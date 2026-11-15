@@ -225,9 +225,21 @@ export class LensRenderer {
   readonly maxTextureSize: number;
   lost = false;
 
+  /**
+   * El navegador negó WebGL2 en esta página. No hay forma de preguntarlo sin pedir un contexto (la interfaz
+   * WebGL2RenderingContext existe aunque no se pueda crear), y Firefox escribe un aviso en la consola por cada
+   * intento fallido: se pregunta una vez y los demás carruseles de la página van directos a la lente css.
+   */
+  private static unavailable = false;
+
   static create(canvas: HTMLCanvasElement, onLost: () => void): LensRenderer | null {
+    if (LensRenderer.unavailable) return null;
     const gl = canvas.getContext("webgl2", { alpha: true, antialias: true, premultipliedAlpha: true });
-    if (!gl || gl.isContextLost()) return null;
+    if (!gl) {
+      LensRenderer.unavailable = true;
+      return null;
+    }
+    if (gl.isContextLost()) return null;
     try {
       return new LensRenderer(canvas, gl, onLost);
     } catch {

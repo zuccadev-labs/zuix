@@ -5,6 +5,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Corregido
+
+- Carousel en modo `gl`: si el navegador no ofrece WebGL2, se pregunta una sola vez por página. Antes cada
+  carrusel pedía su contexto, y Firefox escribía un aviso en la consola por cada intento antes de caer a la
+  lente `css`.
+
 ## [0.1.0] - 2026-11-14
 
 Primera versión publicada.
