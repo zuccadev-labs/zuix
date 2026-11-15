@@ -510,7 +510,8 @@ export default function ShellPage() {
     const r = spawnSync(process.execPath, [nextBin, "build"], { cwd: nextDir, encoding: "utf8", timeout: 600_000, env: nextEnv });
     const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
     if (r.status !== 0) bad(`next ${version}: next build\n${out.split("\n").slice(-40).map((l) => `    ${l}`).join("\n")}`);
-    else if (/\[zicon\]|Warning:|⚠/.test(out)) bad(`next ${version}: next build pasa con avisos\n${out.split("\n").filter((l) => /\[zicon\]|Warning:|⚠/.test(l)).slice(0, 10).map((l) => `    ${l}`).join("\n")}`);
+    // En CI, Next avisa de que no hay caché de compilación: no dice nada del paquete y no cuenta como aviso.
+    else if (/\[zicon\]|Warning:|⚠/.test(out.split("\n").filter((l) => !/No build cache found/.test(l)).join("\n"))) bad(`next ${version}: next build pasa con avisos\n${out.split("\n").filter((l) => /\[zicon\]|Warning:|⚠/.test(l) && !/No build cache found/.test(l)).slice(0, 10).map((l) => `    ${l}`).join("\n")}`);
     else { built = true; ok(`next ${version}: next build (App Router, Turbopack) sin avisos; rutas / (estática), /dynamic y /shell`); }
   }
   if (built) {
