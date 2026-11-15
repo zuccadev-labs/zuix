@@ -1,7 +1,8 @@
 # Publicación
 
-Cómo se publica la suite en npmjs.com: flujo automático desde `main`, configuración de una sola vez y
-vía manual de respaldo. Última actualización: 2026-11-14.
+Cómo se publica la suite en npmjs.com. Última actualización: 2026-11-14.
+
+Flujo automático desde `main`, configuración de una sola vez y vía manual de respaldo.
 
 > **Estado (2026-11-14):** los cinco paquetes están publicados en npmjs.com en `0.1.0`. Esa primera versión
 > la publicó el responsable a mano, con 2FA, desde los tarballs verificados; no lleva procedencia. Desde
