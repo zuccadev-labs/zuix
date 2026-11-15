@@ -3,17 +3,19 @@
 Cómo se versionan, se construyen y se publican los paquetes de la suite. Para quien publica.
 Última actualización: 2026-11-14.
 
-> **Estado (2026-11-14):** los cinco paquetes están en `0.1.0`, verificados y **sin publicar**. No quedan
-> decisiones abiertas: scope `@zuccadev-labs` (organización existente en npmjs.com), licencia MIT, acceso
-> público y repositorio `github.com/zuccadev-labs/zuix`. La primera publicación la hace el responsable a
-> mano, con 2FA ([Publicación](./02-publicacion.md#primera-publicación-manual-con-2fa)).
+> **Estado (2026-11-14):** los cinco paquetes están **publicados en npmjs.com en `0.1.0`**, bajo el scope
+> `@zuccadev-labs`, con licencia MIT y acceso público. `0.1.0` la publicó el responsable a mano, con 2FA y
+> sin procedencia. Las siguientes se publican solas al fusionar en `main` una subida de versión
+> ([Publicación automática](./02-publicacion.md#publicación-automática-desde-main)); antes hay que registrar
+> el trusted publisher en npmjs.com y crear el entorno `npm` en GitHub
+> ([Configuración de una sola vez](./02-publicacion.md#configuración-de-una-sola-vez)).
 
 ## Documentos
 
 | # | Documento | Qué responde |
 |---|---|---|
-| 01 | [Versionado](./01-versionado.md) | Qué número sube con cada cambio y cómo se sube |
-| 02 | [Publicación](./02-publicacion.md) | Decisiones, lista previa, pasos exactos de la publicación manual con 2FA y ensayo con registro local |
+| 01 | [Versionado](./01-versionado.md) | Qué número sube con cada cambio, cómo se sube y cómo llega a publicarse |
+| 02 | [Publicación](./02-publicacion.md) | Publicación automática desde `main` con OIDC, configuración de una sola vez en npmjs.com y GitHub, vía manual con 2FA y ensayo con registro local |
 | 03 | [Contrato público](./03-contrato-publico.md) | Qué es superficie pública y qué cuenta como cambio incompatible |
 | 04 | [Apertura del repositorio](./04-apertura-del-repositorio.md) | Qué se saneó para hacerlo público y cómo hacer el primer push sin publicar el historial |
 
@@ -44,7 +46,8 @@ Tamaño del tarball comprimido y número de archivos. Ninguno incluye `src/`, pr
 | `pnpm bump check` | Comprueba que la versión es la misma en los cinco y que cada `CHANGELOG.md` la recoge |
 | `pnpm bump patch` (o `minor`, `major`, `X.Y.Z`) | Sube la versión y cierra la sección "Sin publicar" de cada `CHANGELOG.md` |
 
-Ninguno publica, crea etiquetas ni hace commits.
+Ninguno publica, crea etiquetas ni hace commits. Publica el workflow `release` cuando una subida de versión
+llega a `main`, y es él quien crea la etiqueta y el GitHub Release.
 
 ## Estructura de `dist/`
 
@@ -218,7 +221,9 @@ sobre los proyectos instalados desde el registro (el navegador se prueba con `pn
 
 ## Sin verificar
 
-- **Publicación real en npmjs.com.** Nunca se ejecutó. Se ensayó contra un registro local.
+- **Publicación automática.** `0.1.0` está en npmjs.com, publicada a mano. El workflow `release` no ha
+  publicado nunca: se validó en local y contra el registro en solo lectura
+  ([Publicación](./02-publicacion.md#sin-verificar)).
 - **Next.js con el paraguas.** `pnpm test:pack:next` usa los paquetes sueltos; el paraguas se probó con Vite
   y en Node.
 - **webpack, Rspack, Parcel y Turbopack contra el paquete publicado.** Solo Vite 7. `zudocs` usa Rspack,
@@ -226,5 +231,5 @@ sobre los proyectos instalados desde el registro (el navegador se prueba con `pn
 - **`attw` en modo estricto.** Se ejecuta con el perfil `esm-only`: los paquetes no tienen salida CommonJS
   y `require("@zuccadev-labs/zuix-zui")` solo funciona en un Node que cargue ESM con `require`.
 - **CDN.** Las rutas `dist/*.css` y `dist/*.js` existen en el tarball; no se probaron desde unpkg o jsDelivr.
-- **Los workflows de CI y de release** no se han ejecutado nunca: el repositorio remoto es nuevo y todavía
-  no ha recibido ningún push.
+- **El workflow `ci`** se ejecuta en cada push y pull request desde el 2026-11-14. Su uso como verificación
+  de una publicación (`workflow_call` desde `release`) no se ha ejecutado todavía.

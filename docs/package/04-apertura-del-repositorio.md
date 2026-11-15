@@ -3,13 +3,13 @@
 Qué se saneó para poder hacer público el repositorio, qué queda todavía en el historial y cómo hacer el
 primer push sin publicarlo. Fecha del saneado: 2026-11-14.
 
-El remoto está decidido y creado: `https://github.com/zuccadev-labs/zuix`, público y todavía vacío.
+El remoto es `https://github.com/zuccadev-labs/zuix`, público. El primer push se hizo el 2026-11-14 desde
+un commit raíz limpio (`0d069bd`, "zuix 0.1.0"), y los cinco paquetes están publicados en npmjs.com en `0.1.0`.
 
-> **Aviso: el historial local actual no es publicable.** Los commits anteriores a la apertura (`eaa8eb3`,
-> `b541f64` y los posteriores de `main` local) contienen los datos que se retiraron del árbol de trabajo. Sanear los archivos no los borra de esos commits. El primer push
-> público debe salir de una rama huérfana con un único commit raíz
-> ([Primer push público](#primer-push-público)). Nada de ese procedimiento se ha ejecutado: no se
-> reescribió el historial ni se hizo push.
+> **Aviso: el historial local anterior no es publicable.** Los commits anteriores a la apertura (`eaa8eb3`,
+> `b541f64` y los que les siguieron) contienen los datos que se retiraron del árbol de trabajo. Sanear los
+> archivos no los borra de esos commits. Ese historial vive solo en local, en una rama aparte, y no se
+> empuja nunca: ni `--all`, ni `--mirror`, ni esa rama.
 
 ## Criterio
 
@@ -79,6 +79,8 @@ Cualquier push de `main` tal como está publica todo eso, aunque el último comm
 
 ## Primer push público
 
+Hecho el 2026-11-14. Se conserva el procedimiento por si hay que repetirlo en otro repositorio.
+
 Con tan pocos commits no compensa reescribir el historial con `git filter-repo`: se publica un commit raíz
 nuevo y el historial antiguo se queda fuera.
 
@@ -138,25 +140,30 @@ Después del push:
    git gc --prune=now
    ```
 
-3. Crear la etiqueta `v0.1.0` sobre el commit nuevo solo cuando se vaya a publicar
-   ([Publicación](./02-publicacion.md)). Una etiqueta creada sobre el historial antiguo no se empuja nunca.
+3. La etiqueta `v0.1.0` y su GitHub Release van sobre el commit público `0d069bd`
+   ([Publicación](./02-publicacion.md#3-etiqueta-y-release-de-010)). De la versión siguiente en adelante las
+   crea el workflow `release`. Una etiqueta creada sobre el historial antiguo no se empuja nunca.
 
 Si por error se empuja el historial antiguo a un repositorio público: borrar el repositorio remoto y
 crearlo de nuevo. Un `push --force` no basta, porque los commits antiguos siguen accesibles por su hash
 durante un tiempo.
 
-## Configuración del repositorio al crearlo
+## Configuración del repositorio
 
-Pendiente del responsable; nada de esto se puede dejar hecho desde el código:
+Pendiente del responsable; nada de esto se puede dejar hecho desde el código. Estado leído con la API de
+GitHub el 2026-11-14:
 
-| Ajuste | Para qué |
-|---|---|
-| Protección de `main` con las comprobaciones de `ci` requeridas | Que nada entre sin verificación |
-| Alertas de secretos y protección de push | Detectar credenciales antes de que entren |
-| Reporte privado de vulnerabilidades | Es el canal que anuncia `SECURITY.md`; hay que activarlo |
-| Entorno `npm` con revisores y el secreto `NPM_TOKEN` | Aprobación manual de cada publicación ([Publicación](./02-publicacion.md#publicación-desde-github-actions)) |
-| `CODEOWNERS` | No existe: faltan las cuentas de los revisores |
-| Campos `repository`, `homepage` y `bugs` de los cinco `package.json` | Hechos: apuntan a `github.com/zuccadev-labs/zuix`. Hasta el primer push esas direcciones responden 404 |
+| Ajuste | Estado | Para qué |
+|---|---|---|
+| Protección de `main` con las comprobaciones de `ci` requeridas | Sin protección ni rulesets | Que nada entre sin verificación. Con la publicación automática, lo que entra en `main` con una versión nueva se publica: la protección de `main` es la puerta de la publicación |
+| Alertas de secretos y protección de push | Desactivadas | Detectar credenciales antes de que entren |
+| Actualizaciones de seguridad de Dependabot | Alertas activas, sin alertas abiertas; actualizaciones automáticas desactivadas | Parches de seguridad sin esperar a la ronda semanal |
+| Reporte privado de vulnerabilidades | Desactivado | Es el canal que anuncia `SECURITY.md`; hay que activarlo |
+| Entorno `npm` limitado a `main` | No existe | Lo declara el trabajo `publish` y forma parte del trusted publisher de npm ([Publicación](./02-publicacion.md#configuración-de-una-sola-vez)). Ya no hace falta el secreto `NPM_TOKEN` |
+| Etiqueta `v0.1.0` y GitHub Release | No existen | Marcar el commit publicado ([Publicación](./02-publicacion.md#3-etiqueta-y-release-de-010)) |
+| `CODEOWNERS` | No existe | Faltan las cuentas de los revisores |
+| Temas y página del repositorio | Sin temas ni página; descripción y licencia MIT correctas | Que el repositorio se encuentre y enlace a npm |
+| Campos `repository`, `homepage` y `bugs` de los cinco `package.json` | Hechos | Apuntan a `github.com/zuccadev-labs/zuix`. `repository.url` es además un requisito de la publicación de confianza |
 
 ## Cómo se comprueba
 
@@ -172,7 +179,8 @@ No debe imprimir nada. La misma orden con `-iE "$ZUIX_PRIVADO"` comprueba los no
 
 ## Sin verificar
 
-- El procedimiento del primer push no se ha ejecutado.
+- El primer push lo hizo el responsable; aquí solo se comprobó el resultado: `main` remoto en `0d069bd`,
+  un único commit, sin etiquetas.
 - No se revisaron los metadatos de las imágenes ni de otros binarios: hoy no hay binarios versionados
   (los iconos y el logo de ejemplo son SVG de texto).
 - El saneado cubre los archivos versionados. `docs/*.pptx` (manual de marca), `examples/zenith-docs/docs/`,

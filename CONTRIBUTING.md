@@ -88,7 +88,9 @@ visible para quien usa el paquete se anota en "Sin publicar" en el mismo pull re
 corresponda: `Añadido`, `Cambiado`, `Obsoleto`, `Eliminado` o `Corregido`. Los cambios internos (pruebas,
 herramientas, documentación) no se anotan.
 
-La versión no se toca en un pull request normal: la sube quien publica con `pnpm bump`
+La versión no se toca en un pull request normal: la sube el responsable con `pnpm bump`, en un pull
+request propio. Al fusionarlo en `main`, el workflow `release` publica los cinco paquetes en npm y crea la
+etiqueta y el GitHub Release; nadie publica a mano
 ([`docs/package/02-publicacion.md`](./docs/package/02-publicacion.md)).
 
 ## Datos privados

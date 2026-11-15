@@ -181,11 +181,19 @@ La pasada táctil encontró estos, ya corregidos:
    convertir: 8 diagramas Mermaid y 23 enlaces que ya estaban rotos en el origen.
 5. Identidad visual definitiva de DAZLABS: la paleta y las fuentes salen de un manual incompleto.
 6. Control de versiones: repositorio git local creado el 2026-11-14. El remoto `github.com/zuccadev-labs/zuix`
-   existe, público y vacío; el primer push sale de un commit raíz limpio
-   ([Apertura](../package/04-apertura-del-repositorio.md)). `.github/workflows/ci.yml` no se ha ejecutado nunca.
+   es público y recibió su primer push ese día, desde un commit raíz limpio
+   ([Apertura](../package/04-apertura-del-repositorio.md)). `.github/workflows/ci.yml` se ejecuta en cada
+   push y pull request. Su primera ejecución falló en dos puntos que en local no se veían: el Firefox sin
+   interfaz de los runners no ofrece WebGL y avisa en la consola cada vez que el Carousel pide un contexto
+   (11 casos de `test:browser`), y un caso táctil de `test:html` medía un cajón del Shell tras una espera
+   fija, antes de que WebKit hubiera avanzado la animación. Los dos están corregidos; `NO_WEBGL=1` reproduce
+   en local un motor sin WebGL (`tests/webgl.mjs`). Falta proteger `main` y el resto de ajustes del repositorio.
 7. Publicación. A 2026-11-14 los cinco paquetes publicables (`@zuccadev-labs/zuix` y `@zuccadev-labs/zuix-tokens`,
-   `-zicon`, `-zui`, `-zout`) están en `0.1.0`, verificados y sin publicar: `pnpm build` genera ESM,
+   `-zicon`, `-zui`, `-zout`) están publicados en npmjs.com en `0.1.0`: `pnpm build` genera ESM,
    declaraciones y CSS en `dist/`, `pnpm test:pack` los instala y los usa fuera del workspace, y se
    ensayaron contra un registro local con pnpm, npm, yarn y bun ([Empaquetado](../package/README.md)).
-   Licencia MIT, acceso público, scope `@zuccadev-labs` y repositorio decididos. Falta que el responsable
-   ejecute la publicación manual con 2FA ([Publicación](../package/02-publicacion.md)).
+   Licencia MIT, acceso público, scope `@zuccadev-labs`. `0.1.0` la publicó el responsable a mano, con 2FA y
+   sin procedencia. De la siguiente en adelante publica el workflow `release` al fusionar en `main` una
+   subida de versión, con publicación de confianza de npm (OIDC). Falta la configuración de una sola vez:
+   trusted publisher en los cinco paquetes, entorno `npm` en GitHub, y etiqueta y Release de `0.1.0`
+   ([Publicación](../package/02-publicacion.md#configuración-de-una-sola-vez)). El workflow no ha publicado todavía.

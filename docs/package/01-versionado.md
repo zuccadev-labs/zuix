@@ -65,8 +65,25 @@ pnpm install               # actualiza el lockfile
 `## [X.Y.Z] - fecha`. Un paquete sin cambios anotados recibe la línea "Sin cambios en este paquete". Si
 ningún paquete tiene cambios anotados, se niega a subir.
 
-No crea commits ni etiquetas. La etiqueta es `vX.Y.Z` sobre el commit de la
-subida ([Publicación](./02-publicacion.md)).
+No crea commits ni etiquetas, ni publica.
+
+## De la subida a la publicación
+
+```
+pnpm bump patch → commit "release: vX.Y.Z" en una rama → pull request → ci en verde → fusionar en main
+                                                                                          │
+              workflow release: detecta la versión nueva → verifica → publica en npm → etiqueta vX.Y.Z y Release
+```
+
+1. `pnpm bump …` y `pnpm install` en una rama, un commit `release: vX.Y.Z` y un pull request. El pull
+   request solo lleva la subida: los cinco `package.json`, los cinco `CHANGELOG.md` y el lockfile.
+2. El workflow `ci` lo verifica como cualquier cambio.
+3. Al fusionarlo en `main`, el workflow `release` ve que la versión de los `package.json` no está en el
+   registro, repite la verificación, publica los cinco paquetes y crea la etiqueta `vX.Y.Z` y el GitHub
+   Release con las notas de los `CHANGELOG.md` ([Publicación](./02-publicacion.md#publicación-automática-desde-main)).
+
+Un push a `main` que no cambia la versión no publica nada: el workflow termina en su primer trabajo. La
+etiqueta no se crea a mano; es una consecuencia de publicar, no lo que lo dispara.
 
 ## Obsolescencia
 
@@ -77,13 +94,15 @@ eliminarlo.
 ## Por qué un script propio y no Changesets
 
 Changesets resuelve versiones independientes por paquete y se apoya en git para saber qué cambió. Aquí la
-versión es única. `tools/version.mjs` son unas 80 líneas sin dependencias. Si la suite pasa a versiones independientes o a publicar desde CI, Changesets es el
-reemplazo natural.
+versión es única. `tools/version.mjs` son unas 80 líneas sin dependencias, y la publicación desde CI solo necesita comparar
+esa versión con el registro. Si la suite pasa a versiones independientes, Changesets es el reemplazo natural.
 
 ## Sin verificar
 
 - `pnpm bump` se probó sobre una copia de los paquetes, antes de existir el paraguas (subida `minor` con y sin
   cambios anotados).
-  En el repositorio real solo se ejecutó `check` y `--dry-run`: la versión sigue en `0.1.0`.
+  En el repositorio real solo se ejecutó `check` y `--dry-run`: la versión sigue en `0.1.0`, la publicada.
+- El flujo completo (subida, pull request, fusión y publicación automática) no se ha recorrido todavía: la
+  primera vez será con la versión siguiente a `0.1.0`.
 - Versiones preliminares (`0.2.0-beta.1`): el script las acepta como versión explícita; no se probó el
   flujo completo con `--tag`.

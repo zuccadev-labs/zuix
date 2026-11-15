@@ -21,8 +21,8 @@ terceros se citan con una descripción neutra ("proyecto de origen", "design sys
 
 ## Estado
 
-- Los paquetes existen y pasan su verificación (documento 07). A 2026-11-14, sin publicar; el procedimiento
-  está en `docs/package/02-publicacion.md`.
+- Los paquetes existen y pasan su verificación (documento 07). Desde el 2026-11-14 están publicados en
+  npmjs.com en `0.1.0`; el procedimiento está en `docs/package/02-publicacion.md`.
 - Los documentos 01 a 06 se escribieron antes de construir: describen el análisis y el plan. Donde la
   construcción se apartó del plan, manda el documento 07.
 - Los documentos de usuario en [`../users/`](../users/README.md) describen lo construido.
