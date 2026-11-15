@@ -1,0 +1,790 @@
+{
+ "name": "@zuccadev-labs/zuix-zout",
+ "count": 10,
+ "groups": {
+  "layout": [
+   "Grid",
+   "Page",
+   "Rail",
+   "ResizeHandle",
+   "Shell",
+   "SidePanel",
+   "Sidebar",
+   "SplitPane",
+   "TabStrip",
+   "TitleBar"
+  ]
+ },
+ "components": [
+  {
+   "name": "Grid",
+   "group": "layout",
+   "description": "Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.",
+   "import": "import { Grid, Stack, Inline } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "Grid",
+    "Stack",
+    "Inline"
+   ],
+   "props": [
+    {
+     "name": "Grid.min",
+     "type": "number | string",
+     "default": 240,
+     "description": "Ancho mínimo de celda; las columnas se calculan solas."
+    },
+    {
+     "name": "gap",
+     "type": "enum",
+     "values": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      12,
+      16,
+      20
+     ],
+     "description": "Paso de la escala de espaciado."
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end",
+      "stretch"
+     ]
+    },
+    {
+     "name": "Inline.justify",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end",
+      "between"
+     ]
+    },
+    {
+     "name": "Inline.wrap",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "as",
+     "type": "ElementType",
+     "default": "div"
+    }
+   ],
+   "tokens": [
+    "space-0",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-5",
+    "space-6",
+    "space-8",
+    "space-10",
+    "space-12",
+    "space-16",
+    "space-20"
+   ],
+   "classes": [
+    "z-grid",
+    "z-stack",
+    "z-inline"
+   ],
+   "examples": [
+    {
+     "title": "Rejilla de métricas",
+     "code": "<Grid min={200} gap={4}>\n  <StatTile label=\"Users\" value=\"1,284\" />\n  <StatTile label=\"Revenue\" value=\"$12.4k\" />\n</Grid>"
+    }
+   ],
+   "origin": "`kpi-grid` y `grid-2` de ui-glass.",
+   "file": "zout/src/layouts/Grid.manifest.json"
+  },
+  {
+   "name": "Page",
+   "group": "layout",
+   "description": "Página con desplazamiento propio, cabecera y secciones.",
+   "import": "import { Page, PageHeader, PageSection, Container } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "Page",
+    "PageHeader",
+    "PageSection",
+    "Container"
+   ],
+   "props": [
+    {
+     "name": "header",
+     "type": "ReactNode"
+    },
+    {
+     "name": "width",
+     "type": "enum",
+     "values": [
+      "content",
+      "prose",
+      "full"
+     ],
+     "default": "content"
+    },
+    {
+     "name": "PageHeader.title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "PageHeader.description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "PageHeader.eyebrow",
+     "type": "ReactNode"
+    },
+    {
+     "name": "PageHeader.actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "PageHeader.breadcrumb",
+     "type": "ReactNode"
+    },
+    {
+     "name": "PageSection.title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "PageSection.description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "PageSection.actions",
+     "type": "ReactNode"
+    }
+   ],
+   "tokens": [
+    "content-max",
+    "prose-max",
+    "stage-pad-x",
+    "stage-pad-y",
+    "font-display",
+    "text-display",
+    "text-heading-lg",
+    "fg",
+    "fg-muted",
+    "accent"
+   ],
+   "classes": [
+    "z-page",
+    "z-pagehead",
+    "z-section",
+    "z-container"
+   ],
+   "examples": [
+    {
+     "title": "Panel de control",
+     "code": "<Page header={<PageHeader eyebrow=\"Analytics\" title=\"Overview\" description=\"Last 30 days.\" actions={<Button variant=\"primary\" icon=\"plus\">New report</Button>} />}>\n  <PageSection title=\"Metrics\">\n    <Grid min={200}>…</Grid>\n  </PageSection>\n</Page>"
+    }
+   ],
+   "origin": "Contenedor y cabeceras del design system base.",
+   "file": "zout/src/layouts/Page.manifest.json"
+  },
+  {
+   "name": "Rail",
+   "group": "layout",
+   "description": "Barra estrecha de navegación principal, solo iconos.",
+   "import": "import { Rail, RailItem } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "Rail",
+    "RailItem"
+   ],
+   "props": [
+    {
+     "name": "brand",
+     "type": "ReactNode"
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Primary"
+    },
+    {
+     "name": "RailItem.icon",
+     "type": "IconName",
+     "required": true
+    },
+    {
+     "name": "RailItem.label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre accesible y título."
+    },
+    {
+     "name": "RailItem.active",
+     "type": "boolean"
+    },
+    {
+     "name": "RailItem.badge",
+     "type": "number | string"
+    }
+   ],
+   "tokens": [
+    "rail-width",
+    "radius-full",
+    "radius-md",
+    "surface-3",
+    "accent-solid",
+    "fg-on-accent",
+    "fg-muted",
+    "danger",
+    "focus-ring"
+   ],
+   "classes": [
+    "z-rail"
+   ],
+   "a11y": "<nav> con nombre. Cada elemento es un botón con aria-label; el activo lleva aria-current=page.",
+   "examples": [
+    {
+     "title": "Rail con pie",
+     "code": "<Rail brand={<Logo />} footer={<RailItem icon=\"gear\" label=\"Settings\" />}>\n  <RailItem icon=\"home\" label=\"Home\" active />\n  <RailItem icon=\"bell\" label=\"Notifications\" badge={3} />\n</Rail>"
+    }
+   ],
+   "origin": "Rail de zutool.",
+   "file": "zout/src/layouts/Rail.manifest.json"
+  },
+  {
+   "name": "ResizeHandle",
+   "group": "layout",
+   "description": "Tirador para redimensionar un panel, con puntero y teclado.",
+   "import": "import { ResizeHandle } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "ResizeHandle"
+   ],
+   "props": [
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "left",
+      "right",
+      "top",
+      "bottom"
+     ],
+     "required": true
+    },
+    {
+     "name": "size",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "onResize",
+     "type": "(size: number) => void",
+     "required": true
+    },
+    {
+     "name": "min",
+     "type": "number",
+     "default": 200
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 720
+    },
+    {
+     "name": "defaultSize",
+     "type": "number",
+     "description": "Doble clic o Inicio vuelven a este tamaño."
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 16
+    }
+   ],
+   "tokens": [
+    "accent",
+    "radius-full"
+   ],
+   "classes": [
+    "z-resize"
+   ],
+   "a11y": "role=separator enfocable con aria-valuenow.",
+   "examples": [
+    {
+     "title": "Borde derecho de un panel",
+     "code": "<ResizeHandle side=\"right\" size={width} onResize={setWidth} min={200} max={480} defaultSize={224} />"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Borde derecho de un panel",
+     "code": "<div id=\"resize-demo\" class=\"z-solid\" style=\"position:relative;box-sizing:border-box;width:240px;padding:var(--z-space-4);border-radius:var(--z-radius-md)\">\n  Drag the right edge, or focus it and use the arrow keys.\n  <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panel\" aria-valuenow=\"240\" aria-valuemin=\"160\" aria-valuemax=\"320\" class=\"z-resize\" data-side=\"right\" data-default-size=\"240\"></div>\n</div>"
+    }
+   ],
+   "origin": "ResizeHandle de zutool; se añadió el teclado.",
+   "file": "zout/src/layouts/ResizeHandle.manifest.json"
+  },
+  {
+   "name": "Shell",
+   "group": "layout",
+   "description": "Estructura general de una aplicación. Los paneles laterales se acoplan si caben y pasan a cajón con velo si no.",
+   "import": "import { Shell } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "Shell"
+   ],
+   "zones": [
+    {
+     "name": "titlebar",
+     "accepts": "TitleBar",
+     "optional": true
+    },
+    {
+     "name": "rail",
+     "accepts": "Rail",
+     "optional": true,
+     "token": "rail-width"
+    },
+    {
+     "name": "sidebar",
+     "accepts": "ShellPanel con Sidebar o SidePanel",
+     "optional": true,
+     "token": "sidebar-width"
+    },
+    {
+     "name": "header",
+     "accepts": "título, pestañas, acciones",
+     "optional": true,
+     "token": "header-height"
+    },
+    {
+     "name": "children",
+     "accepts": "Page, SplitPane o contenido propio"
+    },
+    {
+     "name": "inspector",
+     "accepts": "ShellPanel con SidePanel",
+     "optional": true,
+     "token": "inspector-width"
+    },
+    {
+     "name": "overlays",
+     "accepts": "capas flotantes propias",
+     "optional": true
+    }
+   ],
+   "props": [
+    {
+     "name": "sidebar",
+     "type": "ShellPanel",
+     "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize? }"
+    },
+    {
+     "name": "inspector",
+     "type": "ShellPanel"
+    },
+    {
+     "name": "surface",
+     "type": "enum",
+     "values": [
+      "glass",
+      "solid",
+      "none"
+     ],
+     "default": "glass",
+     "description": "`solid` para lectura o edición de texto denso."
+    },
+    {
+     "name": "sidebarBreakpoint",
+     "type": "number",
+     "default": 880,
+     "description": "Ancho del shell bajo el cual la sidebar `auto` pasa a cajón."
+    },
+    {
+     "name": "inspectorBreakpoint",
+     "type": "number",
+     "default": 1180
+    },
+    {
+     "name": "onCloseOverlay",
+     "type": "() => void",
+     "description": "Cierra el cajón abierto (velo o Escape)."
+    },
+    {
+     "name": "onModeChange",
+     "type": "(modes: { sidebar: \"docked\" | \"overlay\"; inspector: \"docked\" | \"overlay\" }) => void",
+     "description": "Avisa del modo que corresponde a cada panel según el ancho medido, esté abierto o no. Sirve para cerrar los paneles cuando pasan a cajón."
+    },
+    {
+     "name": "closeOverlayLabel",
+     "type": "string",
+     "default": "Close panel"
+    }
+   ],
+   "tokens": [
+    "shell-gap",
+    "sidebar-width",
+    "inspector-width",
+    "header-height",
+    "stage-pad-x",
+    "panel-radius",
+    "scrim",
+    "shadow-lg",
+    "layer-overlay",
+    "line"
+   ],
+   "classes": [
+    "z-shell"
+   ],
+   "a11y": "El área principal es <main>; los paneles son <aside> con nombre. En modo cajón el panel es role=dialog, recibe el foco al abrirse y lo devuelve al cerrarse, el área principal queda inerte y Escape o el velo lo cierran.",
+   "examples": [
+    {
+     "title": "Aplicación con rail, sidebar e inspector",
+     "code": "<Shell\n  rail={<Rail><RailItem icon=\"home\" label=\"Home\" active /><RailItem icon=\"gear\" label=\"Settings\" /></Rail>}\n  sidebar={{ label: \"Navigation\", open: sidebarOpen, content: <Sidebar><SidebarSection title=\"Projects\" count={3}>…</SidebarSection></Sidebar> }}\n  inspector={{ label: \"Details\", open: detailsOpen, content: <SidePanel title=\"Details\">…</SidePanel> }}\n  onCloseOverlay={closePanels}\n>\n  <Page header={<PageHeader title=\"Overview\" />}>…</Page>\n</Shell>"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Shell con barra de título, rail, sidebar redimensionable e inspector",
+     "code": "<div style=\"width:100%;height:360px\">\n  <div class=\"z-shell z-canvas z-root\" id=\"shell-demo\">\n    <div class=\"z-titlebar\">\n      <div class=\"z-titlebar__brand\">\n        <button type=\"button\" title=\"Toggle navigation\" aria-label=\"Toggle navigation\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-shell-toggle=\"sidebar\">\n          <z-icon name=\"bars-3\" size=\"16\"></z-icon>\n        </button>\n      </div>\n      <div class=\"z-titlebar__center\"></div>\n      <div class=\"z-titlebar__actions\">\n        <button type=\"button\" title=\"Toggle details panel\" aria-label=\"Toggle details panel\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-shell-toggle=\"inspector\">\n          <z-icon name=\"adjustments-horizontal\" size=\"16\"></z-icon>\n        </button>\n      </div>\n    </div>\n    <div class=\"z-shell__body\">\n      <div class=\"z-shell__rail\">\n        <nav class=\"z-rail z-liquid\" aria-label=\"Primary\">\n          <div class=\"z-rail__items\">\n            <button type=\"button\" class=\"z-rail__item\" aria-label=\"Home\" title=\"Home\" aria-current=\"page\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"20\"></z-icon>\n            </button>\n            <button type=\"button\" class=\"z-rail__item\" aria-label=\"Settings\" title=\"Settings\">\n              <z-icon name=\"gear\" size=\"20\"></z-icon>\n            </button>\n          </div>\n        </nav>\n      </div>\n      <aside class=\"z-liquid z-shell__side\" aria-label=\"Navigation\" data-side=\"left\">\n        <div class=\"z-shell__panel-body\">\n          <div class=\"z-sidebar\">\n            <div class=\"z-sidebar__sections\">\n              <section class=\"z-sidebar__section\" data-open=\"true\">\n                <div class=\"z-sidebar__head\">\n                  <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"shell-demo-projects\">\n                    <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n                    <span class=\"z-sidebar__title\">Projects</span>\n                    <span class=\"z-sidebar__count\">2</span>\n                  </button>\n                </div>\n                <div class=\"z-sidebar__body\" id=\"shell-demo-projects\">\n                  <nav aria-label=\"Projects\" class=\"z-navlist\">\n                    <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\" data-z-close>\n                      <span class=\"z-navlink__icon\">\n                        <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navlink__label\">Atlas</span>\n                    </button>\n                    <button type=\"button\" class=\"z-navlink\" data-z-close>\n                      <span class=\"z-navlink__icon\">\n                        <z-icon name=\"folder\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navlink__label\">Borealis</span>\n                    </button>\n                  </nav>\n                </div>\n              </section>\n            </div>\n          </div>\n        </div>\n        <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize Navigation\" aria-valuenow=\"224\" aria-valuemin=\"180\" aria-valuemax=\"360\" class=\"z-resize\" data-side=\"right\" data-default-size=\"224\"></div>\n      </aside>\n      <main class=\"z-shell__main z-liquid\">\n        <div class=\"z-shell__content\">\n          <div class=\"z-page\">\n            <div class=\"z-container\" data-width=\"content\">\n              <header class=\"z-pagehead\">\n                <div class=\"z-pagehead__row\">\n                  <div class=\"z-pagehead__text\">\n                    <h1 class=\"z-pagehead__title\">Overview</h1>\n                    <p class=\"z-pagehead__description\">Panels dock when the shell is wide enough and become drawers when it is not.</p>\n                  </div>\n                </div>\n              </header>\n            </div>\n          </div>\n        </div>\n      </main>\n      <aside class=\"z-liquid z-shell__inspector\" aria-label=\"Details\" data-side=\"right\">\n        <div class=\"z-shell__panel-body\">\n          <section class=\"z-sidepanel\">\n            <div class=\"z-sidepanel__head\">\n              <div class=\"z-sidepanel__titles\">\n                <div class=\"z-sidepanel__title\">Details</div>\n              </div>\n              <div class=\"z-sidepanel__actions\">\n                <button type=\"button\" title=\"Close details\" aria-label=\"Close details\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-close>\n                  <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n                </button>\n              </div>\n            </div>\n            <div class=\"z-sidepanel__body\" data-padded=\"true\">Atlas, updated two hours ago.</div>\n          </section>\n        </div>\n      </aside>\n    </div>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "AppShell de zutool.",
+   "file": "zout/src/layouts/Shell.manifest.json"
+  },
+  {
+   "name": "SidePanel",
+   "group": "layout",
+   "description": "Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.",
+   "import": "import { SidePanel } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "SidePanel"
+   ],
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "subtitle",
+     "type": "ReactNode"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "padded",
+     "type": "boolean",
+     "default": true
+    }
+   ],
+   "tokens": [
+    "line",
+    "fg",
+    "fg-subtle",
+    "font-display",
+    "text-title",
+    "space-3",
+    "space-4"
+   ],
+   "classes": [
+    "z-sidepanel"
+   ],
+   "examples": [
+    {
+     "title": "Inspector",
+     "code": "<SidePanel title=\"Details\" subtitle=\"Updated today\" footer={<Button variant=\"primary\">Save</Button>}>…</SidePanel>"
+    }
+   ],
+   "origin": "Panel de zutool.",
+   "file": "zout/src/layouts/SidePanel.manifest.json"
+  },
+  {
+   "name": "Sidebar",
+   "group": "layout",
+   "description": "Navegación secundaria en acordeón: secciones plegables y pie fijo.",
+   "import": "import { Sidebar, SidebarSection } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "Sidebar",
+    "SidebarSection"
+   ],
+   "props": [
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "SidebarSection.title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "SidebarSection.count",
+     "type": "number"
+    },
+    {
+     "name": "SidebarSection.actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "SidebarSection.open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "SidebarSection.defaultOpen",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "SidebarSection.grow",
+     "type": "boolean",
+     "description": "Reparte el alto libre."
+    }
+   ],
+   "tokens": [
+    "line",
+    "fg-muted",
+    "fg",
+    "text-caption",
+    "tracking-wide",
+    "focus-ring"
+   ],
+   "classes": [
+    "z-sidebar"
+   ],
+   "a11y": "Cada cabecera es un botón con aria-expanded y aria-controls.",
+   "examples": [
+    {
+     "title": "Dos secciones",
+     "code": "<Sidebar footer={<NavLink icon=\"gear\">Settings</NavLink>}>\n  <SidebarSection title=\"Workspaces\" count={2} grow>…</SidebarSection>\n  <SidebarSection title=\"Recent\" defaultOpen={false}>…</SidebarSection>\n</Sidebar>"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Dos secciones y pie",
+     "code": "<div style=\"width:240px;height:280px\">\n  <div class=\"z-sidebar\" id=\"sidebar-demo\">\n    <div class=\"z-sidebar__sections\">\n      <section class=\"z-sidebar__section\" data-open=\"true\" data-grow=\"true\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"sidebar-demo-workspaces\">\n            <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Workspaces</span>\n            <span class=\"z-sidebar__count\">2</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-workspaces\">\n          <nav aria-label=\"Workspaces\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Atlas</span>\n            </button>\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Borealis</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n      <section class=\"z-sidebar__section\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"false\" aria-controls=\"sidebar-demo-recent\">\n            <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Recent</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-recent\" hidden>\n          <nav aria-label=\"Recent\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"document-text\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Release notes</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <button type=\"button\" class=\"z-navlink\">\n        <span class=\"z-navlink__icon\">\n          <z-icon name=\"gear\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-navlink__label\">Settings</span>\n      </button>\n    </div>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "Barra izquierda de zutool.",
+   "file": "zout/src/layouts/Sidebar.manifest.json"
+  },
+  {
+   "name": "SplitPane",
+   "group": "layout",
+   "description": "Paneles divididos con divisores arrastrables y manejables con teclado.",
+   "import": "import { SplitPane, Pane } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "SplitPane",
+    "Pane"
+   ],
+   "props": [
+    {
+     "name": "direction",
+     "type": "enum",
+     "values": [
+      "row",
+      "column"
+     ],
+     "default": "row"
+    },
+    {
+     "name": "sizes",
+     "type": "number[]",
+     "description": "Fracciones controladas; suman 1."
+    },
+    {
+     "name": "defaultSizes",
+     "type": "number[]"
+    },
+    {
+     "name": "onSizesChange",
+     "type": "(sizes: number[]) => void"
+    },
+    {
+     "name": "minFraction",
+     "type": "number",
+     "default": 0.1
+    },
+    {
+     "name": "Pane.header",
+     "type": "ReactNode"
+    },
+    {
+     "name": "Pane.focused",
+     "type": "boolean",
+     "description": "true marca el panel con borde de acento; false lo atenúa."
+    }
+   ],
+   "tokens": [
+    "accent",
+    "accent-ring",
+    "line",
+    "reading-bg",
+    "surface",
+    "scrim",
+    "radius-md"
+   ],
+   "classes": [
+    "z-split",
+    "z-pane"
+   ],
+   "a11y": "Cada divisor es role=separator enfocable; las flechas lo mueven un 2 %.",
+   "examples": [
+    {
+     "title": "Editor y vista previa",
+     "code": "<SplitPane defaultSizes={[0.6, 0.4]}>\n  <Pane header=\"Editor\" focused>…</Pane>\n  <Pane header=\"Preview\" focused={false}>…</Pane>\n</SplitPane>"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Editor, vista previa y salida",
+     "code": "<div style=\"width:100%;height:240px\">\n  <div class=\"z-split\" id=\"split-demo\" data-direction=\"row\">\n    <div class=\"z-split__pane\" style=\"flex-grow:0.6\">\n      <div class=\"z-split\" data-direction=\"column\">\n        <div class=\"z-split__pane\" style=\"flex-grow:0.65\">\n          <div class=\"z-pane\" data-focused=\"true\">\n            <div class=\"z-pane__header\">Editor</div>\n            <div class=\"z-pane__body\">\n              <div style=\"padding:var(--z-space-2)\">export const answer = 42;</div>\n            </div>\n          </div>\n        </div>\n        <div role=\"separator\" tabindex=\"0\" aria-orientation=\"horizontal\" aria-label=\"Resize output\" aria-valuenow=\"65\" aria-valuemin=\"10\" aria-valuemax=\"90\" class=\"z-split__divider\"></div>\n        <div class=\"z-split__pane\" style=\"flex-grow:0.35\">\n          <div class=\"z-pane\" data-focused=\"false\">\n            <div class=\"z-pane__header\">Output</div>\n            <div class=\"z-pane__body\">\n              <div style=\"padding:var(--z-space-2)\">ready in 312 ms</div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panes\" aria-valuenow=\"60\" aria-valuemin=\"10\" aria-valuemax=\"90\" class=\"z-split__divider\"></div>\n    <div class=\"z-split__pane\" style=\"flex-grow:0.4\">\n      <div class=\"z-pane\" data-focused=\"false\">\n        <div class=\"z-pane__header\">Preview</div>\n        <div class=\"z-pane__body\">\n              <div style=\"padding:var(--z-space-2)\">42</div>\n            </div>\n      </div>\n    </div>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "`split` y `pane` de zutool.",
+   "file": "zout/src/layouts/SplitPane.manifest.json"
+  },
+  {
+   "name": "TabStrip",
+   "group": "layout",
+   "description": "Tira de pestañas de trabajo con cierre y alta.",
+   "import": "import { TabStrip } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "TabStrip"
+   ],
+   "props": [
+    {
+     "name": "tabs",
+     "type": "WorkTab[]",
+     "required": true,
+     "description": "{ id, title, leading?, closable? }"
+    },
+    {
+     "name": "activeId",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "onSelect",
+     "type": "(id: string) => void",
+     "required": true
+    },
+    {
+     "name": "onClose",
+     "type": "(id: string) => void"
+    },
+    {
+     "name": "onAdd",
+     "type": "() => void"
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Close tab"
+    },
+    {
+     "name": "addLabel",
+     "type": "string",
+     "default": "New tab"
+    }
+   ],
+   "tokens": [
+    "row-hover",
+    "surface-2",
+    "surface-3",
+    "glass-highlight",
+    "fg",
+    "fg-muted",
+    "radius-full",
+    "focus-ring"
+   ],
+   "classes": [
+    "z-tabstrip"
+   ],
+   "a11y": "role=tablist; flechas, Inicio y Fin cambian de pestaña. La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
+   "examples": [
+    {
+     "title": "Pestañas con alta",
+     "code": "<TabStrip tabs={[{ id: \"a\", title: \"main.ts\" }, { id: \"b\", title: \"README.md\" }]} activeId={active} onSelect={setActive} onClose={closeTab} onAdd={newTab} />"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Pestañas con cierre y alta",
+     "code": "<div class=\"z-tabstrip\" id=\"tabs-demo\">\n  <div class=\"z-tabstrip__list\" role=\"tablist\" aria-label=\"Open files\">\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-selected=\"true\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"true\" tabindex=\"0\" data-tab-id=\"main\">\n        <span class=\"z-tabstrip__title\">main.ts</span>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" tabindex=\"-1\" data-tab-id=\"readme\">\n        <span class=\"z-tabstrip__title\">README.md</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" tabindex=\"-1\" data-tab-id=\"config\">\n        <span class=\"z-tabstrip__title\">package.json</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n  </div>\n  <button type=\"button\" class=\"z-tabstrip__add\" aria-label=\"New tab\" data-new-title=\"Untitled\">\n    <z-icon name=\"plus\" size=\"14\"></z-icon>\n  </button>\n</div>"
+    }
+   ],
+   "origin": "`tabstrip` de zutool.",
+   "file": "zout/src/layouts/TabStrip.manifest.json"
+  },
+  {
+   "name": "TitleBar",
+   "group": "layout",
+   "description": "Barra de título para ventanas sin marco, transparente sobre el fondo.",
+   "import": "import { TitleBar } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "TitleBar"
+   ],
+   "props": [
+    {
+     "name": "brand",
+     "type": "ReactNode"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Centro: pestañas, título o buscador."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "windowControls",
+     "type": "ReactNode"
+    }
+   ],
+   "tokens": [
+    "canvas-fg",
+    "layer-sticky",
+    "text-body"
+   ],
+   "classes": [
+    "z-titlebar"
+   ],
+   "examples": [
+    {
+     "title": "Con pestañas",
+     "code": "<TitleBar brand={<Logo />} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={tabs} activeId={active} onSelect={setActive} />\n</TitleBar>"
+    }
+   ],
+   "origin": "Barra de título de zutool.",
+   "file": "zout/src/layouts/TitleBar.manifest.json"
+  }
+ ]
+}

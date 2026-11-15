@@ -1,0 +1,126 @@
+{
+  "name": "@zuccadev-labs/zuix",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "zuix",
+    "design-system",
+    "ui",
+    "components",
+    "design-tokens",
+    "icons",
+    "layouts",
+    "liquid-glass",
+    "react",
+    "html",
+    "css"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zuccadev-labs/zuix.git",
+    "directory": "suite"
+  },
+  "homepage": "https://github.com/zuccadev-labs/zuix/tree/main/suite#readme",
+  "bugs": {
+    "url": "https://github.com/zuccadev-labs/zuix/issues"
+  },
+  "description": "Suite zuix completa en un paquete: tokens, iconos (zicon), componentes (zui) y layouts (zout). Estándar HTML + CSS + tokens con comportamiento sin framework y binding de React.",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./zui": {
+      "types": "./zui.d.ts",
+      "default": "./zui.js"
+    },
+    "./zui/dom": {
+      "types": "./zui-dom.d.ts",
+      "default": "./zui-dom.js"
+    },
+    "./zout": {
+      "types": "./zout.d.ts",
+      "default": "./zout.js"
+    },
+    "./zout/dom": {
+      "types": "./zout-dom.d.ts",
+      "default": "./zout-dom.js"
+    },
+    "./zicon": {
+      "types": "./zicon.d.ts",
+      "default": "./zicon.js"
+    },
+    "./zicon/core": {
+      "types": "./zicon-core.d.ts",
+      "default": "./zicon-core.js"
+    },
+    "./zicon/dom": {
+      "types": "./zicon-dom.d.ts",
+      "default": "./zicon-dom.js"
+    },
+    "./zicon/all": {
+      "types": "./zicon-all.d.ts",
+      "default": "./zicon-all.js"
+    },
+    "./zicon/element": {
+      "types": "./zicon-element.d.ts",
+      "default": "./zicon-element.js"
+    },
+    "./tokens.css": "./tokens.css",
+    "./styles.css": "./styles.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "*.css",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./zicon.js",
+    "./zicon-all.js",
+    "./zicon-element.js",
+    "./zui-dom.js",
+    "./zout-dom.js",
+    "**/*.css"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@zuccadev-labs/zuix-tokens": "workspace:^",
+    "@zuccadev-labs/zuix-zicon": "workspace:^",
+    "@zuccadev-labs/zuix-zui": "workspace:^",
+    "@zuccadev-labs/zuix-zout": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.9.0"
+  }
+}

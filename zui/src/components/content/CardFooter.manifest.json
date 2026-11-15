@@ -1,0 +1,40 @@
+{
+  "name": "CardFooter",
+  "group": "content",
+  "description": "Pie de una Card con sus acciones.",
+  "import": "import { CardFooter } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "end",
+        "between"
+      ],
+      "default": "end"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode"
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "space-2",
+    "space-3",
+    "line"
+  ],
+  "classes": [
+    "z-card__footer"
+  ],
+  "examples": [
+    {
+      "title": "Acciones a los extremos",
+      "code": "<Card>\n  <p>Delete this workspace and all its data.</p>\n  <CardFooter align=\"between\">\n    <Link href=\"/docs/workspaces\" variant=\"subtle\">Learn more</Link>\n    <Button variant=\"danger\">Delete workspace</Button>\n  </CardFooter>\n</Card>"
+    }
+  ],
+  "origin": "Nuevo."
+}

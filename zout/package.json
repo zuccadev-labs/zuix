@@ -1,0 +1,108 @@
+{
+  "name": "@zuccadev-labs/zuix-zout",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Layouts y ventanas dinámicas de la suite zuix.",
+  "license": "MIT",
+  "keywords": [
+    "zuix",
+    "layout",
+    "app-shell",
+    "split-pane",
+    "sidebar",
+    "tabs",
+    "react",
+    "html",
+    "css"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zuccadev-labs/zuix.git",
+    "directory": "zout"
+  },
+  "homepage": "https://github.com/zuccadev-labs/zuix/tree/main/zout#readme",
+  "bugs": {
+    "url": "https://github.com/zuccadev-labs/zuix/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/index.css",
+    "./manifest.json": "./manifest.json",
+    "./html.json": "./html.json",
+    "./dom": "./src/dom/index.ts",
+    "./dist/zout.css": "./dist/zout.css",
+    "./dist/zout.dom.js": "./dist/zout.dom.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "peerDependencies": {
+    "@zuccadev-labs/zuix-zicon": "workspace:^",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@zuccadev-labs/zuix-tokens": "workspace:^",
+    "@zuccadev-labs/zuix-zui": "workspace:^"
+  },
+  "devDependencies": {
+    "@zuccadev-labs/zuix-zicon": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.9.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "manifest.json",
+    "html.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "./src/dom/*.ts",
+    "./dist/esm/dom/*.js",
+    "./dist/zout.dom.js"
+  ],
+  "publishConfig": {
+    "main": "./dist/esm/index.js",
+    "types": "./dist/esm/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "./dom": {
+        "types": "./dist/esm/dom/index.d.ts",
+        "default": "./dist/esm/dom/index.js"
+      },
+      "./styles.css": "./dist/zout.css",
+      "./manifest.json": "./manifest.json",
+      "./html.json": "./html.json",
+      "./dist/zout.css": "./dist/zout.css",
+      "./dist/zout.dom.js": {
+        "types": "./dist/esm/dom/index.d.ts",
+        "default": "./dist/zout.dom.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  }
+}

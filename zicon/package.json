@@ -1,0 +1,120 @@
+{
+  "name": "@zuccadev-labs/zuix-zicon",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Estándar iconográfico de la suite zuix, extraído de Dazicon.",
+  "license": "MIT",
+  "keywords": [
+    "zuix",
+    "icons",
+    "svg",
+    "icon-set",
+    "react",
+    "web-components",
+    "custom-elements",
+    "sprite"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zuccadev-labs/zuix.git",
+    "directory": "zicon"
+  },
+  "homepage": "https://github.com/zuccadev-labs/zuix/tree/main/zicon#readme",
+  "bugs": {
+    "url": "https://github.com/zuccadev-labs/zuix/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts",
+    "./all": "./src/all.ts",
+    "./dom": "./src/dom.ts",
+    "./element": "./src/element.ts",
+    "./icons/*": "./src/icons/*.ts",
+    "./manifest.json": "./manifest.json",
+    "./sprite.svg": "./sprite.svg",
+    "./svg/*": "./svg/*",
+    "./dist/zicon.element.js": "./dist/zicon.element.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs && node scripts/sprite.mjs",
+    "extract": "python3 -I scripts/extract.py",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "typescript": "^5.9.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "svg",
+    "sprite.svg",
+    "manifest.json",
+    "AGENTS.md",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./src/all.ts",
+    "./src/index.ts",
+    "./src/element.ts",
+    "./dist/esm/all.js",
+    "./dist/esm/index.js",
+    "./dist/esm/element.js",
+    "./dist/zicon.element.js"
+  ],
+  "publishConfig": {
+    "main": "./dist/esm/index.js",
+    "types": "./dist/esm/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "./core": {
+        "types": "./dist/esm/core.d.ts",
+        "default": "./dist/esm/core.js"
+      },
+      "./all": {
+        "types": "./dist/esm/all.d.ts",
+        "default": "./dist/esm/all.js"
+      },
+      "./dom": {
+        "types": "./dist/esm/dom.d.ts",
+        "default": "./dist/esm/dom.js"
+      },
+      "./element": {
+        "types": "./dist/esm/element.d.ts",
+        "default": "./dist/esm/element.js"
+      },
+      "./icons/*": {
+        "types": "./dist/esm/icons/*.d.ts",
+        "default": "./dist/esm/icons/*.js"
+      },
+      "./manifest.json": "./manifest.json",
+      "./sprite.svg": "./sprite.svg",
+      "./svg/*": "./svg/*",
+      "./dist/zicon.element.js": {
+        "types": "./dist/esm/element.d.ts",
+        "default": "./dist/zicon.element.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "name": "Page",
+  "group": "layout",
+  "description": "Página con desplazamiento propio, cabecera y secciones.",
+  "import": "import { Page, PageHeader, PageSection, Container } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "Page",
+    "PageHeader",
+    "PageSection",
+    "Container"
+  ],
+  "props": [
+    {
+      "name": "header",
+      "type": "ReactNode"
+    },
+    {
+      "name": "width",
+      "type": "enum",
+      "values": [
+        "content",
+        "prose",
+        "full"
+      ],
+      "default": "content"
+    },
+    {
+      "name": "PageHeader.title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "PageHeader.description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "PageHeader.eyebrow",
+      "type": "ReactNode"
+    },
+    {
+      "name": "PageHeader.actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "PageHeader.breadcrumb",
+      "type": "ReactNode"
+    },
+    {
+      "name": "PageSection.title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "PageSection.description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "PageSection.actions",
+      "type": "ReactNode"
+    }
+  ],
+  "tokens": [
+    "content-max",
+    "prose-max",
+    "stage-pad-x",
+    "stage-pad-y",
+    "font-display",
+    "text-display",
+    "text-heading-lg",
+    "fg",
+    "fg-muted",
+    "accent"
+  ],
+  "classes": [
+    "z-page",
+    "z-pagehead",
+    "z-section",
+    "z-container"
+  ],
+  "examples": [
+    {
+      "title": "Panel de control",
+      "code": "<Page header={<PageHeader eyebrow=\"Analytics\" title=\"Overview\" description=\"Last 30 days.\" actions={<Button variant=\"primary\" icon=\"plus\">New report</Button>} />}>\n  <PageSection title=\"Metrics\">\n    <Grid min={200}>…</Grid>\n  </PageSection>\n</Page>"
+    }
+  ],
+  "origin": "Contenedor y cabeceras del design system base."
+}

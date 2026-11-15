@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Marca zuix",
+  "description": "Archivo único que define una marca. `{p.nombre}` referencia un primitivo de esta marca; `{nombre}` referencia otro token semántico.",
+  "type": "object",
+  "required": ["name", "primitives", "fonts", "themes"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "Identificador; es el valor de data-brand." },
+    "label": { "type": "string" },
+    "primitives": {
+      "type": "object",
+      "description": "Valores en bruto de la marca. Solo los usa este archivo; los componentes nunca los leen.",
+      "additionalProperties": { "type": "string" }
+    },
+    "fonts": {
+      "type": "object",
+      "required": ["sans", "mono"],
+      "additionalProperties": false,
+      "properties": {
+        "display": { "type": "string" },
+        "sans": { "type": "string" },
+        "mono": { "type": "string" }
+      }
+    },
+    "scale": {
+      "type": "object",
+      "description": "Sobrescribe claves de la escala común (radios, espaciado, medidas de layout).",
+      "additionalProperties": { "type": "string" }
+    },
+    "component": {
+      "type": "object",
+      "description": "Sobrescribe tokens de componente. Rara vez necesario.",
+      "additionalProperties": { "type": "string" }
+    },
+    "themes": {
+      "type": "object",
+      "required": ["dark", "light"],
+      "additionalProperties": false,
+      "properties": {
+        "dark": { "$ref": "#/$defs/theme" },
+        "light": { "$ref": "#/$defs/theme" }
+      }
+    }
+  },
+  "$defs": {
+    "theme": {
+      "type": "object",
+      "required": ["accent", "fg", "fg-muted", "fg-subtle", "fg-on-accent", "canvas", "canvas-gradient", "canvas-fg", "canvas-fg-muted", "glass-bg", "glass-border", "glass-highlight", "glass-specular", "glass-shadow", "surface", "surface-2", "surface-3", "surface-solid", "overlay", "inset", "line", "line-strong", "row-hover", "success", "warning", "danger", "info", "shadow-sm", "shadow-md", "shadow-lg"],
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+.container {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: var(--z-space-5);
+}
+
+.container > svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}

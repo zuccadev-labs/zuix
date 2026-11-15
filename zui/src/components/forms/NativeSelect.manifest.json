@@ -1,0 +1,91 @@
+{
+  "name": "NativeSelect",
+  "group": "forms",
+  "description": "Lista desplegable sobre el `<select>` nativo (lista del sistema) con el aspecto del resto de controles. Para iconos, grupos o popup con el material de la suite, `Select`.",
+  "import": "import { NativeSelect } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "options",
+      "type": "NativeSelectOption[]",
+      "description": "{ value, label, disabled? }. Alternativa: hijos <option>."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "description": "Opción vacía inicial, no seleccionable."
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": true,
+      "description": "Ancho completo; con false, ancho intrínseco."
+    },
+    {
+      "name": "...rest",
+      "type": "SelectHTMLAttributes",
+      "description": "value, onChange, disabled, ref, etc."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "control-height-md",
+    "text-body",
+    "control-height-sm",
+    "text-small",
+    "control-height-lg",
+    "text-title",
+    "space-8",
+    "space-3",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "duration-fast",
+    "ease-standard",
+    "control-border-hover",
+    "accent",
+    "focus-ring",
+    "surface",
+    "danger",
+    "fg-subtle",
+    "popup-bg",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-select"
+  ],
+  "a11y": "select nativo: teclado y lista del sistema. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
+  "examples": [
+    {
+      "title": "Con datos",
+      "code": "<NativeSelect aria-label=\"Region\" placeholder=\"Choose a region\" defaultValue=\"\" options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />"
+    },
+    {
+      "title": "Con hijos, en línea",
+      "code": "<NativeSelect size=\"sm\" block={false} defaultValue=\"25\" aria-label=\"Rows per page\">\n  <option value=\"10\">10</option>\n  <option value=\"25\">25</option>\n</NativeSelect>"
+    }
+  ],
+  "origin": "Select de zutool; el chevron pasa a ser un icono de zicon."
+}

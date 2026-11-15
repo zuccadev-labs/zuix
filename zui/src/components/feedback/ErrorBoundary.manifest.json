@@ -1,0 +1,85 @@
+{
+  "name": "ErrorBoundary",
+  "group": "feedback",
+  "description": "Captura errores de render de su subárbol y muestra un ErrorState con reintento.",
+  "import": "import { ErrorBoundary } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "resetKey",
+      "type": "unknown",
+      "description": "Al cambiar, descarta el error y vuelve a intentar (p. ej. la ruta actual)."
+    },
+    {
+      "name": "fallback",
+      "type": "(error: Error, reset: () => void) => ReactNode",
+      "description": "Sustituye la vista por defecto."
+    },
+    {
+      "name": "onError",
+      "type": "(error: Error, info: ErrorInfo) => void",
+      "description": "Para registrar el error."
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "default": "This section could not be displayed"
+    },
+    {
+      "name": "message",
+      "type": "ReactNode"
+    },
+    {
+      "name": "retryLabel",
+      "type": "string",
+      "default": "Try again"
+    }
+  ],
+  "states": [
+    "ok",
+    "error"
+  ],
+  "tokens": [
+    "space-2",
+    "space-10",
+    "space-6",
+    "fg-muted",
+    "space-4",
+    "space-16",
+    "line",
+    "radius-full",
+    "surface-2",
+    "danger-soft",
+    "danger",
+    "fg",
+    "font-display",
+    "text-heading-lg",
+    "weight-semibold",
+    "leading-snug",
+    "text-title",
+    "text-body",
+    "leading-normal",
+    "text-small",
+    "space-3"
+  ],
+  "classes": [
+    "z-empty",
+    "z-empty--error"
+  ],
+  "a11y": "La vista por defecto es un ErrorState (role alert).",
+  "examples": [
+    {
+      "title": "Por ruta",
+      "code": "<ErrorBoundary resetKey={location.pathname} onError={(error) => reportError(error)}>\n  <Dashboard />\n</ErrorBoundary>"
+    },
+    {
+      "title": "Vista propia",
+      "code": "<ErrorBoundary fallback={(error, reset) => <Alert tone=\"danger\" title=\"Widget failed\" actions={<Button size=\"sm\" onClick={reset}>Reload widget</Button>}>{error.message}</Alert>}>\n  <UsageWidget />\n</ErrorBoundary>"
+    }
+  ],
+  "origin": "ErrorBoundary del design system base, sin la lógica de recarga propia de aplicación."
+}

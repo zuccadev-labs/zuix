@@ -1,0 +1,129 @@
+{
+  "name": "CommandPalette",
+  "group": "overlay",
+  "description": "Paleta de comandos con búsqueda difusa, grupos y manejo completo por teclado.",
+  "import": "import { CommandPalette, type PaletteGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void",
+      "required": true
+    },
+    {
+      "name": "groups",
+      "type": "PaletteGroup[]",
+      "required": true,
+      "description": "{ heading?, commands: { id, label, hint?, shortcut?, icon?, keywords?, disabled?, onSelect }[] }"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Type a command or search…"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "default": "No results"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Command palette"
+    },
+    {
+      "name": "escapeLabel",
+      "type": "string",
+      "default": "Esc"
+    },
+    {
+      "name": "filter",
+      "type": "(groups: PaletteGroup[], query: string) => PaletteGroup[]",
+      "description": "Sustituye la búsqueda difusa por defecto."
+    },
+    {
+      "name": "closeOnSelect",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "states": [
+    "open",
+    "closed",
+    "empty",
+    "active-option",
+    "disabled-option"
+  ],
+  "tokens": [
+    "accent-soft",
+    "duration-fast",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "font-mono",
+    "font-sans",
+    "glass-bg",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-dialog",
+    "leading-normal",
+    "line",
+    "line-strong",
+    "radius-sm",
+    "radius-xl",
+    "radius-xs",
+    "scrim",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-8",
+    "surface-2",
+    "text-body",
+    "text-caption",
+    "text-fine",
+    "text-small",
+    "text-title",
+    "tracking-wide",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-palette",
+    "z-palette__search",
+    "z-palette__input",
+    "z-palette__list",
+    "z-palette__group",
+    "z-palette__heading",
+    "z-palette__item",
+    "z-palette__item-hint",
+    "z-palette__kbd",
+    "z-palette__empty",
+    "z-overlay-scrim"
+  ],
+  "a11y": "Radix Dialog con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
+  "examples": [
+    {
+      "title": "Abrir con Ctrl/Cmd K",
+      "code": "function Palette() {\n  const [open, setOpen] = useState(false);\n  useEffect(() => {\n    const onKey = (e: KeyboardEvent) => {\n      if ((e.metaKey || e.ctrlKey) && e.key === \"k\") {\n        e.preventDefault();\n        setOpen((v) => !v);\n      }\n    };\n    window.addEventListener(\"keydown\", onKey);\n    return () => window.removeEventListener(\"keydown\", onKey);\n  }, []);\n  return (\n    <CommandPalette\n      open={open}\n      onOpenChange={setOpen}\n      groups={[\n        { heading: \"Navigation\", commands: [\n          { id: \"home\", label: \"Go to home\", shortcut: \"G H\", onSelect: () => navigate(\"/\") },\n          { id: \"settings\", label: \"Open settings\", hint: \"/settings\", onSelect: () => navigate(\"/settings\") },\n        ] },\n        { heading: \"Actions\", commands: [\n          { id: \"new\", label: \"New project\", keywords: [\"create\"], onSelect: () => createProject() },\n        ] },\n      ]}\n    />\n  );\n}"
+    }
+  ],
+  "origin": "CommandPalette de zutool (puntuación difusa, medidas y aspecto); diálogo de Radix, sin dependencia cmdk.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Paleta en un <dialog>: se abre con el botón o con Ctrl/Cmd K; emite z:select",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#commands\">Search commands</button>\n\n<dialog id=\"commands\" class=\"z-liquid z-palette\" aria-label=\"Command palette\" data-z-hotkey=\"mod+k\">\n  <h2 class=\"z-sr-only\">Command palette</h2>\n  <div class=\"z-palette__search\">\n    <span class=\"z-palette__search-icon\"><z-icon name=\"magnifying-glass\" size=\"16\"></z-icon></span>\n    <input class=\"z-palette__input\" type=\"text\" role=\"combobox\" aria-expanded=\"true\" aria-controls=\"commands-list\" aria-autocomplete=\"list\" aria-label=\"Command palette\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Type a command or search…\">\n    <kbd class=\"z-palette__kbd\">Esc</kbd>\n  </div>\n  <div id=\"commands-list\" role=\"listbox\" aria-label=\"Command palette\" class=\"z-palette__list\">\n    <div class=\"z-palette__empty\" role=\"status\" hidden>No results</div>\n    <div role=\"group\" aria-label=\"Navigation\" class=\"z-palette__group\">\n      <div class=\"z-palette__heading\" aria-hidden=\"true\">Navigation</div>\n      <div id=\"commands-home\" role=\"option\" aria-selected=\"false\" class=\"z-palette__item\" data-value=\"home\">\n        <span class=\"z-palette__item-icon\"><z-icon name=\"home\" size=\"16\"></z-icon></span>\n        <span class=\"z-palette__item-label\">Go to home</span>\n        <span class=\"z-palette__shortcut\"><kbd class=\"z-palette__kbd\">G</kbd><kbd class=\"z-palette__kbd\">H</kbd></span>\n      </div>\n      <div id=\"commands-settings\" role=\"option\" aria-selected=\"false\" class=\"z-palette__item\" data-value=\"settings\">\n        <span class=\"z-palette__item-icon\"><z-icon name=\"cog\" size=\"16\"></z-icon></span>\n        <span class=\"z-palette__item-label\">Open settings</span>\n        <span class=\"z-palette__item-hint\">/settings</span>\n      </div>\n      <div id=\"commands-billing\" role=\"option\" aria-selected=\"false\" aria-disabled=\"true\" class=\"z-palette__item\" data-value=\"billing\">\n        <span class=\"z-palette__item-icon\"><z-icon name=\"credit-card\" size=\"16\"></z-icon></span>\n        <span class=\"z-palette__item-label\">Open billing</span>\n        <span class=\"z-palette__item-hint\">/billing</span>\n      </div>\n    </div>\n    <div role=\"group\" aria-label=\"Actions\" class=\"z-palette__group\">\n      <div class=\"z-palette__heading\" aria-hidden=\"true\">Actions</div>\n      <div id=\"commands-new\" role=\"option\" aria-selected=\"false\" class=\"z-palette__item\" data-value=\"new\" data-keywords=\"create,add\">\n        <span class=\"z-palette__item-icon\"><z-icon name=\"plus\" size=\"16\"></z-icon></span>\n        <span class=\"z-palette__item-label\">New project</span>\n      </div>\n      <div id=\"commands-invite\" role=\"option\" aria-selected=\"false\" class=\"z-palette__item\" data-value=\"invite\" data-keywords=\"team,people\">\n        <span class=\"z-palette__item-icon\"><z-icon name=\"user-plus\" size=\"16\"></z-icon></span>\n        <span class=\"z-palette__item-label\">Invite member</span>\n      </div>\n    </div>\n  </div>\n</dialog>",
+      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#commands\").addEventListener(\"z:select\", (event) => {\n  toast({ title: \"Command: \" + event.detail.value });\n});"
+    }
+  ]
+}

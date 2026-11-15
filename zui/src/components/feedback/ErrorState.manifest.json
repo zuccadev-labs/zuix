@@ -1,0 +1,90 @@
+{
+  "name": "ErrorState",
+  "group": "feedback",
+  "description": "Estado de error recuperable, con reintento opcional.",
+  "import": "import { ErrorState } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "icon",
+      "type": "IconName",
+      "default": "exclamation-triangle"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "default": "Something went wrong"
+    },
+    {
+      "name": "message",
+      "type": "ReactNode",
+      "default": "The content could not be loaded. Try again in a moment."
+    },
+    {
+      "name": "onRetry",
+      "type": "() => void",
+      "description": "Muestra el botón de reintento."
+    },
+    {
+      "name": "retryLabel",
+      "type": "string",
+      "default": "Try again"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Acciones adicionales."
+    },
+    {
+      "name": "fullScreen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "headingLevel",
+      "type": "2 | 3 | 4",
+      "default": 3
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "space-2",
+    "space-10",
+    "space-6",
+    "fg-muted",
+    "space-4",
+    "space-16",
+    "line",
+    "radius-full",
+    "surface-2",
+    "danger-soft",
+    "danger",
+    "fg",
+    "font-display",
+    "text-heading-lg",
+    "weight-semibold",
+    "leading-snug",
+    "text-title",
+    "text-body",
+    "leading-normal",
+    "text-small",
+    "space-3"
+  ],
+  "classes": [
+    "z-empty",
+    "z-empty--error"
+  ],
+  "a11y": "role=\"alert\": se anuncia al aparecer.",
+  "examples": [
+    {
+      "title": "Con reintento",
+      "code": "<ErrorState onRetry={() => refetch()} />"
+    },
+    {
+      "title": "Mensaje propio",
+      "code": "<ErrorState title=\"Report unavailable\" message=\"The export service is not responding.\" retryLabel=\"Retry export\" onRetry={retryExport} actions={<Button variant=\"ghost\">Contact support</Button>} />"
+    }
+  ],
+  "origin": "ErrorState del design system base."
+}

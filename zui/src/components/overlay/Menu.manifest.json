@@ -1,0 +1,130 @@
+{
+  "name": "Menu",
+  "group": "overlay",
+  "description": "Menú desplegable de acciones anclado a un disparador.",
+  "import": "import { Menu, type MenuEntry } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "trigger",
+      "type": "ReactElement",
+      "required": true
+    },
+    {
+      "name": "items",
+      "type": "MenuEntry[]",
+      "required": true,
+      "description": "Entradas: { id, label, icon?, shortcut?, danger?, disabled?, keepOpen?, onSelect?, items? } | { type: \"separator\" } | { type: \"label\", label }. `items` anida un submenú."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del menú."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ],
+      "default": "bottom"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
+      "default": "end"
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    }
+  ],
+  "states": [
+    "open",
+    "closed",
+    "highlighted",
+    "disabled"
+  ],
+  "tokens": [
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "font-mono",
+    "font-sans",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-menu",
+    "layer-popover",
+    "leading-normal",
+    "line",
+    "popup-bg",
+    "popup-radius",
+    "radius-xs",
+    "row-hover",
+    "text-body",
+    "text-fine",
+    "text-heading",
+    "text-small",
+    "weight-medium",
+    "weight-regular"
+  ],
+  "classes": [
+    "z-menu",
+    "z-menu__item",
+    "z-menu__icon",
+    "z-menu__text",
+    "z-menu__shortcut",
+    "z-menu__separator",
+    "z-menu__label",
+    "z-menu__chevron"
+  ],
+  "a11y": "React: Radix DropdownMenu, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
+  "examples": [
+    {
+      "title": "Acciones de una fila",
+      "code": "<Menu\n  label=\"Project actions\"\n  trigger={<button type=\"button\">Actions</button>}\n  items={[\n    { type: \"label\", label: \"Project\" },\n    { id: \"rename\", label: \"Rename\", icon: \"pencil\", shortcut: \"F2\", onSelect: () => rename() },\n    { id: \"duplicate\", label: \"Duplicate\", icon: \"copy\", onSelect: () => duplicate() },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", icon: \"trash\", danger: true, onSelect: () => remove() },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Menu y `.ctx-menu` de zutool; accesibilidad de Radix DropdownMenu.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Menú de acciones con submenú",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#actions\">Actions</button>\n\n<div id=\"actions\" popover class=\"z-liquid z-menu\" role=\"menu\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"pencil\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Rename</span>\n    <kbd class=\"z-menu__shortcut\">F2</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Duplicate</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"actions-share\" data-z-submenu=\"#actions-share\">\n    <span class=\"z-menu__icon\"><z-icon name=\"share\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Share</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger>\n    <span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Delete</span>\n  </button>\n</div>\n\n<div id=\"actions-share\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Share\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"link\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy link</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"envelope\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Email</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-text\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Export as PDF</span>\n  </button>\n</div>",
+      "script": "// z:select burbujea desde la entrada elegida; un submenú declarado fuera de su menú se escucha en un ancestro común.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"#actions, #actions-share\")) console.log(event.target.textContent.trim()); });"
+    }
+  ]
+}

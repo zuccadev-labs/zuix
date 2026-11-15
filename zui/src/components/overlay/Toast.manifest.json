@@ -1,0 +1,132 @@
+{
+  "name": "Toast",
+  "group": "overlay",
+  "description": "Avisos efímeros apilados en una esquina. `ToastProvider` envuelve la aplicación y `useToast()` los lanza.",
+  "exports": [
+    "ToastProvider",
+    "useToast"
+  ],
+  "import": "import { ToastProvider, useToast } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 5000,
+      "description": "ToastProvider: duración por defecto en ms."
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": [
+        "top-right",
+        "top-center",
+        "bottom-right",
+        "bottom-center"
+      ],
+      "default": "bottom-right",
+      "description": "ToastProvider."
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 5,
+      "description": "ToastProvider: máximo de avisos simultáneos."
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Notification",
+      "description": "ToastProvider: nombre anunciado por lectores de pantalla."
+    },
+    {
+      "name": "toast",
+      "type": "(options: { title: ReactNode; description?: ReactNode; intent?: \"info\" | \"success\" | \"warning\" | \"danger\"; duration?: number; action?: { label: string; onClick: () => void } }) => string",
+      "description": "useToast(): muestra un aviso y devuelve su id."
+    },
+    {
+      "name": "dismiss",
+      "type": "(id: string) => void",
+      "description": "useToast()."
+    },
+    {
+      "name": "dismissAll",
+      "type": "() => void",
+      "description": "useToast()."
+    }
+  ],
+  "states": [
+    "open",
+    "closed",
+    "swipe"
+  ],
+  "tokens": [
+    "button-radius",
+    "danger",
+    "duration-fast",
+    "duration-normal",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "focus-ring",
+    "font-sans",
+    "glass-bg",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "info",
+    "layer-toast",
+    "leading-normal",
+    "line-strong",
+    "radius-full",
+    "radius-lg",
+    "space-2",
+    "space-3",
+    "space-5",
+    "space-8",
+    "success",
+    "surface-2",
+    "text-body",
+    "text-small",
+    "warning",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-toast",
+    "z-toast__dot",
+    "z-toast__content",
+    "z-toast__title",
+    "z-toast__description",
+    "z-toast__action",
+    "z-toast__close",
+    "z-toast-viewport"
+  ],
+  "a11y": "Radix Toast: región con aria-live (asertiva en warning y danger), F8 lleva el foco a los avisos, se pausan con hover o foco y se descartan deslizando.",
+  "examples": [
+    {
+      "title": "Proveedor y uso",
+      "code": "function SaveButton() {\n  const { toast } = useToast();\n  return (\n    <button type=\"button\" onClick={() => toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" })}>\n      Save\n    </button>\n  );\n}\n\n<ToastProvider>\n  <SaveButton />\n</ToastProvider>"
+    },
+    {
+      "title": "Error con acción",
+      "code": "const { toast } = useToast();\ntoast({ title: \"Upload failed\", intent: \"danger\", action: { label: \"Retry\", onClick: () => upload() } });"
+    }
+  ],
+  "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad de Radix Toast.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Aviso de éxito",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" id=\"save\">Save</button>",
+      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#save\").addEventListener(\"click\", () => {\n  toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" });\n});"
+    }
+  ]
+}

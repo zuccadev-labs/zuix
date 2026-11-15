@@ -1,0 +1,71 @@
+{
+  "name": "AvatarGroup",
+  "group": "data",
+  "description": "Avatares solapados con contador de sobrantes.",
+  "import": "import { AvatarGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "max",
+      "type": "number",
+      "default": 4,
+      "description": "Máximo de avatares visibles."
+    },
+    {
+      "name": "total",
+      "type": "number",
+      "description": "Total real si hay más elementos que hijos."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
+      "default": "md",
+      "description": "Tamaño del contador; debe coincidir con el de los avatares."
+    },
+    {
+      "name": "overflowLabel",
+      "type": "(hidden: number) => string",
+      "description": "Nombre accesible del contador. Por defecto \"N more\"."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "radius-full",
+    "accent-soft",
+    "accent",
+    "weight-bold",
+    "radius-sm",
+    "fg-subtle",
+    "surface-solid",
+    "success",
+    "danger",
+    "warning",
+    "surface-3",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-avatar-group",
+    "z-avatar"
+  ],
+  "a11y": "role group; el contador expone su texto por aria-label.",
+  "examples": [
+    {
+      "title": "Con sobrantes",
+      "code": "<AvatarGroup max={3} aria-label=\"Project members\">\n  <Avatar name=\"Ana Ruiz\" />\n  <Avatar name=\"Leo Park\" />\n  <Avatar name=\"Mia Chen\" />\n  <Avatar name=\"Sam Diaz\" />\n  <Avatar name=\"Noa Levi\" />\n</AvatarGroup>"
+    }
+  ],
+  "origin": "AvatarGroup del design system base."
+}

@@ -1,0 +1,113 @@
+{
+  "name": "Popover",
+  "group": "overlay",
+  "description": "Panel flotante anclado a un disparador, para contenido interactivo breve.",
+  "import": "import { Popover } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "trigger",
+      "type": "ReactElement",
+      "required": true
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ],
+      "default": "bottom"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
+      "default": "end"
+    },
+    {
+      "name": "sideOffset",
+      "type": "number",
+      "default": 4
+    },
+    {
+      "name": "width",
+      "type": "number | string"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del panel."
+    },
+    {
+      "name": "modal",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "children",
+      "type": "ReactNode"
+    }
+  ],
+  "states": [
+    "open",
+    "closed"
+  ],
+  "tokens": [
+    "duration-fast",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "font-sans",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-popover",
+    "leading-normal",
+    "popup-bg",
+    "popup-radius",
+    "space-3",
+    "space-4",
+    "text-body"
+  ],
+  "classes": [
+    "z-popover"
+  ],
+  "a11y": "Radix Popover: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador.",
+  "examples": [
+    {
+      "title": "Panel de detalles",
+      "code": "<Popover trigger={<button type=\"button\">Usage</button>} label=\"Usage details\" width={280}>\n  <p>1,204 requests this month.</p>\n</Popover>"
+    }
+  ],
+  "origin": "Popover de zutool (alineado al final, separación de 4 px); posicionamiento de Radix Popover.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Popover anclado",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"dialog\" data-z-open=\"#usage\" data-z-placement=\"bottom-start\">Usage</button>\n\n<div id=\"usage\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"Usage\">\n  412 GB of 512 GB used.\n</div>"
+    }
+  ]
+}

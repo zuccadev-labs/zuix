@@ -1,0 +1,146 @@
+{
+  "name": "ConfirmDialog",
+  "group": "overlay",
+  "description": "Confirmación de una acción con cancelar y confirmar; la variante danger marca acciones destructivas.",
+  "import": "import { ConfirmDialog } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "trigger",
+      "type": "ReactElement"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "intent",
+      "type": "enum",
+      "values": [
+        "default",
+        "danger"
+      ],
+      "default": "default"
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Por defecto `information-circle`, o `exclamation-triangle` con intent danger."
+    },
+    {
+      "name": "confirmLabel",
+      "type": "string",
+      "default": "Confirm"
+    },
+    {
+      "name": "cancelLabel",
+      "type": "string",
+      "default": "Cancel"
+    },
+    {
+      "name": "onConfirm",
+      "type": "() => void"
+    },
+    {
+      "name": "onCancel",
+      "type": "() => void"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Cuerpo adicional."
+    }
+  ],
+  "states": [
+    "open",
+    "closed"
+  ],
+  "tokens": [
+    "accent",
+    "accent-soft",
+    "button-primary-bg",
+    "button-primary-bg-hover",
+    "button-primary-fg",
+    "button-radius",
+    "control-height-sm",
+    "danger",
+    "danger-soft",
+    "duration-fast",
+    "duration-normal",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-on-accent",
+    "focus-ring",
+    "font-sans",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-dialog",
+    "leading-normal",
+    "leading-relaxed",
+    "leading-snug",
+    "line",
+    "popup-bg",
+    "radius-full",
+    "radius-xl",
+    "scrim",
+    "space-12",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-5",
+    "space-8",
+    "surface",
+    "surface-2",
+    "text-body",
+    "text-heading",
+    "text-small",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-confirm",
+    "z-confirm__icon",
+    "z-modal",
+    "z-dialog-btn",
+    "z-overlay-scrim"
+  ],
+  "a11y": "Radix AlertDialog: role=alertdialog, el foco entra en Cancelar, Escape cancela y un clic fuera no cierra.",
+  "examples": [
+    {
+      "title": "Borrado destructivo",
+      "code": "<ConfirmDialog\n  trigger={<button type=\"button\">Delete project</button>}\n  intent=\"danger\"\n  title=\"Delete project?\"\n  description=\"This cannot be undone.\"\n  confirmLabel=\"Delete\"\n  onConfirm={() => removeProject()}\n/>"
+    }
+  ],
+  "origin": "ConfirmDialog y `.liquid.confirm` de zutool; accesibilidad de Radix AlertDialog.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Confirmación destructiva",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"md\" id=\"delete\">Delete project</button>",
+      "script": "import { confirm } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#delete\").addEventListener(\"click\", async () => {\n  const ok = await confirm({ title: \"Delete project?\", description: \"This cannot be undone.\", intent: \"danger\", confirmLabel: \"Delete\" });\n  if (ok) removeProject();\n});"
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "name": "StatTile",
+  "group": "data",
+  "description": "Tesela de indicador: etiqueta, valor destacado y contexto.",
+  "import": "import { StatTile } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "value",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "hint",
+      "type": "ReactNode"
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "delta",
+      "type": "ReactNode",
+      "description": "Variación, p. ej. \"+12%\"."
+    },
+    {
+      "name": "deltaTone",
+      "type": "enum",
+      "values": [
+        "neutral",
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
+      "default": "neutral"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "glass",
+        "solid",
+        "soft"
+      ],
+      "default": "glass",
+      "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta."
+    },
+    {
+      "name": "onClick",
+      "type": "() => void",
+      "description": "Vuelve la tesela un botón."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active"
+  ],
+  "tokens": [
+    "fg-muted",
+    "surface-3",
+    "accent",
+    "accent-soft",
+    "success",
+    "success-soft",
+    "warning",
+    "warning-soft",
+    "danger",
+    "danger-soft",
+    "info",
+    "info-soft",
+    "space-1",
+    "space-4",
+    "card-radius",
+    "fg",
+    "card-border",
+    "card-bg",
+    "card-shadow",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "duration-normal",
+    "ease-standard",
+    "focus-ring",
+    "space-2",
+    "text-small",
+    "weight-semibold",
+    "radius-full",
+    "font-display",
+    "text-display-sm",
+    "weight-bold",
+    "tracking-tight",
+    "leading-tight",
+    "text-caption",
+    "fg-subtle",
+    "glass-bg",
+    "glass-border",
+    "glass-blur",
+    "glass-saturate",
+    "glass-highlight",
+    "glass-specular",
+    "glass-shadow"
+  ],
+  "classes": [
+    "z-stat"
+  ],
+  "a11y": "div; con onClick pasa a ser button con todo el contenido como nombre.",
+  "examples": [
+    {
+      "title": "Cristal",
+      "code": "<StatTile label=\"Requests\" value=\"18,240\" hint=\"last 24 h\" delta=\"+12%\" deltaTone=\"success\" icon=\"chart-bar\" />"
+    },
+    {
+      "title": "Destacada y activable",
+      "code": "<StatTile variant=\"solid\" label=\"Open incidents\" value={3} onClick={() => navigate(\"/incidents\")} />"
+    }
+  ],
+  "origin": "StatTile de ui-glass y tarjeta KPI de zutool."
+}

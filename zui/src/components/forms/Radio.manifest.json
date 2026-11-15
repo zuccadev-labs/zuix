@@ -1,0 +1,64 @@
+{
+  "name": "Radio",
+  "group": "forms",
+  "description": "Opción de un `RadioGroup`, con etiqueta y descripción.",
+  "import": "import { RadioGroup, Radio } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Etiqueta visible."
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "checked",
+    "disabled"
+  ],
+  "tokens": [
+    "space-2",
+    "fg",
+    "text-body",
+    "leading-snug",
+    "line-strong",
+    "control-bg",
+    "fg-on-accent",
+    "duration-fast",
+    "ease-standard",
+    "radius-full",
+    "accent",
+    "focus-ring",
+    "accent-solid",
+    "danger",
+    "space-4"
+  ],
+  "classes": [
+    "z-radio",
+    "z-check__text"
+  ],
+  "a11y": "Radix RadioGroup.Item: role radio. Solo funciona dentro de `RadioGroup`.",
+  "examples": [
+    {
+      "title": "Dentro de un grupo",
+      "code": "<RadioGroup aria-label=\"Theme\" defaultValue=\"dark\">\n  <Radio value=\"light\">Light</Radio>\n  <Radio value=\"dark\">Dark</Radio>\n</RadioGroup>"
+    }
+  ],
+  "origin": "Nuevo, sobre RadioGroup de radix-ui."
+}

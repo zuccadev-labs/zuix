@@ -1,0 +1,59 @@
+{
+  "name": "Spinner",
+  "group": "feedback",
+  "description": "Anillo giratorio para esperas de duración desconocida.",
+  "import": "import { Spinner } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "accent",
+        "muted",
+        "current"
+      ],
+      "default": "accent",
+      "description": "`current` hereda el color del texto."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Loading",
+      "description": "Nombre accesible; cadena vacía lo vuelve decorativo."
+    }
+  ],
+  "states": [
+    "spinning"
+  ],
+  "tokens": [
+    "surface-3",
+    "accent",
+    "radius-full",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-spinner"
+  ],
+  "a11y": "role=\"status\" con aria-label; decorativo si `label` está vacío.",
+  "examples": [
+    {
+      "title": "Básico",
+      "code": "<Spinner />"
+    },
+    {
+      "title": "Dentro de un texto",
+      "code": "<p><Spinner size=\"sm\" tone=\"current\" label=\"\" /> Saving changes</p>"
+    }
+  ],
+  "origin": "Spinner del design system base."
+}

@@ -1,0 +1,149 @@
+# Publicación en npm de los cinco paquetes de la suite: @zuccadev-labs/zuix-tokens, @zuccadev-labs/zuix-zicon,
+# @zuccadev-labs/zuix-zui, @zuccadev-labs/zuix-zout y el paraguas @zuccadev-labs/zuix (carpeta suite/).
+# Procedimiento y secretos: docs/package/02-publicacion.md.
+#
+#   Etiqueta vX.Y.Z      verifica y publica.
+#   Ejecución manual     verifica y ensaya (dry-run) por defecto. Para publicar de verdad hay que
+#                        lanzarla sobre una etiqueta vX.Y.Z y desmarcar "dry-run".
+#
+# Dos trabajos: `verify` ejecuta código del repositorio y de sus dependencias sin credenciales;
+# `publish` solo descarga los dist/ ya verificados y publica, y es el único con NPM_TOKEN e id-token.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Ensayo. No sube nada al registro
+        type: boolean
+        default: true
+      dist-tag:
+        description: Etiqueta de distribución de npm (latest, next)
+        type: string
+        default: latest
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verificación previa
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Los archivos generados están al día
+        run: git diff --exit-code
+      - run: pnpm --filter @zuccadev-labs/zuix-zudocs build
+      - run: pnpm build
+      - run: node tools/pack-test.mjs --skip-build --next
+      # chromium usa el Chrome del sistema (canal "chrome"), presente en los runners de GitHub.
+      - run: pnpm test:html
+        env:
+          BROWSER: chromium
+      - run: pnpm test:browser
+        env:
+          BROWSER: chromium
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dist
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            tokens/dist
+            zicon/dist
+            zui/dist
+            zout/dist
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-shots
+          path: |
+            tests/html/shots
+            tests/browser/shots
+          retention-days: 7
+
+  publish:
+    name: Publicación en npm
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Entorno de GitHub: permite exigir aprobación manual y limitar NPM_TOKEN a este trabajo.
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write # procedencia (npm provenance)
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run && 'true' || 'false' }}
+      DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.dist-tag || 'latest' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dist
+          path: .
+      - name: Versión única y CHANGELOG al día
+        run: node tools/version.mjs check
+      - name: La etiqueta coincide con la versión
+        run: |
+          version="$(node -p "require('./tokens/package.json').version")"
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+              echo "::error::La etiqueta $GITHUB_REF_NAME no coincide con la versión $version de los paquetes."
+              exit 1
+            fi
+          elif [ "$DRY_RUN" != "true" ]; then
+            echo "::error::Una publicación real solo se lanza sobre una etiqueta v$version, no sobre $GITHUB_REF_NAME."
+            exit 1
+          fi
+          case "$DIST_TAG" in
+            ""|*[!a-z0-9.-]*) echo "::error::dist-tag no válido: $DIST_TAG"; exit 1 ;;
+          esac
+      # Exactamente los cinco paquetes publicables, por carpeta y en orden de dependencias: nunca `pnpm -r publish`,
+      # que publicaría cualquier paquete del workspace que dejara de ser privado. Una versión que ya está en el
+      # registro se salta, para poder repetir la ejecución si se quedó a medias.
+      - name: Publicar (o ensayar)
+        run: |
+          set -euo pipefail
+          for dir in tokens zicon zui zout suite; do
+            name="$(node -p "require('./$dir/package.json').name")"
+            version="$(node -p "require('./$dir/package.json').version")"
+            if [ "$(node -p "require('./$dir/package.json').private === true")" = "true" ]; then
+              echo "::error::$dir está marcado como privado."; exit 1
+            fi
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "$name@$version ya está publicado: se salta."
+              continue
+            fi
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "Ensayo de $name@$version: no se sube nada."
+              (cd "$dir" && pnpm publish --access public --no-git-checks --tag "$DIST_TAG" --dry-run)
+            else
+              (cd "$dir" && pnpm publish --access public --no-git-checks --tag "$DIST_TAG")
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: ${{ env.DRY_RUN == 'true' && 'false' || 'true' }}

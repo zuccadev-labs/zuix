@@ -1,0 +1,66 @@
+{
+  "name": "Rail",
+  "group": "layout",
+  "description": "Barra estrecha de navegación principal, solo iconos.",
+  "import": "import { Rail, RailItem } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "Rail",
+    "RailItem"
+  ],
+  "props": [
+    {
+      "name": "brand",
+      "type": "ReactNode"
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Primary"
+    },
+    {
+      "name": "RailItem.icon",
+      "type": "IconName",
+      "required": true
+    },
+    {
+      "name": "RailItem.label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible y título."
+    },
+    {
+      "name": "RailItem.active",
+      "type": "boolean"
+    },
+    {
+      "name": "RailItem.badge",
+      "type": "number | string"
+    }
+  ],
+  "tokens": [
+    "rail-width",
+    "radius-full",
+    "radius-md",
+    "surface-3",
+    "accent-solid",
+    "fg-on-accent",
+    "fg-muted",
+    "danger",
+    "focus-ring"
+  ],
+  "classes": [
+    "z-rail"
+  ],
+  "a11y": "<nav> con nombre. Cada elemento es un botón con aria-label; el activo lleva aria-current=page.",
+  "examples": [
+    {
+      "title": "Rail con pie",
+      "code": "<Rail brand={<Logo />} footer={<RailItem icon=\"gear\" label=\"Settings\" />}>\n  <RailItem icon=\"home\" label=\"Home\" active />\n  <RailItem icon=\"bell\" label=\"Notifications\" badge={3} />\n</Rail>"
+    }
+  ],
+  "origin": "Rail de zutool."
+}

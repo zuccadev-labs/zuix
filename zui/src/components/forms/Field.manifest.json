@@ -1,0 +1,91 @@
+{
+  "name": "Field",
+  "group": "forms",
+  "description": "Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.",
+  "import": "import { Field, useFieldControl } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "ReactNode"
+    },
+    {
+      "name": "hint",
+      "type": "ReactNode",
+      "description": "Ayuda bajo el control."
+    },
+    {
+      "name": "error",
+      "type": "ReactNode",
+      "description": "Mensaje de error; marca el control como inválido."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Añade el asterisco y pasa required al control."
+    },
+    {
+      "name": "optionalLabel",
+      "type": "string",
+      "description": "Texto junto a la etiqueta cuando el campo no es obligatorio, p. ej. \"Optional\"."
+    },
+    {
+      "name": "htmlFor",
+      "type": "string",
+      "description": "Id del control; por defecto se genera."
+    },
+    {
+      "name": "layout",
+      "type": "enum",
+      "values": [
+        "stacked",
+        "inline"
+      ],
+      "default": "stacked"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true,
+      "description": "El control (Input, Select, Textarea, Checkbox, etc.)."
+    }
+  ],
+  "states": [
+    "rest",
+    "invalid"
+  ],
+  "tokens": [
+    "space-2",
+    "space-4",
+    "control-height-md",
+    "space-1",
+    "fg",
+    "text-small",
+    "weight-semibold",
+    "leading-snug",
+    "danger",
+    "fg-subtle",
+    "weight-regular",
+    "fg-muted",
+    "weight-medium"
+  ],
+  "classes": [
+    "z-field"
+  ],
+  "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". `useFieldControl` permite conectar controles propios.",
+  "examples": [
+    {
+      "title": "Con ayuda",
+      "code": "<Field label=\"Project name\" hint=\"Shown in the sidebar.\" required>\n  <Input placeholder=\"My project\" />\n</Field>"
+    },
+    {
+      "title": "Con error",
+      "code": "<Field label=\"Email\" error=\"Enter a valid email address.\">\n  <Input type=\"email\" defaultValue=\"ana@\" />\n</Field>"
+    },
+    {
+      "title": "En línea",
+      "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <Select options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
+    }
+  ],
+  "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común."
+}

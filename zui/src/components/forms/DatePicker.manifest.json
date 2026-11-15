@@ -1,0 +1,237 @@
+{
+  "name": "DatePicker",
+  "group": "forms",
+  "description": "Campo de fecha con calendario propio en un popover; fecha única o rango. Para escribir la fecha o usar el selector del sistema, `DateInput`.",
+  "import": "import { DatePicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": [
+        "single",
+        "range"
+      ],
+      "default": "single"
+    },
+    {
+      "name": "value",
+      "type": "string | null | DateRange",
+      "description": "Fecha ISO YYYY-MM-DD; en modo range, { from, to }."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null | DateRange"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void"
+    },
+    {
+      "name": "min",
+      "type": "string",
+      "description": "Primera fecha elegible, YYYY-MM-DD."
+    },
+    {
+      "name": "max",
+      "type": "string",
+      "description": "Última fecha elegible, YYYY-MM-DD."
+    },
+    {
+      "name": "isDateDisabled",
+      "type": "(date: string) => boolean",
+      "description": "true para fechas no elegibles."
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "enum",
+      "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "description": "Primer día de la semana (0 domingo). Por defecto el del locale; lunes si no se conoce."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Etiqueta BCP 47 para Intl.DateTimeFormat. Por defecto la del entorno."
+    },
+    {
+      "name": "formatOptions",
+      "type": "Intl.DateTimeFormatOptions",
+      "default": "{ dateStyle: \"medium\" }",
+      "description": "Formato del texto del campo."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Select date",
+      "description": "En modo range, \"Select dates\"."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo oculto para formularios: fecha ISO, o desde/hasta en rango."
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
+      "default": "start"
+    },
+    {
+      "name": "open",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "calendarLabel",
+      "type": "string",
+      "default": "Choose date",
+      "description": "Nombre accesible del panel."
+    },
+    {
+      "name": "previousMonthLabel",
+      "type": "string",
+      "default": "Previous month"
+    },
+    {
+      "name": "nextMonthLabel",
+      "type": "string",
+      "default": "Next month"
+    },
+    {
+      "name": "popupClassName",
+      "type": "string"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "placeholder",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "control-height-md",
+    "text-body",
+    "control-height-sm",
+    "text-small",
+    "control-height-lg",
+    "text-title",
+    "space-8",
+    "space-3",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "duration-fast",
+    "ease-standard",
+    "control-border-hover",
+    "accent",
+    "focus-ring",
+    "surface",
+    "danger",
+    "fg-subtle",
+    "popup-bg",
+    "fg-muted",
+    "space-2",
+    "weight-semibold",
+    "leading-snug",
+    "radius-full",
+    "surface-3",
+    "text-caption",
+    "weight-medium",
+    "line-strong",
+    "button-primary-bg",
+    "button-primary-fg",
+    "accent-soft",
+    "row-hover"
+  ],
+  "classes": [
+    "z-select",
+    "z-datepicker",
+    "z-popover",
+    "z-calendar"
+  ],
+  "a11y": "Botón que abre un diálogo no modal (Popover de Radix) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Fecha única",
+      "code": "<DatePicker aria-label=\"Due date\" locale=\"en-US\" defaultValue=\"2026-11-13\" />"
+    },
+    {
+      "title": "Rango dentro de Field",
+      "code": "<Field label=\"Stay\" hint=\"Check-in and check-out.\">\n  <DatePicker mode=\"range\" locale=\"en-US\" min=\"2026-11-01\" defaultValue={{ from: \"2026-11-09\", to: \"2026-11-14\" }} />\n</Field>"
+    },
+    {
+      "title": "Vacío, pequeño",
+      "code": "<DatePicker size=\"sm\" block={false} aria-label=\"Start date\" locale=\"en-US\" placeholder=\"Pick a date\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Fecha única",
+      "code": "<span class=\"z-select z-datepicker\" id=\"due\" data-size=\"md\" data-block data-locale=\"en-US\" data-week-start=\"0\" data-value=\"2026-11-13\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"due-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Due date</span>\n    <span class=\"z-select__value\">Nov 13, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"due\" value=\"2026-11-13\" />\n</span>\n\n<div id=\"due-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>",
+      "script": "document.querySelector(\"#due\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Rango con mínimo",
+      "code": "<span class=\"z-select z-datepicker\" id=\"stay\" data-size=\"md\" data-block data-mode=\"range\" data-locale=\"en-US\" data-week-start=\"1\" data-min=\"2026-11-01\" data-value=\"2026-11-09/2026-11-14\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"stay-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Stay</span>\n    <span class=\"z-select__value\">Nov 9, 2026 – Nov 14, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"stay\" value=\"2026-11-09/2026-11-14\" />\n</span>\n\n<div id=\"stay-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+      "title": "Vacío",
+      "code": "<span class=\"z-select z-datepicker\" id=\"start\" data-size=\"md\" data-block data-locale=\"en-US\" data-placeholder=\"Pick a date\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"start-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Start date</span>\n    <span class=\"z-select__value\">Pick a date</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n</span>\n\n<div id=\"start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+  ],
+  "origin": "DatePicker del catálogo objetivo; reutiliza la envoltura de Select y el panel de Popover."
+}

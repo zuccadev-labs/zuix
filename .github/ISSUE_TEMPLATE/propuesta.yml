@@ -1,0 +1,62 @@
+name: Propuesta de componente, token o icono
+description: Añadir o cambiar una pieza del estándar.
+labels: [propuesta]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Lo que entra en el contrato público no se retira sin una versión incompatible
+        (docs/package/03-contrato-publico.md). Por eso una pieza nueva se propone antes de escribirla.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Qué se propone
+      options:
+        - Componente nuevo (zui)
+        - Variante o prop de un componente existente
+        - Layout (zout)
+        - Token
+        - Icono
+        - Marca
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: Necesidad
+      description: Qué pantalla o caso no se puede resolver hoy con lo que existe, y por qué no sirve una pieza actual.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: >-
+        Componente: marcado HTML, clases, atributos de estado y comportamiento (none, dom o react).
+        Token: nombre, nivel (semántico o de componente) y valor por marca y tema.
+        Icono: nombre en inglés según la forma, categoría, palabras clave y dibujo en outline y solid sobre caja de 24.
+    validations:
+      required: true
+  - type: textarea
+    id: a11y
+    attributes:
+      label: Accesibilidad
+      description: Rol, nombre accesible, teclado y foco. No aplica a tokens.
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Efecto en el contrato público
+      options:
+        - Añade sin romper
+        - Incompatible
+        - No lo sé
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Comprobaciones
+      options:
+        - label: Revisé el catálogo y no existe una pieza que exprese lo mismo.
+          required: true
+        - label: No depende de un framework concreto para verse igual.

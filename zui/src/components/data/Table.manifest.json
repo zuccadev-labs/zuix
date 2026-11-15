@@ -1,0 +1,107 @@
+{
+  "name": "Table",
+  "group": "data",
+  "description": "Tabla con estilo para marcado nativo (thead, tbody, tr, th, td).",
+  "import": "import { Table } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "density",
+      "type": "enum",
+      "values": [
+        "compact",
+        "comfortable"
+      ],
+      "default": "comfortable"
+    },
+    {
+      "name": "framed",
+      "type": "boolean",
+      "default": true,
+      "description": "Marco de tarjeta."
+    },
+    {
+      "name": "striped",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "hoverable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "stickyHeader",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "fixed",
+      "type": "boolean",
+      "default": false,
+      "description": "Reparto fijo de columnas con texto truncado."
+    },
+    {
+      "name": "caption",
+      "type": "ReactNode"
+    },
+    {
+      "name": "captionHidden",
+      "type": "boolean",
+      "default": false,
+      "description": "Deja el título solo para lectores de pantalla."
+    },
+    {
+      "name": "wrapperClassName",
+      "type": "string"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "selected"
+  ],
+  "tokens": [
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "card-shadow",
+    "space-3",
+    "fg",
+    "text-small",
+    "space-2",
+    "fg-muted",
+    "line",
+    "fg-subtle",
+    "text-fine",
+    "weight-bold",
+    "tracking-wide",
+    "duration-fast",
+    "ease-standard",
+    "font-mono",
+    "surface-solid",
+    "surface",
+    "row-hover",
+    "accent-soft",
+    "accent-ring",
+    "surface-3",
+    "space-8",
+    "space-4",
+    "space-1",
+    "radius-xs",
+    "surface-2",
+    "focus-ring",
+    "accent"
+  ],
+  "classes": [
+    "z-table",
+    "z-table-wrap"
+  ],
+  "a11y": "table nativa con caption. Alineación por data-align (start, center, end) en th y td; el contenedor desplaza en horizontal.",
+  "examples": [
+    {
+      "title": "Estática",
+      "code": "<Table caption=\"Team members\" captionHidden hoverable>\n  <thead>\n    <tr><th scope=\"col\">Name</th><th scope=\"col\">Role</th><th scope=\"col\" data-align=\"end\">Seats</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>Ana Ruiz</td><td>Owner</td><td data-align=\"end\">3</td></tr>\n    <tr><td>Leo Park</td><td>Editor</td><td data-align=\"end\">1</td></tr>\n  </tbody>\n</Table>"
+    }
+  ],
+  "origin": "Tabla de datos de zutool y de ui-glass."
+}

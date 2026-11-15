@@ -1,0 +1,361 @@
+{
+  "sheets": [
+    "packages/ui-glass/src/tokens.css"
+  ],
+  "conflicts": [],
+  "declared": {
+    "--accent": {
+      "dark": "var(--orange-500)"
+    },
+    "--accent-hover": {
+      "dark": "var(--orange-400)"
+    },
+    "--accent-ring": {
+      "dark": "rgba(255, 97, 24, 0.45)"
+    },
+    "--accent-soft": {
+      "dark": "rgba(255, 97, 24, 0.18)"
+    },
+    "--amber-500": {
+      "dark": "#f59e0b"
+    },
+    "--brand-primary-bg": {
+      "dark": "var(--orange-500)"
+    },
+    "--brand-primary-fg": {
+      "dark": "#ffffff"
+    },
+    "--canvas": {
+      "dark": "#2a2422"
+    },
+    "--canvas-dot": {
+      "dark": "rgba(255, 255, 255, 0.1)"
+    },
+    "--canvas-fg": {
+      "dark": "#ffffff"
+    },
+    "--canvas-fg-muted": {
+      "dark": "rgba(255, 255, 255, 0.72)"
+    },
+    "--canvas-gradient": {
+      "dark": "radial-gradient(1000px 560px at 12% 18%, rgba(224, 190, 160, 0.62), transparent 60%), radial-gradient(760px 520px at 88% 82%, rgba(140, 118, 105, 0.7), transparent 60%), radial-gradient(560px 420px at 62% 6%, rgba(255, 244, 226, 0.4), transparent 60%), radial-gradient(420px 320px at 30% 92%, rgba(90, 76, 70, 0.8), transparent 60%), linear-gradient(160deg, #7a6a60 0%, #4a3f3c 48%, #2a2423 100%)"
+    },
+    "--card-bg": {
+      "dark": "rgba(255, 255, 255, 0.07)"
+    },
+    "--card-border": {
+      "dark": "rgba(255, 255, 255, 0.1)"
+    },
+    "--card-muted": {
+      "dark": "rgba(255, 255, 255, 0.62)"
+    },
+    "--card-radius": {
+      "dark": "16px"
+    },
+    "--card-shadow": {
+      "dark": "0 14px 34px -22px rgba(0, 0, 0, 0.55)"
+    },
+    "--chart-4xx": {
+      "dark": "#c97f0a"
+    },
+    "--chart-5xx": {
+      "dark": "#ff3d7f"
+    },
+    "--chart-axis": {
+      "dark": "rgba(255, 255, 255, 0.48)"
+    },
+    "--chart-grid": {
+      "dark": "rgba(255, 255, 255, 0.08)"
+    },
+    "--chart-ok": {
+      "dark": "#4f8fe0"
+    },
+    "--danger": {
+      "dark": "var(--pink-500)"
+    },
+    "--danger-soft": {
+      "dark": "rgba(255, 45, 120, 0.2)"
+    },
+    "--edge-import": {
+      "dark": "var(--orange-500)"
+    },
+    "--edge-link": {
+      "dark": "#94a3b8"
+    },
+    "--edge-variable": {
+      "dark": "var(--amber-500)"
+    },
+    "--fg": {
+      "dark": "#ffffff"
+    },
+    "--fg-muted": {
+      "dark": "rgba(255, 255, 255, 0.7)"
+    },
+    "--fg-on-accent": {
+      "dark": "#ffffff"
+    },
+    "--fg-subtle": {
+      "dark": "rgba(255, 255, 255, 0.48)"
+    },
+    "--font-mono": {
+      "dark": "\"JetBrains Mono Variable\", \"JetBrains Mono\", ui-monospace, SFMono-Regular, Menlo, monospace"
+    },
+    "--font-sans": {
+      "dark": "\"Plus Jakarta Sans Variable\", \"Inter Variable\", \"Inter\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "--glass-bg": {
+      "dark": "rgba(44, 38, 40, 0.66)"
+    },
+    "--glass-blur": {
+      "dark": "36px"
+    },
+    "--glass-border": {
+      "dark": "rgba(255, 255, 255, 0.1)"
+    },
+    "--glass-highlight": {
+      "dark": "rgba(255, 255, 255, 0.14)"
+    },
+    "--glass-shadow": {
+      "dark": "0 30px 80px -30px rgba(0, 0, 0, 0.75)"
+    },
+    "--glass-specular": {
+      "dark": "rgba(255, 255, 255, 0.08)"
+    },
+    "--green-500": {
+      "dark": "#22c55e"
+    },
+    "--header-height": {
+      "dark": "60px"
+    },
+    "--header-icon": {
+      "dark": "rgba(255, 255, 255, 0.85)"
+    },
+    "--header-icon-hover": {
+      "dark": "rgba(255, 255, 255, 0.14)"
+    },
+    "--info": {
+      "dark": "var(--sky-500)"
+    },
+    "--info-soft": {
+      "dark": "rgba(96, 165, 250, 0.18)"
+    },
+    "--inset": {
+      "dark": "rgba(0, 0, 0, 0.22)"
+    },
+    "--inspector-width": {
+      "dark": "400px"
+    },
+    "--kpi-soft": {
+      "dark": "rgba(255, 255, 255, 0.09)"
+    },
+    "--kpi-soft-fg": {
+      "dark": "#ffffff"
+    },
+    "--kpi-soft-muted": {
+      "dark": "rgba(255, 255, 255, 0.62)"
+    },
+    "--kpi-solid": {
+      "dark": "var(--orange-500)"
+    },
+    "--line": {
+      "dark": "rgba(255, 255, 255, 0.09)"
+    },
+    "--line-strong": {
+      "dark": "rgba(255, 255, 255, 0.18)"
+    },
+    "--node-component": {
+      "dark": "var(--teal-500)"
+    },
+    "--node-component-soft": {
+      "dark": "rgba(45, 212, 191, 0.16)"
+    },
+    "--node-data": {
+      "dark": "var(--amber-500)"
+    },
+    "--node-data-soft": {
+      "dark": "rgba(245, 158, 11, 0.16)"
+    },
+    "--node-document": {
+      "dark": "#ffb38a"
+    },
+    "--node-document-soft": {
+      "dark": "rgba(255, 97, 24, 0.16)"
+    },
+    "--node-folder": {
+      "dark": "#b5aeb2"
+    },
+    "--node-folder-soft": {
+      "dark": "rgba(148, 163, 184, 0.08)"
+    },
+    "--node-layout": {
+      "dark": "var(--violet-500)"
+    },
+    "--node-layout-soft": {
+      "dark": "rgba(167, 139, 250, 0.16)"
+    },
+    "--node-render": {
+      "dark": "var(--green-500)"
+    },
+    "--node-render-soft": {
+      "dark": "rgba(34, 197, 94, 0.16)"
+    },
+    "--orange-400": {
+      "dark": "#ff7a3d"
+    },
+    "--orange-500": {
+      "dark": "#ff6118"
+    },
+    "--overlay": {
+      "dark": "rgba(36, 31, 33, 0.94)"
+    },
+    "--panel": {
+      "dark": "var(--glass-bg)"
+    },
+    "--pink-500": {
+      "dark": "#ff2d78"
+    },
+    "--progress-fill": {
+      "dark": "var(--orange-500)"
+    },
+    "--progress-track": {
+      "dark": "rgba(255, 255, 255, 0.14)"
+    },
+    "--radius-lg": {
+      "dark": "16px"
+    },
+    "--radius-md": {
+      "dark": "14px"
+    },
+    "--radius-panel": {
+      "dark": "24px"
+    },
+    "--radius-sm": {
+      "dark": "10px"
+    },
+    "--radius-xl": {
+      "dark": "22px"
+    },
+    "--rail-active-bg": {
+      "dark": "var(--orange-500)"
+    },
+    "--rail-active-fg": {
+      "dark": "#ffffff"
+    },
+    "--rail-bg": {
+      "dark": "rgba(38, 33, 35, 0.76)"
+    },
+    "--rail-width": {
+      "dark": "58px"
+    },
+    "--row-hover": {
+      "dark": "rgba(255, 255, 255, 0.08)"
+    },
+    "--search-bg": {
+      "dark": "rgba(0, 0, 0, 0.38)"
+    },
+    "--search-fg": {
+      "dark": "#ffffff"
+    },
+    "--search-placeholder": {
+      "dark": "rgba(255, 255, 255, 0.5)"
+    },
+    "--shadow-lg": {
+      "dark": "0 28px 70px -28px rgba(0, 0, 0, 0.75)"
+    },
+    "--shadow-md": {
+      "dark": "0 8px 24px -10px rgba(0, 0, 0, 0.6)"
+    },
+    "--shadow-node": {
+      "dark": "0 12px 34px -16px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.04) inset"
+    },
+    "--shadow-sm": {
+      "dark": "0 1px 2px rgba(0, 0, 0, 0.4)"
+    },
+    "--shell-gap": {
+      "dark": "12px"
+    },
+    "--side-bg": {
+      "dark": "var(--glass-bg)"
+    },
+    "--sidebar-width": {
+      "dark": "264px"
+    },
+    "--sky-500": {
+      "dark": "#60a5fa"
+    },
+    "--success": {
+      "dark": "var(--green-500)"
+    },
+    "--success-soft": {
+      "dark": "rgba(34, 197, 94, 0.18)"
+    },
+    "--surface": {
+      "dark": "rgba(255, 255, 255, 0.06)"
+    },
+    "--surface-2": {
+      "dark": "rgba(255, 255, 255, 0.09)"
+    },
+    "--surface-3": {
+      "dark": "rgba(255, 255, 255, 0.14)"
+    },
+    "--teal-500": {
+      "dark": "#2dd4bf"
+    },
+    "--violet-500": {
+      "dark": "#a78bfa"
+    },
+    "--warning": {
+      "dark": "#f5a524"
+    },
+    "--warning-soft": {
+      "dark": "rgba(245, 165, 36, 0.18)"
+    }
+  },
+  "used": {
+    "--accent": 3,
+    "--accent-hover": 1,
+    "--accent-ring": 3,
+    "--accent-soft": 1,
+    "--canvas": 1,
+    "--canvas-gradient": 1,
+    "--chart-4xx": 1,
+    "--chart-5xx": 1,
+    "--chart-axis": 1,
+    "--chart-grid": 1,
+    "--chart-ok": 1,
+    "--danger": 5,
+    "--danger-soft": 1,
+    "--fg": 6,
+    "--fg-muted": 9,
+    "--fg-on-accent": 2,
+    "--fg-subtle": 3,
+    "--font-mono": 1,
+    "--font-sans": 1,
+    "--glass-bg": 1,
+    "--glass-blur": 2,
+    "--glass-border": 1,
+    "--glass-highlight": 1,
+    "--glass-shadow": 1,
+    "--glass-specular": 1,
+    "--info": 1,
+    "--info-soft": 1,
+    "--inset": 3,
+    "--line": 5,
+    "--radius-md": 2,
+    "--radius-panel": 1,
+    "--row-hover": 2,
+    "--shell-gap": 5,
+    "--sidebar-width": 1,
+    "--success": 3,
+    "--success-soft": 1,
+    "--surface-2": 1,
+    "--surface-3": 2,
+    "--warning": 3,
+    "--warning-soft": 1
+  },
+  "locations": {},
+  "usedLocal": [],
+  "usedUndefined": [
+    "--lg-bg"
+  ]
+}

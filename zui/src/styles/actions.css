@@ -1,0 +1,316 @@
+/* Acciones: botones, enlaces, conmutadores y control segmentado. Origen: primitivas de zutool (forma píldora). */
+@layer zui.actions {
+  /* ---- Button / IconButton ---- */
+  .z-btn {
+    --z-btn-bg: var(--z-surface-2);
+    --z-btn-bg-hover: var(--z-surface-3);
+    --z-btn-fg: var(--z-fg);
+    --z-btn-line: var(--z-line);
+    --z-btn-height: var(--z-control-height-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-2);
+    height: var(--z-btn-height);
+    padding: 0 var(--z-space-4);
+    border: 1px solid var(--z-btn-line);
+    border-radius: var(--z-button-radius);
+    background: var(--z-btn-bg);
+    color: var(--z-btn-fg);
+    font-family: inherit;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none; -webkit-user-select: none;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-fast) var(--z-ease-standard),
+      transform var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-btn:hover:not(:disabled) {
+      background: var(--z-btn-bg-hover);
+    }
+  }
+  .z-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--z-focus-ring);
+  }
+  .z-btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .z-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-btn[data-loading] {
+    cursor: progress;
+  }
+  .z-btn[data-size="sm"] {
+    --z-btn-height: var(--z-control-height-sm);
+    padding: 0 var(--z-space-3);
+    gap: var(--z-space-1);
+    font-size: var(--z-text-small);
+  }
+  .z-btn[data-size="lg"] {
+    --z-btn-height: var(--z-control-height-lg);
+    padding: 0 var(--z-space-5);
+    font-size: var(--z-text-title);
+  }
+  .z-btn[data-block] {
+    display: flex;
+    width: 100%;
+  }
+  .z-btn--primary {
+    --z-btn-bg: var(--z-button-primary-bg);
+    --z-btn-bg-hover: var(--z-button-primary-bg-hover);
+    --z-btn-fg: var(--z-button-primary-fg);
+    --z-btn-line: transparent;
+    box-shadow: var(--z-shadow-sm);
+  }
+  .z-btn--ghost {
+    --z-btn-bg: transparent;
+    --z-btn-bg-hover: var(--z-surface-3);
+    --z-btn-fg: var(--z-fg-muted);
+    --z-btn-line: transparent;
+  }
+  @media (hover: hover) {
+    .z-btn--ghost:hover:not(:disabled) {
+      --z-btn-fg: var(--z-fg);
+    }
+  }
+  .z-btn--danger {
+    --z-btn-bg: var(--z-danger-soft);
+    --z-btn-bg-hover: color-mix(in srgb, var(--z-danger) 30%, transparent);
+    --z-btn-fg: var(--z-danger);
+    --z-btn-line: transparent;
+  }
+  .z-btn--icon {
+    width: var(--z-btn-height);
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .z-btn--icon[data-size] {
+    padding: 0;
+  }
+  .z-btn--icon[data-active] {
+    --z-btn-bg: var(--z-accent-soft);
+    --z-btn-bg-hover: var(--z-accent-soft);
+    --z-btn-fg: var(--z-accent);
+  }
+  .z-btn__spinner {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: var(--z-radius-full);
+    animation: z-btn-spin 0.7s linear infinite;
+  }
+  @keyframes z-btn-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ---- Link ---- */
+  .z-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    color: var(--z-accent);
+    font-weight: var(--z-weight-medium);
+    text-decoration: underline;
+    text-decoration-color: var(--z-accent-ring);
+    text-underline-offset: 3px;
+    border-radius: var(--z-radius-xs);
+    cursor: pointer;
+    transition:
+      color var(--z-duration-fast) var(--z-ease-standard),
+      text-decoration-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-link:hover {
+      color: var(--z-accent-hover);
+      text-decoration-color: currentColor;
+    }
+  }
+  .z-link:focus-visible {
+    outline: none;
+    box-shadow: var(--z-focus-ring);
+  }
+  .z-link:active {
+    color: var(--z-accent);
+  }
+  .z-link--subtle {
+    color: var(--z-fg-muted);
+    text-decoration-color: transparent;
+  }
+  @media (hover: hover) {
+    .z-link--subtle:hover {
+      color: var(--z-fg);
+    }
+  }
+  .z-link--standalone {
+    font-weight: var(--z-weight-semibold);
+    text-decoration-color: transparent;
+  }
+  .z-link[aria-disabled="true"] {
+    color: var(--z-fg-subtle);
+    text-decoration-color: transparent;
+    cursor: not-allowed;
+  }
+
+  /* ---- Toggle ---- */
+  .z-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-2);
+    height: var(--z-control-height-md);
+    padding: 0 var(--z-space-3);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-button-radius);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font-family: inherit;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      transform var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-toggle:hover:not(:disabled) {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--z-focus-ring);
+  }
+  .z-toggle:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .z-toggle[data-state="on"] {
+    background: var(--z-accent-soft);
+    border-color: var(--z-accent-ring);
+    color: var(--z-accent);
+  }
+  .z-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-toggle[data-size="sm"] {
+    height: var(--z-control-height-sm);
+    padding: 0 var(--z-space-2);
+    font-size: var(--z-text-small);
+  }
+  .z-toggle[data-size="lg"] {
+    height: var(--z-control-height-lg);
+    padding: 0 var(--z-space-4);
+    font-size: var(--z-text-title);
+  }
+  .z-toggle[data-icon-only] {
+    aspect-ratio: 1;
+    padding: 0;
+  }
+
+  /* ---- SegmentedControl ---- */
+  .z-segmented {
+    --z-segmented-height: var(--z-control-height-md);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: var(--z-segmented-height);
+    padding: 3px;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-button-radius);
+    background: var(--z-control-bg);
+  }
+  .z-segmented[data-size="sm"] {
+    --z-segmented-height: var(--z-control-height-sm);
+  }
+  .z-segmented[data-size="lg"] {
+    --z-segmented-height: var(--z-control-height-lg);
+  }
+  .z-segmented[data-block] {
+    display: flex;
+    width: 100%;
+  }
+  .z-segmented[data-block] .z-segmented__item {
+    flex: 1 1 0;
+  }
+  .z-segmented__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+    height: 100%;
+    padding: 0 var(--z-space-3);
+    border: 0;
+    border-radius: var(--z-button-radius);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font-family: inherit;
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-segmented[data-size="lg"] .z-segmented__item {
+    padding: 0 var(--z-space-4);
+    font-size: var(--z-text-body);
+  }
+  .z-segmented__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @media (hover: hover) {
+    .z-segmented__item:hover:not(:disabled):not([data-state="on"]) {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-segmented__item:focus-visible {
+    outline: none;
+    box-shadow: var(--z-focus-ring);
+  }
+  .z-segmented__item:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .z-segmented__item[data-state="on"] {
+    background: var(--z-button-primary-bg);
+    color: var(--z-button-primary-fg);
+    box-shadow: var(--z-shadow-sm);
+  }
+  .z-segmented__item:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Objetivo táctil: con puntero grueso cada opción del SegmentedControl se pulsa en todo el alto del control. */
+  @media (pointer: coarse) {
+    .z-segmented__item { position: relative; }
+    .z-segmented__item::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+      height: max(100%, var(--z-touch-target, 0px));
+    }
+  }
+}

@@ -1,0 +1,43 @@
+# Actualizaciones semanales, agrupadas para no abrir un pull request por dependencia.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    groups:
+      docusaurus:
+        patterns:
+          - "@docusaurus/*"
+          - "@easyops-cn/docusaurus-search-local"
+          - "@mdx-js/*"
+      react:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+      herramientas:
+        patterns:
+          - typescript
+          - esbuild
+          - vite
+          - "@vitejs/*"
+          - playwright-core
+          - axe-core
+      resto-menores:
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      acciones:
+        patterns:
+          - "*"

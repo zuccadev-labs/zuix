@@ -1,0 +1,145 @@
+{
+  "name": "Drawer",
+  "group": "overlay",
+  "description": "Panel de cristal que entra desde un borde, flotando sobre un velo.",
+  "import": "import { Drawer } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "trigger",
+      "type": "ReactElement"
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "left",
+        "right",
+        "bottom"
+      ],
+      "default": "right"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md",
+      "description": "Ancho (o alto con side bottom): 320, 400 o 560 px."
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Panel"
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "hideClose",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode"
+    }
+  ],
+  "states": [
+    "open",
+    "closed"
+  ],
+  "tokens": [
+    "duration-fast",
+    "duration-normal",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "font-sans",
+    "glass-bg",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "inspector-width",
+    "layer-dialog",
+    "layer-overlay",
+    "leading-normal",
+    "leading-snug",
+    "line",
+    "panel-radius",
+    "scrim",
+    "shell-gap",
+    "space-12",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-5",
+    "text-body",
+    "text-heading",
+    "text-small",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-drawer",
+    "z-drawer__header",
+    "z-drawer__title",
+    "z-drawer__description",
+    "z-drawer__body",
+    "z-drawer__footer",
+    "z-drawer__close",
+    "z-overlay-scrim"
+  ],
+  "a11y": "Radix Dialog modal: trampa de foco, Escape y clic en el velo cierran, el foco vuelve al disparador.",
+  "examples": [
+    {
+      "title": "Filtros a la derecha",
+      "code": "<Drawer trigger={<button type=\"button\">Filters</button>} title=\"Filters\" side=\"right\">\n  <p>Filter controls go here.</p>\n</Drawer>"
+    },
+    {
+      "title": "Hoja inferior controlada",
+      "code": "<Drawer open={open} onOpenChange={setOpen} side=\"bottom\" title=\"Details\">\n  <p>Details go here.</p>\n</Drawer>"
+    }
+  ],
+  "origin": "Cajones con velo (`.shell-drawer`, `.shell-scrim`) de zutool; accesibilidad de Radix Dialog.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Panel lateral derecho",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#filters\">Filters</button>\n\n<dialog id=\"filters\" class=\"z-liquid z-drawer\" data-side=\"right\" data-size=\"md\" aria-labelledby=\"filters-title\">\n  <header class=\"z-drawer__header\">\n    <h2 id=\"filters-title\" class=\"z-drawer__title\">Filters</h2>\n    <p class=\"z-drawer__description\">Narrow the list of projects.</p>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <footer class=\"z-drawer__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close>Apply</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
+    }
+  ]
+}

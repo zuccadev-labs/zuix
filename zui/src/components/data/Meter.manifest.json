@@ -1,0 +1,123 @@
+{
+  "name": "Meter",
+  "group": "data",
+  "description": "Medidor de una magnitud dentro de un rango conocido.",
+  "import": "import { Meter } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible."
+    },
+    {
+      "name": "showLabel",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "valueLabel",
+      "type": "ReactNode",
+      "description": "Texto del valor."
+    },
+    {
+      "name": "startLabel",
+      "type": "ReactNode"
+    },
+    {
+      "name": "endLabel",
+      "type": "ReactNode"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
+      "description": "Tono fijo; sin él se deduce de los umbrales."
+    },
+    {
+      "name": "warningAt",
+      "type": "number"
+    },
+    {
+      "name": "dangerAt",
+      "type": "number"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    }
+  ],
+  "states": [
+    "rest",
+    "warning",
+    "danger"
+  ],
+  "tokens": [
+    "fg-muted",
+    "surface-3",
+    "accent",
+    "accent-soft",
+    "success",
+    "success-soft",
+    "warning",
+    "warning-soft",
+    "danger",
+    "danger-soft",
+    "info",
+    "info-soft",
+    "space-1",
+    "space-2",
+    "fg",
+    "text-small",
+    "weight-semibold",
+    "fg-subtle",
+    "text-caption",
+    "radius-full",
+    "inset",
+    "line",
+    "duration-slow",
+    "ease-standard",
+    "duration-normal"
+  ],
+  "classes": [
+    "z-meter"
+  ],
+  "a11y": "role=\"meter\" con aria-valuemin, aria-valuemax, aria-valuenow y aria-valuetext.",
+  "examples": [
+    {
+      "title": "Uso de disco con umbrales",
+      "code": "<Meter label=\"Disk usage\" showLabel value={412} max={512} valueLabel=\"412 GB of 512 GB\" warningAt={384} dangerAt={480} />"
+    },
+    {
+      "title": "Con escala",
+      "code": "<Meter label=\"Signal strength\" value={72} startLabel=\"Weak\" endLabel=\"Strong\" tone=\"success\" size=\"sm\" />"
+    }
+  ],
+  "origin": "LinearMeter del design system base."
+}

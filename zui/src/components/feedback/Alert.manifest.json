@@ -1,0 +1,93 @@
+{
+  "name": "Alert",
+  "group": "feedback",
+  "description": "Aviso en línea sobre el resultado de una acción o el estado del sistema.",
+  "import": "import { Alert } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ],
+      "default": "info"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Sustituye el icono del tono."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "onDismiss",
+      "type": "() => void",
+      "description": "Muestra el botón de cierre."
+    },
+    {
+      "name": "dismissLabel",
+      "type": "string",
+      "default": "Dismiss"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Mensaje."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active"
+  ],
+  "tokens": [
+    "info",
+    "info-soft",
+    "space-3",
+    "space-4",
+    "radius-md",
+    "fg",
+    "text-body",
+    "leading-normal",
+    "success",
+    "success-soft",
+    "warning",
+    "warning-soft",
+    "danger",
+    "danger-soft",
+    "space-1",
+    "weight-semibold",
+    "fg-muted",
+    "space-2",
+    "radius-full",
+    "duration-fast",
+    "ease-standard",
+    "surface-3",
+    "focus-ring"
+  ],
+  "classes": [
+    "z-alert"
+  ],
+  "a11y": "danger y warning usan role=\"alert\"; info y success, role=\"status\". El botón de cierre tiene nombre accesible.",
+  "examples": [
+    {
+      "title": "Éxito",
+      "code": "<Alert tone=\"success\" title=\"Changes saved\">Your profile is up to date.</Alert>"
+    },
+    {
+      "title": "Aviso con acción y cierre",
+      "code": "<Alert tone=\"warning\" title=\"Storage almost full\" onDismiss={() => setHidden(true)} actions={<Button size=\"sm\">Manage storage</Button>}>You have used 92% of your quota.</Alert>"
+    }
+  ],
+  "origin": "Nuevo; versión genérica del panel de alertas del design system base."
+}

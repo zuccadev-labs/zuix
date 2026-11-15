@@ -1,0 +1,345 @@
+# Usar zuix con cualquier framework
+
+Zuix no es una librería de React. El estándar es un **contrato de HTML, CSS y tokens**; React es uno de
+los bindings que lo implementan. El mismo marcado, con las mismas clases, se ve y se comporta igual en
+HTML plano, Vue, Svelte, Angular, Astro o plantillas de servidor.
+
+## Las tres capas
+
+| Capa | Qué es | Depende de |
+|---|---|---|
+| Contrato | Tokens `--z-*`, clases `z-*`, atributos de estado (`data-state`, `data-size`, `aria-*`) e iconos | Nada: CSS y SVG |
+| Comportamiento | `@zuccadev-labs/zuix-zui/dom`: diálogos, menús, popovers, tooltips, avisos, pestañas, acordeón, controles | El navegador (`<dialog>`, `popover`) |
+| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 19 y Radix |
+
+Un binding para otro framework solo tiene que producir el marcado del contrato. La apariencia no se
+reescribe nunca.
+
+## Instalar
+
+```
+pnpm add @zuccadev-labs/zuix
+```
+
+El paraguas trae tokens, iconos, componentes y layouts. `react` y `react-dom` son peers opcionales: las
+entradas sin framework (`/zui/dom`, `/zout/dom`, `/zicon/dom`, `/zicon/element`) no los importan. pnpm, npm
+y bun pueden instalarlos igualmente, porque `radix-ui` (dependencia del binding) los pide como peer. Paquete a paquete: `@zuccadev-labs/zuix-tokens`, `@zuccadev-labs/zuix-zicon`,
+`@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` ([Instalar](./README.md#instalar)).
+
+## Empezar sin bundler
+
+Los archivos listos para enlazar están en la carpeta `dist/` de cada paquete instalado
+(`node_modules/@zuccadev-labs/zuix-zui/dist/zui.css`…). En una copia del repositorio los genera `pnpm dist`:
+
+```html
+<html data-theme="dark" data-brand="dazlabs">
+<head>
+  <link rel="stylesheet" href="tokens/dist/tokens.css">
+  <link rel="stylesheet" href="zui/dist/zui.css">
+  <link rel="stylesheet" href="zout/dist/zout.css">
+</head>
+<body class="z-root z-canvas" data-z-dom>
+  <button type="button" class="z-btn z-btn--primary" data-size="md">
+    <z-icon name="plus" size="16"></z-icon>
+    New project
+  </button>
+
+  <script type="module">
+    import "./zicon/dist/zicon.element.js";          // define <z-icon>
+    import { init } from "./zui/dist/zui.dom.js";    // comportamiento
+    init();
+  </script>
+</body>
+</html>
+```
+
+- `z-root` aplica tipografía y foco; `z-canvas` pinta el fondo.
+- `data-z-dom` activa el comportamiento de pestañas, acordeón y controles dentro de ese contenedor.
+- El ejemplo completo, con todos los componentes, está en `examples/html/index.html`.
+
+## Con bundler (Vue, Svelte, Angular, Astro)
+
+```js
+import "@zuccadev-labs/zuix-tokens/tokens.css";
+import "@zuccadev-labs/zuix-zui/styles.css";
+import "@zuccadev-labs/zuix-zout/styles.css";
+import "@zuccadev-labs/zuix-zicon/element";            // <z-icon> con el set completo
+import { init, toast } from "@zuccadev-labs/zuix-zui/dom";
+
+init();
+```
+
+Con el paraguas, lo mismo sin React:
+
+```js
+import "@zuccadev-labs/zuix/styles.css";
+import "@zuccadev-labs/zuix/zicon/element";
+import { init, toast } from "@zuccadev-labs/zuix/zui/dom";
+import { init as initLayouts } from "@zuccadev-labs/zuix/zout/dom";
+
+init();
+initLayouts();
+```
+
+Después se escribe el marcado del contrato en la plantilla del framework. En Vue hay que declarar
+`z-icon` como elemento personalizado (`compilerOptions.isCustomElement`); en Angular, añadir
+`CUSTOM_ELEMENTS_SCHEMA`.
+
+## Con Next.js (App Router)
+
+El binding de React funciona con Server Components. Los componentes de solo marcado (`Button`, `Badge`,
+`Card`, `EmptyState`, `Icon`, `Page`, `Stack`, `Rail`…) se renderizan en el servidor sin enviar código al
+navegador. Los que tienen estado, contexto o Radix (`Modal`, `Menu`, `Tabs`, `Select`, `Shell`…) llevan
+`"use client"` en su propio módulo: se usan desde un Server Component sin envolverlos, siempre que sus
+props sean serializables. Un manejador (`onClick`, `onSelect`, `onValueChange`) obliga a escribirlo en un
+archivo propio con `"use client"`.
+
+Los iconos necesitan **dos importaciones**. El registro de iconos es estado de módulo y Next compila dos
+grafos separados: el de Server Components y el de Client Components (que se renderiza en el servidor y en
+el navegador). Cada grafo tiene su copia del registro.
+
+```tsx
+// app/layout.tsx (Server Component)
+import "@zuccadev-labs/zuix-tokens/tokens.css";
+import "@zuccadev-labs/zuix-zui/styles.css";
+import "@zuccadev-labs/zuix-zout/styles.css";
+import "@zuccadev-labs/zuix-zicon/all";              // iconos de los Server Components
+import { Providers } from "./providers";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" data-theme="dark">
+      <body className="z-root z-canvas"><Providers>{children}</Providers></body>
+    </html>
+  );
+}
+```
+
+```tsx
+// app/providers.tsx
+"use client";
+import "@zuccadev-labs/zuix-zicon/all";              // iconos de los Client Components
+import { ToastProvider } from "@zuccadev-labs/zuix-zui";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <ToastProvider>{children}</ToastProvider>;
+}
+```
+
+- Con una sola de las dos, la mitad de los iconos sale como `<svg>` vacío y `next build` escribe
+  `[zicon] "…" no está registrado`. No hay error de hidratación, porque el servidor y el navegador
+  coinciden en el hueco: hay que mirar el aviso.
+- `@zuccadev-labs/zuix-zicon/all` añade el set completo (unos 580 kB sin comprimir) al bundle del navegador. Para
+  enviar solo algunos, el módulo de cliente registra los suyos:
+  `import { registerIcons } from "@zuccadev-labs/zuix-zicon/core"; import { check } from "@zuccadev-labs/zuix-zicon/icons/check"; registerIcons([check]);`.
+  Los componentes de `zui` usan iconos propios (`x-mark`, `chevron-down`, `check`…): también hay que
+  registrarlos.
+- `next.config` no necesita `transpilePackages`: los paquetes publican ESM compilado.
+- `Calendar` y `DatePicker` marcan el día de hoy con el reloj de quien renderiza. Si el servidor y el
+  navegador están en fechas distintas (zona horaria, medianoche) el marcado de servidor difiere.
+
+`pnpm test:pack:next` lo comprueba con la última versión estable de Next.js (ver
+[Verificación](#verificación)).
+
+## Dónde está el marcado de cada componente
+
+`zui/html.json` y `zout/html.json` contienen el HTML de cada ejemplo. Se generan renderizando el
+binding de React (`pnpm html`), así que el contrato documentado es el que produce la implementación.
+El catálogo de [Componentes](/components) muestra cada ejemplo como React o como HTML.
+
+Cada componente declara cómo se comporta:
+
+| `behavior` | Significado |
+|---|---|
+| `none` | Solo CSS. Basta el marcado |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom` |
+| `react` | Hoy solo existe en el binding de React |
+
+## Iconos sin React
+
+| Forma | Uso |
+|---|---|
+| Elemento | `<z-icon name="bell" variant="solid" size="20" label="Alerts"></z-icon>` |
+| Cadena | `iconSvg("bell", { size: 20 })` desde `@zuccadev-labs/zuix-zicon/dom` |
+| Sprite | `<svg class="z-icon" width="16" height="16"><use href="sprite.svg#bell"/></svg>` (`#bell-solid` para la variante sólida) |
+| Archivo | `@zuccadev-labs/zuix-zicon/svg/outline/bell.svg` |
+
+`@zuccadev-labs/zuix-zicon/dom` no incluye datos: se registran los iconos que se usen con `registerIcons`.
+`@zuccadev-labs/zuix-zicon/element` registra el set completo (unos 580 kB sin comprimir).
+
+## Comportamiento: `@zuccadev-labs/zuix-zui/dom`
+
+### Declarativo
+
+| Atributo | Efecto |
+|---|---|
+| `data-z-open="#id"` | Abre el `<dialog>` o el elemento `[popover]` indicado, anclado al disparador |
+| `data-z-close` | Cierra el diálogo o popover que lo contiene |
+| `data-z-context="#id"` | Abre ese menú en el puntero con clic derecho, o con una pulsación larga (600 ms) con dedo o lápiz |
+| `data-z-submenu="#id"` | En un `.z-menu__item`: abre ese `.z-menu[popover]` como submenú |
+| `data-z-tooltip="texto"` | Tooltip al pasar el puntero o enfocar |
+| `data-z-placement` | `bottom-start` (por defecto), `bottom`, `bottom-end`, `top-start`, `top`, `top-end`, `right`, `left` |
+| `data-z-static` | En un `<dialog>`: Escape y clic fuera no lo cierran |
+
+```html
+<button class="z-btn z-btn--secondary" data-size="md" data-z-open="#edit">Edit profile</button>
+
+<dialog id="edit" class="z-liquid z-modal" data-size="md" aria-labelledby="edit-title">
+  <header class="z-modal__header">
+    <div class="z-modal__heading"><h2 id="edit-title" class="z-modal__title">Edit profile</h2></div>
+  </header>
+  <div class="z-modal__body">…</div>
+  <footer class="z-modal__footer">
+    <button class="z-dialog-btn" data-variant="primary" data-z-close value="save">Save</button>
+  </footer>
+</dialog>
+```
+
+### Submenús
+
+Una entrada de `Menu` o `ContextMenu` con `data-z-submenu="#id"` abre otro `.z-liquid.z-menu[popover]`. El
+marcado es el del binding de React: la entrada lleva `.z-menu__chevron`, `aria-haspopup="menu"`,
+`aria-expanded` y `aria-controls` (`hydrate()` los completa si faltan).
+
+```html
+<div id="actions" popover class="z-liquid z-menu" role="menu" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">…</button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"
+          aria-haspopup="menu" aria-expanded="false" aria-controls="actions-share" data-z-submenu="#actions-share">
+    <span class="z-menu__icon"><z-icon name="share" size="14"></z-icon></span>
+    <span class="z-menu__text">Share</span>
+    <span class="z-menu__chevron"><z-icon name="chevron-right" size="14"></z-icon></span>
+  </button>
+</div>
+
+<div id="actions-share" popover class="z-liquid z-menu" role="menu" aria-label="Share" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">…</button>
+</div>
+```
+
+| Acción | Efecto |
+|---|---|
+| Puntero sobre la entrada (100 ms) o clic | Abre el submenú; el foco no se mueve |
+| Flecha derecha, Intro o Espacio | Abre y enfoca la primera entrada |
+| Flecha izquierda o Escape | Cierra solo ese submenú; el foco vuelve a la entrada |
+| Elegir una entrada, Tab o clic fuera | Cierra toda la cadena |
+| Letras | Búsqueda por letra dentro del menú enfocado (también en menús sin submenús) |
+
+- Se coloca a la derecha del menú padre y voltea a la izquierda si no cabe (`data-side`). No hay variante
+  para `dir="rtl"`.
+- El submenú puede ir fuera del menú (como arriba) o anidado dentro de él. Fuera, se emparenta con
+  `showPopover({ source })`; en un navegador sin esa opción, `zui/dom` lo mueve dentro del menú padre al
+  abrirlo para que el `popover` del padre no se cierre.
+- `z:select` burbujea desde la entrada elegida. Con el submenú fuera del menú, el evento no pasa por el
+  menú padre: se escucha en un ancestro común o en `document`. Anidado, llega al menú raíz.
+- La entrada con submenú no emite `z:select`. `openSubmenu(entrada, enfocar)` lo abre desde código.
+
+### Imperativo
+
+```js
+import { openDialog, closeDialog, openPopover, toast, confirm, setTheme, setBrand, hydrate } from "@zuccadev-labs/zuix-zui/dom";
+
+toast({ title: "Changes saved", intent: "success" });
+if (await confirm({ title: "Delete project?", intent: "danger", confirmLabel: "Delete" })) remove();
+setTheme("light");
+hydrate(container);   // tras insertar marcado nuevo con pestañas, radios o acordeones
+```
+
+### Táctil
+
+Sin código adicional. Un aviso de `toast()` se descarta deslizándolo hacia la derecha (hacia el borde en las
+posiciones centradas); `data-z-context` abre con pulsación larga; el Slider, el Carousel y los divisores de
+`@zuccadev-labs/zuix-zout/dom` siguen al dedo. Con puntero grueso los controles miden 40 px y los estilos de `:hover` no se
+aplican ([zui · Táctil](./03-zui.md#táctil)).
+
+### Eventos
+
+Los elementos emiten `z:open`, `z:close`, `z:change` (con `detail.value`, `detail.checked` o
+`detail.pressed`) y `z:select` (entrada de menú elegida).
+
+### Carousel en WebGL (modo `gl`)
+
+Con `data-effect="lens"`, las zonas curvas se pueden dibujar en un lienzo WebGL2 a partir de una imagen de
+cada slide, como hace la prop `rasterize` en React. La franja central sigue siendo el slide HTML real.
+
+```html
+<div id="covers" class="z-carousel" data-z-carousel data-effect="lens" data-loop aria-label="Project covers">
+  <img data-raster src="atlas.png" alt="Atlas cover">
+  <img data-raster src="beacon.png" alt="Beacon cover">
+  <img data-raster src="cinder.png" alt="Cinder cover">
+</div>
+```
+
+| Forma de declarar la imagen | Uso |
+|---|---|
+| `<img data-raster>` o `<canvas data-raster>` | El propio elemento, como slide o dentro de él, es la imagen |
+| `data-raster="#selector"` | En el slide o en un descendiente: un `<img>`, `<canvas>` o `<video>` de la página |
+| `data-raster-src="url"` | Una imagen por URL; de otro origen necesita CORS |
+| `carousel(el, { rasterize(slide, index, size) })` | Devuelve la imagen o su URL; con `null` se usa la declarada en el marcado |
+
+- El modo `gl` se activa cuando **todos** los slides declaran imagen, o cuando se pasa `rasterize`. La raíz
+  queda con `data-mode="gl"` y `zui/dom` añade `<canvas class="z-carousel__canvas" aria-hidden="true">`.
+- La imagen se ajusta en modo cover al tamaño del slide: debe verse igual que el slide.
+- Sin WebGL2, si falta la imagen de algún slide, si no se puede leer (otro origen sin CORS) o con
+  `prefers-reduced-motion`, la lente sigue en `css` o `flat`. No hay que comprobar nada en la aplicación.
+- Los shaders no van en `zui.dom.js`: se cargan la primera vez que un carrusel los pide. Con bundler es el
+  módulo `@zuccadev-labs/zuix-zui/dom/carousel-gl` (import dinámico); sin bundler, `zui/dist/zui.dom.carousel-gl.js`, que
+  tiene que estar en la misma carpeta que `zui.dom.js`. Mientras llegan, el carrusel funciona en `css`.
+- Si las imágenes cambian después de activar el carrusel (un `<canvas>` que se pinta más tarde, un cambio de
+  tema): `carousel(el).refresh()` rehace las réplicas del bucle y las texturas.
+
+## Qué cubre hoy cada capa
+
+| Componentes | Sin React |
+|---|---|
+| Acciones, datos, estado, contenido, navegación estática, layouts de página y rejillas | Solo CSS |
+| Modal, Drawer, ConfirmDialog, Popover, Tooltip, Menu, ContextMenu (con submenús y búsqueda por letra), Toast | `zui/dom` |
+| Tabs, Accordion, Switch, Checkbox, Radio, Toggle, SegmentedControl | `zui/dom` |
+| Select no nativo, Combobox, Calendar, DatePicker, Slider, OTPInput, FileUpload | `zui/dom`: teclado, puntero, campo oculto para formularios y `z:change`. El campo y su popup (`popover`) se enlazan con `aria-controls` |
+| CommandPalette | `zui/dom`: `<dialog class="z-liquid z-palette">` abierto con `data-z-open`, con `data-z-hotkey="mod+k"` o con `openPalette(el)`. Filtra por etiqueta, detalle, `data-keywords` y grupo; flechas, Inicio/Fin, Intro y Escape; `z:select` con `detail.value`. `data-keep-open` no cierra al elegir |
+| Tree | `zui/dom`: expandir, plegar, selección y teclado de árbol (flechas, Inicio/Fin, letra, Intro, Espacio). Las ramas plegadas van en el marcado con `hidden`. `z:change` con `detail.value` y `detail.expanded`; `toggleTreeItem(li)`, `selectTreeItem(li)` |
+| DataTable (orden) | `zui/dom`: ordena las filas presentes al pulsar una cabecera con `aria-sort` (ascendente, descendente, sin orden). Tipo en `<th data-sort="number\|text\|date">`, valor en `<td data-sort-value>`; `data-manual-sort` en la tabla solo avisa. `z:sort` con `detail.key`, `direction` y `column`; `sortTable(th, direction)` |
+| Pagination | `zui/dom`: cambia de página, recalcula el rango con huecos y emite `z:change` con `detail.value`. `data-page-count`, `data-siblings`, `data-page-label="Page {page}"`; `setPage(nav, page)` |
+| Carousel | `zui/dom`: `<div class="z-carousel" data-z-carousel data-effect="lens\|none" data-loop>` con un hijo por slide; monta la tira, las flechas, el contador y los anuncios. Arrastre con inercia, bucle, teclado y `prefers-reduced-motion` con el mismo motor que React. `z:change` con `detail.index`; `carousel(el)` devuelve `{ next, prev, goTo, refresh, destroy }`. Zonas curvas en WebGL: [modo `gl`](#carousel-en-webgl-modo-gl) |
+| `Shell` responsive, `ResizeHandle`, `SplitPane`, `TabStrip` y `Sidebar` de `zout` | `zout/dom` ([Zout](./04-zout.md#sin-react-zuccadev-labszuix-zoutdom)) |
+| `Rail`, `TitleBar`, `SidePanel`, `Page`, `Grid`, `Stack`, `Inline` de `zout` | Solo CSS; el destino activo del `Rail` (`aria-current`) lo marca la aplicación |
+
+Para un campo de selección sin React, `NativeSelect` usa el `<select>` del navegador y no necesita
+comportamiento.
+
+## Verificación
+
+```
+pnpm html        # regenera el contrato HTML desde los componentes
+pnpm dist        # empaqueta CSS y módulos, y regenera examples/html
+pnpm test:html   # abre examples/html en Chrome y ejercita zui/dom, sin React
+```
+
+`pnpm test:pack:next` (`node tools/pack-test.mjs --next`) instala Next.js y los paquetes empaquetados en
+`.tmp/consumer/next/`, fuera del workspace, y comprueba `next build`, el HTML de servidor de una ruta
+estática, una dinámica y una de cliente (cada icono con su trazado), la hidratación en Chrome sin avisos
+ni errores de consola y la interacción con Modal, Tabs, Accordion, Menu, Select, Switch, Toast, `Shell` y
+`SplitPane`. Necesita red y añade cerca de medio minuto a `pnpm test:pack`.
+
+`tests/html/cases/07-touch.mjs` repite lo principal en un contexto de teléfono (táctil, 390 px, puntero grueso):
+gestos reales en Chrome por el protocolo de depuración; en Firefox y WebKit, toques reales y arrastres con
+eventos de puntero sintéticos.
+
+`pnpm test:blur` (`tests/blur-firefox.mjs`) comprueba por píxeles que Firefox pinta el desenfoque del cristal.
+Necesita una pantalla X: `xvfb-run -a pnpm test:blur` (paquetes `xvfb` y `x11-apps`).
+
+## Sin verificar
+
+- Safari real. `pnpm test:html:all` pasa en Chrome y en los motores Firefox y WebKit de Playwright;
+  WebKit en Linux no es Safari en macOS o iOS.
+- No hay bindings escritos para Vue, Svelte ni Angular: se usa el contrato directamente.
+- Next.js: probado con 16.4.6 (App Router, Turbopack, `next build` y `next start`). Sin probar: `next dev`,
+  Pages Router, el runtime Edge, versiones anteriores, y servidor y navegador en fechas distintas. El build
+  con webpack (`next build --webpack`) compila; la prueba en navegador no se repitió sobre él.
+- Submenús: solo se ha probado un nivel de anidamiento, y la ruta sin `showPopover({ source })` solo con el
+  argumento anulado en los tres motores, no en un navegador antiguo real. Los submenús no tienen pruebas táctiles.
+- Táctil en un dispositivo real. La emulación cubre gestos reales solo en Chrome; en Firefox y WebKit los
+  arrastres son eventos sintéticos y el desplazamiento nativo no se comprueba.
+- Lectores de pantalla.
+- Modo `gl` del Carousel: probado con WebGL por software (sin GPU física) y con lienzos como imagen; no con
+  `<video>`, con imágenes de otro origen ni con pérdida real del contexto WebGL.

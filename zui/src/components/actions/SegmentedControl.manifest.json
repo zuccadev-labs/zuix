@@ -1,0 +1,100 @@
+{
+  "name": "SegmentedControl",
+  "group": "actions",
+  "description": "Selector de una opción entre pocas; siempre hay una elegida.",
+  "import": "import { SegmentedControl } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "SegmentedItem[]",
+      "required": true,
+      "description": "{ value, label, icon?, ariaLabel?, disabled? }"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor controlado."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: T) => void"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "default": false,
+      "description": "Reparte el ancho entre los segmentos."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "on",
+    "disabled"
+  ],
+  "tokens": [
+    "control-height-md",
+    "line",
+    "button-radius",
+    "control-bg",
+    "control-height-sm",
+    "control-height-lg",
+    "space-2",
+    "space-3",
+    "fg-muted",
+    "text-small",
+    "weight-semibold",
+    "duration-fast",
+    "ease-standard",
+    "space-4",
+    "text-body",
+    "surface-2",
+    "fg",
+    "focus-ring",
+    "button-primary-bg",
+    "button-primary-fg",
+    "shadow-sm"
+  ],
+  "classes": [
+    "z-segmented"
+  ],
+  "a11y": "Radix ToggleGroup de tipo single: role radiogroup, flechas para moverse. No permite quedar sin selección.",
+  "examples": [
+    {
+      "title": "Vista",
+      "code": "<SegmentedControl label=\"View\" value={view} onValueChange={setView} items={[{ value: \"list\", label: \"List\", icon: \"list-bullet\" }, { value: \"grid\", label: \"Grid\", icon: \"squares-2x2\" }]} />"
+    },
+    {
+      "title": "Periodo, ancho completo",
+      "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
+    }
+  ],
+  "origin": "Tabs (control segmentado) de zutool, sobre ToggleGroup de radix-ui."
+}

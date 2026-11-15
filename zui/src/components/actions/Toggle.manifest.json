@@ -1,0 +1,92 @@
+{
+  "name": "Toggle",
+  "group": "actions",
+  "description": "Botón de dos estados (activado o no), con texto, icono o ambos.",
+  "import": "import { Toggle } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "pressed",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultPressed",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onPressedChange",
+      "type": "(pressed: boolean) => void"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible; obligatorio cuando solo hay icono."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "on",
+    "disabled"
+  ],
+  "tokens": [
+    "space-2",
+    "control-height-md",
+    "space-3",
+    "line",
+    "button-radius",
+    "fg-muted",
+    "text-body",
+    "weight-semibold",
+    "duration-fast",
+    "ease-standard",
+    "surface-2",
+    "fg",
+    "focus-ring",
+    "accent-soft",
+    "accent-ring",
+    "accent",
+    "control-height-sm",
+    "text-small",
+    "control-height-lg",
+    "space-4",
+    "text-title"
+  ],
+  "classes": [
+    "z-toggle"
+  ],
+  "a11y": "Radix Toggle: button con aria-pressed y data-state on/off.",
+  "examples": [
+    {
+      "title": "Solo icono",
+      "code": "<Toggle icon=\"star\" label=\"Favourite\" defaultPressed />"
+    },
+    {
+      "title": "Controlado con texto",
+      "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
+    }
+  ],
+  "origin": "Nuevo, sobre Toggle de radix-ui."
+}

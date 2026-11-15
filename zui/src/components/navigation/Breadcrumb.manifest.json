@@ -1,0 +1,54 @@
+{
+  "name": "Breadcrumb",
+  "group": "navigation",
+  "description": "Ruta jerárquica hasta la página actual.",
+  "import": "import { Breadcrumb } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "BreadcrumbItem[]",
+      "required": true,
+      "description": "{ label, href?, icon?, onClick? }; el último es la página actual."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Breadcrumb"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "current"
+  ],
+  "tokens": [
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-ring",
+    "radius-xs",
+    "row-hover",
+    "space-1",
+    "text-small",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-breadcrumb",
+    "z-breadcrumb__list",
+    "z-breadcrumb__item",
+    "z-breadcrumb__link",
+    "z-breadcrumb__current",
+    "z-breadcrumb__separator"
+  ],
+  "a11y": "nav con nombre accesible y lista ordenada; el último elemento lleva aria-current=page y los separadores son decorativos.",
+  "examples": [
+    {
+      "title": "Tres niveles",
+      "code": "<Breadcrumb\n  items={[\n    { label: \"Home\", href: \"/\" },\n    { label: \"Projects\", href: \"/projects\" },\n    { label: \"Website redesign\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo, sobre los tokens de fila de zutool."
+}

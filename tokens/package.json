@@ -1,0 +1,62 @@
+{
+  "name": "@zuccadev-labs/zuix-tokens",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Fuente única de tokens de diseño de la suite zuix. Una marca es un archivo en brands/.",
+  "license": "MIT",
+  "keywords": [
+    "zuix",
+    "design-tokens",
+    "css-variables",
+    "theming",
+    "themes",
+    "dark-mode",
+    "design-system",
+    "tailwind",
+    "css"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zuccadev-labs/zuix.git",
+    "directory": "tokens"
+  },
+  "homepage": "https://github.com/zuccadev-labs/zuix/tree/main/tokens#readme",
+  "bugs": {
+    "url": "https://github.com/zuccadev-labs/zuix/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    "./tokens.css": "./dist/tokens.css",
+    "./tailwind.css": "./dist/tailwind.css",
+    "./docusaurus.css": "./dist/docusaurus.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./brands/*": "./brands/*",
+    "./schema/*": "./schema/*",
+    "./css/*": "./dist/brands/*",
+    "./compat/*": "./dist/compat/*"
+  },
+  "scripts": {
+    "build": "node src/build.mjs",
+    "validate": "node src/validate.mjs",
+    "compat:scan": "node src/compat.mjs --scan",
+    "typecheck": "node src/build.mjs --check"
+  },
+  "files": [
+    "dist",
+    "brands",
+    "compat",
+    "schema",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "!compat/*.inventory.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ]
+}

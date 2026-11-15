@@ -1,0 +1,37 @@
+import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
+import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { cx } from "../../cx";
+import { ICON_SIZE, type ControlSize, type Intent } from "./types";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: Intent;
+  size?: ControlSize;
+  /** Icono a la izquierda del texto. */
+  icon?: IconName;
+  /** Icono a la derecha del texto. */
+  iconRight?: IconName;
+  loading?: boolean;
+  fullWidth?: boolean;
+  ref?: Ref<HTMLButtonElement>;
+  children?: ReactNode;
+}
+
+export function Button({ variant = "secondary", size = "md", icon, iconRight, loading, fullWidth, className, children, disabled, ...rest }: ButtonProps) {
+  return (
+    <button
+      type="button"
+      {...rest}
+      className={cx("z-btn", `z-btn--${variant}`, className)}
+      data-size={size}
+      data-block={fullWidth || undefined}
+      data-loading={loading || undefined}
+      aria-busy={loading || undefined}
+      disabled={disabled || loading}
+    >
+      {/* Con carga, el anillo sustituye al icono izquierdo. */}
+      {loading ? <span className="z-btn__spinner" aria-hidden="true" /> : icon ? <Icon name={icon} size={ICON_SIZE[size]} /> : null}
+      {children}
+      {iconRight ? <Icon name={iconRight} size={ICON_SIZE[size]} /> : null}
+    </button>
+  );
+}

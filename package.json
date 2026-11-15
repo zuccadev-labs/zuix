@@ -1,0 +1,36 @@
+{
+  "name": "zuix",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=12"
+  },
+  "scripts": {
+    "tokens": "node tokens/src/build.mjs && node tokens/src/validate.mjs",
+    "icons": "node zicon/scripts/build.mjs && node zicon/scripts/sprite.mjs",
+    "style-audit": "node tools/audit.mjs",
+    "manifest": "node tools/manifest.mjs",
+    "typecheck": "pnpm -r typecheck",
+    "test:browser": "node tests/browser/run.mjs",
+    "check": "pnpm tokens && pnpm icons && pnpm style-audit && pnpm manifest && pnpm html && pnpm dist && pnpm typecheck",
+    "html": "node tools/html.mjs",
+    "dist": "node tools/dist.mjs && node examples/html/build.mjs",
+    "test:html": "node tests/html/run.mjs",
+    "test:browser:all": "BROWSER=all node tests/browser/run.mjs",
+    "test:html:all": "BROWSER=all node tests/html/run.mjs",
+    "build": "node tools/build.mjs",
+    "test:pack": "node tools/pack-test.mjs",
+    "test:pack:next": "node tools/pack-test.mjs --next",
+    "test:blur": "node tests/blur-firefox.mjs",
+    "bump": "node tools/version.mjs",
+    "verify": "pnpm check && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser"
+  },
+  "devDependencies": {
+    "axe-core": "^4.14.0",
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.65.0"
+  },
+  "license": "MIT"
+}

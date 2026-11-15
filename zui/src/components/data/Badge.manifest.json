@@ -1,0 +1,97 @@
+{
+  "name": "Badge",
+  "group": "data",
+  "description": "Etiqueta de estado o categoría, no interactiva.",
+  "import": "import { Badge } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "neutral",
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
+      "default": "neutral"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "soft",
+        "solid",
+        "outline"
+      ],
+      "default": "soft"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "dot",
+      "type": "boolean",
+      "default": false,
+      "description": "Punto de estado antes del texto."
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "fg-muted",
+    "surface-3",
+    "accent",
+    "accent-soft",
+    "success",
+    "success-soft",
+    "warning",
+    "warning-soft",
+    "danger",
+    "danger-soft",
+    "info",
+    "info-soft",
+    "space-1",
+    "space-2",
+    "radius-full",
+    "text-caption",
+    "weight-semibold",
+    "leading-snug",
+    "text-fine",
+    "line",
+    "fg-on-accent",
+    "fg",
+    "canvas"
+  ],
+  "classes": [
+    "z-badge"
+  ],
+  "a11y": "span sin rol: el texto debe bastar; el color no es el único indicador.",
+  "examples": [
+    {
+      "title": "Estado",
+      "code": "<Badge tone=\"success\" dot>Active</Badge>"
+    },
+    {
+      "title": "Sólido con icono",
+      "code": "<Badge tone=\"accent\" variant=\"solid\" icon=\"star\">Pro</Badge>"
+    },
+    {
+      "title": "Contorno pequeño",
+      "code": "<Badge tone=\"warning\" variant=\"outline\" size=\"sm\">Beta</Badge>"
+    }
+  ],
+  "origin": "Badge de zutool y de ui-glass (tonos); tamaños del design system base."
+}

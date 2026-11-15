@@ -1,0 +1,74 @@
+{
+  "name": "ResizeHandle",
+  "group": "layout",
+  "description": "Tirador para redimensionar un panel, con puntero y teclado.",
+  "import": "import { ResizeHandle } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "ResizeHandle"
+  ],
+  "props": [
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "left",
+        "right",
+        "top",
+        "bottom"
+      ],
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "onResize",
+      "type": "(size: number) => void",
+      "required": true
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 720
+    },
+    {
+      "name": "defaultSize",
+      "type": "number",
+      "description": "Doble clic o Inicio vuelven a este tamaño."
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 16
+    }
+  ],
+  "tokens": [
+    "accent",
+    "radius-full"
+  ],
+  "classes": [
+    "z-resize"
+  ],
+  "a11y": "role=separator enfocable con aria-valuenow.",
+  "examples": [
+    {
+      "title": "Borde derecho de un panel",
+      "code": "<ResizeHandle side=\"right\" size={width} onResize={setWidth} min={200} max={480} defaultSize={224} />"
+    }
+  ],
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Borde derecho de un panel",
+      "code": "<div id=\"resize-demo\" class=\"z-solid\" style=\"position:relative;box-sizing:border-box;width:240px;padding:var(--z-space-4);border-radius:var(--z-radius-md)\">\n  Drag the right edge, or focus it and use the arrow keys.\n  <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panel\" aria-valuenow=\"240\" aria-valuemin=\"160\" aria-valuemax=\"320\" class=\"z-resize\" data-side=\"right\" data-default-size=\"240\"></div>\n</div>"
+    }
+  ],
+  "origin": "ResizeHandle de zutool; se añadió el teclado."
+}

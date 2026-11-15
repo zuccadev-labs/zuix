@@ -1,0 +1,171 @@
+{
+  "name": "Calendar",
+  "group": "forms",
+  "description": "Rejilla de un mes para elegir una fecha o un rango. Valores como cadenas ISO YYYY-MM-DD; sin librerías de fechas.",
+  "import": "import { Calendar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": [
+        "single",
+        "range"
+      ],
+      "default": "single"
+    },
+    {
+      "name": "value",
+      "type": "string | null | DateRange",
+      "description": "Fecha ISO; en modo range, { from, to } (to es null mientras solo hay inicio)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null | DateRange"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void",
+      "description": "Recibe la fecha ISO o el rango { from, to }."
+    },
+    {
+      "name": "month",
+      "type": "string",
+      "description": "Mes visible controlado, YYYY-MM."
+    },
+    {
+      "name": "defaultMonth",
+      "type": "string",
+      "description": "Mes visible inicial; por defecto el de la selección o el actual."
+    },
+    {
+      "name": "onMonthChange",
+      "type": "(month: string) => void"
+    },
+    {
+      "name": "min",
+      "type": "string",
+      "description": "Primera fecha elegible, YYYY-MM-DD."
+    },
+    {
+      "name": "max",
+      "type": "string",
+      "description": "Última fecha elegible, YYYY-MM-DD."
+    },
+    {
+      "name": "isDateDisabled",
+      "type": "(date: string) => boolean",
+      "description": "true para fechas no elegibles."
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "enum",
+      "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "description": "Primer día de la semana (0 domingo). Por defecto el del locale; lunes si no se conoce."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Etiqueta BCP 47 para Intl.DateTimeFormat. Por defecto la del entorno."
+    },
+    {
+      "name": "showOutsideDays",
+      "type": "boolean",
+      "default": true,
+      "description": "Días de los meses vecinos que completan las semanas."
+    },
+    {
+      "name": "previousMonthLabel",
+      "type": "string",
+      "default": "Previous month"
+    },
+    {
+      "name": "nextMonthLabel",
+      "type": "string",
+      "default": "Next month"
+    },
+    {
+      "name": "autoFocus",
+      "type": "boolean",
+      "default": false,
+      "description": "Enfoca el día activo al montar."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "selected",
+    "today",
+    "outside",
+    "disabled",
+    "range"
+  ],
+  "tokens": [
+    "control-height-md",
+    "space-2",
+    "fg",
+    "text-small",
+    "text-body",
+    "weight-semibold",
+    "leading-snug",
+    "control-height-sm",
+    "radius-full",
+    "fg-muted",
+    "duration-fast",
+    "ease-standard",
+    "surface-3",
+    "focus-ring",
+    "fg-subtle",
+    "text-caption",
+    "weight-medium",
+    "line-strong",
+    "accent",
+    "button-primary-bg",
+    "button-primary-fg",
+    "accent-soft",
+    "row-hover"
+  ],
+  "classes": [
+    "z-calendar"
+  ],
+  "a11y": "Tabla con role=grid etiquetada por el título del mes (aria-live). Foco itinerante: un solo día en el orden de tabulación. Flechas mueven por día y semana, Home/End al inicio/fin de la semana, PageUp/PageDown cambian de mes (con Mayús, de año), Enter/Espacio eligen. Cada día lleva la fecha completa como nombre accesible; hoy aria-current=date; no elegibles aria-disabled. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con la misma tabla (role=grid, título con aria-live, aria-multiselectable en modo rango) y las mismas teclas; el módulo mantiene aria-selected, aria-current=date, aria-disabled y el foco itinerante. Los nombres de los botones de mes salen de `data-previous-label` y `data-next-label` (en inglés por defecto) y las fechas se formatean con `data-locale`.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Fecha única con límites",
+      "code": "<Calendar locale=\"en-US\" defaultValue=\"2026-11-13\" min=\"2026-11-05\" max=\"2026-12-20\" />"
+    },
+    {
+      "title": "Rango",
+      "code": "<Calendar mode=\"range\" locale=\"en-US\" weekStartsOn={1} defaultValue={{ from: \"2026-11-09\", to: \"2026-11-14\" }} />"
+    },
+    {
+      "title": "Sin fines de semana",
+      "code": "<Calendar locale=\"en-US\" defaultMonth=\"2026-11\" isDateDisabled={(date) => [0, 6].includes(new Date(date).getUTCDay())} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Fecha única con límites",
+      "code": "<div class=\"z-calendar\" id=\"due-calendar\" data-mode=\"single\" data-locale=\"en-US\" data-week-start=\"0\" data-value=\"2026-11-13\" data-min=\"2026-11-05\" data-max=\"2026-12-20\"></div>",
+      "script": "document.querySelector(\"#due-calendar\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Rango",
+      "code": "<div class=\"z-calendar\" id=\"stay-calendar\" data-mode=\"range\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-09/2026-11-14\"></div>"
+    },
+    {
+      "title": "Sin fines de semana",
+      "code": "<div class=\"z-calendar\" id=\"workdays\" data-locale=\"en-US\" data-month=\"2026-11\" data-disabled-weekdays=\"0,6\"></div>"
+    }
+  ],
+  "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG."
+}

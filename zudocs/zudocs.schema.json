@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Configuración de un sitio zudocs",
+  "description": "Archivo único que adapta la plantilla a un proyecto o marca. No hace falta tocar el tema. Puede vivir en cualquier carpeta: las rutas (docs.path, static, outDir, llms.append) son relativas a este archivo y se elige con --config o ZUDOCS_CONFIG.",
+  "type": "object",
+  "required": ["name", "brand", "docs"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "description": "Nombre del sitio (título y navbar)." },
+    "tagline": { "type": "string", "description": "Frase de la portada." },
+    "brand": { "type": "string", "description": "Marca de @zuccadev-labs/zuix-tokens: nombre de un archivo en tokens/brands/ sin extensión." },
+    "defaultTheme": { "enum": ["dark", "light"], "default": "dark" },
+    "locale": { "type": "string", "default": "es" },
+    "url": { "type": "string" },
+    "baseUrl": { "type": "string", "default": "/" },
+    "logo": {
+      "type": "object", "required": ["src"], "additionalProperties": false,
+      "properties": { "src": { "type": "string", "description": "Ruta dentro de la carpeta de estáticos (campo `static`)." }, "srcDark": { "type": "string" }, "alt": { "type": "string" } }
+    },
+    "static": { "type": "string", "default": "static", "description": "Carpeta de recursos estáticos del proyecto (logo, imágenes), relativa a este archivo. Si no existe, el sitio no tiene estáticos propios." },
+    "outDir": { "type": "string", "default": "build", "description": "Carpeta de salida del sitio compilado, relativa a este archivo. `--out-dir` la sustituye." },
+    "fonts": { "type": "array", "items": { "type": "string" }, "description": "Hojas de estilo de fuentes. Deben coincidir con las familias de la marca." },
+    "docs": {
+      "type": "object", "required": ["path", "areas"], "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string", "description": "Carpeta de documentación, relativa a este archivo." },
+        "areas": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "required": ["id", "label"], "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "description": "Nombre de la subcarpeta del área." },
+              "label": { "type": "string" },
+              "icon": { "type": "string", "description": "Nombre de un icono de @zuccadev-labs/zuix-zicon." },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "pages": {
+      "type": "object", "additionalProperties": false,
+      "description": "Páginas de catálogo de la suite zuix. Desactivadas por defecto: un proyecto que solo documenta no las necesita.",
+      "properties": {
+        "components": { "type": "boolean", "default": false, "description": "Catálogo en vivo de zui y zout en /components." },
+        "icons": { "type": "boolean", "default": false, "description": "Buscador de zicon en /icons." },
+        "tokens": { "type": "boolean", "default": false, "description": "Tokens de la marca activa en /tokens." }
+      }
+    },
+    "home": {
+      "type": "object", "additionalProperties": false,
+      "description": "Portada. Sin este campo muestra el nombre, la frase y las áreas.",
+      "properties": {
+        "eyebrow": { "type": "string", "description": "Etiqueta sobre el título." },
+        "title": { "type": "string", "description": "Título de la portada. Por defecto, `name`." },
+        "emphasis": { "type": "string", "description": "Segunda parte del título, con el color de acento." },
+        "suite": { "type": "boolean", "default": false, "description": "Muestra las cifras y el carrusel de piezas de la suite zuix." }
+      }
+    },
+    "llms": {
+      "type": "object", "additionalProperties": false,
+      "description": "Mapa de la documentación para modelos (llms.txt).",
+      "properties": { "append": { "type": "string", "description": "Archivo Markdown que se añade al final de llms.txt, relativo a este archivo." } }
+    },
+    "markdown": {
+      "type": "object", "additionalProperties": false,
+      "description": "Extensiones del Markdown de los documentos.",
+      "properties": {
+        "mermaid": { "type": "boolean", "default": false, "description": "Dibuja los bloques ```mermaid como diagramas, con los colores de la marca en claro y oscuro. Desactivado, quedan como bloque de código y Mermaid no se carga." }
+      }
+    },
+    "search": {
+      "type": "object", "additionalProperties": false,
+      "description": "Buscador local: índice generado en el build, sin servicio externo.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "languages": { "type": "array", "minItems": 1, "items": { "type": "string" }, "default": ["es", "en"], "description": "Idiomas del índice (códigos de lunr-languages)." }
+      }
+    },
+    "navbar": {
+      "type": "array",
+      "items": { "type": "object", "required": ["label"], "additionalProperties": false, "properties": { "label": { "type": "string" }, "to": { "type": "string" }, "href": { "type": "string" } } }
+    },
+    "footer": { "type": "string" }
+  }
+}

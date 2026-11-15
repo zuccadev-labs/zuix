@@ -1,0 +1,70 @@
+{
+  "name": "Sidebar",
+  "group": "layout",
+  "description": "Navegación secundaria en acordeón: secciones plegables y pie fijo.",
+  "import": "import { Sidebar, SidebarSection } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "Sidebar",
+    "SidebarSection"
+  ],
+  "props": [
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "SidebarSection.title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "SidebarSection.count",
+      "type": "number"
+    },
+    {
+      "name": "SidebarSection.actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "SidebarSection.open",
+      "type": "boolean",
+      "description": "Controlado."
+    },
+    {
+      "name": "SidebarSection.defaultOpen",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "SidebarSection.grow",
+      "type": "boolean",
+      "description": "Reparte el alto libre."
+    }
+  ],
+  "tokens": [
+    "line",
+    "fg-muted",
+    "fg",
+    "text-caption",
+    "tracking-wide",
+    "focus-ring"
+  ],
+  "classes": [
+    "z-sidebar"
+  ],
+  "a11y": "Cada cabecera es un botón con aria-expanded y aria-controls.",
+  "examples": [
+    {
+      "title": "Dos secciones",
+      "code": "<Sidebar footer={<NavLink icon=\"gear\">Settings</NavLink>}>\n  <SidebarSection title=\"Workspaces\" count={2} grow>…</SidebarSection>\n  <SidebarSection title=\"Recent\" defaultOpen={false}>…</SidebarSection>\n</Sidebar>"
+    }
+  ],
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Dos secciones y pie",
+      "code": "<div style=\"width:240px;height:280px\">\n  <div class=\"z-sidebar\" id=\"sidebar-demo\">\n    <div class=\"z-sidebar__sections\">\n      <section class=\"z-sidebar__section\" data-open=\"true\" data-grow=\"true\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"sidebar-demo-workspaces\">\n            <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Workspaces</span>\n            <span class=\"z-sidebar__count\">2</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-workspaces\">\n          <nav aria-label=\"Workspaces\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Atlas</span>\n            </button>\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Borealis</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n      <section class=\"z-sidebar__section\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"false\" aria-controls=\"sidebar-demo-recent\">\n            <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Recent</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-recent\" hidden>\n          <nav aria-label=\"Recent\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"document-text\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Release notes</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <button type=\"button\" class=\"z-navlink\">\n        <span class=\"z-navlink__icon\">\n          <z-icon name=\"gear\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-navlink__label\">Settings</span>\n      </button>\n    </div>\n  </div>\n</div>"
+    }
+  ],
+  "origin": "Barra izquierda de zutool."
+}

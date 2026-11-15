@@ -1,0 +1,88 @@
+{
+  "name": "Stepper",
+  "group": "navigation",
+  "description": "Progreso por pasos numerados, horizontal o vertical.",
+  "import": "import { Stepper } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "steps",
+      "type": "StepItem[]",
+      "required": true,
+      "description": "{ label, description? }"
+    },
+    {
+      "name": "current",
+      "type": "number",
+      "required": true,
+      "description": "Índice del paso actual, desde 0."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    },
+    {
+      "name": "onStepSelect",
+      "type": "(index: number) => void",
+      "description": "Hace pulsables los pasos completados."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Progress"
+    },
+    {
+      "name": "statusLabels",
+      "type": "{ complete: string; current: string; upcoming: string }",
+      "default": "{ complete: \"Completed\", current: \"Current\", upcoming: \"Upcoming\" }"
+    }
+  ],
+  "states": [
+    "complete",
+    "current",
+    "upcoming"
+  ],
+  "tokens": [
+    "accent",
+    "accent-soft",
+    "accent-solid",
+    "duration-normal",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-on-accent",
+    "fg-subtle",
+    "focus-ring",
+    "line-strong",
+    "radius-full",
+    "radius-sm",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-5",
+    "surface",
+    "text-caption",
+    "text-small",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-stepper",
+    "z-stepper__step",
+    "z-stepper__body",
+    "z-stepper__marker",
+    "z-stepper__label",
+    "z-stepper__description"
+  ],
+  "a11y": "Lista ordenada con nombre; el paso actual lleva aria-current=step y cada paso anuncia su estado con texto oculto visualmente.",
+  "examples": [
+    {
+      "title": "Alta en tres pasos",
+      "code": "<Stepper\n  current={1}\n  steps={[\n    { label: \"Account\", description: \"Email and password\" },\n    { label: \"Profile\" },\n    { label: \"Confirm\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo."
+}

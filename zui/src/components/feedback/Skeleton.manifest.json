@@ -1,0 +1,71 @@
+{
+  "name": "Skeleton",
+  "group": "feedback",
+  "description": "Marcador de posición mientras llega el contenido.",
+  "import": "import { Skeleton } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "width",
+      "type": "number | string"
+    },
+    {
+      "name": "height",
+      "type": "number | string"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "text",
+        "circular",
+        "rectangular",
+        "rounded"
+      ],
+      "default": "text"
+    },
+    {
+      "name": "animation",
+      "type": "enum",
+      "values": [
+        "pulse",
+        "wave",
+        "none"
+      ],
+      "default": "pulse"
+    },
+    {
+      "name": "lines",
+      "type": "number",
+      "default": 1,
+      "description": "Con `text`: número de líneas; la última queda más corta."
+    }
+  ],
+  "states": [
+    "pulse",
+    "wave"
+  ],
+  "tokens": [
+    "surface-3",
+    "radius-xs",
+    "radius-full",
+    "radius-md",
+    "glass-highlight",
+    "space-2"
+  ],
+  "classes": [
+    "z-skeleton",
+    "z-skeleton-lines"
+  ],
+  "a11y": "aria-hidden: el contenedor debe anunciar la carga con aria-busy.",
+  "examples": [
+    {
+      "title": "Párrafo",
+      "code": "<Skeleton lines={3} />"
+    },
+    {
+      "title": "Fila de lista",
+      "code": "<div aria-busy=\"true\">\n  <Skeleton variant=\"circular\" width={36} />\n  <Skeleton width=\"40%\" />\n  <Skeleton variant=\"rounded\" height={120} animation=\"wave\" />\n</div>"
+    }
+  ],
+  "origin": "Skeleton del design system base."
+}

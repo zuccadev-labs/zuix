@@ -1,0 +1,33 @@
+{
+  "$schema": "./zudocs.schema.json",
+  "name": "Zuix",
+  "tagline": "Componentes, layouts, iconos y documentación con un solo estándar. Cambia la marca, conserva el sistema.",
+  "brand": "dazlabs",
+  "defaultTheme": "dark",
+  "locale": "es",
+  "url": "https://zuix.local",
+  "baseUrl": "/",
+  "logo": { "src": "img/logo.svg", "alt": "Zuix" },
+  "fonts": [
+    "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Poppins:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  ],
+  "docs": {
+    "path": "../docs",
+    "areas": [
+      { "id": "users", "label": "Uso", "icon": "book", "description": "Qué es cada paquete y cómo se usa." },
+      { "id": "agents", "label": "Agentes", "icon": "sparkles", "description": "Reglas, patrones y verificación para agentes de IA." },
+      { "id": "investigations", "label": "Investigación", "icon": "beaker", "description": "Análisis previos y decisiones de arquitectura." },
+      { "id": "package", "label": "Publicación", "icon": "archive-box", "description": "Versionado, build de publicación y contrato público." }
+    ]
+  },
+  "pages": { "components": true, "icons": true, "tokens": true },
+  "home": { "eyebrow": "Suite de UI/UX · marca {brand}", "title": "Un estándar.", "emphasis": "Cualquier marca.", "suite": true },
+  "llms": { "append": "llms.append.md" },
+  "search": { "enabled": true, "languages": ["es", "en"] },
+  "navbar": [
+    { "label": "Componentes", "to": "/components" },
+    { "label": "Iconos", "to": "/icons" },
+    { "label": "Tokens", "to": "/tokens" }
+  ],
+  "footer": "Zuix · suite de UI/UX de DAZLABS"
+}

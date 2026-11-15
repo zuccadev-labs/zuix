@@ -1,0 +1,122 @@
+{
+  "name": "NavList",
+  "group": "navigation",
+  "description": "Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.",
+  "exports": [
+    "NavList",
+    "NavLink"
+  ],
+  "import": "import { NavList, NavLink } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "NavList: nombre accesible."
+    },
+    {
+      "name": "heading",
+      "type": "ReactNode",
+      "description": "NavList: encabezado visible."
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "description": "NavLink: con href pinta un enlace; sin él, un botón."
+    },
+    {
+      "name": "onClick",
+      "type": "(event: MouseEvent<HTMLElement>) => void",
+      "description": "NavLink."
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "NavLink."
+    },
+    {
+      "name": "active",
+      "type": "boolean",
+      "default": false,
+      "description": "NavLink: destino actual."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "NavLink."
+    },
+    {
+      "name": "trailing",
+      "type": "ReactNode",
+      "description": "NavLink: contador o insignia al final."
+    },
+    {
+      "name": "asChild",
+      "type": "boolean",
+      "default": false,
+      "description": "NavLink: fusiona con el hijo (Link de un router)."
+    },
+    {
+      "name": "target",
+      "type": "string"
+    },
+    {
+      "name": "rel",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled"
+  ],
+  "tokens": [
+    "accent",
+    "control-height-md",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-ring",
+    "radius-sm",
+    "row-hover",
+    "space-1",
+    "space-2",
+    "space-3",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-fine",
+    "tracking-wide",
+    "weight-medium",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-navlist",
+    "z-navlist__heading",
+    "z-navlink",
+    "z-navlink__icon",
+    "z-navlink__label",
+    "z-navlink__trailing"
+  ],
+  "a11y": "nav con nombre accesible; el destino activo lleva aria-current=page. Enlaces o botones nativos, con foco visible.",
+  "examples": [
+    {
+      "title": "Barra lateral",
+      "code": "<NavList label=\"Main\" heading=\"Workspace\">\n  <NavLink href=\"/\" icon=\"home\" active>Home</NavLink>\n  <NavLink href=\"/projects\" icon=\"folder\" trailing=\"12\">Projects</NavLink>\n  <NavLink href=\"/settings\" icon=\"cog\">Settings</NavLink>\n</NavList>"
+    },
+    {
+      "title": "Con el Link de un router",
+      "code": "<NavList label=\"Main\">\n  <NavLink asChild icon=\"home\" active>\n    <Link to=\"/\">Home</Link>\n  </NavLink>\n</NavList>"
+    }
+  ],
+  "origin": "Filas de lista y elementos de la barra lateral de zutool."
+}

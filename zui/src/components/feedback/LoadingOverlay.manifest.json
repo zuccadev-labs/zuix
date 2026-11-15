@@ -1,0 +1,64 @@
+{
+  "name": "LoadingOverlay",
+  "group": "feedback",
+  "description": "Capa de espera sobre un contenedor o sobre toda la ventana.",
+  "import": "import { LoadingOverlay } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "visible",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "message",
+      "type": "ReactNode"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Loading",
+      "description": "Nombre accesible cuando no hay mensaje."
+    },
+    {
+      "name": "fullscreen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "blur",
+      "type": "boolean",
+      "default": true,
+      "description": "Difumina lo cubierto."
+    }
+  ],
+  "states": [
+    "visible",
+    "hidden"
+  ],
+  "tokens": [
+    "layer-sticky",
+    "space-3",
+    "scrim",
+    "canvas-fg",
+    "layer-overlay",
+    "text-body",
+    "weight-medium",
+    "surface-3",
+    "accent"
+  ],
+  "classes": [
+    "z-loading-overlay"
+  ],
+  "a11y": "role=\"status\" con aria-live polite. El contenedor necesita position: relative.",
+  "examples": [
+    {
+      "title": "Sobre una tarjeta",
+      "code": "<Card style={{ position: \"relative\" }}>\n  <CardHeader title=\"Usage report\" />\n  <LoadingOverlay visible={isLoading} message=\"Loading report\" />\n</Card>"
+    },
+    {
+      "title": "Pantalla completa",
+      "code": "<LoadingOverlay fullscreen visible={isSigningIn} label=\"Signing in\" />"
+    }
+  ],
+  "origin": "LoadingOverlay del design system base."
+}

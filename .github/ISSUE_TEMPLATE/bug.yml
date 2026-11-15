@@ -1,0 +1,70 @@
+name: Error
+description: Algo no funciona como dice la documentación.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Una vulnerabilidad no se reporta aquí. Ver SECURITY.md.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Paquete
+      multiple: true
+      options:
+        - "@zuccadev-labs/zuix (paraguas)"
+        - "@zuccadev-labs/zuix-tokens"
+        - "@zuccadev-labs/zuix-zicon"
+        - "@zuccadev-labs/zuix-zui"
+        - "@zuccadev-labs/zuix-zout"
+        - "@zuccadev-labs/zuix-zudocs"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión
+      description: Versión del paquete o commit del repositorio.
+    validations:
+      required: true
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Capa
+      options:
+        - Contrato (HTML, CSS, tokens)
+        - Comportamiento sin framework (dom, z-icon)
+        - Binding de React
+        - Herramientas o documentación
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Qué ocurre
+      description: Qué esperabas y qué pasó.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Cómo reproducirlo
+      description: Marcado o código mínimo y pasos. Sin datos privados.
+      render: html
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Entorno
+      description: Navegador y versión, sistema operativo, framework y bundler si aplica.
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Tema y marca
+      description: Si es un problema visual.
+      multiple: true
+      options:
+        - Tema oscuro
+        - Tema claro
+        - Marca por defecto
+        - Otra marca

@@ -1,0 +1,98 @@
+{
+  "name": "Accordion",
+  "group": "navigation",
+  "description": "Secciones plegables apiladas.",
+  "import": "import { Accordion } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "AccordionItem[]",
+      "required": true,
+      "description": "{ value, title, content, icon?, disabled? }"
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": [
+        "single",
+        "multiple"
+      ],
+      "default": "single"
+    },
+    {
+      "name": "value",
+      "type": "string[]",
+      "description": "Secciones abiertas (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string[]) => void"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "default": 3
+    }
+  ],
+  "states": [
+    "open",
+    "closed",
+    "hover",
+    "focus",
+    "disabled"
+  ],
+  "tokens": [
+    "duration-fast",
+    "duration-normal",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-ring",
+    "leading-relaxed",
+    "line",
+    "radius-sm",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-4",
+    "text-body",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-accordion",
+    "z-accordion__item",
+    "z-accordion__trigger",
+    "z-accordion__title",
+    "z-accordion__chevron",
+    "z-accordion__content",
+    "z-accordion__body"
+  ],
+  "a11y": "Radix Accordion: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
+  "examples": [
+    {
+      "title": "Preguntas frecuentes",
+      "code": "<Accordion\n  defaultValue={[\"billing\"]}\n  items={[\n    { value: \"billing\", title: \"How does billing work?\", content: <p>You are charged monthly.</p> },\n    { value: \"cancel\", title: \"Can I cancel anytime?\", content: <p>Yes, from your account settings.</p> },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo; accesibilidad de Radix Accordion.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Preguntas frecuentes (una abierta a la vez; data-type=\"multiple\" permite varias)",
+      "code": "<div class=\"z-accordion\" data-type=\"single\">\n  <div class=\"z-accordion__item\" data-state=\"open\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"faq-1-content\" id=\"faq-1\">\n        <span class=\"z-accordion__title\">How does billing work?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"faq-1-content\" aria-labelledby=\"faq-1\">\n      <div class=\"z-accordion__body\">You are charged monthly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"faq-2-content\" id=\"faq-2\">\n        <span class=\"z-accordion__title\">Can I cancel anytime?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"faq-2-content\" aria-labelledby=\"faq-2\" hidden>\n      <div class=\"z-accordion__body\">Yes, from the billing page.</div>\n    </div>\n  </div>\n</div>"
+    }
+  ]
+}

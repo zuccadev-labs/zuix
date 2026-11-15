@@ -1,0 +1,28 @@
+{
+  "name": "@zuccadev-labs/zuix-example-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Aplicación de ejemplo (React) que ejercita Shell, overlays y carousel; base de las pruebas en navegador.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@zuccadev-labs/zuix-tokens": "workspace:*",
+    "@zuccadev-labs/zuix-zicon": "workspace:*",
+    "@zuccadev-labs/zuix-zout": "workspace:*",
+    "@zuccadev-labs/zuix-zui": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.0.0"
+  }
+}

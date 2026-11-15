@@ -1,0 +1,72 @@
+{
+  "name": "Divider",
+  "group": "content",
+  "description": "Línea separadora entre bloques o entre elementos de una barra.",
+  "import": "import { Divider } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    },
+    {
+      "name": "spacing",
+      "type": "enum",
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "emphasis",
+      "type": "enum",
+      "values": [
+        "subtle",
+        "strong"
+      ],
+      "default": "subtle"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Texto centrado sobre la línea (solo horizontal)."
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "line",
+    "space-3",
+    "fg-subtle",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide",
+    "line-strong",
+    "space-2",
+    "space-4",
+    "space-8"
+  ],
+  "classes": [
+    "z-divider"
+  ],
+  "a11y": "role=\"separator\" con aria-orientation.",
+  "examples": [
+    {
+      "title": "Horizontal con texto",
+      "code": "<Divider spacing=\"md\">or</Divider>"
+    },
+    {
+      "title": "Vertical en una barra",
+      "code": "<div style={{ display: \"flex\", alignItems: \"center\" }}>\n  <IconButton icon=\"bold\" label=\"Bold\" />\n  <Divider orientation=\"vertical\" spacing=\"sm\" />\n  <IconButton icon=\"link\" label=\"Insert link\" />\n</div>"
+    }
+  ],
+  "origin": "Divider de zutool."
+}

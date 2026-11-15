@@ -1,0 +1,94 @@
+{
+  "name": "Grid",
+  "group": "layout",
+  "description": "Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.",
+  "import": "import { Grid, Stack, Inline } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "Grid",
+    "Stack",
+    "Inline"
+  ],
+  "props": [
+    {
+      "name": "Grid.min",
+      "type": "number | string",
+      "default": 240,
+      "description": "Ancho mínimo de celda; las columnas se calculan solas."
+    },
+    {
+      "name": "gap",
+      "type": "enum",
+      "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        12,
+        16,
+        20
+      ],
+      "description": "Paso de la escala de espaciado."
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end",
+        "stretch"
+      ]
+    },
+    {
+      "name": "Inline.justify",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end",
+        "between"
+      ]
+    },
+    {
+      "name": "Inline.wrap",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "as",
+      "type": "ElementType",
+      "default": "div"
+    }
+  ],
+  "tokens": [
+    "space-0",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-5",
+    "space-6",
+    "space-8",
+    "space-10",
+    "space-12",
+    "space-16",
+    "space-20"
+  ],
+  "classes": [
+    "z-grid",
+    "z-stack",
+    "z-inline"
+  ],
+  "examples": [
+    {
+      "title": "Rejilla de métricas",
+      "code": "<Grid min={200} gap={4}>\n  <StatTile label=\"Users\" value=\"1,284\" />\n  <StatTile label=\"Revenue\" value=\"$12.4k\" />\n</Grid>"
+    }
+  ],
+  "origin": "`kpi-grid` y `grid-2` de ui-glass."
+}

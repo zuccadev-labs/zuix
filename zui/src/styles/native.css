@@ -1,0 +1,43 @@
+/*
+  Capa para el contrato HTML sin framework: neutraliza los estilos por defecto del navegador en
+  <dialog>, [popover], <button> usados como piezas de zui y <z-icon>. Va antes que los grupos, así
+  que cualquier regla de componente la sobrescribe.
+*/
+@layer zui.native {
+  svg.z-icon { fill: currentColor; flex-shrink: 0; }
+  z-icon { display: contents; }
+
+  dialog.z-modal, dialog.z-drawer { padding: 0; max-width: none; }
+  dialog.z-drawer { inset: auto; margin: 0; max-height: none; height: auto; }
+  /* !important: esta capa va antes que los grupos y `display` del componente no debe reabrir un diálogo cerrado. */
+  dialog.z-modal:not([open]), dialog.z-drawer:not([open]) { display: none !important; }
+  dialog.z-modal::backdrop, dialog.z-drawer::backdrop {
+    background: var(--z-scrim);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  }
+
+  .z-popover[popover], .z-menu[popover], .z-tooltip[popover] { position: fixed; inset: auto; margin: 0; }
+  .z-menu[popover], .z-popover[popover] { max-height: calc(100dvh - var(--z-space-4)); }
+  /* Listbox de Select y Combobox como [popover]: sin el relleno del navegador y oculto mientras no está abierto. */
+  .z-listbox[popover] { position: fixed; inset: auto; margin: 0; padding: 0; }
+  .z-listbox[popover]:not(:popover-open) { display: none !important; }
+  .z-listbox__option[hidden], .z-listbox__group[hidden], .z-listbox__viewport[hidden], .z-input__action[hidden] { display: none !important; }
+  .z-toast-viewport[popover] { inset: auto; padding: 0; border: 0; background: transparent; overflow: visible; }
+  .z-toast-viewport[popover]:not(:popover-open) { display: none !important; }
+
+  :where(button).z-menu__item, :where(button).z-tabs__tab, :where(button).z-accordion__trigger {
+    border: 0; background: transparent; font: inherit; color: inherit; text-align: inherit;
+  }
+  :where(button).z-menu__item, :where(button).z-accordion__trigger { width: 100%; }
+  .z-accordion__content[hidden], .z-tabs__panel[hidden] { display: none !important; }
+
+  /* Paleta de comandos como <dialog>: mismo sitio y velo que el binding de React. */
+  dialog.z-palette { padding: 0; bottom: auto; max-width: none; max-height: none; }
+  dialog.z-palette:not([open]) { display: none !important; }
+  dialog.z-palette::backdrop {
+    background: color-mix(in srgb, var(--z-scrim) 50%, transparent);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
+  /* Lo que React no monta, aquí se oculta: comandos filtrados y ramas plegadas. */
+  .z-palette__item[hidden], .z-palette__group[hidden], .z-palette__empty[hidden], .z-tree__group[hidden] { display: none !important; }
+}

@@ -1,0 +1,125 @@
+{
+  "name": "IconButton",
+  "group": "actions",
+  "description": "Botón cuadrado de solo icono con nombre accesible obligatorio.",
+  "import": "import { IconButton } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "icon",
+      "type": "IconName",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible; también es el título nativo."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "primary",
+        "secondary",
+        "ghost",
+        "danger"
+      ],
+      "default": "ghost"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "iconVariant",
+      "type": "enum",
+      "values": [
+        "outline",
+        "solid"
+      ],
+      "default": "outline"
+    },
+    {
+      "name": "active",
+      "type": "boolean",
+      "default": false,
+      "description": "Marca el botón como activo (panel abierto, filtro aplicado)."
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "...rest",
+      "type": "ButtonHTMLAttributes"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "active",
+    "loading"
+  ],
+  "tokens": [
+    "surface-2",
+    "surface-3",
+    "fg",
+    "line",
+    "control-height-md",
+    "space-2",
+    "space-4",
+    "button-radius",
+    "text-body",
+    "weight-semibold",
+    "duration-fast",
+    "ease-standard",
+    "focus-ring",
+    "control-height-sm",
+    "space-3",
+    "space-1",
+    "text-small",
+    "control-height-lg",
+    "space-5",
+    "text-title",
+    "button-primary-bg",
+    "button-primary-bg-hover",
+    "button-primary-fg",
+    "shadow-sm",
+    "fg-muted",
+    "danger-soft",
+    "danger",
+    "accent-soft",
+    "accent",
+    "radius-full"
+  ],
+  "classes": [
+    "z-btn",
+    "z-btn--icon"
+  ],
+  "a11y": "aria-label y title toman `label`. El icono es decorativo.",
+  "examples": [
+    {
+      "title": "Cerrar",
+      "code": "<IconButton icon=\"x-mark\" label=\"Close\" onClick={() => setOpen(false)} />"
+    },
+    {
+      "title": "Activo",
+      "code": "<IconButton icon=\"star\" iconVariant=\"solid\" label=\"Remove from favourites\" active />"
+    },
+    {
+      "title": "Destructivo pequeño",
+      "code": "<IconButton icon=\"trash\" label=\"Delete row\" variant=\"danger\" size=\"sm\" />"
+    }
+  ],
+  "origin": "IconButton de zutool."
+}

@@ -1,0 +1,106 @@
+{
+  "name": "Input",
+  "group": "forms",
+  "description": "Campo de texto de una línea con icono y contenido final opcionales.",
+  "import": "import { Input } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Icono decorativo a la izquierda."
+    },
+    {
+      "name": "trailing",
+      "type": "ReactNode",
+      "description": "Contenido a la derecha (unidad, atajo, botón)."
+    },
+    {
+      "name": "mono",
+      "type": "boolean",
+      "default": false,
+      "description": "Tipografía monoespaciada."
+    },
+    {
+      "name": "inputClassName",
+      "type": "string",
+      "description": "Clase del input; `className` va a la envoltura."
+    },
+    {
+      "name": "...rest",
+      "type": "InputHTMLAttributes",
+      "description": "value, onChange, type, placeholder, disabled, ref, etc."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "control-height-md",
+    "space-3",
+    "space-2",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "text-body",
+    "duration-fast",
+    "ease-standard",
+    "control-border-hover",
+    "accent",
+    "focus-ring",
+    "surface",
+    "danger",
+    "danger-soft",
+    "control-height-sm",
+    "text-small",
+    "control-height-lg",
+    "space-4",
+    "text-title",
+    "font-mono",
+    "fg-subtle",
+    "space-1",
+    "radius-xs",
+    "fg-muted",
+    "surface-3",
+    "radius-full"
+  ],
+  "classes": [
+    "z-input"
+  ],
+  "a11y": "input nativo. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin Field necesita aria-label.",
+  "examples": [
+    {
+      "title": "Básico",
+      "code": "<Input placeholder=\"Project name\" value={name} onChange={(event) => setName(event.target.value)} />"
+    },
+    {
+      "title": "Con icono y unidad",
+      "code": "<Input type=\"number\" icon=\"clock\" trailing=\"min\" defaultValue={30} aria-label=\"Duration\" />"
+    },
+    {
+      "title": "Inválido, monoespaciado",
+      "code": "<Input mono invalid defaultValue=\"sk_live_\" aria-label=\"API key\" />"
+    }
+  ],
+  "origin": "Input de zutool (icono inicial, mono, invalid) y del design system base (tamaños, icono final)."
+}

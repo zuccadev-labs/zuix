@@ -1,0 +1,104 @@
+{
+  "name": "Panel",
+  "group": "content",
+  "description": "Panel de cristal líquido: la pieza de cromo sobre la que flota la interfaz.",
+  "import": "import { Panel } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "as",
+      "type": "enum",
+      "values": [
+        "section",
+        "aside",
+        "header",
+        "footer",
+        "nav",
+        "div"
+      ],
+      "default": "section"
+    },
+    {
+      "name": "material",
+      "type": "enum",
+      "values": [
+        "glass",
+        "solid"
+      ],
+      "default": "glass",
+      "description": "`glass` para cromo; `solid` para texto denso."
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Controles a la derecha de la cabecera."
+    },
+    {
+      "name": "padding",
+      "type": "enum",
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "headingLevel",
+      "type": "2 | 3 | 4",
+      "default": 2
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "space-3",
+    "fg-muted",
+    "text-small",
+    "leading-snug",
+    "space-2",
+    "space-5",
+    "space-4",
+    "panel-radius",
+    "fg",
+    "space-8",
+    "font-display",
+    "text-heading-lg",
+    "weight-semibold",
+    "tracking-tight",
+    "glass-bg",
+    "glass-border",
+    "glass-blur",
+    "glass-saturate",
+    "glass-highlight",
+    "glass-specular",
+    "glass-shadow",
+    "reading-bg",
+    "line",
+    "overlay"
+  ],
+  "classes": [
+    "z-panel"
+  ],
+  "a11y": "Elemento semántico elegido con `as`. Sin `title`, un section o aside necesita aria-label.",
+  "examples": [
+    {
+      "title": "Con título y acciones",
+      "code": "<Panel title=\"Traffic\" description=\"Last 7 days\" actions={<Button size=\"sm\" icon=\"arrow-down-tray\">Export</Button>}>\n  <StatTile variant=\"soft\" label=\"Visits\" value=\"48,120\" />\n</Panel>"
+    },
+    {
+      "title": "Lateral opaco",
+      "code": "<Panel as=\"aside\" material=\"solid\" padding=\"lg\" aria-label=\"Release notes\">\n  <p>Version 2.4 adds keyboard navigation to every table.</p>\n</Panel>"
+    }
+  ],
+  "origin": "GlassPanel de ui-glass sobre el material liquid de zutool."
+}

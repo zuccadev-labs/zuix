@@ -1,0 +1,101 @@
+{
+  "name": "Textarea",
+  "group": "forms",
+  "description": "Campo de texto de varias líneas, con crecimiento automático opcional.",
+  "import": "import { Textarea } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "mono",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "autoRows",
+      "type": "boolean",
+      "default": false,
+      "description": "Crece con las líneas del valor hasta `maxRows`."
+    },
+    {
+      "name": "maxRows",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "resize",
+      "type": "enum",
+      "values": [
+        "none",
+        "vertical"
+      ],
+      "default": "vertical"
+    },
+    {
+      "name": "...rest",
+      "type": "TextareaHTMLAttributes"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "space-2",
+    "space-3",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "text-body",
+    "leading-normal",
+    "duration-fast",
+    "ease-standard",
+    "fg-subtle",
+    "control-border-hover",
+    "accent",
+    "focus-ring",
+    "surface",
+    "danger",
+    "danger-soft",
+    "space-1",
+    "text-small",
+    "font-mono"
+  ],
+  "classes": [
+    "z-textarea"
+  ],
+  "a11y": "textarea nativo. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
+  "examples": [
+    {
+      "title": "Básico",
+      "code": "<Textarea placeholder=\"Describe the change\" rows={4} aria-label=\"Description\" />"
+    },
+    {
+      "title": "Crece con el contenido",
+      "code": "<Textarea autoRows maxRows={12} value={notes} onChange={(event) => setNotes(event.target.value)} aria-label=\"Notes\" />"
+    }
+  ],
+  "origin": "Textarea de zutool."
+}

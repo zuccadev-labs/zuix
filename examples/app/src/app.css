@@ -1,0 +1,38 @@
+/* Estilos propios de la aplicación de ejemplo. Solo maquetación y tokens: ningún color literal. */
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--z-canvas); overflow: hidden; }
+*, *::before, *::after { box-sizing: border-box; }
+
+.app-screen { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.app-screen > * { flex: 1 1 auto; min-height: 0; }
+
+.app-brand { font-family: var(--z-font-display); font-weight: var(--z-weight-bold); letter-spacing: var(--z-tracking-tight); text-transform: capitalize; }
+.app-logo { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: var(--z-radius-md); background: var(--z-accent-soft); color: var(--z-accent); }
+.app-user { display: flex; align-items: center; gap: var(--z-space-2); padding: var(--z-space-1); min-width: 0; }
+.app-user__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--z-text-small); font-weight: var(--z-weight-semibold); }
+
+.app-text { margin: 0; color: var(--z-fg-muted); font-size: var(--z-text-small); line-height: var(--z-leading-relaxed); }
+.app-muted { margin: 0; color: var(--z-fg-muted); font-size: var(--z-text-small); }
+.app-meta { display: grid; grid-template-columns: auto 1fr; gap: var(--z-space-1) var(--z-space-4); margin: 0; font-size: var(--z-text-small); }
+.app-meta dt { color: var(--z-fg-subtle); }
+.app-meta dd { margin: 0; font-family: var(--z-font-mono); }
+
+.app-dropzone {
+  display: grid; place-items: center; min-height: 96px; padding: var(--z-space-4);
+  border: 1px dashed var(--z-line-strong); border-radius: var(--z-radius-md);
+  color: var(--z-fg-muted); font-size: var(--z-text-small); user-select: none;
+}
+.app-dropzone:focus-visible { outline: none; box-shadow: var(--z-focus-ring); }
+
+.app-slide { height: 100%; }
+.app-cover { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
+
+.app-editor { display: flex; height: 100%; min-height: 0; }
+.app-pane-slot { display: flex; min-width: 0; min-height: 0; }
+.app-pane-slot > * { flex: 1 1 auto; }
+.app-pane-pad { padding: var(--z-space-2); }
+.app-pane-title { font-family: var(--z-font-mono); color: var(--z-fg); }
+.app-spacer { flex: 1 1 auto; }
+.app-code { display: flex; width: 100%; height: 100%; }
+/* Tarjetas de demostración: el disparador conserva su ancho natural. */
+.app-demo > .z-btn { align-self: flex-start; }

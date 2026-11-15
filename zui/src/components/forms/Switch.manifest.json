@@ -1,0 +1,95 @@
+{
+  "name": "Switch",
+  "group": "forms",
+  "description": "Interruptor de activación inmediata.",
+  "import": "import { Switch } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultChecked",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onCheckedChange",
+      "type": "(checked: boolean) => void"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Etiqueta visible. Sin ella hace falta aria-label."
+    },
+    {
+      "name": "labelPosition",
+      "type": "enum",
+      "values": [
+        "start",
+        "end"
+      ],
+      "default": "end"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "checked",
+    "disabled"
+  ],
+  "tokens": [
+    "space-2",
+    "fg",
+    "text-body",
+    "weight-medium",
+    "text-small",
+    "radius-full",
+    "line-strong",
+    "duration-normal",
+    "ease-standard",
+    "duration-fast",
+    "fg-subtle",
+    "focus-ring",
+    "accent-solid",
+    "fg-on-accent",
+    "shadow-sm",
+    "ease-spring"
+  ],
+  "classes": [
+    "z-switch"
+  ],
+  "a11y": "Radix Switch: role switch, Espacio o Enter para alternar.",
+  "examples": [
+    {
+      "title": "Con etiqueta",
+      "code": "<Switch checked={enabled} onCheckedChange={setEnabled}>Automatic updates</Switch>"
+    },
+    {
+      "title": "Pequeño, sin etiqueta visible",
+      "code": "<Switch size=\"sm\" aria-label=\"Enable rule\" defaultChecked />"
+    }
+  ],
+  "origin": "Switch de zutool, sobre Switch de radix-ui."
+}

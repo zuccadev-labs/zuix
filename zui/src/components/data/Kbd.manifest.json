@@ -1,0 +1,58 @@
+{
+  "name": "Kbd",
+  "group": "data",
+  "description": "Tecla o atajo de teclado.",
+  "import": "import { Kbd } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "keys",
+      "type": "string",
+      "description": "Combinación separada por espacios; una tecla por palabra."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Una sola tecla."
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "line-strong",
+    "radius-xs",
+    "surface-2",
+    "fg-muted",
+    "font-mono",
+    "text-caption",
+    "leading-snug",
+    "line",
+    "text-fine",
+    "space-1"
+  ],
+  "classes": [
+    "z-kbd",
+    "z-kbd-group"
+  ],
+  "a11y": "Elemento kbd nativo.",
+  "examples": [
+    {
+      "title": "Una tecla",
+      "code": "<Kbd>Esc</Kbd>"
+    },
+    {
+      "title": "Atajo",
+      "code": "<Kbd keys=\"Ctrl Shift P\" />"
+    }
+  ],
+  "origin": "Kbd y Shortcut de zutool."
+}

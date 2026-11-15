@@ -1,0 +1,21 @@
+node_modules
+.docusaurus
+.zudocs
+build
+*.tsbuildinfo
+tests/browser/shots/
+.tmp/
+dist
+tests/html/shots/
+__pycache__/
+*.pyc
+*.tgz
+.env
+.env.*
+
+# Material interno: no entra en un repositorio que puede hacerse público.
+docs/*.pptx
+# Piloto de zudocs sobre Zenith: Zenith es un repositorio privado, así que el piloto entero (script de
+# migración, configuración y copia migrada) vive solo en local.
+examples/zenith-docs/
+# Informe de la migración: lista archivos y enlaces del proyecto de origen.

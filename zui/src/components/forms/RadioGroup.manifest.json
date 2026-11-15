@@ -1,0 +1,74 @@
+{
+  "name": "RadioGroup",
+  "group": "forms",
+  "description": "Grupo de opciones excluyentes; contiene componentes `Radio`.",
+  "import": "import { RadioGroup, Radio } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor controlado."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void"
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": [
+        "vertical",
+        "horizontal"
+      ],
+      "default": "vertical"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "aria-label",
+      "type": "string",
+      "description": "Nombre accesible si no está dentro de un Field."
+    }
+  ],
+  "states": [
+    "rest",
+    "invalid",
+    "disabled"
+  ],
+  "tokens": [
+    "danger",
+    "space-2",
+    "space-4"
+  ],
+  "classes": [
+    "z-radio-group"
+  ],
+  "a11y": "Radix RadioGroup: role radiogroup, foco itinerante con flechas.",
+  "examples": [
+    {
+      "title": "Vertical",
+      "code": "<RadioGroup aria-label=\"Plan\" defaultValue=\"team\">\n  <Radio value=\"solo\">Solo</Radio>\n  <Radio value=\"team\" description=\"Up to 10 members.\">Team</Radio>\n  <Radio value=\"org\" disabled>Organization</Radio>\n</RadioGroup>"
+    },
+    {
+      "title": "Horizontal dentro de Field",
+      "code": "<Field label=\"Density\">\n  <RadioGroup orientation=\"horizontal\" value={density} onValueChange={setDensity}>\n    <Radio value=\"compact\">Compact</Radio>\n    <Radio value=\"comfortable\">Comfortable</Radio>\n  </RadioGroup>\n</Field>"
+    }
+  ],
+  "origin": "Nuevo, sobre RadioGroup de radix-ui."
+}

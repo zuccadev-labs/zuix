@@ -1,0 +1,91 @@
+{
+  "name": "Progress",
+  "group": "data",
+  "description": "Barra de avance de una tarea, determinada o indeterminada.",
+  "import": "import { Progress } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | null",
+      "description": "Sin valor, la barra es indeterminada."
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
+      "default": "accent"
+    },
+    {
+      "name": "showValue",
+      "type": "boolean",
+      "default": false,
+      "description": "Muestra el porcentaje."
+    }
+  ],
+  "states": [
+    "loading",
+    "complete",
+    "indeterminate"
+  ],
+  "tokens": [
+    "fg-muted",
+    "surface-3",
+    "accent",
+    "accent-soft",
+    "success",
+    "success-soft",
+    "warning",
+    "warning-soft",
+    "danger",
+    "danger-soft",
+    "info",
+    "info-soft",
+    "space-2",
+    "radius-full",
+    "duration-slow",
+    "ease-standard",
+    "text-caption"
+  ],
+  "classes": [
+    "z-progress"
+  ],
+  "a11y": "role=\"progressbar\" con aria-valuenow; sin valor queda indeterminada.",
+  "examples": [
+    {
+      "title": "Determinada",
+      "code": "<Progress label=\"Upload progress\" value={uploaded} max={total} showValue />"
+    },
+    {
+      "title": "Indeterminada",
+      "code": "<Progress label=\"Syncing\" size=\"sm\" />"
+    }
+  ],
+  "origin": "Barra de progreso de zutool."
+}

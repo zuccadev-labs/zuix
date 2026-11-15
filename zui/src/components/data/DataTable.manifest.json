@@ -1,0 +1,163 @@
+{
+  "name": "DataTable",
+  "group": "data",
+  "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables y filas activables.",
+  "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "rows",
+      "type": "T[]",
+      "required": true
+    },
+    {
+      "name": "columns",
+      "type": "DataTableColumn<T>[]",
+      "required": true,
+      "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono? }"
+    },
+    {
+      "name": "rowKey",
+      "type": "(row: T, index: number) => string | number",
+      "required": true
+    },
+    {
+      "name": "sort",
+      "type": "SortState | null",
+      "description": "Orden controlado: { key, direction }."
+    },
+    {
+      "name": "defaultSort",
+      "type": "SortState | null"
+    },
+    {
+      "name": "onSortChange",
+      "type": "(sort: SortState | null) => void"
+    },
+    {
+      "name": "manualSort",
+      "type": "boolean",
+      "default": false,
+      "description": "No reordena: el orden lo aplica quien provee las filas."
+    },
+    {
+      "name": "onRowClick",
+      "type": "(row: T, index: number) => void"
+    },
+    {
+      "name": "isRowSelected",
+      "type": "(row: T) => boolean"
+    },
+    {
+      "name": "empty",
+      "type": "ReactNode",
+      "default": "No data"
+    },
+    {
+      "name": "sortLabel",
+      "type": "string",
+      "default": "Sort"
+    },
+    {
+      "name": "density",
+      "type": "enum",
+      "values": [
+        "compact",
+        "comfortable"
+      ],
+      "default": "comfortable"
+    },
+    {
+      "name": "framed",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "striped",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "stickyHeader",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "fixed",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "caption",
+      "type": "ReactNode"
+    },
+    {
+      "name": "captionHidden",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "sorted",
+    "selected",
+    "empty"
+  ],
+  "tokens": [
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "card-shadow",
+    "space-3",
+    "fg",
+    "text-small",
+    "space-2",
+    "fg-muted",
+    "line",
+    "fg-subtle",
+    "text-fine",
+    "weight-bold",
+    "tracking-wide",
+    "duration-fast",
+    "ease-standard",
+    "font-mono",
+    "surface-solid",
+    "surface",
+    "row-hover",
+    "accent-soft",
+    "accent-ring",
+    "surface-3",
+    "space-8",
+    "space-4",
+    "space-1",
+    "radius-xs",
+    "surface-2",
+    "focus-ring",
+    "accent"
+  ],
+  "classes": [
+    "z-table",
+    "z-table-wrap"
+  ],
+  "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio.",
+  "examples": [
+    {
+      "title": "Ordenable",
+      "code": "const users = [\n  { id: 1, name: \"Ana Ruiz\", seats: 3, joined: new Date(\"2025-03-02\") },\n  { id: 2, name: \"Leo Park\", seats: 1, joined: new Date(\"2026-01-15\") },\n];\n\n<DataTable\n  caption=\"Users\"\n  captionHidden\n  rows={users}\n  rowKey={(user) => user.id}\n  defaultSort={{ key: \"name\", direction: \"asc\" }}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (user) => user.name, sortable: true },\n    { key: \"seats\", header: \"Seats\", accessor: (user) => user.seats, sortable: true, align: \"end\", mono: true },\n    { key: \"joined\", header: \"Joined\", accessor: (user) => user.joined, sortable: true },\n  ]}\n/>"
+    },
+    {
+      "title": "Filas activables y celda propia",
+      "code": "<DataTable\n  rows={orders}\n  rowKey={(order) => order.id}\n  onRowClick={(order) => openOrder(order.id)}\n  isRowSelected={(order) => order.id === selectedId}\n  empty=\"No orders yet\"\n  columns={[\n    { key: \"id\", header: \"Order\", accessor: (order) => order.id, mono: true, width: \"120px\" },\n    { key: \"status\", header: \"Status\", render: (order) => <Badge tone={order.paid ? \"success\" : \"warning\"}>{order.paid ? \"Paid\" : \"Pending\"}</Badge> },\n  ]}\n/>"
+    }
+  ],
+  "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Ordenable (data-sort en la cabecera, data-sort-value en la celda; emite z:sort)",
+      "code": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Users</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" aria-sort=\"ascending\" data-key=\"name\">\n          <button type=\"button\" class=\"z-table__sort\" data-active=\"true\">\n            <span>Name</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Seats</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" aria-sort=\"none\" data-key=\"joined\" data-sort=\"date\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Joined</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Ana Ruiz</td>\n        <td data-align=\"end\" data-mono=\"true\">3</td>\n        <td data-sort-value=\"2025-03-02\">Mar 2, 2025</td>\n      </tr>\n      <tr>\n        <td>Leo Park</td>\n        <td data-align=\"end\" data-mono=\"true\">12</td>\n        <td data-sort-value=\"2026-01-15\">Jan 15, 2026</td>\n      </tr>\n      <tr>\n        <td>Mia Chen</td>\n        <td data-align=\"end\" data-mono=\"true\">1</td>\n        <td data-sort-value=\"2024-11-30\">Nov 30, 2024</td>\n      </tr>\n      <tr>\n        <td>Zoe Katz</td>\n        <td data-align=\"end\" data-mono=\"true\">7</td>\n        <td data-sort-value=\"2025-08-09\">Aug 9, 2025</td>\n      </tr>\n    </tbody>\n  </table>\n</div>"
+    }
+  ]
+}

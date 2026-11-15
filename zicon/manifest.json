@@ -1,0 +1,6570 @@
+{
+ "name": "@zuccadev-labs/zuix-zicon",
+ "source": "Dazicon",
+ "box": 24,
+ "count": 346,
+ "variants": [
+  "outline",
+  "solid"
+ ],
+ "usage": "import { Icon } from \"@zuccadev-labs/zuix-zicon\"; <Icon name=\"magnifying-glass\" size={16} />",
+ "categories": {
+  "arrows": {
+   "en": "Arrows",
+   "es": "Flechas"
+  },
+  "documents": {
+   "en": "Documents",
+   "es": "Documentos"
+  },
+  "math": {
+   "en": "Math",
+   "es": "Matemática"
+  },
+  "sort": {
+   "en": "Sort",
+   "es": "Organización"
+  },
+  "buildings": {
+   "en": "Buildings",
+   "es": "Edificios"
+  },
+  "ecommerce": {
+   "en": "E-commerce",
+   "es": "Comercio"
+  },
+  "media": {
+   "en": "Media",
+   "es": "Multimedia"
+  },
+  "symbols": {
+   "en": "Symbols",
+   "es": "Símbolos"
+  },
+  "communication": {
+   "en": "Communication",
+   "es": "Comunicación"
+  },
+  "editor": {
+   "en": "Editor",
+   "es": "Edición"
+  },
+  "misc": {
+   "en": "Miscellaneous",
+   "es": "Misceláneos"
+  },
+  "system": {
+   "en": "System",
+   "es": "Sistema"
+  },
+  "design": {
+   "en": "Design",
+   "es": "Diseño"
+  },
+  "charts": {
+   "en": "Charts",
+   "es": "Gráficos"
+  },
+  "others": {
+   "en": "Others",
+   "es": "Otros"
+  },
+  "time": {
+   "en": "Time",
+   "es": "Tiempo"
+  },
+  "devices": {
+   "en": "Devices",
+   "es": "Dispositivos"
+  },
+  "maps": {
+   "en": "Maps",
+   "es": "Mapas"
+  },
+  "security": {
+   "en": "Security",
+   "es": "Seguridad"
+  },
+  "user": {
+   "en": "User",
+   "es": "Usuario"
+  }
+ },
+ "icons": [
+  {
+   "name": "academic-cap",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "academic",
+    "cap",
+    "académico",
+    "birrete",
+    "learn",
+    "tutorial",
+    "education",
+    "aprender",
+    "educación"
+   ],
+   "emoji": [
+    "🎓"
+   ]
+  },
+  {
+   "name": "adjustments-horizontal",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "adjustments",
+    "horizontal",
+    "ajustes",
+    "filters",
+    "settings",
+    "filtros",
+    "controles"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "adjustments-vertical",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "adjustments",
+    "vertical",
+    "ajustes"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "ant",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ant",
+    "hormiga",
+    "bug",
+    "issue",
+    "defect",
+    "error",
+    "fallo"
+   ],
+   "emoji": [
+    "🐛",
+    "🐞"
+   ]
+  },
+  {
+   "name": "archive-box",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "archive",
+    "box",
+    "archivo",
+    "caja",
+    "storage",
+    "package",
+    "almacén",
+    "paquete"
+   ],
+   "emoji": [
+    "📦"
+   ]
+  },
+  {
+   "name": "archive-box-arrow-down",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "archive",
+    "box",
+    "arrow",
+    "down",
+    "archivo",
+    "caja",
+    "flecha",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "archive-drawer",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "archive",
+    "drawer",
+    "archivo",
+    "cajón"
+   ],
+   "emoji": [
+    "🗄️"
+   ]
+  },
+  {
+   "name": "arrow-down",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "flecha",
+    "abajo"
+   ],
+   "emoji": [
+    "⬇️"
+   ]
+  },
+  {
+   "name": "arrow-down-circle",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "circle",
+    "flecha",
+    "abajo",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-down-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "left",
+    "flecha",
+    "abajo",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-down-on-square",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "on",
+    "square",
+    "flecha",
+    "abajo",
+    "sobre",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-down-on-square-stack",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "on",
+    "square",
+    "stack",
+    "flecha",
+    "abajo",
+    "sobre",
+    "cuadrado",
+    "pila"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-down-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "right",
+    "flecha",
+    "abajo",
+    "derecha"
+   ],
+   "emoji": [
+    "↘️"
+   ]
+  },
+  {
+   "name": "arrow-down-tray",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "down",
+    "tray",
+    "flecha",
+    "abajo",
+    "bandeja",
+    "download",
+    "descargar"
+   ],
+   "emoji": [
+    "💾"
+   ]
+  },
+  {
+   "name": "arrow-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "left",
+    "flecha",
+    "izquierda"
+   ],
+   "emoji": [
+    "⬅️"
+   ]
+  },
+  {
+   "name": "arrow-left-circle",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "left",
+    "circle",
+    "flecha",
+    "izquierda",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-left-end-on-rectangle",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "left",
+    "end",
+    "on",
+    "rectangle",
+    "flecha",
+    "izquierda",
+    "fin",
+    "sobre",
+    "rectángulo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-left-start-on-rectangle",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "left",
+    "start",
+    "on",
+    "rectangle",
+    "flecha",
+    "izquierda",
+    "inicio",
+    "sobre",
+    "rectángulo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-down",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "down",
+    "flecha",
+    "larga",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-down-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "down",
+    "left",
+    "flecha",
+    "larga",
+    "abajo",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-down-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "down",
+    "right",
+    "flecha",
+    "larga",
+    "abajo",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "left",
+    "flecha",
+    "larga",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "right",
+    "flecha",
+    "larga",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-up",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "up",
+    "flecha",
+    "larga",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-up-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "up",
+    "left",
+    "flecha",
+    "larga",
+    "arriba",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-long-up-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "long",
+    "up",
+    "right",
+    "flecha",
+    "larga",
+    "arriba",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-path",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "path",
+    "flecha",
+    "ciclo",
+    "sync",
+    "reload",
+    "refresh",
+    "retry",
+    "sincronizar",
+    "recargar",
+    "reintentar"
+   ],
+   "emoji": [
+    "🔄",
+    "🔃"
+   ]
+  },
+  {
+   "name": "arrow-path-rounded-square-horizontal",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "path",
+    "rounded",
+    "square",
+    "horizontal",
+    "flecha",
+    "ciclo",
+    "redondeado",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-path-rounded-square-vertical",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "path",
+    "rounded",
+    "square",
+    "vertical",
+    "flecha",
+    "ciclo",
+    "redondeado",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-refresh",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "refresh",
+    "flecha",
+    "refrescar",
+    "reload",
+    "undo",
+    "reset",
+    "recargar",
+    "restablecer"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "right",
+    "flecha",
+    "derecha"
+   ],
+   "emoji": [
+    "➡️"
+   ]
+  },
+  {
+   "name": "arrow-right-circle",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "right",
+    "circle",
+    "flecha",
+    "derecha",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-right-end-on-rectangle",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "right",
+    "end",
+    "on",
+    "rectangle",
+    "flecha",
+    "derecha",
+    "fin",
+    "sobre",
+    "rectángulo",
+    "login",
+    "sign in",
+    "enter",
+    "iniciar sesión",
+    "entrar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-right-start-on-rectangle",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "right",
+    "start",
+    "on",
+    "rectangle",
+    "flecha",
+    "derecha",
+    "inicio",
+    "sobre",
+    "rectángulo",
+    "logout",
+    "sign out",
+    "exit",
+    "cerrar sesión",
+    "salir"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-top-left-down-square",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "top",
+    "left",
+    "down",
+    "square",
+    "flecha",
+    "superior",
+    "izquierda",
+    "abajo",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-top-left-on-square",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "top",
+    "left",
+    "on",
+    "square",
+    "flecha",
+    "superior",
+    "izquierda",
+    "sobre",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-top-right-down-square",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "top",
+    "right",
+    "down",
+    "square",
+    "flecha",
+    "superior",
+    "derecha",
+    "abajo",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-top-right-on-square",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "top",
+    "right",
+    "on",
+    "square",
+    "flecha",
+    "superior",
+    "derecha",
+    "sobre",
+    "cuadrado",
+    "external link",
+    "open in new",
+    "enlace externo",
+    "abrir en nueva pestaña"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-trending-down-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "trending",
+    "down",
+    "left",
+    "flecha",
+    "tendencia",
+    "abajo",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-trending-down-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "trending",
+    "down",
+    "right",
+    "flecha",
+    "tendencia",
+    "abajo",
+    "derecha",
+    "decline",
+    "decrease",
+    "caída",
+    "bajada"
+   ],
+   "emoji": [
+    "📉"
+   ]
+  },
+  {
+   "name": "arrow-trending-up-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "trending",
+    "up",
+    "left",
+    "flecha",
+    "tendencia",
+    "arriba",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-trending-up-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "trending",
+    "up",
+    "right",
+    "flecha",
+    "tendencia",
+    "arriba",
+    "derecha",
+    "growth",
+    "increase",
+    "crecimiento",
+    "subida"
+   ],
+   "emoji": [
+    "📈"
+   ]
+  },
+  {
+   "name": "arrow-turn-down-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "down",
+    "left",
+    "flecha",
+    "giro",
+    "abajo",
+    "izquierda",
+    "enter",
+    "return",
+    "intro"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-down-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "down",
+    "right",
+    "flecha",
+    "giro",
+    "abajo",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-left-down",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "left",
+    "down",
+    "flecha",
+    "giro",
+    "izquierda",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-left-up",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "left",
+    "up",
+    "flecha",
+    "giro",
+    "izquierda",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-right-down",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "right",
+    "down",
+    "flecha",
+    "giro",
+    "derecha",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-right-up",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "right",
+    "up",
+    "flecha",
+    "giro",
+    "derecha",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-up-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "up",
+    "left",
+    "flecha",
+    "giro",
+    "arriba",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-turn-up-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "turn",
+    "up",
+    "right",
+    "flecha",
+    "giro",
+    "arriba",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-up",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "up",
+    "flecha",
+    "arriba"
+   ],
+   "emoji": [
+    "⬆️"
+   ]
+  },
+  {
+   "name": "arrow-up-circle",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "up",
+    "circle",
+    "flecha",
+    "arriba",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-up-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "up",
+    "left",
+    "flecha",
+    "arriba",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-up-on-square",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "up",
+    "on",
+    "square",
+    "flecha",
+    "arriba",
+    "sobre",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-up-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "up",
+    "right",
+    "flecha",
+    "arriba",
+    "derecha"
+   ],
+   "emoji": [
+    "↗️"
+   ]
+  },
+  {
+   "name": "arrow-up-tray",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "up",
+    "tray",
+    "flecha",
+    "arriba",
+    "bandeja",
+    "upload",
+    "subir",
+    "cargar"
+   ],
+   "emoji": [
+    "📤"
+   ]
+  },
+  {
+   "name": "arrow-uturn-down-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "uturn",
+    "down",
+    "left",
+    "flecha",
+    "retorno",
+    "abajo",
+    "izquierda",
+    "undo",
+    "back",
+    "deshacer",
+    "volver"
+   ],
+   "emoji": [
+    "↩️"
+   ]
+  },
+  {
+   "name": "arrow-uturn-down-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "uturn",
+    "down",
+    "right",
+    "flecha",
+    "retorno",
+    "abajo",
+    "derecha",
+    "redo",
+    "rehacer"
+   ],
+   "emoji": [
+    "↪️"
+   ]
+  },
+  {
+   "name": "arrow-uturn-up-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "uturn",
+    "up",
+    "left",
+    "flecha",
+    "retorno",
+    "arriba",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrow-uturn-up-right",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrow",
+    "uturn",
+    "up",
+    "right",
+    "flecha",
+    "retorno",
+    "arriba",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrows-pointing-in",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrows",
+    "pointing",
+    "in",
+    "flechas",
+    "apuntando",
+    "dentro",
+    "exit fullscreen",
+    "collapse",
+    "minimize",
+    "contraer",
+    "minimizar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrows-pointing-out",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrows",
+    "pointing",
+    "out",
+    "flechas",
+    "apuntando",
+    "fuera",
+    "fullscreen",
+    "expand",
+    "maximize",
+    "pantalla completa",
+    "expandir",
+    "maximizar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrows-right-left",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrows",
+    "right",
+    "left",
+    "flechas",
+    "derecha",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "arrows-up-down",
+   "category": "arrows",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "arrows",
+    "up",
+    "down",
+    "flechas",
+    "arriba",
+    "abajo",
+    "sort",
+    "reorder",
+    "ordenar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "at-symbol",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "at",
+    "symbol",
+    "arroba",
+    "símbolo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "backspace",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "backspace",
+    "retroceso",
+    "delete",
+    "erase",
+    "borrar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "backward",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "backward",
+    "retroceder"
+   ],
+   "emoji": [
+    "⏪"
+   ]
+  },
+  {
+   "name": "banknotes",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "banknotes",
+    "billetes",
+    "money",
+    "cash",
+    "payment",
+    "dinero",
+    "efectivo",
+    "pago"
+   ],
+   "emoji": [
+    "💰",
+    "💵"
+   ]
+  },
+  {
+   "name": "bars-2",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "2",
+    "barras",
+    "dos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-3",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "3",
+    "barras",
+    "tres",
+    "menu",
+    "hamburger",
+    "menú"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-3-bottom-left",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "3",
+    "bottom",
+    "left",
+    "barras",
+    "tres",
+    "inferior",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-3-bottom-right",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "3",
+    "bottom",
+    "right",
+    "barras",
+    "tres",
+    "inferior",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-3-center-left",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "3",
+    "center",
+    "left",
+    "barras",
+    "tres",
+    "centro",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-3-center-right",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "3",
+    "center",
+    "right",
+    "barras",
+    "tres",
+    "centro",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-4",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "4",
+    "barras",
+    "cuatro"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-arrow-down",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "arrow",
+    "down",
+    "barras",
+    "flecha",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bars-arrow-up",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bars",
+    "arrow",
+    "up",
+    "barras",
+    "flecha",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "battery-0",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "battery",
+    "0",
+    "batería",
+    "vacía"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "battery-100",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "battery",
+    "100",
+    "batería",
+    "llena"
+   ],
+   "emoji": [
+    "🔋"
+   ]
+  },
+  {
+   "name": "beaker",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "beaker",
+    "matraz",
+    "lab",
+    "experiment",
+    "test",
+    "laboratorio",
+    "experimento",
+    "prueba"
+   ],
+   "emoji": [
+    "🧪"
+   ]
+  },
+  {
+   "name": "bell",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bell",
+    "campana",
+    "notifications",
+    "notificaciones"
+   ],
+   "emoji": [
+    "🔔"
+   ]
+  },
+  {
+   "name": "bell-alert",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bell",
+    "alert",
+    "campana",
+    "alerta"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bell-slash",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bell",
+    "slash",
+    "campana",
+    "tachado",
+    "mute notifications",
+    "silenciar"
+   ],
+   "emoji": [
+    "🔕"
+   ]
+  },
+  {
+   "name": "bell-snooze",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bell",
+    "snooze",
+    "campana",
+    "posponer"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bold",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bold",
+    "negrita"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bolt",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bolt",
+    "rayo",
+    "fast",
+    "power",
+    "energy",
+    "action",
+    "automation",
+    "rápido",
+    "energía",
+    "automatización"
+   ],
+   "emoji": [
+    "⚡"
+   ]
+  },
+  {
+   "name": "bolt-slash",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bolt",
+    "slash",
+    "rayo",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "book",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "book",
+    "libro",
+    "docs",
+    "guide",
+    "manual",
+    "documentación",
+    "guía"
+   ],
+   "emoji": [
+    "📖",
+    "📚"
+   ]
+  },
+  {
+   "name": "bookmark",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bookmark",
+    "marcador",
+    "save",
+    "guardar",
+    "guardado"
+   ],
+   "emoji": [
+    "🔖"
+   ]
+  },
+  {
+   "name": "bookmark-slash",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bookmark",
+    "slash",
+    "marcador",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "bookmark-square",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "bookmark",
+    "square",
+    "marcador",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "briefcase",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "briefcase",
+    "maletín",
+    "work",
+    "business",
+    "job",
+    "trabajo",
+    "negocio"
+   ],
+   "emoji": [
+    "💼"
+   ]
+  },
+  {
+   "name": "building-library",
+   "category": "buildings",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "building",
+    "library",
+    "edificio",
+    "biblioteca"
+   ],
+   "emoji": [
+    "🏦"
+   ]
+  },
+  {
+   "name": "building-office",
+   "category": "buildings",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "building",
+    "office",
+    "edificio",
+    "oficina",
+    "company",
+    "organization",
+    "empresa",
+    "organización"
+   ],
+   "emoji": [
+    "🏢"
+   ]
+  },
+  {
+   "name": "building-office-2",
+   "category": "buildings",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "building",
+    "office",
+    "2",
+    "edificio",
+    "oficina",
+    "dos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "building-storefront",
+   "category": "buildings",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "building",
+    "storefront",
+    "edificio",
+    "tienda",
+    "store",
+    "shop",
+    "marketplace",
+    "comercio"
+   ],
+   "emoji": [
+    "🏪"
+   ]
+  },
+  {
+   "name": "cake",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cake",
+    "pastel"
+   ],
+   "emoji": [
+    "🎂"
+   ]
+  },
+  {
+   "name": "calculator",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "calculator",
+    "calculadora"
+   ],
+   "emoji": [
+    "🧮"
+   ]
+  },
+  {
+   "name": "calendar",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "calendar",
+    "calendario",
+    "date",
+    "schedule",
+    "event",
+    "fecha",
+    "agenda",
+    "evento"
+   ],
+   "emoji": [
+    "📅"
+   ]
+  },
+  {
+   "name": "calendar-date-range",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "calendar",
+    "date",
+    "range",
+    "calendario",
+    "fecha",
+    "rango"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "calendar-days",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "calendar",
+    "days",
+    "calendario",
+    "días"
+   ],
+   "emoji": [
+    "📆"
+   ]
+  },
+  {
+   "name": "camera",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "camera",
+    "cámara",
+    "photo",
+    "capture",
+    "foto",
+    "capturar"
+   ],
+   "emoji": [
+    "📷",
+    "📸"
+   ]
+  },
+  {
+   "name": "chart-bar",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chart",
+    "bar",
+    "gráfico",
+    "barras",
+    "analytics",
+    "stats",
+    "metrics",
+    "analítica",
+    "estadísticas",
+    "métricas"
+   ],
+   "emoji": [
+    "📊"
+   ]
+  },
+  {
+   "name": "chart-bar-square",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chart",
+    "bar",
+    "square",
+    "gráfico",
+    "barras",
+    "cuadrado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chart-pie",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chart",
+    "pie",
+    "gráfico",
+    "circular",
+    "analytics",
+    "distribution",
+    "analítica",
+    "distribución"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-center",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "center",
+    "burbuja",
+    "inferior",
+    "centro"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-center-ellipsis",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "center",
+    "ellipsis",
+    "burbuja",
+    "inferior",
+    "centro",
+    "puntos suspensivos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-left",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "left",
+    "burbuja",
+    "inferior",
+    "izquierda"
+   ],
+   "emoji": [
+    "🗨️"
+   ]
+  },
+  {
+   "name": "chat-bubble-bottom-left-ellipsis",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "left",
+    "ellipsis",
+    "burbuja",
+    "inferior",
+    "izquierda",
+    "puntos suspensivos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-left-text",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "left",
+    "text",
+    "burbuja",
+    "inferior",
+    "izquierda",
+    "texto"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-right",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "right",
+    "burbuja",
+    "inferior",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-right-ellipsis",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "right",
+    "ellipsis",
+    "burbuja",
+    "inferior",
+    "derecha",
+    "puntos suspensivos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-right-text",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "right",
+    "text",
+    "burbuja",
+    "inferior",
+    "derecha",
+    "texto"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-bottom-text",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "bottom",
+    "text",
+    "burbuja",
+    "inferior",
+    "texto"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-left-right",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "left",
+    "right",
+    "burbuja",
+    "izquierda",
+    "derecha",
+    "conversation",
+    "discussion",
+    "conversación"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-oval-ellipsis",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "oval",
+    "ellipsis",
+    "burbuja",
+    "ovalada",
+    "puntos suspensivos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-oval-left",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "oval",
+    "left",
+    "burbuja",
+    "ovalada",
+    "izquierda",
+    "comment",
+    "message",
+    "comentario",
+    "mensaje"
+   ],
+   "emoji": [
+    "💬"
+   ]
+  },
+  {
+   "name": "chat-bubble-vertical-center",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "vertical",
+    "center",
+    "burbuja",
+    "centro"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-vertical-left",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "vertical",
+    "left",
+    "burbuja",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chat-bubble-vertical-right",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chat",
+    "bubble",
+    "vertical",
+    "right",
+    "burbuja",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "check",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "check",
+    "verificación",
+    "done",
+    "ok",
+    "success",
+    "confirm",
+    "tick",
+    "hecho",
+    "correcto",
+    "confirmar"
+   ],
+   "emoji": [
+    "✔️"
+   ]
+  },
+  {
+   "name": "check-badge",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "check",
+    "badge",
+    "verificación",
+    "insignia",
+    "verified",
+    "verificado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "check-circle",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "check",
+    "circle",
+    "verificación",
+    "círculo",
+    "success",
+    "done",
+    "completed",
+    "éxito",
+    "completado"
+   ],
+   "emoji": [
+    "✅",
+    "☑️"
+   ]
+  },
+  {
+   "name": "chevron-double-down",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "down",
+    "cheurón",
+    "doble",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-down-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "down",
+    "small",
+    "cheurón",
+    "doble",
+    "abajo",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-left",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "left",
+    "cheurón",
+    "doble",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-left-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "left",
+    "small",
+    "cheurón",
+    "doble",
+    "izquierda",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-right",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "right",
+    "cheurón",
+    "doble",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-right-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "right",
+    "small",
+    "cheurón",
+    "doble",
+    "derecha",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-up",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "up",
+    "cheurón",
+    "doble",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-double-up-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "double",
+    "up",
+    "small",
+    "cheurón",
+    "doble",
+    "arriba",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-down",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "down",
+    "cheurón",
+    "abajo",
+    "expand",
+    "dropdown",
+    "desplegar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-down-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "down",
+    "small",
+    "cheurón",
+    "abajo",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-left",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "left",
+    "cheurón",
+    "izquierda",
+    "previous",
+    "back",
+    "anterior",
+    "atrás"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-left-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "left",
+    "small",
+    "cheurón",
+    "izquierda",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-right",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "right",
+    "cheurón",
+    "derecha",
+    "next",
+    "siguiente",
+    "expandir"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-right-left",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "right",
+    "left",
+    "cheurón",
+    "derecha",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-right-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "right",
+    "small",
+    "cheurón",
+    "derecha",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-up",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "up",
+    "cheurón",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-up-down",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "up",
+    "down",
+    "cheurón",
+    "arriba",
+    "abajo",
+    "select",
+    "sort",
+    "selector",
+    "ordenar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "chevron-up-small",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "chevron",
+    "up",
+    "small",
+    "cheurón",
+    "arriba",
+    "pequeño"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "circle-stack",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "circle",
+    "stack",
+    "círculo",
+    "pila",
+    "database",
+    "storage",
+    "data",
+    "base de datos",
+    "datos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "clipboard",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "clipboard",
+    "portapapeles"
+   ],
+   "emoji": [
+    "📋"
+   ]
+  },
+  {
+   "name": "clipboard-document",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "clipboard",
+    "document",
+    "portapapeles",
+    "documento"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "clipboard-document-check",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "clipboard",
+    "document",
+    "check",
+    "portapapeles",
+    "documento",
+    "verificación"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "clipboard-document-list",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "clipboard",
+    "document",
+    "list",
+    "portapapeles",
+    "documento",
+    "lista"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "clock",
+   "category": "time",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "clock",
+    "reloj",
+    "time",
+    "history",
+    "recent",
+    "pending",
+    "hora",
+    "tiempo",
+    "historial",
+    "reciente",
+    "pendiente"
+   ],
+   "emoji": [
+    "🕐",
+    "⏰",
+    "⏱️"
+   ]
+  },
+  {
+   "name": "cloud",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cloud",
+    "nube"
+   ],
+   "emoji": [
+    "☁️"
+   ]
+  },
+  {
+   "name": "cloud-arrow-down",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cloud",
+    "arrow",
+    "down",
+    "nube",
+    "flecha",
+    "abajo",
+    "download",
+    "descargar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "cloud-arrow-up",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cloud",
+    "arrow",
+    "up",
+    "nube",
+    "flecha",
+    "arriba",
+    "upload",
+    "subir"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "code-bracket",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "code",
+    "bracket",
+    "código",
+    "corchete",
+    "developer",
+    "source",
+    "desarrollador"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "code-bracket-square",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "code",
+    "bracket",
+    "square",
+    "código",
+    "corchete",
+    "cuadrado",
+    "snippet",
+    "embed",
+    "fragmento"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "cog",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cog",
+    "rueda dentada",
+    "settings",
+    "ajustes",
+    "configuración"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "command-line",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "command",
+    "line",
+    "comando",
+    "línea",
+    "terminal",
+    "console",
+    "shell",
+    "cli",
+    "consola"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "computer",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "computer",
+    "ordenador"
+   ],
+   "emoji": [
+    "💻"
+   ]
+  },
+  {
+   "name": "computer-desktop",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "computer",
+    "desktop",
+    "ordenador",
+    "escritorio",
+    "system",
+    "monitor",
+    "display",
+    "sistema",
+    "pantalla"
+   ],
+   "emoji": [
+    "🖥️"
+   ]
+  },
+  {
+   "name": "copy",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "copy",
+    "copiar",
+    "duplicate",
+    "clipboard",
+    "duplicar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "cpu-chip",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cpu",
+    "chip",
+    "procesador",
+    "processor",
+    "hardware",
+    "performance",
+    "rendimiento"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "credit-card",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "credit",
+    "card",
+    "crédito",
+    "tarjeta",
+    "payment",
+    "billing",
+    "pago",
+    "facturación"
+   ],
+   "emoji": [
+    "💳"
+   ]
+  },
+  {
+   "name": "cube",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cube",
+    "cubo",
+    "package",
+    "module",
+    "3d",
+    "paquete",
+    "módulo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "cube-transparent",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cube",
+    "transparent",
+    "cubo",
+    "transparente"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "currency-bangladeshi",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "currency",
+    "bangladeshi",
+    "moneda",
+    "taka"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "currency-dollar",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "currency",
+    "dollar",
+    "moneda",
+    "dólar",
+    "price",
+    "money",
+    "cost",
+    "precio",
+    "dinero",
+    "coste"
+   ],
+   "emoji": [
+    "💲"
+   ]
+  },
+  {
+   "name": "currency-euro",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "currency",
+    "euro",
+    "moneda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "currency-pound",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "currency",
+    "pound",
+    "moneda",
+    "libra"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "currency-rupee",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "currency",
+    "rupee",
+    "moneda",
+    "rupia"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "currency-yen",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "currency",
+    "yen",
+    "moneda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "cursor-arrow-rays",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cursor",
+    "arrow",
+    "rays",
+    "flecha",
+    "rayos",
+    "click",
+    "interaction",
+    "clic",
+    "interacción"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "cursor-arrow-ripple",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cursor",
+    "arrow",
+    "ripple",
+    "flecha",
+    "onda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "divide",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "divide",
+    "dividir"
+   ],
+   "emoji": [
+    "➗"
+   ]
+  },
+  {
+   "name": "divide-circle",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "divide",
+    "circle",
+    "dividir",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "documento",
+    "file",
+    "page",
+    "archivo",
+    "página"
+   ],
+   "emoji": [
+    "📄"
+   ]
+  },
+  {
+   "name": "document-arrow-down",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "arrow",
+    "down",
+    "documento",
+    "flecha",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-arrow-up",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "arrow",
+    "up",
+    "documento",
+    "flecha",
+    "arriba"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-chart-bar",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "chart",
+    "bar",
+    "documento",
+    "gráfico",
+    "barras"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-currency-bangladeshi",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "currency",
+    "bangladeshi",
+    "documento",
+    "moneda",
+    "taka"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-currency-dollar",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "currency",
+    "dollar",
+    "documento",
+    "moneda",
+    "dólar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-currency-euro",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "currency",
+    "euro",
+    "documento",
+    "moneda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-currency-pound",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "currency",
+    "pound",
+    "documento",
+    "moneda",
+    "libra"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-currency-rupee",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "currency",
+    "rupee",
+    "documento",
+    "moneda",
+    "rupia"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-currency-yen",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "currency",
+    "yen",
+    "documento",
+    "moneda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-duplicate",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "duplicate",
+    "documento",
+    "duplicar",
+    "copy",
+    "copiar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-magnifying-glass",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "magnifying",
+    "glass",
+    "documento",
+    "lupa"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-minus",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "minus",
+    "documento",
+    "menos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-plus",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "plus",
+    "documento",
+    "más"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "document-text",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "document",
+    "text",
+    "documento",
+    "texto",
+    "file",
+    "article",
+    "docs",
+    "artículo",
+    "documentación"
+   ],
+   "emoji": [
+    "📃"
+   ]
+  },
+  {
+   "name": "ellipsis-horizontal",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ellipsis",
+    "horizontal",
+    "puntos suspensivos",
+    "more",
+    "options",
+    "más",
+    "opciones"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "ellipsis-horizontal-circle",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ellipsis",
+    "horizontal",
+    "circle",
+    "puntos suspensivos",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "ellipsis-vertical",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ellipsis",
+    "vertical",
+    "puntos suspensivos",
+    "more",
+    "options",
+    "kebab",
+    "más",
+    "opciones"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "ellipsis-vertical-circle",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ellipsis",
+    "vertical",
+    "circle",
+    "puntos suspensivos",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "envelope",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "envelope",
+    "sobre",
+    "email",
+    "mail",
+    "message",
+    "correo",
+    "mensaje"
+   ],
+   "emoji": [
+    "✉️",
+    "📧"
+   ]
+  },
+  {
+   "name": "envelope-open",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "envelope",
+    "open",
+    "sobre",
+    "abierto"
+   ],
+   "emoji": [
+    "📨"
+   ]
+  },
+  {
+   "name": "equal",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "equal",
+    "igual"
+   ],
+   "emoji": [
+    "🟰"
+   ]
+  },
+  {
+   "name": "equal-circle",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "equal",
+    "circle",
+    "igual",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "exclamation-circle",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "exclamation",
+    "circle",
+    "exclamación",
+    "círculo",
+    "error",
+    "alert",
+    "alerta"
+   ],
+   "emoji": [
+    "❗"
+   ]
+  },
+  {
+   "name": "exclamation-triangle",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "exclamation",
+    "triangle",
+    "exclamación",
+    "triángulo",
+    "warning",
+    "caution",
+    "advertencia",
+    "aviso",
+    "precaución"
+   ],
+   "emoji": [
+    "⚠️"
+   ]
+  },
+  {
+   "name": "eye",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "eye",
+    "ojo",
+    "show",
+    "view",
+    "visible",
+    "preview",
+    "ver",
+    "mostrar",
+    "vista previa"
+   ],
+   "emoji": [
+    "👁️"
+   ]
+  },
+  {
+   "name": "eye-dropper",
+   "category": "design",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "eye",
+    "dropper",
+    "ojo",
+    "cuentagotas",
+    "color picker",
+    "selector de color"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "eye-slash",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "eye",
+    "slash",
+    "ojo",
+    "tachado",
+    "hide",
+    "hidden",
+    "ocultar",
+    "oculto"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "face-frown",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "face",
+    "frown",
+    "cara",
+    "triste"
+   ],
+   "emoji": [
+    "☹️",
+    "🙁"
+   ]
+  },
+  {
+   "name": "face-smile",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "face",
+    "smile",
+    "cara",
+    "sonrisa",
+    "emoji",
+    "happy",
+    "reaction",
+    "feliz",
+    "reacción"
+   ],
+   "emoji": [
+    "😀",
+    "🙂"
+   ]
+  },
+  {
+   "name": "film",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "film",
+    "película"
+   ],
+   "emoji": [
+    "🎬"
+   ]
+  },
+  {
+   "name": "finger-print",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "finger",
+    "print",
+    "dedo",
+    "huella",
+    "biometric",
+    "identity",
+    "auth",
+    "biometría",
+    "identidad"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "fire",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "fire",
+    "fuego",
+    "hot",
+    "trending",
+    "popular",
+    "tendencia"
+   ],
+   "emoji": [
+    "🔥"
+   ]
+  },
+  {
+   "name": "flag",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "flag",
+    "bandera",
+    "report",
+    "milestone",
+    "reportar",
+    "hito"
+   ],
+   "emoji": [
+    "🚩"
+   ]
+  },
+  {
+   "name": "folder",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "folder",
+    "carpeta",
+    "directory",
+    "directorio"
+   ],
+   "emoji": [
+    "📁"
+   ]
+  },
+  {
+   "name": "folder-arrow-down",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "folder",
+    "arrow",
+    "down",
+    "carpeta",
+    "flecha",
+    "abajo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "folder-minus",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "folder",
+    "minus",
+    "carpeta",
+    "menos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "folder-open",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "folder",
+    "open",
+    "carpeta",
+    "abierto"
+   ],
+   "emoji": [
+    "📂"
+   ]
+  },
+  {
+   "name": "folder-plus",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "folder",
+    "plus",
+    "carpeta",
+    "más"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "forward",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "forward",
+    "avanzar"
+   ],
+   "emoji": [
+    "⏩"
+   ]
+  },
+  {
+   "name": "funnel",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "funnel",
+    "embudo",
+    "filter",
+    "filtrar",
+    "filtro"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "gear",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "gear",
+    "engranaje",
+    "settings",
+    "preferences",
+    "config",
+    "ajustes",
+    "configuración",
+    "preferencias"
+   ],
+   "emoji": [
+    "⚙️"
+   ]
+  },
+  {
+   "name": "gif",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "gif"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "gift",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "gift",
+    "regalo",
+    "reward",
+    "present",
+    "recompensa"
+   ],
+   "emoji": [
+    "🎁"
+   ]
+  },
+  {
+   "name": "gift-top",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "gift",
+    "top",
+    "regalo",
+    "superior"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "globe-alt",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "globe",
+    "alt",
+    "globo",
+    "alternativo",
+    "web",
+    "internet",
+    "world",
+    "language",
+    "website",
+    "sitio web",
+    "mundo"
+   ],
+   "emoji": [
+    "🌐"
+   ]
+  },
+  {
+   "name": "globe-americas",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "globe",
+    "americas",
+    "globo",
+    "américas"
+   ],
+   "emoji": [
+    "🌎"
+   ]
+  },
+  {
+   "name": "globe-asia-australia",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "globe",
+    "asia",
+    "australia",
+    "globo"
+   ],
+   "emoji": [
+    "🌏"
+   ]
+  },
+  {
+   "name": "globe-europe-africa",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "globe",
+    "europe",
+    "africa",
+    "globo",
+    "europa",
+    "áfrica"
+   ],
+   "emoji": [
+    "🌍"
+   ]
+  },
+  {
+   "name": "hand",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "hand",
+    "mano"
+   ],
+   "emoji": [
+    "✋"
+   ]
+  },
+  {
+   "name": "hand-thumb-down",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "hand",
+    "thumb",
+    "down",
+    "mano",
+    "pulgar",
+    "abajo",
+    "dislike",
+    "reject",
+    "no me gusta",
+    "rechazar"
+   ],
+   "emoji": [
+    "👎"
+   ]
+  },
+  {
+   "name": "hand-thumb-up",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "hand",
+    "thumb",
+    "up",
+    "mano",
+    "pulgar",
+    "arriba",
+    "like",
+    "approve",
+    "me gusta",
+    "aprobar"
+   ],
+   "emoji": [
+    "👍"
+   ]
+  },
+  {
+   "name": "heart",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "heart",
+    "corazón",
+    "like",
+    "favorite",
+    "love",
+    "me gusta",
+    "favorito"
+   ],
+   "emoji": [
+    "❤️"
+   ]
+  },
+  {
+   "name": "home",
+   "category": "buildings",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "home",
+    "casa",
+    "start",
+    "dashboard",
+    "inicio"
+   ],
+   "emoji": [
+    "🏠"
+   ]
+  },
+  {
+   "name": "home-modern",
+   "category": "buildings",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "home",
+    "modern",
+    "casa",
+    "moderna"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "identification",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "identification",
+    "identificación",
+    "id card",
+    "profile",
+    "carné",
+    "credencial"
+   ],
+   "emoji": [
+    "🆔"
+   ]
+  },
+  {
+   "name": "inbox",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "inbox",
+    "bandeja",
+    "messages",
+    "bandeja de entrada"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "inbox-arrow-down",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "inbox",
+    "arrow",
+    "down",
+    "bandeja",
+    "flecha",
+    "abajo"
+   ],
+   "emoji": [
+    "📥"
+   ]
+  },
+  {
+   "name": "inbox-stack",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "inbox",
+    "stack",
+    "bandeja",
+    "pila"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "information-circle",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "information",
+    "circle",
+    "información",
+    "círculo",
+    "info",
+    "help",
+    "about",
+    "ayuda",
+    "acerca de"
+   ],
+   "emoji": [
+    "ℹ️"
+   ]
+  },
+  {
+   "name": "italic",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "italic",
+    "cursiva"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "key",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "key",
+    "llave",
+    "password",
+    "api key",
+    "credentials",
+    "contraseña",
+    "credenciales"
+   ],
+   "emoji": [
+    "🔑"
+   ]
+  },
+  {
+   "name": "language",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "language",
+    "idioma",
+    "translate",
+    "i18n",
+    "locale",
+    "traducir",
+    "traducción"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "lifebuoy",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "lifebuoy",
+    "salvavidas",
+    "support",
+    "help",
+    "soporte",
+    "ayuda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "light-bulb",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "light",
+    "bulb",
+    "luz",
+    "bombilla",
+    "idea",
+    "tip",
+    "hint",
+    "consejo",
+    "sugerencia"
+   ],
+   "emoji": [
+    "💡"
+   ]
+  },
+  {
+   "name": "link",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "link",
+    "enlace",
+    "url",
+    "hyperlink",
+    "vínculo"
+   ],
+   "emoji": [
+    "🔗"
+   ]
+  },
+  {
+   "name": "link-slash",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "link",
+    "slash",
+    "enlace",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "list-bullet",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "list",
+    "bullet",
+    "lista",
+    "viñetas",
+    "list view",
+    "vista de lista"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "lock-closed",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "lock",
+    "closed",
+    "candado",
+    "cerrado",
+    "secure",
+    "private",
+    "password",
+    "seguro",
+    "privado",
+    "contraseña"
+   ],
+   "emoji": [
+    "🔒"
+   ]
+  },
+  {
+   "name": "lock-open",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "lock",
+    "open",
+    "candado",
+    "abierto",
+    "unlock",
+    "public",
+    "desbloquear"
+   ],
+   "emoji": [
+    "🔓"
+   ]
+  },
+  {
+   "name": "magnifying-glass",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "magnifying",
+    "glass",
+    "lupa",
+    "search",
+    "find",
+    "buscar",
+    "encontrar"
+   ],
+   "emoji": [
+    "🔍",
+    "🔎"
+   ]
+  },
+  {
+   "name": "magnifying-glass-circle",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "magnifying",
+    "glass",
+    "circle",
+    "lupa",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "magnifying-glass-minus",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "magnifying",
+    "glass",
+    "minus",
+    "lupa",
+    "menos",
+    "zoom out",
+    "alejar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "magnifying-glass-plus",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "magnifying",
+    "glass",
+    "plus",
+    "lupa",
+    "más",
+    "zoom in",
+    "acercar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "map",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "map",
+    "mapa"
+   ],
+   "emoji": [
+    "🗺️"
+   ]
+  },
+  {
+   "name": "map-pin",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "map",
+    "pin",
+    "mapa",
+    "marcador",
+    "location",
+    "place",
+    "address",
+    "ubicación",
+    "lugar",
+    "dirección"
+   ],
+   "emoji": [
+    "📍",
+    "📌"
+   ]
+  },
+  {
+   "name": "megaphone",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "megaphone",
+    "megáfono",
+    "announcement",
+    "marketing",
+    "anuncio"
+   ],
+   "emoji": [
+    "📢",
+    "📣"
+   ]
+  },
+  {
+   "name": "microphone",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "microphone",
+    "micrófono",
+    "voice",
+    "audio",
+    "record",
+    "voz",
+    "grabar"
+   ],
+   "emoji": [
+    "🎤"
+   ]
+  },
+  {
+   "name": "microphone-slash",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "microphone",
+    "slash",
+    "micrófono",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "minus",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "minus",
+    "menos",
+    "remove",
+    "subtract",
+    "quitar",
+    "restar"
+   ],
+   "emoji": [
+    "➖"
+   ]
+  },
+  {
+   "name": "minus-circle",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "minus",
+    "circle",
+    "menos",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "mobile",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "mobile",
+    "móvil",
+    "phone",
+    "smartphone",
+    "teléfono"
+   ],
+   "emoji": [
+    "📱"
+   ]
+  },
+  {
+   "name": "moon",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "moon",
+    "luna",
+    "dark mode",
+    "night",
+    "modo oscuro",
+    "noche"
+   ],
+   "emoji": [
+    "🌙"
+   ]
+  },
+  {
+   "name": "musical-note",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "musical",
+    "note",
+    "nota"
+   ],
+   "emoji": [
+    "🎵"
+   ]
+  },
+  {
+   "name": "newspaper",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "newspaper",
+    "periódico",
+    "news",
+    "blog",
+    "article",
+    "noticias",
+    "artículo"
+   ],
+   "emoji": [
+    "📰"
+   ]
+  },
+  {
+   "name": "no-circle",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "no",
+    "circle",
+    "prohibido",
+    "círculo",
+    "blocked",
+    "forbidden",
+    "disabled",
+    "bloqueado",
+    "deshabilitado"
+   ],
+   "emoji": [
+    "🚫",
+    "⛔"
+   ]
+  },
+  {
+   "name": "numbered-list",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "numbered",
+    "list",
+    "numerada",
+    "lista"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "paint-brush",
+   "category": "design",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "paint",
+    "brush",
+    "pintura",
+    "pincel",
+    "design",
+    "style",
+    "appearance",
+    "diseño",
+    "estilo",
+    "apariencia"
+   ],
+   "emoji": [
+    "🖌️"
+   ]
+  },
+  {
+   "name": "paper-airplane",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "paper",
+    "airplane",
+    "papel",
+    "avión",
+    "send",
+    "submit",
+    "enviar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "paper-clip",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "paper",
+    "clip",
+    "papel",
+    "attachment",
+    "attach",
+    "adjunto",
+    "adjuntar"
+   ],
+   "emoji": [
+    "📎"
+   ]
+  },
+  {
+   "name": "pause",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "pause",
+    "pausa"
+   ],
+   "emoji": [
+    "⏸️"
+   ]
+  },
+  {
+   "name": "pause-circle",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "pause",
+    "circle",
+    "pausa",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "pencil",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "pencil",
+    "lápiz",
+    "edit",
+    "write",
+    "editar",
+    "escribir"
+   ],
+   "emoji": [
+    "✏️"
+   ]
+  },
+  {
+   "name": "pencil-square",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "pencil",
+    "square",
+    "lápiz",
+    "cuadrado",
+    "edit",
+    "compose",
+    "editar",
+    "redactar"
+   ],
+   "emoji": [
+    "📝"
+   ]
+  },
+  {
+   "name": "percent-badge",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "percent",
+    "badge",
+    "porcentaje",
+    "insignia"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "percent-circle",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "percent",
+    "circle",
+    "porcentaje",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "percent-gear",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "percent",
+    "gear",
+    "porcentaje",
+    "engranaje"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "phone",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "phone",
+    "teléfono",
+    "call",
+    "llamar"
+   ],
+   "emoji": [
+    "📞",
+    "☎️"
+   ]
+  },
+  {
+   "name": "phone-arrow-down-left",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "phone",
+    "arrow",
+    "down",
+    "left",
+    "teléfono",
+    "flecha",
+    "abajo",
+    "izquierda"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "phone-arrow-up-right",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "phone",
+    "arrow",
+    "up",
+    "right",
+    "teléfono",
+    "flecha",
+    "arriba",
+    "derecha"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "phone-x-mark",
+   "category": "communication",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "phone",
+    "x",
+    "mark",
+    "teléfono",
+    "equis",
+    "marca"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "photo",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "photo",
+    "foto",
+    "image",
+    "picture",
+    "gallery",
+    "imagen",
+    "galería"
+   ],
+   "emoji": [
+    "🖼️"
+   ]
+  },
+  {
+   "name": "play",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "play",
+    "reproducir",
+    "start",
+    "run",
+    "iniciar",
+    "ejecutar"
+   ],
+   "emoji": [
+    "▶️"
+   ]
+  },
+  {
+   "name": "play-circle",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "play",
+    "circle",
+    "reproducir",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "play-pause",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "play",
+    "pause",
+    "reproducir",
+    "pausa"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "plus",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "plus",
+    "más",
+    "add",
+    "new",
+    "create",
+    "añadir",
+    "nuevo",
+    "crear"
+   ],
+   "emoji": [
+    "➕"
+   ]
+  },
+  {
+   "name": "plus-circle",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "plus",
+    "circle",
+    "más",
+    "círculo",
+    "add",
+    "añadir"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "power",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "power",
+    "encendido",
+    "shutdown",
+    "on off",
+    "apagar",
+    "encender"
+   ],
+   "emoji": [
+    "🔌"
+   ]
+  },
+  {
+   "name": "presentation-chart-bar",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "presentation",
+    "chart",
+    "bar",
+    "presentación",
+    "gráfico",
+    "barras"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "presentation-chart-line",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "presentation",
+    "chart",
+    "line",
+    "presentación",
+    "gráfico",
+    "línea",
+    "report",
+    "trend",
+    "informe",
+    "tendencia"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "printer",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "printer",
+    "impresora",
+    "print",
+    "imprimir"
+   ],
+   "emoji": [
+    "🖨️"
+   ]
+  },
+  {
+   "name": "puzzle-piece",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "puzzle",
+    "piece",
+    "rompecabezas",
+    "pieza",
+    "plugin",
+    "extension",
+    "integration",
+    "complemento",
+    "extensión",
+    "integración"
+   ],
+   "emoji": [
+    "🧩"
+   ]
+  },
+  {
+   "name": "qr-code",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "qr",
+    "code",
+    "código",
+    "scan",
+    "escanear"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "question-mark-circle",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "question",
+    "mark",
+    "circle",
+    "pregunta",
+    "marca",
+    "círculo",
+    "help",
+    "support",
+    "faq",
+    "ayuda",
+    "soporte"
+   ],
+   "emoji": [
+    "❓"
+   ]
+  },
+  {
+   "name": "queue-list",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "queue",
+    "list",
+    "cola",
+    "lista"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "radio",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "radio"
+   ],
+   "emoji": [
+    "📻"
+   ]
+  },
+  {
+   "name": "receipt-percent",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "receipt",
+    "percent",
+    "recibo",
+    "porcentaje"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "receipt-refund",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "receipt",
+    "refund",
+    "recibo",
+    "reembolso"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "rectangle-group",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "rectangle",
+    "group",
+    "rectángulo",
+    "grupo",
+    "layout",
+    "template",
+    "components",
+    "maquetación",
+    "plantilla",
+    "componentes"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "rectangle-stack",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "rectangle",
+    "stack",
+    "rectángulo",
+    "pila"
+   ],
+   "emoji": [
+    "🗂️"
+   ]
+  },
+  {
+   "name": "rocket-launch",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "rocket",
+    "launch",
+    "cohete",
+    "lanzamiento",
+    "deploy",
+    "release",
+    "start",
+    "desplegar",
+    "lanzar",
+    "publicar"
+   ],
+   "emoji": [
+    "🚀"
+   ]
+  },
+  {
+   "name": "scale",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "scale",
+    "balanza",
+    "legal",
+    "balance",
+    "compare",
+    "comparar",
+    "licencia"
+   ],
+   "emoji": [
+    "⚖️"
+   ]
+  },
+  {
+   "name": "scissors",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "scissors",
+    "tijeras",
+    "cut",
+    "cortar"
+   ],
+   "emoji": [
+    "✂️"
+   ]
+  },
+  {
+   "name": "screen-recording",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "screen",
+    "recording",
+    "pantalla",
+    "grabación"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "server",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "server",
+    "servidor",
+    "host",
+    "backend"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "server-stack",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "server",
+    "stack",
+    "servidor",
+    "pila",
+    "infrastructure",
+    "hosting",
+    "infraestructura"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "share",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "share",
+    "compartir",
+    "difundir"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "shield-check",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "shield",
+    "check",
+    "escudo",
+    "verificación",
+    "security",
+    "protected",
+    "seguridad",
+    "protegido"
+   ],
+   "emoji": [
+    "🛡️"
+   ]
+  },
+  {
+   "name": "shield-exclamation",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "shield",
+    "exclamation",
+    "escudo",
+    "exclamación"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "shopping-bag",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "shopping",
+    "bag",
+    "compras",
+    "bolsa"
+   ],
+   "emoji": [
+    "🛍️"
+   ]
+  },
+  {
+   "name": "shopping-cart",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "shopping",
+    "cart",
+    "compras",
+    "carrito",
+    "basket",
+    "buy",
+    "cesta",
+    "comprar"
+   ],
+   "emoji": [
+    "🛒"
+   ]
+  },
+  {
+   "name": "signal",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "signal",
+    "señal",
+    "live",
+    "broadcast",
+    "stream",
+    "en vivo",
+    "emisión"
+   ],
+   "emoji": [
+    "📶"
+   ]
+  },
+  {
+   "name": "signal-slash",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "signal",
+    "slash",
+    "señal",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "slash",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "slash",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "sparkles",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "sparkles",
+    "destellos",
+    "ai",
+    "magic",
+    "new",
+    "generate",
+    "ia",
+    "magia",
+    "generar"
+   ],
+   "emoji": [
+    "✨"
+   ]
+  },
+  {
+   "name": "speaker-wave",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "speaker",
+    "wave",
+    "altavoz",
+    "onda",
+    "volume",
+    "sound",
+    "audio",
+    "volumen",
+    "sonido"
+   ],
+   "emoji": [
+    "🔊"
+   ]
+  },
+  {
+   "name": "speaker-x-mark",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "speaker",
+    "x",
+    "mark",
+    "altavoz",
+    "equis",
+    "marca",
+    "mute",
+    "silence",
+    "silenciar",
+    "mudo"
+   ],
+   "emoji": [
+    "🔇"
+   ]
+  },
+  {
+   "name": "square-2-stack",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "square",
+    "2",
+    "stack",
+    "cuadrado",
+    "dos",
+    "pila",
+    "layers",
+    "duplicate",
+    "capas"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "square-3-stack-3d",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "square",
+    "3",
+    "stack",
+    "3d",
+    "cuadrado",
+    "tres",
+    "pila",
+    "layers",
+    "capas"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "square-plus",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "square",
+    "plus",
+    "cuadrado",
+    "más"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "squares-2x2",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "squares",
+    "2x2",
+    "cuadrados",
+    "grid",
+    "apps",
+    "dashboard",
+    "cuadrícula",
+    "panel"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "star",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "star",
+    "estrella",
+    "favorite",
+    "rating",
+    "featured",
+    "favorito",
+    "valoración",
+    "destacado"
+   ],
+   "emoji": [
+    "⭐",
+    "🌟"
+   ]
+  },
+  {
+   "name": "stop",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "stop",
+    "detener",
+    "halt",
+    "parar"
+   ],
+   "emoji": [
+    "⏹️"
+   ]
+  },
+  {
+   "name": "stop-circle",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "stop",
+    "circle",
+    "detener",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "strikethrough",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "strikethrough",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "sun",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "sun",
+    "sol",
+    "light mode",
+    "day",
+    "brightness",
+    "modo claro",
+    "día",
+    "brillo"
+   ],
+   "emoji": [
+    "☀️"
+   ]
+  },
+  {
+   "name": "swatch",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "swatch",
+    "muestra",
+    "theme",
+    "colors",
+    "palette",
+    "tema",
+    "colores",
+    "paleta"
+   ],
+   "emoji": [
+    "🎨"
+   ]
+  },
+  {
+   "name": "table-cells",
+   "category": "sort",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "table",
+    "cells",
+    "tabla",
+    "celdas",
+    "grid",
+    "spreadsheet",
+    "hoja de cálculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "tablet",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "tablet",
+    "tableta"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "tag",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "tag",
+    "etiqueta",
+    "label",
+    "price",
+    "category",
+    "categoría",
+    "precio"
+   ],
+   "emoji": [
+    "🏷️"
+   ]
+  },
+  {
+   "name": "ticket",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ticket",
+    "boleto"
+   ],
+   "emoji": [
+    "🎫"
+   ]
+  },
+  {
+   "name": "trash",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "trash",
+    "papelera",
+    "delete",
+    "remove",
+    "bin",
+    "eliminar",
+    "borrar"
+   ],
+   "emoji": [
+    "🗑️"
+   ]
+  },
+  {
+   "name": "trophy",
+   "category": "misc",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "trophy",
+    "trofeo",
+    "award",
+    "achievement",
+    "winner",
+    "premio",
+    "logro"
+   ],
+   "emoji": [
+    "🏆"
+   ]
+  },
+  {
+   "name": "truck",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "truck",
+    "camión",
+    "delivery",
+    "shipping",
+    "envío",
+    "entrega"
+   ],
+   "emoji": [
+    "🚚"
+   ]
+  },
+  {
+   "name": "underline",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "underline",
+    "subrayado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "user",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "user",
+    "usuario",
+    "profile",
+    "account",
+    "person",
+    "perfil",
+    "cuenta",
+    "persona"
+   ],
+   "emoji": [
+    "👤"
+   ]
+  },
+  {
+   "name": "user-circle",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "user",
+    "circle",
+    "usuario",
+    "círculo",
+    "avatar",
+    "profile",
+    "account",
+    "perfil",
+    "cuenta"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "user-group",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "user",
+    "group",
+    "usuario",
+    "grupo",
+    "team",
+    "community",
+    "equipo",
+    "comunidad"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "user-minus",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "user",
+    "minus",
+    "usuario",
+    "menos"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "user-plus",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "user",
+    "plus",
+    "usuario",
+    "más",
+    "invite",
+    "add user",
+    "invitar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "users",
+   "category": "user",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "users",
+    "usuarios",
+    "people",
+    "team",
+    "personas",
+    "equipo"
+   ],
+   "emoji": [
+    "👥"
+   ]
+  },
+  {
+   "name": "variable",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "variable"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "video-camera",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "video",
+    "camera",
+    "vídeo",
+    "cámara",
+    "record",
+    "grabar"
+   ],
+   "emoji": [
+    "🎥"
+   ]
+  },
+  {
+   "name": "video-camera-slash",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "video",
+    "camera",
+    "slash",
+    "vídeo",
+    "cámara",
+    "tachado"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "view-columns",
+   "category": "documents",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "view",
+    "columns",
+    "vista",
+    "columnas",
+    "kanban",
+    "board",
+    "tablero"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "viewfinder-circle",
+   "category": "media",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "viewfinder",
+    "circle",
+    "visor",
+    "círculo"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "wallet",
+   "category": "ecommerce",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "wallet",
+    "cartera"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "wifi",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "wifi",
+    "network",
+    "connection",
+    "red",
+    "conexión"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "wifi-signal",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "wifi",
+    "signal",
+    "señal"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "window",
+   "category": "system",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "window",
+    "ventana",
+    "app",
+    "browser",
+    "aplicación",
+    "navegador"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "wrench",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "wrench",
+    "llave inglesa",
+    "tool",
+    "fix",
+    "maintenance",
+    "herramienta",
+    "arreglar",
+    "mantenimiento"
+   ],
+   "emoji": [
+    "🔧"
+   ]
+  },
+  {
+   "name": "wrench-screwdriver",
+   "category": "editor",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "wrench",
+    "screwdriver",
+    "llave inglesa",
+    "destornillador",
+    "tools",
+    "build",
+    "setup",
+    "herramientas",
+    "construir"
+   ],
+   "emoji": [
+    "🛠️"
+   ]
+  },
+  {
+   "name": "x-circle",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "x",
+    "circle",
+    "equis",
+    "círculo",
+    "error",
+    "clear",
+    "close",
+    "borrar",
+    "limpiar"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "x-mark",
+   "category": "math",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "x",
+    "mark",
+    "equis",
+    "marca",
+    "close",
+    "dismiss",
+    "cancel",
+    "remove",
+    "cerrar",
+    "cancelar",
+    "quitar"
+   ],
+   "emoji": [
+    "❌",
+    "✖️"
+   ]
+  },
+  {
+   "name": "x-square",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "x",
+    "square",
+    "equis",
+    "cuadrado"
+   ],
+   "emoji": []
+  }
+ ],
+ "emoji": {
+  "✅": "check-circle",
+  "✔️": "check",
+  "☑️": "check-circle",
+  "❌": "x-mark",
+  "✖️": "x-mark",
+  "⚠️": "exclamation-triangle",
+  "❗": "exclamation-circle",
+  "ℹ️": "information-circle",
+  "❓": "question-mark-circle",
+  "🔍": "magnifying-glass",
+  "🔎": "magnifying-glass",
+  "⚙️": "gear",
+  "🛠️": "wrench-screwdriver",
+  "🔧": "wrench",
+  "🗑️": "trash",
+  "✏️": "pencil",
+  "📝": "pencil-square",
+  "📁": "folder",
+  "📂": "folder-open",
+  "📄": "document",
+  "📃": "document-text",
+  "📋": "clipboard",
+  "📎": "paper-clip",
+  "🔗": "link",
+  "🔒": "lock-closed",
+  "🔓": "lock-open",
+  "🔑": "key",
+  "🛡️": "shield-check",
+  "👁️": "eye",
+  "🔔": "bell",
+  "🔕": "bell-slash",
+  "❤️": "heart",
+  "⭐": "star",
+  "🌟": "star",
+  "✨": "sparkles",
+  "🔖": "bookmark",
+  "🏷️": "tag",
+  "🏠": "home",
+  "👤": "user",
+  "👥": "users",
+  "📅": "calendar",
+  "📆": "calendar-days",
+  "🕐": "clock",
+  "⏰": "clock",
+  "⏱️": "clock",
+  "📷": "camera",
+  "📸": "camera",
+  "🖼️": "photo",
+  "🎬": "film",
+  "🎥": "video-camera",
+  "🎵": "musical-note",
+  "🎤": "microphone",
+  "🔊": "speaker-wave",
+  "🔇": "speaker-x-mark",
+  "▶️": "play",
+  "⏸️": "pause",
+  "⏹️": "stop",
+  "⏩": "forward",
+  "⏪": "backward",
+  "📞": "phone",
+  "☎️": "phone",
+  "✉️": "envelope",
+  "📧": "envelope",
+  "📨": "envelope-open",
+  "📤": "arrow-up-tray",
+  "📥": "inbox-arrow-down",
+  "💬": "chat-bubble-oval-left",
+  "🗨️": "chat-bubble-bottom-left",
+  "📢": "megaphone",
+  "📣": "megaphone",
+  "🚀": "rocket-launch",
+  "💡": "light-bulb",
+  "🔥": "fire",
+  "⚡": "bolt",
+  "☀️": "sun",
+  "🌙": "moon",
+  "☁️": "cloud",
+  "🌐": "globe-alt",
+  "🌍": "globe-europe-africa",
+  "🌎": "globe-americas",
+  "🌏": "globe-asia-australia",
+  "📍": "map-pin",
+  "🗺️": "map",
+  "🛒": "shopping-cart",
+  "🛍️": "shopping-bag",
+  "💳": "credit-card",
+  "💰": "banknotes",
+  "💵": "banknotes",
+  "💲": "currency-dollar",
+  "🎫": "ticket",
+  "🎁": "gift",
+  "🏆": "trophy",
+  "🚚": "truck",
+  "📦": "archive-box",
+  "📊": "chart-bar",
+  "📈": "arrow-trending-up-right",
+  "📉": "arrow-trending-down-right",
+  "🖨️": "printer",
+  "💻": "computer",
+  "🖥️": "computer-desktop",
+  "📱": "mobile",
+  "🐛": "ant",
+  "🐞": "ant",
+  "📖": "book",
+  "📚": "book",
+  "📰": "newspaper",
+  "📻": "radio",
+  "🎓": "academic-cap",
+  "👍": "hand-thumb-up",
+  "👎": "hand-thumb-down",
+  "✋": "hand",
+  "😀": "face-smile",
+  "🙂": "face-smile",
+  "☹️": "face-frown",
+  "🙁": "face-frown",
+  "✂️": "scissors",
+  "🧪": "beaker",
+  "🧩": "puzzle-piece",
+  "🎨": "swatch",
+  "🖌️": "paint-brush",
+  "🎂": "cake",
+  "🚩": "flag",
+  "⚖️": "scale",
+  "💼": "briefcase",
+  "🏢": "building-office",
+  "🏦": "building-library",
+  "🏪": "building-storefront",
+  "🔋": "battery-100",
+  "📶": "signal",
+  "🔌": "power",
+  "➕": "plus",
+  "➖": "minus",
+  "➗": "divide",
+  "🟰": "equal",
+  "⬆️": "arrow-up",
+  "⬇️": "arrow-down",
+  "⬅️": "arrow-left",
+  "➡️": "arrow-right",
+  "↗️": "arrow-up-right",
+  "↘️": "arrow-down-right",
+  "🔄": "arrow-path",
+  "🔃": "arrow-path",
+  "↩️": "arrow-uturn-down-left",
+  "↪️": "arrow-uturn-down-right",
+  "🚫": "no-circle",
+  "⛔": "no-circle",
+  "🆔": "identification",
+  "📌": "map-pin",
+  "🗂️": "rectangle-stack",
+  "🗄️": "archive-drawer",
+  "💾": "arrow-down-tray",
+  "🧮": "calculator"
+ }
+}

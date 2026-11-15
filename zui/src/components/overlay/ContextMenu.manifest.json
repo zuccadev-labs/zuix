@@ -1,0 +1,103 @@
+{
+  "name": "ContextMenu",
+  "group": "overlay",
+  "description": "Menú contextual que se abre con clic derecho o pulsación larga sobre una zona.",
+  "import": "import { ContextMenu, type MenuEntry } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "children",
+      "type": "ReactElement",
+      "required": true,
+      "description": "Zona sensible al clic derecho."
+    },
+    {
+      "name": "items",
+      "type": "MenuEntry[]",
+      "required": true,
+      "description": "Entradas: { id, label, icon?, shortcut?, danger?, disabled?, keepOpen?, onSelect?, items? } | { type: \"separator\" } | { type: \"label\", label }. `items` anida un submenú."
+    },
+    {
+      "name": "label",
+      "type": "string"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    }
+  ],
+  "states": [
+    "open",
+    "closed",
+    "highlighted",
+    "disabled"
+  ],
+  "tokens": [
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "font-mono",
+    "font-sans",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-menu",
+    "layer-popover",
+    "leading-normal",
+    "line",
+    "popup-bg",
+    "popup-radius",
+    "radius-xs",
+    "row-hover",
+    "text-body",
+    "text-fine",
+    "text-heading",
+    "text-small",
+    "weight-medium",
+    "weight-regular"
+  ],
+  "classes": [
+    "z-menu",
+    "z-menu__item",
+    "z-menu__icon",
+    "z-menu__text",
+    "z-menu__shortcut",
+    "z-menu__separator",
+    "z-menu__label",
+    "z-menu__chevron"
+  ],
+  "a11y": "React: Radix ContextMenu, que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
+  "examples": [
+    {
+      "title": "Sobre una tarjeta",
+      "code": "<ContextMenu\n  label=\"File actions\"\n  items={[\n    { id: \"open\", label: \"Open\", onSelect: () => openFile() },\n    { id: \"move\", label: \"Move to\", items: [\n      { id: \"archive\", label: \"Archive\", onSelect: () => moveTo(\"archive\") },\n      { id: \"inbox\", label: \"Inbox\", onSelect: () => moveTo(\"inbox\") },\n    ] },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", danger: true, shortcut: \"Del\", onSelect: () => removeFile() },\n  ]}\n>\n  <div>Right-click this area</div>\n</ContextMenu>"
+    }
+  ],
+  "origin": "ContextMenu y `.ctx-menu` de zutool (las subpáginas pasan a submenús); accesibilidad de Radix ContextMenu.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Menú contextual con submenú anidado",
+      "code": "<div class=\"z-liquid\" data-z-context=\"#file-menu\">Right-click here</div>\n\n<div id=\"file-menu\" popover class=\"z-liquid z-menu\" role=\"menu\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"pencil\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Rename</span>\n    <kbd class=\"z-menu__shortcut\">F2</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Duplicate</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"file-move\" data-z-submenu=\"#file-move\">\n    <span class=\"z-menu__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Move to</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div id=\"file-move\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Move to\" data-size=\"md\">\n    <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n      <span class=\"z-menu__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Documents</span>\n    </button>\n    <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n      <span class=\"z-menu__icon\"><z-icon name=\"archive-box\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Archive</span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger>\n    <span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Delete</span>\n  </button>\n</div>"
+    }
+  ]
+}

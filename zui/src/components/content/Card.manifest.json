@@ -1,0 +1,84 @@
+{
+  "name": "Card",
+  "group": "content",
+  "description": "Superficie que agrupa contenido relacionado.",
+  "import": "import { Card, CardHeader, CardFooter } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "elevated",
+        "outlined",
+        "filled"
+      ],
+      "default": "elevated"
+    },
+    {
+      "name": "padding",
+      "type": "enum",
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "interactive",
+      "type": "boolean",
+      "default": false,
+      "description": "Respuesta al puntero y al foco; añadir onClick, role y tabIndex, o envolver un enlace."
+    },
+    {
+      "name": "...rest",
+      "type": "HTMLAttributes<HTMLDivElement>"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active"
+  ],
+  "tokens": [
+    "space-4",
+    "space-3",
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "fg",
+    "card-shadow",
+    "space-6",
+    "inset",
+    "duration-normal",
+    "ease-standard",
+    "line-strong",
+    "surface-2",
+    "focus-ring",
+    "font-display",
+    "text-heading",
+    "weight-semibold",
+    "leading-snug",
+    "fg-muted",
+    "text-small",
+    "space-2",
+    "line"
+  ],
+  "classes": [
+    "z-card"
+  ],
+  "a11y": "div sin rol. Si es activable, quien la usa aporta rol, tabIndex y teclado.",
+  "examples": [
+    {
+      "title": "Con cabecera y pie",
+      "code": "<Card>\n  <CardHeader title=\"Billing\" subtitle=\"Next invoice on 1 December\" action={<Badge tone=\"success\">Active</Badge>} />\n  <p>Team plan, 8 seats.</p>\n  <CardFooter>\n    <Button variant=\"ghost\">Cancel plan</Button>\n    <Button variant=\"primary\">Manage</Button>\n  </CardFooter>\n</Card>"
+    },
+    {
+      "title": "Activable",
+      "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(project.id)}>\n  <CardHeader title={project.name} subtitle={project.owner} />\n</Card>"
+    }
+  ],
+  "origin": "Card del design system base con la superficie de tarjeta de zutool."
+}

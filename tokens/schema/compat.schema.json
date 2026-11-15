@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Capa de compatibilidad de un proyecto",
+  "description": "Mapa declarativo de las variables CSS antiguas de un proyecto a tokens de @zuccadev-labs/zuix-tokens. Cada variable que declara la hoja antigua debe estar en `map`, `rename` o `keep`; el build falla si falta alguna.",
+  "type": "object",
+  "required": ["project", "brand", "source", "map"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string" },
+    "project": { "type": "string", "description": "Nombre del proyecto que migra." },
+    "label": { "type": "string" },
+    "brand": { "type": "string", "description": "Marca de brands/ contra la que se validan los tokens y se comparan los valores." },
+    "source": {
+      "type": "object", "required": ["env", "sheets", "scan"], "additionalProperties": false,
+      "description": "Fuentes del proyecto. Viven fuera de este repositorio y solo se leen. Sin la variable de entorno se usa la instantánea <proyecto>.inventory.json.",
+      "properties": {
+        "env": { "type": "string", "pattern": "^ZUIX_COMPAT_[A-Z0-9_]+_ROOT$", "description": "Nombre de la variable de entorno que contiene la ruta a la raíz del proyecto. La ruta no se escribe en este archivo." },
+        "sheets": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Hojas de tokens antiguas, relativas a la raíz del proyecto." },
+        "scan": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Carpetas o archivos donde se buscan los usos, relativos a la raíz del proyecto." }
+      }
+    },
+    "map": {
+      "type": "object", "additionalProperties": { "type": "string" },
+      "description": "Variable antigua → valor nuevo. `{nombre}` es var(--z-nombre); `{p.nombre}` es un primitivo de la marca."
+    },
+    "rename": {
+      "type": "object",
+      "description": "Variables que la capa no puede cubrir porque su nombre choca con un token de zuix. Se sustituyen en el código del proyecto.",
+      "additionalProperties": { "type": "object", "required": ["to", "reason"], "additionalProperties": false, "properties": { "to": { "type": "string", "pattern": "^--z-" }, "reason": { "type": "string" } } }
+    },
+    "keep": {
+      "type": "object", "additionalProperties": { "type": "string" },
+      "description": "Variables sin equivalente, con el motivo. Se quedan en la aplicación. Una clave acabada en `*` cubre un prefijo."
+    },
+    "notes": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Nota por variable para la tabla de diferencias." }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "name": "Slider",
+  "group": "forms",
+  "description": "Deslizador de un valor o de un rango.",
+  "import": "import { Slider } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number[]",
+      "description": "Valor controlado; un elemento por tirador."
+    },
+    {
+      "name": "defaultValue",
+      "type": "number[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: number[]) => void"
+    },
+    {
+      "name": "onValueCommit",
+      "type": "(value: number[]) => void",
+      "description": "Al soltar el tirador."
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "thumbLabels",
+      "type": "string[]",
+      "description": "Nombre accesible de cada tirador."
+    },
+    {
+      "name": "aria-label",
+      "type": "string",
+      "description": "Nombre accesible común si no hay `thumbLabels`."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled"
+  ],
+  "tokens": [
+    "space-20",
+    "radius-full",
+    "surface-3",
+    "accent",
+    "fg-on-accent",
+    "shadow-sm",
+    "duration-fast",
+    "ease-standard",
+    "focus-ring"
+  ],
+  "classes": [
+    "z-slider"
+  ],
+  "a11y": "Radix Slider: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Un valor",
+      "code": "<Slider aria-label=\"Volume\" defaultValue={[60]} max={100} step={5} />"
+    },
+    {
+      "title": "Rango",
+      "code": "<Slider value={range} onValueChange={setRange} min={0} max={500} thumbLabels={[\"Minimum\", \"Maximum\"]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Un valor",
+      "code": "<span class=\"z-slider\" id=\"volume\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"5\" data-value=\"60\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Volume\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"60\" aria-orientation=\"horizontal\"></span>\n  <input type=\"hidden\" name=\"volume\" value=\"60\" />\n</span>",
+      "script": "document.querySelector(\"#volume\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Rango",
+      "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
+    }
+  ],
+  "origin": "Nuevo, sobre Slider de radix-ui."
+}

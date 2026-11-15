@@ -1,0 +1,98 @@
+{
+  "name": "Chip",
+  "group": "data",
+  "description": "Ficha compacta: filtro conmutable, etiqueta eliminable o ambas.",
+  "import": "import { Chip } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "selected",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onClick",
+      "type": "() => void",
+      "description": "Vuelve la ficha un botón conmutable (aria-pressed)."
+    },
+    {
+      "name": "onRemove",
+      "type": "() => void",
+      "description": "Añade el botón de quitar."
+    },
+    {
+      "name": "removeLabel",
+      "type": "string",
+      "default": "Remove"
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "count",
+      "type": "number",
+      "description": "Contador a la derecha."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "selected"
+  ],
+  "tokens": [
+    "line",
+    "radius-full",
+    "surface",
+    "fg-muted",
+    "text-small",
+    "weight-medium",
+    "duration-fast",
+    "ease-standard",
+    "text-caption",
+    "space-3",
+    "space-2",
+    "space-1",
+    "surface-3",
+    "text-fine",
+    "weight-bold",
+    "line-strong",
+    "surface-2",
+    "fg",
+    "focus-ring",
+    "accent-ring",
+    "accent-soft",
+    "accent"
+  ],
+  "classes": [
+    "z-chip"
+  ],
+  "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
+  "examples": [
+    {
+      "title": "Filtro",
+      "code": "<Chip selected={onlyMine} onClick={() => setOnlyMine(!onlyMine)} icon=\"user\" count={12}>Assigned to me</Chip>"
+    },
+    {
+      "title": "Etiqueta eliminable",
+      "code": "<Chip onRemove={() => removeTag(\"design\")} removeLabel=\"Remove design tag\">design</Chip>"
+    }
+  ],
+  "origin": "FilterChip del design system base y chip de zutool."
+}

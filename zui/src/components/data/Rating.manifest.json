@@ -1,0 +1,95 @@
+{
+  "name": "Rating",
+  "group": "data",
+  "description": "Valoración con estrellas: lectura (admite decimales) o entrada.",
+  "import": "import { Rating } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "showValue",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "caption",
+      "type": "ReactNode",
+      "description": "Texto tras el valor, p. ej. número de opiniones."
+    },
+    {
+      "name": "onChange",
+      "type": "(value: number) => void",
+      "description": "Vuelve las estrellas un grupo de opciones."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Rating"
+    },
+    {
+      "name": "valueLabel",
+      "type": "(value: number, max: number) => string",
+      "description": "Por defecto \"N out of M\"."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled"
+  ],
+  "tokens": [
+    "space-2",
+    "fg",
+    "text-small",
+    "text-body",
+    "warning",
+    "line-strong",
+    "radius-xs",
+    "duration-fast",
+    "ease-standard",
+    "ease-spring",
+    "focus-ring",
+    "weight-semibold",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-rating"
+  ],
+  "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con flechas.",
+  "examples": [
+    {
+      "title": "Lectura",
+      "code": "<Rating value={4.3} showValue caption=\"(128 reviews)\" />"
+    },
+    {
+      "title": "Entrada",
+      "code": "<Rating value={score} onChange={setScore} size=\"lg\" label=\"Your rating\" />"
+    }
+  ],
+  "origin": "Rating del design system base."
+}

@@ -1,0 +1,105 @@
+{
+  "name": "Pagination",
+  "group": "navigation",
+  "description": "Navegación entre páginas numeradas con anterior, siguiente y huecos.",
+  "import": "import { Pagination } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "page",
+      "type": "number",
+      "required": true,
+      "description": "Página actual, desde 1."
+    },
+    {
+      "name": "pageCount",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "onPageChange",
+      "type": "(page: number) => void",
+      "required": true
+    },
+    {
+      "name": "siblingCount",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Pagination"
+    },
+    {
+      "name": "previousLabel",
+      "type": "string",
+      "default": "Previous page"
+    },
+    {
+      "name": "nextLabel",
+      "type": "string",
+      "default": "Next page"
+    },
+    {
+      "name": "pageLabel",
+      "type": "(page: number) => string",
+      "default": "(n) => `Page ${n}`"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "current",
+    "disabled"
+  ],
+  "tokens": [
+    "accent-solid",
+    "control-height-md",
+    "control-height-sm",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-on-accent",
+    "fg-subtle",
+    "focus-ring",
+    "radius-full",
+    "row-hover",
+    "space-1",
+    "space-2",
+    "space-6",
+    "text-body",
+    "text-small",
+    "weight-medium"
+  ],
+  "classes": [
+    "z-pagination",
+    "z-pagination__btn",
+    "z-pagination__gap"
+  ],
+  "a11y": "nav con nombre accesible; cada botón tiene etiqueta, la página actual lleva aria-current=page y los extremos se deshabilitan.",
+  "examples": [
+    {
+      "title": "Controlada",
+      "code": "function Pager() {\n  const [page, setPage] = useState(1);\n  return <Pagination page={page} pageCount={20} onPageChange={setPage} />;\n}"
+    }
+  ],
+  "origin": "Nuevo.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Veinte páginas (data-page-count; emite z:change)",
+      "code": "<nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"md\" data-page-count=\"20\">\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled>\n    <z-icon name=\"chevron-left\" size=\"14\"></z-icon>\n  </button>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 3\">3</button>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 4\">4</button>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 5\">5</button>\n  <span class=\"z-pagination__gap\" aria-hidden=\"true\">…</span>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 20\">20</button>\n  <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\">\n    <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n  </button>\n</nav>"
+    }
+  ]
+}

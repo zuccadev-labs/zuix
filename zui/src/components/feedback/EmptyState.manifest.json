@@ -1,0 +1,81 @@
+{
+  "name": "EmptyState",
+  "group": "feedback",
+  "description": "Estado vacío: explica por qué no hay contenido y qué hacer.",
+  "import": "import { EmptyState } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "action",
+      "type": "ReactNode",
+      "description": "Acción principal."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "headingLevel",
+      "type": "2 | 3 | 4",
+      "default": 3
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "space-2",
+    "space-10",
+    "space-6",
+    "fg-muted",
+    "space-4",
+    "space-16",
+    "line",
+    "radius-full",
+    "surface-2",
+    "danger-soft",
+    "danger",
+    "fg",
+    "font-display",
+    "text-heading-lg",
+    "weight-semibold",
+    "leading-snug",
+    "text-title",
+    "text-body",
+    "leading-normal",
+    "text-small",
+    "space-3"
+  ],
+  "classes": [
+    "z-empty"
+  ],
+  "a11y": "Encabezado real con nivel configurable; el icono es decorativo.",
+  "examples": [
+    {
+      "title": "Con acción",
+      "code": "<EmptyState icon=\"folder-plus\" title=\"No projects yet\" description=\"Create your first project to start organising work.\" action={<Button variant=\"primary\" icon=\"plus\">New project</Button>} />"
+    },
+    {
+      "title": "Compacto",
+      "code": "<EmptyState size=\"sm\" icon=\"magnifying-glass\" title=\"No results\" description=\"Try a different search term.\" />"
+    }
+  ],
+  "origin": "EmptyState del design system base y de zutool."
+}

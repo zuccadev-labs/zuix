@@ -1,0 +1,97 @@
+{
+  "name": "Checkbox",
+  "group": "forms",
+  "description": "Casilla de verificación con etiqueta, descripción y estado indeterminado.",
+  "import": "import { Checkbox } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "checked",
+      "type": "boolean | \"indeterminate\"",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultChecked",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onCheckedChange",
+      "type": "(checked: boolean | \"indeterminate\") => void"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Etiqueta visible. Sin ella hace falta aria-label."
+    },
+    {
+      "name": "description",
+      "type": "ReactNode",
+      "description": "Texto secundario bajo la etiqueta."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre para envío en formularios."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "on"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "checked",
+    "indeterminate",
+    "invalid",
+    "disabled"
+  ],
+  "tokens": [
+    "space-2",
+    "fg",
+    "text-body",
+    "leading-snug",
+    "weight-medium",
+    "fg-muted",
+    "text-small",
+    "line-strong",
+    "control-bg",
+    "fg-on-accent",
+    "duration-fast",
+    "ease-standard",
+    "radius-xs",
+    "accent",
+    "focus-ring",
+    "accent-solid",
+    "danger",
+    "ease-spring"
+  ],
+  "classes": [
+    "z-check"
+  ],
+  "a11y": "Radix Checkbox: role checkbox, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
+  "examples": [
+    {
+      "title": "Con descripción",
+      "code": "<Checkbox defaultChecked description=\"We will email you once a week.\">Send me the summary</Checkbox>"
+    },
+    {
+      "title": "Indeterminado",
+      "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
+    }
+  ],
+  "origin": "Nuevo, sobre Checkbox de radix-ui."
+}

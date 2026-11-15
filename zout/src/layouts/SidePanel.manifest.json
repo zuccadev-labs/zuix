@@ -1,0 +1,51 @@
+{
+  "name": "SidePanel",
+  "group": "layout",
+  "description": "Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.",
+  "import": "import { SidePanel } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "SidePanel"
+  ],
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "subtitle",
+      "type": "ReactNode"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "padded",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "tokens": [
+    "line",
+    "fg",
+    "fg-subtle",
+    "font-display",
+    "text-title",
+    "space-3",
+    "space-4"
+  ],
+  "classes": [
+    "z-sidepanel"
+  ],
+  "examples": [
+    {
+      "title": "Inspector",
+      "code": "<SidePanel title=\"Details\" subtitle=\"Updated today\" footer={<Button variant=\"primary\">Save</Button>}>…</SidePanel>"
+    }
+  ],
+  "origin": "Panel de zutool."
+}

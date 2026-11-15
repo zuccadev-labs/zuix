@@ -1,0 +1,56 @@
+# Zuix
+
+> Componentes, layouts, iconos y documentación con un solo estándar. Cambia la marca, conserva el sistema.
+
+## Uso
+
+Qué es cada paquete y cómo se usa.
+
+- [Tokens](/docs/users/tokens): `@zuccadev-labs/zuix-tokens` es la fuente única de los valores de diseño. Iconos, componentes, layouts y
+- [Zicon](/docs/users/zicon): `@zuccadev-labs/zuix-zicon` es el estándar iconográfico de la suite. Sale de Dazicon, el set de iconos de DAZLABS.
+- [Zui](/docs/users/zui): `@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 64 componentes en 8 grupos. Cada componente es
+- [Zout](/docs/users/zout): `@zuccadev-labs/zuix-zout` es el paquete de layouts y ventanas dinámicas. Resuelve la estructura de la pantalla; no
+- [Zudocs](/docs/users/zudocs): `@zuccadev-labs/zuix-zudocs` es el estándar de documentación de la suite y su plantilla: un sitio Docusaurus con el
+- [Usar zuix con cualquier framework](/docs/users/frameworks): Zuix no es una librería de React. El estándar es un **contrato de HTML, CSS y tokens**; React es uno de
+- [Migrar zutool y ui-glass a @zuccadev-labs/zuix-tokens](/docs/users/migracion): zutool y `ui-glass` llevan cada uno su copia de los tokens liquid glass. Esta guía explica cómo pasan a
+- [Zuix para usuarios](/docs/users/): Zuix es una suite de UI/UX: tokens, iconos, componentes, layouts y documentación con un solo estándar.
+
+## Agentes
+
+Reglas, patrones y verificación para agentes de IA.
+
+- [Cambiar de marca](/docs/agents/marca): Una marca es un archivo: `tokens/brands/<nombre>.json`. Los componentes no se tocan.
+- [Montar una pantalla](/docs/agents/pantallas): Una pantalla se compone con layouts de `zout` y componentes de `zui`. No define medidas de estructura ni
+- [Documentar con zudocs](/docs/agents/documentacion): Se edita un solo archivo: `zudocs.config.json`. Tiene esquema (`zudocs/zudocs.schema.json`), así que un
+- [Usar o extender zuix fuera de React](/docs/agents/otros-frameworks): Formato: reglas → patrones → verificación. Guía de uso en [Frameworks](../users/06-frameworks.md).
+- [Kit de agente](/docs/agents/): Cómo trabaja un agente de IA con la suite. Todo sigue el mismo formato: **reglas → patrones →
+
+## Investigación
+
+Análisis previos y decisiones de arquitectura.
+
+- [Investigación inicial: arquitectura de un sistema de diseño corporativo](/docs/investigations/investigacion-inicial): Crear un sistema de diseño (un "Material UI" propio) a escala corporativa. Cuando trabajas en una gran corporación, las prioridades cambian: la velocidad de des
+- [01 · Estado actual y problemática](/docs/investigations/estado-y-problematica): Fecha: 2026-11-12.
+- [02 · Fuentes de estilo](/docs/investigations/fuentes-de-estilo): Fecha: 2026-11-12.
+- [03 · Zicon: extracción de Dazicon](/docs/investigations/zicon-dazicon): Fecha: 2026-11-12.
+- [04 · Componentes de referencia](/docs/investigations/componentes-de-referencia): Fecha: 2026-11-12.
+- [05 · Zudocs: Docusaurus y estándar documental](/docs/investigations/zudocs-docusaurus): Fecha: 2026-11-12.
+- [06 · Arquitectura de la suite y decisiones](/docs/investigations/arquitectura-y-decisiones): Fecha: 2026-11-12. Estado: plan previo a la construcción. Lo construido y las decisiones tomadas están en
+- [07 · Estado de construcción](/docs/investigations/estado-de-construccion): Fecha: 2026-11-13; actualizado el 2026-11-14. Qué se construyó a partir del plan del documento 06, cómo se verificó y qué falta.
+- [Investigaciones de Zuix](/docs/investigations/): Registro de lo que se analizó antes de construir la suite y de las decisiones que salen de ahí.
+
+## Publicación
+
+Versionado, build de publicación y contrato público.
+
+- [Versionado](/docs/package/versionado): Qué número sube con cada cambio y cómo se sube.
+- [Publicación](/docs/package/publicacion): Pasos exactos para publicar la suite en npmjs.com. Última actualización: 2026-11-14.
+- [Contrato público](/docs/package/contrato-publico): Qué es superficie pública de la suite y qué cuenta como cambio incompatible. Todo lo que no aparece aquí
+- [Apertura del repositorio](/docs/package/apertura-del-repositorio): Qué se saneó para poder hacer público el repositorio, qué queda todavía en el historial y cómo hacer el
+- [Empaquetado y publicación](/docs/package/): Cómo se versionan, se construyen y se publican los paquetes de la suite. Para quien publica.
+
+## Contratos legibles por máquina
+
+- tokens/dist/tokens.json: tokens por marca y tema
+- zicon/manifest.json: iconos, palabras clave y sustitución de emojis
+- zui/manifest.json y zout/manifest.json: props, variantes, tokens y ejemplos de cada componente

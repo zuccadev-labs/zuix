@@ -1,0 +1,401 @@
+<!doctype html>
+<!-- Aplicación completa en HTML plano, sin React ni bundler: Shell con TitleBar, Rail, Sidebar, inspector,
+     TabStrip y SplitPane. El comportamiento lo ponen @zuccadev-labs/zuix-zui/dom y @zuccadev-labs/zuix-zout/dom. Requiere `pnpm dist`. -->
+<html lang="en" data-theme="dark" data-brand="dazlabs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zuix · Shell in plain HTML</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../tokens/dist/tokens.css">
+  <link rel="stylesheet" href="../../zui/dist/zui.css">
+  <link rel="stylesheet" href="../../zout/dist/zout.css">
+  <style>
+    /* Maquetación propia de la página. Solo tokens. El Shell necesita un contenedor con alto definido. */
+    html, body { height: 100%; }
+    body { margin: 0; overflow: hidden; }
+    *, *::before, *::after { box-sizing: border-box; }
+    .app-brand { font-family: var(--z-font-display); font-weight: var(--z-weight-bold); letter-spacing: var(--z-tracking-tight); }
+    .app-logo { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: var(--z-radius-md); background: var(--z-accent-soft); color: var(--z-accent); }
+    .app-screen { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+    .app-screen[hidden] { display: none; }
+    .app-screen > * { flex: 1 1 auto; min-height: 0; }
+    .app-text { margin: 0; color: var(--z-fg-muted); font-size: var(--z-text-small); line-height: var(--z-leading-relaxed); }
+    .app-meta { display: grid; grid-template-columns: auto 1fr; gap: var(--z-space-1) var(--z-space-4); margin: 0; font-size: var(--z-text-small); }
+    .app-meta dt { color: var(--z-fg-subtle); }
+    .app-meta dd { margin: 0; font-family: var(--z-font-mono); }
+    .app-pane-pad { padding: var(--z-space-2); }
+    .app-pane-title { font-family: var(--z-font-mono); color: var(--z-fg); }
+    .app-code { display: flex; width: 100%; height: 100%; }
+  </style>
+</head>
+<body class="z-root z-canvas" data-z-dom>
+  <div class="z-shell z-canvas z-root" id="app">
+    <div class="z-titlebar">
+      <div class="z-titlebar__brand">
+        <button type="button" title="Toggle navigation" aria-label="Toggle navigation" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-z-shell-toggle="sidebar" id="toggle-sidebar">
+          <z-icon name="bars-3" size="16"></z-icon>
+        </button>
+        <span class="app-brand">Zuix</span>
+      </div>
+      <div class="z-titlebar__center">
+        <div class="z-tabstrip" id="tabs">
+          <div class="z-tabstrip__list" role="tablist" aria-label="Open screens">
+            <div class="z-tabstrip__tab" data-selected="true">
+              <button type="button" role="tab" class="z-tabstrip__select" aria-selected="true" tabindex="0" data-tab-id="overview" aria-controls="screen-overview">
+                <z-icon name="home" size="14"></z-icon>
+                <span class="z-tabstrip__title">Overview</span>
+              </button>
+            </div>
+            <div class="z-tabstrip__tab">
+              <button type="button" role="tab" class="z-tabstrip__select" aria-selected="false" tabindex="-1" data-tab-id="editor" aria-controls="screen-editor">
+                <z-icon name="code-bracket" size="14"></z-icon>
+                <span class="z-tabstrip__title">Editor</span>
+              </button>
+              <button type="button" class="z-tabstrip__close" aria-label="Close tab" tabindex="-1">
+                <z-icon name="x-mark" size="12"></z-icon>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="z-tabstrip__add" aria-label="New tab">
+            <z-icon name="plus" size="14"></z-icon>
+          </button>
+        </div>
+      </div>
+      <div class="z-titlebar__actions">
+        <button type="button" title="Toggle theme" aria-label="Toggle theme" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" id="toggle-theme">
+          <z-icon name="sun" size="16"></z-icon>
+        </button>
+        <button type="button" title="Toggle details panel" aria-label="Toggle details panel" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-z-shell-toggle="inspector" id="toggle-inspector">
+          <z-icon name="adjustments-horizontal" size="16"></z-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="z-shell__body">
+      <div class="z-shell__rail">
+        <nav class="z-rail z-liquid" aria-label="Primary">
+          <div class="z-rail__brand">
+            <span class="app-logo"><z-icon name="cube" variant="solid" size="20"></z-icon></span>
+          </div>
+          <div class="z-rail__items">
+            <button type="button" class="z-rail__item" aria-label="Overview" title="Overview" aria-current="page" data-go="overview">
+              <z-icon name="home" variant="solid" size="20"></z-icon>
+            </button>
+            <button type="button" class="z-rail__item" aria-label="Editor" title="Editor" data-go="editor">
+              <z-icon name="code-bracket" size="20"></z-icon>
+            </button>
+          </div>
+          <div class="z-rail__footer">
+            <button type="button" class="z-rail__item" aria-label="Notifications" title="Notifications" id="notifications">
+              <z-icon name="bell" size="20"></z-icon>
+              <span class="z-rail__badge">3</span>
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      <aside class="z-liquid z-shell__side" aria-label="Navigation" data-side="left">
+        <div class="z-shell__panel-body">
+          <div class="z-sidebar">
+            <div class="z-sidebar__sections">
+              <section class="z-sidebar__section" data-open="true">
+                <div class="z-sidebar__head">
+                  <button type="button" class="z-sidebar__fold" aria-expanded="true" aria-controls="nav-workspace">
+                    <z-icon name="chevron-down-small" size="12"></z-icon>
+                    <span class="z-sidebar__title">Workspace</span>
+                  </button>
+                </div>
+                <div class="z-sidebar__body" id="nav-workspace">
+                  <nav aria-label="Workspace" class="z-navlist">
+                    <button type="button" class="z-navlink" aria-current="page" data-active="true" data-go="overview" data-z-close>
+                      <span class="z-navlink__icon"><z-icon name="home" variant="solid" size="16"></z-icon></span>
+                      <span class="z-navlink__label">Overview</span>
+                    </button>
+                    <button type="button" class="z-navlink" data-go="editor" data-z-close>
+                      <span class="z-navlink__icon"><z-icon name="code-bracket" size="16"></z-icon></span>
+                      <span class="z-navlink__label">Editor</span>
+                    </button>
+                  </nav>
+                </div>
+              </section>
+              <section class="z-sidebar__section" data-open="true" data-grow="true">
+                <div class="z-sidebar__head">
+                  <button type="button" class="z-sidebar__fold" aria-expanded="true" aria-controls="nav-projects">
+                    <z-icon name="chevron-down-small" size="12"></z-icon>
+                    <span class="z-sidebar__title">Projects</span>
+                    <span class="z-sidebar__count">3</span>
+                  </button>
+                </div>
+                <div class="z-sidebar__body" id="nav-projects">
+                  <nav aria-label="Projects" class="z-navlist">
+                    <button type="button" class="z-navlink">
+                      <span class="z-navlink__icon"><z-icon name="folder" size="16"></z-icon></span>
+                      <span class="z-navlink__label">Atlas</span>
+                      <span class="z-navlink__trailing">12</span>
+                    </button>
+                    <button type="button" class="z-navlink">
+                      <span class="z-navlink__icon"><z-icon name="folder" size="16"></z-icon></span>
+                      <span class="z-navlink__label">Borealis</span>
+                      <span class="z-navlink__trailing">4</span>
+                    </button>
+                    <button type="button" class="z-navlink">
+                      <span class="z-navlink__icon"><z-icon name="folder" size="16"></z-icon></span>
+                      <span class="z-navlink__label">Cascade</span>
+                      <span class="z-navlink__trailing">27</span>
+                    </button>
+                  </nav>
+                </div>
+              </section>
+            </div>
+            <div class="z-sidebar__foot">
+              <button type="button" class="z-navlink">
+                <span class="z-navlink__icon"><z-icon name="gear" size="16"></z-icon></span>
+                <span class="z-navlink__label">Settings</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize Navigation" aria-valuenow="224" aria-valuemin="180" aria-valuemax="360" class="z-resize" data-side="right" data-default-size="224"></div>
+      </aside>
+
+      <main class="z-shell__main z-liquid">
+        <div class="z-shell__content">
+          <div class="app-screen" id="screen-overview" role="tabpanel">
+            <div class="z-page">
+              <div class="z-container" data-width="content">
+                <header class="z-pagehead">
+                  <div class="z-pagehead__row">
+                    <div class="z-pagehead__text">
+                      <div class="z-pagehead__eyebrow">Plain HTML</div>
+                      <h1 class="z-pagehead__title">Overview</h1>
+                      <p class="z-pagehead__description">Resize the window: the side panels dock when they fit and turn into drawers when they do not. No framework is loaded on this page.</p>
+                    </div>
+                    <div class="z-pagehead__actions">
+                      <button type="button" class="z-btn z-btn--primary" data-size="md" data-go="editor">
+                        <z-icon name="code-bracket" size="16"></z-icon>
+                        Open editor
+                      </button>
+                    </div>
+                  </div>
+                </header>
+                <div class="z-page__body">
+                  <section class="z-section">
+                    <div class="z-section__head">
+                      <div>
+                        <h2 class="z-section__title">Metrics</h2>
+                        <p class="z-section__description">Panel modes: <output id="modes"></output></p>
+                      </div>
+                    </div>
+                    <div class="z-grid" data-gap="4" style="--z-grid-min:200px">
+                      <div class="z-stat z-liquid" data-variant="glass">
+                        <span class="z-stat__head">
+                          <span class="z-stat__label">Users</span>
+                          <span class="z-stat__icon"><z-icon name="users" size="14"></z-icon></span>
+                        </span>
+                        <span class="z-stat__value">1,284</span>
+                        <span class="z-stat__foot">
+                          <span class="z-stat__delta" data-tone="success">+12%</span>
+                          <span class="z-stat__hint">last 24 h</span>
+                        </span>
+                      </div>
+                      <div class="z-stat z-liquid" data-variant="glass">
+                        <span class="z-stat__head">
+                          <span class="z-stat__label">Requests</span>
+                          <span class="z-stat__icon"><z-icon name="chart-bar" size="14"></z-icon></span>
+                        </span>
+                        <span class="z-stat__value">18,240</span>
+                        <span class="z-stat__foot">
+                          <span class="z-stat__delta" data-tone="success">+4%</span>
+                          <span class="z-stat__hint">last 24 h</span>
+                        </span>
+                      </div>
+                      <div class="z-stat z-liquid" data-variant="glass">
+                        <span class="z-stat__head">
+                          <span class="z-stat__label">Revenue</span>
+                        </span>
+                        <span class="z-stat__value">$12.4k</span>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-screen" id="screen-editor" role="tabpanel" hidden>
+            <div class="z-split" id="split-main" data-direction="row">
+              <div class="z-split__pane" style="flex-grow:0.25" id="pane-files">
+                <div class="z-pane" data-focused="false">
+                  <div class="z-pane__header">Files</div>
+                  <div class="z-pane__body">
+                    <div class="app-pane-pad">
+                      <nav aria-label="Project files" class="z-navlist">
+                        <button type="button" class="z-navlink" aria-current="page" data-active="true">
+                          <span class="z-navlink__icon"><z-icon name="document-text" size="16"></z-icon></span>
+                          <span class="z-navlink__label">index.html</span>
+                        </button>
+                        <button type="button" class="z-navlink">
+                          <span class="z-navlink__icon"><z-icon name="document-text" size="16"></z-icon></span>
+                          <span class="z-navlink__label">page.css</span>
+                        </button>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize file list" aria-valuenow="25" aria-valuemin="10" aria-valuemax="90" class="z-split__divider"></div>
+              <div class="z-split__pane" style="flex-grow:0.75">
+                <div class="z-split" id="split-inner" data-direction="column">
+                  <div class="z-split__pane" style="flex-grow:0.65" id="pane-editor">
+                    <div class="z-pane" data-focused="true">
+                      <div class="z-pane__header">
+                        <span class="app-pane-title">index.html</span>
+                        <span class="z-badge" data-tone="info" data-variant="soft" data-size="sm">HTML</span>
+                      </div>
+                      <div class="z-pane__body">
+                        <textarea aria-label="Contents of index.html" spellcheck="false" class="z-textarea app-code" data-size="md" data-resize="none" data-mono="true" id="editor-text">&lt;body class="z-root z-canvas" data-z-dom&gt;
+  &lt;div class="z-shell"&gt;…&lt;/div&gt;
+&lt;/body&gt;
+</textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div role="separator" tabindex="0" aria-orientation="horizontal" aria-label="Resize output" aria-valuenow="65" aria-valuemin="10" aria-valuemax="90" class="z-split__divider"></div>
+                  <div class="z-split__pane" style="flex-grow:0.35" id="pane-output">
+                    <div class="z-pane" data-focused="false">
+                      <div class="z-pane__header">Output</div>
+                      <div class="z-pane__body">
+                        <div class="app-pane-pad">
+                          <p class="app-text">Served as static files. No build step.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="z-liquid z-shell__inspector" aria-label="Details" data-side="right">
+        <div class="z-shell__panel-body">
+          <section class="z-sidepanel">
+            <div class="z-sidepanel__head">
+              <div class="z-sidepanel__titles">
+                <div class="z-sidepanel__title">Atlas</div>
+                <div class="z-sidepanel__subtitle">Marta Ruiz</div>
+              </div>
+              <div class="z-sidepanel__actions">
+                <button type="button" title="Close details" aria-label="Close details" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-z-shell-toggle="inspector" id="close-inspector">
+                  <z-icon name="x-mark" size="16"></z-icon>
+                </button>
+              </div>
+            </div>
+            <div class="z-sidepanel__body" data-padded="true">
+              <div class="z-stack" data-gap="4">
+                <div>
+                  <span class="z-badge" data-tone="success" data-variant="soft" data-size="md">
+                    <span class="z-badge__dot" aria-hidden="true"></span>
+                    Active
+                  </span>
+                </div>
+                <p class="app-text">Shared component contract for every product surface. This panel is an inspector: docked on wide windows, a drawer otherwise.</p>
+                <label class="z-switch" data-size="md" data-label="end">
+                  <button type="button" role="switch" aria-checked="true" data-state="checked" value="on" class="z-switch__track" id="notify">
+                    <span data-state="checked" class="z-switch__thumb"></span>
+                  </button>
+                  <span class="z-switch__label">Notify me about changes</span>
+                </label>
+                <dl class="app-meta">
+                  <dt>Updated</dt><dd>2 hours ago</dd>
+                  <dt>Identifier</dt><dd>atlas</dd>
+                </dl>
+              </div>
+            </div>
+            <div class="z-sidepanel__foot">
+              <button type="button" class="z-btn z-btn--primary" data-size="md" data-block="true" data-go="editor" data-z-close>
+                <z-icon name="arrow-top-right-on-square" size="16"></z-icon>
+                Open project
+              </button>
+            </div>
+          </section>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script type="module">
+    import "../../zicon/dist/zicon.element.js";
+    import { init, setTheme, toast } from "../../zui/dist/zui.dom.js";
+    import { init as initLayouts, addWorkTab, selectWorkTab } from "../../zout/dist/zout.dom.js";
+
+    const shell = document.querySelector("#app");
+    const tabs = document.querySelector("#tabs");
+    const SCREENS = { overview: { title: "Overview", icon: "home" }, editor: { title: "Editor", icon: "code-bracket" } };
+
+    // El shell avisa del modo de cada panel; se escucha antes de init() para recibir el primer aviso.
+    shell.addEventListener("z:modechange", (event) => {
+      if (event.target !== shell) return;
+      const name = (mode) => (mode === "overlay" ? "drawer" : "docked");
+      document.querySelector("#modes").textContent = `sidebar ${name(event.detail.sidebar)}, inspector ${name(event.detail.inspector)}`;
+    });
+
+    // La pestaña activa manda: marca el destino en el rail y la sidebar y elige la superficie del área principal.
+    tabs.addEventListener("z:select", (event) => {
+      const { id } = event.detail;
+      for (const item of document.querySelectorAll(".z-rail [data-go], .z-sidebar [data-go]")) {
+        const active = item.dataset.go === id;
+        if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current");
+        if (item.classList.contains("z-navlink")) item.toggleAttribute("data-active", active);
+        item.querySelector("z-icon")?.setAttribute("variant", active ? "solid" : "outline");
+      }
+      shell.querySelector(".z-shell__main").classList.toggle("z-liquid", id !== "editor");
+    });
+
+    // Rail, sidebar y botones llevan a una pantalla; si su pestaña se cerró, se vuelve a abrir.
+    document.addEventListener("click", (event) => {
+      const id = event.target.closest("[data-go]")?.dataset.go;
+      if (!id) return;
+      if (!selectWorkTab(tabs, id)) addWorkTab(tabs, { id, ...SCREENS[id], controls: `screen-${id}` });
+    });
+
+    // Pestaña nueva: la aplicación crea el panel y pide la pestaña.
+    let drafts = 0;
+    tabs.addEventListener("z:add", () => {
+      const id = `draft-${++drafts}`;
+      const screen = document.createElement("div");
+      screen.className = "app-screen";
+      screen.id = `screen-${id}`;
+      screen.setAttribute("role", "tabpanel");
+      screen.innerHTML = '<div class="z-page"><div class="z-container" data-width="content"><header class="z-pagehead"><h1 class="z-pagehead__title"></h1><p class="z-pagehead__description">An empty screen created from the new tab button.</p></header></div></div>';
+      screen.querySelector("h1").textContent = `Draft ${drafts}`;
+      shell.querySelector(".z-shell__content").append(screen);
+      addWorkTab(tabs, { id, title: `Draft ${drafts}`, icon: "document-text", controls: screen.id });
+    });
+    // Al cerrar una pestaña creada aquí, su panel se retira.
+    tabs.addEventListener("z:close", (event) => {
+      if (event.detail.id.startsWith("draft-")) document.querySelector(`#screen-${event.detail.id}`)?.remove();
+    });
+
+    // Panel con foco del editor.
+    for (const type of ["pointerdown", "focusin"]) {
+      document.querySelector("#screen-editor").addEventListener(type, (event) => {
+        const pane = event.target.closest(".z-pane");
+        if (pane) for (const other of document.querySelectorAll("#screen-editor .z-pane")) other.dataset.focused = String(other === pane);
+      });
+    }
+
+    const html = document.documentElement;
+    document.querySelector("#toggle-theme").addEventListener("click", (event) => {
+      setTheme(html.dataset.theme === "dark" ? "light" : "dark");
+      event.currentTarget.querySelector("z-icon").setAttribute("name", html.dataset.theme === "dark" ? "sun" : "moon");
+    });
+    document.querySelector("#notifications").addEventListener("click", () => toast({ title: "3 unread notifications", description: "Review requests are waiting.", intent: "info" }));
+
+    init();
+    initLayouts();
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{
+  "name": "DateInput",
+  "group": "forms",
+  "description": "Campo de fecha, hora, fecha y hora o mes sobre el control nativo.",
+  "import": "import { DateInput } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "type",
+      "type": "enum",
+      "values": [
+        "date",
+        "time",
+        "datetime-local",
+        "month"
+      ],
+      "default": "date"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "pickerLabel",
+      "type": "string",
+      "default": "Open picker",
+      "description": "Nombre accesible del botón que abre el selector."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor ISO (YYYY-MM-DD, HH:mm, etc.)."
+    },
+    {
+      "name": "min",
+      "type": "string"
+    },
+    {
+      "name": "max",
+      "type": "string"
+    },
+    {
+      "name": "...rest",
+      "type": "InputHTMLAttributes",
+      "description": "onChange, disabled, ref, etc."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "control-height-md",
+    "space-3",
+    "space-2",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "text-body",
+    "duration-fast",
+    "ease-standard",
+    "control-border-hover",
+    "accent",
+    "focus-ring",
+    "surface",
+    "danger",
+    "danger-soft",
+    "control-height-sm",
+    "text-small",
+    "control-height-lg",
+    "space-4",
+    "text-title",
+    "font-mono",
+    "fg-subtle",
+    "space-1",
+    "radius-xs",
+    "fg-muted",
+    "surface-3",
+    "radius-full"
+  ],
+  "classes": [
+    "z-input",
+    "z-input--date"
+  ],
+  "a11y": "input nativo: edición por segmentos con teclado y selector del sistema (showPicker). Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
+  "examples": [
+    {
+      "title": "Fecha con límites",
+      "code": "<DateInput value={date} onChange={(event) => setDate(event.target.value)} min=\"2026-01-01\" max=\"2026-12-31\" aria-label=\"Start date\" />"
+    },
+    {
+      "title": "Hora dentro de Field",
+      "code": "<Field label=\"Reminder time\">\n  <DateInput type=\"time\" defaultValue=\"09:30\" />\n</Field>"
+    }
+  ],
+  "origin": "DatePicker y campos de fecha del design system base, reducidos al control nativo con botón de selector."
+}

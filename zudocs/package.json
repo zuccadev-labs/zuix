@@ -1,0 +1,58 @@
+{
+  "name": "@zuccadev-labs/zuix-zudocs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Estándar de documentación de la suite zuix y su plantilla Docusaurus con estilo liquid glass.",
+  "bin": {
+    "zudocs": "./bin/zudocs.mjs"
+  },
+  "scripts": {
+    "start": "node bin/zudocs.mjs start",
+    "build": "node bin/zudocs.mjs build",
+    "serve": "node bin/zudocs.mjs serve",
+    "verify": "node bin/zudocs.mjs verify",
+    "new": "node bin/zudocs.mjs new",
+    "info": "node bin/zudocs.mjs info",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/faster": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@docusaurus/theme-common": "3.10.2",
+    "@docusaurus/theme-mermaid": "3.10.2",
+    "@easyops-cn/docusaurus-search-local": "^0.55.3",
+    "@mdx-js/react": "^3.1.0",
+    "@zuccadev-labs/zuix-tokens": "workspace:*",
+    "@zuccadev-labs/zuix-zicon": "workspace:*",
+    "@zuccadev-labs/zuix-zout": "workspace:*",
+    "@zuccadev-labs/zuix-zui": "workspace:*",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.10.2",
+    "@docusaurus/tsconfig": "3.10.2",
+    "@docusaurus/types": "3.10.2",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.9.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 safari versions"
+    ]
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

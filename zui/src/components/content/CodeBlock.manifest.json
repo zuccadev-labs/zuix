@@ -1,0 +1,109 @@
+{
+  "name": "CodeBlock",
+  "group": "content",
+  "description": "Bloque de código sin resaltado, con botón de copiar.",
+  "import": "import { CodeBlock } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "code",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "description": "Rótulo de cabecera, p. ej. el nombre del archivo."
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "description": "Se muestra en la cabecera y se expone como data-language."
+    },
+    {
+      "name": "wrap",
+      "type": "boolean",
+      "default": false,
+      "description": "Ajusta las líneas largas."
+    },
+    {
+      "name": "maxHeight",
+      "type": "string",
+      "description": "Alto máximo (longitud CSS)."
+    },
+    {
+      "name": "hideCopy",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "copyLabel",
+      "type": "string",
+      "default": "Copy"
+    },
+    {
+      "name": "copiedLabel",
+      "type": "string",
+      "default": "Copied"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Code",
+      "description": "Nombre accesible de la región de código."
+    },
+    {
+      "name": "onCopy",
+      "type": "(code: string) => void"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "copied"
+  ],
+  "tokens": [
+    "line",
+    "radius-md",
+    "code-bg",
+    "fg",
+    "space-2",
+    "control-height-md",
+    "space-4",
+    "fg-muted",
+    "text-small",
+    "font-mono",
+    "fg-subtle",
+    "text-caption",
+    "tracking-wide",
+    "leading-relaxed",
+    "accent-ring",
+    "space-1",
+    "radius-full",
+    "font-sans",
+    "weight-semibold",
+    "duration-fast",
+    "ease-standard",
+    "surface-solid",
+    "surface-3",
+    "line-strong",
+    "focus-ring",
+    "success"
+  ],
+  "classes": [
+    "z-code"
+  ],
+  "a11y": "pre enfocable con role region para desplazarlo con teclado. El botón anuncia \"Copied\" por aria-live.",
+  "examples": [
+    {
+      "title": "Con cabecera",
+      "code": "<CodeBlock title=\"install.sh\" language=\"bash\" code={\"pnpm add @zuccadev-labs/zuix\\npnpm dev\"} />"
+    },
+    {
+      "title": "Sin cabecera, con alto máximo",
+      "code": "<CodeBlock code={JSON.stringify(config, null, 2)} maxHeight=\"240px\" wrap />"
+    }
+  ],
+  "origin": "Nuevo."
+}

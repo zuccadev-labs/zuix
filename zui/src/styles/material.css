@@ -1,0 +1,51 @@
+/*
+  Material liquid glass. Origen: `.liquid` de zutool (apps/desktop/src/styles/app.css).
+  Cuerpo ahumado difuminado, borde luminoso y destello especular arriba. `--z-lg-bg` cambia el tinte por elemento.
+  Regla: nunca sobre texto denso (lectura, editor, terminal). Ahí se usa `.z-solid`.
+*/
+@layer zui.material {
+  .z-liquid {
+    position: relative;
+    isolation: isolate;
+    background: var(--z-lg-bg, var(--z-glass-bg));
+    border: 1px solid var(--z-glass-border);
+    -webkit-backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+    backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight), var(--z-glass-shadow);
+  }
+  .z-liquid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(120% 50% at 50% -20%, var(--z-glass-specular), transparent 60%);
+  }
+  /* Superficie opaca para lectura y edición. */
+  .z-solid {
+    background: var(--z-reading-bg);
+    border: 1px solid var(--z-line);
+  }
+  /* Fondo de aplicación: el "papel pintado" sobre el que flota el cristal. */
+  .z-canvas {
+    background: var(--z-canvas-gradient);
+    background-color: var(--z-canvas);
+    background-attachment: fixed;
+    color: var(--z-fg);
+  }
+  /* `!important`: esta capa es la primera y los grupos posteriores redefinen fondo y desenfoque; la preferencia de la persona manda. */
+  @media (prefers-reduced-transparency: reduce) {
+    .z-liquid {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      background: var(--z-surface-solid);
+    }
+    /* Los velos conservan su tinte, sin desenfocar lo que tapan. */
+    .z-overlay-scrim, .z-loading-overlay[data-blur], .z-shell__scrim,
+    dialog.z-modal::backdrop, dialog.z-drawer::backdrop, dialog.z-palette::backdrop {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+  }
+}

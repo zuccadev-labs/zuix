@@ -1,0 +1,55 @@
+{
+  "name": "CardHeader",
+  "group": "content",
+  "description": "Cabecera de una Card: título, subtítulo y acción.",
+  "import": "import { CardHeader } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "subtitle",
+      "type": "ReactNode"
+    },
+    {
+      "name": "action",
+      "type": "ReactNode",
+      "description": "Alineada a la derecha."
+    },
+    {
+      "name": "headingLevel",
+      "type": "2 | 3 | 4",
+      "default": 3
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "space-3",
+    "font-display",
+    "text-heading",
+    "weight-semibold",
+    "leading-snug",
+    "fg-muted",
+    "text-small",
+    "space-2"
+  ],
+  "classes": [
+    "z-card__header",
+    "z-card__heading",
+    "z-card__title",
+    "z-card__subtitle",
+    "z-card__action"
+  ],
+  "a11y": "El título es un encabezado real con nivel configurable.",
+  "examples": [
+    {
+      "title": "Con acción",
+      "code": "<Card>\n  <CardHeader title=\"Members\" subtitle=\"5 people\" action={<IconButton icon=\"plus\" label=\"Add member\" />} />\n</Card>"
+    }
+  ],
+  "origin": "CardHeader del design system base."
+}

@@ -1,0 +1,4 @@
+/* Tokens (todas las marcas) + componentes + layouts. Requiere un bundler que resuelva paquetes en @import. */
+@import "@zuccadev-labs/zuix-tokens/tokens.css";
+@import "@zuccadev-labs/zuix-zui/styles.css";
+@import "@zuccadev-labs/zuix-zout/styles.css";

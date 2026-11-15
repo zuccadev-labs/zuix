@@ -1,0 +1,43 @@
+{
+  "name": "TitleBar",
+  "group": "layout",
+  "description": "Barra de título para ventanas sin marco, transparente sobre el fondo.",
+  "import": "import { TitleBar } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": [
+    "TitleBar"
+  ],
+  "props": [
+    {
+      "name": "brand",
+      "type": "ReactNode"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Centro: pestañas, título o buscador."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "windowControls",
+      "type": "ReactNode"
+    }
+  ],
+  "tokens": [
+    "canvas-fg",
+    "layer-sticky",
+    "text-body"
+  ],
+  "classes": [
+    "z-titlebar"
+  ],
+  "examples": [
+    {
+      "title": "Con pestañas",
+      "code": "<TitleBar brand={<Logo />} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={tabs} activeId={active} onSelect={setActive} />\n</TitleBar>"
+    }
+  ],
+  "origin": "Barra de título de zutool."
+}

@@ -1,0 +1,92 @@
+{
+  "name": "Avatar",
+  "group": "data",
+  "description": "Imagen de persona o entidad, con iniciales o icono como respaldo.",
+  "import": "import { Avatar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "src",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Genera las iniciales y el nombre accesible."
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "description": "Por defecto, `name`."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "shape",
+      "type": "enum",
+      "values": [
+        "circle",
+        "rounded"
+      ],
+      "default": "circle"
+    },
+    {
+      "name": "status",
+      "type": "enum",
+      "values": [
+        "online",
+        "offline",
+        "busy",
+        "away"
+      ]
+    },
+    {
+      "name": "statusLabel",
+      "type": "string",
+      "description": "Nombre accesible del estado; por defecto el propio valor."
+    }
+  ],
+  "states": [
+    "rest",
+    "image",
+    "fallback"
+  ],
+  "tokens": [
+    "radius-full",
+    "accent-soft",
+    "accent",
+    "weight-bold",
+    "radius-sm",
+    "fg-subtle",
+    "surface-solid",
+    "success",
+    "danger",
+    "warning",
+    "surface-3",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-avatar"
+  ],
+  "a11y": "Con imagen, img con alt. Sin imagen, role=\"img\" con el nombre; si la imagen falla se muestran las iniciales.",
+  "examples": [
+    {
+      "title": "Con imagen y estado",
+      "code": "<Avatar src=\"/people/ana.jpg\" name=\"Ana Ruiz\" status=\"online\" statusLabel=\"Online\" />"
+    },
+    {
+      "title": "Iniciales",
+      "code": "<Avatar name=\"Leo Park\" size=\"lg\" shape=\"rounded\" />"
+    }
+  ],
+  "origin": "Avatar del design system base y de zutool."
+}

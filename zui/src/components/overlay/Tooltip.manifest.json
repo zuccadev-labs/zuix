@@ -1,0 +1,102 @@
+{
+  "name": "Tooltip",
+  "group": "overlay",
+  "description": "Burbuja de ayuda breve al pasar el cursor o enfocar un control.",
+  "import": "import { Tooltip } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "content",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "children",
+      "type": "ReactElement",
+      "required": true,
+      "description": "Disparador: un único elemento enfocable."
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ],
+      "default": "top"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
+      "default": "center"
+    },
+    {
+      "name": "delay",
+      "type": "number",
+      "default": 300,
+      "description": "Retardo de apertura en ms."
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Estado controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    }
+  ],
+  "states": [
+    "closed",
+    "delayed-open",
+    "instant-open"
+  ],
+  "tokens": [
+    "duration-fast",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "font-sans",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-tooltip",
+    "leading-normal",
+    "radius-sm",
+    "text-body",
+    "text-caption",
+    "tooltip-bg"
+  ],
+  "classes": [
+    "z-tooltip"
+  ],
+  "a11y": "Radix Tooltip: aparece con hover y con foco de teclado, describe al disparador con aria-describedby y Escape lo cierra. No sustituye al nombre accesible del control.",
+  "examples": [
+    {
+      "title": "Sobre un botón de icono",
+      "code": "<Tooltip content=\"Copy link\">\n  <button type=\"button\" aria-label=\"Copy link\">Copy</button>\n</Tooltip>"
+    }
+  ],
+  "origin": "Tooltip y `.tooltip` de zutool; accesibilidad de Radix Tooltip.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Tooltip en un botón de icono",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"md\" aria-label=\"Copy link\" data-z-tooltip=\"Copy link\">\n  <z-icon name=\"link\" size=\"16\"></z-icon>\n</button>"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "name": "Tabs",
+  "group": "navigation",
+  "description": "Pestañas para alternar vistas: control segmentado, tira de pastillas o subrayado.",
+  "exports": [
+    "Tabs",
+    "TabPanel"
+  ],
+  "import": "import { Tabs, TabPanel } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "TabItem[]",
+      "required": true,
+      "description": "{ value, label, icon?, badge?, disabled?, content? }"
+    },
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "description": "Por defecto la primera pestaña."
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "segmented",
+        "pill",
+        "underline"
+      ],
+      "default": "segmented"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible de la lista."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Paneles `TabPanel` (props: value, keepMounted)."
+    }
+  ],
+  "states": [
+    "active",
+    "inactive",
+    "hover",
+    "focus",
+    "disabled"
+  ],
+  "tokens": [
+    "accent",
+    "accent-solid",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-on-accent",
+    "focus-ring",
+    "line",
+    "radius-full",
+    "radius-lg",
+    "radius-sm",
+    "row-hover",
+    "space-1",
+    "space-3",
+    "space-4",
+    "surface-2",
+    "surface-3",
+    "text-caption",
+    "text-small",
+    "weight-medium"
+  ],
+  "classes": [
+    "z-tabs",
+    "z-tabs__list",
+    "z-tabs__tab",
+    "z-tabs__label",
+    "z-tabs__panel"
+  ],
+  "a11y": "Radix Tabs: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
+  "examples": [
+    {
+      "title": "Segmentado con contenido",
+      "code": "<Tabs\n  label=\"Account sections\"\n  items={[\n    { value: \"overview\", label: \"Overview\", content: <p>Overview content</p> },\n    { value: \"activity\", label: \"Activity\", content: <p>Activity content</p> },\n    { value: \"settings\", label: \"Settings\", icon: \"cog\", content: <p>Settings content</p> },\n  ]}\n/>"
+    },
+    {
+      "title": "Subrayado controlado con TabPanel",
+      "code": "<Tabs variant=\"underline\" value={tab} onValueChange={setTab} items={[{ value: \"code\", label: \"Code\" }, { value: \"preview\", label: \"Preview\" }]}>\n  <TabPanel value=\"code\">Code view</TabPanel>\n  <TabPanel value=\"preview\">Preview view</TabPanel>\n</Tabs>"
+    }
+  ],
+  "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad de Radix Tabs.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Pestañas segmentadas",
+      "code": "<div class=\"z-tabs\" data-orientation=\"horizontal\">\n  <div role=\"tablist\" class=\"z-tabs__list\" data-variant=\"segmented\" data-size=\"md\" data-orientation=\"horizontal\" aria-label=\"Account sections\">\n    <button type=\"button\" role=\"tab\" class=\"z-tabs__tab\" data-value=\"overview\" data-state=\"active\" aria-selected=\"true\" aria-controls=\"panel-overview\" id=\"tab-overview\">\n      <span class=\"z-tabs__label\">Overview</span>\n    </button>\n    <button type=\"button\" role=\"tab\" class=\"z-tabs__tab\" data-value=\"activity\" data-state=\"inactive\" aria-selected=\"false\" aria-controls=\"panel-activity\" id=\"tab-activity\">\n      <span class=\"z-tabs__label\">Activity</span>\n    </button>\n    <button type=\"button\" role=\"tab\" class=\"z-tabs__tab\" data-value=\"settings\" data-state=\"inactive\" aria-selected=\"false\" aria-controls=\"panel-settings\" id=\"tab-settings\">\n      <z-icon name=\"cog\" size=\"16\"></z-icon>\n      <span class=\"z-tabs__label\">Settings</span>\n    </button>\n  </div>\n  <div role=\"tabpanel\" class=\"z-tabs__panel\" data-value=\"overview\" data-state=\"active\" id=\"panel-overview\" aria-labelledby=\"tab-overview\" tabindex=\"0\">Overview content.</div>\n  <div role=\"tabpanel\" class=\"z-tabs__panel\" data-value=\"activity\" data-state=\"inactive\" id=\"panel-activity\" aria-labelledby=\"tab-activity\" tabindex=\"0\" hidden>Activity content.</div>\n  <div role=\"tabpanel\" class=\"z-tabs__panel\" data-value=\"settings\" data-state=\"inactive\" id=\"panel-settings\" aria-labelledby=\"tab-settings\" tabindex=\"0\" hidden>Settings content.</div>\n</div>"
+    }
+  ]
+}

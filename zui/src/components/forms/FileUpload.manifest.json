@@ -1,0 +1,135 @@
+{
+  "name": "FileUpload",
+  "group": "forms",
+  "description": "Zona para elegir o soltar archivos. No guarda estado.",
+  "import": "import { FileUpload } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "onFiles",
+      "type": "(files: File[]) => void",
+      "required": true,
+      "description": "Archivos aceptados."
+    },
+    {
+      "name": "onReject",
+      "type": "(files: File[]) => void",
+      "description": "Archivos descartados por tipo o tamaño."
+    },
+    {
+      "name": "accept",
+      "type": "string",
+      "description": "Como el atributo accept: extensiones, tipos MIME, comodines."
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "maxSize",
+      "type": "number",
+      "description": "Tamaño máximo por archivo en bytes."
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "default": "arrow-up-tray"
+    },
+    {
+      "name": "label",
+      "type": "ReactNode",
+      "default": "Drop files here or click to browse"
+    },
+    {
+      "name": "hint",
+      "type": "ReactNode",
+      "description": "Formatos y límites."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Contenido extra, p. ej. la lista de archivos elegidos."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "dragging",
+    "invalid",
+    "disabled"
+  ],
+  "tokens": [
+    "space-2",
+    "space-6",
+    "space-4",
+    "line-strong",
+    "card-radius",
+    "control-bg",
+    "fg-muted",
+    "duration-fast",
+    "ease-standard",
+    "space-10",
+    "accent",
+    "surface",
+    "focus-ring",
+    "accent-soft",
+    "danger",
+    "radius-full",
+    "fg",
+    "text-body",
+    "weight-semibold",
+    "text-small"
+  ],
+  "classes": [
+    "z-upload"
+  ],
+  "a11y": "label que envuelve un input de archivos real: se activa con teclado y lo anuncian los lectores. `hint` va por aria-describedby. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo label con su input real, así que teclado y lectores funcionan sin el módulo; este añade soltar archivos, el filtrado por `accept` y `data-max-size`, y la lista `ul.z-upload__files` con nombre y tamaño. Los archivos rechazados solo llegan en `z:change` (`detail.rejected`): anunciarlos es cosa de la aplicación.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Imágenes",
+      "code": "<FileUpload accept=\"image/*\" multiple maxSize={5 * 1024 * 1024} hint=\"PNG or JPG, up to 5 MB each.\" onFiles={(files) => setImages(files)} onReject={() => setError(\"Some files were skipped.\")} />"
+    },
+    {
+      "title": "Un documento",
+      "code": "<FileUpload accept=\".pdf\" label=\"Upload the signed contract\" icon=\"document-arrow-up\" onFiles={([file]) => upload(file)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Imágenes, con lista",
+      "code": "<label class=\"z-upload\" id=\"images\" data-size=\"md\" data-max-size=\"5242880\">\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"images\" accept=\"image/*\" multiple aria-describedby=\"images-hint\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"arrow-up-tray\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\">Drop files here or click to browse</span>\n  <span class=\"z-upload__hint\" id=\"images-hint\">PNG or JPG, up to 5 MB each.</span>\n  <ul class=\"z-upload__files\"></ul>\n</label>",
+      "script": "document.querySelector(\"#images\").addEventListener(\"z:change\", (event) => console.log(event.detail.files.length, event.detail.rejected.length));"
+    },
+    {
+      "title": "Un documento",
+      "code": "<label class=\"z-upload\" id=\"contract\" data-size=\"md\">\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"contract\" accept=\".pdf\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"document-arrow-up\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\">Upload the signed contract</span>\n</label>"
+    }
+  ],
+  "origin": "Nuevo."
+}

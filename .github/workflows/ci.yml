@@ -1,0 +1,85 @@
+# Integración continua de zuix. Mismos comandos que en local (ver AGENTS.md).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Contrato, auditoría y tipos
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Los archivos generados están al día
+        run: git diff --exit-code
+      - run: pnpm --filter @zuccadev-labs/zuix-zudocs build
+      # Build de publicación y consumo externo desde los tarballs (docs/package/README.md).
+      - run: pnpm build
+      - run: pnpm test:pack --skip-build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          if-no-files-found: error
+          path: |
+            tokens/dist
+            zui/dist
+            zout/dist
+            zicon/dist
+            zui/html.json
+            zout/html.json
+          retention-days: 7
+
+  browser:
+    name: Navegador (${{ matrix.browser }})
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    env:
+      BROWSER: ${{ matrix.browser }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # chromium usa el Chrome del sistema (canal "chrome"), presente en los runners de GitHub.
+      - if: matrix.browser != 'chromium'
+        run: pnpm exec playwright-core install --with-deps ${{ matrix.browser }}
+      - run: pnpm tokens && pnpm icons && pnpm manifest && pnpm html && pnpm dist
+      - run: pnpm test:html
+      - run: pnpm test:browser
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shots-${{ matrix.browser }}
+          path: |
+            tests/html/shots
+            tests/browser/shots
+          retention-days: 7

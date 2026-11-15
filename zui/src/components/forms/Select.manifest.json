@@ -1,0 +1,184 @@
+{
+  "name": "Select",
+  "group": "forms",
+  "description": "Lista desplegable con popup propio (material liquid): opciones con icono, grupos y placeholder. Para la lista del sistema, `NativeSelect`.",
+  "import": "import { Select } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "options",
+      "type": "(SelectOption | SelectOptionGroup)[]",
+      "required": true,
+      "description": "Opciones { value, label, icon?, disabled? } o grupos { label, options }. `value` no puede ser cadena vacía."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor controlado; cadena vacía muestra el placeholder."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void"
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": true,
+      "description": "Ancho completo; con false, ancho intrínseco."
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
+      "default": "start",
+      "description": "Alineación del popup."
+    },
+    {
+      "name": "open",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean"
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "popupClassName",
+      "type": "string",
+      "description": "Clase del popup; `className` va a la envoltura."
+    },
+    {
+      "name": "aria-label",
+      "type": "string",
+      "description": "Nombre accesible cuando no hay `Field` ni etiqueta enlazada."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "placeholder",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "control-height-md",
+    "text-body",
+    "control-height-sm",
+    "text-small",
+    "control-height-lg",
+    "text-title",
+    "space-8",
+    "space-3",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "duration-fast",
+    "ease-standard",
+    "control-border-hover",
+    "accent",
+    "focus-ring",
+    "surface",
+    "danger",
+    "fg-subtle",
+    "popup-bg",
+    "fg-muted",
+    "space-2",
+    "layer-popover",
+    "space-4",
+    "popup-radius",
+    "font-sans",
+    "leading-normal",
+    "space-1",
+    "line-strong",
+    "radius-xs",
+    "weight-medium",
+    "row-hover",
+    "text-caption",
+    "weight-semibold",
+    "line"
+  ],
+  "classes": [
+    "z-select",
+    "z-listbox"
+  ],
+  "a11y": "Select de Radix: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Con iconos",
+      "code": "<Select aria-label=\"View\" placeholder=\"Choose a view\" options={[{ value: \"list\", label: \"List\", icon: \"list-bullet\" }, { value: \"grid\", label: \"Grid\", icon: \"squares-2x2\" }, { value: \"board\", label: \"Board\", disabled: true }]} />"
+    },
+    {
+      "title": "Grupos dentro de Field",
+      "code": "<Field label=\"Region\">\n  <Select\n    defaultValue=\"eu-west\"\n    options={[\n      { label: \"Europe\", options: [{ value: \"eu-west\", label: \"Ireland\" }, { value: \"eu-central\", label: \"Frankfurt\" }] },\n      { label: \"Americas\", options: [{ value: \"us-east\", label: \"Virginia\" }, { value: \"sa-east\", label: \"São Paulo\" }] },\n    ]}\n  />\n</Field>"
+    },
+    {
+      "title": "Pequeño, en línea",
+      "code": "<Select size=\"sm\" block={false} aria-label=\"Rows per page\" defaultValue=\"25\" options={[{ value: \"10\", label: \"10\" }, { value: \"25\", label: \"25\" }, { value: \"50\", label: \"50\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Con iconos y campo oculto",
+      "code": "<span class=\"z-select\" id=\"view\" data-size=\"md\" data-block data-placeholder=\"Choose a view\">\n  <button type=\"button\" class=\"z-select__control\" role=\"combobox\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"view-list\" aria-label=\"View\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-select__value\">Choose a view</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"view\" value=\"\" />\n</span>\n\n<div id=\"view-list\" popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\">\n  <div class=\"z-listbox__viewport\" role=\"listbox\" aria-label=\"View\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"list\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__icon\"><z-icon name=\"list-bullet\" size=\"16\"></z-icon></span>\n      <span class=\"z-listbox__text\">List</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"grid\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__icon\"><z-icon name=\"squares-2x2\" size=\"16\"></z-icon></span>\n      <span class=\"z-listbox__text\">Grid</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"board\" aria-selected=\"false\" data-state=\"unchecked\" aria-disabled=\"true\" data-disabled>\n      <span class=\"z-listbox__text\">Board</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"calendar\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__icon\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n      <span class=\"z-listbox__text\">Calendar</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"gallery\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__icon\"><z-icon name=\"photo\" size=\"16\"></z-icon></span>\n      <span class=\"z-listbox__text\">Gallery</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>",
+      "script": "document.querySelector(\"#view\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Grupos, con valor",
+      "code": "<span class=\"z-select\" id=\"region\" data-size=\"md\" data-block data-value=\"eu-west\">\n  <button type=\"button\" class=\"z-select__control\" role=\"combobox\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"region-list\" aria-label=\"Region\" data-state=\"closed\">\n    <span class=\"z-select__value\">Ireland</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></span>\n</span>\n\n<div id=\"region-list\" popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\">\n  <div class=\"z-listbox__viewport\" role=\"listbox\" aria-label=\"Region\">\n    <div class=\"z-listbox__group\" role=\"group\" aria-labelledby=\"region-eu\">\n      <div class=\"z-listbox__label\" id=\"region-eu\">Europe</div>\n      <div class=\"z-listbox__option\" role=\"option\" data-value=\"eu-west\" aria-selected=\"true\" data-state=\"checked\">\n        <span class=\"z-listbox__text\">Ireland</span>\n        <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n      </div>\n      <div class=\"z-listbox__option\" role=\"option\" data-value=\"eu-central\" aria-selected=\"false\" data-state=\"unchecked\">\n        <span class=\"z-listbox__text\">Frankfurt</span>\n        <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n      </div>\n    </div>\n    <div class=\"z-listbox__group\" role=\"group\" aria-labelledby=\"region-am\">\n      <div class=\"z-listbox__label\" id=\"region-am\">Americas</div>\n      <div class=\"z-listbox__option\" role=\"option\" data-value=\"us-east\" aria-selected=\"false\" data-state=\"unchecked\">\n        <span class=\"z-listbox__text\">Virginia</span>\n        <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n      </div>\n      <div class=\"z-listbox__option\" role=\"option\" data-value=\"sa-east\" aria-selected=\"false\" data-state=\"unchecked\">\n        <span class=\"z-listbox__text\">São Paulo</span>\n        <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Pequeño, en línea, inválido",
+      "code": "<span class=\"z-select\" id=\"rows\" data-size=\"sm\" data-invalid data-value=\"25\">\n  <button type=\"button\" class=\"z-select__control\" role=\"combobox\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"rows-list\" aria-invalid=\"true\" aria-label=\"Rows per page\" data-state=\"closed\">\n    <span class=\"z-select__value\">25</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n</span>\n\n<div id=\"rows-list\" popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"sm\">\n  <div class=\"z-listbox__viewport\" role=\"listbox\" aria-label=\"Rows per page\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"10\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">10</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"25\" aria-selected=\"true\" data-state=\"checked\">\n      <span class=\"z-listbox__text\">25</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"50\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">50</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n  </div>\n</div>"
+    }
+  ],
+  "origin": "Select no nativo del catálogo objetivo; comparte envoltura con NativeSelect y el aspecto del popup con Menu."
+}

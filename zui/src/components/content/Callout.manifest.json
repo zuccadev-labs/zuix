@@ -1,0 +1,75 @@
+{
+  "name": "Callout",
+  "group": "content",
+  "description": "Nota destacada dentro de un contenido; estática.",
+  "import": "import { Callout } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "neutral",
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
+      "default": "neutral"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "icon",
+      "type": "IconName | null",
+      "description": "Sustituye el icono del tono; null lo quita."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode"
+    }
+  ],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "fg-muted",
+    "surface",
+    "space-3",
+    "space-4",
+    "radius-xs",
+    "radius-md",
+    "fg",
+    "text-body",
+    "leading-normal",
+    "accent",
+    "accent-soft",
+    "info",
+    "info-soft",
+    "success",
+    "success-soft",
+    "warning",
+    "warning-soft",
+    "danger",
+    "danger-soft",
+    "space-1",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-callout"
+  ],
+  "a11y": "aside con role=\"note\". Para mensajes que deben anunciarse, usar Alert.",
+  "examples": [
+    {
+      "title": "Consejo",
+      "code": "<Callout tone=\"info\" title=\"Tip\">Press <Kbd keys=\"Ctrl K\" /> to open the command palette.</Callout>"
+    },
+    {
+      "title": "Advertencia sin icono",
+      "code": "<Callout tone=\"warning\" icon={null}>This action cannot be undone.</Callout>"
+    }
+  ],
+  "origin": "Nuevo."
+}

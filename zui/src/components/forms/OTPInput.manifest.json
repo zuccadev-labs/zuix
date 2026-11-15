@@ -1,0 +1,141 @@
+{
+  "name": "OTPInput",
+  "group": "forms",
+  "description": "Código de un solo uso repartido en casillas.",
+  "import": "import { OTPInput } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "length",
+      "type": "number",
+      "default": 6
+    },
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "onChange",
+      "type": "(value: string) => void"
+    },
+    {
+      "name": "onComplete",
+      "type": "(value: string) => void",
+      "description": "Cuando todas las casillas están completas."
+    },
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": [
+        "numeric",
+        "text"
+      ],
+      "default": "numeric"
+    },
+    {
+      "name": "mask",
+      "type": "boolean",
+      "default": false,
+      "description": "Oculta los caracteres."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "autoFocus",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Verification code",
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "cellLabel",
+      "type": "(position: number, total: number) => string",
+      "description": "Nombre accesible de cada casilla. Por defecto \"Character N of M\"."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Añade un campo oculto con el valor completo."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "control-height-lg",
+    "space-2",
+    "space-12",
+    "space-1",
+    "control-border",
+    "control-radius",
+    "control-bg",
+    "fg",
+    "font-mono",
+    "text-heading-lg",
+    "weight-semibold",
+    "accent",
+    "duration-fast",
+    "ease-standard",
+    "control-border-hover",
+    "focus-ring",
+    "surface",
+    "danger"
+  ],
+  "classes": [
+    "z-otp"
+  ],
+  "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Seis dígitos",
+      "code": "<OTPInput length={6} autoFocus onComplete={(code) => verify(code)} />"
+    },
+    {
+      "title": "Controlado con error",
+      "code": "<OTPInput length={4} value={pin} onChange={setPin} mask invalid label=\"PIN\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Seis dígitos",
+      "code": "<div role=\"group\" aria-label=\"Verification code\" class=\"z-otp\" id=\"code\" data-size=\"md\" data-mode=\"numeric\">\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"6\" aria-label=\"Character 1 of 6\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 2 of 6\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 3 of 6\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 4 of 6\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 5 of 6\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 6 of 6\" />\n  <input type=\"hidden\" name=\"code\" value=\"\" />\n</div>",
+      "script": "document.querySelector(\"#code\").addEventListener(\"z:change\", (event) => { if (event.detail.complete) console.log(event.detail.value); });"
+    },
+    {
+      "title": "PIN oculto con error",
+      "code": "<div role=\"group\" aria-label=\"PIN\" class=\"z-otp\" id=\"pin\" data-size=\"md\" data-mode=\"numeric\" data-invalid>\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"4\" aria-label=\"Character 1 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 2 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 3 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 4 of 4\" aria-invalid=\"true\" />\n</div>"
+    }
+  ],
+  "origin": "Nuevo."
+}
