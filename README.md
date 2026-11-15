@@ -144,10 +144,11 @@ Para contribuir: [`CONTRIBUTING.md`](./CONTRIBUTING.md). Para reportar una vulne
 
 ## Estado
 
-Versión `0.1.0`, la primera. Los paquetes se distribuyen en npmjs.com bajo la organización
-`@zuccadev-labs`. Mientras la versión sea `0.x`, una subida de `MENOR` puede traer cambios incompatibles
-([Versionado](./docs/package/01-versionado.md)). El procedimiento de publicación está en
-[Publicación](./docs/package/02-publicacion.md).
+Versión `0.1.0`, la primera, publicada en npmjs.com bajo la organización `@zuccadev-labs`
+([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). Mientras la versión sea
+`0.x`, una subida de `MENOR` puede traer cambios incompatibles ([Versionado](./docs/package/01-versionado.md)).
+Las versiones se publican solas cuando una subida de versión llega a `main`
+([Publicación](./docs/package/02-publicacion.md)).
 
 ## Licencia
 

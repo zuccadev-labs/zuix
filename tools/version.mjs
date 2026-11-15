@@ -4,7 +4,8 @@
 //   pnpm bump check                     misma versión en los cinco y entrada de esa versión en cada CHANGELOG.md
 //   pnpm bump patch|minor|major|X.Y.Z   sube la versión y cierra la sección "Sin publicar" de cada CHANGELOG.md
 //   … --dry-run                         muestra lo que haría sin escribir
-// No crea commits ni etiquetas ni publica: eso es manual (docs/package/02-publicacion.md).
+// No crea commits ni etiquetas ni publica: publica el workflow release cuando la versión nueva llega a main,
+// y es él quien crea la etiqueta (docs/package/02-publicacion.md).
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";

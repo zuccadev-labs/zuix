@@ -24,9 +24,13 @@
   `pnpm test:html` (sin React) y `pnpm test:browser` (aplicación de ejemplo de React). Si toca lo que se
   publica (`package.json`, entradas de `exports`, archivos nuevos en `src/`, `tools/build.mjs`):
   `pnpm build` y `pnpm test:pack` (empaqueta y consume los paquetes fuera del workspace). Ver `docs/package/`.
-- Antes de una release: `pnpm verify` encadena todo lo anterior (suites de navegador en Chromium). La
-  publicación es manual o con `.github/workflows/release.yml`; ver `docs/package/02-publicacion.md`. Un agente
-  no publica: `pnpm publish` y `npm publish` solo con `--dry-run` o contra un registro local.
+- Antes de una release: `pnpm verify` encadena todo lo anterior (suites de navegador en Chromium). Los
+  runners de CI no ofrecen WebGL en Firefox: `NO_WEBGL=1 BROWSER=firefox pnpm test:browser` lo reproduce.
+- Publicación: los cinco paquetes están en npmjs.com. Publica `.github/workflows/release.yml`, solo, cuando
+  llega a `main` una versión de `package.json` que no está en el registro (`pnpm bump` → pull request →
+  fusión); también crea la etiqueta `vX.Y.Z` y el GitHub Release. Ver `docs/package/02-publicacion.md`. Por
+  eso la versión solo se toca en el pull request de la subida. Un agente no publica ni crea etiquetas:
+  `pnpm publish` y `npm publish` solo con `--dry-run` o contra un registro local.
 - El repositorio es público: sin rutas absolutas, nombres de proyectos privados ni credenciales en archivos
   versionados. Una herramienta que lee de fuera recibe la ruta por argumento o variable de entorno. Ver
   `docs/package/04-apertura-del-repositorio.md`. Contribución: `CONTRIBUTING.md`.

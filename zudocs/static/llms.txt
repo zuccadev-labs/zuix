@@ -44,7 +44,7 @@ Análisis previos y decisiones de arquitectura.
 Versionado, build de publicación y contrato público.
 
 - [Versionado](/docs/package/versionado): Qué número sube con cada cambio y cómo se sube.
-- [Publicación](/docs/package/publicacion): Pasos exactos para publicar la suite en npmjs.com. Última actualización: 2026-11-14.
+- [Publicación](/docs/package/publicacion): Cómo se publica la suite en npmjs.com. Última actualización: 2026-11-14.
 - [Contrato público](/docs/package/contrato-publico): Qué es superficie pública de la suite y qué cuenta como cambio incompatible. Todo lo que no aparece aquí
 - [Apertura del repositorio](/docs/package/apertura-del-repositorio): Qué se saneó para poder hacer público el repositorio, qué queda todavía en el historial y cómo hacer el
 - [Empaquetado y publicación](/docs/package/): Cómo se versionan, se construyen y se publican los paquetes de la suite. Para quien publica.

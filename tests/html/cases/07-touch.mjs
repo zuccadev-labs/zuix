@@ -22,6 +22,15 @@ const until = async (fn, message, arg) => {
   try { await tp.waitForFunction(fn, arg, { timeout: 4000 }); }
   catch { throw new Error(message); }
 };
+/**
+ * Espera a que terminen las animaciones de entrada del elemento (y de su subárbol). Una espera fija no basta para
+ * medirlo: en un WebKit cargado el reloj de animaciones puede no haber avanzado 350 ms después de insertar el nodo,
+ * y la caja sale con la transformación del primer fotograma.
+ */
+const rested = async (selector, what) => until((s) => {
+  const el = document.querySelector(s);
+  return el !== null && el.getAnimations({ subtree: true }).every((a) => a.playState === "finished" || a.playState === "idle" || a.effect?.getComputedTiming().iterations === Infinity);
+}, `${what} no terminó su animación de entrada`, selector);
 const card = (name) => tp.locator(`[data-component="${name}"]`);
 /** Trae el elemento al centro de la ventana y devuelve su caja. */
 const boxOf = async (selector) => {
@@ -351,7 +360,8 @@ await test("táctil · Shell: los cajones se abren con un toque y se cierran toc
   if (coarse) ok(toggle.width >= 40 && toggle.height >= 40, `botón de la barra de título de ${toggle.width}×${toggle.height}`);
   await finger.tap(mid(toggle));
   await until(() => document.querySelector(".z-shell__side.z-shell__drawer[role=dialog]") && document.querySelector(".z-shell__scrim"), "el toque no abrió el cajón de la sidebar");
-  await settle();
+  await rested(side, "el cajón de la sidebar");
+  await rested(".z-shell__scrim", "el velo");
   const b = await tp.locator(side).boundingBox();
   const size = tp.viewportSize();
   ok(b.x >= 0 && b.x + b.width <= size.width && b.width < size.width - 40, `el cajón no deja velo que tocar: ${JSON.stringify(b)}`);
@@ -363,7 +373,7 @@ await test("táctil · Shell: los cajones se abren con un toque y se cierran toc
   await until(() => !document.querySelector(".z-shell__drawer") && !document.querySelector(".z-shell__scrim"), "tocar el velo no cerró el cajón");
   await finger.tap(mid(await tp.locator("#toggle-inspector").boundingBox()));
   await until(() => document.querySelector(".z-shell__inspector.z-shell__drawer"), "el toque no abrió el cajón del inspector");
-  await settle();
+  await rested(inspector, "el cajón del inspector");
   const i = await tp.locator(inspector).boundingBox();
   ok(i.x >= 0 && i.x + i.width <= size.width + 1, `el inspector se sale de la ventana: ${JSON.stringify(i)}`);
   await finger.tap(mid(await tp.locator("#close-inspector").boundingBox()));

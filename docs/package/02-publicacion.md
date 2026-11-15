@@ -1,9 +1,15 @@
 # Publicación
 
-Pasos exactos para publicar la suite en npmjs.com. Última actualización: 2026-11-14.
+Cómo se publica la suite en npmjs.com. Última actualización: 2026-11-14.
 
-> **Estado (2026-11-14):** los cinco paquetes están en `0.1.0`, verificados y sin publicar. La primera
-> publicación es manual y la hace el responsable con su cuenta ([Primera publicación](#primera-publicación-manual-con-2fa)).
+Flujo automático desde `main`, configuración de una sola vez y vía manual de respaldo.
+
+> **Estado (2026-11-14):** los cinco paquetes están publicados en npmjs.com en `0.1.0`. Esa primera versión
+> la publicó el responsable a mano, con 2FA, desde los tarballs verificados; no lleva procedencia. Desde
+> entonces la publicación es automática al fusionar en `main` una subida de versión
+> ([Publicación automática](#publicación-automática-desde-main)), con publicación de confianza de npm (OIDC).
+> Falta la [configuración de una sola vez](#configuración-de-una-sola-vez) en npmjs.com y en GitHub: hasta
+> que esté hecha, el workflow no puede publicar.
 > Una versión publicada no se puede reutilizar ni renombrar: ante un fallo se publica un `PARCHE`.
 
 ## Qué se publica
@@ -21,9 +27,16 @@ Cinco paquetes, siempre con la misma versión y en este orden (cada uno después
 La raíz, `zudocs` y `examples/app` llevan `"private": true` y no se publican. Los cinco de la tabla no lo
 llevan: `pnpm publish` en una de esas carpetas publica de verdad.
 
+En npm: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix),
+[`-tokens`](https://www.npmjs.com/package/@zuccadev-labs/zuix-tokens),
+[`-zicon`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon),
+[`-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) y
+[`-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout). En el registro cada uno tiene además una
+versión `0.0.0-stage`, anterior a `0.1.0`; `latest` apunta a `0.1.0`.
+
 ## Decisiones
 
-Todas tomadas. Ninguna queda pendiente para publicar `0.1.0`.
+Todas tomadas.
 
 | # | Decisión | Resultado |
 |---|---|---|
@@ -32,14 +45,15 @@ Todas tomadas. Ninguna queda pendiente para publicar `0.1.0`.
 | 3 | Registro | Público, npmjs.com. `publishConfig.access: "public"` en los cinco |
 | 4 | Scope y nombres | Organización `zuccadev-labs` de npmjs.com, de la que el responsable es propietario. Nombres: `@zuccadev-labs/zuix` y `@zuccadev-labs/zuix-<paquete>` |
 | 5 | Repositorio y página | `https://github.com/zuccadev-labs/zuix`, público. `repository` (con `directory`), `homepage` y `bugs` están en los cinco `package.json` |
-| 6 | Quién publica | La primera versión, el responsable a mano con 2FA. Las siguientes, a mano o con el workflow `release` cuando tenga su secreto |
+| 6 | Quién publica | `0.1.0`, el responsable a mano con 2FA. Las siguientes, el workflow `release` al llegar la subida de versión a `main`, con publicación de confianza (OIDC) y sin token. La vía manual queda como respaldo |
 | 7 | `@zuccadev-labs/zuix-zicon`: dependencia o peer de `zui` y `zout` | **Peer**, con rango `^`. Ver [Registro de iconos duplicado](#registro-de-iconos-duplicado) |
 | 8 | Rango de las dependencias entre paquetes de la suite | `^X.Y.Z` (`workspace:^`), no la versión exacta. Ver [Versionado](./01-versionado.md) |
 | 9 | Código heredado del proyecto de origen | Reutilización autorizada por el responsable ([estado de construcción](../investigations/07-estado-de-construccion.md)) |
 
 ## Lista previa
 
-Todo desde la raíz, con el árbol limpio y en la rama principal. `pnpm verify` encadena `check`, el build
+Es lo que comprueba el pull request de la subida de versión (el workflow `ci` ejecuta todo menos el
+consumidor Next.js, que añade `release`). En local, desde la raíz y con el árbol limpio: `pnpm verify` encadena `check`, el build
 de zudocs, `build`, `test:pack`, `test:html` y `test:browser` en Chromium; la lista completa añade Firefox,
 WebKit y el consumidor Next.js.
 
@@ -57,13 +71,160 @@ pnpm bump check                                  # versión única y CHANGELOG a
 Además:
 
 - [ ] Cada cambio visible está en el `CHANGELOG.md` de su paquete, en la entrada de la versión.
-- [ ] La versión subió según [Versionado](./01-versionado.md). Para `0.1.0` no hay subida: es la primera.
+- [ ] La versión subió según [Versionado](./01-versionado.md).
 - [ ] `pnpm test:pack` no avisó de que `publint` o `attw` no pudieron ejecutarse.
 - [ ] Se revisó el contenido de cada tarball: `tar -tzf .tmp/pack/zuccadev-labs-zuix-zui-X.Y.Z.tgz`.
-- [ ] La versión no existe ya en el registro: `npm view @zuccadev-labs/zuix versions` (la primera vez
-  responde `404`: es lo esperado).
+- [ ] La versión no existe ya en el registro: `npm view @zuccadev-labs/zuix versions`.
 
-## Primera publicación, manual, con 2FA
+## Publicación automática desde main
+
+`.github/workflows/release.yml`. Subir la versión y fusionar en `main` es lo que publica; no hay que crear
+etiquetas ni lanzar nada a mano.
+
+```
+pnpm bump patch            # o minor, major, X.Y.Z: sube los cinco y cierra "Sin publicar"
+pnpm install               # actualiza el lockfile
+git switch -c release/vX.Y.Z && git commit -am "release: vX.Y.Z"
+# pull request → ci en verde → fusionar en main
+```
+
+Cada push a `main` lanza el workflow:
+
+| Trabajo | Qué hace | Permisos |
+|---|---|---|
+| `detect` | `pnpm bump check` y, por cada paquete, `npm view <paquete>@<versión>`. Si los cinco están en el registro termina en verde y los demás trabajos se saltan. Un fallo de red al consultar detiene la ejecución: no se da una versión por pendiente sin un `E404` | `contents: read` |
+| `verify` | Llama a `ci.yml` (`workflow_call`): la misma verificación que cualquier cambio, en los tres navegadores, más el consumidor Next.js (`pnpm test:pack --skip-build --next`). Deja los cinco tarballs de `pnpm pack` en el artefacto `tarballs` | `contents: read` |
+| `publish` | En el entorno `npm`. Descarga `tarballs` y ejecuta `npm publish <tarball> --access public --tag <dist-tag>` en orden (`tokens`, `zicon`, `zui`, `zout`, `suite`), saltando lo que ya esté publicado. No descarga el repositorio ni instala dependencias | `id-token: write` |
+| `release` | Crea la etiqueta `vX.Y.Z` sobre el commit publicado y el GitHub Release, con las notas de la entrada `[X.Y.Z]` de los cinco `CHANGELOG.md` y enlaces a npm. Si el Release ya existe no lo toca | `contents: write` |
+| `rehearse` | Solo en una ejecución manual con "dry-run": el mismo bucle con `npm publish --dry-run`, sin entorno ni credenciales | ninguno |
+
+Reglas:
+
+- **Lo que sube es lo que se probó.** Se publican los tarballs que generó y verificó `pnpm test:pack` en la
+  misma ejecución, nunca `npm publish` dentro de una carpeta. `publish` comprueba además que cada tarball es
+  del paquete y la versión esperados, que no es privado y que no lleva rangos `workspace:`.
+- **Idempotente.** Una versión que ya está en el registro se salta, en `detect` y otra vez justo antes de
+  cada `npm publish`. Si la ejecución se queda a medias se repite (Re-run) y continúa por el paquete que falta.
+- **Sin carreras.** `concurrency: release` sin cancelación: una publicación en curso termina, y la siguiente
+  ejecución vuelve a consultar el registro.
+- **La etiqueta no publica.** El workflow solo escucha pushes a `main`. La etiqueta la crea él mismo por la
+  API con `GITHUB_TOKEN`, que además no dispara workflows.
+- **Etiqueta de distribución.** `latest`, o `next` si la versión es preliminar (`0.2.0-beta.1`). Una
+  ejecución manual puede fijar otra.
+- **Un fork no publica.** `detect` solo corre en `zuccadev-labs/zuix`.
+
+Ejecución manual (Actions → release → Run workflow):
+
+| Entrada | Efecto |
+|---|---|
+| "dry-run" marcado (por defecto) | Desde cualquier rama: detecta, verifica y ensaya. No sube nada ni crea etiqueta |
+| "dry-run" desmarcado | Solo desde `main`: lo mismo que un push. Sirve para repetir una publicación fallida |
+| `dist-tag` | Sustituye la etiqueta de distribución calculada |
+
+### Autenticación: publicación de confianza (OIDC)
+
+El trabajo `publish` no usa ningún token de larga duración. npm acepta la publicación porque GitHub firma
+una identidad de corta duración (OIDC) que dice qué repositorio, workflow y entorno la piden, y esa
+identidad coincide con el *trusted publisher* registrado en cada paquete. La procedencia se genera sola
+(repositorio público, paquete público). Requisitos de npm, leídos en
+[docs.npmjs.com/trusted-publishers](https://docs.npmjs.com/trusted-publishers) el 2026-11-14:
+
+| Requisito | Cómo se cumple |
+|---|---|
+| npm CLI 11.5.1 o posterior y Node 22.14.0 o posterior | `publish` usa Node 24 y falla con un mensaje claro si la versión de npm o de Node es menor |
+| Runner alojado por GitHub (los propios no están admitidos) | `runs-on: ubuntu-latest` |
+| Permiso `id-token: write` | Declarado solo en `publish` |
+| El workflow registrado es el que contiene la orden de publicar. Con `workflow_call`, npm valida el workflow que llama | `npm publish` está en `release.yml`, no en `ci.yml`; `release.yml` es el que se registra |
+| El entorno, si se registra, debe coincidir | `environment: npm` |
+| `repository.url` del `package.json` coincide exactamente con el repositorio | Los cinco llevan `git+https://github.com/zuccadev-labs/zuix.git` |
+| Todos los campos distinguen mayúsculas | `zuccadev-labs`, `zuix`, `release.yml`, `npm` |
+
+Alternativa: si el entorno `npm` tiene un secreto `NPM_TOKEN` (token granular con escritura sobre
+`@zuccadev-labs`, sin exigir 2FA al publicar), `publish` lo usa en lugar de OIDC y pide la procedencia con
+`NPM_CONFIG_PROVENANCE=true`. Sin el secreto, OIDC. No hace falta crearlo.
+
+## Configuración de una sola vez
+
+Nada de esto se puede dejar hecho desde el código: lo hace el responsable con su cuenta. Hasta entonces el
+workflow se queda en `detect` (verde, "nada que publicar") mientras la versión siga en `0.1.0`.
+
+### 1. Entorno `npm` en GitHub, limitado a `main`
+
+Con permiso de administración sobre el repositorio:
+
+```
+gh api -X PUT repos/zuccadev-labs/zuix/environments/npm --input - <<'JSON'
+{ "deployment_branch_policy": { "protected_branches": false, "custom_branch_policies": true } }
+JSON
+gh api -X POST repos/zuccadev-labs/zuix/environments/npm/deployment-branch-policies -f name=main -f type=branch
+gh api repos/zuccadev-labs/zuix/environments/npm/deployment-branch-policies --jq '.branch_policies[].name'   # main
+```
+
+Para exigir aprobación manual de cada publicación, añadir revisores al entorno (Settings → Environments →
+npm → Required reviewers). Con revisores, la publicación deja de ser desatendida: espera la aprobación.
+
+### 2. Trusted publisher en npmjs.com, en cada uno de los cinco paquetes
+
+Con la cuenta propietaria de la organización `zuccadev-labs`, con 2FA. En cada página de ajustes:
+
+| Paquete | Ajustes |
+|---|---|
+| `@zuccadev-labs/zuix-tokens` | <https://www.npmjs.com/package/@zuccadev-labs/zuix-tokens/access> |
+| `@zuccadev-labs/zuix-zicon` | <https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon/access> |
+| `@zuccadev-labs/zuix-zui` | <https://www.npmjs.com/package/@zuccadev-labs/zuix-zui/access> |
+| `@zuccadev-labs/zuix-zout` | <https://www.npmjs.com/package/@zuccadev-labs/zuix-zout/access> |
+| `@zuccadev-labs/zuix` | <https://www.npmjs.com/package/@zuccadev-labs/zuix/access> |
+
+1. Sección **Trusted Publisher** → **GitHub Actions**.
+2. Rellenar, exactamente así (distingue mayúsculas; npm no valida nada al guardar, el error aparece al publicar):
+
+   | Campo | Valor |
+   |---|---|
+   | Organization or user | `zuccadev-labs` |
+   | Repository | `zuix` |
+   | Workflow filename | `release.yml` (solo el nombre, con extensión; sin `.github/workflows/`) |
+   | Environment name | `npm` |
+   | Allowed actions | Marcar **`npm publish`**. En las configuraciones creadas desde el 2026-09-03 solo viene activo `npm stage publish`, y el workflow publica directamente |
+
+3. Guardar (pide el segundo factor). Repetir en los otros cuatro.
+
+Lo mismo desde la terminal, con npm 11.15.0 o posterior y sesión iniciada con 2FA (`npm login`):
+
+```
+for p in zuix-tokens zuix-zicon zuix-zui zuix-zout zuix; do
+  npm trust github "@zuccadev-labs/$p" --file release.yml --repo zuccadev-labs/zuix --env npm --allow-publish
+done
+for p in zuix-tokens zuix-zicon zuix-zui zuix-zout zuix; do npm trust list "@zuccadev-labs/$p"; done
+```
+
+**Cuándo hacerlo.** Según la documentación de npm, una configuración nueva debe completar su primera
+publicación en un plazo de 2 días; si no, caduca y hay que crearla otra vez. Conviene registrarla justo
+antes de fusionar la primera subida de versión (`0.1.1` o `0.2.0`), no semanas antes.
+
+Después de la primera publicación automática correcta, npm recomienda cerrar la vía de los tokens: en la
+misma página, **Publishing access** → *Require two-factor authentication and disallow tokens*. La
+publicación de confianza sigue funcionando; la manual con 2FA también.
+
+### 3. Etiqueta y Release de `0.1.0`
+
+`0.1.0` se publicó a mano, antes de existir este flujo, y no tiene etiqueta ni Release. El commit publicado
+es `0d069bd`. Las notas están preparadas con el mismo guion que usa el workflow (se regeneran con el paso
+"Notas desde los CHANGELOG" de `release.yml` y `VERSION=0.1.0`):
+
+```
+gh release create v0.1.0 --repo zuccadev-labs/zuix --target 0d069bd \
+  --title "zuix 0.1.0" --notes-file .tmp/ci-release-notes-0.1.0.md
+gh release view v0.1.0 --repo zuccadev-labs/zuix --json tagName,targetCommitish,url
+```
+
+`gh release create` crea la etiqueta `v0.1.0` sobre ese commit. Crear la etiqueta no lanza ninguna
+publicación.
+
+## Publicación manual, con 2FA
+
+Así se publicó `0.1.0` el 2026-11-14. Queda como respaldo si el workflow no puede publicar. Una versión
+publicada a mano no lleva procedencia, y hay que crear después su etiqueta y su Release (como en
+[Etiqueta y Release de `0.1.0`](#3-etiqueta-y-release-de-010)).
 
 Se publican **los tarballs que generó y verificó `pnpm test:pack`**, con `npm publish <archivo>`. Así lo
 que sube es byte a byte lo que se probó, y es el mismo procedimiento que se ensayó contra un registro local.
@@ -122,20 +283,11 @@ que apunta a `src/`.
    node --input-type=module -e 'import "@zuccadev-labs/zuix/zicon/all"; import { createElement as h } from "react"; import { renderToStaticMarkup } from "react-dom/server"; import { Button } from "@zuccadev-labs/zuix/zui"; console.log(renderToStaticMarkup(h(Button, { icon: "plus" }, "ok")).includes("<path") ? "ok" : "ICONO VACÍO")'
    ```
 
-6. Etiqueta `v0.1.0` sobre el commit publicado y push de la etiqueta. **Hasta que exista el secreto
-   `NPM_TOKEN`**, el push de la etiqueta lanza el workflow `release`, que verifica y falla al publicar por
-   falta de credencial, sin subir nada; cuando el secreto exista, el workflow salta las versiones ya publicadas.
+6. Etiqueta y Release sobre el commit publicado, con `gh release create` (ver
+   [Etiqueta y Release de `0.1.0`](#3-etiqueta-y-release-de-010)). La etiqueta no lanza ninguna publicación.
+   Al llegar ese commit a `main`, el workflow `release` encuentra las versiones en el registro y no hace nada.
 
 Una versión preliminar se publica con `--tag next` para que no pase a ser `latest`.
-
-### Versiones siguientes
-
-```
-pnpm bump patch            # o minor, major, X.Y.Z: sube los cinco y cierra "Sin publicar"
-pnpm install               # actualiza el lockfile
-```
-
-Después, la lista previa, commit `release: vX.Y.Z`, y los pasos 1 a 6 con la versión nueva.
 
 Alternativa con pnpm, que empaqueta y publica en un paso (`pnpm publish` acepta `--otp`):
 
@@ -187,50 +339,14 @@ tarballs, se usa otro puerto. Un proyecto de prueba creado dentro del repositori
 Resultado del ensayo del 2026-11-14 (verdaccio 6.11.1; pnpm 12.18.0, npm 12.2.2, yarn 1.22.22 y bun 1.4.4;
 Node 26.13.0): ver la tabla de [Empaquetado](./README.md#ensayo-con-registro-local).
 
-## Publicación desde GitHub Actions
-
-`.github/workflows/release.yml`. **No se ha ejecutado nunca:** el repositorio remoto existe, pero no tiene
-todavía el secreto ni el entorno.
-
-| Cómo se lanza | Qué hace |
-|---|---|
-| Push de una etiqueta `vX.Y.Z` | Verifica y publica con la etiqueta de distribución `latest` |
-| Manual (`workflow_dispatch`), por defecto | Verifica y ensaya: `publish --dry-run`, no sube nada |
-| Manual sobre una etiqueta `vX.Y.Z`, con "dry-run" desmarcado | Verifica y publica. Permite elegir `dist-tag` (`next` para una preliminar) |
-
-Una ejecución manual sin "dry-run" sobre una rama falla: solo se publica desde una etiqueta, y la etiqueta
-debe coincidir con la versión de los `package.json`.
-
-Tiene dos trabajos:
-
-1. `verify`, sin credenciales: `pnpm check`, comprobación de que los archivos generados están al día
-   (`git diff --exit-code`), build de zudocs, `pnpm build`, `pnpm test:pack --skip-build --next`, y
-   `pnpm test:html` y `pnpm test:browser` en Chromium. Guarda los `dist/` como artefacto.
-2. `publish`, en el entorno `npm`: descarga esos `dist/`, ejecuta `pnpm bump check` y publica las cinco
-   carpetas, una a una y en orden (`tokens`, `zicon`, `zui`, `zout`, `suite`), con
-   `pnpm publish --access public --no-git-checks`. Salta la versión que ya esté en el registro. No instala
-   dependencias ni ejecuta código del repositorio aparte de `tools/version.mjs`, así que el token no queda
-   al alcance de ninguna dependencia.
-
-### Secretos y configuración necesarios
-
-| Qué | Dónde | Detalle |
-|---|---|---|
-| `NPM_TOKEN` | Secreto del entorno `npm` del repositorio (o secreto del repositorio) | Token de acceso granular de npmjs.com con permiso de lectura y escritura sobre el scope `@zuccadev-labs`, sin exigir 2FA al publicar. Se pasa como `NODE_AUTH_TOKEN` |
-| Entorno `npm` | Settings → Environments | El trabajo `publish` lo declara. Conviene exigir revisores para que cada publicación pida aprobación. Si no existe, GitHub lo crea sin protección |
-| `id-token: write` | Ya declarado en el trabajo `publish` | Permite firmar la procedencia. No es un secreto |
-| `repository` en los cinco `package.json` | Hecho | npm compara ese campo con el repositorio que firma la procedencia y rechaza la publicación si falta o no coincide |
-| Repositorio público | Hecho | npm solo acepta procedencia desde repositorios públicos |
-
-No hace falta ningún otro secreto. `GITHUB_TOKEN` solo tiene `contents: read`.
-
-La procedencia se activa con `NPM_CONFIG_PROVENANCE=true` en la publicación real y se desactiva en el
-ensayo. Una publicación manual desde un equipo no lleva procedencia. Alternativa sin token de larga
-duración: la publicación de confianza de npm (OIDC), que se configura por paquete en npmjs.com una vez
-publicado; no está configurada.
-
 ## Si algo sale mal
 
+- **El workflow falló a medias.** Corregir la causa y repetir la ejecución (Re-run, o manual sin "dry-run"
+  desde `main`): salta lo publicado y sigue. Si falló solo `release`, repetir ese trabajo o crear el Release
+  a mano con `gh release create`.
+- **`publish` falla con `ENEEDAUTH`.** El trusted publisher no coincide: nombre del workflow (`release.yml`),
+  entorno (`npm`), organización o repositorio mal escritos, `npm publish` sin marcar en *Allowed actions*,
+  o la configuración caducó sin estrenarse. Se borra y se crea de nuevo; no se puede editar.
 - **Se publicaron solo algunos paquetes.** Repetir desde el que falló. Mientras falte alguno, el paraguas
   no se puede instalar; los ya publicados sí, salvo `zout` sin `zui`.
 - **La versión publicada está rota.** Corregir y publicar un `PARCHE` de los cinco. Marcar la rota:
@@ -269,12 +385,18 @@ El último caso no lo evita ningún diseño: quien usa el paraguas importa los i
 
 ## Sin verificar
 
-- La publicación en npmjs.com: nunca se ejecutó. Se ensayó `npm publish <tarball>` contra un registro
-  local (verdaccio) y `pnpm publish --dry-run` en las cinco carpetas.
-- El flujo de 2FA de npmjs.com (aprobación en el navegador, `--otp`): verdaccio no lo tiene.
-- Que la cuenta del responsable tenga permiso de publicación en la organización `zuccadev-labs` y que los
-  cinco nombres estén libres: se comprueba en el paso 2 y en la lista previa.
-- El workflow `release`: nunca se ejecutó. En particular, que `pnpm publish` de pnpm 12 respete
-  `NPM_CONFIG_PROVENANCE` y el `.npmrc` que escribe `actions/setup-node`, que el ensayo funcione sin token
-  válido, y que los `dist/` restaurados desde el artefacto produzcan los mismos tarballs que `pnpm test:pack`.
+- **El workflow `release` no se ha ejecutado nunca en GitHub.** Se validó en local: sintaxis YAML,
+  `actionlint` 1.7.12 (sin `shellcheck`), y los guiones de `detect`, del bucle de publicación y de las notas
+  extraídos del propio archivo y ejecutados contra el registro real en solo lectura (2026-11-14: concluye
+  "nada que publicar"; con copias de los tarballs en una versión que no existe, `npm publish <tarball>
+  --dry-run` recorre los cinco en orden y sin sesión iniciada). No se ha comprobado en un runner: que el artefacto `tarballs` llegue a `publish`, que
+  `ci.yml` llamado con `workflow_call` no comparta grupo de concurrencia con el `ci` del mismo push, ni el
+  consumidor Next.js en el runner.
+- **La publicación de confianza.** No hay ningún trusted publisher registrado todavía. No se ha comprobado
+  que npm acepte la identidad OIDC al publicar un tarball con `npm publish <archivo>`, ni la procedencia
+  resultante. Los requisitos son los de la documentación de npm del 2026-11-14.
+- **La alternativa con `NPM_TOKEN`**: no existe el secreto y no se probó.
+- **La publicación manual de `0.1.0`** la hizo el responsable; aquí solo se comprobó el resultado en el
+  registro (`npm view`: los cinco en `0.1.0`, `latest` → `0.1.0`).
+- Versiones preliminares: el cálculo de `next` como etiqueta de distribución no se ha estrenado.
 - CDN (unpkg, jsDelivr): las rutas `dist/` existen en los tarballs; no se probaron servidas.

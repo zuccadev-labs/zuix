@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Pruebas en navegador de la suite sobre examples/app. Runner propio, sin @playwright/test.
 // Uso: node tests/browser/run.mjs [filtro…] [--headed]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)
+//   NO_WEBGL=1 lanza los motores sin WebGL, como el Firefox de los runners de CI (tests/webgl.mjs).
 //   Levanta Vite en un puerto libre y ejecuta los casos de cases.mjs en cada navegador pedido:
 //   chromium es el Chrome del sistema; firefox y webkit son los de Playwright
 //   (`pnpm exec playwright-core install firefox webkit`). Termina con código ≠ 0 si algún caso falla
@@ -13,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { chromium, firefox, webkit } from "playwright-core";
 import { cases } from "./cases.mjs";
 import { touchContext, touchDriver } from "../touch.mjs";
+import { WEBGL_UNAVAILABLE_WARNING, applyNoWebgl, noWebgl, noWebglLaunch } from "../webgl.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
@@ -25,11 +27,20 @@ const filters = args.filter((a) => !a.startsWith("--")).map((a) => a.toLowerCase
 /** Señal de "no verificable en este entorno": el caso no cuenta como fallo. */
 class Unverifiable extends Error {}
 
+// Mezcla las opciones del runner con las de NO_WEBGL (tests/webgl.mjs) y las de una instancia especial (`extra`).
+const launchOptions = (browserName, base, extra = {}) => {
+  const off = noWebglLaunch(browserName);
+  return {
+    ...base, ...off, ...extra,
+    args: [...(base.args ?? []), ...(off.args ?? []), ...(extra.args ?? [])],
+    firefoxUserPrefs: { ...off.firefoxUserPrefs, ...extra.firefoxUserPrefs },
+  };
+};
 const ENGINES = {
   // SwiftShader permite WebGL2 sin GPU. No se fuerza ANGLE por software para el compositor: con desenfoques de fondo cae a ~1 fps.
-  chromium: (extra = {}) => chromium.launch({ channel: "chrome", headless: !headed, args: ["--enable-unsafe-swiftshader", "--force-device-scale-factor=1"], ...extra }),
-  firefox: (extra = {}) => firefox.launch({ headless: !headed, ...extra }),
-  webkit: (extra = {}) => webkit.launch({ headless: !headed, ...extra }),
+  chromium: (extra) => chromium.launch(launchOptions("chromium", { channel: "chrome", headless: !headed, args: [...(noWebgl ? [] : ["--enable-unsafe-swiftshader"]), "--force-device-scale-factor=1"] }, extra)),
+  firefox: (extra) => firefox.launch(launchOptions("firefox", { headless: !headed }, extra)),
+  webkit: (extra) => webkit.launch(launchOptions("webkit", { headless: !headed }, extra)),
 };
 // Firefox no deja emular `prefers-reduced-transparency` por página: se lanza una segunda instancia con la preferencia activa.
 const FIREFOX_REDUCED_TRANSPARENCY = { firefoxUserPrefs: { "layout.css.prefers-reduced-transparency.enabled": true, "ui.prefersReducedTransparency": 1 } };
@@ -72,8 +83,9 @@ async function startServer() {
   return { url, pid: child.pid, stop: () => new Promise((resolve) => { if (child.exitCode !== null) return resolve(); child.once("exit", resolve); child.kill("SIGTERM"); }), log: () => log };
 }
 
-// Avisos que no son de la aplicación: React DevTools, HMR de Vite y mensajes de rendimiento del driver GL por software.
-const IGNORED_CONSOLE = [/Download the React DevTools/, /\[vite\]/, /GL Driver Message/];
+// Avisos que no son de la aplicación: React DevTools, HMR de Vite, mensajes de rendimiento del driver GL por software
+// y el aviso con el que Firefox responde a `getContext("webgl2")` cuando el equipo no ofrece WebGL (tests/webgl.mjs).
+const IGNORED_CONSOLE = [/Download the React DevTools/, /\[vite\]/, /GL Driver Message/, WEBGL_UNAVAILABLE_WARNING];
 
 function makeContext(engine, baseUrl, record, shots) {
   const { browser, browserName } = engine;
@@ -134,7 +146,7 @@ async function runBrowser(browserName, server, selected) {
   const results = [];
   const engine = { browserName, browser: null, reduced: null };
   try {
-    try { engine.browser = await ENGINES[browserName](); }
+    try { engine.browser = applyNoWebgl(await ENGINES[browserName](), browserName); }
     catch (error) {
       const reason = String(error.message).split("\n")[0];
       console.log(`FAIL [${browserName}] no se pudo lanzar el navegador: ${reason}`);

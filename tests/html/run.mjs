@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Prueba el contrato HTML sin framework: sirve el repo, abre examples/html/index.html y ejercita
 // @zuccadev-labs/zuix-zui/dom y @zuccadev-labs/zuix-zout/dom. Sale con código ≠ 0 si algo falla. Capturas en tests/html/shots/<navegador>/.
-// Uso: node tests/html/run.mjs [filtro]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)
+// Uso: node tests/html/run.mjs [filtro]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)   NO_WEBGL=1 sin WebGL
 // Los casos viven en tests/html/cases/*.mjs: cada archivo exporta `default async (ctx)` y registra casos
 // con ctx.test(nombre, fn). ctx = { page, test, ok, card, settle, shots, browserName, note, Unverifiable }.
 // `throw new Unverifiable(motivo)` marca el caso como no verificable en ese motor (no cuenta como fallo);
@@ -11,6 +11,7 @@ import { mkdirSync, readFileSync, readdirSync, existsSync, statSync } from "node
 import { dirname, extname, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium, firefox, webkit } from "playwright-core";
+import { applyNoWebgl, noWebglLaunch } from "../webgl.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const here = dirname(fileURLToPath(import.meta.url));
@@ -25,7 +26,12 @@ const server = createServer((req, res) => {
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const url = `http://127.0.0.1:${server.address().port}/examples/html/index.html`;
 
-const ENGINES = { chromium: () => chromium.launch({ channel: "chrome", headless: true }), firefox: () => firefox.launch({ headless: true }), webkit: () => webkit.launch({ headless: true }) };
+// NO_WEBGL=1 lanza los motores sin WebGL, como el Firefox de los runners de CI (tests/webgl.mjs).
+const ENGINES = {
+  chromium: () => chromium.launch({ channel: "chrome", headless: true, ...noWebglLaunch("chromium") }),
+  firefox: () => firefox.launch({ headless: true, ...noWebglLaunch("firefox") }),
+  webkit: () => webkit.launch({ headless: true, ...noWebglLaunch("webkit") }),
+};
 const wanted = (process.env.BROWSER ?? "chromium") === "all" ? Object.keys(ENGINES) : (process.env.BROWSER ?? "chromium").split(",");
 const caseFiles = readdirSync(join(here, "cases")).filter((f) => f.endsWith(".mjs")).sort();
 let failedTotal = 0;
@@ -36,7 +42,7 @@ for (const browserName of wanted) {
   const shots = join(here, "shots", browserName);
   mkdirSync(shots, { recursive: true });
   let browser;
-  try { browser = await ENGINES[browserName](); }
+  try { browser = applyNoWebgl(await ENGINES[browserName](), browserName); }
   catch (error) { console.log(`✗ ${browserName}: no se pudo lanzar (${String(error.message).split("\n")[0]})`); failedTotal += 1; continue; }
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.setDefaultTimeout(15000);
