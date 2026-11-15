@@ -1,14 +1,24 @@
 # Integración continua de zuix. Mismos comandos que en local (ver AGENTS.md).
+# También es la verificación de una publicación: release.yml lo llama con `workflow_call` y publica
+# los tarballs que el trabajo `check` deja en el artefacto `tarballs` (docs/package/02-publicacion.md).
 name: ci
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+    inputs:
+      next:
+        description: Añade el consumidor Next.js a la prueba de empaquetado (pnpm test:pack --next)
+        type: boolean
+        default: false
 
+# `github.workflow` es el nombre del workflow que llama: una verificación lanzada por release.yml no comparte
+# grupo con el ci del mismo push, y no se cancela.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.workflow == 'ci' }}
 
 permissions:
   contents: read
@@ -17,13 +27,13 @@ jobs:
   check:
     name: Contrato, auditoría y tipos
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -34,8 +44,8 @@ jobs:
       - run: pnpm --filter @zuccadev-labs/zuix-zudocs build
       # Build de publicación y consumo externo desde los tarballs (docs/package/README.md).
       - run: pnpm build
-      - run: pnpm test:pack --skip-build
-      - uses: actions/upload-artifact@v4
+      - run: pnpm test:pack --skip-build ${{ inputs.next && '--next' || '' }}
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           if-no-files-found: error
@@ -46,6 +56,14 @@ jobs:
             zicon/dist
             zui/html.json
             zout/html.json
+          retention-days: 7
+      # Los cinco tarballs de `pnpm pack` que acaba de probar test:pack. Son los que publica release.yml.
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tarballs
+          if-no-files-found: error
+          include-hidden-files: true
+          path: .tmp/pack/*.tgz
           retention-days: 7
 
   browser:
@@ -60,11 +78,11 @@ jobs:
     env:
       BROWSER: ${{ matrix.browser }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -73,10 +91,12 @@ jobs:
       - if: matrix.browser != 'chromium'
         run: pnpm exec playwright-core install --with-deps ${{ matrix.browser }}
       - run: pnpm tokens && pnpm icons && pnpm manifest && pnpm html && pnpm dist
+      # El Firefox sin interfaz de los runners no ofrece WebGL: los casos del modo gl del Carousel quedan como
+      # no verificables (tests/webgl.mjs). En local se reproduce con NO_WEBGL=1.
       - run: pnpm test:html
       - run: pnpm test:browser
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: shots-${{ matrix.browser }}
           path: |
