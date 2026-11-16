@@ -1,0 +1,4 @@
+# Revisión por defecto de todo el repositorio.
+# Con un solo mantenedor no se exige aprobación de otra persona: la puerta de `main` son las cuatro
+# comprobaciones de CI (ver CONTRIBUTING.md).
+* @devzucca

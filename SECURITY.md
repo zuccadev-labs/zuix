@@ -13,14 +13,9 @@ Los paquetes están en `0.x`. Las correcciones de seguridad se aplican a la últ
 
 No abras un issue público ni un pull request con los detalles.
 
-1. Canal preferente: el reporte privado de vulnerabilidades del repositorio (pestaña "Security",
-   "Report a vulnerability"). **Pendiente de definir por el responsable:** hay que activarlo en la
-   configuración del repositorio cuando exista.
-2. Canal alternativo por correo: **pendiente de definir por el responsable.** Todavía no hay una
-   dirección de contacto de seguridad.
-
-Mientras ninguno de los dos canales esté activo, abre un issue que diga solo que quieres reportar un
-problema de seguridad, sin detalles, y espera a que el responsable indique un canal privado.
+Usa el reporte privado de vulnerabilidades del repositorio:
+<https://github.com/zuccadev-labs/zuix/security/advisories/new> (pestaña "Security", "Report a vulnerability").
+Es el único canal; no hay dirección de correo de seguridad.
 
 Incluye en el reporte:
 
@@ -31,8 +26,8 @@ Incluye en el reporte:
 
 ## Qué esperar
 
-Los plazos de respuesta y de corrección están **pendientes de definir por el responsable.** La intención
-es confirmar la recepción, acordar una fecha de divulgación y publicar la corrección con una nota en el
+El proyecto lo mantiene una sola persona y no hay plazos garantizados. La intención es confirmar la
+recepción en una semana, acordar una fecha de divulgación y publicar la corrección con una nota en el
 `CHANGELOG.md` del paquete.
 
 ## Alcance
