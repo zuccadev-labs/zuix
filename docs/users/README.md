@@ -56,7 +56,7 @@ la otra y salen vacíos; con el paraguas, los iconos se importan por sus subruta
 
 ## Trabajar en el repositorio
 
-Requisitos: Node 20 o superior y pnpm 12.
+Requisitos: Node 20.19 o superior (22.12 o superior en la rama 22) y pnpm 12.
 
 ```
 pnpm install

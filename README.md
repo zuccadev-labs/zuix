@@ -108,7 +108,7 @@ El tema se elige con `data-theme="dark"` o `"light"` en `<html>`; la marca, impo
 
 ## Desarrollo
 
-Requisitos: Node 20 o superior y pnpm 12 (`packageManager` fija la versión; `corepack enable` la instala).
+Requisitos: Node 20.19 o superior (22.12 o superior en la rama 22) y pnpm 12 (`packageManager` fija la versión; `corepack enable` la instala).
 
 ```
 pnpm install

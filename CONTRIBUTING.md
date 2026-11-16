@@ -14,7 +14,7 @@ reglas para agentes en [`AGENTS.md`](./AGENTS.md) y [`docs/agents/`](./docs/agen
 
 ## Entorno
 
-Requisitos: Node 20 o superior y pnpm 12. `packageManager` en `package.json` fija la versión exacta;
+Requisitos: Node 20.19 o superior (o 22.12 o superior en la rama 22; lo exige Vite 8) y pnpm 12. `packageManager` en `package.json` fija la versión exacta;
 `corepack enable` la instala.
 
 ```

@@ -51,7 +51,7 @@ export function Editor() {
           <div className="app-pane-slot" onPointerDown={() => setFocused("output")} onFocus={() => setFocused("output")} data-testid="pane-output">
             <Pane header="Output" focused={focused === "output"}>
               <div className="app-pane-pad">
-                <CodeBlock code={"vite v7 ready in 312 ms\n  Local: http://127.0.0.1:5173/"} language="sh" hideCopy />
+                <CodeBlock code={"vite v8 ready in 312 ms\n  Local: http://127.0.0.1:5173/"} language="sh" hideCopy />
               </div>
             </Pane>
           </div>
