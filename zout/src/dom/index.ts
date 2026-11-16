@@ -213,7 +213,8 @@ export function setPanelOpen(shell: HTMLElement, side: ShellSide, open: boolean)
 
 export function togglePanel(shell: HTMLElement, side: ShellSide): void {
   const el = panelOf(shell, side);
-  if (el) setPanelOpen(shell, side, el.hidden);
+  // `hidden` no es solo booleano: "until-found" también es un panel oculto, y alternarlo es abrirlo.
+  if (el) setPanelOpen(shell, side, el.hidden !== false);
 }
 
 /** Cierra el cajón abierto (lo que hacen Escape y el velo). Devuelve si había alguno. */

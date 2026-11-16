@@ -170,6 +170,7 @@ pnpm test:pack
 4. `.tmp/consumer/react`: instala los tarballs con React, renderiza `Button`, `Badge`, `Stack` e `Icon`
    con `react-dom/server` y compara el marcado, resuelve 29 entradas de `exports`, pasa
    `tsc --noEmit` con `skipLibCheck: false` en `Bundler` y `NodeNext` (también importando por el paraguas),
+   con TypeScript 5.9 y con TypeScript 7 (las declaraciones se emiten con 7 y deben servir a quien siga en 5.x),
    y compila con Vite dos veces: con los paquetes sueltos y con `@zuccadev-labs/zuix/styles.css` y las
    subrutas del paraguas.
 5. `.tmp/consumer/dom`: instala los tarballs sin React e importa los módulos `dom`, sueltos y por el
