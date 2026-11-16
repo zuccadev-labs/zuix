@@ -106,7 +106,7 @@ for (const pkg of PACKAGES) {
 // ── Proyectos consumidores ────────────────────────────────────────────────────────────────────────
 const tgz = (pkg) => `file:${tarballs[pkg]}`;
 const zuixDeps = Object.fromEntries(PACKAGES.map((p) => [npmName(p), tgz(p)]));
-function project(name, pkg, files, builds = ["esbuild"]) {
+function project(name, pkg, files, builds = []) {
   const dir = join(consumerDir, name);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "package.json"), JSON.stringify({ name: `consumer-${name}`, private: true, type: "module", ...pkg }, null, 2));
@@ -114,9 +114,10 @@ function project(name, pkg, files, builds = ["esbuild"]) {
   // (pnpm 12 ya no lee `pnpm.overrides` de package.json, y `--ignore-workspace` ignora también este archivo,
   // que es donde viven los overrides; por eso el aislamiento se hace así y no con esa opción.)
   // overrides: las dependencias entre paquetes zuix (zui → zicon 0.1.0) no existen en ningún registro; se fuerzan al tarball.
-  // allowBuilds: el binario de esbuild que usa Vite (misma autorización que en la raíz).
+  // allowBuilds: solo lo que el consumidor compila al instalar. Vite 8 (Rolldown y Oxc) ya no trae esbuild, así que
+  // el consumidor de React no autoriza nada; Next autoriza sharp.
   // autoInstallPeers: false: sin esto pnpm instalaría React como peer de radix-ui y la prueba "sin React" no probaría nada.
-  writeFileSync(join(dir, "pnpm-workspace.yaml"), `autoInstallPeers: false\nallowBuilds:\n${builds.map((b) => `  "${b}": true`).join("\n")}\noverrides:\n${Object.entries(zuixDeps).map(([k, v]) => `  "${k}": "${v}"`).join("\n")}\n`);
+  writeFileSync(join(dir, "pnpm-workspace.yaml"), `autoInstallPeers: false\n${builds.length ? `allowBuilds:\n${builds.map((b) => `  "${b}": true`).join("\n")}\n` : ""}overrides:\n${Object.entries(zuixDeps).map(([k, v]) => `  "${k}": "${v}"`).join("\n")}\n`);
   for (const [f, content] of Object.entries(files)) { mkdirSync(dirname(join(dir, f)), { recursive: true }); writeFileSync(join(dir, f), content); }
   return dir;
 }
@@ -153,7 +154,7 @@ console.log("ok");
 // ── 3. Consumidor con React ───────────────────────────────────────────────────────────────────────
 const reactDir = project("react", {
   dependencies: { ...zuixDeps, react: "^19.0.0", "react-dom": "^19.0.0" },
-  devDependencies: { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", typescript: "^5.9.0", vite: "^7.0.0" },
+  devDependencies: { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", typescript: "^5.9.0", vite: "^8.0.0" },
 }, {
   "ssr.mjs": `import assert from "node:assert/strict";
 import { createElement as h } from "react";
@@ -210,11 +211,11 @@ console.log("subpaths: " + specs.length + " entradas de exports resuelven a arch
   "tsconfig.json": JSON.stringify({ compilerOptions: { target: "ES2022", module: "ESNext", moduleResolution: "Bundler", jsx: "react-jsx", lib: ["ES2022", "DOM", "DOM.Iterable"], strict: true, noEmit: true, skipLibCheck: false, types: [], resolveJsonModule: true }, include: ["src"] }, null, 2),
   "tsconfig.nodenext.json": JSON.stringify({ extends: "./tsconfig.json", compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext" } }, null, 2),
   "index.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>consumer</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n`,
-  "vite.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ esbuild: { jsx: "automatic" }, logLevel: "warn", build: { outDir: "out" } });\n`,
+  "vite.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out" } });\n`,
   "src/css.d.ts": `declare module "*.css";\n`,
   // El mismo uso a través del paraguas: tipos en Bundler y NodeNext, y CSS con @import de paquetes en Vite.
   "umbrella.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>umbrella</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/umbrella.tsx"></script></body></html>\n`,
-  "vite.umbrella.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ esbuild: { jsx: "automatic" }, logLevel: "warn", build: { outDir: "out-umbrella", rollupOptions: { input: "umbrella.html" } } });\n`,
+  "vite.umbrella.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out-umbrella", rolldownOptions: { input: "umbrella.html" } } });\n`,
   "src/umbrella.tsx": `import "@zuccadev-labs/zuix/styles.css";
 import { createRoot } from "react-dom/client";
 import { Icon, registerIcons, type IconName } from "@zuccadev-labs/zuix/zicon/core";
@@ -499,7 +500,7 @@ export default function ShellPage() {
   );
 }
 `,
-  }, ["esbuild", "sharp"]);
+  }, ["sharp"]);
 
   const nextBin = join(nextDir, "node_modules/next/dist/bin/next");
   const nextEnv = { ...process.env, NEXT_TELEMETRY_DISABLED: "1", FORCE_COLOR: "0", NO_COLOR: "1" };
