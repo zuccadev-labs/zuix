@@ -104,8 +104,12 @@ archivos de fuera del repositorio reciben la ruta por argumento o variable de en
 
 Las contribuciones se publican bajo la licencia [MIT](./LICENSE) del proyecto.
 
-## Pendiente de definir por el responsable
+## Cómo se gobierna el repositorio
 
-- Revisores obligatorios: no hay `CODEOWNERS` porque el repositorio aún no tiene cuentas asignadas.
-- Protección de la rama `main` y comprobaciones requeridas.
-- Código de conducta.
+- `main` está protegida: todo entra por pull request con las cuatro comprobaciones de CI en verde
+  (contrato y tipos, Chromium, Firefox y WebKit), historial lineal y sin `force push`. Vale también para
+  quien administra el repositorio.
+- No se exige la aprobación de otra persona: hay un solo mantenedor, que figura en `.github/CODEOWNERS`.
+- Lo que llega a `main` con una versión nueva se publica en npm de forma automática
+  ([Publicación](./docs/package/02-publicacion.md)).
+- No hay código de conducta propio; se espera un trato respetuoso en issues y pull requests.

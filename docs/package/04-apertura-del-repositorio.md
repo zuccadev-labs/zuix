@@ -150,20 +150,20 @@ durante un tiempo.
 
 ## Configuración del repositorio
 
-Pendiente del responsable; nada de esto se puede dejar hecho desde el código. Estado leído con la API de
-GitHub el 2026-11-14:
+Estado leído con la API de GitHub el 2026-11-16:
 
-| Ajuste | Estado | Para qué |
-|---|---|---|
-| Protección de `main` con las comprobaciones de `ci` requeridas | Sin protección ni rulesets | Que nada entre sin verificación. Con la publicación automática, lo que entra en `main` con una versión nueva se publica: la protección de `main` es la puerta de la publicación |
-| Alertas de secretos y protección de push | Desactivadas | Detectar credenciales antes de que entren |
-| Actualizaciones de seguridad de Dependabot | Alertas activas, sin alertas abiertas; actualizaciones automáticas desactivadas | Parches de seguridad sin esperar a la ronda semanal |
-| Reporte privado de vulnerabilidades | Desactivado | Es el canal que anuncia `SECURITY.md`; hay que activarlo |
-| Entorno `npm` limitado a `main` | No existe | Lo declara el trabajo `publish` y forma parte del trusted publisher de npm ([Publicación](./02-publicacion.md#configuración-de-una-sola-vez)). Ya no hace falta el secreto `NPM_TOKEN` |
-| Etiqueta `v0.1.0` y GitHub Release | No existen | Marcar el commit publicado ([Publicación](./02-publicacion.md#3-etiqueta-y-release-de-010)) |
-| `CODEOWNERS` | No existe | Faltan las cuentas de los revisores |
-| Temas y página del repositorio | Sin temas ni página; descripción y licencia MIT correctas | Que el repositorio se encuentre y enlace a npm |
-| Campos `repository`, `homepage` y `bugs` de los cinco `package.json` | Hechos | Apuntan a `github.com/zuccadev-labs/zuix`. `repository.url` es además un requisito de la publicación de confianza |
+| Ajuste | Estado |
+|---|---|
+| Protección de `main` | Activa: exige las cuatro comprobaciones de `ci`, historial lineal, sin `force push` ni borrado, también para administradores. Sin aprobación obligatoria de otra persona |
+| Alertas de secretos y protección de push | Activas |
+| Dependabot | Alertas y actualizaciones de seguridad activas |
+| Reporte privado de vulnerabilidades | Activo; es el canal de `SECURITY.md` |
+| Entorno `npm` limitado a `main` | Creado; sin revisores obligatorios |
+| Etiqueta `v0.1.0` y GitHub Release | Creados sobre el commit publicado |
+| `CODEOWNERS` | Un mantenedor |
+| Temas y página del repositorio | Puestos; la página enlaza a npm |
+| Campos `repository`, `homepage` y `bugs` de los cinco `package.json` | Hechos |
+| Publicador de confianza en npm | **Pendiente del responsable**: se registra en npmjs.com, paquete a paquete ([Publicación](./02-publicacion.md#configuración-de-una-sola-vez)) |
 
 ## Cómo se comprueba
 
