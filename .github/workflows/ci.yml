@@ -10,7 +10,7 @@ on:
   workflow_call:
     inputs:
       next:
-        description: Añade el consumidor Next.js a la prueba de empaquetado (pnpm test:pack --next)
+        description: Se conserva por compatibilidad; la prueba de empaquetado incluye siempre el consumidor Next.js
         type: boolean
         default: false
 
@@ -44,7 +44,8 @@ jobs:
       - run: pnpm --filter @zuccadev-labs/zuix-zudocs build
       # Build de publicación y consumo externo desde los tarballs (docs/package/README.md).
       - run: pnpm build
-      - run: pnpm test:pack --skip-build ${{ inputs.next && '--next' || '' }}
+      # Siempre con el consumidor Next.js: un fallo ahí debe verse en el PR, no al publicar.
+      - run: pnpm test:pack --skip-build --next
       - uses: actions/upload-artifact@v7
         with:
           name: dist
