@@ -226,7 +226,8 @@ sobre los proyectos instalados desde el registro (el navegador se prueba con `pn
   ([Publicación](./02-publicacion.md#sin-verificar)).
 - **Next.js con el paraguas.** `pnpm test:pack:next` usa los paquetes sueltos; el paraguas se probó con Vite
   y en Node.
-- **webpack, Rspack, Parcel y Turbopack contra el paquete publicado.** Solo Vite 7. `zudocs` usa Rspack,
+- **webpack, Rspack, Parcel y Turbopack contra el paquete publicado.** Solo Vite (7 en el ensayo con registro;
+  8, con Rolldown, en `pnpm test:pack`). `zudocs` usa Rspack,
   pero contra el fuente.
 - **`attw` en modo estricto.** Se ejecuta con el perfil `esm-only`: los paquetes no tienen salida CommonJS
   y `require("@zuccadev-labs/zuix-zui")` solo funciona en un Node que cargue ESM con `require`.
