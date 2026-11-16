@@ -4,7 +4,8 @@
 //   2. Revisa cada tarball (los cinco, incluido el paraguas @zuccadev-labs/zuix): sin `src/`, sin `workspace:`, sin datos
 //      internos, con README, LICENSE, CHANGELOG y metadatos de npm, y cada destino de `exports` existe dentro.
 //   3. .tmp/consumer/react: proyecto fuera del workspace (raíz propia), instalado desde los tarballs. Renderiza con
-//      react-dom/server, compila con Vite y pasa `tsc --noEmit` con skipLibCheck: false (bundler y nodenext).
+//      react-dom/server, compila con Vite y pasa `tsc --noEmit` con skipLibCheck: false (bundler y nodenext), con
+//      TypeScript 5.9 y con TypeScript 7.
 //   4. .tmp/consumer/dom: lo mismo sin React instalado; importa los módulos `dom` en Node.
 //   5. Con --next, .tmp/consumer/next: Next.js (última estable, App Router) instalado desde los tarballs. `next build`,
 //      `next start` y una prueba en Chrome con playwright-core: marcado de servidor con iconos, hidratación sin avisos
@@ -154,7 +155,7 @@ console.log("ok");
 // ── 3. Consumidor con React ───────────────────────────────────────────────────────────────────────
 const reactDir = project("react", {
   dependencies: { ...zuixDeps, react: "^19.0.0", "react-dom": "^19.0.0" },
-  devDependencies: { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", typescript: "^5.9.0", vite: "^8.0.0" },
+  devDependencies: { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", typescript: "^5.9.0", "typescript-7": "npm:typescript@^7.0.0", vite: "^8.0.0" },
 }, {
   "ssr.mjs": `import assert from "node:assert/strict";
 import { createElement as h } from "react";
@@ -290,8 +291,13 @@ const install = ["install", "--prefer-offline", "--no-frozen-lockfile"];
 if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", install, reactDir).ok) {
   step("react: render con react-dom/server", "node", ["ssr.mjs"], reactDir);
   step("react: subpath exports", "node", ["subpaths.mjs"], reactDir);
-  step("react: tsc --noEmit (Bundler, skipLibCheck: false)", "pnpm", ["exec", "tsc", "-p", "tsconfig.json"], reactDir);
-  step("react: tsc --noEmit (NodeNext, skipLibCheck: false)", "pnpm", ["exec", "tsc", "-p", "tsconfig.nodenext.json"], reactDir);
+  // Las declaraciones se emiten con TypeScript 7 y las consume quien siga en 5.x: se comprueban con los dos compiladores,
+  // cada uno por su ruta (los dos paquetes declaran el binario `tsc`).
+  for (const [label, pkg] of [["TS 5.9", "typescript"], ["TS 7", "typescript-7"]]) {
+    const tsc = join(reactDir, "node_modules", pkg, "bin/tsc");
+    step(`react: tsc --noEmit con ${label} (Bundler, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.json"], reactDir);
+    step(`react: tsc --noEmit con ${label} (NodeNext, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.nodenext.json"], reactDir);
+  }
   if (step("react: vite build", "pnpm", ["exec", "vite", "build"], reactDir).ok) {
     const out = walk(join(reactDir, "out"));
     const css = out.filter((f) => f.endsWith(".css")).map((f) => readFileSync(f, "utf8")).join("");
