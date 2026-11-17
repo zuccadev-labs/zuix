@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Pruebas en navegador de la suite sobre examples/app. Runner propio, sin @playwright/test.
-// Uso: node tests/browser/run.mjs [filtro…] [--headed]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)
+// Uso: node tests/browser/run.mjs [filtro…] [--headed] [--repeat=N]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)
+//   --repeat=N ejecuta N veces cada caso elegido (para medir un caso inestable: el objetivo es N de N).
 //   NO_WEBGL=1 lanza los motores sin WebGL, como el Firefox de los runners de CI (tests/webgl.mjs).
 //   Levanta Vite en un puerto libre y ejecuta los casos de cases.mjs en cada navegador pedido:
 //   chromium es el Chrome del sistema; firefox y webkit son los de Playwright
@@ -23,6 +24,7 @@ const shotsRoot = join(here, "shots");
 const args = process.argv.slice(2);
 const headed = args.includes("--headed");
 const filters = args.filter((a) => !a.startsWith("--")).map((a) => a.toLowerCase());
+const repeat = Math.max(1, Number(args.find((a) => a.startsWith("--repeat="))?.slice(9)) || 1);
 
 /** Señal de "no verificable en este entorno": el caso no cuenta como fallo. */
 class Unverifiable extends Error {}
@@ -92,7 +94,8 @@ async function startServer() {
     {
       cwd: appDir,
       stdio: ["ignore", "pipe", "pipe"],
-      env: { ...process.env, NO_COLOR: "1" },
+      // Sin vigilancia de archivos ni HMR (examples/app/vite.config.ts): la suite no depende de quién edite el repositorio mientras corre.
+      env: { ...process.env, NO_COLOR: "1", ZUIX_TEST_SERVER: "1" },
     },
   );
   let log = "";
@@ -304,7 +307,8 @@ async function runBrowser(browserName, server, selected) {
 }
 
 async function main() {
-  const selected = cases.filter((c) => filters.length === 0 || filters.some((f) => c.name.toLowerCase().includes(f)));
+  const chosen = cases.filter((c) => filters.length === 0 || filters.some((f) => c.name.toLowerCase().includes(f)));
+  const selected = Array.from({ length: repeat }, () => chosen).flat();
   if (selected.length === 0) {
     console.error("Ningún caso coincide con el filtro.");
     process.exit(2);
@@ -318,6 +322,13 @@ async function main() {
   } finally {
     await server.stop();
   }
+  // Una recarga del servidor a mitad de un caso (un archivo cambió, o Vite optimizó una dependencia tarde) desmonta
+  // la pantalla que se estaba probando: si ocurrió, se dice, porque explica un fallo que no es del producto.
+  const reloads = server
+    .log()
+    .split("\n")
+    .filter((line) => /hmr update|page reload|new dependencies optimized|optimized dependencies changed/i.test(line));
+  if (reloads.length) console.log(`\nAVISO: el servidor de Vite recargó durante la ejecución (${reloads.length}):\n  ${reloads.slice(0, 8).join("\n  ")}`);
 
   console.log("");
   let failed = 0;

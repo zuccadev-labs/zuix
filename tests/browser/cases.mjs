@@ -2173,9 +2173,6 @@ export const cases = [
     async run({ open, axe, note }) {
       const failures = [];
       let minor = 0;
-      // Con un menú o un Select abiertos, Radix oculta el resto de la página con aria-hidden y atrapa el foco en la capa:
-      // lo que axe ve como "contenido enfocable oculto" no es alcanzable mientras la capa está abierta.
-      const LAYER_OPEN = { rules: { "aria-hidden-focus": { enabled: false } } };
       const check = async (page, label, options) => {
         await settled(page);
         for (const v of await axe(page, options)) {
@@ -2197,7 +2194,7 @@ export const cases = [
           if (screen === "overlays") {
             await page.click(t("open-menu"));
             await visible(page, ".z-menu[role=menu]");
-            await check(page, `overlays con menú (${theme})`, LAYER_OPEN);
+            await check(page, `overlays con menú (${theme})`);
             await page.keyboard.press("Escape");
             await gone(page, ".z-menu[role=menu]");
             await page.click(t("open-modal"));
@@ -2212,7 +2209,7 @@ export const cases = [
           if (screen === "forms") {
             await page.click(`${t("page-select")} .z-select__control`);
             await visible(page, ".z-listbox");
-            await check(page, `forms con Select abierto (${theme})`, LAYER_OPEN);
+            await check(page, `forms con Select abierto (${theme})`);
             await page.keyboard.press("Escape");
             await gone(page, ".z-listbox");
             await page.click(`${t("page-date")} .z-select__control`);

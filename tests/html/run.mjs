@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Prueba el contrato HTML sin framework: sirve el repo, abre examples/html/index.html y ejercita
 // @zuccadev-labs/zuix-zui/dom y @zuccadev-labs/zuix-zout/dom. Sale con código ≠ 0 si algo falla. Capturas en tests/html/shots/<navegador>/.
-// Uso: node tests/html/run.mjs [filtro]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)   NO_WEBGL=1 sin WebGL
+// Uso: node tests/html/run.mjs [filtro] [--repeat=N]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)   NO_WEBGL=1 sin WebGL
+//   --repeat=N repite N veces la pasada completa de cada navegador, con una página nueva cada vez (los casos comparten página).
 // Los casos viven en tests/html/cases/*.mjs: cada archivo exporta `default async (ctx)` y registra casos
 // con ctx.test(nombre, fn). ctx = { page, test, ok, card, settle, shots, browserName, note, Unverifiable }.
 // `throw new Unverifiable(motivo)` marca el caso como no verificable en ese motor (no cuenta como fallo);
@@ -19,6 +20,7 @@ const filter = process.argv
   .slice(2)
   .find((a) => !a.startsWith("--"))
   ?.toLowerCase();
+const repeat = Math.max(1, Number(process.argv.find((a) => a.startsWith("--repeat="))?.slice(9)) || 1);
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".json": "application/json" };
 const server = createServer((req, res) => {
   const file = join(root, normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)));
@@ -38,7 +40,8 @@ const ENGINES = {
   firefox: () => firefox.launch({ headless: true, ...noWebglLaunch("firefox") }),
   webkit: () => webkit.launch({ headless: true, ...noWebglLaunch("webkit") }),
 };
-const wanted = (process.env.BROWSER ?? "chromium") === "all" ? Object.keys(ENGINES) : (process.env.BROWSER ?? "chromium").split(",");
+const engines = (process.env.BROWSER ?? "chromium") === "all" ? Object.keys(ENGINES) : (process.env.BROWSER ?? "chromium").split(",");
+const wanted = Array.from({ length: repeat }, () => engines).flat();
 const caseFiles = readdirSync(join(here, "cases"))
   .filter((f) => f.endsWith(".mjs"))
   .sort();
