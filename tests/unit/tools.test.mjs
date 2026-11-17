@@ -238,23 +238,67 @@ describe("tools/audit.mjs", () => {
       [1, 3],
     );
   });
-  test("informativas: colores con nombre solo como valor de una propiedad de color", () => {
+  test("colores con nombre solo como valor de una propiedad de color", () => {
     const r = css(
       "a { color: red; }\nb { background: var(--z-accent, white); }\n.red { margin: 0; }\nc { border: 1px solid Black; }\nd { transition: color 1s; color: currentColor; background: transparent; }",
     );
     assert.deepEqual(r.named, [1, 4]);
   });
-  test("informativas: !important, z-index literal y px fuera de tokens", () => {
+  test("!important sin justificar y z-index literal", () => {
     const r = css(
-      "a { color: var(--z-fg) !important; b: x ! important; }\nb { z-index: 10; }\nc { z-index: var(--z-layer-popup); z-index: auto; }\nd { padding: 12px var(--z-space-2); margin: 0 1px; border: 1px solid; width: calc(100% - 24px); gap: var(--z-space-1, 4px); }",
+      "a { color: var(--z-fg) !important; b: x ! important; }\nb { z-index: 10; }\nc { z-index: var(--z-layer-popup); z-index: auto; z-index: calc(var(--z-layer-raised) + 1); }",
     );
     assert.deepEqual(r.important, [1, 1]);
+    assert.deepEqual(r.justified, []);
     assert.deepEqual(r.zindex, [2]);
-    assert.deepEqual(r.px, [4, 4]);
   });
-  test("las columnas informativas no se calculan fuera de una hoja CSS", () => {
-    const r = auditSource('const s = "z-index: 10 !important; padding: 20px; color: red";');
-    assert.deepEqual([r.named, r.important, r.zindex, r.px], [[], [], [], []]);
+  test("!important justificado: comentario que lo nombra en la regla, antes de ella o antes de su bloque condicional", () => {
+    const inside = css("a {\n  /* !important: gana al display del componente. */\n  display: none !important;\n}");
+    assert.deepEqual([inside.important, inside.justified], [[], [3]]);
+    const before = css(
+      "/* `!important`: la preferencia manda. */\na[hidden] {\n  display: none !important;\n}\nb { color: var(--z-fg) !important; }",
+    );
+    assert.deepEqual([before.important, before.justified], [[5], [3]], "el comentario justifica su regla, no la siguiente");
+    const media = css(
+      "/* !important: movimiento reducido. */\n@media (prefers-reduced-motion: reduce) {\n  a { transition: none !important; }\n  b { animation: none !important; }\n}",
+    );
+    assert.deepEqual([media.important, media.justified], [[], [3, 4]]);
+  });
+  test("!important: un comentario sin nombrarlo, o al principio de un @layer, no justifica", () => {
+    assert.deepEqual(css("/* Oculto. */\na { display: none !important; }").important, [2]);
+    const layer = css(
+      "/* !important en toda la hoja. */\n@layer x {\n  a { display: none !important; }\n  @media print {\n    b { color: var(--z-fg) !important; }\n  }\n}",
+    );
+    assert.deepEqual(layer.important, [3, 5]);
+    assert.deepEqual(layer.justified, []);
+  });
+  test("px: radio, fuente e interletrado siempre; espacio solo si el valor es de la escala", () => {
+    const spaces = new Map([
+      [8, "space-2"],
+      [12, "space-3"],
+    ]);
+    const r = css(
+      "a { border-radius: 6px; font-size: 13px; letter-spacing: 3px; }\nb { padding: 12px var(--z-space-2); margin: 0 1px; gap: var(--z-space-1, 4px); }\nc { padding: 7px 9px; top: -8px; }\nd { width: 8px; height: calc(100% - 24px); line-height: 16px; }",
+      { spaces },
+    );
+    assert.deepEqual(r.px, [1, 1, 1, 2, 3]);
+    assert.deepEqual(r.size, [3, 3, 4, 4, 4], "fuera de la escala y dimensiones: informativo");
+  });
+  test("px: sin la escala de espacio, un valor de espacio es informativo; 1px y 2px son trazos", () => {
+    const r = css("a { padding: 12px; border: 1px solid; inset: 2px; }");
+    assert.deepEqual([r.px, r.size], [[], [1]]);
+  });
+  test("px: los puntos de corte de @media y @container no son medidas del componente", () => {
+    const r = css(
+      "@media (max-width: 640px) {\n  a { max-width: 320px; }\n}\n@container stage (max-width: 760px) {\n  b { min-height: 54px }\n}",
+    );
+    assert.deepEqual([r.px, r.size], [[], [2, 5]]);
+  });
+  test("las columnas de hoja no se calculan fuera de una hoja CSS", () => {
+    const r = auditSource('const s = "z-index: 10 !important; padding: 20px; color: red; border-radius: 4px";', {
+      spaces: new Map([[20, "space-5"]]),
+    });
+    assert.deepEqual([r.named, r.important, r.zindex, r.px, r.size], [[], [], [], [], []]);
   });
   test("el script: una ruta inexistente o una opción desconocida fallan con código 2, no dan cero archivos", () => {
     const missing = run("tools/audit.mjs", "no/existe");
@@ -268,6 +312,14 @@ describe("tools/audit.mjs", () => {
     assert.equal(r.status, 0, r.stdout.slice(0, 400));
     assert.ok(report.files > 50);
     assert.deepEqual([report.total.color, report.total.prim, report.total.token, report.total.emoji, report.total.inline], [0, 0, 0, 0, 0]);
+    // Las columnas de hoja también bloquean: ningún color con nombre, !important sin motivo, z-index literal ni medida de la escala a mano.
+    assert.deepEqual([report.total.named, report.total.important, report.total.zindex, report.total.px], [0, 0, 0, 0]);
+    assert.ok(report.justified > 0, "los !important de la suite llevan su motivo");
+  });
+  test("el script: --strict añade la columna informativa `size`", () => {
+    const report = JSON.parse(run("tools/audit.mjs", "--json", "--strict").stdout);
+    assert.equal(report.strict, true);
+    assert.equal(typeof report.total.size, "number");
   });
 });
 

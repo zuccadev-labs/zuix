@@ -278,7 +278,7 @@
     position: absolute;
     top: var(--z-space-2);
     inset-inline-end: var(--z-space-2);
-    z-index: 1;
+    z-index: var(--z-layer-raised);
     border-color: var(--z-line);
     background: var(--z-surface-solid);
   }

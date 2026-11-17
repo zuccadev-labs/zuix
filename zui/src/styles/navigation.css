@@ -32,7 +32,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--z-space-1-5);
     flex-shrink: 0;
     /* min-height: con puntero grueso todas las variantes y tamaños llegan al objetivo táctil (`--z-touch-target`). */
     height: 30px;
@@ -71,7 +71,7 @@
   }
   .z-tabs__list[data-size="sm"] .z-tabs__tab {
     height: 24px;
-    padding: 0 10px;
+    padding: 0 var(--z-space-2-5);
     font-size: var(--z-text-caption);
   }
   .z-tabs__panel {
@@ -179,9 +179,9 @@
   .z-breadcrumb__current {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--z-space-1-5);
     min-width: 0;
-    padding: 2px 6px;
+    padding: 2px var(--z-space-1-5);
     border-radius: var(--z-radius-xs);
     color: var(--z-fg-muted);
     text-decoration: none;
@@ -405,14 +405,14 @@
     align-items: flex-start;
   }
   .z-stepper[data-orientation="vertical"] .z-stepper__text {
-    padding-top: 4px;
+    padding-top: var(--z-space-1);
   }
   .z-stepper[data-orientation="vertical"] .z-stepper__step:not(:last-child)::after {
     content: "";
     position: absolute;
     inset-inline-start: 14px;
-    top: 32px;
-    bottom: 4px;
+    top: var(--z-space-8);
+    bottom: var(--z-space-1);
     width: 1px;
     background: var(--z-line-strong);
   }
@@ -514,7 +514,7 @@
   .z-tree__row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--z-space-1-5);
     min-width: 0;
     height: max(28px, var(--z-touch-target, 0px));
     padding-block: 0;
@@ -596,7 +596,7 @@
   .z-navlink {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--z-space-2-5);
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
@@ -678,7 +678,8 @@
     }
   }
 
-  /* Válido también fuera de `.z-root`. */
+  /* Válido también fuera de `.z-root`. `!important`: la preferencia de movimiento reducido manda sobre las transiciones
+     que cada pieza declara con más especificidad. */
   @media (prefers-reduced-motion: reduce) {
     .z-tabs__tab,
     .z-breadcrumb__link,

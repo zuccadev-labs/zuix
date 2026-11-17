@@ -53,7 +53,7 @@
       "description": "Id del panel que redimensiona (aria-controls)."
     }
   ],
-  "tokens": ["accent", "radius-full"],
+  "tokens": ["accent", "radius-full", "layer-raised"],
   "classes": ["z-resize"],
   "a11y": "Patrón «window splitter» de WAI-ARIA: role=separator enfocable con aria-orientation, aria-valuenow, aria-valuemin y aria-valuemax (px). Las flechas mueven el tirador hacia donde apuntan un paso (`step`); Inicio vuelve a `defaultSize`. Doble clic vuelve a `defaultSize`: es la alternativa de un solo gesto al arrastre (WCAG 2.5.7). Solo arrastra el botón principal. Con puntero grueso la zona de agarre crece hasta `--z-touch-target`.",
   "examples": [

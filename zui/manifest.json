@@ -1152,7 +1152,8 @@
     "surface-3",
     "line-strong",
     "focus-ring",
-    "success"
+    "success",
+    "layer-raised"
    ],
    "classes": [
     "z-code"
@@ -2465,7 +2466,8 @@
     "radius-xs",
     "surface-2",
     "focus-ring",
-    "accent"
+    "accent",
+    "layer-raised"
    ],
    "classes": [
     "z-table",

@@ -19,7 +19,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: var(--z-layer-below);
     border-radius: inherit;
     pointer-events: none;
     background: radial-gradient(120% 50% at 50% -20%, var(--z-glass-specular), transparent 60%);

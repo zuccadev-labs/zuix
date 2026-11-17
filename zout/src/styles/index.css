@@ -178,7 +178,8 @@
      arrastrar y soltar nativo de esa selección, que cancela los eventos de puntero. */
   .z-resize {
     position: absolute;
-    z-index: 2;
+    /* Un paso por encima del divisor de SplitPane (`layer-raised`): el tirador gana donde se cruzan. */
+    z-index: calc(var(--z-layer-raised) + 1);
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
@@ -190,16 +191,16 @@
     cursor: col-resize;
   }
   .z-resize[data-side="left"] {
-    left: -8px;
+    left: calc(var(--z-space-2) * -1);
   }
   .z-resize[data-side="right"] {
-    right: -8px;
+    right: calc(var(--z-space-2) * -1);
   }
   .z-resize[data-side="start"] {
-    inset-inline-start: -8px;
+    inset-inline-start: calc(var(--z-space-2) * -1);
   }
   .z-resize[data-side="end"] {
-    inset-inline-end: -8px;
+    inset-inline-end: calc(var(--z-space-2) * -1);
   }
   .z-resize[data-side="top"],
   .z-resize[data-side="bottom"] {
@@ -209,10 +210,10 @@
     cursor: row-resize;
   }
   .z-resize[data-side="top"] {
-    top: -8px;
+    top: calc(var(--z-space-2) * -1);
   }
   .z-resize[data-side="bottom"] {
-    bottom: -8px;
+    bottom: calc(var(--z-space-2) * -1);
   }
   .z-resize::after {
     content: "";
@@ -244,7 +245,7 @@
   /* Con puntero grueso la zona de agarre crece hasta el objetivo táctil (`--z-touch-target`); la línea no cambia. */
   @media (pointer: coarse) {
     .z-split__divider {
-      z-index: 1;
+      z-index: var(--z-layer-raised);
     }
     .z-resize::before,
     .z-split__divider::before {
@@ -641,7 +642,7 @@
     align-items: center;
     flex-shrink: 0;
     max-width: 220px;
-    height: max(30px, var(--z-touch-target, 0px));
+    height: var(--z-control-height-sm);
     border-radius: var(--z-radius-full);
     color: var(--z-fg-muted);
     transition:
@@ -708,8 +709,8 @@
     }
   }
   .z-tabstrip__add {
-    width: max(30px, var(--z-touch-target, 0px));
-    height: max(30px, var(--z-touch-target, 0px));
+    width: var(--z-control-height-sm);
+    height: var(--z-control-height-sm);
     color: var(--z-fg-muted);
   }
   @media (hover: hover) {

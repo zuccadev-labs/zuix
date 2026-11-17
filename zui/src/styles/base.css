@@ -37,6 +37,7 @@
     white-space: nowrap;
     border: 0;
   }
+  /* Movimiento reducido. `!important`: la preferencia de la persona manda sobre cualquier animación o transición declarada después, sea cual sea su especificidad. */
   @media (prefers-reduced-motion: reduce) {
     .z-root *,
     .z-root *::before,
@@ -167,7 +168,8 @@
       border-width: 3px !important;
     }
   }
-  /* La persona pide más contraste: cristal a superficie sólida, bordes fuertes, texto atenuado a pleno y foco más grueso. */
+  /* La persona pide más contraste: cristal a superficie sólida, bordes fuertes, texto atenuado a pleno y foco más grueso.
+     `!important`: esta capa va antes que los grupos y la preferencia manda sobre el fondo, el borde y el color de cada componente. */
   @media (prefers-contrast: more) {
     .z-root :focus-visible {
       outline-width: 3px;

@@ -61,9 +61,11 @@
     margin: 0;
     padding: 0;
   }
+  /* !important: esta capa va antes que los grupos, y el `display` que fija el componente no debe volver a mostrar una lista cerrada. */
   .z-listbox[popover]:not(:popover-open) {
     display: none !important;
   }
+  /* !important: esta capa va antes que los grupos, y el `display` que fija el componente no debe volver a mostrar lo marcado con `hidden` (opciones filtradas, acciones sin uso). */
   .z-listbox__option[hidden],
   .z-listbox__group[hidden],
   .z-listbox__viewport[hidden],
@@ -77,6 +79,7 @@
     background: transparent;
     overflow: visible;
   }
+  /* !important: esta capa va antes que los grupos, y el `display` que fija el componente no debe volver a mostrar la región de avisos cerrada. */
   .z-toast-viewport[popover]:not(:popover-open) {
     display: none !important;
   }
@@ -94,6 +97,7 @@
   :where(button).z-accordion__trigger {
     width: 100%;
   }
+  /* !important: esta capa va antes que los grupos, y el `display` que fija el componente no debe volver a mostrar un panel plegado o una pestaña inactiva. */
   .z-accordion__content[hidden],
   .z-tabs__panel[hidden] {
     display: none !important;
@@ -106,6 +110,7 @@
     max-width: none;
     max-height: none;
   }
+  /* !important: esta capa va antes que los grupos, y el `display` que fija el componente no debe volver a mostrar una paleta cerrada. */
   dialog.z-palette:not([open]) {
     display: none !important;
   }
@@ -114,7 +119,8 @@
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
   }
-  /* Lo que React no monta, aquí se oculta: comandos filtrados y ramas plegadas. */
+  /* Lo que React no monta, aquí se oculta: comandos filtrados y ramas plegadas. `!important`: el `display` del
+     componente (flex, grid) ganaría al atributo `hidden`. */
   .z-palette__item[hidden],
   .z-palette__group[hidden],
   .z-palette__empty[hidden],

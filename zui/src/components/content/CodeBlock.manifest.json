@@ -83,7 +83,8 @@
     "surface-3",
     "line-strong",
     "focus-ring",
-    "success"
+    "success",
+    "layer-raised"
   ],
   "classes": ["z-code"],
   "a11y": "pre enfocable con role region para desplazarlo con teclado. El botón anuncia \"Copied\" por aria-live.",

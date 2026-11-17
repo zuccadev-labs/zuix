@@ -337,7 +337,8 @@
    ],
    "tokens": [
     "accent",
-    "radius-full"
+    "radius-full",
+    "layer-raised"
    ],
    "classes": [
     "z-resize"
@@ -680,7 +681,8 @@
     "reading-bg",
     "surface",
     "scrim",
-    "radius-md"
+    "radius-md",
+    "layer-raised"
    ],
    "classes": [
     "z-split",

@@ -83,7 +83,8 @@
     "radius-xs",
     "surface-2",
     "focus-ring",
-    "accent"
+    "accent",
+    "layer-raised"
   ],
   "classes": ["z-table", "z-table-wrap"],
   "a11y": "table nativa con caption. Alineación por data-align (start, center, end) en th y td; el contenedor desplaza en horizontal.",
