@@ -45,7 +45,8 @@ Guías por paquete: `zui/AGENTS.md` y `zicon/AGENTS.md`. Guía general: `docs/ag
 9. **Lo generado no se edita.** `tokens/dist/`, `zicon/src/icons/`, `zicon/src/names.ts`, `zicon/src/all.ts`,
    los `manifest.json` y `html.json` de la raíz de cada paquete, `*/dist/`, `zicon/sprite.svg`,
    `examples/html/index.html`, `zudocs/static/llms.txt` y `tokens/dist/compat/`. Las capas de compatibilidad
-   salen de `tokens/compat/*.json`. Se regeneran con `pnpm check` y entran en el mismo cambio.
+   salen de `tokens/compat/*.json`. Se regeneran con `pnpm check` (`llms.txt`, con el build de zudocs) y entran
+   en el mismo cambio.
 10. **Cada cambio visible se anota** en "Sin publicar" del `CHANGELOG.md` de su paquete.
 11. **Un agente no publica.** Ni `pnpm publish` ni `npm publish` sin `--dry-run`, ni etiquetas, ni `git push`
     a `main`. Publica el workflow `release` cuando una subida de versión llega a `main`

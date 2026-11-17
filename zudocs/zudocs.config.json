@@ -16,10 +16,16 @@
       { "id": "users", "label": "Uso", "icon": "book", "description": "Qué es cada paquete y cómo se usa." },
       { "id": "agents", "label": "Agentes", "icon": "sparkles", "description": "Reglas, patrones y verificación para agentes de IA." },
       {
+        "id": "development",
+        "label": "Desarrollo",
+        "icon": "wrench-screwdriver",
+        "description": "Arquitectura, pruebas, CI y cadena de suministro."
+      },
+      {
         "id": "investigations",
         "label": "Investigación",
         "icon": "beaker",
-        "description": "Análisis previos y decisiones de arquitectura."
+        "description": "Notas de investigación y decisiones de diseño."
       },
       {
         "id": "package",

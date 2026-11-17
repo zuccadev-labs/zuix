@@ -26,7 +26,7 @@ Marca lo que ejecutaste. Las cuatro primeras son obligatorias.
 
 ## Lista
 
-- [ ] Los archivos generados (`manifest.json`, `html.json`, `examples/html/index.html`, `zudocs/static/llms.txt`…) salen de `pnpm check`, no de una edición a mano.
+- [ ] Los archivos generados (`manifest.json`, `html.json`, `examples/html/index.html`…) salen de `pnpm check`, y `zudocs/static/llms.txt` del build de zudocs; ninguno de una edición a mano.
 - [ ] El cambio visible está en "Sin publicar" del `CHANGELOG.md` de su paquete.
 - [ ] Una entrada nueva de paquete está en `exports` y en `publishConfig.exports`.
 - [ ] Un módulo de React con hooks, contexto o manejadores propios empieza por `"use client";`.

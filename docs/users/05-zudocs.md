@@ -217,7 +217,8 @@ Cada build regenera tres cosas, con el formato de [llmstxt.org](https://llmstxt.
 | `<ruta>.md` | Copia en Markdown de cada documento junto a su página |
 
 `llms.append` añade un archivo propio al final de `llms.txt`. El de zuix está versionado en
-`zudocs/static/llms.txt` y lo regenera `pnpm check`.
+`zudocs/static/llms.txt`; lo regeneran `build` y `llms`, y el cambio se incluye en el mismo commit que la
+documentación.
 
 ### Documentos escritos por terceros
 

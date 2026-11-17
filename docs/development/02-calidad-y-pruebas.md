@@ -1,0 +1,151 @@
+# Calidad y pruebas
+
+Qué comprueba cada comando, qué cubre cada suite y cuándo se ejecuta. La regla general: lo que una máquina
+puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
+
+## Mapa de comandos
+
+| Comando | Qué comprueba | Tiempo |
+|---|---|---|
+| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, contrato HTML, bundles de navegador y tipos | Segundos |
+| `pnpm lint` | Biome con errores y avisos bloqueantes, y la regla de `"use client"` | Segundos |
+| `pnpm format:check` | Formato de TypeScript, CSS y JSON | Segundos |
+| `pnpm test:unit` | Lógica pura, con umbral de cobertura | Segundos |
+| `pnpm --filter @zuccadev-labs/zuix-zudocs build` | El sitio compila; enlaces, anclas e imágenes resuelven | Un minuto |
+| `pnpm test:site` | El sitio compilado, página a página | Minutos |
+| `pnpm test:html` | El contrato HTML y el modo sin framework, en navegador | Minutos |
+| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador | Minutos |
+| `pnpm build` | El `dist/` de publicación | Segundos |
+| `pnpm test:pack` | Los cinco tarballs, consumidos fuera del workspace | Minutos |
+| `pnpm verify` | Todo lo anterior, en orden, en Chromium | — |
+
+`pnpm verify` es la puerta antes de una versión. La integración continua ejecuta lo mismo y añade Firefox,
+WebKit, Node 22 y 24 y el consumidor Next.js ([CI](./03-ci-y-cadena-de-suministro.md)).
+
+## Lint y formato: Biome
+
+`pnpm lint` ejecuta `biome lint --error-on-warnings` y después `tools/use-client.mjs`. La configuración está
+en `biome.json`.
+
+| Decisión | Detalle |
+|---|---|
+| Base | Reglas recomendadas, dominio `react` (hooks), grupo de accesibilidad, y linters de CSS y JSON |
+| Añadidas como error | Importaciones y variables sin usar, dependencias de hooks, hooks solo en el nivel superior, `any` explícito, `import type` y `export type`, protocolo `node:`, y `console` salvo `warn` y `error` |
+| Importaciones vetadas | Las bibliotecas de UI que la suite sustituyó por primitivas propias: reintroducirlas es un error de lint |
+| Informativas | Aserción no nula, `!important` y especificidad descendente: se ven, no bloquean. La auditoría de estilo exige justificar cada `!important` |
+| Desactivada | `useSemanticElements`: pide `<hr>` para un `role="separator"` interactivo, que es justo el patrón de un divisor redimensionable |
+| Excepciones por carpeta | `console` permitido en `tools/`, `tests/` y scripts; las reglas de hooks no se aplican al código sin React (`dom/`, el motor WebGL), donde `gl.useProgram` no es un hook |
+| Formato | 2 espacios, 140 columnas, comillas dobles, punto y coma, comas finales, LF |
+| Fuera de Biome | Markdown (realinea las tablas) y todo lo generado |
+
+Elegí Biome y no ESLint por una razón práctica: el proyecto usa TypeScript 7 y `typescript-eslint` no lo
+admite todavía ([versiones que admite](https://typescript-eslint.io/users/dependency-versions/)). Biome no
+depende del compilador de TypeScript, lint y formato son una sola herramienta y una pasada completa tarda
+menos de un segundo. El razonamiento entero, y lo que descarté, está en
+[Lint, pruebas y por qué no Barrits](../investigations/11-lint-pruebas-y-barrits.md).
+
+### La regla de `"use client"`
+
+Ningún linter la trae, así que es un script: `tools/use-client.mjs` recorre `zui/src`, `zout/src` y
+`zicon/src` (sin `dom/`, `icons/` ni `styles/`) y falla si un módulo usa hooks de React, hooks propios,
+`createContext` o un manejador de eventos escrito en el propio módulo y no empieza por `"use client";`.
+Reenviar una prop (`onClick={onClick}`) no cuenta. Sin la directiva, un Server Component que importe ese
+módulo falla al compilar en Next.js; con la directiva de más, un componente de solo marcado deja de poder
+renderizarse en el servidor.
+
+### Auditoría de estilo
+
+`pnpm style-audit` (`tools/audit.mjs`) cuenta por archivo y exige cero en cada columna:
+
+| Columna | Qué cuenta |
+|---|---|
+| `color` | Colores literales: `#hex` y funciones de color |
+| `prim` | Uso directo de primitivos de marca (`--zp-*`) |
+| `token` | `var(--z-*)` que no existe en los tokens ni se declara en lo auditado |
+| `emoji` | Emojis usados como iconos |
+| `inline` | `style={{…}}` con propiedades de apariencia |
+| `named` | Colores con nombre (`red`, `white`) |
+| `important` | `!important` sin un comentario que lo justifique |
+| `zindex` | `z-index` con un número literal en lugar de un token de capa |
+| `px` | Un radio, un tamaño de fuente o un espacio en píxeles donde hay un token |
+
+`--strict` añade una columna informativa con el resto de longitudes en píxeles. El comando acepta rutas:
+sirve para auditar una aplicación que consume la suite.
+
+## Pruebas unitarias
+
+`pnpm test:unit` usa el runner nativo de Node (`node:test`) con `tsx` para importar el TypeScript y el TSX
+reales, y `happy-dom` donde hace falta un documento. No hay framework de pruebas que mantener.
+
+| Qué | Cómo |
+|---|---|
+| Cobertura | La de V8, medida sobre una lista explícita de módulos de lógica (`COVERED` en `tests/unit/run.mjs`) |
+| Umbral | 80 % de líneas, 70 % de ramas y 75 % de funciones sobre esa lista. Por debajo, el comando falla |
+| Qué cubre | `zui/src/core/`, el motor y la lente del Carousel, paginación y orden de tabla, la lógica de `zout`, el registro y el SVG de `zicon`, el color y los pares de `tokens`, las herramientas (`version`, `build`, `audit`, `use-client`) y la configuración de zudocs |
+| Un módulo nuevo de lógica | Lleva su prueba y su línea en `COVERED` |
+
+```
+pnpm test:unit                  # todas, con cobertura y umbral
+pnpm test:unit calendar         # solo los archivos cuyo nombre contiene "calendar", sin umbral
+pnpm test:unit --no-coverage
+```
+
+Las ramas que solo existen en un navegador real (WebGL, captura de puntero, capa superior) no cuentan para
+el umbral: las cubren las suites de navegador.
+
+## Pruebas de navegador
+
+Las tres suites usan un runner propio sobre `playwright-core`, sin `@playwright/test`. Chromium es el Chrome
+instalado en el sistema; Firefox y WebKit son los de Playwright (`pnpm exec playwright-core install firefox
+webkit`). `BROWSER=chromium|firefox|webkit|all` elige el motor; los scripts `:all` usan los tres.
+
+Un caso falla si lanza o si la página registra errores de consola, excepciones o peticiones fallidas.
+
+| Suite | Sobre qué | Qué ejercita |
+|---|---|---|
+| `test:html` | `examples/html/index.html` y `shell.html`: el contrato sin React | Capas, formularios, colecciones, layouts, submenús, táctil, Carousel en WebGL, RTL, colores forzados, inyección de marcado, CSP estricta y Trusted Types |
+| `test:browser` | `examples/app`: el binding de React | Lo mismo desde React, las combinaciones de marca y tema, `Shell` en tres anchos, móvil a 390 px, y formularios dentro de un `Modal` |
+| `test:site` | El sitio de documentación compilado, servido bajo su `baseUrl` | Todas las páginas del sitemap en dos temas y tres anchos: hidratación, consola, red, desbordamiento, enlaces y anclas; teclado; impresión; `sitemap.xml`, `robots.txt` y `llms.txt` |
+
+En las tres:
+
+- **axe-core** revisa cada pantalla en claro y oscuro, también con menús, diálogos y selectores abiertos. Las
+  violaciones graves y críticas hacen fallar. En el sitio, con las reglas de WCAG 2.2 A y AA.
+- **Preferencias del sistema** emuladas: `prefers-reduced-motion`, `forced-colors`,
+  `prefers-reduced-transparency` (en Chrome y Firefox; WebKit no permite emularla).
+- **Táctil emulado**: un contexto de teléfono (390 × 844, puntero grueso, sin hover) y otro de tableta. En
+  Chrome los gestos son reales, por el protocolo de depuración, y el navegador aplica `touch-action` y el
+  desplazamiento nativo. En Firefox y WebKit, Playwright solo ofrece el toque; los arrastres son eventos de
+  puntero sintéticos, que ejercitan los manejadores pero no la decisión del navegador.
+- **Sin WebGL**: `NO_WEBGL=1` lanza los motores sin WebGL, como el Firefox sin interfaz de los runners de CI.
+  Los casos del modo `gl` del Carousel quedan entonces como no verificables, no como fallos.
+
+`pnpm test:blur` es una prueba aparte: mide por píxeles que Firefox con ventana pinta el desenfoque del
+cristal. Necesita una pantalla X (`xvfb-run -a pnpm test:blur`). Existe porque el Firefox sin interfaz, y sus
+capturas, no dibujan `backdrop-filter`, y quería saber si era el navegador o la captura: es la captura.
+
+Con la máquina muy cargada un caso puede fallar por tiempos; repetirlo lo confirma o lo descarta.
+
+## Prueba de empaquetado
+
+`pnpm test:pack` no publica nada. Empaqueta los cinco paquetes con `pnpm pack` y los usa como lo haría una
+aplicación, en proyectos fuera del workspace:
+
+| Paso | Qué comprueba |
+|---|---|
+| Tarballs | Sin `src/`, sin `workspace:`, sin archivos internos; con `README.md`, `LICENSE`, `CHANGELOG.md` y metadatos de npm; cada destino de `exports` existe; rango `^` entre paquetes y `zicon` como peer |
+| Paraguas | Cada subruta es el mismo módulo que la del paquete suelto |
+| Proyecto con React | Render en servidor, resolución de todas las entradas, `tsc --noEmit` con `skipLibCheck: false` en TypeScript 5.9, 6 y 7 y con `Bundler` y `NodeNext`, y build con Vite, suelto y por el paraguas. Falla si el set completo de iconos entra en el bundle |
+| Proyecto sin React | Importa los módulos `dom` en Node sin que React esté instalado |
+| `--next` | Next.js, última estable, App Router: `next build`, `next start` y una pasada en Chrome con marcado de servidor, hidratación sin avisos e interacción. Una ruta lo importa todo por el paraguas |
+| `publint` y `attw` | Metadatos del paquete y resolución de tipos. Sin red se avisa y no cuenta como fallo |
+
+La CI lo ejecuta siempre con `--next`: prefiero ver un fallo de Next.js en el pull request que al publicar.
+
+## Lo que ninguna prueba cubre
+
+- Safari real, dispositivos táctiles reales y lectores de pantalla.
+- Regresión visual: no hay comparación de capturas. Un cambio de valor en un token no lo detecta ninguna
+  prueba salvo que rompa el contraste.
+- Rendimiento del desenfoque y de la hidratación en hardware real.
+- Las versiones mínimas de los navegadores admitidos ([Compatibilidad](../users/10-compatibilidad.md)).
