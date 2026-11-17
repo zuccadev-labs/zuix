@@ -233,7 +233,7 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
             const text = label.firstChild.textContent.trim();
             // Controles etiquetables: <label for>. Los demás: aria-labelledby a la etiqueta.
             const labelled = [...wrap.querySelectorAll(`[aria-labelledby~="${CSS.escape(label.id)}"]`)];
-            const named = (control && control.matches("input, select, textarea, button")) || labelled.length > 0 || wrap.querySelector("[aria-label]");
+            const named = control?.matches("input, select, textarea, button") || labelled.length > 0 || wrap.querySelector("[aria-label]");
             if (!named) bad.push(`${id}: nada queda nombrado por la etiqueta "${text}"`);
             const described = [...wrap.querySelectorAll("[aria-describedby]")].filter((el) => el.getAttribute("aria-describedby").split(" ").includes(hint.id));
             if (!described.length) bad.push(`${id}: la ayuda no está en aria-describedby de ningún control`);

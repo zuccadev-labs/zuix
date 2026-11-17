@@ -96,11 +96,12 @@ function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | 
     if (!el.contains(previous)) el.focus({ preventScroll: true });
     return () => {
       const active = document.activeElement;
-      if (previous && previous.isConnected && (!active || active === document.body || el.contains(active))) previous.focus({ preventScroll: true });
+      if (previous?.isConnected && (!active || active === document.body || el.contains(active))) previous.focus({ preventScroll: true });
     };
   }, [overlay]);
   const style = panel.width !== undefined ? ({ "--z-shell-panel-width": `${panel.width}px` } as CSSProperties) : undefined;
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-modal solo se emite cuando el panel es un cajón y lleva role="dialog"; acoplado es un <aside> sin ninguno de los dos.
     <aside
       ref={ref}
       tabIndex={overlay ? -1 : undefined}
@@ -158,9 +159,11 @@ export function Shell({
   const modeChange = useRef(onModeChange);
   modeChange.current = onModeChange;
   // Antes del pintado: si la aplicación cierra un panel al pasar a cajón, no llega a verse abierto.
+  // Solo importa si el ancho ya se midió, no su valor: el aviso depende de los modos resueltos.
+  const measured = width !== null;
   useLayoutEffect(() => {
-    if (width !== null) modeChange.current?.({ sidebar: sidebarAuto, inspector: inspectorAuto });
-  }, [width === null, sidebarAuto, inspectorAuto]);
+    if (measured) modeChange.current?.({ sidebar: sidebarAuto, inspector: inspectorAuto });
+  }, [measured, sidebarAuto, inspectorAuto]);
 
   useEffect(() => {
     if (!drawerOpen || !onCloseOverlay) return;

@@ -404,9 +404,9 @@ export class LensRenderer {
     const gl = this.gl;
     this.canvas.removeEventListener("webglcontextlost", this.handleLost);
     if (this.lost) return;
-    this.textures.forEach((texture) => gl.deleteTexture(texture));
+    for (const texture of this.textures.values()) gl.deleteTexture(texture);
     this.textures.clear();
-    this.buffers.forEach((buffer) => gl.deleteBuffer(buffer));
+    for (const buffer of this.buffers) gl.deleteBuffer(buffer);
     gl.deleteVertexArray(this.vao);
     gl.deleteProgram(this.program);
     this.clear();

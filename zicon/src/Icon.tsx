@@ -43,6 +43,7 @@ export function Icon({ name, variant = "outline", size = 16, label, className, .
       className={className ? `z-icon ${className}` : "z-icon"}
     >
       {paths.map((d, i) =>
+        // biome-ignore lint/suspicious/noArrayIndexKey: los trazos de un icono son una lista fija y sin estado, y dos pueden coincidir en `d`; su posición es su identidad.
         d.startsWith("E:") ? <path key={i} fillRule="evenodd" clipRule="evenodd" d={d.slice(2)} /> : <path key={i} d={d} />,
       )}
     </svg>

@@ -24,7 +24,9 @@ export function validate(value, schema, root = schema, path = "") {
     if (schema.pattern && !new RegExp(schema.pattern, "u").test(value)) errors.push(`${at}: "${value}" no cumple ${schema.pattern}`);
     if (schema.minLength !== undefined && value.length < schema.minLength) errors.push(`${at}: cadena vacía o demasiado corta`);
   }
-  if (Array.isArray(value) && schema.items) value.forEach((item, i) => errors.push(...validate(item, schema.items, root, `${path}[${i}]`)));
+  if (Array.isArray(value) && schema.items) value.forEach((item, i) => {
+      errors.push(...validate(item, schema.items, root, `${path}[${i}]`));
+    });
   if (typeOf(value) === "object") {
     for (const key of schema.required ?? []) if (!(key in value)) errors.push(`${at}: falta "${key}"`);
     for (const [key, item] of Object.entries(value)) {

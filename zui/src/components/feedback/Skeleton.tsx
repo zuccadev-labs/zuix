@@ -18,6 +18,7 @@ export function Skeleton({ width, height, variant = "text", animation = "pulse",
     return (
       <span {...rest} className={cx("z-skeleton-lines", className)} style={{ ...style, width }} aria-hidden="true">
         {Array.from({ length: lines }, (_, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: líneas idénticas generadas a partir de un número; no hay más identidad que la posición.
           <span key={index} className="z-skeleton" data-variant="text" data-animation={animation} style={{ height, width: index === lines - 1 ? "60%" : undefined }} />
         ))}
       </span>

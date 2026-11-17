@@ -36,7 +36,8 @@ export async function touchDriver(page, browserName) {
       return waiting;
     })();
     const fire = (type, p) => page.evaluate(([type, x, y, id]) => {
-      const state = (window.__zTouch ??= {});
+      window.__zTouch ??= {};
+      const state = window.__zTouch;
       if (type === "pointerdown") state.target = document.elementFromPoint(x, y);
       const target = state.target?.isConnected ? state.target : document.elementFromPoint(x, y);
       if (!target) return;

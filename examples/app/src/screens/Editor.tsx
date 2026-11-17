@@ -29,6 +29,7 @@ export function Editor() {
   return (
     <div className="app-editor" data-testid="editor">
       <SplitPane sizes={sizes} onSizesChange={setSizes} dividerLabel="Resize file list" className="app-split-main">
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: no es un control; solo anota qué panel tiene el foco para resaltarlo. La interacción está en los controles de dentro. */}
         <div className="app-pane-slot" onPointerDown={() => setFocused("files")} onFocus={() => setFocused("files")} data-testid="pane-files">
           <Pane header="Files" focused={focused === "files"}>
             <div className="app-pane-pad">
@@ -37,6 +38,7 @@ export function Editor() {
           </Pane>
         </div>
         <SplitPane direction="column" defaultSizes={[0.65, 0.35]} dividerLabel="Resize output" className="app-split-inner">
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: no es un control; solo anota qué panel tiene el foco para resaltarlo. */}
           <div className="app-pane-slot" onPointerDown={() => setFocused("editor")} onFocus={() => setFocused("editor")} data-testid="pane-editor">
             <Pane
               header={<><span className="app-pane-title" data-testid="editor-file">{file}</span><Badge size="sm" tone="info">TSX</Badge><span className="app-spacer" /><IconButton icon="play" label="Run" size="sm" variant="ghost" /></>}
@@ -48,6 +50,7 @@ export function Editor() {
               />
             </Pane>
           </div>
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: no es un control; solo anota qué panel tiene el foco para resaltarlo. */}
           <div className="app-pane-slot" onPointerDown={() => setFocused("output")} onFocus={() => setFocused("output")} data-testid="pane-output">
             <Pane header="Output" focused={focused === "output"}>
               <div className="app-pane-pad">

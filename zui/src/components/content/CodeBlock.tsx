@@ -62,6 +62,7 @@ export function CodeBlock({ code, title, language, wrap, maxHeight, hideCopy, co
       ) : (
         copyButton
       )}
+      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: el bloque se desplaza; una región con scroll debe poder enfocarse para recorrerla con el teclado (WCAG 2.1.1). */}
       <pre className="z-code__pre" tabIndex={0} role="region" aria-label={label} style={maxHeight ? { maxHeight } : undefined}>
         <code>{code}</code>
       </pre>

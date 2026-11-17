@@ -213,7 +213,9 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   };
 
   const render = () => {
-    mains.forEach((slide, i) => slide.toggleAttribute("data-active", i === index));
+    mains.forEach((slide, i) => {
+      slide.toggleAttribute("data-active", i === index);
+    });
     if (counterCurrent) counterCurrent.textContent = pad(count === 0 ? 0 : index + 1);
     if (counterTotal) counterTotal.textContent = `/${pad(count)}`;
     if (arrows[0]) arrows[0].disabled = count === 0 || (!looping && index === 0);

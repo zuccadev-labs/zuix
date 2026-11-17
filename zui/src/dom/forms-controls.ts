@@ -55,7 +55,10 @@ function paintSlider(slider: HTMLElement, values: number[]): void {
   });
   const inputs = [...slider.querySelectorAll<HTMLInputElement>("input")];
   if (inputs.length === 1) inputs[0]!.value = values.join(",");
-  else inputs.forEach((input, i) => (input.value = String(values[i] ?? "")));
+  else
+    inputs.forEach((input, i) => {
+      input.value = String(values[i] ?? "");
+    });
 }
 
 function moveThumb(slider: HTMLElement, index: number, raw: number): void {
@@ -132,7 +135,9 @@ function writeOtp(otp: HTMLElement, value: string): void {
   const cells = otpCells(otp);
   const next = value.slice(0, cells.length);
   otp.dataset.value = next;
-  cells.forEach((cell, i) => (cell.value = next[i] ?? ""));
+  cells.forEach((cell, i) => {
+    cell.value = next[i] ?? "";
+  });
   const hidden = otp.querySelector<HTMLInputElement>('input[type="hidden"]');
   if (hidden) hidden.value = next;
 }
@@ -162,7 +167,10 @@ function onOtpInput(otp: HTMLElement, cell: HTMLInputElement): void {
   const current = otpValue(otp);
   const typed = otpClean(otp, cell.value);
   // Carácter no admitido o borrado directo: la casilla vuelve a su valor.
-  if (!typed) return writeOtp(otp, current);
+  if (!typed) {
+    writeOtp(otp, current);
+    return;
+  }
   // Escribir sobre una casilla sustituye su carácter; el resto se conserva.
   commitOtp(otp, current.slice(0, index) + typed + current.slice(index + 1));
   focusCell(otp, Math.min(index + typed.length, cells.length - 1));

@@ -13,6 +13,7 @@ export function Gallery({ theme, brand }: { theme: Theme; brand: Brand }) {
   const [opened, setOpened] = useState("none");
 
   // Las portadas se redibujan con los tokens del tema y la marca activos.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `theme` y `brand` no se leen dentro, pero cambian los tokens CSS que `drawCover` lee del documento; son el disparador del redibujado.
   const covers = useMemo(() => {
     const map = new Map<string, { canvas: HTMLCanvasElement; url: string }>();
     ITEMS.forEach((project, index) => {
@@ -20,7 +21,6 @@ export function Gallery({ theme, brand }: { theme: Theme; brand: Brand }) {
       map.set(project.id, { canvas, url: canvas.toDataURL("image/png") });
     });
     return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme, brand]);
 
   return (

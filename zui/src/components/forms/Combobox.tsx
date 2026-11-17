@@ -305,6 +305,8 @@ export function Combobox({
         >
           <div ref={list} id={listId} role="listbox" className="z-listbox__viewport" aria-label={ariaLabel} aria-labelledby={ariaLabelledBy} aria-busy={loading || undefined}>
             {visible.map((option, index) => (
+              // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
+              // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
               <div
                 key={option.value}
                 id={optionId(index)}

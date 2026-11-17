@@ -57,7 +57,9 @@ function setPaletteActive(dialog: HTMLElement, index: number, scroll = true): vo
   const visible = paletteVisible(dialog);
   const active = visible[Math.min(Math.max(index, 0), visible.length - 1)];
   for (const item of paletteItems(dialog)) item.setAttribute("aria-selected", String(item === active));
-  visible.forEach((item, i) => (item.dataset.index = String(i)));
+  visible.forEach((item, i) => {
+    item.dataset.index = String(i);
+  });
   const input = paletteInput(dialog);
   if (active) input?.setAttribute("aria-activedescendant", active.id);
   else input?.removeAttribute("aria-activedescendant");
@@ -425,7 +427,10 @@ function onClick(event: MouseEvent): void {
     return;
   }
   const command = target.closest<HTMLElement>(`${PALETTE} .z-palette__item`);
-  if (command) return runCommand(command.closest<HTMLDialogElement>(PALETTE)!, command);
+  if (command) {
+    runCommand(command.closest<HTMLDialogElement>(PALETTE)!, command);
+    return;
+  }
 
   if (!inDom(target)) return;
 
@@ -434,7 +439,8 @@ function onClick(event: MouseEvent): void {
   const tree = item && treeOf(item);
   if (item && tree) {
     focusTreeItem(tree, item);
-    return activateTreeItem(tree, item);
+    activateTreeItem(tree, item);
+    return;
   }
 
   const sorter = target.closest<HTMLElement>(".z-table__sort");
@@ -442,7 +448,8 @@ function onClick(event: MouseEvent): void {
   if (th) {
     // Ciclo: ascendente, descendente, sin orden.
     const now = th.getAttribute("aria-sort");
-    return sortTable(th, now === "ascending" ? "desc" : now === "descending" ? null : "asc");
+    sortTable(th, now === "ascending" ? "desc" : now === "descending" ? null : "asc");
+    return;
   }
 
   const button = target.closest<HTMLButtonElement>(".z-pagination > .z-pagination__btn");
@@ -459,7 +466,10 @@ function onKeydown(event: KeyboardEvent): void {
   const target = event.target;
   if (!(target instanceof Element)) return;
   const palette = target.closest<HTMLDialogElement>(PALETTE);
-  if (palette) return onPaletteKey(palette, event);
+  if (palette) {
+    onPaletteKey(palette, event);
+    return;
+  }
   if (!inDom(target) || !target.matches('[role="treeitem"]')) return;
   const tree = treeOf(target);
   if (tree) onTreeKey(tree, target as HTMLElement, event);

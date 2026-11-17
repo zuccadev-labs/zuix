@@ -747,7 +747,10 @@ function onClick(event: MouseEvent): void {
   if (!inDom(target)) return;
 
   const tab = target.closest<HTMLElement>(".z-tabs__tab");
-  if (tab && !isDisabled(tab)) return selectTab(tab.closest(".z-tabs")!, tabKey(tab));
+  if (tab && !isDisabled(tab)) {
+    selectTab(tab.closest(".z-tabs")!, tabKey(tab));
+    return;
+  }
 
   const trigger = target.closest<HTMLElement>(".z-accordion__trigger");
   if (trigger) {
@@ -763,12 +766,18 @@ function onClick(event: MouseEvent): void {
   }
 
   const check = target.closest<HTMLElement>('[role="switch"], [role="checkbox"]');
-  if (check) return toggleChecked(check);
+  if (check) {
+    toggleChecked(check);
+    return;
+  }
 
   const radio = target.closest<HTMLElement>('[role="radio"]');
   if (radio && !isDisabled(radio)) {
     const group = radio.closest<HTMLElement>('[role="radiogroup"]');
-    if (group?.matches(".z-rating__stars")) return rate(group, radio);
+    if (group?.matches(".z-rating__stars")) {
+      rate(group, radio);
+      return;
+    }
     for (const other of group?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [radio]) {
       setChecked(other, other === radio);
       other.tabIndex = other === radio ? 0 : -1;

@@ -6,11 +6,11 @@ import { fileURLToPath } from "node:url";
 
 const contract = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../zui/html.json"), "utf8")).components;
 
-export default async function ({ page, test, ok, card, settle, shots }) {
+export default async function ({ page, test, ok, settle, shots }) {
 // Registro de eventos z:change y z:input, para comprobar qué se emite y dónde.
 await page.evaluate(() => {
   window.__zforms = [];
-  const plain = (detail) => JSON.parse(JSON.stringify(detail ?? null, (key, value) => (value instanceof File ? value.name : value)));
+  const plain = (detail) => JSON.parse(JSON.stringify(detail ?? null, (_key, value) => (value instanceof File ? value.name : value)));
   for (const name of ["z:change", "z:input"]) document.addEventListener(name, (event) => window.__zforms.push({ name, id: event.target.id, detail: plain(event.detail) }));
 });
 const events = () => page.evaluate(() => window.__zforms.splice(0));

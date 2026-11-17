@@ -231,7 +231,7 @@ await test("auditoría · layouts: SplitPane con Inicio, Fin, doble clic y aria-
   await page.keyboard.press("Home");
   ok(Number(await divider.getAttribute("aria-valuenow")) === min, `Inicio no llevó al mínimo (${await divider.getAttribute("aria-valuenow")} / ${min})`);
   await page.keyboard.press("End");
-  const atEnd = await page.evaluate((sel) => { const s = document.querySelector("#split-demo"); const panes = [...s.children].filter((c) => c.classList.contains("z-split__pane")); return [parseFloat(panes[0].style.flexGrow), parseFloat(panes[1].style.flexGrow)]; }, row);
+  const atEnd = await page.evaluate(() => { const s = document.querySelector("#split-demo"); const panes = [...s.children].filter((c) => c.classList.contains("z-split__pane")); return [parseFloat(panes[0].style.flexGrow), parseFloat(panes[1].style.flexGrow)]; });
   ok(atEnd[0] > atEnd[1], `Fin no llevó al máximo: ${atEnd}`);
   const c = await center(row);
   await page.mouse.dblclick(c.x, c.y);

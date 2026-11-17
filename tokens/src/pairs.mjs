@@ -82,7 +82,7 @@ export function extractUses(rules, known) {
     }
     if (Object.keys(binds).length) definers.push({ rule, binds });
   }
-  const expand = (names, rule) => {
+  const expand = (names) => {
     // names: lista devuelta por soleToken. Devuelve los tokens del contrato a los que puede resolverse.
     const out = new Set();
     const visit = (name, seen) => {
@@ -124,13 +124,13 @@ export function extractUses(rules, known) {
       const combos = bgNames ? paired(fgNames, bgNames) : null;
       if (combos) for (const [fg, b] of combos) { if (known(fg) && known(b)) push(text, { fg, bg: b, graphic, ...meta }); }
       else {
-        const bgs = bgNames ? expand(bgNames, rule) : [null];
-        for (const fg of expand(fgNames, rule)) for (const b of bgs.length ? bgs : [null]) push(text, { fg, bg: b, graphic, ...meta });
+        const bgs = bgNames ? expand(bgNames) : [null];
+        for (const fg of expand(fgNames)) for (const b of bgs.length ? bgs : [null]) push(text, { fg, bg: b, graphic, ...meta });
       }
     }
     const borderToken = border ? [...border.matchAll(/var\(\s*--z-([a-z0-9-]+)/g)].map((m) => m[1]).pop() : null;
     if (borderToken && /^control-border/.test(borderToken)) {
-      const bgs = bgNames ? expand(bgNames, rule) : [null];
+      const bgs = bgNames ? expand(bgNames) : [null];
       for (const b of bgs.length ? bgs : [null]) push(borders, { border: borderToken, bg: b, ...meta });
     }
   }

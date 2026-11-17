@@ -48,13 +48,14 @@ export function scan(spec) {
   if (process.env.ZUIX_COMPAT_OFFLINE || !from) return null;
   const base = resolve(from);
   const sheets = spec.source.sheets.map((s) => join(base, s));
-  if (!sheets.every(existsSync)) throw new Error(`${spec.source.env}=${from}: no contiene ${spec.source.sheets.filter((s, i) => !existsSync(sheets[i])).join(", ")}`);
+  if (!sheets.every(existsSync)) throw new Error(`${spec.source.env}=${from}: no contiene ${spec.source.sheets.filter((_sheet, i) => !existsSync(sheets[i])).join(", ")}`);
   const declared = {};
   const conflicts = [];
   for (const sheet of sheets) {
     const parsed = parseSheet(readFileSync(sheet, "utf8"));
     for (const theme of THEMES) for (const [name, value] of Object.entries(parsed[theme])) {
-      const entry = (declared[name] ??= {});
+      declared[name] ??= {};
+      const entry = declared[name];
       if (entry[theme] !== undefined && entry[theme] !== value) conflicts.push(`${name} (${theme}): "${entry[theme]}" y "${value}" según la hoja`);
       entry[theme] = value;
     }
@@ -69,13 +70,16 @@ export function scan(spec) {
     const text = stripComments(readFileSync(file, "utf8"));
     if (!isSheet) for (const m of text.matchAll(/(?:^|[\s;{"'`(])(--[a-z][\w-]*)\s*:/g)) elsewhere.add(m[1]);
     if (isSheet) continue;
-    for (const m of text.matchAll(/var\(\s*(--[a-z][\w-]*)|["'`](--[a-z][\w-]*)["'`$]|-[\[(](--[a-z][\w-]*)[\])]/g)) {
+    for (const m of text.matchAll(/var\(\s*(--[a-z][\w-]*)|["'`](--[a-z][\w-]*)["'`$]|-[[(](--[a-z][\w-]*)[\])]/g)) {
       const name = m[1] ?? m[2] ?? m[3];
       // Un nombre que acaba en guion viene de una plantilla (`--tone-${x}`): cuenta para todas las que empiezan así.
       const names = name.endsWith("-") ? Object.keys(declared).filter((d) => d.startsWith(name)) : [name];
       for (const n of names) {
         used[n] = (used[n] ?? 0) + 1;
-        if (n.startsWith("--z-")) (locations[n] ??= []).push(`${relative(base, file).split("\\").join("/")}:${text.slice(0, m.index).split("\n").length}`);
+        if (n.startsWith("--z-")) {
+          locations[n] ??= [];
+          locations[n].push(`${relative(base, file).split("\\").join("/")}:${text.slice(0, m.index).split("\n").length}`);
+        }
       }
     }
   }

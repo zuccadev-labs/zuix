@@ -58,6 +58,7 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
   return (
     <div ref={root} className={cx("z-split", className)} data-direction={direction}>
       {panes.map((pane, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: un panel es su posición: `panes` es una lista de nodos sin identificador y los tamaños (`sizes`) se asignan por índice.
         <Fragment key={i}>
           {i > 0 ? (
             <div

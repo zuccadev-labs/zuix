@@ -158,6 +158,8 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
             if (event.target === event.currentTarget) setFocused(node.id);
           }}
         >
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: la fila es la zona de puntero del treeitem que la contiene, que es quien tiene el rol y el foco. */}
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: el teclado lo atiende el árbol (flechas, Intro y Espacio sobre el treeitem enfocado). */}
           <div
             className="z-tree__row"
             style={indent}
@@ -186,6 +188,7 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
     });
 
   return (
+    // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «tree view»: la lista conserva su estructura y role="tree" le da la semántica y el teclado.
     <ul role="tree" aria-label={label} className={cx("z-tree", className)} onKeyDown={onKeyDown}>
       {render(nodes, 1)}
     </ul>

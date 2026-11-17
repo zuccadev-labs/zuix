@@ -269,7 +269,8 @@ function dtcg(brand, theme) {
     const raw = String(rawToken(name, brand, theme));
     const alias = /^\{([a-z0-9.-]+)\}$/i.exec(raw)?.[1];
     const target = alias?.startsWith("p.") ? (alias.slice(2) in out.primitive ? `primitive.${alias.slice(2)}` : null) : alias && typed.has(alias) ? path(alias).join(".") : null;
-    (out[group] ??= {})[key] = target ? { $type: value.$type, $value: `{${target}}` } : value;
+    out[group] ??= {};
+    out[group][key] = target ? { $type: value.$type, $value: `{${target}}` } : value;
   }
   return JSON.stringify(out, null, 2) + "\n";
 }

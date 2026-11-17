@@ -2,7 +2,6 @@
 // Un caso falla si lanza o si la página registra errores de consola, `pageerror` o peticiones fallidas.
 
 import auditCss from "./cases-audit-css.mjs";
-import auditDom from "./cases-audit-zui.mjs";
 import auditReact from "./cases-audit-react.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -81,6 +80,7 @@ async function clickOutside(page, x, y) {
   await sleep(80);
   await page.mouse.click(x, y);
 }
+// biome-ignore lint/performance/useDomNodeTextContent: es el método innerText() de Playwright, no la propiedad del DOM; las aserciones comparan el texto que se ve (sin nodos ocultos), que textContent no da.
 const text = (page, selector) => page.locator(selector).first().innerText();
 
 /** El elemento queda por encima de todo en su centro (no lo tapa otra capa). */
@@ -2254,7 +2254,7 @@ export const cases = [
     },
   },
   // Auditoría previa a 0.1.1: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditDom, auditCss].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss].flatMap((build) => build(helpers())),
 ];
 
 /** Ayudantes compartidos con los archivos cases-audit-*.mjs. */

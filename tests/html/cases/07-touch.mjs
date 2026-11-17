@@ -29,7 +29,8 @@ const until = async (fn, message, arg) => {
  */
 const rested = async (selector, what) => until((s) => {
   const el = document.querySelector(s);
-  return el !== null && el.getAnimations({ subtree: true }).every((a) => a.playState === "finished" || a.playState === "idle" || a.effect?.getComputedTiming().iterations === Infinity);
+  if (el === null) return false;
+  return el.getAnimations({ subtree: true }).every((a) => a.playState === "finished" || a.playState === "idle" || a.effect?.getComputedTiming().iterations === Infinity);
 }, `${what} no terminó su animación de entrada`, selector);
 const card = (name) => tp.locator(`[data-component="${name}"]`);
 /** Trae el elemento al centro de la ventana y devuelve su caja. */

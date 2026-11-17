@@ -45,6 +45,7 @@ const COVERED = [
   "zui/src/core/date.ts",
   "zui/src/core/dir.ts",
   "zui/src/core/focus.ts",
+  "zui/src/core/keys.ts",
   "zui/src/core/layers.ts",
   "zui/src/core/long-press.ts",
   "zui/src/core/menu-aim.ts",

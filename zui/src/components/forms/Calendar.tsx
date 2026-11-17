@@ -155,11 +155,13 @@ export function Calendar(props: CalendarProps) {
     setFocused(target);
     showMonth(monthOf(target));
   };
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `visibleMonth` no se lee dentro; la celda del día activo solo existe una vez pintado su mes, así que el efecto debe repetirse al cambiar de mes.
   useEffect(() => {
     if (!moveFocus.current || !focused) return;
     moveFocus.current = false;
     grid.current?.querySelector<HTMLElement>(`[data-date="${focused}"]`)?.focus();
   }, [focused, visibleMonth]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: foco inicial; se ejecuta solo al montar con los valores de ese momento (repetirlo robaría el foco en cada cambio de selección).
   useEffect(() => {
     // Sin selección el foco va a hoy: `today` aún no está resuelto en este primer efecto, así que se busca por fecha.
     if (autoFocus) (grid.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${anchorDate ?? todayISO()}"]`) ?? grid.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]'))?.focus();
@@ -227,8 +229,8 @@ export function Calendar(props: CalendarProps) {
 
   // Rango pintado: el elegido o, con solo el inicio, la vista previa hasta el día bajo el puntero o el foco.
   const previewing = mode === "range" && range.from && !range.to && preview && preview !== range.from ? preview : null;
-  const bandFrom = previewing ? (previewing < range.from! ? previewing : range.from) : range.from;
-  const bandTo = previewing ? (previewing < range.from! ? range.from : previewing) : range.to;
+  // Las fechas ISO se ordenan como texto: la banda va de la menor a la mayor.
+  const [bandFrom, bandTo] = previewing && range.from ? (previewing < range.from ? [previewing, range.from] : [range.from, previewing]) : [range.from, range.to];
   const rangePart = (date: string) => {
     if (mode !== "range" || !bandFrom) return undefined;
     if (!bandTo || bandFrom === bandTo) return date === bandFrom ? "single" : undefined;
@@ -252,6 +254,7 @@ export function Calendar(props: CalendarProps) {
           <Icon name="chevron-right" size={16} />
         </button>
       </div>
+      {/* biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «date picker grid»: una tabla con role="grid" conserva filas, cabeceras y celdas y añade la navegación con flechas. */}
       <table ref={grid} className="z-calendar__grid" role="grid" aria-labelledby={titleId} aria-multiselectable={mode === "range" || undefined} onKeyDown={handleKeyDown} onMouseLeave={() => setPreview(null)}>
         <thead>
           <tr>
@@ -273,6 +276,7 @@ export function Calendar(props: CalendarProps) {
                 const inRange = mode === "range" && Boolean(range.from && range.to && date >= range.from && date <= range.to);
                 const isDisabled = unavailable(date);
                 return (
+                  // biome-ignore lint/a11y/useAriaPropsSupportedByRole: dentro de una tabla con role="grid" la celda es un gridcell implícito, que sí admite aria-selected.
                   <td key={date} className="z-calendar__cell" aria-selected={isSelected || inRange} data-range={part} data-preview={part && previewing ? "" : undefined}>
                     <button
                       type="button"

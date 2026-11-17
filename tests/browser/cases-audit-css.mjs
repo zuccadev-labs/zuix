@@ -3,7 +3,7 @@
 export default function ({ t, assert, visible, settled, SCREENS }) {
   const emulate = async (page, features, Unverifiable, browserName) => {
     try { await page.emulateMedia(features); }
-    catch (error) { throw new Unverifiable(`${browserName} no emula ${Object.keys(features).join(", ")}`); }
+    catch { throw new Unverifiable(`${browserName} no emula ${Object.keys(features).join(", ")}`); }
   };
   return [
     {

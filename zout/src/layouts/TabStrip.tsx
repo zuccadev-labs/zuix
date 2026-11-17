@@ -33,6 +33,7 @@ export function TabStrip({ tabs, activeId, onSelect, onClose, onAdd, label = "Ta
   // Tras cerrar con el teclado, el foco pasa a la pestaña que queda activa.
   const refocus = useRef(false);
   // La pestaña activa siempre queda a la vista: la tira se desplaza sola al cambiar de pestaña, al añadir o cerrar y al estrecharse.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `tabs.length` no se lee dentro; es el disparador para volver a revelar la pestaña activa cuando se añade o se cierra otra.
   useEffect(() => {
     const list = listRef.current;
     if (!list) return;

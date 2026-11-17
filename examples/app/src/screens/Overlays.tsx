@@ -152,6 +152,7 @@ export function Overlays({ onOpenPalette }: { onOpenPalette: () => void }) {
           <Card className="app-demo">
             <CardHeader title="Context menu" subtitle="Right-click or long press" />
             <ContextMenu items={menu} label="Document actions">
+              {/* biome-ignore lint/a11y/noNoninteractiveTabindex: la zona debe poder enfocarse para abrir el menú contextual con el teclado (Mayús+F10 o la tecla de menú). */}
               <div className="app-dropzone" tabIndex={0} data-testid="context-area">Right-click this area</div>
             </ContextMenu>
           </Card>

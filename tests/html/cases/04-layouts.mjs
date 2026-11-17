@@ -138,7 +138,6 @@ const side = ".z-shell__side";
 const inspector = ".z-shell__inspector";
 const hidden = (selector) => page.locator(selector).evaluate((el) => el.hidden);
 const inert = (selector) => page.locator(selector).evaluate((el) => el.inert);
-const modes = () => page.locator("#modes").textContent();
 
 await test("layouts · shell.html no usa React y dibuja los iconos", async () => {
   ok(await page.evaluate(() => !window.React && !Object.keys(document.body).some((k) => k.startsWith("__react"))), "hay rastro de React");

@@ -37,19 +37,24 @@ export function Pagination({
   const go = (next: number) => {
     if (next !== current && next >= 1 && next <= count) onPageChange(next);
   };
+  // Un hueco se identifica por la página que lo precede: es el mismo hueco mientras siga en el mismo punto de la serie.
+  const entries: Array<{ key: string; n: number }> = [];
+  for (const n of pageRange(current, count, Math.max(0, Math.floor(siblingCount) || 0))) {
+    entries.push({ key: n === 0 ? `gap-after-${entries[entries.length - 1]?.n ?? 0}` : `page-${n}`, n });
+  }
   return (
     <nav aria-label={label} className={cx("z-pagination", className)} data-size={size}>
       <button type="button" className="z-pagination__btn" aria-label={previousLabel} disabled={current <= 1} onClick={() => go(current - 1)}>
         <Icon name="chevron-left" size={14} />
       </button>
-      {pageRange(current, count, Math.max(0, Math.floor(siblingCount) || 0)).map((n, i) =>
+      {entries.map(({ key, n }) =>
         n === 0 ? (
-          <span key={`gap-${i}`} className="z-pagination__gap" aria-hidden="true">
+          <span key={key} className="z-pagination__gap" aria-hidden="true">
             …
           </span>
         ) : (
           <button
-            key={n}
+            key={key}
             type="button"
             className="z-pagination__btn"
             aria-label={pageLabel(n)}

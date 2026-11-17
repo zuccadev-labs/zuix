@@ -27,7 +27,10 @@ let calSeq = 0;
 
 function stateOf(cal: HTMLElement): CalState {
   let state = states.get(cal);
-  if (!state) states.set(cal, (state = { focused: null, preview: null }));
+  if (!state) {
+    state = { focused: null, preview: null };
+    states.set(cal, state);
+  }
   return state;
 }
 
@@ -50,7 +53,9 @@ function visibleMonth(cal: HTMLElement): string {
   if (/^\d{4}-\d{2}$/.test(cal.dataset.month ?? "") && valid(`${cal.dataset.month}-01`)) return cal.dataset.month!;
   const { anchor, min, max } = config(cal);
   const today = todayISO();
-  return (cal.dataset.month = monthOf(anchor ?? (min && min > today ? min : max && max < today ? max : today)));
+  const month = monthOf(anchor ?? (min && min > today ? min : max && max < today ? max : today));
+  cal.dataset.month = month;
+  return month;
 }
 
 function skeleton(cal: HTMLElement): void {
@@ -116,8 +121,8 @@ function paint(cal: HTMLElement): void {
   const tabbable = [state.focused, c.anchor, today].find(inMonth) ?? `${month}-01`;
   const { from, to } = c.range;
   const previewing = c.mode === "range" && from && !to && state.preview && state.preview !== from ? state.preview : null;
-  const bandFrom = previewing ? (previewing < from! ? previewing : from) : from;
-  const bandTo = previewing ? (previewing < from! ? from : previewing) : to;
+  // Las fechas ISO se ordenan como texto: la banda va de la menor a la mayor.
+  const [bandFrom, bandTo] = previewing && from ? (previewing < from ? [previewing, from] : [from, previewing]) : [from, to];
   for (const button of cal.querySelectorAll<HTMLElement>(".z-calendar__day")) {
     const date = button.dataset.date!;
     const cell = button.parentElement!;
@@ -327,7 +332,7 @@ function previewAt(target: EventTarget | null, leaving = false): void {
   if (!(target instanceof Element)) return;
   const day = target.closest<HTMLElement>(".z-calendar__day");
   const cal = calendarAt(target);
-  if (!cal || cal.dataset.mode !== "range") return;
+  if (cal?.dataset.mode !== "range") return;
   const state = stateOf(cal);
   const next = leaving ? null : (day?.dataset.date ?? state.preview);
   if (next === state.preview) return;

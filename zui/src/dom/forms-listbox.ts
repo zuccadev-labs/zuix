@@ -19,13 +19,13 @@ const COMBO = ".z-combobox";
 const optionsOf = (popup: Element) => [...popup.querySelectorAll<HTMLElement>(".z-listbox__option")];
 const usable = (option: HTMLElement) => !option.hidden && !option.hasAttribute("data-disabled") && option.getAttribute("aria-disabled") !== "true";
 const labelOf = (option: HTMLElement) => option.dataset.label ?? (option.querySelector(".z-listbox__text") ?? option).textContent?.trim() ?? "";
-const valueOf = (option: HTMLElement) => option.dataset.value ?? labelOf(option);
+const optionValue = (option: HTMLElement) => option.dataset.value ?? labelOf(option);
 const activeOf = (popup: Element) => popup.querySelector<HTMLElement>(".z-listbox__option[data-highlighted]");
 
 function mark(popup: Element, value: string | null): HTMLElement | undefined {
   let selected: HTMLElement | undefined;
   for (const option of optionsOf(popup)) {
-    const on = value !== null && valueOf(option) === value;
+    const on = value !== null && optionValue(option) === value;
     if (on) selected ??= option;
     option.dataset.state = on ? "checked" : "unchecked";
     option.setAttribute("aria-selected", String(on));
@@ -110,7 +110,7 @@ function closeSelect(select: HTMLElement, refocus = true): void {
 function chooseSelect(select: HTMLElement, option: HTMLElement): void {
   if (!usable(option)) return;
   closeSelect(select);
-  setSelectValue(select, valueOf(option));
+  setSelectValue(select, optionValue(option));
 }
 
 function onSelectControlKey(select: HTMLElement, event: KeyboardEvent): void {
@@ -124,7 +124,7 @@ function onSelectControlKey(select: HTMLElement, event: KeyboardEvent): void {
     event.preventDefault();
     const list = optionsOf(popup).filter(usable);
     const next = typeahead(list, event.key, list.find((option) => option.dataset.state === "checked") ?? null);
-    if (next) setSelectValue(select, valueOf(next));
+    if (next) setSelectValue(select, optionValue(next));
   }
 }
 
@@ -184,7 +184,10 @@ const comboValue = (combo: HTMLElement): string | null => combo.dataset.value ??
 
 function comboState(combo: HTMLElement): ComboState {
   let state = combos.get(combo);
-  if (!state) combos.set(combo, (state = { editing: false, label: "" }));
+  if (!state) {
+    state = { editing: false, label: "" };
+    combos.set(combo, state);
+  }
   return state;
 }
 
@@ -246,7 +249,7 @@ function commitCombo(combo: HTMLElement, option: HTMLElement | null): void {
   const { popup, hidden } = comboParts(combo);
   if (!popup) return;
   const before = comboValue(combo);
-  const value = option ? valueOf(option) : null;
+  const value = option ? optionValue(option) : null;
   const state = comboState(combo);
   state.label = option ? labelOf(option) : "";
   if (value === null) delete combo.dataset.value;
@@ -414,7 +417,7 @@ export function setComboboxLoading(combo: HTMLElement, loading: boolean): void {
 export function setComboboxValue(combo: HTMLElement, value: string | null): void {
   const { input, popup } = comboParts(combo);
   if (!input || !popup) return;
-  const option = value === null ? null : (optionsOf(popup).find((item) => valueOf(item) === value) ?? null);
+  const option = value === null ? null : (optionsOf(popup).find((item) => optionValue(item) === value) ?? null);
   commitCombo(combo, option);
   const state = comboState(combo);
   state.editing = false;
@@ -431,9 +434,9 @@ function hydrateCombo(combo: HTMLElement): void {
   const declared = combo.dataset.value ?? (hidden?.value || null) ?? optionsOf(popup).find((option) => option.getAttribute("aria-selected") === "true")?.dataset.value ?? null;
   const selected = mark(popup, declared);
   if (selected) {
-    combo.dataset.value = valueOf(selected);
+    combo.dataset.value = optionValue(selected);
     state.label = labelOf(selected);
-    if (hidden) hidden.value = valueOf(selected);
+    if (hidden) hidden.value = optionValue(selected);
     if (!isOpen(popup)) input.value = state.label;
   }
   if (!isOpen(popup)) {
@@ -461,7 +464,11 @@ function onClick(event: MouseEvent): void {
 
   const option = target.closest<HTMLElement>(".z-listbox__option");
   const at = option && ownerAt(option);
-  if (option && at) return at.owner.matches(COMBO) ? chooseCombo(at.owner, option) : chooseSelect(at.owner, option);
+  if (option && at) {
+    if (at.owner.matches(COMBO)) chooseCombo(at.owner, option);
+    else chooseSelect(at.owner, option);
+    return;
+  }
 
   if (!inDom(target)) return;
 
@@ -477,8 +484,8 @@ function onClick(event: MouseEvent): void {
   if (!combo) return;
   const { input, popup, toggle, clear } = comboParts(combo);
   if (!input || !popup || input.disabled) return;
-  if (clear && clear.contains(target)) clearCombo(combo);
-  else if (toggle && toggle.contains(target)) {
+  if (clear?.contains(target)) clearCombo(combo);
+  else if (toggle?.contains(target)) {
     if (isOpen(popup)) closeCombo(combo);
     else openCombo(combo, "selected");
     input.focus();
@@ -489,10 +496,16 @@ function onKeydown(event: KeyboardEvent): void {
   const target = event.target;
   if (!(target instanceof Element) || event.defaultPrevented || typeof event.key !== "string") return;
   const at = ownerAt(target);
-  if (at && !at.owner.matches(COMBO)) return onSelectListKey(at.owner, at.popup, event);
+  if (at && !at.owner.matches(COMBO)) {
+    onSelectListKey(at.owner, at.popup, event);
+    return;
+  }
   if (!inDom(target)) return;
   const control = target.closest<HTMLElement>(`${SELECT} > button.z-select__control`);
-  if (control) return onSelectControlKey(control.parentElement!, event);
+  if (control?.parentElement) {
+    onSelectControlKey(control.parentElement, event);
+    return;
+  }
   if (target.matches(`${COMBO} input.z-input__control`)) onComboKey(target.closest<HTMLElement>(COMBO)!, event);
 }
 

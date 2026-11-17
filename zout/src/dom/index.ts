@@ -191,7 +191,10 @@ function measure(shell: HTMLElement, width: number): void {
 let shellObserver: ResizeObserver | undefined;
 
 function hydrateShell(shell: HTMLElement): void {
-  if (shells.has(shell)) return syncShell(shell);
+  if (shells.has(shell)) {
+    syncShell(shell);
+    return;
+  }
   const panel = (): PanelState => ({ overlay: false, previous: null, dockedOpen: true });
   shells.set(shell, { width: null, modes: null, panels: { sidebar: panel(), inspector: panel() } });
   // Se mide antes del primer pintado para que un shell estrecho no muestre un instante los paneles acoplados.
@@ -302,7 +305,9 @@ export function getSplitSizes(split: HTMLElement): number[] {
 /** Fija el reparto sin emitir `z:resize`. */
 export function setSplitSizes(split: HTMLElement, sizes: number[]): void {
   parts(split, "z-split__pane").forEach((pane, i) => { pane.style.flexGrow = String(sizes[i] ?? 0); });
-  parts(split, "z-split__divider").forEach((divider, i) => divider.setAttribute("aria-valuenow", String(Math.round((sizes[i] ?? 0) * 100))));
+  parts(split, "z-split__divider").forEach((divider, i) => {
+    divider.setAttribute("aria-valuenow", String(Math.round((sizes[i] ?? 0) * 100)));
+  });
 }
 
 function minFraction(split: HTMLElement): number {
@@ -512,7 +517,8 @@ function onClick(event: MouseEvent): void {
     if (!shell) return;
     // El foco queda en el botón (hay navegadores que no enfocan al hacer clic): ahí vuelve al cerrar el cajón.
     if (document.activeElement !== toggle) toggle.focus({ preventScroll: true });
-    return togglePanel(shell, toggle.getAttribute("data-z-shell-toggle") as ShellSide);
+    togglePanel(shell, toggle.getAttribute("data-z-shell-toggle") as ShellSide);
+    return;
   }
 
   const scrim = target.closest(".z-shell__scrim");
@@ -570,7 +576,8 @@ function onKeydown(event: KeyboardEvent): void {
     const next = resizeByKey(event.key, options.side, currentSize(handle, options), options);
     if (next === undefined) return;
     event.preventDefault();
-    return resizeTo(handle, next);
+    resizeTo(handle, next);
+    return;
   }
 
   const divider = target.closest<HTMLElement>(".z-split__divider");
@@ -581,7 +588,8 @@ function onKeydown(event: KeyboardEvent): void {
     event.preventDefault();
     const index = parts(split, "z-split__divider").indexOf(divider);
     const sizes = getSplitSizes(split);
-    return moveSplit(split, index, sizes[index] ?? 0, sizes[index + 1] ?? 0, delta);
+    moveSplit(split, index, sizes[index] ?? 0, sizes[index + 1] ?? 0, delta);
+    return;
   }
 
   const list = target.closest(".z-tabstrip__list");
@@ -653,7 +661,8 @@ function onDoubleClick(event: MouseEvent): void {
     const index = parts(split, "z-split__divider").indexOf(divider);
     const sizes = getSplitSizes(split);
     const half = ((sizes[index] ?? 0) + (sizes[index + 1] ?? 0)) / 2;
-    return moveSplit(split, index, half, half, 0);
+    moveSplit(split, index, half, half, 0);
+    return;
   }
   const handle = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-resize") : null;
   if (!handle || !inDom(handle)) return;

@@ -32,6 +32,7 @@ export function Breadcrumb({ items, label = "Breadcrumb", className }: Breadcrum
           );
           const current = i === last;
           return (
+            // biome-ignore lint/suspicious/noArrayIndexKey: una miga es su nivel en la ruta; `label` puede ser un nodo y `href` puede faltar o repetirse.
             <li key={i} className="z-breadcrumb__item">
               {current ? (
                 <span className="z-breadcrumb__current" aria-current="page">

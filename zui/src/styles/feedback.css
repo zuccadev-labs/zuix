@@ -125,6 +125,7 @@
   }
   .z-empty[data-fullscreen] {
     min-height: 100vh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: 100vh es el respaldo de los navegadores sin unidades dinámicas (dvh); el orden es intencionado. */
     min-height: 100dvh;
   }
   .z-empty__icon {

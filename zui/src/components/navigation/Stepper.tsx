@@ -42,6 +42,7 @@ export function Stepper({ steps, current, orientation = "horizontal", onStepSele
           </>
         );
         return (
+          // biome-ignore lint/suspicious/noArrayIndexKey: un paso es su número de orden (el mismo índice que recibe `onStepSelect`); `label` puede ser un nodo.
           <li key={i} className="z-stepper__step" data-state={state} aria-current={state === "current" ? "step" : undefined}>
             {onStepSelect && state === "complete" ? (
               <button type="button" className="z-stepper__body" onClick={() => onStepSelect(i)}>

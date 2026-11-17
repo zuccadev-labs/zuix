@@ -37,7 +37,7 @@ window.__ready = true;
 </script></body></html>`;
 }
 
-export default async function ({ page, test, ok, settle, shots, browserName, note, Unverifiable }) {
+export default async function ({ page, test, ok, shots, browserName, note, Unverifiable }) {
 const dir = join(shots, "audit");
 mkdirSync(dir, { recursive: true });
 const base = new URL(page.url()).origin;
@@ -81,7 +81,7 @@ const all = Object.entries(contract).filter(([, c]) => c.behavior !== "react").f
 await test(`contrato: los ${all.length} ejemplos de zui/html.json cargan sin errores, sin violaciones graves de axe y responden`, async () => {
   const failures = [];
   let interactions = 0;
-  for (const { name, index, example, behavior } of all) {
+  for (const { name, index, example } of all) {
     const id = `${name} #${index + 1} "${example.title}"`;
     const file = `ex-${name}-${index}.html`;
     write(file, examplePage(name, example));

@@ -123,7 +123,7 @@ await test("Tree: clic expande, pliega y selecciona; z:change; rama deshabilitad
   ok(await node("src/styles").getAttribute("aria-expanded") === "true" && await node("src/styles/base.css").isVisible(), "no expandió");
   ok(await row("src/styles").locator(".z-tree__toggle").getAttribute("data-state") === "open", "el indicador no giró");
   ok(await node("src/styles").getAttribute("aria-selected") === "true", "no seleccionó");
-  let last = (await events("z:change")).at(-1);
+  const last = (await events("z:change")).at(-1);
   ok(last?.detail.value === "src/styles" && last.detail.expanded.join() === "src,src/styles", `z:change: ${JSON.stringify(last)}`);
   await row("src/app.tsx").click();
   ok(await tree.locator('[aria-selected="true"]').count() === 1 && await node("src/app.tsx").getAttribute("aria-selected") === "true", "selección única");

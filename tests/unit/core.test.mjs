@@ -24,6 +24,7 @@ const { lockScroll } = await core("scroll-lock");
 const { swipeDirection, swipeToDismiss } = await core("swipe");
 const { createLongPress } = await core("long-press");
 const { byRef } = await core("ref");
+const { occurrenceKeys } = await core("keys");
 const { mergeProps } = await import("../../zui/src/primitives/slot.ts");
 
 describe("core/place: computePlace", () => {
@@ -154,6 +155,16 @@ describe("core/search", () => {
     assert.equal(score("cfg", "Configuración"), 1);
     assert.equal(score("xyz", "Configuración"), 0);
     assert.equal(score("CONFIGURACIÓN", "configuracion"), 3);
+  });
+});
+
+describe("core/keys", () => {
+  test("occurrenceKeys: una clave por elemento, estable al quitar entradas por delante", () => {
+    assert.deepEqual(occurrenceKeys(["Ctrl", "Shift", "K"]), ["Ctrl", "Shift", "K"]);
+    assert.deepEqual(occurrenceKeys(["a", "b", "a", "a"]), ["a", "b", "a#1", "a#2"]);
+    assert.deepEqual(occurrenceKeys(["b", "a"]), ["b", "a"], "«b» conserva su clave al desaparecer la primera entrada");
+    assert.equal(new Set(occurrenceKeys(["", "", "x", "x"])).size, 4);
+    assert.deepEqual(occurrenceKeys([]), []);
   });
 });
 

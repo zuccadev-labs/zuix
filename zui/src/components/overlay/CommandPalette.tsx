@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { occurrenceKeys } from "../../core/keys";
 import { score } from "../../core/search";
 import { cx } from "../../cx";
 import { DialogSurface } from "../../primitives/dialog";
@@ -57,6 +58,13 @@ function defaultFilter(groups: PaletteGroup[], query: string): PaletteGroup[] {
         .map((x) => x.command),
     }))
     .filter((group) => group.commands.length > 0);
+}
+
+/** Teclas de un atajo con su clave de React (una tecla repetida no duplica clave). */
+function shortcutKeys(shortcut: string): Array<[id: string, key: string]> {
+  const keys = shortcut.split(" ");
+  const ids = occurrenceKeys(keys);
+  return keys.map((key, k) => [ids[k] ?? key, key]);
 }
 
 export function CommandPalette({
@@ -123,6 +131,8 @@ export function CommandPalette({
     }
   };
 
+  // Un grupo se identifica por su título y su primer comando: la clave lo sigue cuando el filtro quita grupos por delante.
+  const groupKeys = occurrenceKeys(visible.map((group) => `${group.heading ?? ""}/${group.commands[0]?.id ?? ""}`));
   let n = -1;
   return (
     // Siempre se abre de forma controlada (atajo o botón propio): al cerrar, el foco vuelve a donde estaba.
@@ -165,7 +175,7 @@ export function CommandPalette({
           </div>
         ) : null}
         {visible.map((group, g) => (
-          <div key={`group-${g}`} role="group" aria-label={group.heading} className="z-palette__group">
+          <div key={groupKeys[g]} role="group" aria-label={group.heading} className="z-palette__group">
             {group.heading ? (
               <div className="z-palette__heading" aria-hidden="true">
                 {group.heading}
@@ -176,6 +186,8 @@ export function CommandPalette({
               const i = n;
               const active = i === index;
               return (
+                // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
+                // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
                 <div
                   key={command.id}
                   id={optionId(i)}
@@ -198,8 +210,8 @@ export function CommandPalette({
                   {command.hint ? <span className="z-palette__item-hint">{command.hint}</span> : null}
                   {command.shortcut ? (
                     <span className="z-palette__shortcut">
-                      {command.shortcut.split(" ").map((key, k) => (
-                        <kbd key={`${key}-${k}`} className="z-palette__kbd">
+                      {shortcutKeys(command.shortcut).map(([id, key]) => (
+                        <kbd key={id} className="z-palette__kbd">
                           {key}
                         </kbd>
                       ))}

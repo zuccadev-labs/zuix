@@ -107,6 +107,7 @@ export function OTPInput({
     <div role="group" {...named} aria-describedby={describedBy} className={cx("z-otp", className)} data-size={size} data-invalid={isInvalid || undefined}>
       {Array.from({ length }, (_, index) => (
         <input
+          // biome-ignore lint/suspicious/noArrayIndexKey: una casilla es su posición en el código; la lista solo cambia de longitud.
           key={index}
           ref={(node) => {
             cells.current[index] = node;
@@ -115,6 +116,7 @@ export function OTPInput({
           type={mask ? "password" : "text"}
           inputMode={mode === "numeric" ? "numeric" : "text"}
           autoComplete={index === 0 ? "one-time-code" : "off"}
+          // biome-ignore lint/a11y/noAutofocus: es opcional y lo decide quien usa el componente (prop `autoFocus`, desactivada por defecto), para pantallas cuyo único fin es escribir el código.
           autoFocus={autoFocus && index === 0}
           maxLength={length}
           value={current[index] ?? ""}
