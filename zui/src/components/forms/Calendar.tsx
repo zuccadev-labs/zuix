@@ -1,13 +1,12 @@
 "use client";
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { addDays, addMonths, daysInMonth, localeWeekStart, monthOf, MONTH, pad, parse, todayISO, valid, type DateRange } from "../../core/date";
 import { cx } from "../../cx";
 
-/** Rango de fechas ISO (`YYYY-MM-DD`). `to` es `null` mientras solo se ha elegido el inicio. */
-export interface DateRange {
-  from: string | null;
-  to: string | null;
-}
+export { todayISO };
+
+export type { DateRange } from "../../core/date";
 
 interface CalendarBaseProps {
   /** Mes visible, `YYYY-MM` (controlado). */
@@ -50,42 +49,7 @@ export interface CalendarRangeProps extends CalendarBaseProps {
 
 export type CalendarProps = CalendarSingleProps | CalendarRangeProps;
 
-// ---- Fechas: todo en UTC para que el día no dependa de la zona horaria. ----
-const DAY_MS = 86_400_000;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const pad = (n: number, width = 2) => String(n).padStart(width, "0");
-const parse = (iso: string) => new Date(Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10))));
-const format = (date: Date) => `${pad(date.getUTCFullYear(), 4)}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
-const valid = (iso: string | null | undefined): iso is string => typeof iso === "string" && ISO_DATE.test(iso) && format(parse(iso)) === iso;
-const addDays = (iso: string, days: number) => format(new Date(parse(iso).getTime() + days * DAY_MS));
-const monthOf = (iso: string) => iso.slice(0, 7);
-const daysInMonth = (year: number, monthIndex: number) => new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
-/** Suma meses conservando el día; si no existe (31 → mes de 30), usa el último del mes. */
-function addMonths(iso: string, months: number) {
-  const date = parse(iso);
-  const target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + months, 1));
-  const day = Math.min(date.getUTCDate(), daysInMonth(target.getUTCFullYear(), target.getUTCMonth()));
-  return format(new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), day)));
-}
-/** Hoy en la zona horaria local, como fecha ISO. */
-export function todayISO() {
-  const now = new Date();
-  return `${pad(now.getFullYear(), 4)}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-
-/** Primer día de la semana según el locale (Intl.Locale.weekInfo), o lunes. */
-function localeWeekStart(locale?: string): number {
-  try {
-    const resolved = new Intl.Locale(locale ?? new Intl.DateTimeFormat().resolvedOptions().locale) as Intl.Locale & {
-      getWeekInfo?: () => { firstDay?: number };
-      weekInfo?: { firstDay?: number };
-    };
-    const first = (resolved.getWeekInfo?.() ?? resolved.weekInfo)?.firstDay;
-    return typeof first === "number" ? first % 7 : 1;
-  } catch {
-    return 1;
-  }
-}
+const noSubscription = () => () => {};
 
 /** Rejilla de un mes para elegir una fecha o un rango. Valores como cadenas ISO `YYYY-MM-DD`. */
 export function Calendar(props: CalendarProps) {
@@ -121,8 +85,18 @@ export function Calendar(props: CalendarProps) {
   useEffect(() => setToday(todayISO()), []);
 
   // ---- Mes visible y día activo (foco itinerante) ----
-  const [innerMonth, setInnerMonth] = useState(() => defaultMonth ?? (anchorDate ? monthOf(anchorDate) : monthOf(valid(min) && min > todayISO() ? min : valid(max) && max < todayISO() ? max : todayISO())));
-  const visibleMonth = month ?? innerMonth;
+  // Sin `month`, `defaultMonth` ni valor, el mes sale del reloj. El reloj del servidor y el del navegador pueden
+  // caer en meses distintos (zona horaria, HTML estático generado otro mes): durante la hidratación se toma el mes
+  // que el servidor dejó en `data-month`, y justo después React vuelve a pintar con el reloj del navegador.
+  const [innerMonth, setInnerMonth] = useState<string | null>(() => (defaultMonth && MONTH.test(defaultMonth) ? defaultMonth : anchorDate ? monthOf(anchorDate) : null));
+  const clockMonth = () => {
+    const now = todayISO();
+    return monthOf(valid(min) && min > now ? min : valid(max) && max < now ? max : now);
+  };
+  const fallbackMonth = useSyncExternalStore(noSubscription, clockMonth, () =>
+    typeof document === "undefined" ? clockMonth() : (document.getElementById(titleId)?.closest<HTMLElement>(".z-calendar")?.dataset.month ?? clockMonth()),
+  );
+  const visibleMonth = month && MONTH.test(month) ? month : (innerMonth ?? fallbackMonth);
   const [focused, setFocused] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const moveFocus = useRef(false);
@@ -216,7 +190,10 @@ export function Calendar(props: CalendarProps) {
     if (!date) return;
     const weekday = (parse(date).getUTCDay() - start + 7) % 7;
     let next: string | null = null;
-    switch (event.key) {
+    // En RTL la rejilla se refleja: la flecha izquierda va al día siguiente.
+    const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
+    const key = rtl && event.key === "ArrowLeft" ? "ArrowRight" : rtl && event.key === "ArrowRight" ? "ArrowLeft" : event.key;
+    switch (key) {
       case "ArrowLeft":
         next = addDays(date, -1);
         break;
@@ -263,7 +240,7 @@ export function Calendar(props: CalendarProps) {
   const weekdays = (weeks[0] ?? []).map((date) => ({ short: formats.weekdayShort.format(parse(date)), long: formats.weekdayLong.format(parse(date)) }));
 
   return (
-    <div id={id} className={cx("z-calendar", className)} data-mode={mode}>
+    <div id={id} className={cx("z-calendar", className)} data-mode={mode} data-month={visibleMonth}>
       <div className="z-calendar__header">
         <button type="button" className="z-calendar__nav" aria-label={previousMonthLabel} title={previousMonthLabel} disabled={!canGoBack} onClick={() => shiftMonth(-1)}>
           <Icon name="chevron-left" size={16} />

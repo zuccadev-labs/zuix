@@ -1,4 +1,4 @@
-export { Field, useFieldControl, type FieldProps } from "./Field";
+export { Field, useFieldControl, useFieldLabel, type FieldProps } from "./Field";
 export { Input, type InputProps } from "./Input";
 export { Textarea, type TextareaProps } from "./Textarea";
 export { Select, type SelectProps, type SelectOption, type SelectOptionGroup } from "./Select";

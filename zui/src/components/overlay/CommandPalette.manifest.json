@@ -107,17 +107,16 @@
     "z-palette__item",
     "z-palette__item-hint",
     "z-palette__kbd",
-    "z-palette__empty",
-    "z-overlay-scrim"
+    "z-palette__empty"
   ],
-  "a11y": "Radix Dialog con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
+  "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
   "examples": [
     {
       "title": "Abrir con Ctrl/Cmd K",
       "code": "function Palette() {\n  const [open, setOpen] = useState(false);\n  useEffect(() => {\n    const onKey = (e: KeyboardEvent) => {\n      if ((e.metaKey || e.ctrlKey) && e.key === \"k\") {\n        e.preventDefault();\n        setOpen((v) => !v);\n      }\n    };\n    window.addEventListener(\"keydown\", onKey);\n    return () => window.removeEventListener(\"keydown\", onKey);\n  }, []);\n  return (\n    <CommandPalette\n      open={open}\n      onOpenChange={setOpen}\n      groups={[\n        { heading: \"Navigation\", commands: [\n          { id: \"home\", label: \"Go to home\", shortcut: \"G H\", onSelect: () => navigate(\"/\") },\n          { id: \"settings\", label: \"Open settings\", hint: \"/settings\", onSelect: () => navigate(\"/settings\") },\n        ] },\n        { heading: \"Actions\", commands: [\n          { id: \"new\", label: \"New project\", keywords: [\"create\"], onSelect: () => createProject() },\n        ] },\n      ]}\n    />\n  );\n}"
     }
   ],
-  "origin": "CommandPalette de zutool (puntuación difusa, medidas y aspecto); diálogo de Radix, sin dependencia cmdk.",
+  "origin": "CommandPalette de zutool (puntuación difusa, medidas y aspecto); `<dialog>` nativo, sin dependencia cmdk.",
   "behavior": "dom",
   "html": [
     {

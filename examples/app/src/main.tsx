@@ -9,14 +9,32 @@ import "./app.css";
 
 import { ToastProvider } from "@zuccadev-labs/zuix-zui";
 import { App } from "./App";
+import { Audit } from "./screens/audit/Audit";
+import { AuditSsr } from "./screens/audit/AuditSsr";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing #root");
 
+// Pantallas de auditoría: fuera del Shell, sin pestaña ni entrada en la navegación (?screen=audit, ?screen=audit-ssr).
+const params = new URLSearchParams(window.location.search);
+const screen = params.get("screen");
+if (screen === "audit" || screen === "audit-ssr") {
+  document.documentElement.dataset.theme = params.get("theme") === "light" ? "light" : "dark";
+  document.documentElement.dataset.brand = params.get("brand") === "zutool" ? "zutool" : "dazlabs";
+}
+// ?dir=rtl: cualquier pantalla (también el Shell) de derecha a izquierda.
+if (params.get("dir") === "rtl") document.documentElement.dir = "rtl";
+
 createRoot(root).render(
   <StrictMode>
-    <ToastProvider>
-      <App />
-    </ToastProvider>
+    {screen === "audit" ? (
+      <Audit />
+    ) : screen === "audit-ssr" ? (
+      <AuditSsr />
+    ) : (
+      <ToastProvider>
+        <App />
+      </ToastProvider>
+    )}
   </StrictMode>,
 );

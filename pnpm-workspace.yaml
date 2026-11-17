@@ -6,7 +6,44 @@ packages:
   - zudocs
   - suite
   - examples/*
+
+# ── Cadena de suministro (pnpm 12; https://pnpm.io/supply-chain-security) ────────────────────────────
+# Ningún paquete ejecuta scripts de instalación. Los tres que los declaran funcionan sin ellos: esbuild y
+# @swc/core traen su binario como dependencia opcional de plataforma (el script solo lo comprueba) y el de
+# core-js es un mensaje. Un paquete nuevo con script detiene la instalación (strictDepBuilds) hasta que se
+# revise y se anote aquí.
 allowBuilds:
-  "@swc/core": true
+  "@swc/core": false
   core-js: false
-  esbuild: true
+  esbuild: false
+strictDepBuilds: true
+# No se instala una versión publicada hace menos de un día (1440 min). Es el valor por defecto de pnpm;
+# escrito aquí pasa a ser estricto: si ninguna versión del rango cumple, la resolución falla en vez de
+# instalar la reciente. Dependabot espera además siete días (.github/dependabot.yml).
+minimumReleaseAge: 1440
+# Una versión que pierde la procedencia o la publicación de confianza que tenían las anteriores no se instala.
+trustPolicy: no-downgrade
+# Excepciones revisadas a mano, por versión exacta. Cada una lleva la comprobación que la justifica.
+trustPolicyExclude:
+  # Retroporte de seguridad de la rama 7 (la que fija webpack-dev-server 5): la publicó a mano el mismo
+  # mantenedor que 7.4.2-7.4.5, sin procedencia como ellas, mientras la rama 8 ya la lleva. Su gitHead
+  # (70b3c33) es la etiqueta v7.4.6 del repositorio webpack/webpack-dev-middleware.
+  - webpack-dev-middleware@7.4.6
+  # Retroporte de la rama 4 (la que pide @docusaurus/theme-search-algolia 3.10.2), publicado a mano mientras
+  # la rama 5 sale por publicación de confianza. Su gitHead (42eb3c5) es el commit "chore: release v4.7.1
+  # (#3058)" del repositorio algolia/docsearch.
+  - "@docsearch/core@4.7.1"
+  - "@docsearch/css@4.7.1"
+  - "@docsearch/react@4.7.1"
+# Las dependencias transitivas solo pueden venir del registro (ni git ni tarballs por URL).
+blockExoticSubdeps: true
+
+# Avisos de seguridad en dependencias transitivas del sitio (Docusaurus 3.10.2 fija rangos antiguos).
+# Cada línea se retira cuando Docusaurus publique el rango corregido; `pnpm audit` debe seguir en cero.
+overrides:
+  # GHSA-5gmw-xhrv-c9v3 y GHSA-85c8-ppgw-ccpr (críticos). tinypool 2 solo retira Node 18.
+  "tinypool@<2.1.2": ^2.1.2
+  # GHSA-5c6j-r48x-rmvq (alto), GHSA-qj8w-gfj5-8c6v, GHSA-m5mm-p8h7-m29v. La 7 solo exige Node 20.
+  "serialize-javascript@<7.1.3": ^7.1.3
+  # GHSA-w5hq-g745-h8pq (moderado), vía webpack-dev-server > sockjs. La 11 mantiene la entrada CommonJS.
+  "uuid@<11.1.1": ^11.1.1

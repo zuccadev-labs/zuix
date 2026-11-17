@@ -55,7 +55,7 @@
   "classes": [
     "z-rail"
   ],
-  "a11y": "<nav> con nombre. Cada elemento es un botón con aria-label; el activo lleva aria-current=page.",
+  "a11y": "<nav> con nombre (región navigation). Cada elemento es un botón de 40 × 40 px con aria-label; el activo lleva aria-current=page y el contador forma parte del nombre accesible.",
   "examples": [
     {
       "title": "Rail con pie",

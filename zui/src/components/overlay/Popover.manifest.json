@@ -56,7 +56,7 @@
     {
       "name": "label",
       "type": "string",
-      "description": "Nombre accesible del panel."
+      "description": "Nombre accesible del panel. Obligatorio salvo que se pase `aria-labelledby` con el id de un encabezado del panel."
     },
     {
       "name": "modal",
@@ -95,14 +95,14 @@
   "classes": [
     "z-popover"
   ],
-  "a11y": "Radix Popover: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador.",
+  "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo.",
   "examples": [
     {
       "title": "Panel de detalles",
       "code": "<Popover trigger={<button type=\"button\">Usage</button>} label=\"Usage details\" width={280}>\n  <p>1,204 requests this month.</p>\n</Popover>"
     }
   ],
-  "origin": "Popover de zutool (alineado al final, separación de 4 px); posicionamiento de Radix Popover.",
+  "origin": "Popover de zutool (alineado al final, separación de 4 px); colocación propia (`core/place`).",
   "behavior": "dom",
   "html": [
     {

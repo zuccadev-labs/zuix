@@ -1,6 +1,5 @@
 "use client";
 import {
-  useCallback,
   useRef,
   useState,
   useSyncExternalStore,
@@ -13,6 +12,7 @@ import {
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";
+import { useMergedRef } from "../../refs";
 import { useCarouselTrack } from "./useCarouselTrack";
 
 export interface CarouselSlideState {
@@ -109,14 +109,7 @@ export function Carousel<T>({
   const trackRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const setRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [ref],
-  );
+  const setRoot = useMergedRef(rootRef, ref);
 
   const keys = items.map((item, index) => String(getKey ? getKey(item, index) : index));
   const useGl = effect === "lens" && rasterize !== undefined;

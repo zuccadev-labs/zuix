@@ -78,9 +78,18 @@
   "semantic": {
     "accent-hover": "color-mix(in srgb, {accent} 86%, white)",
     "accent-solid": "{accent}",
-    "accent-solid-hover": "color-mix(in srgb, {accent-solid} 88%, white)",
+    "accent-solid-hover": "color-mix(in srgb, {accent-solid} 88%, black)",
+    "accent-text": "color-mix(in srgb, {accent} 48%, {fg})",
     "accent-soft": "color-mix(in srgb, {accent} 18%, transparent)",
-    "accent-ring": "color-mix(in srgb, {accent} 45%, transparent)",
+    "accent-ring": "{accent-text}",
+    "success-text": "color-mix(in srgb, {success} 58%, {fg})",
+    "warning-text": "color-mix(in srgb, {warning} 62%, {fg})",
+    "danger-text": "color-mix(in srgb, {danger} 44%, {fg})",
+    "info-text": "color-mix(in srgb, {info} 58%, {fg})",
+    "success-solid": "color-mix(in srgb, {success} 68%, black)",
+    "warning-solid": "color-mix(in srgb, {warning} 64%, black)",
+    "danger-solid": "color-mix(in srgb, {danger} 86%, black)",
+    "info-solid": "color-mix(in srgb, {info} 68%, black)",
     "success-soft": "color-mix(in srgb, {success} 18%, transparent)",
     "warning-soft": "color-mix(in srgb, {warning} 18%, transparent)",
     "danger-soft": "color-mix(in srgb, {danger} 20%, transparent)",
@@ -100,8 +109,8 @@
     "control-height-lg": "44px",
     "control-radius": "{radius-sm}",
     "control-bg": "{inset}",
-    "control-border": "{line}",
-    "control-border-hover": "{line-strong}",
+    "control-border": "color-mix(in srgb, {fg} 50%, transparent)",
+    "control-border-hover": "{fg-muted}",
 
     "button-radius": "{radius-full}",
     "button-primary-bg": "{accent-solid}",
@@ -130,14 +139,50 @@
     "success", "warning", "danger", "info",
     "shadow-sm", "shadow-md", "shadow-lg"
   ],
-  "contrast": [
-    { "fg": "fg", "bg": "surface-solid", "min": 4.5 },
-    { "fg": "fg-muted", "bg": "surface-solid", "min": 4.5 },
-    { "fg": "fg-subtle", "bg": "surface-solid", "min": 3 },
-    { "fg": "fg", "bg": "glass-bg", "over": "canvas", "min": 4.5 },
-    { "fg": "fg-muted", "bg": "glass-bg", "over": "canvas", "min": 4.5 },
-    { "fg": "fg", "bg": "overlay", "over": "canvas", "min": 4.5 },
-    { "fg": "fg-on-accent", "bg": "accent-solid", "min": 4.5 },
-    { "fg": "accent", "bg": "surface-solid", "min": 3 }
-  ]
+  "moreContrast": {
+    "fg-muted": "{fg}",
+    "fg-subtle": "color-mix(in srgb, {fg} 82%, transparent)",
+    "canvas-fg-muted": "{canvas-fg}",
+    "line": "color-mix(in srgb, {fg} 45%, transparent)",
+    "line-strong": "color-mix(in srgb, {fg} 70%, transparent)",
+    "glass-border": "color-mix(in srgb, {fg} 45%, transparent)",
+    "glass-bg": "{surface-solid}",
+    "overlay": "{surface-solid}",
+    "canvas-gradient": "none",
+    "control-border": "{fg}",
+    "control-border-hover": "{fg}"
+  },
+  "forcedColors": {
+    "canvas-gradient": "none",
+    "glass-specular": "transparent"
+  },
+  "contrast": {
+    "$comment": "Lo que mide src/validate.mjs. `surfaces`: fondos sobre los que se pinta contenido (las translúcidas se componen sobre canvas y los extremos de su degradado). `text`: tokens de texto que deben llegar a 4.5:1 sobre todas ellas. `canvasText`: texto que va directamente sobre canvas. `pairs`: pares con fondo propio. `nonText`: 3:1 frente a la superficie (WCAG 1.4.11). `ignore`: usos de las hojas que no son un par real, con su motivo.",
+    "surfaces": {
+      "glass": { "over": "canvas", "layers": ["glass-bg"] },
+      "card-on-glass": { "over": "canvas", "layers": ["glass-bg", "card-bg"] },
+      "overlay": { "over": "canvas", "layers": ["overlay"] },
+      "solid": { "layers": ["surface-solid"] },
+      "card-on-solid": { "layers": ["surface-solid", "card-bg"] }
+    },
+    "text": ["fg", "fg-muted", "fg-subtle", "accent-text", "success-text", "warning-text", "danger-text", "info-text"],
+    "canvasText": ["canvas-fg", "canvas-fg-muted"],
+    "pairs": [
+      { "fg": "fg-on-accent", "bg": "accent-solid", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "accent-solid-hover", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "success-solid", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "warning-solid", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "danger-solid", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "info-solid", "min": 4.5 },
+      { "fg": "accent-text", "bg": "accent-soft", "min": 4.5 },
+      { "fg": "success-text", "bg": "success-soft", "min": 4.5 },
+      { "fg": "warning-text", "bg": "warning-soft", "min": 4.5 },
+      { "fg": "danger-text", "bg": "danger-soft", "min": 4.5 },
+      { "fg": "info-text", "bg": "info-soft", "min": 4.5 }
+    ],
+    "nonText": ["control-border", "control-border-hover", "accent-ring", "accent", "success", "warning", "danger", "info"],
+    "ignore": [
+      { "selector": ".z-check__box", "reason": "El color es el de la marca de verificación, que solo se ve con la casilla marcada (fondo accent-solid)." }
+    ]
+  }
 }

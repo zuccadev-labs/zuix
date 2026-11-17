@@ -8,7 +8,7 @@ binding de React en la entrada principal.
 |---|---|---|
 | Contrato | `@zuccadev-labs/zuix-zui/styles.css`, `@zuccadev-labs/zuix-zui/html.json` | `@zuccadev-labs/zuix-tokens` |
 | Comportamiento | `@zuccadev-labs/zuix-zui/dom` | El navegador (`<dialog>`, `popover`) |
-| Binding de React | `@zuccadev-labs/zuix-zui` | React 19 y Radix |
+| Binding de React | `@zuccadev-labs/zuix-zui` | React 19 |
 
 ## Instalación
 
@@ -75,7 +75,7 @@ export function NewProject() {
 
 En `<html>` va `data-theme="dark"` o `"light"`, y en el contenedor de la aplicación, `class="z-root z-canvas"`.
 
-Los componentes con hooks, contexto o Radix declaran `"use client"`. Los que solo producen marcado
+Los componentes con hooks, contexto o manejadores de eventos propios declaran `"use client"`. Los que solo producen marcado
 (`Button`, `Badge`, `Card`…) no lo llevan.
 
 ## Entradas

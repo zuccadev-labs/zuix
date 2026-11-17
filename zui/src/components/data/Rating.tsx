@@ -60,10 +60,14 @@ export function Rating({ value, max = 5, size = "md", showValue, caption, onChan
   const shown = hover ?? value;
   // Flechas como en un grupo de radio: mueven y eligen.
   const onKeyDown = (event: KeyboardEvent<HTMLSpanElement>) => {
-    const step = event.key === "ArrowRight" || event.key === "ArrowUp" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowDown" ? -1 : 0;
-    if (!step) return;
+    // En RTL las estrellas crecen hacia la izquierda: la flecha izquierda sube.
+    const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
+    const forward = rtl ? "ArrowLeft" : "ArrowRight";
+    const backward = rtl ? "ArrowRight" : "ArrowLeft";
+    const step = event.key === forward || event.key === "ArrowUp" ? 1 : event.key === backward || event.key === "ArrowDown" ? -1 : 0;
+    if (!step && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
-    const next = Math.max(1, Math.min(max, Math.round(value) + step));
+    const next = event.key === "Home" ? 1 : event.key === "End" ? max : Math.max(1, Math.min(max, Math.round(value) + step));
     onChange(next);
     event.currentTarget.querySelector<HTMLButtonElement>(`[data-star="${next}"]`)?.focus();
   };
@@ -71,7 +75,7 @@ export function Rating({ value, max = 5, size = "md", showValue, caption, onChan
     <span className={cx("z-rating", className)} data-size={size} data-interactive data-disabled={disabled || undefined}>
       <span className="z-rating__stars" role="radiogroup" aria-label={label} onKeyDown={onKeyDown} onMouseLeave={() => setHover(null)}>
         {stars.map((star) => {
-          const checked = Math.round(value) === star;
+          const checked = Math.round(Math.min(value, max)) === star;
           return (
             <button
               key={star}

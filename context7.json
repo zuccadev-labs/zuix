@@ -1,0 +1,17 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "zuix",
+  "description": "Suite de UI con un solo estándar: tokens de diseño, iconos, componentes y layouts en HTML y CSS, comportamiento sin framework y binding de React.",
+  "folders": ["docs", "tokens", "zicon", "zui", "zout", "suite"],
+  "excludeFolders": ["**/node_modules", "**/dist", "zicon/src/icons", "zicon/svg", "docs/investigations", ".tmp", "tests", "examples"],
+  "excludeFiles": ["CHANGELOG.md", "LICENSE", "CODE_OF_CONDUCT.md", "SECURITY.md", "pnpm-lock.yaml", "sprite.svg", "icons.json"],
+  "rules": [
+    "El estándar es HTML, CSS y tokens: el marcado de cada componente está en zui/html.json y zout/html.json; React es un binding",
+    "Los componentes solo leen tokens semánticos y de componente (--z-*); sin colores, radios ni sombras literales",
+    "Los iconos se piden por nombre (<z-icon name> o <Icon name>); no se usan emojis ni SVG a mano",
+    "@zuccadev-labs/zuix-zicon es peerDependency de zui y zout: la aplicación lo instala siempre",
+    "El tema se elige con data-theme=\"dark\" o \"light\" en <html>; la marca, importando su CSS o con data-brand",
+    "Sin framework: import { init } from \"@zuccadev-labs/zuix-zui/dom\" y data-z-dom en el contenedor",
+    "Un módulo de React con hooks, contexto o manejadores de eventos propios empieza por \"use client\""
+  ]
+}

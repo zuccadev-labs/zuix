@@ -77,7 +77,7 @@
     },
     {
       "title": "Activable",
-      "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(project.id)}>\n  <CardHeader title={project.name} subtitle={project.owner} />\n</Card>"
+      "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(\"atlas\")}>\n  <CardHeader title=\"Atlas\" subtitle=\"Ana Ruiz\" />\n</Card>"
     }
   ],
   "origin": "Card del design system base con la superficie de tarjeta de zutool."

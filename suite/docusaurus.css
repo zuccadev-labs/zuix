@@ -1,0 +1,2 @@
+/* Mapa de los tokens a las variables de Infima (Docusaurus). Importar después de tokens.css. */
+@import "@zuccadev-labs/zuix-tokens/docusaurus.css";

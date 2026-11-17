@@ -20,7 +20,9 @@ Formato: reglas → patrones → verificación. Un cambio está terminado cuando
 5. **Cristal solo en el cromo.** `.z-liquid` para paneles, barras, menús y diálogos. Texto denso sobre
    `.z-solid`.
 6. **Accesibilidad no opcional.** Lo interactivo complejo (diálogos, menús, pestañas, popovers) usa las
-   primitivas de `radix-ui`. Todo control tiene nombre accesible, foco visible y uso con teclado.
+   primitivas propias de `src/primitives/` (React) sobre la lógica de `src/core/`, según el patrón APG de cada
+   widget. Sin bibliotecas de UI: `radix-ui` y `@radix-ui/*` están vetados por lint. Todo control tiene nombre
+   accesible, foco visible y uso con teclado.
 7. **Sin dominio.** Pagos, reservas, mapas o clima viven en la aplicación, no aquí.
 8. **Sin dependencias nuevas** sin justificarlo en el informe del cambio.
 9. **Texto visible por props.** Los componentes no fijan idioma: las etiquetas llegan por props, con valor
@@ -34,7 +36,11 @@ src/components/<grupo>/<Componente>.manifest.json  contrato legible por máquina
 src/components/<grupo>/index.ts                    exportaciones del grupo
 src/styles/<grupo>.css                             estilos del grupo, dentro de @layer zui.<grupo>
 src/styles/native.css                              neutraliza <dialog>, [popover] y <button> para el contrato HTML
-src/dom/index.ts                                   comportamiento sin framework (@zuccadev-labs/zuix-zui/dom)
+src/core/*.ts                                      lógica compartida, sin React ni efectos al importar: colocación,
+                                                   foco itinerante, typeahead, capas, foco, presencia, fechas…
+src/primitives/*                                   primitivas de React sobre core: diálogo (<dialog>), capa
+                                                   (popover), menú, slot, hooks, campo nativo oculto
+src/dom/index.ts                                   comportamiento sin framework (@zuccadev-labs/zuix-zui/dom), sobre core
 ```
 
 Grupos: `actions`, `forms`, `data`, `feedback`, `content`, `overlay`, `navigation`, `carousel`.
@@ -63,7 +69,8 @@ export function Button({ variant = "secondary", size = "md", icon, loading, clas
       data-size={size}
       data-loading={loading || undefined}
       aria-busy={loading || undefined}
-      disabled={rest.disabled || loading}
+      aria-disabled={loading || undefined}
+      disabled={rest.disabled}
     >
       {icon ? <Icon name={icon} size={16} /> : null}
       {children}
@@ -106,7 +113,7 @@ export function Button({ variant = "secondary", size = "md", icon, loading, clas
   "states": ["rest", "hover", "focus", "active", "disabled", "loading"],
   "tokens": ["button-radius", "button-primary-bg", "button-primary-fg", "surface", "surface-2", "line", "fg", "focus-ring", "control-height-md"],
   "classes": ["z-btn"],
-  "a11y": "Elemento button nativo. Con `loading` expone aria-busy y queda deshabilitado.",
+  "a11y": "Elemento button nativo. Con `loading` expone aria-busy y aria-disabled: no actúa, pero conserva el foco.",
   "examples": [
     { "title": "Primario con icono", "code": "<Button variant=\"primary\" icon=\"plus\">New project</Button>" }
   ],
@@ -118,6 +125,16 @@ Campos obligatorios: `name`, `group`, `description`, `import`, `props`, `tokens`
 
 Campos del contrato HTML: `behavior` (`none` | `dom` | `react`; se deduce si falta) y `html` (lista de
 `{ title, code, script? }`) cuando el marcado no sale del render estático, como en lo que va por portal.
+
+## Lógica compartida
+
+- Una sola lógica para React y para el modo DOM: lo que no depende de React vive en `src/core/` y lo consumen
+  `src/primitives/`, `src/components/` y `src/dom/`. No se duplica un cálculo en los dos lados.
+- `src/core/` no importa React ni toca el documento al cargarse. Un módulo nuevo lleva su prueba en
+  `tests/unit/` y su entrada en la lista `COVERED` de `tests/unit/run.mjs`.
+- Plataforma primero: `<dialog>` + `showModal()` para lo modal, `popover="manual"` para lo flotante, `useId`,
+  `ref` como prop. El marcado que emite React es el del contrato (`html.json`).
+- La dirección (RTL) se lee del DOM (`core/dir`), no de una prop ni de un proveedor.
 
 ## Si falta algo
 

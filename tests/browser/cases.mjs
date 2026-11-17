@@ -1,6 +1,10 @@
 // Casos de prueba en navegador. Cada caso recibe { open, shot, axe, finger, note, browserName, Unverifiable } (ver run.mjs).
 // Un caso falla si lanza o si la página registra errores de consola, `pageerror` o peticiones fallidas.
 
+import auditCss from "./cases-audit-css.mjs";
+import auditDom from "./cases-audit-zui.mjs";
+import auditReact from "./cases-audit-react.mjs";
+
 const t = (id) => `[data-testid="${id}"]`;
 
 function assert(condition, message) {
@@ -149,7 +153,7 @@ async function inPageAndModal(page, fn) {
   await fn("page");
   await page.locator(t("open-forms-modal")).scrollIntoViewIfNeeded();
   await page.click(t("open-forms-modal"));
-  await visible(page, ".z-modal[role=dialog]");
+  await visible(page, "dialog.z-modal:modal");
   await settled(page);
   await fn("modal");
   assert(await page.isVisible(".z-modal"), "el modal sigue abierto tras usar los controles");
@@ -169,7 +173,7 @@ export const cases = [
     async run({ open, shot }) {
       const page = await open("overlays");
       await page.click(t("open-modal"));
-      await visible(page, ".z-modal[role=dialog]");
+      await visible(page, "dialog.z-modal:modal");
       await focusInside(page, ".z-modal");
       assert(await page.getAttribute(".z-modal", "aria-modal") !== "false", "el modal debe ser modal");
       const labelled = await page.evaluate(() => { const d = document.querySelector(".z-modal"); const id = d?.getAttribute("aria-labelledby"); return id ? document.getElementById(id)?.textContent : null; });
@@ -180,7 +184,17 @@ export const cases = [
       await expectFocusTrap(page, ".z-modal");
       await shot(page, "overlay-modal");
       // El fondo queda inerte para lectores de pantalla y puntero.
-      const hidden = await page.evaluate(() => document.querySelector("#root")?.getAttribute("aria-hidden") === "true" || document.querySelector("#root")?.hasAttribute("inert") || getComputedStyle(document.body).pointerEvents === "none");
+      // Con <dialog> + showModal() la inercia es nativa (no hay aria-hidden ni atributo inert que mirar): se comprueba su
+      // efecto. Un control del fondo no acepta el foco y el puntero sobre él da en el velo del diálogo.
+      const hidden = await page.evaluate((trigger) => {
+        const dialog = document.querySelector(".z-modal");
+        const outside = document.querySelector(trigger);
+        if (!dialog?.matches("dialog:modal") || !outside || dialog.contains(outside)) return false;
+        outside.focus();
+        const box = outside.getBoundingClientRect();
+        const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        return document.activeElement !== outside && dialog.contains(document.activeElement) && !outside.contains(hit);
+      }, t("open-modal"));
       assert(hidden, "el fondo no queda oculto/inerte con el modal abierto");
       await page.keyboard.press("Escape");
       await gone(page, ".z-modal");
@@ -289,7 +303,7 @@ export const cases = [
     async run({ open, shot }) {
       const page = await open("overlays");
       await page.click(t("open-drawer"));
-      await visible(page, ".z-drawer[role=dialog]");
+      await visible(page, "dialog.z-drawer:modal");
       await focusInside(page, ".z-drawer");
       await settled(page);
       await expectInViewport(page, ".z-drawer");
@@ -499,7 +513,7 @@ export const cases = [
       const page = await open("overlays");
       await page.locator(t("open-menu")).focus();
       await page.keyboard.press("Control+k");
-      await visible(page, ".z-palette[role=dialog]");
+      await visible(page, "dialog.z-palette:modal");
       await focusOn(page, ".z-palette__input", "el foco entra en el buscador");
       await expectInViewport(page, ".z-palette");
       await expectCount(page, ".z-palette__item", 19, "19 comandos sin filtro");
@@ -1036,6 +1050,51 @@ export const cases = [
     },
   },
   {
+    name: "Shell en RTL (React): la sidebar pasa al lado derecho y su tirador sigue la dirección; enlace de salto al contenido",
+    async run({ open }) {
+      const page = await open("overview", { query: "dir=rtl&skip=1" });
+      assert(await page.evaluate(() => getComputedStyle(document.querySelector(".z-shell")).direction === "rtl"), "el Shell no está en RTL");
+      const handle = ".z-shell__side > .z-resize";
+      await visible(page, handle);
+      const side = await page.locator(".z-shell__side").boundingBox();
+      const main = await page.locator(".z-shell__main").boundingBox();
+      assert(side.x > main.x + main.width - 1, `en RTL la sidebar queda a la derecha del contenido: ${JSON.stringify({ side: side.x, main: main.x })}`);
+      assert((await page.getAttribute(handle, "data-side")) === "end", "el tirador de la sidebar usa el lado lógico end");
+      const grip = await page.locator(handle).boundingBox();
+      assert(Math.abs(grip.x + grip.width / 2 - side.x) < 12, `el tirador queda en el borde izquierdo de la sidebar (hacia el contenido): ${JSON.stringify({ grip: grip.x, side: side.x })}`);
+      const width = async () => Math.round((await page.locator(".z-shell__side").boundingBox()).width);
+      const before = await width();
+      // Arrastrar hacia el contenido (a la izquierda) ensancha la sidebar: lo contrario que en LTR.
+      const c = await center(page, handle);
+      await drag(page, c, { x: c.x - 60, y: c.y });
+      await poll(async () => (await width()) === before + 60, `arrastrar 60 px a la izquierda ensancha la sidebar (${before} → ${before + 60})`);
+      await page.focus(handle);
+      const now = Number(await page.getAttribute(handle, "aria-valuenow"));
+      await page.keyboard.press("ArrowLeft");
+      await poll(async () => Number(await page.getAttribute(handle, "aria-valuenow")) > now, "en RTL la flecha izquierda ensancha la sidebar");
+      await page.keyboard.press("ArrowRight");
+      await expectAttr(page, handle, "aria-valuenow", String(now), "y la derecha la estrecha");
+
+      // Enlace de salto (WCAG 2.4.1): es la primera parada de tabulación, solo se ve con el foco y lleva al contenido.
+      // En una página recién cargada: el tabulador empieza por el principio del documento.
+      const fresh = await open("overview", { query: "skip=1" });
+      const skip = ".z-shell__skip";
+      await visible(fresh, ".z-shell__main");
+      const hiddenBox = await fresh.locator(skip).boundingBox();
+      assert(hiddenBox.y + hiddenBox.height <= 0, "sin foco, el enlace de salto queda fuera de la ventana");
+      await fresh.keyboard.press("Tab");
+      await focusOn(fresh, skip, "la primera parada de tabulación es el enlace de salto");
+      await settled(page);
+      await expectInViewport(fresh, skip);
+      assert((await fresh.locator(skip).textContent()).trim() === "Skip to content", "texto del enlace de salto");
+      const target = await fresh.getAttribute(skip, "href");
+      assert(await fresh.evaluate((href) => document.querySelector(href)?.matches(".z-shell__main") ?? false, target), `el enlace apunta al área principal (${target})`);
+      await fresh.keyboard.press("Enter");
+      await fresh.keyboard.press("Tab");
+      await poll(() => fresh.evaluate(() => document.querySelector(".z-shell__main").contains(document.activeElement) && document.activeElement !== document.body), "tras el salto, el tabulador sigue dentro del contenido");
+    },
+  },
+  {
     name: "SplitPane: los divisores se mueven con arrastre y con flechas",
     async run({ open, shot }) {
       const page = await open("editor");
@@ -1374,7 +1433,7 @@ export const cases = [
       await inPageAndModal(page, async (scope) => {
         const trigger = `${t(`${scope}-select`)} .z-select__control`;
         const value = t(`${scope}-select-value`);
-        const list = ".z-listbox[role=listbox]";
+        const list = ".z-listbox [role=listbox]";
         const option = (label) => `${list} [role=option]:has-text("${label}")`;
         const focusedOption = (label, message) => poll(() => page.evaluate((l) => document.activeElement?.getAttribute("role") === "option" && document.activeElement.textContent.trim() === l, label), message ?? `opción enfocada: ${label}`);
 
@@ -1854,7 +1913,8 @@ export const cases = [
         let max = 0;
         const root = document.querySelector(s);
         for (const el of [root, ...root.querySelectorAll("*")]) {
-          for (const pseudo of [null, "::before", "::after"]) {
+          // `::backdrop` es el velo de un <dialog> modal (antes, un elemento `.z-overlay-scrim` aparte).
+          for (const pseudo of [null, "::before", "::after", ...(el === root && el.matches("dialog") ? ["::backdrop"] : [])]) {
             const cs = getComputedStyle(el, pseudo);
             const toMs = (list) => list.split(",").map((v) => (v.trim().endsWith("ms") ? parseFloat(v) : parseFloat(v) * 1000));
             if (cs.animationName !== "none") max = Math.max(max, ...toMs(cs.animationDuration));
@@ -1869,7 +1929,7 @@ export const cases = [
       await page.click(t("open-modal"));
       await visible(page, ".z-modal");
       await expectStill(".z-modal");
-      await expectStill(".z-overlay-scrim");
+      assert(await page.evaluate(() => document.querySelector(".z-modal").matches("dialog:modal")), "el Modal no es un <dialog> modal: su velo (::backdrop) no se habría medido");
       await page.focus(t("modal-role"));
       await page.keyboard.press("Enter");
       await visible(page, ".z-menu[role=menu]");
@@ -2193,4 +2253,11 @@ export const cases = [
       await gone(page, ".z-shell__side", "navegar con un toque desde el cajón lo cierra");
     },
   },
+  // Auditoría previa a 0.1.1: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
+  ...[auditReact, auditDom, auditCss].flatMap((build) => build(helpers())),
 ];
+
+/** Ayudantes compartidos con los archivos cases-audit-*.mjs. */
+function helpers() {
+  return { t, assert, TIMEOUT, sleep, poll, until, visible, gone, settled, focusInside, focusOn, expectAttr, expectText, expectCount, expectFocusTrap, SCREENS };
+}

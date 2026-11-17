@@ -1,0 +1,160 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/build",
+      "!**/.docusaurus",
+      "!**/.zudocs",
+      "!.tmp",
+      "!pnpm-lock.yaml",
+      "!tokens/dist",
+      "!zicon/src/icons",
+      "!zicon/src/names.ts",
+      "!zicon/src/all.ts",
+      "!zicon/svg",
+      "!zicon/icons.json",
+      "!zicon/sprite.svg",
+      "!zicon/manifest.json",
+      "!zui/manifest.json",
+      "!zui/html.json",
+      "!zout/manifest.json",
+      "!zout/html.json",
+      "!examples/html/index.html",
+      "!examples/zenith-docs",
+      "!zudocs/static/llms.txt"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 140,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "quoteStyle": "double"
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "domains": {
+      "react": "recommended"
+    },
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "warn",
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noConsole": {
+          "level": "error",
+          "options": {
+            "allow": ["warn", "error"]
+          }
+        }
+      },
+      "style": {
+        "useImportType": "error",
+        "useExportType": "error",
+        "useNodejsImportProtocol": "error",
+        "noDefaultExport": "off",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "radix-ui": "zuix no depende de bibliotecas de UI: usa las primitivas propias (decisión de 0.2.0)."
+            },
+            "patterns": [
+              {
+                "group": ["@radix-ui/*"],
+                "message": "zuix no depende de bibliotecas de UI: usa las primitivas propias (decisión de 0.2.0)."
+              }
+            ]
+          }
+        },
+        "noNonNullAssertion": "info",
+        "noDescendingSpecificity": "info"
+      },
+      "complexity": {
+        "noImportantStyles": "info"
+      },
+      "a11y": {
+        "useSemanticElements": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["tools/**", "tests/**", "**/scripts/**", "tokens/src/**", "examples/**/*.mjs", "**/*.config.*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["zui/src/dom/**", "zout/src/dom/**", "zicon/src/**/*.ts", "**/lensRenderer.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noComponentHookFactories": "off",
+            "useHookAtTopLevel": "off"
+          }
+        }
+      }
+    }
+  ]
+}

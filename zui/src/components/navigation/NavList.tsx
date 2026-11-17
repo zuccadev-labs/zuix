@@ -1,8 +1,8 @@
 "use client";
-import type { ComponentProps, MouseEvent, ReactNode } from "react";
-import { Slot } from "radix-ui";
+import { isValidElement, type ComponentProps, type HTMLAttributes, type MouseEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import { slot } from "../../primitives/slot";
 
 export interface NavListProps extends Omit<ComponentProps<"nav">, "aria-label"> {
   /** Nombre accesible de la navegación. */
@@ -22,7 +22,8 @@ export function NavList({ label, heading, className, children, ...rest }: NavLis
   );
 }
 
-export interface NavLinkProps {
+/** Además de sus props, admite atributos HTML (`data-*`, `aria-*`, `id`), que llegan al enlace o al botón. */
+export interface NavLinkProps extends Omit<HTMLAttributes<HTMLElement>, "onClick" | "children" | "className" | "title"> {
   /** Con `href` se pinta un enlace; sin él, un botón. */
   href?: string;
   target?: string;
@@ -41,8 +42,9 @@ export interface NavLinkProps {
   children?: ReactNode;
 }
 
-export function NavLink({ href, target, rel, onClick, icon, active, disabled, trailing, asChild, title, className, children }: NavLinkProps) {
+export function NavLink({ href, target, rel, onClick, icon, active, disabled, trailing, asChild, title, className, children, ...rest }: NavLinkProps) {
   const shared = {
+    ...rest,
     className: cx("z-navlink", className),
     title,
     onClick: disabled ? undefined : onClick,
@@ -55,13 +57,17 @@ export function NavLink({ href, target, rel, onClick, icon, active, disabled, tr
     </span>
   ) : null;
   const tail = trailing ? <span className="z-navlink__trailing">{trailing}</span> : null;
-  if (asChild) {
-    return (
-      <Slot.Root {...shared} aria-disabled={disabled || undefined}>
+  // `asChild`: el hijo (el Link de un router) es el elemento; recibe las props y la ref fusionadas y, dentro, el icono,
+  // su propio contenido y el final de la fila.
+  if (asChild && isValidElement<{ children?: ReactNode }>(children)) {
+    return slot(
+      children,
+      { ...shared, "aria-disabled": disabled || undefined },
+      <>
         {glyph}
-        <Slot.Slottable>{children}</Slot.Slottable>
+        {children.props.children}
         {tail}
-      </Slot.Root>
+      </>,
     );
   }
   const body = (
@@ -73,7 +79,7 @@ export function NavLink({ href, target, rel, onClick, icon, active, disabled, tr
   );
   if (href !== undefined) {
     return (
-      <a {...shared} href={disabled ? undefined : href} target={target} rel={rel} aria-disabled={disabled || undefined}>
+      <a {...shared} href={disabled ? undefined : href} target={target} rel={rel} role={disabled ? "link" : undefined} aria-disabled={disabled || undefined}>
         {body}
       </a>
     );

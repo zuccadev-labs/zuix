@@ -162,6 +162,8 @@ export function App() {
   return (
     <Shell
       className="app-shell"
+      // ?skip=1: enlace «saltar al contenido» (lo recorre tests/browser).
+      skipLinkLabel={params.get("skip") === "1" ? "Skip to content" : undefined}
       surface={active === "editor" ? "none" : "glass"}
       onCloseOverlay={closeOverlays}
       onModeChange={onModeChange}

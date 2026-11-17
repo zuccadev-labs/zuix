@@ -93,7 +93,7 @@ function makeContext(engine, baseUrl, record, shots) {
    * Abre una pantalla de la app en una página nueva y vigila consola y errores.
    * `reducedTransparency` emula `prefers-reduced-transparency: reduce` donde el motor lo permite; si no, el caso queda no verificable.
    */
-  async function open(screen = "overview", { width = 1440, height = 900, theme = "dark", brand = "dazlabs", reducedMotion = "no-preference", reducedTransparency = false, hasTouch = false, touch = false } = {}) {
+  async function open(screen = "overview", { width = 1440, height = 900, theme = "dark", brand = "dazlabs", reducedMotion = "no-preference", reducedTransparency = false, hasTouch = false, touch = false, query = "" } = {}) {
     let target = browser;
     if (reducedTransparency) {
       if (browserName === "webkit") throw new Unverifiable("WebKit de Playwright no permite emular prefers-reduced-transparency.");
@@ -114,7 +114,7 @@ function makeContext(engine, baseUrl, record, shots) {
     });
     page.on("pageerror", (error) => record.problems.push(`pageerror: ${error.message}`));
     page.on("requestfailed", (request) => record.problems.push(`requestfailed: ${request.url()} ${request.failure()?.errorText ?? ""}`));
-    await page.goto(`${baseUrl}/?screen=${screen}&theme=${theme}&brand=${brand}`, { waitUntil: "load" });
+    await page.goto(`${baseUrl}/?screen=${screen}&theme=${theme}&brand=${brand}${query ? `&${query}` : ""}`, { waitUntil: "load" });
     await page.waitForSelector(`[data-testid="screen-${screen}"]`, { timeout: 15000 });
     await page.evaluate(() => document.fonts.ready);
     record.pages.push(context);
@@ -170,6 +170,8 @@ async function runBrowser(browserName, server, selected) {
       let detail = "";
       try {
         await testCase.run(ctx);
+        // `expectConsole`: mensajes de consola que el caso provoca a propósito (un límite de errores de React).
+        if (testCase.expectConsole) record.problems = record.problems.filter((problem) => !testCase.expectConsole.test(problem));
         if (record.problems.length) { status = "fail"; detail = `Errores de consola o de página:\n  ${[...new Set(record.problems)].join("\n  ")}`; }
       } catch (error) {
         if (error instanceof Unverifiable) { status = "unverifiable"; detail = error.message; }

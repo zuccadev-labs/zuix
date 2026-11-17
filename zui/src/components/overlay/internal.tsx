@@ -1,36 +1,11 @@
 "use client";
-// Piezas internas del grupo overlay: botón de cierre, botón de acción y entradas de menú compartidas.
-import { createContext, useRef, type ComponentProps, type ComponentType, type MouseEvent, type ReactNode } from "react";
+// Piezas internas del grupo overlay: botón de cierre, botón de acción, tipos de las entradas de menú y el estado
+// abierto/cerrado con disparador que comparten los diálogos.
+import { useRef, type ComponentProps, type ReactElement, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { useControllable } from "../../primitives/hooks";
+import { slot } from "../../primitives/slot";
 import { cx } from "../../cx";
-
-/** Verdadero dentro de un Modal: los menús anidados suben de capa para no quedar detrás. */
-export const ElevatedContext = createContext(false);
-
-/**
- * Devolución del foco para diálogos abiertos sin disparador (uso controlado). Radix solo devuelve el foco a su
- * `Trigger`; sin él, al cerrar el foco se quedaba en `body`. Aquí se recuerda el elemento enfocado al abrir y se
- * le devuelve el foco al cerrar. Con disparador no hace nada.
- */
-export function useReturnFocus(hasTrigger: boolean) {
-  const previous = useRef<HTMLElement | null>(null);
-  return {
-    onOpenAutoFocus: () => {
-      // En este momento el foco aún no ha entrado en el diálogo.
-      previous.current = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null;
-    },
-    onCloseAutoFocus: (event: Event) => {
-      const target = previous.current;
-      previous.current = null;
-      if (hasTrigger || !target || !target.isConnected) return;
-      event.preventDefault();
-      target.focus({ preventScroll: true });
-    },
-  };
-}
-
-/** Un clic en el velo de un diálogo que no se cierra con él no debe llevarse el foco a `body`. */
-export const keepFocus = (event: MouseEvent) => event.preventDefault();
 
 export interface CloseButtonProps extends ComponentProps<"button"> {
   label: string;
@@ -72,73 +47,22 @@ export interface MenuItemEntry {
 
 export type MenuEntry = { type: "separator" } | { type: "label"; label: ReactNode } | MenuItemEntry;
 
-// Subconjunto común de DropdownMenu y ContextMenu de Radix.
-export interface MenuKit {
-  Item: ComponentType<{ className?: string; disabled?: boolean; onSelect?: (event: Event) => void; children?: ReactNode }>;
-  Separator: ComponentType<{ className?: string }>;
-  Label: ComponentType<{ className?: string; children?: ReactNode }>;
-  Sub: ComponentType<{ children?: ReactNode }>;
-  SubTrigger: ComponentType<{ className?: string; disabled?: boolean; children?: ReactNode }>;
-  SubContent: ComponentType<{ className?: string; children?: ReactNode }>;
-  Portal: ComponentType<{ children?: ReactNode }>;
-}
-
-function ItemBody({ entry, sub }: { entry: MenuItemEntry; sub?: boolean }) {
-  return (
-    <>
-      <span className="z-menu__icon">{entry.icon ? <Icon name={entry.icon} size={14} /> : null}</span>
-      <span className="z-menu__text">{entry.label}</span>
-      {entry.shortcut ? <kbd className="z-menu__shortcut">{entry.shortcut}</kbd> : null}
-      {sub ? (
-        <span className="z-menu__chevron">
-          <Icon name="chevron-right" size={14} />
-        </span>
-      ) : null}
-    </>
-  );
-}
-
-export function MenuEntries({ kit, items, size, elevated }: { kit: MenuKit; items: MenuEntry[]; size: "md" | "lg"; elevated: boolean }) {
-  return (
-    <>
-      {items.map((entry, i) => {
-        if (entry.type === "separator") return <kit.Separator key={`sep-${i}`} className="z-menu__separator" />;
-        if (entry.type === "label") {
-          return (
-            <kit.Label key={`label-${i}`} className="z-menu__label">
-              {entry.label}
-            </kit.Label>
-          );
-        }
-        if (entry.items && entry.items.length > 0) {
-          return (
-            <kit.Sub key={entry.id}>
-              <kit.SubTrigger className="z-menu__item" disabled={entry.disabled} data-danger={entry.danger || undefined}>
-                <ItemBody entry={entry} sub />
-              </kit.SubTrigger>
-              <kit.Portal>
-                <kit.SubContent className="z-liquid z-menu" data-size={size} data-elevated={elevated || undefined}>
-                  <MenuEntries kit={kit} items={entry.items} size={size} elevated={elevated} />
-                </kit.SubContent>
-              </kit.Portal>
-            </kit.Sub>
-          );
-        }
-        return (
-          <kit.Item
-            key={entry.id}
-            className="z-menu__item"
-            disabled={entry.disabled}
-            data-danger={entry.danger || undefined}
-            onSelect={(event) => {
-              if (entry.keepOpen) event.preventDefault();
-              entry.onSelect?.();
-            }}
-          >
-            <ItemBody entry={entry} />
-          </kit.Item>
-        );
-      })}
-    </>
-  );
+/**
+ * Estado abierto/cerrado de una capa con disparador opcional. Devuelve el disparador ya conectado (clic, ref y
+ * atributos ARIA) y su ref, a la que vuelve el foco al cerrar.
+ */
+export function useDisclosure(options: { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void; trigger?: ReactElement; popup?: "dialog" | "menu"; id?: string }) {
+  const [open, setOpen] = useControllable(options.open, options.defaultOpen ?? false, options.onOpenChange);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const trigger = options.trigger
+    ? slot(options.trigger, {
+        ref: triggerRef,
+        "aria-haspopup": options.popup ?? "dialog",
+        "aria-expanded": open,
+        "aria-controls": open ? options.id : undefined,
+        "data-state": open ? "open" : "closed",
+        onClick: () => setOpen(!open),
+      })
+    : null;
+  return { open, setOpen, trigger, triggerRef };
 }

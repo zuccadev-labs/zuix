@@ -33,7 +33,7 @@
     line-height: var(--z-leading-snug);
   }
   .z-field__required {
-    color: var(--z-danger);
+    color: var(--z-danger-text);
   }
   .z-field__optional {
     color: var(--z-fg-subtle);
@@ -49,7 +49,7 @@
     color: var(--z-fg-muted);
   }
   .z-field__error {
-    color: var(--z-danger);
+    color: var(--z-danger-text);
     font-weight: var(--z-weight-medium);
   }
 
@@ -152,7 +152,7 @@
     justify-content: center;
     width: calc(var(--z-input-height) - 10px);
     height: calc(var(--z-input-height) - 10px);
-    margin-right: calc(var(--z-input-pad) * -1 + 4px);
+    margin-inline-end: calc(var(--z-input-pad) * -1 + 4px);
     padding: 0;
     border: 0;
     border-radius: var(--z-radius-xs);
@@ -280,7 +280,8 @@
     width: 100%;
     min-width: 0;
     height: 100%;
-    padding: 0 var(--z-space-8) 0 var(--z-space-3);
+    padding-block: 0;
+    padding-inline: var(--z-space-3) var(--z-space-8);
     border: 1px solid var(--z-control-border);
     border-radius: var(--z-control-radius);
     background: var(--z-control-bg);
@@ -324,7 +325,7 @@
   .z-select__chevron {
     position: absolute;
     top: 0;
-    right: var(--z-space-3);
+    inset-inline-end: var(--z-space-3);
     bottom: 0;
     display: inline-flex;
     align-items: center;
@@ -373,9 +374,9 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    min-width: max(160px, var(--radix-select-trigger-width, var(--radix-popover-trigger-width, 0px)));
+    min-width: max(160px, var(--z-anchor-width, 0px));
     max-width: min(420px, calc(100vw - var(--z-space-4)));
-    max-height: min(320px, var(--radix-select-content-available-height, var(--radix-popover-content-available-height, 320px)));
+    max-height: min(320px, var(--z-available-height, 320px));
     overflow: hidden;
     border-radius: var(--z-popup-radius);
     color: var(--z-fg);
@@ -385,7 +386,7 @@
     -webkit-font-smoothing: antialiased;
     animation: z-listbox-in var(--z-duration-fast) var(--z-ease-standard) both;
   }
-  .z-listbox:focus {
+  .z-listbox:focus-visible {
     outline: none;
   }
   .z-listbox[data-size="lg"] {
@@ -541,6 +542,10 @@
     opacity: 0.4;
     cursor: not-allowed;
   }
+  /* RTL: la rejilla avanza hacia la izquierda y las flechas de mes se reflejan con ella. */
+  [dir="rtl"] .z-calendar__nav svg.z-icon {
+    transform: scaleX(-1);
+  }
   .z-calendar__grid {
     width: 100%;
     table-layout: fixed;
@@ -592,7 +597,7 @@
   }
   .z-calendar__day[data-today] {
     box-shadow: inset 0 0 0 1px var(--z-line-strong);
-    color: var(--z-accent);
+    color: var(--z-accent-text);
     font-weight: var(--z-weight-semibold);
   }
   .z-calendar__day[data-today]:focus-visible {
@@ -633,6 +638,27 @@
     .z-calendar__cell[data-range="middle"] .z-calendar__day:hover:not([data-selected]) {
       background: var(--z-surface-3);
     }
+  }
+
+  /* Campo nativo oculto que acompaña a un control propio (casilla, radio, interruptor, Select, DatePicker): lleva el
+     valor y la validación al formulario. No se ve ni recibe el puntero; queda al pie del control, donde el navegador
+     ancla su mensaje de validación. */
+  .z-native-input {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .z-check,
+  .z-radio,
+  .z-switch {
+    position: relative;
   }
 
   /* ---- Checkbox / Radio (texto compartido) ---- */
@@ -716,6 +742,12 @@
     border-color: var(--z-danger);
   }
   /* Marca dibujada con bordes: palomita o guion. */
+  /* La marca no recibe el puntero: el destino del clic es siempre el botón. En el modo DOM la marca se quita al
+     desmarcar, y un destino que desaparece hace que Firefox y Safari repitan el clic a través de la etiqueta. */
+  .z-check__mark,
+  .z-radio__mark {
+    pointer-events: none;
+  }
   .z-check__mark {
     display: block;
     width: 5px;
@@ -806,7 +838,7 @@
   .z-switch__thumb {
     position: absolute;
     top: 2px;
-    left: 2px;
+    inset-inline-start: 2px;
     width: calc(var(--z-switch-height) - 4px);
     height: calc(var(--z-switch-height) - 4px);
     border-radius: var(--z-radius-full);
@@ -819,6 +851,9 @@
   }
   .z-switch__track[data-state="checked"] .z-switch__thumb {
     transform: translateX(calc(var(--z-switch-width) - var(--z-switch-height)));
+  }
+  [dir="rtl"] .z-switch__track[data-state="checked"] .z-switch__thumb {
+    transform: translateX(calc(var(--z-switch-height) - var(--z-switch-width)));
   }
 
   /* ---- Slider ---- */
@@ -902,6 +937,8 @@
   .z-otp {
     --z-otp-size: var(--z-control-height-lg);
     display: inline-flex;
+    /* Un código se escribe y se lee de izquierda a derecha también en una página RTL. */
+    direction: ltr;
     gap: var(--z-space-2);
   }
   .z-otp[data-size="lg"] {
@@ -997,7 +1034,7 @@
     height: var(--z-space-10);
     border-radius: var(--z-radius-full);
     background: var(--z-accent-soft);
-    color: var(--z-accent);
+    color: var(--z-accent-text);
   }
   .z-upload__label {
     color: var(--z-fg);

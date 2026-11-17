@@ -15,6 +15,8 @@
   .z-carousel__viewport {
     container: z-carousel / inline-size;
     position: relative; overflow: hidden; padding-block: var(--z-carousel-bleed);
+    /* La tira es física (el motor la mueve con translateX y la lente tiene izquierda y derecha): no se invierte en RTL. */
+    direction: ltr;
     cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
   }
   .z-carousel__viewport[data-dragging] { cursor: grabbing; }
@@ -29,6 +31,8 @@
     position: relative; flex: 0 0 auto; width: var(--z-carousel-slide-width);
     border-radius: var(--z-carousel-radius); overflow: clip; transform-origin: 0 0;
   }
+  /* El contenido de cada slide sí conserva la dirección de la página. */
+  [dir="rtl"] .z-carousel__slide { direction: rtl; }
   /* Con lente, el slide centrado debe caber en la zona plana: un slide más ancho que la tira se vería deformado entero. */
   .z-carousel[data-effect="lens"] .z-carousel__slide { max-width: 80cqw; }
   .z-carousel__slide img, .z-carousel__slide a { -webkit-user-drag: none; }
@@ -43,12 +47,15 @@
   .z-carousel[data-mode="gl"] .z-carousel__slide[data-lens-off] { pointer-events: none; }
   .z-carousel__canvas {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    pointer-events: none; color: var(--z-accent);
+    /* No es texto: el motor lee este color para el resplandor de la lente (relleno), por eso sigue siendo el acento. */
+    pointer-events: none; color: color-mix(in srgb, var(--z-accent) 100%, transparent);
   }
   .z-carousel:not([data-mode="gl"]) .z-carousel__canvas { visibility: hidden; }
 
   .z-carousel__controls {
     display: flex; align-items: center; justify-content: center; gap: var(--z-space-4);
+    /* Anterior a la izquierda y siguiente a la derecha, como la tira. */
+    direction: ltr;
   }
   .z-carousel__arrow {
     display: inline-flex; align-items: center; justify-content: center; flex: none;

@@ -2,7 +2,7 @@
   "name": "@zuccadev-labs/zuix-zui",
   "version": "0.1.0",
   "type": "module",
-  "description": "Sistema de componentes de la suite zuix. Contrato HTML + CSS sobre tokens, comportamiento sin framework (dom) y binding de React (Radix).",
+  "description": "Sistema de componentes de la suite zuix. Contrato HTML + CSS sobre tokens, comportamiento sin framework (dom) y binding de React, sin dependencias de terceros.",
   "license": "MIT",
   "keywords": [
     "zuix",
@@ -10,7 +10,6 @@
     "ui",
     "design-system",
     "react",
-    "radix",
     "accessibility",
     "liquid-glass",
     "html",
@@ -26,7 +25,7 @@
     "url": "https://github.com/zuccadev-labs/zuix/issues"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12.0"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -52,8 +51,7 @@
     "react-dom": "^19.0.0"
   },
   "dependencies": {
-    "@zuccadev-labs/zuix-tokens": "workspace:^",
-    "radix-ui": "^1.4.0"
+    "@zuccadev-labs/zuix-tokens": "workspace:^"
   },
   "devDependencies": {
     "@zuccadev-labs/zuix-zicon": "workspace:*",
@@ -78,7 +76,8 @@
     "AGENTS.md",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": [
     "**/*.css",

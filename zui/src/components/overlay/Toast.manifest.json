@@ -38,10 +38,10 @@
       "default": "Close"
     },
     {
-      "name": "label",
+      "name": "regionLabel",
       "type": "string",
-      "default": "Notification",
-      "description": "ToastProvider: nombre anunciado por lectores de pantalla."
+      "default": "Notifications (F8)",
+      "description": "ToastProvider: nombre accesible de la región de avisos."
     },
     {
       "name": "toast",
@@ -109,7 +109,7 @@
     "z-toast__close",
     "z-toast-viewport"
   ],
-  "a11y": "Radix Toast: región con aria-live (asertiva en warning y danger), F8 lleva el foco a los avisos, se pausan con hover o foco y se descartan deslizando.",
+  "a11y": "Región con nombre (role=region) en la capa superior; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
   "examples": [
     {
       "title": "Proveedor y uso",
@@ -120,7 +120,7 @@
       "code": "const { toast } = useToast();\ntoast({ title: \"Upload failed\", intent: \"danger\", action: { label: \"Retry\", onClick: () => upload() } });"
     }
   ],
-  "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad de Radix Toast.",
+  "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

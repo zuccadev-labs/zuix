@@ -3,6 +3,7 @@ import { useRef, type InputHTMLAttributes, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
+import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
 
 export interface DateInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
@@ -20,11 +21,7 @@ export function DateInput({ type = "date", size = "md", invalid, pickerLabel = "
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const inner = useRef<HTMLInputElement | null>(null);
   // Une la ref interna (para abrir el selector) con la ref recibida.
-  const setRef = (node: HTMLInputElement | null) => {
-    inner.current = node;
-    if (typeof ref === "function") ref(node);
-    else if (ref) ref.current = node;
-  };
+  const setRef = useMergedRef(inner, ref);
   const openPicker = () => {
     const node = inner.current;
     if (!node) return;

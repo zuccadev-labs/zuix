@@ -1,6 +1,7 @@
 "use client";
 import { useId, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { matchesAccept } from "../../core/accept";
 import { cx } from "../../cx";
 import { useFieldControl } from "./Field";
 
@@ -30,12 +31,16 @@ export interface FileUploadProps {
 }
 
 // Comprueba un archivo contra una lista `accept` (extensiones, tipos MIME y comodines).
-function matchesAccept(file: File, accept?: string): boolean {
-  if (!accept) return true;
-  const rules = accept.split(",").map((rule) => rule.trim().toLowerCase()).filter(Boolean);
-  const name = file.name.toLowerCase();
-  const type = file.type.toLowerCase();
-  return rules.some((rule) => (rule.startsWith(".") ? name.endsWith(rule) : rule.endsWith("/*") ? type.startsWith(rule.slice(0, -1)) : type === rule));
+// Deja en el campo solo los archivos aceptados: el formulario envía lo mismo que recibió `onFiles`.
+function keep(input: HTMLInputElement | null, files: File[]): void {
+  if (!input) return;
+  try {
+    const transfer = new DataTransfer();
+    for (const file of files) transfer.items.add(file);
+    input.files = transfer.files;
+  } catch {
+    // Navegador sin DataTransfer construible: el campo queda como estaba.
+  }
 }
 
 /** Zona para elegir o soltar archivos. No guarda estado: entrega los archivos por `onFiles`. */
@@ -68,11 +73,14 @@ export function FileUpload({
     const rejected = picked.filter((file) => !accepted.includes(file));
     if (accepted.length) onFiles(accepted);
     if (rejected.length) onReject?.(rejected);
+    return accepted;
   };
   const onDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setDragging(false);
-    if (!disabled) deliver(event.dataTransfer.files);
+    if (disabled) return;
+    const accepted = deliver(event.dataTransfer.files);
+    if (name) keep(input.current, accepted);
   };
 
   return (
@@ -86,7 +94,10 @@ export function FileUpload({
         event.preventDefault();
         if (!disabled) setDragging(true);
       }}
-      onDragLeave={() => setDragging(false)}
+      onDragLeave={(event) => {
+        // Pasar sobre un hijo de la zona no es salir de ella.
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false);
+      }}
       onDrop={onDrop}
     >
       <input
@@ -101,9 +112,11 @@ export function FileUpload({
         aria-invalid={control["aria-invalid"]}
         aria-describedby={[hint ? hintId : undefined, control["aria-describedby"]].filter(Boolean).join(" ") || undefined}
         onChange={(event) => {
-          deliver(event.target.files);
-          // Permite volver a elegir el mismo archivo.
-          event.target.value = "";
+          const accepted = deliver(event.target.files);
+          // Con `name` el campo conserva lo aceptado para enviarlo con el formulario. Sin él se vacía, y así se
+          // puede volver a elegir el mismo archivo.
+          if (name) keep(event.target, accepted);
+          else event.target.value = "";
         }}
       />
       <span className="z-upload__icon">

@@ -1,0 +1,2 @@
+/* Solo la marca zenith en :root. Sustituye a tokens.css cuando la aplicación usa una única marca. */
+@import "@zuccadev-labs/zuix-tokens/css/zenith.css";

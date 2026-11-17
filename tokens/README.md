@@ -54,6 +54,7 @@ Para cargar una sola marca en `:root`, se importa `@zuccadev-labs/zuix-tokens/cs
 | `@zuccadev-labs/zuix-tokens/tailwind.css` | Puente a utilidades de Tailwind v4 (`@theme inline`) |
 | `@zuccadev-labs/zuix-tokens/docusaurus.css` | Mapa a las variables del tema clásico de Docusaurus |
 | `@zuccadev-labs/zuix-tokens/tokens.json` | Todo el contrato, para herramientas y agentes |
+| `@zuccadev-labs/zuix-tokens/dtcg/<marca>.<tema>.tokens.json` | Formato Design Tokens (DTCG 2025.10), por marca y tema |
 | `@zuccadev-labs/zuix-tokens/brands/<marca>.json` | Definición de cada marca |
 | `@zuccadev-labs/zuix-tokens/schema/brand.schema.json` | Esquema JSON de una marca |
 | `@zuccadev-labs/zuix-tokens/compat/<proyecto>.css` | Capa de compatibilidad: variables antiguas de un proyecto como alias de tokens |
@@ -71,7 +72,8 @@ Una aplicación lee tokens semánticos y de componente, nunca primitivos.
 ## Marcas incluidas
 
 `dazlabs` (por defecto), `zutool` y `zenith`, cada una en tema oscuro y claro. La generación valida, por
-marca y tema, los tokens obligatorios y el contraste WCAG de ocho pares de texto y fondo.
+marca y tema, el esquema, los tokens obligatorios y el contraste WCAG 2.2 de cada token de texto sobre cada
+superficie (4.5:1), de los pares que usan las hojas de componentes y de los bordes de control y el foco (3:1).
 
 ## Documentación
 

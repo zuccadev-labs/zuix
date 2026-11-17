@@ -21,6 +21,7 @@ import * as calendar from "./forms-calendar";
 import * as controls from "./forms-controls";
 import * as listbox from "./forms-listbox";
 import * as popup from "./forms-popup";
+import type { Listen } from "./shared";
 
 export { setCalendarValue, setDatePickerValue, type DateRange } from "./forms-calendar";
 export { setOtpValue, setSliderValue } from "./forms-controls";
@@ -28,8 +29,8 @@ export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValu
 
 const parts = [popup, listbox, calendar, controls];
 
-export function setup(): void {
-  for (const part of parts) part.setup();
+export function setup(on: Listen): void {
+  for (const part of parts) part.setup(on);
 }
 
 export function hydrate(root: ParentNode): void {

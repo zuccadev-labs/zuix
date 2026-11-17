@@ -3,6 +3,7 @@ import { useRef, useState, type ChangeEvent, type InputHTMLAttributes, type Keyb
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
+import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
 
 export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type" | "value" | "defaultValue"> {
@@ -28,11 +29,7 @@ export function SearchInput({ value, defaultValue = "", onValueChange, onSearch,
   const node = useRef<HTMLInputElement | null>(null);
   const current = value ?? inner;
 
-  const setRef = (element: HTMLInputElement | null) => {
-    node.current = element;
-    if (typeof ref === "function") ref(element);
-    else if (ref) ref.current = element;
-  };
+  const setRef = useMergedRef(node, ref);
   const update = (next: string) => {
     setInner(next);
     onValueChange?.(next);

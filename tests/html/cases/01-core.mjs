@@ -84,8 +84,17 @@ await test("confirm(): resuelve y el aviso queda sobre la página", async () => 
   await page.locator("#delete").click(); await settle();
   ok(await page.locator("dialog.z-confirm").evaluate((d) => d.open), "no abrió");
   await page.screenshot({ path: join(shots, "confirm.png") });
-  await page.keyboard.press("Escape"); await settle();
-  ok(await page.locator("dialog.z-confirm").count() === 1, "un diálogo de confirmación no debe cerrarse con Escape");
+  // Nombre y descripción accesibles, como el ConfirmDialog de React (APG alertdialog).
+  ok(await page.locator("dialog.z-confirm").evaluate((d) => d.getAttribute("role") === "alertdialog" && document.getElementById(d.getAttribute("aria-labelledby"))?.textContent === "Delete project?" && document.getElementById(d.getAttribute("aria-describedby"))?.textContent === "This cannot be undone."), "alertdialog sin aria-labelledby o aria-describedby");
+  // El velo no cierra una confirmación.
+  await page.mouse.click(5, 500); await settle();
+  ok(await page.locator("dialog.z-confirm").evaluate((d) => d.open), "un clic en el velo no debe cerrar una confirmación");
+  // Escape cancela (igual que ConfirmDialog en React y que el patrón de diálogo modal de APG): se cierra sin ejecutar la acción.
+  await page.keyboard.press("Escape"); await page.waitForTimeout(500);
+  ok(await page.locator("dialog.z-confirm").count() === 0, "Escape debe cancelar la confirmación");
+  ok(await page.locator(".z-toast").count() === 0, "cancelar con Escape no debe ejecutar la acción");
+  ok(await page.evaluate(() => document.activeElement?.id === "delete"), "al cancelar el foco vuelve al disparador");
+  await page.locator("#delete").click(); await settle();
   await page.locator("dialog.z-confirm .z-dialog-btn[data-variant='danger']").click(); await page.waitForTimeout(500);
   ok(await page.locator("dialog.z-confirm").count() === 0, "no se retiró");
   ok(await page.locator(".z-toast").count() === 1, "la confirmación no ejecutó la acción");

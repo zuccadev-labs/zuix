@@ -1,8 +1,8 @@
 "use client";
-import type { ReactElement, ReactNode } from "react";
-import { Dialog } from "radix-ui";
+import { useId, type ReactElement, type ReactNode } from "react";
 import { cx } from "../../cx";
-import { CloseButton, ElevatedContext, keepFocus, useReturnFocus } from "./internal";
+import { DialogSurface } from "../../primitives/dialog";
+import { CloseButton, useDisclosure } from "./internal";
 
 export interface ModalProps {
   open?: boolean;
@@ -24,11 +24,12 @@ export interface ModalProps {
   children?: ReactNode;
 }
 
+/** Diálogo modal: un `<dialog>` abierto con `showModal()`, con el mismo marcado que el contrato HTML. */
 export function Modal({
-  open,
+  open: openProp,
   defaultOpen,
   onOpenChange,
-  trigger,
+  trigger: triggerProp,
   title,
   description,
   label = "Dialog",
@@ -40,48 +41,48 @@ export function Modal({
   className,
   children,
 }: ModalProps) {
-  const returnFocus = useReturnFocus(Boolean(trigger));
-  const block = (event: Event) => {
-    if (!dismissible) event.preventDefault();
-  };
+  const id = useId();
+  const { open, setOpen, trigger, triggerRef } = useDisclosure({ open: openProp, defaultOpen, onOpenChange, trigger: triggerProp, id });
+  const titleId = `${id}-title`;
+  const descriptionId = `${id}-description`;
   return (
-    <Dialog.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
-      {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
-      <Dialog.Portal>
-        <Dialog.Overlay className="z-overlay-scrim" onMouseDown={dismissible ? undefined : keepFocus} />
-        <Dialog.Content
-          className={cx("z-liquid z-modal", className)}
-          data-size={size}
-          {...returnFocus}
-          onEscapeKeyDown={block}
-          onPointerDownOutside={block}
-          onInteractOutside={block}
-          {...(description ? {} : { "aria-describedby": undefined })}
-        >
-          <ElevatedContext.Provider value={true}>
-            {title ? (
-              <header className="z-modal__header">
-                <div className="z-modal__heading">
-                  <Dialog.Title className="z-modal__title">{title}</Dialog.Title>
-                  {description ? <Dialog.Description className="z-modal__description">{description}</Dialog.Description> : null}
-                </div>
-              </header>
-            ) : (
-              <>
-                <Dialog.Title className="z-sr-only">{label}</Dialog.Title>
-                {description ? <Dialog.Description className="z-sr-only">{description}</Dialog.Description> : null}
-              </>
-            )}
-            {children ? <div className="z-modal__body">{children}</div> : null}
-            {footer ? <footer className="z-modal__footer">{footer}</footer> : null}
-            {hideClose ? null : (
-              <Dialog.Close asChild>
-                <CloseButton label={closeLabel} className="z-modal__close" />
-              </Dialog.Close>
-            )}
-          </ElevatedContext.Provider>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <>
+      {trigger}
+      <DialogSurface
+        id={id}
+        open={open}
+        onDismiss={() => setOpen(false)}
+        closeOnEscape={dismissible}
+        closeOnBackdrop={dismissible}
+        trigger={triggerRef}
+        className={cx("z-liquid z-modal", className)}
+        data-size={size}
+        aria-labelledby={title ? titleId : undefined}
+        aria-label={title ? undefined : label}
+        aria-describedby={description ? descriptionId : undefined}
+      >
+        {title ? (
+          <header className="z-modal__header">
+            <div className="z-modal__heading">
+              <h2 id={titleId} className="z-modal__title">
+                {title}
+              </h2>
+              {description ? (
+                <p id={descriptionId} className="z-modal__description">
+                  {description}
+                </p>
+              ) : null}
+            </div>
+          </header>
+        ) : description ? (
+          <p id={descriptionId} className="z-sr-only">
+            {description}
+          </p>
+        ) : null}
+        {children ? <div className="z-modal__body">{children}</div> : null}
+        {footer ? <footer className="z-modal__footer">{footer}</footer> : null}
+        {hideClose ? null : <CloseButton label={closeLabel} className="z-modal__close" onClick={() => setOpen(false)} />}
+      </DialogSurface>
+    </>
   );
 }

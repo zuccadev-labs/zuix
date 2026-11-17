@@ -1,87 +1,327 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Configuración de un sitio zudocs",
-  "description": "Archivo único que adapta la plantilla a un proyecto o marca. No hace falta tocar el tema. Puede vivir en cualquier carpeta: las rutas (docs.path, static, outDir, llms.append) son relativas a este archivo y se elige con --config o ZUDOCS_CONFIG.",
+  "description": "Archivo único que adapta la plantilla a un proyecto o marca. No hace falta tocar el tema. Puede vivir en cualquier carpeta: las rutas (docs.path, static, outDir, llms.append y las fuentes locales) son relativas a este archivo y se elige con --config o ZUDOCS_CONFIG. Un campo desconocido es un error.",
   "type": "object",
-  "required": ["name", "brand", "docs"],
+  "required": [
+    "name",
+    "brand",
+    "docs"
+  ],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string" },
-    "name": { "type": "string", "description": "Nombre del sitio (título y navbar)." },
-    "tagline": { "type": "string", "description": "Frase de la portada." },
-    "brand": { "type": "string", "description": "Marca de @zuccadev-labs/zuix-tokens: nombre de un archivo en tokens/brands/ sin extensión." },
-    "defaultTheme": { "enum": ["dark", "light"], "default": "dark" },
-    "locale": { "type": "string", "default": "es" },
-    "url": { "type": "string" },
-    "baseUrl": { "type": "string", "default": "/" },
-    "logo": {
-      "type": "object", "required": ["src"], "additionalProperties": false,
-      "properties": { "src": { "type": "string", "description": "Ruta dentro de la carpeta de estáticos (campo `static`)." }, "srcDark": { "type": "string" }, "alt": { "type": "string" } }
+    "$schema": {
+      "type": "string"
     },
-    "static": { "type": "string", "default": "static", "description": "Carpeta de recursos estáticos del proyecto (logo, imágenes), relativa a este archivo. Si no existe, el sitio no tiene estáticos propios." },
-    "outDir": { "type": "string", "default": "build", "description": "Carpeta de salida del sitio compilado, relativa a este archivo. `--out-dir` la sustituye." },
-    "fonts": { "type": "array", "items": { "type": "string" }, "description": "Hojas de estilo de fuentes. Deben coincidir con las familias de la marca." },
-    "docs": {
-      "type": "object", "required": ["path", "areas"], "additionalProperties": false,
+    "name": {
+      "type": "string",
+      "description": "Nombre del sitio (título y navbar).",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "tagline": {
+      "type": "string",
+      "description": "Frase de la portada y descripción del sitio para buscadores.",
+      "maxLength": 300
+    },
+    "brand": {
+      "type": "string",
+      "description": "Marca de @zuccadev-labs/zuix-tokens: nombre de un archivo en tokens/brands/ sin extensión.",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "patternHint": "minúsculas, cifras y guiones: el nombre de un archivo de tokens/brands/ sin extensión"
+    },
+    "defaultTheme": {
+      "type": "string",
+      "enum": [
+        "dark",
+        "light"
+      ],
+      "default": "dark",
+      "description": "Tema inicial. El visitante puede cambiarlo y su elección se recuerda."
+    },
+    "locale": {
+      "type": "string",
+      "default": "es",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "patternHint": "código de idioma BCP 47, como es, en o pt-BR",
+      "description": "Idioma del sitio: atributo lang, textos del tema y Open Graph."
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https?://[^/\\s]+$",
+      "patternHint": "origen sin ruta ni barra final, como https://docs.ejemplo.com; la ruta va en baseUrl",
+      "description": "Origen público del sitio. Con él se escriben las canónicas, el sitemap, robots.txt y los enlaces de llms.txt. ZUDOCS_URL lo sustituye en una ejecución."
+    },
+    "baseUrl": {
+      "type": "string",
+      "default": "/",
+      "pattern": "^/([^\\s]*/)?$",
+      "patternHint": "empieza y acaba en /, como / o /proyecto/",
+      "description": "Ruta bajo la que se sirve el sitio. ZUDOCS_BASE_URL la sustituye en una ejecución."
+    },
+    "logo": {
+      "type": "object",
+      "required": [
+        "src"
+      ],
+      "additionalProperties": false,
       "properties": {
-        "path": { "type": "string", "description": "Carpeta de documentación, relativa a este archivo." },
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(https://\\S+|(?!/)(?!.*\\.\\.)\\S+)$",
+          "patternHint": "ruta dentro de la carpeta de estáticos, sin / inicial ni .., o una URL https",
+          "description": "Ruta dentro de la carpeta de estáticos (campo `static`)."
+        },
+        "srcDark": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(https://\\S+|(?!/)(?!.*\\.\\.)\\S+)$",
+          "patternHint": "ruta dentro de la carpeta de estáticos, sin / inicial ni .., o una URL https",
+          "description": "Logo para el tema oscuro. Por defecto, `src`."
+        },
+        "alt": {
+          "type": "string",
+          "description": "Texto alternativo. Por defecto, `name`."
+        }
+      }
+    },
+    "static": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Carpeta de recursos estáticos del proyecto (logo, imágenes), relativa a este archivo. Si no existe, el sitio no tiene estáticos propios.",
+      "default": "static"
+    },
+    "outDir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Carpeta de salida del sitio compilado, relativa a este archivo. `--out-dir` la sustituye. La compilación la vacía: no puede contener la documentación, la configuración ni otra cosa que un sitio compilado.",
+      "default": "build"
+    },
+    "fonts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(https://\\S+|(?!https?:)\\S.*\\.css)$",
+        "patternHint": "una hoja .css local, relativa a este archivo, o una URL https"
+      },
+      "description": "Hojas de estilo de las fuentes de la marca. Una ruta local (relativa a este archivo) se empaqueta con el sitio: es lo recomendado, sin peticiones a terceros. Una URL https se enlaza tal cual y `verify` avisa. `zudocs fonts <url>` descarga una hoja remota y sus archivos."
+    },
+    "docs": {
+      "type": "object",
+      "required": [
+        "path",
+        "areas"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Carpeta de documentación, relativa a este archivo."
+        },
         "areas": {
-          "type": "array", "minItems": 1,
+          "type": "array",
+          "minItems": 1,
           "items": {
-            "type": "object", "required": ["id", "label"], "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "id",
+              "label"
+            ],
+            "additionalProperties": false,
             "properties": {
-              "id": { "type": "string", "description": "Nombre de la subcarpeta del área." },
-              "label": { "type": "string" },
-              "icon": { "type": "string", "description": "Nombre de un icono de @zuccadev-labs/zuix-zicon." },
-              "description": { "type": "string" }
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]*$",
+                "patternHint": "nombre de carpeta en minúsculas, cifras, guiones o guiones bajos",
+                "description": "Nombre de la subcarpeta del área; también su ruta: /docs/<id>."
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "description": "Nombre del área en la barra y en la portada."
+              },
+              "icon": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "patternHint": "nombre de un icono de zicon, como book",
+                "description": "Nombre de un icono de @zuccadev-labs/zuix-zicon."
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "Una frase: a quién va dirigida el área. Sale en la portada y en llms.txt."
+              }
             }
-          }
+          },
+          "description": "Áreas de la documentación: cada una es una subcarpeta, una entrada de la barra y una sidebar."
         }
       }
     },
     "pages": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "description": "Páginas de catálogo de la suite zuix. Desactivadas por defecto: un proyecto que solo documenta no las necesita.",
       "properties": {
-        "components": { "type": "boolean", "default": false, "description": "Catálogo en vivo de zui y zout en /components." },
-        "icons": { "type": "boolean", "default": false, "description": "Buscador de zicon en /icons." },
-        "tokens": { "type": "boolean", "default": false, "description": "Tokens de la marca activa en /tokens." }
+        "components": {
+          "type": "boolean",
+          "default": false,
+          "description": "Catálogo en vivo de zui y zout en /components."
+        },
+        "icons": {
+          "type": "boolean",
+          "default": false,
+          "description": "Buscador de zicon en /icons."
+        },
+        "tokens": {
+          "type": "boolean",
+          "default": false,
+          "description": "Tokens de la marca activa en /tokens."
+        }
       }
     },
     "home": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "description": "Portada. Sin este campo muestra el nombre, la frase y las áreas.",
       "properties": {
-        "eyebrow": { "type": "string", "description": "Etiqueta sobre el título." },
-        "title": { "type": "string", "description": "Título de la portada. Por defecto, `name`." },
-        "emphasis": { "type": "string", "description": "Segunda parte del título, con el color de acento." },
-        "suite": { "type": "boolean", "default": false, "description": "Muestra las cifras y el carrusel de piezas de la suite zuix." }
+        "eyebrow": {
+          "type": "string",
+          "description": "Etiqueta sobre el título.",
+          "maxLength": 120
+        },
+        "title": {
+          "type": "string",
+          "description": "Título de la portada. Por defecto, `name`.",
+          "maxLength": 120
+        },
+        "emphasis": {
+          "type": "string",
+          "description": "Segunda parte del título, con el color de acento.",
+          "maxLength": 120
+        },
+        "suite": {
+          "type": "boolean",
+          "default": false,
+          "description": "Muestra las cifras y el carrusel de piezas de la suite zuix."
+        }
       }
     },
     "llms": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "description": "Mapa de la documentación para modelos (llms.txt).",
-      "properties": { "append": { "type": "string", "description": "Archivo Markdown que se añade al final de llms.txt, relativo a este archivo." } }
+      "properties": {
+        "append": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Archivo Markdown que se añade al final de llms.txt, relativo a este archivo."
+        },
+        "full": {
+          "type": "boolean",
+          "default": true,
+          "description": "Genera llms-full.txt (toda la documentación en un archivo) y una copia .md de cada documento junto a su página."
+        }
+      }
     },
     "markdown": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "description": "Extensiones del Markdown de los documentos.",
       "properties": {
-        "mermaid": { "type": "boolean", "default": false, "description": "Dibuja los bloques ```mermaid como diagramas, con los colores de la marca en claro y oscuro. Desactivado, quedan como bloque de código y Mermaid no se carga." }
+        "mermaid": {
+          "type": "boolean",
+          "default": false,
+          "description": "Dibuja los bloques ```mermaid como diagramas, con los colores de la marca en claro y oscuro. Desactivado, quedan como bloque de código y Mermaid no se carga."
+        },
+        "untrusted": {
+          "type": "boolean",
+          "default": false,
+          "description": "Los documentos los escribe alguien en quien no se confía (contribuciones externas, contenido importado). `verify` rechaza entonces los archivos .mdx, que ejecutan código al compilar y en el navegador, y el HTML activo en los .md (script, iframe, object, embed, style, link, meta, base, form y atributos on*). Compila además con `--headers` y sirve el sitio con esa política de contenido."
+        }
       }
     },
     "search": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "description": "Buscador local: índice generado en el build, sin servicio externo.",
       "properties": {
-        "enabled": { "type": "boolean", "default": true },
-        "languages": { "type": "array", "minItems": 1, "items": { "type": "string" }, "default": ["es", "en"], "description": "Idiomas del índice (códigos de lunr-languages)." }
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$",
+            "patternHint": "código de lunr-languages de dos letras, como es o en"
+          },
+          "default": [
+            "es",
+            "en"
+          ],
+          "description": "Idiomas del índice (códigos de lunr-languages)."
+        }
       }
     },
     "navbar": {
       "type": "array",
-      "items": { "type": "object", "required": ["label"], "additionalProperties": false, "properties": { "label": { "type": "string" }, "to": { "type": "string" }, "href": { "type": "string" } } }
+      "description": "Enlaces adicionales de la barra superior. Cada uno lleva `to` (ruta del sitio) o `href` (URL externa), no los dos.",
+      "items": {
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^/[^\\s]*$",
+            "patternHint": "ruta del sitio que empieza por /, sin el baseUrl"
+          },
+          "href": {
+            "type": "string",
+            "pattern": "^(https://|mailto:|pathname:///)\\S+$",
+            "patternHint": "URL https, mailto o pathname:///ruta para un archivo de la carpeta de estáticos"
+          }
+        }
+      }
     },
-    "footer": { "type": "string" }
+    "footer": {
+      "type": "string",
+      "maxLength": 300,
+      "description": "Texto del pie."
+    },
+    "trailingSlash": {
+      "type": "boolean",
+      "default": false,
+      "description": "Barra final en las rutas. false (por defecto) genera docs/guia.html y sirve /docs/guia sin redirección en GitHub Pages y en cualquier alojamiento estático. true genera docs/guia/index.html."
+    },
+    "favicon": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\.\\.)\\S+$",
+      "patternHint": "ruta dentro de la carpeta de estáticos, sin / inicial ni ..",
+      "description": "Icono de la pestaña, dentro de la carpeta de estáticos. Por defecto, `logo.src`."
+    },
+    "image": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\.\\.)\\S+\\.(png|jpe?g|webp)$",
+      "patternHint": "imagen PNG, JPEG o WebP dentro de la carpeta de estáticos",
+      "description": "Imagen para compartir en redes (og:image), 1200 × 630 px, dentro de la carpeta de estáticos."
+    }
   }
 }

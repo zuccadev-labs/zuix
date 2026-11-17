@@ -13,6 +13,30 @@ const names = new Set(icons.map((i) => i.name));
 const errors = [];
 for (const k of Object.keys(aliases)) if (!names.has(k)) errors.push(`aliases: no existe el icono "${k}"`);
 for (const [e, k] of Object.entries(emoji)) if (!names.has(k)) errors.push(`emoji ${e}: no existe el icono "${k}"`);
+const camel0 = (n) => n.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/^(\d)/, "_$1");
+// Cada icono: nombre normalizado, las dos variantes con trazados dentro de la caja, identificador de módulo único
+// y válido, categoría existente. Alias sin repetir dentro de un icono.
+const RESERVED = new Set("break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield let static await package interface".split(" "));
+const seenIds = new Map();
+for (const icon of icons) {
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(icon.name)) errors.push(`${icon.name}: nombre no normalizado`);
+  const id = camel0(icon.name);
+  if (seenIds.has(id)) errors.push(`${icon.name}: su identificador "${id}" choca con el de ${seenIds.get(id)}`);
+  if (RESERVED.has(id)) errors.push(`${icon.name}: "${id}" es una palabra reservada de JavaScript`);
+  seenIds.set(id, icon.name);
+  if (!(icon.category in categories)) errors.push(`${icon.name}: la categoría "${icon.category}" no existe`);
+  for (const variant of ["outline", "solid"]) {
+    const paths = icon.variants?.[variant];
+    if (!Array.isArray(paths) || paths.length === 0) { errors.push(`${icon.name}: falta la variante ${variant}`); continue; }
+    for (const [rule, d] of paths) {
+      if (rule !== "nonzero" && rule !== "evenodd") errors.push(`${icon.name}/${variant}: regla de relleno desconocida "${rule}"`);
+      if (!/^M[\d\s.,MLQCZ-]+$/.test(d)) errors.push(`${icon.name}/${variant}: el trazado contiene algo que no son comandos M, L, Q, C, Z y números`);
+      const numbers = (d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+      if (numbers.some((n) => n < 0 || n > box)) errors.push(`${icon.name}/${variant}: el trazado se sale de la caja de ${box} × ${box}`);
+    }
+  }
+}
+for (const [name, list] of Object.entries(aliases)) if (new Set(list).size !== list.length) errors.push(`aliases: "${name}" repite algún alias`);
 if (errors.length) { console.error(errors.map((e) => `✗ ${e}`).join("\n")); process.exit(1); }
 
 const camel = (n) => n.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/^(\d)/, "_$1");

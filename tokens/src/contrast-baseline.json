@@ -1,0 +1,4 @@
+{
+  "$comment": "Pares de las hojas de componentes que no llegan a su mínimo y que no se corrigen en este paquete: la hoja que los usa tiene que cambiar de token. `pnpm tokens` los lista como pendientes sin fallar; cuando la hoja cambia, la entrada sobra y la validación exige quitarla. Clave: paquete:texto/fondo (`*` = el fondo es la superficie del entorno).",
+  "pending": []
+}

@@ -103,7 +103,7 @@
     "z-tabs__label",
     "z-tabs__panel"
   ],
-  "a11y": "Radix Tabs: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
+  "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
   "examples": [
     {
       "title": "Segmentado con contenido",
@@ -114,7 +114,7 @@
       "code": "<Tabs variant=\"underline\" value={tab} onValueChange={setTab} items={[{ value: \"code\", label: \"Code\" }, { value: \"preview\", label: \"Preview\" }]}>\n  <TabPanel value=\"code\">Code view</TabPanel>\n  <TabPanel value=\"preview\">Preview view</TabPanel>\n</Tabs>"
     }
   ],
-  "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad de Radix Tabs.",
+  "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

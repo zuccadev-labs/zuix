@@ -169,6 +169,12 @@
     {
      "name": "PageSection.actions",
      "type": "ReactNode"
+    },
+    {
+     "name": "headingLevel",
+     "type": "number",
+     "default": 1,
+     "description": "PageHeader: nivel del encabezado del título (1 a 6). PageSection: 2 por defecto (2 a 6). Una página dentro de otra baja de nivel."
     }
    ],
    "tokens": [
@@ -255,7 +261,7 @@
    "classes": [
     "z-rail"
    ],
-   "a11y": "<nav> con nombre. Cada elemento es un botón con aria-label; el activo lleva aria-current=page.",
+   "a11y": "<nav> con nombre (región navigation). Cada elemento es un botón de 40 × 40 px con aria-label; el activo lleva aria-current=page y el contador forma parte del nombre accesible.",
    "examples": [
     {
      "title": "Rail con pie",
@@ -281,9 +287,12 @@
       "left",
       "right",
       "top",
-      "bottom"
+      "bottom",
+      "start",
+      "end"
      ],
-     "required": true
+     "required": true,
+     "description": "Borde del panel donde va el tirador. `start` y `end` son lógicos: siguen la dirección de escritura (en RTL, `end` es el borde izquierdo)."
     },
     {
      "name": "size",
@@ -314,6 +323,16 @@
      "name": "step",
      "type": "number",
      "default": 16
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Resize panel"
+    },
+    {
+     "name": "controls",
+     "type": "string",
+     "description": "Id del panel que redimensiona (aria-controls)."
     }
    ],
    "tokens": [
@@ -323,7 +342,7 @@
    "classes": [
     "z-resize"
    ],
-   "a11y": "role=separator enfocable con aria-valuenow.",
+   "a11y": "Patrón «window splitter» de WAI-ARIA: role=separator enfocable con aria-orientation, aria-valuenow, aria-valuemin y aria-valuemax (px). Las flechas mueven el tirador hacia donde apuntan un paso (`step`); Inicio vuelve a `defaultSize`. Doble clic vuelve a `defaultSize`: es la alternativa de un solo gesto al arrastre (WCAG 2.5.7). Solo arrastra el botón principal. Con puntero grueso la zona de agarre crece hasta `--z-touch-target`.",
    "examples": [
     {
      "title": "Borde derecho de un panel",
@@ -392,7 +411,7 @@
     {
      "name": "sidebar",
      "type": "ShellPanel",
-     "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize? }"
+     "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize?, resizeLabel? }"
     },
     {
      "name": "inspector",
@@ -434,6 +453,22 @@
      "name": "closeOverlayLabel",
      "type": "string",
      "default": "Close panel"
+    },
+    {
+     "name": "skipLinkLabel",
+     "type": "string",
+     "description": "Texto del enlace «saltar al contenido»: primer elemento enfocable del shell, visible solo con el foco, que lleva al área principal (WCAG 2.4.1). Sin valor no se dibuja."
+    },
+    {
+     "name": "mainAs",
+     "type": "enum",
+     "values": [
+      "main",
+      "div",
+      "section"
+     ],
+     "default": "main",
+     "description": "Elemento del área principal. Solo puede haber un <main> visible por documento: un Shell anidado o un segundo Shell en la misma página usa `div` o `section`."
     }
    ],
    "tokens": [
@@ -451,7 +486,7 @@
    "classes": [
     "z-shell"
    ],
-   "a11y": "El área principal es <main>; los paneles son <aside> con nombre. En modo cajón el panel es role=dialog, recibe el foco al abrirse y lo devuelve al cerrarse, el área principal queda inerte y Escape o el velo lo cierran.",
+   "a11y": "Regiones: la TitleBar es <header> (banner), el Rail es <nav> (navigation), el área principal es <main> (o lo que diga `mainAs`) y los paneles son <aside> con nombre (complementary). `skipLinkLabel` añade un enlace para saltar al contenido. En modo cajón el panel es role=dialog con aria-modal, recibe el foco al abrirse y lo devuelve al cerrarse; el rail, el área principal y el otro panel quedan inertes, y Escape o el velo lo cierran. La barra de título sigue operable para poder alternar los paneles. Escape no cierra el cajón si lo gestiona una capa por encima (un <dialog> o un popover abiertos). Sigue la dirección de escritura: en RTL la sidebar y su cajón quedan a la derecha. Antes de medirse (HTML de servidor, o antes de init()), un panel `auto` que no cabe no se muestra.",
    "examples": [
     {
      "title": "Aplicación con rail, sidebar e inspector",
@@ -462,7 +497,7 @@
    "html": [
     {
      "title": "Shell con barra de título, rail, sidebar redimensionable e inspector",
-     "code": "<div style=\"width:100%;height:360px\">\n  <div class=\"z-shell z-canvas z-root\" id=\"shell-demo\">\n    <div class=\"z-titlebar\">\n      <div class=\"z-titlebar__brand\">\n        <button type=\"button\" title=\"Toggle navigation\" aria-label=\"Toggle navigation\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-shell-toggle=\"sidebar\">\n          <z-icon name=\"bars-3\" size=\"16\"></z-icon>\n        </button>\n      </div>\n      <div class=\"z-titlebar__center\"></div>\n      <div class=\"z-titlebar__actions\">\n        <button type=\"button\" title=\"Toggle details panel\" aria-label=\"Toggle details panel\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-shell-toggle=\"inspector\">\n          <z-icon name=\"adjustments-horizontal\" size=\"16\"></z-icon>\n        </button>\n      </div>\n    </div>\n    <div class=\"z-shell__body\">\n      <div class=\"z-shell__rail\">\n        <nav class=\"z-rail z-liquid\" aria-label=\"Primary\">\n          <div class=\"z-rail__items\">\n            <button type=\"button\" class=\"z-rail__item\" aria-label=\"Home\" title=\"Home\" aria-current=\"page\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"20\"></z-icon>\n            </button>\n            <button type=\"button\" class=\"z-rail__item\" aria-label=\"Settings\" title=\"Settings\">\n              <z-icon name=\"gear\" size=\"20\"></z-icon>\n            </button>\n          </div>\n        </nav>\n      </div>\n      <aside class=\"z-liquid z-shell__side\" aria-label=\"Navigation\" data-side=\"left\">\n        <div class=\"z-shell__panel-body\">\n          <div class=\"z-sidebar\">\n            <div class=\"z-sidebar__sections\">\n              <section class=\"z-sidebar__section\" data-open=\"true\">\n                <div class=\"z-sidebar__head\">\n                  <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"shell-demo-projects\">\n                    <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n                    <span class=\"z-sidebar__title\">Projects</span>\n                    <span class=\"z-sidebar__count\">2</span>\n                  </button>\n                </div>\n                <div class=\"z-sidebar__body\" id=\"shell-demo-projects\">\n                  <nav aria-label=\"Projects\" class=\"z-navlist\">\n                    <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\" data-z-close>\n                      <span class=\"z-navlink__icon\">\n                        <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navlink__label\">Atlas</span>\n                    </button>\n                    <button type=\"button\" class=\"z-navlink\" data-z-close>\n                      <span class=\"z-navlink__icon\">\n                        <z-icon name=\"folder\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navlink__label\">Borealis</span>\n                    </button>\n                  </nav>\n                </div>\n              </section>\n            </div>\n          </div>\n        </div>\n        <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize Navigation\" aria-valuenow=\"224\" aria-valuemin=\"180\" aria-valuemax=\"360\" class=\"z-resize\" data-side=\"right\" data-default-size=\"224\"></div>\n      </aside>\n      <main class=\"z-shell__main z-liquid\">\n        <div class=\"z-shell__content\">\n          <div class=\"z-page\">\n            <div class=\"z-container\" data-width=\"content\">\n              <header class=\"z-pagehead\">\n                <div class=\"z-pagehead__row\">\n                  <div class=\"z-pagehead__text\">\n                    <h1 class=\"z-pagehead__title\">Overview</h1>\n                    <p class=\"z-pagehead__description\">Panels dock when the shell is wide enough and become drawers when it is not.</p>\n                  </div>\n                </div>\n              </header>\n            </div>\n          </div>\n        </div>\n      </main>\n      <aside class=\"z-liquid z-shell__inspector\" aria-label=\"Details\" data-side=\"right\">\n        <div class=\"z-shell__panel-body\">\n          <section class=\"z-sidepanel\">\n            <div class=\"z-sidepanel__head\">\n              <div class=\"z-sidepanel__titles\">\n                <div class=\"z-sidepanel__title\">Details</div>\n              </div>\n              <div class=\"z-sidepanel__actions\">\n                <button type=\"button\" title=\"Close details\" aria-label=\"Close details\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-close>\n                  <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n                </button>\n              </div>\n            </div>\n            <div class=\"z-sidepanel__body\" data-padded=\"true\">Atlas, updated two hours ago.</div>\n          </section>\n        </div>\n      </aside>\n    </div>\n  </div>\n</div>"
+     "code": "<div style=\"width:100%;height:360px\">\n  <div class=\"z-shell z-canvas z-root\" id=\"shell-demo\">\n    <a class=\"z-shell__skip\" href=\"#shell-demo-main\">Skip to content</a>\n    <header class=\"z-titlebar\">\n      <div class=\"z-titlebar__brand\">\n        <button type=\"button\" title=\"Toggle navigation\" aria-label=\"Toggle navigation\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-shell-toggle=\"sidebar\">\n          <z-icon name=\"bars-3\" size=\"16\"></z-icon>\n        </button>\n      </div>\n      <div class=\"z-titlebar__center\"></div>\n      <div class=\"z-titlebar__actions\">\n        <button type=\"button\" title=\"Toggle details panel\" aria-label=\"Toggle details panel\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-shell-toggle=\"inspector\">\n          <z-icon name=\"adjustments-horizontal\" size=\"16\"></z-icon>\n        </button>\n      </div>\n    </header>\n    <div class=\"z-shell__body\">\n      <div class=\"z-shell__rail\">\n        <nav class=\"z-rail z-liquid\" aria-label=\"Primary\">\n          <div class=\"z-rail__items\">\n            <button type=\"button\" class=\"z-rail__item\" aria-label=\"Home\" title=\"Home\" aria-current=\"page\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"20\"></z-icon>\n            </button>\n            <button type=\"button\" class=\"z-rail__item\" aria-label=\"Settings\" title=\"Settings\">\n              <z-icon name=\"gear\" size=\"20\"></z-icon>\n            </button>\n          </div>\n        </nav>\n      </div>\n      <aside class=\"z-liquid z-shell__side\" aria-label=\"Navigation\" data-side=\"left\">\n        <div class=\"z-shell__panel-body\">\n          <div class=\"z-sidebar\">\n            <div class=\"z-sidebar__sections\">\n              <section class=\"z-sidebar__section\" data-open=\"true\">\n                <div class=\"z-sidebar__head\">\n                  <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"shell-demo-projects\">\n                    <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n                    <span class=\"z-sidebar__title\">Projects</span>\n                    <span class=\"z-sidebar__count\">2</span>\n                  </button>\n                </div>\n                <div class=\"z-sidebar__body\" id=\"shell-demo-projects\">\n                  <nav aria-label=\"Projects\" class=\"z-navlist\">\n                    <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\" data-z-close>\n                      <span class=\"z-navlink__icon\">\n                        <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navlink__label\">Atlas</span>\n                    </button>\n                    <button type=\"button\" class=\"z-navlink\" data-z-close>\n                      <span class=\"z-navlink__icon\">\n                        <z-icon name=\"folder\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navlink__label\">Borealis</span>\n                    </button>\n                  </nav>\n                </div>\n              </section>\n            </div>\n          </div>\n        </div>\n        <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize Navigation\" aria-valuenow=\"224\" aria-valuemin=\"180\" aria-valuemax=\"360\" class=\"z-resize\" data-side=\"end\" data-default-size=\"224\"></div>\n      </aside>\n      <main class=\"z-shell__main z-liquid\" id=\"shell-demo-main\" tabindex=\"-1\">\n        <div class=\"z-shell__content\">\n          <div class=\"z-page\">\n            <div class=\"z-container\" data-width=\"content\">\n              <header class=\"z-pagehead\">\n                <div class=\"z-pagehead__row\">\n                  <div class=\"z-pagehead__text\">\n                    <h1 class=\"z-pagehead__title\">Overview</h1>\n                    <p class=\"z-pagehead__description\">Panels dock when the shell is wide enough and become drawers when it is not.</p>\n                  </div>\n                </div>\n              </header>\n            </div>\n          </div>\n        </div>\n      </main>\n      <aside class=\"z-liquid z-shell__inspector\" aria-label=\"Details\" data-side=\"right\">\n        <div class=\"z-shell__panel-body\">\n          <section class=\"z-sidepanel\">\n            <div class=\"z-sidepanel__head\">\n              <div class=\"z-sidepanel__titles\">\n                <div class=\"z-sidepanel__title\">Details</div>\n              </div>\n              <div class=\"z-sidepanel__actions\">\n                <button type=\"button\" title=\"Close details\" aria-label=\"Close details\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-z-close>\n                  <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n                </button>\n              </div>\n            </div>\n            <div class=\"z-sidepanel__body\" data-padded=\"true\">Atlas, updated two hours ago.</div>\n          </section>\n        </div>\n      </aside>\n    </div>\n  </div>\n</div>"
     }
    ],
    "origin": "AppShell de zutool.",
@@ -651,7 +686,7 @@
     "z-split",
     "z-pane"
    ],
-   "a11y": "Cada divisor es role=separator enfocable; las flechas lo mueven un 2 %.",
+   "a11y": "Patrón «window splitter» de WAI-ARIA: cada divisor es role=separator enfocable con aria-orientation, aria-controls (el panel que tiene delante) y aria-valuenow, aria-valuemin y aria-valuemax en porcentaje. Las flechas lo mueven un 2 % hacia donde apuntan (también en RTL); Inicio y Fin lo llevan a su mínimo y a su máximo. Doble clic reparte a partes iguales los dos paneles del divisor: es la alternativa de un solo gesto al arrastre (WCAG 2.5.7). Con puntero grueso la zona de agarre crece hasta `--z-touch-target`.",
    "examples": [
     {
      "title": "Editor y vista previa",
@@ -681,7 +716,7 @@
      "name": "tabs",
      "type": "WorkTab[]",
      "required": true,
-     "description": "{ id, title, leading?, closable? }"
+     "description": "{ id, title, leading?, closable?, controls? }. `controls` es el id del panel de la pestaña (aria-controls)."
     },
     {
      "name": "activeId",
@@ -725,7 +760,7 @@
    "classes": [
     "z-tabstrip"
    ],
-   "a11y": "role=tablist; flechas, Inicio y Fin cambian de pestaña. La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
+   "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
    "examples": [
     {
      "title": "Pestañas con alta",
@@ -767,6 +802,16 @@
     {
      "name": "windowControls",
      "type": "ReactNode"
+    },
+    {
+     "name": "as",
+     "type": "enum",
+     "values": [
+      "header",
+      "div"
+     ],
+     "default": "header",
+     "description": "`header` es la cabecera de la aplicación (región banner). `div` para una barra que no lo es: un Shell anidado o una segunda ventana en la misma página."
     }
    ],
    "tokens": [
@@ -777,6 +822,7 @@
    "classes": [
     "z-titlebar"
    ],
+   "a11y": "Es un <header>: fuera de <main>, <section> o <article> el navegador lo expone como región banner, y solo debe haber una por página (`as=\"div\"` en las demás).",
    "examples": [
     {
      "title": "Con pestañas",

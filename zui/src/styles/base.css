@@ -22,4 +22,58 @@
       animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important;
     }
   }
+
+  /*
+    Modo de colores forzados (Windows High Contrast). El navegador sustituye los colores y quita sombras y fondos de
+    imagen: el foco dibujado con box-shadow y los estados que solo cambian el fondo dejarían de verse. Aquí se
+    devuelven con colores del sistema. `!important`: esta capa va antes que los grupos y la preferencia manda.
+  */
+  @media (forced-colors: active) {
+    .z-root :focus-visible { outline: 2px solid Highlight !important; outline-offset: 2px !important; }
+    /* Dentro de un control compuesto el anillo va por dentro para no recortarse. */
+    .z-root :is(.z-input__control, .z-listbox__option, .z-menu__item, .z-palette__item, .z-tree__item, .z-calendar__day, .z-table__sort):focus-visible { outline-offset: -2px !important; }
+    .z-root :is(.z-input, .z-select):focus-within { outline: 2px solid Highlight !important; outline-offset: 1px !important; }
+    .z-liquid, .z-solid, .z-card, .z-btn, .z-input, .z-select, .z-textarea, .z-toggle, .z-segmented, .z-chip, .z-badge, .z-alert, .z-callout, .z-toast, .z-tooltip, .z-kbd, .z-otp__cell, .z-upload, .z-check__box, .z-radio__dot, .z-switch__track, .z-slider__track, .z-progress__track, .z-meter__track, .z-table-wrap, .z-code {
+      border: 1px solid CanvasText !important;
+    }
+    /* Seleccionado, marcado, activo o resaltado: par de colores de selección del sistema. */
+    .z-root :is(
+      .z-tabs__tab[data-state="active"], .z-segmented__item[data-state="on"], .z-toggle[data-state="on"], .z-btn[data-active],
+      .z-listbox__option[data-highlighted], .z-menu__item[data-highlighted], .z-palette__item[aria-selected="true"],
+      .z-calendar__day[data-selected], .z-pagination__btn[aria-current="page"], .z-navlink[data-active],
+      .z-chip[data-selected], .z-tree__item[aria-selected="true"] > .z-tree__row, .z-table tr[data-selected],
+      .z-stepper__step[data-state="current"] .z-stepper__marker, .z-check__box:is([data-state="checked"], [data-state="indeterminate"]),
+      .z-switch__track[data-state="checked"]
+    ) {
+      forced-color-adjust: none;
+      background: Highlight !important;
+      color: HighlightText !important;
+      border-color: Highlight !important;
+    }
+    .z-root :is(.z-listbox__option[data-state="checked"], .z-calendar__cell[data-range] .z-calendar__day, .z-calendar__day[data-today]) { outline: 1px solid CanvasText; outline-offset: -3px; }
+    /* Rellenos e indicadores que solo existían como fondo. */
+    .z-root :is(.z-progress__fill, .z-meter__fill, .z-slider__range, .z-radio__mark, .z-toast__dot, .z-badge__dot, .z-avatar__status) { forced-color-adjust: none; background: Highlight !important; }
+    .z-root :is(.z-slider__thumb, .z-switch__thumb) { forced-color-adjust: none; background: ButtonText !important; border: 1px solid Canvas !important; }
+    .z-root .z-switch__track[data-state="checked"] .z-switch__thumb { background: HighlightText !important; }
+    .z-root :is(.z-rating__star[data-filled], .z-rating__layer--filled) { color: Highlight !important; }
+    .z-root :is(.z-spinner, .z-btn__spinner, .z-input__spinner) { border-color: CanvasText !important; border-top-color: Highlight !important; }
+    .z-root .z-skeleton { background: GrayText !important; animation: none !important; }
+    /* Deshabilitado. */
+    .z-root :is(:disabled, [aria-disabled="true"], [data-disabled]) { color: GrayText !important; border-color: GrayText !important; opacity: 1 !important; }
+    /* Inválido: el borde rojo desaparece; queda un borde doble. */
+    .z-root :is([data-invalid], [aria-invalid="true"]) { border-style: double !important; border-width: 3px !important; }
+  }
+  /* La persona pide más contraste: cristal a superficie sólida, bordes fuertes, texto atenuado a pleno y foco más grueso. */
+  @media (prefers-contrast: more) {
+    .z-root :focus-visible { outline-width: 3px; }
+    .z-liquid {
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      background: var(--z-surface-solid) !important;
+      border-color: var(--z-line-strong) !important;
+    }
+    .z-root :is(.z-btn, .z-input, .z-select, .z-textarea, .z-toggle, .z-segmented, .z-chip, .z-card, .z-solid, .z-check__box, .z-radio__dot, .z-switch__track, .z-otp__cell, .z-upload, .z-table-wrap, .z-kbd, .z-tooltip, .z-alert, .z-callout) { border-color: var(--z-fg-muted) !important; }
+    .z-root :is(.z-field__hint, .z-field__optional, .z-check__description, .z-card__subtitle, .z-panel__description, .z-modal__description, .z-drawer__description, .z-toast__description, .z-stat__hint, .z-empty__description, .z-menu__shortcut, .z-navlink, .z-tabs__tab, .z-breadcrumb__link, .z-upload__hint, .z-stepper__description) { color: var(--z-fg) !important; }
+    .z-root :is(:disabled, [aria-disabled="true"], [data-disabled]) { opacity: 0.7 !important; }
+  }
 }

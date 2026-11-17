@@ -202,7 +202,7 @@
     "z-popover",
     "z-calendar"
   ],
-  "a11y": "Botón que abre un diálogo no modal (Popover de Radix) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
+  "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
   "behavior": "dom",
   "examples": [
     {

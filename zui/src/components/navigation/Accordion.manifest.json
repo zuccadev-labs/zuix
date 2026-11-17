@@ -80,14 +80,14 @@
     "z-accordion__content",
     "z-accordion__body"
   ],
-  "a11y": "Radix Accordion: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
+  "a11y": "Patrón APG «accordion»: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
   "examples": [
     {
       "title": "Preguntas frecuentes",
       "code": "<Accordion\n  defaultValue={[\"billing\"]}\n  items={[\n    { value: \"billing\", title: \"How does billing work?\", content: <p>You are charged monthly.</p> },\n    { value: \"cancel\", title: \"Can I cancel anytime?\", content: <p>Yes, from your account settings.</p> },\n  ]}\n/>"
     }
   ],
-  "origin": "Nuevo; accesibilidad de Radix Accordion.",
+  "origin": "Nuevo; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

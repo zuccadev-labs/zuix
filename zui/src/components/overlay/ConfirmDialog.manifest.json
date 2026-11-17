@@ -124,17 +124,16 @@
     "z-confirm",
     "z-confirm__icon",
     "z-modal",
-    "z-dialog-btn",
-    "z-overlay-scrim"
+    "z-dialog-btn"
   ],
-  "a11y": "Radix AlertDialog: role=alertdialog, el foco entra en Cancelar, Escape cancela y un clic fuera no cierra.",
+  "a11y": "`<dialog>` modal con role=alertdialog (patrón APG), el foco entra en Cancelar, Escape cancela y un clic fuera no cierra.",
   "examples": [
     {
       "title": "Borrado destructivo",
       "code": "<ConfirmDialog\n  trigger={<button type=\"button\">Delete project</button>}\n  intent=\"danger\"\n  title=\"Delete project?\"\n  description=\"This cannot be undone.\"\n  confirmLabel=\"Delete\"\n  onConfirm={() => removeProject()}\n/>"
     }
   ],
-  "origin": "ConfirmDialog y `.liquid.confirm` de zutool; accesibilidad de Radix AlertDialog.",
+  "origin": "ConfirmDialog y `.liquid.confirm` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

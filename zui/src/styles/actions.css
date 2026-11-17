@@ -33,7 +33,7 @@
       transform var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
-    .z-btn:hover:not(:disabled) {
+    .z-btn:hover:not(:disabled, [aria-disabled="true"]) {
       background: var(--z-btn-bg-hover);
     }
   }
@@ -41,10 +41,12 @@
     outline: none;
     box-shadow: var(--z-focus-ring);
   }
-  .z-btn:active:not(:disabled) {
+  .z-btn:active:not(:disabled, [aria-disabled="true"]) {
     transform: translateY(1px);
   }
-  .z-btn:disabled {
+  /* `aria-disabled`: en carga el botón no actúa pero conserva el foco del teclado. */
+  .z-btn:disabled,
+  .z-btn[aria-disabled="true"] {
     opacity: 0.5;
     cursor: not-allowed;
   }
@@ -87,7 +89,7 @@
   .z-btn--danger {
     --z-btn-bg: var(--z-danger-soft);
     --z-btn-bg-hover: color-mix(in srgb, var(--z-danger) 30%, transparent);
-    --z-btn-fg: var(--z-danger);
+    --z-btn-fg: var(--z-danger-text);
     --z-btn-line: transparent;
   }
   .z-btn--icon {
@@ -101,7 +103,7 @@
   .z-btn--icon[data-active] {
     --z-btn-bg: var(--z-accent-soft);
     --z-btn-bg-hover: var(--z-accent-soft);
-    --z-btn-fg: var(--z-accent);
+    --z-btn-fg: var(--z-accent-text);
   }
   .z-btn__spinner {
     width: 1em;
@@ -123,7 +125,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--z-space-1);
-    color: var(--z-accent);
+    color: var(--z-accent-text);
     font-weight: var(--z-weight-medium);
     text-decoration: underline;
     text-decoration-color: var(--z-accent-ring);
@@ -135,8 +137,9 @@
       text-decoration-color var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
+    /* El hover se distingue por el subrayado pleno, no por un color con menos contraste. */
     .z-link:hover {
-      color: var(--z-accent-hover);
+      color: var(--z-accent-text);
       text-decoration-color: currentColor;
     }
   }
@@ -145,7 +148,7 @@
     box-shadow: var(--z-focus-ring);
   }
   .z-link:active {
-    color: var(--z-accent);
+    color: var(--z-accent-text);
   }
   .z-link--subtle {
     color: var(--z-fg-muted);
@@ -206,7 +209,7 @@
   .z-toggle[data-state="on"] {
     background: var(--z-accent-soft);
     border-color: var(--z-accent-ring);
-    color: var(--z-accent);
+    color: var(--z-accent-text);
   }
   .z-toggle:disabled {
     opacity: 0.5;
@@ -309,7 +312,7 @@
   @media (pointer: coarse) {
     .z-segmented__item { position: relative; }
     .z-segmented__item::before {
-      content: ""; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+      content: ""; position: absolute; inset-inline: 0; top: 50%; transform: translateY(-50%);
       height: max(100%, var(--z-touch-target, 0px));
     }
   }

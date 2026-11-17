@@ -14,7 +14,11 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowDown } from "@zuccadev-labs/zuix-zicon/icons/arrow-down";
 import { arrowUp } from "@zuccadev-labs/zuix-zicon/icons/arrow-up";
+import { compare, parseNumber } from "../core/compare";
+import { clampPage, pageRange, pageTotal } from "../core/pagination";
+import { score } from "../core/search";
 import { closeDialog, openDialog } from "./index";
+import { logicalKey, pressedOnBackdrop, setMarkup, type Listen } from "./shared";
 
 registerIcons([arrowUp, arrowDown]);
 
@@ -30,17 +34,6 @@ const isDisabled = (el: Element) => el.getAttribute("aria-disabled") === "true" 
 const PALETTE = "dialog.z-palette";
 let paletteId = 0;
 const order = new WeakMap<Element, number>();
-
-// Puntuación difusa mínima, la misma que el binding de React: prefijo > contiene > subsecuencia.
-function score(query: string, text: string): number {
-  const q = query.toLowerCase();
-  const t = text.toLowerCase();
-  if (t.startsWith(q)) return 3;
-  if (t.includes(q)) return 2;
-  let qi = 0;
-  for (const ch of t) if (ch === q[qi]) qi += 1;
-  return qi === q.length ? 1 : 0;
-}
 
 const paletteInput = (dialog: Element) => dialog.querySelector<HTMLInputElement>(".z-palette__input");
 const paletteItems = (dialog: Element) => [...dialog.querySelectorAll<HTMLElement>(".z-palette__item")];
@@ -171,6 +164,8 @@ function matchesHotkey(event: KeyboardEvent, spec: string): boolean {
 }
 
 function onHotkey(event: KeyboardEvent): boolean {
+  // El autocompletado del navegador emite `keydown` sin `key`.
+  if (typeof event.key !== "string") return false;
   for (const el of document.querySelectorAll<HTMLElement>("[data-z-hotkey]")) {
     if (!(el.dataset.zHotkey ?? "").split(/\s+/).some((spec) => spec && matchesHotkey(event, spec))) continue;
     if (isDisabled(el)) continue;
@@ -247,7 +242,8 @@ function onTreeKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): 
   const at = rows.indexOf(item);
   const hasChildren = treeGroup(item) !== null;
   const open = item.getAttribute("aria-expanded") === "true";
-  switch (event.key) {
+  // En RTL la flecha que apunta hacia el final de la línea (izquierda) expande.
+  switch (logicalKey(event.key, tree)) {
     case "ArrowDown":
       focusTreeItem(tree, rows[at + 1]);
       break;
@@ -303,23 +299,14 @@ function cellValue(cell: HTMLElement | undefined, type: string | undefined): Sor
   const raw = (cell?.dataset.sortValue ?? cell?.textContent ?? "").trim();
   if (!raw) return null;
   if (type === "number") {
-    const n = Number(raw.replace(/[^\d.eE+-]/g, ""));
-    return Number.isNaN(n) ? null : n;
+    // Sin ninguna cifra («n/d», «—») cuenta como vacío, no como cero.
+    return parseNumber(raw);
   }
   if (type === "date") {
     const t = Date.parse(raw);
     return Number.isNaN(t) ? null : t;
   }
   return raw;
-}
-
-// Los vacíos van al final; el texto se compara sin distinguir mayúsculas y con números naturales.
-function compare(a: SortValue, b: SortValue): number {
-  if (a === null && b === null) return 0;
-  if (a === null) return 1;
-  if (b === null) return -1;
-  if (typeof a === "number" && typeof b === "number") return a - b;
-  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
 }
 
 const sortKey = (th: HTMLTableCellElement) => th.dataset.key ?? String(th.cellIndex);
@@ -340,7 +327,11 @@ export function sortTable(th: HTMLTableCellElement, direction: SortDirection | n
     const svg = button.querySelector("svg.z-icon");
     if (element) {
       if (element.getAttribute("name") !== name) element.setAttribute("name", name);
-    } else if (svg && svg.getAttribute("data-icon") !== name) svg.outerHTML = iconSvg(name, { size: svg.getAttribute("width") ?? 12 });
+    } else if (svg && svg.getAttribute("data-icon") !== name) {
+      const holder = document.createElement("span");
+      setMarkup(holder, iconSvg(name, { size: svg.getAttribute("width") ?? 12 }));
+      svg.replaceWith(...holder.childNodes);
+    }
   }
   const body = table.tBodies[0];
   if (body && !table.hasAttribute("data-manual-sort")) {
@@ -362,30 +353,19 @@ export function sortTable(th: HTMLTableCellElement, direction: SortDirection | n
 
 /* ---------- Paginación: .z-pagination ---------- */
 
-// Rango con huecos, igual que el binding de React: 1 … 4 5 6 … 20. Un hueco es 0.
-function pageRange(page: number, count: number, siblings: number): number[] {
-  const slots = siblings * 2 + 5;
-  if (count <= slots) return Array.from({ length: count }, (_, i) => i + 1);
-  const left = Math.max(page - siblings, 1);
-  const right = Math.min(page + siblings, count);
-  const edge = siblings * 2 + 3;
-  if (!(left > 2)) return [...Array.from({ length: edge }, (_, i) => i + 1), 0, count];
-  if (!(right < count - 1)) return [1, 0, ...Array.from({ length: edge }, (_, i) => count - edge + 1 + i)];
-  return [1, 0, ...Array.from({ length: right - left + 1 }, (_, i) => left + i), 0, count];
-}
-
 function pagination(nav: HTMLElement) {
   const buttons = [...nav.querySelectorAll<HTMLButtonElement>(":scope > .z-pagination__btn")];
   const pages = buttons.slice(1, -1);
   const numbers = pages.map((button) => Number(text(button)));
-  const count = Math.max(1, Math.floor(Number(nav.dataset.pageCount) || Math.max(1, ...numbers)));
+  const count = pageTotal(Number(nav.dataset.pageCount) || Math.max(1, ...numbers.filter(Number.isFinite)));
   const current = Number(text(nav.querySelector(':scope > [aria-current="page"]'))) || 1;
-  return { previous: buttons[0], next: buttons[buttons.length - 1], pages, count, current: Math.min(Math.max(1, current), count) };
+  return { previous: buttons[0], next: buttons[buttons.length - 1], pages, count, current: clampPage(current, count) };
 }
 
 function setPageQuiet(nav: HTMLElement, page: number): boolean {
   const { previous, next, pages, count, current } = pagination(nav);
-  const target = Math.min(Math.max(1, Math.round(page)), count);
+  // Una página que no es un número (NaN) deja la actual.
+  const target = clampPage(page, count, current);
   if (!previous || !next || previous === next) return false;
   const hadFocus = nav.contains(document.activeElement);
   const wanted = pageRange(target, count, Math.max(0, Number(nav.dataset.siblings ?? 1) || 0));
@@ -441,9 +421,7 @@ function onClick(event: MouseEvent): void {
 
   // Clic en el velo de la paleta: el objetivo es el propio diálogo.
   if (target instanceof HTMLDialogElement && target.matches(PALETTE)) {
-    const r = target.getBoundingClientRect();
-    const outside = event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom;
-    if (outside && !target.hasAttribute("data-z-static")) closeDialog(target);
+    if (!target.hasAttribute("data-z-static") && pressedOnBackdrop(target, event)) closeDialog(target);
     return;
   }
   const command = target.closest<HTMLElement>(`${PALETTE} .z-palette__item`);
@@ -476,7 +454,7 @@ function onClick(event: MouseEvent): void {
 }
 
 function onKeydown(event: KeyboardEvent): void {
-  if (event.defaultPrevented) return;
+  if (event.defaultPrevented || typeof event.key !== "string") return;
   if (onHotkey(event)) return;
   const target = event.target;
   if (!(target instanceof Element)) return;
@@ -487,23 +465,23 @@ function onKeydown(event: KeyboardEvent): void {
   if (tree) onTreeKey(tree, target as HTMLElement, event);
 }
 
-export function setup(): void {
-  document.addEventListener("click", onClick);
-  document.addEventListener("keydown", onKeydown);
-  document.addEventListener("input", (event) => {
+export function setup(on: Listen): void {
+  on(document, "click", onClick);
+  on(document, "keydown", onKeydown);
+  on(document, "input", (event) => {
     const palette = (event.target as Element).closest?.<HTMLElement>(PALETTE);
     if (palette && (event.target as Element).matches(".z-palette__input")) filterPalette(palette);
   });
-  document.addEventListener("pointermove", (event) => {
+  on(document, "pointermove", (event) => {
     const item = (event.target as Element).closest?.<HTMLElement>(`${PALETTE} .z-palette__item`);
     if (item && item.getAttribute("aria-selected") !== "true") setPaletteActive(item.closest<HTMLElement>(PALETTE)!, paletteVisible(item.closest(PALETTE)!).indexOf(item), false);
   });
   // Abierta con data-z-open: empieza limpia igual que con openPalette().
-  document.addEventListener("z:open", (event) => {
+  on(document, "z:open", (event) => {
     if ((event.target as Element).matches?.(PALETTE)) resetPalette(event.target as HTMLElement);
   });
   // Cierre pedido por el navegador (Escape, gesto atrás): pasa por la animación de salida.
-  document.addEventListener("cancel", (event) => {
+  on(document, "cancel", (event) => {
     const dialog = event.target as HTMLDialogElement;
     if (!dialog.matches?.(PALETTE)) return;
     event.preventDefault();

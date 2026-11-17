@@ -37,7 +37,16 @@ export function Avatar({ src, name, alt, size = "md", shape = "circle", status, 
   return (
     <span {...rest} className={cx("z-avatar", className)} data-size={size} data-shape={shape} role={showImage ? undefined : "img"} aria-label={showImage ? undefined : label} aria-hidden={!showImage && !label ? true : undefined}>
       {showImage ? (
-        <img className="z-avatar__image" src={src} alt={label ?? ""} onError={() => setFailed(src ?? null)} />
+        <img
+          className="z-avatar__image"
+          src={src}
+          alt={label ?? ""}
+          onError={() => setFailed(src ?? null)}
+          // Renderizada en servidor, la imagen puede haber fallado antes de hidratar: `error` ya no llegará.
+          ref={(node) => {
+            if (node?.complete && node.naturalWidth === 0 && node.getAttribute("src")) setFailed(src ?? null);
+          }}
+        />
       ) : name ? (
         <span className="z-avatar__initials" aria-hidden="true">
           {initials(name)}

@@ -65,18 +65,21 @@ export interface PageHeaderProps {
   actions?: ReactNode;
   /** Migas u otro elemento encima del título. */
   breadcrumb?: ReactNode;
+  /** Nivel del encabezado del título. Por defecto 1; una página dentro de otra (un Shell anidado) usa 2 o más. */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   className?: string;
 }
 
 /** Cabecera de página: migas, título, descripción y acciones. */
-export function PageHeader({ title, description, eyebrow, actions, breadcrumb, className }: PageHeaderProps) {
+export function PageHeader({ title, description, eyebrow, actions, breadcrumb, headingLevel = 1, className }: PageHeaderProps) {
+  const Heading = `h${headingLevel}` as "h1";
   return (
     <header className={cx("z-pagehead", className)}>
       {breadcrumb}
       <div className="z-pagehead__row">
         <div className="z-pagehead__text">
           {eyebrow ? <div className="z-pagehead__eyebrow">{eyebrow}</div> : null}
-          <h1 className="z-pagehead__title">{title}</h1>
+          <Heading className="z-pagehead__title">{title}</Heading>
           {description ? <p className="z-pagehead__description">{description}</p> : null}
         </div>
         {actions ? <div className="z-pagehead__actions">{actions}</div> : null}
@@ -109,17 +112,20 @@ export interface PageSectionProps {
   description?: ReactNode;
   actions?: ReactNode;
   children: ReactNode;
+  /** Nivel del encabezado del título. Por defecto 2. */
+  headingLevel?: 2 | 3 | 4 | 5 | 6;
   className?: string;
 }
 
 /** Sección de página con título opcional. */
-export function PageSection({ title, description, actions, children, className }: PageSectionProps) {
+export function PageSection({ title, description, actions, children, headingLevel = 2, className }: PageSectionProps) {
+  const Heading = `h${headingLevel}` as "h2";
   return (
     <section className={cx("z-section", className)}>
       {title || actions ? (
         <div className="z-section__head">
           <div>
-            {title ? <h2 className="z-section__title">{title}</h2> : null}
+            {title ? <Heading className="z-section__title">{title}</Heading> : null}
             {description ? <p className="z-section__description">{description}</p> : null}
           </div>
           {actions}

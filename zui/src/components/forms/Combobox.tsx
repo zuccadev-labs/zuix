@@ -1,9 +1,12 @@
 "use client";
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FocusEvent, type KeyboardEvent, type Ref } from "react";
-import { Popover as RadixPopover } from "radix-ui";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { fold } from "../../core/search";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
+import { useLayer, usePresence } from "../../primitives/hooks";
+import { Popup, Portal, rectOf } from "../../primitives/popup";
+import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
 
 export interface ComboboxOption {
@@ -54,7 +57,6 @@ export interface ComboboxProps {
   ref?: Ref<HTMLInputElement>;
 }
 
-const fold = (text: string) => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const matches = (option: ComboboxOption, text: string) => fold(option.label).includes(fold(text.trim()));
 
 /** Campo con lista filtrable (patrón ARIA combobox): el foco se queda en el campo y la opción activa va por aria-activedescendant. */
@@ -97,22 +99,20 @@ export function Combobox({
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   // Última opción elegida: conserva la etiqueta si las opciones cambian (carga asíncrona).
-  const chosen = useRef<ComboboxOption | null>(null);
+  const [chosen, setChosen] = useState<ComboboxOption | null>(null);
   const anchor = useRef<HTMLSpanElement | null>(null);
   const input = useRef<HTMLInputElement | null>(null);
   const list = useRef<HTMLDivElement | null>(null);
+  const popup = useRef<HTMLDivElement | null>(null);
+  const present = usePresence(open, popup);
 
-  const selected = current === null ? null : (options.find((option) => option.value === current) ?? (chosen.current?.value === current ? chosen.current : null));
+  const selected = current === null ? null : (options.find((option) => option.value === current) ?? (chosen?.value === current ? chosen : null));
   const shownText = text ?? selected?.label ?? "";
   const test = typeof filter === "function" ? filter : matches;
   const visible = text !== null && text.trim() !== "" && filter !== false ? options.filter((option) => test(option, text)) : options;
   const activeOption = open && active >= 0 && active < visible.length ? visible[active] : undefined;
 
-  const setRef = (element: HTMLInputElement | null) => {
-    input.current = element;
-    if (typeof ref === "function") ref(element);
-    else if (ref) ref.current = element;
-  };
+  const setRef = useMergedRef(input, ref);
 
   // Mantiene visible la opción activa al moverse con el teclado.
   useEffect(() => {
@@ -136,7 +136,7 @@ export function Combobox({
   };
 
   const commit = (option: ComboboxOption | null) => {
-    chosen.current = option;
+    setChosen(option);
     setInner(option?.value ?? null);
     if ((option?.value ?? null) !== current) onValueChange?.(option?.value ?? null, option);
   };
@@ -220,9 +220,14 @@ export function Combobox({
 
   const status = visible.length === 0 ? (loading ? loadingText : emptyText) : null;
 
+  // El foco no sale del campo: Escape lo atiende el propio campo; una pulsación fuera de él y de la lista la cierra.
+  useLayer(open, {
+    contains: (target) => (anchor.current?.contains(target) ?? false) || (popup.current?.contains(target) ?? false),
+    onPointerOutside: close,
+  });
+
   return (
-    <RadixPopover.Root open={open} onOpenChange={(next) => (next ? show("selected") : close())}>
-      <RadixPopover.Anchor asChild>
+    <>
         <span ref={anchor} className={cx("z-input", "z-combobox", className)} data-size={size} data-state={open ? "open" : "closed"} data-invalid={isInvalid || undefined} data-disabled={disabled || undefined}>
           {selected?.icon && text === null ? (
             <span className="z-input__icon">
@@ -282,23 +287,21 @@ export function Combobox({
             <Icon name="chevron-down" size={ICON_SIZE[size]} />
           </button>
         </span>
-      </RadixPopover.Anchor>
-      <RadixPopover.Portal>
-        <RadixPopover.Content
+      {present ? (
+      <Portal anchor={anchor}>
+        <Popup
+          ref={popup}
+          open={open}
+          anchorRect={() => rectOf(anchor.current)}
+          watch={anchor}
+          anchorWidth
+          placement="bottom-start"
+          gap={4}
           className={cx("z-liquid z-listbox", popupClassName)}
           data-size={size}
           role="presentation"
-          side="bottom"
-          align="start"
-          sideOffset={4}
-          collisionPadding={8}
-          // El foco no sale del campo: ni al abrir ni al cerrar.
-          onOpenAutoFocus={(event) => event.preventDefault()}
-          onCloseAutoFocus={(event) => event.preventDefault()}
+          // El foco no sale del campo: pulsar en la lista no se lo quita.
           onMouseDown={(event) => event.preventDefault()}
-          onInteractOutside={(event) => {
-            if (anchor.current?.contains(event.target as Node)) event.preventDefault();
-          }}
         >
           <div ref={list} id={listId} role="listbox" className="z-listbox__viewport" aria-label={ariaLabel} aria-labelledby={ariaLabelledBy} aria-busy={loading || undefined}>
             {visible.map((option, index) => (
@@ -333,8 +336,9 @@ export function Combobox({
               {status}
             </div>
           ) : null}
-        </RadixPopover.Content>
-      </RadixPopover.Portal>
-    </RadixPopover.Root>
+        </Popup>
+      </Portal>
+      ) : null}
+    </>
   );
 }

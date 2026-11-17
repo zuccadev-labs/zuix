@@ -92,7 +92,7 @@
   "classes": [
     "z-slider"
   ],
-  "a11y": "Radix Slider: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
+  "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
   "behavior": "dom",
   "examples": [
     {
@@ -115,5 +115,5 @@
       "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
     }
   ],
-  "origin": "Nuevo, sobre Slider de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

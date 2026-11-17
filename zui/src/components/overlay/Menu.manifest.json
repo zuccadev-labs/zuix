@@ -111,14 +111,14 @@
     "z-menu__label",
     "z-menu__chevron"
   ],
-  "a11y": "React: Radix DropdownMenu, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
+  "a11y": "React: menú propio (patrón APG «menu button»), con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
   "examples": [
     {
       "title": "Acciones de una fila",
       "code": "<Menu\n  label=\"Project actions\"\n  trigger={<button type=\"button\">Actions</button>}\n  items={[\n    { type: \"label\", label: \"Project\" },\n    { id: \"rename\", label: \"Rename\", icon: \"pencil\", shortcut: \"F2\", onSelect: () => rename() },\n    { id: \"duplicate\", label: \"Duplicate\", icon: \"copy\", onSelect: () => duplicate() },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", icon: \"trash\", danger: true, onSelect: () => remove() },\n  ]}\n/>"
     }
   ],
-  "origin": "Menu y `.ctx-menu` de zutool; accesibilidad de Radix DropdownMenu.",
+  "origin": "Menu y `.ctx-menu` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

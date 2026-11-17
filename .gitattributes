@@ -1,0 +1,37 @@
+# Finales de línea: el repositorio guarda LF y la copia de trabajo también, en cualquier sistema.
+# Las herramientas generan con LF y CI comprueba con `git diff --exit-code` que lo generado está al día;
+# con CRLF en Windows esa comprobación fallaría sin que nada hubiera cambiado.
+* text=auto eol=lf
+
+# Binarios: sin conversión ni diff de texto.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.tgz binary
+
+# Generados que se versionan (no se editan a mano, ver AGENTS.md): GitHub los pliega en los diffs y no cuentan
+# en las estadísticas de lenguaje. Los regenera `pnpm check`.
+pnpm-lock.yaml linguist-generated=true
+zicon/src/icons/** linguist-generated=true
+zicon/src/names.ts linguist-generated=true
+zicon/src/all.ts linguist-generated=true
+zicon/icons.json linguist-generated=true
+zicon/sprite.svg linguist-generated=true
+zicon/manifest.json linguist-generated=true
+zui/manifest.json linguist-generated=true
+zui/html.json linguist-generated=true
+zout/manifest.json linguist-generated=true
+zout/html.json linguist-generated=true
+examples/html/index.html linguist-generated=true
+zudocs/static/llms.txt linguist-generated=true
+
+# Fuente de los iconos (SVG de Dazicon): datos, no código.
+zicon/svg/** linguist-vendored=true
+
+# La documentación cuenta como contenido del repositorio.
+docs/** linguist-documentation=true

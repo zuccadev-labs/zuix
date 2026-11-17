@@ -82,7 +82,7 @@
   "classes": [
     "z-check"
   ],
-  "a11y": "Radix Checkbox: role checkbox, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
+  "a11y": "Patrón APG «checkbox»: botón con role checkbox y un `input type=checkbox` oculto para formularios, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
   "examples": [
     {
       "title": "Con descripción",
@@ -93,5 +93,5 @@
       "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
     }
   ],
-  "origin": "Nuevo, sobre Checkbox de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

@@ -1,31 +1,33 @@
 // Crea un documento a partir de una plantilla de templates/, en el área indicada y con el siguiente prefijo numérico.
+//   zudocs new [--config <ruta>] <tipo> <area> "<título>" ["<descripción>"]
 //   pnpm --filter @zuccadev-labs/zuix-zudocs new -- <tipo> <area> "<título>" ["<descripción>"]
-//   zudocs new --config <ruta> <tipo> <area> "<título>" ["<descripción>"]      en otro proyecto
-import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadZudocs, parseArgs, templateDir as root } from "./config.mjs";
 
-const args = parseArgs();
-const ctx = loadZudocs(args);
-const { site } = ctx;
+const fail = (message, usage = "") => { process.stderr.write(`✗ ${message}${usage}\n`); process.exit(1); };
+let args, ctx;
+try { args = parseArgs(); ctx = loadZudocs(args); } catch (e) { fail(e.message); }
 const templates = join(root, "templates");
 const types = readdirSync(templates).filter((f) => f.endsWith(".md")).map((f) => f.slice(0, -3)).sort();
-const areas = site.docs.areas.map((a) => a.id);
-const [type, area, title, description] = args.rest;
+const areas = ctx.site.docs.areas.map((a) => a.id);
+const usage = `\n\nUso: zudocs new [--config <ruta>] <tipo> <area> "<título>" ["<descripción>"]\n  tipos: ${types.join(", ")}\n  áreas: ${areas.join(", ")}`;
+const [type, area, rawTitle, rawDescription, ...extra] = args.rest;
+// Una línea: un salto dentro del título o la descripción rompería el front matter o el encabezado.
+const oneLine = (s) => s?.replace(/\s+/g, " ").trim();
+const title = oneLine(rawTitle);
+const description = oneLine(rawDescription);
 
-const fail = (message) => {
-  console.error(`${message}\n\nUso: pnpm --filter @zuccadev-labs/zuix-zudocs new -- <tipo> <area> "<título>" ["<descripción>"]\n  tipos: ${types.join(", ")}\n  áreas: ${areas.join(", ")}`);
-  process.exit(1);
-};
-if (!type || !area || !title) fail("Faltan argumentos.");
-if (!types.includes(type)) fail(`Tipo desconocido: "${type}".`);
-if (!areas.includes(area)) fail(`El área "${area}" no está declarada en ${ctx.rel(ctx.configPath)}.`);
+if (!type || !area || !title) fail("Faltan argumentos.", usage);
+if (extra.length) fail(`Sobran argumentos: ${extra.join(" ")}. El título y la descripción van entre comillas.`, usage);
+if (!types.includes(type)) fail(`Tipo desconocido: "${type}".`, usage);
+if (!areas.includes(area)) fail(`El área "${area}" no está declarada en ${ctx.rel(ctx.configPath)}.`, usage);
 
 const dir = join(ctx.docsDir, area);
-if (!existsSync(dir)) fail(`No existe la carpeta del área: ${dir}`);
+if (!existsSync(dir)) fail(`No existe la carpeta del área: ${ctx.rel(dir)}. Créala con su README.md.`);
 
-const slug = title.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-if (!slug) fail("El título no produce un nombre de archivo válido.");
+const slug = title.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60).replace(/-+$/, "");
+if (!slug) fail("El título no produce un nombre de archivo válido: necesita letras o cifras.");
 const files = readdirSync(dir);
 const clash = files.find((f) => f.replace(/^\d+-/, "").replace(/\.mdx?$/, "") === slug);
 if (clash) fail(`Ya existe un documento con ese nombre en ${area}: ${clash}`);
@@ -34,8 +36,10 @@ if (last >= 99) fail(`El área ${area} agotó los prefijos de dos dígitos.`);
 const file = join(dir, `${String(last + 1).padStart(2, "0")}-${slug}.md`);
 
 const quote = (s) => s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+// Sustitución en una sola pasada y con función: un título con "$&" o "{{fecha}}" se escribe tal cual.
+const values = { titulo: title, descripcion: quote(description ?? ""), fecha: new Date().toISOString().slice(0, 10) };
 let text = readFileSync(join(templates, `${type}.md`), "utf8");
-text = description ? text.replace("{{descripcion}}", quote(description)) : text.replace(/^description: .*\n/m, "");
-text = text.replaceAll("{{titulo}}", title).replaceAll("{{fecha}}", new Date().toISOString().slice(0, 10));
-writeFileSync(file, text, { flag: "wx" });
-console.log(`✓ ${ctx.rel(file)} (plantilla ${type})`);
+if (!description) text = text.replace(/^description: .*\n/m, "");
+text = text.replace(/\{\{(titulo|descripcion|fecha)\}\}/g, (_, key) => values[key]);
+try { writeFileSync(file, text, { flag: "wx" }); } catch (e) { fail(`No se pudo crear ${ctx.rel(file)}: ${e.message}`); }
+process.stdout.write(`✓ ${ctx.rel(file)} (plantilla ${type})\n`);

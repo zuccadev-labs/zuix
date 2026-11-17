@@ -77,7 +77,7 @@
   "classes": [
     "z-toggle"
   ],
-  "a11y": "Radix Toggle: button con aria-pressed y data-state on/off.",
+  "a11y": "Elemento button con aria-pressed y data-state on/off.",
   "examples": [
     {
       "title": "Solo icono",
@@ -88,5 +88,5 @@
       "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
     }
   ],
-  "origin": "Nuevo, sobre Toggle de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

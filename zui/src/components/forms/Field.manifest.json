@@ -72,7 +72,7 @@
   "classes": [
     "z-field"
   ],
-  "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". `useFieldControl` permite conectar controles propios.",
+  "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",
   "examples": [
     {
       "title": "Con ayuda",
@@ -84,7 +84,7 @@
     },
     {
       "title": "En línea",
-      "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <Select options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
+      "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <NativeSelect options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
     }
   ],
   "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común."

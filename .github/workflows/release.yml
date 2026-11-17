@@ -14,10 +14,16 @@
 # npm exige: npm >= 11.5.1 y Node >= 22.14, runner alojado por GitHub, `id-token: write`, y que el workflow (release.yml),
 # el entorno (npm) y `repository.url` de cada paquete coincidan con lo registrado en npmjs.com. El trabajo que publica
 # está en este archivo y no en un workflow reutilizable: npm valida el workflow que llama.
-# Si existe el secreto NPM_TOKEN en el entorno `npm`, se usa ese token en lugar de OIDC.
+# No hay vía con token: si la publicación de confianza falla, el respaldo es la publicación manual con 2FA
+# (docs/package/02-publicacion.md). npm recomienda además prohibir los tokens en cada paquete.
 #
 # Se publican los tarballs de `pnpm pack` que probó `pnpm test:pack` (artefacto `tarballs` de ci.yml), nunca una carpeta.
-# `publish` no descarga el repositorio ni instala dependencias: solo los tarballs y npm.
+# `publish` no descarga el repositorio ni instala dependencias: solo los tarballs y npm. Después de publicar,
+# `attest` firma la procedencia de esos mismos tarballs (attestations de GitHub, verificables con
+# `gh attestation verify`) y `release` los adjunta al GitHub Release con sus huellas y su SBOM.
+#
+# Endurecimiento: acciones fijadas por SHA completo, `permissions: {}` por defecto y permisos por trabajo, sin
+# cachés en ningún trabajo (la verificación se llama con `release: true`), y ninguna expresión `${{ }}` en un `run:`.
 name: release
 
 on:
@@ -56,7 +62,7 @@ jobs:
       dry-run: ${{ steps.detect.outputs.dry-run }}
       dist-tag: ${{ steps.detect.outputs.dist-tag }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Comparar las versiones con el registro
@@ -84,10 +90,26 @@ jobs:
             *[!a-z0-9.-]*|[0-9]*) echo "::error::dist-tag no válido: $dist_tag"; exit 1 ;;
           esac
 
+          # `latest` es lo que instala `npm install` sin versión: ni una preliminar ni una versión anterior a la actual.
+          if [ "$dist_tag" = "latest" ]; then
+            case "$version" in *-*) echo "::error::$version es preliminar: no puede publicarse como latest."; exit 1 ;; esac
+          fi
+
           pending=""
           for dir in tokens zicon zui zout suite; do
             name="$(node -p "require('./$dir/package.json').name")"
             v="$(node -p "require('./$dir/package.json').version")"
+            if [ "$dist_tag" = "latest" ]; then
+              current="$(npm view "$name" dist-tags.latest 2>/dev/null || true)"
+              if [ -n "$current" ] && ! CURRENT="$current" NEXT="$v" node -e '
+                const parts = (s) => s.split("-")[0].split(".").map(Number);
+                const [next, current] = [parts(process.env.NEXT), parts(process.env.CURRENT)];
+                for (let i = 0; i < 3; i++) if (next[i] !== current[i]) process.exit(next[i] > current[i] ? 0 : 1);
+              '; then
+                echo "::error::$name: latest es $current y $v es anterior. Publicarla movería latest hacia atrás; usa otra dist-tag."
+                exit 1
+              fi
+            fi
             if [ "$(node -p "require('./$dir/package.json').private === true")" = "true" ]; then
               echo "::error::$dir está marcado como privado."; exit 1
             fi
@@ -120,7 +142,7 @@ jobs:
             echo "Versión $version pendiente en: $pending (dist-tag $dist_tag, ensayo: $dry_run)." | tee -a "$GITHUB_STEP_SUMMARY"
           fi
 
-  # La misma verificación que el ci de cada cambio, más el consumidor Next.js. Deja el artefacto `tarballs`.
+  # La misma verificación que el ci de cada cambio, sin cachés. Deja los artefactos `tarballs` y `sbom`.
   verify:
     name: Verificación
     needs: detect
@@ -129,7 +151,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/ci.yml
     with:
-      next: true
+      release: true
 
   # Ensayo: sin entorno, sin credenciales y desde cualquier rama.
   rehearse:
@@ -144,11 +166,11 @@ jobs:
       VERSION: ${{ needs.detect.outputs.version }}
       DIST_TAG: ${{ needs.detect.outputs.dist-tag }}
     steps:
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24
+          node-version: 26
           package-manager-cache: false
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: tarballs
           path: pack
@@ -156,6 +178,8 @@ jobs:
       - name: Ensayar la publicación
         run: |
           set -euo pipefail
+          # Los tarballs son los que empaquetó y probó `verify`: sus huellas coinciden con las que dejó.
+          (cd pack && sha256sum --check --strict SHA256SUMS)
           published=""
           for dir in tokens zicon zui zout suite; do
             case "$dir" in suite) name="@zuccadev-labs/zuix" ;; *) name="@zuccadev-labs/zuix-$dir" ;; esac
@@ -206,15 +230,15 @@ jobs:
       name: npm
       url: https://www.npmjs.com/package/@zuccadev-labs/zuix/v/${{ needs.detect.outputs.version }}
     permissions:
-      id-token: write # OIDC: autentica la publicación y firma la procedencia
+      id-token: write # OIDC: autentica la publicación en npm y firma su procedencia. Sin más permisos ni secretos.
     env:
       DRY_RUN: "false"
       VERSION: ${{ needs.detect.outputs.version }}
       DIST_TAG: ${{ needs.detect.outputs.dist-tag }}
     steps:
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24
+          node-version: 26
           package-manager-cache: false
       - name: npm admite la publicación de confianza
         run: |
@@ -226,31 +250,17 @@ jobs:
             console.log(`node ${node}, npm ${npm}`);
             if (!atLeast(node, "22.14.0") || !atLeast(npm, "11.5.1")) { console.error("::error::La publicación de confianza exige Node >= 22.14.0 y npm >= 11.5.1."); process.exit(1); }
           '
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: tarballs
           path: pack
-      - name: Elegir la autenticación
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          set -euo pipefail
-          if [ -n "${NPM_TOKEN:-}" ]; then
-            # npm sustituye ${NPM_TOKEN} al leer el archivo: el valor del secreto no se escribe en disco.
-            printf '%s\n' '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > "$RUNNER_TEMP/npmrc"
-            echo "NPM_CONFIG_USERCONFIG=$RUNNER_TEMP/npmrc" >> "$GITHUB_ENV"
-            echo "NPM_CONFIG_PROVENANCE=true" >> "$GITHUB_ENV"
-            echo "Autenticación: secreto NPM_TOKEN, con procedencia."
-          else
-            echo "Autenticación: publicación de confianza (OIDC). La procedencia es automática."
-          fi
       # El mismo guion que el paso "Ensayar la publicación" de `rehearse`: se mantienen idénticos.
       - name: Publicar
         id: publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
+          # Los tarballs son los que empaquetó y probó `verify`: sus huellas coinciden con las que dejó.
+          (cd pack && sha256sum --check --strict SHA256SUMS)
           published=""
           for dir in tokens zicon zui zout suite; do
             case "$dir" in suite) name="@zuccadev-labs/zuix" ;; *) name="@zuccadev-labs/zuix-$dir" ;; esac
@@ -290,21 +300,49 @@ jobs:
           echo "published=${published# }" >> "$GITHUB_OUTPUT"
           echo "Publicado: ${published:- nada}" | tee -a "$GITHUB_STEP_SUMMARY"
 
-  # Etiqueta y GitHub Release sobre el commit publicado. La etiqueta se crea por la API con GITHUB_TOKEN:
-  # no dispara workflows, y este solo escucha pushes a main.
+  # Procedencia de los tarballs publicados (SLSA, firmada con Sigstore y guardada en GitHub).
+  # Se comprueba con: gh attestation verify <tarball> --repo zuccadev-labs/zuix
+  attest:
+    name: Attestations de los tarballs
+    needs: [detect, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # certificado de firma de Sigstore
+      attestations: write # guardar la attestation en el repositorio
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tarballs
+          path: pack
+      - run: cd pack && sha256sum --check --strict SHA256SUMS
+      - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: pack/*.tgz
+
+  # Etiqueta y GitHub Release sobre el commit publicado, con los cinco tarballs, sus huellas y el SBOM de cada
+  # paquete. La etiqueta se crea por la API con GITHUB_TOKEN: no dispara workflows, y este solo escucha pushes a main.
   release:
     name: Etiqueta y GitHub Release
     needs: [detect, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      contents: write
+      contents: write # crear la etiqueta vX.Y.Z y el Release
     env:
       VERSION: ${{ needs.detect.outputs.version }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tarballs
+          path: ${{ runner.temp }}/assets
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sbom
+          path: ${{ runner.temp }}/assets
       - name: Notas desde los CHANGELOG
         run: |
           set -euo pipefail
@@ -333,6 +371,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           NOTES: ${{ runner.temp }}/release-notes.md
+          ASSETS: ${{ runner.temp }}/assets
         run: |
           set -euo pipefail
           tag="v$VERSION"
@@ -340,9 +379,16 @@ jobs:
             echo "El Release $tag ya existe: no se toca."
             exit 0
           fi
-          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
-            echo "::warning::La etiqueta $tag ya existía: el Release se crea sobre ella y no se mueve."
+          # Una etiqueta previa solo vale si apunta al commit publicado: el Release no se crea sobre otro código.
+          if existing="$(gh api "repos/$GITHUB_REPOSITORY/commits/$tag" --jq .sha 2>/dev/null)"; then
+            if [ "$existing" != "$GITHUB_SHA" ]; then
+              echo "::error::La etiqueta $tag ya existe y apunta a $existing, no al commit publicado ($GITHUB_SHA)."
+              exit 1
+            fi
+            echo "::warning::La etiqueta $tag ya existía sobre este commit: el Release se crea sobre ella."
           fi
-          prerelease=""
-          case "$VERSION" in *-*) prerelease="--prerelease" ;; esac
-          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "zuix $VERSION" --notes-file "$NOTES" $prerelease
+          (cd "$ASSETS" && sha256sum --check --strict SHA256SUMS)
+          prerelease=()
+          case "$VERSION" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "zuix $VERSION" --notes-file "$NOTES" "${prerelease[@]}" \
+            "$ASSETS"/*.tgz "$ASSETS"/SHA256SUMS "$ASSETS"/*.cdx.json

@@ -91,7 +91,8 @@
     justify-content: center;
     gap: var(--z-space-3);
     border-radius: inherit;
-    background: var(--z-scrim);
+    /* Velo del color del lienzo: el mensaje conserva el contraste del texto normal en los dos temas. */
+    background: color-mix(in srgb, var(--z-canvas) 78%, transparent);
     color: var(--z-canvas-fg);
   }
   .z-loading-overlay[data-blur] {
@@ -145,7 +146,7 @@
   .z-empty--error .z-empty__icon {
     border-color: transparent;
     background: var(--z-danger-soft);
-    color: var(--z-danger);
+    color: var(--z-danger-text);
   }
   .z-empty__title {
     margin: 0;
@@ -235,7 +236,9 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    margin: -2px calc(var(--z-space-1) * -1) 0 0;
+    margin: 0;
+    margin-block-start: -2px;
+    margin-inline-end: calc(var(--z-space-1) * -1);
     padding: 0;
     border: 0;
     border-radius: var(--z-radius-full);

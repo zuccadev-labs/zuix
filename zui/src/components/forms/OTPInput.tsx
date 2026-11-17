@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, type ClipboardEvent, type KeyboardEvent } from "react";
 import { cx } from "../../cx";
-import { useFieldControl } from "./Field";
+import { useFieldControl, useFieldLabel } from "./Field";
 
 export interface OTPInputProps {
   /** Número de casillas. */
@@ -41,12 +41,15 @@ export function OTPInput({
   invalid,
   disabled,
   autoFocus,
-  label = "Verification code",
+  label,
   cellLabel = (position, total) => `Character ${position} of ${total}`,
   name,
   className,
 }: OTPInputProps) {
   const { invalid: isInvalid, "aria-describedby": describedBy } = useFieldControl({ invalid });
+  // Dentro de un Field con etiqueta, el grupo se nombra con ella; si no, con `label`.
+  const fieldLabel = useFieldLabel();
+  const named = label === undefined && fieldLabel ? { "aria-labelledby": fieldLabel } : { "aria-label": label ?? "Verification code" };
   const [inner, setInner] = useState(defaultValue);
   const cells = useRef<Array<HTMLInputElement | null>>([]);
   const current = (value ?? inner).slice(0, length);
@@ -80,6 +83,10 @@ export function OTPInput({
         commit(current.slice(0, index - 1) + current.slice(index));
         focusCell(index - 1);
       }
+    } else if (event.key === "Delete") {
+      // Supr borra el carácter de la casilla sin mover el foco.
+      event.preventDefault();
+      if (current[index]) commit(current.slice(0, index) + current.slice(index + 1));
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
       focusCell(index - 1);
@@ -97,7 +104,7 @@ export function OTPInput({
   };
 
   return (
-    <div role="group" aria-label={label} aria-describedby={describedBy} className={cx("z-otp", className)} data-size={size} data-invalid={isInvalid || undefined}>
+    <div role="group" {...named} aria-describedby={describedBy} className={cx("z-otp", className)} data-size={size} data-invalid={isInvalid || undefined}>
       {Array.from({ length }, (_, index) => (
         <input
           key={index}

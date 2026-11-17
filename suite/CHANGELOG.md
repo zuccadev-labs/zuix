@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Entradas `/zui/dom/carousel-gl`, `/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` (una sola
+  marca en `:root`), `/tailwind.css` y `/docusaurus.css`.
+
 ## [0.1.0] - 2026-11-14
 
 Primera versión publicada.

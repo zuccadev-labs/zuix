@@ -1,5 +1,13 @@
 # zuix
 
+[![npm](https://img.shields.io/npm/v/%40zuccadev-labs%2Fzuix?label=npm)](https://www.npmjs.com/package/@zuccadev-labs/zuix)
+[![ci](https://github.com/zuccadev-labs/zuix/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zuccadev-labs/zuix/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+**English** | [Español](./README.es.md)
+
+<!-- FASE 2: este archivo pasa a inglés (convención de la organización: README.md en inglés, README.es.md en español). Hasta entonces el contenido es el mismo que README.es.md. -->
+
 Suite de UI/UX con un solo estándar: tokens de diseño, iconos, componentes, layouts y documentación.
 El estándar es HTML, CSS y tokens. Sirve con cualquier framework o sin ninguno, y trae un binding de React.
 Una marca replica el sistema cambiando un archivo.
@@ -120,6 +128,9 @@ pnpm --filter @zuccadev-labs/zuix-zudocs start    # sitio de documentación con 
 |---|---|
 | `pnpm check` | Regenera y valida tokens, iconos, manifiestos y contrato HTML; audita estilos; comprueba tipos |
 | `pnpm --filter @zuccadev-labs/zuix-zudocs build` | Compila el sitio de documentación y falla con enlaces rotos |
+| `pnpm lint` | Linter (Biome: TypeScript, React, accesibilidad, CSS y JSON) y regla de `"use client"` |
+| `pnpm format` / `pnpm format:check` | Aplica o comprueba el formato |
+| `pnpm test:unit` | Pruebas unitarias de la lógica pura con cobertura (`node:test`) |
 | `pnpm test:html` | Contrato HTML y `@zuccadev-labs/zuix-zui/dom` en navegador, sin React |
 | `pnpm test:browser` | Aplicación de ejemplo de React en navegador |
 | `pnpm build` | Genera `dist/` de publicación de `zicon`, `zui` y `zout` y comprueba el paraguas |
@@ -140,7 +151,7 @@ Las suites de navegador usan el Chrome del sistema. Para Firefox y WebKit: `pnpm
 | [`docs/investigations/`](./docs/investigations/README.md) | Análisis y decisiones previas a la construcción |
 
 Para contribuir: [`CONTRIBUTING.md`](./CONTRIBUTING.md). Para reportar una vulnerabilidad:
-[`SECURITY.md`](./SECURITY.md).
+[`SECURITY.md`](./SECURITY.md). Código de conducta: [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md).
 
 ## Estado
 

@@ -42,7 +42,7 @@
       background: var(--z-surface-solid);
     }
     /* Los velos conservan su tinte, sin desenfocar lo que tapan. */
-    .z-overlay-scrim, .z-loading-overlay[data-blur], .z-shell__scrim,
+    .z-loading-overlay[data-blur], .z-shell__scrim,
     dialog.z-modal::backdrop, dialog.z-drawer::backdrop, dialog.z-palette::backdrop {
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;

@@ -13,6 +13,9 @@
     "verify": "node bin/zudocs.mjs verify",
     "new": "node bin/zudocs.mjs new",
     "info": "node bin/zudocs.mjs info",
+    "llms": "node bin/zudocs.mjs llms",
+    "fonts": "node bin/zudocs.mjs fonts",
+    "headers": "node bin/zudocs.mjs headers",
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
@@ -52,7 +55,7 @@
     ]
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "license": "MIT"
 }

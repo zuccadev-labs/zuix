@@ -16,6 +16,10 @@
     -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
   }
 
+  /* El velo (`::backdrop`) aparece y se va con el diálogo. */
+  dialog:is(.z-modal, .z-drawer, .z-palette)[data-state="open"]::backdrop { animation: z-ov-fade-in var(--z-duration-fast) var(--z-ease-standard) both; }
+  dialog:is(.z-modal, .z-drawer, .z-palette)[data-state="closed"]::backdrop { animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both; }
+
   .z-popover[popover], .z-menu[popover], .z-tooltip[popover] { position: fixed; inset: auto; margin: 0; }
   .z-menu[popover], .z-popover[popover] { max-height: calc(100dvh - var(--z-space-4)); }
   /* Listbox de Select y Combobox como [popover]: sin el relleno del navegador y oculto mientras no está abierto. */

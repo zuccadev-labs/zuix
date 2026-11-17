@@ -14,9 +14,12 @@
         "left",
         "right",
         "top",
-        "bottom"
+        "bottom",
+        "start",
+        "end"
       ],
-      "required": true
+      "required": true,
+      "description": "Borde del panel donde va el tirador. `start` y `end` son lógicos: siguen la dirección de escritura (en RTL, `end` es el borde izquierdo)."
     },
     {
       "name": "size",
@@ -47,6 +50,16 @@
       "name": "step",
       "type": "number",
       "default": 16
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Resize panel"
+    },
+    {
+      "name": "controls",
+      "type": "string",
+      "description": "Id del panel que redimensiona (aria-controls)."
     }
   ],
   "tokens": [
@@ -56,7 +69,7 @@
   "classes": [
     "z-resize"
   ],
-  "a11y": "role=separator enfocable con aria-valuenow.",
+  "a11y": "Patrón «window splitter» de WAI-ARIA: role=separator enfocable con aria-orientation, aria-valuenow, aria-valuemin y aria-valuemax (px). Las flechas mueven el tirador hacia donde apuntan un paso (`step`); Inicio vuelve a `defaultSize`. Doble clic vuelve a `defaultSize`: es la alternativa de un solo gesto al arrastre (WCAG 2.5.7). Solo arrastra el botón principal. Con puntero grueso la zona de agarre crece hasta `--z-touch-target`.",
   "examples": [
     {
       "title": "Borde derecho de un panel",

@@ -9,7 +9,8 @@
 //   4. .tmp/consumer/dom: lo mismo sin React instalado; importa los módulos `dom` en Node.
 //   5. Con --next, .tmp/consumer/next: Next.js (última estable, App Router) instalado desde los tarballs. `next build`,
 //      `next start` y una prueba en Chrome con playwright-core: marcado de servidor con iconos, hidratación sin avisos
-//      e interacción (Modal, Menu, Tabs, Select, Toast, Accordion, Shell). Necesita red (next) y Chrome. Añade unos 25 s con la caché de pnpm caliente.
+//      e interacción (Modal, Menu, Tabs, Select, Toast, Accordion, Shell), y la ruta /umbrella, que lo importa todo por
+//      el paquete paraguas con un solo @import de estilos. Necesita red (next) y Chrome. Añade unos 25 s con la caché de pnpm caliente.
 //   6. Opcional: publint y @arethetypeswrong/cli con `pnpm dlx`. Si no hay red se avisa y no falla.
 // Lo que esta prueba no cubre (instalar desde un registro, sin `overrides`, con npm, yarn y bun) está en
 // docs/package/02-publicacion.md, "Ensayo contra un registro local".
@@ -34,8 +35,11 @@ const bad = (msg) => { failures.push(msg); console.log(`✗ ${msg}`); };
 const walk = (d) => readdirSync(d).flatMap((f) => { const p = join(d, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 
 function sh(cmd, argv, cwd, { timeout = 600_000 } = {}) {
-  const r = spawnSync(cmd, argv, { cwd, encoding: "utf8", timeout, env: { ...process.env, CI: "1", FORCE_COLOR: "0" } });
-  return { ok: r.status === 0, out: `${r.stdout ?? ""}${r.stderr ?? ""}`.trim(), status: r.status };
+  // "node" es este mismo Node, no el primero del PATH. En Windows pnpm es pnpm.cmd, que solo se lanza con shell.
+  const bin = cmd === "node" ? process.execPath : cmd;
+  const r = spawnSync(bin, argv, { cwd, encoding: "utf8", timeout, shell: process.platform === "win32" && cmd === "pnpm", env: { ...process.env, CI: "1", FORCE_COLOR: "0" } });
+  const failure = r.error ? `no se pudo ejecutar ${cmd}: ${r.error.code === "ETIMEDOUT" ? `superó ${timeout / 1000} s` : r.error.message}` : "";
+  return { ok: r.status === 0, out: `${r.stdout ?? ""}${r.stderr ?? ""}${failure}`.trim(), status: r.status };
 }
 function step(name, cmd, argv, cwd) {
   const r = sh(cmd, argv, cwd);
@@ -117,7 +121,8 @@ function project(name, pkg, files, builds = []) {
   // overrides: las dependencias entre paquetes zuix (zui → zicon 0.1.0) no existen en ningún registro; se fuerzan al tarball.
   // allowBuilds: solo lo que el consumidor compila al instalar. Vite 8 (Rolldown y Oxc) ya no trae esbuild, así que
   // el consumidor de React no autoriza nada; Next autoriza sharp.
-  // autoInstallPeers: false: sin esto pnpm instalaría React como peer de radix-ui y la prueba "sin React" no probaría nada.
+  // autoInstallPeers: false: React es un peer opcional de los paquetes zuix; si pnpm lo instalara por su cuenta, la prueba
+  // "sin React" no probaría nada.
   writeFileSync(join(dir, "pnpm-workspace.yaml"), `autoInstallPeers: false\n${builds.length ? `allowBuilds:\n${builds.map((b) => `  "${b}": true`).join("\n")}\n` : ""}overrides:\n${Object.entries(zuixDeps).map(([k, v]) => `  "${k}": "${v}"`).join("\n")}\n`);
   for (const [f, content] of Object.entries(files)) { mkdirSync(dirname(join(dir, f)), { recursive: true }); writeFileSync(join(dir, f), content); }
   return dir;
@@ -155,7 +160,7 @@ console.log("ok");
 // ── 3. Consumidor con React ───────────────────────────────────────────────────────────────────────
 const reactDir = project("react", {
   dependencies: { ...zuixDeps, react: "^19.0.0", "react-dom": "^19.0.0" },
-  devDependencies: { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", typescript: "^5.9.0", "typescript-7": "npm:typescript@^7.0.0", vite: "^8.0.0" },
+  devDependencies: { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", typescript: "^5.9.0", "typescript-6": "npm:typescript@^6.0.0", "typescript-7": "npm:typescript@^7.0.0", vite: "^8.0.0" },
 }, {
   "ssr.mjs": `import assert from "node:assert/strict";
 import { createElement as h } from "react";
@@ -293,7 +298,7 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
   step("react: subpath exports", "node", ["subpaths.mjs"], reactDir);
   // Las declaraciones se emiten con TypeScript 7 y las consume quien siga en 5.x: se comprueban con los dos compiladores,
   // cada uno por su ruta (los dos paquetes declaran el binario `tsc`).
-  for (const [label, pkg] of [["TS 5.9", "typescript"], ["TS 7", "typescript-7"]]) {
+  for (const [label, pkg] of [["TS 5.9", "typescript"], ["TS 6", "typescript-6"], ["TS 7", "typescript-7"]]) {
     const tsc = join(reactDir, "node_modules", pkg, "bin/tsc");
     step(`react: tsc --noEmit con ${label} (Bundler, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.json"], reactDir);
     step(`react: tsc --noEmit con ${label} (NodeNext, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.nodenext.json"], reactDir);
@@ -351,7 +356,7 @@ assert.equal((await import("@zuccadev-labs/zuix/zout/dom")).init, zout.init);
 assert.equal((await import("@zuccadev-labs/zuix/zicon/dom")).iconSvg, zicon.iconSvg);
 await import("@zuccadev-labs/zuix/zicon/element");
 // El binding de React sí debe fallar aquí: confirma que React no llegó por otra vía.
-await assert.rejects(() => import("@zuccadev-labs/zuix-zui"), /Cannot find package 'react|radix|react/);
+await assert.rejects(() => import("@zuccadev-labs/zuix-zui"), /Cannot find package 'react/);
 console.log("dom: @zuccadev-labs/zuix-zicon/dom, @zuccadev-labs/zuix-zui/dom y @zuccadev-labs/zuix-zout/dom cargan en Node sin React instalado");
 `,
 });
@@ -378,7 +383,7 @@ export default { turbopack: { root: here }, outputFileTracingRoot: here };
     "tsconfig.json": JSON.stringify({ compilerOptions: { target: "ES2022", lib: ["dom", "dom.iterable", "esnext"], allowJs: true, module: "esnext", moduleResolution: "bundler", jsx: "react-jsx", strict: true, noEmit: true, skipLibCheck: true, esModuleInterop: true, resolveJsonModule: true, isolatedModules: true, incremental: true, plugins: [{ name: "next" }] }, include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"], exclude: ["node_modules"] }, null, 2),
     // Icono de la aplicación: sin él Chrome pide /favicon.ico y el 404 llega a la consola.
     "app/icon.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor"/></svg>\n`,
-    "app/layout.tsx": `import type { ReactNode } from "react";
+    "app/(packages)/layout.tsx": `import type { ReactNode } from "react";
 import "@zuccadev-labs/zuix-tokens/tokens.css";
 import "@zuccadev-labs/zuix-zui/styles.css";
 import "@zuccadev-labs/zuix-zout/styles.css";
@@ -397,7 +402,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   );
 }
 `,
-    "app/providers.tsx": `"use client";
+    "app/(packages)/providers.tsx": `"use client";
 import type { ReactNode } from "react";
 import "@zuccadev-labs/zuix-zicon/all"; // iconos de los Client Components, en su render de servidor y en el navegador
 import { ToastProvider } from "@zuccadev-labs/zuix-zui";
@@ -407,7 +412,7 @@ export function Providers({ children }: { children: ReactNode }) {
 }
 `,
     // Server Component: componentes de solo marcado, y componentes de cliente usados directamente con props serializables.
-    "app/content.tsx": `import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+    "app/(packages)/content.tsx": `import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { Accordion, Badge, Button, Callout, Card, EmptyState, Kbd, Modal, Progress, Tabs } from "@zuccadev-labs/zuix-zui";
 import { Inline, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import { Interactive } from "./interactive";
@@ -450,14 +455,14 @@ export function Content({ mode }: { mode: string }) {
   );
 }
 `,
-    "app/page.tsx": `import { Content } from "./content";
+    "app/(packages)/page.tsx": `import { Content } from "./content";
 export default function Home() { return <Content mode="static" />; }
 `,
-    "app/dynamic/page.tsx": `import { Content } from "../content";
+    "app/(packages)/dynamic/page.tsx": `import { Content } from "../content";
 export const dynamic = "force-dynamic";
 export default function Dynamic() { return <Content mode="dynamic" />; }
 `,
-    "app/interactive.tsx": `"use client";
+    "app/(packages)/interactive.tsx": `"use client";
 import { useState } from "react";
 import { Button, DatePicker, Field, Input, Menu, Select, Switch, useToast } from "@zuccadev-labs/zuix-zui";
 
@@ -485,7 +490,7 @@ export function Interactive() {
 }
 `,
     // Página de cliente con los layouts de zout que miden el contenedor.
-    "app/shell/page.tsx": `"use client";
+    "app/(packages)/shell/page.tsx": `"use client";
 import { useState } from "react";
 import { Button } from "@zuccadev-labs/zuix-zui";
 import { Pane, Rail, RailItem, Shell, Sidebar, SidebarSection, SplitPane, TitleBar } from "@zuccadev-labs/zuix-zout";
@@ -506,6 +511,60 @@ export default function ShellPage() {
   );
 }
 `,
+    // Ruta /umbrella: lo mismo que /shell, pero todo llega por el paquete paraguas (@zuccadev-labs/zuix/zui, /zout, /zicon)
+    // y los estilos por un solo @import. Tiene su propio layout raíz (grupo de rutas): no hereda las hojas ni el
+    // registro de iconos de las rutas que importan los paquetes uno a uno.
+    "app/(umbrella)/globals.css": `@import "@zuccadev-labs/zuix/styles.css";\n`,
+    "app/(umbrella)/layout.tsx": `import type { ReactNode } from "react";
+import "./globals.css";
+import "@zuccadev-labs/zuix/zicon/all"; // iconos de los Server Components, registrados a través del paraguas
+
+export const metadata = { title: "consumer-next-umbrella" };
+
+export default function UmbrellaLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" data-theme="dark">
+      <body className="z-root z-canvas">{children}</body>
+    </html>
+  );
+}
+`,
+    // Server Component: el icono se dibuja con el Icon del paraguas y con el de @zuccadev-labs/zuix-zicon/core; los dos leen el
+    // registro que llenó el layout a través de @zuccadev-labs/zuix/zicon/all.
+    "app/(umbrella)/umbrella/page.tsx": `import { Icon } from "@zuccadev-labs/zuix/zicon/core";
+import { Icon as PackageIcon } from "@zuccadev-labs/zuix-zicon/core";
+import { UmbrellaShell } from "./shell";
+
+export default function UmbrellaPage() {
+  return (
+    <div style={{ height: "100vh" }}>
+      <span data-testid="server-icons"><Icon name="star" /><PackageIcon name="folder" /></span>
+      <UmbrellaShell />
+    </div>
+  );
+}
+`,
+    "app/(umbrella)/umbrella/shell.tsx": `"use client";
+import { useState } from "react";
+import "@zuccadev-labs/zuix/zicon/all"; // iconos de los Client Components, registrados a través del paraguas
+import { Icon } from "@zuccadev-labs/zuix/zicon/core";
+import { Button } from "@zuccadev-labs/zuix/zui";
+import { Pane, Rail, RailItem, Shell, Sidebar, SidebarSection, SplitPane, TitleBar } from "@zuccadev-labs/zuix/zout";
+
+export function UmbrellaShell() {
+  const [open, setOpen] = useState(true);
+  return (
+    <Shell
+      titlebar={<TitleBar actions={<Button data-testid="toggle-sidebar" size="sm" icon="bars-3" onClick={() => setOpen((v) => !v)}>Sidebar</Button>}><Icon name="bell" /> Workspace</TitleBar>}
+      rail={<Rail label="Primary"><RailItem icon="home" label="Home" active /><RailItem icon="cog" label="Settings" /></Rail>}
+      sidebar={{ label: "Explorer", open, content: <Sidebar><SidebarSection title="Files">File list</SidebarSection></Sidebar> }}
+      onCloseOverlay={() => setOpen(false)}
+    >
+      <SplitPane><Pane header="Left">Left pane</Pane><Pane header="Right">Right pane</Pane></SplitPane>
+    </Shell>
+  );
+}
+`,
   }, ["sharp"]);
 
   const nextBin = join(nextDir, "node_modules/next/dist/bin/next");
@@ -519,7 +578,7 @@ export default function ShellPage() {
     if (r.status !== 0) bad(`next ${version}: next build\n${out.split("\n").slice(-40).map((l) => `    ${l}`).join("\n")}`);
     // En CI, Next avisa de que no hay caché de compilación: no dice nada del paquete y no cuenta como aviso.
     else if (/\[zicon\]|Warning:|⚠/.test(out.split("\n").filter((l) => !/No build cache found/.test(l)).join("\n"))) bad(`next ${version}: next build pasa con avisos\n${out.split("\n").filter((l) => /\[zicon\]|Warning:|⚠/.test(l) && !/No build cache found/.test(l)).slice(0, 10).map((l) => `    ${l}`).join("\n")}`);
-    else { built = true; ok(`next ${version}: next build (App Router, Turbopack) sin avisos; rutas / (estática), /dynamic y /shell`); }
+    else { built = true; ok(`next ${version}: next build (App Router, Turbopack) sin avisos; rutas / (estática), /dynamic, /shell y /umbrella`); }
   }
   if (built) {
     const port = await new Promise((resolve, reject) => { const s = net.createServer(); s.once("error", reject); s.listen(0, "127.0.0.1", () => { const { port } = s.address(); s.close(() => resolve(port)); }); });
@@ -529,6 +588,7 @@ export default function ShellPage() {
     server.stderr.on("data", (d) => { log += d; });
     const base = `http://127.0.0.1:${port}`;
     let browser;
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: quita los códigos de color ANSI del mensaje de Playwright.
     const check = async (name, fn) => { try { const detail = await fn(); ok(`next: ${name}${detail ? ` · ${detail}` : ""}`); } catch (error) { bad(`next: ${name} — ${String(error?.message ?? error).replace(/\u001b\[\d+m/g, "").split("\n").slice(0, 6).join("\n    ")}`); } };
     const must = (cond, msg) => { if (!cond) throw new Error(msg); };
     try {
@@ -541,14 +601,14 @@ export default function ShellPage() {
       }
       // Marcado de servidor, sin navegador: cada <svg data-icon> trae trazados, en la parte de servidor y en la de cliente.
       const icons = (html) => [...html.matchAll(/<svg[^>]*data-icon="([^"]+)"[^>]*>(.*?)<\/svg>/g)].map((m) => ({ name: m[1], drawn: m[2].includes("<path") }));
-      for (const route of ["/", "/dynamic", "/shell"]) {
+      for (const route of ["/", "/dynamic", "/shell", "/umbrella"]) {
         await check(`marcado de servidor de ${route} con iconos dibujados`, async () => {
           const res = await fetch(base + route);
           must(res.ok, `HTTP ${res.status}`);
           const found = icons(await res.text());
           const empty = found.filter((i) => !i.drawn).map((i) => i.name);
           must(empty.length === 0, `iconos sin trazado en el HTML de servidor: ${empty.join(", ")}`);
-          const expected = route === "/shell" ? ["home", "cog", "bars-3"] : ["plus", "bell", "star", "folder", "pencil", "home", "credit-card", "ellipsis-horizontal", "chevron-down", "check"];
+          const expected = route === "/umbrella" ? ["star", "folder", "bell", "home", "cog", "bars-3"] : route === "/shell" ? ["home", "cog", "bars-3"] : ["plus", "bell", "star", "folder", "pencil", "home", "credit-card", "ellipsis-horizontal", "chevron-down", "check"];
           const missing = expected.filter((n) => !found.some((i) => i.name === n));
           must(missing.length === 0, `faltan iconos en el HTML de servidor: ${missing.join(", ")}`);
           return `${found.length} iconos`;
@@ -562,6 +622,26 @@ export default function ShellPage() {
         const css = (await Promise.all(sheets.map(async (href) => (await fetch(new URL(href, base))).text()))).join("");
         must(css.includes(".z-btn") && css.includes(".z-shell") && css.includes("--z-"), "el CSS servido no trae zui, zout y tokens");
         return `CSS ${(css.length / 1024).toFixed(0)} kB`;
+      });
+      await check("/umbrella: un solo @import \"@zuccadev-labs/zuix/styles.css\" sirve tokens, zui y zout", async () => {
+        const html = await (await fetch(`${base}/umbrella`)).text();
+        for (const cls of ['class="z-shell', 'class="z-btn z-btn--secondary', 'class="z-titlebar']) must(html.includes(cls), `falta ${cls} en el HTML`);
+        const sheets = [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map((m) => m[1]);
+        must(sheets.length > 0, "sin hojas de estilo enlazadas");
+        const css = (await Promise.all(sheets.map(async (href) => (await fetch(new URL(href, base))).text()))).join("");
+        must(css.includes(".z-btn") && css.includes(".z-shell") && css.includes("--z-") && !css.includes("@import"), "el CSS de /umbrella no trae tokens, zui y zout resueltos");
+        return `CSS ${(css.length / 1024).toFixed(0)} kB`;
+      });
+      // El registro de iconos es uno por grafo de módulos (servidor y cliente no comparten memoria). Lo que se comprueba
+      // es que, en cada grafo, @zuccadev-labs/zuix/zicon/core es el mismo módulo que @zuccadev-labs/zuix-zicon/core: lo registrado a través
+      // del paraguas lo dibujan el Icon del paraguas, el del paquete y los componentes de zui y zout.
+      await check("/umbrella: /zicon/core comparte registro con @zuccadev-labs/zuix-zicon/core en el grafo de servidor y en el de cliente", async () => {
+        const html = await (await fetch(`${base}/umbrella`)).text();
+        const found = icons(html);
+        const drawn = (name) => found.some((i) => i.name === name && i.drawn);
+        must(drawn("star") && drawn("folder"), "grafo de servidor: el Icon del paraguas o el del paquete no ven lo registrado con @zuccadev-labs/zuix/zicon/all");
+        must(drawn("bell") && drawn("home") && drawn("cog") && drawn("bars-3"), "grafo de cliente (render de servidor): el Icon del paraguas o los componentes de zui/zout no ven lo registrado con @zuccadev-labs/zuix/zicon/all");
+        return "servidor: star, folder · cliente: bell, home, cog, bars-3";
       });
 
       const { chromium } = await import("playwright-core");
@@ -621,6 +701,7 @@ export default function ShellPage() {
               await page.locator(`${t("switch")}:text-is("true")`).waitFor();
               await page.locator(t("toast")).click();
               await page.locator(".z-toast").waitFor();
+              // biome-ignore lint/performance/useDomNodeTextContent: innerText() es la API de Playwright (texto visible), no la propiedad del DOM.
               must((await page.locator(".z-toast").innerText()).includes("Saved"), "el Toast no muestra el título");
               must((await emptyIcons(page)).length === 0, `iconos vacíos tras interactuar: ${(await emptyIcons(page)).join(", ")}`);
               must(problems.length === 0, `avisos o errores de consola:\n    ${[...new Set(problems)].slice(0, 6).join("\n    ")}`);
@@ -628,11 +709,12 @@ export default function ShellPage() {
             } finally { await page.close(); }
           });
         }
-        await check("/shell hidrata sin avisos; Shell acoplado a 1280 px y en cajón a 600 px", async () => {
-          const wide = await open("/shell");
+        for (const route of ["/shell", "/umbrella"]) await check(`${route} hidrata sin avisos; Shell acoplado a 1280 px y en cajón a 600 px`, async () => {
+          const wide = await open(route);
           try {
             await wide.page.locator(".z-shell__side").waitFor();
             must(await wide.page.locator(".z-shell__drawer").count() === 0, "a 1280 px la sidebar no debería ser un cajón");
+            if (route === "/umbrella") must(await wide.page.locator('.z-titlebar svg[data-icon="bell"] path, .z-shell svg[data-icon="bell"] path').count() > 0, "en el navegador, el Icon del paraguas no dibuja lo registrado");
             must(await wide.page.locator(".z-split__divider").count() === 1, "SplitPane sin divisor");
             await wide.page.locator(".z-split__divider").focus();
             const before = await wide.page.locator(".z-split__divider").getAttribute("aria-valuenow");
@@ -640,7 +722,7 @@ export default function ShellPage() {
             must(await wide.page.locator(".z-split__divider").getAttribute("aria-valuenow") !== before, "el divisor no respondió al teclado");
             must(wide.problems.length === 0, `avisos o errores de consola (1280 px):\n    ${[...new Set(wide.problems)].slice(0, 6).join("\n    ")}`);
           } finally { await wide.page.close(); }
-          const narrow = await open("/shell", { width: 600, height: 800 });
+          const narrow = await open(route, { width: 600, height: 800 });
           try {
             await narrow.page.locator(".z-shell__drawer").waitFor();
             await narrow.page.keyboard.press("Escape");

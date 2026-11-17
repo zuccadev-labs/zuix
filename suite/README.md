@@ -65,6 +65,9 @@ Estas subrutas no importan React.
 |---|---|
 | `@zuccadev-labs/zuix/styles.css` | Tokens (todas las marcas) + estilos de componentes y layouts |
 | `@zuccadev-labs/zuix/tokens.css` | `@zuccadev-labs/zuix-tokens/tokens.css` |
+| `@zuccadev-labs/zuix/tokens/<marca>.css` | Una sola marca en `:root` (`dazlabs`, `zutool`, `zenith`) |
+| `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Puentes de los tokens a Tailwind v4 y a Docusaurus |
+| `@zuccadev-labs/zuix/zui/dom/carousel-gl` | Modo WebGL del carrusel sin framework |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom` | `@zuccadev-labs/zuix-zui` y su comportamiento sin framework |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout` y su comportamiento sin framework |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | Las entradas de `@zuccadev-labs/zuix-zicon` |

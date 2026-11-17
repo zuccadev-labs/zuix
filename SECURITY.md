@@ -30,6 +30,26 @@ El proyecto lo mantiene una sola persona y no hay plazos garantizados. La intenc
 recepción en una semana, acordar una fecha de divulgación y publicar la corrección con una nota en el
 `CHANGELOG.md` del paquete.
 
+## Cadena de suministro
+
+Cómo se construye y se publica, y cómo comprobarlo desde fuera:
+
+- **Publicación.** Solo desde el workflow `release` de este repositorio, con publicación de confianza de npm
+  (OIDC, sin tokens de larga duración). Cada versión publicada así lleva procedencia en npm:
+  `npm audit signatures` en un proyecto que la instale, o la insignia de procedencia en npmjs.com.
+  `0.1.0` se publicó a mano y no la lleva.
+- **Tarballs.** El GitHub Release de cada versión adjunta los cinco tarballs publicados, sus huellas
+  (`SHA256SUMS`) y un SBOM CycloneDX por paquete. La procedencia de cada tarball se comprueba con
+  `gh attestation verify <archivo>.tgz --repo zuccadev-labs/zuix`.
+- **Dependencias.** Lockfile congelado en CI; ninguna dependencia ejecuta scripts de instalación; no se
+  instala una versión con menos de un día en el registro ni una que pierda la procedencia que tenían las
+  anteriores (`pnpm-workspace.yaml`). `pnpm audit` forma parte de la integración continua, y cada pull
+  request pasa revisión de dependencias, CodeQL y, en `main`, OpenSSF Scorecard.
+- **Workflows.** Acciones fijadas por SHA, permisos mínimos por trabajo y sin secretos.
+
+Los paquetes son código de navegador y de compilación: no abren conexiones ni leen el sistema de archivos
+al instalarse ni al importarse, y no declaran scripts de instalación.
+
 ## Alcance
 
 Dentro del alcance:

@@ -13,6 +13,8 @@
 //   data-z-tooltip="texto"   tooltip al pasar el puntero o enfocar
 //   data-z-placement         bottom-start (por defecto) | bottom | bottom-end | top-start | top | top-end | right | left
 //   data-z-static            en un <dialog>: Escape y clic fuera no lo cierran
+// Los atributos de referencia (`#id`) se resuelven con getElementById: valen ids con cualquier carácter y un valor
+// que no sea un selector válido no lanza. Seguridad (CSP, Trusted Types, texto de la aplicación): ver ./shared.
 // Tabs, Accordion, Switch, Checkbox, Radio, Toggle y SegmentedControl se activan solos dentro de un contenedor
 // [data-z-dom]. Tras insertar marcado nuevo: hydrate(contenedor). Eventos: z:open, z:close, z:change, z:select.
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
@@ -22,6 +24,19 @@ import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import * as carousel from "./carousel";
 import * as collections from "./collections";
 import * as forms from "./forms";
+import { trapTab } from "../core/focus";
+import { escapeTop } from "../core/layers";
+import { lockScroll } from "../core/scroll-lock";
+import { createLongPress } from "../core/long-press";
+import { createMenuAim } from "../core/menu-aim";
+import { isRtl } from "../core/dir";
+import { place, submenuAnchor, topInset, type Placement } from "../core/place";
+import { afterExit } from "../core/presence";
+import { move, moveBoth } from "../core/roving";
+import { swipeDirection, swipeToDismiss } from "../core/swipe";
+import { createTimer } from "../core/timer";
+import { createTypeahead } from "../core/typeahead";
+import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
 const modules = [forms, collections, carousel];
@@ -32,34 +47,12 @@ export { setSelectValue, setComboboxOptions, setComboboxLoading, setComboboxValu
 // Los tres iconos que este módulo dibuja por su cuenta (cierre de aviso, confirmación).
 registerIcons([xMark, exclamationTriangle, informationCircle]);
 
-export type Placement = "bottom-start" | "bottom" | "bottom-end" | "top-start" | "top" | "top-end" | "right" | "right-start" | "right-end" | "left" | "left-start" | "left-end";
+export { place, type Placement };
 
-const EXIT_MS = 220;
 const isBrowser = typeof document !== "undefined";
 
 function emit(el: Element, name: string, detail?: unknown): boolean {
   return el.dispatchEvent(new CustomEvent(`z:${name}`, { bubbles: true, cancelable: true, detail }));
-}
-
-function reducedMotion(): boolean {
-  return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-/** Espera la animación de salida (data-state="closed") antes de retirar el elemento. */
-function afterExit(el: HTMLElement, done: () => void): void {
-  if (reducedMotion()) return done();
-  let finished = false;
-  const finish = () => {
-    if (finished) return;
-    finished = true;
-    el.removeEventListener("animationend", onEnd);
-    done();
-  };
-  const onEnd = (event: AnimationEvent) => {
-    if (event.target === el) finish();
-  };
-  el.addEventListener("animationend", onEnd);
-  setTimeout(finish, EXIT_MS);
 }
 
 /* ---------- Diálogos: <dialog class="z-liquid z-modal"> y <dialog class="z-liquid z-drawer"> ---------- */
@@ -69,6 +62,8 @@ export function openDialog(dialog: HTMLDialogElement): void {
   if (dialog.open) return;
   dialog.dataset.state = "open";
   dialog.showModal();
+  // La página no se desplaza bajo un diálogo modal; se libera cuando el diálogo se cierra, por la vía que sea.
+  dialog.addEventListener("close", lockScroll(), { once: true });
   emit(dialog, "open");
 }
 
@@ -77,40 +72,46 @@ export function closeDialog(dialog: HTMLDialogElement, value?: string): void {
   if (!dialog.open || dialog.dataset.state === "closed") return;
   dialog.dataset.state = "closed";
   afterExit(dialog, () => {
+    // Ya cerrado por otra vía (dialog.close() de la aplicación durante la animación): no se cierra dos veces.
+    if (!dialog.open) return;
+    announced.add(dialog);
     dialog.close(value);
     emit(dialog, "close", { value });
   });
 }
 
+// Diálogos cuyo z:close ya se emitió desde closeDialog(): el `close` nativo que llega después no lo repite.
+const announced = new WeakSet<HTMLDialogElement>();
+
+/**
+ * Cierre que no pasó por closeDialog(): `dialog.close()` de la aplicación, `<form method="dialog">` o el segundo
+ * Escape que el navegador no deja cancelar. El estado y el evento z:close quedan igual que en un cierre normal.
+ */
+function onNativeClose(event: Event): void {
+  const dialog = event.target;
+  if (!(dialog instanceof HTMLDialogElement) || !dialog.matches(".z-modal, .z-drawer, .z-palette")) return;
+  if (announced.delete(dialog)) return;
+  dialog.dataset.state = "closed";
+  emit(dialog, "close", { value: dialog.returnValue || undefined });
+}
+
 /* ---------- Popover, menú y tooltip: elementos con atributo `popover` ---------- */
 
 const anchors = new WeakMap<HTMLElement, Element>();
+// Popovers abiertos junto a un elemento: se recolocan si la página se desplaza o cambia de tamaño.
+const followers = new Map<HTMLElement, () => void>();
 
-export function place(el: HTMLElement, rect: DOMRect, placement: Placement, gap = 6): void {
-  const { width, height } = el.getBoundingClientRect();
-  const vw = document.documentElement.clientWidth;
-  const vh = document.documentElement.clientHeight;
-  let [side, align = "center"] = placement.split("-") as [string, string?];
-  // Voltea al lado opuesto si no cabe.
-  if (side === "bottom" && rect.bottom + gap + height > vh && rect.top - gap - height >= 0) side = "top";
-  else if (side === "top" && rect.top - gap - height < 0) side = "bottom";
-  else if (side === "right" && rect.right + gap + width > vw) side = "left";
-  else if (side === "left" && rect.left - gap - width < 0) side = "right";
-  let x: number;
-  let y: number;
-  if (side === "top" || side === "bottom") {
-    y = side === "bottom" ? rect.bottom + gap : rect.top - gap - height;
-    x = align === "start" ? rect.left : align === "end" ? rect.right - width : rect.left + rect.width / 2 - width / 2;
-  } else {
-    x = side === "right" ? rect.right + gap : rect.left - gap - width;
-    y = align === "start" ? rect.top : align === "end" ? rect.bottom - height : rect.top + rect.height / 2 - height / 2;
+function follow(event: Event): void {
+  if (!followers.size) return;
+  // El desplazamiento dentro del propio popover (una lista larga) no lo mueve.
+  if (event.target instanceof Element && event.target.closest("[popover]")) return;
+  for (const [el, reposition] of [...followers]) {
+    if (!el.isConnected || !el.matches(":popover-open")) followers.delete(el);
+    else reposition();
   }
-  el.style.left = `${Math.round(Math.min(Math.max(8, x), Math.max(8, vw - width - 8)))}px`;
-  el.style.top = `${Math.round(Math.min(Math.max(8, y), Math.max(8, vh - height - 8)))}px`;
-  el.dataset.side = side;
 }
 
-const isDisabled = (item: Element) => item.hasAttribute("data-disabled") || (item as HTMLButtonElement).disabled === true;
+const isDisabled = (item: Element) => item.hasAttribute("data-disabled") || item.getAttribute("aria-disabled") === "true" || (item as HTMLButtonElement).disabled === true;
 
 // Un submenú puede ir anidado en el marcado de su menú padre: cada menú solo cuenta sus propias entradas.
 function menuItems(menu: Element): HTMLElement[] {
@@ -124,16 +125,23 @@ function highlight(menu: Element, item: HTMLElement | undefined): void {
   item.focus({ preventScroll: true });
 }
 
-/** Abre un elemento `[popover]` anclado a `anchor` (un elemento o un punto de la ventana). */
-export function openPopover(el: HTMLElement, anchor: Element | { x: number; y: number }, placement: Placement = "bottom-start"): void {
+/**
+ * Abre un elemento `[popover]` anclado a `anchor` (un elemento o un punto de la ventana). Anclado a un elemento, lo
+ * sigue cuando la página se desplaza o cambia de tamaño; `follow: false` lo deja donde se abrió.
+ */
+export function openPopover(el: HTMLElement, anchor: Element | { x: number; y: number }, placement: Placement = "bottom-start", options: { follow?: boolean } = {}): void {
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
   if (!el.matches(":popover-open")) el.showPopover();
-  const rect = anchor instanceof Element ? anchor.getBoundingClientRect() : new DOMRect(anchor.x, anchor.y, 0, 0);
-  place(el, rect, placement, anchor instanceof Element ? 6 : 0);
+  const position = () => {
+    const rect = anchor instanceof Element ? anchor.getBoundingClientRect() : new DOMRect(anchor.x, anchor.y, 0, 0);
+    place(el, rect, placement, anchor instanceof Element ? 6 : 0);
+  };
+  position();
   if (anchor instanceof Element) {
     anchors.set(el, anchor);
     anchor.setAttribute("aria-expanded", "true");
+    if (options.follow !== false) followers.set(el, position);
   }
   if (el.classList.contains("z-menu")) highlight(el, menuItems(el)[0]);
   emit(el, "open");
@@ -171,13 +179,7 @@ function detectSourceNesting(): void {
 }
 
 function submenuOf(trigger: Element): HTMLElement | null {
-  const selector = trigger.getAttribute("data-z-submenu");
-  if (!selector) return null;
-  try {
-    return document.querySelector<HTMLElement>(selector);
-  } catch {
-    return null;
-  }
+  return byRef(trigger.getAttribute("data-z-submenu"));
 }
 
 function describeSubmenu(trigger: Element, sub: HTMLElement | null = submenuOf(trigger)): void {
@@ -230,12 +232,12 @@ export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
     anchors.set(sub, trigger);
     trigger.setAttribute("aria-expanded", "true");
     trigger.dataset.state = "open";
-    // Pegado al borde del menú padre y con la primera entrada a la altura del disparador.
-    const menuRect = parent.getBoundingClientRect();
-    const itemRect = trigger.getBoundingClientRect();
-    const style = getComputedStyle(sub);
-    const inset = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.borderTopWidth) || 0);
-    place(sub, new DOMRect(menuRect.left, itemRect.top - inset, menuRect.width, itemRect.height + inset * 2), "right-start", 4);
+    // Pegado al borde del menú padre y con la primera entrada a la altura del disparador. En RTL abre hacia la izquierda.
+    const position = () => {
+      place(sub, submenuAnchor(parent.getBoundingClientRect(), trigger.getBoundingClientRect(), topInset(sub)), isRtl(sub) ? "left-start" : "right-start", 4);
+    };
+    position();
+    followers.set(sub, position);
     emit(sub, "open");
   }
   if (focusFirst) highlight(sub, menuItems(sub)[0]);
@@ -243,33 +245,30 @@ export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
 
 let subTimer: ReturnType<typeof setTimeout> | undefined;
 
-/** Puntero sobre una entrada: la resalta y, con un pequeño retardo, abre su submenú o cierra el de otra entrada. */
-function onMenuPointer(item: HTMLElement): void {
+const aim = createMenuAim();
+
+/**
+ * Puntero sobre una entrada: la resalta y, con un pequeño retardo, abre su submenú o cierra el de otra entrada.
+ * Mientras el puntero va camino del submenú abierto (zona de gracia), las entradas que cruza no cuentan.
+ */
+function onMenuPointer(item: HTMLElement, event: PointerEvent): void {
   const menu = item.closest<HTMLElement>(".z-menu")!;
+  const open = openChild(menu);
+  if (open && submenuOf(item) !== open && aim.blocks({ x: event.clientX, y: event.clientY })) return;
   highlight(menu, item);
   clearTimeout(subTimer);
-  const open = openChild(menu);
   if (item.hasAttribute("data-z-submenu")) {
     if (submenuOf(item) !== open) subTimer = setTimeout(() => openSubmenu(item), 100);
   } else if (open) subTimer = setTimeout(() => closePopover(open), 200);
 }
 
-let typed = "";
-let typedAt = 0;
+// Búsqueda por letra: enfoca la siguiente entrada cuyo texto empieza por lo tecleado.
+const menuSearch = createTypeahead(600);
 
-/** Búsqueda por letra: enfoca la siguiente entrada cuyo texto empieza por lo tecleado. */
 function typeahead(menu: HTMLElement, key: string): boolean {
-  const now = Date.now();
-  typed = now - typedAt > 600 ? key : typed + key;
-  typedAt = now;
-  const query = typed.toLowerCase();
-  const repeated = [...query].every((char) => char === query[0]);
   const items = menuItems(menu);
-  const at = Math.max(0, items.indexOf(document.activeElement as HTMLElement));
-  // Una letra (o la misma repetida) avanza desde la entrada siguiente; una palabra busca desde la actual.
-  const order = repeated ? [...items.slice(at + 1), ...items.slice(0, at + 1)] : [...items.slice(at), ...items.slice(0, at)];
-  const text = (item: HTMLElement) => (item.querySelector(".z-menu__text") ?? item).textContent!.trim().toLowerCase();
-  const hit = order.find((item) => text(item).startsWith(repeated ? query[0]! : query));
+  const text = (item: HTMLElement) => (item.querySelector(".z-menu__text") ?? item).textContent ?? "";
+  const hit = items[menuSearch(items.map(text), key, items.indexOf(document.activeElement as HTMLElement))];
   if (hit) highlight(menu, hit);
   return hit !== undefined;
 }
@@ -277,6 +276,7 @@ function typeahead(menu: HTMLElement, key: string): boolean {
 function onPopoverToggle(event: Event): void {
   const el = event.target as HTMLElement;
   if ((event as ToggleEvent).newState !== "closed" || !el.hasAttribute?.("popover")) return;
+  followers.delete(el);
   const anchor = anchors.get(el);
   if (anchor) {
     anchor.setAttribute("aria-expanded", "false");
@@ -290,34 +290,58 @@ function onPopoverToggle(event: Event): void {
 
 /* ---------- Tooltip ---------- */
 
+// WCAG 1.4.13: la burbuja se puede descartar sin mover el puntero (Escape), el puntero puede pasar a ella sin que
+// se cierre (hoverable) y sigue visible mientras el puntero o el foco estén en el disparador o en la burbuja.
+const TIP_OPEN_MS = 350;
+const TIP_CLOSE_MS = 120;
 let tip: HTMLElement | undefined;
+let tipHost: HTMLElement | undefined;
 let tipTimer: ReturnType<typeof setTimeout> | undefined;
 let tipId = 0;
+
+const describedBy = (el: Element) => (el.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
 
 function showTooltip(target: HTMLElement): void {
   const text = target.getAttribute("data-z-tooltip");
   if (!text) return;
+  clearTimeout(tipTimer);
+  if (tipHost === target) return;
   hideTooltip();
   tipTimer = setTimeout(() => {
+    if (!target.isConnected) return;
     tip = document.createElement("div");
     tip.className = "z-liquid z-tooltip";
     tip.setAttribute("role", "tooltip");
     tip.setAttribute("popover", "manual");
     tip.id = `z-tip-${++tipId}`;
     tip.textContent = text;
-    document.body.append(tip);
+    // Dentro del diálogo modal que contiene al disparador: fuera de él la burbuja quedaría inerte.
+    (target.closest("dialog[open]") ?? document.body).append(tip);
     tip.showPopover();
     place(tip, target.getBoundingClientRect(), (target.getAttribute("data-z-placement") as Placement) ?? "top");
-    target.setAttribute("aria-describedby", tip.id);
-  }, 350);
+    // Se añade a la descripción que el control ya tuviera (la ayuda de un Field), sin sustituirla.
+    target.setAttribute("aria-describedby", [...describedBy(target), tip.id].join(" "));
+    tipHost = target;
+  }, TIP_OPEN_MS);
 }
 
 function hideTooltip(): void {
   clearTimeout(tipTimer);
   if (!tip) return;
-  document.querySelector(`[aria-describedby="${tip.id}"]`)?.removeAttribute("aria-describedby");
+  if (tipHost) {
+    const rest = describedBy(tipHost).filter((id) => id !== tip!.id);
+    if (rest.length) tipHost.setAttribute("aria-describedby", rest.join(" "));
+    else tipHost.removeAttribute("aria-describedby");
+  }
   tip.remove();
   tip = undefined;
+  tipHost = undefined;
+}
+
+/** Cierre diferido: da tiempo a que el puntero cruce del disparador a la burbuja. */
+function scheduleHideTooltip(): void {
+  clearTimeout(tipTimer);
+  tipTimer = setTimeout(hideTooltip, TIP_CLOSE_MS);
 }
 
 /* ---------- Avisos ---------- */
@@ -331,17 +355,22 @@ export interface ToastOptions {
   action?: { label: string; onClick: () => void };
   position?: "top-right" | "top-center" | "bottom-right" | "bottom-center";
   closeLabel?: string;
+  /** Nombre accesible de la región de avisos. F8 lleva el foco a ella. */
+  regionLabel?: string;
 }
 
-function viewport(position: string): HTMLElement {
+function viewport(position: string, label: string): HTMLElement {
   let host = document.querySelector<HTMLElement>(".z-toast-viewport");
   if (!host) {
-    host = document.createElement("ol");
+    host = document.createElement("div");
     host.className = "z-toast-viewport";
     host.setAttribute("popover", "manual");
+    // Región con nombre (landmark); cada aviso lleva role status o alert.
+    host.setAttribute("role", "region");
     host.tabIndex = -1;
     document.body.append(host);
   }
+  host.setAttribute("aria-label", label);
   host.dataset.position = position;
   // Capa superior: los avisos quedan por encima de un <dialog> abierto.
   if (host.matches(":popover-open")) host.hidePopover();
@@ -349,75 +378,16 @@ function viewport(position: string): HTMLElement {
   return host;
 }
 
-const SWIPE_THRESHOLD = 50;
-
-/**
- * Deslizar para descartar, con ratón, lápiz o dedo, igual que el Toast de React: hacia la derecha, o hacia el borde
- * (arriba o abajo) en las posiciones centradas. El CSS lee `data-swipe` y las mismas variables que escribe Radix.
- */
-function swipeToDismiss(item: HTMLElement, position: string, dismiss: () => void, pause: () => void, resume: () => void): void {
-  const vertical = position.endsWith("center");
-  const sign = position === "top-center" ? -1 : 1;
-  const axis = vertical ? "y" : "x";
-  let swipe: { id: number; x: number; y: number; active: boolean } | undefined;
-  // Solo cuenta el avance en la dirección de descarte.
-  const delta = (event: PointerEvent, from: { x: number; y: number }) => Math.max(0, (vertical ? event.clientY - from.y : event.clientX - from.x) * sign) * sign;
-  item.addEventListener("pointerdown", (event) => {
-    if (event.button !== 0 || item.dataset.state === "closed") return;
-    swipe = { id: event.pointerId, x: event.clientX, y: event.clientY, active: false };
-  });
-  item.addEventListener("pointermove", (event) => {
-    if (!swipe || event.pointerId !== swipe.id) return;
-    const moved = delta(event, swipe);
-    if (!swipe.active) {
-      // Un dedo tiembla más que un ratón: margen mayor antes de dar el gesto por empezado.
-      const buffer = event.pointerType === "touch" ? 10 : 2;
-      const cross = Math.abs(vertical ? event.clientX - swipe.x : event.clientY - swipe.y);
-      if (Math.abs(moved) > buffer) {
-        swipe.active = true;
-        pause();
-        item.dataset.swipe = "move";
-        try { item.setPointerCapture(event.pointerId); } catch { /* puntero sintético o ya liberado */ }
-      } else if (cross > buffer) {
-        swipe = undefined;
-        return;
-      } else return;
-    }
-    item.style.setProperty(`--radix-toast-swipe-move-${axis}`, `${moved}px`);
-  });
-  const end = (event: PointerEvent, cancelled: boolean) => {
-    if (!swipe || event.pointerId !== swipe.id) return;
-    const { active } = swipe;
-    const moved = delta(event, swipe);
-    swipe = undefined;
-    if (!active) return;
-    item.style.removeProperty(`--radix-toast-swipe-move-${axis}`);
-    // El clic que sigue al gesto no debe activar la acción ni el cierre que quedaran bajo el dedo.
-    const swallow = (click: Event) => { click.preventDefault(); click.stopPropagation(); };
-    item.addEventListener("click", swallow, { capture: true, once: true });
-    setTimeout(() => item.removeEventListener("click", swallow, { capture: true }));
-    if (!cancelled && Math.abs(moved) > SWIPE_THRESHOLD) {
-      item.style.setProperty(`--radix-toast-swipe-end-${axis}`, `${moved}px`);
-      item.dataset.swipe = "end";
-      dismiss();
-    } else {
-      item.dataset.swipe = "cancel";
-      resume();
-    }
-  };
-  item.addEventListener("pointerup", (event) => end(event, false));
-  item.addEventListener("pointercancel", (event) => end(event, true));
-}
-
 /** Muestra un aviso con el mismo marcado que el Toast de React. Devuelve una función para descartarlo. */
-export function toast({ title, description, intent = "info", duration = 5000, action, position = "bottom-right", closeLabel = "Close" }: ToastOptions): () => void {
-  const host = viewport(position);
-  const item = document.createElement("li");
+export function toast({ title, description, intent = "info", duration = 5000, action, position = "bottom-right", closeLabel = "Close", regionLabel = "Notifications (F8)" }: ToastOptions): () => void {
+  const host = viewport(position, regionLabel);
+  const item = document.createElement("div");
   item.className = "z-liquid z-toast";
   item.dataset.intent = intent;
   item.dataset.state = "open";
   item.setAttribute("role", intent === "danger" || intent === "warning" ? "alert" : "status");
-  item.innerHTML = `<span class="z-toast__dot" aria-hidden="true"></span><div class="z-toast__content"><div class="z-toast__title"></div></div><button type="button" class="z-overlay-close z-toast__close">${iconSvg("x-mark", { size: 16 })}</button>`;
+  item.tabIndex = 0;
+  setMarkup(item, `<span class="z-toast__dot" aria-hidden="true"></span><div class="z-toast__content"><div class="z-toast__title"></div></div><button type="button" class="z-overlay-close z-toast__close">${iconSvg("x-mark", { size: 16 })}</button>`);
   const content = item.querySelector(".z-toast__content")!;
   content.querySelector(".z-toast__title")!.textContent = title;
   item.querySelector(".z-toast__close")!.setAttribute("aria-label", closeLabel);
@@ -427,14 +397,23 @@ export function toast({ title, description, intent = "info", duration = 5000, ac
     text.textContent = description;
     content.append(text);
   }
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Cierre automático con pausa (WCAG 2.2.1): el tiempo no corre mientras el puntero o el foco están en el aviso,
+  // ni durante un gesto de descarte; al salir continúa con lo que quedaba.
+  const timer = createTimer(duration, () => dismiss());
+  const hold = (reason: string) => timer.hold(reason);
+  const release = (reason: string) => timer.release(reason);
+  const whileOpen = new AbortController();
   const dismiss = () => {
-    clearTimeout(timer);
+    timer.stop();
+    whileOpen.abort();
     if (item.dataset.state === "closed") return;
     item.dataset.state = "closed";
+    // El foco no se queda en un aviso que desaparece: vuelve a donde estaba antes de entrar en la región.
+    const hadFocus = item.contains(document.activeElement);
     afterExit(item, () => {
       item.remove();
       if (!host.children.length && host.matches(":popover-open")) host.hidePopover();
+      if (hadFocus) (toastReturn?.isConnected ? toastReturn : null)?.focus({ preventScroll: true });
     });
   };
   if (action) {
@@ -449,10 +428,35 @@ export function toast({ title, description, intent = "info", duration = 5000, ac
     content.append(button);
   }
   item.querySelector(".z-toast__close")!.addEventListener("click", dismiss);
-  swipeToDismiss(item, position, dismiss, () => clearTimeout(timer), () => { if (duration > 0) timer = setTimeout(dismiss, duration); });
+  item.addEventListener("pointerenter", () => hold("pointer"));
+  item.addEventListener("pointerleave", () => release("pointer"));
+  item.addEventListener("focusin", () => hold("focus"));
+  item.addEventListener("focusout", (event) => {
+    if (!item.contains(event.relatedTarget as Node | null)) release("focus");
+  });
+  item.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") dismiss();
+  });
+  // Con la ventana sin foco nadie está leyendo el aviso: el tiempo se detiene hasta que vuelve.
+  window.addEventListener("blur", () => hold("window"), { signal: whileOpen.signal });
+  window.addEventListener("focus", () => release("window"), { signal: whileOpen.signal });
+  swipeToDismiss(item, { direction: swipeDirection(position), onStart: () => hold("swipe"), onCancel: () => release("swipe"), onDismiss: dismiss });
   host.append(item);
-  if (duration > 0) timer = setTimeout(dismiss, duration);
+  timer.start();
   return dismiss;
+}
+
+// Elemento que tenía el foco antes de entrar en la región de avisos con F8.
+let toastReturn: HTMLElement | null = null;
+
+/** F8 lleva el foco al aviso más reciente, como el Toast de React. */
+function focusToasts(): boolean {
+  const host = document.querySelector<HTMLElement>(".z-toast-viewport");
+  const last = host?.querySelector<HTMLElement>('.z-toast[data-state="open"]:last-of-type');
+  if (!host || !last) return false;
+  if (!host.contains(document.activeElement)) toastReturn = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  last.focus();
+  return true;
 }
 
 /* ---------- Confirmación ---------- */
@@ -465,20 +469,29 @@ export interface ConfirmOptions {
   cancelLabel?: string;
 }
 
-/** Diálogo de confirmación; resuelve `true` si se confirma. Mismo marcado que ConfirmDialog. */
+let confirmId = 0;
+
+/**
+ * Diálogo de confirmación; resuelve `true` si se confirma. Mismo marcado que ConfirmDialog: `role="alertdialog"`
+ * con nombre (aria-labelledby) y descripción (aria-describedby). Escape cancela; el clic en el velo no cierra.
+ */
 export function confirm({ title, description, intent = "default", confirmLabel = "Confirm", cancelLabel = "Cancel" }: ConfirmOptions): Promise<boolean> {
   const dialog = document.createElement("dialog");
+  const id = `z-confirm-${++confirmId}`;
   dialog.className = "z-liquid z-modal z-confirm";
   dialog.dataset.intent = intent;
   dialog.setAttribute("role", "alertdialog");
+  dialog.setAttribute("aria-labelledby", `${id}-title`);
   dialog.setAttribute("data-z-static", "");
-  dialog.innerHTML = `<header class="z-modal__header"><span class="z-confirm__icon">${iconSvg(intent === "danger" ? "exclamation-triangle" : "information-circle", { size: 16 })}</span><div class="z-modal__heading"><h2 class="z-modal__title"></h2></div></header><footer class="z-modal__footer"><button type="button" class="z-dialog-btn" data-variant="secondary" value="cancel"></button><button type="button" class="z-dialog-btn" data-variant="${intent === "danger" ? "danger" : "primary"}" value="confirm"></button></footer>`;
+  setMarkup(dialog, `<header class="z-modal__header"><span class="z-confirm__icon">${iconSvg(intent === "danger" ? "exclamation-triangle" : "information-circle", { size: 16 })}</span><div class="z-modal__heading"><h2 class="z-modal__title" id="${id}-title"></h2></div></header><footer class="z-modal__footer"><button type="button" class="z-dialog-btn" data-variant="secondary" value="cancel"></button><button type="button" class="z-dialog-btn" data-variant="${intent === "danger" ? "danger" : "primary"}" value="confirm"></button></footer>`);
   dialog.querySelector(".z-modal__title")!.textContent = title;
   if (description) {
     const text = document.createElement("p");
     text.className = "z-modal__description";
+    text.id = `${id}-description`;
     text.textContent = description;
     dialog.querySelector(".z-modal__heading")!.append(text);
+    dialog.setAttribute("aria-describedby", text.id);
   }
   const [cancel, ok] = dialog.querySelectorAll<HTMLButtonElement>(".z-dialog-btn");
   cancel!.textContent = cancelLabel;
@@ -487,6 +500,16 @@ export function confirm({ title, description, intent = "default", confirmLabel =
   return new Promise((resolve) => {
     cancel!.addEventListener("click", () => closeDialog(dialog, "cancel"));
     ok!.addEventListener("click", () => closeDialog(dialog, "confirm"));
+    // Escape (y el gesto atrás del sistema) cancelan, como el ConfirmDialog de React. El velo sigue sin cerrar.
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      event.preventDefault();
+      closeDialog(dialog, "cancel");
+    });
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeDialog(dialog, "cancel");
+    });
     dialog.addEventListener("close", () => {
       resolve(dialog.returnValue === "confirm");
       dialog.remove();
@@ -534,9 +557,21 @@ function selectTabQuiet(tabs: Element, value: string): void {
 
 /* ---------- Acordeón ---------- */
 
-function setSection(item: Element, open: boolean): void {
-  const trigger = item.querySelector<HTMLElement>(".z-accordion__trigger");
-  const content = item.querySelector<HTMLElement>(".z-accordion__content");
+// Un acordeón puede llevar otro dentro de una sección: cada uno solo cuenta sus propias piezas.
+const ownPart = <T extends HTMLElement>(item: Element, selector: string) => [...item.querySelectorAll<T>(selector)].find((el) => el.closest(".z-accordion__item") === item);
+const accordionItems = (root: Element) => [...root.querySelectorAll<HTMLElement>(".z-accordion__item")].filter((item) => item.closest(".z-accordion") === root);
+const sectionValue = (item: HTMLElement) => item.dataset.value ?? ownPart(item, ".z-accordion__content")?.id ?? "";
+
+// Secciones que están terminando su animación de cierre: función que cancela la espera.
+const closing = new WeakMap<HTMLElement, () => void>();
+
+/**
+ * Abre o cierra una sección. Con `animate`, la altura se anima entre 0 y `--z-accordion-content-height` (medida
+ * aquí) y, al cerrar, el contenido se oculta cuando termina la animación. Sin él (marcado inicial) no hay animación.
+ */
+function setSection(item: Element, open: boolean, animate = false): void {
+  const trigger = ownPart<HTMLElement>(item, ".z-accordion__trigger");
+  const content = ownPart<HTMLElement>(item, ".z-accordion__content");
   const state = open ? "open" : "closed";
   (item as HTMLElement).dataset.state = state;
   if (trigger) {
@@ -544,8 +579,19 @@ function setSection(item: Element, open: boolean): void {
     trigger.setAttribute("aria-expanded", String(open));
   }
   if (content) {
+    const changed = content.dataset.state !== state || content.hidden === open;
     content.dataset.state = state;
-    content.hidden = !open;
+    closing.get(content)?.();
+    closing.delete(content);
+    if (!animate || !changed) {
+      content.style.animation = "none";
+      content.hidden = !open;
+      return;
+    }
+    content.style.removeProperty("animation");
+    content.hidden = false;
+    content.style.setProperty("--z-accordion-content-height", `${content.scrollHeight}px`);
+    if (!open) closing.set(content, afterExit(content, () => { content.hidden = true; }));
   }
 }
 
@@ -580,10 +626,52 @@ function setChecked(el: HTMLElement, checked: boolean): void {
 const isChecked = (el: HTMLElement) => el.getAttribute("aria-checked") === "true" || el.dataset.state === "checked" || el.dataset.state === "on";
 
 function toggleChecked(el: HTMLElement): void {
-  if (el.hasAttribute("data-disabled") || (el as HTMLButtonElement).disabled) return;
+  if (isDisabled(el)) return;
   const next = !isChecked(el);
   setChecked(el, next);
   emit(el, "change", { checked: next });
+}
+
+/* ---------- Rating: .z-rating[data-interactive] > .z-rating__stars[role="radiogroup"] ---------- */
+
+const ratingStars = (group: Element) => [...group.querySelectorAll<HTMLElement>(".z-rating__star")];
+const starValue = (star: HTMLElement, index: number) => Number(star.dataset.star) || index + 1;
+
+/** Dibuja la valoración: estrellas rellenas hasta `value`, radio marcado y parada de tabulación. */
+function paintRating(group: HTMLElement, value: number, shown = value): void {
+  const stars = ratingStars(group);
+  stars.forEach((star, index) => {
+    const n = starValue(star, index);
+    const checked = n === value;
+    star.setAttribute("aria-checked", String(checked));
+    star.tabIndex = checked || ((value < 1 || value > stars.length) && index === 0) ? 0 : -1;
+    star.toggleAttribute("data-filled", n <= shown);
+    const variant = n <= shown ? "solid" : "outline";
+    const glyph = star.querySelector("z-icon");
+    const svg = star.querySelector("svg.z-icon");
+    if (glyph) {
+      if ((glyph.getAttribute("variant") ?? "outline") !== variant) glyph.setAttribute("variant", variant);
+    } else if (svg && svg.getAttribute("data-variant") !== variant) {
+      const holder = document.createElement("span");
+      setMarkup(holder, iconSvg(svg.getAttribute("data-icon") ?? "star", { variant, size: svg.getAttribute("width") ?? 18 }));
+      svg.replaceWith(...holder.childNodes);
+    }
+  });
+}
+
+const ratingValue = (group: Element) => {
+  const stars = ratingStars(group);
+  const at = stars.findIndex((star) => star.getAttribute("aria-checked") === "true");
+  return at < 0 ? 0 : starValue(stars[at]!, at);
+};
+
+/** Elige una estrella: z:change { value } en `.z-rating`, igual que `onChange` del Rating de React. */
+function rate(group: HTMLElement, star: HTMLElement): void {
+  const stars = ratingStars(group);
+  const value = starValue(star, stars.indexOf(star));
+  const before = ratingValue(group);
+  paintRating(group, value);
+  if (value !== before) emit(group.closest(".z-rating") ?? group, "change", { value });
 }
 
 /** Prepara el marcado estático dentro de `[data-z-dom]`: orden de tabulación de pestañas y grupos de radio. */
@@ -597,8 +685,12 @@ export function hydrate(root: ParentNode = document): void {
     el.setAttribute("aria-checked", el.dataset.state === "indeterminate" ? "mixed" : String(isChecked(el)));
   }
   for (const group of root.querySelectorAll<HTMLElement>('[data-z-dom] [role="radiogroup"]')) {
+    if (group.matches(".z-rating__stars")) {
+      paintRating(group, ratingValue(group));
+      continue;
+    }
     const radios = [...group.querySelectorAll<HTMLElement>('[role="radio"]')];
-    const current = radios.find(isChecked) ?? radios.find((r) => !(r as HTMLButtonElement).disabled);
+    const current = radios.find(isChecked) ?? radios.find((r) => !isDisabled(r));
     for (const radio of radios) radio.tabIndex = radio === current ? 0 : -1;
   }
   for (const section of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-accordion__item")) setSection(section, section.dataset.state === "open");
@@ -612,7 +704,8 @@ function onClick(event: MouseEvent): void {
 
   const opener = target.closest<HTMLElement>("[data-z-open]");
   if (opener) {
-    const el = document.querySelector<HTMLElement>(opener.getAttribute("data-z-open")!);
+    if (isDisabled(opener)) return;
+    const el = byRef(opener.getAttribute("data-z-open"));
     if (el instanceof HTMLDialogElement) openDialog(el);
     else if (el) {
       if (el.matches(":popover-open")) closePopover(el);
@@ -630,10 +723,10 @@ function onClick(event: MouseEvent): void {
     return;
   }
 
-  // Clic en el velo de un <dialog>: el objetivo es el propio diálogo.
+  // Clic en el velo de un <dialog>: el objetivo es el propio diálogo. Solo cuenta si la pulsación también empezó
+  // en el velo: soltar fuera tras seleccionar texto dentro del diálogo no lo cierra.
   if (target instanceof HTMLDialogElement && target.matches(".z-modal, .z-drawer") && !target.hasAttribute("data-z-static")) {
-    const r = target.getBoundingClientRect();
-    if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) closeDialog(target);
+    if (pressedOnBackdrop(target, event)) closeDialog(target);
     return;
   }
 
@@ -654,15 +747,18 @@ function onClick(event: MouseEvent): void {
   if (!inDom(target)) return;
 
   const tab = target.closest<HTMLElement>(".z-tabs__tab");
-  if (tab && !tab.hasAttribute("data-disabled")) return selectTab(tab.closest(".z-tabs")!, tabKey(tab));
+  if (tab && !isDisabled(tab)) return selectTab(tab.closest(".z-tabs")!, tabKey(tab));
 
   const trigger = target.closest<HTMLElement>(".z-accordion__trigger");
-  if (trigger && !trigger.hasAttribute("data-disabled")) {
-    const section = trigger.closest(".z-accordion__item")!;
+  if (trigger) {
+    const section = trigger.closest<HTMLElement>(".z-accordion__item");
+    if (!section || isDisabled(trigger) || section.hasAttribute("data-disabled")) return;
     const root = section.closest<HTMLElement>(".z-accordion");
     const open = trigger.dataset.state !== "open";
-    if (open && root?.dataset.type !== "multiple") for (const other of root?.querySelectorAll(".z-accordion__item") ?? []) if (other !== section) setSection(other, false);
-    setSection(section, open);
+    if (open && root && root.dataset.type !== "multiple") for (const other of accordionItems(root)) if (other !== section) setSection(other, false, true);
+    setSection(section, open, true);
+    // Secciones abiertas, como `onValueChange` del Accordion de React.
+    if (root) emit(root, "change", { value: accordionItems(root).filter((item) => item.dataset.state === "open").map(sectionValue) });
     return;
   }
 
@@ -670,8 +766,9 @@ function onClick(event: MouseEvent): void {
   if (check) return toggleChecked(check);
 
   const radio = target.closest<HTMLElement>('[role="radio"]');
-  if (radio && !radio.hasAttribute("data-disabled") && !(radio as HTMLButtonElement).disabled) {
-    const group = radio.closest('[role="radiogroup"]');
+  if (radio && !isDisabled(radio)) {
+    const group = radio.closest<HTMLElement>('[role="radiogroup"]');
+    if (group?.matches(".z-rating__stars")) return rate(group, radio);
     for (const other of group?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [radio]) {
       setChecked(other, other === radio);
       other.tabIndex = other === radio ? 0 : -1;
@@ -689,27 +786,25 @@ function onClick(event: MouseEvent): void {
   }
 }
 
-function move(list: HTMLElement[], current: Element | null, key: string, vertical: boolean): HTMLElement | undefined {
-  const i = list.indexOf(current as HTMLElement);
-  const next = vertical ? "ArrowDown" : "ArrowRight";
-  const prev = vertical ? "ArrowUp" : "ArrowLeft";
-  if (key === next) return list[(i + 1) % list.length];
-  if (key === prev) return list[(i - 1 + list.length) % list.length];
-  if (key === "Home") return list[0];
-  if (key === "End") return list[list.length - 1];
-  return undefined;
-}
-
 function onKeydown(event: KeyboardEvent): void {
   const target = event.target as Element;
-  if (!(target instanceof Element)) return;
+  // El autocompletado del navegador emite `keydown` sin `key`.
+  if (!(target instanceof Element) || typeof event.key !== "string") return;
+
+  if (event.key === "F8" && !event.ctrlKey && !event.metaKey && !event.altKey && focusToasts()) {
+    event.preventDefault();
+    return;
+  }
+  // Escape es de la capa de arriba (la lista de un Select o un Combobox, el panel de un DatePicker) antes que del
+  // menú o del diálogo que la contenga. Un evento ya cancelado no cierra nada.
+  if (event.key === "Escape" && (event.defaultPrevented || escapeTop(event))) return;
 
   const menu = target.closest<HTMLElement>(".z-menu[popover]");
   if (menu) {
     const current = target.closest<HTMLElement>(".z-menu__item");
     const own = current && current.closest(".z-menu") === menu && !isDisabled(current) ? current : null;
     const parentTrigger = anchors.get(menu);
-    const next = move(menuItems(menu), document.activeElement, event.key, true);
+    const next = move(menuItems(menu), document.activeElement as HTMLElement | null, event.key, true);
     if (next) {
       event.preventDefault();
       // El foco pasa a otra entrada: el submenú que dejó abierto la anterior se cierra.
@@ -718,11 +813,11 @@ function onKeydown(event: KeyboardEvent): void {
       clearTimeout(subTimer);
       highlight(menu, next);
     } else if (event.key === "Tab") closeChain(menu);
-    else if ((event.key === "ArrowRight" || event.key === "Enter" || event.key === " ") && own?.hasAttribute("data-z-submenu")) {
+    else if ((logicalKey(event.key, menu) === "ArrowRight" || event.key === "Enter" || event.key === " ") && own?.hasAttribute("data-z-submenu")) {
       event.preventDefault();
       clearTimeout(subTimer);
       openSubmenu(own, true);
-    } else if (event.key === "ArrowLeft" && parentTrigger?.hasAttribute("data-z-submenu")) {
+    } else if (logicalKey(event.key, menu) === "ArrowLeft" && parentTrigger?.hasAttribute("data-z-submenu")) {
       // Cierra solo este submenú; el foco vuelve a la entrada que lo abrió.
       event.preventDefault();
       closePopover(menu);
@@ -731,6 +826,13 @@ function onKeydown(event: KeyboardEvent): void {
     } else if (event.key.length === 1 && event.key !== " " && !event.ctrlKey && !event.metaKey && !event.altKey) {
       if (typeahead(menu, event.key)) event.preventDefault();
     }
+    return;
+  }
+
+  // Tab en un diálogo modal da la vuelta dentro de él: el navegador dejaría salir el foco hacia su propia interfaz.
+  if (event.key === "Tab" && !event.defaultPrevented) {
+    const dialog = target.closest<HTMLDialogElement>("dialog.z-modal, dialog.z-drawer, dialog.z-palette");
+    if (dialog?.open && dialog.matches(":modal") && trapTab(dialog, event)) event.preventDefault();
     return;
   }
 
@@ -745,10 +847,27 @@ function onKeydown(event: KeyboardEvent): void {
   }
 
   if (!inDom(target)) return;
+  // Una casilla se marca con Espacio; Intro no la cambia (APG checkbox; igual que en React).
+  if (event.key === "Enter" && target.matches('button[role="checkbox"]')) {
+    event.preventDefault();
+    return;
+  }
+  // Acordeón (APG): las flechas, Inicio y Fin llevan el foco de una cabecera a otra.
+  const header = target.closest<HTMLElement>(".z-accordion__trigger");
+  if (header) {
+    const root = header.closest(".z-accordion");
+    const next = root ? move([...root.querySelectorAll<HTMLElement>(".z-accordion__trigger")].filter((t) => t.closest(".z-accordion") === root && !isDisabled(t)), header, event.key, true) : undefined;
+    if (next) {
+      event.preventDefault();
+      next.focus();
+    }
+    return;
+  }
   const radio = target.closest<HTMLElement>('[role="radio"]');
   if (radio) {
-    const list = [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])].filter((r) => !(r as HTMLButtonElement).disabled);
-    const next = move(list, radio, event.key, true) ?? move(list, radio, event.key, false);
+    const list = [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])].filter((r) => !isDisabled(r));
+    // En RTL la flecha izquierda avanza.
+    const next = moveBoth(list, radio, logicalKey(event.key, radio));
     if (next) {
       event.preventDefault();
       next.focus();
@@ -759,8 +878,9 @@ function onKeydown(event: KeyboardEvent): void {
   const tab = target.closest<HTMLElement>(".z-tabs__tab");
   if (tab) {
     const tabs = tab.closest(".z-tabs")!;
-    const list = [...tabs.querySelectorAll<HTMLElement>(".z-tabs__tab")].filter((t) => t.closest(".z-tabs") === tabs && !t.hasAttribute("data-disabled"));
-    const next = move(list, tab, event.key, (tabs as HTMLElement).dataset.orientation === "vertical");
+    const list = [...tabs.querySelectorAll<HTMLElement>(".z-tabs__tab")].filter((t) => t.closest(".z-tabs") === tabs && !isDisabled(t));
+    const vertical = (tabs as HTMLElement).dataset.orientation === "vertical";
+    const next = move(list, tab, vertical ? event.key : logicalKey(event.key, tab), vertical);
     if (next) {
       event.preventDefault();
       next.focus();
@@ -769,95 +889,141 @@ function onKeydown(event: KeyboardEvent): void {
   }
 }
 
-const LONG_PRESS_MS = 600;
-let longPress: { id: number; x: number; y: number; timer: ReturnType<typeof setTimeout> } | undefined;
-let longPressOpened = 0;
-function cancelLongPress(): void {
-  if (longPress) clearTimeout(longPress.timer);
-  longPress = undefined;
+// Pulsación larga con dedo o lápiz: iOS no emite `contextmenu`, y un Chromium de escritorio con pantalla táctil tampoco.
+const contextPress = createLongPress((point, event) => {
+  const menu = contextMenuAt(event.target);
+  if (!menu) return;
+  openPopover(menu, point, "bottom-start");
+  // Al levantar el dedo, el cierre ligero de los popovers `auto` lo trataría como un clic fuera. Con el puntero
+  // capturado por el menú, ese `pointerup` cae dentro y no lo cierra; si aun así se cerró, se vuelve a abrir.
+  try {
+    menu.setPointerCapture(event.pointerId);
+  } catch {
+    // Puntero sintético o ya liberado.
+  }
+  const lift = new AbortController();
+  const onLift = () => {
+    lift.abort();
+    setTimeout(() => {
+      if (!menu.matches(":popover-open")) openPopover(menu, point, "bottom-start");
+    });
+  };
+  window.addEventListener("pointerup", onLift, { capture: true, signal: lift.signal });
+  window.addEventListener("pointercancel", onLift, { capture: true, signal: lift.signal });
+});
+
+function contextMenuAt(target: EventTarget | null): HTMLElement | null {
+  const zone = target instanceof Element ? target.closest("[data-z-context]") : null;
+  return zone ? byRef(zone.getAttribute("data-z-context")) : null;
 }
 
-let wired = false;
+let wiring: AbortController | undefined;
 
-/** Conecta el comportamiento. Idempotente; llamar una vez al cargar. */
-export function init(): void {
-  if (!isBrowser || wired) return;
-  wired = true;
-  document.addEventListener("click", onClick);
-  document.addEventListener("keydown", onKeydown);
-  document.addEventListener("toggle", onPopoverToggle, true);
-  document.addEventListener("cancel", (event) => {
-    // Evita el cierre nativo sin animación; onKeydown ya lo gestiona.
-    if ((event.target as Element).matches?.("dialog.z-modal, dialog.z-drawer")) event.preventDefault();
+/**
+ * Conecta el comportamiento. Idempotente; llamar una vez al cargar. Devuelve `destroy`, que retira todos los
+ * listeners del documento (pruebas, microfrontends, navegación con sustitución de página).
+ */
+export function init(): () => void {
+  if (!isBrowser) return () => {};
+  if (wiring) return destroy;
+  wiring = new AbortController();
+  const on = listener(wiring.signal);
+  on(document, "click", onClick);
+  on(document, "keydown", onKeydown);
+  // Escape cierra la burbuja sin mover el puntero ni el foco (WCAG 1.4.13); no consume la tecla.
+  on(document, "keydown", (event) => {
+    if (event.key === "Escape") hideTooltip();
   }, true);
-  document.addEventListener("contextmenu", (event) => {
-    const zone = (event.target as Element).closest?.("[data-z-context]");
-    const menu = zone && document.querySelector<HTMLElement>(zone.getAttribute("data-z-context")!);
+  on(document, "pointerdown", notePress, true);
+  on(document, "toggle", onPopoverToggle, true);
+  on(document, "close", onNativeClose, true);
+  on(document, "scroll", follow, { capture: true, passive: true });
+  on(window, "resize", follow);
+  on(document, "cancel", (event) => {
+    // Cierre pedido por el navegador (Escape, gesto atrás del sistema): pasa por la animación de salida, o no
+    // ocurre si el diálogo es estático. Con Escape ya lo hizo onKeydown; closeDialog() no repite.
+    const dialog = event.target;
+    if (!(dialog instanceof HTMLDialogElement) || !dialog.matches("dialog.z-modal, dialog.z-drawer")) return;
+    event.preventDefault();
+    if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
+  }, true);
+  on(document, "contextmenu", (event) => {
+    const menu = contextMenuAt(event.target);
     if (!menu) return;
     event.preventDefault();
-    // Con el dedo ya lo abre (o lo va a abrir) la pulsación larga de más abajo: Android emite además `contextmenu`.
-    if (longPress || Date.now() - longPressOpened < 1000) return;
+    // Con el dedo ya lo abre (o lo va a abrir) la pulsación larga: Android emite además `contextmenu`.
+    if (contextPress.pending() || contextPress.sinceFired() < 1000) return;
     const point = { x: event.clientX, y: event.clientY };
     const open = () => openPopover(menu, point, "bottom-start");
     // En Linux y macOS `contextmenu` llega al pulsar el botón, no al soltarlo: el `pointerup` que sigue cuenta como
     // clic fuera y cerraría el menú recién abierto (Firefox y WebKit). Con el botón aún pulsado se abre al soltar.
     if (event.buttons & 2) {
       const release = new AbortController();
-      const onRelease = () => { release.abort(); setTimeout(open); };
+      const onRelease = () => {
+        release.abort();
+        setTimeout(open);
+      };
       window.addEventListener("pointerup", onRelease, { capture: true, signal: release.signal });
       window.addEventListener("pointercancel", onRelease, { capture: true, signal: release.signal });
     } else open();
   });
-  // Pulsación larga con dedo o lápiz: iOS no emite `contextmenu`, y un Chromium de escritorio con pantalla táctil tampoco.
-  document.addEventListener("pointerdown", (event) => {
-    cancelLongPress();
-    if (event.pointerType === "mouse") return;
-    const zone = (event.target as Element).closest?.("[data-z-context]");
-    const menu = zone && document.querySelector<HTMLElement>(zone.getAttribute("data-z-context")!);
-    if (!menu) return;
-    const point = { x: event.clientX, y: event.clientY };
-    const timer = setTimeout(() => {
-      longPress = undefined;
-      longPressOpened = Date.now();
-      openPopover(menu, point, "bottom-start");
-      // Al levantar el dedo, el cierre ligero de los popovers `auto` lo trataría como un clic fuera. Con el puntero
-      // capturado por el menú, ese `pointerup` cae dentro y no lo cierra; si aun así se cerró, se vuelve a abrir.
-      try { menu.setPointerCapture(event.pointerId); } catch { /* puntero sintético o ya liberado */ }
-      const lift = new AbortController();
-      const onLift = () => {
-        lift.abort();
-        setTimeout(() => { if (!menu.matches(":popover-open")) openPopover(menu, point, "bottom-start"); });
-      };
-      window.addEventListener("pointerup", onLift, { capture: true, signal: lift.signal });
-      window.addEventListener("pointercancel", onLift, { capture: true, signal: lift.signal });
-    }, LONG_PRESS_MS);
-    longPress = { id: event.pointerId, x: point.x, y: point.y, timer };
+  on(document, "pointerdown", (event) => {
+    contextPress.cancel();
+    if (contextMenuAt(event.target)) contextPress.down(event);
   }, true);
-  document.addEventListener("pointermove", (event) => {
-    if (longPress && event.pointerId === longPress.id && Math.hypot(event.clientX - longPress.x, event.clientY - longPress.y) > 10) cancelLongPress();
-  }, true);
-  document.addEventListener("pointerup", cancelLongPress, true);
-  document.addEventListener("pointercancel", cancelLongPress, true);
-  document.addEventListener("pointerover", (event) => {
+  on(document, "pointermove", (event) => contextPress.move(event), true);
+  on(document, "pointerup", () => contextPress.cancel(), true);
+  on(document, "pointercancel", () => contextPress.cancel(), true);
+  on(document, "pointerover", (event) => {
     const item = (event.target as Element).closest?.<HTMLElement>(".z-menu[popover] .z-menu__item");
-    if (item && !isDisabled(item)) onMenuPointer(item);
+    if (item && !isDisabled(item)) onMenuPointer(item, event);
     const host = (event.target as Element).closest?.<HTMLElement>("[data-z-tooltip]");
-    if (host && !host.hasAttribute("aria-describedby")) showTooltip(host);
+    if (host) showTooltip(host);
+    // El puntero llegó a la burbuja: sigue abierta.
+    else if (tip?.contains(event.target as Node)) clearTimeout(tipTimer);
   });
-  document.addEventListener("pointerout", (event) => {
-    const host = (event.target as Element).closest?.("[data-z-tooltip]");
-    if (host && !host.contains(event.relatedTarget as Node | null)) hideTooltip();
+  on(document, "pointerout", (event) => {
+    const from = event.target as Element;
+    const to = event.relatedTarget as Node | null;
+    // El puntero sale de una entrada con el submenú abierto: empieza la zona de gracia hacia él.
+    const trigger = from.closest?.<HTMLElement>('.z-menu__item[data-z-submenu][aria-expanded="true"]');
+    const sub = trigger && !trigger.contains(to) ? submenuOf(trigger) : null;
+    if (sub?.matches(":popover-open")) aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
+    const host = from.closest?.("[data-z-tooltip]");
+    if (host && !host.contains(to)) {
+      // Con el foco en el disparador la burbuja se queda: se cierra al perder el foco o con Escape.
+      if (tipHost === host && host.matches(":focus-visible")) return;
+      if (tip?.contains(to)) return;
+      if (tipHost === host) scheduleHideTooltip();
+      else hideTooltip();
+    } else if (tip?.contains(from) && !tip.contains(to) && !(tipHost?.contains(to) ?? false)) scheduleHideTooltip();
   });
-  document.addEventListener("focusin", (event) => {
+  on(document, "focusin", (event) => {
     const host = (event.target as Element).closest?.<HTMLElement>("[data-z-tooltip]");
     if (host?.matches(":focus-visible")) showTooltip(host);
   });
-  document.addEventListener("focusout", hideTooltip);
-  for (const mod of modules) mod.setup();
+  on(document, "focusout", (event) => {
+    if (!tipHost || tipHost.contains(event.target as Node)) hideTooltip();
+  });
+  for (const mod of modules) mod.setup(on);
   const ready = () => {
     detectSourceNesting();
     hydrate();
   };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ready);
+  if (document.readyState === "loading") on(document, "DOMContentLoaded", ready);
   else ready();
+  return destroy;
+}
+
+/**
+ * Deshace `init()`: retira los listeners del documento y de la ventana y cierra la burbuja de ayuda. El marcado
+ * queda como está (los diálogos y popovers abiertos siguen abiertos). `init()` se puede volver a llamar.
+ */
+export function destroy(): void {
+  wiring?.abort();
+  wiring = undefined;
+  contextPress.cancel();
+  clearTimeout(subTimer);
+  aim.clear();
+  hideTooltip();
 }

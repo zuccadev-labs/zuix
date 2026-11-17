@@ -21,10 +21,12 @@
 // WebGL2, si falta la fuente de algún slide o si falla la carga, la lente sigue en modo css.
 // Si las imágenes cambian después de activar el carrusel (un <canvas> pintado más tarde): refresh().
 // `setup()` conecta los listeners delegados una vez; `hydrate(root)` prepara marcado nuevo.
+import type { Listen } from "./shared";
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
 import { MIN_SIDE, createEngine } from "../components/carousel/engine";
+import { byRef, setMarkup } from "./shared";
 import type { CarouselRasterSize, CarouselRasterSource } from "../components/carousel/slideTexture";
 
 export type { CarouselRasterSize, CarouselRasterSource };
@@ -137,7 +139,7 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   let controls = root.querySelector<HTMLElement>(":scope > .z-carousel__controls");
   if (!controls) {
     const created = make("div", "z-carousel__controls");
-    created.innerHTML = `<button type="button" class="z-carousel__arrow">${iconSvg("chevron-left", { size: 16 })}</button><span class="z-carousel__counter" aria-hidden="true"><span class="z-carousel__counter-current"></span><span class="z-carousel__counter-total"></span></span><button type="button" class="z-carousel__arrow">${iconSvg("chevron-right", { size: 16 })}</button>`;
+    setMarkup(created, `<button type="button" class="z-carousel__arrow">${iconSvg("chevron-left", { size: 16 })}</button><span class="z-carousel__counter" aria-hidden="true"><span class="z-carousel__counter-current"></span><span class="z-carousel__counter-total"></span></span><button type="button" class="z-carousel__arrow">${iconSvg("chevron-right", { size: 16 })}</button>`);
     const [before, after] = created.querySelectorAll(".z-carousel__arrow");
     before!.setAttribute("aria-label", text.previous);
     after!.setAttribute("aria-label", text.next);
@@ -190,7 +192,7 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
     const mark = declared(slide);
     if (!mark) throw new Error("Slide sin fuente ráster");
     if (mark.dataset.rasterSrc) return mark.dataset.rasterSrc;
-    const target = mark.dataset.raster ? document.querySelector(mark.dataset.raster) : mark;
+    const target = mark.dataset.raster ? byRef(mark.dataset.raster) : mark;
     if (target instanceof HTMLImageElement) {
       if (!target.complete || target.naturalWidth === 0) await target.decode();
       return target;
@@ -344,7 +346,7 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   return handle;
 }
 
-export function setup(): void {}
+export function setup(_on: Listen): void {}
 
 export function hydrate(root: ParentNode): void {
   if (root instanceof HTMLElement && root.matches("[data-z-carousel]")) carousel(root);

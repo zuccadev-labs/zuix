@@ -70,7 +70,7 @@
       "name": "label",
       "type": "string",
       "default": "Verification code",
-      "description": "Nombre accesible del grupo."
+      "description": "Nombre accesible del grupo. Sin `label` y dentro de un `Field` con etiqueta, el grupo se nombra con ella."
     },
     {
       "name": "cellLabel",
@@ -114,7 +114,7 @@
   "classes": [
     "z-otp"
   ],
-  "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
+  "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
   "behavior": "dom",
   "examples": [
     {

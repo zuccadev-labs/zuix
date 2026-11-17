@@ -29,7 +29,8 @@ export function NativeSelect({ size = "md", invalid, options, placeholder, block
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   return (
     <span className={cx("z-select", className)} data-size={size} data-block={block || undefined} data-invalid={isInvalid || undefined} data-disabled={rest.disabled || undefined}>
-      <select {...rest} {...control} className="z-select__control">
+      {/* Sin valor, el `placeholder` es la opción mostrada: el navegador elegiría la primera opción habilitada. */}
+      <select {...rest} {...control} defaultValue={rest.value === undefined ? (rest.defaultValue ?? (placeholder ? "" : undefined)) : undefined} className="z-select__control">
         {placeholder ? (
           <option value="" disabled hidden>
             {placeholder}

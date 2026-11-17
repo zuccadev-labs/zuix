@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cx } from "../cx";
 import { INSPECTOR_BREAKPOINT, SIDEBAR_BREAKPOINT, panelMode } from "../logic";
 import { ResizeHandle } from "./ResizeHandle";
@@ -21,6 +21,8 @@ export interface ShellPanel {
   defaultWidth?: number;
   /** Si se pasa, el panel acoplado muestra un tirador para redimensionar. */
   onResize?: (width: number) => void;
+  /** Nombre accesible del tirador. Por defecto, `Resize <label>`. */
+  resizeLabel?: string;
 }
 
 export interface ShellProps {
@@ -50,6 +52,16 @@ export interface ShellProps {
   closeOverlayLabel?: string;
   /** Capas flotantes hermanas del cuerpo (diálogos propios, avisos). */
   overlays?: ReactNode;
+  /**
+   * Texto de un enlace «saltar al contenido», primer elemento enfocable del shell y visible solo con el foco:
+   * lleva al área principal sin recorrer la barra de título, el rail y la sidebar (WCAG 2.4.1). Sin valor no se dibuja.
+   */
+  skipLinkLabel?: string;
+  /**
+   * Elemento del área principal. `main` (por defecto) es la región principal del documento, y solo puede haber
+   * una visible: un Shell anidado o un segundo Shell en la misma página usa `div` o `section`.
+   */
+  mainAs?: "main" | "div" | "section";
   className?: string;
 }
 
@@ -73,6 +85,7 @@ function useWidth() {
 }
 
 function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | "right"; mode: ShellPanelMode; inert?: boolean }) {
+  const id = useId();
   const overlay = mode === "overlay";
   const ref = useRef<HTMLElement>(null);
   // En modo cajón el foco entra en el panel al abrirse y vuelve a donde estaba al cerrarse.
@@ -96,20 +109,24 @@ function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | 
       aria-label={panel.label}
       role={overlay ? "dialog" : undefined}
       aria-modal={overlay ? true : undefined}
+      id={id}
       data-mode={mode}
+      data-panel-mode={panel.mode ?? "auto"}
       data-side={side}
       inert={inert || undefined}
     >
       <div className="z-shell__panel-body">{panel.content}</div>
       {!overlay && panel.onResize && panel.width !== undefined ? (
         <ResizeHandle
-          side={side === "left" ? "right" : "left"}
+          // Bordes lógicos: la sidebar se redimensiona por su borde final y el inspector por el inicial, también en RTL.
+          side={side === "left" ? "end" : "start"}
+          controls={id}
           size={panel.width}
           onResize={panel.onResize}
           min={panel.minWidth}
           max={panel.maxWidth}
           defaultSize={panel.defaultWidth}
-          label={`Resize ${panel.label}`}
+          label={panel.resizeLabel ?? `Resize ${panel.label}`}
         />
       ) : null}
     </aside>
@@ -122,9 +139,11 @@ function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | 
  */
 export function Shell({
   titlebar, rail, sidebar, inspector, header, children, surface = "glass",
-  sidebarBreakpoint = SIDEBAR_BREAKPOINT, inspectorBreakpoint = INSPECTOR_BREAKPOINT, onCloseOverlay, onModeChange, closeOverlayLabel = "Close panel", overlays, className,
+  sidebarBreakpoint = SIDEBAR_BREAKPOINT, inspectorBreakpoint = INSPECTOR_BREAKPOINT, onCloseOverlay, onModeChange, closeOverlayLabel = "Close panel", overlays,
+  skipLinkLabel, mainAs: Main = "main", className,
 }: ShellProps) {
   const [ref, width] = useWidth();
+  const mainId = useId();
   const resolve = (panel: ShellPanel | undefined, breakpoint: number): ShellPanelMode | null => {
     if (!panel || panel.open === false) return null;
     return panelMode(width, breakpoint, panel.mode);
@@ -145,22 +164,30 @@ export function Shell({
 
   useEffect(() => {
     if (!drawerOpen || !onCloseOverlay) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !e.defaultPrevented) onCloseOverlay(); };
+    // Escape cierra el cajón salvo que lo gestione una capa por encima (un diálogo, un menú o un popover abiertos).
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      if (e.target instanceof Element && e.target.closest("dialog[open], :popover-open")) return;
+      onCloseOverlay();
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [drawerOpen, onCloseOverlay]);
 
   return (
-    <div ref={ref} className={cx("z-shell z-canvas z-root", className)}>
+    // `data-measured`: hasta que se mide el ancho (servidor, antes de hidratar) la hoja oculta con una consulta de
+    // contenedor los paneles `auto` que no caben, para que una ventana estrecha no los muestre acoplados un instante.
+    <div ref={ref} className={cx("z-shell z-canvas z-root", className)} data-measured={width !== null ? "" : undefined}>
+      {skipLinkLabel ? <a className="z-shell__skip" href={`#${mainId}`}>{skipLinkLabel}</a> : null}
       {titlebar}
       <div className="z-shell__body">
         {/* Con un cajón abierto todo lo que queda bajo el velo es inerte: rail, área principal y el panel que siga acoplado. */}
         {rail ? <div className="z-shell__rail" inert={drawerOpen ? true : undefined}>{rail}</div> : null}
         {sidebar && sideMode ? <Side panel={sidebar} side="left" mode={sideMode} inert={drawerOpen && sideMode === "docked"} /> : null}
-        <main className={cx("z-shell__main", surface === "glass" && "z-liquid", surface === "solid" && "z-solid")} inert={drawerOpen ? true : undefined}>
+        <Main id={mainId} tabIndex={skipLinkLabel ? -1 : undefined} className={cx("z-shell__main", surface === "glass" && "z-liquid", surface === "solid" && "z-solid")} inert={drawerOpen ? true : undefined}>
           {header ? <header className="z-shell__header">{header}</header> : null}
           <div className="z-shell__content">{children}</div>
-        </main>
+        </Main>
         {inspector && inspectorMode ? <Side panel={inspector} side="right" mode={inspectorMode} inert={drawerOpen && inspectorMode === "docked"} /> : null}
         {drawerOpen ? <button type="button" className="z-shell__scrim" aria-label={closeOverlayLabel} onClick={onCloseOverlay} /> : null}
       </div>

@@ -25,15 +25,19 @@
     "url": "https://github.com/zuccadev-labs/zuix/issues"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12.0"
   },
   "exports": {
     "./tokens.css": "./dist/tokens.css",
     "./tailwind.css": "./dist/tailwind.css",
     "./docusaurus.css": "./dist/docusaurus.css",
     "./tokens.json": "./dist/tokens.json",
+    "./dtcg/*": "./dist/dtcg/*",
     "./brands/*": "./brands/*",
     "./schema/*": "./schema/*",
+    "./css/dazlabs.css": "./dist/brands/dazlabs.css",
+    "./css/zenith.css": "./dist/brands/zenith.css",
+    "./css/zutool.css": "./dist/brands/zutool.css",
     "./css/*": "./dist/brands/*",
     "./compat/*": "./dist/compat/*"
   },

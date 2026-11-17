@@ -75,7 +75,7 @@
     "z-tree__label",
     "z-tree__group"
   ],
-  "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan.",
+  "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten.",
   "examples": [
     {
       "title": "Explorador de archivos",

@@ -1,4 +1,7 @@
 import { useState, type ReactNode } from "react";
+// Página de catálogo: carga el set completo de iconos. El resto del sitio solo lleva los que usa.
+import "@zuccadev-labs/zuix-zicon/all";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import Layout from "@theme/Layout";
 import zui from "@zuccadev-labs/zuix-zui/manifest.json";
 import zout from "@zuccadev-labs/zuix-zout/manifest.json";
@@ -25,6 +28,9 @@ const users = [
 
 function Demos(): Record<string, ReactNode> {
   const { toast } = useToast();
+  // Los enlaces de las demos son <a> normales: llevan el baseUrl del sitio a mano.
+  const home = useBaseUrl("/");
+  const here = useBaseUrl("/components");
   const [view, setView] = useState("list");
   const [on, setOn] = useState(true);
   const [query, setQuery] = useState("");
@@ -77,7 +83,7 @@ function Demos(): Record<string, ReactNode> {
     CommandPalette: (<><Button icon="command-line" onClick={() => setPalette(true)}>Open palette</Button><CommandPalette open={palette} onOpenChange={setPalette} groups={[{ heading: "Navigation", commands: [{ id: "home", label: "Go to home", shortcut: "G H", onSelect: () => {} }, { id: "settings", label: "Open settings", hint: "/settings", onSelect: () => {} }] }, { heading: "Actions", commands: [{ id: "new", label: "New project", keywords: ["create"], onSelect: () => {} }] }]} /></>),
     Toast: <Button onClick={() => toast({ title: "Changes saved", description: "Your profile is up to date.", intent: "success" })}>Show toast</Button>,
     Tabs: <Tabs label="Account sections" items={[{ value: "overview", label: "Overview", content: <p>Overview content</p> }, { value: "activity", label: "Activity", content: <p>Activity content</p> }, { value: "settings", label: "Settings", icon: "cog", content: <p>Settings content</p> }]} />,
-    Breadcrumb: <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Projects", href: "/components" }, { label: "Website redesign" }]} />,
+    Breadcrumb: <Breadcrumb items={[{ label: "Home", href: home }, { label: "Projects", href: here }, { label: "Website redesign" }]} />,
     Pagination: <Pagination page={page} pageCount={20} onPageChange={setPage} />,
     Stepper: <Stepper current={1} steps={[{ label: "Account", description: "Email and password" }, { label: "Profile" }, { label: "Confirm" }]} />,
     Accordion: <Accordion defaultValue={["billing"]} items={[{ value: "billing", title: "How does billing work?", content: <p>You are charged monthly.</p> }, { value: "cancel", title: "Can I cancel anytime?", content: <p>Yes, from your account settings.</p> }]} />,

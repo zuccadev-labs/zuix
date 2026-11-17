@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+// Página de catálogo: carga el set completo de iconos. El resto del sitio solo lleva los que usa.
+import "@zuccadev-labs/zuix-zicon/all";
 import Layout from "@theme/Layout";
 import { Icon, type IconName, type IconVariant } from "@zuccadev-labs/zuix-zicon/core";
 import manifest from "@zuccadev-labs/zuix-zicon/manifest.json";

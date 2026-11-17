@@ -84,14 +84,14 @@
   "classes": [
     "z-tooltip"
   ],
-  "a11y": "Radix Tooltip: aparece con hover y con foco de teclado, describe al disparador con aria-describedby y Escape lo cierra. No sustituye al nombre accesible del control.",
+  "a11y": "Aparece con hover y con foco de teclado, describe al disparador con aria-describedby y Escape lo cierra. La burbuja recibe el puntero: se puede pasar del disparador a ella sin que se cierre (WCAG 1.4.13). Sin React (`data-z-tooltip`): lo mismo, y se añade a la descripción que el control ya tuviera. No sustituye al nombre accesible del control.",
   "examples": [
     {
       "title": "Sobre un botón de icono",
       "code": "<Tooltip content=\"Copy link\">\n  <button type=\"button\" aria-label=\"Copy link\">Copy</button>\n</Tooltip>"
     }
   ],
-  "origin": "Tooltip y `.tooltip` de zutool; accesibilidad de Radix Tooltip.",
+  "origin": "Tooltip y `.tooltip` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

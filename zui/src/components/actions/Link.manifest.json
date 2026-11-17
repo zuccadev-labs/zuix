@@ -69,7 +69,7 @@
   "classes": [
     "z-link"
   ],
-  "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña.",
+  "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña. Deshabilitado: sin href, role=link, aria-disabled y sin ejecutar onClick.",
   "examples": [
     {
       "title": "En un texto",

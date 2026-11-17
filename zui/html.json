@@ -16,7 +16,7 @@
     },
     {
      "title": "Guardando",
-     "html": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-loading=\"true\" aria-busy=\"true\" disabled=\"\">\n  <span class=\"z-btn__spinner\" aria-hidden=\"true\"></span>\n  Saving\n</button>",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-loading=\"true\" aria-busy=\"true\" aria-disabled=\"true\">\n  <span class=\"z-btn__spinner\" aria-hidden=\"true\"></span>\n  Saving\n</button>",
      "source": "generated"
     },
     {
@@ -89,12 +89,12 @@
    "examples": [
     {
      "title": "Vista",
-     "html": "<div dir=\"ltr\" role=\"radiogroup\" aria-label=\"View\" class=\"z-segmented\" data-size=\"md\" tabindex=\"-1\">\n  <button type=\"button\" data-state=\"off\" role=\"radio\" aria-checked=\"false\" class=\"z-segmented__item\" tabindex=\"-1\">\n    <z-icon name=\"list-bullet\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">List</span>\n  </button>\n  <button type=\"button\" data-state=\"off\" role=\"radio\" aria-checked=\"false\" class=\"z-segmented__item\" tabindex=\"-1\">\n    <z-icon name=\"squares-2x2\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">Grid</span>\n  </button>\n</div>",
+     "html": "<div role=\"radiogroup\" aria-label=\"View\" class=\"z-segmented\" data-size=\"md\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"list\" tabindex=\"0\" class=\"z-segmented__item\">\n    <z-icon name=\"list-bullet\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">List</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"grid\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <z-icon name=\"squares-2x2\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">Grid</span>\n  </button>\n</div>",
      "source": "generated"
     },
     {
      "title": "Periodo, ancho completo",
-     "html": "<div dir=\"ltr\" role=\"radiogroup\" aria-label=\"Period\" class=\"z-segmented\" data-size=\"md\" data-block=\"true\" tabindex=\"-1\">\n  <button type=\"button\" data-state=\"off\" role=\"radio\" aria-checked=\"false\" class=\"z-segmented__item\" tabindex=\"-1\">\n    <span class=\"z-segmented__label\">Day</span>\n  </button>\n  <button type=\"button\" data-state=\"on\" role=\"radio\" aria-checked=\"true\" class=\"z-segmented__item\" tabindex=\"-1\">\n    <span class=\"z-segmented__label\">Week</span>\n  </button>\n  <button type=\"button\" data-state=\"off\" role=\"radio\" aria-checked=\"false\" class=\"z-segmented__item\" tabindex=\"-1\">\n    <span class=\"z-segmented__label\">Month</span>\n  </button>\n</div>",
+     "html": "<div role=\"radiogroup\" aria-label=\"Period\" class=\"z-segmented\" data-size=\"md\" data-block=\"true\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"day\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Day</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"on\" value=\"week\" tabindex=\"0\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Week</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"month\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Month</span>\n  </button>\n</div>",
      "source": "generated"
     }
    ]
@@ -108,7 +108,7 @@
    "examples": [
     {
      "title": "Solo icono",
-     "html": "<button type=\"button\" aria-pressed=\"true\" data-state=\"on\" title=\"Favourite\" aria-label=\"Favourite\" class=\"z-toggle\" data-size=\"md\" data-icon-only=\"true\">\n  <z-icon name=\"star\" size=\"16\"></z-icon>\n</button>",
+     "html": "<button type=\"button\" title=\"Favourite\" aria-pressed=\"true\" aria-label=\"Favourite\" data-state=\"on\" class=\"z-toggle\" data-size=\"md\" data-icon-only=\"true\">\n  <z-icon name=\"star\" size=\"16\"></z-icon>\n</button>",
      "source": "generated"
     },
     {
@@ -186,7 +186,7 @@
     },
     {
      "title": "Activable",
-     "html": "<div role=\"button\" tabindex=\"0\" class=\"z-card\" data-variant=\"outlined\" data-padding=\"md\" data-interactive=\"true\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\"></h3>\n      <p class=\"z-card__subtitle\"></p>\n    </div>\n  </div>\n</div>",
+     "html": "<div role=\"button\" tabindex=\"0\" class=\"z-card\" data-variant=\"outlined\" data-padding=\"md\" data-interactive=\"true\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Atlas</h3>\n      <p class=\"z-card__subtitle\">Ana Ruiz</p>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -633,12 +633,12 @@
    "examples": [
     {
      "title": "Con descripción",
-     "html": "<label class=\"z-check\">\n  <button type=\"button\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\">\n    <span data-state=\"checked\" class=\"z-check__mark\" style=\"pointer-events:none\"></span>\n  </button>\n  <input type=\"checkbox\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" checked=\"\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-check__label\">Send me the summary</span>\n    <span class=\"z-check__description\">We will email you once a week.</span>\n  </span>\n</label>",
+     "html": "<label class=\"z-check\">\n  <button type=\"button\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\">\n    <span class=\"z-check__mark\" data-state=\"checked\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-check__label\">Send me the summary</span>\n    <span class=\"z-check__description\">We will email you once a week.</span>\n  </span>\n</label>",
      "source": "generated"
     },
     {
      "title": "Indeterminado",
-     "html": "<label class=\"z-check\">\n  <button type=\"button\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\">\n    <span data-state=\"indeterminate\" class=\"z-check__mark\" style=\"pointer-events:none\"></span>\n  </button>\n  <input type=\"checkbox\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-check__label\">Select all</span>\n  </span>\n</label>",
+     "html": "<label class=\"z-check\">\n  <button type=\"button\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\">\n    <span class=\"z-check__mark\" data-state=\"indeterminate\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-check__label\">Select all</span>\n  </span>\n</label>",
      "source": "generated"
     }
    ]
@@ -681,7 +681,7 @@
     },
     {
      "title": "Hora dentro de Field",
-     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" for=\"_R_0_-control\">Reminder time</label>\n  <div class=\"z-field__body\">\n    <span class=\"z-input z-input--date\" data-size=\"md\">\n      <input id=\"_R_0_-control\" type=\"time\" class=\"z-input__control\" value=\"09:30\"/>\n      <button type=\"button\" class=\"z-input__action\" aria-label=\"Open picker\" title=\"Open picker\">\n        <z-icon name=\"clock\" size=\"16\"></z-icon>\n      </button>\n    </span>\n  </div>\n</div>",
+     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Reminder time</label>\n  <div class=\"z-field__body\">\n    <span class=\"z-input z-input--date\" data-size=\"md\">\n      <input id=\"_R_0_-control\" type=\"time\" class=\"z-input__control\" value=\"09:30\"/>\n      <button type=\"button\" class=\"z-input__action\" aria-label=\"Open picker\" title=\"Open picker\">\n        <z-icon name=\"clock\" size=\"16\"></z-icon>\n      </button>\n    </span>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -723,17 +723,17 @@
    "examples": [
     {
      "title": "Con ayuda",
-     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" for=\"_R_0_-control\">Project name\n    <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n  </label>\n  <div class=\"z-field__body\">\n    <span class=\"z-input\" data-size=\"md\">\n      <input placeholder=\"My project\" id=\"_R_0_-control\" required=\"\" aria-describedby=\"_R_0_-hint\" class=\"z-input__control\"/>\n    </span>\n    <p class=\"z-field__hint\" id=\"_R_0_-hint\">Shown in the sidebar.</p>\n  </div>\n</div>",
+     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Project name\n    <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n  </label>\n  <div class=\"z-field__body\">\n    <span class=\"z-input\" data-size=\"md\">\n      <input placeholder=\"My project\" id=\"_R_0_-control\" required=\"\" aria-describedby=\"_R_0_-hint\" class=\"z-input__control\"/>\n    </span>\n    <p class=\"z-field__hint\" id=\"_R_0_-hint\">Shown in the sidebar.</p>\n  </div>\n</div>",
      "source": "generated"
     },
     {
      "title": "Con error",
-     "html": "<div class=\"z-field\" data-layout=\"stacked\" data-invalid=\"true\">\n  <label class=\"z-field__label\" for=\"_R_0_-control\">Email</label>\n  <div class=\"z-field__body\">\n    <span class=\"z-input\" data-size=\"md\" data-invalid=\"true\">\n      <input type=\"email\" id=\"_R_0_-control\" aria-invalid=\"true\" aria-describedby=\"_R_0_-error\" class=\"z-input__control\" value=\"ana@\"/>\n    </span>\n    <p class=\"z-field__error\" id=\"_R_0_-error\" role=\"alert\">Enter a valid email address.</p>\n  </div>\n</div>",
+     "html": "<div class=\"z-field\" data-layout=\"stacked\" data-invalid=\"true\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Email</label>\n  <div class=\"z-field__body\">\n    <span class=\"z-input\" data-size=\"md\" data-invalid=\"true\">\n      <input type=\"email\" id=\"_R_0_-control\" aria-invalid=\"true\" aria-describedby=\"_R_0_-error\" class=\"z-input__control\" value=\"ana@\"/>\n    </span>\n    <p class=\"z-field__error\" id=\"_R_0_-error\" role=\"alert\">Enter a valid email address.</p>\n  </div>\n</div>",
      "source": "generated"
     },
     {
      "title": "En línea",
-     "html": "<div class=\"z-field\" data-layout=\"inline\">\n  <label class=\"z-field__label\" for=\"_R_0_-control\">Region\n    <span class=\"z-field__optional\">Optional</span>\n  </label>\n  <div class=\"z-field__body\">\n    <span class=\"z-select\" data-size=\"md\" data-block=\"true\">\n      <button type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-autocomplete=\"none\" dir=\"ltr\" data-state=\"closed\" data-placeholder=\"\" id=\"_R_0_-control\" class=\"z-select__control\">\n        <span class=\"z-select__value\">\n          <span style=\"pointer-events:none\"></span>\n        </span>\n      </button>\n      <span class=\"z-select__chevron\">\n        <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n      </span>\n    </span>\n    <select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal\">\n      <option value=\"\" selected=\"\"></option>\n    </select>\n  </div>\n</div>",
+     "html": "<div class=\"z-field\" data-layout=\"inline\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Region\n    <span class=\"z-field__optional\">Optional</span>\n  </label>\n  <div class=\"z-field__body\">\n    <span class=\"z-select\" data-size=\"md\" data-block=\"true\">\n      <select id=\"_R_0_-control\" class=\"z-select__control\">\n        <option value=\"eu\">Europe</option>\n        <option value=\"us\">United States</option>\n      </select>\n      <span class=\"z-select__chevron\">\n        <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n      </span>\n    </span>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -831,7 +831,7 @@
    "examples": [
     {
      "title": "Dentro de un grupo",
-     "html": "<div role=\"radiogroup\" aria-required=\"false\" aria-orientation=\"vertical\" dir=\"ltr\" aria-label=\"Theme\" class=\"z-radio-group\" tabindex=\"-1\" data-orientation=\"vertical\">\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"light\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"vertical\"></button>\n    <input type=\"radio\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"light\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Light</span>\n    </span>\n  </label>\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"checked\" value=\"dark\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"vertical\">\n      <span data-state=\"checked\" class=\"z-radio__mark\"></span>\n    </button>\n    <input type=\"radio\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" checked=\"\" value=\"dark\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Dark</span>\n    </span>\n  </label>\n</div>",
+     "html": "<div aria-label=\"Theme\" role=\"radiogroup\" aria-orientation=\"vertical\" data-orientation=\"vertical\" class=\"z-radio-group\">\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"light\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"light\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Light</span>\n    </span>\n  </label>\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"checked\" value=\"dark\" tabindex=\"0\" class=\"z-radio__dot\">\n      <span class=\"z-radio__mark\" data-state=\"checked\"></span>\n    </button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"dark\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Dark</span>\n    </span>\n  </label>\n</div>",
      "source": "generated"
     }
    ]
@@ -845,12 +845,12 @@
    "examples": [
     {
      "title": "Vertical",
-     "html": "<div role=\"radiogroup\" aria-required=\"false\" aria-orientation=\"vertical\" dir=\"ltr\" aria-label=\"Plan\" class=\"z-radio-group\" tabindex=\"-1\" data-orientation=\"vertical\">\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"solo\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"vertical\"></button>\n    <input type=\"radio\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"solo\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Solo</span>\n    </span>\n  </label>\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"checked\" value=\"team\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"vertical\">\n      <span data-state=\"checked\" class=\"z-radio__mark\"></span>\n    </button>\n    <input type=\"radio\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" checked=\"\" value=\"team\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Team</span>\n      <span class=\"z-check__description\">Up to 10 members.</span>\n    </span>\n  </label>\n  <label class=\"z-radio\" data-disabled=\"true\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" data-disabled=\"\" disabled=\"\" value=\"org\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"vertical\"></button>\n    <input type=\"radio\" aria-hidden=\"true\" disabled=\"\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"org\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Organization</span>\n    </span>\n  </label>\n</div>",
+     "html": "<div aria-label=\"Plan\" role=\"radiogroup\" aria-orientation=\"vertical\" data-orientation=\"vertical\" class=\"z-radio-group\">\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"solo\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"solo\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Solo</span>\n    </span>\n  </label>\n  <label class=\"z-radio\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"checked\" value=\"team\" tabindex=\"0\" class=\"z-radio__dot\">\n      <span class=\"z-radio__mark\" data-state=\"checked\"></span>\n    </button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"team\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Team</span>\n      <span class=\"z-check__description\">Up to 10 members.</span>\n    </span>\n  </label>\n  <label class=\"z-radio\" data-disabled=\"true\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" data-disabled=\"\" disabled=\"\" value=\"org\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" disabled=\"\" value=\"org\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Organization</span>\n    </span>\n  </label>\n</div>",
      "source": "generated"
     },
     {
      "title": "Horizontal dentro de Field",
-     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" for=\"_R_0_-control\">Density</label>\n  <div class=\"z-field__body\">\n    <div role=\"radiogroup\" aria-required=\"false\" aria-orientation=\"horizontal\" dir=\"ltr\" id=\"_R_0_-control\" class=\"z-radio-group\" tabindex=\"-1\" data-orientation=\"horizontal\">\n      <label class=\"z-radio\">\n        <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"compact\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"horizontal\"></button>\n        <input type=\"radio\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"compact\"/>\n        <span class=\"z-check__text\">\n          <span class=\"z-check__label\">Compact</span>\n        </span>\n      </label>\n      <label class=\"z-radio\">\n        <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"comfortable\" class=\"z-radio__dot\" tabindex=\"-1\" data-orientation=\"horizontal\"></button>\n        <input type=\"radio\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"comfortable\"/>\n        <span class=\"z-check__text\">\n          <span class=\"z-check__label\">Comfortable</span>\n        </span>\n      </label>\n    </div>\n  </div>\n</div>",
+     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Density</label>\n  <div class=\"z-field__body\">\n    <div id=\"_R_0_-control\" role=\"radiogroup\" aria-orientation=\"horizontal\" aria-labelledby=\"_R_0_-label\" data-orientation=\"horizontal\" class=\"z-radio-group\">\n      <label class=\"z-radio\">\n        <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"compact\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n        <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"compact\"/>\n        <span class=\"z-check__text\">\n          <span class=\"z-check__label\">Compact</span>\n        </span>\n      </label>\n      <label class=\"z-radio\">\n        <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"comfortable\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n        <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"comfortable\"/>\n        <span class=\"z-check__text\">\n          <span class=\"z-check__label\">Comfortable</span>\n        </span>\n      </label>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -930,12 +930,12 @@
    "examples": [
     {
      "title": "Con etiqueta",
-     "html": "<label class=\"z-switch\" data-size=\"md\" data-label=\"end\">\n  <button type=\"button\" role=\"switch\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n    <span data-state=\"checked\" class=\"z-switch__thumb\"></span>\n  </button>\n  <input type=\"checkbox\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" value=\"on\"/>\n  <span class=\"z-switch__label\">Automatic updates</span>\n</label>",
+     "html": "<label class=\"z-switch\" data-size=\"md\" data-label=\"end\">\n  <button type=\"button\" role=\"switch\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n    <span class=\"z-switch__thumb\" data-state=\"checked\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"/>\n  <span class=\"z-switch__label\">Automatic updates</span>\n</label>",
      "source": "generated"
     },
     {
      "title": "Pequeño, sin etiqueta visible",
-     "html": "<label class=\"z-switch\" data-size=\"sm\" data-label=\"end\">\n  <button type=\"button\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" aria-label=\"Enable rule\" class=\"z-switch__track\">\n    <span data-state=\"checked\" class=\"z-switch__thumb\"></span>\n  </button>\n  <input type=\"checkbox\" aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)\" checked=\"\" value=\"on\"/>\n</label>",
+     "html": "<label class=\"z-switch\" data-size=\"sm\" data-label=\"end\">\n  <button type=\"button\" aria-label=\"Enable rule\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n    <span class=\"z-switch__thumb\" data-state=\"checked\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n</label>",
      "source": "generated"
     }
    ]
@@ -1107,8 +1107,7 @@
     "z-palette__item",
     "z-palette__item-hint",
     "z-palette__kbd",
-    "z-palette__empty",
-    "z-overlay-scrim"
+    "z-palette__empty"
    ],
    "behavior": "dom",
    "examples": [
@@ -1126,8 +1125,7 @@
     "z-confirm",
     "z-confirm__icon",
     "z-modal",
-    "z-dialog-btn",
-    "z-overlay-scrim"
+    "z-dialog-btn"
    ],
    "behavior": "dom",
    "examples": [
@@ -1169,8 +1167,7 @@
     "z-drawer__description",
     "z-drawer__body",
     "z-drawer__footer",
-    "z-drawer__close",
-    "z-overlay-scrim"
+    "z-drawer__close"
    ],
    "behavior": "dom",
    "examples": [
@@ -1213,7 +1210,6 @@
     "z-modal__body",
     "z-modal__footer",
     "z-modal__close",
-    "z-overlay-scrim",
     "z-overlay-close"
    ],
    "behavior": "dom",

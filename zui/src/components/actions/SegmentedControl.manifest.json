@@ -85,7 +85,7 @@
   "classes": [
     "z-segmented"
   ],
-  "a11y": "Radix ToggleGroup de tipo single: role radiogroup, flechas para moverse. No permite quedar sin selección.",
+  "a11y": "Patrón APG «radiogroup»: una parada de tabulación; las flechas mueven el foco y la selección (reflejadas en RTL). No permite quedar sin selección.",
   "examples": [
     {
       "title": "Vista",
@@ -96,5 +96,5 @@
       "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
     }
   ],
-  "origin": "Tabs (control segmentado) de zutool, sobre ToggleGroup de radix-ui."
+  "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG)."
 }

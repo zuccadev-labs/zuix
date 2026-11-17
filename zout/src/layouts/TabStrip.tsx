@@ -7,9 +7,11 @@ import { revealOffset, tabKeyIndex } from "../logic";
 export interface WorkTab {
   id: string;
   title: ReactNode;
-  /** Icono o indicador a la izquierda del título. */
+  /** Icono o indicador antes del título. */
   leading?: ReactNode;
   closable?: boolean;
+  /** Id del panel (`role="tabpanel"`) que muestra la pestaña: se anuncia con `aria-controls`. */
+  controls?: string;
 }
 
 export interface TabStripProps {
@@ -61,7 +63,7 @@ export function TabStrip({ tabs, activeId, onSelect, onClose, onAdd, label = "Ta
       onClose(tabs[i].id);
       return;
     }
-    const next = tabs[tabKeyIndex(e.key, i, tabs.length)];
+    const next = tabs[tabKeyIndex(e.key, i, tabs.length, getComputedStyle(e.currentTarget).direction === "rtl")];
     if (!next) return;
     e.preventDefault();
     onSelect(next.id);
@@ -75,7 +77,7 @@ export function TabStrip({ tabs, activeId, onSelect, onClose, onAdd, label = "Ta
           const selected = tab.id === activeId;
           return (
             <div key={tab.id} className="z-tabstrip__tab" role="presentation" data-selected={selected || undefined}>
-              <button type="button" role="tab" className="z-tabstrip__select" aria-selected={selected} aria-keyshortcuts={closable(tab) ? "Delete" : undefined} tabIndex={selected ? 0 : -1} data-tab-id={tab.id} onClick={() => onSelect(tab.id)}>
+              <button type="button" role="tab" className="z-tabstrip__select" aria-selected={selected} aria-controls={tab.controls} aria-keyshortcuts={closable(tab) ? "Delete" : undefined} tabIndex={selected ? 0 : -1} data-tab-id={tab.id} onClick={() => onSelect(tab.id)}>
                 {tab.leading}
                 <span className="z-tabstrip__title">{tab.title}</span>
               </button>
