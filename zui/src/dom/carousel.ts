@@ -102,8 +102,12 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   let track: HTMLElement;
   let stage: HTMLElement;
   if (viewport) {
-    stage = viewport.querySelector<HTMLElement>(".z-carousel__stage")!;
-    track = viewport.querySelector<HTMLElement>(".z-carousel__track")!;
+    // El marcado completo es parte del contrato: un viewport sin escenario o sin pista no se puede reparar sin adivinar.
+    const foundStage = viewport.querySelector<HTMLElement>(".z-carousel__stage");
+    const foundTrack = viewport.querySelector<HTMLElement>(".z-carousel__track");
+    if (!foundStage || !foundTrack) throw new Error("z-carousel: .z-carousel__viewport debe contener .z-carousel__stage y .z-carousel__track");
+    stage = foundStage;
+    track = foundTrack;
     // Réplicas que vinieran ya en el marcado (render de servidor): se regeneran.
     for (const clone of track.querySelectorAll(':scope > [aria-hidden="true"]')) clone.remove();
   } else {

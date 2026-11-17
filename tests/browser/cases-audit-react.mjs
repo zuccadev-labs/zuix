@@ -3,8 +3,8 @@
 // componente interactivo con `data-testid` estables. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, until, visible, gone, settled, focusOn, expectAttr, expectText, expectCount, sleep }) {
   const out = (page, id, value, message) => expectText(page, t(id), String(value), message ?? `${id} = ${value}`);
-  // Radix mueve el foco itinerante en un temporizador y decide "flecha pulsada" entre keydown y keyup: la tecla se
-  // mantiene un instante, como la pulsa una persona.
+  // La tecla se mantiene un instante y hay una pausa entre pulsaciones, como las de una persona: el foco itinerante y
+  // la búsqueda por tecleo se asientan entre una y otra.
   const press = async (page, ...keys) => { for (const key of keys) { await page.keyboard.press(key, { delay: 50 }); await sleep(50); } };
   const inside = (page, selector) =>
     page.locator(selector).first().evaluate((el) => {

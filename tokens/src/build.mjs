@@ -190,7 +190,7 @@ function docusaurusCss() {
 function tokensJson() {
   const out = { defaultBrand, themes: THEMES, scale: base.scale, coarse: base.coarse, moreContrast: base.moreContrast, forcedColors: base.forcedColors, component: base.component, semanticDerived: base.semantic, required: base.required, brands: {} };
   for (const b of brands) out.brands[b.name] = { label: b.label ?? b.name, primitives: b.primitives, fonts: b.fonts, scale: b.scale ?? {}, component: b.component ?? {}, themes: b.themes };
-  return JSON.stringify(out, null, 2) + "\n";
+  return `${JSON.stringify(out, null, 2)}\n`;
 }
 
 /* ---------- Formato DTCG (Design Tokens Community Group, 2025.10) ---------- */
@@ -272,7 +272,7 @@ function dtcg(brand, theme) {
     out[group] ??= {};
     out[group][key] = target ? { $type: value.$type, $value: `{${target}}` } : value;
   }
-  return JSON.stringify(out, null, 2) + "\n";
+  return `${JSON.stringify(out, null, 2)}\n`;
 }
 
 export function build() {

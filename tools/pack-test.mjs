@@ -130,9 +130,8 @@ function project(name, pkg, files, builds = []) {
 
 // ── Paquete paraguas @zuccadev-labs/zuix: reexporta los otros cuatro bajo subrutas ───────────────────────────
 {
-  {
-    const dir = project("umbrella", { dependencies: { ...zuixDeps, react: "^19.0.0", "react-dom": "^19.0.0" } }, {
-      "check.mjs": `import assert from "node:assert/strict";
+  const dir = project("umbrella", { dependencies: { ...zuixDeps, react: "^19.0.0", "react-dom": "^19.0.0" } }, {
+    "check.mjs": `import assert from "node:assert/strict";
 import { createElement as h } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import "@zuccadev-labs/zuix/zicon/all";
@@ -151,10 +150,9 @@ assert.ok(iconSvg("plus").includes("<path")); assert.equal(typeof zuiDom.init, "
 for (const f of ["styles.css", "tokens.css"]) import.meta.resolve("@zuccadev-labs/zuix/" + f);
 console.log("ok");
 `,
-    });
-    step("instalar consumidor paraguas", "pnpm", ["install", "--no-frozen-lockfile"], dir);
-    step("paraguas @zuccadev-labs/zuix: subrutas, mismo módulo y render", "node", ["check.mjs"], dir);
-  }
+  });
+  step("instalar consumidor paraguas", "pnpm", ["install", "--no-frozen-lockfile"], dir);
+  step("paraguas @zuccadev-labs/zuix: subrutas, mismo módulo y render", "node", ["check.mjs"], dir);
 }
 
 // ── 3. Consumidor con React ───────────────────────────────────────────────────────────────────────

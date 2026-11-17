@@ -150,7 +150,7 @@ await test("sin desbordamiento horizontal a 390 px", async () => {
   await page.setViewportSize({ width: 390, height: 844 });
   await settle();
   const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  const wide = await page.evaluate(() => [...document.querySelectorAll("[data-component]")].filter((c) => c.getBoundingClientRect().right > innerWidth + 1).map((c) => c.dataset.component).concat([...document.querySelectorAll("body *")].filter((e) => e.getBoundingClientRect().right > innerWidth + 1 && !e.closest(".demo__stage")).slice(0, 6).map((e) => e.tagName + "." + e.className)));
+  const wide = await page.evaluate(() => [...document.querySelectorAll("[data-component]")].filter((c) => c.getBoundingClientRect().right > innerWidth + 1).map((c) => c.dataset.component).concat([...document.querySelectorAll("body *")].filter((e) => e.getBoundingClientRect().right > innerWidth + 1 && !e.closest(".demo__stage")).slice(0, 6).map((e) => `${e.tagName}.${e.className}`)));
   await page.screenshot({ path: join(shots, "page-mobile.png"), fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
   ok(over <= 1, `desborda ${over}px: ${wide.join(", ")}`);

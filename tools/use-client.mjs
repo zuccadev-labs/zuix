@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Regla de "use client" (AGENTS.md): un módulo del binding de React con hooks, contexto, Radix o manejadores
-// de eventos propios empieza por la directiva `"use client";`. Sin ella, un Server Component que lo importe
+// Regla de "use client" (AGENTS.md): un módulo del binding de React con hooks, contexto, primitivas propias
+// (`zui/src/primitives`) o manejadores de eventos propios empieza por la directiva `"use client";`. Sin ella, un Server Component que lo importe
 // falla al compilar en Next.js. Ningún linter trae esta regla; se ejecuta dentro de `pnpm lint`.
 // Uso: node tools/use-client.mjs [rutas...]     Sin rutas revisa zui/src, zout/src y zicon/src.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -25,7 +25,9 @@ const REASONS = [
     (code) => /\buse[A-Z]\w*\s*\(/.test(code.replace(HOOK, "")) && /\bimport\b[^;]*\buse[A-Z]\w*[^;]*\bfrom\b/.test(code),
   ],
   ["createContext", (code) => /\bcreateContext\s*[(<]/.test(code)],
-  ["Radix", (code) => /\bfrom\s*["'](?:radix-ui|@radix-ui\/[^"']+)["']/.test(code)],
+  // Las primitivas propias (capas, diálogo, menú, entradas nativas) llevan estado, contexto y oyentes: quien las importa
+  // es un componente de cliente. `slot` es una función pura y no cuenta.
+  ["primitivas propias", (code) => /\bfrom\s*["'][^"']*\/primitives\/(?!slot["'])[^"']+["']/.test(code)],
   // Un manejador escrito en el módulo (función en línea). Reenviar una prop (`onClick={onClick}`) no cuenta.
   ["manejadores de eventos", (code) => /\son[A-Z][A-Za-z]*=\{\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>/.test(code)],
 ];

@@ -278,13 +278,14 @@ describe("tools/use-client.mjs", () => {
     assert.equal(hasUseClient('import x from "y";\n"use client";'), false);
     assert.equal(hasUseClient('// "use client";\nimport x from "y";'), false);
   });
-  test("motivos: hooks, contexto, Radix y manejadores propios", () => {
+  test("motivos: hooks, contexto, primitivas propias y manejadores propios", () => {
     assert.deepEqual(clientReasons('import { useState } from "react";\nconst [a] = useState(0);'), ["hooks de React"]);
     assert.deepEqual(clientReasons("const r = useRef<HTMLDivElement>(null);"), ["hooks de React"]);
     assert.deepEqual(clientReasons('import { useTrack } from "./useTrack";\nuseTrack();'), ["hooks propios (use…)"]);
     assert.deepEqual(clientReasons("export const Ctx = createContext(null);"), ["createContext"]);
-    assert.deepEqual(clientReasons('import { Dialog } from "radix-ui";'), ["Radix"]);
-    assert.deepEqual(clientReasons('import * as D from "@radix-ui/react-dialog";'), ["Radix"]);
+    assert.deepEqual(clientReasons('import { DialogSurface } from "../../primitives/dialog";'), ["primitivas propias"]);
+    assert.deepEqual(clientReasons('import { Popup } from "../primitives/popup";'), ["primitivas propias"]);
+    assert.deepEqual(clientReasons('import { slot } from "../../primitives/slot";'), [], "slot es una función pura");
     assert.deepEqual(clientReasons("<button onClick={() => go(1)} />"), ["manejadores de eventos"]);
     assert.deepEqual(clientReasons("<button onClick={async (e) => go(e)} />"), ["manejadores de eventos"]);
   });

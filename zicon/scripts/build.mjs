@@ -40,7 +40,7 @@ for (const [name, list] of Object.entries(aliases)) if (new Set(list).size !== l
 if (errors.length) { console.error(errors.map((e) => `✗ ${e}`).join("\n")); process.exit(1); }
 
 const camel = (n) => n.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/^(\d)/, "_$1");
-const enc = (paths) => paths.map(([rule, d]) => (rule === "evenodd" ? "E:" + d : d));
+const enc = (paths) => paths.map(([rule, d]) => (rule === "evenodd" ? `E:${d}` : d));
 const untranslated = new Set();
 
 rmSync(join(root, "src/icons"), { recursive: true, force: true });
@@ -66,11 +66,11 @@ writeFileSync(join(root, "src/names.ts"),
   `${HEADER}export const iconNames = ${JSON.stringify(icons.map((i) => i.name))} as const;\n\nexport type IconName = (typeof iconNames)[number];\n`);
 writeFileSync(join(root, "src/all.ts"),
   `${HEADER}// Registra el set completo. Una aplicación lo importa una vez: import "@zuccadev-labs/zuix-zicon/all".\nimport { registerIcons } from "./registry";\n${icons.map((i) => `import { ${camel(i.name)} } from "./icons/${i.name}";`).join("\n")}\n\nexport const allIcons = [${icons.map((i) => camel(i.name)).join(", ")}];\n\nregisterIcons(allIcons);\n`);
-writeFileSync(join(root, "manifest.json"), JSON.stringify({
+writeFileSync(join(root, "manifest.json"), `${JSON.stringify({
   name: "@zuccadev-labs/zuix-zicon", source: "Dazicon", box, count: icons.length, variants: ["outline", "solid"],
   usage: 'import { Icon } from "@zuccadev-labs/zuix-zicon"; <Icon name="magnifying-glass" size={16} />',
   categories, icons: manifest, emoji,
-}, null, 1) + "\n");
+}, null, 1)}\n`);
 
 // Tabla de sustitución para agentes, dentro de AGENTS.md entre marcadores.
 const agents = join(root, "AGENTS.md");

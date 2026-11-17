@@ -72,8 +72,8 @@ async function expectFocusTrap(page, selector, presses = 6) {
 const menuFocus = (page, prefix, message = "elemento de menú enfocado") =>
   poll(() => page.evaluate((p) => document.activeElement?.getAttribute("role") === "menuitem" && document.activeElement.textContent.startsWith(p), prefix), `${message}: "${prefix}"`);
 /**
- * Clic fuera de una capa recién abierta. Radix registra su oyente de "clic fuera" en la tarea siguiente al montaje:
- * un clic sintético en el mismo frame de la apertura se pierde (una persona no llega a tiempo). Se espera al reposo.
+ * Clic fuera de una capa recién abierta. Se espera al reposo: un clic sintético en el mismo frame de la apertura llega
+ * antes de que la capa termine de montarse y colocarse (una persona no llega a tiempo).
  */
 async function clickOutside(page, x, y) {
   await settled(page);
@@ -157,7 +157,7 @@ async function inPageAndModal(page, fn) {
   await settled(page);
   await fn("modal");
   assert(await page.isVisible(".z-modal"), "el modal sigue abierto tras usar los controles");
-  // Radix devuelve el foco al control en la tarea siguiente al cierre de la capa.
+  // Al cerrar su capa, el control recupera el foco tras el cierre (no en el mismo instante): se espera a que vuelva.
   await poll(() => page.evaluate(() => { const a = document.activeElement; return !!a && a !== document.body && !!a.closest(".z-modal"); }), "el foco sigue dentro del modal");
   await page.keyboard.press("Escape");
   await gone(page, ".z-modal");
@@ -2124,7 +2124,7 @@ export const cases = [
       await touch.tap(await center(page, t("toast-danger")));
       await visible(page, ".z-toast[data-intent=danger]");
       await settled(page);
-      // Radix fija `touch-action: none` en línea; el contrato CSS declara `pan-y`. Cualquiera de los dos reserva el gesto.
+      // El contrato CSS declara `touch-action: pan-y` (`pan-x` en las posiciones centradas): reserva el gesto de descarte.
       assert((await page.locator(".z-toast").evaluate((el) => getComputedStyle(el).touchAction)) !== "auto", "el aviso reserva el gesto horizontal (touch-action)");
       const box = await page.locator(".z-toast").boundingBox();
       const from = { x: box.x + 80, y: box.y + box.height / 2 };
@@ -2171,7 +2171,7 @@ export const cases = [
   {
     name: "Táctil: Slider, SplitPane y ResizeHandle con el dedo",
     async run({ open, finger, note }) {
-      // Slider (Radix): toque en la pista en los tres motores; el arrastre exige captura real del puntero.
+      // Slider: toque en la pista en los tres motores; el arrastre exige captura real del puntero (setPointerCapture).
       const page = await open("projects", { width: 390, height: 844, touch: true });
       const touch = await finger(page);
       const slider = '.z-slider:has([aria-label="Weekly budget"])';
@@ -2189,7 +2189,7 @@ export const cases = [
         await touch.swipe(grip, { x: box.x + box.width * 0.25, y: grip.y + 40 }, { steps: 10 });
         await expectAttr(page, thumb, "aria-valuenow", "20", "arrastrar el tirador al 25 %");
         assert((await scroll()) === before, "arrastrar el Slider no desplaza la página");
-      } else note("arrastre del Slider no verificable: Radix exige la captura real del puntero y el motor no ofrece gestos táctiles (se comprobó el toque en la pista)");
+      } else note("arrastre del Slider no verificable: el Slider captura el puntero (setPointerCapture) y el motor no ofrece gestos táctiles (se comprobó el toque en la pista)");
 
       // Divisores en una tableta apaisada: la sidebar está acoplada y el editor reparte paneles.
       const tablet = await open("editor", { width: 1180, height: 820, touch: true });

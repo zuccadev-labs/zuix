@@ -294,12 +294,12 @@ await test("Carousel: monta el marcado del contrato desde los hijos", async () =
     const clones = slides.filter((x) => x.hasAttribute("aria-hidden"));
     const arrows = [...el.querySelectorAll(":scope > .z-carousel__controls > .z-carousel__arrow")];
     return {
-      role: el.getAttribute("role") + "/" + el.getAttribute("aria-roledescription"),
+      role: `${el.getAttribute("role")}/${el.getAttribute("aria-roledescription")}`,
       mains: mains.length, clones: clones.length,
       slideOk: mains.every((x, i) => x.classList.contains("z-carousel__slide") && x.getAttribute("role") === "group" && x.getAttribute("aria-roledescription") === "slide" && x.getAttribute("aria-label") === `Slide ${i + 1} of 6` && x.firstElementChild.classList.contains("z-card")),
       clonesOk: clones.every((x) => x.inert && !x.hasAttribute("role") && !x.querySelector("[id]")),
       copies: new Set(slides.map((x) => x.dataset.copy)).size,
-      arrows: arrows.map((a) => a.getAttribute("aria-label") + ":" + a.disabled + ":" + !!a.querySelector("svg.z-icon path")).join(),
+      arrows: arrows.map((a) => `${a.getAttribute("aria-label")}:${a.disabled}:${!!a.querySelector("svg.z-icon path")}`).join(),
       live: el.querySelector(":scope > .z-carousel__live")?.getAttribute("aria-live"),
       slideWidth: mains[0].getBoundingClientRect().height > 60 && getComputedStyle(mains[0]).overflow,
     };
@@ -353,7 +353,7 @@ await test("Carousel: arrastre real con inercia; no activa el botón del slide; 
   }, lens);
   const dragging = await drag(lens, -340);
   ok(dragging, "sin data-dragging durante el arrastre");
-  await until((s) => document.querySelector(s + " .z-carousel__slide[data-active]")?.dataset.index !== "0", lens, "el arrastre no cambió de slide");
+  await until((s) => document.querySelector(`${s} .z-carousel__slide[data-active]`)?.dataset.index !== "0", lens, "el arrastre no cambió de slide");
   const after = await settled(lens);
   ok(after >= 1 && after <= 3, `arrastre a la izquierda: slide ${after}`);
   ok((await page.evaluate(() => window.__opened)).length === 0, "el arrastre activó el botón del slide");
@@ -363,7 +363,7 @@ await test("Carousel: arrastre real con inercia; no activa el botón del slide; 
   // Lanzamiento rápido en sentido contrario: la inercia lleva más allá de lo arrastrado.
   await drag(lens, 200, { steps: 3, pause: 8 });
   await page.waitForTimeout(150);
-  await until(([s, a]) => { const i = Number(document.querySelector(s + " .z-carousel__slide[data-active]")?.dataset.index); return i !== a; }, [lens, after], "el lanzamiento no cambió de slide");
+  await until(([s, a]) => { const i = Number(document.querySelector(`${s} .z-carousel__slide[data-active]`)?.dataset.index); return i !== a; }, [lens, after], "el lanzamiento no cambió de slide");
   const thrown = await settled(lens);
   ok(thrown !== after, "el lanzamiento volvió al mismo slide");
   // Clic simple en el botón del slide activo.
@@ -404,7 +404,7 @@ await test("Carousel plano sin bucle: límites, arrastre y API carousel(el)", as
   await drag(flat, -300);
   await atRest(flat, 3);
   await drag(flat, 280);
-  await until((s) => document.querySelector(s + " .z-carousel__slide[data-active]")?.dataset.index !== "3", flat, "el arrastre no retrocedió");
+  await until((s) => document.querySelector(`${s} .z-carousel__slide[data-active]`)?.dataset.index !== "3", flat, "el arrastre no retrocedió");
   const back = await settled(flat);
   ok(back < 3, `arrastre hacia atrás: slide ${back}`);
   await card("Carousel").screenshot({ path: join(shots, "carousel-flat.png") });

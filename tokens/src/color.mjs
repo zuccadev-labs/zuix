@@ -86,7 +86,7 @@ export function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-export const toHex = (c) => "#" + [0, 1, 2].map((i) => Math.round(Math.max(0, Math.min(255, c[i]))).toString(16).padStart(2, "0")).join("");
+export const toHex = (c) => `#${[0, 1, 2].map((i) => Math.round(Math.max(0, Math.min(255, c[i]))).toString(16).padStart(2, "0")).join("")}`;
 
 /**
  * Colores opacos que puede tener el fondo de aplicación: el color plano y los extremos del degradado
