@@ -1,19 +1,24 @@
 # Usar zuix con cualquier framework
 
-Zuix no es una librería de React. El estándar es un **contrato de HTML, CSS y tokens**; React es uno de
+zuix no es una biblioteca de React. El estándar es un **contrato de HTML, CSS y tokens**; React es uno de
 los bindings que lo implementan. El mismo marcado, con las mismas clases, se ve y se comporta igual en
 HTML plano, Vue, Svelte, Angular, Astro o plantillas de servidor.
+
+Mi primer plan era una biblioteca de React. Lo corregí al día siguiente de escribirlo, porque quiero
+usar la suite también donde no hay React. Desde entonces un componente se diseña primero como marcado, y el
+binding se escribe después y tiene que producir ese marcado.
 
 ## Las tres capas
 
 | Capa | Qué es | Depende de |
 |---|---|---|
 | Contrato | Tokens `--z-*`, clases `z-*`, atributos de estado (`data-state`, `data-size`, `aria-*`) e iconos | Nada: CSS y SVG |
-| Comportamiento | `@zuccadev-labs/zuix-zui/dom`: diálogos, menús, popovers, tooltips, avisos, pestañas, acordeón, controles | El navegador (`<dialog>`, `popover`) |
-| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 19 y Radix |
+| Comportamiento | `@zuccadev-labs/zuix-zui/dom` y `@zuccadev-labs/zuix-zout/dom`: diálogos, menús, popovers, tooltips, avisos, pestañas, acordeón, controles, paneles | El navegador (`<dialog>`, Popover API) |
+| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 19 |
 
-Un binding para otro framework solo tiene que producir el marcado del contrato. La apariencia no se
-reescribe nunca.
+El comportamiento y el binding comparten la misma lógica (colocación, foco, teclado, capas): está escrita
+una vez, sin framework, y los dos la consumen. Un binding para otro framework solo tiene que producir el
+marcado del contrato. La apariencia no se reescribe nunca.
 
 ## Instalar
 
@@ -22,9 +27,10 @@ pnpm add @zuccadev-labs/zuix
 ```
 
 El paraguas trae tokens, iconos, componentes y layouts. `react` y `react-dom` son peers opcionales: las
-entradas sin framework (`/zui/dom`, `/zout/dom`, `/zicon/dom`, `/zicon/element`) no los importan. pnpm, npm
-y bun pueden instalarlos igualmente, porque `radix-ui` (dependencia del binding) los pide como peer. Paquete a paquete: `@zuccadev-labs/zuix-tokens`, `@zuccadev-labs/zuix-zicon`,
-`@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` ([Instalar](./README.md#instalar)).
+entradas sin framework (`/zui/dom`, `/zout/dom`, `/zicon/dom`, `/zicon/element`) no los importan y un
+proyecto que solo usa esas entradas no instala React. Paquete a paquete: `@zuccadev-labs/zuix-tokens`,
+`@zuccadev-labs/zuix-zicon`, `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout`
+([Instalar](./README.md#instalar)).
 
 ## Empezar sin bundler
 
@@ -85,14 +91,18 @@ Después se escribe el marcado del contrato en la plantilla del framework. En Vu
 `z-icon` como elemento personalizado (`compilerOptions.isCustomElement`); en Angular, añadir
 `CUSTOM_ELEMENTS_SCHEMA`.
 
+`init()` devuelve una función `destroy` (también exportada) que retira todos los listeners del documento y
+de la ventana; `init()` se puede volver a llamar. Sirve en pruebas, en microfrontends y en aplicaciones que
+montan y desmontan la interfaz.
+
 ## Con Next.js (App Router)
 
 El binding de React funciona con Server Components. Los componentes de solo marcado (`Button`, `Badge`,
 `Card`, `EmptyState`, `Icon`, `Page`, `Stack`, `Rail`…) se renderizan en el servidor sin enviar código al
-navegador. Los que tienen estado, contexto o Radix (`Modal`, `Menu`, `Tabs`, `Select`, `Shell`…) llevan
-`"use client"` en su propio módulo: se usan desde un Server Component sin envolverlos, siempre que sus
-props sean serializables. Un manejador (`onClick`, `onSelect`, `onValueChange`) obliga a escribirlo en un
-archivo propio con `"use client"`.
+navegador. Los que tienen estado, contexto o manejadores propios (`Modal`, `Menu`, `Tabs`, `Select`,
+`Shell`…) llevan `"use client"` en su propio módulo: se usan desde un Server Component sin
+envolverlos, siempre que sus props sean serializables. Un manejador (`onClick`, `onSelect`,
+`onValueChange`) obliga a escribirlo en un archivo propio con `"use client"`.
 
 Los iconos necesitan **dos importaciones**. El registro de iconos es estado de módulo y Next compila dos
 grafos separados: el de Server Components y el de Client Components (que se renderiza en el servidor y en
@@ -129,17 +139,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
 - Con una sola de las dos, la mitad de los iconos sale como `<svg>` vacío y `next build` escribe
   `[zicon] "…" no está registrado`. No hay error de hidratación, porque el servidor y el navegador
   coinciden en el hueco: hay que mirar el aviso.
-- `@zuccadev-labs/zuix-zicon/all` añade el set completo (unos 580 kB sin comprimir) al bundle del navegador. Para
-  enviar solo algunos, el módulo de cliente registra los suyos:
+- `@zuccadev-labs/zuix-zicon/all` añade el set completo (unos 580 kB sin comprimir) al bundle del navegador.
+  Para enviar solo algunos, el módulo de cliente registra los suyos:
   `import { registerIcons } from "@zuccadev-labs/zuix-zicon/core"; import { check } from "@zuccadev-labs/zuix-zicon/icons/check"; registerIcons([check]);`.
   Los componentes de `zui` usan iconos propios (`x-mark`, `chevron-down`, `check`…): también hay que
   registrarlos.
 - `next.config` no necesita `transpilePackages`: los paquetes publican ESM compilado.
-- `Calendar` y `DatePicker` marcan el día de hoy con el reloj de quien renderiza. Si el servidor y el
-  navegador están en fechas distintas (zona horaria, medianoche) el marcado de servidor difiere.
+- `Calendar` sin `value`, `month` ni `defaultMonth` no produce desajuste de hidratación aunque el reloj del
+  servidor y el del navegador caigan en meses distintos. `DataTable` con fechas sin `render` sí puede
+  producirlo: usa `render`.
+- El paraguas funciona igual: una ruta de la prueba lo importa todo por `@zuccadev-labs/zuix`, con un solo
+  `@import` de estilos.
 
-`pnpm test:pack:next` lo comprueba con la última versión estable de Next.js (ver
-[Verificación](#verificación)).
+Lo compruebo en cada pull request con la última versión estable de Next.js, instalando los paquetes
+empaquetados fuera del workspace (`pnpm test:pack --next`).
 
 ## Dónde está el marcado de cada componente
 
@@ -152,20 +165,22 @@ Cada componente declara cómo se comporta:
 | `behavior` | Significado |
 |---|---|
 | `none` | Solo CSS. Basta el marcado |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom` |
-| `react` | Hoy solo existe en el binding de React |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom` (en layouts, `@zuccadev-labs/zuix-zout/dom`) |
+| `react` | Solo existe en el binding de React. Hoy ningún componente con marcado está en este caso |
 
 ## Iconos sin React
 
 | Forma | Uso |
 |---|---|
 | Elemento | `<z-icon name="bell" variant="solid" size="20" label="Alerts"></z-icon>` |
+| Nodo | `iconElement("bell", { size: 20 })` desde `@zuccadev-labs/zuix-zicon/dom`: un `<svg>` construido con el DOM |
 | Cadena | `iconSvg("bell", { size: 20 })` desde `@zuccadev-labs/zuix-zicon/dom` |
 | Sprite | `<svg class="z-icon" width="16" height="16"><use href="sprite.svg#bell"/></svg>` (`#bell-solid` para la variante sólida) |
 | Archivo | `@zuccadev-labs/zuix-zicon/svg/outline/bell.svg` |
 
 `@zuccadev-labs/zuix-zicon/dom` no incluye datos: se registran los iconos que se usen con `registerIcons`.
-`@zuccadev-labs/zuix-zicon/element` registra el set completo (unos 580 kB sin comprimir).
+`@zuccadev-labs/zuix-zicon/element` registra el set completo (unos 580 kB sin comprimir). Más en
+[Zicon](./02-zicon.md#uso-sin-react).
 
 ## Comportamiento: `@zuccadev-labs/zuix-zui/dom`
 
@@ -173,11 +188,11 @@ Cada componente declara cómo se comporta:
 
 | Atributo | Efecto |
 |---|---|
-| `data-z-open="#id"` | Abre el `<dialog>` o el elemento `[popover]` indicado, anclado al disparador |
+| `data-z-open="#id"` | Abre el `<dialog>` o el elemento `[popover]` indicado, anclado al disparador. Un disparador deshabilitado (`disabled`, `aria-disabled`, `data-disabled`) no abre |
 | `data-z-close` | Cierra el diálogo o popover que lo contiene |
 | `data-z-context="#id"` | Abre ese menú en el puntero con clic derecho, o con una pulsación larga (600 ms) con dedo o lápiz |
 | `data-z-submenu="#id"` | En un `.z-menu__item`: abre ese `.z-menu[popover]` como submenú |
-| `data-z-tooltip="texto"` | Tooltip al pasar el puntero o enfocar |
+| `data-z-tooltip="texto"` | Tooltip al pasar el puntero o enfocar. La burbuja admite el puntero y Escape la cierra |
 | `data-z-placement` | `bottom-start` (por defecto), `bottom`, `bottom-end`, `top-start`, `top`, `top-end`, `right`, `left` |
 | `data-z-static` | En un `<dialog>`: Escape y clic fuera no lo cierran |
 
@@ -221,12 +236,14 @@ marcado es el del binding de React: la entrada lleva `.z-menu__chevron`, `aria-h
 |---|---|
 | Puntero sobre la entrada (100 ms) o clic | Abre el submenú; el foco no se mueve |
 | Flecha derecha, Intro o Espacio | Abre y enfoca la primera entrada |
-| Flecha izquierda o Escape | Cierra solo ese submenú; el foco vuelve a la entrada |
+| Flecha izquierda o Escape | Cierra solo ese nivel; el foco vuelve a la entrada |
 | Elegir una entrada, Tab o clic fuera | Cierra toda la cadena |
 | Letras | Búsqueda por letra dentro del menú enfocado (también en menús sin submenús) |
 
-- Se coloca a la derecha del menú padre y voltea a la izquierda si no cabe (`data-side`). No hay variante
-  para `dir="rtl"`.
+- Se coloca a la derecha del menú padre y voltea a la izquierda si no cabe (`data-side`). Dentro de
+  `dir="rtl"` abre hacia la izquierda y las flechas se invierten.
+- Al ir con el puntero en diagonal hacia el submenú hay una zona de gracia: pasar por encima de otras
+  entradas no lo cierra.
 - El submenú puede ir fuera del menú (como arriba) o anidado dentro de él. Fuera, se emparenta con
   `showPopover({ source })`; en un navegador sin esa opción, `zui/dom` lo mueve dentro del menú padre al
   abrirlo para que el `popover` del padre no se cierre.
@@ -237,7 +254,11 @@ marcado es el del binding de React: la entrada lleva `.z-menu__chevron`, `aria-h
 ### Imperativo
 
 ```js
-import { openDialog, closeDialog, openPopover, toast, confirm, setTheme, setBrand, hydrate } from "@zuccadev-labs/zuix-zui/dom";
+import {
+  init, destroy, hydrate,
+  openDialog, closeDialog, openPopover, closePopover, toast, confirm,
+  setTheme, setBrand,
+} from "@zuccadev-labs/zuix-zui/dom";
 
 toast({ title: "Changes saved", intent: "success" });
 if (await confirm({ title: "Delete project?", intent: "danger", confirmLabel: "Delete" })) remove();
@@ -245,17 +266,36 @@ setTheme("light");
 hydrate(container);   // tras insertar marcado nuevo con pestañas, radios o acordeones
 ```
 
+| Función | Notas |
+|---|---|
+| `openDialog(el)`, `closeDialog(el)` | `<dialog>` con `showModal()`: retiene el foco (Tab da la vuelta), bloquea el desplazamiento de la página y devuelve el foco al cerrar. `data-z-static` impide cerrar con Escape o con el velo |
+| `openPopover(el, ancla, placement, { follow })` | Anclado a un elemento, lo sigue al desplazar o redimensionar la página; `follow: false` lo deja donde se abrió |
+| `toast(opciones)` | El cierre automático se detiene mientras el puntero o el foco están en el aviso y con la ventana sin foco. F8 lleva el foco al aviso más reciente y Escape lo descarta. La región tiene nombre: `regionLabel`, por defecto `Notifications (F8)` |
+| `confirm(opciones)` | Resuelve `true` o `false`. Escape cancela; el clic en el velo no cierra |
+| `setSelectValue`, `setComboboxValue`, `setCalendarValue`, `setDatePickerValue`, `setSliderValue`, `setOtpValue`, `setPage`, `sortTable`, `selectTab`… | Cambian el valor desde código y emiten el mismo evento que la interacción |
+
+Los textos que reciben estas funciones se escriben con `textContent`: un título con `<b>` se ve tal cual, no
+se interpreta.
+
 ### Táctil
 
 Sin código adicional. Un aviso de `toast()` se descarta deslizándolo hacia la derecha (hacia el borde en las
 posiciones centradas); `data-z-context` abre con pulsación larga; el Slider, el Carousel y los divisores de
-`@zuccadev-labs/zuix-zout/dom` siguen al dedo. Con puntero grueso los controles miden 40 px y los estilos de `:hover` no se
-aplican ([zui · Táctil](./03-zui.md#táctil)).
+`@zuccadev-labs/zuix-zout/dom` siguen al dedo. Con puntero grueso los controles miden 40 px y los estilos de
+`:hover` no se aplican ([zui · Táctil](./03-zui.md#táctil)).
 
 ### Eventos
 
 Los elementos emiten `z:open`, `z:close`, `z:change` (con `detail.value`, `detail.checked` o
-`detail.pressed`) y `z:select` (entrada de menú elegida).
+`detail.pressed`), `z:select` (entrada de menú elegida) y `z:sort`. `z:close` se emite también cuando un
+`<dialog>` de zui se cierra con `dialog.close()` o con `<form method="dialog">`. Los de `zout/dom` están en
+[Zout](./04-zout.md#eventos).
+
+### Dirección de escritura
+
+Dentro de `dir="rtl"` el modo DOM refleja el teclado igual que React: la flecha izquierda avanza en pestañas,
+grupos de radio, calendario, árbol, valoración y Slider, y los popovers alinean `start` con el borde derecho
+del ancla.
 
 ### Carousel en WebGL (modo `gl`)
 
@@ -288,13 +328,14 @@ cada slide, como hace la prop `rasterize` en React. La franja central sigue sien
 - Si las imágenes cambian después de activar el carrusel (un `<canvas>` que se pinta más tarde, un cambio de
   tema): `carousel(el).refresh()` rehace las réplicas del bucle y las texturas.
 
-## Qué cubre hoy cada capa
+## Qué cubre cada capa
 
 | Componentes | Sin React |
 |---|---|
 | Acciones, datos, estado, contenido, navegación estática, layouts de página y rejillas | Solo CSS |
 | Modal, Drawer, ConfirmDialog, Popover, Tooltip, Menu, ContextMenu (con submenús y búsqueda por letra), Toast | `zui/dom` |
-| Tabs, Accordion, Switch, Checkbox, Radio, Toggle, SegmentedControl | `zui/dom` |
+| Rating de entrada (`.z-rating[data-interactive]`) | `zui/dom`: clic y flechas rellenan las estrellas; `z:change` con `detail.value` |
+| Tabs, Accordion, Switch, Checkbox, Radio, Toggle, SegmentedControl | `zui/dom`. El acordeón emite `z:change` con las secciones abiertas y se recorre con flechas, Inicio y Fin |
 | Select no nativo, Combobox, Calendar, DatePicker, Slider, OTPInput, FileUpload | `zui/dom`: teclado, puntero, campo oculto para formularios y `z:change`. El campo y su popup (`popover`) se enlazan con `aria-controls` |
 | CommandPalette | `zui/dom`: `<dialog class="z-liquid z-palette">` abierto con `data-z-open`, con `data-z-hotkey="mod+k"` o con `openPalette(el)`. Filtra por etiqueta, detalle, `data-keywords` y grupo; flechas, Inicio/Fin, Intro y Escape; `z:select` con `detail.value`. `data-keep-open` no cierra al elegir |
 | Tree | `zui/dom`: expandir, plegar, selección y teclado de árbol (flechas, Inicio/Fin, letra, Intro, Espacio). Las ramas plegadas van en el marcado con `hidden`. `z:change` con `detail.value` y `detail.expanded`; `toggleTreeItem(li)`, `selectTreeItem(li)` |
@@ -307,6 +348,9 @@ cada slide, como hace la prop `rasterize` en React. La franja central sigue sien
 Para un campo de selección sin React, `NativeSelect` usa el `<select>` del navegador y no necesita
 comportamiento.
 
+Para un campo de selección sin React, `NativeSelect` usa el `<select>` del navegador y no necesita
+comportamiento.
+
 ## Verificación
 
 ```
@@ -315,31 +359,20 @@ pnpm dist        # empaqueta CSS y módulos, y regenera examples/html
 pnpm test:html   # abre examples/html en Chrome y ejercita zui/dom, sin React
 ```
 
-`pnpm test:pack:next` (`node tools/pack-test.mjs --next`) instala Next.js y los paquetes empaquetados en
-`.tmp/consumer/next/`, fuera del workspace, y comprueba `next build`, el HTML de servidor de una ruta
-estática, una dinámica y una de cliente (cada icono con su trazado), la hidratación en Chrome sin avisos
-ni errores de consola y la interacción con Modal, Tabs, Accordion, Menu, Select, Switch, Toast, `Shell` y
-`SplitPane`. Necesita red y añade cerca de medio minuto a `pnpm test:pack`.
+`pnpm test:html:all` repite la suite en Firefox y WebKit. Qué cubre cada suite, incluida la de Next.js y la
+de táctil emulado: [Calidad y pruebas](../development/02-calidad-y-pruebas.md).
 
-`tests/html/cases/07-touch.mjs` repite lo principal en un contexto de teléfono (táctil, 390 px, puntero grueso):
-gestos reales en Chrome por el protocolo de depuración; en Firefox y WebKit, toques reales y arrastres con
-eventos de puntero sintéticos.
+## Lo que no he comprobado
 
-`pnpm test:blur` (`tests/blur-firefox.mjs`) comprueba por píxeles que Firefox pinta el desenfoque del cristal.
-Necesita una pantalla X: `xvfb-run -a pnpm test:blur` (paquetes `xvfb` y `x11-apps`).
-
-## Sin verificar
-
-- Safari real. `pnpm test:html:all` pasa en Chrome y en los motores Firefox y WebKit de Playwright;
-  WebKit en Linux no es Safari en macOS o iOS.
-- No hay bindings escritos para Vue, Svelte ni Angular: se usa el contrato directamente.
-- Next.js: probado con 16.4.6 (App Router, Turbopack, `next build` y `next start`). Sin probar: `next dev`,
-  Pages Router, el runtime Edge, versiones anteriores, y servidor y navegador en fechas distintas. El build
-  con webpack (`next build --webpack`) compila; la prueba en navegador no se repitió sobre él.
-- Submenús: solo se ha probado un nivel de anidamiento, y la ruta sin `showPopover({ source })` solo con el
-  argumento anulado en los tres motores, no en un navegador antiguo real. Los submenús no tienen pruebas táctiles.
+- Safari real. Las suites pasan en Chrome y en los motores Firefox y WebKit de Playwright; WebKit en Linux no
+  es Safari en macOS o iOS.
+- No he escrito bindings para Vue, Svelte ni Angular: se usa el contrato directamente.
+- Next.js: lo pruebo con App Router, Turbopack, `next build` y `next start`. No he probado `next dev`, Pages
+  Router ni el runtime Edge.
+- Submenús: solo un nivel de anidamiento, y sin pruebas táctiles. La ruta sin `showPopover({ source })` la
+  probé anulando el argumento en los tres motores, no en un navegador antiguo real.
 - Táctil en un dispositivo real. La emulación cubre gestos reales solo en Chrome; en Firefox y WebKit los
-  arrastres son eventos sintéticos y el desplazamiento nativo no se comprueba.
+  arrastres son eventos sintéticos.
 - Lectores de pantalla.
-- Modo `gl` del Carousel: probado con WebGL por software (sin GPU física) y con lienzos como imagen; no con
-  `<video>`, con imágenes de otro origen ni con pérdida real del contexto WebGL.
+- Modo `gl` del Carousel: probado con WebGL por software y con lienzos como imagen; no con `<video>`, con
+  imágenes de otro origen ni con pérdida real del contexto WebGL.

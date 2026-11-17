@@ -1,9 +1,12 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 64 componentes en 8 grupos. Cada componente es
-un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes y el
-mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
-React (lógica accesible de Radix) y `@zuccadev-labs/zuix-zui/dom`, sin framework. Ver [Frameworks](./06-frameworks.md).
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 64 componentes en 8 grupos. Cada
+componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
+y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
+React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)).
+
+No depende de ninguna biblioteca de UI. En ejecución solo necesita `@zuccadev-labs/zuix-tokens`;
+`@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM 19 son peers opcionales.
 
 El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/components).
 
@@ -16,9 +19,18 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Datos | Table, DataTable, Badge, Chip, Avatar, AvatarGroup, StatTile, Meter, Progress, Rating, Kbd |
 | Estado | Spinner, Skeleton, LoadingOverlay, EmptyState, ErrorState, ErrorBoundary, Alert |
 | Contenido | Card, CardHeader, CardFooter, Panel, Callout, CodeBlock, Divider |
-| Superposición | Modal, ConfirmDialog, Drawer, Popover, Tooltip, Menu, ContextMenu, CommandPalette, Toast |
+| Capas | Modal, ConfirmDialog, Drawer, Popover, Tooltip, Menu, ContextMenu, CommandPalette, Toast |
 | Navegación | Tabs, Breadcrumb, Pagination, Stepper, Accordion, Tree, NavList |
 | Carousel | Carousel con efecto lente |
+
+Cada componente declara en el contrato qué necesita para funcionar:
+
+| `behavior` | Significado | Cuántos |
+|---|---|---|
+| `none` | Solo CSS. Basta el marcado | 34 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 29 |
+
+`ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
 
 ## Uso con React
 
@@ -27,41 +39,85 @@ import "@zuccadev-labs/zuix-tokens/tokens.css";
 import "@zuccadev-labs/zuix-zui/styles.css";
 import "@zuccadev-labs/zuix-zicon/all";
 
-import { Button, Field, Input, ToastProvider, useToast } from "@zuccadev-labs/zuix-zui";
+import { Button, ToastProvider, useToast } from "@zuccadev-labs/zuix-zui";
 
 function Save() {
   const { toast } = useToast();
   return <Button variant="primary" icon="check" onClick={() => toast({ title: "Saved", intent: "success" })}>Save</Button>;
+}
+
+export function App() {
+  return <ToastProvider><Save /></ToastProvider>;
 }
 ```
 
 - `ToastProvider` envuelve la aplicación una vez.
 - Los textos visibles llegan por props; los valores por defecto están en inglés.
 - La clase `z-root` en el contenedor de la aplicación aplica tipografía, foco y selección.
+- Los componentes aceptan `ref` como prop, sin `forwardRef`: es la forma de React 19.
 
 ### Con Next.js
 
-Los componentes con estado llevan `"use client"`; los de solo marcado se renderizan como Server
-Components. `@zuccadev-labs/zuix-zicon/all` se importa dos veces, en `app/layout.tsx` y en un módulo con
-`"use client"`, porque Next mantiene un registro de iconos por cada grafo. Ejemplo completo en
-[Frameworks](./06-frameworks.md#con-nextjs-app-router).
+Los módulos con hooks, contexto o manejadores propios llevan `"use client"`; los de solo marcado se
+renderizan como Server Components. `@zuccadev-labs/zuix-zicon/all` se importa dos veces, en `app/layout.tsx`
+y en un módulo con `"use client"`, porque Next mantiene un registro de iconos por cada grafo. Ejemplo completo
+en [Frameworks](./06-frameworks.md#con-nextjs-app-router).
+
+## Cómo están hechas las capas
+
+| Pieza | Sobre qué va | Qué da el navegador |
+|---|---|---|
+| `Modal`, `Drawer`, `ConfirmDialog`, `CommandPalette` | `<dialog>` abierto con `showModal()` | Capa superior, velo (`::backdrop`) e inercia del resto de la página |
+| `Popover`, `Tooltip`, `Menu`, `ContextMenu`, `Select`, `Combobox`, `DatePicker`, avisos | Un elemento `popover="manual"` | Capa superior, sin `z-index` ni portales |
+| Colocación junto al disparador | Una función propia, la misma en React y en el modo DOM | — |
+
+Lo que el navegador no da lo pone la suite: retener el foco y devolverlo al cerrar, cerrar con Escape solo
+la capa de arriba, cerrar al interactuar fuera, bloquear el desplazamiento de la página y seguir al
+disparador cuando la página se desplaza.
+
+El marcado que emite React es el del contrato: se puede copiar a una página sin React y funciona con
+`zui/dom`. Por eso el velo de un diálogo se estiliza como `dialog::backdrop` y un selector de aplicación debe
+escribir `dialog.z-modal`, no `.z-modal[role=dialog]`.
 
 ## Variantes y estados
 
 - Intención: `primary`, `secondary`, `ghost`, `danger`. Tamaño: `sm`, `md`, `lg`.
 - Todo componente interactivo define reposo, hover, foco, activo y deshabilitado.
+- `Button` e `IconButton` con `loading` llevan `aria-disabled="true"`, no `disabled`: no ejecutan `onClick`
+  ni envían el formulario, pero conservan el foco del teclado.
+- `Popover` exige nombre accesible en sus tipos: `label`, o `aria-labelledby` con el id de un encabezado del
+  panel.
+
+## Formularios
+
+- `Field` etiqueta su control con `<label for>` y, cuando el control no es etiquetable (`RadioGroup`,
+  `OTPInput`, `Slider`), con `aria-labelledby`. `useFieldLabel()` lo expone para controles propios.
+- `Select`, `Checkbox`, `Switch`, `RadioGroup` y `DatePicker` llevan un campo nativo oculto
+  (`.z-native-input`): participan en el envío del formulario y vuelven a su valor inicial con `form.reset()`.
+  `Select required` y `DatePicker required` usan además la validación nativa: el formulario no se envía vacío.
+- `Slider` con varios tiradores envía un campo por tirador con el mismo `name`.
+- `FileUpload` con `name` conserva los archivos aceptados en el campo y el formulario los envía.
+
+## Dirección de escritura
+
+Dentro de un contenedor con `dir="rtl"` las hojas se reflejan (usan propiedades lógicas), los iconos
+direccionales se voltean y el teclado se invierte donde el patrón lo pide: en `Tabs`, `Menu`, `Slider`,
+`RadioGroup`, `SegmentedControl`, `Calendar`, `Tree` y `Rating` la flecha izquierda avanza. La dirección se
+lee del DOM; no hay proveedor ni prop.
 
 ## Táctil
 
-- Con el dedo como puntero principal (`pointer: coarse`) los controles `sm` y `md` miden 40 px de alto: sale del
-  token `--z-touch-target` ([Tokens](./01-tokens.md)). Checkbox, Radio y Switch ganan aire vertical; el Slider,
-  los botones de cierre y las opciones de SegmentedControl amplían su zona de pulsación sin cambiar el dibujo.
-  No llegan a 40 px los controles secundarios densos: días de `Calendar` en contenedores estrechos, cierre de
-  pestaña de `TabStrip`, quitar `Chip`, estrellas de `Rating` y enlaces en línea.
+- Con el dedo como puntero principal (`pointer: coarse`) los controles `sm` y `md` miden 40 px de alto: sale
+  del token `--z-touch-target` ([Tokens](./01-tokens.md#objetivo-táctil)). Checkbox, Radio y Switch ganan aire
+  vertical; el Slider, los botones de cierre y las opciones de SegmentedControl amplían su zona de pulsación
+  sin cambiar el dibujo.
+- Las estrellas de `Rating` de entrada miden al menos 24 × 24 px con cualquier puntero.
+- No llegan a 40 px los controles secundarios densos: días de `Calendar` en contenedores estrechos, quitar
+  `Chip`, copiar de `CodeBlock` y enlaces en línea.
 - Los estilos de `:hover` solo se aplican donde hay hover (`@media (hover: hover)`).
 - Gestos: el Carousel se arrastra con inercia y deja pasar el desplazamiento vertical (`touch-action: pan-y`);
   un Toast se descarta deslizándolo; el ContextMenu se abre con pulsación larga; Slider, `SplitPane` y
-  `ResizeHandle` se arrastran con el dedo (`touch-action: none`). Igual con React y con `@zuccadev-labs/zuix-zui/dom`.
+  `ResizeHandle` se arrastran con el dedo. Igual con React y con `zui/dom`.
 
 ## Material
 
@@ -71,7 +127,7 @@ Components. `@zuccadev-labs/zuix-zicon/all` se importa dos veces, en `app/layout
 | `z-solid` | Superficie opaca para lectura y edición |
 | `z-canvas` | Fondo de aplicación sobre el que flota el cristal |
 
-Con `prefers-reduced-transparency` el cristal pasa a opaco.
+Con `prefers-reduced-transparency` o `prefers-contrast: more` el cristal pasa a opaco.
 
 ## Carousel
 
@@ -90,17 +146,8 @@ Con `prefers-reduced-transparency` el cristal pasa a opaco.
 | `gl` | Si se pasa `rasterize` y hay WebGL2: los bordes se dibujan en un lienzo. Sin React: `data-raster` ([Frameworks](./06-frameworks.md#carousel-en-webgl-modo-gl)) |
 | `flat` | Con `effect="none"` o movimiento reducido |
 
-Arrastre con inercia, bucle infinito, flechas, teclado y anuncios para lectores de pantalla.
-
-## De dónde sale cada cosa
-
-| Fuente | Aporta |
-|---|---|
-| Radix | Lógica accesible de diálogos, menús, pestañas, controles |
-| Design system base (paquete `ui` de un proyecto previo) | Button, Input, DateInput, Card, Avatar, Chip, Rating, Meter, estados |
-| zutool | Aspecto liquid glass, menús, paleta de comandos, controles |
-| `ui-glass` | Panel, StatTile, DataTable |
-| Proyecto previo (landing) | Carousel con efecto lente |
+Arrastre con inercia, bucle infinito, flechas, teclado y anuncios para lectores de pantalla. Si el navegador
+no ofrece WebGL2 se pregunta una sola vez por página y el carrusel sigue en `css`.
 
 ## Reglas de uso
 
@@ -108,31 +155,30 @@ Arrastre con inercia, bucle infinito, flechas, teclado y anuncios para lectores 
 2. Si una variante no existe, se añade al sistema.
 3. El cristal no se aplica sobre áreas de lectura o edición de texto.
 4. Los componentes de dominio (pagos, reservas, mapas) viven en la aplicación.
+5. `DataTable` muestra una fecha sin `render` con `toLocaleDateString()`. En render de servidor, con otra
+   zona horaria o idioma que el navegador, eso produce un desajuste de hidratación: para fechas, pasa `render`.
 
 ## Manifiestos
 
-Cada componente tiene un `*.manifest.json` con props, valores permitidos, tokens que lee, clases y
-ejemplos completos. `pnpm manifest` los valida y los reúne en `zui/manifest.json`.
+Cada componente tiene un `*.manifest.json` con props, valores permitidos, tokens que lee, clases y ejemplos
+completos. `pnpm manifest` los valida y los reúne en `zui/manifest.json`; `pnpm html` genera `zui/html.json`
+con el marcado de cada ejemplo. Los dos se publican con el paquete.
 
-## Verificado y sin verificar
+## De dónde sale cada cosa
 
-- `pnpm test:browser` (46 casos, binding de React) abre y cierra cada overlay con teclado y puntero,
-  recorre menús, paleta de comandos, avisos, pestañas, acordeón, árbol, tabla y formulario, y prueba
-  el Carousel en modo `css`, `gl` y movimiento reducido, en las dos marcas y los dos temas.
-- Select, Combobox, NativeSelect, Calendar y DatePicker (fecha y rango) tienen casos propios con
-  teclado y puntero, en la página y dentro de un `Modal`.
-- `pnpm test:html` (97 casos, sin React) hace lo propio con el contrato HTML y `@zuccadev-labs/zuix-zui/dom`.
-- Las dos suites pasan en Chrome, Firefox y WebKit: `BROWSER=chromium|firefox|webkit|all`, o
-  `pnpm test:browser:all` y `pnpm test:html:all`.
-- `pnpm test:pack:next` instala los paquetes empaquetados en una aplicación Next.js 16 (App Router) y
-  comprueba el marcado de servidor con iconos, la hidratación sin avisos y la interacción en Chrome.
-- axe-core revisa cada pantalla en tema claro y oscuro; fallan las violaciones graves y críticas.
-- `prefers-reduced-motion` se prueba en los tres motores; `prefers-reduced-transparency`, en Chrome y
-  Firefox.
-- El modo `gl` del Carousel se probó con WebGL por software, no con una GPU física.
-- Táctil emulado en las dos suites (teléfono a 390 px): gestos reales en Chrome; toques reales y arrastres
-  sintéticos en Firefox y WebKit.
-- `pnpm test:blur` mide por píxeles que Firefox con ventana pinta el desenfoque del cristal (pasa sobre Xvfb).
-  El Firefox sin interfaz y sus capturas no lo muestran.
-- Sin verificar: Safari real, táctil en un dispositivo real y lectores de pantalla. Detalle en
-  [`../investigations/07-estado-de-construccion.md`](../investigations/07-estado-de-construccion.md).
+| Fuente | Aporta |
+|---|---|
+| WAI-ARIA Authoring Practices | Roles, teclado y foco de cada patrón |
+| El design system de un proyecto privado anterior | Button, Input, DateInput, Card, Avatar, Chip, Rating, Meter, estados |
+| zutool | Aspecto liquid glass, menús, paleta de comandos, controles |
+| `ui-glass` | Panel, StatTile, DataTable |
+| La página de presentación de ese mismo proyecto | Carousel con efecto lente |
+
+Las dos técnicas adaptadas de terceros (la zona de gracia del puntero en submenús y la prueba de punto en
+polígono) llevan su aviso en `THIRD_PARTY_NOTICES.md`, dentro del paquete.
+
+## Qué está probado
+
+Las pruebas y lo que cubre cada una están en [Calidad y pruebas](../development/02-calidad-y-pruebas.md); los
+límites, en [Accesibilidad](./09-accesibilidad.md#lo-que-no-he-comprobado) y
+[Compatibilidad](./10-compatibilidad.md#lo-que-no-he-comprobado).
