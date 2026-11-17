@@ -1,8 +1,32 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
-import { Rail, RailItem, Shell, Sidebar, SidebarSection, SidePanel, Stack, TabStrip, TitleBar, type ShellPanelMode, type WorkTab } from "@zuccadev-labs/zuix-zout";
 import {
-  Avatar, Badge, Button, CommandPalette, Divider, IconButton, Meter, NavLink, NavList, Progress, Switch, Tooltip, useToast,
+  Rail,
+  RailItem,
+  Shell,
+  Sidebar,
+  SidebarSection,
+  SidePanel,
+  Stack,
+  TabStrip,
+  TitleBar,
+  type ShellPanelMode,
+  type WorkTab,
+} from "@zuccadev-labs/zuix-zout";
+import {
+  Avatar,
+  Badge,
+  Button,
+  CommandPalette,
+  Divider,
+  IconButton,
+  Meter,
+  NavLink,
+  NavList,
+  Progress,
+  Switch,
+  Tooltip,
+  useToast,
   type PaletteGroup,
 } from "@zuccadev-labs/zuix-zui";
 import { PROJECTS, SCREENS, STATUS_LABEL, STATUS_TONE, isScreen, type Brand, type Project, type ScreenId, type Theme } from "./data";
@@ -74,18 +98,15 @@ export function App() {
     });
   }, []);
 
-  const navigate = useCallback(
-    (id: ScreenId) => {
-      setTabs((list) => (list.includes(id) ? list : [...list, id]));
-      setActive(id);
-      // En cajón, elegir un destino cierra la navegación.
-      setModes((current) => {
-        if (current?.sidebar === "overlay") setSidebarOpen(false);
-        return current;
-      });
-    },
-    [],
-  );
+  const navigate = useCallback((id: ScreenId) => {
+    setTabs((list) => (list.includes(id) ? list : [...list, id]));
+    setActive(id);
+    // En cajón, elegir un destino cierra la navegación.
+    setModes((current) => {
+      if (current?.sidebar === "overlay") setSidebarOpen(false);
+      return current;
+    });
+  }, []);
 
   const closeTab = (id: string) => {
     const index = tabs.indexOf(id as ScreenId);
@@ -121,7 +142,13 @@ export function App() {
     () => [
       {
         heading: "Go to",
-        commands: SCREENS.map((screen) => ({ id: `go-${screen.id}`, label: screen.title, hint: screen.hint, icon: screen.icon, onSelect: () => navigate(screen.id) })),
+        commands: SCREENS.map((screen) => ({
+          id: `go-${screen.id}`,
+          label: screen.title,
+          hint: screen.hint,
+          icon: screen.icon,
+          onSelect: () => navigate(screen.id),
+        })),
       },
       {
         heading: "Appearance",
@@ -151,13 +178,21 @@ export function App() {
   );
 
   const screen =
-    active === "overview" ? <Overview onNavigate={navigate} onSelectProject={selectProject} /> :
-    active === "projects" ? <Projects selectedId={projectId} onSelect={selectProject} /> :
-    active === "forms" ? <Forms /> :
-    active === "overlays" ? <Overlays onOpenPalette={() => setPaletteOpen(true)} /> :
-    active === "navigation" ? <NavigationScreen /> :
-    active === "gallery" ? <Gallery theme={theme} brand={brand} /> :
-    <Editor />;
+    active === "overview" ? (
+      <Overview onNavigate={navigate} onSelectProject={selectProject} />
+    ) : active === "projects" ? (
+      <Projects selectedId={projectId} onSelect={selectProject} />
+    ) : active === "forms" ? (
+      <Forms />
+    ) : active === "overlays" ? (
+      <Overlays onOpenPalette={() => setPaletteOpen(true)} />
+    ) : active === "navigation" ? (
+      <NavigationScreen />
+    ) : active === "gallery" ? (
+      <Gallery theme={theme} brand={brand} />
+    ) : (
+      <Editor />
+    );
 
   return (
     <Shell
@@ -171,40 +206,96 @@ export function App() {
         <TitleBar
           brand={
             <>
-              <IconButton icon="bars-3" label="Toggle navigation" variant="ghost" size="sm" onClick={toggleSidebar} aria-expanded={sidebarOpen} data-testid="toggle-sidebar" />
-              <span className="app-brand" data-testid="brand-name">{brand}</span>
+              <IconButton
+                icon="bars-3"
+                label="Toggle navigation"
+                variant="ghost"
+                size="sm"
+                onClick={toggleSidebar}
+                aria-expanded={sidebarOpen}
+                data-testid="toggle-sidebar"
+              />
+              <span className="app-brand" data-testid="brand-name">
+                {brand}
+              </span>
             </>
           }
           actions={
             <>
               <Tooltip content="Command palette (Ctrl K)" side="bottom">
-                <IconButton icon="magnifying-glass" label="Open command palette" variant="ghost" size="sm" onClick={() => setPaletteOpen(true)} data-testid="open-palette" />
+                <IconButton
+                  icon="magnifying-glass"
+                  label="Open command palette"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPaletteOpen(true)}
+                  data-testid="open-palette"
+                />
               </Tooltip>
               <IconButton
-                icon="swatch" label={`Switch brand (current: ${brand})`} variant="ghost" size="sm"
-                onClick={() => setBrand(brand === "dazlabs" ? "zutool" : "dazlabs")} data-testid="toggle-brand"
+                icon="swatch"
+                label={`Switch brand (current: ${brand})`}
+                variant="ghost"
+                size="sm"
+                onClick={() => setBrand(brand === "dazlabs" ? "zutool" : "dazlabs")}
+                data-testid="toggle-brand"
               />
               <IconButton
-                icon={theme === "dark" ? "sun" : "moon"} label={theme === "dark" ? "Use light theme" : "Use dark theme"} variant="ghost" size="sm"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")} data-testid="toggle-theme"
+                icon={theme === "dark" ? "sun" : "moon"}
+                label={theme === "dark" ? "Use light theme" : "Use dark theme"}
+                variant="ghost"
+                size="sm"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                data-testid="toggle-theme"
               />
-              <IconButton icon="adjustments-horizontal" label="Toggle details panel" variant="ghost" size="sm" onClick={toggleInspector} aria-expanded={inspectorOpen} data-testid="toggle-inspector" />
+              <IconButton
+                icon="adjustments-horizontal"
+                label="Toggle details panel"
+                variant="ghost"
+                size="sm"
+                onClick={toggleInspector}
+                aria-expanded={inspectorOpen}
+                data-testid="toggle-inspector"
+              />
             </>
           }
         >
-          <TabStrip tabs={workTabs} activeId={active} onSelect={(id) => setActive(id as ScreenId)} onClose={closeTab} onAdd={addTab} label="Open screens" />
+          <TabStrip
+            tabs={workTabs}
+            activeId={active}
+            onSelect={(id) => setActive(id as ScreenId)}
+            onClose={closeTab}
+            onAdd={addTab}
+            label="Open screens"
+          />
         </TitleBar>
       }
       rail={
         <Rail
-          brand={<span className="app-logo"><Icon name="cube" variant="solid" size={20} /></span>}
+          brand={
+            <span className="app-logo">
+              <Icon name="cube" variant="solid" size={20} />
+            </span>
+          }
           footer={
-            <RailItem icon="bell" label="Notifications" badge={3} data-testid="rail-notifications"
-              onClick={() => toast({ title: "3 unread notifications", description: "Review requests are waiting.", intent: "info" })} />
+            <RailItem
+              icon="bell"
+              label="Notifications"
+              badge={3}
+              data-testid="rail-notifications"
+              onClick={() => toast({ title: "3 unread notifications", description: "Review requests are waiting.", intent: "info" })}
+            />
           }
         >
           {SCREENS.map((s) => (
-            <RailItem key={s.id} icon={s.icon} label={s.title} active={active === s.id} onClick={() => navigate(s.id)} data-testid={`rail-${s.id}`} />
+            <RailItem
+              key={s.id}
+              icon={s.icon}
+              label={s.title}
+              active={active === s.id}
+              onClick={() => navigate(s.id)}
+              data-testid={`rail-${s.id}`}
+            />
           ))}
         </Rail>
       }
@@ -238,9 +329,18 @@ export function App() {
               <NavList label="Projects">
                 {PROJECTS.map((p) => (
                   <NavLink
-                    key={p.id} icon="folder" active={p.id === projectId}
-                    trailing={<Badge tone={STATUS_TONE[p.status]} size="sm">{p.tasks}</Badge>}
-                    onClick={() => { setProjectId(p.id); navigate("projects"); }}
+                    key={p.id}
+                    icon="folder"
+                    active={p.id === projectId}
+                    trailing={
+                      <Badge tone={STATUS_TONE[p.status]} size="sm">
+                        {p.tasks}
+                      </Badge>
+                    }
+                    onClick={() => {
+                      setProjectId(p.id);
+                      navigate("projects");
+                    }}
                   >
                     {p.name}
                   </NavLink>
@@ -257,19 +357,48 @@ export function App() {
           <SidePanel
             title={project.name}
             subtitle={project.owner}
-            actions={<IconButton icon="x-mark" label="Close details" variant="ghost" size="sm" onClick={() => setInspectorOpen(false)} data-testid="close-inspector" />}
-            footer={<Button variant="primary" icon="arrow-top-right-on-square" fullWidth onClick={() => navigate("projects")}>Open project</Button>}
+            actions={
+              <IconButton
+                icon="x-mark"
+                label="Close details"
+                variant="ghost"
+                size="sm"
+                onClick={() => setInspectorOpen(false)}
+                data-testid="close-inspector"
+              />
+            }
+            footer={
+              <Button variant="primary" icon="arrow-top-right-on-square" fullWidth onClick={() => navigate("projects")}>
+                Open project
+              </Button>
+            }
           >
             <Stack gap={4}>
-              <div><Badge tone={STATUS_TONE[project.status]} dot>{STATUS_LABEL[project.status]}</Badge></div>
+              <div>
+                <Badge tone={STATUS_TONE[project.status]} dot>
+                  {STATUS_LABEL[project.status]}
+                </Badge>
+              </div>
               <p className="app-text">{project.summary}</p>
               <Progress value={project.progress} label="Completion" showValue />
-              <Meter value={project.tasks} max={50} label="Open tasks" showLabel valueLabel={`${project.tasks} of 50`} warningAt={25} dangerAt={40} />
+              <Meter
+                value={project.tasks}
+                max={50}
+                label="Open tasks"
+                showLabel
+                valueLabel={`${project.tasks} of 50`}
+                warningAt={25}
+                dangerAt={40}
+              />
               <Divider />
-              <Switch checked={notify} onCheckedChange={setNotify} data-testid="inspector-switch">Notify me about changes</Switch>
+              <Switch checked={notify} onCheckedChange={setNotify} data-testid="inspector-switch">
+                Notify me about changes
+              </Switch>
               <dl className="app-meta">
-                <dt>Updated</dt><dd>{project.updated}</dd>
-                <dt>Identifier</dt><dd>{project.id}</dd>
+                <dt>Updated</dt>
+                <dd>{project.updated}</dd>
+                <dt>Identifier</dt>
+                <dd>{project.id}</dd>
               </dl>
             </Stack>
           </SidePanel>
@@ -277,7 +406,9 @@ export function App() {
       }}
       overlays={<CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} groups={groups} />}
     >
-      <div className="app-screen" data-testid={`screen-${active}`} data-screen={active}>{screen}</div>
+      <div className="app-screen" data-testid={`screen-${active}`} data-screen={active}>
+        {screen}
+      </div>
     </Shell>
   );
 }

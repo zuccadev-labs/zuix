@@ -1,14 +1,5 @@
 "use client";
-import {
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-  type HTMLAttributes,
-  type Key,
-  type ReactNode,
-  type Ref,
-} from "react";
+import { useRef, useState, useSyncExternalStore, type CSSProperties, type HTMLAttributes, type Key, type ReactNode, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";

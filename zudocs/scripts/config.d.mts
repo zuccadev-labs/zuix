@@ -1,5 +1,10 @@
 // Tipos de scripts/config.mjs, para docusaurus.config.ts y sidebars.ts.
-export interface ZudocsArea { id: string; label: string; icon?: string; description?: string }
+export interface ZudocsArea {
+  id: string;
+  label: string;
+  icon?: string;
+  description?: string;
+}
 export interface ZudocsConfig {
   name: string;
   tagline?: string;
@@ -58,7 +63,14 @@ export const PAGES: readonly ("components" | "icons" | "tokens")[];
 export function callerDir(): string;
 export const CONFIG_NAME: string;
 export class ZudocsError extends Error {}
-export function parseArgs(argv?: string[]): { config?: string; outDir?: string; strict: boolean; headers: boolean; help: boolean; rest: string[] };
+export function parseArgs(argv?: string[]): {
+  config?: string;
+  outDir?: string;
+  strict: boolean;
+  headers: boolean;
+  help: boolean;
+  rest: string[];
+};
 export function validateSchema(value: unknown, schema: object, path?: string): string[];
 export function unsafeOutDir(outDir: string, protectedDirs: [string, string | undefined][]): string | undefined;
 export function findConfig(explicit?: string): string;

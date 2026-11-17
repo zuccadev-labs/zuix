@@ -28,9 +28,12 @@ export function defineIconElement(tag = "z-icon"): void {
       this.style.display = this.hasAttribute("hidden") ? "none" : "contents";
       const name = this.getAttribute("name") ?? "";
       const variant: IconVariant = this.getAttribute("variant") === "solid" ? "solid" : "outline";
-      if (name && !getIcon(name)) pending.add(this); else pending.delete(this);
+      if (name && !getIcon(name)) pending.add(this);
+      else pending.delete(this);
       // Con el DOM, no con `innerHTML`: funciona bajo Trusted Types y ningún atributo se interpreta como marcado.
-      this.replaceChildren(iconElement(name, { variant, size: this.getAttribute("size") || 16, label: this.getAttribute("label") || undefined }));
+      this.replaceChildren(
+        iconElement(name, { variant, size: this.getAttribute("size") || 16, label: this.getAttribute("label") || undefined }),
+      );
     }
   }
   onIconsRegistered(() => {

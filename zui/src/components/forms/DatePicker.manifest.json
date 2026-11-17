@@ -7,10 +7,7 @@
     {
       "name": "mode",
       "type": "enum",
-      "values": [
-        "single",
-        "range"
-      ],
+      "values": ["single", "range"],
       "default": "single"
     },
     {
@@ -44,15 +41,7 @@
     {
       "name": "weekStartsOn",
       "type": "enum",
-      "values": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
+      "values": [0, 1, 2, 3, 4, 5, 6],
       "description": "Primer día de la semana (0 domingo). Por defecto el del locale; lunes si no se conoce."
     },
     {
@@ -75,11 +64,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -110,11 +95,7 @@
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "start"
     },
     {
@@ -151,15 +132,7 @@
       "type": "string"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "placeholder",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],
   "tokens": [
     "control-height-md",
     "text-body",
@@ -196,12 +169,7 @@
     "accent-soft",
     "row-hover"
   ],
-  "classes": [
-    "z-select",
-    "z-datepicker",
-    "z-popover",
-    "z-calendar"
-  ],
+  "classes": ["z-select", "z-datepicker", "z-popover", "z-calendar"],
   "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
   "behavior": "dom",
   "examples": [

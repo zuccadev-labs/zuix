@@ -7,23 +7,14 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "primary",
-        "secondary",
-        "ghost",
-        "danger"
-      ],
+      "values": ["primary", "secondary", "ghost", "danger"],
       "default": "secondary",
       "description": "Intención."
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -54,14 +45,7 @@
       "description": "Atributos nativos de button (onClick, type, disabled, ref)."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "loading"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "loading"],
   "tokens": [
     "surface-2",
     "surface-3",
@@ -94,9 +78,7 @@
     "accent",
     "radius-full"
   ],
-  "classes": [
-    "z-btn"
-  ],
+  "classes": ["z-btn"],
   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y queda deshabilitado.",
   "examples": [
     {

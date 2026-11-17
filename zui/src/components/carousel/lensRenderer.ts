@@ -40,7 +40,21 @@ export interface LensFrame {
 export type Rgb = [number, number, number];
 
 const UNIFORMS = [
-  "uViewport", "uRect", "uExpand", "uStrength", "uLens", "uSlide", "uPixelRatio", "uRadius", "uSpread", "uAlpha", "uBand", "uBloom", "uGlow", "uGlowColor", "uBackground",
+  "uViewport",
+  "uRect",
+  "uExpand",
+  "uStrength",
+  "uLens",
+  "uSlide",
+  "uPixelRatio",
+  "uRadius",
+  "uSpread",
+  "uAlpha",
+  "uBand",
+  "uBloom",
+  "uGlow",
+  "uGlowColor",
+  "uBackground",
 ] as const;
 type UniformName = (typeof UNIFORMS)[number];
 

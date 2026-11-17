@@ -37,9 +37,24 @@ const TabsContext = createContext<{ value: string | undefined; baseId: string } 
 const part = (baseId: string, kind: "tab" | "panel", value: string) => `${baseId}-${kind}-${value.replace(/\s+/g, "_")}`;
 
 /** Pestañas (patrón APG «tabs» con activación automática): las flechas mueven el foco y activan la pestaña. */
-export function Tabs({ items, value: valueProp, defaultValue, onValueChange, variant = "segmented", size = "md", orientation = "horizontal", label, className, children }: TabsProps) {
+export function Tabs({
+  items,
+  value: valueProp,
+  defaultValue,
+  onValueChange,
+  variant = "segmented",
+  size = "md",
+  orientation = "horizontal",
+  label,
+  className,
+  children,
+}: TabsProps) {
   const baseId = useId();
-  const [value, setValue] = useControllable<string | undefined>(valueProp, defaultValue ?? items[0]?.value, onValueChange as (value: string | undefined) => void);
+  const [value, setValue] = useControllable<string | undefined>(
+    valueProp,
+    defaultValue ?? items[0]?.value,
+    onValueChange as (value: string | undefined) => void,
+  );
   // Parada de tabulación: la pestaña activa o, si no hay, la primera habilitada.
   const tabStop = (items.find((item) => item.value === value && !item.disabled) ?? items.find((item) => !item.disabled))?.value;
 
@@ -58,7 +73,16 @@ export function Tabs({ items, value: valueProp, defaultValue, onValueChange, var
 
   return (
     <div className={cx("z-tabs", className)} data-orientation={orientation}>
-      <div role="tablist" className="z-tabs__list" data-variant={variant} data-size={size} data-orientation={orientation} aria-orientation={orientation} aria-label={label} onKeyDown={onKeyDown}>
+      <div
+        role="tablist"
+        className="z-tabs__list"
+        data-variant={variant}
+        data-size={size}
+        data-orientation={orientation}
+        aria-orientation={orientation}
+        aria-label={label}
+        onKeyDown={onKeyDown}
+      >
         {items.map((item) => {
           const active = item.value === value;
           return (

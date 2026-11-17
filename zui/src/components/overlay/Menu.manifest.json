@@ -23,31 +23,19 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "md",
-        "lg"
-      ],
+      "values": ["md", "lg"],
       "default": "md"
     },
     {
       "name": "side",
       "type": "enum",
-      "values": [
-        "top",
-        "right",
-        "bottom",
-        "left"
-      ],
+      "values": ["top", "right", "bottom", "left"],
       "default": "bottom"
     },
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "end"
     },
     {
@@ -65,12 +53,7 @@
       "type": "(open: boolean) => void"
     }
   ],
-  "states": [
-    "open",
-    "closed",
-    "highlighted",
-    "disabled"
-  ],
+  "states": ["open", "closed", "highlighted", "disabled"],
   "tokens": [
     "danger",
     "duration-fast",

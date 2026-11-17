@@ -10,7 +10,10 @@ export function parseFrontMatter(text) {
   const src = text.replace(/^\uFEFF/, "");
   if (!/^---[ \t]*\r?\n/.test(src)) return out;
   const end = src.slice(3).search(/\r?\n---[ \t]*(\r?\n|$)/);
-  if (end < 0) { out.problems.push("front matter sin cerrar (falta la línea --- final)"); return out; }
+  if (end < 0) {
+    out.problems.push("front matter sin cerrar (falta la línea --- final)");
+    return out;
+  }
   const raw = src.slice(src.indexOf("\n") + 1, end + 3);
   const rest = src.slice(end + 3).replace(/^\r?\n---[ \t]*(\r?\n|$)/, "");
   out.body = rest;
@@ -20,9 +23,15 @@ export function parseFrontMatter(text) {
     if (!line.trim() || /^\s*#/.test(line)) continue;
     if (line.includes("\t")) out.problems.push(`front matter, línea ${i + 2}: tabulador (YAML solo admite espacios)`);
     // Línea de continuación (lista o valor anidado): pertenece a la clave anterior.
-    if (/^\s+\S/.test(line) || /^-\s/.test(line)) { if (!last) out.problems.push(`front matter, línea ${i + 2}: valor sin clave`); continue; }
+    if (/^\s+\S/.test(line) || /^-\s/.test(line)) {
+      if (!last) out.problems.push(`front matter, línea ${i + 2}: valor sin clave`);
+      continue;
+    }
     const m = line.match(/^([A-Za-z_][\w-]*):(?:\s+(.*))?$/);
-    if (!m) { out.problems.push(`front matter, línea ${i + 2}: se esperaba "clave: valor" y hay "${line.trim().slice(0, 40)}"`); continue; }
+    if (!m) {
+      out.problems.push(`front matter, línea ${i + 2}: se esperaba "clave: valor" y hay "${line.trim().slice(0, 40)}"`);
+      continue;
+    }
     const [, key, value = ""] = m;
     if (key in out.data) out.problems.push(`front matter: clave "${key}" repetida`);
     let v = value.trim();
@@ -45,11 +54,20 @@ export function stripCode(text, { inline = true } = {}) {
 }
 
 /** Texto de un título sin marcas de Markdown, como lo ve el lector. */
-const plain = (s) => s.replace(/\s+\{#[^}]+\}\s*$/, "").replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/<[^>]+>/g, "").replace(/(\*\*|__|\*|_|`|~~)/g, "").trim();
+const plain = (s) =>
+  s
+    .replace(/\s+\{#[^}]+\}\s*$/, "")
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/(\*\*|__|\*|_|`|~~)/g, "")
+    .trim();
 
 /** Ancla de un título como la genera Docusaurus (github-slugger): minúsculas, sin puntuación, espacios a guiones. */
 export function slugify(text) {
-  return text.toLowerCase().replace(/[^\p{L}\p{M}\p{N}\p{Pc}\- ]/gu, "").replace(/ /g, "-");
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{M}\p{N}\p{Pc}\- ]/gu, "")
+    .replace(/ /g, "-");
 }
 
 /** Títulos de un documento con su ancla. Los repetidos reciben -1, -2…; `{#id}` fija el ancla a mano. */
@@ -66,7 +84,11 @@ export function headings(body) {
     const explicit = raw.match(/\{#([^}]+)\}\s*$/)?.[1];
     const title = plain(raw);
     let id = explicit ?? slugify(title);
-    if (!explicit) { const n = seen.get(id) ?? 0; seen.set(id, n + 1); if (n) id = `${id}-${n}`; }
+    if (!explicit) {
+      const n = seen.get(id) ?? 0;
+      seen.set(id, n + 1);
+      if (n) id = `${id}-${n}`;
+    }
     out.push({ level: m[1].length, title, id, line: i + 1 });
   }
   return out;
@@ -82,11 +104,14 @@ const stripPrefix = (name) => name.replace(/^\d+\s*[-_.]\s*/, "");
 export function listDocs(docsDir) {
   const out = [];
   const walk = (dir) => {
-    const entries = readdirSync(dir, { withFileTypes: true }).filter((e) => !e.name.startsWith("_") && !e.name.startsWith(".")).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    const entries = readdirSync(dir, { withFileTypes: true })
+      .filter((e) => !e.name.startsWith("_") && !e.name.startsWith("."))
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
     // La portada primero; después los archivos en orden y, al final, las subcarpetas.
     const isIndex = (n) => /^(README|index)\.mdx?$/i.test(n);
     const files = entries.filter((e) => e.isFile() && /\.mdx?$/.test(e.name));
-    for (const e of [...files.filter((f) => isIndex(f.name)), ...files.filter((f) => !isIndex(f.name))]) out.push(readDoc(docsDir, join(dir, e.name)));
+    for (const e of [...files.filter((f) => isIndex(f.name)), ...files.filter((f) => !isIndex(f.name))])
+      out.push(readDoc(docsDir, join(dir, e.name)));
     for (const e of entries.filter((d) => d.isDirectory())) walk(join(dir, e.name));
   };
   walk(docsDir);
@@ -108,11 +133,25 @@ function readDoc(docsDir, file) {
   const hs = headings(fm.body);
   const h1 = hs.find((h) => h.level === 1);
   // Primer párrafo de prosa: ni título, ni cita, ni tabla, ni lista, ni JSX.
-  const first = stripCode(fm.body, { inline: false }).split(/\n[ \t]*\n/).map((p) => p.trim()).find((p) => p && !/^(#|>|---|\||<|import |export |:::|[-*+] |\d+\. |!\[)/.test(p)) ?? "";
+  const first =
+    stripCode(fm.body, { inline: false })
+      .split(/\n[ \t]*\n/)
+      .map((p) => p.trim())
+      .find((p) => p && !/^(#|>|---|\||<|import |export |:::|[-*+] |\d+\. |!\[)/.test(p)) ?? "";
   return {
-    file, rel, area: rel.includes("/") ? rel.split("/")[0] : "", route: `docs/${route}`.replace(/\/$/, ""),
-    title: fm.data.title || h1?.title || base, description: fm.data.description || "", summary: plain(first),
-    data: fm.data, body: fm.body, bodyOffset: fm.lines, headings: hs, problems: fm.problems, index,
+    file,
+    rel,
+    area: rel.includes("/") ? rel.split("/")[0] : "",
+    route: `docs/${route}`.replace(/\/$/, ""),
+    title: fm.data.title || h1?.title || base,
+    description: fm.data.description || "",
+    summary: plain(first),
+    data: fm.data,
+    body: fm.body,
+    bodyOffset: fm.lines,
+    headings: hs,
+    problems: fm.problems,
+    index,
     draft: fm.data.draft === "true" || fm.data.unlisted === "true",
   };
 }

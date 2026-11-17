@@ -15,7 +15,9 @@ export function registerIcons(defs: readonly IconDef[]): void {
  */
 export function onIconsRegistered(listener: () => void): () => void {
   listeners.add(listener);
-  return () => { listeners.delete(listener); };
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 export function getIcon(name: string): IconDef | undefined {

@@ -106,7 +106,8 @@ export function Combobox({
   const popup = useRef<HTMLDivElement | null>(null);
   const present = usePresence(open, popup);
 
-  const selected = current === null ? null : (options.find((option) => option.value === current) ?? (chosen?.value === current ? chosen : null));
+  const selected =
+    current === null ? null : (options.find((option) => option.value === current) ?? (chosen?.value === current ? chosen : null));
   const shownText = text ?? selected?.label ?? "";
   const test = typeof filter === "function" ? filter : matches;
   const visible = text !== null && text.trim() !== "" && filter !== false ? options.filter((option) => test(option, text)) : options;
@@ -148,7 +149,12 @@ export function Combobox({
   const show = (start: "selected" | "first" | "last") => {
     if (disabled) return;
     setOpen(true);
-    const at = start === "last" ? lastEnabled(visible) : start === "selected" ? visible.findIndex((option) => option.value === current && !option.disabled) : -1;
+    const at =
+      start === "last"
+        ? lastEnabled(visible)
+        : start === "selected"
+          ? visible.findIndex((option) => option.value === current && !option.disabled)
+          : -1;
     setActive(at >= 0 ? at : firstEnabled(visible));
   };
   const choose = (option: ComboboxOption) => {
@@ -228,118 +234,141 @@ export function Combobox({
 
   return (
     <>
-        <span ref={anchor} className={cx("z-input", "z-combobox", className)} data-size={size} data-state={open ? "open" : "closed"} data-invalid={isInvalid || undefined} data-disabled={disabled || undefined}>
-          {selected?.icon && text === null ? (
-            <span className="z-input__icon">
-              <Icon name={selected.icon} size={ICON_SIZE[size]} />
-            </span>
-          ) : null}
-          <input
-            {...control}
-            ref={setRef}
-            type="text"
-            role="combobox"
-            className="z-input__control"
-            aria-label={ariaLabel}
-            aria-labelledby={ariaLabelledBy}
-            aria-autocomplete="list"
-            aria-expanded={open}
-            aria-controls={open ? listId : undefined}
-            aria-activedescendant={activeOption ? optionId(active) : undefined}
-            aria-busy={loading || undefined}
-            autoComplete="off"
-            autoCapitalize="none"
-            spellCheck={false}
-            placeholder={placeholder}
-            disabled={disabled}
-            value={shownText}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            onBlur={handleBlur}
-            onClick={() => (open ? undefined : show("selected"))}
-          />
-          {name ? <input type="hidden" name={name} value={current ?? ""} /> : null}
-          {loading ? (
-            <span className="z-input__trailing">
-              <span className="z-input__spinner" aria-hidden="true" />
-            </span>
-          ) : null}
-          {clearable && (current !== null || shownText) && !disabled ? (
-            <button type="button" className="z-input__action" aria-label={clearLabel} title={clearLabel} tabIndex={-1} onMouseDown={(event) => event.preventDefault()} onClick={clear}>
-              <Icon name="x-mark" size={ICON_SIZE[size]} />
-            </button>
-          ) : null}
+      <span
+        ref={anchor}
+        className={cx("z-input", "z-combobox", className)}
+        data-size={size}
+        data-state={open ? "open" : "closed"}
+        data-invalid={isInvalid || undefined}
+        data-disabled={disabled || undefined}
+      >
+        {selected?.icon && text === null ? (
+          <span className="z-input__icon">
+            <Icon name={selected.icon} size={ICON_SIZE[size]} />
+          </span>
+        ) : null}
+        <input
+          {...control}
+          ref={setRef}
+          type="text"
+          role="combobox"
+          className="z-input__control"
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-autocomplete="list"
+          aria-expanded={open}
+          aria-controls={open ? listId : undefined}
+          aria-activedescendant={activeOption ? optionId(active) : undefined}
+          aria-busy={loading || undefined}
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder={placeholder}
+          disabled={disabled}
+          value={shownText}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
+          onClick={() => (open ? undefined : show("selected"))}
+        />
+        {name ? <input type="hidden" name={name} value={current ?? ""} /> : null}
+        {loading ? (
+          <span className="z-input__trailing">
+            <span className="z-input__spinner" aria-hidden="true" />
+          </span>
+        ) : null}
+        {clearable && (current !== null || shownText) && !disabled ? (
           <button
             type="button"
-            className="z-input__action z-combobox__toggle"
-            aria-label={toggleLabel}
-            aria-expanded={open}
-            aria-controls={open ? listId : undefined}
+            className="z-input__action"
+            aria-label={clearLabel}
+            title={clearLabel}
             tabIndex={-1}
-            disabled={disabled}
             onMouseDown={(event) => event.preventDefault()}
-            onClick={() => {
-              if (open) close();
-              else show("selected");
-              input.current?.focus();
-            }}
+            onClick={clear}
           >
-            <Icon name="chevron-down" size={ICON_SIZE[size]} />
+            <Icon name="x-mark" size={ICON_SIZE[size]} />
           </button>
-        </span>
-      {present ? (
-      <Portal anchor={anchor}>
-        <Popup
-          ref={popup}
-          open={open}
-          anchorRect={() => rectOf(anchor.current)}
-          watch={anchor}
-          anchorWidth
-          placement="bottom-start"
-          gap={4}
-          className={cx("z-liquid z-listbox", popupClassName)}
-          data-size={size}
-          role="presentation"
-          // El foco no sale del campo: pulsar en la lista no se lo quita.
+        ) : null}
+        <button
+          type="button"
+          className="z-input__action z-combobox__toggle"
+          aria-label={toggleLabel}
+          aria-expanded={open}
+          aria-controls={open ? listId : undefined}
+          tabIndex={-1}
+          disabled={disabled}
           onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (open) close();
+            else show("selected");
+            input.current?.focus();
+          }}
         >
-          <div ref={list} id={listId} role="listbox" className="z-listbox__viewport" aria-label={ariaLabel} aria-labelledby={ariaLabelledBy} aria-busy={loading || undefined}>
-            {visible.map((option, index) => (
-              // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
-              // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
-              <div
-                key={option.value}
-                id={optionId(index)}
-                role="option"
-                className="z-listbox__option"
-                data-index={index}
-                data-state={option.value === current ? "checked" : "unchecked"}
-                data-highlighted={index === active ? "" : undefined}
-                data-disabled={option.disabled ? "" : undefined}
-                aria-selected={option.value === current}
-                aria-disabled={option.disabled || undefined}
-                onMouseMove={() => (option.disabled || index === active ? undefined : setActive(index))}
-                onClick={() => choose(option)}
-              >
-                {option.icon ? (
-                  <span className="z-listbox__icon">
-                    <Icon name={option.icon} size={ICON_SIZE[size]} />
+          <Icon name="chevron-down" size={ICON_SIZE[size]} />
+        </button>
+      </span>
+      {present ? (
+        <Portal anchor={anchor}>
+          <Popup
+            ref={popup}
+            open={open}
+            anchorRect={() => rectOf(anchor.current)}
+            watch={anchor}
+            anchorWidth
+            placement="bottom-start"
+            gap={4}
+            className={cx("z-liquid z-listbox", popupClassName)}
+            data-size={size}
+            role="presentation"
+            // El foco no sale del campo: pulsar en la lista no se lo quita.
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <div
+              ref={list}
+              id={listId}
+              role="listbox"
+              className="z-listbox__viewport"
+              aria-label={ariaLabel}
+              aria-labelledby={ariaLabelledBy}
+              aria-busy={loading || undefined}
+            >
+              {visible.map((option, index) => (
+                // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
+                // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
+                <div
+                  key={option.value}
+                  id={optionId(index)}
+                  role="option"
+                  className="z-listbox__option"
+                  data-index={index}
+                  data-state={option.value === current ? "checked" : "unchecked"}
+                  data-highlighted={index === active ? "" : undefined}
+                  data-disabled={option.disabled ? "" : undefined}
+                  aria-selected={option.value === current}
+                  aria-disabled={option.disabled || undefined}
+                  onMouseMove={() => (option.disabled || index === active ? undefined : setActive(index))}
+                  onClick={() => choose(option)}
+                >
+                  {option.icon ? (
+                    <span className="z-listbox__icon">
+                      <Icon name={option.icon} size={ICON_SIZE[size]} />
+                    </span>
+                  ) : null}
+                  <span className="z-listbox__text">{option.label}</span>
+                  <span className="z-listbox__check">
+                    <Icon name="check" size={ICON_SIZE[size]} />
                   </span>
-                ) : null}
-                <span className="z-listbox__text">{option.label}</span>
-                <span className="z-listbox__check">
-                  <Icon name="check" size={ICON_SIZE[size]} />
-                </span>
-              </div>
-            ))}
-          </div>
-          {status ? (
-            <div className="z-listbox__empty" role="status" data-loading={loading || undefined}>
-              {status}
+                </div>
+              ))}
             </div>
-          ) : null}
-        </Popup>
-      </Portal>
+            {status ? (
+              <div className="z-listbox__empty" role="status" data-loading={loading || undefined}>
+                {status}
+              </div>
+            ) : null}
+          </Popup>
+        </Portal>
       ) : null}
     </>
   );

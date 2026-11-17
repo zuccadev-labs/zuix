@@ -47,7 +47,9 @@ const html = `<!doctype html>
     <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="brand">Brand: dazlabs</button>
   </header>
   <main class="page__main">
-${Object.entries(groups).map(([group, cards]) => `<h2 class="page__group">${group}</h2>\n<div class="page__grid">\n${cards.join("\n")}\n</div>`).join("\n")}
+${Object.entries(groups)
+  .map(([group, cards]) => `<h2 class="page__group">${group}</h2>\n<div class="page__grid">\n${cards.join("\n")}\n</div>`)
+  .join("\n")}
   </main>
   <script type="module">
 import "../../zicon/dist/zicon.element.js";

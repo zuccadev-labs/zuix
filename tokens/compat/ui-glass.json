@@ -6,14 +6,8 @@
   "brand": "zutool",
   "source": {
     "env": "ZUIX_COMPAT_UI_GLASS_ROOT",
-    "sheets": [
-      "packages/ui-glass/src/tokens.css"
-    ],
-    "scan": [
-      "packages/ui-glass/src",
-      "apps/dashboard/src",
-      "apps/dashboard/index.html"
-    ]
+    "sheets": ["packages/ui-glass/src/tokens.css"],
+    "scan": ["packages/ui-glass/src", "apps/dashboard/src", "apps/dashboard/index.html"]
   },
   "map": {
     "--orange-500": "{p.orange-500}",

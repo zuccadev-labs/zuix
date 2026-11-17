@@ -51,13 +51,7 @@
       "default": true
     }
   ],
-  "states": [
-    "open",
-    "closed",
-    "empty",
-    "active-option",
-    "disabled-option"
-  ],
+  "states": ["open", "closed", "empty", "active-option", "disabled-option"],
   "tokens": [
     "accent-soft",
     "duration-fast",

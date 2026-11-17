@@ -9,7 +9,10 @@
 
 /** Opciones de contexto para un teléfono. Firefox no admite `isMobile`. */
 export const touchContext = (browserName, viewport = { width: 390, height: 844 }) => ({
-  viewport, hasTouch: true, deviceScaleFactor: 1, ...(browserName === "firefox" ? {} : { isMobile: true }),
+  viewport,
+  hasTouch: true,
+  deviceScaleFactor: 1,
+  ...(browserName === "firefox" ? {} : { isMobile: true }),
 });
 
 export async function touchDriver(page, browserName) {
@@ -18,7 +21,8 @@ export async function touchDriver(page, browserName) {
   const real = browserName === "chromium";
   if (real) {
     const cdp = await page.context().newCDPSession(page);
-    const send = (type, points) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: points.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y), id: 1 })) });
+    const send = (type, points) =>
+      cdp.send("Input.dispatchTouchEvent", { type, touchPoints: points.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y), id: 1 })) });
     down = (p) => send("touchStart", [p]);
     move = (p) => send("touchMove", [p]);
     up = () => send("touchEnd", []);
@@ -26,32 +30,66 @@ export async function touchDriver(page, browserName) {
     // `setPointerCapture` lanza con un identificador que no sea de un puntero activo. El del ratón siempre lo es:
     // con él la llamada no lanza (y no captura nada, porque el ratón no tiene botones pulsados).
     const mouseId = await (async () => {
-      const waiting = page.evaluate(() => new Promise((resolve) => {
-        const done = (event) => { removeEventListener("pointermove", done, true); resolve(event.pointerId); };
-        addEventListener("pointermove", done, true);
-        setTimeout(() => { removeEventListener("pointermove", done, true); resolve(1); }, 1500);
-      }));
+      const waiting = page.evaluate(
+        () =>
+          new Promise((resolve) => {
+            const done = (event) => {
+              removeEventListener("pointermove", done, true);
+              resolve(event.pointerId);
+            };
+            addEventListener("pointermove", done, true);
+            setTimeout(() => {
+              removeEventListener("pointermove", done, true);
+              resolve(1);
+            }, 1500);
+          }),
+      );
       await page.mouse.move(3, 3);
       await page.mouse.move(4, 4);
       return waiting;
     })();
-    const fire = (type, p) => page.evaluate(([type, x, y, id]) => {
-      window.__zTouch ??= {};
-      const state = window.__zTouch;
-      if (type === "pointerdown") state.target = document.elementFromPoint(x, y);
-      const target = state.target?.isConnected ? state.target : document.elementFromPoint(x, y);
-      if (!target) return;
-      const pressed = type !== "pointerup" && type !== "pointercancel";
-      target.dispatchEvent(new PointerEvent(type, {
-        bubbles: true, cancelable: true, composed: true, view: window, pointerId: id, pointerType: "touch", isPrimary: true,
-        clientX: x, clientY: y, screenX: x, screenY: y, button: type === "pointermove" ? -1 : 0, buttons: pressed ? 1 : 0,
-        width: 24, height: 24, pressure: pressed ? 0.5 : 0,
-      }));
-      if (!pressed) state.target = null;
-    }, [type, p.x, p.y, mouseId]);
+    const fire = (type, p) =>
+      page.evaluate(
+        ([type, x, y, id]) => {
+          window.__zTouch ??= {};
+          const state = window.__zTouch;
+          if (type === "pointerdown") state.target = document.elementFromPoint(x, y);
+          const target = state.target?.isConnected ? state.target : document.elementFromPoint(x, y);
+          if (!target) return;
+          const pressed = type !== "pointerup" && type !== "pointercancel";
+          target.dispatchEvent(
+            new PointerEvent(type, {
+              bubbles: true,
+              cancelable: true,
+              composed: true,
+              view: window,
+              pointerId: id,
+              pointerType: "touch",
+              isPrimary: true,
+              clientX: x,
+              clientY: y,
+              screenX: x,
+              screenY: y,
+              button: type === "pointermove" ? -1 : 0,
+              buttons: pressed ? 1 : 0,
+              width: 24,
+              height: 24,
+              pressure: pressed ? 0.5 : 0,
+            }),
+          );
+          if (!pressed) state.target = null;
+        },
+        [type, p.x, p.y, mouseId],
+      );
     let last = { x: 0, y: 0 };
-    down = (p) => { last = p; return fire("pointerdown", p); };
-    move = (p) => { last = p; return fire("pointermove", p); };
+    down = (p) => {
+      last = p;
+      return fire("pointerdown", p);
+    };
+    move = (p) => {
+      last = p;
+      return fire("pointermove", p);
+    };
     up = () => fire("pointerup", last);
   }
   /** Arrastre con el dedo de `from` a `to`. `stepMs` bajo y pocos pasos = gesto rápido (lanzamiento). */
@@ -68,7 +106,11 @@ export async function touchDriver(page, browserName) {
   async function press(point, ms = 900, during) {
     await down(point);
     await wait(ms);
-    try { if (during) await during(); } finally { await up(); }
+    try {
+      if (during) await during();
+    } finally {
+      await up();
+    }
   }
   /** Toque real en los tres motores. */
   const tap = (point) => page.touchscreen.tap(point.x, point.y);

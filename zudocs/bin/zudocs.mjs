@@ -25,12 +25,21 @@ ZUDOCS_URL y ZUDOCS_BASE_URL sustituyen "url" y "baseUrl" en una ejecución.`;
 // Una tubería cerrada por el lector (zudocs info | head) no es un error.
 process.stdout.on("error", (e) => process.exit(e.code === "EPIPE" ? 0 : 1));
 const say = (text) => process.stdout.write(`${text}\n`);
-const die = (text, code = 1) => { process.stderr.write(`${text}\n`); process.exit(code); };
+const die = (text, code = 1) => {
+  process.stderr.write(`${text}\n`);
+  process.exit(code);
+};
 
 const [command, ...argv] = process.argv.slice(2).filter((a) => a !== "--");
 if (!command) die(USAGE, 2);
-if (command === "--help" || command === "-h" || command === "help") { say(USAGE); process.exit(0); }
-if (command === "--version" || command === "-v") { say(JSON.parse(readFileSync(join(templateDir, "package.json"), "utf8")).version); process.exit(0); }
+if (command === "--help" || command === "-h" || command === "help") {
+  say(USAGE);
+  process.exit(0);
+}
+if (command === "--version" || command === "-v") {
+  say(JSON.parse(readFileSync(join(templateDir, "package.json"), "utf8")).version);
+  process.exit(0);
+}
 
 // Argumentos que cada comando admite además de --config. Lo demás es un error: una opción mal escrita
 // (--strcit) no debe pasar en silencio. build, start y serve pasan el resto a Docusaurus.
@@ -51,9 +60,13 @@ if (!spec) die(`Comando desconocido: "${command}".\n\n${USAGE}`, 2);
 let args, ctx;
 try {
   args = parseArgs(argv);
-  if (args.help) { say(USAGE); process.exit(0); }
+  if (args.help) {
+    say(USAGE);
+    process.exit(0);
+  }
   const NAMES = { outDir: "--out-dir", strict: "--strict", headers: "--headers" };
-  for (const [key, flag] of Object.entries(NAMES)) if (args[key] && !spec.flags.includes(key)) throw new ZudocsError(`"${command}" no admite ${flag}.`);
+  for (const [key, flag] of Object.entries(NAMES))
+    if (args[key] && !spec.flags.includes(key)) throw new ZudocsError(`"${command}" no admite ${flag}.`);
   if (!spec.rest && args.rest.length) throw new ZudocsError(`"${command}" no admite: ${args.rest.join(" ")}`);
   // fonts usa --out-dir como destino de las fuentes, no como salida del sitio.
   ctx = loadZudocs(command === "fonts" ? { config: args.config } : args);
@@ -63,7 +76,13 @@ try {
 }
 
 // Los procesos hijos reciben la configuración ya resuelta: no vuelven a buscarla.
-const env = { ...process.env, INIT_CWD: callerDir(), ZUDOCS_CONFIG: ctx.configPath, ZUDOCS_OUT_DIR: ctx.outDir, DOCUSAURUS_GENERATED_FILES_DIR_NAME: ctx.generatedDirName };
+const env = {
+  ...process.env,
+  INIT_CWD: callerDir(),
+  ZUDOCS_CONFIG: ctx.configPath,
+  ZUDOCS_OUT_DIR: ctx.outDir,
+  DOCUSAURUS_GENERATED_FILES_DIR_NAME: ctx.generatedDirName,
+};
 // Por debajo de este tamaño Docusaurus incrusta un recurso en el CSS como data: URI. Su valor por defecto
 // (10 kB) metería las fuentes pequeñas en la hoja de estilos, que bloquea el pintado, y obligaría a
 // permitir data: en font-src. Docusaurus lee la variable al cargarse: se fija aquí, en el entorno del hijo.
@@ -90,18 +109,38 @@ const strict = args.strict ? ["--strict"] : [];
 switch (command) {
   case "info":
     for (const [k, v] of Object.entries({
-      configuración: ctx.configPath, documentación: ctx.docsDir, estáticos: existsSync(ctx.staticDir) ? ctx.staticDir : `${ctx.staticDir} (no existe)`, salida: ctx.outDir,
+      configuración: ctx.configPath,
+      documentación: ctx.docsDir,
+      estáticos: existsSync(ctx.staticDir) ? ctx.staticDir : `${ctx.staticDir} (no existe)`,
+      salida: ctx.outDir,
       "URL pública": ctx.url ? ctx.href() : `sin "url" (baseUrl ${ctx.baseUrl})`,
-      caché: ctx.isDefault ? join(templateDir, ".docusaurus") : ctx.workDir, generados: ctx.generatedStaticDir, "llms.txt": ctx.llmsPath,
+      caché: ctx.isDefault ? join(templateDir, ".docusaurus") : ctx.workDir,
+      generados: ctx.generatedStaticDir,
+      "llms.txt": ctx.llmsPath,
       fuentes: [...ctx.localFonts, ...ctx.remoteFonts].join(", ") || "las del sistema",
-      páginas: Object.entries(ctx.pages).filter(([, on]) => on).map(([p]) => p).join(", ") || "ninguna",
-    })) say(`${k.padEnd(14)} ${v}`);
+      páginas:
+        Object.entries(ctx.pages)
+          .filter(([, on]) => on)
+          .map(([p]) => p)
+          .join(", ") || "ninguna",
+    }))
+      say(`${k.padEnd(14)} ${v}`);
     break;
-  case "verify": script("verify", strict); break;
-  case "llms": script("llms"); break;
-  case "new": script("new", args.rest); break;
-  case "fonts": script("fonts", [...(args.outDir ? ["--out-dir", args.outDir] : []), ...args.rest]); break;
-  case "headers": script("headers"); break;
+  case "verify":
+    script("verify", strict);
+    break;
+  case "llms":
+    script("llms");
+    break;
+  case "new":
+    script("new", args.rest);
+    break;
+  case "fonts":
+    script("fonts", [...(args.outDir ? ["--out-dir", args.outDir] : []), ...args.rest]);
+    break;
+  case "headers":
+    script("headers");
+    break;
   case "build": {
     script("verify", strict);
     script("llms");
@@ -114,7 +153,12 @@ switch (command) {
       rmSync(ctx.outDir, { recursive: true, force: true });
       mkdirSync(dirname(ctx.outDir), { recursive: true });
       // Mover es atómico en el mismo sistema de archivos; entre sistemas distintos se copia.
-      try { renameSync(target, ctx.outDir); } catch { cpSync(target, ctx.outDir, { recursive: true }); rmSync(target, { recursive: true, force: true }); }
+      try {
+        renameSync(target, ctx.outDir);
+      } catch {
+        cpSync(target, ctx.outDir, { recursive: true });
+        rmSync(target, { recursive: true, force: true });
+      }
     }
     if (args.headers) script("headers");
     say(`✓ ${ctx.site.name}: sitio en ${ctx.rel(ctx.outDir)}`);
@@ -125,7 +169,8 @@ switch (command) {
     serve(docusaurusBin, ["start", templateDir, ...args.rest]);
     break;
   case "serve":
-    if (!existsSync(join(ctx.outDir, "index.html"))) die(`✗ No hay sitio compilado en ${ctx.rel(ctx.outDir)}. Ejecuta antes "zudocs build".`);
+    if (!existsSync(join(ctx.outDir, "index.html")))
+      die(`✗ No hay sitio compilado en ${ctx.rel(ctx.outDir)}. Ejecuta antes "zudocs build".`);
     serve(docusaurusBin, ["serve", templateDir, "--dir", ctx.outDir, ...args.rest]);
     break;
 }

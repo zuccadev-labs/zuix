@@ -6,16 +6,8 @@
   "brand": "zutool",
   "source": {
     "env": "ZUIX_COMPAT_ZUTOOL_ROOT",
-    "sheets": [
-      "apps/desktop/src/styles/tokens.css",
-      "apps/mobile/src/styles/tokens.css"
-    ],
-    "scan": [
-      "apps/desktop/src",
-      "apps/desktop/index.html",
-      "apps/mobile/src",
-      "apps/mobile/index.html"
-    ]
+    "sheets": ["apps/desktop/src/styles/tokens.css", "apps/mobile/src/styles/tokens.css"],
+    "scan": ["apps/desktop/src", "apps/desktop/index.html", "apps/mobile/src", "apps/mobile/index.html"]
   },
   "map": {
     "--orange-500": "{p.orange-500}",

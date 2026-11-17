@@ -30,10 +30,7 @@
     {
       "name": "mode",
       "type": "enum",
-      "values": [
-        "numeric",
-        "text"
-      ],
+      "values": ["numeric", "text"],
       "default": "numeric"
     },
     {
@@ -45,10 +42,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "md",
-        "lg"
-      ],
+      "values": ["md", "lg"],
       "default": "md"
     },
     {
@@ -83,14 +77,7 @@
       "description": "Añade un campo oculto con el valor completo."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "invalid"],
   "tokens": [
     "control-height-lg",
     "space-2",
@@ -111,9 +98,7 @@
     "surface",
     "danger"
   ],
-  "classes": [
-    "z-otp"
-  ],
+  "classes": ["z-otp"],
   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
   "behavior": "dom",
   "examples": [

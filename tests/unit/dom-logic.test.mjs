@@ -356,16 +356,23 @@ describe("SegmentedControl sin framework: foco itinerante", () => {
     dom.hydrate(document.body);
     const group = root.querySelector(".z-segmented");
     const items = [...group.querySelectorAll(".z-segmented__item")];
-    assert.deepEqual(items.map((item) => item.tabIndex), [0, ...items.slice(1).map(() => -1)], "sin elección, la primera opción es la parada");
+    assert.deepEqual(
+      items.map((item) => item.tabIndex),
+      [0, ...items.slice(1).map(() => -1)],
+      "sin elección, la primera opción es la parada",
+    );
     const values = [];
     group.addEventListener("z:change", () => values.push(items.findIndex((item) => item.getAttribute("aria-checked") === "true")));
     items[0].focus();
     assert.equal(press(items[0], "ArrowRight").defaultPrevented, true);
     assert.equal(document.activeElement, items[1]);
     assert.equal(items[1].dataset.state, "on");
-    assert.deepEqual(items.map((item) => item.tabIndex), items.map((_, i) => (i === 1 ? 0 : -1)));
+    assert.deepEqual(
+      items.map((item) => item.tabIndex),
+      items.map((_, i) => (i === 1 ? 0 : -1)),
+    );
     press(items[1], "ArrowDown");
-    assert.equal(document.activeElement, items[(2) % items.length]);
+    assert.equal(document.activeElement, items[2 % items.length]);
     press(document.activeElement, "Home");
     assert.equal(document.activeElement, items[0]);
     press(items[0], "ArrowLeft");
@@ -403,6 +410,10 @@ describe("init() y destroy()", () => {
     list[1].click();
     assert.equal(list[1].getAttribute("aria-selected"), "true");
     list[2].click();
-    assert.equal(list.filter((tab) => tab.getAttribute("aria-selected") === "true").length, 1, "un solo juego de listeners tras volver a iniciar");
+    assert.equal(
+      list.filter((tab) => tab.getAttribute("aria-selected") === "true").length,
+      1,
+      "un solo juego de listeners tras volver a iniciar",
+    );
   });
 });

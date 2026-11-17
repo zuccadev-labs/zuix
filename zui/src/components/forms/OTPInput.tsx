@@ -104,7 +104,14 @@ export function OTPInput({
   };
 
   return (
-    <div role="group" {...named} aria-describedby={describedBy} className={cx("z-otp", className)} data-size={size} data-invalid={isInvalid || undefined}>
+    <div
+      role="group"
+      {...named}
+      aria-describedby={describedBy}
+      className={cx("z-otp", className)}
+      data-size={size}
+      data-invalid={isInvalid || undefined}
+    >
       {Array.from({ length }, (_, index) => (
         <input
           // biome-ignore lint/suspicious/noArrayIndexKey: una casilla es su posición en el código; la lista solo cambia de longitud.

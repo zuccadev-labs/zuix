@@ -42,7 +42,18 @@ import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } 
 const modules = [forms, collections, carousel];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { openPalette, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
-export { setSelectValue, setComboboxOptions, setComboboxLoading, setComboboxValue, setCalendarValue, setDatePickerValue, setSliderValue, setOtpValue, type ComboboxOption, type DateRange } from "./forms";
+export {
+  setSelectValue,
+  setComboboxOptions,
+  setComboboxLoading,
+  setComboboxValue,
+  setCalendarValue,
+  setDatePickerValue,
+  setSliderValue,
+  setOtpValue,
+  type ComboboxOption,
+  type DateRange,
+} from "./forms";
 
 // Los tres iconos que este módulo dibuja por su cuenta (cierre de aviso, confirmación).
 registerIcons([xMark, exclamationTriangle, informationCircle]);
@@ -111,7 +122,8 @@ function follow(event: Event): void {
   }
 }
 
-const isDisabled = (item: Element) => item.hasAttribute("data-disabled") || item.getAttribute("aria-disabled") === "true" || (item as HTMLButtonElement).disabled === true;
+const isDisabled = (item: Element) =>
+  item.hasAttribute("data-disabled") || item.getAttribute("aria-disabled") === "true" || (item as HTMLButtonElement).disabled === true;
 
 // Un submenú puede ir anidado en el marcado de su menú padre: cada menú solo cuenta sus propias entradas.
 function menuItems(menu: Element): HTMLElement[] {
@@ -119,7 +131,8 @@ function menuItems(menu: Element): HTMLElement[] {
 }
 
 function highlight(menu: Element, item: HTMLElement | undefined): void {
-  for (const other of menu.querySelectorAll("[data-highlighted]")) if (other.closest(".z-menu") === menu) other.removeAttribute("data-highlighted");
+  for (const other of menu.querySelectorAll("[data-highlighted]"))
+    if (other.closest(".z-menu") === menu) other.removeAttribute("data-highlighted");
   if (!item) return;
   item.setAttribute("data-highlighted", "");
   item.focus({ preventScroll: true });
@@ -129,7 +142,12 @@ function highlight(menu: Element, item: HTMLElement | undefined): void {
  * Abre un elemento `[popover]` anclado a `anchor` (un elemento o un punto de la ventana). Anclado a un elemento, lo
  * sigue cuando la página se desplaza o cambia de tamaño; `follow: false` lo deja donde se abrió.
  */
-export function openPopover(el: HTMLElement, anchor: Element | { x: number; y: number }, placement: Placement = "bottom-start", options: { follow?: boolean } = {}): void {
+export function openPopover(
+  el: HTMLElement,
+  anchor: Element | { x: number; y: number },
+  placement: Placement = "bottom-start",
+  options: { follow?: boolean } = {},
+): void {
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
   if (!el.matches(":popover-open")) el.showPopover();
@@ -234,7 +252,12 @@ export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
     trigger.dataset.state = "open";
     // Pegado al borde del menú padre y con la primera entrada a la altura del disparador. En RTL abre hacia la izquierda.
     const position = () => {
-      place(sub, submenuAnchor(parent.getBoundingClientRect(), trigger.getBoundingClientRect(), topInset(sub)), isRtl(sub) ? "left-start" : "right-start", 4);
+      place(
+        sub,
+        submenuAnchor(parent.getBoundingClientRect(), trigger.getBoundingClientRect(), topInset(sub)),
+        isRtl(sub) ? "left-start" : "right-start",
+        4,
+      );
     };
     position();
     followers.set(sub, position);
@@ -281,7 +304,8 @@ function onPopoverToggle(event: Event): void {
   if (anchor) {
     anchor.setAttribute("aria-expanded", "false");
     if (anchor.hasAttribute("data-z-submenu")) (anchor as HTMLElement).dataset.state = "closed";
-    if (el.contains(document.activeElement) || document.activeElement === document.body) (anchor as HTMLElement).focus?.({ preventScroll: true });
+    if (el.contains(document.activeElement) || document.activeElement === document.body)
+      (anchor as HTMLElement).focus?.({ preventScroll: true });
     anchors.delete(el);
   }
   el.dataset.state = "closed";
@@ -379,7 +403,16 @@ function viewport(position: string, label: string): HTMLElement {
 }
 
 /** Muestra un aviso con el mismo marcado que el Toast de React. Devuelve una función para descartarlo. */
-export function toast({ title, description, intent = "info", duration = 5000, action, position = "bottom-right", closeLabel = "Close", regionLabel = "Notifications (F8)" }: ToastOptions): () => void {
+export function toast({
+  title,
+  description,
+  intent = "info",
+  duration = 5000,
+  action,
+  position = "bottom-right",
+  closeLabel = "Close",
+  regionLabel = "Notifications (F8)",
+}: ToastOptions): () => void {
   const host = viewport(position, regionLabel);
   const item = document.createElement("div");
   item.className = "z-liquid z-toast";
@@ -387,7 +420,10 @@ export function toast({ title, description, intent = "info", duration = 5000, ac
   item.dataset.state = "open";
   item.setAttribute("role", intent === "danger" || intent === "warning" ? "alert" : "status");
   item.tabIndex = 0;
-  setMarkup(item, `<span class="z-toast__dot" aria-hidden="true"></span><div class="z-toast__content"><div class="z-toast__title"></div></div><button type="button" class="z-overlay-close z-toast__close">${iconSvg("x-mark", { size: 16 })}</button>`);
+  setMarkup(
+    item,
+    `<span class="z-toast__dot" aria-hidden="true"></span><div class="z-toast__content"><div class="z-toast__title"></div></div><button type="button" class="z-overlay-close z-toast__close">${iconSvg("x-mark", { size: 16 })}</button>`,
+  );
   const content = item.querySelector(".z-toast__content")!;
   content.querySelector(".z-toast__title")!.textContent = title;
   item.querySelector(".z-toast__close")!.setAttribute("aria-label", closeLabel);
@@ -440,7 +476,12 @@ export function toast({ title, description, intent = "info", duration = 5000, ac
   // Con la ventana sin foco nadie está leyendo el aviso: el tiempo se detiene hasta que vuelve.
   window.addEventListener("blur", () => hold("window"), { signal: whileOpen.signal });
   window.addEventListener("focus", () => release("window"), { signal: whileOpen.signal });
-  swipeToDismiss(item, { direction: swipeDirection(position), onStart: () => hold("swipe"), onCancel: () => release("swipe"), onDismiss: dismiss });
+  swipeToDismiss(item, {
+    direction: swipeDirection(position),
+    onStart: () => hold("swipe"),
+    onCancel: () => release("swipe"),
+    onDismiss: dismiss,
+  });
   host.append(item);
   timer.start();
   return dismiss;
@@ -475,7 +516,13 @@ let confirmId = 0;
  * Diálogo de confirmación; resuelve `true` si se confirma. Mismo marcado que ConfirmDialog: `role="alertdialog"`
  * con nombre (aria-labelledby) y descripción (aria-describedby). Escape cancela; el clic en el velo no cierra.
  */
-export function confirm({ title, description, intent = "default", confirmLabel = "Confirm", cancelLabel = "Cancel" }: ConfirmOptions): Promise<boolean> {
+export function confirm({
+  title,
+  description,
+  intent = "default",
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+}: ConfirmOptions): Promise<boolean> {
   const dialog = document.createElement("dialog");
   const id = `z-confirm-${++confirmId}`;
   dialog.className = "z-liquid z-modal z-confirm";
@@ -483,7 +530,10 @@ export function confirm({ title, description, intent = "default", confirmLabel =
   dialog.setAttribute("role", "alertdialog");
   dialog.setAttribute("aria-labelledby", `${id}-title`);
   dialog.setAttribute("data-z-static", "");
-  setMarkup(dialog, `<header class="z-modal__header"><span class="z-confirm__icon">${iconSvg(intent === "danger" ? "exclamation-triangle" : "information-circle", { size: 16 })}</span><div class="z-modal__heading"><h2 class="z-modal__title" id="${id}-title"></h2></div></header><footer class="z-modal__footer"><button type="button" class="z-dialog-btn" data-variant="secondary" value="cancel"></button><button type="button" class="z-dialog-btn" data-variant="${intent === "danger" ? "danger" : "primary"}" value="confirm"></button></footer>`);
+  setMarkup(
+    dialog,
+    `<header class="z-modal__header"><span class="z-confirm__icon">${iconSvg(intent === "danger" ? "exclamation-triangle" : "information-circle", { size: 16 })}</span><div class="z-modal__heading"><h2 class="z-modal__title" id="${id}-title"></h2></div></header><footer class="z-modal__footer"><button type="button" class="z-dialog-btn" data-variant="secondary" value="cancel"></button><button type="button" class="z-dialog-btn" data-variant="${intent === "danger" ? "danger" : "primary"}" value="confirm"></button></footer>`,
+  );
   dialog.querySelector(".z-modal__title")!.textContent = title;
   if (description) {
     const text = document.createElement("p");
@@ -558,8 +608,10 @@ function selectTabQuiet(tabs: Element, value: string): void {
 /* ---------- Acordeón ---------- */
 
 // Un acordeón puede llevar otro dentro de una sección: cada uno solo cuenta sus propias piezas.
-const ownPart = <T extends HTMLElement>(item: Element, selector: string) => [...item.querySelectorAll<T>(selector)].find((el) => el.closest(".z-accordion__item") === item);
-const accordionItems = (root: Element) => [...root.querySelectorAll<HTMLElement>(".z-accordion__item")].filter((item) => item.closest(".z-accordion") === root);
+const ownPart = <T extends HTMLElement>(item: Element, selector: string) =>
+  [...item.querySelectorAll<T>(selector)].find((el) => el.closest(".z-accordion__item") === item);
+const accordionItems = (root: Element) =>
+  [...root.querySelectorAll<HTMLElement>(".z-accordion__item")].filter((item) => item.closest(".z-accordion") === root);
 const sectionValue = (item: HTMLElement) => item.dataset.value ?? ownPart(item, ".z-accordion__content")?.id ?? "";
 
 // Secciones que están terminando su animación de cierre: función que cancela la espera.
@@ -591,7 +643,13 @@ function setSection(item: Element, open: boolean, animate = false): void {
     content.style.removeProperty("animation");
     content.hidden = false;
     content.style.setProperty("--z-accordion-content-height", `${content.scrollHeight}px`);
-    if (!open) closing.set(content, afterExit(content, () => { content.hidden = true; }));
+    if (!open)
+      closing.set(
+        content,
+        afterExit(content, () => {
+          content.hidden = true;
+        }),
+      );
   }
 }
 
@@ -623,7 +681,8 @@ function setChecked(el: HTMLElement, checked: boolean): void {
   if (input) input.checked = checked;
 }
 
-const isChecked = (el: HTMLElement) => el.getAttribute("aria-checked") === "true" || el.dataset.state === "checked" || el.dataset.state === "on";
+const isChecked = (el: HTMLElement) =>
+  el.getAttribute("aria-checked") === "true" || el.dataset.state === "checked" || el.dataset.state === "on";
 
 function toggleChecked(el: HTMLElement): void {
   if (isDisabled(el)) return;
@@ -681,7 +740,9 @@ export function hydrate(root: ParentNode = document): void {
     if (active) selectTabQuiet(tabs, tabKey(active));
   }
   // Un interruptor, casilla o radio sin `aria-checked` no tiene estado para las tecnologías de apoyo: sale de `data-state`.
-  for (const el of root.querySelectorAll<HTMLElement>('[data-z-dom] :is([role="switch"], [role="checkbox"], [role="radio"]):not([aria-checked])')) {
+  for (const el of root.querySelectorAll<HTMLElement>(
+    '[data-z-dom] :is([role="switch"], [role="checkbox"], [role="radio"]):not([aria-checked])',
+  )) {
     el.setAttribute("aria-checked", el.dataset.state === "indeterminate" ? "mixed" : String(isChecked(el)));
   }
   for (const group of root.querySelectorAll<HTMLElement>('[data-z-dom] [role="radiogroup"]')) {
@@ -693,7 +754,8 @@ export function hydrate(root: ParentNode = document): void {
     const current = radios.find(isChecked) ?? radios.find((r) => !isDisabled(r));
     for (const radio of radios) radio.tabIndex = radio === current ? 0 : -1;
   }
-  for (const section of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-accordion__item")) setSection(section, section.dataset.state === "open");
+  for (const section of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-accordion__item"))
+    setSection(section, section.dataset.state === "open");
   for (const trigger of root.querySelectorAll<HTMLElement>(".z-menu__item[data-z-submenu]")) describeSubmenu(trigger);
   for (const mod of modules) mod.hydrate(root);
 }
@@ -758,10 +820,16 @@ function onClick(event: MouseEvent): void {
     if (!section || isDisabled(trigger) || section.hasAttribute("data-disabled")) return;
     const root = section.closest<HTMLElement>(".z-accordion");
     const open = trigger.dataset.state !== "open";
-    if (open && root && root.dataset.type !== "multiple") for (const other of accordionItems(root)) if (other !== section) setSection(other, false, true);
+    if (open && root && root.dataset.type !== "multiple")
+      for (const other of accordionItems(root)) if (other !== section) setSection(other, false, true);
     setSection(section, open, true);
     // Secciones abiertas, como `onValueChange` del Accordion de React.
-    if (root) emit(root, "change", { value: accordionItems(root).filter((item) => item.dataset.state === "open").map(sectionValue) });
+    if (root)
+      emit(root, "change", {
+        value: accordionItems(root)
+          .filter((item) => item.dataset.state === "open")
+          .map(sectionValue),
+      });
     return;
   }
 
@@ -822,7 +890,10 @@ function onKeydown(event: KeyboardEvent): void {
       clearTimeout(subTimer);
       highlight(menu, next);
     } else if (event.key === "Tab") closeChain(menu);
-    else if ((logicalKey(event.key, menu) === "ArrowRight" || event.key === "Enter" || event.key === " ") && own?.hasAttribute("data-z-submenu")) {
+    else if (
+      (logicalKey(event.key, menu) === "ArrowRight" || event.key === "Enter" || event.key === " ") &&
+      own?.hasAttribute("data-z-submenu")
+    ) {
       event.preventDefault();
       clearTimeout(subTimer);
       openSubmenu(own, true);
@@ -865,7 +936,16 @@ function onKeydown(event: KeyboardEvent): void {
   const header = target.closest<HTMLElement>(".z-accordion__trigger");
   if (header) {
     const root = header.closest(".z-accordion");
-    const next = root ? move([...root.querySelectorAll<HTMLElement>(".z-accordion__trigger")].filter((t) => t.closest(".z-accordion") === root && !isDisabled(t)), header, event.key, true) : undefined;
+    const next = root
+      ? move(
+          [...root.querySelectorAll<HTMLElement>(".z-accordion__trigger")].filter(
+            (t) => t.closest(".z-accordion") === root && !isDisabled(t),
+          ),
+          header,
+          event.key,
+          true,
+        )
+      : undefined;
     if (next) {
       event.preventDefault();
       next.focus();
@@ -874,7 +954,9 @@ function onKeydown(event: KeyboardEvent): void {
   }
   const radio = target.closest<HTMLElement>('[role="radio"]');
   if (radio) {
-    const list = [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])].filter((r) => !isDisabled(r));
+    const list = [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])].filter(
+      (r) => !isDisabled(r),
+    );
     // En RTL la flecha izquierda avanza.
     const next = moveBoth(list, radio, logicalKey(event.key, radio));
     if (next) {
@@ -940,22 +1022,32 @@ export function init(): () => void {
   on(document, "click", onClick);
   on(document, "keydown", onKeydown);
   // Escape cierra la burbuja sin mover el puntero ni el foco (WCAG 1.4.13); no consume la tecla.
-  on(document, "keydown", (event) => {
-    if (event.key === "Escape") hideTooltip();
-  }, true);
+  on(
+    document,
+    "keydown",
+    (event) => {
+      if (event.key === "Escape") hideTooltip();
+    },
+    true,
+  );
   on(document, "pointerdown", notePress, true);
   on(document, "toggle", onPopoverToggle, true);
   on(document, "close", onNativeClose, true);
   on(document, "scroll", follow, { capture: true, passive: true });
   on(window, "resize", follow);
-  on(document, "cancel", (event) => {
-    // Cierre pedido por el navegador (Escape, gesto atrás del sistema): pasa por la animación de salida, o no
-    // ocurre si el diálogo es estático. Con Escape ya lo hizo onKeydown; closeDialog() no repite.
-    const dialog = event.target;
-    if (!(dialog instanceof HTMLDialogElement) || !dialog.matches("dialog.z-modal, dialog.z-drawer")) return;
-    event.preventDefault();
-    if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
-  }, true);
+  on(
+    document,
+    "cancel",
+    (event) => {
+      // Cierre pedido por el navegador (Escape, gesto atrás del sistema): pasa por la animación de salida, o no
+      // ocurre si el diálogo es estático. Con Escape ya lo hizo onKeydown; closeDialog() no repite.
+      const dialog = event.target;
+      if (!(dialog instanceof HTMLDialogElement) || !dialog.matches("dialog.z-modal, dialog.z-drawer")) return;
+      event.preventDefault();
+      if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
+    },
+    true,
+  );
   on(document, "contextmenu", (event) => {
     const menu = contextMenuAt(event.target);
     if (!menu) return;
@@ -976,10 +1068,15 @@ export function init(): () => void {
       window.addEventListener("pointercancel", onRelease, { capture: true, signal: release.signal });
     } else open();
   });
-  on(document, "pointerdown", (event) => {
-    contextPress.cancel();
-    if (contextMenuAt(event.target)) contextPress.down(event);
-  }, true);
+  on(
+    document,
+    "pointerdown",
+    (event) => {
+      contextPress.cancel();
+      if (contextMenuAt(event.target)) contextPress.down(event);
+    },
+    true,
+  );
   on(document, "pointermove", (event) => contextPress.move(event), true);
   on(document, "pointerup", () => contextPress.cancel(), true);
   on(document, "pointercancel", () => contextPress.cancel(), true);
@@ -997,7 +1094,8 @@ export function init(): () => void {
     // El puntero sale de una entrada con el submenú abierto: empieza la zona de gracia hacia él.
     const trigger = from.closest?.<HTMLElement>('.z-menu__item[data-z-submenu][aria-expanded="true"]');
     const sub = trigger && !trigger.contains(to) ? submenuOf(trigger) : null;
-    if (sub?.matches(":popover-open")) aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
+    if (sub?.matches(":popover-open"))
+      aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
     const host = from.closest?.("[data-z-tooltip]");
     if (host && !host.contains(to)) {
       // Con el foco en el disparador la burbuja se queda: se cierra al perder el foco o con Escape.

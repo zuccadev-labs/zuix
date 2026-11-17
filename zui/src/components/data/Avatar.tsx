@@ -36,7 +36,15 @@ export function Avatar({ src, name, alt, size = "md", shape = "circle", status, 
   const label = alt ?? name;
   return (
     // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-label solo se emite junto a role="img" (sin imagen); con imagen el nombre lo da su `alt`.
-    <span {...rest} className={cx("z-avatar", className)} data-size={size} data-shape={shape} role={showImage ? undefined : "img"} aria-label={showImage ? undefined : label} aria-hidden={!showImage && !label ? true : undefined}>
+    <span
+      {...rest}
+      className={cx("z-avatar", className)}
+      data-size={size}
+      data-shape={shape}
+      role={showImage ? undefined : "img"}
+      aria-label={showImage ? undefined : label}
+      aria-hidden={!showImage && !label ? true : undefined}
+    >
       {showImage ? (
         <img
           className="z-avatar__image"

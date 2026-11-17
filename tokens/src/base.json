@@ -131,13 +131,36 @@
     "code-bg": "{inset}"
   },
   "required": [
-    "accent", "fg", "fg-muted", "fg-subtle", "fg-on-accent",
-    "canvas", "canvas-gradient", "canvas-fg", "canvas-fg-muted",
-    "glass-bg", "glass-border", "glass-highlight", "glass-specular", "glass-shadow",
-    "surface", "surface-2", "surface-3", "surface-solid", "overlay", "inset",
-    "line", "line-strong", "row-hover",
-    "success", "warning", "danger", "info",
-    "shadow-sm", "shadow-md", "shadow-lg"
+    "accent",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "fg-on-accent",
+    "canvas",
+    "canvas-gradient",
+    "canvas-fg",
+    "canvas-fg-muted",
+    "glass-bg",
+    "glass-border",
+    "glass-highlight",
+    "glass-specular",
+    "glass-shadow",
+    "surface",
+    "surface-2",
+    "surface-3",
+    "surface-solid",
+    "overlay",
+    "inset",
+    "line",
+    "line-strong",
+    "row-hover",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "shadow-sm",
+    "shadow-md",
+    "shadow-lg"
   ],
   "moreContrast": {
     "fg-muted": "{fg}",
@@ -182,7 +205,10 @@
     ],
     "nonText": ["control-border", "control-border-hover", "accent-ring", "accent", "success", "warning", "danger", "info"],
     "ignore": [
-      { "selector": ".z-check__box", "reason": "El color es el de la marca de verificación, que solo se ve con la casilla marcada (fondo accent-solid)." }
+      {
+        "selector": ".z-check__box",
+        "reason": "El color es el de la marca de verificación, que solo se ve con la casilla marcada (fondo accent-solid)."
+      }
     ]
   }
 }

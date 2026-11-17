@@ -15,22 +15,13 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "text",
-        "circular",
-        "rectangular",
-        "rounded"
-      ],
+      "values": ["text", "circular", "rectangular", "rounded"],
       "default": "text"
     },
     {
       "name": "animation",
       "type": "enum",
-      "values": [
-        "pulse",
-        "wave",
-        "none"
-      ],
+      "values": ["pulse", "wave", "none"],
       "default": "pulse"
     },
     {
@@ -40,22 +31,9 @@
       "description": "Con `text`: número de líneas; la última queda más corta."
     }
   ],
-  "states": [
-    "pulse",
-    "wave"
-  ],
-  "tokens": [
-    "surface-3",
-    "radius-xs",
-    "radius-full",
-    "radius-md",
-    "glass-highlight",
-    "space-2"
-  ],
-  "classes": [
-    "z-skeleton",
-    "z-skeleton-lines"
-  ],
+  "states": ["pulse", "wave"],
+  "tokens": ["surface-3", "radius-xs", "radius-full", "radius-md", "glass-highlight", "space-2"],
+  "classes": ["z-skeleton", "z-skeleton-lines"],
   "a11y": "aria-hidden: el contenedor debe anunciar la carga con aria-busy.",
   "examples": [
     {

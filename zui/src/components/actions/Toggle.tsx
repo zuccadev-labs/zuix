@@ -17,7 +17,19 @@ export interface ToggleProps extends Omit<ComponentProps<"button">, "onChange"> 
 }
 
 /** Botón de dos estados (aria-pressed). */
-export function Toggle({ pressed: pressedProp, defaultPressed = false, onPressedChange, size = "md", icon, label, className, children, disabled, onClick, ...rest }: ToggleProps) {
+export function Toggle({
+  pressed: pressedProp,
+  defaultPressed = false,
+  onPressedChange,
+  size = "md",
+  icon,
+  label,
+  className,
+  children,
+  disabled,
+  onClick,
+  ...rest
+}: ToggleProps) {
   const [pressed, setPressed] = useControllable(pressedProp, defaultPressed, onPressedChange);
   return (
     <button

@@ -32,7 +32,29 @@ export interface SliderProps extends Omit<ComponentProps<"span">, "children" | "
 }
 
 /** Deslizador de uno o varios valores (patrón APG «slider»; rango con dos tiradores). */
-export function Slider({ value: valueProp, defaultValue = [0], onValueChange, onValueCommit, min = 0, max: maxProp = 100, step: stepProp = 1, minStepsBetweenThumbs = 0, orientation = "horizontal", inverted, disabled, name, form, size = "md", thumbLabels, className, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, onPointerDown, ...rest }: SliderProps) {
+export function Slider({
+  value: valueProp,
+  defaultValue = [0],
+  onValueChange,
+  onValueCommit,
+  min = 0,
+  max: maxProp = 100,
+  step: stepProp = 1,
+  minStepsBetweenThumbs = 0,
+  orientation = "horizontal",
+  inverted,
+  disabled,
+  name,
+  form,
+  size = "md",
+  thumbLabels,
+  className,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
+  onPointerDown,
+  ...rest
+}: SliderProps) {
   const max = Math.max(min, maxProp);
   const step = stepProp > 0 ? stepProp : 1;
   const [raw, setValue] = useControllable(valueProp, defaultValue, onValueChange);
@@ -147,14 +169,18 @@ export function Slider({ value: valueProp, defaultValue = [0], onValueChange, on
           aria-disabled={disabled || undefined}
           data-disabled={disabled ? "" : undefined}
           // El tirador no sobresale de la pista: recorre el ancho menos su propio tamaño.
-          style={{ position: "absolute", [start]: `calc(${percent(value, min, max) / 100} * (100% - var(--z-slider-thumb)))` } as CSSProperties}
+          style={
+            { position: "absolute", [start]: `calc(${percent(value, min, max) / 100} * (100% - var(--z-slider-thumb)))` } as CSSProperties
+          }
           onKeyDown={handleKeyDown(index)}
         />
       ))}
-      {name ? values.map((value, index) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: un campo por tirador, en el mismo orden.
-        <input key={index} type="hidden" name={name} form={form} value={value} disabled={disabled} />
-      )) : null}
+      {name
+        ? values.map((value, index) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: un campo por tirador, en el mismo orden.
+            <input key={index} type="hidden" name={name} form={form} value={value} disabled={disabled} />
+          ))
+        : null}
     </span>
   );
 }

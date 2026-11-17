@@ -42,7 +42,16 @@ export interface PlaceResult {
 
 export const PLACE_PADDING = 8;
 
-export function computePlace({ anchor, size, viewport, placement, gap = 6, padding = PLACE_PADDING, rtl = false, lockSide }: PlaceInput): PlaceResult {
+export function computePlace({
+  anchor,
+  size,
+  viewport,
+  placement,
+  gap = 6,
+  padding = PLACE_PADDING,
+  rtl = false,
+  lockSide,
+}: PlaceInput): PlaceResult {
   const [wanted, align = "center"] = placement.split("-") as [Side, Align?];
   const { width, height } = size;
   const right = anchor.left + anchor.width;
@@ -65,7 +74,12 @@ export function computePlace({ anchor, size, viewport, placement, gap = 6, paddi
     x = side === "right" ? right + gap : anchor.left - gap - width;
     y = align === "start" ? anchor.top : align === "end" ? bottom - height : anchor.top + anchor.height / 2 - height / 2;
   }
-  const room = { top: anchor.top - gap, bottom: viewport.height - bottom - gap, left: anchor.left - gap, right: viewport.width - right - gap };
+  const room = {
+    top: anchor.top - gap,
+    bottom: viewport.height - bottom - gap,
+    left: anchor.left - gap,
+    right: viewport.width - right - gap,
+  };
   const vertical = side === "top" || side === "bottom";
   return {
     x: Math.round(Math.min(Math.max(padding, x), Math.max(padding, viewport.width - width - padding))),

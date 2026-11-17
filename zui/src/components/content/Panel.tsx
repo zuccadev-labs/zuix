@@ -15,7 +15,18 @@ export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, "title"> {
 }
 
 /** Panel de cristal líquido: la pieza de cromo sobre la que flota el resto de la interfaz. */
-export function Panel({ as: Tag = "section", material = "glass", title, description, actions, padding = "md", headingLevel = 2, className, children, ...rest }: PanelProps) {
+export function Panel({
+  as: Tag = "section",
+  material = "glass",
+  title,
+  description,
+  actions,
+  padding = "md",
+  headingLevel = 2,
+  className,
+  children,
+  ...rest
+}: PanelProps) {
   const Heading = `h${headingLevel}` as const;
   return (
     <Tag {...rest} className={cx("z-panel", material === "glass" ? "z-liquid" : "z-solid", className)} data-padding={padding}>

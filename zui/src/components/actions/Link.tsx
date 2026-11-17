@@ -15,7 +15,18 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children?: ReactNode;
 }
 
-export function Link({ variant = "inline", external, externalLabel = "opens in a new tab", icon, disabled, className, children, href, onClick, ...rest }: LinkProps) {
+export function Link({
+  variant = "inline",
+  external,
+  externalLabel = "opens in a new tab",
+  icon,
+  disabled,
+  className,
+  children,
+  href,
+  onClick,
+  ...rest
+}: LinkProps) {
   const externalProps = external ? { target: "_blank", rel: "noopener noreferrer" } : null;
   return (
     <a

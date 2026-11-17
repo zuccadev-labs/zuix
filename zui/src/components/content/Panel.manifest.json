@@ -7,23 +7,13 @@
     {
       "name": "as",
       "type": "enum",
-      "values": [
-        "section",
-        "aside",
-        "header",
-        "footer",
-        "nav",
-        "div"
-      ],
+      "values": ["section", "aside", "header", "footer", "nav", "div"],
       "default": "section"
     },
     {
       "name": "material",
       "type": "enum",
-      "values": [
-        "glass",
-        "solid"
-      ],
+      "values": ["glass", "solid"],
       "default": "glass",
       "description": "`glass` para cromo; `solid` para texto denso."
     },
@@ -43,12 +33,7 @@
     {
       "name": "padding",
       "type": "enum",
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["none", "sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -57,9 +42,7 @@
       "default": 2
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "space-3",
     "fg-muted",
@@ -86,9 +69,7 @@
     "line",
     "overlay"
   ],
-  "classes": [
-    "z-panel"
-  ],
+  "classes": ["z-panel"],
   "a11y": "Elemento semántico elegido con `as`. Sin `title`, un section o aside necesita aria-label.",
   "examples": [
     {

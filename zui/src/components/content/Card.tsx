@@ -13,7 +13,13 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 /** Superficie que agrupa contenido relacionado. */
 export function Card({ variant = "elevated", padding = "md", interactive, className, children, ...rest }: CardProps) {
   return (
-    <div {...rest} className={cx("z-card", className)} data-variant={variant} data-padding={padding} data-interactive={interactive || undefined}>
+    <div
+      {...rest}
+      className={cx("z-card", className)}
+      data-variant={variant}
+      data-padding={padding}
+      data-interactive={interactive || undefined}
+    >
       {children}
     </div>
   );

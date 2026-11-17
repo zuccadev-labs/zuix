@@ -1,10 +1,52 @@
 // Secciones de la pantalla de auditoría que no usan portal: se renderizan también en servidor (AuditSsr).
 import { useRef, useState, type ReactNode } from "react";
 import {
-  Accordion, Alert, Avatar, AvatarGroup, Badge, Breadcrumb, Button, Calendar, Card, CardHeader, Carousel, Checkbox, Chip, CodeBlock, Combobox,
-  DataTable, DateInput, DatePicker, ErrorBoundary, Field, FileUpload, IconButton, Input, Link, LoadingOverlay, NativeSelect, NavLink, NavList,
-  OTPInput, Pagination, Radio, RadioGroup, Rating, SearchInput, SegmentedControl, Select, Slider, Stepper, Switch, TabPanel, Tabs, Textarea,
-  Toggle, Tree, type DataTableColumn, type TreeNode,
+  Accordion,
+  Alert,
+  Avatar,
+  AvatarGroup,
+  Badge,
+  Breadcrumb,
+  Button,
+  Calendar,
+  Card,
+  CardHeader,
+  Carousel,
+  Checkbox,
+  Chip,
+  CodeBlock,
+  Combobox,
+  DataTable,
+  DateInput,
+  DatePicker,
+  ErrorBoundary,
+  Field,
+  FileUpload,
+  IconButton,
+  Input,
+  Link,
+  LoadingOverlay,
+  NativeSelect,
+  NavLink,
+  NavList,
+  OTPInput,
+  Pagination,
+  Radio,
+  RadioGroup,
+  Rating,
+  SearchInput,
+  SegmentedControl,
+  Select,
+  Slider,
+  Stepper,
+  Switch,
+  TabPanel,
+  Tabs,
+  Textarea,
+  Toggle,
+  Tree,
+  type DataTableColumn,
+  type TreeNode,
 } from "@zuccadev-labs/zuix-zui";
 
 export function Cell({ title, id, children }: { title: string; id?: string; children: ReactNode }) {
@@ -41,17 +83,27 @@ export function ActionsSection() {
     <>
       <Cell title="Button and IconButton" id="a-buttons">
         <div className="audit__row">
-          <Button variant="primary" loading={loading} onClick={() => setClicks((n) => n + 1)} data-testid="a-btn">Save</Button>
-          <Button onClick={() => setLoading((v) => !v)} data-testid="a-btn-toggle-loading">Toggle loading</Button>
+          <Button variant="primary" loading={loading} onClick={() => setClicks((n) => n + 1)} data-testid="a-btn">
+            Save
+          </Button>
+          <Button onClick={() => setLoading((v) => !v)} data-testid="a-btn-toggle-loading">
+            Toggle loading
+          </Button>
           <IconButton icon="star" label="Favorite" onClick={() => setClicks((n) => n + 1)} data-testid="a-iconbtn" />
         </div>
         <Out id="a-btn-clicks">{clicks}</Out>
       </Cell>
       <Cell title="Link" id="a-links">
         <div className="audit__row">
-          <Link href="#audit-link" onClick={() => setLinkClicks((n) => n + 1)} data-testid="a-link">Enabled link</Link>
-          <Link href="#audit-disabled" disabled onClick={() => setLinkClicks((n) => n + 1)} data-testid="a-link-disabled">Disabled link</Link>
-          <Link href="https://example.com/" external variant="standalone" data-testid="a-link-external">External</Link>
+          <Link href="#audit-link" onClick={() => setLinkClicks((n) => n + 1)} data-testid="a-link">
+            Enabled link
+          </Link>
+          <Link href="#audit-disabled" disabled onClick={() => setLinkClicks((n) => n + 1)} data-testid="a-link-disabled">
+            Disabled link
+          </Link>
+          <Link href="https://example.com/" external variant="standalone" data-testid="a-link-external">
+            External
+          </Link>
         </div>
         <Out id="a-link-clicks">{linkClicks}</Out>
       </Cell>
@@ -71,7 +123,9 @@ export function ActionsSection() {
         </div>
         <Out id="a-seg-value">{seg}</Out>
         <div className="audit__row">
-          <Toggle pressed={pressed} onPressedChange={setPressed} icon="star" data-testid="a-toggle">Pin</Toggle>
+          <Toggle pressed={pressed} onPressedChange={setPressed} icon="star" data-testid="a-toggle">
+            Pin
+          </Toggle>
           <Toggle icon="star" label="Favorite" data-testid="a-toggle-icon" />
         </div>
         <Out id="a-toggle-value">{pressed ? "on" : "off"}</Out>
@@ -105,18 +159,28 @@ export function FormsSection() {
   return (
     <>
       <Cell title="Checkbox, RadioGroup and Switch" id="a-choice">
-        <Checkbox checked={check} onCheckedChange={setCheck} data-testid="a-check">Select all</Checkbox>
-        <Checkbox disabled data-testid="a-check-disabled">Disabled</Checkbox>
+        <Checkbox checked={check} onCheckedChange={setCheck} data-testid="a-check">
+          Select all
+        </Checkbox>
+        <Checkbox disabled data-testid="a-check-disabled">
+          Disabled
+        </Checkbox>
         <Out id="a-check-value">{String(check)}</Out>
         <RadioGroup value={radio} onValueChange={setRadio} aria-label="Contact" data-testid="a-radio">
           <Radio value="email">Email</Radio>
           <Radio value="phone">Phone</Radio>
-          <Radio value="fax" disabled>Fax</Radio>
+          <Radio value="fax" disabled>
+            Fax
+          </Radio>
           <Radio value="post">Post</Radio>
         </RadioGroup>
         <Out id="a-radio-value">{radio}</Out>
-        <Switch checked={sw} onCheckedChange={setSw} data-testid="a-switch">Notifications</Switch>
-        <Switch disabled data-testid="a-switch-disabled">Disabled</Switch>
+        <Switch checked={sw} onCheckedChange={setSw} data-testid="a-switch">
+          Notifications
+        </Switch>
+        <Switch disabled data-testid="a-switch-disabled">
+          Disabled
+        </Switch>
         <Out id="a-switch-value">{sw ? "on" : "off"}</Out>
       </Cell>
       <Cell title="Slider" id="a-sliders">
@@ -143,17 +207,42 @@ export function FormsSection() {
         </div>
       </Cell>
       <Cell title="SearchInput" id="a-search-cell">
-        <SearchInput value={search} onValueChange={setSearch} onSearch={setSearched} onClear={() => setCleared((n) => n + 1)} loading={searching} data-testid="a-search" />
-        <Button size="sm" onClick={() => setSearching((v) => !v)} data-testid="a-search-loading">Toggle loading</Button>
+        <SearchInput
+          value={search}
+          onValueChange={setSearch}
+          onSearch={setSearched}
+          onClear={() => setCleared((n) => n + 1)}
+          loading={searching}
+          data-testid="a-search"
+        />
+        <Button size="sm" onClick={() => setSearching((v) => !v)} data-testid="a-search-loading">
+          Toggle loading
+        </Button>
         <Out id="a-search-value">{search || "empty"}</Out>
         <Out id="a-search-submitted">{searched || "none"}</Out>
         <Out id="a-search-cleared">{cleared}</Out>
         <SearchInput defaultValue="draft" aria-label="Uncontrolled search" data-testid="a-search-unc" />
       </Cell>
       <Cell title="Input, Textarea and DateInput" id="a-text-cell">
-        <Input value={text} onChange={(event) => setText(event.target.value)} invalid={text.length > 0 && text.length < 3} icon="user" trailing={<Badge size="sm">kg</Badge>} aria-label="Weight" data-testid="a-input" />
+        <Input
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          invalid={text.length > 0 && text.length < 3}
+          icon="user"
+          trailing={<Badge size="sm">kg</Badge>}
+          aria-label="Weight"
+          data-testid="a-input"
+        />
         <Out id="a-input-value">{text || "empty"}</Out>
-        <Textarea value={ta} onChange={(event) => setTa(event.target.value)} autoRows rows={2} maxRows={5} aria-label="Controlled notes" data-testid="a-ta-ctl" />
+        <Textarea
+          value={ta}
+          onChange={(event) => setTa(event.target.value)}
+          autoRows
+          rows={2}
+          maxRows={5}
+          aria-label="Controlled notes"
+          data-testid="a-ta-ctl"
+        />
         <Textarea defaultValue="one" autoRows rows={2} maxRows={5} aria-label="Uncontrolled notes" data-testid="a-ta-unc" />
         <div data-testid="a-dateinput">
           <DateInput aria-label="Start" defaultValue="2026-03-10" />
@@ -163,7 +252,13 @@ export function FormsSection() {
         </div>
       </Cell>
       <Cell title="NativeSelect" id="a-native-cell">
-        <NativeSelect options={OPTIONS} placeholder="Choose a letter" aria-label="Letter" onChange={(event) => setNative(event.target.value)} data-testid="a-native" />
+        <NativeSelect
+          options={OPTIONS}
+          placeholder="Choose a letter"
+          aria-label="Letter"
+          onChange={(event) => setNative(event.target.value)}
+          data-testid="a-native"
+        />
         <Out id="a-native-value">{native}</Out>
       </Cell>
       <Cell title="FileUpload" id="a-upload-cell">
@@ -171,7 +266,13 @@ export function FormsSection() {
           data-testid="a-upload-form"
           onSubmit={(event) => {
             event.preventDefault();
-            setSubmitted(new FormData(event.currentTarget).getAll("docs").map((file) => (file instanceof File ? file.name : String(file))).filter(Boolean).join(",") || "none");
+            setSubmitted(
+              new FormData(event.currentTarget)
+                .getAll("docs")
+                .map((file) => (file instanceof File ? file.name : String(file)))
+                .filter(Boolean)
+                .join(",") || "none",
+            );
           }}
         >
           <div data-testid="a-upload">
@@ -187,7 +288,9 @@ export function FormsSection() {
               <span data-testid="a-upload-child">Inner content</span>
             </FileUpload>
           </div>
-          <Button type="submit" size="sm" data-testid="a-upload-submit">Submit</Button>
+          <Button type="submit" size="sm" data-testid="a-upload-submit">
+            Submit
+          </Button>
         </form>
         <Out id="a-upload-accepted">{accepted.join(",") || "none"}</Out>
         <Out id="a-upload-rejected">{rejected.join(",") || "none"}</Out>
@@ -293,9 +396,15 @@ export function DataSection() {
       </Cell>
       <Cell title="Chip and Avatar" id="a-chip-cell">
         <div className="audit__row">
-          <Chip selected={chip} onClick={() => setChip((v) => !v)} count={3} data-testid="a-chip">Open</Chip>
-          <Chip onRemove={() => setRemoved((n) => n + 1)} removeLabel="Remove tag" data-testid="a-chip-remove">design</Chip>
-          <Chip onClick={() => setChip((v) => !v)} onRemove={() => setRemoved((n) => n + 1)} disabled data-testid="a-chip-disabled">Locked</Chip>
+          <Chip selected={chip} onClick={() => setChip((v) => !v)} count={3} data-testid="a-chip">
+            Open
+          </Chip>
+          <Chip onRemove={() => setRemoved((n) => n + 1)} removeLabel="Remove tag" data-testid="a-chip-remove">
+            design
+          </Chip>
+          <Chip onClick={() => setChip((v) => !v)} onRemove={() => setRemoved((n) => n + 1)} disabled data-testid="a-chip-disabled">
+            Locked
+          </Chip>
         </div>
         <Out id="a-chip-value">{chip ? "selected" : "idle"}</Out>
         <Out id="a-chip-removed">{removed}</Out>
@@ -312,7 +421,15 @@ export function DataSection() {
       </Cell>
       <Cell title="DataTable" id="a-table-cell">
         <div data-testid="a-table">
-          <DataTable rows={ROWS} columns={COLUMNS} rowKey={(item) => item.id} caption="Files" captionHidden onRowClick={(item) => setRow(item.id)} isRowSelected={(item) => item.id === row} />
+          <DataTable
+            rows={ROWS}
+            columns={COLUMNS}
+            rowKey={(item) => item.id}
+            caption="Files"
+            captionHidden
+            onRowClick={(item) => setRow(item.id)}
+            isRowSelected={(item) => item.id === row}
+          />
         </div>
         <Out id="a-table-row">{row}</Out>
       </Cell>
@@ -335,20 +452,45 @@ function BoundaryDemo({ id, custom }: { id: string; custom?: boolean }) {
   return (
     <div data-testid={id}>
       <div className="audit__row">
-        <Button size="sm" data-testid={`${id}-arm`} onClick={() => { armed.current = true; bump((n) => n + 1); }}>Break</Button>
-        <Button size="sm" data-testid={`${id}-disarm`} onClick={() => { armed.current = false; }}>Repair</Button>
-        <Button size="sm" data-testid={`${id}-key`} onClick={() => setKey((n) => n + 1)}>Change resetKey</Button>
+        <Button
+          size="sm"
+          data-testid={`${id}-arm`}
+          onClick={() => {
+            armed.current = true;
+            bump((n) => n + 1);
+          }}
+        >
+          Break
+        </Button>
+        <Button
+          size="sm"
+          data-testid={`${id}-disarm`}
+          onClick={() => {
+            armed.current = false;
+          }}
+        >
+          Repair
+        </Button>
+        <Button size="sm" data-testid={`${id}-key`} onClick={() => setKey((n) => n + 1)}>
+          Change resetKey
+        </Button>
       </div>
       <ErrorBoundary
         resetKey={key}
         onError={() => setErrors((n) => n + 1)}
         retryLabel="Retry now"
-        fallback={custom ? (error, reset) => (
-          <div data-testid={`${id}-fallback`}>
-            <span>Custom: {error.message}</span>
-            <Button size="sm" onClick={reset} data-testid={`${id}-reset`}>Reset</Button>
-          </div>
-        ) : undefined}
+        fallback={
+          custom
+            ? (error, reset) => (
+                <div data-testid={`${id}-fallback`}>
+                  <span>Custom: {error.message}</span>
+                  <Button size="sm" onClick={reset} data-testid={`${id}-reset`}>
+                    Reset
+                  </Button>
+                </div>
+              )
+            : undefined
+        }
       >
         <Bomb armed={armed} />
       </ErrorBoundary>
@@ -365,12 +507,29 @@ export function FeedbackSection() {
     <>
       <Cell title="Alert" id="a-alert-cell">
         {alerts.includes("info") ? (
-          <Alert tone="info" title="Heads up" onDismiss={() => setAlerts((list) => list.filter((tone) => tone !== "info"))} data-testid="a-alert-info">Informational message.</Alert>
+          <Alert
+            tone="info"
+            title="Heads up"
+            onDismiss={() => setAlerts((list) => list.filter((tone) => tone !== "info"))}
+            data-testid="a-alert-info"
+          >
+            Informational message.
+          </Alert>
         ) : null}
         {alerts.includes("danger") ? (
-          <Alert tone="danger" title="Failed" dismissLabel="Close alert" onDismiss={() => setAlerts((list) => list.filter((tone) => tone !== "danger"))} data-testid="a-alert-danger">Something broke.</Alert>
+          <Alert
+            tone="danger"
+            title="Failed"
+            dismissLabel="Close alert"
+            onDismiss={() => setAlerts((list) => list.filter((tone) => tone !== "danger"))}
+            data-testid="a-alert-danger"
+          >
+            Something broke.
+          </Alert>
         ) : null}
-        <Alert tone="success" data-testid="a-alert-static">Saved.</Alert>
+        <Alert tone="success" data-testid="a-alert-static">
+          Saved.
+        </Alert>
         <Out id="a-alert-count">{alerts.length}</Out>
       </Cell>
       <Cell title="ErrorBoundary" id="a-eb-cell">
@@ -378,7 +537,9 @@ export function FeedbackSection() {
         <BoundaryDemo id="a-eb-custom" custom />
       </Cell>
       <Cell title="LoadingOverlay" id="a-loading-cell">
-        <Button size="sm" onClick={() => setBusy((v) => !v)} data-testid="a-loading-toggle">Toggle overlay</Button>
+        <Button size="sm" onClick={() => setBusy((v) => !v)} data-testid="a-loading-toggle">
+          Toggle overlay
+        </Button>
         <div className="audit__host" data-testid="a-loading-host">
           <p className="app-text">Covered content.</p>
           <LoadingOverlay visible={busy} message="Saving changes" data-testid="a-loading" />
@@ -388,7 +549,13 @@ export function FeedbackSection() {
         </div>
       </Cell>
       <Cell title="CodeBlock" id="a-code-cell">
-        <CodeBlock code={"pnpm add @zuccadev-labs/zuix-zui\npnpm check"} language="sh" title="install.sh" onCopy={setCopied} data-testid="a-code" />
+        <CodeBlock
+          code={"pnpm add @zuccadev-labs/zuix-zui\npnpm check"}
+          language="sh"
+          title="install.sh"
+          onCopy={setCopied}
+          data-testid="a-code"
+        />
         <Out id="a-code-copied">{copied === "none" ? "none" : `copied:${copied.length}`}</Out>
       </Cell>
     </>
@@ -398,7 +565,14 @@ export function FeedbackSection() {
 /* ---------- Navegación ---------- */
 
 const NODES: TreeNode[] = [
-  { id: "src", label: "src", children: [{ id: "app", label: "app.tsx" }, { id: "main", label: "main.tsx" }] },
+  {
+    id: "src",
+    label: "src",
+    children: [
+      { id: "app", label: "app.tsx" },
+      { id: "main", label: "main.tsx" },
+    ],
+  },
   { id: "docs", label: "docs", children: [{ id: "guide", label: "guide.md" }] },
   { id: "license", label: "LICENSE" },
   { id: "readme", label: "README.md" },
@@ -424,18 +598,30 @@ export function NavigationSection() {
           <Stepper steps={STEPS} current={1} orientation="vertical" label="Static progress" />
         </div>
         <div className="audit__row">
-          <Button size="sm" onClick={() => setStep((n) => Math.min(STEPS.length, n + 1))} data-testid="a-stepper-next">Next step</Button>
+          <Button size="sm" onClick={() => setStep((n) => Math.min(STEPS.length, n + 1))} data-testid="a-stepper-next">
+            Next step
+          </Button>
           <Out id="a-stepper-value">{step}</Out>
         </div>
       </Cell>
       <Cell title="NavList and Breadcrumb" id="a-nav-cell">
         <NavList label="Audit navigation" heading="Sections" data-testid="a-navlist">
-          <NavLink href="#audit-home" icon="home" active onClick={() => setNav("home")} data-testid="a-nav-link">Home</NavLink>
-          <NavLink icon="folder" onClick={() => setNav("files")} trailing={<Badge size="sm">4</Badge>} data-testid="a-nav-button">Files</NavLink>
-          <NavLink href="#audit-off" disabled onClick={() => setNav("off-link")} data-testid="a-nav-link-disabled">Billing</NavLink>
-          <NavLink disabled onClick={() => setNav("off-button")} data-testid="a-nav-button-disabled">Admin</NavLink>
+          <NavLink href="#audit-home" icon="home" active onClick={() => setNav("home")} data-testid="a-nav-link">
+            Home
+          </NavLink>
+          <NavLink icon="folder" onClick={() => setNav("files")} trailing={<Badge size="sm">4</Badge>} data-testid="a-nav-button">
+            Files
+          </NavLink>
+          <NavLink href="#audit-off" disabled onClick={() => setNav("off-link")} data-testid="a-nav-link-disabled">
+            Billing
+          </NavLink>
+          <NavLink disabled onClick={() => setNav("off-button")} data-testid="a-nav-button-disabled">
+            Admin
+          </NavLink>
           <NavLink asChild icon="star" onClick={() => setNav("child")}>
-            <a href="#audit-child" data-testid="a-nav-child">Router link</a>
+            <a href="#audit-child" data-testid="a-nav-child">
+              Router link
+            </a>
           </NavLink>
         </NavList>
         <Out id="a-nav-value">{nav}</Out>
@@ -483,7 +669,12 @@ export function NavigationSection() {
             label="Vertical tabs"
             value={tab}
             onValueChange={setTab}
-            items={[{ value: "one", label: "One" }, { value: "two", label: "Two" }, { value: "three", label: "Three", disabled: true }, { value: "four", label: "Four" }]}
+            items={[
+              { value: "one", label: "One" },
+              { value: "two", label: "Two" },
+              { value: "three", label: "Three", disabled: true },
+              { value: "four", label: "Four" },
+            ]}
           >
             <TabPanel value="one">Panel one</TabPanel>
             <TabPanel value="two" keepMounted>
@@ -544,7 +735,16 @@ export function RtlSection() {
         </div>
         <Out id="a-rtl-slider-value">{slider.join(",")}</Out>
         <div data-testid="a-rtl-tabs">
-          <Tabs label="RTL tabs" value={tab} onValueChange={setTab} items={[{ value: "one", label: "One", content: "1" }, { value: "two", label: "Two", content: "2" }, { value: "three", label: "Three", content: "3" }]} />
+          <Tabs
+            label="RTL tabs"
+            value={tab}
+            onValueChange={setTab}
+            items={[
+              { value: "one", label: "One", content: "1" },
+              { value: "two", label: "Two", content: "2" },
+              { value: "three", label: "Three", content: "3" },
+            ]}
+          />
         </div>
         <Out id="a-rtl-tabs-value">{tab}</Out>
       </Cell>
@@ -569,15 +769,26 @@ export function StaticSections() {
   return (
     <>
       <h2 className="audit__group">Actions</h2>
-      <div className="audit__grid"><ActionsSection /></div>
+      <div className="audit__grid">
+        <ActionsSection />
+      </div>
       <h2 className="audit__group">Forms</h2>
-      <div className="audit__grid"><FormsSection /><FieldSection /></div>
+      <div className="audit__grid">
+        <FormsSection />
+        <FieldSection />
+      </div>
       <h2 className="audit__group">Data</h2>
-      <div className="audit__grid"><DataSection /></div>
+      <div className="audit__grid">
+        <DataSection />
+      </div>
       <h2 className="audit__group">Feedback and content</h2>
-      <div className="audit__grid"><FeedbackSection /></div>
+      <div className="audit__grid">
+        <FeedbackSection />
+      </div>
       <h2 className="audit__group">Navigation</h2>
-      <div className="audit__grid"><NavigationSection /></div>
+      <div className="audit__grid">
+        <NavigationSection />
+      </div>
       <h2 className="audit__group">Right to left</h2>
       <RtlSection />
     </>

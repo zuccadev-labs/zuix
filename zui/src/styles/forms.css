@@ -413,7 +413,8 @@
     color: var(--z-fg);
     font-weight: var(--z-weight-medium);
     cursor: default;
-    user-select: none; -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
     outline: none;
     scroll-margin: var(--z-space-1);
   }
@@ -494,7 +495,8 @@
     gap: var(--z-space-2);
     color: var(--z-fg);
     font-size: var(--z-text-small);
-    user-select: none; -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .z-calendar__header {
     display: flex;
@@ -866,7 +868,8 @@
     width: 100%;
     height: var(--z-slider-thumb);
     touch-action: none;
-    user-select: none; -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .z-slider[data-size="sm"] {
     --z-slider-thumb: 14px;
@@ -1088,13 +1091,28 @@
      crece en su eje corto (toda la pista es zona de arrastre: el tirador no cambia) y el botón del campo amplía su
      zona de pulsación con un pseudo-elemento transparente. */
   @media (pointer: coarse) {
-    .z-check, .z-radio, .z-switch { padding-block: max(0px, (var(--z-touch-target, 0px) - 1lh) / 2); }
-    .z-slider:not([data-orientation="vertical"]) { height: max(var(--z-slider-thumb), var(--z-touch-target, 0px)); }
-    .z-slider[data-orientation="vertical"] { width: max(var(--z-slider-thumb), var(--z-touch-target, 0px)); }
-    .z-input__action { position: relative; }
+    .z-check,
+    .z-radio,
+    .z-switch {
+      padding-block: max(0px, (var(--z-touch-target, 0px) - 1lh) / 2);
+    }
+    .z-slider:not([data-orientation="vertical"]) {
+      height: max(var(--z-slider-thumb), var(--z-touch-target, 0px));
+    }
+    .z-slider[data-orientation="vertical"] {
+      width: max(var(--z-slider-thumb), var(--z-touch-target, 0px));
+    }
+    .z-input__action {
+      position: relative;
+    }
     .z-input__action::before {
-      content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: max(100%, var(--z-touch-target, 0px)); height: max(100%, var(--z-touch-target, 0px));
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100%, var(--z-touch-target, 0px));
+      height: max(100%, var(--z-touch-target, 0px));
     }
   }
 }

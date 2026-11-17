@@ -17,7 +17,18 @@ export interface DateInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
 }
 
 /** Campo de fecha u hora sobre el control nativo: valor ISO, teclado y selector del sistema. */
-export function DateInput({ type = "date", size = "md", invalid, pickerLabel = "Open picker", className, id, required, ref, "aria-describedby": describedBy, ...rest }: DateInputProps) {
+export function DateInput({
+  type = "date",
+  size = "md",
+  invalid,
+  pickerLabel = "Open picker",
+  className,
+  id,
+  required,
+  ref,
+  "aria-describedby": describedBy,
+  ...rest
+}: DateInputProps) {
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const inner = useRef<HTMLInputElement | null>(null);
   // Une la ref interna (para abrir el selector) con la ref recibida.
@@ -33,9 +44,21 @@ export function DateInput({ type = "date", size = "md", invalid, pickerLabel = "
     }
   };
   return (
-    <span className={cx("z-input", "z-input--date", className)} data-size={size} data-invalid={isInvalid || undefined} data-disabled={rest.disabled || undefined}>
+    <span
+      className={cx("z-input", "z-input--date", className)}
+      data-size={size}
+      data-invalid={isInvalid || undefined}
+      data-disabled={rest.disabled || undefined}
+    >
       <input {...rest} {...control} ref={setRef} type={type} className="z-input__control" />
-      <button type="button" className="z-input__action" aria-label={pickerLabel} title={pickerLabel} onClick={openPicker} disabled={rest.disabled || rest.readOnly}>
+      <button
+        type="button"
+        className="z-input__action"
+        aria-label={pickerLabel}
+        title={pickerLabel}
+        onClick={openPicker}
+        disabled={rest.disabled || rest.readOnly}
+      >
         <Icon name={type === "time" ? "clock" : "calendar"} size={ICON_SIZE[size]} />
       </button>
     </span>

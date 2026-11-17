@@ -2,10 +2,7 @@
   "name": "Toast",
   "group": "overlay",
   "description": "Avisos efímeros apilados en una esquina. `ToastProvider` envuelve la aplicación y `useToast()` los lanza.",
-  "exports": [
-    "ToastProvider",
-    "useToast"
-  ],
+  "exports": ["ToastProvider", "useToast"],
   "import": "import { ToastProvider, useToast } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -17,12 +14,7 @@
     {
       "name": "position",
       "type": "enum",
-      "values": [
-        "top-right",
-        "top-center",
-        "bottom-right",
-        "bottom-center"
-      ],
+      "values": ["top-right", "top-center", "bottom-right", "bottom-center"],
       "default": "bottom-right",
       "description": "ToastProvider."
     },
@@ -59,11 +51,7 @@
       "description": "useToast()."
     }
   ],
-  "states": [
-    "open",
-    "closed",
-    "swipe"
-  ],
+  "states": ["open", "closed", "swipe"],
   "tokens": [
     "button-radius",
     "danger",

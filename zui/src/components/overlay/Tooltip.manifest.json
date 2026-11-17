@@ -18,22 +18,13 @@
     {
       "name": "side",
       "type": "enum",
-      "values": [
-        "top",
-        "right",
-        "bottom",
-        "left"
-      ],
+      "values": ["top", "right", "bottom", "left"],
       "default": "top"
     },
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "center"
     },
     {
@@ -57,11 +48,7 @@
       "type": "(open: boolean) => void"
     }
   ],
-  "states": [
-    "closed",
-    "delayed-open",
-    "instant-open"
-  ],
+  "states": ["closed", "delayed-open", "instant-open"],
   "tokens": [
     "duration-fast",
     "ease-out",
@@ -81,9 +68,7 @@
     "text-caption",
     "tooltip-bg"
   ],
-  "classes": [
-    "z-tooltip"
-  ],
+  "classes": ["z-tooltip"],
   "a11y": "Aparece con hover y con foco de teclado, describe al disparador con aria-describedby y Escape lo cierra. La burbuja recibe el puntero: se puede pasar del disparador a ella sin que se cierre (WCAG 1.4.13). Sin React (`data-z-tooltip`): lo mismo, y se añade a la descripción que el control ya tuviera. No sustituye al nombre accesible del control.",
   "examples": [
     {

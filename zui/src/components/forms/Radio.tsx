@@ -39,7 +39,15 @@ export function Radio({ value, children, description, className, disabled: disab
       >
         {checked ? <span className="z-radio__mark" data-state={state} /> : null}
       </button>
-      <NativeInput type="radio" name={group.name} value={value} checked={checked} required={group.required} disabled={disabled} onReset={group.reset} />
+      <NativeInput
+        type="radio"
+        name={group.name}
+        value={value}
+        checked={checked}
+        required={group.required}
+        disabled={disabled}
+        onReset={group.reset}
+      />
       {children || description ? (
         <span className="z-check__text">
           {children ? <span className="z-check__label">{children}</span> : null}

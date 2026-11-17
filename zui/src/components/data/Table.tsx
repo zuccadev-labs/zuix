@@ -22,7 +22,20 @@ export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
 }
 
 /** Tabla con estilo. Dentro se usa el marcado nativo: thead, tbody, tr, th y td. */
-export function Table({ density = "comfortable", framed = true, striped, hoverable, stickyHeader, fixed, caption, captionHidden, wrapperClassName, className, children, ...rest }: TableProps) {
+export function Table({
+  density = "comfortable",
+  framed = true,
+  striped,
+  hoverable,
+  stickyHeader,
+  fixed,
+  caption,
+  captionHidden,
+  wrapperClassName,
+  className,
+  children,
+  ...rest
+}: TableProps) {
   return (
     <div className={cx("z-table-wrap", wrapperClassName)} data-framed={framed || undefined}>
       <table

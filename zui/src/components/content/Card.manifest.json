@@ -7,22 +7,13 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "elevated",
-        "outlined",
-        "filled"
-      ],
+      "values": ["elevated", "outlined", "filled"],
       "default": "elevated"
     },
     {
       "name": "padding",
       "type": "enum",
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["none", "sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -36,12 +27,7 @@
       "type": "HTMLAttributes<HTMLDivElement>"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active"
-  ],
+  "states": ["rest", "hover", "focus", "active"],
   "tokens": [
     "space-4",
     "space-3",
@@ -66,9 +52,7 @@
     "space-2",
     "line"
   ],
-  "classes": [
-    "z-card"
-  ],
+  "classes": ["z-card"],
   "a11y": "div sin rol. Si es activable, quien la usa aporta rol, tabIndex y teclado.",
   "examples": [
     {

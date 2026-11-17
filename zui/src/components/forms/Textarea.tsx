@@ -15,7 +15,21 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   ref?: Ref<HTMLTextAreaElement>;
 }
 
-export function Textarea({ size = "md", invalid, mono, autoRows, maxRows = 10, resize = "vertical", rows = 3, className, id, required, onChange, "aria-describedby": describedBy, ...rest }: TextareaProps) {
+export function Textarea({
+  size = "md",
+  invalid,
+  mono,
+  autoRows,
+  maxRows = 10,
+  resize = "vertical",
+  rows = 3,
+  className,
+  id,
+  required,
+  onChange,
+  "aria-describedby": describedBy,
+  ...rest
+}: TextareaProps) {
   // Sin controlar, el texto vive en el DOM: se guarda lo último escrito para contar sus líneas.
   const [typed, setTyped] = useState<string | null>(null);
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });

@@ -17,8 +17,10 @@ const COMBO = ".z-combobox";
 /* ---------- Lista ---------- */
 
 const optionsOf = (popup: Element) => [...popup.querySelectorAll<HTMLElement>(".z-listbox__option")];
-const usable = (option: HTMLElement) => !option.hidden && !option.hasAttribute("data-disabled") && option.getAttribute("aria-disabled") !== "true";
-const labelOf = (option: HTMLElement) => option.dataset.label ?? (option.querySelector(".z-listbox__text") ?? option).textContent?.trim() ?? "";
+const usable = (option: HTMLElement) =>
+  !option.hidden && !option.hasAttribute("data-disabled") && option.getAttribute("aria-disabled") !== "true";
+const labelOf = (option: HTMLElement) =>
+  option.dataset.label ?? (option.querySelector(".z-listbox__text") ?? option).textContent?.trim() ?? "";
 const optionValue = (option: HTMLElement) => option.dataset.value ?? labelOf(option);
 const activeOf = (popup: Element) => popup.querySelector<HTMLElement>(".z-listbox__option[data-highlighted]");
 
@@ -52,7 +54,8 @@ function typeahead(list: HTMLElement[], key: string, current: HTMLElement | null
 /* ---------- Select ---------- */
 
 const selectControl = (select: Element) => select.querySelector<HTMLButtonElement>("button.z-select__control");
-const selectValue = (select: HTMLElement) => select.dataset.value ?? select.querySelector<HTMLInputElement>('input[type="hidden"]')?.value ?? "";
+const selectValue = (select: HTMLElement) =>
+  select.dataset.value ?? select.querySelector<HTMLInputElement>('input[type="hidden"]')?.value ?? "";
 
 function syncSelect(select: HTMLElement, value: string): void {
   const control = selectControl(select);
@@ -212,7 +215,8 @@ function refreshCombo(combo: HTMLElement): void {
   });
   const none = options.every((option) => option.hidden);
   if (viewport) viewport.hidden = none;
-  for (const group of popup.querySelectorAll<HTMLElement>(".z-listbox__group")) group.hidden = !group.querySelector(".z-listbox__option:not([hidden])");
+  for (const group of popup.querySelectorAll<HTMLElement>(".z-listbox__group"))
+    group.hidden = !group.querySelector(".z-listbox__option:not([hidden])");
   const loading = combo.hasAttribute("data-loading");
   let status = popup.querySelector<HTMLElement>(".z-listbox__empty");
   if (none) {
@@ -236,7 +240,9 @@ function syncComboIcon(combo: HTMLElement): void {
   const { input, popup } = comboParts(combo);
   combo.querySelector(":scope > .z-input__icon[data-z-selected]")?.remove();
   if (!input || !popup || comboState(combo).editing) return;
-  const icon = optionsOf(popup).find((option) => option.dataset.state === "checked")?.querySelector(".z-listbox__icon");
+  const icon = optionsOf(popup)
+    .find((option) => option.dataset.state === "checked")
+    ?.querySelector(".z-listbox__icon");
   if (!icon) return;
   const copy = document.createElement("span");
   copy.className = "z-input__icon";
@@ -263,17 +269,23 @@ function openCombo(combo: HTMLElement, start: "selected" | "first" | "last"): vo
   const { input, popup, toggle } = comboParts(combo);
   if (!input || !popup || input.disabled) return;
   if (!isOpen(popup)) {
-    showPopup(popup, combo, input, () => {
-      // Al cerrar, el campo vuelve a mostrar la selección.
-      const state = comboState(combo);
-      state.editing = false;
-      input.value = state.label;
-      combo.dataset.state = "closed";
-      toggle?.setAttribute("aria-expanded", "false");
-      setComboActive(combo, undefined);
-      refreshCombo(combo);
-      syncComboIcon(combo);
-    }, false);
+    showPopup(
+      popup,
+      combo,
+      input,
+      () => {
+        // Al cerrar, el campo vuelve a mostrar la selección.
+        const state = comboState(combo);
+        state.editing = false;
+        input.value = state.label;
+        combo.dataset.state = "closed";
+        toggle?.setAttribute("aria-expanded", "false");
+        setComboActive(combo, undefined);
+        refreshCombo(combo);
+        syncComboIcon(combo);
+      },
+      false,
+    );
     combo.dataset.state = "open";
     toggle?.setAttribute("aria-expanded", "true");
   }
@@ -431,7 +443,11 @@ function hydrateCombo(combo: HTMLElement): void {
   if (!input || !popup) return;
   if (viewport && !viewport.id) viewport.id = `z-listbox-${++listSeq}`;
   const state = comboState(combo);
-  const declared = combo.dataset.value ?? (hidden?.value || null) ?? optionsOf(popup).find((option) => option.getAttribute("aria-selected") === "true")?.dataset.value ?? null;
+  const declared =
+    combo.dataset.value ??
+    (hidden?.value || null) ??
+    optionsOf(popup).find((option) => option.getAttribute("aria-selected") === "true")?.dataset.value ??
+    null;
   const selected = mark(popup, declared);
   if (selected) {
     combo.dataset.value = optionValue(selected);
@@ -514,7 +530,8 @@ export function setup(on: Listen): void {
   on(document, "keydown", onKeydown);
   on(document, "input", (event) => {
     const input = event.target as Element;
-    if (input.matches?.(`${COMBO} input.z-input__control`) && inDom(input)) onComboInput(input.closest<HTMLElement>(COMBO)!, input as HTMLInputElement);
+    if (input.matches?.(`${COMBO} input.z-input__control`) && inDom(input))
+      onComboInput(input.closest<HTMLElement>(COMBO)!, input as HTMLInputElement);
   });
   // Combobox: al perder el foco el campo, la lista se cierra (también si el foco no va a ningún elemento).
   on(document, "focusout", (event) => {
@@ -542,6 +559,14 @@ export function setup(on: Listen): void {
 }
 
 export function hydrate(root: ParentNode): void {
-  for (const select of all(root, SELECT)) if (selectControl(select)) syncSelect(select, selectValue(select) || (optionsOf(popupFor(selectControl(select)) ?? select).find((option) => option.getAttribute("aria-selected") === "true")?.dataset.value ?? ""));
+  for (const select of all(root, SELECT))
+    if (selectControl(select))
+      syncSelect(
+        select,
+        selectValue(select) ||
+          (optionsOf(popupFor(selectControl(select)) ?? select).find((option) => option.getAttribute("aria-selected") === "true")?.dataset
+            .value ??
+            ""),
+      );
   for (const combo of all(root, COMBO)) hydrateCombo(combo);
 }

@@ -40,19 +40,13 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "horizontal",
-        "vertical"
-      ],
+      "values": ["horizontal", "vertical"],
       "default": "horizontal"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -71,27 +65,9 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled"
-  ],
-  "tokens": [
-    "space-20",
-    "radius-full",
-    "surface-3",
-    "accent",
-    "fg-on-accent",
-    "shadow-sm",
-    "duration-fast",
-    "ease-standard",
-    "focus-ring"
-  ],
-  "classes": [
-    "z-slider"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled"],
+  "tokens": ["space-20", "radius-full", "surface-3", "accent", "fg-on-accent", "shadow-sm", "duration-fast", "ease-standard", "focus-ring"],
+  "classes": ["z-slider"],
   "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
   "behavior": "dom",
   "examples": [

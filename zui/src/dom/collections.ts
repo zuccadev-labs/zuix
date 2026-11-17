@@ -27,7 +27,8 @@ function emit(el: Element, name: string, detail?: unknown): boolean {
 }
 
 const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
-const isDisabled = (el: Element) => el.getAttribute("aria-disabled") === "true" || el.hasAttribute("data-disabled") || (el as HTMLButtonElement).disabled === true;
+const isDisabled = (el: Element) =>
+  el.getAttribute("aria-disabled") === "true" || el.hasAttribute("data-disabled") || (el as HTMLButtonElement).disabled === true;
 
 /* ---------- Paleta de comandos: <dialog class="z-liquid z-palette"> ---------- */
 
@@ -38,7 +39,11 @@ const order = new WeakMap<Element, number>();
 const paletteInput = (dialog: Element) => dialog.querySelector<HTMLInputElement>(".z-palette__input");
 const paletteItems = (dialog: Element) => [...dialog.querySelectorAll<HTMLElement>(".z-palette__item")];
 const paletteVisible = (dialog: Element) => paletteItems(dialog).filter((item) => !item.hidden);
-const paletteIndex = (dialog: Element) => Math.max(0, paletteVisible(dialog).findIndex((item) => item.getAttribute("aria-selected") === "true"));
+const paletteIndex = (dialog: Element) =>
+  Math.max(
+    0,
+    paletteVisible(dialog).findIndex((item) => item.getAttribute("aria-selected") === "true"),
+  );
 const text = (el: Element | null | undefined) => el?.textContent?.trim() ?? "";
 
 function preparePalette(dialog: HTMLElement): void {
@@ -73,13 +78,27 @@ function filterPalette(dialog: HTMLElement): void {
   const groups = [...dialog.querySelectorAll<HTMLElement>(".z-palette__group")];
   // Comandos sueltos, sin grupo: la lista hace de grupo.
   const loose = paletteItems(dialog).filter((item) => !item.closest(".z-palette__group"));
-  const sets: Array<[HTMLElement | null, HTMLElement[], string]> = groups.map((group) => [group, [...group.querySelectorAll<HTMLElement>(".z-palette__item")], text(group.querySelector(".z-palette__heading")) || (group.getAttribute("aria-label") ?? "")]);
+  const sets: Array<[HTMLElement | null, HTMLElement[], string]> = groups.map((group) => [
+    group,
+    [...group.querySelectorAll<HTMLElement>(".z-palette__item")],
+    text(group.querySelector(".z-palette__heading")) || (group.getAttribute("aria-label") ?? ""),
+  ]);
   if (loose.length) sets.push([null, loose, ""]);
   let shown = 0;
   for (const [group, items, heading] of sets) {
     const scored = items.map((item) => {
-      const keywords = (item.dataset.keywords ?? "").split(",").map((k) => k.trim()).filter(Boolean);
-      const s = !q ? 1 : Math.max(score(q, text(item.querySelector(".z-palette__item-label")) || text(item)), score(q, text(item.querySelector(".z-palette__item-hint"))) * 0.9, ...keywords.map((k) => score(q, k) * 0.8), score(q, heading) * 0.5);
+      const keywords = (item.dataset.keywords ?? "")
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean);
+      const s = !q
+        ? 1
+        : Math.max(
+            score(q, text(item.querySelector(".z-palette__item-label")) || text(item)),
+            score(q, text(item.querySelector(".z-palette__item-hint"))) * 0.9,
+            ...keywords.map((k) => score(q, k) * 0.8),
+            score(q, heading) * 0.5,
+          );
       item.hidden = s <= 0;
       return { item, s: q ? s : 0 };
     });
@@ -158,7 +177,8 @@ function matchesHotkey(event: KeyboardEvent, spec: string): boolean {
   const key = parts.pop();
   const has = (name: string) => parts.includes(name);
   if (!key || event.key.toLowerCase() !== key) return false;
-  if (has("mod") ? !(event.ctrlKey || event.metaKey) : event.ctrlKey !== has("ctrl") || event.metaKey !== (has("meta") || has("cmd"))) return false;
+  if (has("mod") ? !(event.ctrlKey || event.metaKey) : event.ctrlKey !== has("ctrl") || event.metaKey !== (has("meta") || has("cmd")))
+    return false;
   if (event.altKey !== has("alt")) return false;
   // Sin modificadores, la tecla no debe robarse a un campo de texto; Mayús solo cuenta si se declara con otros.
   if (parts.length === 0) return !(event.target instanceof Element && event.target.closest(EDITABLE));
@@ -209,7 +229,10 @@ function focusTreeItem(tree: Element, item: HTMLElement | null | undefined): voi
 function emitTree(tree: HTMLElement): void {
   const items = treeItems(tree);
   const selected = items.find((item) => item.getAttribute("aria-selected") === "true");
-  emit(tree, "change", { value: selected ? treeValue(selected) : null, expanded: items.filter((item) => item.getAttribute("aria-expanded") === "true").map(treeValue) });
+  emit(tree, "change", {
+    value: selected ? treeValue(selected) : null,
+    expanded: items.filter((item) => item.getAttribute("aria-expanded") === "true").map(treeValue),
+  });
 }
 
 /** Expande o pliega un nodo del árbol. */
@@ -218,7 +241,8 @@ export function toggleTreeItem(item: HTMLElement, open = item.getAttribute("aria
   if (!tree || !treeGroup(item)) return;
   setExpanded(item, open);
   // El foco itinerante no puede quedar en un nodo oculto.
-  if (!open && !treeVisible(tree).some((other) => other.tabIndex === 0)) for (const other of treeItems(tree)) other.tabIndex = other === item ? 0 : -1;
+  if (!open && !treeVisible(tree).some((other) => other.tabIndex === 0))
+    for (const other of treeItems(tree)) other.tabIndex = other === item ? 0 : -1;
   emitTree(tree);
 }
 
@@ -286,7 +310,8 @@ function hydrateTree(tree: HTMLElement): void {
   const items = treeItems(tree);
   for (const item of items) if (treeGroup(item)) setExpanded(item, item.getAttribute("aria-expanded") === "true");
   const visible = treeVisible(tree);
-  const stop = visible.find((item) => item.tabIndex === 0) ?? visible.find((item) => item.getAttribute("aria-selected") === "true") ?? visible[0];
+  const stop =
+    visible.find((item) => item.tabIndex === 0) ?? visible.find((item) => item.getAttribute("aria-selected") === "true") ?? visible[0];
   for (const item of items) item.tabIndex = item === stop ? 0 : -1;
 }
 
@@ -341,7 +366,11 @@ export function sortTable(th: HTMLTableCellElement, direction: SortDirection | n
     // Orden original: el del marcado la primera vez que se ve cada fila.
     for (const row of rows) if (!rowOrder.has(row)) rowOrder.set(row, rowSeq++);
     const factor = direction === "desc" ? -1 : 1;
-    const entries = rows.map((row, index) => ({ row, index: rowOrder.get(row) ?? index, value: direction ? cellValue(row.cells[th.cellIndex], th.dataset.sort) : null }));
+    const entries = rows.map((row, index) => ({
+      row,
+      index: rowOrder.get(row) ?? index,
+      value: direction ? cellValue(row.cells[th.cellIndex], th.dataset.sort) : null,
+    }));
     entries.sort((x, y) => {
       if (!direction) return x.index - y.index;
       // Los vacíos quedan al final en ambos sentidos; el orden original desempata.
@@ -393,7 +422,9 @@ function setPageQuiet(nav: HTMLElement, page: number): boolean {
         node.setAttribute("type", "button");
         node.textContent = String(n);
         const old = text(template);
-        const label = nav.dataset.pageLabel?.replace("{page}", String(n)) ?? (template?.getAttribute("aria-label")?.includes(old) ? template.getAttribute("aria-label")!.replace(old, String(n)) : String(n));
+        const label =
+          nav.dataset.pageLabel?.replace("{page}", String(n)) ??
+          (template?.getAttribute("aria-label")?.includes(old) ? template.getAttribute("aria-label")!.replace(old, String(n)) : String(n));
         node.setAttribute("aria-label", label);
       }
       nav.insertBefore(node, cursor ?? next);
@@ -406,7 +437,8 @@ function setPageQuiet(nav: HTMLElement, page: number): boolean {
   previous.disabled = target <= 1;
   next.disabled = target >= count;
   const active = document.activeElement as HTMLButtonElement | null;
-  if (hadFocus && (!active || !nav.contains(active) || active.disabled)) nav.querySelector<HTMLElement>(':scope > [aria-current="page"]')?.focus();
+  if (hadFocus && (!active || !nav.contains(active) || active.disabled))
+    nav.querySelector<HTMLElement>(':scope > [aria-current="page"]')?.focus();
   return target !== current;
 }
 
@@ -484,19 +516,25 @@ export function setup(on: Listen): void {
   });
   on(document, "pointermove", (event) => {
     const item = (event.target as Element).closest?.<HTMLElement>(`${PALETTE} .z-palette__item`);
-    if (item && item.getAttribute("aria-selected") !== "true") setPaletteActive(item.closest<HTMLElement>(PALETTE)!, paletteVisible(item.closest(PALETTE)!).indexOf(item), false);
+    if (item && item.getAttribute("aria-selected") !== "true")
+      setPaletteActive(item.closest<HTMLElement>(PALETTE)!, paletteVisible(item.closest(PALETTE)!).indexOf(item), false);
   });
   // Abierta con data-z-open: empieza limpia igual que con openPalette().
   on(document, "z:open", (event) => {
     if ((event.target as Element).matches?.(PALETTE)) resetPalette(event.target as HTMLElement);
   });
   // Cierre pedido por el navegador (Escape, gesto atrás): pasa por la animación de salida.
-  on(document, "cancel", (event) => {
-    const dialog = event.target as HTMLDialogElement;
-    if (!dialog.matches?.(PALETTE)) return;
-    event.preventDefault();
-    if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
-  }, true);
+  on(
+    document,
+    "cancel",
+    (event) => {
+      const dialog = event.target as HTMLDialogElement;
+      if (!dialog.matches?.(PALETTE)) return;
+      event.preventDefault();
+      if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
+    },
+    true,
+  );
 }
 
 export function hydrate(root: ParentNode): void {

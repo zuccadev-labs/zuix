@@ -24,10 +24,25 @@ interface PopoverBaseProps {
 }
 
 /** El panel es un `role="dialog"`: necesita nombre accesible, con `label` o con el id de un título suyo en `aria-labelledby`. */
-export type PopoverProps = PopoverBaseProps & ({ label: string; "aria-labelledby"?: string } | { label?: undefined; "aria-labelledby": string });
+export type PopoverProps = PopoverBaseProps &
+  ({ label: string; "aria-labelledby"?: string } | { label?: undefined; "aria-labelledby": string });
 
 /** Panel flotante no modal anclado a su disparador. Escape, una pulsación fuera o salir con Tab lo cierran. */
-export function Popover({ trigger: triggerProp, open: openProp, defaultOpen, onOpenChange, side = "bottom", align = "end", sideOffset = 4, width, label, "aria-labelledby": labelledBy, modal, className, children }: PopoverProps) {
+export function Popover({
+  trigger: triggerProp,
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  side = "bottom",
+  align = "end",
+  sideOffset = 4,
+  width,
+  label,
+  "aria-labelledby": labelledBy,
+  modal,
+  className,
+  children,
+}: PopoverProps) {
   const id = useId();
   const { open, setOpen, trigger, triggerRef } = useDisclosure({ open: openProp, defaultOpen, onOpenChange, trigger: triggerProp, id });
   const panel = useRef<HTMLDivElement | null>(null);

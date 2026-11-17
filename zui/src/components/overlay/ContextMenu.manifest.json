@@ -23,10 +23,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "md",
-        "lg"
-      ],
+      "values": ["md", "lg"],
       "default": "md"
     },
     {
@@ -39,12 +36,7 @@
       "type": "(open: boolean) => void"
     }
   ],
-  "states": [
-    "open",
-    "closed",
-    "highlighted",
-    "disabled"
-  ],
+  "states": ["open", "closed", "highlighted", "disabled"],
   "tokens": [
     "danger",
     "duration-fast",

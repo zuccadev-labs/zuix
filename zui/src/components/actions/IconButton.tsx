@@ -16,7 +16,19 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   ref?: Ref<HTMLButtonElement>;
 }
 
-export function IconButton({ icon, label, variant = "ghost", size = "md", iconVariant = "outline", active, loading, className, disabled, onClick, ...rest }: IconButtonProps) {
+export function IconButton({
+  icon,
+  label,
+  variant = "ghost",
+  size = "md",
+  iconVariant = "outline",
+  active,
+  loading,
+  className,
+  disabled,
+  onClick,
+  ...rest
+}: IconButtonProps) {
   return (
     <button
       type="button"

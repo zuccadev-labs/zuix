@@ -77,7 +77,9 @@ function useWidth() {
     if (!el) return;
     setWidth(el.getBoundingClientRect().width);
     if (typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(([entry]) => { if (entry) setWidth(entry.contentRect.width); });
+    const ro = new ResizeObserver(([entry]) => {
+      if (entry) setWidth(entry.contentRect.width);
+    });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -139,9 +141,22 @@ function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | 
  * Los paneles laterales se acoplan si caben y pasan a cajón con velo si no. Origen: AppShell de zutool.
  */
 export function Shell({
-  titlebar, rail, sidebar, inspector, header, children, surface = "glass",
-  sidebarBreakpoint = SIDEBAR_BREAKPOINT, inspectorBreakpoint = INSPECTOR_BREAKPOINT, onCloseOverlay, onModeChange, closeOverlayLabel = "Close panel", overlays,
-  skipLinkLabel, mainAs: Main = "main", className,
+  titlebar,
+  rail,
+  sidebar,
+  inspector,
+  header,
+  children,
+  surface = "glass",
+  sidebarBreakpoint = SIDEBAR_BREAKPOINT,
+  inspectorBreakpoint = INSPECTOR_BREAKPOINT,
+  onCloseOverlay,
+  onModeChange,
+  closeOverlayLabel = "Close panel",
+  overlays,
+  skipLinkLabel,
+  mainAs: Main = "main",
+  className,
 }: ShellProps) {
   const [ref, width] = useWidth();
   const mainId = useId();
@@ -181,17 +196,32 @@ export function Shell({
     // `data-measured`: hasta que se mide el ancho (servidor, antes de hidratar) la hoja oculta con una consulta de
     // contenedor los paneles `auto` que no caben, para que una ventana estrecha no los muestre acoplados un instante.
     <div ref={ref} className={cx("z-shell z-canvas z-root", className)} data-measured={width !== null ? "" : undefined}>
-      {skipLinkLabel ? <a className="z-shell__skip" href={`#${mainId}`}>{skipLinkLabel}</a> : null}
+      {skipLinkLabel ? (
+        <a className="z-shell__skip" href={`#${mainId}`}>
+          {skipLinkLabel}
+        </a>
+      ) : null}
       {titlebar}
       <div className="z-shell__body">
         {/* Con un cajón abierto todo lo que queda bajo el velo es inerte: rail, área principal y el panel que siga acoplado. */}
-        {rail ? <div className="z-shell__rail" inert={drawerOpen ? true : undefined}>{rail}</div> : null}
+        {rail ? (
+          <div className="z-shell__rail" inert={drawerOpen ? true : undefined}>
+            {rail}
+          </div>
+        ) : null}
         {sidebar && sideMode ? <Side panel={sidebar} side="left" mode={sideMode} inert={drawerOpen && sideMode === "docked"} /> : null}
-        <Main id={mainId} tabIndex={skipLinkLabel ? -1 : undefined} className={cx("z-shell__main", surface === "glass" && "z-liquid", surface === "solid" && "z-solid")} inert={drawerOpen ? true : undefined}>
+        <Main
+          id={mainId}
+          tabIndex={skipLinkLabel ? -1 : undefined}
+          className={cx("z-shell__main", surface === "glass" && "z-liquid", surface === "solid" && "z-solid")}
+          inert={drawerOpen ? true : undefined}
+        >
           {header ? <header className="z-shell__header">{header}</header> : null}
           <div className="z-shell__content">{children}</div>
         </Main>
-        {inspector && inspectorMode ? <Side panel={inspector} side="right" mode={inspectorMode} inert={drawerOpen && inspectorMode === "docked"} /> : null}
+        {inspector && inspectorMode ? (
+          <Side panel={inspector} side="right" mode={inspectorMode} inert={drawerOpen && inspectorMode === "docked"} />
+        ) : null}
         {drawerOpen ? <button type="button" className="z-shell__scrim" aria-label={closeOverlayLabel} onClick={onCloseOverlay} /> : null}
       </div>
       {overlays}

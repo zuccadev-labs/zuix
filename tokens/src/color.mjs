@@ -7,12 +7,16 @@ const NAMED = { transparent: [0, 0, 0, 0], white: [255, 255, 255, 1], black: [0,
 /** Parte `text` por las comas de primer nivel (fuera de paréntesis). */
 export function splitTop(text, separator = ",") {
   const parts = [];
-  let depth = 0, start = 0;
+  let depth = 0,
+    start = 0;
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     if (ch === "(") depth++;
     else if (ch === ")") depth--;
-    else if (ch === separator && depth === 0) { parts.push(text.slice(start, i)); start = i + 1; }
+    else if (ch === separator && depth === 0) {
+      parts.push(text.slice(start, i));
+      start = i + 1;
+    }
   }
   parts.push(text.slice(start));
   return parts.map((p) => p.trim());
@@ -76,7 +80,10 @@ export const flatten = (layers) => layers.reduce((acc, layer) => over(layer, acc
 
 /** Luminancia relativa (WCAG 2.2, «relative luminance»). */
 export function luminance(c) {
-  const f = (x) => { x /= 255; return x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; };
+  const f = (x) => {
+    x /= 255;
+    return x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
+  };
   return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
 }
 
@@ -86,7 +93,14 @@ export function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-export const toHex = (c) => `#${[0, 1, 2].map((i) => Math.round(Math.max(0, Math.min(255, c[i]))).toString(16).padStart(2, "0")).join("")}`;
+export const toHex = (c) =>
+  `#${[0, 1, 2]
+    .map((i) =>
+      Math.round(Math.max(0, Math.min(255, c[i])))
+        .toString(16)
+        .padStart(2, "0"),
+    )
+    .join("")}`;
 
 /**
  * Colores opacos que puede tener el fondo de aplicación: el color plano y los extremos del degradado
@@ -96,9 +110,18 @@ export const toHex = (c) => `#${[0, 1, 2].map((i) => Math.round(Math.max(0, Math
 export function canvasCandidates(flat, gradient) {
   const out = flat ? [flat] : [];
   const layers = gradient ? splitTop(gradient) : [];
-  const stops = (layer) => splitTop(layer.replace(/^[a-z-]+\(/, "").replace(/\)$/, "")).map((s) => parseColor(s.replace(/\s+-?[\d.]+%$/, ""))).filter(Boolean);
-  const linear = layers.filter((l) => l.startsWith("linear-gradient(")).flatMap(stops).filter((c) => c[3] === 1);
-  const spots = layers.filter((l) => l.startsWith("radial-gradient(")).flatMap(stops).filter((c) => c[3] > 0);
+  const stops = (layer) =>
+    splitTop(layer.replace(/^[a-z-]+\(/, "").replace(/\)$/, ""))
+      .map((s) => parseColor(s.replace(/\s+-?[\d.]+%$/, "")))
+      .filter(Boolean);
+  const linear = layers
+    .filter((l) => l.startsWith("linear-gradient("))
+    .flatMap(stops)
+    .filter((c) => c[3] === 1);
+  const spots = layers
+    .filter((l) => l.startsWith("radial-gradient("))
+    .flatMap(stops)
+    .filter((c) => c[3] > 0);
   const bases = linear.length ? linear : out;
   out.push(...linear);
   for (const base of bases) for (const spot of spots) out.push(over(spot, base));

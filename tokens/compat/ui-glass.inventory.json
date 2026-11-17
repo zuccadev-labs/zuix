@@ -1,7 +1,5 @@
 {
-  "sheets": [
-    "packages/ui-glass/src/tokens.css"
-  ],
+  "sheets": ["packages/ui-glass/src/tokens.css"],
   "conflicts": [],
   "declared": {
     "--accent": {
@@ -355,7 +353,5 @@
   },
   "locations": {},
   "usedLocal": [],
-  "usedUndefined": [
-    "--lg-bg"
-  ]
+  "usedUndefined": ["--lg-bg"]
 }

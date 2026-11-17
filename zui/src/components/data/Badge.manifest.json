@@ -7,33 +7,19 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "neutral",
-        "accent",
-        "success",
-        "warning",
-        "danger",
-        "info"
-      ],
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
       "default": "neutral"
     },
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "soft",
-        "solid",
-        "outline"
-      ],
+      "values": ["soft", "solid", "outline"],
       "default": "soft"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -47,9 +33,7 @@
       "type": "IconName"
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -75,9 +59,7 @@
     "fg",
     "canvas"
   ],
-  "classes": [
-    "z-badge"
-  ],
+  "classes": ["z-badge"],
   "a11y": "span sin rol: el texto debe bastar; el color no es el único indicador.",
   "examples": [
     {

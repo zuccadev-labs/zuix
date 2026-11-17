@@ -34,7 +34,17 @@ export interface SegmentedControlProps<T extends string = string> {
  * Selector de una opción entre pocas, siempre con una elegida. Es un `radiogroup` (patrón APG): una sola parada de
  * tabulación y las flechas mueven el foco y la selección.
  */
-export function SegmentedControl<T extends string = string>({ items, value, defaultValue, onValueChange, size = "md", fullWidth, disabled, label, className }: SegmentedControlProps<T>) {
+export function SegmentedControl<T extends string = string>({
+  items,
+  value,
+  defaultValue,
+  onValueChange,
+  size = "md",
+  fullWidth,
+  disabled,
+  label,
+  className,
+}: SegmentedControlProps<T>) {
   const [current, setCurrent] = useControllable<T | undefined>(value, defaultValue, onValueChange as (value: T | undefined) => void);
   const off = (item: SegmentedItem<T>) => Boolean(disabled || item.disabled);
   // Parada de tabulación: la opción elegida o, si no hay ninguna, la primera habilitada.
@@ -43,7 +53,9 @@ export function SegmentedControl<T extends string = string>({ items, value, defa
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const from = event.target instanceof Element ? event.target.closest<HTMLButtonElement>(".z-segmented__item") : null;
     if (!from) return;
-    const list = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(":scope > .z-segmented__item")].filter((item) => !item.disabled);
+    const list = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(":scope > .z-segmented__item")].filter(
+      (item) => !item.disabled,
+    );
     // En RTL la flecha izquierda avanza: la dirección se lee del DOM.
     const next = moveBoth(list, from, logicalKey(event.key, from));
     if (!next) return;
@@ -53,7 +65,15 @@ export function SegmentedControl<T extends string = string>({ items, value, defa
   };
 
   return (
-    <div role="radiogroup" aria-label={label} aria-disabled={disabled || undefined} className={cx("z-segmented", className)} data-size={size} data-block={fullWidth || undefined} onKeyDown={onKeyDown}>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      aria-disabled={disabled || undefined}
+      className={cx("z-segmented", className)}
+      data-size={size}
+      data-block={fullWidth || undefined}
+      onKeyDown={onKeyDown}
+    >
       {items.map((item) => {
         const checked = item.value === current;
         return (

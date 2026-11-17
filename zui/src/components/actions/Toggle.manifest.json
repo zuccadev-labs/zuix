@@ -21,11 +21,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -43,14 +39,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "on",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "on", "disabled"],
   "tokens": [
     "space-2",
     "control-height-md",
@@ -74,9 +63,7 @@
     "space-4",
     "text-title"
   ],
-  "classes": [
-    "z-toggle"
-  ],
+  "classes": ["z-toggle"],
   "a11y": "Elemento button con aria-pressed y data-state on/off.",
   "examples": [
     {

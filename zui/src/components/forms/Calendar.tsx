@@ -1,7 +1,19 @@
 "use client";
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
-import { addDays, addMonths, daysInMonth, localeWeekStart, monthOf, MONTH, pad, parse, todayISO, valid, type DateRange } from "../../core/date";
+import {
+  addDays,
+  addMonths,
+  daysInMonth,
+  localeWeekStart,
+  monthOf,
+  MONTH,
+  pad,
+  parse,
+  todayISO,
+  valid,
+  type DateRange,
+} from "../../core/date";
 import { cx } from "../../cx";
 
 export { todayISO };
@@ -77,7 +89,10 @@ export function Calendar(props: CalendarProps) {
   const [inner, setInner] = useState<string | DateRange | null>(props.defaultValue ?? null);
   const raw = props.value === undefined ? inner : props.value;
   const single = mode === "single" && typeof raw === "string" && valid(raw) ? raw : null;
-  const range: DateRange = mode === "range" && raw && typeof raw === "object" ? { from: valid(raw.from) ? raw.from : null, to: valid(raw.to) ? raw.to : null } : { from: null, to: null };
+  const range: DateRange =
+    mode === "range" && raw && typeof raw === "object"
+      ? { from: valid(raw.from) ? raw.from : null, to: valid(raw.to) ? raw.to : null }
+      : { from: null, to: null };
   const anchorDate = single ?? range.from;
 
   // Hoy se resuelve tras montar: el HTML del servidor no depende del reloj.
@@ -88,13 +103,17 @@ export function Calendar(props: CalendarProps) {
   // Sin `month`, `defaultMonth` ni valor, el mes sale del reloj. El reloj del servidor y el del navegador pueden
   // caer en meses distintos (zona horaria, HTML estático generado otro mes): durante la hidratación se toma el mes
   // que el servidor dejó en `data-month`, y justo después React vuelve a pintar con el reloj del navegador.
-  const [innerMonth, setInnerMonth] = useState<string | null>(() => (defaultMonth && MONTH.test(defaultMonth) ? defaultMonth : anchorDate ? monthOf(anchorDate) : null));
+  const [innerMonth, setInnerMonth] = useState<string | null>(() =>
+    defaultMonth && MONTH.test(defaultMonth) ? defaultMonth : anchorDate ? monthOf(anchorDate) : null,
+  );
   const clockMonth = () => {
     const now = todayISO();
     return monthOf(valid(min) && min > now ? min : valid(max) && max < now ? max : now);
   };
   const fallbackMonth = useSyncExternalStore(noSubscription, clockMonth, () =>
-    typeof document === "undefined" ? clockMonth() : (document.getElementById(titleId)?.closest<HTMLElement>(".z-calendar")?.dataset.month ?? clockMonth()),
+    typeof document === "undefined"
+      ? clockMonth()
+      : (document.getElementById(titleId)?.closest<HTMLElement>(".z-calendar")?.dataset.month ?? clockMonth()),
   );
   const visibleMonth = month && MONTH.test(month) ? month : (innerMonth ?? fallbackMonth);
   const [focused, setFocused] = useState<string | null>(null);
@@ -164,7 +183,11 @@ export function Calendar(props: CalendarProps) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: foco inicial; se ejecuta solo al montar con los valores de ese momento (repetirlo robaría el foco en cada cambio de selección).
   useEffect(() => {
     // Sin selección el foco va a hoy: `today` aún no está resuelto en este primer efecto, así que se busca por fecha.
-    if (autoFocus) (grid.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${anchorDate ?? todayISO()}"]`) ?? grid.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]'))?.focus();
+    if (autoFocus)
+      (
+        grid.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${anchorDate ?? todayISO()}"]`) ??
+        grid.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]')
+      )?.focus();
     // Solo al montar.
   }, []);
 
@@ -177,7 +200,12 @@ export function Calendar(props: CalendarProps) {
       showMonth(monthOf(date));
     }
     if (props.mode === "range") {
-      const next: DateRange = !range.from || range.to ? { from: date, to: null } : date < range.from ? { from: date, to: range.from } : { from: range.from, to: date };
+      const next: DateRange =
+        !range.from || range.to
+          ? { from: date, to: null }
+          : date < range.from
+            ? { from: date, to: range.from }
+            : { from: range.from, to: date };
       setInner(next);
       setPreview(null);
       props.onValueChange?.(next);
@@ -230,7 +258,8 @@ export function Calendar(props: CalendarProps) {
   // Rango pintado: el elegido o, con solo el inicio, la vista previa hasta el día bajo el puntero o el foco.
   const previewing = mode === "range" && range.from && !range.to && preview && preview !== range.from ? preview : null;
   // Las fechas ISO se ordenan como texto: la banda va de la menor a la mayor.
-  const [bandFrom, bandTo] = previewing && range.from ? (previewing < range.from ? [previewing, range.from] : [range.from, previewing]) : [range.from, range.to];
+  const [bandFrom, bandTo] =
+    previewing && range.from ? (previewing < range.from ? [previewing, range.from] : [range.from, previewing]) : [range.from, range.to];
   const rangePart = (date: string) => {
     if (mode !== "range" || !bandFrom) return undefined;
     if (!bandTo || bandFrom === bandTo) return date === bandFrom ? "single" : undefined;
@@ -239,23 +268,48 @@ export function Calendar(props: CalendarProps) {
     return date > bandFrom && date < bandTo ? "middle" : undefined;
   };
 
-  const weekdays = (weeks[0] ?? []).map((date) => ({ short: formats.weekdayShort.format(parse(date)), long: formats.weekdayLong.format(parse(date)) }));
+  const weekdays = (weeks[0] ?? []).map((date) => ({
+    short: formats.weekdayShort.format(parse(date)),
+    long: formats.weekdayLong.format(parse(date)),
+  }));
 
   return (
     <div id={id} className={cx("z-calendar", className)} data-mode={mode} data-month={visibleMonth}>
       <div className="z-calendar__header">
-        <button type="button" className="z-calendar__nav" aria-label={previousMonthLabel} title={previousMonthLabel} disabled={!canGoBack} onClick={() => shiftMonth(-1)}>
+        <button
+          type="button"
+          className="z-calendar__nav"
+          aria-label={previousMonthLabel}
+          title={previousMonthLabel}
+          disabled={!canGoBack}
+          onClick={() => shiftMonth(-1)}
+        >
           <Icon name="chevron-left" size={16} />
         </button>
         <div className="z-calendar__title" id={titleId} aria-live="polite">
           {formats.title.format(parse(first))}
         </div>
-        <button type="button" className="z-calendar__nav" aria-label={nextMonthLabel} title={nextMonthLabel} disabled={!canGoForward} onClick={() => shiftMonth(1)}>
+        <button
+          type="button"
+          className="z-calendar__nav"
+          aria-label={nextMonthLabel}
+          title={nextMonthLabel}
+          disabled={!canGoForward}
+          onClick={() => shiftMonth(1)}
+        >
           <Icon name="chevron-right" size={16} />
         </button>
       </div>
       {/* biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «date picker grid»: una tabla con role="grid" conserva filas, cabeceras y celdas y añade la navegación con flechas. */}
-      <table ref={grid} className="z-calendar__grid" role="grid" aria-labelledby={titleId} aria-multiselectable={mode === "range" || undefined} onKeyDown={handleKeyDown} onMouseLeave={() => setPreview(null)}>
+      <table
+        ref={grid}
+        className="z-calendar__grid"
+        role="grid"
+        aria-labelledby={titleId}
+        aria-multiselectable={mode === "range" || undefined}
+        onKeyDown={handleKeyDown}
+        onMouseLeave={() => setPreview(null)}
+      >
         <thead>
           <tr>
             {weekdays.map((weekday) => (
@@ -277,7 +331,13 @@ export function Calendar(props: CalendarProps) {
                 const isDisabled = unavailable(date);
                 return (
                   // biome-ignore lint/a11y/useAriaPropsSupportedByRole: dentro de una tabla con role="grid" la celda es un gridcell implícito, que sí admite aria-selected.
-                  <td key={date} className="z-calendar__cell" aria-selected={isSelected || inRange} data-range={part} data-preview={part && previewing ? "" : undefined}>
+                  <td
+                    key={date}
+                    className="z-calendar__cell"
+                    aria-selected={isSelected || inRange}
+                    data-range={part}
+                    data-preview={part && previewing ? "" : undefined}
+                  >
                     <button
                       type="button"
                       className="z-calendar__day"

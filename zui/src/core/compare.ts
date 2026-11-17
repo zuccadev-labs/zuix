@@ -3,7 +3,8 @@
 // `instanceof Date` falla con fechas creadas en otro realm (un iframe, un entorno de pruebas): se mira la etiqueta.
 export const isDate = (value: unknown): value is Date => Object.prototype.toString.call(value) === "[object Date]";
 
-const empty = (value: unknown) => value == null || (typeof value === "number" && Number.isNaN(value)) || (isDate(value) && Number.isNaN(value.getTime()));
+const empty = (value: unknown) =>
+  value == null || (typeof value === "number" && Number.isNaN(value)) || (isDate(value) && Number.isNaN(value.getTime()));
 
 /** Compara dos valores de celda en orden ascendente; el texto, sin distinguir mayúsculas y con números naturales. */
 export function compare(a: unknown, b: unknown): number {

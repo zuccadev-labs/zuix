@@ -17,7 +17,8 @@ const development = process.env.NODE_ENV === "development";
 // Un proyecto externo guarda la caché del empaquetador en su carpeta de trabajo, no en la común.
 const bundlerCache = (): Plugin => ({
   name: "zudocs-bundler-cache",
-  configureWebpack: () => ({ experiments: { cache: { type: "persistent", storage: { type: "filesystem", directory: zudocs.bundlerCacheDir } } } }) as object,
+  configureWebpack: () =>
+    ({ experiments: { cache: { type: "persistent", storage: { type: "filesystem", directory: zudocs.bundlerCacheDir } } } }) as object,
 });
 
 // Iconos del paquete común: solo los que el sitio puede dibujar (scripts/icons.mjs). El módulo se escribe
@@ -34,8 +35,20 @@ const mermaidThemes = zudocs.mermaid ? [require.resolve("@docusaurus/theme-merma
 
 // Tema claro del código: el "github" de Prism con los colores que no llegan a 4,5:1 sobre el fondo del
 // bloque (comentarios, cadenas, propiedades, etiquetas) sustituidos por tonos más oscuros de la misma familia.
-const AA: Record<string, string> = { "#999988": "#5f6a61", "#e3116c": "#b80d55", "#36acaa": "#0b6e6c", "#00a4db": "#0a6aa1", "#d73a49": "#b4232f" };
-const prismLight = { ...prism.github, styles: prism.github.styles.map((s) => ({ ...s, style: { ...s.style, color: AA[String(s.style.color).toLowerCase()] ?? s.style.color } })) };
+const AA: Record<string, string> = {
+  "#999988": "#5f6a61",
+  "#e3116c": "#b80d55",
+  "#36acaa": "#0b6e6c",
+  "#00a4db": "#0a6aa1",
+  "#d73a49": "#b4232f",
+};
+const prismLight = {
+  ...prism.github,
+  styles: prism.github.styles.map((s) => ({
+    ...s,
+    style: { ...s.style, color: AA[String(s.style.color).toLowerCase()] ?? s.style.color },
+  })),
+};
 
 const favicon = site.favicon ?? site.logo?.src;
 
@@ -77,7 +90,15 @@ const config: Config = {
         },
         blog: false,
         // Las páginas de catálogo se activan con `pages` en la configuración; las demás no se enrutan.
-        pages: { exclude: ["**/_*.{js,jsx,ts,tsx,md,mdx}", "**/_*/**", "**/*.test.{js,jsx,ts,tsx}", "**/__tests__/**", ...PAGES.filter((p) => !pages[p]).map((p) => `${p}.tsx`)] },
+        pages: {
+          exclude: [
+            "**/_*.{js,jsx,ts,tsx,md,mdx}",
+            "**/_*/**",
+            "**/*.test.{js,jsx,ts,tsx}",
+            "**/__tests__/**",
+            ...PAGES.filter((p) => !pages[p]).map((p) => `${p}.tsx`),
+          ],
+        },
         // changefreq y priority no los usa ningún buscador; lastmod pediría el historial de git de un proyecto ajeno.
         sitemap: { changefreq: null, priority: null, lastmod: null, ignorePatterns: ["**/search", "**/search/"] },
         theme: {
@@ -101,7 +122,16 @@ const config: Config = {
       : [
           [
             require.resolve("@easyops-cn/docusaurus-search-local"),
-            { hashed: true, language: search?.languages ?? ["es", "en"], indexBlog: false, docsRouteBasePath: "docs", docsDir, searchBarPosition: "right", highlightSearchTermsOnTargetPage: true, explicitSearchResultPath: true },
+            {
+              hashed: true,
+              language: search?.languages ?? ["es", "en"],
+              indexBlog: false,
+              docsRouteBasePath: "docs",
+              docsDir,
+              searchBarPosition: "right",
+              highlightSearchTermsOnTargetPage: true,
+              explicitSearchResultPath: true,
+            },
           ] as [string, object],
         ]),
   ],
@@ -109,10 +139,15 @@ const config: Config = {
   themeConfig: {
     colorMode: { defaultMode: site.defaultTheme ?? "dark", respectPrefersColorScheme: false },
     image: site.image,
-    metadata: [{ property: "og:site_name", content: site.name }, { property: "og:type", content: "website" }],
+    metadata: [
+      { property: "og:site_name", content: site.name },
+      { property: "og:type", content: "website" },
+    ],
     navbar: {
       title: site.name,
-      logo: site.logo ? { src: site.logo.src, srcDark: site.logo.srcDark ?? site.logo.src, alt: site.logo.alt ?? "", width: 32, height: 32 } : undefined,
+      logo: site.logo
+        ? { src: site.logo.src, srcDark: site.logo.srcDark ?? site.logo.src, alt: site.logo.alt ?? "", width: 32, height: 32 }
+        : undefined,
       items: [
         ...areas.map((a) => ({ type: "docSidebar" as const, sidebarId: a.id, label: a.label, position: "left" as const })),
         ...(site.navbar ?? []).map((n) => ({ ...n, position: "right" as const })),

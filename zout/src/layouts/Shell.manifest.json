@@ -3,9 +3,7 @@
   "group": "layout",
   "description": "Estructura general de una aplicación. Los paneles laterales se acoplan si caben y pasan a cajón con velo si no.",
   "import": "import { Shell } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "Shell"
-  ],
+  "exports": ["Shell"],
   "zones": [
     {
       "name": "titlebar",
@@ -59,11 +57,7 @@
     {
       "name": "surface",
       "type": "enum",
-      "values": [
-        "glass",
-        "solid",
-        "none"
-      ],
+      "values": ["glass", "solid", "none"],
       "default": "glass",
       "description": "`solid` para lectura o edición de texto denso."
     },
@@ -101,11 +95,7 @@
     {
       "name": "mainAs",
       "type": "enum",
-      "values": [
-        "main",
-        "div",
-        "section"
-      ],
+      "values": ["main", "div", "section"],
       "default": "main",
       "description": "Elemento del área principal. Solo puede haber un <main> visible por documento: un Shell anidado o un segundo Shell en la misma página usa `div` o `section`."
     }
@@ -122,9 +112,7 @@
     "layer-overlay",
     "line"
   ],
-  "classes": [
-    "z-shell"
-  ],
+  "classes": ["z-shell"],
   "a11y": "Regiones: la TitleBar es <header> (banner), el Rail es <nav> (navigation), el área principal es <main> (o lo que diga `mainAs`) y los paneles son <aside> con nombre (complementary). `skipLinkLabel` añade un enlace para saltar al contenido. En modo cajón el panel es role=dialog con aria-modal, recibe el foco al abrirse y lo devuelve al cerrarse; el rail, el área principal y el otro panel quedan inertes, y Escape o el velo lo cierran. La barra de título sigue operable para poder alternar los paneles. Escape no cierra el cajón si lo gestiona una capa por encima (un <dialog> o un popover abiertos). Sigue la dirección de escritura: en RTL la sidebar y su cajón quedan a la derecha. Antes de medirse (HTML de servidor, o antes de init()), un panel `auto` que no cabe no se muestra.",
   "examples": [
     {

@@ -39,18 +39,40 @@ async function until(page, fn, message, arg, timeout = TIMEOUT) {
 }
 
 const visible = (page, selector, message = `${selector} visible`) =>
-  page.waitForSelector(selector, { state: "visible", timeout: TIMEOUT }).catch(() => { throw new Error(`No se cumplió: ${message}`); });
+  page.waitForSelector(selector, { state: "visible", timeout: TIMEOUT }).catch(() => {
+    throw new Error(`No se cumplió: ${message}`);
+  });
 const gone = (page, selector, message = `${selector} retirado`) =>
-  page.waitForSelector(selector, { state: "detached", timeout: TIMEOUT }).catch(() => { throw new Error(`No se cumplió: ${message}`); });
+  page.waitForSelector(selector, { state: "detached", timeout: TIMEOUT }).catch(() => {
+    throw new Error(`No se cumplió: ${message}`);
+  });
 
 /** Espera a que terminen las animaciones y transiciones finitas (entrada de capas, muelles CSS). */
 const settled = (page) =>
-  until(page, () => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity), "las animaciones terminan");
+  until(
+    page,
+    () => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+    "las animaciones terminan",
+  );
 
 const focusInside = (page, selector, message = `foco dentro de ${selector}`) =>
-  poll(() => page.locator(selector).first().evaluate((el) => el.contains(document.activeElement) && document.activeElement !== document.body), message);
+  poll(
+    () =>
+      page
+        .locator(selector)
+        .first()
+        .evaluate((el) => el.contains(document.activeElement) && document.activeElement !== document.body),
+    message,
+  );
 const focusOn = (page, selector, message = `foco en ${selector}`) =>
-  poll(() => page.locator(selector).first().evaluate((el) => el === document.activeElement), message);
+  poll(
+    () =>
+      page
+        .locator(selector)
+        .first()
+        .evaluate((el) => el === document.activeElement),
+    message,
+  );
 const expectAttr = (page, selector, name, value, message = `${selector} con ${name}="${value}"`) =>
   poll(async () => (await page.locator(selector).first().getAttribute(name)) === value, message);
 const expectText = (page, selector, expected, message = `${selector} con texto "${expected}"`) =>
@@ -70,7 +92,14 @@ async function expectFocusTrap(page, selector, presses = 6) {
 }
 
 const menuFocus = (page, prefix, message = "elemento de menú enfocado") =>
-  poll(() => page.evaluate((p) => document.activeElement?.getAttribute("role") === "menuitem" && document.activeElement.textContent.startsWith(p), prefix), `${message}: "${prefix}"`);
+  poll(
+    () =>
+      page.evaluate(
+        (p) => document.activeElement?.getAttribute("role") === "menuitem" && document.activeElement.textContent.startsWith(p),
+        prefix,
+      ),
+    `${message}: "${prefix}"`,
+  );
 /**
  * Clic fuera de una capa recién abierta. Se espera al reposo: un clic sintético en el mismo frame de la apertura llega
  * antes de que la capa termine de montarse y colocarse (una persona no llega a tiempo).
@@ -102,8 +131,10 @@ async function expectInViewport(page, selector) {
   const box = await page.locator(selector).first().boundingBox();
   const size = page.viewportSize();
   assert(box, `${selector} sin caja`);
-  assert(box.x >= -0.5 && box.y >= -0.5 && box.x + box.width <= size.width + 0.5 && box.y + box.height <= size.height + 0.5,
-    `${selector} se sale de la ventana: ${JSON.stringify(box)} en ${size.width}×${size.height}`);
+  assert(
+    box.x >= -0.5 && box.y >= -0.5 && box.x + box.width <= size.width + 0.5 && box.y + box.height <= size.height + 0.5,
+    `${selector} se sale de la ventana: ${JSON.stringify(box)} en ${size.width}×${size.height}`,
+  );
 }
 
 async function drag(page, from, to, steps = 12) {
@@ -127,17 +158,38 @@ async function overflowReport(page) {
   return page.evaluate(() => {
     const out = [];
     const vw = window.innerWidth;
-    const check = (el, name) => { if (el && el.scrollWidth > el.clientWidth + 1) out.push(`${name}: scrollWidth ${el.scrollWidth} > ${el.clientWidth}`); };
+    const check = (el, name) => {
+      if (el && el.scrollWidth > el.clientWidth + 1) out.push(`${name}: scrollWidth ${el.scrollWidth} > ${el.clientWidth}`);
+    };
     check(document.documentElement, "html");
     check(document.body, "body");
-    for (const s of [".z-shell", ".z-shell__body", ".z-shell__main", ".z-shell__content", ".z-page", ".z-container", ".z-page__body", ".z-titlebar"]) check(document.querySelector(s), s);
+    for (const s of [
+      ".z-shell",
+      ".z-shell__body",
+      ".z-shell__main",
+      ".z-shell__content",
+      ".z-page",
+      ".z-container",
+      ".z-page__body",
+      ".z-titlebar",
+    ])
+      check(document.querySelector(s), s);
     // Elementos visibles que asoman por la derecha o la izquierda sin estar en un contenedor con desplazamiento horizontal propio.
-    const scrollsX = (el) => { for (let n = el.parentElement; n; n = n.parentElement) { const o = getComputedStyle(n).overflowX; if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true; if (n.classList.contains("z-carousel__viewport")) return true; } return false; };
+    const scrollsX = (el) => {
+      for (let n = el.parentElement; n; n = n.parentElement) {
+        const o = getComputedStyle(n).overflowX;
+        if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
+        if (n.classList.contains("z-carousel__viewport")) return true;
+      }
+      return false;
+    };
     for (const el of document.querySelectorAll(".z-shell *")) {
       const r = el.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) continue;
       if ((r.right > vw + 1 || r.left < -1) && !scrollsX(el) && getComputedStyle(el).visibility !== "hidden") {
-        out.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} [${Math.round(r.left)}, ${Math.round(r.right)}] fuera de 0–${vw}`);
+        out.push(
+          `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]} [${Math.round(r.left)}, ${Math.round(r.right)}] fuera de 0–${vw}`,
+        );
         if (out.length > 12) break;
       }
     }
@@ -158,7 +210,14 @@ async function inPageAndModal(page, fn) {
   await fn("modal");
   assert(await page.isVisible(".z-modal"), "el modal sigue abierto tras usar los controles");
   // Al cerrar su capa, el control recupera el foco tras el cierre (no en el mismo instante): se espera a que vuelva.
-  await poll(() => page.evaluate(() => { const a = document.activeElement; return !!a && a !== document.body && !!a.closest(".z-modal"); }), "el foco sigue dentro del modal");
+  await poll(
+    () =>
+      page.evaluate(() => {
+        const a = document.activeElement;
+        return !!a && a !== document.body && !!a.closest(".z-modal");
+      }),
+    "el foco sigue dentro del modal",
+  );
   await page.keyboard.press("Escape");
   await gone(page, ".z-modal");
   await focusOn(page, t("open-forms-modal"), "al cerrar el modal el foco vuelve a su disparador");
@@ -175,8 +234,12 @@ export const cases = [
       await page.click(t("open-modal"));
       await visible(page, "dialog.z-modal:modal");
       await focusInside(page, ".z-modal");
-      assert(await page.getAttribute(".z-modal", "aria-modal") !== "false", "el modal debe ser modal");
-      const labelled = await page.evaluate(() => { const d = document.querySelector(".z-modal"); const id = d?.getAttribute("aria-labelledby"); return id ? document.getElementById(id)?.textContent : null; });
+      assert((await page.getAttribute(".z-modal", "aria-modal")) !== "false", "el modal debe ser modal");
+      const labelled = await page.evaluate(() => {
+        const d = document.querySelector(".z-modal");
+        const id = d?.getAttribute("aria-labelledby");
+        return id ? document.getElementById(id)?.textContent : null;
+      });
       assert(labelled === "Invite member", `aria-labelledby apunta a "${labelled}"`);
       await settled(page);
       await expectInViewport(page, ".z-modal");
@@ -273,7 +336,10 @@ export const cases = [
       await page.click(t("open-confirm"));
       await visible(page, ".z-confirm[role=alertdialog]");
       await focusInside(page, ".z-confirm");
-      await poll(() => page.evaluate(() => document.activeElement?.textContent === "Cancel"), "el foco inicial va a Cancel (la acción menos destructiva)");
+      await poll(
+        () => page.evaluate(() => document.activeElement?.textContent === "Cancel"),
+        "el foco inicial va a Cancel (la acción menos destructiva)",
+      );
       await expectFocusTrap(page, ".z-confirm", 5);
       await shot(page, "overlay-confirm");
       // El velo no cierra un alertdialog.
@@ -351,7 +417,10 @@ export const cases = [
       await expectOnTop(page, ".z-popover");
       const trigger = await page.locator(t("open-popover")).boundingBox();
       const pop = await page.locator(".z-popover").boundingBox();
-      assert(Math.abs(pop.y - (trigger.y + trigger.height)) < 16 && Math.abs(pop.x - trigger.x) < 4, `el popover no está anclado al disparador: ${JSON.stringify({ trigger, pop })}`);
+      assert(
+        Math.abs(pop.y - (trigger.y + trigger.height)) < 16 && Math.abs(pop.x - trigger.x) < 4,
+        `el popover no está anclado al disparador: ${JSON.stringify({ trigger, pop })}`,
+      );
       assert(Math.abs(pop.width - 260) < 2, `ancho del popover ${pop.width}, se pidió 260`);
       await shot(page, "overlay-popover");
       await page.fill(t("popover-input"), "urgent");
@@ -374,7 +443,10 @@ export const cases = [
       await page.hover(t("tooltip-trigger"));
       await visible(page, ".z-tooltip");
       assert((await text(page, ".z-tooltip")).includes("Refresh the list"), "texto del tooltip");
-      const described = await page.evaluate((s) => { const id = document.querySelector(s)?.getAttribute("aria-describedby"); return id ? document.getElementById(id)?.textContent : null; }, t("tooltip-trigger"));
+      const described = await page.evaluate((s) => {
+        const id = document.querySelector(s)?.getAttribute("aria-describedby");
+        return id ? document.getElementById(id)?.textContent : null;
+      }, t("tooltip-trigger"));
       assert(described?.includes("Refresh the list"), "el disparador no queda descrito por el tooltip (aria-describedby)");
       await settled(page);
       const trigger = await page.locator(t("tooltip-trigger")).boundingBox();
@@ -402,7 +474,14 @@ export const cases = [
       await visible(page, ".z-menu[role=menu]");
       await expectInViewport(page, ".z-menu[role=menu]");
       const highlighted = (prefix, message) =>
-        poll(() => page.evaluate((p) => document.activeElement?.getAttribute("role") === "menuitem" && document.activeElement.textContent.startsWith(p), prefix), `${message}: elemento enfocado "${prefix}"`);
+        poll(
+          () =>
+            page.evaluate(
+              (p) => document.activeElement?.getAttribute("role") === "menuitem" && document.activeElement.textContent.startsWith(p),
+              prefix,
+            ),
+          `${message}: elemento enfocado "${prefix}"`,
+        );
       await highlighted("Rename", "abrir con teclado enfoca el primer elemento");
       await page.keyboard.press("ArrowDown");
       await highlighted("Duplicate", "flecha abajo");
@@ -522,7 +601,10 @@ export const cases = [
       await page.keyboard.type("gal");
       await expectCount(page, ".z-palette__item", 1, "el filtro deja un solo comando");
       await expectText(page, ".z-palette__item[aria-selected=true] .z-palette__item-label", "Gallery");
-      const active = await page.evaluate(() => { const input = document.querySelector(".z-palette__input"); return document.getElementById(input.getAttribute("aria-activedescendant"))?.textContent; });
+      const active = await page.evaluate(() => {
+        const input = document.querySelector(".z-palette__input");
+        return document.getElementById(input.getAttribute("aria-activedescendant"))?.textContent;
+      });
       assert(active?.includes("Gallery"), "aria-activedescendant apunta a la opción activa");
       await page.keyboard.press("Enter");
       await gone(page, ".z-palette");
@@ -540,7 +622,12 @@ export const cases = [
       await until(page, () => document.querySelectorAll(".z-palette__item").length === 2, "dos comandos de tema");
       await expectText(page, ".z-palette__item[aria-selected=true] .z-palette__item-label", "Use light theme");
       await page.keyboard.press("ArrowDown");
-      await expectText(page, ".z-palette__item[aria-selected=true] .z-palette__item-label", "Use dark theme", "flecha abajo mueve la selección");
+      await expectText(
+        page,
+        ".z-palette__item[aria-selected=true] .z-palette__item-label",
+        "Use dark theme",
+        "flecha abajo mueve la selección",
+      );
       await page.keyboard.press("ArrowUp");
       await expectText(page, ".z-palette__item[aria-selected=true] .z-palette__item-label", "Use light theme", "flecha arriba vuelve");
       await page.keyboard.press("Enter");
@@ -585,7 +672,10 @@ export const cases = [
       await expectInViewport(page, ".z-toast[data-intent=danger]");
       await expectInViewport(page, ".z-toast[data-intent=warning]");
       await settled(page);
-      const overlap = await page.evaluate(() => { const [a, b] = [...document.querySelectorAll(".z-toast")].map((e) => e.getBoundingClientRect()); return !(a.bottom <= b.top + 1 || b.bottom <= a.top + 1); });
+      const overlap = await page.evaluate(() => {
+        const [a, b] = [...document.querySelectorAll(".z-toast")].map((e) => e.getBoundingClientRect());
+        return !(a.bottom <= b.top + 1 || b.bottom <= a.top + 1);
+      });
       assert(!overlap, "los avisos se solapan");
       await shot(page, "overlay-toasts");
       await page.click(".z-toast[data-intent=warning] .z-toast__action");
@@ -598,7 +688,9 @@ export const cases = [
       await page.click(t("toast-success"));
       await visible(page, ".z-toast[data-intent=success]");
       await page.mouse.move(700, 300);
-      await page.waitForSelector(".z-toast", { state: "detached", timeout: 15000 }).catch(() => { throw new Error("el aviso no se cerró solo tras su duración (5 s)"); });
+      await page.waitForSelector(".z-toast", { state: "detached", timeout: 15000 }).catch(() => {
+        throw new Error("el aviso no se cerró solo tras su duración (5 s)");
+      });
 
       // dismissAll.
       await page.click(t("toast-danger"));
@@ -636,14 +728,24 @@ export const cases = [
       await focusOn(page, tab("Summary"));
       await page.click(tab("Activity"));
       await visible(page, t("tab-panel-activity"));
-      const controls = await page.evaluate((s) => { const el = document.querySelector(s); const panel = document.getElementById(el.getAttribute("aria-controls")); return panel?.getAttribute("role"); }, `${t("tabs")} [role=tab][aria-selected=true]`);
+      const controls = await page.evaluate(
+        (s) => {
+          const el = document.querySelector(s);
+          const panel = document.getElementById(el.getAttribute("aria-controls"));
+          return panel?.getAttribute("role");
+        },
+        `${t("tabs")} [role=tab][aria-selected=true]`,
+      );
       assert(controls === "tabpanel", "aria-controls apunta a un tabpanel");
       // SegmentedControl con flechas.
       // SegmentedControl.
       await page.click('button:has-text("List")');
       await expectText(page, t("view-state"), "list");
       await page.keyboard.press("ArrowLeft");
-      await poll(() => page.evaluate(() => document.activeElement?.textContent === "Grid"), "flecha izquierda mueve el foco al segmento anterior");
+      await poll(
+        () => page.evaluate(() => document.activeElement?.textContent === "Grid"),
+        "flecha izquierda mueve el foco al segmento anterior",
+      );
       await page.keyboard.press("Enter");
       await expectText(page, t("view-state"), "grid", "Enter elige el segmento enfocado");
       await shot(page, "screen-navigation");
@@ -655,7 +757,7 @@ export const cases = [
       const page = await open("navigation");
       const trigger = (name) => `${t("accordion")} .z-accordion__trigger:has-text("${name}")`;
       const expanded = (name) => page.getAttribute(trigger(name), "aria-expanded");
-      assert(await expanded("Design tokens") === "true", "la primera sección empieza abierta");
+      assert((await expanded("Design tokens")) === "true", "la primera sección empieza abierta");
       await page.focus(trigger("Design tokens"));
       await page.keyboard.press("ArrowDown");
       await focusOn(page, trigger("Icons"));
@@ -665,7 +767,10 @@ export const cases = [
       await visible(page, `${t("accordion")} .z-accordion__content[data-state=open]`);
       // El alto se anima al abrir: se mide cuando la animación ha terminado.
       await settled(page);
-      await poll(async () => (await page.locator(`${t("accordion")} .z-accordion__content[data-state=open]`).boundingBox()).height > 20, "el contenido abierto tiene alto");
+      await poll(
+        async () => (await page.locator(`${t("accordion")} .z-accordion__content[data-state=open]`).boundingBox()).height > 20,
+        "el contenido abierto tiene alto",
+      );
       await page.keyboard.press("End");
       await focusOn(page, trigger("Layouts"));
       await page.keyboard.press("Space");
@@ -718,19 +823,35 @@ export const cases = [
       const root = t("carousel-css");
       const index = t("carousel-css-index");
       await until(page, (s) => document.querySelector(s)?.dataset.mode === "css", "modo css", root);
-      const centered = () => page.evaluate((s) => {
-        const el = document.querySelector(`${s} .z-carousel__slide[data-active]`); const vp = document.querySelector(`${s} .z-carousel__viewport`);
-        if (!el || !vp) return null;
-        const a = el.getBoundingClientRect(); const b = vp.getBoundingClientRect();
-        return Math.abs(a.left + a.width / 2 - (b.left + b.width / 2));
-      }, root);
-      const atRest = (message) => poll(async () => { const d = await centered(); return d !== null && d < 2; }, message, 15000);
+      const centered = () =>
+        page.evaluate((s) => {
+          const el = document.querySelector(`${s} .z-carousel__slide[data-active]`);
+          const vp = document.querySelector(`${s} .z-carousel__viewport`);
+          if (!el || !vp) return null;
+          const a = el.getBoundingClientRect();
+          const b = vp.getBoundingClientRect();
+          return Math.abs(a.left + a.width / 2 - (b.left + b.width / 2));
+        }, root);
+      const atRest = (message) =>
+        poll(
+          async () => {
+            const d = await centered();
+            return d !== null && d < 2;
+          },
+          message,
+          15000,
+        );
       await atRest("el slide activo queda centrado al cargar");
       await shot(page, "screen-gallery");
 
       await page.click(`${root} .z-carousel__arrow[aria-label="Next slide"]`);
       await expectText(page, index, "1");
-      await until(page, (s) => document.querySelector(`${s} .z-carousel__live`)?.textContent === "Slide 2 of 6", "anuncio para lectores de pantalla", root);
+      await until(
+        page,
+        (s) => document.querySelector(`${s} .z-carousel__live`)?.textContent === "Slide 2 of 6",
+        "anuncio para lectores de pantalla",
+        root,
+      );
       await page.keyboard.press("ArrowRight"); // foco en la flecha
       await expectText(page, index, "2");
       await page.keyboard.press("ArrowLeft");
@@ -762,7 +883,12 @@ export const cases = [
       // Clic en el botón del slide activo funciona; clic en un slide lateral lo centra.
       const current = await text(page, index);
       await page.click(`${root} .z-carousel__slide[data-active] button`);
-      await until(page, (s) => document.querySelector(s)?.textContent !== "none", "el botón del slide activo responde", t("carousel-css-opened"));
+      await until(
+        page,
+        (s) => document.querySelector(s)?.textContent !== "none",
+        "el botón del slide activo responde",
+        t("carousel-css-opened"),
+      );
       // Si el slide aún se asienta, Playwright reintenta el clic desplazando la página (Firefox): la tira se trae de vuelta y se vuelve a medir.
       await page.locator(`${root} .z-carousel__viewport`).scrollIntoViewIfNeeded();
       const strip = await center(page, `${root} .z-carousel__viewport`);
@@ -770,7 +896,10 @@ export const cases = [
       await until(page, ([s, c]) => document.querySelector(s)?.textContent !== c, "clic en un slide lateral lo centra", [index, current]);
       await atRest("reposo tras centrar un slide lateral");
 
-      const clones = await page.evaluate((s) => [...document.querySelectorAll(`${s} .z-carousel__slide[aria-hidden=true]`)].every((el) => el.inert), root);
+      const clones = await page.evaluate(
+        (s) => [...document.querySelectorAll(`${s} .z-carousel__slide[aria-hidden=true]`)].every((el) => el.inert),
+        root,
+      );
       assert(clones, "las réplicas del bucle deben ser inertes");
       await shot(page, "carousel-css-after");
     },
@@ -810,13 +939,23 @@ export const cases = [
         return String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || "webgl2";
       }, browserName !== "firefox");
       // En Chrome el WebGL2 sin GPU depende de los flags de SwiftShader del runner; Firefox y WebKit usan su propio rasterizador por software.
-      if (!support) throw new Unverifiable(`${browserName} sin interfaz no ofrece WebGL2 en esta máquina: el modo gl no se puede comprobar (el carrusel cae a modo css).`);
+      if (!support)
+        throw new Unverifiable(
+          `${browserName} sin interfaz no ofrece WebGL2 en esta máquina: el modo gl no se puede comprobar (el carrusel cae a modo css).`,
+        );
       note(`WebGL2: ${support}`);
       await until(page, (s) => document.querySelector(s)?.dataset.mode === "gl", "el carrusel con rasterize entra en modo gl", root, 15000);
       const state = await page.evaluate((s) => {
         const canvas = document.querySelector(`${s} canvas.z-carousel__canvas`);
         const gl = canvas.getContext("webgl2");
-        return { same: !!gl, lost: gl?.isContextLost(), error: gl?.getError(), w: canvas.width, h: canvas.height, visible: getComputedStyle(canvas).visibility };
+        return {
+          same: !!gl,
+          lost: gl?.isContextLost(),
+          error: gl?.getError(),
+          w: canvas.width,
+          h: canvas.height,
+          visible: getComputedStyle(canvas).visibility,
+        };
       }, root);
       assert(state.same && !state.lost, "contexto WebGL2 perdido o ausente");
       assert(state.error === 0, `gl.getError() = ${state.error}`);
@@ -830,7 +969,8 @@ export const cases = [
         // se lanza una animación y se muestrea dentro de requestAnimationFrame, tras el dibujo del motor.
         const sample = () => {
           const copy = document.createElement("canvas");
-          copy.width = canvas.width; copy.height = canvas.height;
+          copy.width = canvas.width;
+          copy.height = canvas.height;
           const ctx = copy.getContext("2d");
           ctx.drawImage(canvas, 0, 0);
           const data = ctx.getImageData(0, 0, copy.width, copy.height).data;
@@ -856,7 +996,10 @@ export const cases = [
       await drag(page, { x: x + 100, y }, { x: x - 260, y });
       await until(page, (s) => document.querySelector(s)?.textContent !== "2", "arrastre en modo gl", t("carousel-gl-index"));
       await page.waitForTimeout(1200);
-      const after = await page.evaluate((s) => { const gl = document.querySelector(`${s} canvas`).getContext("webgl2"); return { error: gl.getError(), lost: gl.isContextLost(), mode: document.querySelector(s).dataset.mode }; }, root);
+      const after = await page.evaluate((s) => {
+        const gl = document.querySelector(`${s} canvas`).getContext("webgl2");
+        return { error: gl.getError(), lost: gl.isContextLost(), mode: document.querySelector(s).dataset.mode };
+      }, root);
       assert(after.error === 0 && !after.lost && after.mode === "gl", `estado WebGL tras interactuar: ${JSON.stringify(after)}`);
       await shot(page, "carousel-gl-after");
     },
@@ -881,10 +1024,29 @@ export const cases = [
       await visible(page, ".z-shell__inspector[data-mode=docked]");
       assert((await page.locator(".z-shell__scrim").count()) === 0, "no debe haber velo con paneles acoplados");
       assert(!(await page.evaluate(() => document.querySelector(".z-shell__main").inert)), "el área principal no debe estar inerte");
-      const boxes = await page.evaluate(() => Object.fromEntries([".z-titlebar", ".z-rail", ".z-shell__side", ".z-shell__main", ".z-shell__inspector"].map((s) => { const r = document.querySelector(s).getBoundingClientRect(); return [s, { l: Math.round(r.left), r: Math.round(r.right), t: Math.round(r.top), b: Math.round(r.bottom) }]; })));
-      assert(boxes[".z-rail"].r <= boxes[".z-shell__side"].l && boxes[".z-shell__side"].r <= boxes[".z-shell__main"].l && boxes[".z-shell__main"].r <= boxes[".z-shell__inspector"].l, `zonas solapadas: ${JSON.stringify(boxes)}`);
-      assert(boxes[".z-shell__side"].r - boxes[".z-shell__side"].l === 224 && boxes[".z-shell__inspector"].r - boxes[".z-shell__inspector"].l === 400, `anchos de panel fuera de token: ${JSON.stringify(boxes)}`);
-      assert(boxes[".z-titlebar"].b <= boxes[".z-rail"].t && boxes[".z-shell__inspector"].r <= 1440 && boxes[".z-shell__main"].b <= 900, `maquetación del shell: ${JSON.stringify(boxes)}`);
+      const boxes = await page.evaluate(() =>
+        Object.fromEntries(
+          [".z-titlebar", ".z-rail", ".z-shell__side", ".z-shell__main", ".z-shell__inspector"].map((s) => {
+            const r = document.querySelector(s).getBoundingClientRect();
+            return [s, { l: Math.round(r.left), r: Math.round(r.right), t: Math.round(r.top), b: Math.round(r.bottom) }];
+          }),
+        ),
+      );
+      assert(
+        boxes[".z-rail"].r <= boxes[".z-shell__side"].l &&
+          boxes[".z-shell__side"].r <= boxes[".z-shell__main"].l &&
+          boxes[".z-shell__main"].r <= boxes[".z-shell__inspector"].l,
+        `zonas solapadas: ${JSON.stringify(boxes)}`,
+      );
+      assert(
+        boxes[".z-shell__side"].r - boxes[".z-shell__side"].l === 224 &&
+          boxes[".z-shell__inspector"].r - boxes[".z-shell__inspector"].l === 400,
+        `anchos de panel fuera de token: ${JSON.stringify(boxes)}`,
+      );
+      assert(
+        boxes[".z-titlebar"].b <= boxes[".z-rail"].t && boxes[".z-shell__inspector"].r <= 1440 && boxes[".z-shell__main"].b <= 900,
+        `maquetación del shell: ${JSON.stringify(boxes)}`,
+      );
       await shot(page, "shell-1440");
       // Los botones de la barra de título pliegan los paneles acoplados.
       await page.click(t("toggle-sidebar"));
@@ -922,8 +1084,15 @@ export const cases = [
       await page.click(t("toggle-inspector"));
       await visible(page, ".z-shell__inspector.z-shell__drawer[data-mode=overlay][role=dialog]");
       await visible(page, ".z-shell__scrim");
-      await until(page, () => document.querySelector(".z-shell__main").inert === true, "con el cajón abierto el área principal queda inerte");
-      assert(await page.evaluate(() => document.querySelector(".z-shell__rail").inert && document.querySelector(".z-shell__side").inert), "con el cajón abierto, el rail y la sidebar acoplada (bajo el velo) también quedan inertes");
+      await until(
+        page,
+        () => document.querySelector(".z-shell__main").inert === true,
+        "con el cajón abierto el área principal queda inerte",
+      );
+      assert(
+        await page.evaluate(() => document.querySelector(".z-shell__rail").inert && document.querySelector(".z-shell__side").inert),
+        "con el cajón abierto, el rail y la sidebar acoplada (bajo el velo) también quedan inertes",
+      );
       await focusInside(page, ".z-shell__inspector", "el foco entra en el cajón");
       await expectInViewport(page, ".z-shell__inspector");
       await expectOnTop(page, ".z-shell__inspector");
@@ -934,7 +1103,10 @@ export const cases = [
       await gone(page, ".z-shell__inspector");
       await gone(page, ".z-shell__scrim");
       await focusOn(page, t("toggle-inspector"), "al cerrar, el foco vuelve al botón que abrió el cajón");
-      assert(await page.evaluate(() => !document.querySelector(".z-shell__rail").inert && !document.querySelector(".z-shell__side").inert), "al cerrar el cajón, rail y sidebar vuelven a estar activos");
+      assert(
+        await page.evaluate(() => !document.querySelector(".z-shell__rail").inert && !document.querySelector(".z-shell__side").inert),
+        "al cerrar el cajón, rail y sidebar vuelven a estar activos",
+      );
       await until(page, () => !document.querySelector(".z-shell__main").inert, "el área principal deja de estar inerte");
 
       await page.click(t("toggle-inspector"));
@@ -964,7 +1136,10 @@ export const cases = [
       // Tab dentro del cajón no escapa al contenido inerte.
       for (let i = 0; i < 20; i++) {
         await page.keyboard.press("Tab");
-        const where = await page.evaluate(() => { const a = document.activeElement; return a?.closest(".z-shell__main") ? "el área principal" : a?.closest(".z-rail") ? "el rail" : "ok"; });
+        const where = await page.evaluate(() => {
+          const a = document.activeElement;
+          return a?.closest(".z-shell__main") ? "el área principal" : a?.closest(".z-rail") ? "el rail" : "ok";
+        });
         assert(where === "ok", `con el cajón abierto (aria-modal) el foco llegó a ${where}`);
       }
       await page.keyboard.press("Escape");
@@ -1014,7 +1189,10 @@ export const cases = [
       const expectWidth = (value, message) => poll(async () => (await width()) === value, `${message}: ancho ${value}`);
       await visible(page, handle);
       assert((await width()) === 224, `ancho inicial ${await width()}`);
-      assert(await page.getAttribute(handle, "role") === "separator" && await page.getAttribute(handle, "aria-orientation") === "vertical", "el tirador es un separador vertical");
+      assert(
+        (await page.getAttribute(handle, "role")) === "separator" && (await page.getAttribute(handle, "aria-orientation")) === "vertical",
+        "el tirador es un separador vertical",
+      );
       const mainBefore = (await page.locator(".z-shell__main").boundingBox()).width;
       const c = await center(page, handle);
       await drag(page, c, { x: c.x + 80, y: c.y });
@@ -1053,25 +1231,40 @@ export const cases = [
     name: "Shell en RTL (React): la sidebar pasa al lado derecho y su tirador sigue la dirección; enlace de salto al contenido",
     async run({ open }) {
       const page = await open("overview", { query: "dir=rtl&skip=1" });
-      assert(await page.evaluate(() => getComputedStyle(document.querySelector(".z-shell")).direction === "rtl"), "el Shell no está en RTL");
+      assert(
+        await page.evaluate(() => getComputedStyle(document.querySelector(".z-shell")).direction === "rtl"),
+        "el Shell no está en RTL",
+      );
       const handle = ".z-shell__side > .z-resize";
       await visible(page, handle);
       const side = await page.locator(".z-shell__side").boundingBox();
       const main = await page.locator(".z-shell__main").boundingBox();
-      assert(side.x > main.x + main.width - 1, `en RTL la sidebar queda a la derecha del contenido: ${JSON.stringify({ side: side.x, main: main.x })}`);
+      assert(
+        side.x > main.x + main.width - 1,
+        `en RTL la sidebar queda a la derecha del contenido: ${JSON.stringify({ side: side.x, main: main.x })}`,
+      );
       assert((await page.getAttribute(handle, "data-side")) === "end", "el tirador de la sidebar usa el lado lógico end");
       const grip = await page.locator(handle).boundingBox();
-      assert(Math.abs(grip.x + grip.width / 2 - side.x) < 12, `el tirador queda en el borde izquierdo de la sidebar (hacia el contenido): ${JSON.stringify({ grip: grip.x, side: side.x })}`);
+      assert(
+        Math.abs(grip.x + grip.width / 2 - side.x) < 12,
+        `el tirador queda en el borde izquierdo de la sidebar (hacia el contenido): ${JSON.stringify({ grip: grip.x, side: side.x })}`,
+      );
       const width = async () => Math.round((await page.locator(".z-shell__side").boundingBox()).width);
       const before = await width();
       // Arrastrar hacia el contenido (a la izquierda) ensancha la sidebar: lo contrario que en LTR.
       const c = await center(page, handle);
       await drag(page, c, { x: c.x - 60, y: c.y });
-      await poll(async () => (await width()) === before + 60, `arrastrar 60 px a la izquierda ensancha la sidebar (${before} → ${before + 60})`);
+      await poll(
+        async () => (await width()) === before + 60,
+        `arrastrar 60 px a la izquierda ensancha la sidebar (${before} → ${before + 60})`,
+      );
       await page.focus(handle);
       const now = Number(await page.getAttribute(handle, "aria-valuenow"));
       await page.keyboard.press("ArrowLeft");
-      await poll(async () => Number(await page.getAttribute(handle, "aria-valuenow")) > now, "en RTL la flecha izquierda ensancha la sidebar");
+      await poll(
+        async () => Number(await page.getAttribute(handle, "aria-valuenow")) > now,
+        "en RTL la flecha izquierda ensancha la sidebar",
+      );
       await page.keyboard.press("ArrowRight");
       await expectAttr(page, handle, "aria-valuenow", String(now), "y la derecha la estrecha");
 
@@ -1088,10 +1281,19 @@ export const cases = [
       await expectInViewport(fresh, skip);
       assert((await fresh.locator(skip).textContent()).trim() === "Skip to content", "texto del enlace de salto");
       const target = await fresh.getAttribute(skip, "href");
-      assert(await fresh.evaluate((href) => document.querySelector(href)?.matches(".z-shell__main") ?? false, target), `el enlace apunta al área principal (${target})`);
+      assert(
+        await fresh.evaluate((href) => document.querySelector(href)?.matches(".z-shell__main") ?? false, target),
+        `el enlace apunta al área principal (${target})`,
+      );
       await fresh.keyboard.press("Enter");
       await fresh.keyboard.press("Tab");
-      await poll(() => fresh.evaluate(() => document.querySelector(".z-shell__main").contains(document.activeElement) && document.activeElement !== document.body), "tras el salto, el tabulador sigue dentro del contenido");
+      await poll(
+        () =>
+          fresh.evaluate(
+            () => document.querySelector(".z-shell__main").contains(document.activeElement) && document.activeElement !== document.body,
+          ),
+        "tras el salto, el tabulador sigue dentro del contenido",
+      );
     },
   },
   {
@@ -1111,19 +1313,35 @@ export const cases = [
       const c = await center(page, rowDivider);
       await drag(page, c, { x: c.x + 150, y: c.y });
       const filesAfter = await width("pane-files");
-      assert(Math.abs(filesAfter - filesBefore - 150) < 4, `arrastrar 150 px debe ensanchar el panel 150 px: ${filesBefore} → ${filesAfter}`);
+      assert(
+        Math.abs(filesAfter - filesBefore - 150) < 4,
+        `arrastrar 150 px debe ensanchar el panel 150 px: ${filesBefore} → ${filesAfter}`,
+      );
       assert(Math.abs((await width("pane-editor")) - (editorBefore - 150)) < 4, "el panel vecino cede el mismo espacio");
-      assert(!(await page.evaluate((s) => document.querySelector(s).hasAttribute("data-dragging"), rowDivider)), "data-dragging se limpia al soltar");
+      assert(
+        !(await page.evaluate((s) => document.querySelector(s).hasAttribute("data-dragging"), rowDivider)),
+        "data-dragging se limpia al soltar",
+      );
 
       // Teclado: cada flecha mueve un 2 %.
       await page.focus(rowDivider);
       const now = Number(await page.getAttribute(rowDivider, "aria-valuenow"));
       await page.keyboard.press("ArrowLeft");
       await page.keyboard.press("ArrowLeft");
-      await until(page, ([s, v]) => Number(document.querySelector(s).getAttribute("aria-valuenow")) === v - 4, "dos flechas a la izquierda restan un 4 %", [rowDivider, now]);
+      await until(
+        page,
+        ([s, v]) => Number(document.querySelector(s).getAttribute("aria-valuenow")) === v - 4,
+        "dos flechas a la izquierda restan un 4 %",
+        [rowDivider, now],
+      );
       await page.keyboard.press("ArrowRight");
-      await until(page, ([s, v]) => Number(document.querySelector(s).getAttribute("aria-valuenow")) === v - 2, "flecha derecha suma un 2 %", [rowDivider, now]);
-      assert(await page.getAttribute(rowDivider, "aria-orientation") === "vertical", "orientación del divisor");
+      await until(
+        page,
+        ([s, v]) => Number(document.querySelector(s).getAttribute("aria-valuenow")) === v - 2,
+        "flecha derecha suma un 2 %",
+        [rowDivider, now],
+      );
+      assert((await page.getAttribute(rowDivider, "aria-orientation")) === "vertical", "orientación del divisor");
 
       // Límite mínimo: arrastrar muy a la izquierda no baja de la fracción mínima.
       const c2 = await center(page, rowDivider);
@@ -1142,8 +1360,13 @@ export const cases = [
       assert(Math.abs(editorH - editorH2 - 100) < 4, `arrastre vertical: ${editorH} → ${editorH2}`);
       await page.focus(colDivider);
       await page.keyboard.press("ArrowDown");
-      await until(page, ([id, h]) => document.querySelector(`[data-testid="${id}"]`).getBoundingClientRect().height > h + 5, "flecha abajo agranda el panel superior", ["pane-editor", editorH2]);
-      assert(await page.getAttribute(colDivider, "aria-orientation") === "horizontal", "orientación del divisor horizontal");
+      await until(
+        page,
+        ([id, h]) => document.querySelector(`[data-testid="${id}"]`).getBoundingClientRect().height > h + 5,
+        "flecha abajo agranda el panel superior",
+        ["pane-editor", editorH2],
+      );
+      assert((await page.getAttribute(colDivider, "aria-orientation")) === "horizontal", "orientación del divisor horizontal");
 
       // Panel con foco.
       await page.click(t("editor-text"));
@@ -1159,7 +1382,8 @@ export const cases = [
     async run({ open }) {
       const page = await open("overview");
       const tab = (id) => `.z-tabstrip [role=tab][data-tab-id="${id}"]`;
-      const ids = () => page.evaluate(() => [...document.querySelectorAll(".z-tabstrip [role=tab]")].map((el) => el.dataset.tabId).join(","));
+      const ids = () =>
+        page.evaluate(() => [...document.querySelectorAll(".z-tabstrip [role=tab]")].map((el) => el.dataset.tabId).join(","));
       assert((await ids()) === "overview,projects", `pestañas iniciales: ${await ids()}`);
       await page.click(tab("projects"));
       await visible(page, t("screen-projects"));
@@ -1189,7 +1413,10 @@ export const cases = [
       await page.click(`.z-tabstrip__tab[data-selected] .z-tabstrip__close`);
       await poll(async () => (await ids()) === "overview", "tras cerrar la activa queda overview");
       await visible(page, t("screen-overview"), "al cerrar la pestaña activa se activa la vecina");
-      assert((await page.locator(".z-tabstrip__tab[data-selected] .z-tabstrip__close").count()) === 0, "la pestaña no cerrable no muestra botón de cierre");
+      assert(
+        (await page.locator(".z-tabstrip__tab[data-selected] .z-tabstrip__close").count()) === 0,
+        "la pestaña no cerrable no muestra botón de cierre",
+      );
       // Teclado: Supr cierra la pestaña activa y el foco pasa a la que queda activa; la no cerrable lo ignora.
       await page.focus(tab("overview"));
       await page.keyboard.press("Delete");
@@ -1202,7 +1429,12 @@ export const cases = [
       await page.keyboard.press("Delete");
       await poll(async () => (await ids()) === "overview", "Supr cierra la pestaña activa");
       await focusOn(page, tab("overview"), "tras cerrar con Supr el foco pasa a la pestaña activa");
-      const children = await page.evaluate(() => [...document.querySelectorAll(".z-tabstrip__list [role], .z-tabstrip__list button")].filter((el) => el.getAttribute("aria-hidden") !== "true" && !["tab", "presentation"].includes(el.getAttribute("role"))).length);
+      const children = await page.evaluate(
+        () =>
+          [...document.querySelectorAll(".z-tabstrip__list [role], .z-tabstrip__list button")].filter(
+            (el) => el.getAttribute("aria-hidden") !== "true" && !["tab", "presentation"].includes(el.getAttribute("role")),
+          ).length,
+      );
       assert(children === 0, "dentro del tablist solo hay pestañas expuestas a las tecnologías de apoyo");
       // Muchas pestañas: la tira no empuja las acciones fuera de la barra.
       for (let i = 0; i < 5; i++) await page.click(".z-tabstrip__add");
@@ -1211,7 +1443,14 @@ export const cases = [
       await page.waitForTimeout(400);
       await expectInViewport(page, t("toggle-inspector"));
       await expectInViewport(page, ".z-tabstrip__add");
-      const selectedVisible = () => page.evaluate(() => { const el = document.querySelector(".z-tabstrip__tab[data-selected]"); const list = document.querySelector(".z-tabstrip__list"); const a = el.getBoundingClientRect(); const b = list.getBoundingClientRect(); return a.left >= b.left - 1 && a.right <= b.right + 1; });
+      const selectedVisible = () =>
+        page.evaluate(() => {
+          const el = document.querySelector(".z-tabstrip__tab[data-selected]");
+          const list = document.querySelector(".z-tabstrip__list");
+          const a = el.getBoundingClientRect();
+          const b = list.getBoundingClientRect();
+          return a.left >= b.left - 1 && a.right <= b.right + 1;
+        });
       await poll(selectedVisible, "la pestaña activa queda visible dentro de la tira");
       // Con la tira desplazada, activar la primera pestaña con el teclado también la trae a la vista.
       await page.focus(".z-tabstrip [role=tab][aria-selected=true]");
@@ -1226,7 +1465,12 @@ export const cases = [
     name: "DataTable y formulario: ordenar, filtrar, paginar, seleccionar y validar",
     async run({ open, shot }) {
       const page = await open("projects");
-      const names = () => page.evaluate(() => [...document.querySelectorAll('[data-testid="projects-table"] tbody tr td:first-child')].map((td) => td.textContent.trim()).join(","));
+      const names = () =>
+        page.evaluate(() =>
+          [...document.querySelectorAll('[data-testid="projects-table"] tbody tr td:first-child')]
+            .map((td) => td.textContent.trim())
+            .join(","),
+        );
       assert((await names()) === "Atlas,Borealis,Cobalt,Delta,Ember", `orden inicial: ${await names()}`);
       await shot(page, "screen-projects");
       const header = (name) => `${t("projects-table")} th:has-text("${name}")`;
@@ -1254,7 +1498,13 @@ export const cases = [
       await page.click(t("project-submit"));
       await visible(page, ".z-field__error");
       await expectAttr(page, t("project-name"), "aria-invalid", "true", "el control queda marcado como inválido");
-      const describedBy = await page.evaluate((s) => { const el = document.querySelector(s); return (el.getAttribute("aria-describedby") ?? "").split(" ").map((id) => document.getElementById(id)?.textContent).join("|"); }, t("project-name"));
+      const describedBy = await page.evaluate((s) => {
+        const el = document.querySelector(s);
+        return (el.getAttribute("aria-describedby") ?? "")
+          .split(" ")
+          .map((id) => document.getElementById(id)?.textContent)
+          .join("|");
+      }, t("project-name"));
       assert(describedBy.includes("Use at least 3 characters."), `aria-describedby no enlaza el error: ${describedBy}`);
       await shot(page, "screen-projects-form");
       await page.fill(t("project-name"), "Nimbus");
@@ -1295,12 +1545,21 @@ export const cases = [
             const el = document.querySelector('[data-testid="carousel-css"] .z-carousel__slide[data-active]');
             const r = el.getBoundingClientRect();
             const vp = el.closest(".z-carousel__viewport").getBoundingClientRect();
-            return { stretch: Math.round(Math.abs(r.height - el.offsetHeight)), fits: r.left >= vp.left - 1 && r.right <= vp.right + 1, width: Math.round(r.width), viewport: Math.round(vp.width) };
+            return {
+              stretch: Math.round(Math.abs(r.height - el.offsetHeight)),
+              fits: r.left >= vp.left - 1 && r.right <= vp.right + 1,
+              width: Math.round(r.width),
+              viewport: Math.round(vp.width),
+            };
           });
-          if (slide.stretch > 2 || !slide.fits) failures.push(`gallery: el slide centrado del carrusel se deforma o no cabe en la tira: ${JSON.stringify(slide)}`);
+          if (slide.stretch > 2 || !slide.fits)
+            failures.push(`gallery: el slide centrado del carrusel se deforma o no cabe en la tira: ${JSON.stringify(slide)}`);
         }
         // Página completa desplazada hasta el final.
-        await page.evaluate(() => { const p = document.querySelector(".z-page"); if (p) p.scrollTop = p.scrollHeight; });
+        await page.evaluate(() => {
+          const p = document.querySelector(".z-page");
+          if (p) p.scrollTop = p.scrollHeight;
+        });
         await page.waitForTimeout(150);
         await shot(page, `mobile-${screen}-end`);
         const report2 = await overflowReport(page);
@@ -1375,8 +1634,23 @@ export const cases = [
           const page = await open("overview", { theme, brand });
           const state = await page.evaluate(() => {
             const cs = getComputedStyle(document.documentElement);
-            const probe = (name) => { const el = document.createElement("div"); el.style.color = `var(${name})`; document.body.append(el); const c = getComputedStyle(el).color; el.remove(); return c; };
-            return { theme: document.documentElement.dataset.theme, brand: document.documentElement.dataset.brand, canvas: probe("--z-canvas"), fg: probe("--z-fg"), accent: probe("--z-accent"), font: cs.getPropertyValue("--z-font-sans").trim(), scheme: cs.colorScheme };
+            const probe = (name) => {
+              const el = document.createElement("div");
+              el.style.color = `var(${name})`;
+              document.body.append(el);
+              const c = getComputedStyle(el).color;
+              el.remove();
+              return c;
+            };
+            return {
+              theme: document.documentElement.dataset.theme,
+              brand: document.documentElement.dataset.brand,
+              canvas: probe("--z-canvas"),
+              fg: probe("--z-fg"),
+              accent: probe("--z-accent"),
+              font: cs.getPropertyValue("--z-font-sans").trim(),
+              scheme: cs.colorScheme,
+            };
           });
           assert(state.theme === theme && state.brand === brand, `atributos: ${JSON.stringify(state)}`);
           seen[`${brand}-${theme}`] = state;
@@ -1404,7 +1678,10 @@ export const cases = [
         assert(seen[`${brand}-dark`].fg !== seen[`${brand}-light`].fg, `${brand}: el color de texto no cambia entre temas`);
       }
       const differs = ["canvas", "accent", "font"].some((k) => seen["dazlabs-dark"][k] !== seen["zutool-dark"][k]);
-      assert(differs, `las marcas dazlabs y zutool no difieren en fondo, acento ni fuente: ${JSON.stringify([seen["dazlabs-dark"], seen["zutool-dark"]])}`);
+      assert(
+        differs,
+        `las marcas dazlabs y zutool no difieren en fondo, acento ni fuente: ${JSON.stringify([seen["dazlabs-dark"], seen["zutool-dark"]])}`,
+      );
     },
   },
   {
@@ -1435,9 +1712,20 @@ export const cases = [
         const value = t(`${scope}-select-value`);
         const list = ".z-listbox [role=listbox]";
         const option = (label) => `${list} [role=option]:has-text("${label}")`;
-        const focusedOption = (label, message) => poll(() => page.evaluate((l) => document.activeElement?.getAttribute("role") === "option" && document.activeElement.textContent.trim() === l, label), message ?? `opción enfocada: ${label}`);
+        const focusedOption = (label, message) =>
+          poll(
+            () =>
+              page.evaluate(
+                (l) => document.activeElement?.getAttribute("role") === "option" && document.activeElement.textContent.trim() === l,
+                label,
+              ),
+            message ?? `opción enfocada: ${label}`,
+          );
 
-        assert((await page.locator(trigger).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Role"), "la etiqueta del Field nombra el control");
+        assert(
+          (await page.locator(trigger).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Role"),
+          "la etiqueta del Field nombra el control",
+        );
         await expectText(page, trigger, "Choose a role", "sin valor muestra el placeholder");
         // Puntero.
         await page.click(trigger);
@@ -1446,7 +1734,12 @@ export const cases = [
         await expectOnTop(page, list);
         await expectInViewport(page, list);
         await expectCount(page, `${list} [role=option]`, 5, "cinco opciones, dos de ellas en un grupo");
-        assert((await page.locator(`${list} [role=group]`).evaluate((g) => document.getElementById(g.getAttribute("aria-labelledby"))?.textContent)) === "Administration", "el grupo está etiquetado por su título");
+        assert(
+          (await page
+            .locator(`${list} [role=group]`)
+            .evaluate((g) => document.getElementById(g.getAttribute("aria-labelledby"))?.textContent)) === "Administration",
+          "el grupo está etiquetado por su título",
+        );
         if (scope === "page") await shot(page, "forms-select-open");
         else await shot(page, "forms-modal-select-open");
         await page.click(option("Editor"));
@@ -1507,15 +1800,26 @@ export const cases = [
         const value = t(`${scope}-combobox-value`);
         const list = ".z-listbox [role=listbox]";
         const option = (label) => `${list} [role=option]:has-text("${label}")`;
-        const active = () => page.evaluate((s) => { const el = document.querySelector(s); const id = el.getAttribute("aria-activedescendant"); return id ? document.getElementById(id)?.textContent.trim() ?? null : null; }, input);
+        const active = () =>
+          page.evaluate((s) => {
+            const el = document.querySelector(s);
+            const id = el.getAttribute("aria-activedescendant");
+            return id ? (document.getElementById(id)?.textContent.trim() ?? null) : null;
+          }, input);
         const expectActive = (label, message) => poll(async () => (await active()) === label, message ?? `opción activa: ${label}`);
 
-        assert((await page.locator(input).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Assignee"), "la etiqueta del Field nombra el campo");
+        assert(
+          (await page.locator(input).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Assignee"),
+          "la etiqueta del Field nombra el campo",
+        );
         // Puntero: el clic abre la lista y el foco se queda en el campo.
         await page.click(input);
         await visible(page, list);
         await expectAttr(page, input, "aria-expanded", "true");
-        assert((await page.getAttribute(input, "aria-controls")) === (await page.getAttribute(list, "id")), "aria-controls apunta a la lista");
+        assert(
+          (await page.getAttribute(input, "aria-controls")) === (await page.getAttribute(list, "id")),
+          "aria-controls apunta a la lista",
+        );
         await focusOn(page, input, "el foco no sale del campo al abrir");
         await expectOnTop(page, ".z-listbox");
         await expectInViewport(page, ".z-listbox");
@@ -1589,8 +1893,21 @@ export const cases = [
       await inPageAndModal(page, async (scope) => {
         const select = `select${t(`${scope}-native`)}`;
         const value = t(`${scope}-native-value`);
-        assert((await page.locator(select).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Priority"), "la etiqueta del Field nombra el control");
-        const look = await page.locator(select).evaluate((el) => { const cs = getComputedStyle(el); const chevron = el.parentElement.querySelector(".z-select__chevron").getBoundingClientRect(); const box = el.getBoundingClientRect(); return { appearance: cs.appearance || cs.webkitAppearance, chevronInside: chevron.width > 0 && chevron.left >= box.left && chevron.right <= box.right + 1, text: el.selectedOptions[0]?.textContent, height: Math.round(box.height) }; });
+        assert(
+          (await page.locator(select).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Priority"),
+          "la etiqueta del Field nombra el control",
+        );
+        const look = await page.locator(select).evaluate((el) => {
+          const cs = getComputedStyle(el);
+          const chevron = el.parentElement.querySelector(".z-select__chevron").getBoundingClientRect();
+          const box = el.getBoundingClientRect();
+          return {
+            appearance: cs.appearance || cs.webkitAppearance,
+            chevronInside: chevron.width > 0 && chevron.left >= box.left && chevron.right <= box.right + 1,
+            text: el.selectedOptions[0]?.textContent,
+            height: Math.round(box.height),
+          };
+        });
         assert(look.appearance === "none", `el select conserva la apariencia del sistema: ${look.appearance}`);
         assert(look.chevronInside, "la flecha propia queda dentro del control");
         assert(look.text === "Choose a priority", `placeholder: ${look.text}`);
@@ -1600,11 +1917,16 @@ export const cases = [
         // Puntero / API del control: elegir una opción dispara el cambio.
         await page.selectOption(select, "high");
         await expectText(page, value, "high");
-        assert(await page.locator(`${select} option[value=blocked]`).evaluate((o) => o.disabled), "la opción deshabilitada lo está en el control");
+        assert(
+          await page.locator(`${select} option[value=blocked]`).evaluate((o) => o.disabled),
+          "la opción deshabilitada lo está en el control",
+        );
         // Teclado: con el foco en el control, las flechas cambian el valor sin abrir la lista del sistema.
         await page.focus(select);
         await page.keyboard.press("ArrowUp");
-        const moved = await poll(async () => (await text(page, value)) === "medium", "flecha arriba elige la opción anterior", 2500).catch(() => false);
+        const moved = await poll(async () => (await text(page, value)) === "medium", "flecha arriba elige la opción anterior", 2500).catch(
+          () => false,
+        );
         if (!moved) {
           // Hay motores que abren la lista del sistema con las flechas: no es observable sin interfaz.
           note(`${browserName}: las flechas abren la lista del sistema del select nativo; se comprueba la escritura por letra.`);
@@ -1612,7 +1934,10 @@ export const cases = [
         }
         await page.focus(select);
         await page.keyboard.type("l");
-        await poll(async () => ["low", "medium", "high"].includes(await text(page, value)), "el control sigue con un valor válido tras usar el teclado");
+        await poll(
+          async () => ["low", "medium", "high"].includes(await text(page, value)),
+          "el control sigue con un valor válido tras usar el teclado",
+        );
         if (moved) await expectText(page, value, "low", "escribir una letra elige la opción que empieza por ella");
         if (scope === "modal") assert(await page.isVisible(".z-modal"), "el modal sigue abierto");
       });
@@ -1631,10 +1956,24 @@ export const cases = [
 
         await page.locator(root).scrollIntoViewIfNeeded();
         await expectText(page, title, "March 2026");
-        assert((await page.locator(`${root} [role=grid]`).evaluate((g) => document.getElementById(g.getAttribute("aria-labelledby"))?.textContent)) === "March 2026", "la rejilla se nombra con el mes");
+        assert(
+          (await page
+            .locator(`${root} [role=grid]`)
+            .evaluate((g) => document.getElementById(g.getAttribute("aria-labelledby"))?.textContent)) === "March 2026",
+          "la rejilla se nombra con el mes",
+        );
         await expectCount(page, `${root} .z-calendar__day[tabindex="0"]`, 1, "un solo día en el orden de tabulación");
-        await expectAttr(page, `${root} .z-calendar__day[tabindex="0"]`, "data-date", "2026-03-10", "el día elegido es el que recibe el tabulador");
-        assert((await page.getAttribute(day("2026-03-10"), "aria-label")) === "Tuesday, March 10, 2026", "cada día se anuncia con la fecha completa");
+        await expectAttr(
+          page,
+          `${root} .z-calendar__day[tabindex="0"]`,
+          "data-date",
+          "2026-03-10",
+          "el día elegido es el que recibe el tabulador",
+        );
+        assert(
+          (await page.getAttribute(day("2026-03-10"), "aria-label")) === "Tuesday, March 10, 2026",
+          "cada día se anuncia con la fecha completa",
+        );
         const firstColumn = await page.locator(`${root} th`).first().getAttribute("abbr");
         assert(firstColumn === "Monday", `la semana empieza en ${firstColumn}`);
         if (scope === "page") await shot(page, "forms-calendar");
@@ -1649,7 +1988,10 @@ export const cases = [
         }
         await page.waitForTimeout(100);
         await expectText(page, value, "2026-03-12", "un día deshabilitado no se elige");
-        assert(await page.isDisabled(`${root} .z-calendar__nav[aria-label="Previous month"]`), "no se puede retroceder más allá del mínimo");
+        assert(
+          await page.isDisabled(`${root} .z-calendar__nav[aria-label="Previous month"]`),
+          "no se puede retroceder más allá del mínimo",
+        );
         // Teclado. El foco se pone a mano: WebKit no enfoca un botón al hacer clic en él.
         await page.focus(day("2026-03-12"));
         await page.keyboard.press("ArrowRight");
@@ -1693,10 +2035,16 @@ export const cases = [
         await page.click(rday("2026-03-05"));
         await expectText(page, rangeValue, "2026-03-05/");
         await page.hover(rday("2026-03-09"));
-        await poll(async () => (await part("2026-03-07")) === "middle" && (await page.locator(`${range} td[data-preview]`).count()) === 5, "vista previa del rango bajo el puntero");
+        await poll(
+          async () => (await part("2026-03-07")) === "middle" && (await page.locator(`${range} td[data-preview]`).count()) === 5,
+          "vista previa del rango bajo el puntero",
+        );
         await page.click(rday("2026-03-09"));
         await expectText(page, rangeValue, "2026-03-05/2026-03-09");
-        assert((await part("2026-03-05")) === "start" && (await part("2026-03-09")) === "end" && (await part("2026-03-07")) === "middle", "extremos y días intermedios marcados");
+        assert(
+          (await part("2026-03-05")) === "start" && (await part("2026-03-09")) === "end" && (await part("2026-03-07")) === "middle",
+          "extremos y días intermedios marcados",
+        );
         await expectCount(page, `${range} td[aria-selected=true]`, 5, "los cinco días del rango quedan seleccionados");
         if (scope === "page") await shot(page, "forms-calendar-range");
         // Un tercer clic empieza otro rango; elegir antes del inicio lo invierte.
@@ -1721,7 +2069,11 @@ export const cases = [
     name: "DatePicker: fecha única y rango con puntero y teclado, en la página y en un Modal",
     async run({ open, shot }) {
       const page = await open("forms");
-      const today = await page.evaluate(() => { const d = new Date(); const p = (n) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; });
+      const today = await page.evaluate(() => {
+        const d = new Date();
+        const p = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+      });
       const month = today.slice(0, 7);
       const shift = (iso, days) => new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
       await inPageAndModal(page, async (scope) => {
@@ -1730,7 +2082,10 @@ export const cases = [
         const panel = ".z-datepicker__panel";
         const day = (date) => `${panel} .z-calendar__day[data-date="${date}"]`;
 
-        assert((await page.locator(trigger).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Due date"), "la etiqueta del Field nombra el control");
+        assert(
+          (await page.locator(trigger).evaluate((el) => el.labels?.[0]?.textContent ?? "")).includes("Due date"),
+          "la etiqueta del Field nombra el control",
+        );
         await expectText(page, trigger, "Select date");
         // Teclado: Enter abre, el foco entra en hoy, las flechas mueven y Enter elige y cierra.
         await page.focus(trigger);
@@ -1824,7 +2179,13 @@ export const cases = [
       const check = async (page, label, options) => {
         await settled(page);
         for (const v of await axe(page, options)) {
-          if (v.impact === "serious" || v.impact === "critical") failures.push(`${label}: [${v.impact}] ${v.id} — ${v.help}\n      ${v.nodes.slice(0, 4).map((n) => `${n.target} · ${n.summary}`).join("\n      ")}`);
+          if (v.impact === "serious" || v.impact === "critical")
+            failures.push(
+              `${label}: [${v.impact}] ${v.id} — ${v.help}\n      ${v.nodes
+                .slice(0, 4)
+                .map((n) => `${n.target} · ${n.summary}`)
+                .join("\n      ")}`,
+            );
           else minor += v.nodes.length;
         }
       };
@@ -1869,7 +2230,8 @@ export const cases = [
     name: "prefers-reduced-transparency: el cristal pasa a opaco y los velos no desenfocan",
     async run({ open, shot, Unverifiable, browserName }) {
       const page = await open("overlays", { reducedTransparency: true });
-      if (!(await page.evaluate(() => matchMedia("(prefers-reduced-transparency: reduce)").matches))) throw new Unverifiable(`${browserName} no aplica la emulación de prefers-reduced-transparency.`);
+      if (!(await page.evaluate(() => matchMedia("(prefers-reduced-transparency: reduce)").matches)))
+        throw new Unverifiable(`${browserName} no aplica la emulación de prefers-reduced-transparency.`);
       // Todo lo que esté a la vista, con un modal y un menú abiertos.
       await page.click(t("open-modal"));
       await visible(page, ".z-modal");
@@ -1880,7 +2242,12 @@ export const cases = [
       const report = await page.evaluate(() => {
         const out = [];
         const blur = (cs) => [cs.backdropFilter, cs.webkitBackdropFilter].find((v) => v && v !== "none");
-        const alpha = (color) => { const m = color.match(/rgba?\(([^)]+)\)/); if (!m) return color.startsWith("color(") && !color.includes("/") ? 1 : null; const p = m[1].split(/[,/ ]+/).filter(Boolean); return p.length > 3 ? Number(p[3]) : 1; };
+        const alpha = (color) => {
+          const m = color.match(/rgba?\(([^)]+)\)/);
+          if (!m) return color.startsWith("color(") && !color.includes("/") ? 1 : null;
+          const p = m[1].split(/[,/ ]+/).filter(Boolean);
+          return p.length > 3 ? Number(p[3]) : 1;
+        };
         let liquid = 0;
         for (const el of document.querySelectorAll("*")) {
           const cs = getComputedStyle(el);
@@ -1895,11 +2262,20 @@ export const cases = [
         return { out: [...new Set(out)], liquid };
       });
       assert(report.liquid >= 3, `se esperaban varias superficies de cristal a la vista, hay ${report.liquid}`);
-      assert(report.out.length === 0, `con transparencia reducida quedan superficies translúcidas o desenfoques:\n  ${report.out.join("\n  ")}`);
+      assert(
+        report.out.length === 0,
+        `con transparencia reducida quedan superficies translúcidas o desenfoques:\n  ${report.out.join("\n  ")}`,
+      );
       await shot(page, "reduced-transparency-modal");
       // Sin la preferencia, el mismo estado sí usa desenfoque: la comprobación anterior no pasa por omisión.
       const normal = await open("overlays");
-      const blurred = await normal.evaluate(() => [...document.querySelectorAll(".z-liquid")].filter((el) => { const cs = getComputedStyle(el); return [cs.backdropFilter, cs.webkitBackdropFilter].some((v) => v && v !== "none"); }).length);
+      const blurred = await normal.evaluate(
+        () =>
+          [...document.querySelectorAll(".z-liquid")].filter((el) => {
+            const cs = getComputedStyle(el);
+            return [cs.backdropFilter, cs.webkitBackdropFilter].some((v) => v && v !== "none");
+          }).length,
+      );
       assert(blurred > 0, "sin la preferencia el cristal debería desenfocar el fondo");
     },
   },
@@ -1907,29 +2283,39 @@ export const cases = [
     name: "prefers-reduced-motion: capas y cajones aparecen sin animación",
     async run({ open }) {
       const page = await open("overlays", { reducedMotion: "reduce" });
-      assert(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches), "la emulación de prefers-reduced-motion no se aplicó");
+      assert(
+        await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches),
+        "la emulación de prefers-reduced-motion no se aplicó",
+      );
       /** Duración efectiva más larga (animaciones y transiciones) entre el elemento y sus descendientes, en ms. */
-      const longest = (selector) => page.evaluate((s) => {
-        let max = 0;
-        const root = document.querySelector(s);
-        for (const el of [root, ...root.querySelectorAll("*")]) {
-          // `::backdrop` es el velo de un <dialog> modal (antes, un elemento `.z-overlay-scrim` aparte).
-          for (const pseudo of [null, "::before", "::after", ...(el === root && el.matches("dialog") ? ["::backdrop"] : [])]) {
-            const cs = getComputedStyle(el, pseudo);
-            const toMs = (list) => list.split(",").map((v) => (v.trim().endsWith("ms") ? parseFloat(v) : parseFloat(v) * 1000));
-            if (cs.animationName !== "none") max = Math.max(max, ...toMs(cs.animationDuration));
-            max = Math.max(max, ...toMs(cs.transitionDuration));
+      const longest = (selector) =>
+        page.evaluate((s) => {
+          let max = 0;
+          const root = document.querySelector(s);
+          for (const el of [root, ...root.querySelectorAll("*")]) {
+            // `::backdrop` es el velo de un <dialog> modal (antes, un elemento `.z-overlay-scrim` aparte).
+            for (const pseudo of [null, "::before", "::after", ...(el === root && el.matches("dialog") ? ["::backdrop"] : [])]) {
+              const cs = getComputedStyle(el, pseudo);
+              const toMs = (list) => list.split(",").map((v) => (v.trim().endsWith("ms") ? parseFloat(v) : parseFloat(v) * 1000));
+              if (cs.animationName !== "none") max = Math.max(max, ...toMs(cs.animationDuration));
+              max = Math.max(max, ...toMs(cs.transitionDuration));
+            }
           }
-        }
-        return max;
-      }, selector);
-      const expectStill = async (selector) => { const ms = await longest(selector); assert(ms <= 1, `${selector} conserva animaciones o transiciones de ${ms} ms con movimiento reducido`); };
+          return max;
+        }, selector);
+      const expectStill = async (selector) => {
+        const ms = await longest(selector);
+        assert(ms <= 1, `${selector} conserva animaciones o transiciones de ${ms} ms con movimiento reducido`);
+      };
 
       await expectStill(".z-shell");
       await page.click(t("open-modal"));
       await visible(page, ".z-modal");
       await expectStill(".z-modal");
-      assert(await page.evaluate(() => document.querySelector(".z-modal").matches("dialog:modal")), "el Modal no es un <dialog> modal: su velo (::backdrop) no se habría medido");
+      assert(
+        await page.evaluate(() => document.querySelector(".z-modal").matches("dialog:modal")),
+        "el Modal no es un <dialog> modal: su velo (::backdrop) no se habría medido",
+      );
       await page.focus(t("modal-role"));
       await page.keyboard.press("Enter");
       await visible(page, ".z-menu[role=menu]");
@@ -1964,13 +2350,25 @@ export const cases = [
       const forms = await open("forms", { reducedMotion: "reduce" });
       await forms.click(`${t("page-select")} .z-select__control`);
       await visible(forms, ".z-listbox");
-      const listMs = await forms.evaluate(() => { const cs = getComputedStyle(document.querySelector(".z-listbox")); return cs.animationName === "none" ? 0 : parseFloat(cs.animationDuration) * (cs.animationDuration.trim().endsWith("ms") ? 1 : 1000); });
+      const listMs = await forms.evaluate(() => {
+        const cs = getComputedStyle(document.querySelector(".z-listbox"));
+        return cs.animationName === "none" ? 0 : parseFloat(cs.animationDuration) * (cs.animationDuration.trim().endsWith("ms") ? 1 : 1000);
+      });
       assert(listMs <= 1, `la lista del Select conserva una animación de ${listMs} ms con movimiento reducido`);
       // Cajón del shell en una ventana estrecha.
       const narrow = await open("overview", { width: 700, reducedMotion: "reduce" });
       await narrow.click(t("toggle-sidebar"));
       await visible(narrow, ".z-shell__side.z-shell__drawer");
-      const drawerAnim = await narrow.evaluate(() => [".z-shell__drawer", ".z-shell__scrim"].map((s) => { const cs = getComputedStyle(document.querySelector(s)); return cs.animationName === "none" || parseFloat(cs.animationDuration) === 0 ? "" : `${s}: ${cs.animationName} ${cs.animationDuration}`; }).filter(Boolean));
+      const drawerAnim = await narrow.evaluate(() =>
+        [".z-shell__drawer", ".z-shell__scrim"]
+          .map((s) => {
+            const cs = getComputedStyle(document.querySelector(s));
+            return cs.animationName === "none" || parseFloat(cs.animationDuration) === 0
+              ? ""
+              : `${s}: ${cs.animationName} ${cs.animationDuration}`;
+          })
+          .filter(Boolean),
+      );
       assert(drawerAnim.length === 0, `el cajón del shell se anima con movimiento reducido: ${drawerAnim.join(", ")}`);
     },
   },
@@ -1982,41 +2380,73 @@ export const cases = [
     name: "Táctil: objetivos de 40 px en los controles principales y sin hover pegajoso",
     async run({ open, shot, finger, note, Unverifiable }) {
       const page = await open("forms", { width: 390, height: 844, touch: true });
-      if (!(await page.evaluate(() => matchMedia("(pointer: coarse)").matches && !matchMedia("(hover: hover)").matches))) throw new Unverifiable("el motor no emula (pointer: coarse) ni (hover: none).");
+      if (!(await page.evaluate(() => matchMedia("(pointer: coarse)").matches && !matchMedia("(hover: hover)").matches)))
+        throw new Unverifiable("el motor no emula (pointer: coarse) ni (hover: none).");
       const touch = await finger(page);
-      const measure = (selectors) => page.evaluate(async (list) => {
-        const MIN = 40;
-        const small = [];
-        let count = 0;
-        for (const selector of list) {
-          const seen = new Set();
-          for (const el of document.querySelectorAll(selector)) {
-            if (el.closest("[hidden], [inert], [aria-hidden=true]") || el.matches(":disabled, [data-disabled], [aria-disabled=true]")) continue;
-            let r = el.getBoundingClientRect();
-            if (!r.width || !r.height) continue;
-            const key = `${Math.round(r.width)}x${Math.round(r.height)}`;
-            if (seen.has(key)) continue;
-            seen.add(key);
-            count += 1;
-            if (r.width >= MIN && r.height >= MIN) continue;
-            el.scrollIntoView({ block: "center", inline: "nearest" });
-            await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
-            r = el.getBoundingClientRect();
-            const [cx, cy] = [r.left + r.width / 2, r.top + r.height / 2];
-            const reach = MIN / 2 - 1;
-            const points = [];
-            if (r.height < MIN) points.push([cx, cy - reach], [cx, cy + reach]);
-            if (r.width < MIN) points.push([cx - reach, cy], [cx + reach, cy]);
-            if (points.some(([x, y]) => { const hit = document.elementFromPoint(x, y); return !(hit && (el.contains(hit) || (hit.contains(el) && hit.matches("label")))); })) small.push(`${selector} ${key}`);
+      const measure = (selectors) =>
+        page.evaluate(async (list) => {
+          const MIN = 40;
+          const small = [];
+          let count = 0;
+          for (const selector of list) {
+            const seen = new Set();
+            for (const el of document.querySelectorAll(selector)) {
+              if (el.closest("[hidden], [inert], [aria-hidden=true]") || el.matches(":disabled, [data-disabled], [aria-disabled=true]"))
+                continue;
+              let r = el.getBoundingClientRect();
+              if (!r.width || !r.height) continue;
+              const key = `${Math.round(r.width)}x${Math.round(r.height)}`;
+              if (seen.has(key)) continue;
+              seen.add(key);
+              count += 1;
+              if (r.width >= MIN && r.height >= MIN) continue;
+              el.scrollIntoView({ block: "center", inline: "nearest" });
+              await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+              r = el.getBoundingClientRect();
+              const [cx, cy] = [r.left + r.width / 2, r.top + r.height / 2];
+              const reach = MIN / 2 - 1;
+              const points = [];
+              if (r.height < MIN) points.push([cx, cy - reach], [cx, cy + reach]);
+              if (r.width < MIN) points.push([cx - reach, cy], [cx + reach, cy]);
+              if (
+                points.some(([x, y]) => {
+                  const hit = document.elementFromPoint(x, y);
+                  return !(hit && (el.contains(hit) || (hit.contains(el) && hit.matches("label"))));
+                })
+              )
+                small.push(`${selector} ${key}`);
+            }
           }
-        }
-        return { count, small };
-      }, selectors);
-      const CONTROLS = [".z-btn", ".z-toggle", ".z-segmented__item", ".z-input", ".z-textarea", ".z-select__control", ".z-tabs__tab", ".z-check", ".z-radio", ".z-switch", ".z-slider",
-        ".z-accordion__trigger", ".z-pagination__btn", ".z-carousel__arrow", ".z-tree__row", ".z-navlink", ".z-rail__item", ".z-tabstrip__select", ".z-tabstrip__add", ".z-calendar__nav"];
+          return { count, small };
+        }, selectors);
+      const CONTROLS = [
+        ".z-btn",
+        ".z-toggle",
+        ".z-segmented__item",
+        ".z-input",
+        ".z-textarea",
+        ".z-select__control",
+        ".z-tabs__tab",
+        ".z-check",
+        ".z-radio",
+        ".z-switch",
+        ".z-slider",
+        ".z-accordion__trigger",
+        ".z-pagination__btn",
+        ".z-carousel__arrow",
+        ".z-tree__row",
+        ".z-navlink",
+        ".z-rail__item",
+        ".z-tabstrip__select",
+        ".z-tabstrip__add",
+        ".z-calendar__nav",
+      ];
       let total = 0;
       for (const screen of ["forms", "projects", "overlays", "navigation", "gallery"]) {
-        if (screen !== "forms") { await page.goto(page.url().replace(/screen=[a-z]+/, `screen=${screen}`)); await visible(page, t(`screen-${screen}`)); }
+        if (screen !== "forms") {
+          await page.goto(page.url().replace(/screen=[a-z]+/, `screen=${screen}`));
+          await visible(page, t(`screen-${screen}`));
+        }
         const { count, small } = await measure(CONTROLS);
         total += count;
         assert(small.length === 0, `pantalla ${screen}: controles por debajo de 40 px: ${small.join(", ")}`);
@@ -2055,11 +2485,19 @@ export const cases = [
             if (rule.cssRules?.length) walk(rule.cssRules, inMedia);
           }
         };
-        for (const sheet of document.styleSheets) { try { walk(sheet.cssRules, false); } catch { /* hoja de otro origen */ } }
+        for (const sheet of document.styleSheets) {
+          try {
+            walk(sheet.cssRules, false);
+          } catch {
+            /* hoja de otro origen */
+          }
+        }
         return out;
       });
       assert(loose.length === 0, `reglas :hover de la suite fuera de @media (hover: hover): ${loose.slice(0, 6).join(" | ")}`);
-      note("no se exigen 40 px a controles secundarios densos (días de Calendar en contenedores estrechos: 33 px a 390; cierre de pestaña de TabStrip, quitar Chip, estrellas de Rating, copiar de CodeBlock, enlaces en línea)");
+      note(
+        "no se exigen 40 px a controles secundarios densos (días de Calendar en contenedores estrechos: 33 px a 390; cierre de pestaña de TabStrip, quitar Chip, estrellas de Rating, copiar de CodeBlock, enlaces en línea)",
+      );
     },
   },
   {
@@ -2071,14 +2509,39 @@ export const cases = [
       const index = t("carousel-css-index");
       await until(page, (s) => document.querySelector(s)?.dataset.mode === "css", "modo css", root);
       const viewport = `${root} .z-carousel__viewport`;
-      assert((await page.locator(viewport).evaluate((el) => getComputedStyle(el).touchAction)) === "pan-y", "el viewport del carrusel declara touch-action: pan-y");
-      const state = () => page.evaluate(([s, i]) => {
-        const vp = document.querySelector(`${s} .z-carousel__viewport`);
-        let scroll = scrollY;
-        for (let el = vp.parentElement; el; el = el.parentElement) scroll += el.scrollTop;
-        return { x: new DOMMatrix(getComputedStyle(document.querySelector(`${s} .z-carousel__track`)).transform).m41, index: Number(document.querySelector(i).textContent), scroll, dragging: vp.hasAttribute("data-dragging") };
-      }, [root, index]);
-      const rest = () => { let last; return poll(async () => { const now = (await state()).x; const still = now === last; last = now; if (!still) await sleep(120); return still; }, "la tira llega al reposo", 15000); };
+      assert(
+        (await page.locator(viewport).evaluate((el) => getComputedStyle(el).touchAction)) === "pan-y",
+        "el viewport del carrusel declara touch-action: pan-y",
+      );
+      const state = () =>
+        page.evaluate(
+          ([s, i]) => {
+            const vp = document.querySelector(`${s} .z-carousel__viewport`);
+            let scroll = scrollY;
+            for (let el = vp.parentElement; el; el = el.parentElement) scroll += el.scrollTop;
+            return {
+              x: new DOMMatrix(getComputedStyle(document.querySelector(`${s} .z-carousel__track`)).transform).m41,
+              index: Number(document.querySelector(i).textContent),
+              scroll,
+              dragging: vp.hasAttribute("data-dragging"),
+            };
+          },
+          [root, index],
+        );
+      const rest = () => {
+        let last;
+        return poll(
+          async () => {
+            const now = (await state()).x;
+            const still = now === last;
+            last = now;
+            if (!still) await sleep(120);
+            return still;
+          },
+          "la tira llega al reposo",
+          15000,
+        );
+      };
       await page.locator(viewport).evaluate((el) => el.scrollIntoView({ block: "center" }));
       await rest();
       const box = await page.locator(viewport).boundingBox();
@@ -2096,22 +2559,41 @@ export const cases = [
       await touch.swipe(from, { x: from.x - 200, y }, { steps: 4, stepMs: 12 });
       await rest();
       const fling = await state();
-      const steps = (a, b) => ((b - a) % 6 + 6) % 6;
-      assert(steps(slow.index, fling.index) > steps(start.index, slow.index) || Math.abs(fling.x - slow.x) > Math.abs(slow.x - start.x) + 20,
-        `el lanzamiento no añade inercia: lento ${steps(start.index, slow.index)} slides, rápido ${steps(slow.index, fling.index)}`);
+      const steps = (a, b) => (((b - a) % 6) + 6) % 6;
+      assert(
+        steps(slow.index, fling.index) > steps(start.index, slow.index) || Math.abs(fling.x - slow.x) > Math.abs(slow.x - start.x) + 20,
+        `el lanzamiento no añade inercia: lento ${steps(start.index, slow.index)} slides, rápido ${steps(slow.index, fling.index)}`,
+      );
       // Un toque en el botón del slide activo lo activa. Chromium anula el toque que llega justo después de un
       // lanzamiento (lo toma por "parar la inercia"): se espera como lo haría una persona.
       await sleep(500);
       const button = await center(page, `${root} .z-carousel__slide[data-active] button`);
       await touch.tap(button);
-      await until(page, (s) => document.querySelector(s)?.textContent !== "none", "un toque activa el botón del slide", t("carousel-css-opened"));
-      if (!touch.real) { note("arrastre con eventos de puntero sintéticos; el desplazamiento vertical nativo sobre el carrusel no es verificable en este motor (touch-action calculado: pan-y)"); return; }
+      await until(
+        page,
+        (s) => document.querySelector(s)?.textContent !== "none",
+        "un toque activa el botón del slide",
+        t("carousel-css-opened"),
+      );
+      if (!touch.real) {
+        note(
+          "arrastre con eventos de puntero sintéticos; el desplazamiento vertical nativo sobre el carrusel no es verificable en este motor (touch-action calculado: pan-y)",
+        );
+        return;
+      }
       const before = await state();
       const again = await page.locator(viewport).boundingBox();
-      await touch.swipe({ x: again.x + again.width / 2, y: again.y + again.height / 2 }, { x: again.x + again.width / 2 + 6, y: again.y + again.height / 2 - 220 }, { steps: 10 });
+      await touch.swipe(
+        { x: again.x + again.width / 2, y: again.y + again.height / 2 },
+        { x: again.x + again.width / 2 + 6, y: again.y + again.height / 2 - 220 },
+        { steps: 10 },
+      );
       await sleep(500);
       const scrolled = await state();
-      assert(scrolled.scroll > before.scroll + 100, `el carrusel bloquea el desplazamiento vertical: ${before.scroll} → ${scrolled.scroll}`);
+      assert(
+        scrolled.scroll > before.scroll + 100,
+        `el carrusel bloquea el desplazamiento vertical: ${before.scroll} → ${scrolled.scroll}`,
+      );
       assert(scrolled.index === before.index && !scrolled.dragging, "un gesto vertical no mueve la tira");
     },
   },
@@ -2125,18 +2607,32 @@ export const cases = [
       await visible(page, ".z-toast[data-intent=danger]");
       await settled(page);
       // El contrato CSS declara `touch-action: pan-y` (`pan-x` en las posiciones centradas): reserva el gesto de descarte.
-      assert((await page.locator(".z-toast").evaluate((el) => getComputedStyle(el).touchAction)) !== "auto", "el aviso reserva el gesto horizontal (touch-action)");
+      assert(
+        (await page.locator(".z-toast").evaluate((el) => getComputedStyle(el).touchAction)) !== "auto",
+        "el aviso reserva el gesto horizontal (touch-action)",
+      );
       const box = await page.locator(".z-toast").boundingBox();
       const from = { x: box.x + 80, y: box.y + box.height / 2 };
       await touch.swipe(from, { x: from.x + 30, y: from.y });
       await sleep(400);
       await expectCount(page, ".z-toast", 1, "30 px no descartan el aviso");
-      await poll(async () => Math.abs((await page.locator(".z-toast").boundingBox()).x - box.x) < 1, "tras un gesto corto el aviso vuelve a su sitio");
+      await poll(
+        async () => Math.abs((await page.locator(".z-toast").boundingBox()).x - box.x) < 1,
+        "tras un gesto corto el aviso vuelve a su sitio",
+      );
       await touch.down(from);
-      for (const dx of [20, 40, 60, 80]) { await touch.move({ x: from.x + dx, y: from.y }); await sleep(20); }
-      const moved = await page.locator(".z-toast").evaluate((el) => [el.dataset.swipe, Math.round(new DOMMatrix(getComputedStyle(el).transform).m41)]);
+      for (const dx of [20, 40, 60, 80]) {
+        await touch.move({ x: from.x + dx, y: from.y });
+        await sleep(20);
+      }
+      const moved = await page
+        .locator(".z-toast")
+        .evaluate((el) => [el.dataset.swipe, Math.round(new DOMMatrix(getComputedStyle(el).transform).m41)]);
       assert(moved[0] === "move" && moved[1] >= 60, `el aviso sigue al dedo: ${moved}`);
-      for (const dx of [110, 150]) { await touch.move({ x: from.x + dx, y: from.y }); await sleep(20); }
+      for (const dx of [110, 150]) {
+        await touch.move({ x: from.x + dx, y: from.y });
+        await sleep(20);
+      }
       await touch.up();
       await gone(page, ".z-toast", "deslizar 150 px a la derecha descarta el aviso");
       if (!touch.real) note("arrastre con eventos de puntero sintéticos: el motor no ofrece gestos táctiles reales");
@@ -2153,7 +2649,9 @@ export const cases = [
       await sleep(300);
       await expectCount(page, ".z-menu[role=menu]", 0, "un toque corto no abre el menú contextual");
       let during = false;
-      await touch.press(point, 1000, async () => { during = await page.isVisible(".z-menu[role=menu]"); });
+      await touch.press(point, 1000, async () => {
+        during = await page.isVisible(".z-menu[role=menu]");
+      });
       assert(during, "tras 1 s con el dedo quieto el menú contextual abre");
       await settled(page);
       await sleep(300);
@@ -2177,39 +2675,62 @@ export const cases = [
       const slider = '.z-slider:has([aria-label="Weekly budget"])';
       const thumb = `${slider} [role=slider]`;
       await page.locator(slider).evaluate((el) => el.scrollIntoView({ block: "center" }));
-      assert((await page.locator(slider).evaluate((el) => getComputedStyle(el).touchAction)) === "none", "el Slider declara touch-action: none");
+      assert(
+        (await page.locator(slider).evaluate((el) => getComputedStyle(el).touchAction)) === "none",
+        "el Slider declara touch-action: none",
+      );
       const box = await page.locator(slider).boundingBox();
       assert(box.height >= 40, `franja táctil del Slider de ${box.height} px`);
       await touch.tap({ x: box.x + box.width * 0.75, y: box.y + 4 });
       await expectAttr(page, thumb, "aria-valuenow", "60", "un toque al 75 % de la pista (0-80, paso 5) deja 60");
       if (touch.real) {
-        const scroll = () => page.evaluate((s) => { let total = scrollY; for (let el = document.querySelector(s).parentElement; el; el = el.parentElement) total += el.scrollTop; return total; }, slider);
+        const scroll = () =>
+          page.evaluate((s) => {
+            let total = scrollY;
+            for (let el = document.querySelector(s).parentElement; el; el = el.parentElement) total += el.scrollTop;
+            return total;
+          }, slider);
         const before = await scroll();
         const grip = await center(page, thumb);
         await touch.swipe(grip, { x: box.x + box.width * 0.25, y: grip.y + 40 }, { steps: 10 });
         await expectAttr(page, thumb, "aria-valuenow", "20", "arrastrar el tirador al 25 %");
         assert((await scroll()) === before, "arrastrar el Slider no desplaza la página");
-      } else note("arrastre del Slider no verificable: el Slider captura el puntero (setPointerCapture) y el motor no ofrece gestos táctiles (se comprobó el toque en la pista)");
+      } else
+        note(
+          "arrastre del Slider no verificable: el Slider captura el puntero (setPointerCapture) y el motor no ofrece gestos táctiles (se comprobó el toque en la pista)",
+        );
 
       // Divisores en una tableta apaisada: la sidebar está acoplada y el editor reparte paneles.
       const tablet = await open("editor", { width: 1180, height: 820, touch: true });
       const pad = await finger(tablet);
       const width = async (selector) => (await tablet.locator(selector).boundingBox()).width;
       const rowDivider = ".app-split-main > .z-split__divider";
-      assert((await tablet.locator(rowDivider).evaluate((el) => getComputedStyle(el).touchAction)) === "none", "el divisor declara touch-action: none");
+      assert(
+        (await tablet.locator(rowDivider).evaluate((el) => getComputedStyle(el).touchAction)) === "none",
+        "el divisor declara touch-action: none",
+      );
       const files = await width(t("pane-files"));
       const c = await center(tablet, rowDivider);
       // Agarrado 14 px a la derecha del divisor (8 px de ancho): la zona táctil ampliada también arrastra.
       await pad.swipe({ x: c.x + 14, y: c.y }, { x: c.x + 14 + 120, y: c.y + 30 }, { steps: 10 });
-      await poll(async () => Math.abs((await width(t("pane-files"))) - files - 120) < 4, `arrastrar 120 px con el dedo ensancha el panel: ${files} → ${await width(t("pane-files"))}`);
-      assert(!(await tablet.evaluate((s) => document.querySelector(s).hasAttribute("data-dragging"), rowDivider)), "data-dragging se limpia al levantar el dedo");
+      await poll(
+        async () => Math.abs((await width(t("pane-files"))) - files - 120) < 4,
+        `arrastrar 120 px con el dedo ensancha el panel: ${files} → ${await width(t("pane-files"))}`,
+      );
+      assert(
+        !(await tablet.evaluate((s) => document.querySelector(s).hasAttribute("data-dragging"), rowDivider)),
+        "data-dragging se limpia al levantar el dedo",
+      );
       const handle = ".z-shell__side > .z-resize";
       await visible(tablet, handle);
       const side = await width(".z-shell__side");
       const h = await center(tablet, handle);
       // Agarrado 12 px hacia dentro del panel: hacia fuera, la zona ampliada acaba donde empieza el área principal.
       await pad.swipe({ x: h.x - 12, y: h.y }, { x: h.x - 12 + 60, y: h.y - 20 }, { steps: 10 });
-      await poll(async () => Math.round(await width(".z-shell__side")) === Math.round(side) + 60, `el tirador de la sidebar sigue al dedo: ${side} → ${await width(".z-shell__side")}`);
+      await poll(
+        async () => Math.round(await width(".z-shell__side")) === Math.round(side) + 60,
+        `el tirador de la sidebar sigue al dedo: ${side} → ${await width(".z-shell__side")}`,
+      );
       if (!pad.real) note("arrastre de divisores con eventos de puntero sintéticos: el motor no ofrece gestos táctiles reales");
     },
   },
@@ -2229,7 +2750,10 @@ export const cases = [
       await shot(page, "touch-shell-sidebar");
       const drawer = await page.locator(".z-shell__side").boundingBox();
       // Desplazar con el dedo dentro del cajón no lo cierra.
-      await touch.swipe({ x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.6 }, { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.3 });
+      await touch.swipe(
+        { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.6 },
+        { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.3 },
+      );
       await sleep(400);
       await expectCount(page, ".z-shell__side.z-shell__drawer", 1, "desplazar dentro del cajón no lo cierra");
       const size = page.viewportSize();
@@ -2259,5 +2783,22 @@ export const cases = [
 
 /** Ayudantes compartidos con los archivos cases-audit-*.mjs. */
 function helpers() {
-  return { t, assert, TIMEOUT, sleep, poll, until, visible, gone, settled, focusInside, focusOn, expectAttr, expectText, expectCount, expectFocusTrap, SCREENS };
+  return {
+    t,
+    assert,
+    TIMEOUT,
+    sleep,
+    poll,
+    until,
+    visible,
+    gone,
+    settled,
+    focusInside,
+    focusOn,
+    expectAttr,
+    expectText,
+    expectCount,
+    expectFocusTrap,
+    SCREENS,
+  };
 }

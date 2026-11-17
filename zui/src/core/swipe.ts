@@ -18,10 +18,14 @@ export interface SwipeOptions {
 }
 
 /** Dirección de descarte de un aviso según la posición de su región: hacia el borde en las centradas, a la derecha en el resto. */
-export const swipeDirection = (position: string): SwipeDirection => (position.endsWith("center") ? (position.startsWith("top") ? "up" : "down") : "right");
+export const swipeDirection = (position: string): SwipeDirection =>
+  position.endsWith("center") ? (position.startsWith("top") ? "up" : "down") : "right";
 
 /** Conecta el gesto a `item`. Devuelve la función que lo desconecta. */
-export function swipeToDismiss(item: HTMLElement, { direction, onStart, onCancel, onDismiss, threshold = 50, prefix = "--z-toast-swipe" }: SwipeOptions): () => void {
+export function swipeToDismiss(
+  item: HTMLElement,
+  { direction, onStart, onCancel, onDismiss, threshold = 50, prefix = "--z-toast-swipe" }: SwipeOptions,
+): () => void {
   const vertical = direction === "up" || direction === "down";
   const sign = direction === "up" || direction === "left" ? -1 : 1;
   const axis = vertical ? "y" : "x";
@@ -29,7 +33,8 @@ export function swipeToDismiss(item: HTMLElement, { direction, onStart, onCancel
   const { signal } = wiring;
   let swipe: { id: number; x: number; y: number; active: boolean } | undefined;
   // Solo cuenta el avance en la dirección de descarte.
-  const delta = (event: PointerEvent, from: { x: number; y: number }) => Math.max(0, (vertical ? event.clientY - from.y : event.clientX - from.x) * sign) * sign;
+  const delta = (event: PointerEvent, from: { x: number; y: number }) =>
+    Math.max(0, (vertical ? event.clientY - from.y : event.clientX - from.x) * sign) * sign;
   item.addEventListener(
     "pointerdown",
     (event) => {

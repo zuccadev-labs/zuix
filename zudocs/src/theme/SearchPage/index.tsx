@@ -5,7 +5,11 @@ import SearchPage from "@theme-original/SearchPage";
 import { type ComponentProps, useEffect } from "react";
 
 export default function SearchPageWrapper(props: ComponentProps<typeof SearchPage>) {
-  const label = translate({ id: "theme.SearchBar.label", message: "Search", description: "The ARIA label and placeholder for search button" });
+  const label = translate({
+    id: "theme.SearchBar.label",
+    message: "Search",
+    description: "The ARIA label and placeholder for search button",
+  });
   useEffect(() => {
     const input = document.querySelector<HTMLInputElement>('input[type="search"][name="q"]');
     input?.setAttribute("aria-label", label);

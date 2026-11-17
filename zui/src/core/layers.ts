@@ -81,7 +81,10 @@ export function notePress(event: { target: EventTarget | null; clientX: number; 
 }
 
 /** Verdadero si el clic recae en el velo de `dialog` (`::backdrop`) y la pulsación empezó también en el velo. */
-export function pressedOnBackdrop(dialog: HTMLDialogElement, event: { target: EventTarget | null; clientX: number; clientY: number }): boolean {
+export function pressedOnBackdrop(
+  dialog: HTMLDialogElement,
+  event: { target: EventTarget | null; clientX: number; clientY: number },
+): boolean {
   if (event.target !== dialog || !outsideBox(dialog, event.clientX, event.clientY)) return false;
   // Sin pulsación registrada (clic sintético, init() tardío) basta con la posición del clic.
   return !pressed || (pressed.target === dialog && outsideBox(dialog, pressed.x, pressed.y));

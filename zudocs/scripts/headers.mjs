@@ -10,34 +10,64 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadZudocs, parseArgs } from "./config.mjs";
 
-const fail = (message) => { process.stderr.write(`✗ ${message}\n`); process.exit(1); };
+const fail = (message) => {
+  process.stderr.write(`✗ ${message}\n`);
+  process.exit(1);
+};
 let ctx;
-try { ctx = loadZudocs(parseArgs()); } catch (e) { fail(e.message); }
+try {
+  ctx = loadZudocs(parseArgs());
+} catch (e) {
+  fail(e.message);
+}
 if (!existsSync(join(ctx.outDir, "index.html"))) fail(`No hay sitio compilado en ${ctx.rel(ctx.outDir)}. Ejecuta antes "zudocs build".`);
 
-const html = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? html(join(dir, e.name)) : e.name.endsWith(".html") ? [join(dir, e.name)] : []));
+const html = (dir) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory() ? html(join(dir, e.name)) : e.name.endsWith(".html") ? [join(dir, e.name)] : [],
+  );
 // Solo se autorizan los scripts en línea que están en TODAS las páginas: los de la plantilla de Docusaurus.
 // Uno que aparece solo en algunas viene del contenido (un <script> en un documento) y la política lo bloquea.
 const seen = new Map();
 const origins = { script: new Set(), style: new Set(), font: new Set(), img: new Set(), frame: new Set() };
-const origin = (u) => { try { return new URL(u).origin; } catch { return undefined; } };
+const origin = (u) => {
+  try {
+    return new URL(u).origin;
+  } catch {
+    return undefined;
+  }
+};
 for (const file of html(ctx.outDir)) {
   const text = readFileSync(file, "utf8");
   for (const m of text.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
     const src = m[1].match(/\ssrc=["']?([^\s"'>]+)/)?.[1];
-    if (src) { if (/^https?:/.test(src)) origins.script.add(origin(src)); }
+    if (src) {
+      if (/^https?:/.test(src)) origins.script.add(origin(src));
+    }
     // Los bloques de datos (JSON-LD) no se ejecutan y no necesitan hash.
-    else if (m[2].trim() && !/type=["']?application\/(ld\+)?json/.test(m[1])) { const h = `'sha256-${createHash("sha256").update(m[2]).digest("base64")}'`; if (!seen.has(h)) seen.set(h, new Set()); seen.get(h).add(file); }
+    else if (m[2].trim() && !/type=["']?application\/(ld\+)?json/.test(m[1])) {
+      const h = `'sha256-${createHash("sha256").update(m[2]).digest("base64")}'`;
+      if (!seen.has(h)) seen.set(h, new Set());
+      seen.get(h).add(file);
+    }
   }
-  for (const m of text.matchAll(/<link\b[^>]*rel=["']?stylesheet[^>]*>/g)) { const href = m[0].match(/href=["']?([^\s"'>]+)/)?.[1]; if (href && /^https?:/.test(href)) origins.style.add(origin(href)); }
+  for (const m of text.matchAll(/<link\b[^>]*rel=["']?stylesheet[^>]*>/g)) {
+    const href = m[0].match(/href=["']?([^\s"'>]+)/)?.[1];
+    if (href && /^https?:/.test(href)) origins.style.add(origin(href));
+  }
   // Imágenes y marcos de otros orígenes salen del contenido: solo se autorizan si los documentos son de confianza.
-  if (ctx.site.markdown?.untrusted !== true) for (const m of text.matchAll(/<(img|iframe)\b[^>]*\ssrc=["']?(https?:[^\s"'>]+)/g)) origins[m[1] === "img" ? "img" : "frame"].add(origin(m[2]));
+  if (ctx.site.markdown?.untrusted !== true)
+    for (const m of text.matchAll(/<(img|iframe)\b[^>]*\ssrc=["']?(https?:[^\s"'>]+)/g))
+      origins[m[1] === "img" ? "img" : "frame"].add(origin(m[2]));
 }
 const pages = html(ctx.outDir).length;
 const hashes = new Set([...seen].filter(([, files]) => files.size === pages).map(([h]) => h));
 const blocked = [...new Set([...seen].filter(([, files]) => files.size !== pages).flatMap(([, files]) => [...files]))];
 // Una hoja de fuentes remota (Google Fonts) trae sus archivos de otro origen.
-for (const font of ctx.remoteFonts) { origins.style.add(origin(font)); if (/fonts\.googleapis\.com/.test(font)) origins.font.add("https://fonts.gstatic.com"); }
+for (const font of ctx.remoteFonts) {
+  origins.style.add(origin(font));
+  if (/fonts\.googleapis\.com/.test(font)) origins.font.add("https://fonts.gstatic.com");
+}
 const list = (set) => [...set].filter(Boolean).sort().join(" ");
 
 const csp = [
@@ -73,5 +103,13 @@ ${base}assets/*
   Cache-Control: public, max-age=31536000, immutable
 `;
 writeFileSync(join(ctx.outDir, "_headers"), out);
-if (blocked.length) process.stdout.write(`aviso  ${blocked.length} página(s) llevan un script en línea que no es de la plantilla y la política lo bloqueará: ${blocked.slice(0, 5).map((f) => ctx.rel(f)).join(", ")}${blocked.length > 5 ? "…" : ""}\n`);
-process.stdout.write(`✓ ${ctx.rel(join(ctx.outDir, "_headers"))}: CSP con ${hashes.size} hash(es) de script${[...origins.script, ...origins.style, ...origins.font].filter(Boolean).length ? " y orígenes externos" : ", sin orígenes externos"}\n`);
+if (blocked.length)
+  process.stdout.write(
+    `aviso  ${blocked.length} página(s) llevan un script en línea que no es de la plantilla y la política lo bloqueará: ${blocked
+      .slice(0, 5)
+      .map((f) => ctx.rel(f))
+      .join(", ")}${blocked.length > 5 ? "…" : ""}\n`,
+  );
+process.stdout.write(
+  `✓ ${ctx.rel(join(ctx.outDir, "_headers"))}: CSP con ${hashes.size} hash(es) de script${[...origins.script, ...origins.style, ...origins.font].filter(Boolean).length ? " y orígenes externos" : ", sin orígenes externos"}\n`,
+);

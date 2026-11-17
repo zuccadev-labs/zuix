@@ -3,7 +3,21 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
-import { addDays, addMonths, daysInMonth, localeWeekStart, monthOf, pad, parse, parseRange, rangeText, safeLocale, todayISO, valid, type DateRange } from "../core/date";
+import {
+  addDays,
+  addMonths,
+  daysInMonth,
+  localeWeekStart,
+  monthOf,
+  pad,
+  parse,
+  parseRange,
+  rangeText,
+  safeLocale,
+  todayISO,
+  valid,
+  type DateRange,
+} from "../core/date";
 import { all, emit, flag, hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup } from "./forms-popup";
 import { logicalKey, setMarkup, type Listen } from "./shared";
 
@@ -11,7 +25,8 @@ registerIcons([chevronLeft, chevronRight]);
 
 export type { DateRange };
 
-const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const esc = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /* ---------- Calendar ---------- */
 
@@ -40,13 +55,31 @@ function config(cal: HTMLElement) {
   const locale = safeLocale(data.locale);
   const min = valid(data.min) ? data.min : null;
   const max = valid(data.max) ? data.max : null;
-  const weekStart = data.weekStart !== undefined && data.weekStart !== "" && Number.isInteger(Number(data.weekStart)) ? ((Number(data.weekStart) % 7) + 7) % 7 : localeWeekStart(locale);
+  const weekStart =
+    data.weekStart !== undefined && data.weekStart !== "" && Number.isInteger(Number(data.weekStart))
+      ? ((Number(data.weekStart) % 7) + 7) % 7
+      : localeWeekStart(locale);
   const single = mode === "single" && valid(data.value) ? data.value : null;
   const range = mode === "range" ? parseRange(data.value) : { from: null, to: null };
-  const offDays = (data.disabledWeekdays ?? "").split(",").filter((d) => d.trim() !== "").map(Number);
+  const offDays = (data.disabledWeekdays ?? "")
+    .split(",")
+    .filter((d) => d.trim() !== "")
+    .map(Number);
   const offDates = new Set((data.disabledDates ?? "").split(",").map((d) => d.trim()));
-  const unavailable = (date: string) => (min !== null && date < min) || (max !== null && date > max) || offDays.includes(parse(date).getUTCDay()) || offDates.has(date);
-  return { mode, locale, min, max, weekStart, single, range, anchor: single ?? range.from, unavailable, outside: data.outsideDays !== "false" };
+  const unavailable = (date: string) =>
+    (min !== null && date < min) || (max !== null && date > max) || offDays.includes(parse(date).getUTCDay()) || offDates.has(date);
+  return {
+    mode,
+    locale,
+    min,
+    max,
+    weekStart,
+    single,
+    range,
+    anchor: single ?? range.from,
+    unavailable,
+    outside: data.outsideDays !== "false",
+  };
 }
 
 function visibleMonth(cal: HTMLElement): string {
@@ -62,7 +95,10 @@ function skeleton(cal: HTMLElement): void {
   const previous = cal.dataset.previousLabel ?? "Previous month";
   const next = cal.dataset.nextLabel ?? "Next month";
   const titleId = `${cal.id || `z-calendar-${++calSeq}`}-title`;
-  setMarkup(cal, `<div class="z-calendar__header"><button type="button" class="z-calendar__nav" aria-label="${esc(previous)}" title="${esc(previous)}">${iconSvg("chevron-left", { size: 16 })}</button><div class="z-calendar__title" id="${esc(titleId)}" aria-live="polite"></div><button type="button" class="z-calendar__nav" aria-label="${esc(next)}" title="${esc(next)}">${iconSvg("chevron-right", { size: 16 })}</button></div><table class="z-calendar__grid" role="grid" aria-labelledby="${esc(titleId)}"><thead><tr></tr></thead><tbody></tbody></table>`);
+  setMarkup(
+    cal,
+    `<div class="z-calendar__header"><button type="button" class="z-calendar__nav" aria-label="${esc(previous)}" title="${esc(previous)}">${iconSvg("chevron-left", { size: 16 })}</button><div class="z-calendar__title" id="${esc(titleId)}" aria-live="polite"></div><button type="button" class="z-calendar__nav" aria-label="${esc(next)}" title="${esc(next)}">${iconSvg("chevron-right", { size: 16 })}</button></div><table class="z-calendar__grid" role="grid" aria-labelledby="${esc(titleId)}"><thead><tr></tr></thead><tbody></tbody></table>`,
+  );
 }
 
 /** Dibuja el mes visible: título, días de la semana y semanas. */
@@ -86,7 +122,12 @@ function renderMonth(cal: HTMLElement): void {
   const first = `${month}-01`;
   const last = `${month}-${pad(daysInMonth(year, monthIndex))}`;
   const fmt = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(c.locale, { ...options, timeZone: "UTC" });
-  const [short, long, day, full] = [fmt({ weekday: "short" }), fmt({ weekday: "long" }), fmt({ day: "numeric" }), fmt({ dateStyle: "full" })];
+  const [short, long, day, full] = [
+    fmt({ weekday: "short" }),
+    fmt({ weekday: "long" }),
+    fmt({ day: "numeric" }),
+    fmt({ dateStyle: "full" }),
+  ];
 
   title.textContent = fmt({ month: "long", year: "numeric" }).format(parse(first));
   const [back, forward] = cal.querySelectorAll<HTMLButtonElement>(".z-calendar__nav");
@@ -97,14 +138,24 @@ function renderMonth(cal: HTMLElement): void {
   const total = Math.ceil((lead + daysInMonth(year, monthIndex)) / 7) * 7;
   const origin = addDays(first, -lead);
   const dates = Array.from({ length: total }, (_, i) => addDays(origin, i));
-  setMarkup(head, dates.slice(0, 7).map((date) => `<th scope="col" abbr="${esc(long.format(parse(date)))}" class="z-calendar__weekday">${esc(short.format(parse(date)))}</th>`).join(""));
+  setMarkup(
+    head,
+    dates
+      .slice(0, 7)
+      .map(
+        (date) =>
+          `<th scope="col" abbr="${esc(long.format(parse(date)))}" class="z-calendar__weekday">${esc(short.format(parse(date)))}</th>`,
+      )
+      .join(""),
+  );
   let rows = "";
   dates.forEach((date, i) => {
     if (i % 7 === 0) rows += "<tr>";
     const out = date < first || date > last;
-    rows += out && !c.outside
-      ? '<td class="z-calendar__cell" data-outside=""></td>'
-      : `<td class="z-calendar__cell" aria-selected="false"><button type="button" class="z-calendar__day" data-date="${date}"${out ? ' data-outside=""' : ""} aria-label="${esc(full.format(parse(date)))}" tabindex="-1">${esc(day.format(parse(date)))}</button></td>`;
+    rows +=
+      out && !c.outside
+        ? '<td class="z-calendar__cell" data-outside=""></td>'
+        : `<td class="z-calendar__cell" aria-selected="false"><button type="button" class="z-calendar__day" data-date="${date}"${out ? ' data-outside=""' : ""} aria-label="${esc(full.format(parse(date)))}" tabindex="-1">${esc(day.format(parse(date)))}</button></td>`;
     if (i % 7 === 6) rows += "</tr>";
   });
   setMarkup(body, rows);
@@ -221,15 +272,32 @@ function onCalendarKey(cal: HTMLElement, date: string, event: KeyboardEvent): vo
 /* ---------- DatePicker ---------- */
 
 const PICKER = ".z-datepicker";
-const FORWARDED = ["mode", "min", "max", "locale", "weekStart", "disabledWeekdays", "disabledDates", "outsideDays", "previousLabel", "nextLabel"];
+const FORWARDED = [
+  "mode",
+  "min",
+  "max",
+  "locale",
+  "weekStart",
+  "disabledWeekdays",
+  "disabledDates",
+  "outsideDays",
+  "previousLabel",
+  "nextLabel",
+];
 
 function pickerParts(picker: HTMLElement) {
   const control = picker.querySelector<HTMLButtonElement>("button.z-select__control");
   const panel = popupFor(control);
-  return { control, panel, cal: panel?.querySelector<HTMLElement>(".z-calendar") ?? null, hidden: picker.querySelector<HTMLInputElement>('input[type="hidden"]') };
+  return {
+    control,
+    panel,
+    cal: panel?.querySelector<HTMLElement>(".z-calendar") ?? null,
+    hidden: picker.querySelector<HTMLInputElement>('input[type="hidden"]'),
+  };
 }
 
-const pickerMode = (picker: HTMLElement) => (picker.dataset.mode ?? pickerParts(picker).cal?.dataset.mode) === "range" ? "range" : "single";
+const pickerMode = (picker: HTMLElement) =>
+  (picker.dataset.mode ?? pickerParts(picker).cal?.dataset.mode) === "range" ? "range" : "single";
 
 function syncPicker(picker: HTMLElement): void {
   const { control, hidden } = pickerParts(picker);

@@ -34,7 +34,14 @@ describe("core/place: computePlace", () => {
   const box = (left, top, width, height) => ({ left, top, width, height });
 
   test("lado y alineación pedidos", () => {
-    assert.deepEqual(at(box(100, 100, 80, 30), "bottom-start"), { x: 100, y: 136, side: "bottom", align: "start", availableWidth: 984, availableHeight: 656 });
+    assert.deepEqual(at(box(100, 100, 80, 30), "bottom-start"), {
+      x: 100,
+      y: 136,
+      side: "bottom",
+      align: "start",
+      availableWidth: 984,
+      availableHeight: 656,
+    });
     assert.equal(at(box(400, 100, 80, 30), "bottom-end").x, 280);
     assert.equal(at(box(400, 100, 80, 30), "bottom").align, "center");
     assert.deepEqual([at(box(400, 300, 80, 30), "right-start").x, at(box(400, 300, 80, 30), "right-start").y], [486, 300]);
@@ -420,12 +427,22 @@ describe("core/layers", () => {
     offA();
   });
   test("pulsación y foco fuera: de arriba abajo hasta la capa que contiene el destino; una modal corta", () => {
-    const root = mount('<div><div id="a"><button id="in-a"></button></div><div id="b"><button id="in-b"></button></div><button id="out"></button></div>');
+    const root = mount(
+      '<div><div id="a"><button id="in-a"></button></div><div id="b"><button id="in-b"></button></div><button id="out"></button></div>',
+    );
     const a = root.querySelector("#a");
     const b = root.querySelector("#b");
     const calls = [];
-    const offA = layers.pushLayer({ contains: (t) => a.contains(t), onPointerOutside: () => calls.push("a"), onFocusOutside: () => calls.push("fa") });
-    const offB = layers.pushLayer({ contains: (t) => b.contains(t), onPointerOutside: () => calls.push("b"), onFocusOutside: () => calls.push("fb") });
+    const offA = layers.pushLayer({
+      contains: (t) => a.contains(t),
+      onPointerOutside: () => calls.push("a"),
+      onFocusOutside: () => calls.push("fa"),
+    });
+    const offB = layers.pushLayer({
+      contains: (t) => b.contains(t),
+      onPointerOutside: () => calls.push("b"),
+      onFocusOutside: () => calls.push("fb"),
+    });
     pointer(root.querySelector("#in-b"));
     assert.deepEqual(calls, []);
     pointer(root.querySelector("#in-a"));
@@ -459,9 +476,14 @@ describe("core/layers", () => {
 
 describe("core/focus", () => {
   test("tabbable: en orden, sin deshabilitados, ocultos, inertes ni tabindex negativo", () => {
-    const root = mount('<div><button id="a">a</button><button disabled>b</button><a href="#" id="c">c</a><span tabindex="-1">d</span><div hidden><button>e</button></div><div inert><button>f</button></div><input type="hidden"><input id="g"><span tabindex="0" id="h">h</span></div>');
+    const root = mount(
+      '<div><button id="a">a</button><button disabled>b</button><a href="#" id="c">c</a><span tabindex="-1">d</span><div hidden><button>e</button></div><div inert><button>f</button></div><input type="hidden"><input id="g"><span tabindex="0" id="h">h</span></div>',
+    );
     for (const el of root.querySelectorAll("*")) el.checkVisibility = () => true;
-    assert.deepEqual(focus.tabbable(root).map((el) => el.id), ["a", "c", "g", "h"]);
+    assert.deepEqual(
+      focus.tabbable(root).map((el) => el.id),
+      ["a", "c", "g", "h"],
+    );
   });
   test("focusInto, focusQuiet, activeElement y trapTab", () => {
     const root = mount('<div id="box"><button id="a">a</button><button id="b">b</button></div>');
@@ -530,7 +552,12 @@ describe("core/presence, scroll-lock, swipe, long-press, ref", () => {
   test("swipeToDismiss: supera el umbral y descarta; si no, cancela; solo cuenta la dirección de descarte", () => {
     const el = mount("<div></div>");
     const calls = [];
-    const off = swipeToDismiss(el, { direction: "right", onStart: () => calls.push("start"), onCancel: () => calls.push("cancel"), onDismiss: () => calls.push("dismiss") });
+    const off = swipeToDismiss(el, {
+      direction: "right",
+      onStart: () => calls.push("start"),
+      onCancel: () => calls.push("cancel"),
+      onDismiss: () => calls.push("dismiss"),
+    });
     const fire = (type, x, y = 0) => {
       const event = new window.MouseEvent(type, { bubbles: true, clientX: x, clientY: y, button: 0 });
       Object.defineProperty(event, "pointerId", { value: 1 });
@@ -599,8 +626,25 @@ describe("primitives/slot: mergeProps", () => {
     const childRef = { current: null };
     const slotRef = { current: null };
     const merged = mergeProps(
-      { className: "z-navlink", style: { width: 1 }, ref: slotRef, onClick: () => calls.push("slot"), "aria-expanded": true, title: undefined, id: "slot" },
-      { className: "app", style: { width: 2, height: 3 }, ref: childRef, onClick: () => calls.push("child"), "aria-expanded": false, title: "child", id: "child", href: "/x" },
+      {
+        className: "z-navlink",
+        style: { width: 1 },
+        ref: slotRef,
+        onClick: () => calls.push("slot"),
+        "aria-expanded": true,
+        title: undefined,
+        id: "slot",
+      },
+      {
+        className: "app",
+        style: { width: 2, height: 3 },
+        ref: childRef,
+        onClick: () => calls.push("child"),
+        "aria-expanded": false,
+        title: "child",
+        id: "child",
+        href: "/x",
+      },
     );
     assert.equal(merged.className, "z-navlink app");
     assert.deepEqual(merged.style, { width: 1, height: 3 });
@@ -620,7 +664,12 @@ describe("primitives/slot: mergeProps", () => {
   test("si el hijo cancela el evento, la primitiva no actúa", () => {
     const calls = [];
     const merged = mergeProps({ onClick: () => calls.push("slot") }, { onClick: (event) => event.preventDefault() });
-    const event = { defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+    const event = {
+      defaultPrevented: false,
+      preventDefault() {
+        this.defaultPrevented = true;
+      },
+    };
     merged.onClick(event);
     assert.deepEqual(calls, []);
     assert.equal(mergeProps({ ref: "r" }, {}).ref, "r");

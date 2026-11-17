@@ -25,12 +25,35 @@ export interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectE
 }
 
 /** `<select>` nativo con el aspecto del resto de controles: lista del sistema, ideal en móvil y formularios simples. */
-export function NativeSelect({ size = "md", invalid, options, placeholder, block = true, className, children, id, required, "aria-describedby": describedBy, ...rest }: NativeSelectProps) {
+export function NativeSelect({
+  size = "md",
+  invalid,
+  options,
+  placeholder,
+  block = true,
+  className,
+  children,
+  id,
+  required,
+  "aria-describedby": describedBy,
+  ...rest
+}: NativeSelectProps) {
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   return (
-    <span className={cx("z-select", className)} data-size={size} data-block={block || undefined} data-invalid={isInvalid || undefined} data-disabled={rest.disabled || undefined}>
+    <span
+      className={cx("z-select", className)}
+      data-size={size}
+      data-block={block || undefined}
+      data-invalid={isInvalid || undefined}
+      data-disabled={rest.disabled || undefined}
+    >
       {/* Sin valor, el `placeholder` es la opción mostrada: el navegador elegiría la primera opción habilitada. */}
-      <select {...rest} {...control} defaultValue={rest.value === undefined ? (rest.defaultValue ?? (placeholder ? "" : undefined)) : undefined} className="z-select__control">
+      <select
+        {...rest}
+        {...control}
+        defaultValue={rest.value === undefined ? (rest.defaultValue ?? (placeholder ? "" : undefined)) : undefined}
+        className="z-select__control"
+      >
         {placeholder ? (
           <option value="" disabled hidden>
             {placeholder}

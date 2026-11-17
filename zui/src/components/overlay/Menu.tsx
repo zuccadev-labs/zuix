@@ -20,10 +20,28 @@ export interface MenuProps {
 }
 
 /** Menú desplegable (patrón APG «menu button»): el disparador lo abre con clic, Intro, Espacio o las flechas. */
-export function Menu({ trigger: triggerProp, items, label, size = "md", side = "bottom", align = "end", open: openProp, defaultOpen, onOpenChange, className }: MenuProps) {
+export function Menu({
+  trigger: triggerProp,
+  items,
+  label,
+  size = "md",
+  side = "bottom",
+  align = "end",
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  className,
+}: MenuProps) {
   const id = useId();
   const triggerId = `${id}-trigger`;
-  const { open, setOpen, trigger, triggerRef } = useDisclosure({ open: openProp, defaultOpen, onOpenChange, trigger: triggerProp, popup: "menu", id });
+  const { open, setOpen, trigger, triggerRef } = useDisclosure({
+    open: openProp,
+    defaultOpen,
+    onOpenChange,
+    trigger: triggerProp,
+    popup: "menu",
+    id,
+  });
   // Cómo se abrió: con el teclado (Intro, Espacio o flechas) el foco va a la primera entrada.
   const byKeyboard = useRef(false);
   const withKeys = slot(trigger!, {

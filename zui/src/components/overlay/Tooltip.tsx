@@ -31,7 +31,17 @@ export function Tooltip(props: TooltipProps) {
 
 // WCAG 1.4.13: la burbuja se puede descartar sin mover el puntero (Escape), el puntero puede pasar a ella sin que se
 // cierre y sigue visible mientras el puntero o el foco estén en el disparador o en la burbuja.
-function Bubble({ content, children, side = "top", align = "center", delay = 300, open: openProp, defaultOpen, onOpenChange, className }: TooltipProps) {
+function Bubble({
+  content,
+  children,
+  side = "top",
+  align = "center",
+  delay = 300,
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  className,
+}: TooltipProps) {
   const id = useId();
   const [open, setOpen] = useControllable(openProp, defaultOpen ?? false, onOpenChange);
   const trigger = useRef<HTMLElement | null>(null);

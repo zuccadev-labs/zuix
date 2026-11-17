@@ -23,7 +23,24 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
 }
 
 /** Campo de búsqueda con icono, botón de borrado y Escape para limpiar. */
-export function SearchInput({ value, defaultValue = "", onValueChange, onSearch, onClear, onChange, onKeyDown, size = "md", clearLabel = "Clear search", loading, placeholder = "Search", className, id, ref, "aria-describedby": describedBy, ...rest }: SearchInputProps) {
+export function SearchInput({
+  value,
+  defaultValue = "",
+  onValueChange,
+  onSearch,
+  onClear,
+  onChange,
+  onKeyDown,
+  size = "md",
+  clearLabel = "Clear search",
+  loading,
+  placeholder = "Search",
+  className,
+  id,
+  ref,
+  "aria-describedby": describedBy,
+  ...rest
+}: SearchInputProps) {
   const { invalid: _invalid, ...control } = useFieldControl({ id, "aria-describedby": describedBy });
   const [inner, setInner] = useState(defaultValue);
   const node = useRef<HTMLInputElement | null>(null);

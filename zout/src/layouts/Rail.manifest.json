@@ -3,10 +3,7 @@
   "group": "layout",
   "description": "Barra estrecha de navegación principal, solo iconos.",
   "import": "import { Rail, RailItem } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "Rail",
-    "RailItem"
-  ],
+  "exports": ["Rail", "RailItem"],
   "props": [
     {
       "name": "brand",
@@ -41,20 +38,8 @@
       "type": "number | string"
     }
   ],
-  "tokens": [
-    "rail-width",
-    "radius-full",
-    "radius-md",
-    "surface-3",
-    "accent-solid",
-    "fg-on-accent",
-    "fg-muted",
-    "danger",
-    "focus-ring"
-  ],
-  "classes": [
-    "z-rail"
-  ],
+  "tokens": ["rail-width", "radius-full", "radius-md", "surface-3", "accent-solid", "fg-on-accent", "fg-muted", "danger", "focus-ring"],
+  "classes": ["z-rail"],
   "a11y": "<nav> con nombre (región navigation). Cada elemento es un botón de 40 × 40 px con aria-label; el activo lleva aria-current=page y el contador forma parte del nombre accesible.",
   "examples": [
     {

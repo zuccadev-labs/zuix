@@ -46,13 +46,7 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "accent",
-        "success",
-        "warning",
-        "danger",
-        "info"
-      ],
+      "values": ["accent", "success", "warning", "danger", "info"],
       "description": "Tono fijo; sin él se deduce de los umbrales."
     },
     {
@@ -66,18 +60,11 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     }
   ],
-  "states": [
-    "rest",
-    "warning",
-    "danger"
-  ],
+  "states": ["rest", "warning", "danger"],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -105,9 +92,7 @@
     "ease-standard",
     "duration-normal"
   ],
-  "classes": [
-    "z-meter"
-  ],
+  "classes": ["z-meter"],
   "a11y": "role=\"meter\" con aria-valuemin, aria-valuemax, aria-valuenow y aria-valuetext.",
   "examples": [
     {

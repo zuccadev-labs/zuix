@@ -7,30 +7,19 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "horizontal",
-        "vertical"
-      ],
+      "values": ["horizontal", "vertical"],
       "default": "horizontal"
     },
     {
       "name": "spacing",
       "type": "enum",
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["none", "sm", "md", "lg"],
       "default": "none"
     },
     {
       "name": "emphasis",
       "type": "enum",
-      "values": [
-        "subtle",
-        "strong"
-      ],
+      "values": ["subtle", "strong"],
       "default": "subtle"
     },
     {
@@ -39,9 +28,7 @@
       "description": "Texto centrado sobre la línea (solo horizontal)."
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "line",
     "space-3",
@@ -54,9 +41,7 @@
     "space-4",
     "space-8"
   ],
-  "classes": [
-    "z-divider"
-  ],
+  "classes": ["z-divider"],
   "a11y": "role=\"separator\" con aria-orientation.",
   "examples": [
     {

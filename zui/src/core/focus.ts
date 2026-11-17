@@ -1,12 +1,16 @@
 // Foco: elementos tabulables, entrada del foco en una capa, trampa de Tab y devolución al cerrar.
 
-const TABBABLE = 'a[href], area[href], button, input:not([type="hidden"]), select, textarea, summary, iframe, audio[controls], video[controls], [contenteditable]:not([contenteditable="false"]), [tabindex]';
+const TABBABLE =
+  'a[href], area[href], button, input:not([type="hidden"]), select, textarea, summary, iframe, audio[controls], video[controls], [contenteditable]:not([contenteditable="false"]), [tabindex]';
 
-const visible = (el: HTMLElement) => !el.closest("[hidden], [inert]") && (typeof el.checkVisibility === "function" ? el.checkVisibility() : el.getClientRects().length > 0);
+const visible = (el: HTMLElement) =>
+  !el.closest("[hidden], [inert]") && (typeof el.checkVisibility === "function" ? el.checkVisibility() : el.getClientRects().length > 0);
 
 /** Elementos de `root` que reciben el foco con Tab, en orden del documento. */
 export function tabbable(root: ParentNode): HTMLElement[] {
-  return [...root.querySelectorAll<HTMLElement>(TABBABLE)].filter((el) => el.tabIndex >= 0 && !(el as HTMLButtonElement).disabled && visible(el));
+  return [...root.querySelectorAll<HTMLElement>(TABBABLE)].filter(
+    (el) => el.tabIndex >= 0 && !(el as HTMLButtonElement).disabled && visible(el),
+  );
 }
 
 /** Elemento con el foco, o null si está en `body` o no hay documento. */

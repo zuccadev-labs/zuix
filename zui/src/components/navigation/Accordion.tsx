@@ -48,14 +48,31 @@ function Content({ open, id, labelledBy, children }: { open: boolean; id: string
   }, [open, animated]);
   const present = usePresence(open, node);
   return (
-    <div ref={node} id={id} role="region" aria-labelledby={labelledBy} className="z-accordion__content" data-state={open ? "open" : "closed"} hidden={!present} style={animated ? undefined : { animation: "none" }}>
+    <div
+      ref={node}
+      id={id}
+      role="region"
+      aria-labelledby={labelledBy}
+      className="z-accordion__content"
+      data-state={open ? "open" : "closed"}
+      hidden={!present}
+      style={animated ? undefined : { animation: "none" }}
+    >
       <div className="z-accordion__body">{children}</div>
     </div>
   );
 }
 
 /** Acordeón (patrón APG «accordion»): cada cabecera es un botón dentro de un encabezado; las flechas, Inicio y Fin van de una a otra. */
-export function Accordion({ items, type = "single", value: valueProp, defaultValue, onValueChange, headingLevel = 3, className }: AccordionProps) {
+export function Accordion({
+  items,
+  type = "single",
+  value: valueProp,
+  defaultValue,
+  onValueChange,
+  headingLevel = 3,
+  className,
+}: AccordionProps) {
   const baseId = useId();
   const [value, setValue] = useControllable(valueProp, defaultValue ?? NONE, onValueChange);
   const open = type === "single" ? value.slice(0, 1) : value;
@@ -67,7 +84,9 @@ export function Accordion({ items, type = "single", value: valueProp, defaultVal
     const from = event.target instanceof Element ? event.target.closest<HTMLButtonElement>(".z-accordion__trigger") : null;
     // Un acordeón anidado en una sección lleva sus propias cabeceras.
     if (!from || from.closest(".z-accordion") !== event.currentTarget) return;
-    const list = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(".z-accordion__trigger")].filter((trigger) => trigger.closest(".z-accordion") === event.currentTarget && !trigger.disabled);
+    const list = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(".z-accordion__trigger")].filter(
+      (trigger) => trigger.closest(".z-accordion") === event.currentTarget && !trigger.disabled,
+    );
     const next = move(list, from, event.key, true);
     if (!next) return;
     event.preventDefault();
@@ -83,11 +102,27 @@ export function Accordion({ items, type = "single", value: valueProp, defaultVal
         const triggerId = `${baseId}-${key}`;
         const contentId = `${baseId}-${key}-content`;
         return (
-          <div key={item.value} className="z-accordion__item" data-state={state} data-value={item.value} data-disabled={item.disabled ? "" : undefined}>
+          <div
+            key={item.value}
+            className="z-accordion__item"
+            data-state={state}
+            data-value={item.value}
+            data-disabled={item.disabled ? "" : undefined}
+          >
             {createElement(
               `h${headingLevel}`,
               { className: "z-accordion__header" },
-              <button type="button" id={triggerId} className="z-accordion__trigger" data-state={state} data-disabled={item.disabled ? "" : undefined} aria-expanded={isOpen} aria-controls={contentId} disabled={item.disabled} onClick={() => toggle(item.value)}>
+              <button
+                type="button"
+                id={triggerId}
+                className="z-accordion__trigger"
+                data-state={state}
+                data-disabled={item.disabled ? "" : undefined}
+                aria-expanded={isOpen}
+                aria-controls={contentId}
+                disabled={item.disabled}
+                onClick={() => toggle(item.value)}
+              >
                 {item.icon ? <Icon name={item.icon} size={16} /> : null}
                 <span className="z-accordion__title">{item.title}</span>
                 <span className="z-accordion__chevron">

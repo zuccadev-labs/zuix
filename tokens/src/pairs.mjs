@@ -22,29 +22,43 @@ export function parseRules(css, file = "") {
       const ch = text[i++];
       if (ch === '"' || ch === "'") {
         buffer += ch;
-        while (i < text.length) { const c = text[i++]; buffer += c; if (c === "\\") buffer += text[i++] ?? ""; else if (c === ch) break; }
+        while (i < text.length) {
+          const c = text[i++];
+          buffer += c;
+          if (c === "\\") buffer += text[i++] ?? "";
+          else if (c === ch) break;
+        }
       } else if (ch === ";") flush();
       else if (ch === "{") {
         const prelude = buffer.trim().replace(/\s+/g, " ");
         buffer = "";
         if (prelude.startsWith("@")) {
           // @keyframes y @font-face no son reglas de estilo de componente.
-          if (/^@(keyframes|font-face|property)/.test(prelude)) { skip(); continue; }
+          if (/^@(keyframes|font-face|property)/.test(prelude)) {
+            skip();
+            continue;
+          }
           const inner = block([...at, prelude]);
           if (inner.size) rules.push({ selector: ":scope", decls: inner, at: [...at, prelude], file });
         } else {
           const inner = block(at);
           rules.push({ selector: prelude, decls: inner, at, file });
         }
-      } else if (ch === "}") { flush(); return decls; }
-      else buffer += ch;
+      } else if (ch === "}") {
+        flush();
+        return decls;
+      } else buffer += ch;
     }
     flush();
     return decls;
   }
   function skip() {
     let depth = 1;
-    while (i < text.length && depth > 0) { const ch = text[i++]; if (ch === "{") depth++; else if (ch === "}") depth--; }
+    while (i < text.length && depth > 0) {
+      const ch = text[i++];
+      if (ch === "{") depth++;
+      else if (ch === "}") depth--;
+    }
   }
   block([]);
   return rules;
@@ -105,10 +119,18 @@ export function extractUses(rules, known) {
     return combos.length ? combos : null;
   };
 
-  const text = [], borders = [];
+  const text = [],
+    borders = [];
   // Un uso por combinación y paquete: el primer selector que la usa sirve de ejemplo.
   const pkg = (file) => file.split("/")[0];
-  const push = (list, item) => { if (!list.some((x) => pkg(x.file) === pkg(item.file) && Object.keys(item).every((k) => k === "selector" || k === "file" || x[k] === item[k]))) list.push(item); };
+  const push = (list, item) => {
+    if (
+      !list.some(
+        (x) => pkg(x.file) === pkg(item.file) && Object.keys(item).every((k) => k === "selector" || k === "file" || x[k] === item[k]),
+      )
+    )
+      list.push(item);
+  };
   for (const rule of rules) {
     if (DISABLED.test(rule.selector)) continue;
     // En modo de colores forzados manda el sistema, no los tokens.
@@ -118,11 +140,19 @@ export function extractUses(rules, known) {
     const border = rule.decls.get("border") ?? rule.decls.get("border-color");
     const fgNames = color ? soleToken(color) : null;
     const bgNames = bg ? soleToken(bg) : null;
-    const graphic = GRAPHIC.test(rule.selector.split(/[\s>+~,]/).filter(Boolean).pop() ?? "");
+    const graphic = GRAPHIC.test(
+      rule.selector
+        .split(/[\s>+~,]/)
+        .filter(Boolean)
+        .pop() ?? "",
+    );
     const meta = { selector: rule.selector, file: rule.file };
     if (fgNames) {
       const combos = bgNames ? paired(fgNames, bgNames) : null;
-      if (combos) for (const [fg, b] of combos) { if (known(fg) && known(b)) push(text, { fg, bg: b, graphic, ...meta }); }
+      if (combos)
+        for (const [fg, b] of combos) {
+          if (known(fg) && known(b)) push(text, { fg, bg: b, graphic, ...meta });
+        }
       else {
         const bgs = bgNames ? expand(bgNames) : [null];
         for (const fg of expand(fgNames)) for (const b of bgs.length ? bgs : [null]) push(text, { fg, bg: b, graphic, ...meta });

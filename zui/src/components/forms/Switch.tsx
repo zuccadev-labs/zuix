@@ -22,8 +22,30 @@ export interface SwitchProps extends Omit<ComponentProps<"button">, "children" |
 }
 
 /** Interruptor de activación inmediata (role="switch"). */
-export function Switch({ checked: checkedProp, defaultChecked = false, onCheckedChange, name, value = "on", form, size = "md", children, labelPosition = "end", className, id, required, disabled, onClick, "aria-describedby": describedBy, ...rest }: SwitchProps) {
-  const { invalid: _invalid, "aria-invalid": _ariaInvalid, required: isRequired, ...control } = useFieldControl({ id, required, "aria-describedby": describedBy });
+export function Switch({
+  checked: checkedProp,
+  defaultChecked = false,
+  onCheckedChange,
+  name,
+  value = "on",
+  form,
+  size = "md",
+  children,
+  labelPosition = "end",
+  className,
+  id,
+  required,
+  disabled,
+  onClick,
+  "aria-describedby": describedBy,
+  ...rest
+}: SwitchProps) {
+  const {
+    invalid: _invalid,
+    "aria-invalid": _ariaInvalid,
+    required: isRequired,
+    ...control
+  } = useFieldControl({ id, required, "aria-describedby": describedBy });
   const [checked, setChecked] = useControllable(checkedProp, defaultChecked, onCheckedChange);
   const state = checked ? "checked" : "unchecked";
   return (
@@ -47,7 +69,16 @@ export function Switch({ checked: checkedProp, defaultChecked = false, onChecked
       >
         <span className="z-switch__thumb" data-state={state} />
       </button>
-      <NativeInput type="checkbox" name={name} value={value} form={form} checked={checked} required={isRequired} disabled={disabled} onReset={() => setChecked(defaultChecked)} />
+      <NativeInput
+        type="checkbox"
+        name={name}
+        value={value}
+        form={form}
+        checked={checked}
+        required={isRequired}
+        disabled={disabled}
+        onReset={() => setChecked(defaultChecked)}
+      />
       {children ? <span className="z-switch__label">{children}</span> : null}
     </label>
   );

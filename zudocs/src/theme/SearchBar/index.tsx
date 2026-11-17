@@ -6,7 +6,11 @@ import { type ComponentProps, useEffect, useRef } from "react";
 
 export default function SearchBarWrapper(props: ComponentProps<typeof SearchBar>) {
   const ref = useRef<HTMLSpanElement>(null);
-  const label = translate({ id: "theme.SearchBar.label", message: "Search", description: "The ARIA label and placeholder for search button" });
+  const label = translate({
+    id: "theme.SearchBar.label",
+    message: "Search",
+    description: "The ARIA label and placeholder for search button",
+  });
   useEffect(() => {
     ref.current?.querySelector("input")?.setAttribute("aria-label", label);
   });

@@ -7,16 +7,30 @@ import type { Listen } from "./shared";
 
 /* ---------- Slider ---------- */
 
-const num = (raw: string | undefined | null, fallback: number) => (raw !== undefined && raw !== null && raw.trim() !== "" && Number.isFinite(Number(raw)) ? Number(raw) : fallback);
+const num = (raw: string | undefined | null, fallback: number) =>
+  raw !== undefined && raw !== null && raw.trim() !== "" && Number.isFinite(Number(raw)) ? Number(raw) : fallback;
 
 function sliderConfig(slider: HTMLElement) {
   const min = num(slider.dataset.min, 0);
   const max = Math.max(min, num(slider.dataset.max, 100));
   const step = Math.max(num(slider.dataset.step, 1), Number.EPSILON);
   const thumbs = [...slider.querySelectorAll<HTMLElement>(".z-slider__thumb")];
-  const declared = (slider.dataset.value ?? "").split(",").filter((v) => v.trim() !== "").map(Number);
-  const values = thumbs.map((thumb, i) => Math.min(max, Math.max(min, num(String(declared[i] ?? thumb.getAttribute("aria-valuenow") ?? ""), min))));
-  return { min, max, step, thumbs, values, vertical: slider.dataset.orientation === "vertical", disabled: slider.hasAttribute("data-disabled") };
+  const declared = (slider.dataset.value ?? "")
+    .split(",")
+    .filter((v) => v.trim() !== "")
+    .map(Number);
+  const values = thumbs.map((thumb, i) =>
+    Math.min(max, Math.max(min, num(String(declared[i] ?? thumb.getAttribute("aria-valuenow") ?? ""), min))),
+  );
+  return {
+    min,
+    max,
+    step,
+    thumbs,
+    values,
+    vertical: slider.dataset.orientation === "vertical",
+    disabled: slider.hasAttribute("data-disabled"),
+  };
 }
 
 /** Sentido del eje horizontal: -1 si la pista crece hacia la izquierda (RTL, o `data-inverted` en LTR). */
@@ -26,8 +40,15 @@ function paintSlider(slider: HTMLElement, values: number[]): void {
   const { min, max, thumbs, vertical, disabled } = sliderConfig(slider);
   const percent = (value: number) => percentOf(value, min, max);
   // El origen de la pista: abajo en vertical; en horizontal, el inicio de la línea (derecha en RTL o con data-inverted).
-  const [start, end] = vertical ? (slider.hasAttribute("data-inverted") ? ["top", "bottom"] : ["bottom", "top"]) : sliderDir(slider) === -1 ? ["right", "left"] : ["left", "right"];
-  for (const side of ["left", "right", "top", "bottom"]) if (side !== start && side !== end) slider.querySelector<HTMLElement>(".z-slider__range")?.style.removeProperty(side);
+  const [start, end] = vertical
+    ? slider.hasAttribute("data-inverted")
+      ? ["top", "bottom"]
+      : ["bottom", "top"]
+    : sliderDir(slider) === -1
+      ? ["right", "left"]
+      : ["left", "right"];
+  for (const side of ["left", "right", "top", "bottom"])
+    if (side !== start && side !== end) slider.querySelector<HTMLElement>(".z-slider__range")?.style.removeProperty(side);
   slider.dataset.value = values.join(",");
   slider.dataset.orientation = vertical ? "vertical" : "horizontal";
   const range = slider.querySelector<HTMLElement>(".z-slider__range");
@@ -74,7 +95,9 @@ function moveThumb(slider: HTMLElement, index: number, raw: number): void {
 export function setSliderValue(slider: HTMLElement, value: number | ReadonlyArray<number>): void {
   const { min, max, step, values } = sliderConfig(slider);
   // Un valor que no es un número (NaN) no mueve su tirador.
-  const wanted = (typeof value === "number" ? [value] : [...value]).map((v, i) => (Number.isNaN(v) ? values[i] : snap(v, min, max, step))).sort((a, b) => (a ?? 0) - (b ?? 0));
+  const wanted = (typeof value === "number" ? [value] : [...value])
+    .map((v, i) => (Number.isNaN(v) ? values[i] : snap(v, min, max, step)))
+    .sort((a, b) => (a ?? 0) - (b ?? 0));
   const next = values.map((current, i) => wanted[i] ?? current);
   if (next.every((v, i) => v === values[i])) return;
   paintSlider(slider, next);
@@ -86,7 +109,11 @@ function valueAtPointer(slider: HTMLElement, event: PointerEvent): number {
   const rect = slider.getBoundingClientRect();
   const across = (event.clientX - rect.left) / (rect.width || 1);
   const up = (rect.bottom - event.clientY) / (rect.height || 1);
-  return valueAt(vertical ? (slider.hasAttribute("data-inverted") ? 1 - up : up) : sliderDir(slider) === -1 ? 1 - across : across, min, max);
+  return valueAt(
+    vertical ? (slider.hasAttribute("data-inverted") ? 1 - up : up) : sliderDir(slider) === -1 ? 1 - across : across,
+    min,
+    max,
+  );
 }
 
 let drag: { slider: HTMLElement; index: number; pointer: number } | undefined;
@@ -119,7 +146,16 @@ function onSliderKey(thumb: HTMLElement, event: KeyboardEvent): void {
   const index = thumbs.indexOf(thumb);
   if (disabled || index < 0) return;
   // En RTL (o con data-inverted) la flecha izquierda sube el valor: apunta hacia el final de la pista.
-  const next = keyValue(event.key, event.shiftKey, values[index]!, min, max, step, sliderDir(slider), slider.hasAttribute("data-inverted") ? -1 : 1);
+  const next = keyValue(
+    event.key,
+    event.shiftKey,
+    values[index]!,
+    min,
+    max,
+    step,
+    sliderDir(slider),
+    slider.hasAttribute("data-inverted") ? -1 : 1,
+  );
   if (next === undefined) return;
   event.preventDefault();
   moveThumb(slider, index, next);
@@ -128,8 +164,16 @@ function onSliderKey(thumb: HTMLElement, event: KeyboardEvent): void {
 /* ---------- OTPInput ---------- */
 
 const otpCells = (otp: Element) => [...otp.querySelectorAll<HTMLInputElement>(".z-otp__cell")];
-const otpClean = (otp: HTMLElement, text: string) => text.replace((otp.dataset.mode ?? (otpCells(otp)[0]?.inputMode === "numeric" ? "numeric" : "text")) === "numeric" ? /\D/g : /[^a-zA-Z0-9]/g, "");
-const otpValue = (otp: HTMLElement) => otp.dataset.value ?? otpCells(otp).map((cell) => cell.value.slice(0, 1)).join("");
+const otpClean = (otp: HTMLElement, text: string) =>
+  text.replace(
+    (otp.dataset.mode ?? (otpCells(otp)[0]?.inputMode === "numeric" ? "numeric" : "text")) === "numeric" ? /\D/g : /[^a-zA-Z0-9]/g,
+    "",
+  );
+const otpValue = (otp: HTMLElement) =>
+  otp.dataset.value ??
+  otpCells(otp)
+    .map((cell) => cell.value.slice(0, 1))
+    .join("");
 
 function writeOtp(otp: HTMLElement, value: string): void {
   const cells = otpCells(otp);
@@ -225,18 +269,20 @@ function deliver(zone: HTMLElement, list: FileList | null | undefined): void {
   }
   const target = zone.querySelector<HTMLElement>(".z-upload__files");
   if (target) {
-    target.replaceChildren(...files.map((file) => {
-      const item = document.createElement("li");
-      item.className = "z-upload__file";
-      const name = document.createElement("span");
-      name.className = "z-upload__file-name";
-      name.textContent = file.name;
-      const size = document.createElement("span");
-      size.className = "z-upload__file-size";
-      size.textContent = fileSize(file.size);
-      item.append(name, size);
-      return item;
-    }));
+    target.replaceChildren(
+      ...files.map((file) => {
+        const item = document.createElement("li");
+        item.className = "z-upload__file";
+        const name = document.createElement("span");
+        name.className = "z-upload__file-name";
+        name.textContent = file.name;
+        const size = document.createElement("span");
+        size.className = "z-upload__file-size";
+        size.textContent = fileSize(file.size);
+        item.append(name, size);
+        return item;
+      }),
+    );
   }
   emit(zone, "change", { files, rejected });
 }
@@ -245,7 +291,8 @@ const uploadZone = (target: EventTarget | null) => {
   const zone = target instanceof Element ? target.closest<HTMLElement>(".z-upload") : null;
   return zone && inDom(zone) ? zone : null;
 };
-const uploadOff = (zone: HTMLElement) => zone.hasAttribute("data-disabled") || zone.querySelector<HTMLInputElement>(".z-upload__input")?.disabled === true;
+const uploadOff = (zone: HTMLElement) =>
+  zone.hasAttribute("data-disabled") || zone.querySelector<HTMLInputElement>(".z-upload__input")?.disabled === true;
 
 /* ---------- Delegación ---------- */
 

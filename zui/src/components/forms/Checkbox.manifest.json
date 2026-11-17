@@ -49,16 +49,7 @@
       "default": "on"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "checked",
-    "indeterminate",
-    "invalid",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "checked", "indeterminate", "invalid", "disabled"],
   "tokens": [
     "space-2",
     "fg",
@@ -79,9 +70,7 @@
     "danger",
     "ease-spring"
   ],
-  "classes": [
-    "z-check"
-  ],
+  "classes": ["z-check"],
   "a11y": "Patrón APG «checkbox»: botón con role checkbox y un `input type=checkbox` oculto para formularios, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
   "examples": [
     {

@@ -51,7 +51,14 @@ export type MenuEntry = { type: "separator" } | { type: "label"; label: ReactNod
  * Estado abierto/cerrado de una capa con disparador opcional. Devuelve el disparador ya conectado (clic, ref y
  * atributos ARIA) y su ref, a la que vuelve el foco al cerrar.
  */
-export function useDisclosure(options: { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void; trigger?: ReactElement; popup?: "dialog" | "menu"; id?: string }) {
+export function useDisclosure(options: {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: ReactElement;
+  popup?: "dialog" | "menu";
+  id?: string;
+}) {
   const [open, setOpen] = useControllable(options.open, options.defaultOpen ?? false, options.onOpenChange);
   const triggerRef = useRef<HTMLElement | null>(null);
   const trigger = options.trigger

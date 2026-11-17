@@ -5,11 +5,22 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadZudocs, parseArgs, templateDir as root } from "./config.mjs";
 
-const fail = (message, usage = "") => { process.stderr.write(`✗ ${message}${usage}\n`); process.exit(1); };
+const fail = (message, usage = "") => {
+  process.stderr.write(`✗ ${message}${usage}\n`);
+  process.exit(1);
+};
 let args, ctx;
-try { args = parseArgs(); ctx = loadZudocs(args); } catch (e) { fail(e.message); }
+try {
+  args = parseArgs();
+  ctx = loadZudocs(args);
+} catch (e) {
+  fail(e.message);
+}
 const templates = join(root, "templates");
-const types = readdirSync(templates).filter((f) => f.endsWith(".md")).map((f) => f.slice(0, -3)).sort();
+const types = readdirSync(templates)
+  .filter((f) => f.endsWith(".md"))
+  .map((f) => f.slice(0, -3))
+  .sort();
 const areas = ctx.site.docs.areas.map((a) => a.id);
 const usage = `\n\nUso: zudocs new [--config <ruta>] <tipo> <area> "<título>" ["<descripción>"]\n  tipos: ${types.join(", ")}\n  áreas: ${areas.join(", ")}`;
 const [type, area, rawTitle, rawDescription, ...extra] = args.rest;
@@ -26,7 +37,14 @@ if (!areas.includes(area)) fail(`El área "${area}" no está declarada en ${ctx.
 const dir = join(ctx.docsDir, area);
 if (!existsSync(dir)) fail(`No existe la carpeta del área: ${ctx.rel(dir)}. Créala con su README.md.`);
 
-const slug = title.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60).replace(/-+$/, "");
+const slug = title
+  .normalize("NFD")
+  .replace(/[̀-ͯ]/g, "")
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-+|-+$/g, "")
+  .slice(0, 60)
+  .replace(/-+$/, "");
 if (!slug) fail("El título no produce un nombre de archivo válido: necesita letras o cifras.");
 const files = readdirSync(dir);
 const clash = files.find((f) => f.replace(/^\d+-/, "").replace(/\.mdx?$/, "") === slug);
@@ -41,5 +59,9 @@ const values = { titulo: title, descripcion: quote(description ?? ""), fecha: ne
 let text = readFileSync(join(templates, `${type}.md`), "utf8");
 if (!description) text = text.replace(/^description: .*\n/m, "");
 text = text.replace(/\{\{(titulo|descripcion|fecha)\}\}/g, (_, key) => values[key]);
-try { writeFileSync(file, text, { flag: "wx" }); } catch (e) { fail(`No se pudo crear ${ctx.rel(file)}: ${e.message}`); }
+try {
+  writeFileSync(file, text, { flag: "wx" });
+} catch (e) {
+  fail(`No se pudo crear ${ctx.rel(file)}: ${e.message}`);
+}
 process.stdout.write(`✓ ${ctx.rel(file)} (plantilla ${type})\n`);

@@ -24,7 +24,15 @@ export interface StepperProps {
 
 const DEFAULT_STATUS = { complete: "Completed", current: "Current", upcoming: "Upcoming" };
 
-export function Stepper({ steps, current, orientation = "horizontal", onStepSelect, label = "Progress", statusLabels = DEFAULT_STATUS, className }: StepperProps) {
+export function Stepper({
+  steps,
+  current,
+  orientation = "horizontal",
+  onStepSelect,
+  label = "Progress",
+  statusLabels = DEFAULT_STATUS,
+  className,
+}: StepperProps) {
   return (
     <ol className={cx("z-stepper", className)} data-orientation={orientation} aria-label={label}>
       {steps.map((step, i) => {

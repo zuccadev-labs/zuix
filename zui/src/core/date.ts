@@ -21,7 +21,8 @@ function utc(year: number, monthIndex: number, day: number): Date {
 export const parse = (iso: string) => utc(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)));
 export const format = (date: Date) => `${pad(date.getUTCFullYear(), 4)}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
 /** Verdadero si es una fecha ISO que existe (2026-02-30 no). */
-export const valid = (iso: string | null | undefined): iso is string => typeof iso === "string" && ISO_DATE.test(iso) && format(parse(iso)) === iso;
+export const valid = (iso: string | null | undefined): iso is string =>
+  typeof iso === "string" && ISO_DATE.test(iso) && format(parse(iso)) === iso;
 export const addDays = (iso: string, days: number) => format(new Date(parse(iso).getTime() + days * DAY_MS));
 export const monthOf = (iso: string) => iso.slice(0, 7);
 export const daysInMonth = (year: number, monthIndex: number) => utc(year, monthIndex + 1, 0).getUTCDate();

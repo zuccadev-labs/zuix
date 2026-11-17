@@ -23,23 +23,13 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "accent",
-        "success",
-        "warning",
-        "danger",
-        "info"
-      ],
+      "values": ["accent", "success", "warning", "danger", "info"],
       "default": "accent"
     },
     {
@@ -49,11 +39,7 @@
       "description": "Muestra el porcentaje."
     }
   ],
-  "states": [
-    "loading",
-    "complete",
-    "indeterminate"
-  ],
+  "states": ["loading", "complete", "indeterminate"],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -73,9 +59,7 @@
     "ease-standard",
     "text-caption"
   ],
-  "classes": [
-    "z-progress"
-  ],
+  "classes": ["z-progress"],
   "a11y": "role=\"progressbar\" con aria-valuenow; sin valor queda indeterminada.",
   "examples": [
     {

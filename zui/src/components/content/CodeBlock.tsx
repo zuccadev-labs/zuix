@@ -24,12 +24,28 @@ export interface CodeBlockProps extends Omit<HTMLAttributes<HTMLDivElement>, "ti
 }
 
 /** Bloque de código sin resaltado, con botón de copiar. */
-export function CodeBlock({ code, title, language, wrap, maxHeight, hideCopy, copyLabel = "Copy", copiedLabel = "Copied", label = "Code", onCopy, className, ...rest }: CodeBlockProps) {
+export function CodeBlock({
+  code,
+  title,
+  language,
+  wrap,
+  maxHeight,
+  hideCopy,
+  copyLabel = "Copy",
+  copiedLabel = "Copied",
+  label = "Code",
+  onCopy,
+  className,
+  ...rest
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
 
   const copy = async () => {
     try {
@@ -52,7 +68,13 @@ export function CodeBlock({ code, title, language, wrap, maxHeight, hideCopy, co
     </button>
   );
   return (
-    <div {...rest} className={cx("z-code", className)} data-language={language} data-wrap={wrap || undefined} data-header={hasHeader || undefined}>
+    <div
+      {...rest}
+      className={cx("z-code", className)}
+      data-language={language}
+      data-wrap={wrap || undefined}
+      data-header={hasHeader || undefined}
+    >
       {hasHeader ? (
         <div className="z-code__header">
           <span className="z-code__title">{title ?? language}</span>

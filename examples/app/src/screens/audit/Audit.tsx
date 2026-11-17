@@ -2,7 +2,22 @@
 // estables. La recorre tests/browser/cases-audit-react.mjs. No forma parte de la navegación de la aplicación.
 import { useMemo, useState } from "react";
 import {
-  Button, Calendar, Combobox, CommandPalette, ConfirmDialog, ContextMenu, DatePicker, Drawer, Menu, Modal, Popover, SearchInput, Select, ToastProvider, Tooltip, useToast,
+  Button,
+  Calendar,
+  Combobox,
+  CommandPalette,
+  ConfirmDialog,
+  ContextMenu,
+  DatePicker,
+  Drawer,
+  Menu,
+  Modal,
+  Popover,
+  SearchInput,
+  Select,
+  ToastProvider,
+  Tooltip,
+  useToast,
   type PaletteGroup,
 } from "@zuccadev-labs/zuix-zui";
 import { Cell, OPTIONS, Out, StaticSections } from "./sections";
@@ -57,11 +72,21 @@ function Composite({ scope }: { scope: string }) {
   return (
     <div className="audit__cell" data-testid={id("content")}>
       <div className="audit__row">
-        <Menu trigger={<Button size="sm" data-testid={id("menu")}>Actions</Button>} items={menu.items} label="Actions" />
+        <Menu
+          trigger={
+            <Button size="sm" data-testid={id("menu")}>
+              Actions
+            </Button>
+          }
+          items={menu.items}
+          label="Actions"
+        />
         <Out id={id("menu-value")}>{menu.last}</Out>
       </div>
       <ContextMenu items={menu.items} label="Zone actions">
-        <div className="audit__zone" data-testid={id("zone")}>Right-click zone</div>
+        <div className="audit__zone" data-testid={id("zone")}>
+          Right-click zone
+        </div>
       </ContextMenu>
       <div data-testid={id("select")}>
         <Select options={OPTIONS} value={role} onValueChange={setRole} placeholder="Choose" aria-label="Letter" />
@@ -95,13 +120,24 @@ function Toasts() {
           data-testid="a-toast-add"
           onClick={() => {
             setCount((n) => n + 1);
-            setLastId(toast({ title: `Notice ${count + 1}`, description: "Stays until dismissed", duration: 60000, intent: count % 2 ? "danger" : "success" }));
+            setLastId(
+              toast({
+                title: `Notice ${count + 1}`,
+                description: "Stays until dismissed",
+                duration: 60000,
+                intent: count % 2 ? "danger" : "success",
+              }),
+            );
           }}
         >
           Add toast
         </Button>
-        <Button size="sm" data-testid="a-toast-dismiss" onClick={() => dismiss(lastId)}>Dismiss last</Button>
-        <Button size="sm" data-testid="a-toast-dismiss-all" onClick={dismissAll}>Dismiss all</Button>
+        <Button size="sm" data-testid="a-toast-dismiss" onClick={() => dismiss(lastId)}>
+          Dismiss last
+        </Button>
+        <Button size="sm" data-testid="a-toast-dismiss-all" onClick={dismissAll}>
+          Dismiss all
+        </Button>
       </div>
       <Out id="a-toast-last">{lastId || "none"}</Out>
     </Cell>
@@ -112,7 +148,14 @@ function Toasts() {
 function ModalSearch() {
   return (
     <Cell title="SearchInput in Modal" id="a-ms-cell">
-      <Modal trigger={<Button size="sm" data-testid="a-ms-open">Open search modal</Button>} title="Find a project">
+      <Modal
+        trigger={
+          <Button size="sm" data-testid="a-ms-open">
+            Open search modal
+          </Button>
+        }
+        title="Find a project"
+      >
         <SearchInput defaultValue="draft" aria-label="Project search" data-testid="a-ms-input" />
       </Modal>
     </Cell>
@@ -162,7 +205,12 @@ function OverlaySection() {
   }, [short]);
   // Filtro propio: solo el prefijo exacto de la etiqueta, sin puntuación difusa.
   const prefix = (list: PaletteGroup[], query: string) =>
-    list.map((group) => ({ ...group, commands: group.commands.filter((command) => command.label.toLowerCase().startsWith(query.trim().toLowerCase())) })).filter((group) => group.commands.length > 0);
+    list
+      .map((group) => ({
+        ...group,
+        commands: group.commands.filter((command) => command.label.toLowerCase().startsWith(query.trim().toLowerCase())),
+      }))
+      .filter((group) => group.commands.length > 0);
 
   return (
     <>
@@ -175,7 +223,12 @@ function OverlaySection() {
       </Cell>
       <Cell title="Composition" id="a-compose-cell">
         <div className="audit__row">
-          <Popover trigger={<Button data-testid="a-compose-popover">Controls in a popover</Button>} label="Controls" width={320} align="start">
+          <Popover
+            trigger={<Button data-testid="a-compose-popover">Controls in a popover</Button>}
+            label="Controls"
+            width={320}
+            align="start"
+          >
             <Composite scope="pop" />
           </Popover>
           <Drawer trigger={<Button data-testid="a-compose-drawer">Controls in a drawer</Button>} title="Controls">
@@ -186,7 +239,11 @@ function OverlaySection() {
       <Cell title="ConfirmDialog and Tooltip" id="a-confirm-cell">
         <div className="audit__row">
           <ConfirmDialog
-            trigger={<Button variant="danger" data-testid="a-confirm">Delete</Button>}
+            trigger={
+              <Button variant="danger" data-testid="a-confirm">
+                Delete
+              </Button>
+            }
             title="Delete the file?"
             description="This cannot be undone."
             intent="danger"
@@ -202,21 +259,52 @@ function OverlaySection() {
       </Cell>
       <Cell title="CommandPalette" id="a-palette-cell">
         <div className="audit__row">
-          <Button data-testid="a-palette" onClick={() => { setShort(false); setPaletteOpen(true); }}>Open palette</Button>
-          <Button size="sm" data-testid="a-palette-strict" onClick={() => setStrict((value) => !value)}>Prefix filter: {strict ? "on" : "off"}</Button>
+          <Button
+            data-testid="a-palette"
+            onClick={() => {
+              setShort(false);
+              setPaletteOpen(true);
+            }}
+          >
+            Open palette
+          </Button>
+          <Button size="sm" data-testid="a-palette-strict" onClick={() => setStrict((value) => !value)}>
+            Prefix filter: {strict ? "on" : "off"}
+          </Button>
         </div>
         <Out id="a-palette-ran">{ran}</Out>
-        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} groups={groups} closeOnSelect={false} filter={strict ? prefix : undefined} label="Audit commands" />
+        <CommandPalette
+          open={paletteOpen}
+          onOpenChange={setPaletteOpen}
+          groups={groups}
+          closeOnSelect={false}
+          filter={strict ? prefix : undefined}
+          label="Audit commands"
+        />
       </Cell>
       <Toasts />
-        <ModalSearch />
+      <ModalSearch />
       <Cell title="Viewport edges" id="a-edges-cell">
-        <Button data-testid="a-edges" onClick={() => setEdges((value) => !value)}>Toggle edge triggers</Button>
+        <Button data-testid="a-edges" onClick={() => setEdges((value) => !value)}>
+          Toggle edge triggers
+        </Button>
         {edges
           ? CORNERS.map((at) => (
               <span key={at} className="audit__edge" data-at={at}>
-                <Popover trigger={<Button size="sm" data-testid={`a-pop-${at}`}>P</Button>} label={`Popover ${at}`} width={260} side={at.startsWith("t") ? "top" : "bottom"} align={at.endsWith("l") ? "end" : "start"}>
-                  <p className="app-text" data-testid={`a-pop-${at}-body`}>Popover content that has to stay inside the window at the {at} corner.</p>
+                <Popover
+                  trigger={
+                    <Button size="sm" data-testid={`a-pop-${at}`}>
+                      P
+                    </Button>
+                  }
+                  label={`Popover ${at}`}
+                  width={260}
+                  side={at.startsWith("t") ? "top" : "bottom"}
+                  align={at.endsWith("l") ? "end" : "start"}
+                >
+                  <p className="app-text" data-testid={`a-pop-${at}-body`}>
+                    Popover content that has to stay inside the window at the {at} corner.
+                  </p>
                 </Popover>
               </span>
             ))
@@ -225,7 +313,9 @@ function OverlaySection() {
           ? EDGES.map(({ at, side }) => (
               <span key={at} className="audit__edge" data-at={at}>
                 <Tooltip content={`A long tooltip text anchored at the ${at} edge`} side={side} delay={0}>
-                  <Button size="sm" data-testid={`a-tip-${at}`}>T</Button>
+                  <Button size="sm" data-testid={`a-tip-${at}`}>
+                    T
+                  </Button>
                 </Tooltip>
               </span>
             ))
@@ -241,7 +331,9 @@ export function Audit() {
       <main className="z-root z-canvas audit" data-testid="screen-audit">
         <h1 className="audit__title">Component audit</h1>
         <h2 className="audit__group">Overlays</h2>
-        <div className="audit__grid"><OverlaySection /></div>
+        <div className="audit__grid">
+          <OverlaySection />
+        </div>
         <StaticSections />
       </main>
     </ToastProvider>

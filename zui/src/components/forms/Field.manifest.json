@@ -37,10 +37,7 @@
     {
       "name": "layout",
       "type": "enum",
-      "values": [
-        "stacked",
-        "inline"
-      ],
+      "values": ["stacked", "inline"],
       "default": "stacked"
     },
     {
@@ -50,10 +47,7 @@
       "description": "El control (Input, Select, Textarea, Checkbox, etc.)."
     }
   ],
-  "states": [
-    "rest",
-    "invalid"
-  ],
+  "states": ["rest", "invalid"],
   "tokens": [
     "space-2",
     "space-4",
@@ -69,9 +63,7 @@
     "fg-muted",
     "weight-medium"
   ],
-  "classes": [
-    "z-field"
-  ],
+  "classes": ["z-field"],
   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",
   "examples": [
     {

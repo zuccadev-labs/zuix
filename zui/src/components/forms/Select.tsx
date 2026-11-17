@@ -58,7 +58,8 @@ export interface SelectProps {
 
 const isGroup = (entry: SelectOption | SelectOptionGroup): entry is SelectOptionGroup => "options" in entry;
 
-const optionsIn = (list: Element) => [...list.querySelectorAll<HTMLElement>(".z-listbox__option")].filter((option) => option.getAttribute("aria-disabled") !== "true");
+const optionsIn = (list: Element) =>
+  [...list.querySelectorAll<HTMLElement>(".z-listbox__option")].filter((option) => option.getAttribute("aria-disabled") !== "true");
 
 /** Resalta una opción y le da el foco (foco itinerante dentro de la lista). */
 function activate(list: Element, option: HTMLElement | undefined, scroll = true): void {
@@ -97,7 +98,11 @@ export function Select({
   popupClassName,
   ref,
 }: SelectProps) {
-  const { invalid: isInvalid, required: isRequired, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
+  const {
+    invalid: isInvalid,
+    required: isRequired,
+    ...control
+  } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const listId = `${useId()}-list`;
   const [current, setCurrent] = useControllable(value, defaultValue, onValueChange);
   const [open, setOpen] = useControllable(openProp, defaultOpen ?? false, onOpenChange);
@@ -167,7 +172,14 @@ export function Select({
       // Cerrado: la letra cambia el valor sin abrir la lista.
       event.preventDefault();
       const usable = flat.filter((option) => !option.disabled);
-      const next = usable[search(usable.map((option) => option.label), event.key, usable.findIndex((option) => option.value === current))];
+      const next =
+        usable[
+          search(
+            usable.map((option) => option.label),
+            event.key,
+            usable.findIndex((option) => option.value === current),
+          )
+        ];
       if (next) setCurrent(next.value);
     }
   };
@@ -188,7 +200,14 @@ export function Select({
       event.preventDefault();
     } else if (isPrintable(event)) {
       event.preventDefault();
-      const hit = items[search(items.map((option) => option.dataset.label ?? option.textContent ?? ""), event.key, active ? items.indexOf(active) : -1)];
+      const hit =
+        items[
+          search(
+            items.map((option) => option.dataset.label ?? option.textContent ?? ""),
+            event.key,
+            active ? items.indexOf(active) : -1,
+          )
+        ];
       if (hit) activate(list, hit);
     }
   };
@@ -209,7 +228,8 @@ export function Select({
         aria-selected={checked}
         aria-disabled={option.disabled || undefined}
         onPointerMove={(event) => {
-          if (!option.disabled && document.activeElement !== event.currentTarget && popup.current) activate(popup.current, event.currentTarget, false);
+          if (!option.disabled && document.activeElement !== event.currentTarget && popup.current)
+            activate(popup.current, event.currentTarget, false);
         }}
         onClick={() => choose(option)}
       >
@@ -228,7 +248,15 @@ export function Select({
 
   return (
     <>
-      <span ref={wrapper} className={cx("z-select", className)} data-size={size} data-block={block || undefined} data-invalid={isInvalid || undefined} data-disabled={disabled || undefined} data-value={current}>
+      <span
+        ref={wrapper}
+        className={cx("z-select", className)}
+        data-size={size}
+        data-block={block || undefined}
+        data-invalid={isInvalid || undefined}
+        data-disabled={disabled || undefined}
+        data-value={current}
+      >
         <button
           {...control}
           ref={setButton}
@@ -259,7 +287,17 @@ export function Select({
         </span>
         {name || isRequired ? (
           // Campo nativo oculto: envía el valor y da la validación `required` del navegador.
-          <select ref={native} className="z-native-input" aria-hidden="true" tabIndex={-1} name={name} required={isRequired} disabled={disabled} value={selected ? current : ""} onChange={(event) => setCurrent(event.target.value)}>
+          <select
+            ref={native}
+            className="z-native-input"
+            aria-hidden="true"
+            tabIndex={-1}
+            name={name}
+            required={isRequired}
+            disabled={disabled}
+            value={selected ? current : ""}
+            onChange={(event) => setCurrent(event.target.value)}
+          >
             <option value="" />
             {flat.map((option) => (
               <option key={option.value} value={option.value} disabled={option.disabled}>
@@ -271,8 +309,26 @@ export function Select({
       </span>
       {present ? (
         <Portal anchor={wrapper}>
-          <Popup ref={popup} open={open} anchorRect={() => rectOf(wrapper.current)} watch={wrapper} anchorWidth placement={align === "center" ? "bottom" : `bottom-${align}`} gap={4} className={cx("z-liquid z-listbox", popupClassName)} data-size={size} onKeyDown={onListKey} onShown={focusStart}>
-            <div id={listId} role="listbox" className="z-listbox__viewport" aria-label={ariaLabel} aria-labelledby={ariaLabel ? undefined : (ariaLabelledBy ?? control.id)}>
+          <Popup
+            ref={popup}
+            open={open}
+            anchorRect={() => rectOf(wrapper.current)}
+            watch={wrapper}
+            anchorWidth
+            placement={align === "center" ? "bottom" : `bottom-${align}`}
+            gap={4}
+            className={cx("z-liquid z-listbox", popupClassName)}
+            data-size={size}
+            onKeyDown={onListKey}
+            onShown={focusStart}
+          >
+            <div
+              id={listId}
+              role="listbox"
+              className="z-listbox__viewport"
+              aria-label={ariaLabel}
+              aria-labelledby={ariaLabel ? undefined : (ariaLabelledBy ?? control.id)}
+            >
               {options.map((entry, index) =>
                 isGroup(entry) ? (
                   // biome-ignore lint/suspicious/noArrayIndexKey: los grupos no tienen identidad propia.

@@ -1,16 +1,81 @@
 /* Maquetación de la página de ejemplo. Solo tokens. */
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; }
-.page__bar { position: sticky; top: var(--z-space-3); z-index: var(--z-layer-sticky); display: flex; align-items: center; gap: var(--z-space-2); margin: var(--z-space-3); padding: var(--z-space-2) var(--z-space-4); border-radius: var(--z-radius-full); }
-.page__spacer { flex: 1; }
-.page__main { max-width: var(--z-content-max); margin: 0 auto; padding: var(--z-space-4) var(--z-space-4) var(--z-space-16); }
-.page__group { margin: var(--z-space-8) 0 var(--z-space-3); font-family: var(--z-font-display); font-size: var(--z-text-heading-lg); text-transform: capitalize; }
-.page__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: var(--z-space-4); }
-.demo { display: flex; flex-direction: column; gap: var(--z-space-3); min-width: 0; }
-.demo__head { display: flex; align-items: center; justify-content: space-between; gap: var(--z-space-2); }
-.demo__name { margin: 0; font-size: var(--z-text-title); font-weight: var(--z-weight-semibold); }
-.demo__stage { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: var(--z-space-3); min-width: 0; overflow-x: auto; padding: var(--z-space-1); }
-.demo__stage > .z-accordion, .demo__stage > .z-tabs, .demo__stage > .z-table-wrap { flex: 1 1 100%; }
-.demo__stage > * { max-width: 100%; }
-.demo[data-component="Carousel"] { grid-column: 1 / -1; }
-.demo__stage > .z-carousel { flex: 1 1 100%; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+.page__bar {
+  position: sticky;
+  top: var(--z-space-3);
+  z-index: var(--z-layer-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--z-space-2);
+  margin: var(--z-space-3);
+  padding: var(--z-space-2) var(--z-space-4);
+  border-radius: var(--z-radius-full);
+}
+.page__spacer {
+  flex: 1;
+}
+.page__main {
+  max-width: var(--z-content-max);
+  margin: 0 auto;
+  padding: var(--z-space-4) var(--z-space-4) var(--z-space-16);
+}
+.page__group {
+  margin: var(--z-space-8) 0 var(--z-space-3);
+  font-family: var(--z-font-display);
+  font-size: var(--z-text-heading-lg);
+  text-transform: capitalize;
+}
+.page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: var(--z-space-4);
+}
+.demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-3);
+  min-width: 0;
+}
+.demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--z-space-2);
+}
+.demo__name {
+  margin: 0;
+  font-size: var(--z-text-title);
+  font-weight: var(--z-weight-semibold);
+}
+.demo__stage {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--z-space-3);
+  min-width: 0;
+  overflow-x: auto;
+  padding: var(--z-space-1);
+}
+.demo__stage > .z-accordion,
+.demo__stage > .z-tabs,
+.demo__stage > .z-table-wrap {
+  flex: 1 1 100%;
+}
+.demo__stage > * {
+  max-width: 100%;
+}
+.demo[data-component="Carousel"] {
+  grid-column: 1 / -1;
+}
+.demo__stage > .z-carousel {
+  flex: 1 1 100%;
+}

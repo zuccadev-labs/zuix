@@ -13,7 +13,10 @@ import { listDocs, sentence } from "./docs.mjs";
 const ctx = loadZudocs(parseArgs());
 const { site } = ctx;
 const full = site.llms?.full !== false;
-const write = (path, text) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); };
+const write = (path, text) => {
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, text);
+};
 
 rmSync(ctx.generatedStaticDir, { recursive: true, force: true });
 mkdirSync(ctx.generatedStaticDir, { recursive: true });
@@ -26,11 +29,13 @@ const inline = (s) => s.replace(/\s+/g, " ").replace(/[[\]]/g, "");
 
 /** Cuerpo del documento con los enlaces relativos a otros documentos convertidos en URL del sitio. */
 function portable(doc) {
-  return doc.body.replace(/(\]\(\s*<?)([^)\s>#]+\.mdx?)(#[^)\s>]*)?/g, (all, open, path, hash = "") => {
-    if (/^[a-z][a-z0-9+.-]*:|^\//i.test(path)) return all;
-    const target = byFile.get(resolve(dirname(doc.file), decodeURIComponent(path)));
-    return target ? `${open}${link(target)}${hash}` : all;
-  }).trim();
+  return doc.body
+    .replace(/(\]\(\s*<?)([^)\s>#]+\.mdx?)(#[^)\s>]*)?/g, (all, open, path, hash = "") => {
+      if (/^[a-z][a-z0-9+.-]*:|^\//i.test(path)) return all;
+      const target = byFile.get(resolve(dirname(doc.file), decodeURIComponent(path)));
+      return target ? `${open}${link(target)}${hash}` : all;
+    })
+    .trim();
 }
 
 let out = `# ${site.name}\n`;
@@ -56,6 +61,9 @@ if (full) write(join(ctx.generatedStaticDir, "llms-full.txt"), fullText);
 // robots.txt solo cuenta en la raíz del dominio: con un baseUrl distinto de / se genera igual, pero los
 // buscadores no lo leen ahí.
 const ownRobots = existsSync(join(ctx.staticDir, "robots.txt"));
-if (!ownRobots) write(join(ctx.generatedStaticDir, "robots.txt"), `User-agent: *\nAllow: /\n${ctx.url ? `\nSitemap: ${ctx.href("sitemap.xml")}\n` : ""}`);
+if (!ownRobots)
+  write(join(ctx.generatedStaticDir, "robots.txt"), `User-agent: *\nAllow: /\n${ctx.url ? `\nSitemap: ${ctx.href("sitemap.xml")}\n` : ""}`);
 
-process.stdout.write(`✓ ${ctx.rel(ctx.llmsPath)} (${docs.length} documentos)${full ? ", llms-full.txt y copias .md" : ""}${ownRobots ? "" : ", robots.txt"}\n`);
+process.stdout.write(
+  `✓ ${ctx.rel(ctx.llmsPath)} (${docs.length} documentos)${full ? ", llms-full.txt y copias .md" : ""}${ownRobots ? "" : ", robots.txt"}\n`,
+);

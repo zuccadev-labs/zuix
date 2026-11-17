@@ -24,8 +24,30 @@ export interface CheckboxProps extends Omit<ComponentProps<"button">, "children"
 }
 
 /** Casilla con estado marcado, sin marcar e indeterminado (`checked="indeterminate"`). Patrón APG «checkbox»: se cambia con Espacio. */
-export function Checkbox({ checked: checkedProp, defaultChecked = false, onCheckedChange, name, value = "on", form, children, description, invalid, className, id, required, disabled, onClick, onKeyDown, "aria-describedby": describedBy, ...rest }: CheckboxProps) {
-  const { invalid: isInvalid, required: isRequired, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
+export function Checkbox({
+  checked: checkedProp,
+  defaultChecked = false,
+  onCheckedChange,
+  name,
+  value = "on",
+  form,
+  children,
+  description,
+  invalid,
+  className,
+  id,
+  required,
+  disabled,
+  onClick,
+  onKeyDown,
+  "aria-describedby": describedBy,
+  ...rest
+}: CheckboxProps) {
+  const {
+    invalid: isInvalid,
+    required: isRequired,
+    ...control
+  } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const [checked, setChecked] = useControllable<CheckedState>(checkedProp, defaultChecked, onCheckedChange);
   const state = checked === "indeterminate" ? "indeterminate" : checked ? "checked" : "unchecked";
   return (
@@ -56,7 +78,17 @@ export function Checkbox({ checked: checkedProp, defaultChecked = false, onCheck
         {/* La marca se dibuja con CSS según data-state. */}
         <span className="z-check__mark" data-state={state} />
       </button>
-      <NativeInput type="checkbox" name={name} value={value} form={form} checked={checked === true} indeterminate={checked === "indeterminate"} required={isRequired} disabled={disabled} onReset={() => setChecked(defaultChecked)} />
+      <NativeInput
+        type="checkbox"
+        name={name}
+        value={value}
+        form={form}
+        checked={checked === true}
+        indeterminate={checked === "indeterminate"}
+        required={isRequired}
+        disabled={disabled}
+        onReset={() => setChecked(defaultChecked)}
+      />
       {children || description ? (
         <span className="z-check__text">
           {children ? <span className="z-check__label">{children}</span> : null}

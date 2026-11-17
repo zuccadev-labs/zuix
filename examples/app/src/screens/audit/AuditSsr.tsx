@@ -35,7 +35,14 @@ function SsrSet({ dates }: { dates: boolean }) {
         <Calendar mode="range" locale="en-US" />
       </div>
       <DatePicker locale="en-US" aria-label="Due" />
-      {dates ? <DataTable rows={WHEN} rowKey={(row) => row.id} columns={[{ key: "when", header: "When", accessor: (row) => row.when }]} caption="Dates" /> : null}
+      {dates ? (
+        <DataTable
+          rows={WHEN}
+          rowKey={(row) => row.id}
+          columns={[{ key: "when", header: "When", accessor: (row) => row.when }]}
+          caption="Dates"
+        />
+      ) : null}
       <StaticSections />
     </div>
   );
@@ -74,7 +81,10 @@ export function AuditSsr() {
       let html = "";
       try {
         globalThis.Date = ServerDate as DateConstructor;
-        if (otherLocale) RealDate.prototype.toLocaleDateString = function (this: Date) { return realFormat.call(this, "ja-JP", { timeZone: "Pacific/Kiritimati" }); };
+        if (otherLocale)
+          RealDate.prototype.toLocaleDateString = function (this: Date) {
+            return realFormat.call(this, "ja-JP", { timeZone: "Pacific/Kiritimati" });
+          };
         html = renderToString(<SsrSet dates />);
       } finally {
         globalThis.Date = RealDate;
@@ -89,7 +99,9 @@ export function AuditSsr() {
         consoleErrors.push(args.map(String).join(" ").slice(0, 400));
         realError(...args);
       };
-      hydrateRoot(container, <SsrSet dates />, { onRecoverableError: (error) => recoverable.push(String((error as Error)?.message ?? error).slice(0, 400)) });
+      hydrateRoot(container, <SsrSet dates />, {
+        onRecoverableError: (error) => recoverable.push(String((error as Error)?.message ?? error).slice(0, 400)),
+      });
       await new Promise((resolve) => setTimeout(resolve, 600));
       console.error = realError;
       window.__auditSsr = {

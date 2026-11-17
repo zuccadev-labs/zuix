@@ -24,7 +24,18 @@ export interface RatingProps {
 }
 
 /** Valoración con estrellas: lectura (admite decimales) o entrada. */
-export function Rating({ value, max = 5, size = "md", showValue, caption, onChange, disabled, label = "Rating", valueLabel = (v, m) => `${v} out of ${m}`, className }: RatingProps) {
+export function Rating({
+  value,
+  max = 5,
+  size = "md",
+  showValue,
+  caption,
+  onChange,
+  disabled,
+  label = "Rating",
+  valueLabel = (v, m) => `${v} out of ${m}`,
+  className,
+}: RatingProps) {
   const [hover, setHover] = useState<number | null>(null);
   const px = STAR_PX[size];
   const stars = Array.from({ length: max }, (_, index) => index + 1);

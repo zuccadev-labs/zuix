@@ -5,12 +5,20 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
   const out = (page, id, value, message) => expectText(page, t(id), String(value), message ?? `${id} = ${value}`);
   // La tecla se mantiene un instante y hay una pausa entre pulsaciones, como las de una persona: el foco itinerante y
   // la búsqueda por tecleo se asientan entre una y otra.
-  const press = async (page, ...keys) => { for (const key of keys) { await page.keyboard.press(key, { delay: 50 }); await sleep(50); } };
+  const press = async (page, ...keys) => {
+    for (const key of keys) {
+      await page.keyboard.press(key, { delay: 50 });
+      await sleep(50);
+    }
+  };
   const inside = (page, selector) =>
-    page.locator(selector).first().evaluate((el) => {
-      const r = el.getBoundingClientRect();
-      return r.width > 0 && r.left >= -0.5 && r.top >= -0.5 && r.right <= window.innerWidth + 0.5 && r.bottom <= window.innerHeight + 0.5;
-    });
+    page
+      .locator(selector)
+      .first()
+      .evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.left >= -0.5 && r.top >= -0.5 && r.right <= window.innerWidth + 0.5 && r.bottom <= window.innerHeight + 0.5;
+      });
   const audit = (open, options) => open("audit", options);
 
   return [
@@ -26,7 +34,11 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         assert(await page.locator(t("a-btn")).isDisabled(), "un botón en carga queda deshabilitado");
         assert((await page.locator(`${t("a-btn")} .z-btn__spinner`).count()) === 1, "el anillo sustituye al icono");
         // 0.2.0: en carga lleva aria-disabled (no `disabled`): no actúa, pero conserva el foco del teclado.
-        assert((await page.locator(t("a-btn")).getAttribute("aria-disabled")) === "true" && (await page.locator(t("a-btn")).getAttribute("disabled")) === null, "en carga: aria-disabled, sin el atributo disabled");
+        assert(
+          (await page.locator(t("a-btn")).getAttribute("aria-disabled")) === "true" &&
+            (await page.locator(t("a-btn")).getAttribute("disabled")) === null,
+          "en carga: aria-disabled, sin el atributo disabled",
+        );
         await page.locator(t("a-btn")).focus();
         await focusOn(page, t("a-btn"), "un botón en carga conserva el foco");
         await press(page, "Enter", "Space");
@@ -36,11 +48,19 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await page.click(t("a-link"));
         await out(page, "a-link-clicks", 1);
         const off = page.locator(t("a-link-disabled"));
-        assert((await off.getAttribute("href")) === null && (await off.getAttribute("aria-disabled")) === "true" && (await off.getAttribute("role")) === "link", "enlace deshabilitado: sin href, aria-disabled y role=link");
+        assert(
+          (await off.getAttribute("href")) === null &&
+            (await off.getAttribute("aria-disabled")) === "true" &&
+            (await off.getAttribute("role")) === "link",
+          "enlace deshabilitado: sin href, aria-disabled y role=link",
+        );
         await off.click({ force: true });
         await out(page, "a-link-clicks", 1, "un enlace deshabilitado no ejecuta onClick");
         const ext = page.locator(t("a-link-external"));
-        assert((await ext.getAttribute("target")) === "_blank" && /noopener/.test(await ext.getAttribute("rel")), "enlace externo sin target o rel");
+        assert(
+          (await ext.getAttribute("target")) === "_blank" && /noopener/.test(await ext.getAttribute("rel")),
+          "enlace externo sin target o rel",
+        );
         assert(/opens in a new tab/.test(await ext.textContent()), "enlace externo sin texto para lectores de pantalla");
         // SegmentedControl: siempre queda una opción; la deshabilitada no se elige; flechas.
         const seg = `${t("a-seg")} .z-segmented__item`;
@@ -100,12 +120,18 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await press(page, "Home", "ArrowUp");
         await out(page, "a-slider-value", 5);
         const range = page.locator(`${t("a-slider-range")} [role="slider"]`);
-        assert((await range.nth(0).getAttribute("aria-label")) === "Minimum" && (await range.nth(1).getAttribute("aria-label")) === "Maximum", "thumbLabels no nombra cada tirador");
+        assert(
+          (await range.nth(0).getAttribute("aria-label")) === "Minimum" && (await range.nth(1).getAttribute("aria-label")) === "Maximum",
+          "thumbLabels no nombra cada tirador",
+        );
         await range.nth(0).focus();
         await press(page, "End");
         const [low, high] = (await page.locator(t("a-range-value")).textContent()).split(",").map(Number);
         assert(low <= high && high <= 100 && low >= 0, `los tiradores no se cruzan ni salen del rango (${low},${high})`);
-        assert((await page.locator(`${t("a-slider-disabled")} .z-slider`).getAttribute("data-disabled")) !== null, "slider deshabilitado sin data-disabled");
+        assert(
+          (await page.locator(`${t("a-slider-disabled")} .z-slider`).getAttribute("data-disabled")) !== null,
+          "slider deshabilitado sin data-disabled",
+        );
       },
     },
     {
@@ -138,7 +164,11 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await out(page, "a-otp-value", "9876", "pegar rellena todas las casillas");
         await out(page, "a-otp-complete", "9876");
         assert((await page.locator(`${t("a-otp")} input[type="hidden"]`).inputValue()) === "9876", "campo oculto con el código");
-        assert((await page.locator(`${t("a-otp")} [role="group"]`).getAttribute("aria-label")) === "Verification code" && (await page.locator(`${t("a-otp-text")} [role="group"]`).getAttribute("aria-label")) === "Invite code", "nombre del grupo OTP");
+        assert(
+          (await page.locator(`${t("a-otp")} [role="group"]`).getAttribute("aria-label")) === "Verification code" &&
+            (await page.locator(`${t("a-otp-text")} [role="group"]`).getAttribute("aria-label")) === "Invite code",
+          "nombre del grupo OTP",
+        );
         assert((await cells.first().getAttribute("autocomplete")) === "one-time-code", "autocomplete one-time-code");
         // SearchInput
         const search = page.locator(t("a-search"));
@@ -150,12 +180,22 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await out(page, "a-search-value", "empty", "Escape limpia");
         await out(page, "a-search-cleared", 1);
         await search.fill("x");
-        await page.locator(`${t("a-search-cell")} .z-input__action`).first().click();
+        await page
+          .locator(`${t("a-search-cell")} .z-input__action`)
+          .first()
+          .click();
         await out(page, "a-search-cleared", 2);
         await focusOn(page, t("a-search"), "limpiar devuelve el foco al campo");
         await search.fill("y");
         await page.click(t("a-search-loading"));
-        assert((await page.locator(`${t("a-search-cell")} .z-input--search`).first().locator(".z-input__spinner").count()) === 1, "loading muestra el anillo en lugar del botón");
+        assert(
+          (await page
+            .locator(`${t("a-search-cell")} .z-input--search`)
+            .first()
+            .locator(".z-input__spinner")
+            .count()) === 1,
+          "loading muestra el anillo en lugar del botón",
+        );
         assert((await page.locator(t("a-search-unc")).inputValue()) === "draft", "defaultValue sin controlar");
         // Input
         const input = page.locator(t("a-input"));
@@ -175,12 +215,18 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         // DateInput
         const date = page.locator(`${t("a-dateinput")} input`);
         assert((await date.getAttribute("type")) === "date" && (await date.inputValue()) === "2026-03-10", "DateInput: tipo y valor ISO");
-        assert((await page.locator(`${t("a-dateinput")} .z-input__action`).getAttribute("aria-label")) === "Open picker", "botón del selector sin nombre");
+        assert(
+          (await page.locator(`${t("a-dateinput")} .z-input__action`).getAttribute("aria-label")) === "Open picker",
+          "botón del selector sin nombre",
+        );
         await page.locator(`${t("a-dateinput")} .z-input__action`).click();
         assert(await page.locator(`${t("a-dateinput-disabled")} .z-input__action`).isDisabled(), "selector deshabilitado");
         // NativeSelect
         const native = page.locator(t("a-native"));
-        assert((await native.inputValue()) === "" && (await native.evaluate((el) => el.selectedOptions[0]?.textContent)) === "Choose a letter", "NativeSelect debe mostrar el placeholder sin defaultValue");
+        assert(
+          (await native.inputValue()) === "" && (await native.evaluate((el) => el.selectedOptions[0]?.textContent)) === "Choose a letter",
+          "NativeSelect debe mostrar el placeholder sin defaultValue",
+        );
         await native.selectOption("beta");
         await out(page, "a-native-value", "beta");
       },
@@ -190,7 +236,14 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
       async run({ open }) {
         const page = await audit(open);
         const file = (name, size = 10, mimeType = "text/plain") => ({ name, mimeType, buffer: Buffer.alloc(size, 97) });
-        await page.locator(`${t("a-upload")} input[type="file"]`).setInputFiles([file("a.txt"), file("big.txt", 2000), file("pic.png", 20, "image/png"), file("app.exe", 5, "application/octet-stream")]);
+        await page
+          .locator(`${t("a-upload")} input[type="file"]`)
+          .setInputFiles([
+            file("a.txt"),
+            file("big.txt", 2000),
+            file("pic.png", 20, "image/png"),
+            file("app.exe", 5, "application/octet-stream"),
+          ]);
         await out(page, "a-upload-accepted", "a.txt,pic.png");
         await out(page, "a-upload-rejected", "big.txt,app.exe");
         await page.click(t("a-upload-submit"));
@@ -204,14 +257,21 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         });
         await zone.dispatchEvent("dragover", { dataTransfer: transfer });
         await expectAttr(page, `${t("a-upload")} .z-upload`, "data-dragging", "true");
-        await zone.evaluate((el) => el.dispatchEvent(new DragEvent("dragleave", { bubbles: true, relatedTarget: el.querySelector('[data-testid="a-upload-child"]') })));
+        await zone.evaluate((el) =>
+          el.dispatchEvent(
+            new DragEvent("dragleave", { bubbles: true, relatedTarget: el.querySelector('[data-testid="a-upload-child"]') }),
+          ),
+        );
         assert((await zone.getAttribute("data-dragging")) === "true", "pasar sobre un hijo no quita data-dragging");
         await zone.dispatchEvent("drop", { dataTransfer: transfer });
         await out(page, "a-upload-accepted", "drop.txt");
         assert((await zone.getAttribute("data-dragging")) === null, "soltar quita data-dragging");
         await page.locator(`${t("a-upload-single")} input[type="file"]`).setInputFiles([file("one.txt")]);
         await out(page, "a-upload-single-value", "one.txt");
-        assert((await page.locator(`${t("a-upload-single")} input[type="file"]`).evaluate((el) => el.files.length)) === 0, "sin `name` el campo se vacía para poder repetir el archivo");
+        assert(
+          (await page.locator(`${t("a-upload-single")} input[type="file"]`).evaluate((el) => el.files.length)) === 0,
+          "sin `name` el campo se vacía para poder repetir el archivo",
+        );
         const off = page.locator(`${t("a-upload-disabled")} .z-upload`);
         await off.dispatchEvent("drop", { dataTransfer: transfer });
         await out(page, "a-upload-disabled-count", 0, "una zona deshabilitada no entrega archivos");
@@ -235,18 +295,26 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
             const labelled = [...wrap.querySelectorAll(`[aria-labelledby~="${CSS.escape(label.id)}"]`)];
             const named = control?.matches("input, select, textarea, button") || labelled.length > 0 || wrap.querySelector("[aria-label]");
             if (!named) bad.push(`${id}: nada queda nombrado por la etiqueta "${text}"`);
-            const described = [...wrap.querySelectorAll("[aria-describedby]")].filter((el) => el.getAttribute("aria-describedby").split(" ").includes(hint.id));
+            const described = [...wrap.querySelectorAll("[aria-describedby]")].filter((el) =>
+              el.getAttribute("aria-describedby").split(" ").includes(hint.id),
+            );
             if (!described.length) bad.push(`${id}: la ayuda no está en aria-describedby de ningún control`);
             if (error) {
               if (error.getAttribute("role") !== "alert") bad.push(`${id}: el error no es role=alert`);
-              if (!described.some((el) => el.getAttribute("aria-describedby").split(" ").includes(error.id))) bad.push(`${id}: el error no está en aria-describedby`);
-              if (!wrap.querySelector('[aria-invalid="true"], [data-invalid]')) bad.push(`${id}: el control no queda marcado como inválido`);
+              if (!described.some((el) => el.getAttribute("aria-describedby").split(" ").includes(error.id)))
+                bad.push(`${id}: el error no está en aria-describedby`);
+              if (!wrap.querySelector('[aria-invalid="true"], [data-invalid]'))
+                bad.push(`${id}: el control no queda marcado como inválido`);
             }
           }
           const radio = document.querySelector('[data-testid="f-radio"] [role="radiogroup"]');
           const otp = document.querySelector('[data-testid="f-otp"] [role="group"]');
           const thumb = document.querySelector('[data-testid="f-slider"] [role="slider"]');
-          const name = (el) => (el?.getAttribute("aria-labelledby") ?? "").split(" ").map((id) => document.getElementById(id)?.firstChild?.textContent.trim()).join(" ");
+          const name = (el) =>
+            (el?.getAttribute("aria-labelledby") ?? "")
+              .split(" ")
+              .map((id) => document.getElementById(id)?.firstChild?.textContent.trim())
+              .join(" ");
           if (name(radio) !== "Plan") bad.push(`radiogroup sin nombre de la etiqueta (${name(radio)})`);
           if (name(otp) !== "Code") bad.push(`grupo OTP sin nombre de la etiqueta (${name(otp)})`);
           if (name(thumb) !== "Volume") bad.push(`tirador de Slider sin nombre de la etiqueta (${name(thumb)})`);
@@ -268,8 +336,14 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
       async run({ open }) {
         const page = await audit(open);
         const read = page.locator(`${t("a-rating-read")} .z-rating__stars`);
-        assert((await read.getAttribute("role")) === "img" && (await read.getAttribute("aria-label")) === "Rating: 3.5 out of 5", "Rating en lectura: role=img con valor");
-        assert((await page.locator(`${t("a-rating-read")} .z-rating__layer--filled`).evaluate((el) => el.style.width)) === "70%", "capa rellena al 70 %");
+        assert(
+          (await read.getAttribute("role")) === "img" && (await read.getAttribute("aria-label")) === "Rating: 3.5 out of 5",
+          "Rating en lectura: role=img con valor",
+        );
+        assert(
+          (await page.locator(`${t("a-rating-read")} .z-rating__layer--filled`).evaluate((el) => el.style.width)) === "70%",
+          "capa rellena al 70 %",
+        );
         const star = (n, scope = "a-rating") => page.locator(`${t(scope)} [data-star="${n}"]`);
         await star(4).click();
         await out(page, "a-rating-value", 4);
@@ -286,7 +360,10 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await press(page, "ArrowLeft", "ArrowDown");
         await out(page, "a-rating-value", 3);
         await focusOn(page, `${t("a-rating")} [data-star="3"]`, "el foco sigue a la estrella elegida");
-        assert((await page.locator(`${t("a-rating-over")} [tabindex="0"]`).count()) === 1, "con un valor mayor que max sigue habiendo una estrella tabulable");
+        assert(
+          (await page.locator(`${t("a-rating-over")} [tabindex="0"]`).count()) === 1,
+          "con un valor mayor que max sigue habiendo una estrella tabulable",
+        );
         assert(await star(1, "a-rating-disabled").isDisabled(), "Rating deshabilitado");
         // Chip
         const chip = page.locator(`${t("a-chip")} .z-chip__main`);
@@ -300,13 +377,29 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         assert((await remove.getAttribute("aria-label")) === "Remove tag", "botón de quitar sin nombre");
         await remove.click();
         await out(page, "a-chip-removed", 1);
-        assert(await page.locator(`${t("a-chip-disabled")} .z-chip__main`).isDisabled() && await page.locator(`${t("a-chip-disabled")} .z-chip__remove`).isDisabled(), "chip deshabilitado");
+        assert(
+          (await page.locator(`${t("a-chip-disabled")} .z-chip__main`).isDisabled()) &&
+            (await page.locator(`${t("a-chip-disabled")} .z-chip__remove`).isDisabled()),
+          "chip deshabilitado",
+        );
         // Avatar
         await until(page, () => !document.querySelector('[data-testid="a-avatar-broken"] img'), "la imagen rota deja paso a las iniciales");
         const broken = page.locator(t("a-avatar-broken"));
-        assert((await broken.locator(".z-avatar__initials").textContent()) === "MR" && (await broken.getAttribute("role")) === "img" && (await broken.getAttribute("aria-label")) === "Marta Ruiz", "respaldo con iniciales y nombre accesible");
-        assert((await page.locator(`${t("a-avatar-initials")} .z-avatar__status`).getAttribute("aria-label")) === "Busy", "estado con nombre");
-        assert((await page.locator(`${t("a-avatar-group")} .z-avatar--overflow`).getAttribute("aria-label")) === "2 more" && (await page.locator(`${t("a-avatar-group")} > .z-avatar`).count()) === 3, "AvatarGroup resume los sobrantes");
+        assert(
+          (await broken.locator(".z-avatar__initials").textContent()) === "MR" &&
+            (await broken.getAttribute("role")) === "img" &&
+            (await broken.getAttribute("aria-label")) === "Marta Ruiz",
+          "respaldo con iniciales y nombre accesible",
+        );
+        assert(
+          (await page.locator(`${t("a-avatar-initials")} .z-avatar__status`).getAttribute("aria-label")) === "Busy",
+          "estado con nombre",
+        );
+        assert(
+          (await page.locator(`${t("a-avatar-group")} .z-avatar--overflow`).getAttribute("aria-label")) === "2 more" &&
+            (await page.locator(`${t("a-avatar-group")} > .z-avatar`).count()) === 3,
+          "AvatarGroup resume los sobrantes",
+        );
         // DataTable
         const rows = `${t("a-table")} tbody tr`;
         await page.locator(rows).nth(1).focus();
@@ -316,10 +409,16 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await page.locator(rows).nth(2).focus();
         await press(page, "Space");
         await out(page, "a-table-row", "r3");
-        await page.locator(`${t("a-table")} .z-table__sort`).nth(1).click();
+        await page
+          .locator(`${t("a-table")} .z-table__sort`)
+          .nth(1)
+          .click();
         await expectAttr(page, `${t("a-table")} th >> nth=1`, "aria-sort", "ascending");
         assert((await page.locator(rows).first().locator("td").first().textContent()) === "Borealis", "orden por número");
-        await page.locator(`${t("a-table")} .z-table__sort`).nth(2).click();
+        await page
+          .locator(`${t("a-table")} .z-table__sort`)
+          .nth(2)
+          .click();
         assert((await page.locator(rows).first().locator("td").first().textContent()) === "Borealis", "orden por fecha");
       },
     },
@@ -349,14 +448,23 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await gone(page, t("a-loading"));
         // CodeBlock
         const pre = page.locator(`${t("a-code")} pre`);
-        assert((await pre.getAttribute("tabindex")) === "0" && (await pre.getAttribute("role")) === "region" && (await pre.getAttribute("aria-label")) === "Code", "región de código enfocable y con nombre");
+        assert(
+          (await pre.getAttribute("tabindex")) === "0" &&
+            (await pre.getAttribute("role")) === "region" &&
+            (await pre.getAttribute("aria-label")) === "Code",
+          "región de código enfocable y con nombre",
+        );
         if (browserName === "chromium") {
           await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
           await page.locator(`${t("a-code")} .z-code__copy`).click();
           await out(page, "a-code-copied", "copied:43");
           await expectAttr(page, `${t("a-code")} .z-code__copy`, "data-copied", "true");
-          assert((await page.evaluate(() => navigator.clipboard.readText())) === "pnpm add @zuccadev-labs/zuix-zui\npnpm check", "el portapapeles recibe el código");
-        } else note(`CodeBlock copiar: ${browserName} no deja conceder el permiso de portapapeles en Playwright; verificado solo en chromium`);
+          assert(
+            (await page.evaluate(() => navigator.clipboard.readText())) === "pnpm add @zuccadev-labs/zuix-zui\npnpm check",
+            "el portapapeles recibe el código",
+          );
+        } else
+          note(`CodeBlock copiar: ${browserName} no deja conceder el permiso de portapapeles en Playwright; verificado solo en chromium`);
       },
     },
     {
@@ -395,41 +503,79 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
       async run({ open }) {
         const page = await audit(open);
         const steps = `${t("a-stepper")} .z-stepper__step`;
-        assert((await page.locator(`${steps}[data-state="complete"]`).count()) === 2 && (await page.locator(`${steps}[aria-current="step"]`).count()) === 1, "estados de los pasos");
+        assert(
+          (await page.locator(`${steps}[data-state="complete"]`).count()) === 2 &&
+            (await page.locator(`${steps}[aria-current="step"]`).count()) === 1,
+          "estados de los pasos",
+        );
         assert((await page.locator(`${steps} button`).count()) === 2, "solo los pasos completos son botones");
-        assert(/Completed/.test(await page.locator(steps).first().textContent()) && /Current/.test(await page.locator(steps).nth(2).textContent()), "texto de estado para lectores de pantalla");
+        assert(
+          /Completed/.test(await page.locator(steps).first().textContent()) &&
+            /Current/.test(await page.locator(steps).nth(2).textContent()),
+          "texto de estado para lectores de pantalla",
+        );
         await page.locator(`${steps} button`).first().click();
         await out(page, "a-stepper-value", 0);
         for (let i = 0; i < 4; i++) await page.click(t("a-stepper-next"));
         await out(page, "a-stepper-value", 4);
         assert((await page.locator(`${steps}[data-state="complete"]`).count()) === 4, "current = steps.length deja todos completos");
-        assert((await page.locator(`${t("a-stepper-static")} button`).count()) === 0 && (await page.locator(`${t("a-stepper-static")} .z-stepper`).getAttribute("data-orientation")) === "vertical", "sin onStepSelect no hay botones");
+        assert(
+          (await page.locator(`${t("a-stepper-static")} button`).count()) === 0 &&
+            (await page.locator(`${t("a-stepper-static")} .z-stepper`).getAttribute("data-orientation")) === "vertical",
+          "sin onStepSelect no hay botones",
+        );
         // NavList
         assert((await page.locator(t("a-navlist")).getAttribute("aria-label")) === "Audit navigation", "nav con nombre");
         await expectAttr(page, t("a-nav-link"), "aria-current", "page");
         await page.click(t("a-nav-button"));
         await out(page, "a-nav-value", "files");
-        assert((await page.locator(t("a-nav-button")).evaluate((el) => el.tagName)) === "BUTTON" && (await page.locator(t("a-nav-link")).evaluate((el) => el.tagName)) === "A", "href → enlace; sin href → botón");
+        assert(
+          (await page.locator(t("a-nav-button")).evaluate((el) => el.tagName)) === "BUTTON" &&
+            (await page.locator(t("a-nav-link")).evaluate((el) => el.tagName)) === "A",
+          "href → enlace; sin href → botón",
+        );
         const offLink = page.locator(t("a-nav-link-disabled"));
-        assert((await offLink.getAttribute("href")) === null && (await offLink.getAttribute("aria-disabled")) === "true" && (await offLink.getAttribute("role")) === "link", "NavLink deshabilitado con href: sin href, aria-disabled, role=link");
+        assert(
+          (await offLink.getAttribute("href")) === null &&
+            (await offLink.getAttribute("aria-disabled")) === "true" &&
+            (await offLink.getAttribute("role")) === "link",
+          "NavLink deshabilitado con href: sin href, aria-disabled, role=link",
+        );
         await offLink.click({ force: true });
         assert(await page.locator(t("a-nav-button-disabled")).isDisabled(), "NavLink botón deshabilitado");
         await out(page, "a-nav-value", "files", "un NavLink deshabilitado no ejecuta onClick");
         const child = page.locator(t("a-nav-child"));
-        assert((await child.getAttribute("class")).includes("z-navlink") && (await child.locator(".z-navlink__icon").count()) === 1, "asChild fusiona clase e icono con el hijo");
+        assert(
+          (await child.getAttribute("class")).includes("z-navlink") && (await child.locator(".z-navlink__icon").count()) === 1,
+          "asChild fusiona clase e icono con el hijo",
+        );
         await child.click();
         await out(page, "a-nav-value", "child");
         // Breadcrumb
         const crumb = `${t("a-breadcrumb")}`;
         assert((await page.locator(`${crumb} nav`).getAttribute("aria-label")) === "Breadcrumb", "nav con nombre");
         assert((await page.locator(`${crumb} [aria-current="page"]`).textContent()).trim() === "Atlas", "el último es la página actual");
-        assert((await page.locator(`${crumb} a.z-breadcrumb__link`).count()) === 1 && (await page.locator(`${crumb} button.z-breadcrumb__link`).count()) === 1 && (await page.locator(`${crumb} .z-breadcrumb__text`).count()) === 1, "enlace, botón y texto según el elemento");
+        assert(
+          (await page.locator(`${crumb} a.z-breadcrumb__link`).count()) === 1 &&
+            (await page.locator(`${crumb} button.z-breadcrumb__link`).count()) === 1 &&
+            (await page.locator(`${crumb} .z-breadcrumb__text`).count()) === 1,
+          "enlace, botón y texto según el elemento",
+        );
         assert((await page.locator(`${crumb} .z-breadcrumb__separator[aria-hidden="true"]`).count()) === 3, "separadores decorativos");
         await page.locator(`${crumb} button.z-breadcrumb__link`).click();
         await out(page, "a-breadcrumb-value", "projects");
         // Pagination
         const nav = `${t("a-pagination")} .z-pagination`;
-        const pages = () => page.locator(`${nav} > *`).allTextContents().then((list) => list.map((s) => s.trim()).filter(Boolean).join(" "));
+        const pages = () =>
+          page
+            .locator(`${nav} > *`)
+            .allTextContents()
+            .then((list) =>
+              list
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .join(" "),
+            );
         assert((await pages()) === "1 2 3 4 5 … 20", `rango inicial: ${await pages()}`);
         assert(await page.locator(`${nav} > button`).first().isDisabled(), "anterior deshabilitado en la primera");
         await page.locator(`${nav} > button`).last().click();
@@ -447,7 +593,12 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         assert((await pages()) === "1 … 13 14 15 … 20", `rango con dos huecos: ${await pages()}`);
         assert((await page.locator(`${nav} [aria-current="page"]`).getAttribute("aria-label")) === "Page 14", "nombre de la página actual");
         const short = `${t("a-pagination-short")} .z-pagination > button`;
-        assert((await page.locator(short).count()) === 3 && await page.locator(short).first().isDisabled() && await page.locator(short).last().isDisabled(), "una sola página: anterior y siguiente deshabilitados");
+        assert(
+          (await page.locator(short).count()) === 3 &&
+            (await page.locator(short).first().isDisabled()) &&
+            (await page.locator(short).last().isDisabled()),
+          "una sola página: anterior y siguiente deshabilitados",
+        );
       },
     },
     {
@@ -473,30 +624,60 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await page.locator(tabs).nth(1).focus();
         await press(page, "ArrowDown");
         await out(page, "a-tabs-value", "four", "salta la pestaña deshabilitada");
-        assert((await page.locator(t("a-tabs-kept")).count()) === 1 && (await page.locator(t("a-tabs-kept")).inputValue()) === "kept", "keepMounted conserva el panel y su estado");
+        assert(
+          (await page.locator(t("a-tabs-kept")).count()) === 1 && (await page.locator(t("a-tabs-kept")).inputValue()) === "kept",
+          "keepMounted conserva el panel y su estado",
+        );
         await press(page, "ArrowRight");
         await out(page, "a-tabs-value", "four", "en vertical las flechas horizontales no cambian de pestaña");
         // Tree
-        const item = (name) => page.locator(`${t("a-tree")} [role="treeitem"]`, { has: page.locator(`:scope > .z-tree__row .z-tree__label:text-is("${name}")`) });
+        const item = (name) =>
+          page.locator(`${t("a-tree")} [role="treeitem"]`, {
+            has: page.locator(`:scope > .z-tree__row .z-tree__label:text-is("${name}")`),
+          });
         await item("src").focus();
         await press(page, "l");
-        await focusOn(page, `${t("a-tree")} [role="treeitem"]:has(> .z-tree__row .z-tree__label:text-is("LICENSE"))`, "la letra salta al nodo cuyo nombre empieza por ella");
+        await focusOn(
+          page,
+          `${t("a-tree")} [role="treeitem"]:has(> .z-tree__row .z-tree__label:text-is("LICENSE"))`,
+          "la letra salta al nodo cuyo nombre empieza por ella",
+        );
         await press(page, "m");
-        await focusOn(page, `${t("a-tree")} [role="treeitem"]:has(> .z-tree__row .z-tree__label:text-is("main.tsx"))`, "la búsqueda da la vuelta");
+        await focusOn(
+          page,
+          `${t("a-tree")} [role="treeitem"]:has(> .z-tree__row .z-tree__label:text-is("main.tsx"))`,
+          "la búsqueda da la vuelta",
+        );
         await press(page, "Enter");
         await out(page, "a-tree-value", "main");
         await press(page, "ArrowLeft");
-        await focusOn(page, `${t("a-tree")} [role="treeitem"]:has(> .z-tree__row .z-tree__label:text-is("src"))`, "flecha izquierda en una hoja va al padre");
+        await focusOn(
+          page,
+          `${t("a-tree")} [role="treeitem"]:has(> .z-tree__row .z-tree__label:text-is("src"))`,
+          "flecha izquierda en una hoja va al padre",
+        );
         await press(page, "ArrowLeft");
         await expectAttr(page, `${t("a-tree")} [role="treeitem"] >> nth=0`, "aria-expanded", "false");
         assert((await page.locator(`${t("a-tree")} [role="treeitem"][tabindex="0"]`).count()) === 1, "un solo nodo tabulable");
         // Carousel
         await out(page, "a-carousel-value", 1);
-        await page.locator(`${t("a-carousel")} .z-carousel__arrow`).last().click();
+        await page
+          .locator(`${t("a-carousel")} .z-carousel__arrow`)
+          .last()
+          .click();
         await out(page, "a-carousel-value", 2);
-        await page.locator(`${t("a-carousel")} .z-carousel__arrow`).last().click();
+        await page
+          .locator(`${t("a-carousel")} .z-carousel__arrow`)
+          .last()
+          .click();
         await out(page, "a-carousel-value", 3);
-        assert(await page.locator(`${t("a-carousel")} .z-carousel__arrow`).last().isDisabled(), "sin bucle, la flecha se deshabilita en el último");
+        assert(
+          await page
+            .locator(`${t("a-carousel")} .z-carousel__arrow`)
+            .last()
+            .isDisabled(),
+          "sin bucle, la flecha se deshabilita en el último",
+        );
         assert(/Slide 4 of 4/.test(await page.locator(`${t("a-carousel")} .z-carousel__live`).textContent()), "anuncio del slide");
       },
     },
@@ -515,14 +696,20 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         assert((await page.locator('[role="menu"]').count()) === 1, "keepOpen deja el menú abierto");
         // Deshabilitado: las flechas lo saltan.
         await press(page, "ArrowDown");
-        await poll(() => page.evaluate(() => document.activeElement?.textContent.trim().startsWith("Share")), "la flecha salta la entrada deshabilitada");
+        await poll(
+          () => page.evaluate(() => document.activeElement?.textContent.trim().startsWith("Share")),
+          "la flecha salta la entrada deshabilitada",
+        );
         await press(page, "ArrowRight");
         await expectCount(page, '[role="menu"]', 2);
         await press(page, "ArrowDown", "ArrowRight");
         await expectCount(page, '[role="menu"]', 3);
         await press(page, "ArrowDown", "ArrowRight");
         await expectCount(page, '[role="menu"]', 4, "cuarto nivel abierto con teclado");
-        await poll(() => page.evaluate(() => document.activeElement?.textContent.trim() === "Frontend"), "el foco entra en el último submenú");
+        await poll(
+          () => page.evaluate(() => document.activeElement?.textContent.trim() === "Frontend"),
+          "el foco entra en el último submenú",
+        );
         await press(page, "ArrowLeft");
         await expectCount(page, '[role="menu"]', 3, "flecha izquierda cierra solo el último nivel");
         await press(page, "ArrowRight", "ArrowDown", "Enter");
@@ -550,7 +737,10 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
       name: "Auditoría · composición: Menu, ContextMenu, Select, Combobox, DatePicker y Calendar dentro de un Popover y de un Drawer",
       async run({ open }) {
         const page = await audit(open);
-        for (const [scope, trigger, layer] of [["pop", "a-compose-popover", ".z-popover"], ["drawer", "a-compose-drawer", ".z-drawer"]]) {
+        for (const [scope, trigger, layer] of [
+          ["pop", "a-compose-popover", ".z-popover"],
+          ["drawer", "a-compose-drawer", ".z-drawer"],
+        ]) {
           const id = (name) => t(`${scope}-${name}`);
           await page.click(t(trigger));
           await visible(page, id("content"));
@@ -587,16 +777,29 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
           // DatePicker
           await page.locator(`${id("datepicker")} .z-select__control`).click();
           await visible(page, ".z-datepicker__panel .z-calendar__day");
-          await poll(() => page.evaluate(() => document.activeElement?.classList.contains("z-calendar__day")), `${scope}: el DatePicker enfoca un día`);
+          await poll(
+            () => page.evaluate(() => document.activeElement?.classList.contains("z-calendar__day")),
+            `${scope}: el DatePicker enfoca un día`,
+          );
           await press(page, "ArrowRight", "Enter");
-          await poll(async () => /^\d{4}-\d{2}-\d{2}$/.test((await page.locator(id("datepicker-value")).textContent()).trim()), `${scope}: el DatePicker elige con teclado`);
+          await poll(
+            async () => /^\d{4}-\d{2}-\d{2}$/.test((await page.locator(id("datepicker-value")).textContent()).trim()),
+            `${scope}: el DatePicker elige con teclado`,
+          );
           await stillOpen("elegir fecha no cierra la capa que contiene al DatePicker");
           // Calendar
           await page.locator(`${id("calendar")} [data-date="2026-03-18"]`).click();
           await out(page, `${scope}-calendar-value`, "2026-03-18");
           await press(page, "PageDown");
-          await poll(() => page.evaluate(() => document.activeElement?.dataset.date === "2026-04-18"), `${scope}: Av Pág cambia de mes dentro de la capa`);
-          await page.locator(`${layer} .z-overlay-close, ${id("content")}`).first().focus().catch(() => {});
+          await poll(
+            () => page.evaluate(() => document.activeElement?.dataset.date === "2026-04-18"),
+            `${scope}: Av Pág cambia de mes dentro de la capa`,
+          );
+          await page
+            .locator(`${layer} .z-overlay-close, ${id("content")}`)
+            .first()
+            .focus()
+            .catch(() => {});
           await press(page, "Escape");
           await gone(page, id("content"), `${scope}: Escape cierra la capa`);
         }
@@ -658,7 +861,13 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         // CommandPalette
         await page.click(t("a-palette"));
         await visible(page, ".z-palette");
-        const active = () => page.evaluate(() => document.getElementById(document.querySelector(".z-palette__input").getAttribute("aria-activedescendant") ?? "")?.textContent.trim() ?? null);
+        const active = () =>
+          page.evaluate(
+            () =>
+              document
+                .getElementById(document.querySelector(".z-palette__input").getAttribute("aria-activedescendant") ?? "")
+                ?.textContent.trim() ?? null,
+          );
         await press(page, "ArrowDown", "ArrowDown", "Enter");
         await out(page, "a-palette-ran", "none", "un comando deshabilitado no se ejecuta");
         await press(page, "ArrowUp", "Enter");
@@ -669,7 +878,10 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         assert((await active()) === "Shrink the list", `comando activo: ${await active()}`);
         await press(page, "Enter");
         await expectCount(page, ".z-palette__item", 3);
-        assert((await active()) === "Locked command", `tras acortar la lista el comando activo debe ser el último que queda, no uno inexistente: ${await active()}`);
+        assert(
+          (await active()) === "Locked command",
+          `tras acortar la lista el comando activo debe ser el último que queda, no uno inexistente: ${await active()}`,
+        );
         await press(page, "ArrowUp", "Enter");
         await out(page, "a-palette-ran", "save");
         await press(page, "Escape");
@@ -689,10 +901,22 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         const toastMarkup = await page.evaluate(() => {
           const region = document.querySelector(".z-toast-viewport");
           const items = [...region.querySelectorAll(".z-toast")];
-          return { region: `${region.tagName} ${region.getAttribute("role")}`, name: region.getAttribute("aria-label"), top: region.matches(":popover-open"), items: items.map((el) => `${el.tagName} ${el.getAttribute("role")}`), lists: document.querySelectorAll(".z-toast-viewport ol, .z-toast-viewport li, ol.z-toast-viewport").length };
+          return {
+            region: `${region.tagName} ${region.getAttribute("role")}`,
+            name: region.getAttribute("aria-label"),
+            top: region.matches(":popover-open"),
+            items: items.map((el) => `${el.tagName} ${el.getAttribute("role")}`),
+            lists: document.querySelectorAll(".z-toast-viewport ol, .z-toast-viewport li, ol.z-toast-viewport").length,
+          };
         });
-        assert(toastMarkup.region === "DIV region" && toastMarkup.name === "Audit notice" && toastMarkup.top && toastMarkup.lists === 0, `región de avisos: ${JSON.stringify(toastMarkup)}`);
-        assert(toastMarkup.items.every((item) => item === "DIV status" || item === "DIV alert") && toastMarkup.items.includes("DIV alert"), `avisos: ${JSON.stringify(toastMarkup.items)}`);
+        assert(
+          toastMarkup.region === "DIV region" && toastMarkup.name === "Audit notice" && toastMarkup.top && toastMarkup.lists === 0,
+          `región de avisos: ${JSON.stringify(toastMarkup)}`,
+        );
+        assert(
+          toastMarkup.items.every((item) => item === "DIV status" || item === "DIV alert") && toastMarkup.items.includes("DIV alert"),
+          `avisos: ${JSON.stringify(toastMarkup.items)}`,
+        );
         assert((await page.locator(".z-toast").first().textContent()).includes("Notice 2"), "el aviso más antiguo es el que se retira");
         await page.click(t("a-toast-dismiss"));
         await expectCount(page, '.z-toast[data-state="open"]', 2);
@@ -722,7 +946,8 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
           for (const trigger of document.querySelectorAll('[aria-haspopup="dialog"]:not(.z-select__control)')) {
             trigger.click();
             await new Promise((done) => setTimeout(done, 60));
-            for (const panel of document.querySelectorAll(".z-popover[role=dialog]:popover-open")) out.push(panel.getAttribute("aria-label") || panel.getAttribute("aria-labelledby") || "");
+            for (const panel of document.querySelectorAll(".z-popover[role=dialog]:popover-open"))
+              out.push(panel.getAttribute("aria-label") || panel.getAttribute("aria-labelledby") || "");
             trigger.click();
             await new Promise((done) => setTimeout(done, 60));
           }
@@ -732,32 +957,51 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
       },
     },
     {
-      name: "Auditoría · RTL: Calendar, Rating, Slider, Tabs, Pagination y Breadcrumb dentro de dir=\"rtl\", y la pantalla entera con <html dir=\"rtl\">",
+      name: 'Auditoría · RTL: Calendar, Rating, Slider, Tabs, Pagination y Breadcrumb dentro de dir="rtl", y la pantalla entera con <html dir="rtl">',
       async run({ open }) {
         const page = await audit(open);
         await page.locator(`${t("a-rtl-calendar")} [data-date="2026-03-10"]`).focus();
         await press(page, "ArrowLeft");
-        await poll(() => page.evaluate(() => document.activeElement?.dataset.date === "2026-03-11"), "Calendar RTL: flecha izquierda = día siguiente");
+        await poll(
+          () => page.evaluate(() => document.activeElement?.dataset.date === "2026-03-11"),
+          "Calendar RTL: flecha izquierda = día siguiente",
+        );
         const left = (d) => page.locator(`${t("a-rtl-calendar")} [data-date="${d}"]`).evaluate((el) => el.getBoundingClientRect().left);
         assert((await left("2026-03-11")) < (await left("2026-03-10")), "Calendar RTL: el día siguiente queda a la izquierda");
         await page.locator(`${t("a-rtl-rating")} [data-star="2"]`).focus();
         await press(page, "ArrowLeft");
         await out(page, "a-rtl-rating-value", 3, "Rating RTL: flecha izquierda sube");
-        assert((await page.locator(`${t("a-rtl-rating")} [data-star="3"]`).evaluate((el) => el.getBoundingClientRect().left)) < (await page.locator(`${t("a-rtl-rating")} [data-star="1"]`).evaluate((el) => el.getBoundingClientRect().left)), "Rating RTL: las estrellas crecen hacia la izquierda");
+        assert(
+          (await page.locator(`${t("a-rtl-rating")} [data-star="3"]`).evaluate((el) => el.getBoundingClientRect().left)) <
+            (await page.locator(`${t("a-rtl-rating")} [data-star="1"]`).evaluate((el) => el.getBoundingClientRect().left)),
+          "Rating RTL: las estrellas crecen hacia la izquierda",
+        );
         // 0.2.0: las primitivas propias leen la dirección del DOM, sin proveedor ni prop `dir`: la flecha izquierda avanza.
-        await page.locator(`${t("a-rtl-tabs")} [role="tab"]`).first().focus();
+        await page
+          .locator(`${t("a-rtl-tabs")} [role="tab"]`)
+          .first()
+          .focus();
         await press(page, "ArrowLeft");
         await out(page, "a-rtl-tabs-value", "two", "Tabs RTL: flecha izquierda = pestaña siguiente");
         await press(page, "ArrowRight", "ArrowRight");
         await out(page, "a-rtl-tabs-value", "three", "Tabs RTL: flecha derecha retrocede (y da la vuelta)");
-        const tabLeft = (i) => page.locator(`${t("a-rtl-tabs")} [role="tab"]`).nth(i).evaluate((el) => el.getBoundingClientRect().left);
+        const tabLeft = (i) =>
+          page
+            .locator(`${t("a-rtl-tabs")} [role="tab"]`)
+            .nth(i)
+            .evaluate((el) => el.getBoundingClientRect().left);
         assert((await tabLeft(1)) < (await tabLeft(0)), "Tabs RTL: la pestaña siguiente queda a la izquierda");
         await page.locator(`${t("a-rtl-slider")} [role="slider"]`).focus();
         const before = Number((await page.locator(t("a-rtl-slider-value")).textContent()).trim());
         await press(page, "ArrowLeft");
-        await poll(async () => Number((await page.locator(t("a-rtl-slider-value")).textContent()).trim()) > before, "Slider RTL: flecha izquierda sube el valor");
+        await poll(
+          async () => Number((await page.locator(t("a-rtl-slider-value")).textContent()).trim()) > before,
+          "Slider RTL: flecha izquierda sube el valor",
+        );
         const crumb = await page.evaluate(() => {
-          const items = [...document.querySelectorAll('[data-testid="a-rtl-breadcrumb"] .z-breadcrumb__item')].map((el) => el.getBoundingClientRect().left);
+          const items = [...document.querySelectorAll('[data-testid="a-rtl-breadcrumb"] .z-breadcrumb__item')].map(
+            (el) => el.getBoundingClientRect().left,
+          );
           const icon = document.querySelector('[data-testid="a-rtl-breadcrumb"] .z-breadcrumb__separator svg');
           return { order: items[0] > items[1] && items[1] > items[2], flipped: new DOMMatrix(getComputedStyle(icon).transform).a < 0 };
         });
@@ -769,12 +1013,17 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         assert(pag, "Pagination RTL: anterior a la derecha");
         const icon = await page.evaluate(() => {
           const wrap = document.querySelector('[data-testid="a-rtl-input"]').closest(".z-input");
-          return wrap.querySelector(".z-input__icon").getBoundingClientRect().left > wrap.querySelector("input").getBoundingClientRect().left;
+          return (
+            wrap.querySelector(".z-input__icon").getBoundingClientRect().left > wrap.querySelector("input").getBoundingClientRect().left
+          );
         });
         assert(icon, "Input RTL: el icono queda al inicio (derecha)");
         // Página entera en RTL.
         const rtl = await open("audit", { query: "dir=rtl" });
-        const state = await rtl.evaluate(() => ({ dir: document.documentElement.dir, overflow: document.querySelector(".audit").scrollWidth > document.querySelector(".audit").clientWidth + 1 }));
+        const state = await rtl.evaluate(() => ({
+          dir: document.documentElement.dir,
+          overflow: document.querySelector(".audit").scrollWidth > document.querySelector(".audit").clientWidth + 1,
+        }));
         assert(state.dir === "rtl" && !state.overflow, `pantalla RTL: ${JSON.stringify(state)}`);
         await rtl.click(t("a-compose-drawer"));
         await visible(rtl, ".z-drawer");
@@ -794,13 +1043,25 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await expectText(page, t("ssr-status"), "done", "la hidratación termina");
         const result = await page.evaluate(() => window.__auditSsr);
         assert(result.htmlLength > 20000, "el render de servidor está vacío");
-        assert(result.serverMonth === result.serverClock && result.serverClock !== result.clientMonth, `el servidor debía pintar otro mes: ${JSON.stringify(result)}`);
-        assert(result.recoverable.length === 0 && result.consoleErrors.length === 0, `la hidratación emite errores:\n${[...result.recoverable, ...result.consoleErrors].join("\n")}`);
-        assert(result.hydratedMonth === result.clientMonth, `tras hidratar, Calendar debe mostrar el mes del navegador (${result.hydratedMonth} ≠ ${result.clientMonth})`);
+        assert(
+          result.serverMonth === result.serverClock && result.serverClock !== result.clientMonth,
+          `el servidor debía pintar otro mes: ${JSON.stringify(result)}`,
+        );
+        assert(
+          result.recoverable.length === 0 && result.consoleErrors.length === 0,
+          `la hidratación emite errores:\n${[...result.recoverable, ...result.consoleErrors].join("\n")}`,
+        );
+        assert(
+          result.hydratedMonth === result.clientMonth,
+          `tras hidratar, Calendar debe mostrar el mes del navegador (${result.hydratedMonth} ≠ ${result.clientMonth})`,
+        );
         const same = await open("audit-ssr", { query: "clock=same" });
         await expectText(same, t("ssr-status"), "done");
         const again = await same.evaluate(() => window.__auditSsr);
-        assert(again.recoverable.length === 0 && again.consoleErrors.length === 0, `hidratación con el mismo reloj: ${[...again.recoverable, ...again.consoleErrors].join("\n")}`);
+        assert(
+          again.recoverable.length === 0 && again.consoleErrors.length === 0,
+          `hidratación con el mismo reloj: ${[...again.recoverable, ...again.consoleErrors].join("\n")}`,
+        );
       },
     },
     {
@@ -809,10 +1070,24 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         for (const theme of ["dark", "light"]) {
           const page = await audit(open, { theme });
           const violations = (await axe(page)).filter((v) => v.impact === "serious" || v.impact === "critical");
-          assert(violations.length === 0, `axe (${theme}): ${violations.map((v) => `${v.id}: ${v.nodes.slice(0, 4).map((n) => n.target).join("; ")}`).join(" | ")}`);
+          assert(
+            violations.length === 0,
+            `axe (${theme}): ${violations
+              .map(
+                (v) =>
+                  `${v.id}: ${v.nodes
+                    .slice(0, 4)
+                    .map((n) => n.target)
+                    .join("; ")}`,
+              )
+              .join(" | ")}`,
+          );
         }
         const narrow = await audit(open, { width: 390, height: 800 });
-        assert(await narrow.evaluate(() => document.querySelector(".audit").scrollWidth <= document.querySelector(".audit").clientWidth + 1), "desbordamiento horizontal a 390 px");
+        assert(
+          await narrow.evaluate(() => document.querySelector(".audit").scrollWidth <= document.querySelector(".audit").clientWidth + 1),
+          "desbordamiento horizontal a 390 px",
+        );
       },
     },
   ];

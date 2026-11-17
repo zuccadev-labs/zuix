@@ -8,7 +8,13 @@ export function pageTotal(count: number): number {
 /** Página dentro de [1, count], redondeada; un valor no numérico devuelve `fallback` (acotado). */
 export function clampPage(page: number, count: number, fallback = 1): number {
   const total = pageTotal(count);
-  const wanted = Number.isFinite(page) ? Math.round(page) : page === Number.POSITIVE_INFINITY ? total : Number.isFinite(fallback) ? Math.round(fallback) : 1;
+  const wanted = Number.isFinite(page)
+    ? Math.round(page)
+    : page === Number.POSITIVE_INFINITY
+      ? total
+      : Number.isFinite(fallback)
+        ? Math.round(fallback)
+        : 1;
   return Math.min(Math.max(1, wanted), total);
 }
 

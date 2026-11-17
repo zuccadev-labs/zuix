@@ -24,9 +24,26 @@ import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-s
 import { chevronRightSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-right-small";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import {
-  INSPECTOR_BREAKPOINT, RESIZE_MAX, RESIZE_MIN, RESIZE_STEP, SIDEBAR_BREAKPOINT, SPLIT_MIN_FRACTION,
-  clamp, dividerKeyDelta, evenFractions, isHorizontal, moveDivider, panelMode, physicalSide, resizeByKey, resizeSign, revealOffset, tabKeyIndex,
-  type PanelMode, type PhysicalSide, type ResizeSide,
+  INSPECTOR_BREAKPOINT,
+  RESIZE_MAX,
+  RESIZE_MIN,
+  RESIZE_STEP,
+  SIDEBAR_BREAKPOINT,
+  SPLIT_MIN_FRACTION,
+  clamp,
+  dividerKeyDelta,
+  evenFractions,
+  isHorizontal,
+  moveDivider,
+  panelMode,
+  physicalSide,
+  resizeByKey,
+  resizeSign,
+  revealOffset,
+  tabKeyIndex,
+  type PanelMode,
+  type PhysicalSide,
+  type ResizeSide,
 } from "../logic";
 
 export type { PanelMode } from "../logic";
@@ -54,15 +71,23 @@ const isRtl = (el: Element) => getComputedStyle(el).direction === "rtl";
 
 /** `document.querySelector` con un selector que viene de un atributo del marcado: uno inválido no rompe el manejador. */
 function query(selector: string): HTMLElement | null {
-  try { return document.querySelector<HTMLElement>(selector); } catch { return null; }
+  try {
+    return document.querySelector<HTMLElement>(selector);
+  } catch {
+    return null;
+  }
 }
 
-const num = (value: string | null | undefined, fallback: number) => (value != null && value !== "" && Number.isFinite(Number(value)) ? Number(value) : fallback);
+const num = (value: string | null | undefined, fallback: number) =>
+  value != null && value !== "" && Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 /* ---------- Shell ---------- */
 
 const SIDES: readonly ShellSide[] = ["sidebar", "inspector"];
-const PANEL: Record<ShellSide, string> = { sidebar: ":scope > .z-shell__body > .z-shell__side", inspector: ":scope > .z-shell__body > .z-shell__inspector" };
+const PANEL: Record<ShellSide, string> = {
+  sidebar: ":scope > .z-shell__body > .z-shell__side",
+  inspector: ":scope > .z-shell__body > .z-shell__inspector",
+};
 
 interface PanelState {
   /** Si ahora mismo está abierto como cajón. */
@@ -72,21 +97,30 @@ interface PanelState {
   /** Si estaba abierto la última vez que estuvo acoplado. */
   dockedOpen: boolean;
 }
-interface ShellState { width: number | null; modes: ShellModes | null; panels: Record<ShellSide, PanelState> }
+interface ShellState {
+  width: number | null;
+  modes: ShellModes | null;
+  panels: Record<ShellSide, PanelState>;
+}
 
 const shells = new WeakMap<HTMLElement, ShellState>();
 const panelOf = (shell: HTMLElement, side: ShellSide) => shell.querySelector<HTMLElement>(PANEL[side]);
 
 function autoModes(shell: HTMLElement, state: ShellState): ShellModes {
   const mode = (side: ShellSide, fallback: number) =>
-    panelMode(state.width, num(shell.getAttribute(`data-${side}-breakpoint`), fallback), panelOf(shell, side)?.dataset.panelMode as PanelMode | "auto" | undefined);
+    panelMode(
+      state.width,
+      num(shell.getAttribute(`data-${side}-breakpoint`), fallback),
+      panelOf(shell, side)?.dataset.panelMode as PanelMode | "auto" | undefined,
+    );
   return { sidebar: mode("sidebar", SIDEBAR_BREAKPOINT), inspector: mode("inspector", INSPECTOR_BREAKPOINT) };
 }
 
 function shellOf(el: Element): HTMLElement | null {
   // Un botón con `data-z-shell="#id"` apunta a ese shell aunque esté dentro de otro (shells anidados).
   const named = el.getAttribute("data-z-shell");
-  const shell = (named ? query(named) : null) ?? el.closest<HTMLElement>(".z-shell") ?? query("[data-z-dom] .z-shell, .z-shell[data-z-dom]");
+  const shell =
+    (named ? query(named) : null) ?? el.closest<HTMLElement>(".z-shell") ?? query("[data-z-dom] .z-shell, .z-shell[data-z-dom]");
   return shell && shells.has(shell) ? shell : null;
 }
 
@@ -204,7 +238,11 @@ function hydrateShell(shell: HTMLElement): void {
     for (const entry of entries) {
       const target = entry.target as HTMLElement;
       // Un shell retirado del documento deja de observarse: el observador no lo retiene y vuelve a activarse con hydrate().
-      if (!target.isConnected) { shellObserver?.unobserve(target); shells.delete(target); continue; }
+      if (!target.isConnected) {
+        shellObserver?.unobserve(target);
+        shells.delete(target);
+        continue;
+      }
       measure(target, entry.contentRect.width);
     }
   });
@@ -293,7 +331,8 @@ export function resizeTo(handle: HTMLElement, size: number): void {
 
 /* ---------- SplitPane ---------- */
 
-const parts = (split: Element, cls: string) => [...split.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.classList.contains(cls));
+const parts = (split: Element, cls: string) =>
+  [...split.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.classList.contains(cls));
 const directionOf = (split: HTMLElement) => (split.dataset.direction === "column" ? "column" : "row");
 
 /** Reparto actual, una fracción por panel (el `flex-grow` de cada uno). */
@@ -304,7 +343,9 @@ export function getSplitSizes(split: HTMLElement): number[] {
 
 /** Fija el reparto sin emitir `z:resize`. */
 export function setSplitSizes(split: HTMLElement, sizes: number[]): void {
-  parts(split, "z-split__pane").forEach((pane, i) => { pane.style.flexGrow = String(sizes[i] ?? 0); });
+  parts(split, "z-split__pane").forEach((pane, i) => {
+    pane.style.flexGrow = String(sizes[i] ?? 0);
+  });
   parts(split, "z-split__divider").forEach((divider, i) => {
     divider.setAttribute("aria-valuenow", String(Math.round((sizes[i] ?? 0) * 100)));
   });
@@ -325,7 +366,8 @@ function hydrateSplit(split: HTMLElement): void {
   for (const divider of parts(split, "z-split__divider")) {
     if (!divider.hasAttribute("role")) divider.setAttribute("role", "separator");
     if (!divider.hasAttribute("tabindex")) divider.tabIndex = 0;
-    if (!divider.hasAttribute("aria-orientation")) divider.setAttribute("aria-orientation", directionOf(split) === "row" ? "vertical" : "horizontal");
+    if (!divider.hasAttribute("aria-orientation"))
+      divider.setAttribute("aria-orientation", directionOf(split) === "row" ? "vertical" : "horizontal");
     if (!divider.hasAttribute("aria-valuemin")) divider.setAttribute("aria-valuemin", String(min));
     if (!divider.hasAttribute("aria-valuemax")) divider.setAttribute("aria-valuemax", String(100 - min));
     // El divisor controla el panel que tiene delante (patrón «window splitter»).
@@ -353,7 +395,8 @@ export interface WorkTabInit {
 const selects = (strip: Element) => [...strip.querySelectorAll<HTMLElement>(".z-tabstrip__select")];
 const findTab = (strip: Element, id: string) => selects(strip).find((s) => s.dataset.tabId === id);
 const activeTab = (strip: Element) => selects(strip).find((s) => s.getAttribute("aria-selected") === "true");
-const panelFor = (select: HTMLElement) => (select.getAttribute("aria-controls") ? document.getElementById(select.getAttribute("aria-controls")!) : null);
+const panelFor = (select: HTMLElement) =>
+  select.getAttribute("aria-controls") ? document.getElementById(select.getAttribute("aria-controls")!) : null;
 
 /** Desplaza la tira para que la pestaña activa quede a la vista. */
 function reveal(strip: Element): void {
@@ -415,7 +458,10 @@ export function closeWorkTab(strip: HTMLElement, id: string): boolean {
 }
 
 /** Añade una pestaña con el marcado del contrato. Devuelve su botón, o null si el id ya existe. */
-export function addWorkTab(strip: HTMLElement, { id, title, icon, closable = true, closeLabel, controls, select = true }: WorkTabInit): HTMLElement | null {
+export function addWorkTab(
+  strip: HTMLElement,
+  { id, title, icon, closable = true, closeLabel, controls, select = true }: WorkTabInit,
+): HTMLElement | null {
   const list = strip.querySelector<HTMLElement>(".z-tabstrip__list");
   if (!list || findTab(strip, id)) return null;
   const tab = document.createElement("div");
@@ -462,7 +508,8 @@ function addRequested(strip: HTMLElement, button: HTMLElement): void {
   const title = button.dataset.newTitle;
   if (!emit(strip, "add") || !title) return;
   let id: string;
-  do id = `tab-${++created}`; while (findTab(strip, id));
+  do id = `tab-${++created}`;
+  while (findTab(strip, id));
   addWorkTab(strip, { id, title: `${title} ${selects(strip).length + 1}` })?.focus();
 }
 
@@ -477,7 +524,11 @@ function hydrateStrip(strip: HTMLElement): void {
   // Al estrecharse la tira, la pestaña activa sigue a la vista.
   stripObserver ??= new ResizeObserver((entries) => {
     for (const entry of entries) {
-      if (!entry.target.isConnected) { stripObserver?.unobserve(entry.target); observedLists.delete(entry.target); continue; }
+      if (!entry.target.isConnected) {
+        stripObserver?.unobserve(entry.target);
+        observedLists.delete(entry.target);
+        continue;
+      }
       const owner = entry.target.closest(".z-tabstrip");
       if (owner) reveal(owner);
     }
@@ -645,7 +696,11 @@ function onPointerDown(event: PointerEvent): void {
     el.dataset.dragging = "";
   }
   drag = { el, move };
-  try { el.setPointerCapture(event.pointerId); } catch { /* puntero ya liberado */ }
+  try {
+    el.setPointerCapture(event.pointerId);
+  } catch {
+    /* puntero ya liberado */
+  }
 }
 
 function onPointerEnd(): void {
@@ -680,11 +735,13 @@ export function hydrate(root: ParentNode = document): void {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
     if (!handle.hasAttribute("tabindex")) handle.tabIndex = 0;
-    if (!handle.hasAttribute("aria-orientation")) handle.setAttribute("aria-orientation", isHorizontal((handle.dataset.side ?? "right") as ResizeSide) ? "vertical" : "horizontal");
+    if (!handle.hasAttribute("aria-orientation"))
+      handle.setAttribute("aria-orientation", isHorizontal((handle.dataset.side ?? "right") as ResizeSide) ? "vertical" : "horizontal");
     if (!handle.hasAttribute("aria-valuemin")) handle.setAttribute("aria-valuemin", String(RESIZE_MIN));
     if (!handle.hasAttribute("aria-valuemax")) handle.setAttribute("aria-valuemax", String(RESIZE_MAX));
     const options = resizeOptions(handle);
-    if (options.target && !handle.closest("[hidden]")) handle.setAttribute("aria-valuenow", String(Math.round(currentSize(handle, options))));
+    if (options.target && !handle.closest("[hidden]"))
+      handle.setAttribute("aria-valuenow", String(Math.round(currentSize(handle, options))));
   }
 }
 
@@ -695,10 +752,16 @@ export function hydrate(root: ParentNode = document): void {
  */
 export function dispose(root: ParentNode = document): void {
   if (!isBrowser) return;
-  for (const shell of all(root, ".z-shell")) { shellObserver?.unobserve(shell); shells.delete(shell); }
+  for (const shell of all(root, ".z-shell")) {
+    shellObserver?.unobserve(shell);
+    shells.delete(shell);
+  }
   for (const strip of all(root, ".z-tabstrip")) {
     const list = strip.querySelector(".z-tabstrip__list");
-    if (list) { stripObserver?.unobserve(list); observedLists.delete(list); }
+    if (list) {
+      stripObserver?.unobserve(list);
+      observedLists.delete(list);
+    }
   }
 }
 

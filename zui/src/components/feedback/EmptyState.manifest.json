@@ -25,10 +25,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -37,9 +34,7 @@
       "default": 3
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "space-2",
     "space-10",
@@ -63,9 +58,7 @@
     "text-small",
     "space-3"
   ],
-  "classes": [
-    "z-empty"
-  ],
+  "classes": ["z-empty"],
   "a11y": "Encabezado real con nivel configurable; el icono es decorativo.",
   "examples": [
     {

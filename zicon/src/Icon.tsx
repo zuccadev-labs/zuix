@@ -21,7 +21,9 @@ export function Icon({ name, variant = "outline", size = 16, label, className, .
   const def = getIcon(name);
   if (!def && !warned.has(name)) {
     warned.add(name);
-    console.warn(`[zicon] "${name}" no está registrado. Importa "@zuccadev-labs/zuix-zicon/all" una vez o registra el icono con registerIcons().`);
+    console.warn(
+      `[zicon] "${name}" no está registrado. Importa "@zuccadev-labs/zuix-zicon/all" una vez o registra el icono con registerIcons().`,
+    );
   }
   const paths = def ? (variant === "solid" ? def.s : def.o) : [];
   // Un nombre accesible puede llegar también por `aria-label` o `aria-labelledby`: entonces el icono no se oculta.

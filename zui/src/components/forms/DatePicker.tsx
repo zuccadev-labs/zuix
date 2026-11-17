@@ -99,7 +99,11 @@ export function DatePicker(props: DatePickerProps) {
     popupClassName,
     ref,
   } = props;
-  const { invalid: isInvalid, required: isRequired, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
+  const {
+    invalid: isInvalid,
+    required: isRequired,
+    ...control
+  } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const anchor = useRef<HTMLSpanElement | null>(null);
   const auto = useId();
   const valueId = `${auto}-value`;
@@ -128,12 +132,16 @@ export function DatePicker(props: DatePickerProps) {
   const single = typeof raw === "string" && raw ? raw : null;
   const range = raw && typeof raw === "object" ? raw : null;
 
-  const formatter = useMemo(() => new Intl.DateTimeFormat(locale, { ...(formatOptions ?? { dateStyle: "medium" }), timeZone: "UTC" }), [locale, formatOptions]);
+  const formatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { ...(formatOptions ?? { dateStyle: "medium" }), timeZone: "UTC" }),
+    [locale, formatOptions],
+  );
   const show = (iso: string) => {
     const date = toDate(iso);
     return Number.isNaN(date.getTime()) ? iso : formatter.format(date);
   };
-  const text = mode === "range" ? (range?.from ? `${show(range.from)} – ${range.to ? show(range.to) : "…"}` : "") : single ? show(single) : "";
+  const text =
+    mode === "range" ? (range?.from ? `${show(range.from)} – ${range.to ? show(range.to) : "…"}` : "") : single ? show(single) : "";
   const formValue = mode === "range" ? rangeText(range) : (single ?? "");
 
   // Formulario: `form.reset()` devuelve el valor inicial, y un campo obligatorio vacío lleva el foco al botón.
@@ -156,12 +164,22 @@ export function DatePicker(props: DatePickerProps) {
   // Foco inicial: el día elegido (o el inicio del rango) o, sin valor, hoy.
   const focusDay = () => {
     const start = (mode === "range" ? range?.from : single) ?? todayISO();
-    (panel.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${start}"]`) ?? panel.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]'))?.focus();
+    (
+      panel.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${start}"]`) ??
+      panel.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]')
+    )?.focus();
   };
 
   return (
     <>
-      <span ref={anchor} className={cx("z-select", "z-datepicker", className)} data-size={size} data-block={block || undefined} data-invalid={isInvalid || undefined} data-disabled={disabled || undefined}>
+      <span
+        ref={anchor}
+        className={cx("z-select", "z-datepicker", className)}
+        data-size={size}
+        data-block={block || undefined}
+        data-invalid={isInvalid || undefined}
+        data-disabled={disabled || undefined}
+      >
         <button
           {...control}
           ref={setButton}
@@ -173,7 +191,9 @@ export function DatePicker(props: DatePickerProps) {
           // El nombre accesible incluye la fecha elegida: con `aria-label` a secas el lector de pantalla no la diría.
           // Etiquetado por un `Field`, la fecha va como descripción.
           aria-labelledby={ariaLabelledBy ? `${ariaLabelledBy} ${valueId}` : undefined}
-          aria-describedby={[control["aria-describedby"], ariaLabel || ariaLabelledBy ? undefined : valueId].filter(Boolean).join(" ") || undefined}
+          aria-describedby={
+            [control["aria-describedby"], ariaLabel || ariaLabelledBy ? undefined : valueId].filter(Boolean).join(" ") || undefined
+          }
           data-state={isOpen ? "open" : "closed"}
           data-placeholder={text ? undefined : ""}
           disabled={disabled}
@@ -190,7 +210,18 @@ export function DatePicker(props: DatePickerProps) {
         {name || isRequired ? (
           // Campo nativo oculto: envía el valor y da la validación `required` del navegador. Un `button` no admite
           // `aria-required`; que el campo es obligatorio lo dicen la etiqueta del Field y el mensaje del navegador.
-          <input ref={native} type="text" className="z-native-input" aria-hidden="true" tabIndex={-1} name={name} value={formValue} required={isRequired} disabled={disabled} onChange={noop} />
+          <input
+            ref={native}
+            type="text"
+            className="z-native-input"
+            aria-hidden="true"
+            tabIndex={-1}
+            name={name}
+            value={formValue}
+            required={isRequired}
+            disabled={disabled}
+            onChange={noop}
+          />
         ) : null}
       </span>
       {present ? (

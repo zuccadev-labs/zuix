@@ -21,10 +21,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -35,10 +32,7 @@
     {
       "name": "labelPosition",
       "type": "enum",
-      "values": [
-        "start",
-        "end"
-      ],
+      "values": ["start", "end"],
       "default": "end"
     },
     {
@@ -51,14 +45,7 @@
       "type": "string"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "checked",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "checked", "disabled"],
   "tokens": [
     "space-2",
     "fg",
@@ -77,9 +64,7 @@
     "shadow-sm",
     "ease-spring"
   ],
-  "classes": [
-    "z-switch"
-  ],
+  "classes": ["z-switch"],
   "a11y": "Patrón APG «switch»: botón con role switch y un `input type=checkbox` oculto para formularios, Espacio o Enter para alternar.",
   "examples": [
     {

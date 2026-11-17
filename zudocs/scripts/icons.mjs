@@ -6,7 +6,18 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { repoDir, templateDir } from "./config.mjs";
 
-const walk = (dir, test) => (existsSync(dir) ? readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? (e.name === "node_modules" || e.name === "dist" ? [] : walk(join(dir, e.name), test)) : test(e.name) ? [join(dir, e.name)] : [])) : []);
+const walk = (dir, test) =>
+  existsSync(dir)
+    ? readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory()
+          ? e.name === "node_modules" || e.name === "dist"
+            ? []
+            : walk(join(dir, e.name), test)
+          : test(e.name)
+            ? [join(dir, e.name)]
+            : [],
+      )
+    : [];
 
 /** Nombres de iconos que el sitio puede necesitar fuera de las páginas de catálogo, ordenados. */
 export function siteIcons(ctx) {
@@ -21,7 +32,8 @@ export function siteIcons(ctx) {
     ...walk(ctx.docsDir, (n) => n.endsWith(".mdx")),
   ];
   // Cualquier cadena literal que sea el nombre de un icono cuenta: sobra alguno, no falta ninguno.
-  for (const file of sources) for (const m of readFileSync(file, "utf8").matchAll(/["'`]([a-z0-9]+(?:-[a-z0-9]+)*)["'`]/g)) if (known.has(m[1])) names.add(m[1]);
+  for (const file of sources)
+    for (const m of readFileSync(file, "utf8").matchAll(/["'`]([a-z0-9]+(?:-[a-z0-9]+)*)["'`]/g)) if (known.has(m[1])) names.add(m[1]);
   return [...names].filter((n) => known.has(n)).sort();
 }
 

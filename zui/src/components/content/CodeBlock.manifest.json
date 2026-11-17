@@ -56,13 +56,7 @@
       "type": "(code: string) => void"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "copied"
-  ],
+  "states": ["rest", "hover", "focus", "active", "copied"],
   "tokens": [
     "line",
     "radius-md",
@@ -91,9 +85,7 @@
     "focus-ring",
     "success"
   ],
-  "classes": [
-    "z-code"
-  ],
+  "classes": ["z-code"],
   "a11y": "pre enfocable con role region para desplazarlo con teclado. El botón anuncia \"Copied\" por aria-live.",
   "examples": [
     {

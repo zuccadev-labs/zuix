@@ -266,10 +266,17 @@
 
   /* Objetivo táctil: con puntero grueso la zona de pulsación del cierre crece hasta `--z-touch-target`. */
   @media (pointer: coarse) {
-    .z-alert__dismiss { position: relative; }
+    .z-alert__dismiss {
+      position: relative;
+    }
     .z-alert__dismiss::before {
-      content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: max(100%, var(--z-touch-target, 0px)); height: max(100%, var(--z-touch-target, 0px));
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100%, var(--z-touch-target, 0px));
+      height: max(100%, var(--z-touch-target, 0px));
     }
   }
 }

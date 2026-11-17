@@ -20,10 +20,7 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "vertical",
-        "horizontal"
-      ],
+      "values": ["vertical", "horizontal"],
       "default": "vertical"
     },
     {
@@ -46,19 +43,9 @@
       "description": "Nombre accesible si no está dentro de un Field."
     }
   ],
-  "states": [
-    "rest",
-    "invalid",
-    "disabled"
-  ],
-  "tokens": [
-    "danger",
-    "space-2",
-    "space-4"
-  ],
-  "classes": [
-    "z-radio-group"
-  ],
+  "states": ["rest", "invalid", "disabled"],
+  "tokens": ["danger", "space-2", "space-4"],
+  "classes": ["z-radio-group"],
   "a11y": "Patrón APG «radiogroup»: foco itinerante con flechas (reflejadas en RTL), que también eligen.",
   "examples": [
     {

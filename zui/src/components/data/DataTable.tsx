@@ -26,7 +26,11 @@ export interface DataTableColumn<T> {
   mono?: boolean;
 }
 
-export interface DataTableProps<T> extends Pick<TableProps, "density" | "framed" | "striped" | "stickyHeader" | "fixed" | "caption" | "captionHidden" | "className" | "wrapperClassName"> {
+export interface DataTableProps<T>
+  extends Pick<
+    TableProps,
+    "density" | "framed" | "striped" | "stickyHeader" | "fixed" | "caption" | "captionHidden" | "className" | "wrapperClassName"
+  > {
   rows: ReadonlyArray<T>;
   columns: ReadonlyArray<DataTableColumn<T>>;
   rowKey: (row: T, index: number) => string | number;
@@ -84,7 +88,8 @@ export function DataTable<T>({
 
   // Ciclo: ascendente, descendente, sin orden.
   const toggleSort = (key: string) => {
-    const next: SortState | null = active?.key !== key ? { key, direction: "asc" } : active.direction === "asc" ? { key, direction: "desc" } : null;
+    const next: SortState | null =
+      active?.key !== key ? { key, direction: "asc" } : active.direction === "asc" ? { key, direction: "desc" } : null;
     setInner(next);
     onSortChange?.(next);
   };
@@ -112,7 +117,12 @@ export function DataTable<T>({
                 style={column.width ? { width: column.width } : undefined}
               >
                 {canSort ? (
-                  <button type="button" className="z-table__sort" data-active={direction ? true : undefined} onClick={() => toggleSort(column.key)}>
+                  <button
+                    type="button"
+                    className="z-table__sort"
+                    data-active={direction ? true : undefined}
+                    onClick={() => toggleSort(column.key)}
+                  >
                     <span>{column.header}</span>
                     <span className="z-sr-only">, {sortLabel}</span>
                     <Icon name={direction === "desc" ? "arrow-down" : "arrow-up"} size={12} />

@@ -26,7 +26,20 @@ export interface DialogSurfaceProps extends Omit<ComponentProps<"dialog">, "open
   ref?: Ref<HTMLDialogElement>;
 }
 
-export function DialogSurface({ open, onDismiss, closeOnEscape = true, closeOnBackdrop = true, initialFocus, trigger, ref, children, onClick, onMouseDown, onKeyDown, ...rest }: DialogSurfaceProps) {
+export function DialogSurface({
+  open,
+  onDismiss,
+  closeOnEscape = true,
+  closeOnBackdrop = true,
+  initialFocus,
+  trigger,
+  ref,
+  children,
+  onClick,
+  onMouseDown,
+  onKeyDown,
+  ...rest
+}: DialogSurfaceProps) {
   const node = useRef<HTMLDialogElement | null>(null);
   const setRef = useMergedRef(node, ref);
   const present = usePresence(open, node);
@@ -68,7 +81,8 @@ export function DialogSurface({ open, onDismiss, closeOnEscape = true, closeOnBa
   if (!present || typeof document === "undefined") return null;
   const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
     onClick?.(event);
-    if (!event.defaultPrevented && closeOnBackdrop && open && pressedOnBackdrop(event.currentTarget, event.nativeEvent)) onDismiss("backdrop");
+    if (!event.defaultPrevented && closeOnBackdrop && open && pressedOnBackdrop(event.currentTarget, event.nativeEvent))
+      onDismiss("backdrop");
   };
   const handleMouseDown = (event: MouseEvent<HTMLDialogElement>) => {
     onMouseDown?.(event);
@@ -83,7 +97,15 @@ export function DialogSurface({ open, onDismiss, closeOnEscape = true, closeOnBa
     if (trapTab(event.currentTarget, event)) event.preventDefault();
   };
   return createPortal(
-    <dialog {...rest} ref={setRef} data-state={open ? "open" : "closed"} onPointerDownCapture={(event) => notePress(event.nativeEvent)} onClick={handleClick} onMouseDown={handleMouseDown} onKeyDown={handleKeyDown}>
+    <dialog
+      {...rest}
+      ref={setRef}
+      data-state={open ? "open" : "closed"}
+      onPointerDownCapture={(event) => notePress(event.nativeEvent)}
+      onClick={handleClick}
+      onMouseDown={handleMouseDown}
+      onKeyDown={handleKeyDown}
+    >
       {children}
     </dialog>,
     document.body,

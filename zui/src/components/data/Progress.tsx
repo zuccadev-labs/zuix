@@ -19,8 +19,21 @@ export function Progress({ value, max = 100, size = "md", tone = "accent", label
   const determinate = typeof value === "number";
   const percent = determinate ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
   return (
-    <div {...rest} className={cx("z-progress", className)} data-size={size} data-tone={tone} data-state={determinate ? (percent >= 100 ? "complete" : "loading") : "indeterminate"}>
-      <div className="z-progress__track" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={max} aria-valuenow={determinate ? value : undefined}>
+    <div
+      {...rest}
+      className={cx("z-progress", className)}
+      data-size={size}
+      data-tone={tone}
+      data-state={determinate ? (percent >= 100 ? "complete" : "loading") : "indeterminate"}
+    >
+      <div
+        className="z-progress__track"
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-valuenow={determinate ? value : undefined}
+      >
         <div className="z-progress__fill" style={{ "--z-progress-value": `${percent}%` } as CSSProperties} />
       </div>
       {showValue && determinate ? <span className="z-progress__value">{Math.round(percent)}%</span> : null}

@@ -13,10 +13,7 @@
     {
       "name": "type",
       "type": "enum",
-      "values": [
-        "single",
-        "multiple"
-      ],
+      "values": ["single", "multiple"],
       "default": "single"
     },
     {
@@ -35,23 +32,11 @@
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
+      "values": [2, 3, 4, 5, 6],
       "default": 3
     }
   ],
-  "states": [
-    "open",
-    "closed",
-    "hover",
-    "focus",
-    "disabled"
-  ],
+  "states": ["open", "closed", "hover", "focus", "disabled"],
   "tokens": [
     "duration-fast",
     "duration-normal",

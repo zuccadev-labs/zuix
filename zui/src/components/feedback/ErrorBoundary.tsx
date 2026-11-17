@@ -43,7 +43,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     const { error } = this.state;
     if (!error) return this.props.children;
     if (this.props.fallback) return this.props.fallback(error, this.reset);
-    const { title = "This section could not be displayed", message = "Something failed while rendering this content. You can try again; if it keeps happening, reload the page.", retryLabel } = this.props;
+    const {
+      title = "This section could not be displayed",
+      message = "Something failed while rendering this content. You can try again; if it keeps happening, reload the page.",
+      retryLabel,
+    } = this.props;
     return <ErrorState title={title} message={message} retryLabel={retryLabel} onRetry={this.reset} />;
   }
 }

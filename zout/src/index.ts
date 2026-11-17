@@ -7,6 +7,18 @@ export { TabStrip, type TabStripProps, type WorkTab } from "./layouts/TabStrip";
 export { TitleBar, type TitleBarProps } from "./layouts/TitleBar";
 export { ResizeHandle, type ResizeHandleProps } from "./layouts/ResizeHandle";
 export {
-  Stack, Inline, Grid, Container, Page, PageHeader, PageSection,
-  type StackProps, type InlineProps, type GridProps, type ContainerProps, type PageProps, type PageHeaderProps, type PageSectionProps,
+  Stack,
+  Inline,
+  Grid,
+  Container,
+  Page,
+  PageHeader,
+  PageSection,
+  type StackProps,
+  type InlineProps,
+  type GridProps,
+  type ContainerProps,
+  type PageProps,
+  type PageHeaderProps,
+  type PageSectionProps,
 } from "./layouts/Page";

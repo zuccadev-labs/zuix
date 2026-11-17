@@ -19,7 +19,16 @@ export interface SplitPaneProps {
 }
 
 /** Paneles divididos con divisores arrastrables y manejables con teclado. Origen: `split` de zutool. */
-export function SplitPane({ direction = "row", children, sizes, defaultSizes, onSizesChange, minFraction = SPLIT_MIN_FRACTION, dividerLabel = "Resize panes", className }: SplitPaneProps) {
+export function SplitPane({
+  direction = "row",
+  children,
+  sizes,
+  defaultSizes,
+  onSizesChange,
+  minFraction = SPLIT_MIN_FRACTION,
+  dividerLabel = "Resize panes",
+  className,
+}: SplitPaneProps) {
   const panes = Children.toArray(children);
   const [inner, setInner] = useState<number[]>(() => defaultSizes ?? even(panes.length));
   const current = sizes ?? inner;
@@ -30,7 +39,10 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
   // En una fila RTL el primer panel queda a la derecha: el arrastre y las flechas se invierten.
   const isRtl = (el: Element) => direction === "row" && getComputedStyle(el).direction === "rtl";
 
-  const commit = (next: number[]) => { if (sizes === undefined) setInner(next); onSizesChange?.(next); };
+  const commit = (next: number[]) => {
+    if (sizes === undefined) setInner(next);
+    onSizesChange?.(next);
+  };
   // Mueve el divisor `index` (entre los paneles index e index+1) una fracción `delta`.
   const move = (index: number, a: number, b: number, delta: number) => commit(moveDivider(fractions, index, a, b, delta, minFraction));
 
@@ -38,8 +50,19 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
     const rect = root.current?.getBoundingClientRect();
     // Solo el botón principal (o un dedo, o el lápiz).
     if (!rect || e.button !== 0) return;
-    drag.current = { index, pos: direction === "row" ? e.clientX : e.clientY, a: fractions[index] ?? 0, b: fractions[index + 1] ?? 0, total: direction === "row" ? rect.width : rect.height, sign: isRtl(e.currentTarget) ? -1 : 1 };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* puntero ya liberado */ }
+    drag.current = {
+      index,
+      pos: direction === "row" ? e.clientX : e.clientY,
+      a: fractions[index] ?? 0,
+      b: fractions[index + 1] ?? 0,
+      total: direction === "row" ? rect.width : rect.height,
+      sign: isRtl(e.currentTarget) ? -1 : 1,
+    };
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
     e.currentTarget.dataset.dragging = "";
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -47,7 +70,10 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
     if (!d || d.total <= 0) return;
     move(d.index, d.a, d.b, (d.sign * ((direction === "row" ? e.clientX : e.clientY) - d.pos)) / d.total);
   };
-  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => { drag.current = null; delete e.currentTarget.dataset.dragging; };
+  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
+    drag.current = null;
+    delete e.currentTarget.dataset.dragging;
+  };
   const onKeyDown = (index: number) => (e: KeyboardEvent<HTMLDivElement>) => {
     const delta = dividerKeyDelta(e.key, direction, isRtl(e.currentTarget));
     if (!delta) return;
@@ -77,13 +103,18 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
               onPointerCancel={onPointerUp}
               onLostPointerCapture={onPointerUp}
               // Doble clic: los dos paneles del divisor se reparten su espacio a partes iguales (alternativa de un solo gesto al arrastre).
-              onDoubleClick={() => { const pair = (fractions[i - 1] ?? 0) + (fractions[i] ?? 0); move(i - 1, pair / 2, pair / 2, 0); }}
+              onDoubleClick={() => {
+                const pair = (fractions[i - 1] ?? 0) + (fractions[i] ?? 0);
+                move(i - 1, pair / 2, pair / 2, 0);
+              }}
               // WebKit puede iniciar un arrastrar y soltar nativo desde el divisor, que cancela los eventos de puntero.
               onDragStart={(e) => e.preventDefault()}
               onKeyDown={onKeyDown(i - 1)}
             />
           ) : null}
-          <div className="z-split__pane" id={`${id}-${i}`} style={{ flexGrow: fractions[i] ?? 0 }}>{pane}</div>
+          <div className="z-split__pane" id={`${id}-${i}`} style={{ flexGrow: fractions[i] ?? 0 }}>
+            {pane}
+          </div>
         </Fragment>
       ))}
     </div>

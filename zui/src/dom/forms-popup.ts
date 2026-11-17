@@ -80,7 +80,13 @@ export function showPopup(popup: HTMLElement, owner: HTMLElement, trigger: HTMLE
     onPointerOutside: () => hidePopup(popup),
     onFocusOutside: () => hidePopup(popup),
   });
-  open.set(popup, { owner, trigger, placement: (trigger.getAttribute("data-z-placement") as Placement) ?? "bottom-start", onClose, release });
+  open.set(popup, {
+    owner,
+    trigger,
+    placement: (trigger.getAttribute("data-z-placement") as Placement) ?? "bottom-start",
+    onClose,
+    release,
+  });
   const rect = owner.getBoundingClientRect();
   popup.style.setProperty("--z-anchor-width", `${rect.width}px`);
   // La posición la lleva este módulo (reposition): el popup sigue al campo, no al disparador.

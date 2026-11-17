@@ -51,7 +51,12 @@ function defaultFilter(groups: PaletteGroup[], query: string): PaletteGroup[] {
       commands: group.commands
         .map((command) => ({
           command,
-          s: Math.max(score(q, command.label), score(q, command.hint ?? "") * 0.9, ...(command.keywords ?? []).map((k) => score(q, k) * 0.8), score(q, group.heading ?? "") * 0.5),
+          s: Math.max(
+            score(q, command.label),
+            score(q, command.hint ?? "") * 0.9,
+            ...(command.keywords ?? []).map((k) => score(q, k) * 0.8),
+            score(q, group.heading ?? "") * 0.5,
+          ),
         }))
         .filter((x) => x.s > 0)
         .sort((a, b) => b.s - a.s)

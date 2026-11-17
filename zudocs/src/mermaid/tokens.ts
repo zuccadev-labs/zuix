@@ -6,7 +6,10 @@
 // color literal: cambiar de marca o de modo cambia el diagrama.
 import { useEffect, useState } from "react";
 
-export interface MermaidTokens { theme: string; variables: Record<string, string | boolean> }
+export interface MermaidTokens {
+  theme: string;
+  variables: Record<string, string | boolean>;
+}
 
 /** Variable de Mermaid -> token de la suite. Los translúcidos se componen sobre `--z-reading-bg`. */
 const COLORS: Record<string, string> = {
@@ -67,13 +70,31 @@ function read(theme: string): MermaidTokens | null {
     probe.style.display = "none";
     root.appendChild(probe);
     // El navegador resuelve `var()` y `color-mix()`; el lienzo lo convierte a un color opaco.
-    const computed = (token: string) => { probe.style.color = ""; probe.style.color = `var(${token})`; return getComputedStyle(probe).color; };
-    const paint = (color: string) => { ctx.fillStyle = color; ctx.fillRect(0, 0, 1, 1); };
-    const pixel = () => { const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data; return `#${hex(r)}${hex(g)}${hex(b)}`; };
+    const computed = (token: string) => {
+      probe.style.color = "";
+      probe.style.color = `var(${token})`;
+      return getComputedStyle(probe).color;
+    };
+    const paint = (color: string) => {
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 1, 1);
+    };
+    const pixel = () => {
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return `#${hex(r)}${hex(g)}${hex(b)}`;
+    };
     const canvas = computed("--z-canvas");
-    const backdrop = () => { ctx.clearRect(0, 0, 1, 1); paint(canvas); paint(computed("--z-reading-bg")); };
+    const backdrop = () => {
+      ctx.clearRect(0, 0, 1, 1);
+      paint(canvas);
+      paint(computed("--z-reading-bg"));
+    };
     const variables: Record<string, string | boolean> = {};
-    for (const [name, token] of Object.entries(COLORS)) { backdrop(); paint(computed(token)); variables[name] = pixel(); }
+    for (const [name, token] of Object.entries(COLORS)) {
+      backdrop();
+      paint(computed(token));
+      variables[name] = pixel();
+    }
     probe.remove();
     const style = getComputedStyle(root);
     variables.fontFamily = style.getPropertyValue("--z-font-sans").trim() || style.fontFamily;

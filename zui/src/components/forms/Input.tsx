@@ -19,10 +19,28 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   ref?: Ref<HTMLInputElement>;
 }
 
-export function Input({ size = "md", invalid, icon, trailing, mono, className, inputClassName, id, required, "aria-describedby": describedBy, ...rest }: InputProps) {
+export function Input({
+  size = "md",
+  invalid,
+  icon,
+  trailing,
+  mono,
+  className,
+  inputClassName,
+  id,
+  required,
+  "aria-describedby": describedBy,
+  ...rest
+}: InputProps) {
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   return (
-    <span className={cx("z-input", className)} data-size={size} data-invalid={isInvalid || undefined} data-disabled={rest.disabled || undefined} data-mono={mono || undefined}>
+    <span
+      className={cx("z-input", className)}
+      data-size={size}
+      data-invalid={isInvalid || undefined}
+      data-disabled={rest.disabled || undefined}
+      data-mono={mono || undefined}
+    >
       {icon ? (
         <span className="z-input__icon">
           <Icon name={icon} size={ICON_SIZE[size]} />

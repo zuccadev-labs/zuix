@@ -20,7 +20,19 @@ export interface ChipProps extends Omit<HTMLAttributes<HTMLSpanElement>, "onClic
 }
 
 /** Ficha compacta: filtro conmutable, etiqueta eliminable o ambas. */
-export function Chip({ selected, onClick, onRemove, removeLabel = "Remove", icon, count, size = "md", disabled, className, children, ...rest }: ChipProps) {
+export function Chip({
+  selected,
+  onClick,
+  onRemove,
+  removeLabel = "Remove",
+  icon,
+  count,
+  size = "md",
+  disabled,
+  className,
+  children,
+  ...rest
+}: ChipProps) {
   const content = (
     <>
       {icon ? <Icon name={icon} size={size === "sm" ? 12 : 14} /> : null}
@@ -29,7 +41,14 @@ export function Chip({ selected, onClick, onRemove, removeLabel = "Remove", icon
     </>
   );
   return (
-    <span {...rest} className={cx("z-chip", className)} data-size={size} data-selected={selected || undefined} data-interactive={onClick ? true : undefined} data-disabled={disabled || undefined}>
+    <span
+      {...rest}
+      className={cx("z-chip", className)}
+      data-size={size}
+      data-selected={selected || undefined}
+      data-interactive={onClick ? true : undefined}
+      data-disabled={disabled || undefined}
+    >
       {onClick ? (
         <button type="button" className="z-chip__main" aria-pressed={selected ?? false} disabled={disabled} onClick={onClick}>
           {content}
@@ -38,7 +57,14 @@ export function Chip({ selected, onClick, onRemove, removeLabel = "Remove", icon
         <span className="z-chip__main">{content}</span>
       )}
       {onRemove ? (
-        <button type="button" className="z-chip__remove" aria-label={removeLabel} title={removeLabel} disabled={disabled} onClick={onRemove}>
+        <button
+          type="button"
+          className="z-chip__remove"
+          aria-label={removeLabel}
+          title={removeLabel}
+          disabled={disabled}
+          onClick={onRemove}
+        >
           <Icon name="x-mark" size={12} />
         </button>
       ) : null}

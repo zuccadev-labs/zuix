@@ -7,14 +7,7 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "neutral",
-        "accent",
-        "success",
-        "warning",
-        "danger",
-        "info"
-      ],
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
       "default": "neutral"
     },
     {
@@ -31,9 +24,7 @@
       "type": "ReactNode"
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "fg-muted",
     "surface",
@@ -57,9 +48,7 @@
     "space-1",
     "weight-semibold"
   ],
-  "classes": [
-    "z-callout"
-  ],
+  "classes": ["z-callout"],
   "a11y": "aside con role=\"note\". Para mensajes que deben anunciarse, usar Alert.",
   "examples": [
     {

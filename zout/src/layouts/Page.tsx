@@ -14,7 +14,11 @@ export interface StackProps {
 
 /** Apila hijos en vertical con separación de la escala. */
 export function Stack({ children, gap = 4, align = "stretch", as: Tag = "div", className }: StackProps) {
-  return <Tag className={cx("z-stack", className)} data-gap={gap} data-align={align}>{children}</Tag>;
+  return (
+    <Tag className={cx("z-stack", className)} data-gap={gap} data-align={align}>
+      {children}
+    </Tag>
+  );
 }
 
 export interface InlineProps extends StackProps {
@@ -25,7 +29,11 @@ export interface InlineProps extends StackProps {
 
 /** Coloca hijos en horizontal; salta de línea si no caben. */
 export function Inline({ children, gap = 2, align = "center", justify = "start", wrap = true, as: Tag = "div", className }: InlineProps) {
-  return <Tag className={cx("z-inline", className)} data-gap={gap} data-align={align} data-justify={justify} data-wrap={wrap || undefined}>{children}</Tag>;
+  return (
+    <Tag className={cx("z-inline", className)} data-gap={gap} data-align={align} data-justify={justify} data-wrap={wrap || undefined}>
+      {children}
+    </Tag>
+  );
 }
 
 export interface GridProps {
@@ -40,7 +48,11 @@ export interface GridProps {
 /** Rejilla intrínseca: tantas columnas como quepan con el ancho mínimo dado. Origen: `kpi-grid` y `grid-2` de ui-glass. */
 export function Grid({ children, min = 240, gap = 4, as: Tag = "div", className }: GridProps) {
   const style = { "--z-grid-min": typeof min === "number" ? `${min}px` : min } as CSSProperties;
-  return <Tag className={cx("z-grid", className)} data-gap={gap} style={style}>{children}</Tag>;
+  return (
+    <Tag className={cx("z-grid", className)} data-gap={gap} style={style}>
+      {children}
+    </Tag>
+  );
 }
 
 export interface ContainerProps {
@@ -53,7 +65,11 @@ export interface ContainerProps {
 
 /** Centra el contenido y limita su ancho con los tokens `content-max` o `prose-max`. */
 export function Container({ children, width = "content", as: Tag = "div", className }: ContainerProps) {
-  return <Tag className={cx("z-container", className)} data-width={width}>{children}</Tag>;
+  return (
+    <Tag className={cx("z-container", className)} data-width={width}>
+      {children}
+    </Tag>
+  );
 }
 
 export interface PageHeaderProps {

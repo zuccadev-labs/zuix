@@ -34,10 +34,7 @@
     {
       "name": "intent",
       "type": "enum",
-      "values": [
-        "default",
-        "danger"
-      ],
+      "values": ["default", "danger"],
       "default": "default"
     },
     {
@@ -69,10 +66,7 @@
       "description": "Cuerpo adicional."
     }
   ],
-  "states": [
-    "open",
-    "closed"
-  ],
+  "states": ["open", "closed"],
   "tokens": [
     "accent",
     "accent-soft",
@@ -120,12 +114,7 @@
     "text-small",
     "weight-semibold"
   ],
-  "classes": [
-    "z-confirm",
-    "z-confirm__icon",
-    "z-modal",
-    "z-dialog-btn"
-  ],
+  "classes": ["z-confirm", "z-confirm__icon", "z-modal", "z-dialog-btn"],
   "a11y": "`<dialog>` modal con role=alertdialog (patrón APG), el foco entra en Cancelar, Escape cancela y un clic fuera no cierra.",
   "examples": [
     {

@@ -19,7 +19,16 @@ export const percent = (value: number, min: number, max: number) => (max === min
  * ese eje va invertido (horizontal: RTL o `inverted`; vertical: `inverted`): entonces la flecha izquierda (o la de
  * abajo) sube el valor. Mayúsculas y Re/Av Pág: 10 pasos.
  */
-export function keyValue(key: string, shift: boolean, current: number, min: number, max: number, step: number, dirX: 1 | -1 = 1, dirY: 1 | -1 = 1): number | undefined {
+export function keyValue(
+  key: string,
+  shift: boolean,
+  current: number,
+  min: number,
+  max: number,
+  step: number,
+  dirX: 1 | -1 = 1,
+  dirY: 1 | -1 = 1,
+): number | undefined {
   const big = shift || key === "PageUp" || key === "PageDown" ? 10 : 1;
   if (key === "Home") return min;
   if (key === "End") return max;
@@ -41,7 +50,15 @@ export function closestThumb(values: ReadonlyArray<number>, value: number): numb
 }
 
 /** Mueve un tirador entre sus vecinos. Devuelve la lista nueva, o `null` si no cambia. */
-export function moveThumb(values: ReadonlyArray<number>, index: number, raw: number, min: number, max: number, step: number, minStepsBetween = 0): number[] | null {
+export function moveThumb(
+  values: ReadonlyArray<number>,
+  index: number,
+  raw: number,
+  min: number,
+  max: number,
+  step: number,
+  minStepsBetween = 0,
+): number[] | null {
   if (index < 0 || index >= values.length) return null;
   const gap = minStepsBetween * step;
   const low = index > 0 ? values[index - 1]! + gap : min;

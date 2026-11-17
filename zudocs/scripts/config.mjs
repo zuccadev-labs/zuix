@@ -41,7 +41,8 @@ export function parseArgs(argv = process.argv.slice(2)) {
     const name = a.startsWith("--") && a.includes("=") ? a.slice(0, a.indexOf("=")) : a;
     if (name in VALUE_FLAGS) {
       const value = a === name ? args[++i] : a.slice(name.length + 1);
-      if (value === undefined || value === "" || (a === name && value.startsWith("--"))) throw new ZudocsError(`La opción ${name} necesita un valor: ${name} <ruta>`);
+      if (value === undefined || value === "" || (a === name && value.startsWith("--")))
+        throw new ZudocsError(`La opción ${name} necesita un valor: ${name} <ruta>`);
       out[VALUE_FLAGS[name]] = value;
     } else if (a in BOOLEAN_FLAGS) out[BOOLEAN_FLAGS[a]] = true;
     else out.rest.push(a);
@@ -70,21 +71,50 @@ export function findConfig(explicit) {
  * @returns {string[]} problemas encontrados, con la ruta del campo.
  */
 export function validateSchema(value, schema, path = "$") {
-  const KNOWN = new Set(["$schema", "$comment", "title", "description", "default", "examples", "type", "enum", "const", "required", "properties", "additionalProperties", "items", "minItems", "uniqueItems", "minLength", "maxLength", "pattern", "patternHint"]);
+  const KNOWN = new Set([
+    "$schema",
+    "$comment",
+    "title",
+    "description",
+    "default",
+    "examples",
+    "type",
+    "enum",
+    "const",
+    "required",
+    "properties",
+    "additionalProperties",
+    "items",
+    "minItems",
+    "uniqueItems",
+    "minLength",
+    "maxLength",
+    "pattern",
+    "patternHint",
+  ]);
   const out = [];
-  for (const key of Object.keys(schema)) if (!KNOWN.has(key)) out.push(`esquema ${path}: palabra clave "${key}" sin soporte en el validador`);
+  for (const key of Object.keys(schema))
+    if (!KNOWN.has(key)) out.push(`esquema ${path}: palabra clave "${key}" sin soporte en el validador`);
   const kind = Array.isArray(value) ? "array" : value === null ? "null" : typeof value;
-  if (schema.type && kind !== schema.type && !(schema.type === "integer" && Number.isInteger(value))) return [...out, `${path}: se esperaba ${schema.type} y es ${kind}`];
-  if (schema.enum && !schema.enum.includes(value)) out.push(`${path}: debe ser uno de ${schema.enum.map((v) => JSON.stringify(v)).join(", ")} y es ${JSON.stringify(value)}`);
+  if (schema.type && kind !== schema.type && !(schema.type === "integer" && Number.isInteger(value)))
+    return [...out, `${path}: se esperaba ${schema.type} y es ${kind}`];
+  if (schema.enum && !schema.enum.includes(value))
+    out.push(`${path}: debe ser uno de ${schema.enum.map((v) => JSON.stringify(v)).join(", ")} y es ${JSON.stringify(value)}`);
   if ("const" in schema && value !== schema.const) out.push(`${path}: debe ser ${JSON.stringify(schema.const)}`);
   if (kind === "string") {
     if (schema.minLength !== undefined && value.trim().length < schema.minLength) out.push(`${path}: no puede estar vacío`);
-    if (schema.maxLength !== undefined && value.length > schema.maxLength) out.push(`${path}: admite como máximo ${schema.maxLength} caracteres`);
-    if (schema.pattern && !new RegExp(schema.pattern, "u").test(value)) out.push(`${path}: ${JSON.stringify(value)} no es válido${schema.patternHint ? ` (${schema.patternHint})` : ` (patrón ${schema.pattern})`}`);
+    if (schema.maxLength !== undefined && value.length > schema.maxLength)
+      out.push(`${path}: admite como máximo ${schema.maxLength} caracteres`);
+    if (schema.pattern && !new RegExp(schema.pattern, "u").test(value))
+      out.push(
+        `${path}: ${JSON.stringify(value)} no es válido${schema.patternHint ? ` (${schema.patternHint})` : ` (patrón ${schema.pattern})`}`,
+      );
   }
   if (kind === "array") {
-    if (schema.minItems !== undefined && value.length < schema.minItems) out.push(`${path}: necesita al menos ${schema.minItems} elemento(s)`);
-    if (schema.uniqueItems && new Set(value.map((v) => JSON.stringify(v))).size !== value.length) out.push(`${path}: tiene elementos repetidos`);
+    if (schema.minItems !== undefined && value.length < schema.minItems)
+      out.push(`${path}: necesita al menos ${schema.minItems} elemento(s)`);
+    if (schema.uniqueItems && new Set(value.map((v) => JSON.stringify(v))).size !== value.length)
+      out.push(`${path}: tiene elementos repetidos`);
     if (schema.items) for (const [i, v] of value.entries()) out.push(...validateSchema(v, schema.items, `${path}[${i}]`));
   }
   if (kind === "object") {
@@ -119,14 +149,19 @@ function distance(a, b) {
 /** Lee un JSON y, si no es válido, dice en qué línea. */
 function readJson(path) {
   const text = readFileSync(path, "utf8").replace(/^﻿/, "");
-  try { return JSON.parse(text); } catch (error) {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
     const pos = Number(String(error.message).match(/position (\d+)/)?.[1]);
     const where = Number.isFinite(pos) ? ` (línea ${text.slice(0, pos).split("\n").length})` : "";
     throw new ZudocsError(`${path} no es JSON válido${where}: ${error.message}`);
   }
 }
 
-const inside = (child, parent) => { const r = relative(parent, child); return r === "" || (!r.startsWith(`..${sep}`) && r !== ".." && !isAbsolute(r)); };
+const inside = (child, parent) => {
+  const r = relative(parent, child);
+  return r === "" || (!r.startsWith(`..${sep}`) && r !== ".." && !isAbsolute(r));
+};
 
 /**
  * Motivo por el que `outDir` no puede usarse como salida, o `undefined` si es segura.
@@ -139,7 +174,8 @@ export function unsafeOutDir(outDir, protectedDirs) {
   if (existsSync(outDir)) {
     if (!statSync(outDir).isDirectory()) return "existe y no es una carpeta";
     const entries = readdirSync(outDir);
-    if (entries.length && !(entries.includes("index.html") && entries.includes("assets"))) return "ya existe, no está vacía y no parece un sitio compilado (sin index.html ni assets/): bórrala a mano o elige otra";
+    if (entries.length && !(entries.includes("index.html") && entries.includes("assets")))
+      return "ya existe, no está vacía y no parece un sitio compilado (sin index.html ni assets/): bórrala a mano o elige otra";
   }
   return undefined;
 }
@@ -155,7 +191,8 @@ export function loadZudocs(options = {}) {
   if (statSync(configPath).isDirectory()) throw new ZudocsError(`${configPath} es una carpeta sin ${CONFIG_NAME}`);
   const site = readJson(configPath);
   const problems = validateSchema(site, readJson(join(templateDir, "zudocs.schema.json")));
-  if (problems.length) throw new ZudocsError(`${configPath} no cumple el esquema (zudocs.schema.json):\n${problems.map((p) => `  · ${p}`).join("\n")}`);
+  if (problems.length)
+    throw new ZudocsError(`${configPath} no cumple el esquema (zudocs.schema.json):\n${problems.map((p) => `  · ${p}`).join("\n")}`);
 
   const configDir = dirname(configPath);
   const isDefault = resolve(configPath) === resolve(templateDir, CONFIG_NAME);
@@ -163,27 +200,49 @@ export function loadZudocs(options = {}) {
 
   // Cada proyecto tiene su carpeta de trabajo dentro de la plantilla: caché de Docusaurus, caché del
   // empaquetador y archivos generados. Así dos proyectos no se pisan y el proyecto no se ensucia.
-  const slug = `${site.name.normalize("NFD").replace(/[^\w]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "sitio"}-${createHash("sha1").update(resolve(configPath)).digest("hex").slice(0, 8)}`;
+  const slug = `${
+    site.name
+      .normalize("NFD")
+      .replace(/[^\w]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase() || "sitio"
+  }-${createHash("sha1").update(resolve(configPath)).digest("hex").slice(0, 8)}`;
   const workDir = isDefault ? templateDir : join(templateDir, ".zudocs", slug);
   const staticDir = from(site.static ?? "static");
   // Archivos generados en cada build (robots.txt, llms-full.txt, copias .md): nunca en la carpeta del proyecto.
   const generatedStaticDir = join(templateDir, ".zudocs", isDefault ? "_zuix" : slug, "static");
   const docsDir = from(site.docs.path);
-  const outDir = options.outDir ? resolve(callerDir(), options.outDir) : process.env.ZUDOCS_OUT_DIR ? resolve(callerDir(), process.env.ZUDOCS_OUT_DIR) : from(site.outDir ?? "build");
+  const outDir = options.outDir
+    ? resolve(callerDir(), options.outDir)
+    : process.env.ZUDOCS_OUT_DIR
+      ? resolve(callerDir(), process.env.ZUDOCS_OUT_DIR)
+      : from(site.outDir ?? "build");
   const pages = Object.fromEntries(PAGES.map((p) => [p, site.pages?.[p] === true]));
   const areas = site.docs.areas.filter((a) => existsSync(join(docsDir, a.id)));
 
   // URL pública. ZUDOCS_URL y ZUDOCS_BASE_URL la sustituyen para una ejecución (vista previa, otro alojamiento).
   const url = (process.env.ZUDOCS_URL || site.url || "").replace(/\/+$/, "") || undefined;
   const baseUrl = (process.env.ZUDOCS_BASE_URL || site.baseUrl || "/").replace(/^\/?/, "/").replace(/\/?$/, "/");
-  if (url && !/^https?:\/\/[^/\s]+$/.test(url)) throw new ZudocsError(`URL del sitio no válida: "${url}". Es el origen, sin ruta: la ruta va en baseUrl.`);
+  if (url && !/^https?:\/\/[^/\s]+$/.test(url))
+    throw new ZudocsError(`URL del sitio no válida: "${url}". Es el origen, sin ruta: la ruta va en baseUrl.`);
 
   // Fuentes: una URL se enlaza tal cual (petición a un tercero); una ruta local se empaqueta con el sitio.
   const isRemote = (f) => /^https?:\/\//.test(f);
   const fonts = site.fonts ?? [];
 
   const ctx = {
-    site, configPath, configDir, isDefault, slug, workDir, docsDir, outDir, pages, areas, url, baseUrl,
+    site,
+    configPath,
+    configDir,
+    isDefault,
+    slug,
+    workDir,
+    docsDir,
+    outDir,
+    pages,
+    areas,
+    url,
+    baseUrl,
     /** Barra final en las rutas. `false`: /docs/guia → docs/guia.html, la forma que sirve sin redirección cualquier alojamiento estático. */
     trailingSlash: site.trailingSlash ?? false,
     /** Diagramas Mermaid activos (`markdown.mermaid`). Desactivados por defecto. */
@@ -204,7 +263,10 @@ export function loadZudocs(options = {}) {
     generatedDirName: isDefault ? ".docusaurus" : relative(templateDir, join(workDir, "docusaurus")),
     bundlerCacheDir: isDefault ? undefined : join(workDir, "cache"),
     /** Ruta legible en mensajes: relativa a la carpeta de llamada si queda dentro, absoluta si no. */
-    rel: (p) => { const r = relative(callerDir(), p); return r.startsWith("..") || isAbsolute(r) ? p : r || "."; },
+    rel: (p) => {
+      const r = relative(callerDir(), p);
+      return r.startsWith("..") || isAbsolute(r) ? p : r || ".";
+    },
     /** URL absoluta de una ruta del sitio si hay `url`; si no, la ruta con su baseUrl. */
     href: (route = "") => `${url ?? ""}${baseUrl}${route.replace(/^\//, "")}`,
   };
@@ -213,7 +275,16 @@ export function loadZudocs(options = {}) {
   const fatal = [];
   if (!existsSync(docsDir)) fatal.push(`docs.path: no existe la carpeta de documentación ${ctx.rel(docsDir)}`);
   else if (!statSync(docsDir).isDirectory()) fatal.push(`docs.path: ${ctx.rel(docsDir)} no es una carpeta`);
-  const bad = unsafeOutDir(outDir, [["la carpeta de documentación", docsDir], ["la configuración", configDir], ["los recursos estáticos", existsSync(staticDir) ? staticDir : undefined], ["la plantilla de zudocs", templateDir], ["la carpeta de trabajo actual", process.cwd()]].filter(([, d]) => !(isDefault && d === templateDir && outDir !== templateDir && !inside(templateDir, outDir))));
+  const bad = unsafeOutDir(
+    outDir,
+    [
+      ["la carpeta de documentación", docsDir],
+      ["la configuración", configDir],
+      ["los recursos estáticos", existsSync(staticDir) ? staticDir : undefined],
+      ["la plantilla de zudocs", templateDir],
+      ["la carpeta de trabajo actual", process.cwd()],
+    ].filter(([, d]) => !(isDefault && d === templateDir && outDir !== templateDir && !inside(templateDir, outDir))),
+  );
   if (bad) fatal.push(`carpeta de salida ${ctx.rel(outDir)}: ${bad}. La compilación la vacía antes de escribir.`);
   if (fatal.length) throw new ZudocsError(`${configPath}:\n${fatal.map((p) => `  · ${p}`).join("\n")}`);
   return ctx;

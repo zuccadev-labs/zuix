@@ -79,12 +79,21 @@ function ToastView({ item, duration, position, closeLabel, dismiss, remove, retu
     el.addEventListener("pointerenter", () => timer.hold("pointer"), { signal });
     el.addEventListener("pointerleave", () => timer.release("pointer"), { signal });
     el.addEventListener("focusin", () => timer.hold("focus"), { signal });
-    el.addEventListener("focusout", (event) => {
-      if (!el.contains(event.relatedTarget as Node | null)) timer.release("focus");
-    }, { signal });
+    el.addEventListener(
+      "focusout",
+      (event) => {
+        if (!el.contains(event.relatedTarget as Node | null)) timer.release("focus");
+      },
+      { signal },
+    );
     window.addEventListener("blur", () => timer.hold("window"), { signal });
     window.addEventListener("focus", () => timer.release("window"), { signal });
-    const unswipe = swipeToDismiss(el, { direction: swipeDirection(position), onStart: () => timer.hold("swipe"), onCancel: () => timer.release("swipe"), onDismiss: close });
+    const unswipe = swipeToDismiss(el, {
+      direction: swipeDirection(position),
+      onStart: () => timer.hold("swipe"),
+      onCancel: () => timer.release("swipe"),
+      onDismiss: close,
+    });
     if (el.contains(document.activeElement)) timer.hold("focus");
     timer.start();
     return () => {
@@ -147,14 +156,24 @@ function ToastView({ item, duration, position, closeLabel, dismiss, remove, retu
  * Región de avisos. Mismo marcado que `toast()` de `@zuccadev-labs/zuix-zui/dom`: una región con nombre (`role="region"`) en la
  * capa superior, y cada aviso con `role="status"` o `role="alert"`.
  */
-export function ToastProvider({ children, duration = 5000, position = "bottom-right", limit = 5, closeLabel = "Close", regionLabel = "Notifications (F8)" }: ToastProviderProps) {
+export function ToastProvider({
+  children,
+  duration = 5000,
+  position = "bottom-right",
+  limit = 5,
+  closeLabel = "Close",
+  regionLabel = "Notifications (F8)",
+}: ToastProviderProps) {
   const [items, setItems] = useState<ToastItem[]>([]);
   const [host, setHost] = useState<HTMLElement | null>(null);
   const viewport = useRef<HTMLDivElement | null>(null);
   // Elemento que tenía el foco antes de entrar en la región con F8.
   const returnTo = useRef<HTMLElement | null>(null);
 
-  const dismiss = useCallback((id: string) => setItems((list) => list.map((item) => (item.id === id ? { ...item, open: false } : item))), []);
+  const dismiss = useCallback(
+    (id: string) => setItems((list) => list.map((item) => (item.id === id ? { ...item, open: false } : item))),
+    [],
+  );
   const remove = useCallback((id: string) => setItems((list) => list.filter((item) => item.id !== id)), []);
 
   const api = useMemo<ToastApi>(
@@ -195,7 +214,8 @@ export function ToastProvider({ children, duration = 5000, position = "bottom-ri
       const target = [...(el?.querySelectorAll<HTMLElement>('.z-toast[data-state="open"]') ?? [])].pop();
       if (!el || !target) return;
       event.preventDefault();
-      if (!el.contains(document.activeElement)) returnTo.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      if (!el.contains(document.activeElement))
+        returnTo.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       target.focus();
     };
     document.addEventListener("keydown", onKey);
@@ -207,9 +227,26 @@ export function ToastProvider({ children, duration = 5000, position = "bottom-ri
       {children}
       {host && count
         ? createPortal(
-            <div ref={viewport} className="z-toast-viewport" role="region" aria-label={regionLabel} tabIndex={-1} popover="manual" data-position={position}>
+            <div
+              ref={viewport}
+              className="z-toast-viewport"
+              role="region"
+              aria-label={regionLabel}
+              tabIndex={-1}
+              popover="manual"
+              data-position={position}
+            >
               {items.map((item) => (
-                <ToastView key={item.id} item={item} duration={item.duration ?? duration} position={position} closeLabel={closeLabel} dismiss={dismiss} remove={remove} returnTo={returnTo} />
+                <ToastView
+                  key={item.id}
+                  item={item}
+                  duration={item.duration ?? duration}
+                  position={position}
+                  closeLabel={closeLabel}
+                  dismiss={dismiss}
+                  remove={remove}
+                  returnTo={returnTo}
+                />
               ))}
             </div>,
             host,

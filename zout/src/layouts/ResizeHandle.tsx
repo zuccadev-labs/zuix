@@ -1,7 +1,17 @@
 "use client";
 import { useRef, type KeyboardEvent, type PointerEvent } from "react";
 import { cx } from "../cx";
-import { RESIZE_MAX, RESIZE_MIN, RESIZE_STEP, clamp as clampTo, isHorizontal, physicalSide, resizeByKey, resizeSign, type ResizeSide } from "../logic";
+import {
+  RESIZE_MAX,
+  RESIZE_MIN,
+  RESIZE_STEP,
+  clamp as clampTo,
+  isHorizontal,
+  physicalSide,
+  resizeByKey,
+  resizeSign,
+  type ResizeSide,
+} from "../logic";
 
 export interface ResizeHandleProps {
   /**
@@ -27,7 +37,18 @@ export interface ResizeHandleProps {
 const isRtl = (el: Element) => getComputedStyle(el).direction === "rtl";
 
 /** Tirador para redimensionar un panel. Funciona con puntero y con teclado. */
-export function ResizeHandle({ side, size, onResize, min = RESIZE_MIN, max = RESIZE_MAX, defaultSize, step = RESIZE_STEP, label = "Resize panel", controls, className }: ResizeHandleProps) {
+export function ResizeHandle({
+  side,
+  size,
+  onResize,
+  min = RESIZE_MIN,
+  max = RESIZE_MAX,
+  defaultSize,
+  step = RESIZE_STEP,
+  label = "Resize panel",
+  controls,
+  className,
+}: ResizeHandleProps) {
   const start = useRef<{ pos: number; size: number; sign: number } | null>(null);
   const horizontal = isHorizontal(side);
   const clamp = (v: number) => clampTo(v, min, max);
@@ -36,14 +57,20 @@ export function ResizeHandle({ side, size, onResize, min = RESIZE_MIN, max = RES
     // Solo el botón principal (o un dedo, o el lápiz): el secundario abre el menú contextual, no arrastra.
     if (e.button !== 0) return;
     start.current = { pos: horizontal ? e.clientX : e.clientY, size, sign: resizeSign(physicalSide(side, isRtl(e.currentTarget))) };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* puntero ya liberado */ }
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!start.current) return;
     const delta = (horizontal ? e.clientX : e.clientY) - start.current.pos;
     onResize(clamp(start.current.size + start.current.sign * delta));
   };
-  const onPointerUp = () => { start.current = null; };
+  const onPointerUp = () => {
+    start.current = null;
+  };
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const next = resizeByKey(e.key, physicalSide(side, isRtl(e.currentTarget)), size, { min, max, step, defaultSize });
     if (next === undefined) return;

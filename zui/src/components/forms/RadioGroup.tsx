@@ -20,11 +20,33 @@ export interface RadioGroupProps extends Omit<ComponentProps<"div">, "onChange" 
 }
 
 /** Radios habilitados que pertenecen a `group` (no a un grupo anidado). */
-const radiosOf = (group: Element) => [...group.querySelectorAll<HTMLButtonElement>('[role="radio"]')].filter((radio) => radio.closest('[role="radiogroup"]') === group && !radio.disabled);
+const radiosOf = (group: Element) =>
+  [...group.querySelectorAll<HTMLButtonElement>('[role="radio"]')].filter(
+    (radio) => radio.closest('[role="radiogroup"]') === group && !radio.disabled,
+  );
 
 /** Grupo de opciones excluyentes (patrón APG «radiogroup»): las flechas mueven el foco y la selección. */
-export function RadioGroup({ value: valueProp, defaultValue = "", onValueChange, name, disabled, invalid, className, orientation = "vertical", id, required, "aria-describedby": describedBy, onKeyDown, children, ...rest }: RadioGroupProps) {
-  const { invalid: isInvalid, required: isRequired, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
+export function RadioGroup({
+  value: valueProp,
+  defaultValue = "",
+  onValueChange,
+  name,
+  disabled,
+  invalid,
+  className,
+  orientation = "vertical",
+  id,
+  required,
+  "aria-describedby": describedBy,
+  onKeyDown,
+  children,
+  ...rest
+}: RadioGroupProps) {
+  const {
+    invalid: isInvalid,
+    required: isRequired,
+    ...control
+  } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   // Un radiogroup no es etiquetable con <label for>: dentro de un Field se nombra con aria-labelledby.
   const fieldLabel = useFieldLabel();
   const labelledBy = rest["aria-labelledby"] ?? (rest["aria-label"] ? undefined : fieldLabel);
@@ -66,7 +88,11 @@ export function RadioGroup({ value: valueProp, defaultValue = "", onValueChange,
       className={cx("z-radio-group", className)}
       onKeyDown={handleKeyDown}
     >
-      <RadioGroupContext.Provider value={{ value, select: setValue, reset: () => setValue(defaultValue), name, required: isRequired, disabled, tabStop }}>{children}</RadioGroupContext.Provider>
+      <RadioGroupContext.Provider
+        value={{ value, select: setValue, reset: () => setValue(defaultValue), name, required: isRequired, disabled, tabStop }}
+      >
+        {children}
+      </RadioGroupContext.Provider>
     </div>
   );
 }

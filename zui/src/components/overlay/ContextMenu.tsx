@@ -59,7 +59,10 @@ export function ContextMenu({ children, items, label, size = "md", disabled, onO
           // Tecla de menú o Mayús+F10: sin puntero, el menú sale en el centro de la zona.
           const box = event.currentTarget.getBoundingClientRect();
           const keyboard = event.clientX === 0 && event.clientY === 0;
-          show.current(keyboard ? { x: box.left + box.width / 2, y: box.top + box.height / 2 } : { x: event.clientX, y: event.clientY }, keyboard);
+          show.current(
+            keyboard ? { x: box.left + box.width / 2, y: box.top + box.height / 2 } : { x: event.clientX, y: event.clientY },
+            keyboard,
+          );
         },
         onPointerDown: (event: PointerEvent) => press.down(event.nativeEvent),
         onPointerMove: (event: PointerEvent) => press.move(event.nativeEvent),
@@ -70,7 +73,19 @@ export function ContextMenu({ children, items, label, size = "md", disabled, onO
   return (
     <>
       {slot(children, zoneProps)}
-      <MenuSurface open={open && !disabled} onClose={() => setOpen(false)} items={items} size={size} anchor={zone} point={point} focusFirst={byKeyboard} placement="bottom-start" gap={0} label={label} className={className} />
+      <MenuSurface
+        open={open && !disabled}
+        onClose={() => setOpen(false)}
+        items={items}
+        size={size}
+        anchor={zone}
+        point={point}
+        focusFirst={byKeyboard}
+        placement="bottom-start"
+        gap={0}
+        label={label}
+        className={className}
+      />
     </>
   );
 }

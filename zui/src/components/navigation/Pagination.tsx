@@ -44,7 +44,13 @@ export function Pagination({
   }
   return (
     <nav aria-label={label} className={cx("z-pagination", className)} data-size={size}>
-      <button type="button" className="z-pagination__btn" aria-label={previousLabel} disabled={current <= 1} onClick={() => go(current - 1)}>
+      <button
+        type="button"
+        className="z-pagination__btn"
+        aria-label={previousLabel}
+        disabled={current <= 1}
+        onClick={() => go(current - 1)}
+      >
         <Icon name="chevron-left" size={14} />
       </button>
       {entries.map(({ key, n }) =>
@@ -65,7 +71,13 @@ export function Pagination({
           </button>
         ),
       )}
-      <button type="button" className="z-pagination__btn" aria-label={nextLabel} disabled={current >= count} onClick={() => go(current + 1)}>
+      <button
+        type="button"
+        className="z-pagination__btn"
+        aria-label={nextLabel}
+        disabled={current >= count}
+        onClick={() => go(current + 1)}
+      >
         <Icon name="chevron-right" size={14} />
       </button>
     </nav>

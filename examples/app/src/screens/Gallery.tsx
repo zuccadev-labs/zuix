@@ -24,8 +24,19 @@ export function Gallery({ theme, brand }: { theme: Theme; brand: Brand }) {
   }, [theme, brand]);
 
   return (
-    <Page header={<PageHeader eyebrow="Components" title="Gallery" description="The carousel in its three drawing modes: CSS lens, WebGL lens and flat." />}>
-      <PageSection title="Featured projects" description="CSS mode: real slides warped with transforms. Drag, use the arrows or the keyboard.">
+    <Page
+      header={
+        <PageHeader
+          eyebrow="Components"
+          title="Gallery"
+          description="The carousel in its three drawing modes: CSS lens, WebGL lens and flat."
+        />
+      }
+    >
+      <PageSection
+        title="Featured projects"
+        description="CSS mode: real slides warped with transforms. Drag, use the arrows or the keyboard."
+      >
         <Carousel
           data-testid="carousel-css"
           ariaLabel="Featured projects"
@@ -34,16 +45,25 @@ export function Gallery({ theme, brand }: { theme: Theme; brand: Brand }) {
           onIndexChange={setCssIndex}
           renderItem={(project: Project, _index, { active, clone }) => (
             <Card className="app-slide" variant={active ? "elevated" : "outlined"}>
-              <CardHeader title={project.name} subtitle={project.owner} action={<Badge tone={STATUS_TONE[project.status]}>{STATUS_LABEL[project.status]}</Badge>} />
+              <CardHeader
+                title={project.name}
+                subtitle={project.owner}
+                action={<Badge tone={STATUS_TONE[project.status]}>{STATUS_LABEL[project.status]}</Badge>}
+              />
               <p className="app-text">{project.summary}</p>
               <Progress value={project.progress} label={`${project.name} completion`} size="sm" showValue />
               <CardFooter align="end">
-                <Button size="sm" tabIndex={clone ? -1 : undefined} onClick={() => setOpened(project.id)}>Open</Button>
+                <Button size="sm" tabIndex={clone ? -1 : undefined} onClick={() => setOpened(project.id)}>
+                  Open
+                </Button>
               </CardFooter>
             </Card>
           )}
         />
-        <span className="app-muted">Active slide: <output data-testid="carousel-css-index">{cssIndex}</output> · Opened: <output data-testid="carousel-css-opened">{opened}</output></span>
+        <span className="app-muted">
+          Active slide: <output data-testid="carousel-css-index">{cssIndex}</output> · Opened:{" "}
+          <output data-testid="carousel-css-opened">{opened}</output>
+        </span>
       </PageSection>
 
       <PageSection title="Covers" description="WebGL mode: the curved zones are drawn on a canvas from the raster of each slide.">
@@ -57,10 +77,19 @@ export function Gallery({ theme, brand }: { theme: Theme; brand: Brand }) {
           onIndexChange={setGlIndex}
           rasterize={(project) => covers.get(project.id)!.canvas}
           renderItem={(project: Project) => (
-            <img className="app-cover" src={covers.get(project.id)!.url} width={COVER_WIDTH} height={COVER_HEIGHT} alt={`${project.name} cover`} draggable={false} />
+            <img
+              className="app-cover"
+              src={covers.get(project.id)!.url}
+              width={COVER_WIDTH}
+              height={COVER_HEIGHT}
+              alt={`${project.name} cover`}
+              draggable={false}
+            />
           )}
         />
-        <span className="app-muted">Active slide: <output data-testid="carousel-gl-index">{glIndex}</output></span>
+        <span className="app-muted">
+          Active slide: <output data-testid="carousel-gl-index">{glIndex}</output>
+        </span>
       </PageSection>
 
       <PageSection title="Flat" description="No lens and no loop.">
@@ -80,7 +109,9 @@ export function Gallery({ theme, brand }: { theme: Theme; brand: Brand }) {
             </Card>
           )}
         />
-        <span className="app-muted">Active slide: <output data-testid="carousel-flat-index">{flatIndex}</output></span>
+        <span className="app-muted">
+          Active slide: <output data-testid="carousel-flat-index">{flatIndex}</output>
+        </span>
       </PageSection>
     </Page>
   );

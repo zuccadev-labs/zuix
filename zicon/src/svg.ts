@@ -15,7 +15,8 @@ export interface IconSvgOptions {
 
 /** Lado del icono: un número o una longitud CSS. Cualquier otra cosa (un atributo mal escrito u hostil) vale 16. */
 const LENGTH = /^\d*\.?\d+(px|em|rem|ex|ch|%|vw|vh|vmin|vmax|pt|pc|cm|mm|in)?$/;
-const side = (size: number | string): string => (typeof size === "number" ? (Number.isFinite(size) && size >= 0 ? String(size) : "16") : LENGTH.test(size.trim()) ? size.trim() : "16");
+const side = (size: number | string): string =>
+  typeof size === "number" ? (Number.isFinite(size) && size >= 0 ? String(size) : "16") : LENGTH.test(size.trim()) ? size.trim() : "16";
 
 const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -49,14 +50,23 @@ export function iconElement(name: string, { variant = "outline", size = 16, labe
   variant = variant === "solid" ? "solid" : "outline";
   const svg = document.createElementNS(SVG_NS, "svg");
   const attrs: Record<string, string> = {
-    viewBox: "0 0 24 24", width: side(size), height: side(size), fill: "currentColor", focusable: "false",
+    viewBox: "0 0 24 24",
+    width: side(size),
+    height: side(size),
+    fill: "currentColor",
+    focusable: "false",
     ...(label ? { role: "img", "aria-label": label } : { "aria-hidden": "true" }),
-    "data-icon": name, "data-variant": variant, class: className ? `z-icon ${className}` : "z-icon",
+    "data-icon": name,
+    "data-variant": variant,
+    class: className ? `z-icon ${className}` : "z-icon",
   };
   for (const [key, value] of Object.entries(attrs)) svg.setAttribute(key, value);
   for (const d of iconPaths(name, variant)) {
     const path = document.createElementNS(SVG_NS, "path");
-    if (d.startsWith("E:")) { path.setAttribute("fill-rule", "evenodd"); path.setAttribute("clip-rule", "evenodd"); }
+    if (d.startsWith("E:")) {
+      path.setAttribute("fill-rule", "evenodd");
+      path.setAttribute("clip-rule", "evenodd");
+    }
     path.setAttribute("d", d.startsWith("E:") ? d.slice(2) : d);
     svg.append(path);
   }

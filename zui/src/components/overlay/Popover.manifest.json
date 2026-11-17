@@ -26,22 +26,13 @@
     {
       "name": "side",
       "type": "enum",
-      "values": [
-        "top",
-        "right",
-        "bottom",
-        "left"
-      ],
+      "values": ["top", "right", "bottom", "left"],
       "default": "bottom"
     },
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "end"
     },
     {
@@ -68,10 +59,7 @@
       "type": "ReactNode"
     }
   ],
-  "states": [
-    "open",
-    "closed"
-  ],
+  "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
     "ease-out",
@@ -92,9 +80,7 @@
     "space-4",
     "text-body"
   ],
-  "classes": [
-    "z-popover"
-  ],
+  "classes": ["z-popover"],
   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo.",
   "examples": [
     {

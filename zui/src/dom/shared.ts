@@ -55,8 +55,18 @@ export function cloneChildren(from: Element, to: Element): void {
 
 /** Registra un listener en el documento o la ventana, ligado a la señal de `init()`: `destroy()` los retira todos. */
 export interface Listen {
-  <K extends keyof DocumentEventMap>(target: Document, type: K, handler: (event: DocumentEventMap[K]) => void, options?: boolean | AddEventListenerOptions): void;
-  <K extends keyof WindowEventMap>(target: Window, type: K, handler: (event: WindowEventMap[K]) => void, options?: boolean | AddEventListenerOptions): void;
+  <K extends keyof DocumentEventMap>(
+    target: Document,
+    type: K,
+    handler: (event: DocumentEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  <K extends keyof WindowEventMap>(
+    target: Window,
+    type: K,
+    handler: (event: WindowEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
   (target: Document | Window, type: string, handler: (event: Event) => void, options?: boolean | AddEventListenerOptions): void;
 }
 

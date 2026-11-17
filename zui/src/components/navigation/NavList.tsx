@@ -42,7 +42,21 @@ export interface NavLinkProps extends Omit<HTMLAttributes<HTMLElement>, "onClick
   children?: ReactNode;
 }
 
-export function NavLink({ href, target, rel, onClick, icon, active, disabled, trailing, asChild, title, className, children, ...rest }: NavLinkProps) {
+export function NavLink({
+  href,
+  target,
+  rel,
+  onClick,
+  icon,
+  active,
+  disabled,
+  trailing,
+  asChild,
+  title,
+  className,
+  children,
+  ...rest
+}: NavLinkProps) {
   const shared = {
     ...rest,
     className: cx("z-navlink", className),
@@ -79,7 +93,14 @@ export function NavLink({ href, target, rel, onClick, icon, active, disabled, tr
   );
   if (href !== undefined) {
     return (
-      <a {...shared} href={disabled ? undefined : href} target={target} rel={rel} role={disabled ? "link" : undefined} aria-disabled={disabled || undefined}>
+      <a
+        {...shared}
+        href={disabled ? undefined : href}
+        target={target}
+        rel={rel}
+        role={disabled ? "link" : undefined}
+        aria-disabled={disabled || undefined}
+      >
         {body}
       </a>
     );

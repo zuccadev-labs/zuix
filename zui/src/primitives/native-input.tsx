@@ -31,7 +31,22 @@ export function NativeInput({ type, name, value = "on", checked, indeterminate, 
     owner.addEventListener("reset", onFormReset);
     return () => owner.removeEventListener("reset", onFormReset);
   }, [latest]);
-  return <input ref={node} type={type} className="z-native-input" aria-hidden="true" tabIndex={-1} name={name} value={value} checked={checked} required={required} disabled={disabled} form={form} onChange={noop} />;
+  return (
+    <input
+      ref={node}
+      type={type}
+      className="z-native-input"
+      aria-hidden="true"
+      tabIndex={-1}
+      name={name}
+      value={value}
+      checked={checked}
+      required={required}
+      disabled={disabled}
+      form={form}
+      onChange={noop}
+    />
+  );
 }
 
 const noop = () => {};

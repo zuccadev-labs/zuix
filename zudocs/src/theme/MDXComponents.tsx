@@ -16,4 +16,23 @@ function TaskCheckbox(props: ComponentProps<"input">) {
   return <input {...props} aria-label={label} />;
 }
 
-export default { ...MDXComponents, input: TaskCheckbox, Icon, Alert, Badge, Button, Callout, Card, CardHeader, Carousel, Kbd, Panel, StatTile, Stepper, Tabs, Grid, Inline, Stack };
+export default {
+  ...MDXComponents,
+  input: TaskCheckbox,
+  Icon,
+  Alert,
+  Badge,
+  Button,
+  Callout,
+  Card,
+  CardHeader,
+  Carousel,
+  Kbd,
+  Panel,
+  StatTile,
+  Stepper,
+  Tabs,
+  Grid,
+  Inline,
+  Stack,
+};

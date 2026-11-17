@@ -3,12 +3,7 @@
   "group": "layout",
   "description": "Página con desplazamiento propio, cabecera y secciones.",
   "import": "import { Page, PageHeader, PageSection, Container } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "Page",
-    "PageHeader",
-    "PageSection",
-    "Container"
-  ],
+  "exports": ["Page", "PageHeader", "PageSection", "Container"],
   "props": [
     {
       "name": "header",
@@ -17,11 +12,7 @@
     {
       "name": "width",
       "type": "enum",
-      "values": [
-        "content",
-        "prose",
-        "full"
-      ],
+      "values": ["content", "prose", "full"],
       "default": "content"
     },
     {
@@ -76,12 +67,7 @@
     "fg-muted",
     "accent"
   ],
-  "classes": [
-    "z-page",
-    "z-pagehead",
-    "z-section",
-    "z-container"
-  ],
+  "classes": ["z-page", "z-pagehead", "z-section", "z-container"],
   "examples": [
     {
       "title": "Panel de control",

@@ -24,7 +24,8 @@
     white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
-    user-select: none; -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
       border-color var(--z-duration-fast) var(--z-ease-standard),
@@ -310,9 +311,15 @@
 
   /* Objetivo táctil: con puntero grueso cada opción del SegmentedControl se pulsa en todo el alto del control. */
   @media (pointer: coarse) {
-    .z-segmented__item { position: relative; }
+    .z-segmented__item {
+      position: relative;
+    }
     .z-segmented__item::before {
-      content: ""; position: absolute; inset-inline: 0; top: 50%; transform: translateY(-50%);
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 50%;
+      transform: translateY(-50%);
       height: max(100%, var(--z-touch-target, 0px));
     }
   }

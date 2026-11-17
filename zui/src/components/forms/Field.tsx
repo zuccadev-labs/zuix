@@ -55,14 +55,28 @@ export interface FieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "childr
 }
 
 /** Envoltura de campo: etiqueta, ayuda y error enlazados al control por id y aria-describedby. */
-export function Field({ label, hint, error, required = false, optionalLabel, htmlFor, layout = "stacked", className, children, ...rest }: FieldProps) {
+export function Field({
+  label,
+  hint,
+  error,
+  required = false,
+  optionalLabel,
+  htmlFor,
+  layout = "stacked",
+  className,
+  children,
+  ...rest
+}: FieldProps) {
   const auto = useId();
   const id = htmlFor ?? `${auto}-control`;
   const hintId = hint ? `${auto}-hint` : undefined;
   const errorId = error ? `${auto}-error` : undefined;
   const labelId = label ? `${auto}-label` : undefined;
   const describedBy = [errorId, hintId].filter(Boolean).join(" ") || undefined;
-  const value = useMemo<FieldContextValue>(() => ({ id, labelId, describedBy, invalid: Boolean(error), required }), [id, labelId, describedBy, error, required]);
+  const value = useMemo<FieldContextValue>(
+    () => ({ id, labelId, describedBy, invalid: Boolean(error), required }),
+    [id, labelId, describedBy, error, required],
+  );
 
   return (
     <div {...rest} className={cx("z-field", className)} data-layout={layout} data-invalid={error ? true : undefined}>

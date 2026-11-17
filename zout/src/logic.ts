@@ -47,7 +47,12 @@ export const resizeSign = (side: PhysicalSide) => (side === "right" || side === 
  * Tamaño tras una tecla, o `undefined` si la tecla no mueve el tirador. Las flechas son físicas (patrón
  * «window splitter» de WAI-ARIA): la flecha mueve el tirador hacia donde apunta. Inicio vuelve al tamaño por defecto.
  */
-export function resizeByKey(key: string, side: PhysicalSide, size: number, opts: { min: number; max: number; step: number; defaultSize?: number }): number | undefined {
+export function resizeByKey(
+  key: string,
+  side: PhysicalSide,
+  size: number,
+  opts: { min: number; max: number; step: number; defaultSize?: number },
+): number | undefined {
   const sign = resizeSign(side);
   const grow = isHorizontal(side) ? (sign === 1 ? "ArrowRight" : "ArrowLeft") : sign === 1 ? "ArrowDown" : "ArrowUp";
   const shrink = isHorizontal(side) ? (sign === 1 ? "ArrowLeft" : "ArrowRight") : sign === 1 ? "ArrowUp" : "ArrowDown";

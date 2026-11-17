@@ -371,7 +371,8 @@
     font-size: calc(var(--z-avatar-size) * 0.38);
     font-weight: var(--z-weight-bold);
     line-height: 1;
-    user-select: none; -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .z-avatar[data-size="xs"] {
     --z-avatar-size: 20px;

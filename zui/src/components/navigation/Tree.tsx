@@ -32,7 +32,17 @@ interface Row {
   parent: string | null;
 }
 
-export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange, selected, defaultSelected = null, onSelect, className }: TreeProps) {
+export function Tree({
+  nodes,
+  label,
+  expanded,
+  defaultExpanded,
+  onExpandedChange,
+  selected,
+  defaultSelected = null,
+  onSelect,
+  className,
+}: TreeProps) {
   const [ownExpanded, setOwnExpanded] = useState<string[]>(defaultExpanded ?? []);
   const [ownSelected, setOwnSelected] = useState<string | null>(defaultSelected);
   const [focused, setFocused] = useState<string | null>(null);
@@ -122,7 +132,8 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
         handled = false;
         if (event.key.length !== 1) break;
         const letter = event.key.toLowerCase();
-        const name = (id: string) => (refs.current.get(id)?.querySelector(":scope > .z-tree__row .z-tree__label")?.textContent ?? "").trim().toLowerCase();
+        const name = (id: string) =>
+          (refs.current.get(id)?.querySelector(":scope > .z-tree__row .z-tree__label")?.textContent ?? "").trim().toLowerCase();
         const next = [...rows.slice(at + 1), ...rows.slice(0, at)].find((r) => name(r.node.id).startsWith(letter));
         if (next) {
           focus(next.node.id);

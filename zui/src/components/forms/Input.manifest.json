@@ -7,11 +7,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -46,14 +42,7 @@
       "description": "value, onChange, type, placeholder, disabled, ref, etc."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "invalid"],
   "tokens": [
     "control-height-md",
     "space-3",
@@ -84,9 +73,7 @@
     "surface-3",
     "radius-full"
   ],
-  "classes": [
-    "z-input"
-  ],
+  "classes": ["z-input"],
   "a11y": "input nativo. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin Field necesita aria-label.",
   "examples": [
     {

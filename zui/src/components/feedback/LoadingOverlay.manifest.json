@@ -31,24 +31,9 @@
       "description": "Difumina lo cubierto."
     }
   ],
-  "states": [
-    "visible",
-    "hidden"
-  ],
-  "tokens": [
-    "layer-sticky",
-    "space-3",
-    "scrim",
-    "canvas-fg",
-    "layer-overlay",
-    "text-body",
-    "weight-medium",
-    "surface-3",
-    "accent"
-  ],
-  "classes": [
-    "z-loading-overlay"
-  ],
+  "states": ["visible", "hidden"],
+  "tokens": ["layer-sticky", "space-3", "scrim", "canvas-fg", "layer-overlay", "text-body", "weight-medium", "surface-3", "accent"],
+  "classes": ["z-loading-overlay"],
   "a11y": "role=\"status\" con aria-live polite. El contenedor necesita position: relative.",
   "examples": [
     {

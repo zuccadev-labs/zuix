@@ -1,7 +1,12 @@
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import type { IconName } from "@zuccadev-labs/zuix-zicon/core";
 
-export interface ZudocsArea { id: string; label: string; icon?: IconName; description?: string }
+export interface ZudocsArea {
+  id: string;
+  label: string;
+  icon?: IconName;
+  description?: string;
+}
 export interface ZudocsSite {
   name: string;
   tagline?: string;

@@ -45,9 +45,7 @@
       "default": 3
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "space-2",
     "space-10",
@@ -71,10 +69,7 @@
     "text-small",
     "space-3"
   ],
-  "classes": [
-    "z-empty",
-    "z-empty--error"
-  ],
+  "classes": ["z-empty", "z-empty--error"],
   "a11y": "role=\"alert\": se anuncia al aparecer.",
   "examples": [
     {

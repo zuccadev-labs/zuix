@@ -40,11 +40,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md",
       "description": "Ancho máximo: 400, 560 o 720 px."
     },
@@ -74,10 +70,7 @@
       "type": "ReactNode"
     }
   ],
-  "states": [
-    "open",
-    "closed"
-  ],
+  "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
     "duration-normal",

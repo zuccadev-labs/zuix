@@ -19,7 +19,8 @@ import { Popup, Portal, rectOf } from "./popup";
 const OPEN_MS = 100;
 const CLOSE_MS = 200;
 
-const itemsOf = (menu: Element) => [...menu.querySelectorAll<HTMLElement>(":scope > .z-menu__item")].filter((item) => item.getAttribute("aria-disabled") !== "true");
+const itemsOf = (menu: Element) =>
+  [...menu.querySelectorAll<HTMLElement>(":scope > .z-menu__item")].filter((item) => item.getAttribute("aria-disabled") !== "true");
 const labelOf = (item: HTMLElement) => (item.querySelector(".z-menu__text") ?? item).textContent ?? "";
 
 /** Resalta una entrada y le da el foco; las demás del mismo menú dejan de estar resaltadas. */
@@ -171,7 +172,8 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
       return;
     }
     const sub = document.getElementById(`${id}-${entry.id}`);
-    if (sub) tree.aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
+    if (sub)
+      tree.aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
   };
 
   return (
@@ -254,7 +256,9 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
                 const menu = node.current;
                 const item = triggers.current.get(entry.id);
                 const child = document.getElementById(`${id}-${entry.id}`);
-                return menu && item ? submenuAnchor(menu.getBoundingClientRect(), item.getBoundingClientRect(), child ? topInset(child) : 0) : null;
+                return menu && item
+                  ? submenuAnchor(menu.getBoundingClientRect(), item.getBoundingClientRect(), child ? topInset(child) : 0)
+                  : null;
               }}
               placement={node.current && isRtl(node.current) ? "left-start" : "right-start"}
               gap={4}
@@ -290,7 +294,22 @@ export interface MenuSurfaceProps {
   id?: string;
 }
 
-export function MenuSurface({ open, onClose, items, size, anchor, point, anchorIsTrigger, focusFirst = false, placement, gap = 4, label, labelledBy, className, id: idProp }: MenuSurfaceProps) {
+export function MenuSurface({
+  open,
+  onClose,
+  items,
+  size,
+  anchor,
+  point,
+  anchorIsTrigger,
+  focusFirst = false,
+  placement,
+  gap = 4,
+  label,
+  labelledBy,
+  className,
+  id: idProp,
+}: MenuSurfaceProps) {
   const auto = useId();
   const id = idProp ?? auto;
   const [path, setPath] = useState<string[]>([]);
@@ -338,13 +357,30 @@ export function MenuSurface({ open, onClose, items, size, anchor, point, anchorI
   const tree: Tree = { path: open ? path : [], setPath, focusSub, menus, aim, search, timer, size, open, focusFirst, close, anchor };
   return (
     <Portal anchor={anchor}>
-      <RootLevel key={point ? `${point.x},${point.y}` : "anchor"} tree={tree} root={root} previous={previous} items={items} id={id} anchorRect={() => (point ? { left: point.x, top: point.y, width: 0, height: 0 } : rectOf(anchor.current))} placement={placement} gap={gap} label={label} labelledBy={labelledBy} className={className} />
+      <RootLevel
+        key={point ? `${point.x},${point.y}` : "anchor"}
+        tree={tree}
+        root={root}
+        previous={previous}
+        items={items}
+        id={id}
+        anchorRect={() => (point ? { left: point.x, top: point.y, width: 0, height: 0 } : rectOf(anchor.current))}
+        placement={placement}
+        gap={gap}
+        label={label}
+        labelledBy={labelledBy}
+        className={className}
+      />
     </Portal>
   );
 }
 
 /** Nivel raíz: recuerda el foco previo antes de que el menú lo tome y expone su elemento para la animación de salida. */
-function RootLevel({ root, previous, ...level }: Omit<LevelProps, "depth"> & { root: RefObject<HTMLElement | null>; previous: RefObject<HTMLElement | null> }) {
+function RootLevel({
+  root,
+  previous,
+  ...level
+}: Omit<LevelProps, "depth"> & { root: RefObject<HTMLElement | null>; previous: RefObject<HTMLElement | null> }) {
   const [ready, setReady] = useState(false);
   useIsoLayoutEffect(() => {
     previous.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;

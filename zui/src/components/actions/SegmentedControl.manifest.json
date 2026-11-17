@@ -32,11 +32,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -51,14 +47,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "on",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "on", "disabled"],
   "tokens": [
     "control-height-md",
     "line",
@@ -82,9 +71,7 @@
     "button-primary-fg",
     "shadow-sm"
   ],
-  "classes": [
-    "z-segmented"
-  ],
+  "classes": ["z-segmented"],
   "a11y": "Patrón APG «radiogroup»: una parada de tabulación; las flechas mueven el foco y la selección (reflejadas en RTL). No permite quedar sin selección.",
   "examples": [
     {

@@ -25,21 +25,13 @@
     {
       "name": "side",
       "type": "enum",
-      "values": [
-        "left",
-        "right",
-        "bottom"
-      ],
+      "values": ["left", "right", "bottom"],
       "default": "right"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md",
       "description": "Ancho (o alto con side bottom): 320, 400 o 560 px."
     },
@@ -75,10 +67,7 @@
       "type": "ReactNode"
     }
   ],
-  "states": [
-    "open",
-    "closed"
-  ],
+  "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
     "duration-normal",

@@ -240,12 +240,7 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
         const p = lensForward(cx, cy, shape, k);
         return { x: p.x - left, y: p.y - y };
       };
-      slot.el.style.transform = quadToMatrix3d(w, h, [
-        corner(left, y),
-        corner(left + w, y),
-        corner(left + w, y + h),
-        corner(left, y + h),
-      ]);
+      slot.el.style.transform = quadToMatrix3d(w, h, [corner(left, y), corner(left + w, y), corner(left + w, y + h), corner(left, y + h)]);
     }
   };
 
@@ -427,9 +422,7 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
       // Textura al doble de la pantalla (hasta 3x): las zonas curvas se amplían sin perder nitidez.
       const scale = Math.min(pixelRatio() * 2, 3);
       const mains = slots.filter((slot) => slot.copy === main);
-      const sources = await Promise.all(
-        mains.map((slot) => rasterize(slot.index, { width: slot.width, height: state.slideH, scale })),
-      );
+      const sources = await Promise.all(mains.map((slot) => rasterize(slot.index, { width: slot.width, height: state.slideH, scale })));
       if (state.disposed || token !== state.rasterToken || state.gl !== gl || gl.lost) return;
       mains.forEach((slot, i) => {
         const source = sources[i];
@@ -652,11 +645,7 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
       ? null
       : new ResizeObserver(() => {
           // La primera notificación llega al observar, sin cambio de tamaño: no debe recolocar la tira.
-          if (
-            viewport.clientWidth === state.width &&
-            track.offsetHeight === state.slideH &&
-            track.offsetWidth === state.trackW
-          ) {
+          if (viewport.clientWidth === state.width && track.offsetHeight === state.slideH && track.offsetWidth === state.trackW) {
             return;
           }
           layout();
