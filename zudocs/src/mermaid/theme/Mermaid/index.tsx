@@ -16,8 +16,8 @@ function Result({ renderResult }: { renderResult: RenderResult }): ReactNode {
   useEffect(() => {
     if (ref.current) renderResult.bindFunctions?.(ref.current);
   }, [renderResult]);
-  // biome-ignore lint/security/noDangerouslySetInnerHtml: es el SVG que devuelve Mermaid, que con su securityLevel "strict" (el valor por defecto) lo sanea con DOMPurify. El componente oficial de Docusaurus lo inserta igual.
   return (
+    // biome-ignore lint/security/noDangerouslySetInnerHtml: es el SVG que devuelve Mermaid, que con su securityLevel "strict" (el valor por defecto) lo sanea con DOMPurify. El componente oficial de Docusaurus lo inserta igual.
     <div ref={ref} className={`${MermaidContainerClassName} ${styles.container}`} dangerouslySetInnerHTML={{ __html: renderResult.svg }} />
   );
 }

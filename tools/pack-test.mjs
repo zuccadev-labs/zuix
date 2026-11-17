@@ -776,7 +776,8 @@ export function UmbrellaShell() {
     });
     const base = `http://127.0.0.1:${port}`;
     let browser;
-    // biome-ignore lint/suspicious/noControlCharactersInRegex: quita los códigos de color ANSI del mensaje de Playwright.
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: casa los códigos de color ANSI (ESC[…m) para quitarlos del mensaje de Playwright.
+    const ANSI = /\u001b\[\d+m/g;
     const check = async (name, fn) => {
       try {
         const detail = await fn();
@@ -784,7 +785,7 @@ export function UmbrellaShell() {
       } catch (error) {
         bad(
           `next: ${name} — ${String(error?.message ?? error)
-            .replace(/\u001b\[\d+m/g, "")
+            .replace(ANSI, "")
             .split("\n")
             .slice(0, 6)
             .join("\n    ")}`,

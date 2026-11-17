@@ -300,10 +300,10 @@ export function Calendar(props: CalendarProps) {
           <Icon name="chevron-right" size={16} />
         </button>
       </div>
-      {/* biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «date picker grid»: una tabla con role="grid" conserva filas, cabeceras y celdas y añade la navegación con flechas. */}
       <table
         ref={grid}
         className="z-calendar__grid"
+        // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «date picker grid»: una tabla con role="grid" conserva filas, cabeceras y celdas y añade la navegación con flechas.
         role="grid"
         aria-labelledby={titleId}
         aria-multiselectable={mode === "range" || undefined}
