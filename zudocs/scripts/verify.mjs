@@ -67,7 +67,7 @@ if (ctx) {
     if (!existsSync(font)) errors.push(`fonts: no existe ${rel(font)} (una hoja local es relativa a la configuración)`);
   for (const font of ctx.remoteFonts)
     warnings.push(
-      `fonts: ${new URL(font).host} recibe una petición de cada visitante. Autoalójalas con "zudocs fonts" y pon la hoja local en "fonts"`,
+      `fonts: ${new URL(font).host} recibe una petición de cada visitante. Autoalójalas: guarda los .woff2 y su hoja junto a la configuración y pon la hoja local en "fonts"`,
     );
   if (!ctx.url)
     warnings.push('sin "url": el sitio se compila con https://example.com en canónicas y sitemap, y llms.txt lleva rutas en vez de URL');

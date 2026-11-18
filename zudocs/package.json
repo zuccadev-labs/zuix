@@ -14,7 +14,6 @@
     "new": "node bin/zudocs.mjs new",
     "info": "node bin/zudocs.mjs info",
     "llms": "node bin/zudocs.mjs llms",
-    "fonts": "node bin/zudocs.mjs fonts",
     "headers": "node bin/zudocs.mjs headers",
     "typecheck": "tsc --noEmit -p ."
   },
