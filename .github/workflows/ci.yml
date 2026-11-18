@@ -155,9 +155,12 @@ jobs:
   # Windows: las herramientas del repositorio (generadores, auditoría, manifiestos, tipos) y las pruebas unitarias.
   # Quien contribuye desde Windows ejecuta `pnpm check`; lo que genera debe salir igual, byte a byte, que en Linux
   # (.gitattributes fija LF en la copia de trabajo). Las suites de navegador y el empaquetado se quedan en Linux.
+  # No forma parte de la verificación de una publicación (`release: true`): lo que se publica se construye y se
+  # prueba en Linux, y un fallo propio de Windows se ve en el PR y en el ci de main sin detener una versión.
   windows:
     name: Windows (contrato y pruebas unitarias)
     needs: check
+    if: inputs.release != true
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
