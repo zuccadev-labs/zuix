@@ -71,18 +71,20 @@ mantener dos caminos.
 
 ## Qué medí
 
-Medidas del 2026-11-17, con los paquetes empaquetados e instalados fuera del workspace, que es como los
-consume una aplicación.
+Medidas con los paquetes empaquetados e instalados fuera del workspace, que es como los consume una
+aplicación. La columna de la `0.1.0` de la aplicación de prueba es del 2026-11-17; el resto, del 2026-11-18,
+con los tarballs de la `0.2.0`. El proyecto sin React es un `npm install @zuccadev-labs/zuix` en una carpeta
+vacía, medido con `du -sb --apparent-size node_modules`; la aplicación de React es la de `pnpm test:pack`.
 
 | Qué | Con la 0.1.0 | Sin la biblioteca |
 |---|---|---|
-| Proyecto sin React (`zui/dom`, `zout/dom`, `zicon`): tamaño de `node_modules` | 15,9 MB | 9,6 MB |
-| Ese mismo proyecto: paquetes instalados | Más de setenta | Los cinco de la suite |
-| Aplicación de React de prueba, compilada con Vite: JavaScript | 393 kB (121,6 kB con gzip) | 346 kB (107,5 kB con gzip) |
-| Esa misma aplicación: CSS | 136 kB | 146 kB |
-| Tarball de `zui` | 416,7 kB | 549,7 kB |
+| Proyecto sin React (`zui/dom`, `zout/dom`, `zicon`): tamaño de `node_modules` | 18,0 MB | 5,5 MB |
+| Ese mismo proyecto: paquetes instalados | 82 | Los cinco de la suite |
+| Aplicación de React de prueba, compilada con Vite: JavaScript | 393 kB (121,6 kB con gzip) | 350 kB (109,4 kB con gzip) |
+| Esa misma aplicación: CSS | 136 kB | 144 kB |
+| Tarball de `zui` | 416,7 kB | 556,3 kB |
 
-Lo que cuentan esas cifras, sin adornarlas: el JavaScript de una aplicación baja un 12 %, que está bien y no
+Lo que cuentan esas cifras, sin adornarlas: el JavaScript de una aplicación baja un 11 %, que está bien y no
 es espectacular. El CSS sube, pero no por este cambio: en el mismo periodo entraron las propiedades lógicas,
 los colores forzados y el contraste. El paquete de `zui` pesa más, porque ahora lleva dentro la lógica que
 antes venía de fuera. La ganancia grande no es de tamaño: es que quien no usa React no instala nada que no

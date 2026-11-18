@@ -20,14 +20,14 @@ público. La publiqué a mano, con 2FA y sin procedencia. De la siguiente en ade
 
 | Paquete | Contenido | Tarball 0.1.0 | Tarball 0.2.0 |
 |---|---|---|---|
-| `@zuccadev-labs/zuix-tokens` (`tokens/`) | CSS y JSON generados, DTCG, marcas, capas de compatibilidad y esquemas | 20,9 kB · 24 archivos | 41,7 kB · 30 |
-| `@zuccadev-labs/zuix-zicon` (`zicon/`) | ESM por icono, declaraciones, sprite, SVG sueltos, `<z-icon>` para navegador | 715,1 kB · 1425 | 737,6 kB · 1425 |
-| `@zuccadev-labs/zuix-zui` (`zui/`) | ESM de componentes, lógica y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 416,7 kB · 292 | 549,7 kB · 377 |
+| `@zuccadev-labs/zuix-tokens` (`tokens/`) | CSS y JSON generados, DTCG, marcas, capas de compatibilidad y esquemas | 20,9 kB · 24 archivos | 42,1 kB · 30 |
+| `@zuccadev-labs/zuix-zicon` (`zicon/`) | ESM por icono, declaraciones, sprite, SVG sueltos, `<z-icon>` para navegador | 715,1 kB · 1425 | 721,8 kB · 1425 |
+| `@zuccadev-labs/zuix-zui` (`zui/`) | ESM de componentes, lógica y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 416,7 kB · 292 | 556,3 kB · 383 |
 | `@zuccadev-labs/zuix-zout` (`zout/`) | ESM de layouts y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 69,1 kB · 44 | 81,7 kB · 44 |
-| `@zuccadev-labs/zuix` (`suite/`) | Paraguas: depende de los otros cuatro y los reexporta bajo subrutas. Sin código propio | 4,1 kB · 26 | 4,8 kB · 33 |
+| `@zuccadev-labs/zuix` (`suite/`) | Paraguas: depende de los otros cuatro y los reexporta bajo subrutas. Sin código propio | 4,1 kB · 26 | 5,1 kB · 33 |
 
-Tamaño del tarball comprimido y número de archivos. La columna de la `0.2.0` la medí el 2026-11-17 sobre el
-código sin publicar; la cifra final puede variar algo. `zui` crece porque ahora lleva dentro la lógica que
+Tamaño del tarball comprimido (en kB de 1024 bytes) y número de archivos, con `pnpm pack`. La columna de la
+`0.2.0` la medí el 2026-11-18 sobre los tarballs de la versión, antes de publicarla. `zui` crece porque ahora lleva dentro la lógica que
 antes venía de una dependencia: el paquete pesa más y lo que instala una aplicación, menos
 ([medidas](../investigations/08-primitivas-propias.md#qué-medí)).
 
