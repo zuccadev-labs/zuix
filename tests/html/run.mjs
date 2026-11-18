@@ -8,8 +8,8 @@
 // `throw new Unverifiable(motivo)` marca el caso como no verificable en ese motor (no cuenta como fallo);
 // `note(texto)` deja una observación bajo el caso en curso.
 import { createServer } from "node:http";
-import { mkdirSync, readFileSync, readdirSync, existsSync, statSync } from "node:fs";
-import { dirname, extname, join, normalize } from "node:path";
+import { mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { dirname, extname, join, normalize, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium, firefox, webkit } from "playwright-core";
 import { applyNoWebgl, noWebglLaunch } from "../webgl.mjs";
@@ -24,12 +24,17 @@ const repeat = Math.max(1, Number(process.argv.find((a) => a.startsWith("--repea
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".json": "application/json" };
 const server = createServer((req, res) => {
   const file = join(root, normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)));
-  if (!file.startsWith(root) || !existsSync(file) || statSync(file).isDirectory()) {
+  // Se lee sin comprobar antes si existe: un archivo que falta o una carpeta fallan en la propia lectura.
+  let body;
+  try {
+    if (!file.startsWith(root + sep)) throw new Error("fuera del repositorio");
+    body = readFileSync(file);
+  } catch {
     res.writeHead(404);
     return res.end();
   }
   res.writeHead(200, { "content-type": TYPES[extname(file)] ?? "application/octet-stream" });
-  res.end(readFileSync(file));
+  res.end(body);
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const url = `http://127.0.0.1:${server.address().port}/examples/html/index.html`;

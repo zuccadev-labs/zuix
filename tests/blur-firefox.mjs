@@ -11,8 +11,8 @@
 // un modal y un aviso, se captura la ventana y se mide la "energía de borde" (diferencia media de luminancia entre
 // píxeles vecinos) dentro de cada capa. Con desenfoque el rayado se funde y la energía cae; sin él, se conserva.
 import { createServer } from "node:http";
-import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, extname, join, normalize } from "node:path";
+import { mkdirSync, readFileSync } from "node:fs";
+import { dirname, extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { inflateSync } from "node:zlib";
@@ -138,12 +138,17 @@ function edgeEnergy(image, box) {
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".json": "application/json" };
 const server = createServer((req, res) => {
   const file = join(root, normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)));
-  if (!file.startsWith(root) || !existsSync(file) || statSync(file).isDirectory()) {
+  // Se lee sin comprobar antes si existe: un archivo que falta o una carpeta fallan en la propia lectura.
+  let body;
+  try {
+    if (!file.startsWith(root + sep)) throw new Error("fuera del repositorio");
+    body = readFileSync(file);
+  } catch {
     res.writeHead(404);
     return res.end();
   }
   res.writeHead(200, { "content-type": TYPES[extname(file)] ?? "application/octet-stream" });
-  res.end(readFileSync(file));
+  res.end(body);
 });
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const url = `http://127.0.0.1:${server.address().port}/examples/html/index.html`;

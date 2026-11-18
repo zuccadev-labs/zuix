@@ -1,7 +1,7 @@
 // Genera el paquete a partir de icons.json (salida de extract.py) y scripts/keywords.json.
 // Escribe: src/icons/<nombre>.ts, src/names.ts, src/all.ts, manifest.json y la tabla de AGENTS.md.
 // Falla si un alias o un emoji apunta a un icono que no existe.
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -120,8 +120,15 @@ writeFileSync(
 );
 
 // Tabla de sustitución para agentes, dentro de AGENTS.md entre marcadores.
+// Se lee sin comprobar antes si existe: sin el archivo no hay nada que actualizar.
 const agents = join(root, "AGENTS.md");
-if (existsSync(agents)) {
+let agentsMd = null;
+try {
+  agentsMd = readFileSync(agents, "utf8");
+} catch (error) {
+  if (error.code !== "ENOENT") throw error;
+}
+if (agentsMd !== null) {
   const byIcon = new Map();
   for (const [e, k] of Object.entries(emoji)) byIcon.set(k, [...(byIcon.get(k) ?? []), e]);
   const rows = [...byIcon]
@@ -131,8 +138,7 @@ if (existsSync(agents)) {
   const catRows = Object.entries(categories)
     .map(([k, l]) => `| \`${k}\` | ${l.es} | ${icons.filter((i) => i.category === k).length} |`)
     .join("\n");
-  let md = readFileSync(agents, "utf8");
-  md = md.replace(
+  let md = agentsMd.replace(
     /<!-- emoji:start -->[\s\S]*<!-- emoji:end -->/,
     `<!-- emoji:start -->\n| Emoji | Icono |\n|---|---|\n${rows}\n<!-- emoji:end -->`,
   );
