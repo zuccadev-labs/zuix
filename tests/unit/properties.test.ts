@@ -54,7 +54,6 @@ describe("propiedades: iconSvg", () => {
       .replace(/&lt;/g, "<")
       .replace(/&gt;/g, ">")
       .replace(/&amp;/g, "&");
-  const ATTR = /([a-zA-Z-]+)="([^"]*)"/g;
   const SHAPE = /^<svg((?: [a-zA-Z-]+="[^"<>']*")+)>((?:<path(?: [a-z-]+="[^"<>']*")+\/>)*)<\/svg>$/;
   const ALLOWED = new Set([
     "xmlns",
@@ -87,7 +86,14 @@ describe("propiedades: iconSvg", () => {
           assert.ok(shape, svg);
           // Un `&` solo aparece como principio de una de las cinco entidades que escribe `esc`.
           assert.doesNotMatch(svg, /&(?!amp;|quot;|#39;|lt;|gt;)/);
-          const attrs = new Map([...shape[1]!.matchAll(ATTR)].map((m) => [m[1]!, decode(m[2]!)]));
+          // Las comillas de los valores van escapadas: la siguiente `"` siempre cierra el atributo.
+          const attrs = new Map<string, string>();
+          for (let rest = shape[1]!; rest; ) {
+            const eq = rest.indexOf('="');
+            const end = rest.indexOf('"', eq + 2);
+            attrs.set(rest.slice(1, eq), decode(rest.slice(eq + 2, end)));
+            rest = rest.slice(end + 1);
+          }
           assert.equal(attrs.get("data-icon"), name);
           assert.ok(attrs.get("data-variant") === "outline" || attrs.get("data-variant") === "solid");
           assert.match(attrs.get("width")!, /^(?:\d+(?:\.\d+)?(?:e[+-]?\d+)?|\.\d+)[a-z%]{0,4}$/);
