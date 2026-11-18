@@ -1009,6 +1009,9 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
             `Tab sacó el foco del panel (pulsación ${i + 1})`,
           );
         }
+        // Como los demás diálogos modales, bloquea el desplazamiento de la página mientras está abierto.
+        const scrollLocked = () => page.evaluate(() => getComputedStyle(document.documentElement).overflowY === "hidden");
+        assert(await scrollLocked(), "el popover modal no bloquea el desplazamiento de la página");
         // Inercia real: lo de fuera no se puede enfocar ni pulsar. La pulsación fuera solo cierra el panel.
         assert(
           await page.evaluate((s) => {
@@ -1024,6 +1027,7 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         });
         await page.mouse.click(x, y);
         await gone(page, panel, "la pulsación fuera cierra el popover modal");
+        assert(!(await scrollLocked()), "al cerrar el popover modal la página sigue sin poder desplazarse");
         await out(page, "a-mpop-count", 0, "la pulsación fuera no activó el botón que había debajo");
         await focusOn(page, t("a-mpop-open"), "al cerrar, el foco vuelve al disparador");
         // Cerrado, la página vuelve a responder.

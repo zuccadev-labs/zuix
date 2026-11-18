@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { activeElement, focusQuiet } from "../core/focus";
 import { notePress, pressedOnBackdrop } from "../core/layers";
 import { place, type Box, type Placement } from "../core/place";
+import { lockScroll } from "../core/scroll-lock";
 import { useMergedRef } from "../refs";
 import { useIsoLayoutEffect, useLatest } from "./hooks";
 
@@ -129,7 +130,7 @@ export interface ModalPopupProps extends Omit<ComponentProps<"dialog">, "open"> 
 
 /**
  * Capa anclada modal: un `<dialog>` abierto con `showModal()` mientras está montado. Como `Popup`, va en la capa
- * superior y sigue a su ancla; además el navegador deja inerte todo lo que queda fuera. No lleva velo visible: una
+ * superior y sigue a su ancla; además el navegador deja inerte todo lo que queda fuera y la página no se desplaza. No lleva velo visible: una
  * pulsación fuera recae en su `::backdrop` transparente y pide el cierre.
  */
 export function ModalPopup({
@@ -155,6 +156,8 @@ export function ModalPopup({
     if (!el) return;
     const previous = activeElement();
     if (!el.open) el.showModal();
+    // Como cualquier otro diálogo modal de la suite: la página de debajo, que ya es inerte, tampoco se desplaza.
+    const unlock = lockScroll();
     const release = anchorTo(el, latest, watch);
     latest.current.onShown?.(el);
     // El navegador cerraría el diálogo por su cuenta: el cierre lo decide el componente (estado controlado).
@@ -166,6 +169,7 @@ export function ModalPopup({
     return () => {
       el.removeEventListener("cancel", onCancel);
       release();
+      unlock();
       const inside = el.contains(document.activeElement) || !activeElement();
       if (el.open) el.close();
       // Mientras el diálogo estaba abierto el disparador era inerte y no podía recibir el foco: se le devuelve ahora.

@@ -153,7 +153,7 @@ repasar las pruebas que dependan de ello.
 | `SegmentedControl`, `RadioGroup` | — | Las flechas mueven el foco y la selección, con vuelta al otro extremo |
 | `Menu` y `ContextMenu` (React) | Abiertos con el puntero, el foco iba al menú sin resaltar ninguna entrada | El foco va a la primera entrada, se abran con el teclado o con el puntero, como en `zui/dom`. Una prueba que abre con un clic y pulsa Flecha abajo llega ahora a la segunda entrada. Las flechas dan la vuelta del último al primero |
 | `Popover` no modal | — | Salir con Tab por un extremo lo cierra y devuelve el foco al disparador |
-| `Popover modal` | — | Retiene el foco (Tab da la vuelta) y el resto de la página queda inerte. Ver «Popover modal» arriba |
+| `Popover modal` | — | Retiene el foco (Tab da la vuelta), bloquea el desplazamiento y el resto de la página queda inerte. Ver «Popover modal» arriba |
 | `DatePicker required` | El botón llevaba `aria-required` | La obligatoriedad la valida un campo nativo oculto, que impide enviar el formulario vacío |
 | `confirm()` de `zui/dom` | Escape no hacía nada | **Escape cancela** (resuelve `false`), como `ConfirmDialog` en React. El clic en el velo sigue sin cerrar |
 | `ConfirmDialog` | Cerrar con Escape solo llamaba a `onOpenChange(false)` | Llama también a `onCancel` |

@@ -85,8 +85,9 @@ Comportamiento:
   con el puntero, lo recibía el menú sin resaltar ninguna). Es el patrón de botón de menú de APG y lo que ya
   hacía `zui/dom`. Las flechas dan la vuelta del último al primero.
 - `Popover` no modal: salir con Tab por un extremo lo cierra y devuelve el foco al disparador. `Popover
-  modal`: retiene el foco (Tab da la vuelta) y el resto de la página queda inerte para el puntero, el
-  teclado y los lectores de pantalla; una pulsación fuera solo lo cierra, sin llegar a lo que hay debajo.
+  modal`: retiene el foco (Tab da la vuelta), bloquea el desplazamiento de la página y el resto queda inerte
+  para el puntero, el teclado y los lectores de pantalla; una pulsación fuera solo lo cierra, sin llegar a
+  lo que hay debajo.
 - `DatePicker required`: el botón ya no lleva `aria-required` (su rol no lo admite); la obligatoriedad la
   valida un campo nativo oculto, que impide enviar el formulario vacío.
 - Tooltip (React y `data-z-tooltip`): la burbuja recibe el puntero. Se puede pasar del disparador a ella sin

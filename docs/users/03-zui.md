@@ -67,7 +67,7 @@ en [Frameworks](./06-frameworks.md#con-nextjs-app-router).
 
 | Pieza | Sobre qué va | Qué da el navegador |
 |---|---|---|
-| `Modal`, `Drawer`, `ConfirmDialog`, `CommandPalette` | `<dialog>` abierto con `showModal()` | Capa superior, velo (`::backdrop`) e inercia del resto de la página |
+| `Modal`, `Drawer`, `ConfirmDialog`, `CommandPalette`, `Popover modal` | `<dialog>` abierto con `showModal()` | Capa superior, velo (`::backdrop`, transparente en el Popover) e inercia del resto de la página |
 | `Popover`, `Tooltip`, `Menu`, `ContextMenu`, `Select`, `Combobox`, `DatePicker`, avisos | Un elemento `popover="manual"` | Capa superior, sin `z-index` ni portales |
 | Colocación junto al disparador | Una función propia, la misma en React y en el modo DOM | — |
 
