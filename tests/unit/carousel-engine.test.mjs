@@ -332,6 +332,41 @@ describe("arrastre y velocidad de lanzamiento", () => {
     );
     assert.equal(c.active(), 2);
   });
+  test("un clic en un slide lateral lo centra", () => {
+    const c = carousel({ reducedMotion: false, initialIndex: 1 });
+    // Con el slide 1 centrado en una ventana de 600 px, el 2 ocupa [420, 620].
+    const id = ++pointerId;
+    pointer(c.viewport, "pointerdown", 500, 0, id);
+    pointer(c.viewport, "pointerup", 500, 40, id);
+    advance(5000);
+    assert.equal(c.active(), 2);
+    assert.equal(c.x(), c.centered(2));
+  });
+  test("la cola imperceptible del muelle no se traga el clic: la tira ya parece quieta y el slide pulsado se centra", () => {
+    const c = carousel({ reducedMotion: false, initialIndex: 0 });
+    c.engine.goTo(1);
+    // Se avanza hasta que falta menos de 1 px, con el muelle aún sin dar el movimiento por terminado.
+    for (let i = 0; i < 400 && Math.abs(c.x() - c.centered(1)) >= 1; i++) advance(16);
+    assert.ok(frames.some(Boolean), "el muelle sigue activo (cola de asentamiento)");
+    assert.ok(Math.abs(c.x() - c.centered(1)) < 1 && c.x() !== c.centered(1), `x=${c.x()}`);
+    const id = ++pointerId;
+    pointer(c.viewport, "pointerdown", 500, 0, id);
+    pointer(c.viewport, "pointerup", 500, 40, id);
+    advance(5000);
+    assert.equal(c.active(), 2, "el clic sobre el slide 2 lo centra");
+  });
+  test("una pulsación con la tira en pleno movimiento la detiene y no navega al slide pulsado", () => {
+    const c = carousel({ reducedMotion: false, count: 9, initialIndex: 0 });
+    c.engine.goTo(6);
+    advance(160);
+    const moving = c.active();
+    assert.ok(moving < 6, "aún en camino");
+    const id = ++pointerId;
+    pointer(c.viewport, "pointerdown", 590, 0, id);
+    pointer(c.viewport, "pointerup", 590, 40, id);
+    advance(5000);
+    assert.ok(Math.abs(c.active() - moving) <= 1, `se ajusta al slide más cercano a donde se detuvo: ${c.active()} (iba por ${moving})`);
+  });
   test("menos de 5 px no es un arrastre: no mueve la tira ni anula el clic", () => {
     const c = carousel({ initialIndex: 2 });
     const id = ++pointerId;

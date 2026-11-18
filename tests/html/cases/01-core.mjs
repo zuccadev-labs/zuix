@@ -115,6 +115,35 @@ export default async function ({ page, test, ok, card, settle, shots }) {
     await page.waitForTimeout(500);
     ok((await page.locator(".z-toast").count()) === 0, "no se descartó");
   });
+  await test("Toast y diálogo modal: un aviso emitido antes de abrir un <dialog> sigue activo dentro y vuelve a la página al cerrarlo", async () => {
+    const zui = await page.evaluateHandle(() => import("/zui/dist/zui.dom.js"));
+    await zui.evaluate((m) => {
+      m.toast({ title: "Before the dialog", duration: 60000 });
+      m.toast({ title: "Stays after", duration: 60000 });
+    });
+    await settle();
+    const hosts = () =>
+      page.evaluate(() => [...document.querySelectorAll(".z-toast")].map((el) => el.closest("dialog:modal")?.id ?? "body").join());
+    ok((await hosts()) === "body,body", `sin diálogo, la región vive en la página: ${await hosts()}`);
+    await zui.evaluate((m) => m.openDialog(document.querySelector("#edit-profile")));
+    // Fuera de un diálogo modal todo es inerte: la región se muda a él.
+    await page.waitForFunction(() =>
+      [...document.querySelectorAll(".z-toast")].every((el) => el.closest("dialog:modal")?.id === "edit-profile"),
+    );
+    ok((await page.locator(".z-toast").count()) === 2, "los avisos no se pierden ni se duplican al mudarse");
+    ok(await page.locator(".z-toast-viewport").evaluate((el) => el.matches(":popover-open")), "la región sigue en la capa superior");
+    await page.locator('.z-toast:has-text("Before the dialog") .z-toast__close').click({ timeout: 5000 });
+    await page.waitForFunction(() => document.querySelectorAll(".z-toast").length === 1);
+    await zui.evaluate((m) => m.closeDialog(document.querySelector("#edit-profile")));
+    await page.waitForFunction(() => !document.querySelector("#edit-profile").open);
+    await page.waitForFunction(() => document.querySelector(".z-toast")?.closest("dialog") === null);
+    ok(
+      await page.locator(".z-toast-viewport").evaluate((el) => el.matches(":popover-open")),
+      "la región sigue visible tras cerrar el diálogo",
+    );
+    await page.locator(".z-toast__close").click({ timeout: 5000 });
+    await page.waitForFunction(() => document.querySelectorAll(".z-toast").length === 0);
+  });
   await test("confirm(): resuelve y el aviso queda sobre la página", async () => {
     await page.locator("#delete").click();
     await settle();

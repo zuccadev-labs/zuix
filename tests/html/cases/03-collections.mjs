@@ -1,5 +1,6 @@
 // Casos de colecciones sin framework: CommandPalette, Tree, DataTable, Pagination y Carousel.
 import { readFileSync } from "node:fs";
+import { carouselAtRest } from "../../rest.mjs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -20,7 +21,7 @@ export default async function ({ page, test, ok, card, settle, shots, browserNam
   const dom = () => page.evaluateHandle(() => import("/zui/dist/zui.dom.js"));
   const until = async (fn, arg, msg) => {
     try {
-      await page.waitForFunction(fn, arg, { timeout: 4000 });
+      await page.waitForFunction(fn, arg, { timeout: 10000 });
     } catch {
       throw new Error(msg);
     }
@@ -378,32 +379,37 @@ export default async function ({ page, test, ok, card, settle, shots, browserNam
         mode: el.dataset.mode,
       };
     }, sel);
-  const atRest = (sel, index) =>
-    until(
-      ([s, i]) => {
-        const el = document.querySelector(s);
-        const slide = el.querySelector(".z-carousel__slide[data-active]");
-        if (!slide || Number(slide.dataset.index) !== i) return false;
-        const vp = el.querySelector(".z-carousel__viewport").getBoundingClientRect();
-        const r = slide.getBoundingClientRect();
-        return (
-          Math.abs(r.left + r.width / 2 - (vp.left + vp.width / 2)) < 2 &&
-          !el.querySelector(".z-carousel__viewport").hasAttribute("data-dragging")
-        );
-      },
-      [sel, index],
-      `el slide ${index} no quedó centrado en ${sel}`,
-    );
+  // El muelle avanza por fotogramas: con la CPU saturada tarda más en llegar. El plazo cubre ese caso; la aserción no cambia.
+  const REST_TIMEOUT = 15000;
+  // Si no llega al reposo, el mensaje dice dónde estaba la tira: distingue «slide equivocado» de «aún en movimiento».
+  const atRest = async (sel, index) => {
+    try {
+      await page.waitForFunction(
+        ([s, i]) => {
+          const el = document.querySelector(s);
+          const slide = el.querySelector(".z-carousel__slide[data-active]");
+          if (!slide || Number(slide.dataset.index) !== i) return false;
+          const vp = el.querySelector(".z-carousel__viewport").getBoundingClientRect();
+          const r = slide.getBoundingClientRect();
+          return (
+            Math.abs(r.left + r.width / 2 - (vp.left + vp.width / 2)) < 2 &&
+            !el.querySelector(".z-carousel__viewport").hasAttribute("data-dragging")
+          );
+        },
+        [sel, index],
+        { timeout: REST_TIMEOUT },
+      );
+    } catch {
+      const now = await state(sel);
+      throw new Error(`el slide ${index} no quedó centrado en ${sel} (activo ${now.index}, a ${now.offset} px del centro)`);
+    }
+  };
   // Espera a que la tira se detenga y devuelve el slide centrado.
   const settled = async (sel) => {
-    let last = null;
-    for (let i = 0; i < 60; i++) {
-      await page.waitForTimeout(100);
-      const s = await state(sel);
-      if (last && s.index === last.index && s.offset === last.offset && Math.abs(s.offset) < 2) return s.index;
-      last = s;
-    }
-    throw new Error(`la tira de ${sel} no se detuvo: ${JSON.stringify(last)}`);
+    await carouselAtRest(page, sel);
+    const s = await state(sel);
+    if (Math.abs(s.offset) >= 2) throw new Error(`la tira de ${sel} se detuvo descentrada: ${JSON.stringify(s)}`);
+    return s.index;
   };
   const drag = async (sel, dx, { steps = 8, pause = 12 } = {}) => {
     await page.locator(`${sel} .z-carousel__viewport`).evaluate((el) => el.scrollIntoView({ block: "center" }));

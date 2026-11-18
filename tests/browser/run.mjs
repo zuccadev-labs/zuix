@@ -328,7 +328,8 @@ async function main() {
     .log()
     .split("\n")
     .filter((line) => /hmr update|page reload|new dependencies optimized|optimized dependencies changed/i.test(line));
-  if (reloads.length) console.log(`\nAVISO: el servidor de Vite recargó durante la ejecución (${reloads.length}):\n  ${reloads.slice(0, 8).join("\n  ")}`);
+  if (reloads.length)
+    console.log(`\nAVISO: el servidor de Vite recargó durante la ejecución (${reloads.length}):\n  ${reloads.slice(0, 8).join("\n  ")}`);
 
   console.log("");
   let failed = 0;

@@ -32,6 +32,7 @@ const COVERED = [
   "tools/version.mjs",
   "tools/build.mjs",
   "tools/audit.mjs",
+  "tools/check-barrels.mjs",
   "tools/use-client.mjs",
   "zout/src/logic.ts",
   "zicon/src/svg.ts",

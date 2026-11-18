@@ -2,10 +2,14 @@
 // regla de "use client". Se prueban las funciones que exportan; los scripts completos, como procesos.
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { auditSource, localNames, strip } from "../../tools/audit.mjs";
 import { completeSpecifiers } from "../../tools/build.mjs";
+import { checkBarrels, declaredNames, exportedNames, importedNames } from "../../tools/check-barrels.mjs";
 import { checkUseClient, clientReasons, hasUseClient } from "../../tools/use-client.mjs";
 import { closeUnreleased, compareVersions, nextVersion, parseVersion, setPackageVersion, today } from "../../tools/version.mjs";
 
@@ -320,6 +324,109 @@ describe("tools/audit.mjs", () => {
     const report = JSON.parse(run("tools/audit.mjs", "--json", "--strict").stdout);
     assert.equal(report.strict, true);
     assert.equal(typeof report.total.size, "number");
+  });
+});
+
+describe("tools/check-barrels.mjs", () => {
+  /** Paquete de mentira en la carpeta temporal de la suite: { "ruta/relativa": "contenido" }. */
+  const pkg = (files) => {
+    const dir = mkdtempSync(join(tmpdir(), "barrels-"));
+    for (const [path, content] of Object.entries(files)) {
+      mkdirSync(dirname(join(dir, path)), { recursive: true });
+      writeFileSync(join(dir, path), typeof content === "string" ? content : JSON.stringify(content));
+    }
+    return dir;
+  };
+  const GROUP = "src/components/actions";
+  const base = {
+    "src/index.ts": 'export * from "./components/actions";\n',
+    [`${GROUP}/index.ts`]: 'export { Button, type ButtonProps } from "./Button";\n',
+    [`${GROUP}/Button.tsx`]: "export interface ButtonProps {}\nexport function Button() { return null; }\n",
+    [`${GROUP}/Button.manifest.json`]: { name: "Button", import: 'import { Button } from "pkg"' },
+  };
+
+  test("un paquete completo no tiene problemas", () => {
+    assert.deepEqual(checkBarrels(pkg(base)), []);
+  });
+  test("detecta el componente con manifiesto que el barrel de su grupo no reexporta", () => {
+    const dir = pkg({
+      ...base,
+      [`${GROUP}/Link.tsx`]: "export function Link() { return null; }\n",
+      [`${GROUP}/Link.manifest.json`]: { name: "Link", import: 'import { Link } from "pkg"' },
+    });
+    assert.deepEqual(checkBarrels(dir), ['src/components/actions/Link.manifest.json: src/components/actions/index.ts no reexporta "Link"']);
+  });
+  test("detecta la carpeta con barrel que el index raíz no reexporta", () => {
+    const [problem, ...rest] = checkBarrels(
+      pkg({ ...base, "src/index.ts": 'export { cx } from "./cx";\n', "src/cx.ts": "export const cx = 1;\n" }),
+    );
+    assert.match(problem, /Button\.manifest\.json: src\/index\.ts no reexporta la carpeta de src\/components\/actions\/index\.ts/);
+    assert.deepEqual(rest, []);
+  });
+  test("exportar solo el tipo no es exportar el componente; un export comentado tampoco", () => {
+    const typeOnly = pkg({
+      ...base,
+      [`${GROUP}/index.ts`]: 'export { type Button } from "./Button";\nexport type { ButtonProps } from "./Button";\n',
+    });
+    assert.equal(checkBarrels(typeOnly).length, 1);
+    const commented = pkg({ ...base, [`${GROUP}/index.ts`]: '// export { Button } from "./Button";\n/* export * from "./Button"; */\n' });
+    assert.equal(checkBarrels(commented).length, 1);
+  });
+  test("`export *`, alias y un grupo sin barrel propio (exportado desde la raíz)", () => {
+    const star = pkg({ ...base, [`${GROUP}/index.ts`]: 'export * from "./Button";\n' });
+    assert.deepEqual(checkBarrels(star), []);
+    const alias = pkg({
+      ...base,
+      [`${GROUP}/index.ts`]: 'export { Btn as Button } from "./Button";\n',
+      [`${GROUP}/Button.tsx`]: "export const Btn = () => null;\n",
+    });
+    assert.deepEqual(checkBarrels(alias), []);
+    const flat = pkg({
+      "src/index.ts": 'export { Page, Grid } from "./layouts/Page";\n',
+      "src/layouts/Page.tsx": "export function Page() {}\nexport function Grid() {}\nexport function Hidden() {}\n",
+      "src/layouts/Page.manifest.json": { name: "Page" },
+      // Un manifiesto sin archivo propio: el componente vive en Page.tsx.
+      "src/layouts/Grid.manifest.json": { name: "Grid" },
+      "src/layouts/Hidden.manifest.json": { name: "Hidden" },
+    });
+    assert.deepEqual(checkBarrels(flat), ['src/layouts/Hidden.manifest.json: src/index.ts no reexporta "Hidden"']);
+  });
+  test("`exports` sustituye a `name`, y la línea `import` documentada también debe poder importarse", () => {
+    assert.deepEqual(
+      declaredNames({ name: "Toast", exports: ["ToastProvider", "useToast"], import: 'import { ToastProvider, useToast } from "pkg"' }),
+      ["ToastProvider", "useToast"],
+    );
+    assert.deepEqual(declaredNames({ name: "Tree", import: 'import { Tree, type TreeNode, helper as h } from "pkg"' }), ["Tree", "helper"]);
+    assert.deepEqual(importedNames(undefined), []);
+    const dir = pkg({
+      ...base,
+      [`${GROUP}/Button.manifest.json`]: { name: "Button", exports: ["Button", "ButtonGroup"], import: 'import { Button } from "pkg"' },
+    });
+    assert.deepEqual(checkBarrels(dir), [
+      'src/components/actions/Button.manifest.json: src/components/actions/index.ts no reexporta "ButtonGroup"',
+    ]);
+  });
+  test("exportedNames no se pierde en un ciclo entre barrels ni con un módulo inexistente", () => {
+    const dir = pkg({
+      "src/index.ts": 'export * from "./a";\nexport * from "./nada";\nexport * as ns from "./b";\n',
+      "src/a.ts": 'export * from "./b";\nexport const A = 1;\n',
+      "src/b.ts": 'export * from "./a";\nexport const B = 2;\n',
+    });
+    assert.deepEqual([...exportedNames(join(dir, "src/index.ts"))].sort(), ["A", "B", "ns"]);
+  });
+  test("un manifiesto ilegible o sin nombre es un problema, no una excepción; sin src/index.ts también", () => {
+    const dir = pkg({ ...base, [`${GROUP}/Roto.manifest.json`]: "{ no es json", [`${GROUP}/Vacio.manifest.json`]: {} });
+    const problems = checkBarrels(dir);
+    assert.equal(problems.length, 2);
+    assert.match(problems[0], /Roto\.manifest\.json: JSON no válido/);
+    assert.match(problems[1], /Vacio\.manifest\.json: el manifiesto no declara ningún nombre/);
+    assert.match(checkBarrels(pkg({ "src/x.ts": "" }))[0], /src\/index\.ts: no existe el punto de entrada/);
+  });
+  test("el script: zui y zout están completos; un paquete inexistente falla con código 2", () => {
+    const r = run("tools/check-barrels.mjs");
+    assert.equal(r.status, 0, r.stdout + r.stderr);
+    assert.match(r.stdout, /✓ barrels: \d+ componentes con manifiesto exportados \(zui, zout\)/);
+    assert.equal(run("tools/check-barrels.mjs", "no-existe").status, 2);
   });
 });
 

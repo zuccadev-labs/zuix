@@ -1,5 +1,5 @@
 "use client";
-import { useId, useRef, type KeyboardEvent, type MouseEvent, type ReactElement } from "react";
+import { useId, type KeyboardEvent, type ReactElement } from "react";
 import { MenuSurface } from "../../primitives/menu";
 import { slot } from "../../primitives/slot";
 import { useDisclosure, type MenuEntry } from "./internal";
@@ -42,18 +42,11 @@ export function Menu({
     popup: "menu",
     id,
   });
-  // Cómo se abrió: con el teclado (Intro, Espacio o flechas) el foco va a la primera entrada.
-  const byKeyboard = useRef(false);
   const withKeys = slot(trigger!, {
     id: (triggerProp.props as { id?: string }).id ?? triggerId,
-    // Antes que el clic del disparador (captura): un clic sin puntero (detail 0) viene del teclado.
-    onClickCapture: (event: MouseEvent) => {
-      byKeyboard.current = event.detail === 0;
-    },
     onKeyDown: (event: KeyboardEvent) => {
       if (open || (event.key !== "ArrowDown" && event.key !== "ArrowUp")) return;
       event.preventDefault();
-      byKeyboard.current = true;
       setOpen(true);
     },
   });
@@ -68,7 +61,6 @@ export function Menu({
         size={size}
         anchor={triggerRef}
         anchorIsTrigger
-        focusFirst={byKeyboard.current}
         placement={align === "center" ? side : `${side}-${align}`}
         label={label}
         labelledBy={(triggerProp.props as { id?: string }).id ?? triggerId}

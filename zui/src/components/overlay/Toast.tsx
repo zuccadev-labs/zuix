@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { followModalHost, modalHost, moveToHost, settleShown } from "../../core/modal-host";
 import { focusQuiet } from "../../core/focus";
 import { afterExit } from "../../core/presence";
 import { swipeDirection, swipeToDismiss } from "../../core/swipe";
@@ -47,8 +48,13 @@ interface ToastItem extends ToastOptions {
 const ToastContext = createContext<ToastApi | null>(null);
 let counter = 0;
 
-/** Diálogo modal abierto más reciente: fuera de él la región de avisos quedaría inerte. */
-const toastHost = (): HTMLElement => [...document.querySelectorAll<HTMLElement>("dialog:modal")].pop() ?? document.body;
+/** Contenedor de la región de avisos: no ocupa sitio en el diálogo o la página que lo aloja. */
+function createToastRoot(): HTMLElement {
+  const root = document.createElement("div");
+  root.dataset.zToastRoot = "";
+  root.style.display = "contents";
+  return root;
+}
 
 interface ToastViewProps {
   item: ToastItem;
@@ -165,6 +171,9 @@ export function ToastProvider({
   regionLabel = "Notifications (F8)",
 }: ToastProviderProps) {
   const [items, setItems] = useState<ToastItem[]>([]);
+  // Contenedor propio de la región, fuera del árbol que pinta React: es lo que se muda entre `<body>` y el diálogo
+  // modal vigente. Mover el contenedor (y no cambiar el destino del portal) conserva los avisos montados, con su
+  // temporizador y su foco.
   const [host, setHost] = useState<HTMLElement | null>(null);
   const viewport = useRef<HTMLDivElement | null>(null);
   // Elemento que tenía el foco antes de entrar en la región con F8.
@@ -181,7 +190,7 @@ export function ToastProvider({
       toast: (options) => {
         counter += 1;
         const id = `z-toast-${counter}`;
-        setHost(toastHost());
+        setHost((current) => current ?? createToastRoot());
         setItems((list) => [...list, { ...options, id, open: true }].slice(-limit));
         return id;
       },
@@ -191,18 +200,35 @@ export function ToastProvider({
     [dismiss, limit],
   );
 
-  // Capa superior: con cada aviso nuevo la región se vuelve a mostrar para quedar por encima de un diálogo abierto.
+  // Capa superior: con cada aviso nuevo, y cada vez que se abre o se cierra un diálogo modal, la región se muda al
+  // diálogo de arriba (fuera de él sería inerte) y se vuelve a mostrar para quedar por encima de todo.
   const last = items[items.length - 1]?.id;
+  const active = items.length > 0;
+  // Avisos que ya hicieron su entrada: al mudar o volver a mostrar la región no la repiten.
+  const shown = useRef(new WeakSet<Element>());
   useIsoLayoutEffect(() => {
-    const el = viewport.current;
-    if (!el || !last) return;
-    try {
-      if (el.matches(":popover-open")) el.hidePopover();
-      el.showPopover();
-    } catch {
-      // Navegador sin Popover API: la región queda con su posición fija y su z-index.
-    }
-  }, [last, host]);
+    if (!host || !active) return;
+    const raise = (to: HTMLElement) => {
+      moveToHost(host, to);
+      const el = viewport.current;
+      if (!el) return;
+      try {
+        if (el.matches(":popover-open")) el.hidePopover();
+        el.showPopover();
+      } catch {
+        // Navegador sin Popover API: la región queda con su posición fija y su z-index.
+      }
+      settleShown(el, '.z-toast[data-state="open"]', shown.current);
+    };
+    raise(modalHost());
+    return followModalHost(raise);
+  }, [last, host, active]);
+  // Sin avisos (o al desmontar el proveedor) el contenedor no se queda en el documento.
+  useEffect(() => {
+    if (!host || active) return;
+    host.remove();
+  }, [host, active]);
+  useEffect(() => () => host?.remove(), [host]);
 
   // F8 lleva el foco al aviso más reciente.
   const count = items.length;

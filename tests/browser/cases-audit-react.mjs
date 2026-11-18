@@ -946,7 +946,7 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
           for (const trigger of document.querySelectorAll('[aria-haspopup="dialog"]:not(.z-select__control)')) {
             trigger.click();
             await new Promise((done) => setTimeout(done, 60));
-            for (const panel of document.querySelectorAll(".z-popover[role=dialog]:popover-open"))
+            for (const panel of document.querySelectorAll(".z-popover[role=dialog]:popover-open, dialog.z-popover[open]"))
               out.push(panel.getAttribute("aria-label") || panel.getAttribute("aria-labelledby") || "");
             trigger.click();
             await new Promise((done) => setTimeout(done, 60));
@@ -954,6 +954,130 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
           return out;
         });
         assert(names.length > 0 && names.every(Boolean), `Popover sin nombre accesible: ${JSON.stringify(names)}`);
+      },
+    },
+    {
+      name: "Auditoría · Popover modal: <dialog> con inercia real, foco retenido, cierre con Escape y pulsación fuera",
+      async run({ open }) {
+        const page = await audit(open);
+        const panel = "dialog.z-popover";
+        const look = (selector) =>
+          page.locator(selector).evaluate((el) => {
+            const s = getComputedStyle(el);
+            return [s.paddingTop, s.borderTopWidth, s.borderTopStyle, s.borderTopColor, s.backgroundColor, s.color, s.borderRadius].join(
+              " | ",
+            );
+          });
+        // Aspecto de referencia: el popover no modal.
+        await page.click(t("a-compose-popover"));
+        await visible(page, ".z-popover[role=dialog]:popover-open");
+        await settled(page);
+        const plain = await look(".z-popover[role=dialog]:popover-open");
+        await press(page, "Escape");
+        await gone(page, ".z-popover");
+
+        await page.click(t("a-mpop-open"));
+        await visible(page, `${panel}:modal`);
+        await settled(page);
+        assert((await look(panel)) === plain, `el popover modal no se ve como el no modal: ${await look(panel)} ≠ ${plain}`);
+        await expectAttr(page, panel, "aria-label", "Rename project");
+        await expectAttr(page, t("a-mpop-open"), "aria-expanded", "true");
+        // Anclado a su disparador, no centrado como un <dialog> del navegador; y sin velo que oscurezca la página.
+        const geometry = await page.evaluate(
+          ([p, tr]) => {
+            const a = document.querySelector(p).getBoundingClientRect();
+            const b = document.querySelector(tr).getBoundingClientRect();
+            return {
+              gap: a.top - b.bottom,
+              left: a.left - b.left,
+              veil: getComputedStyle(document.querySelector(p), "::backdrop").backgroundColor,
+            };
+          },
+          [panel, t("a-mpop-open")],
+        );
+        assert(
+          Math.abs(geometry.gap - 4) < 1.5 && Math.abs(geometry.left) < 1.5,
+          `no está anclado al disparador: ${JSON.stringify(geometry)}`,
+        );
+        assert(/rgba\(0, 0, 0, 0\)|transparent/.test(geometry.veil), `el velo no es transparente: ${geometry.veil}`);
+        // El foco entra en el panel y Tab da la vuelta dentro.
+        await focusOn(page, t("a-mpop-save"), "al abrir, el foco va al primer control del panel");
+        for (let i = 0; i < 5; i++) {
+          await press(page, "Tab");
+          assert(
+            await page.evaluate((p) => document.querySelector(p).contains(document.activeElement), panel),
+            `Tab sacó el foco del panel (pulsación ${i + 1})`,
+          );
+        }
+        // Inercia real: lo de fuera no se puede enfocar ni pulsar. La pulsación fuera solo cierra el panel.
+        assert(
+          await page.evaluate((s) => {
+            const el = document.querySelector(s);
+            el.focus();
+            return document.activeElement !== el;
+          }, t("a-mpop-outside")),
+          "un control de fuera del popover modal admite el foco: no es inerte",
+        );
+        const { x, y } = await page.locator(t("a-mpop-outside")).evaluate((el) => {
+          const r = el.getBoundingClientRect();
+          return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        });
+        await page.mouse.click(x, y);
+        await gone(page, panel, "la pulsación fuera cierra el popover modal");
+        await out(page, "a-mpop-count", 0, "la pulsación fuera no activó el botón que había debajo");
+        await focusOn(page, t("a-mpop-open"), "al cerrar, el foco vuelve al disparador");
+        // Cerrado, la página vuelve a responder.
+        await page.click(t("a-mpop-outside"));
+        await out(page, "a-mpop-count", 1, "con el popover cerrado el botón de fuera responde");
+        // Escape cierra y devuelve el foco.
+        await page.click(t("a-mpop-open"));
+        await visible(page, `${panel}:modal`);
+        await press(page, "Escape");
+        await gone(page, panel, "Escape cierra el popover modal");
+        await focusOn(page, t("a-mpop-open"), "tras Escape el foco vuelve al disparador");
+        await expectAttr(page, t("a-mpop-open"), "aria-expanded", "false");
+      },
+    },
+    {
+      name: "Auditoría · Toast y capa modal: un aviso emitido antes de abrir un Modal sigue activo dentro y vuelve a la página al cerrarlo",
+      async run({ open }) {
+        const page = await audit(open);
+        await page.click(t("a-toast-add"));
+        await page.click(t("a-toast-add"));
+        await expectCount(page, ".z-toast", 2);
+        await settled(page);
+        const inside = () =>
+          page.evaluate(() => [...document.querySelectorAll(".z-toast")].map((el) => !!el.closest("dialog:modal")).join());
+        // Lo que queda fuera de un diálogo modal es inerte: la región de avisos se muda a él.
+        await page.click(t("a-ms-open"));
+        await visible(page, "dialog.z-modal:modal");
+        await settled(page);
+        await poll(async () => (await inside()) === "true,true", "la región de avisos pasa al diálogo modal abierto");
+        await expectCount(page, ".z-toast", 2, "los avisos no se pierden ni se duplican al mudarse");
+        assert(
+          await page.locator(".z-toast-viewport").evaluate((el) => el.matches(":popover-open")),
+          "la región sigue en la capa superior",
+        );
+        // Sigue activo: se puede enfocar y su botón de cierre responde.
+        await page.locator('.z-toast:has-text("Notice 1") .z-toast__close').click({ timeout: 5000 });
+        await expectCount(page, ".z-toast", 1, "el aviso emitido antes de abrir el Modal se puede cerrar");
+        await press(page, "F8");
+        await poll(
+          () => page.evaluate(() => document.activeElement?.classList.contains("z-toast")),
+          "F8 lleva el foco al aviso con el Modal abierto",
+        );
+        // Al cerrar el Modal el aviso que queda vuelve a la página, sin reiniciarse, y sigue activo.
+        await page.locator(t("a-ms-input")).focus();
+        await press(page, "Escape", "Escape");
+        await gone(page, ".z-modal");
+        await poll(async () => (await inside()) === "false", "al cerrar el Modal la región vuelve a la página");
+        await expectText(page, ".z-toast .z-toast__title", "Notice 2");
+        assert(
+          await page.locator(".z-toast-viewport").evaluate((el) => el.matches(":popover-open")),
+          "la región sigue visible tras cerrar el Modal",
+        );
+        await page.locator(".z-toast .z-toast__close").click({ timeout: 5000 });
+        await expectCount(page, ".z-toast", 0, "el aviso sigue respondiendo en la página");
       },
     },
     {

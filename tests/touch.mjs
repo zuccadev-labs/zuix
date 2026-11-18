@@ -6,6 +6,11 @@
 //     captura implícita de un dedo). Ejercitan los manejadores, no la decisión del navegador sobre `touch-action`
 //     ni el desplazamiento nativo: eso queda como no verificable en esos motores.
 // El contexto debe crearse con `hasTouch: true` (ver touchContext).
+//
+// El gesto lleva su propio reloj. Cada evento se envía con la marca de tiempo que le corresponde en el gesto descrito
+// (`stepMs` entre pasos, `hold` antes de soltar), no con la hora a la que el proceso de pruebas consiguió enviarlo:
+// un dedo no va más despacio porque la CPU esté ocupada. Sin esto, con la máquina cargada un lanzamiento de 50 ms
+// llega repartido en cientos de milisegundos y el componente, con razón, no lo trata como un lanzamiento.
 
 /** Opciones de contexto para un teléfono. Firefox no admite `isMobile`. */
 export const touchContext = (browserName, viewport = { width: 390, height: 844 }) => ({
@@ -16,14 +21,29 @@ export const touchContext = (browserName, viewport = { width: 390, height: 844 }
 });
 
 export async function touchDriver(page, browserName) {
-  const wait = (ms) => page.waitForTimeout(ms);
+  // Reloj del gesto (ms). `wait` deja pasar el tiempo real (la página pinta) y adelanta el reloj lo que dice el gesto.
+  let clock = 0;
+  const wait = async (ms) => {
+    clock += ms;
+    await page.waitForTimeout(ms);
+  };
   let down, move, up;
   const real = browserName === "chromium";
   if (real) {
     const cdp = await page.context().newCDPSession(page);
+    // Origen del reloj en segundos desde la época, que es lo que espera `timestamp`. Se fija al bajar el dedo.
+    let origin = 0;
     const send = (type, points) =>
-      cdp.send("Input.dispatchTouchEvent", { type, touchPoints: points.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y), id: 1 })) });
-    down = (p) => send("touchStart", [p]);
+      cdp.send("Input.dispatchTouchEvent", {
+        type,
+        timestamp: origin + clock / 1000,
+        touchPoints: points.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y), id: 1 })),
+      });
+    down = (p) => {
+      origin = Date.now() / 1000;
+      clock = 0;
+      return send("touchStart", [p]);
+    };
     move = (p) => send("touchMove", [p]);
     up = () => send("touchEnd", []);
   } else {
@@ -50,40 +70,45 @@ export async function touchDriver(page, browserName) {
     })();
     const fire = (type, p) =>
       page.evaluate(
-        ([type, x, y, id]) => {
+        ([type, x, y, id, elapsed]) => {
           window.__zTouch ??= {};
           const state = window.__zTouch;
-          if (type === "pointerdown") state.target = document.elementFromPoint(x, y);
+          if (type === "pointerdown") {
+            state.target = document.elementFromPoint(x, y);
+            state.origin = performance.now();
+          }
           const target = state.target?.isConnected ? state.target : document.elementFromPoint(x, y);
           if (!target) return;
           const pressed = type !== "pointerup" && type !== "pointercancel";
-          target.dispatchEvent(
-            new PointerEvent(type, {
-              bubbles: true,
-              cancelable: true,
-              composed: true,
-              view: window,
-              pointerId: id,
-              pointerType: "touch",
-              isPrimary: true,
-              clientX: x,
-              clientY: y,
-              screenX: x,
-              screenY: y,
-              button: type === "pointermove" ? -1 : 0,
-              buttons: pressed ? 1 : 0,
-              width: 24,
-              height: 24,
-              pressure: pressed ? 0.5 : 0,
-            }),
-          );
+          const event = new PointerEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+            view: window,
+            pointerId: id,
+            pointerType: "touch",
+            isPrimary: true,
+            clientX: x,
+            clientY: y,
+            screenX: x,
+            screenY: y,
+            button: type === "pointermove" ? -1 : 0,
+            buttons: pressed ? 1 : 0,
+            width: 24,
+            height: 24,
+            pressure: pressed ? 0.5 : 0,
+          });
+          // `timeStamp` es de solo lectura y vale el instante de creación: se sustituye por el del reloj del gesto.
+          Object.defineProperty(event, "timeStamp", { value: (state.origin ?? performance.now()) + elapsed });
+          target.dispatchEvent(event);
           if (!pressed) state.target = null;
         },
-        [type, p.x, p.y, mouseId],
+        [type, p.x, p.y, mouseId, clock],
       );
     let last = { x: 0, y: 0 };
     down = (p) => {
       last = p;
+      clock = 0;
       return fire("pointerdown", p);
     };
     move = (p) => {

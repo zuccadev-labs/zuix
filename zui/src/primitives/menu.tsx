@@ -43,8 +43,6 @@ interface Tree {
   timer: RefObject<ReturnType<typeof setTimeout> | undefined>;
   size: "md" | "lg";
   open: boolean;
-  /** Abierto con el teclado: la primera entrada recibe el foco. Con el puntero lo recibe el menú, sin resaltar nada. */
-  focusFirst: boolean;
   close: (refocus: boolean) => void;
   anchor: RefObject<Element | null>;
 }
@@ -88,10 +86,15 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
     const menu = node.current;
     if (!menu) return;
     tree.menus.current.add(menu);
-    // Abierto con el teclado, el foco va a la primera entrada (APG); con el puntero, al propio menú: nada queda
-    // resaltado hasta que el puntero o una flecha elijan entrada. Un submenú sigue la misma regla.
-    if (depth === 0 ? tree.focusFirst : tree.focusSub.current) highlight(menu, itemsOf(menu)[0]);
-    else if (depth === 0) focusQuiet(menu);
+    // Al abrir, el foco va a la primera entrada (patrón APG «menu button»), se abra con el teclado o con el puntero:
+    // igual que el modo sin framework (`openPopover` en dom/index.ts). Un submenú solo recibe el foco si se abrió con
+    // el teclado; abierto al pasar el puntero, el foco sigue en la entrada padre.
+    if (depth === 0 || tree.focusSub.current) {
+      const first = itemsOf(menu)[0];
+      if (first) highlight(menu, first);
+      // Sin entradas habilitadas, el foco va al propio menú: Escape y las flechas siguen llegando.
+      else if (depth === 0) focusQuiet(menu);
+    }
     tree.focusSub.current = false;
     return () => {
       tree.menus.current.delete(menu);
@@ -282,8 +285,6 @@ export interface MenuSurfaceProps {
   anchor: RefObject<HTMLElement | null>;
   /** Punto de la ventana al que se ancla (ContextMenu). Sin él, se ancla a `anchor`. */
   point?: { x: number; y: number } | null;
-  /** Abierto con el teclado: el foco va a la primera entrada. */
-  focusFirst?: boolean;
   /** Pulsar el ancla no cuenta como pulsación fuera (el disparador alterna el menú con su propio clic). */
   anchorIsTrigger?: boolean;
   placement: Placement;
@@ -302,7 +303,6 @@ export function MenuSurface({
   anchor,
   point,
   anchorIsTrigger,
-  focusFirst = false,
   placement,
   gap = 4,
   label,
@@ -354,7 +354,7 @@ export function MenuSurface({
   });
 
   if (!present) return null;
-  const tree: Tree = { path: open ? path : [], setPath, focusSub, menus, aim, search, timer, size, open, focusFirst, close, anchor };
+  const tree: Tree = { path: open ? path : [], setPath, focusSub, menus, aim, search, timer, size, open, close, anchor };
   return (
     <Portal anchor={anchor}>
       <RootLevel

@@ -162,6 +162,41 @@ function ModalSearch() {
   );
 }
 
+/** Popover modal: lo de fuera queda inerte. El botón de al lado cuenta sus clics para comprobarlo. */
+function ModalPopover() {
+  const [outside, setOutside] = useState(0);
+  return (
+    <Cell title="Modal popover" id="a-mpop-cell">
+      <div className="audit__row">
+        <Popover
+          modal
+          trigger={
+            <Button size="sm" data-testid="a-mpop-open">
+              Rename (modal popover)
+            </Button>
+          }
+          label="Rename project"
+          width={260}
+          align="start"
+        >
+          <div className="audit__row">
+            <Button size="sm" data-testid="a-mpop-save">
+              Save
+            </Button>
+            <Button size="sm" variant="ghost" data-testid="a-mpop-cancel">
+              Cancel
+            </Button>
+          </div>
+        </Popover>
+        <Button size="sm" data-testid="a-mpop-outside" onClick={() => setOutside((n) => n + 1)}>
+          Outside
+        </Button>
+      </div>
+      <Out id="a-mpop-count">{outside}</Out>
+    </Cell>
+  );
+}
+
 const CORNERS = ["tl", "tr", "bl", "br"] as const;
 const EDGES = [
   { at: "top", side: "top" },
@@ -284,6 +319,7 @@ function OverlaySection() {
       </Cell>
       <Toasts />
       <ModalSearch />
+      <ModalPopover />
       <Cell title="Viewport edges" id="a-edges-cell">
         <Button data-testid="a-edges" onClick={() => setEdges((value) => !value)}>
           Toggle edge triggers

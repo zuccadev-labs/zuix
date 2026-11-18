@@ -1,5 +1,5 @@
 # Finales de línea: el repositorio guarda LF y la copia de trabajo también, en cualquier sistema.
-# Las herramientas generan con LF y CI comprueba con `git diff --exit-code` que lo generado está al día;
+# Las herramientas generan con LF y CI comprueba con `git status --porcelain` que lo generado está al día;
 # con CRLF en Windows esa comprobación fallaría sin que nada hubiera cambiado.
 * text=auto eol=lf
 

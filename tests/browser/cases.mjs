@@ -3,6 +3,7 @@
 
 import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
+import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
 
@@ -527,9 +528,11 @@ export const cases = [
       await gone(page, ".z-menu[role=menu]");
       await focusOn(page, t("open-menu"));
 
-      // Con puntero.
+      // Con puntero: el foco va igualmente a la primera entrada (APG), y solo ella queda resaltada.
       await page.click(t("open-menu"));
       await visible(page, ".z-menu[role=menu]");
+      await menuFocus(page, "Rename", "al abrir con el puntero el foco va a la primera entrada");
+      await expectCount(page, ".z-menu[role=menu] [data-highlighted]", 1, "una sola entrada resaltada al abrir con el puntero");
       await page.click(".z-menu__item:has-text('Delete')");
       await expectText(page, t("last-action"), "menu:delete");
       await gone(page, ".z-menu[role=menu]");
@@ -549,8 +552,10 @@ export const cases = [
       assert(atPointer, `el menú contextual no aparece en el puntero: ${JSON.stringify(box)} vs ${x},${y}`);
       await expectInViewport(page, ".z-menu[role=menu]");
       await shot(page, "overlay-context-menu");
-      await page.keyboard.press("ArrowDown");
-      await menuFocus(page, "Rename");
+      // Al abrir, el foco va a la primera entrada (patrón APG «menu button»), también con el puntero: mismo
+      // comportamiento que el modo sin framework. Antes el binding de React dejaba el foco en el menú y hacía falta
+      // una flecha para llegar a «Rename».
+      await menuFocus(page, "Rename", "al abrir con el puntero el foco va a la primera entrada");
       await page.keyboard.press("ArrowDown");
       await menuFocus(page, "Duplicate");
       await page.keyboard.press("Enter");
@@ -2525,20 +2530,7 @@ export const cases = [
           },
           [root, index],
         );
-      const rest = () => {
-        let last;
-        return poll(
-          async () => {
-            const now = (await state()).x;
-            const still = now === last;
-            last = now;
-            if (!still) await sleep(120);
-            return still;
-          },
-          "la tira llega al reposo",
-          15000,
-        );
-      };
+      const rest = () => carouselAtRest(page, root);
       await page.locator(viewport).evaluate((el) => el.scrollIntoView({ block: "center" }));
       await rest();
       const box = await page.locator(viewport).boundingBox();

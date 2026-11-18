@@ -28,6 +28,7 @@ import { trapTab } from "../core/focus";
 import { escapeTop } from "../core/layers";
 import { lockScroll } from "../core/scroll-lock";
 import { createLongPress } from "../core/long-press";
+import { followModalHost, modalHost, moveToHost, settleShown } from "../core/modal-host";
 import { createMenuAim } from "../core/menu-aim";
 import { isRtl } from "../core/dir";
 import { place, submenuAnchor, topInset, type Placement } from "../core/place";
@@ -383,6 +384,21 @@ export interface ToastOptions {
   regionLabel?: string;
 }
 
+// Avisos que ya hicieron su entrada: al mudar o volver a mostrar la región no la repiten.
+const toastShown = new WeakSet<Element>();
+let unfollowToasts: (() => void) | undefined;
+
+/**
+ * Lleva la región de avisos al diálogo modal de arriba (fuera de él sería inerte) o a `<body>`, y la vuelve a mostrar
+ * para que quede por encima de todo en la capa superior.
+ */
+function raiseToasts(host: HTMLElement, to: HTMLElement = modalHost()): void {
+  moveToHost(host, to);
+  if (host.matches(":popover-open")) host.hidePopover();
+  host.showPopover();
+  settleShown(host, '.z-toast[data-state="open"]', toastShown);
+}
+
 function viewport(position: string, label: string): HTMLElement {
   let host = document.querySelector<HTMLElement>(".z-toast-viewport");
   if (!host) {
@@ -392,13 +408,15 @@ function viewport(position: string, label: string): HTMLElement {
     // Región con nombre (landmark); cada aviso lleva role status o alert.
     host.setAttribute("role", "region");
     host.tabIndex = -1;
-    document.body.append(host);
   }
   host.setAttribute("aria-label", label);
   host.dataset.position = position;
-  // Capa superior: los avisos quedan por encima de un <dialog> abierto.
-  if (host.matches(":popover-open")) host.hidePopover();
-  host.showPopover();
+  raiseToasts(host);
+  // Mientras haya avisos, la región sigue al diálogo modal que se abra o se cierre.
+  const region = host;
+  unfollowToasts ??= followModalHost((to) => {
+    if (region.isConnected || region.children.length) raiseToasts(region, to);
+  });
   return host;
 }
 
@@ -448,7 +466,11 @@ export function toast({
     const hadFocus = item.contains(document.activeElement);
     afterExit(item, () => {
       item.remove();
-      if (!host.children.length && host.matches(":popover-open")) host.hidePopover();
+      if (!host.children.length) {
+        if (host.matches(":popover-open")) host.hidePopover();
+        unfollowToasts?.();
+        unfollowToasts = undefined;
+      }
       if (hadFocus) (toastReturn?.isConnected ? toastReturn : null)?.focus({ preventScroll: true });
     });
   };
@@ -483,6 +505,7 @@ export function toast({
     onDismiss: dismiss,
   });
   host.append(item);
+  toastShown.add(item);
   timer.start();
   return dismiss;
 }
@@ -1133,4 +1156,6 @@ export function destroy(): void {
   clearTimeout(subTimer);
   aim.clear();
   hideTooltip();
+  unfollowToasts?.();
+  unfollowToasts = undefined;
 }

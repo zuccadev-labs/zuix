@@ -23,10 +23,8 @@ export function ContextMenu({ children, items, label, size = "md", disabled, onO
   const zone = useRef<HTMLElement | null>(null);
   const [open, setOpen] = useControllable<boolean>(undefined, false, onOpenChange);
   const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
-  const [byKeyboard, setByKeyboard] = useState(false);
-  const show = useLatest((at: { x: number; y: number }, keyboard = false) => {
+  const show = useLatest((at: { x: number; y: number }) => {
     setPoint(at);
-    setByKeyboard(keyboard);
     setOpen(true);
   });
   // iOS no emite `contextmenu`, y un Chromium de escritorio con pantalla táctil tampoco.
@@ -59,10 +57,7 @@ export function ContextMenu({ children, items, label, size = "md", disabled, onO
           // Tecla de menú o Mayús+F10: sin puntero, el menú sale en el centro de la zona.
           const box = event.currentTarget.getBoundingClientRect();
           const keyboard = event.clientX === 0 && event.clientY === 0;
-          show.current(
-            keyboard ? { x: box.left + box.width / 2, y: box.top + box.height / 2 } : { x: event.clientX, y: event.clientY },
-            keyboard,
-          );
+          show.current(keyboard ? { x: box.left + box.width / 2, y: box.top + box.height / 2 } : { x: event.clientX, y: event.clientY });
         },
         onPointerDown: (event: PointerEvent) => press.down(event.nativeEvent),
         onPointerMove: (event: PointerEvent) => press.move(event.nativeEvent),
@@ -80,7 +75,6 @@ export function ContextMenu({ children, items, label, size = "md", disabled, onO
         size={size}
         anchor={zone}
         point={point}
-        focusFirst={byKeyboard}
         placement="bottom-start"
         gap={0}
         label={label}

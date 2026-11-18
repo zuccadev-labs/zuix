@@ -3,6 +3,7 @@
 // puntero sintéticos de tipo "touch" (ver tests/touch.mjs). Lo que un motor no puede emular se anota o queda
 // como no verificable. No sustituye a un dedo en un dispositivo real.
 import { join } from "node:path";
+import { carouselAtRest } from "../../rest.mjs";
 import { touchContext, touchDriver } from "../../touch.mjs";
 
 export default async function ({ page, test, ok, shots, browserName, note, Unverifiable }) {
@@ -215,16 +216,7 @@ export default async function ({ page, test, ok, shots, browserName, note, Unver
             dragging: c.querySelector(".z-carousel__viewport").hasAttribute("data-dragging"),
           };
         });
-      const rest = async () => {
-        let last;
-        for (let i = 0; i < 40; i++) {
-          const now = (await state()).x;
-          if (now === last) return;
-          last = now;
-          await settle(120);
-        }
-        throw new Error("la tira no llega al reposo");
-      };
+      const rest = () => carouselAtRest(tp, "#projects");
       await rest();
       const start = await state();
       // Arrastre lento de 180 px con parada antes de soltar: sin inercia, la tira se ajusta al slide más cercano.

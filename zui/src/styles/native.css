@@ -54,6 +54,16 @@
   .z-popover[popover] {
     max-height: calc(100dvh - var(--z-space-4));
   }
+  /* Popover modal: un <dialog> abierto con showModal() que conserva el aspecto y la colocación de un popover. Anclado a
+     su disparador (sin el centrado del navegador) y sin velo: la página queda inerte, no oscurecida. */
+  dialog.z-popover {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+  }
+  dialog.z-popover::backdrop {
+    background: transparent;
+  }
   /* Listbox de Select y Combobox como [popover]: sin el relleno del navegador y oculto mientras no está abierto. */
   .z-listbox[popover] {
     position: fixed;
