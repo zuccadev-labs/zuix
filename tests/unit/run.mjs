@@ -87,6 +87,13 @@ const args = [
 const temp = join(root, ".tmp/unit");
 rmSync(temp, { recursive: true, force: true });
 mkdirSync(temp, { recursive: true });
+// tokens/dist no se versiona y varias pruebas lo leen (la generación de tokens, tools/audit.mjs): la suite lo
+// genera antes de empezar, igual que `pnpm tokens`, y así pasa en un checkout recién clonado sin pasos previos.
+const tokens = spawnSync(process.execPath, ["tokens/src/build.mjs"], { cwd: root, encoding: "utf8" });
+if (tokens.status !== 0) {
+  console.error(`✗ no se pudo generar tokens/dist antes de las pruebas:\n${tokens.error?.message ?? (tokens.stderr || tokens.stdout)}`);
+  process.exit(1);
+}
 const result = spawnSync(process.execPath, args, {
   cwd: root,
   stdio: "inherit",
