@@ -179,10 +179,10 @@ Code of conduct: [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md).
 
 ## Status
 
-`0.1.0` is the version on npm, under the `@zuccadev-labs` organization
-([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). The next one is `0.2.0`, and
-it carries breaking changes: it drops the third-party UI library the React binding was built on, moves dialogs to the native
-`<dialog>` and raises the minimum Node version. While the version is `0.x`, a `MINOR` bump may break
+The suite is on npm under the `@zuccadev-labs` organization
+([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). `0.2.0` breaks with `0.1.0`:
+it drops the third-party UI library the React binding was built on, moves dialogs to the native `<dialog>`
+and raises the minimum Node version. While the version is `0.x`, a `MINOR` bump may break
 ([Versioning](./docs/package/01-versionado.md)). Releases are published automatically when a version bump
 reaches `main` ([Publishing](./docs/package/02-publicacion.md)).
 

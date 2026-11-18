@@ -180,10 +180,11 @@ contribuir: [`CONTRIBUTING.md`](./CONTRIBUTING.md). Para reportar una vulnerabil
 
 ## Estado
 
-La versión que está en npm es la `0.1.0`, bajo la organización `@zuccadev-labs`
-([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). La siguiente es la `0.2.0` y
-trae cambios incompatibles: retira la biblioteca de UI de terceros sobre la que estaba hecho el binding de React, pasa los diálogos al `<dialog>` nativo y
-sube la versión mínima de Node. Mientras la versión sea `0.x`, una subida de `MENOR` puede romper
+La suite está en npm bajo la organización `@zuccadev-labs`
+([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). La `0.2.0` rompe con la
+`0.1.0`: retira la biblioteca de UI de terceros sobre la que estaba hecho el binding de React, pasa los
+diálogos al `<dialog>` nativo y sube la versión mínima de Node. Mientras la versión sea `0.x`, una subida de
+`MENOR` puede romper
 ([Versionado](./docs/package/01-versionado.md)). Las versiones se publican solas cuando una subida de versión
 llega a `main` ([Publicación](./docs/package/02-publicacion.md)).
 

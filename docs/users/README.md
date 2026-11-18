@@ -4,8 +4,7 @@ zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación c
 marca replica el sistema cambiando un archivo. El estándar es HTML, CSS y tokens: sirve con cualquier
 framework o sin ninguno, y trae un binding de React.
 
-La versión publicada en npm es la `0.1.0`. Esta documentación describe el código de la rama principal, que
-será la `0.2.0`; lo que cambia entre una y otra está en
+Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que cambia entre una y otra en
 [Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
 
 ## Documentos

@@ -23,11 +23,17 @@ Hay tres motivos detrás de casi todo:
 | Navegadores | Sin línea declarada | Chrome y Edge 116, Firefox 125, Safari 17, Safari de iOS 18.3 ([Compatibilidad](./10-compatibilidad.md)) |
 | Dependencias que instala `zui` | `zuix-tokens` y `radix-ui` | Solo `zuix-tokens` |
 
-Los cinco paquetes se actualizan juntos:
+Los cinco paquetes se actualizan juntos. En `0.x` el rango `^0.1.0` no llega a la `0.2.0`, así que una
+actualización normal (`pnpm up`, `npm update`) deja la aplicación donde estaba: hay que pedir la versión
+nueva.
 
 ```
-pnpm up "@zuccadev-labs/*"
+pnpm up --latest "@zuccadev-labs/*"
+npm install @zuccadev-labs/zuix@^0.2.0        # con npm; si usas los paquetes sueltos, cada uno con @^0.2.0
 ```
+
+pnpm no instala por defecto una versión publicada hace menos de un día: el mismo día de la publicación,
+`pnpm up --latest` puede responder que todo está al día.
 
 Si tu aplicación importaba algo de `radix-ui` o de `@radix-ui/*` aprovechando que `zui` lo instalaba,
 decláralo ahora en tu propio `package.json`: ya no llega de forma transitiva.
