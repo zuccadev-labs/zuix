@@ -43,6 +43,18 @@
     {
       "name": "name",
       "type": "string"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "on",
+      "description": "Valor que envía el formulario cuando está activado."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "El formulario no se envía si está desactivado."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "checked", "disabled"],

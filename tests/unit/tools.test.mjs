@@ -11,7 +11,16 @@ import { auditSource, localNames, strip } from "../../tools/audit.mjs";
 import { completeSpecifiers } from "../../tools/build.mjs";
 import { checkBarrels, declaredNames, exportedNames, importedNames } from "../../tools/check-barrels.mjs";
 import { checkUseClient, clientReasons, hasUseClient } from "../../tools/use-client.mjs";
-import { closeUnreleased, compareVersions, nextVersion, parseVersion, setPackageVersion, today } from "../../tools/version.mjs";
+import {
+  closeUnreleased,
+  compareVersions,
+  nextVersion,
+  parseVersion,
+  PRIVATE,
+  PUBLISHED,
+  setPackageVersion,
+  today,
+} from "../../tools/version.mjs";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const run = (script, ...args) => spawnSync(process.execPath, [script, ...args], { cwd: root, encoding: "utf8" });
@@ -117,11 +126,28 @@ describe("tools/version.mjs", () => {
     const check = run("tools/version.mjs", "check");
     assert.equal(check.status, 0, check.stderr);
     assert.match(check.stdout, /✓ versión \d+\.\d+\.\d+/);
+    assert.match(check.stdout, /6 paquetes \(5 publicables y zudocs\)/);
     for (const args of [[], ["mayor"], ["patch", "--force"], ["patch", "minor"]]) {
       const r = run("tools/version.mjs", ...args);
       assert.equal(r.status, 1, args.join(" "));
       assert.match(r.stderr, /uso:/);
     }
+  });
+});
+
+describe("tools/version.mjs: zudocs comparte número con la suite", () => {
+  test("zudocs es privado: se versiona con los demás y no entra en la lista de lo que se publica", () => {
+    assert.deepEqual(PUBLISHED, ["tokens", "zicon", "zui", "zout", "suite"]);
+    assert.deepEqual(PRIVATE, ["zudocs"]);
+  });
+  test("el script: un cierre de versión (--dry-run) sube zudocs y cierra su CHANGELOG.md, sin escribir nada", () => {
+    const r = run("tools/version.mjs", "minor", "--dry-run");
+    assert.equal(r.status, 0, r.stderr);
+    const lines = r.stdout.split("\n").filter((line) => line.startsWith("· @zuccadev-labs/"));
+    assert.equal(lines.length, 6, r.stdout);
+    assert.match(r.stdout, /· @zuccadev-labs\/zuix-zudocs \d+\.\d+\.\d+ → \d+\.\d+\.\d+ · \d+ cambios anotados/);
+    assert.match(r.stdout, /--dry-run: no se escribió nada/);
+    assert.equal(run("tools/version.mjs", "check").status, 0, "tras --dry-run todo sigue en la versión anterior");
   });
 });
 

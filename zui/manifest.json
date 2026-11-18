@@ -126,7 +126,7 @@
      "name": "loading",
      "type": "boolean",
      "default": false,
-     "description": "Muestra un anillo, deshabilita el botón y expone aria-busy."
+     "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
      "name": "fullWidth",
@@ -183,7 +183,7 @@
    "classes": [
     "z-btn"
    ],
-   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y queda deshabilitado.",
+   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
    "examples": [
     {
      "title": "Primario con icono",
@@ -261,7 +261,8 @@
     {
      "name": "loading",
      "type": "boolean",
-     "default": false
+     "default": false,
+     "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
      "name": "...rest",
@@ -3254,6 +3255,12 @@
      "name": "value",
      "type": "string",
      "default": "on"
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "El formulario no se envía si no está marcada."
     }
    ],
    "states": [
@@ -4532,6 +4539,12 @@
      "type": "string"
     },
     {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "El formulario no se envía sin una opción elegida; el grupo expone aria-required."
+    },
+    {
      "name": "aria-label",
      "type": "string",
      "description": "Nombre accesible si no está dentro de un Field."
@@ -4904,6 +4917,12 @@
      "default": 1
     },
     {
+     "name": "minStepsBetweenThumbs",
+     "type": "number",
+     "default": 0,
+     "description": "Pasos mínimos entre dos tiradores."
+    },
+    {
      "name": "orientation",
      "type": "enum",
      "values": [
@@ -4911,6 +4930,12 @@
       "vertical"
      ],
      "default": "horizontal"
+    },
+    {
+     "name": "inverted",
+     "type": "boolean",
+     "default": false,
+     "description": "La pista crece en sentido contrario: de derecha a izquierda (o de arriba abajo)."
     },
     {
      "name": "size",
@@ -4935,6 +4960,16 @@
      "name": "disabled",
      "type": "boolean",
      "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario; con varios tiradores envía un valor por tirador con el mismo nombre."
+    },
+    {
+     "name": "form",
+     "type": "string",
+     "description": "Id del formulario al que pertenece, si no está dentro de él."
     }
    ],
    "states": [
@@ -5035,6 +5070,18 @@
     {
      "name": "name",
      "type": "string"
+    },
+    {
+     "name": "value",
+     "type": "string",
+     "default": "on",
+     "description": "Valor que envía el formulario cuando está activado."
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "El formulario no se envía si está desactivado."
     }
    ],
    "states": [
@@ -5720,6 +5767,12 @@
      "name": "children",
      "type": "ReactNode",
      "description": "Paneles `TabPanel` (props: value, keepMounted)."
+    },
+    {
+     "name": "keepMounted",
+     "type": "boolean",
+     "default": false,
+     "description": "TabPanel: mantiene el contenido montado aunque el panel esté oculto."
     }
    ],
    "states": [
@@ -6236,7 +6289,7 @@
     "z-menu__label",
     "z-menu__chevron"
    ],
-   "a11y": "React: menú propio (patrón APG «menu»), que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
+   "a11y": "React: menú propio (patrón APG «menu»), que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10, y enfoca su primera entrada; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
    "examples": [
     {
      "title": "Sobre una tarjeta",
@@ -6511,7 +6564,7 @@
     "z-menu__label",
     "z-menu__chevron"
    ],
-   "a11y": "React: menú propio (patrón APG «menu button»), con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
+   "a11y": "Al abrirse, con el teclado o con el puntero, el foco va a la primera entrada (patrón APG «menu button»), igual en React y sin React. React: menú propio, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
    "examples": [
     {
      "title": "Acciones de una fila",
@@ -6736,9 +6789,15 @@
      "description": "Nombre accesible del panel. Obligatorio salvo que se pase `aria-labelledby` con el id de un encabezado del panel."
     },
     {
+     "name": "aria-labelledby",
+     "type": "string",
+     "description": "Id de un encabezado del panel que le da nombre. Alternativa a `label`."
+    },
+    {
      "name": "modal",
      "type": "boolean",
-     "default": false
+     "default": false,
+     "description": "Modal: el panel es un <dialog> abierto con showModal(). El resto de la página queda inerte (puntero, foco y lectores de pantalla), Tab da la vuelta dentro y una pulsación fuera solo lo cierra."
     },
     {
      "name": "children",
@@ -6772,7 +6831,7 @@
    "classes": [
     "z-popover"
    ],
-   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo.",
+   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra.",
    "examples": [
     {
      "title": "Panel de detalles",
@@ -6900,7 +6959,7 @@
     "z-toast__close",
     "z-toast-viewport"
    ],
-   "a11y": "Región con nombre (role=region) en la capa superior; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
+   "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
    "examples": [
     {
      "title": "Proveedor y uso",

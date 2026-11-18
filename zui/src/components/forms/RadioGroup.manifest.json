@@ -38,6 +38,12 @@
       "type": "string"
     },
     {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "El formulario no se envía sin una opción elegida; el grupo expone aria-required."
+    },
+    {
       "name": "aria-label",
       "type": "string",
       "description": "Nombre accesible si no está dentro de un Field."

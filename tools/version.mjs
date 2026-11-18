@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Versionado de la suite (`pnpm bump …`). Los cinco paquetes publicables comparten versión:
-// tokens, zicon, zui, zout y el paraguas @zuccadev-labs/zuix (carpeta suite/).
-//   pnpm bump check                     misma versión en los cinco y entrada de esa versión en cada CHANGELOG.md
+// tokens, zicon, zui, zout y el paraguas @zuccadev-labs/zuix (carpeta suite/). zudocs es privado (no se publica),
+// pero lleva el mismo número y su CHANGELOG.md se cierra con los demás.
+//   pnpm bump check                     misma versión en todos y entrada de esa versión en cada CHANGELOG.md
 //   pnpm bump patch|minor|major|X.Y.Z   sube la versión y cierra la sección "Sin publicar" de cada CHANGELOG.md
 //   … --dry-run                         muestra lo que haría sin escribir
 // No crea commits ni etiquetas ni publica: publica el workflow release cuando la versión nueva llega a main,
@@ -11,7 +12,11 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const PACKAGES = ["tokens", "zicon", "zui", "zout", "suite"];
+/** Paquetes que se publican en npm. */
+export const PUBLISHED = ["tokens", "zicon", "zui", "zout", "suite"];
+/** Paquetes privados que comparten número con la suite: se versionan y cierran su CHANGELOG.md, pero no se publican. */
+export const PRIVATE = ["zudocs"];
+const PACKAGES = [...PUBLISHED, ...PRIVATE];
 const UNRELEASED = "## [Sin publicar]";
 const USAGE = "uso: pnpm bump check | patch | minor | major | X.Y.Z [--dry-run]";
 const SEMVER = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
@@ -136,7 +141,9 @@ function main(argv) {
         errors.push(`${p}/CHANGELOG.md no tiene la entrada [${versions[p]}]`);
     }
     if (errors.length) fail(errors.join("\n✗ "));
-    console.log(`✓ versión ${current} en ${PACKAGES.length} paquetes, con entrada en cada CHANGELOG.md`);
+    console.log(
+      `✓ versión ${current} en ${PACKAGES.length} paquetes (${PUBLISHED.length} publicables y ${PRIVATE.join(", ")}), con entrada en cada CHANGELOG.md`,
+    );
   }
 
   check();

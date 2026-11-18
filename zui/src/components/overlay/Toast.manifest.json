@@ -97,7 +97,7 @@
     "z-toast__close",
     "z-toast-viewport"
   ],
-  "a11y": "Región con nombre (role=region) en la capa superior; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
+  "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
   "examples": [
     {
       "title": "Proveedor y uso",

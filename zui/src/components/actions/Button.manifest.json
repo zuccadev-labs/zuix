@@ -31,7 +31,7 @@
       "name": "loading",
       "type": "boolean",
       "default": false,
-      "description": "Muestra un anillo, deshabilita el botón y expone aria-busy."
+      "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
       "name": "fullWidth",
@@ -79,7 +79,7 @@
     "radius-full"
   ],
   "classes": ["z-btn"],
-  "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y queda deshabilitado.",
+  "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
   "examples": [
     {
       "title": "Primario con icono",

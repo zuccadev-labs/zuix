@@ -51,6 +51,12 @@
       "name": "children",
       "type": "ReactNode",
       "description": "Paneles `TabPanel` (props: value, keepMounted)."
+    },
+    {
+      "name": "keepMounted",
+      "type": "boolean",
+      "default": false,
+      "description": "TabPanel: mantiene el contenido montado aunque el panel esté oculto."
     }
   ],
   "states": ["active", "inactive", "hover", "focus", "disabled"],

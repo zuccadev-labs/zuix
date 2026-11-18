@@ -42,7 +42,8 @@
     {
       "name": "loading",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
       "name": "...rest",

@@ -50,9 +50,15 @@
       "description": "Nombre accesible del panel. Obligatorio salvo que se pase `aria-labelledby` con el id de un encabezado del panel."
     },
     {
+      "name": "aria-labelledby",
+      "type": "string",
+      "description": "Id de un encabezado del panel que le da nombre. Alternativa a `label`."
+    },
+    {
       "name": "modal",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Modal: el panel es un <dialog> abierto con showModal(). El resto de la página queda inerte (puntero, foco y lectores de pantalla), Tab da la vuelta dentro y una pulsación fuera solo lo cierra."
     },
     {
       "name": "children",
@@ -81,7 +87,7 @@
     "text-body"
   ],
   "classes": ["z-popover"],
-  "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo.",
+  "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra.",
   "examples": [
     {
       "title": "Panel de detalles",

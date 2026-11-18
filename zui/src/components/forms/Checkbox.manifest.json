@@ -47,6 +47,12 @@
       "name": "value",
       "type": "string",
       "default": "on"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "El formulario no se envía si no está marcada."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "checked", "indeterminate", "invalid", "disabled"],

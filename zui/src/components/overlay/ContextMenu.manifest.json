@@ -77,7 +77,7 @@
     "z-menu__label",
     "z-menu__chevron"
   ],
-  "a11y": "React: menú propio (patrón APG «menu»), que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
+  "a11y": "React: menú propio (patrón APG «menu»), que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10, y enfoca su primera entrada; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
   "examples": [
     {
       "title": "Sobre una tarjeta",

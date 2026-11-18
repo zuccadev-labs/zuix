@@ -1,5 +1,4 @@
 # Publica el sitio de documentación de zuix (zudocs) en GitHub Pages: https://zuccadev-labs.github.io/zuix/
-# Propuesto por la auditoría del frente 4; va en .github/workflows/pages.yml.
 #
 # Requisito único, a mano y una sola vez: Settings → Pages → Build and deployment → Source: "GitHub Actions".
 # `url` y `baseUrl` salen de zudocs/zudocs.config.json (https://zuccadev-labs.github.io y /zuix/): el workflow

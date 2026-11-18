@@ -38,10 +38,22 @@
       "default": 1
     },
     {
+      "name": "minStepsBetweenThumbs",
+      "type": "number",
+      "default": 0,
+      "description": "Pasos mínimos entre dos tiradores."
+    },
+    {
       "name": "orientation",
       "type": "enum",
       "values": ["horizontal", "vertical"],
       "default": "horizontal"
+    },
+    {
+      "name": "inverted",
+      "type": "boolean",
+      "default": false,
+      "description": "La pista crece en sentido contrario: de derecha a izquierda (o de arriba abajo)."
     },
     {
       "name": "size",
@@ -63,6 +75,16 @@
       "name": "disabled",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario; con varios tiradores envía un valor por tirador con el mismo nombre."
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "description": "Id del formulario al que pertenece, si no está dentro de él."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled"],
