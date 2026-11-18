@@ -112,7 +112,7 @@ Un caso falla si lanza o si la página registra errores de consola, excepciones 
 | Suite | Sobre qué | Qué ejercita |
 |---|---|---|
 | `test:html` | `examples/html/index.html` y `shell.html`: el contrato sin React | Capas, formularios, colecciones, layouts, submenús, táctil, Carousel en WebGL, RTL, colores forzados, inyección de marcado, CSP estricta y Trusted Types |
-| `test:browser` | `examples/app`: el binding de React | Lo mismo desde React, las combinaciones de marca y tema, `Shell` en tres anchos, móvil a 390 px, y formularios dentro de un `Modal` |
+| `test:browser` | `examples/app`: el binding de React | Lo mismo desde React, las combinaciones de marca y tema, `Shell` en tres anchos, móvil a 390 px, formularios dentro de un `Modal`, y las capas apiladas: cierre en orden con cuatro niveles, 200 aperturas seguidas sin fugas, y desmontaje con la capa abierta |
 | `test:site` | El sitio de documentación compilado, servido bajo su `baseUrl` | Todas las páginas del sitemap en dos temas y tres anchos: hidratación, consola, red, desbordamiento, enlaces y anclas; teclado; impresión; `sitemap.xml`, `robots.txt` y `llms.txt` |
 
 En las tres:

@@ -3,6 +3,7 @@
 
 import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
+import layers from "./cases-layers.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -2767,7 +2768,7 @@ export const cases = [
     },
   },
   // Auditoría previa a 0.1.1: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss, layers].flatMap((build) => build(helpers())),
 ];
 
 /** Ayudantes compartidos con los archivos cases-audit-*.mjs. */

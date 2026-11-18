@@ -141,6 +141,12 @@ body {
   align-self: flex-start;
 }
 
+/* Pantalla de capas (?screen=layers): más alta que la ventana, para que el bloqueo del desplazamiento tenga algo que bloquear. */
+.layers {
+  min-height: 220vh;
+  padding: var(--z-space-6);
+}
+
 /* Pantalla de auditoría (?screen=audit): rejilla simple con desplazamiento propio. */
 .audit {
   height: 100%;
