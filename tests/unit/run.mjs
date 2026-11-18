@@ -66,6 +66,7 @@ const COVERED = [
   "zui/src/dom/forms-calendar.ts",
   "zui/src/dom/collections.ts",
   "zudocs/scripts/config.mjs",
+  "zudocs/scripts/font-sheet.mjs",
 ];
 // Umbrales sobre el conjunto anterior. El motor del carrusel y los módulos DOM incluyen ramas que solo existen
 // en un navegador real (WebGL, captura de puntero, capa superior); esas las cubren tests/html y tests/browser.

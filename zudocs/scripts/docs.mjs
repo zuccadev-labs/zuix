@@ -53,12 +53,33 @@ export function stripCode(text, { inline = true } = {}) {
   return inline ? blocks.replace(/(`+)[^`\n]*?\1/g, blank) : blocks;
 }
 
+/**
+ * Quita las etiquetas HTML y JSX (`<`, al menos un carácter y `>`), de dentro afuera y en una sola pasada.
+ * Sustituir `<[^>]+>` una vez no basta: en `<scr<b>ipt>`, al quitar la de dentro lo que queda vuelve a ser una
+ * etiqueta. Aquí cada `>` cierra el `<` abierto más cercano y se lleva lo que hay entre los dos, así que el
+ * resultado no contiene ninguna etiqueta y el coste es lineal por muy anidadas que vengan.
+ */
+export function stripTags(text) {
+  const out = [];
+  const open = [];
+  for (const char of text) {
+    if (char === ">") {
+      // `<>` no es una etiqueta: si el `<` más cercano está pegado, cierra el anterior.
+      const at = open.at(-1) === out.length - 1 ? open.at(-2) : open.at(-1);
+      if (at !== undefined) {
+        while (open.length && open.at(-1) >= at) open.pop();
+        out.length = at;
+        continue;
+      }
+    } else if (char === "<") open.push(out.length);
+    out.push(char);
+  }
+  return out.join("");
+}
+
 /** Texto de un título sin marcas de Markdown, como lo ve el lector. */
 const plain = (s) =>
-  s
-    .replace(/\s+\{#[^}]+\}\s*$/, "")
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/<[^>]+>/g, "")
+  stripTags(s.replace(/\s+\{#[^}]+\}\s*$/, "").replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1"))
     .replace(/(\*\*|__|\*|_|`|~~)/g, "")
     .trim();
 

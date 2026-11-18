@@ -8,6 +8,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { callerDir, loadZudocs, parseArgs } from "./config.mjs";
+import { cssComment, fontFaceCss, fontFaces, fontFileName, isWoff2, MAX_FONT_BYTES, MAX_SHEET_BYTES, remoteUrl } from "./font-sheet.mjs";
 
 const fail = (message) => {
   process.stderr.write(`✗ ${message}\n`);
@@ -20,51 +21,54 @@ try {
 } catch (e) {
   fail(e.message);
 }
-const urls = args.rest.length ? args.rest : ctx.remoteFonts;
-if (!urls.length) fail('No hay hojas remotas: pasa una URL o declara una en "fonts".');
-for (const u of urls) if (!/^https:\/\//.test(u)) fail(`Solo se descargan URL https: ${u}`);
 const dest = args.outDir ? resolve(callerDir(), args.outDir) : join(ctx.configDir, "fonts");
 const subsets = (process.env.ZUDOCS_FONT_SUBSETS ?? "latin,latin-ext").split(",").map((s) => s.trim());
+let urls;
+try {
+  // Las hojas las elige quien ejecuta el comando (argumentos o configuración). Solo https y sin credenciales.
+  urls = (args.rest.length ? args.rest : ctx.remoteFonts).map(remoteUrl);
+} catch (e) {
+  fail(e.message);
+}
+if (!urls.length) fail('No hay hojas remotas: pasa una URL o declara una en "fonts".');
 // Con el agente de un navegador actual, el servidor entrega woff2 y un bloque por subconjunto.
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
-const get = async (url) => {
+/** Descarga una URL ya validada. Una redirección tampoco puede salir de https, y la respuesta tiene un tamaño máximo. */
+const get = async (url, maxBytes) => {
   const r = await fetch(url, { headers: { "user-agent": UA } });
-  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  return r;
+  if (!r.ok) throw new Error(`${url.href}: HTTP ${r.status}`);
+  remoteUrl(r.url);
+  const data = Buffer.from(await r.arrayBuffer());
+  if (data.length > maxBytes) throw new Error(`${url.href}: la respuesta pesa más de ${Math.round(maxBytes / 1024)} KB`);
+  return data;
 };
 
-mkdirSync(dest, { recursive: true });
-let css = `/* GENERADO por "zudocs fonts". No editar: vuelve a ejecutar el comando.\n   Origen: ${urls.join("\n           ")}\n   Subconjuntos: ${subsets.join(", ")}. Las fuentes conservan su licencia de origen. */\n`;
-let files = 0,
-  bytes = 0;
-const written = new Set();
+let css = `/* GENERADO por "zudocs fonts". No editar: vuelve a ejecutar el comando.\n   Origen: ${urls.map((u) => cssComment(u.href)).join("\n           ")}\n   Subconjuntos: ${cssComment(subsets.join(", "))}. Las fuentes conservan su licencia de origen. */\n`;
+let bytes = 0;
+/** Archivos por escribir: nombre (alfabeto cerrado, sin separadores de ruta) → contenido comprobado. */
+const fonts = new Map();
 try {
   for (const url of urls) {
-    const sheet = await (await get(url)).text();
-    // Cada bloque @font-face viene precedido de un comentario con su subconjunto: /* latin */.
-    for (const m of sheet.matchAll(/(?:\/\*\s*([\w-]+)\s*\*\/\s*)?(@font-face\s*\{[^}]*\})/g)) {
-      const [, subset, block] = m;
-      if (subset && !subsets.includes(subset)) continue;
-      const src = block.match(/url\((["']?)(https:\/\/[^)"']+\.woff2)\1\)/)?.[2];
-      if (!src) continue;
-      const family = (block.match(/font-family:\s*["']?([^;"']+)/)?.[1] ?? "fuente").trim().toLowerCase().replace(/\s+/g, "-");
-      const data = Buffer.from(await (await get(src)).arrayBuffer());
-      // El nombre sale del contenido: una fuente variable sirve varios pesos con un solo archivo.
-      const name = `${family}-${subset ?? "all"}-${createHash("sha1").update(data).digest("hex").slice(0, 8)}.woff2`;
-      if (!written.has(name)) {
-        writeFileSync(join(dest, name), data);
-        written.add(name);
+    const sheet = (await get(url, MAX_SHEET_BYTES)).toString("utf8");
+    for (const face of fontFaces(sheet, subsets)) {
+      const data = await get(face.src, MAX_FONT_BYTES);
+      if (!isWoff2(data)) throw new Error(`${face.src.href}: no es un archivo WOFF2`);
+      const name = fontFileName(face, createHash("sha1").update(data).digest("hex"));
+      if (!fonts.has(name)) {
+        fonts.set(name, data);
         bytes += data.length;
       }
-      files = written.size;
-      css += `${subset ? `/* ${subset} */\n` : ""}${block.replace(/src:[^;]+;/, `src: url("./${name}") format("woff2");`)}\n`;
+      css += fontFaceCss(face, name);
     }
   }
 } catch (e) {
   fail(`No se pudieron descargar las fuentes: ${e.message}`);
 }
-if (!files) fail("La hoja no contiene fuentes woff2 de los subconjuntos pedidos.");
+if (!fonts.size) fail("La hoja no contiene fuentes woff2 de los subconjuntos pedidos.");
+// Se escribe al final, con todo descargado y comprobado: un fallo a mitad no deja la carpeta a medias.
+mkdirSync(dest, { recursive: true });
+for (const [name, data] of fonts) writeFileSync(join(dest, name), data);
 writeFileSync(join(dest, "fonts.css"), css);
 process.stdout.write(
-  `✓ ${ctx.rel(join(dest, "fonts.css"))}: ${files} archivos, ${Math.round(bytes / 1024)} KB\n  Declárala en la configuración, relativa a ella: "fonts": ["…/fonts.css"]\n`,
+  `✓ ${ctx.rel(join(dest, "fonts.css"))}: ${fonts.size} archivos, ${Math.round(bytes / 1024)} KB\n  Declárala en la configuración, relativa a ella: "fonts": ["…/fonts.css"]\n`,
 );
