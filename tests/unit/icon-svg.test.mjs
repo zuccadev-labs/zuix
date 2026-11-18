@@ -44,6 +44,11 @@ describe("iconSvg", () => {
     assert.match(svg, /role="img" aria-label="Cerrar"/);
     assert.doesNotMatch(svg, /aria-hidden/);
   });
+  test("un valor que no se puede convertir a texto no lanza: queda vacío", () => {
+    const svg = iconSvg("t-plain", { label: Object.create(null), className: { toString: [] } });
+    assert.match(svg, /role="img" aria-label="" /);
+    assert.match(svg, /class="z-icon "/);
+  });
   test("label vacío es decorativo", () => {
     assert.match(iconSvg("t-plain", { label: "" }), /aria-hidden="true"/);
   });

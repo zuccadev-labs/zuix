@@ -54,6 +54,9 @@ van aquí.
 
 ### Corregido
 
+- Validación de contraste: un color con un número que no lo es (`rgb(0 0 1e999)`, un porcentaje `..%` en
+  `color-mix()`) se rechaza como valor ilegible. Antes daba un contraste `NaN`, que no es menor que ningún
+  umbral y pasaba. Un valor llamado `constructor` o `__proto__` ya no lanza una excepción.
 - `tailwind.css`: la variante `dark:` sigue al tema de los tokens también sin `data-theme`, cuando manda el
   sistema.
 - El umbral de la luminancia relativa usa el valor de WCAG 2.2 (0,04045).

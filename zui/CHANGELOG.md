@@ -163,6 +163,12 @@ Color:
 
 ### Corregido
 
+- `Slider`: con un `max` que no es un paso desde `min` (`min` 0, `max` 10, `step` 3), el tope es el último
+  paso que cabe (9), como en `<input type="range">`. Antes se podía arrastrar hasta 10 y el valor volvía a 9
+  al redibujarse.
+- `CommandPalette`: la coincidencia por subsecuencia cuenta caracteres, no unidades UTF-16. Una búsqueda con
+  un emoji o una letra fuera del plano básico ya encuentra la entrada que los contiene.
+
 Seguridad del modo DOM:
 
 - `data-z-open`, `data-z-context`, `data-z-submenu` y `data-raster` se resuelven por id. Un valor que no es
