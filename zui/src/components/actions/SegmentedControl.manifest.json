@@ -32,11 +32,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -51,14 +47,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "on",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "on", "disabled"],
   "tokens": [
     "control-height-md",
     "line",
@@ -82,10 +71,8 @@
     "button-primary-fg",
     "shadow-sm"
   ],
-  "classes": [
-    "z-segmented"
-  ],
-  "a11y": "Radix ToggleGroup de tipo single: role radiogroup, flechas para moverse. No permite quedar sin selección.",
+  "classes": ["z-segmented"],
+  "a11y": "Patrón APG «radiogroup»: una parada de tabulación; las flechas mueven el foco y la selección (reflejadas en RTL). No permite quedar sin selección.",
   "examples": [
     {
       "title": "Vista",
@@ -96,5 +83,5 @@
       "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
     }
   ],
-  "origin": "Tabs (control segmentado) de zutool, sobre ToggleGroup de radix-ui."
+  "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG)."
 }

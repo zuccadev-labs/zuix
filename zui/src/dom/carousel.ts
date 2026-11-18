@@ -21,10 +21,12 @@
 // WebGL2, si falta la fuente de algún slide o si falla la carga, la lente sigue en modo css.
 // Si las imágenes cambian después de activar el carrusel (un <canvas> pintado más tarde): refresh().
 // `setup()` conecta los listeners delegados una vez; `hydrate(root)` prepara marcado nuevo.
+import type { Listen } from "./shared";
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
 import { MIN_SIDE, createEngine } from "../components/carousel/engine";
+import { byRef, setMarkup } from "./shared";
 import type { CarouselRasterSize, CarouselRasterSource } from "../components/carousel/slideTexture";
 
 export type { CarouselRasterSize, CarouselRasterSource };
@@ -86,7 +88,8 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   const text = {
     previous: root.dataset.labelPrevious ?? "Previous slide",
     next: root.dataset.labelNext ?? "Next slide",
-    slide: (index: number, count: number) => (root.dataset.labelSlide ?? "Slide {index} of {count}").replace("{index}", String(index + 1)).replace("{count}", String(count)),
+    slide: (index: number, count: number) =>
+      (root.dataset.labelSlide ?? "Slide {index} of {count}").replace("{index}", String(index + 1)).replace("{count}", String(count)),
   };
   const undo: Array<() => void> = [];
   const setAttr = (el: Element, name: string, value: string) => {
@@ -100,13 +103,20 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   let track: HTMLElement;
   let stage: HTMLElement;
   if (viewport) {
-    stage = viewport.querySelector<HTMLElement>(".z-carousel__stage")!;
-    track = viewport.querySelector<HTMLElement>(".z-carousel__track")!;
+    // El marcado completo es parte del contrato: un viewport sin escenario o sin pista no se puede reparar sin adivinar.
+    const foundStage = viewport.querySelector<HTMLElement>(".z-carousel__stage");
+    const foundTrack = viewport.querySelector<HTMLElement>(".z-carousel__track");
+    if (!foundStage || !foundTrack)
+      throw new Error("z-carousel: .z-carousel__viewport debe contener .z-carousel__stage y .z-carousel__track");
+    stage = foundStage;
+    track = foundTrack;
     // Réplicas que vinieran ya en el marcado (render de servidor): se regeneran.
     for (const clone of track.querySelectorAll(':scope > [aria-hidden="true"]')) clone.remove();
   } else {
     const original = [...root.childNodes];
-    const children = [...root.children].filter((el): el is HTMLElement => el instanceof HTMLElement && !el.matches(".z-carousel__controls, .z-carousel__live"));
+    const children = [...root.children].filter(
+      (el): el is HTMLElement => el instanceof HTMLElement && !el.matches(".z-carousel__controls, .z-carousel__live"),
+    );
     const built = make("div", "z-carousel__viewport");
     stage = make("div", "z-carousel__stage");
     track = make("div", "z-carousel__track");
@@ -137,7 +147,10 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   let controls = root.querySelector<HTMLElement>(":scope > .z-carousel__controls");
   if (!controls) {
     const created = make("div", "z-carousel__controls");
-    created.innerHTML = `<button type="button" class="z-carousel__arrow">${iconSvg("chevron-left", { size: 16 })}</button><span class="z-carousel__counter" aria-hidden="true"><span class="z-carousel__counter-current"></span><span class="z-carousel__counter-total"></span></span><button type="button" class="z-carousel__arrow">${iconSvg("chevron-right", { size: 16 })}</button>`;
+    setMarkup(
+      created,
+      `<button type="button" class="z-carousel__arrow">${iconSvg("chevron-left", { size: 16 })}</button><span class="z-carousel__counter" aria-hidden="true"><span class="z-carousel__counter-current"></span><span class="z-carousel__counter-total"></span></span><button type="button" class="z-carousel__arrow">${iconSvg("chevron-right", { size: 16 })}</button>`,
+    );
     const [before, after] = created.querySelectorAll(".z-carousel__arrow");
     before!.setAttribute("aria-label", text.previous);
     after!.setAttribute("aria-label", text.next);
@@ -179,7 +192,10 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   // ---------- Modo gl ----------
   const declared = (slide: HTMLElement) => (slide.matches(RASTER) ? slide : slide.querySelector<HTMLElement>(RASTER));
   const wantsGl = () =>
-    lens && !motion.matches && count > 0 && typeof WebGL2RenderingContext !== "undefined" &&
+    lens &&
+    !motion.matches &&
+    count > 0 &&
+    typeof WebGL2RenderingContext !== "undefined" &&
     (rasterize !== undefined || mains.every((slide) => declared(slide) !== null));
   /** Fuente de un slide: la de `rasterize` o la declarada en el marcado. Lanza si no hay: el motor cae a css. */
   const sourceOf = async (slideIndex: number, size: CarouselRasterSize): Promise<CarouselRasterSource> => {
@@ -190,7 +206,7 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
     const mark = declared(slide);
     if (!mark) throw new Error("Slide sin fuente ráster");
     if (mark.dataset.rasterSrc) return mark.dataset.rasterSrc;
-    const target = mark.dataset.raster ? document.querySelector(mark.dataset.raster) : mark;
+    const target = mark.dataset.raster ? byRef(mark.dataset.raster) : mark;
     if (target instanceof HTMLImageElement) {
       if (!target.complete || target.naturalWidth === 0) await target.decode();
       return target;
@@ -198,7 +214,8 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
     if (target instanceof HTMLCanvasElement || target instanceof HTMLVideoElement) return target;
     throw new Error("data-raster no apunta a un <img>, <canvas> o <video>");
   };
-  const texture = async (slideIndex: number, size: CarouselRasterSize) => gl!.toSlideTexture(await sourceOf(slideIndex, size), size, maxTexture);
+  const texture = async (slideIndex: number, size: CarouselRasterSize) =>
+    gl!.toSlideTexture(await sourceOf(slideIndex, size), size, maxTexture);
   const ensureCanvas = () => {
     if (canvas) return;
     canvas = viewport!.querySelector<HTMLCanvasElement>(":scope > canvas.z-carousel__canvas");
@@ -211,7 +228,9 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   };
 
   const render = () => {
-    mains.forEach((slide, i) => slide.toggleAttribute("data-active", i === index));
+    mains.forEach((slide, i) => {
+      slide.toggleAttribute("data-active", i === index);
+    });
     if (counterCurrent) counterCurrent.textContent = pad(count === 0 ? 0 : index + 1);
     if (counterTotal) counterTotal.textContent = `/${pad(count)}`;
     if (arrows[0]) arrows[0].disabled = count === 0 || (!looping && index === 0);
@@ -344,7 +363,7 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
   return handle;
 }
 
-export function setup(): void {}
+export function setup(_on: Listen): void {}
 
 export function hydrate(root: ParentNode): void {
   if (root instanceof HTMLElement && root.matches("[data-z-carousel]")) carousel(root);

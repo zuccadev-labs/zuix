@@ -21,33 +21,19 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ],
+      "values": ["xs", "sm", "md", "lg", "xl"],
       "default": "md"
     },
     {
       "name": "shape",
       "type": "enum",
-      "values": [
-        "circle",
-        "rounded"
-      ],
+      "values": ["circle", "rounded"],
       "default": "circle"
     },
     {
       "name": "status",
       "type": "enum",
-      "values": [
-        "online",
-        "offline",
-        "busy",
-        "away"
-      ]
+      "values": ["online", "offline", "busy", "away"]
     },
     {
       "name": "statusLabel",
@@ -55,11 +41,7 @@
       "description": "Nombre accesible del estado; por defecto el propio valor."
     }
   ],
-  "states": [
-    "rest",
-    "image",
-    "fallback"
-  ],
+  "states": ["rest", "image", "fallback"],
   "tokens": [
     "radius-full",
     "accent-soft",
@@ -74,9 +56,7 @@
     "surface-3",
     "fg-muted"
   ],
-  "classes": [
-    "z-avatar"
-  ],
+  "classes": ["z-avatar"],
   "a11y": "Con imagen, img con alt. Sin imagen, role=\"img\" con el nombre; si la imagen falla se muestran las iniciales.",
   "examples": [
     {

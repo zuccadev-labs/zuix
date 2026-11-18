@@ -7,11 +7,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -41,14 +37,7 @@
       "description": "value, onChange, disabled, ref, etc."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "invalid"],
   "tokens": [
     "control-height-md",
     "text-body",
@@ -73,9 +62,7 @@
     "popup-bg",
     "fg-muted"
   ],
-  "classes": [
-    "z-select"
-  ],
+  "classes": ["z-select"],
   "a11y": "select nativo: teclado y lista del sistema. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
   "examples": [
     {

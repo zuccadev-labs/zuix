@@ -18,31 +18,19 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "primary",
-        "secondary",
-        "ghost",
-        "danger"
-      ],
+      "values": ["primary", "secondary", "ghost", "danger"],
       "default": "ghost"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
       "name": "iconVariant",
       "type": "enum",
-      "values": [
-        "outline",
-        "solid"
-      ],
+      "values": ["outline", "solid"],
       "default": "outline"
     },
     {
@@ -54,22 +42,15 @@
     {
       "name": "loading",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
       "name": "...rest",
       "type": "ButtonHTMLAttributes"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "active",
-    "loading"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "active", "loading"],
   "tokens": [
     "surface-2",
     "surface-3",
@@ -102,10 +83,7 @@
     "accent",
     "radius-full"
   ],
-  "classes": [
-    "z-btn",
-    "z-btn--icon"
-  ],
+  "classes": ["z-btn", "z-btn--icon"],
   "a11y": "aria-label y title toman `label`. El icono es decorativo.",
   "examples": [
     {

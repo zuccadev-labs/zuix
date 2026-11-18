@@ -38,21 +38,27 @@
       "default": 1
     },
     {
+      "name": "minStepsBetweenThumbs",
+      "type": "number",
+      "default": 0,
+      "description": "Pasos mínimos entre dos tiradores."
+    },
+    {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "horizontal",
-        "vertical"
-      ],
+      "values": ["horizontal", "vertical"],
       "default": "horizontal"
+    },
+    {
+      "name": "inverted",
+      "type": "boolean",
+      "default": false,
+      "description": "La pista crece en sentido contrario: de derecha a izquierda (o de arriba abajo)."
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -69,30 +75,22 @@
       "name": "disabled",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario; con varios tiradores envía un valor por tirador con el mismo nombre."
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "description": "Id del formulario al que pertenece, si no está dentro de él."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled"
-  ],
-  "tokens": [
-    "space-20",
-    "radius-full",
-    "surface-3",
-    "accent",
-    "fg-on-accent",
-    "shadow-sm",
-    "duration-fast",
-    "ease-standard",
-    "focus-ring"
-  ],
-  "classes": [
-    "z-slider"
-  ],
-  "a11y": "Radix Slider: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
+  "states": ["rest", "hover", "focus", "active", "disabled"],
+  "tokens": ["space-20", "radius-full", "surface-3", "accent", "fg-on-accent", "shadow-sm", "duration-fast", "ease-standard", "focus-ring"],
+  "classes": ["z-slider"],
+  "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
   "behavior": "dom",
   "examples": [
     {
@@ -115,5 +113,5 @@
       "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
     }
   ],
-  "origin": "Nuevo, sobre Slider de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

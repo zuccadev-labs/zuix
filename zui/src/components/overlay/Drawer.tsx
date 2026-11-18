@@ -1,8 +1,8 @@
 "use client";
-import type { ReactElement, ReactNode } from "react";
-import { Dialog } from "radix-ui";
+import { useId, type ReactElement, type ReactNode } from "react";
 import { cx } from "../../cx";
-import { CloseButton, useReturnFocus } from "./internal";
+import { DialogSurface } from "../../primitives/dialog";
+import { CloseButton, useDisclosure } from "./internal";
 
 export interface DrawerProps {
   open?: boolean;
@@ -23,11 +23,12 @@ export interface DrawerProps {
   children?: ReactNode;
 }
 
+/** Panel lateral modal: un `<dialog>` abierto con `showModal()`, con el mismo marcado que el contrato HTML. */
 export function Drawer({
-  open,
+  open: openProp,
   defaultOpen,
   onOpenChange,
-  trigger,
+  trigger: triggerProp,
   side = "right",
   size = "md",
   title,
@@ -39,39 +40,45 @@ export function Drawer({
   className,
   children,
 }: DrawerProps) {
-  const returnFocus = useReturnFocus(Boolean(trigger));
+  const id = useId();
+  const { open, setOpen, trigger, triggerRef } = useDisclosure({ open: openProp, defaultOpen, onOpenChange, trigger: triggerProp, id });
+  const titleId = `${id}-title`;
+  const descriptionId = `${id}-description`;
   return (
-    <Dialog.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
-      {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
-      <Dialog.Portal>
-        <Dialog.Overlay className="z-overlay-scrim z-overlay-scrim--drawer" />
-        <Dialog.Content
-          className={cx("z-liquid z-drawer", className)}
-          data-side={side}
-          data-size={size}
-          {...returnFocus}
-          {...(description ? {} : { "aria-describedby": undefined })}
-        >
-          {title ? (
-            <header className="z-drawer__header">
-              <Dialog.Title className="z-drawer__title">{title}</Dialog.Title>
-              {description ? <Dialog.Description className="z-drawer__description">{description}</Dialog.Description> : null}
-            </header>
-          ) : (
-            <>
-              <Dialog.Title className="z-sr-only">{label}</Dialog.Title>
-              {description ? <Dialog.Description className="z-sr-only">{description}</Dialog.Description> : null}
-            </>
-          )}
-          <div className="z-drawer__body">{children}</div>
-          {footer ? <footer className="z-drawer__footer">{footer}</footer> : null}
-          {hideClose ? null : (
-            <Dialog.Close asChild>
-              <CloseButton label={closeLabel} className="z-drawer__close" />
-            </Dialog.Close>
-          )}
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <>
+      {trigger}
+      <DialogSurface
+        id={id}
+        open={open}
+        onDismiss={() => setOpen(false)}
+        trigger={triggerRef}
+        className={cx("z-liquid z-drawer", className)}
+        data-side={side}
+        data-size={size}
+        aria-labelledby={title ? titleId : undefined}
+        aria-label={title ? undefined : label}
+        aria-describedby={description ? descriptionId : undefined}
+      >
+        {title ? (
+          <header className="z-drawer__header">
+            <h2 id={titleId} className="z-drawer__title">
+              {title}
+            </h2>
+            {description ? (
+              <p id={descriptionId} className="z-drawer__description">
+                {description}
+              </p>
+            ) : null}
+          </header>
+        ) : description ? (
+          <p id={descriptionId} className="z-sr-only">
+            {description}
+          </p>
+        ) : null}
+        <div className="z-drawer__body">{children}</div>
+        {footer ? <footer className="z-drawer__footer">{footer}</footer> : null}
+        {hideClose ? null : <CloseButton label={closeLabel} className="z-drawer__close" onClick={() => setOpen(false)} />}
+      </DialogSurface>
+    </>
   );
 }

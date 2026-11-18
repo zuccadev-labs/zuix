@@ -3,66 +3,30 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
+import {
+  addDays,
+  addMonths,
+  daysInMonth,
+  localeWeekStart,
+  monthOf,
+  pad,
+  parse,
+  parseRange,
+  rangeText,
+  safeLocale,
+  todayISO,
+  valid,
+  type DateRange,
+} from "../core/date";
 import { all, emit, flag, hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup } from "./forms-popup";
+import { logicalKey, setMarkup, type Listen } from "./shared";
 
 registerIcons([chevronLeft, chevronRight]);
 
-export interface DateRange {
-  from: string | null;
-  to: string | null;
-}
+export type { DateRange };
 
-/* ---------- Fechas ---------- */
-
-const DAY_MS = 86_400_000;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const pad = (n: number, width = 2) => String(n).padStart(width, "0");
-const parse = (iso: string) => new Date(Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10))));
-const format = (date: Date) => `${pad(date.getUTCFullYear(), 4)}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
-const valid = (iso: string | null | undefined): iso is string => typeof iso === "string" && ISO_DATE.test(iso) && format(parse(iso)) === iso;
-const addDays = (iso: string, days: number) => format(new Date(parse(iso).getTime() + days * DAY_MS));
-const monthOf = (iso: string) => iso.slice(0, 7);
-const daysInMonth = (year: number, monthIndex: number) => new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
-
-/** Suma meses conservando el día; si no existe (31 en un mes de 30), usa el último del mes. */
-function addMonths(iso: string, months: number): string {
-  const date = parse(iso);
-  const target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + months, 1));
-  const day = Math.min(date.getUTCDate(), daysInMonth(target.getUTCFullYear(), target.getUTCMonth()));
-  return format(new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), day)));
-}
-
-/** Hoy en la zona horaria local, como fecha ISO. */
-function todayISO(): string {
-  const now = new Date();
-  return `${pad(now.getFullYear(), 4)}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-
-function safeLocale(locale: string | undefined): string | undefined {
-  try {
-    return locale ? Intl.DateTimeFormat.supportedLocalesOf(locale)[0] : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-/** Primer día de la semana según el locale (Intl.Locale.weekInfo), o lunes. */
-function localeWeekStart(locale?: string): number {
-  try {
-    const resolved = new Intl.Locale(locale ?? new Intl.DateTimeFormat().resolvedOptions().locale) as Intl.Locale & { getWeekInfo?: () => { firstDay?: number }; weekInfo?: { firstDay?: number } };
-    const first = (resolved.getWeekInfo?.() ?? resolved.weekInfo)?.firstDay;
-    return typeof first === "number" ? first % 7 : 1;
-  } catch {
-    return 1;
-  }
-}
-
-const parseRange = (raw: string | undefined): DateRange => {
-  const [from, to] = (raw ?? "").split("/");
-  return { from: valid(from) ? from : null, to: valid(to) ? to : null };
-};
-const rangeText = (range: DateRange) => (range.from ? `${range.from}/${range.to ?? ""}` : "");
-const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+const esc = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /* ---------- Calendar ---------- */
 
@@ -78,7 +42,10 @@ let calSeq = 0;
 
 function stateOf(cal: HTMLElement): CalState {
   let state = states.get(cal);
-  if (!state) states.set(cal, (state = { focused: null, preview: null }));
+  if (!state) {
+    state = { focused: null, preview: null };
+    states.set(cal, state);
+  }
   return state;
 }
 
@@ -88,27 +55,50 @@ function config(cal: HTMLElement) {
   const locale = safeLocale(data.locale);
   const min = valid(data.min) ? data.min : null;
   const max = valid(data.max) ? data.max : null;
-  const weekStart = data.weekStart !== undefined && data.weekStart !== "" && Number.isInteger(Number(data.weekStart)) ? ((Number(data.weekStart) % 7) + 7) % 7 : localeWeekStart(locale);
+  const weekStart =
+    data.weekStart !== undefined && data.weekStart !== "" && Number.isInteger(Number(data.weekStart))
+      ? ((Number(data.weekStart) % 7) + 7) % 7
+      : localeWeekStart(locale);
   const single = mode === "single" && valid(data.value) ? data.value : null;
   const range = mode === "range" ? parseRange(data.value) : { from: null, to: null };
-  const offDays = (data.disabledWeekdays ?? "").split(",").filter((d) => d.trim() !== "").map(Number);
+  const offDays = (data.disabledWeekdays ?? "")
+    .split(",")
+    .filter((d) => d.trim() !== "")
+    .map(Number);
   const offDates = new Set((data.disabledDates ?? "").split(",").map((d) => d.trim()));
-  const unavailable = (date: string) => (min !== null && date < min) || (max !== null && date > max) || offDays.includes(parse(date).getUTCDay()) || offDates.has(date);
-  return { mode, locale, min, max, weekStart, single, range, anchor: single ?? range.from, unavailable, outside: data.outsideDays !== "false" };
+  const unavailable = (date: string) =>
+    (min !== null && date < min) || (max !== null && date > max) || offDays.includes(parse(date).getUTCDay()) || offDates.has(date);
+  return {
+    mode,
+    locale,
+    min,
+    max,
+    weekStart,
+    single,
+    range,
+    anchor: single ?? range.from,
+    unavailable,
+    outside: data.outsideDays !== "false",
+  };
 }
 
 function visibleMonth(cal: HTMLElement): string {
   if (/^\d{4}-\d{2}$/.test(cal.dataset.month ?? "") && valid(`${cal.dataset.month}-01`)) return cal.dataset.month!;
   const { anchor, min, max } = config(cal);
   const today = todayISO();
-  return (cal.dataset.month = monthOf(anchor ?? (min && min > today ? min : max && max < today ? max : today)));
+  const month = monthOf(anchor ?? (min && min > today ? min : max && max < today ? max : today));
+  cal.dataset.month = month;
+  return month;
 }
 
 function skeleton(cal: HTMLElement): void {
   const previous = cal.dataset.previousLabel ?? "Previous month";
   const next = cal.dataset.nextLabel ?? "Next month";
   const titleId = `${cal.id || `z-calendar-${++calSeq}`}-title`;
-  cal.innerHTML = `<div class="z-calendar__header"><button type="button" class="z-calendar__nav" aria-label="${esc(previous)}" title="${esc(previous)}">${iconSvg("chevron-left", { size: 16 })}</button><div class="z-calendar__title" id="${esc(titleId)}" aria-live="polite"></div><button type="button" class="z-calendar__nav" aria-label="${esc(next)}" title="${esc(next)}">${iconSvg("chevron-right", { size: 16 })}</button></div><table class="z-calendar__grid" role="grid" aria-labelledby="${esc(titleId)}"><thead><tr></tr></thead><tbody></tbody></table>`;
+  setMarkup(
+    cal,
+    `<div class="z-calendar__header"><button type="button" class="z-calendar__nav" aria-label="${esc(previous)}" title="${esc(previous)}">${iconSvg("chevron-left", { size: 16 })}</button><div class="z-calendar__title" id="${esc(titleId)}" aria-live="polite"></div><button type="button" class="z-calendar__nav" aria-label="${esc(next)}" title="${esc(next)}">${iconSvg("chevron-right", { size: 16 })}</button></div><table class="z-calendar__grid" role="grid" aria-labelledby="${esc(titleId)}"><thead><tr></tr></thead><tbody></tbody></table>`,
+  );
 }
 
 /** Dibuja el mes visible: título, días de la semana y semanas. */
@@ -132,7 +122,12 @@ function renderMonth(cal: HTMLElement): void {
   const first = `${month}-01`;
   const last = `${month}-${pad(daysInMonth(year, monthIndex))}`;
   const fmt = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(c.locale, { ...options, timeZone: "UTC" });
-  const [short, long, day, full] = [fmt({ weekday: "short" }), fmt({ weekday: "long" }), fmt({ day: "numeric" }), fmt({ dateStyle: "full" })];
+  const [short, long, day, full] = [
+    fmt({ weekday: "short" }),
+    fmt({ weekday: "long" }),
+    fmt({ day: "numeric" }),
+    fmt({ dateStyle: "full" }),
+  ];
 
   title.textContent = fmt({ month: "long", year: "numeric" }).format(parse(first));
   const [back, forward] = cal.querySelectorAll<HTMLButtonElement>(".z-calendar__nav");
@@ -143,17 +138,27 @@ function renderMonth(cal: HTMLElement): void {
   const total = Math.ceil((lead + daysInMonth(year, monthIndex)) / 7) * 7;
   const origin = addDays(first, -lead);
   const dates = Array.from({ length: total }, (_, i) => addDays(origin, i));
-  head.innerHTML = dates.slice(0, 7).map((date) => `<th scope="col" abbr="${esc(long.format(parse(date)))}" class="z-calendar__weekday">${esc(short.format(parse(date)))}</th>`).join("");
+  setMarkup(
+    head,
+    dates
+      .slice(0, 7)
+      .map(
+        (date) =>
+          `<th scope="col" abbr="${esc(long.format(parse(date)))}" class="z-calendar__weekday">${esc(short.format(parse(date)))}</th>`,
+      )
+      .join(""),
+  );
   let rows = "";
   dates.forEach((date, i) => {
     if (i % 7 === 0) rows += "<tr>";
     const out = date < first || date > last;
-    rows += out && !c.outside
-      ? '<td class="z-calendar__cell" data-outside=""></td>'
-      : `<td class="z-calendar__cell" aria-selected="false"><button type="button" class="z-calendar__day" data-date="${date}"${out ? ' data-outside=""' : ""} aria-label="${esc(full.format(parse(date)))}" tabindex="-1">${esc(day.format(parse(date)))}</button></td>`;
+    rows +=
+      out && !c.outside
+        ? '<td class="z-calendar__cell" data-outside=""></td>'
+        : `<td class="z-calendar__cell" aria-selected="false"><button type="button" class="z-calendar__day" data-date="${date}"${out ? ' data-outside=""' : ""} aria-label="${esc(full.format(parse(date)))}" tabindex="-1">${esc(day.format(parse(date)))}</button></td>`;
     if (i % 7 === 6) rows += "</tr>";
   });
-  body.innerHTML = rows;
+  setMarkup(body, rows);
   paint(cal);
 }
 
@@ -167,8 +172,8 @@ function paint(cal: HTMLElement): void {
   const tabbable = [state.focused, c.anchor, today].find(inMonth) ?? `${month}-01`;
   const { from, to } = c.range;
   const previewing = c.mode === "range" && from && !to && state.preview && state.preview !== from ? state.preview : null;
-  const bandFrom = previewing ? (previewing < from! ? previewing : from) : from;
-  const bandTo = previewing ? (previewing < from! ? from : previewing) : to;
+  // Las fechas ISO se ordenan como texto: la banda va de la menor a la mayor.
+  const [bandFrom, bandTo] = previewing && from ? (previewing < from ? [previewing, from] : [from, previewing]) : [from, to];
   for (const button of cal.querySelectorAll<HTMLElement>(".z-calendar__day")) {
     const date = button.dataset.date!;
     const cell = button.parentElement!;
@@ -257,7 +262,8 @@ function onCalendarKey(cal: HTMLElement, date: string, event: KeyboardEvent): vo
     PageUp: () => addMonths(date, event.shiftKey ? -12 : -1),
     PageDown: () => addMonths(date, event.shiftKey ? 12 : 1),
   };
-  const move = moves[event.key];
+  // En RTL la rejilla se refleja: la flecha izquierda va al día siguiente.
+  const move = typeof event.key === "string" ? moves[logicalKey(event.key, cal)] : undefined;
   if (!move) return;
   event.preventDefault();
   focusDate(cal, move());
@@ -266,15 +272,32 @@ function onCalendarKey(cal: HTMLElement, date: string, event: KeyboardEvent): vo
 /* ---------- DatePicker ---------- */
 
 const PICKER = ".z-datepicker";
-const FORWARDED = ["mode", "min", "max", "locale", "weekStart", "disabledWeekdays", "disabledDates", "outsideDays", "previousLabel", "nextLabel"];
+const FORWARDED = [
+  "mode",
+  "min",
+  "max",
+  "locale",
+  "weekStart",
+  "disabledWeekdays",
+  "disabledDates",
+  "outsideDays",
+  "previousLabel",
+  "nextLabel",
+];
 
 function pickerParts(picker: HTMLElement) {
   const control = picker.querySelector<HTMLButtonElement>("button.z-select__control");
   const panel = popupFor(control);
-  return { control, panel, cal: panel?.querySelector<HTMLElement>(".z-calendar") ?? null, hidden: picker.querySelector<HTMLInputElement>('input[type="hidden"]') };
+  return {
+    control,
+    panel,
+    cal: panel?.querySelector<HTMLElement>(".z-calendar") ?? null,
+    hidden: picker.querySelector<HTMLInputElement>('input[type="hidden"]'),
+  };
 }
 
-const pickerMode = (picker: HTMLElement) => (picker.dataset.mode ?? pickerParts(picker).cal?.dataset.mode) === "range" ? "range" : "single";
+const pickerMode = (picker: HTMLElement) =>
+  (picker.dataset.mode ?? pickerParts(picker).cal?.dataset.mode) === "range" ? "range" : "single";
 
 function syncPicker(picker: HTMLElement): void {
   const { control, hidden } = pickerParts(picker);
@@ -377,7 +400,7 @@ function previewAt(target: EventTarget | null, leaving = false): void {
   if (!(target instanceof Element)) return;
   const day = target.closest<HTMLElement>(".z-calendar__day");
   const cal = calendarAt(target);
-  if (!cal || cal.dataset.mode !== "range") return;
+  if (cal?.dataset.mode !== "range") return;
   const state = stateOf(cal);
   const next = leaving ? null : (day?.dataset.date ?? state.preview);
   if (next === state.preview) return;
@@ -385,16 +408,16 @@ function previewAt(target: EventTarget | null, leaving = false): void {
   paint(cal);
 }
 
-export function setup(): void {
-  document.addEventListener("click", onClick);
-  document.addEventListener("keydown", (event) => {
+export function setup(on: Listen): void {
+  on(document, "click", onClick);
+  on(document, "keydown", (event) => {
     const target = event.target;
     if (!(target instanceof Element) || event.defaultPrevented) return;
     const day = target.closest<HTMLElement>(".z-calendar__grid .z-calendar__day");
     const cal = day && calendarAt(day);
     if (cal && day.dataset.date) onCalendarKey(cal, day.dataset.date, event);
   });
-  document.addEventListener("focusin", (event) => {
+  on(document, "focusin", (event) => {
     const day = (event.target as Element).closest?.<HTMLElement>(".z-calendar__day");
     const cal = day && calendarAt(day);
     if (!cal || !day.dataset.date) return;
@@ -403,8 +426,8 @@ export function setup(): void {
     if (cal.dataset.mode === "range") state.preview = day.dataset.date;
     paint(cal);
   });
-  document.addEventListener("pointerover", (event) => previewAt(event.target));
-  document.addEventListener("pointerout", (event) => {
+  on(document, "pointerover", (event) => previewAt(event.target));
+  on(document, "pointerout", (event) => {
     const grid = (event.target as Element).closest?.(".z-calendar__grid");
     if (grid && !grid.contains(event.relatedTarget as Node | null)) previewAt(event.target, true);
   });

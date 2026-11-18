@@ -1,33 +1,33 @@
 # @zuccadev-labs/zuix-tokens
 
-Fuente única de los valores de diseño de la suite zuix: color, material, tipografía, espaciado, forma,
-elevación, movimiento, capas y medidas de layout. Iconos, componentes y layouts leen de aquí. Una marca
-es un archivo JSON; cambiar de marca no toca ningún componente.
+The single source of design values for the zuix suite: color, material, typography, spacing, shape,
+elevation, motion, layers and layout measures. Icons, components and layouts read from here. A brand is one
+JSON file; switching brands does not touch any component.
 
-No tiene dependencias ni JavaScript de ejecución: publica CSS y JSON.
+It has no dependencies and no runtime JavaScript: it publishes CSS and JSON.
 
-## Instalación
+## Install
 
 ```
 pnpm add @zuccadev-labs/zuix-tokens
 ```
 
-También viene dentro de la suite completa, [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
+It also comes inside the full suite, [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 
-## Uso
+## Usage
 
-Con un bundler (Vite, webpack, Next.js…), en la hoja de estilos de la aplicación o desde JavaScript:
+With a bundler (Vite, webpack, Next.js…), from the application stylesheet or from JavaScript:
 
 ```css
-@import "@zuccadev-labs/zuix-tokens/tokens.css";          /* todas las marcas */
+@import "@zuccadev-labs/zuix-tokens/tokens.css";          /* all brands */
 ```
 
 ```js
 import "@zuccadev-labs/zuix-tokens/tokens.css";
 ```
 
-Para cargar una sola marca en `:root`, se importa `@zuccadev-labs/zuix-tokens/css/dazlabs.css` en lugar de
-`tokens.css`. Sin bundler se enlaza `node_modules/@zuccadev-labs/zuix-tokens/dist/tokens.css` con un `<link>`.
+To load a single brand on `:root`, import `@zuccadev-labs/zuix-tokens/css/dazlabs.css` instead of
+`tokens.css`. Without a bundler, link `node_modules/@zuccadev-labs/zuix-tokens/dist/tokens.css`.
 
 ```html
 <html data-theme="dark" data-brand="dazlabs">
@@ -42,43 +42,68 @@ Para cargar una sola marca en `:root`, se importa `@zuccadev-labs/zuix-tokens/cs
 }
 ```
 
-- `data-theme` es `dark` o `light`. Sin el atributo se sigue la preferencia del sistema.
-- `data-brand` elige la marca cuando se importa `tokens.css`. La marca por defecto va en `:root`.
+- `data-theme` is `dark` or `light`. Without the attribute the system preference is followed.
+- `data-brand` picks the brand when `tokens.css` is imported. The default brand lives on `:root`.
 
-## Entradas
+## One token per use of a color
 
-| Entrada | Contenido |
-|---|---|
-| `@zuccadev-labs/zuix-tokens/tokens.css` | Todas las marcas: la de por defecto en `:root`, las demás con `data-brand` |
-| `@zuccadev-labs/zuix-tokens/css/<marca>.css` | Una sola marca en `:root` |
-| `@zuccadev-labs/zuix-tokens/tailwind.css` | Puente a utilidades de Tailwind v4 (`@theme inline`) |
-| `@zuccadev-labs/zuix-tokens/docusaurus.css` | Mapa a las variables del tema clásico de Docusaurus |
-| `@zuccadev-labs/zuix-tokens/tokens.json` | Todo el contrato, para herramientas y agentes |
-| `@zuccadev-labs/zuix-tokens/brands/<marca>.json` | Definición de cada marca |
-| `@zuccadev-labs/zuix-tokens/schema/brand.schema.json` | Esquema JSON de una marca |
-| `@zuccadev-labs/zuix-tokens/compat/<proyecto>.css` | Capa de compatibilidad: variables antiguas de un proyecto como alias de tokens |
+Brand and status colors come in three flavors. Mixing them up is the usual way to lose contrast.
 
-## Niveles
-
-| Nivel | Variable | Quién lo edita |
+| Use | Token | Contrast it guarantees |
 |---|---|---|
-| Primitivo | `--zp-red-500` | La marca |
-| Semántico | `--z-accent`, `--z-surface`, `--z-fg` | La marca, al asignar primitivos |
-| Componente | `--z-card-bg`, `--z-button-radius` | El sistema |
+| Fill, border, icon, indicator | `--z-accent`, `--z-success`, `--z-warning`, `--z-danger`, `--z-info` | 3:1 against the surrounding surface |
+| Colored text and links | `--z-accent-text`, `--z-success-text`, `--z-warning-text`, `--z-danger-text`, `--z-info-text` | 4.5:1 on every surface and on its own `-soft` background |
+| Background with text on top | `--z-accent-solid`, `--z-success-solid`, `--z-warning-solid`, `--z-danger-solid`, `--z-info-solid` | 4.5:1 with `--z-fg-on-accent` in both themes |
 
-Una aplicación lee tokens semánticos y de componente, nunca primitivos.
+## Entry points
 
-## Marcas incluidas
+| Entry | Contents |
+|---|---|
+| `@zuccadev-labs/zuix-tokens/tokens.css` | All brands: the default one on `:root`, the others under `data-brand` |
+| `@zuccadev-labs/zuix-tokens/css/<brand>.css` | A single brand on `:root` |
+| `@zuccadev-labs/zuix-tokens/tailwind.css` | Bridge to Tailwind 4 utilities (`@theme inline`) |
+| `@zuccadev-labs/zuix-tokens/docusaurus.css` | Map to the variables of the Docusaurus classic theme |
+| `@zuccadev-labs/zuix-tokens/tokens.json` | The whole contract, for tools and agents |
+| `@zuccadev-labs/zuix-tokens/dtcg/<brand>.<theme>.tokens.json` | Design Tokens format (DTCG 2025.10), one self-contained file per brand and theme |
+| `@zuccadev-labs/zuix-tokens/brands/<brand>.json` | The definition of each brand |
+| `@zuccadev-labs/zuix-tokens/schema/brand.schema.json` | JSON schema of a brand |
+| `@zuccadev-labs/zuix-tokens/compat/<project>.css` | Compatibility layer: a project's old variables as aliases of tokens |
 
-`dazlabs` (por defecto), `zutool` y `zenith`, cada una en tema oscuro y claro. La generación valida, por
-marca y tema, los tokens obligatorios y el contraste WCAG de ocho pares de texto y fondo.
+## Levels
 
-## Documentación
+| Level | Variable | Who edits it |
+|---|---|---|
+| Primitive | `--zp-red-500` | The brand |
+| Semantic | `--z-accent`, `--z-surface`, `--z-fg` | The brand, by assigning primitives |
+| Component | `--z-card-bg`, `--z-button-radius` | The system |
 
-- [Guía de tokens y creación de marcas](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/01-tokens.md)
-- [Migración desde variables CSS propias](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/07-migracion.md)
-- [Cambios](https://github.com/zuccadev-labs/zuix/blob/main/tokens/CHANGELOG.md)
+An application reads semantic and component tokens, never primitives.
 
-## Licencia
+## Brands and validation
+
+`dazlabs` (default), `zutool` and `zenith`, each in a dark and a light theme. The build validates every
+brand and theme: the schema, the required tokens, and WCAG 2.2 contrast — every text token on every surface
+(4.5:1), the color pairs the component stylesheets actually use, and control borders and the focus ring
+(3:1). A pair below its minimum fails the build.
+
+The tokens also react to system preferences: `pointer: coarse` raises the touch target to 40 px,
+`prefers-contrast: more` makes glass opaque and strengthens borders, and `forced-colors` removes the
+gradient and the specular highlight.
+
+## Documentation
+
+The guides are written in Spanish.
+
+- [Tokens guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/01-tokens.md)
+- [Creating a brand](https://github.com/zuccadev-labs/zuix/blob/main/docs/agents/01-marca.md)
+- [Migrating a project that has its own CSS variables](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/07-migracion.md)
+- [Changelog](https://github.com/zuccadev-labs/zuix/blob/main/tokens/CHANGELOG.md)
+
+## Español
+
+Fuente única de los valores de diseño de la suite zuix. Una marca es un archivo JSON. La guía está en
+español en [`docs/users/01-tokens.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/01-tokens.md).
+
+## License
 
 [MIT](https://github.com/zuccadev-labs/zuix/blob/main/LICENSE).

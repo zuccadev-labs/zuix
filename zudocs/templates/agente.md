@@ -27,7 +27,7 @@ tipo: agente
 
 <!-- Cómo se hace bien cada caso frecuente: código mínimo correcto y, si ayuda, el contraejemplo. -->
 
-### 
+### Nombre del caso
 
 ```tsx
 

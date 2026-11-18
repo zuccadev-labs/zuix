@@ -3,11 +3,7 @@
   "group": "layout",
   "description": "Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.",
   "import": "import { Grid, Stack, Inline } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "Grid",
-    "Stack",
-    "Inline"
-  ],
+  "exports": ["Grid", "Stack", "Inline"],
   "props": [
     {
       "name": "Grid.min",
@@ -18,41 +14,18 @@
     {
       "name": "gap",
       "type": "enum",
-      "values": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        8,
-        10,
-        12,
-        16,
-        20
-      ],
+      "values": [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20],
       "description": "Paso de la escala de espaciado."
     },
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end",
-        "stretch"
-      ]
+      "values": ["start", "center", "end", "stretch"]
     },
     {
       "name": "Inline.justify",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end",
-        "between"
-      ]
+      "values": ["start", "center", "end", "between"]
     },
     {
       "name": "Inline.wrap",
@@ -79,11 +52,7 @@
     "space-16",
     "space-20"
   ],
-  "classes": [
-    "z-grid",
-    "z-stack",
-    "z-inline"
-  ],
+  "classes": ["z-grid", "z-stack", "z-inline"],
   "examples": [
     {
       "title": "Rejilla de métricas",

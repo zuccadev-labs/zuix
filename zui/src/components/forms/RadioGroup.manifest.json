@@ -20,10 +20,7 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "vertical",
-        "horizontal"
-      ],
+      "values": ["vertical", "horizontal"],
       "default": "vertical"
     },
     {
@@ -41,25 +38,21 @@
       "type": "string"
     },
     {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "El formulario no se envía sin una opción elegida; el grupo expone aria-required."
+    },
+    {
       "name": "aria-label",
       "type": "string",
       "description": "Nombre accesible si no está dentro de un Field."
     }
   ],
-  "states": [
-    "rest",
-    "invalid",
-    "disabled"
-  ],
-  "tokens": [
-    "danger",
-    "space-2",
-    "space-4"
-  ],
-  "classes": [
-    "z-radio-group"
-  ],
-  "a11y": "Radix RadioGroup: role radiogroup, foco itinerante con flechas.",
+  "states": ["rest", "invalid", "disabled"],
+  "tokens": ["danger", "space-2", "space-4"],
+  "classes": ["z-radio-group"],
+  "a11y": "Patrón APG «radiogroup»: foco itinerante con flechas (reflejadas en RTL), que también eligen.",
   "examples": [
     {
       "title": "Vertical",
@@ -70,5 +63,5 @@
       "code": "<Field label=\"Density\">\n  <RadioGroup orientation=\"horizontal\" value={density} onValueChange={setDensity}>\n    <Radio value=\"compact\">Compact</Radio>\n    <Radio value=\"comfortable\">Comfortable</Radio>\n  </RadioGroup>\n</Field>"
     }
   ],
-  "origin": "Nuevo, sobre RadioGroup de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

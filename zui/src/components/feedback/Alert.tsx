@@ -26,7 +26,17 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"
 }
 
 /** Aviso en línea sobre el resultado de una acción o el estado del sistema. */
-export function Alert({ tone = "info", title, icon, actions, onDismiss, dismissLabel = "Dismiss", className, children, ...rest }: AlertProps) {
+export function Alert({
+  tone = "info",
+  title,
+  icon,
+  actions,
+  onDismiss,
+  dismissLabel = "Dismiss",
+  className,
+  children,
+  ...rest
+}: AlertProps) {
   // Lo urgente interrumpe (alert); lo informativo se anuncia con cortesía (status).
   const role = tone === "danger" || tone === "warning" ? "alert" : "status";
   return (

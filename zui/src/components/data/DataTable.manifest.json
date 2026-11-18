@@ -60,10 +60,7 @@
     {
       "name": "density",
       "type": "enum",
-      "values": [
-        "compact",
-        "comfortable"
-      ],
+      "values": ["compact", "comfortable"],
       "default": "comfortable"
     },
     {
@@ -96,15 +93,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "sorted",
-    "selected",
-    "empty"
-  ],
+  "states": ["rest", "hover", "focus", "active", "sorted", "selected", "empty"],
   "tokens": [
     "card-border",
     "card-radius",
@@ -137,10 +126,7 @@
     "focus-ring",
     "accent"
   ],
-  "classes": [
-    "z-table",
-    "z-table-wrap"
-  ],
+  "classes": ["z-table", "z-table-wrap"],
   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio.",
   "examples": [
     {

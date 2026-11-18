@@ -5,6 +5,49 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+Qué hay que tocar en una aplicación está en la [guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).
+
+### Cambios incompatibles
+
+- Node 22.12 o posterior (antes, 20). Node 20 terminó su soporte el 2026-04-30.
+- `TitleBar` es un `<header>` (región `banner`) en lugar de un `<div>`. Las clases no cambian; `as="div"`
+  recupera el elemento anterior.
+- El tirador de los paneles del `Shell` usa `data-side="end"` (sidebar) y `"start"` (inspector) en lugar de
+  `right` y `left`. Afecta a quien escribió el marcado a mano o tiene selectores sobre ese atributo.
+- `.z-shell` es un contenedor de consultas (`container: z-shell / inline-size`). Antes de medirse (HTML de
+  servidor, o antes de `init()`), un panel `auto` que no cabe no se muestra: una ventana estrecha ya no
+  enseña un instante los paneles acoplados.
+- El botón de cierre de una pestaña mide 24 × 24 px (antes 18): el mínimo de WCAG 2.5.8.
+- El eyebrow de `PageHeader` usa `--z-accent-text` y el contador del rail `--z-danger-solid`, para llegar a
+  4.5:1. Cambia su tono.
+
+### Añadido
+
+- `Shell`: `skipLinkLabel` (enlace para saltar al contenido, WCAG 2.4.1), `mainAs` (`main`, `div` o
+  `section`, para shells anidados o varios en una página) y `resizeLabel` en cada panel.
+- `ResizeHandle`: lados lógicos `start` y `end`, que siguen la dirección de escritura, y `controls`
+  (`aria-controls`). En HTML: `data-side="start|end"`.
+- `SplitPane`: Inicio y Fin llevan el divisor a su mínimo y a su máximo; doble clic reparte a partes iguales
+  los dos paneles; cada divisor lleva `aria-controls`.
+- `TabStrip`: `controls` en cada pestaña (`aria-controls` del panel).
+- `TitleBar`: prop `as` (`header` o `div`). `PageHeader` y `PageSection`: `headingLevel`.
+- `@zuccadev-labs/zuix-zout/dom`: `dispose(root)` suelta los observadores de un bloque de marcado;
+  `hydrate()` completa un `.z-resize` escrito solo con su clase (rol, orientación, límites).
+- Colores forzados (contraste alto de Windows): foco, elemento activo del rail, pestaña seleccionada,
+  divisores y cajones se distinguen con contornos y colores del sistema.
+
+### Corregido
+
+- RTL: los cajones, el tirador, el arrastre y las flechas de `SplitPane`, y las flechas de `TabStrip`,
+  siguen la dirección de escritura; la hoja usa propiedades lógicas.
+- `Shell` (React): Escape no cierra el cajón si lo gestiona un `<dialog>` o un popover abierto por encima.
+- `ResizeHandle` y `SplitPane` (React): solo arrastra el botón principal; el arrastre termina si se pierde
+  la captura del puntero.
+- `@zuccadev-labs/zuix-zout/dom`: un selector inválido en `data-z-shell` o `data-z-resize` ya no lanza una
+  excepción; un shell retirado del documento deja de observarse; los iconos se crean con el DOM (compatible
+  con Trusted Types); `data-z-shell="#id"` manda sobre el shell que contiene al botón.
+- El foco de los controles de layout sigue visible con colores forzados.
+
 ## [0.1.0] - 2026-11-14
 
 Primera versión publicada.

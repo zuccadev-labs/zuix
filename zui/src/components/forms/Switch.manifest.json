@@ -21,10 +21,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -35,10 +32,7 @@
     {
       "name": "labelPosition",
       "type": "enum",
-      "values": [
-        "start",
-        "end"
-      ],
+      "values": ["start", "end"],
       "default": "end"
     },
     {
@@ -49,16 +43,21 @@
     {
       "name": "name",
       "type": "string"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "on",
+      "description": "Valor que envía el formulario cuando está activado."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "El formulario no se envía si está desactivado."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "checked",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "checked", "disabled"],
   "tokens": [
     "space-2",
     "fg",
@@ -77,10 +76,8 @@
     "shadow-sm",
     "ease-spring"
   ],
-  "classes": [
-    "z-switch"
-  ],
-  "a11y": "Radix Switch: role switch, Espacio o Enter para alternar.",
+  "classes": ["z-switch"],
+  "a11y": "Patrón APG «switch»: botón con role switch y un `input type=checkbox` oculto para formularios, Espacio o Enter para alternar.",
   "examples": [
     {
       "title": "Con etiqueta",
@@ -91,5 +88,5 @@
       "code": "<Switch size=\"sm\" aria-label=\"Enable rule\" defaultChecked />"
     }
   ],
-  "origin": "Switch de zutool, sobre Switch de radix-ui."
+  "origin": "Switch de zutool, con primitiva propia (patrón APG)."
 }

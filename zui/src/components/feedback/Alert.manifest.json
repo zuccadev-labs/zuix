@@ -7,12 +7,7 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "info",
-        "success",
-        "warning",
-        "danger"
-      ],
+      "values": ["info", "success", "warning", "danger"],
       "default": "info"
     },
     {
@@ -44,12 +39,7 @@
       "description": "Mensaje."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active"
-  ],
+  "states": ["rest", "hover", "focus", "active"],
   "tokens": [
     "info",
     "info-soft",
@@ -75,9 +65,7 @@
     "surface-3",
     "focus-ring"
   ],
-  "classes": [
-    "z-alert"
-  ],
+  "classes": ["z-alert"],
   "a11y": "danger y warning usan role=\"alert\"; info y success, role=\"status\". El botón de cierre tiene nombre accesible.",
   "examples": [
     {

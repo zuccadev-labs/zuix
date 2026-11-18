@@ -24,7 +24,15 @@ export interface StepperProps {
 
 const DEFAULT_STATUS = { complete: "Completed", current: "Current", upcoming: "Upcoming" };
 
-export function Stepper({ steps, current, orientation = "horizontal", onStepSelect, label = "Progress", statusLabels = DEFAULT_STATUS, className }: StepperProps) {
+export function Stepper({
+  steps,
+  current,
+  orientation = "horizontal",
+  onStepSelect,
+  label = "Progress",
+  statusLabels = DEFAULT_STATUS,
+  className,
+}: StepperProps) {
   return (
     <ol className={cx("z-stepper", className)} data-orientation={orientation} aria-label={label}>
       {steps.map((step, i) => {
@@ -42,6 +50,7 @@ export function Stepper({ steps, current, orientation = "horizontal", onStepSele
           </>
         );
         return (
+          // biome-ignore lint/suspicious/noArrayIndexKey: un paso es su número de orden (el mismo índice que recibe `onStepSelect`); `label` puede ser un nodo.
           <li key={i} className="z-stepper__step" data-state={state} aria-current={state === "current" ? "step" : undefined}>
             {onStepSelect && state === "complete" ? (
               <button type="button" className="z-stepper__body" onClick={() => onStepSelect(i)}>

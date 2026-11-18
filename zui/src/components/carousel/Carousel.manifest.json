@@ -5,35 +5,114 @@
   "import": "import { Carousel } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     { "name": "items", "type": "T[]", "required": true, "description": "Datos de los slides." },
-    { "name": "renderItem", "type": "(item: T, index: number, state: CarouselSlideState) => ReactNode", "required": true, "description": "Dibuja un slide. `state` trae index, count, active y clone (réplica del bucle: inerte y oculta a lectores de pantalla)." },
-    { "name": "getKey", "type": "(item: T, index: number) => Key", "description": "Clave estable de cada elemento. Por defecto, el índice." },
-    { "name": "effect", "type": "enum", "values": ["lens", "none"], "default": "lens", "description": "Lente curva o tira plana. Con prefers-reduced-motion siempre es plana y sin animación." },
-    { "name": "loop", "type": "boolean", "default": true, "description": "Bucle infinito. Sin bucle la tira tiene topes y las flechas se deshabilitan en los extremos." },
+    {
+      "name": "renderItem",
+      "type": "(item: T, index: number, state: CarouselSlideState) => ReactNode",
+      "required": true,
+      "description": "Dibuja un slide. `state` trae index, count, active y clone (réplica del bucle: inerte y oculta a lectores de pantalla)."
+    },
+    {
+      "name": "getKey",
+      "type": "(item: T, index: number) => Key",
+      "description": "Clave estable de cada elemento. Por defecto, el índice."
+    },
+    {
+      "name": "effect",
+      "type": "enum",
+      "values": ["lens", "none"],
+      "default": "lens",
+      "description": "Lente curva o tira plana. Con prefers-reduced-motion siempre es plana y sin animación."
+    },
+    {
+      "name": "loop",
+      "type": "boolean",
+      "default": true,
+      "description": "Bucle infinito. Sin bucle la tira tiene topes y las flechas se deshabilitan en los extremos."
+    },
     { "name": "ariaLabel", "type": "string", "required": true, "description": "Nombre accesible de la región." },
-    { "name": "labels", "type": "Partial<CarouselLabels>", "description": "Textos: previous, next, slide(index, count) con index desde 0, carousel y slideRole (aria-roledescription). Por defecto en inglés." },
+    {
+      "name": "labels",
+      "type": "Partial<CarouselLabels>",
+      "description": "Textos: previous, next, slide(index, count) con index desde 0, carousel y slideRole (aria-roledescription). Por defecto en inglés."
+    },
     { "name": "defaultIndex", "type": "number", "default": 0, "description": "Slide centrado al montar." },
-    { "name": "onIndexChange", "type": "(index: number) => void", "description": "Cambia el slide centrado; durante un arrastre o un desplazamiento largo avisa de cada slide que cruza el centro." },
-    { "name": "slideWidth", "type": "number | string", "description": "Ancho de cada slide (px o longitud CSS). Fija --z-carousel-slide-width." },
+    {
+      "name": "onIndexChange",
+      "type": "(index: number) => void",
+      "description": "Cambia el slide centrado; durante un arrastre o un desplazamiento largo avisa de cada slide que cruza el centro."
+    },
+    {
+      "name": "slideWidth",
+      "type": "number | string",
+      "description": "Ancho de cada slide (px o longitud CSS). Fija --z-carousel-slide-width."
+    },
     { "name": "gap", "type": "number | string", "description": "Separación entre slides (px o longitud CSS). Fija --z-carousel-gap." },
-    { "name": "rasterize", "type": "(item: T, index: number, size: CarouselRasterSize) => CarouselRasterSource | Promise<CarouselRasterSource>", "description": "Opcional. Imagen (o URL con CORS) de cada slide tal como se ve; se ajusta en modo cover al tamaño del slide. Activa el dibujo WebGL2 de las zonas curvas con refracción cromática. Sin esta prop, sin WebGL2 o ante cualquier fallo, la lente usa transformaciones CSS." },
+    {
+      "name": "rasterize",
+      "type": "(item: T, index: number, size: CarouselRasterSize) => CarouselRasterSource | Promise<CarouselRasterSource>",
+      "description": "Opcional. Imagen (o URL con CORS) de cada slide tal como se ve; se ajusta en modo cover al tamaño del slide. Activa el dibujo WebGL2 de las zonas curvas con refracción cromática. Sin esta prop, sin WebGL2 o ante cualquier fallo, la lente usa transformaciones CSS."
+    },
     { "name": "ref", "type": "Ref<HTMLDivElement>", "description": "Elemento raíz." }
   ],
   "states": ["rest", "dragging", "focus", "disabled"],
   "modes": [
     { "name": "css", "description": "Lente por defecto: cada slide real se deforma con matrix3d. Admite cualquier contenido React." },
-    { "name": "gl", "description": "Con `rasterize` y WebGL2: la franja central es el slide real y las zonas curvas se dibujan en un lienzo. En @zuccadev-labs/zuix-zui/dom se pide declarando la imagen de cada slide (data-raster, data-raster-src) o con carousel(el, { rasterize }); los shaders se cargan bajo demanda (@zuccadev-labs/zuix-zui/dom/carousel-gl)." },
+    {
+      "name": "gl",
+      "description": "Con `rasterize` y WebGL2: la franja central es el slide real y las zonas curvas se dibujan en un lienzo. En @zuccadev-labs/zuix-zui/dom se pide declarando la imagen de cada slide (data-raster, data-raster-src) o con carousel(el, { rasterize }); los shaders se cargan bajo demanda (@zuccadev-labs/zuix-zui/dom/carousel-gl)."
+    },
     { "name": "flat", "description": "effect=\"none\" o prefers-reduced-motion: tira plana; el ajuste es inmediato." }
   ],
-  "tokens": ["fg", "fg-subtle", "surface", "surface-2", "line", "line-strong", "accent", "focus-ring", "card-radius", "radius-full", "control-height-md", "space-4", "space-6", "font-mono", "text-small", "weight-semibold", "tracking-wide", "duration-fast", "ease-standard"],
+  "tokens": [
+    "fg",
+    "fg-subtle",
+    "surface",
+    "surface-2",
+    "line",
+    "line-strong",
+    "accent",
+    "focus-ring",
+    "card-radius",
+    "radius-full",
+    "control-height-md",
+    "space-4",
+    "space-6",
+    "font-mono",
+    "text-small",
+    "weight-semibold",
+    "tracking-wide",
+    "duration-fast",
+    "ease-standard"
+  ],
   "cssVars": ["--z-carousel-slide-width", "--z-carousel-gap", "--z-carousel-radius"],
-  "classes": ["z-carousel", "z-carousel__viewport", "z-carousel__stage", "z-carousel__track", "z-carousel__slide", "z-carousel__canvas", "z-carousel__controls", "z-carousel__arrow", "z-carousel__counter", "z-carousel__live"],
+  "classes": [
+    "z-carousel",
+    "z-carousel__viewport",
+    "z-carousel__stage",
+    "z-carousel__track",
+    "z-carousel__slide",
+    "z-carousel__canvas",
+    "z-carousel__controls",
+    "z-carousel__arrow",
+    "z-carousel__counter",
+    "z-carousel__live"
+  ],
   "attributes": ["data-effect", "data-mode", "data-dragging", "data-active", "data-copy", "data-index", "data-raster", "data-raster-src"],
   "icons": ["chevron-left", "chevron-right"],
   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden).",
   "examples": [
-    { "title": "Tarjetas con lente", "code": "<Carousel ariaLabel=\"Featured projects\" items={projects} getKey={(p) => p.id} renderItem={(p, i, { active }) => <ProjectCard project={p} highlighted={active} />} />" },
-    { "title": "Plano, sin bucle y con textos propios", "code": "<Carousel ariaLabel=\"Galería\" effect=\"none\" loop={false} slideWidth={320} gap={16} items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} />} labels={{ previous: \"Anterior\", next: \"Siguiente\", slide: (i, n) => `Foto ${i + 1} de ${n}` }} />" },
-    { "title": "Zonas curvas en WebGL", "code": "<Carousel ariaLabel=\"Gallery\" items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} crossOrigin=\"anonymous\" />} rasterize={(photo) => photo.src} />" }
+    {
+      "title": "Tarjetas con lente",
+      "code": "<Carousel ariaLabel=\"Featured projects\" items={projects} getKey={(p) => p.id} renderItem={(p, i, { active }) => <ProjectCard project={p} highlighted={active} />} />"
+    },
+    {
+      "title": "Plano, sin bucle y con textos propios",
+      "code": "<Carousel ariaLabel=\"Galería\" effect=\"none\" loop={false} slideWidth={320} gap={16} items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} />} labels={{ previous: \"Anterior\", next: \"Siguiente\", slide: (i, n) => `Foto ${i + 1} de ${n}` }} />"
+    },
+    {
+      "title": "Zonas curvas en WebGL",
+      "code": "<Carousel ariaLabel=\"Gallery\" items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} crossOrigin=\"anonymous\" />} rasterize={(photo) => photo.src} />"
+    }
   ],
   "origin": "carousel con efecto lente de un proyecto previo",
   "behavior": "dom",
@@ -47,6 +126,10 @@
       "title": "Plano, sin bucle y con medidas propias",
       "code": "<div id=\"gallery\" class=\"z-carousel\" data-z-carousel data-effect=\"none\" aria-label=\"Gallery\" style=\"--z-carousel-slide-width:240px;--z-carousel-gap:16px\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n    <div class=\"z-card__footer\" data-align=\"end\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-project=\"gallery-atlas\">Open</button>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n    <div class=\"z-card__footer\" data-align=\"end\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-project=\"gallery-beacon\">Open</button>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n    <div class=\"z-card__footer\" data-align=\"end\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-project=\"gallery-cinder\">Open</button>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n    <div class=\"z-card__footer\" data-align=\"end\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-project=\"gallery-drift\">Open</button>\n    </div>\n  </div>\n</div>"
     },
-    {"title": "Zonas curvas en WebGL: cada slide declara su imagen con data-raster; los shaders se cargan bajo demanda", "code": "<div id=\"covers\" class=\"z-carousel\" data-z-carousel data-effect=\"lens\" data-loop aria-label=\"Project covers\" style=\"--z-carousel-slide-width:320px\">\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Atlas cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Beacon cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Cinder cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Drift cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Ember cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Flint cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n</div>", "script": "import { carousel } from \"@zuccadev-labs/zuix-zui/dom\";\n\n// Cada <canvas data-raster> es a la vez el slide y la textura de las zonas curvas. Se pinta con los tokens activos.\nconst covers = document.querySelector(\"#covers\");\nconst token = (name) => getComputedStyle(covers).getPropertyValue(name).trim();\ncovers.querySelectorAll(\"canvas[data-raster]\").forEach((canvas, index) => {\n  const ctx = canvas.getContext(\"2d\");\n  // Fondo opaco: la textura debe verse igual que el slide sobre cualquier fondo.\n  ctx.fillStyle = token(\"--z-reading-bg\");\n  ctx.fillRect(0, 0, canvas.width, canvas.height);\n  ctx.fillStyle = token(\"--z-accent\");\n  for (let bar = 0; bar < 6; bar++) {\n    const height = 60 + (((bar + 1) * (index + 3) * 37) % 170);\n    ctx.globalAlpha = 0.2 + ((bar + index) % 4) * 0.15;\n    ctx.fillRect(40 + bar * 96, canvas.height - 48 - height, 64, height);\n  }\n  ctx.globalAlpha = 1;\n  ctx.fillStyle = token(\"--z-fg\");\n  ctx.font = `700 56px ${token(\"--z-font-sans\") || \"sans-serif\"}`;\n  ctx.textBaseline = \"top\";\n  ctx.fillText(canvas.getAttribute(\"aria-label\"), 40, 36);\n});\n// Los lienzos se han pintado después de activar el carrusel: refresh() rehace las réplicas y las texturas.\ncarousel(covers).refresh();\n// Con contenido HTML en los slides, la imagen se declara aparte: data-raster=\"#id\", data-raster-src=\"url\"\n// o carousel(el, { rasterize: (slide, index, size) => imagen })."}
+    {
+      "title": "Zonas curvas en WebGL: cada slide declara su imagen con data-raster; los shaders se cargan bajo demanda",
+      "code": "<div id=\"covers\" class=\"z-carousel\" data-z-carousel data-effect=\"lens\" data-loop aria-label=\"Project covers\" style=\"--z-carousel-slide-width:320px\">\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Atlas cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Beacon cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Cinder cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Drift cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Ember cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Flint cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n</div>",
+      "script": "import { carousel } from \"@zuccadev-labs/zuix-zui/dom\";\n\n// Cada <canvas data-raster> es a la vez el slide y la textura de las zonas curvas. Se pinta con los tokens activos.\nconst covers = document.querySelector(\"#covers\");\nconst token = (name) => getComputedStyle(covers).getPropertyValue(name).trim();\ncovers.querySelectorAll(\"canvas[data-raster]\").forEach((canvas, index) => {\n  const ctx = canvas.getContext(\"2d\");\n  // Fondo opaco: la textura debe verse igual que el slide sobre cualquier fondo.\n  ctx.fillStyle = token(\"--z-reading-bg\");\n  ctx.fillRect(0, 0, canvas.width, canvas.height);\n  ctx.fillStyle = token(\"--z-accent\");\n  for (let bar = 0; bar < 6; bar++) {\n    const height = 60 + (((bar + 1) * (index + 3) * 37) % 170);\n    ctx.globalAlpha = 0.2 + ((bar + index) % 4) * 0.15;\n    ctx.fillRect(40 + bar * 96, canvas.height - 48 - height, 64, height);\n  }\n  ctx.globalAlpha = 1;\n  ctx.fillStyle = token(\"--z-fg\");\n  ctx.font = `700 56px ${token(\"--z-font-sans\") || \"sans-serif\"}`;\n  ctx.textBaseline = \"top\";\n  ctx.fillText(canvas.getAttribute(\"aria-label\"), 40, 36);\n});\n// Los lienzos se han pintado después de activar el carrusel: refresh() rehace las réplicas y las texturas.\ncarousel(covers).refresh();\n// Con contenido HTML en los slides, la imagen se declara aparte: data-raster=\"#id\", data-raster-src=\"url\"\n// o carousel(el, { rasterize: (slide, index, size) => imagen })."
+    }
   ]
 }

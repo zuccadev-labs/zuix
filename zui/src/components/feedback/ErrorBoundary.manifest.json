@@ -39,10 +39,7 @@
       "default": "Try again"
     }
   ],
-  "states": [
-    "ok",
-    "error"
-  ],
+  "states": ["ok", "error"],
   "tokens": [
     "space-2",
     "space-10",
@@ -66,10 +63,7 @@
     "text-small",
     "space-3"
   ],
-  "classes": [
-    "z-empty",
-    "z-empty--error"
-  ],
+  "classes": ["z-empty", "z-empty--error"],
   "a11y": "La vista por defecto es un ErrorState (role alert).",
   "examples": [
     {

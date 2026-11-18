@@ -34,6 +34,12 @@ const THROW = 280;
 const VELOCITY_WINDOW = 100;
 /** Duración mínima (ms) de esa medida: un salto del puntero en menos tiempo no es una velocidad fiable. */
 const VELOCITY_MIN_SPAN = 16;
+/**
+ * Cola de asentamiento del muelle: a menos de esta distancia (px) y de esta velocidad (px/s) del objetivo, el
+ * movimiento ya no se percibe aunque el muelle siga corrigiendo décimas de píxel.
+ */
+const SETTLE_DISTANCE = 2;
+const SETTLE_SPEED = 40;
 const NO_DRAG = "input, textarea, select, [contenteditable]:not([contenteditable='false'])";
 const FOCUSABLE = "a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex='-1'])";
 
@@ -240,12 +246,7 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
         const p = lensForward(cx, cy, shape, k);
         return { x: p.x - left, y: p.y - y };
       };
-      slot.el.style.transform = quadToMatrix3d(w, h, [
-        corner(left, y),
-        corner(left + w, y),
-        corner(left + w, y + h),
-        corner(left, y + h),
-      ]);
+      slot.el.style.transform = quadToMatrix3d(w, h, [corner(left, y), corner(left + w, y), corner(left + w, y + h), corner(left, y + h)]);
     }
   };
 
@@ -427,9 +428,7 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
       // Textura al doble de la pantalla (hasta 3x): las zonas curvas se amplían sin perder nitidez.
       const scale = Math.min(pixelRatio() * 2, 3);
       const mains = slots.filter((slot) => slot.copy === main);
-      const sources = await Promise.all(
-        mains.map((slot) => rasterize(slot.index, { width: slot.width, height: state.slideH, scale })),
-      );
+      const sources = await Promise.all(mains.map((slot) => rasterize(slot.index, { width: slot.width, height: state.slideH, scale })));
       if (state.disposed || token !== state.rasterToken || state.gl !== gl || gl.lost) return;
       mains.forEach((slot, i) => {
         const source = sources[i];
@@ -485,7 +484,10 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
     if ((state.drag.id !== -1 && state.drag.moved) || !ready()) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest(NO_DRAG)) return;
-    const wasMoving = state.target !== null;
+    // «En movimiento» es lo que se ve moverse. En la cola de asentamiento la tira ya parece quieta (y con pocos
+    // fotogramas por segundo esa cola dura más de un segundo): ahí una pulsación es un clic, no «parar la tira».
+    const wasMoving =
+      state.target !== null && (Math.abs(state.target - state.x) > SETTLE_DISTANCE || Math.abs(state.velocity) > SETTLE_SPEED);
     stopMotion();
     Object.assign(state.drag, {
       id: e.pointerId,
@@ -652,11 +654,7 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
       ? null
       : new ResizeObserver(() => {
           // La primera notificación llega al observar, sin cambio de tamaño: no debe recolocar la tira.
-          if (
-            viewport.clientWidth === state.width &&
-            track.offsetHeight === state.slideH &&
-            track.offsetWidth === state.trackW
-          ) {
+          if (viewport.clientWidth === state.width && track.offsetHeight === state.slideH && track.offsetWidth === state.trackW) {
             return;
           }
           layout();

@@ -13,8 +13,13 @@ type RenderResult = NonNullable<ReturnType<typeof useMermaidRenderResult>>;
 
 function Result({ renderResult }: { renderResult: RenderResult }): ReactNode {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => { if (ref.current) renderResult.bindFunctions?.(ref.current); }, [renderResult]);
-  return <div ref={ref} className={`${MermaidContainerClassName} ${styles.container}`} dangerouslySetInnerHTML={{ __html: renderResult.svg }} />;
+  useEffect(() => {
+    if (ref.current) renderResult.bindFunctions?.(ref.current);
+  }, [renderResult]);
+  return (
+    // biome-ignore lint/security/noDangerouslySetInnerHtml: es el SVG que devuelve Mermaid, que con su securityLevel "strict" (el valor por defecto) lo sanea con DOMPurify. El componente oficial de Docusaurus lo inserta igual.
+    <div ref={ref} className={`${MermaidContainerClassName} ${styles.container}`} dangerouslySetInnerHTML={{ __html: renderResult.svg }} />
+  );
 }
 
 function Renderer({ value, tokens }: Props & { tokens: MermaidTokens | null }): ReactNode {

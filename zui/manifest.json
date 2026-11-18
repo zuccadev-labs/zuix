@@ -126,7 +126,7 @@
      "name": "loading",
      "type": "boolean",
      "default": false,
-     "description": "Muestra un anillo, deshabilita el botón y expone aria-busy."
+     "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
      "name": "fullWidth",
@@ -183,7 +183,7 @@
    "classes": [
     "z-btn"
    ],
-   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y queda deshabilitado.",
+   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
    "examples": [
     {
      "title": "Primario con icono",
@@ -261,7 +261,8 @@
     {
      "name": "loading",
      "type": "boolean",
-     "default": false
+     "default": false,
+     "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
      "name": "...rest",
@@ -402,7 +403,7 @@
    "classes": [
     "z-link"
    ],
-   "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña.",
+   "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña. Deshabilitado: sin href, role=link, aria-disabled y sin ejecutar onClick.",
    "examples": [
     {
      "title": "En un texto",
@@ -507,7 +508,7 @@
    "classes": [
     "z-segmented"
    ],
-   "a11y": "Radix ToggleGroup de tipo single: role radiogroup, flechas para moverse. No permite quedar sin selección.",
+   "a11y": "Patrón APG «radiogroup»: una parada de tabulación; las flechas mueven el foco y la selección (reflejadas en RTL). No permite quedar sin selección.",
    "examples": [
     {
      "title": "Vista",
@@ -518,7 +519,7 @@
      "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
     }
    ],
-   "origin": "Tabs (control segmentado) de zutool, sobre ToggleGroup de radix-ui.",
+   "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/SegmentedControl.manifest.json"
   },
   {
@@ -600,7 +601,7 @@
    "classes": [
     "z-toggle"
    ],
-   "a11y": "Radix Toggle: button con aria-pressed y data-state on/off.",
+   "a11y": "Elemento button con aria-pressed y data-state on/off.",
    "examples": [
     {
      "title": "Solo icono",
@@ -611,7 +612,7 @@
      "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
     }
    ],
-   "origin": "Nuevo, sobre Toggle de radix-ui.",
+   "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/Toggle.manifest.json"
   },
   {
@@ -958,7 +959,7 @@
     },
     {
      "title": "Activable",
-     "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(project.id)}>\n  <CardHeader title={project.name} subtitle={project.owner} />\n</Card>"
+     "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(\"atlas\")}>\n  <CardHeader title=\"Atlas\" subtitle=\"Ana Ruiz\" />\n</Card>"
     }
    ],
    "origin": "Card del design system base con la superficie de tarjeta de zutool.",
@@ -1152,7 +1153,8 @@
     "surface-3",
     "line-strong",
     "focus-ring",
-    "success"
+    "success",
+    "layer-raised"
    ],
    "classes": [
     "z-code"
@@ -2232,7 +2234,7 @@
    "classes": [
     "z-rating"
    ],
-   "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con flechas.",
+   "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con foco itinerante; flechas (reflejadas en RTL), Inicio y Fin mueven y eligen. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo marcado dentro de `[data-z-dom]`; emite z:change { value } en `.z-rating`.",
    "examples": [
     {
      "title": "Lectura",
@@ -2465,7 +2467,8 @@
     "radius-xs",
     "surface-2",
     "focus-ring",
-    "accent"
+    "accent",
+    "layer-raised"
    ],
    "classes": [
     "z-table",
@@ -3169,7 +3172,7 @@
    "classes": [
     "z-calendar"
    ],
-   "a11y": "Tabla con role=grid etiquetada por el título del mes (aria-live). Foco itinerante: un solo día en el orden de tabulación. Flechas mueven por día y semana, Home/End al inicio/fin de la semana, PageUp/PageDown cambian de mes (con Mayús, de año), Enter/Espacio eligen. Cada día lleva la fecha completa como nombre accesible; hoy aria-current=date; no elegibles aria-disabled. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con la misma tabla (role=grid, título con aria-live, aria-multiselectable en modo rango) y las mismas teclas; el módulo mantiene aria-selected, aria-current=date, aria-disabled y el foco itinerante. Los nombres de los botones de mes salen de `data-previous-label` y `data-next-label` (en inglés por defecto) y las fechas se formatean con `data-locale`.",
+   "a11y": "Tabla con role=grid etiquetada por el título del mes (aria-live). Foco itinerante: un solo día en el orden de tabulación. Flechas mueven por día y semana (en RTL izquierda y derecha se invierten), Home/End al inicio/fin de la semana, PageUp/PageDown cambian de mes (con Mayús, de año), Enter/Espacio eligen. Cada día lleva la fecha completa como nombre accesible; hoy aria-current=date; no elegibles aria-disabled. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con la misma tabla (role=grid, título con aria-live, aria-multiselectable en modo rango) y las mismas teclas; el módulo mantiene aria-selected, aria-current=date, aria-disabled y el foco itinerante. Los nombres de los botones de mes salen de `data-previous-label` y `data-next-label` (en inglés por defecto) y las fechas se formatean con `data-locale`.",
    "behavior": "dom",
    "examples": [
     {
@@ -3252,6 +3255,12 @@
      "name": "value",
      "type": "string",
      "default": "on"
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "El formulario no se envía si no está marcada."
     }
    ],
    "states": [
@@ -3287,7 +3296,7 @@
    "classes": [
     "z-check"
    ],
-   "a11y": "Radix Checkbox: role checkbox, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
+   "a11y": "Patrón APG «checkbox»: botón con role checkbox y un `input type=checkbox` oculto para formularios, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
    "examples": [
     {
      "title": "Con descripción",
@@ -3298,7 +3307,7 @@
      "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
     }
    ],
-   "origin": "Nuevo, sobre Checkbox de radix-ui.",
+   "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Checkbox.manifest.json"
   },
   {
@@ -3819,7 +3828,7 @@
     "z-popover",
     "z-calendar"
    ],
-   "a11y": "Botón que abre un diálogo no modal (Popover de Radix) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
+   "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
    "behavior": "dom",
    "examples": [
     {
@@ -3927,7 +3936,7 @@
    "classes": [
     "z-field"
    ],
-   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". `useFieldControl` permite conectar controles propios.",
+   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",
    "examples": [
     {
      "title": "Con ayuda",
@@ -3939,7 +3948,7 @@
     },
     {
      "title": "En línea",
-     "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <Select options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
+     "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <NativeSelect options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
     }
    ],
    "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común.",
@@ -4352,7 +4361,7 @@
      "name": "label",
      "type": "string",
      "default": "Verification code",
-     "description": "Nombre accesible del grupo."
+     "description": "Nombre accesible del grupo. Sin `label` y dentro de un `Field` con etiqueta, el grupo se nombra con ella."
     },
     {
      "name": "cellLabel",
@@ -4396,7 +4405,7 @@
    "classes": [
     "z-otp"
    ],
-   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
+   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
    "behavior": "dom",
    "examples": [
     {
@@ -4477,14 +4486,14 @@
     "z-radio",
     "z-check__text"
    ],
-   "a11y": "Radix RadioGroup.Item: role radio. Solo funciona dentro de `RadioGroup`.",
+   "a11y": "Botón con role radio y un `input type=radio` oculto para formularios. Solo funciona dentro de `RadioGroup`.",
    "examples": [
     {
      "title": "Dentro de un grupo",
      "code": "<RadioGroup aria-label=\"Theme\" defaultValue=\"dark\">\n  <Radio value=\"light\">Light</Radio>\n  <Radio value=\"dark\">Dark</Radio>\n</RadioGroup>"
     }
    ],
-   "origin": "Nuevo, sobre RadioGroup de radix-ui.",
+   "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Radio.manifest.json"
   },
   {
@@ -4530,6 +4539,12 @@
      "type": "string"
     },
     {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "El formulario no se envía sin una opción elegida; el grupo expone aria-required."
+    },
+    {
      "name": "aria-label",
      "type": "string",
      "description": "Nombre accesible si no está dentro de un Field."
@@ -4548,7 +4563,7 @@
    "classes": [
     "z-radio-group"
    ],
-   "a11y": "Radix RadioGroup: role radiogroup, foco itinerante con flechas.",
+   "a11y": "Patrón APG «radiogroup»: foco itinerante con flechas (reflejadas en RTL), que también eligen.",
    "examples": [
     {
      "title": "Vertical",
@@ -4559,7 +4574,7 @@
      "code": "<Field label=\"Density\">\n  <RadioGroup orientation=\"horizontal\" value={density} onValueChange={setDensity}>\n    <Radio value=\"compact\">Compact</Radio>\n    <Radio value=\"comfortable\">Comfortable</Radio>\n  </RadioGroup>\n</Field>"
     }
    ],
-   "origin": "Nuevo, sobre RadioGroup de radix-ui.",
+   "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/RadioGroup.manifest.json"
   },
   {
@@ -4828,7 +4843,7 @@
     "z-select",
     "z-listbox"
    ],
-   "a11y": "Select de Radix: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
+   "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
    "behavior": "dom",
    "examples": [
     {
@@ -4902,6 +4917,12 @@
      "default": 1
     },
     {
+     "name": "minStepsBetweenThumbs",
+     "type": "number",
+     "default": 0,
+     "description": "Pasos mínimos entre dos tiradores."
+    },
+    {
      "name": "orientation",
      "type": "enum",
      "values": [
@@ -4909,6 +4930,12 @@
       "vertical"
      ],
      "default": "horizontal"
+    },
+    {
+     "name": "inverted",
+     "type": "boolean",
+     "default": false,
+     "description": "La pista crece en sentido contrario: de derecha a izquierda (o de arriba abajo)."
     },
     {
      "name": "size",
@@ -4933,6 +4960,16 @@
      "name": "disabled",
      "type": "boolean",
      "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario; con varios tiradores envía un valor por tirador con el mismo nombre."
+    },
+    {
+     "name": "form",
+     "type": "string",
+     "description": "Id del formulario al que pertenece, si no está dentro de él."
     }
    ],
    "states": [
@@ -4956,7 +4993,7 @@
    "classes": [
     "z-slider"
    ],
-   "a11y": "Radix Slider: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
+   "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
    "behavior": "dom",
    "examples": [
     {
@@ -4979,7 +5016,7 @@
      "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
     }
    ],
-   "origin": "Nuevo, sobre Slider de radix-ui.",
+   "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Slider.manifest.json"
   },
   {
@@ -5033,6 +5070,18 @@
     {
      "name": "name",
      "type": "string"
+    },
+    {
+     "name": "value",
+     "type": "string",
+     "default": "on",
+     "description": "Valor que envía el formulario cuando está activado."
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "El formulario no se envía si está desactivado."
     }
    ],
    "states": [
@@ -5064,7 +5113,7 @@
    "classes": [
     "z-switch"
    ],
-   "a11y": "Radix Switch: role switch, Espacio o Enter para alternar.",
+   "a11y": "Patrón APG «switch»: botón con role switch y un `input type=checkbox` oculto para formularios, Espacio o Enter para alternar.",
    "examples": [
     {
      "title": "Con etiqueta",
@@ -5075,7 +5124,7 @@
      "code": "<Switch size=\"sm\" aria-label=\"Enable rule\" defaultChecked />"
     }
    ],
-   "origin": "Switch de zutool, sobre Switch de radix-ui.",
+   "origin": "Switch de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Switch.manifest.json"
   },
   {
@@ -5262,14 +5311,14 @@
     "z-accordion__content",
     "z-accordion__body"
    ],
-   "a11y": "Radix Accordion: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
+   "a11y": "Patrón APG «accordion»: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
    "examples": [
     {
      "title": "Preguntas frecuentes",
      "code": "<Accordion\n  defaultValue={[\"billing\"]}\n  items={[\n    { value: \"billing\", title: \"How does billing work?\", content: <p>You are charged monthly.</p> },\n    { value: \"cancel\", title: \"Can I cancel anytime?\", content: <p>Yes, from your account settings.</p> },\n  ]}\n/>"
     }
    ],
-   "origin": "Nuevo; accesibilidad de Radix Accordion.",
+   "origin": "Nuevo; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -5718,6 +5767,12 @@
      "name": "children",
      "type": "ReactNode",
      "description": "Paneles `TabPanel` (props: value, keepMounted)."
+    },
+    {
+     "name": "keepMounted",
+     "type": "boolean",
+     "default": false,
+     "description": "TabPanel: mantiene el contenido montado aunque el panel esté oculto."
     }
    ],
    "states": [
@@ -5757,7 +5812,7 @@
     "z-tabs__label",
     "z-tabs__panel"
    ],
-   "a11y": "Radix Tabs: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
+   "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
    "examples": [
     {
      "title": "Segmentado con contenido",
@@ -5768,7 +5823,7 @@
      "code": "<Tabs variant=\"underline\" value={tab} onValueChange={setTab} items={[{ value: \"code\", label: \"Code\" }, { value: \"preview\", label: \"Preview\" }]}>\n  <TabPanel value=\"code\">Code view</TabPanel>\n  <TabPanel value=\"preview\">Preview view</TabPanel>\n</Tabs>"
     }
    ],
-   "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad de Radix Tabs.",
+   "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -5855,7 +5910,7 @@
     "z-tree__label",
     "z-tree__group"
    ],
-   "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan.",
+   "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten.",
    "examples": [
     {
      "title": "Explorador de archivos",
@@ -5981,17 +6036,16 @@
     "z-palette__item",
     "z-palette__item-hint",
     "z-palette__kbd",
-    "z-palette__empty",
-    "z-overlay-scrim"
+    "z-palette__empty"
    ],
-   "a11y": "Radix Dialog con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
+   "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
    "examples": [
     {
      "title": "Abrir con Ctrl/Cmd K",
      "code": "function Palette() {\n  const [open, setOpen] = useState(false);\n  useEffect(() => {\n    const onKey = (e: KeyboardEvent) => {\n      if ((e.metaKey || e.ctrlKey) && e.key === \"k\") {\n        e.preventDefault();\n        setOpen((v) => !v);\n      }\n    };\n    window.addEventListener(\"keydown\", onKey);\n    return () => window.removeEventListener(\"keydown\", onKey);\n  }, []);\n  return (\n    <CommandPalette\n      open={open}\n      onOpenChange={setOpen}\n      groups={[\n        { heading: \"Navigation\", commands: [\n          { id: \"home\", label: \"Go to home\", shortcut: \"G H\", onSelect: () => navigate(\"/\") },\n          { id: \"settings\", label: \"Open settings\", hint: \"/settings\", onSelect: () => navigate(\"/settings\") },\n        ] },\n        { heading: \"Actions\", commands: [\n          { id: \"new\", label: \"New project\", keywords: [\"create\"], onSelect: () => createProject() },\n        ] },\n      ]}\n    />\n  );\n}"
     }
    ],
-   "origin": "CommandPalette de zutool (puntuación difusa, medidas y aspecto); diálogo de Radix, sin dependencia cmdk.",
+   "origin": "CommandPalette de zutool (puntuación difusa, medidas y aspecto); `<dialog>` nativo, sin dependencia cmdk.",
    "behavior": "dom",
    "html": [
     {
@@ -6128,17 +6182,16 @@
     "z-confirm",
     "z-confirm__icon",
     "z-modal",
-    "z-dialog-btn",
-    "z-overlay-scrim"
+    "z-dialog-btn"
    ],
-   "a11y": "Radix AlertDialog: role=alertdialog, el foco entra en Cancelar, Escape cancela y un clic fuera no cierra.",
+   "a11y": "`<dialog>` modal con role=alertdialog (patrón APG), el foco entra en Cancelar, Escape cancela y un clic fuera no cierra.",
    "examples": [
     {
      "title": "Borrado destructivo",
      "code": "<ConfirmDialog\n  trigger={<button type=\"button\">Delete project</button>}\n  intent=\"danger\"\n  title=\"Delete project?\"\n  description=\"This cannot be undone.\"\n  confirmLabel=\"Delete\"\n  onConfirm={() => removeProject()}\n/>"
     }
    ],
-   "origin": "ConfirmDialog y `.liquid.confirm` de zutool; accesibilidad de Radix AlertDialog.",
+   "origin": "ConfirmDialog y `.liquid.confirm` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -6236,14 +6289,14 @@
     "z-menu__label",
     "z-menu__chevron"
    ],
-   "a11y": "React: Radix ContextMenu, que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
+   "a11y": "React: menú propio (patrón APG «menu»), que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10, y enfoca su primera entrada; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
    "examples": [
     {
      "title": "Sobre una tarjeta",
      "code": "<ContextMenu\n  label=\"File actions\"\n  items={[\n    { id: \"open\", label: \"Open\", onSelect: () => openFile() },\n    { id: \"move\", label: \"Move to\", items: [\n      { id: \"archive\", label: \"Archive\", onSelect: () => moveTo(\"archive\") },\n      { id: \"inbox\", label: \"Inbox\", onSelect: () => moveTo(\"inbox\") },\n    ] },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", danger: true, shortcut: \"Del\", onSelect: () => removeFile() },\n  ]}\n>\n  <div>Right-click this area</div>\n</ContextMenu>"
     }
    ],
-   "origin": "ContextMenu y `.ctx-menu` de zutool (las subpáginas pasan a submenús); accesibilidad de Radix ContextMenu.",
+   "origin": "ContextMenu y `.ctx-menu` de zutool (las subpáginas pasan a submenús); accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -6375,10 +6428,9 @@
     "z-drawer__description",
     "z-drawer__body",
     "z-drawer__footer",
-    "z-drawer__close",
-    "z-overlay-scrim"
+    "z-drawer__close"
    ],
-   "a11y": "Radix Dialog modal: trampa de foco, Escape y clic en el velo cierran, el foco vuelve al disparador.",
+   "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape y clic en el velo cierran, el foco vuelve al disparador.",
    "examples": [
     {
      "title": "Filtros a la derecha",
@@ -6389,7 +6441,7 @@
      "code": "<Drawer open={open} onOpenChange={setOpen} side=\"bottom\" title=\"Details\">\n  <p>Details go here.</p>\n</Drawer>"
     }
    ],
-   "origin": "Cajones con velo (`.shell-drawer`, `.shell-scrim`) de zutool; accesibilidad de Radix Dialog.",
+   "origin": "Cajones con velo (`.shell-drawer`, `.shell-scrim`) de zutool; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -6512,14 +6564,14 @@
     "z-menu__label",
     "z-menu__chevron"
    ],
-   "a11y": "React: Radix DropdownMenu, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
+   "a11y": "Al abrirse, con el teclado o con el puntero, el foco va a la primera entrada (patrón APG «menu button»), igual en React y sin React. React: menú propio, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
    "examples": [
     {
      "title": "Acciones de una fila",
      "code": "<Menu\n  label=\"Project actions\"\n  trigger={<button type=\"button\">Actions</button>}\n  items={[\n    { type: \"label\", label: \"Project\" },\n    { id: \"rename\", label: \"Rename\", icon: \"pencil\", shortcut: \"F2\", onSelect: () => rename() },\n    { id: \"duplicate\", label: \"Duplicate\", icon: \"copy\", onSelect: () => duplicate() },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", icon: \"trash\", danger: true, onSelect: () => remove() },\n  ]}\n/>"
     }
    ],
-   "origin": "Menu y `.ctx-menu` de zutool; accesibilidad de Radix DropdownMenu.",
+   "origin": "Menu y `.ctx-menu` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -6653,10 +6705,9 @@
     "z-modal__body",
     "z-modal__footer",
     "z-modal__close",
-    "z-overlay-scrim",
     "z-overlay-close"
    ],
-   "a11y": "Radix Dialog: role=dialog, aria-modal, trampa de foco, Escape cierra y el foco vuelve al disparador. El título nombra el diálogo; sin título se usa `label` oculto visualmente.",
+   "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape cierra y el foco vuelve al disparador. El título nombra el diálogo; sin título se usa `label` como `aria-label`.",
    "examples": [
     {
      "title": "Con disparador y pie",
@@ -6667,7 +6718,7 @@
      "code": "<Modal open={open} onOpenChange={setOpen} size=\"lg\" title=\"Release notes\">\n  <p>Version 2.4 brings a new command palette.</p>\n</Modal>"
     }
    ],
-   "origin": "Tamaños y API de Modal de design system base; material y animación de los diálogos de zutool; accesibilidad de Radix Dialog.",
+   "origin": "Tamaños y API de Modal de design system base; material y animación de los diálogos de zutool; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -6735,12 +6786,18 @@
     {
      "name": "label",
      "type": "string",
-     "description": "Nombre accesible del panel."
+     "description": "Nombre accesible del panel. Obligatorio salvo que se pase `aria-labelledby` con el id de un encabezado del panel."
+    },
+    {
+     "name": "aria-labelledby",
+     "type": "string",
+     "description": "Id de un encabezado del panel que le da nombre. Alternativa a `label`."
     },
     {
      "name": "modal",
      "type": "boolean",
-     "default": false
+     "default": false,
+     "description": "Modal: el panel es un <dialog> abierto con showModal(). El resto de la página queda inerte (puntero, foco y lectores de pantalla), Tab da la vuelta dentro y una pulsación fuera solo lo cierra."
     },
     {
      "name": "children",
@@ -6774,14 +6831,14 @@
    "classes": [
     "z-popover"
    ],
-   "a11y": "Radix Popover: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador.",
+   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra.",
    "examples": [
     {
      "title": "Panel de detalles",
      "code": "<Popover trigger={<button type=\"button\">Usage</button>} label=\"Usage details\" width={280}>\n  <p>1,204 requests this month.</p>\n</Popover>"
     }
    ],
-   "origin": "Popover de zutool (alineado al final, separación de 4 px); posicionamiento de Radix Popover.",
+   "origin": "Popover de zutool (alineado al final, separación de 4 px); colocación propia (`core/place`).",
    "behavior": "dom",
    "html": [
     {
@@ -6831,10 +6888,10 @@
      "default": "Close"
     },
     {
-     "name": "label",
+     "name": "regionLabel",
      "type": "string",
-     "default": "Notification",
-     "description": "ToastProvider: nombre anunciado por lectores de pantalla."
+     "default": "Notifications (F8)",
+     "description": "ToastProvider: nombre accesible de la región de avisos."
     },
     {
      "name": "toast",
@@ -6902,7 +6959,7 @@
     "z-toast__close",
     "z-toast-viewport"
    ],
-   "a11y": "Radix Toast: región con aria-live (asertiva en warning y danger), F8 lleva el foco a los avisos, se pausan con hover o foco y se descartan deslizando.",
+   "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
    "examples": [
     {
      "title": "Proveedor y uso",
@@ -6913,7 +6970,7 @@
      "code": "const { toast } = useToast();\ntoast({ title: \"Upload failed\", intent: \"danger\", action: { label: \"Retry\", onClick: () => upload() } });"
     }
    ],
-   "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad de Radix Toast.",
+   "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {
@@ -7010,14 +7067,14 @@
    "classes": [
     "z-tooltip"
    ],
-   "a11y": "Radix Tooltip: aparece con hover y con foco de teclado, describe al disparador con aria-describedby y Escape lo cierra. No sustituye al nombre accesible del control.",
+   "a11y": "Aparece con hover y con foco de teclado, describe al disparador con aria-describedby y Escape lo cierra. La burbuja recibe el puntero: se puede pasar del disparador a ella sin que se cierre (WCAG 1.4.13). Sin React (`data-z-tooltip`): lo mismo, y se añade a la descripción que el control ya tuviera. No sustituye al nombre accesible del control.",
    "examples": [
     {
      "title": "Sobre un botón de icono",
      "code": "<Tooltip content=\"Copy link\">\n  <button type=\"button\" aria-label=\"Copy link\">Copy</button>\n</Tooltip>"
     }
    ],
-   "origin": "Tooltip y `.tooltip` de zutool; accesibilidad de Radix Tooltip.",
+   "origin": "Tooltip y `.tooltip` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
    "behavior": "dom",
    "html": [
     {

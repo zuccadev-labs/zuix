@@ -16,7 +16,7 @@
     body { margin: 0; overflow: hidden; }
     *, *::before, *::after { box-sizing: border-box; }
     .app-brand { font-family: var(--z-font-display); font-weight: var(--z-weight-bold); letter-spacing: var(--z-tracking-tight); }
-    .app-logo { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: var(--z-radius-md); background: var(--z-accent-soft); color: var(--z-accent); }
+    .app-logo { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: var(--z-radius-md); background: var(--z-accent-soft); color: var(--z-accent-text); }
     .app-screen { display: flex; flex-direction: column; height: 100%; min-height: 0; }
     .app-screen[hidden] { display: none; }
     .app-screen > * { flex: 1 1 auto; min-height: 0; }
@@ -31,7 +31,8 @@
 </head>
 <body class="z-root z-canvas" data-z-dom>
   <div class="z-shell z-canvas z-root" id="app">
-    <div class="z-titlebar">
+    <a class="z-shell__skip" href="#app-main">Skip to content</a>
+    <header class="z-titlebar">
       <div class="z-titlebar__brand">
         <button type="button" title="Toggle navigation" aria-label="Toggle navigation" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-z-shell-toggle="sidebar" id="toggle-sidebar">
           <z-icon name="bars-3" size="16"></z-icon>
@@ -70,7 +71,7 @@
           <z-icon name="adjustments-horizontal" size="16"></z-icon>
         </button>
       </div>
-    </div>
+    </header>
 
     <div class="z-shell__body">
       <div class="z-shell__rail">
@@ -156,10 +157,10 @@
             </div>
           </div>
         </div>
-        <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize Navigation" aria-valuenow="224" aria-valuemin="180" aria-valuemax="360" class="z-resize" data-side="right" data-default-size="224"></div>
+        <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize Navigation" aria-valuenow="224" aria-valuemin="180" aria-valuemax="360" class="z-resize" data-side="end" data-default-size="224"></div>
       </aside>
 
-      <main class="z-shell__main z-liquid">
+      <main class="z-shell__main z-liquid" id="app-main" tabindex="-1">
         <div class="z-shell__content">
           <div class="app-screen" id="screen-overview" role="tabpanel">
             <div class="z-page">

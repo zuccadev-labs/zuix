@@ -1,30 +1,36 @@
 # @zuccadev-labs/zuix-zui
 
-Sistema de componentes de la suite zuix: 64 componentes accesibles en 8 grupos. Cada componente es un
-contrato de HTML y CSS sobre tokens; el comportamiento sin framework está en `@zuccadev-labs/zuix-zui/dom` y el
-binding de React en la entrada principal.
+The component system of the zuix suite: 64 accessible components in 8 groups. Each component is an HTML and
+CSS contract on top of tokens; the framework-free behavior lives in `@zuccadev-labs/zuix-zui/dom` and the
+React binding in the main entry.
 
-| Capa | Entrada | Depende de |
+| Layer | Entry | Depends on |
 |---|---|---|
-| Contrato | `@zuccadev-labs/zuix-zui/styles.css`, `@zuccadev-labs/zuix-zui/html.json` | `@zuccadev-labs/zuix-tokens` |
-| Comportamiento | `@zuccadev-labs/zuix-zui/dom` | El navegador (`<dialog>`, `popover`) |
-| Binding de React | `@zuccadev-labs/zuix-zui` | React 19 y Radix |
+| Contract | `@zuccadev-labs/zuix-zui/styles.css`, `@zuccadev-labs/zuix-zui/html.json` | `@zuccadev-labs/zuix-tokens` |
+| Behavior | `@zuccadev-labs/zuix-zui/dom` | The browser (`<dialog>`, Popover API) |
+| React binding | `@zuccadev-labs/zuix-zui` | React 19 |
 
-## Instalación
+There is no third-party UI library underneath. Dialogs are a native `<dialog>` opened with `showModal()`,
+floating layers are `popover` elements, and the keyboard and focus logic follows the
+[WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/). React and the framework-free mode share
+one implementation of that logic, and React emits exactly the markup of the contract.
+
+## Install
 
 ```
 pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-zicon
 ```
 
-`@zuccadev-labs/zuix-zicon` es un peer obligatorio (los componentes dibujan sus iconos con la copia de la
-aplicación). `react` y `react-dom` 19 son peers opcionales: solo los necesita el binding
-(`pnpm add react react-dom`). Los paquetes de la suite se instalan y se actualizan juntos, en la misma versión.
+`@zuccadev-labs/zuix-zicon` is a required peer (components draw their icons with the application's copy).
+`react` and `react-dom` 19 are optional peers: only the binding needs them (`pnpm add react react-dom`).
+React 18 is not supported. The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
+are installed and upgraded together, at the same version. Requires Node 22.12 or later.
 
-Para instalarlo todo con una sola dependencia: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
+To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 
-## Uso sin React
+## Without React
 
-Con un bundler:
+With a bundler:
 
 ```js
 import "@zuccadev-labs/zuix-tokens/tokens.css";
@@ -52,19 +58,20 @@ toast({ title: "Ready", intent: "success" });
 </body>
 ```
 
-- `z-root` aplica tipografía y foco; `z-canvas` pinta el fondo.
-- `data-z-dom` activa pestañas, acordeón y controles dentro de ese contenedor.
-- El marcado de cada componente está en `@zuccadev-labs/zuix-zui/html.json`. Cada componente declara su `behavior`:
-  `none` (solo CSS), `dom` (necesita `@zuccadev-labs/zuix-zui/dom`) o `react` (hoy solo en el binding de React).
+- `z-root` applies typography and focus; `z-canvas` paints the background.
+- `data-z-dom` enables tabs, accordion and form controls inside that container.
+- The markup of every component is in `@zuccadev-labs/zuix-zui/html.json`. Each component declares its
+  `behavior`: `none` (CSS only) or `dom` (needs `@zuccadev-labs/zuix-zui/dom`).
+- `init()` returns a `destroy` function that removes every listener.
 
-Sin bundler se enlazan `dist/zui.css` y `dist/zui.dom.js`, incluidos en el paquete.
+Without a bundler, link `dist/zui.css` and `dist/zui.dom.js`, both included in the package.
 
-## Uso con React
+## With React
 
 ```tsx
 import "@zuccadev-labs/zuix-tokens/tokens.css";
 import "@zuccadev-labs/zuix-zui/styles.css";
-import "@zuccadev-labs/zuix-zicon/all";           // registra los iconos
+import "@zuccadev-labs/zuix-zicon/all";           // registers the icons
 
 import { Button } from "@zuccadev-labs/zuix-zui";
 
@@ -73,37 +80,59 @@ export function NewProject() {
 }
 ```
 
-En `<html>` va `data-theme="dark"` o `"light"`, y en el contenedor de la aplicación, `class="z-root z-canvas"`.
+Put `data-theme="dark"` or `"light"` on `<html>`, and `class="z-root z-canvas"` on the application
+container.
 
-Los componentes con hooks, contexto o Radix declaran `"use client"`. Los que solo producen marcado
-(`Button`, `Badge`, `Card`…) no lo llevan.
+Modules with hooks, context or their own event handlers declare `"use client"`. Those that only produce
+markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Components.
 
-## Entradas
+## Accessibility and security
 
-| Entrada | Contenido |
+- WCAG 2.2 AA contrast is measured on every change: the token build reads the color pairs these stylesheets
+  use and fails below 4.5:1 for text or 3:1 for non-text.
+- Right-to-left works through logical properties and a mirrored keyboard, with the direction read from the
+  DOM. `forced-colors`, `prefers-contrast`, `prefers-reduced-motion` and `prefers-reduced-transparency`
+  are handled. Controls grow to 40 px with a coarse pointer.
+- The framework-free mode writes application text with `textContent`, and works under a strict Content
+  Security Policy with Trusted Types (policy name: `zuix-zui`).
+- Browsers: Chrome and Edge 116, Firefox 125, Safari 17, iOS Safari 18.3.
+
+## Entry points
+
+| Entry | Contents |
 |---|---|
-| `@zuccadev-labs/zuix-zui` | Componentes de React y sus tipos `*Props` |
-| `@zuccadev-labs/zuix-zui/dom` | Comportamiento sin framework: `init`, `hydrate`, `toast`, `confirm`… |
-| `@zuccadev-labs/zuix-zui/styles.css` | Todos los estilos |
-| `@zuccadev-labs/zuix-zui/styles/*` | Hojas sueltas por grupo |
-| `@zuccadev-labs/zuix-zui/manifest.json` | Componentes, props, clases y ejemplos, para herramientas y agentes |
-| `@zuccadev-labs/zuix-zui/html.json` | Marcado de cada ejemplo |
-| `@zuccadev-labs/zuix-zui/dist/zui.css`, `@zuccadev-labs/zuix-zui/dist/zui.dom.js` | Bundles para enlazar sin bundler |
+| `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
+| `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
+| `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
+| `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
+| `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |
+| `@zuccadev-labs/zuix-zui/manifest.json` | Components, props, classes and examples, for tools and agents |
+| `@zuccadev-labs/zuix-zui/html.json` | The markup of every example |
+| `@zuccadev-labs/zuix-zui/dist/zui.css`, `@zuccadev-labs/zuix-zui/dist/zui.dom.js` | Bundles to link without a bundler |
 
-## Reglas
+## Rules
 
-1. Los componentes solo leen tokens: sin colores, radios ni sombras literales.
-2. Los iconos se piden por nombre; no se usan emojis como iconos.
-3. Si falta una variante, un token o un icono, se añade al sistema.
+1. Components only read tokens: no literal colors, radii or shadows.
+2. Icons are requested by name; emojis are not used as icons.
+3. If a variant, a token or an icon is missing, it is added to the system.
 
-## Documentación
+## Documentation
 
-- [Guía de componentes](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/03-zui.md)
-- [Uso con otros frameworks o sin ninguno](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md)
-- [Contrato público](https://github.com/zuccadev-labs/zuix/blob/main/docs/package/03-contrato-publico.md): qué es superficie pública
-- [Cambios](https://github.com/zuccadev-labs/zuix/blob/main/zui/CHANGELOG.md)
-- Reglas para agentes de IA: `AGENTS.md`, incluido en el paquete.
+The guides are written in Spanish.
 
-## Licencia
+- [Components guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/03-zui.md)
+- [Using zuix with other frameworks, or with none](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md)
+- [Upgrading from 0.1 to 0.2](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md)
+- [Accessibility](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/09-accesibilidad.md) and [CSP and Trusted Types](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/11-csp-y-trusted-types.md)
+- [Public contract](https://github.com/zuccadev-labs/zuix/blob/main/docs/package/03-contrato-publico.md): what counts as public surface
+- [Changelog](https://github.com/zuccadev-labs/zuix/blob/main/zui/CHANGELOG.md)
+- Rules for AI agents: `AGENTS.md`, included in the package. Third-party notices: `THIRD_PARTY_NOTICES.md`.
+
+## Español
+
+Sistema de componentes de la suite zuix: 64 componentes sobre un contrato de HTML y CSS, sin bibliotecas de
+UI de terceros. La guía está en español en [`docs/users/03-zui.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/03-zui.md).
+
+## License
 
 [MIT](https://github.com/zuccadev-labs/zuix/blob/main/LICENSE).

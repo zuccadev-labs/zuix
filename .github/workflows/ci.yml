@@ -1,6 +1,11 @@
 # Integración continua de zuix. Mismos comandos que en local (ver AGENTS.md).
 # También es la verificación de una publicación: release.yml lo llama con `workflow_call` y publica
 # los tarballs que el trabajo `check` deja en el artefacto `tarballs` (docs/package/02-publicacion.md).
+#
+# Endurecimiento (docs.github.com/actions/reference/security/secure-use): acciones fijadas por SHA completo
+# con la versión en un comentario (Dependabot actualiza los dos), GITHUB_TOKEN de solo lectura, sin
+# credenciales de git en disco, sin secretos, sin `pull_request_target`, y ninguna expresión `${{ }}`
+# dentro de un `run:`.
 name: ci
 
 on:
@@ -9,8 +14,8 @@ on:
   pull_request:
   workflow_call:
     inputs:
-      next:
-        description: Se conserva por compatibilidad; la prueba de empaquetado incluye siempre el consumidor Next.js
+      release:
+        description: Verificación de una publicación. No restaura ni guarda cachés, para que lo publicado no dependa de una caché que otra ejecución pudo escribir
         type: boolean
         default: false
 
@@ -27,26 +32,70 @@ jobs:
   check:
     name: Contrato, auditoría y tipos
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Incluye el recorrido completo del sitio compilado (pnpm test:site).
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      # Node 26, la LTS más reciente: la misma línea con la que publica release.yml.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
-          cache: pnpm
+          node-version: 26
+          package-manager-cache: false
+          cache: ${{ inputs.release != true && 'pnpm' || '' }}
+      # Con el lockfile congelado pnpm vuelve a aplicar las políticas de pnpm-workspace.yaml a cada entrada
+      # (antigüedad mínima, procedencia, scripts de instalación): un lockfile que las esquive no instala.
       - run: pnpm install --frozen-lockfile
+      - name: Sin vulnerabilidades conocidas en las dependencias
+        run: pnpm audit
+      # Linter (Biome) y regla de "use client". Las anotaciones aparecen en el diff del PR.
+      - name: Lint
+        run: pnpm exec biome lint --error-on-warnings --reporter=github && node tools/use-client.mjs
+      - name: Formato
+        run: pnpm format:check
+      - name: Pruebas unitarias (cobertura con umbral)
+        run: pnpm test:unit
       - run: pnpm check
+      # `git status --porcelain` y no `git diff --exit-code`: un archivo generado nuevo, aún sin seguimiento, no sale
+      # en `git diff` y la comprobación pasaría sin que estuviera en el repositorio.
       - name: Los archivos generados están al día
-        run: git diff --exit-code
+        run: |
+          set -euo pipefail
+          changes="$(git status --porcelain)"
+          if [ -n "$changes" ]; then
+            echo "::error::pnpm check dejó archivos modificados o sin seguimiento. Ejecútalo en local y sube el resultado."
+            echo "$changes"
+            git --no-pager diff --stat
+            exit 1
+          fi
       - run: pnpm --filter @zuccadev-labs/zuix-zudocs build
+      # El sitio ya compilado, página a página (tests/site/run.mjs): hidratación, enlaces, axe y teclado, en el Chrome del runner.
+      - name: Sitio de documentación compilado
+        run: pnpm test:site
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: shots-site
+          include-hidden-files: true
+          path: .tmp/site-shots
+          retention-days: 7
       # Build de publicación y consumo externo desde los tarballs (docs/package/README.md).
       - run: pnpm build
       # Siempre con el consumidor Next.js: un fallo ahí debe verse en el PR, no al publicar.
       - run: pnpm test:pack --skip-build --next
-      - uses: actions/upload-artifact@v7
+      # Inventario de dependencias de producción de cada paquete publicable (CycloneDX), y huellas de los tarballs.
+      - name: SBOM y huellas
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp/sbom
+          pnpm --filter ./tokens --filter ./zicon --filter ./zui --filter ./zout --filter ./suite \
+            sbom --sbom-format cyclonedx --prod --split --out ".tmp/sbom/%s-%v.cdx.json"
+          test "$(find .tmp/sbom -name '*.cdx.json' | wc -l)" -eq 5
+          (cd .tmp/pack && sha256sum -- *.tgz | tee SHA256SUMS)
+          test "$(wc -l < .tmp/pack/SHA256SUMS)" -eq 5
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist
           if-no-files-found: error
@@ -58,14 +107,87 @@ jobs:
             zui/html.json
             zout/html.json
           retention-days: 7
-      # Los cinco tarballs de `pnpm pack` que acaba de probar test:pack. Son los que publica release.yml.
-      - uses: actions/upload-artifact@v7
+      # Los cinco tarballs de `pnpm pack` que acaba de probar test:pack, con sus huellas. Son los que publica release.yml.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tarballs
           if-no-files-found: error
           include-hidden-files: true
-          path: .tmp/pack/*.tgz
+          path: |
+            .tmp/pack/*.tgz
+            .tmp/pack/SHA256SUMS
           retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sbom
+          if-no-files-found: error
+          include-hidden-files: true
+          path: .tmp/sbom/*.cdx.json
+          retention-days: 7
+
+  # Las otras líneas LTS de Node con soporte (nodejs.org/en/about/previous-releases): 22 hasta 2027-04-30 y 26
+  # hasta 2029-04-30. `check` cubre la 26. Node 20 terminó su soporte el 2026-04-30 y ya no se prueba.
+  node:
+    name: Node ${{ matrix.node }}
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+          cache: ${{ inputs.release != true && 'pnpm' || '' }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm build
+      # Consumo externo desde los tarballs, sin Next.js ni publint/attw (ya los ejecutó `check`).
+      - run: pnpm test:pack --skip-build --skip-lint
+
+  # Windows: las herramientas del repositorio (generadores, auditoría, manifiestos, tipos) y las pruebas unitarias.
+  # Quien contribuye desde Windows ejecuta `pnpm check`; lo que genera debe salir igual, byte a byte, que en Linux
+  # (.gitattributes fija LF en la copia de trabajo). Las suites de navegador y el empaquetado se quedan en Linux.
+  # No forma parte de la verificación de una publicación (`release: true`): lo que se publica se construye y se
+  # prueba en Linux, y un fallo propio de Windows se ve en el PR y en el ci de main sin detener una versión.
+  windows:
+    name: Windows (contrato y pruebas unitarias)
+    needs: check
+    if: inputs.release != true
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          package-manager-cache: false
+          cache: ${{ inputs.release != true && 'pnpm' || '' }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Los archivos generados salen igual que en Linux
+        shell: bash
+        run: |
+          set -euo pipefail
+          changes="$(git status --porcelain)"
+          if [ -n "$changes" ]; then
+            echo "::error::pnpm check genera en Windows archivos distintos de los del repositorio."
+            echo "$changes"
+            git --no-pager diff --stat
+            exit 1
+          fi
+      - name: Pruebas unitarias (cobertura con umbral)
+        run: pnpm test:unit
 
   browser:
     name: Navegador (${{ matrix.browser }})
@@ -79,25 +201,26 @@ jobs:
     env:
       BROWSER: ${{ matrix.browser }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
-          cache: pnpm
+          node-version: 26
+          package-manager-cache: false
+          cache: ${{ inputs.release != true && 'pnpm' || '' }}
       - run: pnpm install --frozen-lockfile
       # chromium usa el Chrome del sistema (canal "chrome"), presente en los runners de GitHub.
       - if: matrix.browser != 'chromium'
-        run: pnpm exec playwright-core install --with-deps ${{ matrix.browser }}
+        run: pnpm exec playwright-core install --with-deps "$BROWSER"
       - run: pnpm tokens && pnpm icons && pnpm manifest && pnpm html && pnpm dist
       # El Firefox sin interfaz de los runners no ofrece WebGL: los casos del modo gl del Carousel quedan como
       # no verificables (tests/webgl.mjs). En local se reproduce con NO_WEBGL=1.
       - run: pnpm test:html
       - run: pnpm test:browser
       - if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: shots-${{ matrix.browser }}
           path: |

@@ -16,7 +16,19 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
-export function Button({ variant = "secondary", size = "md", icon, iconRight, loading, fullWidth, className, children, disabled, ...rest }: ButtonProps) {
+export function Button({
+  variant = "secondary",
+  size = "md",
+  icon,
+  iconRight,
+  loading,
+  fullWidth,
+  className,
+  children,
+  disabled,
+  onClick,
+  ...rest
+}: ButtonProps) {
   return (
     <button
       type="button"
@@ -26,7 +38,11 @@ export function Button({ variant = "secondary", size = "md", icon, iconRight, lo
       data-block={fullWidth || undefined}
       data-loading={loading || undefined}
       aria-busy={loading || undefined}
-      disabled={disabled || loading}
+      // En carga el botón no se deshabilita (`disabled` le quitaría el foco del teclado): lleva `aria-disabled`, no
+      // ejecuta `onClick` y deja de ser un botón de envío. Sin manejador propio: el componente sigue siendo estático.
+      aria-disabled={loading || undefined}
+      disabled={disabled}
+      {...(loading ? { type: "button" as const, onClick: undefined } : { onClick })}
     >
       {/* Con carga, el anillo sustituye al icono izquierdo. */}
       {loading ? <span className="z-btn__spinner" aria-hidden="true" /> : icon ? <Icon name={icon} size={ICON_SIZE[size]} /> : null}

@@ -1,0 +1,5 @@
+# Revisiones que solo cambian formato: `git blame` las salta.
+# Uso local: git config blame.ignoreRevsFile .git-blame-ignore-revs  (GitHub lo aplica solo).
+#
+# Cada línea es el SHA completo que la revisión tiene en `main`. Con historial lineal, el SHA de una rama cambia
+# al fusionarla: se anota después de fusionar, no antes. Un SHA que no existe hace fallar `git blame`.

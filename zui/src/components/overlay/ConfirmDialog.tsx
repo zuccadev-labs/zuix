@@ -1,9 +1,9 @@
 "use client";
-import type { ReactElement, ReactNode } from "react";
-import { AlertDialog } from "radix-ui";
+import { useId, type ReactElement, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
-import { DialogButton, ElevatedContext, keepFocus, useReturnFocus } from "./internal";
+import { DialogSurface } from "../../primitives/dialog";
+import { DialogButton, useDisclosure } from "./internal";
 
 export interface ConfirmDialogProps {
   open?: boolean;
@@ -25,11 +25,15 @@ export interface ConfirmDialogProps {
   children?: ReactNode;
 }
 
+/**
+ * Confirmación (`role="alertdialog"`, patrón APG): el foco empieza en Cancelar, el clic en el velo no cierra y
+ * Escape cancela. Mismo marcado que `confirm()` de `@zuccadev-labs/zuix-zui/dom`.
+ */
 export function ConfirmDialog({
-  open,
+  open: openProp,
   defaultOpen,
   onOpenChange,
-  trigger,
+  trigger: triggerProp,
   title,
   description,
   intent = "default",
@@ -41,43 +45,64 @@ export function ConfirmDialog({
   className,
   children,
 }: ConfirmDialogProps) {
-  const returnFocus = useReturnFocus(Boolean(trigger));
+  const id = useId();
+  const { open, setOpen, trigger, triggerRef } = useDisclosure({ open: openProp, defaultOpen, onOpenChange, trigger: triggerProp, id });
   const glyph: IconName = icon ?? (intent === "danger" ? "exclamation-triangle" : "information-circle");
+  const titleId = `${id}-title`;
+  const descriptionId = `${id}-description`;
+  const cancel = () => {
+    onCancel?.();
+    setOpen(false);
+  };
   return (
-    <AlertDialog.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
-      {trigger ? <AlertDialog.Trigger asChild>{trigger}</AlertDialog.Trigger> : null}
-      <AlertDialog.Portal>
-        <AlertDialog.Overlay className="z-overlay-scrim" onMouseDown={keepFocus} />
-        <AlertDialog.Content
-          className={cx("z-liquid z-modal z-confirm", className)}
-          data-intent={intent}
-          {...returnFocus}
-          {...(description ? {} : { "aria-describedby": undefined })}
-        >
-          <ElevatedContext.Provider value={true}>
-            <header className="z-modal__header">
-              <span className="z-confirm__icon">
-                <Icon name={glyph} size={16} />
-              </span>
-              <div className="z-modal__heading">
-                <AlertDialog.Title className="z-modal__title">{title}</AlertDialog.Title>
-                {description ? <AlertDialog.Description className="z-modal__description">{description}</AlertDialog.Description> : null}
-              </div>
-            </header>
-            {children ? <div className="z-modal__body">{children}</div> : null}
-            <footer className="z-modal__footer">
-              <AlertDialog.Cancel asChild>
-                <DialogButton onClick={onCancel}>{cancelLabel}</DialogButton>
-              </AlertDialog.Cancel>
-              <AlertDialog.Action asChild>
-                <DialogButton variant={intent === "danger" ? "danger" : "primary"} onClick={onConfirm}>
-                  {confirmLabel}
-                </DialogButton>
-              </AlertDialog.Action>
-            </footer>
-          </ElevatedContext.Provider>
-        </AlertDialog.Content>
-      </AlertDialog.Portal>
-    </AlertDialog.Root>
+    <>
+      {trigger}
+      <DialogSurface
+        id={id}
+        open={open}
+        // Escape cancela: avisa igual que el botón de cancelar.
+        onDismiss={cancel}
+        closeOnBackdrop={false}
+        initialFocus={(dialog) => dialog.querySelector<HTMLElement>(".z-modal__footer .z-dialog-btn")}
+        trigger={triggerRef}
+        role="alertdialog"
+        className={cx("z-liquid z-modal z-confirm", className)}
+        data-intent={intent}
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
+      >
+        <header className="z-modal__header">
+          <span className="z-confirm__icon">
+            <Icon name={glyph} size={16} />
+          </span>
+          <div className="z-modal__heading">
+            <h2 id={titleId} className="z-modal__title">
+              {title}
+            </h2>
+            {description ? (
+              <p id={descriptionId} className="z-modal__description">
+                {description}
+              </p>
+            ) : null}
+          </div>
+        </header>
+        {children ? <div className="z-modal__body">{children}</div> : null}
+        <footer className="z-modal__footer">
+          <DialogButton value="cancel" onClick={cancel}>
+            {cancelLabel}
+          </DialogButton>
+          <DialogButton
+            value="confirm"
+            variant={intent === "danger" ? "danger" : "primary"}
+            onClick={() => {
+              onConfirm?.();
+              setOpen(false);
+            }}
+          >
+            {confirmLabel}
+          </DialogButton>
+        </footer>
+      </DialogSurface>
+    </>
   );
 }

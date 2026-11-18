@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { compare, isDate } from "../../core/compare";
 import { cx } from "../../cx";
 import { Table, type TableProps } from "./Table";
 
@@ -25,7 +26,11 @@ export interface DataTableColumn<T> {
   mono?: boolean;
 }
 
-export interface DataTableProps<T> extends Pick<TableProps, "density" | "framed" | "striped" | "stickyHeader" | "fixed" | "caption" | "captionHidden" | "className" | "wrapperClassName"> {
+export interface DataTableProps<T>
+  extends Pick<
+    TableProps,
+    "density" | "framed" | "striped" | "stickyHeader" | "fixed" | "caption" | "captionHidden" | "className" | "wrapperClassName"
+  > {
   rows: ReadonlyArray<T>;
   columns: ReadonlyArray<DataTableColumn<T>>;
   rowKey: (row: T, index: number) => string | number;
@@ -42,17 +47,6 @@ export interface DataTableProps<T> extends Pick<TableProps, "density" | "framed"
   empty?: ReactNode;
   /** Texto para lectores de pantalla en las cabeceras ordenables. */
   sortLabel?: string;
-}
-
-// Compara dos valores de celda; los vacíos van al final.
-function compare(a: unknown, b: unknown): number {
-  if (a == null && b == null) return 0;
-  if (a == null) return 1;
-  if (b == null) return -1;
-  if (a instanceof Date && b instanceof Date) return a.getTime() - b.getTime();
-  if (typeof a === "number" && typeof b === "number") return a - b;
-  if (typeof a === "boolean" && typeof b === "boolean") return Number(a) - Number(b);
-  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
 }
 
 /** Tabla de datos genérica sobre el tipo de fila, con columnas ordenables. */
@@ -94,7 +88,8 @@ export function DataTable<T>({
 
   // Ciclo: ascendente, descendente, sin orden.
   const toggleSort = (key: string) => {
-    const next: SortState | null = active?.key !== key ? { key, direction: "asc" } : active.direction === "asc" ? { key, direction: "desc" } : null;
+    const next: SortState | null =
+      active?.key !== key ? { key, direction: "asc" } : active.direction === "asc" ? { key, direction: "desc" } : null;
     setInner(next);
     onSortChange?.(next);
   };
@@ -122,7 +117,12 @@ export function DataTable<T>({
                 style={column.width ? { width: column.width } : undefined}
               >
                 {canSort ? (
-                  <button type="button" className="z-table__sort" data-active={direction ? true : undefined} onClick={() => toggleSort(column.key)}>
+                  <button
+                    type="button"
+                    className="z-table__sort"
+                    data-active={direction ? true : undefined}
+                    onClick={() => toggleSort(column.key)}
+                  >
                     <span>{column.header}</span>
                     <span className="z-sr-only">, {sortLabel}</span>
                     <Icon name={direction === "desc" ? "arrow-down" : "arrow-up"} size={12} />
@@ -156,7 +156,7 @@ export function DataTable<T>({
                 const value = column.render ? column.render(row, index) : column.accessor?.(row);
                 return (
                   <td key={column.key} data-align={column.align} data-mono={column.mono || undefined}>
-                    {value instanceof Date ? value.toLocaleDateString() : typeof value === "boolean" ? String(value) : (value as ReactNode)}
+                    {isDate(value) ? value.toLocaleDateString() : typeof value === "boolean" ? String(value) : (value as ReactNode)}
                   </td>
                 );
               })}

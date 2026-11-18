@@ -7,22 +7,13 @@
     {
       "name": "type",
       "type": "enum",
-      "values": [
-        "date",
-        "time",
-        "datetime-local",
-        "month"
-      ],
+      "values": ["date", "time", "datetime-local", "month"],
       "default": "date"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -55,14 +46,7 @@
       "description": "onChange, disabled, ref, etc."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "invalid"],
   "tokens": [
     "control-height-md",
     "space-3",
@@ -93,10 +77,7 @@
     "surface-3",
     "radius-full"
   ],
-  "classes": [
-    "z-input",
-    "z-input--date"
-  ],
+  "classes": ["z-input", "z-input--date"],
   "a11y": "input nativo: edición por segmentos con teclado y selector del sistema (showPicker). Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
   "examples": [
     {

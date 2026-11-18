@@ -7,11 +7,7 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "inline",
-        "subtle",
-        "standalone"
-      ],
+      "values": ["inline", "subtle", "standalone"],
       "default": "inline",
       "description": "`inline` subrayado; `subtle` atenuado, se subraya al pasar; `standalone` en negrita sin subrayado."
     },
@@ -44,13 +40,7 @@
       "description": "href, onClick, ref y demás atributos de a."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled"],
   "tokens": [
     "space-1",
     "accent",
@@ -66,10 +56,8 @@
     "weight-semibold",
     "fg-subtle"
   ],
-  "classes": [
-    "z-link"
-  ],
-  "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña.",
+  "classes": ["z-link"],
+  "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña. Deshabilitado: sin href, role=link, aria-disabled y sin ejecutar onClick.",
   "examples": [
     {
       "title": "En un texto",

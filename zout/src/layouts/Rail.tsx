@@ -36,9 +36,20 @@ export interface RailItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function RailItem({ icon, label, active, badge, className, ...rest }: RailItemProps) {
   return (
     // El contador se ve: tiene que formar parte del nombre accesible, no quedarse fuera de él.
-    <button type="button" {...rest} className={cx("z-rail__item", className)} aria-label={badge !== undefined ? `${label}, ${badge}` : label} title={label} aria-current={active ? "page" : undefined}>
+    <button
+      type="button"
+      {...rest}
+      className={cx("z-rail__item", className)}
+      aria-label={badge !== undefined ? `${label}, ${badge}` : label}
+      title={label}
+      aria-current={active ? "page" : undefined}
+    >
       <Icon name={icon} variant={active ? "solid" : "outline"} size={20} />
-      {badge !== undefined ? <span className="z-rail__badge" aria-hidden="true">{badge}</span> : null}
+      {badge !== undefined ? (
+        <span className="z-rail__badge" aria-hidden="true">
+          {badge}
+        </span>
+      ) : null}
     </button>
   );
 }

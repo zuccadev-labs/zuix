@@ -29,11 +29,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -57,14 +53,7 @@
       "type": "InputHTMLAttributes"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "loading"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "loading"],
   "tokens": [
     "control-height-md",
     "space-3",
@@ -95,10 +84,7 @@
     "surface-3",
     "radius-full"
   ],
-  "classes": [
-    "z-input",
-    "z-input--search"
-  ],
+  "classes": ["z-input", "z-input--search"],
   "a11y": "input type=\"search\". Escape borra el texto; el botón de borrado tiene nombre accesible y devuelve el foco al campo.",
   "examples": [
     {

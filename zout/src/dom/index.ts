@@ -4,7 +4,7 @@
 //
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zout/dom"; init();
 // Uso imperativo:    setPanelOpen, togglePanel, closeDrawers, getShellModes, resizeTo, getSplitSizes, setSplitSizes,
-//                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen
+//                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, dispose
 //
 // Todo se activa dentro de un contenedor [data-z-dom], para no chocar con React en la misma página.
 // Atributos:
@@ -14,19 +14,36 @@
 //   data-panel-mode="auto|docked|overlay"     en el <aside>: preferencia de modo (auto por defecto)
 //   hidden                                    en el <aside>: panel cerrado
 //   data-close-label                          en .z-shell: nombre accesible del velo
-//   data-default-size, data-step, data-var, data-z-resize="#id"   en .z-resize
+//   data-default-size, data-step, data-var, data-z-resize="#id"   en .z-resize (data-side: left|right|top|bottom, o start|end, que siguen la dirección de escritura)
 //   data-min-fraction                         en .z-split
 //   data-new-title="Untitled"                 en .z-tabstrip__add: crea la pestaña sin código de la aplicación
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
-import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-small";
 import { chevronRightSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-right-small";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import {
-  INSPECTOR_BREAKPOINT, RESIZE_MAX, RESIZE_MIN, RESIZE_STEP, SIDEBAR_BREAKPOINT, SPLIT_MIN_FRACTION,
-  clamp, dividerKeyDelta, evenFractions, isHorizontal, moveDivider, panelMode, resizeByKey, resizeSign, revealOffset, tabKeyIndex,
-  type PanelMode, type ResizeSide,
+  INSPECTOR_BREAKPOINT,
+  RESIZE_MAX,
+  RESIZE_MIN,
+  RESIZE_STEP,
+  SIDEBAR_BREAKPOINT,
+  SPLIT_MIN_FRACTION,
+  clamp,
+  dividerKeyDelta,
+  evenFractions,
+  isHorizontal,
+  moveDivider,
+  panelMode,
+  physicalSide,
+  resizeByKey,
+  resizeSign,
+  revealOffset,
+  tabKeyIndex,
+  type PanelMode,
+  type PhysicalSide,
+  type ResizeSide,
 } from "../logic";
 
 export type { PanelMode } from "../logic";
@@ -50,12 +67,27 @@ function all(root: ParentNode, selector: string): HTMLElement[] {
   return list.filter(inDom);
 }
 
-const num = (value: string | null | undefined, fallback: number) => (value != null && value !== "" && Number.isFinite(Number(value)) ? Number(value) : fallback);
+const isRtl = (el: Element) => getComputedStyle(el).direction === "rtl";
+
+/** `document.querySelector` con un selector que viene de un atributo del marcado: uno inválido no rompe el manejador. */
+function query(selector: string): HTMLElement | null {
+  try {
+    return document.querySelector<HTMLElement>(selector);
+  } catch {
+    return null;
+  }
+}
+
+const num = (value: string | null | undefined, fallback: number) =>
+  value != null && value !== "" && Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 /* ---------- Shell ---------- */
 
 const SIDES: readonly ShellSide[] = ["sidebar", "inspector"];
-const PANEL: Record<ShellSide, string> = { sidebar: ":scope > .z-shell__body > .z-shell__side", inspector: ":scope > .z-shell__body > .z-shell__inspector" };
+const PANEL: Record<ShellSide, string> = {
+  sidebar: ":scope > .z-shell__body > .z-shell__side",
+  inspector: ":scope > .z-shell__body > .z-shell__inspector",
+};
 
 interface PanelState {
   /** Si ahora mismo está abierto como cajón. */
@@ -65,19 +97,30 @@ interface PanelState {
   /** Si estaba abierto la última vez que estuvo acoplado. */
   dockedOpen: boolean;
 }
-interface ShellState { width: number | null; modes: ShellModes | null; panels: Record<ShellSide, PanelState> }
+interface ShellState {
+  width: number | null;
+  modes: ShellModes | null;
+  panels: Record<ShellSide, PanelState>;
+}
 
 const shells = new WeakMap<HTMLElement, ShellState>();
 const panelOf = (shell: HTMLElement, side: ShellSide) => shell.querySelector<HTMLElement>(PANEL[side]);
 
 function autoModes(shell: HTMLElement, state: ShellState): ShellModes {
   const mode = (side: ShellSide, fallback: number) =>
-    panelMode(state.width, num(shell.getAttribute(`data-${side}-breakpoint`), fallback), panelOf(shell, side)?.dataset.panelMode as PanelMode | "auto" | undefined);
+    panelMode(
+      state.width,
+      num(shell.getAttribute(`data-${side}-breakpoint`), fallback),
+      panelOf(shell, side)?.dataset.panelMode as PanelMode | "auto" | undefined,
+    );
   return { sidebar: mode("sidebar", SIDEBAR_BREAKPOINT), inspector: mode("inspector", INSPECTOR_BREAKPOINT) };
 }
 
 function shellOf(el: Element): HTMLElement | null {
-  const shell = el.closest<HTMLElement>(".z-shell") ?? document.querySelector<HTMLElement>(el.getAttribute("data-z-shell") ?? "[data-z-dom] .z-shell, .z-shell[data-z-dom]");
+  // Un botón con `data-z-shell="#id"` apunta a ese shell aunque esté dentro de otro (shells anidados).
+  const named = el.getAttribute("data-z-shell");
+  const shell =
+    (named ? query(named) : null) ?? el.closest<HTMLElement>(".z-shell") ?? query("[data-z-dom] .z-shell, .z-shell[data-z-dom]");
   return shell && shells.has(shell) ? shell : null;
 }
 
@@ -98,6 +141,7 @@ function syncShell(shell: HTMLElement): void {
     const overlay = mode === "overlay";
     el.classList.toggle("z-shell__drawer", overlay);
     el.dataset.mode = auto[side];
+    el.dataset.panelMode ??= "auto";
     el.dataset.side ??= side === "sidebar" ? "left" : "right";
     if (overlay) {
       el.setAttribute("role", "dialog");
@@ -156,6 +200,7 @@ function measure(shell: HTMLElement, width: number): void {
   const state = shells.get(shell);
   if (!state) return;
   state.width = width;
+  shell.dataset.measured = "";
   const next = autoModes(shell, state);
   const prev = state.modes;
   if (!prev || prev.sidebar !== next.sidebar || prev.inspector !== next.inspector) {
@@ -180,14 +225,26 @@ function measure(shell: HTMLElement, width: number): void {
 let shellObserver: ResizeObserver | undefined;
 
 function hydrateShell(shell: HTMLElement): void {
-  if (shells.has(shell)) return syncShell(shell);
+  if (shells.has(shell)) {
+    syncShell(shell);
+    return;
+  }
   const panel = (): PanelState => ({ overlay: false, previous: null, dockedOpen: true });
   shells.set(shell, { width: null, modes: null, panels: { sidebar: panel(), inspector: panel() } });
   // Se mide antes del primer pintado para que un shell estrecho no muestre un instante los paneles acoplados.
   measure(shell, shell.getBoundingClientRect().width);
   if (typeof ResizeObserver === "undefined") return;
   shellObserver ??= new ResizeObserver((entries) => {
-    for (const entry of entries) measure(entry.target as HTMLElement, entry.contentRect.width);
+    for (const entry of entries) {
+      const target = entry.target as HTMLElement;
+      // Un shell retirado del documento deja de observarse: el observador no lo retiene y vuelve a activarse con hydrate().
+      if (!target.isConnected) {
+        shellObserver?.unobserve(target);
+        shells.delete(target);
+        continue;
+      }
+      measure(target, entry.contentRect.width);
+    }
   });
   shellObserver.observe(shell);
 }
@@ -234,11 +291,11 @@ export function closeDrawers(shell: HTMLElement): boolean {
 /* ---------- ResizeHandle ---------- */
 
 function resizeOptions(handle: HTMLElement) {
-  const side = (handle.dataset.side ?? "right") as ResizeSide;
+  const side: PhysicalSide = physicalSide((handle.dataset.side ?? "right") as ResizeSide, isRtl(handle));
   const sel = handle.getAttribute("data-z-resize");
   return {
     side,
-    target: sel ? document.querySelector<HTMLElement>(sel) : handle.parentElement,
+    target: sel ? query(sel) : handle.parentElement,
     min: num(handle.getAttribute("aria-valuemin"), RESIZE_MIN),
     max: num(handle.getAttribute("aria-valuemax"), RESIZE_MAX),
     step: num(handle.dataset.step, RESIZE_STEP),
@@ -246,7 +303,7 @@ function resizeOptions(handle: HTMLElement) {
   };
 }
 
-function currentSize(handle: HTMLElement, { side, target }: { side: ResizeSide; target: HTMLElement | null }): number {
+function currentSize(handle: HTMLElement, { side, target }: { side: PhysicalSide; target: HTMLElement | null }): number {
   if (!target) return num(handle.getAttribute("aria-valuenow"), 0);
   const rect = target.getBoundingClientRect();
   return isHorizontal(side) ? rect.width : rect.height;
@@ -274,7 +331,8 @@ export function resizeTo(handle: HTMLElement, size: number): void {
 
 /* ---------- SplitPane ---------- */
 
-const parts = (split: Element, cls: string) => [...split.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.classList.contains(cls));
+const parts = (split: Element, cls: string) =>
+  [...split.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.classList.contains(cls));
 const directionOf = (split: HTMLElement) => (split.dataset.direction === "column" ? "column" : "row");
 
 /** Reparto actual, una fracción por panel (el `flex-grow` de cada uno). */
@@ -285,8 +343,12 @@ export function getSplitSizes(split: HTMLElement): number[] {
 
 /** Fija el reparto sin emitir `z:resize`. */
 export function setSplitSizes(split: HTMLElement, sizes: number[]): void {
-  parts(split, "z-split__pane").forEach((pane, i) => { pane.style.flexGrow = String(sizes[i] ?? 0); });
-  parts(split, "z-split__divider").forEach((divider, i) => divider.setAttribute("aria-valuenow", String(Math.round((sizes[i] ?? 0) * 100))));
+  parts(split, "z-split__pane").forEach((pane, i) => {
+    pane.style.flexGrow = String(sizes[i] ?? 0);
+  });
+  parts(split, "z-split__divider").forEach((divider, i) => {
+    divider.setAttribute("aria-valuenow", String(Math.round((sizes[i] ?? 0) * 100)));
+  });
 }
 
 function minFraction(split: HTMLElement): number {
@@ -304,9 +366,13 @@ function hydrateSplit(split: HTMLElement): void {
   for (const divider of parts(split, "z-split__divider")) {
     if (!divider.hasAttribute("role")) divider.setAttribute("role", "separator");
     if (!divider.hasAttribute("tabindex")) divider.tabIndex = 0;
-    if (!divider.hasAttribute("aria-orientation")) divider.setAttribute("aria-orientation", directionOf(split) === "row" ? "vertical" : "horizontal");
+    if (!divider.hasAttribute("aria-orientation"))
+      divider.setAttribute("aria-orientation", directionOf(split) === "row" ? "vertical" : "horizontal");
     if (!divider.hasAttribute("aria-valuemin")) divider.setAttribute("aria-valuemin", String(min));
     if (!divider.hasAttribute("aria-valuemax")) divider.setAttribute("aria-valuemax", String(100 - min));
+    // El divisor controla el panel que tiene delante (patrón «window splitter»).
+    const primary = divider.previousElementSibling;
+    if (!divider.hasAttribute("aria-controls") && primary?.id) divider.setAttribute("aria-controls", primary.id);
   }
   setSplitSizes(split, getSplitSizes(split));
 }
@@ -329,7 +395,8 @@ export interface WorkTabInit {
 const selects = (strip: Element) => [...strip.querySelectorAll<HTMLElement>(".z-tabstrip__select")];
 const findTab = (strip: Element, id: string) => selects(strip).find((s) => s.dataset.tabId === id);
 const activeTab = (strip: Element) => selects(strip).find((s) => s.getAttribute("aria-selected") === "true");
-const panelFor = (select: HTMLElement) => (select.getAttribute("aria-controls") ? document.getElementById(select.getAttribute("aria-controls")!) : null);
+const panelFor = (select: HTMLElement) =>
+  select.getAttribute("aria-controls") ? document.getElementById(select.getAttribute("aria-controls")!) : null;
 
 /** Desplaza la tira para que la pestaña activa quede a la vista. */
 function reveal(strip: Element): void {
@@ -391,7 +458,10 @@ export function closeWorkTab(strip: HTMLElement, id: string): boolean {
 }
 
 /** Añade una pestaña con el marcado del contrato. Devuelve su botón, o null si el id ya existe. */
-export function addWorkTab(strip: HTMLElement, { id, title, icon, closable = true, closeLabel, controls, select = true }: WorkTabInit): HTMLElement | null {
+export function addWorkTab(
+  strip: HTMLElement,
+  { id, title, icon, closable = true, closeLabel, controls, select = true }: WorkTabInit,
+): HTMLElement | null {
   const list = strip.querySelector<HTMLElement>(".z-tabstrip__list");
   if (!list || findTab(strip, id)) return null;
   const tab = document.createElement("div");
@@ -424,7 +494,7 @@ export function addWorkTab(strip: HTMLElement, { id, title, icon, closable = tru
     close.setAttribute("aria-hidden", "true");
     close.tabIndex = -1;
     button.setAttribute("aria-keyshortcuts", "Delete");
-    close.innerHTML = iconSvg("x-mark", { size: 12 });
+    close.append(iconElement("x-mark", { size: 12 }));
     tab.append(close);
   }
   list.append(tab);
@@ -438,7 +508,8 @@ function addRequested(strip: HTMLElement, button: HTMLElement): void {
   const title = button.dataset.newTitle;
   if (!emit(strip, "add") || !title) return;
   let id: string;
-  do id = `tab-${++created}`; while (findTab(strip, id));
+  do id = `tab-${++created}`;
+  while (findTab(strip, id));
   addWorkTab(strip, { id, title: `${title} ${selects(strip).length + 1}` })?.focus();
 }
 
@@ -453,6 +524,11 @@ function hydrateStrip(strip: HTMLElement): void {
   // Al estrecharse la tira, la pestaña activa sigue a la vista.
   stripObserver ??= new ResizeObserver((entries) => {
     for (const entry of entries) {
+      if (!entry.target.isConnected) {
+        stripObserver?.unobserve(entry.target);
+        observedLists.delete(entry.target);
+        continue;
+      }
       const owner = entry.target.closest(".z-tabstrip");
       if (owner) reveal(owner);
     }
@@ -477,7 +553,7 @@ export function setSectionOpen(section: HTMLElement, open: boolean): void {
   if (!icon || !/^chevron-(down|right)-small$/.test(icon.getAttribute(attr) ?? "")) return;
   const name = open ? "chevron-down-small" : "chevron-right-small";
   if (attr === "name") icon.setAttribute("name", name);
-  else icon.outerHTML = iconSvg(name, { size: icon.getAttribute("width") ?? 12 });
+  else icon.replaceWith(iconElement(name, { size: icon.getAttribute("width") ?? 12 }));
 }
 
 /* ---------- Delegación de eventos ---------- */
@@ -492,7 +568,8 @@ function onClick(event: MouseEvent): void {
     if (!shell) return;
     // El foco queda en el botón (hay navegadores que no enfocan al hacer clic): ahí vuelve al cerrar el cajón.
     if (document.activeElement !== toggle) toggle.focus({ preventScroll: true });
-    return togglePanel(shell, toggle.getAttribute("data-z-shell-toggle") as ShellSide);
+    togglePanel(shell, toggle.getAttribute("data-z-shell-toggle") as ShellSide);
+    return;
   }
 
   const scrim = target.closest(".z-shell__scrim");
@@ -550,18 +627,20 @@ function onKeydown(event: KeyboardEvent): void {
     const next = resizeByKey(event.key, options.side, currentSize(handle, options), options);
     if (next === undefined) return;
     event.preventDefault();
-    return resizeTo(handle, next);
+    resizeTo(handle, next);
+    return;
   }
 
   const divider = target.closest<HTMLElement>(".z-split__divider");
   const split = divider?.parentElement;
   if (divider && split?.classList.contains("z-split")) {
-    const delta = dividerKeyDelta(event.key, directionOf(split));
+    const delta = dividerKeyDelta(event.key, directionOf(split), isRtl(split));
     if (!delta) return;
     event.preventDefault();
     const index = parts(split, "z-split__divider").indexOf(divider);
     const sizes = getSplitSizes(split);
-    return moveSplit(split, index, sizes[index] ?? 0, sizes[index + 1] ?? 0, delta);
+    moveSplit(split, index, sizes[index] ?? 0, sizes[index + 1] ?? 0, delta);
+    return;
   }
 
   const list = target.closest(".z-tabstrip__list");
@@ -576,7 +655,7 @@ function onKeydown(event: KeyboardEvent): void {
       activeTab(strip)?.focus();
       return;
     }
-    const next = tabs[tabKeyIndex(event.key, tabs.indexOf(activeTab(strip)!), tabs.length)];
+    const next = tabs[tabKeyIndex(event.key, tabs.indexOf(activeTab(strip)!), tabs.length, isRtl(list))];
     if (!next) return;
     event.preventDefault();
     selectWorkTab(strip, next.dataset.tabId ?? "");
@@ -611,11 +690,17 @@ function onPointerDown(event: PointerEvent): void {
     const sizes = getSplitSizes(split);
     const [a, b] = [sizes[index] ?? 0, sizes[index + 1] ?? 0];
     const pos = row ? event.clientX : event.clientY;
-    move = (e) => moveSplit(split, index, a, b, ((row ? e.clientX : e.clientY) - pos) / total);
+    // En una fila RTL el primer panel queda a la derecha: arrastrar a la derecha lo encoge.
+    const sign = row && isRtl(split) ? -1 : 1;
+    move = (e) => moveSplit(split, index, a, b, (sign * ((row ? e.clientX : e.clientY) - pos)) / total);
     el.dataset.dragging = "";
   }
   drag = { el, move };
-  try { el.setPointerCapture(event.pointerId); } catch { /* puntero ya liberado */ }
+  try {
+    el.setPointerCapture(event.pointerId);
+  } catch {
+    /* puntero ya liberado */
+  }
 }
 
 function onPointerEnd(): void {
@@ -624,6 +709,16 @@ function onPointerEnd(): void {
 }
 
 function onDoubleClick(event: MouseEvent): void {
+  // Divisor: los dos paneles que separa se reparten su espacio a partes iguales.
+  const divider = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-split__divider") : null;
+  const split = divider?.parentElement;
+  if (divider && split?.classList.contains("z-split") && inDom(divider)) {
+    const index = parts(split, "z-split__divider").indexOf(divider);
+    const sizes = getSplitSizes(split);
+    const half = ((sizes[index] ?? 0) + (sizes[index + 1] ?? 0)) / 2;
+    moveSplit(split, index, half, half, 0);
+    return;
+  }
   const handle = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-resize") : null;
   if (!handle || !inDom(handle)) return;
   const { defaultSize } = resizeOptions(handle);
@@ -637,8 +732,36 @@ export function hydrate(root: ParentNode = document): void {
   for (const split of all(root, ".z-split")) hydrateSplit(split);
   for (const strip of all(root, ".z-tabstrip")) hydrateStrip(strip);
   for (const handle of all(root, ".z-resize")) {
+    // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
+    if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
+    if (!handle.hasAttribute("tabindex")) handle.tabIndex = 0;
+    if (!handle.hasAttribute("aria-orientation"))
+      handle.setAttribute("aria-orientation", isHorizontal((handle.dataset.side ?? "right") as ResizeSide) ? "vertical" : "horizontal");
+    if (!handle.hasAttribute("aria-valuemin")) handle.setAttribute("aria-valuemin", String(RESIZE_MIN));
+    if (!handle.hasAttribute("aria-valuemax")) handle.setAttribute("aria-valuemax", String(RESIZE_MAX));
     const options = resizeOptions(handle);
-    if (options.target && !handle.closest("[hidden]")) handle.setAttribute("aria-valuenow", String(Math.round(currentSize(handle, options))));
+    if (options.target && !handle.closest("[hidden]"))
+      handle.setAttribute("aria-valuenow", String(Math.round(currentSize(handle, options))));
+  }
+}
+
+/**
+ * Suelta lo que este módulo guarda de los layouts de `root` (observadores de tamaño y estado de shells): se llama
+ * antes de retirar del documento un bloque de marcado en una aplicación que monta y desmonta vistas. Los
+ * manejadores de eventos son del documento y no dependen de ningún elemento: no hay nada más que soltar.
+ */
+export function dispose(root: ParentNode = document): void {
+  if (!isBrowser) return;
+  for (const shell of all(root, ".z-shell")) {
+    shellObserver?.unobserve(shell);
+    shells.delete(shell);
+  }
+  for (const strip of all(root, ".z-tabstrip")) {
+    const list = strip.querySelector(".z-tabstrip__list");
+    if (list) {
+      stripObserver?.unobserve(list);
+      observedLists.delete(list);
+    }
   }
 }
 

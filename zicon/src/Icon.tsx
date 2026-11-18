@@ -21,9 +21,13 @@ export function Icon({ name, variant = "outline", size = 16, label, className, .
   const def = getIcon(name);
   if (!def && !warned.has(name)) {
     warned.add(name);
-    console.warn(`[zicon] "${name}" no está registrado. Importa "@zuccadev-labs/zuix-zicon/all" una vez o registra el icono con registerIcons().`);
+    console.warn(
+      `[zicon] "${name}" no está registrado. Importa "@zuccadev-labs/zuix-zicon/all" una vez o registra el icono con registerIcons().`,
+    );
   }
   const paths = def ? (variant === "solid" ? def.s : def.o) : [];
+  // Un nombre accesible puede llegar también por `aria-label` o `aria-labelledby`: entonces el icono no se oculta.
+  const named = Boolean(label ?? rest["aria-label"] ?? rest["aria-labelledby"]);
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -32,15 +36,16 @@ export function Icon({ name, variant = "outline", size = 16, label, className, .
       height={size}
       fill="currentColor"
       focusable="false"
-      role={label ? "img" : undefined}
+      role={named ? "img" : undefined}
       aria-label={label}
-      aria-hidden={label ? undefined : true}
+      aria-hidden={named ? undefined : true}
       data-icon={name}
       data-variant={variant}
       {...rest}
       className={className ? `z-icon ${className}` : "z-icon"}
     >
       {paths.map((d, i) =>
+        // biome-ignore lint/suspicious/noArrayIndexKey: los trazos de un icono son una lista fija y sin estado, y dos pueden coincidir en `d`; su posición es su identidad.
         d.startsWith("E:") ? <path key={i} fillRule="evenodd" clipRule="evenodd" d={d.slice(2)} /> : <path key={i} d={d} />,
       )}
     </svg>

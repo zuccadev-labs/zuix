@@ -14,7 +14,15 @@ export interface AvatarGroupProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /** Avatares solapados con contador de sobrantes. */
-export function AvatarGroup({ max = 4, total, size = "md", overflowLabel = (hidden) => `${hidden} more`, className, children, ...rest }: AvatarGroupProps) {
+export function AvatarGroup({
+  max = 4,
+  total,
+  size = "md",
+  overflowLabel = (hidden) => `${hidden} more`,
+  className,
+  children,
+  ...rest
+}: AvatarGroupProps) {
   const items = Children.toArray(children);
   const visible = items.slice(0, max);
   const hidden = (total ?? items.length) - visible.length;

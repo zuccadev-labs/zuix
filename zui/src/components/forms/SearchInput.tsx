@@ -3,6 +3,7 @@ import { useRef, useState, type ChangeEvent, type InputHTMLAttributes, type Keyb
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
+import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
 
 export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type" | "value" | "defaultValue"> {
@@ -22,17 +23,30 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
 }
 
 /** Campo de búsqueda con icono, botón de borrado y Escape para limpiar. */
-export function SearchInput({ value, defaultValue = "", onValueChange, onSearch, onClear, onChange, onKeyDown, size = "md", clearLabel = "Clear search", loading, placeholder = "Search", className, id, ref, "aria-describedby": describedBy, ...rest }: SearchInputProps) {
+export function SearchInput({
+  value,
+  defaultValue = "",
+  onValueChange,
+  onSearch,
+  onClear,
+  onChange,
+  onKeyDown,
+  size = "md",
+  clearLabel = "Clear search",
+  loading,
+  placeholder = "Search",
+  className,
+  id,
+  ref,
+  "aria-describedby": describedBy,
+  ...rest
+}: SearchInputProps) {
   const { invalid: _invalid, ...control } = useFieldControl({ id, "aria-describedby": describedBy });
   const [inner, setInner] = useState(defaultValue);
   const node = useRef<HTMLInputElement | null>(null);
   const current = value ?? inner;
 
-  const setRef = (element: HTMLInputElement | null) => {
-    node.current = element;
-    if (typeof ref === "function") ref(element);
-    else if (ref) ref.current = element;
-  };
+  const setRef = useMergedRef(node, ref);
   const update = (next: string) => {
     setInner(next);
     onValueChange?.(next);

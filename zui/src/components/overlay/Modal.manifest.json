@@ -40,11 +40,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md",
       "description": "Ancho máximo: 400, 560 o 720 px."
     },
@@ -74,10 +70,7 @@
       "type": "ReactNode"
     }
   ],
-  "states": [
-    "open",
-    "closed"
-  ],
+  "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
     "duration-normal",
@@ -121,10 +114,9 @@
     "z-modal__body",
     "z-modal__footer",
     "z-modal__close",
-    "z-overlay-scrim",
     "z-overlay-close"
   ],
-  "a11y": "Radix Dialog: role=dialog, aria-modal, trampa de foco, Escape cierra y el foco vuelve al disparador. El título nombra el diálogo; sin título se usa `label` oculto visualmente.",
+  "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape cierra y el foco vuelve al disparador. El título nombra el diálogo; sin título se usa `label` como `aria-label`.",
   "examples": [
     {
       "title": "Con disparador y pie",
@@ -135,7 +127,7 @@
       "code": "<Modal open={open} onOpenChange={setOpen} size=\"lg\" title=\"Release notes\">\n  <p>Version 2.4 brings a new command palette.</p>\n</Modal>"
     }
   ],
-  "origin": "Tamaños y API de Modal de design system base; material y animación de los diálogos de zutool; accesibilidad de Radix Dialog.",
+  "origin": "Tamaños y API de Modal de design system base; material y animación de los diálogos de zutool; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

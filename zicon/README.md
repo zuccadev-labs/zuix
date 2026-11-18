@@ -1,21 +1,22 @@
 # @zuccadev-labs/zuix-zicon
 
-Estándar iconográfico de la suite zuix: 346 iconos en dos variantes (`outline` y `solid`), en caja de
-24 × 24, con categorías y palabras clave en español e inglés. Se usan por nombre desde React, como
-elemento `<z-icon>`, como cadena SVG, desde un sprite o como archivos sueltos.
+The icon standard of the zuix suite: 346 icons in two variants (`outline` and `solid`), on a 24 × 24 box,
+with categories and keywords in Spanish and English. They are used by name from React, as a `<z-icon>`
+element, as an SVG node or string, from a sprite, or as single files.
 
-## Instalación
+## Install
 
 ```
 pnpm add @zuccadev-labs/zuix-zicon
 ```
 
-React 19 es un peer opcional: solo lo necesita el componente `Icon`. También viene dentro de la suite
-completa, [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
+React 19 is an optional peer: only the `Icon` component needs it. The package also comes inside the full
+suite, [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 
-## Uso sin React
+## Without React
 
-Con un bundler, `import "@zuccadev-labs/zuix-zicon/element"` define el elemento `<z-icon>` con el set completo:
+With a bundler, `import "@zuccadev-labs/zuix-zicon/element"` defines the `<z-icon>` element with the full
+set:
 
 ```js
 import "@zuccadev-labs/zuix-zicon/element";
@@ -27,14 +28,18 @@ import "@zuccadev-labs/zuix-zicon/element";
 <z-icon name="bookmark" variant="solid"></z-icon>
 ```
 
-| Forma | Uso |
+| Form | Usage |
 |---|---|
-| Elemento | `<z-icon name="bell" variant="solid" size="20" label="Alerts"></z-icon>` |
-| Cadena | `iconSvg("bell", { size: 20 })` desde `@zuccadev-labs/zuix-zicon/dom` |
-| Sprite | `<svg class="z-icon" width="16" height="16"><use href="sprite.svg#bell"/></svg>` (`#bell-solid` para la variante sólida) |
-| Archivo | `@zuccadev-labs/zuix-zicon/svg/outline/bell.svg` |
+| Element | `<z-icon name="bell" variant="solid" size="20" label="Alerts"></z-icon>` |
+| Node | `iconElement("bell", { size: 20 })` from `@zuccadev-labs/zuix-zicon/dom`: an `<svg>` built with the DOM |
+| String | `iconSvg("bell", { size: 20 })` from `@zuccadev-labs/zuix-zicon/dom` |
+| Sprite | `<svg class="z-icon" width="16" height="16"><use href="sprite.svg#bell"/></svg>` (`#bell-solid` for the solid variant) |
+| File | `@zuccadev-labs/zuix-zicon/svg/outline/bell.svg` |
 
-## Uso con React
+`<z-icon>` and `iconElement()` never use `innerHTML`: they work on pages with Trusted Types enabled.
+`iconSvg()` returns a string with every interpolated value escaped.
+
+## With React
 
 ```tsx
 import { Icon } from "@zuccadev-labs/zuix-zicon";
@@ -42,27 +47,27 @@ import { Icon } from "@zuccadev-labs/zuix-zicon";
 export function Toolbar() {
   return (
     <>
-      <Icon name="magnifying-glass" />                 {/* 16 px, decorativo */}
-      <Icon name="trash" size={20} label="Delete" />   {/* con nombre accesible */}
+      <Icon name="magnifying-glass" />                 {/* 16 px, decorative */}
+      <Icon name="trash" size={20} label="Delete" />   {/* with an accessible name */}
       <Icon name="bookmark" variant="solid" />
     </>
   );
 }
 ```
 
-| Prop o atributo | Valores | Por defecto |
+| Prop or attribute | Values | Default |
 |---|---|---|
-| `name` | Un nombre de `manifest.json`; en TypeScript, uno inexistente no compila | — |
+| `name` | A name from `manifest.json`; in TypeScript, one that does not exist does not compile | — |
 | `variant` | `outline`, `solid` | `outline` |
-| `size` | Número (px) o longitud CSS | `16` |
-| `label` | Nombre accesible. Sin él, el icono es decorativo | — |
+| `size` | Number (px) or CSS length | `16` |
+| `label` | Accessible name. Without it the icon is decorative | — |
 
-El color se hereda del texto que rodea al icono.
+The color is inherited from the surrounding text.
 
-## Incluir solo algunos iconos
+## Shipping only some icons
 
-`@zuccadev-labs/zuix-zicon`, `@zuccadev-labs/zuix-zicon/all` y `@zuccadev-labs/zuix-zicon/element` registran el set completo (unos 580 kB de
-trazados sin comprimir). Para registrar solo los que se usan:
+`@zuccadev-labs/zuix-zicon`, `/all` and `/element` register the full set (about 580 kB of path data,
+uncompressed). To register only what you use:
 
 ```tsx
 import { Icon, registerIcons } from "@zuccadev-labs/zuix-zicon/core";
@@ -71,40 +76,52 @@ import { trash } from "@zuccadev-labs/zuix-zicon/icons/trash";
 registerIcons([trash]);
 ```
 
-`@zuccadev-labs/zuix-zicon/dom` tampoco incluye datos: ofrece `iconSvg` y `registerIcons` sin React.
+`@zuccadev-labs/zuix-zicon/dom` ships no data either: it offers `iconSvg`, `iconElement` and
+`registerIcons` without React.
 
-## Entradas
+## Entry points
 
-| Entrada | Contenido |
+| Entry | Contents |
 |---|---|
-| `@zuccadev-labs/zuix-zicon` | `Icon` de React con el set completo registrado |
-| `@zuccadev-labs/zuix-zicon/core` | `Icon` y `registerIcons`, sin datos |
-| `@zuccadev-labs/zuix-zicon/all` | Registra el set completo al importarse |
-| `@zuccadev-labs/zuix-zicon/dom` | `iconSvg` y `registerIcons`, sin React y sin datos |
-| `@zuccadev-labs/zuix-zicon/element` | Define `<z-icon>` con el set completo |
-| `@zuccadev-labs/zuix-zicon/icons/<nombre>` | Un icono por módulo |
-| `@zuccadev-labs/zuix-zicon/manifest.json` | Nombres, categorías y palabras clave |
-| `@zuccadev-labs/zuix-zicon/sprite.svg`, `@zuccadev-labs/zuix-zicon/svg/*` | Sprite y archivos SVG sueltos |
-| `@zuccadev-labs/zuix-zicon/dist/zicon.element.js` | `<z-icon>` autocontenido para enlazar sin bundler |
+| `@zuccadev-labs/zuix-zicon` | React `Icon` with the full set registered |
+| `@zuccadev-labs/zuix-zicon/core` | `Icon`, `registerIcons` and `onIconsRegistered`, without data |
+| `@zuccadev-labs/zuix-zicon/all` | Registers the full set on import |
+| `@zuccadev-labs/zuix-zicon/dom` | `iconSvg`, `iconElement`, `iconPaths` and `registerIcons`, without React and without data |
+| `@zuccadev-labs/zuix-zicon/element` | Defines `<z-icon>` with the full set |
+| `@zuccadev-labs/zuix-zicon/icons/<name>` | One icon per module |
+| `@zuccadev-labs/zuix-zicon/manifest.json` | Names, categories and keywords |
+| `@zuccadev-labs/zuix-zicon/sprite.svg`, `@zuccadev-labs/zuix-zicon/svg/*` | Sprite and single SVG files |
+| `@zuccadev-labs/zuix-zicon/dist/zicon.element.js` | Self-contained `<z-icon>` to link without a bundler |
 
-## Un solo registro
+## A single registry
 
-Los iconos se registran en un mapa dentro del paquete. Si un proyecto instala dos copias de
-`@zuccadev-labs/zuix-zicon`, los iconos registrados en una no se ven desde la otra: salen vacíos y la consola
-avisa. Por eso `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` lo declaran como `peerDependency` y usan la
-copia de la aplicación. Los paquetes de la suite se instalan y se actualizan juntos, en la misma versión.
+Icons are registered in a map inside the package. If a project installs two copies of
+`@zuccadev-labs/zuix-zicon`, icons registered in one are not visible from the other: they render empty and
+the console warns. That is why `@zuccadev-labs/zuix-zui` and `@zuccadev-labs/zuix-zout` declare it as a
+`peerDependency` and use the application's copy. The suite packages are installed and upgraded together, at
+the same version.
 
-## Limitaciones
+## Known limits
 
-- La variante `outline` está dibujada como forma rellena: el grosor del trazo no se ajusta.
-- Hay una sola caja de 24 px.
+- The `outline` variant is drawn as a filled shape: stroke width cannot be adjusted.
+- There is a single 24 px box.
+- 101 of the 346 icons are identical in `outline` and `solid`: the source drawing does not distinguish them.
+- `<use>` pointing at an external `sprite.svg` only works when the sprite is served from the same origin as
+  the page.
 
-## Documentación
+## Documentation
 
-- [Guía de iconos](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/02-zicon.md)
-- [Cambios](https://github.com/zuccadev-labs/zuix/blob/main/zicon/CHANGELOG.md)
-- Reglas para agentes de IA: `AGENTS.md`, incluido en el paquete.
+The guides are written in Spanish.
 
-## Licencia
+- [Icons guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/02-zicon.md)
+- [Changelog](https://github.com/zuccadev-labs/zuix/blob/main/zicon/CHANGELOG.md)
+- Rules for AI agents: `AGENTS.md`, included in the package.
+
+## Español
+
+Estándar iconográfico de la suite zuix: 346 iconos en `outline` y `solid`. La guía está en español en
+[`docs/users/02-zicon.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/02-zicon.md).
+
+## License
 
 [MIT](https://github.com/zuccadev-labs/zuix/blob/main/LICENSE).

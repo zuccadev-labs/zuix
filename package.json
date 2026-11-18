@@ -2,9 +2,9 @@
   "name": "zuix",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@12.18.0",
+  "packageManager": "pnpm@12.21.0",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0",
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0",
     "pnpm": ">=12"
   },
   "scripts": {
@@ -14,7 +14,9 @@
     "manifest": "node tools/manifest.mjs",
     "typecheck": "pnpm -r typecheck",
     "test:browser": "node tests/browser/run.mjs",
-    "check": "pnpm tokens && pnpm icons && pnpm style-audit && pnpm manifest && pnpm html && pnpm dist && pnpm typecheck",
+    "barrels": "node tools/check-barrels.mjs",
+    "llms": "pnpm --filter @zuccadev-labs/zuix-zudocs llms",
+    "check": "pnpm tokens && pnpm icons && pnpm style-audit && pnpm manifest && pnpm barrels && pnpm html && pnpm dist && pnpm llms && pnpm typecheck",
     "html": "node tools/html.mjs",
     "dist": "node tools/dist.mjs && node examples/html/build.mjs",
     "test:html": "node tests/html/run.mjs",
@@ -25,12 +27,21 @@
     "test:pack:next": "node tools/pack-test.mjs --next",
     "test:blur": "node tests/blur-firefox.mjs",
     "bump": "node tools/version.mjs",
-    "verify": "pnpm check && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser"
+    "lint": "biome lint --error-on-warnings && node tools/use-client.mjs",
+    "format": "biome format --write",
+    "format:check": "biome format",
+    "test:unit": "node tests/unit/run.mjs",
+    "test:site": "node tests/site/run.mjs",
+    "test:site:all": "BROWSER=all node tests/site/run.mjs",
+    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm test:site && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser"
   },
   "devDependencies": {
-    "axe-core": "^4.14.0",
+    "@biomejs/biome": "^2.6.8",
+    "axe-core": "^4.14.1",
     "esbuild": "^0.28.2",
-    "playwright-core": "^1.65.0"
+    "happy-dom": "^21.0.4",
+    "playwright-core": "^1.65.1",
+    "tsx": "^4.23.15"
   },
   "license": "MIT"
 }

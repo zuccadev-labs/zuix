@@ -1,13 +1,24 @@
 "use client";
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import {
+  addDays,
+  addMonths,
+  daysInMonth,
+  localeWeekStart,
+  monthOf,
+  MONTH,
+  pad,
+  parse,
+  todayISO,
+  valid,
+  type DateRange,
+} from "../../core/date";
 import { cx } from "../../cx";
 
-/** Rango de fechas ISO (`YYYY-MM-DD`). `to` es `null` mientras solo se ha elegido el inicio. */
-export interface DateRange {
-  from: string | null;
-  to: string | null;
-}
+export { todayISO };
+
+export type { DateRange } from "../../core/date";
 
 interface CalendarBaseProps {
   /** Mes visible, `YYYY-MM` (controlado). */
@@ -50,42 +61,7 @@ export interface CalendarRangeProps extends CalendarBaseProps {
 
 export type CalendarProps = CalendarSingleProps | CalendarRangeProps;
 
-// ---- Fechas: todo en UTC para que el día no dependa de la zona horaria. ----
-const DAY_MS = 86_400_000;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const pad = (n: number, width = 2) => String(n).padStart(width, "0");
-const parse = (iso: string) => new Date(Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10))));
-const format = (date: Date) => `${pad(date.getUTCFullYear(), 4)}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
-const valid = (iso: string | null | undefined): iso is string => typeof iso === "string" && ISO_DATE.test(iso) && format(parse(iso)) === iso;
-const addDays = (iso: string, days: number) => format(new Date(parse(iso).getTime() + days * DAY_MS));
-const monthOf = (iso: string) => iso.slice(0, 7);
-const daysInMonth = (year: number, monthIndex: number) => new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
-/** Suma meses conservando el día; si no existe (31 → mes de 30), usa el último del mes. */
-function addMonths(iso: string, months: number) {
-  const date = parse(iso);
-  const target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + months, 1));
-  const day = Math.min(date.getUTCDate(), daysInMonth(target.getUTCFullYear(), target.getUTCMonth()));
-  return format(new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), day)));
-}
-/** Hoy en la zona horaria local, como fecha ISO. */
-export function todayISO() {
-  const now = new Date();
-  return `${pad(now.getFullYear(), 4)}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-
-/** Primer día de la semana según el locale (Intl.Locale.weekInfo), o lunes. */
-function localeWeekStart(locale?: string): number {
-  try {
-    const resolved = new Intl.Locale(locale ?? new Intl.DateTimeFormat().resolvedOptions().locale) as Intl.Locale & {
-      getWeekInfo?: () => { firstDay?: number };
-      weekInfo?: { firstDay?: number };
-    };
-    const first = (resolved.getWeekInfo?.() ?? resolved.weekInfo)?.firstDay;
-    return typeof first === "number" ? first % 7 : 1;
-  } catch {
-    return 1;
-  }
-}
+const noSubscription = () => () => {};
 
 /** Rejilla de un mes para elegir una fecha o un rango. Valores como cadenas ISO `YYYY-MM-DD`. */
 export function Calendar(props: CalendarProps) {
@@ -113,7 +89,10 @@ export function Calendar(props: CalendarProps) {
   const [inner, setInner] = useState<string | DateRange | null>(props.defaultValue ?? null);
   const raw = props.value === undefined ? inner : props.value;
   const single = mode === "single" && typeof raw === "string" && valid(raw) ? raw : null;
-  const range: DateRange = mode === "range" && raw && typeof raw === "object" ? { from: valid(raw.from) ? raw.from : null, to: valid(raw.to) ? raw.to : null } : { from: null, to: null };
+  const range: DateRange =
+    mode === "range" && raw && typeof raw === "object"
+      ? { from: valid(raw.from) ? raw.from : null, to: valid(raw.to) ? raw.to : null }
+      : { from: null, to: null };
   const anchorDate = single ?? range.from;
 
   // Hoy se resuelve tras montar: el HTML del servidor no depende del reloj.
@@ -121,8 +100,22 @@ export function Calendar(props: CalendarProps) {
   useEffect(() => setToday(todayISO()), []);
 
   // ---- Mes visible y día activo (foco itinerante) ----
-  const [innerMonth, setInnerMonth] = useState(() => defaultMonth ?? (anchorDate ? monthOf(anchorDate) : monthOf(valid(min) && min > todayISO() ? min : valid(max) && max < todayISO() ? max : todayISO())));
-  const visibleMonth = month ?? innerMonth;
+  // Sin `month`, `defaultMonth` ni valor, el mes sale del reloj. El reloj del servidor y el del navegador pueden
+  // caer en meses distintos (zona horaria, HTML estático generado otro mes): durante la hidratación se toma el mes
+  // que el servidor dejó en `data-month`, y justo después React vuelve a pintar con el reloj del navegador.
+  const [innerMonth, setInnerMonth] = useState<string | null>(() =>
+    defaultMonth && MONTH.test(defaultMonth) ? defaultMonth : anchorDate ? monthOf(anchorDate) : null,
+  );
+  const clockMonth = () => {
+    const now = todayISO();
+    return monthOf(valid(min) && min > now ? min : valid(max) && max < now ? max : now);
+  };
+  const fallbackMonth = useSyncExternalStore(noSubscription, clockMonth, () =>
+    typeof document === "undefined"
+      ? clockMonth()
+      : (document.getElementById(titleId)?.closest<HTMLElement>(".z-calendar")?.dataset.month ?? clockMonth()),
+  );
+  const visibleMonth = month && MONTH.test(month) ? month : (innerMonth ?? fallbackMonth);
   const [focused, setFocused] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const moveFocus = useRef(false);
@@ -181,14 +174,20 @@ export function Calendar(props: CalendarProps) {
     setFocused(target);
     showMonth(monthOf(target));
   };
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `visibleMonth` no se lee dentro; la celda del día activo solo existe una vez pintado su mes, así que el efecto debe repetirse al cambiar de mes.
   useEffect(() => {
     if (!moveFocus.current || !focused) return;
     moveFocus.current = false;
     grid.current?.querySelector<HTMLElement>(`[data-date="${focused}"]`)?.focus();
   }, [focused, visibleMonth]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: foco inicial; se ejecuta solo al montar con los valores de ese momento (repetirlo robaría el foco en cada cambio de selección).
   useEffect(() => {
     // Sin selección el foco va a hoy: `today` aún no está resuelto en este primer efecto, así que se busca por fecha.
-    if (autoFocus) (grid.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${anchorDate ?? todayISO()}"]`) ?? grid.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]'))?.focus();
+    if (autoFocus)
+      (
+        grid.current?.querySelector<HTMLElement>(`.z-calendar__day[data-date="${anchorDate ?? todayISO()}"]`) ??
+        grid.current?.querySelector<HTMLElement>('.z-calendar__day[tabindex="0"]')
+      )?.focus();
     // Solo al montar.
   }, []);
 
@@ -201,7 +200,12 @@ export function Calendar(props: CalendarProps) {
       showMonth(monthOf(date));
     }
     if (props.mode === "range") {
-      const next: DateRange = !range.from || range.to ? { from: date, to: null } : date < range.from ? { from: date, to: range.from } : { from: range.from, to: date };
+      const next: DateRange =
+        !range.from || range.to
+          ? { from: date, to: null }
+          : date < range.from
+            ? { from: date, to: range.from }
+            : { from: range.from, to: date };
       setInner(next);
       setPreview(null);
       props.onValueChange?.(next);
@@ -216,7 +220,10 @@ export function Calendar(props: CalendarProps) {
     if (!date) return;
     const weekday = (parse(date).getUTCDay() - start + 7) % 7;
     let next: string | null = null;
-    switch (event.key) {
+    // En RTL la rejilla se refleja: la flecha izquierda va al día siguiente.
+    const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
+    const key = rtl && event.key === "ArrowLeft" ? "ArrowRight" : rtl && event.key === "ArrowRight" ? "ArrowLeft" : event.key;
+    switch (key) {
       case "ArrowLeft":
         next = addDays(date, -1);
         break;
@@ -250,8 +257,9 @@ export function Calendar(props: CalendarProps) {
 
   // Rango pintado: el elegido o, con solo el inicio, la vista previa hasta el día bajo el puntero o el foco.
   const previewing = mode === "range" && range.from && !range.to && preview && preview !== range.from ? preview : null;
-  const bandFrom = previewing ? (previewing < range.from! ? previewing : range.from) : range.from;
-  const bandTo = previewing ? (previewing < range.from! ? range.from : previewing) : range.to;
+  // Las fechas ISO se ordenan como texto: la banda va de la menor a la mayor.
+  const [bandFrom, bandTo] =
+    previewing && range.from ? (previewing < range.from ? [previewing, range.from] : [range.from, previewing]) : [range.from, range.to];
   const rangePart = (date: string) => {
     if (mode !== "range" || !bandFrom) return undefined;
     if (!bandTo || bandFrom === bandTo) return date === bandFrom ? "single" : undefined;
@@ -260,22 +268,48 @@ export function Calendar(props: CalendarProps) {
     return date > bandFrom && date < bandTo ? "middle" : undefined;
   };
 
-  const weekdays = (weeks[0] ?? []).map((date) => ({ short: formats.weekdayShort.format(parse(date)), long: formats.weekdayLong.format(parse(date)) }));
+  const weekdays = (weeks[0] ?? []).map((date) => ({
+    short: formats.weekdayShort.format(parse(date)),
+    long: formats.weekdayLong.format(parse(date)),
+  }));
 
   return (
-    <div id={id} className={cx("z-calendar", className)} data-mode={mode}>
+    <div id={id} className={cx("z-calendar", className)} data-mode={mode} data-month={visibleMonth}>
       <div className="z-calendar__header">
-        <button type="button" className="z-calendar__nav" aria-label={previousMonthLabel} title={previousMonthLabel} disabled={!canGoBack} onClick={() => shiftMonth(-1)}>
+        <button
+          type="button"
+          className="z-calendar__nav"
+          aria-label={previousMonthLabel}
+          title={previousMonthLabel}
+          disabled={!canGoBack}
+          onClick={() => shiftMonth(-1)}
+        >
           <Icon name="chevron-left" size={16} />
         </button>
         <div className="z-calendar__title" id={titleId} aria-live="polite">
           {formats.title.format(parse(first))}
         </div>
-        <button type="button" className="z-calendar__nav" aria-label={nextMonthLabel} title={nextMonthLabel} disabled={!canGoForward} onClick={() => shiftMonth(1)}>
+        <button
+          type="button"
+          className="z-calendar__nav"
+          aria-label={nextMonthLabel}
+          title={nextMonthLabel}
+          disabled={!canGoForward}
+          onClick={() => shiftMonth(1)}
+        >
           <Icon name="chevron-right" size={16} />
         </button>
       </div>
-      <table ref={grid} className="z-calendar__grid" role="grid" aria-labelledby={titleId} aria-multiselectable={mode === "range" || undefined} onKeyDown={handleKeyDown} onMouseLeave={() => setPreview(null)}>
+      <table
+        ref={grid}
+        className="z-calendar__grid"
+        // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «date picker grid»: una tabla con role="grid" conserva filas, cabeceras y celdas y añade la navegación con flechas.
+        role="grid"
+        aria-labelledby={titleId}
+        aria-multiselectable={mode === "range" || undefined}
+        onKeyDown={handleKeyDown}
+        onMouseLeave={() => setPreview(null)}
+      >
         <thead>
           <tr>
             {weekdays.map((weekday) => (
@@ -296,7 +330,14 @@ export function Calendar(props: CalendarProps) {
                 const inRange = mode === "range" && Boolean(range.from && range.to && date >= range.from && date <= range.to);
                 const isDisabled = unavailable(date);
                 return (
-                  <td key={date} className="z-calendar__cell" aria-selected={isSelected || inRange} data-range={part} data-preview={part && previewing ? "" : undefined}>
+                  // biome-ignore lint/a11y/useAriaPropsSupportedByRole: dentro de una tabla con role="grid" la celda es un gridcell implícito, que sí admite aria-selected.
+                  <td
+                    key={date}
+                    className="z-calendar__cell"
+                    aria-selected={isSelected || inRange}
+                    data-range={part}
+                    data-preview={part && previewing ? "" : undefined}
+                  >
                     <button
                       type="button"
                       className="z-calendar__day"

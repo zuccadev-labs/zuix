@@ -16,7 +16,19 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   ref?: Ref<HTMLButtonElement>;
 }
 
-export function IconButton({ icon, label, variant = "ghost", size = "md", iconVariant = "outline", active, loading, className, disabled, ...rest }: IconButtonProps) {
+export function IconButton({
+  icon,
+  label,
+  variant = "ghost",
+  size = "md",
+  iconVariant = "outline",
+  active,
+  loading,
+  className,
+  disabled,
+  onClick,
+  ...rest
+}: IconButtonProps) {
   return (
     <button
       type="button"
@@ -28,7 +40,11 @@ export function IconButton({ icon, label, variant = "ghost", size = "md", iconVa
       data-active={active || undefined}
       data-loading={loading || undefined}
       aria-busy={loading || undefined}
-      disabled={disabled || loading}
+      // En carga el botón no se deshabilita (`disabled` le quitaría el foco del teclado): lleva `aria-disabled`, no
+      // ejecuta `onClick` y deja de ser un botón de envío. Sin manejador propio: el componente sigue siendo estático.
+      aria-disabled={loading || undefined}
+      disabled={disabled}
+      {...(loading ? { type: "button" as const, onClick: undefined } : { onClick })}
     >
       {loading ? <span className="z-btn__spinner" aria-hidden="true" /> : <Icon name={icon} variant={iconVariant} size={ICON_SIZE[size]} />}
     </button>

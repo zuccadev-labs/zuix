@@ -20,7 +20,17 @@ export function panelMode(width: number | null, breakpoint: number, mode?: Panel
 
 /* ---------- ResizeHandle ---------- */
 
-export type ResizeSide = "left" | "right" | "top" | "bottom";
+/** Lado físico del panel donde va el tirador. */
+export type PhysicalSide = "left" | "right" | "top" | "bottom";
+/** `start` y `end` son los bordes lógicos en el eje de la escritura: en RTL, `start` es el derecho. */
+export type ResizeSide = PhysicalSide | "start" | "end";
+
+/** Lado físico de un lado lógico según la dirección de escritura. */
+export function physicalSide(side: ResizeSide, rtl: boolean): PhysicalSide {
+  if (side === "start") return rtl ? "right" : "left";
+  if (side === "end") return rtl ? "left" : "right";
+  return side;
+}
 
 export const RESIZE_MIN = 200;
 export const RESIZE_MAX = 720;
@@ -28,13 +38,21 @@ export const RESIZE_STEP = 16;
 
 export const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
-export const isHorizontal = (side: ResizeSide) => side === "left" || side === "right";
+export const isHorizontal = (side: ResizeSide) => side !== "top" && side !== "bottom";
 
 /** Un tirador en el borde derecho o inferior crece al avanzar; en el izquierdo o superior, al retroceder. */
-export const resizeSign = (side: ResizeSide) => (side === "right" || side === "bottom" ? 1 : -1);
+export const resizeSign = (side: PhysicalSide) => (side === "right" || side === "bottom" ? 1 : -1);
 
-/** Tamaño tras una tecla, o `undefined` si la tecla no mueve el tirador. */
-export function resizeByKey(key: string, side: ResizeSide, size: number, opts: { min: number; max: number; step: number; defaultSize?: number }): number | undefined {
+/**
+ * Tamaño tras una tecla, o `undefined` si la tecla no mueve el tirador. Las flechas son físicas (patrón
+ * «window splitter» de WAI-ARIA): la flecha mueve el tirador hacia donde apunta. Inicio vuelve al tamaño por defecto.
+ */
+export function resizeByKey(
+  key: string,
+  side: PhysicalSide,
+  size: number,
+  opts: { min: number; max: number; step: number; defaultSize?: number },
+): number | undefined {
   const sign = resizeSign(side);
   const grow = isHorizontal(side) ? (sign === 1 ? "ArrowRight" : "ArrowLeft") : sign === 1 ? "ArrowDown" : "ArrowUp";
   const shrink = isHorizontal(side) ? (sign === 1 ? "ArrowLeft" : "ArrowRight") : sign === 1 ? "ArrowUp" : "ArrowDown";
@@ -65,20 +83,30 @@ export function moveDivider(fractions: number[], index: number, a: number, b: nu
   return next;
 }
 
-/** Fracción que pide una tecla en un divisor, o 0 si la tecla no lo mueve. */
-export function dividerKeyDelta(key: string, direction: "row" | "column"): number {
+/**
+ * Fracción que pide una tecla en un divisor, o 0 si la tecla no lo mueve. Las flechas mueven el divisor hacia
+ * donde apuntan: en una fila RTL el primer panel está a la derecha, así que la flecha derecha lo encoge.
+ * Inicio y Fin llevan el divisor a su mínimo y a su máximo (±Infinity; `moveDivider` lo acota).
+ */
+export function dividerKeyDelta(key: string, direction: "row" | "column", rtl = false): number {
+  const sign = direction === "row" && rtl ? -1 : 1;
   const fwd = direction === "row" ? "ArrowRight" : "ArrowDown";
   const back = direction === "row" ? "ArrowLeft" : "ArrowUp";
-  return key === fwd ? SPLIT_KEY_STEP : key === back ? -SPLIT_KEY_STEP : 0;
+  if (key === "Home") return -Infinity;
+  if (key === "End") return Infinity;
+  return key === fwd ? sign * SPLIT_KEY_STEP : key === back ? -sign * SPLIT_KEY_STEP : 0;
 }
 
 /* ---------- TabStrip ---------- */
 
-/** Índice de la pestaña a la que lleva una tecla desde `current`, o -1 si la tecla no navega. */
-export function tabKeyIndex(key: string, current: number, count: number): number {
+/**
+ * Índice de la pestaña a la que lleva una tecla desde `current`, o -1 si la tecla no navega. En RTL la tira
+ * se dibuja de derecha a izquierda, así que la flecha izquierda avanza.
+ */
+export function tabKeyIndex(key: string, current: number, count: number, rtl = false): number {
   if (count === 0) return -1;
-  if (key === "ArrowRight") return (current + 1) % count;
-  if (key === "ArrowLeft") return (current - 1 + count) % count;
+  if (key === (rtl ? "ArrowLeft" : "ArrowRight")) return (current + 1) % count;
+  if (key === (rtl ? "ArrowRight" : "ArrowLeft")) return (current - 1 + count) % count;
   if (key === "Home") return 0;
   if (key === "End") return count - 1;
   return -1;

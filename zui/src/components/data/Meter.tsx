@@ -23,10 +23,26 @@ export interface MeterProps extends Omit<HTMLAttributes<HTMLDivElement>, "childr
 }
 
 /** Medidor de una magnitud dentro de un rango conocido (uso de disco, cuota, nivel). */
-export function Meter({ value, min = 0, max = 100, label, showLabel, valueLabel, startLabel, endLabel, tone, warningAt, dangerAt, size = "md", className, ...rest }: MeterProps) {
+export function Meter({
+  value,
+  min = 0,
+  max = 100,
+  label,
+  showLabel,
+  valueLabel,
+  startLabel,
+  endLabel,
+  tone,
+  warningAt,
+  dangerAt,
+  size = "md",
+  className,
+  ...rest
+}: MeterProps) {
   const span = max - min || 1;
   const percent = Math.max(0, Math.min(100, ((value - min) / span) * 100));
-  const resolved = tone ?? (dangerAt !== undefined && value >= dangerAt ? "danger" : warningAt !== undefined && value >= warningAt ? "warning" : "accent");
+  const resolved =
+    tone ?? (dangerAt !== undefined && value >= dangerAt ? "danger" : warningAt !== undefined && value >= warningAt ? "warning" : "accent");
   return (
     <div {...rest} className={cx("z-meter", className)} data-size={size} data-tone={resolved}>
       {showLabel || valueLabel ? (
@@ -35,7 +51,15 @@ export function Meter({ value, min = 0, max = 100, label, showLabel, valueLabel,
           {valueLabel ? <span className="z-meter__value">{valueLabel}</span> : null}
         </div>
       ) : null}
-      <div className="z-meter__track" role="meter" aria-label={label} aria-valuemin={min} aria-valuemax={max} aria-valuenow={value} aria-valuetext={typeof valueLabel === "string" ? valueLabel : undefined}>
+      <div
+        className="z-meter__track"
+        role="meter"
+        aria-label={label}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-valuetext={typeof valueLabel === "string" ? valueLabel : undefined}
+      >
         <div className="z-meter__fill" style={{ "--z-meter-value": `${percent}%` } as CSSProperties} />
       </div>
       {startLabel || endLabel ? (

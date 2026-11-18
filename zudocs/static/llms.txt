@@ -4,50 +4,58 @@
 
 ## Uso
 
-Qué es cada paquete y cómo se usa.
-
-- [Tokens](/docs/users/tokens): `@zuccadev-labs/zuix-tokens` es la fuente única de los valores de diseño. Iconos, componentes, layouts y
-- [Zicon](/docs/users/zicon): `@zuccadev-labs/zuix-zicon` es el estándar iconográfico de la suite. Sale de Dazicon, el set de iconos de DAZLABS.
-- [Zui](/docs/users/zui): `@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 64 componentes en 8 grupos. Cada componente es
-- [Zout](/docs/users/zout): `@zuccadev-labs/zuix-zout` es el paquete de layouts y ventanas dinámicas. Resuelve la estructura de la pantalla; no
-- [Zudocs](/docs/users/zudocs): `@zuccadev-labs/zuix-zudocs` es el estándar de documentación de la suite y su plantilla: un sitio Docusaurus con el
-- [Usar zuix con cualquier framework](/docs/users/frameworks): Zuix no es una librería de React. El estándar es un **contrato de HTML, CSS y tokens**; React es uno de
-- [Migrar zutool y ui-glass a @zuccadev-labs/zuix-tokens](/docs/users/migracion): zutool y `ui-glass` llevan cada uno su copia de los tokens liquid glass. Esta guía explica cómo pasan a
-- [Zuix para usuarios](/docs/users/): Zuix es una suite de UI/UX: tokens, iconos, componentes, layouts y documentación con un solo estándar.
+- [Zuix para usuarios](https://zuccadev-labs.github.io/zuix/docs/users.md): zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación con un solo estándar.
+- [Tokens](https://zuccadev-labs.github.io/zuix/docs/users/tokens.md): @zuccadev-labs/zuix-tokens es la fuente única de los valores de diseño.
+- [Zicon](https://zuccadev-labs.github.io/zuix/docs/users/zicon.md): @zuccadev-labs/zuix-zicon es el estándar iconográfico de la suite.
+- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 64 componentes en 8 grupos.
+- [Zout](https://zuccadev-labs.github.io/zuix/docs/users/zout.md): @zuccadev-labs/zuix-zout es el paquete de layouts y ventanas dinámicas.
+- [Zudocs](https://zuccadev-labs.github.io/zuix/docs/users/zudocs.md): @zuccadev-labs/zuix-zudocs es el estándar de documentación de la suite y su plantilla: un sitio Docusaurus con el estilo liquid glass, que se adapta a otro proyecto o marca editando un solo archivo.
+- [Usar zuix con cualquier framework](https://zuccadev-labs.github.io/zuix/docs/users/frameworks.md): zuix no es una biblioteca de React.
+- [Migrar un proyecto con variables propias a los tokens de zuix](https://zuccadev-labs.github.io/zuix/docs/users/migracion.md): zutool y ui-glass llevaban cada uno su copia de los tokens liquid glass.
+- [Actualizar de 0.1 a 0.2](https://zuccadev-labs.github.io/zuix/docs/users/actualizar-de-0-1-a-0-2.md): La 0.2.0 es la primera versión con cambios incompatibles.
+- [Accesibilidad](https://zuccadev-labs.github.io/zuix/docs/users/accesibilidad.md): El objetivo de la suite es WCAG 2.2 nivel AA, y lo trato como algo que se mide: lo que se puede comprobar con una máquina se comprueba en cada cambio y hace fallar la verificación.
+- [Compatibilidad](https://zuccadev-labs.github.io/zuix/docs/users/compatibilidad.md): Qué navegadores, qué versiones de Node, de React y de TypeScript, y qué bundlers admite la suite.
+- [CSP y Trusted Types](https://zuccadev-labs.github.io/zuix/docs/users/csp-y-trusted-types.md): Cómo usar la suite en una página con una política de seguridad de contenido estricta, y qué hace la suite con los datos que recibe.
 
 ## Agentes
 
-Reglas, patrones y verificación para agentes de IA.
+- [Kit de agente](https://zuccadev-labs.github.io/zuix/docs/agents.md): Cómo trabaja un agente de IA con la suite.
+- [Cambiar de marca](https://zuccadev-labs.github.io/zuix/docs/agents/marca.md): Una marca es un archivo: tokens/brands/.json.
+- [Montar una pantalla](https://zuccadev-labs.github.io/zuix/docs/agents/pantallas.md): Una pantalla se compone con layouts de zout y componentes de zui.
+- [Documentar con zudocs](https://zuccadev-labs.github.io/zuix/docs/agents/documentacion.md): Cómo se escribe, se organiza y se verifica la documentación de un proyecto que usa la plantilla.
+- [Usar o extender zuix fuera de React](https://zuccadev-labs.github.io/zuix/docs/agents/otros-frameworks.md): Cómo se escribe marcado del contrato y cómo se añade comportamiento sin framework.
 
-- [Cambiar de marca](/docs/agents/marca): Una marca es un archivo: `tokens/brands/<nombre>.json`. Los componentes no se tocan.
-- [Montar una pantalla](/docs/agents/pantallas): Una pantalla se compone con layouts de `zout` y componentes de `zui`. No define medidas de estructura ni
-- [Documentar con zudocs](/docs/agents/documentacion): Se edita un solo archivo: `zudocs.config.json`. Tiene esquema (`zudocs/zudocs.schema.json`), así que un
-- [Usar o extender zuix fuera de React](/docs/agents/otros-frameworks): Formato: reglas → patrones → verificación. Guía de uso en [Frameworks](../users/06-frameworks.md).
-- [Kit de agente](/docs/agents/): Cómo trabaja un agente de IA con la suite. Todo sigue el mismo formato: **reglas → patrones →
+## Desarrollo
+
+- [Desarrollo de zuix](https://zuccadev-labs.github.io/zuix/docs/development.md): Cómo está hecha la suite por dentro y cómo se mantiene.
+- [Arquitectura](https://zuccadev-labs.github.io/zuix/docs/development/arquitectura.md): Qué paquetes hay, cómo se divide cada uno por dentro y de dónde sale cada archivo generado.
+- [Calidad y pruebas](https://zuccadev-labs.github.io/zuix/docs/development/calidad-y-pruebas.md): Qué comprueba cada comando, qué cubre cada suite y cuándo se ejecuta.
+- [CI y cadena de suministro](https://zuccadev-labs.github.io/zuix/docs/development/ci-y-cadena-de-suministro.md): Qué hacen los workflows del repositorio, cómo se protegen las dependencias y cómo comprobar desde fuera que una versión publicada salió de aquí.
 
 ## Investigación
 
-Análisis previos y decisiones de arquitectura.
-
-- [Investigación inicial: arquitectura de un sistema de diseño corporativo](/docs/investigations/investigacion-inicial): Crear un sistema de diseño (un "Material UI" propio) a escala corporativa. Cuando trabajas en una gran corporación, las prioridades cambian: la velocidad de des
-- [01 · Estado actual y problemática](/docs/investigations/estado-y-problematica): Fecha: 2026-11-12.
-- [02 · Fuentes de estilo](/docs/investigations/fuentes-de-estilo): Fecha: 2026-11-12.
-- [03 · Zicon: extracción de Dazicon](/docs/investigations/zicon-dazicon): Fecha: 2026-11-12.
-- [04 · Componentes de referencia](/docs/investigations/componentes-de-referencia): Fecha: 2026-11-12.
-- [05 · Zudocs: Docusaurus y estándar documental](/docs/investigations/zudocs-docusaurus): Fecha: 2026-11-12.
-- [06 · Arquitectura de la suite y decisiones](/docs/investigations/arquitectura-y-decisiones): Fecha: 2026-11-12. Estado: plan previo a la construcción. Lo construido y las decisiones tomadas están en
-- [07 · Estado de construcción](/docs/investigations/estado-de-construccion): Fecha: 2026-11-13; actualizado el 2026-11-14. Qué se construyó a partir del plan del documento 06, cómo se verificó y qué falta.
-- [Investigaciones de Zuix](/docs/investigations/): Registro de lo que se analizó antes de construir la suite y de las decisiones que salen de ahí.
+- [Investigaciones de zuix](https://zuccadev-labs.github.io/zuix/docs/investigations.md): Mis notas de investigación y las decisiones que salieron de ellas.
+- [Investigación inicial](https://zuccadev-labs.github.io/zuix/docs/investigations/investigacion-inicial.md): Antes de escribir una línea de zuix quise tener claro cómo se arma un sistema de diseño que aguante muchos proyectos y más de una marca.
+- [Estado de partida y problemática](https://zuccadev-labs.github.io/zuix/docs/investigations/estado-y-problematica.md): Notas del 2026-11-12, antes de construir nada.
+- [Fuentes de estilo](https://zuccadev-labs.github.io/zuix/docs/investigations/fuentes-de-estilo.md): Notas del 2026-11-12. Tres fuentes alimentan el estándar: el material liquid glass de zutool, el design system empaquetado de un proyecto anterior y el manual de marca de DAZLABS. De cada una apunté…
+- [Zicon: extracción de Dazicon](https://zuccadev-labs.github.io/zuix/docs/investigations/zicon-dazicon.md): Notas de noviembre de 2026.
+- [Componentes de referencia](https://zuccadev-labs.github.io/zuix/docs/investigations/componentes-de-referencia.md): Notas del 2026-11-12, antes de construir zui.
+- [Zudocs: Docusaurus y estándar documental](https://zuccadev-labs.github.io/zuix/docs/investigations/zudocs-docusaurus.md): Notas del 2026-11-12, antes de construir zudocs.
+- [Arquitectura de la suite y decisiones](https://zuccadev-labs.github.io/zuix/docs/investigations/arquitectura-y-decisiones.md): El plan que escribí el 2026-11-12, antes de construir, y cómo acabó cada decisión.
+- [Construcción de la 0.1.0](https://zuccadev-labs.github.io/zuix/docs/investigations/construccion-de-la-0-1-0.md): El registro de lo que construí a partir del plan, de cómo lo verifiqué y de los fallos que encontré.
+- [Primitivas propias](https://zuccadev-labs.github.io/zuix/docs/investigations/primitivas-propias.md): Por qué quité la biblioteca de UI que había debajo del binding de React, cómo lo hice y qué medí.
+- [Accesibilidad medida](https://zuccadev-labs.github.io/zuix/docs/investigations/accesibilidad-medida.md): Cómo pasé de afirmar que la suite cumplía WCAG AA a medirlo, y lo que encontré al medir.
+- [Node, dependencias y cadena de suministro](https://zuccadev-labs.github.io/zuix/docs/investigations/node-dependencias-y-cadena-de-suministro.md): Qué versiones admito y por qué, cómo protejo la instalación de dependencias y cómo publico sin guardar un token en ningún sitio.
+- [Lint, pruebas y por qué no Barrits](https://zuccadev-labs.github.io/zuix/docs/investigations/lint-pruebas-y-barrits.md): La 0.1.0 salió sin linter, sin formateador y sin pruebas unitarias: tenía auditoría de estilo, tipos y pruebas de navegador.
+- [El sitio de documentación, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/el-sitio-medido.md): zudocs lo había tratado como una plantilla que funcionaba: compilaba y no tenía enlaces rotos.
 
 ## Publicación
 
-Versionado, build de publicación y contrato público.
-
-- [Versionado](/docs/package/versionado): Qué número sube con cada cambio y cómo se sube.
-- [Publicación](/docs/package/publicacion): Cómo se publica la suite en npmjs.com. Última actualización: 2026-11-14.
-- [Contrato público](/docs/package/contrato-publico): Qué es superficie pública de la suite y qué cuenta como cambio incompatible. Todo lo que no aparece aquí
-- [Apertura del repositorio](/docs/package/apertura-del-repositorio): Qué se saneó para poder hacer público el repositorio, qué queda todavía en el historial y cómo hacer el
-- [Empaquetado y publicación](/docs/package/): Cómo se versionan, se construyen y se publican los paquetes de la suite. Para quien publica.
+- [Empaquetado y publicación](https://zuccadev-labs.github.io/zuix/docs/package.md): Cómo se versionan, se construyen y se publican los paquetes de la suite.
+- [Versionado](https://zuccadev-labs.github.io/zuix/docs/package/versionado.md): Qué número sube con cada cambio y cómo se sube.
+- [Publicación](https://zuccadev-labs.github.io/zuix/docs/package/publicacion.md): Cómo se publica la suite en npmjs.com: el flujo automático desde main, lo que hay que configurar una sola vez y la vía manual de respaldo.
+- [Contrato público](https://zuccadev-labs.github.io/zuix/docs/package/contrato-publico.md): Qué es superficie pública de la suite y qué cuenta como cambio incompatible.
+- [Apertura del repositorio](https://zuccadev-labs.github.io/zuix/docs/package/apertura-del-repositorio.md): Qué saneé para poder hacer público el repositorio y cómo se publica un repositorio sin arrastrar su historial privado.
 
 ## Contratos legibles por máquina
 

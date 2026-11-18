@@ -1,6 +1,19 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Alert, Avatar, AvatarGroup, Badge, Breadcrumb, Button, Callout, Card, CardFooter, CardHeader, Progress, StatTile } from "@zuccadev-labs/zuix-zui";
+import {
+  Alert,
+  Avatar,
+  AvatarGroup,
+  Badge,
+  Breadcrumb,
+  Button,
+  Callout,
+  Card,
+  CardFooter,
+  CardHeader,
+  Progress,
+  StatTile,
+} from "@zuccadev-labs/zuix-zui";
 import { PROJECTS, STATUS_LABEL, STATUS_TONE, type ScreenId } from "../data";
 
 export function Overview({ onNavigate, onSelectProject }: { onNavigate: (id: ScreenId) => void; onSelectProject: (id: string) => void }) {
@@ -17,8 +30,12 @@ export function Overview({ onNavigate, onSelectProject }: { onNavigate: (id: Scr
           description="A sample workspace that exercises the shell, overlays, forms, tables and the carousel of the suite."
           actions={
             <>
-              <Button icon="folder" onClick={() => onNavigate("projects")} data-testid="overview-projects">Projects</Button>
-              <Button variant="primary" icon="window" onClick={() => onNavigate("overlays")} data-testid="overview-overlays">Overlays</Button>
+              <Button icon="folder" onClick={() => onNavigate("projects")} data-testid="overview-projects">
+                Projects
+              </Button>
+              <Button variant="primary" icon="window" onClick={() => onNavigate("overlays")} data-testid="overview-overlays">
+                Overlays
+              </Button>
             </>
           }
         />
@@ -39,11 +56,22 @@ export function Overview({ onNavigate, onSelectProject }: { onNavigate: (id: Scr
         </Grid>
       </PageSection>
 
-      <PageSection title="Active projects" actions={<Button variant="ghost" iconRight="arrow-right" onClick={() => onNavigate("projects")}>View all</Button>}>
+      <PageSection
+        title="Active projects"
+        actions={
+          <Button variant="ghost" iconRight="arrow-right" onClick={() => onNavigate("projects")}>
+            View all
+          </Button>
+        }
+      >
         <Grid min={280}>
           {active.map((project) => (
             <Card key={project.id} data-testid={`overview-card-${project.id}`}>
-              <CardHeader title={project.name} subtitle={project.owner} action={<Badge tone={STATUS_TONE[project.status]}>{STATUS_LABEL[project.status]}</Badge>} />
+              <CardHeader
+                title={project.name}
+                subtitle={project.owner}
+                action={<Badge tone={STATUS_TONE[project.status]}>{STATUS_LABEL[project.status]}</Badge>}
+              />
               <p className="app-text">{project.summary}</p>
               <Progress value={project.progress} label={`${project.name} completion`} showValue size="sm" />
               <CardFooter align="between">
@@ -53,7 +81,15 @@ export function Overview({ onNavigate, onSelectProject }: { onNavigate: (id: Scr
                   <Avatar name="Lena Fischer" />
                   <Avatar name="Omar Haddad" />
                 </AvatarGroup>
-                <Button size="sm" onClick={() => { onSelectProject(project.id); onNavigate("projects"); }}>Open</Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    onSelectProject(project.id);
+                    onNavigate("projects");
+                  }}
+                >
+                  Open
+                </Button>
               </CardFooter>
             </Card>
           ))}
@@ -62,8 +98,12 @@ export function Overview({ onNavigate, onSelectProject }: { onNavigate: (id: Scr
 
       <PageSection title="Notes">
         <Stack gap={3}>
-          <Callout tone="accent" title="Keyboard first">Press Ctrl K to open the command palette from any screen.</Callout>
-          <Callout tone="warning" title="Maintenance">The preview environment restarts every night at 02:00 UTC.</Callout>
+          <Callout tone="accent" title="Keyboard first">
+            Press Ctrl K to open the command palette from any screen.
+          </Callout>
+          <Callout tone="warning" title="Maintenance">
+            The preview environment restarts every night at 02:00 UTC.
+          </Callout>
         </Stack>
       </PageSection>
     </Page>

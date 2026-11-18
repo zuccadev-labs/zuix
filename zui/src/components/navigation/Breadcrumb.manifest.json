@@ -16,12 +16,7 @@
       "default": "Breadcrumb"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "current"
-  ],
+  "states": ["rest", "hover", "focus", "current"],
   "tokens": [
     "duration-fast",
     "ease-standard",

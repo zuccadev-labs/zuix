@@ -3,15 +3,13 @@
   "group": "layout",
   "description": "Tira de pestañas de trabajo con cierre y alta.",
   "import": "import { TabStrip } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "TabStrip"
-  ],
+  "exports": ["TabStrip"],
   "props": [
     {
       "name": "tabs",
       "type": "WorkTab[]",
       "required": true,
-      "description": "{ id, title, leading?, closable? }"
+      "description": "{ id, title, leading?, closable?, controls? }. `controls` es el id del panel de la pestaña (aria-controls)."
     },
     {
       "name": "activeId",
@@ -42,20 +40,9 @@
       "default": "New tab"
     }
   ],
-  "tokens": [
-    "row-hover",
-    "surface-2",
-    "surface-3",
-    "glass-highlight",
-    "fg",
-    "fg-muted",
-    "radius-full",
-    "focus-ring"
-  ],
-  "classes": [
-    "z-tabstrip"
-  ],
-  "a11y": "role=tablist; flechas, Inicio y Fin cambian de pestaña. La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
+  "tokens": ["row-hover", "surface-2", "surface-3", "glass-highlight", "fg", "fg-muted", "radius-full", "focus-ring"],
+  "classes": ["z-tabstrip"],
+  "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
   "examples": [
     {
       "title": "Pestañas con alta",

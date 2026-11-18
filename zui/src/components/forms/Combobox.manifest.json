@@ -75,11 +75,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -112,16 +108,7 @@
       "description": "Nombre accesible cuando no hay `Field`."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "loading",
-    "empty",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "loading", "empty", "disabled", "invalid"],
   "tokens": [
     "control-height-md",
     "space-3",
@@ -163,11 +150,7 @@
     "weight-semibold",
     "line"
   ],
-  "classes": [
-    "z-input",
-    "z-combobox",
-    "z-listbox"
-  ],
+  "classes": ["z-input", "z-combobox", "z-listbox"],
   "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado.",
   "behavior": "dom",
   "examples": [

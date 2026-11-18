@@ -49,6 +49,7 @@ export function useCarouselTrack(options: UseCarouselTrackOptions): { side: numb
     latest.current = options;
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `contentKey` no se lee dentro; cambia cuando cambia el contenido de los slides y obliga a recrear el motor para volver a medir y rasterizar.
   useLayoutEffect(() => {
     const root = rootRef.current;
     const viewport = viewportRef.current;

@@ -1,7 +1,28 @@
 {
   "$comment": "Tabla de renombrado revisada a mano contra hojas de contacto de los 696 dibujos. `names`: nombre original (opcionalmente con prefijo `outline:` o `solid:`) → nombre final. `drop`: dibujos rotos en el archivo original que tienen reemplazo. Los nombres no listados se pasan a kebab-case.",
   "categories": {
-    "byIndex": ["arrows", "documents", "math", "sort", "buildings", "ecommerce", "media", "symbols", "communication", "editor", "misc", "system", "design", "charts", "others", "time", "devices", "maps", "security", "user"],
+    "byIndex": [
+      "arrows",
+      "documents",
+      "math",
+      "sort",
+      "buildings",
+      "ecommerce",
+      "media",
+      "symbols",
+      "communication",
+      "editor",
+      "misc",
+      "system",
+      "design",
+      "charts",
+      "others",
+      "time",
+      "devices",
+      "maps",
+      "security",
+      "user"
+    ],
     "labels": {
       "arrows": { "en": "Arrows", "es": "Flechas" },
       "documents": { "en": "Documents", "es": "Documentos" },

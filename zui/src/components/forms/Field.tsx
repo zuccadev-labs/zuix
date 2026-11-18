@@ -4,6 +4,7 @@ import { cx } from "../../cx";
 
 interface FieldContextValue {
   id: string;
+  labelId?: string;
   describedBy?: string;
   invalid: boolean;
   required: boolean;
@@ -28,6 +29,15 @@ export function useFieldControl(own: { id?: string; invalid?: boolean; required?
   } as const;
 }
 
+/**
+ * Id de la etiqueta del `Field` que envuelve al control, si la tiene. Lo usan los controles que `<label for>` no
+ * puede nombrar porque no son elementos etiquetables (un `radiogroup`, el grupo de casillas de OTPInput, los
+ * tiradores de Slider): se enlazan con `aria-labelledby`.
+ */
+export function useFieldLabel(): string | undefined {
+  return useContext(FieldContext)?.labelId;
+}
+
 export interface FieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   label?: ReactNode;
   /** Ayuda bajo el control. */
@@ -45,18 +55,33 @@ export interface FieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "childr
 }
 
 /** Envoltura de campo: etiqueta, ayuda y error enlazados al control por id y aria-describedby. */
-export function Field({ label, hint, error, required = false, optionalLabel, htmlFor, layout = "stacked", className, children, ...rest }: FieldProps) {
+export function Field({
+  label,
+  hint,
+  error,
+  required = false,
+  optionalLabel,
+  htmlFor,
+  layout = "stacked",
+  className,
+  children,
+  ...rest
+}: FieldProps) {
   const auto = useId();
   const id = htmlFor ?? `${auto}-control`;
   const hintId = hint ? `${auto}-hint` : undefined;
   const errorId = error ? `${auto}-error` : undefined;
+  const labelId = label ? `${auto}-label` : undefined;
   const describedBy = [errorId, hintId].filter(Boolean).join(" ") || undefined;
-  const value = useMemo<FieldContextValue>(() => ({ id, describedBy, invalid: Boolean(error), required }), [id, describedBy, error, required]);
+  const value = useMemo<FieldContextValue>(
+    () => ({ id, labelId, describedBy, invalid: Boolean(error), required }),
+    [id, labelId, describedBy, error, required],
+  );
 
   return (
     <div {...rest} className={cx("z-field", className)} data-layout={layout} data-invalid={error ? true : undefined}>
       {label ? (
-        <label className="z-field__label" htmlFor={id}>
+        <label className="z-field__label" id={labelId} htmlFor={id}>
           {label}
           {required ? (
             <span className="z-field__required" aria-hidden="true">

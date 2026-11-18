@@ -9,7 +9,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../..");
 const read = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
 const all = { ...read("zui/html.json").components, ...read("zout/html.json").components };
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
 const groups = {};
 const scripts = [];
@@ -17,7 +16,8 @@ for (const [name, c] of Object.entries(all)) {
   if (c.behavior === "react") continue;
   // Primer ejemplo que no dependa de archivos externos (imágenes de datos de muestra).
   const ex = c.examples.find((e) => !/\bsrc="\//.test(e.html)) ?? c.examples[0];
-  (groups[c.group] ??= []).push(`<section class="z-card demo" data-component="${name}" data-behavior="${c.behavior}">
+  groups[c.group] ??= [];
+  groups[c.group].push(`<section class="z-card demo" data-component="${name}" data-behavior="${c.behavior}">
   <header class="demo__head"><h3 class="demo__name">${name}</h3><span class="z-badge" data-tone="${c.behavior === "dom" ? "accent" : "neutral"}">${c.behavior === "dom" ? "dom" : "css"}</span></header>
   <div class="demo__stage">
 ${ex.html}
@@ -47,7 +47,9 @@ const html = `<!doctype html>
     <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="brand">Brand: dazlabs</button>
   </header>
   <main class="page__main">
-${Object.entries(groups).map(([group, cards]) => `<h2 class="page__group">${group}</h2>\n<div class="page__grid">\n${cards.join("\n")}\n</div>`).join("\n")}
+${Object.entries(groups)
+  .map(([group, cards]) => `<h2 class="page__group">${group}</h2>\n<div class="page__grid">\n${cards.join("\n")}\n</div>`)
+  .join("\n")}
   </main>
   <script type="module">
 import "../../zicon/dist/zicon.element.js";

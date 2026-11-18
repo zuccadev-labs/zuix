@@ -47,7 +47,38 @@
   "$defs": {
     "theme": {
       "type": "object",
-      "required": ["accent", "fg", "fg-muted", "fg-subtle", "fg-on-accent", "canvas", "canvas-gradient", "canvas-fg", "canvas-fg-muted", "glass-bg", "glass-border", "glass-highlight", "glass-specular", "glass-shadow", "surface", "surface-2", "surface-3", "surface-solid", "overlay", "inset", "line", "line-strong", "row-hover", "success", "warning", "danger", "info", "shadow-sm", "shadow-md", "shadow-lg"],
+      "required": [
+        "accent",
+        "fg",
+        "fg-muted",
+        "fg-subtle",
+        "fg-on-accent",
+        "canvas",
+        "canvas-gradient",
+        "canvas-fg",
+        "canvas-fg-muted",
+        "glass-bg",
+        "glass-border",
+        "glass-highlight",
+        "glass-specular",
+        "glass-shadow",
+        "surface",
+        "surface-2",
+        "surface-3",
+        "surface-solid",
+        "overlay",
+        "inset",
+        "line",
+        "line-strong",
+        "row-hover",
+        "success",
+        "warning",
+        "danger",
+        "info",
+        "shadow-sm",
+        "shadow-md",
+        "shadow-lg"
+      ],
       "additionalProperties": { "type": "string" }
     }
   }

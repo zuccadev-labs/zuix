@@ -21,11 +21,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -43,14 +39,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "on",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "on", "disabled"],
   "tokens": [
     "space-2",
     "control-height-md",
@@ -74,10 +63,8 @@
     "space-4",
     "text-title"
   ],
-  "classes": [
-    "z-toggle"
-  ],
-  "a11y": "Radix Toggle: button con aria-pressed y data-state on/off.",
+  "classes": ["z-toggle"],
+  "a11y": "Elemento button con aria-pressed y data-state on/off.",
   "examples": [
     {
       "title": "Solo icono",
@@ -88,5 +75,5 @@
       "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
     }
   ],
-  "origin": "Nuevo, sobre Toggle de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

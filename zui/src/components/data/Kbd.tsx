@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { occurrenceKeys } from "../../core/keys";
 import { cx } from "../../cx";
 
 export interface KbdProps extends HTMLAttributes<HTMLElement> {
@@ -11,10 +12,12 @@ export interface KbdProps extends HTMLAttributes<HTMLElement> {
 /** Tecla o atajo de teclado. */
 export function Kbd({ keys, size = "md", className, children, ...rest }: KbdProps) {
   if (keys) {
+    const parts = keys.split(" ").filter(Boolean);
+    const ids = occurrenceKeys(parts);
     return (
       <span className="z-kbd-group">
-        {keys.split(" ").filter(Boolean).map((key, index) => (
-          <kbd key={`${key}-${index}`} {...rest} className={cx("z-kbd", className)} data-size={size}>
+        {parts.map((key, index) => (
+          <kbd key={ids[index]} {...rest} className={cx("z-kbd", className)} data-size={size}>
             {key}
           </kbd>
         ))}

@@ -1,12 +1,27 @@
 # Zuix para usuarios
 
-Zuix es una suite de UI/UX: tokens, iconos, componentes, layouts y documentación con un solo estándar.
-Una marca replica el sistema cambiando un archivo. El estándar es HTML, CSS y tokens: sirve con
-cualquier framework, y trae un binding de React.
+zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación con un solo estándar. Una
+marca replica el sistema cambiando un archivo. El estándar es HTML, CSS y tokens: sirve con cualquier
+framework o sin ninguno, y trae un binding de React.
 
-> **Estado (2026-11-14):** versión `0.1.0`, la primera. Los paquetes pasan su verificación y se distribuyen
-> en npmjs.com bajo `@zuccadev-labs`; el procedimiento y el estado de la publicación están en
-> [Empaquetado y publicación](../package/README.md).
+Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que cambia entre una y otra en
+[Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
+
+## Documentos
+
+| # | Documento | Qué responde |
+|---|---|---|
+| 01 | [Tokens](./01-tokens.md) | Qué tokens hay, cómo se elige marca y tema y qué salidas genera el paquete |
+| 02 | [Zicon](./02-zicon.md) | Cómo se usa un icono, con React y sin él |
+| 03 | [Zui](./03-zui.md) | Qué componentes hay y cómo se usan |
+| 04 | [Zout](./04-zout.md) | Cómo se monta la estructura de una pantalla |
+| 05 | [Zudocs](./05-zudocs.md) | Cómo documentar un proyecto con la plantilla |
+| 06 | [Frameworks](./06-frameworks.md) | Cómo usar la suite sin React: HTML plano, Vue, Svelte, Angular, Astro; y con Next.js |
+| 07 | [Migración de variables propias](./07-migracion.md) | Cómo pasa un proyecto con sus propias variables CSS a leer los tokens de zuix |
+| 08 | [Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md) | Qué se rompe al subir de versión y cómo arreglarlo |
+| 09 | [Accesibilidad](./09-accesibilidad.md) | Qué garantiza la suite, cómo se mide y qué queda en manos de la aplicación |
+| 10 | [Compatibilidad](./10-compatibilidad.md) | Navegadores, Node, React, TypeScript y bundlers admitidos |
+| 11 | [CSP y Trusted Types](./11-csp-y-trusted-types.md) | Cómo desplegar con una política de seguridad de contenido estricta |
 
 ## Paquetes
 
@@ -31,15 +46,22 @@ pnpm add react react-dom                     # solo para el binding de React
 | Subruta del paraguas | Equivale a |
 |---|---|
 | `@zuccadev-labs/zuix/styles.css` | `tokens.css` + estilos de `zui` + estilos de `zout`, en ese orden. Necesita un bundler |
-| `@zuccadev-labs/zuix/tokens.css` | `@zuccadev-labs/zuix-tokens/tokens.css` |
-| `@zuccadev-labs/zuix/zui`, `/zui/dom` | `@zuccadev-labs/zuix-zui`, `@zuccadev-labs/zuix-zui/dom` |
+| `@zuccadev-labs/zuix/tokens.css` | `@zuccadev-labs/zuix-tokens/tokens.css` (todas las marcas) |
+| `@zuccadev-labs/zuix/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` | Una sola marca en `:root` |
+| `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Puentes de los tokens a Tailwind 4 y a Docusaurus |
+| `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | Las mismas entradas de `@zuccadev-labs/zuix-zui` |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout`, `@zuccadev-labs/zuix-zout/dom` |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | Las mismas entradas de `@zuccadev-labs/zuix-zicon` |
 
-Las guías de este sitio escriben los imports con el nombre de cada paquete; con el paraguas se cambia
-el prefijo según la tabla. Lo que el paraguas no reexporta (manifiestos, `html.json`, iconos sueltos
-`icons/<nombre>`, una marca por separado, bundles `dist/`) se importa del paquete suelto, que entonces
-se añade también a las dependencias del proyecto.
+Las guías escriben los imports con el nombre de cada paquete; con el paraguas se cambia el prefijo según la
+tabla. Lo que el paraguas no reexporta (manifiestos, `html.json`, `tokens.json`, el sprite, los iconos
+sueltos `icons/<nombre>` y los bundles `dist/`) se importa del paquete suelto, que entonces se añade también
+a las dependencias del proyecto. El campo `exports` de Node no puede reenviar una subruta a otro paquete, y
+no quise publicar copias de esos archivos dentro del paraguas.
+
+La entrada raíz (`import { zui, zout, zicon } from "@zuccadev-labs/zuix"`) exporta tres espacios de nombres.
+Es cómoda para explorar, pero un espacio de nombres arrastra el paquete entero: importar `Stack` así añade
+todo `zout` al bundle. Para una aplicación conviene importar por subruta.
 
 También se puede instalar paquete a paquete:
 
@@ -48,26 +70,15 @@ pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-zicon @zuccadev-labs/zuix-t
 pnpm add @zuccadev-labs/zuix-zout            # layouts
 ```
 
-`@zuccadev-labs/zuix-zicon` es un peer de `zui` y `zout`: la aplicación lo instala siempre. Los paquetes
-de la suite comparten versión y **se actualizan juntos** (`pnpm up "@zuccadev-labs/*"`). Si quedan dos
-versiones de `@zuccadev-labs/zuix-zicon` en un proyecto, los iconos registrados en una no se ven desde
-la otra y salen vacíos; con el paraguas, los iconos se importan por sus subrutas
-(`@zuccadev-labs/zuix/zicon/all`) y no del paquete suelto.
+`@zuccadev-labs/zuix-zicon` es un peer de `zui` y `zout`: la aplicación lo instala siempre. Los paquetes de
+la suite comparten versión y **se actualizan juntos** (`pnpm up "@zuccadev-labs/*"`). Si quedan dos versiones
+de `@zuccadev-labs/zuix-zicon` en un proyecto, los iconos registrados en una no se ven desde la otra y salen
+vacíos; con el paraguas, los iconos se importan por sus subrutas (`@zuccadev-labs/zuix/zicon/all`) y no del
+paquete suelto.
 
-## Trabajar en el repositorio
+## Empezar
 
-Requisitos: Node 20.19 o superior (22.12 o superior en la rama 22) y pnpm 12.
-
-```
-pnpm install
-pnpm check                          # tokens, iconos, auditoría, manifiestos, contrato HTML y tipos
-pnpm --filter @zuccadev-labs/zuix-zudocs start    # este sitio, con el catálogo en vivo
-```
-
-## Usar la suite
-
-En cualquier framework o en HTML plano: [Frameworks](./06-frameworks.md). Un proyecto que ya tiene sus
-propias variables CSS: [Migración](./07-migracion.md). Con React:
+Con React:
 
 ```tsx
 import "@zuccadev-labs/zuix-tokens/tokens.css";   // o @zuccadev-labs/zuix-tokens/css/<marca>.css
@@ -80,10 +91,6 @@ import { Button } from "@zuccadev-labs/zuix-zui";
 <Button variant="primary" icon="plus">New project</Button>
 ```
 
-- El tema se elige con `data-theme="dark"` o `"light"` en `<html>`.
-- La marca se elige importando su CSS o con `data-brand` en `<html>`.
-- El binding de React requiere React 19. El resto de la suite no depende de React.
-
 Con el paraguas:
 
 ```tsx
@@ -93,6 +100,15 @@ import { Button } from "@zuccadev-labs/zuix/zui";
 import { Stack } from "@zuccadev-labs/zuix/zout";
 ```
 
+- El tema se elige con `data-theme="dark"` o `"light"` en `<html>`. Sin el atributo se sigue la preferencia
+  del sistema.
+- La marca se elige importando su CSS o con `data-brand` en `<html>`.
+- El contenedor de la aplicación lleva `class="z-root z-canvas"`: `z-root` aplica tipografía, foco y
+  selección; `z-canvas` pinta el fondo.
+- El binding requiere React 19. El resto de la suite no depende de React.
+
+Sin React, en HTML plano o en otro framework: [Frameworks](./06-frameworks.md).
+
 ## Reglas comunes
 
 1. Los componentes solo leen tokens. No hay colores, radios ni sombras literales.
@@ -100,7 +116,7 @@ import { Stack } from "@zuccadev-labs/zuix/zout";
 3. El cristal va en el cromo (paneles, barras, menús). El texto denso va sobre superficie opaca.
 4. Si falta una variante, un token o un icono, se añade al sistema; no se improvisa en la pantalla.
 
-## Para agentes
+## Para agentes de IA
 
-La guía está en [Kit de agente](../agents/README.md). Cada paquete trae su `AGENTS.md` y un
-`manifest.json` legible por máquina.
+La guía está en [Kit de agente](../agents/README.md). Cada paquete trae un `manifest.json` legible por
+máquina, y `zui` y `zicon` incluyen su `AGENTS.md` en el paquete publicado.

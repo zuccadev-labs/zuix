@@ -24,7 +24,13 @@ export interface StatTileProps {
 export function StatTile({ label, value, hint, icon, delta, deltaTone = "neutral", variant = "glass", onClick, className }: StatTileProps) {
   const Tag = onClick ? "button" : "div";
   return (
-    <Tag type={onClick ? "button" : undefined} onClick={onClick} className={cx("z-stat", variant === "glass" && "z-liquid", className)} data-variant={variant} data-interactive={onClick ? true : undefined}>
+    <Tag
+      type={onClick ? "button" : undefined}
+      onClick={onClick}
+      className={cx("z-stat", variant === "glass" && "z-liquid", className)}
+      data-variant={variant}
+      data-interactive={onClick ? true : undefined}
+    >
       <span className="z-stat__head">
         <span className="z-stat__label">{label}</span>
         {icon ? (

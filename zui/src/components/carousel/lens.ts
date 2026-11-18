@@ -53,7 +53,7 @@ export function lensSource(x: number, y: number, shape: LensShape, strength = 1)
   const span = Math.max(1 - shape.flat, 1e-3);
   const u = Math.max(ax - shape.flat, 0);
   const t = Math.min(u / span, 1);
-  const e = Math.pow(t, CURVE) * strength;
+  const e = t ** CURVE * strength;
 
   const sx = ax - shape.magnify * strength * u * t;
   const halfSlide = shape.slideHeight / 2;
@@ -86,7 +86,7 @@ export function lensForward(x: number, y: number, shape: LensShape, strength = 1
 
   const ax = a > f ? f + u : a;
   const t = Math.min(u / span, 1);
-  const e = Math.pow(t, CURVE) * strength;
+  const e = t ** CURVE * strength;
   const halfSlide = shape.slideHeight / 2;
   const nySource = (y - shape.centerY) / halfSlide;
   const ny = side + (nySource - side) * (1 + shape.stretch * e);

@@ -1,0 +1,78 @@
+# Cambios de @zuccadev-labs/zuix-zudocs
+
+Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
+
+zudocs es un paquete privado: no se publica en npm y se usa desde una copia del repositorio. Sus cambios se
+anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube su versión con las demás.
+
+## [Sin publicar]
+
+### Cambios incompatibles
+
+- La configuración se valida al cargar, en todos los comandos, y un campo desconocido es un error. Una
+  configuración con campos de más que antes pasaba ahora falla, con una sugerencia del campo correcto.
+- `brand`, `url`, `baseUrl`, `locale`, `docs.areas[].id`, `logo.src` y los enlaces de `navbar` tienen patrón en
+  el esquema.
+- Una opción desconocida o un `--config` sin valor son un error de uso (código de salida 2). Antes se
+  ignoraban.
+- `build` se niega a usar una carpeta de salida que no sea segura: la raíz, la carpeta personal, una que
+  contenga la documentación, la configuración, los estáticos o la plantilla, o una con contenido que no
+  parezca un sitio compilado.
+- `trailingSlash` vale `false` por defecto: las rutas se generan como `docs/guia.html`.
+- Enlaces, anclas e imágenes rotos, rutas duplicadas y front matter inválido son errores de `verify`; el
+  build falla también con anclas rotas y rutas duplicadas.
+- Node 22.12 o posterior.
+
+### Añadido
+
+- Campos de configuración: `url`, `baseUrl`, `locale`, `image`, `favicon`, `trailingSlash`, `llms.full` y
+  `markdown.untrusted`. `ZUDOCS_URL` y `ZUDOCS_BASE_URL` sustituyen `url` y `baseUrl` en una ejecución.
+- `zudocs fonts`: descarga una hoja de fuentes remota y sus archivos para autoalojarlos. `fonts` admite hojas
+  locales, que se empaquetan con el sitio.
+- `zudocs headers` y `build --headers`: archivo `_headers` con una política de seguridad de contenido que
+  autoriza por su hash solo los scripts en línea de la plantilla.
+- `markdown.untrusted`: `verify` rechaza los `.mdx` y el HTML activo en los `.md`.
+- `llms.txt` conforme a llmstxt.org (URL absolutas, primera frase completa, portada primero), `llms-full.txt`
+  y una copia `.md` de cada documento. `zudocs llms` los regenera sin compilar.
+- `verify`: anclas, imágenes, front matter, rutas duplicadas, documentos fuera de área, títulos repetidos,
+  marcadores de plantilla sin rellenar, imágenes sin texto alternativo e iconos de `.mdx`.
+- `robots.txt` generado, imagen para compartir y `og:site_name`.
+- Estilos de impresión, `prefers-reduced-motion` y `forced-colors` en la hoja del sitio.
+- `--help` y `--version`; `info` muestra la URL pública y las fuentes.
+
+### Cambiado
+
+- Las fuentes del sitio de zuix están autoalojadas: ninguna visita hace una petición a un tercero.
+- El paquete común solo registra los iconos que el sitio puede dibujar; las páginas de iconos y de
+  componentes cargan el set completo.
+- La portada de cada área es la primera de su barra lateral.
+- El texto con color de acento y el tema claro del código cumplen 4.5:1.
+- La compilación se hace siempre en la carpeta de trabajo de zudocs y se mueve a su destino: funciona dentro
+  de un proyecto con `"type": "module"` y con rutas con espacios.
+- La plantilla `investigacion` se organiza como notas de quien decide: qué me planteé, qué comparé, qué medí,
+  qué decidí y qué descarté.
+
+### Corregido
+
+- Las casillas de las listas de tareas tienen nombre accesible.
+- La etiqueta del buscador se traduce y la página de resultados tiene región principal.
+- El buscador ya no recupera el foco cuando termina de descargar su índice si para entonces el foco está en
+  otro control. Con la red lenta, quien recorría la barra con Tab veía saltar el foco de vuelta al campo de
+  búsqueda.
+- `start` y `serve` reenvían las señales al servidor: terminar zudocs ya no deja el puerto ocupado.
+- `new`: un título con `$&` o con saltos de línea ya no rompe el documento generado.
+- Las plantillas `agente` y `tutorial` ya no traen títulos vacíos.
+- El logo no repite el nombre del sitio como texto alternativo.
+
+## [0.1.0] - 2026-11-14
+
+Primera versión de la plantilla, publicada con la suite.
+
+### Añadido
+
+- Sitio Docusaurus con el estilo liquid glass sobre los tokens de la suite, adaptable con
+  `zudocs.config.json` y su esquema.
+- Áreas de documentación, plantillas por tipo de documento y el comando `new`.
+- Páginas de catálogo opcionales: componentes, iconos y tokens.
+- Buscador local, diagramas Mermaid con los colores de la marca y `llms.txt`.
+- Uso desde otro proyecto con `--config`, sin copiar la plantilla.

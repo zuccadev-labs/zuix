@@ -1,0 +1,76 @@
+# Publica el sitio de documentación de zuix (zudocs) en GitHub Pages: https://zuccadev-labs.github.io/zuix/
+#
+# Requisito único, a mano y una sola vez: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# `url` y `baseUrl` salen de zudocs/zudocs.config.json (https://zuccadev-labs.github.io y /zuix/): el workflow
+# no los calcula. Con un dominio propio se cambian ahí (`baseUrl: "/"`) y se añade static/CNAME.
+#
+# Mismo endurecimiento que ci.yml: acciones fijadas por SHA completo, GITHUB_TOKEN de solo lectura salvo en
+# el trabajo que despliega, sin credenciales de git en disco y ninguna expresión `${{ }}` dentro de un `run:`.
+name: pages
+
+on:
+  push:
+    branches: [main]
+    # Solo cuando cambia algo que el sitio muestra: la documentación, la plantilla o los paquetes del catálogo.
+    paths:
+      - "docs/**"
+      - "zudocs/**"
+      - "tokens/**"
+      - "zicon/**"
+      - "zui/**"
+      - "zout/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+# Un despliegue a la vez; el que está en curso termina, para no dejar el sitio a medias.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Compilar el sitio
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          package-manager-cache: false
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Los archivos generados que el sitio importa (tokens, iconos, manifiestos) se regeneran y se comprueban.
+      - run: pnpm check
+      # verify + llms.txt + build. --strict: un aviso (nombre fuera de convención, fuente remota) no llega a producción.
+      - run: pnpm --filter @zuccadev-labs/zuix-zudocs build -- --strict
+      # El sitio compilado se recorre entero antes de publicarlo: enlaces, anclas, consola y accesibilidad.
+      - run: node tests/site/run.mjs --quick --no-shots
+      # Con origen "GitHub Actions" el artefacto se publica tal cual: Jekyll no interviene y no hace falta .nojekyll
+      # (upload-pages-artifact, además, deja fuera los archivos ocultos).
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: zudocs/build
+
+  deploy:
+    name: Publicar en GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Los dos permisos que pide actions/deploy-pages: escribir en Pages y un token OIDC que prueba el origen.
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

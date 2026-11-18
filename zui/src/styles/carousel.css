@@ -7,76 +7,173 @@
     --z-carousel-gap: var(--z-space-6);
     --z-carousel-radius: var(--z-card-radius);
     --z-carousel-bleed: 0px;
-    position: relative; display: flex; flex-direction: column; gap: var(--z-space-4);
-    min-width: 0; color: var(--z-fg);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    min-width: 0;
+    color: var(--z-fg);
   }
 
   /* El margen vertical (bleed) deja sitio al estiramiento de la lente; lo calcula el motor. */
   .z-carousel__viewport {
     container: z-carousel / inline-size;
-    position: relative; overflow: hidden; padding-block: var(--z-carousel-bleed);
-    cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--z-carousel-bleed);
+    /* La tira es física (el motor la mueve con translateX y la lente tiene izquierda y derecha): no se invierte en RTL. */
+    direction: ltr;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .z-carousel__viewport[data-dragging] { cursor: grabbing; }
-  .z-carousel__viewport[data-dragging] .z-carousel__slide { pointer-events: none; }
+  .z-carousel__viewport[data-dragging] {
+    cursor: grabbing;
+  }
+  .z-carousel__viewport[data-dragging] .z-carousel__slide {
+    pointer-events: none;
+  }
 
   .z-carousel__track {
-    position: relative; display: flex; align-items: stretch; gap: var(--z-carousel-gap);
-    width: max-content; will-change: transform;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: var(--z-carousel-gap);
+    width: max-content;
+    will-change: transform;
   }
 
   .z-carousel__slide {
-    position: relative; flex: 0 0 auto; width: var(--z-carousel-slide-width);
-    border-radius: var(--z-carousel-radius); overflow: clip; transform-origin: 0 0;
+    position: relative;
+    flex: 0 0 auto;
+    width: var(--z-carousel-slide-width);
+    border-radius: var(--z-carousel-radius);
+    overflow: clip;
+    transform-origin: 0 0;
+  }
+  /* El contenido de cada slide sí conserva la dirección de la página. */
+  [dir="rtl"] .z-carousel__slide {
+    direction: rtl;
   }
   /* Con lente, el slide centrado debe caber en la zona plana: un slide más ancho que la tira se vería deformado entero. */
-  .z-carousel[data-effect="lens"] .z-carousel__slide { max-width: 80cqw; }
-  .z-carousel__slide img, .z-carousel__slide a { -webkit-user-drag: none; }
-  .z-carousel[data-mode="css"] .z-carousel__slide { will-change: transform; backface-visibility: hidden; }
+  .z-carousel[data-effect="lens"] .z-carousel__slide {
+    max-width: 80cqw;
+  }
+  .z-carousel__slide img,
+  .z-carousel__slide a {
+    -webkit-user-drag: none;
+  }
+  .z-carousel[data-mode="css"] .z-carousel__slide {
+    will-change: transform;
+    backface-visibility: hidden;
+  }
 
   /* Modo WebGL: el slide real solo se ve en la franja central (máscara de opacidad, no un color);
      las zonas curvas las dibuja el lienzo, cuyo halo toma el acento. */
   .z-carousel[data-mode="gl"] .z-carousel__stage {
-    -webkit-mask-image: linear-gradient(90deg, transparent var(--z-carousel-lens-left, 0px), black var(--z-carousel-lens-left, 0px), black var(--z-carousel-lens-right, 100%), transparent var(--z-carousel-lens-right, 100%));
-    mask-image: linear-gradient(90deg, transparent var(--z-carousel-lens-left, 0px), black var(--z-carousel-lens-left, 0px), black var(--z-carousel-lens-right, 100%), transparent var(--z-carousel-lens-right, 100%));
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent var(--z-carousel-lens-left, 0px),
+      black var(--z-carousel-lens-left, 0px),
+      black var(--z-carousel-lens-right, 100%),
+      transparent var(--z-carousel-lens-right, 100%)
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent var(--z-carousel-lens-left, 0px),
+      black var(--z-carousel-lens-left, 0px),
+      black var(--z-carousel-lens-right, 100%),
+      transparent var(--z-carousel-lens-right, 100%)
+    );
   }
-  .z-carousel[data-mode="gl"] .z-carousel__slide[data-lens-off] { pointer-events: none; }
+  .z-carousel[data-mode="gl"] .z-carousel__slide[data-lens-off] {
+    pointer-events: none;
+  }
   .z-carousel__canvas {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    pointer-events: none; color: var(--z-accent);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* No es texto: el motor lee este color para el resplandor de la lente (relleno), por eso sigue siendo el acento. */
+    pointer-events: none;
+    color: color-mix(in srgb, var(--z-accent) 100%, transparent);
   }
-  .z-carousel:not([data-mode="gl"]) .z-carousel__canvas { visibility: hidden; }
+  .z-carousel:not([data-mode="gl"]) .z-carousel__canvas {
+    visibility: hidden;
+  }
 
   .z-carousel__controls {
-    display: flex; align-items: center; justify-content: center; gap: var(--z-space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-4);
+    /* Anterior a la izquierda y siguiente a la derecha, como la tira. */
+    direction: ltr;
   }
   .z-carousel__arrow {
-    display: inline-flex; align-items: center; justify-content: center; flex: none;
-    width: var(--z-control-height-md); height: var(--z-control-height-md); padding: 0;
-    border-radius: var(--z-radius-full); border: 1px solid var(--z-line);
-    background: var(--z-surface); color: var(--z-fg); cursor: pointer;
-    transition: background var(--z-duration-fast) var(--z-ease-standard), border-color var(--z-duration-fast) var(--z-ease-standard);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--z-control-height-md);
+    height: var(--z-control-height-md);
+    padding: 0;
+    border-radius: var(--z-radius-full);
+    border: 1px solid var(--z-line);
+    background: var(--z-surface);
+    color: var(--z-fg);
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
-    .z-carousel__arrow:hover:not(:disabled) { background: var(--z-surface-2); border-color: var(--z-line-strong); }
+    .z-carousel__arrow:hover:not(:disabled) {
+      background: var(--z-surface-2);
+      border-color: var(--z-line-strong);
+    }
   }
-  .z-carousel__arrow:focus-visible { outline: none; box-shadow: var(--z-focus-ring); }
-  .z-carousel__arrow:disabled { opacity: 0.4; cursor: default; }
+  .z-carousel__arrow:focus-visible {
+    outline: none;
+    box-shadow: var(--z-focus-ring);
+  }
+  .z-carousel__arrow:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 
   .z-carousel__counter {
-    display: inline-flex; align-items: baseline; min-width: 5ch; justify-content: center;
-    font-family: var(--z-font-mono); font-size: var(--z-text-small); font-weight: var(--z-weight-semibold);
-    font-variant-numeric: tabular-nums; letter-spacing: var(--z-tracking-wide);
+    display: inline-flex;
+    align-items: baseline;
+    min-width: 5ch;
+    justify-content: center;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--z-tracking-wide);
   }
-  .z-carousel__counter-total { color: var(--z-fg-subtle); }
+  .z-carousel__counter-total {
+    color: var(--z-fg-subtle);
+  }
 
   /* Región viva: solo para lectores de pantalla. */
   .z-carousel__live {
-    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   @media (max-width: 640px) {
-    .z-carousel { --z-carousel-gap: var(--z-space-4); }
+    .z-carousel {
+      --z-carousel-gap: var(--z-space-4);
+    }
   }
 }

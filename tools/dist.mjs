@@ -24,15 +24,25 @@ const LAZY = { "./carousel-gl": "./zui.dom.carousel-gl.js" };
 const lazy = {
   name: "lazy",
   setup(b) {
-    b.onResolve({ filter: /^\.\/carousel-gl$/ }, (args) => (args.kind === "dynamic-import" ? { path: LAZY[args.path], external: true } : null));
+    b.onResolve({ filter: /^\.\/carousel-gl$/ }, (args) =>
+      args.kind === "dynamic-import" ? { path: LAZY[args.path], external: true } : null,
+    );
   },
 };
 for (const [entry, out] of targets) {
   await build({
     plugins: [lazy],
-    entryPoints: [join(root, entry)], outfile: join(root, out), bundle: true, format: "esm", target: "es2022",
-    minify: out.endsWith(".js"), legalComments: "none", logLevel: "warning",
-    banner: out.endsWith(".js") ? { js: "// GENERADO por tools/dist.mjs. No editar." } : { css: "/* GENERADO por tools/dist.mjs. No editar. */" },
+    entryPoints: [join(root, entry)],
+    outfile: join(root, out),
+    bundle: true,
+    format: "esm",
+    target: "es2022",
+    minify: out.endsWith(".js"),
+    legalComments: "none",
+    logLevel: "warning",
+    banner: out.endsWith(".js")
+      ? { js: "// GENERADO por tools/dist.mjs. No editar." }
+      : { css: "/* GENERADO por tools/dist.mjs. No editar. */" },
   });
   console.log(`✓ ${out} · ${(statSync(join(root, out)).size / 1024).toFixed(1)} kB`);
 }

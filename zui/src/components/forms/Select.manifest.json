@@ -31,11 +31,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -67,11 +63,7 @@
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "start",
       "description": "Alineación del popup."
     },
@@ -98,15 +90,7 @@
       "description": "Nombre accesible cuando no hay `Field` ni etiqueta enlazada."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "placeholder",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],
   "tokens": [
     "control-height-md",
     "text-body",
@@ -145,11 +129,8 @@
     "weight-semibold",
     "line"
   ],
-  "classes": [
-    "z-select",
-    "z-listbox"
-  ],
-  "a11y": "Select de Radix: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
+  "classes": ["z-select", "z-listbox"],
+  "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
   "behavior": "dom",
   "examples": [
     {

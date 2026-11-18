@@ -1,8 +1,20 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
-  Button, Calendar, Card, CardHeader, Combobox, DatePicker, Field, Modal, NativeSelect, Select,
-  type ComboboxOption, type DateRange, type SelectOption, type SelectOptionGroup,
+  Button,
+  Calendar,
+  Card,
+  CardHeader,
+  Combobox,
+  DatePicker,
+  Field,
+  Modal,
+  NativeSelect,
+  Select,
+  type ComboboxOption,
+  type DateRange,
+  type SelectOption,
+  type SelectOptionGroup,
 } from "@zuccadev-labs/zuix-zui";
 
 const ROLES: ReadonlyArray<SelectOption | SelectOptionGroup> = [
@@ -56,7 +68,9 @@ function Controls({ scope }: { scope: "page" | "modal" }) {
             <Select options={ROLES} value={role} onValueChange={setRole} placeholder="Choose a role" />
           </div>
         </Field>
-        <span className="app-muted">Value: <output data-testid={id("select-value")}>{role || "none"}</output></span>
+        <span className="app-muted">
+          Value: <output data-testid={id("select-value")}>{role || "none"}</output>
+        </span>
       </Card>
 
       <Card className="app-demo">
@@ -66,15 +80,25 @@ function Controls({ scope }: { scope: "page" | "modal" }) {
             <Combobox options={PEOPLE} value={person} onValueChange={setPerson} placeholder="Search people" clearable />
           </div>
         </Field>
-        <span className="app-muted">Value: <output data-testid={id("combobox-value")}>{person ?? "none"}</output></span>
+        <span className="app-muted">
+          Value: <output data-testid={id("combobox-value")}>{person ?? "none"}</output>
+        </span>
       </Card>
 
       <Card className="app-demo">
         <CardHeader title="NativeSelect" subtitle="System list" />
         <Field label="Priority">
-          <NativeSelect options={PRIORITIES} value={priority} onChange={(event) => setPriority(event.target.value)} placeholder="Choose a priority" data-testid={id("native")} />
+          <NativeSelect
+            options={PRIORITIES}
+            value={priority}
+            onChange={(event) => setPriority(event.target.value)}
+            placeholder="Choose a priority"
+            data-testid={id("native")}
+          />
         </Field>
-        <span className="app-muted">Value: <output data-testid={id("native-value")}>{priority || "none"}</output></span>
+        <span className="app-muted">
+          Value: <output data-testid={id("native-value")}>{priority || "none"}</output>
+        </span>
       </Card>
 
       <Card className="app-demo">
@@ -82,25 +106,40 @@ function Controls({ scope }: { scope: "page" | "modal" }) {
         <Stack gap={3}>
           <Field label="Due date">
             <div data-testid={id("date")}>
-            <DatePicker value={due} onValueChange={setDue} locale="en-US" weekStartsOn={1} />
-          </div>
+              <DatePicker value={due} onValueChange={setDue} locale="en-US" weekStartsOn={1} />
+            </div>
           </Field>
-          <span className="app-muted">Value: <output data-testid={id("date-value")}>{due ?? "none"}</output></span>
+          <span className="app-muted">
+            Value: <output data-testid={id("date-value")}>{due ?? "none"}</output>
+          </span>
           <Field label="Stay">
             <div data-testid={id("range")}>
-            <DatePicker mode="range" value={stay} onValueChange={setStay} locale="en-US" weekStartsOn={1} />
-          </div>
+              <DatePicker mode="range" value={stay} onValueChange={setStay} locale="en-US" weekStartsOn={1} />
+            </div>
           </Field>
-          <span className="app-muted">Value: <output data-testid={id("range-value")}>{showRange(stay)}</output></span>
+          <span className="app-muted">
+            Value: <output data-testid={id("range-value")}>{showRange(stay)}</output>
+          </span>
         </Stack>
       </Card>
 
       <Card className="app-demo">
         <CardHeader title="Calendar" subtitle="Single date, bounded to March and April 2026" />
         <div data-testid={id("calendar")}>
-          <Calendar value={day} onValueChange={setDay} defaultMonth="2026-03" min="2026-03-03" max="2026-04-20" locale="en-US" weekStartsOn={1} isDateDisabled={(date) => date === "2026-03-17"} />
+          <Calendar
+            value={day}
+            onValueChange={setDay}
+            defaultMonth="2026-03"
+            min="2026-03-03"
+            max="2026-04-20"
+            locale="en-US"
+            weekStartsOn={1}
+            isDateDisabled={(date) => date === "2026-03-17"}
+          />
         </div>
-        <span className="app-muted">Value: <output data-testid={id("calendar-value")}>{day ?? "none"}</output></span>
+        <span className="app-muted">
+          Value: <output data-testid={id("calendar-value")}>{day ?? "none"}</output>
+        </span>
       </Card>
 
       <Card className="app-demo">
@@ -108,7 +147,9 @@ function Controls({ scope }: { scope: "page" | "modal" }) {
         <div data-testid={id("calendar-range")}>
           <Calendar mode="range" value={range} onValueChange={setRange} defaultMonth="2026-03" locale="en-US" weekStartsOn={1} />
         </div>
-        <span className="app-muted">Value: <output data-testid={id("calendar-range-value")}>{showRange(range)}</output></span>
+        <span className="app-muted">
+          Value: <output data-testid={id("calendar-range-value")}>{showRange(range)}</output>
+        </span>
       </Card>
     </Grid>
   );
@@ -116,13 +157,30 @@ function Controls({ scope }: { scope: "page" | "modal" }) {
 
 export function Forms() {
   return (
-    <Page header={<PageHeader eyebrow="Components" title="Forms" description="Select, Combobox, Calendar, DatePicker and NativeSelect, on the page and inside a modal." />}>
+    <Page
+      header={
+        <PageHeader
+          eyebrow="Components"
+          title="Forms"
+          description="Select, Combobox, Calendar, DatePicker and NativeSelect, on the page and inside a modal."
+        />
+      }
+    >
       <PageSection title="On the page">
         <Controls scope="page" />
       </PageSection>
       <PageSection title="Inside a modal" description="The same controls, with their popups layered above the dialog.">
         <div>
-          <Modal trigger={<Button variant="primary" icon="window" data-testid="open-forms-modal">Open form in a modal</Button>} title="Schedule task" description="Popups open above the dialog and keep the focus trapped." size="lg">
+          <Modal
+            trigger={
+              <Button variant="primary" icon="window" data-testid="open-forms-modal">
+                Open form in a modal
+              </Button>
+            }
+            title="Schedule task"
+            description="Popups open above the dialog and keep the focus trapped."
+            size="lg"
+          >
             <Controls scope="modal" />
           </Modal>
         </div>

@@ -1,0 +1,2 @@
+/* Puente de los tokens a utilidades de Tailwind v4. Importar después de "tailwindcss" y de tokens.css. */
+@import "@zuccadev-labs/zuix-tokens/tailwind.css";

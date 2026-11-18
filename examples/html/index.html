@@ -50,12 +50,12 @@
 <section class="z-card demo" data-component="SegmentedControl" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">SegmentedControl</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
-<div dir="ltr" role="radiogroup" aria-label="View" class="z-segmented" data-size="md" tabindex="-1">
-  <button type="button" data-state="off" role="radio" aria-checked="false" class="z-segmented__item" tabindex="-1">
+<div role="radiogroup" aria-label="View" class="z-segmented" data-size="md">
+  <button type="button" role="radio" aria-checked="false" data-state="off" value="list" tabindex="0" class="z-segmented__item">
     <z-icon name="list-bullet" size="16"></z-icon>
     <span class="z-segmented__label">List</span>
   </button>
-  <button type="button" data-state="off" role="radio" aria-checked="false" class="z-segmented__item" tabindex="-1">
+  <button type="button" role="radio" aria-checked="false" data-state="off" value="grid" tabindex="-1" class="z-segmented__item">
     <z-icon name="squares-2x2" size="16"></z-icon>
     <span class="z-segmented__label">Grid</span>
   </button>
@@ -65,7 +65,7 @@
 <section class="z-card demo" data-component="Toggle" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Toggle</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
-<button type="button" aria-pressed="true" data-state="on" title="Favourite" aria-label="Favourite" class="z-toggle" data-size="md" data-icon-only="true">
+<button type="button" title="Favourite" aria-pressed="true" aria-label="Favourite" data-state="on" class="z-toggle" data-size="md" data-icon-only="true">
   <z-icon name="star" size="16"></z-icon>
 </button>
   </div>
@@ -580,9 +580,9 @@ pnpm dev</code>
   <div class="demo__stage">
 <label class="z-check">
   <button type="button" role="checkbox" aria-checked="true" data-state="checked" value="on" class="z-check__box">
-    <span data-state="checked" class="z-check__mark" style="pointer-events:none"></span>
+    <span class="z-check__mark" data-state="checked"></span>
   </button>
-  <input type="checkbox" aria-hidden="true" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" checked="" value="on"/>
+  <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" checked="" value="on"/>
   <span class="z-check__text">
     <span class="z-check__label">Send me the summary</span>
     <span class="z-check__description">We will email you once a week.</span>
@@ -670,7 +670,7 @@ pnpm dev</code>
   <header class="demo__head"><h3 class="demo__name">Field</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
 <div class="z-field" data-layout="stacked">
-  <label class="z-field__label" for="_R_0_-control">Project name
+  <label class="z-field__label" id="_R_0_-label" for="_R_0_-control">Project name
     <span class="z-field__required" aria-hidden="true">*</span>
   </label>
   <div class="z-field__body">
@@ -734,19 +734,19 @@ pnpm dev</code>
 <section class="z-card demo" data-component="Radio" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Radio</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
-<div role="radiogroup" aria-required="false" aria-orientation="vertical" dir="ltr" aria-label="Theme" class="z-radio-group" tabindex="-1" data-orientation="vertical">
+<div aria-label="Theme" role="radiogroup" aria-orientation="vertical" data-orientation="vertical" class="z-radio-group">
   <label class="z-radio">
-    <button type="button" role="radio" aria-checked="false" data-state="unchecked" value="light" class="z-radio__dot" tabindex="-1" data-orientation="vertical"></button>
-    <input type="radio" aria-hidden="true" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" value="light"/>
+    <button type="button" role="radio" aria-checked="false" data-state="unchecked" value="light" tabindex="-1" class="z-radio__dot"></button>
+    <input type="radio" class="z-native-input" aria-hidden="true" tabindex="-1" value="light"/>
     <span class="z-check__text">
       <span class="z-check__label">Light</span>
     </span>
   </label>
   <label class="z-radio">
-    <button type="button" role="radio" aria-checked="true" data-state="checked" value="dark" class="z-radio__dot" tabindex="-1" data-orientation="vertical">
-      <span data-state="checked" class="z-radio__mark"></span>
+    <button type="button" role="radio" aria-checked="true" data-state="checked" value="dark" tabindex="0" class="z-radio__dot">
+      <span class="z-radio__mark" data-state="checked"></span>
     </button>
-    <input type="radio" aria-hidden="true" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" checked="" value="dark"/>
+    <input type="radio" class="z-native-input" aria-hidden="true" tabindex="-1" checked="" value="dark"/>
     <span class="z-check__text">
       <span class="z-check__label">Dark</span>
     </span>
@@ -757,27 +757,27 @@ pnpm dev</code>
 <section class="z-card demo" data-component="RadioGroup" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">RadioGroup</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
-<div role="radiogroup" aria-required="false" aria-orientation="vertical" dir="ltr" aria-label="Plan" class="z-radio-group" tabindex="-1" data-orientation="vertical">
+<div aria-label="Plan" role="radiogroup" aria-orientation="vertical" data-orientation="vertical" class="z-radio-group">
   <label class="z-radio">
-    <button type="button" role="radio" aria-checked="false" data-state="unchecked" value="solo" class="z-radio__dot" tabindex="-1" data-orientation="vertical"></button>
-    <input type="radio" aria-hidden="true" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" value="solo"/>
+    <button type="button" role="radio" aria-checked="false" data-state="unchecked" value="solo" tabindex="-1" class="z-radio__dot"></button>
+    <input type="radio" class="z-native-input" aria-hidden="true" tabindex="-1" value="solo"/>
     <span class="z-check__text">
       <span class="z-check__label">Solo</span>
     </span>
   </label>
   <label class="z-radio">
-    <button type="button" role="radio" aria-checked="true" data-state="checked" value="team" class="z-radio__dot" tabindex="-1" data-orientation="vertical">
-      <span data-state="checked" class="z-radio__mark"></span>
+    <button type="button" role="radio" aria-checked="true" data-state="checked" value="team" tabindex="0" class="z-radio__dot">
+      <span class="z-radio__mark" data-state="checked"></span>
     </button>
-    <input type="radio" aria-hidden="true" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" checked="" value="team"/>
+    <input type="radio" class="z-native-input" aria-hidden="true" tabindex="-1" checked="" value="team"/>
     <span class="z-check__text">
       <span class="z-check__label">Team</span>
       <span class="z-check__description">Up to 10 members.</span>
     </span>
   </label>
   <label class="z-radio" data-disabled="true">
-    <button type="button" role="radio" aria-checked="false" data-state="unchecked" data-disabled="" disabled="" value="org" class="z-radio__dot" tabindex="-1" data-orientation="vertical"></button>
-    <input type="radio" aria-hidden="true" disabled="" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" value="org"/>
+    <button type="button" role="radio" aria-checked="false" data-state="unchecked" data-disabled="" disabled="" value="org" tabindex="-1" class="z-radio__dot"></button>
+    <input type="radio" class="z-native-input" aria-hidden="true" tabindex="-1" disabled="" value="org"/>
     <span class="z-check__text">
       <span class="z-check__label">Organization</span>
     </span>
@@ -855,9 +855,9 @@ pnpm dev</code>
   <div class="demo__stage">
 <label class="z-switch" data-size="md" data-label="end">
   <button type="button" role="switch" data-state="checked" value="on" class="z-switch__track">
-    <span data-state="checked" class="z-switch__thumb"></span>
+    <span class="z-switch__thumb" data-state="checked"></span>
   </button>
-  <input type="checkbox" aria-hidden="true" tabindex="-1" style="position:absolute;pointer-events:none;opacity:0;margin:0;transform:translateX(-100%)" value="on"/>
+  <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" value="on"/>
   <span class="z-switch__label">Automatic updates</span>
 </label>
   </div>
@@ -1408,7 +1408,8 @@ pnpm dev</code>
   <div class="demo__stage">
 <div style="width:100%;height:360px">
   <div class="z-shell z-canvas z-root" id="shell-demo">
-    <div class="z-titlebar">
+    <a class="z-shell__skip" href="#shell-demo-main">Skip to content</a>
+    <header class="z-titlebar">
       <div class="z-titlebar__brand">
         <button type="button" title="Toggle navigation" aria-label="Toggle navigation" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-z-shell-toggle="sidebar">
           <z-icon name="bars-3" size="16"></z-icon>
@@ -1420,7 +1421,7 @@ pnpm dev</code>
           <z-icon name="adjustments-horizontal" size="16"></z-icon>
         </button>
       </div>
-    </div>
+    </header>
     <div class="z-shell__body">
       <div class="z-shell__rail">
         <nav class="z-rail z-liquid" aria-label="Primary">
@@ -1466,9 +1467,9 @@ pnpm dev</code>
             </div>
           </div>
         </div>
-        <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize Navigation" aria-valuenow="224" aria-valuemin="180" aria-valuemax="360" class="z-resize" data-side="right" data-default-size="224"></div>
+        <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize Navigation" aria-valuenow="224" aria-valuemin="180" aria-valuemax="360" class="z-resize" data-side="end" data-default-size="224"></div>
       </aside>
-      <main class="z-shell__main z-liquid">
+      <main class="z-shell__main z-liquid" id="shell-demo-main" tabindex="-1">
         <div class="z-shell__content">
           <div class="z-page">
             <div class="z-container" data-width="content">
@@ -1660,7 +1661,7 @@ pnpm dev</code>
 <section class="z-card demo" data-component="TitleBar" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">TitleBar</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
-<div class="z-titlebar">
+<header class="z-titlebar">
   <div class="z-titlebar__brand"></div>
   <div class="z-titlebar__center">
     <div class="z-tabstrip">
@@ -1672,7 +1673,7 @@ pnpm dev</code>
       <z-icon name="gear" size="16"></z-icon>
     </button>
   </div>
-</div>
+</header>
   </div>
 </section>
 </div>

@@ -1,42 +1,42 @@
 # @zuccadev-labs/zuix-zout
 
-Layouts y ventanas dinámicas de la suite zuix. Resuelve la estructura de la pantalla (shell, paneles,
-pestañas de trabajo, rejillas) y no dibuja contenido. Las medidas y el material salen de los tokens.
+Layouts and dynamic windows for the zuix suite. It solves the structure of the screen (shell, panels, work
+tabs, grids) and draws no content. Measures and material come from the tokens.
 
-## Instalación
+## Install
 
 ```
 pnpm add @zuccadev-labs/zuix-zout @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-zicon
 ```
 
-`@zuccadev-labs/zuix-zicon` es un peer obligatorio. `react` y `react-dom` 19 son peers opcionales: solo los
-necesita el binding (`pnpm add react react-dom`). Los paquetes de la suite se instalan y se actualizan
-juntos, en la misma versión.
+`@zuccadev-labs/zuix-zicon` is a required peer. `react` and `react-dom` 19 are optional peers: only the
+binding needs them (`pnpm add react react-dom`). The suite packages are installed and upgraded together, at
+the same version. Requires Node 22.12 or later.
 
-Para instalarlo todo con una sola dependencia: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
+To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 
-## Piezas
+## Pieces
 
-| Pieza | Qué hace |
+| Piece | What it does |
 |---|---|
-| `Shell` | Estructura general: barra de título, rail, sidebar, área principal, inspector |
-| `Rail`, `RailItem` | Barra estrecha de navegación principal |
-| `Sidebar`, `SidebarSection` | Navegación secundaria en acordeón |
-| `SidePanel` | Panel con título, cuerpo con desplazamiento y pie |
-| `SplitPane`, `Pane` | Paneles divididos con divisores arrastrables |
-| `TabStrip` | Pestañas de trabajo con cierre y alta |
-| `TitleBar` | Cabecera para ventanas sin marco |
-| `ResizeHandle` | Tirador de redimensionado |
-| `Page`, `PageHeader`, `PageSection`, `Container` | Página con cabecera y secciones |
-| `Grid`, `Stack`, `Inline` | Rejilla intrínseca, pila y fila |
+| `Shell` | The overall structure: title bar, rail, sidebar, main area, inspector |
+| `Rail`, `RailItem` | Narrow bar for primary navigation |
+| `Sidebar`, `SidebarSection` | Secondary navigation as an accordion |
+| `SidePanel` | Panel with a title, a scrolling body and a footer |
+| `SplitPane`, `Pane` | Split panes with draggable dividers |
+| `TabStrip` | Work tabs with close and add |
+| `TitleBar` | Header for frameless windows. It is a `<header>` |
+| `ResizeHandle` | Resize handle |
+| `Page`, `PageHeader`, `PageSection`, `Container` | Page with a header and sections |
+| `Grid`, `Stack`, `Inline` | Intrinsic grid, stack and row |
 
-## Uso con React
+## With React
 
 ```tsx
 import "@zuccadev-labs/zuix-tokens/tokens.css";
 import "@zuccadev-labs/zuix-zui/styles.css";
 import "@zuccadev-labs/zuix-zout/styles.css";
-import "@zuccadev-labs/zuix-zicon/all";           // registra los iconos
+import "@zuccadev-labs/zuix-zicon/all";           // registers the icons
 import { useState } from "react";
 import { Shell, Sidebar, SidebarSection, Page, PageHeader, Grid } from "@zuccadev-labs/zuix-zout";
 
@@ -57,12 +57,13 @@ export function App() {
 }
 ```
 
-El `Shell` necesita un contenedor con alto definido.
+The `Shell` needs a container with a defined height. `skipLinkLabel` adds a "skip to content" link, and
+`mainAs` lets a nested shell avoid a second `<main>`.
 
-## Uso sin React
+## Without React
 
-El marcado de cada layout está en `@zuccadev-labs/zuix-zout/html.json`. El comportamiento (cajones del shell,
-divisores, pestañas de trabajo) lo pone `@zuccadev-labs/zuix-zout/dom`:
+The markup of every layout is in `@zuccadev-labs/zuix-zout/html.json`. The behavior (shell drawers, dividers,
+work tabs) comes from `@zuccadev-labs/zuix-zout/dom`:
 
 ```js
 import "@zuccadev-labs/zuix-tokens/tokens.css";
@@ -73,37 +74,51 @@ import { init } from "@zuccadev-labs/zuix-zout/dom";
 init();
 ```
 
-Sin bundler se enlazan `dist/zout.css` y `dist/zout.dom.js`, incluidos en el paquete.
+Without a bundler, link `dist/zout.css` and `dist/zout.dom.js`, both included in the package.
 
-## Comportamiento responsive
+## Responsive behavior
 
-El `Shell` mide su propio ancho, no el de la pantalla:
+The `Shell` measures its own width, not the screen:
 
-| Ancho del shell | Sidebar | Inspector |
+| Shell width | Sidebar | Inspector |
 |---|---|---|
-| 1180 px o más | Acoplada | Acoplado |
-| De 880 a 1179 px | Acoplada | Cajón |
-| Menos de 880 px | Cajón | Cajón |
+| 1180 px or more | Docked | Docked |
+| 880 to 1179 px | Docked | Drawer |
+| Less than 880 px | Drawer | Drawer |
 
-Los divisores de `SplitPane` y los `ResizeHandle` se mueven con las flechas; `TabStrip` cambia de
-pestaña con flechas, Inicio y Fin.
+## Keyboard, pointer and direction
 
-## Entradas
+- `SplitPane` dividers and `ResizeHandle` move with the arrow keys; Home and End take them to their minimum
+  and maximum. Double-click resets a handle or splits two panes evenly.
+- `TabStrip` switches tabs with the arrow keys, Home and End, and closes the active tab with Delete.
+- With `dir="rtl"`, drawers, handles and arrow keys follow the writing direction. Handle sides are named
+  `start` and `end`.
+- With a coarse pointer, the grab area of handles and dividers grows to 40 px.
 
-| Entrada | Contenido |
+## Entry points
+
+| Entry | Contents |
 |---|---|
-| `@zuccadev-labs/zuix-zout` | Layouts de React y sus tipos |
-| `@zuccadev-labs/zuix-zout/dom` | Comportamiento sin framework: `init`, `hydrate`, `setPanelOpen`, `setSplitSizes`, `addWorkTab`… |
-| `@zuccadev-labs/zuix-zout/styles.css` | Estilos |
-| `@zuccadev-labs/zuix-zout/manifest.json`, `@zuccadev-labs/zuix-zout/html.json` | Props, clases y marcado, para herramientas y agentes |
-| `@zuccadev-labs/zuix-zout/dist/zout.css`, `@zuccadev-labs/zuix-zout/dist/zout.dom.js` | Bundles para enlazar sin bundler |
+| `@zuccadev-labs/zuix-zout` | React layouts and their types |
+| `@zuccadev-labs/zuix-zout/dom` | Framework-free behavior: `init`, `hydrate`, `dispose`, `setPanelOpen`, `setSplitSizes`, `addWorkTab`… |
+| `@zuccadev-labs/zuix-zout/styles.css` | Styles |
+| `@zuccadev-labs/zuix-zout/manifest.json`, `@zuccadev-labs/zuix-zout/html.json` | Props, classes and markup, for tools and agents |
+| `@zuccadev-labs/zuix-zout/dist/zout.css`, `@zuccadev-labs/zuix-zout/dist/zout.dom.js` | Bundles to link without a bundler |
 
-## Documentación
+## Documentation
 
-- [Guía de layouts](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/04-zout.md)
-- [Uso con otros frameworks o sin ninguno](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md)
-- [Cambios](https://github.com/zuccadev-labs/zuix/blob/main/zout/CHANGELOG.md)
+The guides are written in Spanish.
 
-## Licencia
+- [Layouts guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/04-zout.md)
+- [Using zuix with other frameworks, or with none](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md)
+- [Upgrading from 0.1 to 0.2](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md)
+- [Changelog](https://github.com/zuccadev-labs/zuix/blob/main/zout/CHANGELOG.md)
+
+## Español
+
+Layouts y ventanas dinámicas de la suite zuix. La guía está en español en
+[`docs/users/04-zout.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/04-zout.md).
+
+## License
 
 [MIT](https://github.com/zuccadev-labs/zuix/blob/main/LICENSE).

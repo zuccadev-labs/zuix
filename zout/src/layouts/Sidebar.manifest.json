@@ -3,10 +3,7 @@
   "group": "layout",
   "description": "Navegación secundaria en acordeón: secciones plegables y pie fijo.",
   "import": "import { Sidebar, SidebarSection } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "Sidebar",
-    "SidebarSection"
-  ],
+  "exports": ["Sidebar", "SidebarSection"],
   "props": [
     {
       "name": "footer",
@@ -41,17 +38,8 @@
       "description": "Reparte el alto libre."
     }
   ],
-  "tokens": [
-    "line",
-    "fg-muted",
-    "fg",
-    "text-caption",
-    "tracking-wide",
-    "focus-ring"
-  ],
-  "classes": [
-    "z-sidebar"
-  ],
+  "tokens": ["line", "fg-muted", "fg", "text-caption", "tracking-wide", "focus-ring"],
+  "classes": ["z-sidebar"],
   "a11y": "Cada cabecera es un botón con aria-expanded y aria-controls.",
   "examples": [
     {

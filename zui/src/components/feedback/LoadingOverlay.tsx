@@ -16,10 +16,26 @@ export interface LoadingOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>
 }
 
 /** Capa de espera sobre un contenedor (que debe tener `position: relative`) o sobre toda la ventana. */
-export function LoadingOverlay({ visible = true, message, label = "Loading", fullscreen, blur = true, className, ...rest }: LoadingOverlayProps) {
+export function LoadingOverlay({
+  visible = true,
+  message,
+  label = "Loading",
+  fullscreen,
+  blur = true,
+  className,
+  ...rest
+}: LoadingOverlayProps) {
   if (!visible) return null;
   return (
-    <div {...rest} className={cx("z-loading-overlay", className)} data-fullscreen={fullscreen || undefined} data-blur={blur || undefined} role="status" aria-live="polite" aria-label={message ? undefined : label}>
+    <div
+      {...rest}
+      className={cx("z-loading-overlay", className)}
+      data-fullscreen={fullscreen || undefined}
+      data-blur={blur || undefined}
+      role="status"
+      aria-live="polite"
+      aria-label={message ? undefined : label}
+    >
       <Spinner size="lg" label="" />
       {message ? <span className="z-loading-overlay__message">{message}</span> : null}
     </div>

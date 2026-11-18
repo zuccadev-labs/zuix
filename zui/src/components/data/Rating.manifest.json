@@ -17,11 +17,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -55,13 +51,7 @@
       "description": "Por defecto \"N out of M\"."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled"],
   "tokens": [
     "space-2",
     "fg",
@@ -77,10 +67,8 @@
     "weight-semibold",
     "fg-muted"
   ],
-  "classes": [
-    "z-rating"
-  ],
-  "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con flechas.",
+  "classes": ["z-rating"],
+  "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con foco itinerante; flechas (reflejadas en RTL), Inicio y Fin mueven y eligen. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo marcado dentro de `[data-z-dom]`; emite z:change { value } en `.z-rating`.",
   "examples": [
     {
       "title": "Lectura",

@@ -18,13 +18,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ],
+      "values": ["xs", "sm", "md", "lg", "xl"],
       "default": "md",
       "description": "Tamaño del contador; debe coincidir con el de los avatares."
     },
@@ -39,9 +33,7 @@
       "required": true
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "radius-full",
     "accent-soft",
@@ -56,10 +48,7 @@
     "surface-3",
     "fg-muted"
   ],
-  "classes": [
-    "z-avatar-group",
-    "z-avatar"
-  ],
+  "classes": ["z-avatar-group", "z-avatar"],
   "a11y": "role group; el contador expone su texto por aria-label.",
   "examples": [
     {

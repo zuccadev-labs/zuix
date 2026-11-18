@@ -11,5 +11,16 @@ export interface SpinnerProps extends Omit<HTMLAttributes<HTMLSpanElement>, "chi
 
 /** Anillo giratorio para esperas de duración desconocida. */
 export function Spinner({ size = "md", tone = "accent", label = "Loading", className, ...rest }: SpinnerProps) {
-  return <span {...rest} className={cx("z-spinner", className)} data-size={size} data-tone={tone} role={label ? "status" : undefined} aria-label={label || undefined} aria-hidden={label ? undefined : true} />;
+  return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-label solo se emite junto a role="status"; sin etiqueta el anillo es decorativo y va con aria-hidden.
+    <span
+      {...rest}
+      className={cx("z-spinner", className)}
+      data-size={size}
+      data-tone={tone}
+      role={label ? "status" : undefined}
+      aria-label={label || undefined}
+      aria-hidden={label ? undefined : true}
+    />
+  );
 }

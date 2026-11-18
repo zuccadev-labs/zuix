@@ -47,18 +47,15 @@
       "name": "value",
       "type": "string",
       "default": "on"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "El formulario no se envía si no está marcada."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "checked",
-    "indeterminate",
-    "invalid",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "checked", "indeterminate", "invalid", "disabled"],
   "tokens": [
     "space-2",
     "fg",
@@ -79,10 +76,8 @@
     "danger",
     "ease-spring"
   ],
-  "classes": [
-    "z-check"
-  ],
-  "a11y": "Radix Checkbox: role checkbox, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
+  "classes": ["z-check"],
+  "a11y": "Patrón APG «checkbox»: botón con role checkbox y un `input type=checkbox` oculto para formularios, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
   "examples": [
     {
       "title": "Con descripción",
@@ -93,5 +88,5 @@
       "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
     }
   ],
-  "origin": "Nuevo, sobre Checkbox de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

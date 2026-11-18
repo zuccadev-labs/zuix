@@ -2,10 +2,7 @@
   "name": "NavList",
   "group": "navigation",
   "description": "Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.",
-  "exports": [
-    "NavList",
-    "NavLink"
-  ],
+  "exports": ["NavList", "NavLink"],
   "import": "import { NavList, NavLink } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -70,13 +67,7 @@
       "type": "string"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled"],
   "tokens": [
     "accent",
     "control-height-md",
@@ -99,14 +90,7 @@
     "weight-medium",
     "weight-semibold"
   ],
-  "classes": [
-    "z-navlist",
-    "z-navlist__heading",
-    "z-navlink",
-    "z-navlink__icon",
-    "z-navlink__label",
-    "z-navlink__trailing"
-  ],
+  "classes": ["z-navlist", "z-navlist__heading", "z-navlink", "z-navlink__icon", "z-navlink__label", "z-navlink__trailing"],
   "a11y": "nav con nombre accesible; el destino activo lleva aria-current=page. Enlaces o botones nativos, con foco visible.",
   "examples": [
     {

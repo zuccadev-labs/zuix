@@ -36,10 +36,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -48,14 +45,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "selected"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "selected"],
   "tokens": [
     "line",
     "radius-full",
@@ -80,9 +70,7 @@
     "accent-soft",
     "accent"
   ],
-  "classes": [
-    "z-chip"
-  ],
+  "classes": ["z-chip"],
   "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
   "examples": [
     {

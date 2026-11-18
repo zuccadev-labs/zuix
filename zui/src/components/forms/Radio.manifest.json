@@ -24,14 +24,7 @@
       "default": false
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "checked",
-    "disabled"
-  ],
+  "states": ["rest", "hover", "focus", "active", "checked", "disabled"],
   "tokens": [
     "space-2",
     "fg",
@@ -49,16 +42,13 @@
     "danger",
     "space-4"
   ],
-  "classes": [
-    "z-radio",
-    "z-check__text"
-  ],
-  "a11y": "Radix RadioGroup.Item: role radio. Solo funciona dentro de `RadioGroup`.",
+  "classes": ["z-radio", "z-check__text"],
+  "a11y": "Botón con role radio y un `input type=radio` oculto para formularios. Solo funciona dentro de `RadioGroup`.",
   "examples": [
     {
       "title": "Dentro de un grupo",
       "code": "<RadioGroup aria-label=\"Theme\" defaultValue=\"dark\">\n  <Radio value=\"light\">Light</Radio>\n  <Radio value=\"dark\">Dark</Radio>\n</RadioGroup>"
     }
   ],
-  "origin": "Nuevo, sobre RadioGroup de radix-ui."
+  "origin": "Nuevo, con primitiva propia (patrón APG)."
 }

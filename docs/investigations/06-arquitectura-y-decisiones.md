@@ -1,23 +1,26 @@
-# 06 · Arquitectura de la suite y decisiones
+# Arquitectura de la suite y decisiones
 
-Fecha: 2026-11-12. Estado: plan previo a la construcción. Lo construido y las decisiones tomadas están en
-[07-estado-de-construccion.md](07-estado-de-construccion.md).
+El plan que escribí el 2026-11-12, antes de construir, y cómo acabó cada decisión. Lo mantengo porque el
+contraste entre lo que planeé y lo que hice explica varias cosas de la suite.
 
 ## Principio
 
 La estructura es común y la marca es un archivo. Una marca replica el estándar cambiando tokens, sin
 tocar la lógica de los componentes.
 
-## Paquetes
+## Paquetes que planeé
 
 | Paquete | Papel | Fuente principal |
 |---|---|---|
-| tokens | Fuente única de valores; genera variables CSS, tema Tailwind y mapa para Docusaurus | `tokens.css` de zutool, `tokens.ts` del design system base |
+| tokens | Fuente única de valores; genera variables CSS, tema de Tailwind y mapa para Docusaurus | Las hojas de tokens de zutool y el design system del proyecto de origen |
 | `zicon` | Iconos, manifiesto y tabla de sustitución | `Dazicon.fig` |
-| `zui` | Componentes: capa headless y capa con estilo | Radix, el design system base, primitivos de zutool, referencias de `stack.txt` |
-| `zout` | Layouts y ventanas dinámicas | Shell y paneles de zutool |
-| `zudocs` | Estándar documental, tema Docusaurus, plantillas | Documento 05 |
-| kit de agente | Guías, auditoría, comandos y manifiestos legibles por máquina | Modelo del design system base |
+| `zui` | Componentes: una capa de lógica y una de estilo | Una biblioteca headless, el design system del proyecto de origen y los primitivos de zutool |
+| `zout` | Layouts y ventanas dinámicas | El shell y los paneles de zutool |
+| `zudocs` | Estándar documental, tema de Docusaurus, plantillas | [Zudocs](./05-zudocs-docusaurus.md) |
+| Kit de agente | Guías, auditoría, comandos y manifiestos legibles por máquina | El modelo del design system del proyecto de origen |
+
+Después añadí un sexto paquete publicable que no estaba en el plan: el paraguas `@zuccadev-labs/zuix`, para
+instalar la suite con una sola dependencia.
 
 ## Capas
 
@@ -26,53 +29,63 @@ marca (un archivo de tokens)
         ↓
 tokens: primitivos → semánticos → componente
         ↓
-zicon      zui (headless + estilo)      zout
+zicon      zui      zout
         ↓
 zudocs y aplicaciones
 ```
 
 ## Qué hace al estándar operable por agentes
 
-Tomado de lo que ya funciona en el design system base (documento 02):
+Lo tomé de lo que ya funcionaba en el design system del proyecto de origen
+([Fuentes de estilo](./02-fuentes-de-estilo.md)):
 
 1. **Una guía por paquete** con el formato reglas → patrones copiables → verificación.
 2. **Un manifiesto por componente**: props, variantes, tokens que usa y ejemplos.
 3. **Auditoría por comando**, con resultado por archivo y objetivo numérico.
 4. **Un único archivo de marca**, con esquema, que el agente edita.
-5. **Contexto para modelos**: `AGENTS.md` y `llms.txt` generados.
+5. **Contexto para modelos**: `AGENTS.md` y `llms.txt` generado.
 
 ## Orden de construcción
 
 1. Base del repositorio.
 2. Tokens.
-3. `zicon`: la fuente está lista y la extracción ya se probó.
+3. `zicon`: la fuente estaba lista y la extracción ya la había probado.
 4. `zui`: primitivos y primeros componentes.
 5. `zout`: a partir del shell de zutool.
 6. Carousel con efecto lente.
 7. `zudocs`: prototipo del tema, estándar escrito, plantillas.
-8. Piloto: migrar la documentación de Zenith.
+8. Piloto con la documentación de otro proyecto.
 
-## Decisiones (como se plantearon)
+## Decisiones
 
-Cómo quedó cada una: documento 07.
-
-| # | Decisión | Recomendación | Alternativa |
+| # | Decisión | Lo que planeé | Lo que hice |
 |---|---|---|---|
-| 1 | Framework | React 19 con Radix: zutool, Docusaurus y Radix son React. **Corregido el 2026-11-13 por el responsable: la suite no es solo para React.** El estándar pasa a ser HTML + CSS + tokens y React queda como un binding (ver documento 07) | ArrowJS en el núcleo |
-| 2 | Distribución | npm para tokens, `zicon` y primitivos; registro copiable para componentes con estilo | Todo por npm, o todo por registro |
-| 3 | Referencias externas | Reimplementar sobre tokens propios | Copiar código donde la licencia lo permita |
-| 4 | Marca por defecto | Material de zutool con paleta DAZLABS; naranja de zutool como segundo tema | Naranja de zutool como tema base |
-| 5 | Taxonomía documental | Nombres en inglés plural e idiomas con el i18n de Docusaurus | Carpetas `EN/ES` como en otro paquete propio |
-| 6 | Repositorio | `git init` en zuix con workspace de pnpm | Un repositorio por paquete |
-| 7 | Reutilización del proyecto de origen | Confirmar permiso antes de extraer el carousel y los patrones | — |
+| 1 | Framework | React 19 con una biblioteca headless (Radix): zutool y Docusaurus son React | **Ninguno obligatorio.** Al día siguiente lo corregí: la suite no es solo para React. El estándar es HTML + CSS + tokens, `zui/dom` da el comportamiento sin framework y React es un binding. En la `0.2.0` quité además la biblioteca headless ([Primitivas propias](./08-primitivas-propias.md)) |
+| 2 | Distribución | npm para tokens, `zicon` y primitivos; un registro copiable para los componentes con estilo | Todo por npm. Paquetes de workspace que exportan su fuente dentro del workspace y `dist/` compilado al empaquetar. No monté un registro copiable |
+| 3 | Referencias externas | Reimplementar sobre tokens propios | Así fue: no copié código de las bibliotecas de referencia ([Componentes de referencia](./04-componentes-de-referencia.md)) |
+| 4 | Marca por defecto | El material de zutool con la paleta de DAZLABS; el naranja de zutool como segunda marca | Así fue: `dazlabs` por defecto y `zutool` como segunda. Después añadí `zenith` |
+| 5 | Taxonomía documental | Nombres en inglés y en plural; idiomas con el i18n de Docusaurus | Nombres en inglés y en plural. Sin i18n: un idioma por sitio |
+| 6 | Repositorio | Un repositorio con workspace de pnpm | Workspace de pnpm, público en `github.com/zuccadev-labs/zuix` desde el 2026-11-14 ([Apertura](../package/04-apertura-del-repositorio.md)) |
+| 7 | Reutilizar el código del proyecto de origen | Confirmar antes que podía hacerlo | Confirmado. El código extraído no conserva su nombre ni su dominio |
 
-## Riesgos
+## Dónde me aparté del plan
 
-| Riesgo | Mitigación |
+| Plan | Lo que hice | Motivo |
+|---|---|---|
+| Tailwind 4 en el tema de Docusaurus | Sin Tailwind | `zui` es CSS plano sobre tokens. Desaparece el riesgo de convivencia con Infima |
+| Una herramienta de tokens de terceros | Un script propio de Node sin dependencias | El contrato es pequeño y la validación de contraste es propia |
+| 348 iconos | 346 | Dos dibujos estaban rotos en ambas variantes y los sustituí por su versión corregida |
+| El token `accent` para los botones | Un token aparte, `accent-solid` | El acento de las marcas no da contraste 4.5:1 con texto blanco en tema oscuro |
+| `zicon` con una sola entrada | Además `zicon/core` y un registro de iconos | El set completo pesa unos 580 kB; las bibliotecas no deben arrastrarlo |
+| Una biblioteca headless debajo de React | Primitivas propias sobre la plataforma | Una sola lógica para React y para el modo sin framework, y ninguna dependencia |
+
+## Riesgos que apunté, y qué pasó
+
+| Riesgo | Qué pasó |
 |---|---|
-| Tailwind v4 e Infima no conviven bien | Prototipo antes de fijar el tema |
-| `backdrop-filter` degrada el rendimiento o la legibilidad | Cristal solo en el cromo; superficie de lectura opaca |
-| `zui` y los componentes de zudocs se convierten en dos sistemas | zudocs consume `zui`; no define componentes propios |
-| Los tokens vuelven a divergir por copia | Un solo paquete de tokens; las aplicaciones lo importan |
-| La identidad visual del manual está incompleta | Paleta y tipografía se confirman con el responsable de marca |
-| Erratas y duplicados en Dazicon | Tabla de renombrado revisada a mano antes de publicar |
+| Tailwind 4 e Infima no conviven bien | No llegó a plantearse |
+| `backdrop-filter` degrada el rendimiento o la legibilidad | La legibilidad sí: el texto sobre cristal no llegaba al contraste mínimo y subí la opacidad. El rendimiento en hardware real sigue sin medir |
+| `zui` y los componentes de zudocs se convierten en dos sistemas | No: zudocs consume `zui` y no define componentes propios |
+| Los tokens vuelven a divergir por copia | Un solo paquete de tokens, con capas de compatibilidad para migrar las copias antiguas |
+| La identidad visual del manual de marca está incompleta | Sigue incompleta. La marca `dazlabs` usa la paleta y las fuentes del propio documento |
+| Erratas y duplicados en el archivo de iconos | Resueltos con una tabla de renombrado revisada a mano |

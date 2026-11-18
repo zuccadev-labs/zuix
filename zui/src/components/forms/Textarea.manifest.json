@@ -7,10 +7,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
@@ -42,10 +39,7 @@
     {
       "name": "resize",
       "type": "enum",
-      "values": [
-        "none",
-        "vertical"
-      ],
+      "values": ["none", "vertical"],
       "default": "vertical"
     },
     {
@@ -53,14 +47,7 @@
       "type": "TextareaHTMLAttributes"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "invalid"],
   "tokens": [
     "space-2",
     "space-3",
@@ -83,9 +70,7 @@
     "text-small",
     "font-mono"
   ],
-  "classes": [
-    "z-textarea"
-  ],
+  "classes": ["z-textarea"],
   "a11y": "textarea nativo. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
   "examples": [
     {

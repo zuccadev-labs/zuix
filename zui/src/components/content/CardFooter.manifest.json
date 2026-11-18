@@ -7,11 +7,7 @@
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "end",
-        "between"
-      ],
+      "values": ["start", "end", "between"],
       "default": "end"
     },
     {
@@ -19,17 +15,9 @@
       "type": "ReactNode"
     }
   ],
-  "states": [
-    "rest"
-  ],
-  "tokens": [
-    "space-2",
-    "space-3",
-    "line"
-  ],
-  "classes": [
-    "z-card__footer"
-  ],
+  "states": ["rest"],
+  "tokens": ["space-2", "space-3", "line"],
+  "classes": ["z-card__footer"],
   "examples": [
     {
       "title": "Acciones a los extremos",

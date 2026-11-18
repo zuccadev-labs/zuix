@@ -32,7 +32,17 @@ interface Row {
   parent: string | null;
 }
 
-export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange, selected, defaultSelected = null, onSelect, className }: TreeProps) {
+export function Tree({
+  nodes,
+  label,
+  expanded,
+  defaultExpanded,
+  onExpandedChange,
+  selected,
+  defaultSelected = null,
+  onSelect,
+  className,
+}: TreeProps) {
   const [ownExpanded, setOwnExpanded] = useState<string[]>(defaultExpanded ?? []);
   const [ownSelected, setOwnSelected] = useState<string | null>(defaultSelected);
   const [focused, setFocused] = useState<string | null>(null);
@@ -88,7 +98,11 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
     const hasChildren = Boolean(row.node.children?.length);
     const isOpen = open.has(row.node.id);
     let handled = true;
-    switch (event.key) {
+    // En RTL la flecha que apunta hacia el final de la línea (izquierda) expande.
+    const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
+    const key = rtl && event.key === "ArrowLeft" ? "ArrowRight" : rtl && event.key === "ArrowRight" ? "ArrowLeft" : event.key;
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    switch (key) {
       case "ArrowDown":
         focus(rows[at + 1]?.node.id);
         break;
@@ -113,8 +127,19 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
       case " ":
         activate(row.node);
         break;
-      default:
+      default: {
+        // Letra: salta al siguiente nodo visible cuyo nombre empieza por ella (APG treeview; igual que el modo DOM).
         handled = false;
+        if (event.key.length !== 1) break;
+        const letter = event.key.toLowerCase();
+        const name = (id: string) =>
+          (refs.current.get(id)?.querySelector(":scope > .z-tree__row .z-tree__label")?.textContent ?? "").trim().toLowerCase();
+        const next = [...rows.slice(at + 1), ...rows.slice(0, at)].find((r) => name(r.node.id).startsWith(letter));
+        if (next) {
+          focus(next.node.id);
+          handled = true;
+        }
+      }
     }
     if (handled) event.preventDefault();
   };
@@ -144,6 +169,8 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
             if (event.target === event.currentTarget) setFocused(node.id);
           }}
         >
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: la fila es la zona de puntero del treeitem que la contiene, que es quien tiene el rol y el foco. */}
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: el teclado lo atiende el árbol (flechas, Intro y Espacio sobre el treeitem enfocado). */}
           <div
             className="z-tree__row"
             style={indent}
@@ -172,6 +199,7 @@ export function Tree({ nodes, label, expanded, defaultExpanded, onExpandedChange
     });
 
   return (
+    // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: patrón APG «tree view»: la lista conserva su estructura y role="tree" le da la semántica y el teclado.
     <ul role="tree" aria-label={label} className={cx("z-tree", className)} onKeyDown={onKeyDown}>
       {render(nodes, 1)}
     </ul>

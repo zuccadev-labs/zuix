@@ -1,8 +1,5 @@
 {
-  "sheets": [
-    "apps/desktop/src/styles/tokens.css",
-    "apps/mobile/src/styles/tokens.css"
-  ],
+  "sheets": ["apps/desktop/src/styles/tokens.css", "apps/mobile/src/styles/tokens.css"],
   "conflicts": [],
   "declared": {
     "--accent": {
@@ -536,24 +533,15 @@
     "--z-tour-ring": 1
   },
   "locations": {
-    "--z-dialog": [
-      "apps/desktop/src/styles/app.css:1235",
-      "apps/desktop/src/styles/app.css:1278"
-    ],
-    "--z-drag": [
-      "apps/desktop/src/styles/workspace.css:43"
-    ],
+    "--z-dialog": ["apps/desktop/src/styles/app.css:1235", "apps/desktop/src/styles/app.css:1278"],
+    "--z-drag": ["apps/desktop/src/styles/workspace.css:43"],
     "--z-menu": [
       "apps/desktop/src/styles/zutool.css:539",
       "apps/desktop/src/styles/zutool.css:1020",
       "apps/desktop/src/styles/zutool.css:1039"
     ],
-    "--z-menu-scrim": [
-      "apps/desktop/src/styles/zutool.css:1019"
-    ],
-    "--z-onboarding": [
-      "apps/desktop/src/styles/zutool.css:903"
-    ],
+    "--z-menu-scrim": ["apps/desktop/src/styles/zutool.css:1019"],
+    "--z-onboarding": ["apps/desktop/src/styles/zutool.css:903"],
     "--z-overlay": [
       "apps/desktop/src/styles/workspace.css:38",
       "apps/desktop/src/styles/workspace.css:93",
@@ -562,27 +550,16 @@
       "apps/desktop/src/styles/zutool.css:748",
       "apps/desktop/src/styles/zutool.css:1028"
     ],
-    "--z-popover": [
-      "apps/desktop/src/styles/zutool.css:768"
-    ],
+    "--z-popover": ["apps/desktop/src/styles/zutool.css:768"],
     "--z-popup": [
       "apps/desktop/src/styles/app.css:1053",
       "apps/desktop/src/styles/zutool.css:164",
       "apps/desktop/src/styles/zutool.css:686"
     ],
-    "--z-toast": [
-      "apps/desktop/src/styles/app.css:1327"
-    ],
-    "--z-top": [
-      "apps/desktop/src/styles/app.css:233",
-      "apps/desktop/src/styles/zutool.css:786"
-    ],
-    "--z-tour": [
-      "apps/desktop/src/styles/zutool.css:922"
-    ],
-    "--z-tour-ring": [
-      "apps/desktop/src/styles/zutool.css:921"
-    ]
+    "--z-toast": ["apps/desktop/src/styles/app.css:1327"],
+    "--z-top": ["apps/desktop/src/styles/app.css:233", "apps/desktop/src/styles/zutool.css:786"],
+    "--z-tour": ["apps/desktop/src/styles/zutool.css:922"],
+    "--z-tour-ring": ["apps/desktop/src/styles/zutool.css:921"]
   },
   "usedLocal": [
     "--bar-gap",

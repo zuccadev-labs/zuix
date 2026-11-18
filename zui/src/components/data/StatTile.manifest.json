@@ -30,24 +30,13 @@
     {
       "name": "deltaTone",
       "type": "enum",
-      "values": [
-        "neutral",
-        "accent",
-        "success",
-        "warning",
-        "danger",
-        "info"
-      ],
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
       "default": "neutral"
     },
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "glass",
-        "solid",
-        "soft"
-      ],
+      "values": ["glass", "solid", "soft"],
       "default": "glass",
       "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta."
     },
@@ -57,12 +46,7 @@
       "description": "Vuelve la tesela un botón."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active"
-  ],
+  "states": ["rest", "hover", "focus", "active"],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -108,9 +92,7 @@
     "glass-specular",
     "glass-shadow"
   ],
-  "classes": [
-    "z-stat"
-  ],
+  "classes": ["z-stat"],
   "a11y": "div; con onClick pasa a ser button con todo el contenido como nombre.",
   "examples": [
     {

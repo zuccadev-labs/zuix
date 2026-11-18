@@ -7,10 +7,7 @@
     {
       "name": "density",
       "type": "enum",
-      "values": [
-        "compact",
-        "comfortable"
-      ],
+      "values": ["compact", "comfortable"],
       "default": "comfortable"
     },
     {
@@ -55,11 +52,7 @@
       "type": "string"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "selected"
-  ],
+  "states": ["rest", "hover", "selected"],
   "tokens": [
     "card-border",
     "card-radius",
@@ -90,12 +83,10 @@
     "radius-xs",
     "surface-2",
     "focus-ring",
-    "accent"
+    "accent",
+    "layer-raised"
   ],
-  "classes": [
-    "z-table",
-    "z-table-wrap"
-  ],
+  "classes": ["z-table", "z-table-wrap"],
   "a11y": "table nativa con caption. Alineación por data-align (start, center, end) en th y td; el contenedor desplaza en horizontal.",
   "examples": [
     {

@@ -15,7 +15,18 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children?: ReactNode;
 }
 
-export function Link({ variant = "inline", external, externalLabel = "opens in a new tab", icon, disabled, className, children, href, ...rest }: LinkProps) {
+export function Link({
+  variant = "inline",
+  external,
+  externalLabel = "opens in a new tab",
+  icon,
+  disabled,
+  className,
+  children,
+  href,
+  onClick,
+  ...rest
+}: LinkProps) {
   const externalProps = external ? { target: "_blank", rel: "noopener noreferrer" } : null;
   return (
     <a
@@ -23,6 +34,8 @@ export function Link({ variant = "inline", external, externalLabel = "opens in a
       {...rest}
       // Sin href un ancla deja de ser enlace: así se representa el estado deshabilitado.
       href={disabled ? undefined : href}
+      // Deshabilitado no navega ni ejecuta su acción.
+      onClick={disabled ? undefined : onClick}
       aria-disabled={disabled || undefined}
       role={disabled ? "link" : rest.role}
       className={cx("z-link", `z-link--${variant}`, className)}

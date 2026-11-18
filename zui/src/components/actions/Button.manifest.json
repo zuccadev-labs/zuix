@@ -7,23 +7,14 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "primary",
-        "secondary",
-        "ghost",
-        "danger"
-      ],
+      "values": ["primary", "secondary", "ghost", "danger"],
       "default": "secondary",
       "description": "Intención."
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -40,7 +31,7 @@
       "name": "loading",
       "type": "boolean",
       "default": false,
-      "description": "Muestra un anillo, deshabilita el botón y expone aria-busy."
+      "description": "Muestra un anillo y expone aria-busy. El botón no se deshabilita: lleva aria-disabled, conserva el foco y no responde a la pulsación mientras carga."
     },
     {
       "name": "fullWidth",
@@ -54,14 +45,7 @@
       "description": "Atributos nativos de button (onClick, type, disabled, ref)."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "loading"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "loading"],
   "tokens": [
     "surface-2",
     "surface-3",
@@ -94,10 +78,8 @@
     "accent",
     "radius-full"
   ],
-  "classes": [
-    "z-btn"
-  ],
-  "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y queda deshabilitado.",
+  "classes": ["z-btn"],
+  "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
   "examples": [
     {
       "title": "Primario con icono",

@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { Dialog } from "radix-ui";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { occurrenceKeys } from "../../core/keys";
+import { score } from "../../core/search";
 import { cx } from "../../cx";
-import { useReturnFocus } from "./internal";
+import { DialogSurface } from "../../primitives/dialog";
 
 export interface PaletteCommand {
   id: string;
@@ -41,17 +42,6 @@ export interface CommandPaletteProps {
   className?: string;
 }
 
-// Puntuación difusa mínima: prefijo > contiene > subsecuencia.
-function score(query: string, text: string): number {
-  const q = query.toLowerCase();
-  const t = text.toLowerCase();
-  if (t.startsWith(q)) return 3;
-  if (t.includes(q)) return 2;
-  let qi = 0;
-  for (const ch of t) if (ch === q[qi]) qi += 1;
-  return qi === q.length ? 1 : 0;
-}
-
 function defaultFilter(groups: PaletteGroup[], query: string): PaletteGroup[] {
   const q = query.trim();
   if (!q) return groups;
@@ -61,13 +51,25 @@ function defaultFilter(groups: PaletteGroup[], query: string): PaletteGroup[] {
       commands: group.commands
         .map((command) => ({
           command,
-          s: Math.max(score(q, command.label), score(q, command.hint ?? "") * 0.9, ...(command.keywords ?? []).map((k) => score(q, k) * 0.8), score(q, group.heading ?? "") * 0.5),
+          s: Math.max(
+            score(q, command.label),
+            score(q, command.hint ?? "") * 0.9,
+            ...(command.keywords ?? []).map((k) => score(q, k) * 0.8),
+            score(q, group.heading ?? "") * 0.5,
+          ),
         }))
         .filter((x) => x.s > 0)
         .sort((a, b) => b.s - a.s)
         .map((x) => x.command),
     }))
     .filter((group) => group.commands.length > 0);
+}
+
+/** Teclas de un atajo con su clave de React (una tecla repetida no duplica clave). */
+function shortcutKeys(shortcut: string): Array<[id: string, key: string]> {
+  const keys = shortcut.split(" ");
+  const ids = occurrenceKeys(keys);
+  return keys.map((key, k) => [ids[k] ?? key, key]);
 }
 
 export function CommandPalette({
@@ -84,22 +86,25 @@ export function CommandPalette({
 }: CommandPaletteProps) {
   const baseId = useId();
   const [query, setQuery] = useState("");
-  const [index, setIndex] = useState(0);
+  const [rawIndex, setIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
-  // La paleta siempre se abre de forma controlada (atajo o botón propio): el foco vuelve a donde estaba.
-  const returnFocus = useReturnFocus(false);
 
   const visible = useMemo(() => filter(groups, query), [filter, groups, query]);
   const flat = useMemo(() => visible.flatMap((group) => group.commands), [visible]);
   const optionId = (i: number) => `${baseId}-option-${i}`;
+  // Si los grupos cambian con la paleta abierta, el comando activo nunca queda fuera de la lista.
+  const index = Math.max(0, Math.min(rawIndex, flat.length - 1));
 
-  // Cada apertura empieza limpia.
-  useEffect(() => {
+  // Cada apertura empieza limpia. Se decide en el render, no en un efecto: el campo no llega a pintarse con la
+  // búsqueda anterior.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (open) {
       setQuery("");
       setIndex(0);
     }
-  }, [open]);
+  }
 
   useEffect(() => {
     listRef.current?.querySelector<HTMLElement>(`[data-index="${index}"]`)?.scrollIntoView({ block: "nearest" });
@@ -115,10 +120,10 @@ export function CommandPalette({
     const last = flat.length - 1;
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      setIndex((i) => Math.min(last, i + 1));
+      setIndex(Math.min(last, index + 1));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
-      setIndex((i) => Math.max(0, i - 1));
+      setIndex(Math.max(0, index - 1));
     } else if (event.key === "Home" && flat.length > 0) {
       event.preventDefault();
       setIndex(0);
@@ -131,93 +136,98 @@ export function CommandPalette({
     }
   };
 
+  // Un grupo se identifica por su título y su primer comando: la clave lo sigue cuando el filtro quita grupos por delante.
+  const groupKeys = occurrenceKeys(visible.map((group) => `${group.heading ?? ""}/${group.commands[0]?.id ?? ""}`));
   let n = -1;
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="z-overlay-scrim z-overlay-scrim--palette" />
-        <Dialog.Content className={cx("z-liquid z-palette", className)} aria-describedby={undefined} {...returnFocus}>
-          <Dialog.Title className="z-sr-only">{label}</Dialog.Title>
-          <div className="z-palette__search">
-            <span className="z-palette__search-icon">
-              <Icon name="magnifying-glass" size={16} />
-            </span>
-            <input
-              className="z-palette__input"
-              type="text"
-              role="combobox"
-              aria-expanded="true"
-              aria-controls={`${baseId}-list`}
-              aria-activedescendant={flat.length > 0 ? optionId(index) : undefined}
-              aria-autocomplete="list"
-              aria-label={label}
-              autoComplete="off"
-              spellCheck={false}
-              placeholder={placeholder}
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setIndex(0);
-              }}
-              onKeyDown={onKeyDown}
-            />
-            <kbd className="z-palette__kbd">{escapeLabel}</kbd>
+    // Siempre se abre de forma controlada (atajo o botón propio): al cerrar, el foco vuelve a donde estaba.
+    <DialogSurface
+      open={open}
+      onDismiss={() => onOpenChange(false)}
+      initialFocus={(dialog) => dialog.querySelector<HTMLElement>(".z-palette__input")}
+      className={cx("z-liquid z-palette", className)}
+      aria-label={label}
+    >
+      <div className="z-palette__search">
+        <span className="z-palette__search-icon">
+          <Icon name="magnifying-glass" size={16} />
+        </span>
+        <input
+          className="z-palette__input"
+          type="text"
+          role="combobox"
+          aria-expanded="true"
+          aria-controls={`${baseId}-list`}
+          aria-activedescendant={flat.length > 0 ? optionId(index) : undefined}
+          aria-autocomplete="list"
+          aria-label={label}
+          autoComplete="off"
+          spellCheck={false}
+          placeholder={placeholder}
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setIndex(0);
+          }}
+          onKeyDown={onKeyDown}
+        />
+        <kbd className="z-palette__kbd">{escapeLabel}</kbd>
+      </div>
+      <div ref={listRef} id={`${baseId}-list`} role="listbox" aria-label={label} className="z-palette__list">
+        {flat.length === 0 ? (
+          <div className="z-palette__empty" role="status">
+            {emptyLabel}
           </div>
-          <div ref={listRef} id={`${baseId}-list`} role="listbox" aria-label={label} className="z-palette__list">
-            {flat.length === 0 ? (
-              <div className="z-palette__empty" role="status">
-                {emptyLabel}
+        ) : null}
+        {visible.map((group, g) => (
+          <div key={groupKeys[g]} role="group" aria-label={group.heading} className="z-palette__group">
+            {group.heading ? (
+              <div className="z-palette__heading" aria-hidden="true">
+                {group.heading}
               </div>
             ) : null}
-            {visible.map((group, g) => (
-              <div key={group.heading ?? `group-${g}`} role="group" aria-label={group.heading} className="z-palette__group">
-                {group.heading ? (
-                  <div className="z-palette__heading" aria-hidden="true">
-                    {group.heading}
-                  </div>
-                ) : null}
-                {group.commands.map((command) => {
-                  n += 1;
-                  const i = n;
-                  const active = i === index;
-                  return (
-                    <div
-                      key={command.id}
-                      id={optionId(i)}
-                      role="option"
-                      aria-selected={active}
-                      aria-disabled={command.disabled || undefined}
-                      data-index={i}
-                      className="z-palette__item"
-                      onPointerMove={() => {
-                        if (!active) setIndex(i);
-                      }}
-                      onClick={() => run(command)}
-                    >
-                      {command.icon ? (
-                        <span className="z-palette__item-icon">
-                          <Icon name={command.icon} size={16} />
-                        </span>
-                      ) : null}
-                      <span className="z-palette__item-label">{command.label}</span>
-                      {command.hint ? <span className="z-palette__item-hint">{command.hint}</span> : null}
-                      {command.shortcut ? (
-                        <span className="z-palette__shortcut">
-                          {command.shortcut.split(" ").map((key, k) => (
-                            <kbd key={`${key}-${k}`} className="z-palette__kbd">
-                              {key}
-                            </kbd>
-                          ))}
-                        </span>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
+            {group.commands.map((command) => {
+              n += 1;
+              const i = n;
+              const active = i === index;
+              return (
+                // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
+                // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
+                <div
+                  key={command.id}
+                  id={optionId(i)}
+                  role="option"
+                  aria-selected={active}
+                  aria-disabled={command.disabled || undefined}
+                  data-index={i}
+                  className="z-palette__item"
+                  onPointerMove={() => {
+                    if (!active) setIndex(i);
+                  }}
+                  onClick={() => run(command)}
+                >
+                  {command.icon ? (
+                    <span className="z-palette__item-icon">
+                      <Icon name={command.icon} size={16} />
+                    </span>
+                  ) : null}
+                  <span className="z-palette__item-label">{command.label}</span>
+                  {command.hint ? <span className="z-palette__item-hint">{command.hint}</span> : null}
+                  {command.shortcut ? (
+                    <span className="z-palette__shortcut">
+                      {shortcutKeys(command.shortcut).map(([id, key]) => (
+                        <kbd key={id} className="z-palette__kbd">
+                          {key}
+                        </kbd>
+                      ))}
+                    </span>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        ))}
+      </div>
+    </DialogSurface>
   );
 }

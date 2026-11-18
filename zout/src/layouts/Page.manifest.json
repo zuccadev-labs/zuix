@@ -3,12 +3,7 @@
   "group": "layout",
   "description": "Página con desplazamiento propio, cabecera y secciones.",
   "import": "import { Page, PageHeader, PageSection, Container } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "Page",
-    "PageHeader",
-    "PageSection",
-    "Container"
-  ],
+  "exports": ["Page", "PageHeader", "PageSection", "Container"],
   "props": [
     {
       "name": "header",
@@ -17,11 +12,7 @@
     {
       "name": "width",
       "type": "enum",
-      "values": [
-        "content",
-        "prose",
-        "full"
-      ],
+      "values": ["content", "prose", "full"],
       "default": "content"
     },
     {
@@ -56,6 +47,12 @@
     {
       "name": "PageSection.actions",
       "type": "ReactNode"
+    },
+    {
+      "name": "headingLevel",
+      "type": "number",
+      "default": 1,
+      "description": "PageHeader: nivel del encabezado del título (1 a 6). PageSection: 2 por defecto (2 a 6). Una página dentro de otra baja de nivel."
     }
   ],
   "tokens": [
@@ -70,12 +67,7 @@
     "fg-muted",
     "accent"
   ],
-  "classes": [
-    "z-page",
-    "z-pagehead",
-    "z-section",
-    "z-container"
-  ],
+  "classes": ["z-page", "z-pagehead", "z-section", "z-container"],
   "examples": [
     {
       "title": "Panel de control",

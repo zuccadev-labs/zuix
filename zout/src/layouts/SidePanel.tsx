@@ -28,7 +28,9 @@ export function SidePanel({ title, subtitle, actions, children, footer, padded =
           {actions ? <div className="z-sidepanel__actions">{actions}</div> : null}
         </div>
       ) : null}
-      <div className="z-sidepanel__body" data-padded={padded || undefined}>{children}</div>
+      <div className="z-sidepanel__body" data-padded={padded || undefined}>
+        {children}
+      </div>
       {footer ? <div className="z-sidepanel__foot">{footer}</div> : null}
     </section>
   );
@@ -50,11 +52,25 @@ export interface SidebarSectionProps {
 }
 
 /** Sección plegable de una sidebar en acordeón. Origen: barra izquierda de zutool. */
-export function SidebarSection({ title, count, actions, children, open, defaultOpen = true, onOpenChange, grow, className }: SidebarSectionProps) {
+export function SidebarSection({
+  title,
+  count,
+  actions,
+  children,
+  open,
+  defaultOpen = true,
+  onOpenChange,
+  grow,
+  className,
+}: SidebarSectionProps) {
   const [inner, setInner] = useState(defaultOpen);
   const isOpen = open ?? inner;
   const id = useId();
-  const toggle = () => { const next = !isOpen; if (open === undefined) setInner(next); onOpenChange?.(next); };
+  const toggle = () => {
+    const next = !isOpen;
+    if (open === undefined) setInner(next);
+    onOpenChange?.(next);
+  };
   return (
     <section className={cx("z-sidebar__section", className)} data-open={isOpen || undefined} data-grow={grow || undefined}>
       <div className="z-sidebar__head">
@@ -65,7 +81,9 @@ export function SidebarSection({ title, count, actions, children, open, defaultO
         </button>
         {actions ? <div className="z-sidebar__actions">{actions}</div> : null}
       </div>
-      <div className="z-sidebar__body" id={id} hidden={!isOpen}>{children}</div>
+      <div className="z-sidebar__body" id={id} hidden={!isOpen}>
+        {children}
+      </div>
     </section>
   );
 }

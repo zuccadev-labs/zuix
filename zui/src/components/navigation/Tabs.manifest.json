@@ -2,10 +2,7 @@
   "name": "Tabs",
   "group": "navigation",
   "description": "Pestañas para alternar vistas: control segmentado, tira de pastillas o subrayado.",
-  "exports": [
-    "Tabs",
-    "TabPanel"
-  ],
+  "exports": ["Tabs", "TabPanel"],
   "import": "import { Tabs, TabPanel } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -30,29 +27,19 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "segmented",
-        "pill",
-        "underline"
-      ],
+      "values": ["segmented", "pill", "underline"],
       "default": "segmented"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md"
-      ],
+      "values": ["sm", "md"],
       "default": "md"
     },
     {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "horizontal",
-        "vertical"
-      ],
+      "values": ["horizontal", "vertical"],
       "default": "horizontal"
     },
     {
@@ -64,15 +51,15 @@
       "name": "children",
       "type": "ReactNode",
       "description": "Paneles `TabPanel` (props: value, keepMounted)."
+    },
+    {
+      "name": "keepMounted",
+      "type": "boolean",
+      "default": false,
+      "description": "TabPanel: mantiene el contenido montado aunque el panel esté oculto."
     }
   ],
-  "states": [
-    "active",
-    "inactive",
-    "hover",
-    "focus",
-    "disabled"
-  ],
+  "states": ["active", "inactive", "hover", "focus", "disabled"],
   "tokens": [
     "accent",
     "accent-solid",
@@ -96,14 +83,8 @@
     "text-small",
     "weight-medium"
   ],
-  "classes": [
-    "z-tabs",
-    "z-tabs__list",
-    "z-tabs__tab",
-    "z-tabs__label",
-    "z-tabs__panel"
-  ],
-  "a11y": "Radix Tabs: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
+  "classes": ["z-tabs", "z-tabs__list", "z-tabs__tab", "z-tabs__label", "z-tabs__panel"],
+  "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
   "examples": [
     {
       "title": "Segmentado con contenido",
@@ -114,7 +95,7 @@
       "code": "<Tabs variant=\"underline\" value={tab} onValueChange={setTab} items={[{ value: \"code\", label: \"Code\" }, { value: \"preview\", label: \"Preview\" }]}>\n  <TabPanel value=\"code\">Code view</TabPanel>\n  <TabPanel value=\"preview\">Preview view</TabPanel>\n</Tabs>"
     }
   ],
-  "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad de Radix Tabs.",
+  "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {

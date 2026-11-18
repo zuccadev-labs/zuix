@@ -1,0 +1,41 @@
+# OpenSSF Scorecard: evalúa las prácticas de seguridad del repositorio (acciones fijadas, permisos, protección
+# de ramas, publicación firmada…). Resultados en Security → Code scanning y en scorecard.dev.
+# `publish_results` impone restricciones a este archivo (github.com/ossf/scorecard-action#workflow-restrictions):
+# sin permisos de escritura globales y solo con las acciones de abajo.
+name: scorecard
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "41 4 * * 6"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  analysis:
+    name: Scorecard
+    # Un fork no publica resultados con el nombre de este repositorio.
+    if: github.repository == 'zuccadev-labs/zuix'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write # subir los resultados a Code scanning
+      id-token: write # firmar los resultados que se publican en scorecard.dev
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+      - uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: results.sarif

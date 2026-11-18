@@ -19,10 +19,7 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": [
-        "horizontal",
-        "vertical"
-      ],
+      "values": ["horizontal", "vertical"],
       "default": "horizontal"
     },
     {
@@ -41,11 +38,7 @@
       "default": "{ complete: \"Completed\", current: \"Current\", upcoming: \"Upcoming\" }"
     }
   ],
-  "states": [
-    "complete",
-    "current",
-    "upcoming"
-  ],
+  "states": ["complete", "current", "upcoming"],
   "tokens": [
     "accent",
     "accent-soft",
@@ -69,14 +62,7 @@
     "text-small",
     "weight-semibold"
   ],
-  "classes": [
-    "z-stepper",
-    "z-stepper__step",
-    "z-stepper__body",
-    "z-stepper__marker",
-    "z-stepper__label",
-    "z-stepper__description"
-  ],
+  "classes": ["z-stepper", "z-stepper__step", "z-stepper__body", "z-stepper__marker", "z-stepper__label", "z-stepper__description"],
   "a11y": "Lista ordenada con nombre; el paso actual lleva aria-current=step y cada paso anuncia su estado con texto oculto visualmente.",
   "examples": [
     {

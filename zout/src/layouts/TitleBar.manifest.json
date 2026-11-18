@@ -3,9 +3,7 @@
   "group": "layout",
   "description": "Barra de título para ventanas sin marco, transparente sobre el fondo.",
   "import": "import { TitleBar } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": [
-    "TitleBar"
-  ],
+  "exports": ["TitleBar"],
   "props": [
     {
       "name": "brand",
@@ -23,16 +21,18 @@
     {
       "name": "windowControls",
       "type": "ReactNode"
+    },
+    {
+      "name": "as",
+      "type": "enum",
+      "values": ["header", "div"],
+      "default": "header",
+      "description": "`header` es la cabecera de la aplicación (región banner). `div` para una barra que no lo es: un Shell anidado o una segunda ventana en la misma página."
     }
   ],
-  "tokens": [
-    "canvas-fg",
-    "layer-sticky",
-    "text-body"
-  ],
-  "classes": [
-    "z-titlebar"
-  ],
+  "tokens": ["canvas-fg", "layer-sticky", "text-body"],
+  "classes": ["z-titlebar"],
+  "a11y": "Es un <header>: fuera de <main>, <section> o <article> el navegador lo expone como región banner, y solo debe haber una por página (`as=\"div\"` en las demás).",
   "examples": [
     {
       "title": "Con pestañas",

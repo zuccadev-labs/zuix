@@ -1,5 +1,5 @@
 "use client";
-import { Children, Fragment, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { Children, Fragment, useId, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { cx } from "../cx";
 import { SPLIT_MIN_FRACTION, dividerKeyDelta, evenFractions as even, moveDivider } from "../logic";
 
@@ -19,33 +19,63 @@ export interface SplitPaneProps {
 }
 
 /** Paneles divididos con divisores arrastrables y manejables con teclado. Origen: `split` de zutool. */
-export function SplitPane({ direction = "row", children, sizes, defaultSizes, onSizesChange, minFraction = SPLIT_MIN_FRACTION, dividerLabel = "Resize panes", className }: SplitPaneProps) {
+export function SplitPane({
+  direction = "row",
+  children,
+  sizes,
+  defaultSizes,
+  onSizesChange,
+  minFraction = SPLIT_MIN_FRACTION,
+  dividerLabel = "Resize panes",
+  className,
+}: SplitPaneProps) {
   const panes = Children.toArray(children);
   const [inner, setInner] = useState<number[]>(() => defaultSizes ?? even(panes.length));
   const current = sizes ?? inner;
   const fractions = current.length === panes.length ? current : even(panes.length);
   const root = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ index: number; pos: number; a: number; b: number; total: number } | null>(null);
+  const drag = useRef<{ index: number; pos: number; a: number; b: number; total: number; sign: number } | null>(null);
+  const id = useId();
+  // En una fila RTL el primer panel queda a la derecha: el arrastre y las flechas se invierten.
+  const isRtl = (el: Element) => direction === "row" && getComputedStyle(el).direction === "rtl";
 
-  const commit = (next: number[]) => { if (sizes === undefined) setInner(next); onSizesChange?.(next); };
+  const commit = (next: number[]) => {
+    if (sizes === undefined) setInner(next);
+    onSizesChange?.(next);
+  };
   // Mueve el divisor `index` (entre los paneles index e index+1) una fracción `delta`.
   const move = (index: number, a: number, b: number, delta: number) => commit(moveDivider(fractions, index, a, b, delta, minFraction));
 
   const onPointerDown = (index: number) => (e: PointerEvent<HTMLDivElement>) => {
     const rect = root.current?.getBoundingClientRect();
-    if (!rect) return;
-    drag.current = { index, pos: direction === "row" ? e.clientX : e.clientY, a: fractions[index] ?? 0, b: fractions[index + 1] ?? 0, total: direction === "row" ? rect.width : rect.height };
-    e.currentTarget.setPointerCapture(e.pointerId);
+    // Solo el botón principal (o un dedo, o el lápiz).
+    if (!rect || e.button !== 0) return;
+    drag.current = {
+      index,
+      pos: direction === "row" ? e.clientX : e.clientY,
+      a: fractions[index] ?? 0,
+      b: fractions[index + 1] ?? 0,
+      total: direction === "row" ? rect.width : rect.height,
+      sign: isRtl(e.currentTarget) ? -1 : 1,
+    };
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
     e.currentTarget.dataset.dragging = "";
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
     if (!d || d.total <= 0) return;
-    move(d.index, d.a, d.b, ((direction === "row" ? e.clientX : e.clientY) - d.pos) / d.total);
+    move(d.index, d.a, d.b, (d.sign * ((direction === "row" ? e.clientX : e.clientY) - d.pos)) / d.total);
   };
-  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => { drag.current = null; delete e.currentTarget.dataset.dragging; };
+  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
+    drag.current = null;
+    delete e.currentTarget.dataset.dragging;
+  };
   const onKeyDown = (index: number) => (e: KeyboardEvent<HTMLDivElement>) => {
-    const delta = dividerKeyDelta(e.key, direction);
+    const delta = dividerKeyDelta(e.key, direction, isRtl(e.currentTarget));
     if (!delta) return;
     e.preventDefault();
     move(index, fractions[index] ?? 0, fractions[index + 1] ?? 0, delta);
@@ -54,6 +84,7 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
   return (
     <div ref={root} className={cx("z-split", className)} data-direction={direction}>
       {panes.map((pane, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: un panel es su posición: `panes` es una lista de nodos sin identificador y los tamaños (`sizes`) se asignan por índice.
         <Fragment key={i}>
           {i > 0 ? (
             <div
@@ -61,6 +92,7 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
               tabIndex={0}
               aria-orientation={direction === "row" ? "vertical" : "horizontal"}
               aria-label={dividerLabel}
+              aria-controls={`${id}-${i - 1}`}
               aria-valuenow={Math.round((fractions[i - 1] ?? 0) * 100)}
               aria-valuemin={Math.round(minFraction * 100)}
               aria-valuemax={Math.round((1 - minFraction) * 100)}
@@ -69,12 +101,20 @@ export function SplitPane({ direction = "row", children, sizes, defaultSizes, on
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}
               onPointerCancel={onPointerUp}
+              onLostPointerCapture={onPointerUp}
+              // Doble clic: los dos paneles del divisor se reparten su espacio a partes iguales (alternativa de un solo gesto al arrastre).
+              onDoubleClick={() => {
+                const pair = (fractions[i - 1] ?? 0) + (fractions[i] ?? 0);
+                move(i - 1, pair / 2, pair / 2, 0);
+              }}
               // WebKit puede iniciar un arrastrar y soltar nativo desde el divisor, que cancela los eventos de puntero.
               onDragStart={(e) => e.preventDefault()}
               onKeyDown={onKeyDown(i - 1)}
             />
           ) : null}
-          <div className="z-split__pane" style={{ flexGrow: fractions[i] ?? 0 }}>{pane}</div>
+          <div className="z-split__pane" id={`${id}-${i}`} style={{ flexGrow: fractions[i] ?? 0 }}>
+            {pane}
+          </div>
         </Fragment>
       ))}
     </div>

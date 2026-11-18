@@ -7,21 +7,13 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "accent",
-        "muted",
-        "current"
-      ],
+      "values": ["accent", "muted", "current"],
       "default": "accent",
       "description": "`current` hereda el color del texto."
     },
@@ -32,18 +24,9 @@
       "description": "Nombre accesible; cadena vacía lo vuelve decorativo."
     }
   ],
-  "states": [
-    "spinning"
-  ],
-  "tokens": [
-    "surface-3",
-    "accent",
-    "radius-full",
-    "fg-muted"
-  ],
-  "classes": [
-    "z-spinner"
-  ],
+  "states": ["spinning"],
+  "tokens": ["surface-3", "accent", "radius-full", "fg-muted"],
+  "classes": ["z-spinner"],
   "a11y": "role=\"status\" con aria-label; decorativo si `label` está vacío.",
   "examples": [
     {

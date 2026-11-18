@@ -18,7 +18,7 @@ tipo: tutorial
 
 - 
 
-## Paso 1: 
+## Paso 1: nombre de la acción
 
 <!-- Una acción por paso, en imperativo. Comando o código exacto y, después, lo que el lector debe ver. -->
 
@@ -28,7 +28,7 @@ tipo: tutorial
 
 Resultado esperado:
 
-## Paso 2: 
+## Paso 2: nombre de la acción
 
 <!-- Repite la forma: acción, código, resultado visible. Sin alternativas ni desvíos: un solo camino. -->
 

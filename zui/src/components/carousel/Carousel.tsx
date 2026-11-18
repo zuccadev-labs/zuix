@@ -1,18 +1,9 @@
 "use client";
-import {
-  useCallback,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-  type HTMLAttributes,
-  type Key,
-  type ReactNode,
-  type Ref,
-} from "react";
+import { useRef, useState, useSyncExternalStore, type CSSProperties, type HTMLAttributes, type Key, type ReactNode, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";
+import { useMergedRef } from "../../refs";
 import { useCarouselTrack } from "./useCarouselTrack";
 
 export interface CarouselSlideState {
@@ -109,14 +100,7 @@ export function Carousel<T>({
   const trackRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const setRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [ref],
-  );
+  const setRoot = useMergedRef(rootRef, ref);
 
   const keys = items.map((item, index) => String(getKey ? getKey(item, index) : index));
   const useGl = effect === "lens" && rasterize !== undefined;
@@ -174,6 +158,7 @@ export function Carousel<T>({
                 const clone = copy !== side;
                 const state: CarouselSlideState = { index, count, active: !clone && index === current, clone };
                 return (
+                  // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-roledescription solo se emite junto a role="group" (el slide real); las réplicas no llevan ni uno ni otro.
                   <div
                     // La copia principal conserva su clave aunque cambie el número de réplicas.
                     key={clone ? `${copy - side}:${keys[index]}` : `main:${keys[index]}`}
@@ -194,6 +179,7 @@ export function Carousel<T>({
             )}
           </div>
         </div>
+        {/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: un <canvas> sin tabindex no recibe foco; es la capa de dibujo WebGL y los slides reales siguen en el árbol accesible. */}
         {useGl ? <canvas ref={canvasRef} className="z-carousel__canvas" aria-hidden="true" /> : null}
       </div>
 

@@ -1,6 +1,13 @@
 {
   "extends": "@docusaurus/tsconfig",
-  "compilerOptions": { "baseUrl": null, "paths": { "@site/*": ["./*"] }, "resolveJsonModule": true, "strict": true, "skipLibCheck": true, "jsx": "react-jsx" },
-  "include": ["src", "scripts/config.d.mts", "docusaurus.config.ts", "sidebars.ts"],
+  "compilerOptions": {
+    "baseUrl": null,
+    "paths": { "@site/*": ["./*"] },
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src", "scripts/config.d.mts", "scripts/icons.d.mts", "docusaurus.config.ts", "sidebars.ts"],
   "exclude": [".docusaurus", ".zudocs", "build"]
 }

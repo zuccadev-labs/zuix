@@ -23,10 +23,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "md",
-        "lg"
-      ],
+      "values": ["md", "lg"],
       "default": "md"
     },
     {
@@ -39,12 +36,7 @@
       "type": "(open: boolean) => void"
     }
   ],
-  "states": [
-    "open",
-    "closed",
-    "highlighted",
-    "disabled"
-  ],
+  "states": ["open", "closed", "highlighted", "disabled"],
   "tokens": [
     "danger",
     "duration-fast",
@@ -85,14 +77,14 @@
     "z-menu__label",
     "z-menu__chevron"
   ],
-  "a11y": "React: Radix ContextMenu, que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
+  "a11y": "React: menú propio (patrón APG «menu»), que se abre en el puntero dentro de la ventana, también con la tecla de menú o Mayús+F10, y enfoca su primera entrada; flechas, Escape, submenús y roles de menú. Sin React (`@zuccadev-labs/zuix-zui/dom`): `data-z-context=\"#id\"` abre el menú en el puntero con clic derecho y enfoca su primera entrada; flechas, Inicio/Fin, búsqueda por letra, Tab y Escape como en Menu. Los submenús se declaran con `data-z-submenu=\"#id\"` y se manejan igual: Flecha derecha o Intro abren, Flecha izquierda o Escape cierran solo el submenú. La apertura con la tecla de menú o Mayús+F10 depende del evento `contextmenu` del navegador.",
   "examples": [
     {
       "title": "Sobre una tarjeta",
       "code": "<ContextMenu\n  label=\"File actions\"\n  items={[\n    { id: \"open\", label: \"Open\", onSelect: () => openFile() },\n    { id: \"move\", label: \"Move to\", items: [\n      { id: \"archive\", label: \"Archive\", onSelect: () => moveTo(\"archive\") },\n      { id: \"inbox\", label: \"Inbox\", onSelect: () => moveTo(\"inbox\") },\n    ] },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", danger: true, shortcut: \"Del\", onSelect: () => removeFile() },\n  ]}\n>\n  <div>Right-click this area</div>\n</ContextMenu>"
     }
   ],
-  "origin": "ContextMenu y `.ctx-menu` de zutool (las subpáginas pasan a submenús); accesibilidad de Radix ContextMenu.",
+  "origin": "ContextMenu y `.ctx-menu` de zutool (las subpáginas pasan a submenús); accesibilidad según el patrón APG, con primitivas propias.",
   "behavior": "dom",
   "html": [
     {
