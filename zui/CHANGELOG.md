@@ -39,6 +39,9 @@ Marcado y CSS:
   región solo existe mientras hay avisos.
 - Menús de React: cada entrada es un `button[role=menuitem]` (antes `div`), el separador lleva
   `role="separator"` y el atributo `data-elevated` desaparece: todo va en la capa superior.
+- `Popover modal` de React es un `<dialog>` abierto con `showModal()` (antes un `div[role=dialog]`). Un
+  selector `.z-popover[role=dialog]` pasa a `dialog.z-popover` para el modal; el no modal sigue siendo un
+  `div`.
 - `Select` de React: `role="listbox"` va en `.z-listbox__viewport`, dentro de `.z-listbox`, y las opciones
   llevan `data-value`. Con `name` o `required`, el campo de formulario es un `<select>` nativo oculto
   (`.z-native-input`), no un `input[type=hidden]`.
@@ -76,10 +79,12 @@ Comportamiento:
   de un `Modal`, la primera pulsación limpia el campo y la segunda cierra el diálogo. En un submenú cierra
   ese nivel.
 - `SegmentedControl` y `RadioGroup`: las flechas mueven el foco y la selección, con vuelta al otro extremo.
-- `Menu`: las flechas dan la vuelta del último al primero; abierto con el puntero, el foco va al menú sin
-  resaltar ninguna entrada.
-- `Popover` no modal: salir con Tab por un extremo lo cierra y devuelve el foco al disparador. `modal`
-  retiene el foco (Tab da la vuelta) y marca `aria-modal`; ya no bloquea el puntero fuera del panel.
+- `Menu` y `ContextMenu` de React: al abrir, el foco va a la primera entrada, también con el puntero (antes,
+  con el puntero, lo recibía el menú sin resaltar ninguna). Es el patrón de botón de menú de APG y lo que ya
+  hacía `zui/dom`. Las flechas dan la vuelta del último al primero.
+- `Popover` no modal: salir con Tab por un extremo lo cierra y devuelve el foco al disparador. `Popover
+  modal`: retiene el foco (Tab da la vuelta) y el resto de la página queda inerte para el puntero, el
+  teclado y los lectores de pantalla; una pulsación fuera solo lo cierra, sin llegar a lo que hay debajo.
 - `DatePicker required`: el botón ya no lleva `aria-required` (su rol no lo admite); la obligatoriedad la
   valida un campo nativo oculto, que impide enviar el formulario vacío.
 - Tooltip (React y `data-z-tooltip`): la burbuja recibe el puntero. Se puede pasar del disparador a ella sin
@@ -147,6 +152,10 @@ Color:
 - `CommandPalette` (React y DOM): la búsqueda ignora acentos.
 - Trusted Types: `zui/dom` escribe su marcado a través de la política `zuix-zui` (`trusted-types zuix-zui` en
   la política de seguridad de contenido).
+- `Popover modal`: la inercia del resto de la página la pone el navegador (`<dialog>`), no atributos
+  `aria-hidden` repartidos por el documento.
+- Las hojas usan los tokens nuevos `--z-layer-raised`, `--z-layer-below`, `--z-space-1-5` y `--z-space-2-5`
+  de `@zuccadev-labs/zuix-tokens` donde antes había un `z-index` o un espacio literal.
 - `THIRD_PARTY_NOTICES.md` en el paquete.
 
 ### Corregido
@@ -173,6 +182,14 @@ Accesibilidad:
 
 Comportamiento:
 
+- Avisos con un diálogo modal abierto (React y `toast()`): la región se muda al diálogo de arriba y vuelve a
+  `<body>` cuando se cierra, sin repetir la animación de entrada ni reiniciar el temporizador. Fuera del
+  diálogo el navegador la deja inerte: el aviso se veía, pero no se podía pulsar, enfocar ni leer. En React
+  la región vive en un contenedor `div[data-z-toast-root]` (`display: contents`), que es lo que se mueve.
+- Carousel: un clic en un slide lateral cuando la tira está terminando de asentarse cuenta como clic. Antes
+  se tomaba por «parar la tira» y se perdía, sobre todo con pocos fotogramas por segundo.
+- Carousel en `zui/dom`: un `.z-carousel__viewport` escrito a mano sin `.z-carousel__stage` o sin
+  `.z-carousel__track` lanza un error que lo dice, en lugar de un `TypeError` más adelante.
 - Modo DOM: el cierre pedido por el sistema (gesto atrás) cierra el diálogo con su animación. Un acordeón
   anidado ya no cierra las secciones del exterior.
 - `Calendar` sin `value`, `month` ni `defaultMonth`: sin desajuste de hidratación cuando el reloj del

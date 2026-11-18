@@ -38,7 +38,8 @@ Búsquedas que encuentran casi todo lo que hay que cambiar en el código de una 
 
 ```
 grep -rnE -- "--radix-|data-radix-|radix-" src/           # variables y atributos que ya no existen
-grep -rnE "z-overlay-scrim|\[role=.?dialog.?\]" src/       # velo y selectores de diálogo
+grep -rnE "z-overlay-scrim|\[role=.?dialog.?\]" src/       # velo y selectores de diálogo y de Popover modal
+grep -rnE "> *\.z-toast-viewport" src/                     # la región de avisos cambia de sitio en el documento
 grep -rnE "data-elevated|asChild|forceMount" src/          # atributos y props retirados
 grep -rnE "<ToastProvider[^>]* label=" src/                # prop renombrada
 grep -rnE "<Popover" src/                                  # ahora exige label o aria-labelledby
@@ -65,32 +66,33 @@ sin framework. Antes eran un `div[role=dialog]` con un `div.z-overlay-scrim` apa
 En pruebas de extremo a extremo, un diálogo abierto se localiza con `dialog:modal` o `dialog[open]`. El fondo
 queda inerte por el propio navegador: ya no lleva `aria-hidden`.
 
-### Variables CSS
+### Popover modal
 
-No queda ningún `--radix-*`, `data-radix-*` ni id `radix-…`.
+`<Popover modal>` es también un `<dialog>` abierto con `showModal()`. El no modal sigue siendo un
+`div[role=dialog]` en la capa superior.
 
 | Antes | Ahora |
 |---|---|
-| `--radix-select-trigger-width` | `--z-anchor-width` |
-| `--radix-*-content-available-height` | `--z-available-height` |
-| `--radix-*-content-available-width` | `--z-available-width` |
-| `--radix-toast-swipe-move-x`, `-move-y`, `-end-x`, `-end-y` | `--z-toast-swipe-move-x`, `-move-y`, `-end-x`, `-end-y` |
-| `--radix-accordion-content-height` | `--z-accordion-content-height` |
+| `.z-popover[role=dialog]` con `aria-modal` | `dialog.z-popover` |
+| El resto de la página se marcaba con `aria-hidden` y se le quitaba el puntero | Queda inerte por el navegador: ni puntero, ni foco, ni lectores de pantalla |
+| Una pulsación fuera lo cerraba | Igual: lo cierra y no llega a lo que hay debajo |
 
-### Resto del marcado
+`dialog:modal` encuentra ahora también un Popover modal abierto. Si una prueba cuenta diálogos con ese
+selector, acótalo con la clase (`dialog.z-modal:modal`).
 
-| Componente | Qué cambia |
-|---|---|
-| Toast (React y `toast()`) | La región es `div.z-toast-viewport[role=region]` con nombre y cada aviso un `div.z-toast[role=status\|alert]`. Antes eran `ol` y `li`. La región solo existe mientras hay avisos |
-| Menu, ContextMenu (React) | Cada entrada es un `button[role=menuitem]` (antes `div`) y el separador lleva `role="separator"` |
-| Select (React) | `role="listbox"` va en `.z-listbox__viewport`, dentro de `.z-listbox`, y las opciones llevan `data-value`. Con `name` o `required`, el campo de formulario es un `<select>` nativo oculto (`.z-native-input`), no un `input[type=hidden]` |
-| Checkbox, Switch, Radio | El campo nativo oculto lleva la clase `z-native-input` (antes estilos en línea) y está siempre en el marcado. `RadioGroup` y `SegmentedControl` ya no llevan `dir` ni `tabindex` en el grupo |
-| Tabs | Los ids son `…-tab-<valor>` y `…-panel-<valor>`; cada pestaña lleva `data-value` |
-| Accordion | La cabecera es un `h2`…`h6` real según `headingLevel` (antes `h3` con `aria-level`). El contenido de una sección cerrada sigue montado, oculto con `hidden`. `.z-accordion` lleva `data-type` |
-| Slider (React) | Los tiradores son hijos directos de `.z-slider` y la pista se sitúa con `inset-inline-start` y `-end`. El contenedor lleva `data-min`, `data-max`, `data-step` y `data-value` |
+### Avisos con un diálogo abierto
 
-El marcado que emite React es ahora exactamente el del contrato (`html.json`): se puede copiar a una página
-sin React.
+Con un `<dialog>` modal abierto, el navegador deja inerte todo lo que queda fuera de él, también la región
+de avisos. Para que un aviso se pueda leer, enfocar y descartar, la región se muda al diálogo de arriba
+mientras está abierto y vuelve a `<body>` cuando se cierra.
+
+| | Antes | Ahora |
+|---|---|---|
+| `toast()` de `zui/dom` | `.z-toast-viewport` siempre en `<body>` | En `<body>`, o dentro del `<dialog>` modal abierto más reciente |
+| Toast de React | La región se pintaba donde estuviera `ToastProvider` en el árbol | Sale por un portal a un `div[data-z-toast-root]` con `display: contents`, que cuelga de `<body>` o del `<dialog>` modal abierto más reciente |
+
+Un selector que dependa de dónde cuelga la región (`body > .z-toast-viewport`, `#app .z-toast-viewport`)
+deja de valer; `.z-toast-viewport` a secas sigue encontrándola.
 
 ## Props y tipos de React
 
@@ -115,8 +117,9 @@ repasar las pruebas que dependan de ello.
 | Dirección de escritura | `Tabs`, `Menu`, `Slider`, `RadioGroup` y `SegmentedControl` de React la leían de una prop o de un proveedor | Se lee del DOM: dentro de `dir="rtl"` las flechas se reflejan sin configurar nada |
 | Escape | En un `SearchInput` con texto dentro de un `Modal`, limpiaba el campo y además cerraba el diálogo | Cierra solo la capa de arriba y respeta un evento ya cancelado: la primera pulsación limpia el campo y la segunda cierra el diálogo. En un submenú cierra ese nivel |
 | `SegmentedControl`, `RadioGroup` | — | Las flechas mueven el foco y la selección, con vuelta al otro extremo |
-| `Menu` | — | Las flechas dan la vuelta del último al primero; abierto con el puntero, el foco va al menú sin resaltar ninguna entrada |
-| `Popover` no modal | — | Salir con Tab por un extremo lo cierra y devuelve el foco al disparador. `modal` retiene el foco y marca `aria-modal`, pero ya no bloquea el puntero fuera del panel |
+| `Menu` y `ContextMenu` (React) | Abiertos con el puntero, el foco iba al menú sin resaltar ninguna entrada | El foco va a la primera entrada, se abran con el teclado o con el puntero, como en `zui/dom`. Una prueba que abre con un clic y pulsa Flecha abajo llega ahora a la segunda entrada. Las flechas dan la vuelta del último al primero |
+| `Popover` no modal | — | Salir con Tab por un extremo lo cierra y devuelve el foco al disparador |
+| `Popover modal` | — | Retiene el foco (Tab da la vuelta) y el resto de la página queda inerte. Ver «Popover modal» arriba |
 | `DatePicker required` | El botón llevaba `aria-required` | La obligatoriedad la valida un campo nativo oculto, que impide enviar el formulario vacío |
 | `confirm()` de `zui/dom` | Escape no hacía nada | **Escape cancela** (resuelve `false`), como `ConfirmDialog` en React. El clic en el velo sigue sin cerrar |
 | `ConfirmDialog` | Cerrar con Escape solo llamaba a `onOpenChange(false)` | Llama también a `onCancel` |

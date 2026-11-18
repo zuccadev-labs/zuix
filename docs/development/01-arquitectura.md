@@ -153,7 +153,7 @@ publicada, y `pnpm test:pack` que cada subruta del paraguas es el mismo módulo 
 | `zui/html.json`, `zout/html.json` | `tools/html.mjs` | `pnpm html` |
 | `*/dist/*.css`, `*/dist/*.js` (bundles de navegador) | `tools/dist.mjs` | `pnpm dist` |
 | `examples/html/index.html` | `examples/html/build.mjs` | `pnpm dist` |
-| `zudocs/static/llms.txt` | `zudocs/scripts/llms.mjs` | `pnpm --filter @zuccadev-labs/zuix-zudocs build` (o `llms`) |
+| `zudocs/static/llms.txt` | `zudocs/scripts/llms.mjs` | `pnpm llms` (también lo regenera el build de zudocs) |
 | `*/dist/esm/` (publicación) | `tools/build.mjs` | `pnpm build` |
 
 `pnpm check` encadena los seis primeros, la auditoría de estilo, la comprobación de exportaciones y la de

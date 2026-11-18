@@ -40,8 +40,7 @@ añadir una dependencia, el pull request lo explica; no se desactiva la polític
 2. Hacer el cambio en el fuente. No se editan a mano los archivos generados: `tokens/dist/`,
    `zicon/src/icons/`, `zicon/src/names.ts`, `zicon/src/all.ts`, los `manifest.json` y `html.json` de la
    raíz de cada paquete, `*/dist/`, `zicon/sprite.svg`, `examples/html/index.html` ni
-   `zudocs/static/llms.txt`. Se regeneran con `pnpm check` (y `llms.txt`, con el build de zudocs) y se incluyen
-   en el mismo cambio.
+   `zudocs/static/llms.txt`. Se regeneran con `pnpm check` y se incluyen en el mismo cambio.
 3. Anotar el cambio en el `CHANGELOG.md` del paquete afectado, bajo "Sin publicar".
 4. Ejecutar la verificación.
 5. Abrir el pull request y completar su lista.
@@ -51,7 +50,7 @@ añadir una dependencia, el pull request lo explica; no se desactiva la polític
 Un cambio está terminado cuando pasan estos cuatro:
 
 ```
-pnpm check                                        # tokens, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, tipos
+pnpm check                                        # tokens, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, llms.txt, tipos
 pnpm lint && pnpm format:check                    # Biome y la regla de "use client"
 pnpm test:unit                                    # lógica pura, con umbral de cobertura
 pnpm --filter @zuccadev-labs/zuix-zudocs build    # el sitio compila sin enlaces ni anclas rotos
@@ -75,6 +74,8 @@ Qué hace cada suite: [Calidad y pruebas](./docs/development/02-calidad-y-prueba
 
 - Los componentes solo leen tokens semánticos y de componente. Sin colores, radios ni sombras literales:
   `pnpm style-audit` debe quedar en 0.
+- Un `z-index` usa un token de capa (`--z-layer-*`) y un espacio, un token `--z-space-*`. Un `!important`
+  lleva al lado un comentario que diga por qué hace falta. La auditoría de estilo también los cuenta.
 - El texto de color usa los tokens `--z-*-text` y un fondo con texto encima usa `--z-*-solid`. `pnpm tokens`
   mide el contraste de los pares que las hojas usan y falla si alguno baja del mínimo.
 - Las hojas usan propiedades lógicas (`inline-start`, `inline-end`): la suite funciona de derecha a izquierda.

@@ -140,7 +140,7 @@ como diagrama, en `.md` y en `.mdx`. Sin el campo queda como bloque de código y
 | Una cifra sin origen | La cifra, la fecha y el comando que la da |
 | Un enlace a un archivo de trabajo o a una carpeta temporal | El hecho, comprobado en el código |
 | Un `<script>` o un `<iframe>` en un `.md` | Un bloque de código, o un `.mdx` si el proyecto lo admite |
-| Editar `zudocs/static/llms.txt` | El build de zudocs, que lo regenera |
+| Editar `zudocs/static/llms.txt` | `pnpm check` o el build de zudocs, que lo regeneran |
 
 ## Verificación
 

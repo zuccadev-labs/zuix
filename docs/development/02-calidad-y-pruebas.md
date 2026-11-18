@@ -7,7 +7,7 @@ puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
 
 | Comando | Qué comprueba |
 |---|---|
-| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, bundles de navegador y tipos |
+| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, bundles de navegador, `llms.txt` y tipos |
 | `pnpm lint` | Biome con errores y avisos bloqueantes, y la regla de `"use client"` |
 | `pnpm format:check` | Formato de TypeScript, CSS y JSON |
 | `pnpm test:unit` | Lógica pura, con umbral de cobertura |
@@ -35,7 +35,7 @@ en `biome.json`.
 | Informativas | Aserción no nula, `!important` y especificidad descendente: se ven, no bloquean. La auditoría de estilo exige justificar cada `!important` |
 | Desactivada | `useSemanticElements`: pide `<hr>` para un `role="separator"` interactivo, que es justo el patrón de un divisor redimensionable |
 | Excepciones por carpeta | `console` permitido en `tools/`, `tests/` y scripts; las reglas de hooks no se aplican al código sin React (`dom/`, el motor WebGL), donde `gl.useProgram` no es un hook |
-| Formato | 2 espacios, 140 columnas, comillas dobles, punto y coma, comas finales, LF |
+| Formato | 2 espacios, 140 columnas, comillas dobles, punto y coma, comas finales, LF. Un commit que solo cambia formato se anota en `.git-blame-ignore-revs` con el SHA que tiene en `main`, después de fusionarlo, para que `git blame` lo salte |
 | Fuera de Biome | Markdown (realinea las tablas) y todo lo generado |
 
 Elegí Biome y no ESLint por una razón práctica: el proyecto usa TypeScript 7 y `typescript-eslint` no lo
@@ -132,7 +132,21 @@ En las tres:
 cristal. Necesita una pantalla X (`xvfb-run -a pnpm test:blur`). Existe porque el Firefox sin interfaz, y sus
 capturas, no dibujan `backdrop-filter`, y quería saber si era el navegador o la captura: es la captura.
 
-Con la máquina muy cargada un caso puede fallar por tiempos; repetirlo lo confirma o lo descarta.
+Con la máquina muy cargada un caso puede fallar por tiempos; repetirlo lo confirma o lo descarta. Los tres
+runners admiten `--repeat=N`:
+
+```
+node tests/browser/run.mjs "menú" --repeat=25     # N veces cada caso elegido
+node tests/html/run.mjs --repeat=5                # N pasadas completas, con una página nueva cada vez
+node tests/site/run.mjs teclado --repeat=25
+```
+
+El objetivo es N de N. Un caso que falla una de cada veinticinco bloquea igual una publicación.
+
+`tests/browser/run.mjs` arranca el servidor de Vite de `examples/app` con `ZUIX_TEST_SERVER=1`: sin
+vigilancia de archivos ni HMR. Sin eso, un archivo que cambia a mitad de una ejecución (un editor, `pnpm
+check` regenerando fuentes) recarga la página que se está probando y el caso falla sin que haya ningún
+defecto.
 
 ## Prueba de empaquetado
 

@@ -39,8 +39,8 @@ SOFTWARE.
 
 ## Punto dentro de un polígono
 
-`inPolygon` aplica la prueba par-impar con un rayo horizontal en la forma que popularizó PNPOLY, de
-W. Randolph Franklin (<https://wrfranklin.org/Research/Short_Notes/pnpoly.html>).
+`inPolygon` es una adaptación a TypeScript del código C de PNPOLY, de W. Randolph Franklin
+(<https://wrfranklin.org/Research/Short_Notes/pnpoly.html>): la prueba par-impar con un rayo horizontal.
 
 ```
 Copyright (c) 1970-2003, Wm. Randolph Franklin

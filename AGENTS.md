@@ -29,7 +29,9 @@ Guías por paquete: `zui/AGENTS.md` y `zicon/AGENTS.md`. Guía general: `docs/ag
    dependencia nueva en un paquete publicable se justifica antes de añadirla.
 3. **Solo tokens.** Ningún color, radio, sombra o fuente literal. El texto de color usa `--z-*-text`; un fondo
    con texto encima, `--z-*-solid`. `--z-accent`, `--z-success`, `--z-warning`, `--z-danger` e `--z-info` son
-   para rellenos, bordes e iconos.
+   para rellenos, bordes e iconos. Un `z-index` usa un token de capa (`--z-layer-*`) y un espacio, uno de
+   `--z-space-*`. Un `!important` lleva al lado un comentario que diga por qué. `pnpm style-audit` cuenta
+   todo esto y falla con cualquier cifra distinta de cero.
 4. **Propiedades lógicas.** `margin-inline-start`, `inset-inline-end`, `border-start-start-radius`. Nada de
    `left` o `right` en una hoja: la suite funciona en `dir="rtl"`.
 5. **Cinco paquetes, una versión.** Se publican `tokens`, `zicon`, `zui`, `zout` y el paraguas, siempre con
@@ -45,8 +47,7 @@ Guías por paquete: `zui/AGENTS.md` y `zicon/AGENTS.md`. Guía general: `docs/ag
 9. **Lo generado no se edita.** `tokens/dist/`, `zicon/src/icons/`, `zicon/src/names.ts`, `zicon/src/all.ts`,
    los `manifest.json` y `html.json` de la raíz de cada paquete, `*/dist/`, `zicon/sprite.svg`,
    `examples/html/index.html`, `zudocs/static/llms.txt` y `tokens/dist/compat/`. Las capas de compatibilidad
-   salen de `tokens/compat/*.json`. Se regeneran con `pnpm check` (`llms.txt`, con el build de zudocs) y entran
-   en el mismo cambio.
+   salen de `tokens/compat/*.json`. Se regeneran con `pnpm check` y entran en el mismo cambio.
 10. **Cada cambio visible se anota** en "Sin publicar" del `CHANGELOG.md` de su paquete.
 11. **Un agente no publica.** Ni `pnpm publish` ni `npm publish` sin `--dry-run`, ni etiquetas, ni `git push`
     a `main`. Publica el workflow `release` cuando una subida de versión llega a `main`
@@ -84,18 +85,19 @@ informa.
 
 | Comando | Cuándo |
 |---|---|
-| `pnpm check` | Siempre. Tokens, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, `dist` y tipos |
+| `pnpm check` | Siempre. Tokens, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, `dist`, `llms.txt` y tipos |
 | `pnpm --filter @zuccadev-labs/zuix-zudocs build` | Siempre. El sitio compila sin enlaces ni anclas rotos |
 | `pnpm lint` y `pnpm format:check` | Siempre que se toque código |
 | `pnpm test:unit` | Si toca lógica de `core/`, `logic.ts`, `tokens/src/` o `tools/` |
 | `pnpm test:html` y `pnpm test:browser` | Si toca interacción (sin React y con React) |
 | `pnpm test:site` | Si toca `zudocs/` |
 | `pnpm build` y `pnpm test:pack` | Si toca lo que se publica: `package.json`, `exports`, archivos nuevos en `src/`, `tools/build.mjs` |
-| `pnpm verify` | Antes de una versión: todo lo anterior, en Chromium |
+| `pnpm verify` | Antes de una versión: todo lo anterior, con `format:check`, en Chromium |
 
 Un cambio está terminado cuando pasan `pnpm check` y el build de zudocs, más lo que corresponda de la tabla.
 Los runners de CI no ofrecen WebGL en Firefox: `NO_WEBGL=1 BROWSER=firefox pnpm test:browser` lo reproduce
-en local.
+en local. Un caso de navegador que falla una vez se mide antes de tocarlo: `node tests/browser/run.mjs
+<filtro> --repeat=25` (`tests/html/run.mjs` y `tests/site/run.mjs` admiten el mismo argumento).
 
 ## Cuando falta algo
 

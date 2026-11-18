@@ -26,11 +26,11 @@ Marca lo que ejecutaste. Las cuatro primeras son obligatorias.
 
 ## Lista
 
-- [ ] Los archivos generados (`manifest.json`, `html.json`, `examples/html/index.html`…) salen de `pnpm check`, y `zudocs/static/llms.txt` del build de zudocs; ninguno de una edición a mano.
+- [ ] Los archivos generados (`manifest.json`, `html.json`, `examples/html/index.html`…) y `zudocs/static/llms.txt` salen de `pnpm check`; ninguno de una edición a mano.
 - [ ] El cambio visible está en "Sin publicar" del `CHANGELOG.md` de su paquete.
 - [ ] Una entrada nueva de paquete está en `exports` y en `publishConfig.exports`.
 - [ ] Un módulo de React con hooks, contexto o manejadores propios empieza por `"use client";`.
-- [ ] Sin colores, radios ni sombras literales, ni emojis como iconos (`pnpm style-audit` en 0).
+- [ ] Sin colores, radios ni sombras literales, ni emojis como iconos; `z-index` y espacios con token; cada `!important` con su comentario (`pnpm style-audit` en 0).
 - [ ] El texto de color usa `--z-*-text`, los fondos con texto `--z-*-solid`, y las hojas usan propiedades lógicas.
 - [ ] Sin dependencias nuevas en un paquete publicable, o están justificadas arriba.
 - [ ] La documentación en `docs/` refleja el cambio.
