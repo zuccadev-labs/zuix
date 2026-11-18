@@ -52,8 +52,9 @@ overrides:
 # fallar la CI. Cada línea se retira en cuanto exista una versión corregida (entonces pasa a `overrides`).
 auditConfig:
   ignoreGhsas:
-    # picomatch <= 4.0.7 (alto, ReDoS con un patrón glob malicioso). El 2026-11-17 el aviso se amplió a todas las
-    # versiones publicadas y no hay ninguna corregida. Llega solo por herramientas de desarrollo (Docusaurus,
-    # webpack-dev-server, chokidar, fast-glob, Vite), que evalúan patrones escritos en este repositorio, nunca
-    # entrada de terceros. Ningún paquete publicado depende de picomatch ni de ningún otro paquete ajeno a la suite.
+    # picomatch <= 4.0.7 (ReDoS con un patrón glob malicioso). GitHub retiró el aviso el 2026-11-18: el autor de la
+    # librería no lo considera una vulnerabilidad (un glob es una expresión regular) y no habrá versión corregida.
+    # `pnpm audit` aún lo marcaba ese día; la línea se quita en cuanto deje de hacerlo. Llega solo por herramientas
+    # de desarrollo (Docusaurus, webpack-dev-server, chokidar, fast-glob, Vite), que evalúan patrones escritos en
+    # este repositorio, nunca entrada de terceros. Ningún paquete publicado depende de picomatch.
     - GHSA-fc5q-39xc-vjpf

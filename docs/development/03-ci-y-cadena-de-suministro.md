@@ -75,8 +75,9 @@ Además:
 - `pnpm audit` es un paso de `ci`: una vulnerabilidad conocida en el árbol hace fallar el pull request. Un
   aviso sin versión corregida no se puede resolver con un `override`: lo reviso y, si no afecta a lo que se
   publica, lo anoto por su identificador en `auditConfig.ignoreGhsas`, con el motivo. Hay uno: el ReDoS de
-  `picomatch` (GHSA-fc5q-39xc-vjpf), que desde el 2026-11-17 alcanza a todas sus versiones y solo llega por
-  herramientas de desarrollo.
+  `picomatch` (GHSA-fc5q-39xc-vjpf), que solo llega por herramientas de desarrollo. GitHub retiró ese aviso el
+  2026-11-18, porque el autor de la librería no lo considera una vulnerabilidad; `pnpm audit` todavía lo
+  marcaba ese día, y quito la línea en cuanto deje de hacerlo.
 - Dependabot propone actualizaciones una vez por semana, agrupadas, y espera siete días desde que una versión
   se publica (catorce para una versión mayor). Las de seguridad no esperan.
 - Todas las dependencias están en su última versión estable. Los paquetes publicados no tienen dependencias
