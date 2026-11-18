@@ -47,3 +47,13 @@ overrides:
   "serialize-javascript@<7.1.3": ^7.1.3
   # GHSA-w5hq-g745-h8pq (moderado), vía webpack-dev-server > sockjs. La 11 mantiene la entrada CommonJS.
   "uuid@<11.1.1": ^11.1.1
+
+# Avisos sin versión corregida, revisados uno a uno. `pnpm audit` los da por vistos; cualquier otro sigue haciendo
+# fallar la CI. Cada línea se retira en cuanto exista una versión corregida (entonces pasa a `overrides`).
+auditConfig:
+  ignoreGhsas:
+    # picomatch <= 4.0.7 (alto, ReDoS con un patrón glob malicioso). El 2026-11-17 el aviso se amplió a todas las
+    # versiones publicadas y no hay ninguna corregida. Llega solo por herramientas de desarrollo (Docusaurus,
+    # webpack-dev-server, chokidar, fast-glob, Vite), que evalúan patrones escritos en este repositorio, nunca
+    # entrada de terceros. Ningún paquete publicado depende de picomatch ni de ningún otro paquete ajeno a la suite.
+    - GHSA-fc5q-39xc-vjpf
