@@ -85,6 +85,9 @@ dirección contraria, un componente exportado sin manifiesto, la comprueba `pnpm
 `pnpm test:unit` usa el runner nativo de Node (`node:test`) con `tsx` para importar el TypeScript y el TSX
 reales, y `happy-dom` donde hace falta un documento. No hay framework de pruebas que mantener.
 
+No necesita ningún paso previo: `tokens/dist/` no se versiona y varias pruebas lo leen, así que la suite lo
+genera antes de empezar. Pasa en un checkout recién clonado, con solo `pnpm install`.
+
 | Qué | Cómo |
 |---|---|
 | Cobertura | La de V8, medida sobre una lista explícita de módulos de lógica (`COVERED` en `tests/unit/run.mjs`) |
