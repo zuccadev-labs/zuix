@@ -28,7 +28,7 @@ tipo: explicacion
 
 ## Límites
 
-<!-- Dónde deja de servir el modelo, y lo que no se ha verificado. -->
+<!-- Dónde deja de servir el modelo, y lo que no se ha comprobado. -->
 
 ## Para seguir
 

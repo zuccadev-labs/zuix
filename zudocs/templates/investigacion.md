@@ -6,47 +6,47 @@ fecha: {{fecha}}
 
 # {{titulo}}
 
-<!-- Investigación: análisis previo a una decisión. El título enuncia la pregunta investigada. -->
-<!-- Empieza por la conclusión: quien decide lee esto primero. -->
+<!-- Investigación: las notas de quien decide, antes o después de decidir. El título enuncia la pregunta investigada. -->
+<!-- Se escribe en primera persona: qué me planteé, qué comparé, qué medí, qué decidí y qué descarté. -->
+<!-- Empieza por la respuesta, en dos o tres frases: quien llega aquí quiere saber en qué acabó. -->
 
-## Conclusión
+## Lo que me planteé
 
-<!-- La respuesta en dos o tres frases y la recomendación. -->
+<!-- La pregunta y por qué ahora. Qué queda fuera. -->
 
-## Pregunta
+## Qué comparé
 
-<!-- Qué se quería saber y por qué ahora. Alcance: qué queda fuera. -->
+<!-- Las alternativas, con lo que cada una da y lo que cuesta. Incluye la que ya había. -->
 
-## Método
-
-<!-- Cómo se investigó: fuentes leídas, pruebas hechas, versiones y fechas. Lo suficiente para repetirlo. -->
-
-## Hallazgos
-
-<!-- Hechos, cada uno con su fuente o evidencia. Separa lo observado de lo interpretado. -->
-
-| Hallazgo | Evidencia |
-|---|---|
-|  |  |
-
-## Opciones
-
-<!-- Las alternativas que salen de los hallazgos, con coste y riesgo de cada una. -->
-
-| Opción | Ventajas | Costes y riesgos |
+| Opción | A favor | En contra |
 |---|---|---|
 |  |  |  |
 
-## Recomendación
+## Qué medí
 
-<!-- Qué hacer y cuál es el siguiente paso. Si acaba en decisión, enlaza el ADR. -->
+<!-- Hechos, cada uno con su fecha y cómo se obtuvo: comando, versión, entorno. Lo suficiente para repetirlo. -->
+<!-- Separa lo observado de lo interpretado. Sin cifras que no puedas reproducir. -->
 
-## Sin verificar
+| Qué | Resultado |
+|---|---|
+|  |  |
 
-<!-- Lo que se supone y no se comprobó. -->
+## Qué decidí
+
+<!-- La decisión y el motivo que la inclinó. Si una sola fila de la comparación decidió, dilo. -->
+
+## Qué descarté
+
+<!-- Lo que no hice y por qué. Evita que alguien vuelva a proponerlo sin saber que ya se miró. -->
+
+## Lo que no he comprobado
+
+<!-- Lo que se supone y no se comprobó, sin rodeos. -->
 
 - 
 
 ## Fuentes
+
+<!-- Las externas que sostienen la decisión, con su URL. -->
 
 - 

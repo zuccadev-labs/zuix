@@ -5,6 +5,15 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+El paraguas no tiene código propio: los cambios de esta versión, incluidos los incompatibles, están en el
+`CHANGELOG.md` de cada paquete y reunidos en la [guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).
+
+### Cambios incompatibles
+
+- Node 22.12 o posterior (antes, 20). Node 20 terminó su soporte el 2026-04-30.
+- Deja de instalarse `radix-ui`, que llegaba por `@zuccadev-labs/zuix-zui`. Un proyecto que solo usa las
+  subrutas sin framework ya no instala React.
+
 ### Añadido
 
 - Entradas `/zui/dom/carousel-gl`, `/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` (una sola

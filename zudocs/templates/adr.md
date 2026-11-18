@@ -14,7 +14,7 @@ fecha: {{fecha}}
 |---|---|
 | Estado | Propuesta <!-- propuesta, aceptada, rechazada o sustituida por NN --> |
 | Fecha | {{fecha}} |
-| Decide | <!-- persona o equipo --> |
+| Decide | <!-- quién firma la decisión --> |
 
 ## Contexto
 
@@ -22,7 +22,7 @@ fecha: {{fecha}}
 
 ## Decisión
 
-<!-- Lo que se decide, en una o dos frases en presente: "Usamos …". -->
+<!-- Lo que se decide, en una o dos frases, en primera persona y en presente: "Uso …", "Usamos …". -->
 
 ## Opciones consideradas
 
@@ -40,7 +40,7 @@ fecha: {{fecha}}
 
 ## Verificación
 
-<!-- Cómo se comprueba que la decisión se cumple: comando, auditoría o prueba. Di lo que no se verificó. -->
+<!-- Cómo se comprueba que la decisión se cumple: comando, auditoría o prueba. Di lo que no has comprobado. -->
 
 ## Referencias
 

@@ -5,42 +5,58 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+Ningún token se elimina ni se renombra. Cambian valores para cumplir el contraste de WCAG 2.2 AA, que ahora
+se mide sobre los pares de color que las hojas usan de verdad. Qué revisar en una aplicación está en la
+[guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).
+
+### Cambios incompatibles
+
+- Node 22.12 o posterior (antes, 20). Node 20 terminó su soporte el 2026-04-30.
+- `--z-fg-subtle` sube de opacidad en todas las marcas y temas para llegar a 4.5:1 como texto (oscuro: de
+  0.48 a entre 0.52 y 0.60; claro: de 0.50 a entre 0.59 y 0.64).
+- `--z-control-border` pasa de `--z-line` (1.2:1) a `--z-fg` al 50 % (3:1, WCAG 1.4.11) y
+  `--z-control-border-hover` a `--z-fg-muted`: los campos de formulario tienen un borde más marcado.
+- `--z-accent-ring` (y con él `--z-focus-ring`) pasa de `--z-accent` al 45 % (entre 1.4 y 2.2:1) a
+  `--z-accent-text`, opaco: el anillo de foco llega a 3:1 sobre cualquier superficie.
+- `--z-accent-solid-hover` oscurece en lugar de aclarar, para conservar 4.5:1 con el texto blanco.
+- Marca `zutool`, tema oscuro: el degradado del fondo se atenúa (el texto blanco de la barra de título
+  quedaba a 2.5:1 sobre sus manchas claras; ahora 6.6:1), `canvas-fg-muted` pasa de 0.72 a 0.80, `fg-muted` de
+  0.70 a 0.74 y el cristal de 0.66 a 0.82 de opacidad. Marca `dazlabs`, tema oscuro: cristal de 0.66 a 0.72.
+
+Son ajustes de valor dentro de la intención de cada token, pero cambian el aspecto de forma visible: por eso
+van aquí.
+
 ### Añadido
 
-- Tokens de texto accesible `--z-accent-text`, `--z-success-text`, `--z-warning-text`, `--z-danger-text` y
+- Tokens de texto `--z-accent-text`, `--z-success-text`, `--z-warning-text`, `--z-danger-text` y
   `--z-info-text`: el color de marca o de estado mezclado con `--z-fg` hasta llegar a 4.5:1 sobre todas las
-  superficies y sobre su propio fondo suave (`-soft`). `--z-accent`, `--z-success`… quedan para rellenos, bordes,
-  iconos e indicadores (3:1).
-- Tokens de fondo sólido `--z-success-solid`, `--z-warning-solid`, `--z-danger-solid` y `--z-info-solid`: fondos
-  sobre los que `--z-fg-on-accent` llega a 4.5:1 en los dos temas (como ya hacía `--z-accent-solid`).
+  superficies y sobre su propio fondo suave (`-soft`). `--z-accent`, `--z-success`… quedan para rellenos,
+  bordes, iconos e indicadores (3:1).
+- Tokens de fondo sólido `--z-success-solid`, `--z-warning-solid`, `--z-danger-solid` y `--z-info-solid`:
+  fondos sobre los que `--z-fg-on-accent` llega a 4.5:1 en los dos temas, como ya hacía `--z-accent-solid`.
+- Tokens de escala `--z-space-1-5` (6 px) y `--z-space-2-5` (10 px), y de capa `--z-layer-below` y
+  `--z-layer-raised`, para el apilamiento local dentro de un componente.
 - `prefers-contrast: more`: `fg-muted` pasa a `fg`, líneas y bordes de control se refuerzan y el cristal y el
-  degradado del fondo se vuelven opacos (sección `moreContrast` de `src/base.json`, también en `tokens.json`).
-- `forced-colors: active`: se retiran el degradado del fondo y el destello del cristal, que el sistema no fuerza
-  (sección `forcedColors`).
+  degradado del fondo se vuelven opacos (sección `moreContrast` de `src/base.json`, también en
+  `tokens.json`).
+- `forced-colors: active`: se retiran el degradado del fondo y el destello del cristal, que el sistema no
+  fuerza (sección `forcedColors`).
 - Salida en formato Design Tokens (DTCG 2025.10): `@zuccadev-labs/zuix-tokens/dtcg/<marca>.<tema>.tokens.json`,
   un archivo autocontenido por marca y tema. Lo que el formato no expresa (`clamp()`, `max()`, degradados,
   unidades `em` y `ch`) va con su valor CSS en `$extensions`.
-- Validación: cada marca se comprueba contra `schema/brand.schema.json` al generar; se detectan referencias
-  circulares, tokens que solo define un tema y claves de `scale` que no existen. El contraste se mide sobre los
-  pares reales de las hojas de `zui` y `zout` (texto 4.5:1, gráficos y bordes de control 3:1), componiendo las
-  superficies translúcidas sobre los extremos del degradado del fondo. Los pares que debe corregir otra hoja se
-  anotan en `src/contrast-baseline.json`.
+- Validación al generar: cada marca se comprueba contra `schema/brand.schema.json`; se detectan referencias
+  circulares, tokens que solo define un tema y claves de `scale` que no existen. El contraste se mide sobre
+  la matriz completa de texto por superficie, sobre los pares reales de las hojas de `zui` y `zout` (texto
+  4.5:1; gráficos y bordes de control 3:1) y sobre el foco, componiendo las superficies translúcidas sobre
+  los extremos del degradado del fondo. Un par que no se puede resolver es un error.
 - `tailwind.css`: utilidades para los tokens nuevos (`text-accent-text`, `bg-success-solid`…).
-- Entradas `./css/dazlabs.css`, `./css/zenith.css` y `./css/zutool.css` explícitas (además del comodín).
+- Entradas `./css/dazlabs.css`, `./css/zenith.css` y `./css/zutool.css` explícitas, además del comodín.
 
-### Cambiado
+### Corregido
 
-- `--z-fg-subtle` sube de opacidad en todas las marcas y temas para llegar a 4.5:1 como texto (oscuro: 0.48 →
-  0.52–0.60; claro: 0.50 → 0.59–0.64).
-- `--z-control-border` pasa de `--z-line` (1.2:1) a `--z-fg` al 50 % (3:1, WCAG 1.4.11) y
-  `--z-control-border-hover` a `--z-fg-muted`: los campos de formulario tienen un borde más marcado.
-- `--z-accent-ring` (y con él `--z-focus-ring`) pasa de `--z-accent` al 45 % (1.4–2.2:1) a `--z-accent-text`,
-  opaco: el anillo de foco llega a 3:1 sobre cualquier superficie.
-- `--z-accent-solid-hover` oscurece en lugar de aclarar, para conservar 4.5:1 con el texto blanco.
-- Marca `zutool`, tema oscuro: el degradado del fondo se atenúa (el texto blanco de la barra de título quedaba a
-  2.5:1 sobre sus manchas claras; ahora 6.6:1), `canvas-fg-muted` 0.72 → 0.80, `fg-muted` 0.70 → 0.74 y el cristal
-  0.66 → 0.82 de opacidad. Marca `dazlabs`, tema oscuro: cristal 0.66 → 0.72.
-- `tailwind.css`: la variante `dark:` sigue al tema de los tokens también sin `data-theme` (sistema).
+- `tailwind.css`: la variante `dark:` sigue al tema de los tokens también sin `data-theme`, cuando manda el
+  sistema.
+- El umbral de la luminancia relativa usa el valor de WCAG 2.2 (0,04045).
 
 ## [0.1.0] - 2026-11-14
 
