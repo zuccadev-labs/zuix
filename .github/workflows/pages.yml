@@ -1,6 +1,8 @@
 # Publica el sitio de documentación de zuix (zudocs) en GitHub Pages: https://zuccadev-labs.github.io/zuix/
 #
 # Requisito único, a mano y una sola vez: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# Mientras no esté hecho, el sitio se compila y se recorre igual, el despliegue se omite y el resumen de la
+# ejecución lo avisa: un ajuste pendiente del repositorio no es un fallo del cambio que lanzó el workflow.
 # `url` y `baseUrl` salen de zudocs/zudocs.config.json (https://zuccadev-labs.github.io y /zuix/): el workflow
 # no los calcula. Con un dominio propio se cambian ahí (`baseUrl: "/"`) y se añade static/CNAME.
 #
@@ -36,7 +38,39 @@ jobs:
     name: Compilar el sitio
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read # consultar si GitHub Pages está activado
+    outputs:
+      pages: ${{ steps.pages.outputs.enabled }}
     steps:
+      # La API responde 404 mientras Pages no esté activado. Cualquier otro fallo de la consulta no decide nada:
+      # se intenta el despliegue, que es lo que hacía este workflow antes de consultar.
+      - id: pages
+        name: Consultar si GitHub Pages está activado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          enabled=true
+          if ! answer="$(gh api "repos/$GITHUB_REPOSITORY/pages" 2>&1)"; then
+            if printf '%s' "$answer" | grep -q 'HTTP 404'; then
+              enabled=false
+            else
+              echo "::warning title=GitHub Pages::No se pudo consultar el estado de Pages; se intenta el despliegue."
+              printf '%s\n' "$answer"
+            fi
+          fi
+          echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
+          if [ "$enabled" = false ]; then
+            echo "::warning title=GitHub Pages no está activado::El sitio se compila y se comprueba, pero no se publica."
+            {
+              echo "### El sitio no se ha publicado"
+              echo
+              echo "GitHub Pages no está activado en este repositorio. El sitio se ha compilado y recorrido; el despliegue se ha omitido."
+              echo
+              echo "Para activarlo: Settings → Pages → Build and deployment → Source: **GitHub Actions**. Después, vuelve a lanzar este workflow."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -55,13 +89,16 @@ jobs:
       - run: node tests/site/run.mjs --quick --no-shots
       # Con origen "GitHub Actions" el artefacto se publica tal cual: Jekyll no interviene y no hace falta .nojekyll
       # (upload-pages-artifact, además, deja fuera los archivos ocultos).
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      - if: steps.pages.outputs.enabled == 'true'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: zudocs/build
 
   deploy:
     name: Publicar en GitHub Pages
     needs: build
+    # Sin Pages activado no hay dónde publicar: el trabajo se omite y la ejecución termina en verde, con el aviso.
+    if: needs.build.outputs.pages == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Los dos permisos que pide actions/deploy-pages: escribir en Pages y un token OIDC que prueba el origen.
