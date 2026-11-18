@@ -1,4 +1,4 @@
-// Auditoría previa a 0.1.1 de zout, zicon y tokens, sin framework: lo que no cubrían los casos anteriores.
+// Auditoría previa a la 0.2.0 de zout, zicon y tokens, sin framework: lo que no cubrían los casos anteriores.
 // Iconos: los 346 × 2 se dibujan, atributos hostiles, `hidden`, registro tardío, sprite. Tokens: preferencias de
 // contraste y colores forzados. Layouts: regiones y enlace de salto, RTL, patrón «window splitter» completo,
 // tiradores verticales, shells anidados, estado previo a la medida, selectores inválidos y dispose().

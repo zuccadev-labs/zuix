@@ -2767,7 +2767,7 @@ export const cases = [
       await gone(page, ".z-shell__side", "navegar con un toque desde el cajón lo cierra");
     },
   },
-  // Auditoría previa a 0.1.1: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
+  // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
   ...[auditReact, auditCss, layers].flatMap((build) => build(helpers())),
 ];
 

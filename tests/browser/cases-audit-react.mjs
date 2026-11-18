@@ -1,4 +1,4 @@
-// Auditoría previa a 0.1.1 · componentes de zui sin caso propio en React (cobertura).
+// Auditoría previa a la 0.2.0 · componentes de zui sin caso propio en React (cobertura).
 // Recorre la pantalla `?screen=audit` de examples/app (examples/app/src/screens/audit): un ejemplar de cada
 // componente interactivo con `data-testid` estables. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, until, visible, gone, settled, focusOn, expectAttr, expectText, expectCount, sleep }) {

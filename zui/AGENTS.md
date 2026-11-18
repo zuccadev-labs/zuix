@@ -19,7 +19,7 @@ verificación. Un cambio está terminado cuando la verificación pasa.
    fuente van en la hoja de estilos.
 4. **Iconos de `@zuccadev-labs/zuix-zicon`.** `<Icon name="…" />`. Sin emojis, sin SVG incrustado a mano. Si
    no existe un icono para el concepto, se informa; no se inventa.
-5. **Clases con prefijo `z-`**, estilo BEM: `.z-btn`, `.z-btn__icon`, `.z-btn--primary`. Estado por atributo:
+5. **Clases con prefijo `z-`**, estilo BEM: `.z-btn`, `.z-btn__spinner`, `.z-btn--primary`. Estado por atributo:
    `[data-state]`, `[data-size]`, `[aria-selected]`, `[disabled]`.
 6. **Propiedades lógicas.** `margin-inline-start`, `inset-inline-end`, `padding-block`. Nunca `left`, `right`,
    `margin-left`. Un icono direccional se refleja en `[dir="rtl"]`.

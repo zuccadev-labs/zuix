@@ -1,4 +1,4 @@
-// Auditoría previa a 0.1.1 del CSS de zui sobre la página sin framework: colores forzados, más contraste,
+// Auditoría previa a la 0.2.0 del CSS de zui sobre la página sin framework: colores forzados, más contraste,
 // RTL y tamaño de objetivo (WCAG 2.2, 2.5.8). Cada caso deja la página como la encontró.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";

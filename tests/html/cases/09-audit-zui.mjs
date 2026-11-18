@@ -1,4 +1,4 @@
-// Auditoría previa a 0.1.1 del modo sin framework de zui.
+// Auditoría previa a la 0.2.0 del modo sin framework de zui.
 //  1. TODOS los ejemplos de zui/html.json (no solo el primero de cada componente): cada uno en su página, con
 //     consola limpia, sin violaciones graves de axe y con su interacción genérica funcionando.
 //  2. Seguridad: inyección de marcado y de selectores, CSP estricta y Trusted Types.

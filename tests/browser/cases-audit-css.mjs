@@ -1,4 +1,4 @@
-// Auditoría previa a 0.1.1 · CSS sobre el binding de React: colores forzados, RTL y tamaño de objetivo.
+// Auditoría previa a la 0.2.0 · CSS sobre el binding de React: colores forzados, RTL y tamaño de objetivo.
 // Exporta una función que recibe los ayudantes de cases.mjs y devuelve la lista de casos ({ name, run(ctx) }).
 export default function ({ t, assert, visible, settled, SCREENS }) {
   const emulate = async (page, features, Unverifiable, browserName) => {
