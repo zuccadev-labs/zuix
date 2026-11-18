@@ -162,6 +162,9 @@ describe("core/search", () => {
     assert.equal(score("cfg", "Configuración"), 1);
     assert.equal(score("xyz", "Configuración"), 0);
     assert.equal(score("CONFIGURACIÓN", "configuracion"), 3);
+    // La subsecuencia se cuenta por caracteres: un emoji ocupa dos unidades UTF-16.
+    assert.equal(score("🚀!", "🚀 despegue!"), 1);
+    assert.equal(score("🚀x", "🚀 despegue!"), 0);
   });
 });
 
@@ -247,6 +250,14 @@ describe("core/slider", () => {
     assert.equal(slider.snap(Number.NEGATIVE_INFINITY, 10, 100, 5), 10);
     assert.equal(slider.snap(42.4, 0, 100, 0), 42);
     assert.equal(slider.snap(42.4, 0, 100, Number.NaN), 42);
+  });
+  test("snap: el tope es el último paso que cabe, y volver a ajustar no mueve el valor", () => {
+    assert.equal(slider.snap(11, 0, 10, 3), 9);
+    assert.equal(slider.snap(10, 0, 10, 3), 9);
+    assert.equal(slider.snap(Number.POSITIVE_INFINITY, 0, 10, 3), 9);
+    assert.equal(slider.snap(1, 0, 1, 2), 0);
+    assert.equal(slider.snap(0.95, 0, 1, 0.3), 0.9);
+    assert.equal(slider.snap(Number.POSITIVE_INFINITY, 0, 1, Number.MIN_VALUE), 1);
   });
   test("percent y valueAt", () => {
     assert.equal(slider.percent(25, 0, 100), 25);

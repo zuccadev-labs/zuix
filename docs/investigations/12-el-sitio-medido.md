@@ -46,8 +46,14 @@ Cada visita pedía la hoja y cinco archivos a Google Fonts. Eso es tres problema
 visitante llega a un tercero, la petición bloquea el pintado y obliga a abrir la política de contenido a otro
 origen.
 
-Añadí `zudocs fonts`, que descarga la hoja y sus archivos y escribe una hoja local. Las del sitio de zuix
-están autoalojadas: diez `woff2`, 173 kB, con licencia OFL. Una URL remota sigue funcionando, con aviso.
+Las del sitio de zuix están autoalojadas: diez `woff2`, 173 kB, con licencia OFL, y `fonts` admite una hoja
+local. Una URL remota sigue funcionando, con aviso.
+
+Para bajarlas escribí un comando, `zudocs fonts`, que descargaba la hoja y sus archivos y escribía una hoja
+local. Lo quité antes de publicarlo: un comando que trae archivos de internet y los escribe en el repositorio
+es lo que las políticas de dependencias del proyecto evitan, y el análisis estático lo señalaba con razón
+(una URL de la configuración llega a una petición, y lo descargado llega al disco). Las fuentes se autoalojan
+a mano o con un paquete `@fontsource/*` ([Zudocs](../users/05-zudocs.md#fuentes)).
 
 De paso encontré que las fuentes de menos de 10 kB se incrustaban en el CSS como `data:`, 73 kB más de CSS
 bloqueante. Bajé ese límite.

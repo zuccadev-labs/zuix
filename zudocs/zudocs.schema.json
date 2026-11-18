@@ -98,7 +98,7 @@
         "pattern": "^(https://\\S+|(?!https?:)\\S.*\\.css)$",
         "patternHint": "una hoja .css local, relativa a este archivo, o una URL https"
       },
-      "description": "Hojas de estilo de las fuentes de la marca. Una ruta local (relativa a este archivo) se empaqueta con el sitio: es lo recomendado, sin peticiones a terceros. Una URL https se enlaza tal cual y `verify` avisa. `zudocs fonts <url>` descarga una hoja remota y sus archivos."
+      "description": "Hojas de estilo de las fuentes de la marca. Una ruta local (relativa a este archivo) se empaqueta con el sitio: es lo recomendado, sin peticiones a terceros. Una URL https se enlaza tal cual y `verify` avisa."
     },
     "docs": {
       "type": "object",

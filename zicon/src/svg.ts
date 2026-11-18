@@ -27,9 +27,18 @@ const side = (size: unknown): string => {
   return LENGTH.test(value) ? value : "16";
 };
 
+/** Un valor cualquiera como texto. Un objeto que no se deja convertir (sin prototipo, con un `toString` roto) es texto vacío. */
+const text = (value: unknown): string => {
+  try {
+    return String(value);
+  } catch {
+    return "";
+  }
+};
+
 /** Texto seguro dentro de un atributo HTML o SVG, con comillas dobles o simples. Acepta valores que no son cadena. */
 const esc = (value: unknown): string =>
-  String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  text(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /** Trazados de un icono registrado; lista vacía si no existe. */
 export function iconPaths(name: string, variant: IconVariant = "outline"): string[] {

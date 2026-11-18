@@ -9,7 +9,9 @@ export function score(query: string, text: string): number {
   const t = fold(text);
   if (t.startsWith(q)) return 3;
   if (t.includes(q)) return 2;
+  // Por caracteres, no por unidades UTF-16: un emoji o una letra fuera del plano básico ocupa dos.
+  const wanted = [...q];
   let qi = 0;
-  for (const ch of t) if (ch === q[qi]) qi += 1;
-  return qi === q.length ? 1 : 0;
+  for (const ch of t) if (ch === wanted[qi]) qi += 1;
+  return qi === wanted.length ? 1 : 0;
 }

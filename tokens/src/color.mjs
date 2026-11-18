@@ -25,10 +25,20 @@ export function splitTop(text, separator = ",") {
 const channel = (v) => (v.endsWith("%") ? (parseFloat(v) / 100) * 255 : parseFloat(v));
 const alpha = (v) => (v === undefined ? 1 : v.endsWith("%") ? parseFloat(v) / 100 : parseFloat(v));
 
-/** Color de un valor CSS, o `null` si no es un color que esta validación sepa leer. */
+/**
+ * Color de un valor CSS, o `null` si no es un color que esta validación sepa leer. Un valor con forma de color
+ * y un número que no lo es (`rgb(0 0 1e999)`, `color-mix(in srgb, white ..%, black)`) también es `null`: un
+ * canal `NaN` o infinito daría un contraste `NaN`, que no es menor que ningún umbral y pasaría la validación.
+ */
 export function parseColor(value) {
+  const color = readColor(value);
+  return color?.every(Number.isFinite) ? color : null;
+}
+
+function readColor(value) {
   const v = String(value).trim().toLowerCase();
-  if (v in NAMED) return [...NAMED[v]];
+  // `in` encontraría también lo heredado de Object.prototype (`constructor`, `__proto__`).
+  if (Object.hasOwn(NAMED, v)) return [...NAMED[v]];
   let m = v.match(/^#([0-9a-f]{3,8})$/);
   if (m && [3, 4, 6, 8].includes(m[1].length)) {
     const h = m[1].length <= 4 ? [...m[1]].map((c) => c + c).join("") : m[1];
@@ -47,7 +57,7 @@ export function parseColor(value) {
     if (!/^in\s+srgb$/.test(space ?? "") || a === undefined || b === undefined) return null;
     const side = (text) => {
       const pct = text.match(/\s(-?[\d.]+)%$/);
-      return { color: parseColor(pct ? text.slice(0, pct.index) : text), pct: pct ? parseFloat(pct[1]) : null };
+      return { color: readColor(pct ? text.slice(0, pct.index) : text), pct: pct ? parseFloat(pct[1]) : null };
     };
     const [x, y] = [side(a), side(b)];
     if (!x.color || !y.color) return null;

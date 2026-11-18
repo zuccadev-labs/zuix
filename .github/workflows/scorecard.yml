@@ -1,5 +1,8 @@
 # OpenSSF Scorecard: evalúa las prácticas de seguridad del repositorio (acciones fijadas, permisos, protección
-# de ramas, publicación firmada…). Resultados en Security → Code scanning y en scorecard.dev.
+# de ramas, publicación firmada…). Los resultados se publican en scorecard.dev y quedan como artefacto.
+# No se suben a Code scanning: esa pestaña es para vulnerabilidades del código que se corrigen con un cambio, y
+# varias comprobaciones de Scorecard miden el proyecto, no el código (antigüedad del repositorio, revisión por
+# otra persona, insignia de buenas prácticas). Ver docs/development/03-ci-y-cadena-de-suministro.md.
 # `publish_results` impone restricciones a este archivo (github.com/ossf/scorecard-action#workflow-restrictions):
 # sin permisos de escritura globales y solo con las acciones de abajo.
 name: scorecard
@@ -25,7 +28,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      security-events: write # subir los resultados a Code scanning
       id-token: write # firmar los resultados que se publican en scorecard.dev
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,6 +38,9 @@ jobs:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
-      - uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          sarif_file: results.sarif
+          name: scorecard
+          if-no-files-found: error
+          path: results.sarif
+          retention-days: 30

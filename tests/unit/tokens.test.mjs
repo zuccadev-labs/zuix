@@ -29,6 +29,10 @@ describe("parseColor", () => {
     nearColor(parseColor("#a1b2c380"), [161, 178, 195, 128 / 255]);
     assert.deepEqual(parseColor("  #000  "), [0, 0, 0, 1]);
   });
+  test("un nombre heredado de Object.prototype o un número que no lo es no es un color", () => {
+    for (const bad of ["__proto__", "constructor", "toString", "rgb(0 0 1e999)", "color-mix(in srgb, white ..%, black)"])
+      assert.equal(parseColor(bad), null, bad);
+  });
   test("hex con longitud o cifras inválidas no es un color", () => {
     for (const bad of ["#ff", "#fffff", "#fffffff", "#ggg", "#", "fff", "#fffffffff"]) assert.equal(parseColor(bad), null, bad);
   });

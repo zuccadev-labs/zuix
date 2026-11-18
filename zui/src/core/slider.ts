@@ -2,13 +2,20 @@
 
 const decimalsOf = (n: number) => (String(n).split(".")[1] ?? "").length;
 
-/** Ajusta al paso más cercano (contado desde `min`), sin el ruido de la coma flotante. Un valor no numérico da `min`. */
+/**
+ * Ajusta al paso más cercano (contado desde `min`), sin el ruido de la coma flotante. Un valor no numérico da `min`.
+ * El tope es el último paso que cabe en el recorrido, como en `<input type="range">`: con `min` 0, `max` 10 y
+ * `step` 3 es 9, no 10, que no es un paso y al volver a ajustarse bajaría a 9.
+ */
 export function snap(value: number, min: number, max: number, step: number): number {
-  if (!Number.isFinite(value)) return value === Number.POSITIVE_INFINITY ? Math.max(min, max) : min;
   const size = Number.isFinite(step) && step > 0 ? step : 1;
   const decimals = Math.max(decimalsOf(size), decimalsOf(min));
-  const snapped = Number((Math.round((value - min) / size) * size + min).toFixed(decimals));
-  return Math.min(Math.max(min, max), Math.max(min, snapped));
+  const at = (steps: number) => Number((steps * size + min).toFixed(decimals));
+  const top = Math.max(min, max);
+  const steps = Math.floor((top - min) / size + 1e-9);
+  const last = Number.isFinite(steps) ? Math.min(top, at(steps)) : top;
+  if (!Number.isFinite(value)) return value === Number.POSITIVE_INFINITY ? last : min;
+  return Math.min(last, Math.max(min, at(Math.round((value - min) / size))));
 }
 
 /** Posición de un valor en la pista, de 0 a 100. */

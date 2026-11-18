@@ -83,7 +83,8 @@ dirección contraria, un componente exportado sin manifiesto, la comprueba `pnpm
 ## Pruebas unitarias
 
 `pnpm test:unit` usa el runner nativo de Node (`node:test`) con `tsx` para importar el TypeScript y el TSX
-reales, y `happy-dom` donde hace falta un documento. No hay framework de pruebas que mantener.
+reales, y `happy-dom` donde hace falta un documento. No hay framework de pruebas que mantener. Los archivos
+son `tests/unit/*.test.mjs` y `*.test.ts`.
 
 No necesita ningún paso previo: `tokens/dist/` no se versiona y varias pruebas lo leen, así que la suite lo
 genera antes de empezar. Pasa en un checkout recién clonado, con solo `pnpm install`.
@@ -100,6 +101,37 @@ pnpm test:unit                  # todas, con cobertura y umbral
 pnpm test:unit calendar         # solo los archivos cuyo nombre contiene "calendar", sin umbral
 pnpm test:unit --no-coverage
 ```
+
+### Pruebas basadas en propiedades
+
+`tests/unit/properties.test.ts` usa [fast-check](https://fast-check.dev/): en vez de casos elegidos a mano,
+genera las entradas y cada prueba afirma algo que debe cumplirse para todas. Corre dentro de `pnpm test:unit`,
+con el mismo runner.
+
+| Módulo | Qué se afirma |
+|---|---|
+| `iconSvg` | Cualquier nombre, tamaño, etiqueta, clase o trazado da un único `<svg>` bien formado, sin elementos ni atributos de más |
+| `computePlace` | La capa que cabe queda dentro de la ventana; solo voltea al lado opuesto y solo si no cabía |
+| Fechas | Formato y lectura son inversos; sumar y restar días o meses no produce fechas inexistentes |
+| Paginación | La página es siempre una que existe; el rango contiene la actual y sus vecinas |
+| Búsqueda | `fold` es idempotente; prefijo, fragmento y subsecuencia puntúan lo que deben |
+| `snap` del Slider | El valor queda en el recorrido, sobre un paso, y volver a ajustarlo no lo mueve |
+| Color | `parseColor` devuelve `null` o cuatro números finitos; el contraste es simétrico y va de 1 a 21 |
+| Versiones | `compareVersions` es un orden total; `nextVersion` da siempre una versión posterior |
+| `stripTags` | No queda ninguna etiqueta y solo se quita texto |
+
+La semilla es fija (300 ejecuciones por propiedad, unos dos segundos en total): un fallo se reproduce igual
+en cualquier máquina. Para buscar más lejos:
+
+```
+ZUIX_FC_RUNS=20000 pnpm test:unit properties
+ZUIX_FC_SEED=7 pnpm test:unit properties
+```
+
+Al escribirlas, el 2026-11-18, encontraron cuatro defectos que los casos a mano no cubrían, todos corregidos:
+`snap` devolvía un `max` que no era un paso y lo cambiaba al volver a ajustar; `score` no encontraba una
+subsecuencia con caracteres de fuera del plano básico; `parseColor` daba canales `NaN` o infinitos y lanzaba
+con `__proto__`; `iconSvg` lanzaba con un objeto que no se puede convertir a texto.
 
 Las ramas que solo existen en un navegador real (WebGL, captura de puntero, capa superior) no cuentan para
 el umbral: las cubren las suites de navegador.

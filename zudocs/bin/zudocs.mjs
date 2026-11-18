@@ -16,7 +16,6 @@ const USAGE = `Uso: zudocs <comando> [--config <archivo o carpeta>] [opciones]
   verify  [--strict]                                   configuración, áreas, documentos, enlaces, anclas e imágenes
   new     <tipo> <area> "<título>" ["<descripción>"]   documento nuevo desde una plantilla
   llms                                                 solo regenera llms.txt, llms-full.txt y robots.txt
-  fonts   [--out-dir <carpeta>] [<url> …]              descarga las fuentes remotas para autoalojarlas
   headers [--out-dir <ruta>]                           escribe _headers (CSP y caché) en el sitio compilado
   info                                                 rutas y URL que usará el proyecto
 
@@ -50,7 +49,6 @@ const COMMANDS = {
   verify: { flags: ["strict"] },
   new: { flags: [], rest: "posicionales" },
   llms: { flags: [] },
-  fonts: { flags: ["outDir"], rest: "posicionales" },
   headers: { flags: ["outDir"] },
   info: { flags: ["outDir"] },
 };
@@ -68,8 +66,7 @@ try {
   for (const [key, flag] of Object.entries(NAMES))
     if (args[key] && !spec.flags.includes(key)) throw new ZudocsError(`"${command}" no admite ${flag}.`);
   if (!spec.rest && args.rest.length) throw new ZudocsError(`"${command}" no admite: ${args.rest.join(" ")}`);
-  // fonts usa --out-dir como destino de las fuentes, no como salida del sitio.
-  ctx = loadZudocs(command === "fonts" ? { config: args.config } : args);
+  ctx = loadZudocs(args);
 } catch (e) {
   if (!(e instanceof ZudocsError)) throw e;
   die(`✗ ${e.message}`, /opción|admite/.test(e.message) ? 2 : 1);
@@ -134,9 +131,6 @@ switch (command) {
     break;
   case "new":
     script("new", args.rest);
-    break;
-  case "fonts":
-    script("fonts", [...(args.outDir ? ["--out-dir", args.outDir] : []), ...args.rest]);
     break;
   case "headers":
     script("headers");

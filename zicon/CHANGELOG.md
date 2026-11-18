@@ -17,6 +17,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `iconSvg` no lanza con un `label` o un `className` que no se puede convertir a texto (un objeto sin
+  prototipo): lo trata como vacío.
 - `<z-icon>` funciona con Trusted Types (`require-trusted-types-for 'script'`): dibuja con el DOM, no con
   `innerHTML`.
 - `<z-icon>` conectado antes de registrar su icono se dibuja al registrarlo. Antes quedaba vacío para
