@@ -369,8 +369,20 @@ export function buildCompat({ base, brands, css, knownNames, header }) {
   return { files, errors, warnings, summaries };
 }
 
+/**
+ * Un valor como código dentro de una celda de tabla Markdown (GFM). Un tramo entre acentos graves no admite
+ * escapes: una barra vertical parte la celda, `\\|` deja de protegerla si el valor ya termina en barra invertida
+ * y un acento grave cierra el tramo. Un valor con alguno de esos caracteres va en `<code>` con todo lo que no es
+ * letra, cifra o espacio escrito como entidad numérica, que ni Markdown ni HTML interpretan.
+ */
+export function mdCode(value) {
+  const text = String(value).replace(/\s+/g, " ");
+  if (!/[|`\\]/.test(text)) return `\`${text}\``;
+  return `<code>${text.replace(/[^\p{L}\p{N} ]/gu, (c) => `&#${c.codePointAt(0)};`)}</code>`;
+}
+
 function report({ spec, id, brand, inv, diffs, equal, themes, kept, keep, rename }) {
-  const code = (s) => `\`${String(s).replace(/\|/g, "\\|")}\``;
+  const code = mdCode;
   const short = (v) => {
     const s = show(v ?? "sin definir");
     return s.length > 64 ? `${s.slice(0, 61)}…` : s;

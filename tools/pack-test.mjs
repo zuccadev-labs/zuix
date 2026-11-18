@@ -142,9 +142,16 @@ for (const pkg of PACKAGES) {
   collect(manifest.exports);
   for (const t of [manifest.main, manifest.types, ...targets].filter(Boolean)) {
     const rel = t.replace(/^\.\//, "");
-    const hit = rel.includes("*")
-      ? entries.some((e) => new RegExp(`^${rel.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace("*", ".+")}$`).test(e))
-      : entries.includes(rel);
+    // Un patrón de subruta (`./dist/*.js`): cada tramo literal se escapa entero y cada `*` vale por uno o más caracteres.
+    const pattern = rel.includes("*")
+      ? new RegExp(
+          `^${rel
+            .split("*")
+            .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+            .join(".+")}$`,
+        )
+      : null;
+    const hit = pattern ? entries.some((e) => pattern.test(e)) : entries.includes(rel);
     if (!hit) problems.push(`exports apunta a "${t}", que no está en el tarball`);
   }
   if (problems.length) bad(`tarball ${pkg}: ${problems.join("; ")}`);

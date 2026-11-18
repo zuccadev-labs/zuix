@@ -9,7 +9,7 @@ import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { build, expandToken, loadAll } from "../../tokens/src/build.mjs";
 import { canvasCandidates, contrast, flatten, luminance, over, parseColor, splitTop, toHex } from "../../tokens/src/color.mjs";
-import { scan } from "../../tokens/src/compat.mjs";
+import { mdCode, scan } from "../../tokens/src/compat.mjs";
 import { parseRules } from "../../tokens/src/pairs.mjs";
 import { validate } from "../../tokens/src/schema.mjs";
 
@@ -303,6 +303,23 @@ describe("generación (build)", () => {
       env: { ...process.env, ZUIX_COMPAT_OFFLINE: "1" },
     });
     assert.equal(r.status, 0, r.stderr || r.stdout);
+  });
+});
+
+describe("compat.mdCode (código en una celda de tabla Markdown)", () => {
+  test("un valor corriente va entre acentos graves, en una línea", () => {
+    assert.equal(mdCode("--ui-accent"), "`--ui-accent`");
+    assert.equal(mdCode("rgba(0, 0, 0, .5)"), "`rgba(0, 0, 0, .5)`");
+    assert.equal(mdCode("a\n  b"), "`a b`");
+    assert.equal(mdCode(12), "`12`");
+  });
+  test("barra vertical, barra invertida o acento grave: <code> con entidades, sin nada que parta la celda", () => {
+    assert.equal(mdCode("a|b"), "<code>a&#124;b</code>");
+    assert.equal(mdCode("a\\|b"), "<code>a&#92;&#124;b</code>");
+    assert.equal(mdCode("a`b"), "<code>a&#96;b</code>");
+    assert.equal(mdCode("ñ 1 *x* <b> & | \\"), "<code>ñ 1 &#42;x&#42; &#60;b&#62; &#38; &#124; &#92;</code>");
+    for (const hostile of ["|", "\\|", "\\\\|", "`|`", "</code>|<script>", "a\n|b"])
+      assert.doesNotMatch(mdCode(hostile).replace(/^<code>|<\/code>$/g, ""), /[|`\\<>\n*_]/, hostile);
   });
 });
 
