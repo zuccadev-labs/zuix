@@ -62,7 +62,9 @@ Props y tipos:
   `Notifications (F8)`).
 - `CheckboxProps`, `SwitchProps`, `RadioProps`, `RadioGroupProps`, `SliderProps` y `ToggleProps` son los
   atributos del elemento más las props propias (`checked`, `defaultChecked`, `onCheckedChange`, `value`,
-  `onValueChange`, `pressed`, `onPressedChange`…). Desaparecen `asChild`, `dir`, `loop` y `forceMount`.
+  `onValueChange`, `pressed`, `onPressedChange`…). Desaparecen `asChild`, `dir`, `loop` y `forceMount`, y
+  con ellas tres props que la suite no usaba: `form` en `RadioGroup`, `checked` y `required` en `Radio` (los
+  decide el grupo) y `preserveThumbOrder` en `Slider`. `RadioGroup value` ya no admite `null`.
 - `Slider` con varios tiradores envía un campo por tirador con el mismo `name` (antes `name[]`).
 
 Comportamiento:

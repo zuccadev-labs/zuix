@@ -94,13 +94,41 @@ mientras está abierto y vuelve a `<body>` cuando se cierra.
 Un selector que dependa de dónde cuelga la región (`body > .z-toast-viewport`, `#app .z-toast-viewport`)
 deja de valer; `.z-toast-viewport` a secas sigue encontrándola.
 
+### Variables CSS
+
+No queda ningún `--radix-*`, `data-radix-*` ni id `radix-…`.
+
+| Antes | Ahora |
+|---|---|
+| `--radix-select-trigger-width` | `--z-anchor-width` (la escriben `Select` y `Combobox`) |
+| `--radix-popover-trigger-width` | Sin sustituto: `Popover` no escribe el ancho de su disparador. Usa la prop `width` |
+| `--radix-*-content-available-height` | `--z-available-height` |
+| `--radix-*-content-available-width` | `--z-available-width` |
+| `--radix-toast-swipe-move-x`, `-move-y`, `-end-x`, `-end-y` | `--z-toast-swipe-move-x`, `-move-y`, `-end-x`, `-end-y` |
+| `--radix-accordion-content-height` | `--z-accordion-content-height` |
+
+### Resto del marcado
+
+| Componente | Qué cambia |
+|---|---|
+| Toast (React y `toast()`) | La región es `div.z-toast-viewport[role=region]` con nombre y cada aviso un `div.z-toast[role=status\|alert]`. Antes eran `ol` y `li`. La región solo existe mientras hay avisos |
+| Menu, ContextMenu (React) | Cada entrada es un `button[role=menuitem]` (antes `div`) y el separador lleva `role="separator"` |
+| Select (React) | `role="listbox"` va en `.z-listbox__viewport`, dentro de `.z-listbox`, y las opciones llevan `data-value`. Con `name` o `required`, el campo de formulario es un `<select>` nativo oculto (`.z-native-input`), no un `input[type=hidden]` |
+| Checkbox, Switch, Radio | El campo nativo oculto lleva la clase `z-native-input` (antes estilos en línea) y está siempre en el marcado. `RadioGroup` y `SegmentedControl` ya no llevan `dir` ni `tabindex` en el grupo |
+| Tabs | Los ids son `…-tab-<valor>` y `…-panel-<valor>`; cada pestaña lleva `data-value` |
+| Accordion | La cabecera es un `h2`…`h6` real según `headingLevel` (antes `h3` con `aria-level`). El contenido de una sección cerrada sigue montado, oculto con `hidden`. `.z-accordion` lleva `data-type` |
+| Slider (React) | Los tiradores son hijos directos de `.z-slider` y la pista se sitúa con `inset-inline-start` y `-end`. El contenedor lleva `data-min`, `data-max`, `data-step` y `data-value` |
+
+El marcado que emite React es ahora exactamente el del contrato (`html.json`): se puede copiar a una página
+sin React.
+
 ## Props y tipos de React
 
 | Componente | Antes | Ahora |
 |---|---|---|
 | `Popover` | `label` opcional | El nombre accesible es obligatorio en los tipos: `label`, o `aria-labelledby` con el id de un encabezado del panel |
 | `ToastProvider` | `label` | `regionLabel`: nombre de la región, por defecto `Notifications (F8)` |
-| `Checkbox`, `Switch`, `Radio`, `RadioGroup`, `Slider`, `Toggle` | Sus `*Props` extendían los tipos de la biblioteca anterior | Son los atributos del elemento más las props propias (`checked`, `defaultChecked`, `onCheckedChange`, `value`, `onValueChange`, `pressed`, `onPressedChange`…). Desaparecen `asChild`, `dir`, `loop` y `forceMount` |
+| `Checkbox`, `Switch`, `Radio`, `RadioGroup`, `Slider`, `Toggle` | Sus `*Props` extendían los tipos de la biblioteca anterior | Son los atributos del elemento más las props propias (`checked`, `defaultChecked`, `onCheckedChange`, `value`, `onValueChange`, `pressed`, `onPressedChange`…). Desaparecen `asChild`, `dir`, `loop` y `forceMount`, y tres que la suite no usaba: `form` en `RadioGroup`, `checked` y `required` en `Radio` (los decide el grupo) y `preserveThumbOrder` en `Slider`. `RadioGroup value` ya no admite `null` |
 | `Slider` con varios tiradores | Enviaba `name[]` | Envía un campo por tirador con el mismo `name` |
 | `Button`, `IconButton` con `loading` | `disabled` | `aria-disabled="true"`. Ver abajo |
 
