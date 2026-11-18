@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-11-18
+
 ### Cambios incompatibles
 
 - Node 22.12 o posterior (antes, 20). Node 20 terminó su soporte el 2026-04-30.

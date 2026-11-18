@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-11-18
+
 El paraguas no tiene código propio: los cambios de esta versión, incluidos los incompatibles, están en el
 `CHANGELOG.md` de cada paquete y reunidos en la [guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).
 

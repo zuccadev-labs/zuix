@@ -142,11 +142,16 @@ describe("tools/version.mjs: zudocs comparte número con la suite", () => {
   });
   test("el script: un cierre de versión (--dry-run) sube zudocs y cierra su CHANGELOG.md, sin escribir nada", () => {
     const r = run("tools/version.mjs", "minor", "--dry-run");
-    assert.equal(r.status, 0, r.stderr);
-    const lines = r.stdout.split("\n").filter((line) => line.startsWith("· @zuccadev-labs/"));
-    assert.equal(lines.length, 6, r.stdout);
-    assert.match(r.stdout, /· @zuccadev-labs\/zuix-zudocs \d+\.\d+\.\d+ → \d+\.\d+\.\d+ · \d+ cambios anotados/);
-    assert.match(r.stdout, /--dry-run: no se escribió nada/);
+    if (r.status !== 0) {
+      // Recién cerrada una versión no hay nada anotado en «Sin publicar»: el script lo dice y no escribe.
+      // Es el estado del repositorio en el propio pull request de una subida de versión.
+      assert.match(r.stderr, /no hay nada que versionar/, r.stderr);
+    } else {
+      const lines = r.stdout.split("\n").filter((line) => line.startsWith("· @zuccadev-labs/"));
+      assert.equal(lines.length, 6, r.stdout);
+      assert.match(r.stdout, /· @zuccadev-labs\/zuix-zudocs \d+\.\d+\.\d+ → \d+\.\d+\.\d+ · \d+ cambios anotados/);
+      assert.match(r.stdout, /--dry-run: no se escribió nada/);
+    }
     assert.equal(run("tools/version.mjs", "check").status, 0, "tras --dry-run todo sigue en la versión anterior");
   });
 });
