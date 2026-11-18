@@ -245,7 +245,8 @@ describe("tools/audit.mjs", () => {
     assert.deepEqual(css("/* #fff\n rgb(0 0 0) */\na { color: #000; } // #abc").color, [3]);
     assert.equal(strip("a /* b\nc */ d").split("\n").length, 2);
     // Una URL no es un comentario de línea.
-    assert.match(strip('const u = "https://example.com/#fff";'), /example\.com/);
+    const url = 'const u = "https://example.com/#fff";';
+    assert.equal(strip(url), url);
   });
   test("primitivos de marca y tokens inexistentes sin respaldo", () => {
     const r = css("a { color: var(--zp-blue-500); b: var(--z-accent); c: var(--z-nope); d: var(--z-nope2, 4px); e: var( --z-local ); }", {

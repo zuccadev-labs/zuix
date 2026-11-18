@@ -43,7 +43,7 @@ export default function Tokens() {
             ["Capas", "layer-"],
             ["Medidas de layout", ""],
           ].map(([title, prefix]) => {
-            const rows = prefix ? group(prefix as string) : scale.filter(([k]) => /width|height|gap|pad|max$/.test(k));
+            const rows = prefix ? group(prefix as string) : scale.filter(([k]) => /width|height|gap|pad|max/.test(k));
             return (
               <Panel key={title} title={title}>
                 <table className="z-table">

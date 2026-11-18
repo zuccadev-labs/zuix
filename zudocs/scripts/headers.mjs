@@ -30,22 +30,25 @@ const html = (dir) =>
 // Uno que aparece solo en algunas viene del contenido (un <script> en un documento) y la política lo bloquea.
 const seen = new Map();
 const origins = { script: new Set(), style: new Set(), font: new Set(), img: new Set(), frame: new Set() };
-const origin = (u) => {
+const parse = (u) => {
   try {
-    return new URL(u).origin;
+    return new URL(u);
   } catch {
     return undefined;
   }
 };
+const origin = (u) => parse(u)?.origin;
 for (const file of html(ctx.outDir)) {
   const text = readFileSync(file, "utf8");
-  for (const m of text.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
-    const src = m[1].match(/\ssrc=["']?([^\s"'>]+)/)?.[1];
+  // Como las lee un navegador: sin distinguir mayúsculas y con la etiqueta de cierre en cualquiera de sus formas
+  // (`</SCRIPT>`, `</script >`). Un script que este patrón no viera quedaría sin hash y sin aviso.
+  for (const m of text.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
+    const src = m[1].match(/\ssrc\s*=\s*["']?([^\s"'>]+)/i)?.[1];
     if (src) {
-      if (/^https?:/.test(src)) origins.script.add(origin(src));
+      if (/^https?:/i.test(src)) origins.script.add(origin(src));
     }
     // Los bloques de datos (JSON-LD) no se ejecutan y no necesitan hash.
-    else if (m[2].trim() && !/type=["']?application\/(ld\+)?json/.test(m[1])) {
+    else if (m[2].trim() && !/\stype\s*=\s*["']?application\/(ld\+)?json\b/i.test(m[1])) {
       const h = `'sha256-${createHash("sha256").update(m[2]).digest("base64")}'`;
       if (!seen.has(h)) seen.set(h, new Set());
       seen.get(h).add(file);
@@ -66,7 +69,7 @@ const blocked = [...new Set([...seen].filter(([, files]) => files.size !== pages
 // Una hoja de fuentes remota (Google Fonts) trae sus archivos de otro origen.
 for (const font of ctx.remoteFonts) {
   origins.style.add(origin(font));
-  if (/fonts\.googleapis\.com/.test(font)) origins.font.add("https://fonts.gstatic.com");
+  if (parse(font)?.hostname === "fonts.googleapis.com") origins.font.add("https://fonts.gstatic.com");
 }
 const list = (set) => [...set].filter(Boolean).sort().join(" ");
 
