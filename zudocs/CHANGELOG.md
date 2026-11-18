@@ -3,7 +3,7 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 zudocs es un paquete privado: no se publica en npm y se usa desde una copia del repositorio. Sus cambios se
-anotan aquí por versión de la suite. `pnpm bump` no cierra esta sección: la cierro yo a mano al publicar.
+anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube su versión con las demás.
 
 ## [Sin publicar]
 
@@ -56,6 +56,9 @@ anotan aquí por versión de la suite. `pnpm bump` no cierra esta sección: la c
 
 - Las casillas de las listas de tareas tienen nombre accesible.
 - La etiqueta del buscador se traduce y la página de resultados tiene región principal.
+- El buscador ya no recupera el foco cuando termina de descargar su índice si para entonces el foco está en
+  otro control. Con la red lenta, quien recorría la barra con Tab veía saltar el foco de vuelta al campo de
+  búsqueda.
 - `start` y `serve` reenvían las señales al servidor: terminar zudocs ya no deja el puerto ocupado.
 - `new`: un título con `$&` o con saltos de línea ya no rompe el documento generado.
 - Las plantillas `agente` y `tutorial` ya no traen títulos vacíos.

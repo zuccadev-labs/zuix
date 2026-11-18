@@ -6,6 +6,7 @@
 //   node tests/site/run.mjs --dir <carpeta> [--base /ruta/]   otro sitio compilado con zudocs
 //   BROWSER=chromium|firefox|webkit|all (por defecto chromium)   --quick: solo 1440 px oscuro en el rastreo
 //   --no-axe  --no-shots   SHOTS=<carpeta> (por defecto .tmp/site-shots/<navegador>)
+//   --repeat=N  repite N veces la pasada de cada navegador (con un filtro, para medir un caso inestable: N de N)
 //
 // Qué comprueba:
 //   rastreo   por página × tema × ancho: hidratación, consola y red sin errores, sin desbordamiento horizontal,
@@ -40,6 +41,7 @@ const baseArg = opt("--base");
 const quick = flag("--quick");
 const noAxe = flag("--no-axe");
 const noShots = flag("--no-shots");
+const repeat = Math.max(1, Number(argv.find((a) => a.startsWith("--repeat="))?.slice(9)) || 1);
 const filter = argv.find((a) => !a.startsWith("--"))?.toLowerCase();
 
 if (!existsSync(join(dir, "index.html"))) {
@@ -182,7 +184,8 @@ const ENGINES = {
   firefox: () => firefox.launch({ headless: true }),
   webkit: () => webkit.launch({ headless: true }),
 };
-const wanted = (process.env.BROWSER ?? "chromium") === "all" ? Object.keys(ENGINES) : (process.env.BROWSER ?? "chromium").split(",");
+const engines = (process.env.BROWSER ?? "chromium") === "all" ? Object.keys(ENGINES) : (process.env.BROWSER ?? "chromium").split(",");
+const wanted = Array.from({ length: repeat }, () => engines).flat();
 const WIDTHS = quick ? [1440] : [390, 768, 1440];
 const THEMES = quick ? ["dark"] : ["dark", "light"];
 const axeSource = noAxe ? "" : readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8");
@@ -612,6 +615,37 @@ for (const browserName of wanted) {
       await page.waitForFunction((u) => location.href !== u, before);
       ok(new URL(page.url()).pathname.startsWith(base), `el resultado lleva fuera del baseUrl: ${page.url()}`);
       await hydrated(page);
+    }));
+
+  // El buscador descarga su índice al recibir el foco y, al terminar, vuelve a enfocar el campo. Si para entonces
+  // el foco ya está en otro control, no debe quitárselo: con la red lenta, quien pasa con Tab por la barra veía
+  // saltar el foco de vuelta al buscador (y la tecla siguiente caía en el campo, no en el control elegido).
+  await test("teclado: el buscador no recupera el foco cuando termina de cargar su índice", () =>
+    withPage({ path: "" }, async (page) => {
+      if (!(await page.locator(searchInput).count())) throw new Unverifiable("el sitio no tiene buscador (search.enabled: false)");
+      // Red lenta: todo lo que el buscador pida a partir de aquí tarda, y el Tab siguiente llega antes.
+      await page.route("**/*", async (route) => {
+        await new Promise((r) => setTimeout(r, 400));
+        await route.continue().catch(() => {});
+      });
+      await tabTo(page, (e) => /navbar__search-input/.test(e.cls), 30);
+      await page.keyboard.press(TAB);
+      const next = await page.evaluate(() => {
+        document.activeElement.setAttribute("data-test-focus", "");
+        return String(document.activeElement.className);
+      });
+      ok(!/navbar__search-input/.test(next), "Tab no sale del campo de búsqueda");
+      // El índice ha terminado de cargar cuando el autocompletado toma el campo y lo marca como combobox.
+      await page.waitForFunction((s) => {
+        const input = document.querySelector(s);
+        return input?.hasAttribute("aria-autocomplete") || input?.getAttribute("role") === "combobox";
+      }, searchInput);
+      await page.waitForTimeout(150);
+      const now = await active(page);
+      ok(
+        await page.evaluate(() => document.activeElement.hasAttribute("data-test-focus")),
+        `al terminar de cargar el índice el foco saltó a ${now.tag}.${now.cls}`,
+      );
     }));
 
   if (existsSync(join(dir, "search-index.json")) || existsSync(join(dir, "search/index.html"))) {
