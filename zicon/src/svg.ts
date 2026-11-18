@@ -13,12 +13,23 @@ export interface IconSvgOptions {
   className?: string;
 }
 
-/** Lado del icono: un número o una longitud CSS. Cualquier otra cosa (un atributo mal escrito u hostil) vale 16. */
-const LENGTH = /^\d*\.?\d+(px|em|rem|ex|ch|%|vw|vh|vmin|vmax|pt|pc|cm|mm|in)?$/;
-const side = (size: number | string): string =>
-  typeof size === "number" ? (Number.isFinite(size) && size >= 0 ? String(size) : "16") : LENGTH.test(size.trim()) ? size.trim() : "16";
+/**
+ * Lado del icono: un número o una longitud CSS. Cualquier otra cosa (un atributo mal escrito u hostil, un valor
+ * que no es ni número ni cadena) vale 16. La expresión no tiene dos cuantificadores que compitan por las mismas
+ * cifras, así que se evalúa en tiempo lineal; el tope de longitud descarta antes las cadenas desmedidas.
+ */
+const LENGTH = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|em|rem|ex|ch|%|vw|vh|vmin|vmax|pt|pc|cm|mm|in)?$/;
+const MAX_LENGTH = 32;
+const side = (size: unknown): string => {
+  if (typeof size === "number") return Number.isFinite(size) && size >= 0 ? String(size) : "16";
+  if (typeof size !== "string" || size.length > MAX_LENGTH) return "16";
+  const value = size.trim();
+  return LENGTH.test(value) ? value : "16";
+};
 
-const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+/** Texto seguro dentro de un atributo HTML o SVG, con comillas dobles o simples. Acepta valores que no son cadena. */
+const esc = (value: unknown): string =>
+  String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /** Trazados de un icono registrado; lista vacía si no existe. */
 export function iconPaths(name: string, variant: IconVariant = "outline"): string[] {
@@ -36,7 +47,9 @@ export function iconSvg(name: string, { variant = "outline", size = 16, label, c
     .join("");
   const a11y = label ? `role="img" aria-label="${esc(label)}"` : `aria-hidden="true"`;
   const cls = className ? `z-icon ${esc(className)}` : "z-icon";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${side(size)}" height="${side(size)}" fill="currentColor" focusable="false" ${a11y} data-icon="${esc(name)}" data-variant="${variant}" class="${cls}">${body}</svg>`;
+  // El lado ya está validado; se escapa igualmente, como todo lo demás, para que la regla no tenga excepciones.
+  const px = esc(side(size));
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${px}" height="${px}" fill="currentColor" focusable="false" ${a11y} data-icon="${esc(name)}" data-variant="${variant}" class="${cls}">${body}</svg>`;
 }
 
 const SVG_NS = "http://www.w3.org/2000/svg";

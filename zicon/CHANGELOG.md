@@ -25,6 +25,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `iconSvg()` reduce `variant` a `outline` o `solid` y escapa los trazados: ningún valor llega al marcado sin
   escapar.
 - `Icon` con `aria-label` o `aria-labelledby`, sin `label`, ya no lleva `aria-hidden`.
+- `size` en `iconSvg()`, `iconElement()` y `<z-icon>` se valida en tiempo lineal. La expresión anterior
+  retrocedía de forma cuadrática con una cadena larga de cifras seguida de un carácter inválido: 80 000
+  caracteres en el atributo `size` bloqueaban la página unos doce segundos. Un `size` de más de 32 caracteres, o
+  que no es número ni cadena, vale 16.
+- `iconSvg()` escapa también la comilla simple (`&#39;`) y el valor de `width` y `height`, y no lanza si
+  `name`, `label` o `className` llegan sin ser cadenas desde JavaScript sin tipos.
 - `sprite.svg` oculta su raíz con el atributo `display="none"` en lugar de `style`: incrustado en una página
   con una política de seguridad de contenido sin estilos en línea, sigue oculto.
 - La generación valida cada icono (trazados dentro de la caja, identificador de módulo único y no reservado,
