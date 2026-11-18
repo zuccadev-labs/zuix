@@ -14,12 +14,12 @@ const root = join(here, "../..");
 const argv = process.argv.slice(2);
 const filters = argv.filter((a) => !a.startsWith("--"));
 const all = readdirSync(here)
-  .filter((f) => f.endsWith(".test.mjs"))
+  .filter((f) => /\.test\.(mjs|ts)$/.test(f))
   .sort();
 const files = all.filter((f) => !filters.length || filters.some((x) => f.includes(x)));
 if (!files.length) {
   console.error(
-    `✗ ninguna prueba coincide con: ${filters.join(", ")}\n  disponibles: ${all.map((f) => f.replace(".test.mjs", "")).join(", ")}`,
+    `✗ ninguna prueba coincide con: ${filters.join(", ")}\n  disponibles: ${all.map((f) => f.replace(/\.test\.(mjs|ts)$/, "")).join(", ")}`,
   );
   process.exit(2);
 }
