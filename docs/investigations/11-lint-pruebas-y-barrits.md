@@ -115,10 +115,11 @@ pedí el inventario, con la versión 0.3.1.
 3. **Pide su propia estructura de carpetas.** Adoptarlo habría significado reorganizar tres paquetes para
    resolver una comprobación de pocas líneas.
 
-No es un defecto de Barrits: resuelve otro problema, y lo resuelve bien donde lo uso. Para zuix escribí un
-prototipo de la comprobación que quería, unas cuarenta líneas sin dependencias que recorren cada carpeta y
-fallan si un componente no está reexportado por su índice. Todavía no lo he incorporado a las herramientas
-del repositorio. Las colisiones de nombres ya las detecta el compilador.
+No es un defecto de Barrits: resuelve otro problema, y lo resuelve bien donde lo uso. Para zuix escribí la
+comprobación que quería, sin dependencias: `tools/check-barrels.mjs` falla si un componente con manifiesto no
+se puede importar desde la raíz de su paquete, y forma parte de `pnpm check` (`pnpm barrels`). La dirección
+contraria, un componente exportado sin manifiesto, ya la comprobaba `pnpm manifest`, y las colisiones de
+nombres las detecta el compilador.
 
 Lo que sí me llevo es una tarea para Barrits: admitir TypeScript 7.
 

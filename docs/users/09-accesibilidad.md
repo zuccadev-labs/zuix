@@ -10,7 +10,7 @@ Esta página dice qué garantiza la suite, cómo se mide y qué queda en manos d
 |---|---|---|
 | Contraste del texto | `pnpm tokens` cruza cada token de texto con cada superficie, en las tres marcas y los dos temas | 1.4.3, 4.5:1 |
 | Contraste de los pares reales | El mismo comando lee de las hojas de `zui` y `zout` qué color va sobre qué fondo y mide cada par | 1.4.3 (4.5:1) y 1.4.11 (3:1) |
-| Bordes de control y anillo de foco | Medidos frente a la superficie que los rodea | 1.4.11 y 2.4.7, 3:1 |
+| Bordes de control y anillo de foco | Medidos contra la superficie que los rodea | 1.4.11 y 2.4.7, 3:1 |
 | Roles, nombres y estados | axe-core en cada pantalla de las suites de navegador, en claro y oscuro, también con menús, diálogos y selectores abiertos. Las violaciones graves y críticas hacen fallar | Reglas WCAG 2 A y AA de axe |
 | Teclado y foco | Casos de navegador por componente: abrir, recorrer, cerrar, y dónde queda el foco | Patrones de [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/) |
 | El sitio de documentación | Todas las páginas, en dos temas y tres anchos, con axe | WCAG 2.2 A y AA |
@@ -48,7 +48,7 @@ Cada componente interactivo sigue el patrón de APG que le corresponde. Lo que m
 | Diálogos | El foco entra al abrir, Tab da la vuelta dentro, Escape cierra y el foco vuelve al disparador |
 | Menús | Flechas con vuelta, Inicio y Fin, búsqueda por letra; flecha derecha abre un submenú y la izquierda lo cierra |
 | Pestañas, grupos de radio, control segmentado | Un solo punto de tabulación; las flechas mueven foco y selección |
-| Select, Combobox | Flechas, Inicio y Fin, búsqueda por letra, Intro elige, Escape cierra |
+| Select, Combobox | Flechas, Inicio y Fin, Intro elige, Escape cierra. Select busca por letra; Combobox filtra al escribir |
 | Calendario | Flechas por día y semana, Re Pág y Av Pág por mes, Inicio y Fin por semana |
 | Slider | Flechas, Re Pág y Av Pág, Inicio y Fin |
 | Árbol | Flechas para moverse, expandir y plegar; letra para saltar |

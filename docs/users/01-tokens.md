@@ -24,11 +24,11 @@ comprueba.
 | Estado | `success`, `warning`, `danger`, `info`, cada uno con `-soft`, `-text` y `-solid` |
 | Material | `glass-bg`, `glass-border`, `glass-highlight`, `glass-specular`, `glass-shadow`, `glass-blur`, `glass-saturate`, `canvas`, `canvas-gradient` |
 | Tipografía | `font-display`, `font-sans`, `font-mono`, `text-*`, `weight-*`, `leading-*`, `tracking-*` |
-| Espaciado | `space-0` a `space-20` |
+| Espaciado | `space-0` a `space-20`, con los intermedios `space-1-5` (6 px) y `space-2-5` (10 px) |
 | Forma | `radius-xs`, `sm`, `md`, `lg`, `xl`, `panel`, `full` |
 | Elevación | `shadow-sm`, `md`, `lg` |
 | Movimiento | `duration-fast`, `normal`, `slow`; `ease-standard`, `out`, `spring` |
-| Capas | `layer-sticky`, `overlay`, `menu`, `dialog`, `popover`, `tooltip`, `toast`, `top` |
+| Capas | `layer-sticky`, `overlay`, `menu`, `dialog`, `popover`, `tooltip`, `toast`, `top`; y `layer-below` y `layer-raised` para el apilamiento dentro de un componente |
 | Layout | `rail-width`, `sidebar-width`, `inspector-width`, `header-height`, `shell-gap`, `stage-pad-x`, `stage-pad-y`, `content-max`, `prose-max`, `touch-target` |
 | Componente | `focus-ring`, `scrim`, `control-height-sm`, `md`, `lg`, `control-radius`, `control-bg`, `control-border`, `control-border-hover`, `button-*`, `card-*`, `panel-radius`, `popup-*`, `tooltip-bg`, `reading-bg`, `code-bg` |
 
@@ -41,7 +41,7 @@ frecuente de perder contraste.
 
 | Uso | Token | Contraste que garantiza |
 |---|---|---|
-| Relleno, borde, icono, indicador | `accent`, `success`, `warning`, `danger`, `info` | 3:1 frente a la superficie que lo rodea |
+| Relleno, borde, icono, indicador | `accent`, `success`, `warning`, `danger`, `info` | 3:1 contra la superficie que lo rodea |
 | Texto de color y enlaces | `accent-text`, `success-text`, `warning-text`, `danger-text`, `info-text` | 4.5:1 sobre todas las superficies y sobre su propio fondo `-soft` |
 | Fondo con texto encima (botón primario, insignia sólida) | `accent-solid`, `success-solid`, `warning-solid`, `danger-solid`, `info-solid` | 4.5:1 con `fg-on-accent` en los dos temas |
 | Fondo tenue de un aviso o una insignia | `accent-soft`, `success-soft`… | El texto que va encima es el `-text` correspondiente |
@@ -126,7 +126,7 @@ otra herramienta que lea el formato; no los he importado en ninguna.
 - un token de texto no llega a 4.5:1 sobre alguna superficie (la matriz completa texto × superficie);
 - un par que usan de verdad las hojas de `zui` y `zout` no llega a su mínimo: 4.5:1 en texto, 3:1 en iconos,
   indicadores y bordes de control. Los pares se leen de las propias hojas;
-- el anillo de foco o el borde de un control no llegan a 3:1 frente a lo que los rodea;
+- el anillo de foco o el borde de un control no llegan a 3:1 contra lo que los rodea;
 - una capa de compatibilidad deja una variable antigua sin destino.
 
 Las superficies translúcidas se componen sobre el fondo de la aplicación, incluidos los extremos de su

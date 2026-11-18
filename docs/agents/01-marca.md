@@ -60,7 +60,7 @@ como hacen las tres marcas incluidas en su tema oscuro.
 | Cada token de texto (`fg`, `fg-muted`, `fg-subtle`, los `-text`) sobre cada superficie | 4.5:1 |
 | Texto sobre los fondos `-solid` y sobre el acento sólido | 4.5:1 |
 | Cada par de color que usan las hojas de `zui` y `zout` | 4.5:1 en texto; 3:1 en iconos e indicadores |
-| Borde de los controles y anillo de foco frente a lo que los rodea | 3:1 |
+| Borde de los controles y anillo de foco contra lo que los rodea | 3:1 |
 
 Las superficies translúcidas se componen sobre el lienzo y sobre los extremos de su degradado. Un degradado
 con manchas claras en tema oscuro baja el contraste del texto que va sobre el cristal: si falla, se atenúa

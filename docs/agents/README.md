@@ -42,6 +42,7 @@ Desde la raíz de zuix:
 | `pnpm icons` | Iconos válidos; alias y emojis apuntan a iconos existentes | Sin fallos |
 | `pnpm style-audit` | Colores literales, primitivos, tokens inexistentes, emojis, estilos en línea | 0 en todo |
 | `pnpm manifest` | Cada componente exportado tiene manifiesto válido | Sin fallos |
+| `pnpm barrels` | Cada componente con manifiesto se puede importar desde la raíz de su paquete | Sin fallos |
 | `pnpm html` | El contrato HTML se genera desde los componentes | Sin fallos |
 | `pnpm dist` | CSS y módulos para usar sin bundler | Sin fallos |
 | `pnpm typecheck` | Tipos, incluidos los nombres de icono | Sin errores |

@@ -191,6 +191,7 @@ pnpm style-audit  # color, prim, token, emoji, inline: todo en 0
 pnpm lint         # Biome y la regla de "use client"
 pnpm typecheck    # sin errores
 pnpm manifest     # todo componente exportado tiene manifiesto válido
+pnpm barrels      # todo componente con manifiesto se exporta desde la raíz del paquete
 pnpm html         # el contrato HTML se regenera
 pnpm test:unit    # si tocaste src/core o lógica cubierta
 pnpm test:html    # si tocaste src/dom, native.css o un componente con behavior "dom"

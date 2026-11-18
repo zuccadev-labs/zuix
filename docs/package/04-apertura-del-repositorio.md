@@ -9,7 +9,7 @@ El remoto es `https://github.com/zuccadev-labs/zuix`, público. El primer push s
 ## El problema
 
 Empecé zuix como una carpeta de trabajo, no como un proyecto público. Los primeros commits tenían lo que
-tiene cualquier repositorio privado: rutas absolutas de mi máquina, el nombre de un proyecto de cliente del
+tiene cualquier repositorio privado: rutas absolutas de mi máquina, el nombre de un proyecto privado del
 que reutilicé código, rutas hacia otras carpetas de mi disco y mi correo personal en los metadatos. Sanear
 los archivos no borra nada de eso de los commits anteriores, así que el historial antiguo no se podía
 publicar tal cual.

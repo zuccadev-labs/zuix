@@ -19,9 +19,10 @@ una versión publicada salió de aquí. El procedimiento de publicación está e
 
 | Trabajo | Qué ejecuta |
 |---|---|
-| Contrato, auditoría y tipos (Node 26) | `pnpm install --frozen-lockfile`, `pnpm audit`, lint, formato, pruebas unitarias con umbral, `pnpm check`, `git diff --exit-code` (lo generado está al día), build del sitio, `pnpm build`, `pnpm test:pack --skip-build --next`, y genera el SBOM y las huellas de los tarballs |
+| Contrato, auditoría y tipos (Node 26) | `pnpm install --frozen-lockfile`, `pnpm audit`, lint, formato, pruebas unitarias con umbral, `pnpm check`, comprobación de que lo generado está al día (`git status --porcelain` no devuelve nada), build del sitio y `pnpm test:site`, `pnpm build`, `pnpm test:pack --skip-build --next`, y genera el SBOM y las huellas de los tarballs |
 | Node 22 y Node 24 | `pnpm check`, `pnpm build` y la prueba de empaquetado sin Next.js |
 | Navegador (Chromium, Firefox, WebKit) | `pnpm test:html` y `pnpm test:browser` en cada motor. Si fallan, sube las capturas |
+| Windows | `pnpm check`, que lo generado sale igual, byte a byte, que en Linux, y las pruebas unitarias. Las suites de navegador y el empaquetado se quedan en Linux |
 
 El primer trabajo deja tres artefactos: `dist`, `tarballs` (los cinco paquetes de `pnpm pack` con su
 `SHA256SUMS`) y `sbom` (un CycloneDX por paquete). Los tarballs que publica `release` son esos, no otros

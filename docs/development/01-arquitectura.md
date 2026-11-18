@@ -156,8 +156,9 @@ publicada, y `pnpm test:pack` que cada subruta del paraguas es el mismo módulo 
 | `zudocs/static/llms.txt` | `zudocs/scripts/llms.mjs` | `pnpm --filter @zuccadev-labs/zuix-zudocs build` (o `llms`) |
 | `*/dist/esm/` (publicación) | `tools/build.mjs` | `pnpm build` |
 
-`pnpm check` encadena los seis primeros, la auditoría de estilo y la comprobación de tipos. La CI ejecuta después
-`git diff --exit-code`: un archivo generado que no esté al día hace fallar el pull request.
+`pnpm check` encadena los seis primeros, la auditoría de estilo, la comprobación de exportaciones y la de
+tipos. La CI comprueba después que el árbol de trabajo sigue limpio: un archivo generado que no esté al día,
+o uno nuevo sin añadir, hace fallar el pull request.
 
 ## Dos mapas de entradas
 

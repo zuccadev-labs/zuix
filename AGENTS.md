@@ -84,7 +84,7 @@ informa.
 
 | Comando | Cuándo |
 |---|---|
-| `pnpm check` | Siempre. Tokens, iconos, auditoría de estilo, manifiestos, contrato HTML, `dist` y tipos |
+| `pnpm check` | Siempre. Tokens, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, `dist` y tipos |
 | `pnpm --filter @zuccadev-labs/zuix-zudocs build` | Siempre. El sitio compila sin enlaces ni anclas rotos |
 | `pnpm lint` y `pnpm format:check` | Siempre que se toque código |
 | `pnpm test:unit` | Si toca lógica de `core/`, `logic.ts`, `tokens/src/` o `tools/` |

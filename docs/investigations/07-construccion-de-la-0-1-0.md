@@ -51,8 +51,8 @@ Las cifras son de esa fecha; lo que cambió después está en los documentos 08 
 - **Desenfoque en Firefox.** El Firefox sin interfaz y sus capturas no dibujan `backdrop-filter`, y quería
   saber si el cristal se veía de verdad. `pnpm test:blur` lanza Firefox con ventana en un servidor X virtual,
   dibuja un rayado de 2 px detrás de un menú, un modal, un aviso y el velo, y mide en una captura de la
-  pantalla cuánto rayado sobrevive. Con ventana se funde por completo (energía de borde de 0,0 a 1,0, frente a
-  111,7 del rayado desnudo); sin interfaz se sigue viendo (de 3,5 a 55,8). Era la captura, no el navegador.
+  pantalla cuánto rayado sobrevive. Con ventana se funde por completo (energía de borde de 0,0 a 1,0, cuando
+  la del rayado desnudo es 111,7); sin interfaz se sigue viendo (de 3,5 a 55,8). Era la captura, no el navegador.
 - **Iconos.** Hojas de contacto de los 692 dibujos, revisadas a ojo.
 
 Resultado del 2026-11-14 (correctos / fallidos / no verificables):

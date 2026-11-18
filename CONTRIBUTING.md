@@ -51,7 +51,7 @@ añadir una dependencia, el pull request lo explica; no se desactiva la polític
 Un cambio está terminado cuando pasan estos cuatro:
 
 ```
-pnpm check                                        # tokens, iconos, auditoría de estilo, manifiestos, contrato HTML, tipos
+pnpm check                                        # tokens, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, tipos
 pnpm lint && pnpm format:check                    # Biome y la regla de "use client"
 pnpm test:unit                                    # lógica pura, con umbral de cobertura
 pnpm --filter @zuccadev-labs/zuix-zudocs build    # el sitio compila sin enlaces ni anclas rotos
@@ -67,7 +67,8 @@ Según lo que toque el cambio, además:
 | Varias de las anteriores, o una versión | `pnpm verify` (todo, en Chromium) |
 
 La integración continua ejecuta lo mismo, con las suites de navegador en Chromium, Firefox y WebKit, y
-comprueba además que los archivos generados están al día (`git diff --exit-code` después de `pnpm check`).
+comprueba además que los archivos generados están al día: después de `pnpm check` el árbol de trabajo tiene
+que seguir limpio.
 Qué hace cada suite: [Calidad y pruebas](./docs/development/02-calidad-y-pruebas.md).
 
 ## Reglas del código

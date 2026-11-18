@@ -5,19 +5,19 @@ puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
 
 ## Mapa de comandos
 
-| Comando | Qué comprueba | Tiempo |
-|---|---|---|
-| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, contrato HTML, bundles de navegador y tipos | Segundos |
-| `pnpm lint` | Biome con errores y avisos bloqueantes, y la regla de `"use client"` | Segundos |
-| `pnpm format:check` | Formato de TypeScript, CSS y JSON | Segundos |
-| `pnpm test:unit` | Lógica pura, con umbral de cobertura | Segundos |
-| `pnpm --filter @zuccadev-labs/zuix-zudocs build` | El sitio compila; enlaces, anclas e imágenes resuelven | Un minuto |
-| `pnpm test:site` | El sitio compilado, página a página | Minutos |
-| `pnpm test:html` | El contrato HTML y el modo sin framework, en navegador | Minutos |
-| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador | Minutos |
-| `pnpm build` | El `dist/` de publicación | Segundos |
-| `pnpm test:pack` | Los cinco tarballs, consumidos fuera del workspace | Minutos |
-| `pnpm verify` | Todo lo anterior, en orden, en Chromium | — |
+| Comando | Qué comprueba |
+|---|---|
+| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, bundles de navegador y tipos |
+| `pnpm lint` | Biome con errores y avisos bloqueantes, y la regla de `"use client"` |
+| `pnpm format:check` | Formato de TypeScript, CSS y JSON |
+| `pnpm test:unit` | Lógica pura, con umbral de cobertura |
+| `pnpm --filter @zuccadev-labs/zuix-zudocs build` | El sitio compila; enlaces, anclas e imágenes resuelven |
+| `pnpm test:site` | El sitio compilado, página a página |
+| `pnpm test:html` | El contrato HTML y el modo sin framework, en navegador |
+| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador |
+| `pnpm build` | El `dist/` de publicación |
+| `pnpm test:pack` | Los cinco tarballs, consumidos fuera del workspace |
+| `pnpm verify` | Todo lo anterior, en orden, en Chromium |
 
 `pnpm verify` es la puerta antes de una versión. La integración continua ejecuta lo mismo y añade Firefox,
 WebKit, Node 22 y 24 y el consumidor Next.js ([CI](./03-ci-y-cadena-de-suministro.md)).
@@ -71,6 +71,14 @@ renderizarse en el servidor.
 
 `--strict` añade una columna informativa con el resto de longitudes en píxeles. El comando acepta rutas:
 sirve para auditar una aplicación que consume la suite.
+
+### Exportaciones
+
+`pnpm barrels` (`tools/check-barrels.mjs`) comprueba que todo componente con manifiesto se puede importar
+desde la raíz de su paquete: que sale del `index.ts` de su carpeta y, de ahí, del de `src/`. Sin esa
+comprobación un componente nuevo, con su manifiesto y su hoja de estilos, podría publicarse sin que nadie
+pudiera importarlo, y el compilador no lo notaría: un archivo que nadie importa no es un error de tipos. La
+dirección contraria, un componente exportado sin manifiesto, la comprueba `pnpm manifest`.
 
 ## Pruebas unitarias
 

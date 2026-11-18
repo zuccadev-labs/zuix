@@ -74,7 +74,7 @@ La validación de `pnpm tokens` mide ahora cuatro cosas, y cualquiera hace falla
 1. La matriz completa: cada token de texto sobre cada superficie.
 2. Los pares declarados en el contrato.
 3. Los pares reales, leídos de las hojas en cada ejecución.
-4. Lo que no es texto: bordes de control y foco frente a lo que los rodea.
+4. Lo que no es texto: bordes de control y foco contra lo que los rodea.
 
 Dos decisiones de detalle. Las superficies translúcidas se componen sobre los extremos del degradado del
 fondo, no sobre su media: es una cota conservadora, y prefiero un falso negativo a un panel ilegible sobre la
