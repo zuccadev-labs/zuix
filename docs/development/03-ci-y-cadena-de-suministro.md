@@ -129,5 +129,8 @@ de contenido que genera `zudocs headers` no tiene efecto allí; sirve en un aloj
 
 - El workflow `release` no ha publicado todavía ninguna versión: la primera será la `0.2.0`. Lo validé en
   local y con la ejecución de ensayo.
+- El trabajo de Windows no ha corrido todavía en ningún runner: repasé los scripts que ejecuta (rutas,
+  finales de línea, procesos hijos) sin tener un Windows donde probarlos. Por eso se ve en el pull request
+  y no forma parte de la verificación de una publicación.
 - El despliegue de `pages` en el alojamiento real.
 - La puntuación de Scorecard con estos cambios ya en `main`.
