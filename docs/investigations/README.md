@@ -1,34 +1,40 @@
-# Investigaciones de Zuix
+# Investigaciones de zuix
 
-Registro de lo que se analizó antes de construir la suite y de las decisiones que salen de ahí.
-Última actualización: 2026-11-13.
-
-Las rutas de otros proyectos se escriben relativas a la raíz de cada proyecto. Los proyectos privados o de
-terceros se citan con una descripción neutra ("proyecto de origen", "design system base"), sin nombre ni ruta.
+Mis notas de investigación y las decisiones que salieron de ellas. Cada documento cuenta qué me planteé, qué
+comparé, qué medí, qué decidí y qué descarté. Sirven para entender por qué la suite es como es, y para no
+repetir una discusión que ya tuve conmigo mismo.
 
 ## Lectura en orden
 
 | # | Documento | Qué responde |
 |---|---|---|
-| 00 | [00-investigacion-inicial.md](00-investigacion-inicial.md) | Arquitectura de un sistema de diseño corporativo: tokens, headless, Tailwind con variables CSS, CSS nativo moderno |
-| 01 | [01-estado-y-problematica.md](01-estado-y-problematica.md) | Qué existe hoy en zuix y qué problema resuelve la suite |
-| 02 | [02-fuentes-de-estilo.md](02-fuentes-de-estilo.md) | De dónde sale el estilo: liquid glass de zutool, el design system base y el manual de marca |
-| 03 | [03-zicon-dazicon.md](03-zicon-dazicon.md) | Qué contiene `Dazicon.fig` y cómo se extrae sin Figma |
-| 04 | [04-componentes-de-referencia.md](04-componentes-de-referencia.md) | Carousel con efecto lente, bibliotecas de `stack.txt` y kits de Figma |
-| 05 | [05-zudocs-docusaurus.md](05-zudocs-docusaurus.md) | Estado de Docusaurus, estándar documental de facto y modelo tipo Mintlify |
-| 06 | [06-arquitectura-y-decisiones.md](06-arquitectura-y-decisiones.md) | Paquetes de la suite, orden de construcción y decisiones |
-| 07 | [07-estado-de-construccion.md](07-estado-de-construccion.md) | Qué se construyó, cómo se verificó y qué falta |
+| 00 | [Investigación inicial](./00-investigacion-inicial.md) | Cómo se separan tokens, lógica y estilos en un sistema de diseño, y cuánto puede hacer ya el CSS sin JavaScript |
+| 01 | [Estado de partida y problemática](./01-estado-y-problematica.md) | Qué había antes de zuix y qué problema resuelve la suite |
+| 02 | [Fuentes de estilo](./02-fuentes-de-estilo.md) | De dónde sale el estilo: el liquid glass de zutool, un design system anterior y el manual de marca |
+| 03 | [Zicon: extracción de Dazicon](./03-zicon-dazicon.md) | Qué contiene el archivo de Figma de los iconos y cómo se extrae sin Figma |
+| 04 | [Componentes de referencia](./04-componentes-de-referencia.md) | El Carousel con efecto lente, las bibliotecas que miré como referencia y el código propio que ya existía |
+| 05 | [Zudocs: Docusaurus y estándar documental](./05-zudocs-docusaurus.md) | Por qué Docusaurus, qué estándar documental ya usaba sin haberlo escrito y qué copié de Mintlify |
+| 06 | [Arquitectura de la suite y decisiones](./06-arquitectura-y-decisiones.md) | Qué paquetes planeé, en qué orden y cómo acabó cada decisión |
+| 07 | [Construcción de la 0.1.0](./07-construccion-de-la-0-1-0.md) | Qué construí, cómo lo verifiqué y qué fallos encontré por el camino |
+| 08 | [Primitivas propias](./08-primitivas-propias.md) | Por qué quité la biblioteca de UI que había debajo del binding de React y qué medí al hacerlo |
+| 09 | [Accesibilidad medida](./09-accesibilidad-medida.md) | Cómo pasé de afirmar WCAG AA a medirlo: contraste, RTL, colores forzados y táctil |
+| 10 | [Node, dependencias y cadena de suministro](./10-node-dependencias-y-cadena-de-suministro.md) | Qué versiones admito, cómo protejo la instalación y cómo publico sin tokens |
+| 11 | [Lint, pruebas y por qué no Barrits](./11-lint-pruebas-y-barrits.md) | Por qué Biome y no ESLint, por qué `node:test`, y por qué no uso aquí mi propio Barrits |
+| 12 | [El sitio de documentación, medido](./12-el-sitio-medido.md) | Qué encontré al auditar zudocs: seguridad, fuentes, rendimiento, `llms.txt` y despliegue |
 
-## Estado
+## Cómo leerlas
 
-- Los paquetes existen y pasan su verificación (documento 07). Desde el 2026-11-14 están publicados en
-  npmjs.com en `0.1.0`; el procedimiento está en `docs/package/02-publicacion.md`.
-- Los documentos 01 a 06 se escribieron antes de construir: describen el análisis y el plan. Donde la
-  construcción se apartó del plan, manda el documento 07.
-- Los documentos de usuario en [`../users/`](../users/README.md) describen lo construido.
+- Los documentos 00 a 06 son anteriores a la construcción: describen el análisis y el plan. Donde la
+  construcción se apartó del plan, lo digo en el propio documento.
+- El 07 es el registro de la `0.1.0`. Del 08 al 12, lo que investigué y cambié para la `0.2.0`.
+- La guía de uso está en [`../users/`](../users/README.md): describe lo que hay, no cómo llegué a ello.
 
 ## Convención
 
 - Un documento por tema, con prefijo numérico de dos dígitos.
-- Cada afirmación sobre otro proyecto dice de qué proyecto sale y, si el proyecto es propio, la ruta dentro de él.
-- Lo que no se verificó se dice explícitamente.
+- Las cifras llevan su fecha y cómo las obtuve.
+- Las fuentes externas que sostienen una decisión se citan con su URL.
+- Lo que no he comprobado se dice.
+- De otros proyectos míos (zutool, `ui-glass`, analizador-trafico, Barrits) cito la ruta dentro de su
+  repositorio. Los proyectos privados no se nombran: el design system y el carousel que reutilicé salen de un
+  "proyecto de origen" que no identifico.

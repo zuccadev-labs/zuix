@@ -1,14 +1,17 @@
-# 04 · Componentes de referencia
+# Componentes de referencia
 
-Fecha: 2026-11-12.
+Notas del 2026-11-12, antes de construir `zui`. Qué miré para decidir qué componentes hacer y cómo: un
+carousel propio que quería rescatar, las bibliotecas que tenía apuntadas como inspiración y el código que ya
+tenía escrito en otros proyectos.
 
 ## A. Carousel con efecto lente
 
-Origen: la página de presentación del proyecto de origen (privado; no se cita su nombre ni su ruta).
+Sale de la página de presentación del proyecto de origen (privado; no cito su nombre ni su ruta). Quería
+traerlo a la suite sin su dominio.
 
 | Archivo | Líneas | Papel |
 |---|---|---|
-| Componente principal (`.tsx`) | 953 | Componente: estado, gestos, animación, accesibilidad |
+| Componente principal | 953 | Estado, gestos, animación, accesibilidad |
 | `lensRenderer.ts` | 396 | Dibujo WebGL2 de las zonas curvas |
 | `cardRaster.ts` | 216 | Copia cada tarjeta HTML a una textura |
 | `lens.ts` | 146 | Geometría pura de la lente |
@@ -17,8 +20,7 @@ Origen: la página de presentación del proyecto de origen (privado; no se cita 
 
 - Tira infinita con tres copias del contenido.
 - El centro queda plano y los bordes se curvan en S, con ampliación horizontal y refracción.
-- Arrastre con inercia y avance ligado al scroll de la página.
-- Cursor propio "Ver" y apertura de la tarjeta a pantalla de sección con "Cerrar".
+- Arrastre con inercia y avance ligado al desplazamiento de la página.
 - Flechas, contador y anuncio para lectores de pantalla.
 
 ### Modos de dibujo
@@ -29,58 +31,61 @@ Origen: la página de presentación del proyecto de origen (privado; no se cita 
 | `css` | Sin WebGL2 o mientras carga | Cada tarjeta se deforma con `matrix3d` |
 | `flat` | `prefers-reduced-motion` | Tira plana sin animación |
 
-### Acoplamientos con el proyecto de origen
+### Acoplamientos que tenía
 
-- `animejs` para animación, inercia y scroll.
-- Iconos del design system base.
-- Un tipo de datos y textos propios del dominio del proyecto.
-- Clases propias dentro de la hoja global de esa aplicación (1.994 líneas).
+- Una biblioteca de animación para la inercia y el desplazamiento.
+- Los iconos y las clases del proyecto de origen, y un tipo de datos de su dominio.
 - React 18.
 
-### Extracción prevista
+### Cómo lo extraje
 
-1. `Carousel` base en `zui`: pista, bucle, arrastre, ajuste, teclado y anuncios. Sin efecto.
-2. Efecto lente como capa opcional sobre el `Carousel`. `lens.ts` se reutiliza tal cual.
-3. Contenido por slots: la tarjeta la define quien lo usa.
-4. Estilos movidos a tokens de la suite.
-
-Pendiente: confirmar que el código de este proyecto de cliente puede reutilizarse en la suite.
-
-## B. Referencias de `stack.txt`
-
-| Referencia | Qué es | Distribución | Aporte a zuix |
-|---|---|---|---|
-| [Shark UI](https://shark-ui.com/) | 90+ componentes con tokens semánticos; React, Solid, Vue y Svelte | no indicada en la portada | Lista de control de "sistema completo" |
-| [NeonBlade UI](https://neonbladeui.neuronrush.com/) | 41+ componentes React + Tailwind, estética neón | CLI o copiar y pegar | Efectos y variantes |
-| [Dot Matrix](https://dotmatrix.zzzzshawn.cloud/) | unos 87 loaders de matriz de puntos | registro shadcn | Paquete de loaders |
-| [remocn](https://remocn.dev/) | 932 componentes de movimiento para Remotion; MIT | registro shadcn | Motion para video, no UI de aplicación |
-| [ArrowJS](https://arrow-js.com/) | framework reactivo de menos de 5 KB, sin build, con sandbox para agentes; MIT | npm | Alternativa a React |
-| [Radix Primitives](https://github.com/radix-ui/primitives) | primitivos headless accesibles | npm | Capa de lógica de `zui` |
-
-### Observaciones
-
-- Dot Matrix y remocn usan un registro estilo shadcn: el código se copia al proyecto y se edita.
-  NeonBlade ofrece CLI o copiar y pegar.
-- Solo remocn y ArrowJS declaran licencia MIT en su página. El resto dice "open source" sin nombrarla.
-- La portada de NeonBlade y la de Shark UI no listan el catálogo completo; se revisó solo lo visible.
-
-### Criterio de uso
-
-Las referencias sirven como catálogo y comportamiento a igualar. Los componentes se reimplementan sobre
-los tokens de zuix. Copiar código fuente requiere revisar antes la licencia de cada una.
-
-## C. Kits de Figma
-
-- `Dazicon.fig` contiene botones, campos y chips (documento 03).
-- `SISTEMAS DE DISEÑO.fig` y `Design System - Proyectos Regulares (…).fig`, en la misma carpeta,
-  son candidatos a fuente de diseño de componentes. No se abrieron.
-
-## D. Componentes propios ya escritos
-
-| Fuente | Qué aporta |
+| Plan | Resultado |
 |---|---|
-| zutool: `apps/desktop/src/ui/primitives` | Primitivos liquid glass y `Popover` |
-| zutool: `apps/desktop/src/ui/layout` | Shell: rail, sidebar, main, inspector, cajones |
+| Un `Carousel` base: pista, bucle, arrastre, ajuste, teclado y anuncios | `zui/src/components/carousel/`, con el motor en un módulo sin React (`engine.ts`) que también usa el modo sin framework |
+| El efecto lente como capa opcional; `lens.ts` tal cual | `effect="lens"` o `"none"`. La geometría pura se quedó casi igual y tiene pruebas unitarias |
+| Contenido por slots | `renderItem`: la tarjeta la define quien lo usa |
+| Estilos sobre tokens de la suite | Hecho; sin la biblioteca de animación ni dependencias del dominio |
+
+Lo que no traje: el cursor propio y la apertura de la tarjeta a pantalla de sección, que eran de aquella
+página.
+
+## B. Las referencias que tenía apuntadas
+
+Tenía apuntados unos enlaces a bibliotecas que me parecían bien resueltas. Estaban en un archivo suelto en
+la raíz del repositorio; los dejo aquí, que es donde tienen sentido.
+
+| Referencia | Qué es | Qué me aportó |
+|---|---|---|
+| [Shark UI](https://shark.vini.one/) | Biblioteca de componentes con tokens semánticos para varios frameworks | Lista de control de qué es un "sistema completo" |
+| [NeonBlade UI](https://neonbladeui.neuronrush.com/) | Componentes de React con estética neón, por CLI o copiar y pegar | Efectos y variantes |
+| [Dot Matrix](https://dotmatrix.zzzzshawn.cloud/) | Colección de loaders de matriz de puntos, distribuida como registro copiable | La idea de un paquete de loaders, que no he hecho |
+| [remocn](https://remocn.dev/) | Componentes de movimiento para vídeo programático | Movimiento para vídeo, no interfaz de aplicación |
+| [ArrowJS](https://arrow-js.com/play/) | Un framework reactivo mínimo, sin paso de compilación | La alternativa a React que consideré para el núcleo |
+| [Radix Primitives](https://github.com/radix-ui/primitives) | Primitivos headless accesibles para React | La capa de lógica de `zui` en la `0.1.0`. La sustituí en la `0.2.0` ([Primitivas propias](./08-primitivas-propias.md)) |
+
+### Qué hice con ellas
+
+No copié código de ninguna. Me sirvieron de catálogo y de vara de medida: qué componentes tiene un sistema
+completo y cómo se comporta cada uno. Los componentes de `zui` están reimplementados sobre los tokens de la
+suite. Copiar código habría exigido revisar la licencia de cada una, y varias no la declaran con claridad en
+su página.
+
+Dos de ellas distribuyen sus componentes como un registro del que el código se copia al proyecto y se edita.
+Lo consideré para los componentes con estilo de `zui` y al final lo distribuí todo por npm, con versión
+([cómo quedó cada decisión](./06-arquitectura-y-decisiones.md#decisiones)).
+
+De la `0.1.0` queda una deuda reconocida con una de estas referencias: la zona de gracia del puntero en los
+submenús sigue la técnica de Radix Primitives, con código propio. Su aviso de licencia está en
+`THIRD_PARTY_NOTICES.md`, dentro de `zui`.
+
+## C. Código propio que ya existía
+
+| Fuente | Qué aportó |
+|---|---|
+| zutool: `apps/desktop/src/ui/primitives` | Primitivos liquid glass y un `Popover` |
+| zutool: `apps/desktop/src/ui/layout` | El shell: rail, sidebar, área principal, inspector, cajones |
 | zutool: `apps/desktop/src/styles/zutool.css` | Pestañas, paneles divididos, divisores, cabecera de panel |
-| analizador-trafico: `packages/ui-glass` | `GlassPanel`, `StatTile`, `Badge`, `DataTable` |
-| Design system base | `Button`, `Input`, `Select`, `DateInput`, `Card`, `Avatar`, `Badge`, `Modal`, `Spinner`, `Tooltip`, `Toast`, `Skeleton`, `EmptyState`, `ErrorState`, `Rating`, `DataViz` |
+| analizador-trafico: `packages/ui-glass` | Panel de cristal, `StatTile`, `Badge`, `DataTable` |
+| El design system del proyecto de origen | `Button`, `Input`, `Select`, `DateInput`, `Card`, `Avatar`, `Badge`, `Modal`, `Spinner`, `Tooltip`, `Toast`, `Skeleton`, `EmptyState`, `ErrorState`, `Rating` |
+
+No traje los componentes de dominio de ese design system (pagos, reservas, clima, visor 3D, chat).
