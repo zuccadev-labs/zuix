@@ -33,7 +33,7 @@
     "test:unit": "node tests/unit/run.mjs",
     "test:site": "node tests/site/run.mjs",
     "test:site:all": "BROWSER=all node tests/site/run.mjs",
-    "verify": "pnpm check && pnpm lint && pnpm test:unit && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm test:site && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser"
+    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm test:site && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

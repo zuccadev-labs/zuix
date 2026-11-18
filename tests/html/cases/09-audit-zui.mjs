@@ -102,8 +102,22 @@ window.__ready = true;
       const file = `ex-${name}-${index}.html`;
       write(file, examplePage(name, example));
       const { tab, problems } = await openPage(file);
+      // Espera a que se cumpla `check` (hasta `timeout` ms) y devuelve si se cumplió. Sustituye a «esperar N ms y mirar
+      // una vez»: con la CPU saturada una animación de salida de 200 ms puede tardar un segundo, y eso no es un fallo
+      // del componente. Lo que se comprueba es lo mismo; solo cambia cuánto se espera antes de darlo por incumplido.
+      const soon = async (check, timeout = 5000) => {
+        const end = Date.now() + timeout;
+        for (;;) {
+          if (await check()) return true;
+          if (Date.now() > end) return false;
+          await tab.waitForTimeout(40);
+        }
+      };
       try {
-        await tab.waitForTimeout(60);
+        await soon(
+          () => tab.evaluate(() => [...document.querySelectorAll("z-icon")].every((i) => i.querySelector("svg.z-icon path"))),
+          3000,
+        );
         // Iconos dibujados y nada desbordado.
         const state = await tab.evaluate(() => ({
           icons: [...document.querySelectorAll("z-icon")]
@@ -121,11 +135,13 @@ window.__ready = true;
           const ref = await opener.getAttribute("data-z-open");
           if (await opener.isDisabled().catch(() => false)) continue;
           await opener.click();
-          await tab.waitForTimeout(120);
-          const opened = await tab.evaluate((r) => {
-            const el = document.getElementById(r.slice(1));
-            return el ? (el instanceof HTMLDialogElement ? el.open : el.matches(":popover-open")) : null;
-          }, ref);
+          const isOpen = () =>
+            tab.evaluate((r) => {
+              const el = document.getElementById(r.slice(1));
+              return el ? (el instanceof HTMLDialogElement ? el.open : el.matches(":popover-open")) : null;
+            }, ref);
+          await soon(async () => (await isOpen()) === true);
+          const opened = await isOpen();
           if (opened !== true) failures.push(`${id}: data-z-open="${ref}" no abre`);
           interactions += 1;
           // Cada capa tiene nombre accesible mientras está abierta.
@@ -141,11 +157,16 @@ window.__ready = true;
           }, ref);
           if (unnamed) failures.push(`${id}: la capa ${ref} no tiene nombre accesible`);
           await tab.keyboard.press("Escape");
-          await tab.waitForTimeout(320);
-          const closed = await tab.evaluate((r) => {
-            const el = document.getElementById(r.slice(1));
-            return el instanceof HTMLDialogElement ? !el.open : !el.matches(":popover-open");
-          }, ref);
+          const isClosed = () =>
+            tab.evaluate((r) => {
+              const el = document.getElementById(r.slice(1));
+              return el instanceof HTMLDialogElement ? !el.open : !el.matches(":popover-open");
+            }, ref);
+          // Un diálogo estático no se cierra con Escape: no hay por qué agotar el plazo esperándolo.
+          const staticLayer = await tab.evaluate((r) => document.getElementById(r.slice(1)).hasAttribute("data-z-static"), ref);
+          if (staticLayer) await tab.waitForTimeout(320);
+          else await soon(isClosed);
+          const closed = await isClosed();
           if (!closed) {
             // Un diálogo estático no se cierra con Escape: se cierra con su botón.
             const isStatic = await tab.evaluate((r) => document.getElementById(r.slice(1)).hasAttribute("data-z-static"), ref);
@@ -205,7 +226,7 @@ window.__ready = true;
             continue;
           }
           await control.click();
-          await tab.waitForTimeout(80);
+          await soon(async () => (await control.getAttribute("aria-expanded")) === "true");
           interactions += 1;
           if ((await control.getAttribute("aria-expanded")) !== "true") {
             failures.push(`${id}: Select no abre`);
@@ -213,24 +234,24 @@ window.__ready = true;
           }
           await tab.keyboard.press("End");
           await tab.keyboard.press("Enter");
-          await tab.waitForTimeout(80);
+          await soon(async () => (await control.getAttribute("aria-expanded")) === "false");
           if ((await control.getAttribute("aria-expanded")) !== "false") failures.push(`${id}: Select no cierra al elegir`);
         }
         for (const input of await tab.locator(".z-combobox input.z-input__control:not([disabled])").all()) {
           await input.click();
-          await tab.waitForTimeout(80);
+          await soon(async () => (await input.getAttribute("aria-expanded")) === "true");
           interactions += 1;
           if ((await input.getAttribute("aria-expanded")) !== "true") failures.push(`${id}: Combobox no abre`);
           await tab.keyboard.press("Escape");
         }
         for (const control of await tab.locator(".z-datepicker > button.z-select__control:not([disabled])").all()) {
           await control.click();
-          await tab.waitForTimeout(100);
+          await soon(() => tab.evaluate(() => document.activeElement?.classList.contains("z-calendar__day") === true));
           interactions += 1;
           if (!(await tab.evaluate(() => document.activeElement?.classList.contains("z-calendar__day"))))
             failures.push(`${id}: DatePicker no enfoca un día al abrir`);
           await tab.keyboard.press("Escape");
-          await tab.waitForTimeout(60);
+          await soon(async () => (await control.getAttribute("aria-expanded")) !== "true");
         }
         for (const cal of await tab.locator("[data-z-dom] .z-calendar").all()) {
           if (!(await cal.isVisible())) continue;
@@ -287,11 +308,11 @@ window.__ready = true;
         }
         for (const host of await tab.locator("[data-z-tooltip]").all()) {
           await host.hover();
-          await tab.waitForTimeout(450);
+          await soon(async () => (await tab.locator('.z-tooltip[role="tooltip"]').count()) > 0);
           interactions += 1;
           if (!(await tab.locator('.z-tooltip[role="tooltip"]').count())) failures.push(`${id}: Tooltip no aparece`);
           await tab.mouse.move(2, 2);
-          await tab.waitForTimeout(200);
+          await soon(async () => (await tab.locator('.z-tooltip[role="tooltip"]').count()) === 0, 3000);
         }
         // Botones que el script del ejemplo conecta (toast, confirm): un clic no debe lanzar.
         for (const button of await tab.locator("main > button[id]:not([data-z-open]), main > .z-btn[id]:not([data-z-open])").all()) {
@@ -300,11 +321,18 @@ window.__ready = true;
           interactions += 1;
           if (await tab.locator("dialog.z-confirm[open]").count()) {
             await tab.keyboard.press("Escape");
-            await tab.waitForTimeout(300);
+            await soon(async () => (await tab.locator("dialog.z-confirm[open]").count()) === 0);
           }
         }
         await tab.mouse.move(2, 2);
-        await tab.waitForTimeout(80);
+        // axe mide contraste y visibilidad: se evalúa con las animaciones de entrada y salida ya terminadas.
+        await soon(
+          () =>
+            tab.evaluate(() =>
+              document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+            ),
+          3000,
+        );
         await tab.evaluate(axeSource);
         const violations = await tab.evaluate(async () => {
           const result = await window.axe.run(document, { resultTypes: ["violations"] });
