@@ -62,7 +62,6 @@ pnpm --filter @zuccadev-labs/zuix-zudocs new -- guia users "Cómo cambiar de mar
 | `verify [--strict]` | Comprueba la configuración y la documentación sin compilar |
 | `new <tipo> <area> "<título>" ["<descripción>"]` | Documento nuevo desde una plantilla |
 | `llms` | Solo regenera `llms.txt`, `llms-full.txt` y `robots.txt` |
-| `fonts [--out-dir <carpeta>] [<url> …]` | Descarga las fuentes remotas para autoalojarlas |
 | `headers [--out-dir <ruta>]` | Escribe `_headers` (política de contenido y caché) en el sitio compilado |
 | `info` | Muestra las rutas y la URL que usará el proyecto |
 
@@ -186,15 +185,31 @@ explica qué va en cada una. `new` copia la plantilla al área, con el siguiente
 
 Las fuentes del sitio de zuix están autoalojadas (`zudocs/src/fonts/`, diez archivos `woff2` con licencia
 OFL): ninguna visita hace una petición a un tercero, y eso permite además una política de contenido
-estricta. Para otro proyecto:
+estricta. Para otro proyecto hay dos caminos:
 
-```
-pnpm --filter @zuccadev-labs/zuix-zudocs fonts -- --config <ruta>/zudocs.config.json "https://fonts.googleapis.com/css2?family=Inter:wght@400;600"
+- **A mano.** Descarga los `.woff2` de la fuente oficial de la tipografía (su repositorio o la página de su
+  autor), guárdalos junto a la configuración con el archivo de licencia y escribe una hoja con un `@font-face`
+  por archivo, con `src: url("./archivo.woff2") format("woff2")`. `zudocs/src/fonts/fonts.css` sirve de
+  modelo.
+- **Con un paquete [`@fontsource/*`](https://fontsource.org/).** `pnpm add -D @fontsource/inter` trae los
+  archivos y sus hojas por el gestor de paquetes: con la integridad anotada en el lockfile y sujeto a las
+  políticas de `pnpm-workspace.yaml` (antigüedad mínima, procedencia, sin scripts de instalación). La hoja
+  local es la del paquete, por ejemplo `node_modules/@fontsource/inter/latin-400.css`.
+
+En los dos casos se declara la hoja en `fonts`, con la ruta relativa a la configuración:
+
+```json
+{ "fonts": ["fonts/fonts.css"] }
 ```
 
-`fonts` descarga la hoja y sus archivos (subconjuntos `latin` y `latin-ext`) y escribe una hoja local; se
-pone su ruta en `fonts` y el resultado se versiona. Es el único comando que usa la red. Una URL remota en
-`fonts` sigue funcionando, pero `verify` avisa.
+Una hoja local se empaqueta con el sitio y sus `url()` relativas se resuelven desde la carpeta de la hoja.
+Una URL remota en `fonts` sigue funcionando, pero `verify` avisa.
+
+Quité el descargador (`zudocs fonts`) antes de publicarlo. Bajaba una hoja de Google Fonts y sus archivos y
+los escribía en el repositorio: un comando que trae archivos de internet y los deja versionados es justo lo
+que las políticas de dependencias de este proyecto evitan, y ninguna validación cambia eso. Las fuentes
+entran como cualquier otra dependencia, revisadas a mano o por el gestor de paquetes. Ningún comando de
+zudocs usa la red.
 
 ### Buscador
 
@@ -305,3 +320,4 @@ privado y el piloto no se versiona aquí. De él salió la marca `zenith` de los
   todavía no están traducidos.
 - Usar el bin desde un proyecto que instale `@zuccadev-labs/zuix-zudocs` como dependencia publicada: el
   paquete no está publicado.
+- El camino de `@fontsource/*` en un sitio real: las fuentes de zuix están copiadas a mano.

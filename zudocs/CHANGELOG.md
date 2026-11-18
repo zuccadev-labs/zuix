@@ -27,8 +27,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 - Campos de configuración: `url`, `baseUrl`, `locale`, `image`, `favicon`, `trailingSlash`, `llms.full` y
   `markdown.untrusted`. `ZUDOCS_URL` y `ZUDOCS_BASE_URL` sustituyen `url` y `baseUrl` en una ejecución.
-- `zudocs fonts`: descarga una hoja de fuentes remota y sus archivos para autoalojarlos. `fonts` admite hojas
-  locales, que se empaquetan con el sitio.
+- `fonts` admite hojas locales, que se empaquetan con el sitio. Las fuentes se autoalojan a mano o con un
+  paquete `@fontsource/*`: zudocs no trae un comando que las descargue.
 - `zudocs headers` y `build --headers`: archivo `_headers` con una política de seguridad de contenido que
   autoriza por su hash solo los scripts en línea de la plantilla.
 - `markdown.untrusted`: `verify` rechaza los `.mdx` y el HTML activo en los `.md`.
