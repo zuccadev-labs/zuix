@@ -183,7 +183,7 @@ explica qué va en cada una. `new` copia la plantilla al área, con el siguiente
 
 ### Fuentes
 
-Las fuentes del sitio de zuix están autoalojadas (`zudocs/src/fonts/`, diez archivos `woff2` con licencia
+Las fuentes del sitio de zuix están autoalojadas (`zudocs/src/fonts/`, cuatro archivos `woff2` con licencia
 OFL): ninguna visita hace una petición a un tercero, y eso permite además una política de contenido
 estricta. Para otro proyecto hay dos caminos:
 

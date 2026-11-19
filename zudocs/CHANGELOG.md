@@ -7,6 +7,12 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Cambiado
+
+- El sitio deja de cargar Poppins: con la base visual nueva, la marca `dazlabs` usa DM Sans también en los
+  titulares. Quedan autoalojadas DM Sans y JetBrains Mono.
+
+
 ## [0.2.0] - 2026-11-18
 
 ### Cambios incompatibles
