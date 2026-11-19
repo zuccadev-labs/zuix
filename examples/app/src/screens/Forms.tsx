@@ -20,6 +20,7 @@ import {
   type SelectOption,
   type SelectOptionGroup,
 } from "@zuccadev-labs/zuix-zui";
+import { DateTimeFields } from "./DateTimeFields";
 
 const ROLES: ReadonlyArray<SelectOption | SelectOptionGroup> = [
   { value: "viewer", label: "Viewer", icon: "eye" },
@@ -376,6 +377,7 @@ export function Forms() {
           </Modal>
         </div>
       </PageSection>
+      <DateTimeFields />
     </Page>
   );
 }

@@ -1542,4 +1542,147 @@
       height: max(100%, var(--z-touch-target, 0px));
     }
   }
+
+  /* ---- DateField, TimeField, TimePicker ----
+     El campo es un `.z-input` (superficie de control, borde, radio por tamaño y anillo en `:focus-within`); cada
+     segmento es un spinbutton de texto. El activo se rellena de acento; los vacíos muestran su marcador atenuado.
+     El panel de TimePicker es un `.z-popover` con columnas o franjas de `item-radius`. */
+  .z-datefield {
+    position: relative;
+    cursor: text;
+    font-variant-numeric: tabular-nums;
+  }
+  .z-datefield[data-disabled] {
+    cursor: not-allowed;
+  }
+  .z-datefield__input {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .z-datefield__segment {
+    padding-inline: 2px;
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg);
+    caret-color: transparent;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-datefield__segment[data-placeholder] {
+    color: var(--z-fg-subtle);
+  }
+  .z-datefield__segment:focus {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-datefield[data-readonly] .z-datefield__segment:focus {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+  }
+  .z-datefield__literal {
+    color: var(--z-fg-muted);
+    white-space: pre;
+  }
+  .z-datefield .z-input__action[hidden] {
+    display: none;
+  }
+  .z-timepicker__trigger[aria-expanded="true"] {
+    color: var(--z-fg);
+  }
+
+  .z-timepicker__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    padding: var(--z-space-1-5);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-timepicker__columns {
+    display: flex;
+    gap: var(--z-space-1);
+  }
+  .z-timepicker__column,
+  .z-timepicker__list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: min(224px, var(--z-available-height, 224px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--z-line-strong) transparent;
+  }
+  .z-timepicker__column {
+    min-width: 3.25rem;
+  }
+  .z-timepicker__column + .z-timepicker__column {
+    padding-inline-start: var(--z-space-1);
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-timepicker__list {
+    min-width: max(8rem, var(--z-anchor-width, 0px));
+    max-height: min(280px, var(--z-available-height, 280px));
+  }
+  .z-timepicker__option {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-height: max(32px, var(--z-touch-target, 0px));
+    padding: var(--z-space-1) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-medium);
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    scroll-margin: var(--z-space-1);
+  }
+  .z-timepicker__list .z-timepicker__option {
+    justify-content: flex-start;
+  }
+  @media (hover: hover) {
+    .z-timepicker__option:hover:not([aria-disabled="true"], [aria-selected="true"]) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-timepicker__option[aria-selected="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-timepicker__option:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-timepicker__option[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-timepicker__query {
+    padding: var(--z-space-1) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-timepicker__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-block-start: var(--z-space-1);
+    border-block-start: 1px solid var(--z-line);
+  }
+  @media (forced-colors: active) {
+    .z-datefield__segment:focus,
+    .z-timepicker__option[aria-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
 }
