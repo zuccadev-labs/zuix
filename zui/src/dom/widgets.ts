@@ -10,6 +10,8 @@ import { setCalendarOptions, type CalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
 import { patchChildren } from "./vtree";
 import { freeBusyWidget } from "../core/freebusy-widget";
+import { habitWidget } from "../core/habit-widget";
+import { heatmapWidget } from "../core/heatmap-widget";
 import { perpetualWidget } from "../core/perpetual-widget";
 import { slotPickerWidget } from "../core/slots-widget";
 import { timelineWidget } from "../core/timeline-widget";
@@ -32,6 +34,8 @@ registerWidget(perpetualWidget);
 registerWidget(timelineWidget);
 registerWidget(freeBusyWidget);
 registerWidget(slotPickerWidget);
+registerWidget(heatmapWidget);
+registerWidget(habitWidget);
 
 /** Registra una pieza para que `hydrate` la monte. */
 export function registerWidget(widget: AnyWidget): void {

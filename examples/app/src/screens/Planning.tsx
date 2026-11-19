@@ -1,6 +1,9 @@
 import { useState, type ReactNode } from "react";
 import {
   FreeBusy,
+  CalendarHeatmap,
+  HabitCalendar,
+  type HabitState,
   PerpetualYear,
   SlotPicker,
   TimelineView,
@@ -81,8 +84,50 @@ export const GUESTS: FreeBusyAttendee[] = [
   { id: "you", name: "You", meta: "Madrid", timeZone: TZ, workingHours: { start: "08:00", end: "19:00" }, busy: [busy("10:00", "12:00"), busy("13:00", "13:45"), busy("15:00", "16:00")] },
 ];
 
-export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy" | "slots";
-export const PIECES: PieceId[] = ["perpetual", "gantt", "resources", "freebusy", "slots"];
+export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy" | "slots" | "heatmap" | "habits";
+export const PIECES: PieceId[] = ["perpetual", "gantt", "resources", "freebusy", "slots", "heatmap", "habits"];
+
+// Contribuciones de 2026 (deterministas: un generador sencillo con semilla, sin Math.random).
+function contributions(): Record<string, number> {
+  const out: Record<string, number> = {};
+  let seed = 7;
+  const next = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+  for (let d = new Date(Date.UTC(2026, 0, 1)); d <= new Date(Date.UTC(2026, 10, 19)); d.setUTCDate(d.getUTCDate() + 1)) {
+    const weekend = d.getUTCDay() === 0 || d.getUTCDay() === 6;
+    const r = next();
+    const v = r < (weekend ? 0.55 : 0.18) ? 0 : Math.round(r * (weekend ? 4 : 9));
+    if (v) out[d.toISOString().slice(0, 10)] = v;
+  }
+  for (let i = 0; i < 12; i++) out[`2026-11-${String(8 + i).padStart(2, "0")}`] = Math.max(out[`2026-11-${String(8 + i).padStart(2, "0")}`] ?? 0, 3 + (i % 4));
+  out["2026-11-12"] = 14;
+  return out;
+}
+export const CONTRIBUTIONS = contributions();
+
+export const HABITS: Record<string, HabitState> = {
+  "2026-11-02": "done",
+  "2026-11-03": "done",
+  "2026-11-04": "missed",
+  "2026-11-05": "done",
+  "2026-11-06": "done",
+  "2026-11-07": "done",
+  "2026-11-08": "rest",
+  "2026-11-09": "done",
+  "2026-11-10": "done",
+  "2026-11-11": "missed",
+  "2026-11-12": "done",
+  "2026-11-13": "done",
+  "2026-11-14": "done",
+  "2026-11-15": "rest",
+  "2026-11-16": "done",
+  "2026-11-17": "done",
+  "2026-11-18": "done",
+  "2026-11-19": { progress: 60 },
+};
+const LESSONS: Record<string, HabitState> = { "2026-11-16": "done", "2026-11-17": "done", "2026-11-18": "done" };
 
 // Disponibilidad del anfitrión (Madrid): días laborables 09:00–17:00, franjas de 30 min, algunas ya reservadas.
 const HOST_BUSY = [
@@ -204,6 +249,70 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
               weekStartsOn={1}
               onSelect={(slot) => setLog(`Slot: ${slot.start}`)}
               onConfirm={(slot) => setLog(`Confirm: ${slot.start}`)}
+            />
+          </div>
+        </Section>
+      ) : null}
+      {show("heatmap") ? (
+        <Section id="heatmap" title="Contributions">
+          <div className="app-planning__stack">
+            <CalendarHeatmap
+              id="app-heatmap"
+              title={`${Object.values(CONTRIBUTIONS).reduce((a, b) => a + b, 0).toLocaleString("en-GB")} contributions in 2026`}
+              values={CONTRIBUTIONS}
+              range={{ from: "2026-01-01", to: "2026-12-31" }}
+              today={AGENDA_TODAY}
+              locale="en-GB"
+              weekStartsOn={1}
+              onDayClick={({ date, value }) => setLog(`Day: ${date} ${value}`)}
+            />
+            <div className="app-planning__row">
+              <CalendarHeatmap
+                id="app-heatmap-12"
+                title="Last 12 weeks · color"
+                values={CONTRIBUTIONS}
+                range={{ from: "2026-08-31", to: AGENDA_TODAY }}
+                today={AGENDA_TODAY}
+                locale="en-GB"
+                weekStartsOn={1}
+                showStats={false}
+              />
+              <CalendarHeatmap
+                id="app-heatmap-size"
+                title="Last 12 weeks · size + color"
+                values={CONTRIBUTIONS}
+                range={{ from: "2026-08-31", to: AGENDA_TODAY }}
+                today={AGENDA_TODAY}
+                locale="en-GB"
+                weekStartsOn={1}
+                encoding="size"
+                showStats={false}
+              />
+            </div>
+          </div>
+        </Section>
+      ) : null}
+      {show("habits") ? (
+        <Section id="habits" title="Habits">
+          <div className="app-planning__row">
+            <HabitCalendar
+              id="app-habit"
+              states={HABITS}
+              subtitle="Read 20 minutes"
+              today={AGENDA_TODAY}
+              locale="en-GB"
+              weekStartsOn={1}
+              onDayClick={({ date }) => setLog(`Habit: ${date}`)}
+            />
+            <HabitCalendar
+              id="app-habit-week"
+              variant="week"
+              states={LESSONS}
+              subtitle="Practice German"
+              note="Complete a lesson today to reach 4 days."
+              today={AGENDA_TODAY}
+              locale="en-GB"
+              weekStartsOn={1}
             />
           </div>
         </Section>

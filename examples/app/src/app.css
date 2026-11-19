@@ -279,3 +279,19 @@ body {
     border-block-end: 1px solid var(--z-line);
   }
 }
+.app-planning__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-4);
+}
+.app-planning__row > .z-heatmap {
+  flex: 1 1 20rem;
+  max-inline-size: 28rem;
+}
+.app-planning__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--z-space-4);
+}

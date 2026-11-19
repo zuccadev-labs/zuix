@@ -1142,3 +1142,527 @@
     }
   }
 }
+
+@layer zui.agenda {
+  /* ---------- Mapa de calor ---------- */
+  .z-heatmap {
+    --z-hm-cell: var(--z-space-3);
+    --z-hm-gap: 3px;
+    container: z-heatmap / inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    min-inline-size: 0;
+    padding: var(--z-space-5);
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-heatmap__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+  }
+  .z-heatmap__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-heatmap__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2-5);
+    border-radius: var(--z-control-radius-sm);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  @media (hover: hover) {
+    .z-heatmap__toggle:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-heatmap__toggle[aria-pressed="true"] {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+  }
+  .z-heatmap__toggle:focus-visible,
+  .z-heatmap__cell:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 2px;
+  }
+  .z-heatmap__scroll {
+    container-type: inline-size;
+    overflow-x: auto;
+    padding-block: var(--z-space-8) var(--z-space-1-5);
+    margin-block-start: calc(var(--z-space-8) * -1 + var(--z-space-1));
+    scrollbar-width: thin;
+  }
+  .z-heatmap__body {
+    /* Celdas que llenan el ancho disponible (entre 11 y 18 px), como en el prototipo. */
+    --z-hm-cell: clamp(11px, (100cqi - var(--z-space-8)) / var(--z-hm-weeks) - var(--z-hm-gap), 18px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    inline-size: max-content;
+  }
+  .z-heatmap__months {
+    display: grid;
+    grid-template-columns: var(--z-space-8) repeat(var(--z-hm-weeks), var(--z-hm-cell));
+    column-gap: var(--z-hm-gap);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-fine);
+  }
+  .z-heatmap__months span {
+    grid-column: var(--z-hm-col) / span 4;
+    grid-row: 1;
+  }
+  .z-heatmap__grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-hm-gap);
+  }
+  .z-heatmap__row {
+    display: grid;
+    grid-template-columns: var(--z-space-8) repeat(var(--z-hm-weeks), var(--z-hm-cell));
+    column-gap: var(--z-hm-gap);
+    align-items: center;
+  }
+  .z-heatmap__weekday {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-fine);
+    line-height: var(--z-hm-cell);
+  }
+  .z-heatmap__cell {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-hm-cell);
+    block-size: var(--z-hm-cell);
+    border-radius: 3px;
+    background: var(--z-heatmap-0);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-fg) 6%, transparent);
+  }
+  .z-heatmap__cell[data-level="1"] {
+    background: var(--z-heatmap-1);
+  }
+  .z-heatmap__cell[data-level="2"] {
+    background: var(--z-heatmap-2);
+  }
+  .z-heatmap__cell[data-level="3"] {
+    background: var(--z-heatmap-3);
+  }
+  .z-heatmap__cell[data-level="4"] {
+    background: var(--z-heatmap-4);
+  }
+  .z-heatmap__cell[data-future] {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--z-line);
+  }
+  .z-heatmap__cell[data-pad] {
+    visibility: hidden;
+  }
+  .z-heatmap__cell[data-today] {
+    outline: 2px solid var(--z-fg);
+    outline-offset: 1px;
+  }
+  .z-heatmap__grid .z-heatmap__cell[data-date]:not([data-future]) {
+    cursor: pointer;
+  }
+  /* Etiqueta al enfocar o pasar: el valor y la fecha en texto (también en el nombre accesible). */
+  .z-heatmap__tip {
+    position: absolute;
+    z-index: var(--z-layer-tooltip);
+    inset-block-end: calc(100% + var(--z-space-1-5));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    padding: var(--z-space-1) var(--z-space-2);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+    box-shadow: var(--z-shadow-md);
+    font-size: var(--z-text-caption);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  [dir="rtl"] .z-heatmap__tip {
+    translate: 50% 0;
+  }
+  .z-heatmap__tip[data-edge="end"] {
+    inset-inline: auto 0;
+    translate: none;
+  }
+  .z-heatmap__tip[data-edge="start"] {
+    inset-inline-start: 0;
+    translate: none;
+  }
+  .z-heatmap__tip b {
+    font-weight: var(--z-weight-semibold);
+  }
+  /* Variante de tamaño: el nivel también se lee por el área del cuadrado interior. */
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell:not([data-pad]) {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--z-line);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell::after {
+    content: "";
+    inline-size: var(--z-hm-size, 0%);
+    block-size: var(--z-hm-size, 0%);
+    border-radius: 2px;
+    background: var(--z-hm-fill, var(--z-heatmap-4));
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="1"] {
+    --z-hm-size: 32%;
+    --z-hm-fill: var(--z-heatmap-1);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="2"] {
+    --z-hm-size: 55%;
+    --z-hm-fill: var(--z-heatmap-2);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="3"] {
+    --z-hm-size: 78%;
+    --z-hm-fill: var(--z-heatmap-3);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="4"] {
+    --z-hm-size: 100%;
+  }
+  .z-heatmap__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--z-space-3);
+  }
+  .z-heatmap__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-2) var(--z-space-6);
+    margin: 0;
+  }
+  .z-heatmap__stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .z-heatmap__stats dt {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-heatmap__stats dd {
+    margin: 0;
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-heatmap__legend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-heatmap__table-wrap {
+    max-block-size: calc(var(--z-space-20) * 4);
+    overflow: auto;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-item-radius);
+    background: var(--z-reading-bg);
+    container-type: inline-size;
+  }
+  .z-heatmap__table-wrap:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 2px;
+  }
+  .z-heatmap__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--z-text-small);
+  }
+  .z-heatmap__table caption {
+    padding: var(--z-space-2) var(--z-space-3);
+    color: var(--z-fg-muted);
+    text-align: start;
+  }
+  .z-heatmap__table thead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-layer-raised);
+  }
+  .z-heatmap__table th,
+  .z-heatmap__table td {
+    padding: var(--z-space-1-5) var(--z-space-3);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-surface-solid);
+    font-weight: var(--z-weight-regular);
+    text-align: start;
+  }
+  .z-heatmap__table thead th {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-heatmap__table td {
+    text-align: end;
+  }
+  /* Contraste alto (o `outline`): todo día con actividad lleva un filo del tono, así «hay / no hay» se distingue a
+     ≥ 3:1 aunque los niveles bajos no lleguen por sí solos. */
+  @media (prefers-contrast: more) {
+    .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
+      box-shadow: inset 0 0 0 1.5px var(--z-heatmap-hue);
+    }
+  }
+  .z-heatmap[data-outline] .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
+    box-shadow: inset 0 0 0 1.5px var(--z-heatmap-hue);
+  }
+  @container z-heatmap (max-width: 560px) {
+    .z-heatmap {
+      padding: var(--z-space-3);
+    }
+  }
+  @media (forced-colors: active) {
+    .z-heatmap__cell {
+      forced-color-adjust: none;
+      border: 1px solid CanvasText;
+    }
+    .z-heatmap__cell[data-level="0"] {
+      background: Canvas;
+    }
+    .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
+      background: CanvasText;
+    }
+  }
+
+  /* ---------- Rachas y hábitos ---------- */
+  .z-habit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3-5);
+    inline-size: min(100%, calc(var(--z-space-20) * 5));
+    padding: var(--z-space-5);
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-habit__head {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-3);
+  }
+  .z-habit__head p {
+    margin: 0;
+  }
+  .z-habit__flame {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: calc(var(--z-space-10) + var(--z-space-1));
+    block-size: calc(var(--z-space-10) + var(--z-space-1));
+    border-radius: var(--z-control-radius-lg);
+    background: color-mix(in srgb, var(--z-warning) 20%, var(--z-surface-solid));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-warning) 40%, transparent);
+    color: var(--z-warning-text);
+  }
+  .z-habit__count {
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-bold);
+    letter-spacing: var(--z-tracking-tight);
+    line-height: 1.1;
+  }
+  .z-habit__sub,
+  .z-habit__note {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-habit__note {
+    margin: 0;
+  }
+  .z-habit__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .z-habit__month {
+    margin: 0;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-habit__grid {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0 var(--z-space-1);
+  }
+  .z-habit__grid th {
+    padding-block-end: var(--z-space-1);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-habit__cell {
+    position: relative;
+    padding: 0;
+    text-align: center;
+  }
+  /* Banda de la racha actual: continua en la celda, con los extremos redondeados. */
+  .z-habit__cell[data-band]::before {
+    content: "";
+    position: absolute;
+    inset-block: 2px;
+    inset-inline: 0;
+    background: color-mix(in srgb, var(--z-success) 22%, transparent);
+  }
+  .z-habit__cell:is([data-band="start"], [data-band="single"])::before {
+    inset-inline-start: 2px;
+    border-start-start-radius: var(--z-calendar-cell-radius);
+    border-end-start-radius: var(--z-calendar-cell-radius);
+  }
+  .z-habit__cell:is([data-band="end"], [data-band="single"])::before {
+    inset-inline-end: 2px;
+    border-start-end-radius: var(--z-calendar-cell-radius);
+    border-end-end-radius: var(--z-calendar-cell-radius);
+  }
+  .z-habit__day {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-space-10);
+    block-size: var(--z-space-10);
+    border-radius: var(--z-calendar-cell-radius);
+    font-size: var(--z-text-small);
+    isolation: isolate;
+  }
+  .z-habit__day:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-habit__day[data-future] {
+    color: var(--z-fg-muted);
+  }
+  .z-habit__mark {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
+    display: inline-grid;
+  }
+  .z-habit__day[data-state="done"] {
+    background: var(--z-success-solid);
+    color: var(--z-fg-on-accent);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-habit__day[data-state="missed"] {
+    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--z-danger) 14%, transparent) 0 4px, transparent 4px 8px);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--z-danger) 55%, transparent);
+    color: var(--z-danger-text);
+  }
+  .z-habit__day[data-state="rest"] {
+    color: var(--z-fg-subtle);
+  }
+  .z-habit__day[data-state="rest"]::after {
+    content: "";
+    position: absolute;
+    inset-block-end: var(--z-space-1-5);
+    inline-size: var(--z-space-2-5);
+    block-size: 2px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+  /* Hoy en curso: anillo de progreso (el porcentaje, también en el nombre accesible). */
+  .z-habit__day[data-state="progress"] {
+    background: conic-gradient(var(--z-success) var(--z-habit-progress), color-mix(in srgb, var(--z-fg) 14%, transparent) 0);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-habit__day[data-state="progress"]::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    z-index: -1;
+    border-radius: calc(var(--z-calendar-cell-radius) - 3px);
+    background: var(--z-surface-solid);
+  }
+  .z-habit__day[data-today]:not([data-state]) {
+    box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
+    color: var(--z-accent-text);
+  }
+  .z-habit__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5) var(--z-space-3-5);
+    margin: 0;
+    padding: var(--z-space-2-5) 0 0;
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    list-style: none;
+  }
+  .z-habit__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+  }
+  .z-habit__legend i {
+    position: relative;
+    inline-size: var(--z-space-3-5);
+    block-size: var(--z-space-3-5);
+    border-radius: 4px;
+  }
+  .z-habit__legend i[data-state="done"] {
+    background: var(--z-success-solid);
+  }
+  .z-habit__legend i[data-state="missed"] {
+    box-shadow: inset 0 0 0 1.5px var(--z-danger);
+    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--z-danger) 30%, transparent) 0 3px, transparent 3px 6px);
+  }
+  .z-habit__legend i[data-state="rest"] {
+    box-shadow: inset 0 0 0 1px var(--z-line-strong);
+  }
+  .z-habit__legend i[data-state="progress"] {
+    background: conic-gradient(var(--z-success) var(--z-habit-progress), color-mix(in srgb, var(--z-fg) 14%, transparent) 0);
+  }
+  .z-habit__week {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--z-space-1-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-habit__weekday {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-habit__box {
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-space-9);
+    block-size: var(--z-space-9);
+    border-radius: var(--z-calendar-cell-radius);
+    box-shadow: inset 0 0 0 1.5px var(--z-line-strong);
+    color: var(--z-fg-subtle);
+  }
+  .z-habit__box[data-state="done"] {
+    background: var(--z-warning-solid);
+    box-shadow: none;
+    color: var(--z-fg-on-accent);
+  }
+  .z-habit__box[data-today]:not([data-state="done"]) {
+    box-shadow: inset 0 0 0 2px var(--z-warning);
+    color: var(--z-warning-text);
+  }
+  @media (forced-colors: active) {
+    .z-habit__day[data-state="done"],
+    .z-habit__box[data-state="done"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .z-habit__day[data-state="missed"] {
+      border: 1px dashed CanvasText;
+    }
+  }
+}
