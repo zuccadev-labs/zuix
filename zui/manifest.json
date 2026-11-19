@@ -1,13 +1,17 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 75,
+ "count": 79,
  "groups": {
   "actions": [
    "Button",
+   "ButtonGroup",
+   "CopyButton",
    "IconButton",
    "Link",
    "SegmentedControl",
-   "Toggle"
+   "Swap",
+   "Toggle",
+   "ToggleGroup"
   ],
   "agenda": [
    "EventCalendar"
@@ -109,21 +113,26 @@
      "values": [
       "primary",
       "secondary",
+      "outline",
       "ghost",
+      "link",
       "danger"
      ],
      "default": "secondary",
-     "description": "Intención."
+     "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`)."
     },
     {
      "name": "size",
      "type": "enum",
      "values": [
+      "xs",
       "sm",
       "md",
-      "lg"
+      "lg",
+      "xl"
      ],
-     "default": "md"
+     "default": "md",
+     "description": "Altura: 24, 28, 34, 40 o 48 px, con su radio concéntrico (6, 8, 10, 12, 14)."
     },
     {
      "name": "icon",
@@ -199,7 +208,16 @@
     "control-radius-lg",
     "accent-text",
     "danger-text",
-    "fg-on-accent"
+    "fg-on-accent",
+    "line-strong",
+    "control-height-xs",
+    "control-height-xl",
+    "control-radius-xl",
+    "radius-xs",
+    "space-2",
+    "space-5",
+    "text-caption",
+    "text-title"
    ],
    "classes": [
     "z-btn"
@@ -221,10 +239,213 @@
     {
      "title": "Fantasma con icono a la derecha",
      "code": "<Button variant=\"ghost\" size=\"sm\" iconRight=\"chevron-right\">View all</Button>"
+    },
+    {
+     "title": "Contorno y enlace",
+     "code": "<>\n  <Button variant=\"outline\" icon=\"arrow-down-tray\">Export</Button>\n  <Button variant=\"link\">Learn more</Button>\n</>"
+    },
+    {
+     "title": "Escala de tamaños",
+     "code": "<>\n  <Button size=\"xs\">Extra small</Button>\n  <Button size=\"sm\">Small</Button>\n  <Button>Medium</Button>\n  <Button size=\"lg\">Large</Button>\n  <Button size=\"xl\" variant=\"primary\">Extra large</Button>\n</>"
     }
    ],
    "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes de zutool; forma (rectángulo de radios concéntricos) del estándar liquid glass.",
    "file": "zui/src/components/actions/Button.manifest.json"
+  },
+  {
+   "name": "ButtonGroup",
+   "exports": [
+    "ButtonGroupSeparator"
+   ],
+   "group": "actions",
+   "description": "Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.",
+   "import": "import { ButtonGroup, ButtonGroupSeparator } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del grupo (aria-label)."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "attached",
+     "type": "boolean",
+     "default": true,
+     "description": "Une las piezas. Con `false` quedan separadas por 8 px."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Button, IconButton, el disparador de un Menu, un Input o ButtonGroupSeparator."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "space-2",
+    "line-strong"
+   ],
+   "classes": [
+    "z-btn-group",
+    "z-btn-group__separator"
+   ],
+   "a11y": "Contenedor `role=\"group\"` con nombre por `label`. Cada botón conserva su parada de Tab y su nombre; el grupo no añade teclado propio. Para un conjunto con estado (activado o no) y una sola parada de tabulación, ToggleGroup.",
+   "examples": [
+    {
+     "title": "Unido",
+     "code": "<ButtonGroup label=\"History\">\n  <Button icon=\"arrow-uturn-up-left\">Undo</Button>\n  <Button icon=\"arrow-uturn-up-right\">Redo</Button>\n  <IconButton icon=\"ellipsis-horizontal\" label=\"More\" variant=\"secondary\" />\n</ButtonGroup>"
+    },
+    {
+     "title": "Contorno con separador",
+     "code": "<ButtonGroup label=\"Export\">\n  <Button variant=\"primary\" icon=\"arrow-down-tray\">Export</Button>\n  <ButtonGroupSeparator />\n  <IconButton icon=\"chevron-down\" label=\"Export options\" variant=\"primary\" />\n</ButtonGroup>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<ButtonGroup label=\"Zoom\" orientation=\"vertical\">\n  <IconButton icon=\"plus\" label=\"Zoom in\" variant=\"outline\" />\n  <IconButton icon=\"minus\" label=\"Zoom out\" variant=\"outline\" />\n</ButtonGroup>"
+    },
+    {
+     "title": "Separado",
+     "code": "<ButtonGroup label=\"Actions\" attached={false}>\n  <Button variant=\"outline\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Button Group de Shark UI (horizontal, vertical, separador). Forma del estándar liquid glass.",
+   "file": "zui/src/components/actions/ButtonGroup.manifest.json"
+  },
+  {
+   "name": "CopyButton",
+   "group": "actions",
+   "description": "Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.",
+   "import": "import { CopyButton } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | (() => string)",
+     "description": "Texto que se copia."
+    },
+    {
+     "name": "target",
+     "type": "string",
+     "description": "Id del elemento cuyo texto (o valor, si es un campo) se copia, si no hay `value`. En el marcado: command=\"--copy\" commandfor=\"id\"."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Copy",
+     "description": "Nombre accesible del botón de solo icono. Di qué se copia («Copy API key»): varios «Copy» iguales no se distinguen."
+    },
+    {
+     "name": "copiedLabel",
+     "type": "string",
+     "default": "Copied"
+    },
+    {
+     "name": "failedLabel",
+     "type": "string",
+     "default": "Copy failed"
+    },
+    {
+     "name": "timeout",
+     "type": "number",
+     "default": 2000,
+     "description": "Milisegundos que dura la confirmación."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "outline",
+      "ghost",
+      "danger"
+     ],
+     "default": "ghost"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl"
+     ],
+     "default": "sm"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Texto visible: entonces es el nombre del botón."
+    },
+    {
+     "name": "onCopied",
+     "type": "(text: string) => void"
+    },
+    {
+     "name": "onCopyError",
+     "type": "() => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "copied",
+    "failed"
+   ],
+   "tokens": [
+    "success-text",
+    "danger-text",
+    "glass-border",
+    "control-radius-sm",
+    "tooltip-bg",
+    "shadow-md",
+    "fg",
+    "text-caption",
+    "weight-medium",
+    "leading-ui",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "layer-tooltip",
+    "duration-fast",
+    "ease-standard",
+    "ease-spring"
+   ],
+   "classes": [
+    "z-copy",
+    "z-copy__button",
+    "z-copy__status",
+    "z-btn"
+   ],
+   "a11y": "button type=\"button\" de al menos 24 × 24 px con nombre (aria-label en el de solo icono). El resultado («Copied» o «Copy failed») se escribe en una burbuja `role=\"status\"` fuera del botón: es a la vez la confirmación visible y la anunciada; el icono cambia además a una marca, así que no depende del color. No se deshabilita mientras confirma (copiar es repetible) y un mensaje repetido se vuelve a anunciar en VoiceOver. Copia con la API asíncrona del portapapeles y, si falta o la rechaza el navegador, con la copia heredada.",
+   "examples": [
+    {
+     "title": "Solo icono",
+     "code": "<CopyButton value=\"zx_live_4f9c2a\" label=\"Copy API key\" />"
+    },
+    {
+     "title": "Con texto",
+     "code": "<CopyButton value=\"pnpm add @zuccadev-labs/zuix\" variant=\"outline\">Copy command</CopyButton>"
+    },
+    {
+     "title": "Copiar otro elemento",
+     "code": "<>\n  <code id=\"invite-link\">https://example.com/i/8d2k</code>\n  <CopyButton target=\"invite-link\" label=\"Copy invite link\" />\n</>"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI.",
+   "file": "zui/src/components/actions/CopyButton.manifest.json"
   },
   {
    "name": "IconButton",
@@ -249,6 +470,7 @@
      "values": [
       "primary",
       "secondary",
+      "outline",
       "ghost",
       "danger"
      ],
@@ -258,9 +480,11 @@
      "name": "size",
      "type": "enum",
      "values": [
+      "xs",
       "sm",
       "md",
-      "lg"
+      "lg",
+      "xl"
      ],
      "default": "md"
     },
@@ -338,7 +562,12 @@
     "glass-highlight",
     "space-1-5",
     "space-3-5",
-    "weight-medium"
+    "weight-medium",
+    "line-strong",
+    "control-height-xs",
+    "control-height-xl",
+    "control-radius-xl",
+    "radius-xs"
    ],
    "classes": [
     "z-btn",
@@ -499,6 +728,26 @@
      "description": "Reparte el ancho entre los segmentos."
     },
     {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "En columna, cada opción ocupa el ancho. Las flechas de los dos ejes funcionan en ambas."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "underline"
+     ],
+     "default": "default",
+     "description": "`underline`: sin pista; la opción elegida lleva una barra de acento (abajo, o al inicio en vertical)."
+    },
+    {
      "name": "disabled",
      "type": "boolean",
      "default": false
@@ -538,7 +787,10 @@
     "accent-ring",
     "duration-press",
     "ease-out",
-    "touch-target"
+    "touch-target",
+    "line",
+    "accent",
+    "surface-2"
    ],
    "classes": [
     "z-segmented"
@@ -552,10 +804,83 @@
     {
      "title": "Periodo, ancho completo",
      "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
+    },
+    {
+     "title": "Subrayado",
+     "code": "<SegmentedControl\n  label=\"Section\"\n  variant=\"underline\"\n  defaultValue=\"overview\"\n  items={[\n    { value: \"overview\", label: \"Overview\" },\n    { value: \"activity\", label: \"Activity\" },\n    { value: \"settings\", label: \"Settings\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<SegmentedControl\n  label=\"Density\"\n  orientation=\"vertical\"\n  defaultValue=\"comfortable\"\n  items={[\n    { value: \"compact\", label: \"Compact\", icon: \"bars-3\" },\n    { value: \"comfortable\", label: \"Comfortable\", icon: \"list-bullet\" },\n    { value: \"spacious\", label: \"Spacious\", icon: \"squares-2x2\" },\n  ]}\n/>"
     }
    ],
    "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/SegmentedControl.manifest.json"
+  },
+  {
+   "name": "Swap",
+   "group": "actions",
+   "description": "Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna). Sigue al control que lo contiene.",
+   "import": "import { Swap } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "none",
+   "props": [
+    {
+     "name": "off",
+     "type": "ReactNode",
+     "description": "Contenido en reposo."
+    },
+    {
+     "name": "on",
+     "type": "ReactNode",
+     "description": "Contenido activado."
+    },
+    {
+     "name": "active",
+     "type": "boolean",
+     "description": "Estado propio. Sin él se activa dentro de un elemento con aria-pressed=\"true\", aria-expanded=\"true\" o data-state=\"on\"."
+    },
+    {
+     "name": "effect",
+     "type": "enum",
+     "values": [
+      "fade",
+      "rotate",
+      "flip",
+      "scale"
+     ],
+     "default": "fade"
+    }
+   ],
+   "states": [
+    "off",
+    "on"
+   ],
+   "tokens": [
+    "duration-normal",
+    "ease-standard",
+    "ease-spring"
+   ],
+   "classes": [
+    "z-swap",
+    "z-swap__item"
+   ],
+   "a11y": "Decorativo (aria-hidden): el nombre y el estado los expone el control que lo contiene (un Toggle con aria-pressed o un botón con aria-expanded). Con movimiento reducido solo hay fundido.",
+   "examples": [
+    {
+     "title": "En un Toggle (sigue a aria-pressed)",
+     "code": "<Toggle label=\"Dark mode\">\n  <Swap effect=\"rotate\" off={<Icon name=\"sun\" />} on={<Icon name=\"moon\" />} />\n</Toggle>"
+    },
+    {
+     "title": "Estado propio",
+     "code": "<Swap active effect=\"scale\" off={<Icon name=\"bars-3\" />} on={<Icon name=\"x-mark\" />} />"
+    },
+    {
+     "title": "Volteo",
+     "code": "<Toggle label=\"Favourite\" variant=\"ghost\">\n  <Swap effect=\"flip\" off={<Icon name=\"heart\" />} on={<Icon name=\"heart\" variant=\"solid\" />} />\n</Toggle>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Swap de Shark UI (fundido, giro, volteo, escala).",
+   "file": "zui/src/components/actions/Swap.manifest.json"
   },
   {
    "name": "Toggle",
@@ -586,6 +911,16 @@
       "lg"
      ],
      "default": "md"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "outline",
+      "ghost"
+     ],
+     "default": "outline",
+     "description": "`outline` con canto; `ghost` sin canto hasta pasar el puntero o activarse."
     },
     {
      "name": "icon",
@@ -634,7 +969,9 @@
     "duration-press",
     "ease-out",
     "focus-offset",
-    "focus-width"
+    "focus-width",
+    "control-radius-sm",
+    "control-radius-lg"
    ],
    "classes": [
     "z-toggle"
@@ -648,10 +985,141 @@
     {
      "title": "Controlado con texto",
      "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
+    },
+    {
+     "title": "Fantasma y contorno",
+     "code": "<>\n  <Toggle icon=\"bold\" label=\"Bold\" variant=\"ghost\" />\n  <Toggle icon=\"italic\" label=\"Italic\" defaultPressed />\n</>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/Toggle.manifest.json"
+  },
+  {
+   "name": "ToggleGroup",
+   "group": "actions",
+   "description": "Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).",
+   "import": "import { ToggleGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "items",
+     "type": "ToggleGroupItem[]",
+     "description": "{ value, label?, icon?, ariaLabel?, disabled? }. Sin `label`, `ariaLabel` es obligatorio."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "type",
+     "type": "enum",
+     "values": [
+      "single",
+      "multiple"
+     ],
+     "default": "single"
+    },
+    {
+     "name": "value",
+     "type": "string | string[]",
+     "description": "Controlado: la opción activada (\"\" si ninguna) o la lista."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value) => void"
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Solo `single`: la opción activa no se puede desactivar."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "outline",
+      "ghost"
+     ],
+     "default": "outline"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "attached",
+     "type": "boolean",
+     "default": true,
+     "description": "Une las piezas; con `false` quedan separadas por 4 px."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "on",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "line",
+    "accent-soft",
+    "accent-ring",
+    "accent-text",
+    "control-radius-sm",
+    "control-radius-lg"
+   ],
+   "classes": [
+    "z-toggle-group",
+    "z-toggle"
+   ],
+   "a11y": "`role=\"group\"` con nombre; cada opción es un button con aria-pressed (patrón APG «toolbar» para el foco). Una sola parada de Tab: las flechas mueven el foco con vuelta al otro extremo (en RTL la izquierda avanza; en vertical, arriba y abajo), Inicio y Fin van a los extremos, y Espacio o Intro activan. Para elegir exactamente una opción entre pocas, SegmentedControl (radiogroup).",
+   "examples": [
+    {
+     "title": "Formato de texto (múltiple)",
+     "code": "<ToggleGroup\n  type=\"multiple\"\n  label=\"Text formatting\"\n  defaultValue={[\"bold\"]}\n  items={[\n    { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n    { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n    { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Alineación (una, fantasma)",
+     "code": "<ToggleGroup\n  label=\"Alignment\"\n  variant=\"ghost\"\n  defaultValue=\"left\"\n  items={[\n    { value: \"left\", icon: \"bars-3-bottom-left\", ariaLabel: \"Align left\" },\n    { value: \"center\", icon: \"bars-3\", ariaLabel: \"Align center\" },\n    { value: \"right\", icon: \"bars-3-bottom-right\", ariaLabel: \"Align right\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Vista con texto, separada",
+     "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  required\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<ToggleGroup\n  type=\"multiple\"\n  label=\"Layers\"\n  orientation=\"vertical\"\n  size=\"sm\"\n  items={[\n    { value: \"grid\", icon: \"table-cells\", label: \"Grid\" },\n    { value: \"guides\", icon: \"adjustments-horizontal\", label: \"Guides\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (APG «toolbar» para el foco; aria-pressed). Referencia de variantes: Toggle Group de Shark UI y Radix.",
+   "file": "zui/src/components/actions/ToggleGroup.manifest.json"
   },
   {
    "name": "EventCalendar",

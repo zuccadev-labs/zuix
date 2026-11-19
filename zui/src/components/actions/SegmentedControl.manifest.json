@@ -42,6 +42,20 @@
       "description": "Reparte el ancho entre los segmentos."
     },
     {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "En columna, cada opción ocupa el ancho. Las flechas de los dos ejes funcionan en ambas."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["default", "underline"],
+      "default": "default",
+      "description": "`underline`: sin pista; la opción elegida lleva una barra de acento (abajo, o al inicio en vertical)."
+    },
+    {
       "name": "disabled",
       "type": "boolean",
       "default": false
@@ -74,7 +88,10 @@
     "accent-ring",
     "duration-press",
     "ease-out",
-    "touch-target"
+    "touch-target",
+    "line",
+    "accent",
+    "surface-2"
   ],
   "classes": ["z-segmented"],
   "a11y": "Patrón APG «radiogroup»: una parada de tabulación; las flechas mueven el foco y la selección (reflejadas en RTL). No permite quedar sin selección.",
@@ -86,6 +103,14 @@
     {
       "title": "Periodo, ancho completo",
       "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
+    },
+    {
+      "title": "Subrayado",
+      "code": "<SegmentedControl\n  label=\"Section\"\n  variant=\"underline\"\n  defaultValue=\"overview\"\n  items={[\n    { value: \"overview\", label: \"Overview\" },\n    { value: \"activity\", label: \"Activity\" },\n    { value: \"settings\", label: \"Settings\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Vertical",
+      "code": "<SegmentedControl\n  label=\"Density\"\n  orientation=\"vertical\"\n  defaultValue=\"comfortable\"\n  items={[\n    { value: \"compact\", label: \"Compact\", icon: \"bars-3\" },\n    { value: \"comfortable\", label: \"Comfortable\", icon: \"list-bullet\" },\n    { value: \"spacious\", label: \"Spacious\", icon: \"squares-2x2\" },\n  ]}\n/>"
     }
   ],
   "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG)."

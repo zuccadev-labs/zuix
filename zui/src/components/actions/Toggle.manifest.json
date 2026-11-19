@@ -25,6 +25,13 @@
       "default": "md"
     },
     {
+      "name": "variant",
+      "type": "enum",
+      "values": ["outline", "ghost"],
+      "default": "outline",
+      "description": "`outline` con canto; `ghost` sin canto hasta pasar el puntero o activarse."
+    },
+    {
       "name": "icon",
       "type": "IconName"
     },
@@ -64,7 +71,9 @@
     "duration-press",
     "ease-out",
     "focus-offset",
-    "focus-width"
+    "focus-width",
+    "control-radius-sm",
+    "control-radius-lg"
   ],
   "classes": ["z-toggle"],
   "a11y": "Elemento button con aria-pressed y data-state on/off.",
@@ -76,6 +85,10 @@
     {
       "title": "Controlado con texto",
       "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
+    },
+    {
+      "title": "Fantasma y contorno",
+      "code": "<>\n  <Toggle icon=\"bold\" label=\"Bold\" variant=\"ghost\" />\n  <Toggle icon=\"italic\" label=\"Italic\" defaultPressed />\n</>"
     }
   ],
   "origin": "Nuevo, con primitiva propia (patrón APG)."

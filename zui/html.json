@@ -28,6 +28,73 @@
      "title": "Fantasma con icono a la derecha",
      "html": "<button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\">View all\n  <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n</button>",
      "source": "generated"
+    },
+    {
+     "title": "Contorno y enlace",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--outline\" data-size=\"md\">\n  <z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>\n  Export\n</button>\n<button type=\"button\" class=\"z-btn z-btn--link\" data-size=\"md\">Learn more</button>",
+     "source": "generated"
+    },
+    {
+     "title": "Escala de tamaños",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"xs\">Extra small</button>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\">Small</button>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Medium</button>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"lg\">Large</button>\n<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"xl\">Extra large</button>",
+     "source": "generated"
+    }
+   ]
+  },
+  "ButtonGroup": {
+   "group": "actions",
+   "classes": [
+    "z-btn-group",
+    "z-btn-group__separator"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Unido",
+     "html": "<div role=\"group\" aria-label=\"History\" class=\"z-btn-group\" data-orientation=\"horizontal\" data-attached=\"true\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"arrow-uturn-up-left\" size=\"16\"></z-icon>\n    Undo\n  </button>\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"arrow-uturn-up-right\" size=\"16\"></z-icon>\n    Redo\n  </button>\n  <button type=\"button\" title=\"More\" aria-label=\"More\" class=\"z-btn z-btn--icon z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"ellipsis-horizontal\" size=\"16\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Contorno con separador",
+     "html": "<div role=\"group\" aria-label=\"Export\" class=\"z-btn-group\" data-orientation=\"horizontal\" data-attached=\"true\">\n  <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n    <z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>\n    Export\n  </button>\n  <span class=\"z-btn-group__separator\" aria-hidden=\"true\"></span>\n  <button type=\"button\" title=\"Export options\" aria-label=\"Export options\" class=\"z-btn z-btn--icon z-btn--primary\" data-size=\"md\">\n    <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical",
+     "html": "<div role=\"group\" aria-label=\"Zoom\" class=\"z-btn-group\" data-orientation=\"vertical\" data-attached=\"true\">\n  <button type=\"button\" title=\"Zoom in\" aria-label=\"Zoom in\" class=\"z-btn z-btn--icon z-btn--outline\" data-size=\"md\">\n    <z-icon name=\"plus\" size=\"16\"></z-icon>\n  </button>\n  <button type=\"button\" title=\"Zoom out\" aria-label=\"Zoom out\" class=\"z-btn z-btn--icon z-btn--outline\" data-size=\"md\">\n    <z-icon name=\"minus\" size=\"16\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Separado",
+     "html": "<div role=\"group\" aria-label=\"Actions\" class=\"z-btn-group\" data-orientation=\"horizontal\">\n  <button type=\"button\" class=\"z-btn z-btn--outline\" data-size=\"md\">Cancel</button>\n  <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Save</button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "CopyButton": {
+   "group": "actions",
+   "classes": [
+    "z-copy",
+    "z-copy__button",
+    "z-copy__status",
+    "z-btn"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Solo icono",
+     "html": "<span class=\"z-copy\">\n  <button type=\"button\" title=\"Copy API key\" aria-label=\"Copy API key\" class=\"z-btn z-btn--ghost z-btn--icon z-copy__button\" data-size=\"sm\" data-value=\"zx_live_4f9c2a\">\n    <span class=\"z-copy__icons\" aria-hidden=\"true\">\n      <span class=\"z-copy__icon\" data-for=\"idle\">\n        <z-icon name=\"document-duplicate\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-copy__icon\" data-for=\"copied\">\n        <z-icon name=\"check\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-copy__icon\" data-for=\"failed\">\n        <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n      </span>\n    </span>\n  </button>\n  <span class=\"z-copy__status\" role=\"status\" data-state=\"idle\"></span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Con texto",
+     "html": "<span class=\"z-copy\">\n  <button type=\"button\" class=\"z-btn z-btn--outline z-copy__button\" data-size=\"sm\" data-value=\"pnpm add @zuccadev-labs/zuix\">\n    <span class=\"z-copy__icons\" aria-hidden=\"true\">\n      <span class=\"z-copy__icon\" data-for=\"idle\">\n        <z-icon name=\"document-duplicate\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-copy__icon\" data-for=\"copied\">\n        <z-icon name=\"check\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-copy__icon\" data-for=\"failed\">\n        <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n      </span>\n    </span>\n    Copy command\n  </button>\n  <span class=\"z-copy__status\" role=\"status\" data-state=\"idle\"></span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Copiar otro elemento",
+     "html": "<code id=\"invite-link\">https://example.com/i/8d2k</code>\n<span class=\"z-copy\">\n  <button type=\"button\" title=\"Copy invite link\" aria-label=\"Copy invite link\" class=\"z-btn z-btn--ghost z-btn--icon z-copy__button\" data-size=\"sm\" command=\"--copy\" commandfor=\"invite-link\">\n    <span class=\"z-copy__icons\" aria-hidden=\"true\">\n      <span class=\"z-copy__icon\" data-for=\"idle\">\n        <z-icon name=\"document-duplicate\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-copy__icon\" data-for=\"copied\">\n        <z-icon name=\"check\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-copy__icon\" data-for=\"failed\">\n        <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n      </span>\n    </span>\n  </button>\n  <span class=\"z-copy__status\" role=\"status\" data-state=\"idle\"></span>\n</span>",
+     "source": "generated"
     }
    ]
   },
@@ -96,6 +163,41 @@
      "title": "Periodo, ancho completo",
      "html": "<div role=\"radiogroup\" aria-label=\"Period\" class=\"z-segmented\" data-size=\"md\" data-block=\"true\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"day\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Day</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"on\" value=\"week\" tabindex=\"0\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Week</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"month\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Month</span>\n  </button>\n</div>",
      "source": "generated"
+    },
+    {
+     "title": "Subrayado",
+     "html": "<div role=\"radiogroup\" aria-label=\"Section\" class=\"z-segmented\" data-size=\"md\" data-variant=\"underline\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"on\" value=\"overview\" tabindex=\"0\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Overview</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"activity\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Activity</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"settings\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <span class=\"z-segmented__label\">Settings</span>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical",
+     "html": "<div role=\"radiogroup\" aria-label=\"Density\" aria-orientation=\"vertical\" class=\"z-segmented\" data-size=\"md\" data-orientation=\"vertical\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"compact\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <z-icon name=\"bars-3\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">Compact</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"on\" value=\"comfortable\" tabindex=\"0\" class=\"z-segmented__item\">\n    <z-icon name=\"list-bullet\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">Comfortable</span>\n  </button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"spacious\" tabindex=\"-1\" class=\"z-segmented__item\">\n    <z-icon name=\"squares-2x2\" size=\"16\"></z-icon>\n    <span class=\"z-segmented__label\">Spacious</span>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Swap": {
+   "group": "actions",
+   "classes": [
+    "z-swap",
+    "z-swap__item"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "En un Toggle (sigue a aria-pressed)",
+     "html": "<button type=\"button\" aria-pressed=\"false\" aria-label=\"Dark mode\" data-state=\"off\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\">\n  <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"rotate\">\n    <span class=\"z-swap__item\" data-for=\"off\"></span>\n    <span class=\"z-swap__item\" data-for=\"on\"></span>\n  </span>\n</button>",
+     "source": "generated"
+    },
+    {
+     "title": "Estado propio",
+     "html": "<span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"scale\" data-state=\"on\">\n  <span class=\"z-swap__item\" data-for=\"off\"></span>\n  <span class=\"z-swap__item\" data-for=\"on\"></span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Volteo",
+     "html": "<button type=\"button\" aria-pressed=\"false\" aria-label=\"Favourite\" data-state=\"off\" class=\"z-toggle\" data-size=\"md\" data-variant=\"ghost\">\n  <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"flip\">\n    <span class=\"z-swap__item\" data-for=\"off\"></span>\n    <span class=\"z-swap__item\" data-for=\"on\"></span>\n  </span>\n</button>",
+     "source": "generated"
     }
    ]
   },
@@ -108,12 +210,47 @@
    "examples": [
     {
      "title": "Solo icono",
-     "html": "<button type=\"button\" title=\"Favourite\" aria-pressed=\"true\" aria-label=\"Favourite\" data-state=\"on\" class=\"z-toggle\" data-size=\"md\" data-icon-only=\"true\">\n  <z-icon name=\"star\" size=\"16\"></z-icon>\n</button>",
+     "html": "<button type=\"button\" title=\"Favourite\" aria-pressed=\"true\" aria-label=\"Favourite\" data-state=\"on\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" data-icon-only=\"true\">\n  <z-icon name=\"star\" size=\"16\"></z-icon>\n</button>",
      "source": "generated"
     },
     {
      "title": "Controlado con texto",
-     "html": "<button type=\"button\" data-state=\"on\" class=\"z-toggle\" data-size=\"md\">\n  <z-icon name=\"speaker-x-mark\" size=\"16\"></z-icon>\n  Mute\n</button>",
+     "html": "<button type=\"button\" data-state=\"on\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\">\n  <z-icon name=\"speaker-x-mark\" size=\"16\"></z-icon>\n  Mute\n</button>",
+     "source": "generated"
+    },
+    {
+     "title": "Fantasma y contorno",
+     "html": "<button type=\"button\" title=\"Bold\" aria-pressed=\"false\" aria-label=\"Bold\" data-state=\"off\" class=\"z-toggle\" data-size=\"md\" data-variant=\"ghost\" data-icon-only=\"true\">\n  <z-icon name=\"bold\" size=\"16\"></z-icon>\n</button>\n<button type=\"button\" title=\"Italic\" aria-pressed=\"true\" aria-label=\"Italic\" data-state=\"on\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" data-icon-only=\"true\">\n  <z-icon name=\"italic\" size=\"16\"></z-icon>\n</button>",
+     "source": "generated"
+    }
+   ]
+  },
+  "ToggleGroup": {
+   "group": "actions",
+   "classes": [
+    "z-toggle-group",
+    "z-toggle"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Formato de texto (múltiple)",
+     "html": "<div role=\"group\" aria-label=\"Text formatting\" class=\"z-toggle-group\" data-orientation=\"horizontal\" data-attached=\"true\" data-type=\"multiple\">\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" data-icon-only=\"true\" aria-pressed=\"true\" aria-label=\"Bold\" title=\"Bold\" data-state=\"on\" value=\"bold\" tabindex=\"0\">\n    <z-icon name=\"bold\" size=\"16\"></z-icon>\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Italic\" title=\"Italic\" data-state=\"off\" value=\"italic\" tabindex=\"-1\">\n    <z-icon name=\"italic\" size=\"16\"></z-icon>\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Underline\" title=\"Underline\" data-state=\"off\" value=\"underline\" tabindex=\"-1\">\n    <z-icon name=\"underline\" size=\"16\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Alineación (una, fantasma)",
+     "html": "<div role=\"group\" aria-label=\"Alignment\" class=\"z-toggle-group\" data-orientation=\"horizontal\" data-attached=\"true\" data-type=\"single\">\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"true\" aria-label=\"Align left\" title=\"Align left\" data-state=\"on\" value=\"left\" tabindex=\"0\">\n    <z-icon name=\"bars-3-bottom-left\" size=\"16\"></z-icon>\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Align center\" title=\"Align center\" data-state=\"off\" value=\"center\" tabindex=\"-1\">\n    <z-icon name=\"bars-3\" size=\"16\"></z-icon>\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Align right\" title=\"Align right\" data-state=\"off\" value=\"right\" tabindex=\"-1\">\n    <z-icon name=\"bars-3-bottom-right\" size=\"16\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vista con texto, separada",
+     "html": "<div role=\"group\" aria-label=\"View\" class=\"z-toggle-group\" data-orientation=\"horizontal\" data-type=\"single\" data-required=\"true\">\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" aria-pressed=\"true\" data-state=\"on\" value=\"list\" tabindex=\"0\">\n    <z-icon name=\"list-bullet\" size=\"16\"></z-icon>\n    List\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" aria-pressed=\"false\" data-state=\"off\" value=\"grid\" tabindex=\"-1\">\n    <z-icon name=\"squares-2x2\" size=\"16\"></z-icon>\n    Grid\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"md\" data-variant=\"outline\" aria-pressed=\"false\" data-state=\"off\" data-disabled=\"\" disabled=\"\" value=\"board\" tabindex=\"-1\">\n    <z-icon name=\"view-columns\" size=\"16\"></z-icon>\n    Board\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical",
+     "html": "<div role=\"group\" aria-label=\"Layers\" class=\"z-toggle-group\" data-orientation=\"vertical\" data-attached=\"true\" data-type=\"multiple\">\n  <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"outline\" aria-pressed=\"false\" data-state=\"off\" value=\"grid\" tabindex=\"0\">\n    <z-icon name=\"table-cells\" size=\"14\"></z-icon>\n    Grid\n  </button>\n  <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"outline\" aria-pressed=\"false\" data-state=\"off\" value=\"guides\" tabindex=\"-1\">\n    <z-icon name=\"adjustments-horizontal\" size=\"14\"></z-icon>\n    Guides\n  </button>\n</div>",
      "source": "generated"
     }
    ]

@@ -1,0 +1,54 @@
+{
+  "name": "ButtonGroup",
+  "exports": ["ButtonGroupSeparator"],
+  "group": "actions",
+  "description": "Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.",
+  "import": "import { ButtonGroup, ButtonGroupSeparator } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del grupo (aria-label)."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "attached",
+      "type": "boolean",
+      "default": true,
+      "description": "Une las piezas. Con `false` quedan separadas por 8 px."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Button, IconButton, el disparador de un Menu, un Input o ButtonGroupSeparator."
+    }
+  ],
+  "states": ["rest"],
+  "tokens": ["space-2", "line-strong"],
+  "classes": ["z-btn-group", "z-btn-group__separator"],
+  "a11y": "Contenedor `role=\"group\"` con nombre por `label`. Cada botón conserva su parada de Tab y su nombre; el grupo no añade teclado propio. Para un conjunto con estado (activado o no) y una sola parada de tabulación, ToggleGroup.",
+  "examples": [
+    {
+      "title": "Unido",
+      "code": "<ButtonGroup label=\"History\">\n  <Button icon=\"arrow-uturn-up-left\">Undo</Button>\n  <Button icon=\"arrow-uturn-up-right\">Redo</Button>\n  <IconButton icon=\"ellipsis-horizontal\" label=\"More\" variant=\"secondary\" />\n</ButtonGroup>"
+    },
+    {
+      "title": "Contorno con separador",
+      "code": "<ButtonGroup label=\"Export\">\n  <Button variant=\"primary\" icon=\"arrow-down-tray\">Export</Button>\n  <ButtonGroupSeparator />\n  <IconButton icon=\"chevron-down\" label=\"Export options\" variant=\"primary\" />\n</ButtonGroup>"
+    },
+    {
+      "title": "Vertical",
+      "code": "<ButtonGroup label=\"Zoom\" orientation=\"vertical\">\n  <IconButton icon=\"plus\" label=\"Zoom in\" variant=\"outline\" />\n  <IconButton icon=\"minus\" label=\"Zoom out\" variant=\"outline\" />\n</ButtonGroup>"
+    },
+    {
+      "title": "Separado",
+      "code": "<ButtonGroup label=\"Actions\" attached={false}>\n  <Button variant=\"outline\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+    }
+  ],
+  "origin": "Nuevo. Referencia de variantes: Button Group de Shark UI (horizontal, vertical, separador). Forma del estándar liquid glass."
+}
