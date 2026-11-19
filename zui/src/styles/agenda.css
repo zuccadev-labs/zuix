@@ -1230,8 +1230,14 @@
     .z-agenda__zone {
       display: none;
     }
+    /* Las vistas pasan a otra fila si no caben (sin recortar el área táctil de cada opción). */
     .z-agenda__views {
+      flex-wrap: wrap;
       max-inline-size: 100%;
+      height: auto;
+    }
+    .z-agenda__views .z-segmented__item {
+      height: calc(var(--z-segmented-height) - var(--z-segmented-pad) * 2 - 2px);
     }
     .z-agenda__views .z-segmented__item {
       flex: none;
