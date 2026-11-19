@@ -73,7 +73,8 @@
     "focus-width",
     "accent-ring",
     "duration-press",
-    "ease-out"
+    "ease-out",
+    "touch-target"
   ],
   "classes": ["z-segmented"],
   "a11y": "Patrón APG «radiogroup»: una parada de tabulación; las flechas mueven el foco y la selección (reflejadas en RTL). No permite quedar sin selección.",
