@@ -104,10 +104,7 @@ export function timelineRows(tasks: TimelineTask[], groups: TimelineGroup[] = []
     const own = tasks.filter((t) => t.group === group.id);
     if (!own.length) continue;
     const start = own.map((t) => t.start).sort()[0]!;
-    const end = own
-      .map(taskEnd)
-      .sort()
-      .at(-1)!;
+    const end = own.map(taskEnd).sort().at(-1)!;
     const isFolded = folded.has(group.id) || Boolean(group.collapsed && !folded.has(`!${group.id}`));
     rows.push({ kind: "group", group, tasks: own, start, end, collapsed: isFolded });
     if (!isFolded) for (const task of own) rows.push({ kind: "task", task, group: group.id });

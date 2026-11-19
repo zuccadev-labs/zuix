@@ -7,17 +7,17 @@
 @layer zui.agenda {
   /* Botones propios de estas vistas: sin el aspecto del navegador (especificidad cero; cada pieza pone el suyo). */
   :where(
-      .z-yeargrid__day,
-      .z-yeargrid__month-btn,
-      .z-timeline__toggle,
-      .z-timeline__bar,
-      .z-timeline__milestone,
-      .z-timeline__booking,
-      .z-slotpicker__slot,
-      .z-heatmap__cell,
-      .z-heatmap__toggle,
-      .z-habit__day
-    ) {
+    .z-yeargrid__day,
+    .z-yeargrid__month-btn,
+    .z-timeline__toggle,
+    .z-timeline__bar,
+    .z-timeline__milestone,
+    .z-timeline__booking,
+    .z-slotpicker__slot,
+    .z-heatmap__cell,
+    .z-heatmap__toggle,
+    .z-habit__day
+  ) {
     margin: 0;
     padding: 0;
     border: 0;
@@ -633,7 +633,7 @@
   .z-timeline__bar,
   .z-timeline__booking {
     position: absolute;
-    z-index: 1;
+    z-index: var(--z-layer-raised);
     inset-block: var(--z-space-2);
     inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col) + 3px);
     inline-size: max(var(--z-space-3), calc(var(--z-tl-span) * var(--z-tl-col) - 6px));
@@ -648,7 +648,7 @@
     position: absolute;
     inset-block: 0;
     inset-inline-start: 0;
-    z-index: -1;
+    z-index: var(--z-layer-below);
     inline-size: var(--z-tl-progress, 0%);
     background: color-mix(in srgb, var(--z-event-color) 30%, transparent);
   }
@@ -656,8 +656,9 @@
     margin-inline-start: auto;
     color: var(--z-event-fg-muted);
   }
+  /* Seleccionada: el porcentaje hereda el texto del sólido del evento (fg-on-accent sobre event-solid-N). */
   .z-timeline__bar[data-selected] .z-timeline__pct {
-    color: var(--z-fg-on-accent);
+    color: inherit;
   }
   .z-timeline__resize {
     position: absolute;
@@ -673,11 +674,11 @@
   }
   .z-timeline__summary {
     position: absolute;
-    inset-block-start: calc(50% - 4px);
+    inset-block-start: calc(50% - var(--z-space-1));
     inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col));
     inline-size: calc(var(--z-tl-span) * var(--z-tl-col));
     block-size: var(--z-space-2);
-    border-radius: 3px;
+    border-radius: calc(var(--z-radius-xs) / 2);
     background: var(--z-fg-muted);
   }
   .z-timeline__summary::before,
@@ -698,7 +699,7 @@
   }
   .z-timeline__milestone {
     position: absolute;
-    z-index: 2;
+    z-index: calc(var(--z-layer-raised) + 1);
     inset-block-start: 50%;
     inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col));
     display: flex;
@@ -715,7 +716,7 @@
     inline-size: var(--z-space-3-5);
     block-size: var(--z-space-3-5);
     rotate: 45deg;
-    border-radius: 3px;
+    border-radius: calc(var(--z-radius-xs) / 2);
     background: var(--z-warning);
     box-shadow: 0 0 0 2px var(--z-surface-solid);
   }
@@ -734,7 +735,7 @@
   }
   .z-timeline__deps {
     position: absolute;
-    z-index: 1;
+    z-index: var(--z-layer-raised);
     inset-block-start: 0;
     inset-inline-start: var(--z-tl-label);
     overflow: visible;
@@ -762,7 +763,7 @@
   }
   .z-timeline__today {
     position: absolute;
-    z-index: 2;
+    z-index: calc(var(--z-layer-raised) + 1);
     inset-block: 0;
     inset-inline-start: calc(var(--z-tl-label) + var(--z-tl-at) * var(--z-tl-col));
     inline-size: 2px;
@@ -1241,7 +1242,7 @@
     place-items: center;
     inline-size: var(--z-hm-cell);
     block-size: var(--z-hm-cell);
-    border-radius: 3px;
+    border-radius: calc(var(--z-radius-xs) / 2);
     background: var(--z-heatmap-0);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-fg) 6%, transparent);
   }
@@ -1574,9 +1575,9 @@
   .z-habit__day[data-state="progress"]::before {
     content: "";
     position: absolute;
-    inset: 3px;
-    z-index: -1;
-    border-radius: calc(var(--z-calendar-cell-radius) - 3px);
+    inset: 2px;
+    z-index: var(--z-layer-below);
+    border-radius: calc(var(--z-calendar-cell-radius) - 2px);
     background: var(--z-surface-solid);
   }
   .z-habit__day[data-today]:not([data-state]) {
@@ -1603,7 +1604,7 @@
     position: relative;
     inline-size: var(--z-space-3-5);
     block-size: var(--z-space-3-5);
-    border-radius: 4px;
+    border-radius: calc(var(--z-radius-xs) - 2px);
   }
   .z-habit__legend i[data-state="done"] {
     background: var(--z-success-solid);

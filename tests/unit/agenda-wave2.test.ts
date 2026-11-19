@@ -78,7 +78,12 @@ describe("perpetual: lámina de una página", () => {
     assert.deepEqual(model.numbers[6], [7, 14, 21, 28]);
     assert.equal(perpetualYear(2024, 8).weekStart, 1);
     assert.equal(model.columns.flat().find((m) => m.month === 2)!.days, 28);
-    assert.equal(perpetualYear(2028).columns.flat().find((m) => m.month === 2)!.days, 29);
+    assert.equal(
+      perpetualYear(2028)
+        .columns.flat()
+        .find((m) => m.month === 2)!.days,
+      29,
+    );
   });
 });
 
@@ -261,11 +266,17 @@ describe("timeline: escalas, filas y camino crítico", () => {
     assert.equal(pathOf(back), "M100 10 L108 10 L108 30 L52 30 L52 50 L60 50");
     assert.equal(routeDependency({ x: 100, y: 50 }, { x: 60, y: 10 }, 8, 20)[2]!.y, 30);
     fc.assert(
-      fc.property(fc.integer({ min: 0, max: 900 }), fc.integer({ min: 0, max: 900 }), fc.integer({ min: 0, max: 40 }), fc.integer({ min: 0, max: 40 }), (x1, x2, r1, r2) => {
-        const pts = routeDependency({ x: x1, y: r1 * 40 }, { x: x2, y: r2 * 40 });
-        for (let i = 1; i < pts.length; i++) assert.ok(pts[i]!.x === pts[i - 1]!.x || pts[i]!.y === pts[i - 1]!.y);
-        assert.deepEqual(pts.at(-1), { x: x2, y: r2 * 40 });
-      }),
+      fc.property(
+        fc.integer({ min: 0, max: 900 }),
+        fc.integer({ min: 0, max: 900 }),
+        fc.integer({ min: 0, max: 40 }),
+        fc.integer({ min: 0, max: 40 }),
+        (x1, x2, r1, r2) => {
+          const pts = routeDependency({ x: x1, y: r1 * 40 }, { x: x2, y: r2 * 40 });
+          for (let i = 1; i < pts.length; i++) assert.ok(pts[i]!.x === pts[i - 1]!.x || pts[i]!.y === pts[i - 1]!.y);
+          assert.deepEqual(pts.at(-1), { x: x2, y: r2 * 40 });
+        },
+      ),
     );
   });
 });
@@ -289,7 +300,13 @@ describe("freebusy: libres comunes", () => {
         for (let x = 0; x < 240; x += 7) assert.equal(covered(minus, x), covered(a, x) && !covered(b, x));
       }),
     );
-    assert.deepEqual(mergeIntervals([{ start: 5, end: 5 }, { start: Number.NaN, end: 3 }]), []);
+    assert.deepEqual(
+      mergeIntervals([
+        { start: 5, end: 5 },
+        { start: Number.NaN, end: 3 },
+      ]),
+      [],
+    );
   });
   test("horas de trabajo en la zona de cada persona y la franja común", () => {
     const madrid = workingIntervals({ start: "09:00", end: "18:00" }, "Europe/Madrid", T0, T0 + 24 * H);
@@ -303,8 +320,20 @@ describe("freebusy: libres comunes", () => {
     assert.equal(workingIntervals({ start: "22:00", end: "06:00", days: [4] }, "UTC", T0, T0 + 48 * H)[0]!.end, T0 + 30 * H);
     assert.equal(workingIntervals({ start: "08:00", end: "24:00", days: [4] }, "UTC", T0, T0 + 48 * H)[0]!.end, T0 + 24 * H);
     const people: Attendee[] = [
-      { id: "m", name: "Marta", timeZone: "Europe/Madrid", workingHours: { start: "09:00", end: "18:00" }, busy: [{ start: "2026-11-19T08:00:00Z", end: "2026-11-19T09:30:00Z" }] },
-      { id: "d", name: "Dana", timeZone: "America/New_York", workingHours: { start: "08:00", end: "17:00" }, busy: [{ start: T0 + 15 * H, end: T0 + 16 * H }] },
+      {
+        id: "m",
+        name: "Marta",
+        timeZone: "Europe/Madrid",
+        workingHours: { start: "09:00", end: "18:00" },
+        busy: [{ start: "2026-11-19T08:00:00Z", end: "2026-11-19T09:30:00Z" }],
+      },
+      {
+        id: "d",
+        name: "Dana",
+        timeZone: "America/New_York",
+        workingHours: { start: "08:00", end: "17:00" },
+        busy: [{ start: T0 + 15 * H, end: T0 + 16 * H }],
+      },
       { id: "o", name: "Optional", timeZone: "UTC", busy: [{ start: T0, end: T0 + 24 * H }], optional: true },
     ];
     // Dana empieza a las 13:00 UTC; Marta acaba a las 17:00 UTC; Dana está ocupada 15–16 UTC.
@@ -352,15 +381,27 @@ describe("virtual: ventana visible", () => {
 
 describe("slots: franjas de cita", () => {
   test("disponibilidad del anfitrión, días del visitante y horas en 12/24 h", () => {
-    const slots = availabilitySlots([{ days: [1, 2, 3, 4, 5], start: "09:00", end: "11:00" }], "Europe/Madrid", "2026-11-19", "2026-11-22", 30, {
-      busy: [{ start: Date.parse("2026-11-19T08:30:00Z"), end: Date.parse("2026-11-19T09:00:00Z") }],
-    });
+    const slots = availabilitySlots(
+      [{ days: [1, 2, 3, 4, 5], start: "09:00", end: "11:00" }],
+      "Europe/Madrid",
+      "2026-11-19",
+      "2026-11-22",
+      30,
+      {
+        busy: [{ start: Date.parse("2026-11-19T08:30:00Z"), end: Date.parse("2026-11-19T09:00:00Z") }],
+      },
+    );
     // Jueves y viernes, cuatro franjas cada uno, menos la ocupada.
     assert.equal(slots.length, 7);
     assert.equal(new Date(slots[0]!).toISOString(), "2026-11-19T08:00:00.000Z");
     assert.deepEqual(availabilitySlots([], "UTC", "2026-11-20", "2026-11-19", 30), []);
     assert.equal(availabilitySlots([{ days: [4], start: "x", end: "10:00" }], "UTC", "2026-11-19", "2026-11-19", 30).length, 0);
-    assert.equal(availabilitySlots([{ days: [4], start: "09:00", end: "10:00" }], "UTC", "2026-11-19", "2026-11-19", 30, { notBefore: Date.parse("2026-11-19T09:10:00Z") }).length, 1);
+    assert.equal(
+      availabilitySlots([{ days: [4], start: "09:00", end: "10:00" }], "UTC", "2026-11-19", "2026-11-19", 30, {
+        notBefore: Date.parse("2026-11-19T09:10:00Z"),
+      }).length,
+      1,
+    );
     // Una franja de las 00:30 del anfitrión cae el día anterior del visitante de Nueva York.
     const late = availabilitySlots([{ days: [5], start: "00:30", end: "01:00" }], "Europe/Madrid", "2026-11-20", "2026-11-20", 30);
     const byDay = slotsByDay([...late, "2026-11-19T10:00:00Z", "bad"], "America/New_York");

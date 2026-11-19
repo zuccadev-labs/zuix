@@ -137,7 +137,10 @@ export const habitWidget: Widget<HabitCalendarProps, HabitConfig, HabitState2> =
         h(
           "p",
           { class: "z-habit__sub" },
-          (config.variant === "week" ? [fill(labels.bestShort, { n: streak.longest }), config.subtitle] : [config.subtitle, fill(labels.best, { n: streak.longest })])
+          (config.variant === "week"
+            ? [fill(labels.bestShort, { n: streak.longest }), config.subtitle]
+            : [config.subtitle, fill(labels.best, { n: streak.longest })]
+          )
             .filter(Boolean)
             .join(" · "),
         ),
@@ -193,8 +196,16 @@ export const habitWidget: Widget<HabitCalendarProps, HabitConfig, HabitState2> =
         h(
           "span",
           { class: "z-agenda__nav" },
-          h("button", { type: "button", class: "z-agenda__icon-btn", "data-nav": "previous", "aria-label": labels.previous }, icon("chevron-left", 16)),
-          h("button", { type: "button", class: "z-agenda__icon-btn", "data-nav": "next", "aria-label": labels.next }, icon("chevron-right", 16)),
+          h(
+            "button",
+            { type: "button", class: "z-agenda__icon-btn", "data-nav": "previous", "aria-label": labels.previous },
+            icon("chevron-left", 16),
+          ),
+          h(
+            "button",
+            { type: "button", class: "z-agenda__icon-btn", "data-nav": "next", "aria-label": labels.next },
+            icon("chevron-right", 16),
+          ),
         ),
       ),
       h(
@@ -207,7 +218,11 @@ export const habitWidget: Widget<HabitCalendarProps, HabitConfig, HabitState2> =
             "tr",
             null,
             ...weekdays.map((d) =>
-              h("th", { key: d, scope: "col", abbr: fmt(locale, { weekday: "long" }).format(parse(d)) }, fmt(locale, { weekday: "short" }).format(parse(d)).slice(0, 2)),
+              h(
+                "th",
+                { key: d, scope: "col", abbr: fmt(locale, { weekday: "long" }).format(parse(d)) },
+                fmt(locale, { weekday: "short" }).format(parse(d)).slice(0, 2),
+              ),
             ),
           ),
         ),
@@ -266,7 +281,12 @@ export const habitWidget: Widget<HabitCalendarProps, HabitConfig, HabitState2> =
         h("li", null, h("i", { "data-state": "missed" }), labels.missed),
         h("li", null, h("i", { "data-state": "rest" }), labels.rest),
         progressOf(states[today]) !== null && kindOf(states[today]) === "progress"
-          ? h("li", null, h("i", { "data-state": "progress", s: { "--z-habit-progress": `${progressOf(states[today])}%` } }), fill(labels.progress, { n: progressOf(states[today])! }))
+          ? h(
+              "li",
+              null,
+              h("i", { "data-state": "progress", s: { "--z-habit-progress": `${progressOf(states[today])}%` } }),
+              fill(labels.progress, { n: progressOf(states[today])! }),
+            )
           : null,
       ),
     );

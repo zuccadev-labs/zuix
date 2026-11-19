@@ -35,7 +35,9 @@ export const toMs = (v: string | number) => (typeof v === "number" ? v : Date.pa
 
 /** Ordena y une intervalos que se solapan o se tocan. Quita los vacíos o inválidos. */
 export function mergeIntervals(list: Interval[]): Interval[] {
-  const sorted = list.filter((i) => Number.isFinite(i.start) && Number.isFinite(i.end) && i.end > i.start).sort((a, b) => a.start - b.start);
+  const sorted = list
+    .filter((i) => Number.isFinite(i.start) && Number.isFinite(i.end) && i.end > i.start)
+    .sort((a, b) => a.start - b.start);
   const out: Interval[] = [];
   for (const i of sorted) {
     const last = out[out.length - 1];
@@ -147,5 +149,10 @@ export function findSlots(
 }
 
 /** Primera franja común, o `null`. */
-export const firstSlot = (attendees: Attendee[], from: number, to: number, duration: number, options: { step?: number; fallbackZone?: string } = {}) =>
-  findSlots(attendees, from, to, duration, { ...options, limit: 1 })[0] ?? null;
+export const firstSlot = (
+  attendees: Attendee[],
+  from: number,
+  to: number,
+  duration: number,
+  options: { step?: number; fallbackZone?: string } = {},
+) => findSlots(attendees, from, to, duration, { ...options, limit: 1 })[0] ?? null;

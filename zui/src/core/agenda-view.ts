@@ -398,7 +398,13 @@ export function eventLabel(
 function eventButton(
   bits: EventBits,
   variant: "timed" | "bar" | "dot" | "row" | "lane",
-  extra: { s?: Record<string, string | number>; cls?: string; cont?: [boolean, boolean]; half?: "top" | "bottom" | null; conflict?: boolean } = {},
+  extra: {
+    s?: Record<string, string | number>;
+    cls?: string;
+    cont?: [boolean, boolean];
+    half?: "top" | "bottom" | null;
+    conflict?: boolean;
+  } = {},
 ) {
   const { o, config, model, state } = bits;
   const e = o.event;
@@ -450,7 +456,9 @@ function eventButton(
       : null,
     // Barra que sigue de la semana anterior o continúa en la siguiente: chevrón de continuación (forma, no solo el
     // borde recto).
-    variant === "bar" && extra.cont?.[0] ? h("span", { class: "z-event__cont", "data-edge": "start", "aria-hidden": "true" }, icon("chevron-left", 12)) : null,
+    variant === "bar" && extra.cont?.[0]
+      ? h("span", { class: "z-event__cont", "data-edge": "start", "aria-hidden": "true" }, icon("chevron-left", 12))
+      : null,
     task ? h("span", { class: "z-event__box", "aria-hidden": "true" }) : null,
     config.customEvents
       ? {
@@ -468,30 +476,34 @@ function eventButton(
           },
         }
       : null,
+    config.customEvents ? h("span", { class: "z-sr-only" }, `, ${eventLabel(o, config, model.sources, bits.start, bits.end)}`) : null,
     config.customEvents
-      ? h("span", { class: "z-sr-only" }, `, ${eventLabel(o, config, model.sources, bits.start, bits.end)}`)
-      : null,
-    config.customEvents ? null : h(
-      "span",
-      { class: "z-event__title" },
-      extra.conflict ? h("span", { class: "z-timeline__warn", "aria-hidden": "true" }, icon("exclamation-triangle", 12)) : null,
-      e.title,
-      o.seriesId ? h("span", { class: "z-event__icon", "aria-hidden": "true" }, icon("arrow-path", 12)) : null,
-    ),
+      ? null
+      : h(
+          "span",
+          { class: "z-event__title" },
+          extra.conflict ? h("span", { class: "z-timeline__warn", "aria-hidden": "true" }, icon("exclamation-triangle", 12)) : null,
+          e.title,
+          o.seriesId ? h("span", { class: "z-event__icon", "aria-hidden": "true" }, icon("arrow-path", 12)) : null,
+        ),
     meta.length && variant !== "bar" && !config.customEvents ? h("span", { class: "z-sr-only" }, ", ") : null,
     meta.length && variant !== "bar" && !config.customEvents
       ? h("span", { class: "z-event__meta" }, ...meta.flatMap((m, i): VNode[] => (i ? [" · ", m] : [h("bdi", null, m)])))
       : null,
-    variant === "bar" && extra.cont?.[1] ? h("span", { class: "z-event__cont", "data-edge": "end", "aria-hidden": "true" }, icon("chevron-right", 12)) : null,
+    variant === "bar" && extra.cont?.[1]
+      ? h("span", { class: "z-event__cont", "data-edge": "end", "aria-hidden": "true" }, icon("chevron-right", 12))
+      : null,
     editable && variant === "timed" ? h("span", { class: "z-event__resize", "data-edge": "end", "aria-hidden": "true" }) : null,
     // El nombre sale del contenido: lo visible (título, hora, lugar) y, oculto a la vista, el resto (día,
     // calendario, provisional, repite). Así el nombre siempre contiene el texto visible (WCAG 2.5.3).
-    config.customEvents ? null : h(
-      "span",
-      { class: "z-sr-only" },
-      restOfLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta),
-      extra.conflict ? `, ${config.labels.overlaps}` : "",
-    ),
+    config.customEvents
+      ? null
+      : h(
+          "span",
+          { class: "z-sr-only" },
+          restOfLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta),
+          extra.conflict ? `, ${config.labels.overlaps}` : "",
+        ),
   );
 }
 
@@ -950,7 +962,11 @@ function laneView(config: AgendaConfig, state: AgendaState, model: AgendaModel):
     dayEnd: config.dayEnd,
     now: nowMin,
     locale: config.locale,
-    labels: { resource: byResource ? config.labels.resources : config.labels.calendars, overlaps: config.labels.overlaps, newBooking: config.labels.newEvent },
+    labels: {
+      resource: byResource ? config.labels.resources : config.labels.calendars,
+      overlaps: config.labels.overlaps,
+      newBooking: config.labels.newEvent,
+    },
     renderItem: (it, layout) => {
       const o = occ.get(it.key)!;
       return eventButton({ o, config, model, state, start: base + it.start, end: base + it.end }, "lane", {
@@ -960,7 +976,18 @@ function laneView(config: AgendaConfig, state: AgendaState, model: AgendaModel):
         conflict: layout.conflict,
       });
     },
-    ...(byResource ? {} : { renderLabel: (r: ResourceRow) => [h("span", { class: "z-timeline__dot", "data-color": config.calendars.find((c) => c.id === r.id)?.color ?? "1", "aria-hidden": "true" }), h("span", { class: "z-timeline__name" }, r.title)] }),
+    ...(byResource
+      ? {}
+      : {
+          renderLabel: (r: ResourceRow) => [
+            h("span", {
+              class: "z-timeline__dot",
+              "data-color": config.calendars.find((c) => c.id === r.id)?.color ?? "1",
+              "aria-hidden": "true",
+            }),
+            h("span", { class: "z-timeline__name" }, r.title),
+          ],
+        }),
   });
 }
 
@@ -971,7 +998,7 @@ function yearView(config: AgendaConfig, state: AgendaState, model: AgendaModel):
   for (const o of model.occurrences) {
     const from = dateOf(o.start);
     const to = dateOf(Math.max(o.start, o.end - 1));
-    for (let d = from < first ? first : from, i = 0; d <= to && d <= last && i < 400; d = addDays(d, 1), i++)
+    for (let d = [from, first].sort()[1]!, i = 0; d <= to && d <= last && i < 400; d = addDays(d, 1), i++)
       counts.set(d, (counts.get(d) ?? 0) + 1);
   }
   return yearGrid({
@@ -1172,20 +1199,20 @@ export function agendaTree(
           : state.view === "timeline"
             ? laneView(config, state, model)
             : state.view === "perpetual"
-            ? h(
-                "div",
-                { class: "z-perpetual z-agenda__perpetual" },
-                perpetualTree({
-                  uid,
-                  year: Number(state.date.slice(0, 4)),
-                  weekStart: config.weekStart,
-                  locale,
-                  highlight: state.date,
-                  today: model.today,
-                  labels: { ...PERPETUAL_LABELS, ...labels.perpetual },
-                }),
-              )
-            : timeGrid(config, state, model);
+              ? h(
+                  "div",
+                  { class: "z-perpetual z-agenda__perpetual" },
+                  perpetualTree({
+                    uid,
+                    year: Number(state.date.slice(0, 4)),
+                    weekStart: config.weekStart,
+                    locale,
+                    highlight: state.date,
+                    today: model.today,
+                    labels: { ...PERPETUAL_LABELS, ...labels.perpetual },
+                  }),
+                )
+              : timeGrid(config, state, model);
   const counts = new Map<string, number>();
   for (const o of expandEvents({
     events: config.events,

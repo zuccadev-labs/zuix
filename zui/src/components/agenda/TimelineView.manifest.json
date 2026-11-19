@@ -1,0 +1,185 @@
+{
+  "name": "TimelineView",
+  "group": "agenda",
+  "description": "Línea temporal. `mode=\"tasks\"` (Gantt): fases plegables con barra resumen, tareas con progreso, hitos, dependencias fin → inicio en codo, camino crítico, línea de hoy, fines de semana y zoom día/semana/mes. `mode=\"resources\"`: una fila por sala o persona, reservas por hora con el color del calendario, conflictos con borde, trama y «Overlaps», crear arrastrando y ventana virtual de filas a partir de `virtualizeFrom`.",
+  "import": "import { TimelineView } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": ["tasks", "resources"],
+      "default": "tasks"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "tasks",
+      "type": "TimelineTask[]",
+      "description": "{ id, title, start, end? (exclusivo; sin end o milestone: hito), group?, progress?, dependsOn?, color?, editable? }."
+    },
+    {
+      "name": "groups",
+      "type": "TimelineGroup[]",
+      "description": "{ id, title, collapsed? }: fases."
+    },
+    {
+      "name": "scale",
+      "type": "enum",
+      "values": ["day", "week", "month"],
+      "default": "day",
+      "description": "También defaultScale, scales y onScaleChange."
+    },
+    {
+      "name": "range",
+      "type": "{ from: string; to: string }",
+      "description": "Rango visible (to exclusivo). Por defecto, el de las tareas."
+    },
+    {
+      "name": "criticalPath",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "dependencies",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "resources",
+      "type": "Resource[]",
+      "description": "{ id, title, meta? }."
+    },
+    {
+      "name": "events",
+      "type": "CalendarEvent[]",
+      "description": "Reservas: eventos con resourceIds."
+    },
+    {
+      "name": "calendars",
+      "type": "CalendarSource[]"
+    },
+    {
+      "name": "date",
+      "type": "string"
+    },
+    {
+      "name": "timeZone",
+      "type": "string"
+    },
+    {
+      "name": "dayStart",
+      "type": "string",
+      "default": "08:00"
+    },
+    {
+      "name": "dayEnd",
+      "type": "string",
+      "default": "19:00"
+    },
+    {
+      "name": "snapDuration",
+      "type": "number",
+      "default": 15
+    },
+    {
+      "name": "virtualizeFrom",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "editable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "selectable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "now",
+      "type": "number | string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TimelineLabels>"
+    },
+    {
+      "name": "onTaskChange",
+      "type": "(detail: { task; start; end; kind: move|resize }) => void"
+    },
+    {
+      "name": "onTaskClick",
+      "type": "(detail: { task }) => void"
+    },
+    {
+      "name": "onGroupToggle",
+      "type": "(detail: { groupId; collapsed }) => void"
+    },
+    {
+      "name": "onEventChange",
+      "type": "(detail: { event; occurrence; start; end; kind }) => void"
+    },
+    {
+      "name": "onEventClick",
+      "type": "(detail: { event; occurrence; resourceId }) => void"
+    },
+    {
+      "name": "onSelectSlot",
+      "type": "(detail: SlotSelection & { resourceId }) => void"
+    }
+  ],
+  "states": ["rest", "hover", "focus", "selected", "grabbed", "critical", "conflict", "collapsed"],
+  "tokens": [
+    "reading-bg",
+    "surface-solid",
+    "line",
+    "calendar-now",
+    "calendar-now-label-bg",
+    "calendar-weekend-bg",
+    "event-tint",
+    "event-radius",
+    "event-fg",
+    "event-fg-muted",
+    "warning",
+    "danger",
+    "danger-text",
+    "accent-ring",
+    "control-radius-sm",
+    "panel-radius"
+  ],
+  "classes": ["z-timeline"],
+  "a11y": "Gantt con role=treegrid (fila de cabecera, rowheader por tarea, aria-level, aria-expanded en las fases, aria-rowcount/aria-rowindex) y recursos con role=grid. Una parada de Tab: ↑↓ entre filas, ←→ pliega y despliega una fase, Inicio/Fin. Las barras son button con nombre completo (fechas, días, progreso, camino crítico); las dependencias, en texto («Depends on Tokens v2») por aria-describedby; los hitos, button con «milestone». Intro elige; con editable, una segunda Intro agarra: ←→ ±1 día (recursos: ±snapDuration), Mayús cambia la duración, Intro suelta, Escape cancela; anuncio en una región status. Conflicto con trama, borde y «Overlaps» (no solo color). SVG de dependencias aria-hidden y reflejado en RTL. Sin React: .z-timeline con data-mode, data-scale, data-date… y los datos en <script type=\"application/json\" data-props> o setWidgetProps; emite z:taskchange, z:taskclick, z:grouptoggle, z:scalechange, z:eventchange, z:eventclick y z:selectslot.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Gantt",
+      "code": "<TimelineView\n  title=\"Design system Q4\"\n  groups={[{ id: \"ds\", title: \"Design system\" }]}\n  tasks={[\n    { id: \"tokens\", title: \"Tokens v2\", start: \"2026-11-16\", end: \"2026-11-24\", group: \"ds\", progress: 80 },\n    { id: \"beta\", title: \"Beta release\", start: \"2026-11-27\", milestone: true, group: \"ds\", dependsOn: [\"tokens\"] }\n  ]}\n  today=\"2026-11-19\"\n  editable\n  onTaskChange={(change) => console.log(change.start, change.end)}\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Gantt",
+      "code": "<div class=\"z-timeline\" id=\"plan-gantt\" data-title=\"Design system Q4\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\" data-editable>\n  <script type=\"application/json\" data-props>{ \"range\": { \"from\": \"2026-11-09\", \"to\": \"2026-11-30\" }, \"groups\": [{ \"id\": \"ds\", \"title\": \"Design system\" }], \"tasks\": [{ \"id\": \"tokens\", \"title\": \"Tokens v2\", \"start\": \"2026-11-16\", \"end\": \"2026-11-24\", \"group\": \"ds\", \"progress\": 80, \"color\": \"5\" }, { \"id\": \"docs\", \"title\": \"Docs site\", \"start\": \"2026-11-24\", \"end\": \"2026-11-27\", \"group\": \"ds\", \"dependsOn\": [\"tokens\"] }, { \"id\": \"beta\", \"title\": \"Beta release\", \"start\": \"2026-11-27\", \"milestone\": true, \"group\": \"ds\", \"dependsOn\": [\"docs\"] }] }</script>\n</div>"
+    },
+    {
+      "title": "Recursos",
+      "code": "<div class=\"z-timeline\" id=\"plan-rooms\" data-mode=\"resources\" data-title=\"Rooms\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-editable>\n  <script type=\"application/json\" data-props>{ \"resources\": [{ \"id\": \"atlas\", \"title\": \"Atlas\", \"meta\": \"8 seats\" }, { \"id\": \"kepler\", \"title\": \"Kepler\", \"meta\": \"4 seats\" }], \"calendars\": [{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }], \"events\": [{ \"id\": \"a\", \"title\": \"Sprint planning\", \"start\": \"2026-11-19T09:00\", \"end\": \"2026-11-19T10:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"atlas\"] }, { \"id\": \"b\", \"title\": \"Interview\", \"start\": \"2026-11-19T10:30\", \"end\": \"2026-11-19T11:30\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }, { \"id\": \"c\", \"title\": \"Supplier call\", \"start\": \"2026-11-19T11:00\", \"end\": \"2026-11-19T12:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }] }</script>\n</div>"
+    }
+  ],
+  "origin": "Especificación agenda.md §8–9; Asana, ClickUp, FullCalendar Scheduler."
+}

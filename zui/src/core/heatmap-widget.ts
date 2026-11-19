@@ -92,6 +92,9 @@ export interface HeatmapState {
   tip: boolean;
 }
 
+/** La fecha ISO anterior de dos (se comparan como texto). */
+const earlier = (a: string, b: string) => [a, b].sort()[0]!;
+
 function numberFormat(locale?: string): Intl.NumberFormat {
   try {
     return new Intl.NumberFormat(locale);
@@ -105,7 +108,8 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
   configure(p) {
     const today = valid(p.today) ? p.today : todayISO();
     const ws = (((p.weekStartsOn ?? localeWeekInfo(p.locale).firstDay) % 7) + 7) % 7;
-    const range = p.range && valid(p.range.from) && valid(p.range.to) ? p.range : { from: startOfWeek(addDays(today, -364), ws), to: today };
+    const range =
+      p.range && valid(p.range.from) && valid(p.range.to) ? p.range : { from: startOfWeek(addDays(today, -364), ws), to: today };
     return {
       values: p.values ?? {},
       from: range.from,
@@ -137,7 +141,7 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
     const number = numberFormat(locale);
     const valueText = (v: number) => (v === 1 ? labels.valueOne : v > 0 ? fill(labels.value, { n: number.format(v) }) : labels.none);
     const cellText = (d: string) => fill(labels.cell, { value: valueText(values[d] ?? 0), date: dayName.format(parse(d)) });
-    const lastPast = config.today < config.to ? config.today : config.to;
+    const lastPast = earlier(config.today, config.to);
     const focus = state.focus && state.focus >= config.from && state.focus <= lastPast ? state.focus : lastPast;
     const tipDay = state.tip ? (state.hover ?? focus) : null;
     const titleId = `${uid}-title`;
@@ -198,7 +202,16 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
                     tabindex: d === focus ? 0 : -1,
                   },
                   d === tipDay && !future
-                    ? h("span", { class: "z-heatmap__tip", "aria-hidden": "true", "data-edge": c > weeks.length - 8 ? "end" : c < 6 ? "start" : undefined }, h("b", null, valueText(values[d] ?? 0)), ` · ${dayName.format(parse(d))}`)
+                    ? h(
+                        "span",
+                        {
+                          class: "z-heatmap__tip",
+                          "aria-hidden": "true",
+                          "data-edge": c > weeks.length - 8 ? "end" : c < 6 ? "start" : undefined,
+                        },
+                        h("b", null, valueText(values[d] ?? 0)),
+                        ` · ${dayName.format(parse(d))}`,
+                      )
                     : null,
                 );
               }),
@@ -235,7 +248,13 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
           { class: "z-heatmap__legend" },
           h("span", null, labels.less),
           ...[0, 1, 2, 3, 4].map((l) =>
-            h("span", { key: `l${l}`, class: "z-heatmap__cell z-heatmap__swatch", "data-level": l, role: "img", "aria-label": fill(labels.level, { n: l }) }),
+            h("span", {
+              key: `l${l}`,
+              class: "z-heatmap__cell z-heatmap__swatch",
+              "data-level": l,
+              role: "img",
+              "aria-label": fill(labels.level, { n: l }),
+            }),
           ),
           h("span", null, labels.more),
         )
@@ -324,13 +343,13 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
         else if (key === "PageUp") next = addMonths(date, -1);
         else if (key === "PageDown") next = addMonths(date, 1);
         else if (key === "Home") next = c.from;
-        else if (key === "End") next = c.today < c.to ? c.today : c.to;
+        else if (key === "End") next = earlier(c.today, c.to);
         else if (key === "Enter" || key === " ") {
           event.preventDefault();
           host.emit("day-click", { date, value: c.values[date] ?? 0 });
           return;
         } else return;
-        const last = c.today < c.to ? c.today : c.to;
+        const last = earlier(c.today, c.to);
         next = next < c.from ? c.from : next > last ? last : next;
         event.preventDefault();
         if (next !== date) host.update({ focus: next, hover: null, tip: true }, true);
@@ -357,7 +376,8 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
       (event) => {
         const cell = (event.target as HTMLElement).closest<HTMLElement>(".z-heatmap__cell[data-date]");
         const date = cell && !cell.dataset.future ? cell.dataset.date! : null;
-        if (date !== host.state().hover) host.update({ hover: date, tip: Boolean(date) || root.contains(root.ownerDocument.activeElement) });
+        if (date !== host.state().hover)
+          host.update({ hover: date, tip: Boolean(date) || root.contains(root.ownerDocument.activeElement) });
       },
       { signal },
     );

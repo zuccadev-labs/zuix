@@ -53,7 +53,12 @@ function create(v: VNode, doc: Document, slots: SlotRenderers): Node {
 const keyOf = (v: VNode): string =>
   typeof v === "string" || !v ? "#text" : "slot" in v ? slotKey(v) : v.k !== undefined ? `${v.t}:${v.k}` : v.t;
 
-export function patchElement(el: Element, v: Exclude<VNode, string | null | undefined | false>, fresh = false, slots: SlotRenderers = {}): void {
+export function patchElement(
+  el: Element,
+  v: Exclude<VNode, string | null | undefined | false>,
+  fresh = false,
+  slots: SlotRenderers = {},
+): void {
   if ("slot" in v) return;
   const want = new Map<string, string>();
   for (const [k, value] of Object.entries(v.a ?? {})) {

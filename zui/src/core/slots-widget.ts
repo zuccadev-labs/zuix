@@ -111,11 +111,18 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
     let slots = (p.slots ?? []).map(toMs).filter((v): v is number => v !== null && Number.isFinite(v));
     if (!p.slots && p.availability) {
       const from = valid(p.from) ? p.from : today;
-      slots = availabilitySlots(p.availability, safeTimeZone(p.hostTimeZone), from, valid(p.to) ? p.to : addDays(from, 60), p.duration ?? 30, {
-        step: p.step,
-        busy: (p.busy ?? []).map((b) => ({ start: toMs(b.start)!, end: toMs(b.end)! })),
-        notBefore: now,
-      });
+      slots = availabilitySlots(
+        p.availability,
+        safeTimeZone(p.hostTimeZone),
+        from,
+        valid(p.to) ? p.to : addDays(from, 60),
+        p.duration ?? 30,
+        {
+          step: p.step,
+          busy: (p.busy ?? []).map((b) => ({ start: toMs(b.start)!, end: toMs(b.end)! })),
+          notBefore: now,
+        },
+      );
     }
     return {
       slots,
@@ -157,11 +164,17 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
     const byDay = slotsByDay(config.slots, tz);
     const days = new Set(byDay.keys());
     const list = state.date ? (byDay.get(state.date) ?? []) : [];
-    const focus = state.focus !== null && list.includes(state.focus) ? state.focus : state.value !== null && list.includes(state.value) ? state.value : (list[0] ?? null);
+    const focus =
+      state.focus !== null && list.includes(state.focus)
+        ? state.focus
+        : state.value !== null && list.includes(state.value)
+          ? state.value
+          : (list[0] ?? null);
     const headingId = `${uid}-day`;
     const label = (ms: number) => slotLabel(ms, tz, locale, state.hourCycle);
     const zones = [...new Set([tz, ...(config.timeZones ?? [])])];
-    const zoneText = (z: string) => `${zoneCity(z)} · ${zoneLabel(z, config.now, locale)} (${slotLabel(config.now, z, locale, state.hourCycle)})`;
+    const zoneText = (z: string) =>
+      `${zoneCity(z)} · ${zoneLabel(z, config.now, locale)} (${slotLabel(config.now, z, locale, state.hourCycle)})`;
     const selectedInList = state.value !== null && list.includes(state.value);
     return h(
       "div",
@@ -229,8 +242,16 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
           h(
             "div",
             null,
-            h("h3", { class: "z-slotpicker__day", id: headingId }, state.date ? fmt(locale, { weekday: "long", day: "numeric", month: "long" }).format(parse(state.date)) : labels.times),
-            h("p", { class: "z-slotpicker__count" }, list.length === 1 ? labels.availableOne : list.length ? fill(labels.available, { n: list.length }) : labels.none),
+            h(
+              "h3",
+              { class: "z-slotpicker__day", id: headingId },
+              state.date ? fmt(locale, { weekday: "long", day: "numeric", month: "long" }).format(parse(state.date)) : labels.times,
+            ),
+            h(
+              "p",
+              { class: "z-slotpicker__count" },
+              list.length === 1 ? labels.availableOne : list.length ? fill(labels.available, { n: list.length }) : labels.none,
+            ),
           ),
           h(
             "div",
@@ -354,7 +375,9 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
   after(root, host, focus) {
     if (!focus) return;
     const s = host.state();
-    const el = root.querySelector<HTMLElement>(`.z-slotpicker__slot[data-slot="${s.focus ?? s.value}"]`) ?? root.querySelector<HTMLElement>('.z-slotpicker__slot[tabindex="0"]');
+    const el =
+      root.querySelector<HTMLElement>(`.z-slotpicker__slot[data-slot="${s.focus ?? s.value}"]`) ??
+      root.querySelector<HTMLElement>('.z-slotpicker__slot[tabindex="0"]');
     el?.focus({ preventScroll: true });
     el?.scrollIntoView?.({ block: "nearest" });
   },

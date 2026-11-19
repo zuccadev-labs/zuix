@@ -58,7 +58,15 @@ export const perpetualWidget: Widget<PerpetualYearProps, PerpetualConfig, Perpet
     return h(
       "div",
       { class: "z-perpetual", "data-shown-year": year },
-      perpetualTree({ uid, year, weekStart: config.weekStart, locale: config.locale, highlight: state.highlight, today: config.today, labels: config.labels }),
+      perpetualTree({
+        uid,
+        year,
+        weekStart: config.weekStart,
+        locale: config.locale,
+        highlight: state.highlight,
+        today: config.today,
+        labels: config.labels,
+      }),
     );
   },
   attach(root, host) {

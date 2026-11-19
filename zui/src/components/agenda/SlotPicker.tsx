@@ -23,7 +23,17 @@ export interface SlotPickerProps extends CoreProps {
  * Franjas de cita: Calendar con los días que tienen hueco (los demás, deshabilitados pero enfocables y anunciados) y
  * un `listbox` con las horas del día en la zona del visitante, en 12 o 24 h; «Next» es un botón aparte.
  */
-export function SlotPicker({ onSelect, onConfirm, onDateChange, onTimeZoneChange, onHourCycleChange, id, className, ref, ...props }: SlotPickerProps) {
+export function SlotPicker({
+  onSelect,
+  onConfirm,
+  onDateChange,
+  onTimeZoneChange,
+  onHourCycleChange,
+  id,
+  className,
+  ref,
+  ...props
+}: SlotPickerProps) {
   return useWidget(slotPickerWidget, props, {
     id,
     className,

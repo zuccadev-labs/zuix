@@ -47,6 +47,34 @@
       "name": "...DatePicker",
       "type": "DatePickerProps",
       "description": "El resto de props de DatePicker."
+    },
+    {
+      "name": "isDateCheckoutOnly",
+      "type": "(date) => boolean",
+      "description": "Estancia: se puede terminar el rango ese día, no empezarlo (marca pequeña y «check-out only»). Modo DOM: data-checkout-only-dates o setCalendarOptions."
+    },
+    {
+      "name": "rangeUnit",
+      "type": "enum",
+      "values": ["days", "nights"],
+      "default": "days",
+      "description": "minRange y maxRange en noches; sin rangos de un día."
+    },
+    {
+      "name": "minRangeLabel",
+      "type": "string",
+      "description": "Aviso visible y en el nombre del día que no llega al mínimo («{n}-night minimum»)."
+    },
+    {
+      "name": "showLengthStepper",
+      "type": "boolean",
+      "default": false,
+      "description": "Pie con −/+ que acortan o alargan el rango (lengthLabel «{n} nights»)."
+    },
+    {
+      "name": "flexibility",
+      "type": "number",
+      "description": "Chips «Exact dates», «± 1 day»…; también defaultFlexibility, flexibilityOptions y onFlexibilityChange (modo DOM: data-flexibility y z:flexibilitychange)."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "disabled", "invalid"],

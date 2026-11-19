@@ -4,6 +4,19 @@
 // `<script type="application/json" data-props>`; datos por propiedad con `setWidgetProps(el, props)`. Los avisos salen
 // como `z:<nombre>` (`z:select`, `z:taskchange`…). El texto de la aplicación entra siempre como texto.
 
+import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { buildingOffice } from "@zuccadev-labs/zuix-zicon/icons/building-office";
+import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
+import { chevronDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-down";
+import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
+import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
+import { chevronUpDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-up-down";
+import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-triangle";
+import { fire } from "@zuccadev-labs/zuix-zicon/icons/fire";
+import { flag } from "@zuccadev-labs/zuix-zicon/icons/flag";
+import { globeAlt } from "@zuccadev-labs/zuix-zicon/icons/globe-alt";
+import { tableCells } from "@zuccadev-labs/zuix-zicon/icons/table-cells";
+import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { findSlots, type VAttr } from "../core/vnode";
 import { domEventName, focusActive, type Widget, type WidgetHost } from "../core/widget";
 import { setCalendarOptions, type CalendarOptions } from "./forms-calendar";
@@ -30,6 +43,20 @@ const entries = new WeakMap<HTMLElement, Entry>();
 const registry: AnyWidget[] = [];
 let seq = 0;
 
+registerIcons([
+  buildingOffice,
+  check,
+  chevronDown,
+  chevronLeft,
+  chevronRight,
+  chevronUpDown,
+  exclamationTriangle,
+  fire,
+  flag,
+  globeAlt,
+  tableCells,
+  xMark,
+]);
 registerWidget(perpetualWidget);
 registerWidget(timelineWidget);
 registerWidget(freeBusyWidget);

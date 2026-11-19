@@ -8,6 +8,8 @@
 
 import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowPath } from "@zuccadev-labs/zuix-zicon/icons/arrow-path";
+import { buildingOffice } from "@zuccadev-labs/zuix-zicon/icons/building-office";
+import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-triangle";
 import { calendar } from "@zuccadev-labs/zuix-zicon/icons/calendar";
 import { calendarDays } from "@zuccadev-labs/zuix-zicon/icons/calendar-days";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
@@ -34,10 +36,24 @@ import { localeWeekInfo, todayISO, valid } from "../core/date";
 import { safeTimeZone } from "../core/zone";
 import { setCalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
-import { type Listen } from "./shared";
+import type { Listen } from "./shared";
 import { patchChildren } from "./vtree";
 
-registerIcons([arrowPath, calendar, calendarDays, chevronLeft, chevronRight, chevronUpDown, clock, globeAlt, mapPin, plus, xMark]);
+registerIcons([
+  arrowPath,
+  buildingOffice,
+  exclamationTriangle,
+  calendar,
+  calendarDays,
+  chevronLeft,
+  chevronRight,
+  chevronUpDown,
+  clock,
+  globeAlt,
+  mapPin,
+  plus,
+  xMark,
+]);
 
 interface Entry {
   state: AgendaState;

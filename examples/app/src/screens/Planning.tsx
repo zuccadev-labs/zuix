@@ -31,12 +31,48 @@ export const GANTT_GROUPS: TimelineGroup[] = [
 
 export const GANTT_TASKS: TimelineTask[] = [
   { id: "interviews", title: "User interviews", start: "2026-11-09", end: "2026-11-14", group: "discovery", progress: 100, color: "6" },
-  { id: "synthesis", title: "Synthesis", start: "2026-11-14", end: "2026-11-18", group: "discovery", progress: 100, color: "6", dependsOn: ["interviews"] },
-  { id: "tokens", title: "Tokens v2", start: "2026-11-16", end: "2026-11-24", group: "ds", progress: 80, color: "5", dependsOn: ["synthesis"] },
-  { id: "calendar", title: "Calendar components", start: "2026-11-20", end: "2026-12-03", group: "ds", progress: 35, color: "5", dependsOn: ["tokens"] },
+  {
+    id: "synthesis",
+    title: "Synthesis",
+    start: "2026-11-14",
+    end: "2026-11-18",
+    group: "discovery",
+    progress: 100,
+    color: "6",
+    dependsOn: ["interviews"],
+  },
+  {
+    id: "tokens",
+    title: "Tokens v2",
+    start: "2026-11-16",
+    end: "2026-11-24",
+    group: "ds",
+    progress: 80,
+    color: "5",
+    dependsOn: ["synthesis"],
+  },
+  {
+    id: "calendar",
+    title: "Calendar components",
+    start: "2026-11-20",
+    end: "2026-12-03",
+    group: "ds",
+    progress: 35,
+    color: "5",
+    dependsOn: ["tokens"],
+  },
   { id: "docs", title: "Docs site", start: "2026-11-24", end: "2026-12-03", group: "ds", progress: 10, color: "1", dependsOn: ["tokens"] },
   { id: "beta", title: "Beta release", start: "2026-12-03", milestone: true, group: "ds", dependsOn: ["calendar"] },
-  { id: "guide", title: "Migration guide", start: "2026-12-04", end: "2026-12-10", group: "rollout", progress: 0, color: "1", dependsOn: ["beta"] },
+  {
+    id: "guide",
+    title: "Migration guide",
+    start: "2026-12-04",
+    end: "2026-12-10",
+    group: "rollout",
+    progress: 0,
+    color: "1",
+    dependsOn: ["beta"],
+  },
   { id: "launch", title: "Launch", start: "2026-12-12", milestone: true, group: "rollout", dependsOn: ["guide"] },
 ];
 
@@ -80,11 +116,38 @@ export const ROOM_BOOKINGS: CalendarEvent[] = [
 
 const busy = (from: string, to: string) => ({ start: `2026-11-19T${from}:00+01:00`, end: `2026-11-19T${to}:00+01:00` });
 export const GUESTS: FreeBusyAttendee[] = [
-  { id: "marta", name: "Marta López", meta: "Organiser · Madrid", timeZone: TZ, workingHours: { start: "08:00", end: "19:00" }, busy: [busy("09:00", "10:30"), busy("12:00", "13:00"), busy("16:00", "18:00")] },
-  { id: "javier", name: "Javier Ruiz", meta: "Madrid", timeZone: TZ, workingHours: { start: "08:00", end: "19:00" }, busy: [busy("10:00", "11:00"), busy("15:00", "15:30")] },
+  {
+    id: "marta",
+    name: "Marta López",
+    meta: "Organiser · Madrid",
+    timeZone: TZ,
+    workingHours: { start: "08:00", end: "19:00" },
+    busy: [busy("09:00", "10:30"), busy("12:00", "13:00"), busy("16:00", "18:00")],
+  },
+  {
+    id: "javier",
+    name: "Javier Ruiz",
+    meta: "Madrid",
+    timeZone: TZ,
+    workingHours: { start: "08:00", end: "19:00" },
+    busy: [busy("10:00", "11:00"), busy("15:00", "15:30")],
+  },
   { id: "aiko", name: "Aiko Kato", timeZone: "Asia/Tokyo", workingHours: { start: "08:00", end: "02:00" }, busy: [busy("08:00", "09:30")] },
-  { id: "dana", name: "Dana Price", timeZone: "America/New_York", workingHours: { start: "08:00", end: "18:00" }, busy: [busy("17:00", "18:00")] },
-  { id: "you", name: "You", meta: "Madrid", timeZone: TZ, workingHours: { start: "08:00", end: "19:00" }, busy: [busy("10:00", "12:00"), busy("13:00", "13:45"), busy("15:00", "16:00")] },
+  {
+    id: "dana",
+    name: "Dana Price",
+    timeZone: "America/New_York",
+    workingHours: { start: "08:00", end: "18:00" },
+    busy: [busy("17:00", "18:00")],
+  },
+  {
+    id: "you",
+    name: "You",
+    meta: "Madrid",
+    timeZone: TZ,
+    workingHours: { start: "08:00", end: "19:00" },
+    busy: [busy("10:00", "12:00"), busy("13:00", "13:45"), busy("15:00", "16:00")],
+  },
 ];
 
 export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy" | "slots" | "stay" | "heatmap" | "habits" | "cells";
@@ -95,12 +158,33 @@ const BOOKED = new Set(["2026-11-20", "2026-11-21", "2026-11-22", "2026-12-05", 
 const CHECKOUT_ONLY = new Set(["2026-11-19", "2026-12-04"]);
 const nightsOf = (r: DateRange | null) =>
   r?.from && r.to ? Math.round((Date.parse(`${r.to}T00:00:00Z`) - Date.parse(`${r.from}T00:00:00Z`)) / 86_400_000) : 0;
-const shortDate = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" }).format(Date.parse(`${iso}T00:00:00Z`));
+const shortDate = (iso: string) =>
+  new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" }).format(
+    Date.parse(`${iso}T00:00:00Z`),
+  );
 
 // Contenido por celda: precios (el más barato con borde y «lowest»), historias y seguimiento de ciclo.
 const PRICES: Record<string, number> = {};
-for (let d = 1; d <= 31; d++) PRICES[`2026-12-${String(d).padStart(2, "0")}`] = [79, 108, 137, 128, 93, 136, 115, 39, 61, 126, 72, 129, 107, 125, 41, 140, 73, 90, 83, 85, 112, 79, 95, 0, 0, 111, 128, 140, 137, 147, 68][d - 1]!;
-const STORIES: Record<string, number> = { "2026-11-01": 1, "2026-11-02": 1, "2026-11-04": 2, "2026-11-05": 1, "2026-11-07": 1, "2026-11-08": 3, "2026-11-11": 1, "2026-11-12": 2, "2026-11-13": 1, "2026-11-14": 1, "2026-11-15": 1, "2026-11-16": 2, "2026-11-19": 1 };
+for (let d = 1; d <= 31; d++)
+  PRICES[`2026-12-${String(d).padStart(2, "0")}`] = [
+    79, 108, 137, 128, 93, 136, 115, 39, 61, 126, 72, 129, 107, 125, 41, 140, 73, 90, 83, 85, 112, 79, 95, 0, 0, 111, 128, 140, 137, 147,
+    68,
+  ][d - 1]!;
+const STORIES: Record<string, number> = {
+  "2026-11-01": 1,
+  "2026-11-02": 1,
+  "2026-11-04": 2,
+  "2026-11-05": 1,
+  "2026-11-07": 1,
+  "2026-11-08": 3,
+  "2026-11-11": 1,
+  "2026-11-12": 2,
+  "2026-11-13": 1,
+  "2026-11-14": 1,
+  "2026-11-15": 1,
+  "2026-11-16": 2,
+  "2026-11-19": 1,
+};
 const inSet = (list: string[]) => (d: string) => list.includes(d);
 const CYCLE = {
   period: inSet(["2026-11-01", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05"]),
@@ -124,7 +208,8 @@ function contributions(): Record<string, number> {
     const v = r < (weekend ? 0.55 : 0.18) ? 0 : Math.round(r * (weekend ? 4 : 9));
     if (v) out[d.toISOString().slice(0, 10)] = v;
   }
-  for (let i = 0; i < 12; i++) out[`2026-11-${String(8 + i).padStart(2, "0")}`] = Math.max(out[`2026-11-${String(8 + i).padStart(2, "0")}`] ?? 0, 3 + (i % 4));
+  for (let i = 0; i < 12; i++)
+    out[`2026-11-${String(8 + i).padStart(2, "0")}`] = Math.max(out[`2026-11-${String(8 + i).padStart(2, "0")}`] ?? 0, 3 + (i % 4));
   out["2026-11-12"] = 14;
   return out;
 }
@@ -341,7 +426,9 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
           <div className="app-planning__stack">
             <CalendarHeatmap
               id="app-heatmap"
-              title={`${Object.values(CONTRIBUTIONS).reduce((a, b) => a + b, 0).toLocaleString("en-GB")} contributions in 2026`}
+              title={`${Object.values(CONTRIBUTIONS)
+                .reduce((a, b) => a + b, 0)
+                .toLocaleString("en-GB")} contributions in 2026`}
               values={CONTRIBUTIONS}
               range={{ from: "2026-01-01", to: "2026-12-31" }}
               today={AGENDA_TODAY}
@@ -419,7 +506,9 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
                 isDateDisabled={(d) => PRICES[d] === 0}
                 modifiers={{ cheap: (d) => PRICES[d] !== undefined && PRICES[d]! > 0 && PRICES[d]! < 50 }}
                 renderDay={(d) => (PRICES[d] === undefined ? null : PRICES[d] ? `€${PRICES[d]}` : "—")}
-                getDayDescription={(d) => (PRICES[d] === undefined ? null : PRICES[d] === 0 ? "sold out" : `€${PRICES[d]}${PRICES[d]! < 50 ? ", lowest" : ""}`)}
+                getDayDescription={(d) =>
+                  PRICES[d] === undefined ? null : PRICES[d] === 0 ? "sold out" : `€${PRICES[d]}${PRICES[d]! < 50 ? ", lowest" : ""}`
+                }
               />
               <p className="app-cells__legend">
                 <span data-key="cheap">€39 Lowest</span> <span data-key="selected">Selected</span> <span>— Sold out</span>

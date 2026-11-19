@@ -60,7 +60,10 @@ export function availabilitySlots(
 /** Franjas agrupadas por fecha del visitante (`YYYY-MM-DD` en `timeZone`), ordenadas. */
 export function slotsByDay(slots: (string | number)[], timeZone: string): Map<string, number[]> {
   const out = new Map<string, number[]>();
-  const sorted = slots.map((s) => (typeof s === "number" ? s : Date.parse(s))).filter(Number.isFinite).sort((a, b) => a - b);
+  const sorted = slots
+    .map((s) => (typeof s === "number" ? s : Date.parse(s)))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
   for (const ms of sorted) {
     const date = toWall(ms, timeZone).date;
     const list = out.get(date) ?? [];

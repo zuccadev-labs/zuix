@@ -1,16 +1,5 @@
 "use client";
-import {
-  createElement,
-  type ReactNode,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-  type Ref,
-} from "react";
+import { createElement, type ReactNode, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState, type Ref } from "react";
 import type { AgendaView, CalendarEvent, CalendarSource } from "../../core/agenda";
 import { clockMinutes } from "../../core/agenda";
 import {

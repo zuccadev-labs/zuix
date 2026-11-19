@@ -46,7 +46,8 @@ export const reactHandlerName = (name: string) => `on${name.replace(/(^|-)(\w)/g
 
 /** Lectura tolerante de atributos `data-*`. */
 export const yes = (v: string | undefined) => v !== undefined && v !== "false";
-export const num = (v: string | undefined, fallback: number) => (v !== undefined && v !== "" && Number.isFinite(Number(v)) ? Number(v) : fallback);
+export const num = (v: string | undefined, fallback: number) =>
+  v !== undefined && v !== "" && Number.isFinite(Number(v)) ? Number(v) : fallback;
 export const list = (v: string | undefined) => (v ?? "").split(/[\s,]+/).filter(Boolean);
 
 /** Anuncio educado con ~500 ms de retraso y vaciado previo en la región viva `.z-live` de la pieza. */

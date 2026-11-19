@@ -9,10 +9,12 @@ export function heatmapWeeks(from: string, to: string, weekStart = 1): (string |
   const first = startOfWeek(from, weekStart);
   const weeks: (string | null)[][] = [];
   for (let d = first; d <= to; d = addDays(d, 7))
-    weeks.push(Array.from({ length: 7 }, (_, i) => {
-      const day = addDays(d, i);
-      return day < from || day > to ? null : day;
-    }));
+    weeks.push(
+      Array.from({ length: 7 }, (_, i) => {
+        const day = addDays(d, i);
+        return day < from || day > to ? null : day;
+      }),
+    );
   return weeks;
 }
 

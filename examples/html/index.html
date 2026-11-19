@@ -73,12 +73,58 @@
 </div>
 <h2 class="page__group">agenda</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="CalendarHeatmap" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">CalendarHeatmap</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-heatmap" id="commits" data-title="Commits" data-from="2026-10-26" data-to="2026-11-22" data-today="2026-11-19" data-locale="en-GB" data-week-start="1">
+  <script type="application/json" data-props>{ "values": { "2026-10-27": 2, "2026-11-02": 5, "2026-11-03": 1, "2026-11-10": 8, "2026-11-12": 14, "2026-11-16": 3, "2026-11-17": 6, "2026-11-18": 4, "2026-11-19": 2 } }</script>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="EventCalendar" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">EventCalendar</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <div class="z-agenda" id="team-agenda" data-view="week" data-date="2026-11-19" data-today="2026-11-19" data-time-zone="Europe/Madrid" data-locale="en-GB" data-week-start="1" data-day-start="07:00" data-day-end="21:00" data-editable>
   <script type="application/json" data-calendars>[{ "id": "work", "name": "Work", "color": "1" }]</script>
   <script type="application/json" data-events>[{ "id": "a", "title": "Design review", "start": "2026-11-19T10:00", "end": "2026-11-19T11:00", "timeZone": "Europe/Madrid", "calendarId": "work" }]</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="FreeBusy" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FreeBusy</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-freebusy" id="find-time" data-date="2026-11-19" data-time-zone="Europe/Madrid" data-duration="60" data-locale="en-GB" data-now="2026-11-19T09:42:00Z">
+  <script type="application/json" data-props>{ "attendees": [{ "id": "m", "name": "Marta López", "timeZone": "Europe/Madrid", "workingHours": { "start": "09:00", "end": "18:00" }, "busy": [{ "start": "2026-11-19T08:00:00Z", "end": "2026-11-19T09:30:00Z" }] }, { "id": "d", "name": "Dana Price", "timeZone": "America/New_York", "workingHours": { "start": "08:00", "end": "17:00" }, "busy": [{ "start": "2026-11-19T15:00:00Z", "end": "2026-11-19T16:00:00Z" }] }] }</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="HabitCalendar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">HabitCalendar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-habit" id="reading-habit" data-subtitle="Read 20 minutes" data-today="2026-11-19" data-locale="en-GB" data-week-start="1">
+  <script type="application/json" data-props>{ "states": { "2026-11-12": "done", "2026-11-13": "done", "2026-11-14": "missed", "2026-11-15": "rest", "2026-11-16": "done", "2026-11-17": "done", "2026-11-18": "done", "2026-11-19": { "progress": 60 } } }</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="PerpetualYear" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">PerpetualYear</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-perpetual" id="perpetual-2026" data-highlight="2026-11-19" data-today="2026-11-19" data-locale="en-GB" data-week-start="1"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="SlotPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">SlotPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-slotpicker" id="intro-call" data-host-time-zone="Europe/Madrid" data-duration="30" data-from="2026-11-19" data-to="2026-11-30" data-time-zone="Europe/Madrid" data-time-zones="Europe/Madrid,America/New_York" data-today="2026-11-19" data-now="2026-11-19T09:42:00Z" data-locale="en-GB" data-week-start="1">
+  <script type="application/json" data-props>{ "availability": [{ "days": [1, 2, 3, 4, 5], "start": "09:00", "end": "17:00" }] }</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="TimelineView" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TimelineView</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-timeline" id="plan-gantt" data-title="Design system Q4" data-today="2026-11-19" data-locale="en-GB" data-week-start="1" data-editable>
+  <script type="application/json" data-props>{ "range": { "from": "2026-11-09", "to": "2026-11-30" }, "groups": [{ "id": "ds", "title": "Design system" }], "tasks": [{ "id": "tokens", "title": "Tokens v2", "start": "2026-11-16", "end": "2026-11-24", "group": "ds", "progress": 80, "color": "5" }, { "id": "docs", "title": "Docs site", "start": "2026-11-24", "end": "2026-11-27", "group": "ds", "dependsOn": ["tokens"] }, { "id": "beta", "title": "Beta release", "start": "2026-11-27", "milestone": true, "group": "ds", "dependsOn": ["docs"] }] }</script>
 </div>
   </div>
 </section>

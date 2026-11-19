@@ -207,7 +207,12 @@ function config(cal: HTMLElement) {
     },
     nights,
     stepper: yes(data.lengthStepper),
-    flexOptions: data.flexibilityOptions !== undefined ? list(data.flexibilityOptions).map(Number).filter(Number.isFinite) : data.flexibility !== undefined ? [0, 1, 2, 3, 7] : [],
+    flexOptions:
+      data.flexibilityOptions !== undefined
+        ? list(data.flexibilityOptions).map(Number).filter(Number.isFinite)
+        : data.flexibility !== undefined
+          ? [0, 1, 2, 3, 7]
+          : [],
     flexibility: num(data.flexibility) ?? 0,
   };
 }
@@ -1025,8 +1030,7 @@ function onClick(event: MouseEvent): void {
     } else if (target.closest<HTMLElement>(".z-calendar__stepper-btn")) {
       const next = stepRange(c.selection.range, Number(target.closest<HTMLElement>(".z-calendar__stepper-btn")!.dataset.step), c.rules);
       if (next) commit(cal, next, c);
-    }
-    else if (target.closest(".z-calendar__apply, .z-calendar__cancel")) {
+    } else if (target.closest(".z-calendar__apply, .z-calendar__cancel")) {
       const picker = pickerOf(cal);
       if (!picker?.matches(PICKER)) return;
       if (target.closest(".z-calendar__apply")) applyToPicker(picker, c.selection, c.mode);

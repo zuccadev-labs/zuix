@@ -203,8 +203,18 @@ export function perpetualTree(input: PerpetualInput): VEl {
                 ...months.map((m) =>
                   h(
                     "span",
-                    { key: `m${m.month}`, class: "z-perpetual__month", "data-short": on(m.days < 31), "data-current": on(m.month === hitMonth) },
-                    h("b", null, h("i", { "aria-hidden": "true" }, number(m.month)), h("span", { "aria-hidden": "true" }, monthName(m.month))),
+                    {
+                      key: `m${m.month}`,
+                      class: "z-perpetual__month",
+                      "data-short": on(m.days < 31),
+                      "data-current": on(m.month === hitMonth),
+                    },
+                    h(
+                      "b",
+                      null,
+                      h("i", { "aria-hidden": "true" }, number(m.month)),
+                      h("span", { "aria-hidden": "true" }, monthName(m.month)),
+                    ),
                     h("span", { class: "z-sr-only" }, monthLong(m.month)),
                     h("small", null, fill(labels.days, { n: m.days })),
                   ),
@@ -252,7 +262,12 @@ export function perpetualTree(input: PerpetualInput): VEl {
           row.map((n) =>
             h(
               "span",
-              { key: `n${n}`, s: { "--z-pp-row": r + 1, "--z-pp-col": Math.floor((n - 1) / 7) + 1 }, "data-row-hl": on(hit?.row === r), "data-hit": on(n === hitDay) },
+              {
+                key: `n${n}`,
+                s: { "--z-pp-row": r + 1, "--z-pp-col": Math.floor((n - 1) / 7) + 1 },
+                "data-row-hl": on(hit?.row === r),
+                "data-hit": on(n === hitDay),
+              },
               number(n),
             ),
           ),

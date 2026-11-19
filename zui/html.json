@@ -118,6 +118,20 @@
     }
    ]
   },
+  "CalendarHeatmap": {
+   "group": "agenda",
+   "classes": [
+    "z-heatmap"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Últimas semanas",
+     "html": "<div class=\"z-heatmap\" id=\"commits\" data-title=\"Commits\" data-from=\"2026-10-26\" data-to=\"2026-11-22\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"values\": { \"2026-10-27\": 2, \"2026-11-02\": 5, \"2026-11-03\": 1, \"2026-11-10\": 8, \"2026-11-12\": 14, \"2026-11-16\": 3, \"2026-11-17\": 6, \"2026-11-18\": 4, \"2026-11-19\": 2 } }</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "EventCalendar": {
    "group": "agenda",
    "classes": [
@@ -132,6 +146,81 @@
     {
      "title": "Semana editable",
      "html": "<div class=\"z-agenda\" id=\"team-agenda\" data-view=\"week\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-week-start=\"1\" data-day-start=\"07:00\" data-day-end=\"21:00\" data-editable>\n  <script type=\"application/json\" data-calendars>[{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }]</script>\n  <script type=\"application/json\" data-events>[{ \"id\": \"a\", \"title\": \"Design review\", \"start\": \"2026-11-19T10:00\", \"end\": \"2026-11-19T11:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\" }]</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "FreeBusy": {
+   "group": "agenda",
+   "classes": [
+    "z-freebusy"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Buscar hueco de 1 h",
+     "html": "<div class=\"z-freebusy\" id=\"find-time\" data-date=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-duration=\"60\" data-locale=\"en-GB\" data-now=\"2026-11-19T09:42:00Z\">\n  <script type=\"application/json\" data-props>{ \"attendees\": [{ \"id\": \"m\", \"name\": \"Marta López\", \"timeZone\": \"Europe/Madrid\", \"workingHours\": { \"start\": \"09:00\", \"end\": \"18:00\" }, \"busy\": [{ \"start\": \"2026-11-19T08:00:00Z\", \"end\": \"2026-11-19T09:30:00Z\" }] }, { \"id\": \"d\", \"name\": \"Dana Price\", \"timeZone\": \"America/New_York\", \"workingHours\": { \"start\": \"08:00\", \"end\": \"17:00\" }, \"busy\": [{ \"start\": \"2026-11-19T15:00:00Z\", \"end\": \"2026-11-19T16:00:00Z\" }] }] }</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "HabitCalendar": {
+   "group": "agenda",
+   "classes": [
+    "z-habit"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Racha del mes",
+     "html": "<div class=\"z-habit\" id=\"reading-habit\" data-subtitle=\"Read 20 minutes\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"states\": { \"2026-11-12\": \"done\", \"2026-11-13\": \"done\", \"2026-11-14\": \"missed\", \"2026-11-15\": \"rest\", \"2026-11-16\": \"done\", \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { \"progress\": 60 } } }</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "PerpetualYear": {
+   "group": "agenda",
+   "classes": [
+    "z-perpetual"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Año perpetuo",
+     "html": "<div class=\"z-perpetual\" id=\"perpetual-2026\" data-highlight=\"2026-11-19\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "SlotPicker": {
+   "group": "agenda",
+   "classes": [
+    "z-slotpicker"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Llamada de 30 min",
+     "html": "<div class=\"z-slotpicker\" id=\"intro-call\" data-host-time-zone=\"Europe/Madrid\" data-duration=\"30\" data-from=\"2026-11-19\" data-to=\"2026-11-30\" data-time-zone=\"Europe/Madrid\" data-time-zones=\"Europe/Madrid,America/New_York\" data-today=\"2026-11-19\" data-now=\"2026-11-19T09:42:00Z\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"availability\": [{ \"days\": [1, 2, 3, 4, 5], \"start\": \"09:00\", \"end\": \"17:00\" }] }</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "TimelineView": {
+   "group": "agenda",
+   "classes": [
+    "z-timeline"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Gantt",
+     "html": "<div class=\"z-timeline\" id=\"plan-gantt\" data-title=\"Design system Q4\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\" data-editable>\n  <script type=\"application/json\" data-props>{ \"range\": { \"from\": \"2026-11-09\", \"to\": \"2026-11-30\" }, \"groups\": [{ \"id\": \"ds\", \"title\": \"Design system\" }], \"tasks\": [{ \"id\": \"tokens\", \"title\": \"Tokens v2\", \"start\": \"2026-11-16\", \"end\": \"2026-11-24\", \"group\": \"ds\", \"progress\": 80, \"color\": \"5\" }, { \"id\": \"docs\", \"title\": \"Docs site\", \"start\": \"2026-11-24\", \"end\": \"2026-11-27\", \"group\": \"ds\", \"dependsOn\": [\"tokens\"] }, { \"id\": \"beta\", \"title\": \"Beta release\", \"start\": \"2026-11-27\", \"milestone\": true, \"group\": \"ds\", \"dependsOn\": [\"docs\"] }] }</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Recursos",
+     "html": "<div class=\"z-timeline\" id=\"plan-rooms\" data-mode=\"resources\" data-title=\"Rooms\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-editable>\n  <script type=\"application/json\" data-props>{ \"resources\": [{ \"id\": \"atlas\", \"title\": \"Atlas\", \"meta\": \"8 seats\" }, { \"id\": \"kepler\", \"title\": \"Kepler\", \"meta\": \"4 seats\" }], \"calendars\": [{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }], \"events\": [{ \"id\": \"a\", \"title\": \"Sprint planning\", \"start\": \"2026-11-19T09:00\", \"end\": \"2026-11-19T10:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"atlas\"] }, { \"id\": \"b\", \"title\": \"Interview\", \"start\": \"2026-11-19T10:30\", \"end\": \"2026-11-19T11:30\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }, { \"id\": \"c\", \"title\": \"Supplier call\", \"start\": \"2026-11-19T11:00\", \"end\": \"2026-11-19T12:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }] }</script>\n</div>",
      "source": "manual"
     }
    ]

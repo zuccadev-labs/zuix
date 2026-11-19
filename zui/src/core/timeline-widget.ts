@@ -19,7 +19,16 @@ import {
 import { addDays, diffDays, localeWeekInfo, todayISO, valid } from "./date";
 import { isRtl } from "./dir";
 import { arrowDirection, nextInDirection } from "./spatial";
-import { isMilestone, resizeTask, shiftTask, taskEnd, timelineColumns, type TimelineGroup, type TimelineScale, type TimelineTask } from "./timeline";
+import {
+  isMilestone,
+  resizeTask,
+  shiftTask,
+  taskEnd,
+  timelineColumns,
+  type TimelineGroup,
+  type TimelineScale,
+  type TimelineTask,
+} from "./timeline";
 import {
   dateRangeText,
   RESOURCE_HOUR,
@@ -128,7 +137,10 @@ function defaultRange(tasks: TimelineTask[]): { from: string; to: string } {
     return { from: addDays(t, -7), to: addDays(t, 28) };
   }
   const from = tasks.map((t) => t.start).sort()[0]!;
-  const to = tasks.map((t) => taskEnd(t)).sort().at(-1)!;
+  const to = tasks
+    .map((t) => taskEnd(t))
+    .sort()
+    .at(-1)!;
   return { from: addDays(from, 0), to: addDays(to, 2) };
 }
 
@@ -357,7 +369,16 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
   attach(root, host) {
     const abort = new AbortController();
     const signal = abort.signal;
-    const drag = { id: null as string | null, pointer: -1, x: 0, started: false, mode: "move" as "move" | "resize" | "create", resource: "", origin: 0, moved: false };
+    const drag = {
+      id: null as string | null,
+      pointer: -1,
+      x: 0,
+      started: false,
+      mode: "move" as "move" | "resize" | "create",
+      resource: "",
+      origin: 0,
+      moved: false,
+    };
     const ids = () => {
       const c = host.config();
       const s = host.state();
@@ -368,7 +389,10 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
       if (start === t.start && end === taskEnd(t)) return;
       host.emit("task-change", { task: t, start, end, kind });
       const c = host.config();
-      announceIn(root, fill(c.labels.moved, { title: t.title, when: dateRangeText(start, isMilestone(t) ? addDays(start, 1) : end, c.locale) }));
+      announceIn(
+        root,
+        fill(c.labels.moved, { title: t.title, when: dateRangeText(start, isMilestone(t) ? addDays(start, 1) : end, c.locale) }),
+      );
     };
     const { occFor, itemFor } = {
       occFor: (key: string) => resourceItems(host.config(), host.state()).occ.get(key),
@@ -455,8 +479,15 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
           if (event.key === "Enter" || event.key === " ") {
             if (c.mode === "tasks" && s.preview) {
               const t = taskOf(s.preview.id);
-              if (t) commitTask(t, s.preview.start, s.preview.end, s.preview.end !== taskEnd(t) && s.preview.start === t.start ? "resize" : "move");
-            } else if (s.slotPreview) commitBooking(s.slotPreview.key, s.slotPreview.start - dayStart(c.date), s.slotPreview.end - dayStart(c.date));
+              if (t)
+                commitTask(
+                  t,
+                  s.preview.start,
+                  s.preview.end,
+                  s.preview.end !== taskEnd(t) && s.preview.start === t.start ? "resize" : "move",
+                );
+            } else if (s.slotPreview)
+              commitBooking(s.slotPreview.key, s.slotPreview.start - dayStart(c.date), s.slotPreview.end - dayStart(c.date));
             host.update({ grabbed: null, preview: null, slotPreview: null }, true);
             return;
           }
@@ -474,7 +505,9 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
             if (!o) return;
             const cur = s.slotPreview ?? { key: s.grabbed, start: o.start, end: o.end };
             const step = sign * c.snapDuration;
-            const next = event.shiftKey ? { ...cur, end: Math.max(cur.start + c.snapDuration, cur.end + step) } : { ...cur, start: cur.start + step, end: cur.end + step };
+            const next = event.shiftKey
+              ? { ...cur, end: Math.max(cur.start + c.snapDuration, cur.end + step) }
+              : { ...cur, start: cur.start + step, end: cur.end + step };
             host.update({ slotPreview: next }, true);
             announceIn(root, clockRange(next.start, next.end, c.locale));
           }
@@ -494,7 +527,7 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
           else if (id.startsWith("g:") && (key === "ArrowLeft" || key === "ArrowRight")) {
             const gid = id.slice(2);
             const set = new Set(s.collapsed);
-            if (key === "ArrowLeft" === set.has(gid)) return;
+            if ((key === "ArrowLeft") === set.has(gid)) return;
             if (key === "ArrowLeft") set.add(gid);
             else set.delete(gid);
             host.update({ collapsed: [...set] }, true);
@@ -530,7 +563,11 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
         const dir = arrowDirection(event.key);
         if (!dir) return;
         const pieces = [...root.querySelectorAll<HTMLElement>(".z-timeline__booking")];
-        const j = nextInDirection(piece.getBoundingClientRect(), pieces.map((p) => p.getBoundingClientRect()), dir);
+        const j = nextInDirection(
+          piece.getBoundingClientRect(),
+          pieces.map((p) => p.getBoundingClientRect()),
+          dir,
+        );
         if (j >= 0 && pieces[j] !== piece) {
           event.preventDefault();
           host.update({ focus: pieces[j]!.dataset.focusId! }, true);
@@ -617,11 +654,18 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
         if (drag.mode === "create" && s.creating) {
           const base = `${c.date}T`;
           const t = (m: number) => `${base}${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
-          host.emit("select-slot", { resourceId: s.creating.resourceId, start: t(s.creating.start), end: t(s.creating.end), allDay: false, timeZone: c.timeZone });
+          host.emit("select-slot", {
+            resourceId: s.creating.resourceId,
+            start: t(s.creating.start),
+            end: t(s.creating.end),
+            allDay: false,
+            timeZone: c.timeZone,
+          });
         } else if (c.mode === "tasks" && s.preview) {
           const t = taskOf(s.preview.id);
           if (t) commitTask(t, s.preview.start, s.preview.end, drag.mode === "resize" ? "resize" : "move");
-        } else if (s.slotPreview) commitBooking(s.slotPreview.key, s.slotPreview.start - dayStart(c.date), s.slotPreview.end - dayStart(c.date));
+        } else if (s.slotPreview)
+          commitBooking(s.slotPreview.key, s.slotPreview.start - dayStart(c.date), s.slotPreview.end - dayStart(c.date));
       }
       if (drag.started) host.update({ preview: null, slotPreview: null, creating: drag.mode === "create" && !cancel ? s.creating : null });
       drag.id = null;

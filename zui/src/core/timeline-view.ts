@@ -128,7 +128,11 @@ export function taskFocusIds(tasks: TimelineTask[], groups: TimelineGroup[], col
   return timelineRows(tasks, groups, collapsed).map((r) => (r.kind === "group" ? `g:${r.group.id}` : `t:${r.task.id}`));
 }
 
-function scaleHeader(columns: { date: string; days: number }[], scale: TimelineScale, input: { today: string; locale?: string; labels: TimelineLabels; weekStart: number }): VNode[] {
+function scaleHeader(
+  columns: { date: string; days: number }[],
+  scale: TimelineScale,
+  input: { today: string; locale?: string; labels: TimelineLabels; weekStart: number },
+): VNode[] {
   const { locale, labels } = input;
   const weekend = new Set(localeWeekInfo(locale).weekend);
   if (scale === "day") {
@@ -174,8 +178,14 @@ function scaleHeader(columns: { date: string; days: number }[], scale: TimelineS
         "data-today": on(input.today >= c.date && input.today < addDays(c.date, c.days)),
       },
       ...(scale === "week"
-        ? [h("small", null, fill(labels.weekShort, { n: weekNumber(c.date, 1, 4).week })), h("b", null, dayFmt(locale).format(parse(c.date)))]
-        : [h("small", null, fmt(locale, { year: "numeric" }).format(parse(c.date))), h("b", null, fmt(locale, { month: "short" }).format(parse(c.date)))]),
+        ? [
+            h("small", null, fill(labels.weekShort, { n: weekNumber(c.date, 1, 4).week })),
+            h("b", null, dayFmt(locale).format(parse(c.date))),
+          ]
+        : [
+            h("small", null, fmt(locale, { year: "numeric" }).format(parse(c.date))),
+            h("b", null, fmt(locale, { month: "short" }).format(parse(c.date))),
+          ]),
     ),
   );
 }
@@ -187,14 +197,16 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
   const rows = timelineRows(input.tasks, input.groups, input.collapsed);
   const byId = new Map(input.tasks.map((t) => [t.id, t]));
   const cp = input.showCritical ? criticalPath(input.tasks) : null;
-  const shown = (t: TimelineTask) => (input.preview?.id === t.id ? { start: input.preview.start, end: input.preview.end } : { start: t.start, end: taskEnd(t) });
+  const shown = (t: TimelineTask) =>
+    input.preview?.id === t.id ? { start: input.preview.start, end: input.preview.end } : { start: t.start, end: taskEnd(t) };
   const rowOf = new Map<string, number>();
   rows.forEach((r, i) => {
     if (r.kind === "task") rowOf.set(r.task.id, i);
     else if (r.collapsed) for (const t of r.tasks) rowOf.set(t.id, i);
   });
   const focusIds = rows.map((r) => (r.kind === "group" ? `g:${r.group.id}` : `t:${r.task.id}`));
-  const focus = input.focus && focusIds.includes(input.focus) ? input.focus : (focusIds.find((f) => f.startsWith("t:")) ?? focusIds[0] ?? "");
+  const focus =
+    input.focus && focusIds.includes(input.focus) ? input.focus : (focusIds.find((f) => f.startsWith("t:")) ?? focusIds[0] ?? "");
   const width = columns.length * col;
   const height = rows.length * TIMELINE_ROW;
   const todayAt = input.today >= input.from && input.today < input.to ? columnAt(input.today, columns) : null;
@@ -211,9 +223,18 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
       if (ra === undefined || rb === undefined || ra === rb) continue;
       const sa = shown(a);
       const sb = shown(b);
-      const ax = isMilestone(a) ? (columnAt(sa.start, columns) + 0.5 / (scale === "day" ? 1 : 7)) * col + 8 : columnAt(sa.end, columns) * col - 3;
-      const bx = isMilestone(b) ? columnAt(sb.start, columns) * col + (scale === "day" ? col / 2 - 9 : 0) : columnAt(sb.start, columns) * col + 3;
-      const points = routeDependency({ x: ax, y: ra * TIMELINE_ROW + TIMELINE_ROW / 2 }, { x: bx, y: rb * TIMELINE_ROW + TIMELINE_ROW / 2 }, 8, TIMELINE_ROW / 2);
+      const ax = isMilestone(a)
+        ? (columnAt(sa.start, columns) + 0.5 / (scale === "day" ? 1 : 7)) * col + 8
+        : columnAt(sa.end, columns) * col - 3;
+      const bx = isMilestone(b)
+        ? columnAt(sb.start, columns) * col + (scale === "day" ? col / 2 - 9 : 0)
+        : columnAt(sb.start, columns) * col + 3;
+      const points = routeDependency(
+        { x: ax, y: ra * TIMELINE_ROW + TIMELINE_ROW / 2 },
+        { x: bx, y: rb * TIMELINE_ROW + TIMELINE_ROW / 2 },
+        8,
+        TIMELINE_ROW / 2,
+      );
       const critical = Boolean(cp?.edges.has(`${e.from}→${e.to}`));
       deps.push(
         h("path", {
@@ -285,7 +306,9 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
     const days = milestone ? 0 : diffDays(span.start, span.end);
     const dep = depText(t);
     const depId = dep ? `${uid}-dep-${t.id}` : undefined;
-    const when = milestone ? fmt(locale, { day: "numeric", month: "long" }).format(parse(span.start)) : dateRangeText(span.start, span.end, locale);
+    const when = milestone
+      ? fmt(locale, { day: "numeric", month: "long" }).format(parse(span.start))
+      : dateRangeText(span.start, span.end, locale);
     const progress = t.progress !== undefined && !milestone ? Math.max(0, Math.min(100, Math.round(t.progress))) : null;
     const nameParts = [t.title, when, milestone ? labels.milestone : fill(labels.days, { n: days })];
     if (progress !== null) nameParts.push(fill(labels.progress, { n: progress }));
@@ -329,7 +352,9 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
           h("span", { class: "z-event__title" }, t.title),
           progress !== null ? h("span", { class: "z-timeline__pct", "aria-hidden": "true" }, `${progress}%`) : null,
           h("span", { class: "z-sr-only" }, `, ${nameParts.slice(1).join(", ")}`),
-          input.editable && t.editable !== false ? h("span", { class: "z-event__resize z-timeline__resize", "data-edge": "end", "aria-hidden": "true" }) : null,
+          input.editable && t.editable !== false
+            ? h("span", { class: "z-event__resize z-timeline__resize", "data-edge": "end", "aria-hidden": "true" })
+            : null,
         );
     return h(
       "div",
@@ -347,12 +372,7 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
           milestone ? dayFmt(locale).format(parse(span.start)) : fill(labels.daysShort, { n: taskDays({ ...t, ...span }) }),
         ),
       ),
-      h(
-        "div",
-        { class: "z-timeline__track", role: "gridcell" },
-        item,
-        dep ? h("span", { id: depId, class: "z-sr-only" }, dep) : null,
-      ),
+      h("div", { class: "z-timeline__track", role: "gridcell" }, item, dep ? h("span", { id: depId, class: "z-sr-only" }, dep) : null),
     );
   });
 
@@ -406,13 +426,24 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
             ),
             h(
               "marker",
-              { id: `${uid}-arrow-critical`, class: "z-timeline__marker-critical", viewBox: "0 0 8 8", refX: 7, refY: 4, markerWidth: 7, markerHeight: 7, orient: "auto" },
+              {
+                id: `${uid}-arrow-critical`,
+                class: "z-timeline__marker-critical",
+                viewBox: "0 0 8 8",
+                refX: 7,
+                refY: 4,
+                markerWidth: 7,
+                markerHeight: 7,
+                orient: "auto",
+              },
               h("path", { d: "M0 0 L8 4 L0 8 z" }),
             ),
           ),
           ...deps,
         ),
-        todayAt !== null ? h("div", { class: "z-timeline__today", "aria-hidden": "true", s: { "--z-tl-at": todayAt + (scale === "day" ? 0.5 : 0) } }) : null,
+        todayAt !== null
+          ? h("div", { class: "z-timeline__today", "aria-hidden": "true", s: { "--z-tl-at": todayAt + (scale === "day" ? 0.5 : 0) } })
+          : null,
       ),
     ),
   );
@@ -450,7 +481,10 @@ export interface ResourceTimelineInput {
   creating?: { resourceId: string; start: number; end: number } | null;
   labels: { resource: string; overlaps: string; newBooking: string };
   /** Pinta una reserva: recibe sus variables de posición y si choca con otra. */
-  renderItem: (item: ResourceItem, layout: { s: Record<string, string | number>; conflict: boolean; half: "top" | "bottom" | null }) => VNode;
+  renderItem: (
+    item: ResourceItem,
+    layout: { s: Record<string, string | number>; conflict: boolean; half: "top" | "bottom" | null },
+  ) => VNode;
   /** Pinta la cabecera de una fila (por defecto, título y meta). */
   renderLabel?: (row: ResourceRow) => VNode[];
   /** Capas extra sobre las pistas (sugerencia de buscar hueco). */
@@ -500,7 +534,12 @@ export function resourceTimeline(input: ResourceTimelineInput): VEl {
         { class: "z-timeline__label", role: "rowheader" },
         ...(input.renderLabel?.(r) ?? [
           h("span", { class: "z-timeline__avatar", "aria-hidden": "true" }, icon("building-office", 14)),
-          h("span", { class: "z-timeline__meta" }, h("span", { class: "z-timeline__name" }, r.title), r.meta ? h("small", null, r.meta) : null),
+          h(
+            "span",
+            { class: "z-timeline__meta" },
+            h("span", { class: "z-timeline__name" }, r.title),
+            r.meta ? h("small", null, r.meta) : null,
+          ),
         ]),
       ),
       h(
@@ -513,7 +552,11 @@ export function resourceTimeline(input: ResourceTimelineInput): VEl {
             const from = at(Math.max(it.start, input.dayStart));
             const to = at(Math.min(it.end, input.dayEnd));
             const half = clash.get(it.key) ?? null;
-            return input.renderItem(it, { s: { "--z-tl-from": from, "--z-tl-span": Math.max(0.05, to - from) }, conflict: Boolean(half), half });
+            return input.renderItem(it, {
+              s: { "--z-tl-from": from, "--z-tl-span": Math.max(0.05, to - from) },
+              conflict: Boolean(half),
+              half,
+            });
           }),
         input.creating?.resourceId === r.id
           ? h(
@@ -549,7 +592,13 @@ export function resourceTimeline(input: ResourceTimelineInput): VEl {
         h(
           "div",
           { class: "z-timeline__scale", role: "columnheader", "data-scale": "hour" },
-          ...hours.map((m) => h("span", { key: `h${m}`, class: "z-timeline__unit z-timeline__unit--hour", s: { "--z-tl-at": at(m), "--z-tl-span": 1 } }, hourLabel(m, locale))),
+          ...hours.map((m) =>
+            h(
+              "span",
+              { key: `h${m}`, class: "z-timeline__unit z-timeline__unit--hour", s: { "--z-tl-at": at(m), "--z-tl-span": 1 } },
+              hourLabel(m, locale),
+            ),
+          ),
         ),
       ),
       h(

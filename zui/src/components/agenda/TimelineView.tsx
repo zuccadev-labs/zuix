@@ -17,7 +17,14 @@ export interface TimelineViewProps extends CoreProps {
   /** Mover o cambiar la duración de una tarea (puntero o teclado). La línea temporal no cambia las tareas. */
   onTaskChange?: (detail: { task: TimelineTask; start: string; end: string; kind: "move" | "resize" }) => void;
   onEventClick?: (detail: { event: CalendarEvent; occurrence: string; resourceId?: string }) => void;
-  onEventChange?: (detail: { event: CalendarEvent; occurrence: string; seriesId?: string; start: string; end: string; kind: "move" }) => void;
+  onEventChange?: (detail: {
+    event: CalendarEvent;
+    occurrence: string;
+    seriesId?: string;
+    start: string;
+    end: string;
+    kind: "move";
+  }) => void;
   onSelectSlot?: (detail: SlotSelection & { resourceId: string }) => void;
   id?: string;
   className?: string;

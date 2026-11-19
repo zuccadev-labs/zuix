@@ -6,7 +6,7 @@ import { clockMinutes, dateOf, dayStart, minuteOfDay, nowIn } from "./agenda";
 import { addDays, todayISO, valid } from "./date";
 import { busyOf, findSlots, subtractIntervals, toMs, workingIntervals, type Attendee, type Interval } from "./freebusy";
 import { resourceTimeline, type ResourceItem } from "./timeline-view";
-import { fill, fmt, h, icon, on } from "./vnode";
+import { fill, fmt, h, icon } from "./vnode";
 import { num, type Widget } from "./widget";
 import { fromWall, safeTimeZone, toWall, zoneCity } from "./zone";
 
@@ -88,8 +88,14 @@ const initials = (name: string) =>
 
 /** Franjas comunes del día en la zona de presentación (instantes). */
 export function freeBusySlots(config: FreeBusyConfig): Interval[] {
-  const from = fromWall({ date: config.date, hour: Math.floor(config.dayStart / 60), minute: config.dayStart % 60, second: 0 }, config.timeZone);
-  const to = fromWall({ date: config.date, hour: Math.floor(config.dayEnd / 60) % 24, minute: config.dayEnd % 60, second: 0 }, config.timeZone);
+  const from = fromWall(
+    { date: config.date, hour: Math.floor(config.dayStart / 60), minute: config.dayStart % 60, second: 0 },
+    config.timeZone,
+  );
+  const to = fromWall(
+    { date: config.date, hour: Math.floor(config.dayEnd / 60) % 24, minute: config.dayEnd % 60, second: 0 },
+    config.timeZone,
+  );
   const end = config.dayEnd >= 1440 ? fromWall({ date: addDays(config.date, 1), hour: 0, minute: 0, second: 0 }, config.timeZone) : to;
   if (from === null || end === null) return [];
   return findSlots(config.attendees, from, end, config.duration, { step: config.step, limit: 200, fallbackZone: config.timeZone });
@@ -180,8 +186,7 @@ export const freeBusyWidget: Widget<FreeBusyProps, FreeBusyConfig, FreeBusyState
         const a = config.attendees.find((x) => x.id === r.id)!;
         const zone = a.timeZone ?? timeZone;
         const local = config.now !== null ? fmt(locale, { hour: "2-digit", minute: "2-digit" }, zone).format(config.now) : "";
-        const meta =
-          a.meta ?? (zone !== timeZone && local ? fill(labels.localNow, { city: zoneCity(zone), time: local }) : zoneCity(zone));
+        const meta = a.meta ?? (zone !== timeZone && local ? fill(labels.localNow, { city: zoneCity(zone), time: local }) : zoneCity(zone));
         return [
           h("span", { class: "z-timeline__avatar z-freebusy__avatar", "aria-hidden": "true" }, initials(a.name)),
           h("span", { class: "z-timeline__meta" }, h("span", { class: "z-timeline__name" }, a.name), h("small", null, meta)),
@@ -213,25 +218,45 @@ export const freeBusyWidget: Widget<FreeBusyProps, FreeBusyConfig, FreeBusyState
           { class: "z-freebusy__actions" },
           h(
             "button",
-            { type: "button", class: "z-agenda__icon-btn z-freebusy__prev", "aria-label": labels.earlier, disabled: index <= 0 ? true : undefined },
+            {
+              type: "button",
+              class: "z-agenda__icon-btn z-freebusy__prev",
+              "aria-label": labels.earlier,
+              disabled: index <= 0 ? true : undefined,
+            },
             icon("chevron-left", 16),
           ),
           h(
             "button",
-            { type: "button", class: "z-agenda__icon-btn z-freebusy__next", "aria-label": labels.later, disabled: index >= slots.length - 1 ? true : undefined },
+            {
+              type: "button",
+              class: "z-agenda__icon-btn z-freebusy__next",
+              "aria-label": labels.later,
+              disabled: index >= slots.length - 1 ? true : undefined,
+            },
             icon("chevron-right", 16),
           ),
           slot
             ? h(
                 "button",
-                { type: "button", class: "z-btn z-btn--primary z-freebusy__use", "data-size": "sm", "data-start": slot.start, "data-end": slot.end },
+                {
+                  type: "button",
+                  class: "z-btn z-btn--primary z-freebusy__use",
+                  "data-size": "sm",
+                  "data-start": slot.start,
+                  "data-end": slot.end,
+                },
                 fill(labels.use, { time: slotText }),
               )
             : h("span", { class: "z-freebusy__none" }, labels.none),
         ),
       ),
       grid,
-      h("div", { class: "z-sr-only", role: "status", "aria-live": "polite", "data-live": "" }, slot ? `${fill(labels.allFree, { n: required })}: ${slotText}` : labels.none),
+      h(
+        "div",
+        { class: "z-sr-only", role: "status", "aria-live": "polite", "data-live": "" },
+        slot ? `${fill(labels.allFree, { n: required })}: ${slotText}` : labels.none,
+      ),
     );
   },
   attach(root, host) {
@@ -247,7 +272,13 @@ export const freeBusyWidget: Widget<FreeBusyProps, FreeBusyConfig, FreeBusyState
           const w = toWall(ms, c.timeZone);
           return `${w.date}T${String(w.hour).padStart(2, "0")}:${String(w.minute).padStart(2, "0")}`;
         };
-        host.emit("select", { start: iso(slots[i].start), end: iso(slots[i].end), timeZone: c.timeZone, startMs: slots[i].start, endMs: slots[i].end });
+        host.emit("select", {
+          start: iso(slots[i].start),
+          end: iso(slots[i].end),
+          timeZone: c.timeZone,
+          startMs: slots[i].start,
+          endMs: slots[i].end,
+        });
       }
     };
     root.addEventListener("click", onClick);

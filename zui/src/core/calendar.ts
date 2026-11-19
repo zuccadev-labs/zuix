@@ -197,7 +197,11 @@ export const rangeNights = (range: { from: string | null; to: string | null }) =
  * Estancia: el rango con el fin movido `delta` noches, si se puede (respeta el mínimo, el máximo, lo reservado y los
  * días que no se pueden elegir). `null` si no.
  */
-export function stepRange(range: { from: string | null; to: string | null }, delta: number, rules: CalendarRules): { from: string; to: string } | null {
+export function stepRange(
+  range: { from: string | null; to: string | null },
+  delta: number,
+  rules: CalendarRules,
+): { from: string; to: string } | null {
   if (!range.from || !range.to) return null;
   const to = addDays(range.to, delta);
   if (to <= range.from) return null;
