@@ -666,6 +666,32 @@
     }
    ]
   },
+  "DateField": {
+   "group": "forms",
+   "classes": [
+    "z-input",
+    "z-datefield"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Fecha con borrar",
+     "html": "<div aria-label=\"Deadline\" role=\"group\" id=\"deadline\" class=\"z-input z-datefield\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"day\" data-clearable=\"true\" data-value=\"2026-11-13\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"month\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Month\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"11\" aria-valuetext=\"11 – November\">11</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"day\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Day\" aria-valuemin=\"1\" aria-valuemax=\"30\" aria-valuenow=\"13\" aria-valuetext=\"13\">13</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"year\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Year\" aria-valuemin=\"1\" aria-valuemax=\"9999\" aria-valuenow=\"2026\" aria-valuetext=\"2026\">2026</span>\n  </span>\n  <button type=\"button\" class=\"z-input__action z-datefield__clear\" aria-label=\"Clear\" title=\"Clear\" tabindex=\"-1\">\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"deadline\" value=\"2026-11-13\">\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\"#deadline\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+     "title": "Fecha y hora, 24 h, con mínimo",
+     "html": "<div aria-label=\"Meeting\" role=\"group\" id=\"meeting\" class=\"z-input z-datefield\" data-size=\"md\" data-locale=\"en-GB\" data-granularity=\"minute\" data-min=\"2026-11-01\" data-value=\"2026-11-13T09:30\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"day\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Day\" aria-valuemin=\"1\" aria-valuemax=\"30\" aria-valuenow=\"13\" aria-valuetext=\"13\">13</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"month\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Month\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"11\" aria-valuetext=\"11 – November\">11</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"year\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Year\" aria-valuemin=\"1\" aria-valuemax=\"9999\" aria-valuenow=\"2026\" aria-valuetext=\"2026\">2026</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">, </span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"0\" aria-valuemax=\"23\" aria-valuenow=\"9\" aria-valuetext=\"09\">09</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuenow=\"30\" aria-valuetext=\"30\">30</span>\n  </span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"2026-11-13T09:30\">\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Dentro de Field, obligatorio",
+     "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" id=\"start-date-label\" for=\"start-date\">Start date\n    <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n  </label>\n  <div class=\"z-field__body\">\n    <div aria-labelledby=\"start-date-label\" role=\"group\" id=\"start-date\" aria-describedby=\"start-date-hint\" class=\"z-input z-datefield\" data-size=\"md\" data-locale=\"de\" data-granularity=\"day\">\n      <span class=\"z-datefield__input\">\n        <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"day\" data-placeholder=\"\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Day\" aria-valuemin=\"1\" aria-valuemax=\"31\" aria-valuetext=\"Empty\" aria-required=\"true\">dd</span>\n        <span class=\"z-datefield__literal\" aria-hidden=\"true\">.</span>\n        <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"month\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Month\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuetext=\"Empty\" aria-required=\"true\">mm</span>\n        <span class=\"z-datefield__literal\" aria-hidden=\"true\">.</span>\n        <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"year\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Year\" aria-valuemin=\"1\" aria-valuemax=\"9999\" aria-valuetext=\"Empty\" aria-required=\"true\">yyyy</span>\n      </span>\n      <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" required=\"\" name=\"start\" value=\"\">\n    </div>\n    <p class=\"z-field__hint\" id=\"start-date-hint\">Type or paste a date.</p>\n  </div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "DateInput": {
    "group": "forms",
    "classes": [
@@ -956,6 +982,52 @@
      "title": "Crece con el contenido",
      "html": "<textarea aria-label=\"Notes\" rows=\"3\" class=\"z-textarea\" data-size=\"md\" data-resize=\"vertical\"></textarea>",
      "source": "generated"
+    }
+   ]
+  },
+  "TimeField": {
+   "group": "forms",
+   "classes": [
+    "z-input",
+    "z-datefield",
+    "z-timefield"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "12 h, de 5 en 5 minutos",
+     "html": "<div aria-label=\"Alarm\" role=\"group\" id=\"alarm\" class=\"z-input z-datefield z-timefield\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-minute-step=\"5\" data-value=\"07:30\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"7\" aria-valuetext=\"07 AM\">07</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuenow=\"30\" aria-valuetext=\"30\">30</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\"> </span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"dayPeriod\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"text\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"AM/PM\" aria-valuemin=\"0\" aria-valuemax=\"1\" aria-valuenow=\"0\" aria-valuetext=\"AM\">AM</span>\n  </span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"alarm\" value=\"07:30\">\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\"#alarm\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+     "title": "Turno de noche con segundos",
+     "html": "<div aria-label=\"Night shift\" role=\"group\" id=\"night\" class=\"z-input z-datefield z-timefield\" data-size=\"md\" data-locale=\"en-GB\" data-granularity=\"second\" data-min=\"22:00\" data-max=\"02:00\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" data-placeholder=\"\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"0\" aria-valuemax=\"23\" aria-valuetext=\"Empty\">––</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuetext=\"Empty\">––</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"second\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Second\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuetext=\"Empty\">––</span>\n  </span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"\">\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "TimePicker": {
+   "group": "forms",
+   "classes": [
+    "z-input",
+    "z-datefield",
+    "z-timefield",
+    "z-timepicker",
+    "z-popover"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Columnas con «Now»",
+     "html": "<div aria-label=\"Start time\" data-variant=\"columns\" data-show-now=\"\" role=\"group\" id=\"start-time\" class=\"z-input z-datefield z-timefield z-timepicker\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-minute-step=\"5\" data-value=\"09:30\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"9\" aria-valuetext=\"09 AM\">09</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuenow=\"30\" aria-valuetext=\"30\">30</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\"> </span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"dayPeriod\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"text\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"AM/PM\" aria-valuemin=\"0\" aria-valuemax=\"1\" aria-valuenow=\"0\" aria-valuetext=\"AM\">AM</span>\n  </span>\n  <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Choose time\" title=\"Choose time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"start-time-panel\">\n    <z-icon name=\"clock\" size=\"16\"></z-icon>\n  </button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"09:30\">\n</div>\n\n<div id=\"start-time-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Choose time\"></div>",
+     "source": "manual",
+     "script": "document.querySelector(\"#start-time\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+     "title": "Franjas de 30 minutos en horario de oficina",
+     "html": "<div aria-label=\"Appointment\" data-variant=\"list\" data-step=\"30\" data-disabled-times=\"12:00\" role=\"group\" id=\"slot\" class=\"z-input z-datefield z-timefield z-timepicker\" data-size=\"md\" data-locale=\"en-GB\" data-granularity=\"minute\" data-min=\"09:00\" data-max=\"17:00\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" data-placeholder=\"\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"0\" aria-valuemax=\"23\" aria-valuetext=\"Empty\">––</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuetext=\"Empty\">––</span>\n  </span>\n  <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Choose time\" title=\"Choose time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"slot-panel\">\n    <z-icon name=\"clock\" size=\"16\"></z-icon>\n  </button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"\">\n</div>\n\n<div id=\"slot-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Choose time\"></div>",
+     "source": "manual"
     }
    ]
   },

@@ -638,6 +638,24 @@ pnpm dev</code>
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="DateField" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DateField</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div aria-label="Deadline" role="group" id="deadline" class="z-input z-datefield" data-size="md" data-locale="en-US" data-granularity="day" data-clearable="true" data-value="2026-11-13">
+  <span class="z-datefield__input">
+    <span role="spinbutton" class="z-datefield__segment" data-segment="month" tabindex="0" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Month" aria-valuemin="1" aria-valuemax="12" aria-valuenow="11" aria-valuetext="11 – November">11</span>
+    <span class="z-datefield__literal" aria-hidden="true">/</span>
+    <span role="spinbutton" class="z-datefield__segment" data-segment="day" tabindex="-1" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Day" aria-valuemin="1" aria-valuemax="30" aria-valuenow="13" aria-valuetext="13">13</span>
+    <span class="z-datefield__literal" aria-hidden="true">/</span>
+    <span role="spinbutton" class="z-datefield__segment" data-segment="year" tabindex="-1" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Year" aria-valuemin="1" aria-valuemax="9999" aria-valuenow="2026" aria-valuetext="2026">2026</span>
+  </span>
+  <button type="button" class="z-input__action z-datefield__clear" aria-label="Clear" title="Clear" tabindex="-1">
+    <z-icon name="x-mark" size="16"></z-icon>
+  </button>
+  <input type="text" class="z-native-input" aria-hidden="true" tabindex="-1" name="deadline" value="2026-11-13">
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="DateInput" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">DateInput</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -866,6 +884,41 @@ pnpm dev</code>
   <header class="demo__head"><h3 class="demo__name">Textarea</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
 <textarea placeholder="Describe the change" aria-label="Description" rows="4" class="z-textarea" data-size="md" data-resize="vertical"></textarea>
+  </div>
+</section>
+<section class="z-card demo" data-component="TimeField" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TimeField</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div aria-label="Alarm" role="group" id="alarm" class="z-input z-datefield z-timefield" data-size="md" data-locale="en-US" data-granularity="minute" data-minute-step="5" data-value="07:30">
+  <span class="z-datefield__input">
+    <span role="spinbutton" class="z-datefield__segment" data-segment="hour" tabindex="0" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Hour" aria-valuemin="1" aria-valuemax="12" aria-valuenow="7" aria-valuetext="07 AM">07</span>
+    <span class="z-datefield__literal" aria-hidden="true">:</span>
+    <span role="spinbutton" class="z-datefield__segment" data-segment="minute" tabindex="-1" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Minute" aria-valuemin="0" aria-valuemax="59" aria-valuenow="30" aria-valuetext="30">30</span>
+    <span class="z-datefield__literal" aria-hidden="true"> </span>
+    <span role="spinbutton" class="z-datefield__segment" data-segment="dayPeriod" tabindex="-1" contenteditable="true" inputmode="text" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="AM/PM" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="AM">AM</span>
+  </span>
+  <input type="text" class="z-native-input" aria-hidden="true" tabindex="-1" name="alarm" value="07:30">
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="TimePicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TimePicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div aria-label="Start time" data-variant="columns" data-show-now="" role="group" id="start-time" class="z-input z-datefield z-timefield z-timepicker" data-size="md" data-locale="en-US" data-granularity="minute" data-minute-step="5" data-value="09:30">
+  <span class="z-datefield__input">
+    <span role="spinbutton" class="z-datefield__segment" data-segment="hour" tabindex="0" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Hour" aria-valuemin="1" aria-valuemax="12" aria-valuenow="9" aria-valuetext="09 AM">09</span>
+    <span class="z-datefield__literal" aria-hidden="true">:</span>
+    <span role="spinbutton" class="z-datefield__segment" data-segment="minute" tabindex="-1" contenteditable="true" inputmode="numeric" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="Minute" aria-valuemin="0" aria-valuemax="59" aria-valuenow="30" aria-valuetext="30">30</span>
+    <span class="z-datefield__literal" aria-hidden="true"> </span>
+    <span role="spinbutton" class="z-datefield__segment" data-segment="dayPeriod" tabindex="-1" contenteditable="true" inputmode="text" spellcheck="false" autocorrect="off" autocapitalize="off" enterkeyhint="next" aria-label="AM/PM" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="AM">AM</span>
+  </span>
+  <button type="button" class="z-input__action z-timepicker__trigger" aria-label="Choose time" title="Choose time" aria-haspopup="dialog" aria-expanded="false" aria-controls="start-time-panel">
+    <z-icon name="clock" size="16"></z-icon>
+  </button>
+  <input type="text" class="z-native-input" aria-hidden="true" tabindex="-1" value="09:30">
+</div>
+
+<div id="start-time-panel" popover="manual" class="z-liquid z-popover z-timepicker__panel" role="dialog" aria-label="Choose time"></div>
   </div>
 </section>
 </div>
@@ -1703,6 +1756,9 @@ document.querySelector("#due-calendar").addEventListener("z:change", (event) => 
 // Combobox
 document.querySelector("#country").addEventListener("z:change", (event) => console.log(event.detail.value));
 
+// DateField
+document.querySelector("#deadline").addEventListener("z:change", (event) => console.log(event.detail.value));
+
 // DatePicker
 document.querySelector("#due").addEventListener("z:change", (event) => console.log(event.detail.value));
 
@@ -1717,6 +1773,12 @@ document.querySelector("#view").addEventListener("z:change", (event) => console.
 
 // Slider
 document.querySelector("#volume").addEventListener("z:change", (event) => console.log(event.detail.value));
+
+// TimeField
+document.querySelector("#alarm").addEventListener("z:change", (event) => console.log(event.detail.value));
+
+// TimePicker
+document.querySelector("#start-time").addEventListener("z:change", (event) => console.log(event.detail.value));
 
 // CommandPalette
 document.querySelector("#commands").addEventListener("z:select", (event) => {

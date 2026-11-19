@@ -1,0 +1,322 @@
+{
+  "name": "TimePicker",
+  "group": "forms",
+  "description": "TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear. Valor HH:mm o HH:mm:ss en 24 h. Sin esfera.",
+  "import": "import { TimePicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["columns", "list"],
+      "default": "columns",
+      "description": "columns: una columna por segmento. list: franjas de `step` minutos dentro de min/max."
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 30,
+      "description": "Minutos entre franjas de la lista."
+    },
+    {
+      "name": "isTimeDisabled",
+      "type": "(time: string) => boolean",
+      "description": "true para las horas que no se pueden elegir. Sin React: data-disabled-times=\"12:00,12:30\"."
+    },
+    {
+      "name": "showNow",
+      "type": "boolean",
+      "default": false,
+      "description": "Botón que elige la hora actual."
+    },
+    {
+      "name": "nowLabel",
+      "type": "string",
+      "default": "Now"
+    },
+    {
+      "name": "open",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "pickerLabel",
+      "type": "string",
+      "default": "Choose time",
+      "description": "Nombre accesible del botón y del panel."
+    },
+    {
+      "name": "hoursLabel",
+      "type": "string",
+      "default": "Hours"
+    },
+    {
+      "name": "minutesLabel",
+      "type": "string",
+      "default": "Minutes"
+    },
+    {
+      "name": "secondsLabel",
+      "type": "string",
+      "default": "Seconds"
+    },
+    {
+      "name": "periodLabel",
+      "type": "string",
+      "default": "AM/PM"
+    },
+    {
+      "name": "timesLabel",
+      "type": "string",
+      "default": "Times",
+      "description": "Nombre accesible de la lista de franjas."
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "start"
+    },
+    {
+      "name": "popupClassName",
+      "type": "string"
+    },
+    {
+      "name": "triggerRef",
+      "type": "Ref<HTMLButtonElement>"
+    },
+    {
+      "name": "showSeconds",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "value",
+      "type": "string | null",
+      "description": "Valor ISO controlado; null mientras está vacío o incompleto."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null",
+      "description": "Valor inicial; `form.reset()` vuelve a él."
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string | null) => void",
+      "description": "Cada cambio: el ISO cuando todos los segmentos forman un valor que existe; si no, null."
+    },
+    {
+      "name": "min",
+      "type": "string",
+      "description": "Hora mínima HH:mm[:ss]. Con min > max la franja cruza la medianoche (22:00–02:00)."
+    },
+    {
+      "name": "max",
+      "type": "string",
+      "description": "Hora máxima HH:mm[:ss]."
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": [12, 24],
+      "description": "Ciclo horario mostrado. Por defecto, el del locale (`resolvedOptions().hourCycle`); el valor siempre va en 24 h."
+    },
+    {
+      "name": "minuteStep",
+      "type": "number",
+      "default": 1,
+      "description": "Paso de las flechas en los minutos (1, 5, 10, 15, 30)."
+    },
+    {
+      "name": "secondStep",
+      "type": "number",
+      "default": 1,
+      "description": "Paso de las flechas en los segundos."
+    },
+    {
+      "name": "placeholderValue",
+      "type": "string",
+      "description": "Valor que siembran las flechas en un segmento vacío. Por defecto, hoy a las 00:00."
+    },
+    {
+      "name": "forceLeadingZeros",
+      "type": "boolean",
+      "default": true,
+      "description": "Mes, día y hora con dos cifras. Año, minuto y segundo van siempre rellenos."
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "default": false,
+      "description": "Botón (icono x-mark) que vacía el campo."
+    },
+    {
+      "name": "clearLabel",
+      "type": "string",
+      "default": "Clear"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false,
+      "description": "Se enfoca y se recorre, pero las teclas no cambian el valor."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo nativo oculto con el valor ISO y su validez (obligatorio, incompleto, fuera de rango)."
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "description": "id del formulario del campo oculto, si no lo contiene."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Etiqueta BCP 47: orden de los segmentos, separadores, dígitos y ciclo horario. Por defecto, la del entorno."
+    },
+    {
+      "name": "segmentLabels",
+      "type": "Partial<Record<SegmentType, string>>",
+      "description": "Nombre accesible de cada segmento. Por defecto Year, Month, Day, Hour, Minute, Second y AM/PM."
+    },
+    {
+      "name": "segmentPlaceholders",
+      "type": "Partial<Record<SegmentType, string>>",
+      "description": "Texto visible de cada segmento vacío. Por defecto yyyy, mm, dd y ––."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "default": "Empty",
+      "description": "aria-valuetext de un segmento vacío."
+    },
+    {
+      "name": "incompleteMessage",
+      "type": "string",
+      "default": "Enter a complete time.",
+      "description": "Mensaje de validación nativo con algún segmento vacío."
+    },
+    {
+      "name": "invalidMessage",
+      "type": "string",
+      "default": "Enter a valid time.",
+      "description": "Mensaje de validación nativo cuando la fecha no existe (31 de febrero)."
+    },
+    {
+      "name": "rangeMessage",
+      "type": "string",
+      "default": "Enter a time within the allowed range.",
+      "description": "Mensaje de validación nativo fuera de min/max."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Se pinta dentro del campo, tras los segmentos (p. ej. un botón que abre un calendario)."
+    },
+    {
+      "name": "onKeyDown",
+      "type": "KeyboardEventHandler<HTMLDivElement>",
+      "description": "Teclado del grupo; llega después de que el segmento haya atendido la tecla."
+    },
+    {
+      "name": "ref",
+      "type": "Ref<HTMLDivElement>",
+      "description": "El elemento role=group."
+    }
+  ],
+  "states": ["rest", "hover", "focus", "open", "placeholder", "invalid", "disabled", "readonly"],
+  "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border",
+    "control-border-hover",
+    "accent",
+    "accent-ring",
+    "focus-width",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-subtle",
+    "fg-muted",
+    "danger",
+    "radius-xs",
+    "surface-3",
+    "text-body",
+    "text-small",
+    "space-3",
+    "duration-fast",
+    "ease-standard",
+    "item-radius",
+    "surface-2",
+    "line",
+    "line-strong",
+    "touch-target",
+    "weight-medium",
+    "text-caption",
+    "space-1",
+    "space-1-5",
+    "space-2-5",
+    "popup-bg"
+  ],
+  "classes": ["z-input", "z-datefield", "z-timefield", "z-timepicker", "z-popover"],
+  "a11y": "El campo es un TimeField (spinbuttons en un grupo). El botón (aria-haspopup=dialog, aria-expanded, aria-controls) y Alt+Flecha abajo abren un diálogo no modal (capa popover) con aria-label. Columnas: cada una es un listbox con aria-label y opciones con aria-selected; flechas dentro (la selección sigue al foco), Inicio/Fin, Flecha izquierda/derecha y Tab entre columnas, Intro elige y cierra. Lista: listbox de franjas; flechas mueven, Intro o clic eligen y cierran; lo que se teclea filtra (Retroceso borra, Escape limpia el filtro y, con la lista completa, cierra). Las horas no elegibles llevan aria-disabled. Escape cierra y devuelve el foco al botón. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un [popover] vacío que el módulo rellena.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Columnas con «Now»",
+      "code": "<TimePicker id=\"start-time\" aria-label=\"Start time\" locale=\"en-US\" defaultValue=\"09:30\" minuteStep={5} showNow />"
+    },
+    {
+      "title": "Franjas de 30 minutos en horario de oficina",
+      "code": "<TimePicker id=\"slot\" variant=\"list\" step={30} aria-label=\"Appointment\" locale=\"en-GB\" min=\"09:00\" max=\"17:00\" isTimeDisabled={(time) => time === \"12:00\"} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Columnas con «Now»",
+      "code": "<div aria-label=\"Start time\" data-variant=\"columns\" data-show-now=\"\" role=\"group\" id=\"start-time\" class=\"z-input z-datefield z-timefield z-timepicker\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-minute-step=\"5\" data-value=\"09:30\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"9\" aria-valuetext=\"09 AM\">09</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuenow=\"30\" aria-valuetext=\"30\">30</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\"> </span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"dayPeriod\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"text\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"AM/PM\" aria-valuemin=\"0\" aria-valuemax=\"1\" aria-valuenow=\"0\" aria-valuetext=\"AM\">AM</span>\n  </span>\n  <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Choose time\" title=\"Choose time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"start-time-panel\">\n    <z-icon name=\"clock\" size=\"16\"></z-icon>\n  </button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"09:30\">\n</div>\n\n<div id=\"start-time-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Choose time\"></div>",
+      "script": "document.querySelector(\"#start-time\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Franjas de 30 minutos en horario de oficina",
+      "code": "<div aria-label=\"Appointment\" data-variant=\"list\" data-step=\"30\" data-disabled-times=\"12:00\" role=\"group\" id=\"slot\" class=\"z-input z-datefield z-timefield z-timepicker\" data-size=\"md\" data-locale=\"en-GB\" data-granularity=\"minute\" data-min=\"09:00\" data-max=\"17:00\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" data-placeholder=\"\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"0\" aria-valuemax=\"23\" aria-valuetext=\"Empty\">––</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuetext=\"Empty\">––</span>\n  </span>\n  <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Choose time\" title=\"Choose time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"slot-panel\">\n    <z-icon name=\"clock\" size=\"16\"></z-icon>\n  </button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"\">\n</div>\n\n<div id=\"slot-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Choose time\"></div>"
+    }
+  ],
+  "origin": "Nuevo. Columnas como los selectores de hora de iOS y Material; lista como el selector de franjas de Google Calendar."
+}
