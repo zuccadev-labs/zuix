@@ -2810,7 +2810,10 @@ export const cases = [
           el.focus();
           const transfer = new DataTransfer();
           transfer.setData("text", text);
-          el.dispatchEvent(new ClipboardEvent("paste", { clipboardData: transfer, bubbles: true, cancelable: true }));
+          // Firefox no acepta clipboardData al construir el evento: usa dataType y data.
+          el.dispatchEvent(
+            new ClipboardEvent("paste", { clipboardData: transfer, dataType: "text/plain", data: text, bubbles: true, cancelable: true }),
+          );
         }, data);
       await paste(seg("df", "year"), "2030-01-02");
       await expectText(page, t("df-value"), "2030-01-02", "pegar ISO");

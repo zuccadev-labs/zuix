@@ -295,7 +295,15 @@ function Columns({ columns, labels, onPick }: ColumnsProps) {
           column.options.find((o) => !o.disabled) ??
           column.options[0];
         return (
-          <div key={column.type} role="listbox" aria-label={labels[column.type]} className="z-timepicker__column" data-column={column.type}>
+          <div
+            key={column.type}
+            role="listbox"
+            aria-label={labels[column.type]}
+            className="z-timepicker__column"
+            data-column={column.type}
+            // Firefox hace tabulable una lista con desplazamiento: el foco va a sus opciones, no a la lista.
+            tabIndex={-1}
+          >
             {column.options.map((option) => (
               <div
                 key={option.value}
@@ -397,7 +405,7 @@ function SlotList({ value, step, min, max, locale, cycle, seconds, isTimeDisable
           {query}
         </div>
       ) : null}
-      <div ref={list} role="listbox" aria-label={label} className="z-timepicker__list">
+      <div ref={list} role="listbox" aria-label={label} className="z-timepicker__list" tabIndex={-1}>
         {shown.map((slot) => (
           <div
             key={slot.time}

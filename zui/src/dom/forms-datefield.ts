@@ -332,6 +332,8 @@ function fillPanel(panel: HTMLElement, field: HTMLElement): void {
     list.className = "z-timepicker__list";
     list.setAttribute("role", "listbox");
     list.setAttribute("aria-label", s.timesLabel);
+    // Firefox hace tabulable una lista con desplazamiento: el foco va a sus opciones, no a la lista.
+    list.tabIndex = -1;
     list.append(...shown.map((slot) => option(slot.label, slot.time, slot.time === value, slot.disabled, slot === tabbable)));
     nodes.push(list);
   } else {
@@ -355,6 +357,7 @@ function fillPanel(panel: HTMLElement, field: HTMLElement): void {
       list.setAttribute("role", "listbox");
       list.setAttribute("aria-label", s.labels[column.type]);
       list.dataset.column = column.type;
+      list.tabIndex = -1;
       const tabbable =
         column.options.find((o) => o.value === column.selected && !o.disabled) ??
         column.options.find((o) => !o.disabled) ??
