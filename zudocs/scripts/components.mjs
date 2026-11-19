@@ -19,6 +19,7 @@ const SOURCES = [
 export const GROUPS = {
   actions: { label: "Acciones", icon: "cursor-arrow-rays" },
   forms: { label: "Formularios", icon: "pencil-square" },
+  agenda: { label: "Agenda", icon: "calendar-days" },
   data: { label: "Datos", icon: "table-cells" },
   feedback: { label: "Estado", icon: "bell" },
   content: { label: "Contenido", icon: "rectangle-stack" },

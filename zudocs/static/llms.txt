@@ -67,14 +67,18 @@
 
 ## Componentes: Formularios
 
-- [Calendar](https://zuccadev-labs.github.io/zuix/components/forms/calendar.md): Rejilla de un mes para elegir una fecha o un rango.
+- [Calendar](https://zuccadev-labs.github.io/zuix/components/forms/calendar.md): Rejilla de fechas: una, varias o un rango, en uno o varios meses, con vistas de mes y año, preajustes y fechas reservadas.
 - [Checkbox](https://zuccadev-labs.github.io/zuix/components/forms/checkbox.md): Casilla de verificación con etiqueta, descripción y estado indeterminado.
 - [Combobox](https://zuccadev-labs.github.io/zuix/components/forms/combobox.md): Campo de texto con lista filtrable para elegir una opción; admite carga asíncrona de opciones.
+- [DateField](https://zuccadev-labs.github.io/zuix/components/forms/date-field.md): Fecha (y hora) que se teclea por segmentos —día, mes, año y, con granularity, hora, minuto, segundo y AM/PM— en el orden y con los separadores del locale.
 - [DateInput](https://zuccadev-labs.github.io/zuix/components/forms/date-input.md): Campo de fecha, hora, fecha y hora o mes sobre el control nativo.
-- [DatePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-picker.md): Campo de fecha con calendario propio en un popover; fecha única o rango.
+- [DatePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-picker.md): Campo de fecha con calendario propio en un popover: fecha única, rango o varias fechas, uno o varios meses, preajustes y confirmación.
+- [DateRangePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-range-picker.md): Selector de rango: DatePicker en modo range con dos meses por defecto, vista previa que cruza los meses, preajustes relativos a hoy (rangePresets), minRange/maxRange y fechas reservadas.
+- [DateTimePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-time-picker.md): Fecha y hora en un campo tecleable (DateField segmentado) con un calendario y un TimeField en el mismo panel.
 - [Field](https://zuccadev-labs.github.io/zuix/components/forms/field.md): Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.
 - [FileUpload](https://zuccadev-labs.github.io/zuix/components/forms/file-upload.md): Zona para elegir o soltar archivos.
 - [Input](https://zuccadev-labs.github.io/zuix/components/forms/input.md): Campo de texto de una línea con icono y contenido final opcionales.
+- [MonthPicker](https://zuccadev-labs.github.io/zuix/components/forms/month-picker.md): Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4).
 - [NativeSelect](https://zuccadev-labs.github.io/zuix/components/forms/native-select.md): Lista desplegable sobre el `<select>` nativo (lista del sistema) con el aspecto del resto de controles.
 - [OTPInput](https://zuccadev-labs.github.io/zuix/components/forms/otp-input.md): Código de un solo uso repartido en casillas.
 - [Radio](https://zuccadev-labs.github.io/zuix/components/forms/radio.md): Opción de un `RadioGroup`, con etiqueta y descripción.
@@ -84,6 +88,14 @@
 - [Slider](https://zuccadev-labs.github.io/zuix/components/forms/slider.md): Deslizador de un valor o de un rango.
 - [Switch](https://zuccadev-labs.github.io/zuix/components/forms/switch.md): Interruptor de activación inmediata.
 - [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
+- [TimeField](https://zuccadev-labs.github.io/zuix/components/forms/time-field.md): Hora de reloj que se teclea por segmentos (hora, minuto, segundo, AM/PM).
+- [TimePicker](https://zuccadev-labs.github.io/zuix/components/forms/time-picker.md): TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear.
+- [WeekPicker](https://zuccadev-labs.github.io/zuix/components/forms/week-picker.md): Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible.
+- [YearPicker](https://zuccadev-labs.github.io/zuix/components/forms/year-picker.md): Selector de año: DatePicker en la vista de década (rejilla 3 × 4 con los años del borde atenuados).
+
+## Componentes: Agenda
+
+- [EventCalendar](https://zuccadev-labs.github.io/zuix/components/agenda/event-calendar.md): Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral con minicalendario y calendarios, y las vistas de día, semana, semana laboral, mes con eventos y lista sobre un mismo modelo de…
 
 ## Componentes: Datos
 
@@ -118,6 +130,8 @@
 - [CodeBlock](https://zuccadev-labs.github.io/zuix/components/content/code-block.md): Bloque de código sin resaltado, con botón de copiar.
 - [Divider](https://zuccadev-labs.github.io/zuix/components/content/divider.md): Línea separadora entre bloques o entre elementos de una barra.
 - [Panel](https://zuccadev-labs.github.io/zuix/components/content/panel.md): Panel de cristal líquido: la pieza de cromo sobre la que flota la interfaz.
+- [RelativeTime](https://zuccadev-labs.github.io/zuix/components/content/relative-time.md): Tiempo relativo («3 minutes ago», «in 2 days») sobre un instante, con Intl.RelativeTimeFormat.
+- [Timer](https://zuccadev-labs.github.io/zuix/components/content/timer.md): Cuenta atrás o cronómetro con iniciar, pausar, reanudar y reiniciar.
 
 ## Componentes: Superposición
 
