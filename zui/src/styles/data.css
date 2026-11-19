@@ -734,10 +734,15 @@
   .z-rating__glyph {
     display: inline-flex;
     grid-area: 1 / 1;
+  }
+  /* Gráficos (3:1), como las estrellas de lectura. */
+  .z-rating__glyph > .z-icon {
     color: var(--z-control-border);
   }
-  .z-rating__glyph--filled {
+  .z-rating__glyph--filled > .z-icon {
     color: var(--z-warning);
+  }
+  .z-rating__glyph--filled {
     clip-path: inset(0 100% 0 0);
   }
   [dir="rtl"] .z-rating__glyph--filled {

@@ -80,6 +80,7 @@
 - [DatePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-picker.md): Campo de fecha con calendario propio en un popover: fecha única, rango o varias fechas, uno o varios meses, preajustes y confirmación.
 - [DateRangePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-range-picker.md): Selector de rango: DatePicker en modo range con dos meses por defecto, vista previa que cruza los meses, preajustes relativos a hoy (rangePresets), minRange/maxRange y fechas reservadas.
 - [DateTimePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-time-picker.md): Fecha y hora en un campo tecleable (DateField segmentado) con un calendario y un TimeField en el mismo panel.
+- [Editable](https://zuccadev-labs.github.io/zuix/components/forms/editable.md): Texto que se edita en su sitio (un título, un nombre): se ve como texto y pasa a ser un campo del mismo tamaño al activarlo.
 - [Field](https://zuccadev-labs.github.io/zuix/components/forms/field.md): Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.
 - [Fieldset](https://zuccadev-labs.github.io/zuix/components/forms/fieldset.md): Grupo de campos relacionados con su título (fieldset y legend), descripción y deshabilitado de una vez; FieldGroup reparte los campos con el ritmo del estándar.
 - [FileUpload](https://zuccadev-labs.github.io/zuix/components/forms/file-upload.md): Zona para elegir o soltar archivos.
