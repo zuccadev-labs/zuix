@@ -89,7 +89,9 @@
     "glass-border",
     "control-bg",
     "glass-highlight",
-    "shadow-sm"
+    "shadow-sm",
+    "control-height-md",
+    "space-1-5"
   ],
   "classes": ["z-tabs", "z-tabs__list", "z-tabs__tab", "z-tabs__label", "z-tabs__panel"],
   "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",

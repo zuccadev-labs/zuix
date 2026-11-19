@@ -249,7 +249,8 @@ export default async function ({ page, test, ok, card, settle, shots, browserNam
     await page.keyboard.press("a");
     ok((await focused()) === "src/app.tsx", `letra con vuelta: ${await focused()}`);
     ok((await tree.locator('[role="treeitem"][tabindex="0"]').count()) === 1, "más de un nodo tabulable");
-    const ring = await tree.locator('[data-value="src/app.tsx"] > .z-tree__row').evaluate((el) => getComputedStyle(el).boxShadow);
+    // El foco se dibuja con contorno (estándar liquid glass), no con sombra.
+    const ring = await tree.locator('[data-value="src/app.tsx"] > .z-tree__row').evaluate((el) => getComputedStyle(el).outlineStyle);
     ok(ring !== "none", "sin foco visible con teclado");
   });
 
