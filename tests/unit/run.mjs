@@ -55,6 +55,7 @@ const COVERED = [
   "zui/src/core/place.ts",
   "zui/src/core/presence.ts",
   "zui/src/core/ref.ts",
+  "zui/src/core/relative.ts",
   "zui/src/core/roving.ts",
   "zui/src/core/scroll-lock.ts",
   "zui/src/core/search.ts",
@@ -66,6 +67,7 @@ const COVERED = [
   "zui/src/dom/shared.ts",
   "zui/src/dom/forms-calendar.ts",
   "zui/src/dom/collections.ts",
+  "zui/src/dom/time.ts",
   "zudocs/scripts/config.mjs",
 ];
 // Umbrales sobre el conjunto anterior. El motor del carrusel y los módulos DOM incluyen ramas que solo existen

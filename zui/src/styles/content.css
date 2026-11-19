@@ -349,4 +349,13 @@
     margin: 0 var(--z-divider-gap);
     background: var(--z-divider-line);
   }
+
+  /* ---- RelativeTime ---- */
+  /* Subrayado punteado: el title lleva la fecha completa. */
+  .z-relative-time {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    text-decoration: underline dotted var(--z-fg-subtle);
+    text-underline-offset: 3px;
+  }
 }

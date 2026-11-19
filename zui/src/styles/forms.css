@@ -794,10 +794,22 @@
       background var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard);
   }
+  /* Contenido por celda: bajo el número, encima del botón y sin recibir el puntero. */
   .z-calendar__day-content {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: var(--z-space-1);
+    color: var(--day-content-fg, var(--z-fg-muted));
     font-size: var(--z-text-fine);
     line-height: 1;
-    color: var(--z-fg-muted);
+    pointer-events: none;
+  }
+  .z-calendar__cell:has(.z-calendar__day-content) .z-calendar__day {
+    padding-block-end: var(--z-space-2-5);
+  }
+  /* Sobre el día elegido (accent-solid, como su número): variable local, el texto va encima del botón. */
+  .z-calendar__cell:has([data-selected]) {
+    --day-content-fg: var(--z-fg-on-accent);
   }
   @media (hover: hover) {
     .z-calendar__day:hover:not([data-selected], [aria-disabled="true"]),
@@ -843,9 +855,6 @@
       0 6px 14px -6px var(--z-accent-solid);
     color: var(--z-fg-on-accent);
     font-weight: var(--z-weight-semibold);
-  }
-  .z-calendar__day[data-selected] .z-calendar__day-content {
-    color: inherit;
   }
   .z-calendar__day[aria-disabled="true"],
   .z-calendar__unit[aria-disabled="true"] {
@@ -980,7 +989,7 @@
     box-sizing: border-box;
     display: inline-grid;
     grid-template-columns: var(--z-calendar-presets) minmax(0, 1fr);
-    width: calc(
+    --z-calendar-presets-width: calc(
       var(--z-calendar-presets) +
       var(--z-space-6) +
       var(--z-calendar-months, 1) *
@@ -989,8 +998,12 @@
       (var(--z-calendar-months, 1) - 1) *
       var(--z-space-5)
     );
-    max-width: 100%;
+    width: min(100%, var(--z-calendar-presets-width));
     --z-calendar-presets: calc(var(--z-space-12) * 3 + var(--z-space-1-5));
+  }
+  /* En un popover (ancho intrínseco) el 100 % no se resuelve: vale el ancho calculado. */
+  .z-datepicker__panel .z-calendar[data-presets] {
+    width: min(var(--z-calendar-presets-width), calc(100vw - var(--z-space-10)));
   }
   .z-calendar__presets {
     box-sizing: border-box;

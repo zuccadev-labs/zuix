@@ -1,0 +1,48 @@
+{
+  "name": "RelativeTime",
+  "group": "content",
+  "description": "Tiempo relativo («3 minutes ago», «in 2 days») sobre un instante, con Intl.RelativeTimeFormat. Se actualiza solo con una cadencia que se alarga con la distancia.",
+  "import": "import { RelativeTime } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | string | Date",
+      "description": "Instante: ISO 8601 con zona, milisegundos o Date. No es una fecha civil."
+    },
+    { "name": "locale", "type": "string", "description": "Etiqueta BCP 47. Por defecto la del entorno." },
+    { "name": "format", "type": "enum", "values": ["long", "short", "narrow"], "default": "long" },
+    { "name": "numeric", "type": "enum", "values": ["auto", "always"], "default": "auto", "description": "auto dice «yesterday» o «now»." },
+    {
+      "name": "minUnit",
+      "type": "enum",
+      "values": ["second", "minute", "hour", "day", "week", "month", "year"],
+      "description": "Unidad más pequeña."
+    },
+    {
+      "name": "titleFormat",
+      "type": "Intl.DateTimeFormatOptions",
+      "description": "Fecha completa del title. Por defecto dateStyle full y timeStyle short."
+    },
+    { "name": "now", "type": "number", "description": "Ahora en milisegundos (servidor y pruebas); sin él, el reloj avanza solo." }
+  ],
+  "states": ["rest"],
+  "tokens": ["fg-subtle"],
+  "classes": ["z-relative-time"],
+  "a11y": "Elemento time con el instante en datetime y la fecha completa en title. El texto se actualiza sin región viva (no interrumpe al lector de pantalla); quien necesite anunciar un hito usa su propio aviso. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `<time class=\"z-relative-time\" datetime=\"…\">` dentro de `[data-z-dom]` se pinta y se actualiza solo; data-locale, data-format, data-numeric y data-min-unit; updateRelativeTime(el) tras cambiar datetime.",
+  "behavior": "dom",
+  "examples": [
+    { "title": "Última edición", "code": "<RelativeTime value=\"2026-11-19T09:30:00Z\" locale=\"en-US\" />" },
+    { "title": "Corto, sin segundos", "code": "<RelativeTime value={Date.now() - 90_000} format=\"short\" minUnit=\"minute\" />" }
+  ],
+  "html": [
+    {
+      "title": "Última edición",
+      "code": "<time class=\"z-relative-time\" datetime=\"2026-11-19T09:30:00Z\" data-locale=\"en-US\"></time>"
+    },
+    {
+      "title": "Corto, sin segundos",
+      "code": "<time class=\"z-relative-time\" datetime=\"2026-11-19T09:30:00Z\" data-format=\"short\" data-min-unit=\"minute\"></time>"
+    }
+  ],
+  "origin": "Format de Shark UI; Intl.RelativeTimeFormat."
+}

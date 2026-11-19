@@ -250,7 +250,7 @@ function dayMarkup(cell: DayCell, c: Config): string {
     .filter((m) => MODIFIER.test(m))
     .map((m) => ` data-${m}=""`)
     .join("");
-  return `<td class="z-calendar__cell" aria-selected="${cell.inSelection}"${attr("data-range", Boolean(cell.range), cell.range)}${attr("data-preview", cell.preview)}${attr("data-row-start", cell.rowStart)}${attr("data-row-end", cell.rowEnd)}><button type="button" class="z-calendar__day" data-date="${cell.date}"${attr("data-selected", cell.selected)}${attr("data-today", cell.today)}${attr("data-outside", cell.outside)}${attr("data-unavailable", cell.unavailable)}${attr("data-weekend", cell.weekend)}${mods}${attr("aria-disabled", cell.disabled, "true")}${attr("aria-current", cell.today, "date")} aria-label="${esc(cell.ariaLabel)}" tabindex="${cell.tabbable ? 0 : -1}">${esc(cell.label)}${c.hook.dayContent?.(cell.date) ? '<span class="z-calendar__day-content" aria-hidden="true"></span>' : ""}</button></td>`;
+  return `<td class="z-calendar__cell" aria-selected="${cell.inSelection}"${attr("data-range", Boolean(cell.range), cell.range)}${attr("data-preview", cell.preview)}${attr("data-row-start", cell.rowStart)}${attr("data-row-end", cell.rowEnd)}><button type="button" class="z-calendar__day" data-date="${cell.date}"${attr("data-selected", cell.selected)}${attr("data-today", cell.today)}${attr("data-outside", cell.outside)}${attr("data-unavailable", cell.unavailable)}${attr("data-weekend", cell.weekend)}${mods}${attr("aria-disabled", cell.disabled, "true")}${attr("aria-current", cell.today, "date")} aria-label="${esc(cell.ariaLabel)}" tabindex="${cell.tabbable ? 0 : -1}">${esc(cell.label)}</button>${c.hook.dayContent?.(cell.date) ? `<span class="z-calendar__day-content" data-for="${cell.date}" aria-hidden="true"></span>` : ""}</td>`;
 }
 
 function unitMarkup(cell: UnitCell): string {
@@ -412,7 +412,7 @@ function render(cal: HTMLElement): void {
     if (restore) cal.querySelector<HTMLElement>(restore)?.focus({ preventScroll: true });
     if (c.hook.dayContent)
       for (const content of cal.querySelectorAll<HTMLElement>(".z-calendar__day-content")) {
-        const date = content.parentElement?.dataset.date;
+        const date = content.dataset.for;
         content.textContent = date ? (c.hook.dayContent(date) ?? "") : "";
       }
   }

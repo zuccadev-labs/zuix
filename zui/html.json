@@ -280,6 +280,25 @@
     }
    ]
   },
+  "RelativeTime": {
+   "group": "content",
+   "classes": [
+    "z-relative-time"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Última edición",
+     "html": "<time class=\"z-relative-time\" datetime=\"2026-11-19T09:30:00Z\" data-locale=\"en-US\"></time>",
+     "source": "manual"
+    },
+    {
+     "title": "Corto, sin segundos",
+     "html": "<time class=\"z-relative-time\" datetime=\"2026-11-19T09:30:00Z\" data-format=\"short\" data-min-unit=\"minute\"></time>",
+     "source": "manual"
+    }
+   ]
+  },
   "Avatar": {
    "group": "data",
    "classes": [

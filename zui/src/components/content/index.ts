@@ -5,3 +5,4 @@ export { Panel, type PanelProps } from "./Panel";
 export { Callout, type CalloutProps } from "./Callout";
 export { CodeBlock, type CodeBlockProps } from "./CodeBlock";
 export { Divider, type DividerProps } from "./Divider";
+export { RelativeTime, type RelativeTimeProps } from "./RelativeTime";

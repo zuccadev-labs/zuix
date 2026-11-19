@@ -819,12 +819,13 @@ function DayCellView({ cell, mode, unit, renderDay, onPick, onFocus, onHover }: 
         onMouseEnter={previewing ? onHover : undefined}
       >
         {cell.label}
-        {content != null && content !== false ? (
-          <span className="z-calendar__day-content" aria-hidden="true">
-            {content}
-          </span>
-        ) : null}
       </button>
+      {/* Fuera del botón: decorativo, sin alterar su nombre visible ni recibir el puntero. */}
+      {content != null && content !== false ? (
+        <span className="z-calendar__day-content" aria-hidden="true">
+          {content}
+        </span>
+      ) : null}
     </td>
   );
 }

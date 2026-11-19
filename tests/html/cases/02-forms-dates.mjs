@@ -25,7 +25,7 @@ export default async function ({ page, test, ok, settle, shots }) {
   await page.evaluate(() => {
     window.__zdates = [];
     document.addEventListener("z:change", (event) =>
-      window.__zdates.push({ id: event.target.id, value: JSON.parse(JSON.stringify(event.detail.value)) }),
+      window.__zdates.push({ id: event.target.id, value: JSON.parse(JSON.stringify(event.detail?.value ?? null)) }),
     );
   });
   const active = () => page.evaluate(() => document.activeElement?.dataset?.date ?? document.activeElement?.dataset?.value ?? null);

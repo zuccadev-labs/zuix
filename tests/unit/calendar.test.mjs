@@ -514,7 +514,7 @@ describe("familia completa: varios meses, vistas, múltiple, preajustes, reserva
     click(cal.querySelector(".z-calendar__today"));
     assert.equal(cal.dataset.value, "2026-11-19/");
     dom.setCalendarOptions(cal, { dayContent: (d) => (d === "2026-11-20" ? "$89" : null) });
-    assert.equal(day(cal, "2026-11-20").querySelector(".z-calendar__day-content").textContent, "$89");
+    assert.equal(day(cal, "2026-11-20").parentElement.querySelector(".z-calendar__day-content").textContent, "$89");
   });
 
   test("semana: un clic elige de lunes a domingo", () => {
