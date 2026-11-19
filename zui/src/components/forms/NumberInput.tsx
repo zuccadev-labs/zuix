@@ -146,6 +146,10 @@ export function NumberInput({
     window.addEventListener("pointercancel", release, { once: true });
   };
 
+  const jump = (to: number) => {
+    setDraft(null);
+    commit(to);
+  };
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
@@ -154,8 +158,8 @@ export function NumberInput({
       ArrowDown: () => nudge(-1),
       PageUp: () => nudge(1, big),
       PageDown: () => nudge(-1, big),
-      Home: () => (min !== undefined ? (setDraft(null), commit(min)) : undefined),
-      End: () => (max !== undefined ? (setDraft(null), commit(max)) : undefined),
+      Home: () => (min !== undefined ? jump(min) : undefined),
+      End: () => (max !== undefined ? jump(max) : undefined),
     };
     const action = keys[event.key];
     if (!action || ((event.key === "Home" || event.key === "End") && (event.key === "Home" ? min : max) === undefined)) {

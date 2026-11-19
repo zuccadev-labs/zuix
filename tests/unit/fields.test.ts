@@ -85,7 +85,18 @@ describe("contraseña", () => {
 describe("portapapeles", () => {
   test("API asíncrona", async () => {
     let written = "";
-    assert.equal(await copyText("hola", { writeText: async (t) => void (written = t) }, undefined), true);
+    assert.equal(
+      await copyText(
+        "hola",
+        {
+          writeText: async (t) => {
+            written = t;
+          },
+        },
+        undefined,
+      ),
+      true,
+    );
     assert.equal(written, "hola");
     assert.equal(await copyText("", { writeText: async () => {} }, undefined), false);
   });
