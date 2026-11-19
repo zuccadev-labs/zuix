@@ -658,11 +658,25 @@
     gap: var(--z-space-1-5);
     min-width: 0;
   }
-  /* Selects nativos (teclado, lector y selector del sistema gratis) con la forma de un control de cristal. */
+  /* Selects nativos (teclado, lector y selector del sistema gratis) con la forma de un control de cristal. La flecha
+     es el icono chevron-up-down de zicon, encima del select y sin recibir el puntero. */
+  .z-calendar__select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .z-calendar__select-wrap > svg {
+    position: absolute;
+    inset-inline-end: var(--z-space-2);
+    color: var(--z-fg-muted);
+    pointer-events: none;
+  }
   .z-calendar__select {
     min-width: 0;
     min-height: var(--z-control-height-sm);
-    padding-inline: var(--z-space-3) var(--z-space-2);
+    padding-inline: var(--z-space-3) var(--z-space-7);
+    appearance: none;
     border: 1px solid var(--z-glass-border);
     border-radius: var(--z-control-radius);
     background-color: var(--z-surface-2);
@@ -690,7 +704,7 @@
         gap: var(--z-space-1-5);
       }
       .z-calendar__select::picker-icon {
-        color: var(--z-fg-muted);
+        display: none;
       }
       .z-calendar__select::picker(select) {
         max-height: min(320px, 50dvh);
@@ -840,11 +854,7 @@
   }
   /* Reservada: tachada en el color de peligro y con trama diagonal; además, «…, booked» en el nombre accesible. */
   .z-calendar__day[data-unavailable] {
-    background: repeating-linear-gradient(
-      135deg,
-      transparent 0 5px,
-      color-mix(in srgb, var(--z-fg) 7%, transparent) 5px 6px
-    );
+    background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--z-fg) 7%, transparent) 5px 6px);
     color: var(--z-fg-subtle);
     text-decoration: line-through;
     text-decoration-thickness: 1.5px;
@@ -964,14 +974,29 @@
   }
   /* Preajustes: columna al lado del mes; en un contenedor estrecho, fila encima. */
   .z-calendar[data-presets] {
+    /* Contenedor de consulta: su ancho no puede salir del contenido, así que se calcula (columna de preajustes +
+       meses) y se acota al hueco disponible. Dentro de un popover (ancho intrínseco) vale el calculado. */
     container-type: inline-size;
-    width: min(100%, calc(var(--z-calendar-presets) + var(--z-space-6) + var(--z-calendar-months, 1) * var(--z-calendar-cols) * var(--z-calendar-col) + (var(--z-calendar-months, 1) - 1) * var(--z-space-5)));
+    box-sizing: border-box;
+    display: inline-grid;
+    grid-template-columns: var(--z-calendar-presets) minmax(0, 1fr);
+    width: calc(
+      var(--z-calendar-presets) +
+      var(--z-space-6) +
+      var(--z-calendar-months, 1) *
+      var(--z-calendar-cols) *
+      var(--z-calendar-col) +
+      (var(--z-calendar-months, 1) - 1) *
+      var(--z-space-5)
+    );
+    max-width: 100%;
     --z-calendar-presets: calc(var(--z-space-12) * 3 + var(--z-space-1-5));
   }
   .z-calendar__presets {
+    box-sizing: border-box;
     display: flex;
-    flex: 0 0 var(--z-calendar-presets);
     flex-direction: column;
+    min-width: 0;
     gap: 2px;
     padding: var(--z-space-3) var(--z-space-2-5);
     border-inline-end: 1px solid var(--z-line);
@@ -1011,8 +1036,11 @@
     }
   }
   @container (inline-size < 560px) {
+    .z-calendar__presets,
+    .z-calendar[data-presets] > .z-calendar__main {
+      grid-column: 1 / -1;
+    }
     .z-calendar__presets {
-      flex: 1 1 100%;
       flex-direction: row;
       flex-wrap: wrap;
       border-inline-end: 0;

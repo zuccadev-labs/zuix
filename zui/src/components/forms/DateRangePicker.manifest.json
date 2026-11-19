@@ -49,14 +49,7 @@
       "description": "El resto de props de DatePicker."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "disabled", "invalid"],
   "tokens": [
     "accent",
     "accent-ring",
@@ -94,10 +87,7 @@
     "weight-medium",
     "weight-semibold"
   ],
-  "classes": [
-    "z-datepicker",
-    "z-calendar"
-  ],
+  "classes": ["z-datepicker", "z-calendar"],
   "a11y": "Como DatePicker en modo range: botón con aria-haspopup=dialog y panel no modal; los dos meses forman una sola rejilla para el teclado y el rango se anuncia con aria-selected en cada celda. Sin React es el mismo marcado de DatePicker con data-mode=\"range\" y data-months=\"2\".",
   "behavior": "dom",
   "examples": [

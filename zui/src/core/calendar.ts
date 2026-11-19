@@ -101,7 +101,11 @@ export function parseValueText(mode: CalendarMode, text: string | null | undefin
     const [from, to] = raw.split("/");
     return readSelection(mode, { from, to }, unit);
   }
-  return readSelection(mode, raw.split(",").map((v) => v.trim()), unit);
+  return readSelection(
+    mode,
+    raw.split(",").map((v) => v.trim()),
+    unit,
+  );
 }
 
 /* ---------- Reglas de elegibilidad ---------- */
@@ -395,7 +399,9 @@ function band(input: CalendarInput): { from: string | null; to: string | null; p
   if (unit === "week" && mode === "single") {
     const hovered = preview ? startOfWeek(preview, weekStart) : null;
     if (hovered && hovered !== selection.single) return { from: hovered, to: addDays(hovered, 6), preview: true };
-    return selection.single ? { from: selection.single, to: addDays(selection.single, 6), preview: false } : { from: null, to: null, preview: false };
+    return selection.single
+      ? { from: selection.single, to: addDays(selection.single, 6), preview: false }
+      : { from: null, to: null, preview: false };
   }
   if (mode !== "range") return { from: null, to: null, preview: false };
   const { from, to } = selection.range;
@@ -457,7 +463,11 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
   }
   const weekdays = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(startOfWeek("2026-11-01", input.weekStart), i);
-    return { short: formats.weekday.format(parse(date)), long: formats.weekdayLong.format(parse(date)), weekend: weekend.has(weekdayOf(date)) };
+    return {
+      short: formats.weekday.format(parse(date)),
+      long: formats.weekdayLong.format(parse(date)),
+      weekend: weekend.has(weekdayOf(date)),
+    };
   });
 
   const months: MonthModel[] = [];
@@ -483,15 +493,19 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
         const selected =
           input.mode === "single"
             ? input.unit === "week"
-              ? false
+              ? Boolean(input.selection.single) && (date === input.selection.single || date === addDays(input.selection.single!, 6))
               : date === input.selection.single
             : input.mode === "range"
               ? date === input.selection.range.from || date === input.selection.range.to
               : multiple.has(date);
         const range = input.selection.range;
-        const inRange =
-          input.mode === "range" && Boolean(range.from && range.to && date >= range.from && date <= range.to);
-        const inWeek = input.unit === "week" && input.mode === "single" && Boolean(input.selection.single) && date >= input.selection.single! && date <= addDays(input.selection.single!, 6);
+        const inRange = input.mode === "range" && Boolean(range.from && range.to && date >= range.from && date <= range.to);
+        const inWeek =
+          input.unit === "week" &&
+          input.mode === "single" &&
+          Boolean(input.selection.single) &&
+          date >= input.selection.single! &&
+          date <= addDays(input.selection.single!, 6);
         const extra: string[] = [];
         if (status === "unavailable" && input.labels?.unavailable) extra.push(input.labels.unavailable);
         const description = input.dayDescription?.(date);
@@ -540,8 +554,10 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
   const title =
     n === 1
       ? formats.title.format(parse(firstDay))
-      : (formats.title as Intl.DateTimeFormat & { formatRange?: (a: Date, b: Date) => string }).formatRange?.(parse(firstDay), parse(`${lastMonth}-01`)) ??
-        `${formats.title.format(parse(firstDay))} – ${formats.title.format(parse(`${lastMonth}-01`))}`;
+      : ((formats.title as Intl.DateTimeFormat & { formatRange?: (a: Date, b: Date) => string }).formatRange?.(
+          parse(firstDay),
+          parse(`${lastMonth}-01`),
+        ) ?? `${formats.title.format(parse(firstDay))} – ${formats.title.format(parse(`${lastMonth}-01`))}`);
   return { view, title, weekdays, months, units: [], unitsLabel: "", canPrevious, canNext, tabbable, firstMonth, lastMonth };
 }
 
@@ -576,13 +592,13 @@ function unitModel(
   if (view === "month") for (let m = 1; m <= 12; m++) values.push({ value: `${pad(year, 4)}-${pad(m)}`, outside: false });
   else {
     const decade = year - (year % 10);
-    for (let y = decade - 1; y <= decade + 10; y++) if (y >= 1 && y <= 9999) values.push({ value: pad(y, 4), outside: y < decade || y > decade + 9 });
+    for (let y = decade - 1; y <= decade + 10; y++)
+      if (y >= 1 && y <= 9999) values.push({ value: pad(y, 4), outside: y < decade || y > decade + 9 });
   }
   const focused = input.focused && input.focused.length === (view === "month" ? 7 : 4) ? input.focused : null;
   const has = (v: string | null | undefined) => Boolean(v) && values.some((u) => u.value === v);
   const firstPicked = [...picked][0];
-  const tabbable =
-    [focused, firstPicked, today ? cut(today) : null].find(has) ?? values.find((u) => !u.outside)?.value ?? values[0]!.value;
+  const tabbable = [focused, firstPicked, today ? cut(today) : null].find(has) ?? values.find((u) => !u.outside)?.value ?? values[0]!.value;
   const range = input.selection.range;
   const units = values.map(({ value, outside }) => {
     const start = unitStart(value);
@@ -764,7 +780,11 @@ export function selectionText(
 ): string {
   const unit = options.unit ?? "day";
   const base: Intl.DateTimeFormatOptions =
-    unit === "month" ? { month: "long", year: "numeric" } : unit === "year" ? { year: "numeric" } : (options.format ?? { dateStyle: "medium" });
+    unit === "month"
+      ? { month: "long", year: "numeric" }
+      : unit === "year"
+        ? { year: "numeric" }
+        : (options.format ?? { dateStyle: "medium" });
   let formatter: Intl.DateTimeFormat;
   try {
     formatter = new Intl.DateTimeFormat(safeLocale(options.locale), { ...base, timeZone: "UTC" });

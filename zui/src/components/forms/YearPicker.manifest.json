@@ -47,11 +47,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -62,21 +58,11 @@
     {
       "name": "mode",
       "type": "enum",
-      "values": [
-        "single",
-        "range"
-      ],
+      "values": ["single", "range"],
       "default": "single"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "disabled", "invalid"],
   "tokens": [
     "accent",
     "accent-ring",
@@ -114,10 +100,7 @@
     "weight-medium",
     "weight-semibold"
   ],
-  "classes": [
-    "z-datepicker",
-    "z-calendar"
-  ],
+  "classes": ["z-datepicker", "z-calendar"],
   "a11y": "Rejilla APG de 12 años (la década y uno a cada lado): flechas por celda, RePág/AvPág por década, con Mayús por siglo. Sin React: data-min-view=\"year\".",
   "behavior": "dom",
   "examples": [

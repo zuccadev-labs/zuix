@@ -434,11 +434,7 @@ export function Calendar(props: CalendarProps) {
     onMonthChange?.(nextMonth);
     setView(lower);
     const target =
-      lower === "day"
-        ? anchor && monthOf(unitStart(anchor)) === nextMonth
-          ? unitStart(anchor)
-          : `${nextMonth}-01`
-        : nextMonth;
+      lower === "day" ? (anchor && monthOf(unitStart(anchor)) === nextMonth ? unitStart(anchor) : `${nextMonth}-01`) : nextMonth;
     moveFocus.current = true;
     setFocused(clampUnit(target, rules));
   };
@@ -560,34 +556,40 @@ export function Calendar(props: CalendarProps) {
           {caption ? (
             <div className="z-calendar__selects">
               {captionLayout !== "dropdown-years" ? (
-                <select
-                  className="z-calendar__select"
-                  data-part="month"
-                  aria-label={monthLabel}
-                  value={visibleMonth}
-                  onChange={(event) => showMonth(event.target.value)}
-                >
-                  {caption.months.map((m) => (
-                    <option key={m.value} value={m.value} disabled={m.disabled}>
-                      {m.label}
-                    </option>
-                  ))}
-                </select>
+                <span className="z-calendar__select-wrap">
+                  <select
+                    className="z-calendar__select"
+                    data-part="month"
+                    aria-label={monthLabel}
+                    value={visibleMonth}
+                    onChange={(event) => showMonth(event.target.value)}
+                  >
+                    {caption.months.map((m) => (
+                      <option key={m.value} value={m.value} disabled={m.disabled}>
+                        {m.label}
+                      </option>
+                    ))}
+                  </select>
+                  <Icon name="chevron-up-down" size={14} />
+                </span>
               ) : null}
               {captionLayout !== "dropdown-months" ? (
-                <select
-                  className="z-calendar__select"
-                  data-part="year"
-                  aria-label={yearLabel}
-                  value={visibleMonth.slice(0, 4)}
-                  onChange={(event) => showMonth(`${event.target.value}-${visibleMonth.slice(5, 7)}`)}
-                >
-                  {caption.years.map((y) => (
-                    <option key={y.value} value={y.value}>
-                      {y.label}
-                    </option>
-                  ))}
-                </select>
+                <span className="z-calendar__select-wrap">
+                  <select
+                    className="z-calendar__select"
+                    data-part="year"
+                    aria-label={yearLabel}
+                    value={visibleMonth.slice(0, 4)}
+                    onChange={(event) => showMonth(`${event.target.value}-${visibleMonth.slice(5, 7)}`)}
+                  >
+                    {caption.years.map((y) => (
+                      <option key={y.value} value={y.value}>
+                        {y.label}
+                      </option>
+                    ))}
+                  </select>
+                  <Icon name="chevron-up-down" size={14} />
+                </span>
               ) : null}
             </div>
           ) : null}

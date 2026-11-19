@@ -7,11 +7,7 @@
     {
       "name": "mode",
       "type": "enum",
-      "values": [
-        "single",
-        "range",
-        "multiple"
-      ],
+      "values": ["single", "range", "multiple"],
       "default": "single"
     },
     {
@@ -45,15 +41,7 @@
     {
       "name": "weekStartsOn",
       "type": "enum",
-      "values": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
+      "values": [0, 1, 2, 3, 4, 5, 6],
       "description": "Primer día de la semana (0 domingo). Por defecto el del locale; lunes si no se conoce."
     },
     {
@@ -76,11 +64,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -111,11 +95,7 @@
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "start"
     },
     {
@@ -221,22 +201,14 @@
     {
       "name": "minView",
       "type": "enum",
-      "values": [
-        "day",
-        "month",
-        "year"
-      ],
+      "values": ["day", "month", "year"],
       "default": "day",
       "description": "Unidad del valor: month (MonthPicker) o year (YearPicker)."
     },
     {
       "name": "icon",
       "type": "enum",
-      "values": [
-        "calendar",
-        "calendar-date-range",
-        "calendar-days"
-      ],
+      "values": ["calendar", "calendar-date-range", "calendar-days"],
       "description": "Icono del campo."
     },
     {
@@ -245,15 +217,7 @@
       "description": "Se reenvían captionLayout, isDateUnavailable, modifiers, showOutsideDays, fixedWeeks, showWeekNumber, weekNumbering, weekdayFormat, today, showTodayButton, renderDay, getDayDescription, cellSize, minRange, maxRange, rangeCrossesUnavailable, legend y sus etiquetas."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "placeholder",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],
   "tokens": [
     "accent",
     "accent-ring",
@@ -291,12 +255,7 @@
     "weight-medium",
     "weight-semibold"
   ],
-  "classes": [
-    "z-select",
-    "z-datepicker",
-    "z-popover",
-    "z-calendar"
-  ],
+  "classes": ["z-select", "z-datepicker", "z-popover", "z-calendar"],
   "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog. Con confirm, el pie lleva el resumen y los botones Cancel y Apply (Tab recorre preajustes, rejilla y pie; el foco queda atrapado en el panel). En multiple el formulario recibe un campo por fecha con el mismo name. Escape en las vistas de mes o año vuelve a los días sin cerrar.",
   "behavior": "dom",
   "examples": [

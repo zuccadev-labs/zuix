@@ -94,8 +94,7 @@ export const weekdayOf = (iso: string) => parse(iso).getUTCDay();
 /** Días de `from` a `to` (negativo si `to` es anterior). */
 export const diffDays = (from: string, to: string) => Math.round((parse(to).getTime() - parse(from).getTime()) / DAY_MS);
 export const startOfMonth = (iso: string) => `${iso.slice(0, 7)}-01`;
-export const endOfMonth = (iso: string) =>
-  `${iso.slice(0, 7)}-${pad(daysInMonth(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1))}`;
+export const endOfMonth = (iso: string) => `${iso.slice(0, 7)}-${pad(daysInMonth(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1))}`;
 /** Primer día de la semana que contiene `iso`, con la semana empezando en `weekStart` (0 domingo). */
 export const startOfWeek = (iso: string, weekStart: number) => addDays(iso, -((weekdayOf(iso) - weekStart + 7) % 7));
 /** La fecha acotada a `[min, max]` (los extremos nulos no acotan). */

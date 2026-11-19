@@ -4,6 +4,7 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
+import { chevronUpDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-up-down";
 import {
   anchorOf,
   buildCalendar,
@@ -54,7 +55,7 @@ import {
 import { all, emit, flag, hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup } from "./forms-popup";
 import { logicalKey, setMarkup, type Listen } from "./shared";
 
-registerIcons([chevronLeft, chevronRight]);
+registerIcons([chevronLeft, chevronRight, chevronUpDown]);
 
 export type { DateRange };
 
@@ -101,7 +102,8 @@ function stateOf(cal: HTMLElement): CalState {
 }
 
 const yes = (value: string | undefined) => value !== undefined && value !== "false";
-const num = (value: string | undefined) => (value === undefined || value === "" || !Number.isFinite(Number(value)) ? undefined : Number(value));
+const num = (value: string | undefined) =>
+  value === undefined || value === "" || !Number.isFinite(Number(value)) ? undefined : Number(value);
 const list = (value: string | undefined) =>
   (value ?? "")
     .split(",")
@@ -244,7 +246,10 @@ function summaryText(c: Config): string {
 
 function dayMarkup(cell: DayCell, c: Config): string {
   if (cell.hidden) return '<td class="z-calendar__cell" data-outside=""></td>';
-  const mods = cell.modifiers.filter((m) => MODIFIER.test(m)).map((m) => ` data-${m}=""`).join("");
+  const mods = cell.modifiers
+    .filter((m) => MODIFIER.test(m))
+    .map((m) => ` data-${m}=""`)
+    .join("");
   return `<td class="z-calendar__cell" aria-selected="${cell.inSelection}"${attr("data-range", Boolean(cell.range), cell.range)}${attr("data-preview", cell.preview)}${attr("data-row-start", cell.rowStart)}${attr("data-row-end", cell.rowEnd)}><button type="button" class="z-calendar__day" data-date="${cell.date}"${attr("data-selected", cell.selected)}${attr("data-today", cell.today)}${attr("data-outside", cell.outside)}${attr("data-unavailable", cell.unavailable)}${attr("data-weekend", cell.weekend)}${mods}${attr("aria-disabled", cell.disabled, "true")}${attr("aria-current", cell.today, "date")} aria-label="${esc(cell.ariaLabel)}" tabindex="${cell.tabbable ? 0 : -1}">${esc(cell.label)}${c.hook.dayContent?.(cell.date) ? '<span class="z-calendar__day-content"></span>' : ""}</button></td>`;
 }
 
@@ -276,9 +281,9 @@ function markup(cal: HTMLElement, model: CalendarModel, c: Config, input: Calend
     const caption = captionOptions(model.firstMonth, c.rules, c.locale);
     html += '<div class="z-calendar__selects">';
     if (c.caption !== "dropdown-years")
-      html += `<select class="z-calendar__select" data-part="month" aria-label="${esc(c.labels.month)}">${caption.months.map((m) => `<option value="${m.value}"${attr("disabled", m.disabled)}>${esc(m.label)}</option>`).join("")}</select>`;
+      html += `<span class="z-calendar__select-wrap"><select class="z-calendar__select" data-part="month" aria-label="${esc(c.labels.month)}">${caption.months.map((m) => `<option value="${m.value}"${attr("disabled", m.disabled)}>${esc(m.label)}</option>`).join("")}</select>${iconSvg("chevron-up-down", { size: 14 })}</span>`;
     if (c.caption !== "dropdown-months")
-      html += `<select class="z-calendar__select" data-part="year" aria-label="${esc(c.labels.year)}">${caption.years.map((y) => `<option value="${y.value}">${esc(y.label)}</option>`).join("")}</select>`;
+      html += `<span class="z-calendar__select-wrap"><select class="z-calendar__select" data-part="year" aria-label="${esc(c.labels.year)}">${caption.years.map((y) => `<option value="${y.value}">${esc(y.label)}</option>`).join("")}</select>${iconSvg("chevron-up-down", { size: 14 })}</span>`;
     html += "</div>";
   }
   html += `<div class="z-calendar__title" id="${esc(titleId)}" aria-live="polite"${attr("data-hidden", dropdown)}>${
@@ -517,7 +522,10 @@ function goToday(cal: HTMLElement): void {
   setView(cal, c.minView);
   stateOf(cal).focused = target;
   showMonth(cal, revealMonth(visibleMonth(cal, c), c.minView === "day" ? c.n : 1, unitStart(target), c.paged));
-  const next = choose(c.mode, c.selection, target, c.rules, { unit: cal.dataset.selectionUnit === "week" ? "week" : "day", weekStart: c.weekStart });
+  const next = choose(c.mode, c.selection, target, c.rules, {
+    unit: cal.dataset.selectionUnit === "week" ? "week" : "day",
+    weekStart: c.weekStart,
+  });
   if (next !== undefined && c.mode !== "multiple") commit(cal, next, config(cal));
   else render(cal);
   cellFor(cal, target)?.focus();
@@ -548,7 +556,9 @@ function onCalendarKey(cal: HTMLElement, target: HTMLElement, event: KeyboardEve
   const key = logicalKey(event.key, cal);
   if (view === "day") {
     const date = target.closest<HTMLElement>(".z-calendar__day")?.dataset.date;
-    const next = date ? dayKeyTarget({ key, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey }, date, c.weekStart) : null;
+    const next = date
+      ? dayKeyTarget({ key, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey }, date, c.weekStart)
+      : null;
     if (!next) return;
     event.preventDefault();
     focusTarget(cal, next);
@@ -566,7 +576,11 @@ function onCalendarKey(cal: HTMLElement, target: HTMLElement, event: KeyboardEve
     focusTarget(cal, c.minView === "day" ? (anchor && monthOf(unitStart(anchor)) === month ? unitStart(anchor) : `${month}-01`) : value);
     return;
   }
-  const next = unitKeyTarget(view as "month" | "year", { key, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey }, value);
+  const next = unitKeyTarget(
+    view as "month" | "year",
+    { key, shiftKey: event.shiftKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey },
+    value,
+  );
   if (!next) return;
   event.preventDefault();
   focusTarget(cal, next);
@@ -877,4 +891,3 @@ export function hydrate(root: ParentNode): void {
   for (const cal of root.querySelectorAll<HTMLElement>(".z-calendar")) if (calendarAt(cal)) render(cal);
   if (root instanceof HTMLElement && root.matches(".z-calendar") && calendarAt(root)) render(root);
 }
-

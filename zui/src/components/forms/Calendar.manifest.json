@@ -7,11 +7,7 @@
     {
       "name": "mode",
       "type": "enum",
-      "values": [
-        "single",
-        "range",
-        "multiple"
-      ],
+      "values": ["single", "range", "multiple"],
       "default": "single"
     },
     {
@@ -46,10 +42,7 @@
     {
       "name": "rangeCrossesUnavailable",
       "type": "enum",
-      "values": [
-        "block",
-        "allow"
-      ],
+      "values": ["block", "allow"],
       "default": "block",
       "description": "Solo range: block impide que el rango cruce una fecha reservada."
     },
@@ -87,21 +80,13 @@
     {
       "name": "view",
       "type": "enum",
-      "values": [
-        "day",
-        "month",
-        "year"
-      ],
+      "values": ["day", "month", "year"],
       "description": "Vista controlada: días, meses de un año o años de una década."
     },
     {
       "name": "defaultView",
       "type": "enum",
-      "values": [
-        "day",
-        "month",
-        "year"
-      ]
+      "values": ["day", "month", "year"]
     },
     {
       "name": "onViewChange",
@@ -110,34 +95,21 @@
     {
       "name": "minView",
       "type": "enum",
-      "values": [
-        "day",
-        "month",
-        "year"
-      ],
+      "values": ["day", "month", "year"],
       "default": "day",
       "description": "Vista en la que se elige el valor: month da YYYY-MM y year da YYYY."
     },
     {
       "name": "maxView",
       "type": "enum",
-      "values": [
-        "day",
-        "month",
-        "year"
-      ],
+      "values": ["day", "month", "year"],
       "default": "year",
       "description": "Vista más alta a la que lleva el título (clic en el título: mes → año → década). day desactiva el cambio de vista."
     },
     {
       "name": "captionLayout",
       "type": "enum",
-      "values": [
-        "label",
-        "dropdown",
-        "dropdown-months",
-        "dropdown-years"
-      ],
+      "values": ["label", "dropdown", "dropdown-months", "dropdown-years"],
       "default": "label",
       "description": "Cabecera con título o con desplegables nativos de mes y año."
     },
@@ -169,15 +141,7 @@
     {
       "name": "weekStartsOn",
       "type": "enum",
-      "values": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
+      "values": [0, 1, 2, 3, 4, 5, 6],
       "description": "Primer día de la semana (0 domingo). Por defecto el del locale (Intl.Locale#getWeekInfo); lunes si no se conoce."
     },
     {
@@ -211,21 +175,14 @@
     {
       "name": "weekNumbering",
       "type": "enum",
-      "values": [
-        "iso",
-        "locale"
-      ],
+      "values": ["iso", "locale"],
       "default": "iso",
       "description": "Semana ISO 8601 o la del locale (minimalDays de weekInfo)."
     },
     {
       "name": "weekdayFormat",
       "type": "enum",
-      "values": [
-        "narrow",
-        "short",
-        "long"
-      ],
+      "values": ["narrow", "short", "long"],
       "default": "short"
     },
     {
@@ -262,21 +219,14 @@
     {
       "name": "cellSize",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md",
       "description": "Tamaño de celda: 28, 36 o 44 px. Con puntero grueso sube al objetivo táctil."
     },
     {
       "name": "selectionUnit",
       "type": "enum",
-      "values": [
-        "day",
-        "week"
-      ],
+      "values": ["day", "week"],
       "default": "day",
       "description": "week elige la semana entera (WeekPicker)."
     },
@@ -342,19 +292,7 @@
       "description": "Enfoca el día activo al montar."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "selected",
-    "today",
-    "outside",
-    "disabled",
-    "unavailable",
-    "range",
-    "preview",
-    "weekend"
-  ],
+  "states": ["rest", "hover", "focus", "selected", "today", "outside", "disabled", "unavailable", "range", "preview", "weekend"],
   "tokens": [
     "calendar-cell",
     "calendar-cell-radius",
@@ -402,9 +340,7 @@
     "ease-standard",
     "radius-full"
   ],
-  "classes": [
-    "z-calendar"
-  ],
+  "classes": ["z-calendar"],
   "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange y z:viewchange. Para una tarjeta de cristal elevado: className z-liquid.",
   "behavior": "dom",
   "examples": [
@@ -494,7 +430,5 @@
     }
   ],
   "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG.",
-  "exports": [
-    "presetValue"
-  ]
+  "exports": ["presetValue"]
 }

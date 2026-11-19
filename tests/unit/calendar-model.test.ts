@@ -215,14 +215,20 @@ describe("valor y selección", () => {
     const start = readSelection("range", { from: "2026-11-18", to: null });
     assert.deepEqual(choose("range", start, "2026-11-10", {}), { from: "2026-11-10", to: "2026-11-18" });
     assert.deepEqual(choose("range", start, "2026-11-22", rules), { from: "2026-11-22", to: null }, "cruza una reservada: empieza otro");
-    assert.deepEqual(choose("range", start, "2026-11-22", { ...rules, rangeCrossesUnavailable: "allow" }), { from: "2026-11-18", to: "2026-11-22" });
+    assert.deepEqual(choose("range", start, "2026-11-22", { ...rules, rangeCrossesUnavailable: "allow" }), {
+      from: "2026-11-18",
+      to: "2026-11-22",
+    });
     assert.equal(choose("range", start, "2026-11-18", { allowSingleDayRange: false }), undefined);
     assert.deepEqual(choose("range", start, "2026-11-19", { minRange: 3 }), { from: "2026-11-19", to: null });
     assert.deepEqual(choose("single", empty, "2026-11-19", {}, { unit: "week", weekStart: 1 }), "2026-11-16");
-    assert.deepEqual(choose("range", readSelection("range", { from: "2026-11-16", to: null }), "2026-11-04", {}, { unit: "week", weekStart: 1 }), {
-      from: "2026-11-02",
-      to: "2026-11-22",
-    });
+    assert.deepEqual(
+      choose("range", readSelection("range", { from: "2026-11-16", to: null }), "2026-11-04", {}, { unit: "week", weekStart: 1 }),
+      {
+        from: "2026-11-02",
+        to: "2026-11-22",
+      },
+    );
     assert.equal(choose("single", empty, "2025-12", { min: "2026-01-01" }), undefined, "mes fuera de los límites");
   });
   test("ventana del rango: corta en la reservada más cercana y en maxRange", () => {
@@ -242,7 +248,8 @@ describe("valor y selección", () => {
         if (!second || typeof second !== "object" || Array.isArray(second)) return;
         if (!second.to) return;
         assert.ok(second.from! <= second.to);
-        for (let d = second.from!; d <= second.to; d = addDays(d, 1)) assert.ok(!rules.isDateUnavailable(d), `${d} en ${JSON.stringify(second)}`);
+        for (let d = second.from!; d <= second.to; d = addDays(d, 1))
+          assert.ok(!rules.isDateUnavailable(d), `${d} en ${JSON.stringify(second)}`);
       }),
     );
   });
@@ -380,7 +387,12 @@ describe("modelo", () => {
     assert.ok(flat.find((u) => u.value === "2024")!.selected);
     assert.equal(years.unitsLabel, "Choose year");
     const ranged = buildCalendar(
-      input({ view: "month", minView: "month", mode: "range", selection: readSelection("range", { from: "2026-03", to: "2026-06" }, "month") }),
+      input({
+        view: "month",
+        minView: "month",
+        mode: "range",
+        selection: readSelection("range", { from: "2026-03", to: "2026-06" }, "month"),
+      }),
     );
     assert.equal(ranged.units.flat().find((u) => u.value === "2026-04")!.range, "middle");
   });
@@ -416,7 +428,14 @@ describe("modelo", () => {
     fc.assert(
       fc.property(iso, fc.integer({ min: 1, max: 3 }), weekStart, fc.boolean(), (d, n, ws, fixed) => {
         const model = buildCalendar(
-          input({ month: d.slice(0, 7), numberOfMonths: n, weekStart: ws, fixedWeeks: fixed, selection: readSelection("single", d), today: null }),
+          input({
+            month: d.slice(0, 7),
+            numberOfMonths: n,
+            weekStart: ws,
+            fixedWeeks: fixed,
+            selection: readSelection("single", d),
+            today: null,
+          }),
         );
         const tabbable = model.months.flatMap((m) => m.weeks.flatMap((w) => w.cells)).filter((c) => c.tabbable);
         assert.equal(tabbable.length, 1);

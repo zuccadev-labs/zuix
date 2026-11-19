@@ -47,11 +47,7 @@
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -65,14 +61,7 @@
       "default": "Week"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "open",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "hover", "focus", "open", "disabled", "invalid"],
   "tokens": [
     "accent",
     "accent-ring",
@@ -110,10 +99,7 @@
     "weight-medium",
     "weight-semibold"
   ],
-  "classes": [
-    "z-datepicker",
-    "z-calendar"
-  ],
+  "classes": ["z-datepicker", "z-calendar"],
   "a11y": "Pasar el puntero o el foco por un día resalta su semana; Intro la elige. La columna del número de semana es th scope=row con «Week N». Sin React: data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers; el valor del campo oculto es YYYY-Www.",
   "behavior": "dom",
   "examples": [
