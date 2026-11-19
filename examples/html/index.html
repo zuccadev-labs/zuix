@@ -71,6 +71,18 @@
   </div>
 </section>
 </div>
+<h2 class="page__group">agenda</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="EventCalendar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">EventCalendar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-agenda" id="team-agenda" data-view="week" data-date="2026-11-19" data-today="2026-11-19" data-time-zone="Europe/Madrid" data-locale="en-GB" data-week-start="1" data-day-start="07:00" data-day-end="21:00" data-editable>
+  <script type="application/json" data-calendars>[{ "id": "work", "name": "Work", "color": "1" }]</script>
+  <script type="application/json" data-events>[{ "id": "a", "title": "Design review", "start": "2026-11-19T10:00", "end": "2026-11-19T11:00", "timeZone": "Europe/Madrid", "calendarId": "work" }]</script>
+</div>
+  </div>
+</section>
+</div>
 <h2 class="page__group">carousel</h2>
 <div class="page__grid">
 <section class="z-card demo" data-component="Carousel" data-behavior="dom">
@@ -275,6 +287,19 @@ pnpm dev</code>
   <header class="demo__head"><h3 class="demo__name">RelativeTime</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <time class="z-relative-time" datetime="2026-11-19T09:30:00Z" data-locale="en-US"></time>
+  </div>
+</section>
+<section class="z-card demo" data-component="Timer" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Timer</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-timer" role="group" aria-label="Break" data-mode="countdown" data-duration="PT5M" data-announce-final="5" data-state="idle" data-orientation="horizontal">
+  <time class="z-timer__display" datetime="PT5M"><span role="timer" aria-label="5 minutes left">05:00</span></time>
+  <span class="z-timer__actions">
+    <button type="button" class="z-btn z-btn--primary z-timer__toggle" data-size="sm"><z-icon name="play" size="16"></z-icon>Start</button>
+    <button type="button" class="z-btn z-btn--ghost z-timer__reset" data-size="sm" disabled><z-icon name="arrow-path" size="16"></z-icon>Reset</button>
+  </span>
+  <span class="z-sr-only z-timer__status" role="status"></span>
+</div>
   </div>
 </section>
 </div>

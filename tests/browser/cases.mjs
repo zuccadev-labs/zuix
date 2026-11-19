@@ -3316,7 +3316,10 @@ export const cases = [
       const tabbable = await page.locator(`${root} .z-agenda__view [tabindex="0"]`).count();
       assert(tabbable === 1, `una sola parada de Tab en la vista: ${tabbable}`);
       const label = await page.getAttribute(`${root} .z-event[data-key="interview-frontend-2026-11-19-10-30"]`, "aria-label");
-      assert(label?.includes("Interview: frontend") && label.includes("Room Kepler") && label.includes("Team"), `nombre del evento: ${label}`);
+      assert(
+        label?.includes("Interview: frontend") && label.includes("Room Kepler") && label.includes("Team"),
+        `nombre del evento: ${label}`,
+      );
       const title = () => text(page, `${root} .z-agenda__title`);
       assert(/16\s*–\s*22 November 2026 · W47/.test(await title()), `título: ${await title()}`);
       await page.click(`${root} .z-agenda__nav [data-nav="next"]`);
@@ -3388,7 +3391,11 @@ export const cases = [
       await page.locator(moved).evaluate((el) => el.scrollIntoView({ block: "center" }));
       await page.hover(moved);
       const box = await page.locator(moved).boundingBox();
-      await drag(page, { x: box.x + box.width / 2, y: box.y + box.height - 3 }, { x: box.x + box.width / 2, y: box.y + box.height - 3 + 24 });
+      await drag(
+        page,
+        { x: box.x + box.width / 2, y: box.y + box.height - 3 },
+        { x: box.x + box.width / 2, y: box.y + box.height - 3 + 24 },
+      );
       await poll(
         async () => (await text(page, t("agenda-log"))) === "Release review: 2026-11-20T16:00 → 2026-11-20T17:30",
         "redimensionar 30 min",
@@ -3401,11 +3408,12 @@ export const cases = [
       });
       const sat = await page.locator(`${root} .z-timegrid__col[data-date="2026-11-21"]`).boundingBox();
       await drag(page, { x: sat.x + sat.width / 2, y: sat.y + 48 + 4 }, { x: sat.x + sat.width / 2, y: sat.y + 48 * 2 + 20 });
-      await poll(async () => (await text(page, t("agenda-log"))) === "New event: 2026-11-21T08:00 → 2026-11-21T09:30", "selección de franja").catch(
-        async (e) => {
-          throw new Error(`${e.message}: ${await text(page, t("agenda-log"))}`);
-        },
-      );
+      await poll(
+        async () => (await text(page, t("agenda-log"))) === "New event: 2026-11-21T08:00 → 2026-11-21T09:30",
+        "selección de franja",
+      ).catch(async (e) => {
+        throw new Error(`${e.message}: ${await text(page, t("agenda-log"))}`);
+      });
       // «Move to…»: detalle → diálogo con fecha y horas.
       const lunch = `${root} .z-agenda__view .z-event[data-key="lunch-2026-11-19-13-00"]`;
       await page.click(lunch);
