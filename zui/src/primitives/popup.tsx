@@ -70,12 +70,23 @@ function anchorTo(el: HTMLElement, latest: RefObject<Anchoring>, watch?: RefObje
   };
   document.addEventListener("scroll", follow, { capture: true, passive: true, signal: wiring.signal });
   window.addEventListener("resize", follow, { signal: wiring.signal });
-  const observer = typeof ResizeObserver === "function" ? new ResizeObserver(position) : undefined;
+  // Recolocar cambia el alto disponible del popup, que vuelve a disparar el observador: en el siguiente cuadro, una
+  // vez por cuadro, para no encadenar notificaciones («ResizeObserver loop completed…» en WebKit).
+  let frame = 0;
+  const later = () => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      position();
+    });
+  };
+  const observer = typeof ResizeObserver === "function" ? new ResizeObserver(later) : undefined;
   observer?.observe(el);
   if (watch?.current) observer?.observe(watch.current);
   return () => {
     wiring.abort();
     observer?.disconnect();
+    cancelAnimationFrame(frame);
   };
 }
 
