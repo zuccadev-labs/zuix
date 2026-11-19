@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 87,
+ "count": 88,
  "groups": {
   "actions": [
    "Button",
@@ -62,6 +62,7 @@
    "DatePicker",
    "DateRangePicker",
    "DateTimePicker",
+   "Editable",
    "Field",
    "Fieldset",
    "FileUpload",
@@ -6237,6 +6238,190 @@
    ],
    "origin": "Date Time Picker de Shark UI; APG Date Picker Dialog y Spinbutton.",
    "file": "zui/src/components/forms/DateTimePicker.manifest.json"
+  },
+  {
+   "name": "Editable",
+   "group": "forms",
+   "description": "Texto que se edita en su sitio (un título, un nombre): se ve como texto y pasa a ser un campo del mismo tamaño al activarlo.",
+   "import": "import { Editable } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del texto y del campo."
+    },
+    {
+     "name": "value",
+     "type": "string"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string",
+     "default": ""
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Al guardar, no en cada tecla."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "Empty"
+    },
+    {
+     "name": "activationMode",
+     "type": "enum",
+     "values": [
+      "click",
+      "focus",
+      "dblclick",
+      "none"
+     ],
+     "default": "click",
+     "description": "Cómo se entra a editar; con `none`, solo con el botón de editar (`controls`)."
+    },
+    {
+     "name": "submitOnBlur",
+     "type": "boolean",
+     "default": true,
+     "description": "Salir del campo guarda; con `false`, descarta."
+    },
+    {
+     "name": "multiline",
+     "type": "boolean",
+     "default": false,
+     "description": "Textarea: Intro hace salto de línea y Ctrl/⌘+Intro guarda."
+    },
+    {
+     "name": "controls",
+     "type": "boolean",
+     "default": false,
+     "description": "Botones de editar, guardar y cancelar."
+    },
+    {
+     "name": "editing",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultEditing",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onEditingChange",
+     "type": "(editing: boolean) => void"
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "No guarda un texto vacío."
+    },
+    {
+     "name": "maxLength",
+     "type": "number"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "`lg` sirve para títulos."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor guardado."
+    },
+    {
+     "name": "editLabel",
+     "type": "string",
+     "default": "Edit"
+    },
+    {
+     "name": "saveLabel",
+     "type": "string",
+     "default": "Save"
+    },
+    {
+     "name": "cancelLabel",
+     "type": "string",
+     "default": "Cancel"
+    },
+    {
+     "name": "hint",
+     "type": "string",
+     "default": "Press Enter to edit"
+    }
+   ],
+   "states": [
+    "preview",
+    "hover",
+    "focus",
+    "edit",
+    "disabled"
+   ],
+   "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-bg",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "fg",
+    "fg-subtle",
+    "line",
+    "accent",
+    "accent-ring",
+    "focus-width",
+    "text-body",
+    "text-small",
+    "text-heading",
+    "weight-semibold",
+    "leading-normal",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-editable",
+    "z-editable__preview",
+    "z-editable__text",
+    "z-editable__input",
+    "z-editable__controls"
+   ],
+   "a11y": "El texto es un button cuyo nombre es la etiqueta más el valor («Project name, Borealis») y cuya descripción explica cómo editarlo. Clic, foco o doble clic (según `activationMode`) y también Intro o F2 lo pasan a un campo nativo con la misma etiqueta y el texto seleccionado. Intro guarda (Ctrl/⌘+Intro en varias líneas), Escape cancela y, al terminar, el foco vuelve al texto. Respeta la composición de un IME.",
+   "examples": [
+    {
+     "title": "Título",
+     "code": "<Editable label=\"Project name\" defaultValue=\"Borealis\" size=\"lg\" />"
+    },
+    {
+     "title": "Con botones",
+     "code": "<Editable label=\"Display name\" defaultValue=\"Ana Ruiz\" controls activationMode=\"none\" required />"
+    },
+    {
+     "title": "Varias líneas con doble clic",
+     "code": "<Editable label=\"Description\" multiline activationMode=\"dblclick\" placeholder=\"Add a description\" defaultValue={\"Glass shell for the desktop app.\\nShips in the next release.\"} />"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Editable de Shark UI (clic, foco, doble clic, ninguno; textarea; controles) e InlineEdit de zutool.",
+   "file": "zui/src/components/forms/Editable.manifest.json"
   },
   {
    "name": "Field",

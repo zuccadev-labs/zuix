@@ -69,3 +69,4 @@ export {
   type ListboxSingleProps,
 } from "./Listbox";
 export { TagsInput, type TagsInputProps } from "./TagsInput";
+export { Editable, type EditableProps } from "./Editable";

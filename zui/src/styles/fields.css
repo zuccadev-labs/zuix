@@ -599,4 +599,108 @@
   .z-combobox[data-multiple] .z-input__action {
     align-self: center;
   }
+
+  /* ---- Editable ----
+     Texto que ocupa lo mismo que su campo: misma altura, relleno y radio, así no salta al editar. El texto se marca
+     al pasar con la superficie de control; el campo es un control normal con su anillo de foco. */
+  .z-editable {
+    --z-ed-height: var(--z-control-height-md);
+    --z-ed-pad: var(--z-space-2);
+    --z-ed-radius: var(--z-control-radius);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--z-space-1);
+    min-width: 0;
+    font-size: var(--z-text-body);
+  }
+  .z-editable[data-size="sm"] {
+    --z-ed-height: var(--z-control-height-sm);
+    --z-ed-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-small);
+  }
+  .z-editable[data-size="lg"] {
+    --z-ed-height: var(--z-control-height-lg);
+    --z-ed-pad: var(--z-space-2-5);
+    --z-ed-radius: var(--z-control-radius-lg);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-editable__preview,
+  .z-editable__input {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: var(--z-ed-height);
+    padding: 0 var(--z-ed-pad);
+    border: 1px solid transparent;
+    border-radius: var(--z-ed-radius);
+    color: var(--z-fg);
+    font: inherit;
+    text-align: start;
+  }
+  .z-editable__preview {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    cursor: text;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-editable[data-multiline] .z-editable__preview {
+    align-items: flex-start;
+    padding-block: var(--z-space-1-5);
+    white-space: pre-wrap;
+  }
+  .z-editable__text {
+    overflow-wrap: anywhere;
+  }
+  .z-editable[data-activation="none"] .z-editable__preview {
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .z-editable:not([data-activation="none"], [data-disabled]) .z-editable__preview:hover {
+      border-color: var(--z-line);
+      background: var(--z-control-bg);
+    }
+  }
+  .z-editable__preview:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-editable__preview[data-placeholder] {
+    color: var(--z-fg-subtle);
+    font-style: italic;
+  }
+  .z-editable__preview:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-editable__input {
+    border-color: var(--z-accent);
+    background: var(--z-control-bg);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  textarea.z-editable__input {
+    padding-block: var(--z-space-1-5);
+    line-height: var(--z-leading-normal);
+    resize: vertical;
+  }
+  .z-editable__input[hidden],
+  .z-editable__preview[hidden] {
+    display: none;
+  }
+  .z-editable__controls {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 2px;
+    min-height: var(--z-ed-height);
+  }
+  .z-editable[data-state="preview"] .z-editable__controls [data-action="save"],
+  .z-editable[data-state="preview"] .z-editable__controls [data-action="cancel"],
+  .z-editable[data-state="edit"] .z-editable__controls [data-action="edit"] {
+    display: none;
+  }
 }

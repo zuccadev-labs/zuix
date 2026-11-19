@@ -1065,6 +1065,34 @@
     }
    ]
   },
+  "Editable": {
+   "group": "forms",
+   "classes": [
+    "z-editable",
+    "z-editable__preview",
+    "z-editable__text",
+    "z-editable__input",
+    "z-editable__controls"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Título",
+     "html": "<div class=\"z-editable\" data-size=\"lg\" data-state=\"preview\" data-activation=\"click\" data-value=\"Borealis\" data-placeholder=\"Empty\">\n  <span id=\"_R_0_-label\" class=\"z-sr-only\">Project name</span>\n  <span id=\"_R_0_-hint\" class=\"z-sr-only\">Press Enter to edit</span>\n  <button type=\"button\" class=\"z-editable__preview\" aria-labelledby=\"_R_0_-label _R_0_-text\" aria-describedby=\"_R_0_-hint\">\n    <span id=\"_R_0_-text\" class=\"z-editable__text\">Borealis</span>\n  </button>\n  <input class=\"z-editable__input\" hidden=\"\" aria-labelledby=\"_R_0_-label\" placeholder=\"Empty\" value=\"Borealis\"/>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Con botones",
+     "html": "<div class=\"z-editable\" data-size=\"md\" data-state=\"preview\" data-activation=\"none\" data-required=\"true\" data-value=\"Ana Ruiz\" data-placeholder=\"Empty\">\n  <span id=\"_R_0_-label\" class=\"z-sr-only\">Display name</span>\n  <span id=\"_R_0_-hint\" class=\"z-sr-only\">Press Enter to edit</span>\n  <button type=\"button\" class=\"z-editable__preview\" aria-labelledby=\"_R_0_-label _R_0_-text\" tabindex=\"-1\">\n    <span id=\"_R_0_-text\" class=\"z-editable__text\">Ana Ruiz</span>\n  </button>\n  <input class=\"z-editable__input\" hidden=\"\" aria-labelledby=\"_R_0_-label\" required=\"\" placeholder=\"Empty\" value=\"Ana Ruiz\"/>\n  <span class=\"z-editable__controls\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon\" data-size=\"sm\" data-action=\"edit\" aria-label=\"Edit Display name\" title=\"Edit\">\n      <z-icon name=\"pencil\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon\" data-size=\"sm\" data-action=\"save\" aria-label=\"Save\" title=\"Save\">\n      <z-icon name=\"check\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon\" data-size=\"sm\" data-action=\"cancel\" aria-label=\"Cancel\" title=\"Cancel\">\n      <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n    </button>\n  </span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Varias líneas con doble clic",
+     "html": "<div class=\"z-editable\" data-size=\"md\" data-state=\"preview\" data-activation=\"dblclick\" data-multiline=\"true\" data-value=\"Glass shell for the desktop app.\nShips in the next release.\" data-placeholder=\"Add a description\">\n  <span id=\"_R_0_-label\" class=\"z-sr-only\">Description</span>\n  <span id=\"_R_0_-hint\" class=\"z-sr-only\">Press Enter to edit</span>\n  <button type=\"button\" class=\"z-editable__preview\" aria-labelledby=\"_R_0_-label _R_0_-text\" aria-describedby=\"_R_0_-hint\">\n    <span id=\"_R_0_-text\" class=\"z-editable__text\">Glass shell for the desktop app.\nShips in the next release.</span>\n  </button>\n  <textarea class=\"z-editable__input\" hidden=\"\" aria-labelledby=\"_R_0_-label\" placeholder=\"Add a description\" rows=\"3\">Glass shell for the desktop app.\nShips in the next release.</textarea>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Field": {
    "group": "forms",
    "classes": [

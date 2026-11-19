@@ -8,6 +8,9 @@
 // TagsInput  .z-input.z-tags > .z-tags__tag* + input.z-tags__input + [role=status]. En .z-tags: data-max,
 //            data-max-length, data-delimiters (",;"), data-name (campos ocultos), data-allow-duplicates.
 //            z:change { value: string[] }, z:reject { rejected }. setTagsValue().
+// Editable   .z-editable[data-value] > button.z-editable__preview > .z-editable__text + .z-editable__input[hidden] (input o
+//            textarea) + .z-editable__controls opcional ([data-action=edit|save|cancel]). data-activation="click|focus|
+//            dblclick|none", data-multiline, data-keep (salir descarta), data-required. z:change { value } al guardar.
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { logicalKey } from "../core/dir";
@@ -251,6 +254,48 @@ function onTagKey(box: HTMLElement, tag: HTMLElement, event: KeyboardEvent): voi
   }
 }
 
+/* ---------- Editable ---------- */
+
+const editParts = (box: Element) => ({
+  preview: box.querySelector<HTMLButtonElement>(".z-editable__preview"),
+  field: box.querySelector<HTMLInputElement | HTMLTextAreaElement>(".z-editable__input"),
+  text: box.querySelector<HTMLElement>(".z-editable__text"),
+  hidden: box.querySelector<HTMLInputElement>(':scope > input[type="hidden"]'),
+});
+const returning = new WeakSet<Element>();
+
+function startEdit(box: HTMLElement): void {
+  const { preview, field } = editParts(box);
+  if (!preview || !field || box.hasAttribute("data-disabled") || box.dataset.state === "edit") return;
+  field.value = box.dataset.value ?? "";
+  box.dataset.state = "edit";
+  preview.hidden = true;
+  field.hidden = false;
+  field.focus();
+  field.select();
+}
+
+function finishEdit(box: HTMLElement, save: boolean): void {
+  const { preview, field, text, hidden } = editParts(box);
+  if (!preview || !field || box.dataset.state !== "edit") return;
+  const next = field.value;
+  if (save && box.hasAttribute("data-required") && !next.trim()) return;
+  const before = box.dataset.value ?? "";
+  box.dataset.state = "preview";
+  field.hidden = true;
+  preview.hidden = false;
+  if (save) {
+    box.dataset.value = next;
+    if (text) text.textContent = next || (box.dataset.placeholder ?? "");
+    flag(preview, "data-placeholder", !next);
+    if (hidden) hidden.value = next;
+  }
+  returning.add(box);
+  preview.focus();
+  returning.delete(box);
+  if (save && next !== before) emit(box, "change", { value: next });
+}
+
 /* ---------- Delegación ---------- */
 
 export function setup(on: Listen): void {
@@ -271,6 +316,30 @@ export function setup(on: Listen): void {
     }
     const box = target.closest<HTMLElement>(".z-tags");
     if (box && target === box) tagsInput(box)?.focus();
+    const editable = target.closest<HTMLElement>(".z-editable");
+    if (!editable) return;
+    const action = target.closest<HTMLElement>("[data-action]")?.dataset.action;
+    if (action === "edit") startEdit(editable);
+    else if (action === "save") finishEdit(editable, true);
+    else if (action === "cancel") finishEdit(editable, false);
+    else if (target.closest(".z-editable__preview") && (editable.dataset.activation ?? "click") === "click") startEdit(editable);
+  });
+  on(document, "dblclick", (event) => {
+    const editable = (event.target as Element).closest?.<HTMLElement>(".z-editable[data-activation='dblclick']");
+    if (editable && inDom(editable) && (event.target as Element).closest(".z-editable__preview")) startEdit(editable);
+  });
+  on(document, "focusin", (event) => {
+    const preview = (event.target as Element).closest?.<HTMLElement>(".z-editable[data-activation='focus'] .z-editable__preview");
+    const editable = preview?.closest<HTMLElement>(".z-editable");
+    if (editable && inDom(editable) && !returning.has(editable)) startEdit(editable);
+  });
+  on(document, "focusout", (event) => {
+    const field = event.target as Element;
+    const editable = field.matches?.(".z-editable__input") ? field.closest<HTMLElement>(".z-editable") : null;
+    if (!editable || !inDom(editable)) return;
+    const next = event.relatedTarget as Node | null;
+    if (next && editable.contains(next)) return;
+    finishEdit(editable, !editable.hasAttribute("data-keep"));
   });
   on(document, "keydown", (event) => {
     const target = event.target;
@@ -278,6 +347,27 @@ export function setup(on: Listen): void {
     const option = target.closest<HTMLElement>(`${LISTBOX} .z-listbox__option`);
     if (option) {
       onListKey(option.closest<HTMLElement>(LISTBOX)!, option, event);
+      return;
+    }
+    const editable = target.closest<HTMLElement>(".z-editable");
+    if (editable) {
+      if (target.matches(".z-editable__input") && !event.isComposing) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.stopPropagation();
+          finishEdit(editable, false);
+        } else if (event.key === "Enter" && (!editable.hasAttribute("data-multiline") || event.ctrlKey || event.metaKey)) {
+          event.preventDefault();
+          finishEdit(editable, true);
+        }
+      } else if (
+        target.matches(".z-editable__preview") &&
+        (event.key === "Enter" || event.key === "F2") &&
+        editable.dataset.activation !== "none"
+      ) {
+        event.preventDefault();
+        startEdit(editable);
+      }
       return;
     }
     const box = target.closest<HTMLElement>(".z-tags");
