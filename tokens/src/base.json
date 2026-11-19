@@ -126,7 +126,8 @@
     "glass-saturate": "180%"
   },
   "coarse": {
-    "touch-target": "40px"
+    "touch-target": "40px",
+    "timegrid-hour": "64px"
   },
   "component": {
     "focus-width": "2px",
@@ -174,7 +175,31 @@
     "calendar-cell": "36px",
     "calendar-cell-radius": "{control-radius}",
     "calendar-range-bg": "{accent-soft}",
-    "calendar-today-ring": "{accent}"
+    "calendar-today-ring": "{accent}",
+
+    "calendar-color-1": "{info}",
+    "calendar-color-2": "{success}",
+    "calendar-color-3": "{warning}",
+    "calendar-color-4": "{danger}",
+    "calendar-color-5": "color-mix(in srgb, {info} 52%, {danger})",
+    "calendar-color-6": "color-mix(in srgb, {info} 50%, {success})",
+    "event-tint": "20%",
+    "event-radius": "{radius-xs}",
+    "event-bar-width": "3px",
+    "event-fg": "{fg}",
+    "event-fg-muted": "{fg-muted}",
+    "event-solid-1": "color-mix(in srgb, {calendar-color-1} 58%, black)",
+    "event-solid-2": "color-mix(in srgb, {calendar-color-2} 58%, black)",
+    "event-solid-3": "color-mix(in srgb, {calendar-color-3} 58%, black)",
+    "event-solid-4": "color-mix(in srgb, {calendar-color-4} 58%, black)",
+    "event-solid-5": "color-mix(in srgb, {calendar-color-5} 58%, black)",
+    "event-solid-6": "color-mix(in srgb, {calendar-color-6} 58%, black)",
+    "timegrid-hour": "48px",
+    "timegrid-gutter": "56px",
+    "calendar-now": "{accent}",
+    "calendar-now-label-bg": "{accent-solid}",
+    "calendar-weekend-bg": "color-mix(in srgb, {fg} 2.5%, transparent)",
+    "calendar-drop-bg": "color-mix(in srgb, {accent} 7%, transparent)"
   },
   "required": [
     "accent",
@@ -253,13 +278,44 @@
       { "fg": "success-text", "bg": "success-soft", "min": 4.5 },
       { "fg": "warning-text", "bg": "warning-soft", "min": 4.5 },
       { "fg": "danger-text", "bg": "danger-soft", "min": 4.5 },
-      { "fg": "info-text", "bg": "info-soft", "min": 4.5 }
+      { "fg": "info-text", "bg": "info-soft", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "event-solid-1", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "event-solid-2", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "event-solid-3", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "event-solid-4", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "event-solid-5", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "event-solid-6", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "calendar-now-label-bg", "min": 4.5 }
     ],
-    "nonText": ["control-border", "control-border-hover", "accent-ring", "accent", "success", "warning", "danger", "info"],
+    "nonText": [
+      "control-border",
+      "control-border-hover",
+      "accent-ring",
+      "accent",
+      "success",
+      "warning",
+      "danger",
+      "info",
+      "calendar-color-1",
+      "calendar-color-2",
+      "calendar-color-3",
+      "calendar-color-4",
+      "calendar-color-5",
+      "calendar-color-6",
+      "calendar-now"
+    ],
     "ignore": [
       {
         "selector": ".z-check__box",
         "reason": "El color es el de la marca de verificación, que solo se ve con la casilla marcada (fondo accent-solid)."
+      },
+      {
+        "selector": ".z-event[data-selected]",
+        "reason": "Fondo event-solid-N del calendario del evento (variable local); el par fg-on-accent / event-solid-1…6 se mide en pairs."
+      },
+      {
+        "selector": ".z-event[data-dragging]",
+        "reason": "Como el seleccionado: fg-on-accent sobre event-solid-N, medido en pairs."
       }
     ]
   }
