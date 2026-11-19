@@ -127,7 +127,7 @@ export function NumberInput({
   // Mantener pulsado un botón repite el paso.
   const hold = useRef<{ timer?: ReturnType<typeof setTimeout> }>({});
   const release = () => clearTimeout(hold.current.timer);
-  useEffect(() => release, []);
+  useEffect(() => () => clearTimeout(hold.current.timer), []);
   const press = (delta: number) => (event: PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
     event.preventDefault();
