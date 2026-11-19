@@ -51,7 +51,7 @@
     border-radius: 0;
   }
   .z-skeleton[data-variant="rounded"] {
-    border-radius: var(--z-radius-md);
+    border-radius: var(--z-control-radius);
   }
   .z-skeleton[data-animation="pulse"] {
     animation: z-skeleton-pulse 1.6s ease-in-out infinite;
@@ -96,8 +96,8 @@
     color: var(--z-canvas-fg);
   }
   .z-loading-overlay[data-blur] {
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px) saturate(var(--z-glass-saturate));
+    backdrop-filter: blur(6px) saturate(var(--z-glass-saturate));
   }
   .z-loading-overlay[data-fullscreen] {
     position: fixed;
@@ -128,21 +128,26 @@
     /* biome-ignore lint/suspicious/noDuplicateProperties: 100vh es el respaldo de los navegadores sin unidades dinámicas (dvh); el orden es intencionado. */
     min-height: 100dvh;
   }
+  /* Icono en baldosa de cristal: rectángulo redondeado con canto y brillo, como el de una tarjeta. */
   .z-empty__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--z-space-16);
-    height: var(--z-space-16);
+    width: var(--z-space-12);
+    height: var(--z-space-12);
     margin-bottom: var(--z-space-2);
-    border: 1px solid var(--z-line);
-    border-radius: var(--z-radius-full);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-md);
     background: var(--z-surface-2);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
     color: var(--z-fg-muted);
   }
   .z-empty[data-size="sm"] .z-empty__icon {
-    width: var(--z-space-10);
-    height: var(--z-space-10);
+    width: var(--z-space-9);
+    height: var(--z-space-9);
+    border-radius: var(--z-control-radius-lg);
   }
   .z-empty--error .z-empty__icon {
     border-color: transparent;
@@ -153,9 +158,11 @@
     margin: 0;
     color: var(--z-fg);
     font-family: var(--z-font-display);
-    font-size: var(--z-text-heading-lg);
-    font-weight: var(--z-weight-semibold);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-display);
     line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
+    text-wrap: balance;
   }
   .z-empty[data-size="sm"] .z-empty__title {
     font-size: var(--z-text-title);
@@ -165,6 +172,7 @@
     margin: 0;
     font-size: var(--z-text-body);
     line-height: var(--z-leading-normal);
+    text-wrap: pretty;
   }
   .z-empty[data-size="sm"] .z-empty__description {
     font-size: var(--z-text-small);
@@ -185,12 +193,13 @@
     align-items: flex-start;
     gap: var(--z-space-3);
     padding: var(--z-space-3) var(--z-space-4);
-    border: 1px solid color-mix(in srgb, var(--z-alert-tone) 35%, transparent);
-    border-radius: var(--z-radius-md);
+    border: 1px solid color-mix(in srgb, var(--z-alert-tone) 32%, transparent);
+    border-radius: var(--z-card-radius);
     background: var(--z-alert-soft);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
     font-size: var(--z-text-body);
-    line-height: var(--z-leading-normal);
+    line-height: var(--z-leading-ui);
   }
   .z-alert[data-tone="success"] {
     --z-alert-tone: var(--z-success);
@@ -207,7 +216,7 @@
   .z-alert__icon {
     display: inline-flex;
     flex-shrink: 0;
-    margin-top: 1px;
+    margin-top: 2px;
     color: var(--z-alert-tone);
   }
   .z-alert__body {
@@ -242,26 +251,27 @@
     margin-inline-end: calc(var(--z-space-1) * -1);
     padding: 0;
     border: 0;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-radius-xs);
     background: transparent;
     color: var(--z-fg-muted);
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      color var(--z-duration-fast) var(--z-ease-standard);
+      color var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-alert__dismiss:hover {
-      background: var(--z-surface-3);
+      background: var(--z-surface-2);
       color: var(--z-fg);
     }
   }
   .z-alert__dismiss:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-alert__dismiss:active {
-    transform: scale(0.92);
+    scale: 0.97;
   }
 
   /* Objetivo táctil: con puntero grueso la zona de pulsación del cierre crece hasta `--z-touch-target`. */

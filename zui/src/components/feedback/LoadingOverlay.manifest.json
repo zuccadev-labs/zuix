@@ -32,7 +32,7 @@
     }
   ],
   "states": ["visible", "hidden"],
-  "tokens": ["layer-sticky", "space-3", "scrim", "canvas-fg", "layer-overlay", "text-body", "weight-medium", "surface-3", "accent"],
+  "tokens": ["layer-sticky", "space-3", "canvas-fg", "layer-overlay", "text-body", "weight-medium", "canvas", "glass-saturate"],
   "classes": ["z-loading-overlay"],
   "a11y": "role=\"status\" con aria-live polite. El contenedor necesita position: relative.",
   "examples": [
