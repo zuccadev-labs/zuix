@@ -19,7 +19,11 @@ export function Radio({ value, children, description, className, disabled: disab
   const disabled = disabledProp || group.disabled;
   const state = checked ? "checked" : "unchecked";
   return (
-    <label className={cx("z-radio", className)} data-disabled={disabled || undefined}>
+    <label
+      className={cx("z-radio", className)}
+      data-disabled={disabled || undefined}
+      data-variant={group.variant === "card" ? "card" : undefined}
+    >
       <button
         type="button"
         {...rest}

@@ -11,6 +11,8 @@ export interface RadioGroupState {
   disabled?: boolean;
   /** Valor de la opción que recibe el foco con Tab: la elegida o, si no hay, la primera habilitada. */
   tabStop: string | null;
+  /** Variante de las opciones: `card` las pinta como recuadros. */
+  variant?: "default" | "card";
 }
 
 export const RadioGroupContext = createContext<RadioGroupState | null>(null);

@@ -19,6 +19,12 @@ export interface SwitchProps extends Omit<ComponentProps<"button">, "children" |
   children?: ReactNode;
   /** Coloca la etiqueta antes o después del interruptor. */
   labelPosition?: "start" | "end";
+  /** Texto secundario bajo la etiqueta. */
+  description?: ReactNode;
+  /** Marca el interruptor como no válido (por ejemplo, unas condiciones obligatorias sin aceptar). */
+  invalid?: boolean;
+  /** `card`: etiqueta, descripción e interruptor en un recuadro (el interruptor al final). */
+  variant?: "default" | "card";
 }
 
 /** Interruptor de activación inmediata (role="switch"). */
@@ -32,6 +38,9 @@ export function Switch({
   size = "md",
   children,
   labelPosition = "end",
+  description,
+  invalid,
+  variant = "default",
   className,
   id,
   required,
@@ -41,15 +50,20 @@ export function Switch({
   ...rest
 }: SwitchProps) {
   const {
-    invalid: _invalid,
-    "aria-invalid": _ariaInvalid,
+    invalid: isInvalid,
     required: isRequired,
     ...control
-  } = useFieldControl({ id, required, "aria-describedby": describedBy });
+  } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const [checked, setChecked] = useControllable(checkedProp, defaultChecked, onCheckedChange);
   const state = checked ? "checked" : "unchecked";
   return (
-    <label className={cx("z-switch", className)} data-size={size} data-label={labelPosition} data-disabled={disabled || undefined}>
+    <label
+      className={cx("z-switch", className)}
+      data-size={size}
+      data-label={variant === "card" ? "start" : labelPosition}
+      data-disabled={disabled || undefined}
+      data-variant={variant === "card" ? "card" : undefined}
+    >
       <button
         type="button"
         {...rest}
@@ -58,6 +72,7 @@ export function Switch({
         aria-checked={checked}
         aria-required={isRequired}
         data-state={state}
+        data-invalid={isInvalid || undefined}
         data-disabled={disabled ? "" : undefined}
         disabled={disabled}
         value={value}
@@ -79,7 +94,14 @@ export function Switch({
         disabled={disabled}
         onReset={() => setChecked(defaultChecked)}
       />
-      {children ? <span className="z-switch__label">{children}</span> : null}
+      {children && description ? (
+        <span className="z-check__text">
+          <span className="z-switch__label">{children}</span>
+          <span className="z-check__description">{description}</span>
+        </span>
+      ) : children ? (
+        <span className="z-switch__label">{children}</span>
+      ) : null}
     </label>
   );
 }

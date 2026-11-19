@@ -874,6 +874,40 @@
      "title": "Indeterminado",
      "html": "<label class=\"z-check\">\n  <button type=\"button\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\">\n    <span class=\"z-check__mark\" data-state=\"indeterminate\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-check__label\">Select all</span>\n  </span>\n</label>",
      "source": "generated"
+    },
+    {
+     "title": "Tarjeta",
+     "html": "<label class=\"z-check\" data-variant=\"card\">\n  <button type=\"button\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\">\n    <span class=\"z-check__mark\" data-state=\"checked\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-check__label\">Weekly digest</span>\n    <span class=\"z-check__description\">Get a summary of activity every Monday.</span>\n  </span>\n</label>",
+     "source": "generated"
+    }
+   ]
+  },
+  "CheckboxGroup": {
+   "group": "forms",
+   "classes": [
+    "z-checkgroup",
+    "z-checkgroup__legend",
+    "z-checkgroup__description",
+    "z-checkgroup__items",
+    "z-checkgroup__all",
+    "z-check"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Notificaciones con «todas»",
+     "html": "<fieldset class=\"z-checkgroup\" data-orientation=\"vertical\">\n  <legend class=\"z-checkgroup__legend\">Notify me about</legend>\n  <label class=\"z-check z-checkgroup__all\">\n    <button type=\"button\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\">\n      <span class=\"z-check__mark\" data-state=\"indeterminate\"></span>\n    </button>\n    <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">All activity</span>\n    </span>\n  </label>\n  <div class=\"z-checkgroup__items\">\n    <label class=\"z-check\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"mentions\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"checked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"notify\" checked=\"\" value=\"mentions\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Mentions</span>\n      </span>\n    </label>\n    <label class=\"z-check\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"comments\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"notify\" value=\"comments\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Comments</span>\n      </span>\n    </label>\n    <label class=\"z-check\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"releases\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"notify\" value=\"releases\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Releases</span>\n        <span class=\"z-check__description\">New versions of projects you follow.</span>\n      </span>\n    </label>\n  </div>\n</fieldset>",
+     "source": "generated"
+    },
+    {
+     "title": "Tarjetas en horizontal",
+     "html": "<fieldset class=\"z-checkgroup\" data-orientation=\"horizontal\" data-variant=\"card\">\n  <legend class=\"z-checkgroup__legend\">Platforms</legend>\n  <div class=\"z-checkgroup__items\">\n    <label class=\"z-check\" data-variant=\"card\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"web\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"checked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"web\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Web</span>\n        <span class=\"z-check__description\">Browsers and PWAs</span>\n      </span>\n    </label>\n    <label class=\"z-check\" data-variant=\"card\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"desktop\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"desktop\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Desktop</span>\n        <span class=\"z-check__description\">macOS, Windows, Linux</span>\n      </span>\n    </label>\n    <label class=\"z-check\" data-disabled=\"true\" data-variant=\"card\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" data-disabled=\"\" disabled=\"\" value=\"mobile\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" disabled=\"\" value=\"mobile\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Mobile</span>\n        <span class=\"z-check__description\">iOS and Android</span>\n      </span>\n    </label>\n  </div>\n</fieldset>",
+     "source": "generated"
+    },
+    {
+     "title": "Con error",
+     "html": "<fieldset class=\"z-checkgroup\" data-orientation=\"vertical\" data-invalid=\"true\" aria-describedby=\"_R_0_-error\">\n  <legend class=\"z-checkgroup__legend\">Terms</legend>\n  <div class=\"z-checkgroup__items\">\n    <label class=\"z-check\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" data-invalid=\"true\" value=\"terms\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"terms\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">I accept the terms of service</span>\n      </span>\n    </label>\n    <label class=\"z-check\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" data-invalid=\"true\" value=\"privacy\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"privacy\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">I accept the privacy policy</span>\n      </span>\n    </label>\n  </div>\n  <p id=\"_R_0_-error\" class=\"z-field__error\" role=\"alert\">Accept both to continue.</p>\n</fieldset>",
+     "source": "generated"
     }
    ]
   },
@@ -1042,6 +1076,34 @@
      "title": "En línea",
      "html": "<div class=\"z-field\" data-layout=\"inline\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Region\n    <span class=\"z-field__optional\">Optional</span>\n  </label>\n  <div class=\"z-field__body\">\n    <span class=\"z-select\" data-size=\"md\" data-block=\"true\">\n      <select id=\"_R_0_-control\" class=\"z-select__control\">\n        <option value=\"eu\">Europe</option>\n        <option value=\"us\">United States</option>\n      </select>\n      <span class=\"z-select__chevron\">\n        <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n      </span>\n    </span>\n  </div>\n</div>",
      "source": "generated"
+    },
+    {
+     "title": "Mensajes por ValidityState",
+     "html": "<form noValidate=\"\" class=\"z-form\">\n  <div class=\"z-field\" data-layout=\"stacked\" data-validate=\"\" data-msg-value-missing=\"Enter your email address.\" data-msg-type-mismatch=\"Enter an email in the format you@example.com.\">\n    <label class=\"z-field__label\" id=\"_R_1_-label\" for=\"_R_1_-control\">Email\n      <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n    </label>\n    <div class=\"z-field__body\">\n      <span class=\"z-input\" data-size=\"md\">\n        <input type=\"email\" autoComplete=\"email\" id=\"_R_1_-control\" required=\"\" class=\"z-input__control\" name=\"email\"/>\n      </span>\n    </div>\n  </div>\n  <button type=\"submit\" class=\"z-btn z-btn--primary\" data-size=\"md\">Subscribe</button>\n</form>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Fieldset": {
+   "group": "forms",
+   "classes": [
+    "z-fieldset",
+    "z-fieldset__legend",
+    "z-fieldset__description",
+    "z-fieldset__body",
+    "z-field-group"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Dirección en tarjeta",
+     "html": "<fieldset class=\"z-fieldset\" data-variant=\"card\">\n  <legend class=\"z-fieldset__legend\">Shipping address</legend>\n  <p class=\"z-fieldset__description\">Where we send the hardware key.</p>\n  <div class=\"z-fieldset__body\">\n    <div class=\"z-field-group\" data-orientation=\"vertical\">\n      <div class=\"z-field\" data-layout=\"stacked\">\n        <label class=\"z-field__label\" id=\"_R_7_-label\" for=\"_R_7_-control\">Full name</label>\n        <div class=\"z-field__body\">\n          <span class=\"z-input\" data-size=\"md\">\n            <input autoComplete=\"name\" id=\"_R_7_-control\" class=\"z-input__control\" name=\"name\"/>\n          </span>\n        </div>\n      </div>\n      <div class=\"z-field\" data-layout=\"stacked\">\n        <label class=\"z-field__label\" id=\"_R_b_-label\" for=\"_R_b_-control\">Address</label>\n        <div class=\"z-field__body\">\n          <textarea name=\"address\" autoComplete=\"street-address\" id=\"_R_b_-control\" rows=\"2\" class=\"z-textarea\" data-size=\"md\" data-resize=\"vertical\"></textarea>\n        </div>\n      </div>\n      <div class=\"z-field-group\" data-orientation=\"horizontal\">\n        <div class=\"z-field\" data-layout=\"stacked\">\n          <label class=\"z-field__label\" id=\"_R_v_-label\" for=\"_R_v_-control\">City</label>\n          <div class=\"z-field__body\">\n            <span class=\"z-input\" data-size=\"md\">\n              <input autoComplete=\"address-level2\" id=\"_R_v_-control\" class=\"z-input__control\" name=\"city\"/>\n            </span>\n          </div>\n        </div>\n        <div class=\"z-field\" data-layout=\"stacked\">\n          <label class=\"z-field__label\" id=\"_R_1f_-label\" for=\"_R_1f_-control\">Postal code\n            <span class=\"z-field__optional\">Optional</span>\n          </label>\n          <div class=\"z-field__body\">\n            <span class=\"z-input\" data-size=\"md\">\n              <input autoComplete=\"postal-code\" id=\"_R_1f_-control\" class=\"z-input__control\" name=\"postal\"/>\n            </span>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</fieldset>",
+     "source": "generated"
+    },
+    {
+     "title": "Deshabilitado",
+     "html": "<fieldset disabled=\"\" class=\"z-fieldset\" data-variant=\"plain\">\n  <legend class=\"z-fieldset__legend\">Advanced</legend>\n  <div class=\"z-fieldset__body\">\n    <label class=\"z-switch\" data-size=\"md\" data-label=\"end\">\n      <button type=\"button\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n        <span class=\"z-switch__thumb\" data-state=\"checked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n      <span class=\"z-switch__label\">Telemetry</span>\n    </label>\n    <label class=\"z-check\">\n      <button type=\"button\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\">\n        <span class=\"z-check__mark\" data-state=\"unchecked\"></span>\n      </button>\n      <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"/>\n      <span class=\"z-check__text\">\n        <span class=\"z-check__label\">Beta channel</span>\n      </span>\n    </label>\n  </div>\n</fieldset>",
+     "source": "generated"
     }
    ]
   },
@@ -1062,6 +1124,20 @@
      "title": "Un documento",
      "html": "<label class=\"z-upload\" id=\"contract\" data-size=\"md\">\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"contract\" accept=\".pdf\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"document-arrow-up\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\">Upload the signed contract</span>\n</label>",
      "source": "manual"
+    }
+   ]
+  },
+  "Form": {
+   "group": "forms",
+   "classes": [
+    "z-form"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Alta con validación",
+     "html": "<form noValidate=\"\" aria-label=\"Create account\" class=\"z-form\" method=\"post\">\n  <div class=\"z-field\" data-layout=\"stacked\" data-validate=\"\" data-msg-value-missing=\"Enter your email address.\" data-msg-type-mismatch=\"Enter an email in the format you@example.com.\">\n    <label class=\"z-field__label\" id=\"_R_1_-label\" for=\"_R_1_-control\">Email\n      <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n    </label>\n    <div class=\"z-field__body\">\n      <span class=\"z-input\" data-size=\"md\">\n        <input type=\"email\" autoComplete=\"email\" id=\"_R_1_-control\" required=\"\" class=\"z-input__control\" name=\"email\"/>\n      </span>\n    </div>\n  </div>\n  <div class=\"z-field\" data-layout=\"stacked\" data-validate=\"\" data-msg-too-short=\"Use at least 8 characters.\">\n    <label class=\"z-field__label\" id=\"_R_2_-label\" for=\"_R_2_-control\">Password\n      <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n    </label>\n    <div class=\"z-field__body\">\n      <div class=\"z-password\" data-size=\"md\">\n        <span class=\"z-input z-password__field\" data-size=\"md\">\n          <input minLength=\"8\" id=\"_R_1m_-input\" required=\"\" aria-describedby=\"_R_2_-hint\" type=\"password\" autoComplete=\"new-password\" autoCapitalize=\"none\" autoCorrect=\"off\" spellCheck=\"false\" class=\"z-input__control\" name=\"password\"/>\n          <button type=\"button\" class=\"z-input__action z-password__toggle\" aria-label=\"Show password\" aria-pressed=\"false\" aria-controls=\"_R_1m_-input\" aria-describedby=\"_R_1m_-toggle-hint\" title=\"Show password\">\n            <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"fade\">\n              <span class=\"z-swap__item\" data-for=\"off\">\n                <z-icon name=\"eye\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-swap__item\" data-for=\"on\">\n                <z-icon name=\"eye-slash\" size=\"16\"></z-icon>\n              </span>\n            </span>\n          </button>\n          <span id=\"_R_1m_-toggle-hint\" class=\"z-sr-only\">Shows the password on screen</span>\n        </span>\n      </div>\n      <p class=\"z-field__hint\" id=\"_R_2_-hint\">Eight or more characters.</p>\n    </div>\n  </div>\n  <button type=\"submit\" class=\"z-btn z-btn--primary\" data-size=\"md\">Create account</button>\n</form>",
+     "source": "generated"
     }
    ]
   },
@@ -1274,6 +1350,11 @@
      "title": "Horizontal dentro de Field",
      "html": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" id=\"_R_0_-label\" for=\"_R_0_-control\">Density</label>\n  <div class=\"z-field__body\">\n    <div id=\"_R_0_-control\" role=\"radiogroup\" aria-orientation=\"horizontal\" aria-labelledby=\"_R_0_-label\" data-orientation=\"horizontal\" class=\"z-radio-group\">\n      <label class=\"z-radio\">\n        <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"compact\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n        <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"compact\"/>\n        <span class=\"z-check__text\">\n          <span class=\"z-check__label\">Compact</span>\n        </span>\n      </label>\n      <label class=\"z-radio\">\n        <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"comfortable\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n        <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"comfortable\"/>\n        <span class=\"z-check__text\">\n          <span class=\"z-check__label\">Comfortable</span>\n        </span>\n      </label>\n    </div>\n  </div>\n</div>",
      "source": "generated"
+    },
+    {
+     "title": "Tarjetas de plan",
+     "html": "<div aria-label=\"Plan\" role=\"radiogroup\" aria-orientation=\"horizontal\" data-orientation=\"horizontal\" data-variant=\"card\" class=\"z-radio-group\">\n  <label class=\"z-radio\" data-variant=\"card\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"free\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"free\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Free</span>\n      <span class=\"z-check__description\">Up to 3 projects</span>\n    </span>\n  </label>\n  <label class=\"z-radio\" data-variant=\"card\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"checked\" value=\"pro\" tabindex=\"0\" class=\"z-radio__dot\">\n      <span class=\"z-radio__mark\" data-state=\"checked\"></span>\n    </button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"pro\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Pro</span>\n      <span class=\"z-check__description\">Unlimited projects and history</span>\n    </span>\n  </label>\n  <label class=\"z-radio\" data-variant=\"card\">\n    <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"unchecked\" value=\"team\" tabindex=\"-1\" class=\"z-radio__dot\"></button>\n    <input type=\"radio\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"team\"/>\n    <span class=\"z-check__text\">\n      <span class=\"z-check__label\">Team</span>\n      <span class=\"z-check__description\">Shared workspaces and roles</span>\n    </span>\n  </label>\n</div>",
+     "source": "generated"
     }
    ]
   },
@@ -1358,6 +1439,11 @@
     {
      "title": "Pequeño, sin etiqueta visible",
      "html": "<label class=\"z-switch\" data-size=\"sm\" data-label=\"end\">\n  <button type=\"button\" aria-label=\"Enable rule\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n    <span class=\"z-switch__thumb\" data-state=\"checked\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n</label>",
+     "source": "generated"
+    },
+    {
+     "title": "Tarjeta con descripción",
+     "html": "<label class=\"z-switch\" data-size=\"md\" data-label=\"start\" data-variant=\"card\">\n  <button type=\"button\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n    <span class=\"z-switch__thumb\" data-state=\"checked\"></span>\n  </button>\n  <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n  <span class=\"z-check__text\">\n    <span class=\"z-switch__label\">Focus mode</span>\n    <span class=\"z-check__description\">Pause notifications outside working hours.</span>\n  </span>\n</label>",
      "source": "generated"
     }
    ]

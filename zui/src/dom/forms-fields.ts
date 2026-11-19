@@ -10,8 +10,16 @@
 //                input[type=hidden] opcional. En .z-number: data-min, data-max, data-step, data-large-step,
 //                data-locale, data-format (JSON de Intl.NumberFormatOptions), data-value, data-wheel.
 //                z:change { value } (número o null). setNumberInputValue().
+// CheckboxGroup  fieldset.z-checkgroup con casillas [role=checkbox][value]; la casilla [data-select-all] marca o
+//                desmarca las demás y se ve indeterminada con algunas. z:change { value: string[] } en el grupo.
+// Field          .z-field[data-validate]: muestra el error de la validación nativa del control tras interactuar
+//                (al salir si se editó, o al enviar) en un p.z-field__error, con aria-invalid y aria-describedby;
+//                lo quita al corregirlo. Mensajes propios: data-msg-value-missing, data-msg-type-mismatch…
+// Form           form.z-form[novalidate]: al enviar comprueba los controles y, si falla alguno, cancela el envío,
+//                lleva el foco al primer error y emite z:invalid en el formulario.
 import { clampNumber, formatNumber, parseNumber, stepNumber } from "../core/number";
 import { passwordStrength } from "../core/password";
+import { messageAttribute, validateForm, validityMessage, VALIDITY_KEYS, type ValidityMessages } from "../core/validity";
 import { all, emit, flag, inDom } from "./forms-popup";
 import type { Listen } from "./shared";
 
@@ -195,6 +203,118 @@ function onStepDown(button: HTMLButtonElement, event: PointerEvent): void {
   repeat(400);
 }
 
+/* ---------- CheckboxGroup ---------- */
+
+const groupBoxes = (group: Element) =>
+  [...group.querySelectorAll<HTMLElement>('.z-checkgroup__items [role="checkbox"]')].filter(
+    (box) => box.closest(".z-checkgroup") === group,
+  );
+const boxOn = (box: Element) => box.getAttribute("aria-checked") === "true";
+const boxOff = (box: HTMLElement) => box.hasAttribute("data-disabled") || (box as HTMLButtonElement).disabled;
+
+function paintBox(box: HTMLElement, state: "checked" | "unchecked" | "indeterminate"): void {
+  box.dataset.state = state;
+  box.setAttribute("aria-checked", state === "indeterminate" ? "mixed" : String(state === "checked"));
+  let mark = box.querySelector<HTMLElement>(".z-check__mark");
+  if (state !== "unchecked" && !mark) {
+    mark = document.createElement("span");
+    mark.className = "z-check__mark";
+    box.append(mark);
+  }
+  if (state === "unchecked") mark?.remove();
+  else if (mark) mark.dataset.state = state;
+  const input = box.parentElement?.querySelector<HTMLInputElement>(':scope > input[type="checkbox"]');
+  if (input) {
+    input.checked = state === "checked";
+    input.indeterminate = state === "indeterminate";
+  }
+}
+
+function syncAll(group: HTMLElement): void {
+  const all = group.querySelector<HTMLElement>('[data-select-all][role="checkbox"]');
+  if (!all) return;
+  const usable = groupBoxes(group).filter((box) => !boxOff(box));
+  const on = usable.filter(boxOn).length;
+  paintBox(all, on === 0 ? "unchecked" : on === usable.length ? "checked" : "indeterminate");
+}
+
+function onGroupChange(event: Event): void {
+  const box = event.target;
+  if (!(box instanceof HTMLElement) || !box.matches('[role="checkbox"]')) return;
+  const group = box.closest<HTMLElement>(".z-checkgroup");
+  if (!group || !inDom(group)) return;
+  if (box.hasAttribute("data-select-all")) {
+    const on = boxOn(box);
+    for (const item of groupBoxes(group)) if (!boxOff(item)) paintBox(item, on ? "checked" : "unchecked");
+  }
+  syncAll(group);
+  emit(group, "change", {
+    value: groupBoxes(group)
+      .filter(boxOn)
+      .map((item) => item.getAttribute("value") ?? ""),
+  });
+}
+
+/* ---------- Validación de Field y Form ---------- */
+
+type Validatable = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+const validatable = (el: EventTarget | null): el is Validatable =>
+  el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement;
+const edited = new WeakSet<Element>();
+let errorSeq = 0;
+
+function fieldMessages(field: HTMLElement): ValidityMessages {
+  const out: ValidityMessages = {};
+  for (const key of VALIDITY_KEYS) {
+    const text = field.getAttribute(messageAttribute(key));
+    if (text) out[key] = text;
+  }
+  return out;
+}
+
+/** Controles visibles del campo que describen el error (el nativo oculto de un control propio, no). */
+const describedControls = (field: HTMLElement) =>
+  [
+    ...field.querySelectorAll<HTMLElement>(
+      "input, select, textarea, [role='checkbox'], [role='switch'], [role='combobox'], [role='radiogroup']",
+    ),
+  ].filter((el) => !el.matches(".z-native-input, [type='hidden']"));
+
+function showFieldError(field: HTMLElement, message: string | null): void {
+  const body = field.querySelector<HTMLElement>(".z-field__body") ?? field;
+  let error = body.querySelector<HTMLElement>(":scope > .z-field__error");
+  if (message) {
+    if (!error) {
+      error = document.createElement("p");
+      error.className = "z-field__error";
+      error.id = `z-field-error-${++errorSeq}`;
+      error.setAttribute("role", "alert");
+      body.insertBefore(error, body.querySelector(":scope > .z-field__hint"));
+    }
+    if (error.textContent !== message) error.textContent = message;
+  } else error?.remove();
+  flag(field, "data-invalid", Boolean(message), "true");
+  for (const control of describedControls(field)) {
+    const ids = (control.getAttribute("aria-describedby") ?? "").split(/\s+/).filter((id) => id && id !== error?.id);
+    if (message && error) ids.unshift(error.id);
+    if (ids.length) control.setAttribute("aria-describedby", ids.join(" "));
+    else control.removeAttribute("aria-describedby");
+    flag(control, "aria-invalid", Boolean(message), "true");
+    const box = control.closest(".z-input, .z-select, .z-input-group, .z-textarea");
+    if (box) flag(box, "data-invalid", Boolean(message), "true");
+    if (control.matches(".z-textarea")) flag(control, "data-invalid", Boolean(message), "true");
+  }
+}
+
+function validateField(field: HTMLElement, control: Validatable): void {
+  showFieldError(field, validityMessage(control.validity, fieldMessages(field), control.validationMessage));
+}
+
+const validatingField = (target: EventTarget | null) => {
+  const field = target instanceof Element ? target.closest<HTMLElement>(".z-field[data-validate]") : null;
+  return field && inDom(field) ? field : null;
+};
+
 /* ---------- Delegación ---------- */
 
 export function setup(on: Listen): void {
@@ -217,9 +337,44 @@ export function setup(on: Listen): void {
     const box = input.closest?.<HTMLElement>(".z-password");
     if (box && inDom(box)) paintMeter(box);
   });
+  on(document, "z:change", onGroupChange);
+  on(
+    document,
+    "invalid",
+    (event) => {
+      const field = validatingField(event.target);
+      if (!field || !validatable(event.target)) return;
+      event.preventDefault();
+      validateField(field, event.target);
+    },
+    true,
+  );
+  for (const type of ["input", "change"])
+    on(document, type, (event) => {
+      const field = validatingField(event.target);
+      if (!field || !validatable(event.target)) return;
+      edited.add(event.target);
+      if (event.target.validity.valid) showFieldError(field, null);
+    });
+  on(document, "focusout", (event) => {
+    const field = validatingField(event.target);
+    if (field && validatable(event.target) && edited.has(event.target)) validateField(field, event.target);
+  });
+  on(
+    document,
+    "submit",
+    (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || !form.matches(".z-form") || !inDom(form)) return;
+      if (validateForm(form)) return;
+      event.preventDefault();
+      emit(form, "invalid");
+    },
+    true,
+  );
   on(document, "submit", (event) => {
     const form = event.target as HTMLFormElement;
-    if (!(form instanceof HTMLFormElement)) return;
+    if (!(form instanceof HTMLFormElement) || event.defaultPrevented) return;
     for (const box of form.querySelectorAll<HTMLElement>(".z-password"))
       if (inDom(box) && !box.hasAttribute("data-keep-visible")) setVisible(box, false);
   });
@@ -256,6 +411,7 @@ export function setup(on: Listen): void {
 }
 
 export function hydrate(root: ParentNode): void {
+  for (const group of all(root, ".z-checkgroup")) syncAll(group);
   for (const box of all(root, ".z-password")) paintMeter(box);
   for (const box of all(root, ".z-number")) {
     const input = numberInput(box);

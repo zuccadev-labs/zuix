@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 82,
+ "count": 85,
  "groups": {
   "actions": [
    "Button",
@@ -55,6 +55,7 @@
   "forms": [
    "Calendar",
    "Checkbox",
+   "CheckboxGroup",
    "Combobox",
    "DateField",
    "DateInput",
@@ -62,7 +63,9 @@
    "DateRangePicker",
    "DateTimePicker",
    "Field",
+   "Fieldset",
    "FileUpload",
+   "Form",
    "Input",
    "InputGroup",
    "MonthPicker",
@@ -4719,6 +4722,22 @@
      "type": "boolean",
      "default": false,
      "description": "El formulario no se envía si no está marcada."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default",
+     "description": "`card`: casilla, etiqueta y descripción en un recuadro que se pulsa y se marca entero. Dentro de un CheckboxGroup la toma del grupo."
+    },
+    {
+     "name": "value",
+     "type": "string",
+     "default": "on",
+     "description": "Valor que envía el formulario. Dentro de un CheckboxGroup identifica la casilla: su estado sale del grupo."
     }
    ],
    "states": [
@@ -4752,7 +4771,14 @@
     "control-border",
     "focus-offset",
     "focus-width",
-    "touch-target"
+    "touch-target",
+    "line-strong",
+    "control-radius-lg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent-soft",
+    "space-3",
+    "space-3-5"
    ],
    "classes": [
     "z-check"
@@ -4766,10 +4792,139 @@
     {
      "title": "Indeterminado",
      "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
+    },
+    {
+     "title": "Tarjeta",
+     "code": "<Checkbox variant=\"card\" defaultChecked description=\"Get a summary of activity every Monday.\">\n  Weekly digest\n</Checkbox>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Checkbox.manifest.json"
+  },
+  {
+   "name": "CheckboxGroup",
+   "group": "forms",
+   "description": "Varias casillas de una misma pregunta en un fieldset con su título; valor como lista, casilla «todas» opcional y variante tarjeta.",
+   "import": "import { CheckboxGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "label",
+     "type": "ReactNode",
+     "description": "Título del grupo (legend)."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "options",
+     "type": "CheckboxGroupOption[]",
+     "description": "{ value, label, description?, disabled? }. También valen hijos <Checkbox value=\"…\">."
+    },
+    {
+     "name": "value",
+     "type": "string[]"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[]",
+     "default": []
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string[]) => void"
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Cada casilla marcada envía su valor con este nombre."
+    },
+    {
+     "name": "selectAll",
+     "type": "ReactNode",
+     "description": "Texto de una casilla «todas» encima de las opciones; indeterminada si solo hay algunas."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false,
+     "description": "Deshabilita el fieldset entero."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "error",
+     "type": "ReactNode",
+     "description": "Mensaje bajo el grupo; lo marca como no válido."
+    }
+   ],
+   "states": [
+    "rest",
+    "checked",
+    "indeterminate",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "space-2",
+    "space-4",
+    "space-6",
+    "fg",
+    "fg-muted",
+    "line",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-checkgroup",
+    "z-checkgroup__legend",
+    "z-checkgroup__description",
+    "z-checkgroup__items",
+    "z-checkgroup__all",
+    "z-check"
+   ],
+   "a11y": "fieldset con legend como primer hijo: el título nombra el grupo y cada casilla conserva su etiqueta. Cada casilla es un checkbox (Espacio la cambia). La casilla «todas» expone aria-checked=\"mixed\" cuando hay algunas marcadas. La descripción y el error se enlazan al grupo con aria-describedby.",
+   "examples": [
+    {
+     "title": "Notificaciones con «todas»",
+     "code": "<CheckboxGroup\n  label=\"Notify me about\"\n  name=\"notify\"\n  selectAll=\"All activity\"\n  defaultValue={[\"mentions\"]}\n  options={[\n    { value: \"mentions\", label: \"Mentions\" },\n    { value: \"comments\", label: \"Comments\" },\n    { value: \"releases\", label: \"Releases\", description: \"New versions of projects you follow.\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Tarjetas en horizontal",
+     "code": "<CheckboxGroup\n  label=\"Platforms\"\n  variant=\"card\"\n  orientation=\"horizontal\"\n  defaultValue={[\"web\"]}\n  options={[\n    { value: \"web\", label: \"Web\", description: \"Browsers and PWAs\" },\n    { value: \"desktop\", label: \"Desktop\", description: \"macOS, Windows, Linux\" },\n    { value: \"mobile\", label: \"Mobile\", description: \"iOS and Android\", disabled: true },\n  ]}\n/>"
+    },
+    {
+     "title": "Con error",
+     "code": "<CheckboxGroup\n  label=\"Terms\"\n  error=\"Accept both to continue.\"\n  options={[\n    { value: \"terms\", label: \"I accept the terms of service\" },\n    { value: \"privacy\", label: \"I accept the privacy policy\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
+   "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
   },
   {
    "name": "Combobox",
@@ -6083,6 +6238,11 @@
      "default": "stacked"
     },
     {
+     "name": "validate",
+     "type": "boolean | ValidityMessages",
+     "description": "Muestra el error de la validación nativa del control (required, type, pattern, minLength, min, max…) tras interactuar: al salir del campo si se editó, o al enviar. Se quita en cuanto el valor es válido. `true` usa los mensajes del navegador; un objeto los sustituye por motivo de ValidityState (`valueMissing`, `typeMismatch`, `patternMismatch`, `tooShort`…). `error` manda sobre él."
+    },
+    {
      "name": "children",
      "type": "ReactNode",
      "required": true,
@@ -6111,7 +6271,7 @@
    "classes": [
     "z-field"
    ],
-   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",
+   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios. Con `validate`, el error solo se enlaza (aria-describedby) y se marca (aria-invalid) mientras existe, como :user-invalid: no se anuncia antes de interactuar ni en cada tecla.",
    "examples": [
     {
      "title": "Con ayuda",
@@ -6124,10 +6284,101 @@
     {
      "title": "En línea",
      "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <NativeSelect options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
+    },
+    {
+     "title": "Mensajes por ValidityState",
+     "code": "<Form>\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Subscribe</Button>\n</Form>"
     }
    ],
    "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común.",
    "file": "zui/src/components/forms/Field.manifest.json"
+  },
+  {
+   "name": "Fieldset",
+   "exports": [
+    "FieldGroup"
+   ],
+   "group": "forms",
+   "description": "Grupo de campos relacionados con su título (fieldset y legend), descripción y deshabilitado de una vez; FieldGroup reparte los campos con el ritmo del estándar.",
+   "import": "import { Fieldset, FieldGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "none",
+   "props": [
+    {
+     "name": "legend",
+     "type": "ReactNode",
+     "description": "Fieldset: título del grupo (primer hijo)."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode",
+     "description": "Fieldset: texto bajo el título."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "card"
+     ],
+     "default": "plain",
+     "description": "Fieldset: sin recuadro o en una tarjeta."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false,
+     "description": "Fieldset: deshabilita todos los controles nativos que contiene (también los botones de Checkbox, Switch y Select)."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical",
+     "description": "FieldGroup: apilados, o en columnas que pasan a otra fila si no caben."
+    }
+   ],
+   "states": [
+    "rest",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "space-3",
+    "space-4",
+    "space-5",
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "fg",
+    "fg-muted",
+    "text-title",
+    "text-small",
+    "weight-semibold",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-fieldset",
+    "z-fieldset__legend",
+    "z-fieldset__description",
+    "z-fieldset__body",
+    "z-field-group"
+   ],
+   "a11y": "fieldset con legend como primer hijo: los lectores leen el título al entrar en el grupo. disabled en el fieldset deshabilita los controles nativos de dentro, también los de los controles propios (son button).",
+   "examples": [
+    {
+     "title": "Dirección en tarjeta",
+     "code": "<Fieldset legend=\"Shipping address\" description=\"Where we send the hardware key.\" variant=\"card\">\n  <FieldGroup>\n    <Field label=\"Full name\">\n      <Input name=\"name\" autoComplete=\"name\" />\n    </Field>\n    <Field label=\"Address\">\n      <Textarea name=\"address\" autoComplete=\"street-address\" rows={2} />\n    </Field>\n    <FieldGroup orientation=\"horizontal\">\n      <Field label=\"City\">\n        <Input name=\"city\" autoComplete=\"address-level2\" />\n      </Field>\n      <Field label=\"Postal code\" optionalLabel=\"Optional\">\n        <Input name=\"postal\" autoComplete=\"postal-code\" />\n      </Field>\n    </FieldGroup>\n  </FieldGroup>\n</Fieldset>"
+    },
+    {
+     "title": "Deshabilitado",
+     "code": "<Fieldset legend=\"Advanced\" disabled>\n  <Switch defaultChecked>Telemetry</Switch>\n  <Checkbox>Beta channel</Checkbox>\n</Fieldset>"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «forms» (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI.",
+   "file": "zui/src/components/forms/Fieldset.manifest.json"
   },
   {
    "name": "FileUpload",
@@ -6272,6 +6523,49 @@
    ],
    "origin": "Nuevo.",
    "file": "zui/src/components/forms/FileUpload.manifest.json"
+  },
+  {
+   "name": "Form",
+   "group": "forms",
+   "description": "Formulario que pinta la validación nativa en sus campos: sin globos del navegador, mensajes por ValidityState en cada Field y foco al primer error al enviar.",
+   "import": "import { Form } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "onSubmit",
+     "type": "(event) => void",
+     "description": "Solo se llama si todos los controles son válidos."
+    },
+    {
+     "name": "onInvalidSubmit",
+     "type": "(event) => void",
+     "description": "El envío se detuvo por errores (el foco ya está en el primero)."
+    },
+    {
+     "name": "...rest",
+     "type": "FormHTMLAttributes",
+     "description": "action, method, aria-labelledby…"
+    }
+   ],
+   "states": [
+    "rest",
+    "invalid"
+   ],
+   "tokens": [
+    "space-5"
+   ],
+   "classes": [
+    "z-form"
+   ],
+   "a11y": "form con noValidate: la validación es la nativa (required, type, pattern, minLength…) pero el mensaje va en el campo (Field con `validate`), enlazado con aria-describedby y marcado con aria-invalid solo mientras falla. Al enviar con errores el foco va al primer campo no válido (si es un control propio, a su botón). No deshabilita el botón de enviar. La validación del cliente es experiencia; la del servidor sigue siendo necesaria.",
+   "examples": [
+    {
+     "title": "Alta con validación",
+     "code": "<Form aria-label=\"Create account\" method=\"post\">\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Password\" required hint=\"Eight or more characters.\" validate={{ tooShort: \"Use at least 8 characters.\" }}>\n    <PasswordInput name=\"password\" autoComplete=\"new-password\" minLength={8} />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Create account</Button>\n</Form>"
+    }
+   ],
+   "origin": "Nuevo. Guías «forms» y «accessible-error-announcement» (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState).",
+   "file": "zui/src/components/forms/Form.manifest.json"
   },
   {
    "name": "Input",
@@ -7308,6 +7602,16 @@
      "name": "aria-label",
      "type": "string",
      "description": "Nombre accesible si no está dentro de un Field."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default",
+     "description": "`card`: cada opción es un recuadro que se marca entero (planes, temas, envío). En horizontal, rejilla adaptable."
     }
    ],
    "states": [
@@ -7318,7 +7622,16 @@
    "tokens": [
     "danger",
     "space-2",
-    "space-4"
+    "space-4",
+    "line-strong",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent",
+    "accent-soft",
+    "space-3",
+    "space-3-5"
    ],
    "classes": [
     "z-radio-group"
@@ -7332,6 +7645,10 @@
     {
      "title": "Horizontal dentro de Field",
      "code": "<Field label=\"Density\">\n  <RadioGroup orientation=\"horizontal\" value={density} onValueChange={setDensity}>\n    <Radio value=\"compact\">Compact</Radio>\n    <Radio value=\"comfortable\">Comfortable</Radio>\n  </RadioGroup>\n</Field>"
+    },
+    {
+     "title": "Tarjetas de plan",
+     "code": "<RadioGroup aria-label=\"Plan\" variant=\"card\" orientation=\"horizontal\" defaultValue=\"pro\">\n  <Radio value=\"free\" description=\"Up to 3 projects\">Free</Radio>\n  <Radio value=\"pro\" description=\"Unlimited projects and history\">Pro</Radio>\n  <Radio value=\"team\" description=\"Shared workspaces and roles\">Team</Radio>\n</RadioGroup>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
@@ -7859,6 +8176,27 @@
      "type": "boolean",
      "default": false,
      "description": "El formulario no se envía si está desactivado."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode",
+     "description": "Texto secundario bajo la etiqueta."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false,
+     "description": "Marca el interruptor como no válido (aria-invalid y canto de peligro). También lo toma del Field."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default",
+     "description": "`card`: etiqueta y descripción al inicio y el interruptor al final, en un recuadro."
     }
    ],
    "states": [
@@ -7890,7 +8228,16 @@
     "fg-muted",
     "focus-offset",
     "focus-width",
-    "touch-target"
+    "touch-target",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent",
+    "accent-soft",
+    "space-3",
+    "space-3-5",
+    "danger"
    ],
    "classes": [
     "z-switch"
@@ -7904,6 +8251,10 @@
     {
      "title": "Pequeño, sin etiqueta visible",
      "code": "<Switch size=\"sm\" aria-label=\"Enable rule\" defaultChecked />"
+    },
+    {
+     "title": "Tarjeta con descripción",
+     "code": "<Switch variant=\"card\" defaultChecked description=\"Pause notifications outside working hours.\">\n  Focus mode\n</Switch>"
     }
    ],
    "origin": "Switch de zutool, con primitiva propia (patrón APG).",

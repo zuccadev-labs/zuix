@@ -259,4 +259,167 @@
       border-block-end: 0;
     }
   }
+
+  /* ---- Variante tarjeta: Checkbox, Radio y Switch ----
+     El recuadro entero es la etiqueta: se pulsa en cualquier punto. Marcado: canto de acento y fondo de acento suave
+     (el canto da el contraste de 3:1, no solo el fondo). El control conserva su foco propio. */
+  :is(.z-check, .z-radio, .z-switch)[data-variant="card"] {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--z-space-3);
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--z-space-3) var(--z-space-3-5);
+    border: 1px solid var(--z-line-strong);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-control-bg);
+    transition:
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    :is(.z-check, .z-radio, .z-switch)[data-variant="card"]:hover:not([data-disabled]) {
+      border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
+    }
+  }
+  :is(.z-check, .z-radio, .z-switch)[data-variant="card"]:has(> [role][data-state="checked"], > [role][data-state="indeterminate"]) {
+    border-color: var(--z-accent);
+    background: var(--z-accent-soft);
+  }
+  :is(.z-check, .z-radio)[data-variant="card"] .z-check__text {
+    flex: 1 1 auto;
+  }
+  .z-switch[data-variant="card"] {
+    justify-content: space-between;
+  }
+  .z-switch[data-variant="card"] > .z-switch__track {
+    margin-block-start: 2px;
+  }
+  .z-radio-group[data-variant="card"] {
+    width: 100%;
+    gap: var(--z-space-2);
+  }
+  .z-radio-group[data-variant="card"][data-orientation="horizontal"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+  /* Switch con descripción y no válido. */
+  .z-switch:has(.z-check__description) {
+    align-items: flex-start;
+  }
+  .z-switch__track[data-invalid] {
+    box-shadow: 0 0 0 1px var(--z-danger);
+  }
+
+  /* ---- CheckboxGroup ---- */
+  .z-checkgroup {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .z-checkgroup__legend {
+    padding: 0;
+    margin-block-end: var(--z-space-1);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-snug);
+  }
+  .z-checkgroup__description {
+    margin: calc(var(--z-space-1) * -1) 0 var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-checkgroup__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+  }
+  .z-checkgroup[data-orientation="horizontal"] .z-checkgroup__items {
+    flex-flow: row wrap;
+    gap: var(--z-space-2) var(--z-space-4);
+  }
+  .z-checkgroup[data-variant="card"][data-orientation="horizontal"] .z-checkgroup__items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+  /* La casilla «todas» encabeza la lista, separada por una línea; las demás quedan sangradas bajo ella. */
+  .z-checkgroup__all {
+    padding-block-end: var(--z-space-2);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-checkgroup:has(> .z-checkgroup__all) > .z-checkgroup__items {
+    padding-inline-start: var(--z-space-6);
+  }
+
+  /* ---- Fieldset y FieldGroup ----
+     Más aire entre campos (16) que entre etiqueta y control (6): proximidad. */
+  .z-fieldset {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .z-fieldset[data-variant="card"] {
+    padding: var(--z-space-4) var(--z-space-5) var(--z-space-5);
+    border: 1px solid var(--z-card-border);
+    border-radius: var(--z-card-radius);
+    background: var(--z-card-bg);
+  }
+  .z-fieldset__legend {
+    float: inline-start;
+    width: 100%;
+    padding: 0;
+    color: var(--z-fg);
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+  }
+  .z-fieldset__legend + * {
+    clear: both;
+  }
+  .z-fieldset__description {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-fieldset__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    margin-block-start: var(--z-space-3);
+  }
+  .z-fieldset:disabled .z-fieldset__body {
+    opacity: 0.6;
+  }
+  .z-fieldset:disabled :is(.z-check, .z-radio, .z-switch, .z-input, .z-select) {
+    cursor: not-allowed;
+  }
+  .z-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    min-width: 0;
+  }
+  .z-field-group[data-orientation="horizontal"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    align-items: start;
+  }
+  .z-form {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--z-space-5);
+  }
 }

@@ -55,6 +55,24 @@
       "type": "boolean",
       "default": false,
       "description": "El formulario no se envía si está desactivado."
+    },
+    {
+      "name": "description",
+      "type": "ReactNode",
+      "description": "Texto secundario bajo la etiqueta."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "description": "Marca el interruptor como no válido (aria-invalid y canto de peligro). También lo toma del Field."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["default", "card"],
+      "default": "default",
+      "description": "`card`: etiqueta y descripción al inicio y el interruptor al final, en un recuadro."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "checked", "disabled"],
@@ -79,7 +97,16 @@
     "fg-muted",
     "focus-offset",
     "focus-width",
-    "touch-target"
+    "touch-target",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent",
+    "accent-soft",
+    "space-3",
+    "space-3-5",
+    "danger"
   ],
   "classes": ["z-switch"],
   "a11y": "Patrón APG «switch»: botón con role switch y un `input type=checkbox` oculto para formularios, Espacio o Enter para alternar.",
@@ -91,6 +118,10 @@
     {
       "title": "Pequeño, sin etiqueta visible",
       "code": "<Switch size=\"sm\" aria-label=\"Enable rule\" defaultChecked />"
+    },
+    {
+      "title": "Tarjeta con descripción",
+      "code": "<Switch variant=\"card\" defaultChecked description=\"Pause notifications outside working hours.\">\n  Focus mode\n</Switch>"
     }
   ],
   "origin": "Switch de zutool, con primitiva propia (patrón APG)."

@@ -691,6 +691,53 @@ pnpm dev</code>
 </label>
   </div>
 </section>
+<section class="z-card demo" data-component="CheckboxGroup" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">CheckboxGroup</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<fieldset class="z-checkgroup" data-orientation="vertical">
+  <legend class="z-checkgroup__legend">Notify me about</legend>
+  <label class="z-check z-checkgroup__all">
+    <button type="button" data-select-all="" role="checkbox" aria-checked="mixed" data-state="indeterminate" value="on" class="z-check__box">
+      <span class="z-check__mark" data-state="indeterminate"></span>
+    </button>
+    <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" value="on"/>
+    <span class="z-check__text">
+      <span class="z-check__label">All activity</span>
+    </span>
+  </label>
+  <div class="z-checkgroup__items">
+    <label class="z-check">
+      <button type="button" role="checkbox" aria-checked="true" data-state="checked" value="mentions" class="z-check__box">
+        <span class="z-check__mark" data-state="checked"></span>
+      </button>
+      <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" name="notify" checked="" value="mentions"/>
+      <span class="z-check__text">
+        <span class="z-check__label">Mentions</span>
+      </span>
+    </label>
+    <label class="z-check">
+      <button type="button" role="checkbox" aria-checked="false" data-state="unchecked" value="comments" class="z-check__box">
+        <span class="z-check__mark" data-state="unchecked"></span>
+      </button>
+      <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" name="notify" value="comments"/>
+      <span class="z-check__text">
+        <span class="z-check__label">Comments</span>
+      </span>
+    </label>
+    <label class="z-check">
+      <button type="button" role="checkbox" aria-checked="false" data-state="unchecked" value="releases" class="z-check__box">
+        <span class="z-check__mark" data-state="unchecked"></span>
+      </button>
+      <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" name="notify" value="releases"/>
+      <span class="z-check__text">
+        <span class="z-check__label">Releases</span>
+        <span class="z-check__description">New versions of projects you follow.</span>
+      </span>
+    </label>
+  </div>
+</fieldset>
+  </div>
+</section>
 <section class="z-card demo" data-component="Combobox" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Combobox</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -831,6 +878,53 @@ pnpm dev</code>
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Fieldset" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Fieldset</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<fieldset class="z-fieldset" data-variant="card">
+  <legend class="z-fieldset__legend">Shipping address</legend>
+  <p class="z-fieldset__description">Where we send the hardware key.</p>
+  <div class="z-fieldset__body">
+    <div class="z-field-group" data-orientation="vertical">
+      <div class="z-field" data-layout="stacked">
+        <label class="z-field__label" id="_R_7_-label" for="_R_7_-control">Full name</label>
+        <div class="z-field__body">
+          <span class="z-input" data-size="md">
+            <input autoComplete="name" id="_R_7_-control" class="z-input__control" name="name"/>
+          </span>
+        </div>
+      </div>
+      <div class="z-field" data-layout="stacked">
+        <label class="z-field__label" id="_R_b_-label" for="_R_b_-control">Address</label>
+        <div class="z-field__body">
+          <textarea name="address" autoComplete="street-address" id="_R_b_-control" rows="2" class="z-textarea" data-size="md" data-resize="vertical"></textarea>
+        </div>
+      </div>
+      <div class="z-field-group" data-orientation="horizontal">
+        <div class="z-field" data-layout="stacked">
+          <label class="z-field__label" id="_R_v_-label" for="_R_v_-control">City</label>
+          <div class="z-field__body">
+            <span class="z-input" data-size="md">
+              <input autoComplete="address-level2" id="_R_v_-control" class="z-input__control" name="city"/>
+            </span>
+          </div>
+        </div>
+        <div class="z-field" data-layout="stacked">
+          <label class="z-field__label" id="_R_1f_-label" for="_R_1f_-control">Postal code
+            <span class="z-field__optional">Optional</span>
+          </label>
+          <div class="z-field__body">
+            <span class="z-input" data-size="md">
+              <input autoComplete="postal-code" id="_R_1f_-control" class="z-input__control" name="postal"/>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</fieldset>
+  </div>
+</section>
 <section class="z-card demo" data-component="FileUpload" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">FileUpload</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -841,6 +935,48 @@ pnpm dev</code>
   <span class="z-upload__hint" id="images-hint">PNG or JPG, up to 5 MB each.</span>
   <ul class="z-upload__files"></ul>
 </label>
+  </div>
+</section>
+<section class="z-card demo" data-component="Form" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Form</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<form noValidate="" aria-label="Create account" class="z-form" method="post">
+  <div class="z-field" data-layout="stacked" data-validate="" data-msg-value-missing="Enter your email address." data-msg-type-mismatch="Enter an email in the format you@example.com.">
+    <label class="z-field__label" id="_R_1_-label" for="_R_1_-control">Email
+      <span class="z-field__required" aria-hidden="true">*</span>
+    </label>
+    <div class="z-field__body">
+      <span class="z-input" data-size="md">
+        <input type="email" autoComplete="email" id="_R_1_-control" required="" class="z-input__control" name="email"/>
+      </span>
+    </div>
+  </div>
+  <div class="z-field" data-layout="stacked" data-validate="" data-msg-too-short="Use at least 8 characters.">
+    <label class="z-field__label" id="_R_2_-label" for="_R_2_-control">Password
+      <span class="z-field__required" aria-hidden="true">*</span>
+    </label>
+    <div class="z-field__body">
+      <div class="z-password" data-size="md">
+        <span class="z-input z-password__field" data-size="md">
+          <input minLength="8" id="_R_1m_-input" required="" aria-describedby="_R_2_-hint" type="password" autoComplete="new-password" autoCapitalize="none" autoCorrect="off" spellCheck="false" class="z-input__control" name="password"/>
+          <button type="button" class="z-input__action z-password__toggle" aria-label="Show password" aria-pressed="false" aria-controls="_R_1m_-input" aria-describedby="_R_1m_-toggle-hint" title="Show password">
+            <span class="z-swap" aria-hidden="true" data-effect="fade">
+              <span class="z-swap__item" data-for="off">
+                <z-icon name="eye" size="16"></z-icon>
+              </span>
+              <span class="z-swap__item" data-for="on">
+                <z-icon name="eye-slash" size="16"></z-icon>
+              </span>
+            </span>
+          </button>
+          <span id="_R_1m_-toggle-hint" class="z-sr-only">Shows the password on screen</span>
+        </span>
+      </div>
+      <p class="z-field__hint" id="_R_2_-hint">Eight or more characters.</p>
+    </div>
+  </div>
+  <button type="submit" class="z-btn z-btn--primary" data-size="md">Create account</button>
+</form>
   </div>
 </section>
 <section class="z-card demo" data-component="Input" data-behavior="none">
