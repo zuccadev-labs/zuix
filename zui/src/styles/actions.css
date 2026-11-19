@@ -336,19 +336,25 @@
       transform: rotate(-90deg) scale(0.6);
     }
     .z-swap[data-effect="rotate"][data-state="on"] > .z-swap__item[data-for="off"],
-    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"]) .z-swap[data-effect="rotate"]:not([data-state]) > .z-swap__item[data-for="off"] {
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"])
+      .z-swap[data-effect="rotate"]:not([data-state])
+      > .z-swap__item[data-for="off"] {
       transform: rotate(90deg) scale(0.6);
     }
     .z-swap[data-effect="flip"] > .z-swap__item[data-for="on"] {
       transform: rotateY(90deg);
     }
     .z-swap[data-effect="flip"][data-state="on"] > .z-swap__item[data-for="off"],
-    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"]) .z-swap[data-effect="flip"]:not([data-state]) > .z-swap__item[data-for="off"] {
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"])
+      .z-swap[data-effect="flip"]:not([data-state])
+      > .z-swap__item[data-for="off"] {
       transform: rotateY(-90deg);
     }
     .z-swap[data-effect="scale"] > .z-swap__item[data-for="on"],
     .z-swap[data-effect="scale"][data-state="on"] > .z-swap__item[data-for="off"],
-    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"]) .z-swap[data-effect="scale"]:not([data-state]) > .z-swap__item[data-for="off"] {
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"])
+      .z-swap[data-effect="scale"]:not([data-state])
+      > .z-swap__item[data-for="off"] {
       transform: scale(0.4);
     }
     .z-swap[data-state="on"] > .z-swap__item[data-for="on"],
