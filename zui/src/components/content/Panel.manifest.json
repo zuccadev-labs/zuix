@@ -55,9 +55,6 @@
     "fg",
     "space-8",
     "font-display",
-    "text-heading-lg",
-    "weight-semibold",
-    "tracking-tight",
     "glass-bg",
     "glass-border",
     "glass-blur",
@@ -67,7 +64,10 @@
     "glass-shadow",
     "reading-bg",
     "line",
-    "overlay"
+    "leading-ui",
+    "text-heading",
+    "tracking-snug",
+    "weight-display"
   ],
   "classes": ["z-panel"],
   "a11y": "Elemento semántico elegido con `as`. Sin `title`, un section o aside necesita aria-label.",

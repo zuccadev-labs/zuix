@@ -34,7 +34,6 @@
     "radius-md",
     "fg",
     "text-body",
-    "leading-normal",
     "accent",
     "accent-soft",
     "info",
@@ -46,7 +45,10 @@
     "danger",
     "danger-soft",
     "space-1",
-    "weight-semibold"
+    "weight-semibold",
+    "fg-prose",
+    "leading-relaxed",
+    "line"
   ],
   "classes": ["z-callout"],
   "a11y": "aside con role=\"note\". Para mensajes que deben anunciarse, usar Alert.",

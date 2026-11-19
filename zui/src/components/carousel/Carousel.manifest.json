@@ -4,7 +4,12 @@
   "description": "Carrusel agnóstico al contenido: tira con bucle infinito, arrastre con inercia, ajuste al slide más cercano, flechas, contador, teclado y anuncios para lectores de pantalla. Efecto de lente opcional: el centro queda plano y los bordes se curvan como a través de un cristal.",
   "import": "import { Carousel } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
-    { "name": "items", "type": "T[]", "required": true, "description": "Datos de los slides." },
+    {
+      "name": "items",
+      "type": "T[]",
+      "required": true,
+      "description": "Datos de los slides."
+    },
     {
       "name": "renderItem",
       "type": "(item: T, index: number, state: CarouselSlideState) => ReactNode",
@@ -29,13 +34,23 @@
       "default": true,
       "description": "Bucle infinito. Sin bucle la tira tiene topes y las flechas se deshabilitan en los extremos."
     },
-    { "name": "ariaLabel", "type": "string", "required": true, "description": "Nombre accesible de la región." },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible de la región."
+    },
     {
       "name": "labels",
       "type": "Partial<CarouselLabels>",
       "description": "Textos: previous, next, slide(index, count) con index desde 0, carousel y slideRole (aria-roledescription). Por defecto en inglés."
     },
-    { "name": "defaultIndex", "type": "number", "default": 0, "description": "Slide centrado al montar." },
+    {
+      "name": "defaultIndex",
+      "type": "number",
+      "default": 0,
+      "description": "Slide centrado al montar."
+    },
     {
       "name": "onIndexChange",
       "type": "(index: number) => void",
@@ -46,43 +61,61 @@
       "type": "number | string",
       "description": "Ancho de cada slide (px o longitud CSS). Fija --z-carousel-slide-width."
     },
-    { "name": "gap", "type": "number | string", "description": "Separación entre slides (px o longitud CSS). Fija --z-carousel-gap." },
+    {
+      "name": "gap",
+      "type": "number | string",
+      "description": "Separación entre slides (px o longitud CSS). Fija --z-carousel-gap."
+    },
     {
       "name": "rasterize",
       "type": "(item: T, index: number, size: CarouselRasterSize) => CarouselRasterSource | Promise<CarouselRasterSource>",
       "description": "Opcional. Imagen (o URL con CORS) de cada slide tal como se ve; se ajusta en modo cover al tamaño del slide. Activa el dibujo WebGL2 de las zonas curvas con refracción cromática. Sin esta prop, sin WebGL2 o ante cualquier fallo, la lente usa transformaciones CSS."
     },
-    { "name": "ref", "type": "Ref<HTMLDivElement>", "description": "Elemento raíz." }
+    {
+      "name": "ref",
+      "type": "Ref<HTMLDivElement>",
+      "description": "Elemento raíz."
+    }
   ],
   "states": ["rest", "dragging", "focus", "disabled"],
   "modes": [
-    { "name": "css", "description": "Lente por defecto: cada slide real se deforma con matrix3d. Admite cualquier contenido React." },
+    {
+      "name": "css",
+      "description": "Lente por defecto: cada slide real se deforma con matrix3d. Admite cualquier contenido React."
+    },
     {
       "name": "gl",
       "description": "Con `rasterize` y WebGL2: la franja central es el slide real y las zonas curvas se dibujan en un lienzo. En @zuccadev-labs/zuix-zui/dom se pide declarando la imagen de cada slide (data-raster, data-raster-src) o con carousel(el, { rasterize }); los shaders se cargan bajo demanda (@zuccadev-labs/zuix-zui/dom/carousel-gl)."
     },
-    { "name": "flat", "description": "effect=\"none\" o prefers-reduced-motion: tira plana; el ajuste es inmediato." }
+    {
+      "name": "flat",
+      "description": "effect=\"none\" o prefers-reduced-motion: tira plana; el ajuste es inmediato."
+    }
   ],
   "tokens": [
     "fg",
     "fg-subtle",
-    "surface",
     "surface-2",
     "line",
-    "line-strong",
     "accent",
-    "focus-ring",
     "card-radius",
-    "radius-full",
     "control-height-md",
     "space-4",
     "space-6",
     "font-mono",
-    "text-small",
-    "weight-semibold",
-    "tracking-wide",
     "duration-fast",
-    "ease-standard"
+    "ease-standard",
+    "accent-ring",
+    "button-radius",
+    "duration-press",
+    "ease-out",
+    "focus-offset",
+    "focus-width",
+    "glass-border",
+    "glass-highlight",
+    "surface-3",
+    "text-code",
+    "weight-medium"
   ],
   "cssVars": ["--z-carousel-slide-width", "--z-carousel-gap", "--z-carousel-radius"],
   "classes": [

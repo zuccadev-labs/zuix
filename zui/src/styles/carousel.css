@@ -111,6 +111,7 @@
     /* Anterior a la izquierda y siguiente a la derecha, como la tira. */
     direction: ltr;
   }
+  /* Flechas: botones de cristal cuadrados de esquinas redondeadas (34 px, radio 10), no círculos. */
   .z-carousel__arrow {
     display: inline-flex;
     align-items: center;
@@ -119,24 +120,28 @@
     width: var(--z-control-height-md);
     height: var(--z-control-height-md);
     padding: 0;
-    border-radius: var(--z-radius-full);
-    border: 1px solid var(--z-line);
-    background: var(--z-surface);
+    border-radius: var(--z-button-radius);
+    border: 1px solid var(--z-glass-border);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      border-color var(--z-duration-fast) var(--z-ease-standard);
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-carousel__arrow:hover:not(:disabled) {
-      background: var(--z-surface-2);
-      border-color: var(--z-line-strong);
+      background: var(--z-surface-3);
     }
   }
   .z-carousel__arrow:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-carousel__arrow:active:not(:disabled) {
+    scale: 0.97;
   }
   .z-carousel__arrow:disabled {
     opacity: 0.4;
@@ -149,10 +154,9 @@
     min-width: 5ch;
     justify-content: center;
     font-family: var(--z-font-mono);
-    font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-size: var(--z-text-code);
+    font-weight: var(--z-weight-medium);
     font-variant-numeric: tabular-nums;
-    letter-spacing: var(--z-tracking-wide);
   }
   .z-carousel__counter-total {
     color: var(--z-fg-subtle);

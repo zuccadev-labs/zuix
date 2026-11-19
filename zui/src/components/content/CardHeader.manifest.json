@@ -25,7 +25,19 @@
     }
   ],
   "states": ["rest"],
-  "tokens": ["space-3", "font-display", "text-heading", "weight-semibold", "leading-snug", "fg-muted", "text-small", "space-2"],
+  "tokens": [
+    "space-3",
+    "font-display",
+    "weight-semibold",
+    "leading-snug",
+    "fg-muted",
+    "text-small",
+    "space-2",
+    "fg",
+    "leading-ui",
+    "text-title",
+    "tracking-snug"
+  ],
   "classes": ["z-card__header", "z-card__heading", "z-card__title", "z-card__subtitle", "z-card__action"],
   "a11y": "El título es un encabezado real con nivel configurable.",
   "examples": [
