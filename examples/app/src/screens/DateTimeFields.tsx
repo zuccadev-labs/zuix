@@ -1,6 +1,22 @@
 import { useState, type FormEvent } from "react";
 import { Grid, Inline, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Button, Card, CardHeader, DateField, Field, TimeField, TimePicker } from "@zuccadev-labs/zuix-zui";
+import {
+  Button,
+  Calendar,
+  Card,
+  CardHeader,
+  DateField,
+  DatePicker,
+  DateRangePicker,
+  DateTimePicker,
+  Field,
+  TimeField,
+  TimePicker,
+  Timer,
+  WeekPicker,
+  type DateRange,
+  type WeekRange,
+} from "@zuccadev-labs/zuix-zui";
 
 /** DateField, TimeField y TimePicker con su valor a la vista, un formulario y un campo en RTL (tests/browser). */
 export function DateTimeFields() {
@@ -11,6 +27,12 @@ export function DateTimeFields() {
   const [start, setStart] = useState<string | null>("09:30");
   const [slot, setSlot] = useState<string | null>(null);
   const [sent, setSent] = useState("none");
+  const [weeks, setWeeks] = useState<WeekRange>({ from: "2026-W46", to: "2026-W47" });
+  const [picked, setPicked] = useState<DateRange>({ from: null, to: null });
+  const [weekClicked, setWeekClicked] = useState("none");
+  const [bounded, setBounded] = useState<string | null>(null);
+  const [sheet, setSheet] = useState<string | null>(null);
+  const [timerState, setTimerState] = useState("idle");
   const show = (value: string | null) => value ?? "none";
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -93,6 +115,75 @@ export function DateTimeFields() {
             </Field>
             <span className="app-muted">
               Value: <output data-testid="tpl-value">{show(slot)}</output>
+            </span>
+          </Stack>
+        </Card>
+
+        <Card className="app-demo">
+          <CardHeader title="More date pieces" subtitle="Week ranges, week numbers, bounds, sheet and timer" />
+          <Stack gap={3}>
+            <Field label="Sprint weeks">
+              <div data-testid="week-range">
+                <WeekPicker mode="range" value={weeks} onValueChange={setWeeks} today="2026-11-19" locale="en-GB" numberOfMonths={2} />
+              </div>
+            </Field>
+            <span className="app-muted">
+              Value: <output data-testid="week-range-value">{`${weeks.from ?? ""}/${weeks.to ?? ""}`}</output>
+            </span>
+            <div data-testid="week-number-calendar">
+              <Calendar
+                mode="range"
+                value={picked}
+                onValueChange={setPicked}
+                showWeekNumber
+                onWeekNumberClick={(week) => setWeekClicked(`${week.week}:${week.from}`)}
+                defaultMonth="2026-11"
+                today="2026-11-19"
+                locale="en-GB"
+                weekStartsOn={1}
+              />
+            </div>
+            <span className="app-muted">
+              Week: <output data-testid="week-number-value">{`${weekClicked} ${picked.from ?? ""}/${picked.to ?? ""}`}</output>
+            </span>
+            <Field label="Check-in (from 19 Nov 09:30)">
+              <div data-testid="bounded-dt">
+                <DateTimePicker
+                  value={bounded}
+                  onValueChange={setBounded}
+                  min="2026-11-19T09:30"
+                  max="2026-11-25T18:00"
+                  today="2026-11-19"
+                  locale="en-GB"
+                />
+              </div>
+            </Field>
+            <span className="app-muted">
+              Value: <output data-testid="bounded-dt-value">{show(bounded)}</output>
+            </span>
+            <Field label="Date in a sheet">
+              <div data-testid="sheet-picker">
+                <DatePicker drawer="always" value={sheet} onValueChange={setSheet} today="2026-11-19" locale="en-GB" />
+              </div>
+            </Field>
+            <span className="app-muted">
+              Value: <output data-testid="sheet-picker-value">{show(sheet)}</output>
+            </span>
+            <Field label="Stay">
+              <div data-testid="presets-top">
+                <DateRangePicker
+                  presets={[{ label: "Next 7 days", value: "next-7-days" }]}
+                  presetsPlacement="top"
+                  today="2026-11-19"
+                  locale="en-GB"
+                />
+              </div>
+            </Field>
+            <div data-testid="timer">
+              <Timer label="Tea" duration={2} announceEvery={0} announceFinal={1} onStateChange={setTimerState} />
+            </div>
+            <span className="app-muted">
+              Timer: <output data-testid="timer-state">{timerState}</output>
             </span>
           </Stack>
         </Card>

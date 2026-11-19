@@ -212,7 +212,8 @@ function grabKey(root: HTMLElement, host: AgendaHost, event: KeyboardEvent, key:
   } else if (vertical) next = { ...moveSpan(g, sign * (month ? 7 * 1440 : step)), key: g.key, mode: "move" };
   else if (key === "ArrowLeft" || key === "ArrowRight") next = { ...moveSpan(g, sign * 1440), key: g.key, mode: "move" };
   if (!next) return false;
-  host.update({ grabbed: next });
+  // Cambiar de día vuelve a montar el evento en otra columna: el foco lo sigue.
+  host.update({ grabbed: next }, true);
   announce(root, timeRangeText(next.start, next.end, config.locale));
   return true;
 }
