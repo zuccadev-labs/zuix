@@ -561,4 +561,42 @@
   .z-tags:has(.z-tags__tag) .z-tags__input::placeholder {
     color: transparent;
   }
+
+  /* ---- Select y Combobox múltiples ---- */
+  .z-select__count {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    margin-inline-start: auto;
+    padding-inline: var(--z-space-1-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-combobox[data-multiple] {
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+    height: auto;
+    min-height: var(--z-input-height);
+    padding-block: var(--z-space-1);
+    padding-inline-start: var(--z-space-1-5);
+  }
+  .z-combobox[data-multiple] .z-input__control {
+    flex: 1 1 8ch;
+    min-width: 8ch;
+    height: calc(var(--z-input-height) - 2 * var(--z-space-1) - 2px);
+    padding-inline-start: var(--z-space-1);
+  }
+  .z-combobox[data-multiple] .z-input__icon {
+    padding-inline-start: var(--z-space-1);
+  }
+  .z-combobox[data-multiple] .z-input__action {
+    align-self: center;
+  }
 }

@@ -88,6 +88,28 @@
       "name": "aria-label",
       "type": "string",
       "description": "Nombre accesible cuando no hay `Field` ni etiqueta enlazada."
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "default": false,
+      "description": "Varias opciones: `value` es una lista, elegir marca o desmarca sin cerrar y el control muestra las etiquetas y su número."
+    },
+    {
+      "name": "maxSelected",
+      "type": "number",
+      "description": "Solo con `multiple`: al llegar al tope, las demás opciones se deshabilitan."
+    },
+    {
+      "name": "formatValue",
+      "type": "(labels: string[]) => string",
+      "description": "Solo con `multiple`: texto del control; por defecto, las etiquetas separadas por comas."
+    },
+    {
+      "name": "emptyText",
+      "type": "string",
+      "default": "No options",
+      "description": "Texto de la lista cuando no hay opciones."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],
@@ -137,10 +159,12 @@
     "leading-ui",
     "duration-normal",
     "ease-emphasized",
-    "touch-target"
+    "touch-target",
+    "accent-soft",
+    "radius-xs"
   ],
   "classes": ["z-select", "z-listbox"],
-  "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
+  "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar. Con `multiple` la lista es aria-multiselectable: Intro o Espacio marcan la opción activa sin cerrar, y Escape o Tab devuelven el foco al control.",
   "behavior": "dom",
   "examples": [
     {
@@ -154,6 +178,10 @@
     {
       "title": "Pequeño, en línea",
       "code": "<Select size=\"sm\" block={false} aria-label=\"Rows per page\" defaultValue=\"25\" options={[{ value: \"10\", label: \"10\" }, { value: \"25\", label: \"25\" }, { value: \"50\", label: \"50\" }]} />"
+    },
+    {
+      "title": "Varias con tope",
+      "code": "<Field label=\"Reviewers\" hint=\"Up to two.\">\n  <Select\n    multiple\n    maxSelected={2}\n    name=\"reviewers\"\n    placeholder=\"Choose reviewers\"\n    defaultValue={[\"ana\"]}\n    options={[\n      { value: \"ana\", label: \"Ana Ruiz\" },\n      { value: \"leo\", label: \"Leo Park\" },\n      { value: \"mia\", label: \"Mia Chen\" },\n      { value: \"noor\", label: \"Noor Rahman\" },\n    ]}\n  />\n</Field>"
     }
   ],
   "html": [
@@ -169,6 +197,10 @@
     {
       "title": "Pequeño, en línea, inválido",
       "code": "<span class=\"z-select\" id=\"rows\" data-size=\"sm\" data-invalid data-value=\"25\">\n  <button type=\"button\" class=\"z-select__control\" role=\"combobox\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"rows-list\" aria-invalid=\"true\" aria-label=\"Rows per page\" data-state=\"closed\">\n    <span class=\"z-select__value\">25</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n</span>\n\n<div id=\"rows-list\" popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"sm\">\n  <div class=\"z-listbox__viewport\" role=\"listbox\" aria-label=\"Rows per page\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"10\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">10</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"25\" aria-selected=\"true\" data-state=\"checked\">\n      <span class=\"z-listbox__text\">25</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"50\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">50</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Varias con tope",
+      "code": "<span class=\"z-select\" id=\"reviewers\" data-size=\"md\" data-block=\"true\" data-multiple data-max-selected=\"2\" data-value=\"ana\" data-placeholder=\"Choose reviewers\">\n  <button type=\"button\" role=\"combobox\" class=\"z-select__control\" aria-label=\"Reviewers\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"reviewers-list\" data-state=\"closed\">\n    <span class=\"z-select__value\">Ana Ruiz</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></span>\n  <select class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"reviewers\" multiple>\n    <option value=\"ana\" selected>Ana Ruiz</option>\n    <option value=\"leo\">Leo Park</option>\n    <option value=\"mia\">Mia Chen</option>\n    <option value=\"noor\">Noor Rahman</option>\n  </select>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\">\n  <div class=\"z-listbox__viewport\" id=\"reviewers-list\" role=\"listbox\" aria-label=\"Reviewers\" aria-multiselectable=\"true\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"ana\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Ana Ruiz</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"leo\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Leo Park</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"mia\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Mia Chen</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"noor\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Noor Rahman</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
   ],
   "origin": "Select no nativo del catálogo objetivo; comparte envoltura con NativeSelect y el aspecto del popup con Menu."

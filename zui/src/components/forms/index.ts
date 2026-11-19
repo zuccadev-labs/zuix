@@ -1,9 +1,9 @@
 export { Field, useFieldControl, useFieldLabel, type FieldProps } from "./Field";
 export { Input, type InputProps } from "./Input";
 export { Textarea, type TextareaProps } from "./Textarea";
-export { Select, type SelectProps, type SelectOption, type SelectOptionGroup } from "./Select";
+export { Select, type SelectMultipleProps, type SelectProps, type SelectOption, type SelectOptionGroup } from "./Select";
 export { NativeSelect, type NativeSelectProps, type NativeSelectOption } from "./NativeSelect";
-export { Combobox, type ComboboxProps, type ComboboxOption } from "./Combobox";
+export { Combobox, type ComboboxMultipleProps, type ComboboxOption, type ComboboxOptionGroup, type ComboboxProps } from "./Combobox";
 export { Checkbox, type CheckboxProps, type CheckedState } from "./Checkbox";
 export { RadioGroup, type RadioGroupProps } from "./RadioGroup";
 export { Radio, type RadioProps } from "./Radio";

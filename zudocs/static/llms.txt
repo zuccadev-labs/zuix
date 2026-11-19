@@ -86,6 +86,7 @@
 - [Form](https://zuccadev-labs.github.io/zuix/components/forms/form.md): Formulario que pinta la validación nativa en sus campos: sin globos del navegador, mensajes por ValidityState en cada Field y foco al primer error al enviar.
 - [Input](https://zuccadev-labs.github.io/zuix/components/forms/input.md): Campo de texto de una línea con icono y contenido final opcionales.
 - [InputGroup](https://zuccadev-labs.github.io/zuix/components/forms/input-group.md): Campo con adornos: texto, icono, atajo de teclado, botón o tramo de prefijo al inicio, al final, encima o debajo del control, en un solo recuadro.
+- [Listbox](https://zuccadev-labs.github.io/zuix/components/forms/listbox.md): Lista de opciones siempre visible, de selección única o múltiple, con grupos, iconos, descripciones y búsqueda por letra.
 - [MonthPicker](https://zuccadev-labs.github.io/zuix/components/forms/month-picker.md): Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4).
 - [NativeSelect](https://zuccadev-labs.github.io/zuix/components/forms/native-select.md): Lista desplegable sobre el `<select>` nativo (lista del sistema) con el aspecto del resto de controles.
 - [NumberInput](https://zuccadev-labs.github.io/zuix/components/forms/number-input.md): Campo numérico con pasos, mínimo y máximo, botones que repiten al mantenerlos, rueda opcional y formato del locale con Intl.NumberFormat.
@@ -97,6 +98,7 @@
 - [Select](https://zuccadev-labs.github.io/zuix/components/forms/select.md): Lista desplegable con popup propio (material liquid): opciones con icono, grupos y placeholder.
 - [Slider](https://zuccadev-labs.github.io/zuix/components/forms/slider.md): Deslizador de un valor o de un rango.
 - [Switch](https://zuccadev-labs.github.io/zuix/components/forms/switch.md): Interruptor de activación inmediata.
+- [TagsInput](https://zuccadev-labs.github.io/zuix/components/forms/tags-input.md): Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.
 - [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
 - [TimeField](https://zuccadev-labs.github.io/zuix/components/forms/time-field.md): Hora de reloj que se teclea por segmentos (hora, minuto, segundo, AM/PM).
 - [TimePicker](https://zuccadev-labs.github.io/zuix/components/forms/time-picker.md): TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear.

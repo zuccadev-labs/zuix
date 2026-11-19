@@ -16,12 +16,15 @@ export interface ComboboxOption {
   disabled?: boolean;
 }
 
-export interface ComboboxProps {
+export interface ComboboxOptionGroup {
+  /** Título del grupo. */
+  label: string;
   options: ReadonlyArray<ComboboxOption>;
-  /** Valor elegido; `null` es sin selección. */
-  value?: string | null;
-  defaultValue?: string | null;
-  onValueChange?: (value: string | null, option: ComboboxOption | null) => void;
+}
+
+interface ComboboxBase {
+  /** Opciones sueltas, grupos `{ label, options }` o una mezcla. */
+  options: ReadonlyArray<ComboboxOption | ComboboxOptionGroup>;
   /** Texto escrito por la persona. Para cargar opciones de forma asíncrona. */
   onInputChange?: (text: string) => void;
   /**
@@ -54,39 +57,86 @@ export interface ComboboxProps {
   className?: string;
   /** Clase del popup. */
   popupClassName?: string;
+  /** Icono decorativo al inicio del campo (se sustituye por el de la opción elegida, si lo tiene). */
+  icon?: IconName;
   ref?: Ref<HTMLInputElement>;
 }
 
+export interface ComboboxProps extends ComboboxBase {
+  multiple?: false;
+  /** Valor elegido; `null` es sin selección. Con `allowCustomValue`, también un texto libre. */
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null, option: ComboboxOption | null) => void;
+  /**
+   * Autocompletar: el texto escrito vale aunque no coincida con ninguna opción. Se confirma con Intro (sin opción
+   * activa) o al salir del campo; `onValueChange` recibe el texto y `option` null.
+   */
+  allowCustomValue?: boolean;
+}
+
+export interface ComboboxMultipleProps extends ComboboxBase {
+  /** Varias opciones, como piezas dentro del campo: elegir no cierra la lista y Retroceso quita la última. */
+  multiple: true;
+  value?: ReadonlyArray<string>;
+  defaultValue?: ReadonlyArray<string>;
+  onValueChange?: (value: string[], options: ComboboxOption[]) => void;
+  /** Máximo de opciones elegidas. */
+  maxSelected?: number;
+  /** Nombre del botón de quitar una pieza. */
+  removeLabel?: (label: string) => string;
+  allowCustomValue?: never;
+}
+
+const isGroup = (entry: ComboboxOption | ComboboxOptionGroup): entry is ComboboxOptionGroup => "options" in entry;
+const NONE: ReadonlyArray<string> = [];
+
 const matches = (option: ComboboxOption, text: string) => fold(option.label).includes(fold(text.trim()));
 
-/** Campo con lista filtrable (patrón ARIA combobox): el foco se queda en el campo y la opción activa va por aria-activedescendant. */
-export function Combobox({
-  options,
-  value,
-  defaultValue = null,
-  onValueChange,
-  onInputChange,
-  filter = true,
-  loading,
-  loadingText = "Loading",
-  emptyText = "No results",
-  placeholder,
-  clearable,
-  clearLabel = "Clear selection",
-  toggleLabel = "Show options",
-  size = "md",
-  invalid,
-  disabled,
-  required,
-  name,
-  id,
-  "aria-label": ariaLabel,
-  "aria-labelledby": ariaLabelledBy,
-  "aria-describedby": describedBy,
-  className,
-  popupClassName,
-  ref,
-}: ComboboxProps) {
+/**
+ * Campo con lista filtrable (patrón ARIA combobox): el foco se queda en el campo y la opción activa va por
+ * aria-activedescendant. Admite grupos, varias opciones como piezas (`multiple`) y texto libre (`allowCustomValue`).
+ */
+export function Combobox(props: ComboboxProps | ComboboxMultipleProps) {
+  const multiple = props.multiple === true;
+  const allowCustomValue = !multiple && props.allowCustomValue === true;
+  const {
+    options: entries,
+    onInputChange,
+    filter = true,
+    loading,
+    loadingText = "Loading",
+    emptyText = "No results",
+    placeholder,
+    clearable,
+    clearLabel = "Clear selection",
+    toggleLabel = "Show options",
+    size = "md",
+    invalid,
+    disabled,
+    required,
+    name,
+    id,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": describedBy,
+    className,
+    popupClassName,
+    icon,
+    ref,
+  } = props;
+  const options = entries.flatMap((entry) => (isGroup(entry) ? entry.options : [entry]));
+  const groupOf = new Map<string, number>();
+  entries.forEach((entry, index) => {
+    if (isGroup(entry)) for (const option of entry.options) groupOf.set(option.value, index);
+  });
+  const value = multiple ? undefined : props.value;
+  const defaultValue = multiple ? null : (props.defaultValue ?? null);
+  const [innerMany, setInnerMany] = useState<ReadonlyArray<string>>(multiple ? (props.defaultValue ?? NONE) : NONE);
+  const many = multiple ? (props.value ?? innerMany) : NONE;
+  const maxSelected = multiple ? props.maxSelected : undefined;
+  const fullMany = maxSelected !== undefined && many.length >= maxSelected;
+  const removeLabel = multiple ? (props.removeLabel ?? ((label: string) => `Remove ${label}`)) : undefined;
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   const auto = useId();
   const listId = `${auto}-list`;
@@ -108,7 +158,8 @@ export function Combobox({
 
   const selected =
     current === null ? null : (options.find((option) => option.value === current) ?? (chosen?.value === current ? chosen : null));
-  const shownText = text ?? selected?.label ?? "";
+  // Con texto libre, un valor que no es opción se muestra tal cual.
+  const shownText = multiple ? (text ?? "") : (text ?? selected?.label ?? (allowCustomValue && current !== null ? current : ""));
   const test = typeof filter === "function" ? filter : matches;
   const visible = text !== null && text.trim() !== "" && filter !== false ? options.filter((option) => test(option, text)) : options;
   const activeOption = open && active >= 0 && active < visible.length ? visible[active] : undefined;
@@ -121,9 +172,9 @@ export function Combobox({
     list.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
   }, [open, active]);
 
-  const firstEnabled = (items: ReadonlyArray<ComboboxOption>) => items.findIndex((option) => !option.disabled);
+  const firstEnabled = (items: ReadonlyArray<ComboboxOption>) => items.findIndex((option) => !isOff(option));
   const lastEnabled = (items: ReadonlyArray<ComboboxOption>) => {
-    for (let index = items.length - 1; index >= 0; index--) if (!items[index]?.disabled) return index;
+    for (let index = items.length - 1; index >= 0; index--) if (items[index] && !isOff(items[index]!)) return index;
     return -1;
   };
   /** Siguiente opción habilitada en la dirección dada, con vuelta al otro extremo. */
@@ -131,16 +182,28 @@ export function Combobox({
     const count = visible.length;
     for (let moved = 1; moved <= count; moved++) {
       const index = (from + direction * moved + count * (moved + 1)) % count;
-      if (!visible[index]?.disabled) return index;
+      if (visible[index] && !isOff(visible[index]!)) return index;
     }
     return from;
   };
 
-  const commit = (option: ComboboxOption | null) => {
+  const commit = (option: ComboboxOption | null, custom?: string) => {
+    if (multiple) return;
     setChosen(option);
-    setInner(option?.value ?? null);
-    if ((option?.value ?? null) !== current) onValueChange?.(option?.value ?? null, option);
+    const next = option?.value ?? custom ?? null;
+    setInner(next);
+    if (next !== current) (props.onValueChange as ComboboxProps["onValueChange"])?.(next, option);
   };
+  const setMany = (next: ReadonlyArray<string>) => {
+    if (!multiple) return;
+    setInnerMany(next);
+    props.onValueChange?.(
+      [...next],
+      next.map((v) => options.find((o) => o.value === v)).filter((o): o is ComboboxOption => Boolean(o)),
+    );
+  };
+  const isOn = (option: ComboboxOption) => (multiple ? many.includes(option.value) : option.value === current);
+  const isOff = (option: ComboboxOption) => Boolean(option.disabled || (multiple && fullMany && !many.includes(option.value)));
   const close = () => {
     setOpen(false);
     setActive(-1);
@@ -158,12 +221,29 @@ export function Combobox({
     setActive(at >= 0 ? at : firstEnabled(visible));
   };
   const choose = (option: ComboboxOption) => {
-    if (option.disabled) return;
+    if (isOff(option)) return;
+    if (multiple) {
+      // Varias: marca o desmarca, vacía lo escrito y deja la lista abierta.
+      setMany(many.includes(option.value) ? many.filter((v) => v !== option.value) : [...many, option.value]);
+      setText(null);
+      onInputChange?.("");
+      input.current?.focus();
+      return;
+    }
     commit(option);
     close();
   };
+  /** Texto libre (allowCustomValue): lo escrito pasa a ser el valor. */
+  const commitCustom = () => {
+    if (!allowCustomValue || text === null) return;
+    const typed = text.trim();
+    const match = options.find((option) => fold(option.label) === fold(typed));
+    if (match) commit(match);
+    else commit(null, typed === "" ? undefined : typed);
+  };
   const clear = () => {
-    commit(null);
+    if (multiple) setMany([]);
+    else commit(null);
     setText(null);
     onInputChange?.("");
     input.current?.focus();
@@ -174,7 +254,7 @@ export function Combobox({
     setText(next);
     onInputChange?.(next);
     // Vaciar el campo quita la selección.
-    if (next === "" && current !== null) commit(null);
+    if (!multiple && next === "" && current !== null) commit(null);
     setOpen(true);
     const filtered = next.trim() !== "" && filter !== false ? options.filter((option) => test(option, next)) : options;
     setActive(firstEnabled(filtered));
@@ -203,10 +283,29 @@ export function Combobox({
         setActive(lastEnabled(visible));
         break;
       case "Enter":
-        if (!open) return;
+        if (event.nativeEvent.isComposing) return;
+        if (!open) {
+          if (allowCustomValue && text !== null) {
+            event.preventDefault();
+            commitCustom();
+            setText(null);
+          }
+          return;
+        }
         // Con la lista abierta, Enter elige y no envía el formulario.
         event.preventDefault();
         if (activeOption) choose(activeOption);
+        else if (allowCustomValue) {
+          commitCustom();
+          close();
+        }
+        break;
+      case "Backspace":
+        // Varias: con el campo vacío, Retroceso quita la última pieza.
+        if (multiple && (text ?? "") === "" && many.length) {
+          event.preventDefault();
+          setMany(many.slice(0, -1));
+        }
         break;
       case "Escape":
         if (!open) return;
@@ -221,6 +320,7 @@ export function Combobox({
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     const next = event.relatedTarget as Node | null;
     if (next && (anchor.current?.contains(next) || list.current?.contains(next))) return;
+    commitCustom();
     close();
   };
 
@@ -229,8 +329,60 @@ export function Combobox({
   // El foco no sale del campo: Escape lo atiende el propio campo; una pulsación fuera de él y de la lista la cierra.
   useLayer(open, {
     contains: (target) => (anchor.current?.contains(target) ?? false) || (popup.current?.contains(target) ?? false),
-    onPointerOutside: close,
+    onPointerOutside: () => {
+      commitCustom();
+      close();
+    },
   });
+
+  const renderOption = (option: ComboboxOption) => {
+    const index = visible.indexOf(option);
+    const on = isOn(option);
+    const off = isOff(option);
+    return (
+      // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
+      // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
+      <div
+        key={option.value}
+        id={optionId(index)}
+        role="option"
+        className="z-listbox__option"
+        data-index={index}
+        data-value={option.value}
+        data-state={on ? "checked" : "unchecked"}
+        data-highlighted={index === active ? "" : undefined}
+        data-disabled={off ? "" : undefined}
+        aria-selected={on}
+        aria-disabled={off || undefined}
+        onMouseMove={() => (off || index === active ? undefined : setActive(index))}
+        onClick={() => choose(option)}
+      >
+        {option.icon ? (
+          <span className="z-listbox__icon">
+            <Icon name={option.icon} size={ICON_SIZE[size]} />
+          </span>
+        ) : null}
+        <span className="z-listbox__text">{option.label}</span>
+        <span className="z-listbox__check">
+          <Icon name="check" size={ICON_SIZE[size]} />
+        </span>
+      </div>
+    );
+  };
+  // Grupos visibles en el orden de las opciones; los que el filtro deja vacíos no se pintan.
+  const blocks: Array<{ label?: string; key: string; options: ComboboxOption[] }> = [];
+  for (const option of visible) {
+    const group = groupOf.get(option.value);
+    const last = blocks[blocks.length - 1];
+    if (last && last.key === `g${group ?? "-"}`) last.options.push(option);
+    else
+      blocks.push({
+        key: `g${group ?? "-"}`,
+        label: group === undefined ? undefined : (entries[group] as ComboboxOptionGroup).label,
+        options: [option],
+      });
+  }
+  const chips = multiple ? many.map((v) => options.find((o) => o.value === v) ?? { value: v, label: v }) : [];
 
   return (
     <>
@@ -241,12 +393,39 @@ export function Combobox({
         data-state={open ? "open" : "closed"}
         data-invalid={isInvalid || undefined}
         data-disabled={disabled || undefined}
+        data-value={multiple ? many.join(",") : (current ?? undefined)}
+        data-multiple={multiple || undefined}
+        data-custom={allowCustomValue || undefined}
+        data-max-selected={maxSelected}
+        data-name={multiple ? name : undefined}
       >
-        {selected?.icon && text === null ? (
+        {!multiple && selected?.icon && text === null ? (
           <span className="z-input__icon">
             <Icon name={selected.icon} size={ICON_SIZE[size]} />
           </span>
+        ) : icon ? (
+          <span className="z-input__icon">
+            <Icon name={icon} size={ICON_SIZE[size]} />
+          </span>
         ) : null}
+        {chips.map((option) => (
+          <span key={option.value} className="z-tags__tag" data-value={option.value}>
+            <span className="z-tags__text">{option.label}</span>
+            {disabled ? null : (
+              <button
+                type="button"
+                className="z-tags__remove"
+                tabIndex={-1}
+                aria-label={removeLabel?.(option.label)}
+                title={removeLabel?.(option.label)}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => setMany(many.filter((v) => v !== option.value))}
+              >
+                <Icon name="x-mark" size={ICON_SIZE[size] - 2} />
+              </button>
+            )}
+          </span>
+        ))}
         <input
           {...control}
           ref={setRef}
@@ -271,13 +450,14 @@ export function Combobox({
           onBlur={handleBlur}
           onClick={() => (open ? undefined : show("selected"))}
         />
-        {name ? <input type="hidden" name={name} value={current ?? ""} /> : null}
+        {name && multiple ? many.map((v) => <input key={v} type="hidden" name={name} value={v} />) : null}
+        {name && !multiple ? <input type="hidden" name={name} value={current ?? ""} /> : null}
         {loading ? (
           <span className="z-input__trailing">
             <span className="z-input__spinner" aria-hidden="true" />
           </span>
         ) : null}
-        {clearable && (current !== null || shownText) && !disabled ? (
+        {clearable && (current !== null || shownText || many.length > 0) && !disabled ? (
           <button
             type="button"
             className="z-input__action"
@@ -332,35 +512,20 @@ export function Combobox({
               aria-label={ariaLabel}
               aria-labelledby={ariaLabelledBy}
               aria-busy={loading || undefined}
+              aria-multiselectable={multiple || undefined}
             >
-              {visible.map((option, index) => (
-                // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
-                // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
-                <div
-                  key={option.value}
-                  id={optionId(index)}
-                  role="option"
-                  className="z-listbox__option"
-                  data-index={index}
-                  data-state={option.value === current ? "checked" : "unchecked"}
-                  data-highlighted={index === active ? "" : undefined}
-                  data-disabled={option.disabled ? "" : undefined}
-                  aria-selected={option.value === current}
-                  aria-disabled={option.disabled || undefined}
-                  onMouseMove={() => (option.disabled || index === active ? undefined : setActive(index))}
-                  onClick={() => choose(option)}
-                >
-                  {option.icon ? (
-                    <span className="z-listbox__icon">
-                      <Icon name={option.icon} size={ICON_SIZE[size]} />
-                    </span>
-                  ) : null}
-                  <span className="z-listbox__text">{option.label}</span>
-                  <span className="z-listbox__check">
-                    <Icon name="check" size={ICON_SIZE[size]} />
-                  </span>
-                </div>
-              ))}
+              {blocks.map((block) =>
+                block.label === undefined ? (
+                  block.options.map(renderOption)
+                ) : (
+                  <div key={block.key} role="group" className="z-listbox__group" aria-labelledby={`${listId}-${block.key}`}>
+                    <div id={`${listId}-${block.key}`} className="z-listbox__label">
+                      {block.label}
+                    </div>
+                    {block.options.map(renderOption)}
+                  </div>
+                ),
+              )}
             </div>
             {status ? (
               <div className="z-listbox__empty" role="status" data-loading={loading || undefined}>
