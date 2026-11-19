@@ -22,6 +22,7 @@ import {
   type Occurrence,
 } from "./agenda";
 import { fromWall, toWall, zoneCity, zoneLabel } from "./zone";
+import { PERPETUAL_LABELS, perpetualTree, yearGrid, type PerpetualLabels } from "./agenda-year";
 
 /* ---------- Árbol ---------- */
 
@@ -75,6 +76,8 @@ export interface AgendaLabels {
   creating: string;
   /** Prefijo de la hora repetida en un cambio de hora. */
   repeatedHour: string;
+  /** Textos del año perpetuo. */
+  perpetual: PerpetualLabels;
 }
 
 export const DEFAULT_LABELS: AgendaLabels = {
@@ -82,7 +85,16 @@ export const DEFAULT_LABELS: AgendaLabels = {
   today: "Today",
   previous: "Previous",
   next: "Next",
-  views: { day: "Day", week: "Week", workweek: "Work week", month: "Month", agenda: "Agenda" },
+  views: {
+    day: "Day",
+    week: "Week",
+    workweek: "Work week",
+    month: "Month",
+    agenda: "Agenda",
+    year: "Year",
+    perpetual: "One page",
+    timeline: "Timeline",
+  },
   viewsLabel: "View",
   allDay: "All day",
   more: "+{n} more",
@@ -114,7 +126,24 @@ export const DEFAULT_LABELS: AgendaLabels = {
   emptyHint: "No events in this period.",
   creating: "New event · {when}",
   repeatedHour: "repeated hour",
+  perpetual: PERPETUAL_LABELS,
 };
+
+/** Textos que acepta la agenda: cualquiera de `AgendaLabels`, también por partes en `views` y `perpetual`. */
+export type AgendaLabelsInput = Partial<Omit<AgendaLabels, "views" | "perpetual">> & {
+  views?: Partial<AgendaLabels["views"]>;
+  perpetual?: Partial<PerpetualLabels>;
+};
+
+/** Textos completos: los de la aplicación sobre los de por defecto (en inglés). */
+export function mergeLabels(labels: AgendaLabelsInput | undefined): AgendaLabels {
+  return {
+    ...DEFAULT_LABELS,
+    ...labels,
+    views: { ...DEFAULT_LABELS.views, ...labels?.views },
+    perpetual: { ...DEFAULT_LABELS.perpetual, ...labels?.perpetual },
+  } as AgendaLabels;
+}
 
 export interface BusinessHours {
   days: number[];
@@ -149,6 +178,8 @@ export interface AgendaConfig {
   /** Botón «Nuevo evento» (lo atiende la aplicación con onQuickCreate / z-quick-create). */
   createButton: boolean;
   labels: AgendaLabels;
+  /** Año: densidad 0…3 de un día (por defecto, por número de eventos). */
+  density?: (date: string, count: number) => number;
   /** Hoy (`YYYY-MM-DD`) y ahora (ms) fijos: servidor y pruebas. */
   today?: string;
   now?: number;
@@ -233,7 +264,8 @@ const fill = (template: string, values: Record<string, string | number>) =>
 
 /** Título de la barra: «November 16 – 22, 2026», «Thursday, 19 November 2026», «November 2026». */
 export function periodTitle(view: AgendaView, days: string[], date: string, locale?: string): string {
-  if (view === "day") return fmt(locale, { dateStyle: "full" }).format(parse(date));
+  if (view === "day" || view === "timeline") return fmt(locale, { dateStyle: "full" }).format(parse(date));
+  if (view === "year" || view === "perpetual") return fmt(locale, { year: "numeric" }).format(parse(date));
   if (view === "month") return fmt(locale, { month: "long", year: "numeric" }).format(parse(`${date.slice(0, 7)}-01`));
   const a = parse(days[0]!);
   const b = parse(days[days.length - 1]!);
@@ -294,7 +326,8 @@ export function buildModel(config: AgendaConfig, state: AgendaState, nowMs: numb
 function fallbackFocus(state: AgendaState, model: AgendaModel, config: AgendaConfig): string {
   const inView = (d: string) => model.days.includes(d);
   const anchor = inView(model.today) ? model.today : inView(state.date) ? state.date : model.days[0]!;
-  if (state.view === "month") return `d:${anchor}`;
+  if (state.view === "month" || state.view === "year") return `d:${anchor}`;
+  if (state.view === "perpetual") return "";
   if (state.view === "agenda") {
     const first = model.occurrences.find((o) => o.end > model.now) ?? model.occurrences[0];
     return first ? `e:${first.key}` : "";
@@ -846,6 +879,29 @@ function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel
   );
 }
 
+function yearView(config: AgendaConfig, state: AgendaState, model: AgendaModel): VEl {
+  const counts = new Map<string, number>();
+  const first = model.days[0]!;
+  const last = model.days[model.days.length - 1]!;
+  for (const o of model.occurrences) {
+    const from = dateOf(o.start);
+    const to = dateOf(Math.max(o.start, o.end - 1));
+    for (let d = from < first ? first : from, i = 0; d <= to && d <= last && i < 400; d = addDays(d, 1), i++)
+      counts.set(d, (counts.get(d) ?? 0) + 1);
+  }
+  return yearGrid({
+    year: Number(state.date.slice(0, 4)),
+    weekStart: config.weekStart,
+    locale: config.locale,
+    today: model.today,
+    focus: model.focusId.startsWith("d:") ? model.focusId.slice(2) : state.date,
+    selected: state.date,
+    counts,
+    density: config.density,
+    labels: { events: config.labels.events, event: config.labels.event, title: model.title },
+  });
+}
+
 /* ---------- Armazón ---------- */
 
 function popovers(config: AgendaConfig, state: AgendaState, model: AgendaModel, uid: string): VNode[] {
@@ -1016,7 +1072,7 @@ export function agendaTree(
     state.focus &&
     (state.focus.startsWith("s:")
       ? model.days.includes(state.focus.split(":")[1]!) && state.view !== "month" && state.view !== "agenda"
-      : state.view === "month"
+      : state.view === "month" || state.view === "year"
         ? ids.has(state.focus)
         : state.focus.startsWith("e:") && ids.has(state.focus));
   model.focusId = valid ? state.focus! : fallbackFocus(state, model, config);
@@ -1026,7 +1082,23 @@ export function agendaTree(
       ? monthGrid(config, state, model)
       : state.view === "agenda"
         ? agendaList(config, state, model, uid)
-        : timeGrid(config, state, model);
+        : state.view === "year"
+          ? yearView(config, state, model)
+          : state.view === "perpetual"
+            ? h(
+                "div",
+                { class: "z-perpetual z-agenda__perpetual" },
+                perpetualTree({
+                  uid,
+                  year: Number(state.date.slice(0, 4)),
+                  weekStart: config.weekStart,
+                  locale,
+                  highlight: state.date,
+                  today: model.today,
+                  labels: { ...PERPETUAL_LABELS, ...labels.perpetual },
+                }),
+              )
+            : timeGrid(config, state, model);
   const counts = new Map<string, number>();
   for (const o of expandEvents({
     events: config.events,
@@ -1060,7 +1132,7 @@ export function agendaTree(
             weekStart: config.weekStart,
             showWeekNumber: config.showWeekNumber,
             // La banda de la semana visible solo en las rejillas de horas: en el mes lo teñiría todo.
-            inView: state.view === "month" || state.view === "agenda" ? () => false : inView,
+            inView: ["month", "agenda", "year", "perpetual"].includes(state.view) ? () => false : inView,
             hasEvents: (d: string) => model.occurrences.some((o) => dateOf(o.start) === d),
             attrs: {
               "data-mode": "single",

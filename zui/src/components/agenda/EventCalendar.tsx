@@ -8,11 +8,8 @@ import {
   useReducer,
   useRef,
   useState,
-  type CSSProperties,
-  type ReactNode,
   type Ref,
 } from "react";
-import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import type { AgendaView, CalendarEvent, CalendarSource } from "../../core/agenda";
 import { clockMinutes } from "../../core/agenda";
 import {
@@ -27,21 +24,22 @@ import {
 } from "../../core/agenda-control";
 import {
   agendaTree,
-  DEFAULT_LABELS,
+  mergeLabels,
   initialState,
   type AgendaConfig,
   type AgendaLabels,
+  type AgendaLabelsInput,
   type AgendaModel,
   type AgendaState,
   type BusinessHours,
-  type VNode,
 } from "../../core/agenda-view";
 import { localeWeekInfo, todayISO, valid } from "../../core/date";
 import { safeTimeZone } from "../../core/zone";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
+import { toReact } from "./vtree";
 
-export type { AgendaView, CalendarEvent, CalendarSource, EventChange, SlotSelection, AgendaLabels, BusinessHours };
+export type { AgendaView, CalendarEvent, CalendarSource, EventChange, SlotSelection, AgendaLabels, AgendaLabelsInput, BusinessHours };
 
 export interface EventCalendarProps {
   /** Eventos (ISO; ver el modelo en el manifiesto). La agenda no los cambia: avisa con `onEventChange`. */
@@ -97,45 +95,15 @@ export interface EventCalendarProps {
   /** Hoy y ahora fijos (servidor y pruebas). */
   today?: string;
   now?: number | string;
-  labels?: Partial<AgendaLabels>;
+  labels?: AgendaLabelsInput;
+  /** Vista de año: densidad 0…3 de un día (por defecto, por número de eventos: 1, 2–3, 4 o más). */
+  density?: (date: string, count: number) => number;
   id?: string;
   className?: string;
   ref?: Ref<HTMLDivElement>;
 }
 
 const ALL_VIEWS: AgendaView[] = ["day", "week", "workweek", "month", "agenda"];
-const ATTR: Record<string, string> = { class: "className", tabindex: "tabIndex", for: "htmlFor", readonly: "readOnly" };
-const noop = () => {};
-
-/** Árbol de core/agenda-view → elementos de React. Los eventos los atiende core/agenda-control en la raíz. */
-function toReact(node: VNode, minical: (p: Record<string, unknown>) => ReactNode): ReactNode {
-  if (node === null || node === undefined || node === false) return null;
-  if (typeof node === "string") return node;
-  if ("slot" in node) return node.slot === "icon" ? <Icon name={node.p.name as IconName} size={Number(node.p.size)} /> : minical(node.p);
-  const props: Record<string, unknown> = {};
-  let selectValue: string | undefined;
-  for (const [k, v] of Object.entries(node.a ?? {})) {
-    if (v === undefined || v === null || v === false) continue;
-    if (node.t === "option" && k === "selected") continue;
-    if (k === "value" && node.t === "input") props.defaultValue = v;
-    else if (k === "checked") {
-      props.checked = Boolean(v);
-      props.onChange = noop;
-    } else props[ATTR[k] ?? k] = v === true ? true : v;
-  }
-  if (node.t === "select") {
-    const chosen = (node.c ?? []).find((c) => c && typeof c === "object" && !("slot" in c) && c.a?.selected);
-    selectValue = chosen && typeof chosen === "object" && !("slot" in chosen) ? String(chosen.a?.value ?? "") : undefined;
-    props.value = selectValue;
-    props.onChange = noop;
-  }
-  if (node.s) props.style = node.s as CSSProperties;
-  if (node.k !== undefined) props.key = node.k;
-  // Hijos como argumentos de createElement: una lista fija, sin claves de array.
-  const kids = (node.c ?? []).map((c) => toReact(c, minical));
-  return createElement(node.t, props, ...kids);
-}
-
 /**
  * Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral (minicalendario y calendarios) y las vistas
  * de día, semana, semana laboral, mes y agenda sobre el mismo modelo de eventos. Mover, redimensionar y crear con
@@ -179,6 +147,7 @@ export function EventCalendar({
   today,
   now,
   labels,
+  density,
   id,
   className,
   ref,
@@ -212,7 +181,8 @@ export function EventCalendar({
     sidebar,
     showWeekNumber,
     createButton: Boolean(onQuickCreate),
-    labels: { ...DEFAULT_LABELS, ...labels, views: { ...DEFAULT_LABELS.views, ...labels?.views } },
+    labels: mergeLabels(labels),
+    density,
     today: valid(today) ? today : undefined,
     now: Number.isFinite(nowMs) ? nowMs : undefined,
   };
@@ -321,7 +291,7 @@ export function EventCalendar({
       modifiers={{ "in-view": p.inView as (d: string) => boolean, "has-events": p.hasEvents as (d: string) => boolean }}
     />
   );
-  const { className: _c, ...rest } = (toReact(tree, minical) as { props: Record<string, unknown> }).props;
+  const { className: _c, ...rest } = (toReact(tree, { minical }) as { props: Record<string, unknown> }).props;
   // La raíz lleva la ref; lo demás es el árbol tal cual.
   return createElement("div", { ...rest, className: (tree.a?.class as string) ?? "z-agenda", ref: setRoot });
 }

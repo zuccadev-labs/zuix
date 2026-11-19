@@ -6,7 +6,7 @@
 // `z:eventclick`, `z:selectslot`, `z:datechange`, `z:viewchange`, `z:quickcreate`, `z:calendartoggle` y
 // `z:timezonechange`. El texto de la aplicación entra siempre como texto (nodos de texto, nunca marcado).
 
-import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowPath } from "@zuccadev-labs/zuix-zicon/icons/arrow-path";
 import { calendar } from "@zuccadev-labs/zuix-zicon/icons/calendar";
 import { calendarDays } from "@zuccadev-labs/zuix-zicon/icons/calendar-days";
@@ -18,23 +18,24 @@ import { globeAlt } from "@zuccadev-labs/zuix-zicon/icons/globe-alt";
 import { mapPin } from "@zuccadev-labs/zuix-zicon/icons/map-pin";
 import { plus } from "@zuccadev-labs/zuix-zicon/icons/plus";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
-import { AGENDA_VIEWS, clockMinutes, type AgendaView, type CalendarEvent, type CalendarSource } from "../core/agenda";
+import { AGENDA_VIEWS, ALL_AGENDA_VIEWS, clockMinutes, type AgendaView, type CalendarEvent, type CalendarSource } from "../core/agenda";
 import { attachAgenda, beginFocusMove, everyMinute, syncAgenda, type AgendaEventName, type AgendaHost } from "../core/agenda-control";
 import {
   agendaTree,
-  DEFAULT_LABELS,
+  mergeLabels,
   initialState,
   type AgendaConfig,
-  type AgendaLabels,
+  type AgendaLabelsInput,
   type AgendaModel,
   type AgendaState,
-  type VNode,
 } from "../core/agenda-view";
+import { findSlots } from "../core/vnode";
 import { localeWeekInfo, todayISO, valid } from "../core/date";
 import { safeTimeZone } from "../core/zone";
 import { setCalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
-import { fragment, type Listen } from "./shared";
+import { type Listen } from "./shared";
+import { patchChildren } from "./vtree";
 
 registerIcons([arrowPath, calendar, calendarDays, chevronLeft, chevronRight, chevronUpDown, clock, globeAlt, mapPin, plus, xMark]);
 
@@ -43,12 +44,11 @@ interface Entry {
   model: AgendaModel | null;
   events: CalendarEvent[] | null;
   calendars: CalendarSource[] | null;
-  labels: Partial<AgendaLabels>;
+  labels: AgendaLabelsInput;
   detach: () => void;
   stopClock: () => void;
 }
 const entries = new WeakMap<HTMLElement, Entry>();
-const keys = new WeakMap<Node, string>();
 
 const json = <T>(el: HTMLElement, selector: string): T | null => {
   const script = el.querySelector<HTMLScriptElement>(`:scope > script[type="application/json"]${selector}`);
@@ -64,7 +64,7 @@ const num = (v: string | undefined, fallback: number) => (v !== undefined && Num
 
 function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
   const d = el.dataset;
-  const views = (d.views ?? "").split(/[\s,]+/).filter((v): v is AgendaView => (AGENDA_VIEWS as readonly string[]).includes(v));
+  const views = (d.views ?? "").split(/[\s,]+/).filter((v): v is AgendaView => (ALL_AGENDA_VIEWS as readonly string[]).includes(v));
   const locale = d.locale;
   const zones = d.timeZones?.split(/[\s,]+/).filter(Boolean);
   const now = d.now ? Date.parse(d.now) : undefined;
@@ -94,87 +94,10 @@ function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
     sidebar: d.sidebar !== "false",
     showWeekNumber: d.weekNumbers !== "false",
     createButton: yes(d.createButton),
-    labels: { ...DEFAULT_LABELS, ...entry.labels, views: { ...DEFAULT_LABELS.views, ...entry.labels.views } },
+    labels: mergeLabels(entry.labels),
     today: valid(d.today) ? d.today : undefined,
     now: Number.isFinite(now) ? now : undefined,
   };
-}
-
-/* ---------- Árbol → nodos ---------- */
-
-function create(v: VNode, doc: Document): Node {
-  if (typeof v === "string") return doc.createTextNode(v);
-  if (!v) return doc.createTextNode("");
-  if ("slot" in v) {
-    if (v.slot === "icon") {
-      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size) }));
-      const svg = frag.firstElementChild ?? doc.createElement("span");
-      keys.set(svg, `icon:${v.p.name}:${v.p.size}`);
-      return svg;
-    }
-    const cal = doc.createElement("div");
-    cal.className = "z-calendar z-agenda__minical";
-    keys.set(cal, "minical");
-    return cal;
-  }
-  const el = doc.createElement(v.t);
-  if (v.k !== undefined) keys.set(el, `${v.t}:${v.k}`);
-  else keys.set(el, v.t);
-  patchElement(el, v, true);
-  return el;
-}
-
-const keyOf = (v: VNode): string =>
-  typeof v === "string" || !v
-    ? "#text"
-    : "slot" in v
-      ? v.slot === "icon"
-        ? `icon:${v.p.name}:${v.p.size}`
-        : "minical"
-      : v.k !== undefined
-        ? `${v.t}:${v.k}`
-        : v.t;
-
-function patchElement(el: Element, v: Exclude<VNode, string | null | undefined | false | { slot: string }>, fresh = false): void {
-  if ("slot" in v) return;
-  const want = new Map<string, string>();
-  for (const [k, value] of Object.entries(v.a ?? {})) {
-    if (value === null || value === undefined || value === false) continue;
-    if (k === "value" && !fresh) continue; // lo que teclea la persona en un campo no se pisa
-    want.set(k, value === true ? "" : String(value));
-  }
-  for (const attr of [...el.attributes])
-    if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open") el.removeAttribute(attr.name);
-  for (const [k, value] of want) if (el.getAttribute(k) !== value) el.setAttribute(k, value);
-  if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = want.has("checked");
-  if (el instanceof HTMLOptionElement) el.selected = want.has("selected");
-  if (el instanceof HTMLElement) {
-    const style = el.style;
-    for (const name of [...style].filter((p) => p.startsWith("--") && !(v.s && p in v.s))) style.removeProperty(name);
-    for (const [k, value] of Object.entries(v.s ?? {}))
-      if (style.getPropertyValue(k) !== String(value)) style.setProperty(k, String(value));
-    if (!v.s && !style.length) el.removeAttribute("style");
-  }
-  patchChildren(el, v.c ?? []);
-}
-
-function patchChildren(parent: Element, kids: VNode[]): void {
-  const doc = parent.ownerDocument;
-  const existing = [...parent.childNodes];
-  kids.forEach((v, i) => {
-    const cur = existing[i];
-    const key = keyOf(v);
-    if (cur && (cur.nodeType === Node.TEXT_NODE ? key === "#text" : keys.get(cur) === key)) {
-      if (cur.nodeType === Node.TEXT_NODE) {
-        if (cur.textContent !== v) cur.textContent = v as string;
-      } else if (typeof v === "object" && v && !("slot" in v)) patchElement(cur as Element, v);
-      return;
-    }
-    const node = create(v, doc);
-    if (cur) parent.replaceChild(node, cur);
-    else parent.append(node);
-  });
-  for (let i = existing.length - 1; i >= kids.length; i--) existing[i]!.remove();
 }
 
 /* ---------- Pintado ---------- */
@@ -197,7 +120,7 @@ function render(el: HTMLElement, moveFocus = false): void {
   patchChildren(el, tree.c ?? []);
   el.append(...scripts);
   // Minicalendario: el Calendar del modo DOM, con el día de la vista y la semana visible.
-  const slot = findSlot(tree.c ?? []);
+  const slot = findSlots(tree.c ?? [], "minical")[0]?.p;
   const cal = el.querySelector<HTMLElement>(".z-agenda__minical");
   if (slot && cal) {
     const attrs = slot.attrs as Record<string, string | undefined>;
@@ -212,19 +135,6 @@ function render(el: HTMLElement, moveFocus = false): void {
     });
   }
   syncAgenda(el, hostOf(el), moveFocus, clockMinutes(el.dataset.scrollTime, 480));
-}
-
-function findSlot(nodes: VNode[]): Record<string, unknown> | null {
-  for (const n of nodes) {
-    if (!n || typeof n === "string") continue;
-    if ("slot" in n) {
-      if (n.slot === "minical") return n.p;
-      continue;
-    }
-    const inner = findSlot(n.c ?? []);
-    if (inner) return inner;
-  }
-  return null;
 }
 
 const EVENT_NAMES: Record<AgendaEventName, string> = {
@@ -273,14 +183,14 @@ function mount(el: HTMLElement): void {
   const today = valid(d.today) ? d.today : todayISO();
   const entry: Entry = {
     state: initialState(
-      { views: [...AGENDA_VIEWS], timeZone: safeTimeZone(d.timeZone) },
-      ((AGENDA_VIEWS as readonly string[]).includes(d.view ?? "") ? d.view : "week") as AgendaView,
+      { views: [...ALL_AGENDA_VIEWS], timeZone: safeTimeZone(d.timeZone) },
+      ((ALL_AGENDA_VIEWS as readonly string[]).includes(d.view ?? "") ? d.view : "week") as AgendaView,
       valid(d.date) ? d.date : today,
     ),
     model: null,
     events: null,
     calendars: null,
-    labels: json<Partial<AgendaLabels>>(el, "[data-labels]") ?? {},
+    labels: json<AgendaLabelsInput>(el, "[data-labels]") ?? {},
     detach: () => {},
     stopClock: () => {},
   };

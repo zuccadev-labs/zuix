@@ -284,7 +284,11 @@ function onKeyDown(root: HTMLElement, host: AgendaHost, event: KeyboardEvent): v
     else if (key === "ArrowUp") next = addDays(date, -7);
     else if (key === "Home") next = addDays(date, -((parse(date).getUTCDay() - config.weekStart + 7) % 7));
     else if (key === "End") next = addDays(date, 6 - ((parse(date).getUTCDay() - config.weekStart + 7) % 7));
-    else if (event.key === "Enter" || event.key === " ") {
+    else if ((event.key === "Enter" || event.key === " ") && state.view === "year") {
+      event.preventDefault();
+      openDay(host, date);
+      return;
+    } else if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       const first = piece!.querySelector<HTMLElement>(".z-event");
       if (first?.dataset.focusId) focusId(host, first.dataset.focusId);
@@ -376,6 +380,20 @@ function setView(host: AgendaHost, view: AgendaView): void {
   host.emit("view-change", { view });
 }
 
+/** Año: un día abre la vista de día (si está entre las vistas) en esa fecha. */
+function openDay(host: AgendaHost, date: string, view: AgendaView = "day"): void {
+  const views = host.config().views;
+  const target = views.includes(view) ? view : views.includes("week") ? "week" : null;
+  if (!target) {
+    host.update({ date, focus: `d:${date}` }, true);
+    host.emit("date-change", { date });
+    return;
+  }
+  host.update({ view: target, date, focus: null, more: null, detail: null, grabbed: null }, true);
+  host.emit("view-change", { view: target });
+  host.emit("date-change", { date });
+}
+
 function changeDate(host: AgendaHost, date: string, focus = false): void {
   host.update({ date, focus: null, more: null, detail: null, grabbed: null }, focus);
   host.emit("date-change", { date });
@@ -438,6 +456,16 @@ function onClick(_root: HTMLElement, host: AgendaHost, event: MouseEvent, drag: 
     if (o) selectEvent(host, o, ev);
     return;
   }
+  const yearDay = target.closest<HTMLElement>(".z-yeargrid__day");
+  if (yearDay?.dataset.date) {
+    openDay(host, yearDay.dataset.date);
+    return;
+  }
+  const yearMonth = target.closest<HTMLElement>(".z-yeargrid__month-btn");
+  if (yearMonth?.dataset.month) {
+    openDay(host, `${yearMonth.dataset.month}-01`, "month");
+    return;
+  }
   const cell = target.closest<HTMLElement>(".z-monthgrid__cell");
   if (cell?.dataset.date) {
     host.update({ date: cell.dataset.date, focus: `d:${cell.dataset.date}` }, true);
@@ -464,6 +492,11 @@ function onChange(host: AgendaHost, event: Event): void {
     else hidden.add(id);
     host.update({ hidden: [...hidden], selected: null, detail: null });
     host.emit("calendar-toggle", { calendarId: id, visible: target.checked });
+  } else if (target instanceof HTMLInputElement && target.matches(".z-perpetual__input")) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(target.value) && target.value !== host.state().date) {
+      host.update({ date: target.value });
+      host.emit("date-change", { date: target.value });
+    }
   } else if (target instanceof HTMLSelectElement && target.matches(".z-agenda__zone-select")) {
     host.update({ timeZone: target.value });
     host.emit("time-zone-change", { timeZone: target.value });

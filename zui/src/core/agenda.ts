@@ -5,7 +5,7 @@
 // Aquí: normalizar y expandir (con core/rrule y core/zone), solapes en columnas, carriles del mes, partir por días,
 // ajustar a la rejilla, mover y redimensionar, y devolver la forma ISO que tenía el evento.
 
-import { addDays, DAY_MS, diffDays, pad, parse, valid } from "./date";
+import { addDays, addMonths, DAY_MS, diffDays, pad, parse, valid } from "./date";
 import { expandDates, parseRRule } from "./rrule";
 import { fromWall, instantText, parseDateTime, toWall, wallStatus, wallText, type Wall } from "./zone";
 
@@ -485,8 +485,11 @@ export function rewriteSpan(event: CalendarEvent, span: { start: number; end: nu
 
 /* ---------- Rango visible ---------- */
 
-export type AgendaView = "day" | "week" | "workweek" | "month" | "agenda";
+export type AgendaView = "day" | "week" | "workweek" | "month" | "agenda" | "year" | "perpetual" | "timeline";
+/** Vistas por defecto del selector. */
 export const AGENDA_VIEWS: readonly AgendaView[] = ["day", "week", "workweek", "month", "agenda"];
+/** Todas las vistas que entiende la agenda (`views` elige cuáles ofrece). */
+export const ALL_AGENDA_VIEWS: readonly AgendaView[] = [...AGENDA_VIEWS, "year", "perpetual", "timeline"];
 
 /** Días que muestra una vista anclada en `date`. Mes: semanas completas que cubren el mes (6 con `fixedWeeks`). */
 export function visibleDays(
@@ -498,7 +501,11 @@ export function visibleDays(
   const start = (d: string) => addDays(d, -((parse(d).getUTCDay() - weekStart + 7) % 7));
   const hide = new Set(options.hiddenDays ?? []);
   const keep = (list: string[]) => list.filter((d) => !hide.has(parse(d).getUTCDay()));
-  if (view === "day") return [date];
+  if (view === "day" || view === "perpetual" || view === "timeline") return [date];
+  if (view === "year") {
+    const y = date.slice(0, 4);
+    return Array.from({ length: diffDays(`${y}-01-01`, `${y}-12-31`) + 1 }, (_, i) => addDays(`${y}-01-01`, i));
+  }
   if (view === "week") return keep(Array.from({ length: 7 }, (_, i) => addDays(start(date), i)));
   if (view === "workweek")
     return Array.from({ length: 7 }, (_, i) => addDays(start(date), i)).filter((d) => {
@@ -515,7 +522,8 @@ export function visibleDays(
 
 /** Ancla del periodo anterior o siguiente. */
 export function shiftDate(view: AgendaView, date: string, direction: -1 | 1, listDays = 14): string {
-  if (view === "day") return addDays(date, direction);
+  if (view === "day" || view === "timeline") return addDays(date, direction);
+  if (view === "year" || view === "perpetual") return addMonths(date, 12 * direction);
   if (view === "week" || view === "workweek") return addDays(date, 7 * direction);
   if (view === "agenda") return addDays(date, listDays * direction);
   const y = Number(date.slice(0, 4));

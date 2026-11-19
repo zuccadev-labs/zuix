@@ -1,0 +1,78 @@
+// Árbol de core/vnode → nodos del documento, con parcheo por posición y clave (el texto siempre como nodo de texto,
+// nunca como marcado). Lo usan la agenda y las demás piezas de la agenda del modo DOM.
+
+import { iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
+import type { VNode, VSlot } from "../core/vnode";
+import { fragment } from "./shared";
+
+const keys = new WeakMap<Node, string>();
+
+const slotKey = (v: VSlot) =>
+  v.slot === "icon" ? `icon:${v.p.name}:${v.p.size}` : v.slot === "minical" ? "minical" : `calendar:${String(v.p.name ?? "")}`;
+
+function create(v: VNode, doc: Document): Node {
+  if (typeof v === "string") return doc.createTextNode(v);
+  if (!v) return doc.createTextNode("");
+  if ("slot" in v) {
+    if (v.slot === "icon") {
+      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size) }));
+      const svg = frag.firstElementChild ?? doc.createElement("span");
+      keys.set(svg, slotKey(v));
+      return svg;
+    }
+    const cal = doc.createElement("div");
+    cal.className = v.slot === "minical" ? "z-calendar z-agenda__minical" : `z-calendar${v.p.className ? ` ${v.p.className}` : ""}`;
+    if (v.slot === "calendar") cal.dataset.slot = String(v.p.name ?? "");
+    keys.set(cal, slotKey(v));
+    return cal;
+  }
+  const el = doc.createElement(v.t);
+  keys.set(el, v.k !== undefined ? `${v.t}:${v.k}` : v.t);
+  patchElement(el, v, true);
+  return el;
+}
+
+const keyOf = (v: VNode): string =>
+  typeof v === "string" || !v ? "#text" : "slot" in v ? slotKey(v) : v.k !== undefined ? `${v.t}:${v.k}` : v.t;
+
+export function patchElement(el: Element, v: Exclude<VNode, string | null | undefined | false>, fresh = false): void {
+  if ("slot" in v) return;
+  const want = new Map<string, string>();
+  for (const [k, value] of Object.entries(v.a ?? {})) {
+    if (value === null || value === undefined || value === false) continue;
+    if (k === "value" && !fresh) continue; // lo que teclea la persona en un campo no se pisa
+    want.set(k, value === true ? "" : String(value));
+  }
+  for (const attr of [...el.attributes])
+    if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open") el.removeAttribute(attr.name);
+  for (const [k, value] of want) if (el.getAttribute(k) !== value) el.setAttribute(k, value);
+  if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = want.has("checked");
+  if (el instanceof HTMLOptionElement) el.selected = want.has("selected");
+  if (el instanceof HTMLElement) {
+    const style = el.style;
+    for (const name of [...style].filter((p) => p.startsWith("--") && !(v.s && p in v.s))) style.removeProperty(name);
+    for (const [k, value] of Object.entries(v.s ?? {}))
+      if (style.getPropertyValue(k) !== String(value)) style.setProperty(k, String(value));
+    if (!v.s && !style.length) el.removeAttribute("style");
+  }
+  patchChildren(el, v.c ?? []);
+}
+
+export function patchChildren(parent: Element, kids: VNode[]): void {
+  const doc = parent.ownerDocument;
+  const existing = [...parent.childNodes];
+  kids.forEach((v, i) => {
+    const cur = existing[i];
+    const key = keyOf(v);
+    if (cur && (cur.nodeType === Node.TEXT_NODE ? key === "#text" : keys.get(cur) === key)) {
+      if (cur.nodeType === Node.TEXT_NODE) {
+        if (cur.textContent !== v) cur.textContent = v as string;
+      } else if (typeof v === "object" && v && !("slot" in v)) patchElement(cur as Element, v);
+      return;
+    }
+    const node = create(v, doc);
+    if (cur) parent.replaceChild(node, cur);
+    else parent.append(node);
+  });
+  for (let i = existing.length - 1; i >= kids.length; i--) existing[i]!.remove();
+}

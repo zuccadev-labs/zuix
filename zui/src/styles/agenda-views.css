@@ -1,0 +1,387 @@
+/*
+  Agenda, oleada 2: año (12 minimeses con densidad), año perpetuo de una página, línea temporal (Gantt y recursos),
+  buscar hueco, franjas de cita, mapa de calor y rachas. Mismas reglas que agenda.css: cromo en cristal, lectura
+  sobre `reading-bg`, controles y celdas rectangulares (control-radius*, calendar-cell-radius, item-radius) y
+  `radius-full` solo para lo circular. Ningún estado depende solo del color: forma, trama, icono o texto además.
+*/
+@layer zui.agenda {
+  /* Botones propios de estas vistas: sin el aspecto del navegador (especificidad cero; cada pieza pone el suyo). */
+  :where(
+      .z-yeargrid__day,
+      .z-yeargrid__month-btn,
+      .z-timeline__toggle,
+      .z-timeline__bar,
+      .z-timeline__milestone,
+      .z-timeline__booking,
+      .z-slotpicker__slot,
+      .z-slotpicker__cycle-btn,
+      .z-heatmap__cell,
+      .z-heatmap__toggle,
+      .z-habit__day,
+      .z-calendar__flex-chip,
+      .z-calendar__stepper-btn
+    ) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+  }
+
+  /* ---------- Año: 12 minimeses ---------- */
+  .z-yeargrid {
+    container: z-yeargrid / inline-size;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--z-space-20) * 3 - var(--z-space-2)), 1fr));
+    gap: var(--z-space-5) var(--z-space-6);
+    padding: var(--z-space-5);
+    background: var(--z-reading-bg);
+  }
+  .z-yeargrid__month {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    min-inline-size: 0;
+  }
+  .z-yeargrid__title {
+    margin: 0;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-yeargrid__month-btn {
+    min-block-size: var(--z-space-7);
+    padding-inline: var(--z-space-1-5);
+    border-radius: var(--z-control-radius-sm);
+    color: inherit;
+    font: inherit;
+  }
+  @media (hover: hover) {
+    .z-yeargrid__month-btn:hover {
+      background: var(--z-surface-3);
+    }
+  }
+  .z-yeargrid__month-btn:focus-visible,
+  .z-yeargrid__day:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-yeargrid__month[data-current] .z-yeargrid__month-btn {
+    color: var(--z-accent-text);
+  }
+  .z-yeargrid__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0 2px;
+    table-layout: fixed;
+  }
+  .z-yeargrid__weekday {
+    block-size: var(--z-space-6);
+    padding: 0;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-yeargrid__cell {
+    padding: 0;
+    text-align: center;
+  }
+  .z-yeargrid__day {
+    display: inline-grid;
+    place-items: center;
+    inline-size: min(100%, var(--z-space-8));
+    aspect-ratio: 1;
+    border-radius: var(--z-calendar-cell-radius);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    transition: background-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-yeargrid__day:hover {
+      background: var(--z-surface-3);
+    }
+  }
+  /* Densidad: fondo creciente y, en lo más cargado, el número en negrita (no solo color: el nombre accesible dice
+     cuántos eventos tiene el día). */
+  .z-yeargrid__day[data-load="1"] {
+    background: color-mix(in srgb, var(--z-accent) 10%, transparent);
+  }
+  .z-yeargrid__day[data-load="2"] {
+    background: color-mix(in srgb, var(--z-accent) 20%, transparent);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-yeargrid__day[data-load="3"] {
+    background: color-mix(in srgb, var(--z-accent) 32%, transparent);
+    font-weight: var(--z-weight-bold);
+  }
+  .z-yeargrid__day[data-today] {
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+    box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
+  }
+  @container z-yeargrid (max-width: 560px) {
+    .z-yeargrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--z-space-3-5) var(--z-space-2-5);
+      padding: var(--z-space-3);
+    }
+    .z-yeargrid__day {
+      border-radius: var(--z-control-radius-sm);
+      font-size: var(--z-text-fine);
+    }
+    .z-yeargrid__weekday {
+      font-size: var(--z-text-fine);
+    }
+  }
+
+  /* ---------- Año perpetuo de una página ---------- */
+  .z-perpetual {
+    container: z-perpetual / inline-size;
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-perpetual__frame {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(calc(var(--z-space-20) * 3 + var(--z-space-10)), 1fr);
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+  }
+  .z-agenda__perpetual .z-perpetual__frame {
+    border-radius: 0;
+  }
+  .z-perpetual__sheet {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--z-space-6);
+    overflow-x: auto;
+    background: var(--z-reading-bg);
+  }
+  .z-perpetual__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: var(--z-space-1) 0;
+  }
+  .z-perpetual__corner,
+  .z-perpetual__rowhead {
+    inline-size: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Encabezado de fila solo para la tecnología de apoyo: los números se ven en el panel del año. */
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .z-perpetual__months {
+    vertical-align: bottom;
+    padding: 0 var(--z-space-1-5) var(--z-space-2);
+    text-align: start;
+    font-weight: inherit;
+  }
+  .z-perpetual__months[data-col-hl] {
+    background: color-mix(in srgb, var(--z-fg) 4%, transparent);
+    border-start-start-radius: var(--z-control-radius-sm);
+    border-start-end-radius: var(--z-control-radius-sm);
+  }
+  .z-perpetual__month {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-block-start: var(--z-space-2);
+  }
+  .z-perpetual__month b {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__month b i {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    border-radius: var(--z-radius-full);
+    background: var(--z-success-solid);
+    color: var(--z-fg-on-accent);
+    font-size: var(--z-text-fine);
+    font-style: normal;
+    font-weight: var(--z-weight-bold);
+  }
+  .z-perpetual__month[data-short] b i {
+    background: var(--z-event-solid-5);
+  }
+  .z-perpetual__month[data-current] b {
+    color: var(--z-accent-text);
+  }
+  .z-perpetual__month[data-current] b i {
+    background: var(--z-accent-solid);
+  }
+  .z-perpetual__month small {
+    white-space: nowrap;
+    padding-inline-start: calc(var(--z-space-4) + var(--z-space-1-5));
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-fine);
+  }
+  .z-perpetual__wd {
+    block-size: var(--z-space-10);
+    padding: 0;
+    border-block-end: 1px dashed var(--z-line-strong);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .z-perpetual__wd abbr {
+    text-decoration: none;
+  }
+  .z-perpetual__wd[data-rest] {
+    color: var(--z-danger-text);
+  }
+  .z-perpetual__wd[data-col-hl] {
+    background: color-mix(in srgb, var(--z-fg) 4%, transparent);
+  }
+  .z-perpetual__wd[data-row-hl] {
+    background: color-mix(in srgb, var(--z-accent) 9%, transparent);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__wd[data-hit] {
+    border-block-end-color: transparent;
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+  }
+  .z-perpetual__side {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    padding: var(--z-space-6);
+    background: var(--z-perpetual-side-bg);
+    color: var(--z-fg-on-accent);
+  }
+  .z-perpetual__year {
+    margin: 0;
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-lg);
+    font-weight: var(--z-weight-bold);
+    letter-spacing: var(--z-tracking-tight);
+    line-height: 1;
+  }
+  .z-perpetual__sub {
+    margin: calc(var(--z-space-3) * -1) 0 0;
+    font-size: var(--z-text-small);
+  }
+  .z-perpetual__dates {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: var(--z-space-10);
+  }
+  .z-perpetual__dates span {
+    display: grid;
+    place-items: center;
+    grid-row: var(--z-pp-row);
+    grid-column: var(--z-pp-col);
+    border-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__dates span[data-row-hl] {
+    background: color-mix(in srgb, var(--z-fg-on-accent) 14%, transparent);
+  }
+  .z-perpetual__dates span[data-hit] {
+    background: var(--z-fg-on-accent);
+    color: var(--z-perpetual-side-bg);
+  }
+  .z-perpetual__find {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    font-size: var(--z-text-small);
+  }
+  .z-perpetual__input {
+    min-block-size: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border: 1px solid color-mix(in srgb, var(--z-fg-on-accent) 40%, transparent);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+    font: inherit;
+    color-scheme: inherit;
+  }
+  .z-perpetual__input:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-fg-on-accent);
+    outline-offset: 1px;
+  }
+  .z-perpetual__result {
+    min-block-size: 1lh;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__how {
+    margin: auto 0 0;
+    font-size: var(--z-text-caption);
+    line-height: 1.5;
+  }
+  @container z-perpetual (max-width: 860px) {
+    .z-perpetual__frame {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-perpetual__side {
+      order: -1;
+    }
+  }
+  @container z-perpetual (max-width: 560px) {
+    .z-perpetual__sheet,
+    .z-perpetual__side {
+      padding: var(--z-space-3);
+    }
+    .z-perpetual__table {
+      border-spacing: 2px 0;
+    }
+    .z-perpetual__months {
+      padding-inline: 2px;
+    }
+    .z-perpetual__month b {
+      font-size: var(--z-text-small);
+    }
+    .z-perpetual__month b i {
+      display: none;
+    }
+    .z-perpetual__month small {
+      padding-inline-start: 0;
+    }
+    .z-perpetual__wd {
+      font-size: var(--z-text-fine);
+      letter-spacing: 0;
+    }
+    .z-perpetual__year {
+      font-size: var(--z-text-display-sm);
+    }
+  }
+  @media (forced-colors: active) {
+    .z-perpetual__wd[data-hit],
+    .z-perpetual__dates span[data-hit] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .z-perpetual__side {
+      border: 1px solid CanvasText;
+    }
+  }
+  @media print {
+    .z-perpetual__side {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .z-perpetual__find {
+      display: none;
+    }
+  }
+}

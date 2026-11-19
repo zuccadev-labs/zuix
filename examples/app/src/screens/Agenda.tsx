@@ -93,7 +93,7 @@ export const AGENDA_EVENTS: CalendarEvent[] = [
   at("2026-11-04", "18:30", "19:30", { title: "Yoga", calendarId: "health", rrule: "FREQ=WEEKLY" }),
 ];
 
-const VIEWS: AgendaView[] = ["day", "week", "workweek", "month", "agenda"];
+const VIEWS: AgendaView[] = ["day", "week", "workweek", "month", "agenda", "year", "perpetual", "timeline"];
 
 export function AgendaScreen({ bare = false }: { bare?: boolean }) {
   const params = new URLSearchParams(window.location.search);
