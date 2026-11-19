@@ -1770,3 +1770,23 @@
     }
   }
 }
+
+@layer zui.agenda {
+  /* Chevrón de continuación en las barras de varios días que siguen en otra semana. */
+  .z-event__cont {
+    display: inline-grid;
+    flex: none;
+    margin-inline: -2px 0;
+    color: var(--z-event-fg-muted);
+  }
+  .z-event__cont[data-edge="end"] {
+    margin-inline: auto -2px;
+  }
+  [dir="rtl"] .z-event__cont .z-icon,
+  [dir="rtl"] .z-event__cont svg {
+    scale: -1 1;
+  }
+  .z-event[data-selected] .z-event__cont {
+    color: inherit;
+  }
+}

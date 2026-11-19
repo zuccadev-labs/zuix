@@ -151,8 +151,23 @@
   .z-agenda__minical {
     inline-size: 100%;
   }
-  .z-agenda__minical .z-calendar__day[data-in-view]:not([data-selected]) {
+  /* Semana visible: una banda continua en las celdas (no un fondo por día), con los extremos redondeados. */
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view])::before {
+    content: "";
+    position: absolute;
+    inset-block: 1px;
+    inset-inline: 0;
     background: var(--z-calendar-range-bg);
+  }
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view]):not(.z-calendar__cell:has(> [data-in-view]) + .z-calendar__cell)::before {
+    inset-inline-start: 1px;
+    border-start-start-radius: var(--z-calendar-cell-radius);
+    border-end-start-radius: var(--z-calendar-cell-radius);
+  }
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view]):not(:has(+ .z-calendar__cell > [data-in-view]))::before {
+    inset-inline-end: 1px;
+    border-start-end-radius: var(--z-calendar-cell-radius);
+    border-end-end-radius: var(--z-calendar-cell-radius);
   }
   .z-agenda__minical .z-calendar__day[data-has-events]::after {
     content: "";
@@ -950,6 +965,10 @@
     display: grid;
     grid-template-columns: calc(var(--z-space-20) + var(--z-space-4)) minmax(0, 1fr);
     border-block-end: 1px solid var(--z-line);
+  }
+  /* Solo bajo el pliegue (guía defer-rendering-heavy-content): los primeros días se pintan sin esperar; el resto
+     omite su trabajo de pintado hasta acercarse, con un tamaño estimado que el navegador recuerda. */
+  .z-agendalist__day:nth-child(n + 5) {
     content-visibility: auto;
     contain-intrinsic-size: auto 160px;
   }

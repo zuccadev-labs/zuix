@@ -7,10 +7,19 @@ import { fragment } from "./shared";
 
 const keys = new WeakMap<Node, string>();
 
-const slotKey = (v: VSlot) =>
-  v.slot === "icon" ? `icon:${v.p.name}:${v.p.size}` : v.slot === "minical" ? "minical" : `calendar:${String(v.p.name ?? "")}`;
+/** Contenido propio de un hueco (`event`): texto o nodos de la aplicación. */
+export type SlotRenderers = Partial<Record<"event", (p: Record<string, unknown>) => Node | string | null | undefined>>;
 
-function create(v: VNode, doc: Document): Node {
+const slotKey = (v: VSlot) =>
+  v.slot === "icon"
+    ? `icon:${v.p.name}:${v.p.size}`
+    : v.slot === "minical"
+      ? "minical"
+      : v.slot === "event"
+        ? `event:${v.k ?? ""}`
+        : `calendar:${String(v.p.name ?? "")}`;
+
+function create(v: VNode, doc: Document, slots: SlotRenderers): Node {
   if (typeof v === "string") return doc.createTextNode(v);
   if (!v) return doc.createTextNode("");
   if ("slot" in v) {
@@ -20,6 +29,15 @@ function create(v: VNode, doc: Document): Node {
       keys.set(svg, slotKey(v));
       return svg;
     }
+    if (v.slot === "event") {
+      const span = doc.createElement("span");
+      span.className = "z-event__custom";
+      const content = slots.event?.(v.p);
+      if (typeof content === "string") span.textContent = content;
+      else if (content) span.append(content);
+      keys.set(span, slotKey(v));
+      return span;
+    }
     const cal = doc.createElement("div");
     cal.className = v.slot === "minical" ? "z-calendar z-agenda__minical" : `z-calendar${v.p.className ? ` ${v.p.className}` : ""}`;
     if (v.slot === "calendar") cal.dataset.slot = String(v.p.name ?? "");
@@ -28,14 +46,14 @@ function create(v: VNode, doc: Document): Node {
   }
   const el = doc.createElement(v.t);
   keys.set(el, v.k !== undefined ? `${v.t}:${v.k}` : v.t);
-  patchElement(el, v, true);
+  patchElement(el, v, true, slots);
   return el;
 }
 
 const keyOf = (v: VNode): string =>
   typeof v === "string" || !v ? "#text" : "slot" in v ? slotKey(v) : v.k !== undefined ? `${v.t}:${v.k}` : v.t;
 
-export function patchElement(el: Element, v: Exclude<VNode, string | null | undefined | false>, fresh = false): void {
+export function patchElement(el: Element, v: Exclude<VNode, string | null | undefined | false>, fresh = false, slots: SlotRenderers = {}): void {
   if ("slot" in v) return;
   const want = new Map<string, string>();
   for (const [k, value] of Object.entries(v.a ?? {})) {
@@ -55,10 +73,10 @@ export function patchElement(el: Element, v: Exclude<VNode, string | null | unde
       if (style.getPropertyValue(k) !== String(value)) style.setProperty(k, String(value));
     if (!v.s && !style.length) el.removeAttribute("style");
   }
-  patchChildren(el, v.c ?? []);
+  patchChildren(el, v.c ?? [], slots);
 }
 
-export function patchChildren(parent: Element, kids: VNode[]): void {
+export function patchChildren(parent: Element, kids: VNode[], slots: SlotRenderers = {}): void {
   const doc = parent.ownerDocument;
   const existing = [...parent.childNodes];
   kids.forEach((v, i) => {
@@ -67,10 +85,10 @@ export function patchChildren(parent: Element, kids: VNode[]): void {
     if (cur && (cur.nodeType === Node.TEXT_NODE ? key === "#text" : keys.get(cur) === key)) {
       if (cur.nodeType === Node.TEXT_NODE) {
         if (cur.textContent !== v) cur.textContent = v as string;
-      } else if (typeof v === "object" && v && !("slot" in v)) patchElement(cur as Element, v);
+      } else if (typeof v === "object" && v && !("slot" in v)) patchElement(cur as Element, v, false, slots);
       return;
     }
-    const node = create(v, doc);
+    const node = create(v, doc, slots);
     if (cur) parent.replaceChild(node, cur);
     else parent.append(node);
   });

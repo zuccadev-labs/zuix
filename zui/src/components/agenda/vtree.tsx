@@ -33,7 +33,7 @@ const noop = () => {};
 export type SlotRenderer = (p: Record<string, unknown>) => ReactNode;
 
 /** Árbol de core/vnode → elementos de React. Los eventos los atiende la interacción común en la raíz. */
-export function toReact(node: VNode, slots: Partial<Record<"minical" | "calendar", SlotRenderer>> = {}): ReactNode {
+export function toReact(node: VNode, slots: Partial<Record<"minical" | "calendar" | "event", SlotRenderer>> = {}): ReactNode {
   if (node === null || node === undefined || node === false) return null;
   if (typeof node === "string") return node;
   if ("slot" in node) {

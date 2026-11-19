@@ -13,7 +13,7 @@ export interface VEl {
 }
 /** Hueco que pinta cada vía a su manera: un icono, el minicalendario de la agenda o un Calendar. */
 export interface VSlot {
-  slot: "icon" | "minical" | "calendar";
+  slot: "icon" | "minical" | "calendar" | "event";
   p: Record<string, unknown>;
   k?: string;
 }
@@ -47,6 +47,7 @@ export function toHTML(
   if (typeof node === "string") return escapeText(node);
   if ("slot" in node) {
     if (node.slot === "icon") return iconHTML(String(node.p.name), Number(node.p.size));
+    if (node.slot === "event") return '<span class="z-event__custom"></span>';
     const cls = node.slot === "minical" ? "z-calendar z-agenda__minical" : `z-calendar${node.p.className ? ` ${node.p.className}` : ""}`;
     return `<div class="${cls}"${Object.entries((node.p.attrs ?? {}) as Record<string, VAttr>)
       .map(([k, v]) => attrHTML(k, v))

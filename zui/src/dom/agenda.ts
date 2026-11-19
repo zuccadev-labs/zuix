@@ -45,6 +45,12 @@ interface Entry {
   events: CalendarEvent[] | null;
   calendars: CalendarSource[] | null;
   labels: AgendaLabelsInput;
+  /** Contenido propio de cada evento y carga por rango (setAgendaOptions). */
+  renderEvent?: (detail: Record<string, unknown>) => Node | string | null | undefined;
+  loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+  loaded: CalendarEvent[];
+  range: string;
+  abort?: AbortController;
   detach: () => void;
   stopClock: () => void;
 }
@@ -69,7 +75,8 @@ function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
   const zones = d.timeZones?.split(/[\s,]+/).filter(Boolean);
   const now = d.now ? Date.parse(d.now) : undefined;
   return {
-    events: entry.events ?? json<CalendarEvent[]>(el, "[data-events]") ?? [],
+    events: [...(entry.events ?? json<CalendarEvent[]>(el, "[data-events]") ?? []), ...entry.loaded],
+    customEvents: Boolean(entry.renderEvent),
     calendars: entry.calendars ?? json<CalendarSource[]>(el, "[data-calendars]") ?? [],
     views: views.length ? views : [...AGENDA_VIEWS],
     timeZone: safeTimeZone(d.timeZone),
@@ -118,8 +125,32 @@ function render(el: HTMLElement, moveFocus = false): void {
   }
   el.classList.add("z-agenda");
   for (const s of scripts) s.remove();
-  patchChildren(el, tree.c ?? []);
+  patchChildren(el, tree.c ?? [], { event: entry.renderEvent });
   el.append(...scripts);
+  // Rango visible: z:rangechange y, con loadEvents, la carga de sus eventos (cancela la anterior).
+  const range = `${entry.state.view}|${model.days[0]}|${model.days[model.days.length - 1]}|${entry.state.timeZone}`;
+  if (range !== entry.range) {
+    entry.range = range;
+    const [view, from, to, timeZone] = range.split("|") as [string, string, string, string];
+    emit(el, "rangechange", { from, to, view });
+    if (entry.loadEvents) {
+      entry.abort?.abort();
+      const abort = new AbortController();
+      entry.abort = abort;
+      el.setAttribute("aria-busy", "true");
+      entry
+        .loadEvents({ from, to, timeZone }, abort.signal)
+        .then((list) => {
+          if (abort.signal.aborted) return;
+          entry.loaded = list;
+          render(el);
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!abort.signal.aborted) el.removeAttribute("aria-busy");
+        });
+    }
+  }
   // Minicalendario: el Calendar del modo DOM, con el día de la vista y la semana visible.
   const slot = findSlots(tree.c ?? [], "minical")[0]?.p;
   const cal = el.querySelector<HTMLElement>(".z-agenda__minical");
@@ -192,6 +223,8 @@ function mount(el: HTMLElement): void {
     events: null,
     calendars: null,
     labels: json<AgendaLabelsInput>(el, "[data-labels]") ?? {},
+    loaded: [],
+    range: "",
     detach: () => {},
     stopClock: () => {},
   };
@@ -230,6 +263,29 @@ export function setAgendaCalendars(el: HTMLElement, calendars: CalendarSource[])
   render(el);
 }
 
+/**
+ * Opciones con funciones de un EventCalendar del modo DOM: `renderEvent` (contenido visible de cada evento: texto o
+ * nodos) y `loadEvents` (carga de los eventos del rango visible). Emite `z:rangechange` al cambiar de rango.
+ */
+export function setAgendaOptions(
+  el: HTMLElement,
+  options: {
+    renderEvent?: (detail: Record<string, unknown>) => Node | string | null | undefined;
+    loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+  },
+): void {
+  const entry = entries.get(el);
+  if (!entry) return;
+  if ("renderEvent" in options) entry.renderEvent = options.renderEvent;
+  if ("loadEvents" in options) {
+    entry.loadEvents = options.loadEvents;
+    entry.range = "";
+  }
+  // El contenido propio cambia: los eventos se vuelven a crear.
+  for (const child of [...el.childNodes]) if (!(child instanceof HTMLScriptElement)) child.remove();
+  render(el);
+}
+
 /** Cambia la vista o el día de un EventCalendar del modo DOM. */
 export function setAgendaView(el: HTMLElement, options: { view?: AgendaView; date?: string }): void {
   const entry = entries.get(el);
@@ -251,6 +307,7 @@ export function destroyAgenda(el: HTMLElement): void {
   if (!entry) return;
   entry.detach();
   entry.stopClock();
+  entry.abort?.abort();
   entries.delete(el);
 }
 

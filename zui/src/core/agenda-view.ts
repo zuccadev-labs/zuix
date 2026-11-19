@@ -186,6 +186,8 @@ export interface AgendaConfig {
   labels: AgendaLabels;
   /** Vista de recursos (línea temporal del día): salas o personas. Sin ellos, una fila por calendario. */
   resources?: ResourceRow[];
+  /** El contenido visible de cada evento lo pinta la aplicación (renderEvent / setAgendaOptions). */
+  customEvents?: boolean;
   /** Año: densidad 0…3 de un día (por defecto, por número de eventos). */
   density?: (date: string, count: number) => number;
   /** Hoy (`YYYY-MM-DD`) y ahora (ms) fijos: servidor y pruebas. */
@@ -267,6 +269,8 @@ export function timeRangeText(start: number, end: number, locale?: string): stri
   }
 }
 const dayLong = (date: string, locale?: string) => fmt(locale, { weekday: "long", day: "numeric", month: "long" }).format(parse(date));
+/** Minutos de pared → `YYYY-MM-DDTHH:mm`. */
+const wallText = (min: number) => `${dateOf(min)}T${pad(Math.floor(minuteOfDay(min) / 60))}:${pad(minuteOfDay(min) % 60)}`;
 const fill = (template: string, values: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? `{${k}}`));
 
@@ -444,22 +448,45 @@ function eventButton(
           o.allDay ? null : timeText(bits.end, config.locale),
         )
       : null,
+    // Barra que sigue de la semana anterior o continúa en la siguiente: chevrón de continuación (forma, no solo el
+    // borde recto).
+    variant === "bar" && extra.cont?.[0] ? h("span", { class: "z-event__cont", "data-edge": "start", "aria-hidden": "true" }, icon("chevron-left", 12)) : null,
     task ? h("span", { class: "z-event__box", "aria-hidden": "true" }) : null,
-    h(
+    config.customEvents
+      ? {
+          slot: "event",
+          k: `${o.key}|${bits.start}|${bits.end}|${variant}`,
+          p: {
+            event: e,
+            occurrence: o.key,
+            seriesId: o.seriesId,
+            allDay: o.allDay,
+            start: wallText(bits.start),
+            end: wallText(bits.end),
+            variant,
+            time,
+          },
+        }
+      : null,
+    config.customEvents
+      ? h("span", { class: "z-sr-only" }, `, ${eventLabel(o, config, model.sources, bits.start, bits.end)}`)
+      : null,
+    config.customEvents ? null : h(
       "span",
       { class: "z-event__title" },
       extra.conflict ? h("span", { class: "z-timeline__warn", "aria-hidden": "true" }, icon("exclamation-triangle", 12)) : null,
       e.title,
       o.seriesId ? h("span", { class: "z-event__icon", "aria-hidden": "true" }, icon("arrow-path", 12)) : null,
     ),
-    meta.length && variant !== "bar" ? h("span", { class: "z-sr-only" }, ", ") : null,
-    meta.length && variant !== "bar"
+    meta.length && variant !== "bar" && !config.customEvents ? h("span", { class: "z-sr-only" }, ", ") : null,
+    meta.length && variant !== "bar" && !config.customEvents
       ? h("span", { class: "z-event__meta" }, ...meta.flatMap((m, i): VNode[] => (i ? [" · ", m] : [h("bdi", null, m)])))
       : null,
+    variant === "bar" && extra.cont?.[1] ? h("span", { class: "z-event__cont", "data-edge": "end", "aria-hidden": "true" }, icon("chevron-right", 12)) : null,
     editable && variant === "timed" ? h("span", { class: "z-event__resize", "data-edge": "end", "aria-hidden": "true" }) : null,
     // El nombre sale del contenido: lo visible (título, hora, lugar) y, oculto a la vista, el resto (día,
     // calendario, provisional, repite). Así el nombre siempre contiene el texto visible (WCAG 2.5.3).
-    h(
+    config.customEvents ? null : h(
       "span",
       { class: "z-sr-only" },
       restOfLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta),

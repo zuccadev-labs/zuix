@@ -7,6 +7,7 @@ export {
   type CalendarEvent,
   type CalendarSource,
   type EventCalendarProps,
+  type RenderEventDetail,
   type EventChange,
   type SlotSelection,
 } from "./EventCalendar";

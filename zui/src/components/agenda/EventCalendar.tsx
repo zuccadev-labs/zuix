@@ -1,6 +1,7 @@
 "use client";
 import {
   createElement,
+  type ReactNode,
   useEffect,
   useId,
   useLayoutEffect,
@@ -40,6 +41,20 @@ import { Calendar } from "../forms/Calendar";
 import { toReact } from "./vtree";
 
 export type { AgendaView, CalendarEvent, CalendarSource, EventChange, SlotSelection, AgendaLabels, AgendaLabelsInput, BusinessHours };
+
+/** Lo que recibe `renderEvent`: el evento, su ocurrencia, el intervalo mostrado y la variante de la vista. */
+export interface RenderEventDetail {
+  event: CalendarEvent;
+  occurrence: string;
+  seriesId?: string;
+  allDay: boolean;
+  /** Reloj de la zona de presentación, `YYYY-MM-DDTHH:mm`. */
+  start: string;
+  end: string;
+  variant: "timed" | "bar" | "dot" | "row" | "lane";
+  /** Hora ya formateada con el locale (vacía en todo el día). */
+  time: string;
+}
 
 export interface EventCalendarProps {
   /** Eventos (ISO; ver el modelo en el manifiesto). La agenda no los cambia: avisa con `onEventChange`. */
@@ -99,6 +114,12 @@ export interface EventCalendarProps {
   /** Vista de línea temporal (`"timeline"`): salas o personas; los eventos las ocupan con `resourceIds`. Sin ellas,
    *  una fila por calendario. */
   resources?: { id: string; title: string; meta?: string }[];
+  /** Contenido visible de cada evento (sustituye título, hora y lugar; el nombre accesible completo se mantiene). */
+  renderEvent?: (detail: RenderEventDetail) => ReactNode;
+  /** Carga los eventos del rango visible (se añaden a `events`); se vuelve a llamar al cambiar de rango. */
+  loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+  /** Rango visible (primer y último día) al cambiar de vista, de fecha o de zona. */
+  onRangeChange?: (range: { from: string; to: string; view: AgendaView }) => void;
   /** Vista de año: densidad 0…3 de un día (por defecto, por número de eventos: 1, 2–3, 4 o más). */
   density?: (date: string, count: number) => number;
   id?: string;
@@ -152,6 +173,9 @@ export function EventCalendar({
   labels,
   density,
   resources,
+  renderEvent,
+  loadEvents,
+  onRangeChange,
   id,
   className,
   ref,
@@ -162,8 +186,10 @@ export function EventCalendar({
   const setRoot = useMergedRef(root, ref);
   const zone = useMemo(() => safeTimeZone(timeZone), [timeZone]);
   const nowMs = now === undefined ? undefined : typeof now === "number" ? now : Date.parse(now);
+  // Eventos cargados por rango (loadEvents): se suman a `events`.
+  const [loaded, setLoaded] = useState<{ key: string; events: CalendarEvent[] } | null>(null);
   const config: AgendaConfig = {
-    events,
+    events: loaded?.events.length ? [...events, ...loaded.events] : events,
     calendars,
     views: views.length ? views : ALL_VIEWS,
     timeZone: zone,
@@ -188,6 +214,7 @@ export function EventCalendar({
     labels: mergeLabels(labels),
     density,
     resources,
+    customEvents: Boolean(renderEvent),
     today: valid(today) ? today : undefined,
     now: Number.isFinite(nowMs) ? nowMs : undefined,
   };
@@ -296,7 +323,33 @@ export function EventCalendar({
       modifiers={{ "in-view": p.inView as (d: string) => boolean, "has-events": p.hasEvents as (d: string) => boolean }}
     />
   );
-  const { className: _c, ...rest } = (toReact(tree, { minical }) as { props: Record<string, unknown> }).props;
+  const event = (p: Record<string, unknown>) => (
+    <span key={String(p.key)} className="z-event__custom">
+      {renderEvent?.(p as unknown as RenderEventDetail)}
+    </span>
+  );
+  // Rango visible: avisa y, con loadEvents, carga sus eventos (cancelando la carga anterior).
+  const rangeKey = `${state.current.view}|${built.days[0]}|${built.days[built.days.length - 1]}|${state.current.timeZone}`;
+  const rangeHandlers = useRef({ loadEvents, onRangeChange });
+  rangeHandlers.current = { loadEvents, onRangeChange };
+  useEffect(() => {
+    const [view, from, to, timeZone] = rangeKey.split("|") as [AgendaView, string, string, string];
+    rangeHandlers.current.onRangeChange?.({ from, to, view });
+    const load = rangeHandlers.current.loadEvents;
+    if (!load) return;
+    const abort = new AbortController();
+    if (root.current) root.current.setAttribute("aria-busy", "true");
+    load({ from, to, timeZone }, abort.signal)
+      .then((list) => {
+        if (!abort.signal.aborted) setLoaded({ key: rangeKey, events: list });
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!abort.signal.aborted) root.current?.removeAttribute("aria-busy");
+      });
+    return () => abort.abort();
+  }, [rangeKey]);
+  const { className: _c, ...rest } = (toReact(tree, { minical, event }) as { props: Record<string, unknown> }).props;
   // La raíz lleva la ref; lo demás es el árbol tal cual.
   return createElement("div", { ...rest, className: (tree.a?.class as string) ?? "z-agenda", ref: setRoot });
 }

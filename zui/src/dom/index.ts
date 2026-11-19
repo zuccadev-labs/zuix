@@ -69,7 +69,7 @@ registerIcons([xMark, exclamationTriangle, informationCircle]);
 
 export { place, type Placement };
 export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
-export { destroyAgenda, setAgendaCalendars, setAgendaEvents, setAgendaView, type CalendarEvent, type CalendarSource } from "./agenda";
+export { destroyAgenda, setAgendaCalendars, setAgendaEvents, setAgendaOptions, setAgendaView, type CalendarEvent, type CalendarSource } from "./agenda";
 export { destroyWidget, setWidgetProps } from "./widgets";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
