@@ -253,7 +253,7 @@ export function SegmentedField(props: InternalProps) {
   const onPaste = (event: ClipboardEvent<HTMLElement>) => {
     event.preventDefault();
     if (!editable) return;
-    const pasted = parsePasted(event.clipboardData.getData("text"), config);
+    const pasted = parsePasted(event.clipboardData?.getData("text") ?? "", config);
     if (pasted) commit({ values: { ...latest.current.state.values, ...pasted }, typed: null });
   };
 

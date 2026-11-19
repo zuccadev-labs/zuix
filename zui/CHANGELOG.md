@@ -33,6 +33,22 @@ radios y material de los tokens.
   `prefers-reduced-transparency`, también `.z-solid` pasa a superficie opaca.
 - Base: texto de interfaz con `leading-ui`; titulares con `text-wrap: balance` y párrafos con `pretty`.
 
+### Añadido
+
+- `DateField`: fecha (y hora, con `granularity`) que se teclea por segmentos, un spinbutton de APG por día, mes,
+  año, hora, minuto, segundo y AM/PM, en el orden y con los separadores del locale. Teclado completo (flechas con
+  ciclo, RePág/AvPág, Inicio/Fin, dígitos con avance, Retroceso, flechas laterales también en RTL, `a`/`p`), una
+  sola parada de Tab, pegado de una fecha entera (ISO o en el formato del locale), `min`/`max`, `minuteStep`,
+  `secondStep`, `hourCycle`, `placeholderValue`, `clearable`, `readOnly` y campo nativo oculto (`name`) con
+  validez propia. El 31 de febrero se acepta al teclear y se marca al salir. Valor ISO civil, sin zona.
+- `TimeField`: el mismo campo solo con hora; valor `HH:mm` o `HH:mm:ss` en 24 h, ciclos h11, h12, h23 y h24, y
+  `min`/`max` que cruzan la medianoche.
+- `TimePicker`: `TimeField` con un panel de columnas (horas, minutos, segundos, AM/PM; un listbox por columna) o
+  de franjas de `step` minutos filtrables al teclear; `isTimeDisabled`, `min`, `max` y botón «Now» opcional.
+- Modo sin framework de los tres (`.z-datefield`, `.z-timefield`, `.z-timepicker`) con `setDateFieldValue()`,
+  `setTimeFieldValue()` y `setTimePickerValue()` en `@zuccadev-labs/zuix-zui/dom`. Lógica compartida en
+  `core/segments` y `core/time`.
+
 
 ## [0.2.0] - 2026-11-18
 

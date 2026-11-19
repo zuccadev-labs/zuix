@@ -2769,6 +2769,216 @@ export const cases = [
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
   ...[auditReact, auditCss, layers].flatMap((build) => build(helpers())),
+
+  // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
+  {
+    name: "DateField: teclado de spinbutton, pegar fecha ISO y del locale, inválido al salir y RTL",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const seg = (id, type) => `${t(id)} [data-segment="${type}"]`;
+      const activeSegment = () => page.evaluate(() => document.activeElement?.getAttribute("data-segment"));
+      const texts = (id) => page.locator(`${t(id)} [data-segment]`).allTextContents();
+      await page.locator(t("df")).scrollIntoViewIfNeeded();
+      assert((await texts("df")).join("/") === "11/13/2026", `orden en-US: ${await texts("df")}`);
+      assert(
+        (await page.locator(`${t("df")} [role=group]`).getAttribute("aria-labelledby")) !== null,
+        "el grupo se nombra con la etiqueta del Field",
+      );
+      await page.click(seg("df", "month"));
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("df-value"), "2026-12-13");
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("df-value"), "2026-01-13", "ciclo 12 → 1");
+      await page.keyboard.type("02");
+      await poll(async () => (await activeSegment()) === "day", "dos cifras avanzan al día");
+      await page.keyboard.type("31");
+      await expectText(page, t("df-value"), "none", "31 de febrero: sin valor");
+      assert(!(await page.locator(`${t("df")} .z-datefield`).getAttribute("data-invalid")), "no se marca mientras se teclea");
+      await page.keyboard.press("Tab");
+      await expectAttr(page, `${t("df")} .z-datefield`, "data-invalid", "true", "inválido al salir");
+      await expectAttr(page, seg("df", "day"), "aria-invalid", "true");
+      await page.click(seg("df", "day"));
+      await page.keyboard.type("28");
+      await expectText(page, t("df-value"), "2026-02-28");
+      await poll(async () => (await page.locator(`${t("df")} .z-datefield`).getAttribute("data-invalid")) === null, "corregido: sin marca");
+      await page.keyboard.press("Backspace");
+      await expectText(page, t("df-value"), "none");
+      await page.keyboard.press("Backspace");
+      await poll(async () => (await activeSegment()) === "day", "Retroceso en un segmento vacío vuelve al anterior");
+      const paste = (selector, data) =>
+        page.locator(selector).evaluate((el, text) => {
+          el.focus();
+          const transfer = new DataTransfer();
+          transfer.setData("text", text);
+          el.dispatchEvent(new ClipboardEvent("paste", { clipboardData: transfer, bubbles: true, cancelable: true }));
+        }, data);
+      await paste(seg("df", "year"), "2030-01-02");
+      await expectText(page, t("df-value"), "2030-01-02", "pegar ISO");
+      await paste(seg("df", "day"), "12/25/2031");
+      await expectText(page, t("df-value"), "2031-12-25", "pegar en formato en-US");
+      await page.click(`${t("df")} .z-datefield__clear`);
+      await expectText(page, t("df-value"), "none", "borrar");
+      // Fecha y hora en 24 h, en-GB.
+      assert((await texts("dtf")).join(" ") === "dd mm yyyy –– ––", `en-GB con hora: ${await texts("dtf")}`);
+      await page.click(seg("dtf", "day"));
+      await page.keyboard.type("13112026");
+      await page.keyboard.type("2105");
+      await expectText(page, t("dtf-value"), "2026-11-13T21:05");
+      await shot(page, "forms-datefield");
+      // RTL: la flecha izquierda va al segmento siguiente, que queda a la izquierda.
+      await page.click(seg("rtl-df", "month"));
+      await page.keyboard.press("ArrowLeft");
+      await poll(async () => (await activeSegment()) === "day", "RTL: flecha izquierda al siguiente");
+      const [month, day] = [
+        await page.locator(seg("rtl-df", "month")).boundingBox(),
+        await page.locator(seg("rtl-df", "day")).boundingBox(),
+      ];
+      assert(day.x < month.x, "RTL: el día queda a la izquierda del mes");
+    },
+  },
+  {
+    name: "TimeField: 12 h y AM/PM, pasos de minuto y franja que cruza la medianoche",
+    async run({ open }) {
+      const page = await open("forms");
+      const seg = (id, type) => `${t(id)} [data-segment="${type}"]`;
+      await page.locator(t("tf")).scrollIntoViewIfNeeded();
+      await page.click(seg("tf", "minute"));
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("tf-value"), "07:45", "paso de 15 minutos");
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("tf-value"), "07:00", "ciclo 45 → 00");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.type("p");
+      await expectText(page, t("tf-value"), "19:00");
+      await page.click(seg("tf", "hour"));
+      await page.keyboard.type("12");
+      await expectText(page, t("tf-value"), "12:00", "12 PM es mediodía");
+      await page.click(seg("tf", "dayPeriod"));
+      await page.keyboard.type("a");
+      await expectText(page, t("tf-value"), "00:00", "12 AM es medianoche");
+      // 22:00–02:00.
+      await page.click(seg("night", "hour"));
+      await page.keyboard.type("2330");
+      await expectText(page, t("night-value"), "23:30");
+      await page.keyboard.press("Tab");
+      await sleep(100);
+      assert((await page.locator(`${t("night")} .z-datefield`).getAttribute("data-invalid")) === null, "23:30 está en la franja");
+      await page.click(seg("night", "hour"));
+      await page.keyboard.type("12");
+      await page.keyboard.press("Tab");
+      await expectAttr(page, `${t("night")} .z-datefield`, "data-invalid", "true", "12:30 queda fuera");
+      await page.click(seg("night", "hour"));
+      await page.keyboard.type("01");
+      await expectText(page, t("night-value"), "01:30");
+      await poll(
+        async () => (await page.locator(`${t("night")} .z-datefield`).getAttribute("data-invalid")) === null,
+        "01:30 vuelve a la franja",
+      );
+    },
+  },
+  {
+    name: "TimePicker: columnas y lista de franjas con teclado; Escape y foco",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const panel = ".z-timepicker__panel";
+      const activeOption = () =>
+        page.evaluate(() => {
+          const el = document.activeElement;
+          return el?.getAttribute("role") === "option"
+            ? `${el.closest("[data-column]")?.dataset.column ?? "list"}:${el.textContent}`
+            : null;
+        });
+      await page.locator(t("tp")).scrollIntoViewIfNeeded();
+      const trigger = `${t("tp")} .z-timepicker__trigger`;
+      await page.click(trigger);
+      await visible(page, panel);
+      await expectAttr(page, trigger, "aria-expanded", "true");
+      await poll(async () => (await activeOption()) === "hour:09", "foco inicial en la hora elegida");
+      await expectOnTop(page, panel);
+      await shot(page, "forms-timepicker-columns");
+      await page.keyboard.press("ArrowDown");
+      await expectText(page, t("tp-value"), "10:30", "la selección sigue al foco");
+      await page.keyboard.press("Tab");
+      await poll(async () => (await activeOption()) === "minute:30", "Tab a los minutos");
+      await page.keyboard.press("ArrowDown");
+      await expectText(page, t("tp-value"), "10:35", "minutos de 5 en 5");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowDown");
+      await expectText(page, t("tp-value"), "22:35", "PM");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await focusOn(page, trigger, "Intro cierra y el foco vuelve al botón");
+      // Alt+Flecha abajo desde un segmento; Escape cierra sin cambiar.
+      await page.click(`${t("tp")} [data-segment="minute"]`);
+      await page.keyboard.press("Alt+ArrowDown");
+      await visible(page, panel);
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+      await expectText(page, t("tp-value"), "22:35");
+      await focusOn(page, trigger, "Escape devuelve el foco al botón");
+      // Lista de franjas.
+      const listTrigger = `${t("tpl")} .z-timepicker__trigger`;
+      await page.click(listTrigger);
+      await visible(page, panel);
+      await expectCount(page, `${panel} [role=option]`, 17, "franjas de 09:00 a 17:00");
+      await expectAttr(page, `${panel} [data-value="12:00"]`, "aria-disabled", "true");
+      await poll(async () => (await activeOption()) === "list:09:00", "foco inicial en la primera franja");
+      await page.keyboard.press("ArrowDown");
+      await poll(async () => (await activeOption()) === "list:09:30", "flecha abajo");
+      await expectText(page, t("tpl-value"), "none", "mover no elige");
+      await page.keyboard.type("15");
+      await expectCount(page, `${panel} [role=option]`, 2, "el filtro deja 15:00 y 15:30");
+      await poll(async () => (await activeOption()) === "list:15:00", "el foco va a la primera que coincide");
+      await shot(page, "forms-timepicker-list");
+      await page.keyboard.press("Escape");
+      await expectCount(page, `${panel} [role=option]`, 17, "Escape limpia el filtro");
+      assert(await page.isVisible(panel), "el primer Escape no cierra");
+      await page.keyboard.type("1530");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("tpl-value"), "15:30");
+      await focusOn(page, listTrigger);
+    },
+  },
+  {
+    name: "DateField y TimeField en un formulario: name, required, envío inválido y form.reset()",
+    async run({ open }) {
+      const page = await open("forms");
+      const form = t("dt-form");
+      await page.locator(form).scrollIntoViewIfNeeded();
+      await page.click(t("dt-submit"));
+      await poll(
+        () =>
+          page.evaluate(
+            (s) => document.activeElement?.closest(s) !== null && document.activeElement?.getAttribute("data-segment") === "month",
+            form,
+          ),
+        "un envío con el campo obligatorio vacío lleva el foco a su primer segmento",
+      );
+      await expectText(page, t("dt-sent"), "none", "no se envía");
+      await expectAttr(page, `${form} .z-datefield:not(.z-timefield)`, "data-invalid", "true");
+      await page.keyboard.type("0315");
+      assert(
+        await page.evaluate(
+          (s) =>
+            document.querySelector(`${s} .z-datefield:not(.z-timefield) .z-native-input`).validationMessage === "Enter a complete date.",
+          form,
+        ),
+        "incompleto: mensaje propio",
+      );
+      await page.keyboard.type("2026");
+      await page.click(t("dt-submit"));
+      await expectText(page, t("dt-sent"), '{"date":"2026-03-15","time":"08:00"}');
+      await page.click(`${form} .z-timefield [data-segment="hour"]`);
+      await page.keyboard.press("ArrowUp");
+      await page.click(t("dt-reset"));
+      await expectText(page, t("dt-sent"), "reset");
+      await poll(
+        async () => (await page.locator(`${form} [data-segment]`).allTextContents()).join(" ") === "mm dd yyyy 08 00",
+        "form.reset() vuelve a los valores iniciales",
+      );
+    },
+  },
 ];
 
 /** Ayudantes compartidos con los archivos cases-audit-*.mjs. */
