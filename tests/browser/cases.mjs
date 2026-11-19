@@ -3298,9 +3298,9 @@ export const cases = [
       await expectText(page, t("timer-state"), "paused");
       await poll(async () => (await text(page, `${timer} .z-timer__status`)).startsWith("Paused"), "anuncio de pausa");
       await page.click(`${timer} .z-timer__toggle`);
-      await poll(async () => (await page.locator(t("timer-state")).innerText()) === "done", "la cuenta atrás termina", 6000);
+      await poll(async () => (await page.locator(t("timer-state")).textContent()) === "done", "la cuenta atrás termina", 6000);
       await poll(async () => (await text(page, `${timer} .z-timer__status`)) === "Time's up", "anuncio de fin");
-      assert((await page.locator(`${timer} [role="timer"]`).innerText()) === "00:00", "pantalla a cero");
+      assert((await page.locator(`${timer} [role="timer"]`).textContent()) === "00:00", "pantalla a cero");
     },
   },
 
