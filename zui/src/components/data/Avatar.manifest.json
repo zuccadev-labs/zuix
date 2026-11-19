@@ -45,7 +45,6 @@
   "tokens": [
     "radius-full",
     "accent-soft",
-    "accent",
     "weight-bold",
     "radius-sm",
     "fg-subtle",
@@ -54,7 +53,8 @@
     "danger",
     "warning",
     "surface-3",
-    "fg-muted"
+    "fg-muted",
+    "accent-text"
   ],
   "classes": ["z-avatar"],
   "a11y": "Con imagen, img con alt. Sin imagen, role=\"img\" con el nombre; si la imagen falla se muestran las iniciales.",
