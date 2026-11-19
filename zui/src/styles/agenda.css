@@ -460,8 +460,13 @@
     background: currentColor;
     opacity: 0.55;
   }
-  .z-event:is(:hover, :focus-visible, [data-selected], [data-dragging]) .z-event__resize {
+  .z-event:is(:focus-visible, [data-selected], [data-dragging]) .z-event__resize {
     display: block;
+  }
+  @media (hover: hover) {
+    .z-event:hover .z-event__resize {
+      display: block;
+    }
   }
 
   /* ---------- Rejilla de horas (día, semana, semana laboral) ---------- */

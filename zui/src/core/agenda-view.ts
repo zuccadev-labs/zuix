@@ -389,21 +389,25 @@ export function eventLabel(
   sources: Map<string, CalendarSource>,
   start = o.start,
   end = o.end,
+  visible: string[] = [],
 ): string {
   const { labels, locale } = config;
   const e = o.event;
-  const parts = [e.title];
+  // Primero lo que se ve, en su orden (el nombre contiene el texto visible: WCAG 2.5.3); luego el resto.
+  const parts = [e.title, ...visible];
+  const add = (text: string) => {
+    if (!parts.includes(text)) parts.push(text);
+  };
   if (o.allDay) {
     const last = dateOf(Math.max(start, end - 1));
-    parts.push(
-      dateOf(start) === last ? dayLong(dateOf(start), locale) : `${dayLong(dateOf(start), locale)} – ${dayLong(last, locale)}`,
-      labels.allDay,
-    );
+    add(dateOf(start) === last ? dayLong(dateOf(start), locale) : `${dayLong(dateOf(start), locale)} – ${dayLong(last, locale)}`);
+    add(labels.allDay);
   } else {
-    parts.push(dayLong(dateOf(start), locale), timeRangeText(start, end, locale));
-    if (o.ambiguous) parts.push(labels.repeatedHour);
+    add(timeRangeText(start, end, locale));
+    add(dayLong(dateOf(start), locale));
+    if (o.ambiguous) add(labels.repeatedHour);
   }
-  if (e.location) parts.push(e.location);
+  if (e.location) add(e.location);
   const source = sources.get(e.calendarId);
   if (source) parts.push(source.name);
   if (e.status === "tentative") parts.push(labels.tentative);
@@ -450,7 +454,7 @@ function eventButton(
       "data-cont-start": on(extra.cont?.[0]),
       "data-cont-end": on(extra.cont?.[1]),
       "data-editable": on(editable),
-      "aria-label": eventLabel(o, config, model.sources, bits.start, bits.end),
+      "aria-label": eventLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta),
       "aria-pressed": grabbed ? "true" : undefined,
       tabindex: model.focusId === id ? 0 : -1,
       s: extra.s,
@@ -542,8 +546,8 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel):
                 "data-today": on(d === model.today),
                 "data-weekend": on(weekend.has(parse(d).getUTCDay())),
                 "aria-current": d === model.today ? "date" : undefined,
-                "aria-label": dayLong(d, locale),
               },
+              h("span", { class: "z-sr-only" }, dayLong(d, locale)),
               h("span", { class: "z-timegrid__weekday", "aria-hidden": "true" }, fmt(locale, { weekday: "short" }).format(parse(d))),
               h("span", { class: "z-timegrid__day", "aria-hidden": "true" }, fmt(locale, { day: "numeric" }).format(parse(d))),
             ),
@@ -552,7 +556,7 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel):
         h(
           "div",
           { class: "z-timegrid__row z-timegrid__allday", role: "row", s: { "--z-tg-lanes": Math.max(1, row.lanes) } },
-          second ? h("div", { class: "z-timegrid__label", role: "rowheader" }) : null,
+          second ? h("div", { class: "z-timegrid__label", role: "rowheader" }, h("span", { class: "z-sr-only" }, secondLabel)) : null,
           h("div", { class: "z-timegrid__label", role: "rowheader" }, labels.allDay),
           h(
             "div",
@@ -636,7 +640,6 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel):
                 "data-today": on(d === model.today),
                 "data-weekend": on(weekend.has(wd)),
                 "data-drop": on(Boolean(state.drag && dateOf(state.drag.start) === d)),
-                "aria-label": dayLong(d, locale),
               },
               ...offRanges.map(([a, b]) => h("div", { key: `off${a}`, class: "z-timegrid__off", s: { "--z-ev-s": a, "--z-ev-d": b - a } })),
               ...[...daySegs]
@@ -838,7 +841,7 @@ function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel
       const headingId = `${uid}-day-${d}`;
       const nowAt = today ? items.findIndex((o) => o.start > model.now && !o.allDay) : -1;
       return h(
-        "section",
+        "div",
         { key: d, class: "z-agendalist__day", role: "listitem", "data-today": on(today), "aria-labelledby": headingId },
         h(
           "h3",
@@ -1180,14 +1183,16 @@ export function agendaTree(
         )
       : h(
           "span",
-          { class: "z-agenda__zone", "aria-label": `${labels.timeZone}: ${zoneCity(state.timeZone)} ${zone}` },
+          { class: "z-agenda__zone" },
           icon("globe-alt", 14),
-          h("span", { "aria-hidden": "true" }, `${zoneCity(state.timeZone)} `, h("span", { class: "z-agenda__zone-offset" }, zone)),
+          h("span", { class: "z-sr-only" }, `${labels.timeZone}: `),
+          `${zoneCity(state.timeZone)} `,
+          h("span", { class: "z-agenda__zone-offset" }, zone),
         ),
     config.views.length > 1
       ? h(
           "div",
-          { class: "z-segmented z-agenda__views", role: "group", "aria-label": labels.viewsLabel, "data-size": "sm" },
+          { class: "z-segmented z-agenda__views", role: "group", "aria-label": labels.viewsLabel },
           ...config.views.map((v) =>
             h(
               "button",
@@ -1196,7 +1201,7 @@ export function agendaTree(
                 type: "button",
                 class: "z-segmented__item",
                 "data-view": v,
-                "aria-pressed": v === state.view ? "true" : "false",
+                "aria-current": v === state.view ? "true" : undefined,
                 "data-state": v === state.view ? "on" : "off",
               },
               h("span", { class: "z-segmented__label" }, labels.views[v]),
