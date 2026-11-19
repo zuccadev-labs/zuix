@@ -7,6 +7,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-11-18
+
 ### Cambios incompatibles
 
 - La configuración se valida al cargar, en todos los comandos, y un campo desconocido es un error. Una

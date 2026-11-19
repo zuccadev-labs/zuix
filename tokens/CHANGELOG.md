@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-11-18
+
 Ningún token se elimina ni se renombra. Cambian valores para cumplir el contraste de WCAG 2.2 AA, que ahora
 se mide sobre los pares de color que las hojas usan de verdad. Qué revisar en una aplicación está en la
 [guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).
