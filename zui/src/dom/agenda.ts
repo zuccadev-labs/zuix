@@ -95,6 +95,7 @@ function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
     showWeekNumber: d.weekNumbers !== "false",
     createButton: yes(d.createButton),
     labels: mergeLabels(entry.labels),
+    resources: json(el, "[data-resources]") ?? undefined,
     today: valid(d.today) ? d.today : undefined,
     now: Number.isFinite(now) ? now : undefined,
   };

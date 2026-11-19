@@ -23,6 +23,7 @@ import {
 } from "./agenda";
 import { fromWall, toWall, zoneCity, zoneLabel } from "./zone";
 import { PERPETUAL_LABELS, perpetualTree, yearGrid, type PerpetualLabels } from "./agenda-year";
+import { resourceTimeline, type ResourceItem, type ResourceRow } from "./timeline-view";
 
 /* ---------- Árbol ---------- */
 
@@ -76,6 +77,9 @@ export interface AgendaLabels {
   creating: string;
   /** Prefijo de la hora repetida en un cambio de hora. */
   repeatedHour: string;
+  /** Vista de línea temporal: cabecera de la columna de recursos y marca de conflicto. */
+  resources: string;
+  overlaps: string;
   /** Textos del año perpetuo. */
   perpetual: PerpetualLabels;
 }
@@ -126,6 +130,8 @@ export const DEFAULT_LABELS: AgendaLabels = {
   emptyHint: "No events in this period.",
   creating: "New event · {when}",
   repeatedHour: "repeated hour",
+  resources: "Resources",
+  overlaps: "overlaps",
   perpetual: PERPETUAL_LABELS,
 };
 
@@ -178,6 +184,8 @@ export interface AgendaConfig {
   /** Botón «Nuevo evento» (lo atiende la aplicación con onQuickCreate / z-quick-create). */
   createButton: boolean;
   labels: AgendaLabels;
+  /** Vista de recursos (línea temporal del día): salas o personas. Sin ellos, una fila por calendario. */
+  resources?: ResourceRow[];
   /** Año: densidad 0…3 de un día (por defecto, por número de eventos). */
   density?: (date: string, count: number) => number;
   /** Hoy (`YYYY-MM-DD`) y ahora (ms) fijos: servidor y pruebas. */
@@ -385,8 +393,8 @@ export function eventLabel(
 
 function eventButton(
   bits: EventBits,
-  variant: "timed" | "bar" | "dot" | "row",
-  extra: { s?: Record<string, string | number>; cls?: string; cont?: [boolean, boolean] } = {},
+  variant: "timed" | "bar" | "dot" | "row" | "lane",
+  extra: { s?: Record<string, string | number>; cls?: string; cont?: [boolean, boolean]; half?: "top" | "bottom" | null; conflict?: boolean } = {},
 ) {
   const { o, config, model, state } = bits;
   const e = o.event;
@@ -421,6 +429,8 @@ function eventButton(
       "data-grabbed": on(grabbed),
       "data-cont-start": on(extra.cont?.[0]),
       "data-cont-end": on(extra.cont?.[1]),
+      "data-half": extra.half ?? undefined,
+      "data-conflict": on(extra.conflict),
       "data-editable": on(editable),
       "aria-pressed": grabbed ? "true" : undefined,
       tabindex: model.focusId === id ? 0 : -1,
@@ -438,6 +448,7 @@ function eventButton(
     h(
       "span",
       { class: "z-event__title" },
+      extra.conflict ? h("span", { class: "z-timeline__warn", "aria-hidden": "true" }, icon("exclamation-triangle", 12)) : null,
       e.title,
       o.seriesId ? h("span", { class: "z-event__icon", "aria-hidden": "true" }, icon("arrow-path", 12)) : null,
     ),
@@ -448,7 +459,12 @@ function eventButton(
     editable && variant === "timed" ? h("span", { class: "z-event__resize", "data-edge": "end", "aria-hidden": "true" }) : null,
     // El nombre sale del contenido: lo visible (título, hora, lugar) y, oculto a la vista, el resto (día,
     // calendario, provisional, repite). Así el nombre siempre contiene el texto visible (WCAG 2.5.3).
-    h("span", { class: "z-sr-only" }, restOfLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta)),
+    h(
+      "span",
+      { class: "z-sr-only" },
+      restOfLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta),
+      extra.conflict ? `, ${config.labels.overlaps}` : "",
+    ),
   );
 }
 
@@ -879,6 +895,48 @@ function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel
   );
 }
 
+/** Línea temporal del día: una fila por recurso (o por calendario) con sus eventos por hora. */
+function laneView(config: AgendaConfig, state: AgendaState, model: AgendaModel): VEl {
+  const byResource = Boolean(config.resources?.length);
+  const rows: ResourceRow[] = byResource
+    ? config.resources!
+    : config.calendars.filter((c) => !state.hidden.includes(c.id)).map((c) => ({ id: c.id, title: c.name }));
+  const base = dayStart(state.date);
+  const preview = state.drag ?? state.grabbed;
+  const items: ResourceItem[] = [];
+  const occ = new Map<string, Occurrence>();
+  for (const o of model.occurrences) {
+    if (o.allDay) continue;
+    const span = preview?.key === o.key ? preview : o;
+    for (const rid of byResource ? (o.event.resourceIds ?? []) : [o.event.calendarId]) {
+      const key = `${o.key}@${rid}`;
+      occ.set(key, o);
+      items.push({ key, resourceId: rid, start: span.start - base, end: span.end - base });
+    }
+  }
+  const nowMin = dateOf(model.now) === state.date ? minuteOfDay(model.now) : null;
+  return resourceTimeline({
+    uid: "agenda",
+    resources: rows,
+    items,
+    dayStart: config.dayStart,
+    dayEnd: config.dayEnd,
+    now: nowMin,
+    locale: config.locale,
+    labels: { resource: byResource ? config.labels.resources : config.labels.calendars, overlaps: config.labels.overlaps, newBooking: config.labels.newEvent },
+    renderItem: (it, layout) => {
+      const o = occ.get(it.key)!;
+      return eventButton({ o, config, model, state, start: base + it.start, end: base + it.end }, "lane", {
+        s: layout.s,
+        cls: `z-timeline__booking${layout.conflict ? " z-event--conflict" : ""}`,
+        half: layout.half,
+        conflict: layout.conflict,
+      });
+    },
+    ...(byResource ? {} : { renderLabel: (r: ResourceRow) => [h("span", { class: "z-timeline__dot", "data-color": config.calendars.find((c) => c.id === r.id)?.color ?? "1", "aria-hidden": "true" }), h("span", { class: "z-timeline__name" }, r.title)] }),
+  });
+}
+
 function yearView(config: AgendaConfig, state: AgendaState, model: AgendaModel): VEl {
   const counts = new Map<string, number>();
   const first = model.days[0]!;
@@ -1084,7 +1142,9 @@ export function agendaTree(
         ? agendaList(config, state, model, uid)
         : state.view === "year"
           ? yearView(config, state, model)
-          : state.view === "perpetual"
+          : state.view === "timeline"
+            ? laneView(config, state, model)
+            : state.view === "perpetual"
             ? h(
                 "div",
                 { class: "z-perpetual z-agenda__perpetual" },

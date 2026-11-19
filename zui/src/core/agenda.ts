@@ -35,6 +35,8 @@ export interface CalendarEvent {
   recurrenceId?: string;
   /** Serie a la que pertenece una excepción. */
   seriesId?: string;
+  /** Recursos (salas, personas) que ocupa: filas de la vista de recursos. */
+  resourceIds?: string[];
   editable?: boolean;
   startEditable?: boolean;
   durationEditable?: boolean;

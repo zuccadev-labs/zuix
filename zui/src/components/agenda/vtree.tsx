@@ -18,7 +18,15 @@ import { focusActive, type Widget, type WidgetHost } from "../../core/widget";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
 
-const ATTR: Record<string, string> = { class: "className", tabindex: "tabIndex", for: "htmlFor", readonly: "readOnly", colspan: "colSpan", rowspan: "rowSpan" };
+const ATTR: Record<string, string> = {
+  class: "className",
+  tabindex: "tabIndex",
+  for: "htmlFor",
+  readonly: "readOnly",
+  colspan: "colSpan",
+  rowspan: "rowSpan",
+  "marker-end": "markerEnd",
+};
 const noop = () => {};
 
 export type SlotRenderer = (p: Record<string, unknown>) => ReactNode;

@@ -96,6 +96,9 @@ export interface EventCalendarProps {
   today?: string;
   now?: number | string;
   labels?: AgendaLabelsInput;
+  /** Vista de línea temporal (`"timeline"`): salas o personas; los eventos las ocupan con `resourceIds`. Sin ellas,
+   *  una fila por calendario. */
+  resources?: { id: string; title: string; meta?: string }[];
   /** Vista de año: densidad 0…3 de un día (por defecto, por número de eventos: 1, 2–3, 4 o más). */
   density?: (date: string, count: number) => number;
   id?: string;
@@ -148,6 +151,7 @@ export function EventCalendar({
   now,
   labels,
   density,
+  resources,
   id,
   className,
   ref,
@@ -183,6 +187,7 @@ export function EventCalendar({
     createButton: Boolean(onQuickCreate),
     labels: mergeLabels(labels),
     density,
+    resources,
     today: valid(today) ? today : undefined,
     now: Number.isFinite(nowMs) ? nowMs : undefined,
   };

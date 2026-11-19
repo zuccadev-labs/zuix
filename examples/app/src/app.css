@@ -234,3 +234,14 @@ body {
   background: var(--z-canvas-gradient), var(--z-canvas);
   color: var(--z-fg);
 }
+
+/* Piezas de planificación de la agenda (oleada 2), una bajo otra. */
+.app-planning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-6);
+  min-inline-size: 0;
+}
+.app-planning__piece {
+  min-inline-size: 0;
+}

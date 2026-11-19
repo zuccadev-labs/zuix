@@ -201,6 +201,17 @@ function grabKey(root: HTMLElement, host: AgendaHost, event: KeyboardEvent, key:
     commit(root, host, o, g, g.mode === "move" ? "move" : "resize");
     return true;
   }
+  if (state.view === "timeline") {
+    // Línea temporal: ←→ mueven `snapDuration` (Mayús cambia el fin); ↑↓ no hacen nada.
+    const sign = key === "ArrowLeft" ? -1 : key === "ArrowRight" ? 1 : 0;
+    if (!sign || o.allDay) return false;
+    const next: DragPreview = event.shiftKey
+      ? { ...resizeSpan(g, "end", sign * config.snapDuration, config.snapDuration), key: g.key, mode: "resize-end" }
+      : { ...moveSpan(g, sign * config.snapDuration), key: g.key, mode: "move" };
+    host.update({ grabbed: next }, true);
+    announce(root, timeRangeText(next.start, next.end, config.locale));
+    return true;
+  }
   const month = state.view === "month";
   const step = o.allDay || month ? 1440 : config.snapDuration;
   let next: DragPreview | null = null;

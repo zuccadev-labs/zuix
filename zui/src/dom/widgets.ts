@@ -9,7 +9,9 @@ import { domEventName, focusActive, type Widget, type WidgetHost } from "../core
 import { setCalendarOptions, type CalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
 import { patchChildren } from "./vtree";
+import { freeBusyWidget } from "../core/freebusy-widget";
 import { perpetualWidget } from "../core/perpetual-widget";
+import { timelineWidget } from "../core/timeline-widget";
 
 // biome-ignore lint/suspicious/noExplicitAny: el registro guarda piezas de props, configuración y estado distintos.
 type AnyWidget = Widget<any, any, any>;
@@ -26,6 +28,8 @@ const registry: AnyWidget[] = [];
 let seq = 0;
 
 registerWidget(perpetualWidget);
+registerWidget(timelineWidget);
+registerWidget(freeBusyWidget);
 
 /** Registra una pieza para que `hydrate` la monte. */
 export function registerWidget(widget: AnyWidget): void {

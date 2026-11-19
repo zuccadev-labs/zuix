@@ -207,11 +207,7 @@
     "heatmap-1": "color-mix(in srgb, {heatmap-hue} 34%, {surface-solid})",
     "heatmap-2": "color-mix(in srgb, {heatmap-hue} 56%, {surface-solid})",
     "heatmap-3": "color-mix(in srgb, {heatmap-hue} 78%, {surface-solid})",
-    "heatmap-4": "{heatmap-hue}",
-    "timeline-col": "30px",
-    "timeline-row": "40px",
-    "timeline-label": "200px",
-    "slot-height": "{control-height-lg}"
+    "heatmap-4": "{heatmap-hue}"
   },
   "required": [
     "accent",
