@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 85,
+ "count": 87,
  "groups": {
   "actions": [
    "Button",
@@ -68,6 +68,7 @@
    "Form",
    "Input",
    "InputGroup",
+   "Listbox",
    "MonthPicker",
    "NativeSelect",
    "NumberInput",
@@ -79,6 +80,7 @@
    "Select",
    "Slider",
    "Switch",
+   "TagsInput",
    "Textarea",
    "TimeField",
    "TimePicker",
@@ -6815,6 +6817,145 @@
    "file": "zui/src/components/forms/InputGroup.manifest.json"
   },
   {
+   "name": "Listbox",
+   "group": "forms",
+   "description": "Lista de opciones siempre visible, de selección única o múltiple, con grupos, iconos, descripciones y búsqueda por letra.",
+   "import": "import { Listbox } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "listbox",
+   "props": [
+    {
+     "name": "options",
+     "type": "(ListboxOption | ListboxOptionGroup)[]",
+     "description": "{ value, label, description?, icon?, disabled? } o { label, options }."
+    },
+    {
+     "name": "selectionMode",
+     "type": "enum",
+     "values": [
+      "single",
+      "multiple"
+     ],
+     "default": "single"
+    },
+    {
+     "name": "value",
+     "type": "string | string[]"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value) => void"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible si no lo da un Field."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Cada opción elegida se envía con este nombre."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "emptyText",
+     "type": "string",
+     "default": "No options"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "selected",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "control-border",
+    "control-radius-lg",
+    "control-bg",
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "focus-width",
+    "surface-2",
+    "danger",
+    "space-1",
+    "space-1-5",
+    "fg-muted",
+    "text-body",
+    "text-small",
+    "weight-regular",
+    "leading-snug"
+   ],
+   "cssVars": [
+    {
+     "name": "--z-listbox-max-height",
+     "default": "18rem",
+     "description": "Alto máximo antes de desplazarse."
+    }
+   ],
+   "classes": [
+    "z-listbox",
+    "z-listbox__viewport",
+    "z-listbox__option",
+    "z-listbox__group",
+    "z-listbox__label",
+    "z-listbox__content",
+    "z-listbox__description",
+    "z-listbox__check"
+   ],
+   "a11y": "Patrón APG «listbox» con foco itinerante: una sola parada de Tab (la opción elegida o la primera). Flechas arriba y abajo (izquierda y derecha en horizontal, reflejadas en RTL) mueven el foco, Inicio y Fin van a los extremos y una letra busca por el principio de la etiqueta. En single la selección sigue al foco; en multiple (aria-multiselectable) Espacio o Intro marcan, Mayús+flecha extiende la selección y Ctrl/⌘+A marca o desmarca todas. Los grupos son role=\"group\" con su título. Dentro de un Field se nombra con su etiqueta.",
+   "examples": [
+    {
+     "title": "Única con iconos",
+     "code": "<Field label=\"Default view\">\n  <Listbox\n    defaultValue=\"board\"\n    options={[\n      { value: \"list\", label: \"List\", icon: \"list-bullet\" },\n      { value: \"board\", label: \"Board\", icon: \"view-columns\" },\n      { value: \"grid\", label: \"Grid\", icon: \"squares-2x2\" },\n      { value: \"table\", label: \"Table\", icon: \"table-cells\", disabled: true },\n    ]}\n  />\n</Field>"
+    },
+    {
+     "title": "Múltiple con grupos y descripción",
+     "code": "<Listbox\n  label=\"Regions\"\n  selectionMode=\"multiple\"\n  name=\"regions\"\n  defaultValue={[\"eu-west\", \"us-east\"]}\n  options={[\n    { label: \"Europe\", options: [\n      { value: \"eu-west\", label: \"EU West\", description: \"Dublin\" },\n      { value: \"eu-central\", label: \"EU Central\", description: \"Frankfurt\" },\n    ] },\n    { label: \"Americas\", options: [\n      { value: \"us-east\", label: \"US East\", description: \"Virginia\" },\n      { value: \"sa-east\", label: \"SA East\", description: \"São Paulo\" },\n    ] },\n  ]}\n/>"
+    },
+    {
+     "title": "Horizontal",
+     "code": "<Listbox\n  label=\"Size\"\n  orientation=\"horizontal\"\n  size=\"sm\"\n  defaultValue=\"m\"\n  options={[\n    { value: \"s\", label: \"Small\" },\n    { value: \"m\", label: \"Medium\" },\n    { value: \"l\", label: \"Large\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo; reutiliza la lista del popup de Select (mismas opciones, grupos y marca). Referencia de variantes: Listbox de Shark UI.",
+   "file": "zui/src/components/forms/Listbox.manifest.json"
+  },
+  {
    "name": "MonthPicker",
    "group": "forms",
    "description": "Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4). Valor YYYY-MM, como <input type=\"month\">; en rango, de mes a mes.",
@@ -8259,6 +8400,175 @@
    ],
    "origin": "Switch de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Switch.manifest.json"
+  },
+  {
+   "name": "TagsInput",
+   "group": "forms",
+   "description": "Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.",
+   "import": "import { TagsInput } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "value",
+     "type": "string[]"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[]",
+     "default": []
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string[]) => void"
+    },
+    {
+     "name": "onReject",
+     "type": "(rejected: { tag, reason }[]) => void",
+     "description": "Motivos: duplicate, max, length, invalid."
+    },
+    {
+     "name": "delimiters",
+     "type": "string[]",
+     "default": [
+      ","
+     ],
+     "description": "Caracteres que cierran una etiqueta además de Intro."
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "description": "Máximo de etiquetas; al llegar, el campo queda de solo lectura."
+    },
+    {
+     "name": "maxLength",
+     "type": "number",
+     "description": "Longitud máxima de cada etiqueta."
+    },
+    {
+     "name": "allowDuplicates",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "sanitize",
+     "type": "(tag: string) => string",
+     "description": "Por defecto quita los espacios de los extremos."
+    },
+    {
+     "name": "validate",
+     "type": "(tag: string, current: string[]) => boolean"
+    },
+    {
+     "name": "addOnBlur",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "addOnPaste",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Cada etiqueta se envía con este nombre."
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "removeLabel",
+     "type": "(tag: string) => string",
+     "default": "Remove {tag}"
+    },
+    {
+     "name": "addedMessage",
+     "type": "(tag: string) => string",
+     "default": "{tag} added"
+    },
+    {
+     "name": "removedMessage",
+     "type": "(tag: string) => string",
+     "default": "{tag} removed"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "invalid",
+    "disabled",
+    "full"
+   ],
+   "tokens": [
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "glass-border",
+    "glass-highlight",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-soft",
+    "accent-ring",
+    "focus-width",
+    "radius-xs",
+    "text-small",
+    "weight-medium"
+   ],
+   "classes": [
+    "z-tags",
+    "z-tags__tag",
+    "z-tags__text",
+    "z-tags__remove",
+    "z-tags__input",
+    "z-input"
+   ],
+   "a11y": "Una sola parada de Tab: el campo de texto, que toma etiqueta, ayuda y error del Field. Intro o un delimitador crean la etiqueta (respetando la composición de un IME); Retroceso con el campo vacío o la flecha izquierda al principio llevan a la última etiqueta, las flechas recorren las etiquetas, Retroceso o Supr quitan la enfocada y Escape vuelve al campo. Cada etiqueta tiene un botón con nombre («Remove design») para el puntero y los lectores. Altas y bajas se anuncian en una región status; lo que no entra (repetida, tope) se queda escrito y el campo se marca como no válido.",
+   "examples": [
+    {
+     "title": "Temas",
+     "code": "<Field label=\"Topics\" hint=\"Press Enter or comma to add.\">\n  <TagsInput name=\"topics\" defaultValue={[\"design\", \"tokens\"]} placeholder=\"Add a topic\" />\n</Field>"
+    },
+    {
+     "title": "Correos con tope y validación",
+     "code": "<Field label=\"Invite\" hint=\"Up to 4 emails. Paste a list to add several.\">\n  <TagsInput\n    max={4}\n    delimiters={[\",\", \" \", \";\"]}\n    validate={(tag) => /^[^@\\s]+@[^@\\s]+$/.test(tag)}\n    defaultValue={[\"ana@example.com\"]}\n    placeholder=\"name@example.com\"\n  />\n</Field>"
+    },
+    {
+     "title": "Pequeño, solo lectura",
+     "code": "<TagsInput aria-label=\"Labels\" size=\"sm\" readOnly defaultValue={[\"frontend\", \"a11y\", \"glass\"]} />"
+    }
+   ],
+   "origin": "Nuevo, con lógica propia en core/tags. Referencia de variantes: Tags Input de Shark UI (delimitador, pegar, máximo, longitud, validación, al salir).",
+   "file": "zui/src/components/forms/TagsInput.manifest.json"
   },
   {
    "name": "Textarea",

@@ -60,6 +60,8 @@ export {
   setTimeFieldValue,
   setTimePickerValue,
   setNumberInputValue,
+  setListboxValue,
+  setTagsValue,
   type CalendarOptions,
   type ComboboxOption,
   type DateRange,

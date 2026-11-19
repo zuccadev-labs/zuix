@@ -1004,6 +1004,56 @@ pnpm dev</code>
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Listbox" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Listbox</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-field" data-layout="stacked">
+  <label class="z-field__label" id="_R_0_-label" for="_R_0_-control">Default view</label>
+  <div class="z-field__body">
+    <div class="z-listbox" data-inline="" data-size="md" data-orientation="vertical">
+      <div id="_R_0_-control" role="listbox" class="z-listbox__viewport" aria-labelledby="_R_0_-label" aria-orientation="vertical">
+        <div id="_R_0_-control-0" role="option" class="z-listbox__option" tabindex="-1" data-value="list" data-label="List" data-state="unchecked" aria-selected="false">
+          <span class="z-listbox__icon">
+            <z-icon name="list-bullet" size="16"></z-icon>
+          </span>
+          <span class="z-listbox__text">List</span>
+          <span class="z-listbox__check">
+            <z-icon name="check" size="16"></z-icon>
+          </span>
+        </div>
+        <div id="_R_0_-control-1" role="option" class="z-listbox__option" tabindex="0" data-value="board" data-label="Board" data-state="checked" aria-selected="true">
+          <span class="z-listbox__icon">
+            <z-icon name="view-columns" size="16"></z-icon>
+          </span>
+          <span class="z-listbox__text">Board</span>
+          <span class="z-listbox__check">
+            <z-icon name="check" size="16"></z-icon>
+          </span>
+        </div>
+        <div id="_R_0_-control-2" role="option" class="z-listbox__option" tabindex="-1" data-value="grid" data-label="Grid" data-state="unchecked" aria-selected="false">
+          <span class="z-listbox__icon">
+            <z-icon name="squares-2x2" size="16"></z-icon>
+          </span>
+          <span class="z-listbox__text">Grid</span>
+          <span class="z-listbox__check">
+            <z-icon name="check" size="16"></z-icon>
+          </span>
+        </div>
+        <div id="_R_0_-control-3" role="option" class="z-listbox__option" tabindex="-1" data-value="table" data-label="Table" data-state="unchecked" data-disabled="" aria-selected="false" aria-disabled="true">
+          <span class="z-listbox__icon">
+            <z-icon name="table-cells" size="16"></z-icon>
+          </span>
+          <span class="z-listbox__text">Table</span>
+          <span class="z-listbox__check">
+            <z-icon name="check" size="16"></z-icon>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="MonthPicker" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">MonthPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -1227,6 +1277,35 @@ pnpm dev</code>
   <input type="checkbox" class="z-native-input" aria-hidden="true" tabindex="-1" value="on"/>
   <span class="z-switch__label">Automatic updates</span>
 </label>
+  </div>
+</section>
+<section class="z-card demo" data-component="TagsInput" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TagsInput</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-field" data-layout="stacked">
+  <label class="z-field__label" id="_R_0_-label" for="_R_0_-control">Topics</label>
+  <div class="z-field__body">
+    <div class="z-input z-tags" data-size="md" data-delimiters="," data-name="topics">
+      <span class="z-tags__tag" tabindex="-1" data-value="design">
+        <span class="z-tags__text">design</span>
+        <button type="button" class="z-tags__remove" tabindex="-1" aria-label="Remove design" title="Remove design">
+          <z-icon name="x-mark" size="14"></z-icon>
+        </button>
+      </span>
+      <span class="z-tags__tag" tabindex="-1" data-value="tokens">
+        <span class="z-tags__text">tokens</span>
+        <button type="button" class="z-tags__remove" tabindex="-1" aria-label="Remove tokens" title="Remove tokens">
+          <z-icon name="x-mark" size="14"></z-icon>
+        </button>
+      </span>
+      <input id="_R_0_-control" aria-describedby="_R_0_-hint" class="z-input__control z-tags__input" type="text" autoComplete="off" enterKeyHint="enter" placeholder="Add a topic" value=""/>
+      <span class="z-sr-only" role="status"></span>
+      <input type="hidden" name="topics" value="design"/>
+      <input type="hidden" name="topics" value="tokens"/>
+    </div>
+    <p class="z-field__hint" id="_R_0_-hint">Press Enter or comma to add.</p>
+  </div>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="Textarea" data-behavior="none">

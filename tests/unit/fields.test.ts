@@ -5,6 +5,8 @@ import fc from "fast-check";
 import { announceText, copyText } from "../../zui/src/core/clipboard.ts";
 import { clampNumber, decimalsOf, formatNumber, numberSymbols, parseNumber, stepNumber } from "../../zui/src/core/number.ts";
 import { passwordStrength } from "../../zui/src/core/password.ts";
+import { addTags, splitTags } from "../../zui/src/core/tags.ts";
+import { messageAttribute, VALIDITY_KEYS, validityKey, validityMessage } from "../../zui/src/core/validity.ts";
 
 describe("números", () => {
   test("separadores del locale", () => {
@@ -127,5 +129,44 @@ describe("portapapeles", () => {
     assert.notEqual(a, b);
     assert.equal(b.trim(), "Copied");
     assert.equal(announceText("Copy failed"), "Copy failed");
+  });
+});
+
+describe("etiquetas", () => {
+  test("partir por delimitadores y saltos de línea", () => {
+    assert.deepEqual(splitTags("a, b,,c"), ["a", " b", "c"]);
+    assert.deepEqual(splitTags("x;y z", [";", " "]), ["x", "y", "z"]);
+    assert.deepEqual(splitTags("uno\ndos\tres"), ["uno", "dos", "res"]);
+    assert.deepEqual(splitTags("a.b", ["."]), ["a", "b"], "delimitador con significado en una expresión regular");
+  });
+  test("reglas", () => {
+    assert.deepEqual(addTags(["a"], [" b ", "A", "", "c"]).value, ["a", "b", "c"]);
+    const r = addTags(["a"], ["b", "c", "d"], { max: 2 });
+    assert.deepEqual(r.value, ["a", "b"]);
+    assert.deepEqual(
+      r.rejected.map((x) => x.reason),
+      ["max", "max"],
+    );
+    assert.equal(addTags([], ["toolong"], { maxLength: 3 }).rejected[0]?.reason, "length");
+    assert.equal(addTags([], ["x"], { validate: () => false }).rejected[0]?.reason, "invalid");
+    assert.deepEqual(addTags(["a"], ["a"], { allowDuplicates: true }).value, ["a", "a"]);
+    assert.deepEqual(addTags([], ["B"], { sanitize: (t) => t.toLowerCase() }).added, ["b"]);
+    assert.equal(addTags([], ["  "]).rejected[0]?.reason, "empty");
+  });
+});
+
+describe("validez", () => {
+  test("primer motivo y mensaje", () => {
+    assert.equal(validityKey({ valid: true }), null);
+    assert.equal(validityKey({ valid: false, typeMismatch: true, valueMissing: true }), "valueMissing");
+    assert.equal(validityKey({ valid: false }), null);
+    assert.equal(validityMessage({ valid: false, tooShort: true }, { tooShort: "Short" }), "Short");
+    assert.equal(validityMessage({ valid: false, tooShort: true }, {}, "Browser says"), "Browser says");
+    assert.equal(validityMessage({ valid: false, tooShort: true }), "Invalid value");
+    assert.equal(validityMessage({ valid: true }), null);
+  });
+  test("atributo del modo DOM", () => {
+    assert.equal(messageAttribute("valueMissing"), "data-msg-value-missing");
+    assert.equal(VALIDITY_KEYS.length, 10);
   });
 });
