@@ -5,6 +5,8 @@ import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
 import { chevronUpDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-up-down";
+import { minus } from "@zuccadev-labs/zuix-zicon/icons/minus";
+import { plus } from "@zuccadev-labs/zuix-zicon/icons/plus";
 import {
   anchorOf,
   buildCalendar,
@@ -17,8 +19,10 @@ import {
   initialMonth,
   navStep,
   parseValueText,
+  rangeNights,
   readSelection,
   revealMonth,
+  stepRange,
   selectionText,
   selectionValue,
   shiftMonth,
@@ -59,7 +63,7 @@ import { all, emit, flag, hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup
 import { closeDialog, openDialog } from "./index";
 import { logicalKey, setMarkup, type Listen } from "./shared";
 
-registerIcons([chevronLeft, chevronRight, chevronUpDown]);
+registerIcons([chevronLeft, chevronRight, chevronUpDown, minus, plus]);
 
 export type { DateRange };
 
@@ -78,6 +82,8 @@ export interface CalendarOptions {
   dayContent?: (date: string) => string | null | undefined;
   /** Texto que se añade al nombre accesible del día. */
   dayDescription?: (date: string) => string | null | undefined;
+  /** Estancia: días en que se puede terminar un rango pero no empezarlo. */
+  isDateCheckoutOnly?: (date: string) => boolean;
 }
 
 /* ---------- Calendar ---------- */
@@ -139,6 +145,8 @@ function config(cal: HTMLElement) {
   const offDays = list(data.disabledWeekdays).map(Number);
   const offDates = new Set(list(data.disabledDates));
   const reserved = new Set(list(data.unavailableDates));
+  const checkout = new Set(list(data.checkoutOnlyDates));
+  const nights = data.rangeUnit === "nights";
   const rules: CalendarRules = {
     min: data.min ?? null,
     max: data.max ?? null,
@@ -148,8 +156,11 @@ function config(cal: HTMLElement) {
     minRange: num(data.minRange),
     maxRange: num(data.maxRange),
     rangeCrossesUnavailable: data.rangeCrosses === "allow" ? "allow" : "block",
-    allowSingleDayRange: data.singleDayRange !== "false",
+    allowSingleDayRange: nights ? false : data.singleDayRange !== "false",
     maxSelected: num(data.maxSelected),
+    isDateCheckoutOnly:
+      checkout.size || hook.isDateCheckoutOnly ? (date) => checkout.has(date) || Boolean(hook.isDateCheckoutOnly?.(date)) : undefined,
+    nights,
   };
   const today = valid(data.today) ? data.today : todayISO();
   const n = Math.min(12, Math.max(1, Math.floor(num(data.months) ?? 1)));
@@ -183,7 +194,21 @@ function config(cal: HTMLElement) {
       presets: data.presetsLabel ?? "Quick pick",
       apply: data.applyLabel ?? "Apply",
       cancel: data.cancelLabel ?? "Cancel",
+      checkoutOnly: data.checkoutOnlyLabel ?? "check-out only",
+      minimum: data.minRangeLabel ?? (nights ? "{n}-night minimum" : "{n}-day minimum"),
+      length: data.lengthLabel ?? (nights ? "{n} nights" : "{n} days"),
+      lengthOne: data.lengthOneLabel ?? (nights ? "1 night" : "1 day"),
+      decrease: data.decreaseLabel ?? (nights ? "One night less" : "One day less"),
+      increase: data.increaseLabel ?? (nights ? "One night more" : "One day more"),
+      flexGroup: data.flexibilityGroupLabel ?? "Date flexibility",
+      exact: data.exactDatesLabel ?? "Exact dates",
+      flex: data.flexibilityLabel ?? "± {n} days",
+      flexOne: data.flexibilityOneLabel ?? "± 1 day",
     },
+    nights,
+    stepper: yes(data.lengthStepper),
+    flexOptions: data.flexibilityOptions !== undefined ? list(data.flexibilityOptions).map(Number).filter(Number.isFinite) : data.flexibility !== undefined ? [0, 1, 2, 3, 7] : [],
+    flexibility: num(data.flexibility) ?? 0,
   };
 }
 type Config = ReturnType<typeof config>;
@@ -226,7 +251,14 @@ function inputOf(cal: HTMLElement, c: Config): CalendarInput {
     preview: state.preview,
     locale: c.locale,
     weekdayFormat: data.weekdayFormat === "narrow" || data.weekdayFormat === "long" ? data.weekdayFormat : "short",
-    labels: { unavailable: c.labels.unavailable, week: c.labels.week, chooseMonth: c.labels.chooseMonth, chooseYear: c.labels.chooseYear },
+    labels: {
+      unavailable: c.labels.unavailable,
+      week: c.labels.week,
+      chooseMonth: c.labels.chooseMonth,
+      chooseYear: c.labels.chooseYear,
+      checkoutOnly: c.labels.checkoutOnly,
+      minimum: c.labels.minimum,
+    },
     modifiers: c.hook.modifiers,
     dayDescription: c.hook.dayDescription,
   };
@@ -254,7 +286,7 @@ function dayMarkup(cell: DayCell, c: Config): string {
     .filter((m) => MODIFIER.test(m))
     .map((m) => ` data-${m}=""`)
     .join("");
-  return `<td class="z-calendar__cell" aria-selected="${cell.inSelection}"${attr("data-range", Boolean(cell.range), cell.range)}${attr("data-preview", cell.preview)}${attr("data-row-start", cell.rowStart)}${attr("data-row-end", cell.rowEnd)}><button type="button" class="z-calendar__day" data-date="${cell.date}"${attr("data-selected", cell.selected)}${attr("data-today", cell.today)}${attr("data-outside", cell.outside)}${attr("data-unavailable", cell.unavailable)}${attr("data-weekend", cell.weekend)}${mods}${attr("aria-disabled", cell.disabled, "true")}${attr("aria-current", cell.today, "date")} aria-label="${esc(cell.ariaLabel)}" tabindex="${cell.tabbable ? 0 : -1}">${esc(cell.label)}</button>${c.hook.dayContent?.(cell.date) ? `<span class="z-calendar__day-content" data-for="${cell.date}" aria-hidden="true"></span>` : ""}</td>`;
+  return `<td class="z-calendar__cell" aria-selected="${cell.inSelection}"${attr("data-range", Boolean(cell.range), cell.range)}${attr("data-preview", cell.preview)}${attr("data-row-start", cell.rowStart)}${attr("data-row-end", cell.rowEnd)}><button type="button" class="z-calendar__day" data-date="${cell.date}"${attr("data-selected", cell.selected)}${attr("data-today", cell.today)}${attr("data-outside", cell.outside)}${attr("data-unavailable", cell.unavailable)}${attr("data-weekend", cell.weekend)}${attr("data-checkout-only", cell.checkoutOnly)}${attr("data-below-minimum", cell.belowMinimum)}${mods}${attr("aria-disabled", cell.disabled, "true")}${attr("aria-current", cell.today, "date")} aria-label="${esc(cell.ariaLabel)}" tabindex="${cell.tabbable ? 0 : -1}">${esc(cell.label)}</button>${c.hook.dayContent?.(cell.date) ? `<span class="z-calendar__day-content" data-for="${cell.date}" aria-hidden="true"></span>` : ""}</td>`;
 }
 
 function unitMarkup(cell: UnitCell): string {
@@ -320,6 +352,14 @@ function markup(cal: HTMLElement, model: CalendarModel, c: Config, input: Calend
     html += "</tbody></table></div>";
   }
   html += "</div>";
+  if (c.mode === "range" && c.flexOptions.length) {
+    html += `<div class="z-calendar__flex" role="group" aria-label="${esc(c.labels.flexGroup)}">`;
+    for (const days of c.flexOptions)
+      html += `<button type="button" class="z-calendar__flex-chip" data-flexibility-option="${days}" aria-pressed="${days === c.flexibility}">${esc(days === 0 ? c.labels.exact : days === 1 ? c.labels.flexOne : c.labels.flex.replace("{n}", String(days)))}</button>`;
+    html += "</div>";
+  }
+  if (c.mode === "range" && c.stepper)
+    html += `<div class="z-calendar__stepper"><button type="button" class="z-calendar__stepper-btn" data-step="-1" aria-label="${esc(c.labels.decrease)}">${iconSvg("minus", { size: 16 })}</button><output class="z-calendar__length" aria-live="polite"></output><button type="button" class="z-calendar__stepper-btn" data-step="1" aria-label="${esc(c.labels.increase)}">${iconSvg("plus", { size: 16 })}</button></div>`;
   const todayButton = yes(cal.dataset.todayButton);
   const confirm = yes(cal.dataset.confirm);
   if (todayButton || confirm) {
@@ -358,6 +398,15 @@ function patch(cal: HTMLElement, model: CalendarModel, c: Config): void {
   });
   const summary = cal.querySelector<HTMLElement>(".z-calendar__summary");
   if (summary) summary.textContent = summaryText(c);
+  const length = cal.querySelector<HTMLElement>(".z-calendar__length");
+  if (length) {
+    const n = rangeNights(c.selection.range);
+    const value = n === null ? null : n + (c.nights ? 0 : 1);
+    const text = value === null ? "" : value === 1 ? c.labels.lengthOne : c.labels.length.replace("{n}", String(value));
+    if (length.textContent !== text) length.textContent = text;
+    for (const button of cal.querySelectorAll<HTMLElement>(".z-calendar__stepper-btn"))
+      flag(button, "aria-disabled", !stepRange(c.selection.range, Number(button.dataset.step), c.rules), "true");
+  }
   const cells = [...cal.querySelectorAll<HTMLElement>(".z-calendar__months .z-calendar__cell")];
   if (model.view === "day") {
     const flat = model.months.flatMap((m) => m.weeks.flatMap((w) => w.cells));
@@ -374,7 +423,18 @@ function patch(cal: HTMLElement, model: CalendarModel, c: Config): void {
       flag(button, "data-today", cell.today);
       flag(button, "aria-current", cell.today, "date");
       flag(button, "aria-disabled", cell.disabled, "true");
+      flag(button, "data-below-minimum", cell.belowMinimum);
+      if (button.getAttribute("aria-label") !== cell.ariaLabel) button.setAttribute("aria-label", cell.ariaLabel);
       button.tabIndex = cell.tabbable ? 0 : -1;
+      // Aviso visible del mínimo en el día bajo el puntero o el foco.
+      const hint = td.querySelector<HTMLElement>(".z-calendar__hint");
+      if (cell.hint && !hint) {
+        const span = document.createElement("span");
+        span.className = "z-calendar__hint";
+        span.setAttribute("aria-hidden", "true");
+        span.textContent = cell.hint;
+        td.append(span);
+      } else if (!cell.hint && hint) hint.remove();
     });
   } else {
     model.units.flat().forEach((cell, i) => {
@@ -640,6 +700,21 @@ const FORWARDED = [
   "chooseMonthLabel",
   "chooseYearLabel",
   "legend",
+  "rangeUnit",
+  "checkoutOnlyDates",
+  "checkoutOnlyLabel",
+  "minRangeLabel",
+  "lengthStepper",
+  "lengthLabel",
+  "lengthOneLabel",
+  "decreaseLabel",
+  "increaseLabel",
+  "flexibility",
+  "flexibilityOptions",
+  "flexibilityGroupLabel",
+  "exactDatesLabel",
+  "flexibilityLabel",
+  "flexibilityOneLabel",
   "confirm",
   "applyLabel",
   "cancelLabel",
@@ -940,6 +1015,17 @@ function onClick(event: MouseEvent): void {
       }
       commit(cal, value, c);
     } else if (target.closest(".z-calendar__today")) goToday(cal);
+    else if (target.closest<HTMLElement>(".z-calendar__flex-chip")) {
+      const days = Number(target.closest<HTMLElement>(".z-calendar__flex-chip")!.dataset.flexibilityOption);
+      if (days === c.flexibility) return;
+      cal.dataset.flexibility = String(days);
+      render(cal);
+      cal.querySelector<HTMLElement>(`.z-calendar__flex-chip[data-flexibility-option="${days}"]`)?.focus();
+      emit(cal, "flexibilitychange", { flexibility: days });
+    } else if (target.closest<HTMLElement>(".z-calendar__stepper-btn")) {
+      const next = stepRange(c.selection.range, Number(target.closest<HTMLElement>(".z-calendar__stepper-btn")!.dataset.step), c.rules);
+      if (next) commit(cal, next, c);
+    }
     else if (target.closest(".z-calendar__apply, .z-calendar__cancel")) {
       const picker = pickerOf(cal);
       if (!picker?.matches(PICKER)) return;

@@ -124,6 +124,10 @@ export interface CalendarRules {
   rangeCrossesUnavailable?: "block" | "allow" | undefined;
   allowSingleDayRange?: boolean | undefined;
   maxSelected?: number | undefined;
+  /** Estancia: se puede terminar el rango ese día, no empezarlo (p. ej. el primer día ya reservado). */
+  isDateCheckoutOnly?: ((date: string) => boolean) | undefined;
+  /** `minRange` y `maxRange` cuentan noches (diferencia de días) en vez de días; sin rangos de un solo día. */
+  nights?: boolean | undefined;
 }
 
 /** Límites normalizados a días (`min > max` ignora `max`). */
@@ -170,10 +174,39 @@ export function rangeWindow(from: string, rules: CalendarRules): { lo: string; h
 
 /** Verdadero si `date` no puede cerrar el rango que empieza en `from` (fuera de la ventana o del mínimo de días). */
 export function rangeBlocked(from: string, date: string, rules: CalendarRules, window = rangeWindow(from, rules)): boolean {
-  if (date < window.lo || date > window.hi) return true;
-  const days = Math.abs(diffDays(from, date)) + 1;
-  if (rules.minRange && days < rules.minRange && date !== from) return true;
+  if (date < window.lo || date > window.hi) {
+    // Estancia: el día de solo salida justo tras la ventana sí cierra el rango (se sale ese día).
+    if (!(rules.isDateCheckoutOnly?.(date) && date === addDays(window.hi, 1) && date > from && !rules.isDateDisabled?.(date))) return true;
+  }
+  if (belowMinimum(from, date, rules)) return true;
+  if (rules.isDateCheckoutOnly?.(date) && date < from) return true;
   return false;
+}
+
+/** El rango de `from` a `date` no llega al mínimo (en días o en noches). */
+export function belowMinimum(from: string, date: string, rules: CalendarRules): boolean {
+  const length = Math.abs(diffDays(from, date)) + (rules.nights ? 0 : 1);
+  return Boolean(rules.minRange && length < rules.minRange && date !== from);
+}
+
+/** Noches (días de diferencia) de un rango; `null` si está incompleto. */
+export const rangeNights = (range: { from: string | null; to: string | null }) =>
+  range.from && range.to ? diffDays(range.from, range.to) : null;
+
+/**
+ * Estancia: el rango con el fin movido `delta` noches, si se puede (respeta el mínimo, el máximo, lo reservado y los
+ * días que no se pueden elegir). `null` si no.
+ */
+export function stepRange(range: { from: string | null; to: string | null }, delta: number, rules: CalendarRules): { from: string; to: string } | null {
+  if (!range.from || !range.to) return null;
+  const to = addDays(range.to, delta);
+  if (to <= range.from) return null;
+  if (rangeBlocked(range.from, to, rules)) return null;
+  const length = diffDays(range.from, to) + (rules.nights ? 0 : 1);
+  if (rules.maxRange && length > rules.maxRange) return null;
+  const status = dayStatus(to, rules);
+  if (status === "disabled" || (status === "unavailable" && !rules.isDateCheckoutOnly?.(to))) return null;
+  return { from: range.from, to };
 }
 
 export interface ChooseOptions {
@@ -190,7 +223,10 @@ export function choose(
   options: ChooseOptions = {},
 ): CalendarValue | undefined {
   const isDay = value.length === 10;
-  if (isDay && dayStatus(value, rules)) return undefined;
+  const status = isDay ? dayStatus(value, rules) : null;
+  const closing = mode === "range" && Boolean(selection.range.from && !selection.range.to);
+  // Un día reservado solo se elige si es de solo salida y cierra un rango.
+  if (status && !(status === "unavailable" && closing && rules.isDateCheckoutOnly?.(value))) return undefined;
   if (!isDay) {
     const { min, max } = bounds(rules);
     if (unitEnd(value) < min || unitStart(value) > max) return undefined;
@@ -204,13 +240,16 @@ export function choose(
     return has ? selection.multiple.filter((v) => v !== value) : [...selection.multiple, value].sort();
   }
   const { from, to } = selection.range;
+  // Estancia: un día de solo salida no puede empezar un rango.
+  if ((!from || to) && isDay && rules.isDateCheckoutOnly?.(value)) return undefined;
   if (!from || to) return week ? { from: start, to: null } : { from: value, to: null };
+  if (rules.nights && value === from) return undefined;
   if (week) {
     const [a, b] = start < from ? [start, from] : [from, start];
     return { from: a, to: addDays(b, 6) };
   }
   if (value === from && rules.allowSingleDayRange === false) return undefined;
-  if (isDay && rangeBlocked(from, value, rules)) return { from: value, to: null };
+  if (isDay && rangeBlocked(from, value, rules)) return rules.isDateCheckoutOnly?.(value) ? undefined : { from: value, to: null };
   return value < from ? { from: value, to: from } : { from, to: value };
 }
 
@@ -282,6 +321,10 @@ export interface CalendarLabels {
   unavailable?: string;
   /** Prefijo del número de semana («Week 47»). */
   week?: string;
+  /** Se añade al nombre de un día de solo salida («…, check-out only»). */
+  checkoutOnly?: string;
+  /** Se añade al nombre de un día que no llega al mínimo mientras se elige el fin («…, 2-night minimum»). */
+  minimum?: string;
   chooseMonth?: string;
   chooseYear?: string;
 }
@@ -328,6 +371,12 @@ export interface DayCell {
   inSelection: boolean;
   range: RangePart | undefined;
   preview: boolean;
+  /** Estancia: se puede terminar aquí, no empezar. */
+  checkoutOnly: boolean;
+  /** Mientras se elige el fin, no llega al mínimo de días o noches. */
+  belowMinimum: boolean;
+  /** Aviso visible del día bajo el puntero o el foco que no llega al mínimo («2-night minimum»). */
+  hint?: string;
   /** Extremos de la banda del rango en la fila (redondeo). */
   rowStart: boolean;
   rowEnd: boolean;
@@ -511,7 +560,15 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
         const hidden = (outside && !showOutside) || date < FIRST_DAY || date > LAST_DAY;
         const status = dayStatus(date, input.rules);
         const blocked = Boolean(pickingFrom && window && date !== pickingFrom && rangeBlocked(pickingFrom, date, input.rules, window));
-        const disabled = Boolean(status) || blocked || (outside && input.outsideDaySelectable === false);
+        const checkoutOnly = Boolean(input.rules.isDateCheckoutOnly?.(date));
+        const belowMin = Boolean(pickingFrom && date !== pickingFrom && belowMinimum(pickingFrom, date, input.rules));
+        // Solo salida: no empieza un rango (deshabilitado si no se está eligiendo el fin); sí lo cierra aunque esté reservado.
+        const closable = Boolean(pickingFrom && checkoutOnly && !blocked && status === "unavailable");
+        const disabled =
+          (Boolean(status) && !closable) ||
+          blocked ||
+          (checkoutOnly && input.mode === "range" && !pickingFrom) ||
+          (outside && input.outsideDaySelectable === false);
         const part = bandPart(date, b.from, b.to);
         const selected =
           input.mode === "single"
@@ -531,6 +588,8 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
           date <= addDays(input.selection.single!, 6);
         const extra: string[] = [];
         if (status === "unavailable" && input.labels?.unavailable) extra.push(input.labels.unavailable);
+        if (checkoutOnly && input.labels?.checkoutOnly) extra.push(input.labels.checkoutOnly);
+        if (belowMin && input.labels?.minimum) extra.push(input.labels.minimum.replace("{n}", String(input.rules.minRange ?? "")));
         const description = input.dayDescription?.(date);
         if (description) extra.push(description);
         const mods = input.modifiers ? Object.keys(input.modifiers).filter((k) => input.modifiers![k]!(date)) : [];
@@ -544,6 +603,11 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
           inSelection: selected || inRange || inWeek,
           range: part,
           preview: Boolean(part && b.preview),
+          checkoutOnly,
+          belowMinimum: belowMin,
+          ...(belowMin && date === input.preview && input.labels?.minimum
+            ? { hint: input.labels.minimum.replace("{n}", String(input.rules.minRange ?? "")) }
+            : {}),
           rowStart: false,
           rowEnd: false,
           today: date === today,

@@ -1,15 +1,18 @@
 import { useState, type ReactNode } from "react";
 import {
-  FreeBusy,
+  Button,
+  Calendar,
   CalendarHeatmap,
+  FreeBusy,
   HabitCalendar,
-  type HabitState,
   PerpetualYear,
   SlotPicker,
   TimelineView,
   type CalendarEvent,
   type CalendarSource,
+  type DateRange,
   type FreeBusyAttendee,
+  type HabitState,
   type Resource,
   type TimelineGroup,
   type TimelineTask,
@@ -84,8 +87,28 @@ export const GUESTS: FreeBusyAttendee[] = [
   { id: "you", name: "You", meta: "Madrid", timeZone: TZ, workingHours: { start: "08:00", end: "19:00" }, busy: [busy("10:00", "12:00"), busy("13:00", "13:45"), busy("15:00", "16:00")] },
 ];
 
-export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy" | "slots" | "heatmap" | "habits";
-export const PIECES: PieceId[] = ["perpetual", "gantt", "resources", "freebusy", "slots", "heatmap", "habits"];
+export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy" | "slots" | "stay" | "heatmap" | "habits" | "cells";
+export const PIECES: PieceId[] = ["perpetual", "gantt", "resources", "freebusy", "slots", "stay", "heatmap", "habits", "cells"];
+
+// Estancia: noches reservadas y días de solo salida.
+const BOOKED = new Set(["2026-11-20", "2026-11-21", "2026-11-22", "2026-12-05", "2026-12-06", "2026-12-07", "2026-12-08"]);
+const CHECKOUT_ONLY = new Set(["2026-11-19", "2026-12-04"]);
+const nightsOf = (r: DateRange | null) =>
+  r?.from && r.to ? Math.round((Date.parse(`${r.to}T00:00:00Z`) - Date.parse(`${r.from}T00:00:00Z`)) / 86_400_000) : 0;
+const shortDate = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" }).format(Date.parse(`${iso}T00:00:00Z`));
+
+// Contenido por celda: precios (el más barato con borde y «lowest»), historias y seguimiento de ciclo.
+const PRICES: Record<string, number> = {};
+for (let d = 1; d <= 31; d++) PRICES[`2026-12-${String(d).padStart(2, "0")}`] = [79, 108, 137, 128, 93, 136, 115, 39, 61, 126, 72, 129, 107, 125, 41, 140, 73, 90, 83, 85, 112, 79, 95, 0, 0, 111, 128, 140, 137, 147, 68][d - 1]!;
+const STORIES: Record<string, number> = { "2026-11-01": 1, "2026-11-02": 1, "2026-11-04": 2, "2026-11-05": 1, "2026-11-07": 1, "2026-11-08": 3, "2026-11-11": 1, "2026-11-12": 2, "2026-11-13": 1, "2026-11-14": 1, "2026-11-15": 1, "2026-11-16": 2, "2026-11-19": 1 };
+const inSet = (list: string[]) => (d: string) => list.includes(d);
+const CYCLE = {
+  period: inSet(["2026-11-01", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05"]),
+  predicted: inSet(["2026-11-28", "2026-11-29", "2026-11-30"]),
+  fertile: inSet(["2026-11-14", "2026-11-15", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19"]),
+  ovulation: inSet(["2026-11-17"]),
+};
+const SYMPTOMS: Record<string, number> = { "2026-11-02": 1, "2026-11-03": 2, "2026-11-16": 1, "2026-11-21": 1 };
 
 // Contribuciones de 2026 (deterministas: un generador sencillo con semilla, sin Math.random).
 function contributions(): Record<string, number> {
@@ -150,6 +173,8 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
   const [tasks, setTasks] = useState(GANTT_TASKS);
   const [bookings, setBookings] = useState(ROOM_BOOKINGS);
   const [log, setLog] = useState("");
+  const [stay, setStay] = useState<DateRange>({ from: "2026-11-24", to: "2026-11-29" });
+  const [flex, setFlex] = useState(1);
   const show = (id: PieceId) => !only || only === id;
   return (
     <div className="app-planning" data-testid="planning">
@@ -253,6 +278,64 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
           </div>
         </Section>
       ) : null}
+      {show("stay") ? (
+        <Section id="stay" title="Stay">
+          <div className="app-stay z-liquid" data-testid="stay">
+            <div className="app-stay__head">
+              <div>
+                <h3>{nightsOf(stay)} nights in Lisbon</h3>
+                <p className="app-muted">
+                  {stay.from ? shortDate(stay.from) : "—"} – {stay.to ? shortDate(stay.to) : "—"} · min. 2 nights
+                </p>
+              </div>
+              <div className="app-stay__fields" aria-hidden="true">
+                <div data-active={stay.from && !stay.to ? undefined : ""}>
+                  <small>Check-in</small>
+                  {stay.from ? shortDate(stay.from) : "Add date"}
+                </div>
+                <div data-active={stay.from && !stay.to ? "" : undefined}>
+                  <small>Check-out</small>
+                  {stay.to ? shortDate(stay.to) : "Add date"}
+                </div>
+              </div>
+            </div>
+            <Calendar
+              id="app-stay-calendar"
+              className="app-stay__calendar"
+              mode="range"
+              value={stay}
+              onValueChange={setStay}
+              numberOfMonths={2}
+              defaultMonth="2026-11"
+              today={AGENDA_TODAY}
+              locale="en-GB"
+              weekStartsOn={1}
+              cellSize="lg"
+              rangeUnit="nights"
+              minRange={2}
+              isDateUnavailable={(d) => BOOKED.has(d)}
+              isDateCheckoutOnly={(d) => CHECKOUT_ONLY.has(d)}
+              unavailableLabel="booked"
+              flexibility={flex}
+              onFlexibilityChange={setFlex}
+              showLengthStepper
+              footer={
+                <>
+                  <span className="app-muted">20–22 Nov booked · 4 Dec check-out only</span>
+                  <span className="app-stay__actions">
+                    <Button variant="ghost" size="sm" onClick={() => setStay({ from: null, to: null })}>
+                      Clear dates
+                    </Button>
+                    <Button variant="primary" size="sm" onClick={() => setLog(`Stay: ${stay.from} → ${stay.to} ±${flex}`)}>
+                      Close
+                    </Button>
+                  </span>
+                </>
+              }
+            />
+          </div>
+        </Section>
+      ) : null}
       {show("heatmap") ? (
         <Section id="heatmap" title="Contributions">
           <div className="app-planning__stack">
@@ -314,6 +397,89 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
               locale="en-GB"
               weekStartsOn={1}
             />
+          </div>
+        </Section>
+      ) : null}
+      {show("cells") ? (
+        <Section id="cells" title="Content per cell">
+          <div className="app-planning__row app-cells">
+            <div className="app-cells__card z-liquid">
+              <h3>
+                Madrid → Lisbon <small>one way · from</small>
+              </h3>
+              <Calendar
+                id="app-prices"
+                className="app-cells--prices"
+                defaultMonth="2026-12"
+                defaultValue="2026-12-12"
+                today={AGENDA_TODAY}
+                locale="en-GB"
+                weekStartsOn={1}
+                cellSize="lg"
+                isDateDisabled={(d) => PRICES[d] === 0}
+                modifiers={{ cheap: (d) => PRICES[d] !== undefined && PRICES[d]! > 0 && PRICES[d]! < 50 }}
+                renderDay={(d) => (PRICES[d] === undefined ? null : PRICES[d] ? `€${PRICES[d]}` : "—")}
+                getDayDescription={(d) => (PRICES[d] === undefined ? null : PRICES[d] === 0 ? "sold out" : `€${PRICES[d]}${PRICES[d]! < 50 ? ", lowest" : ""}`)}
+              />
+              <p className="app-cells__legend">
+                <span data-key="cheap">€39 Lowest</span> <span data-key="selected">Selected</span> <span>— Sold out</span>
+              </p>
+            </div>
+            <div className="app-cells__card z-liquid">
+              <h3>
+                Stories archive <small>2026</small>
+              </h3>
+              <Calendar
+                id="app-stories"
+                className="app-cells--stories"
+                defaultMonth="2026-11"
+                today={AGENDA_TODAY}
+                locale="en-GB"
+                weekStartsOn={1}
+                cellSize="lg"
+                modifiers={{
+                  story: (d) => Boolean(STORIES[d]),
+                  "story-a": (d) => Number(d.slice(8)) % 3 === 0,
+                  "story-b": (d) => Number(d.slice(8)) % 3 === 1,
+                }}
+                renderDay={(d) => (STORIES[d] && STORIES[d]! > 1 ? `+${STORIES[d]! - 1}` : null)}
+                getDayDescription={(d) => (STORIES[d] ? `${STORIES[d]} ${STORIES[d] === 1 ? "story" : "stories"}` : "no story")}
+              />
+              <p className="app-cells__legend">
+                <span>+n several stories</span> <span>Empty: no story</span>
+              </p>
+            </div>
+            <div className="app-cells__card z-liquid">
+              <h3>
+                Cycle <small>day 19</small>
+              </h3>
+              <Calendar
+                id="app-cycle"
+                className="app-cells--cycle"
+                defaultMonth="2026-11"
+                today={AGENDA_TODAY}
+                locale="en-GB"
+                weekStartsOn={1}
+                cellSize="lg"
+                modifiers={CYCLE}
+                renderDay={(d) => (SYMPTOMS[d] ? "•".repeat(SYMPTOMS[d]!) : null)}
+                getDayDescription={(d) =>
+                  [
+                    CYCLE.period(d) ? "period" : null,
+                    CYCLE.predicted(d) ? "predicted period" : null,
+                    CYCLE.fertile(d) ? "fertile window" : null,
+                    CYCLE.ovulation(d) ? "ovulation" : null,
+                    SYMPTOMS[d] ? `${SYMPTOMS[d]} symptom${SYMPTOMS[d] === 1 ? "" : "s"}` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(", ") || null
+                }
+              />
+              <p className="app-cells__legend">
+                <span data-key="period">Period</span> <span data-key="predicted">Predicted</span> <span data-key="fertile">Fertile</span>{" "}
+                <span data-key="ovulation">Ovulation</span> <span>• Symptom</span>
+              </p>
+            </div>
           </div>
         </Section>
       ) : null}

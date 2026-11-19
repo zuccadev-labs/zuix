@@ -47,6 +47,23 @@ type ForwardedCalendarProps = Pick<
   | "chooseYearLabel"
   | "maxView"
   | "presetsPlacement"
+  | "isDateCheckoutOnly"
+  | "rangeUnit"
+  | "checkoutOnlyLabel"
+  | "minRangeLabel"
+  | "showLengthStepper"
+  | "lengthLabel"
+  | "lengthOneLabel"
+  | "decreaseLabel"
+  | "increaseLabel"
+  | "flexibility"
+  | "defaultFlexibility"
+  | "onFlexibilityChange"
+  | "flexibilityOptions"
+  | "flexibilityGroupLabel"
+  | "exactDatesLabel"
+  | "flexibilityLabel"
+  | "flexibilityOneLabel"
 >;
 
 interface DatePickerBaseProps extends ForwardedCalendarProps {
