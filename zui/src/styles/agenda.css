@@ -1349,6 +1349,11 @@
 
   /* Puntero grueso: más alto por hora, para que un evento de 15 min tenga 16 px y su área táctil, 24. */
   @media (pointer: coarse) {
+    /* Con las vistas en dos filas, el área ampliada de una opción caería sobre la de la otra fila: la opción
+       mide el objetivo táctil entero. */
+    .z-agenda__views .z-segmented__item {
+      min-block-size: var(--z-touch-target);
+    }
     .z-monthgrid__cell {
       min-block-size: calc(var(--z-mg-head) + (var(--z-mg-lanes) + 0.5) * var(--z-mg-lane) + var(--z-space-2));
     }
