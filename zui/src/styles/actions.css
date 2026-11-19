@@ -1,25 +1,31 @@
-/* Acciones: botones, enlaces, conmutadores y control segmentado. Origen: primitivas de zutool (forma píldora). */
+/* Acciones: botones, enlaces, conmutadores y control segmentado. Origen: primitivas de zutool; forma del estándar
+   liquid glass: rectángulo de esquinas redondeadas, radios concéntricos por tamaño (sm 8, md 10, lg 12). */
 @layer zui.actions {
   /* ---- Button / IconButton ---- */
+  /* Variante por defecto (secondary): botón de cristal, con canto y brillo superior. */
   .z-btn {
     --z-btn-bg: var(--z-surface-2);
     --z-btn-bg-hover: var(--z-surface-3);
     --z-btn-fg: var(--z-fg);
-    --z-btn-line: var(--z-line);
+    --z-btn-line: var(--z-glass-border);
     --z-btn-height: var(--z-control-height-md);
+    --z-btn-radius: var(--z-button-radius);
+    --z-btn-shine: inset 0 1px 0 var(--z-glass-highlight);
+    --z-btn-shadow: 0 0 transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--z-space-2);
+    gap: var(--z-space-1-5);
     height: var(--z-btn-height);
-    padding: 0 var(--z-space-4);
+    padding: 0 var(--z-space-3-5);
     border: 1px solid var(--z-btn-line);
-    border-radius: var(--z-button-radius);
+    border-radius: var(--z-btn-radius);
     background: var(--z-btn-bg);
+    box-shadow: var(--z-btn-shine), var(--z-btn-shadow);
     color: var(--z-btn-fg);
     font-family: inherit;
     font-size: var(--z-text-body);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     line-height: 1;
     white-space: nowrap;
     text-decoration: none;
@@ -31,7 +37,7 @@
       border-color var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard),
       box-shadow var(--z-duration-fast) var(--z-ease-standard),
-      transform var(--z-duration-fast) var(--z-ease-standard);
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-btn:hover:not(:disabled, [aria-disabled="true"]) {
@@ -39,11 +45,12 @@
     }
   }
   .z-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
+  /* Pulsación: la pieza cede un 3 %. */
   .z-btn:active:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(1px);
+    scale: 0.97;
   }
   /* `aria-disabled`: en carga el botón no actúa pero conserva el foco del teclado. */
   .z-btn:disabled,
@@ -56,34 +63,38 @@
   }
   .z-btn[data-size="sm"] {
     --z-btn-height: var(--z-control-height-sm);
+    --z-btn-radius: var(--z-control-radius-sm);
     padding: 0 var(--z-space-3);
     gap: var(--z-space-1);
     font-size: var(--z-text-small);
   }
   .z-btn[data-size="lg"] {
     --z-btn-height: var(--z-control-height-lg);
-    padding: 0 var(--z-space-5);
-    font-size: var(--z-text-title);
+    --z-btn-radius: var(--z-control-radius-lg);
+    padding: 0 var(--z-space-4);
   }
   .z-btn[data-block] {
     display: flex;
     width: 100%;
   }
+  /* Primario: acento sólido con brillo interior y sombra corta. */
   .z-btn--primary {
     --z-btn-bg: var(--z-button-primary-bg);
     --z-btn-bg-hover: var(--z-button-primary-bg-hover);
     --z-btn-fg: var(--z-button-primary-fg);
     --z-btn-line: transparent;
-    box-shadow: var(--z-shadow-sm);
+    --z-btn-shine: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
+    --z-btn-shadow: var(--z-shadow-sm);
   }
   .z-btn--ghost {
     --z-btn-bg: transparent;
-    --z-btn-bg-hover: var(--z-surface-3);
+    --z-btn-bg-hover: var(--z-surface-2);
     --z-btn-fg: var(--z-fg-muted);
     --z-btn-line: transparent;
+    --z-btn-shine: 0 0 transparent;
   }
   @media (hover: hover) {
-    .z-btn--ghost:hover:not(:disabled) {
+    .z-btn--ghost:hover:not(:disabled, [aria-disabled="true"]) {
       --z-btn-fg: var(--z-fg);
     }
   }
@@ -92,6 +103,7 @@
     --z-btn-bg-hover: color-mix(in srgb, var(--z-danger) 30%, transparent);
     --z-btn-fg: var(--z-danger-text);
     --z-btn-line: transparent;
+    --z-btn-shine: 0 0 transparent;
   }
   .z-btn--icon {
     width: var(--z-btn-height);
@@ -192,7 +204,7 @@
       background var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard),
       border-color var(--z-duration-fast) var(--z-ease-standard),
-      transform var(--z-duration-fast) var(--z-ease-standard);
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-toggle:hover:not(:disabled) {
@@ -201,11 +213,11 @@
     }
   }
   .z-toggle:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-toggle:active:not(:disabled) {
-    transform: translateY(1px);
+    scale: 0.97;
   }
   .z-toggle[data-state="on"] {
     background: var(--z-accent-soft);
@@ -232,19 +244,25 @@
   }
 
   /* ---- SegmentedControl ---- */
+  /* Pista hundida con canto de cristal; la opción activa se levanta (superficie, brillo y sombra corta).
+     Radios concéntricos: radio de la pista = radio de la opción + relleno (md y lg: 8 + 4 = 12; sm: 6 + 2 = 8). */
   .z-segmented {
     --z-segmented-height: var(--z-control-height-md);
+    --z-segmented-pad: var(--z-space-1);
+    --z-segmented-item-radius: var(--z-control-radius-sm);
     display: inline-flex;
     align-items: center;
     gap: 2px;
     height: var(--z-segmented-height);
-    padding: 3px;
-    border: 1px solid var(--z-line);
-    border-radius: var(--z-button-radius);
+    padding: var(--z-segmented-pad);
+    border: 1px solid var(--z-glass-border);
+    border-radius: calc(var(--z-segmented-item-radius) + var(--z-segmented-pad));
     background: var(--z-control-bg);
   }
   .z-segmented[data-size="sm"] {
     --z-segmented-height: var(--z-control-height-sm);
+    --z-segmented-pad: 2px;
+    --z-segmented-item-radius: var(--z-radius-xs);
   }
   .z-segmented[data-size="lg"] {
     --z-segmented-height: var(--z-control-height-lg);
@@ -260,26 +278,28 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--z-space-2);
+    gap: var(--z-space-1-5);
     min-width: 0;
     height: 100%;
-    padding: 0 var(--z-space-3);
+    padding: 0 var(--z-space-2-5);
     border: 0;
-    border-radius: var(--z-button-radius);
+    border-radius: var(--z-segmented-item-radius);
     background: transparent;
     color: var(--z-fg-muted);
     font-family: inherit;
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      color var(--z-duration-fast) var(--z-ease-standard);
+      color var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   .z-segmented[data-size="lg"] .z-segmented__item {
-    padding: 0 var(--z-space-4);
+    padding: 0 var(--z-space-3-5);
     font-size: var(--z-text-body);
   }
   .z-segmented__label {
@@ -288,21 +308,22 @@
   }
   @media (hover: hover) {
     .z-segmented__item:hover:not(:disabled):not([data-state="on"]) {
-      background: var(--z-surface-2);
       color: var(--z-fg);
     }
   }
   .z-segmented__item:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-segmented__item:active:not(:disabled) {
-    transform: translateY(1px);
+    scale: 0.97;
   }
   .z-segmented__item[data-state="on"] {
-    background: var(--z-button-primary-bg);
-    color: var(--z-button-primary-fg);
-    box-shadow: var(--z-shadow-sm);
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
   }
   .z-segmented__item:disabled {
     opacity: 0.5;

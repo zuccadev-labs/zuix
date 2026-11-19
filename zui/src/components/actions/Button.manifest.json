@@ -50,23 +50,17 @@
     "surface-2",
     "surface-3",
     "fg",
-    "line",
     "control-height-md",
-    "space-2",
     "space-4",
     "button-radius",
     "text-body",
-    "weight-semibold",
     "duration-fast",
     "ease-standard",
-    "focus-ring",
     "control-height-sm",
     "space-3",
     "space-1",
     "text-small",
     "control-height-lg",
-    "space-5",
-    "text-title",
     "button-primary-bg",
     "button-primary-bg-hover",
     "button-primary-fg",
@@ -76,7 +70,19 @@
     "danger",
     "accent-soft",
     "accent",
-    "radius-full"
+    "radius-full",
+    "glass-border",
+    "glass-highlight",
+    "space-1-5",
+    "space-3-5",
+    "weight-medium",
+    "duration-press",
+    "ease-out",
+    "focus-width",
+    "accent-ring",
+    "focus-offset",
+    "control-radius-sm",
+    "control-radius-lg"
   ],
   "classes": ["z-btn"],
   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
@@ -98,5 +104,5 @@
       "code": "<Button variant=\"ghost\" size=\"sm\" iconRight=\"chevron-right\">View all</Button>"
     }
   ],
-  "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes píldora de zutool."
+  "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes de zutool; forma (rectángulo de radios concéntricos) del estándar liquid glass."
 }

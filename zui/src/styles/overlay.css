@@ -131,6 +131,8 @@
   /* ---------- Modal y confirmación ---------- */
   .z-modal {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     --z-modal-width: 560px;
     position: fixed;
     inset: 0;
@@ -309,6 +311,8 @@
   /* ---------- Popover ---------- */
   .z-popover {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     z-index: var(--z-layer-popover);
     max-width: calc(100vw - var(--z-space-4));
     max-height: var(--z-available-height, calc(100dvh - var(--z-space-4)));
@@ -343,6 +347,8 @@
   /* ---------- Menú desplegable y contextual ---------- */
   .z-menu {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     z-index: var(--z-layer-menu);
     /* En una ventana estrecha el menú se estrecha hasta el ancho útil (`--z-menu-fit`) en lugar de salirse. */
     --z-menu-fit: calc(100vw - var(--z-space-4));

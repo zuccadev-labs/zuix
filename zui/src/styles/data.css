@@ -212,19 +212,21 @@
     flex-shrink: 0;
     align-items: center;
     gap: var(--z-space-1);
-    padding: 2px var(--z-space-2);
+    padding: 1px var(--z-space-2);
     border: 1px solid transparent;
-    border-radius: var(--z-radius-full);
+    /* Insignia: rectángulo de radio corto (6 px), no píldora. */
+    border-radius: var(--z-radius-xs);
     background: var(--z-tone-soft);
     color: var(--z-tone-text);
     font-size: var(--z-text-caption);
-    font-weight: var(--z-weight-semibold);
-    line-height: var(--z-leading-snug);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-ui);
     white-space: nowrap;
   }
   .z-badge[data-size="sm"] {
-    padding: 1px var(--z-space-1-5);
+    padding: 0 var(--z-space-1-5);
     font-size: var(--z-text-fine);
+    line-height: var(--z-leading-snug);
   }
   .z-badge[data-tone="neutral"] {
     border-color: var(--z-line);

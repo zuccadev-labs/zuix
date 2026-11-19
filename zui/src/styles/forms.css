@@ -1,10 +1,12 @@
-/* Formularios: campo, entradas de texto, selección y controles de elección. Origen: primitivas de zutool y campos del design system base. */
+/* Formularios: campo, entradas de texto, selección y controles de elección. Origen: primitivas de zutool y campos del design system base.
+   Campos del estándar liquid glass: superficie de control hundida (`control-bg`) con borde de 3:1 (`control-border`, su única
+   frontera visible), rectángulo de esquinas redondeadas (sm 8, md 10, lg 12) y foco por contorno en el contenedor. */
 @layer zui.forms {
   /* ---- Field ---- */
   .z-field {
     display: flex;
     flex-direction: column;
-    gap: var(--z-space-2);
+    gap: var(--z-space-1-5);
     min-width: 0;
   }
   .z-field[data-layout="inline"] {
@@ -29,7 +31,7 @@
     gap: var(--z-space-1);
     color: var(--z-fg);
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     line-height: var(--z-leading-snug);
   }
   .z-field__required {
@@ -42,7 +44,7 @@
   .z-field__hint,
   .z-field__error {
     margin: 0;
-    font-size: var(--z-text-small);
+    font-size: var(--z-text-caption);
     line-height: var(--z-leading-snug);
   }
   .z-field__hint {
@@ -57,6 +59,7 @@
   .z-input {
     --z-input-height: var(--z-control-height-md);
     --z-input-pad: var(--z-space-3);
+    --z-input-radius: var(--z-control-radius);
     display: flex;
     align-items: center;
     gap: var(--z-space-2);
@@ -65,32 +68,35 @@
     height: var(--z-input-height);
     padding: 0 var(--z-input-pad);
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-input-radius);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font-size: var(--z-text-body);
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
       background var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      outline-color var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-input:hover:not([data-disabled]) {
       border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
     }
   }
+  /* El anillo va en el contenedor, separado 1 px: el campo entero se lee como enfocado. */
   .z-input:focus-within {
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-input:has(.z-input__control:active):not([data-disabled]) {
-    background: var(--z-surface);
+    background: var(--z-control-bg-hover);
   }
   .z-input[data-invalid] {
     border-color: var(--z-danger);
   }
   .z-input[data-invalid]:focus-within {
-    box-shadow: 0 0 0 3px var(--z-danger-soft);
+    outline-color: var(--z-danger);
   }
   .z-input[data-disabled] {
     opacity: 0.5;
@@ -98,13 +104,14 @@
   }
   .z-input[data-size="sm"] {
     --z-input-height: var(--z-control-height-sm);
-    --z-input-pad: var(--z-space-2);
+    --z-input-pad: var(--z-space-2-5);
+    --z-input-radius: var(--z-control-radius-sm);
     font-size: var(--z-text-small);
   }
   .z-input[data-size="lg"] {
     --z-input-height: var(--z-control-height-lg);
-    --z-input-pad: var(--z-space-4);
-    font-size: var(--z-text-title);
+    --z-input-pad: var(--z-space-3-5);
+    --z-input-radius: var(--z-control-radius-lg);
   }
   .z-input[data-mono] {
     font-family: var(--z-font-mono);
@@ -139,7 +146,7 @@
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    color: var(--z-fg-subtle);
+    color: var(--z-fg-muted);
   }
   .z-input__trailing {
     gap: var(--z-space-1);
@@ -170,8 +177,8 @@
     }
   }
   .z-input__action:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-input__action:active:not(:disabled) {
     transform: scale(0.94);
@@ -192,9 +199,6 @@
       transform: rotate(360deg);
     }
   }
-  .z-input--search {
-    border-radius: var(--z-radius-full);
-  }
 
   /* ---- Textarea ---- */
   .z-textarea {
@@ -203,7 +207,7 @@
     min-width: 0;
     padding: var(--z-space-2) var(--z-space-3);
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-field-radius-multiline);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font-family: inherit;
@@ -212,7 +216,7 @@
     resize: vertical;
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      background var(--z-duration-fast) var(--z-ease-standard);
   }
   .z-textarea::placeholder {
     color: var(--z-fg-subtle);
@@ -223,9 +227,9 @@
     }
   }
   .z-textarea:focus-visible {
-    outline: none;
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-textarea:active:not(:disabled) {
     background: var(--z-surface);
@@ -234,7 +238,7 @@
     border-color: var(--z-danger);
   }
   .z-textarea[data-invalid]:focus-visible {
-    box-shadow: 0 0 0 3px var(--z-danger-soft);
+    outline-color: var(--z-danger);
   }
   .z-textarea:disabled {
     opacity: 0.5;
@@ -255,6 +259,7 @@
   /* ---- Select (NativeSelect, Select y DatePicker comparten envoltura y control) ---- */
   .z-select {
     --z-select-height: var(--z-control-height-md);
+    --z-select-radius: var(--z-control-radius);
     position: relative;
     display: inline-flex;
     min-width: 0;
@@ -268,11 +273,12 @@
   }
   .z-select[data-size="sm"] {
     --z-select-height: var(--z-control-height-sm);
+    --z-select-radius: var(--z-control-radius-sm);
     font-size: var(--z-text-small);
   }
   .z-select[data-size="lg"] {
     --z-select-height: var(--z-control-height-lg);
-    font-size: var(--z-text-title);
+    --z-select-radius: var(--z-control-radius-lg);
   }
   .z-select__control {
     appearance: none;
@@ -283,7 +289,7 @@
     padding-block: 0;
     padding-inline: var(--z-space-3) var(--z-space-8);
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-select-radius);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font: inherit;
@@ -293,20 +299,24 @@
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
       background var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      outline-color var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-select__control:hover:not(:disabled) {
       border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
     }
   }
   .z-select__control:focus-visible {
-    outline: none;
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-select__control:active:not(:disabled) {
-    background: var(--z-surface);
+    background: var(--z-control-bg-hover);
+  }
+  .z-select[data-invalid] .z-select__control:focus-visible {
+    outline-color: var(--z-danger);
   }
   .z-select[data-invalid] .z-select__control {
     border-color: var(--z-danger);
@@ -370,6 +380,8 @@
   /* Se monta por portal fuera de `.z-root`: fija su tipografía y color. Opción activa: [data-highlighted]; elegida: [data-state="checked"] o [aria-selected="true"]. */
   .z-listbox {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     z-index: var(--z-layer-popover);
     display: flex;
     flex-direction: column;
@@ -381,22 +393,45 @@
     border-radius: var(--z-popup-radius);
     color: var(--z-fg);
     font-family: var(--z-font-sans);
-    font-size: var(--z-text-small);
-    line-height: var(--z-leading-normal);
+    font-size: var(--z-text-body);
+    line-height: var(--z-leading-ui);
     -webkit-font-smoothing: antialiased;
-    animation: z-listbox-in var(--z-duration-fast) var(--z-ease-standard) both;
+    /* Entrada con @starting-style (mejora progresiva: sin soporte, la lista aparece sin transición). El
+       desplazamiento y la escala solo sin preferencia de movimiento reducido. */
+    opacity: 1;
+    transition:
+      opacity var(--z-duration-normal) var(--z-ease-emphasized),
+      translate var(--z-duration-normal) var(--z-ease-emphasized),
+      scale var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  @starting-style {
+    .z-listbox {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-listbox {
+      translate: 0 0;
+      scale: 1;
+    }
+    @starting-style {
+      .z-listbox {
+        translate: 0 calc(var(--z-space-1) * -1);
+        scale: 0.98;
+      }
+    }
   }
   .z-listbox:focus-visible {
     outline: none;
   }
-  .z-listbox[data-size="lg"] {
-    font-size: var(--z-text-body);
+  .z-listbox[data-size="sm"] {
+    font-size: var(--z-text-small);
   }
   .z-listbox__viewport {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--z-space-1);
+    padding: var(--z-space-1-5);
     scrollbar-width: thin;
     scrollbar-color: var(--z-line-strong) transparent;
   }
@@ -406,10 +441,11 @@
   .z-listbox__option {
     display: flex;
     align-items: center;
-    min-height: var(--z-touch-target, 0px);
+    /* 32 px con ratón; con puntero grueso, el objetivo táctil. Radio concéntrico: popup-radius − relleno = item-radius. */
+    min-height: max(32px, var(--z-touch-target, 0px));
     gap: var(--z-space-2);
-    padding: var(--z-space-2) var(--z-space-3);
-    border-radius: var(--z-radius-xs);
+    padding: var(--z-space-1-5) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
     color: var(--z-fg);
     font-weight: var(--z-weight-medium);
     cursor: default;
@@ -419,10 +455,11 @@
     scroll-margin: var(--z-space-1);
   }
   .z-listbox[data-size="sm"] .z-listbox__option {
+    min-height: max(28px, var(--z-touch-target, 0px));
     padding: var(--z-space-1) var(--z-space-2);
   }
   .z-listbox__option[data-highlighted] {
-    background: var(--z-row-hover);
+    background: var(--z-surface-2);
   }
   .z-listbox__option[data-disabled],
   .z-listbox__option[aria-disabled="true"] {
@@ -446,7 +483,7 @@
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    color: var(--z-accent);
+    color: var(--z-accent-text);
     visibility: hidden;
   }
   .z-listbox__option[data-state="checked"] .z-listbox__check,
@@ -469,11 +506,6 @@
     padding: var(--z-space-4) var(--z-space-3);
     color: var(--z-fg-subtle);
     text-align: center;
-  }
-  @keyframes z-listbox-in {
-    from {
-      opacity: 0;
-    }
   }
 
   /* ---- Combobox (sobre .z-input) ---- */

@@ -1,12 +1,20 @@
 /* Base común: tipografía, foco, selección y barras de desplazamiento. Origen: capa base de zutool. */
 @layer zui.base {
+  /* Texto de interfaz 14/20 (`text-body` en rem: respeta el tamaño de letra de la persona). */
   .z-root {
     color: var(--z-fg);
     font-family: var(--z-font-sans);
     font-size: var(--z-text-body);
-    line-height: var(--z-leading-normal);
+    line-height: var(--z-leading-ui);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+  /* Titulares equilibrados y párrafos sin viudas (mejora progresiva: sin soporte, el texto corta como siempre). */
+  .z-root :where(h1, h2, h3, h4) {
+    text-wrap: balance;
+  }
+  .z-root :where(p) {
+    text-wrap: pretty;
   }
   .z-root ::selection {
     background: var(--z-accent-soft);
@@ -15,9 +23,10 @@
     scrollbar-width: thin;
     scrollbar-color: var(--z-line-strong) transparent;
   }
+  /* Foco por contorno: sigue al radio de cada pieza y sobrevive a los colores forzados. `accent-ring` llega a 3:1. */
   .z-root :focus-visible {
-    outline: 2px solid var(--z-accent);
-    outline-offset: 2px;
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-root :where(button, input, select, textarea) {
     font: inherit;

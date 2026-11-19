@@ -5,6 +5,35 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-tokens`. Botón, campo, select,
+pestañas, control segmentado e insignia son las piezas de referencia; el resto de componentes hereda escala,
+radios y material de los tokens.
+
+### Cambiado
+
+- Botones, campos, selects, pestañas y segmentados son rectángulos de esquinas redondeadas, no píldoras, con
+  radios concéntricos por tamaño (sm 8, md 10, lg 12) y alturas de 28, 34 y 40 px.
+- Foco por contorno (`outline` con `focus-width` y `accent-ring`) en lugar de sombra: sigue al radio y se
+  mantiene con colores forzados. En los campos va en el contenedor, separado 1 px; en rojo si el campo es
+  inválido.
+- Botón: la variante por defecto es de cristal (canto `glass-border` y brillo superior); el primario lleva
+  brillo interior y sombra corta; peso 500; al pulsar cede un 3 % (`scale`) en lugar de bajar un píxel.
+- Campo y select: fondo `control-bg-hover` al pasar el puntero; el icono inicial pasa a `fg-muted`; la
+  etiqueta pesa 500 y la ayuda baja a 12 px. `SearchInput` deja de ser una píldora. Textarea con
+  `field-radius-multiline`.
+- Lista de opciones (Select, Combobox): cristal elevado (`popup-blur`, `popup-shadow`), opciones de 32 px con
+  radio concéntrico, resaltado `surface-2`, marca en `accent-text` y entrada de 200 ms con `@starting-style`
+  (sin soporte aparece sin transición; sin desplazamiento con movimiento reducido).
+- Pestañas `segmented` y `SegmentedControl`: pista hundida con canto de cristal; la opción activa se levanta
+  (`surface-3`, brillo y sombra) en lugar de llenarse de acento.
+- Insignia: radio de 6 px y peso 500.
+- Material: `.z-liquid` acepta `--z-lg-blur` y `--z-lg-shadow`; menús, popovers, diálogos y listas los usan
+  para el cristal elevado. `.z-solid` desenfoca el 6 % del lienzo que deja ver. En `body.z-canvas` el
+  degradado va en una capa fija (Safari de iOS ignora `background-attachment: fixed`). Con
+  `prefers-reduced-transparency`, también `.z-solid` pasa a superficie opaca.
+- Base: texto de interfaz con `leading-ui`; titulares con `text-wrap: balance` y párrafos con `pretty`.
+
+
 ## [0.2.0] - 2026-11-18
 
 Esta versión trae cambios incompatibles. Qué hay que tocar en una aplicación está en la

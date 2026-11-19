@@ -35,11 +35,11 @@
     gap: var(--z-space-1-5);
     flex-shrink: 0;
     /* min-height: con puntero grueso todas las variantes y tamaños llegan al objetivo táctil (`--z-touch-target`). */
-    height: 30px;
+    height: var(--z-control-height-sm);
     min-height: var(--z-touch-target, 0px);
     padding: 0 var(--z-space-3);
     border: 1px solid transparent;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-tabs-radius, var(--z-control-radius-sm));
     background: transparent;
     color: var(--z-fg-muted);
     cursor: pointer;
@@ -50,7 +50,8 @@
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard),
-      border-color var(--z-duration-fast) var(--z-ease-standard);
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-tabs__tab:hover:not([data-disabled]) {
@@ -58,8 +59,8 @@
     }
   }
   .z-tabs__tab:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-tabs__tab[data-disabled] {
     opacity: 0.5;
@@ -69,8 +70,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .z-tabs__list[data-size="sm"] {
+    --z-tabs-radius: var(--z-radius-xs);
+  }
   .z-tabs__list[data-size="sm"] .z-tabs__tab {
-    height: 24px;
+    height: var(--z-control-height-xs);
     padding: 0 var(--z-space-2-5);
     font-size: var(--z-text-caption);
   }
@@ -79,27 +83,32 @@
     flex: 1;
   }
   .z-tabs__panel:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
     border-radius: var(--z-radius-sm);
   }
   .z-tabs__panel[data-state="inactive"] {
     display: none;
   }
 
-  /* segmented: pastilla contenedora, activa con acento */
+  /* segmented: pista hundida con canto de cristal; la activa se levanta. Radio de la pista = radio de la pestaña + relleno. */
   .z-tabs__list[data-variant="segmented"] {
+    --z-tabs-pad: var(--z-space-1);
     gap: 2px;
-    padding: 2px;
-    border-radius: var(--z-radius-full);
-    background: var(--z-surface-3);
+    padding: var(--z-tabs-pad);
+    border: 1px solid var(--z-glass-border);
+    border-radius: calc(var(--z-tabs-radius, var(--z-control-radius-sm)) + var(--z-tabs-pad));
+    background: var(--z-control-bg);
   }
-  .z-tabs__list[data-variant="segmented"][data-orientation="vertical"] {
-    border-radius: var(--z-radius-lg);
+  .z-tabs__list[data-variant="segmented"][data-size="sm"] {
+    --z-tabs-pad: 2px;
   }
   .z-tabs__list[data-variant="segmented"] .z-tabs__tab[data-state="active"] {
-    background: var(--z-accent-solid);
-    color: var(--z-fg-on-accent);
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
   }
 
   /* pill: tira de pestañas sueltas */
@@ -410,7 +419,7 @@
   .z-stepper[data-orientation="vertical"] .z-stepper__step:not(:last-child)::after {
     content: "";
     position: absolute;
-    inset-inline-start: 14px;
+    inset-inline-start: var(--z-space-3-5);
     top: var(--z-space-8);
     bottom: var(--z-space-1);
     width: 1px;
