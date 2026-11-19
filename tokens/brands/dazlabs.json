@@ -18,7 +18,7 @@
     "sky-500": "#74B0FB"
   },
   "fonts": {
-    "display": "\"Poppins\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "display": "\"DM Sans\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
     "sans": "\"DM Sans\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
     "mono": "\"JetBrains Mono\", ui-monospace, SFMono-Regular, Menlo, monospace"
   },
@@ -41,7 +41,7 @@
       "surface-2": "rgba(255, 255, 255, 0.09)",
       "surface-3": "rgba(255, 255, 255, 0.14)",
       "surface-solid": "{p.ink-800}",
-      "overlay": "rgba(20, 20, 25, 0.94)",
+      "overlay": "rgba(22, 22, 28, 0.88)",
       "inset": "rgba(0, 0, 0, 0.26)",
       "line": "rgba(255, 255, 255, 0.09)",
       "line-strong": "rgba(255, 255, 255, 0.18)",
@@ -78,7 +78,7 @@
       "surface-2": "rgba(11, 12, 13, 0.065)",
       "surface-3": "rgba(11, 12, 13, 0.10)",
       "surface-solid": "#FFFFFF",
-      "overlay": "rgba(252, 251, 254, 0.96)",
+      "overlay": "rgba(253, 252, 255, 0.90)",
       "inset": "rgba(11, 12, 13, 0.05)",
       "line": "rgba(11, 12, 13, 0.09)",
       "line-strong": "rgba(11, 12, 13, 0.18)",
@@ -91,7 +91,7 @@
       "warning": "#B45309",
       "warning-text": "color-mix(in srgb, {warning} 76%, {fg})",
       "danger": "#D11A5B",
-      "danger-text": "color-mix(in srgb, {danger} 76%, {fg})",
+      "danger-text": "color-mix(in srgb, {danger} 70%, {fg})",
       "info": "#1D4ED8",
       "info-text": "color-mix(in srgb, {info} 90%, {fg})",
       "shadow-sm": "0 1px 2px rgba(20, 16, 40, 0.10)",

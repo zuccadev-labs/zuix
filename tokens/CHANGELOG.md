@@ -5,6 +5,55 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+Base visual nueva, «liquid glass»: escala tipográfica en `rem`, radios concéntricos, capas de material y foco
+por contorno. Ningún token se elimina ni se renombra; cambian valores y se añaden tokens.
+
+### Añadido
+
+- Tipografía: `text-code` (13 px), `text-reading` (16 px), `text-lead` (fluido, 18–20 px), `weight-display`,
+  `leading-ui` (1.43), `leading-code` (1.7), `tracking-display` (−0.03em) y `tracking-snug` (−0.01em).
+- Espaciado: `space-3-5` (14 px), `space-7` (28), `space-9` (36) y `space-14` (56).
+- Movimiento: `duration-press` (90 ms) para la pulsación, `ease-emphasized` para entradas y `ease-exit` para
+  salidas.
+- Foco: `focus-width` y `focus-offset` (2 px y 2 px; `focus-width` sube a 3 px con `prefers-contrast: more`).
+- Controles: `control-height-xs` (24 px), `control-radius-sm` (8 px), `control-radius-lg` (12 px),
+  `control-bg-hover`, `field-radius-multiline` e `item-radius`.
+- Material: `glass-blur-elevated` (48 px), `popup-blur`, `popup-shadow`, `glass-rim`, `fg-prose` (texto de
+  lectura, `fg` al 88 %), `code-radius` y `code-bar-bg`.
+- Calendario: `calendar-cell`, `calendar-cell-radius`, `calendar-range-bg` y `calendar-today-ring`.
+- Sitio de documentación: `docs-navbar-height`, `docs-sidebar-width`, `docs-rail-width`, `docs-article-max`,
+  `docs-gutter` y `docs-gap`.
+- El validador de contraste mide además las superficies de lectura, de código sobre lectura y de control
+  sobre cristal, y el texto `fg-prose`.
+
+### Cambiado
+
+- Los tamaños de texto pasan de `px` a `rem` y respetan el tamaño de letra de la persona: `text-body` de
+  13.5 a 14 px (`0.875rem`), `text-small` de 12 a 13, `text-caption` de 11 a 12, `text-fine` de 10 a 11,
+  `text-title` de 14 a 16, `text-heading` de 15 a 18 y `text-heading-lg` de 18 a 20. `text-display-sm`,
+  `text-display` y `text-display-lg` son fluidos (22–26, 28–36 y 36–48 px).
+- Interlineado: `leading-tight` de 1.15 a 1.1, `leading-snug` de 1.3 a 1.25 y `leading-relaxed` de 1.7 a
+  1.625.
+- Alturas de control: `control-height-sm` de 30 a 28 px, `md` de 36 a 34 y `lg` de 44 a 40 (el mínimo táctil
+  sigue en 40).
+- `button-radius` pasa de `radius-full` (píldora) a `control-radius` (10 px): botones y controles son
+  rectángulos de esquinas redondeadas.
+- `radius-xl` de 22 a 20 px; `card-radius` de `radius-lg` a `radius-xl`; `card-shadow` de `shadow-md` a
+  `shadow-sm`; `popup-radius` de `radius-md` a `radius-lg`.
+- `reading-bg` pasa de `surface-solid` a `surface-solid` al 94 %; con `prefers-contrast: more` vuelve a ser
+  opaco.
+- `focus-ring` es doble (`0 0 0 2px canvas, 0 0 0 4px accent-ring`); los componentes dibujan el foco con
+  contorno.
+- `duration-fast` de 120 a 150 ms; `glass-saturate` de 160 % a 180 %.
+- `overlay` más translúcido para el cristal elevado: 0.88 en oscuro y 0.90 en claro (antes 0.94 y 0.96), en
+  las tres marcas.
+- `danger-text` en tema claro sube de contraste: `dazlabs` 70 %, `zutool` 64 % y `zenith` 68 % de `danger`.
+- Fuentes: `dazlabs` usa DM Sans también en los titulares (antes Poppins); `zenith` pasa a la familia base de
+  la suite, Geist y Geist Mono (antes Inter y JetBrains Mono). Los paquetes no incluyen archivos de fuente.
+- Capas de compatibilidad `zutool` y `ui-glass`: notas nuevas para `card-radius`, `card-shadow`, `radius-xl` y
+  `overlay`.
+
+
 ## [0.2.0] - 2026-11-18
 
 Ningún token se elimina ni se renombra. Cambian valores para cumplir el contraste de WCAG 2.2 AA, que ahora

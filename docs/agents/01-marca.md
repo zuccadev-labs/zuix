@@ -15,7 +15,9 @@ Una marca es un archivo: `tokens/brands/<nombre>.json`. Los componentes no se to
 1. Copiar `tokens/brands/dazlabs.json` a `tokens/brands/<nombre>.json`.
 2. Cambiar `name` y `label`.
 3. Definir los **primitivos**: la paleta en bruto de la marca.
-4. Definir las **fuentes**: `display`, `sans` y `mono`.
+4. Definir las **fuentes**: `display`, `sans` y `mono`. Sin tipografía propia, la familia base de la suite:
+   Geist y Geist Mono (`display` toma `sans` si falta). La marca solo declara la pila; cargar los archivos es
+   cosa de la aplicación.
 5. Asignar los **semánticos** de cada tema (`dark` y `light`) con `{p.nombre}`.
 6. Ejecutar `pnpm tokens`.
 
@@ -25,7 +27,10 @@ Una marca es un archivo: `tokens/brands/<nombre>.json`. Los componentes no se to
   "name": "acme",
   "label": "Acme",
   "primitives": { "blue-500": "#2563EB", "blue-700": "#1D4ED8", "ink": "#0B1220" },
-  "fonts": { "display": "\"Sora\", sans-serif", "sans": "\"Inter\", sans-serif", "mono": "\"JetBrains Mono\", monospace" },
+  "fonts": {
+    "sans": "\"Geist Variable\", \"Geist\", ui-sans-serif, system-ui, sans-serif",
+    "mono": "\"Geist Mono Variable\", \"Geist Mono\", ui-monospace, monospace"
+  },
   "themes": {
     "dark": { "accent": "{p.blue-500}", "accent-solid": "{p.blue-700}", "canvas": "{p.ink}" },
     "light": { "accent": "{p.blue-700}" }
