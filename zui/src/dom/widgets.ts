@@ -11,6 +11,7 @@ import { emit, inDom } from "./forms-popup";
 import { patchChildren } from "./vtree";
 import { freeBusyWidget } from "../core/freebusy-widget";
 import { perpetualWidget } from "../core/perpetual-widget";
+import { slotPickerWidget } from "../core/slots-widget";
 import { timelineWidget } from "../core/timeline-widget";
 
 // biome-ignore lint/suspicious/noExplicitAny: el registro guarda piezas de props, configuración y estado distintos.
@@ -30,6 +31,7 @@ let seq = 0;
 registerWidget(perpetualWidget);
 registerWidget(timelineWidget);
 registerWidget(freeBusyWidget);
+registerWidget(slotPickerWidget);
 
 /** Registra una pieza para que `hydrate` la monte. */
 export function registerWidget(widget: AnyWidget): void {

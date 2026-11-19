@@ -26,6 +26,7 @@ const ATTR: Record<string, string> = {
   colspan: "colSpan",
   rowspan: "rowSpan",
   "marker-end": "markerEnd",
+  datetime: "dateTime",
 };
 const noop = () => {};
 

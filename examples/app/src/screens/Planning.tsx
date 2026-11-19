@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import {
   FreeBusy,
   PerpetualYear,
+  SlotPicker,
   TimelineView,
   type CalendarEvent,
   type CalendarSource,
@@ -80,8 +81,17 @@ export const GUESTS: FreeBusyAttendee[] = [
   { id: "you", name: "You", meta: "Madrid", timeZone: TZ, workingHours: { start: "08:00", end: "19:00" }, busy: [busy("10:00", "12:00"), busy("13:00", "13:45"), busy("15:00", "16:00")] },
 ];
 
-export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy";
-export const PIECES: PieceId[] = ["perpetual", "gantt", "resources", "freebusy"];
+export type PieceId = "perpetual" | "gantt" | "resources" | "freebusy" | "slots";
+export const PIECES: PieceId[] = ["perpetual", "gantt", "resources", "freebusy", "slots"];
+
+// Disponibilidad del anfitrión (Madrid): días laborables 09:00–17:00, franjas de 30 min, algunas ya reservadas.
+const HOST_BUSY = [
+  { start: "2026-11-24T09:00:00Z", end: "2026-11-24T09:30:00Z" },
+  { start: "2026-11-24T11:00:00Z", end: "2026-11-24T12:00:00Z" },
+  { start: "2026-11-24T13:00:00Z", end: "2026-11-24T14:30:00Z" },
+  { start: "2026-11-25T08:00:00Z", end: "2026-11-25T16:00:00Z" },
+  { start: "2026-11-20T08:00:00Z", end: "2026-11-20T14:00:00Z" },
+];
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
@@ -163,6 +173,39 @@ export function PlanningPieces({ only }: { only?: PieceId | null }) {
             dayEnd="19:00"
             onSelect={(slot) => setLog(`Use: ${slot.start} → ${slot.end}`)}
           />
+        </Section>
+      ) : null}
+      {show("slots") ? (
+        <Section id="slots" title="Book a call">
+          <div className="app-booking z-liquid">
+            <div className="app-booking__host">
+              <span className="z-avatar" data-size="md" aria-hidden="true">
+                ML
+              </span>
+              <p className="app-muted">Marta López</p>
+              <h3>Intro call · 30 min</h3>
+              <p className="app-muted">Video call, link after booking · Host in Europe/Madrid</p>
+            </div>
+            <SlotPicker
+              id="app-slots"
+              availability={[{ days: [1, 2, 3, 4, 5], start: "09:00", end: "17:00" }]}
+              hostTimeZone={TZ}
+              duration={30}
+              step={30}
+              from={AGENDA_TODAY}
+              to="2026-11-30"
+              busy={HOST_BUSY}
+              timeZone={TZ}
+              timeZones={[TZ, "America/New_York", "Asia/Tokyo"]}
+              now={AGENDA_NOW}
+              today={AGENDA_TODAY}
+              date="2026-11-24"
+              locale="en-GB"
+              weekStartsOn={1}
+              onSelect={(slot) => setLog(`Slot: ${slot.start}`)}
+              onConfirm={(slot) => setLog(`Confirm: ${slot.start}`)}
+            />
+          </div>
         </Section>
       ) : null}
       <p className="app-muted" data-testid="planning-log">

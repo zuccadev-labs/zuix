@@ -14,7 +14,6 @@
       .z-timeline__milestone,
       .z-timeline__booking,
       .z-slotpicker__slot,
-      .z-slotpicker__cycle-btn,
       .z-heatmap__cell,
       .z-heatmap__toggle,
       .z-habit__day,
@@ -979,6 +978,167 @@
     .z-timeline,
     .z-freebusy {
       page: z-agenda-landscape;
+    }
+  }
+}
+
+@layer zui.agenda {
+  /* ---------- Franjas de cita (SlotPicker) ---------- */
+  .z-slotpicker {
+    container: z-slotpicker / inline-size;
+    display: grid;
+    grid-template-columns: auto minmax(calc(var(--z-space-20) * 3), 1fr);
+    min-inline-size: 0;
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+  }
+  .z-slotpicker__cal,
+  .z-slotpicker__times {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2-5);
+    min-inline-size: 0;
+    padding: var(--z-space-5);
+  }
+  .z-slotpicker__cal {
+    border-inline-end: 1px solid var(--z-line);
+  }
+  .z-slotpicker__title,
+  .z-slotpicker__day {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-slotpicker__count {
+    margin: 2px 0 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  /* Días con hueco: realzados con el tinte del acento (además, el resto dice «no times available»). */
+  .z-slotpicker__calendar .z-calendar__day[data-available]:not([data-selected]) {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-slotpicker__tz {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-slotpicker__select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+  }
+  .z-slotpicker__select-wrap:focus-within {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-slotpicker__select {
+    flex: 1;
+    min-inline-size: 0;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: none;
+  }
+  .z-slotpicker__select option {
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+  }
+  .z-slotpicker__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--z-space-3);
+  }
+  .z-slotpicker__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    max-block-size: calc(var(--z-space-20) * 4 + var(--z-space-10));
+    overflow: auto;
+    padding: 2px;
+    scrollbar-width: thin;
+  }
+  .z-slotpicker__slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    min-block-size: var(--z-control-height-lg);
+    border: 1px solid color-mix(in srgb, var(--z-accent) 45%, var(--z-line));
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-slotpicker__slot:hover:not([aria-selected="true"]) {
+      border-color: var(--z-accent);
+      background: var(--z-accent-soft);
+    }
+  }
+  .z-slotpicker__slot:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  /* Elegida: relleno neutro intenso y una marca; además, aria-selected y el texto «… selected». */
+  .z-slotpicker__slot[aria-selected="true"] {
+    border-color: transparent;
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+  }
+  .z-slotpicker__confirm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-slotpicker__chosen {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-slotpicker__confirm .z-btn {
+    inline-size: 100%;
+  }
+  @container z-slotpicker (max-width: 640px) {
+    .z-slotpicker {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-slotpicker__cal {
+      align-items: center;
+      border-inline-end: 0;
+      border-block-end: 1px solid var(--z-line);
+    }
+    .z-slotpicker__cal,
+    .z-slotpicker__times {
+      padding: var(--z-space-4);
+    }
+    .z-slotpicker__tz {
+      align-self: stretch;
+    }
+  }
+  @media (forced-colors: active) {
+    .z-slotpicker__slot[aria-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
     }
   }
 }

@@ -245,3 +245,37 @@ body {
 .app-planning__piece {
   min-inline-size: 0;
 }
+.app-booking {
+  display: grid;
+  grid-template-columns: minmax(0, 17.5rem) minmax(0, 1fr);
+  max-inline-size: 65rem;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--z-panel-radius);
+}
+.app-booking__host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-3);
+  padding: var(--z-space-5);
+  border-inline-end: 1px solid var(--z-line);
+}
+.app-booking__host h3 {
+  margin: 0;
+  font-size: var(--z-text-heading);
+}
+.app-booking .z-slotpicker {
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+@media (max-width: 760px) {
+  .app-booking {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app-booking__host {
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--z-line);
+  }
+}
