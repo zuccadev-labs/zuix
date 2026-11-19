@@ -153,25 +153,34 @@ export function NumberInput({
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
-    const keys: Record<string, () => void> = {
-      ArrowUp: () => nudge(1),
-      ArrowDown: () => nudge(-1),
-      PageUp: () => nudge(1, big),
-      PageDown: () => nudge(-1, big),
-      Home: () => (min !== undefined ? jump(min) : undefined),
-      End: () => (max !== undefined ? jump(max) : undefined),
-    };
-    const action = keys[event.key];
-    if (!action || ((event.key === "Home" || event.key === "End") && (event.key === "Home" ? min : max) === undefined)) {
-      if (event.key === "Enter" && draft !== null) {
-        const parsed = parseNumber(draft, locale, percent);
-        setDraft(null);
-        commit(parsed === null ? null : clampNumber(parsed, range));
+    switch (event.key) {
+      case "ArrowUp":
+      case "ArrowDown":
+        event.preventDefault();
+        nudge(event.key === "ArrowUp" ? 1 : -1);
+        break;
+      case "PageUp":
+      case "PageDown":
+        event.preventDefault();
+        nudge(event.key === "PageUp" ? 1 : -1, big);
+        break;
+      case "Home":
+      case "End": {
+        const to = event.key === "Home" ? min : max;
+        if (to === undefined) return;
+        event.preventDefault();
+        jump(to);
+        break;
       }
-      return;
+      case "Enter":
+        if (draft !== null) {
+          const parsed = parseNumber(draft, locale, percent);
+          setDraft(null);
+          commit(parsed === null ? null : clampNumber(parsed, range));
+        }
+        break;
+      default:
     }
-    event.preventDefault();
-    action();
   };
 
   const atMin = current !== null && min !== undefined && current <= min;

@@ -149,19 +149,30 @@ function settleNumber(box: HTMLElement): void {
 
 function onNumberKey(box: HTMLElement, event: KeyboardEvent): void {
   const { min, max } = numberConfig(box);
-  const keys: Record<string, () => void> = {
-    ArrowUp: () => nudge(box, 1),
-    ArrowDown: () => nudge(box, -1),
-    PageUp: () => nudge(box, 1, true),
-    PageDown: () => nudge(box, -1, true),
-    Home: () => min !== undefined && commitNumber(box, min),
-    End: () => max !== undefined && commitNumber(box, max),
-    Enter: () => settleNumber(box),
-  };
-  const action = keys[event.key];
-  if (!action || (event.key === "Home" && min === undefined) || (event.key === "End" && max === undefined)) return;
-  if (event.key !== "Enter") event.preventDefault();
-  action();
+  switch (event.key) {
+    case "ArrowUp":
+    case "ArrowDown":
+      event.preventDefault();
+      nudge(box, event.key === "ArrowUp" ? 1 : -1);
+      break;
+    case "PageUp":
+    case "PageDown":
+      event.preventDefault();
+      nudge(box, event.key === "PageUp" ? 1 : -1, true);
+      break;
+    case "Home":
+    case "End": {
+      const to = event.key === "Home" ? min : max;
+      if (to === undefined) return;
+      event.preventDefault();
+      commitNumber(box, to);
+      break;
+    }
+    case "Enter":
+      settleNumber(box);
+      break;
+    default:
+  }
 }
 
 let hold: ReturnType<typeof setTimeout> | undefined;
