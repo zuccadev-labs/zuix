@@ -8,3 +8,15 @@ export * from "./components/overlay";
 export * from "./components/navigation";
 export * from "./components/carousel";
 export { cx } from "./cx";
+// Utilidades de fechas civiles (cadenas ISO, sin zona) que comparten Calendar y los selectores.
+export {
+  formatDateRange,
+  isoWeekText,
+  localeWeekInfo,
+  PRESET_KEYS,
+  rangePresets,
+  resolvePreset,
+  weekNumber,
+  weekStartOf,
+  type PresetKey,
+} from "./core/date";

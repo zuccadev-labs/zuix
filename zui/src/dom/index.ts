@@ -48,10 +48,12 @@ export {
   setComboboxOptions,
   setComboboxLoading,
   setComboboxValue,
+  setCalendarOptions,
   setCalendarValue,
   setDatePickerValue,
   setSliderValue,
   setOtpValue,
+  type CalendarOptions,
   type ComboboxOption,
   type DateRange,
 } from "./forms";
@@ -60,6 +62,7 @@ export {
 registerIcons([xMark, exclamationTriangle, informationCircle]);
 
 export { place, type Placement };
+export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
 const isBrowser = typeof document !== "undefined";
 

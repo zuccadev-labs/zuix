@@ -7,11 +7,17 @@
 // Combobox    .z-combobox > input.z-input__control[aria-controls] + .z-listbox[popover]. En .z-combobox: data-value,
 //             data-filter="false", data-loading, data-empty-text, data-loading-text. z:input { value } al escribir,
 //             z:change { value, label }. setComboboxOptions(), setComboboxLoading().
-// Calendar    .z-calendar vacío: data-mode="single|range", data-value ("YYYY-MM-DD" o "desde/hasta"), data-month,
-//             data-min, data-max, data-locale, data-week-start, data-disabled-weekdays="0,6", data-disabled-dates,
-//             data-outside-days="false". z:change { value }.
+// Calendar    .z-calendar vacío: data-mode="single|range|multiple", data-value ("YYYY-MM-DD", "desde/hasta" o
+//             "a,b,c"), data-month, data-months (varios meses), data-paged, data-view, data-min-view, data-max-view,
+//             data-caption="dropdown", data-min, data-max, data-locale, data-week-start, data-disabled-weekdays="0,6",
+//             data-disabled-dates, data-unavailable-dates, data-outside-days, data-fixed-weeks, data-week-numbers,
+//             data-today, data-today-button, data-presets (JSON), data-legend (JSON), data-cell-size,
+//             data-selection-unit="week", data-min-range, data-max-range, data-max-selected y las etiquetas
+//             data-*-label. Funciones (deshabilitadas, reservadas, contenido por día): setCalendarOptions().
+//             z:change { value }, z:monthchange { month }, z:viewchange { view }.
 // DatePicker  .z-select.z-datepicker > button[aria-controls] + .z-popover[popover] con un .z-calendar. Los mismos
-//             atributos que Calendar, en .z-datepicker, más data-placeholder y data-date-style. z:change { value }.
+//             atributos que Calendar, en .z-datepicker, más data-placeholder, data-date-style, data-confirm,
+//             data-close-on-select y data-count-label. z:change { value }.
 // Slider      .z-slider: data-min, data-max, data-step, data-value ("60" o "20,80"), data-orientation, data-disabled.
 //             z:change { value, index }.
 // OTPInput    .z-otp: data-mode="numeric|text", data-value. z:change { value, complete }.
@@ -23,7 +29,7 @@ import * as listbox from "./forms-listbox";
 import * as popup from "./forms-popup";
 import type { Listen } from "./shared";
 
-export { setCalendarValue, setDatePickerValue, type DateRange } from "./forms-calendar";
+export { setCalendarOptions, setCalendarValue, setDatePickerValue, type CalendarOptions, type DateRange } from "./forms-calendar";
 export { setOtpValue, setSliderValue } from "./forms-controls";
 export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
 
