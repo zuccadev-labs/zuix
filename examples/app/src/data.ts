@@ -1,6 +1,6 @@
 import type { IconName } from "@zuccadev-labs/zuix-zicon/core";
 
-export type ScreenId = "overview" | "projects" | "overlays" | "navigation" | "gallery" | "editor" | "forms";
+export type ScreenId = "overview" | "projects" | "overlays" | "navigation" | "gallery" | "editor" | "forms" | "agenda";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -17,6 +17,7 @@ export const SCREENS: ScreenDef[] = [
   { id: "gallery", title: "Gallery", icon: "photo", hint: "Carousel" },
   { id: "editor", title: "Editor", icon: "code-bracket", hint: "Split panes" },
   { id: "forms", title: "Forms", icon: "pencil-square", hint: "Select, combobox and dates" },
+  { id: "agenda", title: "Agenda", icon: "calendar-days", hint: "Day, week, month and list" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);

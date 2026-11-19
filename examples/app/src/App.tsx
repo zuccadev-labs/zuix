@@ -37,6 +37,7 @@ import { Overlays } from "./screens/Overlays";
 import { NavigationScreen } from "./screens/Navigation";
 import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
+import { AgendaScreen } from "./screens/Agenda";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -190,6 +191,8 @@ export function App() {
       <NavigationScreen />
     ) : active === "gallery" ? (
       <Gallery theme={theme} brand={brand} />
+    ) : active === "agenda" ? (
+      <AgendaScreen />
     ) : (
       <Editor />
     );

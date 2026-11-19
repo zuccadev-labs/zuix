@@ -7,6 +7,7 @@ export * from "./components/content";
 export * from "./components/overlay";
 export * from "./components/navigation";
 export * from "./components/carousel";
+export * from "./components/agenda";
 export { cx } from "./cx";
 // Utilidades de fechas civiles (cadenas ISO, sin zona) que comparten Calendar y los selectores.
 export {
@@ -20,3 +21,7 @@ export {
   weekStartOf,
   type PresetKey,
 } from "./core/date";
+// Agenda: zonas horarias, recurrencia y cálculo de eventos (los mismos que usa EventCalendar).
+export { expandEvents, layoutTimed, layoutRow, rewriteSpan, type CalendarColor, type Occurrence } from "./core/agenda";
+export { expandDates, parseRRule, formatRRule, type RRule } from "./core/rrule";
+export { fromWall, toWall, wallStatus, type Disambiguation, type Wall } from "./core/zone";

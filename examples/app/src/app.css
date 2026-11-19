@@ -225,3 +225,12 @@ body {
   right: 4px;
   top: 50%;
 }
+
+/* ?screen=agenda-stage: la agenda a todo el ancho sobre el lienzo de la marca (capturas frente al prototipo). */
+.app-stage {
+  box-sizing: border-box;
+  min-block-size: 100dvh;
+  padding: var(--z-space-6);
+  background: var(--z-canvas-gradient), var(--z-canvas);
+  color: var(--z-fg);
+}

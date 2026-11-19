@@ -126,11 +126,7 @@ function periodDates(rule: RRule, start: string, periodStart: string): string[] 
     out = monthCandidates(rule, year, month, startDay);
   } else {
     // Sin BYMONTH, BYMONTHDAY recorre todos los meses del año; sin nada, el mes del inicio.
-    const months = rule.byMonth?.length
-      ? rule.byMonth
-      : rule.byMonthDay?.length
-        ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        : [startMonth];
+    const months = rule.byMonth?.length ? rule.byMonth : rule.byMonthDay?.length ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] : [startMonth];
     if (!rule.byMonth?.length && !rule.byMonthDay?.length && rule.byDay?.length) {
       // BYDAY anual sin BYMONTH: ordinal dentro del año.
       out = rule.byDay.flatMap((b) => yearWeekdays(year, b));

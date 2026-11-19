@@ -12,6 +12,7 @@ import { App } from "./App";
 import { Audit } from "./screens/audit/Audit";
 import { AuditSsr } from "./screens/audit/AuditSsr";
 import { Layers } from "./screens/audit/Layers";
+import { AgendaScreen } from "./screens/Agenda";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing #root");
@@ -20,7 +21,7 @@ if (!root) throw new Error("Missing #root");
 // ?screen=layers).
 const params = new URLSearchParams(window.location.search);
 const screen = params.get("screen");
-if (screen === "audit" || screen === "audit-ssr" || screen === "layers") {
+if (screen === "audit" || screen === "audit-ssr" || screen === "layers" || screen === "agenda-stage") {
   document.documentElement.dataset.theme = params.get("theme") === "light" ? "light" : "dark";
   document.documentElement.dataset.brand = params.get("brand") === "zutool" ? "zutool" : "dazlabs";
 }
@@ -35,6 +36,11 @@ createRoot(root).render(
       <AuditSsr />
     ) : screen === "layers" ? (
       <Layers />
+    ) : screen === "agenda-stage" ? (
+      // Agenda a todo el ancho, sin el Shell: la que se compara con el prototipo.
+      <main className="z-root app-stage">
+        <AgendaScreen bare />
+      </main>
     ) : (
       <ToastProvider>
         <App />

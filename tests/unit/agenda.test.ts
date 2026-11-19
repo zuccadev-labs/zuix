@@ -161,13 +161,28 @@ describe("rrule: subconjunto de RFC 5545", () => {
     assert.equal(parseRRule("BYDAY=MO"), null);
     assert.equal(parseRRule(null), null);
     assert.equal(parseRRule("FREQ=WEEKLY;WKST=SU")?.wkst, 0);
-    assert.equal(formatRRule(parseRRule("FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE;COUNT=10;WKST=SU")!), "FREQ=WEEKLY;INTERVAL=2;COUNT=10;BYDAY=MO,WE;WKST=SU");
-    assert.equal(formatRRule({ freq: "MONTHLY", interval: 1, byMonthDay: [-1], until: "2027-01-01" }), "FREQ=MONTHLY;UNTIL=20270101;BYMONTHDAY=-1");
+    assert.equal(
+      formatRRule(parseRRule("FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE;COUNT=10;WKST=SU")!),
+      "FREQ=WEEKLY;INTERVAL=2;COUNT=10;BYDAY=MO,WE;WKST=SU",
+    );
+    assert.equal(
+      formatRRule({ freq: "MONTHLY", interval: 1, byMonthDay: [-1], until: "2027-01-01" }),
+      "FREQ=MONTHLY;UNTIL=20270101;BYMONTHDAY=-1",
+    );
   });
   test("diario, semanal con intervalo, COUNT y UNTIL (RFC 5545 §3.8.5.3)", () => {
     assert.deepEqual(ex("FREQ=DAILY;COUNT=3", "2026-11-19", "2026-11-01", "2026-12-31"), ["2026-11-19", "2026-11-20", "2026-11-21"]);
-    assert.deepEqual(ex("FREQ=DAILY;INTERVAL=10;COUNT=3", "2026-01-01", "2026-01-01", "2026-12-31"), ["2026-01-01", "2026-01-11", "2026-01-21"]);
-    assert.deepEqual(ex("FREQ=WEEKLY;UNTIL=20261210", "2026-11-19", "2026-11-01", "2027-01-31"), ["2026-11-19", "2026-11-26", "2026-12-03", "2026-12-10"]);
+    assert.deepEqual(ex("FREQ=DAILY;INTERVAL=10;COUNT=3", "2026-01-01", "2026-01-01", "2026-12-31"), [
+      "2026-01-01",
+      "2026-01-11",
+      "2026-01-21",
+    ]);
+    assert.deepEqual(ex("FREQ=WEEKLY;UNTIL=20261210", "2026-11-19", "2026-11-01", "2027-01-31"), [
+      "2026-11-19",
+      "2026-11-26",
+      "2026-12-03",
+      "2026-12-10",
+    ]);
     // Cada dos semanas lunes y miércoles desde un miércoles (WKST=MO).
     assert.deepEqual(ex("FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE", "2026-11-18", "2026-11-01", "2026-12-10"), [
       "2026-11-18",
@@ -176,7 +191,12 @@ describe("rrule: subconjunto de RFC 5545", () => {
     ]);
     // Días laborables.
     assert.equal(ex("FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR", "2026-11-16", "2026-11-16", "2026-11-29").length, 10);
-    assert.deepEqual(ex("FREQ=DAILY;BYMONTH=1", "2026-12-30", "2026-12-28", "2027-01-03"), ["2026-12-30", "2027-01-01", "2027-01-02", "2027-01-03"]);
+    assert.deepEqual(ex("FREQ=DAILY;BYMONTH=1", "2026-12-30", "2026-12-28", "2027-01-03"), [
+      "2026-12-30",
+      "2027-01-01",
+      "2027-01-02",
+      "2027-01-03",
+    ]);
   });
   test("mensual: BYMONTHDAY negativo, día 31 que se salta, ordinales", () => {
     assert.deepEqual(ex("FREQ=MONTHLY;BYMONTHDAY=-1;COUNT=4", "2026-01-31", "2026-01-01", "2026-12-31"), [
@@ -185,16 +205,37 @@ describe("rrule: subconjunto de RFC 5545", () => {
       "2026-03-31",
       "2026-04-30",
     ]);
-    assert.deepEqual(ex("FREQ=MONTHLY;COUNT=4", "2026-01-31", "2026-01-01", "2026-12-31"), ["2026-01-31", "2026-03-31", "2026-05-31", "2026-07-31"]);
-    assert.deepEqual(ex("FREQ=MONTHLY;BYDAY=2TU;COUNT=3", "2026-11-10", "2026-01-01", "2027-12-31"), ["2026-11-10", "2026-12-08", "2027-01-12"]);
+    assert.deepEqual(ex("FREQ=MONTHLY;COUNT=4", "2026-01-31", "2026-01-01", "2026-12-31"), [
+      "2026-01-31",
+      "2026-03-31",
+      "2026-05-31",
+      "2026-07-31",
+    ]);
+    assert.deepEqual(ex("FREQ=MONTHLY;BYDAY=2TU;COUNT=3", "2026-11-10", "2026-01-01", "2027-12-31"), [
+      "2026-11-10",
+      "2026-12-08",
+      "2027-01-12",
+    ]);
     assert.deepEqual(ex("FREQ=MONTHLY;BYDAY=-1FR;COUNT=2", "2026-11-27", "2026-01-01", "2027-12-31"), ["2026-11-27", "2026-12-25"]);
     // Viernes 13 (BYDAY y BYMONTHDAY se cruzan).
-    assert.deepEqual(ex("FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13;COUNT=3", "2026-02-13", "2026-01-01", "2030-12-31"), ["2026-02-13", "2026-03-13", "2026-11-13"]);
-    assert.deepEqual(ex("FREQ=MONTHLY;BYMONTH=6,12;BYMONTHDAY=1", "2026-06-01", "2026-01-01", "2027-06-30"), ["2026-06-01", "2026-12-01", "2027-06-01"]);
+    assert.deepEqual(ex("FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13;COUNT=3", "2026-02-13", "2026-01-01", "2030-12-31"), [
+      "2026-02-13",
+      "2026-03-13",
+      "2026-11-13",
+    ]);
+    assert.deepEqual(ex("FREQ=MONTHLY;BYMONTH=6,12;BYMONTHDAY=1", "2026-06-01", "2026-01-01", "2027-06-30"), [
+      "2026-06-01",
+      "2026-12-01",
+      "2027-06-01",
+    ]);
   });
   test("anual: 29 de febrero, BYMONTH con ordinal, ordinal en el año", () => {
     assert.deepEqual(ex("FREQ=YEARLY;COUNT=3", "2024-02-29", "2024-01-01", "2040-12-31"), ["2024-02-29", "2028-02-29", "2032-02-29"]);
-    assert.deepEqual(ex("FREQ=YEARLY;BYMONTH=11;BYDAY=4TH;COUNT=3", "2026-11-26", "2026-01-01", "2030-12-31"), ["2026-11-26", "2027-11-25", "2028-11-23"]);
+    assert.deepEqual(ex("FREQ=YEARLY;BYMONTH=11;BYDAY=4TH;COUNT=3", "2026-11-26", "2026-01-01", "2030-12-31"), [
+      "2026-11-26",
+      "2027-11-25",
+      "2028-11-23",
+    ]);
     assert.deepEqual(ex("FREQ=YEARLY;BYDAY=1MO;COUNT=2", "2026-01-05", "2026-01-01", "2030-12-31"), ["2026-01-05", "2027-01-04"]);
     assert.equal(ex("FREQ=YEARLY;BYMONTHDAY=1", "2026-01-01", "2026-01-01", "2026-12-31").length, 12);
   });
@@ -216,18 +257,29 @@ describe("rrule: subconjunto de RFC 5545", () => {
   });
   test("propiedad: semanal sin BYDAY = cada 7·INTERVAL días; todas en rango y en orden", () => {
     fc.assert(
-      fc.property(fc.integer({ min: 0, max: 3000 }), fc.integer({ min: 1, max: 4 }), fc.integer({ min: 1, max: 40 }), (offset, interval, count) => {
-        const start = dateOf(dayStart("2020-01-01") + offset * 1440);
-        const dates = expandDates(parseRRule(`FREQ=WEEKLY;INTERVAL=${interval};COUNT=${count}`)!, start, "2000-01-01", "2040-12-31");
-        assert.equal(dates.length, count);
-        dates.forEach((d, i) => assert.equal(d, dateOf(dayStart(start) + i * 7 * interval * 1440)));
-      }),
+      fc.property(
+        fc.integer({ min: 0, max: 3000 }),
+        fc.integer({ min: 1, max: 4 }),
+        fc.integer({ min: 1, max: 40 }),
+        (offset, interval, count) => {
+          const start = dateOf(dayStart("2020-01-01") + offset * 1440);
+          const dates = expandDates(parseRRule(`FREQ=WEEKLY;INTERVAL=${interval};COUNT=${count}`)!, start, "2000-01-01", "2040-12-31");
+          assert.equal(dates.length, count);
+          for (const [i, d] of dates.entries()) assert.equal(d, dateOf(dayStart(start) + i * 7 * interval * 1440));
+        },
+      ),
     );
   });
   test("propiedad: expandir por trozos da lo mismo que de una vez", () => {
     fc.assert(
       fc.property(
-        fc.constantFrom("FREQ=DAILY;INTERVAL=3", "FREQ=WEEKLY;BYDAY=MO,FR", "FREQ=MONTHLY;BYMONTHDAY=-1", "FREQ=MONTHLY;BYDAY=2WE", "FREQ=YEARLY"),
+        fc.constantFrom(
+          "FREQ=DAILY;INTERVAL=3",
+          "FREQ=WEEKLY;BYDAY=MO,FR",
+          "FREQ=MONTHLY;BYMONTHDAY=-1",
+          "FREQ=MONTHLY;BYDAY=2WE",
+          "FREQ=YEARLY",
+        ),
         fc.integer({ min: 1, max: 700 }),
         (text, cut) => {
           const rule = parseRRule(text)!;
@@ -279,12 +331,29 @@ describe("agenda: eventos en el tiempo", () => {
     assert.equal(eventSpan(ev({ id: "f", start: "nope", end: "nope" }), tz), null);
     const rep = eventSpan(ev({ id: "g", start: "2026-10-25T00:30:00Z", end: "2026-10-25T01:00:00Z" }), tz)!;
     assert.ok(rep.ambiguous, "02:30 del 25 de octubre en Madrid se repite");
-    assert.equal(eventSpan(ev({ id: "h", start: "2026-11-19T10:00", end: "2026-11-19T09:00" }), tz)!.end, eventSpan(ev({ id: "h", start: "2026-11-19T10:00", end: "2026-11-19T09:00" }), tz)!.start);
+    assert.equal(
+      eventSpan(ev({ id: "h", start: "2026-11-19T10:00", end: "2026-11-19T09:00" }), tz)!.end,
+      eventSpan(ev({ id: "h", start: "2026-11-19T10:00", end: "2026-11-19T09:00" }), tz)!.start,
+    );
   });
   test("expandir: rango, series con excepción y exdate, ocultos y cancelados", () => {
     const events: CalendarEvent[] = [
-      ev({ id: "standup", start: "2026-11-16T09:00", end: "2026-11-16T09:15", timeZone: MAD, rrule: "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR", exdate: ["2026-11-18"] }),
-      ev({ id: "moved", seriesId: "standup", recurrenceId: "2026-11-19T09:00", start: "2026-11-19T09:30", end: "2026-11-19T09:45", timeZone: MAD }),
+      ev({
+        id: "standup",
+        start: "2026-11-16T09:00",
+        end: "2026-11-16T09:15",
+        timeZone: MAD,
+        rrule: "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+        exdate: ["2026-11-18"],
+      }),
+      ev({
+        id: "moved",
+        seriesId: "standup",
+        recurrenceId: "2026-11-19T09:00",
+        start: "2026-11-19T09:30",
+        end: "2026-11-19T09:45",
+        timeZone: MAD,
+      }),
       ev({ id: "trip", start: "2026-11-14", end: "2026-11-17", calendarId: "travel" }),
       ev({ id: "gone", start: "2026-11-17T12:00", end: "2026-11-17T13:00", status: "cancelled" }),
       ev({ id: "private", start: "2026-11-17T12:00", end: "2026-11-17T13:00", calendarId: "secret" }),
@@ -306,12 +375,32 @@ describe("agenda: eventos en el tiempo", () => {
       to: "2026-03-29",
       timeZone: MAD,
     });
-    assert.deepEqual(spring.map((o) => minuteOfDay(o.start)), [540, 540, 540]);
-    const fromNY = expandEvents({ events: [ev({ id: "s", start: "2026-03-27T09:00", end: "2026-03-27T10:00", timeZone: MAD, rrule: "FREQ=DAILY;COUNT=3" })], from: "2026-03-27", to: "2026-03-29", timeZone: NY });
-    assert.deepEqual(fromNY.map((o) => clockText(minuteOfDay(o.start))), ["04:00", "04:00", "03:00"]);
+    assert.deepEqual(
+      spring.map((o) => minuteOfDay(o.start)),
+      [540, 540, 540],
+    );
+    const fromNY = expandEvents({
+      events: [ev({ id: "s", start: "2026-03-27T09:00", end: "2026-03-27T10:00", timeZone: MAD, rrule: "FREQ=DAILY;COUNT=3" })],
+      from: "2026-03-27",
+      to: "2026-03-29",
+      timeZone: NY,
+    });
+    assert.deepEqual(
+      fromNY.map((o) => clockText(minuteOfDay(o.start))),
+      ["04:00", "04:00", "03:00"],
+    );
     // Serie de varios días que empieza antes del rango.
-    const long = expandEvents({ events: [ev({ id: "w", start: "2026-11-01", end: "2026-11-04", rrule: "FREQ=WEEKLY" })], from: "2026-11-16", to: "2026-11-16", timeZone: MAD, hidden: new Set() });
-    assert.deepEqual(long.map((o) => o.key), ["w::2026-11-15"]);
+    const long = expandEvents({
+      events: [ev({ id: "w", start: "2026-11-01", end: "2026-11-04", rrule: "FREQ=WEEKLY" })],
+      from: "2026-11-16",
+      to: "2026-11-16",
+      timeZone: MAD,
+      hidden: new Set(),
+    });
+    assert.deepEqual(
+      long.map((o) => o.key),
+      ["w::2026-11-15"],
+    );
   });
   test("solapes en columnas: tres a la vez, ensanche y grupos independientes", () => {
     const a = { start: 600, end: 720 }; // 10:00–12:00
@@ -329,7 +418,9 @@ describe("agenda: eventos en el tiempo", () => {
     assert.deepEqual(p.get(z), { col: 0, n: 1, w: 1, side: false });
   });
   test("propiedad: dos del mismo grupo que se solapan nunca comparten columna; ancho dentro de n", () => {
-    const interval = fc.tuple(fc.integer({ min: 0, max: 1400 }), fc.integer({ min: 0, max: 240 })).map(([s, d]) => ({ start: s, end: s + d }));
+    const interval = fc
+      .tuple(fc.integer({ min: 0, max: 1400 }), fc.integer({ min: 0, max: 240 }))
+      .map(([s, d]) => ({ start: s, end: s + d }));
     fc.assert(
       fc.property(fc.array(interval, { maxLength: 30 }), (items) => {
         const p = layoutTimed(items, 15);
@@ -394,8 +485,7 @@ describe("agenda: eventos en el tiempo", () => {
       fc.property(fc.array(item, { maxLength: 20 }), fc.integer({ min: 1, max: 6 }), (items, max) => {
         const row = layoutRow(items, days, max);
         for (const a of row.bars)
-          for (const b of row.bars)
-            if (a !== b && a.lane === b.lane) assert.ok(a.from + a.span <= b.from || b.from + b.span <= a.from);
+          for (const b of row.bars) if (a !== b && a.lane === b.lane) assert.ok(a.from + a.span <= b.from || b.from + b.span <= a.from);
         assert.ok(row.bars.every((b) => b.lane < max));
         const visible = items.filter((i) => i.end > d0 && i.start < d0 + 7 * 1440);
         for (const i of visible) assert.ok(row.bars.some((b) => b.item === i) || row.hidden.some((h) => h.includes(i)));
@@ -420,15 +510,20 @@ describe("agenda: eventos en el tiempo", () => {
   });
   test("propiedad: mover conserva la duración; redimensionar nunca baja del mínimo", () => {
     fc.assert(
-      fc.property(fc.integer({ min: 0, max: 10_000 }), fc.integer({ min: 15, max: 600 }), fc.integer({ min: -2000, max: 2000 }), (s, d, delta) => {
-        const span = { start: s, end: s + d };
-        const m = moveSpan(span, delta);
-        assert.equal(m.end - m.start, d);
-        for (const edge of ["start", "end"] as const) {
-          const r = resizeSpan(span, edge, delta, 15);
-          assert.ok(r.end - r.start >= 15);
-        }
-      }),
+      fc.property(
+        fc.integer({ min: 0, max: 10_000 }),
+        fc.integer({ min: 15, max: 600 }),
+        fc.integer({ min: -2000, max: 2000 }),
+        (s, d, delta) => {
+          const span = { start: s, end: s + d };
+          const m = moveSpan(span, delta);
+          assert.equal(m.end - m.start, d);
+          for (const edge of ["start", "end"] as const) {
+            const r = resizeSpan(span, edge, delta, 15);
+            assert.ok(r.end - r.start >= 15);
+          }
+        },
+      ),
     );
   });
   test("reescribir en la forma del evento, con la hora que no existe", () => {
@@ -442,16 +537,26 @@ describe("agenda: eventos en el tiempo", () => {
       start: "2026-11-20T10:30",
       end: "2026-11-20T11:30",
     });
-    assert.deepEqual(rewriteSpan(ev({ id: "c", start: "2026-11-19T09:00:00Z", end: "2026-11-19T10:00:00Z" }), { start: d + 600, end: d + 660 }, MAD), {
-      start: "2026-11-20T09:00:00Z",
-      end: "2026-11-20T10:00:00Z",
-    });
-    assert.deepEqual(rewriteSpan(ev({ id: "f", start: "2026-11-19T09:00", end: "2026-11-19T09:30:00" }), { start: d + 600, end: d + 630 }, MAD), {
-      start: "2026-11-20T10:00",
-      end: "2026-11-20T10:30:00",
-    });
+    assert.deepEqual(
+      rewriteSpan(ev({ id: "c", start: "2026-11-19T09:00:00Z", end: "2026-11-19T10:00:00Z" }), { start: d + 600, end: d + 660 }, MAD),
+      {
+        start: "2026-11-20T09:00:00Z",
+        end: "2026-11-20T10:00:00Z",
+      },
+    );
+    assert.deepEqual(
+      rewriteSpan(ev({ id: "f", start: "2026-11-19T09:00", end: "2026-11-19T09:30:00" }), { start: d + 600, end: d + 630 }, MAD),
+      {
+        start: "2026-11-20T10:00",
+        end: "2026-11-20T10:30:00",
+      },
+    );
     const gap = dayStart("2026-03-29") + 150; // 02:30, no existe en Madrid
-    const moved = rewriteSpan(ev({ id: "g", start: "2026-03-28T10:00", end: "2026-03-28T11:00", timeZone: MAD }), { start: gap, end: gap + 60 }, MAD);
+    const moved = rewriteSpan(
+      ev({ id: "g", start: "2026-03-28T10:00", end: "2026-03-28T11:00", timeZone: MAD }),
+      { start: gap, end: gap + 60 },
+      MAD,
+    );
     assert.deepEqual(moved, { start: "2026-03-29T03:30", end: "2026-03-29T03:30", shifted: { asked: "02:30", saved: "03:30" } });
   });
   test("rango visible y navegación", () => {
