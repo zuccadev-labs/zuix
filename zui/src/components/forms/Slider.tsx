@@ -29,6 +29,11 @@ export interface SliderProps extends Omit<ComponentProps<"span">, "children" | "
   size?: "sm" | "md";
   /** Nombre accesible de cada tirador (uno por valor). */
   thumbLabels?: ReadonlyArray<string>;
+  /**
+   * Marcas sobre la pista: `true` una por paso (hasta 21), una lista de valores, o `{ value, label }` con texto bajo
+   * la marca. Las marcas son decorativas: el valor lo anuncia el tirador.
+   */
+  marks?: boolean | ReadonlyArray<number | { value: number; label?: string }>;
 }
 
 /** Deslizador de uno o varios valores (patrón APG «slider»; rango con dos tiradores). */
@@ -48,6 +53,7 @@ export function Slider({
   form,
   size = "md",
   thumbLabels,
+  marks,
   className,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
@@ -129,6 +135,18 @@ export function Slider({
   const low = values.length > 1 ? percent(Math.min(...values), min, max) : 0;
   const high = percent(Math.max(...values, min), min, max);
   const rangeStyle = { [start]: `${low}%`, [end]: `${100 - high}%` } as CSSProperties;
+  const steps = Math.round((max - min) / step);
+  const markList: Array<{ value: number; label?: string }> =
+    marks === true
+      ? steps <= 20
+        ? Array.from({ length: steps + 1 }, (_, i) => ({ value: min + i * step }))
+        : []
+      : Array.isArray(marks)
+        ? marks.map((mark) => (typeof mark === "number" ? { value: mark } : mark))
+        : [];
+  const labelled = markList.some((mark) => mark.label);
+  const lowest = values.length > 1 ? Math.min(...values) : min;
+  const highest = Math.max(...values, min);
 
   return (
     <span
@@ -144,6 +162,7 @@ export function Slider({
       data-value={values.join(",")}
       data-disabled={disabled ? "" : undefined}
       data-inverted={inverted ? "" : undefined}
+      data-marks={markList.length ? (labelled ? "labels" : "") : undefined}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerEnd}
@@ -152,6 +171,26 @@ export function Slider({
       <span className="z-slider__track">
         <span className="z-slider__range" style={rangeStyle} />
       </span>
+      {markList.length ? (
+        <span className="z-slider__marks" aria-hidden="true">
+          {markList.map((mark) => (
+            <span
+              key={mark.value}
+              className="z-slider__mark"
+              data-value={mark.value}
+              data-in-range={mark.value >= lowest && mark.value <= highest ? "" : undefined}
+              // Centrada donde estaría el centro del tirador con ese valor.
+              style={
+                {
+                  [start]: `calc(${percent(mark.value, min, max) / 100} * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)`,
+                } as CSSProperties
+              }
+            >
+              {mark.label ? <span className="z-slider__mark-label">{mark.label}</span> : null}
+            </span>
+          ))}
+        </span>
+      ) : null}
       {values.map((value, index) => (
         <span
           // biome-ignore lint/suspicious/noArrayIndexKey: un tirador es su posición en la lista de valores.

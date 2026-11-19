@@ -721,6 +721,55 @@
   .z-rating__star:disabled {
     cursor: not-allowed;
   }
+  /* Medias estrellas: cada estrella es una celda con dos radios (mitad inicial y final) sobre el dibujo; la capa
+     rellena se recorta a la mitad o entera según la mitad marcada (data-filled la pone la valoración). */
+  .z-rating__cell {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 2px;
+  }
+  .z-rating__glyph {
+    display: inline-flex;
+    grid-area: 1 / 1;
+    color: var(--z-control-border);
+  }
+  .z-rating__glyph--filled {
+    color: var(--z-warning);
+    clip-path: inset(0 100% 0 0);
+  }
+  [dir="rtl"] .z-rating__glyph--filled {
+    clip-path: inset(0 0 0 100%);
+  }
+  .z-rating__cell:has(> [data-half="start"][data-filled]) .z-rating__glyph--filled {
+    clip-path: inset(0 50% 0 0);
+  }
+  [dir="rtl"] .z-rating__cell:has(> [data-half="start"][data-filled]) .z-rating__glyph--filled {
+    clip-path: inset(0 0 0 50%);
+  }
+  .z-rating__cell:has(> [data-half="end"][data-filled]) .z-rating__glyph--filled {
+    clip-path: none;
+  }
+  .z-rating[data-half] .z-rating__star {
+    position: absolute;
+    inset-block: 0;
+    min-width: 0;
+    width: 50%;
+    padding: 0;
+  }
+  .z-rating[data-half] .z-rating__star[data-half="start"] {
+    inset-inline-start: 0;
+  }
+  .z-rating[data-half] .z-rating__star[data-half="end"] {
+    inset-inline-end: 0;
+  }
+  @media (hover: hover) {
+    .z-rating[data-half] .z-rating__star:hover:not(:disabled) {
+      transform: none;
+    }
+  }
   .z-rating__value {
     font-weight: var(--z-weight-semibold);
     font-variant-numeric: tabular-nums;

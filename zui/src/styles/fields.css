@@ -703,4 +703,139 @@
   .z-editable[data-state="edit"] .z-editable__controls [data-action="edit"] {
     display: none;
   }
+
+  /* ---- Variantes de piezas existentes: OTP con separador, Slider con marcas, lista de FileUpload ---- */
+  .z-otp {
+    align-items: center;
+  }
+  .z-otp__separator {
+    flex: 0 0 auto;
+    width: var(--z-space-2-5);
+    height: 2px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-line-strong);
+  }
+  .z-otp__cell::placeholder {
+    color: var(--z-fg-subtle);
+  }
+  .z-otp__cell:focus::placeholder {
+    color: transparent;
+  }
+
+  /* Marcas: puntos sobre la pista centrados donde caería el centro del tirador; dentro del rango, de acento. */
+  .z-slider__marks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .z-slider__mark {
+    position: absolute;
+    inset-block-start: 50%;
+    width: 4px;
+    height: 4px;
+    margin-inline-start: -2px;
+    margin-block-start: -2px;
+    border-radius: var(--z-radius-full);
+    background: var(--z-fg-subtle);
+  }
+  .z-slider__mark[data-in-range] {
+    background: var(--z-fg-on-accent);
+  }
+  .z-slider[data-orientation="vertical"] .z-slider__mark {
+    inset-block-start: auto;
+    inset-inline-start: 50%;
+    margin-block: 0 -2px;
+  }
+  .z-slider__mark-label {
+    position: absolute;
+    inset-block-start: calc(var(--z-slider-thumb) / 2 + var(--z-space-1));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  [dir="rtl"] .z-slider__mark-label {
+    translate: 50% 0;
+  }
+  .z-slider[data-marks="labels"]:not([data-orientation="vertical"]) {
+    margin-block-end: calc(var(--z-space-4) + 2px);
+  }
+  .z-slider[data-orientation="vertical"] .z-slider__mark-label {
+    inset-block-start: 50%;
+    inset-inline-start: calc(var(--z-slider-thumb) / 2 + var(--z-space-1));
+    translate: 0 -50%;
+  }
+
+  /* Lista de archivos: miniatura, nombre con barra de progreso, tamaño y quitar. */
+  .z-upload__thumb {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    overflow: hidden;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    color: var(--z-fg-muted);
+  }
+  .z-upload__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .z-upload__file-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    min-width: 0;
+  }
+  .z-upload__progress {
+    width: 100%;
+    height: 4px;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    appearance: none;
+  }
+  .z-upload__progress::-webkit-progress-bar {
+    background: var(--z-surface-3);
+  }
+  .z-upload__progress::-webkit-progress-value {
+    background: var(--z-accent);
+  }
+  .z-upload__progress::-moz-progress-bar {
+    background: var(--z-accent);
+  }
+  .z-upload__remove {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-upload__remove:hover {
+      background: var(--z-surface-3);
+      color: var(--z-fg);
+    }
+  }
+  .z-upload__remove:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-upload:has(.z-upload__files:not(:empty)) {
+    cursor: default;
+  }
 }

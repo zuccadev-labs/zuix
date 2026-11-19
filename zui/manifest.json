@@ -3293,6 +3293,12 @@
      "name": "valueLabel",
      "type": "(value: number, max: number) => string",
      "description": "Por defecto \"N out of M\"."
+    },
+    {
+     "name": "allowHalf",
+     "type": "boolean",
+     "default": false,
+     "description": "Con `onChange`: medias estrellas. Cada estrella tiene dos mitades pulsables y las flechas avanzan de 0,5 en 0,5. En lectura los decimales ya se dibujan."
     }
    ],
    "states": [
@@ -3330,6 +3336,10 @@
     {
      "title": "Entrada",
      "code": "<Rating value={score} onChange={setScore} size=\"lg\" label=\"Your rating\" />"
+    },
+    {
+     "title": "Medias estrellas",
+     "code": "function HalfRating() {\n  const [stars, setStars] = React.useState(3.5);\n  return <Rating value={stars} onChange={setStars} allowHalf showValue label=\"Your rating\" />;\n}"
     }
    ],
    "origin": "Rating del design system base.",
@@ -6685,6 +6695,46 @@
      "name": "children",
      "type": "ReactNode",
      "description": "Contenido extra, p. ej. la lista de archivos elegidos."
+    },
+    {
+     "name": "showFiles",
+     "type": "boolean",
+     "default": false,
+     "description": "Lista de archivos dentro de la zona: miniatura de las imágenes, nombre, tamaño, progreso y botón de quitar. Sin `files` la lleva el componente (acumula con `multiple`)."
+    },
+    {
+     "name": "files",
+     "type": "File[]",
+     "description": "Lista controlada (con `showFiles`)."
+    },
+    {
+     "name": "onRemove",
+     "type": "(file: File) => void"
+    },
+    {
+     "name": "progress",
+     "type": "(file: File) => number | undefined",
+     "description": "Progreso de subida (0–100) de cada archivo."
+    },
+    {
+     "name": "removeLabel",
+     "type": "(file: File) => string",
+     "default": "Remove {name}"
+    },
+    {
+     "name": "directory",
+     "type": "boolean",
+     "default": false,
+     "description": "Elegir una carpeta entera (webkitdirectory)."
+    },
+    {
+     "name": "capture",
+     "type": "enum",
+     "values": [
+      "user",
+      "environment"
+     ],
+     "description": "Abre la cámara en el móvil."
     }
    ],
    "states": [
@@ -6724,7 +6774,9 @@
     "space-1",
     "space-3",
     "surface-2",
-    "weight-medium"
+    "weight-medium",
+    "surface-3",
+    "radius-xs"
    ],
    "classes": [
     "z-upload"
@@ -6739,6 +6791,10 @@
     {
      "title": "Un documento",
      "code": "<FileUpload accept=\".pdf\" label=\"Upload the signed contract\" icon=\"document-arrow-up\" onFiles={([file]) => upload(file)} />"
+    },
+    {
+     "title": "Con lista y progreso",
+     "code": "<FileUpload\n  multiple\n  showFiles\n  accept=\"image/*,.pdf\"\n  hint=\"Images or PDF.\"\n  onFiles={(files) => upload(files)}\n  progress={(file) => uploads[file.name]}\n/>"
     }
    ],
    "html": [
@@ -7344,8 +7400,8 @@
     },
     {
      "name": "options",
-     "type": "NativeSelectOption[]",
-     "description": "{ value, label, disabled? }. Alternativa: hijos <option>."
+     "type": "(NativeSelectOption | NativeSelectOptionGroup)[]",
+     "description": "Opciones sueltas o grupos { label, options, disabled? }, que salen como <optgroup>. También valen hijos <option>."
     },
     {
      "name": "placeholder",
@@ -7411,6 +7467,10 @@
     {
      "title": "Con hijos, en línea",
      "code": "<NativeSelect size=\"sm\" block={false} defaultValue=\"25\" aria-label=\"Rows per page\">\n  <option value=\"10\">10</option>\n  <option value=\"25\">25</option>\n</NativeSelect>"
+    },
+    {
+     "title": "Con grupos (optgroup)",
+     "code": "<Field label=\"Time zone\">\n  <NativeSelect\n    defaultValue=\"Europe/Madrid\"\n    options={[\n      { label: \"Europe\", options: [\n        { value: \"Europe/Lisbon\", label: \"Lisbon\" },\n        { value: \"Europe/Madrid\", label: \"Madrid\" },\n      ] },\n      { label: \"America\", options: [\n        { value: \"America/Mexico_City\", label: \"Mexico City\" },\n        { value: \"America/Bogota\", label: \"Bogotá\" },\n      ] },\n    ]}\n  />\n</Field>"
     }
    ],
    "origin": "Select de zutool; el chevron pasa a ser un icono de zicon.",
@@ -7649,6 +7709,16 @@
      "name": "name",
      "type": "string",
      "description": "Añade un campo oculto con el valor completo."
+    },
+    {
+     "name": "groups",
+     "type": "number[]",
+     "description": "Reparto en grupos con un separador visual entre ellos, p. ej. [3, 3]."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "description": "Carácter de las casillas vacías, p. ej. «·»."
     }
    ],
    "states": [
@@ -7680,12 +7750,16 @@
     "control-bg-hover",
     "control-radius-lg",
     "fg-muted",
-    "focus-width"
+    "focus-width",
+    "space-2-5",
+    "radius-xs",
+    "line-strong",
+    "fg-subtle"
    ],
    "classes": [
     "z-otp"
    ],
-   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
+   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`. El separador es decorativo (aria-hidden).",
    "behavior": "dom",
    "examples": [
     {
@@ -7695,6 +7769,10 @@
     {
      "title": "Controlado con error",
      "code": "<OTPInput length={4} value={pin} onChange={setPin} mask invalid label=\"PIN\" />"
+    },
+    {
+     "title": "Con separador",
+     "code": "<OTPInput length={6} groups={[3, 3]} placeholder=\"·\" label=\"Authenticator code\" />"
     }
    ],
    "html": [
@@ -7706,6 +7784,10 @@
     {
      "title": "PIN oculto con error",
      "code": "<div role=\"group\" aria-label=\"PIN\" class=\"z-otp\" id=\"pin\" data-size=\"md\" data-mode=\"numeric\" data-invalid>\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"4\" aria-label=\"Character 1 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 2 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 3 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 4 of 4\" aria-invalid=\"true\" />\n</div>"
+    },
+    {
+     "title": "Con separador",
+     "code": "<div role=\"group\" aria-label=\"Authenticator code\" class=\"z-otp\" id=\"totp\" data-size=\"md\" data-mode=\"numeric\">\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"6\" aria-label=\"Character 1 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 2 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 3 of 6\" placeholder=\"·\" />\n  <span class=\"z-otp__separator\" aria-hidden=\"true\"></span>\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 4 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 5 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 6 of 6\" placeholder=\"·\" />\n</div>"
     }
    ],
    "origin": "Nuevo.",
@@ -8462,6 +8544,11 @@
      "name": "form",
      "type": "string",
      "description": "Id del formulario al que pertenece, si no está dentro de él."
+    },
+    {
+     "name": "marks",
+     "type": "boolean | (number | { value, label? })[]",
+     "description": "Marcas sobre la pista: `true` una por paso (hasta 21), una lista de valores o `{ value, label }` con texto bajo la marca. Decorativas: el valor lo anuncia el tirador."
     }
    ],
    "states": [
@@ -8484,7 +8571,12 @@
     "focus-width",
     "line",
     "radius-xs",
-    "touch-target"
+    "touch-target",
+    "fg-subtle",
+    "fg-muted",
+    "text-caption",
+    "space-1",
+    "space-4"
    ],
    "classes": [
     "z-slider"
@@ -8499,6 +8591,10 @@
     {
      "title": "Rango",
      "code": "<Slider value={range} onValueChange={setRange} min={0} max={500} thumbLabels={[\"Minimum\", \"Maximum\"]} />"
+    },
+    {
+     "title": "Con marcas y etiquetas",
+     "code": "<Field label=\"Quality\">\n  <Slider\n    defaultValue={[50]}\n    step={25}\n    marks={[\n      { value: 0, label: \"Low\" },\n      { value: 25 },\n      { value: 50, label: \"Medium\" },\n      { value: 75 },\n      { value: 100, label: \"High\" },\n    ]}\n  />\n</Field>"
     }
    ],
    "html": [
@@ -8510,6 +8606,10 @@
     {
      "title": "Rango",
      "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
+    },
+    {
+     "title": "Con marcas y etiquetas",
+     "code": "<span class=\"z-slider\" id=\"quality\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"25\" data-value=\"50\" data-marks=\"labels\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__marks\" aria-hidden=\"true\">\n    <span class=\"z-slider__mark\" data-value=\"0\" data-in-range style=\"inset-inline-start:calc(0.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Low</span></span>\n    <span class=\"z-slider__mark\" data-value=\"25\" data-in-range style=\"inset-inline-start:calc(0.25 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"50\" data-in-range style=\"inset-inline-start:calc(0.5 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Medium</span></span>\n    <span class=\"z-slider__mark\" data-value=\"75\" style=\"inset-inline-start:calc(0.75 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"100\" style=\"inset-inline-start:calc(1.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">High</span></span>\n  </span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Quality\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"50\" aria-orientation=\"horizontal\"></span>\n</span>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
