@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { formatDateRange, toISODate } from "../../core/date";
 import { readSelection, selectionText, valueText, type CalendarMode, type CalendarValue, type CalendarView } from "../../core/calendar";
@@ -9,6 +9,7 @@ import { useControllable, useLayer, usePresence } from "../../primitives/hooks";
 import { Popup, Portal, rectOf } from "../../primitives/popup";
 import { useMergedRef } from "../../refs";
 import { Button } from "../actions/Button";
+import { Drawer } from "../overlay/Drawer";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { Calendar, todayISO, type CalendarLegend, type CalendarPreset, type CalendarProps, type DateRange } from "./Calendar";
 import { DateTimePicker } from "./DateTimePicker";
@@ -45,6 +46,7 @@ type ForwardedCalendarProps = Pick<
   | "chooseMonthLabel"
   | "chooseYearLabel"
   | "maxView"
+  | "presetsPlacement"
 >;
 
 interface DatePickerBaseProps extends ForwardedCalendarProps {
@@ -101,6 +103,9 @@ interface DatePickerBaseProps extends ForwardedCalendarProps {
   selectionUnit?: "day" | "week";
   /** Fecha única: el disparador es un DateField tecleable (patrón combobox con diálogo) con botón de calendario. */
   input?: boolean;
+  /** Hoja inferior (Drawer `side="bottom"`, modal) en lugar del popover: `auto` con puntero grueso o ventana
+   *  estrecha (`(pointer: coarse), (max-width: 640px)`), `always` siempre, `never` (por defecto) nunca. */
+  drawer?: "auto" | "always" | "never";
   /** Icono del campo. */
   icon?: "calendar" | "calendar-date-range" | "calendar-days";
   id?: string;
@@ -220,6 +225,7 @@ function DatePickerPanel(props: DatePickerProps) {
     selectionUnit,
     icon,
     input: _input,
+    drawer = "never",
     id,
     "aria-label": ariaLabel,
     "aria-labelledby": ariaLabelledBy,
@@ -248,13 +254,15 @@ function DatePickerPanel(props: DatePickerProps) {
   const native = useRef<HTMLInputElement | null>(null);
 
   const [isOpen, setOpen] = useControllable(open, defaultOpen, onOpenChange);
-  const present = usePresence(isOpen, panel);
+  const narrow = useMedia(DRAWER_QUERY, drawer === "auto");
+  const sheet = drawer === "always" || (drawer === "auto" && narrow);
+  const present = usePresence(isOpen && !sheet, panel);
   const close = (refocus: boolean) => {
     const inside = panel.current?.contains(document.activeElement) ?? false;
     setOpen(false);
     if (refocus && inside) focusQuiet(button.current);
   };
-  useLayer(isOpen, {
+  useLayer(isOpen && !sheet, {
     contains: (target) => (panel.current?.contains(target) ?? false) || (anchor.current?.contains(target) ?? false),
     onEscape: () => close(true),
     onPointerOutside: () => close(false),
@@ -377,6 +385,15 @@ function DatePickerPanel(props: DatePickerProps) {
   const iconName = icon ?? (mode === "range" ? "calendar-date-range" : mode === "multiple" ? "calendar-days" : "calendar");
   const listed = mode === "multiple" && !serialize ? selection.multiple : [formValue];
 
+  const renderCalendar = (autoFocus?: boolean) =>
+    mode === "range" ? (
+      <Calendar {...calendar} mode="range" autoFocus={autoFocus} />
+    ) : mode === "multiple" ? (
+      <Calendar {...calendar} mode="multiple" maxSelected={(props as DatePickerMultipleProps).maxSelected} autoFocus={autoFocus} />
+    ) : (
+      <Calendar {...calendar} mode="single" autoFocus={autoFocus} />
+    );
+
   return (
     <>
       <span
@@ -394,7 +411,7 @@ function DatePickerPanel(props: DatePickerProps) {
           className="z-select__control"
           aria-haspopup="dialog"
           aria-expanded={isOpen}
-          aria-controls={isOpen ? panelId : undefined}
+          aria-controls={isOpen && !sheet ? panelId : undefined}
           // El nombre accesible incluye la fecha elegida: con `aria-label` a secas el lector de pantalla no la diría.
           // Etiquetado por un `Field`, la fecha va como descripción.
           aria-labelledby={ariaLabelledBy ? `${ariaLabelledBy} ${valueId}` : undefined}
@@ -435,6 +452,18 @@ function DatePickerPanel(props: DatePickerProps) {
             ))
           : null}
       </span>
+      {sheet ? (
+        <Drawer
+          open={isOpen}
+          onOpenChange={(next) => (next ? setOpen(true) : close(true))}
+          side="bottom"
+          size="sm"
+          label={calendarLabel}
+          className={cx("z-datepicker__drawer", popupClassName)}
+        >
+          {isOpen ? renderCalendar(true) : null}
+        </Drawer>
+      ) : null}
       {present ? (
         <Portal anchor={anchor}>
           <Popup
@@ -454,13 +483,7 @@ function DatePickerPanel(props: DatePickerProps) {
               if (panel.current && trapTab(panel.current, event)) event.preventDefault();
             }}
           >
-            {mode === "range" ? (
-              <Calendar {...calendar} mode="range" />
-            ) : mode === "multiple" ? (
-              <Calendar {...calendar} mode="multiple" maxSelected={(props as DatePickerMultipleProps).maxSelected} />
-            ) : (
-              <Calendar {...calendar} mode="single" />
-            )}
+            {renderCalendar()}
           </Popup>
         </Portal>
       ) : null}
@@ -475,5 +498,24 @@ export function DateRangePicker({ numberOfMonths = 2, placeholder = "Select date
 }
 
 const noop = () => {};
+
+const DRAWER_QUERY = "(pointer: coarse), (max-width: 640px)";
+/** Verdadero si la consulta de medios se cumple (falso en el servidor y con `active` falso). */
+function useMedia(query: string, active: boolean): boolean {
+  const subscribe = useCallback(
+    (notify: () => void) => {
+      if (!active) return noop;
+      const list = matchMedia(query);
+      list.addEventListener("change", notify);
+      return () => list.removeEventListener("change", notify);
+    },
+    [query, active],
+  );
+  return useSyncExternalStore(
+    subscribe,
+    () => active && matchMedia(query).matches,
+    () => false,
+  );
+}
 
 export type { CalendarMode };

@@ -66,7 +66,7 @@ export {
 registerIcons([xMark, exclamationTriangle, informationCircle]);
 
 export { place, type Placement };
-export { updateRelativeTime } from "./time";
+export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
 const isBrowser = typeof document !== "undefined";

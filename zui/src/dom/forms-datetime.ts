@@ -1,6 +1,7 @@
 // DateTimePicker (y DatePicker con campo tecleable) sin framework: un `.z-datefield.z-datetimepicker` con su botón
 // `.z-datetimepicker__trigger[aria-controls]` y un panel `[popover]` con un `.z-calendar` y, con hora, un pie con
 // un TimeField y «Apply». El campo es el DateField de forms-datefield; aquí solo se abre, se cierra y se junta.
+import { clampDateTime, dayTimeBounds } from "../core/time";
 import { resetCalendar } from "./forms-calendar";
 import { hydrate as hydrateFields, setDateFieldValue } from "./forms-datefield";
 import { hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup } from "./forms-popup";
@@ -43,6 +44,19 @@ function ensureFooter(field: HTMLElement, panel: HTMLElement, time: string | nul
   const timefield = footer.querySelector<HTMLElement>(".z-timefield")!;
   if (time) timefield.dataset.value = time;
   else delete timefield.dataset.value;
+  limitTime(field, footer, drafts.get(field)?.date ?? null);
+}
+
+/** El día de `min` o de `max` limita la hora del TimeField del pie. */
+function limitTime(field: HTMLElement, footer: HTMLElement, date: string | null): void {
+  const timefield = footer.querySelector<HTMLElement>(".z-timefield");
+  if (!timefield) return;
+  const bounds = dayTimeBounds(date, field.dataset.min, field.dataset.max);
+  for (const key of ["min", "max"] as const) {
+    const bound = bounds[key];
+    if (bound) timefield.dataset[key] = bound;
+    else delete timefield.dataset[key];
+  }
   hydrateFields(footer);
 }
 
@@ -88,8 +102,8 @@ function apply(field: HTMLElement): void {
   const draft = drafts.get(field);
   if (!draft?.date) return;
   const seconds = field.dataset.granularity === "second";
-  const time = (draft.time ?? field.dataset.defaultTime ?? "00:00").slice(0, seconds ? 8 : 5);
-  setDateFieldValue(field, `${draft.date}T${seconds && time.length === 5 ? `${time}:00` : time}`);
+  const time = draft.time ?? field.dataset.defaultTime ?? "00:00";
+  setDateFieldValue(field, clampDateTime(draft.date, time, field.dataset.min, field.dataset.max, seconds));
   closePicker(field);
 }
 
@@ -137,6 +151,9 @@ export function setup(on: Listen): void {
       if (!withTime(field) && draft.date) {
         setDateFieldValue(field, draft.date);
         closePicker(field);
+      } else {
+        const footer = parts(field).panel?.querySelector<HTMLElement>(".z-datetimepicker__footer");
+        if (footer) limitTime(field, footer, draft.date);
       }
     } else if (target.matches(".z-timefield")) {
       draft.time = typeof value === "string" ? value : null;

@@ -214,6 +214,29 @@ export function choose(
   return value < from ? { from: value, to: from } : { from, to: value };
 }
 
+/**
+ * Valor que deja pulsar el número de una semana que empieza en `start`: en rango, la semana entera (recortada a los
+ * días elegibles de los extremos); en múltiple, añade sus días elegibles (o los quita si ya estaban todos); en fecha
+ * única, su primer día elegible. `undefined` si ningún día de la semana se puede elegir.
+ */
+export function chooseWeek(
+  mode: CalendarMode,
+  selection: CalendarSelection,
+  start: string,
+  rules: CalendarRules,
+): CalendarValue | undefined {
+  const days = Array.from({ length: 7 }, (_, i) => addDays(start, i)).filter((d) => !dayStatus(d, rules));
+  if (!days.length) return undefined;
+  const first = days[0]!;
+  const last = days[days.length - 1]!;
+  if (mode === "single") return first;
+  if (mode === "range") return { from: first, to: last };
+  const all = days.every((d) => selection.multiple.includes(d));
+  if (all) return selection.multiple.filter((d) => !days.includes(d));
+  const next = [...new Set([...selection.multiple, ...days])].sort();
+  return rules.maxSelected && next.length > rules.maxSelected ? undefined : next;
+}
+
 /* ---------- Formatos ---------- */
 
 export interface CalendarFormats {

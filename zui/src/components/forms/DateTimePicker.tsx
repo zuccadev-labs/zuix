@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent, type Ref } from
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { todayISO, valid } from "../../core/date";
 import { FIELD_TEXTS } from "../../core/segments";
+import { clampDateTime, dayTimeBounds } from "../../core/time";
 import { focusQuiet, trapTab } from "../../core/focus";
 import { cx } from "../../cx";
 import { useControllable, useLayer, usePresence } from "../../primitives/hooks";
@@ -120,10 +121,11 @@ export function DateTimePicker({
   const apply = () => {
     if (!draftDate) return;
     const seconds = granularity === "second";
-    const time = (draftTime ?? defaultTime).slice(0, seconds ? 8 : 5);
-    setCurrent(`${draftDate}T${seconds && time.length === 5 ? `${time}:00` : time}`);
+    // El día de `min` o de `max` limita también la hora: lo que quede fuera se encaja en el límite.
+    setCurrent(clampDateTime(draftDate, draftTime ?? defaultTime, min, max, seconds));
     close(true);
   };
+  const timeBounds = dayTimeBounds(draftDate, min, max);
 
   return (
     <>
@@ -216,6 +218,8 @@ export function DateTimePicker({
                     size="sm"
                     value={draftTime}
                     onValueChange={setDraftTime}
+                    min={timeBounds.min ?? undefined}
+                    max={timeBounds.max ?? undefined}
                     showSeconds={granularity === "second"}
                     locale={locale}
                     hourCycle={hourCycle}

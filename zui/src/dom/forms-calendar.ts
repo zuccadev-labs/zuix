@@ -10,6 +10,7 @@ import {
   buildCalendar,
   captionOptions,
   choose,
+  chooseWeek,
   clampUnit,
   clampView,
   dayKeyTarget,
@@ -49,10 +50,13 @@ import {
   valid,
   validMonth,
   weekNumber,
+  weekRangeDays,
+  weekRangeOf,
   weekStartOf,
   type DateRange,
 } from "../core/date";
 import { all, emit, flag, hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup } from "./forms-popup";
+import { closeDialog, openDialog } from "./index";
 import { logicalKey, setMarkup, type Listen } from "./shared";
 
 registerIcons([chevronLeft, chevronRight, chevronUpDown]);
@@ -302,7 +306,9 @@ function markup(cal: HTMLElement, model: CalendarModel, c: Config, input: Calend
       for (const row of m.weeks) {
         html += "<tr>";
         if (row.number)
-          html += `<th scope="row" class="z-calendar__week-number" aria-label="${esc(row.number.ariaLabel)}">${esc(row.number.label)}</th>`;
+          html += yes(cal.dataset.weekSelect)
+            ? `<th scope="row" class="z-calendar__week-number"><button type="button" class="z-calendar__week-button" data-week="${esc(row.cells[0]?.date ?? "")}" data-week-value="${row.number.value}" aria-label="${esc(row.number.ariaLabel)}">${esc(row.number.label)}</button></th>`
+            : `<th scope="row" class="z-calendar__week-number" aria-label="${esc(row.number.ariaLabel)}">${esc(row.number.label)}</th>`;
         for (const cell of row.cells) html += dayMarkup(cell, c);
         html += "</tr>";
       }
@@ -424,6 +430,7 @@ function focusSelector(el: HTMLElement): string | null {
   if (el.dataset.nav) return `.z-calendar__nav[data-nav="${el.dataset.nav}"]`;
   if (el.dataset.part) return `.z-calendar__select[data-part="${el.dataset.part}"]`;
   if (el.dataset.preset) return `.z-calendar__preset[data-preset="${el.dataset.preset}"]`;
+  if (el.dataset.week) return `.z-calendar__week-button[data-week="${el.dataset.week}"]`;
   if (el.dataset.date) return `.z-calendar__day[data-date="${el.dataset.date}"]`;
   if (el.dataset.value) return `.z-calendar__unit[data-value="${el.dataset.value}"]`;
   for (const name of ["z-calendar__view", "z-calendar__today", "z-calendar__apply", "z-calendar__cancel"])
@@ -478,7 +485,7 @@ function commit(cal: HTMLElement, value: CalendarValue, c: Config): void {
   stateOf(cal).preview = null;
   render(cal);
   // Dentro de un DatePicker, el cambio lo anuncia el campo.
-  const picker = ownerOf(cal.closest<HTMLElement>("[popover]"));
+  const picker = pickerOf(cal);
   if (picker?.matches(PICKER)) pickFromCalendar(picker, selection, c);
   else emit(cal, "change", { value: selectionValue(c.mode, selection) });
 }
@@ -611,12 +618,14 @@ const FORWARDED = [
   "fixedWeeks",
   "weekNumbers",
   "weekNumbering",
+  "weekSelect",
   "weekdayFormat",
   "today",
   "todayButton",
   "todayLabel",
   "presets",
   "presetsLabel",
+  "presetsPlacement",
   "cellSize",
   "selectionUnit",
   "minRange",
@@ -636,13 +645,51 @@ const FORWARDED = [
   "cancelLabel",
 ];
 
+/* Hoja inferior (`data-drawer="auto|always"`): el calendario pasa del popover a un `<dialog class="z-drawer">` modal. */
+const DRAWER_QUERY = "(pointer: coarse), (max-width: 640px)";
+const drawerOf = new WeakMap<HTMLElement, HTMLDialogElement>();
+const drawerOwner = new WeakMap<HTMLDialogElement, HTMLElement>();
+const wantsDrawer = (picker: HTMLElement) =>
+  picker.dataset.drawer === "always" || (picker.dataset.drawer === "auto" && matchMedia(DRAWER_QUERY).matches);
+
+/** DatePicker dueño de un calendario: el del popover abierto o el de la hoja inferior. */
+function pickerOf(cal: HTMLElement): HTMLElement | undefined {
+  const dialog = cal.closest<HTMLDialogElement>("dialog.z-datepicker__drawer");
+  return dialog ? drawerOwner.get(dialog) : ownerOf(cal.closest<HTMLElement>("[popover]"));
+}
+
+function ensureDrawer(picker: HTMLElement, panel: HTMLElement): HTMLDialogElement {
+  let dialog = drawerOf.get(picker);
+  if (dialog?.isConnected) return dialog;
+  dialog = document.createElement("dialog");
+  dialog.className = "z-liquid z-drawer z-datepicker__drawer";
+  dialog.dataset.side = "bottom";
+  dialog.dataset.size = "sm";
+  dialog.setAttribute("aria-label", panel.getAttribute("aria-label") ?? "Choose date");
+  const body = document.createElement("div");
+  body.className = "z-drawer__body";
+  dialog.append(body);
+  picker.after(dialog);
+  drawerOf.set(picker, dialog);
+  drawerOwner.set(dialog, picker);
+  dialog.addEventListener("close", () => {
+    const control = picker.querySelector<HTMLButtonElement>("button.z-select__control");
+    control?.setAttribute("aria-expanded", "false");
+    if (control) control.dataset.state = "closed";
+    // El calendario vuelve a su popover: la próxima apertura en una ventana ancha lo encuentra allí.
+    const cal = dialog!.querySelector<HTMLElement>(".z-calendar");
+    if (cal) panel.prepend(cal);
+  });
+  return dialog;
+}
+
 function pickerParts(picker: HTMLElement) {
   const control = picker.querySelector<HTMLButtonElement>("button.z-select__control");
   const panel = popupFor(control);
   return {
     control,
     panel,
-    cal: panel?.querySelector<HTMLElement>(".z-calendar") ?? null,
+    cal: panel?.querySelector<HTMLElement>(".z-calendar") ?? drawerOf.get(picker)?.querySelector<HTMLElement>(".z-calendar") ?? null,
     hidden: picker.querySelector<HTMLInputElement>('input[type="hidden"]:not([data-z-extra])'),
   };
 }
@@ -666,6 +713,28 @@ function pickerText(picker: HTMLElement, selection: CalendarSelection, mode: Cal
 
 /** WeekPicker: el valor del campo es una semana ISO `YYYY-Www`; el calendario trabaja con su lunes. */
 const weekly = (picker: HTMLElement) => picker.dataset.selectionUnit === "week" && pickerMode(picker) === "single";
+/** WeekPicker de rango: el valor es `YYYY-Www/YYYY-Www`; el calendario trabaja con el lunes y el domingo. */
+const weeklyRange = (picker: HTMLElement) => picker.dataset.selectionUnit === "week" && pickerMode(picker) === "range";
+const weeksToDays = (text: string | undefined) => {
+  const [from, to] = (text ?? "").split("/");
+  return weekRangeDays({ from, to });
+};
+const daysToWeeks = (range: DateRange) => {
+  const weeks = weekRangeOf(range);
+  return weeks.from ? `${weeks.from}/${weeks.to ?? ""}` : "";
+};
+/** Texto del campo de un rango de semanas: «Week 47–49, 2026». */
+function weekRangeLabel(picker: HTMLElement, range: DateRange): string {
+  if (!range.from) return "";
+  const number = new Intl.NumberFormat(safeLocale(picker.dataset.locale), { useGrouping: false });
+  const label = picker.dataset.weekLabel ?? "Week";
+  const a = weekNumber(range.from, 1, 4);
+  if (!range.to) return `${label} ${number.format(a.week)}, ${number.format(a.year)}`;
+  const b = weekNumber(range.to, 1, 4);
+  return a.year === b.year
+    ? `${label} ${number.format(a.week)}–${number.format(b.week)}, ${number.format(a.year)}`
+    : `${label} ${number.format(a.week)}, ${number.format(a.year)} – ${number.format(b.week)}, ${number.format(b.year)}`;
+}
 
 function syncPicker(picker: HTMLElement): void {
   const { control, hidden } = pickerParts(picker);
@@ -674,9 +743,17 @@ function syncPicker(picker: HTMLElement): void {
   const unit = clampView(picker.dataset.minView);
   const raw = picker.dataset.value ?? hidden?.value ?? "";
   const week = weekly(picker) ? weekStartOf(raw) : null;
-  const selection = weekly(picker) ? readSelection("single", week, "day") : parseValueText(mode, raw, unit);
+  const selection = weekly(picker)
+    ? readSelection("single", week, "day")
+    : weeklyRange(picker)
+      ? readSelection("range", weeksToDays(raw), "day")
+      : parseValueText(mode, raw, unit);
   let text = pickerText(picker, selection, mode);
   let value = valueText(mode, selection);
+  if (weeklyRange(picker)) {
+    text = weekRangeLabel(picker, selection.range);
+    value = daysToWeeks(selection.range);
+  }
   if (weekly(picker)) {
     const n = week ? weekNumber(week, 1, 4) : null;
     const number = new Intl.NumberFormat(safeLocale(picker.dataset.locale), { useGrouping: false });
@@ -714,12 +791,28 @@ function openPicker(picker: HTMLElement): void {
     if (picker.dataset[key] !== undefined) cal.dataset[key] = picker.dataset[key];
     else delete cal.dataset[key];
   }
-  const start = weekly(picker) ? weekStartOf(picker.dataset.value) : picker.dataset.value;
+  const start = weekly(picker)
+    ? weekStartOf(picker.dataset.value)
+    : weeklyRange(picker)
+      ? valueText("range", readSelection("range", weeksToDays(picker.dataset.value), "day"))
+      : picker.dataset.value;
   if (start) cal.dataset.value = start;
   else delete cal.dataset.value;
   delete cal.dataset.month;
   delete cal.dataset.view;
   states.delete(cal);
+  if (wantsDrawer(picker)) {
+    const dialog = ensureDrawer(picker, panel);
+    if (dialog.open) return;
+    dialog.querySelector(".z-drawer__body")!.append(cal);
+    render(cal);
+    openDialog(dialog);
+    control.setAttribute("aria-expanded", "true");
+    control.dataset.state = "open";
+    cal.querySelector<HTMLElement>('.z-calendar__grid [tabindex="0"]')?.focus({ preventScroll: true });
+    return;
+  }
+  if (!panel.contains(cal)) panel.prepend(cal);
   render(cal);
   showPopup(panel, picker, control, () => (control.dataset.state = "closed"));
   control.dataset.state = "open";
@@ -728,6 +821,11 @@ function openPicker(picker: HTMLElement): void {
 }
 
 function closePicker(picker: HTMLElement): void {
+  const dialog = drawerOf.get(picker);
+  if (dialog?.open) {
+    closeDialog(dialog);
+    return;
+  }
   const { control, panel } = pickerParts(picker);
   if (!panel || !isOpen(panel)) return;
   const inside = panel.contains(document.activeElement);
@@ -737,10 +835,11 @@ function closePicker(picker: HTMLElement): void {
 
 function applyToPicker(picker: HTMLElement, selection: CalendarSelection, mode: CalendarMode): void {
   const week = weekly(picker) && selection.single ? isoWeekText(selection.single) : null;
-  picker.dataset.value = weekly(picker) ? (week ?? "") : valueText(mode, selection);
+  const weeks = weeklyRange(picker) ? weekRangeOf(selection.range) : null;
+  picker.dataset.value = weekly(picker) ? (week ?? "") : weeks ? daysToWeeks(selection.range) : valueText(mode, selection);
   if (!picker.dataset.value) delete picker.dataset.value;
   syncPicker(picker);
-  emit(picker, "change", { value: weekly(picker) ? week : selectionValue(mode, selection) });
+  emit(picker, "change", { value: weekly(picker) ? week : (weeks ?? selectionValue(mode, selection)) });
 }
 
 function pickFromCalendar(picker: HTMLElement, selection: CalendarSelection, c: Config): void {
@@ -764,6 +863,17 @@ export function setDatePickerValue(picker: HTMLElement, value: CalendarValue | D
     return;
   }
   const mode = pickerMode(picker);
+  if (weeklyRange(picker)) {
+    // Rango de semanas: `{ from: "YYYY-Www", to }` o `YYYY-Www/YYYY-Www`.
+    const raw = typeof value === "string" ? value : value && !Array.isArray(value) ? `${value.from ?? ""}/${value.to ?? ""}` : "";
+    const range = readSelection("range", weeksToDays(raw), "day").range;
+    const text = daysToWeeks(range);
+    if (text) picker.dataset.value = text;
+    else delete picker.dataset.value;
+    syncPicker(picker);
+    emit(picker, "change", { value: weekRangeOf(range) });
+    return;
+  }
   const selection = readSelection(mode, value, clampView(picker.dataset.minView));
   const text = valueText(mode, selection);
   if (text) picker.dataset.value = text;
@@ -779,7 +889,12 @@ export function setDatePickerValue(picker: HTMLElement, value: CalendarValue | D
 /** Calendario activo: dentro de `[data-z-dom]` o en el panel abierto de un DatePicker. */
 function calendarAt(target: Element): HTMLElement | null {
   const cal = target.closest<HTMLElement>(".z-calendar");
-  return cal && (inDom(cal) || isOpen(cal.closest<HTMLElement>("[popover]"))) ? cal : null;
+  return cal &&
+    (inDom(cal) ||
+      isOpen(cal.closest<HTMLElement>("[popover]")) ||
+      Boolean(cal.closest<HTMLDialogElement>("dialog.z-datepicker__drawer")?.open))
+    ? cal
+    : null;
 }
 
 function onClick(event: MouseEvent): void {
@@ -792,7 +907,17 @@ function onClick(event: MouseEvent): void {
     const day = target.closest<HTMLElement>(".z-calendar__day");
     const unit = target.closest<HTMLElement>(".z-calendar__unit");
     const preset = target.closest<HTMLElement>(".z-calendar__preset");
-    if (nav && !nav.disabled) {
+    const weekButton = target.closest<HTMLElement>(".z-calendar__week-button");
+    if (weekButton?.dataset.week) {
+      const start = weekButton.dataset.week;
+      emit(cal, "week", { week: Number(weekButton.dataset.weekValue), from: start, to: addDays(start, 6) });
+      const next = chooseWeek(c.mode, c.selection, start, c.rules);
+      if (next === undefined) return;
+      const first = anchorOf(readSelection(c.mode, next, c.minView));
+      if (first) stateOf(cal).focused = first;
+      commit(cal, next, c);
+      cal.querySelector<HTMLElement>(`.z-calendar__week-button[data-week="${start}"]`)?.focus();
+    } else if (nav && !nav.disabled) {
       const view = viewOf(cal, c);
       stateOf(cal).focused = null;
       showMonth(cal, shiftMonth(visibleMonth(cal, c), (nav.dataset.nav === "previous" ? -1 : 1) * navStep(view, c.n, c.paged)));
@@ -816,7 +941,7 @@ function onClick(event: MouseEvent): void {
       commit(cal, value, c);
     } else if (target.closest(".z-calendar__today")) goToday(cal);
     else if (target.closest(".z-calendar__apply, .z-calendar__cancel")) {
-      const picker = ownerOf(cal.closest<HTMLElement>("[popover]"));
+      const picker = pickerOf(cal);
       if (!picker?.matches(PICKER)) return;
       if (target.closest(".z-calendar__apply")) applyToPicker(picker, c.selection, c.mode);
       closePicker(picker);

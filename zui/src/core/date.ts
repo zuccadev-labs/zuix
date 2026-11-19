@@ -140,6 +140,21 @@ export function weekStartOf(week: string | null | undefined): string | null {
   return addDays(startOfWeek(`${pad(year, 4)}-01-04`, 1), (n - 1) * 7);
 }
 
+/** Rango de semanas ISO `{ from: "YYYY-Www", to: "YYYY-Www" }` → rango de días (lunes de la primera, domingo de la
+ *  última). Semanas al revés se ordenan; sin `to`, el rango queda abierto. */
+export function weekRangeDays(range: { from?: string | null; to?: string | null } | null | undefined): DateRange {
+  const a = weekStartOf(range?.from);
+  const b = a ? weekStartOf(range?.to) : null;
+  if (!a) return { from: null, to: null };
+  if (!b) return { from: a, to: null };
+  const [lo, hi] = b < a ? [b, a] : [a, b];
+  return { from: lo, to: addDays(hi, 6) };
+}
+/** Rango de días → rango de semanas ISO (la del primer día y la del último). */
+export function weekRangeOf(range: DateRange | null | undefined): { from: string | null; to: string | null } {
+  return { from: range?.from ? isoWeekText(range.from) : null, to: range?.from && range.to ? isoWeekText(range.to) : null };
+}
+
 /** Datos de semana del locale (Intl.Locale#getWeekInfo o weekInfo): primer día, fin de semana y días mínimos de la
  *  semana 1. Días 0 domingo … 6 sábado. Sin datos: lunes, sábado y domingo, 4 (ISO 8601). */
 export function localeWeekInfo(locale?: string): { firstDay: number; weekend: number[]; minimalDays: number } {

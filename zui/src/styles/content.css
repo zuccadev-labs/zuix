@@ -358,4 +358,31 @@
     text-decoration: underline dotted var(--z-fg-subtle);
     text-underline-offset: 3px;
   }
+  /* Timer: cifras tabulares (no bailan al cambiar), acciones al lado o debajo. */
+  .z-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-3);
+  }
+  .z-timer[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  .z-timer__display {
+    color: var(--z-fg);
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .z-timer[data-state="paused"] .z-timer__display {
+    color: var(--z-fg-muted);
+  }
+  .z-timer[data-state="done"] .z-timer__display {
+    color: var(--z-accent-text);
+  }
+  .z-timer__actions {
+    display: inline-flex;
+    gap: var(--z-space-1-5);
+  }
 }

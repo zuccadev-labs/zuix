@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 73,
+ "count": 74,
  "groups": {
   "actions": [
    "Button",
@@ -20,7 +20,8 @@
    "CodeBlock",
    "Divider",
    "Panel",
-   "RelativeTime"
+   "RelativeTime",
+   "Timer"
   ],
   "data": [
    "Avatar",
@@ -1464,6 +1465,173 @@
    ],
    "origin": "Format de Shark UI; Intl.RelativeTimeFormat.",
    "file": "zui/src/components/content/RelativeTime.manifest.json"
+  },
+  {
+   "name": "Timer",
+   "group": "content",
+   "description": "Cuenta atrás o cronómetro con iniciar, pausar, reanudar y reiniciar. Cifras tabulares del locale; los hitos se anuncian en una región status aparte, sin inundarla cada segundo.",
+   "import": "import { Timer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "countdown",
+      "stopwatch"
+     ],
+     "default": "countdown"
+    },
+    {
+     "name": "duration",
+     "type": "number | string",
+     "description": "Cuenta atrás: segundos o ISO 8601 (PT5M)."
+    },
+    {
+     "name": "autoStart",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "precision",
+     "type": "enum",
+     "values": [
+      "second",
+      "tenth"
+     ],
+     "default": "second"
+    },
+    {
+     "name": "showHours",
+     "type": "boolean",
+     "description": "Siempre con horas; por defecto solo desde una hora."
+    },
+    {
+     "name": "controls",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "announceEvery",
+     "type": "number",
+     "default": 60,
+     "description": "Segundos entre anuncios de la región viva (0: solo inicio, pausa y fin)."
+    },
+    {
+     "name": "announceFinal",
+     "type": "number",
+     "default": 0,
+     "description": "Cuenta atrás: anuncia cada uno de los últimos N segundos."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Timer",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "startLabel",
+     "type": "string",
+     "default": "Start"
+    },
+    {
+     "name": "pauseLabel",
+     "type": "string",
+     "default": "Pause"
+    },
+    {
+     "name": "resumeLabel",
+     "type": "string",
+     "default": "Resume"
+    },
+    {
+     "name": "resetLabel",
+     "type": "string",
+     "default": "Reset"
+    },
+    {
+     "name": "doneLabel",
+     "type": "string",
+     "default": "Time's up"
+    },
+    {
+     "name": "pausedLabel",
+     "type": "string",
+     "default": "Paused"
+    },
+    {
+     "name": "leftLabel",
+     "type": "string",
+     "default": "left"
+    },
+    {
+     "name": "onStateChange",
+     "type": "(state: \"idle\" | \"running\" | \"paused\" | \"done\") => void"
+    },
+    {
+     "name": "onComplete",
+     "type": "() => void"
+    }
+   ],
+   "states": [
+    "idle",
+    "running",
+    "paused",
+    "done"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "accent-text",
+    "text-display-sm",
+    "weight-semibold",
+    "space-1-5",
+    "space-3"
+   ],
+   "classes": [
+    "z-timer",
+    "z-timer__display",
+    "z-timer__actions",
+    "z-timer__toggle",
+    "z-timer__reset",
+    "z-timer__status"
+   ],
+   "a11y": "Grupo con nombre (role=group, aria-label). La pantalla es un <time datetime=\"PT…\"> con un role=timer (sin región viva) cuyo nombre es el tiempo hablado («4 minutes, 30 seconds left», Intl.DurationFormat con respaldo de NumberFormat); el lector lo lee al llegar a él. Los anuncios van a un role=status oculto, vaciado antes de cada mensaje: al iniciar o reanudar, al pausar («Paused, …»), cada announceEvery segundos, en los últimos announceFinal segundos y al terminar (doneLabel). Nunca assertive. Botones nativos con icono y texto. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-timer` dentro de `[data-z-dom]` con data-mode, data-duration (segundos o PT…), data-precision, data-show-hours, data-announce-every, data-announce-final, data-autostart, data-locale y los textos en data-*-label; startTimer(el), pauseTimer(el), resetTimer(el); emite z:statechange { state } y z:complete.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Cuenta atrás de cinco minutos",
+     "code": "<Timer label=\"Break\" duration=\"PT5M\" announceFinal={5} />"
+    },
+    {
+     "title": "Cronómetro con décimas",
+     "code": "<Timer label=\"Lap\" mode=\"stopwatch\" precision=\"tenth\" announceEvery={0} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Cuenta atrás de cinco minutos",
+     "code": "<div class=\"z-timer\" role=\"group\" aria-label=\"Break\" data-mode=\"countdown\" data-duration=\"PT5M\" data-announce-final=\"5\" data-state=\"idle\" data-orientation=\"horizontal\">\n  <time class=\"z-timer__display\" datetime=\"PT5M\"><span role=\"timer\" aria-label=\"5 minutes left\">05:00</span></time>\n  <span class=\"z-timer__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary z-timer__toggle\" data-size=\"sm\"><z-icon name=\"play\" size=\"16\"></z-icon>Start</button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-timer__reset\" data-size=\"sm\" disabled><z-icon name=\"arrow-path\" size=\"16\"></z-icon>Reset</button>\n  </span>\n  <span class=\"z-sr-only z-timer__status\" role=\"status\"></span>\n</div>"
+    },
+    {
+     "title": "Cronómetro con décimas",
+     "code": "<div class=\"z-timer\" role=\"group\" aria-label=\"Lap\" data-mode=\"stopwatch\" data-precision=\"tenth\" data-announce-every=\"0\" data-state=\"idle\" data-orientation=\"horizontal\">\n  <time class=\"z-timer__display\" datetime=\"PT0S\"><span role=\"timer\" aria-label=\"0 seconds\">00:00.0</span></time>\n  <span class=\"z-timer__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary z-timer__toggle\" data-size=\"sm\"><z-icon name=\"play\" size=\"16\"></z-icon>Start</button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-timer__reset\" data-size=\"sm\" disabled><z-icon name=\"arrow-path\" size=\"16\"></z-icon>Reset</button>\n  </span>\n  <span class=\"z-sr-only z-timer__status\" role=\"status\"></span>\n</div>"
+    }
+   ],
+   "origin": "Timer de Shark UI; role=timer de WAI-ARIA.",
+   "file": "zui/src/components/content/Timer.manifest.json"
   },
   {
    "name": "Avatar",
@@ -3382,6 +3550,11 @@
      "description": "Semana ISO 8601 o la del locale (minimalDays de weekInfo)."
     },
     {
+     "name": "onWeekNumberClick",
+     "type": "(week: { week: number; from: string; to: string }) => void",
+     "description": "Con showWeekNumber, el número de semana es un botón que elige la semana (rango: la semana entera; múltiple: sus días; única: su primer día elegible). Sin React: data-week-select y evento z:week."
+    },
+    {
      "name": "weekdayFormat",
      "type": "enum",
      "values": [
@@ -3568,7 +3741,7 @@
    "classes": [
     "z-calendar"
    ],
-   "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange y z:viewchange. Para una tarjeta de cristal elevado: className z-liquid.",
+   "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange, z:viewchange y, con data-week-select, z:week { week, from, to }. Con onWeekNumberClick (o data-week-select) cada número de semana es un button dentro del th, en el orden de tabulación, con el nombre «Week N». Para una tarjeta de cristal elevado: className z-liquid.",
    "behavior": "dom",
    "examples": [
     {
@@ -3610,6 +3783,10 @@
     {
      "title": "Contenido por celda",
      "code": "<Calendar\n  locale=\"en-US\"\n  cellSize=\"lg\"\n  defaultMonth=\"2026-11\"\n  renderDay={(date) => (date.endsWith(\"0\") ? \"$89\" : null)}\n  getDayDescription={(date) => (date.endsWith(\"0\") ? \"from $89\" : null)}\n/>"
+    },
+    {
+     "title": "Semana por su número",
+     "code": "<Calendar mode=\"range\" showWeekNumber onWeekNumberClick={(week) => console.log(week.from)} defaultMonth=\"2026-11\" />"
     }
    ],
    "html": [
@@ -7141,20 +7318,30 @@
   {
    "name": "WeekPicker",
    "group": "forms",
-   "description": "Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible. Valor YYYY-Www, como <input type=\"week\">.",
+   "description": "Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible. Valor YYYY-Www, como <input type=\"week\">; con mode=\"range\", un rango de semanas.",
    "import": "import { WeekPicker } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "single",
+      "range"
+     ],
+     "default": "single",
+     "description": "`range`: de una semana a otra; el valor es { from, to } con semanas YYYY-Www y el formulario envía YYYY-Www/YYYY-Www."
+    },
+    {
      "name": "value",
-     "type": "string | null"
+     "type": "string | null | WeekRange"
     },
     {
      "name": "defaultValue",
-     "type": "string | null"
+     "type": "string | null | WeekRange"
     },
     {
      "name": "onValueChange",
-     "type": "(value: string | null) => void"
+     "type": "(value: string | null) => void | (value: WeekRange) => void"
     },
     {
      "name": "min",
@@ -7254,18 +7441,26 @@
     "z-datepicker",
     "z-calendar"
    ],
-   "a11y": "Pasar el puntero o el foco por un día resalta su semana; Intro la elige. La columna del número de semana es th scope=row con «Week N». Sin React: data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers; el valor del campo oculto es YYYY-Www.",
+   "a11y": "Pasar el puntero o el foco por un día resalta su semana; Intro la elige. La columna del número de semana es th scope=row con «Week N». Sin React: data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers; el valor del campo oculto es YYYY-Www. Rango: data-mode=\"range\" y data-value=\"YYYY-Www/YYYY-Www\"; la primera pulsación fija la semana de inicio y la segunda la de fin.",
    "behavior": "dom",
    "examples": [
     {
      "title": "Semana del informe",
      "code": "<WeekPicker aria-label=\"Report week\" locale=\"en-GB\" defaultValue=\"2026-W47\" />"
+    },
+    {
+     "title": "Rango de semanas",
+     "code": "<WeekPicker mode=\"range\" aria-label=\"Sprint\" locale=\"en-GB\" defaultValue={{ from: \"2026-W46\", to: \"2026-W48\" }} />"
     }
    ],
    "html": [
     {
      "title": "Semana del informe",
      "code": "<span class=\"z-select z-datepicker\" id=\"report-week\" data-size=\"md\" data-block data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-value=\"2026-W47\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"report-week-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Report week</span>\n    <span class=\"z-select__value\">Week 47, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"report-week\" value=\"2026-W47\" />\n</span>\n\n<div id=\"report-week-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose week\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+     "title": "Rango de semanas",
+     "code": "<span class=\"z-select z-datepicker\" id=\"sprint-weeks\" data-size=\"md\" data-block data-mode=\"range\" data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-months=\"2\" data-value=\"2026-W46/2026-W48\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"sprint-weeks-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Sprint</span>\n    <span class=\"z-select__value\">Week 46–48, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"sprint-weeks\" value=\"2026-W46/2026-W48\" />\n</span>\n\n<div id=\"sprint-weeks-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose weeks\">\n  <div class=\"z-calendar\"></div>\n</div>"
     }
    ],
    "origin": "Week Picker de Shark UI.",

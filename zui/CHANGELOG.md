@@ -27,6 +27,17 @@ radios y material de los tokens.
 - `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
   `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
   (`DatePicker input`). Alt+Flecha abajo abre.
+- `Timer`: cuenta atrás (`duration` en segundos o `PT…`) y cronómetro (`mode="stopwatch"`), con iniciar, pausar,
+  reanudar y reiniciar, décimas (`precision`), cifras del locale y modo DOM (`startTimer`, `pauseTimer`,
+  `resetTimer`, `z:statechange`, `z:complete`). La pantalla es `role="timer"` sin región viva; los hitos
+  (inicio, pausa, cada `announceEvery` segundos, los últimos `announceFinal`, fin) van a un `role="status"`.
+- `WeekPicker mode="range"`: de una semana a otra, valor `{ from, to }` con semanas `YYYY-Www`.
+- Calendar: `onWeekNumberClick` (y `data-week-select` en `/dom`, con `z:week`) convierte el número de semana en
+  un botón que elige la semana; `presetsPlacement="top"` pone los preajustes encima.
+- DatePicker y DateRangePicker: `drawer="auto" | "always"` abre el calendario en una hoja inferior (Drawer
+  modal) con puntero grueso o ventana estrecha; también en `/dom` con `data-drawer`.
+- DateTimePicker: `min` y `max` con hora limitan también las horas del día límite (el TimeField del panel y el
+  valor al aplicar).
 - `RelativeTime`: «3 minutes ago», «in 2 days» con `Intl.RelativeTimeFormat` sobre un instante, en un `<time>`
   con `datetime` y la fecha completa en `title`; se repinta con una cadencia que se alarga con la distancia.
 - `DateField`: fecha (y hora, con `granularity`) que se teclea por segmentos, un spinbutton de APG por día, mes,

@@ -180,6 +180,11 @@
       "description": "Semana ISO 8601 o la del locale (minimalDays de weekInfo)."
     },
     {
+      "name": "onWeekNumberClick",
+      "type": "(week: { week: number; from: string; to: string }) => void",
+      "description": "Con showWeekNumber, el número de semana es un botón que elige la semana (rango: la semana entera; múltiple: sus días; única: su primer día elegible). Sin React: data-week-select y evento z:week."
+    },
+    {
       "name": "weekdayFormat",
       "type": "enum",
       "values": ["narrow", "short", "long"],
@@ -341,7 +346,7 @@
     "radius-full"
   ],
   "classes": ["z-calendar"],
-  "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange y z:viewchange. Para una tarjeta de cristal elevado: className z-liquid.",
+  "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange, z:viewchange y, con data-week-select, z:week { week, from, to }. Con onWeekNumberClick (o data-week-select) cada número de semana es un button dentro del th, en el orden de tabulación, con el nombre «Week N». Para una tarjeta de cristal elevado: className z-liquid.",
   "behavior": "dom",
   "examples": [
     {
@@ -383,6 +388,10 @@
     {
       "title": "Contenido por celda",
       "code": "<Calendar\n  locale=\"en-US\"\n  cellSize=\"lg\"\n  defaultMonth=\"2026-11\"\n  renderDay={(date) => (date.endsWith(\"0\") ? \"$89\" : null)}\n  getDayDescription={(date) => (date.endsWith(\"0\") ? \"from $89\" : null)}\n/>"
+    },
+    {
+      "title": "Semana por su número",
+      "code": "<Calendar mode=\"range\" showWeekNumber onWeekNumberClick={(week) => console.log(week.from)} defaultMonth=\"2026-11\" />"
     }
   ],
   "html": [

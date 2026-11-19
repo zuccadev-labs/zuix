@@ -61,6 +61,7 @@ const COVERED = [
   "zui/src/core/segments.ts",
   "zui/src/core/search.ts",
   "zui/src/core/slider.ts",
+  "zui/src/core/stopwatch.ts",
   "zui/src/core/swipe.ts",
   "zui/src/core/time.ts",
   "zui/src/core/timer.ts",

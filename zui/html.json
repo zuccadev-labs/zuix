@@ -299,6 +299,30 @@
     }
    ]
   },
+  "Timer": {
+   "group": "content",
+   "classes": [
+    "z-timer",
+    "z-timer__display",
+    "z-timer__actions",
+    "z-timer__toggle",
+    "z-timer__reset",
+    "z-timer__status"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Cuenta atrás de cinco minutos",
+     "html": "<div class=\"z-timer\" role=\"group\" aria-label=\"Break\" data-mode=\"countdown\" data-duration=\"PT5M\" data-announce-final=\"5\" data-state=\"idle\" data-orientation=\"horizontal\">\n  <time class=\"z-timer__display\" datetime=\"PT5M\"><span role=\"timer\" aria-label=\"5 minutes left\">05:00</span></time>\n  <span class=\"z-timer__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary z-timer__toggle\" data-size=\"sm\"><z-icon name=\"play\" size=\"16\"></z-icon>Start</button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-timer__reset\" data-size=\"sm\" disabled><z-icon name=\"arrow-path\" size=\"16\"></z-icon>Reset</button>\n  </span>\n  <span class=\"z-sr-only z-timer__status\" role=\"status\"></span>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Cronómetro con décimas",
+     "html": "<div class=\"z-timer\" role=\"group\" aria-label=\"Lap\" data-mode=\"stopwatch\" data-precision=\"tenth\" data-announce-every=\"0\" data-state=\"idle\" data-orientation=\"horizontal\">\n  <time class=\"z-timer__display\" datetime=\"PT0S\"><span role=\"timer\" aria-label=\"0 seconds\">00:00.0</span></time>\n  <span class=\"z-timer__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary z-timer__toggle\" data-size=\"sm\"><z-icon name=\"play\" size=\"16\"></z-icon>Start</button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-timer__reset\" data-size=\"sm\" disabled><z-icon name=\"arrow-path\" size=\"16\"></z-icon>Reset</button>\n  </span>\n  <span class=\"z-sr-only z-timer__status\" role=\"status\"></span>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Avatar": {
    "group": "data",
    "classes": [
@@ -1159,6 +1183,11 @@
     {
      "title": "Semana del informe",
      "html": "<span class=\"z-select z-datepicker\" id=\"report-week\" data-size=\"md\" data-block data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-value=\"2026-W47\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"report-week-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Report week</span>\n    <span class=\"z-select__value\">Week 47, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"report-week\" value=\"2026-W47\" />\n</span>\n\n<div id=\"report-week-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose week\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Rango de semanas",
+     "html": "<span class=\"z-select z-datepicker\" id=\"sprint-weeks\" data-size=\"md\" data-block data-mode=\"range\" data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-months=\"2\" data-value=\"2026-W46/2026-W48\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"sprint-weeks-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Sprint</span>\n    <span class=\"z-select__value\">Week 46–48, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"sprint-weeks\" value=\"2026-W46/2026-W48\" />\n</span>\n\n<div id=\"sprint-weeks-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose weeks\">\n  <div class=\"z-calendar\"></div>\n</div>",
      "source": "manual"
     }
    ]

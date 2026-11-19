@@ -36,7 +36,7 @@ export {
 } from "./DatePicker";
 export { MonthPicker, type MonthPickerProps } from "./MonthPicker";
 export { YearPicker, type YearPickerProps } from "./YearPicker";
-export { WeekPicker, type WeekPickerProps } from "./WeekPicker";
+export { WeekPicker, type WeekPickerProps, type WeekPickerRangeProps, type WeekPickerSingleProps, type WeekRange } from "./WeekPicker";
 export { OTPInput, type OTPInputProps } from "./OTPInput";
 export { FileUpload, type FileUploadProps } from "./FileUpload";
 export { SearchInput, type SearchInputProps } from "./SearchInput";

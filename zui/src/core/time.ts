@@ -283,3 +283,30 @@ export function revealOption(list: HTMLElement, option: HTMLElement, center = fa
   else if (top < list.scrollTop) list.scrollTop = top;
   else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
 }
+
+/**
+ * Límites de hora de un día dentro de un `min`/`max` de fecha y hora (`YYYY-MM-DDTHH:mm[:ss]`): el día de `min`
+ * empieza a su hora y el de `max` acaba a la suya; los demás días no limitan la hora. Lo usa DateTimePicker para
+ * su TimeField.
+ */
+export function dayTimeBounds(
+  date: string | null | undefined,
+  min?: string | null,
+  max?: string | null,
+): { min: string | null; max: string | null } {
+  const at = (bound: string | null | undefined) =>
+    date && bound && bound.length > 10 && bound.slice(0, 10) === date && validTime(bound.slice(11)) ? bound.slice(11) : null;
+  return { min: at(min), max: at(max) };
+}
+
+/** Une un día y una hora y lo encaja en `min`/`max` (fecha y hora ISO; se comparan como texto completo). */
+export function clampDateTime(date: string, time: string, min?: string | null, max?: string | null, seconds = false): string {
+  const t = fullTime(time);
+  const value = `${date}T${t}`;
+  const full = (bound: string | null | undefined) =>
+    bound && bound.length > 10 && validTime(bound.slice(11)) ? `${bound.slice(0, 10)}T${fullTime(bound.slice(11))}` : null;
+  const lo = full(min);
+  const hi = full(max);
+  const clamped = lo && value < lo ? lo : hi && value > hi ? hi : value;
+  return seconds ? clamped : clamped.slice(0, 16);
+}

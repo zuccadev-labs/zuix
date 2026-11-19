@@ -123,6 +123,8 @@
         .z-menu__item[data-highlighted],
         .z-palette__item[aria-selected="true"],
         .z-calendar__day[data-selected],
+        .z-datefield__segment:focus,
+        .z-timepicker__option[aria-selected="true"],
         .z-pagination__btn[aria-current="page"],
         .z-navlink[data-active],
         .z-chip[data-selected],

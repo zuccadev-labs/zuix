@@ -28,6 +28,7 @@ import {
   buildCalendar,
   captionOptions,
   choose,
+  chooseWeek,
   clampUnit,
   clampView,
   dayKeyTarget,
@@ -126,6 +127,9 @@ interface CalendarBaseProps {
   showWeekNumber?: boolean;
   /** Semana ISO 8601 (por defecto) o la del locale. */
   weekNumbering?: WeekNumbering;
+  /** Con `showWeekNumber`, el número de cada semana es un botón que elige la semana (rango: la semana entera;
+   *  múltiple: sus días; fecha única: su primer día elegible) y llama a esta función. */
+  onWeekNumberClick?: (week: { week: number; from: string; to: string }) => void;
   /** Formato del nombre del día en la cabecera. */
   weekdayFormat?: WeekdayFormat;
   /** Hoy, `YYYY-MM-DD`. Por defecto, la fecha local del dispositivo tras montar. */
@@ -135,6 +139,9 @@ interface CalendarBaseProps {
   /** Atajos al lado del mes. */
   presets?: CalendarPreset[];
   presetsLabel?: string;
+  /** Preajustes en columna al lado del mes (`side`, por defecto) o en una fila encima (`top`). En un contenedor
+   *  estrecho van siempre encima. */
+  presetsPlacement?: "side" | "top";
   /** Contenido extra en cada día (puntos, precios). */
   renderDay?: (date: string, state: CalendarDayState) => ReactNode;
   /** Texto que se añade al nombre accesible del día (p. ej. «3 eventos»). */
@@ -244,11 +251,13 @@ export function Calendar(props: CalendarProps) {
     fixedWeeks = false,
     showWeekNumber = false,
     weekNumbering = "iso",
+    onWeekNumberClick,
     weekdayFormat = "short",
     today: todayProp,
     showTodayButton = false,
     presets,
     presetsLabel = "Quick pick",
+    presetsPlacement = "side",
     renderDay,
     getDayDescription,
     cellSize = "md",
@@ -411,6 +420,17 @@ export function Calendar(props: CalendarProps) {
     commit(next);
   };
 
+  const onWeekNumber = (row: { number: { value: number } | null; cells: DayCell[] }) => {
+    const start = row.cells[0]?.date;
+    if (!start || !row.number) return;
+    const next = chooseWeek(mode, selection, start, rules);
+    onWeekNumberClick?.({ week: row.number.value, from: start, to: addDays(start, 6) });
+    if (next === undefined) return;
+    const first = anchorOf(readSelection(mode, next, unit));
+    if (first) setFocused(first);
+    commit(next);
+  };
+
   const onDay = (cell: DayCell) => {
     if (cell.disabled) return;
     if (cell.outside) {
@@ -515,7 +535,9 @@ export function Calendar(props: CalendarProps) {
       data-months={n > 1 ? n : undefined}
       data-caption={dropdown ? captionLayout : undefined}
       data-week-numbers={on(showWeekNumber)}
+      data-week-select={on(showWeekNumber && Boolean(onWeekNumberClick))}
       data-presets={presets?.length ? "" : undefined}
+      data-presets-placement={presets?.length && presetsPlacement === "top" ? "top" : undefined}
       style={n > 1 ? ({ "--z-calendar-months": n } as CSSProperties) : undefined}
     >
       {presets?.length ? (
@@ -662,8 +684,23 @@ export function Calendar(props: CalendarProps) {
                     {m.weeks.map((row) => (
                       <tr key={row.key}>
                         {row.number ? (
-                          <th scope="row" className="z-calendar__week-number" aria-label={row.number.ariaLabel}>
-                            {row.number.label}
+                          <th
+                            scope="row"
+                            className="z-calendar__week-number"
+                            aria-label={onWeekNumberClick ? undefined : row.number.ariaLabel}
+                          >
+                            {onWeekNumberClick ? (
+                              <button
+                                type="button"
+                                className="z-calendar__week-button"
+                                aria-label={row.number.ariaLabel}
+                                onClick={() => onWeekNumber(row)}
+                              >
+                                {row.number.label}
+                              </button>
+                            ) : (
+                              row.number.label
+                            )}
                           </th>
                         ) : null}
                         {row.cells.map((cell) =>
