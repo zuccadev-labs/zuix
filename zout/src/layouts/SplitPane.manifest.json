@@ -39,7 +39,27 @@
       "description": "true marca el panel con borde de acento; false lo atenúa."
     }
   ],
-  "tokens": ["accent", "accent-ring", "line", "reading-bg", "surface", "scrim", "radius-md", "layer-raised"],
+  "tokens": [
+    "accent",
+    "accent-ring",
+    "line",
+    "reading-bg",
+    "surface",
+    "scrim",
+    "layer-raised",
+    "control-height-md",
+    "duration-fast",
+    "ease-standard",
+    "fg-muted",
+    "radius-lg",
+    "radius-xs",
+    "space-1",
+    "space-2",
+    "space-3",
+    "text-small",
+    "touch-target",
+    "weight-medium"
+  ],
   "classes": ["z-split", "z-pane"],
   "a11y": "Patrón «window splitter» de WAI-ARIA: cada divisor es role=separator enfocable con aria-orientation, aria-controls (el panel que tiene delante) y aria-valuenow, aria-valuemin y aria-valuemax en porcentaje. Las flechas lo mueven un 2 % hacia donde apuntan (también en RTL); Inicio y Fin lo llevan a su mínimo y a su máximo. Doble clic reparte a partes iguales los dos paneles del divisor: es la alternativa de un solo gesto al arrastre (WCAG 2.5.7). Con puntero grueso la zona de agarre crece hasta `--z-touch-target`.",
   "examples": [

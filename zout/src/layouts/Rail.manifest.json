@@ -38,7 +38,32 @@
       "type": "number | string"
     }
   ],
-  "tokens": ["rail-width", "radius-full", "radius-md", "surface-3", "accent-solid", "fg-on-accent", "fg-muted", "danger", "focus-ring"],
+  "tokens": [
+    "rail-width",
+    "radius-full",
+    "accent-solid",
+    "fg-on-accent",
+    "fg-muted",
+    "accent-ring",
+    "control-radius-lg",
+    "danger-solid",
+    "duration-fast",
+    "duration-press",
+    "ease-out",
+    "ease-standard",
+    "fg",
+    "focus-offset",
+    "focus-width",
+    "panel-radius",
+    "shadow-md",
+    "space-1",
+    "space-2",
+    "space-3",
+    "surface-2",
+    "surface-solid",
+    "text-fine",
+    "weight-bold"
+  ],
   "classes": ["z-rail"],
   "a11y": "<nav> con nombre (región navigation). Cada elemento es un botón de 40 × 40 px con aria-label; el activo lleva aria-current=page y el contador forma parte del nombre accesible.",
   "examples": [

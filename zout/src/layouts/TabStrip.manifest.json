@@ -40,7 +40,28 @@
       "default": "New tab"
     }
   ],
-  "tokens": ["row-hover", "surface-2", "surface-3", "glass-highlight", "fg", "fg-muted", "radius-full", "focus-ring"],
+  "tokens": [
+    "row-hover",
+    "surface-3",
+    "glass-highlight",
+    "fg",
+    "fg-muted",
+    "accent-ring",
+    "control-height-sm",
+    "control-radius-sm",
+    "duration-fast",
+    "ease-standard",
+    "focus-offset",
+    "focus-width",
+    "glass-border",
+    "radius-xs",
+    "shadow-sm",
+    "space-1",
+    "space-2",
+    "space-3",
+    "text-small",
+    "weight-medium"
+  ],
   "classes": ["z-tabstrip"],
   "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
   "examples": [

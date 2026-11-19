@@ -16,6 +16,12 @@
       "default": "content"
     },
     {
+      "name": "label",
+      "type": "string",
+      "default": "Page content",
+      "description": "Nombre accesible de la región desplazable. La página es enfocable con teclado (tabindex=\"0\", role=\"region\") para poder desplazarla sin controles dentro."
+    },
+    {
       "name": "PageHeader.title",
       "type": "ReactNode",
       "required": true
@@ -62,10 +68,27 @@
     "stage-pad-y",
     "font-display",
     "text-display",
+    "text-lead",
     "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "tracking-snug",
     "fg",
     "fg-muted",
-    "accent"
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "leading-snug",
+    "leading-tight",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-6",
+    "space-8",
+    "text-body",
+    "text-small",
+    "weight-medium"
   ],
   "classes": ["z-page", "z-pagehead", "z-section", "z-container"],
   "examples": [
@@ -74,5 +97,6 @@
       "code": "<Page header={<PageHeader eyebrow=\"Analytics\" title=\"Overview\" description=\"Last 30 days.\" actions={<Button variant=\"primary\" icon=\"plus\">New report</Button>} />}>\n  <PageSection title=\"Metrics\">\n    <Grid min={200}>…</Grid>\n  </PageSection>\n</Page>"
     }
   ],
-  "origin": "Contenedor y cabeceras del design system base."
+  "origin": "Contenedor y cabeceras del design system base.",
+  "a11y": "Región desplazable (`role=\"region\"`, `tabindex=\"0\"`) con nombre accesible (`label`): el teclado la enfoca y la desplaza con las flechas aunque no contenga controles. Foco por contorno, por dentro."
 }

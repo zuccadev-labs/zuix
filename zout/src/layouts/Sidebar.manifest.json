@@ -38,7 +38,23 @@
       "description": "Reparte el alto libre."
     }
   ],
-  "tokens": ["line", "fg-muted", "fg", "text-caption", "tracking-wide", "focus-ring"],
+  "tokens": [
+    "line",
+    "fg-muted",
+    "fg",
+    "text-caption",
+    "accent-ring",
+    "fg-subtle",
+    "focus-offset",
+    "focus-width",
+    "radius-xs",
+    "space-1",
+    "space-2",
+    "space-3",
+    "text-small",
+    "weight-medium",
+    "weight-regular"
+  ],
   "classes": ["z-sidebar"],
   "a11y": "Cada cabecera es un botón con aria-expanded y aria-controls.",
   "examples": [
