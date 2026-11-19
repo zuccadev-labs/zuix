@@ -9,8 +9,27 @@ Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-to
 pestañas, control segmentado e insignia son las piezas de referencia; el resto de componentes hereda escala,
 radios y material de los tokens.
 
+### Añadido
+
+- Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
+  una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
+  `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
+  `rangePresets`), fechas reservadas (`isDateUnavailable`, tachadas y con trama, cortan un rango),
+  `modifiers`, semanas fijas, números de semana (ISO o del locale), botón Hoy, `today`, tamaño de celda,
+  contenido por celda (`renderDay`, `getDayDescription`), leyenda, `minRange`/`maxRange` y Ctrl+Inicio/Fin.
+  Valores ISO civiles; acepta un `Temporal.PlainDate` en `value`.
+- DatePicker: modo `multiple`, dos meses, preajustes, `confirm` con Aplicar/Cancelar, `closeOnSelect`,
+  `formatValue`, `formatCount` y `serialize`. Nuevos `DateRangePicker` (dos meses por defecto),
+  `MonthPicker` (`YYYY-MM`), `YearPicker` (`YYYY`) y `WeekPicker` (`YYYY-Www`).
+- Utilidades de fechas civiles en la raíz y en `/dom`: `rangePresets`, `resolvePreset`, `formatDateRange`,
+  `isoWeekText`, `weekStartOf`, `weekNumber`, `localeWeekInfo`. En `/dom`, `setCalendarOptions()` para las
+  funciones del calendario y los eventos `z:monthchange` y `z:viewchange`.
+
 ### Cambiado
 
+- Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
+  punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal
+  elevado con `className="z-liquid"`. Los días no elegibles ya no van tachados (lo va la fecha reservada).
 - Botones, campos, selects, pestañas y segmentados son rectángulos de esquinas redondeadas, no píldoras, con
   radios concéntricos por tamaño (sm 8, md 10, lg 12) y alturas de 28, 34 y 40 px.
 - Foco por contorno (`outline` con `focus-width` y `accent-ring`) en lugar de sombra: sigue al radio y se

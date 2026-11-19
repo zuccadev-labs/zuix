@@ -666,6 +666,23 @@ pnpm dev</code>
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="DateRangePicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DateRangePicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-select z-datepicker" id="stay2" data-size="md" data-block data-mode="range" data-months="2" data-min-range="3" data-unavailable-dates="2026-12-24" data-unavailable-label="booked" data-locale="en-US" data-week-start="1" data-placeholder="Select dates">
+  <button type="button" class="z-select__control" aria-haspopup="dialog" aria-expanded="false" aria-controls="stay2-panel" data-state="closed" data-placeholder>
+    <span class="z-sr-only">Stay</span>
+    <span class="z-select__value">Select dates</span>
+  </button>
+  <span class="z-select__chevron"><z-icon name="calendar-date-range" size="16"></z-icon></span>
+  <input type="hidden" name="stay2" value="" />
+</span>
+
+<div id="stay2-panel" popover="manual" class="z-liquid z-popover z-datepicker__panel" role="dialog" aria-label="Choose date">
+  <div class="z-calendar"></div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Field" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Field</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -700,6 +717,23 @@ pnpm dev</code>
 <span class="z-input" data-size="md">
   <input placeholder="Project name" class="z-input__control"/>
 </span>
+  </div>
+</section>
+<section class="z-card demo" data-component="MonthPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">MonthPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-select z-datepicker" id="billing" data-size="md" data-block data-min-view="month" data-locale="en-US" data-min="2026-01" data-value="2026-11">
+  <button type="button" class="z-select__control" aria-haspopup="dialog" aria-expanded="false" aria-controls="billing-panel" data-state="closed">
+    <span class="z-sr-only">Billing month</span>
+    <span class="z-select__value">November 2026</span>
+  </button>
+  <span class="z-select__chevron"><z-icon name="calendar" size="16"></z-icon></span>
+  <input type="hidden" name="billing" value="2026-11" />
+</span>
+
+<div id="billing-panel" popover="manual" class="z-liquid z-popover z-datepicker__panel" role="dialog" aria-label="Choose month">
+  <div class="z-calendar"></div>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="NativeSelect" data-behavior="none">
@@ -866,6 +900,40 @@ pnpm dev</code>
   <header class="demo__head"><h3 class="demo__name">Textarea</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
 <textarea placeholder="Describe the change" aria-label="Description" rows="4" class="z-textarea" data-size="md" data-resize="vertical"></textarea>
+  </div>
+</section>
+<section class="z-card demo" data-component="WeekPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">WeekPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-select z-datepicker" id="report-week" data-size="md" data-block data-selection-unit="week" data-week-start="1" data-week-numbers data-locale="en-GB" data-value="2026-W47">
+  <button type="button" class="z-select__control" aria-haspopup="dialog" aria-expanded="false" aria-controls="report-week-panel" data-state="closed">
+    <span class="z-sr-only">Report week</span>
+    <span class="z-select__value">Week 47, 2026</span>
+  </button>
+  <span class="z-select__chevron"><z-icon name="calendar" size="16"></z-icon></span>
+  <input type="hidden" name="report-week" value="2026-W47" />
+</span>
+
+<div id="report-week-panel" popover="manual" class="z-liquid z-popover z-datepicker__panel" role="dialog" aria-label="Choose week">
+  <div class="z-calendar"></div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="YearPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">YearPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-select z-datepicker" id="model-year" data-size="md" data-block data-min-view="year" data-locale="en-US" data-min="1990" data-max="2027" data-value="2024">
+  <button type="button" class="z-select__control" aria-haspopup="dialog" aria-expanded="false" aria-controls="model-year-panel" data-state="closed">
+    <span class="z-sr-only">Model year</span>
+    <span class="z-select__value">2024</span>
+  </button>
+  <span class="z-select__chevron"><z-icon name="calendar" size="16"></z-icon></span>
+  <input type="hidden" name="model-year" value="2024" />
+</span>
+
+<div id="model-year-panel" popover="manual" class="z-liquid z-popover z-datepicker__panel" role="dialog" aria-label="Choose year">
+  <div class="z-calendar"></div>
+</div>
   </div>
 </section>
 </div>

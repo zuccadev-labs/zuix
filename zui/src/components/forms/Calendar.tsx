@@ -599,7 +599,12 @@ export function Calendar(props: CalendarProps) {
                 type="button"
                 className="z-calendar__view"
                 title={view === "day" ? chooseMonthLabel : chooseYearLabel}
-                onClick={() => setView(upView!)}
+                onClick={() => {
+                  // Sube una vista y el foco entra en la rejilla, en el mes o el año visible.
+                  setView(upView!);
+                  moveFocus.current = true;
+                  setFocused(view === "day" ? visibleMonth : visibleMonth.slice(0, 4));
+                }}
               >
                 {model.title}
               </button>
@@ -814,7 +819,11 @@ function DayCellView({ cell, mode, unit, renderDay, onPick, onFocus, onHover }: 
         onMouseEnter={previewing ? onHover : undefined}
       >
         {cell.label}
-        {content != null && content !== false ? <span className="z-calendar__day-content">{content}</span> : null}
+        {content != null && content !== false ? (
+          <span className="z-calendar__day-content" aria-hidden="true">
+            {content}
+          </span>
+        ) : null}
       </button>
     </td>
   );

@@ -209,7 +209,7 @@
     {
       "name": "renderDay",
       "type": "(date, state) => ReactNode",
-      "description": "Contenido extra en cada día (puntos, precios)."
+      "description": "Contenido extra en cada día (puntos, precios). Es decorativo (aria-hidden): lo que deba oírse va en getDayDescription."
     },
     {
       "name": "getDayDescription",

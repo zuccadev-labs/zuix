@@ -246,10 +246,11 @@ window.__ready = true;
         }
         for (const control of await tab.locator(".z-datepicker > button.z-select__control:not([disabled])").all()) {
           await control.click();
-          await soon(() => tab.evaluate(() => document.activeElement?.classList.contains("z-calendar__day") === true));
+          // Un día, o un mes o un año en MonthPicker y YearPicker.
+          const onCell = () => tab.evaluate(() => document.activeElement?.matches(".z-calendar__day, .z-calendar__unit") === true);
+          await soon(onCell);
           interactions += 1;
-          if (!(await tab.evaluate(() => document.activeElement?.classList.contains("z-calendar__day"))))
-            failures.push(`${id}: DatePicker no enfoca un día al abrir`);
+          if (!(await onCell())) failures.push(`${id}: DatePicker no enfoca un día al abrir`);
           await tab.keyboard.press("Escape");
           await soon(async () => (await control.getAttribute("aria-expanded")) !== "true");
         }

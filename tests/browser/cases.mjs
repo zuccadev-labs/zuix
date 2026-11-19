@@ -2173,6 +2173,238 @@ export const cases = [
     },
   },
 
+  {
+    name: "Familia de fecha: varios meses, múltiple, desplegables, preajustes, reservadas, vistas y RTL",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const activeValue = () =>
+        page.evaluate(() => document.activeElement?.dataset?.date ?? document.activeElement?.dataset?.value ?? null);
+      const focusedOn = (value, message) => poll(async () => (await activeValue()) === value, message ?? `foco en ${value}`);
+      const day = (root, date) => `${t(root)} .z-calendar__day[data-date="${date}"]:not([data-outside])`;
+
+      // Varias fechas: alterna con clic y con teclado, respeta el máximo.
+      await page.locator(t("family-multiple")).scrollIntoViewIfNeeded();
+      await page.click(day("family-multiple", "2026-11-18"));
+      await page.click(day("family-multiple", "2026-11-04"));
+      await expectText(page, t("family-multiple-value"), "2026-11-11,2026-11-18");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press(" ");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
+      await expectText(
+        page,
+        t("family-multiple-value"),
+        "2026-11-05,2026-11-06,2026-11-11,2026-11-18",
+        "maxSelected=4 no deja añadir una quinta",
+      );
+      await expectAttr(page, `${t("family-multiple")} [role=grid]`, "aria-multiselectable", "true");
+
+      // Dos meses: la rejilla es continua para el teclado y la vista solo se mueve al salir; rango con mínimo de 3 días.
+      const months = "family-months";
+      await page.locator(t(months)).scrollIntoViewIfNeeded();
+      await expectCount(page, `${t(months)} [role=grid]`, 2, "dos rejillas");
+      await expectCount(page, `${t(months)} .z-calendar__grid [tabindex="0"]`, 1, "una sola parada de tabulación entre los dos meses");
+      await page.click(day(months, "2026-11-27"));
+      await expectAttr(
+        page,
+        day(months, "2026-11-28"),
+        "aria-disabled",
+        "true",
+        "con minRange=3 el día siguiente no puede cerrar el rango",
+      );
+      await expectText(page, t("family-months-value"), "2026-11-27/");
+      await page.hover(day(months, "2026-12-02"));
+      await expectAttr(
+        page,
+        `${t(months)} .z-calendar__cell:has([data-date="2026-11-30"]:not([data-outside]))`,
+        "data-range",
+        "middle",
+        "la vista previa cruza de un mes a otro",
+      );
+      await page.click(day(months, "2026-12-02"));
+      await expectText(page, t("family-months-value"), "2026-11-27/2026-12-02");
+      await page.focus(day(months, "2026-11-30"));
+      await page.keyboard.press("ArrowDown");
+      await focusedOn("2026-12-07", "de noviembre a diciembre sin salir de la vista");
+      await expectText(page, `${t(months)} .z-calendar__title`, "November – December 2026");
+      await page.keyboard.press("PageDown");
+      await focusedOn("2027-01-07");
+      await expectText(page, `${t(months)} .z-calendar__title`, "December 2026 – January 2027", "la vista avanza un mes al salir");
+      await shot(page, "forms-calendar-two-months");
+
+      // Desplegables de mes y año, con límites.
+      const caption = t("family-caption");
+      await page.locator(caption).scrollIntoViewIfNeeded();
+      await page.selectOption(`${caption} select[data-part="month"]`, "2026-03");
+      await expectText(page, t("family-caption-value"), "2026-11-06@2026-03");
+      await page.selectOption(`${caption} select[data-part="year"]`, "2027");
+      await expectText(page, t("family-caption-value"), "2026-11-06@2027-03");
+      assert(
+        (await page.locator(`${caption} select[data-part="year"] option`).allTextContents()).join(",") === "2025,2026,2027",
+        "el select de año se acota a min/max",
+      );
+      await expectAttr(page, `${caption} .z-calendar__title`, "data-hidden", "", "el título sigue para el lector pero no se ve");
+
+      // Preajustes relativos a hoy.
+      const presets = t("family-presets");
+      await page.locator(presets).scrollIntoViewIfNeeded();
+      await page.click(`${presets} .z-calendar__preset:has-text("Next 7 days")`);
+      await expectText(page, t("family-presets-value"), "2026-11-19/2026-11-25");
+      await expectAttr(page, `${presets} .z-calendar__preset:has-text("Next 7 days")`, "aria-pressed", "true");
+      await page.click(`${presets} .z-calendar__preset:has-text("This month")`);
+      await expectText(page, t("family-presets-value"), "2026-11-01/2026-11-30");
+
+      // Reservadas: tachadas, con nombre «booked», no se eligen; las pasadas quedan fuera por min.
+      const booked = "family-booked";
+      await page.locator(t(booked)).scrollIntoViewIfNeeded();
+      await expectAttr(page, day(booked, "2026-11-20"), "aria-label", "Friday, November 20, 2026, booked");
+      await page.click(day(booked, "2026-11-20"), { force: true });
+      await page.click(day(booked, "2026-11-10"), { force: true });
+      await expectText(page, t("family-booked-value"), "none", "ni reservadas ni pasadas se eligen");
+      await page.click(day(booked, "2026-11-27"));
+      await expectText(page, t("family-booked-value"), "2026-11-27");
+      assert(
+        (await page.locator(day(booked, "2026-11-21")).evaluate((b) => getComputedStyle(b).textDecorationLine)) === "line-through",
+        "la reservada va tachada (no solo color)",
+      );
+      await expectCount(page, `${t(booked)} .z-calendar__legend li`, 3, "leyenda");
+
+      // Vistas: título → meses → años, con teclado; Escape vuelve a los días; botón Hoy.
+      const views = t("family-views");
+      await page.locator(views).scrollIntoViewIfNeeded();
+      await expectCount(page, `${views} .z-calendar__week-number`, 6, "semanas fijas con número");
+      await page.click(`${views} .z-calendar__view`);
+      await expectAttr(page, `${views} [role=grid]`, "aria-label", "Choose month");
+      await page.click(`${views} .z-calendar__view`);
+      await expectAttr(page, `${views} [role=grid]`, "aria-label", "Choose year");
+      await page.click(`${views} .z-calendar__unit[data-value="2027"]`);
+      await focusedOn("2027-11");
+      await page.keyboard.press("ArrowDown");
+      await focusedOn("2028-02", "abajo salta 3 meses");
+      await page.keyboard.press("Enter");
+      await focusedOn("2028-02-01", "Intro baja a los días de ese mes");
+      await page.click(`${views} .z-calendar__view`);
+      await page.keyboard.press("Escape");
+      await expectAttr(page, `${views} .z-calendar`, "data-view", "day", "Escape vuelve a los días");
+      await page.click(`${views} .z-calendar__today`);
+      await expectText(page, t("family-views-value"), "2026-11-19");
+      await focusedOn("2026-11-19");
+
+      // RTL: la flecha izquierda avanza.
+      const rtl = "family-rtl";
+      await page.locator(t(rtl)).scrollIntoViewIfNeeded();
+      await page.focus(day(rtl, "2026-11-10"));
+      await page.keyboard.press("ArrowLeft");
+      await focusedOn("2026-11-11", "en RTL la izquierda es el día siguiente");
+      await page.keyboard.press("ArrowRight");
+      await focusedOn("2026-11-10");
+    },
+  },
+  {
+    name: "Selectores de rango con confirmación, mes, año, semana y múltiple",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const panel = ".z-datepicker__panel";
+      const activeValue = () =>
+        page.evaluate(() => document.activeElement?.dataset?.date ?? document.activeElement?.dataset?.value ?? null);
+      const focusedOn = (value, message) => poll(async () => (await activeValue()) === value, message ?? `foco en ${value}`);
+      const trigger = (id) => `${t(id)} .z-select__control`;
+
+      // Rango con dos meses, preajustes y confirmación: Cancelar y Escape descartan; Aplicar guarda.
+      await page.locator(t("family-range-picker")).scrollIntoViewIfNeeded();
+      await page.click(trigger("family-range-picker"));
+      await visible(page, panel);
+      await expectCount(page, `${panel} [role=grid]`, 2, "dos meses");
+      await page.click(`${panel} .z-calendar__preset:has-text("Next 7 days")`);
+      await expectText(
+        page,
+        `${panel} .z-calendar__summary`,
+        await page.evaluate(() =>
+          new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).formatRange(
+            new Date(Date.UTC(2026, 10, 19)),
+            new Date(Date.UTC(2026, 10, 25)),
+          ),
+        ),
+      );
+      await expectText(page, t("family-range-picker-value"), "none", "con confirm el valor no cambia hasta Aplicar");
+      await shot(page, "forms-daterangepicker-confirm");
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+      await expectText(page, t("family-range-picker-value"), "none", "Escape descarta");
+      await page.click(trigger("family-range-picker"));
+      await visible(page, panel);
+      await page.click(`${panel} .z-calendar__day[data-date="2026-11-23"]:not([data-outside])`);
+      await page.click(`${panel} .z-calendar__day[data-date="2026-12-02"]:not([data-outside])`);
+      await page.click(`${panel} .z-calendar__apply`);
+      await gone(page, panel);
+      await expectText(page, t("family-range-picker-value"), "2026-11-23/2026-12-02");
+      assert(
+        (await page.locator(`${t("family-range-picker")} input[name="window"]`).inputValue()) === "2026-11-23/2026-12-02",
+        "formulario desde/hasta",
+      );
+      await focusOn(page, trigger("family-range-picker"), "el foco vuelve al campo");
+
+      // Mes: rejilla de meses con teclado; Escape en la vista de años vuelve a los meses sin cerrar.
+      await page.click(trigger("family-month-picker"));
+      await visible(page, panel);
+      await focusedOn("2026-11", "el foco va al mes elegido");
+      await page.keyboard.press("ArrowLeft");
+      await page.keyboard.press("ArrowUp");
+      await focusedOn("2026-07");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("family-month-picker-value"), "2026-07");
+      await page.click(trigger("family-month-picker"));
+      await visible(page, panel);
+      await page.click(`${panel} .z-calendar__view`);
+      await expectAttr(page, `${panel} [role=grid]`, "aria-label", "Choose year");
+      await page.keyboard.press("Escape");
+      await visible(page, panel, "Escape en la vista de años no cierra el selector");
+      await expectAttr(page, `${panel} [role=grid]`, "aria-label", "Choose month");
+      await expectAttr(page, `${panel} .z-calendar__unit[data-value="2026-02"]`, "aria-disabled", "true", "min=2026-03");
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+
+      // Año: década con los años del borde atenuados.
+      await page.click(trigger("family-year-picker"));
+      await visible(page, panel);
+      await focusedOn("2024");
+      await expectAttr(page, `${panel} .z-calendar__unit[data-value="2019"]`, "data-outside", "");
+      await page.keyboard.press("PageDown");
+      await focusedOn("2034", "RePág/AvPág por década");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("family-year-picker-value"), "2034");
+
+      // Semana ISO: el foco resalta la semana; el formulario recibe YYYY-Www.
+      await page.click(trigger("family-week-picker"));
+      await visible(page, panel);
+      await expectCount(page, `${panel} td[aria-selected=true]`, 7, "la semana elegida entera");
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("family-week-picker-value"), "2026-W48");
+      assert(
+        (await page.locator(`${t("family-week-picker")} input[name="week"]`).inputValue()) === "2026-W48",
+        "semana ISO en el formulario",
+      );
+      assert((await text(page, trigger("family-week-picker"))).includes("Week 48"), "texto del campo");
+
+      // Múltiple: no cierra al elegir; el campo cuenta.
+      await page.click(trigger("family-multiple-picker"));
+      await visible(page, panel);
+      for (const d of ["2026-11-02", "2026-11-03", "2026-11-04"])
+        await page.click(`${panel} .z-calendar__day[data-date="${d}"]:not([data-outside])`);
+      await visible(page, panel, "en múltiple el panel sigue abierto");
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+      await expectText(page, t("family-multiple-picker-value"), "2026-11-02,2026-11-03,2026-11-04");
+      assert((await text(page, trigger("family-multiple-picker"))).includes("3 shifts"), "texto con formatCount");
+    },
+  },
+
   // ───────────────────────────── Accesibilidad y preferencias ─────────────────────────────
   {
     name: "Accesibilidad (axe): ninguna pantalla tiene violaciones graves en tema claro ni oscuro",
