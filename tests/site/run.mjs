@@ -374,12 +374,6 @@ for (const browserName of wanted) {
                     runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
                     resultTypes: ["violations"],
                   });
-                  // Dentro de una vista previa se pinta el contrato de un componente, que ya miden test:html y
-                  // test:browser. Dos reglas dependen del marco de la vista previa y no del sitio: el tamaño de
-                  // un control (target-size, WCAG 2.2) y el desplazamiento de un layout encajado en su alto.
-                  const framed = new Set(["target-size", "scrollable-region-focusable"]);
-                  for (const v of r.violations)
-                    if (framed.has(v.id)) v.nodes = v.nodes.filter((n) => !document.querySelector(n.target[0])?.closest(".zd-preview"));
                   return r.violations
                     .filter((v) => v.nodes.length && (v.impact === "serious" || v.impact === "critical"))
                     .map(

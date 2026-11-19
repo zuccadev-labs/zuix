@@ -54,7 +54,9 @@ body::before {
   scrollbar-width: thin;
   scrollbar-color: var(--z-line-strong) transparent;
 }
-:focus-visible {
+/* Las piezas de zui (clases `z-*`) dibujan su propio foco en su capa: esta regla sin capa ganaría a su
+   `outline: none` y pintaría un segundo anillo, p. ej. en el campo interior de un Input o de la paleta. */
+:focus-visible:not(:where([class^="z-"], [class*=" z-"])) {
   outline: var(--z-focus-width) solid var(--z-accent-ring);
   outline-offset: var(--z-focus-offset);
 }
@@ -1354,12 +1356,16 @@ a[class*="skipToContent"]:focus {
 .zd-preview > :not(.zd-preview__stage) {
   max-inline-size: 100%;
 }
+/* El escenario ocupa el ancho de la vista previa y centra lo que lleva: un ejemplo con `width: 100%` (Slider,
+   Shell, Progress) se mide contra ese ancho y no contra un contenedor ajustado a su contenido, donde sería 0. */
 .zd-preview__stage {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--z-space-3);
+  justify-self: stretch;
+  inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
