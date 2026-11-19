@@ -1,0 +1,262 @@
+/* Formularios compuestos (oleada 3): InputGroup, PasswordInput, NumberInput, TagsInput, Listbox en línea,
+   CheckboxGroup, variantes tarjeta, Fieldset y Editable. Misma capa que forms.css (`zui.forms`) y el mismo estándar:
+   superficie de control hundida, canto de 3:1, radios concéntricos por tamaño (sm 8, md 10, lg 12) y anillo de foco
+   en el contenedor, separado 1 px. */
+@layer zui.forms {
+  /* ---- InputGroup ----
+     Un solo recuadro con adornos dentro. Los adornos `block-*` ocupan una fila propia (encima o debajo del control);
+     los `segment` son tramos con fondo y separador que llegan hasta el canto. */
+  .z-input-group {
+    --z-ig-height: var(--z-control-height-md);
+    --z-ig-pad: var(--z-space-3);
+    --z-ig-radius: var(--z-control-radius);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--z-space-2);
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--z-ig-height);
+    padding-inline: var(--z-ig-pad);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-ig-radius);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font-size: var(--z-text-body);
+    transition:
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-input-group[data-size="sm"] {
+    --z-ig-height: var(--z-control-height-sm);
+    --z-ig-pad: var(--z-space-2-5);
+    --z-ig-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-small);
+  }
+  .z-input-group[data-size="lg"] {
+    --z-ig-height: var(--z-control-height-lg);
+    --z-ig-pad: var(--z-space-3-5);
+    --z-ig-radius: var(--z-control-radius-lg);
+  }
+  @media (hover: hover) {
+    .z-input-group:hover:not([data-disabled]) {
+      border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
+    }
+  }
+  .z-input-group:focus-within {
+    border-color: var(--z-accent);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-input-group:is([data-invalid], :has(.z-input-group__control[aria-invalid="true"])) {
+    border-color: var(--z-danger);
+  }
+  .z-input-group:is([data-invalid], :has(.z-input-group__control[aria-invalid="true"])):focus-within {
+    outline-color: var(--z-danger);
+  }
+  .z-input-group:is([data-disabled], :has(.z-input-group__control:disabled)) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-input-group__control {
+    flex: 1 1 0;
+    order: 1;
+    min-width: 4ch;
+    min-height: calc(var(--z-ig-height) - 2px);
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  .z-input-group__control::placeholder {
+    color: var(--z-fg-subtle);
+  }
+  .z-input-group__control:disabled {
+    cursor: not-allowed;
+  }
+  .z-input-group__control[data-multiline] {
+    flex-basis: 100%;
+    min-height: calc(var(--z-ig-height) * 2);
+    padding-block: var(--z-space-2);
+    line-height: var(--z-leading-normal);
+    resize: vertical;
+  }
+  .z-input-group:has(.z-input-group__control[data-multiline]) {
+    --z-ig-radius: var(--z-field-radius-multiline);
+  }
+  .z-input-group__addon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-height: calc(var(--z-ig-height) - 2px);
+    color: var(--z-fg-muted);
+    cursor: text;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .z-input-group__addon[data-align="inline-start"] {
+    order: 0;
+  }
+  .z-input-group__addon[data-align="inline-end"] {
+    order: 2;
+  }
+  .z-input-group__addon[data-align="block-start"] {
+    flex-basis: 100%;
+    order: -1;
+    padding-block-start: var(--z-space-2);
+  }
+  .z-input-group__addon[data-align="block-end"] {
+    flex-basis: 100%;
+    order: 3;
+    justify-content: space-between;
+    padding-block-end: var(--z-space-1-5);
+  }
+  .z-input-group__addon[data-align^="block"] {
+    min-height: 0;
+  }
+  /* Un botón dentro del adorno se ciñe al recuadro: su radio es el del campo menos el aire que lo rodea. */
+  .z-input-group__addon .z-btn {
+    --z-btn-radius: max(var(--z-radius-xs), calc(var(--z-ig-radius) - 4px));
+  }
+  .z-input-group__addon[data-align="inline-end"]:has(> .z-btn:last-child) {
+    margin-inline-end: calc(var(--z-ig-pad) * -1 + var(--z-space-1));
+  }
+  .z-input-group__addon[data-align="inline-start"]:has(> .z-btn:first-child) {
+    margin-inline-start: calc(var(--z-ig-pad) * -1 + var(--z-space-1));
+  }
+  .z-input-group__text {
+    font-size: var(--z-text-small);
+    white-space: nowrap;
+  }
+  /* Tramo: fondo propio y separador, de canto a canto en su lado. */
+  .z-input-group__addon[data-variant="segment"] {
+    align-self: stretch;
+    padding-inline: var(--z-ig-pad);
+    background: var(--z-surface-2);
+  }
+  .z-input-group__addon[data-variant="segment"][data-align="inline-start"] {
+    margin-inline-start: calc(var(--z-ig-pad) * -1);
+    border-inline-end: 1px solid var(--z-line);
+    border-start-start-radius: calc(var(--z-ig-radius) - 1px);
+    border-end-start-radius: calc(var(--z-ig-radius) - 1px);
+  }
+  .z-input-group__addon[data-variant="segment"][data-align="inline-end"] {
+    margin-inline-end: calc(var(--z-ig-pad) * -1);
+    border-inline-start: 1px solid var(--z-line);
+    border-start-end-radius: calc(var(--z-ig-radius) - 1px);
+    border-end-end-radius: calc(var(--z-ig-radius) - 1px);
+  }
+
+  /* ---- PasswordInput ---- */
+  .z-password {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    width: 100%;
+    min-width: 0;
+  }
+  .z-password__toggle[aria-pressed="true"] {
+    color: var(--z-fg);
+  }
+  /* Medidor: cuatro tramos que se llenan con el nivel, con texto (no solo color). */
+  .z-password__meter {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    line-height: var(--z-leading-snug);
+  }
+  .z-password__bars {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--z-space-1);
+  }
+  .z-password__bar {
+    height: 4px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    transition: background var(--z-duration-normal) var(--z-ease-standard);
+  }
+  .z-password__label {
+    flex: 0 0 auto;
+    min-width: 9ch;
+    text-align: end;
+  }
+  .z-password__meter[data-score="1"] .z-password__bar:nth-child(-n + 1) {
+    background: var(--z-danger);
+  }
+  .z-password__meter[data-score="2"] .z-password__bar:nth-child(-n + 2) {
+    background: var(--z-warning);
+  }
+  .z-password__meter[data-score="3"] .z-password__bar:nth-child(-n + 3) {
+    background: var(--z-success);
+  }
+  .z-password__meter[data-score="4"] .z-password__bar {
+    background: var(--z-success);
+  }
+  .z-password__meter[data-score="1"] .z-password__label {
+    color: var(--z-danger-text);
+  }
+  .z-password__meter[data-score="4"] .z-password__label {
+    color: var(--z-success-text);
+  }
+
+  /* ---- NumberInput ----
+     Texto con cifras tabulares. Botones apilados al final (mitades del alto del campo) o a los lados (− valor +). */
+  .z-number {
+    font-variant-numeric: tabular-nums;
+  }
+  .z-number[data-controls="split"] .z-number__input {
+    text-align: center;
+  }
+  .z-number[data-controls="split"] .z-number__step[data-step="down"] {
+    margin-inline: calc(var(--z-input-pad) * -1 + var(--z-space-1)) 0;
+  }
+  .z-number__steps {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    margin-inline-end: calc(var(--z-input-pad) * -1);
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-number__steps .z-number__step {
+    flex: 1 1 0;
+    width: calc(var(--z-input-height) * 0.7);
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+  }
+  .z-number__steps .z-number__step[data-step="up"] {
+    border-start-end-radius: calc(var(--z-input-radius) - 1px);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-number__steps .z-number__step[data-step="down"] {
+    border-end-end-radius: calc(var(--z-input-radius) - 1px);
+  }
+  .z-number__step:disabled {
+    opacity: 0.4;
+  }
+  /* Con puntero grueso los botones apilados serían de 20 px: pasan a los lados del valor. */
+  @media (pointer: coarse) {
+    .z-number__steps {
+      flex-direction: row-reverse;
+      border-inline-start: 0;
+      margin-inline-end: calc(var(--z-input-pad) * -1 + var(--z-space-1));
+    }
+    .z-number__steps .z-number__step {
+      width: calc(var(--z-input-height) - 10px);
+      border-radius: var(--z-radius-xs);
+    }
+    .z-number__steps .z-number__step[data-step="up"] {
+      border-block-end: 0;
+    }
+  }
+}

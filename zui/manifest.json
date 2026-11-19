@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 79,
+ "count": 82,
  "groups": {
   "actions": [
    "Button",
@@ -64,9 +64,12 @@
    "Field",
    "FileUpload",
    "Input",
+   "InputGroup",
    "MonthPicker",
    "NativeSelect",
+   "NumberInput",
    "OTPInput",
+   "PasswordInput",
    "Radio",
    "RadioGroup",
    "SearchInput",
@@ -6381,6 +6384,143 @@
    "file": "zui/src/components/forms/Input.manifest.json"
   },
   {
+   "name": "InputGroup",
+   "exports": [
+    "InputGroupAddon",
+    "InputGroupText",
+    "InputGroupInput",
+    "InputGroupTextarea"
+   ],
+   "group": "forms",
+   "description": "Campo con adornos: texto, icono, atajo de teclado, botón o tramo de prefijo al inicio, al final, encima o debajo del control, en un solo recuadro.",
+   "import": "import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText, InputGroupTextarea } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "InputGroup."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false,
+     "description": "InputGroup. También se marca solo si el control lleva aria-invalid."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false,
+     "description": "InputGroup: atenúa el recuadro (deshabilita el control con su propio `disabled`)."
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "inline-start",
+      "inline-end",
+      "block-start",
+      "block-end"
+     ],
+     "default": "inline-start",
+     "description": "InputGroupAddon. Los `block-*` ocupan una fila propia."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "segment"
+     ],
+     "default": "plain",
+     "description": "InputGroupAddon. `segment`: tramo con fondo y separador hasta el canto (prefijos como `https://`)."
+    },
+    {
+     "name": "...rest",
+     "type": "InputHTMLAttributes | TextareaHTMLAttributes",
+     "description": "InputGroupInput e InputGroupTextarea: atributos nativos; toman id, error y ayuda del Field que los envuelve."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "field-radius-multiline",
+    "control-border",
+    "control-border-hover",
+    "control-bg",
+    "control-bg-hover",
+    "accent",
+    "accent-ring",
+    "danger",
+    "focus-width",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "surface-2",
+    "line",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-3-5",
+    "text-body",
+    "text-small",
+    "radius-xs",
+    "leading-normal",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-input-group",
+    "z-input-group__addon",
+    "z-input-group__text",
+    "z-input-group__control"
+   ],
+   "a11y": "El control es un input o textarea nativo: toma etiqueta, ayuda y error del Field. Los adornos son texto o controles propios con su nombre (un botón de solo icono lleva aria-label); pulsar en un adorno que no es un control enfoca el campo. Un texto que cambia el sentido del valor (unidad, moneda) debe estar también en la etiqueta o en la ayuda: un adorno no forma parte del nombre accesible.",
+   "examples": [
+    {
+     "title": "Icono y atajo",
+     "code": "<InputGroup>\n  <InputGroupAddon>\n    <Icon name=\"magnifying-glass\" />\n  </InputGroupAddon>\n  <InputGroupInput placeholder=\"Search projects\" aria-label=\"Search projects\" />\n  <InputGroupAddon align=\"inline-end\">\n    <Kbd keys=\"⌘ K\" size=\"sm\" />\n  </InputGroupAddon>\n</InputGroup>"
+    },
+    {
+     "title": "Prefijo y sufijo en tramo",
+     "code": "<Field label=\"Website\">\n  <InputGroup>\n    <InputGroupAddon variant=\"segment\">\n      <InputGroupText>https://</InputGroupText>\n    </InputGroupAddon>\n    <InputGroupInput placeholder=\"example\" />\n    <InputGroupAddon align=\"inline-end\" variant=\"segment\">\n      <InputGroupText>.com</InputGroupText>\n    </InputGroupAddon>\n  </InputGroup>\n</Field>"
+    },
+    {
+     "title": "Con botón",
+     "code": "<InputGroup>\n  <InputGroupInput placeholder=\"Invite by email\" aria-label=\"Email\" type=\"email\" />\n  <InputGroupAddon align=\"inline-end\">\n    <Button size=\"xs\" variant=\"primary\">Invite</Button>\n  </InputGroupAddon>\n</InputGroup>"
+    },
+    {
+     "title": "Unidad",
+     "code": "<Field label=\"Price (USD)\">\n  <InputGroup>\n    <InputGroupAddon>\n      <InputGroupText>$</InputGroupText>\n    </InputGroupAddon>\n    <InputGroupInput inputMode=\"decimal\" placeholder=\"0.00\" />\n    <InputGroupAddon align=\"inline-end\">\n      <InputGroupText>USD</InputGroupText>\n    </InputGroupAddon>\n  </InputGroup>\n</Field>"
+    },
+    {
+     "title": "Textarea con barra inferior",
+     "code": "<InputGroup>\n  <InputGroupTextarea placeholder=\"Write a comment\" aria-label=\"Comment\" />\n  <InputGroupAddon align=\"block-end\">\n    <InputGroupText>Markdown supported</InputGroupText>\n    <Button size=\"xs\" variant=\"primary\" icon=\"paper-airplane\">Send</Button>\n  </InputGroupAddon>\n</InputGroup>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Input Group de Shark UI (alineaciones, texto, botón, atajo, textarea).",
+   "file": "zui/src/components/forms/InputGroup.manifest.json"
+  },
+  {
    "name": "MonthPicker",
    "group": "forms",
    "description": "Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4). Valor YYYY-MM, como <input type=\"month\">; en rango, de mes a mes.",
@@ -6613,6 +6753,156 @@
    "file": "zui/src/components/forms/NativeSelect.manifest.json"
   },
   {
+   "name": "NumberInput",
+   "group": "forms",
+   "description": "Campo numérico con pasos, mínimo y máximo, botones que repiten al mantenerlos, rueda opcional y formato del locale con Intl.NumberFormat.",
+   "import": "import { NumberInput } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "value",
+     "type": "number | null",
+     "description": "Valor; null es vacío."
+    },
+    {
+     "name": "defaultValue",
+     "type": "number | null",
+     "default": null
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: number | null) => void",
+     "description": "Al pulsar una flecha o un botón, y al confirmar lo escrito (Intro o salir del campo)."
+    },
+    {
+     "name": "min",
+     "type": "number"
+    },
+    {
+     "name": "max",
+     "type": "number"
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "largeStep",
+     "type": "number",
+     "description": "Paso de Re Pág y Av Pág; por defecto, 10 pasos."
+    },
+    {
+     "name": "formatOptions",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Moneda, porcentaje (el campo muestra 25 % y vale 0.25), unidad o decimales."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale del formato y de la lectura; por defecto, el del navegador."
+    },
+    {
+     "name": "wheel",
+     "type": "boolean",
+     "default": false,
+     "description": "La rueda cambia el valor solo con el campo enfocado."
+    },
+    {
+     "name": "controls",
+     "type": "enum",
+     "values": [
+      "stacked",
+      "split",
+      "none"
+     ],
+     "default": "stacked",
+     "description": "Botones apilados al final, a los lados (− valor +) o ninguno. Con puntero grueso los apilados pasan a los lados."
+    },
+    {
+     "name": "incrementLabel",
+     "type": "string",
+     "default": "Increase"
+    },
+    {
+     "name": "decrementLabel",
+     "type": "string",
+     "default": "Decrease"
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el número sin formato."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "invalid",
+    "disabled",
+    "readonly"
+   ],
+   "tokens": [
+    "line",
+    "space-1",
+    "radius-xs"
+   ],
+   "classes": [
+    "z-number",
+    "z-number__input",
+    "z-number__steps",
+    "z-number__step",
+    "z-input"
+   ],
+   "a11y": "Patrón APG «spinbutton»: input de texto con role=\"spinbutton\", aria-valuenow, aria-valuemin, aria-valuemax y aria-valuetext con el valor formateado. Flechas arriba y abajo cambian un paso, Re Pág y Av Pág un paso largo, Inicio y Fin van al mínimo y al máximo (si los hay) e Intro confirma lo escrito. Los botones no reciben el foco (tabindex -1), tienen nombre y se deshabilitan en el tope. No usa type=\"number\": conserva ceros y formato, y la rueda no lo cambia por accidente. inputmode numeric o decimal según el paso.",
+   "examples": [
+    {
+     "title": "Cantidad",
+     "code": "<Field label=\"Seats\">\n  <NumberInput defaultValue={3} min={1} max={50} name=\"seats\" />\n</Field>"
+    },
+    {
+     "title": "Moneda",
+     "code": "<Field label=\"Monthly budget\">\n  <NumberInput defaultValue={1250} step={50} min={0} locale=\"en-US\" formatOptions={{ style: \"currency\", currency: \"USD\" }} />\n</Field>"
+    },
+    {
+     "title": "Botones a los lados",
+     "code": "<NumberInput aria-label=\"Quantity\" defaultValue={1} min={0} max={9} controls=\"split\" size=\"sm\" />"
+    },
+    {
+     "title": "Porcentaje con rueda",
+     "code": "<Field label=\"Opacity\" hint=\"Scroll over the focused field to adjust.\">\n  <NumberInput defaultValue={0.8} min={0} max={1} step={0.05} wheel locale=\"en-US\" formatOptions={{ style: \"percent\" }} />\n</Field>"
+    }
+   ],
+   "origin": "Nuevo, con lógica propia en core/number (lectura y formato por locale, pasos sin error de coma flotante). Referencia de variantes: Number Input de Shark UI.",
+   "file": "zui/src/components/forms/NumberInput.manifest.json"
+  },
+  {
    "name": "OTPInput",
    "group": "forms",
    "description": "Código de un solo uso repartido en casillas.",
@@ -6756,6 +7046,147 @@
    ],
    "origin": "Nuevo.",
    "file": "zui/src/components/forms/OTPInput.manifest.json"
+  },
+  {
+   "name": "PasswordInput",
+   "group": "forms",
+   "description": "Campo de contraseña con botón de mostrar u ocultar y medidor de fortaleza opcional.",
+   "import": "import { PasswordInput } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "autoComplete",
+     "type": "enum",
+     "values": [
+      "current-password",
+      "new-password",
+      "one-time-code",
+      "off"
+     ],
+     "default": "current-password",
+     "description": "`new-password` al crear o cambiar la contraseña: el gestor propone una."
+    },
+    {
+     "name": "visible",
+     "type": "boolean",
+     "description": "Contraseña visible (controlado)."
+    },
+    {
+     "name": "defaultVisible",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onVisibleChange",
+     "type": "(visible: boolean) => void"
+    },
+    {
+     "name": "hideOnSubmit",
+     "type": "boolean",
+     "default": true,
+     "description": "Vuelve a ocultarla al enviar el formulario."
+    },
+    {
+     "name": "strength",
+     "type": "boolean | number",
+     "description": "`true`: medidor con una estimación orientativa (longitud y variedad). Un número de 0 a 4 lo fija la aplicación (por ejemplo, con la respuesta del servidor)."
+    },
+    {
+     "name": "strengthLabels",
+     "type": "[string, string, string, string, string]",
+     "default": "[\"Too short\", \"Weak\", \"Fair\", \"Good\", \"Strong\"]"
+    },
+    {
+     "name": "strengthPrefix",
+     "type": "string",
+     "default": "Strength:"
+    },
+    {
+     "name": "toggleLabel",
+     "type": "string",
+     "default": "Show password",
+     "description": "Nombre del botón; no cambia al pulsarlo (el estado lo da aria-pressed)."
+    },
+    {
+     "name": "toggleHint",
+     "type": "string",
+     "default": "Shows the password on screen",
+     "description": "Aviso que se lee con el botón."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "...rest",
+     "type": "InputHTMLAttributes",
+     "description": "Atributos nativos (name, required, minLength, value, onChange…)."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "visible",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "fg",
+    "fg-muted",
+    "surface-3",
+    "line",
+    "radius-xs",
+    "danger",
+    "danger-text",
+    "warning",
+    "success",
+    "success-text",
+    "text-caption",
+    "leading-snug",
+    "duration-normal",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-password",
+    "z-password__field",
+    "z-password__toggle",
+    "z-password__meter",
+    "z-password__bar",
+    "z-password__label",
+    "z-input"
+   ],
+   "a11y": "Input nativo `type=\"password\"` con autocomplete, sin autocorrección ni mayúsculas automáticas, que admite pegar. El botón es `type=\"button\"` con aria-pressed y un nombre fijo («Show password»), aria-controls al campo y un aviso por aria-describedby. El medidor tiene texto además del color y se lee con el campo (aria-describedby): no se anuncia en cada tecla, y no juzga hasta que hay algo escrito.",
+   "examples": [
+    {
+     "title": "Entrar",
+     "code": "<Field label=\"Password\">\n  <PasswordInput name=\"password\" required />\n</Field>"
+    },
+    {
+     "title": "Crear con medidor",
+     "code": "<Field label=\"New password\" hint=\"Eight or more characters.\">\n  <PasswordInput name=\"new-password\" autoComplete=\"new-password\" minLength={8} strength defaultValue=\"Glass-2026\" />\n</Field>"
+    },
+    {
+     "title": "Visible y pequeño",
+     "code": "<PasswordInput aria-label=\"Access token\" size=\"sm\" defaultVisible defaultValue=\"zx-demo-token\" autoComplete=\"off\" />"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «forms» (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
+   "file": "zui/src/components/forms/PasswordInput.manifest.json"
   },
   {
    "name": "Radio",

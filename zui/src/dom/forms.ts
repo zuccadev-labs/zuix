@@ -32,6 +32,7 @@
 //             (ISO, o null mientras está incompleto). setDateFieldValue(). Otros botones dentro del campo no se tocan.
 // TimeField   El mismo marcado con la clase .z-timefield: segmentos de hora, minuto, (segundo) y AM/PM; data-granularity
 //             ="minute|second". setTimeFieldValue().
+// InputGroup, PasswordInput y NumberInput: ver ./forms-fields.
 // TimePicker  .z-timefield.z-timepicker con button.z-timepicker__trigger[aria-controls] + .z-timepicker__panel[popover]
 //             vacío. En el campo: data-variant="columns|list", data-step (minutos de la lista), data-disabled-times
 //             ="12:00,12:30", data-show-now, data-now-label, data-hours-label, data-minutes-label, data-seconds-label,
@@ -40,6 +41,7 @@ import * as calendar from "./forms-calendar";
 import * as controls from "./forms-controls";
 import * as datefield from "./forms-datefield";
 import * as datetime from "./forms-datetime";
+import * as fields from "./forms-fields";
 import * as listbox from "./forms-listbox";
 import * as popup from "./forms-popup";
 import type { Listen } from "./shared";
@@ -47,9 +49,10 @@ import type { Listen } from "./shared";
 export { setCalendarOptions, setCalendarValue, setDatePickerValue, type CalendarOptions, type DateRange } from "./forms-calendar";
 export { setOtpValue, setSliderValue } from "./forms-controls";
 export { setDateFieldValue, setTimeFieldValue, setTimePickerValue } from "./forms-datefield";
+export { setNumberInputValue } from "./forms-fields";
 export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
 
-const parts = [popup, listbox, calendar, controls, datefield, datetime];
+const parts = [popup, listbox, calendar, controls, datefield, datetime, fields];
 
 export function setup(on: Listen): void {
   for (const part of parts) part.setup(on);
@@ -60,4 +63,5 @@ export function hydrate(root: ParentNode): void {
   calendar.hydrate(root);
   controls.hydrate(root);
   datefield.hydrate(root);
+  fields.hydrate(root);
 }

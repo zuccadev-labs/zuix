@@ -45,19 +45,5 @@
       "code": "<Toggle label=\"Favourite\" variant=\"ghost\">\n  <Swap effect=\"flip\" off={<Icon name=\"heart\" />} on={<Icon name=\"heart\" variant=\"solid\" />} />\n</Toggle>"
     }
   ],
-  "origin": "Nuevo. Referencia de variantes: Swap de Shark UI (fundido, giro, volteo, escala).",
-  "html": [
-    {
-      "title": "En un Toggle (sigue a aria-pressed)",
-      "code": "<button type=\"button\" class=\"z-toggle\" aria-pressed=\"false\" aria-label=\"Dark mode\" data-state=\"off\" data-size=\"md\" data-variant=\"outline\">\n  <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"rotate\">\n    <span class=\"z-swap__item\" data-for=\"off\"><z-icon name=\"sun\" size=\"16\"></z-icon></span>\n    <span class=\"z-swap__item\" data-for=\"on\"><z-icon name=\"moon\" size=\"16\"></z-icon></span>\n  </span>\n</button>"
-    },
-    {
-      "title": "Estado propio",
-      "code": "<span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"scale\" data-state=\"on\">\n  <span class=\"z-swap__item\" data-for=\"off\"><z-icon name=\"bars-3\" size=\"16\"></z-icon></span>\n  <span class=\"z-swap__item\" data-for=\"on\"><z-icon name=\"x-mark\" size=\"16\"></z-icon></span>\n</span>"
-    },
-    {
-      "title": "Volteo",
-      "code": "<button type=\"button\" class=\"z-toggle\" aria-pressed=\"false\" aria-label=\"Favourite\" data-state=\"off\" data-size=\"md\" data-variant=\"ghost\">\n  <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"flip\">\n    <span class=\"z-swap__item\" data-for=\"off\"><z-icon name=\"heart\" size=\"16\"></z-icon></span>\n    <span class=\"z-swap__item\" data-for=\"on\"><z-icon name=\"heart\" variant=\"solid\" size=\"16\"></z-icon></span>\n  </span>\n</button>"
-    }
-  ]
+  "origin": "Nuevo. Referencia de variantes: Swap de Shark UI (fundido, giro, volteo, escala)."
 }

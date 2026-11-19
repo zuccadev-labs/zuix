@@ -1,0 +1,64 @@
+{
+  "name": "NumberInput",
+  "group": "forms",
+  "description": "Campo numérico con pasos, mínimo y máximo, botones que repiten al mantenerlos, rueda opcional y formato del locale con Intl.NumberFormat.",
+  "import": "import { NumberInput } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    { "name": "value", "type": "number | null", "description": "Valor; null es vacío." },
+    { "name": "defaultValue", "type": "number | null", "default": null },
+    {
+      "name": "onValueChange",
+      "type": "(value: number | null) => void",
+      "description": "Al pulsar una flecha o un botón, y al confirmar lo escrito (Intro o salir del campo)."
+    },
+    { "name": "min", "type": "number" },
+    { "name": "max", "type": "number" },
+    { "name": "step", "type": "number", "default": 1 },
+    { "name": "largeStep", "type": "number", "description": "Paso de Re Pág y Av Pág; por defecto, 10 pasos." },
+    {
+      "name": "formatOptions",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Moneda, porcentaje (el campo muestra 25 % y vale 0.25), unidad o decimales."
+    },
+    { "name": "locale", "type": "string", "description": "Locale del formato y de la lectura; por defecto, el del navegador." },
+    { "name": "wheel", "type": "boolean", "default": false, "description": "La rueda cambia el valor solo con el campo enfocado." },
+    {
+      "name": "controls",
+      "type": "enum",
+      "values": ["stacked", "split", "none"],
+      "default": "stacked",
+      "description": "Botones apilados al final, a los lados (− valor +) o ninguno. Con puntero grueso los apilados pasan a los lados."
+    },
+    { "name": "incrementLabel", "type": "string", "default": "Increase" },
+    { "name": "decrementLabel", "type": "string", "default": "Decrease" },
+    { "name": "name", "type": "string", "description": "Campo oculto con el número sin formato." },
+    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md" },
+    { "name": "invalid", "type": "boolean", "default": false },
+    { "name": "disabled", "type": "boolean", "default": false },
+    { "name": "readOnly", "type": "boolean", "default": false }
+  ],
+  "states": ["rest", "hover", "focus", "invalid", "disabled", "readonly"],
+  "tokens": ["line", "space-1", "radius-xs"],
+  "classes": ["z-number", "z-number__input", "z-number__steps", "z-number__step", "z-input"],
+  "a11y": "Patrón APG «spinbutton»: input de texto con role=\"spinbutton\", aria-valuenow, aria-valuemin, aria-valuemax y aria-valuetext con el valor formateado. Flechas arriba y abajo cambian un paso, Re Pág y Av Pág un paso largo, Inicio y Fin van al mínimo y al máximo (si los hay) e Intro confirma lo escrito. Los botones no reciben el foco (tabindex -1), tienen nombre y se deshabilitan en el tope. No usa type=\"number\": conserva ceros y formato, y la rueda no lo cambia por accidente. inputmode numeric o decimal según el paso.",
+  "examples": [
+    {
+      "title": "Cantidad",
+      "code": "<Field label=\"Seats\">\n  <NumberInput defaultValue={3} min={1} max={50} name=\"seats\" />\n</Field>"
+    },
+    {
+      "title": "Moneda",
+      "code": "<Field label=\"Monthly budget\">\n  <NumberInput defaultValue={1250} step={50} min={0} locale=\"en-US\" formatOptions={{ style: \"currency\", currency: \"USD\" }} />\n</Field>"
+    },
+    {
+      "title": "Botones a los lados",
+      "code": "<NumberInput aria-label=\"Quantity\" defaultValue={1} min={0} max={9} controls=\"split\" size=\"sm\" />"
+    },
+    {
+      "title": "Porcentaje con rueda",
+      "code": "<Field label=\"Opacity\" hint=\"Scroll over the focused field to adjust.\">\n  <NumberInput defaultValue={0.8} min={0} max={1} step={0.05} wheel locale=\"en-US\" formatOptions={{ style: \"percent\" }} />\n</Field>"
+    }
+  ],
+  "origin": "Nuevo, con lógica propia en core/number (lectura y formato por locale, pasos sin error de coma flotante). Referencia de variantes: Number Input de Shark UI."
+}

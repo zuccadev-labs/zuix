@@ -44,3 +44,16 @@ export { DateField, type DateFieldProps } from "./DateField";
 export { TimeField, type TimeFieldProps } from "./TimeField";
 export { TimePicker, type TimePickerProps } from "./TimePicker";
 export { DateTimePicker, type DateTimePickerProps } from "./DateTimePicker";
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+  type InputGroupAddonProps,
+  type InputGroupInputProps,
+  type InputGroupProps,
+  type InputGroupTextareaProps,
+} from "./InputGroup";
+export { PasswordInput, type PasswordInputProps } from "./PasswordInput";
+export { NumberInput, type NumberInputProps } from "./NumberInput";
