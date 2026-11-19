@@ -68,6 +68,7 @@ export default async function ({ page, test, ok, settle, shots }) {
     await inject("Calendar", "Selectores de mes y año");
     const root = "#caption-calendar";
     await page.locator(root).scrollIntoViewIfNeeded();
+    await page.locator(`${root} select[data-part="month"]`).focus();
     await page.selectOption(`${root} select[data-part="month"]`, "2026-02");
     ok((await page.getAttribute(root, "data-month")) === "2026-02", "mes");
     ok((await page.evaluate(() => document.activeElement?.dataset?.part)) === "month", "el foco sigue en el select");
@@ -198,25 +199,25 @@ export default async function ({ page, test, ok, settle, shots }) {
   });
 
   await test("DateTimePicker: campo tecleable, calendario y hora en el panel; Aplicar junta día y hora", async () => {
-    if (!(await page.locator("#meeting").count())) await inject("DateTimePicker", "Reunión");
-    const field = page.locator("#meeting");
+    if (!(await page.locator("#meeting-at").count())) await inject("DateTimePicker", "Reunión");
+    const field = page.locator("#meeting-at");
     await field.scrollIntoViewIfNeeded();
     ok((await field.locator('[role="spinbutton"]').count()) >= 5, "segmentos de fecha y hora");
     await field.locator('[role="spinbutton"]').first().focus();
     await page.keyboard.press("Alt+ArrowDown");
     await settle();
-    ok(await isOpen("#meeting-panel"), "Alt+Flecha abajo abre");
+    ok(await isOpen("#meeting-at-panel"), "Alt+Flecha abajo abre");
     ok((await active()) === "2026-11-24", "foco en el día del valor");
     await page.keyboard.press("ArrowRight");
     await page.keyboard.press("Enter");
-    ok(await isOpen("#meeting-panel"), "elegir día no cierra con hora");
-    const hour = page.locator('#meeting-panel .z-timefield [data-segment="hour"]');
+    ok(await isOpen("#meeting-at-panel"), "elegir día no cierra con hora");
+    const hour = page.locator('#meeting-at-panel .z-timefield [data-segment="hour"]');
     await hour.focus();
     await page.keyboard.type("09");
     await page.keyboard.type("45");
-    await page.locator("#meeting-panel .z-calendar__apply").click();
+    await page.locator("#meeting-at-panel .z-calendar__apply").click();
     await settle();
-    ok(!(await isOpen("#meeting-panel")), "Aplicar cierra");
+    ok(!(await isOpen("#meeting-at-panel")), "Aplicar cierra");
     const value = await field.locator("input.z-native-input").inputValue();
     ok(value === "2026-11-25T09:45", `valor: ${value}`);
 
