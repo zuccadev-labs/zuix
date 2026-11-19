@@ -11,6 +11,7 @@ import { useMergedRef } from "../../refs";
 import { Button } from "../actions/Button";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { Calendar, todayISO, type CalendarLegend, type CalendarPreset, type CalendarProps, type DateRange } from "./Calendar";
+import { DateTimePicker } from "./DateTimePicker";
 import { useFieldControl } from "./Field";
 
 /** Props del calendario que el selector reenvía tal cual. */
@@ -98,6 +99,8 @@ interface DatePickerBaseProps extends ForwardedCalendarProps {
   minView?: CalendarView;
   /** `week`: se elige una semana entera (WeekPicker). */
   selectionUnit?: "day" | "week";
+  /** Fecha única: el disparador es un DateField tecleable (patrón combobox con diálogo) con botón de calendario. */
+  input?: boolean;
   /** Icono del campo. */
   icon?: "calendar" | "calendar-date-range" | "calendar-days";
   id?: string;
@@ -137,8 +140,49 @@ export type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps | Dat
 
 const normalize = (raw: unknown) => (raw && typeof raw === "object" && !Array.isArray(raw) && "day" in raw ? toISODate(raw) : raw);
 
-/** Campo de fecha con calendario propio en un popover. Valor ISO `YYYY-MM-DD`, `{ from, to }` en rango o una lista. */
+/** Campo de fecha con calendario propio en un popover. Valor ISO `YYYY-MM-DD`, `{ from, to }` en rango o una lista.
+ *  Con `input` (fecha única), el disparador es un DateField tecleable con un botón de calendario. */
 export function DatePicker(props: DatePickerProps) {
+  if (props.input && (props.mode ?? "single") === "single") {
+    const p = props as DatePickerSingleProps;
+    return (
+      <DateTimePicker
+        granularity="day"
+        value={p.value === undefined ? undefined : (normalize(p.value) as string | null)}
+        defaultValue={normalize(p.defaultValue ?? null) as string | null}
+        onValueChange={p.onValueChange}
+        open={p.open}
+        defaultOpen={p.defaultOpen}
+        onOpenChange={p.onOpenChange}
+        min={p.min}
+        max={p.max}
+        locale={p.locale}
+        isDateDisabled={p.isDateDisabled}
+        isDateUnavailable={p.isDateUnavailable}
+        weekStartsOn={p.weekStartsOn}
+        numberOfMonths={p.numberOfMonths}
+        presets={p.presets}
+        today={p.today}
+        size={p.size}
+        invalid={p.invalid}
+        disabled={p.disabled}
+        required={p.required}
+        name={p.name}
+        align={p.align}
+        calendarLabel={p.calendarLabel}
+        id={p.id}
+        aria-label={p["aria-label"]}
+        aria-labelledby={p["aria-labelledby"]}
+        aria-describedby={p["aria-describedby"]}
+        className={p.className}
+        popupClassName={p.popupClassName}
+      />
+    );
+  }
+  return <DatePickerPanel {...props} />;
+}
+
+function DatePickerPanel(props: DatePickerProps) {
   const {
     mode = "single",
     open,
@@ -175,6 +219,7 @@ export function DatePicker(props: DatePickerProps) {
     minView = "day",
     selectionUnit,
     icon,
+    input: _input,
     id,
     "aria-label": ariaLabel,
     "aria-labelledby": ariaLabelledBy,

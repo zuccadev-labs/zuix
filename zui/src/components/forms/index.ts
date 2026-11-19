@@ -43,3 +43,4 @@ export { SearchInput, type SearchInputProps } from "./SearchInput";
 export { DateField, type DateFieldProps } from "./DateField";
 export { TimeField, type TimeFieldProps } from "./TimeField";
 export { TimePicker, type TimePickerProps } from "./TimePicker";
+export { DateTimePicker, type DateTimePickerProps } from "./DateTimePicker";

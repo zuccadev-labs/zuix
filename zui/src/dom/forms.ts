@@ -39,6 +39,7 @@
 import * as calendar from "./forms-calendar";
 import * as controls from "./forms-controls";
 import * as datefield from "./forms-datefield";
+import * as datetime from "./forms-datetime";
 import * as listbox from "./forms-listbox";
 import * as popup from "./forms-popup";
 import type { Listen } from "./shared";
@@ -48,7 +49,7 @@ export { setOtpValue, setSliderValue } from "./forms-controls";
 export { setDateFieldValue, setTimeFieldValue, setTimePickerValue } from "./forms-datefield";
 export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
 
-const parts = [popup, listbox, calendar, controls, datefield];
+const parts = [popup, listbox, calendar, controls, datefield, datetime];
 
 export function setup(on: Listen): void {
   for (const part of parts) part.setup(on);

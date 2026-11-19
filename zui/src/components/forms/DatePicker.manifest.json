@@ -215,6 +215,12 @@
       "name": "...Calendar",
       "type": "CalendarProps",
       "description": "Se reenvían captionLayout, isDateUnavailable, modifiers, showOutsideDays, fixedWeeks, showWeekNumber, weekNumbering, weekdayFormat, today, showTodayButton, renderDay, getDayDescription, cellSize, minRange, maxRange, rangeCrossesUnavailable, legend y sus etiquetas."
+    },
+    {
+      "name": "input",
+      "type": "boolean",
+      "default": false,
+      "description": "Fecha única: el disparador es un DateField tecleable con botón de calendario (DateTimePicker con granularity day)."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],

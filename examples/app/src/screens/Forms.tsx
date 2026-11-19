@@ -8,6 +8,7 @@ import {
   Combobox,
   DatePicker,
   DateRangePicker,
+  DateTimePicker,
   Field,
   Modal,
   MonthPicker,
@@ -184,6 +185,8 @@ function DateFamily() {
   const [year, setYear] = useState<string | null>("2024");
   const [week, setWeek] = useState<string | null>("2026-W47");
   const [shifts, setShifts] = useState<string[]>([]);
+  const [meeting, setMeeting] = useState<string | null>("2026-11-24T14:30");
+  const [typed, setTyped] = useState<string | null>("2026-11-24");
   const out = (name: string, value: string) => (
     <span className="app-muted">
       Value: <output data-testid={`family-${name}-value`}>{value || "none"}</output>
@@ -332,6 +335,26 @@ function DateFamily() {
             </div>
           </Field>
           {out("multiple-picker", shifts.join(","))}
+          <Field label="Meeting">
+            <div data-testid="family-datetime">
+              <DateTimePicker
+                value={meeting}
+                onValueChange={setMeeting}
+                today={TODAY}
+                locale="en-US"
+                hourCycle={24}
+                weekStartsOn={1}
+                name="meeting"
+              />
+            </div>
+          </Field>
+          {out("datetime", meeting ?? "")}
+          <Field label="Due date (typed)">
+            <div data-testid="family-date-input">
+              <DatePicker input value={typed} onValueChange={setTyped} today={TODAY} locale="en-US" weekStartsOn={1} />
+            </div>
+          </Field>
+          {out("date-input", typed ?? "")}
         </Stack>
       </Card>
       <Card className="app-demo">

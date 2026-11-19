@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 72,
+ "count": 73,
  "groups": {
   "actions": [
    "Button",
@@ -52,6 +52,7 @@
    "DateInput",
    "DatePicker",
    "DateRangePicker",
+   "DateTimePicker",
    "Field",
    "FileUpload",
    "Input",
@@ -4581,6 +4582,12 @@
      "name": "...Calendar",
      "type": "CalendarProps",
      "description": "Se reenvían captionLayout, isDateUnavailable, modifiers, showOutsideDays, fixedWeeks, showWeekNumber, weekNumbering, weekdayFormat, today, showTodayButton, renderDay, getDayDescription, cellSize, minRange, maxRange, rangeCrossesUnavailable, legend y sus etiquetas."
+    },
+    {
+     "name": "input",
+     "type": "boolean",
+     "default": false,
+     "description": "Fecha única: el disparador es un DateField tecleable con botón de calendario (DateTimePicker con granularity day)."
     }
    ],
    "states": [
@@ -4801,6 +4808,218 @@
    ],
    "origin": "Date Range Picker de Shark UI; patrón APG Date Picker Dialog.",
    "file": "zui/src/components/forms/DateRangePicker.manifest.json"
+  },
+  {
+   "name": "DateTimePicker",
+   "group": "forms",
+   "description": "Fecha y hora en un campo tecleable (DateField segmentado) con un calendario y un TimeField en el mismo panel. Valor ISO civil YYYY-MM-DDTHH:mm[:ss] sin zona, como datetime-local. Con granularity=\"day\" es el DatePicker con campo tecleable (DatePicker input).",
+   "import": "import { DateTimePicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | null",
+     "description": "YYYY-MM-DDTHH:mm[:ss] (o YYYY-MM-DD con granularity day)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string | null) => void"
+    },
+    {
+     "name": "granularity",
+     "type": "enum",
+     "values": [
+      "day",
+      "minute",
+      "second"
+     ],
+     "default": "minute",
+     "description": "Unidad más fina del valor."
+    },
+    {
+     "name": "min",
+     "type": "string",
+     "description": "Fecha o fecha y hora; el calendario usa su día."
+    },
+    {
+     "name": "max",
+     "type": "string"
+    },
+    {
+     "name": "hourCycle",
+     "type": "enum",
+     "values": [
+      12,
+      24
+     ]
+    },
+    {
+     "name": "minuteStep",
+     "type": "number"
+    },
+    {
+     "name": "secondStep",
+     "type": "number"
+    },
+    {
+     "name": "defaultTime",
+     "type": "string",
+     "default": "00:00",
+     "description": "Hora de un día recién elegido sin hora."
+    },
+    {
+     "name": "isDateDisabled",
+     "type": "(date) => boolean"
+    },
+    {
+     "name": "isDateUnavailable",
+     "type": "(date) => boolean"
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "enum",
+     "values": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ]
+    },
+    {
+     "name": "numberOfMonths",
+     "type": "number"
+    },
+    {
+     "name": "presets",
+     "type": "{ label, value }[]"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "open",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end"
+     ],
+     "default": "start"
+    },
+    {
+     "name": "calendarLabel",
+     "type": "string",
+     "default": "Choose date"
+    },
+    {
+     "name": "timeLabel",
+     "type": "string",
+     "default": "Time"
+    },
+    {
+     "name": "applyLabel",
+     "type": "string",
+     "default": "Apply"
+    },
+    {
+     "name": "...DateField",
+     "type": "DateFieldProps",
+     "description": "locale, name, required, disabled, readOnly, invalid, size, clearable y etiquetas de segmento."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-datetimepicker",
+    "z-datefield",
+    "z-calendar",
+    "z-timefield"
+   ],
+   "a11y": "Patrón APG «combobox con diálogo»: el campo es un grupo de spinbuttons (DateField) y el botón de calendario (aria-haspopup=dialog, aria-expanded) abre un diálogo no modal; Alt+Flecha abajo también lo abre. En el panel: rejilla APG del Calendar, TimeField y «Apply» (Tab los recorre, el foco queda atrapado); elegir día no cierra con hora; Apply junta día y hora; Escape cierra sin cambios y devuelve el foco al botón. El formulario recibe el valor ISO como datetime-local. Sin React (`@zuccadev-labs/zuix-zui/dom`): `.z-datefield.z-datetimepicker` con data-granularity, data-locale, data-hour-cycle, data-min, data-max, data-value y un panel [popover] con un `.z-calendar` vacío; el pie de hora se crea al abrir.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Reunión",
+     "code": "<DateTimePicker aria-label=\"Meeting\" locale=\"en-US\" hourCycle={24} minuteStep={15} defaultValue=\"2026-11-24T14:30\" name=\"meeting\" />"
+    },
+    {
+     "title": "Fecha tecleable (DatePicker input)",
+     "code": "<DatePicker input aria-label=\"Due date\" locale=\"en-US\" defaultValue=\"2026-11-24\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Reunión",
+     "code": "<div class=\"z-input z-datefield z-datetimepicker\" id=\"meeting\" role=\"group\" aria-label=\"Meeting\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-hour-cycle=\"24\" data-minute-step=\"15\" data-value=\"2026-11-24T14:30\">\n  <button type=\"button\" class=\"z-input__action z-datetimepicker__trigger\" aria-label=\"Choose date\" title=\"Choose date\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"meeting-panel\"><z-icon name=\"calendar\" size=\"16\"></z-icon></button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"meeting\" value=\"2026-11-24T14:30\">\n</div>\n\n<div id=\"meeting-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-datetimepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+     "title": "Fecha tecleable (DatePicker input)",
+     "code": "<div class=\"z-input z-datefield z-datetimepicker\" id=\"due-input\" role=\"group\" aria-label=\"Due date\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"day\" data-value=\"2026-11-24\">\n  <button type=\"button\" class=\"z-input__action z-datetimepicker__trigger\" aria-label=\"Choose date\" title=\"Choose date\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"due-input-panel\"><z-icon name=\"calendar\" size=\"16\"></z-icon></button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"due\" value=\"2026-11-24\">\n</div>\n\n<div id=\"due-input-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-datetimepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+   ],
+   "origin": "Date Time Picker de Shark UI; APG Date Picker Dialog y Spinbutton.",
+   "file": "zui/src/components/forms/DateTimePicker.manifest.json"
   },
   {
    "name": "Field",

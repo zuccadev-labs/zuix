@@ -196,4 +196,38 @@ export default async function ({ page, test, ok, settle, shots }) {
     ok((await page.locator('#report-week input[type="hidden"]').inputValue()) === "2026-W48", "semana ISO");
     ok((await page.locator("#report-week .z-select__value").textContent()) === "Week 48, 2026", "texto de la semana");
   });
+
+  await test("DateTimePicker: campo tecleable, calendario y hora en el panel; Aplicar junta día y hora", async () => {
+    if (!(await page.locator("#meeting").count())) await inject("DateTimePicker", "Reunión");
+    const field = page.locator("#meeting");
+    await field.scrollIntoViewIfNeeded();
+    ok((await field.locator('[role="spinbutton"]').count()) >= 5, "segmentos de fecha y hora");
+    await field.locator('[role="spinbutton"]').first().focus();
+    await page.keyboard.press("Alt+ArrowDown");
+    await settle();
+    ok(await isOpen("#meeting-panel"), "Alt+Flecha abajo abre");
+    ok((await active()) === "2026-11-24", "foco en el día del valor");
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("Enter");
+    ok(await isOpen("#meeting-panel"), "elegir día no cierra con hora");
+    const hour = page.locator('#meeting-panel .z-timefield [data-segment="hour"]');
+    await hour.focus();
+    await page.keyboard.type("09");
+    await page.keyboard.type("45");
+    await page.locator("#meeting-panel .z-calendar__apply").click();
+    await settle();
+    ok(!(await isOpen("#meeting-panel")), "Aplicar cierra");
+    const value = await field.locator("input.z-native-input").inputValue();
+    ok(value === "2026-11-25T09:45", `valor: ${value}`);
+
+    if (!(await page.locator("#due-input").count())) await inject("DateTimePicker", "Fecha tecleable (DatePicker input)");
+    await page.locator("#due-input .z-datetimepicker__trigger").click();
+    await settle();
+    ok(await isOpen("#due-input-panel"), "abre");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await settle();
+    ok(!(await isOpen("#due-input-panel")), "en día, elegir cierra");
+    ok((await page.locator("#due-input input.z-native-input").inputValue()) === "2026-12-01", "fecha elegida");
+  });
 }

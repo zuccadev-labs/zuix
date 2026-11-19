@@ -24,6 +24,9 @@ radios y material de los tokens.
 - Utilidades de fechas civiles en la raíz y en `/dom`: `rangePresets`, `resolvePreset`, `formatDateRange`,
   `isoWeekText`, `weekStartOf`, `weekNumber`, `localeWeekInfo`. En `/dom`, `setCalendarOptions()` para las
   funciones del calendario y los eventos `z:monthchange` y `z:viewchange`.
+- `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
+  `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
+  (`DatePicker input`). Alt+Flecha abajo abre.
 - `RelativeTime`: «3 minutes ago», «in 2 days» con `Intl.RelativeTimeFormat` sobre un instante, en un `<time>`
   con `datetime` y la fecha completa en `title`; se repinta con una cadencia que se alarga con la distancia.
 - `DateField`: fecha (y hora, con `granularity`) que se teclea por segmentos, un spinbutton de APG por día, mes,

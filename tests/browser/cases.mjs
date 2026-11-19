@@ -2402,6 +2402,33 @@ export const cases = [
       await gone(page, panel);
       await expectText(page, t("family-multiple-picker-value"), "2026-11-02,2026-11-03,2026-11-04");
       assert((await text(page, trigger("family-multiple-picker"))).includes("3 shifts"), "texto con formatCount");
+
+      // Fecha y hora: campo tecleable + panel con calendario y hora; Aplicar junta los dos.
+      const dt = t("family-datetime");
+      await page.locator(dt).scrollIntoViewIfNeeded();
+      await page.focus(`${dt} [role="spinbutton"]`);
+      await page.keyboard.press("Alt+ArrowDown");
+      const dtPanel = ".z-datetimepicker__panel";
+      await visible(page, dtPanel);
+      await focusedOn("2026-11-24");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
+      await visible(page, dtPanel, "elegir día no cierra con hora");
+      await page.focus(`${dtPanel} .z-timefield [data-segment="hour"]`);
+      await page.keyboard.type("0945");
+      await page.click(`${dtPanel} .z-calendar__apply`);
+      await gone(page, dtPanel);
+      await expectText(page, t("family-datetime-value"), "2026-11-25T09:45");
+      // Teclear en el campo cambia el valor sin abrir nada.
+      await page.focus(`${t("family-date-input")} [data-segment="day"]`);
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("family-date-input-value"), "2026-11-25");
+      await page.click(`${t("family-date-input")} .z-datetimepicker__trigger`);
+      await visible(page, dtPanel);
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await gone(page, dtPanel);
+      await expectText(page, t("family-date-input-value"), "2026-12-02");
     },
   },
 

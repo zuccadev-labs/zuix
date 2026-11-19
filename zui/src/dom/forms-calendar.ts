@@ -891,3 +891,11 @@ export function hydrate(root: ParentNode): void {
   for (const cal of root.querySelectorAll<HTMLElement>(".z-calendar")) if (calendarAt(cal)) render(cal);
   if (root instanceof HTMLElement && root.matches(".z-calendar") && calendarAt(root)) render(root);
 }
+
+/** Calendario de un panel propio (DateTimePicker): estado nuevo, mes del valor y pintado. */
+export function resetCalendar(cal: HTMLElement): void {
+  delete cal.dataset.month;
+  delete cal.dataset.view;
+  states.delete(cal);
+  render(cal);
+}

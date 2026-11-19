@@ -1063,6 +1063,20 @@
       flex: 1 1 100%;
     }
   }
+  /* DateTimePicker: hora y «Aplicar» al pie del calendario. */
+  .z-datetimepicker__time {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-datetimepicker__time-label {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-datetimepicker__footer {
+    margin-block-start: var(--z-space-2);
+  }
   @media (prefers-reduced-motion: reduce) {
     .z-calendar :is(.z-calendar__day, .z-calendar__unit, .z-calendar__nav, .z-calendar__preset) {
       transition: none;
