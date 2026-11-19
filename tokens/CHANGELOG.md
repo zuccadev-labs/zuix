@@ -10,6 +10,11 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
 
 ### Añadido
 
+- Agenda (nivel component): paleta de calendarios `calendar-color-1…6` (derivada de los semánticos), evento
+  (`event-tint`, `event-radius`, `event-bar-width`, `event-fg`, `event-fg-muted`, `event-solid-1…6` para el
+  seleccionado), rejilla de horas (`timegrid-hour`, 64 px con puntero grueso; `timegrid-gutter`) y estados
+  (`calendar-now`, `calendar-now-label-bg`, `calendar-weekend-bg`, `calendar-drop-bg`). El validador mide
+  `fg-on-accent` sobre `event-solid-1…6` y los colores de calendario como no texto (3:1).
 - Tipografía: `text-code` (13 px), `text-reading` (16 px), `text-lead` (fluido, 18–20 px), `weight-display`,
   `leading-ui` (1.43), `leading-code` (1.7), `tracking-display` (−0.03em) y `tracking-snug` (−0.01em).
 - Espaciado: `space-3-5` (14 px), `space-7` (28), `space-9` (36) y `space-14` (56).

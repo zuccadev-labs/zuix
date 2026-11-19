@@ -27,6 +27,16 @@ radios y material de los tokens.
 - `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
   `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
   (`DatePicker input`). Alt+Flecha abajo abre.
+- `EventCalendar` (grupo nuevo `agenda`): barra (Hoy, anterior, siguiente, título con `aria-live`, zona horaria,
+  vistas), lateral con minicalendario (Calendar) y calendarios como leyenda, y vistas de día (con segunda zona),
+  semana, semana laboral, mes con eventos (barras de varios días, «+N more» con popover, puntos y lista del día en
+  estrecho) y lista. Eventos ISO con fin exclusivo: todo el día, con `timeZone`, flotantes o instantes; series RRULE
+  (subconjunto de RFC 5545) con `exdate` y excepciones. Mover, redimensionar y crear arrastrando con puntero;
+  agarrar–mover–soltar con teclado; «Move to…» (tecla Menú, Mayús+F10 o el detalle) como alternativa sin
+  arrastre; una región viva con retraso. Modo DOM con el mismo árbol (`setAgendaEvents`, `setAgendaCalendars`,
+  `setAgendaView`, `destroyAgenda`, eventos `z:eventchange`, `z:selectslot`…). En la raíz: `expandEvents`,
+  `layoutTimed`, `layoutRow`, `rewriteSpan`, `parseRRule`, `expandDates`, `formatRRule`, `toWall`, `fromWall` y
+  `wallStatus`.
 - `Timer`: cuenta atrás (`duration` en segundos o `PT…`) y cronómetro (`mode="stopwatch"`), con iniciar, pausar,
   reanudar y reiniciar, décimas (`precision`), cifras del locale y modo DOM (`startTimer`, `pauseTimer`,
   `resetTimer`, `z:statechange`, `z:complete`). La pantalla es `role="timer"` sin región viva; los hitos
