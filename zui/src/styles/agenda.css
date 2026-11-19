@@ -580,7 +580,7 @@
   }
   .z-timegrid__alltrack .z-event {
     grid-row: var(--z-ev-lane);
-    grid-column: var(--z-ev-from) / span var(--z-ev-span);
+    grid-column: var(--z-ev-first) / span var(--z-ev-span);
     flex-direction: row;
     align-items: center;
     block-size: calc(var(--z-control-height-xs) - var(--z-space-1));

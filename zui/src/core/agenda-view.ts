@@ -435,7 +435,7 @@ function eventButton(
   return h(
     "button",
     {
-      key: `${variant}:${o.key}:${extra.cont ? `${extra.cont[0]}` : ""}:${String(extra.s?.["--z-ev-from"] ?? "")}`,
+      key: `${variant}:${o.key}:${extra.cont ? `${extra.cont[0]}` : ""}:${String(extra.s?.["--z-ev-first"] ?? "")}`,
       type: "button",
       class: `z-event${extra.cls ? ` ${extra.cls}` : ""}`,
       "data-variant": variant,
@@ -580,7 +580,7 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel):
             { class: "z-timegrid__alltrack", role: "gridcell", "aria-colspan": days.length },
             ...row.bars.map((bar) =>
               eventButton({ o: bar.item, config, model, state, start: bar.item.start, end: bar.item.end }, "bar", {
-                s: { "--z-ev-from": bar.from + 1, "--z-ev-span": bar.span, "--z-ev-lane": bar.lane + 1 },
+                s: { "--z-ev-first": bar.from + 1, "--z-ev-span": bar.span, "--z-ev-lane": bar.lane + 1 },
                 cont: [bar.contStart, bar.contEnd],
               }),
             ),
