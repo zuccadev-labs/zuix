@@ -70,8 +70,6 @@
   "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
-    "duration-normal",
-    "ease-out",
     "ease-standard",
     "fg",
     "fg-muted",
@@ -84,7 +82,6 @@
     "glass-shadow",
     "glass-specular",
     "inspector-width",
-    "layer-dialog",
     "layer-overlay",
     "leading-normal",
     "leading-snug",
@@ -98,9 +95,18 @@
     "space-4",
     "space-5",
     "text-body",
-    "text-heading",
     "text-small",
-    "weight-semibold"
+    "weight-semibold",
+    "duration-slow",
+    "ease-emphasized",
+    "ease-exit",
+    "leading-ui",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "space-1",
+    "text-title",
+    "tracking-snug"
   ],
   "classes": [
     "z-drawer",

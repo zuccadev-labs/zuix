@@ -44,23 +44,27 @@
     height: 28px;
     padding: 0;
     border: 0;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-control-radius-sm);
     background: transparent;
     color: var(--z-fg-muted);
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      color var(--z-duration-fast) var(--z-ease-standard);
+      color var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-overlay-close:hover {
-      background: var(--z-surface-3);
+      background: var(--z-surface-2);
       color: var(--z-fg);
     }
   }
   .z-overlay-close:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-overlay-close:active {
+    scale: 0.97;
   }
   /* Objetivo táctil: con puntero grueso la zona de pulsación crece hasta `--z-touch-target` sin cambiar el dibujo. */
   @media (pointer: coarse) {
@@ -78,30 +82,39 @@
     }
   }
 
+  /* Acciones del diálogo con la anatomía del botón: cristal (canto y brillo) o primario sólido; 34 px, radio 10. */
   .z-dialog-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--z-space-2);
-    height: var(--z-control-height-sm);
-    padding: 0 var(--z-space-4);
+    gap: var(--z-space-1-5);
+    height: var(--z-control-height-md);
+    padding: 0 var(--z-space-3-5);
     border-radius: var(--z-button-radius);
-    border: 1px solid var(--z-line);
-    background: var(--z-surface);
+    border: 1px solid var(--z-glass-border);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
     cursor: pointer;
-    font-weight: var(--z-weight-semibold);
-    font-size: var(--z-text-small);
-    transition: background var(--z-duration-fast) var(--z-ease-standard);
+    font-weight: var(--z-weight-medium);
+    font-size: var(--z-text-body);
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-dialog-btn:hover:not(:disabled) {
-      background: var(--z-surface-2);
+      background: var(--z-surface-3);
     }
   }
   .z-dialog-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-dialog-btn:active:not(:disabled) {
+    scale: 0.97;
   }
   .z-dialog-btn:disabled {
     opacity: 0.5;
@@ -111,6 +124,9 @@
     background: var(--z-button-primary-bg);
     color: var(--z-button-primary-fg);
     border-color: transparent;
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+      var(--z-shadow-sm);
   }
   @media (hover: hover) {
     .z-dialog-btn[data-variant="primary"]:hover:not(:disabled) {
@@ -121,6 +137,9 @@
     background: var(--z-danger-solid);
     color: var(--z-fg-on-accent);
     border-color: transparent;
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+      var(--z-shadow-sm);
   }
   @media (hover: hover) {
     .z-dialog-btn[data-variant="danger"]:hover:not(:disabled) {
@@ -144,7 +163,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: var(--z-radius-xl);
+    border-radius: var(--z-radius-panel);
   }
   .z-modal[data-size="sm"] {
     --z-modal-width: 400px;
@@ -155,21 +174,18 @@
   .z-modal.z-confirm {
     --z-modal-width: 440px;
   }
-  .z-modal[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-normal) var(--z-ease-out) both;
-  }
   .z-modal[data-state="closed"] {
-    animation: z-ov-rise-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-rise-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-modal__header {
     display: flex;
     align-items: flex-start;
     gap: var(--z-space-3);
-    padding: var(--z-space-5) var(--z-space-5) 0;
+    padding: var(--z-space-6) var(--z-space-6) 0;
     padding-inline-end: var(--z-space-12);
   }
   .z-confirm .z-modal__header {
-    padding-inline-end: var(--z-space-5);
+    padding-inline-end: var(--z-space-6);
   }
   .z-modal__heading {
     min-width: 0;
@@ -177,48 +193,56 @@
   }
   .z-modal__title {
     margin: 0;
-    font-size: var(--z-text-heading);
+    font-size: var(--z-text-title);
     font-weight: var(--z-weight-semibold);
     line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
+    text-wrap: balance;
     color: var(--z-fg);
   }
   .z-modal__description {
-    margin: 2px 0 0;
+    margin: var(--z-space-1) 0 0;
     font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);
+    text-wrap: pretty;
   }
   .z-modal__body {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--z-space-3) var(--z-space-5) 0;
+    /* Margen de 4 px abajo: el anillo de foco de un campo (contorno separado 1 px) no se recorta en el borde
+       del cuerpo desplazable. */
+    padding: var(--z-space-4) var(--z-space-6) var(--z-space-1);
     line-height: var(--z-leading-relaxed);
+    color: var(--z-fg-prose);
   }
   .z-modal__body:last-child {
-    padding-bottom: var(--z-space-5);
+    padding-bottom: var(--z-space-6);
   }
   .z-modal__header:last-child {
-    padding-bottom: var(--z-space-5);
+    padding-bottom: var(--z-space-6);
   }
   .z-modal__footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: var(--z-space-2);
-    padding: var(--z-space-4) var(--z-space-5) var(--z-space-5);
+    padding: var(--z-space-4) var(--z-space-6) var(--z-space-6);
   }
   .z-modal__close {
     position: absolute;
     top: var(--z-space-4);
     inset-inline-end: var(--z-space-4);
   }
+  /* Icono en baldosa (rectángulo redondeado, no círculo), como el de una tarjeta. */
   .z-confirm__icon {
     display: inline-grid;
     place-items: center;
     flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    border-radius: var(--z-radius-full);
+    width: var(--z-control-height-md);
+    height: var(--z-control-height-md);
+    border-radius: var(--z-control-radius);
     color: var(--z-accent-text);
     background: var(--z-accent-soft);
   }
@@ -229,6 +253,9 @@
 
   /* ---------- Panel lateral ---------- */
   .z-drawer {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     --z-drawer-size: var(--z-inspector-width);
     --z-drawer-from-x: 0px;
     --z-drawer-from-y: 0px;
@@ -267,25 +294,27 @@
     --z-drawer-from-y: 18px;
   }
   .z-drawer[data-state="open"] {
-    animation: z-ov-drawer-in var(--z-duration-normal) var(--z-ease-out) both;
+    animation: z-ov-drawer-in var(--z-duration-slow) var(--z-ease-emphasized) both;
   }
   .z-drawer[data-state="closed"] {
-    animation: z-ov-drawer-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-drawer-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-drawer__header {
-    padding: var(--z-space-5) var(--z-space-5) var(--z-space-3);
+    padding: var(--z-space-5) var(--z-space-5) var(--z-space-4);
     padding-inline-end: var(--z-space-12);
     border-bottom: 1px solid var(--z-line);
   }
   .z-drawer__title {
     margin: 0;
-    font-size: var(--z-text-heading);
+    font-size: var(--z-text-title);
     font-weight: var(--z-weight-semibold);
     line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
   }
   .z-drawer__description {
-    margin: 2px 0 0;
+    margin: var(--z-space-1) 0 0;
     font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);
   }
   .z-drawer__body {
@@ -320,28 +349,27 @@
     padding: var(--z-space-3);
     border-radius: var(--z-popup-radius);
   }
-  .z-popover[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-fast) var(--z-ease-out) both;
-  }
   .z-popover[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
 
   /* ---------- Tooltip ---------- */
   .z-tooltip {
     --z-lg-bg: var(--z-tooltip-bg);
     z-index: var(--z-layer-tooltip);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-shadow-md);
     max-width: 280px;
     padding: var(--z-space-1-5) var(--z-space-2-5);
-    border-radius: var(--z-radius-sm);
+    border-radius: var(--z-control-radius-sm);
     font-size: var(--z-text-caption);
-    line-height: 1.45;
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-ui);
     /* Recibe el puntero: se puede pasar de su disparador a la burbuja sin que desaparezca (WCAG 1.4.13). */
     cursor: default;
-    animation: z-ov-fade-in var(--z-duration-fast) var(--z-ease-out) both;
   }
   .z-tooltip[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
 
   /* ---------- Menú desplegable y contextual ---------- */
@@ -358,21 +386,22 @@
     overflow-y: auto;
     padding: var(--z-space-1-5);
     border-radius: var(--z-popup-radius);
-    animation: z-ov-fade-in var(--z-duration-fast) var(--z-ease-standard) both;
   }
   .z-menu[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
+  /* Opción de 32 px (objetivo táctil con puntero grueso); radio concéntrico: popup-radius − relleno = item-radius. */
   .z-menu__item {
     display: flex;
     align-items: center;
-    gap: var(--z-space-2-5);
+    gap: var(--z-space-2);
     width: 100%;
-    min-height: var(--z-touch-target, 0px);
+    min-height: max(32px, var(--z-touch-target, 0px));
     padding: var(--z-space-1-5) var(--z-space-2-5);
-    border-radius: var(--z-radius-xs);
-    font-size: var(--z-text-small);
+    border-radius: var(--z-item-radius);
+    font-size: var(--z-text-body);
     font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg);
     cursor: default;
     user-select: none;
@@ -381,13 +410,18 @@
   }
   .z-menu__item[data-highlighted],
   .z-menu__item[data-state="open"] {
-    background: var(--z-row-hover);
+    background: var(--z-surface-2);
+  }
+  /* Foco de teclado sobre la opción: contorno por dentro para no recortarse en el borde del menú. */
+  .z-menu__item:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-menu__item[data-danger] {
     color: var(--z-danger-text);
   }
   .z-menu__item[data-danger][data-highlighted] {
-    background: color-mix(in srgb, var(--z-danger) 12%, transparent);
+    background: var(--z-danger-soft);
   }
   .z-menu__item[data-danger] .z-menu__icon {
     color: inherit;
@@ -399,8 +433,8 @@
     display: inline-grid;
     place-items: center;
     flex-shrink: 0;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     color: var(--z-fg-muted);
   }
   .z-menu__text {
@@ -413,8 +447,10 @@
   }
   .z-menu__shortcut {
     flex-shrink: 0;
+    margin-inline-start: var(--z-space-3);
     font-family: var(--z-font-mono);
-    font-size: var(--z-text-fine);
+    font-size: var(--z-text-caption);
+    letter-spacing: var(--z-tracking-wide);
     color: var(--z-fg-muted);
   }
   .z-menu__chevron {
@@ -429,12 +465,13 @@
   }
   .z-menu__separator {
     height: 0;
-    margin: var(--z-space-1) 0;
+    margin: var(--z-space-1) calc(var(--z-space-1-5) * -1);
     border-top: 1px solid var(--z-line);
   }
   .z-menu__label {
-    padding: var(--z-space-1-5) var(--z-space-2-5) var(--z-space-1);
-    font-size: var(--z-text-small);
+    padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-1);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
     color: var(--z-fg-muted);
   }
   .z-menu[data-size="lg"] {
@@ -442,9 +479,10 @@
     max-width: min(340px, var(--z-menu-fit));
   }
   .z-menu[data-size="lg"] .z-menu__item {
-    gap: 9px;
-    padding: 7px 9px;
-    font-size: var(--z-text-heading);
+    gap: var(--z-space-2-5);
+    min-height: max(var(--z-control-height-lg), var(--z-touch-target, 0px));
+    padding: var(--z-space-2) var(--z-space-2-5);
+    font-size: var(--z-text-title);
     font-weight: var(--z-weight-regular);
   }
   .z-menu[data-size="lg"] .z-menu__icon {
@@ -452,11 +490,14 @@
     height: 16px;
   }
   .z-menu[data-size="lg"] .z-menu__label {
-    padding: 5px 9px;
+    padding: var(--z-space-1-5) var(--z-space-2-5);
   }
 
   /* ---------- Paleta de comandos ---------- */
   .z-palette {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     position: fixed;
     top: 12vh;
     left: 0;
@@ -467,13 +508,10 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: var(--z-radius-xl);
-  }
-  .z-palette[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-fast) var(--z-ease-out) both;
+    border-radius: var(--z-radius-panel);
   }
   .z-palette[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-palette__search {
     display: flex;
@@ -503,12 +541,13 @@
     color: var(--z-fg-subtle);
   }
   .z-palette__kbd {
-    padding: 1px 5px;
+    padding: 1px var(--z-space-1-5);
     border-radius: var(--z-radius-xs);
-    border: 1px solid var(--z-line-strong);
+    border: 1px solid var(--z-glass-border);
     background: var(--z-surface-2);
+    box-shadow: inset 0 -1px 0 var(--z-line);
     font-family: var(--z-font-mono);
-    font-size: var(--z-text-fine);
+    font-size: var(--z-text-caption);
     color: var(--z-fg-muted);
   }
   .z-palette__list {
@@ -525,19 +564,18 @@
     color: var(--z-fg-subtle);
   }
   .z-palette__heading {
-    padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-1);
-    font-size: var(--z-text-fine);
-    font-weight: var(--z-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--z-tracking-wide);
-    color: var(--z-fg-subtle);
+    padding: var(--z-space-2-5) var(--z-space-2-5) var(--z-space-1);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    color: var(--z-fg-muted);
   }
   .z-palette__item {
     display: flex;
     align-items: center;
     gap: var(--z-space-3);
-    padding: var(--z-space-2) var(--z-space-2-5);
-    border-radius: var(--z-radius-sm);
+    min-height: max(36px, var(--z-touch-target, 0px));
+    padding: var(--z-space-1-5) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
     font-size: var(--z-text-body);
     color: var(--z-fg-muted);
     cursor: default;
@@ -548,8 +586,12 @@
       color var(--z-duration-fast) var(--z-ease-standard);
   }
   .z-palette__item[aria-selected="true"] {
-    background: var(--z-accent-soft);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
+  }
+  .z-palette__item[aria-selected="true"] .z-palette__item-icon {
+    color: var(--z-accent-text);
   }
   .z-palette__item[aria-disabled="true"] {
     opacity: 0.5;
@@ -590,7 +632,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--z-space-2);
-    width: min(340px, calc(100vw - var(--z-space-8)));
+    width: min(360px, calc(100vw - var(--z-space-8)));
     margin: 0;
     padding: 0;
     list-style: none;
@@ -616,13 +658,18 @@
     top: var(--z-space-5);
     margin: 0 auto;
   }
+  /* Aviso en cristal elevado, rectángulo de radio de popup (no píldora). */
   .z-toast {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     --z-toast-tone: var(--z-info);
     display: flex;
     align-items: flex-start;
     gap: var(--z-space-3);
-    padding: var(--z-space-3);
-    border-radius: var(--z-radius-lg);
+    padding-block: var(--z-space-3);
+    padding-inline: var(--z-space-3-5) var(--z-space-3);
+    border-radius: var(--z-popup-radius);
     /* Deslizar para descartar: el gesto es del aviso en su eje; en el otro la página sigue desplazándose. */
     touch-action: pan-y;
     user-select: none;
@@ -644,11 +691,8 @@
   .z-toast[data-intent="danger"] {
     --z-toast-tone: var(--z-danger);
   }
-  .z-toast[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-normal) var(--z-ease-out) both;
-  }
   .z-toast[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-toast[data-swipe="move"] {
     transform: translate(var(--z-toast-swipe-move-x, 0), var(--z-toast-swipe-move-y, 0));
@@ -662,14 +706,15 @@
     animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
   }
   .z-toast:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-toast__dot {
     flex-shrink: 0;
     width: 8px;
     height: 8px;
     margin-top: var(--z-space-1-5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--z-toast-tone) 22%, transparent);
     border-radius: var(--z-radius-full);
     background: var(--z-toast-tone);
   }
@@ -678,39 +723,96 @@
     min-width: 0;
   }
   .z-toast__title {
-    font-size: var(--z-text-small);
+    font-size: var(--z-text-body);
     font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg);
   }
   .z-toast__description {
     margin-top: 2px;
     font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);
     overflow-wrap: anywhere;
   }
+  /* Acción: botón de cristal sm (28 px, radio 8). */
   .z-toast__action {
+    display: inline-flex;
+    align-items: center;
+    height: var(--z-control-height-sm);
     margin-top: var(--z-space-2);
-    padding: 2px var(--z-space-3);
-    border: 1px solid var(--z-line-strong);
-    border-radius: var(--z-button-radius);
-    background: transparent;
+    padding: 0 var(--z-space-3);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
     cursor: pointer;
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-toast__action:hover {
-      background: var(--z-surface-2);
+      background: var(--z-surface-3);
     }
   }
   .z-toast__action:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-toast__action:active {
+    scale: 0.97;
   }
   .z-toast__close {
     width: 24px;
     height: 24px;
+    border-radius: var(--z-radius-xs);
+  }
+
+  /* ---------- Entrada de las capas ----------
+     Con @starting-style (mejora progresiva: sin soporte, la capa aparece sin transición). La salida sigue siendo una
+     animación sobre `data-state="closed"`: la presencia espera su `animationend` antes de retirar la capa, también en
+     Firefox y Safari, que no transicionan `display` ni `overlay`. Las capas ancladas a un disparador (popover, menú,
+     tooltip) se deslizan desde él sin escalar: la colocación mide su tamaño al abrir y una escala lo falsearía. El
+     desplazamiento y la escala, solo sin preferencia de movimiento reducido; con ella queda un fundido corto.
+     `:where()`: sin especificidad, para que el gesto de deslizar un aviso conserve su propia transición. El cajón
+     entra con su animación lateral. */
+  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+    opacity: 1;
+    transition:
+      opacity var(--z-duration-normal) var(--z-ease-emphasized),
+      translate var(--z-duration-normal) var(--z-ease-emphasized),
+      scale var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  @starting-style {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+      translate: 0 0;
+      scale: 1;
+    }
+    @starting-style {
+      :where(.z-popover, .z-tooltip, .z-menu):where(:not([data-state="closed"])) {
+        translate: 0 calc(var(--z-space-1) * -1);
+      }
+      :where(.z-popover, .z-tooltip, .z-menu)[data-side="top"]:where(:not([data-state="closed"])) {
+        translate: 0 var(--z-space-1);
+      }
+      :where(.z-palette):where(:not([data-state="closed"])) {
+        translate: 0 calc(var(--z-space-1) * -1);
+        scale: 0.98;
+      }
+      :where(.z-modal, .z-toast):where(:not([data-state="closed"])) {
+        translate: 0 var(--z-space-2);
+        scale: 0.98;
+      }
+    }
   }
 
   /* ---------- Animaciones ---------- */

@@ -68,8 +68,6 @@
   "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
-    "ease-out",
-    "ease-standard",
     "fg",
     "font-sans",
     "glass-blur",
@@ -84,7 +82,13 @@
     "popup-radius",
     "space-3",
     "space-4",
-    "text-body"
+    "text-body",
+    "duration-normal",
+    "ease-emphasized",
+    "ease-exit",
+    "popup-blur",
+    "popup-shadow",
+    "space-1"
   ],
   "classes": ["z-popover"],
   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra.",
