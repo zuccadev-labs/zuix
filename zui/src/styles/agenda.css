@@ -1232,8 +1232,6 @@
     }
     .z-agenda__views {
       max-inline-size: 100%;
-      overflow-x: auto;
-      scrollbar-width: none;
     }
     .z-agenda__views .z-segmented__item {
       flex: none;

@@ -3315,7 +3315,7 @@ export const cases = [
       await expectAttr(page, `${root} .z-timegrid__dayhead[data-date="2026-11-19"]`, "aria-current", "date");
       const tabbable = await page.locator(`${root} .z-agenda__view [tabindex="0"]`).count();
       assert(tabbable === 1, `una sola parada de Tab en la vista: ${tabbable}`);
-      const label = await page.getAttribute(`${root} .z-event[data-key="interview-frontend-2026-11-19-10-30"]`, "aria-label");
+      const label = await page.locator(`${root} .z-event[data-key="interview-frontend-2026-11-19-10-30"]`).evaluate((el) => el.textContent);
       assert(
         label?.includes("Interview: frontend") && label.includes("Room Kepler") && label.includes("Team"),
         `nombre del evento: ${label}`,

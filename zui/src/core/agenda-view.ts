@@ -454,7 +454,6 @@ function eventButton(
       "data-cont-start": on(extra.cont?.[0]),
       "data-cont-end": on(extra.cont?.[1]),
       "data-editable": on(editable),
-      "aria-label": eventLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta),
       "aria-pressed": grabbed ? "true" : undefined,
       tabindex: model.focusId === id ? 0 : -1,
       s: extra.s,
@@ -474,11 +473,29 @@ function eventButton(
       e.title,
       o.seriesId ? h("span", { class: "z-event__icon", "aria-hidden": "true" }, icon("arrow-path", 12)) : null,
     ),
+    meta.length && variant !== "bar" ? h("span", { class: "z-sr-only" }, ", ") : null,
     meta.length && variant !== "bar"
       ? h("span", { class: "z-event__meta" }, ...meta.flatMap((m, i): VNode[] => (i ? [" · ", m] : [h("bdi", null, m)])))
       : null,
     editable && variant === "timed" ? h("span", { class: "z-event__resize", "data-edge": "end", "aria-hidden": "true" }) : null,
+    // El nombre sale del contenido: lo visible (título, hora, lugar) y, oculto a la vista, el resto (día,
+    // calendario, provisional, repite). Así el nombre siempre contiene el texto visible (WCAG 2.5.3).
+    h("span", { class: "z-sr-only" }, restOfLabel(o, config, model.sources, bits.start, bits.end, variant === "bar" ? [] : meta)),
   );
+}
+
+/** Lo que el nombre accesible añade a lo visible: «, Thursday 19 November, Work, repeats». */
+function restOfLabel(
+  o: Occurrence,
+  config: AgendaConfig,
+  sources: Map<string, CalendarSource>,
+  start: number,
+  end: number,
+  visible: string[],
+): string {
+  const full = eventLabel(o, config, sources, start, end, visible);
+  const shown = [o.event.title, ...visible].join(", ");
+  return full.startsWith(shown) ? full.slice(shown.length) : `, ${full}`;
 }
 
 /* ---------- Vistas ---------- */
@@ -744,7 +761,11 @@ function monthGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel)
           const count = items.filter((o) => o.start < dayStart(d) + 1440 && Math.max(o.end, o.start + 1) > dayStart(d));
           const id = `d:${d}`;
           const bars = row.bars.filter((b) => b.from === i);
-          const label = `${dayLong(d, locale)}, ${count.length === 1 ? labels.event : fill(labels.events, { n: count.length })}`;
+          // El 1 lleva el mes a la vista («Nov 1»): el nombre empieza por ese texto (WCAG 2.5.3).
+          const shown = d.endsWith("-01")
+            ? `${fmt(locale, { month: "short" }).format(parse(d))} ${fmt(locale, { day: "numeric" }).format(parse(d))}, `
+            : "";
+          const label = `${shown}${dayLong(d, locale)}, ${count.length === 1 ? labels.event : fill(labels.events, { n: count.length })}`;
           return h(
             "div",
             {

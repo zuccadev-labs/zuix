@@ -41,8 +41,8 @@ export default async function ({ page, test, ok, settle }) {
     ok((await page.locator(`${root} .z-timegrid[role=grid]`).count()) === 1, "rejilla de horas");
     ok((await page.locator(`${root} .z-timegrid__dayhead`).count()) === 7, "siete días");
     ok((await page.locator(`${root} .z-agenda__view [tabindex="0"]`).count()) === 1, "una sola parada de Tab");
-    const label = await page.getAttribute(`${root} .z-event[data-key="a"]`, "aria-label");
-    ok(label?.startsWith("Design review, Thursday 19 November") && label.includes("Work"), `nombre: ${label}`);
+    const label = await page.locator(`${root} .z-event[data-key="a"]`).evaluate((el) => el.textContent);
+    ok(label === "Design review, 10:00–11:00, Thursday 19 November, Work", `nombre: ${label}`);
     ok((await page.locator(`${root} .z-agenda__minical .z-calendar__grid`).count()) === 1, "minicalendario del modo DOM");
     await page.click(`${root} .z-agenda__views [data-view="month"]`);
     ok((await page.locator(`${root} .z-monthgrid[role=grid]`).count()) === 1, "mes");
