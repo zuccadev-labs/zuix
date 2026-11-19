@@ -84,7 +84,6 @@
     "space-12",
     "space-1",
     "control-border",
-    "control-radius",
     "control-bg",
     "fg",
     "font-mono",
@@ -94,9 +93,13 @@
     "duration-fast",
     "ease-standard",
     "control-border-hover",
-    "focus-ring",
     "surface",
-    "danger"
+    "danger",
+    "accent-ring",
+    "control-bg-hover",
+    "control-radius-lg",
+    "fg-muted",
+    "focus-width"
   ],
   "classes": ["z-otp"],
   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",

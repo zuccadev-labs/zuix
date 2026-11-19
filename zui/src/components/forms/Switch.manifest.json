@@ -70,11 +70,16 @@
     "ease-standard",
     "duration-fast",
     "fg-subtle",
-    "focus-ring",
     "accent-solid",
     "fg-on-accent",
     "shadow-sm",
-    "ease-spring"
+    "ease-spring",
+    "accent-ring",
+    "canvas",
+    "fg-muted",
+    "focus-offset",
+    "focus-width",
+    "touch-target"
   ],
   "classes": ["z-switch"],
   "a11y": "Patrón APG «switch»: botón con role switch y un `input type=checkbox` oculto para formularios, Espacio o Enter para alternar.",

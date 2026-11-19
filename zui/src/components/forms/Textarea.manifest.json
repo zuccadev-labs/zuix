@@ -68,7 +68,8 @@
     "font-mono",
     "field-radius-multiline",
     "focus-width",
-    "accent-ring"
+    "accent-ring",
+    "fg-muted"
   ],
   "classes": ["z-textarea"],
   "a11y": "textarea nativo. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
