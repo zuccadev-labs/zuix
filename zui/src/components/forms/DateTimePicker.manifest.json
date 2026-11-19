@@ -20,11 +20,7 @@
     {
       "name": "granularity",
       "type": "enum",
-      "values": [
-        "day",
-        "minute",
-        "second"
-      ],
+      "values": ["day", "minute", "second"],
       "default": "minute",
       "description": "Unidad más fina del valor."
     },
@@ -40,10 +36,7 @@
     {
       "name": "hourCycle",
       "type": "enum",
-      "values": [
-        12,
-        24
-      ]
+      "values": [12, 24]
     },
     {
       "name": "minuteStep",
@@ -70,15 +63,7 @@
     {
       "name": "weekStartsOn",
       "type": "enum",
-      "values": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ]
+      "values": [0, 1, 2, 3, 4, 5, 6]
     },
     {
       "name": "numberOfMonths",
@@ -107,11 +92,7 @@
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "start",
-        "center",
-        "end"
-      ],
+      "values": ["start", "center", "end"],
       "default": "start"
     },
     {
@@ -135,13 +116,7 @@
       "description": "locale, name, required, disabled, readOnly, invalid, size, clearable y etiquetas de segmento."
     }
   ],
-  "states": [
-    "rest",
-    "focus",
-    "open",
-    "disabled",
-    "invalid"
-  ],
+  "states": ["rest", "focus", "open", "disabled", "invalid"],
   "tokens": [
     "accent",
     "accent-ring",
@@ -179,12 +154,7 @@
     "weight-medium",
     "weight-semibold"
   ],
-  "classes": [
-    "z-datetimepicker",
-    "z-datefield",
-    "z-calendar",
-    "z-timefield"
-  ],
+  "classes": ["z-datetimepicker", "z-datefield", "z-calendar", "z-timefield"],
   "a11y": "Patrón APG «combobox con diálogo»: el campo es un grupo de spinbuttons (DateField) y el botón de calendario (aria-haspopup=dialog, aria-expanded) abre un diálogo no modal; Alt+Flecha abajo también lo abre. En el panel: rejilla APG del Calendar, TimeField y «Apply» (Tab los recorre, el foco queda atrapado); elegir día no cierra con hora; Apply junta día y hora; Escape cierra sin cambios y devuelve el foco al botón. El formulario recibe el valor ISO como datetime-local. Sin React (`@zuccadev-labs/zuix-zui/dom`): `.z-datefield.z-datetimepicker` con data-granularity, data-locale, data-hour-cycle, data-min, data-max, data-value y un panel [popover] con un `.z-calendar` vacío; el pie de hora se crea al abrir.",
   "behavior": "dom",
   "examples": [
