@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 64,
+ "count": 68,
  "groups": {
   "actions": [
    "Button",
@@ -49,9 +49,11 @@
    "Combobox",
    "DateInput",
    "DatePicker",
+   "DateRangePicker",
    "Field",
    "FileUpload",
    "Input",
+   "MonthPicker",
    "NativeSelect",
    "OTPInput",
    "Radio",
@@ -60,7 +62,9 @@
    "Select",
    "Slider",
    "Switch",
-   "Textarea"
+   "Textarea",
+   "WeekPicker",
+   "YearPicker"
   ],
   "navigation": [
    "Accordion",
@@ -3060,7 +3064,7 @@
   {
    "name": "Calendar",
    "group": "forms",
-   "description": "Rejilla de un mes para elegir una fecha o un rango. Valores como cadenas ISO YYYY-MM-DD; sin librerías de fechas.",
+   "description": "Rejilla de fechas: una, varias o un rango, en uno o varios meses, con vistas de mes y año, preajustes y fechas reservadas. Valores como cadenas ISO civiles (YYYY-MM-DD; YYYY-MM y YYYY en las vistas de mes y año); sin librerías de fechas.",
    "import": "import { Calendar } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -3068,28 +3072,59 @@
      "type": "enum",
      "values": [
       "single",
-      "range"
+      "range",
+      "multiple"
      ],
      "default": "single"
     },
     {
      "name": "value",
-     "type": "string | null | DateRange",
-     "description": "Fecha ISO; en modo range, { from, to } (to es null mientras solo hay inicio)."
+     "type": "string | null | DateRange | string[]",
+     "description": "Fecha ISO; en range, { from, to } (to es null mientras solo hay inicio); en multiple, lista ordenada. Admite un Temporal.PlainDate en single."
     },
     {
      "name": "defaultValue",
-     "type": "string | null | DateRange"
+     "type": "string | null | DateRange | string[]"
     },
     {
      "name": "onValueChange",
      "type": "(value) => void",
-     "description": "Recibe la fecha ISO o el rango { from, to }."
+     "description": "Recibe la fecha ISO, el rango { from, to } o la lista."
+    },
+    {
+     "name": "maxSelected",
+     "type": "number",
+     "description": "Solo multiple: máximo de fechas."
+    },
+    {
+     "name": "minRange",
+     "type": "number",
+     "description": "Solo range: días mínimos (extremos incluidos)."
+    },
+    {
+     "name": "maxRange",
+     "type": "number",
+     "description": "Solo range: días máximos; durante la elección los días fuera quedan no elegibles."
+    },
+    {
+     "name": "rangeCrossesUnavailable",
+     "type": "enum",
+     "values": [
+      "block",
+      "allow"
+     ],
+     "default": "block",
+     "description": "Solo range: block impide que el rango cruce una fecha reservada."
+    },
+    {
+     "name": "allowSingleDayRange",
+     "type": "boolean",
+     "default": true
     },
     {
      "name": "month",
      "type": "string",
-     "description": "Mes visible controlado, YYYY-MM."
+     "description": "Primer mes visible controlado, YYYY-MM."
     },
     {
      "name": "defaultMonth",
@@ -3101,6 +3136,75 @@
      "type": "(month: string) => void"
     },
     {
+     "name": "numberOfMonths",
+     "type": "number",
+     "default": 1,
+     "description": "Meses visibles a la vez (1–12); se apilan en un contenedor estrecho."
+    },
+    {
+     "name": "pagedNavigation",
+     "type": "boolean",
+     "default": false,
+     "description": "Con varios meses, las flechas avanzan de numberOfMonths en numberOfMonths."
+    },
+    {
+     "name": "view",
+     "type": "enum",
+     "values": [
+      "day",
+      "month",
+      "year"
+     ],
+     "description": "Vista controlada: días, meses de un año o años de una década."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "day",
+      "month",
+      "year"
+     ]
+    },
+    {
+     "name": "onViewChange",
+     "type": "(view) => void"
+    },
+    {
+     "name": "minView",
+     "type": "enum",
+     "values": [
+      "day",
+      "month",
+      "year"
+     ],
+     "default": "day",
+     "description": "Vista en la que se elige el valor: month da YYYY-MM y year da YYYY."
+    },
+    {
+     "name": "maxView",
+     "type": "enum",
+     "values": [
+      "day",
+      "month",
+      "year"
+     ],
+     "default": "year",
+     "description": "Vista más alta a la que lleva el título (clic en el título: mes → año → década). day desactiva el cambio de vista."
+    },
+    {
+     "name": "captionLayout",
+     "type": "enum",
+     "values": [
+      "label",
+      "dropdown",
+      "dropdown-months",
+      "dropdown-years"
+     ],
+     "default": "label",
+     "description": "Cabecera con título o con desplegables nativos de mes y año."
+    },
+    {
      "name": "min",
      "type": "string",
      "description": "Primera fecha elegible, YYYY-MM-DD."
@@ -3108,12 +3212,22 @@
     {
      "name": "max",
      "type": "string",
-     "description": "Última fecha elegible, YYYY-MM-DD."
+     "description": "Última fecha elegible, YYYY-MM-DD. Si min > max, se ignora max."
     },
     {
      "name": "isDateDisabled",
      "type": "(date: string) => boolean",
      "description": "true para fechas no elegibles."
+    },
+    {
+     "name": "isDateUnavailable",
+     "type": "(date: string) => boolean",
+     "description": "Fechas reservadas: enfocables, tachadas y con trama, con unavailableLabel en el nombre accesible; no se eligen y cortan un rango."
+    },
+    {
+     "name": "modifiers",
+     "type": "Record<string, (date) => boolean>",
+     "description": "Atributo data-<nombre> en el día para estilo propio (festivos, vacaciones)."
     },
     {
      "name": "weekStartsOn",
@@ -3127,7 +3241,7 @@
       5,
       6
      ],
-     "description": "Primer día de la semana (0 domingo). Por defecto el del locale; lunes si no se conoce."
+     "description": "Primer día de la semana (0 domingo). Por defecto el del locale (Intl.Locale#getWeekInfo); lunes si no se conoce."
     },
     {
      "name": "locale",
@@ -3137,8 +3251,107 @@
     {
      "name": "showOutsideDays",
      "type": "boolean",
+     "description": "Días de los meses vecinos que completan las semanas. Por defecto solo con un mes (con varios, celdas vacías: no se duplican fechas)."
+    },
+    {
+     "name": "outsideDaySelectable",
+     "type": "boolean",
      "default": true,
-     "description": "Días de los meses vecinos que completan las semanas."
+     "description": "Los días de otro mes se pueden elegir."
+    },
+    {
+     "name": "fixedWeeks",
+     "type": "boolean",
+     "default": false,
+     "description": "Siempre seis semanas: el alto no cambia entre meses."
+    },
+    {
+     "name": "showWeekNumber",
+     "type": "boolean",
+     "default": false,
+     "description": "Columna con el número de semana."
+    },
+    {
+     "name": "weekNumbering",
+     "type": "enum",
+     "values": [
+      "iso",
+      "locale"
+     ],
+     "default": "iso",
+     "description": "Semana ISO 8601 o la del locale (minimalDays de weekInfo)."
+    },
+    {
+     "name": "weekdayFormat",
+     "type": "enum",
+     "values": [
+      "narrow",
+      "short",
+      "long"
+     ],
+     "default": "short"
+    },
+    {
+     "name": "today",
+     "type": "string",
+     "description": "Hoy, YYYY-MM-DD (servidor y pruebas). Por defecto la fecha local tras montar."
+    },
+    {
+     "name": "showTodayButton",
+     "type": "boolean",
+     "default": false,
+     "description": "Botón al pie que lleva la vista y el foco a hoy y, si se puede, lo elige."
+    },
+    {
+     "name": "presets",
+     "type": "{ label, value }[]",
+     "description": "Atajos: value es una clave de rangePresets (today, next-7-days, this-month…), una fecha, un rango desde/hasta, un valor o una función de today."
+    },
+    {
+     "name": "presetsLabel",
+     "type": "string",
+     "default": "Quick pick"
+    },
+    {
+     "name": "renderDay",
+     "type": "(date, state) => ReactNode",
+     "description": "Contenido extra en cada día (puntos, precios)."
+    },
+    {
+     "name": "getDayDescription",
+     "type": "(date: string) => string",
+     "description": "Texto que se añade al nombre accesible del día."
+    },
+    {
+     "name": "cellSize",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "Tamaño de celda: 28, 36 o 44 px. Con puntero grueso sube al objetivo táctil."
+    },
+    {
+     "name": "selectionUnit",
+     "type": "enum",
+     "values": [
+      "day",
+      "week"
+     ],
+     "default": "day",
+     "description": "week elige la semana entera (WeekPicker)."
+    },
+    {
+     "name": "legend",
+     "type": "{ today?, selected?, unavailable? }",
+     "description": "Leyenda al pie: el estado no depende solo del color."
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode",
+     "description": "Contenido del pie (resumen, botones)."
     },
     {
      "name": "previousMonthLabel",
@@ -3149,6 +3362,41 @@
      "name": "nextMonthLabel",
      "type": "string",
      "default": "Next month"
+    },
+    {
+     "name": "todayLabel",
+     "type": "string",
+     "default": "Today"
+    },
+    {
+     "name": "weekLabel",
+     "type": "string",
+     "default": "Week"
+    },
+    {
+     "name": "unavailableLabel",
+     "type": "string",
+     "default": "unavailable"
+    },
+    {
+     "name": "monthLabel",
+     "type": "string",
+     "default": "Month"
+    },
+    {
+     "name": "yearLabel",
+     "type": "string",
+     "default": "Year"
+    },
+    {
+     "name": "chooseMonthLabel",
+     "type": "string",
+     "default": "Choose month"
+    },
+    {
+     "name": "chooseYearLabel",
+     "type": "string",
+     "default": "Choose year"
     },
     {
      "name": "autoFocus",
@@ -3165,37 +3413,62 @@
     "today",
     "outside",
     "disabled",
-    "range"
+    "unavailable",
+    "range",
+    "preview",
+    "weekend"
    ],
    "tokens": [
-    "control-height-md",
-    "space-2",
-    "fg",
-    "text-small",
-    "text-body",
-    "weight-semibold",
-    "leading-snug",
+    "calendar-cell",
+    "calendar-cell-radius",
+    "calendar-range-bg",
+    "calendar-today-ring",
     "control-height-sm",
-    "radius-full",
+    "control-radius",
+    "item-radius",
+    "card-radius",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "space-1",
+    "space-2",
+    "space-3",
+    "fg",
     "fg-muted",
+    "fg-subtle",
+    "fg-on-accent",
+    "accent-solid",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "glass-highlight",
+    "line",
+    "line-strong",
+    "row-hover",
+    "focus-width",
+    "focus-offset",
+    "touch-target",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "weight-medium",
+    "weight-semibold",
+    "tracking-snug",
+    "tracking-wide",
     "duration-fast",
     "ease-standard",
-    "surface-3",
-    "focus-ring",
-    "fg-subtle",
-    "text-caption",
-    "weight-medium",
-    "line-strong",
-    "accent",
-    "button-primary-bg",
-    "button-primary-fg",
-    "accent-soft",
-    "row-hover"
+    "radius-full"
    ],
    "classes": [
     "z-calendar"
    ],
-   "a11y": "Tabla con role=grid etiquetada por el título del mes (aria-live). Foco itinerante: un solo día en el orden de tabulación. Flechas mueven por día y semana (en RTL izquierda y derecha se invierten), Home/End al inicio/fin de la semana, PageUp/PageDown cambian de mes (con Mayús, de año), Enter/Espacio eligen. Cada día lleva la fecha completa como nombre accesible; hoy aria-current=date; no elegibles aria-disabled. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con la misma tabla (role=grid, título con aria-live, aria-multiselectable en modo rango) y las mismas teclas; el módulo mantiene aria-selected, aria-current=date, aria-disabled y el foco itinerante. Los nombres de los botones de mes salen de `data-previous-label` y `data-next-label` (en inglés por defecto) y las fechas se formatean con `data-locale`.",
+   "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange y z:viewchange. Para una tarjeta de cristal elevado: className z-liquid.",
    "behavior": "dom",
    "examples": [
     {
@@ -3209,6 +3482,34 @@
     {
      "title": "Sin fines de semana",
      "code": "<Calendar locale=\"en-US\" defaultMonth=\"2026-11\" isDateDisabled={(date) => [0, 6].includes(new Date(date).getUTCDay())} />"
+    },
+    {
+     "title": "Varias fechas",
+     "code": "<Calendar mode=\"multiple\" locale=\"en-US\" weekStartsOn={1} maxSelected={5} defaultValue={[\"2026-11-04\", \"2026-11-11\", \"2026-11-18\"]} />"
+    },
+    {
+     "title": "Dos meses",
+     "code": "<Calendar className=\"z-liquid\" mode=\"range\" numberOfMonths={2} locale=\"en-US\" weekStartsOn={1} defaultValue={{ from: \"2026-11-26\", to: \"2026-12-04\" }} />"
+    },
+    {
+     "title": "Selectores de mes y año",
+     "code": "<Calendar className=\"z-liquid\" captionLayout=\"dropdown\" locale=\"en-US\" weekStartsOn={1} defaultValue=\"2026-11-06\" />"
+    },
+    {
+     "title": "Con preajustes",
+     "code": "<Calendar\n  className=\"z-liquid\"\n  mode=\"range\"\n  locale=\"en-US\"\n  weekStartsOn={1}\n  presets={[\n    { label: \"Today\", value: \"today\" },\n    { label: \"Tomorrow\", value: \"tomorrow\" },\n    { label: \"Next 7 days\", value: \"next-7-days\" },\n    { label: \"Next 30 days\", value: \"next-30-days\" },\n    { label: \"This month\", value: \"this-month\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Fechas reservadas",
+     "code": "<Calendar\n  className=\"z-liquid\"\n  locale=\"en-US\"\n  weekStartsOn={1}\n  defaultMonth=\"2026-11\"\n  isDateUnavailable={(date) => [\"2026-11-20\", \"2026-11-21\", \"2026-11-22\", \"2026-11-25\"].includes(date)}\n  unavailableLabel=\"booked\"\n  legend={{ today: \"Today\", selected: \"Selected\", unavailable: \"Booked\" }}\n/>"
+    },
+    {
+     "title": "Semanas numeradas, semanas fijas y botón Hoy",
+     "code": "<Calendar locale=\"en-GB\" showWeekNumber fixedWeeks showTodayButton defaultMonth=\"2026-11\" />"
+    },
+    {
+     "title": "Contenido por celda",
+     "code": "<Calendar\n  locale=\"en-US\"\n  cellSize=\"lg\"\n  defaultMonth=\"2026-11\"\n  renderDay={(date) => (date.endsWith(\"0\") ? \"$89\" : null)}\n  getDayDescription={(date) => (date.endsWith(\"0\") ? \"from $89\" : null)}\n/>"
     }
    ],
    "html": [
@@ -3224,9 +3525,41 @@
     {
      "title": "Sin fines de semana",
      "code": "<div class=\"z-calendar\" id=\"workdays\" data-locale=\"en-US\" data-month=\"2026-11\" data-disabled-weekdays=\"0,6\"></div>"
+    },
+    {
+     "title": "Varias fechas",
+     "code": "<div class=\"z-calendar\" id=\"meetings-calendar\" data-mode=\"multiple\" data-locale=\"en-US\" data-week-start=\"1\" data-max-selected=\"5\" data-value=\"2026-11-04,2026-11-11,2026-11-18\"></div>"
+    },
+    {
+     "title": "Dos meses",
+     "code": "<div class=\"z-calendar z-liquid\" id=\"trip-calendar\" data-mode=\"range\" data-months=\"2\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-26/2026-12-04\"></div>"
+    },
+    {
+     "title": "Selectores de mes y año",
+     "code": "<div class=\"z-calendar z-liquid\" id=\"caption-calendar\" data-caption=\"dropdown\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-06\"></div>"
+    },
+    {
+     "title": "Con preajustes",
+     "code": "<div class=\"z-calendar z-liquid\" id=\"preset-calendar\" data-mode=\"range\" data-locale=\"en-US\" data-week-start=\"1\" data-presets='[{\"label\":\"Today\",\"value\":\"today\"},{\"label\":\"Tomorrow\",\"value\":\"tomorrow\"},{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"},{\"label\":\"Next 30 days\",\"value\":\"next-30-days\"},{\"label\":\"This month\",\"value\":\"this-month\"}]'></div>"
+    },
+    {
+     "title": "Fechas reservadas",
+     "code": "<div class=\"z-calendar z-liquid\" id=\"booking-calendar\" data-locale=\"en-US\" data-week-start=\"1\" data-month=\"2026-11\" data-unavailable-dates=\"2026-11-20,2026-11-21,2026-11-22,2026-11-25\" data-unavailable-label=\"booked\" data-legend='{\"today\":\"Today\",\"selected\":\"Selected\",\"unavailable\":\"Booked\"}'></div>"
+    },
+    {
+     "title": "Semanas numeradas, semanas fijas y botón Hoy",
+     "code": "<div class=\"z-calendar\" id=\"week-calendar\" data-locale=\"en-GB\" data-month=\"2026-11\" data-week-numbers data-fixed-weeks data-today-button></div>"
+    },
+    {
+     "title": "Contenido por celda",
+     "code": "<div class=\"z-calendar\" id=\"price-calendar\" data-locale=\"en-US\" data-month=\"2026-11\" data-cell-size=\"lg\"></div>",
+     "script": "import { setCalendarOptions } from \"@zuccadev-labs/zuix-zui/dom\";\nsetCalendarOptions(document.querySelector(\"#price-calendar\"), {\n  dayContent: (date) => (date.endsWith(\"0\") ? \"$89\" : null),\n  dayDescription: (date) => (date.endsWith(\"0\") ? \"from $89\" : null),\n});"
     }
    ],
    "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG.",
+   "exports": [
+    "presetValue"
+   ],
    "file": "zui/src/components/forms/Calendar.manifest.json"
   },
   {
@@ -3650,7 +3983,7 @@
   {
    "name": "DatePicker",
    "group": "forms",
-   "description": "Campo de fecha con calendario propio en un popover; fecha única o rango. Para escribir la fecha o usar el selector del sistema, `DateInput`.",
+   "description": "Campo de fecha con calendario propio en un popover: fecha única, rango o varias fechas, uno o varios meses, preajustes y confirmación. Valor ISO YYYY-MM-DD, { from, to } o lista.",
    "import": "import { DatePicker } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -3658,18 +3991,19 @@
      "type": "enum",
      "values": [
       "single",
-      "range"
+      "range",
+      "multiple"
      ],
      "default": "single"
     },
     {
      "name": "value",
-     "type": "string | null | DateRange",
+     "type": "string | null | DateRange | string[]",
      "description": "Fecha ISO YYYY-MM-DD; en modo range, { from, to }."
     },
     {
      "name": "defaultValue",
-     "type": "string | null | DateRange"
+     "type": "string | null | DateRange | string[]"
     },
     {
      "name": "onValueChange",
@@ -3798,6 +4132,99 @@
     {
      "name": "popupClassName",
      "type": "string"
+    },
+    {
+     "name": "numberOfMonths",
+     "type": "number",
+     "default": 1,
+     "description": "Meses del calendario (2 para un rango cómodo)."
+    },
+    {
+     "name": "pagedNavigation",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "presets",
+     "type": "{ label, value }[]",
+     "description": "Atajos al lado del mes (columna; fila en estrecho)."
+    },
+    {
+     "name": "presetsLabel",
+     "type": "string",
+     "default": "Quick pick"
+    },
+    {
+     "name": "closeOnSelect",
+     "type": "boolean",
+     "description": "Cierra al elegir. Por defecto: fecha única sí, rango al elegir el fin, múltiple no."
+    },
+    {
+     "name": "confirm",
+     "type": "boolean",
+     "default": false,
+     "description": "El valor solo cambia con Apply; Cancel y Escape lo descartan."
+    },
+    {
+     "name": "applyLabel",
+     "type": "string",
+     "default": "Apply"
+    },
+    {
+     "name": "cancelLabel",
+     "type": "string",
+     "default": "Cancel"
+    },
+    {
+     "name": "summary",
+     "type": "(value) => ReactNode",
+     "description": "Resumen del pie con confirm."
+    },
+    {
+     "name": "formatValue",
+     "type": "(value) => string",
+     "description": "Texto propio del campo."
+    },
+    {
+     "name": "formatCount",
+     "type": "(count: number) => string",
+     "description": "Texto con más de dos fechas en modo multiple. Por defecto «N dates»."
+    },
+    {
+     "name": "serialize",
+     "type": "(value) => string",
+     "description": "Valor que envía el formulario (por defecto el texto ISO)."
+    },
+    {
+     "name": "maxSelected",
+     "type": "number",
+     "description": "Solo multiple."
+    },
+    {
+     "name": "minView",
+     "type": "enum",
+     "values": [
+      "day",
+      "month",
+      "year"
+     ],
+     "default": "day",
+     "description": "Unidad del valor: month (MonthPicker) o year (YearPicker)."
+    },
+    {
+     "name": "icon",
+     "type": "enum",
+     "values": [
+      "calendar",
+      "calendar-date-range",
+      "calendar-days"
+     ],
+     "description": "Icono del campo."
+    },
+    {
+     "name": "...Calendar",
+     "type": "CalendarProps",
+     "description": "Se reenvían captionLayout, isDateUnavailable, modifiers, showOutsideDays, fixedWeeks, showWeekNumber, weekNumbering, weekdayFormat, today, showTodayButton, renderDay, getDayDescription, cellSize, minRange, maxRange, rangeCrossesUnavailable, legend y sus etiquetas."
     }
    ],
    "states": [
@@ -3810,40 +4237,41 @@
     "invalid"
    ],
    "tokens": [
-    "control-height-md",
-    "text-body",
-    "control-height-sm",
-    "text-small",
-    "control-height-lg",
-    "text-title",
-    "space-8",
-    "space-3",
-    "control-border",
-    "control-radius",
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
     "control-bg",
-    "fg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
     "duration-fast",
     "ease-standard",
-    "control-border-hover",
-    "accent",
-    "focus-ring",
-    "surface",
-    "danger",
-    "fg-subtle",
-    "popup-bg",
+    "fg",
     "fg-muted",
-    "space-2",
-    "weight-semibold",
+    "fg-subtle",
+    "focus-width",
     "leading-snug",
-    "radius-full",
-    "surface-3",
-    "text-caption",
-    "weight-medium",
     "line-strong",
-    "button-primary-bg",
-    "button-primary-fg",
-    "accent-soft",
-    "row-hover"
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
    ],
    "classes": [
     "z-select",
@@ -3851,7 +4279,7 @@
     "z-popover",
     "z-calendar"
    ],
-   "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
+   "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog. Con confirm, el pie lleva el resumen y los botones Cancel y Apply (Tab recorre preajustes, rejilla y pie; el foco queda atrapado en el panel). En multiple el formulario recibe un campo por fecha con el mismo name. Escape en las vistas de mes o año vuelve a los días sin cerrar.",
    "behavior": "dom",
    "examples": [
     {
@@ -3865,6 +4293,14 @@
     {
      "title": "Vacío, pequeño",
      "code": "<DatePicker size=\"sm\" block={false} aria-label=\"Start date\" locale=\"en-US\" placeholder=\"Pick a date\" />"
+    },
+    {
+     "title": "Rango con dos meses, preajustes y confirmación",
+     "code": "<DatePicker\n  mode=\"range\"\n  aria-label=\"Trip\"\n  locale=\"en-US\"\n  numberOfMonths={2}\n  confirm\n  presets={[\n    { label: \"Next 7 days\", value: \"next-7-days\" },\n    { label: \"Next 30 days\", value: \"next-30-days\" },\n    { label: \"This month\", value: \"this-month\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Varias fechas",
+     "code": "<DatePicker mode=\"multiple\" aria-label=\"Shifts\" locale=\"en-US\" name=\"shifts\" formatCount={(n) => `${n} shifts`} />"
     }
    ],
    "html": [
@@ -3880,10 +4316,135 @@
     {
      "title": "Vacío",
      "code": "<span class=\"z-select z-datepicker\" id=\"start\" data-size=\"md\" data-block data-locale=\"en-US\" data-placeholder=\"Pick a date\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"start-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Start date</span>\n    <span class=\"z-select__value\">Pick a date</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n</span>\n\n<div id=\"start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+     "title": "Rango con dos meses, preajustes y confirmación",
+     "code": "<span class=\"z-select z-datepicker\" id=\"trip\" data-size=\"md\" data-block data-mode=\"range\" data-months=\"2\" data-confirm data-locale=\"en-US\" data-week-start=\"1\" data-presets='[{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"},{\"label\":\"Next 30 days\",\"value\":\"next-30-days\"},{\"label\":\"This month\",\"value\":\"this-month\"}]' data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"trip-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Trip</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"trip\" value=\"\" />\n</span>\n\n<div id=\"trip-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+     "title": "Varias fechas",
+     "code": "<span class=\"z-select z-datepicker\" id=\"shifts\" data-size=\"md\" data-block data-mode=\"multiple\" data-locale=\"en-US\" data-count-label=\"{count} shifts\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shifts-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Shifts</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-days\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"shifts\" value=\"\" />\n</span>\n\n<div id=\"shifts-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
     }
    ],
    "origin": "DatePicker del catálogo objetivo; reutiliza la envoltura de Select y el panel de Popover.",
    "file": "zui/src/components/forms/DatePicker.manifest.json"
+  },
+  {
+   "name": "DateRangePicker",
+   "group": "forms",
+   "description": "Selector de rango: DatePicker en modo range con dos meses por defecto, vista previa que cruza los meses, preajustes relativos a hoy (rangePresets), minRange/maxRange y fechas reservadas.",
+   "import": "import { DateRangePicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "DateRange | null",
+     "description": "{ from, to }; en formulario desde/hasta."
+    },
+    {
+     "name": "defaultValue",
+     "type": "DateRange | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: DateRange) => void"
+    },
+    {
+     "name": "numberOfMonths",
+     "type": "number",
+     "default": 2
+    },
+    {
+     "name": "minRange",
+     "type": "number"
+    },
+    {
+     "name": "maxRange",
+     "type": "number"
+    },
+    {
+     "name": "isDateUnavailable",
+     "type": "(date) => boolean"
+    },
+    {
+     "name": "presets",
+     "type": "{ label, value }[]"
+    },
+    {
+     "name": "confirm",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "...DatePicker",
+     "type": "DatePickerProps",
+     "description": "El resto de props de DatePicker."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "a11y": "Como DatePicker en modo range: botón con aria-haspopup=dialog y panel no modal; los dos meses forman una sola rejilla para el teclado y el rango se anuncia con aria-selected en cada celda. Sin React es el mismo marcado de DatePicker con data-mode=\"range\" y data-months=\"2\".",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Estancia con mínimo de noches",
+     "code": "<DateRangePicker aria-label=\"Stay\" locale=\"en-US\" minRange={3} isDateUnavailable={(date) => date === \"2026-12-24\"} unavailableLabel=\"booked\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Estancia",
+     "code": "<span class=\"z-select z-datepicker\" id=\"stay2\" data-size=\"md\" data-block data-mode=\"range\" data-months=\"2\" data-min-range=\"3\" data-unavailable-dates=\"2026-12-24\" data-unavailable-label=\"booked\" data-locale=\"en-US\" data-week-start=\"1\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"stay2-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Stay</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"stay2\" value=\"\" />\n</span>\n\n<div id=\"stay2-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+   ],
+   "origin": "Date Range Picker de Shark UI; patrón APG Date Picker Dialog.",
+   "file": "zui/src/components/forms/DateRangePicker.manifest.json"
   },
   {
    "name": "Field",
@@ -4222,6 +4783,143 @@
    ],
    "origin": "Input de zutool (icono inicial, mono, invalid) y del design system base (tamaños, icono final).",
    "file": "zui/src/components/forms/Input.manifest.json"
+  },
+  {
+   "name": "MonthPicker",
+   "group": "forms",
+   "description": "Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4). Valor YYYY-MM, como <input type=\"month\">; en rango, de mes a mes.",
+   "import": "import { MonthPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | null"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string | null) => void"
+    },
+    {
+     "name": "min",
+     "type": "string"
+    },
+    {
+     "name": "max",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "name",
+     "type": "string"
+    },
+    {
+     "name": "required",
+     "type": "boolean"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "...DatePicker",
+     "type": "DatePickerProps",
+     "description": "El resto de props de DatePicker."
+    },
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "single",
+      "range"
+     ],
+     "default": "single"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "a11y": "Rejilla APG de 12 meses con nombres cortos: flechas por celda y fila, Inicio/Fin a la fila, RePág/AvPág por año; el título lleva a la década. Sin React: el marcado de DatePicker con data-min-view=\"month\".",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Mes de facturación",
+     "code": "<MonthPicker aria-label=\"Billing month\" locale=\"en-US\" defaultValue=\"2026-11\" min=\"2026-01\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Mes de facturación",
+     "code": "<span class=\"z-select z-datepicker\" id=\"billing\" data-size=\"md\" data-block data-min-view=\"month\" data-locale=\"en-US\" data-min=\"2026-01\" data-value=\"2026-11\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"billing-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Billing month</span>\n    <span class=\"z-select__value\">November 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"billing\" value=\"2026-11\" />\n</span>\n\n<div id=\"billing-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose month\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+   ],
+   "origin": "Month Picker de Shark UI.",
+   "file": "zui/src/components/forms/MonthPicker.manifest.json"
   },
   {
    "name": "NativeSelect",
@@ -5268,6 +5966,276 @@
    ],
    "origin": "Textarea de zutool.",
    "file": "zui/src/components/forms/Textarea.manifest.json"
+  },
+  {
+   "name": "WeekPicker",
+   "group": "forms",
+   "description": "Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible. Valor YYYY-Www, como <input type=\"week\">.",
+   "import": "import { WeekPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | null"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string | null) => void"
+    },
+    {
+     "name": "min",
+     "type": "string"
+    },
+    {
+     "name": "max",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "name",
+     "type": "string"
+    },
+    {
+     "name": "required",
+     "type": "boolean"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "...DatePicker",
+     "type": "DatePickerProps",
+     "description": "El resto de props de DatePicker."
+    },
+    {
+     "name": "weekLabel",
+     "type": "string",
+     "default": "Week"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "a11y": "Pasar el puntero o el foco por un día resalta su semana; Intro la elige. La columna del número de semana es th scope=row con «Week N». Sin React: data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers; el valor del campo oculto es YYYY-Www.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Semana del informe",
+     "code": "<WeekPicker aria-label=\"Report week\" locale=\"en-GB\" defaultValue=\"2026-W47\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Semana del informe",
+     "code": "<span class=\"z-select z-datepicker\" id=\"report-week\" data-size=\"md\" data-block data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-value=\"2026-W47\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"report-week-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Report week</span>\n    <span class=\"z-select__value\">Week 47, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"report-week\" value=\"2026-W47\" />\n</span>\n\n<div id=\"report-week-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose week\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+   ],
+   "origin": "Week Picker de Shark UI.",
+   "file": "zui/src/components/forms/WeekPicker.manifest.json"
+  },
+  {
+   "name": "YearPicker",
+   "group": "forms",
+   "description": "Selector de año: DatePicker en la vista de década (rejilla 3 × 4 con los años del borde atenuados). Valor YYYY.",
+   "import": "import { YearPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | null"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string | null) => void"
+    },
+    {
+     "name": "min",
+     "type": "string"
+    },
+    {
+     "name": "max",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "name",
+     "type": "string"
+    },
+    {
+     "name": "required",
+     "type": "boolean"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "...DatePicker",
+     "type": "DatePickerProps",
+     "description": "El resto de props de DatePicker."
+    },
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "single",
+      "range"
+     ],
+     "default": "single"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "a11y": "Rejilla APG de 12 años (la década y uno a cada lado): flechas por celda, RePág/AvPág por década, con Mayús por siglo. Sin React: data-min-view=\"year\".",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Año de fabricación",
+     "code": "<YearPicker aria-label=\"Model year\" locale=\"en-US\" min=\"1990\" max=\"2027\" defaultValue=\"2024\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Año de fabricación",
+     "code": "<span class=\"z-select z-datepicker\" id=\"model-year\" data-size=\"md\" data-block data-min-view=\"year\" data-locale=\"en-US\" data-min=\"1990\" data-max=\"2027\" data-value=\"2024\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"model-year-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Model year</span>\n    <span class=\"z-select__value\">2024</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"model-year\" value=\"2024\" />\n</span>\n\n<div id=\"model-year-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose year\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+   ],
+   "origin": "Year Picker de Shark UI.",
+   "file": "zui/src/components/forms/YearPicker.manifest.json"
   },
   {
    "name": "Accordion",

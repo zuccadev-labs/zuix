@@ -391,7 +391,7 @@ function render(cal: HTMLElement): void {
   cal.dataset.mode = c.mode;
   cal.dataset.view = model.view;
   if (!cal.dataset.cellSize) cal.dataset.cellSize = "md";
-  flag(cal, "data-presets", c.presets.length > 0);
+  // `data-presets` (JSON) ya marca la variante en la hoja; no se reescribe.
   flag(cal, "data-week-numbers", Boolean(input.showWeekNumber));
   flag(cal, "data-caption", c.caption !== "label" && model.view === "day" && months === 1, c.caption);
   if (months > 1) cal.style.setProperty("--z-calendar-months", String(months));
@@ -400,7 +400,11 @@ function render(cal: HTMLElement): void {
   const shape = JSON.stringify([model.view, model.firstMonth, rest, optionsVersion, hooks.has(cal)]);
   if (state.shape !== shape || !cal.querySelector(".z-calendar__main")) {
     state.shape = shape;
+    // La estructura se rehace: el foco vuelve a la pieza equivalente (flecha, select, preajuste, día…).
+    const active = document.activeElement;
+    const restore = active instanceof HTMLElement && cal.contains(active) ? focusSelector(active) : null;
     setMarkup(cal, markup(cal, model, c, input));
+    if (restore) cal.querySelector<HTMLElement>(restore)?.focus({ preventScroll: true });
     if (c.hook.dayContent)
       for (const content of cal.querySelectorAll<HTMLElement>(".z-calendar__day-content")) {
         const date = content.parentElement?.dataset.date;
@@ -408,6 +412,18 @@ function render(cal: HTMLElement): void {
       }
   }
   patch(cal, model, c);
+}
+
+/** Selector que encuentra, tras rehacer el marcado, la pieza equivalente a `el`. */
+function focusSelector(el: HTMLElement): string | null {
+  if (el.dataset.nav) return `.z-calendar__nav[data-nav="${el.dataset.nav}"]`;
+  if (el.dataset.part) return `.z-calendar__select[data-part="${el.dataset.part}"]`;
+  if (el.dataset.preset) return `.z-calendar__preset[data-preset="${el.dataset.preset}"]`;
+  if (el.dataset.date) return `.z-calendar__day[data-date="${el.dataset.date}"]`;
+  if (el.dataset.value) return `.z-calendar__unit[data-value="${el.dataset.value}"]`;
+  for (const name of ["z-calendar__view", "z-calendar__today", "z-calendar__apply", "z-calendar__cancel"])
+    if (el.classList.contains(name)) return `.${name}`;
+  return null;
 }
 
 /** Celda de un valor (día, mes o año); con varios meses, la del propio mes antes que la de fuera. */

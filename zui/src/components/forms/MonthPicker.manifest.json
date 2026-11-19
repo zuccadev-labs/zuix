@@ -1,0 +1,136 @@
+{
+  "name": "MonthPicker",
+  "group": "forms",
+  "description": "Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4). Valor YYYY-MM, como <input type=\"month\">; en rango, de mes a mes.",
+  "import": "import { MonthPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | null"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string | null) => void"
+    },
+    {
+      "name": "min",
+      "type": "string"
+    },
+    {
+      "name": "max",
+      "type": "string"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "required",
+      "type": "boolean"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "name": "...DatePicker",
+      "type": "DatePickerProps",
+      "description": "El resto de props de DatePicker."
+    },
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": [
+        "single",
+        "range"
+      ],
+      "default": "single"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-datepicker",
+    "z-calendar"
+  ],
+  "a11y": "Rejilla APG de 12 meses con nombres cortos: flechas por celda y fila, Inicio/Fin a la fila, RePág/AvPág por año; el título lleva a la década. Sin React: el marcado de DatePicker con data-min-view=\"month\".",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Mes de facturación",
+      "code": "<MonthPicker aria-label=\"Billing month\" locale=\"en-US\" defaultValue=\"2026-11\" min=\"2026-01\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Mes de facturación",
+      "code": "<span class=\"z-select z-datepicker\" id=\"billing\" data-size=\"md\" data-block data-min-view=\"month\" data-locale=\"en-US\" data-min=\"2026-01\" data-value=\"2026-11\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"billing-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Billing month</span>\n    <span class=\"z-select__value\">November 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"billing\" value=\"2026-11\" />\n</span>\n\n<div id=\"billing-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose month\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+  ],
+  "origin": "Month Picker de Shark UI."
+}

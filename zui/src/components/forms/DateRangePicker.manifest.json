@@ -1,0 +1,116 @@
+{
+  "name": "DateRangePicker",
+  "group": "forms",
+  "description": "Selector de rango: DatePicker en modo range con dos meses por defecto, vista previa que cruza los meses, preajustes relativos a hoy (rangePresets), minRange/maxRange y fechas reservadas.",
+  "import": "import { DateRangePicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "DateRange | null",
+      "description": "{ from, to }; en formulario desde/hasta."
+    },
+    {
+      "name": "defaultValue",
+      "type": "DateRange | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: DateRange) => void"
+    },
+    {
+      "name": "numberOfMonths",
+      "type": "number",
+      "default": 2
+    },
+    {
+      "name": "minRange",
+      "type": "number"
+    },
+    {
+      "name": "maxRange",
+      "type": "number"
+    },
+    {
+      "name": "isDateUnavailable",
+      "type": "(date) => boolean"
+    },
+    {
+      "name": "presets",
+      "type": "{ label, value }[]"
+    },
+    {
+      "name": "confirm",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "...DatePicker",
+      "type": "DatePickerProps",
+      "description": "El resto de props de DatePicker."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled",
+    "invalid"
+  ],
+  "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-datepicker",
+    "z-calendar"
+  ],
+  "a11y": "Como DatePicker en modo range: botón con aria-haspopup=dialog y panel no modal; los dos meses forman una sola rejilla para el teclado y el rango se anuncia con aria-selected en cada celda. Sin React es el mismo marcado de DatePicker con data-mode=\"range\" y data-months=\"2\".",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Estancia con mínimo de noches",
+      "code": "<DateRangePicker aria-label=\"Stay\" locale=\"en-US\" minRange={3} isDateUnavailable={(date) => date === \"2026-12-24\"} unavailableLabel=\"booked\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Estancia",
+      "code": "<span class=\"z-select z-datepicker\" id=\"stay2\" data-size=\"md\" data-block data-mode=\"range\" data-months=\"2\" data-min-range=\"3\" data-unavailable-dates=\"2026-12-24\" data-unavailable-label=\"booked\" data-locale=\"en-US\" data-week-start=\"1\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"stay2-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Stay</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"stay2\" value=\"\" />\n</span>\n\n<div id=\"stay2-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+  ],
+  "origin": "Date Range Picker de Shark UI; patrón APG Date Picker Dialog."
+}

@@ -669,7 +669,9 @@ export function dayKeyTarget(event: KeyInput, date: string, weekStart: number): 
     default:
       return null;
   }
-  return next < FIRST_DAY || next > LAST_DAY ? (next < FIRST_DAY ? FIRST_DAY : LAST_DAY) : next;
+  // Fuera de 0001–9999 (un año de cinco cifras se ordena mal como texto): se queda en el extremo.
+  if (next.length !== 10 || next > LAST_DAY) return LAST_DAY;
+  return next < FIRST_DAY ? FIRST_DAY : next;
 }
 
 /** Mes (`YYYY-MM`) o año (`YYYY`) al que lleva una tecla en las vistas de mes y año. */

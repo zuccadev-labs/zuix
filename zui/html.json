@@ -621,6 +621,42 @@
      "title": "Sin fines de semana",
      "html": "<div class=\"z-calendar\" id=\"workdays\" data-locale=\"en-US\" data-month=\"2026-11\" data-disabled-weekdays=\"0,6\"></div>",
      "source": "manual"
+    },
+    {
+     "title": "Varias fechas",
+     "html": "<div class=\"z-calendar\" id=\"meetings-calendar\" data-mode=\"multiple\" data-locale=\"en-US\" data-week-start=\"1\" data-max-selected=\"5\" data-value=\"2026-11-04,2026-11-11,2026-11-18\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Dos meses",
+     "html": "<div class=\"z-calendar z-liquid\" id=\"trip-calendar\" data-mode=\"range\" data-months=\"2\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-26/2026-12-04\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Selectores de mes y año",
+     "html": "<div class=\"z-calendar z-liquid\" id=\"caption-calendar\" data-caption=\"dropdown\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-06\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Con preajustes",
+     "html": "<div class=\"z-calendar z-liquid\" id=\"preset-calendar\" data-mode=\"range\" data-locale=\"en-US\" data-week-start=\"1\" data-presets='[{\"label\":\"Today\",\"value\":\"today\"},{\"label\":\"Tomorrow\",\"value\":\"tomorrow\"},{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"},{\"label\":\"Next 30 days\",\"value\":\"next-30-days\"},{\"label\":\"This month\",\"value\":\"this-month\"}]'></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Fechas reservadas",
+     "html": "<div class=\"z-calendar z-liquid\" id=\"booking-calendar\" data-locale=\"en-US\" data-week-start=\"1\" data-month=\"2026-11\" data-unavailable-dates=\"2026-11-20,2026-11-21,2026-11-22,2026-11-25\" data-unavailable-label=\"booked\" data-legend='{\"today\":\"Today\",\"selected\":\"Selected\",\"unavailable\":\"Booked\"}'></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Semanas numeradas, semanas fijas y botón Hoy",
+     "html": "<div class=\"z-calendar\" id=\"week-calendar\" data-locale=\"en-GB\" data-month=\"2026-11\" data-week-numbers data-fixed-weeks data-today-button></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Contenido por celda",
+     "html": "<div class=\"z-calendar\" id=\"price-calendar\" data-locale=\"en-US\" data-month=\"2026-11\" data-cell-size=\"lg\"></div>",
+     "source": "manual",
+     "script": "import { setCalendarOptions } from \"@zuccadev-labs/zuix-zui/dom\";\nsetCalendarOptions(document.querySelector(\"#price-calendar\"), {\n  dayContent: (date) => (date.endsWith(\"0\") ? \"$89\" : null),\n  dayDescription: (date) => (date.endsWith(\"0\") ? \"from $89\" : null),\n});"
     }
    ]
   },
@@ -711,6 +747,31 @@
      "title": "Vacío",
      "html": "<span class=\"z-select z-datepicker\" id=\"start\" data-size=\"md\" data-block data-locale=\"en-US\" data-placeholder=\"Pick a date\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"start-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Start date</span>\n    <span class=\"z-select__value\">Pick a date</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n</span>\n\n<div id=\"start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>",
      "source": "manual"
+    },
+    {
+     "title": "Rango con dos meses, preajustes y confirmación",
+     "html": "<span class=\"z-select z-datepicker\" id=\"trip\" data-size=\"md\" data-block data-mode=\"range\" data-months=\"2\" data-confirm data-locale=\"en-US\" data-week-start=\"1\" data-presets='[{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"},{\"label\":\"Next 30 days\",\"value\":\"next-30-days\"},{\"label\":\"This month\",\"value\":\"this-month\"}]' data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"trip-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Trip</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"trip\" value=\"\" />\n</span>\n\n<div id=\"trip-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Varias fechas",
+     "html": "<span class=\"z-select z-datepicker\" id=\"shifts\" data-size=\"md\" data-block data-mode=\"multiple\" data-locale=\"en-US\" data-count-label=\"{count} shifts\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shifts-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Shifts</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-days\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"shifts\" value=\"\" />\n</span>\n\n<div id=\"shifts-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "DateRangePicker": {
+   "group": "forms",
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Estancia",
+     "html": "<span class=\"z-select z-datepicker\" id=\"stay2\" data-size=\"md\" data-block data-mode=\"range\" data-months=\"2\" data-min-range=\"3\" data-unavailable-dates=\"2026-12-24\" data-unavailable-label=\"booked\" data-locale=\"en-US\" data-week-start=\"1\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"stay2-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Stay</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"stay2\" value=\"\" />\n</span>\n\n<div id=\"stay2-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
     }
    ]
   },
@@ -779,6 +840,21 @@
      "title": "Inválido, monoespaciado",
      "html": "<span class=\"z-input\" data-size=\"md\" data-invalid=\"true\" data-mono=\"true\">\n  <input aria-label=\"API key\" aria-invalid=\"true\" class=\"z-input__control\" value=\"sk_live_\"/>\n</span>",
      "source": "generated"
+    }
+   ]
+  },
+  "MonthPicker": {
+   "group": "forms",
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Mes de facturación",
+     "html": "<span class=\"z-select z-datepicker\" id=\"billing\" data-size=\"md\" data-block data-min-view=\"month\" data-locale=\"en-US\" data-min=\"2026-01\" data-value=\"2026-11\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"billing-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Billing month</span>\n    <span class=\"z-select__value\">November 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"billing\" value=\"2026-11\" />\n</span>\n\n<div id=\"billing-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose month\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
     }
    ]
   },
@@ -956,6 +1032,36 @@
      "title": "Crece con el contenido",
      "html": "<textarea aria-label=\"Notes\" rows=\"3\" class=\"z-textarea\" data-size=\"md\" data-resize=\"vertical\"></textarea>",
      "source": "generated"
+    }
+   ]
+  },
+  "WeekPicker": {
+   "group": "forms",
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Semana del informe",
+     "html": "<span class=\"z-select z-datepicker\" id=\"report-week\" data-size=\"md\" data-block data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-value=\"2026-W47\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"report-week-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Report week</span>\n    <span class=\"z-select__value\">Week 47, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"report-week\" value=\"2026-W47\" />\n</span>\n\n<div id=\"report-week-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose week\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "YearPicker": {
+   "group": "forms",
+   "classes": [
+    "z-datepicker",
+    "z-calendar"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Año de fabricación",
+     "html": "<span class=\"z-select z-datepicker\" id=\"model-year\" data-size=\"md\" data-block data-min-view=\"year\" data-locale=\"en-US\" data-min=\"1990\" data-max=\"2027\" data-value=\"2024\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"model-year-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Model year</span>\n    <span class=\"z-select__value\">2024</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"model-year\" value=\"2024\" />\n</span>\n\n<div id=\"model-year-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose year\">\n  <div class=\"z-calendar\"></div>\n</div>",
+     "source": "manual"
     }
    ]
   },
