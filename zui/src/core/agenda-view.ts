@@ -25,73 +25,8 @@ import { fromWall, toWall, zoneCity, zoneLabel } from "./zone";
 
 /* ---------- Árbol ---------- */
 
-export type VAttr = string | number | boolean | null | undefined;
-export interface VEl {
-  t: string;
-  a?: Record<string, VAttr>;
-  /** Variables locales de estilo (`--z-…`): solo maquetación calculada. */
-  s?: Record<string, string | number>;
-  c?: VNode[];
-  k?: string;
-}
-/** Hueco que pinta cada vía a su manera: un icono, o el minicalendario (Calendar). */
-export interface VSlot {
-  slot: "icon" | "minical";
-  p: Record<string, unknown>;
-  k?: string;
-}
-export type VNode = VEl | VSlot | string | null | undefined | false;
-
-type HAttrs = Record<string, VAttr | Record<string, string | number>>;
-const h = (t: string, a?: HAttrs | null, ...c: VNode[]): VEl => {
-  const el: VEl = { t };
-  if (a) {
-    const { key, s: style, ...rest } = a;
-    if (key !== undefined && key !== null) el.k = String(key);
-    if (style && typeof style === "object") el.s = style;
-    el.a = rest as Record<string, VAttr>;
-  }
-  const kids = c.filter((x) => x !== null && x !== undefined && x !== false);
-  if (kids.length) el.c = kids;
-  return el;
-};
-const icon = (name: string, size = 16): VSlot => ({ slot: "icon", p: { name, size } });
-const on = (v: boolean | undefined) => (v ? "" : undefined);
-
-/** HTML del árbol (para el contrato HTML y las pruebas). Escapa texto y atributos. */
-export function toHTML(
-  node: VNode,
-  iconHTML: (name: string, size: number) => string = (n, s) => `<z-icon name="${n}" size="${s}"></z-icon>`,
-): string {
-  if (node === null || node === undefined || node === false) return "";
-  if (typeof node === "string") return escapeText(node);
-  if ("slot" in node) {
-    if (node.slot === "icon") return iconHTML(String(node.p.name), Number(node.p.size));
-    return `<div class="z-calendar z-agenda__minical"${Object.entries((node.p.attrs ?? {}) as Record<string, VAttr>)
-      .map(([k, v]) => attrHTML(k, v))
-      .join("")}></div>`;
-  }
-  const attrs = Object.entries(node.a ?? {})
-    .map(([k, v]) => attrHTML(k, v))
-    .join("");
-  const style = node.s
-    ? ` style="${escapeAttr(
-        Object.entries(node.s)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join("; "),
-      )}"`
-    : "";
-  const inner = (node.c ?? []).map((c) => toHTML(c, iconHTML)).join("");
-  return VOID.has(node.t) ? `<${node.t}${attrs}${style}>` : `<${node.t}${attrs}${style}>${inner}</${node.t}>`;
-}
-const VOID = new Set(["input", "br", "hr", "img"]);
-const escapeText = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const escapeAttr = (s: string) => escapeText(s).replace(/"/g, "&quot;");
-function attrHTML(k: string, v: VAttr): string {
-  if (v === null || v === undefined || v === false) return "";
-  if (v === true || v === "") return ` ${k}`;
-  return ` ${k}="${escapeAttr(String(v))}"`;
-}
+import { h, icon, on, type VAttr, type VEl, type VNode } from "./vnode";
+export { toHTML, type VAttr, type VEl, type VNode, type VSlot } from "./vnode";
 
 /* ---------- Configuración y estado ---------- */
 
