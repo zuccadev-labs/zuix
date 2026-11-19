@@ -5,6 +5,7 @@ import Layout from "@theme/Layout";
 import { Icon, type IconName, type IconVariant } from "@zuccadev-labs/zuix-zicon/core";
 import manifest from "@zuccadev-labs/zuix-zicon/manifest.json";
 import { SearchInput, SegmentedControl, Select } from "@zuccadev-labs/zuix-zui";
+import { Crumbs, DocsShell, PageGrid } from "../components/Shell";
 
 const categories = manifest.categories as Record<string, { en: string; es: string }>;
 
@@ -26,11 +27,12 @@ export default function Icons() {
   };
   return (
     <Layout title="Iconos" description="Zicon: iconos de la suite">
-      <main className="zd-page z-root">
-        <div className="zd-wrap">
-          <header>
+      <DocsShell>
+        <PageGrid>
+          <Crumbs items={[{ label: "Referencia" }, { label: "Iconos" }]} />
+          <div className="zd-markdown">
             <h1>Iconos</h1>
-            <p className="zd-sub">
+            <p className="zd-lead">
               {manifest.count} iconos en dos variantes. Busca por forma o por concepto, en español o inglés. Un clic copia el JSX.
             </p>
             <div className="zd-toolbar">
@@ -58,7 +60,7 @@ export default function Icons() {
                 {shown.length} resultados
               </span>
             </div>
-          </header>
+          </div>
           <div className="zd-icons">
             {shown.map((i) => (
               <button
@@ -74,8 +76,8 @@ export default function Icons() {
               </button>
             ))}
           </div>
-        </div>
-      </main>
+        </PageGrid>
+      </DocsShell>
     </Layout>
   );
 }

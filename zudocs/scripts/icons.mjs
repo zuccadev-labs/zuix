@@ -23,12 +23,15 @@ const walk = (dir, test) =>
 export function siteIcons(ctx) {
   const known = new Set(JSON.parse(readFileSync(join(repoDir, "zicon/manifest.json"), "utf8")).icons.map((i) => i.name));
   const names = new Set(["document-text", ...ctx.site.docs.areas.map((a) => a.icon).filter(Boolean)]);
-  // Las páginas de catálogo importan el set completo por su cuenta: sus demos no cuentan aquí.
-  const CATALOG = /pages[\\/](components|icons)\.tsx$/;
+  // Las páginas de catálogo (iconos y la página de cada componente) importan el set completo por su cuenta: sus
+  // demos no cuentan aquí.
+  const CATALOG = /(pages[\\/]icons\.tsx|components[\\/]ComponentPage[\\/].*)$/;
   const sources = [
     ...walk(join(repoDir, "zui/src"), (n) => /\.tsx?$/.test(n)),
     ...walk(join(repoDir, "zout/src"), (n) => /\.tsx?$/.test(n)),
     ...walk(join(templateDir, "src"), (n) => /\.tsx?$/.test(n)).filter((f) => !CATALOG.test(f)),
+    // Iconos de los grupos de componentes (barra lateral, índice, portada).
+    join(templateDir, "scripts/components.mjs"),
     ...walk(ctx.docsDir, (n) => n.endsWith(".mdx")),
   ];
   // Cualquier cadena literal que sea el nombre de un icono cuenta: sobra alguno, no falta ninguno.

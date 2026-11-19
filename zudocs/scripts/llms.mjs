@@ -8,6 +8,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { loadZudocs, parseArgs } from "./config.mjs";
+import { componentMarkdown, groupsOf, loadCatalog } from "./components.mjs";
 import { listDocs, sentence } from "./docs.mjs";
 
 const ctx = loadZudocs(parseArgs());
@@ -54,6 +55,18 @@ for (const area of site.docs.areas) {
     fullText += `\n---\n\nFuente: ${ctx.href(d.route)}\n\n${text}`;
   }
 }
+// Una página por componente (si el sitio publica el catálogo): su copia .md y una línea en llms.txt.
+const catalog = ctx.pages.components ? loadCatalog() : [];
+for (const g of groupsOf(catalog)) {
+  out += `\n## Componentes: ${g.label}\n\n`;
+  for (const c of catalog.filter((x) => x.group === g.id)) {
+    const route = c.path.replace(/^\//, "");
+    out += `- [${c.name}](${ctx.href(full ? `${route}.md` : route)}): ${inline(sentence(c.description))}\n`;
+    const text = componentMarkdown(c, { href: ctx.href });
+    if (full) write(join(ctx.generatedStaticDir, `${route}.md`), text);
+    fullText += `\n---\n\nFuente: ${ctx.href(route)}\n\n${text}`;
+  }
+}
 if (ctx.llmsAppend) out += `\n${readFileSync(ctx.llmsAppend, "utf8").trim()}\n`;
 write(ctx.llmsPath, out);
 if (full) write(join(ctx.generatedStaticDir, "llms-full.txt"), fullText);
@@ -65,5 +78,5 @@ if (!ownRobots)
   write(join(ctx.generatedStaticDir, "robots.txt"), `User-agent: *\nAllow: /\n${ctx.url ? `\nSitemap: ${ctx.href("sitemap.xml")}\n` : ""}`);
 
 process.stdout.write(
-  `✓ ${ctx.rel(ctx.llmsPath)} (${docs.length} documentos)${full ? ", llms-full.txt y copias .md" : ""}${ownRobots ? "" : ", robots.txt"}\n`,
+  `✓ ${ctx.rel(ctx.llmsPath)} (${docs.length} documentos${catalog.length ? `, ${catalog.length} componentes` : ""})${full ? ", llms-full.txt y copias .md" : ""}${ownRobots ? "" : ", robots.txt"}\n`,
 );

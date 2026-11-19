@@ -27,6 +27,8 @@ export interface ZudocsConfig {
   search?: { enabled?: boolean; languages?: string[] };
   navbar?: { label: string; to?: string; href?: string }[];
   footer?: string;
+  repository?: string;
+  cta?: { label: string; to: string };
   llms?: { append?: string; full?: boolean };
 }
 export interface ZudocsContext {

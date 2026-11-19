@@ -44,5 +44,7 @@
     { "label": "Iconos", "to": "/icons" },
     { "label": "Tokens", "to": "/tokens" }
   ],
+  "repository": "https://github.com/zuccadev-labs/zuix",
+  "cta": { "label": "Empezar", "to": "/docs/users" },
   "footer": "Zuix · suite de UI/UX de DAZLABS"
 }

@@ -4,9 +4,10 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type * as Preset from "@docusaurus/preset-classic";
 import type { Config, Plugin } from "@docusaurus/types";
-import { themes as prism } from "prism-react-renderer";
 import { loadZudocs, PAGES, templateDir } from "./scripts/config.mjs";
 import { iconsModule } from "./scripts/icons.mjs";
+import remarkLead from "./scripts/remark-lead.mjs";
+import { zudocsSite } from "./scripts/site-plugin.mjs";
 
 const zudocs = loadZudocs();
 const { site, areas, pages, docsDir } = zudocs;
@@ -33,22 +34,9 @@ writeFileSync(iconsFile, iconsModule(zudocs, { all: development }));
 const mermaidTokens = (): Plugin => ({ name: "zudocs-mermaid", getThemePath: () => join(templateDir, "src", "mermaid", "theme") });
 const mermaidThemes = zudocs.mermaid ? [require.resolve("@docusaurus/theme-mermaid"), mermaidTokens] : [];
 
-// Tema claro del código: el "github" de Prism con los colores que no llegan a 4,5:1 sobre el fondo del
-// bloque (comentarios, cadenas, propiedades, etiquetas) sustituidos por tonos más oscuros de la misma familia.
-const AA: Record<string, string> = {
-  "#999988": "#5f6a61",
-  "#e3116c": "#b80d55",
-  "#36acaa": "#0b6e6c",
-  "#00a4db": "#0a6aa1",
-  "#d73a49": "#b4232f",
-};
-const prismLight = {
-  ...prism.github,
-  styles: prism.github.styles.map((s) => ({
-    ...s,
-    style: { ...s.style, color: AA[String(s.style.color).toLowerCase()] ?? s.style.color },
-  })),
-};
+// Código: Prism solo pone las clases de cada token (`token keyword`…) y los colores salen de los tokens de la
+// marca en src/css/zudocs.css, los mismos en claro y oscuro, medidos por el validador de contraste.
+const prismTokens = { plain: {}, styles: [] };
 
 const favicon = site.favicon ?? site.logo?.src;
 
@@ -80,6 +68,7 @@ const config: Config = {
           path: docsDir,
           routeBasePath: "docs",
           sidebarPath: "./sidebars.ts",
+          beforeDefaultRemarkPlugins: [remarkLead],
           exclude: ["**/*.pptx", "**/_*", "**/_*/**"],
           // La portada del área (README) va la primera de su barra lateral; por orden alfabético quedaría la última.
           sidebarItemsGenerator: async ({ defaultSidebarItemsGenerator, ...args }) => {
@@ -114,7 +103,7 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  plugins: zudocs.bundlerCacheDir && !process.env.DOCUSAURUS_NO_PERSISTENT_CACHE ? [bundlerCache] : [],
+  plugins: [zudocsSite(zudocs), ...(zudocs.bundlerCacheDir && !process.env.DOCUSAURUS_NO_PERSISTENT_CACHE ? [bundlerCache] : [])],
   themes: [
     ...mermaidThemes,
     ...(search?.enabled === false
@@ -154,7 +143,7 @@ const config: Config = {
       ],
     },
     footer: site.footer ? { copyright: site.footer } : undefined,
-    prism: { theme: prismLight, darkTheme: prism.vsDark, additionalLanguages: ["bash", "json", "css", "tsx"] },
+    prism: { theme: prismTokens, darkTheme: prismTokens, additionalLanguages: ["bash", "json", "css", "tsx"] },
     // Los dos modos usan el tema "base" de Mermaid: los colores los pone src/mermaid/tokens.ts.
     ...(zudocs.mermaid ? { mermaid: { theme: { light: "base", dark: "base" } } } : {}),
     tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },

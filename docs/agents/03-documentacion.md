@@ -48,12 +48,14 @@ editor o un agente ven los campos válidos; un campo desconocido es un error. El
 | `fonts` | Hojas de estilo de las fuentes. Una ruta local se empaqueta con el sitio; una URL remota funciona, con aviso |
 | `docs.path` | Carpeta de documentación |
 | `docs.areas` | Áreas: cada una es una subcarpeta, una entrada de navbar y una sidebar. `id`, `label`, `icon` y `description` |
-| `pages` | Páginas de catálogo de la suite: `components`, `icons`, `tokens`. Desactivadas por defecto |
+| `pages` | Páginas de catálogo de la suite: `components` (índice y una página por componente, generadas de los manifiestos), `icons`, `tokens`. Desactivadas por defecto |
 | `home` | Portada: `eyebrow`, `title`, `emphasis` y `suite` (cifras y carrusel de la suite zuix) |
 | `llms` | `append`: archivo que se añade al final de `llms.txt`. `full`: genera `llms-full.txt` y una copia `.md` por documento (activo por defecto) |
 | `markdown` | `mermaid: true` dibuja los bloques <code>```mermaid</code>. `untrusted: true` rechaza `.mdx` y HTML activo |
 | `search` | Buscador local: `enabled` e idiomas del índice (`languages`) |
 | `navbar` | Enlaces adicionales, cada uno con `to` o con `href` |
+| `repository` | URL del repositorio: la barra superior lo enlaza y cada página de componente enlaza su manifiesto |
+| `cta` | Llamada a la acción de la barra y de la portada (`label`, `to`). Por defecto, «Empezar» hacia la primera área |
 | `footer` | Texto del pie |
 
 No se toca `docusaurus.config.ts` ni el CSS del tema.
@@ -72,7 +74,8 @@ A mano, el resultado es el mismo:
 
 1. Elegir el área.
 2. Crear `NN-nombre.md` en la carpeta del área.
-3. Empezar con un título `#` que enuncie la pregunta que responde el documento.
+3. Empezar con un título `#` que enuncie la pregunta que responde el documento, seguido de un párrafo que la
+   conteste en una o dos frases: el sitio lo muestra como entradilla.
 4. Añadirlo a la tabla del `README.md` del área.
 
 ### Añadir un área

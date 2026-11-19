@@ -5,6 +5,8 @@ import type { ComponentProps } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { Alert, Badge, Button, Callout, Card, CardHeader, Carousel, Kbd, Panel, StatTile, Stepper, Tabs } from "@zuccadev-labs/zuix-zui";
 import { Grid, Inline, Stack } from "@zuccadev-labs/zuix-zout";
+import { DocMeta } from "../components/DocMeta";
+import { PackageInstall } from "../components/PackageInstall";
 
 // Las casillas de una lista de tareas (`- [ ]`) llegan sin nombre accesible: un lector de pantalla solo
 // diría "casilla, no disponible". Se les pone su estado como nombre.
@@ -16,9 +18,22 @@ function TaskCheckbox(props: ComponentProps<"input">) {
   return <input {...props} aria-label={label} />;
 }
 
+// Una tabla ancha se desplaza dentro de su marco, que es enfocable para poder desplazarla con el teclado.
+function Table(props: ComponentProps<"table">) {
+  return (
+    // biome-ignore lint/a11y/noNoninteractiveTabindex: región desplazable; sin foco no se podría recorrer con el teclado
+    <div className="zd-table" role="region" aria-label="Tabla" tabIndex={0}>
+      <table {...props} />
+    </div>
+  );
+}
+
 export default {
   ...MDXComponents,
   input: TaskCheckbox,
+  table: Table,
+  DocMeta,
+  PackageInstall,
   Icon,
   Alert,
   Badge,
