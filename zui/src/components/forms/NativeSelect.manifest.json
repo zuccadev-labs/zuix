@@ -62,7 +62,8 @@
     "focus-width",
     "accent-ring",
     "control-radius-sm",
-    "control-radius-lg"
+    "control-radius-lg",
+    "space-2"
   ],
   "classes": ["z-select"],
   "a11y": "select nativo: teclado y lista del sistema. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",

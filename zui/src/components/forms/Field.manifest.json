@@ -55,13 +55,13 @@
     "fg",
     "text-small",
     "leading-snug",
-    "danger",
     "fg-subtle",
     "weight-regular",
     "fg-muted",
     "weight-medium",
     "space-1-5",
-    "text-caption"
+    "text-caption",
+    "danger-text"
   ],
   "classes": ["z-field"],
   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",

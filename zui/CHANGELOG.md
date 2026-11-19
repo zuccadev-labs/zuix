@@ -90,6 +90,39 @@ radios y material de los tokens.
   degradado va en una capa fija (Safari de iOS ignora `background-attachment: fixed`). Con
   `prefers-reduced-transparency`, también `.z-solid` pasa a superficie opaca.
 - Base: texto de interfaz con `leading-ui`; titulares con `text-wrap: balance` y párrafos con `pretty`.
+- Fase D: el resto de componentes pasa a la anatomía del estándar. Nada en píldora: chips, avisos,
+  paginación, pasos, flechas del carrusel, botón de copiar del código, cierres de diálogo y de alerta, iconos
+  de estado vacío, de confirmación, de subida y de `StatTile` son rectángulos de radios concéntricos (o
+  baldosas). `radius-full` queda para lo circular: avatar y su punto de estado, punto de insignia y de aviso,
+  radio, interruptor y su pulgar, pomo del deslizador y spinners. Las barras finas (progreso, medidor, pista
+  del deslizador) usan `radius-xs`.
+- Foco por contorno en todos los componentes que aún usaban `focus-ring` como sombra (enlace, alerta,
+  tarjeta interactiva, chip, tabla ordenable y fila pulsable, valoración, código, carrusel, migas,
+  paginación, pasos, acordeón, árbol, enlaces de barra lateral, casilla, radio, interruptor, OTP, subida,
+  avisos y diálogos); por dentro en las piezas de un control compuesto (fila, opción de menú, árbol, pestaña).
+- Capas (modal, confirmación, popover, tooltip, menú, paleta, aviso): entrada con `@starting-style` (fundido,
+  desplazamiento corto y, en modal, paleta y aviso, escala .98; sin desplazamiento ni escala con movimiento
+  reducido) y salida con la animación de `data-state="closed"` que ya espera la presencia, también en Firefox
+  y Safari. Panel lateral, paleta y avisos usan el cristal elevado (`popup-bg`, `popup-blur`,
+  `popup-shadow`); modal y paleta con radio de panel (24); velo de los diálogos con `blur(6px)`.
+- Diálogos: título 16/600, descripción 13, relleno 24; acciones con la anatomía del botón (cristal y
+  primario de 34 px). Menú: opciones de 32 px con `item-radius`, 14/500, iconos de 16, atajos en 12 mono,
+  destructivo sobre `danger-soft`. Paleta: opciones de 36 px, seleccionada levantada en `surface-2` con el
+  icono en acento. Aviso: título 14, acción como botón de cristal sm.
+- Tabla: cabecera 13/500 en `fg-muted` sin mayúsculas, celdas de 14 con relleno 12 × 16; fondo `surface` en
+  la cabecera de la tabla enmarcada. Tarjeta: relleno 20, título 16 con interletrado `snug`, elevación al
+  pasar con brillo y `shadow-md`. Código: `code-radius` (20), barra de 44 px, cuerpo 13/1,7.
+- Navegación: enlaces de barra lateral de 32 px con `item-radius` y barra de acento de 2 px en el activo;
+  página actual de la paginación levantada (cristal) en lugar de rellena de acento; árbol con filas de 32 px;
+  acordeón con disparador de 40 px y cuerpo en `fg-prose`; marcadores de pasos en baldosa.
+- `Slider`: el tirador es un objetivo de 24 × 24 px (WCAG 2.5.8) que dibuja dentro su pomo de 18 px (14 en
+  `sm`) con `::before`; el aspecto no cambia. `--z-slider-thumb` pasa a ser el tamaño del objetivo y
+  `--z-slider-knob` el del pomo.
+- Casilla y radio con borde `control-border` (3:1) y brillo interior al marcarse.
+- `SegmentedControl` sm: opciones de 24 px (antes 22) para el objetivo mínimo de WCAG 2.5.8; la pista mide 30 px
+  y fija `box-sizing: border-box`.
+- `Slider`: ancho mínimo de seis tiradores; en un contenedor ajustado a su contenido el 100 % era 0 y los
+  tiradores de un rango se solapaban.
 
 
 ## [0.2.0] - 2026-11-18

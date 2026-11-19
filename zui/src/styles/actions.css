@@ -157,8 +157,8 @@
     }
   }
   .z-link:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-link:active {
     color: var(--z-accent-text);
@@ -253,14 +253,16 @@
     display: inline-flex;
     align-items: center;
     gap: 2px;
+    box-sizing: border-box;
     height: var(--z-segmented-height);
     padding: var(--z-segmented-pad);
     border: 1px solid var(--z-glass-border);
     border-radius: calc(var(--z-segmented-item-radius) + var(--z-segmented-pad));
     background: var(--z-control-bg);
   }
+  /* sm: opciones de 24 px (objetivo mínimo de WCAG 2.5.8); la pista suma el relleno y el canto. */
   .z-segmented[data-size="sm"] {
-    --z-segmented-height: var(--z-control-height-sm);
+    --z-segmented-height: calc(var(--z-control-height-xs) + 2 * var(--z-segmented-pad) + 2px);
     --z-segmented-pad: 2px;
     --z-segmented-item-radius: var(--z-radius-xs);
   }

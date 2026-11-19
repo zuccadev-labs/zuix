@@ -69,7 +69,6 @@
     "danger-soft",
     "danger",
     "accent-soft",
-    "accent",
     "radius-full",
     "glass-border",
     "glass-highlight",
@@ -82,7 +81,10 @@
     "accent-ring",
     "focus-offset",
     "control-radius-sm",
-    "control-radius-lg"
+    "control-radius-lg",
+    "accent-text",
+    "danger-text",
+    "fg-on-accent"
   ],
   "classes": ["z-btn"],
   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",

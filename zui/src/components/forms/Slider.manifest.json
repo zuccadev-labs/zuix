@@ -88,7 +88,21 @@
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled"],
-  "tokens": ["space-20", "radius-full", "surface-3", "accent", "fg-on-accent", "shadow-sm", "duration-fast", "ease-standard", "focus-ring"],
+  "tokens": [
+    "space-20",
+    "radius-full",
+    "surface-3",
+    "accent",
+    "fg-on-accent",
+    "shadow-sm",
+    "duration-fast",
+    "ease-standard",
+    "accent-ring",
+    "focus-width",
+    "line",
+    "radius-xs",
+    "touch-target"
+  ],
   "classes": ["z-slider"],
   "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
   "behavior": "dom",

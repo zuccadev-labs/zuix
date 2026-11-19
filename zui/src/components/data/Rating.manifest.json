@@ -58,14 +58,15 @@
     "text-small",
     "text-body",
     "warning",
-    "line-strong",
     "radius-xs",
     "duration-fast",
     "ease-standard",
     "ease-spring",
-    "focus-ring",
     "weight-semibold",
-    "fg-muted"
+    "fg-muted",
+    "accent-ring",
+    "control-border",
+    "focus-width"
   ],
   "classes": ["z-rating"],
   "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con foco itinerante; flechas (reflejadas en RTL), Inicio y Fin mueven y eligen. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo marcado dentro de `[data-z-dom]`; emite z:change { value } en `.z-rating`.",

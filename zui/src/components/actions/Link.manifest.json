@@ -43,18 +43,18 @@
   "states": ["rest", "hover", "focus", "active", "disabled"],
   "tokens": [
     "space-1",
-    "accent",
     "weight-medium",
     "accent-ring",
     "radius-xs",
     "duration-fast",
     "ease-standard",
-    "accent-hover",
-    "focus-ring",
     "fg-muted",
     "fg",
     "weight-semibold",
-    "fg-subtle"
+    "fg-subtle",
+    "accent-text",
+    "focus-offset",
+    "focus-width"
   ],
   "classes": ["z-link"],
   "a11y": "Elemento a nativo. Los enlaces externos anuncian que abren otra pestaña. Deshabilitado: sin href, role=link, aria-disabled y sin ejecutar onClick.",

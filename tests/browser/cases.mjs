@@ -543,6 +543,8 @@ export const cases = [
     name: "ContextMenu: abre con clic derecho en el puntero, teclado y Escape",
     async run({ open, shot }) {
       const page = await open("overlays");
+      // La zona puede quedar bajo el pliegue según la escala tipográfica: se trae a la vista antes de medirla.
+      await page.locator(t("context-area")).scrollIntoViewIfNeeded();
       const { x, y } = await center(page, t("context-area"));
       await page.mouse.click(x, y, { button: "right" });
       await visible(page, ".z-menu[role=menu]");

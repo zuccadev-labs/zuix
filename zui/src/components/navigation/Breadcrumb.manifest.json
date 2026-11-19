@@ -23,12 +23,14 @@
     "fg",
     "fg-muted",
     "fg-subtle",
-    "focus-ring",
     "radius-xs",
     "row-hover",
     "space-1",
     "text-small",
-    "weight-semibold"
+    "accent-ring",
+    "focus-width",
+    "space-1-5",
+    "weight-medium"
   ],
   "classes": [
     "z-breadcrumb",

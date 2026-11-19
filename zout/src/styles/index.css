@@ -18,19 +18,26 @@
     inset-inline-start: var(--z-space-2);
     z-index: var(--z-layer-top);
     padding: var(--z-space-2) var(--z-space-3);
-    border-radius: var(--z-radius-sm);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius);
     background: var(--z-surface-solid);
     color: var(--z-fg);
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     text-decoration: none;
     box-shadow: var(--z-shadow-md);
     transform: translateY(calc(-100% - var(--z-space-4)));
+    /* Fuera de la vista y transparente hasta recibir el foco: en un shell que no llena la ventana (una vista
+       previa, un panel) el desplazamiento solo no basta para esconderlo. */
+    opacity: 0;
+    pointer-events: none;
   }
   .z-shell__skip:focus-visible {
     transform: none;
-    outline: 2px solid var(--z-accent-ring);
-    outline-offset: 2px;
+    opacity: 1;
+    pointer-events: auto;
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-shell__main:focus {
     outline: none;
@@ -120,8 +127,8 @@
     border: 0;
     cursor: default;
     background: var(--z-scrim);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
     animation: z-fade-in var(--z-duration-normal) var(--z-ease-out) both;
   }
   .z-shell__drawer {
@@ -130,8 +137,11 @@
     bottom: var(--z-shell-gap);
     z-index: var(--z-layer-overlay);
     max-width: calc(100% - var(--z-shell-gap) * 2);
-    box-shadow: var(--z-shadow-lg);
-    animation: z-drawer-in var(--z-duration-normal) var(--z-ease-out) both;
+    /* Cajón: cristal elevado (capa flotante sobre el cromo). */
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    animation: z-drawer-in var(--z-duration-slow) var(--z-ease-emphasized) both;
   }
   .z-shell__drawer:focus {
     outline: none;
@@ -220,7 +230,8 @@
     position: absolute;
     inset: 0;
     margin: auto;
-    border-radius: var(--z-radius-full);
+    /* Línea de 2 px: radio corto del estándar, que a ese grosor redondea los extremos. */
+    border-radius: var(--z-radius-xs);
     background: transparent;
     transition: background var(--z-duration-fast) var(--z-ease-standard);
   }
@@ -287,7 +298,8 @@
     gap: var(--z-space-2);
     width: var(--z-rail-width);
     padding: var(--z-space-3) 0;
-    border-radius: var(--z-radius-full);
+    /* Panel de cromo, no píldora: radio concéntrico con sus items (12 + 8 de margen = 20). */
+    border-radius: var(--z-radius-xl);
   }
   .z-rail__brand {
     margin-bottom: var(--z-space-3);
@@ -316,29 +328,36 @@
     width: 40px;
     height: 40px;
     flex-shrink: 0;
-    border: 0;
-    border-radius: var(--z-radius-md);
+    border: 1px solid transparent;
+    /* Concéntrico con el rail: control lg (12). */
+    border-radius: var(--z-control-radius-lg);
     background: transparent;
     color: var(--z-fg-muted);
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      color var(--z-duration-fast) var(--z-ease-standard);
+      color var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-rail__item:hover {
-      background: var(--z-surface-3);
+      background: var(--z-surface-2);
       color: var(--z-fg);
     }
   }
   .z-rail__item:focus-visible {
-    outline: 2px solid transparent;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-rail__item:active {
+    scale: 0.97;
   }
   .z-rail__item[aria-current="page"] {
     background: var(--z-accent-solid);
     color: var(--z-fg-on-accent);
-    box-shadow: var(--z-shadow-md);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+      var(--z-shadow-md);
   }
   .z-rail__badge {
     position: absolute;
@@ -347,7 +366,9 @@
     min-width: 15px;
     height: 15px;
     padding: 0 var(--z-space-1);
+    /* Contador: circular con una cifra (lo único redondo de la barra). */
     border-radius: var(--z-radius-full);
+    box-shadow: 0 0 0 2px var(--z-surface-solid);
     background: var(--z-danger-solid);
     color: var(--z-fg-on-accent);
     font-size: var(--z-text-fine);
@@ -382,8 +403,8 @@
     white-space: nowrap;
     font-family: var(--z-font-display);
     font-size: var(--z-text-title);
-    font-weight: var(--z-weight-bold);
-    letter-spacing: var(--z-tracking-tight);
+    font-weight: var(--z-weight-display);
+    letter-spacing: var(--z-tracking-snug);
     color: var(--z-fg);
   }
   .z-sidepanel__subtitle {
@@ -391,7 +412,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: var(--z-text-caption);
-    color: var(--z-fg-subtle);
+    color: var(--z-fg-muted);
   }
   .z-sidepanel__actions {
     display: flex;
@@ -444,13 +465,11 @@
     flex: 0 0 auto;
     align-items: center;
     gap: var(--z-space-2);
-    height: 36px;
+    height: 34px;
     padding-block: 0;
     padding-inline: var(--z-space-3) var(--z-space-2);
-    font-size: var(--z-text-caption);
-    font-weight: var(--z-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--z-tracking-wide);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
     color: var(--z-fg-muted);
   }
   .z-sidebar__fold {
@@ -476,8 +495,8 @@
     }
   }
   .z-sidebar__fold:focus-visible {
-    outline: 2px solid transparent;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
     border-radius: var(--z-radius-xs);
   }
   .z-sidebar__title {
@@ -486,11 +505,10 @@
     white-space: nowrap;
   }
   .z-sidebar__count {
-    font-size: var(--z-text-fine);
+    font-size: var(--z-text-caption);
     font-weight: var(--z-weight-regular);
-    text-transform: none;
-    letter-spacing: normal;
     font-variant-numeric: tabular-nums;
+    color: var(--z-fg-subtle);
   }
   .z-sidebar__actions {
     display: flex;
@@ -558,7 +576,7 @@
     content: "";
     position: absolute;
     inset: 1px 3px;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-radius-xs);
     background: transparent;
     transition: background var(--z-duration-fast) var(--z-ease-standard);
   }
@@ -587,13 +605,13 @@
     min-width: 0;
     min-height: 0;
     overflow: hidden;
-    border-radius: var(--z-radius-md);
+    border-radius: var(--z-radius-lg);
     border: 1px solid var(--z-line);
     background: var(--z-reading-bg);
   }
   .z-pane[data-focused="true"] {
     border-color: var(--z-accent);
-    box-shadow: 0 0 0 1px var(--z-accent-ring);
+    outline: 1px solid var(--z-accent-ring);
   }
   .z-pane[data-focused="false"]::after {
     content: "";
@@ -608,11 +626,13 @@
     flex-shrink: 0;
     align-items: center;
     gap: var(--z-space-1);
-    min-height: 30px;
-    padding: 0 var(--z-space-2);
+    min-height: var(--z-control-height-md);
+    padding-block: 0;
+    padding-inline: var(--z-space-3) var(--z-space-2);
     border-bottom: 1px solid var(--z-line);
     background: var(--z-surface);
     font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
     color: var(--z-fg-muted);
   }
   .z-pane__body {
@@ -643,7 +663,8 @@
     flex-shrink: 0;
     max-width: 220px;
     height: var(--z-control-height-sm);
-    border-radius: var(--z-radius-full);
+    /* Pestaña de trabajo: rectángulo de radio sm (8), no píldora. */
+    border-radius: var(--z-control-radius-sm);
     color: var(--z-fg-muted);
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
@@ -655,10 +676,14 @@
       color: var(--z-fg);
     }
   }
+  /* Canto dibujado con sombra interior: un borde restaría alto al objetivo táctil de la pestaña. */
   .z-tabstrip__tab[data-selected] {
-    background: var(--z-surface-2);
+    background: var(--z-surface-3);
     color: var(--z-fg);
-    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    box-shadow:
+      inset 0 0 0 1px var(--z-glass-border),
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
   }
   .z-tabstrip__select {
     display: inline-flex;
@@ -674,6 +699,7 @@
     color: inherit;
     font: inherit;
     font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
     white-space: nowrap;
     cursor: pointer;
   }
@@ -690,7 +716,7 @@
     place-items: center;
     flex-shrink: 0;
     border: 0;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-radius-xs);
     background: transparent;
     color: inherit;
     cursor: pointer;
@@ -711,6 +737,7 @@
   .z-tabstrip__add {
     width: var(--z-control-height-sm);
     height: var(--z-control-height-sm);
+    border-radius: var(--z-control-radius-sm);
     color: var(--z-fg-muted);
   }
   @media (hover: hover) {
@@ -720,10 +747,13 @@
     }
   }
   .z-tabstrip__select:focus-visible,
-  .z-tabstrip__close:focus-visible,
+  .z-tabstrip__close:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
   .z-tabstrip__add:focus-visible {
-    outline: 2px solid transparent;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
 
   /* ── Barra de título ───────────────────────────────────────────────────── */
@@ -864,6 +894,11 @@
     overflow-y: auto;
     padding-block: var(--z-stage-pad-y);
   }
+  /* Región desplazable enfocable (tabindex="0"): el contorno va por dentro para que el recorte no lo esconda. */
+  .z-page:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
   .z-page__body {
     display: flex;
     flex-direction: column;
@@ -888,27 +923,26 @@
   }
   .z-pagehead__eyebrow {
     margin-bottom: var(--z-space-1);
-    font-size: var(--z-text-caption);
-    font-weight: var(--z-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--z-tracking-wide);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
     color: var(--z-accent-text);
   }
   .z-pagehead__title {
     margin: 0;
     font-family: var(--z-font-display);
     font-size: var(--z-text-display);
-    font-weight: var(--z-weight-bold);
+    font-weight: var(--z-weight-display);
     line-height: var(--z-leading-tight);
-    letter-spacing: var(--z-tracking-tight);
+    letter-spacing: var(--z-tracking-display);
     color: var(--z-fg);
     text-wrap: balance;
   }
   .z-pagehead__description {
-    margin: var(--z-space-2) 0 0;
-    max-width: var(--z-prose-max);
+    margin: var(--z-space-3) 0 0;
+    max-width: 62ch;
     color: var(--z-fg-muted);
-    line-height: var(--z-leading-relaxed);
+    font-size: var(--z-text-lead);
+    line-height: var(--z-leading-snug);
     text-wrap: pretty;
   }
   .z-pagehead__actions {
@@ -933,13 +967,17 @@
     margin: 0;
     font-family: var(--z-font-display);
     font-size: var(--z-text-heading-lg);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-display);
+    line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
     color: var(--z-fg);
+    text-wrap: balance;
   }
   .z-section__description {
     margin: var(--z-space-1) 0 0;
-    font-size: var(--z-text-small);
+    font-size: var(--z-text-body);
     color: var(--z-fg-muted);
+    text-wrap: pretty;
   }
 
   @keyframes z-fade-in {
@@ -973,6 +1011,7 @@
   /* Colores forzados (alto contraste de Windows): el sistema retira fondos y sombras, así que los estados que solo
      se distinguían por el fondo o por un anillo de sombra se marcan con contornos y colores del sistema. */
   @media (forced-colors: active) {
+    .z-page:focus-visible,
     .z-rail__item:focus-visible,
     .z-sidebar__fold:focus-visible,
     .z-tabstrip__select:focus-visible,

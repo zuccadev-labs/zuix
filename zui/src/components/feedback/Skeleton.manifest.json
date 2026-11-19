@@ -32,7 +32,7 @@
     }
   ],
   "states": ["pulse", "wave"],
-  "tokens": ["surface-3", "radius-xs", "radius-full", "radius-md", "glass-highlight", "space-2"],
+  "tokens": ["surface-3", "radius-xs", "radius-full", "glass-highlight", "space-2", "control-radius"],
   "classes": ["z-skeleton", "z-skeleton-lines"],
   "a11y": "aria-hidden: el contenedor debe anunciar la carga con aria-busy.",
   "examples": [

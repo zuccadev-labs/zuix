@@ -16,7 +16,7 @@
     }
   ],
   "states": ["rest"],
-  "tokens": ["space-2", "space-3", "line"],
+  "tokens": ["space-2", "line", "space-4"],
   "classes": ["z-card__footer"],
   "examples": [
     {

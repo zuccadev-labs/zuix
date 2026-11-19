@@ -57,6 +57,107 @@
 - [Contrato público](https://zuccadev-labs.github.io/zuix/docs/package/contrato-publico.md): Qué es superficie pública de la suite y qué cuenta como cambio incompatible.
 - [Apertura del repositorio](https://zuccadev-labs.github.io/zuix/docs/package/apertura-del-repositorio.md): Qué saneé para poder hacer público el repositorio y cómo se publica un repositorio sin arrastrar su historial privado.
 
+## Componentes: Acciones
+
+- [Button](https://zuccadev-labs.github.io/zuix/components/actions/button.md): Acción principal o secundaria con texto, iconos opcionales y estado de carga.
+- [IconButton](https://zuccadev-labs.github.io/zuix/components/actions/icon-button.md): Botón cuadrado de solo icono con nombre accesible obligatorio.
+- [Link](https://zuccadev-labs.github.io/zuix/components/actions/link.md): Enlace de texto: dentro de un párrafo, discreto o como acción suelta.
+- [SegmentedControl](https://zuccadev-labs.github.io/zuix/components/actions/segmented-control.md): Selector de una opción entre pocas; siempre hay una elegida.
+- [Toggle](https://zuccadev-labs.github.io/zuix/components/actions/toggle.md): Botón de dos estados (activado o no), con texto, icono o ambos.
+
+## Componentes: Formularios
+
+- [Calendar](https://zuccadev-labs.github.io/zuix/components/forms/calendar.md): Rejilla de un mes para elegir una fecha o un rango.
+- [Checkbox](https://zuccadev-labs.github.io/zuix/components/forms/checkbox.md): Casilla de verificación con etiqueta, descripción y estado indeterminado.
+- [Combobox](https://zuccadev-labs.github.io/zuix/components/forms/combobox.md): Campo de texto con lista filtrable para elegir una opción; admite carga asíncrona de opciones.
+- [DateInput](https://zuccadev-labs.github.io/zuix/components/forms/date-input.md): Campo de fecha, hora, fecha y hora o mes sobre el control nativo.
+- [DatePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-picker.md): Campo de fecha con calendario propio en un popover; fecha única o rango.
+- [Field](https://zuccadev-labs.github.io/zuix/components/forms/field.md): Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.
+- [FileUpload](https://zuccadev-labs.github.io/zuix/components/forms/file-upload.md): Zona para elegir o soltar archivos.
+- [Input](https://zuccadev-labs.github.io/zuix/components/forms/input.md): Campo de texto de una línea con icono y contenido final opcionales.
+- [NativeSelect](https://zuccadev-labs.github.io/zuix/components/forms/native-select.md): Lista desplegable sobre el `<select>` nativo (lista del sistema) con el aspecto del resto de controles.
+- [OTPInput](https://zuccadev-labs.github.io/zuix/components/forms/otp-input.md): Código de un solo uso repartido en casillas.
+- [Radio](https://zuccadev-labs.github.io/zuix/components/forms/radio.md): Opción de un `RadioGroup`, con etiqueta y descripción.
+- [RadioGroup](https://zuccadev-labs.github.io/zuix/components/forms/radio-group.md): Grupo de opciones excluyentes; contiene componentes `Radio`.
+- [SearchInput](https://zuccadev-labs.github.io/zuix/components/forms/search-input.md): Campo de búsqueda con icono, botón de borrado y estado de carga.
+- [Select](https://zuccadev-labs.github.io/zuix/components/forms/select.md): Lista desplegable con popup propio (material liquid): opciones con icono, grupos y placeholder.
+- [Slider](https://zuccadev-labs.github.io/zuix/components/forms/slider.md): Deslizador de un valor o de un rango.
+- [Switch](https://zuccadev-labs.github.io/zuix/components/forms/switch.md): Interruptor de activación inmediata.
+- [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
+
+## Componentes: Datos
+
+- [Avatar](https://zuccadev-labs.github.io/zuix/components/data/avatar.md): Imagen de persona o entidad, con iniciales o icono como respaldo.
+- [AvatarGroup](https://zuccadev-labs.github.io/zuix/components/data/avatar-group.md): Avatares solapados con contador de sobrantes.
+- [Badge](https://zuccadev-labs.github.io/zuix/components/data/badge.md): Etiqueta de estado o categoría, no interactiva.
+- [Chip](https://zuccadev-labs.github.io/zuix/components/data/chip.md): Ficha compacta: filtro conmutable, etiqueta eliminable o ambas.
+- [DataTable](https://zuccadev-labs.github.io/zuix/components/data/data-table.md): Tabla de datos genérica sobre el tipo de fila, con columnas ordenables y filas activables.
+- [Kbd](https://zuccadev-labs.github.io/zuix/components/data/kbd.md): Tecla o atajo de teclado.
+- [Meter](https://zuccadev-labs.github.io/zuix/components/data/meter.md): Medidor de una magnitud dentro de un rango conocido.
+- [Progress](https://zuccadev-labs.github.io/zuix/components/data/progress.md): Barra de avance de una tarea, determinada o indeterminada.
+- [Rating](https://zuccadev-labs.github.io/zuix/components/data/rating.md): Valoración con estrellas: lectura (admite decimales) o entrada.
+- [StatTile](https://zuccadev-labs.github.io/zuix/components/data/stat-tile.md): Tesela de indicador: etiqueta, valor destacado y contexto.
+- [Table](https://zuccadev-labs.github.io/zuix/components/data/table.md): Tabla con estilo para marcado nativo (thead, tbody, tr, th, td).
+
+## Componentes: Estado
+
+- [Alert](https://zuccadev-labs.github.io/zuix/components/feedback/alert.md): Aviso en línea sobre el resultado de una acción o el estado del sistema.
+- [EmptyState](https://zuccadev-labs.github.io/zuix/components/feedback/empty-state.md): Estado vacío: explica por qué no hay contenido y qué hacer.
+- [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
+- [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
+- [LoadingOverlay](https://zuccadev-labs.github.io/zuix/components/feedback/loading-overlay.md): Capa de espera sobre un contenedor o sobre toda la ventana.
+- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido.
+- [Spinner](https://zuccadev-labs.github.io/zuix/components/feedback/spinner.md): Anillo giratorio para esperas de duración desconocida.
+
+## Componentes: Contenido
+
+- [Callout](https://zuccadev-labs.github.io/zuix/components/content/callout.md): Nota destacada dentro de un contenido; estática.
+- [Card](https://zuccadev-labs.github.io/zuix/components/content/card.md): Superficie que agrupa contenido relacionado.
+- [CardFooter](https://zuccadev-labs.github.io/zuix/components/content/card-footer.md): Pie de una Card con sus acciones.
+- [CardHeader](https://zuccadev-labs.github.io/zuix/components/content/card-header.md): Cabecera de una Card: título, subtítulo y acción.
+- [CodeBlock](https://zuccadev-labs.github.io/zuix/components/content/code-block.md): Bloque de código sin resaltado, con botón de copiar.
+- [Divider](https://zuccadev-labs.github.io/zuix/components/content/divider.md): Línea separadora entre bloques o entre elementos de una barra.
+- [Panel](https://zuccadev-labs.github.io/zuix/components/content/panel.md): Panel de cristal líquido: la pieza de cromo sobre la que flota la interfaz.
+
+## Componentes: Superposición
+
+- [CommandPalette](https://zuccadev-labs.github.io/zuix/components/overlay/command-palette.md): Paleta de comandos con búsqueda difusa, grupos y manejo completo por teclado.
+- [ConfirmDialog](https://zuccadev-labs.github.io/zuix/components/overlay/confirm-dialog.md): Confirmación de una acción con cancelar y confirmar; la variante danger marca acciones destructivas.
+- [ContextMenu](https://zuccadev-labs.github.io/zuix/components/overlay/context-menu.md): Menú contextual que se abre con clic derecho o pulsación larga sobre una zona.
+- [Drawer](https://zuccadev-labs.github.io/zuix/components/overlay/drawer.md): Panel de cristal que entra desde un borde, flotando sobre un velo.
+- [Menu](https://zuccadev-labs.github.io/zuix/components/overlay/menu.md): Menú desplegable de acciones anclado a un disparador.
+- [Modal](https://zuccadev-labs.github.io/zuix/components/overlay/modal.md): Diálogo modal centrado sobre un velo, con título, descripción, cuerpo y pie.
+- [Popover](https://zuccadev-labs.github.io/zuix/components/overlay/popover.md): Panel flotante anclado a un disparador, para contenido interactivo breve.
+- [Toast](https://zuccadev-labs.github.io/zuix/components/overlay/toast.md): Avisos efímeros apilados en una esquina.
+- [Tooltip](https://zuccadev-labs.github.io/zuix/components/overlay/tooltip.md): Burbuja de ayuda breve al pasar el cursor o enfocar un control.
+
+## Componentes: Navegación
+
+- [Accordion](https://zuccadev-labs.github.io/zuix/components/navigation/accordion.md): Secciones plegables apiladas.
+- [Breadcrumb](https://zuccadev-labs.github.io/zuix/components/navigation/breadcrumb.md): Ruta jerárquica hasta la página actual.
+- [NavList](https://zuccadev-labs.github.io/zuix/components/navigation/nav-list.md): Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.
+- [Pagination](https://zuccadev-labs.github.io/zuix/components/navigation/pagination.md): Navegación entre páginas numeradas con anterior, siguiente y huecos.
+- [Stepper](https://zuccadev-labs.github.io/zuix/components/navigation/stepper.md): Progreso por pasos numerados, horizontal o vertical.
+- [Tabs](https://zuccadev-labs.github.io/zuix/components/navigation/tabs.md): Pestañas para alternar vistas: control segmentado, tira de pastillas o subrayado.
+- [Tree](https://zuccadev-labs.github.io/zuix/components/navigation/tree.md): Árbol jerárquico con expansión, selección y navegación por teclado.
+
+## Componentes: Carousel
+
+- [Carousel](https://zuccadev-labs.github.io/zuix/components/carousel/carousel.md): Carrusel agnóstico al contenido: tira con bucle infinito, arrastre con inercia, ajuste al slide más cercano, flechas, contador, teclado y anuncios para lectores de pantalla.
+
+## Componentes: Layouts
+
+- [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.
+- [Page](https://zuccadev-labs.github.io/zuix/components/layout/page.md): Página con desplazamiento propio, cabecera y secciones.
+- [Rail](https://zuccadev-labs.github.io/zuix/components/layout/rail.md): Barra estrecha de navegación principal, solo iconos.
+- [ResizeHandle](https://zuccadev-labs.github.io/zuix/components/layout/resize-handle.md): Tirador para redimensionar un panel, con puntero y teclado.
+- [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.
+- [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria en acordeón: secciones plegables y pie fijo.
+- [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.
+- [SplitPane](https://zuccadev-labs.github.io/zuix/components/layout/split-pane.md): Paneles divididos con divisores arrastrables y manejables con teclado.
+- [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre y alta.
+- [TitleBar](https://zuccadev-labs.github.io/zuix/components/layout/title-bar.md): Barra de título para ventanas sin marco, transparente sobre el fondo.
+
 ## Contratos legibles por máquina
 
 - tokens/dist/tokens.json: tokens por marca y tema

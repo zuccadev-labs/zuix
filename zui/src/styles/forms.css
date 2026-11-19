@@ -1192,7 +1192,7 @@
     width: 18px;
     height: 18px;
     padding: 0;
-    border: 1px solid var(--z-line-strong);
+    border: 1px solid var(--z-control-border);
     background: var(--z-control-bg);
     color: var(--z-fg-on-accent);
     cursor: inherit;
@@ -1216,18 +1216,20 @@
   }
   .z-check__box:focus-visible,
   .z-radio__dot:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-check__box:active:not(:disabled),
   .z-radio__dot:active:not(:disabled) {
     transform: scale(0.92);
   }
+  /* Marcado: acento sólido con el brillo interior del botón primario. */
   .z-check__box[data-state="checked"],
   .z-check__box[data-state="indeterminate"],
   .z-radio__dot[data-state="checked"] {
     border-color: transparent;
     background: var(--z-accent-solid);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
   }
   .z-check__box[data-invalid],
   .z-radio-group[data-invalid] .z-radio__dot {
@@ -1309,6 +1311,7 @@
     border: 0;
     border-radius: var(--z-radius-full);
     background: var(--z-line-strong);
+    box-shadow: inset 0 1px 2px color-mix(in srgb, var(--z-canvas) 30%, transparent);
     cursor: inherit;
     transition:
       background var(--z-duration-normal) var(--z-ease-standard),
@@ -1320,12 +1323,13 @@
     }
   }
   .z-switch__track:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-switch__track[data-state="checked"],
   .z-switch__track[data-state="checked"]:hover:not(:disabled) {
     background: var(--z-accent-solid);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
   }
   .z-switch__thumb {
     position: absolute;
@@ -1348,26 +1352,33 @@
     transform: translateX(calc(var(--z-switch-height) - var(--z-switch-width)));
   }
 
-  /* ---- Slider ---- */
+  /* ---- Slider ----
+     El tirador es un objetivo de 24 × 24 (WCAG 2.5.8) que dibuja dentro su pomo de 18 px (14 en sm): el aspecto no
+     cambia y el área que recibe el puntero, el foco y las medidas de accesibilidad es la del elemento. La pista es
+     una barra fina con el radio corto del estándar. */
   .z-slider {
-    --z-slider-thumb: 18px;
+    --z-slider-thumb: 24px;
+    --z-slider-knob: 18px;
     --z-slider-track: 4px;
     position: relative;
     display: flex;
     align-items: center;
     width: 100%;
+    /* En un contenedor que se ajusta a su contenido el 100 % sería 0: los tiradores se solaparían. */
+    min-width: calc(var(--z-slider-thumb) * 6);
     height: var(--z-slider-thumb);
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
   }
   .z-slider[data-size="sm"] {
-    --z-slider-thumb: 14px;
+    --z-slider-knob: 14px;
     --z-slider-track: 3px;
   }
   .z-slider[data-orientation="vertical"] {
     flex-direction: column;
     width: var(--z-slider-thumb);
+    min-width: 0;
     height: 100%;
     min-height: var(--z-space-20);
   }
@@ -1378,8 +1389,9 @@
     position: relative;
     flex: 1 1 auto;
     height: var(--z-slider-track);
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-radius-xs);
     background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
   }
   .z-slider[data-orientation="vertical"] .z-slider__track {
     width: var(--z-slider-track);
@@ -1388,7 +1400,7 @@
   .z-slider__range {
     position: absolute;
     height: 100%;
-    border-radius: var(--z-radius-full);
+    border-radius: inherit;
     background: var(--z-accent);
   }
   .z-slider[data-orientation="vertical"] .z-slider__range {
@@ -1396,34 +1408,45 @@
     height: auto;
   }
   .z-slider__thumb {
-    display: block;
+    display: grid;
+    place-items: center;
     width: var(--z-slider-thumb);
     height: var(--z-slider-thumb);
+    border-radius: var(--z-radius-full);
+    background: transparent;
+    cursor: grab;
+  }
+  .z-slider__thumb::before {
+    content: "";
+    width: var(--z-slider-knob);
+    height: var(--z-slider-knob);
+    box-sizing: border-box;
     border: 2px solid var(--z-accent);
     border-radius: var(--z-radius-full);
     background: var(--z-fg-on-accent);
     box-shadow: var(--z-shadow-sm);
-    cursor: grab;
-    transition:
-      box-shadow var(--z-duration-fast) var(--z-ease-standard),
-      transform var(--z-duration-fast) var(--z-ease-standard);
+    transition: scale var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
-    .z-slider__thumb:hover {
-      transform: scale(1.1);
+    .z-slider__thumb:hover::before {
+      scale: 1.1;
     }
   }
   .z-slider__thumb:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
   }
   .z-slider__thumb:active {
-    transform: scale(1.15);
     cursor: grabbing;
+  }
+  .z-slider__thumb:active::before {
+    scale: 1.15;
   }
   .z-slider[data-disabled] .z-slider__thumb {
     cursor: not-allowed;
-    transform: none;
+  }
+  .z-slider[data-disabled] .z-slider__thumb::before {
+    scale: 1;
   }
 
   /* ---- OTPInput ---- */
@@ -1442,7 +1465,7 @@
     height: calc(var(--z-otp-size) + var(--z-space-1));
     padding: 0;
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-control-radius-lg);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font-family: var(--z-font-mono);
@@ -1452,17 +1475,18 @@
     caret-color: var(--z-accent);
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      background var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-otp__cell:hover:not(:disabled) {
       border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
     }
   }
   .z-otp__cell:focus-visible {
-    outline: none;
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-otp__cell:active:not(:disabled) {
     background: var(--z-surface);
@@ -1483,7 +1507,7 @@
     justify-content: center;
     gap: var(--z-space-2);
     padding: var(--z-space-6) var(--z-space-4);
-    border: 1px dashed var(--z-line-strong);
+    border: 1px dashed var(--z-control-border);
     border-radius: var(--z-card-radius);
     background: var(--z-control-bg);
     color: var(--z-fg-muted);
@@ -1505,7 +1529,8 @@
   }
   .z-upload:has(.z-upload__input:focus-visible) {
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-upload:active:not([data-disabled]),
   .z-upload[data-dragging] {
@@ -1525,14 +1550,16 @@
     justify-content: center;
     width: var(--z-space-10);
     height: var(--z-space-10);
-    border-radius: var(--z-radius-full);
+    /* Baldosa de radio concéntrico (12), no círculo. */
+    border-radius: var(--z-control-radius-lg);
     background: var(--z-accent-soft);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-accent-text);
   }
   .z-upload__label {
     color: var(--z-fg);
     font-size: var(--z-text-body);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
   }
   .z-upload__hint {
     font-size: var(--z-text-small);
@@ -1555,8 +1582,9 @@
     display: flex;
     align-items: center;
     gap: var(--z-space-3);
+    min-height: var(--z-control-height-sm);
     padding: var(--z-space-1) var(--z-space-3);
-    border-radius: var(--z-radius-xs);
+    border-radius: var(--z-control-radius-sm);
     background: var(--z-surface-2);
     color: var(--z-fg);
     font-size: var(--z-text-small);

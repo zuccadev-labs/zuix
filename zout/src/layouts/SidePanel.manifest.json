@@ -27,7 +27,20 @@
       "default": true
     }
   ],
-  "tokens": ["line", "fg", "fg-subtle", "font-display", "text-title", "space-3", "space-4"],
+  "tokens": [
+    "line",
+    "fg",
+    "font-display",
+    "text-title",
+    "space-3",
+    "space-4",
+    "fg-muted",
+    "space-1",
+    "space-2",
+    "text-caption",
+    "tracking-snug",
+    "weight-display"
+  ],
   "classes": ["z-sidepanel"],
   "examples": [
     {

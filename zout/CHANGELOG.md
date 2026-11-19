@@ -5,6 +5,26 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Cambiado
+
+- Estándar liquid glass: nada en píldora. El rail es un panel de cromo con radio 20, concéntrico con sus items
+  (`control-radius-lg`); el enlace «saltar al contenido» es transparente hasta recibir el foco; las pestañas de trabajo (`TabStrip`) son rectángulos de radio 8, la activa
+  levantada con canto, brillo y sombra corta; los tiradores y divisores dibujan su línea con `radius-xs`.
+  `radius-full` queda para el contador del rail.
+- Foco por contorno (`focus-width`, `accent-ring`) en el rail, la barra lateral, las pestañas de trabajo y el
+  enlace «saltar al contenido», en lugar de la sombra `focus-ring`.
+- Cajón del shell en cristal elevado (`popup-blur`, `popup-shadow`) y entrada de 320 ms; velo con
+  `blur(6px)`. Panel dividido con radio 16 y cabecera de 34 px; el panel enfocado se marca con contorno.
+- Tipografía: título de `PageHeader` con `weight-display` y `tracking-display`, entradilla en `text-lead`
+  (máx. 62ch), eyebrow sin mayúsculas; secciones y cabecera de `SidePanel` con peso de display e interletrado
+  `snug`; grupos de `Sidebar` de 34 px en 13/500 sin mayúsculas.
+
+### Corregido
+
+- `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
+  accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía
+  desplazar con el teclado (axe `scrollable-region-focusable`).
+
 ## [0.2.0] - 2026-11-18
 
 Qué hay que tocar en una aplicación está en la [guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).

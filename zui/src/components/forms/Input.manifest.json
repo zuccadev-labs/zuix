@@ -60,7 +60,6 @@
     "control-height-sm",
     "text-small",
     "control-height-lg",
-    "space-4",
     "font-mono",
     "fg-subtle",
     "space-1",
@@ -74,7 +73,8 @@
     "space-2-5",
     "space-3-5",
     "control-radius-sm",
-    "control-radius-lg"
+    "control-radius-lg",
+    "touch-target"
   ],
   "classes": ["z-input"],
   "a11y": "input nativo. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin Field necesita aria-label.",

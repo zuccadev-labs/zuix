@@ -38,9 +38,14 @@ Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que 
 
 Lo habitual es el paraguas, que trae los otros cuatro en la misma versión:
 
+```bash
+pnpm add @zuccadev-labs/zuix
 ```
-pnpm add @zuccadev-labs/zuix                 # o npm install, yarn add, bun add
-pnpm add react react-dom                     # solo para el binding de React
+
+Y, solo para el binding de React:
+
+```bash
+pnpm add react react-dom
 ```
 
 | Subruta del paraguas | Equivale a |
@@ -63,11 +68,10 @@ La entrada raíz (`import { zui, zout, zicon } from "@zuccadev-labs/zuix"`) expo
 Es cómoda para explorar, pero un espacio de nombres arrastra el paquete entero: importar `Stack` así añade
 todo `zout` al bundle. Para una aplicación conviene importar por subruta.
 
-También se puede instalar paquete a paquete:
+También se puede instalar paquete a paquete, con `@zuccadev-labs/zuix-zout` además si hacen falta los layouts:
 
-```
+```bash
 pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-zicon @zuccadev-labs/zuix-tokens
-pnpm add @zuccadev-labs/zuix-zout            # layouts
 ```
 
 `@zuccadev-labs/zuix-zicon` es un peer de `zui` y `zout`: la aplicación lo instala siempre. Los paquetes de

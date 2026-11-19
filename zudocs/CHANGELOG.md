@@ -7,8 +7,32 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Añadido
+
+- Una página por componente de `zui` y `zout` (`/components/<grupo>/<componente>`), generada en el build desde
+  `manifest.json` y `html.json`: título, entradilla, enlaces (APG, manifiesto, HTML sin React), vista previa en
+  vivo sobre el lienzo de la marca, instalación, ejemplos con pestañas Vista previa / Código y conmutador
+  React / HTML (el HTML se pinta con `zui/dom`), API, accesibilidad y teclado, tokens y clases, y
+  relacionados. Un componente nuevo aparece solo con existir su manifiesto. `/components` pasa a ser el
+  índice, con tarjetas por categoría y buscador.
+- «Copiar página» en cada documento y página de componente: copia el Markdown de la página (con menú para
+  verlo y para copiar el enlace). `llms.txt` lista también los componentes y cada uno tiene su copia `.md`.
+- Bloques de instalación con pestañas pnpm, npm, yarn y bun que recuerdan la elección; una orden de
+  instalación en un bloque `bash` se convierte sola.
+- Campos `repository` y `cta` en `zudocs.config.json`.
+
 ### Cambiado
 
+- Tema rehecho con el estándar liquid glass: barra superior flotante en dos barras de cristal, barra lateral
+  de cristal con pestañas de sección, grupos plegables, contadores y filtro, artículo sobre superficie de
+  lectura con anterior/siguiente, migas, entradilla, fecha y tiempo de lectura, rail «En esta página» con la
+  sección visible resaltada, bloques de código con cabecera y portada nueva. Nada del aspecto del tema
+  clásico de Docusaurus queda a la vista.
+- El buscador local se abre como paleta de cristal (`⌘K` / `Ctrl K` o `/`) en un `<dialog>` modal.
+- En pantallas estrechas la navegación va en un cajón (`<dialog>` modal), que se abre desde la barra o desde
+  las migas del artículo.
+- El código se colorea con los tokens de texto de la marca, los mismos en claro y oscuro; el validador de
+  contraste de `@zuccadev-labs/zuix-tokens` mide ahora también la hoja del sitio.
 - El sitio deja de cargar Poppins: con la base visual nueva, la marca `dazlabs` usa DM Sans también en los
   titulares. Quedan autoalojadas DM Sans y JetBrains Mono.
 

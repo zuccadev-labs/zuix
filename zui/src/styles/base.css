@@ -148,7 +148,8 @@
       forced-color-adjust: none;
       background: Highlight !important;
     }
-    .z-root :is(.z-slider__thumb, .z-switch__thumb) {
+    .z-root .z-switch__thumb,
+    .z-root .z-slider__thumb::before {
       forced-color-adjust: none;
       background: ButtonText !important;
       border: 1px solid Canvas !important;
