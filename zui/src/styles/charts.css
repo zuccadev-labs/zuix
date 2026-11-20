@@ -292,11 +292,11 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  .z-chart .z-chart__area {
+  .z-chart .z-chart__svg .z-chart__area {
     fill: var(--z-chart-c);
     fill-opacity: var(--z-chart-area-opacity);
   }
-  .z-chart[data-stacked] .z-chart__area {
+  .z-chart[data-stacked] .z-chart__svg .z-chart__area {
     fill-opacity: calc(var(--z-chart-area-opacity) * 2);
   }
   .z-chart[data-patterns] .z-chart__line {
@@ -742,7 +742,7 @@
       stroke: CanvasText;
       stroke-dasharray: var(--z-chart-dash, none);
     }
-    .z-chart .z-chart__area {
+    .z-chart .z-chart__svg .z-chart__area {
       fill: transparent;
     }
     .z-chart__grid,

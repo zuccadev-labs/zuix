@@ -418,7 +418,10 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
     // Solo se registraron dos iconos: el set completo (≈580 kB) no debe entrar. Tope con margen sobre lo que pesa la
     // biblioteca sin iconos (≈575 kB con la agenda y su oleada 2, que suma ≈70 kB minificados de código propio: año,
     // perpetuo, línea temporal, buscar hueco, franjas, mapa de calor y rachas): con el set completo pasa de 1 MB.
-    else if (js.length > 640_000)
+    // Oleada 5 (medido con esbuild, minificado, sin React ni iconos): zui pasa de 373 a 425 kB (+52 kB: gráficos
+    // ≈26 kB de core/chart-widget y core/chart, selección de DataTable y Tree, JsonTree, Stepper con paneles,
+    // Timeline, formatos y el resto); el consumidor queda en ≈662 kB, sin ningún icono del set completo.
+    else if (js.length > 700_000)
       bad(`vite: el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el set completo de iconos no se está descartando`);
     else
       ok(
@@ -440,7 +443,7 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
     if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-") || css.includes("@import"))
       bad("vite (paraguas): @zuccadev-labs/zuix/styles.css no trae tokens, zui y zout resueltos");
     else if (!js.includes("z-btn--")) bad("vite (paraguas): el JS compilado no trae los componentes");
-    else if (js.length > 640_000)
+    else if (js.length > 700_000)
       bad(`vite (paraguas): el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el paraguas arrastra el set completo de iconos`);
     else
       ok(

@@ -475,6 +475,22 @@
   .z-jsontree .z-tree__row {
     height: max(28px, var(--z-touch-target, 0px));
   }
+  /* Una fila por nodo: lo que no cabe se corta con puntos suspensivos (el valor completo va en title). */
+  .z-jsontree .z-tree__label {
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .z-jsontree :is(.z-jsontree__key, .z-jsontree__sep) {
+    flex: none;
+    white-space: pre;
+  }
+  .z-jsontree__value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .z-jsontree__key {
     color: var(--z-fg);
   }

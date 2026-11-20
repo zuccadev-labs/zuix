@@ -7,6 +7,8 @@
     gap: var(--z-space-2);
     min-width: 0;
     /* La barra pasa a dos filas en un contenedor estrecho (no en la ventana: la tabla puede ir en un panel). */
+    /* Contenedor de consulta: toma el ancho del sitio que lo recibe (no el de su contenido, que lo dejaría en 0). */
+    inline-size: 100%;
     container-type: inline-size;
   }
   .z-table :is(th, td).z-table__select {
@@ -85,6 +87,8 @@
     margin: 0;
     padding: 0;
     list-style: none;
+    /* Contenedor de consulta: toma el ancho del sitio que lo recibe (no el de su contenido, que lo dejaría en 0). */
+    inline-size: 100%;
     container-type: inline-size;
   }
   .z-timeline-list[data-size="sm"] {
@@ -486,6 +490,8 @@
     margin: 0;
     font-size: var(--z-text-body);
     line-height: var(--z-leading-ui);
+    /* Contenedor de consulta: toma el ancho del sitio que lo recibe (no el de su contenido, que lo dejaría en 0). */
+    inline-size: 100%;
     container-type: inline-size;
   }
   .z-dl[data-size="sm"] {

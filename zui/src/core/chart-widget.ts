@@ -698,7 +698,8 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
   // Ejes (HTML colocado por fracciones; el más largo de los rótulos en flujo fija el ancho del eje vertical).
   const valueTicks = yticks.map((t, i) => ({ at: yf(t), text: axisFmt.format(t), minor: yticks.length > 5 && i % 2 === 1 }));
   // Con pocas categorías se ven todas; con muchas, una de cada dos cede en un contenedor estrecho.
-  const catTicks = x.ticks.length > 6 ? x.ticks : x.ticks.map((t) => ({ ...t, minor: false }));
+  // En un eje de tiempo o número los rótulos son más anchos: alternan desde 5.
+  const catTicks = x.ticks.length > 6 || (!bars && x.ticks.length > 4) ? x.ticks : x.ticks.map((t) => ({ ...t, minor: false }));
   const vAxisTicks = horizontal ? catTicks.map((t) => ({ ...t, at: 1 - t.at })) : valueTicks;
   const hAxisTicks = horizontal ? valueTicks : catTicks;
   // Todos los rótulos en flujo (sin alto): el eje toma el ancho del más ancho, sea cual sea la fuente.

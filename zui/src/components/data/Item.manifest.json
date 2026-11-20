@@ -135,7 +135,7 @@
     },
     {
       "title": "Con icono y enlace",
-      "code": "<Item icon=\"document-text\" title=\"Quarterly report.pdf\" description=\"2.4 MB · PDF\" href=\"#report\" variant=\"outline\" />"
+      "code": "<Item icon=\"document-text\" title=\"Quarterly report.pdf\" description=\"2.4 MB · PDF\" href=\"/tokens\" variant=\"outline\" />"
     },
     {
       "title": "Atenuado y compacto",

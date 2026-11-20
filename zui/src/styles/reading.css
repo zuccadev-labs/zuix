@@ -290,7 +290,12 @@
       animation-direction: reverse;
     }
     .z-marquee[data-paused] .z-marquee__track,
-    .z-marquee[data-pause-on-hover]:is(:hover, :focus-within) .z-marquee__track {
+    .z-marquee[data-pause-on-hover]:focus-within .z-marquee__track {
+      animation-play-state: paused;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .z-marquee[data-pause-on-hover]:hover .z-marquee__track {
       animation-play-state: paused;
     }
   }
