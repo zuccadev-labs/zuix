@@ -33,6 +33,13 @@ radios y material de los tokens.
     cambio de menú con el puntero cuando ya hay uno abierto. Cada menú es el de la suite (submenús, casillas,
     radios). Lógica en `core/menubar`. En `/dom`, `.z-menubar[role=menubar]` con títulos `data-z-open` y
     `openMenubarMenu()`.
+  - `Popover`: ancla distinta del disparador (`anchor`), flecha hacia el centro del ancla que sigue al lado en
+    que quede el panel (`arrow`) y botón de cierre (`showClose`, `closeLabel`). Donde el navegador tiene CSS anchor
+    positioning, el popover no modal se ancla con CSS (`position-area`, `position-try-fallbacks`) y la colocación
+    propia queda de respaldo; si el motor deja la capa lejos del ancla, se vuelve a ella. En `/dom`, `data-arrow`
+    en el popover y `data-z-anchor="#id"` en el disparador; `openPopover()` acepta `{ trigger }`. Nuevos
+    `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
+    escribe `--z-arrow-offset`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

@@ -352,6 +352,78 @@
   .z-popover[data-state="closed"] {
     animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
+  /* Con flecha, el panel no recorta (la flecha sobresale): desplaza su cuerpo. */
+  /* Sin `display` propio: un popover cerrado debe seguir oculto por el navegador. */
+  .z-popover[data-arrow] {
+    overflow: visible;
+  }
+  .z-popover__body {
+    max-block-size: calc(var(--z-available-height, calc(100dvh - var(--z-space-4))) - 2 * var(--z-space-3));
+    overflow-y: auto;
+  }
+  /* Botón de cierre en la esquina, concéntrico con el panel; el texto no se mete debajo. */
+  .z-popover[data-close] {
+    padding-inline-end: calc(var(--z-space-3) + var(--z-space-7));
+  }
+  .z-popover__close {
+    position: absolute;
+    inset-block-start: var(--z-space-1-5);
+    inset-inline-end: var(--z-space-1-5);
+  }
+
+  /* ---------- Flecha de las capas ancladas ---------- */
+  /* Media caja girada 45° sobre el borde que mira al ancla, en `--z-arrow-offset` (lo escribe la colocación). Mismo
+     cristal y canto que la capa; el recorte deja solo la mitad de fuera, así no se suma al fondo de la capa. */
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]::after {
+    content: "";
+    position: absolute;
+    inline-size: 12px;
+    block-size: 12px;
+    border: 1px solid var(--z-glass-border);
+    border-inline-end: 0;
+    border-block-end: 0;
+    background: var(--z-lg-bg, var(--z-popup-bg));
+    -webkit-backdrop-filter: blur(var(--z-lg-blur, var(--z-popup-blur)));
+    backdrop-filter: blur(var(--z-lg-blur, var(--z-popup-blur)));
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    pointer-events: none;
+  }
+  /* El recorte es físico (esquina superior izquierda): en RTL el canto pasa al otro borde para seguir dentro del recorte. */
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]:dir(rtl)::after {
+    border-inline-start: 0;
+    border-inline-end: 1px solid var(--z-glass-border);
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]:is([data-side="bottom"], [data-side="top"])::after {
+    inset-inline-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="bottom"]::after {
+    inset-block-start: -7px;
+    rotate: 45deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="top"]::after {
+    inset-block-end: -7px;
+    rotate: 225deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]:is([data-side="left"], [data-side="right"])::after {
+    inset-block-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
+  }
+  /* El lado es físico (lo mide la colocación): en RTL la flecha de una capa a la derecha va en el borde final. */
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="right"]::after {
+    inset-inline-start: -7px;
+    rotate: -45deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="left"]::after {
+    inset-inline-end: -7px;
+    rotate: 135deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="right"]:dir(rtl)::after {
+    inset-inline-start: auto;
+    inset-inline-end: -7px;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="left"]:dir(rtl)::after {
+    inset-inline-end: auto;
+    inset-inline-start: -7px;
+  }
 
   /* ---------- Tooltip ---------- */
   .z-tooltip {

@@ -12,6 +12,8 @@
 //   data-z-submenu="#id"     en un .z-menu__item: abre ese .z-menu[popover] como submenú, a su derecha
 //   data-z-tooltip="texto"   tooltip al pasar el puntero o enfocar
 //   data-z-placement         bottom-start (por defecto) | bottom | bottom-end | top-start | top | top-end | right | left
+//   data-z-anchor="#id"      en un disparador data-z-open: coloca el popover junto a ese elemento (ancla distinta)
+//   data-arrow               en un .z-popover: flecha hacia el centro del ancla
 //   data-z-static            en un <dialog>: Escape y clic fuera no lo cierran
 // Los atributos de referencia (`#id`) se resuelven con getElementById: valen ids con cualquier carácter y un valor
 // que no sea un selector válido no lanza. Seguridad (CSP, Trusted Types, texto de la aplicación): ver ./shared.
@@ -36,6 +38,7 @@ import { createLongPress } from "../core/long-press";
 import { followModalHost, modalHost, moveToHost, settleShown } from "../core/modal-host";
 import { createMenuAim } from "../core/menu-aim";
 import { isRtl } from "../core/dir";
+import { anchorWithCss, settleAnchoring, type CssAnchoring } from "../core/anchor";
 import { place, submenuAnchor, topInset, type Placement } from "../core/place";
 import { afterExit } from "../core/presence";
 import { move, moveBoth } from "../core/roving";
@@ -159,30 +162,46 @@ function highlight(menu: Element, item: HTMLElement | undefined): void {
 
 /**
  * Abre un elemento `[popover]` anclado a `anchor` (un elemento o un punto de la ventana). Anclado a un elemento, lo
- * sigue cuando la página se desplaza o cambia de tamaño; `follow: false` lo deja donde se abrió.
+ * sigue cuando la página se desplaza o cambia de tamaño; `follow: false` lo deja donde se abrió. `trigger` es quien lo
+ * abre cuando no es el ancla (recibe `aria-expanded` y el foco al cerrar). Un `.z-popover` se coloca con CSS anchor
+ * positioning donde el navegador lo admite (mejora progresiva); si no, con `place()`.
  */
 export function openPopover(
   el: HTMLElement,
   anchor: Element | { x: number; y: number },
   placement: Placement = "bottom-start",
-  options: { follow?: boolean } = {},
+  options: { follow?: boolean; trigger?: Element } = {},
 ): void {
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
   if (!el.matches(":popover-open")) el.showPopover();
+  const gap = anchor instanceof Element ? 6 + (el.hasAttribute("data-arrow") ? 7 : 0) : 0;
+  let css = anchor instanceof Element && el.classList.contains("z-popover") ? anchorWithCss(el, anchor, placement, gap) : null;
+  if (css) cssAnchors.set(el, css);
   const position = () => {
+    // Con CSS anchor positioning solo se mide; si el motor la dejó lejos del ancla, se vuelve a `place()`.
+    if (css?.measure()) return;
+    css?.release();
+    css = null;
+    cssAnchors.delete(el);
     const rect = anchor instanceof Element ? anchor.getBoundingClientRect() : new DOMRect(anchor.x, anchor.y, 0, 0);
-    place(el, rect, placement, anchor instanceof Element ? 6 : 0);
+    place(el, rect, placement, gap);
   };
   position();
+  // Con CSS anchor positioning, algún motor aplica el desplazamiento de la página con retraso: se vigila un momento.
+  if (css) settleAnchoring(() => el.matches(":popover-open") && position());
   if (anchor instanceof Element) {
-    anchors.set(el, anchor);
-    anchor.setAttribute("aria-expanded", "true");
+    const owner = options.trigger ?? anchor;
+    anchors.set(el, owner);
+    owner.setAttribute("aria-expanded", "true");
     if (options.follow !== false) followers.set(el, position);
   }
   if (el.classList.contains("z-menu")) highlight(el, menuItems(el)[0]);
   emit(el, "open");
 }
+
+// Popovers colocados con CSS anchor positioning: al cerrarse se retira el ancla.
+const cssAnchors = new WeakMap<HTMLElement, CssAnchoring>();
 
 export function closePopover(el: HTMLElement): void {
   if (el.matches(":popover-open")) el.hidePopover();
@@ -337,6 +356,8 @@ function onPopoverToggle(event: Event): void {
   const el = event.target as HTMLElement;
   if ((event as ToggleEvent).newState !== "closed" || !el.hasAttribute?.("popover")) return;
   followers.delete(el);
+  cssAnchors.get(el)?.release();
+  cssAnchors.delete(el);
   const anchor = anchors.get(el);
   if (anchor) {
     anchor.setAttribute("aria-expanded", "false");
@@ -830,7 +851,11 @@ function onClick(event: MouseEvent): void {
     if (el instanceof HTMLDialogElement) openDialog(el);
     else if (el) {
       if (el.matches(":popover-open")) closePopover(el);
-      else openPopover(el, opener, (opener.getAttribute("data-z-placement") as Placement) ?? "bottom-start");
+      else {
+        // `data-z-anchor="#id"`: se coloca junto a otro elemento; el disparador sigue siendo el que lo abre.
+        const anchor = byRef(opener.getAttribute("data-z-anchor")) ?? opener;
+        openPopover(el, anchor, (opener.getAttribute("data-z-placement") as Placement) ?? "bottom-start", { trigger: opener });
+      }
     }
     return;
   }

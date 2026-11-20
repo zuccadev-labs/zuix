@@ -104,3 +104,124 @@ describe("core/menubar", async () => {
     assert.equal(menubarIndex("next", 0, 0), -1);
   });
 });
+
+describe("core/place: arrowOffset y core/anchor", async () => {
+  const { arrowOffset } = await core("place");
+  const anchor = await core("anchor");
+  test("la flecha apunta al centro del ancla, acotada a las esquinas y reflejada en RTL", () => {
+    const a = { left: 100, top: 100, width: 40, height: 20 };
+    assert.equal(arrowOffset(a, { left: 90, top: 130, width: 200, height: 80 }, "bottom"), 30);
+    assert.equal(arrowOffset(a, { left: 90, top: 130, width: 200, height: 80 }, "bottom", { rtl: true }), 170);
+    assert.equal(arrowOffset(a, { left: 0, top: 130, width: 60, height: 80 }, "top"), 48);
+    assert.equal(arrowOffset({ left: 0, top: 0, width: 4, height: 4 }, { left: 0, top: 10, width: 200, height: 80 }, "bottom"), 12);
+    assert.equal(arrowOffset(a, { left: 150, top: 60, width: 120, height: 200 }, "right"), 50);
+  });
+  test("position-area por colocación", () => {
+    assert.equal(anchor.positionArea("bottom"), "bottom");
+    assert.equal(anchor.positionArea("bottom-start"), "bottom span-x-end");
+    assert.equal(anchor.positionArea("top-end"), "top span-x-start");
+    assert.equal(anchor.positionArea("right-start"), "right span-bottom");
+    assert.equal(anchor.positionArea("left-end"), "left span-top");
+  });
+  test("lado medido y capa pegada al ancla", () => {
+    const a = { left: 100, top: 100, width: 40, height: 20 };
+    assert.equal(anchor.sideOf(a, { left: 90, top: 126, width: 100, height: 50 }), "bottom");
+    assert.equal(anchor.sideOf(a, { left: 90, top: 40, width: 100, height: 54 }), "top");
+    assert.equal(anchor.sideOf(a, { left: 146, top: 90, width: 100, height: 50 }), "right");
+    assert.equal(anchor.sideOf(a, { left: 0, top: 90, width: 94, height: 50 }), "left");
+    assert.equal(anchor.adjacent(a, { left: 90, top: 126, width: 100, height: 50 }, "bottom", 6), true);
+    assert.equal(anchor.adjacent(a, { left: 90, top: 8400, width: 100, height: 50 }, "bottom", 6), false);
+    assert.equal(anchor.adjacent(a, { left: 400, top: 126, width: 100, height: 50 }, "bottom", 6), false);
+    assert.equal(anchor.adjacent(a, { left: 90, top: 40, width: 100, height: 54 }, "top", 6), true);
+    assert.equal(anchor.adjacent(a, { left: 146, top: 90, width: 100, height: 50 }, "right", 6), true);
+    assert.equal(anchor.adjacent(a, { left: 0, top: 90, width: 94, height: 50 }, "left", 6), true);
+  });
+  test("sin soporte de CSS anchor positioning no ancla (respaldo de ./place)", () => {
+    const supports = CSS.supports;
+    CSS.supports = () => false;
+    try {
+      const el = mount(`<div><button id="t">t</button><div id="p" popover></div></div>`);
+      assert.equal(anchor.supportsAnchor(), false);
+      assert.equal(anchor.anchorWithCss(el.querySelector("#p"), el.querySelector("#t"), "bottom", 6), null);
+    } finally {
+      CSS.supports = supports;
+    }
+  });
+  test("con soporte: escribe el ancla, la mide y la retira", () => {
+    const supports = CSS.supports;
+    CSS.supports = () => true;
+    try {
+      const root = mount(`<div><button id="t" style="anchor-name: --app">t</button><div id="p" popover></div></div>`);
+      const trigger = root.querySelector("#t");
+      const pop = root.querySelector("#p");
+      trigger.getBoundingClientRect = () => new DOMRect(100, 100, 40, 20);
+      pop.getBoundingClientRect = () => new DOMRect(100, 126, 120, 60);
+      const css = anchor.anchorWithCss(pop, trigger, "bottom-start", 6);
+      assert.ok(css);
+      assert.match(trigger.style.getPropertyValue("anchor-name"), /^--app, --z-anchor-\d+$/);
+      assert.equal(pop.style.getPropertyValue("position-area"), "bottom span-x-end");
+      assert.equal(pop.style.getPropertyValue("margin-top"), "6px");
+      assert.equal(css.measure(), true);
+      assert.equal(pop.dataset.side, "bottom");
+      assert.equal(pop.style.getPropertyValue("--z-arrow-offset"), "20px");
+      css.release();
+      assert.equal(trigger.style.getPropertyValue("anchor-name"), "--app");
+      assert.equal(pop.hasAttribute("data-anchored"), false);
+      assert.equal(pop.style.getPropertyValue("position-area"), "");
+    } finally {
+      CSS.supports = supports;
+    }
+  });
+});
+
+describe("core/interest", async () => {
+  const { createInterest, bridgeTab } = await core("interest");
+  test("abre tras el retardo, el foco abre ya, cruzar a la capa no la cierra y Escape cierra", (t) => {
+    t.mock.timers.enable({ apis: ["setTimeout"] });
+    const log = [];
+    const interest = createInterest({ openDelay: 500, closeDelay: 300, onChange: (open) => log.push(open) });
+    interest.enter("trigger-pointer");
+    t.mock.timers.tick(499);
+    assert.deepEqual(log, []);
+    t.mock.timers.tick(1);
+    assert.deepEqual(log, [true]);
+    interest.leave("trigger-pointer");
+    t.mock.timers.tick(100);
+    interest.enter("content-pointer");
+    t.mock.timers.tick(1000);
+    assert.equal(interest.isOpen(), true, "el puntero cruzó a la capa");
+    interest.leave("content-pointer");
+    t.mock.timers.tick(300);
+    assert.deepEqual(log, [true, false]);
+    interest.enter("trigger-focus");
+    assert.deepEqual(log, [true, false, true], "el foco abre sin retardo");
+    interest.hide();
+    assert.equal(interest.isOpen(), false);
+    interest.enter("trigger-pointer");
+    interest.leave("trigger-pointer");
+    t.mock.timers.tick(1000);
+    assert.equal(interest.isOpen(), false, "un paso rápido no abre");
+    interest.show();
+    assert.equal(interest.isOpen(), true);
+    interest.setDelays(0, 0);
+    interest.enter("content-focus");
+    interest.leave("content-focus");
+    assert.equal(interest.isOpen(), false, "sin retardo de cierre");
+    interest.dispose();
+  });
+  test("Tab entre el disparador y una capa montada aparte", () => {
+    const root = mount(
+      `<div><a id="t" href="#">t</a><div id="c"><button id="a">a</button><button id="b">b</button></div><button id="n">n</button></div>`,
+    );
+    const [trigger, content, a, b, next] = ["t", "c", "a", "b", "n"].map((id) => root.querySelector(`#${id}`));
+    const ctx = { trigger, content, tabbables: [a, b], after: () => next };
+    assert.deepEqual(bridgeTab(trigger, false, ctx), { focus: a, close: false });
+    assert.equal(bridgeTab(trigger, true, ctx), null);
+    assert.deepEqual(bridgeTab(a, true, ctx), { focus: trigger, close: false });
+    assert.deepEqual(bridgeTab(b, false, ctx), { focus: next, close: true });
+    assert.equal(bridgeTab(a, false, ctx), null);
+    assert.equal(bridgeTab(next, false, ctx), null);
+    assert.equal(bridgeTab(null, false, ctx), null);
+    assert.equal(bridgeTab(trigger, false, { ...ctx, tabbables: [] }), null);
+  });
+});

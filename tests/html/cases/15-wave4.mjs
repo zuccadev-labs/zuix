@@ -240,4 +240,51 @@ export default async function ({ page, test, ok, card, browserName }) {
     ok((await page.locator("#mb-view [role='menuitemcheckbox']").nth(1).getAttribute("aria-checked")) === "true", "casilla en la barra");
     await page.keyboard.press("Escape");
   });
+
+  /* ---------- Popover con ancla distinta y flecha ---------- */
+  await test("Popover: ancla distinta del disparador, flecha hacia su centro, CSS anchor positioning donde existe y cierre", async () => {
+    const box = await inject("Popover", 1);
+    const trigger = box.locator("[data-z-open]");
+    const panel = page.locator("#dns-help");
+    await trigger.click();
+    ok(await panel.isVisible(), "abre");
+    ok((await trigger.getAttribute("aria-expanded")) === "true", "aria-expanded en el disparador, no en el ancla");
+    ok((await box.locator("#dns-field").getAttribute("aria-expanded")) === null, "el ancla no recibe aria-expanded");
+    // Firefox aplica el desplazamiento de la página al anclaje CSS con un pequeño retraso: se espera a que se asiente.
+    await page
+      .waitForFunction(
+        () => {
+          const a = document.getElementById("dns-field").getBoundingClientRect();
+          const r = document.getElementById("dns-help").getBoundingClientRect();
+          return Math.abs(r.top - a.bottom) < 40;
+        },
+        null,
+        { timeout: 2000 },
+      )
+      .catch(() => {});
+    const geo = await page.evaluate(() => {
+      const a = document.getElementById("dns-field").getBoundingClientRect();
+      const p = document.getElementById("dns-help");
+      const r = p.getBoundingClientRect();
+      const arrow = getComputedStyle(p, "::after");
+      return {
+        gapTop: r.top - a.bottom,
+        startAligned: Math.abs(r.left - a.left),
+        side: p.dataset.side,
+        offset: parseFloat(p.style.getPropertyValue("--z-arrow-offset")),
+        anchorCenter: a.left + a.width / 2 - r.left,
+        anchored: p.hasAttribute("data-anchored"),
+        supports: CSS.supports("position-area: bottom") && CSS.supports("anchor-name: --a"),
+        arrow: arrow.content !== "none" && arrow.content !== "normal",
+      };
+    });
+    ok(geo.side === "bottom" && geo.gapTop >= 8 && geo.gapTop <= 16, `debajo del campo: ${JSON.stringify(geo)}`);
+    ok(geo.startAligned <= 1, `alineado al inicio del campo: ${geo.startAligned}`);
+    ok(geo.arrow && Math.abs(geo.offset - Math.max(12, geo.anchorCenter)) <= 2, `flecha al centro del ancla: ${JSON.stringify(geo)}`);
+    ok(geo.anchored === geo.supports, `CSS anchor positioning solo donde existe: ${JSON.stringify(geo)}`);
+    await panel.locator(".z-popover__close").click();
+    ok(await panel.isHidden(), "el botón de cierre cierra");
+    ok(await activeIs("#w4-Popover-1 [data-z-open]"), "el foco vuelve al disparador");
+    ok((await page.locator("#dns-help").getAttribute("data-anchored")) === null, "al cerrar se retira el ancla CSS");
+  });
 }

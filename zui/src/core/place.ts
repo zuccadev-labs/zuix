@@ -92,6 +92,19 @@ export function computePlace({
 }
 
 /**
+ * Posición de la flecha de una capa sobre su borde pegado al ancla: distancia (px) desde el borde inicial de ese
+ * lado (el izquierdo en horizontal, el derecho en RTL; el superior en vertical) hasta el centro del ancla, acotada
+ * para que la flecha no se salga de las esquinas redondeadas (`inset`).
+ */
+export function arrowOffset(anchor: Box, popup: Box, side: Side, { rtl = false, inset = 12 } = {}): number {
+  const vertical = side === "top" || side === "bottom";
+  const length = vertical ? popup.width : popup.height;
+  const center = vertical ? anchor.left + anchor.width / 2 - popup.left : anchor.top + anchor.height / 2 - popup.top;
+  const fromStart = vertical && rtl ? length - center : center;
+  return Math.round(Math.min(Math.max(fromStart, inset), Math.max(inset, length - inset)));
+}
+
+/**
  * Coloca `el` (posición fija) junto a `rect`. Escribe `left`/`top`, `data-side`, `data-align` y las variables
  * `--z-available-width`/`--z-available-height` (hueco hasta el borde de la ventana), que el CSS usa como tope
  * de tamaño. Si ese tope cambia el tamaño de la capa, se recoloca con el tamaño nuevo sin volver a voltear.
@@ -124,6 +137,12 @@ export function place(el: HTMLElement, rect: Box, placement: Placement, gap = 6)
   el.style.top = `${result.y}px`;
   el.dataset.side = result.side;
   el.dataset.align = result.align;
+  // Flecha (si la capa la dibuja): sobre el borde que mira al ancla, apuntando a su centro.
+  const box = measure();
+  el.style.setProperty(
+    "--z-arrow-offset",
+    `${arrowOffset(rect, { left: result.x, top: result.y, width: box.width, height: box.height }, result.side, { rtl })}px`,
+  );
   return result;
 }
 
