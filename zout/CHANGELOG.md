@@ -16,6 +16,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     indicadores `modified` y `busy`, y reordenación con `onReorder`: arrastre con marca de soltar (el orden cambia
     al soltar) y Ctrl+Mayús+flechas, Inicio o Fin con anuncio en una región `status`. En `/dom`,
     `data-reorderable`, `moveWorkTab()`, `setTabGroupCollapsed()` y los eventos `z:reorder` y `z:grouptoggle`.
+  - `PaneHeader`: cabecera de panel con icono, título, línea secundaria y acciones en una `Toolbar` (una sola
+    parada de Tab) con menú opcional; `focused` y `titleId`. Dentro de `Pane.header` ocupa toda la franja.
   - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore` y
     `beforeFor`.
 

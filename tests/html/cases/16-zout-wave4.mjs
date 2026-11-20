@@ -35,7 +35,6 @@ export default async function ({ page, test, ok, card }) {
     );
     return page.locator(`#${id}`);
   };
-  void card;
 
   /* ---------- Sidebar ---------- */
   await test("Sidebar: submenú en disclosure, plegado a iconos con tooltip y submenú flotante, y vuelta", async () => {
@@ -118,5 +117,16 @@ export default async function ({ page, test, ok, card }) {
     await page.mouse.up();
     ok((await order()).join() === "menu,routes,button,readme", `orden al soltar: ${await order()}`);
     ok((await root.locator('[data-tab-id="button"]').getAttribute("aria-selected")) === "true", "el clic de soltar no selecciona otra");
+  });
+
+  /* ---------- PaneHeader ---------- */
+  await test("PaneHeader: acciones y menú en una barra con una sola parada de Tab", async () => {
+    const bar = card("PaneHeader").locator('.z-paneheader [role="toolbar"]');
+    ok((await bar.getAttribute("aria-label")) === "Editor actions", "barra con nombre");
+    const stops = await bar.evaluate((el) => [...el.querySelectorAll("button")].filter((b) => b.tabIndex === 0).length);
+    ok(stops === 1, `paradas de Tab: ${stops}`);
+    await bar.locator("button").first().focus();
+    await press("End");
+    ok(await page.evaluate(() => document.activeElement?.getAttribute("aria-label") === "More actions"), "Fin llega al menú");
   });
 }

@@ -35,6 +35,29 @@
     }
    ]
   },
+  "PaneHeader": {
+   "group": "layout",
+   "classes": [
+    "z-paneheader",
+    "z-paneheader__icon",
+    "z-paneheader__title",
+    "z-paneheader__subtitle",
+    "z-paneheader__actions"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Panel de editor con acciones y menú",
+     "html": "<div style=\"width:420px\">\n  <div class=\"z-pane\">\n    <div class=\"z-pane__header\">\n      <div class=\"z-paneheader\" data-focused=\"true\">\n        <span class=\"z-paneheader__icon\">\n          <z-icon name=\"code-bracket\" size=\"14\"></z-icon>\n        </span>\n        <div class=\"z-paneheader__titles\">\n          <span class=\"z-paneheader__title\">Button.tsx</span>\n          <span class=\"z-paneheader__subtitle\">zui/src/components</span>\n        </div>\n        <div role=\"toolbar\" aria-label=\"Editor actions\" aria-orientation=\"horizontal\" class=\"z-toolbar z-paneheader__actions\" data-variant=\"plain\" data-size=\"sm\">\n          <button type=\"button\" title=\"Split right\" aria-label=\"Split right\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n            <z-icon name=\"view-columns\" size=\"14\"></z-icon>\n          </button>\n          <button type=\"button\" title=\"Maximize\" aria-label=\"Maximize\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n            <z-icon name=\"arrows-pointing-out\" size=\"14\"></z-icon>\n          </button>\n          <button type=\"button\" title=\"More actions\" aria-label=\"More actions\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n            <z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon>\n          </button>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-pane__body\">\n      <div style=\"padding:12px\">export function Button() </div>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Solo título (panel sin foco)",
+     "html": "<div style=\"width:320px\">\n  <div class=\"z-paneheader\" data-focused=\"false\">\n    <span class=\"z-paneheader__icon\">\n      <z-icon name=\"command-line\" size=\"14\"></z-icon>\n    </span>\n    <div class=\"z-paneheader__titles\">\n      <span class=\"z-paneheader__title\">Terminal</span>\n      <span class=\"z-paneheader__subtitle\">zsh</span>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Rail": {
    "group": "layout",
    "classes": [

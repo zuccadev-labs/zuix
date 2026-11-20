@@ -878,6 +878,65 @@
     overflow: auto;
   }
 
+  /* ── Cabecera de panel ─────────────────────────────────────────────────── */
+  .z-pane__header:has(> .z-paneheader) {
+    padding: 0;
+  }
+  .z-paneheader {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+    min-height: var(--z-control-height-md);
+    padding-block: 0;
+    padding-inline: var(--z-space-3) var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-paneheader__icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    color: var(--z-fg-subtle);
+  }
+  .z-paneheader__titles {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: baseline;
+    gap: var(--z-space-2);
+    min-width: 0;
+  }
+  .z-paneheader__title {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--z-fg);
+    font-weight: var(--z-weight-medium);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* La línea secundaria cede antes que el título. */
+  .z-paneheader__subtitle {
+    flex: 0 100 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-paneheader[data-focused="true"] .z-paneheader__icon {
+    color: var(--z-accent);
+  }
+  .z-paneheader[data-focused="false"] .z-paneheader__title {
+    color: var(--z-fg-muted);
+  }
+  .z-paneheader__actions {
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+  }
+
   /* ── Pestañas de trabajo ───────────────────────────────────────────────── */
   .z-tabstrip {
     display: flex;

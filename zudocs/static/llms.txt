@@ -177,6 +177,7 @@
 
 - [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.
 - [Page](https://zuccadev-labs.github.io/zuix/components/layout/page.md): Página con desplazamiento propio, cabecera y secciones.
+- [PaneHeader](https://zuccadev-labs.github.io/zuix/components/layout/pane-header.md): Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.
 - [Rail](https://zuccadev-labs.github.io/zuix/components/layout/rail.md): Barra estrecha de navegación principal, solo iconos.
 - [ResizeHandle](https://zuccadev-labs.github.io/zuix/components/layout/resize-handle.md): Tirador para redimensionar un panel, con puntero y teclado.
 - [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.

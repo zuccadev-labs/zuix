@@ -6,6 +6,7 @@ export { SidebarItem, SidebarTrigger, type SidebarItemProps, type SidebarTrigger
 export { SplitPane, Pane, type SplitPaneProps, type PaneProps } from "./layouts/SplitPane";
 export { TabStrip, type TabStripProps, type WorkTab, type TabGroup, type TabGroupTone } from "./layouts/TabStrip";
 export { TitleBar, type TitleBarProps } from "./layouts/TitleBar";
+export { PaneHeader, type PaneHeaderProps } from "./layouts/PaneHeader";
 export { ResizeHandle, type ResizeHandleProps } from "./layouts/ResizeHandle";
 export {
   Stack,
