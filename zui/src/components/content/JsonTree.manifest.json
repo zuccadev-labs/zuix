@@ -51,14 +51,7 @@
       "default": "Copied {path}"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "selected",
-    "expanded",
-    "collapsed"
-  ],
+  "states": ["rest", "hover", "focus", "selected", "expanded", "collapsed"],
   "tokens": [
     "font-mono",
     "text-code",
@@ -71,12 +64,7 @@
     "accent-text",
     "touch-target"
   ],
-  "classes": [
-    "z-jsontree",
-    "z-jsontree__key",
-    "z-jsontree__sep",
-    "z-jsontree__value"
-  ],
+  "classes": ["z-jsontree", "z-jsontree__key", "z-jsontree__sep", "z-jsontree__value"],
   "a11y": "Es un Tree (patrón APG treeview): roles tree, treeitem y group, foco itinerante, flechas para recorrer, derecha expande, izquierda pliega o sube, Inicio/Fin, una letra salta a la siguiente clave. El tipo no depende solo del color: el valor se escribe con su sintaxis (comillas en las cadenas, n en bigint, Array(3), Map(2)). Con copyPath, la ruta copiada se anuncia en un role=\"status\".",
   "examples": [
     {

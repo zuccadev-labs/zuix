@@ -1,0 +1,911 @@
+/*
+  Gráficos: líneas, áreas, barras, anillo/tarta y minigráficos. Marcas de línea, área y sector en SVG (viewBox 100 × 100
+  sin conservar la proporción y trazos que no escalan); barras, puntos, ejes, cruceta y tooltip en HTML colocado por
+  fracciones (`--x`, `--y`, `--at`…), así que nada se mide y todo sigue al contenedor y a la dirección del texto.
+  Color de serie por `data-color` (1–8 → `--z-chart-N`); el color sigue a la serie, nunca a su posición visible. Ninguna
+  serie depende solo del color: leyenda siempre (2+ series), marcadores con forma (`data-markers`) y trazos o tramas
+  (`data-patterns`, y siempre con colores forzados y al imprimir). Barras con el extremo del dato redondeado y la base
+  recta; nada en píldora.
+*/
+@layer zui.charts {
+  .z-chart {
+    container: z-chart / inline-size;
+    display: block;
+    inline-size: 100%;
+    min-inline-size: 0;
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-chart[data-framed] {
+    padding: var(--z-space-5);
+    border-radius: var(--z-panel-radius);
+  }
+  .z-chart :is([data-color="1"]) {
+    --z-chart-c: var(--z-chart-1);
+  }
+  .z-chart :is([data-color="2"]) {
+    --z-chart-c: var(--z-chart-2);
+  }
+  .z-chart :is([data-color="3"]) {
+    --z-chart-c: var(--z-chart-3);
+  }
+  .z-chart :is([data-color="4"]) {
+    --z-chart-c: var(--z-chart-4);
+  }
+  .z-chart :is([data-color="5"]) {
+    --z-chart-c: var(--z-chart-5);
+  }
+  .z-chart :is([data-color="6"]) {
+    --z-chart-c: var(--z-chart-6);
+  }
+  .z-chart :is([data-color="7"]) {
+    --z-chart-c: var(--z-chart-7);
+  }
+  .z-chart :is([data-color="8"]) {
+    --z-chart-c: var(--z-chart-8);
+  }
+  /* Trazo por serie (con `data-patterns`, colores forzados o impresión): continuo, discontinuo, punteado, raya-punto. */
+  .z-chart [data-pattern="1"] {
+    --z-chart-dash: 6 4;
+    --z-chart-hatch: 45deg;
+  }
+  .z-chart [data-pattern="2"] {
+    --z-chart-dash: 0.5 4;
+    --z-chart-hatch: 135deg;
+  }
+  .z-chart [data-pattern="3"] {
+    --z-chart-dash: 10 4 2 4;
+    --z-chart-hatch: 90deg;
+  }
+
+  .z-chart__figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    margin: 0;
+    min-inline-size: 0;
+  }
+  .z-chart__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+  }
+  .z-chart__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+  .z-chart__title {
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+  }
+  .z-chart__desc {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-chart__toggle {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-block-size: var(--z-control-height-sm);
+    margin: 0;
+    padding-block: 0;
+    padding-inline: var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    font-size: var(--z-text-small);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-chart__toggle:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-chart__toggle[aria-pressed="true"] {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+  }
+
+  /* ---------- Leyenda: botones que muestran u ocultan cada serie ---------- */
+  .z-chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+  }
+  .z-chart__key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-xs);
+    margin: 0;
+    padding-block: 0;
+    padding-inline: var(--z-space-2);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg);
+    font: inherit;
+    font-size: var(--z-text-small);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-chart__key:hover:not([aria-disabled="true"]) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-chart__key[aria-disabled="true"] {
+    cursor: default;
+  }
+  /* Oculta: muestra hueca y texto tachado (no solo un cambio de color). */
+  .z-chart__key[aria-pressed="false"] {
+    color: var(--z-fg-muted);
+  }
+  .z-chart__key[aria-pressed="false"] .z-chart__key-label {
+    text-decoration: line-through;
+  }
+  .z-chart__key-value {
+    color: var(--z-fg-muted);
+  }
+  .z-chart__swatch {
+    flex: none;
+    inline-size: var(--z-space-2-5);
+    block-size: var(--z-space-2-5);
+    border: 2px solid var(--z-chart-c);
+    border-radius: calc(var(--z-radius-xs) / 2);
+    background: var(--z-chart-c);
+  }
+  .z-chart__swatch[data-mark="line"] {
+    inline-size: var(--z-space-4);
+    block-size: 0;
+    border-width: 1.5px;
+    border-radius: 2px;
+  }
+  .z-chart[data-patterns] .z-chart__swatch[data-mark="line"]:is([data-pattern="1"], [data-pattern="3"]) {
+    border-style: dashed;
+  }
+  .z-chart[data-patterns] .z-chart__swatch[data-mark="line"][data-pattern="2"] {
+    border-style: dotted;
+  }
+  .z-chart__key[aria-pressed="false"] .z-chart__swatch {
+    background: transparent;
+  }
+  .z-chart__swatch[data-mark="line"][data-marker] {
+    position: relative;
+  }
+  .z-chart__swatch[data-mark="line"][data-marker]::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 8px;
+    block-size: 8px;
+    translate: -50% -50%;
+    background: var(--z-chart-c);
+  }
+
+  /* ---------- Marco: eje vertical | área de trazado; eje horizontal debajo ---------- */
+  .z-chart__frame {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: var(--z-chart-height) auto;
+    min-inline-size: 0;
+  }
+  .z-chart__frame[data-orientation="horizontal"] {
+    grid-template-columns: fit-content(40%) minmax(0, 1fr);
+  }
+  .z-chart__axis {
+    position: relative;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    line-height: 1;
+  }
+  .z-chart__axis[data-axis="y"] {
+    grid-row: 1;
+    grid-column: 1;
+    padding-inline-end: var(--z-space-2);
+  }
+  .z-chart__axis[data-axis="x"] {
+    grid-row: 2;
+    grid-column: 2;
+    block-size: calc(var(--z-text-caption) + var(--z-space-3));
+  }
+  .z-chart__sizer {
+    display: block;
+    block-size: 0;
+    overflow: hidden;
+    visibility: hidden;
+    white-space: nowrap;
+  }
+  .z-chart__sizer > span {
+    display: block;
+  }
+  .z-chart__tick {
+    position: absolute;
+    white-space: nowrap;
+  }
+  .z-chart__axis[data-axis="y"] .z-chart__tick {
+    inset-block-end: calc(var(--at) * 100%);
+    inset-inline: 0 var(--z-space-2);
+    overflow: hidden;
+    text-align: end;
+    text-overflow: ellipsis;
+    translate: 0 50%;
+  }
+  .z-chart__axis[data-axis="x"] .z-chart__tick {
+    inset-block-start: var(--z-space-2);
+    inset-inline-start: calc(var(--at) * 100%);
+    translate: -50% 0;
+  }
+  .z-chart__axis[data-axis="x"] .z-chart__tick:dir(rtl) {
+    translate: 50% 0;
+  }
+  .z-chart__axis[data-axis="x"] .z-chart__tick[data-edge="start"] {
+    translate: none;
+  }
+  .z-chart__axis[data-axis="x"] .z-chart__tick[data-edge="end"] {
+    translate: -100% 0;
+  }
+  .z-chart__axis[data-axis="x"] .z-chart__tick[data-edge="end"]:dir(rtl) {
+    translate: 100% 0;
+  }
+
+  .z-chart__plot {
+    position: relative;
+    grid-row: 1;
+    grid-column: 2;
+    min-inline-size: 0;
+  }
+  .z-chart__svg {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+  .z-chart__svg:dir(rtl) {
+    scale: -1 1;
+  }
+  .z-chart__svg path:not(.z-chart__slice-hatch) {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+  .z-chart__grid {
+    stroke: var(--z-chart-grid);
+    stroke-width: 1px;
+  }
+  .z-chart__base {
+    stroke: var(--z-chart-baseline);
+    stroke-width: 1px;
+  }
+  .z-chart .z-chart__line {
+    stroke: var(--z-chart-c);
+    stroke-width: var(--z-chart-line-width);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .z-chart .z-chart__area {
+    fill: var(--z-chart-c);
+    fill-opacity: var(--z-chart-area-opacity);
+  }
+  .z-chart[data-stacked] .z-chart__area {
+    fill-opacity: calc(var(--z-chart-area-opacity) * 2);
+  }
+  .z-chart[data-patterns] .z-chart__line {
+    stroke-dasharray: var(--z-chart-dash, none);
+  }
+
+  /* ---------- Barras (HTML): extremo del dato redondeado, base recta, hueco de 2 px entre las que se tocan ---------- */
+  .z-chart__bars,
+  .z-chart__dots,
+  .z-chart__hits {
+    position: absolute;
+    inset: 0;
+  }
+  .z-chart__bars,
+  .z-chart__dots {
+    pointer-events: none;
+  }
+  .z-chart__bar {
+    --z-chart-size: min(calc(var(--w) * 100% - 2px), var(--z-chart-bar-max));
+    position: absolute;
+    background: var(--z-chart-c);
+    background-clip: padding-box;
+    transition: opacity var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-chart[data-patterns] :is(.z-chart__bar, .z-chart__swatch[data-mark="rect"]):not([data-pattern="0"]) {
+    background-image: repeating-linear-gradient(
+      var(--z-chart-hatch),
+      transparent 0 3px,
+      color-mix(in srgb, var(--z-surface-solid) 55%, transparent) 3px 5px
+    );
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__bar {
+    inset-inline-start: calc(var(--x) * 100%);
+    inset-block-end: calc(var(--y0) * 100%);
+    inline-size: var(--z-chart-size);
+    block-size: calc((var(--y1) - var(--y0)) * 100%);
+    margin-inline-start: calc(var(--z-chart-size) / -2);
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__bar[data-cap]:not([data-negative]) {
+    border-start-start-radius: var(--z-chart-bar-radius);
+    border-start-end-radius: var(--z-chart-bar-radius);
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__bar[data-cap][data-negative] {
+    border-end-start-radius: var(--z-chart-bar-radius);
+    border-end-end-radius: var(--z-chart-bar-radius);
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__bar[data-under]:not([data-negative]) {
+    border-block-end: 2px solid transparent;
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__bar[data-under][data-negative] {
+    border-block-start: 2px solid transparent;
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__bar {
+    inset-block-end: calc(var(--x) * 100%);
+    inset-inline-start: calc(var(--y0) * 100%);
+    block-size: var(--z-chart-size);
+    inline-size: calc((var(--y1) - var(--y0)) * 100%);
+    translate: 0 50%;
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__bar {
+    --z-chart-size: min(calc(var(--w) * var(--z-chart-height) - 2px), var(--z-chart-bar-max));
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__bar[data-cap]:not([data-negative]) {
+    border-start-end-radius: var(--z-chart-bar-radius);
+    border-end-end-radius: var(--z-chart-bar-radius);
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__bar[data-cap][data-negative] {
+    border-start-start-radius: var(--z-chart-bar-radius);
+    border-end-start-radius: var(--z-chart-bar-radius);
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__bar[data-under]:not([data-negative]) {
+    border-inline-start: 2px solid transparent;
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__bar[data-under][data-negative] {
+    border-inline-end: 2px solid transparent;
+  }
+  .z-chart__bars:has(.z-chart__bar[data-active]) .z-chart__bar:not([data-active]) {
+    opacity: 0.5;
+  }
+  .z-chart__band {
+    position: absolute;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-row-hover);
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__band {
+    inset-block: 0;
+    inset-inline-start: calc(var(--a) * 100%);
+    inline-size: calc((var(--b) - var(--a)) * 100%);
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__band {
+    inset-inline: 0;
+    inset-block-start: calc(var(--a) * 100%);
+    block-size: calc((var(--b) - var(--a)) * 100%);
+  }
+
+  /* ---------- Puntos (marcador con forma por serie), cruceta y zonas activas ---------- */
+  .z-chart__dot {
+    --z-chart-dot: 8px;
+    position: absolute;
+    inset-inline-start: calc(var(--x) * 100%);
+    inset-block-end: calc(var(--y) * 100%);
+    inline-size: var(--z-chart-dot);
+    block-size: var(--z-chart-dot);
+    margin-inline-start: calc(var(--z-chart-dot) / -2);
+    translate: 0 50%;
+    border-radius: var(--z-radius-full);
+    background: var(--z-chart-c);
+    box-shadow: 0 0 0 2px var(--z-surface-solid);
+  }
+  .z-chart__dot[data-active] {
+    --z-chart-dot: 10px;
+  }
+  .z-chart__dot:not([data-marker="circle"]) {
+    --z-chart-dot: 10px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .z-chart__dot[data-marker="square"] {
+    clip-path: inset(1px);
+  }
+  .z-chart__dot[data-marker="diamond"] {
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+  .z-chart__dot[data-marker="triangle"] {
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+  .z-chart__swatch[data-marker="square"]::after {
+    clip-path: inset(1px);
+  }
+  .z-chart__swatch[data-marker="circle"]::after {
+    border-radius: var(--z-radius-full);
+  }
+  .z-chart__swatch[data-marker="diamond"]::after {
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+  .z-chart__swatch[data-marker="triangle"]::after {
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+  .z-chart__cross {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--x) * 100%);
+    inline-size: 1px;
+    background: var(--z-chart-baseline);
+    pointer-events: none;
+  }
+  .z-chart__hit {
+    position: absolute;
+    border-radius: var(--z-radius-xs);
+  }
+  .z-chart:not([data-orientation="horizontal"]) .z-chart__hit {
+    inset-block: 0;
+    inset-inline-start: calc(var(--a) * 100%);
+    inline-size: calc((var(--b) - var(--a)) * 100%);
+  }
+  .z-chart[data-orientation="horizontal"] .z-chart__hit {
+    inset-inline: 0;
+    inset-block-start: calc(var(--a) * 100%);
+    block-size: calc((var(--b) - var(--a)) * 100%);
+  }
+  .z-chart__hit:focus {
+    outline: none;
+  }
+  .z-chart__hit:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-chart__empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+
+  /* ---------- Tooltip: valor primero, nombre después, clave de línea ---------- */
+  .z-chart__tip {
+    position: absolute;
+    z-index: var(--z-layer-tooltip);
+    display: grid;
+    gap: var(--z-space-1);
+    min-inline-size: calc(var(--z-space-20) * 1.5);
+    padding: var(--z-space-2) var(--z-space-2-5);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface-solid);
+    box-shadow: var(--z-shadow-md);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .z-chart__tip[data-axis="x"] {
+    inset-block-start: var(--z-space-1);
+  }
+  .z-chart__tip[data-axis="x"][data-side="end"] {
+    inset-inline-start: calc(var(--x) * 100% + var(--z-space-3));
+  }
+  .z-chart__tip[data-axis="x"][data-side="start"] {
+    inset-inline-end: calc((1 - var(--x)) * 100% + var(--z-space-3));
+  }
+  .z-chart__tip[data-axis="y"] {
+    inset-block-end: calc(var(--x) * 100%);
+    inset-inline-end: var(--z-space-2);
+    translate: 0 50%;
+  }
+  .z-chart__tip[data-axis="free"] {
+    inset-block-end: calc(var(--y) * 100% + var(--z-space-2));
+  }
+  .z-chart__tip[data-axis="free"][data-side="end"] {
+    inset-inline-start: calc(var(--x) * 100%);
+  }
+  .z-chart__tip[data-axis="free"][data-side="start"] {
+    inset-inline-end: calc((1 - var(--x)) * 100%);
+  }
+  .z-chart__tip-title {
+    color: var(--z-fg-muted);
+  }
+  .z-chart__tip-row {
+    display: grid;
+    grid-template-columns: var(--z-space-3) auto 1fr;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-chart__tip-row b {
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-chart__tip-row span:last-child {
+    color: var(--z-fg-muted);
+  }
+  .z-chart__tip-key {
+    block-size: 2px;
+    border-radius: 1px;
+    background: var(--z-chart-c);
+  }
+  .z-chart__tip-key[data-total] {
+    background: transparent;
+  }
+
+  /* ---------- Anillo y tarta ---------- */
+  .z-chart__frame[data-round] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-5);
+  }
+  .z-chart__frame[data-round] .z-chart__plot {
+    flex: none;
+    inline-size: min(100%, var(--z-chart-height));
+    aspect-ratio: 1;
+  }
+  .z-chart__frame[data-round] .z-chart__legend {
+    flex: 1 1 calc(var(--z-space-20) * 2);
+    flex-direction: column;
+  }
+  .z-chart__frame[data-round] .z-chart__key {
+    justify-content: flex-start;
+  }
+  .z-chart__frame[data-round] .z-chart__key-value {
+    margin-inline-start: auto;
+    padding-inline-start: var(--z-space-3);
+  }
+  .z-chart__slice {
+    fill: var(--z-chart-c);
+    cursor: pointer;
+    transition: opacity var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-chart .z-chart__svg .z-chart__slice {
+    fill: var(--z-chart-c);
+  }
+  .z-chart__marks:has(.z-chart__slice[data-active]) .z-chart__slice:not([data-active]) {
+    opacity: 0.45;
+  }
+  .z-chart__slice:focus {
+    outline: none;
+  }
+  .z-chart__slice:focus-visible {
+    stroke: var(--z-accent-ring);
+    stroke-width: var(--z-focus-width);
+  }
+  .z-chart[data-type="pie"] .z-chart__svg .z-chart__slice {
+    stroke: var(--z-surface-solid);
+    stroke-width: 2px;
+    stroke-linejoin: round;
+  }
+  .z-chart__slice-hatch {
+    pointer-events: none;
+  }
+  .z-chart__hatch {
+    stroke: color-mix(in srgb, var(--z-surface-solid) 60%, transparent);
+    stroke-width: 1.6px;
+  }
+  .z-chart__center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 2px;
+    text-align: center;
+    pointer-events: none;
+  }
+  .z-chart__center b {
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-tight);
+    line-height: var(--z-leading-tight);
+  }
+  .z-chart__center span {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+
+  /* ---------- Tabla de datos alternativa ---------- */
+  .z-chart__table-wrap {
+    max-block-size: calc(var(--z-chart-height) + var(--z-space-8));
+    overflow: auto;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-item-radius);
+    background: var(--z-reading-bg);
+  }
+  .z-chart__toggle:focus-visible,
+  .z-chart__key:focus-visible,
+  .z-chart__table-wrap:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-chart__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--z-text-small);
+  }
+  .z-chart__table caption {
+    padding: var(--z-space-2) var(--z-space-3);
+    color: var(--z-fg-muted);
+    text-align: start;
+  }
+  .z-chart__table thead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-layer-raised);
+  }
+  .z-chart__table th,
+  .z-chart__table td {
+    padding: var(--z-space-1-5) var(--z-space-3);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-surface-solid);
+    font-weight: var(--z-weight-regular);
+    text-align: start;
+  }
+  .z-chart__table thead th {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-chart__table :is(td, thead th:not(:first-child)) {
+    text-align: end;
+  }
+
+  /* ---------- Entrada: revela de inicio a fin; sin movimiento con prefers-reduced-motion ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .z-chart[data-animate]:not([data-type="donut"], [data-type="pie"]) .z-chart__marks {
+      animation: z-chart-reveal calc(var(--z-duration-slow) * 2) var(--z-ease-out) both;
+    }
+    .z-chart[data-animate]:is([data-type="donut"], [data-type="pie"]) .z-chart__marks {
+      transform-box: view-box;
+      transform-origin: 50% 50%;
+      animation: z-chart-pop calc(var(--z-duration-slow) * 1.5) var(--z-ease-emphasized) both;
+    }
+    .z-chart[data-animate] .z-chart__bar {
+      transform-origin: 50% 100%;
+      animation: z-chart-grow-y calc(var(--z-duration-slow) * 1.6) var(--z-ease-emphasized) both;
+    }
+    .z-chart[data-animate] .z-chart__bar[data-negative] {
+      transform-origin: 50% 0;
+    }
+    .z-chart[data-animate][data-orientation="horizontal"] .z-chart__bar {
+      transform-origin: 0 50%;
+      animation-name: z-chart-grow-x;
+    }
+    .z-chart[data-animate][data-orientation="horizontal"] .z-chart__bar:dir(rtl),
+    .z-chart[data-animate][data-orientation="horizontal"] .z-chart__bar[data-negative] {
+      transform-origin: 100% 50%;
+    }
+    .z-chart[data-animate][data-orientation="horizontal"] .z-chart__bar[data-negative]:dir(rtl) {
+      transform-origin: 0 50%;
+    }
+    .z-chart__dot,
+    .z-chart__cross {
+      transition: inset-inline-start var(--z-duration-fast) var(--z-ease-out);
+    }
+  }
+  @keyframes z-chart-reveal {
+    from {
+      clip-path: inset(-10% 100% -10% 0);
+    }
+    to {
+      clip-path: inset(-10% 0 -10% 0);
+    }
+  }
+  @keyframes z-chart-pop {
+    from {
+      opacity: 0;
+      scale: 0.92;
+    }
+  }
+  @keyframes z-chart-grow-y {
+    from {
+      scale: 1 0;
+    }
+  }
+  @keyframes z-chart-grow-x {
+    from {
+      scale: 0 1;
+    }
+  }
+
+  /* ---------- Contenedor estrecho: rótulos alternos y leyenda compacta ---------- */
+  @container z-chart (inline-size < 32rem) {
+    .z-chart__axis[data-axis="x"] .z-chart__tick[data-minor] {
+      display: none;
+    }
+    .z-chart__toggle {
+      padding-inline: var(--z-space-2);
+    }
+  }
+  @container z-chart (inline-size < 22rem) {
+    .z-chart__axis[data-axis="y"] .z-chart__tick[data-minor] {
+      display: none;
+    }
+    .z-chart__frame[data-round] {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .z-chart__frame[data-round] .z-chart__plot {
+      align-self: center;
+    }
+  }
+
+  /* ---------- Colores forzados e impresión: trazos y tramas en lugar del color ---------- */
+  @media (forced-colors: active) {
+    .z-chart .z-chart__line {
+      stroke: CanvasText;
+      stroke-dasharray: var(--z-chart-dash, none);
+    }
+    .z-chart .z-chart__area {
+      fill: transparent;
+    }
+    .z-chart__grid,
+    .z-chart__base {
+      stroke: GrayText;
+    }
+    .z-chart__bar,
+    .z-chart__swatch,
+    .z-chart__dot,
+    .z-chart__tip-key {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+      border-color: CanvasText;
+    }
+    .z-chart__bar:not([data-pattern="0"]) {
+      background-image: repeating-linear-gradient(var(--z-chart-hatch), Canvas 0 2px, CanvasText 2px 5px);
+    }
+    .z-chart__dot {
+      box-shadow: 0 0 0 2px Canvas;
+    }
+    .z-chart__key[aria-pressed="false"] .z-chart__swatch {
+      background: Canvas;
+    }
+    .z-chart .z-chart__svg .z-chart__slice {
+      fill: CanvasText;
+      stroke: Canvas;
+      stroke-width: 2px;
+    }
+    .z-chart__hatch {
+      stroke: Canvas;
+    }
+    .z-chart__slice[data-active],
+    .z-chart__slice:focus-visible {
+      fill: Highlight;
+    }
+    .z-chart__hit:focus-visible {
+      outline-color: Highlight;
+    }
+    .z-chart__cross {
+      background: CanvasText;
+    }
+    .z-chart__tip {
+      border-color: CanvasText;
+    }
+  }
+  @media print {
+    .z-chart {
+      break-inside: avoid;
+      print-color-adjust: exact;
+    }
+    .z-chart__toggle,
+    .z-chart__tip,
+    .z-chart__cross,
+    .z-chart__band {
+      display: none;
+    }
+    .z-chart .z-chart__line {
+      stroke-dasharray: var(--z-chart-dash, none);
+    }
+  }
+}
+
+/* Minigráfico: una serie sin ejes; el color por `data-color` en la raíz. Ocupa el ancho de su caja (6rem por defecto). */
+@layer zui.charts {
+  .z-sparkline {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    inline-size: calc(var(--z-space-12) * 2);
+    block-size: var(--z-space-7);
+    vertical-align: middle;
+  }
+  .z-sparkline[data-color="1"] {
+    --z-chart-c: var(--z-chart-1);
+  }
+  .z-sparkline[data-color="2"] {
+    --z-chart-c: var(--z-chart-2);
+  }
+  .z-sparkline[data-color="3"] {
+    --z-chart-c: var(--z-chart-3);
+  }
+  .z-sparkline[data-color="4"] {
+    --z-chart-c: var(--z-chart-4);
+  }
+  .z-sparkline[data-color="5"] {
+    --z-chart-c: var(--z-chart-5);
+  }
+  .z-sparkline[data-color="6"] {
+    --z-chart-c: var(--z-chart-6);
+  }
+  .z-sparkline[data-color="7"] {
+    --z-chart-c: var(--z-chart-7);
+  }
+  .z-sparkline[data-color="8"] {
+    --z-chart-c: var(--z-chart-8);
+  }
+  .z-sparkline__svg {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+  .z-sparkline__svg:dir(rtl) {
+    scale: -1 1;
+  }
+  .z-sparkline__line {
+    fill: none;
+    stroke: var(--z-chart-c);
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .z-sparkline__area {
+    fill: var(--z-chart-c);
+    fill-opacity: var(--z-chart-area-opacity);
+  }
+  .z-sparkline__bar {
+    fill: var(--z-chart-c);
+    fill-opacity: 0.55;
+  }
+  .z-sparkline__bar[data-last] {
+    fill-opacity: 1;
+  }
+  .z-sparkline__end {
+    position: absolute;
+    inset-inline-start: calc(var(--x) * 100%);
+    inset-block-end: calc(var(--y) * 100%);
+    inline-size: 6px;
+    block-size: 6px;
+    margin-inline-start: -3px;
+    translate: 0 50%;
+    border-radius: var(--z-radius-full);
+    background: var(--z-chart-c);
+    box-shadow: 0 0 0 2px var(--z-surface-solid);
+  }
+  @media (forced-colors: active) {
+    .z-sparkline__line {
+      stroke: CanvasText;
+    }
+    .z-sparkline__area {
+      fill: transparent;
+    }
+    .z-sparkline__bar {
+      fill: CanvasText;
+    }
+    .z-sparkline__end {
+      forced-color-adjust: none;
+      background: CanvasText;
+      box-shadow: 0 0 0 2px Canvas;
+    }
+  }
+}
+
+/* Tendencia de StatTile: minigráfico a todo el ancho bajo el valor. */
+@layer zui.charts {
+  .z-stat .z-stat__trend {
+    display: block;
+    inline-size: 100%;
+    block-size: var(--z-space-10);
+  }
+  .z-stat[data-variant="solid"] .z-stat__trend {
+    --z-chart-c: var(--z-fg-on-accent);
+  }
+}

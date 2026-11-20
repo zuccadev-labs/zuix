@@ -1,6 +1,6 @@
-// Piezas de la agenda sin framework (año perpetuo, línea temporal, buscar hueco, franjas, mapa de calor, rachas): un
-// elemento con la clase raíz de la pieza dentro de `[data-z-dom]` se pinta con el mismo árbol que el binding de React
-// (core/widget + core/vnode) y la misma interacción. Configuración en atributos `data-*` y en un hijo
+// Piezas sin framework (agenda: año perpetuo, línea temporal, buscar hueco, franjas, mapa de calor, rachas; gráficos
+// y minigráficos): un elemento con la clase raíz de la pieza dentro de `[data-z-dom]` se pinta con el mismo árbol que
+// el binding de React (core/widget + core/vnode) y la misma interacción. Configuración en atributos `data-*` y en un hijo
 // `<script type="application/json" data-props>`; datos por propiedad con `setWidgetProps(el, props)`. Los avisos salen
 // como `z:<nombre>` (`z:select`, `z:taskchange`…). El texto de la aplicación entra siempre como texto.
 
@@ -22,11 +22,13 @@ import { domEventName, focusActive, type Widget, type WidgetHost } from "../core
 import { setCalendarOptions, type CalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
 import { patchChildren } from "./vtree";
+import { chartWidget } from "../core/chart-widget";
 import { freeBusyWidget } from "../core/freebusy-widget";
 import { habitWidget } from "../core/habit-widget";
 import { heatmapWidget } from "../core/heatmap-widget";
 import { perpetualWidget } from "../core/perpetual-widget";
 import { slotPickerWidget } from "../core/slots-widget";
+import { sparklineWidget } from "../core/sparkline";
 import { timelineWidget } from "../core/timeline-widget";
 
 // biome-ignore lint/suspicious/noExplicitAny: el registro guarda piezas de props, configuración y estado distintos.
@@ -63,6 +65,8 @@ registerWidget(freeBusyWidget);
 registerWidget(slotPickerWidget);
 registerWidget(heatmapWidget);
 registerWidget(habitWidget);
+registerWidget(chartWidget);
+registerWidget(sparklineWidget);
 
 /** Registra una pieza para que `hydrate` la monte. */
 export function registerWidget(widget: AnyWidget): void {

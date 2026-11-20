@@ -209,7 +209,23 @@
     "heatmap-1": "color-mix(in srgb, {heatmap-hue} 34%, {surface-solid})",
     "heatmap-2": "color-mix(in srgb, {heatmap-hue} 56%, {surface-solid})",
     "heatmap-3": "color-mix(in srgb, {heatmap-hue} 78%, {surface-solid})",
-    "heatmap-4": "{heatmap-hue}"
+    "heatmap-4": "{heatmap-hue}",
+
+    "chart-1": "color-mix(in srgb, {info} 80%, {surface-solid})",
+    "chart-2": "color-mix(in srgb, {warning} 90%, {surface-solid})",
+    "chart-3": "color-mix(in srgb, {danger} 90%, {fg})",
+    "chart-4": "color-mix(in srgb, {success} 70%, {fg})",
+    "chart-5": "color-mix(in srgb, color-mix(in srgb, {info} 55%, {danger}) 80%, {fg})",
+    "chart-6": "color-mix(in srgb, {warning} 60%, {danger})",
+    "chart-7": "color-mix(in srgb, color-mix(in srgb, {info} 35%, {danger}) 70%, {fg})",
+    "chart-8": "color-mix(in srgb, {danger} 60%, {warning})",
+    "chart-grid": "{line}",
+    "chart-baseline": "{line-strong}",
+    "chart-height": "240px",
+    "chart-bar-max": "28px",
+    "chart-bar-radius": "{radius-xs}",
+    "chart-area-opacity": "0.16",
+    "chart-line-width": "2px"
   },
   "required": [
     "accent",
@@ -317,7 +333,15 @@
       "calendar-now",
       "heatmap-hue",
       "heatmap-3",
-      "heatmap-4"
+      "heatmap-4",
+      "chart-1",
+      "chart-2",
+      "chart-3",
+      "chart-4",
+      "chart-5",
+      "chart-6",
+      "chart-7",
+      "chart-8"
     ],
     "ignore": [
       {

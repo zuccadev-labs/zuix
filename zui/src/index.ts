@@ -8,6 +8,7 @@ export * from "./components/overlay";
 export * from "./components/navigation";
 export * from "./components/carousel";
 export * from "./components/agenda";
+export * from "./components/charts";
 export { cx } from "./cx";
 // Utilidades de fechas civiles (cadenas ISO, sin zona) que comparten Calendar y los selectores.
 export {
