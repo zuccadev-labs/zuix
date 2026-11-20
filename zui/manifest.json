@@ -1,13 +1,17 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 75,
+ "count": 88,
  "groups": {
   "actions": [
    "Button",
+   "ButtonGroup",
+   "CopyButton",
    "IconButton",
    "Link",
    "SegmentedControl",
-   "Toggle"
+   "Swap",
+   "Toggle",
+   "ToggleGroup"
   ],
   "agenda": [
    "EventCalendar"
@@ -51,24 +55,33 @@
   "forms": [
    "Calendar",
    "Checkbox",
+   "CheckboxGroup",
    "Combobox",
    "DateField",
    "DateInput",
    "DatePicker",
    "DateRangePicker",
    "DateTimePicker",
+   "Editable",
    "Field",
+   "Fieldset",
    "FileUpload",
+   "Form",
    "Input",
+   "InputGroup",
+   "Listbox",
    "MonthPicker",
    "NativeSelect",
+   "NumberInput",
    "OTPInput",
+   "PasswordInput",
    "Radio",
    "RadioGroup",
    "SearchInput",
    "Select",
    "Slider",
    "Switch",
+   "TagsInput",
    "Textarea",
    "TimeField",
    "TimePicker",
@@ -109,21 +122,26 @@
      "values": [
       "primary",
       "secondary",
+      "outline",
       "ghost",
+      "link",
       "danger"
      ],
      "default": "secondary",
-     "description": "Intención."
+     "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`)."
     },
     {
      "name": "size",
      "type": "enum",
      "values": [
+      "xs",
       "sm",
       "md",
-      "lg"
+      "lg",
+      "xl"
      ],
-     "default": "md"
+     "default": "md",
+     "description": "Altura: 24, 28, 34, 40 o 48 px, con su radio concéntrico (6, 8, 10, 12, 14)."
     },
     {
      "name": "icon",
@@ -199,7 +217,16 @@
     "control-radius-lg",
     "accent-text",
     "danger-text",
-    "fg-on-accent"
+    "fg-on-accent",
+    "line-strong",
+    "control-height-xs",
+    "control-height-xl",
+    "control-radius-xl",
+    "radius-xs",
+    "space-2",
+    "space-5",
+    "text-caption",
+    "text-title"
    ],
    "classes": [
     "z-btn"
@@ -221,10 +248,213 @@
     {
      "title": "Fantasma con icono a la derecha",
      "code": "<Button variant=\"ghost\" size=\"sm\" iconRight=\"chevron-right\">View all</Button>"
+    },
+    {
+     "title": "Contorno y enlace",
+     "code": "<>\n  <Button variant=\"outline\" icon=\"arrow-down-tray\">Export</Button>\n  <Button variant=\"link\">Learn more</Button>\n</>"
+    },
+    {
+     "title": "Escala de tamaños",
+     "code": "<>\n  <Button size=\"xs\">Extra small</Button>\n  <Button size=\"sm\">Small</Button>\n  <Button>Medium</Button>\n  <Button size=\"lg\">Large</Button>\n  <Button size=\"xl\" variant=\"primary\">Extra large</Button>\n</>"
     }
    ],
    "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes de zutool; forma (rectángulo de radios concéntricos) del estándar liquid glass.",
    "file": "zui/src/components/actions/Button.manifest.json"
+  },
+  {
+   "name": "ButtonGroup",
+   "exports": [
+    "ButtonGroupSeparator"
+   ],
+   "group": "actions",
+   "description": "Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.",
+   "import": "import { ButtonGroup, ButtonGroupSeparator } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del grupo (aria-label)."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "attached",
+     "type": "boolean",
+     "default": true,
+     "description": "Une las piezas. Con `false` quedan separadas por 8 px."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Button, IconButton, el disparador de un Menu, un Input o ButtonGroupSeparator."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "space-2",
+    "line-strong"
+   ],
+   "classes": [
+    "z-btn-group",
+    "z-btn-group__separator"
+   ],
+   "a11y": "Contenedor `role=\"group\"` con nombre por `label`. Cada botón conserva su parada de Tab y su nombre; el grupo no añade teclado propio. Para un conjunto con estado (activado o no) y una sola parada de tabulación, ToggleGroup.",
+   "examples": [
+    {
+     "title": "Unido",
+     "code": "<ButtonGroup label=\"History\">\n  <Button icon=\"arrow-uturn-up-left\">Undo</Button>\n  <Button icon=\"arrow-uturn-up-right\">Redo</Button>\n  <IconButton icon=\"ellipsis-horizontal\" label=\"More\" variant=\"secondary\" />\n</ButtonGroup>"
+    },
+    {
+     "title": "Contorno con separador",
+     "code": "<ButtonGroup label=\"Export\">\n  <Button variant=\"primary\" icon=\"arrow-down-tray\">Export</Button>\n  <ButtonGroupSeparator />\n  <IconButton icon=\"chevron-down\" label=\"Export options\" variant=\"primary\" />\n</ButtonGroup>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<ButtonGroup label=\"Zoom\" orientation=\"vertical\">\n  <IconButton icon=\"plus\" label=\"Zoom in\" variant=\"outline\" />\n  <IconButton icon=\"minus\" label=\"Zoom out\" variant=\"outline\" />\n</ButtonGroup>"
+    },
+    {
+     "title": "Separado",
+     "code": "<ButtonGroup label=\"Actions\" attached={false}>\n  <Button variant=\"outline\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Button Group de Shark UI (horizontal, vertical, separador). Forma del estándar liquid glass.",
+   "file": "zui/src/components/actions/ButtonGroup.manifest.json"
+  },
+  {
+   "name": "CopyButton",
+   "group": "actions",
+   "description": "Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.",
+   "import": "import { CopyButton } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | (() => string)",
+     "description": "Texto que se copia."
+    },
+    {
+     "name": "target",
+     "type": "string",
+     "description": "Id del elemento cuyo texto (o valor, si es un campo) se copia, si no hay `value`. En el marcado: command=\"--copy\" commandfor=\"id\"."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Copy",
+     "description": "Nombre accesible del botón de solo icono. Di qué se copia («Copy API key»): varios «Copy» iguales no se distinguen."
+    },
+    {
+     "name": "copiedLabel",
+     "type": "string",
+     "default": "Copied"
+    },
+    {
+     "name": "failedLabel",
+     "type": "string",
+     "default": "Copy failed"
+    },
+    {
+     "name": "timeout",
+     "type": "number",
+     "default": 2000,
+     "description": "Milisegundos que dura la confirmación."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "outline",
+      "ghost",
+      "danger"
+     ],
+     "default": "ghost"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl"
+     ],
+     "default": "sm"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Texto visible: entonces es el nombre del botón."
+    },
+    {
+     "name": "onCopied",
+     "type": "(text: string) => void"
+    },
+    {
+     "name": "onCopyError",
+     "type": "() => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "copied",
+    "failed"
+   ],
+   "tokens": [
+    "success-text",
+    "danger-text",
+    "glass-border",
+    "control-radius-sm",
+    "tooltip-bg",
+    "shadow-md",
+    "fg",
+    "text-caption",
+    "weight-medium",
+    "leading-ui",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "layer-tooltip",
+    "duration-fast",
+    "ease-standard",
+    "ease-spring"
+   ],
+   "classes": [
+    "z-copy",
+    "z-copy__button",
+    "z-copy__status",
+    "z-btn"
+   ],
+   "a11y": "button type=\"button\" de al menos 24 × 24 px con nombre (aria-label en el de solo icono). El resultado («Copied» o «Copy failed») se escribe en una burbuja `role=\"status\"` fuera del botón: es a la vez la confirmación visible y la anunciada; el icono cambia además a una marca, así que no depende del color. No se deshabilita mientras confirma (copiar es repetible) y un mensaje repetido se vuelve a anunciar en VoiceOver. Copia con la API asíncrona del portapapeles y, si falta o la rechaza el navegador, con la copia heredada.",
+   "examples": [
+    {
+     "title": "Solo icono",
+     "code": "<CopyButton value=\"zx_live_4f9c2a\" label=\"Copy API key\" />"
+    },
+    {
+     "title": "Con texto",
+     "code": "<CopyButton value=\"pnpm add @zuccadev-labs/zuix\" variant=\"outline\">Copy command</CopyButton>"
+    },
+    {
+     "title": "Copiar otro elemento",
+     "code": "<>\n  <code id=\"invite-link\">https://example.com/i/8d2k</code>\n  <CopyButton target=\"invite-link\" label=\"Copy invite link\" />\n</>"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI.",
+   "file": "zui/src/components/actions/CopyButton.manifest.json"
   },
   {
    "name": "IconButton",
@@ -249,6 +479,7 @@
      "values": [
       "primary",
       "secondary",
+      "outline",
       "ghost",
       "danger"
      ],
@@ -258,9 +489,11 @@
      "name": "size",
      "type": "enum",
      "values": [
+      "xs",
       "sm",
       "md",
-      "lg"
+      "lg",
+      "xl"
      ],
      "default": "md"
     },
@@ -338,7 +571,12 @@
     "glass-highlight",
     "space-1-5",
     "space-3-5",
-    "weight-medium"
+    "weight-medium",
+    "line-strong",
+    "control-height-xs",
+    "control-height-xl",
+    "control-radius-xl",
+    "radius-xs"
    ],
    "classes": [
     "z-btn",
@@ -499,6 +737,26 @@
      "description": "Reparte el ancho entre los segmentos."
     },
     {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "En columna, cada opción ocupa el ancho. Las flechas de los dos ejes funcionan en ambas."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "underline"
+     ],
+     "default": "default",
+     "description": "`underline`: sin pista; la opción elegida lleva una barra de acento (abajo, o al inicio en vertical)."
+    },
+    {
      "name": "disabled",
      "type": "boolean",
      "default": false
@@ -538,7 +796,10 @@
     "accent-ring",
     "duration-press",
     "ease-out",
-    "touch-target"
+    "touch-target",
+    "line",
+    "accent",
+    "surface-2"
    ],
    "classes": [
     "z-segmented"
@@ -552,10 +813,83 @@
     {
      "title": "Periodo, ancho completo",
      "code": "<SegmentedControl label=\"Period\" defaultValue=\"week\" fullWidth items={[{ value: \"day\", label: \"Day\" }, { value: \"week\", label: \"Week\" }, { value: \"month\", label: \"Month\" }]} />"
+    },
+    {
+     "title": "Subrayado",
+     "code": "<SegmentedControl\n  label=\"Section\"\n  variant=\"underline\"\n  defaultValue=\"overview\"\n  items={[\n    { value: \"overview\", label: \"Overview\" },\n    { value: \"activity\", label: \"Activity\" },\n    { value: \"settings\", label: \"Settings\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<SegmentedControl\n  label=\"Density\"\n  orientation=\"vertical\"\n  defaultValue=\"comfortable\"\n  items={[\n    { value: \"compact\", label: \"Compact\", icon: \"bars-3\" },\n    { value: \"comfortable\", label: \"Comfortable\", icon: \"list-bullet\" },\n    { value: \"spacious\", label: \"Spacious\", icon: \"squares-2x2\" },\n  ]}\n/>"
     }
    ],
    "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/SegmentedControl.manifest.json"
+  },
+  {
+   "name": "Swap",
+   "group": "actions",
+   "description": "Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna). Sigue al control que lo contiene.",
+   "import": "import { Swap } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "none",
+   "props": [
+    {
+     "name": "off",
+     "type": "ReactNode",
+     "description": "Contenido en reposo."
+    },
+    {
+     "name": "on",
+     "type": "ReactNode",
+     "description": "Contenido activado."
+    },
+    {
+     "name": "active",
+     "type": "boolean",
+     "description": "Estado propio. Sin él se activa dentro de un elemento con aria-pressed=\"true\", aria-expanded=\"true\" o data-state=\"on\"."
+    },
+    {
+     "name": "effect",
+     "type": "enum",
+     "values": [
+      "fade",
+      "rotate",
+      "flip",
+      "scale"
+     ],
+     "default": "fade"
+    }
+   ],
+   "states": [
+    "off",
+    "on"
+   ],
+   "tokens": [
+    "duration-normal",
+    "ease-standard",
+    "ease-spring"
+   ],
+   "classes": [
+    "z-swap",
+    "z-swap__item"
+   ],
+   "a11y": "Decorativo (aria-hidden): el nombre y el estado los expone el control que lo contiene (un Toggle con aria-pressed o un botón con aria-expanded). Con movimiento reducido solo hay fundido.",
+   "examples": [
+    {
+     "title": "En un Toggle (sigue a aria-pressed)",
+     "code": "<Toggle label=\"Dark mode\">\n  <Swap effect=\"rotate\" off={<Icon name=\"sun\" />} on={<Icon name=\"moon\" />} />\n</Toggle>"
+    },
+    {
+     "title": "Estado propio",
+     "code": "<Swap active effect=\"scale\" off={<Icon name=\"bars-3\" />} on={<Icon name=\"x-mark\" />} />"
+    },
+    {
+     "title": "Volteo",
+     "code": "<Toggle label=\"Favourite\" variant=\"ghost\">\n  <Swap effect=\"flip\" off={<Icon name=\"heart\" />} on={<Icon name=\"heart\" variant=\"solid\" />} />\n</Toggle>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Swap de Shark UI (fundido, giro, volteo, escala).",
+   "file": "zui/src/components/actions/Swap.manifest.json"
   },
   {
    "name": "Toggle",
@@ -586,6 +920,16 @@
       "lg"
      ],
      "default": "md"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "outline",
+      "ghost"
+     ],
+     "default": "outline",
+     "description": "`outline` con canto; `ghost` sin canto hasta pasar el puntero o activarse."
     },
     {
      "name": "icon",
@@ -634,7 +978,9 @@
     "duration-press",
     "ease-out",
     "focus-offset",
-    "focus-width"
+    "focus-width",
+    "control-radius-sm",
+    "control-radius-lg"
    ],
    "classes": [
     "z-toggle"
@@ -648,10 +994,141 @@
     {
      "title": "Controlado con texto",
      "code": "<Toggle pressed={muted} onPressedChange={setMuted} icon=\"speaker-x-mark\">Mute</Toggle>"
+    },
+    {
+     "title": "Fantasma y contorno",
+     "code": "<>\n  <Toggle icon=\"bold\" label=\"Bold\" variant=\"ghost\" />\n  <Toggle icon=\"italic\" label=\"Italic\" defaultPressed />\n</>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/Toggle.manifest.json"
+  },
+  {
+   "name": "ToggleGroup",
+   "group": "actions",
+   "description": "Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).",
+   "import": "import { ToggleGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "items",
+     "type": "ToggleGroupItem[]",
+     "description": "{ value, label?, icon?, ariaLabel?, disabled? }. Sin `label`, `ariaLabel` es obligatorio."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "type",
+     "type": "enum",
+     "values": [
+      "single",
+      "multiple"
+     ],
+     "default": "single"
+    },
+    {
+     "name": "value",
+     "type": "string | string[]",
+     "description": "Controlado: la opción activada (\"\" si ninguna) o la lista."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value) => void"
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Solo `single`: la opción activa no se puede desactivar."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "outline",
+      "ghost"
+     ],
+     "default": "outline"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "attached",
+     "type": "boolean",
+     "default": true,
+     "description": "Une las piezas; con `false` quedan separadas por 4 px."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "on",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "line",
+    "accent-soft",
+    "accent-ring",
+    "accent-text",
+    "control-radius-sm",
+    "control-radius-lg"
+   ],
+   "classes": [
+    "z-toggle-group",
+    "z-toggle"
+   ],
+   "a11y": "`role=\"group\"` con nombre; cada opción es un button con aria-pressed (patrón APG «toolbar» para el foco). Una sola parada de Tab: las flechas mueven el foco con vuelta al otro extremo (en RTL la izquierda avanza; en vertical, arriba y abajo), Inicio y Fin van a los extremos, y Espacio o Intro activan. Para elegir exactamente una opción entre pocas, SegmentedControl (radiogroup).",
+   "examples": [
+    {
+     "title": "Formato de texto (múltiple)",
+     "code": "<ToggleGroup\n  type=\"multiple\"\n  label=\"Text formatting\"\n  defaultValue={[\"bold\"]}\n  items={[\n    { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n    { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n    { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Alineación (una, fantasma)",
+     "code": "<ToggleGroup\n  label=\"Alignment\"\n  variant=\"ghost\"\n  defaultValue=\"left\"\n  items={[\n    { value: \"left\", icon: \"bars-3-bottom-left\", ariaLabel: \"Align left\" },\n    { value: \"center\", icon: \"bars-3\", ariaLabel: \"Align center\" },\n    { value: \"right\", icon: \"bars-3-bottom-right\", ariaLabel: \"Align right\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Vista con texto, separada",
+     "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<ToggleGroup\n  type=\"multiple\"\n  label=\"Layers\"\n  orientation=\"vertical\"\n  size=\"sm\"\n  items={[\n    { value: \"grid\", icon: \"table-cells\", label: \"Grid\" },\n    { value: \"guides\", icon: \"adjustments-horizontal\", label: \"Guides\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (APG «toolbar» para el foco; aria-pressed). Referencia de variantes: Toggle Group de Shark UI y Radix.",
+   "file": "zui/src/components/actions/ToggleGroup.manifest.json"
   },
   {
    "name": "EventCalendar",
@@ -2816,6 +3293,12 @@
      "name": "valueLabel",
      "type": "(value: number, max: number) => string",
      "description": "Por defecto \"N out of M\"."
+    },
+    {
+     "name": "allowHalf",
+     "type": "boolean",
+     "default": false,
+     "description": "Con `onChange`: medias estrellas. Cada estrella tiene dos mitades pulsables y las flechas avanzan de 0,5 en 0,5. En lectura los decimales ya se dibujan."
     }
    ],
    "states": [
@@ -2853,6 +3336,10 @@
     {
      "title": "Entrada",
      "code": "<Rating value={score} onChange={setScore} size=\"lg\" label=\"Your rating\" />"
+    },
+    {
+     "title": "Medias estrellas",
+     "code": "function HalfRating() {\n  const [stars, setStars] = React.useState(3.5);\n  return <Rating value={stars} onChange={setStars} allowHalf showValue label=\"Your rating\" />;\n}"
     }
    ],
    "origin": "Rating del design system base.",
@@ -4248,6 +4735,22 @@
      "type": "boolean",
      "default": false,
      "description": "El formulario no se envía si no está marcada."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default",
+     "description": "`card`: casilla, etiqueta y descripción en un recuadro que se pulsa y se marca entero. Dentro de un CheckboxGroup la toma del grupo."
+    },
+    {
+     "name": "value",
+     "type": "string",
+     "default": "on",
+     "description": "Valor que envía el formulario. Dentro de un CheckboxGroup identifica la casilla: su estado sale del grupo."
     }
    ],
    "states": [
@@ -4281,7 +4784,14 @@
     "control-border",
     "focus-offset",
     "focus-width",
-    "touch-target"
+    "touch-target",
+    "line-strong",
+    "control-radius-lg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent-soft",
+    "space-3",
+    "space-3-5"
    ],
    "classes": [
     "z-check"
@@ -4295,10 +4805,139 @@
     {
      "title": "Indeterminado",
      "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
+    },
+    {
+     "title": "Tarjeta",
+     "code": "<Checkbox variant=\"card\" defaultChecked description=\"Get a summary of activity every Monday.\">\n  Weekly digest\n</Checkbox>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Checkbox.manifest.json"
+  },
+  {
+   "name": "CheckboxGroup",
+   "group": "forms",
+   "description": "Varias casillas de una misma pregunta en un fieldset con su título; valor como lista, casilla «todas» opcional y variante tarjeta.",
+   "import": "import { CheckboxGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "label",
+     "type": "ReactNode",
+     "description": "Título del grupo (legend)."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "options",
+     "type": "CheckboxGroupOption[]",
+     "description": "{ value, label, description?, disabled? }. También valen hijos <Checkbox value=\"…\">."
+    },
+    {
+     "name": "value",
+     "type": "string[]"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[]",
+     "default": []
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string[]) => void"
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Cada casilla marcada envía su valor con este nombre."
+    },
+    {
+     "name": "selectAll",
+     "type": "ReactNode",
+     "description": "Texto de una casilla «todas» encima de las opciones; indeterminada si solo hay algunas."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false,
+     "description": "Deshabilita el fieldset entero."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "error",
+     "type": "ReactNode",
+     "description": "Mensaje bajo el grupo; lo marca como no válido."
+    }
+   ],
+   "states": [
+    "rest",
+    "checked",
+    "indeterminate",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "space-2",
+    "space-4",
+    "space-6",
+    "fg",
+    "fg-muted",
+    "line",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-checkgroup",
+    "z-checkgroup__legend",
+    "z-checkgroup__description",
+    "z-checkgroup__items",
+    "z-checkgroup__all",
+    "z-check"
+   ],
+   "a11y": "fieldset con legend como primer hijo: el título nombra el grupo y cada casilla conserva su etiqueta. Cada casilla es un checkbox (Espacio la cambia). La casilla «todas» expone aria-checked=\"mixed\" cuando hay algunas marcadas. La descripción y el error se enlazan al grupo con aria-describedby.",
+   "examples": [
+    {
+     "title": "Notificaciones con «todas»",
+     "code": "<CheckboxGroup\n  label=\"Notify me about\"\n  name=\"notify\"\n  selectAll=\"All activity\"\n  defaultValue={[\"mentions\"]}\n  options={[\n    { value: \"mentions\", label: \"Mentions\" },\n    { value: \"comments\", label: \"Comments\" },\n    { value: \"releases\", label: \"Releases\", description: \"New versions of projects you follow.\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Tarjetas en horizontal",
+     "code": "<CheckboxGroup\n  label=\"Platforms\"\n  variant=\"card\"\n  orientation=\"horizontal\"\n  defaultValue={[\"web\"]}\n  options={[\n    { value: \"web\", label: \"Web\", description: \"Browsers and PWAs\" },\n    { value: \"desktop\", label: \"Desktop\", description: \"macOS, Windows, Linux\" },\n    { value: \"mobile\", label: \"Mobile\", description: \"iOS and Android\", disabled: true },\n  ]}\n/>"
+    },
+    {
+     "title": "Con error",
+     "code": "<CheckboxGroup\n  label=\"Terms\"\n  error=\"Accept both to continue.\"\n  options={[\n    { value: \"terms\", label: \"I accept the terms of service\" },\n    { value: \"privacy\", label: \"I accept the privacy policy\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
+   "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
   },
   {
    "name": "Combobox",
@@ -4306,12 +4945,6 @@
    "description": "Campo de texto con lista filtrable para elegir una opción; admite carga asíncrona de opciones.",
    "import": "import { Combobox } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
-    {
-     "name": "options",
-     "type": "ComboboxOption[]",
-     "required": true,
-     "description": "{ value, label, icon?, disabled? }."
-    },
     {
      "name": "value",
      "type": "string | null",
@@ -4412,6 +5045,39 @@
      "name": "aria-label",
      "type": "string",
      "description": "Nombre accesible cuando no hay `Field`."
+    },
+    {
+     "name": "options",
+     "type": "(ComboboxOption | ComboboxOptionGroup)[]",
+     "description": "Opciones sueltas o grupos { label, options }; un grupo sin coincidencias no se muestra."
+    },
+    {
+     "name": "multiple",
+     "type": "boolean",
+     "default": false,
+     "description": "Varias opciones como piezas dentro del campo (`value: string[]`); elegir no cierra la lista y Retroceso con el campo vacío quita la última."
+    },
+    {
+     "name": "maxSelected",
+     "type": "number",
+     "description": "Solo con `multiple`."
+    },
+    {
+     "name": "removeLabel",
+     "type": "(label: string) => string",
+     "default": "Remove {label}",
+     "description": "Solo con `multiple`: nombre del botón de cada pieza."
+    },
+    {
+     "name": "allowCustomValue",
+     "type": "boolean",
+     "default": false,
+     "description": "Autocompletar: el texto escrito vale aunque no coincida con una opción (Intro sin opción activa o al salir). `onValueChange` recibe el texto y `null`."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono decorativo al inicio del campo."
     }
    ],
    "states": [
@@ -4474,14 +5140,15 @@
     "space-2-5",
     "space-3-5",
     "surface-2",
-    "touch-target"
+    "touch-target",
+    "glass-border"
    ],
    "classes": [
     "z-input",
     "z-combobox",
     "z-listbox"
    ],
-   "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado.",
+   "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado. Con `multiple` la lista es aria-multiselectable y cada pieza tiene un botón con nombre; con `allowCustomValue` (patrón «autocompletar») el texto escrito se conserva como valor.",
    "behavior": "dom",
    "examples": [
     {
@@ -4495,6 +5162,14 @@
     {
      "title": "Carga asíncrona",
      "code": "<Combobox aria-label=\"Repository\" placeholder=\"Search repositories\" options={[]} filter={false} loading loadingText=\"Searching\" onInputChange={(text) => console.log(text)} />"
+    },
+    {
+     "title": "Varias como piezas, con grupos",
+     "code": "<Field label=\"Labels\">\n  <Combobox\n    multiple\n    name=\"labels\"\n    placeholder=\"Add labels\"\n    defaultValue={[\"bug\"]}\n    options={[\n      { label: \"Type\", options: [\n        { value: \"bug\", label: \"Bug\" },\n        { value: \"feature\", label: \"Feature\" },\n      ] },\n      { label: \"Area\", options: [\n        { value: \"forms\", label: \"Forms\" },\n        { value: \"docs\", label: \"Docs\" },\n      ] },\n    ]}\n  />\n</Field>"
+    },
+    {
+     "title": "Autocompletar (texto libre) con icono",
+     "code": "<Field label=\"City\" hint=\"Pick a suggestion or type any city.\">\n  <Combobox\n    allowCustomValue\n    icon=\"map-pin\"\n    placeholder=\"Search a city\"\n    options={[\n      { value: \"lisbon\", label: \"Lisbon\" },\n      { value: \"madrid\", label: \"Madrid\" },\n      { value: \"montreal\", label: \"Montreal\" },\n    ]}\n  />\n</Field>"
     }
    ],
    "html": [
@@ -4507,6 +5182,14 @@
      "title": "Carga asíncrona",
      "code": "<span class=\"z-input z-combobox\" id=\"repo\" data-size=\"md\" data-state=\"closed\" data-filter=\"false\" data-empty-text=\"No repositories\" data-loading-text=\"Searching\">\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Repository\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"repo-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search repositories\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"repo-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"repo-list\" role=\"listbox\" aria-label=\"Repository\"></div>\n</div>",
      "script": "import { setComboboxLoading, setComboboxOptions } from \"@zuccadev-labs/zuix-zui/dom\";\n\nconst repo = document.querySelector(\"#repo\");\nrepo.addEventListener(\"z:input\", async (event) => {\n  setComboboxLoading(repo, true);\n  const found = await searchRepositories(event.detail.value);\n  setComboboxOptions(repo, found.map((item) => ({ value: item.id, label: item.name, icon: \"folder\" })));\n  setComboboxLoading(repo, false);\n});"
+    },
+    {
+     "title": "Varias como piezas, con grupos",
+     "code": "<span class=\"z-input z-combobox\" id=\"labels\" data-size=\"md\" data-state=\"closed\" data-multiple data-value=\"bug\" data-name=\"labels\">\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Labels\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"labels-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Add labels\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"labels-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"labels-list\" role=\"listbox\" aria-label=\"Labels\" aria-multiselectable=\"true\">\n    <div role=\"group\" class=\"z-listbox__group\" aria-labelledby=\"labels-type\">\n      <div id=\"labels-type\" class=\"z-listbox__label\">Type</div>\n    <div class=\"z-listbox__option\" id=\"labels-bug\" role=\"option\" data-value=\"bug\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Bug</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"labels-feature\" role=\"option\" data-value=\"feature\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Feature</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    </div>\n    <div role=\"group\" class=\"z-listbox__group\" aria-labelledby=\"labels-area\">\n      <div id=\"labels-area\" class=\"z-listbox__label\">Area</div>\n    <div class=\"z-listbox__option\" id=\"labels-forms\" role=\"option\" data-value=\"forms\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Forms</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"labels-docs\" role=\"option\" data-value=\"docs\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Docs</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Autocompletar (texto libre) con icono",
+     "code": "<span class=\"z-input z-combobox\" id=\"city\" data-size=\"md\" data-state=\"closed\" data-custom>\n  <span class=\"z-input__icon\"><z-icon name=\"map-pin\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"City\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"city-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a city\" />\n  <input type=\"hidden\" name=\"city\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"city-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"city-list\" role=\"listbox\" aria-label=\"City\">\n    <div class=\"z-listbox__option\" id=\"city-lisbon\" role=\"option\" data-value=\"lisbon\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Lisbon</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-madrid\" role=\"option\" data-value=\"madrid\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Madrid</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-montreal\" role=\"option\" data-value=\"montreal\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Montreal</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
    ],
    "origin": "Combobox del catálogo objetivo; patrón combobox de ARIA APG sobre el aspecto de Input.",
@@ -5567,6 +6250,190 @@
    "file": "zui/src/components/forms/DateTimePicker.manifest.json"
   },
   {
+   "name": "Editable",
+   "group": "forms",
+   "description": "Texto que se edita en su sitio (un título, un nombre): se ve como texto y pasa a ser un campo del mismo tamaño al activarlo.",
+   "import": "import { Editable } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del texto y del campo."
+    },
+    {
+     "name": "value",
+     "type": "string"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string",
+     "default": ""
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Al guardar, no en cada tecla."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "Empty"
+    },
+    {
+     "name": "activationMode",
+     "type": "enum",
+     "values": [
+      "click",
+      "focus",
+      "dblclick",
+      "none"
+     ],
+     "default": "click",
+     "description": "Cómo se entra a editar; con `none`, solo con el botón de editar (`controls`)."
+    },
+    {
+     "name": "submitOnBlur",
+     "type": "boolean",
+     "default": true,
+     "description": "Salir del campo guarda; con `false`, descarta."
+    },
+    {
+     "name": "multiline",
+     "type": "boolean",
+     "default": false,
+     "description": "Textarea: Intro hace salto de línea y Ctrl/⌘+Intro guarda."
+    },
+    {
+     "name": "controls",
+     "type": "boolean",
+     "default": false,
+     "description": "Botones de editar, guardar y cancelar."
+    },
+    {
+     "name": "editing",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultEditing",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onEditingChange",
+     "type": "(editing: boolean) => void"
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "No guarda un texto vacío."
+    },
+    {
+     "name": "maxLength",
+     "type": "number"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "`lg` sirve para títulos."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor guardado."
+    },
+    {
+     "name": "editLabel",
+     "type": "string",
+     "default": "Edit"
+    },
+    {
+     "name": "saveLabel",
+     "type": "string",
+     "default": "Save"
+    },
+    {
+     "name": "cancelLabel",
+     "type": "string",
+     "default": "Cancel"
+    },
+    {
+     "name": "hint",
+     "type": "string",
+     "default": "Press Enter to edit"
+    }
+   ],
+   "states": [
+    "preview",
+    "hover",
+    "focus",
+    "edit",
+    "disabled"
+   ],
+   "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-bg",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "fg",
+    "fg-subtle",
+    "line",
+    "accent",
+    "accent-ring",
+    "focus-width",
+    "text-body",
+    "text-small",
+    "text-heading",
+    "weight-semibold",
+    "leading-normal",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-editable",
+    "z-editable__preview",
+    "z-editable__text",
+    "z-editable__input",
+    "z-editable__controls"
+   ],
+   "a11y": "El texto es un button cuyo nombre es la etiqueta (oculta) más el valor visible («Project name: Borealis») y cuya descripción explica cómo editarlo. Clic, foco o doble clic (según `activationMode`) y también Intro o F2 lo pasan a un campo nativo con la misma etiqueta y el texto seleccionado. Intro guarda (Ctrl/⌘+Intro en varias líneas), Escape cancela y, al terminar, el foco vuelve al texto. Respeta la composición de un IME.",
+   "examples": [
+    {
+     "title": "Título",
+     "code": "<Editable label=\"Project name\" defaultValue=\"Borealis\" size=\"lg\" />"
+    },
+    {
+     "title": "Con botones",
+     "code": "<Editable label=\"Display name\" defaultValue=\"Ana Ruiz\" controls activationMode=\"none\" required />"
+    },
+    {
+     "title": "Varias líneas con doble clic",
+     "code": "<Editable label=\"Description\" multiline activationMode=\"dblclick\" placeholder=\"Add a description\" defaultValue={\"Glass shell for the desktop app.\\nShips in the next release.\"} />"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Editable de Shark UI (clic, foco, doble clic, ninguno; textarea; controles) e InlineEdit de zutool.",
+   "file": "zui/src/components/forms/Editable.manifest.json"
+  },
+  {
    "name": "Field",
    "group": "forms",
    "description": "Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.",
@@ -5612,6 +6479,11 @@
      "default": "stacked"
     },
     {
+     "name": "validate",
+     "type": "boolean | ValidityMessages",
+     "description": "Muestra el error de la validación nativa del control (required, type, pattern, minLength, min, max…) tras interactuar: al salir del campo si se editó, o al enviar. Se quita en cuanto el valor es válido. `true` usa los mensajes del navegador; un objeto los sustituye por motivo de ValidityState (`valueMissing`, `typeMismatch`, `patternMismatch`, `tooShort`…). `error` manda sobre él."
+    },
+    {
      "name": "children",
      "type": "ReactNode",
      "required": true,
@@ -5640,7 +6512,7 @@
    "classes": [
     "z-field"
    ],
-   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",
+   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios. Con `validate`, el error solo se enlaza (aria-describedby) y se marca (aria-invalid) mientras existe, como :user-invalid: no se anuncia antes de interactuar ni en cada tecla.",
    "examples": [
     {
      "title": "Con ayuda",
@@ -5653,10 +6525,101 @@
     {
      "title": "En línea",
      "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <NativeSelect options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
+    },
+    {
+     "title": "Mensajes por ValidityState",
+     "code": "<Form>\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Subscribe</Button>\n</Form>"
     }
    ],
    "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común.",
    "file": "zui/src/components/forms/Field.manifest.json"
+  },
+  {
+   "name": "Fieldset",
+   "exports": [
+    "FieldGroup"
+   ],
+   "group": "forms",
+   "description": "Grupo de campos relacionados con su título (fieldset y legend), descripción y deshabilitado de una vez; FieldGroup reparte los campos con el ritmo del estándar.",
+   "import": "import { Fieldset, FieldGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "none",
+   "props": [
+    {
+     "name": "legend",
+     "type": "ReactNode",
+     "description": "Fieldset: título del grupo (primer hijo)."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode",
+     "description": "Fieldset: texto bajo el título."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "card"
+     ],
+     "default": "plain",
+     "description": "Fieldset: sin recuadro o en una tarjeta."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false,
+     "description": "Fieldset: deshabilita todos los controles nativos que contiene (también los botones de Checkbox, Switch y Select)."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical",
+     "description": "FieldGroup: apilados, o en columnas que pasan a otra fila si no caben."
+    }
+   ],
+   "states": [
+    "rest",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "space-3",
+    "space-4",
+    "space-5",
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "fg",
+    "fg-muted",
+    "text-title",
+    "text-small",
+    "weight-semibold",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-fieldset",
+    "z-fieldset__legend",
+    "z-fieldset__description",
+    "z-fieldset__body",
+    "z-field-group"
+   ],
+   "a11y": "fieldset con legend como primer hijo: los lectores leen el título al entrar en el grupo. disabled en el fieldset deshabilita los controles nativos de dentro, también los de los controles propios (son button).",
+   "examples": [
+    {
+     "title": "Dirección en tarjeta",
+     "code": "<Fieldset legend=\"Shipping address\" description=\"Where we send the hardware key.\" variant=\"card\">\n  <FieldGroup>\n    <Field label=\"Full name\">\n      <Input name=\"name\" autoComplete=\"name\" />\n    </Field>\n    <Field label=\"Address\">\n      <Textarea name=\"address\" autoComplete=\"street-address\" rows={2} />\n    </Field>\n    <FieldGroup orientation=\"horizontal\">\n      <Field label=\"City\">\n        <Input name=\"city\" autoComplete=\"address-level2\" />\n      </Field>\n      <Field label=\"Postal code\" optionalLabel=\"Optional\">\n        <Input name=\"postal\" autoComplete=\"postal-code\" />\n      </Field>\n    </FieldGroup>\n  </FieldGroup>\n</Fieldset>"
+    },
+    {
+     "title": "Deshabilitado",
+     "code": "<Fieldset legend=\"Advanced\" disabled>\n  <Switch defaultChecked>Telemetry</Switch>\n  <Checkbox>Beta channel</Checkbox>\n</Fieldset>"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «forms» (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI.",
+   "file": "zui/src/components/forms/Fieldset.manifest.json"
   },
   {
    "name": "FileUpload",
@@ -5732,6 +6695,46 @@
      "name": "children",
      "type": "ReactNode",
      "description": "Contenido extra, p. ej. la lista de archivos elegidos."
+    },
+    {
+     "name": "showFiles",
+     "type": "boolean",
+     "default": false,
+     "description": "Lista de archivos dentro de la zona: miniatura de las imágenes, nombre, tamaño, progreso y botón de quitar. Sin `files` la lleva el componente (acumula con `multiple`)."
+    },
+    {
+     "name": "files",
+     "type": "File[]",
+     "description": "Lista controlada (con `showFiles`)."
+    },
+    {
+     "name": "onRemove",
+     "type": "(file: File) => void"
+    },
+    {
+     "name": "progress",
+     "type": "(file: File) => number | undefined",
+     "description": "Progreso de subida (0–100) de cada archivo."
+    },
+    {
+     "name": "removeLabel",
+     "type": "(file: File) => string",
+     "default": "Remove {name}"
+    },
+    {
+     "name": "directory",
+     "type": "boolean",
+     "default": false,
+     "description": "Elegir una carpeta entera (webkitdirectory)."
+    },
+    {
+     "name": "capture",
+     "type": "enum",
+     "values": [
+      "user",
+      "environment"
+     ],
+     "description": "Abre la cámara en el móvil."
     }
    ],
    "states": [
@@ -5771,7 +6774,9 @@
     "space-1",
     "space-3",
     "surface-2",
-    "weight-medium"
+    "weight-medium",
+    "surface-3",
+    "radius-xs"
    ],
    "classes": [
     "z-upload"
@@ -5786,6 +6791,10 @@
     {
      "title": "Un documento",
      "code": "<FileUpload accept=\".pdf\" label=\"Upload the signed contract\" icon=\"document-arrow-up\" onFiles={([file]) => upload(file)} />"
+    },
+    {
+     "title": "Con lista y progreso",
+     "code": "<FileUpload\n  multiple\n  showFiles\n  accept=\"image/*,.pdf\"\n  hint=\"Images or PDF.\"\n  onFiles={(files) => upload(files)}\n  progress={(file) => uploads[file.name]}\n/>"
     }
    ],
    "html": [
@@ -5801,6 +6810,49 @@
    ],
    "origin": "Nuevo.",
    "file": "zui/src/components/forms/FileUpload.manifest.json"
+  },
+  {
+   "name": "Form",
+   "group": "forms",
+   "description": "Formulario que pinta la validación nativa en sus campos: sin globos del navegador, mensajes por ValidityState en cada Field y foco al primer error al enviar.",
+   "import": "import { Form } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "onSubmit",
+     "type": "(event) => void",
+     "description": "Solo se llama si todos los controles son válidos."
+    },
+    {
+     "name": "onInvalidSubmit",
+     "type": "(event) => void",
+     "description": "El envío se detuvo por errores (el foco ya está en el primero)."
+    },
+    {
+     "name": "...rest",
+     "type": "FormHTMLAttributes",
+     "description": "action, method, aria-labelledby…"
+    }
+   ],
+   "states": [
+    "rest",
+    "invalid"
+   ],
+   "tokens": [
+    "space-5"
+   ],
+   "classes": [
+    "z-form"
+   ],
+   "a11y": "form con noValidate: la validación es la nativa (required, type, pattern, minLength…) pero el mensaje va en el campo (Field con `validate`), enlazado con aria-describedby y marcado con aria-invalid solo mientras falla. Al enviar con errores el foco va al primer campo no válido (si es un control propio, a su botón). No deshabilita el botón de enviar. La validación del cliente es experiencia; la del servidor sigue siendo necesaria.",
+   "examples": [
+    {
+     "title": "Alta con validación",
+     "code": "<Form aria-label=\"Create account\" method=\"post\">\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Password\" required hint=\"Eight or more characters.\" validate={{ tooShort: \"Use at least 8 characters.\" }}>\n    <PasswordInput name=\"password\" autoComplete=\"new-password\" minLength={8} />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Create account</Button>\n</Form>"
+    }
+   ],
+   "origin": "Nuevo. Guías «forms» y «accessible-error-announcement» (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState).",
+   "file": "zui/src/components/forms/Form.manifest.json"
   },
   {
    "name": "Input",
@@ -5911,6 +6963,282 @@
    ],
    "origin": "Input de zutool (icono inicial, mono, invalid) y del design system base (tamaños, icono final).",
    "file": "zui/src/components/forms/Input.manifest.json"
+  },
+  {
+   "name": "InputGroup",
+   "exports": [
+    "InputGroupAddon",
+    "InputGroupText",
+    "InputGroupInput",
+    "InputGroupTextarea"
+   ],
+   "group": "forms",
+   "description": "Campo con adornos: texto, icono, atajo de teclado, botón o tramo de prefijo al inicio, al final, encima o debajo del control, en un solo recuadro.",
+   "import": "import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText, InputGroupTextarea } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "InputGroup."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false,
+     "description": "InputGroup. También se marca solo si el control lleva aria-invalid."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false,
+     "description": "InputGroup: atenúa el recuadro (deshabilita el control con su propio `disabled`)."
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "inline-start",
+      "inline-end",
+      "block-start",
+      "block-end"
+     ],
+     "default": "inline-start",
+     "description": "InputGroupAddon. Los `block-*` ocupan una fila propia."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "segment"
+     ],
+     "default": "plain",
+     "description": "InputGroupAddon. `segment`: tramo con fondo y separador hasta el canto (prefijos como `https://`)."
+    },
+    {
+     "name": "...rest",
+     "type": "InputHTMLAttributes | TextareaHTMLAttributes",
+     "description": "InputGroupInput e InputGroupTextarea: atributos nativos; toman id, error y ayuda del Field que los envuelve."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "field-radius-multiline",
+    "control-border",
+    "control-border-hover",
+    "control-bg",
+    "control-bg-hover",
+    "accent",
+    "accent-ring",
+    "danger",
+    "focus-width",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "surface-2",
+    "line",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-3-5",
+    "text-body",
+    "text-small",
+    "radius-xs",
+    "leading-normal",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-input-group",
+    "z-input-group__addon",
+    "z-input-group__text",
+    "z-input-group__control"
+   ],
+   "a11y": "El control es un input o textarea nativo: toma etiqueta, ayuda y error del Field. Los adornos son texto o controles propios con su nombre (un botón de solo icono lleva aria-label); pulsar en un adorno que no es un control enfoca el campo. Un texto que cambia el sentido del valor (unidad, moneda) debe estar también en la etiqueta o en la ayuda: un adorno no forma parte del nombre accesible.",
+   "examples": [
+    {
+     "title": "Icono y atajo",
+     "code": "<InputGroup>\n  <InputGroupAddon>\n    <Icon name=\"magnifying-glass\" />\n  </InputGroupAddon>\n  <InputGroupInput placeholder=\"Search projects\" aria-label=\"Search projects\" />\n  <InputGroupAddon align=\"inline-end\">\n    <Kbd keys=\"⌘ K\" size=\"sm\" />\n  </InputGroupAddon>\n</InputGroup>"
+    },
+    {
+     "title": "Prefijo y sufijo en tramo",
+     "code": "<Field label=\"Website\">\n  <InputGroup>\n    <InputGroupAddon variant=\"segment\">\n      <InputGroupText>https://</InputGroupText>\n    </InputGroupAddon>\n    <InputGroupInput placeholder=\"example\" />\n    <InputGroupAddon align=\"inline-end\" variant=\"segment\">\n      <InputGroupText>.com</InputGroupText>\n    </InputGroupAddon>\n  </InputGroup>\n</Field>"
+    },
+    {
+     "title": "Con botón",
+     "code": "<InputGroup>\n  <InputGroupInput placeholder=\"Invite by email\" aria-label=\"Email\" type=\"email\" />\n  <InputGroupAddon align=\"inline-end\">\n    <Button size=\"xs\" variant=\"primary\">Invite</Button>\n  </InputGroupAddon>\n</InputGroup>"
+    },
+    {
+     "title": "Unidad",
+     "code": "<Field label=\"Price (USD)\">\n  <InputGroup>\n    <InputGroupAddon>\n      <InputGroupText>$</InputGroupText>\n    </InputGroupAddon>\n    <InputGroupInput inputMode=\"decimal\" placeholder=\"0.00\" />\n    <InputGroupAddon align=\"inline-end\">\n      <InputGroupText>USD</InputGroupText>\n    </InputGroupAddon>\n  </InputGroup>\n</Field>"
+    },
+    {
+     "title": "Textarea con barra inferior",
+     "code": "<InputGroup>\n  <InputGroupTextarea placeholder=\"Write a comment\" aria-label=\"Comment\" />\n  <InputGroupAddon align=\"block-end\">\n    <InputGroupText>Markdown supported</InputGroupText>\n    <Button size=\"xs\" variant=\"primary\" icon=\"paper-airplane\">Send</Button>\n  </InputGroupAddon>\n</InputGroup>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Input Group de Shark UI (alineaciones, texto, botón, atajo, textarea).",
+   "file": "zui/src/components/forms/InputGroup.manifest.json"
+  },
+  {
+   "name": "Listbox",
+   "group": "forms",
+   "description": "Lista de opciones siempre visible, de selección única o múltiple, con grupos, iconos, descripciones y búsqueda por letra.",
+   "import": "import { Listbox } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "listbox",
+   "props": [
+    {
+     "name": "options",
+     "type": "(ListboxOption | ListboxOptionGroup)[]",
+     "description": "{ value, label, description?, icon?, disabled? } o { label, options }."
+    },
+    {
+     "name": "selectionMode",
+     "type": "enum",
+     "values": [
+      "single",
+      "multiple"
+     ],
+     "default": "single"
+    },
+    {
+     "name": "value",
+     "type": "string | string[]"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value) => void"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible si no lo da un Field."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Cada opción elegida se envía con este nombre."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "emptyText",
+     "type": "string",
+     "default": "No options"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "selected",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "control-border",
+    "control-radius-lg",
+    "control-bg",
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "focus-width",
+    "surface-2",
+    "danger",
+    "space-1",
+    "space-1-5",
+    "fg-muted",
+    "text-body",
+    "text-small",
+    "weight-regular",
+    "leading-snug"
+   ],
+   "cssVars": [
+    {
+     "name": "--z-listbox-max-height",
+     "default": "18rem",
+     "description": "Alto máximo antes de desplazarse."
+    }
+   ],
+   "classes": [
+    "z-listbox",
+    "z-listbox__viewport",
+    "z-listbox__option",
+    "z-listbox__group",
+    "z-listbox__label",
+    "z-listbox__content",
+    "z-listbox__description",
+    "z-listbox__check"
+   ],
+   "a11y": "Patrón APG «listbox» con foco itinerante: una sola parada de Tab (la opción elegida o la primera). Flechas arriba y abajo (izquierda y derecha en horizontal, reflejadas en RTL) mueven el foco, Inicio y Fin van a los extremos y una letra busca por el principio de la etiqueta. En single la selección sigue al foco; en multiple (aria-multiselectable) Espacio o Intro marcan, Mayús+flecha extiende la selección y Ctrl/⌘+A marca o desmarca todas. Los grupos son role=\"group\" con su título. Dentro de un Field se nombra con su etiqueta.",
+   "examples": [
+    {
+     "title": "Única con iconos",
+     "code": "<Field label=\"Default view\">\n  <Listbox\n    defaultValue=\"board\"\n    options={[\n      { value: \"list\", label: \"List\", icon: \"list-bullet\" },\n      { value: \"board\", label: \"Board\", icon: \"view-columns\" },\n      { value: \"grid\", label: \"Grid\", icon: \"squares-2x2\" },\n      { value: \"table\", label: \"Table\", icon: \"table-cells\", disabled: true },\n    ]}\n  />\n</Field>"
+    },
+    {
+     "title": "Múltiple con grupos y descripción",
+     "code": "<Listbox\n  label=\"Regions\"\n  selectionMode=\"multiple\"\n  name=\"regions\"\n  defaultValue={[\"eu-west\", \"us-east\"]}\n  options={[\n    { label: \"Europe\", options: [\n      { value: \"eu-west\", label: \"EU West\", description: \"Dublin\" },\n      { value: \"eu-central\", label: \"EU Central\", description: \"Frankfurt\" },\n    ] },\n    { label: \"Americas\", options: [\n      { value: \"us-east\", label: \"US East\", description: \"Virginia\" },\n      { value: \"sa-east\", label: \"SA East\", description: \"São Paulo\" },\n    ] },\n  ]}\n/>"
+    },
+    {
+     "title": "Horizontal",
+     "code": "<Listbox\n  label=\"Size\"\n  orientation=\"horizontal\"\n  size=\"sm\"\n  defaultValue=\"m\"\n  options={[\n    { value: \"s\", label: \"Small\" },\n    { value: \"m\", label: \"Medium\" },\n    { value: \"l\", label: \"Large\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo; reutiliza la lista del popup de Select (mismas opciones, grupos y marca). Referencia de variantes: Listbox de Shark UI.",
+   "file": "zui/src/components/forms/Listbox.manifest.json"
   },
   {
    "name": "MonthPicker",
@@ -6072,8 +7400,8 @@
     },
     {
      "name": "options",
-     "type": "NativeSelectOption[]",
-     "description": "{ value, label, disabled? }. Alternativa: hijos <option>."
+     "type": "(NativeSelectOption | NativeSelectOptionGroup)[]",
+     "description": "Opciones sueltas o grupos { label, options, disabled? }, que salen como <optgroup>. También valen hijos <option>."
     },
     {
      "name": "placeholder",
@@ -6139,10 +7467,165 @@
     {
      "title": "Con hijos, en línea",
      "code": "<NativeSelect size=\"sm\" block={false} defaultValue=\"25\" aria-label=\"Rows per page\">\n  <option value=\"10\">10</option>\n  <option value=\"25\">25</option>\n</NativeSelect>"
+    },
+    {
+     "title": "Con grupos (optgroup)",
+     "code": "<Field label=\"Time zone\">\n  <NativeSelect\n    defaultValue=\"Europe/Madrid\"\n    options={[\n      { label: \"Europe\", options: [\n        { value: \"Europe/Lisbon\", label: \"Lisbon\" },\n        { value: \"Europe/Madrid\", label: \"Madrid\" },\n      ] },\n      { label: \"America\", options: [\n        { value: \"America/Mexico_City\", label: \"Mexico City\" },\n        { value: \"America/Bogota\", label: \"Bogotá\" },\n      ] },\n    ]}\n  />\n</Field>"
     }
    ],
    "origin": "Select de zutool; el chevron pasa a ser un icono de zicon.",
    "file": "zui/src/components/forms/NativeSelect.manifest.json"
+  },
+  {
+   "name": "NumberInput",
+   "group": "forms",
+   "description": "Campo numérico con pasos, mínimo y máximo, botones que repiten al mantenerlos, rueda opcional y formato del locale con Intl.NumberFormat.",
+   "import": "import { NumberInput } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "value",
+     "type": "number | null",
+     "description": "Valor; null es vacío."
+    },
+    {
+     "name": "defaultValue",
+     "type": "number | null",
+     "default": null
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: number | null) => void",
+     "description": "Al pulsar una flecha o un botón, y al confirmar lo escrito (Intro o salir del campo)."
+    },
+    {
+     "name": "min",
+     "type": "number"
+    },
+    {
+     "name": "max",
+     "type": "number"
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "largeStep",
+     "type": "number",
+     "description": "Paso de Re Pág y Av Pág; por defecto, 10 pasos."
+    },
+    {
+     "name": "formatOptions",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Moneda, porcentaje (el campo muestra 25 % y vale 0.25), unidad o decimales."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale del formato y de la lectura; por defecto, el del navegador."
+    },
+    {
+     "name": "wheel",
+     "type": "boolean",
+     "default": false,
+     "description": "La rueda cambia el valor solo con el campo enfocado."
+    },
+    {
+     "name": "controls",
+     "type": "enum",
+     "values": [
+      "end",
+      "split",
+      "stacked",
+      "none"
+     ],
+     "default": "end",
+     "description": "Botones de paso: juntos al final (− +), a los lados (− valor +), apilados al final (compactos; de menos de 24 px de alto en sm y md, pasan a los lados con puntero grueso) o ninguno."
+    },
+    {
+     "name": "incrementLabel",
+     "type": "string",
+     "default": "Increase"
+    },
+    {
+     "name": "decrementLabel",
+     "type": "string",
+     "default": "Decrease"
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el número sin formato."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "invalid",
+    "disabled",
+    "readonly"
+   ],
+   "tokens": [
+    "line",
+    "space-1",
+    "radius-xs"
+   ],
+   "classes": [
+    "z-number",
+    "z-number__input",
+    "z-number__steps",
+    "z-number__step",
+    "z-input"
+   ],
+   "a11y": "Patrón APG «spinbutton»: input de texto con role=\"spinbutton\", aria-valuenow, aria-valuemin, aria-valuemax y aria-valuetext con el valor formateado. Flechas arriba y abajo cambian un paso, Re Pág y Av Pág un paso largo, Inicio y Fin van al mínimo y al máximo (si los hay) e Intro confirma lo escrito. Los botones no reciben el foco (tabindex -1), tienen nombre y se deshabilitan en el tope. No usa type=\"number\": conserva ceros y formato, y la rueda no lo cambia por accidente. inputmode numeric o decimal según el paso.",
+   "examples": [
+    {
+     "title": "Cantidad",
+     "code": "<Field label=\"Seats\">\n  <NumberInput defaultValue={3} min={1} max={50} name=\"seats\" />\n</Field>"
+    },
+    {
+     "title": "Moneda",
+     "code": "<Field label=\"Monthly budget\">\n  <NumberInput defaultValue={1250} step={50} min={0} locale=\"en-US\" formatOptions={{ style: \"currency\", currency: \"USD\" }} />\n</Field>"
+    },
+    {
+     "title": "Botones a los lados",
+     "code": "<NumberInput aria-label=\"Quantity\" defaultValue={1} min={0} max={9} controls=\"split\" size=\"sm\" />"
+    },
+    {
+     "title": "Porcentaje con rueda",
+     "code": "<Field label=\"Opacity\" hint=\"Scroll over the focused field to adjust.\">\n  <NumberInput defaultValue={0.8} min={0} max={1} step={0.05} wheel locale=\"en-US\" formatOptions={{ style: \"percent\" }} />\n</Field>"
+    }
+   ],
+   "origin": "Nuevo, con lógica propia en core/number (lectura y formato por locale, pasos sin error de coma flotante). Referencia de variantes: Number Input de Shark UI.",
+   "file": "zui/src/components/forms/NumberInput.manifest.json"
   },
   {
    "name": "OTPInput",
@@ -6227,6 +7710,16 @@
      "name": "name",
      "type": "string",
      "description": "Añade un campo oculto con el valor completo."
+    },
+    {
+     "name": "groups",
+     "type": "number[]",
+     "description": "Reparto en grupos con un separador visual entre ellos, p. ej. [3, 3]."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "description": "Carácter de las casillas vacías, p. ej. «·»."
     }
    ],
    "states": [
@@ -6258,12 +7751,16 @@
     "control-bg-hover",
     "control-radius-lg",
     "fg-muted",
-    "focus-width"
+    "focus-width",
+    "space-2-5",
+    "radius-xs",
+    "line-strong",
+    "fg-subtle"
    ],
    "classes": [
     "z-otp"
    ],
-   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
+   "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`. El separador es decorativo (aria-hidden).",
    "behavior": "dom",
    "examples": [
     {
@@ -6273,6 +7770,10 @@
     {
      "title": "Controlado con error",
      "code": "<OTPInput length={4} value={pin} onChange={setPin} mask invalid label=\"PIN\" />"
+    },
+    {
+     "title": "Con separador",
+     "code": "<OTPInput length={6} groups={[3, 3]} placeholder=\"·\" label=\"Authenticator code\" />"
     }
    ],
    "html": [
@@ -6284,10 +7785,155 @@
     {
      "title": "PIN oculto con error",
      "code": "<div role=\"group\" aria-label=\"PIN\" class=\"z-otp\" id=\"pin\" data-size=\"md\" data-mode=\"numeric\" data-invalid>\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"4\" aria-label=\"Character 1 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 2 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 3 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 4 of 4\" aria-invalid=\"true\" />\n</div>"
+    },
+    {
+     "title": "Con separador",
+     "code": "<div role=\"group\" aria-label=\"Authenticator code\" class=\"z-otp\" id=\"totp\" data-size=\"md\" data-mode=\"numeric\">\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"6\" aria-label=\"Character 1 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 2 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 3 of 6\" placeholder=\"·\" />\n  <span class=\"z-otp__separator\" aria-hidden=\"true\"></span>\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 4 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 5 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 6 of 6\" placeholder=\"·\" />\n</div>"
     }
    ],
    "origin": "Nuevo.",
    "file": "zui/src/components/forms/OTPInput.manifest.json"
+  },
+  {
+   "name": "PasswordInput",
+   "group": "forms",
+   "description": "Campo de contraseña con botón de mostrar u ocultar y medidor de fortaleza opcional.",
+   "import": "import { PasswordInput } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "autoComplete",
+     "type": "enum",
+     "values": [
+      "current-password",
+      "new-password",
+      "one-time-code",
+      "off"
+     ],
+     "default": "current-password",
+     "description": "`new-password` al crear o cambiar la contraseña: el gestor propone una."
+    },
+    {
+     "name": "visible",
+     "type": "boolean",
+     "description": "Contraseña visible (controlado)."
+    },
+    {
+     "name": "defaultVisible",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onVisibleChange",
+     "type": "(visible: boolean) => void"
+    },
+    {
+     "name": "hideOnSubmit",
+     "type": "boolean",
+     "default": true,
+     "description": "Vuelve a ocultarla al enviar el formulario."
+    },
+    {
+     "name": "strength",
+     "type": "boolean | number",
+     "description": "`true`: medidor con una estimación orientativa (longitud y variedad). Un número de 0 a 4 lo fija la aplicación (por ejemplo, con la respuesta del servidor)."
+    },
+    {
+     "name": "strengthLabels",
+     "type": "[string, string, string, string, string]",
+     "default": "[\"Too short\", \"Weak\", \"Fair\", \"Good\", \"Strong\"]"
+    },
+    {
+     "name": "strengthPrefix",
+     "type": "string",
+     "default": "Strength:"
+    },
+    {
+     "name": "toggleLabel",
+     "type": "string",
+     "default": "Show password",
+     "description": "Nombre del botón; no cambia al pulsarlo (el estado lo da aria-pressed)."
+    },
+    {
+     "name": "toggleHint",
+     "type": "string",
+     "default": "Shows the password on screen",
+     "description": "Aviso que se lee con el botón."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "...rest",
+     "type": "InputHTMLAttributes",
+     "description": "Atributos nativos (name, required, minLength, value, onChange…)."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "visible",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "fg",
+    "fg-muted",
+    "surface-3",
+    "line",
+    "radius-xs",
+    "danger",
+    "danger-text",
+    "warning",
+    "success",
+    "success-text",
+    "text-caption",
+    "leading-snug",
+    "duration-normal",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-password",
+    "z-password__field",
+    "z-password__toggle",
+    "z-password__meter",
+    "z-password__bar",
+    "z-password__label",
+    "z-input"
+   ],
+   "a11y": "Input nativo `type=\"password\"` con autocomplete, sin autocorrección ni mayúsculas automáticas, que admite pegar. El botón es `type=\"button\"` con aria-pressed y un nombre fijo («Show password»), aria-controls al campo y un aviso por aria-describedby. El medidor tiene texto además del color y se lee con el campo (aria-describedby): no se anuncia en cada tecla, y no juzga hasta que hay algo escrito.",
+   "examples": [
+    {
+     "title": "Entrar",
+     "code": "<Field label=\"Password\">\n  <PasswordInput name=\"password\" required />\n</Field>"
+    },
+    {
+     "title": "Crear con medidor",
+     "code": "<Field label=\"New password\" hint=\"Eight or more characters.\">\n  <PasswordInput name=\"new-password\" autoComplete=\"new-password\" minLength={8} strength defaultValue=\"Glass-2026\" />\n</Field>"
+    },
+    {
+     "title": "Visible y pequeño",
+     "code": "<PasswordInput aria-label=\"Access token\" size=\"sm\" defaultVisible defaultValue=\"zx-demo-token\" autoComplete=\"off\" />"
+    }
+   ],
+   "origin": "Nuevo. Patrón de la guía «forms» (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
+   "file": "zui/src/components/forms/PasswordInput.manifest.json"
   },
   {
    "name": "Radio",
@@ -6409,6 +8055,16 @@
      "name": "aria-label",
      "type": "string",
      "description": "Nombre accesible si no está dentro de un Field."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default",
+     "description": "`card`: cada opción es un recuadro que se marca entero (planes, temas, envío). En horizontal, rejilla adaptable."
     }
    ],
    "states": [
@@ -6419,7 +8075,16 @@
    "tokens": [
     "danger",
     "space-2",
-    "space-4"
+    "space-4",
+    "line-strong",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent",
+    "accent-soft",
+    "space-3",
+    "space-3-5"
    ],
    "classes": [
     "z-radio-group"
@@ -6433,6 +8098,10 @@
     {
      "title": "Horizontal dentro de Field",
      "code": "<Field label=\"Density\">\n  <RadioGroup orientation=\"horizontal\" value={density} onValueChange={setDensity}>\n    <Radio value=\"compact\">Compact</Radio>\n    <Radio value=\"comfortable\">Comfortable</Radio>\n  </RadioGroup>\n</Field>"
+    },
+    {
+     "title": "Tarjetas de plan",
+     "code": "<RadioGroup aria-label=\"Plan\" variant=\"card\" orientation=\"horizontal\" defaultValue=\"pro\">\n  <Radio value=\"free\" description=\"Up to 3 projects\">Free</Radio>\n  <Radio value=\"pro\" description=\"Unlimited projects and history\">Pro</Radio>\n  <Radio value=\"team\" description=\"Shared workspaces and roles\">Team</Radio>\n</RadioGroup>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
@@ -6654,6 +8323,28 @@
      "name": "aria-label",
      "type": "string",
      "description": "Nombre accesible cuando no hay `Field` ni etiqueta enlazada."
+    },
+    {
+     "name": "multiple",
+     "type": "boolean",
+     "default": false,
+     "description": "Varias opciones: `value` es una lista, elegir marca o desmarca sin cerrar y el control muestra las etiquetas y su número."
+    },
+    {
+     "name": "maxSelected",
+     "type": "number",
+     "description": "Solo con `multiple`: al llegar al tope, las demás opciones se deshabilitan."
+    },
+    {
+     "name": "formatValue",
+     "type": "(labels: string[]) => string",
+     "description": "Solo con `multiple`: texto del control; por defecto, las etiquetas separadas por comas."
+    },
+    {
+     "name": "emptyText",
+     "type": "string",
+     "default": "No options",
+     "description": "Texto de la lista cuando no hay opciones."
     }
    ],
    "states": [
@@ -6711,13 +8402,15 @@
     "leading-ui",
     "duration-normal",
     "ease-emphasized",
-    "touch-target"
+    "touch-target",
+    "accent-soft",
+    "radius-xs"
    ],
    "classes": [
     "z-select",
     "z-listbox"
    ],
-   "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar.",
+   "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar. Con `multiple` la lista es aria-multiselectable: Intro o Espacio marcan la opción activa sin cerrar, y Escape o Tab devuelven el foco al control.",
    "behavior": "dom",
    "examples": [
     {
@@ -6731,6 +8424,10 @@
     {
      "title": "Pequeño, en línea",
      "code": "<Select size=\"sm\" block={false} aria-label=\"Rows per page\" defaultValue=\"25\" options={[{ value: \"10\", label: \"10\" }, { value: \"25\", label: \"25\" }, { value: \"50\", label: \"50\" }]} />"
+    },
+    {
+     "title": "Varias con tope",
+     "code": "<Field label=\"Reviewers\" hint=\"Up to two.\">\n  <Select\n    multiple\n    maxSelected={2}\n    name=\"reviewers\"\n    placeholder=\"Choose reviewers\"\n    defaultValue={[\"ana\"]}\n    options={[\n      { value: \"ana\", label: \"Ana Ruiz\" },\n      { value: \"leo\", label: \"Leo Park\" },\n      { value: \"mia\", label: \"Mia Chen\" },\n      { value: \"noor\", label: \"Noor Rahman\" },\n    ]}\n  />\n</Field>"
     }
    ],
    "html": [
@@ -6746,6 +8443,10 @@
     {
      "title": "Pequeño, en línea, inválido",
      "code": "<span class=\"z-select\" id=\"rows\" data-size=\"sm\" data-invalid data-value=\"25\">\n  <button type=\"button\" class=\"z-select__control\" role=\"combobox\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"rows-list\" aria-invalid=\"true\" aria-label=\"Rows per page\" data-state=\"closed\">\n    <span class=\"z-select__value\">25</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n</span>\n\n<div id=\"rows-list\" popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"sm\">\n  <div class=\"z-listbox__viewport\" role=\"listbox\" aria-label=\"Rows per page\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"10\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">10</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"25\" aria-selected=\"true\" data-state=\"checked\">\n      <span class=\"z-listbox__text\">25</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"50\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">50</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Varias con tope",
+     "code": "<span class=\"z-select\" id=\"reviewers\" data-size=\"md\" data-block=\"true\" data-multiple data-max-selected=\"2\" data-value=\"ana\" data-placeholder=\"Choose reviewers\">\n  <button type=\"button\" role=\"combobox\" class=\"z-select__control\" aria-label=\"Reviewers\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"reviewers-list\" data-state=\"closed\">\n    <span class=\"z-select__value\">Ana Ruiz</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></span>\n  <select class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"reviewers\" multiple>\n    <option value=\"ana\" selected>Ana Ruiz</option>\n    <option value=\"leo\">Leo Park</option>\n    <option value=\"mia\">Mia Chen</option>\n    <option value=\"noor\">Noor Rahman</option>\n  </select>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\">\n  <div class=\"z-listbox__viewport\" id=\"reviewers-list\" role=\"listbox\" aria-label=\"Reviewers\" aria-multiselectable=\"true\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"ana\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Ana Ruiz</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"leo\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Leo Park</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"mia\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Mia Chen</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"noor\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Noor Rahman</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
    ],
    "origin": "Select no nativo del catálogo objetivo; comparte envoltura con NativeSelect y el aspecto del popup con Menu.",
@@ -6844,6 +8545,11 @@
      "name": "form",
      "type": "string",
      "description": "Id del formulario al que pertenece, si no está dentro de él."
+    },
+    {
+     "name": "marks",
+     "type": "boolean | (number | { value, label? })[]",
+     "description": "Marcas sobre la pista: `true` una por paso (hasta 21), una lista de valores o `{ value, label }` con texto bajo la marca. Decorativas: el valor lo anuncia el tirador."
     }
    ],
    "states": [
@@ -6866,7 +8572,12 @@
     "focus-width",
     "line",
     "radius-xs",
-    "touch-target"
+    "touch-target",
+    "fg-subtle",
+    "fg-muted",
+    "text-caption",
+    "space-1",
+    "space-4"
    ],
    "classes": [
     "z-slider"
@@ -6881,6 +8592,10 @@
     {
      "title": "Rango",
      "code": "<Slider value={range} onValueChange={setRange} min={0} max={500} thumbLabels={[\"Minimum\", \"Maximum\"]} />"
+    },
+    {
+     "title": "Con marcas y etiquetas",
+     "code": "<Field label=\"Quality\">\n  <Slider\n    defaultValue={[50]}\n    step={25}\n    marks={[\n      { value: 0, label: \"Low\" },\n      { value: 25 },\n      { value: 50, label: \"Medium\" },\n      { value: 75 },\n      { value: 100, label: \"High\" },\n    ]}\n  />\n</Field>"
     }
    ],
    "html": [
@@ -6892,6 +8607,10 @@
     {
      "title": "Rango",
      "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
+    },
+    {
+     "title": "Con marcas y etiquetas",
+     "code": "<span class=\"z-slider\" id=\"quality\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"25\" data-value=\"50\" data-marks=\"labels\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__marks\" aria-hidden=\"true\">\n    <span class=\"z-slider__mark\" data-value=\"0\" data-in-range style=\"inset-inline-start:calc(0.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Low</span></span>\n    <span class=\"z-slider__mark\" data-value=\"25\" data-in-range style=\"inset-inline-start:calc(0.25 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"50\" data-in-range style=\"inset-inline-start:calc(0.5 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Medium</span></span>\n    <span class=\"z-slider__mark\" data-value=\"75\" style=\"inset-inline-start:calc(0.75 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"100\" style=\"inset-inline-start:calc(1.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">High</span></span>\n  </span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Quality\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"50\" aria-orientation=\"horizontal\"></span>\n</span>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
@@ -6960,6 +8679,27 @@
      "type": "boolean",
      "default": false,
      "description": "El formulario no se envía si está desactivado."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode",
+     "description": "Texto secundario bajo la etiqueta."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false,
+     "description": "Marca el interruptor como no válido (aria-invalid y canto de peligro). También lo toma del Field."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "card"
+     ],
+     "default": "default",
+     "description": "`card`: etiqueta y descripción al inicio y el interruptor al final, en un recuadro."
     }
    ],
    "states": [
@@ -6991,7 +8731,16 @@
     "fg-muted",
     "focus-offset",
     "focus-width",
-    "touch-target"
+    "touch-target",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent",
+    "accent-soft",
+    "space-3",
+    "space-3-5",
+    "danger"
    ],
    "classes": [
     "z-switch"
@@ -7005,10 +8754,183 @@
     {
      "title": "Pequeño, sin etiqueta visible",
      "code": "<Switch size=\"sm\" aria-label=\"Enable rule\" defaultChecked />"
+    },
+    {
+     "title": "Tarjeta con descripción",
+     "code": "<Switch variant=\"card\" defaultChecked description=\"Pause notifications outside working hours.\">\n  Focus mode\n</Switch>"
     }
    ],
    "origin": "Switch de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/forms/Switch.manifest.json"
+  },
+  {
+   "name": "TagsInput",
+   "group": "forms",
+   "description": "Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.",
+   "import": "import { TagsInput } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "value",
+     "type": "string[]"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[]",
+     "default": []
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string[]) => void"
+    },
+    {
+     "name": "onReject",
+     "type": "(rejected: { tag, reason }[]) => void",
+     "description": "Motivos: duplicate, max, length, invalid."
+    },
+    {
+     "name": "delimiters",
+     "type": "string[]",
+     "default": [
+      ","
+     ],
+     "description": "Caracteres que cierran una etiqueta además de Intro."
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "description": "Máximo de etiquetas; al llegar, el campo queda de solo lectura."
+    },
+    {
+     "name": "maxLength",
+     "type": "number",
+     "description": "Longitud máxima de cada etiqueta."
+    },
+    {
+     "name": "allowDuplicates",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "sanitize",
+     "type": "(tag: string) => string",
+     "description": "Por defecto quita los espacios de los extremos."
+    },
+    {
+     "name": "validate",
+     "type": "(tag: string, current: string[]) => boolean"
+    },
+    {
+     "name": "addOnBlur",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "addOnPaste",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Cada etiqueta se envía con este nombre."
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "removeLabel",
+     "type": "(tag: string) => string",
+     "default": "Remove {tag}"
+    },
+    {
+     "name": "addedMessage",
+     "type": "(tag: string) => string",
+     "default": "{tag} added"
+    },
+    {
+     "name": "removedMessage",
+     "type": "(tag: string) => string",
+     "default": "{tag} removed"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "invalid",
+    "disabled",
+    "full"
+   ],
+   "tokens": [
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "glass-border",
+    "glass-highlight",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-soft",
+    "accent-ring",
+    "focus-width",
+    "radius-xs",
+    "text-small",
+    "weight-medium"
+   ],
+   "classes": [
+    "z-tags",
+    "z-tags__tag",
+    "z-tags__text",
+    "z-tags__remove",
+    "z-tags__input",
+    "z-input"
+   ],
+   "a11y": "Una sola parada de Tab: el campo de texto, que toma etiqueta, ayuda y error del Field. Intro o un delimitador crean la etiqueta (respetando la composición de un IME); Retroceso con el campo vacío o la flecha izquierda al principio llevan a la última etiqueta, las flechas recorren las etiquetas, Retroceso o Supr quitan la enfocada y Escape vuelve al campo. Cada etiqueta tiene un botón con nombre («Remove design») para el puntero y los lectores. Altas y bajas se anuncian en una región status; lo que no entra (repetida, tope) se queda escrito y el campo se marca como no válido.",
+   "examples": [
+    {
+     "title": "Temas",
+     "code": "<Field label=\"Topics\" hint=\"Press Enter or comma to add.\">\n  <TagsInput name=\"topics\" defaultValue={[\"design\", \"tokens\"]} placeholder=\"Add a topic\" />\n</Field>"
+    },
+    {
+     "title": "Correos con tope y validación",
+     "code": "<Field label=\"Invite\" hint=\"Up to 4 emails. Paste a list to add several.\">\n  <TagsInput\n    max={4}\n    delimiters={[\",\", \" \", \";\"]}\n    validate={(tag) => /^[^@\\s]+@[^@\\s]+$/.test(tag)}\n    defaultValue={[\"ana@example.com\"]}\n    placeholder=\"name@example.com\"\n  />\n</Field>"
+    },
+    {
+     "title": "Pequeño, solo lectura",
+     "code": "<TagsInput aria-label=\"Labels\" size=\"sm\" readOnly defaultValue={[\"frontend\", \"a11y\", \"glass\"]} />"
+    }
+   ],
+   "origin": "Nuevo, con lógica propia en core/tags. Referencia de variantes: Tags Input de Shark UI (delimitador, pegar, máximo, longitud, validación, al salir).",
+   "file": "zui/src/components/forms/TagsInput.manifest.json"
   },
   {
    "name": "Textarea",

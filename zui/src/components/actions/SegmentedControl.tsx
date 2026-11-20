@@ -25,6 +25,10 @@ export interface SegmentedControlProps<T extends string = string> {
   /** Reparte el ancho disponible entre los segmentos. */
   fullWidth?: boolean;
   disabled?: boolean;
+  /** Disposición: en fila (por defecto) o en columna. Las flechas de los dos ejes funcionan en ambas. */
+  orientation?: "horizontal" | "vertical";
+  /** `default`: pista hundida con la opción elevada. `underline`: sin pista, la opción elegida subrayada. */
+  variant?: "default" | "underline";
   /** Nombre accesible del grupo. */
   label: string;
   className?: string;
@@ -42,6 +46,8 @@ export function SegmentedControl<T extends string = string>({
   size = "md",
   fullWidth,
   disabled,
+  orientation = "horizontal",
+  variant = "default",
   label,
   className,
 }: SegmentedControlProps<T>) {
@@ -69,8 +75,11 @@ export function SegmentedControl<T extends string = string>({
       role="radiogroup"
       aria-label={label}
       aria-disabled={disabled || undefined}
+      aria-orientation={orientation === "vertical" ? "vertical" : undefined}
       className={cx("z-segmented", className)}
       data-size={size}
+      data-orientation={orientation === "vertical" ? "vertical" : undefined}
+      data-variant={variant === "underline" ? "underline" : undefined}
       data-block={fullWidth || undefined}
       onKeyDown={onKeyDown}
     >

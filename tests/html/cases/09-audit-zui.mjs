@@ -190,7 +190,8 @@ window.__ready = true;
         }
         for (const control of await tab
           .locator(
-            'button[role="switch"]:not([disabled]):not([data-disabled]), button[role="checkbox"]:not([disabled]):not([data-disabled])',
+            // `:disabled` también cubre los botones de un <fieldset disabled>.
+            'button[role="switch"]:not(:disabled):not([data-disabled]), button[role="checkbox"]:not(:disabled):not([data-disabled])',
           )
           .all()) {
           const before = await control.getAttribute("aria-checked");
@@ -200,13 +201,16 @@ window.__ready = true;
             failures.push(`${id}: ${await control.getAttribute("role")} no cambia de estado`);
         }
         for (const group of await tab.locator('[role="radiogroup"]').all()) {
-          const radio = group.locator('[role="radio"]:not([disabled]):not([data-disabled])').last();
+          const radio = group.locator('[role="radio"]:not(:disabled):not([data-disabled])').last();
           if (!(await radio.count())) continue;
           await radio.click();
           interactions += 1;
           if ((await radio.getAttribute("aria-checked")) !== "true") failures.push(`${id}: el radio no queda marcado`);
         }
-        for (const pressed of await tab.locator("[data-z-dom] button[aria-pressed]:not([disabled])").all()) {
+        // La opción activa de un ToggleGroup `required` no se apaga: es su contrato.
+        for (const pressed of await tab
+          .locator('[data-z-dom] button[aria-pressed]:not(:disabled):not(.z-toggle-group[data-required] > [aria-pressed="true"])')
+          .all()) {
           const before = await pressed.getAttribute("aria-pressed");
           await pressed.click();
           interactions += 1;
@@ -234,6 +238,8 @@ window.__ready = true;
           }
           await tab.keyboard.press("End");
           await tab.keyboard.press("Enter");
+          // Un Select múltiple marca sin cerrar: se cierra con Escape.
+          if (await control.evaluate((b) => b.parentElement.hasAttribute("data-multiple"))) await tab.keyboard.press("Escape");
           await soon(async () => (await control.getAttribute("aria-expanded")) === "false");
           if ((await control.getAttribute("aria-expanded")) !== "false") failures.push(`${id}: Select no cierra al elegir`);
         }

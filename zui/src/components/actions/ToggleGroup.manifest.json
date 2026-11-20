@@ -1,0 +1,96 @@
+{
+  "name": "ToggleGroup",
+  "group": "actions",
+  "description": "Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).",
+  "import": "import { ToggleGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    {
+      "name": "items",
+      "type": "ToggleGroupItem[]",
+      "description": "{ value, label?, icon?, ariaLabel?, disabled? }. Sin `label`, `ariaLabel` es obligatorio."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["single", "multiple"],
+      "default": "single"
+    },
+    {
+      "name": "value",
+      "type": "string | string[]",
+      "description": "Controlado: la opción activada (\"\" si ninguna) o la lista."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | string[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Solo `single`: la opción activa no se puede desactivar."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["outline", "ghost"],
+      "default": "outline"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "attached",
+      "type": "boolean",
+      "default": true,
+      "description": "Une las piezas; con `false` quedan separadas por 4 px."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": ["rest", "hover", "focus", "on", "disabled"],
+  "tokens": ["space-1", "line", "accent-soft", "accent-ring", "accent-text", "control-radius-sm", "control-radius-lg"],
+  "classes": ["z-toggle-group", "z-toggle"],
+  "a11y": "`role=\"group\"` con nombre; cada opción es un button con aria-pressed (patrón APG «toolbar» para el foco). Una sola parada de Tab: las flechas mueven el foco con vuelta al otro extremo (en RTL la izquierda avanza; en vertical, arriba y abajo), Inicio y Fin van a los extremos, y Espacio o Intro activan. Para elegir exactamente una opción entre pocas, SegmentedControl (radiogroup).",
+  "examples": [
+    {
+      "title": "Formato de texto (múltiple)",
+      "code": "<ToggleGroup\n  type=\"multiple\"\n  label=\"Text formatting\"\n  defaultValue={[\"bold\"]}\n  items={[\n    { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n    { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n    { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Alineación (una, fantasma)",
+      "code": "<ToggleGroup\n  label=\"Alignment\"\n  variant=\"ghost\"\n  defaultValue=\"left\"\n  items={[\n    { value: \"left\", icon: \"bars-3-bottom-left\", ariaLabel: \"Align left\" },\n    { value: \"center\", icon: \"bars-3\", ariaLabel: \"Align center\" },\n    { value: \"right\", icon: \"bars-3-bottom-right\", ariaLabel: \"Align right\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Vista con texto, separada",
+      "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
+    },
+    {
+      "title": "Vertical",
+      "code": "<ToggleGroup\n  type=\"multiple\"\n  label=\"Layers\"\n  orientation=\"vertical\"\n  size=\"sm\"\n  items={[\n    { value: \"grid\", icon: \"table-cells\", label: \"Grid\" },\n    { value: \"guides\", icon: \"adjustments-horizontal\", label: \"Guides\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo, con primitiva propia (APG «toolbar» para el foco; aria-pressed). Referencia de variantes: Toggle Group de Shark UI y Radix."
+}

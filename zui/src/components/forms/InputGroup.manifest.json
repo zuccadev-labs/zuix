@@ -1,0 +1,102 @@
+{
+  "name": "InputGroup",
+  "exports": ["InputGroupAddon", "InputGroupText", "InputGroupInput", "InputGroupTextarea"],
+  "group": "forms",
+  "description": "Campo con adornos: texto, icono, atajo de teclado, botón o tramo de prefijo al inicio, al final, encima o debajo del control, en un solo recuadro.",
+  "import": "import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText, InputGroupTextarea } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md", "description": "InputGroup." },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false,
+      "description": "InputGroup. También se marca solo si el control lleva aria-invalid."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "InputGroup: atenúa el recuadro (deshabilita el control con su propio `disabled`)."
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["inline-start", "inline-end", "block-start", "block-end"],
+      "default": "inline-start",
+      "description": "InputGroupAddon. Los `block-*` ocupan una fila propia."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["plain", "segment"],
+      "default": "plain",
+      "description": "InputGroupAddon. `segment`: tramo con fondo y separador hasta el canto (prefijos como `https://`)."
+    },
+    {
+      "name": "...rest",
+      "type": "InputHTMLAttributes | TextareaHTMLAttributes",
+      "description": "InputGroupInput e InputGroupTextarea: atributos nativos; toman id, error y ayuda del Field que los envuelve."
+    }
+  ],
+  "states": ["rest", "hover", "focus", "invalid", "disabled"],
+  "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "field-radius-multiline",
+    "control-border",
+    "control-border-hover",
+    "control-bg",
+    "control-bg-hover",
+    "accent",
+    "accent-ring",
+    "danger",
+    "focus-width",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "surface-2",
+    "line",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-3-5",
+    "text-body",
+    "text-small",
+    "radius-xs",
+    "leading-normal",
+    "duration-fast",
+    "ease-standard"
+  ],
+  "classes": ["z-input-group", "z-input-group__addon", "z-input-group__text", "z-input-group__control"],
+  "a11y": "El control es un input o textarea nativo: toma etiqueta, ayuda y error del Field. Los adornos son texto o controles propios con su nombre (un botón de solo icono lleva aria-label); pulsar en un adorno que no es un control enfoca el campo. Un texto que cambia el sentido del valor (unidad, moneda) debe estar también en la etiqueta o en la ayuda: un adorno no forma parte del nombre accesible.",
+  "examples": [
+    {
+      "title": "Icono y atajo",
+      "code": "<InputGroup>\n  <InputGroupAddon>\n    <Icon name=\"magnifying-glass\" />\n  </InputGroupAddon>\n  <InputGroupInput placeholder=\"Search projects\" aria-label=\"Search projects\" />\n  <InputGroupAddon align=\"inline-end\">\n    <Kbd keys=\"⌘ K\" size=\"sm\" />\n  </InputGroupAddon>\n</InputGroup>"
+    },
+    {
+      "title": "Prefijo y sufijo en tramo",
+      "code": "<Field label=\"Website\">\n  <InputGroup>\n    <InputGroupAddon variant=\"segment\">\n      <InputGroupText>https://</InputGroupText>\n    </InputGroupAddon>\n    <InputGroupInput placeholder=\"example\" />\n    <InputGroupAddon align=\"inline-end\" variant=\"segment\">\n      <InputGroupText>.com</InputGroupText>\n    </InputGroupAddon>\n  </InputGroup>\n</Field>"
+    },
+    {
+      "title": "Con botón",
+      "code": "<InputGroup>\n  <InputGroupInput placeholder=\"Invite by email\" aria-label=\"Email\" type=\"email\" />\n  <InputGroupAddon align=\"inline-end\">\n    <Button size=\"xs\" variant=\"primary\">Invite</Button>\n  </InputGroupAddon>\n</InputGroup>"
+    },
+    {
+      "title": "Unidad",
+      "code": "<Field label=\"Price (USD)\">\n  <InputGroup>\n    <InputGroupAddon>\n      <InputGroupText>$</InputGroupText>\n    </InputGroupAddon>\n    <InputGroupInput inputMode=\"decimal\" placeholder=\"0.00\" />\n    <InputGroupAddon align=\"inline-end\">\n      <InputGroupText>USD</InputGroupText>\n    </InputGroupAddon>\n  </InputGroup>\n</Field>"
+    },
+    {
+      "title": "Textarea con barra inferior",
+      "code": "<InputGroup>\n  <InputGroupTextarea placeholder=\"Write a comment\" aria-label=\"Comment\" />\n  <InputGroupAddon align=\"block-end\">\n    <InputGroupText>Markdown supported</InputGroupText>\n    <Button size=\"xs\" variant=\"primary\" icon=\"paper-airplane\">Send</Button>\n  </InputGroupAddon>\n</InputGroup>"
+    }
+  ],
+  "origin": "Nuevo. Referencia de variantes: Input Group de Shark UI (alineaciones, texto, botón, atajo, textarea)."
+}

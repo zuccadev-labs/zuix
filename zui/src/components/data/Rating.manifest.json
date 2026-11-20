@@ -49,6 +49,12 @@
       "name": "valueLabel",
       "type": "(value: number, max: number) => string",
       "description": "Por defecto \"N out of M\"."
+    },
+    {
+      "name": "allowHalf",
+      "type": "boolean",
+      "default": false,
+      "description": "Con `onChange`: medias estrellas. Cada estrella tiene dos mitades pulsables y las flechas avanzan de 0,5 en 0,5. En lectura los decimales ya se dibujan."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled"],
@@ -78,6 +84,10 @@
     {
       "title": "Entrada",
       "code": "<Rating value={score} onChange={setScore} size=\"lg\" label=\"Your rating\" />"
+    },
+    {
+      "title": "Medias estrellas",
+      "code": "function HalfRating() {\n  const [stars, setStars] = React.useState(3.5);\n  return <Rating value={stars} onChange={setStars} allowHalf showValue label=\"Your rating\" />;\n}"
     }
   ],
   "origin": "Rating del design system base."

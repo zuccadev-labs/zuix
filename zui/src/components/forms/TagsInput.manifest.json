@@ -1,0 +1,66 @@
+{
+  "name": "TagsInput",
+  "group": "forms",
+  "description": "Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.",
+  "import": "import { TagsInput } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    { "name": "value", "type": "string[]" },
+    { "name": "defaultValue", "type": "string[]", "default": [] },
+    { "name": "onValueChange", "type": "(value: string[]) => void" },
+    { "name": "onReject", "type": "(rejected: { tag, reason }[]) => void", "description": "Motivos: duplicate, max, length, invalid." },
+    { "name": "delimiters", "type": "string[]", "default": [","], "description": "Caracteres que cierran una etiqueta además de Intro." },
+    { "name": "max", "type": "number", "description": "Máximo de etiquetas; al llegar, el campo queda de solo lectura." },
+    { "name": "maxLength", "type": "number", "description": "Longitud máxima de cada etiqueta." },
+    { "name": "allowDuplicates", "type": "boolean", "default": false },
+    { "name": "sanitize", "type": "(tag: string) => string", "description": "Por defecto quita los espacios de los extremos." },
+    { "name": "validate", "type": "(tag: string, current: string[]) => boolean" },
+    { "name": "addOnBlur", "type": "boolean", "default": true },
+    { "name": "addOnPaste", "type": "boolean", "default": true },
+    { "name": "name", "type": "string", "description": "Cada etiqueta se envía con este nombre." },
+    { "name": "placeholder", "type": "string" },
+    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md" },
+    { "name": "invalid", "type": "boolean", "default": false },
+    { "name": "disabled", "type": "boolean", "default": false },
+    { "name": "readOnly", "type": "boolean", "default": false },
+    { "name": "removeLabel", "type": "(tag: string) => string", "default": "Remove {tag}" },
+    { "name": "addedMessage", "type": "(tag: string) => string", "default": "{tag} added" },
+    { "name": "removedMessage", "type": "(tag: string) => string", "default": "{tag} removed" }
+  ],
+  "states": ["rest", "hover", "focus", "invalid", "disabled", "full"],
+  "tokens": [
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "glass-border",
+    "glass-highlight",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-soft",
+    "accent-ring",
+    "focus-width",
+    "radius-xs",
+    "text-small",
+    "weight-medium"
+  ],
+  "classes": ["z-tags", "z-tags__tag", "z-tags__text", "z-tags__remove", "z-tags__input", "z-input"],
+  "a11y": "Una sola parada de Tab: el campo de texto, que toma etiqueta, ayuda y error del Field. Intro o un delimitador crean la etiqueta (respetando la composición de un IME); Retroceso con el campo vacío o la flecha izquierda al principio llevan a la última etiqueta, las flechas recorren las etiquetas, Retroceso o Supr quitan la enfocada y Escape vuelve al campo. Cada etiqueta tiene un botón con nombre («Remove design») para el puntero y los lectores. Altas y bajas se anuncian en una región status; lo que no entra (repetida, tope) se queda escrito y el campo se marca como no válido.",
+  "examples": [
+    {
+      "title": "Temas",
+      "code": "<Field label=\"Topics\" hint=\"Press Enter or comma to add.\">\n  <TagsInput name=\"topics\" defaultValue={[\"design\", \"tokens\"]} placeholder=\"Add a topic\" />\n</Field>"
+    },
+    {
+      "title": "Correos con tope y validación",
+      "code": "<Field label=\"Invite\" hint=\"Up to 4 emails. Paste a list to add several.\">\n  <TagsInput\n    max={4}\n    delimiters={[\",\", \" \", \";\"]}\n    validate={(tag) => /^[^@\\s]+@[^@\\s]+$/.test(tag)}\n    defaultValue={[\"ana@example.com\"]}\n    placeholder=\"name@example.com\"\n  />\n</Field>"
+    },
+    {
+      "title": "Pequeño, solo lectura",
+      "code": "<TagsInput aria-label=\"Labels\" size=\"sm\" readOnly defaultValue={[\"frontend\", \"a11y\", \"glass\"]} />"
+    }
+  ],
+  "origin": "Nuevo, con lógica propia en core/tags. Referencia de variantes: Tags Input de Shark UI (delimitador, pegar, máximo, longitud, validación, al salir)."
+}

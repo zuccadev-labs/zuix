@@ -21,9 +21,10 @@ const entry = `
 import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import "../zicon/src/all";
+import { Icon } from "../zicon/src/core";
 import * as zui from "./src/index";
 import * as zout from "../zout/src/index";
-export { React, renderToStaticMarkup, zui, zout };
+export { React, renderToStaticMarkup, zui, zout, Icon };
 `;
 const bundle = join(tmp, `html-entry-${process.pid}.cjs`);
 await build({
@@ -36,7 +37,7 @@ await build({
   logLevel: "error",
   define: { "process.env.NODE_ENV": '"production"' },
 });
-const { React, renderToStaticMarkup, zui, zout } = createRequire(import.meta.url)(bundle);
+const { React, renderToStaticMarkup, zui, zout, Icon } = createRequire(import.meta.url)(bundle);
 rmSync(bundle, { force: true });
 
 // Identificadores que el ejemplo no define (datos, manejadores): un sustituto inerte.
@@ -56,7 +57,8 @@ const stub = new Proxy(function () {}, {
               : stub,
   apply: () => stub,
 });
-const components = { ...zui, ...zout };
+// `Icon` (zicon) también: los ejemplos lo usan como contenido de adornos y de Swap.
+const components = { ...zui, ...zout, Icon };
 const scope = new Proxy(
   {},
   {

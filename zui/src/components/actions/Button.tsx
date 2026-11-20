@@ -1,11 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
-import { ICON_SIZE, type ControlSize, type Intent } from "./types";
+import { BUTTON_ICON_SIZE, type ButtonSize, type ButtonVariant } from "./types";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: Intent;
-  size?: ControlSize;
+  /** Intención. `outline` es de contorno sin relleno; `link` tiene aspecto de enlace (sigue siendo un botón). */
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   /** Icono a la izquierda del texto. */
   icon?: IconName;
   /** Icono a la derecha del texto. */
@@ -45,9 +46,9 @@ export function Button({
       {...(loading ? { type: "button" as const, onClick: undefined } : { onClick })}
     >
       {/* Con carga, el anillo sustituye al icono izquierdo. */}
-      {loading ? <span className="z-btn__spinner" aria-hidden="true" /> : icon ? <Icon name={icon} size={ICON_SIZE[size]} /> : null}
+      {loading ? <span className="z-btn__spinner" aria-hidden="true" /> : icon ? <Icon name={icon} size={BUTTON_ICON_SIZE[size]} /> : null}
       {children}
-      {iconRight ? <Icon name={iconRight} size={ICON_SIZE[size]} /> : null}
+      {iconRight ? <Icon name={iconRight} size={BUTTON_ICON_SIZE[size]} /> : null}
     </button>
   );
 }

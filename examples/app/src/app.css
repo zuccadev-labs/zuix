@@ -234,3 +234,11 @@ body {
   background: var(--z-canvas-gradient), var(--z-canvas);
   color: var(--z-fg);
 }
+
+/* Fila de piezas en línea (pantalla Inputs). */
+.app-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--z-space-2);
+}

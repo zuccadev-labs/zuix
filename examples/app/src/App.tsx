@@ -33,6 +33,7 @@ import { PROJECTS, SCREENS, STATUS_LABEL, STATUS_TONE, isScreen, type Brand, typ
 import { Overview } from "./screens/Overview";
 import { Projects } from "./screens/Projects";
 import { Forms } from "./screens/Forms";
+import { Inputs } from "./screens/Inputs";
 import { Overlays } from "./screens/Overlays";
 import { NavigationScreen } from "./screens/Navigation";
 import { Gallery } from "./screens/Gallery";
@@ -185,6 +186,8 @@ export function App() {
       <Projects selectedId={projectId} onSelect={selectProject} />
     ) : active === "forms" ? (
       <Forms />
+    ) : active === "inputs" ? (
+      <Inputs />
     ) : active === "overlays" ? (
       <Overlays onOpenPalette={() => setPaletteOpen(true)} />
     ) : active === "navigation" ? (

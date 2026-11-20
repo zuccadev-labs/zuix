@@ -69,6 +69,43 @@
       "name": "children",
       "type": "ReactNode",
       "description": "Contenido extra, p. ej. la lista de archivos elegidos."
+    },
+    {
+      "name": "showFiles",
+      "type": "boolean",
+      "default": false,
+      "description": "Lista de archivos dentro de la zona: miniatura de las imágenes, nombre, tamaño, progreso y botón de quitar. Sin `files` la lleva el componente (acumula con `multiple`)."
+    },
+    {
+      "name": "files",
+      "type": "File[]",
+      "description": "Lista controlada (con `showFiles`)."
+    },
+    {
+      "name": "onRemove",
+      "type": "(file: File) => void"
+    },
+    {
+      "name": "progress",
+      "type": "(file: File) => number | undefined",
+      "description": "Progreso de subida (0–100) de cada archivo."
+    },
+    {
+      "name": "removeLabel",
+      "type": "(file: File) => string",
+      "default": "Remove {name}"
+    },
+    {
+      "name": "directory",
+      "type": "boolean",
+      "default": false,
+      "description": "Elegir una carpeta entera (webkitdirectory)."
+    },
+    {
+      "name": "capture",
+      "type": "enum",
+      "values": ["user", "environment"],
+      "description": "Abre la cámara en el móvil."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "dragging", "invalid", "disabled"],
@@ -100,7 +137,9 @@
     "space-1",
     "space-3",
     "surface-2",
-    "weight-medium"
+    "weight-medium",
+    "surface-3",
+    "radius-xs"
   ],
   "classes": ["z-upload"],
   "a11y": "label que envuelve un input de archivos real: se activa con teclado y lo anuncian los lectores. `hint` va por aria-describedby. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo label con su input real, así que teclado y lectores funcionan sin el módulo; este añade soltar archivos, el filtrado por `accept` y `data-max-size`, y la lista `ul.z-upload__files` con nombre y tamaño. Los archivos rechazados solo llegan en `z:change` (`detail.rejected`): anunciarlos es cosa de la aplicación.",
@@ -113,6 +152,10 @@
     {
       "title": "Un documento",
       "code": "<FileUpload accept=\".pdf\" label=\"Upload the signed contract\" icon=\"document-arrow-up\" onFiles={([file]) => upload(file)} />"
+    },
+    {
+      "title": "Con lista y progreso",
+      "code": "<FileUpload\n  multiple\n  showFiles\n  accept=\"image/*,.pdf\"\n  hint=\"Images or PDF.\"\n  onFiles={(files) => upload(files)}\n  progress={(file) => uploads[file.name]}\n/>"
     }
   ],
   "html": [

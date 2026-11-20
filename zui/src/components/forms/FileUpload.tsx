@@ -1,5 +1,5 @@
 "use client";
-import { useId, useRef, useState, type DragEvent, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { matchesAccept } from "../../core/accept";
 import { cx } from "../../cx";
@@ -26,8 +26,57 @@ export interface FileUploadProps {
   name?: string;
   id?: string;
   className?: string;
-  /** Contenido extra bajo los textos (por ejemplo, la lista de archivos). */
+  /** Contenido extra bajo los textos. */
   children?: ReactNode;
+  /**
+   * Lista de archivos elegidos dentro de la zona, con miniatura de las imágenes, tamaño, progreso y botón de quitar.
+   * Sin `files`, la lista la lleva el componente (acumula con `multiple`).
+   */
+  showFiles?: boolean;
+  /** Lista controlada (con `showFiles`). */
+  files?: ReadonlyArray<File>;
+  /** Se quitó un archivo de la lista. */
+  onRemove?: (file: File) => void;
+  /** Progreso de subida de un archivo, de 0 a 100 (`undefined`: sin barra). */
+  progress?: (file: File) => number | undefined;
+  /** Nombre del botón de quitar. */
+  removeLabel?: (file: File) => string;
+  /** Permite elegir una carpeta entera (webkitdirectory). */
+  directory?: boolean;
+  /** Abre la cámara en el móvil (`user` o `environment`). */
+  capture?: "user" | "environment";
+}
+
+/** Tamaño legible de un archivo (B, kB, MB). */
+function fileSize(bytes: number): string {
+  if (bytes < 1000) return `${bytes} B`;
+  if (bytes < 1_000_000) return `${(bytes / 1000).toFixed(bytes < 10_000 ? 1 : 0)} kB`;
+  return `${(bytes / 1_000_000).toFixed(1)} MB`;
+}
+
+function FileRow({ file, progress, removeLabel, onRemove }: { file: File; progress?: number; removeLabel: string; onRemove?: () => void }) {
+  const image = file.type.startsWith("image/");
+  const url = useMemo(() => (image && typeof URL.createObjectURL === "function" ? URL.createObjectURL(file) : null), [file, image]);
+  useEffect(() => () => (url ? URL.revokeObjectURL(url) : undefined), [url]);
+  return (
+    <li className="z-upload__file" data-progress={progress === undefined ? undefined : Math.round(progress)}>
+      <span className="z-upload__thumb" aria-hidden="true">
+        {url ? <img src={url} alt="" width={28} height={28} /> : <Icon name={image ? "photo" : "document"} size={16} />}
+      </span>
+      <span className="z-upload__file-main">
+        <span className="z-upload__file-name">{file.name}</span>
+        {progress === undefined ? null : (
+          <progress className="z-upload__progress" max={100} value={progress} aria-label={`${file.name}: ${Math.round(progress)}%`} />
+        )}
+      </span>
+      <span className="z-upload__file-size">{fileSize(file.size)}</span>
+      {onRemove ? (
+        <button type="button" className="z-upload__remove" aria-label={removeLabel} title={removeLabel} onClick={onRemove}>
+          <Icon name="x-mark" size={14} />
+        </button>
+      ) : null}
+    </li>
+  );
 }
 
 // Comprueba un archivo contra una lista `accept` (extensiones, tipos MIME y comodines).
@@ -60,7 +109,16 @@ export function FileUpload({
   id,
   className,
   children,
+  showFiles,
+  files: filesProp,
+  onRemove,
+  progress,
+  removeLabel = (file) => `Remove ${file.name}`,
+  directory,
+  capture,
 }: FileUploadProps) {
+  const [inner, setInner] = useState<ReadonlyArray<File>>([]);
+  const list = filesProp ?? inner;
   const control = useFieldControl({ id, invalid });
   const hintId = useId();
   const input = useRef<HTMLInputElement>(null);
@@ -73,7 +131,8 @@ export function FileUpload({
     const rejected = picked.filter((file) => !accepted.includes(file));
     if (accepted.length) onFiles(accepted);
     if (rejected.length) onReject?.(rejected);
-    return accepted;
+    if (showFiles && filesProp === undefined && accepted.length) setInner(multiple ? [...inner, ...accepted] : accepted);
+    return showFiles && multiple && filesProp === undefined ? [...inner, ...accepted] : accepted;
   };
   const onDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
@@ -109,6 +168,8 @@ export function FileUpload({
         accept={accept}
         multiple={multiple}
         disabled={disabled}
+        capture={capture}
+        {...(directory ? { webkitdirectory: "", directory: "" } : {})}
         aria-invalid={control["aria-invalid"]}
         aria-describedby={[hint ? hintId : undefined, control["aria-describedby"]].filter(Boolean).join(" ") || undefined}
         onChange={(event) => {
@@ -129,6 +190,29 @@ export function FileUpload({
         </span>
       ) : null}
       {children}
+      {showFiles ? (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: solo cancela la activación de la etiqueta; los botones de la lista tienen su teclado.
+        <ul className="z-upload__files" onClick={(event) => event.preventDefault()}>
+          {list.map((file) => (
+            <FileRow
+              key={`${file.name}-${file.size}-${file.lastModified}`}
+              file={file}
+              progress={progress?.(file)}
+              removeLabel={removeLabel(file)}
+              onRemove={
+                disabled
+                  ? undefined
+                  : () => {
+                      const next = list.filter((f) => f !== file);
+                      if (filesProp === undefined) setInner(next);
+                      if (name) keep(input.current, next);
+                      onRemove?.(file);
+                    }
+              }
+            />
+          ))}
+        </ul>
+      ) : null}
     </label>
   );
 }

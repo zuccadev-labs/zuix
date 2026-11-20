@@ -75,6 +75,16 @@
       "name": "name",
       "type": "string",
       "description": "Añade un campo oculto con el valor completo."
+    },
+    {
+      "name": "groups",
+      "type": "number[]",
+      "description": "Reparto en grupos con un separador visual entre ellos, p. ej. [3, 3]."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "description": "Carácter de las casillas vacías, p. ej. «·»."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled", "invalid"],
@@ -99,10 +109,14 @@
     "control-bg-hover",
     "control-radius-lg",
     "fg-muted",
-    "focus-width"
+    "focus-width",
+    "space-2-5",
+    "radius-xs",
+    "line-strong",
+    "fg-subtle"
   ],
   "classes": ["z-otp"],
-  "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`.",
+  "a11y": "role group con nombre; cada casilla tiene su aria-label. Avance automático, Retroceso, Supr, flechas y pegado del código completo; autocomplete one-time-code. Sin React (`@zuccadev-labs/zuix-zui/dom`): el role=group con su nombre y el aria-label de cada casilla van en el marcado; el módulo aporta el avance automático, Retroceso, flechas y el pegado del código completo, y emite `z:change` con `detail.complete`. El separador es decorativo (aria-hidden).",
   "behavior": "dom",
   "examples": [
     {
@@ -112,6 +126,10 @@
     {
       "title": "Controlado con error",
       "code": "<OTPInput length={4} value={pin} onChange={setPin} mask invalid label=\"PIN\" />"
+    },
+    {
+      "title": "Con separador",
+      "code": "<OTPInput length={6} groups={[3, 3]} placeholder=\"·\" label=\"Authenticator code\" />"
     }
   ],
   "html": [
@@ -123,6 +141,10 @@
     {
       "title": "PIN oculto con error",
       "code": "<div role=\"group\" aria-label=\"PIN\" class=\"z-otp\" id=\"pin\" data-size=\"md\" data-mode=\"numeric\" data-invalid>\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"4\" aria-label=\"Character 1 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 2 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 3 of 4\" aria-invalid=\"true\" />\n  <input class=\"z-otp__cell\" type=\"password\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"4\" aria-label=\"Character 4 of 4\" aria-invalid=\"true\" />\n</div>"
+    },
+    {
+      "title": "Con separador",
+      "code": "<div role=\"group\" aria-label=\"Authenticator code\" class=\"z-otp\" id=\"totp\" data-size=\"md\" data-mode=\"numeric\">\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"6\" aria-label=\"Character 1 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 2 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 3 of 6\" placeholder=\"·\" />\n  <span class=\"z-otp__separator\" aria-hidden=\"true\"></span>\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 4 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 5 of 6\" placeholder=\"·\" />\n  <input class=\"z-otp__cell\" type=\"text\" inputmode=\"numeric\" autocomplete=\"off\" maxlength=\"6\" aria-label=\"Character 6 of 6\" placeholder=\"·\" />\n</div>"
     }
   ],
   "origin": "Nuevo."

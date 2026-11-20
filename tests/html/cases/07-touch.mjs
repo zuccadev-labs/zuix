@@ -449,7 +449,9 @@ export default async function ({ page, test, ok, shots, browserName, note, Unver
       await finger.tap(mid(await boxOf(control)));
       await settle();
       ok((await control.getAttribute("aria-expanded")) === "true", "el toque no abrió el Select");
-      const option = tp.locator(".z-listbox__option:visible:not([aria-disabled=true]):not([aria-selected=true])").first();
+      const option = tp
+        .locator(".z-listbox:not([data-inline]) .z-listbox__option:visible:not([aria-disabled=true]):not([aria-selected=true])")
+        .first();
       const label = (await option.textContent()).trim();
       await finger.tap(mid(await option.boundingBox()));
       await settle();

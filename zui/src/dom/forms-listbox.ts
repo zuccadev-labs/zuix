@@ -3,12 +3,13 @@
 // opción activa va por aria-activedescendant.
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
+import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { step } from "../core/roving";
 import { createTypeahead, isPrintable as printable } from "../core/typeahead";
 import { all, emit, flag, fold, hidePopup, inDom, isOpen, ownerOf, popupFor, reposition, showPopup } from "./forms-popup";
 import { cloneChildren, setMarkup, type Listen } from "./shared";
 
-registerIcons([check]);
+registerIcons([check, xMark]);
 
 const ICON_SIZE: Record<string, number> = { sm: 14, md: 16, lg: 18 };
 const SELECT = ".z-select:not(.z-datepicker)";
@@ -24,10 +25,10 @@ const labelOf = (option: HTMLElement) =>
 const optionValue = (option: HTMLElement) => option.dataset.value ?? labelOf(option);
 const activeOf = (popup: Element) => popup.querySelector<HTMLElement>(".z-listbox__option[data-highlighted]");
 
-function mark(popup: Element, value: string | null): HTMLElement | undefined {
+function mark(popup: Element, value: string | null | ReadonlyArray<string>): HTMLElement | undefined {
   let selected: HTMLElement | undefined;
   for (const option of optionsOf(popup)) {
-    const on = value !== null && optionValue(option) === value;
+    const on = value !== null && (typeof value === "string" ? optionValue(option) === value : value.includes(optionValue(option)));
     if (on) selected ??= option;
     option.dataset.state = on ? "checked" : "unchecked";
     option.setAttribute("aria-selected", String(on));
@@ -52,6 +53,48 @@ function typeahead(list: HTMLElement[], key: string, current: HTMLElement | null
 }
 
 /* ---------- Select ---------- */
+// Varias (data-multiple): data-value es la lista separada por comas; elegir marca o desmarca sin cerrar, y
+// data-max-selected deshabilita el resto al llegar al tope. z:change { value: string[] }.
+
+const isMultiSelect = (select: HTMLElement) => select.hasAttribute("data-multiple");
+const multiValue = (select: HTMLElement) => (select.dataset.value ?? "").split(",").filter(Boolean);
+
+function syncMulti(select: HTMLElement, values: ReadonlyArray<string>): void {
+  const control = selectControl(select);
+  const popup = popupFor(control);
+  if (!control || !popup) return;
+  mark(popup, values);
+  const max = Number(select.dataset.maxSelected) || Infinity;
+  for (const option of optionsOf(popup)) {
+    option.tabIndex = -1;
+    const own = option.hasAttribute("data-own-disabled") || (option.hasAttribute("data-disabled") && !option.hasAttribute("data-max-off"));
+    if (own) option.setAttribute("data-own-disabled", "");
+    const off = own || (values.length >= max && !values.includes(optionValue(option)));
+    flag(option, "data-disabled", off);
+    flag(option, "aria-disabled", off, "true");
+    flag(option, "data-max-off", off && !own);
+  }
+  const labels = optionsOf(popup)
+    .filter((option) => values.includes(optionValue(option)))
+    .map(labelOf);
+  const text = control.querySelector<HTMLElement>(".z-select__value");
+  if (text) text.textContent = labels.length ? labels.join(", ") : (select.dataset.placeholder ?? "");
+  let count = control.querySelector<HTMLElement>(".z-select__count");
+  if (labels.length > 1) {
+    if (!count) {
+      count = document.createElement("span");
+      count.className = "z-select__count";
+      count.setAttribute("aria-hidden", "true");
+      control.append(count);
+    }
+    count.textContent = String(labels.length);
+  } else count?.remove();
+  flag(control, "data-placeholder", labels.length === 0);
+  select.dataset.value = values.join(",");
+  const native = select.querySelector<HTMLSelectElement>("select.z-native-input");
+  if (native) for (const option of native.options) option.selected = values.includes(option.value);
+  if (!control.dataset.state) control.dataset.state = "closed";
+}
 
 const selectControl = (select: Element) => select.querySelector<HTMLButtonElement>("button.z-select__control");
 const selectValue = (select: HTMLElement) =>
@@ -82,7 +125,15 @@ function syncSelect(select: HTMLElement, value: string): void {
 }
 
 /** Fija el valor de un Select (`""` lo vacía) y emite z:change si cambia. */
-export function setSelectValue(select: HTMLElement, value: string): void {
+export function setSelectValue(select: HTMLElement, value: string | ReadonlyArray<string>): void {
+  if (isMultiSelect(select)) {
+    const values = typeof value === "string" ? value.split(",").filter(Boolean) : [...value];
+    const before = multiValue(select).join(",");
+    syncMulti(select, values);
+    if (values.join(",") !== before) emit(select, "change", { value: values });
+    return;
+  }
+  if (typeof value !== "string") value = value[0] ?? "";
   const before = selectValue(select);
   syncSelect(select, value);
   if (value !== before) emit(select, "change", { value });
@@ -112,6 +163,13 @@ function closeSelect(select: HTMLElement, refocus = true): void {
 
 function chooseSelect(select: HTMLElement, option: HTMLElement): void {
   if (!usable(option)) return;
+  if (isMultiSelect(select)) {
+    const values = multiValue(select);
+    const value = optionValue(option);
+    setSelectValue(select, values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
+    option.focus({ preventScroll: true });
+    return;
+  }
   closeSelect(select);
   setSelectValue(select, optionValue(option));
 }
@@ -123,8 +181,12 @@ function onSelectControlKey(select: HTMLElement, event: KeyboardEvent): void {
     event.preventDefault();
     openSelect(select, "selected");
   } else if (printable(event)) {
-    // Cerrado: la letra cambia el valor sin abrir la lista.
+    // Cerrado: la letra cambia el valor sin abrir la lista (en múltiple, la abre).
     event.preventDefault();
+    if (isMultiSelect(select)) {
+      openSelect(select, "selected");
+      return;
+    }
     const list = optionsOf(popup).filter(usable);
     const next = typeahead(list, event.key, list.find((option) => option.dataset.state === "checked") ?? null);
     if (next) setSelectValue(select, optionValue(next));
@@ -229,7 +291,11 @@ function refreshCombo(combo: HTMLElement): void {
     status.textContent = loading ? (combo.dataset.loadingText ?? "Loading") : (combo.dataset.emptyText ?? "No results");
     flag(status, "data-loading", loading, "true");
   } else status?.remove();
-  if (clear) clear.hidden = input.disabled || (comboValue(combo) === null && input.value === "");
+  if (clear)
+    clear.hidden =
+      input.disabled ||
+      (comboValue(combo) === null && input.value === "") ||
+      (isMultiCombo(combo) && !comboMany(combo).length && input.value === "");
   const active = activeOf(popup);
   if (active && !usable(active)) setComboActive(combo, undefined);
   if (isOpen(popup)) reposition(popup);
@@ -249,6 +315,90 @@ function syncComboIcon(combo: HTMLElement): void {
   copy.setAttribute("data-z-selected", "");
   cloneChildren(icon, copy);
   combo.prepend(copy);
+}
+
+/* Varias (data-multiple): data-value es la lista separada por comas y cada elegida es una pieza .z-tags__tag dentro
+   del campo; elegir no cierra la lista y Retroceso con el campo vacío quita la última. Texto libre (data-custom): lo
+   escrito vale como valor al pulsar Intro sin opción activa o al salir. */
+const isMultiCombo = (combo: HTMLElement) => combo.hasAttribute("data-multiple");
+const comboMany = (combo: HTMLElement) => (combo.dataset.value ?? "").split(",").filter(Boolean);
+
+function paintMany(combo: HTMLElement, values: ReadonlyArray<string>): void {
+  const { input, popup } = comboParts(combo);
+  if (!input || !popup) return;
+  combo.dataset.value = values.join(",");
+  mark(popup, values);
+  const max = Number(combo.dataset.maxSelected) || Infinity;
+  for (const option of optionsOf(popup)) {
+    const own = option.hasAttribute("data-own-disabled") || (option.hasAttribute("data-disabled") && !option.hasAttribute("data-max-off"));
+    if (own) option.setAttribute("data-own-disabled", "");
+    const off = own || (values.length >= max && !values.includes(optionValue(option)));
+    flag(option, "data-disabled", off);
+    flag(option, "aria-disabled", off, "true");
+    flag(option, "data-max-off", off && !own);
+  }
+  for (const chip of combo.querySelectorAll(":scope > .z-tags__tag")) chip.remove();
+  const size = combo.dataset.size === "sm" ? 12 : 14;
+  for (const value of values) {
+    const option = optionsOf(popup).find((item) => optionValue(item) === value);
+    const label = option ? labelOf(option) : value;
+    const chip = document.createElement("span");
+    chip.className = "z-tags__tag";
+    chip.dataset.value = value;
+    const text = document.createElement("span");
+    text.className = "z-tags__text";
+    text.textContent = label;
+    chip.append(text);
+    if (!input.disabled) {
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "z-tags__remove";
+      remove.tabIndex = -1;
+      const name = (combo.dataset.removeLabel ?? "Remove {label}").replace("{label}", label);
+      remove.setAttribute("aria-label", name);
+      remove.title = name;
+      setMarkup(remove, iconSvg("x-mark", { size }));
+      chip.append(remove);
+    }
+    combo.insertBefore(chip, input);
+  }
+  const fieldName = combo.dataset.name;
+  if (fieldName) {
+    for (const old of combo.querySelectorAll(':scope > input[type="hidden"]')) old.remove();
+    for (const value of values) {
+      const hidden = document.createElement("input");
+      hidden.type = "hidden";
+      hidden.name = fieldName;
+      hidden.value = value;
+      combo.append(hidden);
+    }
+  }
+}
+
+function setMany(combo: HTMLElement, values: ReadonlyArray<string>): void {
+  const before = comboMany(combo).join(",");
+  paintMany(combo, values);
+  if (values.join(",") !== before) emit(combo, "change", { value: [...values] });
+}
+
+function commitCustomCombo(combo: HTMLElement): void {
+  const { input, popup, hidden } = comboParts(combo);
+  const state = comboState(combo);
+  if (!combo.hasAttribute("data-custom") || !input || !popup || !state.editing) return;
+  const typed = input.value.trim();
+  const match = optionsOf(popup).find((option) => fold(labelOf(option)) === fold(typed));
+  if (match) {
+    commitCombo(combo, match);
+    return;
+  }
+  const before = comboValue(combo);
+  state.label = typed;
+  state.editing = false;
+  mark(popup, null);
+  if (typed) combo.dataset.value = typed;
+  else delete combo.dataset.value;
+  if (hidden) hidden.value = typed;
+  if ((typed || null) !== before) emit(combo, "change", { value: typed || null, label: null });
 }
 
 function commitCombo(combo: HTMLElement, option: HTMLElement | null): void {
@@ -302,6 +452,17 @@ function closeCombo(combo: HTMLElement): void {
 
 function chooseCombo(combo: HTMLElement, option: HTMLElement): void {
   if (!usable(option)) return;
+  if (isMultiCombo(combo)) {
+    const values = comboMany(combo);
+    const value = optionValue(option);
+    setMany(combo, values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
+    const { input } = comboParts(combo);
+    if (input) input.value = "";
+    comboState(combo).editing = false;
+    refreshCombo(combo);
+    input?.focus();
+    return;
+  }
   commitCombo(combo, option);
   // Cerrado no ejecuta el cierre: el texto se fija aquí también.
   const { input } = comboParts(combo);
@@ -316,6 +477,13 @@ function chooseCombo(combo: HTMLElement, option: HTMLElement): void {
 function clearCombo(combo: HTMLElement): void {
   const { input } = comboParts(combo);
   if (!input) return;
+  if (isMultiCombo(combo)) {
+    setMany(combo, []);
+    input.value = "";
+    refreshCombo(combo);
+    input.focus();
+    return;
+  }
   commitCombo(combo, null);
   comboState(combo).editing = false;
   input.value = "";
@@ -356,11 +524,31 @@ function onComboKey(combo: HTMLElement, event: KeyboardEvent): void {
       setComboActive(combo, step(list, active, event.key, true));
       break;
     case "Enter":
-      if (!shown) return;
+      if (event.isComposing) return;
+      if (!shown) {
+        if (combo.hasAttribute("data-custom") && comboState(combo).editing) {
+          event.preventDefault();
+          commitCustomCombo(combo);
+        }
+        return;
+      }
       // Con la lista abierta, Enter elige y no envía el formulario.
       event.preventDefault();
       if (active) chooseCombo(combo, active);
+      else if (combo.hasAttribute("data-custom")) {
+        commitCustomCombo(combo);
+        closeCombo(combo);
+      }
       break;
+    case "Backspace": {
+      const { input } = comboParts(combo);
+      if (isMultiCombo(combo) && input?.value === "" && comboMany(combo).length) {
+        event.preventDefault();
+        setMany(combo, comboMany(combo).slice(0, -1));
+        refreshCombo(combo);
+      }
+      break;
+    }
     default:
   }
 }
@@ -441,6 +629,15 @@ export function setComboboxValue(combo: HTMLElement, value: string | null): void
 function hydrateCombo(combo: HTMLElement): void {
   const { input, popup, viewport, hidden, toggle } = comboParts(combo);
   if (!input || !popup) return;
+  if (isMultiCombo(combo)) {
+    if (viewport && !viewport.id) viewport.id = `z-listbox-${++listSeq}`;
+    paintMany(combo, comboMany(combo));
+    combo.dataset.state = "closed";
+    input.setAttribute("aria-expanded", "false");
+    toggle?.setAttribute("aria-expanded", "false");
+    refreshCombo(combo);
+    return;
+  }
   if (viewport && !viewport.id) viewport.id = `z-listbox-${++listSeq}`;
   const state = comboState(combo);
   const declared =
@@ -500,6 +697,17 @@ function onClick(event: MouseEvent): void {
   if (!combo) return;
   const { input, popup, toggle, clear } = comboParts(combo);
   if (!input || !popup || input.disabled) return;
+  const chipRemove = target.closest<HTMLElement>(".z-tags__remove");
+  if (chipRemove && isMultiCombo(combo)) {
+    const value = chipRemove.closest<HTMLElement>(".z-tags__tag")?.dataset.value;
+    setMany(
+      combo,
+      comboMany(combo).filter((v) => v !== value),
+    );
+    refreshCombo(combo);
+    input.focus();
+    return;
+  }
   if (clear?.contains(target)) clearCombo(combo);
   else if (toggle?.contains(target)) {
     if (isOpen(popup)) closeCombo(combo);
@@ -540,7 +748,9 @@ export function setup(on: Listen): void {
     const combo = input.closest<HTMLElement>(COMBO)!;
     const { popup } = comboParts(combo);
     const next = event.relatedTarget as Node | null;
-    if (popup && isOpen(popup) && !(next && (combo.contains(next) || popup.contains(next)))) closeCombo(combo);
+    if (next && (combo.contains(next) || popup?.contains(next))) return;
+    commitCustomCombo(combo);
+    if (popup && isOpen(popup)) closeCombo(combo);
   });
   // El puntero marca la opción activa; en Select además le da el foco.
   on(document, "pointermove", (event) => {
@@ -554,13 +764,15 @@ export function setup(on: Listen): void {
   on(document, "mousedown", (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
-    if (ownerAt(target)?.owner.matches(COMBO) || (target.closest(`${COMBO} .z-input__action`) && inDom(target))) event.preventDefault();
+    if (ownerAt(target)?.owner.matches(COMBO) || (target.closest(`${COMBO} :is(.z-input__action, .z-tags__remove)`) && inDom(target)))
+      event.preventDefault();
   });
 }
 
 export function hydrate(root: ParentNode): void {
   for (const select of all(root, SELECT))
-    if (selectControl(select))
+    if (selectControl(select) && isMultiSelect(select)) syncMulti(select, multiValue(select));
+    else if (selectControl(select))
       syncSelect(
         select,
         selectValue(select) ||

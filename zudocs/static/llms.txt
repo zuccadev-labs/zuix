@@ -60,33 +60,46 @@
 ## Componentes: Acciones
 
 - [Button](https://zuccadev-labs.github.io/zuix/components/actions/button.md): Acción principal o secundaria con texto, iconos opcionales y estado de carga.
+- [ButtonGroup](https://zuccadev-labs.github.io/zuix/components/actions/button-group.md): Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.
+- [CopyButton](https://zuccadev-labs.github.io/zuix/components/actions/copy-button.md): Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.
 - [IconButton](https://zuccadev-labs.github.io/zuix/components/actions/icon-button.md): Botón cuadrado de solo icono con nombre accesible obligatorio.
 - [Link](https://zuccadev-labs.github.io/zuix/components/actions/link.md): Enlace de texto: dentro de un párrafo, discreto o como acción suelta.
 - [SegmentedControl](https://zuccadev-labs.github.io/zuix/components/actions/segmented-control.md): Selector de una opción entre pocas; siempre hay una elegida.
+- [Swap](https://zuccadev-labs.github.io/zuix/components/actions/swap.md): Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna).
 - [Toggle](https://zuccadev-labs.github.io/zuix/components/actions/toggle.md): Botón de dos estados (activado o no), con texto, icono o ambos.
+- [ToggleGroup](https://zuccadev-labs.github.io/zuix/components/actions/toggle-group.md): Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).
 
 ## Componentes: Formularios
 
 - [Calendar](https://zuccadev-labs.github.io/zuix/components/forms/calendar.md): Rejilla de fechas: una, varias o un rango, en uno o varios meses, con vistas de mes y año, preajustes y fechas reservadas.
 - [Checkbox](https://zuccadev-labs.github.io/zuix/components/forms/checkbox.md): Casilla de verificación con etiqueta, descripción y estado indeterminado.
+- [CheckboxGroup](https://zuccadev-labs.github.io/zuix/components/forms/checkbox-group.md): Varias casillas de una misma pregunta en un fieldset con su título; valor como lista, casilla «todas» opcional y variante tarjeta.
 - [Combobox](https://zuccadev-labs.github.io/zuix/components/forms/combobox.md): Campo de texto con lista filtrable para elegir una opción; admite carga asíncrona de opciones.
 - [DateField](https://zuccadev-labs.github.io/zuix/components/forms/date-field.md): Fecha (y hora) que se teclea por segmentos —día, mes, año y, con granularity, hora, minuto, segundo y AM/PM— en el orden y con los separadores del locale.
 - [DateInput](https://zuccadev-labs.github.io/zuix/components/forms/date-input.md): Campo de fecha, hora, fecha y hora o mes sobre el control nativo.
 - [DatePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-picker.md): Campo de fecha con calendario propio en un popover: fecha única, rango o varias fechas, uno o varios meses, preajustes y confirmación.
 - [DateRangePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-range-picker.md): Selector de rango: DatePicker en modo range con dos meses por defecto, vista previa que cruza los meses, preajustes relativos a hoy (rangePresets), minRange/maxRange y fechas reservadas.
 - [DateTimePicker](https://zuccadev-labs.github.io/zuix/components/forms/date-time-picker.md): Fecha y hora en un campo tecleable (DateField segmentado) con un calendario y un TimeField en el mismo panel.
+- [Editable](https://zuccadev-labs.github.io/zuix/components/forms/editable.md): Texto que se edita en su sitio (un título, un nombre): se ve como texto y pasa a ser un campo del mismo tamaño al activarlo.
 - [Field](https://zuccadev-labs.github.io/zuix/components/forms/field.md): Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.
+- [Fieldset](https://zuccadev-labs.github.io/zuix/components/forms/fieldset.md): Grupo de campos relacionados con su título (fieldset y legend), descripción y deshabilitado de una vez; FieldGroup reparte los campos con el ritmo del estándar.
 - [FileUpload](https://zuccadev-labs.github.io/zuix/components/forms/file-upload.md): Zona para elegir o soltar archivos.
+- [Form](https://zuccadev-labs.github.io/zuix/components/forms/form.md): Formulario que pinta la validación nativa en sus campos: sin globos del navegador, mensajes por ValidityState en cada Field y foco al primer error al enviar.
 - [Input](https://zuccadev-labs.github.io/zuix/components/forms/input.md): Campo de texto de una línea con icono y contenido final opcionales.
+- [InputGroup](https://zuccadev-labs.github.io/zuix/components/forms/input-group.md): Campo con adornos: texto, icono, atajo de teclado, botón o tramo de prefijo al inicio, al final, encima o debajo del control, en un solo recuadro.
+- [Listbox](https://zuccadev-labs.github.io/zuix/components/forms/listbox.md): Lista de opciones siempre visible, de selección única o múltiple, con grupos, iconos, descripciones y búsqueda por letra.
 - [MonthPicker](https://zuccadev-labs.github.io/zuix/components/forms/month-picker.md): Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4).
 - [NativeSelect](https://zuccadev-labs.github.io/zuix/components/forms/native-select.md): Lista desplegable sobre el `<select>` nativo (lista del sistema) con el aspecto del resto de controles.
+- [NumberInput](https://zuccadev-labs.github.io/zuix/components/forms/number-input.md): Campo numérico con pasos, mínimo y máximo, botones que repiten al mantenerlos, rueda opcional y formato del locale con Intl.NumberFormat.
 - [OTPInput](https://zuccadev-labs.github.io/zuix/components/forms/otp-input.md): Código de un solo uso repartido en casillas.
+- [PasswordInput](https://zuccadev-labs.github.io/zuix/components/forms/password-input.md): Campo de contraseña con botón de mostrar u ocultar y medidor de fortaleza opcional.
 - [Radio](https://zuccadev-labs.github.io/zuix/components/forms/radio.md): Opción de un `RadioGroup`, con etiqueta y descripción.
 - [RadioGroup](https://zuccadev-labs.github.io/zuix/components/forms/radio-group.md): Grupo de opciones excluyentes; contiene componentes `Radio`.
 - [SearchInput](https://zuccadev-labs.github.io/zuix/components/forms/search-input.md): Campo de búsqueda con icono, botón de borrado y estado de carga.
 - [Select](https://zuccadev-labs.github.io/zuix/components/forms/select.md): Lista desplegable con popup propio (material liquid): opciones con icono, grupos y placeholder.
 - [Slider](https://zuccadev-labs.github.io/zuix/components/forms/slider.md): Deslizador de un valor o de un rango.
 - [Switch](https://zuccadev-labs.github.io/zuix/components/forms/switch.md): Interruptor de activación inmediata.
+- [TagsInput](https://zuccadev-labs.github.io/zuix/components/forms/tags-input.md): Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.
 - [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
 - [TimeField](https://zuccadev-labs.github.io/zuix/components/forms/time-field.md): Hora de reloj que se teclea por segmentos (hora, minuto, segundo, AM/PM).
 - [TimePicker](https://zuccadev-labs.github.io/zuix/components/forms/time-picker.md): TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear.

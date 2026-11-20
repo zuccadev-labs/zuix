@@ -1,0 +1,61 @@
+{
+  "name": "Fieldset",
+  "exports": ["FieldGroup"],
+  "group": "forms",
+  "description": "Grupo de campos relacionados con su título (fieldset y legend), descripción y deshabilitado de una vez; FieldGroup reparte los campos con el ritmo del estándar.",
+  "import": "import { Fieldset, FieldGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "none",
+  "props": [
+    { "name": "legend", "type": "ReactNode", "description": "Fieldset: título del grupo (primer hijo)." },
+    { "name": "description", "type": "ReactNode", "description": "Fieldset: texto bajo el título." },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["plain", "card"],
+      "default": "plain",
+      "description": "Fieldset: sin recuadro o en una tarjeta."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false,
+      "description": "Fieldset: deshabilita todos los controles nativos que contiene (también los botones de Checkbox, Switch y Select)."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["vertical", "horizontal"],
+      "default": "vertical",
+      "description": "FieldGroup: apilados, o en columnas que pasan a otra fila si no caben."
+    }
+  ],
+  "states": ["rest", "disabled"],
+  "tokens": [
+    "space-1",
+    "space-3",
+    "space-4",
+    "space-5",
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "fg",
+    "fg-muted",
+    "text-title",
+    "text-small",
+    "weight-semibold",
+    "leading-snug"
+  ],
+  "classes": ["z-fieldset", "z-fieldset__legend", "z-fieldset__description", "z-fieldset__body", "z-field-group"],
+  "a11y": "fieldset con legend como primer hijo: los lectores leen el título al entrar en el grupo. disabled en el fieldset deshabilita los controles nativos de dentro, también los de los controles propios (son button).",
+  "examples": [
+    {
+      "title": "Dirección en tarjeta",
+      "code": "<Fieldset legend=\"Shipping address\" description=\"Where we send the hardware key.\" variant=\"card\">\n  <FieldGroup>\n    <Field label=\"Full name\">\n      <Input name=\"name\" autoComplete=\"name\" />\n    </Field>\n    <Field label=\"Address\">\n      <Textarea name=\"address\" autoComplete=\"street-address\" rows={2} />\n    </Field>\n    <FieldGroup orientation=\"horizontal\">\n      <Field label=\"City\">\n        <Input name=\"city\" autoComplete=\"address-level2\" />\n      </Field>\n      <Field label=\"Postal code\" optionalLabel=\"Optional\">\n        <Input name=\"postal\" autoComplete=\"postal-code\" />\n      </Field>\n    </FieldGroup>\n  </FieldGroup>\n</Fieldset>"
+    },
+    {
+      "title": "Deshabilitado",
+      "code": "<Fieldset legend=\"Advanced\" disabled>\n  <Switch defaultChecked>Telemetry</Switch>\n  <Checkbox>Beta channel</Checkbox>\n</Fieldset>"
+    }
+  ],
+  "origin": "Nuevo. Patrón de la guía «forms» (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI."
+}
