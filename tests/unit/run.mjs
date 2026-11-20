@@ -79,6 +79,7 @@ const COVERED = [
   "zui/src/core/tags.ts",
   "zui/src/core/time.ts",
   "zui/src/core/timer.ts",
+  "zui/src/core/tree.ts",
   "zui/src/core/typeahead.ts",
   "zui/src/core/validity.ts",
   "zui/src/core/zone.ts",

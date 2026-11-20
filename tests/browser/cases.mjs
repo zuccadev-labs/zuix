@@ -5,6 +5,7 @@ import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
 import layers from "./cases-layers.mjs";
 import wave3 from "./cases-wave3.mjs";
+import wave5Content from "./cases-wave5-content.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -3030,7 +3031,7 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss, layers, wave3, wave5Content].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {

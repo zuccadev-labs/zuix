@@ -46,7 +46,7 @@ import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
 const modules = [actions, forms, collections, carousel, time, agenda, widgets];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
-export { openPalette, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
+export { checkTreeItem, openPalette, renameTreeItem, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
 export {
   setSelectValue,
   setComboboxOptions,

@@ -11,6 +11,13 @@ radios y material de los tokens.
 
 ### Añadido
 
+- Tree, oleada 5: `selectionMode="multiple"` (`aria-multiselectable`; Ctrl/Cmd y Mayús con el puntero,
+  Espacio, Mayús+flechas y Ctrl+A; `selectedIds`, `defaultSelectedIds`, `onSelectedChange`), casillas en
+  cascada con estado mixto (`checkable`, `checked`, `defaultChecked`, `onCheckedChange`; `aria-checked`
+  true/false/mixed) y renombrar (`renamable`, `onRename`, `renameLabel`: F2 o doble clic, Intro confirma,
+  Escape cancela). Modo DOM: `aria-multiselectable`, `data-checkable`, `data-renamable`, `z:change` con
+  `values` y `checked`, `z:rename` cancelable y `checkTreeItem()`/`renameTreeItem()` en `/dom`. Lógica en
+  `core/tree` (cascada, rangos, profundidad).
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

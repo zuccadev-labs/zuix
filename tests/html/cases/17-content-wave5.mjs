@@ -1,0 +1,105 @@
+// Oleada 5 sin framework, contenido y navegación: Tree (selección múltiple, casillas en cascada, renombrar) y las
+// piezas de contenido de la oleada. Puntero y teclado sobre zui/html.json.
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const contract = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../zui/html.json"), "utf8")).components;
+
+export default async function ({ page, test, ok }) {
+  await page.evaluate(() => {
+    window.__w5c = [];
+    for (const name of ["z:change", "z:rename", "z:copy"])
+      document.addEventListener(name, (event) =>
+        window.__w5c.push({ name, cls: String(event.target.className), detail: JSON.parse(JSON.stringify(event.detail ?? null)) }),
+      );
+  });
+  const events = () => page.evaluate(() => window.__w5c.splice(0));
+  const press = async (...keys) => {
+    for (const key of keys) await page.keyboard.press(key);
+  };
+  /** Añade un ejemplo del contrato a la tarjeta del componente y lo activa con hydrate(). Devuelve su contenedor. */
+  const inject = async (name, index) => {
+    const id = `w5c-${name}-${index}`;
+    const example = contract[name].examples[index];
+    await page.evaluate(
+      async ([component, html, wrap]) => {
+        const stage = document.querySelector(`[data-component="${component}"] .demo__stage`) ?? document.querySelector(".page__main");
+        const box = document.createElement("div");
+        box.id = wrap;
+        box.innerHTML = html;
+        stage.append(box);
+        (await import("/zui/dist/zui.dom.js")).hydrate(box);
+      },
+      [name, example.html, id],
+    );
+    return page.locator(`#${id}`);
+  };
+  const exampleIndex = (name, pattern) => contract[name].examples.findIndex((e) => pattern.test(e.title));
+
+  /* ---------- Tree ---------- */
+  await test("Tree: casillas en cascada con estado mixto y Espacio", async () => {
+    const box = await inject("Tree", exampleIndex("Tree", /casillas/));
+    const items = box.locator('[role="treeitem"]');
+    const photos = items.nth(0);
+    ok((await photos.getAttribute("aria-checked")) === "mixed", "la rama empieza mixta");
+    await events();
+    await box.locator('[data-value="photos/2026"] > .z-tree__row .z-tree__check').click();
+    ok((await photos.getAttribute("aria-checked")) === "true", "con los dos hijos marcados, la rama pasa a true");
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:change" && JSON.stringify(e.detail.checked) === '["photos","photos/2025","photos/2026"]'),
+      `evento: ${JSON.stringify(log)}`,
+    );
+    await photos.focus();
+    await press(" ");
+    ok((await photos.getAttribute("aria-checked")) === "false", "Espacio en la rama desmarca todo");
+    ok((await items.nth(1).getAttribute("aria-checked")) === "false", "y los hijos");
+    ok(
+      (await box.locator('[data-value="photos"] > .z-tree__row .z-tree__check').getAttribute("data-state")) === "unchecked",
+      "la casilla visible sigue al estado",
+    );
+  });
+  await test("Tree: selección múltiple con Ctrl, Mayús y Ctrl+A", async () => {
+    const box = page.locator(`#w5c-Tree-${exampleIndex("Tree", /casillas/)}`);
+    const tree = box.locator('[role="tree"]');
+    ok((await tree.getAttribute("aria-multiselectable")) === "true", "aria-multiselectable");
+    const rows = box.locator(".z-tree__label");
+    await rows.nth(1).click();
+    await rows.nth(3).click({ modifiers: ["Shift"] });
+    const selected = () => box.locator('[role="treeitem"][aria-selected="true"]').evaluateAll((l) => l.map((e) => e.dataset.value));
+    ok(JSON.stringify(await selected()) === '["photos/2025","photos/2026","music"]', `rango con Mayús: ${await selected()}`);
+    await rows.nth(2).click({ modifiers: ["ControlOrMeta"] });
+    ok(JSON.stringify(await selected()) === '["photos/2025","music"]', `Ctrl alterna: ${await selected()}`);
+    await box.locator('[data-value="music"]').focus();
+    await press("Control+a");
+    ok((await selected()).length === 4, "Ctrl+A selecciona todo lo visible");
+    await box.locator('[data-value="photos"]').focus();
+    await press("ArrowDown", "ArrowUp", "Shift+ArrowDown");
+    ok(JSON.stringify(await selected()) === '["photos","photos/2025"]', `Mayús+flecha extiende desde el ancla: ${await selected()}`);
+  });
+  await test("Tree: renombrar con F2 (Intro confirma, Escape cancela) y doble clic", async () => {
+    const box = page.locator(`#w5c-Tree-${exampleIndex("Tree", /casillas/)}`);
+    const music = box.locator('[data-value="music"]');
+    await music.focus();
+    await events();
+    await press("F2");
+    const input = music.locator(".z-tree__rename");
+    ok(await input.isVisible(), "aparece el campo");
+    ok((await input.getAttribute("aria-label")) === "Rename", "con nombre accesible");
+    await input.fill("Songs");
+    await press("Enter");
+    ok((await music.locator(".z-tree__label").textContent()) === "Songs", "Intro confirma");
+    ok(await page.evaluate(() => document.activeElement?.dataset.value === "music"), "el foco vuelve al nodo");
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:rename" && e.detail.label === "Songs" && e.detail.value === "music"),
+      JSON.stringify(log),
+    );
+    await music.locator(".z-tree__label").dblclick();
+    await music.locator(".z-tree__rename").fill("Nope");
+    await press("Escape");
+    ok((await music.locator(".z-tree__label").textContent()) === "Songs", "Escape cancela");
+    ok((await music.locator(".z-tree__rename").count()) === 0, "sin campo");
+  });
+}

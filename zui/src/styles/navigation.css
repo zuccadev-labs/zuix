@@ -609,6 +609,34 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* Casilla del árbol: la apariencia de Checkbox (z-check__box), más pequeña; el estado lo lleva el treeitem. */
+  .z-tree__check {
+    width: 16px;
+    height: 16px;
+  }
+  /* Selección múltiple: el seleccionado lleva además un filo de acento (no solo el fondo). */
+  .z-tree[aria-multiselectable="true"] .z-tree__item[aria-selected="true"] > .z-tree__row {
+    background: var(--z-accent-soft);
+    box-shadow: inset 2px 0 0 var(--z-accent);
+  }
+  [dir="rtl"] .z-tree[aria-multiselectable="true"] .z-tree__item[aria-selected="true"] > .z-tree__row {
+    box-shadow: inset -2px 0 0 var(--z-accent);
+  }
+  .z-tree__rename {
+    flex: 1;
+    min-width: 0;
+    height: calc(100% - var(--z-space-1));
+    padding-inline: var(--z-space-1-5);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font: inherit;
+  }
+  .z-tree__rename:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
+  }
 
   /* ---------- Enlaces de barra lateral ---------- */
   .z-navlist {
