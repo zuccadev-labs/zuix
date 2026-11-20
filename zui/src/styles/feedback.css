@@ -289,4 +289,149 @@
       height: max(100%, var(--z-touch-target, 0px));
     }
   }
+
+  /* ---- Banner ---- */
+  /* Franja de aviso: rectángulo de cristal con el tinte del tono. `page` va a todo el ancho y `inline` dentro de un panel. */
+  .z-banner {
+    --z-banner-tone: var(--z-info);
+    --z-banner-soft: var(--z-info-soft);
+    /* La disposición sigue al ancho del propio banner: la acción pasa bajo el texto cuando no cabe a su lado. */
+    container-type: inline-size;
+    box-sizing: border-box;
+    inline-size: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: var(--z-space-2) var(--z-space-3);
+    min-height: var(--z-control-height-lg);
+    padding: var(--z-space-2) var(--z-space-2) var(--z-space-2) var(--z-space-4);
+    border: 1px solid color-mix(in srgb, var(--z-banner-tone) 30%, transparent);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-banner-soft);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    color: var(--z-fg);
+    font-size: var(--z-text-body);
+    line-height: var(--z-leading-ui);
+  }
+  .z-banner[hidden] {
+    display: none;
+  }
+  .z-banner[data-layout="inline"] {
+    border-radius: var(--z-control-radius-lg);
+    min-height: var(--z-control-height-md);
+    padding-block: var(--z-space-1-5);
+    font-size: var(--z-text-small);
+  }
+  .z-banner[data-tone="neutral"] {
+    --z-banner-tone: var(--z-fg-subtle);
+    --z-banner-soft: var(--z-surface-2);
+  }
+  .z-banner[data-tone="accent"] {
+    --z-banner-tone: var(--z-accent);
+    --z-banner-soft: var(--z-accent-soft);
+  }
+  .z-banner[data-tone="success"] {
+    --z-banner-tone: var(--z-success);
+    --z-banner-soft: var(--z-success-soft);
+  }
+  .z-banner[data-tone="warning"] {
+    --z-banner-tone: var(--z-warning);
+    --z-banner-soft: var(--z-warning-soft);
+  }
+  .z-banner[data-tone="danger"] {
+    --z-banner-tone: var(--z-danger);
+    --z-banner-soft: var(--z-danger-soft);
+  }
+  .z-banner__icon {
+    display: inline-flex;
+    grid-area: 1 / 1;
+    align-self: start;
+    /* A la altura de la primera línea de texto. */
+    margin-block-start: 2px;
+    color: var(--z-banner-tone);
+  }
+  .z-banner__body {
+    grid-area: 1 / 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--z-space-1) var(--z-space-2);
+    min-width: 0;
+  }
+  .z-banner__badge {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    height: 20px;
+    padding-inline: var(--z-space-1-5);
+    border: 1px solid color-mix(in srgb, var(--z-banner-tone) 40%, transparent);
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-banner__title {
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-banner__text {
+    color: var(--z-fg-muted);
+  }
+  .z-banner__action {
+    grid-area: 2 / 2;
+    justify-self: start;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  /* Sin icono, el texto y la acción empiezan en el borde. */
+  .z-banner:not(:has(> .z-banner__icon)) > :is(.z-banner__body, .z-banner__action) {
+    grid-column: 1 / span 2;
+  }
+  @container (min-width: 40rem) {
+    .z-banner__action,
+    .z-banner:not(:has(> .z-banner__icon)) > .z-banner__action {
+      grid-area: 1 / 3;
+    }
+  }
+  .z-banner__close {
+    grid-area: 1 / 4;
+    align-self: start;
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    margin-block-start: -2px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+    transition: background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-banner__close:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-banner__close:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  @media (pointer: coarse) {
+    .z-banner__close {
+      position: relative;
+    }
+    .z-banner__close::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+      width: max(100%, var(--z-touch-target, 0px));
+      height: max(100%, var(--z-touch-target, 0px));
+    }
+  }
 }

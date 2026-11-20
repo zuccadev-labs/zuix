@@ -6,6 +6,7 @@ import { describe, test } from "node:test";
 
 const core = (name) => import(`../../zui/src/core/${name}.ts`);
 const toolbar = await core("toolbar");
+const focus = await core("focus");
 
 describe("core/toolbar", () => {
   const bar = () =>
@@ -62,5 +63,17 @@ describe("core/toolbar", () => {
     assert.equal(at("i", "ArrowLeft"), "soft");
     // Un elemento ajeno a la barra no navega.
     assert.equal(toolbar.toolbarTarget(el, el.querySelector("#nested"), "ArrowRight"), undefined);
+  });
+});
+
+describe("core/focus: nextTabbable", () => {
+  test("el siguiente tabulable fuera del elemento, o ninguno", () => {
+    mount(
+      `<div><button id="a">a</button><section id="s"><button id="in">in</button></section><button id="b" tabindex="-1">b</button><a id="c" href="#x">c</a></div>`,
+    );
+    const section = document.getElementById("s");
+    for (const el of document.querySelectorAll("button, a")) el.getClientRects = () => [{}];
+    assert.equal(focus.nextTabbable(section)?.id, "c");
+    assert.equal(focus.nextTabbable(document.getElementById("c")), undefined);
   });
 });

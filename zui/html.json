@@ -731,6 +731,42 @@
     }
    ]
   },
+  "Banner": {
+   "group": "feedback",
+   "classes": [
+    "z-banner",
+    "z-banner__icon",
+    "z-banner__body",
+    "z-banner__badge",
+    "z-banner__title",
+    "z-banner__text",
+    "z-banner__action",
+    "z-banner__close"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Novedad con enlace y cierre",
+     "html": "<div class=\"z-banner\" data-tone=\"accent\" data-layout=\"page\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"megaphone\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <span class=\"z-banner__badge\">New</span>\n    <strong class=\"z-banner__title\">Workspaces are here.</strong>\n    <span class=\"z-banner__text\">Group projects and share layouts with your team.</span>\n  </div>\n  <div class=\"z-banner__action\">\n    <a href=\"/changelog\" class=\"z-link z-link--inline\">See what changed</a>\n  </div>\n  <button type=\"button\" class=\"z-banner__close\" aria-label=\"Dismiss\" title=\"Dismiss\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Mantenimiento programado",
+     "html": "<div class=\"z-banner\" data-tone=\"warning\" data-layout=\"page\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"exclamation-triangle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <strong class=\"z-banner__title\">Scheduled maintenance</strong>\n    <span class=\"z-banner__text\">Sync will be paused on Saturday from 02:00 to 03:00 UTC.</span>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Fallo del sistema con acción",
+     "html": "<div class=\"z-banner\" data-tone=\"danger\" data-layout=\"page\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"exclamation-circle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <strong class=\"z-banner__title\">Billing failed.</strong>\n    <span class=\"z-banner__text\">Your workspace will be read-only in 3 days.</span>\n  </div>\n  <div class=\"z-banner__action\">\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\">Update card</button>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "En un panel (inline)",
+     "html": "<div class=\"z-banner\" data-tone=\"neutral\" data-layout=\"inline\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <span class=\"z-banner__text\">This branch is 4 commits behind main.</span>\n  </div>\n  <button type=\"button\" class=\"z-banner__close\" aria-label=\"Dismiss\" title=\"Dismiss\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "EmptyState": {
    "group": "feedback",
    "classes": [

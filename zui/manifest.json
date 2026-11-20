@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 90,
+ "count": 91,
  "groups": {
   "actions": [
    "Button",
@@ -46,6 +46,7 @@
   ],
   "feedback": [
    "Alert",
+   "Banner",
    "EmptyState",
    "ErrorBoundary",
    "ErrorState",
@@ -3795,6 +3796,133 @@
    ],
    "origin": "Nuevo; versión genérica del panel de alertas del design system base.",
    "file": "zui/src/components/feedback/Alert.manifest.json"
+  },
+  {
+   "name": "Banner",
+   "group": "feedback",
+   "description": "Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.",
+   "import": "import { Banner } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger"
+     ],
+     "default": "info"
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "page",
+      "inline"
+     ],
+     "default": "page",
+     "description": "`page`: franja arriba de la página o del shell. `inline`: dentro de un panel."
+    },
+    {
+     "name": "title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "badge",
+     "type": "ReactNode",
+     "description": "Insignia corta antes del texto («New»)."
+    },
+    {
+     "name": "icon",
+     "type": "IconName | null",
+     "description": "Sustituye el icono del tono; `null` lo quita."
+    },
+    {
+     "name": "action",
+     "type": "ReactNode",
+     "description": "Enlace o botón a la derecha del texto."
+    },
+    {
+     "name": "onDismiss",
+     "type": "() => void",
+     "description": "Muestra el botón de cierre."
+    },
+    {
+     "name": "dismissible",
+     "type": "boolean",
+     "default": false,
+     "description": "Botón de cierre sin manejador: se oculta solo."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "dismissLabel",
+     "type": "string",
+     "default": "Dismiss"
+    },
+    {
+     "name": "live",
+     "type": "boolean",
+     "default": false,
+     "description": "Se anuncia al aparecer (status, o alert en danger y warning). Solo si se inserta tras una acción."
+    }
+   ],
+   "states": [
+    "rest",
+    "dismissed"
+   ],
+   "tokens": [
+    "info",
+    "info-soft",
+    "accent-soft",
+    "success-soft",
+    "warning-soft",
+    "danger-soft",
+    "surface-2",
+    "glass-highlight",
+    "radius-lg",
+    "control-radius-lg",
+    "fg-muted",
+    "radius-xs"
+   ],
+   "classes": [
+    "z-banner",
+    "z-banner__icon",
+    "z-banner__body",
+    "z-banner__badge",
+    "z-banner__title",
+    "z-banner__text",
+    "z-banner__action",
+    "z-banner__close"
+   ],
+   "a11y": "Persistente: no se va solo. Sin `live` no es una región viva (un banner que llega con la página no se anuncia); con `live`, role=status (o alert en danger y warning). El icono es decorativo; el tono no se transmite solo por color (título y texto). El cierre es un button con nombre («Dismiss») de 24 px, con área táctil mayor con puntero grueso; al cerrar, el foco sigue al siguiente elemento tabulable. Para un aviso de resultado dentro del contenido, Alert; para uno pasajero, Toast.",
+   "examples": [
+    {
+     "title": "Novedad con enlace y cierre",
+     "code": "<Banner tone=\"accent\" badge=\"New\" title=\"Workspaces are here.\" action={<Link href=\"/changelog\">See what changed</Link>} dismissible>\n  Group projects and share layouts with your team.\n</Banner>"
+    },
+    {
+     "title": "Mantenimiento programado",
+     "code": "<Banner tone=\"warning\" title=\"Scheduled maintenance\">\n  Sync will be paused on Saturday from 02:00 to 03:00 UTC.\n</Banner>"
+    },
+    {
+     "title": "Fallo del sistema con acción",
+     "code": "<Banner tone=\"danger\" title=\"Billing failed.\" action={<Button size=\"sm\">Update card</Button>}>\n  Your workspace will be read-only in 3 days.\n</Banner>"
+    },
+    {
+     "title": "En un panel (inline)",
+     "code": "<Banner tone=\"neutral\" layout=\"inline\" icon=\"information-circle\" dismissible>\n  This branch is 4 commits behind main.\n</Banner>"
+    }
+   ],
+   "origin": "Nuevo. Material de update-bar, SetupOffer y PaneMarkBanner de zutool. Referencia de variantes: Announcement de Shark UI.",
+   "file": "zui/src/components/feedback/Banner.manifest.json"
   },
   {
    "name": "EmptyState",

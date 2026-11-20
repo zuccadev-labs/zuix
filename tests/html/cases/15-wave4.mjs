@@ -126,4 +126,31 @@ export default async function ({ page, test, ok, card, browserName }) {
     await box.locator(".z-collapsible__trigger").click({ force: true });
     ok((await box.locator(".z-collapsible").getAttribute("data-state")) === "closed", "sigue plegado");
   });
+
+  /* ---------- Banner ---------- */
+  await test("Banner: el cierre emite z:dismiss, lo oculta y el foco sigue hacia delante; cancelable", async () => {
+    const box = await inject("Banner", 0);
+    const banner = box.locator(".z-banner");
+    ok((await banner.getAttribute("role")) === null, "sin región viva al llegar con la página");
+    await box.evaluate((el) => {
+      const after = document.createElement("button");
+      after.id = "w4-after-banner";
+      after.textContent = "After";
+      el.append(after);
+      el.querySelector(".z-banner").addEventListener("z:dismiss", (e) => window.__w4block && e.preventDefault());
+    });
+    await page.evaluate(() => (window.__w4block = true));
+    await banner.locator(".z-banner__close").click();
+    ok(await banner.isVisible(), "z:dismiss cancelado: sigue visible");
+    await page.evaluate(() => (window.__w4block = false));
+    await events();
+    await banner.locator(".z-banner__close").focus();
+    await press("Enter");
+    ok(await banner.isHidden(), "cerrado");
+    ok(
+      (await events()).some((e) => e.name === "z:dismiss"),
+      "evento z:dismiss",
+    );
+    ok(await activeIs("#w4-after-banner"), "el foco sigue al siguiente tabulable");
+  });
 }

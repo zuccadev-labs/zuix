@@ -19,6 +19,10 @@ radios y material de los tokens.
   - `Collapsible` (patrón APG «disclosure»): plegada, la región lleva `hidden="until-found"` y la búsqueda en la
     página la abre; colapso parcial con `peek` (fundido, el botón tras el texto y el foco dentro lo despliega),
     variante `card` y deshabilitado. En `/dom`, `.z-collapsible` y `setCollapsibleOpen()`.
+  - `Banner`: franja de aviso de página (`page`) o de panel (`inline`) en seis tonos, con insignia, acción (al lado
+    del texto si cabe, debajo si no: consulta de contenedor) y cierre con nombre que deja el foco en el siguiente
+    elemento tabulable. Persistente; `live` lo anuncia si se inserta tras una acción. En `/dom`, `.z-banner` con
+    `z:dismiss` cancelable y `dismissBanner()`. Utilidad `nextTabbable()` en `core/focus`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
