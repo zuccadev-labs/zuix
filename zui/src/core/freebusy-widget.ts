@@ -167,7 +167,7 @@ export const freeBusyWidget: Widget<FreeBusyProps, FreeBusyConfig, FreeBusyState
           {
             class: "z-freebusy__suggest",
             "aria-hidden": "true",
-            s: { "--z-tl-from": (toMin(slot.start) - config.dayStart) / 60, "--z-tl-span": (slot.end - slot.start) / 3_600_000 },
+            s: { "--z-tl-start": (toMin(slot.start) - config.dayStart) / 60, "--z-tl-span": (slot.end - slot.start) / 3_600_000 },
           },
           h("span", null, icon("check", 12), fill(labels.allFree, { n: required })),
         )

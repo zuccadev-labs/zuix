@@ -292,7 +292,7 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
             class: "z-timeline__summary",
             role: "img",
             "aria-label": `${r.group.title}, ${dateRangeText(r.start, r.end, locale)}`,
-            s: { "--z-tl-from": pos.from, "--z-tl-span": pos.span },
+            s: { "--z-tl-start": pos.from, "--z-tl-span": pos.span },
           }),
         ),
       );
@@ -325,7 +325,7 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
             "data-selected": on(input.selected === t.id),
             "aria-describedby": depId,
             tabindex: focus === id ? 0 : -1,
-            s: { "--z-tl-from": pos.from + (scale === "day" ? 0.5 : 0) },
+            s: { "--z-tl-start": pos.from + (scale === "day" ? 0.5 : 0) },
           },
           h("i", { "aria-hidden": "true" }),
           h("span", { class: "z-timeline__milestone-text", "aria-hidden": "true" }, t.title),
@@ -347,7 +347,7 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
             "aria-pressed": input.grabbed === t.id ? "true" : undefined,
             "aria-describedby": depId,
             tabindex: focus === id ? 0 : -1,
-            s: { "--z-tl-from": pos.from, "--z-tl-span": pos.span, "--z-tl-progress": `${progress ?? 0}%` },
+            s: { "--z-tl-start": pos.from, "--z-tl-span": pos.span, "--z-tl-progress": `${progress ?? 0}%` },
           },
           h("span", { class: "z-event__title" }, t.title),
           progress !== null ? h("span", { class: "z-timeline__pct", "aria-hidden": "true" }, `${progress}%`) : null,
@@ -555,7 +555,7 @@ export function resourceTimeline(input: ResourceTimelineInput): VEl {
             const to = at(Math.min(it.end, input.dayEnd));
             const half = clash.get(it.key) ?? null;
             return input.renderItem(it, {
-              s: { "--z-tl-from": from, "--z-tl-span": Math.max(0.05, to - from) },
+              s: { "--z-tl-start": from, "--z-tl-span": Math.max(0.05, to - from) },
               conflict: Boolean(half),
               half,
             });
@@ -566,7 +566,7 @@ export function resourceTimeline(input: ResourceTimelineInput): VEl {
               {
                 class: "z-timeline__create",
                 "aria-hidden": "true",
-                s: { "--z-tl-from": at(input.creating.start), "--z-tl-span": (input.creating.end - input.creating.start) / 60 },
+                s: { "--z-tl-start": at(input.creating.start), "--z-tl-span": (input.creating.end - input.creating.start) / 60 },
               },
               h("strong", null, labels.newBooking),
               h("span", null, `${hourLabel(input.creating.start, locale)} – ${hourLabel(input.creating.end, locale)}`),

@@ -650,7 +650,7 @@
     position: absolute;
     z-index: var(--z-layer-raised);
     inset-block: var(--z-space-2);
-    inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col) + 3px);
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col) + 3px);
     inline-size: max(var(--z-space-3), calc(var(--z-tl-span) * var(--z-tl-col) - 6px));
     flex-direction: row;
     align-items: center;
@@ -690,7 +690,7 @@
   .z-timeline__summary {
     position: absolute;
     inset-block-start: calc(50% - var(--z-space-1));
-    inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col));
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col));
     inline-size: calc(var(--z-tl-span) * var(--z-tl-col));
     block-size: var(--z-space-2);
     border-radius: calc(var(--z-radius-xs) / 2);
@@ -716,7 +716,7 @@
     position: absolute;
     z-index: calc(var(--z-layer-raised) + 1);
     inset-block-start: 50%;
-    inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col));
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col));
     display: flex;
     align-items: center;
     gap: var(--z-space-2);
@@ -864,7 +864,7 @@
   .z-timeline__create {
     position: absolute;
     inset-block: var(--z-space-1-5);
-    inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col) + 2px);
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col) + 2px);
     inline-size: calc(var(--z-tl-span) * var(--z-tl-col) - 4px);
     display: flex;
     flex-direction: column;
@@ -883,7 +883,7 @@
   .z-freebusy__block {
     position: absolute;
     inset-block: var(--z-space-2-5);
-    inset-inline-start: calc(var(--z-tl-from) * var(--z-tl-col) + 2px);
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col) + 2px);
     inline-size: calc(var(--z-tl-span) * var(--z-tl-col) - 4px);
     display: flex;
     align-items: center;
@@ -912,7 +912,7 @@
     /* Por encima de la cabecera pegajosa: su etiqueta va en la fila de las horas, como en el prototipo. */
     z-index: calc(var(--z-layer-sticky) + 1);
     inset-block: calc(var(--z-tl-scale-h) * -1) 0;
-    inset-inline-start: calc(var(--z-tl-label) + var(--z-tl-from) * var(--z-tl-col));
+    inset-inline-start: calc(var(--z-tl-label) + var(--z-tl-start) * var(--z-tl-col));
     inline-size: calc(var(--z-tl-span) * var(--z-tl-col));
     border-inline: 2px solid var(--z-success);
     background: color-mix(in srgb, var(--z-success) 14%, transparent);
