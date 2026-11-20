@@ -1222,7 +1222,7 @@
    "examples": [
     {
      "title": "Formato de texto con grupos",
-     "code": "<Toolbar label=\"Text formatting\" controls=\"editor\">\n  <ToggleGroup\n    type=\"multiple\"\n    label=\"Style\"\n    variant=\"ghost\"\n    size=\"sm\"\n    defaultValue={[\"bold\"]}\n    items={[\n      { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n      { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n      { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <ToolbarGroup label=\"Insert\">\n    <IconButton icon=\"link\" label=\"Insert link\" size=\"sm\" />\n    <IconButton icon=\"photo\" label=\"Insert image\" size=\"sm\" />\n    <IconButton icon=\"code-bracket\" label=\"Insert code\" size=\"sm\" aria-disabled=\"true\" />\n  </ToolbarGroup>\n  <ToolbarSeparator />\n  <Button size=\"sm\" variant=\"ghost\" icon=\"arrow-uturn-up-left\">Undo</Button>\n</Toolbar>"
+     "code": "<Toolbar label=\"Text formatting\">\n  <ToggleGroup\n    type=\"multiple\"\n    label=\"Style\"\n    variant=\"ghost\"\n    size=\"sm\"\n    defaultValue={[\"bold\"]}\n    items={[\n      { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n      { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n      { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <ToolbarGroup label=\"Insert\">\n    <IconButton icon=\"link\" label=\"Insert link\" size=\"sm\" />\n    <IconButton icon=\"photo\" label=\"Insert image\" size=\"sm\" />\n    <IconButton icon=\"code-bracket\" label=\"Insert code\" size=\"sm\" aria-disabled=\"true\" />\n  </ToolbarGroup>\n  <ToolbarSeparator />\n  <Button size=\"sm\" variant=\"ghost\" icon=\"arrow-uturn-up-left\">Undo</Button>\n</Toolbar>"
     },
     {
      "title": "Barra de un panel (plain, sm)",
@@ -1230,7 +1230,7 @@
     },
     {
      "title": "Vertical (paleta de herramientas)",
-     "code": "<Toolbar label=\"Tools\" orientation=\"vertical\" size=\"sm\">\n  <ToggleGroup\n    label=\"Tool\"\n    variant=\"ghost\"\n    size=\"sm\"\n    orientation=\"vertical\"\n    required\n    defaultValue=\"select\"\n    items={[\n      { value: \"select\", icon: \"cursor-arrow-rays\", ariaLabel: \"Select\" },\n      { value: \"pen\", icon: \"pencil\", ariaLabel: \"Pen\" },\n      { value: \"shapes\", icon: \"square-2-stack\", ariaLabel: \"Shapes\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <IconButton icon=\"magnifying-glass-plus\" label=\"Zoom in\" size=\"sm\" />\n  <IconButton icon=\"magnifying-glass-minus\" label=\"Zoom out\" size=\"sm\" />\n</Toolbar>"
+     "code": "<Toolbar label=\"Tools\" orientation=\"vertical\" size=\"sm\">\n  <ToggleGroup\n    label=\"Tool\"\n    variant=\"ghost\"\n    size=\"sm\"\n    orientation=\"vertical\"\n    defaultValue=\"select\"\n    items={[\n      { value: \"select\", icon: \"cursor-arrow-rays\", ariaLabel: \"Select\" },\n      { value: \"pen\", icon: \"pencil\", ariaLabel: \"Pen\" },\n      { value: \"shapes\", icon: \"square-2-stack\", ariaLabel: \"Shapes\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <IconButton icon=\"magnifying-glass-plus\" label=\"Zoom in\" size=\"sm\" />\n  <IconButton icon=\"magnifying-glass-minus\" label=\"Zoom out\" size=\"sm\" />\n</Toolbar>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (APG «toolbar»). Material de las barras de zutool (PaneHeaderButtons, FindBar). Referencia de variantes: Toolbar de Radix.",
