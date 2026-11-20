@@ -15,6 +15,7 @@ puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
 | `pnpm test:site` | El sitio compilado, página a página |
 | `pnpm test:html` | El contrato HTML y el modo sin framework, en navegador |
 | `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador |
+| `pnpm audit:visual` | Medidas en navegador: márgenes, fuentes, escala, radios, alturas, alineación, foco, objetivo táctil y axe |
 | `pnpm build` | El `dist/` de publicación |
 | `pnpm test:pack` | Los cinco tarballs, consumidos fuera del workspace |
 | `pnpm verify` | Todo lo anterior, en orden, en Chromium |
@@ -183,6 +184,41 @@ vigilancia de archivos ni HMR. Sin eso, un archivo que cambia a mitad de una eje
 check` regenerando fuentes) recarga la página que se está probando y el caso falla sin que haya ningún
 defecto.
 
+## Auditoría visual
+
+`pnpm audit:visual` (`tools/visual-audit.mjs`) mide en Chrome lo que la auditoría de estilo no puede ver en el
+código: el valor que de verdad calcula el navegador. Recorre el sitio compilado (todas las páginas del sitemap,
+la búsqueda y la 404), cada pantalla de `examples/app` (`?screen=`) y `examples/html`, en las marcas, temas y
+anchos que se le pidan (por defecto dazlabs, zutool y zenith; claro y oscuro; 1440, 768 y 390 px). El sitio se
+compila con una marca: las otras se inyectan con su hoja de `tokens/dist/brands/` para medir color y contraste.
+
+| Comprobación | Qué es un defecto |
+|---|---|
+| Desbordamiento | El documento se desplaza en horizontal, o un elemento se sale del viewport sin contenedor que desplace |
+| Recorte | Texto con `scrollWidth > clientWidth` sin elipsis ni `line-clamp` |
+| Solape | Dos elementos interactivos que se pisan donde se ven |
+| Fuente | La familia computada no es la de la marca, la fuente no cargó (`document.fonts`) o el sistema pinta otra (`CSS.getPlatformFontsForNode`) |
+| Escala | Tamaño, interlineado o peso fuera de los tokens; relleno, margen o hueco fuera de `--z-space-*` (±0,5 px); radio fuera de la familia; altura de control fuera de `--z-control-height-*` |
+| Píldora | Un radio mayor que el de la familia en algo que no es circular |
+| Alineación | Controles de una fila con alturas distintas, icono descentrado en su botón, huecos desiguales entre hermanos |
+| Foco | Una parada de Tab sin contorno, o con contraste menor que 3:1 contra lo que tiene detrás |
+| Objetivo | Menor de 24 × 24 (40 con puntero grueso) sin la excepción de espaciado de WCAG 2.5.8 |
+| axe, consola y red | WCAG 2.2 A y AA con contraste; errores de página, de consola y peticiones fallidas |
+
+Lo que una regla acepta (elipsis intencionada, relleno que compensa el borde, radio concéntrico, muestra de
+tallas distintas, objetivo pequeño con espacio alrededor…) queda contado como aceptado y con el motivo en el
+informe; no se descarta nada en bloque. La medida en bruto se guarda, así que `--report` reclasifica sin abrir
+el navegador.
+
+```
+pnpm audit:visual --target site --brands dazlabs --widths 1440 --themes dark   # una pasada rápida
+pnpm audit:visual --target app --filter forms --shots                          # una pantalla, con capturas
+AUDIT_OUT=/ruta/salida pnpm audit:visual                                       # todo, en otra carpeta
+```
+
+Salida en `.tmp/visual-audit/` (fuera del control de versiones): `raw.json`, `report.json`, `report.md` y, con
+`--shots`, las capturas. Sale con código 1 si queda algún defecto.
+
 ## Prueba de empaquetado
 
 `pnpm test:pack` no publica nada. Empaqueta los cinco paquetes con `pnpm pack` y los usa como lo haría una
@@ -202,7 +238,7 @@ La CI lo ejecuta siempre con `--next`: prefiero ver un fallo de Next.js en el pu
 ## Lo que ninguna prueba cubre
 
 - Safari real, dispositivos táctiles reales y lectores de pantalla.
-- Regresión visual: no hay comparación de capturas. Un cambio de valor en un token no lo detecta ninguna
-  prueba salvo que rompa el contraste.
+- Regresión visual: no hay comparación de capturas. `pnpm audit:visual` mide la escala, no la compara con
+  una versión anterior: un cambio de valor en un token que siga dentro de la escala no lo detecta.
 - Rendimiento del desenfoque y de la hidratación en hardware real.
 - Las versiones mínimas de los navegadores admitidos ([Compatibilidad](../users/10-compatibilidad.md)).
