@@ -12282,6 +12282,16 @@
      "description": "useToast(): muestra un aviso y devuelve su id."
     },
     {
+     "name": "update",
+     "type": "(id: string, options: Partial<ToastOptions>) => void",
+     "description": "Cambia un aviso abierto en su sitio (texto, intención, duración, `loading`)."
+    },
+    {
+     "name": "promise",
+     "type": "<T>(promise: Promise<T>, { loading, success, error }) => Promise<T>",
+     "description": "Aviso que sigue a una promesa: en curso sin cierre automático (anillo, aria-busy) y, al resolverse, éxito o error en el mismo aviso, que entonces se cierra solo. `success` y `error` admiten un texto, unas opciones o una función del valor."
+    },
+    {
      "name": "dismiss",
      "type": "(id: string) => void",
      "description": "useToast()."
@@ -12293,8 +12303,9 @@
     }
    ],
    "states": [
-    "open",
     "closed",
+    "loading",
+    "open",
     "swipe"
    ],
    "tokens": [
@@ -12348,15 +12359,16 @@
    ],
    "classes": [
     "z-toast",
-    "z-toast__dot",
-    "z-toast__content",
-    "z-toast__title",
-    "z-toast__description",
+    "z-toast-viewport",
     "z-toast__action",
     "z-toast__close",
-    "z-toast-viewport"
+    "z-toast__content",
+    "z-toast__description",
+    "z-toast__dot",
+    "z-toast__spinner",
+    "z-toast__title"
    ],
-   "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
+   "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando. Con `promise`, el aviso en curso lleva aria-busy y role=status; el resultado cambia el texto del mismo aviso (y su role a alert si es un error), y su cuenta atrás empieza entonces.",
    "examples": [
     {
      "title": "Proveedor y uso",
@@ -12365,6 +12377,10 @@
     {
      "title": "Error con acción",
      "code": "const { toast } = useToast();\ntoast({ title: \"Upload failed\", intent: \"danger\", action: { label: \"Retry\", onClick: () => upload() } });"
+    },
+    {
+     "title": "Aviso de una promesa",
+     "code": "const { promise } = useToast();\n\npromise(saveProject(), {\n  loading: \"Saving project…\",\n  success: (project) => ({ title: \"Project saved\", description: project.name }),\n  error: \"Could not save the project\",\n});"
     }
    ],
    "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad según el patrón APG, con primitivas propias.",
@@ -12374,6 +12390,11 @@
      "title": "Aviso de éxito",
      "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" id=\"save\">Save</button>",
      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#save\").addEventListener(\"click\", () => {\n  toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" });\n});"
+    },
+    {
+     "title": "Aviso de una promesa",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"deploy\">Deploy</button>",
+     "script": "import { toastPromise } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#deploy\").addEventListener(\"click\", () => {\n  const job = new Promise((resolve) => setTimeout(() => resolve(\"v0.3.0\"), 1500));\n  toastPromise(job, {\n    loading: \"Deploying…\",\n    success: (version) => ({ title: \"Deployed\", description: `Version ${version} is live.` }),\n    error: \"Deploy failed\",\n  });\n});"
     }
    ],
    "file": "zui/src/components/overlay/Toast.manifest.json"

@@ -2089,13 +2089,14 @@
    "group": "overlay",
    "classes": [
     "z-toast",
-    "z-toast__dot",
-    "z-toast__content",
-    "z-toast__title",
-    "z-toast__description",
+    "z-toast-viewport",
     "z-toast__action",
     "z-toast__close",
-    "z-toast-viewport"
+    "z-toast__content",
+    "z-toast__description",
+    "z-toast__dot",
+    "z-toast__spinner",
+    "z-toast__title"
    ],
    "behavior": "dom",
    "examples": [
@@ -2104,6 +2105,12 @@
      "html": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" id=\"save\">Save</button>",
      "source": "manual",
      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#save\").addEventListener(\"click\", () => {\n  toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" });\n});"
+    },
+    {
+     "title": "Aviso de una promesa",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"deploy\">Deploy</button>",
+     "source": "manual",
+     "script": "import { toastPromise } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#deploy\").addEventListener(\"click\", () => {\n  const job = new Promise((resolve) => setTimeout(() => resolve(\"v0.3.0\"), 1500));\n  toastPromise(job, {\n    loading: \"Deploying…\",\n    success: (version) => ({ title: \"Deployed\", description: `Version ${version} is live.` }),\n    error: \"Deploy failed\",\n  });\n});"
     }
    ]
   },

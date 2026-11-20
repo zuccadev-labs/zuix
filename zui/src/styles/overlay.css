@@ -894,6 +894,17 @@
     border-radius: var(--z-radius-full);
     background: var(--z-toast-tone);
   }
+  /* Aviso en curso (`toast.promise`): anillo en lugar del punto, en el tono del aviso. */
+  .z-toast__spinner {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    margin-top: 3px;
+    border: 2px solid var(--z-toast-tone);
+    border-inline-end-color: transparent;
+    border-radius: var(--z-radius-full);
+    animation: z-ov-spin 0.7s linear infinite;
+  }
   .z-toast__content {
     flex: 1;
     min-width: 0;
@@ -992,6 +1003,11 @@
   }
 
   /* ---------- Animaciones ---------- */
+  @keyframes z-ov-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
   @keyframes z-ov-fade-in {
     from {
       opacity: 0;

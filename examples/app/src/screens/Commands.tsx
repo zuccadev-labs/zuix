@@ -19,11 +19,25 @@ import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
+  useToast,
   type MenuEntry,
 } from "@zuccadev-labs/zuix-zui";
 
 /** Oleada 4 en React: barras, menús con estado, capas ligeras y avisos de aplicación. Cada pieza deja su valor a la vista. */
 export function Commands() {
+  const { promise } = useToast();
+  // Promesa que la prueba resuelve o rechaza a mano (window.__deploy).
+  const deploy = () =>
+    promise(
+      new Promise<string>((resolve, reject) => {
+        (window as unknown as { __deploy?: unknown }).__deploy = { resolve, reject };
+      }),
+      {
+        loading: "Deploying…",
+        success: (version) => ({ title: "Deployed", description: `Version ${version} is live.` }),
+        error: "Deploy failed",
+      },
+    ).catch(() => undefined);
   const [last, setLast] = useState("none");
   const [format, setFormat] = useState<string[]>(["bold"]);
   const [minimap, setMinimap] = useState(true);
@@ -167,6 +181,9 @@ export function Commands() {
           </Card>
           <Card className="app-demo">
             <CardHeader title="Popover" subtitle="Arrow, close and another anchor" />
+            <Button size="sm" onClick={deploy} data-testid="c-deploy">
+              Deploy
+            </Button>
             <Stack gap={8}>
               <Input ref={domain} aria-label="Domain" defaultValue="zuix.dev" data-testid="c-domain" />
               <Popover

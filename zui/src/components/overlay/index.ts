@@ -8,6 +8,15 @@ export { Menu, type MenuProps } from "./Menu";
 export { ContextMenu, type ContextMenuProps } from "./ContextMenu";
 export type { MenuEntry, MenuItemEntry, MenuCheckboxEntry, MenuRadioGroupEntry, MenuRadioItem } from "./internal";
 export { CommandPalette, type CommandPaletteProps, type PaletteCommand, type PaletteGroup } from "./CommandPalette";
-export { ToastProvider, useToast, type ToastProviderProps, type ToastOptions, type ToastIntent, type ToastApi } from "./Toast";
+export {
+  ToastProvider,
+  useToast,
+  type ToastProviderProps,
+  type ToastOptions,
+  type ToastIntent,
+  type ToastApi,
+  type ToastPromiseMessage,
+  type ToastPromiseMessages,
+} from "./Toast";
 export { HoverCard, type HoverCardProps } from "./HoverCard";
 export { Toggletip, type ToggletipProps } from "./Toggletip";

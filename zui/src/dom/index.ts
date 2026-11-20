@@ -3,7 +3,7 @@
 // navegador (dialog, popover) y este módulo. Sirve en HTML plano, Vue, Svelte, Angular, Astro o plantillas de servidor.
 //
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zui/dom"; init();
-// Uso imperativo:    openDialog(el), closeDialog(el), openPopover(el, anchor), openSubmenu(item), toast({...}), confirm({...})
+// Uso imperativo:    openDialog(el), closeDialog(el), openPopover(el, anchor), openSubmenu(item), toast({...}), toastPromise(p, {...}), confirm({...})
 //
 // Atributos:
 //   data-z-open="#id"        abre el <dialog> o el [popover] indicado (el popover se ancla al disparador)
@@ -439,6 +439,14 @@ export interface ToastOptions {
   closeLabel?: string;
   /** Nombre accesible de la región de avisos. F8 lleva el foco a ella. */
   regionLabel?: string;
+  /** En curso: anillo de carga, `aria-busy` y sin cierre automático hasta que se actualice. */
+  loading?: boolean;
+}
+
+/** Lo que devuelve `toast()`: descarta el aviso al llamarla; `update()` cambia su texto, intención, duración o carga. */
+export interface ToastHandle {
+  (): void;
+  update(options: Partial<Pick<ToastOptions, "title" | "description" | "intent" | "duration" | "loading">>): void;
 }
 
 // Avisos que ya hicieron su entrada: al mudar o volver a mostrar la región no la repiten.
@@ -477,7 +485,10 @@ function viewport(position: string, label: string): HTMLElement {
   return host;
 }
 
-/** Muestra un aviso con el mismo marcado que el Toast de React. Devuelve una función para descartarlo. */
+/**
+ * Muestra un aviso con el mismo marcado que el Toast de React. Devuelve una función para descartarlo, con `update()`
+ * para cambiarlo en su sitio (lo que usa `toastPromise`).
+ */
 export function toast({
   title,
   description,
@@ -487,7 +498,8 @@ export function toast({
   position = "bottom-right",
   closeLabel = "Close",
   regionLabel = "Notifications (F8)",
-}: ToastOptions): () => void {
+  loading = false,
+}: ToastOptions): ToastHandle {
   const host = viewport(position, regionLabel);
   const item = document.createElement("div");
   item.className = "z-liquid z-toast";
@@ -502,15 +514,32 @@ export function toast({
   const content = item.querySelector(".z-toast__content")!;
   content.querySelector(".z-toast__title")!.textContent = title;
   item.querySelector(".z-toast__close")!.setAttribute("aria-label", closeLabel);
-  if (description) {
-    const text = document.createElement("div");
-    text.className = "z-toast__description";
-    text.textContent = description;
-    content.append(text);
-  }
+  const describe = (text: string | undefined) => {
+    let node = content.querySelector<HTMLElement>(".z-toast__description");
+    if (!text) return node?.remove();
+    if (!node) {
+      node = document.createElement("div");
+      node.className = "z-toast__description";
+      content.querySelector(".z-toast__title")!.after(node);
+    }
+    node.textContent = text;
+  };
+  describe(description);
+  const setLoading = (on: boolean) => {
+    const mark = item.firstElementChild!;
+    mark.className = on ? "z-toast__spinner" : "z-toast__dot";
+    if (on) {
+      item.dataset.loading = "";
+      item.setAttribute("aria-busy", "true");
+    } else {
+      delete item.dataset.loading;
+      item.removeAttribute("aria-busy");
+    }
+  };
+  setLoading(loading);
   // Cierre automático con pausa (WCAG 2.2.1): el tiempo no corre mientras el puntero o el foco están en el aviso,
   // ni durante un gesto de descarte; al salir continúa con lo que quedaba.
-  const timer = createTimer(duration, () => dismiss());
+  let timer = createTimer(loading ? 0 : duration, () => dismiss());
   const hold = (reason: string) => timer.hold(reason);
   const release = (reason: string) => timer.release(reason);
   const whileOpen = new AbortController();
@@ -564,7 +593,50 @@ export function toast({
   host.append(item);
   toastShown.add(item);
   timer.start();
-  return dismiss;
+  const handle = dismiss as ToastHandle;
+  handle.update = (next) => {
+    if (item.dataset.state === "closed") return;
+    if (next.title !== undefined) content.querySelector(".z-toast__title")!.textContent = next.title;
+    if ("description" in next) describe(next.description);
+    if (next.intent) {
+      item.dataset.intent = next.intent;
+      item.setAttribute("role", next.intent === "danger" || next.intent === "warning" ? "alert" : "status");
+    }
+    const busy = next.loading ?? item.hasAttribute("data-loading");
+    setLoading(busy);
+    // La cuenta atrás empieza de nuevo con la duración nueva (ninguna mientras está en curso).
+    timer.stop();
+    timer = createTimer(busy ? 0 : (next.duration ?? duration), () => dismiss());
+    if (item.matches(":hover")) timer.hold("pointer");
+    if (item.contains(document.activeElement)) timer.hold("focus");
+    timer.start();
+  };
+  return handle;
+}
+
+/** Mensaje de un estado de `toastPromise`: un texto o las opciones del aviso. */
+export type ToastPromiseMessage<T> = string | Partial<ToastOptions> | ((value: T) => string | Partial<ToastOptions>);
+
+/**
+ * Aviso que sigue a una promesa (como `toast.promise` de React): «cargando» sin cierre automático y, al resolverse,
+ * el mensaje de éxito o de error en el mismo aviso, que entonces se cierra solo. Devuelve la misma promesa.
+ */
+export function toastPromise<T>(
+  promise: Promise<T>,
+  messages: { loading: string | ToastOptions; success: ToastPromiseMessage<T>; error: ToastPromiseMessage<unknown> },
+): Promise<T> {
+  const start = typeof messages.loading === "string" ? { title: messages.loading } : messages.loading;
+  const handle = toast({ ...start, loading: true });
+  const settle = <V>(message: ToastPromiseMessage<V>, value: V, intent: "success" | "danger") => {
+    const resolved = typeof message === "function" ? message(value) : message;
+    const options = typeof resolved === "string" ? { title: resolved } : resolved;
+    handle.update({ intent, description: undefined, ...options, loading: false });
+  };
+  promise.then(
+    (value) => settle(messages.success, value, "success"),
+    (error: unknown) => settle(messages.error, error, "danger"),
+  );
+  return promise;
 }
 
 // Elemento que tenía el foco antes de entrar en la región de avisos con F8.

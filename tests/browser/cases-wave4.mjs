@@ -207,5 +207,22 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         await focusOn(page, t("c-dns"), "el foco vuelve al disparador");
       },
     },
+    {
+      name: "Oleada 4 · toast.promise: en curso sin cierre automático y resultado en el mismo aviso",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.click(t("c-deploy"));
+        await visible(page, '.z-toast[aria-busy="true"]');
+        await page.evaluate(() => window.__deploy.resolve("0.3.0"));
+        await visible(page, '.z-toast[data-intent="success"]:has-text("Deployed")');
+        await expectText(page, '.z-toast[data-intent="success"] .z-toast__description', "Version 0.3.0 is live.");
+        const busy = await page.locator(".z-toast[aria-busy]").count();
+        assert(busy === 0, "ya no está en curso");
+        await page.click(t("c-deploy"));
+        await visible(page, '.z-toast[aria-busy="true"]');
+        await page.evaluate(() => window.__deploy.reject(new Error("x")));
+        await visible(page, '.z-toast[data-intent="danger"][role="alert"]:has-text("Deploy failed")');
+      },
+    },
   ];
 }

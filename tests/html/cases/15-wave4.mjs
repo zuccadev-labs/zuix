@@ -366,4 +366,41 @@ export default async function ({ page, test, ok, card, browserName }) {
     await page.mouse.click(5, 300);
     await layer.waitFor({ state: "hidden", timeout: 2000 });
   });
+
+  /* ---------- Aviso de una promesa ---------- */
+  await test("toastPromise: en curso con anillo y aria-busy sin cerrarse, luego éxito o error en el mismo aviso", async () => {
+    await page.evaluate(async () => {
+      const dom = await import("/zui/dist/zui.dom.js");
+      window.__w4resolve = undefined;
+      const job = new Promise((resolve, reject) => (window.__w4resolve = { resolve, reject }));
+      dom.toastPromise(job, {
+        loading: "Deploying…",
+        success: (v) => ({ title: "Deployed", description: `Version ${v}` }),
+        error: "Deploy failed",
+      });
+    });
+    const item = page.locator(".z-toast", { hasText: "Deploying" });
+    await item.waitFor({ state: "visible" });
+    ok((await item.getAttribute("aria-busy")) === "true" && (await item.locator(".z-toast__spinner").count()) === 1, "en curso");
+    await page.waitForTimeout(5600);
+    ok(await item.isVisible(), "no se cierra solo mientras está en curso");
+    await page.evaluate(() => window.__w4resolve.resolve("0.3.0"));
+    const done = page.locator(".z-toast", { hasText: "Deployed" });
+    await done.waitFor({ state: "visible" });
+    ok((await done.getAttribute("data-intent")) === "success" && (await done.getAttribute("aria-busy")) === null, "éxito");
+    ok((await done.locator(".z-toast__description").textContent()) === "Version 0.3.0", "descripción del valor");
+    ok((await done.locator(".z-toast__dot").count()) === 1, "vuelve el punto");
+    await page.evaluate(async () => {
+      const dom = await import("/zui/dist/zui.dom.js");
+      dom.toastPromise(Promise.reject(new Error("x")), { loading: "Saving…", success: "Saved", error: (e) => `Failed: ${e.message}` });
+    });
+    const failed = page.locator(".z-toast", { hasText: "Failed: x" });
+    await failed.waitFor({ state: "visible" });
+    ok((await failed.getAttribute("role")) === "alert" && (await failed.getAttribute("data-intent")) === "danger", "error como alerta");
+    await failed.locator(".z-toast__close").click();
+    await done
+      .locator(".z-toast__close")
+      .click()
+      .catch(() => {});
+  });
 }

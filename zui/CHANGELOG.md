@@ -46,6 +46,10 @@ radios y material de los tokens.
   - `Toggletip`: botón de ayuda con nombre propio y `aria-expanded`; el puntero o el foco la asoman, el clic la fija.
   - Lógica común en `core/interest` (`createInterest`, `bridgeTab`). En `/dom`, `[data-z-hovercard]` y
     `[data-z-toggletip]` con `.z-hovercard`/`.z-toggletip` en `popover=manual`, y `setHintOpen()`.
+  - Avisos de promesa: `useToast().promise(promise, { loading, success, error })` y `update(id, options)`; el aviso
+    en curso lleva anillo y `aria-busy` y no se cierra solo, y el resultado (texto, opciones o función del valor) se
+    escribe en el mismo aviso, que entonces empieza su cuenta atrás. En `/dom`, `toastPromise()`; `toast()` devuelve
+    además `update()`. Opción `loading` en los dos.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
