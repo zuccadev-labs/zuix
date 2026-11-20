@@ -908,7 +908,16 @@ function classify(recs) {
         bump(real, "fuente-no-cargada", `${r.target}|${f.family}`, { owner: r.target, detail: `${f.family} no cargó (${r.brand})` }, where);
     for (const f of r.fonts ?? []) {
       const want = f.first.replace(/ Variable$/, "");
-      if (!f.platform.startsWith(want) && !r.injected)
+      // Un texto hecho solo de símbolos (⌘, ↵, flechas) cae en otra fuente porque la de la marca no trae el glifo.
+      if (!f.platform.startsWith(want) && !r.injected && /^[^\p{L}\p{N}]+$/u.test(f.text.trim()))
+        bump(
+          accepted,
+          "fuente-sistema",
+          `${r.target}|${f.first}|${f.platform}`,
+          { owner: f.sig, detail: `«${f.text}» en ${f.platform}`, why: "glifo de símbolo que la fuente de la marca no incluye" },
+          where,
+        );
+      else if (!f.platform.startsWith(want) && !r.injected)
         bump(
           real,
           "fuente-sistema",
@@ -961,17 +970,20 @@ function classify(recs) {
       switch (i.type) {
         case "objetivo-tactil": {
           // Excepciones de WCAG 2.5.8 revisadas una a una (docs: auditoría visual).
-          const why2 = /z-resize|z-split__divider/.test(i.sig)
-            ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
-            : /z-heatmap__cell/.test(i.sig)
-              ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
-              : /z-rating__star/.test(i.sig)
-                ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
-                : /z-timeline__booking/.test(i.sig)
-                  ? "reserva en conflicto partida en dos mitades de la fila; cada una se alcanza también con teclado"
-                  : /z-datefield__segment/.test(i.sig) && Number(i.detail.split("×")[1]?.split(" ")[0]) >= 24
-                    ? "segmento de un campo de fecha (24 px de alto): el valor se escribe de corrido y salta de segmento; el selector de calendario es el control equivalente"
-                    : "";
+          const why2 =
+            /z-segmented__item/.test(i.sig) && / < 40$/.test(i.detail)
+              ? "opción de segmentado: con puntero grueso la zona táctil crece a 40 px con ::before"
+              : /z-resize|z-split__divider/.test(i.sig)
+                ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
+                : /z-heatmap__cell/.test(i.sig)
+                  ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
+                  : /z-rating__star/.test(i.sig)
+                    ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
+                    : /z-timeline__booking/.test(i.sig)
+                      ? "reserva en conflicto partida en dos mitades de la fila; cada una se alcanza también con teclado"
+                      : /z-datefield__segment/.test(i.sig) && Number(i.detail.split("×")[1]?.split(" ")[0]) >= 24
+                        ? "segmento de un campo de fecha (24 px de alto): el valor se escribe de corrido y salta de segmento; el selector de calendario es el control equivalente"
+                        : "";
           if (why2) {
             verdict = "aceptado";
             why = why2;
@@ -1059,7 +1071,10 @@ function classify(recs) {
           }
           break;
         case "solape":
-          if (i.offscreen) {
+          if (/z-event/.test(i.sig) && /z-event/.test(i.detail)) {
+            verdict = "aceptado";
+            why = "eventos que coinciden en el tiempo: se dibujan en cascada a propósito";
+          } else if (i.offscreen) {
             verdict = "aceptado";
             why = "fuera de la pantalla (capa cerrada o carrusel)";
           }

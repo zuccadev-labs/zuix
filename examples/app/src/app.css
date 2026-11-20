@@ -471,6 +471,7 @@ body {
   height: 160px;
 }
 .app-pane-demo__body {
+  margin: 0;
   padding: var(--z-space-3);
   font-family: var(--z-font-mono);
   font-size: var(--z-text-small);
@@ -495,4 +496,10 @@ body {
 [data-testid^="ws-"].app-value {
   display: block;
   overflow-wrap: anywhere;
+}
+
+/* Casillas nativas de la demo de ActionBar: sin el margen de 3 px del navegador. */
+.app-inline > input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--z-accent);
 }
