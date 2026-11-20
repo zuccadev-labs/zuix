@@ -1,0 +1,361 @@
+/*
+  Contenido de lectura, oleada 5: Prose (tipografía de contenido largo), ScrollArea, Marquee, Highlight y los
+  formateadores (FormatNumber, FormatByte, FormatDate). Solo tokens y propiedades lógicas; nada en píldora.
+*/
+@layer zui.content {
+  /* ---------- Prose ---------- */
+  .z-prose {
+    --z-prose-size: var(--z-text-reading);
+    max-inline-size: var(--z-prose-max);
+    color: var(--z-fg-prose);
+    font-size: var(--z-prose-size);
+    line-height: var(--z-leading-relaxed);
+    overflow-wrap: break-word;
+  }
+  .z-prose[data-size="sm"] {
+    --z-prose-size: var(--z-text-body);
+  }
+  .z-prose[data-size="lg"] {
+    --z-prose-size: var(--z-text-lead);
+  }
+  .z-prose :where(p, ul, ol, dl, blockquote, pre, table, figure, details, hr):not(:where(.z-not-prose, .z-not-prose *)) {
+    margin-block: 0 1.1em;
+  }
+  .z-prose :where(h1, h2, h3, h4, h5, h6):not(:where(.z-not-prose, .z-not-prose *)) {
+    margin-block: 1.6em 0.6em;
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+    line-height: var(--z-leading-snug);
+    text-wrap: balance;
+  }
+  .z-prose :where(h1):not(:where(.z-not-prose *)) {
+    margin-block-start: 0;
+    font-size: var(--z-text-display);
+    letter-spacing: var(--z-tracking-tight);
+  }
+  .z-prose :where(h2):not(:where(.z-not-prose *)) {
+    font-size: var(--z-text-display-sm);
+  }
+  .z-prose :where(h3):not(:where(.z-not-prose *)) {
+    font-size: var(--z-text-heading-lg);
+  }
+  .z-prose :where(h4, h5, h6):not(:where(.z-not-prose *)) {
+    font-size: var(--z-text-heading);
+  }
+  .z-prose > :first-child {
+    margin-block-start: 0;
+  }
+  .z-prose :where(p):not(:where(.z-not-prose *)) {
+    text-wrap: pretty;
+  }
+  .z-prose :where(a):not(:where(.z-not-prose *)) {
+    color: var(--z-accent-text);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .z-prose :where(a):not(:where(.z-not-prose *)):focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+    border-radius: var(--z-radius-xs);
+  }
+  .z-prose :where(strong, b, dt):not(:where(.z-not-prose *)) {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-prose :where(ul, ol):not(:where(.z-not-prose *)) {
+    padding-inline-start: 1.4em;
+  }
+  .z-prose :where(li):not(:where(.z-not-prose *)) {
+    margin-block: 0.3em;
+  }
+  .z-prose :where(li)::marker {
+    color: var(--z-fg-muted);
+  }
+  .z-prose :where(dd):not(:where(.z-not-prose *)) {
+    margin-inline-start: 1.4em;
+  }
+  .z-prose :where(blockquote):not(:where(.z-not-prose *)) {
+    margin-inline: 0;
+    padding-inline-start: 1em;
+    border-inline-start: 3px solid var(--z-line-strong);
+    color: var(--z-fg-muted);
+    font-style: italic;
+  }
+  .z-prose :where(code):not(:where(pre code, .z-not-prose *)) {
+    padding: 0.1em 0.35em;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-code-bg);
+    color: var(--z-fg);
+    font-family: var(--z-font-mono);
+    font-size: 0.88em;
+  }
+  .z-prose :where(pre):not(:where(.z-not-prose *)) {
+    overflow-x: auto;
+    padding: var(--z-space-4);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-code-radius);
+    background: var(--z-code-bg);
+    color: var(--z-fg);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+    line-height: var(--z-leading-code);
+  }
+  .z-prose :where(kbd):not(:where(.z-not-prose *)) {
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--z-line-strong);
+    border-block-end-width: 2px;
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg);
+    font-family: var(--z-font-mono);
+    font-size: 0.85em;
+  }
+  .z-prose :where(mark):not(:where(.z-not-prose *)) {
+    padding-inline: 0.15em;
+    border-radius: calc(var(--z-radius-xs) / 2);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-prose :where(hr):not(:where(.z-not-prose *)) {
+    margin-block: 2em;
+    border: 0;
+    border-block-start: 1px solid var(--z-line);
+  }
+  .z-prose :where(img, video, figure img):not(:where(.z-not-prose *)) {
+    max-inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--z-radius-md);
+  }
+  .z-prose :where(figcaption, small):not(:where(.z-not-prose *)) {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-prose :where(figcaption):not(:where(.z-not-prose *)) {
+    margin-block-start: 0.5em;
+  }
+  .z-prose :where(table):not(:where(.z-not-prose *)) {
+    display: block;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: var(--z-text-small);
+  }
+  .z-prose :where(th, td):not(:where(.z-not-prose *)) {
+    padding: var(--z-space-1-5) var(--z-space-3);
+    border-block-end: 1px solid var(--z-line);
+    text-align: start;
+  }
+  .z-prose :where(th):not(:where(.z-not-prose *)) {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-prose :where(details):not(:where(.z-not-prose *)) {
+    padding: var(--z-space-2) var(--z-space-3);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-item-radius);
+  }
+  .z-prose :where(summary):not(:where(.z-not-prose *)) {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-medium);
+    cursor: pointer;
+  }
+  .z-prose :where(summary):not(:where(.z-not-prose *)):focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+    border-radius: var(--z-radius-xs);
+  }
+
+  /* ---------- ScrollArea: región enfocable, barra con contraste y sombras solo hacia lo que queda ---------- */
+  .z-scroll-area {
+    --z-scroll-shadow: color-mix(in srgb, var(--z-fg) 16%, transparent);
+    --z-scroll-thumb: var(--z-control-border);
+    --z-scroll-track: transparent;
+    position: relative;
+    max-block-size: var(--z-scroll-max, none);
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--z-item-radius);
+    scrollbar-color: var(--z-scroll-thumb) var(--z-scroll-track);
+  }
+  .z-scroll-area[data-scrollbar="thin"] {
+    scrollbar-width: thin;
+  }
+  .z-scroll-area[data-orientation="vertical"] {
+    overflow-x: hidden;
+  }
+  .z-scroll-area[data-orientation="horizontal"] {
+    overflow-y: hidden;
+  }
+  .z-scroll-area:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  /* Sombras de desplazamiento: dos fondos «local» tapan dos «scroll»; solo se ve la sombra del lado con más
+     contenido. Sin JavaScript. */
+  .z-scroll-area[data-shadows][data-orientation="vertical"] {
+    background:
+      linear-gradient(var(--z-surface-solid) 30%, transparent) top / 100% var(--z-space-8) no-repeat local,
+      linear-gradient(transparent, var(--z-surface-solid) 70%) bottom / 100% var(--z-space-8) no-repeat local,
+      radial-gradient(farthest-side at 50% 0, var(--z-scroll-shadow), transparent) top / 100% var(--z-space-3) no-repeat scroll,
+      radial-gradient(farthest-side at 50% 100%, var(--z-scroll-shadow), transparent) bottom / 100% var(--z-space-3) no-repeat scroll;
+    background-color: var(--z-surface-solid);
+  }
+  .z-scroll-area[data-shadows][data-orientation="horizontal"] {
+    background:
+      linear-gradient(to right, var(--z-surface-solid) 30%, transparent) left / var(--z-space-8) 100% no-repeat local,
+      linear-gradient(to right, transparent, var(--z-surface-solid) 70%) right / var(--z-space-8) 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, var(--z-scroll-shadow), transparent) left / var(--z-space-3) 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, var(--z-scroll-shadow), transparent) right / var(--z-space-3) 100% no-repeat scroll;
+    background-color: var(--z-surface-solid);
+  }
+  @media (prefers-contrast: more) {
+    .z-scroll-area {
+      --z-scroll-thumb: var(--z-fg);
+      scrollbar-width: auto;
+    }
+  }
+  @media (forced-colors: active) {
+    .z-scroll-area {
+      scrollbar-color: auto;
+    }
+  }
+
+  /* ---------- Marquee ---------- */
+  .z-marquee {
+    --z-marquee-gap: var(--z-space-6);
+    --z-marquee-duration: 30s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-inline-size: 0;
+  }
+  .z-marquee__viewport {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+  .z-marquee[data-fade] .z-marquee__viewport {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--z-fg) var(--z-space-10),
+      var(--z-fg) calc(100% - var(--z-space-10)),
+      transparent
+    );
+  }
+  .z-marquee[data-orientation="vertical"][data-fade] .z-marquee__viewport {
+    mask-image: linear-gradient(transparent, var(--z-fg) var(--z-space-10), var(--z-fg) calc(100% - var(--z-space-10)), transparent);
+  }
+  .z-marquee__track {
+    display: flex;
+    gap: var(--z-marquee-gap);
+    inline-size: max-content;
+  }
+  .z-marquee__group {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--z-marquee-gap);
+  }
+  .z-marquee[data-orientation="vertical"] .z-marquee__viewport {
+    max-block-size: var(--z-marquee-height, calc(var(--z-space-20) * 2.5));
+  }
+  .z-marquee[data-orientation="vertical"] :is(.z-marquee__track, .z-marquee__group) {
+    flex-direction: column;
+    inline-size: auto;
+  }
+  /* Sin movimiento con prefers-reduced-motion: el contenido queda quieto (y se desplaza a mano). */
+  @media (prefers-reduced-motion: reduce) {
+    .z-marquee__viewport {
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .z-marquee__group:not(:first-child) {
+      display: none;
+    }
+    .z-marquee__control {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-marquee__track {
+      animation: z-marquee-x var(--z-marquee-duration) linear infinite;
+    }
+    .z-marquee[data-orientation="vertical"] .z-marquee__track {
+      animation-name: z-marquee-y;
+    }
+    .z-marquee[data-reverse] .z-marquee__track {
+      animation-direction: reverse;
+    }
+    .z-marquee[data-paused] .z-marquee__track,
+    .z-marquee[data-pause-on-hover]:is(:hover, :focus-within) .z-marquee__track {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-marquee-x {
+    to {
+      translate: calc(-50% - var(--z-marquee-gap) / 2) 0;
+    }
+  }
+  @keyframes z-marquee-y {
+    to {
+      translate: 0 calc(-50% - var(--z-marquee-gap) / 2);
+    }
+  }
+  .z-marquee:dir(rtl) .z-marquee__track {
+    animation-direction: reverse;
+  }
+  .z-marquee[data-reverse]:dir(rtl) .z-marquee__track {
+    animation-direction: normal;
+  }
+  .z-marquee__control {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--z-control-height-sm);
+    block-size: var(--z-control-height-sm);
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-marquee__control:hover {
+      background: var(--z-surface-3);
+    }
+  }
+  .z-marquee__control:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+
+  /* ---------- Highlight y formateadores ---------- */
+  .z-highlight__mark {
+    padding-inline: 0.1em;
+    border-radius: calc(var(--z-radius-xs) / 2);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-highlight[data-variant="underline"] .z-highlight__mark {
+    padding-inline: 0;
+    background: transparent;
+    color: inherit;
+    text-decoration: underline wavy var(--z-accent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.2em;
+  }
+  @media (forced-colors: active) {
+    .z-highlight__mark {
+      background: Mark;
+      color: MarkText;
+    }
+  }
+  .z-format {
+    font-variant-numeric: tabular-nums;
+  }
+}

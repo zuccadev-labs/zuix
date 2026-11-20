@@ -1,0 +1,46 @@
+{
+  "name": "ScrollArea",
+  "group": "content",
+  "import": "import { ScrollArea } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Región desplazable con nombre y foco (para el teclado), barra con el color de la suite (scrollbar-color y scrollbar-width, ≥ 3:1 y más gruesa con prefers-contrast) y sombras que solo aparecen hacia donde queda contenido, sin JavaScript.",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre de la región."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["vertical", "horizontal", "both"],
+      "default": "vertical"
+    },
+    {
+      "name": "maxHeight",
+      "type": "string"
+    },
+    {
+      "name": "shadows",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "scrollbar",
+      "type": "enum",
+      "values": ["thin", "auto"],
+      "default": "thin"
+    }
+  ],
+  "tokens": ["control-border", "surface-solid", "fg", "item-radius", "accent-ring", "focus-width", "focus-offset", "space-8", "space-3"],
+  "classes": ["z-scroll-area"],
+  "behavior": "none",
+  "a11y": "role=region con aria-label y tabindex=0: se desplaza con las flechas y RePág/AvPág del navegador. Foco visible.",
+  "examples": [
+    {
+      "title": "Lista larga",
+      "code": "<ScrollArea label=\"Changelog\" maxHeight=\"10rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</ScrollArea>"
+    }
+  ]
+}

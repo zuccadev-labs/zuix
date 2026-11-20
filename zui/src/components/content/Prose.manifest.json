@@ -1,0 +1,55 @@
+{
+  "name": "Prose",
+  "group": "content",
+  "import": "import { Prose } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Tipografía de contenido largo (`.z-prose`): h1–h6, párrafos, enlaces, listas, citas, código en línea y bloques, kbd, mark, tablas, separadores, figuras, details y dl con el ritmo de lectura de la suite; `.z-not-prose` deja fuera un bloque. Solo CSS.",
+  "props": [
+    {
+      "name": "as",
+      "type": "enum",
+      "values": ["div", "article", "section", "main"],
+      "default": "div"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    }
+  ],
+  "tokens": [
+    "fg",
+    "fg-prose",
+    "fg-muted",
+    "accent-text",
+    "accent-soft",
+    "accent-ring",
+    "line",
+    "line-strong",
+    "code-bg",
+    "code-radius",
+    "prose-max",
+    "text-reading",
+    "text-lead",
+    "text-body",
+    "text-display",
+    "text-display-sm",
+    "text-heading",
+    "text-heading-lg",
+    "leading-relaxed",
+    "leading-code",
+    "radius-md",
+    "radius-xs",
+    "item-radius"
+  ],
+  "classes": ["z-prose", "z-not-prose"],
+  "behavior": "none",
+  "a11y": "Solo estilo sobre el HTML semántico. Enlaces subrayados (no solo color) y con foco visible.",
+  "examples": [
+    {
+      "title": "Artículo",
+      "code": "<Prose as=\"article\">\n  <h2>Release notes</h2>\n  <p>Charts land in <strong>zui</strong> with <a href=\"#keyboard\">keyboard support</a> and <code>prefers-reduced-motion</code>.</p>\n  <ul>\n    <li>Line, area and bar charts</li>\n    <li>Donut and pie charts</li>\n  </ul>\n  <blockquote>Nothing depends on color alone.</blockquote>\n  <p>Press <kbd>⌘</kbd> <kbd>K</kbd> to search.</p>\n</Prose>"
+    }
+  ]
+}

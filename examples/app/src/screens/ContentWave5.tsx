@@ -8,7 +8,14 @@ import {
   Card,
   CardHeader,
   CardMedia,
+  FormatByte,
+  FormatDate,
+  FormatNumber,
+  Highlight,
   Input,
+  Marquee,
+  Prose,
+  ScrollArea,
   JsonTree,
   Stepper,
   Tree,
@@ -52,6 +59,7 @@ export function ContentWave5() {
   const [checked, setChecked] = useState<string[]>(["photos/2025"]);
   const [jsonPath, setJsonPath] = useState("none");
   const [step, setStep] = useState(0);
+  const [query, setQuery] = useState("cafe");
   const [crumb, setCrumb] = useState("none");
   const [sections, setSections] = useState<string[]>(["plan"]);
   const nodes = FOLDERS.map(function relabel(node): TreeNode {
@@ -182,6 +190,64 @@ export function ContentWave5() {
             <p className="app-muted">
               Step: <output data-testid="c-stepper-value">{step}</output>
             </p>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Reading and formatting">
+        <Grid min="320px" gap={4}>
+          <Card className="app-demo">
+            <CardHeader title="Prose" subtitle="Long-form typography" />
+            <Prose size="sm" data-testid="c-prose">
+              <h3>Release notes</h3>
+              <p>
+                Charts land in <strong>zui</strong> with <a href="#keyboard">keyboard support</a> and <code>prefers-reduced-motion</code>.
+              </p>
+              <ul>
+                <li>Line, area and bar charts</li>
+                <li>Donut and pie charts</li>
+              </ul>
+              <blockquote>Nothing depends on color alone.</blockquote>
+              <p>
+                Press <kbd>⌘</kbd> <kbd>K</kbd> to search.
+              </p>
+            </Prose>
+          </Card>
+          <Card className="app-demo">
+            <CardHeader title="ScrollArea and Highlight" />
+            <Input aria-label="Highlight query" value={query} onChange={(event) => setQuery(event.currentTarget.value)} />
+            <ScrollArea label="Changelog entries" maxHeight="9rem" data-testid="c-scroll">
+              <ul>
+                {[
+                  "Café charts",
+                  "Data table selection",
+                  "Tree rename",
+                  "Timeline",
+                  "Circular progress",
+                  "Status dot",
+                  "Marquee",
+                  "Málaga highlight",
+                ].map((item) => (
+                  <li key={item}>
+                    <Highlight text={item} query={query} ignoreAccents />
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </Card>
+          <Card className="app-demo">
+            <CardHeader title="Format and Marquee" />
+            <p data-testid="c-format">
+              <FormatNumber value={1250000} options={{ notation: "compact" }} locale="en-US" /> ·{" "}
+              <FormatByte value={1572864} system="binary" locale="en-US" /> ·{" "}
+              <FormatDate value="2026-11-20" options={{ dateStyle: "long" }} locale="en-US" />
+            </p>
+            <Marquee label="Customers" duration={18} data-testid="c-marquee">
+              {["Atlas", "Borealis", "Cobalt", "Dune", "Echo", "Fjord"].map((name) => (
+                <span key={name} className="app-muted">
+                  {name}
+                </span>
+              ))}
+            </Marquee>
           </Card>
         </Grid>
       </PageSection>

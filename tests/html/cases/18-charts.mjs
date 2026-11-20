@@ -52,7 +52,7 @@ export default async function ({ page, test, ok }) {
     await page.keyboard.press("End");
     ok(/June 2026/.test(await active()), "Fin");
     ok(await box.locator(".z-chart__tip").isVisible(), "tooltip al enfocar");
-    ok((await box.locator(".z-chart__tip").innerText()).includes("$72,000"), "valor en el tooltip");
+    ok(((await box.locator(".z-chart__tip").textContent()) ?? "").includes("$72,000"), "valor en el tooltip");
     await page.keyboard.press("Enter");
     const log = await events();
     ok(
@@ -72,7 +72,7 @@ export default async function ({ page, test, ok }) {
     const r = await plot.boundingBox();
     await page.mouse.move(r.x + r.width * 0.98, r.y + r.height / 2);
     await page.waitForFunction((id) => document.querySelector(`#${id} .z-chart__cross`), await box.getAttribute("id"));
-    ok((await box.locator(".z-chart__tip-title").innerText()).includes("June"), "última posición");
+    ok(((await box.locator(".z-chart__tip-title").textContent()) ?? "").includes("June"), "última posición");
     await page.mouse.move(1, 1);
     await page.waitForFunction((id) => !document.querySelector(`#${id} .z-chart__tip`), await box.getAttribute("id"));
   });
@@ -88,7 +88,7 @@ export default async function ({ page, test, ok }) {
     const colors = await box.locator(".z-chart__bar").evaluateAll((els) => [...new Set(els.map((e) => e.dataset.color))]);
     ok(colors.join() === "2", `el color sigue a la serie: ${colors}`);
     await box.locator(".z-chart__toggle").click();
-    ok((await box.locator("table caption").innerText()) === "Tasks by team", "caption de la tabla");
+    ok(((await box.locator("table caption").textContent()) ?? "") === "Tasks by team", "caption de la tabla");
     ok((await box.locator("tbody tr").count()) === 3, "una fila por categoría");
     const log = await events();
     ok(
@@ -125,7 +125,7 @@ export default async function ({ page, test, ok }) {
     ok(/Media: 412 GB \(52\.3%\)/.test(await active()), `nombre: ${await active()}`);
     await page.keyboard.press("ArrowRight");
     ok(/Documents/.test(await active()), "→ siguiente sector");
-    ok((await box.locator(".z-chart__center").innerText()).includes("Documents"), "centro con el sector activo");
+    ok(((await box.locator(".z-chart__center").textContent()) ?? "").includes("Documents"), "centro con el sector activo");
   });
 
   await test("RTL: las flechas siguen la dirección visual y el trazo se refleja", async () => {

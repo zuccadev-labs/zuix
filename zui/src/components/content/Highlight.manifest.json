@@ -1,0 +1,50 @@
+{
+  "name": "Highlight",
+  "group": "content",
+  "import": "import { Highlight } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Marca con <mark> las coincidencias de una o varias consultas en un texto: sin distinguir mayúsculas, opcionalmente sin acentos o solo palabras completas; relleno de acento o subrayado ondulado.",
+  "props": [
+    {
+      "name": "text",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "query",
+      "type": "string | string[]",
+      "required": true
+    },
+    {
+      "name": "ignoreCase",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "ignoreAccents",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "wholeWord",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["fill", "underline"],
+      "default": "fill"
+    }
+  ],
+  "tokens": ["accent-soft", "accent-text", "accent", "radius-xs"],
+  "classes": ["z-highlight", "z-highlight__mark"],
+  "behavior": "dom",
+  "a11y": "El texto se lee igual; <mark> lo exponen algunos lectores como resaltado. Con colores forzados usa Mark/MarkText. El par accent-text sobre accent-soft se valida a 4.5:1.",
+  "examples": [
+    {
+      "title": "Varias consultas sin acentos",
+      "code": "<Highlight text=\"Un café en Málaga con vistas al mar\" query={[\"cafe\", \"malaga\"]} ignoreAccents />"
+    }
+  ]
+}

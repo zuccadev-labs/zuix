@@ -33,7 +33,7 @@ export default function ({ t, assert, poll, expectAttr, expectText, expectCount 
         const r = await plot.boundingBox();
         await page.mouse.move(r.x + r.width * 0.5, r.y + r.height / 2);
         await expectCount(page, "#chart-line .z-chart__cross", 1, "cruceta");
-        const title = await page.locator("#chart-line .z-chart__tip-title").innerText();
+        const title = (await page.locator("#chart-line .z-chart__tip-title").textContent()) ?? "";
         assert(title.length > 0, "tooltip con la fecha");
         const bars = page.locator("#chart-bar .z-chart__plot");
         await bars.scrollIntoViewIfNeeded();
@@ -69,7 +69,7 @@ export default function ({ t, assert, poll, expectAttr, expectText, expectCount 
         await poll(async () => /^Media: .*\(52\.3%\)$/.test(await active(page)), "nombre del sector");
         await page.keyboard.press("ArrowDown");
         await poll(async () => /^Documents/.test(await active(page)), "↓ siguiente sector");
-        await poll(async () => (await page.locator("#chart-donut .z-chart__center").innerText()).includes("Documents"), "centro");
+        await poll(async () => ((await page.locator("#chart-donut .z-chart__center").textContent()) ?? "").includes("Documents"), "centro");
         const spark = page.locator('.app-charts__spark .z-sparkline[role="img"]').first();
         assert(/^Weekly visits: from 120 to 340/.test((await spark.getAttribute("aria-label")) ?? ""), "nombre del minigráfico");
         await expectCount(page, ".z-stat .z-stat__trend", 4, "StatTile con tendencia");

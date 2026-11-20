@@ -29,6 +29,7 @@ import * as collections from "./collections";
 import * as contentDom from "./content";
 import * as datatable from "./datatable";
 import * as forms from "./forms";
+import * as reading from "./reading";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
 import { escapeTop } from "../core/layers";
@@ -46,9 +47,10 @@ import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [actions, forms, collections, datatable, carousel, time, agenda, widgets, contentDom];
+const modules = [actions, forms, collections, datatable, carousel, time, agenda, widgets, contentDom, reading];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { setJsonTreeValue, setStep } from "./content";
+export { setHighlightQuery } from "./reading";
 export {
   checkTreeItem,
   openPalette,

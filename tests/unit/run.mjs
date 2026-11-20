@@ -54,6 +54,7 @@ const COVERED = [
   "zui/src/core/chart.ts",
   "zui/src/core/chart-widget.ts",
   "zui/src/core/sparkline.ts",
+  "zui/src/core/format.ts",
   "zui/src/core/clipboard.ts",
   "zui/src/core/compare.ts",
   "zui/src/core/date.ts",

@@ -59,6 +59,12 @@ radios y material de los tokens.
   que pasa a una columna en estrecho, `<time datetime>`), `CircularProgress` (sobre `<progress>`), `Progress`
   vertical y segmentada, `DescriptionList` (`<dl>`), `Item`/`ItemGroup`, `StatusDot` (tono, tamaño, pulso; nunca
   solo color), `Chip` con `tone`, `CardMedia` y `AspectRatio`.
+- Lectura y formato: `Prose` (`.z-prose`, con `.z-not-prose` para salir), `ScrollArea` (región enfocable con nombre,
+  `scrollbar-color`/`scrollbar-width` y sombras solo hacia donde queda contenido, sin JavaScript), `Marquee` (copias
+  `inert`, pausa al pasar o enfocar, botón de pausa visible, quieto con `prefers-reduced-motion`), `Highlight`
+  (`<mark>`, varias consultas, sin mayúsculas, sin acentos o palabras completas; `setHighlightQuery()` en `/dom`) y
+  `FormatNumber`, `FormatByte` (decimal con unidades de `Intl` o binario IEC) y `FormatDate` (`<time datetime>`, o
+  relativa con RelativeTime). Lógica en `core/format`; modo DOM en `dom/reading`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
