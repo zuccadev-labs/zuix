@@ -5,6 +5,7 @@ import { logicalKey } from "../../core/dir";
 import { move } from "../../core/roving";
 import { cx } from "../../cx";
 import { useControllable, useIsoLayoutEffect } from "../../primitives/hooks";
+import { useInToolbar } from "./toolbar-context";
 import { ICON_SIZE, type ControlSize } from "./types";
 
 export interface ToggleGroupItem {
@@ -72,6 +73,8 @@ export function ToggleGroup(props: ToggleGroupProps) {
   );
   const pressed = (value: string) => (multiple ? many.includes(value) : single === value);
   const off = (item: ToggleGroupItem) => Boolean(disabled || item.disabled);
+  // Dentro de una Toolbar la barra lleva la única parada de tabulación y las flechas (todos sus controles).
+  const inToolbar = useInToolbar();
   const [focused, setFocused] = useState<string | null>(null);
   // Parada de tabulación: la última enfocada, la primera activada o la primera habilitada.
   const usable = items.filter((item) => !off(item));
@@ -87,6 +90,7 @@ export function ToggleGroup(props: ToggleGroupProps) {
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (inToolbar) return;
     const from = event.target instanceof Element ? event.target.closest<HTMLButtonElement>(".z-toggle") : null;
     if (!from) return;
     const list = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(":scope > .z-toggle")].filter((item) => !item.disabled);
@@ -126,7 +130,7 @@ export function ToggleGroup(props: ToggleGroupProps) {
             data-disabled={off(item) ? "" : undefined}
             disabled={off(item)}
             value={item.value}
-            tabIndex={item.value === tabStop ? 0 : -1}
+            tabIndex={inToolbar ? undefined : item.value === tabStop ? 0 : -1}
             onFocus={() => setFocused(item.value)}
             onClick={() => toggle(item.value)}
           >

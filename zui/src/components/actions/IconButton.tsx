@@ -42,9 +42,10 @@ export function IconButton({
       aria-busy={loading || undefined}
       // En carga el botón no se deshabilita (`disabled` le quitaría el foco del teclado): lleva `aria-disabled`, no
       // ejecuta `onClick` y deja de ser un botón de envío. Sin manejador propio: el componente sigue siendo estático.
-      aria-disabled={loading || undefined}
+      // Con `aria-disabled` (un botón apagado que conserva el foco, como en una Toolbar) tampoco ejecuta `onClick`.
+      aria-disabled={loading || rest["aria-disabled"] || undefined}
       disabled={disabled}
-      {...(loading ? { type: "button" as const, onClick: undefined } : { onClick })}
+      {...(loading ? { type: "button" as const, onClick: undefined } : { onClick: off(rest["aria-disabled"]) ? undefined : onClick })}
     >
       {loading ? (
         <span className="z-btn__spinner" aria-hidden="true" />
@@ -54,3 +55,5 @@ export function IconButton({
     </button>
   );
 }
+
+const off = (value: unknown) => value === true || value === "true";

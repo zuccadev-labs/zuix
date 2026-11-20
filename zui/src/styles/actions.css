@@ -684,4 +684,63 @@
       height: max(100%, var(--z-touch-target, 0px));
     }
   }
+
+  /* ---- Toolbar ---- */
+  /* Barra de cromo: pista con relleno 4 y radio concéntrico (radio de los controles + relleno: 8 + 4 en sm, 10 + 4 en md). */
+  .z-toolbar {
+    --z-toolbar-pad: var(--z-space-1);
+    --z-toolbar-radius: calc(var(--z-button-radius) + var(--z-toolbar-pad));
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+    max-inline-size: 100%;
+    padding: var(--z-toolbar-pad);
+    border-radius: var(--z-toolbar-radius);
+  }
+  .z-toolbar[data-size="sm"] {
+    --z-toolbar-radius: calc(var(--z-control-radius-sm) + var(--z-toolbar-pad));
+  }
+  .z-toolbar[data-variant="plain"] {
+    padding: 0;
+    border-radius: 0;
+  }
+  .z-toolbar[aria-orientation="vertical"] {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .z-toolbar__group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+  }
+  .z-toolbar[aria-orientation="vertical"] .z-toolbar__group {
+    flex-direction: column;
+  }
+  /* Separador con borde (no fondo): los colores forzados lo conservan. */
+  .z-toolbar__separator {
+    flex: none;
+    align-self: stretch;
+    inline-size: 0;
+    margin-block: var(--z-space-1);
+    margin-inline: 2px;
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-toolbar__separator[aria-orientation="horizontal"] {
+    inline-size: auto;
+    block-size: 0;
+    margin-block: 2px;
+    margin-inline: var(--z-space-1);
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--z-line);
+  }
+  .z-toolbar :is(.z-btn, .z-toggle):focus-visible {
+    position: relative;
+    z-index: var(--z-layer-raised);
+  }
+  /* Un control con `aria-disabled` sigue en el recorrido del teclado, apagado. */
+  .z-toolbar [aria-disabled="true"]:not([aria-busy="true"]) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }

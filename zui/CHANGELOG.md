@@ -11,6 +11,11 @@ radios y material de los tokens.
 
 ### Añadido
 
+- Oleada 4, capas y navegación de aplicación:
+  - `Toolbar`, `ToolbarGroup` y `ToolbarSeparator` (patrón APG «toolbar»): una sola parada de tabulación para
+    todos los controles de la barra, también los de un `ToggleGroup` anidado, flechas del eje con vuelta, Inicio y
+    Fin, y la barra recuerda el último control. Variantes `glass` (cromo) y `plain`, horizontal y vertical. En
+    `/dom`, `.z-toolbar[role=toolbar]`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
@@ -84,6 +89,9 @@ radios y material de los tokens.
 
 ### Cambiado
 
+- `Button` e `IconButton` respetan un `aria-disabled` recibido (antes lo pisaba el estado de carga) y, con él,
+  no ejecutan `onClick`: un botón apagado que conserva el foco, como pide una barra de herramientas.
+- `ToggleGroup` dentro de una `Toolbar` deja a la barra la parada de tabulación y las flechas.
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
   punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal
   elevado con `className="z-liquid"`. Los días no elegibles ya no van tachados (lo va la fecha reservada).

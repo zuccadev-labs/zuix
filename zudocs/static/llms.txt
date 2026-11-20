@@ -68,6 +68,7 @@
 - [Swap](https://zuccadev-labs.github.io/zuix/components/actions/swap.md): Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna).
 - [Toggle](https://zuccadev-labs.github.io/zuix/components/actions/toggle.md): Botón de dos estados (activado o no), con texto, icono o ambos.
 - [ToggleGroup](https://zuccadev-labs.github.io/zuix/components/actions/toggle-group.md): Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).
+- [Toolbar](https://zuccadev-labs.github.io/zuix/components/actions/toolbar.md): Barra de herramientas: controles que actúan sobre otra cosa (un editor, un lienzo, un panel) con una sola parada de tabulación.
 
 ## Componentes: Formularios
 
