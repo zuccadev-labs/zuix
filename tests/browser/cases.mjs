@@ -604,7 +604,7 @@ export const cases = [
       await visible(page, "dialog.z-palette:modal");
       await focusOn(page, ".z-palette__input", "el foco entra en el buscador");
       await expectInViewport(page, ".z-palette");
-      await expectCount(page, ".z-palette__item", 20, "20 comandos sin filtro (una pantalla más: Agenda)");
+      await expectCount(page, ".z-palette__item", 21, "21 comandos sin filtro (pantallas Agenda e Inputs)");
       await settled(page);
       await shot(page, "overlay-palette");
       await page.keyboard.type("gal");
