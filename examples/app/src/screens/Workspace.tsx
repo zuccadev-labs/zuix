@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import {
+  Float,
   FloatingPanel,
   Grid,
   Pane,
@@ -17,7 +18,7 @@ import {
   type TabGroup,
   type WorkTab,
 } from "@zuccadev-labs/zuix-zout";
-import { Button, Card, CardHeader, IconButton } from "@zuccadev-labs/zuix-zui";
+import { Badge, Button, Card, CardHeader, IconButton } from "@zuccadev-labs/zuix-zui";
 import { Icon } from "@zuccadev-labs/zuix-zicon";
 
 const INITIAL_LAYOUT: PaneNode = {
@@ -176,9 +177,20 @@ export function Workspace() {
           </Card>
           <Card className="app-demo">
             <CardHeader title="FloatingPanel" subtitle="Drag, resize and keyboard; stays inside its area" />
-            <Button size="sm" onClick={() => setInspector((v) => !v)} data-testid="ws-float-toggle">
-              Toggle inspector
-            </Button>
+            <div className="app-row">
+              <Button size="sm" onClick={() => setInspector((v) => !v)} data-testid="ws-float-toggle">
+                Toggle inspector
+              </Button>
+              <Float
+                content={
+                  <Badge tone="danger" variant="solid" size="sm">
+                    2
+                  </Badge>
+                }
+              >
+                <IconButton icon="bell" label="Notifications, 2 unread" variant="secondary" size="sm" />
+              </Float>
+            </div>
             <div className="app-float-area" data-testid="ws-float">
               {inspector ? (
                 <FloatingPanel
