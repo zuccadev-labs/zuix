@@ -243,7 +243,18 @@ export function initialState(config: Pick<AgendaConfig, "views" | "timeZone">, v
 /* ---------- Formatos ---------- */
 
 const formats = new Map<string, Intl.DateTimeFormat>();
+const formatsByOptions = new WeakMap<Intl.DateTimeFormatOptions, Map<string, Intl.DateTimeFormat>>();
 function fmt(locale: string | undefined, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  // Opciones constantes (TIME, DAY_LONG…): sin serializar en cada llamada.
+  const byLocale = formatsByOptions.get(options);
+  const fast = byLocale?.get(locale ?? "");
+  if (fast) return fast;
+  const f = fmtSlow(locale, options);
+  if (byLocale) byLocale.set(locale ?? "", f);
+  else formatsByOptions.set(options, new Map([[locale ?? "", f]]));
+  return f;
+}
+function fmtSlow(locale: string | undefined, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
   const key = `${locale ?? ""}|${JSON.stringify(options)}`;
   let f = formats.get(key);
   if (!f) {
@@ -256,8 +267,17 @@ function fmt(locale: string | undefined, options: Intl.DateTimeFormatOptions): I
 const ms = (min: number) => min * 60_000;
 const TIME: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit" };
 
+// Textos que se repiten miles de veces al pintar (una hora del día, un día): memoria por locale.
+const times = new Map<string, string>();
 export function timeText(min: number, locale?: string): string {
-  return fmt(locale, TIME).format(ms(min));
+  const key = `${locale ?? ""}|${minuteOfDay(min)}`;
+  let text = times.get(key);
+  if (text === undefined) {
+    if (times.size > 10_000) times.clear();
+    text = fmt(locale, TIME).format(ms(minuteOfDay(min)));
+    times.set(key, text);
+  }
+  return text;
 }
 /** Intervalo de horas con `formatRange` (marcas bidi del locale incluidas). */
 const rangeTexts = new Map<string, string>();
@@ -280,7 +300,18 @@ function formatTimeRange(start: number, end: number, locale?: string): string {
     return `${f.format(ms(start))} – ${f.format(ms(end))}`;
   }
 }
-const dayLong = (date: string, locale?: string) => fmt(locale, { weekday: "long", day: "numeric", month: "long" }).format(parse(date));
+const DAY_LONG: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long" };
+const dayLongs = new Map<string, string>();
+const dayLong = (date: string, locale?: string) => {
+  const key = `${locale ?? ""}|${date}`;
+  let text = dayLongs.get(key);
+  if (text === undefined) {
+    if (dayLongs.size > 10_000) dayLongs.clear();
+    text = fmt(locale, DAY_LONG).format(parse(date));
+    dayLongs.set(key, text);
+  }
+  return text;
+};
 /** Minutos de pared → `YYYY-MM-DDTHH:mm`. */
 const wallText = (min: number) => `${dateOf(min)}T${pad(Math.floor(minuteOfDay(min) / 60))}:${pad(minuteOfDay(min) % 60)}`;
 const fill = (template: string, values: Record<string, string | number>) =>

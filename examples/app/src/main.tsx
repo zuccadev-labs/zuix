@@ -23,7 +23,14 @@ if (!root) throw new Error("Missing #root");
 // ?screen=layers).
 const params = new URLSearchParams(window.location.search);
 const screen = params.get("screen");
-if (screen === "audit" || screen === "audit-ssr" || screen === "layers" || screen === "agenda-stage" || screen === "planning-stage" || screen === "perf-stage") {
+if (
+  screen === "audit" ||
+  screen === "audit-ssr" ||
+  screen === "layers" ||
+  screen === "agenda-stage" ||
+  screen === "planning-stage" ||
+  screen === "perf-stage"
+) {
   document.documentElement.dataset.theme = params.get("theme") === "light" ? "light" : "dark";
   document.documentElement.dataset.brand = params.get("brand") === "zutool" ? "zutool" : "dazlabs";
 }

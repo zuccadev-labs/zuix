@@ -36,7 +36,9 @@ export function perfEvents(n: number): CalendarEvent[] {
 
 export function PerfStage({ n = 5000 }: { n?: number }) {
   const [events] = useState(() => perfEvents(n));
-  const [resources] = useState<Resource[]>(() => Array.from({ length: 500 }, (_, i) => ({ id: `r${i}`, title: `Room ${i + 1}`, meta: `${2 + (i % 18)} seats` })));
+  const [resources] = useState<Resource[]>(() =>
+    Array.from({ length: 500 }, (_, i) => ({ id: `r${i}`, title: `Room ${i + 1}`, meta: `${2 + (i % 18)} seats` })),
+  );
   const [view, setView] = useState<AgendaView>("month");
   return (
     <div className="app-planning" data-testid="perf">

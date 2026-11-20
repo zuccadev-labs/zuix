@@ -3519,7 +3519,11 @@ export const cases = [
       await page.locator(`${root} .z-timeline__track[data-resource="vega"]`).evaluate((el) => el.scrollIntoView({ block: "center" }));
       const track = await page.locator(`${root} .z-timeline__track[data-resource="vega"]`).boundingBox();
       // 88 px por hora desde las 08:00: de 13:00 a 15:00.
-      await drag(page, { x: track.x + 88 * 5 + 2, y: track.y + track.height / 2 }, { x: track.x + 88 * 7 + 2, y: track.y + track.height / 2 });
+      await drag(
+        page,
+        { x: track.x + 88 * 5 + 2, y: track.y + track.height / 2 },
+        { x: track.x + 88 * 7 + 2, y: track.y + track.height / 2 },
+      );
       await expectText(page, t("planning-log"), "New booking: vega 2026-11-19T13:00 → 2026-11-19T15:00");
       const conflict = await page.locator(`${root} .z-timeline__booking[data-conflict]`).first().textContent();
       assert(conflict.includes("overlaps") || conflict.includes("Overlaps"), `conflicto: ${conflict}`);
@@ -3541,7 +3545,10 @@ export const cases = [
       await page.keyboard.press("Enter");
       await poll(async () => (await text(page, t("planning-log"))).startsWith("Slot: 2026-11-24T"), "onSelect");
       await page.selectOption(`${root} .z-slotpicker__select`, "America/New_York");
-      await poll(async () => (await page.locator(`${root} [role="option"]`).first().textContent()).startsWith("03:00"), "horas en Nueva York");
+      await poll(
+        async () => (await page.locator(`${root} [role="option"]`).first().textContent()).startsWith("03:00"),
+        "horas en Nueva York",
+      );
       const stay = "#app-stay-calendar";
       await page.locator(stay).scrollIntoViewIfNeeded();
       await expectText(page, `${stay} .z-calendar__length`, "5 nights");
@@ -3644,10 +3651,17 @@ export const cases = [
         return Math.round((performance.now() - start) / 10);
       }, rooms);
       const rendered = await page.locator(`${rooms} .z-timeline__row[data-resource]`).count();
-      note(`5000 eventos · ms por cambio (mayor tarea larga): ${Object.entries(results).map(([k, v]) => `${k} ${v.ms} (${v.longest})`).join(" · ")}`);
+      note(
+        `5000 eventos · ms por cambio (mayor tarea larga): ${Object.entries(results)
+          .map(([k, v]) => `${k} ${v.ms} (${v.longest})`)
+          .join(" · ")}`,
+      );
       note(`500 recursos: ${rows} filas pintadas de 500; desplazamiento ${scroll} ms por paso; ${rendered} filas tras desplazar`);
       assert(rows < 60, `ventana virtual: ${rows} filas pintadas`);
-      assert((await page.locator(`${rooms} .z-timeline__row[data-resource="r120"]`).count()) === 1 || rendered < 60, "la ventana sigue al desplazamiento");
+      assert(
+        (await page.locator(`${rooms} .z-timeline__row[data-resource="r120"]`).count()) === 1 || rendered < 60,
+        "la ventana sigue al desplazamiento",
+      );
     },
   },
 ];

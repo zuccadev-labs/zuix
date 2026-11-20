@@ -144,8 +144,19 @@ function defaultRange(tasks: TimelineTask[]): { from: string; to: string } {
   return { from: addDays(from, 0), to: addDays(to, 2) };
 }
 
-const occurrencesOf = (config: TimelineConfig): Occurrence[] =>
-  expandEvents({ events: config.events, from: config.date, to: config.date, timeZone: config.timeZone });
+// Ocurrencias del día por lista de eventos (la misma lista entre pintados: desplazar no vuelve a expandir).
+const dayCache = new WeakMap<CalendarEvent[], Map<string, Occurrence[]>>();
+function occurrencesOf(config: TimelineConfig): Occurrence[] {
+  const key = `${config.date}|${config.timeZone}`;
+  let byKey = dayCache.get(config.events);
+  const hit = byKey?.get(key);
+  if (hit) return hit;
+  const list = expandEvents({ events: config.events, from: config.date, to: config.date, timeZone: config.timeZone });
+  if (!byKey) dayCache.set(config.events, (byKey = new Map()));
+  if (byKey.size > 16) byKey.clear();
+  byKey.set(key, list);
+  return list;
+}
 
 function resourceItems(config: TimelineConfig, state: TimelineState): { items: ResourceItem[]; occ: Map<string, Occurrence> } {
   const base = dayStart(config.date);

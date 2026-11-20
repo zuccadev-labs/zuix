@@ -49,7 +49,10 @@ export default async function ({ page, test, ok, settle }) {
     await page.fill(`${root} .z-perpetual__input`, "2026-02-14");
     await page.locator(`${root} .z-perpetual__input`).dispatchEvent("change");
     await wait(async () => (await page.locator(`${root} .z-perpetual__result`).textContent()).includes("Saturday"), "14 feb → sábado");
-    ok((await events()).some((e) => e.name === "highlightchange" && e.detail.date === "2026-02-14"), "z:highlightchange");
+    ok(
+      (await events()).some((e) => e.name === "highlightchange" && e.detail.date === "2026-02-14"),
+      "z:highlightchange",
+    );
   });
 
   await test("TimelineView (Gantt): treegrid, una parada de Tab, plegar, agarrar y mover con teclado", async () => {
@@ -68,7 +71,10 @@ export default async function ({ page, test, ok, settle }) {
     await page.keyboard.press("ArrowUp");
     ok(await focused(`${root} .z-timeline__toggle[data-group-id="ds"]`), "↑ lleva a la fase");
     await page.keyboard.press("ArrowLeft");
-    await wait(async () => (await page.locator(`${root} .z-timeline__toggle[data-group-id="ds"]`).getAttribute("aria-expanded")) === "false", "plegada");
+    await wait(
+      async () => (await page.locator(`${root} .z-timeline__toggle[data-group-id="ds"]`).getAttribute("aria-expanded")) === "false",
+      "plegada",
+    );
     ok((await page.locator(bar).count()) === 0, "sus tareas se ocultan");
     await page.keyboard.press("ArrowRight");
     await wait(async () => (await page.locator(bar).count()) === 1, "desplegada");
@@ -88,7 +94,10 @@ export default async function ({ page, test, ok, settle }) {
     await wait(async () => (await page.locator(`${root} [data-live]`).textContent()).startsWith("Moved Tokens v2"), "anuncio");
     await page.click(`${root} [data-scale-option="week"]`);
     ok((await page.getAttribute(root, "data-scale")) === "week", "zoom semanas");
-    ok((await events()).some((e) => e.name === "scalechange" && e.detail.scale === "week"), "z:scalechange");
+    ok(
+      (await events()).some((e) => e.name === "scalechange" && e.detail.scale === "week"),
+      "z:scalechange",
+    );
   });
 
   await test("TimelineView (recursos): grid con conflicto en texto y navegación espacial", async () => {
@@ -131,11 +140,17 @@ export default async function ({ page, test, ok, settle }) {
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
     await wait(async () => (await page.locator(`${root} [role=option][aria-selected="true"]`).count()) === 1, "elegida");
-    ok((await events()).some((e) => e.name === "select"), "z:select");
+    ok(
+      (await events()).some((e) => e.name === "select"),
+      "z:select",
+    );
     await page.click(`${root} [data-cycle="h12"]`);
     await wait(async () => /[AP]M/i.test(await page.locator(`${root} [role=option]`).first().textContent()), "12 h");
     await page.click(`${root} .z-slotpicker__next`);
-    ok((await events()).some((e) => e.name === "confirm"), "z:confirm");
+    ok(
+      (await events()).some((e) => e.name === "confirm"),
+      "z:confirm",
+    );
     await page.click(`${root} .z-calendar__day[data-date="2026-11-24"]`);
     await wait(async () => (await page.locator(`${root} .z-slotpicker__day`).textContent()).includes("24"), "otro día");
   });
@@ -206,7 +221,10 @@ export default async function ({ page, test, ok, settle }) {
     await wait(async () => (await page.locator(`${root} .z-event[data-key="loaded"]`).count()) === 1, "evento cargado");
     ok((await page.locator(`${root} .z-event[data-key="a"] .z-event__custom`).textContent()) === "★ Design review", "contenido propio");
     ok((await page.locator(`${root} .z-event[data-key="a"]`).textContent()).includes("Thursday 19 November"), "nombre completo");
-    ok((await events()).some((e) => e.name === "rangechange"), "z:rangechange");
+    ok(
+      (await events()).some((e) => e.name === "rangechange"),
+      "z:rangechange",
+    );
     await page.evaluate(async (sel) => {
       const el = document.querySelector(sel);
       (await import("/zui/dist/zui.dom.js")).setAgendaOptions(el, { renderEvent: undefined, loadEvents: undefined });
@@ -225,15 +243,25 @@ export default async function ({ page, test, ok, settle }) {
     const cal = "#stay-cal";
     await page.locator(cal).scrollIntoViewIfNeeded();
     ok((await page.locator(`${cal} .z-calendar__length`).textContent()) === "5 nights", "5 noches");
-    ok((await page.getAttribute(`${cal} .z-calendar__day[data-date="2026-12-04"]`, "aria-label")).includes("check-out only"), "solo salida");
+    ok(
+      (await page.getAttribute(`${cal} .z-calendar__day[data-date="2026-12-04"]`, "aria-label")).includes("check-out only"),
+      "solo salida",
+    );
     ok((await page.getAttribute(`${cal} .z-calendar__day[data-date="2026-12-04"]`, "aria-disabled")) === "true", "no empieza un rango");
     await page.click(`${cal} .z-calendar__stepper-btn[data-step="1"]`);
     await wait(async () => (await page.locator(`${cal} .z-calendar__length`).textContent()) === "6 nights", "+1 noche");
     await page.click(`${cal} .z-calendar__flex-chip[data-flexibility-option="3"]`);
-    ok((await events()).some((e) => e.name === "flexibilitychange" && e.detail.flexibility === 3), "z:flexibilitychange");
+    ok(
+      (await events()).some((e) => e.name === "flexibilitychange" && e.detail.flexibility === 3),
+      "z:flexibilitychange",
+    );
     await page.click(`${cal} .z-calendar__day[data-date="2026-11-24"]`);
     const below = await page.getAttribute(`${cal} .z-calendar__day[data-date="2026-11-25"]`, "aria-label");
-    ok(below.includes("2-night minimum") && (await page.getAttribute(`${cal} .z-calendar__day[data-date="2026-11-25"]`, "aria-disabled")) === "true", `mínimo: ${below}`);
+    ok(
+      below.includes("2-night minimum") &&
+        (await page.getAttribute(`${cal} .z-calendar__day[data-date="2026-11-25"]`, "aria-disabled")) === "true",
+      `mínimo: ${below}`,
+    );
     await page.evaluate(() => document.getElementById("stay-stage")?.remove());
   });
 
