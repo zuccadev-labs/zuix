@@ -212,6 +212,9 @@ export default async function ({ page, test, ok, note, browserName }) {
       document.querySelector("#perf-dom-stage")?.remove();
       const stage = document.createElement("div");
       stage.id = "perf-dom-stage";
+      // Por encima de todo lo que otros casos de la página dejaron en pantalla (un panel de TimePicker…): el
+      // arrastre necesita que la pista sea lo que hay bajo el puntero.
+      stage.style.cssText = "position: fixed; inset: 0; z-index: 2147483647; overflow: auto; background: Canvas";
       stage.innerHTML = `<div class="z-agenda" id="perf-dom-agenda" data-view="timeline" data-views="week,timeline" data-date="2026-11-19" data-today="2026-11-19" data-time-zone="Europe/Madrid" data-locale="en-GB" data-week-start="1" data-day-start="07:00" data-day-end="21:00" data-editable>
         <script type="application/json" data-calendars>[{ "id": "work", "name": "Work", "color": "1" }]</script>
         <script type="application/json" data-resources>[{ "id": "kepler", "title": "Kepler" }, { "id": "hubble", "title": "Hubble" }]</script>
