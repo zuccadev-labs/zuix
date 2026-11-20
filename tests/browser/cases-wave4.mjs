@@ -1,7 +1,7 @@
 // Oleada 4 en el binding de React (pantalla `?screen=commands` de examples/app): barras, menús con estado, capas
 // ligeras y avisos de aplicación, con teclado y puntero. Se ejecutan también en Firefox y WebKit.
 // Exporta una función que recibe los ayudantes de cases.mjs.
-export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, expectText }) {
+export default function ({ t, assert, poll, visible, gone, settled, focusOn, expectAttr, expectText }) {
   const screen = (open) => open("commands");
   const press = async (page, ...keys) => {
     for (const key of keys) await page.keyboard.press(key);
@@ -257,6 +257,44 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         await press(page, "Escape");
         await gone(page, ".z-actionbar", "Escape vacía la selección");
         assert(!(await page.isChecked(t("c-file-logo.svg"))), "selección vacía");
+      },
+    },
+    {
+      name: "Oleada 4 · Drawer: anclajes con el asa (slider) y arrastre; cajón superior que se cierra arrastrando",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.click(t("c-sheet"));
+        await visible(page, 'dialog.z-drawer[data-side="bottom"]');
+        const handle = 'dialog.z-drawer[data-side="bottom"] .z-drawer__handle';
+        await expectAttr(page, handle, "role", "slider");
+        await page.locator(handle).focus();
+        await press(page, "ArrowDown");
+        await expectText(page, t("c-snap"), "0");
+        await expectAttr(page, handle, "aria-valuetext", "40%");
+        await press(page, "ArrowUp");
+        await expectText(page, t("c-snap"), "1");
+        await settled(page);
+        const h = await page.locator(handle).boundingBox();
+        await page.mouse.move(h.x + h.width / 2, h.y + h.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(h.x + h.width / 2, h.y + 380, { steps: 8 });
+        // Pausa antes de soltar: sin inercia, cuenta solo la posición (la inercia la prueban las unitarias).
+        await page.waitForTimeout(150);
+        await page.mouse.up();
+        await expectText(page, t("c-snap"), "0", "arrastre al anclaje menor");
+        await press(page, "Escape");
+        await gone(page, 'dialog.z-drawer[data-side="bottom"]');
+        await page.click(t("c-top"));
+        await visible(page, 'dialog.z-drawer[data-side="top"]');
+        await settled(page);
+        const g = await page.locator('dialog.z-drawer[data-side="top"] .z-drawer__handle').boundingBox();
+        await page.mouse.move(g.x + g.width / 2, g.y + g.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(g.x + g.width / 2, g.y - 120, { steps: 8 });
+        // Pausa antes de soltar: sin inercia, cuenta solo la posición (la inercia la prueban las unitarias).
+        await page.waitForTimeout(150);
+        await page.mouse.up();
+        await gone(page, 'dialog.z-drawer[data-side="top"]', "arrastrar hacia arriba lo cierra");
       },
     },
   ];

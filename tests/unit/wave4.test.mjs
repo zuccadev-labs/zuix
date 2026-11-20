@@ -225,3 +225,31 @@ describe("core/interest", async () => {
     assert.equal(bridgeTab(trigger, false, { ...ctx, tabbables: [] }), null);
   });
 });
+
+describe("core/sheet", async () => {
+  const { sheetRelease, snapKey } = await core("sheet");
+  test("al soltar: cierra por debajo del menor o va al anclaje más cercano con la inercia", () => {
+    const sizes = [400, 850];
+    assert.deepEqual(sheetRelease({ offset: 100, velocity: 0, sizes, current: 1 }), { close: false, index: 1 });
+    assert.deepEqual(sheetRelease({ offset: 300, velocity: 0, sizes, current: 1 }), { close: false, index: 0 });
+    assert.deepEqual(sheetRelease({ offset: 100, velocity: 2, sizes, current: 1 }), { close: false, index: 0 });
+    assert.deepEqual(sheetRelease({ offset: 250, velocity: 0, sizes, current: 0 }), { close: true });
+    assert.deepEqual(sheetRelease({ offset: -400, velocity: 0, sizes, current: 0 }), { close: false, index: 1 });
+    assert.deepEqual(sheetRelease({ offset: 50, velocity: 0, sizes: [300], current: 0 }), { close: false, index: 0 });
+    assert.deepEqual(sheetRelease({ offset: 120, velocity: 0, sizes: [300], current: 0 }), { close: true });
+    assert.deepEqual(sheetRelease({ offset: 10, velocity: 1, sizes: [300], current: 0 }), { close: true });
+  });
+  test("teclas del asa según el lado", () => {
+    assert.equal(snapKey("ArrowUp", "bottom", 0, 2), 1);
+    assert.equal(snapKey("ArrowDown", "bottom", 1, 2), 0);
+    assert.equal(snapKey("ArrowDown", "top", 0, 3), 1);
+    assert.equal(snapKey("PageUp", "top", 2, 3), 1);
+    assert.equal(snapKey("ArrowRight", "left", 0, 2), 1);
+    assert.equal(snapKey("ArrowRight", "right", 1, 2), 0);
+    assert.equal(snapKey("End", "bottom", 0, 3), 2);
+    assert.equal(snapKey("Home", "bottom", 2, 3), 0);
+    assert.equal(snapKey("ArrowUp", "bottom", 1, 2), 1);
+    assert.equal(snapKey("a", "bottom", 0, 2), undefined);
+    assert.equal(snapKey("ArrowUp", "bottom", 0, 0), undefined);
+  });
+});

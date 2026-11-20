@@ -450,4 +450,45 @@ export default async function ({ page, test, ok, card, browserName }) {
       "z:close",
     );
   });
+
+  /* ---------- Drawer con anclajes ---------- */
+  await test("Drawer: hoja inferior con anclajes (slider con flechas), arrastre al anclaje menor y por debajo cierra", async () => {
+    const box = await inject("Drawer", 1);
+    await box.locator("[data-z-open]").click();
+    const sheet = page.locator("#comments");
+    await sheet.waitFor({ state: "visible" });
+    await page.waitForTimeout(600);
+    const handle = sheet.locator(".z-drawer__handle");
+    const tall = (await sheet.boundingBox()).height;
+    ok(Math.abs(tall - 0.85 * 1000) < 30, `85 %: ${tall}`);
+    await handle.focus();
+    await press("ArrowDown");
+    ok(
+      (await handle.getAttribute("aria-valuenow")) === "0" && (await handle.getAttribute("aria-valuetext")) === "40%",
+      "flecha abajo: 40 %",
+    );
+    await page.waitForTimeout(400);
+    const short = (await sheet.boundingBox()).height;
+    ok(Math.abs(short - 400) < 30, `40 %: ${short}`);
+    await press("End");
+    ok((await sheet.getAttribute("data-snap")) === "1", "Fin: el mayor");
+    await page.waitForTimeout(600);
+    const h = await handle.boundingBox();
+    await page.mouse.move(h.x + h.width / 2, h.y + h.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(h.x + h.width / 2, h.y + 380, { steps: 8 });
+    // Pausa antes de soltar: sin inercia, cuenta solo la posición (la inercia la prueban las unitarias).
+    await page.waitForTimeout(150);
+    await page.mouse.up();
+    ok((await sheet.getAttribute("data-snap")) === "0", "arrastre al anclaje menor");
+    await page.waitForTimeout(600);
+    const h2 = await handle.boundingBox();
+    await page.mouse.move(h2.x + h2.width / 2, h2.y + h2.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(h2.x + h2.width / 2, h2.y + 330, { steps: 8 });
+    // Pausa antes de soltar: sin inercia, cuenta solo la posición (la inercia la prueban las unitarias).
+    await page.waitForTimeout(150);
+    await page.mouse.up();
+    await sheet.waitFor({ state: "hidden", timeout: 2000 });
+  });
 }

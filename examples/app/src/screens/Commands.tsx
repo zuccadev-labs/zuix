@@ -9,6 +9,7 @@ import {
   Avatar,
   Collapsible,
   Command,
+  Drawer,
   HoverCard,
   Kbd,
   IconButton,
@@ -49,6 +50,7 @@ export function Commands() {
   const [details, setDetails] = useState(false);
   const [banner, setBanner] = useState(true);
   const [statusBar, setStatusBar] = useState(false);
+  const [snap, setSnap] = useState(1);
   const [selected, setSelected] = useState<string[]>([]);
   const toggleFile = (name: string) => setSelected((list) => (list.includes(name) ? list.filter((n) => n !== name) : [...list, name]));
   const domain = useRef<HTMLInputElement | null>(null);
@@ -143,6 +145,30 @@ export function Commands() {
           <p className="app-muted">
             Status bar: <output data-testid="c-statusbar">{String(statusBar)}</output>
           </p>
+        </Card>
+      </PageSection>
+
+      <PageSection title="Sheets">
+        <Card className="app-demo">
+          <CardHeader title="Drawer" subtitle="Snap points and drag to close" />
+          <Stack gap={8}>
+            <Drawer
+              side="bottom"
+              title="Comments"
+              snapPoints={[0.4, 0.85]}
+              snapPoint={snap}
+              onSnapPointChange={setSnap}
+              trigger={<Button data-testid="c-sheet">Comments</Button>}
+            >
+              <p>Drag the handle or use the arrow keys on it.</p>
+            </Drawer>
+            <Drawer side="top" size="sm" title="Search" dragToClose trigger={<Button data-testid="c-top">Search from top</Button>}>
+              <Input aria-label="Search" placeholder="Search…" />
+            </Drawer>
+            <p className="app-muted">
+              Snap: <output data-testid="c-snap">{snap}</output>
+            </p>
+          </Stack>
         </Card>
       </PageSection>
 

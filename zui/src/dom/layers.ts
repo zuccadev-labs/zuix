@@ -12,12 +12,17 @@
 //              Tab entra en la capa y sale hacia lo que sigue al disparador. z:open y z:close en la capa.
 // ActionBar    .z-toolbar.z-actionbar[role=toolbar] (el foco itinerante es el de Toolbar). button.z-actionbar__close o
 //              Escape dentro de la barra emiten z:close (cancelable) y, si nadie lo cancela, la ocultan (`hidden`).
+// Drawer       dialog.z-drawer[data-drag] con button.z-drawer__handle: arrastrar el asa hacia el borde lo cierra. Con
+//              data-snap-points="0.4 0.9" (top o bottom) y data-snap="1", el asa (role=slider) cambia el alto entre
+//              anclajes con el puntero o las flechas. z:change { snap } en el cajón.
 import { focusQuiet, nextTabbable, tabbable } from "../core/focus";
 import { bridgeTab, createInterest, type Interest, type InterestSource } from "../core/interest";
 import { pushLayer } from "../core/layers";
+import { attachSheet, type SheetSide } from "../core/sheet";
 import { place, type Placement } from "../core/place";
 import { afterExit } from "../core/presence";
 import { emit, inDom } from "./forms-popup";
+import { closeDialog } from "./index";
 import { byRef, type Listen } from "./shared";
 
 /* ---------- Banner ---------- */
@@ -29,6 +34,47 @@ export function dismissBanner(banner: HTMLElement): boolean {
   banner.hidden = true;
   focusQuiet(next);
   return true;
+}
+
+/* ---------- Drawer que se arrastra ---------- */
+
+const sheets = new WeakMap<HTMLElement, () => void>();
+const snapsOf = (drawer: HTMLElement) =>
+  (drawer.dataset.snapPoints ?? "")
+    .split(/[\s,]+/)
+    .map(Number)
+    .filter((n) => n > 0 && n <= 1);
+
+/** Lleva un cajón con anclajes al anclaje `index`: alto, `data-snap`, valor del asa y `z:change { snap }`. */
+export function setDrawerSnap(drawer: HTMLElement, index: number): void {
+  const snaps = snapsOf(drawer);
+  if (!snaps.length) return;
+  const i = Math.min(Math.max(index, 0), snaps.length - 1);
+  const changed = drawer.dataset.snap !== String(i);
+  drawer.dataset.snap = String(i);
+  drawer.style.setProperty("--z-drawer-snap", String(snaps[i]));
+  const handle = drawer.querySelector<HTMLElement>(":scope > .z-drawer__handle");
+  if (handle) {
+    handle.setAttribute("aria-valuenow", String(i));
+    handle.setAttribute("aria-valuetext", `${Math.round(snaps[i]! * 100)}%`);
+  }
+  if (changed) emit(drawer, "change", { snap: i });
+}
+
+function attachDrawer(drawer: HTMLElement): void {
+  const handle = drawer.querySelector<HTMLElement>(":scope > .z-drawer__handle");
+  if (!handle || sheets.has(drawer)) return;
+  if (snapsOf(drawer).length) setDrawerSnap(drawer, Number(drawer.dataset.snap ?? snapsOf(drawer).length - 1));
+  sheets.set(
+    drawer,
+    attachSheet(drawer, handle, {
+      side: (drawer.dataset.side as SheetSide) ?? "right",
+      snaps: () => snapsOf(drawer),
+      current: () => Number(drawer.dataset.snap ?? 0),
+      onSnap: (index) => setDrawerSnap(drawer, index),
+      onClose: () => closeDialog(drawer as HTMLDialogElement),
+    }),
+  );
 }
 
 /* ---------- ActionBar ---------- */
@@ -218,6 +264,16 @@ export function setup(on: Listen): void {
     if (target.close) closeHint(at.hint, false);
     focusQuiet(target.focus);
   });
+  on(document, "z:open", (event) => {
+    const drawer = event.target instanceof HTMLElement && event.target.matches("dialog.z-drawer[data-drag]") ? event.target : null;
+    if (drawer && inDom(drawer)) attachDrawer(drawer);
+  });
+  on(document, "z:close", (event) => {
+    const drawer = event.target instanceof HTMLElement ? event.target : null;
+    if (!drawer || !sheets.has(drawer)) return;
+    sheets.get(drawer)?.();
+    sheets.delete(drawer);
+  });
   on(document, "scroll", () => openHints.forEach(positionHint), { capture: true, passive: true });
   on(window, "resize", () => openHints.forEach(positionHint));
   on(document, "click", (event) => {
@@ -227,6 +283,12 @@ export function setup(on: Listen): void {
     const banner = close?.closest<HTMLElement>(".z-banner");
     if (banner) {
       dismissBanner(banner);
+      return;
+    }
+    // Asa de un cajón sin anclajes: el clic (o Intro y Espacio) lo cierra.
+    const grip = target.closest(".z-drawer__handle:not([role='slider'])")?.closest<HTMLDialogElement>("dialog.z-drawer");
+    if (grip && inDom(grip)) {
+      closeDialog(grip);
       return;
     }
     const barClose = target.closest(".z-actionbar__close")?.closest<HTMLElement>(".z-actionbar");

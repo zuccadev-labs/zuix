@@ -56,6 +56,11 @@ radios y material de los tokens.
   - `ActionBar`: barra flotante de acciones sobre una selección (recuento vivo, acciones y cierre) sobre Toolbar;
     `fixed`, `sticky` o `inline`; Escape y el cierre vacían la selección. En `/dom`, `.z-actionbar` con `z:close`
     cancelable y `closeActionBar()`.
+  - `Drawer`: lado `top`, asa para arrastrar y cerrar (`dragToClose`) y puntos de anclaje (`snapPoints`,
+    `snapPoint`, `defaultSnapPoint`, `onSnapPointChange`, `handleLabel`) en `top` y `bottom`: el asa es un slider
+    con flechas, Re Pág/Av Pág, Inicio y Fin, y el arrastre va al anclaje más cercano con su inercia o cierra por
+    debajo del menor. Lógica en `core/sheet` (`sheetRelease`, `snapKey`, `attachSheet`). En `/dom`,
+    `dialog.z-drawer[data-drag]` con `.z-drawer__handle`, `data-snap-points` y `setDrawerSnap()`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

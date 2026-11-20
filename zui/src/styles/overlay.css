@@ -295,6 +295,94 @@
     max-height: min(var(--z-drawer-size), calc(100dvh - 2 * var(--z-shell-gap)));
     --z-drawer-from-y: 18px;
   }
+  .z-drawer[data-side="top"] {
+    inset-block-start: var(--z-shell-gap);
+    inset-inline: var(--z-shell-gap);
+    width: auto;
+    max-height: min(var(--z-drawer-size), calc(100dvh - 2 * var(--z-shell-gap)));
+    --z-drawer-from-y: -18px;
+  }
+  /* Puntos de anclaje: el alto sale del anclaje activo (fracción de la ventana) menos lo que se arrastra. */
+  .z-drawer[data-snap] {
+    height: calc(var(--z-drawer-snap) * 100dvh - var(--z-drawer-drag, 0px));
+    max-height: calc(100dvh - 2 * var(--z-shell-gap));
+    min-height: var(--z-space-14);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-drawer[data-snap]:not([data-dragging]) {
+      transition: height var(--z-duration-slow) var(--z-ease-emphasized);
+    }
+  }
+  /* Sin anclajes, el cajón sigue al dedo hacia su borde; al soltar vuelve (o se cierra). */
+  .z-drawer[data-drag]:not([data-snap]) {
+    translate: var(--z-drawer-drag-x, 0) var(--z-drawer-drag-y, 0);
+  }
+  .z-drawer[data-drag][data-side="bottom"]:not([data-snap]) {
+    --z-drawer-drag-y: var(--z-drawer-drag, 0px);
+  }
+  .z-drawer[data-drag][data-side="top"]:not([data-snap]) {
+    --z-drawer-drag-y: calc(var(--z-drawer-drag, 0px) * -1);
+  }
+  .z-drawer[data-drag][data-side="right"]:not([data-snap]) {
+    --z-drawer-drag-x: var(--z-drawer-drag, 0px);
+  }
+  .z-drawer[data-drag][data-side="left"]:not([data-snap]) {
+    --z-drawer-drag-x: calc(var(--z-drawer-drag, 0px) * -1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-drawer[data-drag]:not([data-snap], [data-dragging]) {
+      transition: translate var(--z-duration-normal) var(--z-ease-emphasized);
+    }
+  }
+  /* Asa: una barra corta centrada en el borde libre; el área de pulsación cubre toda la franja. */
+  .z-drawer__handle {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 100%;
+    block-size: var(--z-space-6);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-drawer[data-dragging] .z-drawer__handle {
+    cursor: grabbing;
+  }
+  .z-drawer[data-side="top"] .z-drawer__handle {
+    order: 99;
+  }
+  .z-drawer:is([data-side="left"], [data-side="right"]) .z-drawer__handle {
+    position: absolute;
+    inset-block: 0;
+    inline-size: var(--z-space-4);
+    block-size: auto;
+    z-index: var(--z-layer-raised);
+  }
+  .z-drawer[data-side="right"] .z-drawer__handle {
+    inset-inline-start: 0;
+  }
+  .z-drawer[data-side="left"] .z-drawer__handle {
+    inset-inline-end: 0;
+  }
+  .z-drawer__grip {
+    inline-size: var(--z-space-9);
+    block-size: 4px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-line-strong);
+  }
+  .z-drawer:is([data-side="left"], [data-side="right"]) .z-drawer__grip {
+    inline-size: 4px;
+    block-size: var(--z-space-9);
+  }
+  .z-drawer__handle:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+    border-radius: var(--z-control-radius-sm);
+  }
   .z-drawer[data-state="open"] {
     animation: z-ov-drawer-in var(--z-duration-slow) var(--z-ease-emphasized) both;
   }

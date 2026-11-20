@@ -67,6 +67,7 @@ const COVERED = [
   "zui/src/core/roving.ts",
   "zui/src/core/scroll-lock.ts",
   "zui/src/core/segments.ts",
+  "zui/src/core/sheet.ts",
   "zui/src/core/search.ts",
   "zui/src/core/slider.ts",
   "zui/src/core/spatial.ts",
