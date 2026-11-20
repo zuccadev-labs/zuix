@@ -30,7 +30,6 @@
 
   /* ---------- Año: 12 minimeses ---------- */
   .z-yeargrid {
-    container: z-yeargrid / inline-size;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(calc(var(--z-space-20) * 3 - var(--z-space-2)), 1fr));
     gap: var(--z-space-5) var(--z-space-6);
@@ -118,7 +117,7 @@
     font-weight: var(--z-weight-semibold);
     box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
   }
-  @container z-yeargrid (max-width: 560px) {
+  @container z-agenda (max-width: 640px) {
     .z-yeargrid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--z-space-3-5) var(--z-space-2-5);
@@ -985,12 +984,14 @@
   /* ---------- Franjas de cita (SlotPicker) ---------- */
   .z-slotpicker {
     container: z-slotpicker / inline-size;
-    display: grid;
-    grid-template-columns: auto minmax(calc(var(--z-space-20) * 3), 1fr);
     min-inline-size: 0;
     overflow: hidden;
     border-radius: var(--z-panel-radius);
     color: var(--z-fg);
+  }
+  .z-slotpicker__frame {
+    display: grid;
+    grid-template-columns: auto minmax(calc(var(--z-space-20) * 3), 1fr);
   }
   .z-slotpicker__cal,
   .z-slotpicker__times {
@@ -1117,7 +1118,7 @@
     inline-size: 100%;
   }
   @container z-slotpicker (max-width: 640px) {
-    .z-slotpicker {
+    .z-slotpicker__frame {
       grid-template-columns: minmax(0, 1fr);
     }
     .z-slotpicker__cal {
@@ -1417,11 +1418,6 @@
   }
   .z-heatmap[data-outline] .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
     box-shadow: inset 0 0 0 1.5px var(--z-heatmap-hue);
-  }
-  @container z-heatmap (max-width: 560px) {
-    .z-heatmap {
-      padding: var(--z-space-3);
-    }
   }
   @media (forced-colors: active) {
     .z-heatmap__cell {

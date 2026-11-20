@@ -181,127 +181,131 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
       { class: "z-slotpicker z-liquid", "data-hour-cycle": state.hourCycle },
       h(
         "div",
-        { class: "z-slotpicker__cal" },
-        h("h3", { class: "z-slotpicker__title" }, labels.title),
-        {
-          slot: "calendar",
-          k: "calendar",
-          p: {
-            name: "day",
-            className: "z-slotpicker__calendar",
-            props: {
-              value: state.date,
-              today: config.today,
-              locale,
-              weekStartsOn: config.weekStart,
-              cellSize: "lg",
-              isDateDisabled: (d: string) => !days.has(d),
-              getDayDescription: (d: string) => (days.has(d) ? null : labels.noTimes),
-              modifiers: { available: (d: string) => days.has(d) },
-            },
-            attrs: {
-              "data-mode": "single",
-              "data-value": state.date ?? "",
-              "data-today": config.today,
-              "data-locale": locale,
-              "data-week-start": config.weekStart,
-              "data-cell-size": "lg",
-            },
-            options: {
-              isDateDisabled: (d: string) => !days.has(d),
-              dayDescription: (d: string) => (days.has(d) ? null : labels.noTimes),
-              modifiers: { available: (d: string) => days.has(d) },
-            },
-          },
-        },
-        h(
-          "label",
-          { class: "z-slotpicker__tz" },
-          h("span", null, labels.timeZone),
-          config.timeZones
-            ? h(
-                "span",
-                { class: "z-slotpicker__select-wrap" },
-                icon("globe-alt", 14),
-                h(
-                  "select",
-                  { class: "z-slotpicker__select" },
-                  ...zones.map((z) => h("option", { key: z, value: z, selected: z === tz }, zoneText(z))),
-                ),
-                icon("chevron-up-down", 14),
-              )
-            : h("span", { class: "z-slotpicker__select-wrap", "data-static": "" }, icon("globe-alt", 14), zoneText(tz)),
-        ),
-      ),
-      h(
-        "div",
-        { class: "z-slotpicker__times" },
+        { class: "z-slotpicker__frame" },
         h(
           "div",
-          { class: "z-slotpicker__head" },
+          { class: "z-slotpicker__cal" },
+          h("h3", { class: "z-slotpicker__title" }, labels.title),
+          {
+            slot: "calendar",
+            k: "calendar",
+            p: {
+              name: "day",
+              className: "z-slotpicker__calendar",
+              props: {
+                value: state.date,
+                today: config.today,
+                locale,
+                weekStartsOn: config.weekStart,
+                cellSize: "lg",
+                isDateDisabled: (d: string) => !days.has(d),
+                getDayDescription: (d: string) => (days.has(d) ? null : labels.noTimes),
+                modifiers: { available: (d: string) => days.has(d) },
+              },
+              attrs: {
+                "data-mode": "single",
+                "data-value": state.date ?? "",
+                "data-today": config.today,
+                "data-locale": locale,
+                "data-week-start": config.weekStart,
+                "data-cell-size": "lg",
+              },
+              options: {
+                isDateDisabled: (d: string) => !days.has(d),
+                dayDescription: (d: string) => (days.has(d) ? null : labels.noTimes),
+                modifiers: { available: (d: string) => days.has(d) },
+              },
+            },
+          },
           h(
-            "div",
-            null,
-            h(
-              "h3",
-              { class: "z-slotpicker__day", id: headingId },
-              state.date ? fmt(locale, { weekday: "long", day: "numeric", month: "long" }).format(parse(state.date)) : labels.times,
-            ),
-            h(
-              "p",
-              { class: "z-slotpicker__count" },
-              list.length === 1 ? labels.availableOne : list.length ? fill(labels.available, { n: list.length }) : labels.none,
-            ),
-          ),
-          h(
-            "div",
-            { class: "z-segmented z-slotpicker__cycle", role: "group", "aria-label": labels.hourCycle, "data-size": "sm" },
-            ...(["h12", "h23"] as const).map((c) =>
-              h(
-                "button",
-                {
-                  key: c,
-                  type: "button",
-                  class: "z-segmented__item z-slotpicker__cycle-btn",
-                  "data-cycle": c,
-                  "aria-pressed": state.hourCycle === c ? "true" : "false",
-                  "data-state": state.hourCycle === c ? "on" : "off",
-                },
-                h("span", { class: "z-segmented__label" }, c === "h12" ? labels.h12 : labels.h24),
-              ),
-            ),
+            "label",
+            { class: "z-slotpicker__tz" },
+            h("span", null, labels.timeZone),
+            config.timeZones
+              ? h(
+                  "span",
+                  { class: "z-slotpicker__select-wrap" },
+                  icon("globe-alt", 14),
+                  h(
+                    "select",
+                    { class: "z-slotpicker__select" },
+                    ...zones.map((z) => h("option", { key: z, value: z, selected: z === tz }, zoneText(z))),
+                  ),
+                  icon("chevron-up-down", 14),
+                )
+              : h("span", { class: "z-slotpicker__select-wrap", "data-static": "" }, icon("globe-alt", 14), zoneText(tz)),
           ),
         ),
-        list.length
-          ? h(
+        h(
+          "div",
+          { class: "z-slotpicker__times" },
+          h(
+            "div",
+            { class: "z-slotpicker__head" },
+            h(
               "div",
-              { class: "z-slotpicker__list", role: "listbox", "aria-labelledby": headingId },
-              ...list.map((ms) =>
+              null,
+              h(
+                "h3",
+                { class: "z-slotpicker__day", id: headingId },
+                state.date ? fmt(locale, { weekday: "long", day: "numeric", month: "long" }).format(parse(state.date)) : labels.times,
+              ),
+              h(
+                "p",
+                { class: "z-slotpicker__count" },
+                list.length === 1 ? labels.availableOne : list.length ? fill(labels.available, { n: list.length }) : labels.none,
+              ),
+            ),
+            h(
+              "div",
+              { class: "z-segmented z-slotpicker__cycle", role: "group", "aria-label": labels.hourCycle, "data-size": "sm" },
+              ...(["h12", "h23"] as const).map((c) =>
                 h(
-                  "div",
+                  "button",
                   {
-                    key: `s${ms}`,
-                    id: `${uid}-slot-${ms}`,
-                    class: "z-slotpicker__slot",
-                    role: "option",
-                    "data-slot": ms,
-                    "data-focus-id": `slot:${ms}`,
-                    "aria-selected": state.value === ms ? "true" : "false",
-                    tabindex: focus === ms ? 0 : -1,
+                    key: c,
+                    type: "button",
+                    class: "z-segmented__item z-slotpicker__cycle-btn",
+                    "data-cycle": c,
+                    "aria-pressed": state.hourCycle === c ? "true" : "false",
+                    "data-state": state.hourCycle === c ? "on" : "off",
                   },
-                  h("time", { datetime: new Date(ms).toISOString() }, label(ms)),
+                  h("span", { class: "z-segmented__label" }, c === "h12" ? labels.h12 : labels.h24),
                 ),
               ),
-            )
-          : null,
-        selectedInList
-          ? h(
-              "div",
-              { class: "z-slotpicker__confirm" },
-              h("span", { class: "z-slotpicker__chosen", role: "status" }, fill(labels.selected, { time: label(state.value!) })),
-              h("button", { type: "button", class: "z-btn z-btn--primary z-slotpicker__next", "data-size": "lg" }, labels.next),
-            )
-          : null,
+            ),
+          ),
+          list.length
+            ? h(
+                "div",
+                { class: "z-slotpicker__list", role: "listbox", "aria-labelledby": headingId },
+                ...list.map((ms) =>
+                  h(
+                    "div",
+                    {
+                      key: `s${ms}`,
+                      id: `${uid}-slot-${ms}`,
+                      class: "z-slotpicker__slot",
+                      role: "option",
+                      "data-slot": ms,
+                      "data-focus-id": `slot:${ms}`,
+                      "aria-selected": state.value === ms ? "true" : "false",
+                      tabindex: focus === ms ? 0 : -1,
+                    },
+                    h("time", { datetime: new Date(ms).toISOString() }, label(ms)),
+                  ),
+                ),
+              )
+            : null,
+          selectedInList
+            ? h(
+                "div",
+                { class: "z-slotpicker__confirm" },
+                h("span", { class: "z-slotpicker__chosen", role: "status" }, fill(labels.selected, { time: label(state.value!) })),
+                h("button", { type: "button", class: "z-btn z-btn--primary z-slotpicker__next", "data-size": "lg" }, labels.next),
+              )
+            : null,
+        ),
       ),
     );
   },
