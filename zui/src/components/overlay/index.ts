@@ -28,3 +28,4 @@ export {
 export { HoverCard, type HoverCardProps } from "./HoverCard";
 export { Toggletip, type ToggletipProps } from "./Toggletip";
 export { ActionBar, type ActionBarProps } from "./ActionBar";
+export { Tour, type TourProps, type TourStep } from "./Tour";

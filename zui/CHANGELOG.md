@@ -61,6 +61,10 @@ radios y material de los tokens.
     con flechas, Re Pág/Av Pág, Inicio y Fin, y el arrastre va al anclaje más cercano con su inercia o cierra por
     debajo del menor. Lógica en `core/sheet` (`sheetRelease`, `snapKey`, `attachSheet`). En `/dom`,
     `dialog.z-drawer[data-drag]` con `.z-drawer__handle`, `data-snap-points` y `setDrawerSnap()`.
+  - `Tour`: recorrido guiado no modal con una tarjeta (role=dialog con encabezado) anclada a cada elemento, anillo
+    que lo resalta, progreso, Anterior, Siguiente/Hecho y Saltar; el foco entra en la tarjeta en cada paso, Escape
+    o Saltar lo cierran y el foco vuelve a donde estaba; las flechas laterales cambian de paso. Lógica en
+    `core/tour`. En `/dom`, `startTour()`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

@@ -297,5 +297,33 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
         await gone(page, 'dialog.z-drawer[data-side="top"]', "arrastrar hacia arriba lo cierra");
       },
     },
+    {
+      name: "Oleada 4 · Tour: foco en la tarjeta en cada paso, anillo, flechas y Atrás, Hecho y Escape devuelven el foco",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.click(t("c-tour-start"));
+        await visible(page, ".z-tour");
+        await focusOn(page, ".z-tour .z-tour__primary", "el foco entra en Siguiente");
+        await visible(page, ".z-tour__ring");
+        const name = await page.locator(".z-tour").getAttribute("aria-labelledby");
+        await expectText(page, `[id="${name}"]`, "Application menus");
+        await press(page, "Enter");
+        await expectText(page, ".z-tour .z-tour__title", "Format the text");
+        await expectAttr(page, ".z-tour", "data-side", "top");
+        await press(page, "ArrowLeft");
+        await expectText(page, ".z-tour .z-tour__title", "Application menus");
+        await press(page, "ArrowRight", "ArrowRight");
+        await expectText(page, ".z-tour .z-tour__primary", "Done");
+        await press(page, "Enter");
+        await gone(page, ".z-tour");
+        await expectText(page, t("c-tour"), "done");
+        await focusOn(page, t("c-tour-start"), "el foco vuelve al botón");
+        await page.click(t("c-tour-start"));
+        await visible(page, ".z-tour");
+        await press(page, "Escape");
+        await gone(page, ".z-tour");
+        await expectText(page, t("c-tour"), "skipped");
+      },
+    },
   ];
 }

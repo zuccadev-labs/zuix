@@ -2191,6 +2191,29 @@
      "source": "manual"
     }
    ]
+  },
+  "Tour": {
+   "group": "overlay",
+   "classes": [
+    "z-tour",
+    "z-tour__header",
+    "z-tour__progress",
+    "z-tour__title",
+    "z-tour__body",
+    "z-tour__footer",
+    "z-tour__primary",
+    "z-tour__close",
+    "z-tour__ring"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Recorrido de tres pasos",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"tour-start\">Take the tour</button>\n\n<div class=\"z-liquid z-tour\" role=\"group\" aria-label=\"Tour step preview\">\n  <header class=\"z-tour__header\">\n    <p class=\"z-tour__progress\">Step 1 of 3</p>\n    <h2 class=\"z-tour__title\">Create a project</h2>\n  </header>\n  <div class=\"z-tour__body\">Projects group your files and members.</div>\n  <footer class=\"z-tour__footer\">\n    <button type=\"button\" class=\"z-dialog-btn z-tour__skip\" data-variant=\"secondary\">Skip tour</button>\n    <span class=\"z-tour__spacer\"></span>\n    <button type=\"button\" class=\"z-dialog-btn z-tour__primary\" data-variant=\"primary\">Next</button>\n  </footer>\n</div>",
+     "source": "manual",
+     "script": "import { startTour } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#tour-start\").addEventListener(\"click\", () => {\n  startTour({\n    steps: [\n      { target: \"#tour-start\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n      { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n    ],\n  });\n});"
+    }
+   ]
   }
  }
 }

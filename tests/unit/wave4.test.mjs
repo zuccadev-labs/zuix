@@ -253,3 +253,26 @@ describe("core/sheet", async () => {
     assert.equal(snapKey("ArrowUp", "bottom", 0, 0), undefined);
   });
 });
+
+describe("core/tour", async () => {
+  const tour = await core("tour");
+  test("progreso, paso acotado, anillo y centro", () => {
+    assert.equal(tour.tourProgress("Step {step} of {count}", 1, 4), "Step 2 of 4");
+    assert.equal(tour.clampStep(9, 3), 2);
+    assert.equal(tour.clampStep(-1, 3), 0);
+    assert.equal(tour.clampStep(0, 0), -1);
+    const view = { width: 1000, height: 800 };
+    assert.deepEqual(tour.ringBox({ left: 10, top: 20, width: 100, height: 40 }, 6, view), { left: 4, top: 14, width: 112, height: 52 });
+    assert.deepEqual(tour.ringBox({ left: 2, top: 2, width: 10, height: 10 }, 6, view), { left: 0, top: 0, width: 18, height: 18 });
+    assert.equal(tour.ringBox(null, 6, view), null);
+    assert.equal(tour.ringBox({ left: 0, top: 0, width: 0, height: 0 }, 6, view), null);
+    assert.equal(tour.ringBox({ left: 2000, top: 20, width: 10, height: 10 }, 6, view), null);
+    assert.deepEqual(tour.centerBox(view), { left: 500, top: 800 / 3, width: 0, height: 0 });
+  });
+  test("teclas laterales, reflejadas en RTL", () => {
+    assert.equal(tour.tourKey("ArrowRight"), "next");
+    assert.equal(tour.tourKey("ArrowLeft"), "prev");
+    assert.equal(tour.tourKey("ArrowLeft", true), "next");
+    assert.equal(tour.tourKey("Enter"), null);
+  });
+});

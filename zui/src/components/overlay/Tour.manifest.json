@@ -1,0 +1,116 @@
+{
+  "name": "Tour",
+  "group": "overlay",
+  "description": "Recorrido guiado por una pantalla: una tarjeta anclada a cada elemento que explica, con anillo, progreso y saltar.",
+  "import": "import { Tour, type TourStep } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    {
+      "name": "steps",
+      "type": "TourStep[]",
+      "required": true,
+      "description": "{ target?: string | RefObject, title, content?, side?, align? }. Sin `target` (o si no está), el paso va centrado."
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "description": "Paso actual, controlado."
+    },
+    {
+      "name": "defaultStep",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "onStepChange",
+      "type": "(step: number) => void"
+    },
+    {
+      "name": "onFinish",
+      "type": "() => void",
+      "description": "Al terminar con «Done»."
+    },
+    {
+      "name": "onSkip",
+      "type": "() => void",
+      "description": "Al saltar con «Skip», Escape o el cierre."
+    },
+    {
+      "name": "progressLabel",
+      "type": "string",
+      "default": "Step {step} of {count}"
+    },
+    {
+      "name": "nextLabel",
+      "type": "string",
+      "default": "Next"
+    },
+    {
+      "name": "backLabel",
+      "type": "string",
+      "default": "Back"
+    },
+    {
+      "name": "doneLabel",
+      "type": "string",
+      "default": "Done"
+    },
+    {
+      "name": "skipLabel",
+      "type": "string",
+      "default": "Skip tour"
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close tour"
+    },
+    {
+      "name": "ringPadding",
+      "type": "number",
+      "default": 6
+    }
+  ],
+  "states": ["closed", "open"],
+  "tokens": ["popup-bg", "popup-radius", "accent-ring", "accent", "control-radius-lg", "fg-muted", "text-title", "layer-popover"],
+  "classes": [
+    "z-tour",
+    "z-tour__header",
+    "z-tour__progress",
+    "z-tour__title",
+    "z-tour__body",
+    "z-tour__footer",
+    "z-tour__primary",
+    "z-tour__close",
+    "z-tour__ring"
+  ],
+  "a11y": "Cada paso es una tarjeta no modal (popover manual) con role=dialog y su encabezado como nombre: el título tiene que entenderse sin ver la pantalla. Al abrir y en cada paso el foco entra en la tarjeta, en Siguiente o Hecho; la página sigue usable (no se vuelve inerte). Escape, Saltar o el cierre terminan el recorrido y el foco vuelve a donde estaba; Flecha izquierda y derecha (invertidas en RTL) cambian de paso con el foco dentro. El elemento del paso se desplaza a la vista y un anillo lo resalta (decorativo). No se abre solo al cargar la página: lo inicia la persona.",
+  "examples": [
+    {
+      "title": "Recorrido de tres pasos",
+      "code": "<Tour\n  open={touring}\n  onOpenChange={setTouring}\n  steps={[\n    { target: \"#new-project\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n    { target: \"#search\", title: \"Search everything\", content: \"Press Ctrl K from anywhere.\", side: \"bottom\", align: \"start\" },\n    { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo, con primitiva propia (core/tour, popover manual). Material de TourPopover y TourRing de zutool. Referencia de variantes: Tour de Shark UI.",
+  "html": [
+    {
+      "title": "Recorrido de tres pasos",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"tour-start\">Take the tour</button>\n\n<div class=\"z-liquid z-tour\" role=\"group\" aria-label=\"Tour step preview\">\n  <header class=\"z-tour__header\">\n    <p class=\"z-tour__progress\">Step 1 of 3</p>\n    <h2 class=\"z-tour__title\">Create a project</h2>\n  </header>\n  <div class=\"z-tour__body\">Projects group your files and members.</div>\n  <footer class=\"z-tour__footer\">\n    <button type=\"button\" class=\"z-dialog-btn z-tour__skip\" data-variant=\"secondary\">Skip tour</button>\n    <span class=\"z-tour__spacer\"></span>\n    <button type=\"button\" class=\"z-dialog-btn z-tour__primary\" data-variant=\"primary\">Next</button>\n  </footer>\n</div>",
+      "script": "import { startTour } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#tour-start\").addEventListener(\"click\", () => {\n  startTour({\n    steps: [\n      { target: \"#tour-start\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n      { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n    ],\n  });\n});"
+    }
+  ]
+}

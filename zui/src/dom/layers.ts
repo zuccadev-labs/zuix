@@ -15,15 +15,22 @@
 // Drawer       dialog.z-drawer[data-drag] con button.z-drawer__handle: arrastrar el asa hacia el borde lo cierra. Con
 //              data-snap-points="0.4 0.9" (top o bottom) y data-snap="1", el asa (role=slider) cambia el alto entre
 //              anclajes con el puntero o las flechas. z:change { snap } en el cajón.
-import { focusQuiet, nextTabbable, tabbable } from "../core/focus";
+// Tour         startTour({ steps: [{ target: "#id", title, content?, side?, align? }], …textos }): tarjeta no modal
+//              (role=dialog con encabezado) anclada al elemento de cada paso, con anillo, progreso, Anterior,
+//              Siguiente/Hecho y Saltar. El foco entra en la tarjeta en cada paso; Escape o Saltar cierran y el foco
+//              vuelve a donde estaba; flechas laterales cambian de paso. z:step { step } y z:close en la tarjeta.
+import { iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
+import { isRtl } from "../core/dir";
+import { activeElement, focusQuiet, nextTabbable, tabbable } from "../core/focus";
 import { bridgeTab, createInterest, type Interest, type InterestSource } from "../core/interest";
 import { pushLayer } from "../core/layers";
 import { attachSheet, type SheetSide } from "../core/sheet";
 import { place, type Placement } from "../core/place";
-import { afterExit } from "../core/presence";
+import { afterExit, reducedMotion } from "../core/presence";
+import { centerBox, clampStep, ringBox, tourKey, tourProgress } from "../core/tour";
 import { emit, inDom } from "./forms-popup";
 import { closeDialog } from "./index";
-import { byRef, type Listen } from "./shared";
+import { byRef, setMarkup, type Listen } from "./shared";
 
 /* ---------- Banner ---------- */
 
@@ -75,6 +82,162 @@ function attachDrawer(drawer: HTMLElement): void {
       onClose: () => closeDialog(drawer as HTMLDialogElement),
     }),
   );
+}
+
+/* ---------- Tour ---------- */
+
+export interface TourStepInit {
+  /** Selector del elemento que explica el paso; sin él (o si no está), el paso va centrado. */
+  target?: string;
+  title: string;
+  content?: string;
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
+}
+
+export interface TourInit {
+  steps: TourStepInit[];
+  start?: number;
+  progressLabel?: string;
+  nextLabel?: string;
+  backLabel?: string;
+  doneLabel?: string;
+  skipLabel?: string;
+  closeLabel?: string;
+  ringPadding?: number;
+}
+
+export interface TourHandle {
+  next(): void;
+  prev(): void;
+  go(step: number): void;
+  close(): void;
+}
+
+let tourSerial = 0;
+
+/** Abre un recorrido guiado con el mismo marcado que el Tour de React. Devuelve sus controles. */
+export function startTour({
+  steps,
+  start = 0,
+  progressLabel = "Step {step} of {count}",
+  nextLabel = "Next",
+  backLabel = "Back",
+  doneLabel = "Done",
+  skipLabel = "Skip tour",
+  closeLabel = "Close tour",
+  ringPadding = 6,
+}: TourInit): TourHandle {
+  tourSerial += 1;
+  const id = `z-tour-${tourSerial}`;
+  const previous = activeElement();
+  const card = document.createElement("div");
+  card.id = id;
+  card.className = "z-liquid z-tour";
+  card.setAttribute("popover", "manual");
+  card.setAttribute("role", "dialog");
+  card.setAttribute("aria-labelledby", `${id}-title`);
+  setMarkup(
+    card,
+    `<header class="z-tour__header"><p class="z-tour__progress"></p><h2 class="z-tour__title" id="${id}-title"></h2></header><div class="z-tour__body"></div><footer class="z-tour__footer"><button type="button" class="z-dialog-btn z-tour__skip" data-variant="secondary"></button><span class="z-tour__spacer"></span><button type="button" class="z-dialog-btn z-tour__back" data-variant="secondary"></button><button type="button" class="z-dialog-btn z-tour__primary" data-variant="primary"></button></footer><button type="button" class="z-overlay-close z-tour__close"></button>`,
+  );
+  const close = card.querySelector<HTMLButtonElement>(".z-tour__close")!;
+  close.setAttribute("aria-label", closeLabel);
+  close.title = closeLabel;
+  setMarkup(close, iconSvg("x-mark", { size: 16 }));
+  const ring = document.createElement("div");
+  ring.className = "z-tour__ring";
+  ring.setAttribute("aria-hidden", "true");
+  document.body.append(ring, card);
+  let index = clampStep(start, steps.length);
+  let open = true;
+  const viewport = () => ({ width: document.documentElement.clientWidth, height: document.documentElement.clientHeight });
+  const targetOf = (step: TourStepInit | undefined) => {
+    if (!step?.target) return null;
+    try {
+      return document.querySelector(step.target);
+    } catch {
+      return null;
+    }
+  };
+  const position = () => {
+    const step = steps[index];
+    const el = targetOf(step);
+    const box = el ? ringBox(el.getBoundingClientRect(), ringPadding, viewport()) : null;
+    ring.hidden = !box;
+    if (box) Object.assign(ring.style, { left: `${box.left}px`, top: `${box.top}px`, width: `${box.width}px`, height: `${box.height}px` });
+    if (el) card.setAttribute("data-arrow", "");
+    else card.removeAttribute("data-arrow");
+    const placement = (
+      step?.align && step.align !== "center" ? `${step.side ?? "bottom"}-${step.align}` : (step?.side ?? "bottom")
+    ) as Placement;
+    place(card, box ?? centerBox(viewport()), placement, 10);
+  };
+  const render = () => {
+    const step = steps[index];
+    if (!step) return;
+    const last = index === steps.length - 1;
+    card.querySelector(".z-tour__progress")!.textContent = tourProgress(progressLabel, index, steps.length);
+    card.querySelector(".z-tour__title")!.textContent = step.title;
+    const body = card.querySelector<HTMLElement>(".z-tour__body")!;
+    body.textContent = step.content ?? "";
+    body.hidden = !step.content;
+    const skip = card.querySelector<HTMLElement>(".z-tour__skip")!;
+    skip.textContent = skipLabel;
+    skip.hidden = last;
+    const back = card.querySelector<HTMLElement>(".z-tour__back")!;
+    back.textContent = backLabel;
+    back.hidden = index === 0;
+    card.querySelector(".z-tour__primary")!.textContent = last ? doneLabel : nextLabel;
+    targetOf(step)?.scrollIntoView({ block: "center", inline: "nearest", behavior: reducedMotion() ? "auto" : "smooth" });
+    card.dataset.state = "open";
+    if (!card.matches(":popover-open")) card.showPopover();
+    position();
+    setTimeout(() => open && position(), 400);
+    focusQuiet(card.querySelector<HTMLElement>(".z-tour__primary"));
+    emit(card, "step", { step: index });
+  };
+  const wiring = new AbortController();
+  const finish = () => {
+    if (!open) return;
+    open = false;
+    wiring.abort();
+    release();
+    emit(card, "close", { step: index });
+    card.dataset.state = "closed";
+    ring.dataset.state = "closed";
+    const inside = card.contains(document.activeElement);
+    afterExit(card, () => {
+      if (card.matches(":popover-open")) card.hidePopover();
+      card.remove();
+      ring.remove();
+    });
+    if (inside || !activeElement()) focusQuiet(previous);
+  };
+  const go = (to: number) => {
+    if (!open) return;
+    if (to >= steps.length) return finish();
+    index = clampStep(to, steps.length);
+    render();
+  };
+  const release = pushLayer({ contains: (target) => card.contains(target), onEscape: finish });
+  document.addEventListener("scroll", position, { capture: true, passive: true, signal: wiring.signal });
+  window.addEventListener("resize", position, { signal: wiring.signal });
+  card.addEventListener("click", (event) => {
+    const button = event.target instanceof Element ? event.target.closest("button") : null;
+    if (!button) return;
+    if (button.matches(".z-tour__primary")) go(index + 1);
+    else if (button.matches(".z-tour__back")) go(index - 1);
+    else if (button.matches(".z-tour__skip, .z-tour__close")) finish();
+  });
+  card.addEventListener("keydown", (event) => {
+    const to = tourKey(event.key, isRtl(card));
+    if (!to || (to === "prev" && index === 0)) return;
+    event.preventDefault();
+    go(to === "next" ? index + 1 : index - 1);
+  });
+  render();
+  return { next: () => go(index + 1), prev: () => go(index - 1), go, close: finish };
 }
 
 /* ---------- ActionBar ---------- */

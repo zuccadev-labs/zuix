@@ -491,4 +491,40 @@ export default async function ({ page, test, ok, card, browserName }) {
     await page.mouse.up();
     await sheet.waitFor({ state: "hidden", timeout: 2000 });
   });
+
+  /* ---------- Tour ---------- */
+  await test("startTour: tarjeta anclada con anillo y foco en Siguiente, flechas, Escape cierra y devuelve el foco", async () => {
+    const start = card("Tour").locator("#tour-start");
+    await start.focus();
+    await page.evaluate(async () => {
+      const dom = await import("/zui/dist/zui.dom.js");
+      window.__tour = dom.startTour({
+        steps: [
+          { target: "#tour-start", title: "Create a project", content: "Projects group your files." },
+          { target: '[data-component="Toolbar"] [role="toolbar"]', title: "Format text", side: "top" },
+          { title: "You are ready" },
+        ],
+      });
+    });
+    const tour = page.locator(".z-tour[popover]");
+    await tour.waitFor({ state: "visible" });
+    ok((await tour.getAttribute("role")) === "dialog", "role=dialog");
+    const name = await tour.getAttribute("aria-labelledby");
+    ok((await page.locator(`[id="${name}"]`).textContent()) === "Create a project", "nombre del encabezado");
+    ok(await activeIs(".z-tour .z-tour__primary"), "el foco entra en Siguiente");
+    ok(await page.locator(".z-tour__ring").isVisible(), "anillo");
+    ok((await tour.locator(".z-tour__progress").textContent()) === "Step 1 of 3", "progreso");
+    await press("ArrowRight");
+    ok((await tour.locator(".z-tour__title").textContent()) === "Format text", "flecha derecha: paso 2");
+    ok((await tour.getAttribute("data-side")) === "top", "lado del paso");
+    await press("ArrowRight");
+    ok(
+      (await tour.locator(".z-tour__primary").textContent()) === "Done" && (await tour.locator(".z-tour__skip").isHidden()),
+      "último paso",
+    );
+    ok((await tour.getAttribute("data-arrow")) === null, "sin elemento: centrado y sin flecha");
+    await press("Escape");
+    await page.locator(".z-tour[popover]").waitFor({ state: "detached", timeout: 2000 });
+    ok(await activeIs("#tour-start"), "el foco vuelve a donde estaba");
+  });
 }

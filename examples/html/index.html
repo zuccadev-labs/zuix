@@ -2112,6 +2112,25 @@ pnpm dev</code>
 </button>
   </div>
 </section>
+<section class="z-card demo" data-component="Tour" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Tour</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-btn z-btn--secondary" data-size="md" id="tour-start">Take the tour</button>
+
+<div class="z-liquid z-tour" role="group" aria-label="Tour step preview">
+  <header class="z-tour__header">
+    <p class="z-tour__progress">Step 1 of 3</p>
+    <h2 class="z-tour__title">Create a project</h2>
+  </header>
+  <div class="z-tour__body">Projects group your files and members.</div>
+  <footer class="z-tour__footer">
+    <button type="button" class="z-dialog-btn z-tour__skip" data-variant="secondary">Skip tour</button>
+    <span class="z-tour__spacer"></span>
+    <button type="button" class="z-dialog-btn z-tour__primary" data-variant="primary">Next</button>
+  </footer>
+</div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">layout</h2>
 <div class="page__grid">
@@ -2545,6 +2564,16 @@ document.addEventListener("z:select", (event) => { if (event.target.closest("#ac
 // Toast
 document.querySelector("#save").addEventListener("click", () => {
   toast({ title: "Changes saved", description: "Your profile is up to date.", intent: "success" });
+});
+
+// Tour
+document.querySelector("#tour-start").addEventListener("click", () => {
+  startTour({
+    steps: [
+      { target: "#tour-start", title: "Create a project", content: "Projects group your files and members." },
+      { title: "You are ready", content: "You can restart this tour from Help." },
+    ],
+  });
 });
   </script>
 </body>

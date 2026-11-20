@@ -13,7 +13,8 @@
   .z-palette,
   .z-toast,
   .z-hovercard,
-  .z-toggletip {
+  .z-toggletip,
+  .z-tour {
     color: var(--z-fg);
     font-family: var(--z-font-sans);
     font-size: var(--z-text-body);
@@ -617,10 +618,90 @@
     display: none;
   }
 
+  /* ---------- Tour ---------- */
+  /* Tarjeta de cristal elevado anclada al elemento del paso, con flecha; el anillo lo resalta sin tapar la página. */
+  .z-tour {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    z-index: var(--z-layer-popover);
+    width: min(340px, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-4);
+    border-radius: var(--z-popup-radius);
+  }
+  .z-tour[data-state="closed"] {
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  .z-tour__header {
+    display: grid;
+    gap: var(--z-space-1);
+    padding-inline-end: var(--z-space-8);
+  }
+  .z-tour__progress {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-tour__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-tour__body {
+    margin-block-start: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
+  }
+  .z-tour__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+    margin-block-start: var(--z-space-4);
+  }
+  .z-tour__spacer {
+    flex: 1;
+  }
+  .z-tour [hidden],
+  .z-tour__ring[hidden] {
+    display: none;
+  }
+  .z-tour__close {
+    position: absolute;
+    inset-block-start: var(--z-space-2);
+    inset-inline-end: var(--z-space-2);
+  }
+  /* Anillo: contorno del acento alrededor del elemento del paso; no recibe el puntero. */
+  .z-tour__ring {
+    position: fixed;
+    z-index: var(--z-layer-popover);
+    border-radius: var(--z-control-radius-lg);
+    outline: 2px solid var(--z-accent-ring);
+    outline-offset: 0;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--z-accent) 18%, transparent);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-tour__ring {
+      transition:
+        inset var(--z-duration-normal) var(--z-ease-emphasized),
+        width var(--z-duration-normal) var(--z-ease-emphasized),
+        height var(--z-duration-normal) var(--z-ease-emphasized);
+    }
+  }
+  .z-tour__ring[data-state="closed"] {
+    opacity: 0;
+  }
+
   /* ---------- Flecha de las capas ancladas ---------- */
   /* Media caja girada 45° sobre el borde que mira al ancla, en `--z-arrow-offset` (lo escribe la colocación). Mismo
      cristal y canto que la capa; el recorte deja solo la mitad de fuera, así no se suma al fondo de la capa. */
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]::after {
     content: "";
     position: absolute;
     inline-size: 12px;
@@ -635,38 +716,38 @@
     pointer-events: none;
   }
   /* El recorte es físico (esquina superior izquierda): en RTL el canto pasa al otro borde para seguir dentro del recorte. */
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]:dir(rtl)::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:dir(rtl)::after {
     border-inline-start: 0;
     border-inline-end: 1px solid var(--z-glass-border);
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]:is([data-side="bottom"], [data-side="top"])::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:is([data-side="bottom"], [data-side="top"])::after {
     inset-inline-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="bottom"]::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="bottom"]::after {
     inset-block-start: -7px;
     rotate: 45deg;
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="top"]::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="top"]::after {
     inset-block-end: -7px;
     rotate: 225deg;
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow]:is([data-side="left"], [data-side="right"])::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:is([data-side="left"], [data-side="right"])::after {
     inset-block-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
   }
   /* El lado es físico (lo mide la colocación): en RTL la flecha de una capa a la derecha va en el borde final. */
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="right"]::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="right"]::after {
     inset-inline-start: -7px;
     rotate: -45deg;
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="left"]::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="left"]::after {
     inset-inline-end: -7px;
     rotate: 135deg;
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="right"]:dir(rtl)::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="right"]:dir(rtl)::after {
     inset-inline-start: auto;
     inset-inline-end: -7px;
   }
-  :is(.z-popover, .z-hovercard, .z-toggletip)[data-arrow][data-side="left"]:dir(rtl)::after {
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="left"]:dir(rtl)::after {
     inset-inline-end: auto;
     inset-inline-start: -7px;
   }
@@ -1157,7 +1238,9 @@
      desplazamiento y la escala, solo sin preferencia de movimiento reducido; con ella queda un fundido corto.
      `:where()`: sin especificidad, para que el gesto de deslizar un aviso conserve su propia transición. El cajón
      entra con su animación lateral. */
-  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
+  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+    :not([data-state="closed"])
+  ) {
     opacity: 1;
     transition:
       opacity var(--z-duration-normal) var(--z-ease-emphasized),
@@ -1165,20 +1248,24 @@
       scale var(--z-duration-normal) var(--z-ease-emphasized);
   }
   @starting-style {
-    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+        :not([data-state="closed"])
+      ) {
       opacity: 0;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+        :not([data-state="closed"])
+      ) {
       translate: 0 0;
       scale: 1;
     }
     @starting-style {
-      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip, .z-tour):where(:not([data-state="closed"])) {
         translate: 0 calc(var(--z-space-1) * -1);
       }
-      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip)[data-side="top"]:where(:not([data-state="closed"])) {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip, .z-tour)[data-side="top"]:where(:not([data-state="closed"])) {
         translate: 0 var(--z-space-1);
       }
       :where(.z-palette):where(:not([data-state="closed"])) {
@@ -1238,8 +1325,36 @@
      reducido manda sobre las animaciones de entrada y salida de cada capa. */
   @media (prefers-reduced-motion: reduce) {
     :is(.z-modal, .z-drawer, .z-palette)::backdrop,
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox, .z-hovercard, .z-toggletip),
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox, .z-hovercard, .z-toggletip)
+    :is(
+        .z-modal,
+        .z-confirm,
+        .z-drawer,
+        .z-popover,
+        .z-tooltip,
+        .z-menu,
+        .z-palette,
+        .z-toast,
+        .z-listbox,
+        .z-hovercard,
+        .z-toggletip,
+        .z-tour,
+        .z-tour__ring
+      ),
+    :is(
+        .z-modal,
+        .z-confirm,
+        .z-drawer,
+        .z-popover,
+        .z-tooltip,
+        .z-menu,
+        .z-palette,
+        .z-toast,
+        .z-listbox,
+        .z-hovercard,
+        .z-toggletip,
+        .z-tour,
+        .z-tour__ring
+      )
       :is(*, *::before, *::after) {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;

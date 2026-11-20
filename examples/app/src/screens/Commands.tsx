@@ -22,6 +22,7 @@ import {
   ToggleGroup,
   Toolbar,
   ToolbarGroup,
+  Tour,
   ToolbarSeparator,
   useToast,
   type MenuEntry,
@@ -51,6 +52,8 @@ export function Commands() {
   const [banner, setBanner] = useState(true);
   const [statusBar, setStatusBar] = useState(false);
   const [snap, setSnap] = useState(1);
+  const [touring, setTouring] = useState(false);
+  const [tourResult, setTourResult] = useState("none");
   const [selected, setSelected] = useState<string[]>([]);
   const toggleFile = (name: string) => setSelected((list) => (list.includes(name) ? list.filter((n) => n !== name) : [...list, name]));
   const domain = useRef<HTMLInputElement | null>(null);
@@ -98,8 +101,22 @@ export function Commands() {
         </p>
       )}
       <p className="app-muted">
-        Last action: <output data-testid="c-last">{last}</output>
+        Last action: <output data-testid="c-last">{last}</output> · tour <output data-testid="c-tour">{tourResult}</output>{" "}
+        <Button size="sm" variant="ghost" icon="sparkles" onClick={() => setTouring(true)} data-testid="c-tour-start">
+          Take the tour
+        </Button>
       </p>
+      <Tour
+        open={touring}
+        onOpenChange={setTouring}
+        onFinish={() => setTourResult("done")}
+        onSkip={() => setTourResult("skipped")}
+        steps={[
+          { target: '[role="menubar"]', title: "Application menus", content: "File, Edit and View share one tab stop." },
+          { target: '[data-testid="c-toolbar"]', title: "Format the text", content: "Arrow keys move between the tools.", side: "top" },
+          { title: "You are ready", content: "Restart the tour from this page at any time." },
+        ]}
+      />
 
       <PageSection title="Menubar">
         <Card className="app-demo">

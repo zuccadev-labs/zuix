@@ -163,6 +163,7 @@
 - [Toast](https://zuccadev-labs.github.io/zuix/components/overlay/toast.md): Avisos efímeros apilados en una esquina.
 - [Toggletip](https://zuccadev-labs.github.io/zuix/components/overlay/toggletip.md): Botón de ayuda («i») que muestra una explicación: se asoma al pasar o enfocar y el clic la deja fija.
 - [Tooltip](https://zuccadev-labs.github.io/zuix/components/overlay/tooltip.md): Burbuja de ayuda breve al pasar el cursor o enfocar un control.
+- [Tour](https://zuccadev-labs.github.io/zuix/components/overlay/tour.md): Recorrido guiado por una pantalla: una tarjeta anclada a cada elemento que explica, con anillo, progreso y saltar.
 
 ## Componentes: Navegación
 

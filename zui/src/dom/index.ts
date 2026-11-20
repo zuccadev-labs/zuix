@@ -3,7 +3,7 @@
 // navegador (dialog, popover) y este módulo. Sirve en HTML plano, Vue, Svelte, Angular, Astro o plantillas de servidor.
 //
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zui/dom"; init();
-// Uso imperativo:    openDialog(el), closeDialog(el), openPopover(el, anchor), openSubmenu(item), toast({...}), toastPromise(p, {...}), confirm({...})
+// Uso imperativo:    openDialog(el), closeDialog(el), openPopover(el, anchor), openSubmenu(item), toast({...}), toastPromise(p, {...}), confirm({...}), startTour({...})
 //
 // Atributos:
 //   data-z-open="#id"        abre el <dialog> o el [popover] indicado (el popover se ancla al disparador)
@@ -78,7 +78,16 @@ registerIcons([xMark, exclamationTriangle, informationCircle]);
 export { place, type Placement };
 export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
 export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
-export { closeActionBar, dismissBanner, setDrawerSnap, setHintOpen } from "./layers";
+export {
+  closeActionBar,
+  dismissBanner,
+  setDrawerSnap,
+  setHintOpen,
+  startTour,
+  type TourHandle,
+  type TourInit,
+  type TourStepInit,
+} from "./layers";
 export { destroyAgenda, setAgendaCalendars, setAgendaEvents, setAgendaView, type CalendarEvent, type CalendarSource } from "./agenda";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
