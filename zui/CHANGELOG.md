@@ -30,6 +30,10 @@ radios y material de los tokens.
   `Map(2)`, `Set(1)`, fechas, bigint, `[Circular]`), `defaultExpandDepth`, `maxStringLength` (texto completo en
   `title`), rutas `$.a[0].b` con `onSelect` y `copyPath` (anuncio en `role="status"`). Modo DOM: `.z-jsontree` con
   `<script type="application/json" data-value>` o `setJsonTreeValue(el, valor)`; `z:select` y `z:copy`.
+- Stepper: icono por paso (`icon`), estado de carga (`loading`: marcador que gira y `aria-busy`) y panel por
+  paso (`content`) con Anterior/Siguiente (`onStepChange`, `completed`, `navLabels`, `nextDisabled`). El foco va
+  al panel nuevo y los ocultos conservan lo escrito. Modo DOM: `.z-stepper-panels` (`data-current`, `z:change`,
+  `setStep()` en `/dom`). Sin cambios para el Stepper sin paneles.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

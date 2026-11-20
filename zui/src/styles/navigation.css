@@ -446,6 +446,73 @@
   .z-stepper .z-stepper__step[data-state="complete"]::after {
     background: var(--z-accent);
   }
+  /* Paso en proceso: anillo que gira dentro del marcador (sin giro con movimiento reducido: queda el arco fijo). */
+  .z-stepper__spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: var(--z-radius-full);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-stepper__spinner {
+      animation: z-stepper-spin 0.8s linear infinite;
+    }
+  }
+  @keyframes z-stepper-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  /* Con paneles: lista, panel del paso actual y Anterior/Siguiente al final. */
+  .z-stepper-panels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-5);
+    min-width: 0;
+  }
+  .z-stepper-panels[data-orientation="vertical"] {
+    display: grid;
+    grid-template-columns: minmax(10rem, max-content) minmax(0, 1fr);
+    grid-template-areas: "steps panel" "steps nav";
+    align-items: start;
+    column-gap: var(--z-space-8);
+  }
+  .z-stepper-panels[data-orientation="vertical"] > .z-stepper {
+    grid-area: steps;
+  }
+  .z-stepper-panels[data-orientation="vertical"] > .z-stepper__panels {
+    grid-area: panel;
+  }
+  .z-stepper-panels[data-orientation="vertical"] > .z-stepper__nav {
+    grid-area: nav;
+  }
+  .z-stepper__panel {
+    min-width: 0;
+    border-radius: var(--z-radius-sm);
+  }
+  .z-stepper__panel:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-stepper__panel:focus:not(:focus-visible) {
+    outline: none;
+  }
+  .z-stepper__nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--z-space-2);
+  }
+  .z-stepper__nav[hidden] {
+    display: none;
+  }
+  @media (width < 40rem) {
+    .z-stepper-panels[data-orientation="vertical"] {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "steps" "panel" "nav";
+      row-gap: var(--z-space-5);
+    }
+  }
 
   /* ---------- Acordeón ---------- */
   .z-accordion {

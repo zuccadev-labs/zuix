@@ -61,5 +61,25 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
         await expectAttr(page, node("$.tags"), "aria-expanded", "false");
       },
     },
+    {
+      name: "Oleada 5 · Stepper con paneles: Siguiente, Anterior, foco y lo escrito se conserva (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const root = t("c-stepper");
+        await page.fill(`${root} input`, "Borealis");
+        await page.click(`${root} [data-step="next"]`);
+        await expectText(page, t("c-stepper-value"), "1");
+        await activeMatches(page, `${root} .z-stepper__panel:not([hidden])`, "el foco va al panel nuevo");
+        await expectAttr(page, `${root} .z-stepper__step:nth-child(2)`, "aria-current", "step");
+        await page.click(`${root} [data-step="prev"]`);
+        assert((await page.inputValue(`${root} input`)) === "Borealis", "el panel oculto conserva lo escrito");
+        await page.click(`${root} [data-step="next"]`);
+        await page.click(`${root} [data-step="next"]`);
+        await expectText(page, `${root} [data-step="next"]`, "Finish");
+        await page.click(`${root} [data-step="next"]`);
+        await expectText(page, `${root} .z-stepper__panel[data-completed]`, "All set.");
+        assert((await page.locator(`${root} .z-stepper__nav`).count()) === 0, "sin botones al terminar");
+      },
+    },
   ];
 }

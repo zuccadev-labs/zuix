@@ -134,4 +134,39 @@ export default async function ({ page, test, ok }) {
     ok((await box.locator('[data-value="$.roles"] .z-jsontree__value').first().textContent()) === "Set(1)", "Set");
     ok((await box.locator("[data-value='$.limits.get(\"api\")'] .z-jsontree__value").textContent()) === "10n", "Map con bigint");
   });
+
+  /* ---------- Stepper con paneles ---------- */
+  await test("Stepper con paneles: Siguiente, Anterior, foco al panel, marcas y fin", async () => {
+    const box = await inject("Stepper", exampleIndex("Stepper", /paneles/));
+    const root = box.locator(".z-stepper-panels");
+    const panels = box.locator(".z-stepper__panel");
+    const next = box.locator('[data-step="next"]');
+    const prev = box.locator('[data-step="prev"]');
+    ok(await prev.isDisabled(), "Anterior desactivado en el primer paso");
+    await events();
+    await next.click();
+    ok((await root.getAttribute("data-current")) === "1", "paso 1");
+    ok(await panels.nth(1).isVisible(), "panel 2 visible");
+    ok(await panels.nth(0).isHidden(), "panel 1 oculto");
+    ok(await page.evaluate(() => document.activeElement?.classList.contains("z-stepper__panel")), "foco en el panel");
+    ok((await box.locator(".z-stepper__step").nth(0).getAttribute("data-state")) === "complete", "paso 1 completo");
+    ok((await box.locator(".z-stepper__step").nth(0).locator(".z-stepper__marker svg").count()) === 1, "marca de hecho");
+    ok((await box.locator(".z-stepper__step").nth(1).getAttribute("aria-current")) === "step", "aria-current");
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:change" && e.detail.value === 1),
+      JSON.stringify(log),
+    );
+    await next.click();
+    ok((await next.textContent()) === "Finish", "último paso: Finish");
+    await prev.click();
+    await prev.click();
+    ok((await box.locator(".z-stepper__step").nth(0).locator('.z-stepper__marker z-icon[name="user"]').count()) === 1, "el icono vuelve");
+    ok((await box.locator(".z-stepper__step").nth(0).locator(".z-sr-only").textContent()) === "Current", "estado leído");
+    await next.click();
+    await next.click();
+    await next.click();
+    ok(await box.locator(".z-stepper__panel[data-completed]").isVisible(), "panel final");
+    ok(await box.locator(".z-stepper__nav").isHidden(), "sin botones al terminar");
+  });
 }

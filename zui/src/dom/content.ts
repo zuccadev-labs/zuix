@@ -1,19 +1,24 @@
-// Contenido sin framework, oleada 5: JsonTree. Todo dentro de `[data-z-dom]`; el texto de la aplicación entra
+// Contenido sin framework, oleada 5: JsonTree y Stepper con paneles. Todo dentro de `[data-z-dom]`; el texto de la aplicación entra
 // siempre como texto (textContent), nunca como marcado.
 //
 // JsonTree   <div class="z-jsontree"> con un hijo <script type="application/json" data-value> (o setJsonTreeValue(el,
 //            valor) para Map, Set, fechas…). Atributos: data-label, data-expand-depth, data-max-string-length,
 //            data-root-name, data-copy-path, data-copied-label. Pinta el árbol de .z-tree (su teclado es el de Tree) y
 //            emite z:select { value: ruta } al activar un nodo; con data-copy-path copia la ruta y emite z:copy.
+// Stepper    <div class="z-stepper-panels" data-current="1"> con la lista .z-stepper, los .z-stepper__panel y los botones
+//            [data-step="prev|next"]: Anterior y Siguiente cambian de paso, el foco va al panel nuevo y se emite
+//            z:change { value }. data-label-next / data-label-finish y data-status-complete|current|upcoming para los
+//            textos. setStep(el, índice) lo hace desde código.
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
 import { announceText, copyText } from "../core/clipboard";
 import { jsonNodes, type JsonNode } from "../core/json-tree";
 import { idsToDepth } from "../core/tree";
 import { emit, inDom } from "./forms-popup";
-import { fragment, type Listen } from "./shared";
+import { fragment, setMarkup, type Listen } from "./shared";
 
-registerIcons([chevronRight]);
+registerIcons([check, chevronRight]);
 
 /* ---------- JsonTree ---------- */
 
@@ -132,10 +137,64 @@ function activateJson(item: HTMLElement): void {
   });
 }
 
+/* ---------- Stepper con paneles ---------- */
+
+const markerMarkup = new WeakMap<Element, string>();
+
+/** Lleva un Stepper con paneles del modo DOM al paso `index` (igual a `pasos` = todo completo). */
+export function setStep(root: HTMLElement, index: number, focus = false): void {
+  const steps = [...root.querySelectorAll<HTMLElement>(":scope > .z-stepper > .z-stepper__step")];
+  const panels = [...root.querySelectorAll<HTMLElement>(":scope > .z-stepper__panels > .z-stepper__panel:not([data-completed])")];
+  const current = Math.max(0, Math.min(steps.length, Math.round(index)));
+  const data = root.dataset;
+  const status = {
+    complete: data.statusComplete ?? "Completed",
+    current: data.statusCurrent ?? "Current",
+    upcoming: data.statusUpcoming ?? "Upcoming",
+  };
+  root.dataset.current = String(current);
+  steps.forEach((step, i) => {
+    const state = i < current ? "complete" : i === current ? "current" : "upcoming";
+    step.dataset.state = state;
+    if (state === "current") step.setAttribute("aria-current", "step");
+    else step.removeAttribute("aria-current");
+    const marker = step.querySelector<HTMLElement>(".z-stepper__marker");
+    if (marker && !marker.hasAttribute("data-loading")) {
+      if (!markerMarkup.has(marker)) markerMarkup.set(marker, marker.innerHTML);
+      // Marcado propio: el número o el icono del paso guardados al empezar, o la marca de hecho.
+      setMarkup(marker, state === "complete" ? iconSvg("check", { size: 14 }) : (markerMarkup.get(marker) ?? ""));
+    }
+    const sr = step.querySelector<HTMLElement>(".z-stepper__text > .z-sr-only");
+    if (sr) sr.textContent = status[state];
+  });
+  panels.forEach((panel, i) => {
+    panel.hidden = i !== current;
+  });
+  const done = current >= steps.length;
+  const finished = root.querySelector<HTMLElement>(":scope > .z-stepper__panels > .z-stepper__panel[data-completed]");
+  if (finished) finished.hidden = !done;
+  const nav = root.querySelector<HTMLElement>(":scope > .z-stepper__nav");
+  if (nav) nav.hidden = done;
+  const prev = root.querySelector<HTMLButtonElement>(':scope > .z-stepper__nav [data-step="prev"]');
+  const next = root.querySelector<HTMLButtonElement>(':scope > .z-stepper__nav [data-step="next"]');
+  if (prev) prev.disabled = current <= 0;
+  if (next) next.textContent = current >= steps.length - 1 ? (data.labelFinish ?? "Finish") : (data.labelNext ?? "Next");
+  if (focus) (done ? finished : panels[current])?.focus();
+}
+
 export function setup(on: Listen): void {
   on(document, "click", (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
+    const stepButton = target.closest<HTMLButtonElement>(".z-stepper-panels > .z-stepper__nav [data-step]");
+    const stepper = stepButton?.closest<HTMLElement>(".z-stepper-panels");
+    if (stepButton && stepper && inDom(stepper) && !stepButton.disabled) {
+      const at = Number(stepper.dataset.current ?? 0);
+      const index = stepButton.dataset.step === "prev" ? at - 1 : at + 1;
+      setStep(stepper, index, true);
+      emit(stepper, "change", { value: Number(stepper.dataset.current) });
+      return;
+    }
     const row = target.closest(".z-jsontree .z-tree__row");
     if (row?.parentElement) activateJson(row.parentElement);
   });

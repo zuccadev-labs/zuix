@@ -1,14 +1,14 @@
 {
   "name": "Stepper",
   "group": "navigation",
-  "description": "Progreso por pasos numerados, horizontal o vertical.",
+  "description": "Progreso por pasos de un flujo, con icono y estado de carga por paso y, opcionalmente, un panel por paso con Anterior/Siguiente.",
   "import": "import { Stepper } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "steps",
       "type": "StepItem[]",
       "required": true,
-      "description": "{ label, description? }"
+      "description": "{ label, description?, icon?, loading?, content? }. Con algún `content`, el Stepper muestra el panel del paso actual y Anterior/Siguiente."
     },
     {
       "name": "current",
@@ -36,9 +36,34 @@
       "name": "statusLabels",
       "type": "{ complete: string; current: string; upcoming: string }",
       "default": "{ complete: \"Completed\", current: \"Current\", upcoming: \"Upcoming\" }"
+    },
+    {
+      "name": "onStepChange",
+      "type": "(index: number) => void",
+      "description": "Con paneles: Anterior y Siguiente piden el índice nuevo (Siguiente en el último paso pide steps.length)."
+    },
+    {
+      "name": "completed",
+      "type": "ReactNode",
+      "description": "Con paneles: lo que se muestra cuando todos los pasos están completos."
+    },
+    {
+      "name": "navLabels",
+      "type": "{ previous: string; next: string; finish: string }",
+      "default": {
+        "previous": "Back",
+        "next": "Next",
+        "finish": "Finish"
+      }
+    },
+    {
+      "name": "nextDisabled",
+      "type": "boolean",
+      "default": false,
+      "description": "Con paneles: Siguiente desactivado (paso no válido). También mientras el paso actual está en `loading`."
     }
   ],
-  "states": ["complete", "current", "upcoming"],
+  "states": ["complete", "current", "loading", "upcoming"],
   "tokens": [
     "accent",
     "accent-soft",
@@ -68,15 +93,39 @@
     "space-3-5",
     "space-8",
     "text-body",
-    "weight-medium"
+    "weight-medium",
+    "radius-full"
   ],
-  "classes": ["z-stepper", "z-stepper__step", "z-stepper__body", "z-stepper__marker", "z-stepper__label", "z-stepper__description"],
-  "a11y": "Lista ordenada con nombre; el paso actual lleva aria-current=step y cada paso anuncia su estado con texto oculto visualmente.",
+  "classes": [
+    "z-stepper",
+    "z-stepper__step",
+    "z-stepper__body",
+    "z-stepper__marker",
+    "z-stepper__label",
+    "z-stepper__description",
+    "z-stepper__spinner",
+    "z-stepper-panels",
+    "z-stepper__panels",
+    "z-stepper__panel",
+    "z-stepper__nav"
+  ],
+  "a11y": "Lista ordenada con nombre; el paso actual lleva aria-current=step y cada paso anuncia su estado con texto oculto visualmente. Un paso en carga lleva aria-busy y su marcador gira (fijo con movimiento reducido). Con paneles, cada panel es un group nombrado por la etiqueta de su paso; los demás llevan hidden (conservan lo escrito). Tras Anterior o Siguiente el foco va al panel nuevo, que lee el paso al que se llega; Siguiente se desactiva mientras el paso carga.",
   "examples": [
     {
       "title": "Alta en tres pasos",
       "code": "<Stepper\n  current={1}\n  steps={[\n    { label: \"Account\", description: \"Email and password\" },\n    { label: \"Profile\" },\n    { label: \"Confirm\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Con paneles, iconos y carga",
+      "code": "const [step, setStep] = useState(0);\n\n<Stepper\n  current={step}\n  onStepChange={setStep}\n  steps={[\n    { label: \"Account\", icon: \"user\", content: <AccountForm /> },\n    { label: \"Plan\", icon: \"credit-card\", content: <PlanPicker /> },\n    { label: \"Deploy\", icon: \"rocket-launch\", loading: deploying, content: <DeployLog /> },\n  ]}\n  completed={<p>All set.</p>}\n/>"
     }
   ],
-  "origin": "Nuevo."
+  "origin": "Nuevo.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Con paneles (Anterior/Siguiente; el foco va al panel nuevo; emite z:change)",
+      "code": "<div class=\"z-stepper-panels\" data-orientation=\"horizontal\" data-current=\"0\">\n  <ol class=\"z-stepper\" data-orientation=\"horizontal\" aria-label=\"Progress\">\n    <li class=\"z-stepper__step\" data-state=\"current\" aria-current=\"step\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\"><z-icon name=\"user\" size=\"14\"></z-icon></span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-0\">Account</span><span class=\"z-sr-only\">Current</span></span>\n      </span>\n    </li>\n    <li class=\"z-stepper__step\" data-state=\"upcoming\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\"><z-icon name=\"credit-card\" size=\"14\"></z-icon></span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-1\">Plan</span><span class=\"z-sr-only\">Upcoming</span></span>\n      </span>\n    </li>\n    <li class=\"z-stepper__step\" data-state=\"upcoming\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\">3</span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-2\">Review</span><span class=\"z-sr-only\">Upcoming</span></span>\n      </span>\n    </li>\n  </ol>\n  <div class=\"z-stepper__panels\">\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-0\" tabindex=\"-1\"><p>Create your account.</p></div>\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-1\" tabindex=\"-1\" hidden><p>Pick a plan.</p></div>\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-2\" tabindex=\"-1\" hidden><p>Review and confirm.</p></div>\n    <div class=\"z-stepper__panel\" data-completed tabindex=\"-1\" hidden><p>All set.</p></div>\n  </div>\n  <div class=\"z-stepper__nav\">\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-step=\"prev\" disabled>Back</button>\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-step=\"next\">Next</button>\n  </div>\n</div>"
+    }
+  ]
 }

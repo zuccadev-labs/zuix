@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Card, CardHeader, JsonTree, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
+import { Card, CardHeader, Input, JsonTree, Stepper, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
 
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
@@ -38,6 +38,7 @@ export function ContentWave5() {
   const [picked, setPicked] = useState<string[]>([]);
   const [checked, setChecked] = useState<string[]>(["photos/2025"]);
   const [jsonPath, setJsonPath] = useState("none");
+  const [step, setStep] = useState(0);
   const nodes = FOLDERS.map(function relabel(node): TreeNode {
     return { ...node, label: labels[node.id] ?? node.label, children: node.children?.map(relabel) };
   });
@@ -88,6 +89,28 @@ export function ContentWave5() {
                 Path: <output data-testid="c-json-path">{jsonPath}</output>
               </p>
             </Stack>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Navigation">
+        <Grid min={320}>
+          <Card className="app-demo">
+            <CardHeader title="Stepper" subtitle="Panels, icons and loading" />
+            <div data-testid="c-stepper">
+              <Stepper
+                current={step}
+                onStepChange={setStep}
+                steps={[
+                  { label: "Account", icon: "user", content: <Input aria-label="Workspace name" defaultValue="Atlas" /> },
+                  { label: "Plan", icon: "credit-card", content: <p>Pick a plan for the workspace.</p> },
+                  { label: "Deploy", icon: "rocket-launch", content: <p>Review and deploy.</p> },
+                ]}
+                completed={<p>All set.</p>}
+              />
+            </div>
+            <p className="app-muted">
+              Step: <output data-testid="c-stepper-value">{step}</output>
+            </p>
           </Card>
         </Grid>
       </PageSection>
