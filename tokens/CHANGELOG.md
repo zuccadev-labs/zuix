@@ -65,6 +65,8 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
   la suite, Geist y Geist Mono (antes Inter y JetBrains Mono). Los paquetes no incluyen archivos de fuente.
 - Capas de compatibilidad `zutool` y `ui-glass`: notas nuevas para `card-radius`, `card-shadow`, `radius-xl` y
   `overlay`.
+- `success-text` en claro más oscuro en `zutool` (62 % de `success`, antes 68 %) y `zenith` (68 %, antes 74 %):
+  sobre `success-soft` compuesto en una tarjeta quedaba en 4,42–4,45:1 (axe en `examples/html`).
 
 
 ## [0.2.0] - 2026-11-18

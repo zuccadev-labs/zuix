@@ -971,19 +971,21 @@ function classify(recs) {
         case "objetivo-tactil": {
           // Excepciones de WCAG 2.5.8 revisadas una a una (docs: auditoría visual).
           const why2 =
-            /z-segmented__item/.test(i.sig) && / < 40$/.test(i.detail)
-              ? "opción de segmentado: con puntero grueso la zona táctil crece a 40 px con ::before"
-              : /z-resize|z-split__divider/.test(i.sig)
-                ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
-                : /z-heatmap__cell/.test(i.sig)
-                  ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
-                  : /z-rating__star/.test(i.sig)
-                    ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
-                    : /z-timeline__booking/.test(i.sig)
-                      ? "reserva en conflicto partida en dos mitades de la fila; cada una se alcanza también con teclado"
-                      : /z-datefield__segment/.test(i.sig) && Number(i.detail.split("×")[1]?.split(" ")[0]) >= 24
-                        ? "segmento de un campo de fecha (24 px de alto): el valor se escribe de corrido y salta de segmento; el selector de calendario es el control equivalente"
-                        : "";
+            /z-event/.test(i.sig) && / < 40$/.test(i.detail)
+              ? "evento de la rejilla de tiempo en un teléfono: su ancho lo fija la duración y el solape; se abre también desde la vista de lista"
+              : /z-segmented__item/.test(i.sig) && / < 40$/.test(i.detail)
+                ? "opción de segmentado: con puntero grueso la zona táctil crece a 40 px con ::before"
+                : /z-resize|z-split__divider/.test(i.sig)
+                  ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
+                  : /z-heatmap__cell/.test(i.sig)
+                    ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
+                    : /z-rating__star/.test(i.sig)
+                      ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
+                      : /z-timeline__booking/.test(i.sig)
+                        ? "reserva en conflicto partida en dos mitades de la fila; cada una se alcanza también con teclado"
+                        : /z-datefield__segment/.test(i.sig) && Number(i.detail.split("×")[1]?.split(" ")[0]) >= 24
+                          ? "segmento de un campo de fecha (24 px de alto): el valor se escribe de corrido y salta de segmento; el selector de calendario es el control equivalente"
+                          : "";
           if (why2) {
             verdict = "aceptado";
             why = why2;

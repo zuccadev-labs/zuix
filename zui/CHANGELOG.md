@@ -254,6 +254,10 @@ radios y material de los tokens.
   - La primera hora de la rejilla de `EventCalendar` ya no se corta por arriba.
   - Los huecos y rellenos de `2px` y `3px` literales pasan a `--z-space-0-5`; `5px` a `--z-space-1`.
   - `Slider` con etiquetas de marca reserva `--z-space-5` debajo (antes 18 px fuera de la escala).
+  - Contraste (axe, zutool y zenith claros sobre tarjeta): el contador de `Chip` y `Kbd` usan `--z-fg` en vez
+    de `--z-fg-muted` (4,4:1 → más de 7:1).
+  - Botón de quitar de `Chip` de 24 px en la talla md (antes 20, por debajo de WCAG 2.5.8).
+  - `ButtonGroup` sin `attached` centra en la fila botones de tallas distintas (quedaban alineados arriba).
 
 
 ## [0.2.0] - 2026-11-18
