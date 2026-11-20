@@ -77,3 +77,30 @@ describe("core/focus: nextTabbable", () => {
     assert.equal(focus.nextTabbable(document.getElementById("c")), undefined);
   });
 });
+
+describe("core/menubar", async () => {
+  const { menubarKey, menubarIndex } = await core("menubar");
+  test("teclas en un título", () => {
+    assert.deepEqual(menubarKey("ArrowRight", { at: "trigger" }), { type: "move", to: "next" });
+    assert.deepEqual(menubarKey("ArrowLeft", { at: "trigger" }), { type: "move", to: "prev" });
+    assert.deepEqual(menubarKey("Home", { at: "trigger" }), { type: "move", to: "first" });
+    assert.deepEqual(menubarKey("End", { at: "trigger" }), { type: "move", to: "last" });
+    for (const key of ["ArrowDown", "Enter", " "]) assert.deepEqual(menubarKey(key, { at: "trigger" }), { type: "open", focus: "first" });
+    assert.deepEqual(menubarKey("ArrowUp", { at: "trigger" }), { type: "open", focus: "last" });
+    assert.equal(menubarKey("a", { at: "trigger" }), null);
+  });
+  test("teclas dentro de un menú: izquierda solo en el primer nivel, derecha sin submenú", () => {
+    assert.deepEqual(menubarKey("ArrowLeft", { at: "menu", depth: 0 }), { type: "move", to: "prev" });
+    assert.equal(menubarKey("ArrowLeft", { at: "menu", depth: 1 }), null);
+    assert.deepEqual(menubarKey("ArrowRight", { at: "menu", depth: 2 }), { type: "move", to: "next" });
+    assert.equal(menubarKey("ArrowRight", { at: "menu", depth: 0, opensSubmenu: true }), null);
+    assert.equal(menubarKey("ArrowDown", { at: "menu" }), null);
+  });
+  test("índices con vuelta", () => {
+    assert.equal(menubarIndex("next", 2, 3), 0);
+    assert.equal(menubarIndex("prev", 0, 3), 2);
+    assert.equal(menubarIndex("first", 2, 3), 0);
+    assert.equal(menubarIndex("last", 0, 3), 2);
+    assert.equal(menubarIndex("next", 0, 0), -1);
+  });
+});

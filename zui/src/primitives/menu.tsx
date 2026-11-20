@@ -9,6 +9,7 @@ import { isRtl, logicalKey } from "../core/dir";
 import { focusQuiet } from "../core/focus";
 import { createMenuAim, type MenuAim } from "../core/menu-aim";
 import { submenuAnchor, topInset, type Box, type Placement } from "../core/place";
+import { menubarKey } from "../core/menubar";
 import { move } from "../core/roving";
 import { createTypeahead, isPrintable, type Typeahead } from "../core/typeahead";
 import { cx } from "../cx";
@@ -48,6 +49,10 @@ interface Tree {
   open: boolean;
   close: (refocus: boolean) => void;
   anchor: RefObject<Element | null>;
+  /** Entrada que recibe el foco al abrir el primer nivel. */
+  initialFocus: "first" | "last";
+  /** Menú de una barra (Menubar): las flechas laterales saltan al menú vecino. */
+  menubar?: (to: "prev" | "next") => void;
 }
 
 /** Señal de una opción de casilla o de radio, en el hueco del icono. La hoja la muestra solo con `aria-checked="true"`. */
@@ -104,7 +109,8 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
     // igual que el modo sin framework (`openPopover` en dom/index.ts). Un submenú solo recibe el foco si se abrió con
     // el teclado; abierto al pasar el puntero, el foco sigue en la entrada padre.
     if (depth === 0 || tree.focusSub.current) {
-      const first = itemsOf(menu)[0];
+      const list = itemsOf(menu);
+      const first = depth === 0 && tree.initialFocus === "last" ? list[list.length - 1] : list[0];
       if (first) highlight(menu, first);
       // Sin entradas habilitadas, el foco va al propio menú: Escape y las flechas siguen llegando.
       else if (depth === 0) focusQuiet(menu);
@@ -137,6 +143,16 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
     const list = itemsOf(menu);
     const current = list.find((item) => item === document.activeElement) ?? null;
     const key = logicalKey(event.key, menu);
+    const bar = tree.menubar
+      ? menubarKey(key, { at: "menu", depth, opensSubmenu: current?.getAttribute("aria-haspopup") === "menu" })
+      : null;
+    if (bar?.type === "move" && (bar.to === "prev" || bar.to === "next")) {
+      // Menú de una barra: la flecha lateral cierra este menú y abre el del título vecino.
+      event.preventDefault();
+      clearTimeout(tree.timer.current);
+      tree.menubar?.(bar.to);
+      return;
+    }
     const next = move(list, current, event.key, true);
     if (next) {
       event.preventDefault();
@@ -413,6 +429,10 @@ export interface MenuSurfaceProps {
   labelledBy?: string;
   className?: string;
   id?: string;
+  /** Entrada que recibe el foco al abrir: la primera (por defecto) o la última (Flecha arriba en el disparador). */
+  initialFocus?: "first" | "last";
+  /** Menú de una barra (Menubar): las flechas laterales piden el menú vecino. */
+  onMenubarStep?: (to: "prev" | "next") => void;
 }
 
 export function MenuSurface({
@@ -429,6 +449,8 @@ export function MenuSurface({
   labelledBy,
   className,
   id: idProp,
+  initialFocus = "first",
+  onMenubarStep,
 }: MenuSurfaceProps) {
   const auto = useId();
   const id = idProp ?? auto;
@@ -442,6 +464,12 @@ export function MenuSurface({
   const previous = useRef<HTMLElement | null>(null);
   const root = useRef<HTMLElement | null>(null);
   const present = usePresence(open, root);
+  // Cada apertura monta el menú de nuevo, también si se reabre durante la salida (la barra que vuelve a un menú que
+  // aún se está cerrando): así el foco vuelve a su primera entrada y el estado de submenús empieza limpio.
+  const wasOpen = useRef(open);
+  const generation = useRef(0);
+  if (open && !wasOpen.current) generation.current += 1;
+  wasOpen.current = open;
   const inside = (target: Node) => [...menus.current].some((menu) => menu.contains(target));
 
   useEffect(() => {
@@ -474,11 +502,25 @@ export function MenuSurface({
   });
 
   if (!present) return null;
-  const tree: Tree = { path: open ? path : [], setPath, focusSub, menus, aim, search, timer, size, open, close, anchor };
+  const tree: Tree = {
+    path: open ? path : [],
+    setPath,
+    focusSub,
+    menus,
+    aim,
+    search,
+    timer,
+    size,
+    open,
+    close,
+    anchor,
+    initialFocus,
+    menubar: onMenubarStep,
+  };
   return (
     <Portal anchor={anchor}>
       <RootLevel
-        key={point ? `${point.x},${point.y}` : "anchor"}
+        key={`${point ? `${point.x},${point.y}` : "anchor"}-${generation.current}`}
         tree={tree}
         root={root}
         previous={previous}

@@ -28,6 +28,11 @@ radios y material de los tokens.
     radio (`{ type: "radio-group", label, value, onValueChange, items }`, `menuitemradio` en un `group` con nombre) y
     entradas enlace (`href`, `<a role=menuitem>`). Tipos `MenuCheckboxEntry`, `MenuRadioGroupEntry` y
     `MenuRadioItem`. En `/dom`, `aria-checked` y `z:change` en la casilla o en el grupo.
+  - `Menubar` (patrón APG «menubar»): barra de menús de aplicación con una sola parada de tabulación, flechas entre
+    títulos y entre menús abiertos (también desde un submenú), Flecha arriba para entrar por la última entrada y
+    cambio de menú con el puntero cuando ya hay uno abierto. Cada menú es el de la suite (submenús, casillas,
+    radios). Lógica en `core/menubar`. En `/dom`, `.z-menubar[role=menubar]` con títulos `data-z-open` y
+    `openMenubarMenu()`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
@@ -104,6 +109,8 @@ radios y material de los tokens.
 - `Button` e `IconButton` respetan un `aria-disabled` recibido (antes lo pisaba el estado de carga) y, con él,
   no ejecutan `onClick`: un botón apagado que conserva el foco, como pide una barra de herramientas.
 - `ToggleGroup` dentro de una `Toolbar` deja a la barra la parada de tabulación y las flechas.
+- Un menú que se vuelve a abrir durante su animación de salida se monta de nuevo: el foco vuelve a su primera
+  entrada (antes se quedaba en el menú que se cerraba).
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
   punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal
   elevado con `className="z-liquid"`. Los días no elegibles ya no van tachados (lo va la fecha reservada).

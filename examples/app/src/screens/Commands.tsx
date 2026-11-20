@@ -9,6 +9,7 @@ import {
   IconButton,
   Link,
   Menu,
+  Menubar,
   ToggleGroup,
   Toolbar,
   ToolbarGroup,
@@ -25,6 +26,7 @@ export function Commands() {
   const [density, setDensity] = useState("comfortable");
   const [details, setDetails] = useState(false);
   const [banner, setBanner] = useState(true);
+  const [statusBar, setStatusBar] = useState(false);
 
   const view: MenuEntry[] = [
     { type: "checkbox", id: "minimap", label: "Minimap", checked: minimap, onCheckedChange: setMinimap },
@@ -71,6 +73,53 @@ export function Commands() {
       <p className="app-muted">
         Last action: <output data-testid="c-last">{last}</output>
       </p>
+
+      <PageSection title="Menubar">
+        <Card className="app-demo">
+          <CardHeader title="Application menus" subtitle="One tab stop; arrows move between menus" />
+          <Menubar
+            label="Application"
+            menus={[
+              {
+                id: "file",
+                label: "File",
+                items: [
+                  { id: "new", label: "New file", icon: "document-plus", shortcut: "Ctrl N", onSelect: () => setLast("file:new") },
+                  { id: "open", label: "Open…", icon: "folder-open", shortcut: "Ctrl O", onSelect: () => setLast("file:open") },
+                  {
+                    id: "recent",
+                    label: "Open recent",
+                    icon: "clock",
+                    items: [
+                      { id: "readme", label: "atlas/README.md", onSelect: () => setLast("file:readme") },
+                      { id: "tokens", label: "borealis/tokens.json", onSelect: () => setLast("file:tokens") },
+                    ],
+                  },
+                  { type: "separator" },
+                  { id: "save", label: "Save", icon: "arrow-down-tray", shortcut: "Ctrl S", onSelect: () => setLast("file:save") },
+                ],
+              },
+              {
+                id: "edit",
+                label: "Edit",
+                items: [
+                  { id: "undo", label: "Undo", icon: "arrow-uturn-up-left", shortcut: "Ctrl Z", onSelect: () => setLast("edit:undo") },
+                  { id: "redo", label: "Redo", icon: "arrow-uturn-up-right", shortcut: "Ctrl Y", onSelect: () => setLast("edit:redo") },
+                ],
+              },
+              {
+                id: "view",
+                label: "View",
+                items: [{ type: "checkbox", id: "status", label: "Status bar", checked: statusBar, onCheckedChange: setStatusBar }],
+              },
+              { id: "help", label: "Help", disabled: true, items: [] },
+            ]}
+          />
+          <p className="app-muted">
+            Status bar: <output data-testid="c-statusbar">{String(statusBar)}</output>
+          </p>
+        </Card>
+      </PageSection>
 
       <PageSection title="Toolbar">
         <Grid min={320}>

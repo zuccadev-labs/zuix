@@ -192,4 +192,52 @@ export default async function ({ page, test, ok, card, browserName }) {
       .evaluate((el) => getComputedStyle(el, "::before").borderTopStyle);
     ok(dot === "solid", "punto del radio dibujado con borde");
   });
+
+  /* ---------- Menubar ---------- */
+  await test("Menubar: una parada de Tab, flechas entre títulos, Flecha abajo abre, y dentro del menú las flechas pasan al vecino", async () => {
+    const bar = card("Menubar").locator('[role="menubar"]');
+    const file = bar.locator("#mb-file-trigger");
+    const stops = await bar.locator('[role="menuitem"]').evaluateAll((list) => list.filter((el) => el.tabIndex === 0).length);
+    ok(stops === 1, `paradas: ${stops}`);
+    await file.focus();
+    await press("ArrowRight");
+    ok(await activeIs("#mb-edit-trigger"), "flecha derecha al siguiente título");
+    await press("ArrowLeft", "ArrowLeft");
+    ok(await activeIs("#mb-view-trigger"), "vuelta al último");
+    await press("Home", "ArrowDown");
+    ok(await page.locator("#mb-file").isVisible(), "Flecha abajo abre");
+    ok((await file.getAttribute("aria-expanded")) === "true", "aria-expanded");
+    ok(await activeIs("#mb-file .z-menu__item"), "foco en la primera entrada");
+    await press("ArrowRight");
+    ok(await page.locator("#mb-edit").isVisible(), "derecha en una entrada sin submenú pasa a Edit");
+    ok(await page.locator("#mb-file").isHidden(), "File se cierra");
+    ok(await activeIs("#mb-edit .z-menu__item"), "foco en la primera entrada de Edit");
+    await press("ArrowLeft");
+    ok((await page.locator("#mb-file").isVisible()) && (await page.locator("#mb-edit").isHidden()), "izquierda vuelve a File");
+    await press("ArrowDown", "ArrowDown", "ArrowRight");
+    ok(await page.locator("#mb-recent").isVisible(), "derecha en una entrada con submenú lo abre");
+    await press("ArrowLeft");
+    ok(
+      (await page.locator("#mb-recent").isHidden()) && (await page.locator("#mb-file").isVisible()),
+      "izquierda en el submenú cierra solo ese nivel",
+    );
+    await press("Escape");
+    ok(await page.locator("#mb-file").isHidden(), "Escape cierra");
+    ok(await activeIs("#mb-file-trigger"), "foco de vuelta al título");
+    await press("ArrowUp");
+    ok(await activeIs("#mb-file .z-menu__item:last-of-type"), `Flecha arriba enfoca la última: ${await activeLabel()}`);
+    await press("Escape");
+  });
+  await test("Menubar: con un menú abierto, el puntero sobre otro título lo abre; sin ninguno, no", async () => {
+    const bar = card("Menubar").locator('[role="menubar"]');
+    await bar.locator("#mb-edit-trigger").hover();
+    ok(await page.locator("#mb-edit").isHidden(), "sin menú abierto, hover no abre");
+    await bar.locator("#mb-file-trigger").click();
+    ok(await page.locator("#mb-file").isVisible(), "clic abre");
+    await bar.locator("#mb-view-trigger").hover();
+    ok((await page.locator("#mb-view").isVisible()) && (await page.locator("#mb-file").isHidden()), "hover cambia de menú");
+    await page.locator("#mb-view [role='menuitemcheckbox']").nth(1).click();
+    ok((await page.locator("#mb-view [role='menuitemcheckbox']").nth(1).getAttribute("aria-checked")) === "true", "casilla en la barra");
+    await page.keyboard.press("Escape");
+  });
 }

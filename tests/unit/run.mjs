@@ -53,6 +53,7 @@ const COVERED = [
   "zui/src/core/layers.ts",
   "zui/src/core/long-press.ts",
   "zui/src/core/menu-aim.ts",
+  "zui/src/core/menubar.ts",
   "zui/src/core/number.ts",
   "zui/src/core/pagination.ts",
   "zui/src/core/password.ts",

@@ -74,7 +74,7 @@ registerIcons([xMark, exclamationTriangle, informationCircle]);
 
 export { place, type Placement };
 export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
-export { setCollapsibleOpen } from "./navigation";
+export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
 export { dismissBanner } from "./layers";
 export { destroyAgenda, setAgendaCalendars, setAgendaEvents, setAgendaView, type CalendarEvent, type CalendarSource } from "./agenda";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
@@ -939,6 +939,8 @@ function onKeydown(event: KeyboardEvent): void {
 
   const menu = target.closest<HTMLElement>(".z-menu[popover]");
   if (menu) {
+    // Menú de una barra (Menubar): las flechas laterales pueden pasar al menú vecino.
+    if (navigation.menubarKeyInMenu(menu, event)) return;
     const current = target.closest<HTMLElement>(".z-menu__item");
     const own = current && current.closest(".z-menu") === menu && !isDisabled(current) ? current : null;
     const parentTrigger = anchors.get(menu);

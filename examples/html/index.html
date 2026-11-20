@@ -1531,6 +1531,86 @@ pnpm dev</code>
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Menubar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Menubar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-menubar z-liquid" role="menubar" aria-label="Application" aria-orientation="horizontal" data-variant="glass" data-size="sm">
+  <button type="button" role="menuitem" id="mb-file-trigger" class="z-menubar__trigger" aria-haspopup="menu" aria-expanded="false" data-z-open="#mb-file" tabindex="0">File</button>
+  <button type="button" role="menuitem" id="mb-edit-trigger" class="z-menubar__trigger" aria-haspopup="menu" aria-expanded="false" data-z-open="#mb-edit" tabindex="-1">Edit</button>
+  <button type="button" role="menuitem" id="mb-view-trigger" class="z-menubar__trigger" aria-haspopup="menu" aria-expanded="false" data-z-open="#mb-view" tabindex="-1">View</button>
+</div>
+
+<div id="mb-file" popover class="z-liquid z-menu" role="menu" aria-labelledby="mb-file-trigger" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="document-plus" size="14"></z-icon></span>
+    <span class="z-menu__text">New file</span>
+    <kbd class="z-menu__shortcut">Ctrl N</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="folder-open" size="14"></z-icon></span>
+    <span class="z-menu__text">Open…</span>
+    <kbd class="z-menu__shortcut">Ctrl O</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" aria-haspopup="menu" aria-expanded="false" aria-controls="mb-recent" data-z-submenu="#mb-recent">
+    <span class="z-menu__icon"><z-icon name="clock" size="14"></z-icon></span>
+    <span class="z-menu__text">Open recent</span>
+    <span class="z-menu__chevron"><z-icon name="chevron-right" size="14"></z-icon></span>
+  </button>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="arrow-down-tray" size="14"></z-icon></span>
+    <span class="z-menu__text">Save</span>
+    <kbd class="z-menu__shortcut">Ctrl S</kbd>
+  </button>
+</div>
+
+<div id="mb-recent" popover class="z-liquid z-menu" role="menu" aria-label="Open recent" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"></span>
+    <span class="z-menu__text">atlas/README.md</span>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"></span>
+    <span class="z-menu__text">borealis/tokens.json</span>
+  </button>
+</div>
+
+<div id="mb-edit" popover class="z-liquid z-menu" role="menu" aria-labelledby="mb-edit-trigger" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="arrow-uturn-up-left" size="14"></z-icon></span>
+    <span class="z-menu__text">Undo</span>
+    <kbd class="z-menu__shortcut">Ctrl Z</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="arrow-uturn-up-right" size="14"></z-icon></span>
+    <span class="z-menu__text">Redo</span>
+    <kbd class="z-menu__shortcut">Ctrl Y</kbd>
+  </button>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="scissors" size="14"></z-icon></span>
+    <span class="z-menu__text">Cut</span>
+    <kbd class="z-menu__shortcut">Ctrl X</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="document-duplicate" size="14"></z-icon></span>
+    <span class="z-menu__text">Copy</span>
+    <kbd class="z-menu__shortcut">Ctrl C</kbd>
+  </button>
+</div>
+
+<div id="mb-view" popover class="z-liquid z-menu" role="menu" aria-labelledby="mb-view-trigger" data-size="md">
+  <button type="button" role="menuitemcheckbox" aria-checked="true" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon z-menu__check" data-kind="checkbox" aria-hidden="true"><z-icon name="check" size="14"></z-icon></span>
+    <span class="z-menu__text">Sidebar</span>
+  </button>
+  <button type="button" role="menuitemcheckbox" aria-checked="false" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon z-menu__check" data-kind="checkbox" aria-hidden="true"><z-icon name="check" size="14"></z-icon></span>
+    <span class="z-menu__text">Status bar</span>
+  </button>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="NavList" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">NavList</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -2327,6 +2407,10 @@ document.querySelector("#alarm").addEventListener("z:change", (event) => console
 
 // TimePicker
 document.querySelector("#start-time").addEventListener("z:change", (event) => console.log(event.detail.value));
+
+// Menubar
+// z:select en la entrada elegida; z:change en las casillas.
+document.addEventListener("z:select", (event) => { if (event.target.closest("[id^=mb-]")) console.log(event.target.textContent.trim()); });
 
 // CommandPalette
 document.querySelector("#commands").addEventListener("z:select", (event) => {

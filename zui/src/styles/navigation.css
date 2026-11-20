@@ -702,6 +702,62 @@
     color: var(--z-fg-subtle);
   }
 
+  /* ---- Menubar ---- */
+  /* Una sola tira continua (una parada de Tab): títulos sin borde entre ellos, radio concéntrico con la pista. */
+  .z-menubar {
+    --z-menubar-pad: var(--z-space-1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    padding: var(--z-menubar-pad);
+    border-radius: calc(var(--z-control-radius-sm) + var(--z-menubar-pad));
+  }
+  .z-menubar[data-variant="plain"] {
+    padding: 0;
+    border-radius: 0;
+  }
+  .z-menubar__trigger {
+    display: inline-flex;
+    align-items: center;
+    height: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-medium);
+    cursor: default;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-menubar[data-size="md"] .z-menubar__trigger {
+    height: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border-radius: var(--z-control-radius);
+  }
+  @media (hover: hover) {
+    .z-menubar__trigger:hover:not([aria-disabled="true"]) {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  /* El título con su menú abierto se marca: se sabe qué menú está a la vista. */
+  .z-menubar__trigger[aria-expanded="true"] {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  .z-menubar__trigger:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-menubar__trigger[aria-disabled="true"] {
+    opacity: 0.5;
+  }
+
   /* ---- Collapsible ---- */
   .z-collapsible {
     display: flex;

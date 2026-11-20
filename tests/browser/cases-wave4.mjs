@@ -101,5 +101,35 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         assert(active && active !== "BODY", `el foco no se pierde: ${active}`);
       },
     },
+    {
+      name: "Oleada 4 · Menubar: una parada de Tab, flechas entre títulos y entre menús abiertos, puntero y Escape",
+      async run({ open }) {
+        const page = await screen(open);
+        const bar = '[role="menubar"][aria-label="Application"]';
+        const stops = await page.locator(`${bar} [role="menuitem"]`).evaluateAll((list) => list.filter((el) => el.tabIndex === 0).length);
+        assert(stops === 1, `paradas: ${stops}`);
+        await page.locator(`${bar} [role="menuitem"]`).first().focus();
+        await press(page, "ArrowLeft");
+        await expectActive(page, "View", "vuelta al último título habilitado (Help está deshabilitado)");
+        await press(page, "ArrowRight", "ArrowDown");
+        await visible(page, '.z-menu[role="menu"]');
+        await focusOn(page, '.z-menu [role="menuitem"]', "foco en New file");
+        await press(page, "ArrowRight");
+        await focusOn(page, '.z-menu [role="menuitem"]:has-text("Undo")', "derecha pasa al menú Edit");
+        await press(page, "ArrowLeft");
+        await focusOn(page, '.z-menu [role="menuitem"]:has-text("New file")', "izquierda vuelve a File");
+        await press(page, "ArrowDown", "ArrowDown", "ArrowRight");
+        await focusOn(page, '.z-menu [role="menuitem"]:has-text("atlas/README.md")', "derecha en Open recent abre el submenú");
+        await press(page, "Enter");
+        await expectText(page, t("c-last"), "file:readme");
+        await focusOn(page, `${bar} [role="menuitem"]:has-text("File")`, "el foco vuelve al título");
+        await page.click(`${bar} [role="menuitem"]:has-text("View")`);
+        await visible(page, '.z-menu [role="menuitemcheckbox"]');
+        await page.hover(`${bar} [role="menuitem"]:has-text("Edit")`);
+        await visible(page, '.z-menu [role="menuitem"]:has-text("Redo")', "el puntero cambia de menú");
+        await press(page, "Escape");
+        await gone(page, '.z-menu[role="menu"]');
+      },
+    },
   ];
 }
