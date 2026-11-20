@@ -411,7 +411,10 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
     await field.fill("Aurora");
     await events();
     await press("Enter");
-    ok((await box.getAttribute("data-value")) === "Aurora" && (await preview.locator(".z-editable__text").textContent()).trim() === "Aurora", "no guardó");
+    ok(
+      (await box.getAttribute("data-value")) === "Aurora" && (await preview.locator(".z-editable__text").textContent()).trim() === "Aurora",
+      "no guardó",
+    );
     ok(await activeIs("[data-component='Editable'] .z-editable__preview"), "foco al texto");
     ok(
       (await events()).some((e) => e.name === "z:change" && e.detail.value === "Aurora"),
