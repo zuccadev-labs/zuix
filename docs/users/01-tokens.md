@@ -24,7 +24,7 @@ comprueba.
 | Estado | `success`, `warning`, `danger`, `info`, cada uno con `-soft`, `-text` y `-solid` |
 | Material | `glass-bg`, `glass-border`, `glass-highlight`, `glass-specular`, `glass-shadow`, `glass-blur`, `glass-blur-elevated`, `glass-saturate`, `canvas`, `canvas-gradient` |
 | Tipografía | `font-display`, `font-sans`, `font-mono`, `text-*`, `weight-*`, `leading-*`, `tracking-*` |
-| Espaciado | `space-0` a `space-20`, con los intermedios `space-1-5` (6 px), `space-2-5` (10 px), `space-3-5` (14 px), `space-7`, `space-9` y `space-14` |
+| Espaciado | `space-0` a `space-20`, con los intermedios `space-0-5` (2 px), `space-1-5` (6 px), `space-2-5` (10 px), `space-3-5` (14 px), `space-7`, `space-9` y `space-14` |
 | Forma | `radius-xs`, `sm`, `md`, `lg`, `xl`, `panel`, `full` |
 | Elevación | `shadow-sm`, `md`, `lg` |
 | Movimiento | `duration-press`, `fast`, `normal`, `slow`; `ease-standard`, `out`, `emphasized`, `exit`, `spring` |
