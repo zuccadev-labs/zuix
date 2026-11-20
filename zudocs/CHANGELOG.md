@@ -36,6 +36,17 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 - El sitio deja de cargar Poppins: con la base visual nueva, la marca `dazlabs` usa DM Sans también en los
   titulares. Quedan autoalojadas DM Sans y JetBrains Mono.
 
+### Corregido
+
+- Auditoría visual del sitio:
+  - Rellenos, huecos, interlineados y pesos en tokens: tabla de props y de Markdown a 14/20 (antes 13/18 y
+    10/18), índice con interlineado `leading-ui` y sangrías de la escala, código en línea con peso regular,
+    titular de portada con `text-hero` y `leading-tight`.
+  - Los chips (enlaces de la cabecera de componente) usaban Arial: heredan la fuente de la marca. El buscador de la
+    barra, el filtro de la barra lateral y los chips pierden el relleno por defecto del navegador.
+  - Página de búsqueda: titular con la escala de la suite y campo de 48 px.
+  - El enlace de cada diapositiva de la portada mide 24 px de alto (objetivo de WCAG 2.5.8).
+
 
 ## [0.2.0] - 2026-11-18
 
