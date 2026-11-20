@@ -1,9 +1,10 @@
 // Demos de React de la página de cada componente: los componentes reales con varios estados a la vez.
 // Un componente sin demo aquí se ve igual con los ejemplos de su manifiesto (contrato HTML en vivo).
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import {
   Accordion,
+  ActionBar,
   Alert,
   Avatar,
   AvatarGroup,
@@ -56,8 +57,11 @@ import {
   Tabs,
   Textarea,
   Toggle,
+  Toggletip,
   Tooltip,
+  Tour,
   Tree,
+  HoverCard,
   useToast,
 } from "@zuccadev-labs/zuix-zui";
 import { Grid, Pane, SplitPane, TabStrip } from "@zuccadev-labs/zuix-zout";
@@ -69,7 +73,11 @@ const users = [
 ];
 
 export function useDemos(): Record<string, ReactNode> {
-  const { toast } = useToast();
+  const { toast, promise } = useToast();
+  const [picked, setPicked] = useState<string[]>(["a"]);
+  const [touring, setTouring] = useState(false);
+  const [snap, setSnap] = useState(1);
+  const dnsField = useRef<HTMLInputElement | null>(null);
   // Los enlaces de las demos son <a> normales: llevan el baseUrl del sitio a mano.
   const home = useBaseUrl("/");
   const here = useBaseUrl("/components");
@@ -81,6 +89,57 @@ export function useDemos(): Record<string, ReactNode> {
   const [tab, setTab] = useState("a");
   const [mine, setMine] = useState(true);
   return {
+    HoverCard: (
+      <p>
+        Reviewed by{" "}
+        <HoverCard arrow trigger={<a href={home}>@ana</a>}>
+          <span className="zd-demo-card">
+            <Avatar name="Ana Ruiz" size="md" />
+            <strong>Ana Ruiz</strong>
+            <span>Design systems · Madrid</span>
+          </span>
+        </HoverCard>{" "}
+        yesterday.
+      </p>
+    ),
+    Toggletip: (
+      <span className="zd-demo-inline">
+        Shipping
+        <Toggletip label="More about shipping">Free on orders over $50. Orders placed before 2pm ship the same day.</Toggletip>
+      </span>
+    ),
+    ActionBar: (
+      <>
+        {["a", "b", "c"].map((file) => (
+          <Checkbox
+            key={file}
+            checked={picked.includes(file)}
+            onCheckedChange={(on) => setPicked((list) => (on === true ? [...list, file] : list.filter((f) => f !== file)))}
+          >
+            {`File ${file.toUpperCase()}`}
+          </Checkbox>
+        ))}
+        <ActionBar open={picked.length > 0} position="inline" count={`${picked.length} selected`} onClose={() => setPicked([])}>
+          <IconButton icon="arrow-down-tray" label="Download" size="sm" />
+          <IconButton icon="trash" label="Delete" size="sm" variant="danger" />
+        </ActionBar>
+      </>
+    ),
+    Tour: (
+      <>
+        <Button id="zd-tour-target" icon="sparkles" onClick={() => setTouring(true)}>
+          Take the tour
+        </Button>
+        <Tour
+          open={touring}
+          onOpenChange={setTouring}
+          steps={[
+            { target: "#zd-tour-target", title: "Start here", content: "Every step points at the control it explains." },
+            { title: "You are ready", content: "Escape or Skip close the tour at any step." },
+          ]}
+        />
+      </>
+    ),
     Button: (
       <>
         <Button variant="primary" icon="plus">
@@ -318,14 +377,39 @@ export function useDemos(): Record<string, ReactNode> {
       />
     ),
     Drawer: (
-      <Drawer trigger={<Button icon="funnel">Filters</Button>} title="Filters" side="right">
-        <Checkbox defaultChecked>Only mine</Checkbox>
-      </Drawer>
+      <>
+        <Drawer trigger={<Button icon="funnel">Filters</Button>} title="Filters" side="right">
+          <Checkbox defaultChecked>Only mine</Checkbox>
+        </Drawer>
+        <Drawer
+          side="bottom"
+          title="Comments"
+          snapPoints={[0.4, 0.85]}
+          snapPoint={snap}
+          onSnapPointChange={setSnap}
+          trigger={<Button>Bottom sheet with snap points</Button>}
+        >
+          <p>Drag the handle or use the arrow keys on it.</p>
+        </Drawer>
+      </>
     ),
     Popover: (
-      <Popover trigger={<Button>Usage</Button>} label="Usage details" width={280}>
-        <p>1,204 requests this month.</p>
-      </Popover>
+      <>
+        <Popover trigger={<Button>Usage</Button>} label="Usage details" width={280}>
+          <p>1,204 requests this month.</p>
+        </Popover>
+        <Input ref={dnsField} aria-label="Domain" defaultValue="zuix.dev" />
+        <Popover
+          label="DNS help"
+          anchor={dnsField}
+          arrow
+          showClose
+          align="start"
+          trigger={<IconButton icon="question-mark-circle" label="DNS help" />}
+        >
+          Point an A record to 76.76.21.21.
+        </Popover>
+      </>
     ),
     Tooltip: (
       <Tooltip content="Copy link">
@@ -380,9 +464,22 @@ export function useDemos(): Record<string, ReactNode> {
       </>
     ),
     Toast: (
-      <Button onClick={() => toast({ title: "Changes saved", description: "Your profile is up to date.", intent: "success" })}>
-        Show toast
-      </Button>
+      <>
+        <Button onClick={() => toast({ title: "Changes saved", description: "Your profile is up to date.", intent: "success" })}>
+          Show toast
+        </Button>
+        <Button
+          onClick={() =>
+            void promise(new Promise((resolve) => setTimeout(() => resolve("0.3.0"), 1500)), {
+              loading: "Deploying…",
+              success: (version) => ({ title: "Deployed", description: `Version ${String(version)} is live.` }),
+              error: "Deploy failed",
+            })
+          }
+        >
+          Deploy (promise)
+        </Button>
+      </>
     ),
     Tabs: (
       <Tabs
@@ -468,6 +565,9 @@ export function useDemos(): Record<string, ReactNode> {
 
 /** Demos que se leen mejor apiladas en columna que en fila. */
 export const COLUMN = new Set([
+  "Banner",
+  "Collapsible",
+  "Command",
   "Calendar",
   "Combobox",
   "Input",

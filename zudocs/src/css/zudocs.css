@@ -2360,3 +2360,15 @@ mark[data-markjs] {
     box-shadow: none;
   }
 }
+
+/* Demos de la oleada 4: tarjeta de vista previa y etiqueta con su ayuda en línea. */
+.zd-demo-card {
+  display: grid;
+  gap: var(--z-space-1);
+  min-inline-size: 200px;
+}
+.zd-demo-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-1);
+}
