@@ -3,6 +3,7 @@
 [![npm](https://img.shields.io/npm/v/%40zuccadev-labs%2Fzuix?label=npm)](https://www.npmjs.com/package/@zuccadev-labs/zuix)
 [![ci](https://github.com/zuccadev-labs/zuix/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zuccadev-labs/zuix/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/zuccadev-labs/zuix/badge)](https://scorecard.dev/viewer/?uri=github.com/zuccadev-labs/zuix)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16943/badge)](https://www.bestpractices.dev/projects/16943)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 [English](./README.md) | **Español**
