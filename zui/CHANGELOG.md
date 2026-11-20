@@ -32,6 +32,16 @@ radios y material de los tokens.
   contenido propio por evento (`renderEvent`, sin perder el nombre accesible completo), carga por rango visible
   (`loadEvents`, `onRangeChange`; en `/dom`, `setAgendaOptions()` y `z:rangechange`), el chevrón de continuación en
   las barras de varios días y la banda continua de la semana visible en el minicalendario.
+- Agenda con muchos eventos (5000 en un mes): la rejilla de horas pinta como mucho cuatro solapes lado a lado en la
+  semana (ocho en el día) y el resto en un «+N» por hora en la última columna del grupo (nombre «+3 more,
+  Thursday 19 November, 10:00–11:00», con tabulador y flechas, que abre el popover de ese intervalo); la lista
+  (`agenda`) pinta solo su ventana visible con un margen a partir de 150 filas (rellenos del alto del resto,
+  `aria-setsize`/`aria-posinset`, la fila con el foco siempre pintada; Inicio y Fin van al primero y al último
+  aunque no estén pintados). Arrastrar con el puntero en la vista `timeline` del EventCalendar (mover y alargar
+  por el asa del final, con desplazamiento automático horizontal). En `/dom`, `setAgendaOptions({ density })`
+  para la vista de año.
+- `layoutTimed` devuelve además el grupo de solape de cada trozo (`group`, `groupStart`) y acepta un tope de
+  columnas.
 - Piezas nuevas del grupo `agenda`, en React y sin framework (`/dom`, `setWidgetProps()`): `PerpetualYear`
   (tabla con caption, instrucciones y buscador con respuesta en texto), `TimelineView` (Gantt con fases
   plegables, progreso, hitos, dependencias, camino crítico, hoy y zoom día/semana/mes; recursos con conflictos
@@ -84,6 +94,18 @@ radios y material de los tokens.
   `core/segments` y `core/time`.
 
 ### Cambiado
+
+- Rendimiento de la agenda (5000 eventos, build de producción): de 450–720 ms de CPU a 80–150 ms al pasar de
+  semana, y de 330–490 ms a 30–60 ms al abrir la lista de 30 días; el mes, el día y el año, por debajo de 90 ms.
+  `expandEvents` usa un índice por intervalos (búsqueda binaria; se vuelve a indexar si la lista o un evento cambian
+  en su sitio) con memoria por rango (la misma lista y las mismas ocurrencias para el mismo rango: no se
+  modifican), las vistas reparten las ocurrencias por día en una sola pasada, los carriles del mes dejan de buscar
+  más allá de `dayMaxEvents`, el marcado de cada evento se memoriza (mover el foco o arrastrar no vuelve a recorrer
+  los que no cambian, ni en React ni en el modo DOM, que además compara atributos con el pintado anterior en vez de
+  leer el documento) y el minicalendario no se vuelve a pintar si no cambia su mes. El aviso de rango
+  (`onRangeChange`, `z:rangechange`) y la carga (`loadEvents`) pasan a después del siguiente pintado.
+- Modo DOM: el parcheo con claves ya no sustituye un nodo que hará falta más adelante (lo recoloca) y devuelve el
+  foco a la pieza que mueve; los datos de los `<script type="application/json">` se analizan una vez por texto.
 
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
   punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal

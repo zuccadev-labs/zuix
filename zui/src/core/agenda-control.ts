@@ -18,10 +18,11 @@ import {
   type CalendarEvent,
   type Occurrence,
 } from "./agenda";
-import type { AgendaConfig, AgendaModel, AgendaState, DragPreview } from "./agenda-view";
-import { timeRangeText } from "./agenda-view";
+import type { AgendaConfig, AgendaModel, AgendaState, DragPreview, ListMetrics } from "./agenda-view";
+import { LIST_BLOCK, LIST_METRICS, timeRangeText } from "./agenda-view";
 import { addDays, parse } from "./date";
 import { isRtl } from "./dir";
+import { afterPaint } from "./idle";
 import { pushLayer } from "./layers";
 import { place } from "./place";
 import { arrowDirection, nextInDirection } from "./spatial";
@@ -150,6 +151,16 @@ function pointInGrid(root: HTMLElement, host: AgendaHost, x: number, y: number):
   const hourPx = rect.height / ((config.dayEnd - config.dayStart) / 60);
   const minute = config.dayStart + ((y - rect.top) / hourPx) * 60;
   return { date: cols[i]!.dataset.date!, minute };
+}
+/** Línea temporal: minuto del día bajo `x` (todas las pistas comparten la escala; en RTL, desde la derecha). */
+function minuteInTrack(root: HTMLElement, host: AgendaHost, x: number): number | null {
+  const track = root.querySelector<HTMLElement>(".z-timeline__track");
+  if (!track) return null;
+  const r = track.getBoundingClientRect();
+  if (!r.width) return null;
+  const config = host.config();
+  const frac = isRtl(root) ? (r.right - x) / r.width : (x - r.left) / r.width;
+  return config.dayStart + frac * (config.dayEnd - config.dayStart);
 }
 const cellAt = (root: HTMLElement, x: number, y: number) =>
   [...root.querySelectorAll<HTMLElement>(".z-monthgrid__cell")].find((c) => {
@@ -344,10 +355,21 @@ function onKeyDown(root: HTMLElement, host: AgendaHost, event: KeyboardEvent): v
     return;
   }
 
-  // Eventos: navegación espacial (y la lista, de arriba abajo).
-  if (o) {
+  // Eventos (y los «+N» de la rejilla de horas): navegación espacial (y la lista, de arriba abajo).
+  const chip = piece?.matches(".z-timegrid__overflow") ? piece : null;
+  if (o || chip) {
     if (event.key === "Home" || event.key === "End") {
-      const scope = state.view === "agenda" ? root : (piece!.closest(".z-timegrid__col, .z-monthgrid__cell, .z-agenda__pop") ?? root);
+      // La lista puede pintar solo una ventana: primero y último salen del modelo, no del documento.
+      if (state.view === "agenda" && !inPop) {
+        const list = model.occurrences;
+        const pick = event.key === "Home" ? list[0] : list[list.length - 1];
+        if (pick && pick.key !== eventKey) {
+          event.preventDefault();
+          focusId(host, `e:${pick.key}`);
+        }
+        return;
+      }
+      const scope = piece!.closest(".z-timegrid__col, .z-monthgrid__cell, .z-agenda__pop") ?? root;
       const list = [...scope.querySelectorAll<HTMLElement>(".z-event[data-focus-id]")];
       const pick = event.key === "Home" ? list[0] : list[list.length - 1];
       if (pick && pick !== piece) {
@@ -360,7 +382,10 @@ function onKeyDown(root: HTMLElement, host: AgendaHost, event: KeyboardEvent): v
     const dir = arrowDirection(event.key);
     if (!dir || event.altKey || event.ctrlKey || event.metaKey) return;
     const scope = inPop ?? (state.view === "month" ? piece!.closest(".z-monthgrid__cell") : root.querySelector(".z-agenda__view"));
-    const pieces = [...(scope ?? root).querySelectorAll<HTMLElement>(".z-event")].filter((el) => el.checkVisibility?.() ?? true);
+    // Todas las lecturas de geometría juntas (sin escribir entre medias): una sola maquetación.
+    const pieces = [...(scope ?? root).querySelectorAll<HTMLElement>(".z-event, .z-timegrid__overflow")].filter(
+      (el) => el.checkVisibility?.() ?? true,
+    );
     const rects = pieces.map((el) => el.getBoundingClientRect());
     const current = piece!.getBoundingClientRect();
     const i = nextInDirection(current, rects, dir);
@@ -372,7 +397,7 @@ function onKeyDown(root: HTMLElement, host: AgendaHost, event: KeyboardEvent): v
       return;
     }
     // Sin evento en esa dirección en la rejilla de horas: el cursor de franja junto al evento.
-    if (!inPop && piece!.closest(".z-timegrid__col") && (dir === "up" || dir === "down") && !o.allDay) {
+    if (o && !inPop && piece!.closest(".z-timegrid__col") && (dir === "up" || dir === "down") && !o.allDay) {
       const step = config.slotDuration;
       const m = dir === "up" ? snap(minuteOfDay(o.start), step) - step : Math.ceil(minuteOfDay(o.end) / step) * step;
       if (m >= config.dayStart && m <= config.dayEnd - step) {
@@ -387,7 +412,7 @@ function onKeyDown(root: HTMLElement, host: AgendaHost, event: KeyboardEvent): v
 
 function setView(host: AgendaHost, view: AgendaView): void {
   if (host.state().view === view) return;
-  host.update({ view, focus: null, more: null, detail: null, grabbed: null });
+  host.update({ view, focus: null, more: null, detail: null, grabbed: null, listScroll: null });
   host.emit("view-change", { view });
 }
 
@@ -400,13 +425,13 @@ function openDay(host: AgendaHost, date: string, view: AgendaView = "day"): void
     host.emit("date-change", { date });
     return;
   }
-  host.update({ view: target, date, focus: null, more: null, detail: null, grabbed: null }, true);
+  host.update({ view: target, date, focus: null, more: null, detail: null, grabbed: null, listScroll: null }, true);
   host.emit("view-change", { view: target });
   host.emit("date-change", { date });
 }
 
 function changeDate(host: AgendaHost, date: string, focus = false): void {
-  host.update({ date, focus: null, more: null, detail: null, grabbed: null }, focus);
+  host.update({ date, focus: null, more: null, detail: null, grabbed: null, listScroll: null }, focus);
   host.emit("date-change", { date });
 }
 
@@ -566,8 +591,9 @@ function pointerStart(root: HTMLElement, host: AgendaHost, event: PointerEvent, 
   const state = host.state();
   const ev = target.closest<HTMLElement>(".z-event");
   if (target.closest(".z-agenda__pop, .z-agenda__move")) return;
-  const grid = target.closest(".z-timegrid__col, .z-monthgrid__cell");
+  const grid = target.closest(".z-timegrid__col, .z-monthgrid__cell, .z-timeline__track");
   if (!grid) return;
+  const lanes = state.view === "timeline";
   let mode: DragState["mode"];
   let o: Occurrence | undefined;
   if (ev?.dataset.key) {
@@ -576,7 +602,16 @@ function pointerStart(root: HTMLElement, host: AgendaHost, event: PointerEvent, 
     mode = target.closest(".z-event__resize") ? "resize-end" : "move";
   } else if (config.selectable && target.closest(".z-timegrid__col") && !target.closest(".z-timegrid__slot")) mode = "create";
   else return;
-  const at = state.view === "month" ? null : pointInGrid(root, host, event.clientX, event.clientY);
+  // Línea temporal: el minuto bajo el puntero en la pista (horizontal), en el día de la vista.
+  const laneMinute = lanes ? minuteInTrack(root, host, event.clientX) : null;
+  const at =
+    state.view === "month"
+      ? null
+      : lanes
+        ? laneMinute === null
+          ? null
+          : { date: state.date, minute: laneMinute }
+        : pointInGrid(root, host, event.clientX, event.clientY);
   Object.assign(drag, {
     pointerId: event.pointerId,
     key: o?.key ?? null,
@@ -632,6 +667,22 @@ function track(root: HTMLElement, host: AgendaHost, drag: DragState): void {
     if (!cur || cur.start !== next.start) host.update({ drag: { key: drag.key, mode: "move", ...next } });
     return;
   }
+  if (state.view === "timeline") {
+    // Línea temporal: mover o alargar en el tiempo, dentro de la fila (la fila no cambia: el recurso es de la app).
+    const minute = minuteInTrack(root, host, drag.lastX);
+    if (minute === null || !drag.key) return;
+    const base = dayStart(state.date);
+    const step = config.snapDuration;
+    const next =
+      drag.mode === "move"
+        ? // `offset`: minutos entre el punto agarrado y el inicio; el inicio nuevo se ajusta a `snapDuration`.
+          moveSpan(drag.origin, base + snap(minute - drag.offset, step) - drag.origin.start)
+        : resizeSpan(drag.origin, "end", base + snap(minute, step) - drag.origin.end, step);
+    const cur = state.drag;
+    if (!cur || cur.start !== next.start || cur.end !== next.end)
+      host.update({ drag: { key: drag.key, mode: drag.mode === "move" ? "move" : "resize-end", ...next } });
+    return;
+  }
   const at = pointInGrid(root, host, drag.lastX, drag.lastY);
   if (!at) return;
   const absolute = dayStart(at.date) + at.minute;
@@ -663,22 +714,32 @@ function track(root: HTMLElement, host: AgendaHost, drag: DragState): void {
 
 /** Desplazamiento automático cerca de los bordes del contenedor, con un bucle de requestAnimationFrame. */
 function autoScroll(root: HTMLElement, host: AgendaHost, drag: DragState): void {
-  const scroller = root.querySelector<HTMLElement>(".z-timegrid__scroll");
+  // Rejilla de horas: en vertical; línea temporal: en horizontal (las horas van a lo ancho).
+  const lanes = root.querySelector<HTMLElement>(".z-agenda__view .z-timeline__scroll");
+  const scroller = lanes ?? root.querySelector<HTMLElement>(".z-timegrid__scroll");
   if (!scroller) return;
   let last = performance.now();
   const tick = (now: number) => {
     if (!drag.started) return;
     const r = scroller.getBoundingClientRect();
-    const zone = Math.min(56, r.height / 3);
     const dt = Math.min(64, now - last);
     last = now;
     let speed = 0;
-    if (drag.lastY < r.top + zone) speed = -Math.min(1.5, (r.top + zone - drag.lastY) / zone);
-    else if (drag.lastY > r.bottom - zone) speed = Math.min(1.5, (drag.lastY - (r.bottom - zone)) / zone);
+    const [lo, hi, at] = lanes ? [r.left, r.right, drag.lastX] : [r.top, r.bottom, drag.lastY];
+    const zone = Math.min(56, (hi - lo) / 3);
+    if (at < lo + zone) speed = -Math.min(1.5, (lo + zone - at) / zone);
+    else if (at > hi - zone) speed = Math.min(1.5, (at - (hi - zone)) / zone);
     if (speed) {
-      const before = scroller.scrollTop;
-      scroller.scrollTop += speed * dt * 0.6;
-      if (scroller.scrollTop !== before) track(root, host, drag);
+      if (lanes) {
+        const before = scroller.scrollLeft;
+        // Cerca del borde físico izquierdo, hacia la izquierda (en RTL, scrollLeft negativo hace lo mismo).
+        scroller.scrollLeft += speed * dt * 0.6;
+        if (scroller.scrollLeft !== before) track(root, host, drag);
+      } else {
+        const before = scroller.scrollTop;
+        scroller.scrollTop += speed * dt * 0.6;
+        if (scroller.scrollTop !== before) track(root, host, drag);
+      }
     }
     drag.frame = requestAnimationFrame(tick);
   };
@@ -772,6 +833,27 @@ export function attachAgenda(root: HTMLElement, host: AgendaHost): () => void {
     },
     { signal, capture: true },
   );
+  // Lista larga: al desplazar, la ventana se recalcula en el siguiente fotograma y solo si cambia de bloque (las
+  // lecturas de scrollTop y clientHeight van juntas, sin escrituras entre medias).
+  let frame = 0;
+  root.addEventListener(
+    "scroll",
+    (event) => {
+      const list = event.target as HTMLElement;
+      if (!list.matches?.(".z-agendalist[data-virtual]")) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const state = host.state();
+        const row = (state.listMetrics ?? LIST_METRICS).row;
+        const block = row * LIST_BLOCK;
+        const top = Math.floor(list.scrollTop / block) * block;
+        const height = list.clientHeight;
+        const cur = state.listScroll;
+        if (!cur || cur.top !== top || Math.abs(cur.height - height) > row) host.update({ listScroll: { top, height } });
+      });
+    },
+    { signal, capture: true },
+  );
   root.addEventListener(
     "focusin",
     (e) => {
@@ -800,6 +882,7 @@ export function attachAgenda(root: HTMLElement, host: AgendaHost): () => void {
   );
   return () => {
     abort.abort();
+    cancelAnimationFrame(frame);
     reset(drag);
     for (const release of layers.get(root)?.values() ?? []) release();
     layers.delete(root);
@@ -812,6 +895,8 @@ const layers = new WeakMap<HTMLElement, Map<Element, () => void>>();
 const scrolled = new WeakMap<HTMLElement, string>();
 /** Raíces que están moviendo el foco tras un cambio (sus desenfoques no sueltan lo agarrado). */
 const moving = new WeakSet<HTMLElement>();
+/** Raíces con una medida de la lista pendiente. */
+const measuring = new WeakSet<HTMLElement>();
 
 /** Marca que el próximo pintado mueve el foco (lo usan React y el modo DOM antes de pintar). */
 export function beginFocusMove(root: HTMLElement): void {
@@ -840,6 +925,23 @@ export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boole
       const top = box.top - scroller.getBoundingClientRect().top + scroller.scrollTop;
       scroller.scrollTop = Math.max(0, top + ((scrollMinute - config.dayStart) / 60) * hourPx - (head?.offsetHeight ?? 0));
     }
+  }
+  // Lista: al cambiar de vista o de periodo, desde el principio; con ventana virtual, la medida de una fila (una
+  // sola vez: una lectura tras pintar, nunca una por fila).
+  const list = root.querySelector<HTMLElement>(".z-agendalist");
+  if (list && !scroller && scrolled.get(root) !== stamp) {
+    scrolled.set(root, stamp);
+    list.scrollTop = 0;
+  }
+  if (list?.hasAttribute("data-virtual") && !state.listMetrics && !measuring.has(root)) {
+    // Tras pintar: la maquetación ya está hecha y la lectura no fuerza otra dentro de la interacción.
+    measuring.add(root);
+    afterPaint(() => {
+      measuring.delete(root);
+      const now = root.querySelector<HTMLElement>(".z-agendalist[data-virtual]");
+      const metrics = now && !host.state().listMetrics ? measureList(now) : null;
+      if (metrics) host.update({ listMetrics: metrics });
+    });
   }
   // Popovers: abiertos, colocados y en la pila de capas.
   const open = layers.get(root) ?? new Map<Element, () => void>();
@@ -892,6 +994,27 @@ export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boole
     }
   }
   moving.delete(root);
+}
+
+/** Alto de una fila, de la cabecera de un día y del relleno de un grupo de la lista (lecturas juntas). */
+function measureList(list: HTMLElement): ListMetrics | null {
+  for (const day of list.querySelectorAll<HTMLElement>(".z-agendalist__day")) {
+    const items = day.querySelectorAll<HTMLElement>(".z-agendalist__item");
+    const ul = day.querySelector<HTMLElement>(".z-agendalist__items");
+    const head = day.querySelector<HTMLElement>(".z-agendalist__date");
+    if (items.length < 2 || !ul || !head) continue;
+    const a = items[0]!.getBoundingClientRect();
+    const b = items[1]!.getBoundingClientRect();
+    const box = ul.getBoundingClientRect();
+    const first = ul.firstElementChild!.getBoundingClientRect();
+    const last = ul.lastElementChild!.getBoundingClientRect();
+    const row = b.top - a.top;
+    if (!(row > 0)) return null;
+    // Relleno del grupo: el de la lista de filas más el borde del día.
+    const pad = box.height - (last.bottom - first.top) + (day.offsetHeight - day.clientHeight);
+    return { row, head: head.offsetHeight, pad: Math.max(0, pad) };
+  }
+  return null;
 }
 
 /** Llama a `tick` al empezar cada minuto, en pausa con la pestaña oculta. Devuelve la función que lo para. */

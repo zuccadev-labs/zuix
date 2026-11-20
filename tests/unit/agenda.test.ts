@@ -410,12 +410,16 @@ describe("agenda: eventos en el tiempo", () => {
     const e = { start: 800, end: 860 };
     const z = { start: 900, end: 900 };
     const p = layoutTimed([c, b, a, d, e, z], 15);
-    assert.deepEqual(p.get(a), { col: 0, n: 3, w: 1, side: true });
-    assert.deepEqual(p.get(b), { col: 1, n: 3, w: 1, side: true });
-    assert.deepEqual(p.get(c), { col: 2, n: 3, w: 1, side: false });
-    assert.deepEqual(p.get(d), { col: 1, n: 3, w: 2, side: false }, "11:30 cabe en la columna 1 y se ensancha a la 2");
-    assert.deepEqual(p.get(e), { col: 0, n: 1, w: 1, side: false });
-    assert.deepEqual(p.get(z), { col: 0, n: 1, w: 1, side: false });
+    assert.deepEqual(p.get(a), { col: 0, n: 3, w: 1, side: true, group: 0, groupStart: 600 });
+    assert.deepEqual(p.get(b), { col: 1, n: 3, w: 1, side: true, group: 0, groupStart: 600 });
+    assert.deepEqual(p.get(c), { col: 2, n: 3, w: 1, side: false, group: 0, groupStart: 600 });
+    assert.deepEqual(
+      p.get(d),
+      { col: 1, n: 3, w: 2, side: false, group: 0, groupStart: 600 },
+      "11:30 cabe en la columna 1 y se ensancha a la 2",
+    );
+    assert.deepEqual(p.get(e), { col: 0, n: 1, w: 1, side: false, group: 1, groupStart: 800 });
+    assert.deepEqual(p.get(z), { col: 0, n: 1, w: 1, side: false, group: 2, groupStart: 900 });
   });
   test("propiedad: dos del mismo grupo que se solapan nunca comparten columna; ancho dentro de n", () => {
     const interval = fc

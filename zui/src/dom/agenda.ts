@@ -34,6 +34,7 @@ import {
 import { findSlots } from "../core/vnode";
 import { localeWeekInfo, todayISO, valid } from "../core/date";
 import { safeTimeZone } from "../core/zone";
+import { afterPaint } from "../core/idle";
 import { setCalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
 import type { Listen } from "./shared";
@@ -64,7 +65,11 @@ interface Entry {
   /** Contenido propio de cada evento y carga por rango (setAgendaOptions). */
   renderEvent?: (detail: Record<string, unknown>) => Node | string | null | undefined;
   loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+  /** Vista de año: densidad 0…3 de un día (setAgendaOptions). */
+  density?: (date: string, count: number) => number;
   loaded: CalendarEvent[];
+  /** Eventos propios más los cargados, con la misma lista mientras no cambien (la agenda indexa por lista). */
+  merged?: { own: CalendarEvent[]; loaded: CalendarEvent[]; list: CalendarEvent[] };
   range: string;
   abort?: AbortController;
   detach: () => void;
@@ -72,17 +77,36 @@ interface Entry {
 }
 const entries = new WeakMap<HTMLElement, Entry>();
 
+// Datos de los `<script type="application/json">` hijos: se analizan una vez por texto, así cada pintado recibe la
+// misma lista (la agenda indexa y memoriza por lista) y no se vuelve a leer el JSON en cada tecla.
+const parsed = new WeakMap<HTMLScriptElement, { text: string; value: unknown }>();
 const json = <T>(el: HTMLElement, selector: string): T | null => {
   const script = el.querySelector<HTMLScriptElement>(`:scope > script[type="application/json"]${selector}`);
-  if (!script?.textContent) return null;
+  const text = script?.textContent;
+  if (!script || !text) return null;
+  const hit = parsed.get(script);
+  if (hit?.text === text) return hit.value as T | null;
+  let value: unknown = null;
   try {
-    return JSON.parse(script.textContent) as T;
+    value = JSON.parse(text);
   } catch {
-    return null;
+    value = null;
   }
+  parsed.set(script, { text, value });
+  return value as T | null;
 };
 const yes = (v: string | undefined) => v !== undefined && v !== "false";
 const num = (v: string | undefined, fallback: number) => (v !== undefined && Number.isFinite(Number(v)) ? Number(v) : fallback);
+
+const NO_EVENTS: CalendarEvent[] = [];
+const NO_CALENDARS: CalendarSource[] = [];
+function eventsOf(el: HTMLElement, entry: Entry): CalendarEvent[] {
+  const own = entry.events ?? json<CalendarEvent[]>(el, "[data-events]") ?? NO_EVENTS;
+  if (!entry.loaded.length) return own;
+  if (entry.merged?.own !== own || entry.merged.loaded !== entry.loaded)
+    entry.merged = { own, loaded: entry.loaded, list: [...own, ...entry.loaded] };
+  return entry.merged.list;
+}
 
 function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
   const d = el.dataset;
@@ -91,9 +115,10 @@ function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
   const zones = d.timeZones?.split(/[\s,]+/).filter(Boolean);
   const now = d.now ? Date.parse(d.now) : undefined;
   return {
-    events: [...(entry.events ?? json<CalendarEvent[]>(el, "[data-events]") ?? []), ...entry.loaded],
+    events: eventsOf(el, entry),
+    density: entry.density,
     customEvents: Boolean(entry.renderEvent),
-    calendars: entry.calendars ?? json<CalendarSource[]>(el, "[data-calendars]") ?? [],
+    calendars: entry.calendars ?? json<CalendarSource[]>(el, "[data-calendars]") ?? NO_CALENDARS,
     views: views.length ? views : [...AGENDA_VIEWS],
     timeZone: safeTimeZone(d.timeZone),
     timeZones: zones?.length ? zones : undefined,
@@ -141,31 +166,41 @@ function render(el: HTMLElement, moveFocus = false): void {
   }
   el.classList.add("z-agenda");
   for (const s of scripts) s.remove();
+  // Una pieza con el foco que el parcheo mueve de sitio (la lista con ventana virtual al desplazarse) sale y vuelve
+  // a entrar en el documento: el foco se le devuelve, como hace React al reordenar.
+  const active = el.ownerDocument.activeElement;
   patchChildren(el, tree.c ?? [], { event: entry.renderEvent });
+  if (active instanceof HTMLElement && active !== el.ownerDocument.activeElement && active.isConnected && el.contains(active))
+    active.focus({ preventScroll: true });
   el.append(...scripts);
   // Rango visible: z:rangechange y, con loadEvents, la carga de sus eventos (cancela la anterior).
   const range = `${entry.state.view}|${model.days[0]}|${model.days[model.days.length - 1]}|${entry.state.timeZone}`;
   if (range !== entry.range) {
     entry.range = range;
     const [view, from, to, timeZone] = range.split("|") as [string, string, string, string];
-    emit(el, "rangechange", { from, to, view });
-    if (entry.loadEvents) {
-      entry.abort?.abort();
-      const abort = new AbortController();
-      entry.abort = abort;
-      el.setAttribute("aria-busy", "true");
-      entry
-        .loadEvents({ from, to, timeZone }, abort.signal)
-        .then((list) => {
-          if (abort.signal.aborted) return;
-          entry.loaded = list;
-          render(el);
-        })
-        .catch(() => {})
-        .finally(() => {
-          if (!abort.signal.aborted) el.removeAttribute("aria-busy");
-        });
-    }
+    entry.abort?.abort();
+    const abort = new AbortController();
+    entry.abort = abort;
+    // Fuera del camino de la interacción: primero se pinta la vista; el aviso y la carga, justo después.
+    afterPaint(
+      () => {
+        emit(el, "rangechange", { from, to, view });
+        if (!entry.loadEvents) return;
+        el.setAttribute("aria-busy", "true");
+        entry
+          .loadEvents({ from, to, timeZone }, abort.signal)
+          .then((list) => {
+            if (abort.signal.aborted) return;
+            entry.loaded = list;
+            render(el);
+          })
+          .catch(() => {})
+          .finally(() => {
+            if (!abort.signal.aborted) el.removeAttribute("aria-busy");
+          });
+      },
+      { signal: abort.signal },
+    );
   }
   // Minicalendario: el Calendar del modo DOM, con el día de la vista y la semana visible.
   const slot = findSlots(tree.c ?? [], "minical")[0]?.p;
@@ -281,24 +316,27 @@ export function setAgendaCalendars(el: HTMLElement, calendars: CalendarSource[])
 
 /**
  * Opciones con funciones de un EventCalendar del modo DOM: `renderEvent` (contenido visible de cada evento: texto o
- * nodos) y `loadEvents` (carga de los eventos del rango visible). Emite `z:rangechange` al cambiar de rango.
+ * nodos), `loadEvents` (carga de los eventos del rango visible) y `density` (vista de año: nivel 0…3 de un día a
+ * partir de su número de eventos). Emite `z:rangechange` al cambiar de rango.
  */
 export function setAgendaOptions(
   el: HTMLElement,
   options: {
     renderEvent?: (detail: Record<string, unknown>) => Node | string | null | undefined;
     loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+    density?: (date: string, count: number) => number;
   },
 ): void {
   const entry = entries.get(el);
   if (!entry) return;
+  if ("density" in options) entry.density = options.density;
   if ("renderEvent" in options) entry.renderEvent = options.renderEvent;
   if ("loadEvents" in options) {
     entry.loadEvents = options.loadEvents;
     entry.range = "";
   }
   // El contenido propio cambia: los eventos se vuelven a crear.
-  for (const child of [...el.childNodes]) if (!(child instanceof HTMLScriptElement)) child.remove();
+  if ("renderEvent" in options) for (const child of [...el.childNodes]) if (!(child instanceof HTMLScriptElement)) child.remove();
   render(el);
 }
 

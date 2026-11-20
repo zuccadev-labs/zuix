@@ -13,7 +13,7 @@ import {
   type Ref,
 } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
-import type { VNode } from "../../core/vnode";
+import type { VEl, VNode } from "../../core/vnode";
 import { focusActive, type Widget, type WidgetHost } from "../../core/widget";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
@@ -32,6 +32,9 @@ const noop = () => {};
 
 export type SlotRenderer = (p: Record<string, unknown>) => ReactNode;
 
+// Elementos ya creados para un subárbol memorizado (`m`): el mismo nodo da el mismo elemento, y React no lo recorre.
+const elements = new WeakMap<object, ReactNode>();
+
 /** Árbol de core/vnode → elementos de React. Los eventos los atiende la interacción común en la raíz. */
 export function toReact(node: VNode, slots: Partial<Record<"minical" | "calendar" | "event", SlotRenderer>> = {}): ReactNode {
   if (node === null || node === undefined || node === false) return null;
@@ -40,6 +43,17 @@ export function toReact(node: VNode, slots: Partial<Record<"minical" | "calendar
     if (node.slot === "icon") return <Icon key={node.k} name={node.p.name as IconName} size={Number(node.p.size)} />;
     return slots[node.slot]?.({ ...node.p, key: node.k }) ?? null;
   }
+  if (node.m) {
+    const hit = elements.get(node);
+    if (hit !== undefined) return hit;
+    const made = element(node, slots);
+    elements.set(node, made);
+    return made;
+  }
+  return element(node, slots);
+}
+
+function element(node: VEl, slots: Partial<Record<"minical" | "calendar" | "event", SlotRenderer>>): ReactNode {
   const props: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(node.a ?? {})) {
     if (v === undefined || v === null || v === false) continue;

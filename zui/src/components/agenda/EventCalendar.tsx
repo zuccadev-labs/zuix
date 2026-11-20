@@ -24,6 +24,7 @@ import {
   type BusinessHours,
 } from "../../core/agenda-view";
 import { localeWeekInfo, todayISO, valid } from "../../core/date";
+import { afterPaint } from "../../core/idle";
 import { safeTimeZone } from "../../core/zone";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
@@ -117,14 +118,17 @@ export interface EventCalendarProps {
 }
 
 const ALL_VIEWS: AgendaView[] = ["day", "week", "workweek", "month", "agenda"];
+// Valores por defecto con identidad fija: la agenda memoriza por lista de eventos y de calendarios.
+const NO_EVENTS: CalendarEvent[] = [];
+const NO_CALENDARS: CalendarSource[] = [];
 /**
  * Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral (minicalendario y calendarios) y las vistas
  * de día, semana, semana laboral, mes y agenda sobre el mismo modelo de eventos. Mover, redimensionar y crear con
  * puntero y teclado, y «Mover a…» como alternativa sin arrastre. El marcado y la interacción son los del modo DOM.
  */
 export function EventCalendar({
-  events = [],
-  calendars = [],
+  events = NO_EVENTS,
+  calendars = NO_CALENDARS,
   view,
   defaultView = "week",
   onViewChange,
@@ -177,8 +181,10 @@ export function EventCalendar({
   const nowMs = now === undefined ? undefined : typeof now === "number" ? now : Date.parse(now);
   // Eventos cargados por rango (loadEvents): se suman a `events`.
   const [loaded, setLoaded] = useState<{ key: string; events: CalendarEvent[] } | null>(null);
+  // Eventos propios más los cargados, con la misma lista mientras no cambien (la agenda indexa por lista).
+  const allEvents = useMemo(() => (loaded?.events.length ? [...events, ...loaded.events] : events), [events, loaded]);
   const config: AgendaConfig = {
-    events: loaded?.events.length ? [...events, ...loaded.events] : events,
+    events: allEvents,
     calendars,
     views: views.length ? views : ALL_VIEWS,
     timeZone: zone,
@@ -292,7 +298,18 @@ export function EventCalendar({
   });
   model.current = built;
 
-  const minical = (p: Record<string, unknown>) => (
+  // El minicalendario solo cambia si cambian sus datos (las funciones del árbol tienen identidad fija por rango): el
+  // mismo elemento, y React no lo vuelve a pintar al mover el foco o navegar dentro del mismo mes.
+  const minicalMemo = useRef<{ deps: unknown[]; el: ReactNode } | null>(null);
+  const minical = (p: Record<string, unknown>) => {
+    const deps = [p.value, p.today, p.locale, p.weekStart, p.showWeekNumber, p.inView, p.hasEvents];
+    const prev = minicalMemo.current;
+    if (prev?.deps.every((d, i) => d === deps[i])) return prev.el;
+    const el = minicalElement(p);
+    minicalMemo.current = { deps, el };
+    return el;
+  };
+  const minicalElement = (p: Record<string, unknown>) => (
     <Calendar
       key="minical"
       className="z-agenda__minical"
@@ -323,19 +340,26 @@ export function EventCalendar({
   rangeHandlers.current = { loadEvents, onRangeChange };
   useEffect(() => {
     const [view, from, to, timeZone] = rangeKey.split("|") as [AgendaView, string, string, string];
-    rangeHandlers.current.onRangeChange?.({ from, to, view });
-    const load = rangeHandlers.current.loadEvents;
-    if (!load) return;
     const abort = new AbortController();
-    if (root.current) root.current.setAttribute("aria-busy", "true");
-    load({ from, to, timeZone }, abort.signal)
-      .then((list) => {
-        if (!abort.signal.aborted) setLoaded({ key: rangeKey, events: list });
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (!abort.signal.aborted) root.current?.removeAttribute("aria-busy");
-      });
+    // Fuera del camino de la interacción: el cambio de vista o de periodo se pinta primero; el aviso a la aplicación
+    // y la carga, justo después (navegar deprisa cancela lo que aún no empezó).
+    afterPaint(
+      () => {
+        rangeHandlers.current.onRangeChange?.({ from, to, view });
+        const load = rangeHandlers.current.loadEvents;
+        if (!load) return;
+        if (root.current) root.current.setAttribute("aria-busy", "true");
+        load({ from, to, timeZone }, abort.signal)
+          .then((list) => {
+            if (!abort.signal.aborted) setLoaded({ key: rangeKey, events: list });
+          })
+          .catch(() => {})
+          .finally(() => {
+            if (!abort.signal.aborted) root.current?.removeAttribute("aria-busy");
+          });
+      },
+      { signal: abort.signal },
+    );
     return () => abort.abort();
   }, [rangeKey]);
   const { className: _c, ...rest } = (toReact(tree, { minical, event }) as { props: Record<string, unknown> }).props;

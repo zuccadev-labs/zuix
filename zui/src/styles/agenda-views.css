@@ -838,6 +838,21 @@
     justify-content: center;
     gap: 0;
   }
+  /* Asa de alargar en la línea temporal de la agenda: el borde final, en horizontal. */
+  .z-timeline__booking .z-event__resize {
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: var(--z-space-2);
+    block-size: auto;
+    cursor: ew-resize;
+  }
+  .z-timeline__booking .z-event__resize::after {
+    inset-block: 50% auto;
+    inset-inline: auto 2px;
+    translate: 0 -50%;
+    inline-size: 3px;
+    block-size: 18px;
+  }
   .z-timeline__booking[data-half="top"] {
     inset-block: var(--z-space-1) 50%;
   }

@@ -16,6 +16,8 @@ import {
   splitByDay,
   visibleDays,
   type AgendaView,
+  type DaySegment,
+  type TimedPlacement,
   type CalendarColor,
   type CalendarEvent,
   type CalendarSource,
@@ -141,8 +143,18 @@ export type AgendaLabelsInput = Partial<Omit<AgendaLabels, "views" | "perpetual"
   perpetual?: Partial<PerpetualLabels>;
 };
 
-/** Textos completos: los de la aplicación sobre los de por defecto (en inglés). */
+/** Textos completos: los de la aplicación sobre los de por defecto (en inglés). El mismo objeto para la misma entrada. */
+const merged = new WeakMap<AgendaLabelsInput, AgendaLabels>();
 export function mergeLabels(labels: AgendaLabelsInput | undefined): AgendaLabels {
+  if (!labels) return DEFAULT_LABELS;
+  let out = merged.get(labels);
+  if (!out) {
+    out = mergeLabelsNow(labels);
+    merged.set(labels, out);
+  }
+  return out;
+}
+function mergeLabelsNow(labels: AgendaLabelsInput): AgendaLabels {
   return {
     ...DEFAULT_LABELS,
     ...labels,
@@ -221,7 +233,24 @@ export interface AgendaState {
   drag: DragPreview | null;
   /** Selección de franja al crear arrastrando. */
   creating: { date: string; start: number; end: number } | null;
+  /** Lista larga (ventana virtual): desplazamiento y alto visibles, en px (el inicio, redondeado a bloques). */
+  listScroll?: { top: number; height: number } | null;
+  /** Lista larga: alto medido de una fila, de la cabecera de un día y del relleno de un grupo, en px. */
+  listMetrics?: ListMetrics | null;
 }
+
+export interface ListMetrics {
+  row: number;
+  head: number;
+  pad: number;
+}
+/** Estimación hasta medir (una fila de 48 px más el hueco de 2, cabecera de día y relleno del grupo). */
+export const LIST_METRICS: ListMetrics = { row: 50, head: 76, pad: 17 };
+/** Filas a partir de las que la lista pinta solo su ventana (más un margen) y rellena el resto. */
+export const LIST_VIRTUAL_FROM = 150;
+/** Filas de margen a cada lado de la ventana de la lista, y tamaño del bloque al que se redondea el desplazamiento. */
+export const LIST_OVERSCAN = 8;
+export const LIST_BLOCK = 4;
 
 export function initialState(config: Pick<AgendaConfig, "views" | "timeZone">, view: AgendaView, date: string): AgendaState {
   return {
@@ -237,6 +266,8 @@ export function initialState(config: Pick<AgendaConfig, "views" | "timeZone">, v
     grabbed: null,
     drag: null,
     creating: null,
+    listScroll: null,
+    listMetrics: null,
   };
 }
 
@@ -332,6 +363,56 @@ export function periodTitle(view: AgendaView, days: string[], date: string, loca
   }
 }
 
+/* ---------- Índices por día ---------- */
+
+/**
+ * Ocurrencias de cada día de `days` (un día cuenta si el intervalo lo pisa; uno de cero minutos, en su día), en una
+ * sola pasada: las vistas no filtran la lista entera por cada celda. El orden de cada día es el de `items`.
+ */
+export function byDay<T extends { start: number; end: number }>(items: T[], days: string[]): Map<string, T[]> {
+  const out = new Map<string, T[]>(days.map((d) => [d, []]));
+  if (!days.length) return out;
+  const at = new Map<number, T[]>(days.map((d) => [dayStart(d) / 1440, out.get(d)!]));
+  const first = dayStart(days[0]!) / 1440;
+  const last = dayStart(days[days.length - 1]!) / 1440;
+  for (const o of items) {
+    const a = Math.max(first, Math.floor(o.start / 1440));
+    const b = Math.min(last, Math.ceil(Math.max(o.end, o.start + 1) / 1440) - 1);
+    for (let k = a; k <= b; k++) at.get(k)?.push(o);
+  }
+  return out;
+}
+const dayIndexes = new WeakMap<Occurrence[], { key: string; map: Map<string, Occurrence[]> }>();
+/** `byDay` memorizado por lista de ocurrencias y días (la lista es la misma mientras no cambie el rango). */
+function occurrencesByDay(list: Occurrence[], days: string[]): Map<string, Occurrence[]> {
+  const key = `${days[0]}|${days[days.length - 1]}|${days.length}`;
+  const hit = dayIndexes.get(list);
+  if (hit?.key === key) return hit.map;
+  const map = byDay(list, days);
+  dayIndexes.set(list, { key, map });
+  return map;
+}
+const eventDays = new WeakMap<Occurrence[], (d: string) => boolean>();
+/** Días que empiezan algún evento (minicalendario), con la misma función mientras la lista no cambie. */
+function hasEventsOf(list: Occurrence[]): (d: string) => boolean {
+  let fn = eventDays.get(list);
+  if (!fn) {
+    const set = new Set(list.map((o) => dateOf(o.start)));
+    fn = (d: string) => set.has(d);
+    eventDays.set(list, fn);
+  }
+  return fn;
+}
+const sourceMaps = new WeakMap<CalendarSource[], Map<string, CalendarSource>>();
+const sourcesOf = (calendars: CalendarSource[]) => {
+  let map = sourceMaps.get(calendars);
+  if (!map) {
+    map = new Map(calendars.map((c) => [c.id, c]));
+    sourceMaps.set(calendars, map);
+  }
+  return map;
+};
+
 /* ---------- Modelo de la vista ---------- */
 
 const colorOf = (event: CalendarEvent, sources: Map<string, CalendarSource>): CalendarColor =>
@@ -364,7 +445,7 @@ export function buildModel(config: AgendaConfig, state: AgendaState, nowMs: numb
   const now = config.now !== undefined ? nowIn(config.now, state.timeZone) : nowIn(nowMs, state.timeZone);
   const today = config.today ?? dateOf(now);
   const week = state.view === "week" || state.view === "workweek" ? weekNumber(days[0]!, 1, 4).week : null;
-  const sources = new Map(config.calendars.map((c) => [c.id, c]));
+  const sources = sourcesOf(config.calendars);
   return {
     days,
     occurrences,
@@ -378,7 +459,7 @@ export function buildModel(config: AgendaConfig, state: AgendaState, nowMs: numb
 }
 
 /** Pieza que recibe el tabulador si `state.focus` ya no está en la vista. */
-function fallbackFocus(state: AgendaState, model: AgendaModel, config: AgendaConfig): string {
+function fallbackFocus(state: AgendaState, model: AgendaModel, config: AgendaConfig, plan: TimeGridPlan | null = null): string {
   const inView = (d: string) => model.days.includes(d);
   const anchor = inView(model.today) ? model.today : inView(state.date) ? state.date : model.days[0]!;
   if (state.view === "month" || state.view === "year") return `d:${anchor}`;
@@ -387,7 +468,7 @@ function fallbackFocus(state: AgendaState, model: AgendaModel, config: AgendaCon
     const first = model.occurrences.find((o) => o.end > model.now) ?? model.occurrences[0];
     return first ? `e:${first.key}` : "";
   }
-  const first = model.occurrences.find((o) => !o.allDay && dateOf(o.start) === anchor);
+  const first = model.occurrences.find((o) => !o.allDay && dateOf(o.start) === anchor && !plan?.hidden.has(o.key));
   if (first) return `e:${first.key}`;
   const scroll = Math.max(config.dayStart, Math.min(config.dayEnd - config.slotDuration, 8 * 60));
   return `s:${anchor}:${scroll}`;
@@ -438,17 +519,67 @@ export function eventLabel(
   return parts.join(", ");
 }
 
-function eventButton(
-  bits: EventBits,
-  variant: "timed" | "bar" | "dot" | "row" | "lane",
-  extra: {
-    s?: Record<string, string | number>;
-    cls?: string;
-    cont?: [boolean, boolean];
-    half?: "top" | "bottom" | null;
-    conflict?: boolean;
-  } = {},
-) {
+type EventVariant = "timed" | "bar" | "dot" | "row" | "lane";
+interface EventExtra {
+  s?: Record<string, string | number>;
+  cls?: string;
+  cont?: [boolean, boolean];
+  half?: "top" | "bottom" | null;
+  conflict?: boolean;
+}
+
+// Memoria del marcado de cada evento (por ocurrencia y por todo lo que lo cambia): navegar, mover el foco o
+// arrastrar vuelve a usar el mismo nodo para los eventos que no cambian, y React y el modo DOM no los recorren.
+const buttons = new WeakMap<Occurrence, Map<string, VEl>>();
+const ids = new WeakMap<object, number>();
+let nextId = 1;
+const idOf = (o: object) => {
+  let v = ids.get(o);
+  if (v === undefined) {
+    v = nextId++;
+    ids.set(o, v);
+  }
+  return v;
+};
+
+function eventButton(bits: EventBits, variant: EventVariant, extra: EventExtra = {}): VEl {
+  const { o, config, model, state } = bits;
+  // Con contenido de la aplicación (renderEvent) no se memoriza: lo pinta la aplicación en cada pasada.
+  if (config.customEvents) return eventButtonTree(bits, variant, extra);
+  const sig = [
+    variant,
+    bits.start,
+    bits.end,
+    extra.s ? Object.entries(extra.s).join(",") : "",
+    extra.cls ?? "",
+    extra.cont ? `${extra.cont[0]}${extra.cont[1]}` : "",
+    extra.half ?? "",
+    extra.conflict ? 1 : 0,
+    state.selected === o.key ? 1 : 0,
+    state.grabbed?.key === o.key ? 1 : 0,
+    state.drag?.key === o.key ? 1 : 0,
+    model.focusId === `e:${o.key}` ? 1 : 0,
+    bits.end <= model.now ? 1 : 0,
+    idOf(config.labels),
+    idOf(model.sources),
+    config.locale ?? "",
+    config.editable ? 1 : 0,
+  ].join("|");
+  let byOcc = buttons.get(o);
+  const hit = byOcc?.get(sig);
+  if (hit) return hit;
+  const el = eventButtonTree(bits, variant, extra);
+  el.m = true;
+  if (!byOcc) {
+    byOcc = new Map();
+    buttons.set(o, byOcc);
+  }
+  if (byOcc.size > 12) byOcc.clear();
+  byOcc.set(sig, el);
+  return el;
+}
+
+function eventButtonTree(bits: EventBits, variant: EventVariant, extra: EventExtra): VEl {
   const { o, config, model, state } = bits;
   const e = o.event;
   const id = `e:${o.key}`;
@@ -536,7 +667,9 @@ function eventButton(
     variant === "bar" && extra.cont?.[1]
       ? h("span", { class: "z-event__cont", "data-edge": "end", "aria-hidden": "true" }, icon("chevron-right", 12))
       : null,
-    editable && variant === "timed" ? h("span", { class: "z-event__resize", "data-edge": "end", "aria-hidden": "true" }) : null,
+    editable && (variant === "timed" || variant === "lane")
+      ? h("span", { class: "z-event__resize", "data-edge": "end", "aria-hidden": "true" })
+      : null,
     // El nombre sale del contenido: lo visible (título, hora, lugar) y, oculto a la vista, el resto (día,
     // calendario, provisional, repite). Así el nombre siempre contiene el texto visible (WCAG 2.5.3).
     config.customEvents
@@ -564,19 +697,115 @@ function restOfLabel(
   return full.startsWith(shown) ? full.slice(shown.length) : `, ${full}`;
 }
 
+/* ---------- Rejilla de horas: solapes con tope ---------- */
+
+/**
+ * Columnas de solape de un grupo, contando la de «+N» (agenda.md §9: «a partir del quinto, un indicador»): en la
+ * semana, cuatro eventos lado a lado y el quinto carril para «+N»; en el día, ocho y el noveno.
+ */
+export const timeGridStack = (days: number) => (days === 1 ? 9 : 5);
+
+interface PlacedSegment {
+  seg: DaySegment<Occurrence>;
+  p: TimedPlacement;
+  /** Se pinta por encima, a todo el ancho: el que se mueve y no cabría en las columnas visibles. */
+  floating?: boolean;
+}
+/** «+N» de un intervalo: los solapes que no caben, agrupados por hora (minutos del día). */
+export interface StackChip {
+  id: string;
+  date: string;
+  start: number;
+  end: number;
+  count: number;
+}
+export interface TimeGridPlan {
+  days: Map<string, { segs: PlacedSegment[]; chips: StackChip[] }>;
+  /** Claves de las ocurrencias con hora que no se pintan (están detrás de un «+N»). */
+  hidden: Set<string>;
+  chips: Set<string>;
+}
+
+/**
+ * Qué pinta cada columna de día: los trozos del día con su columna de solape y, en los grupos con más columnas que
+ * `timeGridStack`, solo las primeras (la última columna se reserva para «+N», uno por hora). Así una semana con mil
+ * eventos pinta lo que cabe y el resto queda a un clic, en el popover del intervalo (como el «+N» del mes).
+ */
+export function planTimeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel): TimeGridPlan {
+  const first = config.dayStart;
+  const last = config.dayEnd;
+  const preview = state.drag ?? state.grabbed;
+  const timed = model.occurrences
+    .filter((o) => !o.allDay)
+    .map((o) => (preview?.key === o.key ? { ...o, start: preview.start, end: preview.end } : o));
+  const segments = splitByDay(timed, model.days);
+  const byDate = new Map<string, DaySegment<Occurrence>[]>(model.days.map((d) => [d, []]));
+  for (const seg of segments) if (seg.end > first && seg.start < last) byDate.get(seg.date)?.push(seg);
+  const cap = timeGridStack(model.days.length);
+  const hidden = new Set<string>();
+  const chipIds = new Set<string>();
+  const days = new Map<string, { segs: PlacedSegment[]; chips: StackChip[] }>();
+  for (const d of model.days) {
+    const daySegs = byDate.get(d) ?? [];
+    const placement = layoutTimed(daySegs, 20, cap);
+    const segs: PlacedSegment[] = [];
+    // Ocultos por hora (en los grupos que superan el tope), con el fin del último para el intervalo del popover.
+    const buckets = new Map<number, { start: number; end: number; count: number }>();
+    for (const seg of [...daySegs].sort((a, b) => a.start - b.start || b.end - a.end)) {
+      const p = placement.get(seg)!;
+      if (p.n <= cap) {
+        segs.push({ seg, p });
+        continue;
+      }
+      const o = seg.item;
+      if (p.col < cap - 1) {
+        segs.push({ seg, p: { ...p, n: cap, w: Math.min(p.w, cap - 1 - p.col) } });
+        continue;
+      }
+      if (preview?.key === o.key) {
+        segs.push({ seg, p: { ...p, col: 0, n: 1, w: 1 }, floating: true });
+        continue;
+      }
+      hidden.add(o.key);
+      const hour = Math.max(Math.floor(seg.start / 60) * 60, p.groupStart, first);
+      const b = buckets.get(hour) ?? { start: hour, end: hour, count: 0 };
+      b.count++;
+      b.end = Math.max(b.end, Math.min(seg.end, last), hour + 60);
+      buckets.set(hour, b);
+    }
+    // Dos «+N» a menos de media hora se juntan en uno (no se tapan).
+    const chips: StackChip[] = [];
+    for (const b of [...buckets.values()].sort((x, y) => x.start - y.start)) {
+      const prev = chips[chips.length - 1];
+      if (prev && b.start < prev.start + 30) {
+        prev.count += b.count;
+        prev.end = Math.max(prev.end, b.end);
+        continue;
+      }
+      chips.push({ id: `m:${d}:${b.start}`, date: d, start: b.start, end: Math.min(b.end, Math.max(last, b.start + 1)), count: b.count });
+    }
+    for (const c of chips) chipIds.add(c.id);
+    days.set(d, { segs, chips });
+  }
+  return { days, hidden, chips: chipIds };
+}
+
+/** Clave de `state.more` para el popover de un intervalo del día: `YYYY-MM-DD@inicio-fin` (minutos del día). */
+export const intervalKey = (chip: Pick<StackChip, "date" | "start" | "end">) => `${chip.date}@${chip.start}-${chip.end}`;
+const parseInterval = (key: string) => {
+  const m = /^(\d{4}-\d{2}-\d{2})@(\d+)-(\d+)$/.exec(key);
+  return m ? { date: m[1]!, start: Number(m[2]), end: Number(m[3]) } : null;
+};
+
 /* ---------- Vistas ---------- */
 
-function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel): VEl {
+function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel, plan: TimeGridPlan): VEl {
   const { labels, locale } = config;
   const days = model.days;
   const first = config.dayStart;
   const last = config.dayEnd;
+  // El evento que se arrastra se pinta en su sitio nuevo (el plan ya lo lleva ahí).
   const preview = state.drag ?? state.grabbed;
-  // El evento que se arrastra se pinta en su sitio nuevo; el original queda como hueco.
-  const timed = model.occurrences
-    .filter((o) => !o.allDay)
-    .map((o) => (preview?.key === o.key ? { ...o, start: preview.start, end: preview.end } : o));
-  const segments = splitByDay(timed, days);
   const allDay = model.occurrences.filter((o) => o.allDay);
   const row = layoutRow(allDay, days, Math.max(1, config.dayMaxEvents));
   const zone = zoneLabel(state.timeZone, Date.now(), locale);
@@ -692,8 +921,7 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel):
             showNow ? h("span", { class: "z-timegrid__now-label", s: { "--z-tg-at": nowMin } }, timeText(model.now, locale)) : null,
           ),
           ...days.map((d) => {
-            const daySegs = segments.filter((s) => s.date === d && s.end > first && s.start < last);
-            const placement = layoutTimed(daySegs, 20);
+            const dayPlan = plan.days.get(d) ?? { segs: [], chips: [] };
             const wd = parse(d).getUTCDay();
             const off = (config.businessHours ?? []).filter((b) => b.days.includes(wd));
             const offRanges: [number, number][] = [];
@@ -725,23 +953,41 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel):
                 "data-drop": on(Boolean(state.drag && dateOf(state.drag.start) === d)),
               },
               ...offRanges.map(([a, b]) => h("div", { key: `off${a}`, class: "z-timegrid__off", s: { "--z-ev-s": a, "--z-ev-d": b - a } })),
-              ...[...daySegs]
-                .sort((a, b) => a.start - b.start || b.end - a.end)
-                .map((seg) => {
-                  const p = placement.get(seg)!;
-                  const o = seg.item as Occurrence;
-                  return eventButton({ o, config, model, state, start: o.start, end: o.end }, "timed", {
-                    s: {
-                      "--z-ev-s": Math.max(seg.start, first),
-                      "--z-ev-d": Math.max(Math.min(seg.end, last) - Math.max(seg.start, first), 0),
-                      "--z-ev-col": p.col,
-                      "--z-ev-n": p.n,
-                      "--z-ev-w": p.w,
-                    },
-                    cls: p.side ? "z-event--side" : undefined,
-                    cont: [seg.contStart, seg.contEnd],
-                  });
-                }),
+              ...dayPlan.segs.map(({ seg, p, floating }) => {
+                const o = seg.item;
+                return eventButton({ o, config, model, state, start: o.start, end: o.end }, "timed", {
+                  s: {
+                    "--z-ev-s": Math.max(seg.start, first),
+                    "--z-ev-d": Math.max(Math.min(seg.end, last) - Math.max(seg.start, first), 0),
+                    "--z-ev-col": p.col,
+                    "--z-ev-n": p.n,
+                    "--z-ev-w": p.w,
+                  },
+                  cls: floating ? "z-event--floating" : p.side ? "z-event--side" : undefined,
+                  cont: [seg.contStart, seg.contEnd],
+                });
+              }),
+              // «+N» de los solapes que no caben, en la última columna de su grupo.
+              ...dayPlan.chips.map((chip) => {
+                const range = timeRangeText(dayStart(d) + chip.start, dayStart(d) + chip.end, locale);
+                const key = intervalKey(chip);
+                return h(
+                  "button",
+                  {
+                    key: chip.id,
+                    type: "button",
+                    class: "z-agenda__more z-timegrid__overflow",
+                    "data-more": key,
+                    "data-focus-id": chip.id,
+                    "aria-haspopup": "dialog",
+                    "aria-expanded": state.more === key ? "true" : "false",
+                    "aria-label": `${fill(labels.more, { n: chip.count })}, ${dayLong(d, locale)}, ${range}`,
+                    tabindex: model.focusId === chip.id ? 0 : -1,
+                    s: { "--z-ev-s": chip.start, "--z-ev-col": timeGridStack(days.length) - 1, "--z-ev-n": timeGridStack(days.length) },
+                  },
+                  `+${chip.count}`,
+                );
+              }),
               preview && state.drag && dateOf(state.drag.start) === d
                 ? h(
                     "span",
@@ -795,8 +1041,11 @@ function monthGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel)
   const preview = state.drag ?? state.grabbed;
   const items = model.occurrences.map((o) => (preview?.key === o.key ? { ...o, start: preview.start, end: preview.end } : o));
   const selectedDay = state.date;
+  // Sin arrastre, el índice por día memorizado; arrastrando, el de la lista con el provisional.
+  const perDay = preview ? byDay(items, model.days) : occurrencesByDay(model.occurrences, model.days);
   const dayItems = sortOccurrences(
-    items.filter((o) => o.start < dayStart(selectedDay) + 1440 && Math.max(o.end, o.start + 1) > dayStart(selectedDay)),
+    perDay.get(selectedDay) ??
+      items.filter((o) => o.start < dayStart(selectedDay) + 1440 && Math.max(o.end, o.start + 1) > dayStart(selectedDay)),
   );
   return h(
     "div",
@@ -819,12 +1068,15 @@ function monthGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel)
       ),
     ),
     ...weeks.map((week) => {
-      const row = layoutRow(items, week, Math.max(1, config.dayMaxEvents));
+      // Solo las ocurrencias de la semana (del índice por día), no la lista del mes entero.
+      const inWeek = new Set<Occurrence>();
+      for (const d of week) for (const o of perDay.get(d) ?? []) inWeek.add(o);
+      const row = layoutRow([...inWeek], week, Math.max(1, config.dayMaxEvents));
       return h(
         "div",
         { key: week[0], class: "z-monthgrid__week", role: "row" },
         ...week.map((d, i) => {
-          const count = items.filter((o) => o.start < dayStart(d) + 1440 && Math.max(o.end, o.start + 1) > dayStart(d));
+          const count = perDay.get(d) ?? [];
           const id = `d:${d}`;
           const bars = row.bars.filter((b) => b.from === i);
           // El 1 lleva el mes a la vista («Nov 1»): el nombre empieza por ese texto (WCAG 2.5.3).
@@ -901,13 +1153,9 @@ function monthGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel)
 }
 
 function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel, uid: string): VEl {
-  const { labels, locale } = config;
-  const groups = model.days
-    .map((d) => ({
-      d,
-      items: model.occurrences.filter((o) => o.start < dayStart(d) + 1440 && Math.max(o.end, o.start + 1) > dayStart(d)),
-    }))
-    .filter((g) => g.items.length);
+  const { labels } = config;
+  const perDay = occurrencesByDay(model.occurrences, model.days);
+  const groups = model.days.map((d) => ({ d, items: perDay.get(d) ?? [] })).filter((g) => g.items.length);
   if (!groups.length)
     return h(
       "div",
@@ -920,60 +1168,133 @@ function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel
         h("p", null, labels.emptyHint),
       ),
     );
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const virtual = total > LIST_VIRTUAL_FROM;
+  const focusKey = model.focusId.startsWith("e:") ? model.focusId.slice(2) : null;
+  const children: VNode[] = [];
+  if (!virtual) {
+    groups.forEach((g, i) => {
+      children.push(listGroup(config, state, model, uid, g.d, g.items, null, i, groups.length));
+    });
+  } else {
+    // Ventana virtual (agenda.md §6): de cada día solo las filas que se ven (con un margen), la que lleva el foco y
+    // un relleno del alto de las demás; los días enteros fuera de la ventana se juntan en un solo relleno. Las
+    // alturas salen de una medida (una lectura tras el primer pintado), no de medir cada fila.
+    const m = state.listMetrics ?? LIST_METRICS;
+    const top = state.listScroll?.top ?? 0;
+    const height = state.listScroll?.height ?? 900;
+    const lo = top - LIST_OVERSCAN * m.row;
+    const hi = top + height + (LIST_OVERSCAN + LIST_BLOCK) * m.row;
+    let y = 0;
+    let gap = 0;
+    const flushGap = (key: string) => {
+      if (gap > 0) children.push(h("div", { key, class: "z-agendalist__spacer", "aria-hidden": "true", s: { "--z-vl-size": `${gap}px` } }));
+      gap = 0;
+    };
+    groups.forEach((g, gi) => {
+      const size = Math.max(m.head, m.pad + g.items.length * m.row);
+      const focusAt = focusKey ? g.items.findIndex((o) => o.key === focusKey) : -1;
+      if ((y + size < lo || y > hi) && focusAt < 0) {
+        gap += size;
+        y += size;
+        return;
+      }
+      flushGap(`gap-${g.d}`);
+      const first = Math.max(0, Math.floor((lo - y - m.pad / 2) / m.row));
+      const last = Math.min(g.items.length, Math.ceil((hi - y) / m.row));
+      const show = new Set<number>();
+      for (let i = first; i < last; i++) show.add(i);
+      if (focusAt >= 0) show.add(focusAt);
+      children.push(listGroup(config, state, model, uid, g.d, g.items, { show, row: m.row }, gi, groups.length));
+      y += size;
+    });
+    flushGap("gap-end");
+  }
+  return h("div", { class: "z-agendalist", role: "list", "aria-label": model.title, "data-virtual": on(virtual) }, ...children);
+}
+
+/** Un día de la lista. Con `win`, solo las filas de `show` y rellenos en lugar de las demás. */
+function listGroup(
+  config: AgendaConfig,
+  state: AgendaState,
+  model: AgendaModel,
+  uid: string,
+  d: string,
+  items: Occurrence[],
+  win: { show: Set<number>; row: number } | null,
+  index: number,
+  count: number,
+): VEl {
+  const { labels, locale } = config;
+  const today = d === model.today;
+  const headingId = `${uid}-day-${d}`;
+  const nowAt = today ? items.findIndex((o) => o.start > model.now && !o.allDay) : -1;
+  const rows: VNode[] = [];
+  let skipped = 0;
+  const spacer = (key: string) => {
+    if (skipped)
+      rows.push(
+        h("li", { key, class: "z-agendalist__spacer", "aria-hidden": "true", s: { "--z-vl-size": `${skipped * win!.row - 2}px` } }),
+      );
+    skipped = 0;
+  };
+  items.forEach((o, i) => {
+    if (win && !win.show.has(i)) {
+      skipped++;
+      return;
+    }
+    spacer(`sp-${i}`);
+    const source = model.sources.get(o.event.calendarId);
+    if (i === nowAt)
+      rows.push(
+        h("li", { key: "now", class: "z-agendalist__now", "aria-hidden": "true" }, `${labels.now} · ${timeText(model.now, locale)}`),
+      );
+    rows.push(
+      h(
+        "li",
+        {
+          key: o.key,
+          class: "z-agendalist__item",
+          "aria-setsize": win ? items.length : undefined,
+          "aria-posinset": win ? i + 1 : undefined,
+        },
+        eventButton({ o, config, model, state, start: o.start, end: o.end }, "row", { cls: "z-event--list" }),
+        source
+          ? h(
+              "span",
+              { class: "z-agendalist__calendar", "aria-hidden": "true", "data-color": colorOf(o.event, model.sources) },
+              source.name,
+            )
+          : null,
+      ),
+    );
+  });
+  spacer("sp-end");
   return h(
     "div",
-    { class: "z-agendalist", role: "list", "aria-label": model.title },
-    ...groups.map(({ d, items }) => {
-      const today = d === model.today;
-      const headingId = `${uid}-day-${d}`;
-      const nowAt = today ? items.findIndex((o) => o.start > model.now && !o.allDay) : -1;
-      return h(
-        "div",
-        { key: d, class: "z-agendalist__day", role: "listitem", "data-today": on(today), "aria-labelledby": headingId },
-        h(
-          "h3",
-          { class: "z-agendalist__date", id: headingId },
-          h("span", { class: "z-agendalist__num" }, fmt(locale, { day: "numeric" }).format(parse(d))),
-          h(
-            "span",
-            { class: "z-agendalist__weekday" },
-            today
-              ? `${labels.today} · ${fmt(locale, { month: "short" }).format(parse(d))}`
-              : fmt(locale, { weekday: "short", month: "short" }).format(parse(d)),
-          ),
-          h("span", { class: "z-sr-only" }, ` ${dayLong(d, locale)}`),
-        ),
-        h(
-          "ul",
-          { class: "z-agendalist__items", role: "list" },
-          ...items.flatMap((o, i) => {
-            const source = model.sources.get(o.event.calendarId);
-            const row = h(
-              "li",
-              { key: o.key, class: "z-agendalist__item" },
-              eventButton({ o, config, model, state, start: o.start, end: o.end }, "row", { cls: "z-event--list" }),
-              source
-                ? h(
-                    "span",
-                    { class: "z-agendalist__calendar", "aria-hidden": "true", "data-color": colorOf(o.event, model.sources) },
-                    source.name,
-                  )
-                : null,
-            );
-            return i === nowAt
-              ? [
-                  h(
-                    "li",
-                    { key: "now", class: "z-agendalist__now", "aria-hidden": "true" },
-                    `${labels.now} · ${timeText(model.now, locale)}`,
-                  ),
-                  row,
-                ]
-              : [row];
-          }),
-        ),
-      );
-    }),
+    {
+      key: d,
+      class: "z-agendalist__day",
+      role: "listitem",
+      "data-today": on(today),
+      "aria-labelledby": headingId,
+      "aria-setsize": win ? count : undefined,
+      "aria-posinset": win ? index + 1 : undefined,
+    },
+    h(
+      "h3",
+      { class: "z-agendalist__date", id: headingId },
+      h("span", { class: "z-agendalist__num" }, fmt(locale, { day: "numeric" }).format(parse(d))),
+      h(
+        "span",
+        { class: "z-agendalist__weekday" },
+        today
+          ? `${labels.today} · ${fmt(locale, { month: "short" }).format(parse(d))}`
+          : fmt(locale, { weekday: "short", month: "short" }).format(parse(d)),
+      ),
+      h("span", { class: "z-sr-only" }, ` ${dayLong(d, locale)}`),
+    ),
+    h("ul", { class: "z-agendalist__items", role: "list" }, ...rows),
   );
 }
 
@@ -1038,12 +1359,16 @@ function yearView(config: AgendaConfig, state: AgendaState, model: AgendaModel):
   const counts = new Map<string, number>();
   const first = model.days[0]!;
   const last = model.days[model.days.length - 1]!;
+  // Por número de día (minutos / 1440), sin aritmética de cadenas por ocurrencia.
+  const a0 = dayStart(first) / 1440;
+  const a1 = dayStart(last) / 1440;
+  const byNumber = new Map<number, number>();
   for (const o of model.occurrences) {
-    const from = dateOf(o.start);
-    const to = dateOf(Math.max(o.start, o.end - 1));
-    for (let d = [from, first].sort()[1]!, i = 0; d <= to && d <= last && i < 400; d = addDays(d, 1), i++)
-      counts.set(d, (counts.get(d) ?? 0) + 1);
+    const from = Math.max(a0, Math.floor(o.start / 1440));
+    const to = Math.min(a1, Math.floor(Math.max(o.start, o.end - 1) / 1440));
+    for (let k = from; k <= to; k++) byNumber.set(k, (byNumber.get(k) ?? 0) + 1);
   }
+  for (const [k, n] of byNumber) counts.set(dateOf(k * 1440), n);
   return yearGrid({
     year: Number(state.date.slice(0, 4)),
     weekStart: config.weekStart,
@@ -1063,26 +1388,38 @@ function popovers(config: AgendaConfig, state: AgendaState, model: AgendaModel, 
   const { labels, locale } = config;
   const out: VNode[] = [];
   if (state.more) {
-    const d = state.more;
+    // `state.more`: un día («+N» del mes y de todo el día) o un intervalo del día («+N» de la rejilla de horas).
+    const interval = parseInterval(state.more);
+    const d = interval?.date ?? state.more;
+    const dayList =
+      occurrencesByDay(model.occurrences, model.days).get(d) ??
+      model.occurrences.filter((o) => o.start < dayStart(d) + 1440 && Math.max(o.end, o.start + 1) > dayStart(d));
     const items = sortOccurrences(
-      model.occurrences.filter((o) => o.start < dayStart(d) + 1440 && Math.max(o.end, o.start + 1) > dayStart(d)),
+      interval
+        ? dayList.filter(
+            (o) => !o.allDay && o.start < dayStart(d) + interval.end && Math.max(o.end, o.start + 1) > dayStart(d) + interval.start,
+          )
+        : dayList,
     );
+    const title = interval
+      ? `${dayLong(d, locale)}, ${timeRangeText(dayStart(d) + interval.start, dayStart(d) + interval.end, locale)}`
+      : dayLong(d, locale);
     out.push(
       h(
         "div",
         {
-          key: `more-${d}`,
+          key: `more-${state.more}`,
           class: "z-liquid z-popover z-agenda__pop",
           popover: "manual",
           role: "dialog",
-          "aria-label": dayLong(d, locale),
+          "aria-label": title,
           "data-pop": "more",
-          "data-for": d,
+          "data-for": state.more,
         },
         h(
           "div",
           { class: "z-agenda__pop-head" },
-          h("strong", null, dayLong(d, locale)),
+          h("strong", null, title),
           h("button", { type: "button", class: "z-agenda__icon-btn z-agenda__pop-close", "aria-label": labels.close }, icon("x-mark", 16)),
         ),
         ...items.map((o) => eventButton({ o, config, model, state, start: o.start, end: o.end }, "row", { cls: "z-event--list" })),
@@ -1210,6 +1547,20 @@ function popovers(config: AgendaConfig, state: AgendaState, model: AgendaModel, 
   return out;
 }
 
+// Funciones del minicalendario con la misma identidad mientras no cambie el rango: su binding no vuelve a pintarlo.
+const never = () => false;
+const inViews = new Map<string, (d: string) => boolean>();
+function inViewOf(first: string, last: string): (d: string) => boolean {
+  const key = `${first}|${last}`;
+  let fn = inViews.get(key);
+  if (!fn) {
+    if (inViews.size > 32) inViews.clear();
+    fn = (d: string) => d >= first && d <= last;
+    inViews.set(key, fn);
+  }
+  return fn;
+}
+
 /** Árbol completo del EventCalendar. `model.focusId` se resuelve aquí. */
 export function agendaTree(
   config: AgendaConfig,
@@ -1220,17 +1571,21 @@ export function agendaTree(
   const model = buildModel(config, state, nowMs);
   const uid = String(rootAttrs.id ?? "z-agenda");
   const { labels, locale } = config;
+  const grid = state.view === "day" || state.view === "week" || state.view === "workweek";
+  const plan = grid ? planTimeGrid(config, state, model) : null;
   const ids = new Set<string>();
-  for (const o of model.occurrences) ids.add(`e:${o.key}`);
+  // Lo que está detrás de un «+N» no tiene pieza en la rejilla: no puede llevar el tabulador.
+  for (const o of model.occurrences) if (!plan?.hidden.has(o.key)) ids.add(`e:${o.key}`);
   for (const d of model.days) ids.add(`d:${d}`);
+  for (const c of plan?.chips ?? []) ids.add(c);
   const valid =
     state.focus &&
     (state.focus.startsWith("s:")
       ? model.days.includes(state.focus.split(":")[1]!) && state.view !== "month" && state.view !== "agenda"
       : state.view === "month" || state.view === "year"
         ? ids.has(state.focus)
-        : state.focus.startsWith("e:") && ids.has(state.focus));
-  model.focusId = valid ? state.focus! : fallbackFocus(state, model, config);
+        : (state.focus.startsWith("e:") || state.focus.startsWith("m:")) && ids.has(state.focus));
+  model.focusId = valid ? state.focus! : fallbackFocus(state, model, config, plan);
 
   const view =
     state.view === "month"
@@ -1255,7 +1610,7 @@ export function agendaTree(
                     labels: { ...PERPETUAL_LABELS, ...labels.perpetual },
                   }),
                 )
-              : timeGrid(config, state, model);
+              : timeGrid(config, state, model, plan!);
   const counts = new Map<string, number>();
   // Con todos los calendarios visibles, las ocurrencias ya están calculadas.
   for (const o of state.hidden.length
@@ -1263,7 +1618,7 @@ export function agendaTree(
     : model.occurrences)
     counts.set(o.event.calendarId, (counts.get(o.event.calendarId) ?? 0) + 1);
   const hidden = new Set(state.hidden);
-  const inView = (d: string) => d >= model.days[0]! && d <= model.days[model.days.length - 1]!;
+  const inView = inViewOf(model.days[0]!, model.days[model.days.length - 1]!);
 
   const side = config.sidebar
     ? h(
@@ -1287,8 +1642,8 @@ export function agendaTree(
             weekStart: config.weekStart,
             showWeekNumber: config.showWeekNumber,
             // La banda de la semana visible solo en las rejillas de horas: en el mes lo teñiría todo.
-            inView: ["month", "agenda", "year", "perpetual"].includes(state.view) ? () => false : inView,
-            hasEvents: (d: string) => model.occurrences.some((o) => dateOf(o.start) === d),
+            inView: ["month", "agenda", "year", "perpetual"].includes(state.view) ? never : inView,
+            hasEvents: hasEventsOf(model.occurrences),
             attrs: {
               "data-mode": "single",
               "data-value": state.date,

@@ -10,6 +10,8 @@ export interface VEl {
   s?: Record<string, string | number>;
   c?: VNode[];
   k?: string;
+  /** Subárbol puro y memorizado (sin huecos de la aplicación): las vías pueden reutilizar lo que pintaron con él. */
+  m?: true;
 }
 /** Hueco que pinta cada vía a su manera: un icono, el minicalendario de la agenda o un Calendar. */
 export interface VSlot {

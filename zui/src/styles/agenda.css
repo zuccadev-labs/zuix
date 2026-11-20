@@ -702,6 +702,29 @@
     inline-size: calc(var(--z-ev-w) / var(--z-ev-n) * 100% - 4px);
     block-size: max(calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px), calc(var(--z-space-5)));
   }
+  /* El que se mueve y no cabría en las columnas visibles: por encima, a todo el ancho. */
+  .z-timegrid__col .z-event--floating {
+    z-index: var(--z-layer-sticky);
+  }
+  /* «+N» de los solapes que no caben: en la última columna del grupo, al inicio de su hora. */
+  .z-timegrid__overflow {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) + 1px);
+    inset-inline-start: calc(var(--z-ev-col) / var(--z-ev-n) * 100% + 2px);
+    inline-size: calc(100% / var(--z-ev-n) - 4px);
+    block-size: var(--z-space-6);
+    padding: 0;
+    background: var(--z-surface-2);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    color: var(--z-fg);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .z-timegrid__overflow[aria-expanded="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
   /* Un evento corto amplía su área de pulsación a 24 px sin cambiar su aspecto (WCAG 2.5.8). */
   .z-timegrid__col .z-event::after {
     content: "";
@@ -971,6 +994,15 @@
   .z-agendalist__day:nth-child(n + 5) {
     content-visibility: auto;
     contain-intrinsic-size: auto 160px;
+  }
+  /* Lista larga con ventana virtual: relleno del alto de lo que no se pinta. */
+  .z-agendalist__spacer {
+    flex: none;
+    block-size: var(--z-vl-size);
+    list-style: none;
+  }
+  .z-agendalist[data-virtual] .z-agendalist__day {
+    content-visibility: visible;
   }
   .z-agendalist__date {
     position: sticky;

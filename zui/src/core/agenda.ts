@@ -199,37 +199,166 @@ function shiftText(text: string, days: number): string {
   return `${addDays(date, days)}${text.slice(10)}`;
 }
 
-/**
- * Ocurrencias que se solapan con `[from, to]` en la zona de presentación, ordenadas por inicio y, a igualdad, por
- * fin descendente. Expande las series (solo en el rango, con margen por la duración), quita `exdate` y las
- * ocurrencias sustituidas por una excepción (`recurrenceId`), y omite los cancelados y los calendarios ocultos.
- */
-export function expandEvents({ events, from, to, timeZone, hidden }: ExpandInput): Occurrence[] {
-  const off = hidden instanceof Set ? hidden : new Set(hidden ?? []);
-  const lo = dayStart(from);
-  const hi = dayStart(addDays(to, 1));
-  const out: Occurrence[] = [];
-  // Excepciones por serie: inicio original sustituido.
+/* Índice por intervalos (agenda.md §6): por lista de eventos y zona, los eventos sueltos ordenados por inicio con su
+   intervalo ya convertido y su ocurrencia ya creada, y aparte las series. Una vista pide su rango con una búsqueda
+   binaria en vez de recorrer la lista entera, y las ocurrencias de un mismo evento son el mismo objeto entre pintados
+   (las vistas memorizan su marcado por ocurrencia). La memoria se comprueba en cada consulta (mismos objetos y mismos
+   campos de tiempo, en O(n) comparaciones): una lista o un evento cambiados en su sitio vuelven a indexarse. */
+interface Indexed {
+  event: CalendarEvent;
+  occ: Occurrence;
+}
+interface EventIndex {
+  events: CalendarEvent[];
+  /** Campos de tiempo de cada evento al indexar (`STAMP` en orden), para ver si alguno cambió en su sitio. */
+  stamps: unknown[];
+  singles: Indexed[];
+  /** Inicios de `singles`, para la búsqueda binaria. */
+  starts: number[];
+  /** Duración máxima de un suelto: lo que empieza antes del rango y aún lo pisa. */
+  longest: number;
+  series: CalendarEvent[];
+  replaced: Map<string, Set<string>>;
+  /** Resultados por rango (memoria por rango: volver a una semana ya vista no recalcula nada). */
+  ranges: Map<string, Occurrence[]>;
+}
+const indexes = new WeakMap<CalendarEvent[], Map<string, EventIndex>>();
+// Campos que deciden dónde y si sale un evento: si alguno cambia en su sitio, la lista se vuelve a indexar.
+const STAMP = 10;
+const stamp = (events: CalendarEvent[]) => {
+  const out = new Array<unknown>(events.length * STAMP);
+  let k = 0;
+  for (const e of events) {
+    out[k] = e.start;
+    out[k + 1] = e.end;
+    out[k + 2] = e.timeZone;
+    out[k + 3] = e.allDay;
+    out[k + 4] = e.calendarId;
+    out[k + 5] = e.status;
+    out[k + 6] = e.rrule;
+    out[k + 7] = e.recurrenceId;
+    out[k + 8] = e.seriesId;
+    out[k + 9] = e.exdate;
+    k += STAMP;
+  }
+  return out;
+};
+/** La lista indexada sigue igual: mismos objetos y mismos campos (comparaciones directas, sin crear cadenas). */
+function fresh(index: EventIndex, events: CalendarEvent[]): boolean {
+  const old = index.events;
+  if (old.length !== events.length) return false;
+  const s = index.stamps;
+  for (let i = 0, k = 0; i < events.length; i++, k += STAMP) {
+    const e = events[i]!;
+    if (
+      e !== old[i] ||
+      e.start !== s[k] ||
+      e.end !== s[k + 1] ||
+      e.timeZone !== s[k + 2] ||
+      e.allDay !== s[k + 3] ||
+      e.calendarId !== s[k + 4] ||
+      e.status !== s[k + 5] ||
+      e.rrule !== s[k + 6] ||
+      e.recurrenceId !== s[k + 7] ||
+      e.seriesId !== s[k + 8] ||
+      e.exdate !== s[k + 9]
+    )
+      return false;
+  }
+  return true;
+}
+
+function indexOf(events: CalendarEvent[], timeZone: string): EventIndex {
+  let byZone = indexes.get(events);
+  const hit = byZone?.get(timeZone);
+  if (hit && fresh(hit, events)) return hit;
+  const singles: Indexed[] = [];
+  const series: CalendarEvent[] = [];
   const replaced = new Map<string, Set<string>>();
+  let longest = 0;
   for (const e of events) {
     if (e.recurrenceId && e.seriesId) {
       const set = replaced.get(e.seriesId) ?? new Set<string>();
       set.add(e.recurrenceId);
       replaced.set(e.seriesId, set);
     }
-  }
-  for (const event of events) {
-    if (off.has(event.calendarId) || event.status === "cancelled") continue;
-    const span = eventSpan(event, timeZone);
-    if (!span) continue;
-    const rule = event.rrule ? parseRRule(event.rrule) : null;
-    if (!rule || event.recurrenceId) {
-      if (span.end > lo && span.start < hi) out.push(occurrence(event, event.id, span, event.start, event.end, event.seriesId));
-      // Un evento de duración cero en el borde también se ve.
-      else if (span.end === span.start && span.start >= lo && span.start < hi)
-        out.push(occurrence(event, event.id, span, event.start, event.end, event.seriesId));
+    if (e.status === "cancelled") continue;
+    if (e.rrule && !e.recurrenceId && parseRRule(e.rrule)) {
+      series.push(e);
       continue;
     }
+    const span = eventSpan(e, timeZone);
+    if (!span) continue;
+    longest = Math.max(longest, span.end - span.start);
+    singles.push({ event: e, occ: occurrence(e, e.id, span, e.start, e.end, e.seriesId) });
+  }
+  singles.sort((a, b) => byStart(a.occ, b.occ));
+  const index: EventIndex = {
+    events: events.slice(),
+    stamps: stamp(events),
+    singles,
+    starts: singles.map((x) => x.occ.start),
+    longest,
+    series,
+    replaced,
+    ranges: new Map(),
+  };
+  if (!byZone) {
+    byZone = new Map();
+    indexes.set(events, byZone);
+  }
+  if (byZone.size > 8) byZone.clear();
+  byZone.set(timeZone, index);
+  return index;
+}
+
+/** Primera posición de `list` (ordenada) con valor `>= x`. */
+function lowerBound(list: number[], x: number): number {
+  let lo = 0;
+  let hi = list.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (list[mid]! < x) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+/**
+ * Ocurrencias que se solapan con `[from, to]` en la zona de presentación, ordenadas por inicio y, a igualdad, por
+ * fin descendente. Expande las series (solo en el rango, con margen por la duración), quita `exdate` y las
+ * ocurrencias sustituidas por una excepción (`recurrenceId`), y omite los cancelados y los calendarios ocultos.
+ * La lista y sus ocurrencias se reutilizan entre llamadas con el mismo rango (memoria por rango): no se modifican.
+ */
+export function expandEvents({ events, from, to, timeZone, hidden }: ExpandInput): Occurrence[] {
+  const off = hidden instanceof Set ? hidden : new Set(hidden ?? []);
+  const index = indexOf(events, timeZone);
+  const rangeKey = `${from}|${to}|${[...off].sort().join(",")}`;
+  const cached = index.ranges.get(rangeKey);
+  if (cached) return cached;
+  const out = expandIndexed(index, from, to, timeZone, off);
+  if (index.ranges.size > 12) index.ranges.delete(index.ranges.keys().next().value!);
+  index.ranges.set(rangeKey, out);
+  return out;
+}
+
+function expandIndexed(index: EventIndex, from: string, to: string, timeZone: string, off: Set<string>): Occurrence[] {
+  const lo = dayStart(from);
+  const hi = dayStart(addDays(to, 1));
+  const out: Occurrence[] = [];
+  for (let i = lowerBound(index.starts, lo - index.longest); i < index.singles.length; i++) {
+    const { event, occ } = index.singles[i]!;
+    if (occ.start >= hi) break;
+    if (off.has(event.calendarId)) continue;
+    // Un evento de duración cero en el borde también se ve.
+    if (occ.end > lo || (occ.end === occ.start && occ.start >= lo)) out.push(occ);
+  }
+  if (!index.series.length) return out;
+  for (const event of index.series) {
+    if (off.has(event.calendarId)) continue;
+    const span = eventSpan(event, timeZone);
+    if (!span) continue;
+    const rule = parseRRule(event.rrule!)!;
     // Serie: se expande en fechas del reloj del evento, con margen de la duración para lo que empieza antes.
     const duration = span.end - span.start;
     const startDate = event.start.slice(0, 10);
@@ -244,7 +373,7 @@ export function expandEvents({ events, from, to, timeZone, hidden }: ExpandInput
       },
     });
     const ex = new Set((event.exdate ?? []).map((d) => d.slice(0, 10)));
-    const swapped = replaced.get(event.id);
+    const swapped = index.replaced.get(event.id);
     for (const date of dates) {
       const days = diffDays(startDate, date);
       const startText = shiftText(event.start, days);
@@ -274,8 +403,12 @@ function occurrence(
 
 /** Orden de pintado: inicio y, a igualdad, el más largo primero; después el título (estable). */
 export function sortOccurrences<T extends { start: number; end: number; event?: { title: string } }>(list: T[]): T[] {
-  return [...list].sort((a, b) => a.start - b.start || b.end - a.end || (a.event?.title ?? "").localeCompare(b.event?.title ?? ""));
+  return [...list].sort(byStart);
 }
+const byStart = (
+  a: { start: number; end: number; event?: { title: string } },
+  b: { start: number; end: number; event?: { title: string } },
+) => a.start - b.start || b.end - a.end || (a.event?.title ?? "").localeCompare(b.event?.title ?? "");
 
 /** Verdadero si dos intervalos `[start, end)` se solapan (uno de duración cero cuenta como un minuto). */
 export const overlaps = (a: { start: number; end: number }, b: { start: number; end: number }) =>
@@ -327,6 +460,9 @@ export interface TimedPlacement {
   w: number;
   /** Empieza a la vez que otro del grupo: va lado a lado también en una columna estrecha. */
   side: boolean;
+  /** Grupo de solape (0, 1…, en orden de inicio) y su inicio. */
+  group: number;
+  groupStart: number;
 }
 
 /**
@@ -334,32 +470,52 @@ export interface TimedPlacement {
  * transitivamente solapados, asignar a cada uno la primera columna libre, `n` = columnas del grupo, y ensanchar a la
  * derecha mientras la columna siguiente esté libre en su intervalo. `minDuration` da altura a los muy cortos.
  */
-export function layoutTimed<T extends { start: number; end: number }>(items: T[], minDuration = 0): Map<T, TimedPlacement> {
+export function layoutTimed<T extends { start: number; end: number }>(
+  items: T[],
+  minDuration = 0,
+  /** Columnas que se pintan como mucho (con «+N» en la última): más allá no se calcula el ensanche. */
+  maxColumns = Infinity,
+): Map<T, TimedPlacement> {
   const sorted = [...items].sort((a, b) => a.start - b.start || b.end - a.end);
   const span = (x: T) => ({ start: x.start, end: Math.max(x.end, x.start + Math.max(1, minDuration)) });
   const result = new Map<T, TimedPlacement>();
   let group: T[] = [];
   let groupEnd = -Infinity;
+  let groupNo = 0;
   const flush = () => {
     if (!group.length) return;
     const columns: { start: number; end: number }[][] = [];
+    // Fin del último de cada columna: llegan ordenados por inicio, así que una columna está libre si su último
+    // intervalo ya terminó (lo mismo que comprobarlos todos, sin recorrerlos).
+    const tails: { start: number; end: number }[] = [];
     const colOf = new Map<T, number>();
     for (const item of group) {
       const s = span(item);
-      let c = columns.findIndex((col) => col.every((other) => !overlaps(s, other)));
-      if (c < 0) c = columns.push([]) - 1;
+      let c = tails.findIndex((last) => !overlaps(s, last));
+      if (c < 0) {
+        c = columns.push([]) - 1;
+        tails.push(s);
+      }
       columns[c]!.push(s);
+      tails[c] = s;
       colOf.set(item, c);
     }
     const n = columns.length;
+    // Inicios repetidos: un recuento en vez de comparar cada par.
+    const starts = new Map<number, number>();
+    for (const item of group) starts.set(item.start, (starts.get(item.start) ?? 0) + 1);
+    const groupStart = group[0]!.start;
+    // Con tope, solo las columnas visibles se ensanchan, y nunca sobre la de «+N».
+    const limit = n > maxColumns ? Math.max(1, maxColumns - 1) : n;
     for (const item of group) {
       const c = colOf.get(item)!;
       const s = span(item);
       let w = 1;
-      while (c + w < n && columns[c + w]!.every((other) => !overlaps(s, other))) w++;
-      const side = group.some((o) => o !== item && o.start === item.start);
-      result.set(item, { col: c, n, w, side });
+      while (c + w < limit && columns[c + w]!.every((other) => !overlaps(s, other))) w++;
+      const side = starts.get(item.start)! > 1;
+      result.set(item, { col: c, n, w, side, group: groupNo, groupStart });
     }
+    groupNo++;
     group = [];
     groupEnd = -Infinity;
   };
@@ -421,18 +577,23 @@ export function layoutRow<T extends { start: number; end: number; allDay?: boole
   });
   const occupied: boolean[][] = [];
   const all: LaneBar<T>[] = [];
+  // Con tope, lo que no cabe en los `maxLanes` carriles no busca más: va a «+N» igual (un mes con 5000 eventos no
+  // reparte cientos de carriles que nadie ve).
+  const cap = Number.isFinite(maxLanes) ? Math.max(0, Math.floor(maxLanes)) : Infinity;
+  let overflow = false;
   for (const p of placed) {
     let lane = 0;
-    for (; ; lane++) {
+    for (; lane < cap; lane++) {
       occupied[lane] ??= Array(n).fill(false);
       let free = true;
       for (let c = p.from; c <= p.to; c++) if (occupied[lane]![c]) free = false;
       if (free) break;
     }
-    for (let c = p.from; c <= p.to; c++) occupied[lane]![c] = true;
+    if (lane >= cap) overflow = true;
+    else for (let c = p.from; c <= p.to; c++) occupied[lane]![c] = true;
     all.push({ item: p.item, from: p.from, span: p.to - p.from + 1, lane, contStart: p.contStart, contEnd: p.contEnd });
   }
-  const used = occupied.length;
+  const used = overflow ? cap + 1 : occupied.length;
   const hidden: T[][] = Array.from({ length: n }, () => []);
   if (used <= maxLanes) return { bars: all, hidden, lanes: used };
   // Algo no cabe: el último carril se reserva para «+N» en los días que lo necesiten.

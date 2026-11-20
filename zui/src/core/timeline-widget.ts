@@ -32,6 +32,7 @@ import {
 import {
   dateRangeText,
   RESOURCE_HOUR,
+  RESOURCE_ROW,
   resourceTimeline,
   TIMELINE_COL,
   TIMELINE_LABELS,
@@ -43,6 +44,7 @@ import {
 } from "./timeline-view";
 import { fill, fmt, h, icon, on, type VEl } from "./vnode";
 import { announceIn, focusActive, num, yes, type Widget, type WidgetHost } from "./widget";
+import { virtualWindow } from "./virtual";
 import { safeTimeZone } from "./zone";
 
 export interface Resource extends ResourceRow {
@@ -697,8 +699,19 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
         if (!scroller.matches?.(".z-timeline__scroll[data-virtual]")) return;
         cancelAnimationFrame(frame);
         frame = requestAnimationFrame(() => {
+          // Lecturas juntas; se vuelve a pintar solo si cambian las filas de la ventana (no en cada píxel).
           const head = scroller.querySelector<HTMLElement>(".z-timeline__head")?.offsetHeight ?? 0;
-          host.update({ scroll: { top: Math.max(0, scroller.scrollTop - head), height: scroller.clientHeight } });
+          const next = { top: Math.max(0, scroller.scrollTop - head), height: scroller.clientHeight };
+          const cur = host.state().scroll;
+          const count = host.config().resources.length;
+          const rows = (s: { top: number; height: number }) =>
+            virtualWindow({ count, size: RESOURCE_ROW, scroll: s.top, viewport: s.height, overscan: 4 });
+          if (cur) {
+            const a = rows(cur);
+            const b = rows(next);
+            if (a.start === b.start && a.end === b.end) return;
+          }
+          host.update({ scroll: next });
         });
       },
       { signal, capture: true },
