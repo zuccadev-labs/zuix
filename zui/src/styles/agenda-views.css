@@ -1509,6 +1509,7 @@
   }
   .z-habit__grid {
     inline-size: 100%;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0 var(--z-space-1);
   }
@@ -1545,8 +1546,9 @@
     position: relative;
     display: inline-grid;
     place-items: center;
-    inline-size: var(--z-space-10);
-    block-size: var(--z-space-10);
+    /* Hasta 40 px, menos si la columna no llega (teléfono): siempre cuadrado. */
+    inline-size: min(var(--z-space-10), 100%);
+    aspect-ratio: 1;
     border-radius: var(--z-calendar-cell-radius);
     font-size: var(--z-text-small);
     isolation: isolate;
@@ -1647,6 +1649,8 @@
     list-style: none;
   }
   .z-habit__weekday {
+    flex: 1;
+    min-inline-size: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1657,8 +1661,8 @@
   .z-habit__box {
     display: grid;
     place-items: center;
-    inline-size: var(--z-space-9);
-    block-size: var(--z-space-9);
+    inline-size: min(var(--z-space-9), 100%);
+    aspect-ratio: 1;
     border-radius: var(--z-calendar-cell-radius);
     box-shadow: inset 0 0 0 1.5px var(--z-line-strong);
     color: var(--z-fg-subtle);

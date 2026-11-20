@@ -322,7 +322,7 @@ body {
 .app-stay__fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-inline-size: 17.5rem;
+  min-inline-size: min(100%, 17.5rem);
   overflow: hidden;
   border: 1px solid var(--z-control-border);
   border-radius: var(--z-control-radius-lg);
