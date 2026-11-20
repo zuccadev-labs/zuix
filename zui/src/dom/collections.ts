@@ -4,6 +4,8 @@
 // CommandPalette  <dialog class="z-liquid z-palette" data-z-hotkey="mod+k">: se abre con data-z-open="#id", con el
 //                 atajo o con openPalette(el). Filtra por etiqueta, detalle, data-keywords="a,b" y cabecera de grupo.
 //                 Emite z:select (detail.value) en el comando elegido. data-keep-open: no cierra al elegir.
+// Command         .z-palette.z-command (sin diálogo): la misma lista en línea, siempre a la vista. Mismas teclas;
+//                 Escape vacía la búsqueda. z:select en el comando elegido.
 // Tree            [data-z-dom] .z-tree: expandir, seleccionar y teclado de árbol. z:change { value, expanded }.
 // DataTable       [data-z-dom] .z-table__sort: ordena las filas presentes. En el <th>: data-sort="number|text|date",
 //                 data-key; en el <td>: data-sort-value. En la tabla: data-manual-sort (solo avisa). z:sort.
@@ -33,6 +35,8 @@ const isDisabled = (el: Element) =>
 /* ---------- Paleta de comandos: <dialog class="z-liquid z-palette"> ---------- */
 
 const PALETTE = "dialog.z-palette";
+// Paleta o comando en línea: comparten búsqueda, teclas y elección.
+const COMMAND = "dialog.z-palette, .z-command";
 let paletteId = 0;
 const order = new WeakMap<Element, number>();
 
@@ -71,7 +75,7 @@ function setPaletteActive(dialog: HTMLElement, index: number, scroll = true): vo
   if (scroll) active?.scrollIntoView({ block: "nearest" });
 }
 
-function filterPalette(dialog: HTMLElement): void {
+function filterPalette(dialog: HTMLElement, scroll = true): void {
   preparePalette(dialog);
   const list = dialog.querySelector<HTMLElement>(".z-palette__list");
   const q = (paletteInput(dialog)?.value ?? "").trim();
@@ -119,7 +123,7 @@ function filterPalette(dialog: HTMLElement): void {
     list.prepend(empty);
   }
   if (empty) empty.hidden = shown > 0;
-  setPaletteActive(dialog, 0);
+  setPaletteActive(dialog, 0, scroll);
 }
 
 function resetPalette(dialog: HTMLElement): void {
@@ -138,16 +142,25 @@ export function openPalette(dialog: HTMLDialogElement): void {
   resetPalette(dialog);
 }
 
-function runCommand(dialog: HTMLDialogElement, item: HTMLElement | undefined): void {
+function runCommand(dialog: HTMLElement, item: HTMLElement | undefined): void {
   if (!item || isDisabled(item)) return;
-  if (!dialog.hasAttribute("data-keep-open")) closeDialog(dialog, item.dataset.value ?? item.id);
+  if (dialog instanceof HTMLDialogElement && !dialog.hasAttribute("data-keep-open")) closeDialog(dialog, item.dataset.value ?? item.id);
   emit(item, "select", { value: item.dataset.value ?? item.id });
 }
 
-function onPaletteKey(dialog: HTMLDialogElement, event: KeyboardEvent): void {
+function onPaletteKey(dialog: HTMLElement, event: KeyboardEvent): void {
   const last = paletteVisible(dialog).length - 1;
   const index = paletteIndex(dialog);
   if (event.key === "Escape") {
+    if (!(dialog instanceof HTMLDialogElement)) {
+      // En línea: Escape vacía la búsqueda (si la hay); si no, sigue su curso.
+      const input = paletteInput(dialog);
+      if (!input?.value) return;
+      event.preventDefault();
+      input.value = "";
+      filterPalette(dialog);
+      return;
+    }
     event.preventDefault();
     if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
   } else if (event.key === "ArrowDown") {
@@ -458,9 +471,10 @@ function onClick(event: MouseEvent): void {
     if (!target.hasAttribute("data-z-static") && pressedOnBackdrop(target, event)) closeDialog(target);
     return;
   }
-  const command = target.closest<HTMLElement>(`${PALETTE} .z-palette__item`);
-  if (command) {
-    runCommand(command.closest<HTMLDialogElement>(PALETTE)!, command);
+  const command = target.closest<HTMLElement>(".z-palette__item");
+  const owner = command?.closest<HTMLElement>(COMMAND);
+  if (command && owner) {
+    runCommand(owner, command);
     return;
   }
 
@@ -497,8 +511,8 @@ function onKeydown(event: KeyboardEvent): void {
   if (onHotkey(event)) return;
   const target = event.target;
   if (!(target instanceof Element)) return;
-  const palette = target.closest<HTMLDialogElement>(PALETTE);
-  if (palette) {
+  const palette = target.closest<HTMLElement>(COMMAND);
+  if (palette && (palette instanceof HTMLDialogElement || target.matches(".z-palette__input"))) {
     onPaletteKey(palette, event);
     return;
   }
@@ -511,13 +525,13 @@ export function setup(on: Listen): void {
   on(document, "click", onClick);
   on(document, "keydown", onKeydown);
   on(document, "input", (event) => {
-    const palette = (event.target as Element).closest?.<HTMLElement>(PALETTE);
+    const palette = (event.target as Element).closest?.<HTMLElement>(COMMAND);
     if (palette && (event.target as Element).matches(".z-palette__input")) filterPalette(palette);
   });
   on(document, "pointermove", (event) => {
-    const item = (event.target as Element).closest?.<HTMLElement>(`${PALETTE} .z-palette__item`);
-    if (item && item.getAttribute("aria-selected") !== "true")
-      setPaletteActive(item.closest<HTMLElement>(PALETTE)!, paletteVisible(item.closest(PALETTE)!).indexOf(item), false);
+    const item = (event.target as Element).closest?.<HTMLElement>(".z-palette__item");
+    const owner = item?.closest<HTMLElement>(COMMAND);
+    if (item && owner && item.getAttribute("aria-selected") !== "true") setPaletteActive(owner, paletteVisible(owner).indexOf(item), false);
   });
   // Abierta con data-z-open: empieza limpia igual que con openPalette().
   on(document, "z:open", (event) => {
@@ -539,5 +553,10 @@ export function setup(on: Listen): void {
 
 export function hydrate(root: ParentNode): void {
   for (const dialog of root.querySelectorAll<HTMLElement>(PALETTE)) preparePalette(dialog);
+  // En línea, a la vista desde el principio: con su primer comando activo.
+  for (const command of root.querySelectorAll<HTMLElement>(".z-command")) {
+    preparePalette(command);
+    filterPalette(command, false);
+  }
   for (const tree of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tree, .z-tree[data-z-dom]")) hydrateTree(tree);
 }

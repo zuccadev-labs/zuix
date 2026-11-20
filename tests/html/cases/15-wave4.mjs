@@ -403,4 +403,33 @@ export default async function ({ page, test, ok, card, browserName }) {
       .click()
       .catch(() => {});
   });
+
+  /* ---------- Command en línea ---------- */
+  await test("Command en línea: filtra, flechas con aria-activedescendant, Intro emite z:select y Escape vacía la búsqueda", async () => {
+    const root = card("Command").locator(".z-command");
+    const input = root.locator(".z-palette__input");
+    ok((await input.getAttribute("aria-activedescendant")) === "project-commands-option-0", "primer comando activo");
+    await input.fill("mem");
+    const shown = await root.locator(".z-palette__item:not([hidden])").count();
+    ok(shown === 1, `filtra: ${shown}`);
+    await input.fill("");
+    await input.focus();
+    await press("ArrowDown", "ArrowDown");
+    const active = await input.getAttribute("aria-activedescendant");
+    ok((await page.locator(`[id="${active}"]`).textContent()).includes("Settings"), `activo: ${active}`);
+    await events();
+    await press("Enter");
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:select"),
+      `z:select: ${JSON.stringify(log)}`,
+    );
+    ok(await root.isVisible(), "en línea no se cierra");
+    await input.fill("dup");
+    await press("Escape");
+    ok(
+      (await input.inputValue()) === "" && (await root.locator(".z-palette__item:not([hidden])").count()) === 4,
+      "Escape vacía la búsqueda",
+    );
+  });
 }

@@ -7,7 +7,9 @@ import {
   CardHeader,
   Avatar,
   Collapsible,
+  Command,
   HoverCard,
+  Kbd,
   IconButton,
   Input,
   Popover,
@@ -138,6 +140,44 @@ export function Commands() {
           <p className="app-muted">
             Status bar: <output data-testid="c-statusbar">{String(statusBar)}</output>
           </p>
+        </Card>
+      </PageSection>
+
+      <PageSection title="Command">
+        <Card className="app-demo">
+          <CardHeader title="Inline command" subtitle="The palette, embedded" />
+          <div data-testid="c-command">
+            <Command
+              id="c-command"
+              label="Project commands"
+              groups={[
+                {
+                  heading: "Project",
+                  commands: [
+                    { id: "rename", label: "Rename project", icon: "pencil", shortcut: "F2", onSelect: () => setLast("command:rename") },
+                    { id: "duplicate", label: "Duplicate", icon: "document-duplicate", onSelect: () => setLast("command:duplicate") },
+                  ],
+                },
+                {
+                  heading: "Go to",
+                  commands: [
+                    { id: "settings", label: "Settings", icon: "gear", hint: "Project", onSelect: () => setLast("command:settings") },
+                    { id: "members", label: "Members", icon: "users", onSelect: () => setLast("command:members") },
+                  ],
+                },
+              ]}
+              footer={
+                <>
+                  <span>
+                    <Kbd>↑</Kbd> <Kbd>↓</Kbd> to move
+                  </span>
+                  <span>
+                    <Kbd>Enter</Kbd> to run
+                  </span>
+                </>
+              }
+            />
+          </div>
         </Card>
       </PageSection>
 

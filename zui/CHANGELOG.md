@@ -50,6 +50,9 @@ radios y material de los tokens.
     en curso lleva anillo y `aria-busy` y no se cierra solo, y el resultado (texto, opciones o función del valor) se
     escribe en el mismo aviso, que entonces empieza su cuenta atrás. En `/dom`, `toastPromise()`; `toast()` devuelve
     además `update()`. Opción `loading` en los dos.
+  - `Command`: la paleta de comandos incrustada en la página (sin diálogo), con el mismo patrón combobox; Escape
+    vacía la búsqueda. `CommandPalette` y `Command` aceptan `footer` (`.z-palette__footer`). En `/dom`,
+    `.z-palette.z-command`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

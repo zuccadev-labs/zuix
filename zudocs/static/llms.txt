@@ -150,6 +150,7 @@
 
 ## Componentes: Superposición
 
+- [Command](https://zuccadev-labs.github.io/zuix/components/overlay/command.md): La paleta de comandos incrustada en la página: buscador y lista siempre a la vista, con grupos, atajos y pie.
 - [CommandPalette](https://zuccadev-labs.github.io/zuix/components/overlay/command-palette.md): Paleta de comandos con búsqueda difusa, grupos y manejo completo por teclado.
 - [ConfirmDialog](https://zuccadev-labs.github.io/zuix/components/overlay/confirm-dialog.md): Confirmación de una acción con cancelar y confirmar; la variante danger marca acciones destructivas.
 - [ContextMenu](https://zuccadev-labs.github.io/zuix/components/overlay/context-menu.md): Menú contextual que se abre con clic derecho o pulsación larga sobre una zona.

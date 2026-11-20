@@ -689,6 +689,29 @@
   .z-palette[data-state="closed"] {
     animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
+  /* Comando en línea: la misma pieza incrustada en la página, sin capa ni velo. Panel de cromo con radio de tarjeta. */
+  .z-command {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    width: 100%;
+    margin: 0;
+    border-radius: var(--z-card-radius);
+  }
+  .z-command .z-palette__list {
+    max-height: var(--z-command-height, 320px);
+  }
+  /* Pie con atajos o ayuda bajo la lista. */
+  .z-palette__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2) var(--z-space-4);
+    padding: var(--z-space-2) var(--z-space-4);
+    border-top: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
   .z-palette__search {
     display: flex;
     align-items: center;

@@ -1796,6 +1796,67 @@ pnpm dev</code>
 </div>
 <h2 class="page__group">overlay</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="Command" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Command</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-liquid z-palette z-command" data-inline="">
+  <div class="z-palette__search">
+    <span class="z-palette__search-icon">
+      <z-icon name="magnifying-glass" size="16"></z-icon>
+    </span>
+    <input class="z-palette__input" type="text" role="combobox" aria-expanded="true" aria-controls="project-commands-list" aria-activedescendant="project-commands-option-0" aria-autocomplete="list" aria-label="Project commands" autoComplete="off" spellCheck="false" placeholder="Search commands…" value=""/>
+  </div>
+  <div id="project-commands-list" role="listbox" aria-label="Project commands" class="z-palette__list">
+    <div role="group" aria-label="Project" class="z-palette__group">
+      <div class="z-palette__heading" aria-hidden="true">Project</div>
+      <div id="project-commands-option-0" role="option" aria-selected="true" data-index="0" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="pencil" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Rename project</span>
+        <span class="z-palette__shortcut">
+          <kbd class="z-palette__kbd">F2</kbd>
+        </span>
+      </div>
+      <div id="project-commands-option-1" role="option" aria-selected="false" data-index="1" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="document-duplicate" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Duplicate</span>
+      </div>
+    </div>
+    <div role="group" aria-label="Go to" class="z-palette__group">
+      <div class="z-palette__heading" aria-hidden="true">Go to</div>
+      <div id="project-commands-option-2" role="option" aria-selected="false" data-index="2" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="gear" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Settings</span>
+        <span class="z-palette__item-hint">Project</span>
+      </div>
+      <div id="project-commands-option-3" role="option" aria-selected="false" data-index="3" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="users" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Members</span>
+      </div>
+    </div>
+  </div>
+  <div class="z-palette__footer">
+    <span>
+      <kbd class="z-kbd" data-size="md">↑</kbd>
+       
+      <kbd class="z-kbd" data-size="md">↓</kbd>
+       to move
+    </span>
+    <span>
+      <kbd class="z-kbd" data-size="md">Enter</kbd>
+       to run
+    </span>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="CommandPalette" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">CommandPalette</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">

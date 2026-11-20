@@ -224,5 +224,22 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         await visible(page, '.z-toast[data-intent="danger"][role="alert"]:has-text("Deploy failed")');
       },
     },
+    {
+      name: "Oleada 4 · Command en línea: filtro, flechas, Intro ejecuta sin cerrar y Escape vacía la búsqueda",
+      async run({ open }) {
+        const page = await screen(open);
+        const input = `${t("c-command")} .z-palette__input`;
+        await page.fill(input, "mem");
+        await page.keyboard.press("Enter");
+        await expectText(page, t("c-last"), "command:members");
+        await page.fill(input, "");
+        await press(page, "ArrowDown", "ArrowDown", "Enter");
+        await expectText(page, t("c-last"), "command:settings");
+        await page.fill(input, "dup");
+        await press(page, "Escape");
+        await poll(async () => (await page.inputValue(input)) === "", "Escape vacía la búsqueda");
+        await visible(page, `${t("c-command")} .z-palette__footer`);
+      },
+    },
   ];
 }
