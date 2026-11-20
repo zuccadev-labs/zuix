@@ -22,6 +22,25 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+/**
+ * Cuántos iconos del set completo trae un bundle: se busca el primer trazado de cada icono de `zicon/src/icons`.
+ * Los componentes usan unos pocos por dentro (chevrones, cierre, marca…); el set completo son más de 300. Medir esto
+ * en vez del peso del bundle evita que el tope tenga que subir con cada componente nuevo.
+ */
+const ICON_LIMIT = 80;
+function iconsIn(js) {
+  const dir = join(root, "zicon", "src", "icons");
+  let found = 0;
+  let total = 0;
+  for (const file of readdirSync(dir)) {
+    const path = /"o":\["([^"]{24,})/.exec(readFileSync(join(dir, file), "utf8"))?.[1];
+    if (!path) continue;
+    total += 1;
+    if (js.includes(path)) found += 1;
+  }
+  return { found, total };
+}
 const args = new Set(process.argv.slice(2));
 // Carpetas de los paquetes publicables, en orden de dependencias. `suite` es el paraguas @zuccadev-labs/zuix.
 const PACKAGES = ["tokens", "zicon", "zui", "zout", "suite"];
@@ -415,14 +434,12 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
     if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-"))
       bad("vite: el CSS compilado no trae zui, zout y tokens");
     else if (!js.includes("z-btn--")) bad("vite: el JS compilado no trae los componentes");
-    // Solo se registraron dos iconos: el set completo (≈580 kB) no debe entrar. Tope con margen sobre lo que pesa la
-    // biblioteca sin iconos (≈575 kB con la agenda completa y ≈571 kB con las capas y layouts de la oleada 4, medidos por
-    // separado; ver el tope abajo): con el set completo de iconos el bundle pasa de 1,1 MB.
-    else if (js.length > 640_000)
-      bad(`vite: el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el set completo de iconos no se está descartando`);
+    // Solo se registraron dos iconos: el set completo no debe entrar en el bundle.
+    else if (iconsIn(js).found > ICON_LIMIT)
+      bad(`vite: el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el set completo no se está descartando`);
     else
       ok(
-        `vite: CSS ${(css.length / 1024).toFixed(0)} kB con tokens, zui y zout · JS ${(js.length / 1024).toFixed(0)} kB sin el set completo de iconos`,
+        `vite: CSS ${(css.length / 1024).toFixed(0)} kB con tokens, zui y zout · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
       );
   }
   if (
@@ -440,11 +457,11 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
     if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-") || css.includes("@import"))
       bad("vite (paraguas): @zuccadev-labs/zuix/styles.css no trae tokens, zui y zout resueltos");
     else if (!js.includes("z-btn--")) bad("vite (paraguas): el JS compilado no trae los componentes");
-    else if (js.length > 640_000)
-      bad(`vite (paraguas): el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el paraguas arrastra el set completo de iconos`);
+    else if (iconsIn(js).found > ICON_LIMIT)
+      bad(`vite (paraguas): el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el paraguas arrastra el set completo`);
     else
       ok(
-        `vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB sin el set completo de iconos`,
+        `vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
       );
   }
 }
