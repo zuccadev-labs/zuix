@@ -304,6 +304,24 @@ function onMenuPointer(item: HTMLElement, event: PointerEvent): void {
   } else if (open) subTimer = setTimeout(() => closePopover(open), 200);
 }
 
+/**
+ * Casilla (`menuitemcheckbox`) o radio (`menuitemradio`) de un menú: cambia `aria-checked` y emite `z:change` en la
+ * entrada (`{ checked }`) o en su grupo (`{ value }`, el `value` o `data-value` de la opción). Otra entrada no cambia.
+ */
+function checkItem(item: HTMLElement): void {
+  const role = item.getAttribute("role");
+  if (role === "menuitemcheckbox") {
+    const checked = item.getAttribute("aria-checked") !== "true";
+    item.setAttribute("aria-checked", String(checked));
+    emit(item, "change", { checked });
+  } else if (role === "menuitemradio" && item.getAttribute("aria-checked") !== "true") {
+    const group = item.closest<HTMLElement>('[role="group"], .z-menu') ?? item;
+    for (const other of group.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+      if (other.closest(".z-menu") === item.closest(".z-menu")) other.setAttribute("aria-checked", String(other === item));
+    emit(group, "change", { value: item.getAttribute("value") ?? item.dataset.value ?? "" });
+  }
+}
+
 // Búsqueda por letra: enfoca la siguiente entrada cuyo texto empieza por lo tecleado.
 const menuSearch = createTypeahead(600);
 
@@ -841,6 +859,7 @@ function onClick(event: MouseEvent): void {
       openSubmenu(item, event.detail === 0);
       return;
     }
+    checkItem(item);
     emit(item, "select");
     // Elegir cierra toda la cadena: el menú raíz se lleva consigo sus submenús.
     if (!item.hasAttribute("data-keep-open")) closeChain(item.closest<HTMLElement>(".z-menu")!);
@@ -932,7 +951,11 @@ function onKeydown(event: KeyboardEvent): void {
       clearTimeout(subTimer);
       highlight(menu, next);
     } else if (event.key === "Tab") closeChain(menu);
-    else if (
+    else if (event.key === " " && own?.getAttribute("role") === "menuitemcheckbox") {
+      // Espacio cambia la casilla y deja el menú abierto (APG); Intro la cambia y cierra (clic).
+      event.preventDefault();
+      checkItem(own);
+    } else if (
       (logicalKey(event.key, menu) === "ArrowRight" || event.key === "Enter" || event.key === " ") &&
       own?.hasAttribute("data-z-submenu")
     ) {

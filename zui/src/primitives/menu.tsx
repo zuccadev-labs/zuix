@@ -12,15 +12,18 @@ import { submenuAnchor, topInset, type Box, type Placement } from "../core/place
 import { move } from "../core/roving";
 import { createTypeahead, isPrintable, type Typeahead } from "../core/typeahead";
 import { cx } from "../cx";
-import type { MenuEntry, MenuItemEntry } from "../components/overlay/internal";
+import type { MenuCheckboxEntry, MenuEntry, MenuItemEntry, MenuRadioGroupEntry, MenuRadioItem } from "../components/overlay/internal";
 import { useIsoLayoutEffect, useLayer, usePresence } from "./hooks";
 import { Popup, Portal, rectOf } from "./popup";
 
 const OPEN_MS = 100;
 const CLOSE_MS = 200;
 
+// Entradas propias del menú, también las de sus grupos de radio (no las de un submenú anidado).
 const itemsOf = (menu: Element) =>
-  [...menu.querySelectorAll<HTMLElement>(":scope > .z-menu__item")].filter((item) => item.getAttribute("aria-disabled") !== "true");
+  [...menu.querySelectorAll<HTMLElement>(":scope > .z-menu__item, :scope > .z-menu__group > .z-menu__item")].filter(
+    (item) => item.getAttribute("aria-disabled") !== "true",
+  );
 const labelOf = (item: HTMLElement) => (item.querySelector(".z-menu__text") ?? item).textContent ?? "";
 
 /** Resalta una entrada y le da el foco; las demás del mismo menú dejan de estar resaltadas. */
@@ -45,6 +48,15 @@ interface Tree {
   open: boolean;
   close: (refocus: boolean) => void;
   anchor: RefObject<Element | null>;
+}
+
+/** Señal de una opción de casilla o de radio, en el hueco del icono. La hoja la muestra solo con `aria-checked="true"`. */
+function CheckMark({ kind }: { kind: "checkbox" | "radio" }) {
+  return (
+    <span className="z-menu__icon z-menu__check" data-kind={kind} aria-hidden="true">
+      {kind === "checkbox" ? <Icon name="check" size={14} /> : null}
+    </span>
+  );
 }
 
 function ItemBody({ entry, sub }: { entry: MenuItemEntry; sub?: boolean }) {
@@ -80,6 +92,8 @@ interface LevelProps {
 function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labelledBy, className, parentItem }: LevelProps) {
   const node = useRef<HTMLDivElement | null>(null);
   const triggers = useRef(new Map<string, HTMLElement>());
+  // Cambio de cada casilla por el id de su entrada: lo usa Espacio, que no pasa por el clic.
+  const checkboxes = useRef(new Map<string, () => void>());
   const openId = tree.path[depth];
 
   useIsoLayoutEffect(() => {
@@ -142,6 +156,10 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
       tree.setPath(tree.path.slice(0, depth - 1));
       const parent = parentItem?.current;
       if (parent?.parentElement) highlight(parent.parentElement, parent);
+    } else if (event.key === " " && !tree.search.pending() && current?.getAttribute("role") === "menuitemcheckbox") {
+      // Espacio cambia la casilla y deja el menú abierto (APG); Intro la cambia y cierra (clic nativo).
+      event.preventDefault();
+      checkboxes.current.get(current.id)?.();
     } else if (isPrintable(event) && (event.key !== " " || tree.search.pending())) {
       const hit = list[tree.search(list.map(labelOf), event.key, current ? list.indexOf(current) : -1)];
       event.preventDefault();
@@ -169,6 +187,82 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
       tree.timer.current = setTimeout(closeSub, CLOSE_MS);
     }
   };
+  // Casillas, radios y enlaces: el puntero las resalta y cierra el submenú que hubiera abierto.
+  const onPlainPointer = (disabled: boolean | undefined, event: PointerEvent<HTMLElement>) => {
+    const menu = node.current;
+    if (!menu || event.pointerType !== "mouse" || disabled || !tree.open) return;
+    if (openId && tree.aim.blocks({ x: event.clientX, y: event.clientY })) return;
+    if (document.activeElement !== event.currentTarget) highlight(menu, event.currentTarget);
+    if (openId) {
+      clearTimeout(tree.timer.current);
+      tree.timer.current = setTimeout(closeSub, CLOSE_MS);
+    }
+  };
+  const checkboxItem = (entry: MenuCheckboxEntry) => {
+    const itemId = `${id}-item-${entry.id}`;
+    const toggle = () => {
+      if (!entry.disabled && tree.open) entry.onCheckedChange?.(!entry.checked);
+    };
+    checkboxes.current.set(itemId, toggle);
+    return (
+      <button
+        key={entry.id}
+        type="button"
+        role="menuitemcheckbox"
+        id={itemId}
+        className="z-menu__item"
+        tabIndex={-1}
+        aria-checked={entry.checked}
+        aria-disabled={entry.disabled || undefined}
+        data-disabled={entry.disabled ? "" : undefined}
+        onPointerMove={(event) => onPlainPointer(entry.disabled, event)}
+        onClick={() => {
+          if (entry.disabled || !tree.open) return;
+          toggle();
+          tree.close(true);
+        }}
+      >
+        <CheckMark kind="checkbox" />
+        <span className="z-menu__text">{entry.label}</span>
+        {entry.shortcut ? <kbd className="z-menu__shortcut">{entry.shortcut}</kbd> : null}
+      </button>
+    );
+  };
+  const radioGroup = (group: MenuRadioGroupEntry) => {
+    const labelId = `${id}-group-${group.id}`;
+    const radio = (item: MenuRadioItem) => (
+      <button
+        key={item.value}
+        type="button"
+        role="menuitemradio"
+        id={`${id}-item-${group.id}-${item.value}`}
+        className="z-menu__item"
+        tabIndex={-1}
+        aria-checked={group.value === item.value}
+        aria-disabled={item.disabled || undefined}
+        data-disabled={item.disabled ? "" : undefined}
+        onPointerMove={(event) => onPlainPointer(item.disabled, event)}
+        onClick={() => {
+          if (item.disabled || !tree.open) return;
+          if (group.value !== item.value) group.onValueChange?.(item.value);
+          tree.close(true);
+        }}
+      >
+        <CheckMark kind="radio" />
+        <span className="z-menu__text">{item.label}</span>
+        {item.shortcut ? <kbd className="z-menu__shortcut">{item.shortcut}</kbd> : null}
+      </button>
+    );
+    return (
+      <div key={group.id} role="group" aria-labelledby={labelId} className="z-menu__group">
+        <div id={labelId} className="z-menu__label">
+          {group.label}
+        </div>
+        {group.items.map(radio)}
+      </div>
+    );
+  };
+
   const onItemLeave = (entry: MenuItemEntry, event: PointerEvent<HTMLElement>) => {
     if (openId !== entry.id) {
       if (entry.items?.length) clearTimeout(tree.timer.current);
@@ -208,8 +302,33 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
               </div>
             );
           }
+          if (entry.type === "checkbox") return checkboxItem(entry);
+          if (entry.type === "radio-group") return radioGroup(entry);
           const sub = Boolean(entry.items?.length);
           const expanded = sub && openId === entry.id;
+          if (entry.href && !sub) {
+            return (
+              <a
+                key={entry.id}
+                role="menuitem"
+                id={`${id}-item-${entry.id}`}
+                className="z-menu__item"
+                tabIndex={-1}
+                href={entry.disabled ? undefined : entry.href}
+                aria-disabled={entry.disabled || undefined}
+                data-disabled={entry.disabled ? "" : undefined}
+                data-danger={entry.danger || undefined}
+                onPointerMove={(event) => onPlainPointer(entry.disabled, event)}
+                onClick={(event) => {
+                  if (entry.disabled || !tree.open) return event.preventDefault();
+                  entry.onSelect?.();
+                  tree.close(false);
+                }}
+              >
+                <ItemBody entry={entry} />
+              </a>
+            );
+          }
           return (
             <button
               key={entry.id}
@@ -245,7 +364,8 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
         })}
       </Popup>
       {items.map((entry) => {
-        if (entry.type === "separator" || entry.type === "label" || !entry.items?.length || openId !== entry.id || !tree.open) return null;
+        if (entry.type === "separator" || entry.type === "label" || entry.type === "checkbox" || entry.type === "radio-group") return null;
+        if (!entry.items?.length || openId !== entry.id || !tree.open) return null;
         const trigger = { current: triggers.current.get(entry.id) ?? null };
         return (
           <Portal key={entry.id} anchor={tree.anchor}>

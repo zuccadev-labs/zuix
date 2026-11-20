@@ -34,6 +34,7 @@ import { Overview } from "./screens/Overview";
 import { Projects } from "./screens/Projects";
 import { Forms } from "./screens/Forms";
 import { Inputs } from "./screens/Inputs";
+import { Commands } from "./screens/Commands";
 import { Overlays } from "./screens/Overlays";
 import { NavigationScreen } from "./screens/Navigation";
 import { Gallery } from "./screens/Gallery";
@@ -188,6 +189,8 @@ export function App() {
       <Forms />
     ) : active === "inputs" ? (
       <Inputs />
+    ) : active === "commands" ? (
+      <Commands />
     ) : active === "overlays" ? (
       <Overlays onOpenPalette={() => setPaletteOpen(true)} />
     ) : active === "navigation" ? (

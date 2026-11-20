@@ -153,4 +153,43 @@ export default async function ({ page, test, ok, card, browserName }) {
     );
     ok(await activeIs("#w4-after-banner"), "el foco sigue al siguiente tabulable");
   });
+
+  /* ---------- Menu con casillas y radios ---------- */
+  await test("Menu: casilla con Espacio (sigue abierto) e Intro (cierra), radios excluyentes con z:change en el grupo", async () => {
+    const box = await inject("Menu", 1);
+    const trigger = box.locator("[data-z-open]");
+    const menu = box.locator("#view-options");
+    await trigger.click();
+    ok(await menu.isVisible(), "abre");
+    ok(await activeIs('#view-options [role="menuitemcheckbox"]'), "foco en la primera entrada");
+    await events();
+    await press(" ");
+    ok(await menu.isVisible(), "Espacio deja el menú abierto");
+    ok((await menu.locator('[role="menuitemcheckbox"]').first().getAttribute("aria-checked")) === "false", "Minimap se apaga");
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:change" && e.detail.checked === false),
+      `z:change: ${JSON.stringify(log)}`,
+    );
+    const hidden = await menu
+      .locator('[role="menuitemcheckbox"]')
+      .first()
+      .locator("z-icon")
+      .evaluate((el) => getComputedStyle(el).visibility);
+    ok(hidden === "hidden", `marca oculta sin marcar: ${hidden}`);
+    await press("ArrowDown", "Enter");
+    ok(await menu.isHidden(), "Intro cierra");
+    ok((await menu.locator('[role="menuitemcheckbox"]').nth(1).getAttribute("aria-checked")) === "true", "Word wrap se enciende");
+    await trigger.click();
+    await menu.locator('[role="menuitemradio"][value="comfortable"]').click();
+    ok(await menu.isHidden(), "elegir un radio cierra");
+    const radios = await menu.locator('[role="menuitemradio"]').evaluateAll((list) => list.map((el) => el.getAttribute("aria-checked")));
+    ok(radios.join() === "false,true", `excluyentes: ${radios}`);
+    const change = (await events()).find((e) => e.name === "z:change" && e.detail?.value);
+    ok(change?.detail.value === "comfortable" && change.cls.includes("z-menu__group"), `z:change del grupo: ${JSON.stringify(change)}`);
+    const dot = await menu
+      .locator('[role="menuitemradio"][aria-checked="true"] .z-menu__check')
+      .evaluate((el) => getComputedStyle(el, "::before").borderTopStyle);
+    ok(dot === "solid", "punto del radio dibujado con borde");
+  });
 }

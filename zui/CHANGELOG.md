@@ -23,6 +23,11 @@ radios y material de los tokens.
     del texto si cabe, debajo si no: consulta de contenedor) y cierre con nombre que deja el foco en el siguiente
     elemento tabulable. Persistente; `live` lo anuncia si se inserta tras una acción. En `/dom`, `.z-banner` con
     `z:dismiss` cancelable y `dismissBanner()`. Utilidad `nextTabbable()` en `core/focus`.
+  - `Menu` y `ContextMenu`: entradas casilla (`{ type: "checkbox", checked, onCheckedChange }`,
+    `menuitemcheckbox`: Espacio la cambia y deja el menú abierto, Intro o el clic la cambian y cierran), grupos de
+    radio (`{ type: "radio-group", label, value, onValueChange, items }`, `menuitemradio` en un `group` con nombre) y
+    entradas enlace (`href`, `<a role=menuitem>`). Tipos `MenuCheckboxEntry`, `MenuRadioGroupEntry` y
+    `MenuRadioItem`. En `/dom`, `aria-checked` y `z:change` en la casilla o en el grupo.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

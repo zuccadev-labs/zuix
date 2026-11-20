@@ -128,6 +128,7 @@
 ## Componentes: Estado
 
 - [Alert](https://zuccadev-labs.github.io/zuix/components/feedback/alert.md): Aviso en línea sobre el resultado de una acción o el estado del sistema.
+- [Banner](https://zuccadev-labs.github.io/zuix/components/feedback/banner.md): Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.
 - [EmptyState](https://zuccadev-labs.github.io/zuix/components/feedback/empty-state.md): Estado vacío: explica por qué no hay contenido y qué hacer.
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.

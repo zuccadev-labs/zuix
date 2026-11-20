@@ -474,6 +474,31 @@
     font-weight: var(--z-weight-medium);
     color: var(--z-fg-muted);
   }
+  /* Casillas y radios: la señal ocupa el hueco del icono. Enlaces: sin subrayado, como el resto de entradas. */
+  a.z-menu__item {
+    text-decoration: none;
+  }
+  .z-menu__check {
+    color: var(--z-accent-text);
+  }
+  .z-menu__item:not([aria-checked="true"]) > .z-menu__check > * {
+    visibility: hidden;
+  }
+  /* El punto del radio es un borde (no un fondo): los colores forzados lo conservan. */
+  .z-menu__check[data-kind="radio"]::before {
+    content: "";
+    inline-size: 0;
+    block-size: 0;
+    border: 3px solid transparent;
+    border-radius: var(--z-radius-full);
+  }
+  .z-menu__item[aria-checked="true"] > .z-menu__check[data-kind="radio"]::before {
+    border-color: currentColor;
+  }
+  .z-menu__group {
+    display: flex;
+    flex-direction: column;
+  }
   .z-menu[data-size="lg"] {
     min-width: min(300px, var(--z-menu-fit));
     max-width: min(340px, var(--z-menu-fit));

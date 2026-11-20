@@ -5,6 +5,7 @@ import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
 import layers from "./cases-layers.mjs";
 import wave3 from "./cases-wave3.mjs";
+import wave4 from "./cases-wave4.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -604,7 +605,7 @@ export const cases = [
       await visible(page, "dialog.z-palette:modal");
       await focusOn(page, ".z-palette__input", "el foco entra en el buscador");
       await expectInViewport(page, ".z-palette");
-      await expectCount(page, ".z-palette__item", 21, "21 comandos sin filtro (pantallas Agenda e Inputs)");
+      await expectCount(page, ".z-palette__item", 22, "22 comandos sin filtro (pantallas Agenda, Inputs y Commands)");
       await settled(page);
       await shot(page, "overlay-palette");
       await page.keyboard.type("gal");
@@ -3030,7 +3031,7 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss, layers, wave3, wave4].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {
