@@ -4935,6 +4935,18 @@
     {
      "title": "Semana por su número",
      "code": "<Calendar mode=\"range\" showWeekNumber onWeekNumberClick={(week) => console.log(week.from)} defaultMonth=\"2026-11\" />"
+    },
+    {
+     "title": "Contenido por celda: precio por día",
+     "code": "<Calendar\n  defaultMonth=\"2026-12\"\n  cellSize=\"lg\"\n  // El precio se ve bajo el número; el nombre accesible lo dice («€39, lowest»).\n  renderDay={(date) => (prices[date] ? `€${prices[date]}` : \"—\")}\n  getDayDescription={(date) => (prices[date] ? `€${prices[date]}${prices[date] < 50 ? \", lowest\" : \"\"}` : \"sold out\")}\n  isDateDisabled={(date) => !prices[date]}\n  modifiers={{ cheap: (date) => prices[date] < 50 }}\n/>"
+    },
+    {
+     "title": "Contenido por celda: marcadores de ciclo con leyenda",
+     "code": "<Calendar\n  defaultMonth=\"2026-11\"\n  cellSize=\"lg\"\n  // Cada marcador es un modificador (data-period, data-fertile…) con su estilo en la hoja de la aplicación,\n  // su texto en getDayDescription y su entrada en la leyenda: no depende solo del color.\n  modifiers={{ period, predicted, fertile, ovulation }}\n  renderDay={(date) => (symptoms[date] ? \"•\".repeat(symptoms[date]) : null)}\n  getDayDescription={(date) => [period(date) && \"period\", fertile(date) && \"fertile window\", ovulation(date) && \"ovulation\"].filter(Boolean).join(\", \") || null}\n/>"
+    },
+    {
+     "title": "Estancia: noches, solo salida, flexibilidad y ajuste ±1",
+     "code": "<Calendar\n  mode=\"range\"\n  numberOfMonths={2}\n  rangeUnit=\"nights\"\n  minRange={2}\n  isDateUnavailable={(date) => booked.has(date)}\n  isDateCheckoutOnly={(date) => checkoutOnly.has(date)}\n  defaultFlexibility={1}\n  showLengthStepper\n/>"
     }
    ],
    "html": [
