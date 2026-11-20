@@ -2,6 +2,7 @@
 import { useId, useState, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
+import { SidebarContext } from "./sidebar-context";
 
 export interface SidePanelProps {
   title?: ReactNode;
@@ -88,12 +89,27 @@ export function SidebarSection({
   );
 }
 
-/** Contenedor de secciones de sidebar, con pie opcional fijo abajo. */
-export function Sidebar({ children, footer, className }: { children: ReactNode; footer?: ReactNode; className?: string }) {
+export interface SidebarProps {
+  children: ReactNode;
+  footer?: ReactNode;
+  /**
+   * Plegada a iconos: los `SidebarItem` muestran solo el icono (con tooltip), las cabeceras de sección se ocultan y
+   * un item con submenú lo abre como panel flotante. Se alterna con `SidebarTrigger`.
+   */
+  collapsed?: boolean;
+  /** Id del contenedor: `SidebarTrigger` lo nombra en `aria-controls`. */
+  id?: string;
+  className?: string;
+}
+
+/** Contenedor de secciones de sidebar, con pie opcional fijo abajo. Plegable a iconos con `collapsed`. */
+export function Sidebar({ children, footer, collapsed = false, id, className }: SidebarProps) {
   return (
-    <div className={cx("z-sidebar", className)}>
-      <div className="z-sidebar__sections">{children}</div>
-      {footer ? <div className="z-sidebar__foot">{footer}</div> : null}
-    </div>
+    <SidebarContext.Provider value={{ collapsed, depth: 0 }}>
+      <div id={id} className={cx("z-sidebar", className)} data-collapsed={collapsed || undefined}>
+        <div className="z-sidebar__sections">{children}</div>
+        {footer ? <div className="z-sidebar__foot">{footer}</div> : null}
+      </div>
+    </SidebarContext.Provider>
   );
 }

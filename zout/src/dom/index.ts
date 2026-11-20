@@ -4,7 +4,8 @@
 //
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zout/dom"; init();
 // Uso imperativo:    setPanelOpen, togglePanel, closeDrawers, getShellModes, resizeTo, getSplitSizes, setSplitSizes,
-//                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, dispose
+//                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, setSidebarCollapsed,
+//                    setSidebarItemOpen, dispose
 //
 // Todo se activa dentro de un contenedor [data-z-dom], para no chocar con React en la misma página.
 // Atributos:
@@ -17,9 +18,15 @@
 //   data-default-size, data-step, data-var, data-z-resize="#id"   en .z-resize (data-side: left|right|top|bottom, o start|end, que siguen la dirección de escritura)
 //   data-min-fraction                         en .z-split
 //   data-new-title="Untitled"                 en .z-tabstrip__add: crea la pestaña sin código de la aplicación
+//   data-collapsed                            en .z-sidebar: plegada a iconos (setSidebarCollapsed la alterna)
+//   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
+// La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
+// (`data-z-open`) para el submenú: cargar también @zuccadev-labs/zuix-zui/dom.
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
+import { chevronDoubleRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-right";
 import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-small";
 import { chevronRightSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-right-small";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
@@ -51,7 +58,7 @@ export type ShellSide = "sidebar" | "inspector";
 export type ShellModes = Record<ShellSide, PanelMode>;
 
 // Iconos que este módulo dibuja por su cuenta cuando el marcado no usa <z-icon>.
-registerIcons([xMark, chevronDownSmall, chevronRightSmall]);
+registerIcons([xMark, chevronDownSmall, chevronRightSmall, chevronDoubleLeft, chevronDoubleRight]);
 
 const isBrowser = typeof document !== "undefined";
 const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
@@ -556,6 +563,78 @@ export function setSectionOpen(section: HTMLElement, open: boolean): void {
   else icon.replaceWith(iconElement(name, { size: icon.getAttribute("width") ?? 12 }));
 }
 
+/* ---------- Sidebar plegable a iconos ---------- */
+
+const subOf = (link: Element) => {
+  const id = link.getAttribute("aria-controls");
+  return id ? document.getElementById(id) : null;
+};
+const topLinks = (sidebar: Element) =>
+  [...sidebar.querySelectorAll<HTMLElement>(".z-sidebar__link")].filter((link) => !link.closest(".z-sidebar__sub"));
+
+/** Abre o pliega el submenú de un item de sidebar (`.z-sidebar__link[aria-controls]`), desplegada la sidebar. */
+export function setSidebarItemOpen(link: HTMLElement, open: boolean): void {
+  const sub = subOf(link);
+  if (!sub || sub.hasAttribute("popover")) return;
+  link.setAttribute("aria-expanded", String(open));
+  sub.hidden = !open;
+  const item = link.closest<HTMLElement>(".z-sidebar__item");
+  if (item) {
+    if (open) item.dataset.open = "true";
+    else delete item.dataset.open;
+  }
+}
+
+/**
+ * Pliega la sidebar a iconos o la despliega. Plegada, cada item muestra su nombre en un tooltip y un submenú pasa a
+ * ser un popover anclado al item; desplegada, vuelve a abrirse en su sitio. Emite `z:change` { collapsed }.
+ */
+export function setSidebarCollapsed(sidebar: HTMLElement, collapsed: boolean, silent = false): void {
+  if (collapsed) sidebar.dataset.collapsed = "true";
+  else delete sidebar.dataset.collapsed;
+  for (const link of topLinks(sidebar)) {
+    const sub = subOf(link);
+    const label = link.querySelector(".z-sidebar__label")?.textContent ?? "";
+    if (!sub) {
+      if (collapsed) link.setAttribute("data-z-tooltip", label);
+      else link.removeAttribute("data-z-tooltip");
+      continue;
+    }
+    if (collapsed) {
+      if (!sub.hasAttribute("popover")) sub.dataset.wasOpen = String(!sub.hidden);
+      sub.hidden = false;
+      sub.setAttribute("popover", "auto");
+      sub.classList.add("z-liquid");
+      link.setAttribute("data-z-open", `#${sub.id}`);
+      link.setAttribute("data-z-placement", "right-start");
+      link.setAttribute("aria-haspopup", "true");
+      link.setAttribute("aria-expanded", "false");
+    } else {
+      if (sub.matches(":popover-open")) sub.hidePopover();
+      sub.removeAttribute("popover");
+      sub.classList.remove("z-liquid");
+      sub.removeAttribute("style");
+      link.removeAttribute("data-z-open");
+      link.removeAttribute("data-z-placement");
+      link.removeAttribute("aria-haspopup");
+      sub.hidden = false;
+      setSidebarItemOpen(link, sub.dataset.wasOpen === "true");
+    }
+  }
+  for (const trigger of document.querySelectorAll<HTMLElement>(".z-sidebar__trigger")) {
+    if (sidebar.id && trigger.getAttribute("aria-controls") === sidebar.id) {
+      trigger.setAttribute("aria-expanded", String(!collapsed));
+      if (collapsed) trigger.dataset.collapsed = "true";
+      else delete trigger.dataset.collapsed;
+      const name = collapsed ? "chevron-double-right" : "chevron-double-left";
+      const icon = trigger.querySelector(":scope > z-icon, :scope > svg.z-icon");
+      if (icon?.localName === "z-icon") icon.setAttribute("name", name);
+      else icon?.replaceWith(iconElement(name, { size: 16 }));
+    }
+  }
+  if (!silent) emit(sidebar, "change", { collapsed });
+}
+
 /* ---------- Delegación de eventos ---------- */
 
 function onClick(event: MouseEvent): void {
@@ -597,6 +676,21 @@ function onClick(event: MouseEvent): void {
     return;
   }
 
+  const trigger = target.closest<HTMLElement>(".z-sidebar__trigger");
+  if (trigger) {
+    const sidebar = document.getElementById(trigger.getAttribute("aria-controls") ?? "");
+    if (sidebar?.classList.contains("z-sidebar")) setSidebarCollapsed(sidebar, !sidebar.hasAttribute("data-collapsed"));
+    return;
+  }
+
+  const sidebarLink = target.closest<HTMLElement>(".z-sidebar__link[aria-controls]");
+  if (sidebarLink && !sidebarLink.hasAttribute("data-z-open") && !(sidebarLink as HTMLButtonElement).disabled) {
+    const open = sidebarLink.getAttribute("aria-expanded") !== "true";
+    setSidebarItemOpen(sidebarLink, open);
+    emit(sidebarLink.closest(".z-sidebar__item") ?? sidebarLink, "change", { open });
+    return;
+  }
+
   const fold = target.closest(".z-sidebar__fold");
   const section = fold?.closest<HTMLElement>(".z-sidebar__section");
   if (section) {
@@ -618,6 +712,14 @@ function onKeydown(event: KeyboardEvent): void {
       if (shell && shells.has(shell)) closeDrawers(shell);
     }
     return;
+  }
+  if (event.key.toLowerCase?.() === "b" && !event.altKey && !event.shiftKey && (event.ctrlKey || event.metaKey)) {
+    const trigger = document.querySelector<HTMLElement>("[data-z-dom] .z-sidebar__trigger[data-shortcut]");
+    if (trigger) {
+      event.preventDefault();
+      trigger.click();
+      return;
+    }
   }
   if (!inDom(target)) return;
 
@@ -731,6 +833,7 @@ export function hydrate(root: ParentNode = document): void {
   for (const shell of all(root, ".z-shell")) hydrateShell(shell);
   for (const split of all(root, ".z-split")) hydrateSplit(split);
   for (const strip of all(root, ".z-tabstrip")) hydrateStrip(strip);
+  for (const sidebar of all(root, ".z-sidebar[data-collapsed]")) setSidebarCollapsed(sidebar, true, true);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");

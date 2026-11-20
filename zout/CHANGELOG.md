@@ -5,6 +5,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Oleada 4, navegación y paneles de aplicación:
+  - `Sidebar` plegable a iconos (`collapsed`) con `SidebarItem` (icono, contador, acción, `aria-current`,
+    submenú en disclosure) y `SidebarTrigger` (aria-expanded, aria-controls, atajo Ctrl/⌘+B opcional). Plegada,
+    cada item muestra su nombre en un tooltip y el submenú se abre en un panel flotante. En `/dom`,
+    `setSidebarCollapsed()` y `setSidebarItemOpen()` (usa el tooltip y el popover de `@zuccadev-labs/zuix-zui/dom`).
+
 ### Cambiado
 
 - Estándar liquid glass: nada en píldora. El rail es un panel de cromo con radio 20, concéntrico con sus items

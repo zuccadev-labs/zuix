@@ -180,7 +180,7 @@
 - [Rail](https://zuccadev-labs.github.io/zuix/components/layout/rail.md): Barra estrecha de navegación principal, solo iconos.
 - [ResizeHandle](https://zuccadev-labs.github.io/zuix/components/layout/resize-handle.md): Tirador para redimensionar un panel, con puntero y teclado.
 - [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.
-- [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria en acordeón: secciones plegables y pie fijo.
+- [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.
 - [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.
 - [SplitPane](https://zuccadev-labs.github.io/zuix/components/layout/split-pane.md): Paneles divididos con divisores arrastrables y manejables con teclado.
 - [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre y alta.
