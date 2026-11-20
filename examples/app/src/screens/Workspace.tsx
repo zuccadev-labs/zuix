@@ -77,7 +77,7 @@ export function Workspace() {
     <Page width="full">
       <PageHeader title="Workspace" description="Collapsible sidebar, work tabs, panes and floating windows." />
       <PageSection title="Navigation">
-        <Grid min={300}>
+        <Grid min={260}>
           <Card className="app-demo">
             <CardHeader title="Sidebar" subtitle="Collapses to icons; submenus become flyouts" />
             <div className="app-sidebar-demo" data-testid="ws-sidebar">
@@ -107,7 +107,7 @@ export function Workspace() {
               {page}
             </output>
           </Card>
-          <Card className="app-demo">
+          <Card className="app-demo app-demo--fluid">
             <CardHeader title="TabStrip" subtitle="Groups, indicators and reorder (drag or Ctrl+Shift+Arrows)" />
             <div data-testid="ws-tabs">
               <TabStrip
@@ -149,7 +149,7 @@ export function Workspace() {
         </output>
       </PageSection>
       <PageSection title="Panes and windows">
-        <Grid min={300}>
+        <Grid min={260}>
           <Card className="app-demo">
             <CardHeader title="PaneHeader" subtitle="Title, subtitle and a toolbar of actions" />
             <div className="app-pane-demo" data-testid="ws-paneheader">

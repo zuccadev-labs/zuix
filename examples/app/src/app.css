@@ -251,7 +251,7 @@ body {
   height: 300px;
 }
 .app-sidebar-demo__frame {
-  width: 240px;
+  width: min(240px, 100%);
   min-height: 0;
   flex: 1;
   border: 1px solid var(--z-line);
@@ -279,4 +279,13 @@ body {
 }
 .app-panelayout {
   height: 380px;
+}
+/* Una tira de pestañas se desplaza dentro de su tarjeta: la tarjeta no crece hasta su ancho natural. */
+.app-demo--fluid {
+  min-width: 0;
+}
+/* Valores de las demos de Workspace: listas de ids largas parten línea. */
+[data-testid^="ws-"].app-value {
+  display: block;
+  overflow-wrap: anywhere;
 }
