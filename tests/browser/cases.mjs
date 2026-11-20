@@ -7,6 +7,7 @@ import layers from "./cases-layers.mjs";
 import wave3 from "./cases-wave3.mjs";
 import wave5Content from "./cases-wave5-content.mjs";
 import wave5Data from "./cases-wave5-data.mjs";
+import charts from "./cases-charts.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -228,7 +229,7 @@ async function inPageAndModal(page, fn) {
   await focusOn(page, t("open-forms-modal"), "al cerrar el modal el foco vuelve a su disparador");
 }
 
-const SCREENS = ["overview", "projects", "overlays", "navigation", "gallery", "editor", "forms", "agenda"];
+const SCREENS = ["overview", "projects", "overlays", "navigation", "gallery", "editor", "forms", "agenda", "content", "data", "charts"];
 
 export const cases = [
   // ───────────────────────────── Overlays ─────────────────────────────
@@ -3032,7 +3033,7 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3, wave5Content, wave5Data].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss, layers, wave3, wave5Content, wave5Data, charts].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {

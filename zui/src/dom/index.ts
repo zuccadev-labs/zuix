@@ -931,9 +931,9 @@ function onClick(event: MouseEvent): void {
   }
 
   // Toggle suelto: no los de un ToggleGroup ni el de mostrar contraseña (los atienden ./actions y ./forms-fields), ni
-  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor).
+  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor, gráficos).
   const pressed = target.closest<HTMLElement>("button[aria-pressed]:not(.z-toggle-group > .z-toggle, .z-password__toggle)");
-  if (pressed && !pressed.closest(".z-calendar, .z-heatmap")) {
+  if (pressed && !pressed.closest(".z-calendar, .z-heatmap, .z-chart")) {
     const next = pressed.getAttribute("aria-pressed") !== "true";
     pressed.setAttribute("aria-pressed", String(next));
     pressed.dataset.state = next ? "on" : "off";
