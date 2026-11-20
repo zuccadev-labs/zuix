@@ -889,7 +889,8 @@
     {
      "name": "dayMaxEvents",
      "type": "number",
-     "default": 3
+     "default": 3,
+     "description": "Mes y fila de todo el día: carriles visibles antes de «+N». En la rejilla de horas el tope es fijo: cuatro solapes lado a lado en la semana (ocho en el día) y el resto en un «+N» por hora que abre el popover del intervalo."
     },
     {
      "name": "fixedWeeks",
@@ -899,7 +900,8 @@
     {
      "name": "listDays",
      "type": "number",
-     "default": 14
+     "default": 14,
+     "description": "Días de la vista de agenda. A partir de 150 filas, la lista pinta solo su ventana visible (con margen) y rellena el resto."
     },
     {
      "name": "sidebar",
@@ -954,7 +956,7 @@
     {
      "name": "density",
      "type": "(date: string, count: number) => number",
-     "description": "Vista de año: densidad 0…3 de un día."
+     "description": "Vista de año: densidad 0…3 de un día. En `/dom`, con `setAgendaOptions(el, { density })`."
     },
     {
      "name": "renderEvent",
@@ -1024,7 +1026,7 @@
     "z-monthgrid",
     "z-agendalist"
    ],
-   "a11y": "Rejilla de horas y mes con role=grid (columnheader por día con aria-current=date en hoy, gridcell por día); lista con role=list y un encabezado por día. Una sola parada de Tab por vista (tabindex itinerante): eventos como button con nombre completo (título, día, intervalo con formatRange, lugar, calendario, provisional, repite); flechas espaciales entre eventos (sin candidato no se evita el desplazamiento) y un único cursor de franja libre que se mueve por franjas y días; en el mes, flechas por días, Intro entra en los eventos del día y Escape vuelve a la celda. RePág/AvPág cambian de periodo. Intro en un evento abre su detalle; con editable, una segunda Intro lo agarra: flechas mueven (snapDuration, un día), Mayús+↑↓ redimensiona el fin (Alt+Mayús el inicio), Intro suelta, Escape cancela, salir con el foco suelta. Tecla Menú o Mayús+F10, o «Move to…» en el detalle: diálogo modal con fecha, inicio y fin (WCAG 2.5.7). Una región status por agenda con 500 ms de retraso y vaciado previo. Colores forzados, contraste alto, movimiento reducido e impresión cubiertos. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-agenda` dentro de `[data-z-dom]` con data-view, data-date, data-time-zone, data-locale, data-week-start, data-day-start, data-day-end, data-editable, data-selectable…, eventos y calendarios en <script type=\"application/json\" data-events> y data-calendars o con setAgendaEvents/setAgendaCalendars; emite z:eventchange, z:eventclick, z:selectslot, z:datechange, z:viewchange, z:quickcreate, z:calendartoggle y z:timezonechange. Año: 12 rejillas con la densidad en el nombre («4 events»); Intro abre el día. Perpetuo: tabla con caption, instrucciones y buscador con respuesta en texto. Línea temporal: grid con rowheader por recurso; conflicto con trama, borde y «overlaps».",
+   "a11y": "Rejilla de horas y mes con role=grid (columnheader por día con aria-current=date en hoy, gridcell por día); lista con role=list y un encabezado por día (con ventana virtual, aria-setsize y aria-posinset en días y filas; la fila con el foco siempre está pintada e Inicio/Fin llegan al primero y al último aunque no estén pintados). Una sola parada de Tab por vista (tabindex itinerante): eventos como button con nombre completo (título, día, intervalo con formatRange, lugar, calendario, provisional, repite); flechas espaciales entre eventos y los «+N» de la rejilla de horas (sin candidato no se evita el desplazamiento) y un único cursor de franja libre que se mueve por franjas y días; en el mes, flechas por días, Intro entra en los eventos del día y Escape vuelve a la celda. RePág/AvPág cambian de periodo. Intro en un evento abre su detalle; con editable, una segunda Intro lo agarra: flechas mueven (snapDuration, un día), Mayús+↑↓ redimensiona el fin (Alt+Mayús el inicio), Intro suelta, Escape cancela, salir con el foco suelta. Tecla Menú o Mayús+F10, o «Move to…» en el detalle: diálogo modal con fecha, inicio y fin (WCAG 2.5.7). Una región status por agenda con 500 ms de retraso y vaciado previo. Colores forzados, contraste alto, movimiento reducido e impresión cubiertos. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-agenda` dentro de `[data-z-dom]` con data-view, data-date, data-time-zone, data-locale, data-week-start, data-day-start, data-day-end, data-editable, data-selectable…, eventos y calendarios en <script type=\"application/json\" data-events> y data-calendars o con setAgendaEvents/setAgendaCalendars; emite z:eventchange, z:eventclick, z:selectslot, z:datechange, z:viewchange, z:quickcreate, z:calendartoggle y z:timezonechange. Año: 12 rejillas con la densidad en el nombre («4 events»); Intro abre el día. Perpetuo: tabla con caption, instrucciones y buscador con respuesta en texto. Línea temporal: grid con rowheader por recurso; conflicto con trama, borde y «overlaps».",
    "behavior": "dom",
    "examples": [
     {

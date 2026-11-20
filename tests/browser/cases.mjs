@@ -3630,7 +3630,7 @@ export const cases = [
   },
   {
     name: "Rendimiento: 5000 eventos en el mes y 500 recursos sin tareas largas al navegar",
-    async run({ open, note, browserName }) {
+    async run({ open, note }) {
       const page = await open("perf-stage");
       const root = "#perf-agenda";
       await visible(page, `${root} .z-monthgrid`);
@@ -3696,12 +3696,8 @@ export const cases = [
       note(`500 recursos: ${rows} filas pintadas de 500; desplazamiento ${scroll} ms por paso; ${rendered} filas tras desplazar`);
       note(`semana: ${weekEvents} eventos pintados y ${chips} «+N»; lista: ${listRows} filas pintadas`);
       assert(weekEvents < 600 && chips > 0, `semana acotada: ${weekEvents} eventos y ${chips} «+N»`);
-      // Tope holgado (el servidor de pruebas sirve React de desarrollo, varias veces más lento que el de producción;
-      // el umbral fino está en tests/html/cases/15-agenda-perf.mjs, sobre el build publicado).
-      const budget = Number(process.env.AGENDA_REACT_BUDGET) || 1500;
-      const slow = Object.entries(results).filter(([, v]) => v.ms > budget);
-      if (browserName === "chromium")
-        assert(!slow.length, `por encima de ${budget} ms: ${slow.map(([k, v]) => `${k} ${v.ms}`).join(", ")}`);
+      // Sin umbral de tiempo aquí: el servidor de pruebas sirve React de desarrollo y el tiempo de pared depende de la
+      // carga de la máquina. El umbral (CPU del hilo principal) está en tests/html/cases/15-agenda-perf.mjs.
       assert(rows < 60, `ventana virtual: ${rows} filas pintadas`);
       assert(
         (await page.locator(`${rooms} .z-timeline__row[data-resource="r120"]`).count()) === 1 || rendered < 60,

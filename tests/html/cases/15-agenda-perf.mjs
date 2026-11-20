@@ -202,6 +202,12 @@ export default async function ({ page, test, ok, note, browserName }) {
   });
 
   await test("EventCalendar sin framework: arrastre con puntero en la línea temporal (mover y alargar)", async () => {
+    // Una capa que dejó abierta otro caso de la página (el panel de un TimePicker…) taparía la pista: se cierra.
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => {
+      for (const el of document.querySelectorAll(":popover-open")) el.hidePopover();
+      for (const d of document.querySelectorAll("dialog[open]")) d.close();
+    });
     await page.evaluate(async () => {
       document.querySelector("#perf-dom-stage")?.remove();
       const stage = document.createElement("div");

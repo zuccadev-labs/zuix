@@ -95,8 +95,9 @@ radios y material de los tokens.
 
 ### Cambiado
 
-- Rendimiento de la agenda (5000 eventos, build de producción): de 450–720 ms de CPU a 80–150 ms al pasar de
-  semana, y de 330–490 ms a 30–60 ms al abrir la lista de 30 días; el mes, el día y el año, por debajo de 90 ms.
+- Rendimiento de la agenda (5000 eventos, build de producción, CPU del hilo principal por interacción): pasar de
+  semana, de 700–770 ms a 150–200 ms (una semana con 1156 eventos: se pintan 254 y el resto va a «+N»); abrir la
+  lista de 30 días, de 430–540 ms a 30–50 ms; el mes, el día y el año, de 120–150 ms a 55–75 ms.
   `expandEvents` usa un índice por intervalos (búsqueda binaria; se vuelve a indexar si la lista o un evento cambian
   en su sitio) con memoria por rango (la misma lista y las mismas ocurrencias para el mismo rango: no se
   modifican), las vistas reparten las ocurrencias por día en una sola pasada, los carriles del mes dejan de buscar

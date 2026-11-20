@@ -48,6 +48,7 @@
 - [Node, dependencias y cadena de suministro](https://zuccadev-labs.github.io/zuix/docs/investigations/node-dependencias-y-cadena-de-suministro.md): Qué versiones admito y por qué, cómo protejo la instalación de dependencias y cómo publico sin guardar un token en ningún sitio.
 - [Lint, pruebas y por qué no Barrits](https://zuccadev-labs.github.io/zuix/docs/investigations/lint-pruebas-y-barrits.md): La 0.1.0 salió sin linter, sin formateador y sin pruebas unitarias: tenía auditoría de estilo, tipos y pruebas de navegador.
 - [El sitio de documentación, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/el-sitio-medido.md): zudocs lo había tratado como una plantilla que funcionaba: compilaba y no tenía enlaces rotos.
+- [Rendimiento de la agenda, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/rendimiento-de-la-agenda.md): La especificación de la agenda pide 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (objetivo de 50 ms por interacción; INP «bueno», por debajo de 200 ms, como mínimo).
 
 ## Publicación
 
