@@ -260,7 +260,19 @@ export function timeText(min: number, locale?: string): string {
   return fmt(locale, TIME).format(ms(min));
 }
 /** Intervalo de horas con `formatRange` (marcas bidi del locale incluidas). */
+const rangeTexts = new Map<string, string>();
 export function timeRangeText(start: number, end: number, locale?: string): string {
+  // Un intervalo que cruza la medianoche lleva fechas en el texto: entonces la clave incluye el día.
+  const length = Math.max(end, start) - start;
+  const key = `${locale ?? ""}|${minuteOfDay(start)}|${length}|${minuteOfDay(start) + length > 1440 ? dateOf(start) : ""}`;
+  const hit = rangeTexts.get(key);
+  if (hit !== undefined) return hit;
+  if (rangeTexts.size > 5000) rangeTexts.clear();
+  const text = formatTimeRange(start, end, locale);
+  rangeTexts.set(key, text);
+  return text;
+}
+function formatTimeRange(start: number, end: number, locale?: string): string {
   const f = fmt(locale, TIME);
   try {
     return f.formatRange(ms(start), ms(Math.max(end, start)));
@@ -1214,12 +1226,10 @@ export function agendaTree(
                 )
               : timeGrid(config, state, model);
   const counts = new Map<string, number>();
-  for (const o of expandEvents({
-    events: config.events,
-    from: model.days[0]!,
-    to: model.days[model.days.length - 1]!,
-    timeZone: state.timeZone,
-  }))
+  // Con todos los calendarios visibles, las ocurrencias ya están calculadas.
+  for (const o of state.hidden.length
+    ? expandEvents({ events: config.events, from: model.days[0]!, to: model.days[model.days.length - 1]!, timeZone: state.timeZone })
+    : model.occurrences)
     counts.set(o.event.calendarId, (counts.get(o.event.calendarId) ?? 0) + 1);
   const hidden = new Set(state.hidden);
   const inView = (d: string) => d >= model.days[0]! && d <= model.days[model.days.length - 1]!;

@@ -1158,6 +1158,9 @@
     font-variant-numeric: tabular-nums;
   }
   .z-heatmap__head {
+    /* Encima del área desplazable, que sube bajo la cabecera para no recortar la etiqueta de la primera fila. */
+    position: relative;
+    z-index: var(--z-layer-raised);
     display: flex;
     flex-wrap: wrap;
     align-items: center;

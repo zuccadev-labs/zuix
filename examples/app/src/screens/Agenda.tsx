@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Page, PageHeader } from "@zuccadev-labs/zuix-zout";
+import { PlanningPieces } from "./Planning";
 import { EventCalendar, type AgendaView, type CalendarEvent, type CalendarSource, type EventChange } from "@zuccadev-labs/zuix-zui";
 
 // Semana del prototipo (agenda.md): jueves 19 de noviembre de 2026, 10:42 en Madrid.
@@ -165,11 +166,13 @@ export function AgendaScreen({ bare = false }: { bare?: boolean }) {
     </div>
   );
   if (bare) return content;
+  // Fuera de la captura: debajo, las piezas de planificación (línea temporal, recursos, franjas, estancia…).
   return (
     <Page
       header={<PageHeader eyebrow="Components" title="Agenda" description="Day, week, work week, month and list over one event model." />}
     >
       {content}
+      <PlanningPieces />
     </Page>
   );
 }

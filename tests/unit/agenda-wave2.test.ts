@@ -414,3 +414,207 @@ describe("slots: franjas de cita", () => {
     assert.equal(localeHourCycle("es-ES"), "h23");
   });
 });
+
+import { belowMinimum, buildCalendar, choose, rangeBlocked, rangeNights, readSelection, stepRange, type CalendarRules } from "../../zui/src/core/calendar.ts";
+import { perpetualTree, yearGrid, PERPETUAL_LABELS } from "../../zui/src/core/agenda-year.ts";
+import { conflicts, resourceTimeline, taskTimeline, TIMELINE_LABELS } from "../../zui/src/core/timeline-view.ts";
+import { toHTML } from "../../zui/src/core/vnode.ts";
+import { heatmapWidget } from "../../zui/src/core/heatmap-widget.ts";
+import { habitWidget } from "../../zui/src/core/habit-widget.ts";
+import { slotPickerWidget } from "../../zui/src/core/slots-widget.ts";
+import { freeBusyWidget } from "../../zui/src/core/freebusy-widget.ts";
+import { perpetualWidget } from "../../zui/src/core/perpetual-widget.ts";
+import { timelineWidget } from "../../zui/src/core/timeline-widget.ts";
+
+describe("calendar: estancia", () => {
+  const booked = new Set(["2026-11-20", "2026-11-21", "2026-11-22"]);
+  const rules: CalendarRules = {
+    nights: true,
+    minRange: 2,
+    allowSingleDayRange: false,
+    isDateUnavailable: (d) => booked.has(d),
+    isDateCheckoutOnly: (d) => d === "2026-11-20" || d === "2026-12-04",
+  };
+  const sel = (from: string | null, to: string | null = null) => readSelection("range", { from, to });
+  test("solo salida: no empieza, sí cierra (también el primer día reservado)", () => {
+    assert.equal(choose("range", sel(null), "2026-12-04", rules), undefined);
+    assert.deepEqual(choose("range", sel("2026-11-17"), "2026-11-20", rules), { from: "2026-11-17", to: "2026-11-20" });
+    assert.deepEqual(choose("range", sel("2026-11-30"), "2026-12-04", rules), { from: "2026-11-30", to: "2026-12-04" });
+    assert.equal(choose("range", sel("2026-12-06"), "2026-12-04", rules), undefined, "solo salida antes del inicio");
+    assert.equal(choose("range", sel("2026-11-24"), "2026-11-24", rules), undefined, "sin rango de un día con noches");
+  });
+  test("mínimo de noches, noches del rango y ajuste ±1", () => {
+    assert.ok(belowMinimum("2026-11-24", "2026-11-25", rules));
+    assert.ok(!belowMinimum("2026-11-24", "2026-11-26", rules));
+    assert.ok(rangeBlocked("2026-11-24", "2026-11-25", rules));
+    assert.equal(rangeNights({ from: "2026-11-24", to: "2026-11-29" }), 5);
+    assert.equal(rangeNights({ from: "2026-11-24", to: null }), null);
+    assert.deepEqual(stepRange({ from: "2026-11-24", to: "2026-11-29" }, 1, rules), { from: "2026-11-24", to: "2026-11-30" });
+    assert.equal(stepRange({ from: "2026-11-24", to: "2026-11-26" }, -1, rules), null, "bajo el mínimo");
+    assert.equal(stepRange({ from: "2026-11-17", to: "2026-11-19" }, 2, rules), null, "cruza lo reservado");
+    assert.deepEqual(stepRange({ from: "2026-11-17", to: "2026-11-19" }, 1, rules), { from: "2026-11-17", to: "2026-11-20" }, "hasta el día de solo salida");
+    assert.equal(stepRange({ from: null, to: null }, 1, rules), null);
+    assert.equal(stepRange({ from: "2026-11-24", to: "2026-11-26" }, 3, { ...rules, maxRange: 3 }), null, "máximo");
+  });
+  test("modelo: solo salida deshabilitado sin inicio, habilitado al cerrar, aviso del mínimo", () => {
+    const base = { mode: "range" as const, rules, month: "2026-11", numberOfMonths: 2, weekStart: 1, today: "2026-11-19", labels: { checkoutOnly: "check-out only", minimum: "{n}-night minimum" } };
+    const cell = (m: ReturnType<typeof buildCalendar>, d: string) => m.months.flatMap((x) => x.weeks.flatMap((w) => w.cells)).find((c) => c.date === d && !c.outside)!;
+    const idle = buildCalendar({ ...base, selection: sel("2026-11-24", "2026-11-29") });
+    assert.ok(cell(idle, "2026-12-04").disabled && cell(idle, "2026-12-04").checkoutOnly);
+    assert.match(cell(idle, "2026-12-04").ariaLabel, /check-out only/);
+    const picking = buildCalendar({ ...base, selection: sel("2026-11-17"), preview: "2026-11-18" });
+    assert.ok(!cell(picking, "2026-11-20").disabled, "el primer reservado de solo salida cierra");
+    assert.ok(cell(picking, "2026-11-18").belowMinimum && cell(picking, "2026-11-18").disabled);
+    assert.equal(cell(picking, "2026-11-18").hint, "2-night minimum");
+    assert.match(cell(picking, "2026-11-18").ariaLabel, /2-night minimum/);
+  });
+});
+
+describe("vistas de la oleada 2: árboles", () => {
+  test("año: 12 meses con densidad, hoy y una parada de Tab", () => {
+    const html = toHTML(
+      yearGrid({
+        year: 2026,
+        weekStart: 1,
+        locale: "en-GB",
+        today: "2026-11-19",
+        focus: "2026-11-19",
+        counts: new Map([["2026-11-19", 4], ["2026-11-18", 1], ["2026-11-17", 2]]),
+        labels: { events: "{n} events", event: "1 event", title: "2026" },
+      }),
+    );
+    assert.equal(html.match(/role="grid"/g)?.length, 12);
+    assert.equal(html.match(/tabindex="0"/g)?.length, 1);
+    assert.match(html, /data-date="2026-11-19"[^>]*data-load="3"[^>]*data-today/);
+    assert.match(html, /Thursday, 19 November 2026, 4 events/);
+    assert.match(html, /data-date="2026-11-18"[^>]*data-load="1"/);
+    assert.match(html, /Tuesday, 17 November 2026, 2 events/);
+    const custom = toHTML(yearGrid({ year: 2026, weekStart: 0, today: "2026-01-01", focus: "2026-01-01", counts: new Map(), density: () => 2, labels: { events: "{n} events", event: "1 event", title: "2026" } }));
+    assert.match(custom, /data-load="2"/);
+  });
+  test("perpetuo: caption, cruz y resultado; sin resaltado fuera del año", () => {
+    const html = toHTML(perpetualTree({ uid: "p", year: 2026, weekStart: 1, locale: "en-GB", highlight: "2026-11-19", labels: PERPETUAL_LABELS }));
+    assert.match(html, /<caption[^>]*>2026 · One-page calendar<\/caption>/);
+    assert.equal(html.match(/data-hit/g)?.length, 2);
+    assert.match(html, /19 Nov 2026 → Thursday/);
+    const other = toHTML(perpetualTree({ uid: "p", year: 2025, weekStart: 0, highlight: "2026-11-19", labels: PERPETUAL_LABELS }));
+    assert.ok(!other.includes("data-hit"));
+  });
+  test("Gantt: filas, dependencias, camino crítico, hitos, escala por semanas y meses", () => {
+    const input = {
+      uid: "g",
+      tasks: TASKS,
+      groups: [{ id: "discovery", title: "Discovery" }, { id: "ds", title: "Design system" }, { id: "rollout", title: "Rollout" }],
+      from: "2026-11-09",
+      to: "2026-12-14",
+      today: "2026-11-19",
+      locale: "en-GB",
+      weekStart: 1,
+      collapsed: [],
+      focus: null,
+      selected: "tokens",
+      preview: { id: "docs", start: "2026-11-25", end: "2026-12-04" },
+      grabbed: "docs",
+      showCritical: true,
+      showDependencies: true,
+      editable: true,
+      labels: TIMELINE_LABELS,
+    };
+    for (const scale of ["day", "week", "month"] as const) {
+      const html = toHTML(taskTimeline({ ...input, scale }));
+      assert.match(html, /role="treegrid"/);
+      assert.equal(html.match(/data-group-id=/g)?.length, 3);
+      assert.match(html, /data-critical/);
+      assert.match(html, /Depends on Tokens v2/);
+      assert.match(html, /marker-end="url\(#g-arrow-critical\)"/);
+      assert.match(html, /aria-pressed="true"/);
+    }
+    const folded = toHTML(taskTimeline({ ...input, scale: "day", collapsed: ["ds"], showCritical: false, showDependencies: false, focus: "g:ds" }));
+    assert.ok(!folded.includes('data-task="tokens"'));
+    assert.match(folded, /aria-expanded="false"/);
+  });
+  test("recursos: conflictos en mitades, ventana virtual y selección de creación", () => {
+    const items = [
+      { key: "a", resourceId: "r1", start: 600, end: 660 },
+      { key: "b", resourceId: "r1", start: 630, end: 700 },
+      { key: "c", resourceId: "r2", start: 700, end: 760 },
+    ];
+    assert.deepEqual([...conflicts(items).entries()], [["a", "top"], ["b", "bottom"]]);
+    const resources = Array.from({ length: 500 }, (_, i) => ({ id: `r${i}`, title: `Room ${i}` }));
+    const html = toHTML(
+      resourceTimeline({
+        uid: "r",
+        resources,
+        items,
+        dayStart: 480,
+        dayEnd: 1140,
+        now: 642,
+        locale: "en-GB",
+        scroll: { top: 0, height: 520 },
+        creating: { resourceId: "r2", start: 780, end: 840 },
+        labels: { resource: "Room", overlaps: "Overlaps", newBooking: "New booking" },
+        renderItem: (it, layout) => ({ t: "button", a: { "data-key": it.key, "data-half": layout.half ?? undefined }, c: [it.key] }),
+      }),
+    );
+    assert.match(html, /aria-rowcount="501"/);
+    assert.ok((html.match(/role="row"/g)?.length ?? 0) < 30, "solo las filas visibles");
+    assert.match(html, /z-timeline__spacer/);
+    assert.match(html, /data-half="bottom"/);
+    assert.match(html, /New booking/);
+    assert.match(html, /z-timeline__now/);
+  });
+  test("piezas: configuración, estado inicial y árbol de cada una", () => {
+    const run = <P, C, S>(w: { configure(p: P): C; initial(c: C): S; tree(c: C, s: S, uid: string): unknown; control?(c: C, s: S): S }, props: P) => {
+      const c = w.configure(props);
+      const s = w.control ? w.control(c, w.initial(c)) : w.initial(c);
+      return toHTML(w.tree(c, s, "u") as never);
+    };
+    const values = { "2026-11-12": 14, "2026-11-13": 2, "2026-11-18": 5 };
+    assert.match(run(heatmapWidget, { values, range: { from: "2026-11-02", to: "2026-11-29" }, today: "2026-11-19", locale: "en-GB", weekStartsOn: 1, title: "T" }), /14 contributions on Thursday 12 November/);
+    assert.match(run(heatmapWidget, { values, today: "2026-11-19", encoding: "size", outline: true, levels: [1, 3, 5, 10], defaultView: "table", showStats: false }), /<table/);
+    assert.match(run(habitWidget, { states: { "2026-11-18": "done", "2026-11-19": { progress: 40 } }, today: "2026-11-19", locale: "en-GB" }), /Today 40%/);
+    assert.match(run(habitWidget, { states: { "2026-11-18": "done" }, today: "2026-11-19", variant: "week", subtitle: "German", note: "Go" }), /1 day streak/);
+    const slots = run(slotPickerWidget, {
+      availability: [{ days: [1, 2, 3, 4, 5], start: "09:00", end: "11:00" }],
+      hostTimeZone: "Europe/Madrid",
+      duration: 30,
+      from: "2026-11-23",
+      to: "2026-11-24",
+      timeZone: "America/New_York",
+      timeZones: ["Europe/Madrid"],
+      now: "2026-11-19T09:42:00Z",
+      today: "2026-11-19",
+      locale: "en-US",
+      hourCycle: "h12",
+      value: "2026-11-23T08:30:00Z",
+    });
+    assert.match(slots, /role="listbox"/);
+    assert.match(slots, /aria-selected="true"/);
+    assert.match(slots, /3:30\sAM/);
+    assert.match(run(slotPickerWidget, { slots: [], today: "2026-11-19" }), /No times available/);
+    assert.match(
+      run(freeBusyWidget, {
+        attendees: [{ id: "a", name: "Ana Pérez", timeZone: "Asia/Tokyo", workingHours: { start: "09:00", end: "18:00" }, busy: [{ start: "2026-11-19T00:00:00Z", end: "2026-11-19T01:00:00Z" }] }],
+        date: "2026-11-19",
+        timeZone: "Europe/Madrid",
+        dayStart: "00:00",
+        dayEnd: "24:00",
+        now: "2026-11-19T09:42:00Z",
+      }),
+      /Outside hours/,
+    );
+    assert.match(run(perpetualWidget, { defaultHighlight: "2026-11-19", today: "2026-11-19", locale: "en-GB" }), /data-shown-year="2026"/);
+    assert.match(run(timelineWidget, { tasks: TASKS, groups: [], today: "2026-11-19", scale: "week", title: "Plan" }), /data-scale="week"/);
+    assert.match(
+      run(timelineWidget, {
+        mode: "resources",
+        resources: [{ id: "a", title: "Atlas" }],
+        events: [{ id: "x", title: "X", start: "2026-11-19T10:00", end: "2026-11-19T11:00", timeZone: "Europe/Madrid", calendarId: "w", resourceIds: ["a"] }],
+        date: "2026-11-19",
+        timeZone: "Europe/Madrid",
+        now: "2026-11-19T09:42:00Z",
+      }),
+      /data-key="x@a"/,
+    );
+  });
+});

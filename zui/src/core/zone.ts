@@ -86,8 +86,28 @@ export function validTimeZone(tz: string | null | undefined): tz is string {
 /** Zona válida o la del dispositivo. */
 export const safeTimeZone = (tz: string | null | undefined) => (validTimeZone(tz) ? tz : deviceTimeZone());
 
+/**
+ * Memoria de conversiones: la agenda convierte los mismos instantes en cada pintado (miles de eventos). El resultado
+ * es determinista por zona e instante; se vacía al pasar de un tope para no crecer sin límite.
+ */
+const WALL_CAP = 50_000;
+const wallCache = new Map<string, Wall>();
+const instantCache = new Map<string, number | null>();
+function remember<K, V>(cache: Map<K, V>, key: K, value: V): V {
+  if (cache.size >= WALL_CAP) cache.clear();
+  cache.set(key, value);
+  return value;
+}
+
 /** Instante (ms) → reloj de pared en `tz`. */
 export function toWall(ms: number, tz: string): Wall {
+  const key = `${useTemporal ? "T" : "I"}|${tz}|${ms}`;
+  const hit = wallCache.get(key);
+  if (hit) return { ...hit };
+  return { ...remember(wallCache, key, computeWall(ms, tz)) };
+}
+
+function computeWall(ms: number, tz: string): Wall {
   const T = useTemporal ? temporal() : null;
   if (T) {
     const z = T.Instant.fromEpochMilliseconds(ms).toZonedDateTimeISO(tz);
@@ -138,6 +158,13 @@ export function wallStatus(wall: Wall, tz: string): "ok" | "gap" | "overlap" {
  * primera. `null` solo con `reject` y una hora que no existe o se repite.
  */
 export function fromWall(wall: Wall, tz: string, disambiguation: Disambiguation = "compatible"): number | null {
+  const key = `${useTemporal ? "T" : "I"}|${tz}|${wall.date}|${wall.hour}|${wall.minute}|${wall.second}|${disambiguation}`;
+  const hit = instantCache.get(key);
+  if (hit !== undefined) return hit;
+  return remember(instantCache, key, computeInstant(wall, tz, disambiguation));
+}
+
+function computeInstant(wall: Wall, tz: string, disambiguation: Disambiguation): number | null {
   const T = useTemporal ? temporal() : null;
   if (T) {
     try {

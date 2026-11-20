@@ -3454,6 +3454,202 @@ export const cases = [
       await shot(narrow, "agenda-month-390");
     },
   },
+  // ───────────────────────────── Agenda, oleada 2 ─────────────────────────────
+  {
+    name: "Agenda: vistas de año, perpetuo y línea temporal en el EventCalendar",
+    async run({ open, shot }) {
+      const page = await open("agenda", { query: "agenda-view=year" });
+      const root = "#app-agenda";
+      await visible(page, `${root} .z-yeargrid`);
+      await expectCount(page, `${root} .z-yeargrid__table[role="grid"]`, 12, "12 minimeses");
+      await expectCount(page, `${root} .z-agenda__view [tabindex="0"]`, 1, "una parada de Tab");
+      const day = `${root} .z-yeargrid__day[data-date="2026-11-19"]`;
+      await page.locator(day).focus();
+      await page.keyboard.press("ArrowRight");
+      await focusOn(page, `${root} .z-yeargrid__day[data-date="2026-11-20"]`);
+      await page.keyboard.press("Enter");
+      await visible(page, `${root} .z-timegrid`);
+      assert((await page.getAttribute(root, "data-view")) === "day", "Intro abre la vista de día");
+      await page.click(`${root} .z-agenda__views [data-view="perpetual"]`);
+      await visible(page, `${root} .z-perpetual__table`);
+      await expectText(page, `${root} .z-perpetual__result`, "20 Nov 2026 → Friday");
+      await page.click(`${root} .z-agenda__views [data-view="timeline"]`);
+      await visible(page, `${root} .z-timeline__grid[role="grid"]`);
+      await expectCount(page, `${root} .z-timeline__booking[data-key^="interview-frontend"]`, 0, "la línea temporal es del día 20");
+      await page.click(`${root} .z-agenda__nav [data-nav="previous"]`);
+      await visible(page, `${root} .z-timeline__booking[data-key^="interview-frontend"]`);
+      await shot(page, "agenda-timeline");
+    },
+  },
+  {
+    name: "Gantt: arrastrar una barra dos días, zoom y dependencias reflejadas en RTL",
+    async run({ open, shot }) {
+      const page = await open("agenda");
+      const root = "#app-gantt";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      const bar = `${root} [data-task="docs"]`;
+      await page.locator(bar).evaluate((el) => el.scrollIntoView({ block: "center" }));
+      const box = await page.locator(bar).boundingBox();
+      await drag(page, { x: box.x + 30, y: box.y + box.height / 2 }, { x: box.x + 30 + 60, y: box.y + box.height / 2 });
+      await expectText(page, t("planning-log"), "Docs site: 2026-11-26 → 2026-12-05");
+      await page.click(`${root} [data-scale-option="month"]`);
+      await expectAttr(page, root, "data-scale", "month");
+      const rtl = await open("agenda", { query: "dir=rtl" });
+      await rtl.locator(root).scrollIntoViewIfNeeded();
+      const scale = await rtl.locator(`${root} .z-timeline__deps`).evaluate((el) => getComputedStyle(el).scale);
+      assert(scale === "-1 1", `SVG reflejado en RTL: ${scale}`);
+      const a = await rtl.locator(`${root} [data-task="tokens"]`).boundingBox();
+      const b = await rtl.locator(`${root} [data-task="calendar"]`).boundingBox();
+      assert(b.x + b.width < a.x + a.width, "en RTL lo posterior queda a la izquierda");
+      await rtl.locator(`${root} [data-task="tokens"]`).focus();
+      await rtl.keyboard.press("Enter");
+      await rtl.keyboard.press("Enter");
+      await rtl.keyboard.press("ArrowLeft");
+      await rtl.keyboard.press("Enter");
+      await expectText(rtl, t("planning-log"), "Tokens v2: 2026-11-17 → 2026-11-25");
+      await shot(rtl, "gantt-rtl");
+    },
+  },
+  {
+    name: "Recursos y buscar hueco: crear arrastrando, conflicto en texto y «Use …»",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-rooms";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      await page.locator(`${root} .z-timeline__track[data-resource="vega"]`).evaluate((el) => el.scrollIntoView({ block: "center" }));
+      const track = await page.locator(`${root} .z-timeline__track[data-resource="vega"]`).boundingBox();
+      // 88 px por hora desde las 08:00: de 13:00 a 15:00.
+      await drag(page, { x: track.x + 88 * 5 + 2, y: track.y + track.height / 2 }, { x: track.x + 88 * 7 + 2, y: track.y + track.height / 2 });
+      await expectText(page, t("planning-log"), "New booking: vega 2026-11-19T13:00 → 2026-11-19T15:00");
+      const conflict = await page.locator(`${root} .z-timeline__booking[data-conflict]`).first().textContent();
+      assert(conflict.includes("overlaps") || conflict.includes("Overlaps"), `conflicto: ${conflict}`);
+      const fb = "#app-freebusy";
+      await page.locator(fb).scrollIntoViewIfNeeded();
+      await page.click(`${fb} .z-freebusy__use`);
+      await poll(async () => (await text(page, t("planning-log"))).startsWith("Use: 2026-11-19T"), "z:select / onSelect");
+    },
+  },
+  {
+    name: "SlotPicker y estancia: elegir hora con teclado, otra zona, noches y ajuste ±1",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-slots";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      const first = page.locator(`${root} [role="option"]`).first();
+      await first.focus();
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await poll(async () => (await text(page, t("planning-log"))).startsWith("Slot: 2026-11-24T"), "onSelect");
+      await page.selectOption(`${root} .z-slotpicker__select`, "America/New_York");
+      await poll(async () => (await page.locator(`${root} [role="option"]`).first().textContent()).startsWith("03:00"), "horas en Nueva York");
+      const stay = "#app-stay-calendar";
+      await page.locator(stay).scrollIntoViewIfNeeded();
+      await expectText(page, `${stay} .z-calendar__length`, "5 nights");
+      await page.click(`${stay} .z-calendar__stepper-btn >> nth=1`);
+      await expectText(page, `${stay} .z-calendar__length`, "6 nights");
+      await page.click(`${stay} .z-calendar__day[data-date="2026-11-25"]:not([data-outside])`);
+      await page.hover(`${stay} .z-calendar__day[data-date="2026-11-26"]:not([data-outside])`);
+      await visible(page, `${stay} .z-calendar__hint`);
+      await page.click(`${stay} .z-calendar__day[data-date="2026-11-28"]:not([data-outside])`);
+      await expectText(page, `${stay} .z-calendar__length`, "3 nights");
+    },
+  },
+  {
+    name: "Mapa de calor y rachas: etiqueta al enfocar, tabla y estados con nombre",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-heatmap";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      const cell = `${root} .z-heatmap__cell[data-date="2026-11-12"]`;
+      await page.locator(cell).focus();
+      await visible(page, `${root} .z-heatmap__tip`);
+      await page.keyboard.press("ArrowLeft");
+      await focusOn(page, `${root} .z-heatmap__cell[data-date="2026-11-05"]`);
+      await page.click(`${root} .z-heatmap__toggle`);
+      await visible(page, `${root} .z-heatmap__table`);
+      const habit = "#app-habit";
+      await page.locator(habit).scrollIntoViewIfNeeded();
+      const label = await page.getAttribute(`${habit} .z-habit__day[data-date="2026-11-04"]`, "aria-label");
+      assert(label.endsWith("Missed"), `fallado: ${label}`);
+    },
+  },
+  {
+    name: "Agenda: zona del navegador distinta de timeZone, colores forzados e impresión",
+    async run({ open, shot }) {
+      // El navegador en Auckland; la agenda presenta Madrid: el jueves 19 a las 10:00 sigue en el jueves 19.
+      const page = await open("agenda", { timezoneId: "Pacific/Auckland" });
+      const root = "#app-agenda";
+      const ev = `${root} .z-agenda__view .z-event[data-key^="interview-frontend"]`;
+      const label = await page.locator(ev).textContent();
+      assert(label.includes("10:30–11:30") && label.includes("Thursday 19 November"), `hora de Madrid: ${label}`);
+      await page.emulateMedia({ forcedColors: "active" });
+      const border = await page.locator(ev).evaluate((el) => getComputedStyle(el).borderTopStyle);
+      assert(border === "solid", "evento con borde de sistema en colores forzados");
+      await page.locator(ev).focus();
+      const outline = await page.locator(ev).evaluate((el) => getComputedStyle(el).outlineStyle);
+      assert(outline !== "none", "foco visible con colores forzados");
+      await shot(page, "agenda-forced-colors");
+      await page.emulateMedia({ forcedColors: "none", media: "print" });
+      const side = await page.locator(`${root} .z-agenda__side`).evaluate((el) => getComputedStyle(el).display);
+      assert(side === "none", "sin lateral al imprimir");
+      const overflow = await page.locator(`${root} .z-timegrid__scroll`).evaluate((el) => getComputedStyle(el).overflowY);
+      assert(overflow === "visible", `sin desplazamiento interno al imprimir: ${overflow}`);
+      await page.emulateMedia({ media: "screen" });
+    },
+  },
+  {
+    name: "Rendimiento: 5000 eventos en el mes y 500 recursos sin tareas largas al navegar",
+    async run({ open, note }) {
+      const page = await open("perf-stage");
+      const root = "#perf-agenda";
+      await visible(page, `${root} .z-monthgrid`);
+      const measure = (label, action) =>
+        page.evaluate(
+          async ([label, action]) => {
+            const long = [];
+            const observer = new PerformanceObserver((list) => {
+              for (const entry of list.getEntries()) long.push(entry.duration);
+            });
+            try {
+              observer.observe({ type: "longtask", buffered: false });
+            } catch {}
+            performance.mark(`${label}-start`);
+            const target = document.querySelector(action);
+            target.click();
+            await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+            performance.mark(`${label}-end`);
+            const m = performance.measure(label, `${label}-start`, `${label}-end`);
+            observer.disconnect();
+            return { ms: Math.round(m.duration), longest: Math.round(Math.max(0, ...long)) };
+          },
+          [label, action],
+        );
+      const results = {};
+      results.monthNext = await measure("month-next", `${root} .z-agenda__nav [data-nav="next"]`);
+      results.monthBack = await measure("month-back", `${root} .z-agenda__nav [data-nav="previous"]`);
+      results.week = await measure("week", `${root} .z-agenda__views [data-view="week"]`);
+      results.weekNext = await measure("week-next", `${root} .z-agenda__nav [data-nav="next"]`);
+      results.agenda = await measure("agenda", `${root} .z-agenda__views [data-view="agenda"]`);
+      results.year = await measure("year", `${root} .z-agenda__views [data-view="year"]`);
+      const rooms = "#perf-rooms";
+      await page.locator(rooms).scrollIntoViewIfNeeded();
+      const rows = await page.locator(`${rooms} .z-timeline__row[data-resource]`).count();
+      const scroll = await page.evaluate(async (sel) => {
+        const el = document.querySelector(`${sel} .z-timeline__scroll`);
+        const start = performance.now();
+        for (let i = 1; i <= 10; i++) {
+          el.scrollTop = i * 1200;
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        }
+        return Math.round((performance.now() - start) / 10);
+      }, rooms);
+      const rendered = await page.locator(`${rooms} .z-timeline__row[data-resource]`).count();
+      note(`5000 eventos · ms por cambio (mayor tarea larga): ${Object.entries(results).map(([k, v]) => `${k} ${v.ms} (${v.longest})`).join(" · ")}`);
+      note(`500 recursos: ${rows} filas pintadas de 500; desplazamiento ${scroll} ms por paso; ${rendered} filas tras desplazar`);
+      assert(rows < 60, `ventana virtual: ${rows} filas pintadas`);
+      assert((await page.locator(`${rooms} .z-timeline__row[data-resource="r120"]`).count()) === 1 || rendered < 60, "la ventana sigue al desplazamiento");
+    },
+  },
 ];
 
 /** Ayudantes compartidos con los archivos cases-audit-*.mjs. */

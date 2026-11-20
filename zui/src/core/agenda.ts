@@ -73,12 +73,30 @@ const MIN_PER_DAY = 1440;
 
 /* ---------- Minutos de pared ---------- */
 
+// Memoria de las dos conversiones más usadas al pintar (miles de llamadas por vista); se vacía al llegar al tope.
+const dayStarts = new Map<string, number>();
+const dates = new Map<number, string>();
 /** Fecha civil → minutos de pared de su medianoche. */
-export const dayStart = (date: string) => Math.round(parse(date).getTime() / 60_000);
+export const dayStart = (date: string) => {
+  let v = dayStarts.get(date);
+  if (v === undefined) {
+    if (dayStarts.size > 20_000) dayStarts.clear();
+    v = Math.round(parse(date).getTime() / 60_000);
+    dayStarts.set(date, v);
+  }
+  return v;
+};
 /** Minutos de pared → fecha civil. */
 export const dateOf = (min: number) => {
-  const d = new Date(Math.floor(min / MIN_PER_DAY) * DAY_MS);
-  return `${pad(d.getUTCFullYear(), 4)}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  const day = Math.floor(min / MIN_PER_DAY);
+  let v = dates.get(day);
+  if (v === undefined) {
+    if (dates.size > 20_000) dates.clear();
+    const d = new Date(day * DAY_MS);
+    v = `${pad(d.getUTCFullYear(), 4)}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+    dates.set(day, v);
+  }
+  return v;
 };
 /** Minutos desde la medianoche (0–1439). */
 export const minuteOfDay = (min: number) => ((min % MIN_PER_DAY) + MIN_PER_DAY) % MIN_PER_DAY;
@@ -129,7 +147,22 @@ function pointMinutes(point: Point, tz: string): { min: number; ambiguous: boole
 export const isAllDay = (event: Pick<CalendarEvent, "start" | "allDay">) => event.allDay ?? valid(event.start);
 
 /** Inicio y fin del evento en minutos de pared de `tz`. `null` si no se puede leer. */
-export function eventSpan(event: CalendarEvent, tz: string): { start: number; end: number; allDay: boolean; ambiguous: boolean } | null {
+type Span = { start: number; end: number; allDay: boolean; ambiguous: boolean };
+/** Memoria por objeto de evento (y su inicio, fin y zona): la agenda vuelve a pintar los mismos eventos. */
+const spans = new WeakMap<CalendarEvent, Map<string, Span | null>>();
+export function eventSpan(event: CalendarEvent, tz: string): Span | null {
+  const key = `${tz}|${event.start}|${event.end}|${event.timeZone ?? ""}|${event.allDay ?? ""}`;
+  let byKey = spans.get(event);
+  const hit = byKey?.get(key);
+  if (hit !== undefined) return hit && { ...hit };
+  const span = computeSpan(event, tz);
+  if (!byKey) spans.set(event, (byKey = new Map()));
+  if (byKey.size > 64) byKey.clear();
+  byKey.set(key, span);
+  return span && { ...span };
+}
+
+function computeSpan(event: CalendarEvent, tz: string): Span | null {
   const allDay = isAllDay(event);
   const a = readPoint(allDay ? event.start.slice(0, 10) : event.start, event.timeZone);
   const b = readPoint(allDay ? event.end.slice(0, 10) : event.end, event.timeZone);
