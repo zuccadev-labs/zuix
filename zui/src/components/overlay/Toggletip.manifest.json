@@ -101,7 +101,7 @@
     },
     {
       "title": "Con enlace, a la derecha",
-      "code": "<button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"About API limits\" aria-expanded=\"false\" data-z-toggletip=\"#tt-limits\" data-z-placement=\"right\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"tt-limits\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  1,000 requests per hour. <a href=\"#limits\">See the limits</a>.\n</div>"
+      "code": "<button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"About API limits\" aria-expanded=\"false\" data-z-toggletip=\"#tt-limits\" data-z-placement=\"right\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"tt-limits\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  1,000 requests per hour. <a href=\"/docs/limits\">See the limits</a>.\n</div>"
     }
   ]
 }

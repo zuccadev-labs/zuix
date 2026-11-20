@@ -88,7 +88,7 @@
   "html": [
     {
       "title": "Perfil de una persona",
-      "code": "<p>Reviewed by <a href=\"#ana\" data-z-hovercard=\"#hc-ana\" data-z-placement=\"bottom\">@ana</a> yesterday.</p>\n\n<div id=\"hc-ana\" popover=\"manual\" class=\"z-liquid z-hovercard\" role=\"tooltip\" data-arrow>\n  <div style=\"display:grid;gap:4px;min-width:220px\">\n    <strong>Ana Ruiz</strong>\n    <span>Design systems · Madrid</span>\n    <a href=\"#ana-projects\">12 projects</a>\n  </div>\n</div>"
+      "code": "<p>Reviewed by <a href=\"/people/ana\" data-z-hovercard=\"#hc-ana\" data-z-placement=\"bottom\">@ana</a> yesterday.</p>\n\n<div id=\"hc-ana\" popover=\"manual\" class=\"z-liquid z-hovercard\" role=\"tooltip\" data-arrow>\n  <div style=\"display:grid;gap:4px;min-width:220px\">\n    <strong>Ana Ruiz</strong>\n    <span>Design systems · Madrid</span>\n    <a href=\"/people/ana/projects\">12 projects</a>\n  </div>\n</div>"
     }
   ]
 }
