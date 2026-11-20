@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { occurrenceKeys } from "../../core/keys";
 import { score } from "../../core/search";
@@ -39,6 +39,8 @@ export interface CommandPaletteProps {
   filter?: (groups: PaletteGroup[], query: string) => PaletteGroup[];
   /** Cierra al elegir un comando. */
   closeOnSelect?: boolean;
+  /** Pie bajo la lista: atajos de navegación, ayuda o una acción. */
+  footer?: ReactNode;
   className?: string;
 }
 
@@ -72,19 +74,26 @@ function shortcutKeys(shortcut: string): Array<[id: string, key: string]> {
   return keys.map((key, k) => [ids[k] ?? key, key]);
 }
 
-export function CommandPalette({
-  open,
-  onOpenChange,
-  groups,
-  placeholder = "Type a command or search…",
-  emptyLabel = "No results",
-  label = "Command palette",
-  escapeLabel = "Esc",
-  filter = defaultFilter,
-  closeOnSelect = true,
-  className,
-}: CommandPaletteProps) {
-  const baseId = useId();
+interface CommandListProps {
+  open: boolean;
+  groups: PaletteGroup[];
+  placeholder: string;
+  emptyLabel: string;
+  label: string;
+  /** Tecla que cierra, a la derecha del campo (solo en la paleta). */
+  escapeLabel?: string;
+  filter: (groups: PaletteGroup[], query: string) => PaletteGroup[];
+  onRun: (command: PaletteCommand) => void;
+  /** En línea: Escape vacía la búsqueda en lugar de cerrar. */
+  inline?: boolean;
+  footer?: ReactNode;
+  id?: string;
+}
+
+/** Campo de búsqueda, lista filtrada y pie: lo que comparten la paleta (en un diálogo) y el comando en línea. */
+function CommandList({ open, groups, placeholder, emptyLabel, label, escapeLabel, filter, onRun, inline, footer, id }: CommandListProps) {
+  const auto = useId();
+  const baseId = id ?? auto;
   const [query, setQuery] = useState("");
   const [rawIndex, setIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
@@ -106,14 +115,19 @@ export function CommandPalette({
     }
   }
 
+  // El comando activo se mantiene a la vista; no al montar (un comando en línea no desplaza la página al cargar).
+  const moved = useRef(false);
   useEffect(() => {
+    if (!moved.current) {
+      moved.current = true;
+      return;
+    }
     listRef.current?.querySelector<HTMLElement>(`[data-index="${index}"]`)?.scrollIntoView({ block: "nearest" });
   }, [index]);
 
   const run = (command: PaletteCommand | undefined) => {
     if (!command || command.disabled) return;
-    if (closeOnSelect) onOpenChange(false);
-    command.onSelect();
+    onRun(command);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -133,6 +147,11 @@ export function CommandPalette({
     } else if (event.key === "Enter") {
       event.preventDefault();
       run(flat[index]);
+    } else if (event.key === "Escape" && inline && query) {
+      // En línea: Escape vacía la búsqueda; sin búsqueda, sigue su curso.
+      event.preventDefault();
+      setQuery("");
+      setIndex(0);
     }
   };
 
@@ -140,14 +159,7 @@ export function CommandPalette({
   const groupKeys = occurrenceKeys(visible.map((group) => `${group.heading ?? ""}/${group.commands[0]?.id ?? ""}`));
   let n = -1;
   return (
-    // Siempre se abre de forma controlada (atajo o botón propio): al cerrar, el foco vuelve a donde estaba.
-    <DialogSurface
-      open={open}
-      onDismiss={() => onOpenChange(false)}
-      initialFocus={(dialog) => dialog.querySelector<HTMLElement>(".z-palette__input")}
-      className={cx("z-liquid z-palette", className)}
-      aria-label={label}
-    >
+    <>
       <div className="z-palette__search">
         <span className="z-palette__search-icon">
           <Icon name="magnifying-glass" size={16} />
@@ -171,7 +183,7 @@ export function CommandPalette({
           }}
           onKeyDown={onKeyDown}
         />
-        <kbd className="z-palette__kbd">{escapeLabel}</kbd>
+        {escapeLabel ? <kbd className="z-palette__kbd">{escapeLabel}</kbd> : null}
       </div>
       <div ref={listRef} id={`${baseId}-list`} role="listbox" aria-label={label} className="z-palette__list">
         {flat.length === 0 ? (
@@ -228,6 +240,94 @@ export function CommandPalette({
           </div>
         ))}
       </div>
+      {footer ? <div className="z-palette__footer">{footer}</div> : null}
+    </>
+  );
+}
+
+export function CommandPalette({
+  open,
+  onOpenChange,
+  groups,
+  placeholder = "Type a command or search…",
+  emptyLabel = "No results",
+  label = "Command palette",
+  escapeLabel = "Esc",
+  filter = defaultFilter,
+  closeOnSelect = true,
+  footer,
+  className,
+}: CommandPaletteProps) {
+  return (
+    // Siempre se abre de forma controlada (atajo o botón propio): al cerrar, el foco vuelve a donde estaba.
+    <DialogSurface
+      open={open}
+      onDismiss={() => onOpenChange(false)}
+      initialFocus={(dialog) => dialog.querySelector<HTMLElement>(".z-palette__input")}
+      className={cx("z-liquid z-palette", className)}
+      aria-label={label}
+    >
+      <CommandList
+        open={open}
+        groups={groups}
+        placeholder={placeholder}
+        emptyLabel={emptyLabel}
+        label={label}
+        escapeLabel={escapeLabel}
+        filter={filter}
+        footer={footer}
+        onRun={(command) => {
+          if (closeOnSelect) onOpenChange(false);
+          command.onSelect();
+        }}
+      />
     </DialogSurface>
+  );
+}
+
+export interface CommandProps {
+  groups: PaletteGroup[];
+  /** Prefijo de los ids de la lista y sus opciones. Sin valor, uno generado. */
+  id?: string;
+  /** Nombre accesible del campo y de la lista. */
+  label?: string;
+  placeholder?: string;
+  emptyLabel?: string;
+  filter?: (groups: PaletteGroup[], query: string) => PaletteGroup[];
+  /** Pie bajo la lista: atajos de navegación, ayuda o una acción. */
+  footer?: ReactNode;
+  className?: string;
+}
+
+/**
+ * La paleta de comandos incrustada en la página (sin diálogo): un buscador con su lista siempre a la vista, para un
+ * panel de acciones, un selector de destino o el cuerpo de un Popover. Mismo patrón combobox con
+ * `aria-activedescendant`: el foco se queda en el campo, las flechas mueven la opción activa e Intro la ejecuta.
+ */
+export function Command({
+  id,
+  groups,
+  label = "Commands",
+  placeholder = "Search commands…",
+  emptyLabel = "No results",
+  filter = defaultFilter,
+  footer,
+  className,
+}: CommandProps) {
+  return (
+    <div className={cx("z-liquid z-palette z-command", className)} data-inline="">
+      <CommandList
+        open
+        inline
+        id={id}
+        groups={groups}
+        placeholder={placeholder}
+        emptyLabel={emptyLabel}
+        label={label}
+        filter={filter}
+        footer={footer}
+        onRun={(command) => command.onSelect()}
+      />
+    </div>
   );
 }

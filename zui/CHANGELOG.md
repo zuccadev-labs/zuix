@@ -11,6 +11,60 @@ radios y material de los tokens.
 
 ### Añadido
 
+- Oleada 4, capas y navegación de aplicación:
+  - `Toolbar`, `ToolbarGroup` y `ToolbarSeparator` (patrón APG «toolbar»): una sola parada de tabulación para
+    todos los controles de la barra, también los de un `ToggleGroup` anidado, flechas del eje con vuelta, Inicio y
+    Fin, y la barra recuerda el último control. Variantes `glass` (cromo) y `plain`, horizontal y vertical. En
+    `/dom`, `.z-toolbar[role=toolbar]`.
+  - `Collapsible` (patrón APG «disclosure»): plegada, la región lleva `hidden="until-found"` y la búsqueda en la
+    página la abre; colapso parcial con `peek` (fundido, el botón tras el texto y el foco dentro lo despliega),
+    variante `card` y deshabilitado. En `/dom`, `.z-collapsible` y `setCollapsibleOpen()`.
+  - `Banner`: franja de aviso de página (`page`) o de panel (`inline`) en seis tonos, con insignia, acción (al lado
+    del texto si cabe, debajo si no: consulta de contenedor) y cierre con nombre que deja el foco en el siguiente
+    elemento tabulable. Persistente; `live` lo anuncia si se inserta tras una acción. En `/dom`, `.z-banner` con
+    `z:dismiss` cancelable y `dismissBanner()`. Utilidad `nextTabbable()` en `core/focus`.
+  - `Menu` y `ContextMenu`: entradas casilla (`{ type: "checkbox", checked, onCheckedChange }`,
+    `menuitemcheckbox`: Espacio la cambia y deja el menú abierto, Intro o el clic la cambian y cierran), grupos de
+    radio (`{ type: "radio-group", label, value, onValueChange, items }`, `menuitemradio` en un `group` con nombre) y
+    entradas enlace (`href`, `<a role=menuitem>`). Tipos `MenuCheckboxEntry`, `MenuRadioGroupEntry` y
+    `MenuRadioItem`. En `/dom`, `aria-checked` y `z:change` en la casilla o en el grupo.
+  - `Menubar` (patrón APG «menubar»): barra de menús de aplicación con una sola parada de tabulación, flechas entre
+    títulos y entre menús abiertos (también desde un submenú), Flecha arriba para entrar por la última entrada y
+    cambio de menú con el puntero cuando ya hay uno abierto. Cada menú es el de la suite (submenús, casillas,
+    radios). Lógica en `core/menubar`. En `/dom`, `.z-menubar[role=menubar]` con títulos `data-z-open` y
+    `openMenubarMenu()`.
+  - `Popover`: ancla distinta del disparador (`anchor`), flecha hacia el centro del ancla que sigue al lado en
+    que quede el panel (`arrow`) y botón de cierre (`showClose`, `closeLabel`). Donde el navegador tiene CSS anchor
+    positioning, el popover no modal se ancla con CSS (`position-area`, `position-try-fallbacks`) y la colocación
+    propia queda de respaldo; si el motor deja la capa lejos del ancla, se vuelve a ella. En `/dom`, `data-arrow`
+    en el popover y `data-z-anchor="#id"` en el disparador; `openPopover()` acepta `{ trigger }`. Nuevos
+    `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
+    escribe `--z-arrow-offset`.
+  - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, que lo
+    describe (`aria-describedby`); el puntero cruza a la tarjeta sin cerrarla, Escape y una pulsación fuera la
+    cierran y Tab entra en ella y sale hacia lo que sigue al enlace. Flecha opcional.
+  - `Toggletip`: botón de ayuda con nombre propio y `aria-expanded`; el puntero o el foco la asoman, el clic la fija.
+  - Lógica común en `core/interest` (`createInterest`, `bridgeTab`). En `/dom`, `[data-z-hovercard]` y
+    `[data-z-toggletip]` con `.z-hovercard`/`.z-toggletip` en `popover=manual`, y `setHintOpen()`.
+  - Avisos de promesa: `useToast().promise(promise, { loading, success, error })` y `update(id, options)`; el aviso
+    en curso lleva anillo y `aria-busy` y no se cierra solo, y el resultado (texto, opciones o función del valor) se
+    escribe en el mismo aviso, que entonces empieza su cuenta atrás. En `/dom`, `toastPromise()`; `toast()` devuelve
+    además `update()`. Opción `loading` en los dos.
+  - `Command`: la paleta de comandos incrustada en la página (sin diálogo), con el mismo patrón combobox; Escape
+    vacía la búsqueda. `CommandPalette` y `Command` aceptan `footer` (`.z-palette__footer`). En `/dom`,
+    `.z-palette.z-command`.
+  - `ActionBar`: barra flotante de acciones sobre una selección (recuento vivo, acciones y cierre) sobre Toolbar;
+    `fixed`, `sticky` o `inline`; Escape y el cierre vacían la selección. En `/dom`, `.z-actionbar` con `z:close`
+    cancelable y `closeActionBar()`.
+  - `Drawer`: lado `top`, asa para arrastrar y cerrar (`dragToClose`) y puntos de anclaje (`snapPoints`,
+    `snapPoint`, `defaultSnapPoint`, `onSnapPointChange`, `handleLabel`) en `top` y `bottom`: el asa es un slider
+    con flechas, Re Pág/Av Pág, Inicio y Fin, y el arrastre va al anclaje más cercano con su inercia o cierra por
+    debajo del menor. Lógica en `core/sheet` (`sheetRelease`, `snapKey`, `attachSheet`). En `/dom`,
+    `dialog.z-drawer[data-drag]` con `.z-drawer__handle`, `data-snap-points` y `setDrawerSnap()`.
+  - `Tour`: recorrido guiado no modal con una tarjeta (role=dialog con encabezado) anclada a cada elemento, anillo
+    que lo resalta, progreso, Anterior, Siguiente/Hecho y Saltar; el foco entra en la tarjeta en cada paso, Escape
+    o Saltar lo cierran y el foco vuelve a donde estaba; las flechas laterales cambian de paso. Lógica en
+    `core/tour`. En `/dom`, `startTour()`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
@@ -126,6 +180,11 @@ radios y material de los tokens.
 - Modo DOM: el parcheo con claves ya no sustituye un nodo que hará falta más adelante (lo recoloca) y devuelve el
   foco a la pieza que mueve; los datos de los `<script type="application/json">` se analizan una vez por texto.
 
+- `Button` e `IconButton` respetan un `aria-disabled` recibido (antes lo pisaba el estado de carga) y, con él,
+  no ejecutan `onClick`: un botón apagado que conserva el foco, como pide una barra de herramientas.
+- `ToggleGroup` dentro de una `Toolbar` deja a la barra la parada de tabulación y las flechas.
+- Un menú que se vuelve a abrir durante su animación de salida se monta de nuevo: el foco vuelve a su primera
+  entrada (antes se quedaba en el menú que se cerraba).
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
   punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal
   elevado con `className="z-liquid"`. Los días no elegibles ya no van tachados (lo va la fecha reservada).

@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 94,
+ "count": 103,
  "groups": {
   "actions": [
    "Button",
@@ -11,7 +11,8 @@
    "SegmentedControl",
    "Swap",
    "Toggle",
-   "ToggleGroup"
+   "ToggleGroup",
+   "Toolbar"
   ],
   "agenda": [
    "CalendarHeatmap",
@@ -51,6 +52,7 @@
   ],
   "feedback": [
    "Alert",
+   "Banner",
    "EmptyState",
    "ErrorBoundary",
    "ErrorState",
@@ -97,6 +99,8 @@
   "navigation": [
    "Accordion",
    "Breadcrumb",
+   "Collapsible",
+   "Menubar",
    "NavList",
    "Pagination",
    "Stepper",
@@ -104,15 +108,20 @@
    "Tree"
   ],
   "overlay": [
+   "ActionBar",
+   "Command",
    "CommandPalette",
    "ConfirmDialog",
    "ContextMenu",
    "Drawer",
+   "HoverCard",
    "Menu",
    "Modal",
    "Popover",
    "Toast",
-   "Tooltip"
+   "Toggletip",
+   "Tooltip",
+   "Tour"
   ]
  },
  "components": [
@@ -1135,6 +1144,103 @@
    ],
    "origin": "Nuevo, con primitiva propia (APG «toolbar» para el foco; aria-pressed). Referencia de variantes: Toggle Group de Shark UI y Radix.",
    "file": "zui/src/components/actions/ToggleGroup.manifest.json"
+  },
+  {
+   "name": "Toolbar",
+   "group": "actions",
+   "description": "Barra de herramientas: controles que actúan sobre otra cosa (un editor, un lienzo, un panel) con una sola parada de tabulación.",
+   "import": "import { Toolbar, ToolbarGroup, ToolbarSeparator } from \"@zuccadev-labs/zuix-zui\"",
+   "exports": [
+    "Toolbar",
+    "ToolbarGroup",
+    "ToolbarSeparator"
+   ],
+   "behavior": "dom",
+   "apg": "toolbar",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible de la barra. Obligatorio salvo que se pase `aria-labelledby`."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "Eje de las flechas (`aria-orientation`). En vertical, arriba y abajo."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "glass",
+      "plain"
+     ],
+     "default": "glass",
+     "description": "`glass`: barra de cromo de cristal. `plain`: sin fondo, para la cabecera de un panel."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md",
+     "description": "Radio de la pista, concéntrico con el de los controles de ese tamaño."
+    },
+    {
+     "name": "controls",
+     "type": "string",
+     "description": "Id del elemento sobre el que actúa la barra (`aria-controls`)."
+    },
+    {
+     "name": "ToolbarGroup.label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre del grupo (`role=\"group\"`)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "disabled"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-border",
+    "line",
+    "space-1",
+    "button-radius",
+    "control-radius-sm",
+    "layer-raised"
+   ],
+   "classes": [
+    "z-toolbar",
+    "z-toolbar__group",
+    "z-toolbar__separator"
+   ],
+   "a11y": "`role=\"toolbar\"` con nombre y `aria-orientation`; cada grupo es `role=\"group\"` con nombre y los separadores son `role=\"separator\"` perpendiculares a la barra. Una sola parada de Tab para todos los controles, también los de un ToggleGroup anidado: las flechas del eje los recorren con vuelta (en RTL la izquierda avanza), Inicio y Fin van al primero y al último, y la barra recuerda el último control enfocado. Un control con `aria-disabled` sigue en el recorrido; uno con `disabled` se salta. Un campo de texto o un select conserva sus flechas: se sale de él con Tab. Los botones de solo icono llevan `aria-label` y título nativo. Para un grupo de botones independientes (cada uno con su parada), ButtonGroup.",
+   "examples": [
+    {
+     "title": "Formato de texto con grupos",
+     "code": "<Toolbar label=\"Text formatting\">\n  <ToggleGroup\n    type=\"multiple\"\n    label=\"Style\"\n    variant=\"ghost\"\n    size=\"sm\"\n    defaultValue={[\"bold\"]}\n    items={[\n      { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n      { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n      { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <ToolbarGroup label=\"Insert\">\n    <IconButton icon=\"link\" label=\"Insert link\" size=\"sm\" />\n    <IconButton icon=\"photo\" label=\"Insert image\" size=\"sm\" />\n    <IconButton icon=\"code-bracket\" label=\"Insert code\" size=\"sm\" aria-disabled=\"true\" />\n  </ToolbarGroup>\n  <ToolbarSeparator />\n  <Button size=\"sm\" variant=\"ghost\" icon=\"arrow-uturn-up-left\">Undo</Button>\n</Toolbar>"
+    },
+    {
+     "title": "Barra de un panel (plain, sm)",
+     "code": "<Toolbar label=\"Terminal actions\" variant=\"plain\" size=\"sm\">\n  <IconButton icon=\"play\" label=\"Run\" size=\"sm\" />\n  <IconButton icon=\"stop\" label=\"Stop\" size=\"sm\" />\n  <IconButton icon=\"trash\" label=\"Clear\" size=\"sm\" />\n</Toolbar>"
+    },
+    {
+     "title": "Vertical (paleta de herramientas)",
+     "code": "<Toolbar label=\"Tools\" orientation=\"vertical\" size=\"sm\">\n  <ToggleGroup\n    label=\"Tool\"\n    variant=\"ghost\"\n    size=\"sm\"\n    orientation=\"vertical\"\n    defaultValue=\"select\"\n    items={[\n      { value: \"select\", icon: \"cursor-arrow-rays\", ariaLabel: \"Select\" },\n      { value: \"pen\", icon: \"pencil\", ariaLabel: \"Pen\" },\n      { value: \"shapes\", icon: \"square-2-stack\", ariaLabel: \"Shapes\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <IconButton icon=\"magnifying-glass-plus\" label=\"Zoom in\" size=\"sm\" />\n  <IconButton icon=\"magnifying-glass-minus\" label=\"Zoom out\" size=\"sm\" />\n</Toolbar>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (APG «toolbar»). Material de las barras de zutool (PaneHeaderButtons, FindBar). Referencia de variantes: Toolbar de Radix.",
+   "file": "zui/src/components/actions/Toolbar.manifest.json"
   },
   {
    "name": "CalendarHeatmap",
@@ -4461,6 +4567,133 @@
    ],
    "origin": "Nuevo; versión genérica del panel de alertas del design system base.",
    "file": "zui/src/components/feedback/Alert.manifest.json"
+  },
+  {
+   "name": "Banner",
+   "group": "feedback",
+   "description": "Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.",
+   "import": "import { Banner } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger"
+     ],
+     "default": "info"
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "page",
+      "inline"
+     ],
+     "default": "page",
+     "description": "`page`: franja arriba de la página o del shell. `inline`: dentro de un panel."
+    },
+    {
+     "name": "title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "badge",
+     "type": "ReactNode",
+     "description": "Insignia corta antes del texto («New»)."
+    },
+    {
+     "name": "icon",
+     "type": "IconName | null",
+     "description": "Sustituye el icono del tono; `null` lo quita."
+    },
+    {
+     "name": "action",
+     "type": "ReactNode",
+     "description": "Enlace o botón a la derecha del texto."
+    },
+    {
+     "name": "onDismiss",
+     "type": "() => void",
+     "description": "Muestra el botón de cierre."
+    },
+    {
+     "name": "dismissible",
+     "type": "boolean",
+     "default": false,
+     "description": "Botón de cierre sin manejador: se oculta solo."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "dismissLabel",
+     "type": "string",
+     "default": "Dismiss"
+    },
+    {
+     "name": "live",
+     "type": "boolean",
+     "default": false,
+     "description": "Se anuncia al aparecer (status, o alert en danger y warning). Solo si se inserta tras una acción."
+    }
+   ],
+   "states": [
+    "rest",
+    "dismissed"
+   ],
+   "tokens": [
+    "info",
+    "info-soft",
+    "accent-soft",
+    "success-soft",
+    "warning-soft",
+    "danger-soft",
+    "surface-2",
+    "glass-highlight",
+    "radius-lg",
+    "control-radius-lg",
+    "fg-muted",
+    "radius-xs"
+   ],
+   "classes": [
+    "z-banner",
+    "z-banner__icon",
+    "z-banner__body",
+    "z-banner__badge",
+    "z-banner__title",
+    "z-banner__text",
+    "z-banner__action",
+    "z-banner__close"
+   ],
+   "a11y": "Persistente: no se va solo. Sin `live` no es una región viva (un banner que llega con la página no se anuncia); con `live`, role=status (o alert en danger y warning). El icono es decorativo; el tono no se transmite solo por color (título y texto). El cierre es un button con nombre («Dismiss») de 24 px, con área táctil mayor con puntero grueso; al cerrar, el foco sigue al siguiente elemento tabulable. Para un aviso de resultado dentro del contenido, Alert; para uno pasajero, Toast.",
+   "examples": [
+    {
+     "title": "Novedad con enlace y cierre",
+     "code": "<Banner tone=\"accent\" badge=\"New\" title=\"Workspaces are here.\" action={<Link href=\"/changelog\">See what changed</Link>} dismissible>\n  Group projects and share layouts with your team.\n</Banner>"
+    },
+    {
+     "title": "Mantenimiento programado",
+     "code": "<Banner tone=\"warning\" title=\"Scheduled maintenance\">\n  Sync will be paused on Saturday from 02:00 to 03:00 UTC.\n</Banner>"
+    },
+    {
+     "title": "Fallo del sistema con acción",
+     "code": "<Banner tone=\"danger\" title=\"Billing failed.\" action={<Button size=\"sm\">Update card</Button>}>\n  Your workspace will be read-only in 3 days.\n</Banner>"
+    },
+    {
+     "title": "En un panel (inline)",
+     "code": "<Banner tone=\"neutral\" layout=\"inline\" icon=\"information-circle\" dismissible>\n  This branch is 4 commits behind main.\n</Banner>"
+    }
+   ],
+   "origin": "Nuevo. Material de update-bar, SetupOffer y PaneMarkBanner de zutool. Referencia de variantes: Announcement de Shark UI.",
+   "file": "zui/src/components/feedback/Banner.manifest.json"
   },
   {
    "name": "EmptyState",
@@ -10949,6 +11182,188 @@
    "file": "zui/src/components/navigation/Breadcrumb.manifest.json"
   },
   {
+   "name": "Collapsible",
+   "group": "navigation",
+   "description": "Bloque que se pliega y despliega con un botón: un detalle opcional, una lista larga o un texto que se recorta.",
+   "import": "import { Collapsible } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "disclosure",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Contenido del botón."
+    },
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Id del bloque; la región lleva `<id>-content`. Sin valor, uno generado."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono antes del título."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "peek",
+     "type": "number",
+     "description": "Colapso parcial: alto en px que se sigue viendo plegado, con fundido. El botón va tras el texto."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "card"
+     ],
+     "default": "plain"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled"
+   ],
+   "tokens": [
+    "item-radius",
+    "row-hover",
+    "line",
+    "card-bg",
+    "card-radius",
+    "fg-muted",
+    "fg-prose",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-collapsible",
+    "z-collapsible__trigger",
+    "z-collapsible__content"
+   ],
+   "a11y": "Patrón APG «disclosure»: un button con aria-expanded y aria-controls. Intro o Espacio lo alternan. Plegada, la región lleva hidden=\"until-found\": no se ve ni se lee, pero la búsqueda en la página del navegador la encuentra y la abre (evento beforematch). Con `peek` el principio sigue visible y en el árbol accesible, y si el foco entra en la parte recortada se despliega para no quedar tapado. Para varias secciones con cabecera, Accordion.",
+   "examples": [
+    {
+     "title": "Detalle opcional",
+     "code": "<Collapsible id=\"advanced\" title=\"Advanced settings\" icon=\"adjustments-horizontal\">\n  <p>Retries, timeouts and the proxy used for outgoing requests.</p>\n</Collapsible>"
+    },
+    {
+     "title": "Tarjeta abierta",
+     "code": "<Collapsible id=\"editors\" title=\"3 people can edit\" variant=\"card\" defaultOpen>\n  <p>Ana Ruiz, Leo Park and Mia Chen.</p>\n</Collapsible>"
+    },
+    {
+     "title": "Colapso parcial",
+     "code": "<Collapsible id=\"release-notes\" title=\"Show full description\" peek={56}>\n  <p>The release adds a workspace layout with resizable panes, a floating inspector and grouped tabs. Panels can be docked, split and moved with the keyboard, and every layout is saved per project.</p>\n</Collapsible>"
+    },
+    {
+     "title": "Deshabilitado",
+     "code": "<Collapsible id=\"billing\" title=\"Billing history\" disabled>\n  <p>Only owners can see billing.</p>\n</Collapsible>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (APG «disclosure», hidden=\"until-found\"). Referencia de variantes: Collapsible de Shark UI y Radix.",
+   "file": "zui/src/components/navigation/Collapsible.manifest.json"
+  },
+  {
+   "name": "Menubar",
+   "group": "navigation",
+   "description": "Barra de menús de aplicación (File, Edit, View): una sola parada de tabulación y paso entre menús con las flechas.",
+   "import": "import { Menubar, type MenubarMenu } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "menubar",
+   "props": [
+    {
+     "name": "menus",
+     "type": "MenubarMenu[]",
+     "required": true,
+     "description": "{ id, label, items: MenuEntry[], disabled? }. Cada menú admite todo lo de Menu: submenús, casillas, radios y enlaces."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre accesible de la barra."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "glass",
+      "plain"
+     ],
+     "default": "glass",
+     "description": "`plain`: sin fondo, dentro de una TitleBar."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "sm"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled"
+   ],
+   "tokens": [
+    "control-height-sm",
+    "control-radius-sm",
+    "surface-2",
+    "surface-3",
+    "glass-highlight",
+    "fg-muted",
+    "space-1",
+    "space-2-5",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-menubar",
+    "z-menubar__trigger"
+   ],
+   "a11y": "role=menubar con nombre; cada título es role=menuitem con aria-haspopup=menu y aria-expanded, y su menú se nombra con el título (aria-labelledby). Una sola parada de Tab (foco itinerante): Flecha izquierda y derecha recorren los títulos con vuelta (en RTL la izquierda avanza) y, si hay un menú abierto, abren el del vecino; Inicio y Fin van al primero y al último. Flecha abajo, Intro o Espacio abren el menú y enfocan su primera entrada; Flecha arriba, la última. Dentro de un menú, Flecha izquierda en el primer nivel o Flecha derecha en una entrada sin submenú pasan al menú vecino; en un submenú, Flecha izquierda cierra solo ese nivel. Escape cierra y devuelve el foco al título; Tab cierra y sale de la barra. Con un menú abierto, pasar el puntero por otro título lo abre; sin ninguno abierto, no. Para menús independientes (cada uno con su parada), Menu.",
+   "examples": [
+    {
+     "title": "Barra de aplicación",
+     "code": "<Menubar\n  label=\"Application\"\n  menus={[\n    { id: \"file\", label: \"File\", items: [\n      { id: \"new\", label: \"New file\", icon: \"document-plus\", shortcut: \"Ctrl N\", onSelect: newFile },\n      { id: \"open\", label: \"Open…\", icon: \"folder-open\", shortcut: \"Ctrl O\", onSelect: openFile },\n      { id: \"recent\", label: \"Open recent\", icon: \"clock\", items: recentEntries },\n      { type: \"separator\" },\n      { id: \"save\", label: \"Save\", icon: \"arrow-down-tray\", shortcut: \"Ctrl S\", onSelect: save },\n    ] },\n    { id: \"edit\", label: \"Edit\", items: editEntries },\n    { id: \"view\", label: \"View\", items: [\n      { type: \"checkbox\", id: \"sidebar\", label: \"Sidebar\", checked: sidebar, onCheckedChange: setSidebar },\n      { type: \"checkbox\", id: \"status\", label: \"Status bar\", checked: status, onCheckedChange: setStatus },\n    ] },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (APG «menubar») sobre el menú de la suite. Material de los menús de escritorio de zutool. Referencia de variantes: Menubar de Radix.",
+   "html": [
+    {
+     "title": "Barra de aplicación",
+     "code": "<div class=\"z-menubar z-liquid\" role=\"menubar\" aria-label=\"Application\" aria-orientation=\"horizontal\" data-variant=\"glass\" data-size=\"sm\">\n  <button type=\"button\" role=\"menuitem\" id=\"mb-file-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-file\" tabindex=\"0\">File</button>\n  <button type=\"button\" role=\"menuitem\" id=\"mb-edit-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-edit\" tabindex=\"-1\">Edit</button>\n  <button type=\"button\" role=\"menuitem\" id=\"mb-view-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-view\" tabindex=\"-1\">View</button>\n</div>\n\n<div id=\"mb-file\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-file-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-plus\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">New file</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl N</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"folder-open\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Open…</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl O</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"mb-recent\" data-z-submenu=\"#mb-recent\">\n    <span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Open recent</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-down-tray\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Save</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl S</kbd>\n  </button>\n</div>\n\n<div id=\"mb-recent\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Open recent\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">atlas/README.md</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">borealis/tokens.json</span>\n  </button>\n</div>\n\n<div id=\"mb-edit\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-edit-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-uturn-up-left\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Undo</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl Z</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-uturn-up-right\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Redo</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl Y</kbd>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"scissors\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Cut</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl X</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl C</kbd>\n  </button>\n</div>\n\n<div id=\"mb-view\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-view-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Sidebar</span>\n  </button>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Status bar</span>\n  </button>\n</div>",
+     "script": "// z:select en la entrada elegida; z:change en las casillas.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"[id^=mb-]\")) console.log(event.target.textContent.trim()); });"
+    }
+   ],
+   "file": "zui/src/components/navigation/Menubar.manifest.json"
+  },
+  {
    "name": "NavList",
    "group": "navigation",
    "description": "Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.",
@@ -11525,6 +11940,172 @@
    "file": "zui/src/components/navigation/Tree.manifest.json"
   },
   {
+   "name": "ActionBar",
+   "group": "overlay",
+   "description": "Barra flotante de acciones sobre una selección (filas, archivos, tarjetas): recuento, acciones y cierre.",
+   "import": "import { ActionBar } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "toolbar",
+   "props": [
+    {
+     "name": "open",
+     "type": "boolean",
+     "required": true,
+     "description": "Visible mientras haya selección."
+    },
+    {
+     "name": "count",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Recuento («3 selected»); se anuncia con cortesía al cambiar."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Acciones sobre la selección."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Selection actions"
+    },
+    {
+     "name": "onClose",
+     "type": "() => void",
+     "description": "Vacía la selección: botón de cierre y Escape dentro de la barra."
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Clear selection"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "fixed",
+      "sticky",
+      "inline"
+     ],
+     "default": "fixed",
+     "description": "`fixed`: abajo en el centro de la ventana. `sticky`: abajo dentro de su contenedor con desplazamiento. `inline`: en su sitio."
+    }
+   ],
+   "states": [
+    "closed",
+    "open"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-highlight",
+    "popup-shadow",
+    "layer-popover",
+    "control-height-sm",
+    "control-radius-sm",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-actionbar",
+    "z-actionbar__count",
+    "z-actionbar__actions",
+    "z-actionbar__close"
+   ],
+   "a11y": "Es una Toolbar (role=toolbar con nombre): una sola parada de Tab para el recuento, las acciones y el cierre, con flechas, Inicio y Fin. El recuento es una región viva cortés (aria-live=polite): se anuncia cuando cambia la selección. No roba el foco al aparecer. Escape dentro de la barra y el botón de cierre («Clear selection») vacían la selección; al ocultarse con el foco dentro, el foco sigue hacia delante. Las acciones solo de icono llevan nombre.",
+   "examples": [
+    {
+     "title": "Selección de filas",
+     "code": "<ActionBar open count=\"3 selected\" position=\"inline\" onClose={clearSelection}>\n  <Button size=\"sm\" variant=\"ghost\" icon=\"archive-box\">Archive</Button>\n  <Button size=\"sm\" variant=\"ghost\" icon=\"tag\">Label</Button>\n  <Button size=\"sm\" variant=\"danger\" icon=\"trash\">Delete</Button>\n</ActionBar>"
+    },
+    {
+     "title": "Flotante sobre la página",
+     "code": "<ActionBar open={selected.length > 0} count={`${selected.length} files`} onClose={() => setSelected([])}>\n  <IconButton icon=\"arrow-down-tray\" label=\"Download\" size=\"sm\" />\n  <IconButton icon=\"share\" label=\"Share\" size=\"sm\" />\n  <IconButton icon=\"trash\" label=\"Delete\" size=\"sm\" variant=\"danger\" />\n</ActionBar>"
+    }
+   ],
+   "origin": "Nuevo, sobre Toolbar. Referencia de variantes: Action Bar de Shark UI.",
+   "file": "zui/src/components/overlay/ActionBar.manifest.json"
+  },
+  {
+   "name": "Command",
+   "group": "overlay",
+   "description": "La paleta de comandos incrustada en la página: buscador y lista siempre a la vista, con grupos, atajos y pie.",
+   "import": "import { Command, type PaletteGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "combobox",
+   "props": [
+    {
+     "name": "groups",
+     "type": "PaletteGroup[]",
+     "required": true,
+     "description": "{ heading?, commands: { id, label, hint?, shortcut?, icon?, keywords?, disabled?, onSelect }[] }."
+    },
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Prefijo de los ids de la lista y sus opciones."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Commands",
+     "description": "Nombre accesible del campo y de la lista."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "Search commands…"
+    },
+    {
+     "name": "emptyLabel",
+     "type": "string",
+     "default": "No results"
+    },
+    {
+     "name": "filter",
+     "type": "(groups, query) => PaletteGroup[]",
+     "description": "Filtro propio."
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode",
+     "description": "Pie bajo la lista (atajos, ayuda)."
+    }
+   ],
+   "states": [
+    "rest",
+    "active",
+    "disabled",
+    "empty"
+   ],
+   "tokens": [
+    "popup-bg",
+    "card-radius",
+    "line",
+    "fg-muted",
+    "surface-2",
+    "text-caption"
+   ],
+   "cssVars": [
+    "--z-command-height"
+   ],
+   "classes": [
+    "z-command",
+    "z-palette__search",
+    "z-palette__input",
+    "z-palette__list",
+    "z-palette__item",
+    "z-palette__footer"
+   ],
+   "a11y": "Patrón combobox con aria-activedescendant, como la CommandPalette: el foco se queda en el campo; Flecha arriba y abajo mueven la opción activa, Inicio y Fin van a los extremos e Intro ejecuta el comando. Escape vacía la búsqueda (si no hay búsqueda, sigue su curso: cierra el Popover que lo contenga). Las cabeceras de grupo nombran cada grupo; sin resultados, un mensaje con role=status. Para abrirla sobre la página con un atajo, CommandPalette.",
+   "examples": [
+    {
+     "title": "Acciones de un proyecto con pie",
+     "code": "<Command\n  id=\"project-commands\"\n  label=\"Project commands\"\n  groups={[\n    { heading: \"Project\", commands: [\n      { id: \"rename\", label: \"Rename project\", icon: \"pencil\", shortcut: \"F2\", onSelect: rename },\n      { id: \"duplicate\", label: \"Duplicate\", icon: \"document-duplicate\", onSelect: duplicate },\n    ] },\n    { heading: \"Go to\", commands: [\n      { id: \"settings\", label: \"Settings\", icon: \"gear\", hint: \"Project\", onSelect: openSettings },\n      { id: \"members\", label: \"Members\", icon: \"users\", onSelect: openMembers },\n    ] },\n  ]}\n  footer={<><span><Kbd>↑</Kbd> <Kbd>↓</Kbd> to move</span><span><Kbd>Enter</Kbd> to run</span></>}\n/>"
+    }
+   ],
+   "origin": "Nuevo, sobre la lista de CommandPalette. Material de QuickSwitcher de zutool. Referencia de variantes: Command de Shark UI.",
+   "file": "zui/src/components/overlay/Command.manifest.json"
+  },
+  {
    "name": "CommandPalette",
    "group": "overlay",
    "description": "Paleta de comandos con búsqueda difusa, grupos y manejo completo por teclado.",
@@ -11575,6 +12156,11 @@
      "name": "closeOnSelect",
      "type": "boolean",
      "default": true
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode",
+     "description": "Pie bajo la lista: atajos de navegación, ayuda o una acción."
     }
    ],
    "states": [
@@ -11631,15 +12217,16 @@
    ],
    "classes": [
     "z-palette",
-    "z-palette__search",
-    "z-palette__input",
-    "z-palette__list",
+    "z-palette__empty",
+    "z-palette__footer",
     "z-palette__group",
     "z-palette__heading",
+    "z-palette__input",
     "z-palette__item",
     "z-palette__item-hint",
     "z-palette__kbd",
-    "z-palette__empty"
+    "z-palette__list",
+    "z-palette__search"
    ],
    "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
    "examples": [
@@ -11972,7 +12559,8 @@
      "values": [
       "left",
       "right",
-      "bottom"
+      "bottom",
+      "top"
      ],
      "default": "right"
     },
@@ -12015,6 +12603,36 @@
      "default": "Close"
     },
     {
+     "name": "dragToClose",
+     "type": "boolean",
+     "default": false,
+     "description": "Asa para arrastrar el cajón hacia su borde y cerrarlo (el clic en el asa también cierra)."
+    },
+    {
+     "name": "snapPoints",
+     "type": "number[]",
+     "description": "Solo `top` y `bottom`: fracciones del alto de la ventana, de menor a mayor. El asa es un slider entre ellas; arrastrar por debajo del menor cierra."
+    },
+    {
+     "name": "snapPoint",
+     "type": "number",
+     "description": "Anclaje activo (índice), controlado."
+    },
+    {
+     "name": "defaultSnapPoint",
+     "type": "number",
+     "description": "Anclaje al abrir; por defecto, el mayor."
+    },
+    {
+     "name": "onSnapPointChange",
+     "type": "(index: number) => void"
+    },
+    {
+     "name": "handleLabel",
+     "type": "string",
+     "description": "Nombre del asa."
+    },
+    {
      "name": "children",
      "type": "ReactNode"
     }
@@ -12025,6 +12643,9 @@
    ],
    "tokens": [
     "duration-fast",
+    "duration-slow",
+    "ease-emphasized",
+    "ease-exit",
     "ease-standard",
     "fg",
     "fg-muted",
@@ -12040,39 +12661,42 @@
     "layer-overlay",
     "leading-normal",
     "leading-snug",
+    "leading-ui",
     "line",
+    "line-strong",
     "panel-radius",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-xs",
     "scrim",
     "shell-gap",
+    "space-1",
     "space-12",
+    "space-14",
     "space-2",
     "space-3",
     "space-4",
     "space-5",
+    "space-9",
     "text-body",
     "text-small",
-    "weight-semibold",
-    "duration-slow",
-    "ease-emphasized",
-    "ease-exit",
-    "leading-ui",
-    "popup-bg",
-    "popup-blur",
-    "popup-shadow",
-    "space-1",
     "text-title",
-    "tracking-snug"
+    "tracking-snug",
+    "weight-semibold"
    ],
    "classes": [
     "z-drawer",
-    "z-drawer__header",
-    "z-drawer__title",
-    "z-drawer__description",
     "z-drawer__body",
+    "z-drawer__close",
+    "z-drawer__description",
     "z-drawer__footer",
-    "z-drawer__close"
+    "z-drawer__grip",
+    "z-drawer__handle",
+    "z-drawer__header",
+    "z-drawer__title"
    ],
-   "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape y clic en el velo cierran, el foco vuelve al disparador.",
+   "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape y clic en el velo cierran, el foco vuelve al disparador. Con `dragToClose`, el asa es un botón con nombre («Close») que también cierra con clic, Intro o Espacio; arrastrarla hacia el borde cierra al soltar pasado un tercio (o con un gesto rápido). Con `snapPoints`, el asa es role=slider (aria-valuenow, aria-valuetext en %): Flecha arriba o abajo (según el lado), Re Pág/Av Pág, Inicio y Fin cambian de anclaje, y arrastrar la lleva al más cercano con su inercia.",
    "examples": [
     {
      "title": "Filtros a la derecha",
@@ -12081,6 +12705,14 @@
     {
      "title": "Hoja inferior controlada",
      "code": "<Drawer open={open} onOpenChange={setOpen} side=\"bottom\" title=\"Details\">\n  <p>Details go here.</p>\n</Drawer>"
+    },
+    {
+     "title": "Hoja inferior con anclajes",
+     "code": "<Drawer\n  side=\"bottom\"\n  title=\"Comments\"\n  snapPoints={[0.4, 0.85]}\n  trigger={<Button>Comments</Button>}\n>\n  …\n</Drawer>"
+    },
+    {
+     "title": "Arriba, arrastrar para cerrar",
+     "code": "<Drawer side=\"top\" size=\"sm\" title=\"Search\" dragToClose trigger={<Button>Search</Button>}>\n  <SearchInput aria-label=\"Search\" />\n</Drawer>"
     }
    ],
    "origin": "Cajones con velo (`.shell-drawer`, `.shell-scrim`) de zutool; accesibilidad según el patrón APG, con primitivas propias.",
@@ -12089,15 +12721,140 @@
     {
      "title": "Panel lateral derecho",
      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#filters\">Filters</button>\n\n<dialog id=\"filters\" class=\"z-liquid z-drawer\" data-side=\"right\" data-size=\"md\" aria-labelledby=\"filters-title\">\n  <header class=\"z-drawer__header\">\n    <h2 id=\"filters-title\" class=\"z-drawer__title\">Filters</h2>\n    <p class=\"z-drawer__description\">Narrow the list of projects.</p>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <footer class=\"z-drawer__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close>Apply</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
+    },
+    {
+     "title": "Hoja inferior con anclajes",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#comments\">Comments</button>\n\n<dialog id=\"comments\" class=\"z-liquid z-drawer\" data-side=\"bottom\" data-size=\"md\" data-drag data-snap-points=\"0.4 0.85\" data-snap=\"1\" aria-labelledby=\"comments-title\">\n  <button type=\"button\" role=\"slider\" class=\"z-drawer__handle\" aria-label=\"Panel height\" aria-orientation=\"vertical\" aria-valuemin=\"0\" aria-valuemax=\"1\" aria-valuenow=\"1\" aria-valuetext=\"85%\">\n    <span class=\"z-drawer__grip\" aria-hidden=\"true\"></span>\n  </button>\n  <header class=\"z-drawer__header\">\n    <h2 id=\"comments-title\" class=\"z-drawer__title\">Comments</h2>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
     }
    ],
+   "cssVars": [
+    "--z-drawer-drag",
+    "--z-drawer-snap"
+   ],
    "file": "zui/src/components/overlay/Drawer.manifest.json"
+  },
+  {
+   "name": "HoverCard",
+   "group": "overlay",
+   "description": "Vista previa al pasar el puntero o enfocar un enlace: un perfil, una incidencia, un repositorio.",
+   "import": "import { HoverCard } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "trigger",
+     "type": "ReactElement",
+     "required": true,
+     "description": "Normalmente un enlace, que hace su propia acción al activarse."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "La vista previa."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "openDelay",
+     "type": "number",
+     "default": 500,
+     "description": "Retardo de apertura con el puntero (ms); con el foco abre sin esperar."
+    },
+    {
+     "name": "closeDelay",
+     "type": "number",
+     "default": 300,
+     "description": "Retardo de cierre (ms): el puntero cruza a la tarjeta sin que se cierre."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "top",
+      "right",
+      "bottom",
+      "left"
+     ],
+     "default": "bottom"
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end"
+     ],
+     "default": "center"
+    },
+    {
+     "name": "sideOffset",
+     "type": "number",
+     "default": 6
+    },
+    {
+     "name": "arrow",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "width",
+     "type": "number | string"
+    }
+   ],
+   "states": [
+    "closed",
+    "open"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "layer-popover",
+    "accent-text",
+    "space-4"
+   ],
+   "classes": [
+    "z-hovercard"
+   ],
+   "a11y": "La tarjeta es role=tooltip y describe al enlace (aria-describedby) mientras está abierta; el enlace no lleva aria-expanded porque Intro lo sigue. Se abre con el puntero tras `openDelay` o al enfocar el enlace con el teclado, y sigue abierta mientras el puntero o el foco estén en el enlace o en la tarjeta (WCAG 1.4.13). Escape la cierra sin mover el puntero y una pulsación fuera también. Montada en la capa superior, el orden de Tab sigue al visual: Tab desde el enlace entra en la tarjeta, Mayús+Tab desde su primer control vuelve al enlace y Tab desde el último sale hacia lo que sigue al enlace. Con el dedo no se abre (el toque sigue el enlace): su contenido debe ser prescindible. Para una ayuda que se pide, Toggletip; para una etiqueta corta, Tooltip.",
+   "examples": [
+    {
+     "title": "Perfil de una persona",
+     "code": "<HoverCard\n  arrow\n  trigger={<a href=\"/people/ana\">@ana</a>}\n>\n  <div className=\"profile\">\n    <Avatar name=\"Ana Ruiz\" size=\"lg\" />\n    <strong>Ana Ruiz</strong>\n    <span>Design systems · Madrid</span>\n    <a href=\"/people/ana/projects\">12 projects</a>\n  </div>\n</HoverCard>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (core/interest). Referencia de variantes: Hover Card de Shark UI y Radix.",
+   "html": [
+    {
+     "title": "Perfil de una persona",
+     "code": "<p>Reviewed by <a href=\"/people/ana\" data-z-hovercard=\"#hc-ana\" data-z-placement=\"bottom\">@ana</a> yesterday.</p>\n\n<div id=\"hc-ana\" popover=\"manual\" class=\"z-liquid z-hovercard\" role=\"tooltip\" data-arrow>\n  <div style=\"display:grid;gap:4px;min-width:220px\">\n    <strong>Ana Ruiz</strong>\n    <span>Design systems · Madrid</span>\n    <a href=\"/people/ana/projects\">12 projects</a>\n  </div>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/overlay/HoverCard.manifest.json"
   },
   {
    "name": "Menu",
    "group": "overlay",
    "description": "Menú desplegable de acciones anclado a un disparador.",
-   "import": "import { Menu, type MenuEntry } from \"@zuccadev-labs/zuix-zui\"",
+   "import": "import { Menu, type MenuEntry, type MenuCheckboxEntry, type MenuRadioGroupEntry } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
      "name": "trigger",
@@ -12108,7 +12865,7 @@
      "name": "items",
      "type": "MenuEntry[]",
      "required": true,
-     "description": "Entradas: { id, label, icon?, shortcut?, danger?, disabled?, keepOpen?, onSelect?, items? } | { type: \"separator\" } | { type: \"label\", label }. `items` anida un submenú."
+     "description": "Entradas: { id, label, icon?, shortcut?, danger?, disabled?, keepOpen?, onSelect?, href?, items? } | { type: \"checkbox\", id, label, checked, onCheckedChange?, shortcut?, disabled? } | { type: \"radio-group\", id, label, value, onValueChange?, items: { value, label, shortcut?, disabled? }[] } | { type: \"separator\" } | { type: \"label\", label }. `items` anida un submenú; `href` hace de la entrada un enlace."
     },
     {
      "name": "label",
@@ -12164,7 +12921,8 @@
     "open",
     "closed",
     "highlighted",
-    "disabled"
+    "disabled",
+    "checked"
    ],
    "tokens": [
     "duration-fast",
@@ -12209,7 +12967,9 @@
     "text-caption",
     "text-title",
     "touch-target",
-    "tracking-wide"
+    "tracking-wide",
+    "accent-text",
+    "radius-full"
    ],
    "classes": [
     "z-menu",
@@ -12219,13 +12979,19 @@
     "z-menu__shortcut",
     "z-menu__separator",
     "z-menu__label",
-    "z-menu__chevron"
+    "z-menu__chevron",
+    "z-menu__check",
+    "z-menu__group"
    ],
-   "a11y": "Al abrirse, con el teclado o con el puntero, el foco va a la primera entrada (patrón APG «menu button»), igual en React y sin React. React: menú propio, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
+   "a11y": "Al abrirse, con el teclado o con el puntero, el foco va a la primera entrada (patrón APG «menu button»), igual en React y sin React. React: menú propio, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena. Casillas: role=menuitemcheckbox con aria-checked; Espacio la cambia y deja el menú abierto, Intro o el clic la cambian y cierran. Radios: role=menuitemradio con aria-checked dentro de un role=group con nombre (su título); elegir cierra. La señal (marca o punto) va en el hueco del icono, dibujada con borde para que sobreviva a los colores forzados. Una entrada con `href` es un enlace (`<a role=menuitem>`): Intro lo sigue y se puede abrir en otra pestaña.",
    "examples": [
     {
      "title": "Acciones de una fila",
      "code": "<Menu\n  label=\"Project actions\"\n  trigger={<button type=\"button\">Actions</button>}\n  items={[\n    { type: \"label\", label: \"Project\" },\n    { id: \"rename\", label: \"Rename\", icon: \"pencil\", shortcut: \"F2\", onSelect: () => rename() },\n    { id: \"duplicate\", label: \"Duplicate\", icon: \"copy\", onSelect: () => duplicate() },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", icon: \"trash\", danger: true, onSelect: () => remove() },\n  ]}\n/>"
+    },
+    {
+     "title": "Vista con casillas y radios",
+     "code": "<Menu\n  label=\"View options\"\n  trigger={<button type=\"button\">View</button>}\n  items={[\n    { type: \"checkbox\", id: \"minimap\", label: \"Minimap\", checked: minimap, onCheckedChange: setMinimap },\n    { type: \"checkbox\", id: \"wrap\", label: \"Word wrap\", shortcut: \"Alt Z\", checked: wrap, onCheckedChange: setWrap },\n    { type: \"separator\" },\n    { type: \"radio-group\", id: \"density\", label: \"Density\", value: density, onValueChange: setDensity, items: [\n      { value: \"compact\", label: \"Compact\" },\n      { value: \"comfortable\", label: \"Comfortable\" },\n    ] },\n    { type: \"separator\" },\n    { id: \"docs\", label: \"Keyboard shortcuts\", icon: \"command-line\", href: \"/docs/shortcuts\" },\n  ]}\n/>"
     }
    ],
    "origin": "Menu y `.ctx-menu` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
@@ -12235,6 +13001,11 @@
      "title": "Menú de acciones con submenú",
      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#actions\">Actions</button>\n\n<div id=\"actions\" popover class=\"z-liquid z-menu\" role=\"menu\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"pencil\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Rename</span>\n    <kbd class=\"z-menu__shortcut\">F2</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Duplicate</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"actions-share\" data-z-submenu=\"#actions-share\">\n    <span class=\"z-menu__icon\"><z-icon name=\"share\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Share</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger>\n    <span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Delete</span>\n  </button>\n</div>\n\n<div id=\"actions-share\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Share\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"link\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy link</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"envelope\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Email</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-text\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Export as PDF</span>\n  </button>\n</div>",
      "script": "// z:select burbujea desde la entrada elegida; un submenú declarado fuera de su menú se escucha en un ancestro común.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"#actions, #actions-share\")) console.log(event.target.textContent.trim()); });"
+    },
+    {
+     "title": "Vista con casillas y radios",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#view-options\">View</button>\n\n<div id=\"view-options\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"View options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Minimap</span>\n  </button>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Word wrap</span>\n    <kbd class=\"z-menu__shortcut\">Alt Z</kbd>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"view-options-density\">\n    <div class=\"z-menu__label\" id=\"view-options-density\">Density</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"compact\">\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span>\n      <span class=\"z-menu__text\">Compact</span>\n    </button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"comfortable\">\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span>\n      <span class=\"z-menu__text\">Comfortable</span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/docs/shortcuts\">\n    <span class=\"z-menu__icon\"><z-icon name=\"command-line\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Keyboard shortcuts</span>\n  </a>\n</div>",
+     "script": "// z:change en la casilla ({ checked }) o en el grupo de radio ({ value }).\ndocument.querySelector(\"#view-options\").addEventListener(\"z:change\", (event) => console.log(event.detail));"
     }
    ],
    "file": "zui/src/components/overlay/Menu.manifest.json"
@@ -12470,6 +13241,28 @@
      "description": "Modal: el panel es un <dialog> abierto con showModal(). El resto de la página queda inerte (puntero, foco y lectores de pantalla), Tab da la vuelta dentro y una pulsación fuera solo lo cierra."
     },
     {
+     "name": "anchor",
+     "type": "RefObject<Element | null>",
+     "description": "Ancla distinta del disparador: el panel se coloca junto a ella; el foco sigue volviendo al disparador."
+    },
+    {
+     "name": "arrow",
+     "type": "boolean",
+     "default": false,
+     "description": "Flecha hacia el centro del ancla; sigue al lado en que quede el panel, también tras voltearse."
+    },
+    {
+     "name": "showClose",
+     "type": "boolean",
+     "default": false,
+     "description": "Botón de cierre en la esquina."
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Close"
+    },
+    {
      "name": "children",
      "type": "ReactNode"
     }
@@ -12480,6 +13273,9 @@
    ],
    "tokens": [
     "duration-fast",
+    "duration-normal",
+    "ease-emphasized",
+    "ease-exit",
     "fg",
     "font-sans",
     "glass-blur",
@@ -12491,25 +13287,32 @@
     "layer-popover",
     "leading-normal",
     "popup-bg",
+    "popup-blur",
     "popup-radius",
+    "popup-shadow",
+    "space-1",
     "space-3",
     "space-4",
-    "text-body",
-    "duration-normal",
-    "ease-emphasized",
-    "ease-exit",
-    "popup-blur",
-    "popup-shadow",
-    "space-1"
+    "text-body"
    ],
    "classes": [
-    "z-popover"
+    "z-popover",
+    "z-popover__body",
+    "z-popover__close"
    ],
-   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra.",
+   "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra. Colocación: donde el navegador tiene CSS anchor positioning (`position-area`), el panel se ancla con CSS y se voltea solo con `position-try-fallbacks` (mejora progresiva); sin ella, se coloca y se sigue con la lógica de siempre. La flecha es decorativa y no cambia el árbol accesible.",
    "examples": [
     {
      "title": "Panel de detalles",
      "code": "<Popover trigger={<button type=\"button\">Usage</button>} label=\"Usage details\" width={280}>\n  <p>1,204 requests this month.</p>\n</Popover>"
+    },
+    {
+     "title": "Con flecha y cierre",
+     "code": "<Popover\n  label=\"Storage\"\n  arrow\n  showClose\n  side=\"top\"\n  align=\"center\"\n  trigger={<Button>Storage</Button>}\n>\n  <p>412 GB of 512 GB used.</p>\n</Popover>"
+    },
+    {
+     "title": "Ancla distinta del disparador",
+     "code": "const field = useRef(null);\n\n<Input ref={field} aria-label=\"Domain\" defaultValue=\"zuix.dev\" />\n<Popover label=\"DNS help\" anchor={field} arrow side=\"bottom\" align=\"start\" trigger={<IconButton icon=\"question-mark-circle\" label=\"DNS help\" />}>\n  Point an A record to 76.76.21.21.\n</Popover>"
     }
    ],
    "origin": "Popover de zutool (alineado al final, separación de 4 px); colocación propia (`core/place`).",
@@ -12518,6 +13321,10 @@
     {
      "title": "Popover anclado",
      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"dialog\" data-z-open=\"#usage\" data-z-placement=\"bottom-start\">Usage</button>\n\n<div id=\"usage\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"Usage\">\n  412 GB of 512 GB used.\n</div>"
+    },
+    {
+     "title": "Con flecha y ancla distinta",
+     "code": "<span class=\"z-input\" data-size=\"md\" id=\"dns-field\">\n  <input class=\"z-input__control\" aria-label=\"Domain\" value=\"zuix.dev\">\n</span>\n<button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" aria-label=\"DNS help\" title=\"DNS help\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#dns-help\" data-z-anchor=\"#dns-field\" data-z-placement=\"bottom-start\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"dns-help\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"DNS help\" data-arrow data-close>\n  <div class=\"z-popover__body\">Point an A record to 76.76.21.21.</div>\n  <button type=\"button\" class=\"z-overlay-close z-popover__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</div>"
     }
    ],
    "file": "zui/src/components/overlay/Popover.manifest.json"
@@ -12573,6 +13380,16 @@
      "description": "useToast(): muestra un aviso y devuelve su id."
     },
     {
+     "name": "update",
+     "type": "(id: string, options: Partial<ToastOptions>) => void",
+     "description": "Cambia un aviso abierto en su sitio (texto, intención, duración, `loading`)."
+    },
+    {
+     "name": "promise",
+     "type": "<T>(promise: Promise<T>, { loading, success, error }) => Promise<T>",
+     "description": "Aviso que sigue a una promesa: en curso sin cierre automático (anillo, aria-busy) y, al resolverse, éxito o error en el mismo aviso, que entonces se cierra solo. `success` y `error` admiten un texto, unas opciones o una función del valor."
+    },
+    {
      "name": "dismiss",
      "type": "(id: string) => void",
      "description": "useToast()."
@@ -12584,8 +13401,9 @@
     }
    ],
    "states": [
-    "open",
     "closed",
+    "loading",
+    "open",
     "swipe"
    ],
    "tokens": [
@@ -12639,15 +13457,16 @@
    ],
    "classes": [
     "z-toast",
-    "z-toast__dot",
-    "z-toast__content",
-    "z-toast__title",
-    "z-toast__description",
+    "z-toast-viewport",
     "z-toast__action",
     "z-toast__close",
-    "z-toast-viewport"
+    "z-toast__content",
+    "z-toast__description",
+    "z-toast__dot",
+    "z-toast__spinner",
+    "z-toast__title"
    ],
-   "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando.",
+   "a11y": "Región con nombre (role=region) en la capa superior, que se muda al diálogo modal abierto (fuera de él sería inerte) y vuelve a la página al cerrarlo; cada aviso es role=status, o role=alert en warning y danger, F8 lleva el foco a los avisos, se pausan con el puntero o el foco encima y con la ventana sin foco, Escape descarta el aviso enfocado y se descartan deslizando. Con `promise`, el aviso en curso lleva aria-busy y role=status; el resultado cambia el texto del mismo aviso (y su role a alert si es un error), y su cuenta atrás empieza entonces.",
    "examples": [
     {
      "title": "Proveedor y uso",
@@ -12656,6 +13475,10 @@
     {
      "title": "Error con acción",
      "code": "const { toast } = useToast();\ntoast({ title: \"Upload failed\", intent: \"danger\", action: { label: \"Retry\", onClick: () => upload() } });"
+    },
+    {
+     "title": "Aviso de una promesa",
+     "code": "const { promise } = useToast();\n\npromise(saveProject(), {\n  loading: \"Saving project…\",\n  success: (project) => ({ title: \"Project saved\", description: project.name }),\n  error: \"Could not save the project\",\n});"
     }
    ],
    "origin": "Aspecto de ToastViewport de zutool; API de proveedor y hook de design system base; accesibilidad según el patrón APG, con primitivas propias.",
@@ -12665,9 +13488,151 @@
      "title": "Aviso de éxito",
      "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" id=\"save\">Save</button>",
      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#save\").addEventListener(\"click\", () => {\n  toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" });\n});"
+    },
+    {
+     "title": "Aviso de una promesa",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"deploy\">Deploy</button>",
+     "script": "import { toastPromise } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#deploy\").addEventListener(\"click\", () => {\n  const job = new Promise((resolve) => setTimeout(() => resolve(\"v0.3.0\"), 1500));\n  toastPromise(job, {\n    loading: \"Deploying…\",\n    success: (version) => ({ title: \"Deployed\", description: `Version ${version} is live.` }),\n    error: \"Deploy failed\",\n  });\n});"
     }
    ],
    "file": "zui/src/components/overlay/Toast.manifest.json"
+  },
+  {
+   "name": "Toggletip",
+   "group": "overlay",
+   "description": "Botón de ayuda («i») que muestra una explicación: se asoma al pasar o enfocar y el clic la deja fija.",
+   "import": "import { Toggletip } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre del botón: dice qué muestra («More about shipping»)."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "La explicación; puede llevar un enlace."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "default": "information-circle"
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "openDelay",
+     "type": "number",
+     "default": 300
+    },
+    {
+     "name": "closeDelay",
+     "type": "number",
+     "default": 200
+    },
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "top",
+      "right",
+      "bottom",
+      "left"
+     ],
+     "default": "top"
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end"
+     ],
+     "default": "center"
+    },
+    {
+     "name": "sideOffset",
+     "type": "number",
+     "default": 6
+    },
+    {
+     "name": "arrow",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md",
+     "description": "Botón de 20 o 24 px; con puntero grueso el área táctil crece."
+    },
+    {
+     "name": "width",
+     "type": "number | string"
+    }
+   ],
+   "states": [
+    "closed",
+    "open",
+    "pinned"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-radius",
+    "radius-md",
+    "radius-xs",
+    "fg-muted",
+    "accent-text",
+    "surface-2",
+    "text-small",
+    "touch-target"
+   ],
+   "classes": [
+    "z-toggletip",
+    "z-toggletip__trigger"
+   ],
+   "a11y": "El botón tiene nombre propio (`label`: qué revela, no «?») y aria-expanded; la burbuja es role=tooltip. El clic, Intro o Espacio la abren y la dejan fija; otro clic, Escape o una pulsación fuera la cierran. Pasar el puntero o enfocar el botón con el teclado la asoman sin fijarla, y se va al salir (WCAG 1.4.13: se puede descartar, se puede pasar a ella y persiste). Con el foco dentro, Tab recorre sus enlaces y sale hacia lo que sigue al botón; Mayús+Tab vuelve al botón. Para información imprescindible, en línea; para el nombre de un icono, Tooltip.",
+   "examples": [
+    {
+     "title": "Ayuda de un campo",
+     "code": "<Field label={<>Shipping <Toggletip label=\"More about shipping\">Free on orders over $50. Orders placed before 2pm ship the same day.</Toggletip></>}>\n  <Input />\n</Field>"
+    },
+    {
+     "title": "Con enlace, a la derecha",
+     "code": "<Toggletip label=\"About API limits\" side=\"right\" icon=\"question-mark-circle\">\n  1,000 requests per hour. <a href=\"/docs/limits\">See the limits</a>.\n</Toggletip>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (core/interest). Material de HelpHint de zutool. Referencia de variantes: Toggle Tooltip de Shark UI.",
+   "html": [
+    {
+     "title": "Ayuda de un campo",
+     "code": "<span style=\"display:inline-flex;align-items:center;gap:4px\">Shipping\n  <button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"More about shipping\" aria-expanded=\"false\" data-z-toggletip=\"#tt-shipping\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </button>\n</span>\n\n<div id=\"tt-shipping\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  Free on orders over $50. Orders placed before 2pm ship the same day.\n</div>"
+    },
+    {
+     "title": "Con enlace, a la derecha",
+     "code": "<button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"About API limits\" aria-expanded=\"false\" data-z-toggletip=\"#tt-limits\" data-z-placement=\"right\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"tt-limits\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  1,000 requests per hour. <a href=\"/docs/limits\">See the limits</a>.\n</div>"
+    }
+   ],
+   "file": "zui/src/components/overlay/Toggletip.manifest.json"
   },
   {
    "name": "Tooltip",
@@ -12780,6 +13745,135 @@
     }
    ],
    "file": "zui/src/components/overlay/Tooltip.manifest.json"
+  },
+  {
+   "name": "Tour",
+   "group": "overlay",
+   "description": "Recorrido guiado por una pantalla: una tarjeta anclada a cada elemento que explica, con anillo, progreso y saltar.",
+   "import": "import { Tour, type TourStep } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "steps",
+     "type": "TourStep[]",
+     "required": true,
+     "description": "{ target?: string | RefObject, title, content?, side?, align? }. Sin `target` (o si no está), el paso va centrado."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "description": "Paso actual, controlado."
+    },
+    {
+     "name": "defaultStep",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "onStepChange",
+     "type": "(step: number) => void"
+    },
+    {
+     "name": "onFinish",
+     "type": "() => void",
+     "description": "Al terminar con «Done»."
+    },
+    {
+     "name": "onSkip",
+     "type": "() => void",
+     "description": "Al saltar con «Skip», Escape o el cierre."
+    },
+    {
+     "name": "progressLabel",
+     "type": "string",
+     "default": "Step {step} of {count}"
+    },
+    {
+     "name": "nextLabel",
+     "type": "string",
+     "default": "Next"
+    },
+    {
+     "name": "backLabel",
+     "type": "string",
+     "default": "Back"
+    },
+    {
+     "name": "doneLabel",
+     "type": "string",
+     "default": "Done"
+    },
+    {
+     "name": "skipLabel",
+     "type": "string",
+     "default": "Skip tour"
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Close tour"
+    },
+    {
+     "name": "ringPadding",
+     "type": "number",
+     "default": 6
+    }
+   ],
+   "states": [
+    "closed",
+    "open"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-radius",
+    "accent-ring",
+    "accent",
+    "control-radius-lg",
+    "fg-muted",
+    "text-title",
+    "layer-popover"
+   ],
+   "classes": [
+    "z-tour",
+    "z-tour__header",
+    "z-tour__progress",
+    "z-tour__title",
+    "z-tour__body",
+    "z-tour__footer",
+    "z-tour__primary",
+    "z-tour__close",
+    "z-tour__ring"
+   ],
+   "a11y": "Cada paso es una tarjeta no modal (popover manual) con role=dialog y su encabezado como nombre: el título tiene que entenderse sin ver la pantalla. Al abrir y en cada paso el foco entra en la tarjeta, en Siguiente o Hecho; la página sigue usable (no se vuelve inerte). Escape, Saltar o el cierre terminan el recorrido y el foco vuelve a donde estaba; Flecha izquierda y derecha (invertidas en RTL) cambian de paso con el foco dentro. El elemento del paso se desplaza a la vista y un anillo lo resalta (decorativo). No se abre solo al cargar la página: lo inicia la persona.",
+   "examples": [
+    {
+     "title": "Recorrido de tres pasos",
+     "code": "<Tour\n  open={touring}\n  onOpenChange={setTouring}\n  steps={[\n    { target: \"#new-project\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n    { target: \"#search\", title: \"Search everything\", content: \"Press Ctrl K from anywhere.\", side: \"bottom\", align: \"start\" },\n    { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (core/tour, popover manual). Material de TourPopover y TourRing de zutool. Referencia de variantes: Tour de Shark UI.",
+   "html": [
+    {
+     "title": "Recorrido de tres pasos",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"tour-start\">Take the tour</button>\n\n<div class=\"z-liquid z-tour\" role=\"group\" aria-label=\"Tour step preview\">\n  <header class=\"z-tour__header\">\n    <p class=\"z-tour__progress\">Step 1 of 3</p>\n    <h2 class=\"z-tour__title\">Create a project</h2>\n  </header>\n  <div class=\"z-tour__body\">Projects group your files and members.</div>\n  <footer class=\"z-tour__footer\">\n    <button type=\"button\" class=\"z-dialog-btn z-tour__skip\" data-variant=\"secondary\">Skip tour</button>\n    <span class=\"z-tour__spacer\"></span>\n    <button type=\"button\" class=\"z-dialog-btn z-tour__primary\" data-variant=\"primary\">Next</button>\n  </footer>\n</div>",
+     "script": "import { startTour } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#tour-start\").addEventListener(\"click\", () => {\n  startTour({\n    steps: [\n      { target: \"#tour-start\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n      { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n    ],\n  });\n});"
+    }
+   ],
+   "file": "zui/src/components/overlay/Tour.manifest.json"
   }
  ]
 }

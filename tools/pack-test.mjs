@@ -416,8 +416,8 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
       bad("vite: el CSS compilado no trae zui, zout y tokens");
     else if (!js.includes("z-btn--")) bad("vite: el JS compilado no trae los componentes");
     // Solo se registraron dos iconos: el set completo (≈580 kB) no debe entrar. Tope con margen sobre lo que pesa la
-    // biblioteca sin iconos (≈575 kB con la agenda y su oleada 2, que suma ≈70 kB minificados de código propio: año,
-    // perpetuo, línea temporal, buscar hueco, franjas, mapa de calor y rachas): con el set completo pasa de 1 MB.
+    // biblioteca sin iconos (≈575 kB con la agenda completa y ≈571 kB con las capas y layouts de la oleada 4, medidos por
+    // separado; ver el tope abajo): con el set completo de iconos el bundle pasa de 1,1 MB.
     else if (js.length > 640_000)
       bad(`vite: el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el set completo de iconos no se está descartando`);
     else

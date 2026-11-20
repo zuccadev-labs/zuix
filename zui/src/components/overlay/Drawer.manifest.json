@@ -25,7 +25,7 @@
     {
       "name": "side",
       "type": "enum",
-      "values": ["left", "right", "bottom"],
+      "values": ["left", "right", "bottom", "top"],
       "default": "right"
     },
     {
@@ -63,6 +63,36 @@
       "default": "Close"
     },
     {
+      "name": "dragToClose",
+      "type": "boolean",
+      "default": false,
+      "description": "Asa para arrastrar el cajón hacia su borde y cerrarlo (el clic en el asa también cierra)."
+    },
+    {
+      "name": "snapPoints",
+      "type": "number[]",
+      "description": "Solo `top` y `bottom`: fracciones del alto de la ventana, de menor a mayor. El asa es un slider entre ellas; arrastrar por debajo del menor cierra."
+    },
+    {
+      "name": "snapPoint",
+      "type": "number",
+      "description": "Anclaje activo (índice), controlado."
+    },
+    {
+      "name": "defaultSnapPoint",
+      "type": "number",
+      "description": "Anclaje al abrir; por defecto, el mayor."
+    },
+    {
+      "name": "onSnapPointChange",
+      "type": "(index: number) => void"
+    },
+    {
+      "name": "handleLabel",
+      "type": "string",
+      "description": "Nombre del asa."
+    },
+    {
       "name": "children",
       "type": "ReactNode"
     }
@@ -70,6 +100,9 @@
   "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
+    "duration-slow",
+    "ease-emphasized",
+    "ease-exit",
     "ease-standard",
     "fg",
     "fg-muted",
@@ -85,39 +118,42 @@
     "layer-overlay",
     "leading-normal",
     "leading-snug",
+    "leading-ui",
     "line",
+    "line-strong",
     "panel-radius",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-xs",
     "scrim",
     "shell-gap",
+    "space-1",
     "space-12",
+    "space-14",
     "space-2",
     "space-3",
     "space-4",
     "space-5",
+    "space-9",
     "text-body",
     "text-small",
-    "weight-semibold",
-    "duration-slow",
-    "ease-emphasized",
-    "ease-exit",
-    "leading-ui",
-    "popup-bg",
-    "popup-blur",
-    "popup-shadow",
-    "space-1",
     "text-title",
-    "tracking-snug"
+    "tracking-snug",
+    "weight-semibold"
   ],
   "classes": [
     "z-drawer",
-    "z-drawer__header",
-    "z-drawer__title",
-    "z-drawer__description",
     "z-drawer__body",
+    "z-drawer__close",
+    "z-drawer__description",
     "z-drawer__footer",
-    "z-drawer__close"
+    "z-drawer__grip",
+    "z-drawer__handle",
+    "z-drawer__header",
+    "z-drawer__title"
   ],
-  "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape y clic en el velo cierran, el foco vuelve al disparador.",
+  "a11y": "`<dialog>` abierto con `showModal()`: el resto de la página queda inerte, Tab da la vuelta dentro, Escape y clic en el velo cierran, el foco vuelve al disparador. Con `dragToClose`, el asa es un botón con nombre («Close») que también cierra con clic, Intro o Espacio; arrastrarla hacia el borde cierra al soltar pasado un tercio (o con un gesto rápido). Con `snapPoints`, el asa es role=slider (aria-valuenow, aria-valuetext en %): Flecha arriba o abajo (según el lado), Re Pág/Av Pág, Inicio y Fin cambian de anclaje, y arrastrar la lleva al más cercano con su inercia.",
   "examples": [
     {
       "title": "Filtros a la derecha",
@@ -126,6 +162,14 @@
     {
       "title": "Hoja inferior controlada",
       "code": "<Drawer open={open} onOpenChange={setOpen} side=\"bottom\" title=\"Details\">\n  <p>Details go here.</p>\n</Drawer>"
+    },
+    {
+      "title": "Hoja inferior con anclajes",
+      "code": "<Drawer\n  side=\"bottom\"\n  title=\"Comments\"\n  snapPoints={[0.4, 0.85]}\n  trigger={<Button>Comments</Button>}\n>\n  …\n</Drawer>"
+    },
+    {
+      "title": "Arriba, arrastrar para cerrar",
+      "code": "<Drawer side=\"top\" size=\"sm\" title=\"Search\" dragToClose trigger={<Button>Search</Button>}>\n  <SearchInput aria-label=\"Search\" />\n</Drawer>"
     }
   ],
   "origin": "Cajones con velo (`.shell-drawer`, `.shell-scrim`) de zutool; accesibilidad según el patrón APG, con primitivas propias.",
@@ -134,6 +178,11 @@
     {
       "title": "Panel lateral derecho",
       "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#filters\">Filters</button>\n\n<dialog id=\"filters\" class=\"z-liquid z-drawer\" data-side=\"right\" data-size=\"md\" aria-labelledby=\"filters-title\">\n  <header class=\"z-drawer__header\">\n    <h2 id=\"filters-title\" class=\"z-drawer__title\">Filters</h2>\n    <p class=\"z-drawer__description\">Narrow the list of projects.</p>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <footer class=\"z-drawer__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close>Apply</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
+    },
+    {
+      "title": "Hoja inferior con anclajes",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#comments\">Comments</button>\n\n<dialog id=\"comments\" class=\"z-liquid z-drawer\" data-side=\"bottom\" data-size=\"md\" data-drag data-snap-points=\"0.4 0.85\" data-snap=\"1\" aria-labelledby=\"comments-title\">\n  <button type=\"button\" role=\"slider\" class=\"z-drawer__handle\" aria-label=\"Panel height\" aria-orientation=\"vertical\" aria-valuemin=\"0\" aria-valuemax=\"1\" aria-valuenow=\"1\" aria-valuetext=\"85%\">\n    <span class=\"z-drawer__grip\" aria-hidden=\"true\"></span>\n  </button>\n  <header class=\"z-drawer__header\">\n    <h2 id=\"comments-title\" class=\"z-drawer__title\">Comments</h2>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
     }
-  ]
+  ],
+  "cssVars": ["--z-drawer-drag", "--z-drawer-snap"]
 }

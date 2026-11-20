@@ -41,11 +41,48 @@ export interface MenuItemEntry {
   /** No cierra el menú al elegir. */
   keepOpen?: boolean;
   onSelect?: () => void;
+  /** Destino: la entrada es un enlace (`<a href>`) que se abre en otra pestaña o se copia como cualquier enlace. */
+  href?: string;
   /** Submenú. */
   items?: MenuEntry[];
 }
 
-export type MenuEntry = { type: "separator" } | { type: "label"; label: ReactNode } | MenuItemEntry;
+/** Opción de encendido y apagado (`menuitemcheckbox`). Intro la cambia y cierra; Espacio la cambia y deja el menú abierto. */
+export interface MenuCheckboxEntry {
+  type: "checkbox";
+  id: string;
+  label: ReactNode;
+  shortcut?: string;
+  checked: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  disabled?: boolean;
+}
+
+/** Opción de un grupo de radio (`menuitemradio`). */
+export interface MenuRadioItem {
+  value: string;
+  label: ReactNode;
+  shortcut?: string;
+  disabled?: boolean;
+}
+
+/** Grupo de opciones excluyentes (`role="group"` con nombre); elegir cierra el menú. */
+export interface MenuRadioGroupEntry {
+  type: "radio-group";
+  id: string;
+  /** Nombre del grupo; se muestra como título encima de las opciones. */
+  label: string;
+  value: string;
+  onValueChange?: (value: string) => void;
+  items: MenuRadioItem[];
+}
+
+export type MenuEntry =
+  | { type: "separator" }
+  | { type: "label"; label: ReactNode }
+  | MenuItemEntry
+  | MenuCheckboxEntry
+  | MenuRadioGroupEntry;
 
 /**
  * Estado abierto/cerrado de una capa con disparador opcional. Devuelve el disparador ya conectado (clic, ref y

@@ -3,7 +3,7 @@
 // navegador (dialog, popover) y este módulo. Sirve en HTML plano, Vue, Svelte, Angular, Astro o plantillas de servidor.
 //
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zui/dom"; init();
-// Uso imperativo:    openDialog(el), closeDialog(el), openPopover(el, anchor), openSubmenu(item), toast({...}), confirm({...})
+// Uso imperativo:    openDialog(el), closeDialog(el), openPopover(el, anchor), openSubmenu(item), toast({...}), toastPromise(p, {...}), confirm({...}), startTour({...})
 //
 // Atributos:
 //   data-z-open="#id"        abre el <dialog> o el [popover] indicado (el popover se ancla al disparador)
@@ -12,6 +12,8 @@
 //   data-z-submenu="#id"     en un .z-menu__item: abre ese .z-menu[popover] como submenú, a su derecha
 //   data-z-tooltip="texto"   tooltip al pasar el puntero o enfocar
 //   data-z-placement         bottom-start (por defecto) | bottom | bottom-end | top-start | top | top-end | right | left
+//   data-z-anchor="#id"      en un disparador data-z-open: coloca el popover junto a ese elemento (ancla distinta)
+//   data-arrow               en un .z-popover: flecha hacia el centro del ancla
 //   data-z-static            en un <dialog>: Escape y clic fuera no lo cierran
 // Los atributos de referencia (`#id`) se resuelven con getElementById: valen ids con cualquier carácter y un valor
 // que no sea un selector válido no lanza. Seguridad (CSP, Trusted Types, texto de la aplicación): ver ./shared.
@@ -27,6 +29,8 @@ import * as widgets from "./widgets";
 import * as carousel from "./carousel";
 import * as collections from "./collections";
 import * as forms from "./forms";
+import * as layers from "./layers";
+import * as navigation from "./navigation";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
 import { escapeTop } from "../core/layers";
@@ -35,6 +39,7 @@ import { createLongPress } from "../core/long-press";
 import { followModalHost, modalHost, moveToHost, settleShown } from "../core/modal-host";
 import { createMenuAim } from "../core/menu-aim";
 import { isRtl } from "../core/dir";
+import { anchorWithCss, settleAnchoring, type CssAnchoring } from "../core/anchor";
 import { place, submenuAnchor, topInset, type Placement } from "../core/place";
 import { afterExit } from "../core/presence";
 import { move, moveBoth } from "../core/roving";
@@ -44,7 +49,7 @@ import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [actions, forms, collections, carousel, time, agenda, widgets];
+const modules = [actions, forms, collections, carousel, time, agenda, widgets, navigation, layers];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { openPalette, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
 export {
@@ -83,6 +88,17 @@ export {
   type CalendarSource,
 } from "./agenda";
 export { destroyWidget, setWidgetProps } from "./widgets";
+export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
+export {
+  closeActionBar,
+  dismissBanner,
+  setDrawerSnap,
+  setHintOpen,
+  startTour,
+  type TourHandle,
+  type TourInit,
+  type TourStepInit,
+} from "./layers";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
 const isBrowser = typeof document !== "undefined";
@@ -165,30 +181,46 @@ function highlight(menu: Element, item: HTMLElement | undefined): void {
 
 /**
  * Abre un elemento `[popover]` anclado a `anchor` (un elemento o un punto de la ventana). Anclado a un elemento, lo
- * sigue cuando la página se desplaza o cambia de tamaño; `follow: false` lo deja donde se abrió.
+ * sigue cuando la página se desplaza o cambia de tamaño; `follow: false` lo deja donde se abrió. `trigger` es quien lo
+ * abre cuando no es el ancla (recibe `aria-expanded` y el foco al cerrar). Un `.z-popover` se coloca con CSS anchor
+ * positioning donde el navegador lo admite (mejora progresiva); si no, con `place()`.
  */
 export function openPopover(
   el: HTMLElement,
   anchor: Element | { x: number; y: number },
   placement: Placement = "bottom-start",
-  options: { follow?: boolean } = {},
+  options: { follow?: boolean; trigger?: Element } = {},
 ): void {
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
   if (!el.matches(":popover-open")) el.showPopover();
+  const gap = anchor instanceof Element ? 6 + (el.hasAttribute("data-arrow") ? 7 : 0) : 0;
+  let css = anchor instanceof Element && el.classList.contains("z-popover") ? anchorWithCss(el, anchor, placement, gap) : null;
+  if (css) cssAnchors.set(el, css);
   const position = () => {
+    // Con CSS anchor positioning solo se mide; si el motor la dejó lejos del ancla, se vuelve a `place()`.
+    if (css?.measure()) return;
+    css?.release();
+    css = null;
+    cssAnchors.delete(el);
     const rect = anchor instanceof Element ? anchor.getBoundingClientRect() : new DOMRect(anchor.x, anchor.y, 0, 0);
-    place(el, rect, placement, anchor instanceof Element ? 6 : 0);
+    place(el, rect, placement, gap);
   };
   position();
+  // Con CSS anchor positioning, algún motor aplica el desplazamiento de la página con retraso: se vigila un momento.
+  if (css) settleAnchoring(() => el.matches(":popover-open") && position());
   if (anchor instanceof Element) {
-    anchors.set(el, anchor);
-    anchor.setAttribute("aria-expanded", "true");
+    const owner = options.trigger ?? anchor;
+    anchors.set(el, owner);
+    owner.setAttribute("aria-expanded", "true");
     if (options.follow !== false) followers.set(el, position);
   }
   if (el.classList.contains("z-menu")) highlight(el, menuItems(el)[0]);
   emit(el, "open");
 }
+
+// Popovers colocados con CSS anchor positioning: al cerrarse se retira el ancla.
+const cssAnchors = new WeakMap<HTMLElement, CssAnchoring>();
 
 export function closePopover(el: HTMLElement): void {
   if (el.matches(":popover-open")) el.hidePopover();
@@ -310,6 +342,24 @@ function onMenuPointer(item: HTMLElement, event: PointerEvent): void {
   } else if (open) subTimer = setTimeout(() => closePopover(open), 200);
 }
 
+/**
+ * Casilla (`menuitemcheckbox`) o radio (`menuitemradio`) de un menú: cambia `aria-checked` y emite `z:change` en la
+ * entrada (`{ checked }`) o en su grupo (`{ value }`, el `value` o `data-value` de la opción). Otra entrada no cambia.
+ */
+function checkItem(item: HTMLElement): void {
+  const role = item.getAttribute("role");
+  if (role === "menuitemcheckbox") {
+    const checked = item.getAttribute("aria-checked") !== "true";
+    item.setAttribute("aria-checked", String(checked));
+    emit(item, "change", { checked });
+  } else if (role === "menuitemradio" && item.getAttribute("aria-checked") !== "true") {
+    const group = item.closest<HTMLElement>('[role="group"], .z-menu') ?? item;
+    for (const other of group.querySelectorAll<HTMLElement>('[role="menuitemradio"]'))
+      if (other.closest(".z-menu") === item.closest(".z-menu")) other.setAttribute("aria-checked", String(other === item));
+    emit(group, "change", { value: item.getAttribute("value") ?? item.dataset.value ?? "" });
+  }
+}
+
 // Búsqueda por letra: enfoca la siguiente entrada cuyo texto empieza por lo tecleado.
 const menuSearch = createTypeahead(600);
 
@@ -325,6 +375,8 @@ function onPopoverToggle(event: Event): void {
   const el = event.target as HTMLElement;
   if ((event as ToggleEvent).newState !== "closed" || !el.hasAttribute?.("popover")) return;
   followers.delete(el);
+  cssAnchors.get(el)?.release();
+  cssAnchors.delete(el);
   const anchor = anchors.get(el);
   if (anchor) {
     anchor.setAttribute("aria-expanded", "false");
@@ -406,6 +458,14 @@ export interface ToastOptions {
   closeLabel?: string;
   /** Nombre accesible de la región de avisos. F8 lleva el foco a ella. */
   regionLabel?: string;
+  /** En curso: anillo de carga, `aria-busy` y sin cierre automático hasta que se actualice. */
+  loading?: boolean;
+}
+
+/** Lo que devuelve `toast()`: descarta el aviso al llamarla; `update()` cambia su texto, intención, duración o carga. */
+export interface ToastHandle {
+  (): void;
+  update(options: Partial<Pick<ToastOptions, "title" | "description" | "intent" | "duration" | "loading">>): void;
 }
 
 // Avisos que ya hicieron su entrada: al mudar o volver a mostrar la región no la repiten.
@@ -444,7 +504,10 @@ function viewport(position: string, label: string): HTMLElement {
   return host;
 }
 
-/** Muestra un aviso con el mismo marcado que el Toast de React. Devuelve una función para descartarlo. */
+/**
+ * Muestra un aviso con el mismo marcado que el Toast de React. Devuelve una función para descartarlo, con `update()`
+ * para cambiarlo en su sitio (lo que usa `toastPromise`).
+ */
 export function toast({
   title,
   description,
@@ -454,7 +517,8 @@ export function toast({
   position = "bottom-right",
   closeLabel = "Close",
   regionLabel = "Notifications (F8)",
-}: ToastOptions): () => void {
+  loading = false,
+}: ToastOptions): ToastHandle {
   const host = viewport(position, regionLabel);
   const item = document.createElement("div");
   item.className = "z-liquid z-toast";
@@ -469,15 +533,32 @@ export function toast({
   const content = item.querySelector(".z-toast__content")!;
   content.querySelector(".z-toast__title")!.textContent = title;
   item.querySelector(".z-toast__close")!.setAttribute("aria-label", closeLabel);
-  if (description) {
-    const text = document.createElement("div");
-    text.className = "z-toast__description";
-    text.textContent = description;
-    content.append(text);
-  }
+  const describe = (text: string | undefined) => {
+    let node = content.querySelector<HTMLElement>(".z-toast__description");
+    if (!text) return node?.remove();
+    if (!node) {
+      node = document.createElement("div");
+      node.className = "z-toast__description";
+      content.querySelector(".z-toast__title")!.after(node);
+    }
+    node.textContent = text;
+  };
+  describe(description);
+  const setLoading = (on: boolean) => {
+    const mark = item.firstElementChild!;
+    mark.className = on ? "z-toast__spinner" : "z-toast__dot";
+    if (on) {
+      item.dataset.loading = "";
+      item.setAttribute("aria-busy", "true");
+    } else {
+      delete item.dataset.loading;
+      item.removeAttribute("aria-busy");
+    }
+  };
+  setLoading(loading);
   // Cierre automático con pausa (WCAG 2.2.1): el tiempo no corre mientras el puntero o el foco están en el aviso,
   // ni durante un gesto de descarte; al salir continúa con lo que quedaba.
-  const timer = createTimer(duration, () => dismiss());
+  let timer = createTimer(loading ? 0 : duration, () => dismiss());
   const hold = (reason: string) => timer.hold(reason);
   const release = (reason: string) => timer.release(reason);
   const whileOpen = new AbortController();
@@ -531,7 +612,50 @@ export function toast({
   host.append(item);
   toastShown.add(item);
   timer.start();
-  return dismiss;
+  const handle = dismiss as ToastHandle;
+  handle.update = (next) => {
+    if (item.dataset.state === "closed") return;
+    if (next.title !== undefined) content.querySelector(".z-toast__title")!.textContent = next.title;
+    if ("description" in next) describe(next.description);
+    if (next.intent) {
+      item.dataset.intent = next.intent;
+      item.setAttribute("role", next.intent === "danger" || next.intent === "warning" ? "alert" : "status");
+    }
+    const busy = next.loading ?? item.hasAttribute("data-loading");
+    setLoading(busy);
+    // La cuenta atrás empieza de nuevo con la duración nueva (ninguna mientras está en curso).
+    timer.stop();
+    timer = createTimer(busy ? 0 : (next.duration ?? duration), () => dismiss());
+    if (item.matches(":hover")) timer.hold("pointer");
+    if (item.contains(document.activeElement)) timer.hold("focus");
+    timer.start();
+  };
+  return handle;
+}
+
+/** Mensaje de un estado de `toastPromise`: un texto o las opciones del aviso. */
+export type ToastPromiseMessage<T> = string | Partial<ToastOptions> | ((value: T) => string | Partial<ToastOptions>);
+
+/**
+ * Aviso que sigue a una promesa (como `toast.promise` de React): «cargando» sin cierre automático y, al resolverse,
+ * el mensaje de éxito o de error en el mismo aviso, que entonces se cierra solo. Devuelve la misma promesa.
+ */
+export function toastPromise<T>(
+  promise: Promise<T>,
+  messages: { loading: string | ToastOptions; success: ToastPromiseMessage<T>; error: ToastPromiseMessage<unknown> },
+): Promise<T> {
+  const start = typeof messages.loading === "string" ? { title: messages.loading } : messages.loading;
+  const handle = toast({ ...start, loading: true });
+  const settle = <V>(message: ToastPromiseMessage<V>, value: V, intent: "success" | "danger") => {
+    const resolved = typeof message === "function" ? message(value) : message;
+    const options = typeof resolved === "string" ? { title: resolved } : resolved;
+    handle.update({ intent, description: undefined, ...options, loading: false });
+  };
+  promise.then(
+    (value) => settle(messages.success, value, "success"),
+    (error: unknown) => settle(messages.error, error, "danger"),
+  );
+  return promise;
 }
 
 // Elemento que tenía el foco antes de entrar en la región de avisos con F8.
@@ -818,7 +942,11 @@ function onClick(event: MouseEvent): void {
     if (el instanceof HTMLDialogElement) openDialog(el);
     else if (el) {
       if (el.matches(":popover-open")) closePopover(el);
-      else openPopover(el, opener, (opener.getAttribute("data-z-placement") as Placement) ?? "bottom-start");
+      else {
+        // `data-z-anchor="#id"`: se coloca junto a otro elemento; el disparador sigue siendo el que lo abre.
+        const anchor = byRef(opener.getAttribute("data-z-anchor")) ?? opener;
+        openPopover(el, anchor, (opener.getAttribute("data-z-placement") as Placement) ?? "bottom-start", { trigger: opener });
+      }
     }
     return;
   }
@@ -847,6 +975,7 @@ function onClick(event: MouseEvent): void {
       openSubmenu(item, event.detail === 0);
       return;
     }
+    checkItem(item);
     emit(item, "select");
     // Elegir cierra toda la cadena: el menú raíz se lleva consigo sus submenús.
     if (!item.hasAttribute("data-keep-open")) closeChain(item.closest<HTMLElement>(".z-menu")!);
@@ -927,6 +1056,8 @@ function onKeydown(event: KeyboardEvent): void {
 
   const menu = target.closest<HTMLElement>(".z-menu[popover]");
   if (menu) {
+    // Menú de una barra (Menubar): las flechas laterales pueden pasar al menú vecino.
+    if (navigation.menubarKeyInMenu(menu, event)) return;
     const current = target.closest<HTMLElement>(".z-menu__item");
     const own = current && current.closest(".z-menu") === menu && !isDisabled(current) ? current : null;
     const parentTrigger = anchors.get(menu);
@@ -939,7 +1070,11 @@ function onKeydown(event: KeyboardEvent): void {
       clearTimeout(subTimer);
       highlight(menu, next);
     } else if (event.key === "Tab") closeChain(menu);
-    else if (
+    else if (event.key === " " && own?.getAttribute("role") === "menuitemcheckbox") {
+      // Espacio cambia la casilla y deja el menú abierto (APG); Intro la cambia y cierra (clic).
+      event.preventDefault();
+      checkItem(own);
+    } else if (
       (logicalKey(event.key, menu) === "ArrowRight" || event.key === "Enter" || event.key === " ") &&
       own?.hasAttribute("data-z-submenu")
     ) {

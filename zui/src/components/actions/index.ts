@@ -14,3 +14,4 @@ export {
 } from "./ToggleGroup";
 export { CopyButton, type CopyButtonProps } from "./CopyButton";
 export { Swap, type SwapProps } from "./Swap";
+export { Toolbar, ToolbarGroup, ToolbarSeparator, type ToolbarProps, type ToolbarGroupProps } from "./Toolbar";

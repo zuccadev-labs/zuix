@@ -140,6 +140,41 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Toolbar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Toolbar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div role="toolbar" aria-label="Text formatting" aria-orientation="horizontal" class="z-toolbar z-liquid" data-variant="glass" data-size="md">
+  <div role="group" aria-label="Style" class="z-toggle-group" data-orientation="horizontal" data-attached="true" data-type="multiple">
+    <button type="button" class="z-toggle" data-size="sm" data-variant="ghost" data-icon-only="true" aria-pressed="true" aria-label="Bold" title="Bold" data-state="on" value="bold">
+      <z-icon name="bold" size="14"></z-icon>
+    </button>
+    <button type="button" class="z-toggle" data-size="sm" data-variant="ghost" data-icon-only="true" aria-pressed="false" aria-label="Italic" title="Italic" data-state="off" value="italic">
+      <z-icon name="italic" size="14"></z-icon>
+    </button>
+    <button type="button" class="z-toggle" data-size="sm" data-variant="ghost" data-icon-only="true" aria-pressed="false" aria-label="Underline" title="Underline" data-state="off" value="underline">
+      <z-icon name="underline" size="14"></z-icon>
+    </button>
+  </div>
+  <div role="separator" aria-orientation="vertical" class="z-toolbar__separator"></div>
+  <div role="group" aria-label="Insert" class="z-toolbar__group">
+    <button type="button" title="Insert link" aria-label="Insert link" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+      <z-icon name="link" size="14"></z-icon>
+    </button>
+    <button type="button" title="Insert image" aria-label="Insert image" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+      <z-icon name="photo" size="14"></z-icon>
+    </button>
+    <button type="button" title="Insert code" aria-disabled="true" aria-label="Insert code" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+      <z-icon name="code-bracket" size="14"></z-icon>
+    </button>
+  </div>
+  <div role="separator" aria-orientation="vertical" class="z-toolbar__separator"></div>
+  <button type="button" class="z-btn z-btn--ghost" data-size="sm">
+    <z-icon name="arrow-uturn-up-left" size="14"></z-icon>
+    Undo
+  </button>
+</div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">agenda</h2>
 <div class="page__grid">
@@ -642,6 +677,27 @@ pnpm dev</code>
     <p class="z-alert__title">Changes saved</p>
     <div class="z-alert__message">Your profile is up to date.</div>
   </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Banner" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Banner</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-banner" data-tone="accent" data-layout="page">
+  <span class="z-banner__icon" aria-hidden="true">
+    <z-icon name="megaphone" size="16"></z-icon>
+  </span>
+  <div class="z-banner__body">
+    <span class="z-banner__badge">New</span>
+    <strong class="z-banner__title">Workspaces are here.</strong>
+    <span class="z-banner__text">Group projects and share layouts with your team.</span>
+  </div>
+  <div class="z-banner__action">
+    <a href="/changelog" class="z-link z-link--inline">See what changed</a>
+  </div>
+  <button type="button" class="z-banner__close" aria-label="Dismiss" title="Dismiss">
+    <z-icon name="x-mark" size="14"></z-icon>
+  </button>
 </div>
   </div>
 </section>
@@ -1504,6 +1560,103 @@ pnpm dev</code>
 </nav>
   </div>
 </section>
+<section class="z-card demo" data-component="Collapsible" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Collapsible</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div id="advanced" class="z-collapsible" data-state="closed" data-variant="plain">
+  <button type="button" class="z-collapsible__trigger" aria-expanded="false" aria-controls="advanced-content">
+    <z-icon name="adjustments-horizontal" size="16"></z-icon>
+    <span class="z-collapsible__title">Advanced settings</span>
+    <span class="z-collapsible__chevron" aria-hidden="true">
+      <z-icon name="chevron-down" size="16"></z-icon>
+    </span>
+  </button>
+  <div id="advanced-content" class="z-collapsible__content" data-state="closed" hidden="">
+    <p>Retries, timeouts and the proxy used for outgoing requests.</p>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Menubar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Menubar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-menubar z-liquid" role="menubar" aria-label="Application" aria-orientation="horizontal" data-variant="glass" data-size="sm">
+  <button type="button" role="menuitem" id="mb-file-trigger" class="z-menubar__trigger" aria-haspopup="menu" aria-expanded="false" data-z-open="#mb-file" tabindex="0">File</button>
+  <button type="button" role="menuitem" id="mb-edit-trigger" class="z-menubar__trigger" aria-haspopup="menu" aria-expanded="false" data-z-open="#mb-edit" tabindex="-1">Edit</button>
+  <button type="button" role="menuitem" id="mb-view-trigger" class="z-menubar__trigger" aria-haspopup="menu" aria-expanded="false" data-z-open="#mb-view" tabindex="-1">View</button>
+</div>
+
+<div id="mb-file" popover class="z-liquid z-menu" role="menu" aria-labelledby="mb-file-trigger" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="document-plus" size="14"></z-icon></span>
+    <span class="z-menu__text">New file</span>
+    <kbd class="z-menu__shortcut">Ctrl N</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="folder-open" size="14"></z-icon></span>
+    <span class="z-menu__text">Open…</span>
+    <kbd class="z-menu__shortcut">Ctrl O</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" aria-haspopup="menu" aria-expanded="false" aria-controls="mb-recent" data-z-submenu="#mb-recent">
+    <span class="z-menu__icon"><z-icon name="clock" size="14"></z-icon></span>
+    <span class="z-menu__text">Open recent</span>
+    <span class="z-menu__chevron"><z-icon name="chevron-right" size="14"></z-icon></span>
+  </button>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="arrow-down-tray" size="14"></z-icon></span>
+    <span class="z-menu__text">Save</span>
+    <kbd class="z-menu__shortcut">Ctrl S</kbd>
+  </button>
+</div>
+
+<div id="mb-recent" popover class="z-liquid z-menu" role="menu" aria-label="Open recent" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"></span>
+    <span class="z-menu__text">atlas/README.md</span>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"></span>
+    <span class="z-menu__text">borealis/tokens.json</span>
+  </button>
+</div>
+
+<div id="mb-edit" popover class="z-liquid z-menu" role="menu" aria-labelledby="mb-edit-trigger" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="arrow-uturn-up-left" size="14"></z-icon></span>
+    <span class="z-menu__text">Undo</span>
+    <kbd class="z-menu__shortcut">Ctrl Z</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="arrow-uturn-up-right" size="14"></z-icon></span>
+    <span class="z-menu__text">Redo</span>
+    <kbd class="z-menu__shortcut">Ctrl Y</kbd>
+  </button>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="scissors" size="14"></z-icon></span>
+    <span class="z-menu__text">Cut</span>
+    <kbd class="z-menu__shortcut">Ctrl X</kbd>
+  </button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="document-duplicate" size="14"></z-icon></span>
+    <span class="z-menu__text">Copy</span>
+    <kbd class="z-menu__shortcut">Ctrl C</kbd>
+  </button>
+</div>
+
+<div id="mb-view" popover class="z-liquid z-menu" role="menu" aria-labelledby="mb-view-trigger" data-size="md">
+  <button type="button" role="menuitemcheckbox" aria-checked="true" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon z-menu__check" data-kind="checkbox" aria-hidden="true"><z-icon name="check" size="14"></z-icon></span>
+    <span class="z-menu__text">Sidebar</span>
+  </button>
+  <button type="button" role="menuitemcheckbox" aria-checked="false" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon z-menu__check" data-kind="checkbox" aria-hidden="true"><z-icon name="check" size="14"></z-icon></span>
+    <span class="z-menu__text">Status bar</span>
+  </button>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="NavList" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">NavList</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1689,6 +1842,93 @@ pnpm dev</code>
 </div>
 <h2 class="page__group">overlay</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="ActionBar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ActionBar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-position="inline" role="toolbar" aria-label="Selection actions" aria-orientation="horizontal" class="z-toolbar z-liquid z-actionbar" data-variant="glass" data-size="sm">
+  <span class="z-actionbar__count" aria-live="polite" aria-atomic="true">3 selected</span>
+  <span role="separator" aria-orientation="vertical" class="z-toolbar__separator"></span>
+  <span class="z-actionbar__actions">
+    <button type="button" class="z-btn z-btn--ghost" data-size="sm">
+      <z-icon name="archive-box" size="14"></z-icon>
+      Archive
+    </button>
+    <button type="button" class="z-btn z-btn--ghost" data-size="sm">
+      <z-icon name="tag" size="14"></z-icon>
+      Label
+    </button>
+    <button type="button" class="z-btn z-btn--danger" data-size="sm">
+      <z-icon name="trash" size="14"></z-icon>
+      Delete
+    </button>
+  </span>
+  <button type="button" class="z-actionbar__close" aria-label="Clear selection" title="Clear selection">
+    <z-icon name="x-mark" size="14"></z-icon>
+  </button>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Command" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Command</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-liquid z-palette z-command" data-inline="">
+  <div class="z-palette__search">
+    <span class="z-palette__search-icon">
+      <z-icon name="magnifying-glass" size="16"></z-icon>
+    </span>
+    <input class="z-palette__input" type="text" role="combobox" aria-expanded="true" aria-controls="project-commands-list" aria-activedescendant="project-commands-option-0" aria-autocomplete="list" aria-label="Project commands" autoComplete="off" spellCheck="false" placeholder="Search commands…" value=""/>
+  </div>
+  <div id="project-commands-list" role="listbox" aria-label="Project commands" class="z-palette__list">
+    <div role="group" aria-label="Project" class="z-palette__group">
+      <div class="z-palette__heading" aria-hidden="true">Project</div>
+      <div id="project-commands-option-0" role="option" aria-selected="true" data-index="0" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="pencil" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Rename project</span>
+        <span class="z-palette__shortcut">
+          <kbd class="z-palette__kbd">F2</kbd>
+        </span>
+      </div>
+      <div id="project-commands-option-1" role="option" aria-selected="false" data-index="1" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="document-duplicate" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Duplicate</span>
+      </div>
+    </div>
+    <div role="group" aria-label="Go to" class="z-palette__group">
+      <div class="z-palette__heading" aria-hidden="true">Go to</div>
+      <div id="project-commands-option-2" role="option" aria-selected="false" data-index="2" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="gear" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Settings</span>
+        <span class="z-palette__item-hint">Project</span>
+      </div>
+      <div id="project-commands-option-3" role="option" aria-selected="false" data-index="3" class="z-palette__item">
+        <span class="z-palette__item-icon">
+          <z-icon name="users" size="16"></z-icon>
+        </span>
+        <span class="z-palette__item-label">Members</span>
+      </div>
+    </div>
+  </div>
+  <div class="z-palette__footer">
+    <span>
+      <kbd class="z-kbd" data-size="md">↑</kbd>
+       
+      <kbd class="z-kbd" data-size="md">↓</kbd>
+       to move
+    </span>
+    <span>
+      <kbd class="z-kbd" data-size="md">Enter</kbd>
+       to run
+    </span>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="CommandPalette" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">CommandPalette</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -1800,6 +2040,20 @@ pnpm dev</code>
 </dialog>
   </div>
 </section>
+<section class="z-card demo" data-component="HoverCard" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">HoverCard</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<p>Reviewed by <a href="/people/ana" data-z-hovercard="#hc-ana" data-z-placement="bottom">@ana</a> yesterday.</p>
+
+<div id="hc-ana" popover="manual" class="z-liquid z-hovercard" role="tooltip" data-arrow>
+  <div style="display:grid;gap:4px;min-width:220px">
+    <strong>Ana Ruiz</strong>
+    <span>Design systems · Madrid</span>
+    <a href="/people/ana/projects">12 projects</a>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Menu" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Menu</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -1882,6 +2136,20 @@ pnpm dev</code>
 <button type="button" class="z-btn z-btn--primary" data-size="md" id="save">Save</button>
   </div>
 </section>
+<section class="z-card demo" data-component="Toggletip" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Toggletip</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span style="display:inline-flex;align-items:center;gap:4px">Shipping
+  <button type="button" class="z-toggletip__trigger" data-size="md" aria-label="More about shipping" aria-expanded="false" data-z-toggletip="#tt-shipping">
+    <z-icon name="information-circle" size="16"></z-icon>
+  </button>
+</span>
+
+<div id="tt-shipping" popover="manual" class="z-liquid z-toggletip" role="tooltip" data-arrow>
+  Free on orders over $50. Orders placed before 2pm ship the same day.
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Tooltip" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Tooltip</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -1890,9 +2158,82 @@ pnpm dev</code>
 </button>
   </div>
 </section>
+<section class="z-card demo" data-component="Tour" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Tour</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-btn z-btn--secondary" data-size="md" id="tour-start">Take the tour</button>
+
+<div class="z-liquid z-tour" role="group" aria-label="Tour step preview">
+  <header class="z-tour__header">
+    <p class="z-tour__progress">Step 1 of 3</p>
+    <h2 class="z-tour__title">Create a project</h2>
+  </header>
+  <div class="z-tour__body">Projects group your files and members.</div>
+  <footer class="z-tour__footer">
+    <button type="button" class="z-dialog-btn z-tour__skip" data-variant="secondary">Skip tour</button>
+    <span class="z-tour__spacer"></span>
+    <button type="button" class="z-dialog-btn z-tour__primary" data-variant="primary">Next</button>
+  </footer>
+</div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">layout</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="Float" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Float</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div style="display:flex;gap:24px;align-items:center">
+  <span class="z-float" data-placement="top-end">
+    <button type="button" title="Notifications, 3 unread" aria-label="Notifications, 3 unread" class="z-btn z-btn--icon z-btn--secondary" data-size="md">
+      <z-icon name="bell" size="16"></z-icon>
+    </button>
+    <span class="z-float__item">
+      <span class="z-badge" data-tone="danger" data-variant="solid" data-size="sm">3</span>
+    </span>
+  </span>
+  <span class="z-float" data-placement="bottom-end" style="--z-float-offset:14%">
+    <span class="z-avatar" data-size="md" data-shape="circle" role="img" aria-label="Ana Ruiz">
+      <span class="z-avatar__initials" aria-hidden="true">AR</span>
+    </span>
+    <span class="z-float__item">
+      <span class="z-badge" data-tone="success" data-variant="solid" data-size="sm">On</span>
+    </span>
+  </span>
+  <span class="z-float" data-placement="top-start">
+    <button type="button" class="z-btn z-btn--secondary" data-size="md">Reports</button>
+    <span class="z-float__item">
+      <span class="z-badge" data-tone="accent" data-variant="solid" data-size="sm">New</span>
+    </span>
+  </span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="FloatingPanel" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FloatingPanel</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%">
+  <button type="button" class="z-btn z-btn--secondary" data-size="sm" data-z-panel="#inspector-panel">Toggle inspector</button>
+  <div style="position:relative;height:300px;width:100%">
+    <section class="z-floatpanel z-liquid" id="inspector-panel" role="dialog" aria-labelledby="inspector-panel-title" tabindex="-1" data-strategy="absolute" style="left:16px;top:16px;width:260px;height:200px">
+      <header class="z-floatpanel__header">
+        <button type="button" class="z-floatpanel__handle" aria-label="Move panel (arrow keys)" title="Move panel (arrow keys)">
+          <z-icon name="bars-2" size="14"></z-icon>
+        </button>
+        <h2 class="z-floatpanel__title" id="inspector-panel-title">Inspector</h2>
+        <button type="button" class="z-floatpanel__close" aria-label="Close" title="Close">
+          <z-icon name="x-mark" size="14"></z-icon>
+        </button>
+      </header>
+      <div class="z-floatpanel__body">
+        <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>
+      </div>
+      <button type="button" class="z-floatpanel__resize" aria-label="Resize panel (arrow keys)" title="Resize panel (arrow keys)"></button>
+    </section>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Grid" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Grid</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1942,6 +2283,160 @@ pnpm dev</code>
         <div class="z-grid" data-gap="4" style="--z-grid-min:200px">…</div>
       </section>
     </div>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="PaneHeader" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">PaneHeader</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="width:420px">
+  <div class="z-pane">
+    <div class="z-pane__header">
+      <div class="z-paneheader" data-focused="true">
+        <span class="z-paneheader__icon">
+          <z-icon name="code-bracket" size="14"></z-icon>
+        </span>
+        <div class="z-paneheader__titles">
+          <span class="z-paneheader__title">Button.tsx</span>
+          <span class="z-paneheader__subtitle">zui/src/components</span>
+        </div>
+        <div role="toolbar" aria-label="Editor actions" aria-orientation="horizontal" class="z-toolbar z-paneheader__actions" data-variant="plain" data-size="sm">
+          <button type="button" title="Split right" aria-label="Split right" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+            <z-icon name="view-columns" size="14"></z-icon>
+          </button>
+          <button type="button" title="Maximize" aria-label="Maximize" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+            <z-icon name="arrows-pointing-out" size="14"></z-icon>
+          </button>
+          <button type="button" title="More actions" aria-label="More actions" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+            <z-icon name="ellipsis-horizontal" size="14"></z-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="z-pane__body">
+      <div style="padding:12px">export function Button() </div>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="PaneLayout" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">PaneLayout</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="height:360px;width:100%">
+  <div class="z-panelayout" id="pl-demo" data-divider-label="Resize panes">
+    <div class="z-split" data-direction="row">
+      <div class="z-split__pane" id="pl-3-0" style="flex-grow:0.55">
+        <section class="z-panelayout__pane" data-pane-id="editor" aria-labelledby="pl-0-editor-title">
+          <div class="z-pane" data-focused="true">
+            <div class="z-pane__header">
+              <div class="z-panelayout__grab">
+                <div class="z-paneheader" data-focused="true">
+                  <span class="z-paneheader__icon">
+                    <z-icon name="code-bracket" size="14"></z-icon>
+                  </span>
+                  <div class="z-paneheader__titles">
+                    <span class="z-paneheader__title" id="pl-0-editor-title">Editor</span>
+                  </div>
+                  <div role="toolbar" aria-label="Editor pane actions" aria-orientation="horizontal" class="z-toolbar z-paneheader__actions" data-variant="plain" data-size="sm">
+                    <button type="button" title="Editor pane actions" aria-haspopup="menu" aria-expanded="false" aria-controls="pl-editor-menu" data-z-open="#pl-editor-menu" data-z-placement="bottom-end" id="pl-1dcr-trigger" aria-label="Editor pane actions" class="z-btn z-btn--icon z-btn--ghost z-panelayout__menu" data-size="sm">
+                      <z-icon name="ellipsis-horizontal" size="14"></z-icon>
+                    </button>
+                    <div class="z-liquid z-menu" popover id="pl-editor-menu" role="menu" aria-label="Editor pane actions" data-size="md">
+                      <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-left" data-pane-for="editor"><span class="z-menu__icon"></span><span class="z-menu__text">Move left</span></button>
+                      <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-right" data-pane-for="editor"><span class="z-menu__icon"></span><span class="z-menu__text">Move right</span></button>
+                      <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-up" data-pane-for="editor"><span class="z-menu__icon"></span><span class="z-menu__text">Move up</span></button>
+                      <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-down" data-pane-for="editor"><span class="z-menu__icon"></span><span class="z-menu__text">Move down</span></button>
+                      <div role="separator" class="z-menu__separator"></div>
+                      <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-danger="true" data-pane-action="close" data-pane-for="editor"><span class="z-menu__icon"><z-icon name="x-mark" size="14"></z-icon></span><span class="z-menu__text">Close pane</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="z-pane__body">
+              <p style="padding:12px">Drag a header onto another pane, or use its menu.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize panes" aria-controls="pl-3-0" aria-valuenow="55" aria-valuemin="10" aria-valuemax="90" class="z-split__divider"></div>
+      <div class="z-split__pane" id="pl-3-1" style="flex-grow:0.45">
+        <div class="z-split" data-direction="column">
+          <div class="z-split__pane" id="pl-5b-0" style="flex-grow:0.35">
+            <section class="z-panelayout__pane" data-pane-id="preview" aria-labelledby="pl-0-preview-title">
+              <div class="z-pane" data-focused="false">
+                <div class="z-pane__header">
+                  <div class="z-panelayout__grab">
+                    <div class="z-paneheader" data-focused="false">
+                      <span class="z-paneheader__icon">
+                        <z-icon name="eye" size="14"></z-icon>
+                      </span>
+                      <div class="z-paneheader__titles">
+                        <span class="z-paneheader__title" id="pl-0-preview-title">Preview</span>
+                      </div>
+                      <div role="toolbar" aria-label="Preview pane actions" aria-orientation="horizontal" class="z-toolbar z-paneheader__actions" data-variant="plain" data-size="sm">
+                        <button type="button" title="Preview pane actions" aria-haspopup="menu" aria-expanded="false" aria-controls="pl-preview-menu" data-z-open="#pl-preview-menu" data-z-placement="bottom-end" id="pl-1dctb-trigger" aria-label="Preview pane actions" class="z-btn z-btn--icon z-btn--ghost z-panelayout__menu" data-size="sm">
+                          <z-icon name="ellipsis-horizontal" size="14"></z-icon>
+                        </button>
+                        <div class="z-liquid z-menu" popover id="pl-preview-menu" role="menu" aria-label="Preview pane actions" data-size="md">
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-left" data-pane-for="preview"><span class="z-menu__icon"></span><span class="z-menu__text">Move left</span></button>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-right" data-pane-for="preview"><span class="z-menu__icon"></span><span class="z-menu__text">Move right</span></button>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-up" data-pane-for="preview"><span class="z-menu__icon"></span><span class="z-menu__text">Move up</span></button>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-down" data-pane-for="preview"><span class="z-menu__icon"></span><span class="z-menu__text">Move down</span></button>
+                          <div role="separator" class="z-menu__separator"></div>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-danger="true" data-pane-action="close" data-pane-for="preview"><span class="z-menu__icon"><z-icon name="x-mark" size="14"></z-icon></span><span class="z-menu__text">Close pane</span></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="z-pane__body">
+                  <p style="padding:12px">Preview</p>
+                </div>
+              </div>
+            </section>
+          </div>
+          <div role="separator" tabindex="0" aria-orientation="horizontal" aria-label="Resize panes" aria-controls="pl-5b-0" aria-valuenow="35" aria-valuemin="10" aria-valuemax="90" class="z-split__divider"></div>
+          <div class="z-split__pane" id="pl-5b-1" style="flex-grow:0.65">
+            <section class="z-panelayout__pane" data-pane-id="terminal" aria-labelledby="pl-0-terminal-title">
+              <div class="z-pane" data-focused="false">
+                <div class="z-pane__header">
+                  <div class="z-panelayout__grab">
+                    <div class="z-paneheader" data-focused="false">
+                      <span class="z-paneheader__icon">
+                        <z-icon name="command-line" size="14"></z-icon>
+                      </span>
+                      <div class="z-paneheader__titles">
+                        <span class="z-paneheader__title" id="pl-0-terminal-title">Terminal</span>
+                      </div>
+                      <div role="toolbar" aria-label="Terminal pane actions" aria-orientation="horizontal" class="z-toolbar z-paneheader__actions" data-variant="plain" data-size="sm">
+                        <button type="button" title="Terminal pane actions" aria-haspopup="menu" aria-expanded="false" aria-controls="pl-terminal-menu" data-z-open="#pl-terminal-menu" data-z-placement="bottom-end" id="pl-1dddb-trigger" aria-label="Terminal pane actions" class="z-btn z-btn--icon z-btn--ghost z-panelayout__menu" data-size="sm">
+                          <z-icon name="ellipsis-horizontal" size="14"></z-icon>
+                        </button>
+                        <div class="z-liquid z-menu" popover id="pl-terminal-menu" role="menu" aria-label="Terminal pane actions" data-size="md">
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-left" data-pane-for="terminal"><span class="z-menu__icon"></span><span class="z-menu__text">Move left</span></button>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-right" data-pane-for="terminal"><span class="z-menu__icon"></span><span class="z-menu__text">Move right</span></button>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-up" data-pane-for="terminal"><span class="z-menu__icon"></span><span class="z-menu__text">Move up</span></button>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-pane-action="move-down" data-pane-for="terminal"><span class="z-menu__icon"></span><span class="z-menu__text">Move down</span></button>
+                          <div role="separator" class="z-menu__separator"></div>
+                          <button type="button" class="z-menu__item" role="menuitem" tabindex="-1" data-danger="true" data-pane-action="close" data-pane-for="terminal"><span class="z-menu__icon"><z-icon name="x-mark" size="14"></z-icon></span><span class="z-menu__text">Close pane</span></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="z-pane__body">
+                  <p style="padding:12px">zsh</p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="z-panelayout__status z-sr-only" role="status"></span>
   </div>
 </div>
   </div>
@@ -2301,6 +2796,10 @@ document.querySelector("#alarm").addEventListener("z:change", (event) => console
 // TimePicker
 document.querySelector("#start-time").addEventListener("z:change", (event) => console.log(event.detail.value));
 
+// Menubar
+// z:select en la entrada elegida; z:change en las casillas.
+document.addEventListener("z:select", (event) => { if (event.target.closest("[id^=mb-]")) console.log(event.target.textContent.trim()); });
+
 // CommandPalette
 document.querySelector("#commands").addEventListener("z:select", (event) => {
   toast({ title: "Command: " + event.detail.value });
@@ -2319,6 +2818,16 @@ document.addEventListener("z:select", (event) => { if (event.target.closest("#ac
 // Toast
 document.querySelector("#save").addEventListener("click", () => {
   toast({ title: "Changes saved", description: "Your profile is up to date.", intent: "success" });
+});
+
+// Tour
+document.querySelector("#tour-start").addEventListener("click", () => {
+  startTour({
+    steps: [
+      { target: "#tour-start", title: "Create a project", content: "Projects group your files and members." },
+      { title: "You are ready", content: "You can restart this tour from Help." },
+    ],
+  });
 });
   </script>
 </body>

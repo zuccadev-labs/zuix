@@ -1,0 +1,63 @@
+{
+  "name": "Menubar",
+  "group": "navigation",
+  "description": "Barra de menús de aplicación (File, Edit, View): una sola parada de tabulación y paso entre menús con las flechas.",
+  "import": "import { Menubar, type MenubarMenu } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "apg": "menubar",
+  "props": [
+    {
+      "name": "menus",
+      "type": "MenubarMenu[]",
+      "required": true,
+      "description": "{ id, label, items: MenuEntry[], disabled? }. Cada menú admite todo lo de Menu: submenús, casillas, radios y enlaces."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible de la barra."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["glass", "plain"],
+      "default": "glass",
+      "description": "`plain`: sin fondo, dentro de una TitleBar."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "sm"
+    }
+  ],
+  "states": ["rest", "hover", "focus", "open", "disabled"],
+  "tokens": [
+    "control-height-sm",
+    "control-radius-sm",
+    "surface-2",
+    "surface-3",
+    "glass-highlight",
+    "fg-muted",
+    "space-1",
+    "space-2-5",
+    "accent-ring"
+  ],
+  "classes": ["z-menubar", "z-menubar__trigger"],
+  "a11y": "role=menubar con nombre; cada título es role=menuitem con aria-haspopup=menu y aria-expanded, y su menú se nombra con el título (aria-labelledby). Una sola parada de Tab (foco itinerante): Flecha izquierda y derecha recorren los títulos con vuelta (en RTL la izquierda avanza) y, si hay un menú abierto, abren el del vecino; Inicio y Fin van al primero y al último. Flecha abajo, Intro o Espacio abren el menú y enfocan su primera entrada; Flecha arriba, la última. Dentro de un menú, Flecha izquierda en el primer nivel o Flecha derecha en una entrada sin submenú pasan al menú vecino; en un submenú, Flecha izquierda cierra solo ese nivel. Escape cierra y devuelve el foco al título; Tab cierra y sale de la barra. Con un menú abierto, pasar el puntero por otro título lo abre; sin ninguno abierto, no. Para menús independientes (cada uno con su parada), Menu.",
+  "examples": [
+    {
+      "title": "Barra de aplicación",
+      "code": "<Menubar\n  label=\"Application\"\n  menus={[\n    { id: \"file\", label: \"File\", items: [\n      { id: \"new\", label: \"New file\", icon: \"document-plus\", shortcut: \"Ctrl N\", onSelect: newFile },\n      { id: \"open\", label: \"Open…\", icon: \"folder-open\", shortcut: \"Ctrl O\", onSelect: openFile },\n      { id: \"recent\", label: \"Open recent\", icon: \"clock\", items: recentEntries },\n      { type: \"separator\" },\n      { id: \"save\", label: \"Save\", icon: \"arrow-down-tray\", shortcut: \"Ctrl S\", onSelect: save },\n    ] },\n    { id: \"edit\", label: \"Edit\", items: editEntries },\n    { id: \"view\", label: \"View\", items: [\n      { type: \"checkbox\", id: \"sidebar\", label: \"Sidebar\", checked: sidebar, onCheckedChange: setSidebar },\n      { type: \"checkbox\", id: \"status\", label: \"Status bar\", checked: status, onCheckedChange: setStatus },\n    ] },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo, con primitiva propia (APG «menubar») sobre el menú de la suite. Material de los menús de escritorio de zutool. Referencia de variantes: Menubar de Radix.",
+  "html": [
+    {
+      "title": "Barra de aplicación",
+      "code": "<div class=\"z-menubar z-liquid\" role=\"menubar\" aria-label=\"Application\" aria-orientation=\"horizontal\" data-variant=\"glass\" data-size=\"sm\">\n  <button type=\"button\" role=\"menuitem\" id=\"mb-file-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-file\" tabindex=\"0\">File</button>\n  <button type=\"button\" role=\"menuitem\" id=\"mb-edit-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-edit\" tabindex=\"-1\">Edit</button>\n  <button type=\"button\" role=\"menuitem\" id=\"mb-view-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-view\" tabindex=\"-1\">View</button>\n</div>\n\n<div id=\"mb-file\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-file-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-plus\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">New file</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl N</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"folder-open\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Open…</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl O</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"mb-recent\" data-z-submenu=\"#mb-recent\">\n    <span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Open recent</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-down-tray\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Save</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl S</kbd>\n  </button>\n</div>\n\n<div id=\"mb-recent\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Open recent\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">atlas/README.md</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">borealis/tokens.json</span>\n  </button>\n</div>\n\n<div id=\"mb-edit\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-edit-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-uturn-up-left\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Undo</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl Z</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-uturn-up-right\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Redo</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl Y</kbd>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"scissors\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Cut</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl X</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl C</kbd>\n  </button>\n</div>\n\n<div id=\"mb-view\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-view-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Sidebar</span>\n  </button>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Status bar</span>\n  </button>\n</div>",
+      "script": "// z:select en la entrada elegida; z:change en las casillas.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"[id^=mb-]\")) console.log(event.target.textContent.trim()); });"
+    }
+  ]
+}

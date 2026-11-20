@@ -6,3 +6,5 @@ export { Stepper, type StepperProps, type StepItem } from "./Stepper";
 export { Accordion, type AccordionProps, type AccordionItem } from "./Accordion";
 export { Tree, type TreeProps, type TreeNode } from "./Tree";
 export { NavList, NavLink, type NavListProps, type NavLinkProps } from "./NavList";
+export { Collapsible, type CollapsibleProps } from "./Collapsible";
+export { Menubar, type MenubarMenu, type MenubarProps } from "./Menubar";

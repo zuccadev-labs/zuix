@@ -5,12 +5,16 @@
 //              (single por defecto), data-required (single: siempre una activada), data-orientation="vertical".
 //              Una sola parada de Tab; las flechas mueven el foco. z:change { value } en el grupo: la cadena
 //              activada ("" si ninguna) en single, la lista en multiple.
+// Toolbar      .z-toolbar[role=toolbar][aria-label] con controles, .z-toolbar__group[role=group] y
+//              .z-toolbar__separator[role=separator]. Una sola parada de Tab para todos los controles (también los de un
+//              ToggleGroup anidado); flechas del eje (aria-orientation) con vuelta, Inicio y Fin. Recuerda el último.
 // CopyButton   .z-copy > button.z-copy__button + .z-copy__status[role=status]. El texto sale de data-value o del
 //              elemento de commandfor="id" (su valor si es un campo). data-copied-label, data-failed-label y
 //              data-timeout (ms) en el botón. z:copy { text } o z:copyerror en el botón.
 import { announceText, copyableText, copyText } from "../core/clipboard";
 import { logicalKey } from "../core/dir";
 import { move } from "../core/roving";
+import { setToolbarStop, toolbarTarget } from "../core/toolbar";
 import { all, emit, inDom } from "./forms-popup";
 import type { Listen } from "./shared";
 
@@ -46,7 +50,9 @@ function pressGroupItem(group: HTMLElement, item: HTMLButtonElement): void {
   if (group.dataset.type === "multiple") setPressed(item, on);
   else if (on) for (const other of group.querySelectorAll<HTMLElement>(":scope > .z-toggle")) setPressed(other, other === item);
   else if (!group.hasAttribute("data-required")) setPressed(item, false);
-  rove(group, item);
+  const bar = toolbarOf(group);
+  if (bar) setToolbarStop(bar, item);
+  else rove(group, item);
   const value = groupValue(group);
   if (JSON.stringify(value) !== before) emit(group, "change", { value });
 }
@@ -93,7 +99,16 @@ async function copyFrom(button: HTMLButtonElement): Promise<void> {
 
 /* ---------- Delegación ---------- */
 
+/* ---------- Toolbar ---------- */
+
+const toolbarOf = (el: Element) => el.closest<HTMLElement>('.z-toolbar[role="toolbar"]');
+
 export function setup(on: Listen): void {
+  on(document, "focusin", (event) => {
+    const target = event.target;
+    const bar = target instanceof Element ? toolbarOf(target) : null;
+    if (bar && target !== bar && inDom(bar)) setToolbarStop(bar, target as Element);
+  });
   on(document, "click", (event) => {
     const target = event.target;
     if (!(target instanceof Element) || !inDom(target)) return;
@@ -108,6 +123,15 @@ export function setup(on: Listen): void {
   on(document, "keydown", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement) || event.defaultPrevented || typeof event.key !== "string") return;
+    const bar = toolbarOf(target);
+    if (bar && inDom(bar)) {
+      const next = toolbarTarget(bar, target, event.key);
+      if (!next) return;
+      event.preventDefault();
+      setToolbarStop(bar, next);
+      next.focus();
+      return;
+    }
     const item = target.closest<HTMLButtonElement>(".z-toggle-group > .z-toggle");
     if (!item || !inDom(item)) return;
     const group = item.parentElement!;
@@ -121,5 +145,7 @@ export function setup(on: Listen): void {
 }
 
 export function hydrate(root: ParentNode): void {
-  for (const group of all(root, ".z-toggle-group")) rove(group);
+  // Un ToggleGroup dentro de una barra deja la parada de tabulación a la barra.
+  for (const group of all(root, ".z-toggle-group")) if (!toolbarOf(group)) rove(group);
+  for (const bar of all(root, '.z-toolbar[role="toolbar"]')) setToolbarStop(bar);
 }

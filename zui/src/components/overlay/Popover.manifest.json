@@ -61,6 +61,28 @@
       "description": "Modal: el panel es un <dialog> abierto con showModal(). El resto de la página queda inerte (puntero, foco y lectores de pantalla), Tab da la vuelta dentro y una pulsación fuera solo lo cierra."
     },
     {
+      "name": "anchor",
+      "type": "RefObject<Element | null>",
+      "description": "Ancla distinta del disparador: el panel se coloca junto a ella; el foco sigue volviendo al disparador."
+    },
+    {
+      "name": "arrow",
+      "type": "boolean",
+      "default": false,
+      "description": "Flecha hacia el centro del ancla; sigue al lado en que quede el panel, también tras voltearse."
+    },
+    {
+      "name": "showClose",
+      "type": "boolean",
+      "default": false,
+      "description": "Botón de cierre en la esquina."
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close"
+    },
+    {
       "name": "children",
       "type": "ReactNode"
     }
@@ -68,6 +90,9 @@
   "states": ["open", "closed"],
   "tokens": [
     "duration-fast",
+    "duration-normal",
+    "ease-emphasized",
+    "ease-exit",
     "fg",
     "font-sans",
     "glass-blur",
@@ -79,23 +104,28 @@
     "layer-popover",
     "leading-normal",
     "popup-bg",
+    "popup-blur",
     "popup-radius",
+    "popup-shadow",
+    "space-1",
     "space-3",
     "space-4",
-    "text-body",
-    "duration-normal",
-    "ease-emphasized",
-    "ease-exit",
-    "popup-blur",
-    "popup-shadow",
-    "space-1"
+    "text-body"
   ],
-  "classes": ["z-popover"],
-  "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra.",
+  "classes": ["z-popover", "z-popover__body", "z-popover__close"],
+  "a11y": "Capa `popover` propia: el disparador expone aria-expanded, el foco entra en el panel, Escape o un clic fuera cierran y el foco vuelve al disparador. El panel es role=dialog y su nombre es obligatorio: `label`, o `aria-labelledby` con el id de un encabezado suyo. Con `modal` el panel es un <dialog> abierto con showModal(): el resto de la página queda inerte, Tab da la vuelta dentro y una pulsación fuera solo lo cierra. Colocación: donde el navegador tiene CSS anchor positioning (`position-area`), el panel se ancla con CSS y se voltea solo con `position-try-fallbacks` (mejora progresiva); sin ella, se coloca y se sigue con la lógica de siempre. La flecha es decorativa y no cambia el árbol accesible.",
   "examples": [
     {
       "title": "Panel de detalles",
       "code": "<Popover trigger={<button type=\"button\">Usage</button>} label=\"Usage details\" width={280}>\n  <p>1,204 requests this month.</p>\n</Popover>"
+    },
+    {
+      "title": "Con flecha y cierre",
+      "code": "<Popover\n  label=\"Storage\"\n  arrow\n  showClose\n  side=\"top\"\n  align=\"center\"\n  trigger={<Button>Storage</Button>}\n>\n  <p>412 GB of 512 GB used.</p>\n</Popover>"
+    },
+    {
+      "title": "Ancla distinta del disparador",
+      "code": "const field = useRef(null);\n\n<Input ref={field} aria-label=\"Domain\" defaultValue=\"zuix.dev\" />\n<Popover label=\"DNS help\" anchor={field} arrow side=\"bottom\" align=\"start\" trigger={<IconButton icon=\"question-mark-circle\" label=\"DNS help\" />}>\n  Point an A record to 76.76.21.21.\n</Popover>"
     }
   ],
   "origin": "Popover de zutool (alineado al final, separación de 4 px); colocación propia (`core/place`).",
@@ -104,6 +134,10 @@
     {
       "title": "Popover anclado",
       "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"dialog\" data-z-open=\"#usage\" data-z-placement=\"bottom-start\">Usage</button>\n\n<div id=\"usage\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"Usage\">\n  412 GB of 512 GB used.\n</div>"
+    },
+    {
+      "title": "Con flecha y ancla distinta",
+      "code": "<span class=\"z-input\" data-size=\"md\" id=\"dns-field\">\n  <input class=\"z-input__control\" aria-label=\"Domain\" value=\"zuix.dev\">\n</span>\n<button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" aria-label=\"DNS help\" title=\"DNS help\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#dns-help\" data-z-anchor=\"#dns-field\" data-z-placement=\"bottom-start\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"dns-help\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"DNS help\" data-arrow data-close>\n  <div class=\"z-popover__body\">Point an A record to 76.76.21.21.</div>\n  <button type=\"button\" class=\"z-overlay-close z-popover__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</div>"
     }
   ]
 }

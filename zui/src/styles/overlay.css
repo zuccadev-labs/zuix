@@ -11,7 +11,10 @@
   .z-tooltip,
   .z-menu,
   .z-palette,
-  .z-toast {
+  .z-toast,
+  .z-hovercard,
+  .z-toggletip,
+  .z-tour {
     color: var(--z-fg);
     font-family: var(--z-font-sans);
     font-size: var(--z-text-body);
@@ -293,6 +296,94 @@
     max-height: min(var(--z-drawer-size), calc(100dvh - 2 * var(--z-shell-gap)));
     --z-drawer-from-y: 18px;
   }
+  .z-drawer[data-side="top"] {
+    inset-block-start: var(--z-shell-gap);
+    inset-inline: var(--z-shell-gap);
+    width: auto;
+    max-height: min(var(--z-drawer-size), calc(100dvh - 2 * var(--z-shell-gap)));
+    --z-drawer-from-y: -18px;
+  }
+  /* Puntos de anclaje: el alto sale del anclaje activo (fracción de la ventana) menos lo que se arrastra. */
+  .z-drawer[data-snap] {
+    height: calc(var(--z-drawer-snap) * 100dvh - var(--z-drawer-drag, 0px));
+    max-height: calc(100dvh - 2 * var(--z-shell-gap));
+    min-height: var(--z-space-14);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-drawer[data-snap]:not([data-dragging]) {
+      transition: height var(--z-duration-slow) var(--z-ease-emphasized);
+    }
+  }
+  /* Sin anclajes, el cajón sigue al dedo hacia su borde; al soltar vuelve (o se cierra). */
+  .z-drawer[data-drag]:not([data-snap]) {
+    translate: var(--z-drawer-drag-x, 0) var(--z-drawer-drag-y, 0);
+  }
+  .z-drawer[data-drag][data-side="bottom"]:not([data-snap]) {
+    --z-drawer-drag-y: var(--z-drawer-drag, 0px);
+  }
+  .z-drawer[data-drag][data-side="top"]:not([data-snap]) {
+    --z-drawer-drag-y: calc(var(--z-drawer-drag, 0px) * -1);
+  }
+  .z-drawer[data-drag][data-side="right"]:not([data-snap]) {
+    --z-drawer-drag-x: var(--z-drawer-drag, 0px);
+  }
+  .z-drawer[data-drag][data-side="left"]:not([data-snap]) {
+    --z-drawer-drag-x: calc(var(--z-drawer-drag, 0px) * -1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-drawer[data-drag]:not([data-snap], [data-dragging]) {
+      transition: translate var(--z-duration-normal) var(--z-ease-emphasized);
+    }
+  }
+  /* Asa: una barra corta centrada en el borde libre; el área de pulsación cubre toda la franja. */
+  .z-drawer__handle {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 100%;
+    block-size: var(--z-space-6);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-drawer[data-dragging] .z-drawer__handle {
+    cursor: grabbing;
+  }
+  .z-drawer[data-side="top"] .z-drawer__handle {
+    order: 99;
+  }
+  .z-drawer:is([data-side="left"], [data-side="right"]) .z-drawer__handle {
+    position: absolute;
+    inset-block: 0;
+    inline-size: var(--z-space-4);
+    block-size: auto;
+    z-index: var(--z-layer-raised);
+  }
+  .z-drawer[data-side="right"] .z-drawer__handle {
+    inset-inline-start: 0;
+  }
+  .z-drawer[data-side="left"] .z-drawer__handle {
+    inset-inline-end: 0;
+  }
+  .z-drawer__grip {
+    inline-size: var(--z-space-9);
+    block-size: 4px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-line-strong);
+  }
+  .z-drawer:is([data-side="left"], [data-side="right"]) .z-drawer__grip {
+    inline-size: 4px;
+    block-size: var(--z-space-9);
+  }
+  .z-drawer__handle:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+    border-radius: var(--z-control-radius-sm);
+  }
   .z-drawer[data-state="open"] {
     animation: z-ov-drawer-in var(--z-duration-slow) var(--z-ease-emphasized) both;
   }
@@ -351,6 +442,314 @@
   }
   .z-popover[data-state="closed"] {
     animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  /* Con flecha, el panel no recorta (la flecha sobresale): desplaza su cuerpo. */
+  /* Sin `display` propio: un popover cerrado debe seguir oculto por el navegador. */
+  .z-popover[data-arrow] {
+    overflow: visible;
+  }
+  .z-popover__body {
+    max-block-size: calc(var(--z-available-height, calc(100dvh - var(--z-space-4))) - 2 * var(--z-space-3));
+    overflow-y: auto;
+  }
+  /* Botón de cierre en la esquina, concéntrico con el panel; el texto no se mete debajo. */
+  .z-popover[data-close] {
+    padding-inline-end: calc(var(--z-space-3) + var(--z-space-7));
+  }
+  .z-popover__close {
+    position: absolute;
+    inset-block-start: var(--z-space-1-5);
+    inset-inline-end: var(--z-space-1-5);
+  }
+
+  /* ---------- HoverCard y Toggletip ---------- */
+  /* Cristal elevado como el popover; la tarjeta se lee (texto de 14) y el toggletip es una explicación corta. */
+  .z-hovercard,
+  .z-toggletip {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    z-index: var(--z-layer-popover);
+    max-width: min(320px, calc(100vw - var(--z-space-4)));
+    border-radius: var(--z-popup-radius);
+    cursor: default;
+  }
+  .z-hovercard {
+    padding: var(--z-space-4);
+  }
+  .z-toggletip {
+    max-width: min(280px, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-2-5) var(--z-space-3);
+    border-radius: var(--z-radius-md);
+    font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
+  }
+  :is(.z-hovercard, .z-toggletip)[data-state="closed"] {
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  .z-hovercard :where(a),
+  .z-toggletip :where(a) {
+    color: var(--z-accent-text);
+  }
+  .z-toggletip__trigger {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    vertical-align: middle;
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-toggletip__trigger[data-size="sm"] {
+    width: 20px;
+    height: 20px;
+  }
+  @media (hover: hover) {
+    .z-toggletip__trigger:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-toggletip__trigger[aria-expanded="true"] {
+    color: var(--z-accent-text);
+  }
+  .z-toggletip__trigger:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  @media (pointer: coarse) {
+    .z-toggletip__trigger {
+      position: relative;
+    }
+    .z-toggletip__trigger::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+      width: max(100%, var(--z-touch-target, 0px));
+      height: max(100%, var(--z-touch-target, 0px));
+    }
+  }
+
+  /* ---------- ActionBar ---------- */
+  /* Barra de cromo flotante sobre una selección: recuento, acciones y cierre. Sube desde abajo al aparecer. */
+  .z-actionbar {
+    gap: var(--z-space-2);
+    flex-wrap: nowrap;
+    max-inline-size: calc(100vw - var(--z-space-8));
+    padding-inline: var(--z-space-3) var(--z-space-1);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-popup-shadow);
+  }
+  .z-actionbar[data-position="fixed"] {
+    position: fixed;
+    inset-block-end: var(--z-space-6);
+    inset-inline: 0;
+    z-index: var(--z-layer-popover);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .z-actionbar[data-position="sticky"] {
+    position: sticky;
+    inset-block-end: var(--z-space-3);
+    z-index: var(--z-layer-raised);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-actionbar:not([data-position="inline"]) {
+      transition:
+        opacity var(--z-duration-normal) var(--z-ease-emphasized),
+        translate var(--z-duration-normal) var(--z-ease-emphasized);
+      @starting-style {
+        opacity: 0;
+        translate: 0 var(--z-space-3);
+      }
+    }
+  }
+  .z-actionbar__count {
+    flex: none;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-medium);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .z-actionbar__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .z-actionbar__close {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--z-control-height-sm);
+    height: var(--z-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-actionbar__close:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-actionbar__close:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-actionbar[hidden] {
+    display: none;
+  }
+
+  /* ---------- Tour ---------- */
+  /* Tarjeta de cristal elevado anclada al elemento del paso, con flecha; el anillo lo resalta sin tapar la página. */
+  .z-tour {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    z-index: var(--z-layer-popover);
+    width: min(340px, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-4);
+    border-radius: var(--z-popup-radius);
+  }
+  .z-tour[data-state="closed"] {
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  .z-tour__header {
+    display: grid;
+    gap: var(--z-space-1);
+    padding-inline-end: var(--z-space-8);
+  }
+  .z-tour__progress {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-tour__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-tour__body {
+    margin-block-start: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
+  }
+  .z-tour__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+    margin-block-start: var(--z-space-4);
+  }
+  .z-tour__spacer {
+    flex: 1;
+  }
+  .z-tour [hidden],
+  .z-tour__ring[hidden] {
+    display: none;
+  }
+  .z-tour__close {
+    position: absolute;
+    inset-block-start: var(--z-space-2);
+    inset-inline-end: var(--z-space-2);
+  }
+  /* Anillo: contorno del acento alrededor del elemento del paso; no recibe el puntero. */
+  .z-tour__ring {
+    position: fixed;
+    z-index: var(--z-layer-popover);
+    border-radius: var(--z-control-radius-lg);
+    outline: 2px solid var(--z-accent-ring);
+    outline-offset: 0;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--z-accent) 18%, transparent);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-tour__ring {
+      transition:
+        inset var(--z-duration-normal) var(--z-ease-emphasized),
+        width var(--z-duration-normal) var(--z-ease-emphasized),
+        height var(--z-duration-normal) var(--z-ease-emphasized);
+    }
+  }
+  .z-tour__ring[data-state="closed"] {
+    opacity: 0;
+  }
+
+  /* ---------- Flecha de las capas ancladas ---------- */
+  /* Media caja girada 45° sobre el borde que mira al ancla, en `--z-arrow-offset` (lo escribe la colocación). Mismo
+     cristal y canto que la capa; el recorte deja solo la mitad de fuera, así no se suma al fondo de la capa. */
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]::after {
+    content: "";
+    position: absolute;
+    inline-size: 12px;
+    block-size: 12px;
+    border: 1px solid var(--z-glass-border);
+    border-inline-end: 0;
+    border-block-end: 0;
+    background: var(--z-lg-bg, var(--z-popup-bg));
+    -webkit-backdrop-filter: blur(var(--z-lg-blur, var(--z-popup-blur)));
+    backdrop-filter: blur(var(--z-lg-blur, var(--z-popup-blur)));
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    pointer-events: none;
+  }
+  /* El recorte es físico (esquina superior izquierda): en RTL el canto pasa al otro borde para seguir dentro del recorte. */
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:dir(rtl)::after {
+    border-inline-start: 0;
+    border-inline-end: 1px solid var(--z-glass-border);
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:is([data-side="bottom"], [data-side="top"])::after {
+    inset-inline-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="bottom"]::after {
+    inset-block-start: -7px;
+    rotate: 45deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="top"]::after {
+    inset-block-end: -7px;
+    rotate: 225deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:is([data-side="left"], [data-side="right"])::after {
+    inset-block-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
+  }
+  /* El lado es físico (lo mide la colocación): en RTL la flecha de una capa a la derecha va en el borde final. */
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="right"]::after {
+    inset-inline-start: -7px;
+    rotate: -45deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="left"]::after {
+    inset-inline-end: -7px;
+    rotate: 135deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="right"]:dir(rtl)::after {
+    inset-inline-start: auto;
+    inset-inline-end: -7px;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="left"]:dir(rtl)::after {
+    inset-inline-end: auto;
+    inset-inline-start: -7px;
   }
 
   /* ---------- Tooltip ---------- */
@@ -474,6 +873,31 @@
     font-weight: var(--z-weight-medium);
     color: var(--z-fg-muted);
   }
+  /* Casillas y radios: la señal ocupa el hueco del icono. Enlaces: sin subrayado, como el resto de entradas. */
+  a.z-menu__item {
+    text-decoration: none;
+  }
+  .z-menu__check {
+    color: var(--z-accent-text);
+  }
+  .z-menu__item:not([aria-checked="true"]) > .z-menu__check > * {
+    visibility: hidden;
+  }
+  /* El punto del radio es un borde (no un fondo): los colores forzados lo conservan. */
+  .z-menu__check[data-kind="radio"]::before {
+    content: "";
+    inline-size: 0;
+    block-size: 0;
+    border: 3px solid transparent;
+    border-radius: var(--z-radius-full);
+  }
+  .z-menu__item[aria-checked="true"] > .z-menu__check[data-kind="radio"]::before {
+    border-color: currentColor;
+  }
+  .z-menu__group {
+    display: flex;
+    flex-direction: column;
+  }
   .z-menu[data-size="lg"] {
     min-width: min(300px, var(--z-menu-fit));
     max-width: min(340px, var(--z-menu-fit));
@@ -512,6 +936,29 @@
   }
   .z-palette[data-state="closed"] {
     animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  /* Comando en línea: la misma pieza incrustada en la página, sin capa ni velo. Panel de cromo con radio de tarjeta. */
+  .z-command {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    width: 100%;
+    margin: 0;
+    border-radius: var(--z-card-radius);
+  }
+  .z-command .z-palette__list {
+    max-height: var(--z-command-height, 320px);
+  }
+  /* Pie con atajos o ayuda bajo la lista. */
+  .z-palette__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2) var(--z-space-4);
+    padding: var(--z-space-2) var(--z-space-4);
+    border-top: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
   }
   .z-palette__search {
     display: flex;
@@ -718,6 +1165,17 @@
     border-radius: var(--z-radius-full);
     background: var(--z-toast-tone);
   }
+  /* Aviso en curso (`toast.promise`): anillo en lugar del punto, en el tono del aviso. */
+  .z-toast__spinner {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    margin-top: 3px;
+    border: 2px solid var(--z-toast-tone);
+    border-inline-end-color: transparent;
+    border-radius: var(--z-radius-full);
+    animation: z-ov-spin 0.7s linear infinite;
+  }
   .z-toast__content {
     flex: 1;
     min-width: 0;
@@ -780,7 +1238,9 @@
      desplazamiento y la escala, solo sin preferencia de movimiento reducido; con ella queda un fundido corto.
      `:where()`: sin especificidad, para que el gesto de deslizar un aviso conserve su propia transición. El cajón
      entra con su animación lateral. */
-  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+    :not([data-state="closed"])
+  ) {
     opacity: 1;
     transition:
       opacity var(--z-duration-normal) var(--z-ease-emphasized),
@@ -788,20 +1248,24 @@
       scale var(--z-duration-normal) var(--z-ease-emphasized);
   }
   @starting-style {
-    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+        :not([data-state="closed"])
+      ) {
       opacity: 0;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+        :not([data-state="closed"])
+      ) {
       translate: 0 0;
       scale: 1;
     }
     @starting-style {
-      :where(.z-popover, .z-tooltip, .z-menu):where(:not([data-state="closed"])) {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip, .z-tour):where(:not([data-state="closed"])) {
         translate: 0 calc(var(--z-space-1) * -1);
       }
-      :where(.z-popover, .z-tooltip, .z-menu)[data-side="top"]:where(:not([data-state="closed"])) {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip, .z-tour)[data-side="top"]:where(:not([data-state="closed"])) {
         translate: 0 var(--z-space-1);
       }
       :where(.z-palette):where(:not([data-state="closed"])) {
@@ -816,6 +1280,11 @@
   }
 
   /* ---------- Animaciones ---------- */
+  @keyframes z-ov-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
   @keyframes z-ov-fade-in {
     from {
       opacity: 0;
@@ -856,8 +1325,37 @@
      reducido manda sobre las animaciones de entrada y salida de cada capa. */
   @media (prefers-reduced-motion: reduce) {
     :is(.z-modal, .z-drawer, .z-palette)::backdrop,
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox),
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox) :is(*, *::before, *::after) {
+    :is(
+        .z-modal,
+        .z-confirm,
+        .z-drawer,
+        .z-popover,
+        .z-tooltip,
+        .z-menu,
+        .z-palette,
+        .z-toast,
+        .z-listbox,
+        .z-hovercard,
+        .z-toggletip,
+        .z-tour,
+        .z-tour__ring
+      ),
+    :is(
+        .z-modal,
+        .z-confirm,
+        .z-drawer,
+        .z-popover,
+        .z-tooltip,
+        .z-menu,
+        .z-palette,
+        .z-toast,
+        .z-listbox,
+        .z-hovercard,
+        .z-toggletip,
+        .z-tour,
+        .z-tour__ring
+      )
+      :is(*, *::before, *::after) {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;

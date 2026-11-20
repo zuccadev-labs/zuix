@@ -4,7 +4,10 @@
 //
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zout/dom"; init();
 // Uso imperativo:    setPanelOpen, togglePanel, closeDrawers, getShellModes, resizeTo, getSplitSizes, setSplitSizes,
-//                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, dispose
+//                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, setSidebarCollapsed,
+//                    setSidebarItemOpen, moveWorkTab, setTabGroupCollapsed, openFloatingPanel,
+//                    closeFloatingPanel, setFloatingPanelRect, getPaneLayout, setPaneLayout,
+//                    splitLayoutPane, dispose
 //
 // Todo se activa dentro de un contenedor [data-z-dom], para no chocar con React en la misma página.
 // Atributos:
@@ -17,9 +20,30 @@
 //   data-default-size, data-step, data-var, data-z-resize="#id"   en .z-resize (data-side: left|right|top|bottom, o start|end, que siguen la dirección de escritura)
 //   data-min-fraction                         en .z-split
 //   data-new-title="Untitled"                 en .z-tabstrip__add: crea la pestaña sin código de la aplicación
+//   data-reorderable                          en .z-tabstrip: arrastrar pestañas y Ctrl+Mayús+flechas (z:reorder { ids });
+//                                             .z-tabstrip__status[role=status] recibe el anuncio (data-moved-label con
+//                                             {title}, {position} y {total})
+//   .z-tabstrip__chip                         chip de grupo: pliega sus pestañas ([data-group]) y emite z:grouptoggle
+//   .z-floatpanel[role=dialog]                panel flotante: se arrastra por .z-floatpanel__header (o con flechas en
+//                                             .z-floatpanel__handle) y se redimensiona por .z-floatpanel__resize;
+//                                             data-strategy="absolute" lo acota a su contenedor; data-min-width/height;
+//                                             .z-floatpanel__close o Escape lo ocultan (z:close). data-z-panel="#id" en
+//                                             un botón lo abre y recibe el foco al cerrarlo. z:change { x, y, width, height }
+//   .z-panelayout                             mosaico: .z-split anidados y .z-panelayout__pane[data-pane-id]; arrastrar
+//                                             .z-panelayout__grab sobre otro panel lo deja en ese borde (o lo
+//                                             intercambia en el centro); items de menú [data-pane-action=move-left|
+//                                             move-right|move-up|move-down|close|split-right|split-down]. z:layout
+//                                             { layout } tras cada cambio; z:split { id, direction } para dividir
+//                                             (la aplicación llama a splitLayoutPane con el panel nuevo)
+//   data-collapsed                            en .z-sidebar: plegada a iconos (setSidebarCollapsed la alterna)
+//   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
+// La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
+// (`data-z-open`) para el submenú: cargar también @zuccadev-labs/zuix-zui/dom.
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
+import { chevronDoubleRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-right";
 import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-small";
 import { chevronRightSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-right-small";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
@@ -39,8 +63,25 @@ import {
   physicalSide,
   resizeByKey,
   resizeSign,
+  beforeFor,
+  clampRect,
+  dropEdge as paneDropEdge,
+  movePane,
+  neighborPane,
+  removePane,
+  splitPane,
+  type DropEdge,
+  type PaneNode,
+  dropIndex,
+  FLOAT_STEP,
+  moveDelta,
+  resizeDelta,
+  resizeRect,
+  type Rect,
+  finalIndex,
   revealOffset,
   tabKeyIndex,
+  tabMoveIndex,
   type PanelMode,
   type PhysicalSide,
   type ResizeSide,
@@ -51,7 +92,7 @@ export type ShellSide = "sidebar" | "inspector";
 export type ShellModes = Record<ShellSide, PanelMode>;
 
 // Iconos que este módulo dibuja por su cuenta cuando el marcado no usa <z-icon>.
-registerIcons([xMark, chevronDownSmall, chevronRightSmall]);
+registerIcons([xMark, chevronDownSmall, chevronRightSmall, chevronDoubleLeft, chevronDoubleRight]);
 
 const isBrowser = typeof document !== "undefined";
 const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
@@ -502,6 +543,120 @@ export function addWorkTab(
   return button;
 }
 
+const shownSelects = (strip: Element) => selects(strip).filter((s) => !s.parentElement?.hidden);
+
+/** Deja el chip de cada grupo delante de la primera pestaña del grupo (tras mover pestañas). */
+function placeChips(strip: Element): void {
+  for (const chip of strip.querySelectorAll<HTMLElement>(".z-tabstrip__group")) {
+    const id = chip.dataset.groupId;
+    const first = id ? strip.querySelector<HTMLElement>(`.z-tabstrip__tab[data-group="${CSS.escape(id)}"]`) : null;
+    if (first && first.previousElementSibling !== chip) first.before(chip);
+  }
+}
+
+/**
+ * Mueve la pestaña `id` delante de la pestaña `before` (al final con null). Emite `z:reorder` { ids } (cancelable) y
+ * devuelve si la movió.
+ */
+export function moveWorkTab(strip: HTMLElement, id: string, before: string | null): boolean {
+  const tab = findTab(strip, id)?.parentElement;
+  if (!tab) return false;
+  const ref = before === null ? null : findTab(strip, before)?.parentElement;
+  const ids = selects(strip).map((s) => s.dataset.tabId ?? "");
+  const rest = ids.filter((x) => x !== id);
+  const at = before === null ? rest.length : rest.indexOf(before);
+  rest.splice(at < 0 ? rest.length : at, 0, id);
+  if (rest.join("\u0000") === ids.join("\u0000") || !emit(strip, "reorder", { ids: rest })) return false;
+  const hadFocus = tab.contains(document.activeElement);
+  if (ref) ref.before(tab);
+  else selects(strip).at(-1)?.parentElement?.after(tab);
+  placeChips(strip);
+  if (hadFocus) findTab(strip, id)?.focus();
+  return true;
+}
+
+/** Pliega o despliega un grupo de pestañas: sus pestañas se ocultan, salvo la activa. Emite `z:grouptoggle`. */
+export function setTabGroupCollapsed(strip: HTMLElement, group: string, collapsed: boolean): void {
+  for (const tab of strip.querySelectorAll<HTMLElement>(`.z-tabstrip__tab[data-group="${CSS.escape(group)}"]`))
+    tab.hidden = collapsed && !tab.hasAttribute("data-selected");
+  strip
+    .querySelector(`.z-tabstrip__group[data-group-id="${CSS.escape(group)}"] .z-tabstrip__chip`)
+    ?.setAttribute("aria-expanded", String(!collapsed));
+  emit(strip, "grouptoggle", { id: group, collapsed });
+}
+
+function announceMove(strip: HTMLElement, id: string): void {
+  const status = strip.querySelector<HTMLElement>(".z-tabstrip__status");
+  const shown = shownSelects(strip);
+  const select = findTab(strip, id);
+  if (!status || !select) return;
+  const template = status.dataset.movedLabel ?? "{title} moved to position {position} of {total}";
+  status.textContent = template
+    .replace("{title}", select.querySelector(".z-tabstrip__title")?.textContent ?? id)
+    .replace("{position}", String(shown.indexOf(select) + 1))
+    .replace("{total}", String(shown.length));
+}
+
+// Arrastre de una pestaña: la marca de soltar va en el canto de la vecina; el orden cambia al soltar.
+// Los tramos de las pestañas se miden al empezar: durante el arrastre nada cambia de sitio salvo la propia pestaña.
+let tabDrag: {
+  strip: HTMLElement;
+  select: HTMLElement;
+  pointerId: number;
+  x: number;
+  active: boolean;
+  gap: number;
+  spans: { start: number; end: number }[];
+} | null = null;
+let swallowTabClick = false;
+
+function tabDragMove(event: PointerEvent): void {
+  const d = tabDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  const dx = event.clientX - d.x;
+  if (!d.active) {
+    if (Math.abs(dx) < 4) return;
+    d.active = true;
+    d.spans = shownSelects(d.strip).map((s) => {
+      const r = s.parentElement!.getBoundingClientRect();
+      return { start: r.left, end: r.right };
+    });
+    d.select.parentElement!.dataset.dragging = "";
+    try {
+      d.select.setPointerCapture(event.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
+  }
+  d.select.parentElement!.style.setProperty("--z-tab-drag", `${dx}px`);
+  const shown = shownSelects(d.strip);
+  d.gap = dropIndex(event.clientX, d.spans, isRtl(d.strip));
+  const from = shown.indexOf(d.select);
+  for (const tab of d.strip.querySelectorAll<HTMLElement>(".z-tabstrip__tab[data-drop]")) delete tab.dataset.drop;
+  if (d.gap === from || d.gap === from + 1) return;
+  const target = shown[d.gap] ?? shown[shown.length - 1];
+  if (target?.parentElement) target.parentElement.dataset.drop = d.gap < shown.length ? "before" : "after";
+}
+
+function tabDragEnd(event: PointerEvent, cancelled: boolean): void {
+  const d = tabDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  tabDrag = null;
+  const tab = d.select.parentElement!;
+  tab.style.removeProperty("--z-tab-drag");
+  delete tab.dataset.dragging;
+  for (const t of d.strip.querySelectorAll<HTMLElement>(".z-tabstrip__tab[data-drop]")) delete t.dataset.drop;
+  if (!d.active) return;
+  swallowTabClick = true;
+  setTimeout(() => {
+    swallowTabClick = false;
+  });
+  if (cancelled || d.gap < 0) return;
+  const shown = shownSelects(d.strip).map((s) => s.dataset.tabId ?? "");
+  const id = d.select.dataset.tabId ?? "";
+  moveWorkTab(d.strip, id, beforeFor(shown, id, finalIndex(shown.indexOf(id), d.gap)));
+}
+
 let created = 0;
 /** Botón de alta: emite `z:add`. Si nadie lo cancela y el botón trae `data-new-title`, crea aquí la pestaña. */
 function addRequested(strip: HTMLElement, button: HTMLElement): void {
@@ -556,6 +711,293 @@ export function setSectionOpen(section: HTMLElement, open: boolean): void {
   else icon.replaceWith(iconElement(name, { size: icon.getAttribute("width") ?? 12 }));
 }
 
+/* ---------- Sidebar plegable a iconos ---------- */
+
+const subOf = (link: Element) => {
+  const id = link.getAttribute("aria-controls");
+  return id ? document.getElementById(id) : null;
+};
+const topLinks = (sidebar: Element) =>
+  [...sidebar.querySelectorAll<HTMLElement>(".z-sidebar__link")].filter((link) => !link.closest(".z-sidebar__sub"));
+
+/** Abre o pliega el submenú de un item de sidebar (`.z-sidebar__link[aria-controls]`), desplegada la sidebar. */
+export function setSidebarItemOpen(link: HTMLElement, open: boolean): void {
+  const sub = subOf(link);
+  if (!sub || sub.hasAttribute("popover")) return;
+  link.setAttribute("aria-expanded", String(open));
+  sub.hidden = !open;
+  const item = link.closest<HTMLElement>(".z-sidebar__item");
+  if (item) {
+    if (open) item.dataset.open = "true";
+    else delete item.dataset.open;
+  }
+}
+
+/**
+ * Pliega la sidebar a iconos o la despliega. Plegada, cada item muestra su nombre en un tooltip y un submenú pasa a
+ * ser un popover anclado al item; desplegada, vuelve a abrirse en su sitio. Emite `z:change` { collapsed }.
+ */
+export function setSidebarCollapsed(sidebar: HTMLElement, collapsed: boolean, silent = false): void {
+  if (collapsed) sidebar.dataset.collapsed = "true";
+  else delete sidebar.dataset.collapsed;
+  for (const link of topLinks(sidebar)) {
+    const sub = subOf(link);
+    const label = link.querySelector(".z-sidebar__label")?.textContent ?? "";
+    if (!sub) {
+      if (collapsed) link.setAttribute("data-z-tooltip", label);
+      else link.removeAttribute("data-z-tooltip");
+      continue;
+    }
+    if (collapsed) {
+      if (!sub.hasAttribute("popover")) sub.dataset.wasOpen = String(!sub.hidden);
+      sub.hidden = false;
+      sub.setAttribute("popover", "auto");
+      sub.classList.add("z-liquid");
+      link.setAttribute("data-z-open", `#${sub.id}`);
+      link.setAttribute("data-z-placement", "right-start");
+      link.setAttribute("aria-haspopup", "true");
+      link.setAttribute("aria-expanded", "false");
+    } else {
+      if (sub.matches(":popover-open")) sub.hidePopover();
+      sub.removeAttribute("popover");
+      sub.classList.remove("z-liquid");
+      sub.removeAttribute("style");
+      link.removeAttribute("data-z-open");
+      link.removeAttribute("data-z-placement");
+      link.removeAttribute("aria-haspopup");
+      sub.hidden = false;
+      setSidebarItemOpen(link, sub.dataset.wasOpen === "true");
+    }
+  }
+  for (const trigger of document.querySelectorAll<HTMLElement>(".z-sidebar__trigger")) {
+    if (sidebar.id && trigger.getAttribute("aria-controls") === sidebar.id) {
+      trigger.setAttribute("aria-expanded", String(!collapsed));
+      if (collapsed) trigger.dataset.collapsed = "true";
+      else delete trigger.dataset.collapsed;
+      const name = collapsed ? "chevron-double-right" : "chevron-double-left";
+      const icon = trigger.querySelector(":scope > z-icon, :scope > svg.z-icon");
+      if (icon?.localName === "z-icon") icon.setAttribute("name", name);
+      else icon?.replaceWith(iconElement(name, { size: 16 }));
+    }
+  }
+  if (!silent) emit(sidebar, "change", { collapsed });
+}
+
+/* ---------- Panel flotante ---------- */
+
+const panelRect = (panel: HTMLElement): Rect => ({
+  x: panel.offsetLeft,
+  y: panel.offsetTop,
+  width: panel.offsetWidth,
+  height: panel.offsetHeight,
+});
+const panelBounds = (panel: HTMLElement) => {
+  const parent = panel.dataset.strategy === "absolute" ? (panel.offsetParent as HTMLElement | null) : null;
+  return parent
+    ? { width: parent.clientWidth, height: parent.clientHeight }
+    : { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight };
+};
+const panelMin = (panel: HTMLElement) => ({ width: num(panel.dataset.minWidth, 200), height: num(panel.dataset.minHeight, 120) });
+// Botón que abrió cada panel: recibe el foco al cerrarlo.
+const panelOpeners = new WeakMap<HTMLElement, HTMLElement>();
+
+/** Coloca y dimensiona un panel flotante (acotado a su área). Emite `z:change` con el rectángulo final. */
+export function setFloatingPanelRect(panel: HTMLElement, rect: Rect, silent = false): Rect {
+  const next = clampRect(rect, panelBounds(panel), panelMin(panel));
+  panel.style.left = `${next.x}px`;
+  panel.style.top = `${next.y}px`;
+  panel.style.width = `${next.width}px`;
+  panel.style.height = `${next.height}px`;
+  if (!silent) emit(panel, "change", next);
+  return next;
+}
+
+function resizePanel(panel: HTMLElement, start: Rect, dw: number, dh: number): void {
+  const next = resizeRect(start, dw, dh, panelBounds(panel), panelMin(panel), isRtl(panel));
+  setFloatingPanelRect(panel, next);
+}
+
+/** Muestra un panel flotante y le lleva el foco. `opener` lo recibe de vuelta al cerrarlo. */
+export function openFloatingPanel(panel: HTMLElement, opener?: HTMLElement | null): void {
+  panel.hidden = false;
+  if (opener) panelOpeners.set(panel, opener);
+  setFloatingPanelRect(panel, panelRect(panel), true);
+  panel.focus({ preventScroll: true });
+  emit(panel, "open");
+}
+
+/** Oculta un panel flotante (emite `z:close`, cancelable). El foco vuelve a quien lo abrió. */
+export function closeFloatingPanel(panel: HTMLElement): void {
+  if (!emit(panel, "close")) return;
+  const hadFocus = panel.contains(document.activeElement);
+  panel.hidden = true;
+  if (hadFocus) panelOpeners.get(panel)?.focus({ preventScroll: true });
+}
+
+/* ---------- Mosaico de paneles ---------- */
+
+const paneSections = (layout: Element) => [...layout.querySelectorAll<HTMLElement>(".z-panelayout__pane[data-pane-id]")];
+
+function readNode(el: Element): PaneNode | null {
+  if (el.classList.contains("z-panelayout__pane")) return { type: "pane", id: (el as HTMLElement).dataset.paneId ?? "" };
+  if (!el.classList.contains("z-split")) return null;
+  const cells = parts(el, "z-split__pane");
+  const children = cells.map((cell) => (cell.firstElementChild ? readNode(cell.firstElementChild) : null)).filter(Boolean) as PaneNode[];
+  return { type: "split", direction: directionOf(el as HTMLElement), sizes: getSplitSizes(el as HTMLElement), children };
+}
+
+/** Árbol del mosaico leído del marcado. */
+export function getPaneLayout(layout: HTMLElement): PaneNode | null {
+  const top = [...layout.children].find((c) => c.classList.contains("z-split") || c.classList.contains("z-panelayout__pane"));
+  return top ? readNode(top) : null;
+}
+
+/**
+ * Rehace el marcado del mosaico con el árbol `tree`, moviendo los paneles existentes (conservan su contenido y su
+ * estado). Un panel nuevo debe estar ya en el mosaico o pasarse en `extra`. Emite `z:layout` { layout }.
+ */
+export function setPaneLayout(layout: HTMLElement, tree: PaneNode, extra: HTMLElement[] = []): void {
+  const byId = new Map([...paneSections(layout), ...extra].map((el) => [el.dataset.paneId ?? "", el]));
+  const label = layout.dataset.dividerLabel ?? "Resize panes";
+  let count = 0;
+  const build = (node: PaneNode): HTMLElement | null => {
+    if (node.type === "pane") return byId.get(node.id) ?? null;
+    const split = document.createElement("div");
+    split.className = "z-split";
+    split.dataset.direction = node.direction;
+    node.children.forEach((child, i) => {
+      const built = build(child);
+      if (!built) return;
+      if (i > 0) {
+        const divider = document.createElement("div");
+        divider.className = "z-split__divider";
+        divider.setAttribute("aria-label", label);
+        split.append(divider);
+      }
+      const cell = document.createElement("div");
+      cell.className = "z-split__pane";
+      cell.id = `${layout.id || "panelayout"}-cell-${++count}`;
+      cell.append(built);
+      split.append(cell);
+    });
+    setSplitSizes(split, node.sizes);
+    return split;
+  };
+  const top = build(tree);
+  const status = layout.querySelector(":scope > .z-panelayout__status");
+  layout.replaceChildren(...(top ? [top] : []), ...(status ? [status] : []));
+  for (const split of layout.querySelectorAll<HTMLElement>(".z-split")) hydrateSplit(split);
+  syncPaneFocus(layout);
+  emit(layout, "layout", { layout: tree });
+}
+
+/** Divide el panel `id` y pone `pane` (un `.z-panelayout__pane[data-pane-id]` nuevo) a su lado. */
+export function splitLayoutPane(layout: HTMLElement, id: string, pane: HTMLElement, direction: "row" | "column"): void {
+  const tree = getPaneLayout(layout);
+  if (!tree || !pane.dataset.paneId) return;
+  setPaneLayout(layout, splitPane(tree, id, pane.dataset.paneId, direction), [pane]);
+}
+
+/** Marca el panel con el foco (el pulsado o enfocado) y atenúa el resto. */
+function syncPaneFocus(layout: HTMLElement, focused?: string): void {
+  const sections = paneSections(layout);
+  const current = focused ?? layout.dataset.focused ?? sections[0]?.dataset.paneId;
+  if (current) layout.dataset.focused = current;
+  for (const section of sections) {
+    const on = String(section.dataset.paneId === current);
+    if (sections.length < 2) {
+      section.querySelector(".z-pane")?.removeAttribute("data-focused");
+      section.querySelector(".z-paneheader")?.removeAttribute("data-focused");
+      continue;
+    }
+    section.querySelector(".z-pane")?.setAttribute("data-focused", on);
+    section.querySelector(".z-paneheader")?.setAttribute("data-focused", on);
+  }
+}
+
+function announcePane(layout: HTMLElement, id: string): void {
+  const status = layout.querySelector<HTMLElement>(":scope > .z-panelayout__status");
+  const title = layout.querySelector(`[data-pane-id="${CSS.escape(id)}"] .z-paneheader__title`)?.textContent ?? id;
+  if (status) status.textContent = (status.dataset.movedLabel ?? "{title} moved").replace("{title}", title);
+}
+
+function paneAction(item: HTMLElement): void {
+  const action = item.dataset.paneAction ?? "";
+  const section = document.querySelector<HTMLElement>(`[data-pane-id="${CSS.escape(item.dataset.paneFor ?? "")}"]`);
+  const layout = section?.closest<HTMLElement>(".z-panelayout");
+  const id = section?.dataset.paneId;
+  const tree = layout ? getPaneLayout(layout) : null;
+  if (!layout || !id || !tree) return;
+  if (action === "close") {
+    const next = removePane(tree, id);
+    if (next && emit(layout, "close", { id })) setPaneLayout(layout, next);
+    return;
+  }
+  if (action === "split-right" || action === "split-down") {
+    emit(layout, "split", { id, direction: action === "split-right" ? "row" : "column" });
+    return;
+  }
+  const direction = ({ "move-left": "left", "move-right": "right", "move-up": "up", "move-down": "down" } as const)[action as "move-left"];
+  if (!direction) return;
+  const rects = paneSections(layout).map((el) => ({ id: el.dataset.paneId ?? "", rect: el.getBoundingClientRect() }));
+  const other = neighborPane(rects, id, direction);
+  if (!other) return;
+  setPaneLayout(layout, movePane(tree, id, other, "center"));
+  announcePane(layout, id);
+  // El foco vuelve al menú del panel movido (zui/dom lo devuelve a su disparador, que sigue siendo el mismo botón).
+}
+
+// Arrastre de un panel por su cabecera.
+let paneDrag: {
+  layout: HTMLElement;
+  id: string;
+  pointerId: number;
+  x: number;
+  y: number;
+  active: boolean;
+  drop: { target: string; edge: DropEdge } | null;
+} | null = null;
+
+function paneDragMove(event: PointerEvent): void {
+  const d = paneDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  if (!d.active) {
+    if (Math.hypot(event.clientX - d.x, event.clientY - d.y) < 6) return;
+    d.active = true;
+    d.layout.dataset.dragging = "";
+    d.layout.querySelector(`[data-pane-id="${CSS.escape(d.id)}"]`)?.setAttribute("data-dragging", "");
+  }
+  d.layout.querySelector(".z-panelayout__drop")?.remove();
+  d.drop = null;
+  const hit = paneSections(d.layout).find((el) => {
+    const r = el.getBoundingClientRect();
+    return event.clientX >= r.left && event.clientX <= r.right && event.clientY >= r.top && event.clientY <= r.bottom;
+  });
+  if (!hit || hit.dataset.paneId === d.id) return;
+  const edge = paneDropEdge(hit.getBoundingClientRect(), { x: event.clientX, y: event.clientY }, isRtl(d.layout));
+  d.drop = { target: hit.dataset.paneId ?? "", edge };
+  const overlay = document.createElement("div");
+  overlay.className = "z-panelayout__drop";
+  overlay.dataset.edge = edge;
+  overlay.setAttribute("aria-hidden", "true");
+  hit.append(overlay);
+}
+
+function paneDragEnd(event: PointerEvent, cancelled: boolean): void {
+  const d = paneDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  paneDrag = null;
+  d.layout.querySelector(".z-panelayout__drop")?.remove();
+  delete d.layout.dataset.dragging;
+  d.layout.querySelector(`[data-pane-id="${CSS.escape(d.id)}"]`)?.removeAttribute("data-dragging");
+  const tree = getPaneLayout(d.layout);
+  if (!d.active || cancelled || !d.drop || !tree) return;
+  const next = movePane(tree, d.id, d.drop.target, d.drop.edge);
+  if (next === tree) return;
+  setPaneLayout(d.layout, next);
+  announcePane(d.layout, d.id);
+}
+
 /* ---------- Delegación de eventos ---------- */
 
 function onClick(event: MouseEvent): void {
@@ -590,10 +1032,48 @@ function onClick(event: MouseEvent): void {
 
   const strip = target.closest<HTMLElement>(".z-tabstrip");
   if (strip) {
+    const chip = target.closest<HTMLElement>(".z-tabstrip__chip");
+    const groupId = chip?.closest<HTMLElement>(".z-tabstrip__group")?.dataset.groupId;
+    if (chip && groupId) {
+      setTabGroupCollapsed(strip, groupId, chip.getAttribute("aria-expanded") !== "false");
+      return;
+    }
+    if (swallowTabClick) return;
     const id = target.closest(".z-tabstrip__tab")?.querySelector<HTMLElement>(".z-tabstrip__select")?.dataset.tabId;
     if (id !== undefined && target.closest(".z-tabstrip__close")) closeWorkTab(strip, id);
     else if (id !== undefined && target.closest(".z-tabstrip__select")) selectWorkTab(strip, id);
     else if (target.closest(".z-tabstrip__add")) addRequested(strip, target.closest<HTMLElement>(".z-tabstrip__add")!);
+    return;
+  }
+
+  const panelOpener = target.closest<HTMLElement>("[data-z-panel]");
+  if (panelOpener) {
+    const panel = document.getElementById((panelOpener.getAttribute("data-z-panel") ?? "").replace(/^#/, ""));
+    if (panel?.classList.contains("z-floatpanel")) {
+      if (panel.hidden) openFloatingPanel(panel, panelOpener);
+      else closeFloatingPanel(panel);
+    }
+    return;
+  }
+  const panelClose = target.closest(".z-floatpanel__close");
+  if (panelClose) {
+    const panel = panelClose.closest<HTMLElement>(".z-floatpanel");
+    if (panel) closeFloatingPanel(panel);
+    return;
+  }
+
+  const trigger = target.closest<HTMLElement>(".z-sidebar__trigger");
+  if (trigger) {
+    const sidebar = document.getElementById(trigger.getAttribute("aria-controls") ?? "");
+    if (sidebar?.classList.contains("z-sidebar")) setSidebarCollapsed(sidebar, !sidebar.hasAttribute("data-collapsed"));
+    return;
+  }
+
+  const sidebarLink = target.closest<HTMLElement>(".z-sidebar__link[aria-controls]");
+  if (sidebarLink && !sidebarLink.hasAttribute("data-z-open") && !(sidebarLink as HTMLButtonElement).disabled) {
+    const open = sidebarLink.getAttribute("aria-expanded") !== "true";
+    setSidebarItemOpen(sidebarLink, open);
+    emit(sidebarLink.closest(".z-sidebar__item") ?? sidebarLink, "change", { open });
     return;
   }
 
@@ -613,13 +1093,46 @@ function onKeydown(event: KeyboardEvent): void {
   // Escape cierra el cajón abierto, salvo que lo haya gestionado otro (un diálogo o un menú por encima).
   if (event.key === "Escape") {
     if (event.defaultPrevented || target.closest("dialog[open], :popover-open")) return;
+    const panel = target.closest<HTMLElement>(".z-floatpanel");
+    if (panel && inDom(panel) && panel.querySelector(".z-floatpanel__close")) {
+      event.preventDefault();
+      closeFloatingPanel(panel);
+      return;
+    }
     for (const drawer of document.querySelectorAll(".z-shell__drawer")) {
       const shell = drawer.closest<HTMLElement>(".z-shell");
       if (shell && shells.has(shell)) closeDrawers(shell);
     }
     return;
   }
+  if (event.key.toLowerCase?.() === "b" && !event.altKey && !event.shiftKey && (event.ctrlKey || event.metaKey)) {
+    const trigger = document.querySelector<HTMLElement>("[data-z-dom] .z-sidebar__trigger[data-shortcut]");
+    if (trigger) {
+      event.preventDefault();
+      trigger.click();
+      return;
+    }
+  }
   if (!inDom(target)) return;
+
+  const floatKey = target.closest<HTMLElement>(".z-floatpanel__handle, .z-floatpanel__resize");
+  const floating = floatKey?.closest<HTMLElement>(".z-floatpanel");
+  if (floatKey && floating) {
+    const step = event.shiftKey ? FLOAT_STEP * 10 : FLOAT_STEP;
+    const start = panelRect(floating);
+    if (floatKey.classList.contains("z-floatpanel__handle")) {
+      const d = moveDelta(event.key, step);
+      if (!d) return;
+      event.preventDefault();
+      setFloatingPanelRect(floating, { ...start, x: start.x + d.dx, y: start.y + d.dy });
+    } else {
+      const d = resizeDelta(event.key, step);
+      if (!d) return;
+      event.preventDefault();
+      resizePanel(floating, start, d.dw, d.dh);
+    }
+    return;
+  }
 
   const handle = target.closest<HTMLElement>(".z-resize");
   if (handle) {
@@ -646,7 +1159,6 @@ function onKeydown(event: KeyboardEvent): void {
   const list = target.closest(".z-tabstrip__list");
   const strip = list?.closest<HTMLElement>(".z-tabstrip");
   if (list && strip) {
-    const tabs = selects(strip);
     const current = activeTab(strip);
     // Supr cierra la pestaña activa si tiene cierre (misma vía de teclado que el binding de React).
     if (event.key === "Delete" && current?.parentElement?.querySelector(".z-tabstrip__close")) {
@@ -655,7 +1167,17 @@ function onKeydown(event: KeyboardEvent): void {
       activeTab(strip)?.focus();
       return;
     }
-    const next = tabs[tabKeyIndex(event.key, tabs.indexOf(activeTab(strip)!), tabs.length, isRtl(list))];
+    const shown = shownSelects(strip);
+    if (current && strip.hasAttribute("data-reorderable") && event.ctrlKey && event.shiftKey && !event.altKey) {
+      const to = tabMoveIndex(event.key, shown.indexOf(current), shown.length, isRtl(list));
+      if (to < 0) return;
+      event.preventDefault();
+      const ids = shown.map((x) => x.dataset.tabId ?? "");
+      const id = current.dataset.tabId ?? "";
+      if (moveWorkTab(strip, id, beforeFor(ids, id, to))) announceMove(strip, id);
+      return;
+    }
+    const next = shown[tabKeyIndex(event.key, shown.indexOf(activeTab(strip)!), shown.length, isRtl(list))];
     if (!next) return;
     event.preventDefault();
     selectWorkTab(strip, next.dataset.tabId ?? "");
@@ -669,6 +1191,55 @@ let drag: { el: HTMLElement; move: (event: PointerEvent) => void } | null = null
 function onPointerDown(event: PointerEvent): void {
   const target = event.target;
   if (!(target instanceof Element) || event.button !== 0 || !inDom(target)) return;
+  const tabSelect = target.closest<HTMLElement>(".z-tabstrip[data-reorderable] .z-tabstrip__select");
+  if (tabSelect) {
+    tabDrag = {
+      strip: tabSelect.closest<HTMLElement>(".z-tabstrip")!,
+      select: tabSelect,
+      pointerId: event.pointerId,
+      x: event.clientX,
+      active: false,
+      gap: -1,
+      spans: [],
+    };
+    return;
+  }
+  const grab = target.closest<HTMLElement>(".z-panelayout__grab");
+  const grabLayout = grab?.closest<HTMLElement>(".z-panelayout");
+  if (grab && grabLayout && !target.closest("button, a, input, select, textarea") && paneSections(grabLayout).length > 1) {
+    const id = grab.closest<HTMLElement>(".z-panelayout__pane")?.dataset.paneId;
+    if (id)
+      paneDrag = { layout: grabLayout, id, pointerId: event.pointerId, x: event.clientX, y: event.clientY, active: false, drop: null };
+    try {
+      grab.setPointerCapture(event.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
+    return;
+  }
+  const grip = target.closest<HTMLElement>(".z-floatpanel__header, .z-floatpanel__resize");
+  const gripPanel = grip?.closest<HTMLElement>(".z-floatpanel");
+  if (grip && gripPanel) {
+    const control = target.closest("button, a, input, select, textarea");
+    if (control && control !== grip && !control.classList.contains("z-floatpanel__handle")) return;
+    const start = panelRect(gripPanel);
+    const [x, y] = [event.clientX, event.clientY];
+    const resizing = grip.classList.contains("z-floatpanel__resize");
+    grip.dataset.dragging = "";
+    drag = {
+      el: grip,
+      move: (e) =>
+        resizing
+          ? resizePanel(gripPanel, start, e.clientX - x, e.clientY - y)
+          : setFloatingPanelRect(gripPanel, { ...start, x: start.x + e.clientX - x, y: start.y + e.clientY - y }),
+    };
+    try {
+      grip.setPointerCapture(event.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
+    return;
+  }
   let move: ((event: PointerEvent) => void) | undefined;
   const el = target.closest<HTMLElement>(".z-resize, .z-split__divider");
   if (!el) return;
@@ -731,6 +1302,9 @@ export function hydrate(root: ParentNode = document): void {
   for (const shell of all(root, ".z-shell")) hydrateShell(shell);
   for (const split of all(root, ".z-split")) hydrateSplit(split);
   for (const strip of all(root, ".z-tabstrip")) hydrateStrip(strip);
+  for (const sidebar of all(root, ".z-sidebar[data-collapsed]")) setSidebarCollapsed(sidebar, true, true);
+  for (const panel of all(root, ".z-floatpanel")) if (!panel.hidden) setFloatingPanelRect(panel, panelRect(panel), true);
+  for (const layout of all(root, ".z-panelayout")) syncPaneFocus(layout);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
@@ -774,9 +1348,39 @@ export function init(): void {
   document.addEventListener("keydown", onKeydown);
   document.addEventListener("dblclick", onDoubleClick);
   document.addEventListener("pointerdown", onPointerDown);
-  document.addEventListener("pointermove", (event) => drag?.move(event));
-  document.addEventListener("pointerup", onPointerEnd);
-  document.addEventListener("pointercancel", onPointerEnd);
+  document.addEventListener("pointermove", (event) => {
+    drag?.move(event);
+    tabDragMove(event);
+    paneDragMove(event);
+  });
+  document.addEventListener("pointerup", (event) => {
+    onPointerEnd();
+    tabDragEnd(event, false);
+    paneDragEnd(event, false);
+  });
+  document.addEventListener("pointercancel", (event) => {
+    onPointerEnd();
+    tabDragEnd(event, true);
+    paneDragEnd(event, true);
+  });
+  // Elegir una acción del menú de un panel (los menús los mueve @zuccadev-labs/zuix-zui/dom, que emite z:select).
+  document.addEventListener("z:select", (event) => {
+    const item = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-pane-action]") : null;
+    if (item) paneAction(item);
+  });
+  // El panel pulsado o enfocado pasa a ser el del foco.
+  const markPane = (event: Event) => {
+    const section = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-panelayout__pane") : null;
+    const layout = section?.closest<HTMLElement>(".z-panelayout");
+    if (section && layout && inDom(layout) && layout.dataset.focused !== section.dataset.paneId)
+      syncPaneFocus(layout, section.dataset.paneId);
+  };
+  document.addEventListener("pointerdown", markPane, true);
+  document.addEventListener("focusin", markPane);
+  document.addEventListener("dragstart", (event) => {
+    if (event.target instanceof Element && event.target.closest(".z-tabstrip[data-reorderable] .z-tabstrip__select"))
+      event.preventDefault();
+  });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => hydrate());
   else hydrate();
 }

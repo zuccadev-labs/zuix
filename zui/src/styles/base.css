@@ -121,6 +121,7 @@
         .z-btn[data-active],
         .z-listbox__option[data-highlighted],
         .z-menu__item[data-highlighted],
+        .z-menubar__trigger[aria-expanded="true"],
         .z-palette__item[aria-selected="true"],
         .z-calendar__day[data-selected],
         .z-datefield__segment:focus,

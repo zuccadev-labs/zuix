@@ -34,11 +34,13 @@ import { Overview } from "./screens/Overview";
 import { Projects } from "./screens/Projects";
 import { Forms } from "./screens/Forms";
 import { Inputs } from "./screens/Inputs";
+import { Commands } from "./screens/Commands";
 import { Overlays } from "./screens/Overlays";
 import { NavigationScreen } from "./screens/Navigation";
 import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
 import { AgendaScreen } from "./screens/Agenda";
+import { Workspace } from "./screens/Workspace";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -188,6 +190,8 @@ export function App() {
       <Forms />
     ) : active === "inputs" ? (
       <Inputs />
+    ) : active === "commands" ? (
+      <Commands />
     ) : active === "overlays" ? (
       <Overlays onOpenPalette={() => setPaletteOpen(true)} />
     ) : active === "navigation" ? (
@@ -196,6 +200,8 @@ export function App() {
       <Gallery theme={theme} brand={brand} />
     ) : active === "agenda" ? (
       <AgendaScreen />
+    ) : active === "workspace" ? (
+      <Workspace />
     ) : (
       <Editor />
     );

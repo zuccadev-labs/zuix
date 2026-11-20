@@ -431,3 +431,56 @@ body {
   color: var(--z-warning-text);
   letter-spacing: 2px;
 }
+
+/* Texto y control en línea (etiqueta con su ayuda). */
+.app-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-1);
+}
+/* Workspace: sidebar de demostración dentro de una tarjeta. */
+.app-sidebar-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-2);
+  height: 300px;
+}
+.app-sidebar-demo__frame {
+  width: min(240px, 100%);
+  min-height: 0;
+  flex: 1;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-lg);
+}
+.app-sidebar-demo__frame[data-collapsed] {
+  width: 56px;
+}
+.app-pane-demo {
+  height: 160px;
+}
+.app-pane-demo__body {
+  padding: var(--z-space-3);
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-small);
+}
+.app-float-area {
+  position: relative;
+  height: 280px;
+  border: 1px dashed var(--z-line);
+  border-radius: var(--z-radius-lg);
+}
+.app-float-text {
+  margin: 0;
+}
+.app-panelayout {
+  height: 380px;
+}
+/* Una tira de pestañas se desplaza dentro de su tarjeta: la tarjeta no crece hasta su ancho natural. */
+.app-demo--fluid {
+  min-width: 0;
+}
+/* Valores de las demos de Workspace: listas de ids largas parten línea. */
+[data-testid^="ws-"].app-value {
+  display: block;
+  overflow-wrap: anywhere;
+}

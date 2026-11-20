@@ -45,7 +45,10 @@
 
   .z-popover[popover],
   .z-menu[popover],
-  .z-tooltip[popover] {
+  .z-tooltip[popover],
+  .z-hovercard[popover],
+  .z-toggletip[popover],
+  .z-tour[popover] {
     position: fixed;
     inset: auto;
     margin: 0;

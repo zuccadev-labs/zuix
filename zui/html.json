@@ -255,6 +255,32 @@
     }
    ]
   },
+  "Toolbar": {
+   "group": "actions",
+   "classes": [
+    "z-toolbar",
+    "z-toolbar__group",
+    "z-toolbar__separator"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Formato de texto con grupos",
+     "html": "<div role=\"toolbar\" aria-label=\"Text formatting\" aria-orientation=\"horizontal\" class=\"z-toolbar z-liquid\" data-variant=\"glass\" data-size=\"md\">\n  <div role=\"group\" aria-label=\"Style\" class=\"z-toggle-group\" data-orientation=\"horizontal\" data-attached=\"true\" data-type=\"multiple\">\n    <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"true\" aria-label=\"Bold\" title=\"Bold\" data-state=\"on\" value=\"bold\">\n      <z-icon name=\"bold\" size=\"14\"></z-icon>\n    </button>\n    <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Italic\" title=\"Italic\" data-state=\"off\" value=\"italic\">\n      <z-icon name=\"italic\" size=\"14\"></z-icon>\n    </button>\n    <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Underline\" title=\"Underline\" data-state=\"off\" value=\"underline\">\n      <z-icon name=\"underline\" size=\"14\"></z-icon>\n    </button>\n  </div>\n  <div role=\"separator\" aria-orientation=\"vertical\" class=\"z-toolbar__separator\"></div>\n  <div role=\"group\" aria-label=\"Insert\" class=\"z-toolbar__group\">\n    <button type=\"button\" title=\"Insert link\" aria-label=\"Insert link\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"link\" size=\"14\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Insert image\" aria-label=\"Insert image\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"photo\" size=\"14\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Insert code\" aria-disabled=\"true\" aria-label=\"Insert code\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"code-bracket\" size=\"14\"></z-icon>\n    </button>\n  </div>\n  <div role=\"separator\" aria-orientation=\"vertical\" class=\"z-toolbar__separator\"></div>\n  <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\">\n    <z-icon name=\"arrow-uturn-up-left\" size=\"14\"></z-icon>\n    Undo\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Barra de un panel (plain, sm)",
+     "html": "<div role=\"toolbar\" aria-label=\"Terminal actions\" aria-orientation=\"horizontal\" class=\"z-toolbar\" data-variant=\"plain\" data-size=\"sm\">\n  <button type=\"button\" title=\"Run\" aria-label=\"Run\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n    <z-icon name=\"play\" size=\"14\"></z-icon>\n  </button>\n  <button type=\"button\" title=\"Stop\" aria-label=\"Stop\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n    <z-icon name=\"stop\" size=\"14\"></z-icon>\n  </button>\n  <button type=\"button\" title=\"Clear\" aria-label=\"Clear\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n    <z-icon name=\"trash\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical (paleta de herramientas)",
+     "html": "<div role=\"toolbar\" aria-label=\"Tools\" aria-orientation=\"vertical\" class=\"z-toolbar z-liquid\" data-variant=\"glass\" data-size=\"sm\">\n  <div role=\"group\" aria-label=\"Tool\" class=\"z-toggle-group\" data-orientation=\"vertical\" data-attached=\"true\" data-type=\"single\">\n    <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"true\" aria-label=\"Select\" title=\"Select\" data-state=\"on\" value=\"select\">\n      <z-icon name=\"cursor-arrow-rays\" size=\"14\"></z-icon>\n    </button>\n    <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Pen\" title=\"Pen\" data-state=\"off\" value=\"pen\">\n      <z-icon name=\"pencil\" size=\"14\"></z-icon>\n    </button>\n    <button type=\"button\" class=\"z-toggle\" data-size=\"sm\" data-variant=\"ghost\" data-icon-only=\"true\" aria-pressed=\"false\" aria-label=\"Shapes\" title=\"Shapes\" data-state=\"off\" value=\"shapes\">\n      <z-icon name=\"square-2-stack\" size=\"14\"></z-icon>\n    </button>\n  </div>\n  <div role=\"separator\" aria-orientation=\"horizontal\" class=\"z-toolbar__separator\"></div>\n  <button type=\"button\" title=\"Zoom in\" aria-label=\"Zoom in\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n    <z-icon name=\"magnifying-glass-plus\" size=\"14\"></z-icon>\n  </button>\n  <button type=\"button\" title=\"Zoom out\" aria-label=\"Zoom out\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n    <z-icon name=\"magnifying-glass-minus\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "CalendarHeatmap": {
    "group": "agenda",
    "classes": [
@@ -790,6 +816,42 @@
     {
      "title": "Aviso con acción y cierre",
      "html": "<div role=\"alert\" class=\"z-alert\" data-tone=\"warning\">\n  <span class=\"z-alert__icon\">\n    <z-icon name=\"exclamation-triangle\" size=\"18\"></z-icon>\n  </span>\n  <div class=\"z-alert__body\">\n    <p class=\"z-alert__title\">Storage almost full</p>\n    <div class=\"z-alert__message\">You have used 92% of your quota.</div>\n    <div class=\"z-alert__actions\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\">Manage storage</button>\n    </div>\n  </div>\n  <button type=\"button\" class=\"z-alert__dismiss\" aria-label=\"Dismiss\" title=\"Dismiss\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Banner": {
+   "group": "feedback",
+   "classes": [
+    "z-banner",
+    "z-banner__icon",
+    "z-banner__body",
+    "z-banner__badge",
+    "z-banner__title",
+    "z-banner__text",
+    "z-banner__action",
+    "z-banner__close"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Novedad con enlace y cierre",
+     "html": "<div class=\"z-banner\" data-tone=\"accent\" data-layout=\"page\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"megaphone\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <span class=\"z-banner__badge\">New</span>\n    <strong class=\"z-banner__title\">Workspaces are here.</strong>\n    <span class=\"z-banner__text\">Group projects and share layouts with your team.</span>\n  </div>\n  <div class=\"z-banner__action\">\n    <a href=\"/changelog\" class=\"z-link z-link--inline\">See what changed</a>\n  </div>\n  <button type=\"button\" class=\"z-banner__close\" aria-label=\"Dismiss\" title=\"Dismiss\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Mantenimiento programado",
+     "html": "<div class=\"z-banner\" data-tone=\"warning\" data-layout=\"page\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"exclamation-triangle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <strong class=\"z-banner__title\">Scheduled maintenance</strong>\n    <span class=\"z-banner__text\">Sync will be paused on Saturday from 02:00 to 03:00 UTC.</span>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Fallo del sistema con acción",
+     "html": "<div class=\"z-banner\" data-tone=\"danger\" data-layout=\"page\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"exclamation-circle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <strong class=\"z-banner__title\">Billing failed.</strong>\n    <span class=\"z-banner__text\">Your workspace will be read-only in 3 days.</span>\n  </div>\n  <div class=\"z-banner__action\">\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\">Update card</button>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "En un panel (inline)",
+     "html": "<div class=\"z-banner\" data-tone=\"neutral\" data-layout=\"inline\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <span class=\"z-banner__text\">This branch is 4 commits behind main.</span>\n  </div>\n  <button type=\"button\" class=\"z-banner__close\" aria-label=\"Dismiss\" title=\"Dismiss\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
      "source": "generated"
     }
    ]
@@ -1799,6 +1861,53 @@
     }
    ]
   },
+  "Collapsible": {
+   "group": "navigation",
+   "classes": [
+    "z-collapsible",
+    "z-collapsible__trigger",
+    "z-collapsible__content"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Detalle opcional",
+     "html": "<div id=\"advanced\" class=\"z-collapsible\" data-state=\"closed\" data-variant=\"plain\">\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"false\" aria-controls=\"advanced-content\">\n    <z-icon name=\"adjustments-horizontal\" size=\"16\"></z-icon>\n    <span class=\"z-collapsible__title\">Advanced settings</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n  <div id=\"advanced-content\" class=\"z-collapsible__content\" data-state=\"closed\" hidden=\"\">\n    <p>Retries, timeouts and the proxy used for outgoing requests.</p>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Tarjeta abierta",
+     "html": "<div id=\"editors\" class=\"z-collapsible\" data-state=\"open\" data-variant=\"card\">\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"true\" aria-controls=\"editors-content\">\n    <span class=\"z-collapsible__title\">3 people can edit</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n  <div id=\"editors-content\" class=\"z-collapsible__content\" data-state=\"open\">\n    <p>Ana Ruiz, Leo Park and Mia Chen.</p>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Colapso parcial",
+     "html": "<div id=\"release-notes\" class=\"z-collapsible\" data-state=\"closed\" data-variant=\"plain\" data-peek=\"true\" style=\"--z-collapsible-peek:56px\">\n  <div id=\"release-notes-content\" class=\"z-collapsible__content\" data-state=\"closed\">\n    <p>The release adds a workspace layout with resizable panes, a floating inspector and grouped tabs. Panels can be docked, split and moved with the keyboard, and every layout is saved per project.</p>\n  </div>\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"false\" aria-controls=\"release-notes-content\">\n    <span class=\"z-collapsible__title\">Show full description</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Deshabilitado",
+     "html": "<div id=\"billing\" class=\"z-collapsible\" data-state=\"closed\" data-variant=\"plain\" data-disabled=\"true\">\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"false\" aria-controls=\"billing-content\" disabled=\"\">\n    <span class=\"z-collapsible__title\">Billing history</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n  <div id=\"billing-content\" class=\"z-collapsible__content\" data-state=\"closed\" hidden=\"\">\n    <p>Only owners can see billing.</p>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Menubar": {
+   "group": "navigation",
+   "classes": [
+    "z-menubar",
+    "z-menubar__trigger"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Barra de aplicación",
+     "html": "<div class=\"z-menubar z-liquid\" role=\"menubar\" aria-label=\"Application\" aria-orientation=\"horizontal\" data-variant=\"glass\" data-size=\"sm\">\n  <button type=\"button\" role=\"menuitem\" id=\"mb-file-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-file\" tabindex=\"0\">File</button>\n  <button type=\"button\" role=\"menuitem\" id=\"mb-edit-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-edit\" tabindex=\"-1\">Edit</button>\n  <button type=\"button\" role=\"menuitem\" id=\"mb-view-trigger\" class=\"z-menubar__trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#mb-view\" tabindex=\"-1\">View</button>\n</div>\n\n<div id=\"mb-file\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-file-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-plus\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">New file</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl N</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"folder-open\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Open…</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl O</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"mb-recent\" data-z-submenu=\"#mb-recent\">\n    <span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Open recent</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-down-tray\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Save</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl S</kbd>\n  </button>\n</div>\n\n<div id=\"mb-recent\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Open recent\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">atlas/README.md</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">borealis/tokens.json</span>\n  </button>\n</div>\n\n<div id=\"mb-edit\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-edit-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-uturn-up-left\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Undo</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl Z</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"arrow-uturn-up-right\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Redo</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl Y</kbd>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"scissors\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Cut</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl X</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy</span>\n    <kbd class=\"z-menu__shortcut\">Ctrl C</kbd>\n  </button>\n</div>\n\n<div id=\"mb-view\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-labelledby=\"mb-view-trigger\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Sidebar</span>\n  </button>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Status bar</span>\n  </button>\n</div>",
+     "source": "manual",
+     "script": "// z:select en la entrada elegida; z:change en las casillas.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"[id^=mb-]\")) console.log(event.target.textContent.trim()); });"
+    }
+   ]
+  },
   "NavList": {
    "group": "navigation",
    "classes": [
@@ -1896,19 +2005,56 @@
     }
    ]
   },
+  "ActionBar": {
+   "group": "overlay",
+   "classes": [
+    "z-actionbar",
+    "z-actionbar__count",
+    "z-actionbar__actions",
+    "z-actionbar__close"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Selección de filas",
+     "html": "<div data-position=\"inline\" role=\"toolbar\" aria-label=\"Selection actions\" aria-orientation=\"horizontal\" class=\"z-toolbar z-liquid z-actionbar\" data-variant=\"glass\" data-size=\"sm\">\n  <span class=\"z-actionbar__count\" aria-live=\"polite\" aria-atomic=\"true\">3 selected</span>\n  <span role=\"separator\" aria-orientation=\"vertical\" class=\"z-toolbar__separator\"></span>\n  <span class=\"z-actionbar__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"archive-box\" size=\"14\"></z-icon>\n      Archive\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"tag\" size=\"14\"></z-icon>\n      Label\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"sm\">\n      <z-icon name=\"trash\" size=\"14\"></z-icon>\n      Delete\n    </button>\n  </span>\n  <button type=\"button\" class=\"z-actionbar__close\" aria-label=\"Clear selection\" title=\"Clear selection\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Command": {
+   "group": "overlay",
+   "classes": [
+    "z-command",
+    "z-palette__search",
+    "z-palette__input",
+    "z-palette__list",
+    "z-palette__item",
+    "z-palette__footer"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Acciones de un proyecto con pie",
+     "html": "<div class=\"z-liquid z-palette z-command\" data-inline=\"\">\n  <div class=\"z-palette__search\">\n    <span class=\"z-palette__search-icon\">\n      <z-icon name=\"magnifying-glass\" size=\"16\"></z-icon>\n    </span>\n    <input class=\"z-palette__input\" type=\"text\" role=\"combobox\" aria-expanded=\"true\" aria-controls=\"project-commands-list\" aria-activedescendant=\"project-commands-option-0\" aria-autocomplete=\"list\" aria-label=\"Project commands\" autoComplete=\"off\" spellCheck=\"false\" placeholder=\"Search commands…\" value=\"\"/>\n  </div>\n  <div id=\"project-commands-list\" role=\"listbox\" aria-label=\"Project commands\" class=\"z-palette__list\">\n    <div role=\"group\" aria-label=\"Project\" class=\"z-palette__group\">\n      <div class=\"z-palette__heading\" aria-hidden=\"true\">Project</div>\n      <div id=\"project-commands-option-0\" role=\"option\" aria-selected=\"true\" data-index=\"0\" class=\"z-palette__item\">\n        <span class=\"z-palette__item-icon\">\n          <z-icon name=\"pencil\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-palette__item-label\">Rename project</span>\n        <span class=\"z-palette__shortcut\">\n          <kbd class=\"z-palette__kbd\">F2</kbd>\n        </span>\n      </div>\n      <div id=\"project-commands-option-1\" role=\"option\" aria-selected=\"false\" data-index=\"1\" class=\"z-palette__item\">\n        <span class=\"z-palette__item-icon\">\n          <z-icon name=\"document-duplicate\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-palette__item-label\">Duplicate</span>\n      </div>\n    </div>\n    <div role=\"group\" aria-label=\"Go to\" class=\"z-palette__group\">\n      <div class=\"z-palette__heading\" aria-hidden=\"true\">Go to</div>\n      <div id=\"project-commands-option-2\" role=\"option\" aria-selected=\"false\" data-index=\"2\" class=\"z-palette__item\">\n        <span class=\"z-palette__item-icon\">\n          <z-icon name=\"gear\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-palette__item-label\">Settings</span>\n        <span class=\"z-palette__item-hint\">Project</span>\n      </div>\n      <div id=\"project-commands-option-3\" role=\"option\" aria-selected=\"false\" data-index=\"3\" class=\"z-palette__item\">\n        <span class=\"z-palette__item-icon\">\n          <z-icon name=\"users\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-palette__item-label\">Members</span>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-palette__footer\">\n    <span>\n      <kbd class=\"z-kbd\" data-size=\"md\">↑</kbd>\n       \n      <kbd class=\"z-kbd\" data-size=\"md\">↓</kbd>\n       to move\n    </span>\n    <span>\n      <kbd class=\"z-kbd\" data-size=\"md\">Enter</kbd>\n       to run\n    </span>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "CommandPalette": {
    "group": "overlay",
    "classes": [
     "z-palette",
-    "z-palette__search",
-    "z-palette__input",
-    "z-palette__list",
+    "z-palette__empty",
+    "z-palette__footer",
     "z-palette__group",
     "z-palette__heading",
+    "z-palette__input",
     "z-palette__item",
     "z-palette__item-hint",
     "z-palette__kbd",
-    "z-palette__empty"
+    "z-palette__list",
+    "z-palette__search"
    ],
    "behavior": "dom",
    "examples": [
@@ -1963,18 +2109,39 @@
    "group": "overlay",
    "classes": [
     "z-drawer",
-    "z-drawer__header",
-    "z-drawer__title",
-    "z-drawer__description",
     "z-drawer__body",
+    "z-drawer__close",
+    "z-drawer__description",
     "z-drawer__footer",
-    "z-drawer__close"
+    "z-drawer__grip",
+    "z-drawer__handle",
+    "z-drawer__header",
+    "z-drawer__title"
    ],
    "behavior": "dom",
    "examples": [
     {
      "title": "Panel lateral derecho",
      "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#filters\">Filters</button>\n\n<dialog id=\"filters\" class=\"z-liquid z-drawer\" data-side=\"right\" data-size=\"md\" aria-labelledby=\"filters-title\">\n  <header class=\"z-drawer__header\">\n    <h2 id=\"filters-title\" class=\"z-drawer__title\">Filters</h2>\n    <p class=\"z-drawer__description\">Narrow the list of projects.</p>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <footer class=\"z-drawer__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close>Apply</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>",
+     "source": "manual"
+    },
+    {
+     "title": "Hoja inferior con anclajes",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#comments\">Comments</button>\n\n<dialog id=\"comments\" class=\"z-liquid z-drawer\" data-side=\"bottom\" data-size=\"md\" data-drag data-snap-points=\"0.4 0.85\" data-snap=\"1\" aria-labelledby=\"comments-title\">\n  <button type=\"button\" role=\"slider\" class=\"z-drawer__handle\" aria-label=\"Panel height\" aria-orientation=\"vertical\" aria-valuemin=\"0\" aria-valuemax=\"1\" aria-valuenow=\"1\" aria-valuetext=\"85%\">\n    <span class=\"z-drawer__grip\" aria-hidden=\"true\"></span>\n  </button>\n  <header class=\"z-drawer__header\">\n    <h2 id=\"comments-title\" class=\"z-drawer__title\">Comments</h2>\n  </header>\n  <div class=\"z-drawer__body\">Your content.</div>\n  <button type=\"button\" class=\"z-overlay-close z-drawer__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>",
+     "source": "manual"
+    }
+   ]
+  },
+  "HoverCard": {
+   "group": "overlay",
+   "classes": [
+    "z-hovercard"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Perfil de una persona",
+     "html": "<p>Reviewed by <a href=\"/people/ana\" data-z-hovercard=\"#hc-ana\" data-z-placement=\"bottom\">@ana</a> yesterday.</p>\n\n<div id=\"hc-ana\" popover=\"manual\" class=\"z-liquid z-hovercard\" role=\"tooltip\" data-arrow>\n  <div style=\"display:grid;gap:4px;min-width:220px\">\n    <strong>Ana Ruiz</strong>\n    <span>Design systems · Madrid</span>\n    <a href=\"/people/ana/projects\">12 projects</a>\n  </div>\n</div>",
      "source": "manual"
     }
    ]
@@ -1989,7 +2156,9 @@
     "z-menu__shortcut",
     "z-menu__separator",
     "z-menu__label",
-    "z-menu__chevron"
+    "z-menu__chevron",
+    "z-menu__check",
+    "z-menu__group"
    ],
    "behavior": "dom",
    "examples": [
@@ -1998,6 +2167,12 @@
      "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#actions\">Actions</button>\n\n<div id=\"actions\" popover class=\"z-liquid z-menu\" role=\"menu\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"pencil\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Rename</span>\n    <kbd class=\"z-menu__shortcut\">F2</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Duplicate</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"actions-share\" data-z-submenu=\"#actions-share\">\n    <span class=\"z-menu__icon\"><z-icon name=\"share\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Share</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger>\n    <span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Delete</span>\n  </button>\n</div>\n\n<div id=\"actions-share\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Share\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"link\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy link</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"envelope\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Email</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-text\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Export as PDF</span>\n  </button>\n</div>",
      "source": "manual",
      "script": "// z:select burbujea desde la entrada elegida; un submenú declarado fuera de su menú se escucha en un ancestro común.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"#actions, #actions-share\")) console.log(event.target.textContent.trim()); });"
+    },
+    {
+     "title": "Vista con casillas y radios",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#view-options\">View</button>\n\n<div id=\"view-options\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"View options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Minimap</span>\n  </button>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Word wrap</span>\n    <kbd class=\"z-menu__shortcut\">Alt Z</kbd>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"view-options-density\">\n    <div class=\"z-menu__label\" id=\"view-options-density\">Density</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"compact\">\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span>\n      <span class=\"z-menu__text\">Compact</span>\n    </button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"comfortable\">\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span>\n      <span class=\"z-menu__text\">Comfortable</span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/docs/shortcuts\">\n    <span class=\"z-menu__icon\"><z-icon name=\"command-line\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Keyboard shortcuts</span>\n  </a>\n</div>",
+     "source": "manual",
+     "script": "// z:change en la casilla ({ checked }) o en el grupo de radio ({ value }).\ndocument.querySelector(\"#view-options\").addEventListener(\"z:change\", (event) => console.log(event.detail));"
     }
    ]
   },
@@ -2025,13 +2200,20 @@
   "Popover": {
    "group": "overlay",
    "classes": [
-    "z-popover"
+    "z-popover",
+    "z-popover__body",
+    "z-popover__close"
    ],
    "behavior": "dom",
    "examples": [
     {
      "title": "Popover anclado",
      "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"dialog\" data-z-open=\"#usage\" data-z-placement=\"bottom-start\">Usage</button>\n\n<div id=\"usage\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"Usage\">\n  412 GB of 512 GB used.\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Con flecha y ancla distinta",
+     "html": "<span class=\"z-input\" data-size=\"md\" id=\"dns-field\">\n  <input class=\"z-input__control\" aria-label=\"Domain\" value=\"zuix.dev\">\n</span>\n<button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" aria-label=\"DNS help\" title=\"DNS help\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#dns-help\" data-z-anchor=\"#dns-field\" data-z-placement=\"bottom-start\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"dns-help\" popover class=\"z-liquid z-popover\" role=\"dialog\" aria-label=\"DNS help\" data-arrow data-close>\n  <div class=\"z-popover__body\">Point an A record to 76.76.21.21.</div>\n  <button type=\"button\" class=\"z-overlay-close z-popover__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</div>",
      "source": "manual"
     }
    ]
@@ -2040,13 +2222,14 @@
    "group": "overlay",
    "classes": [
     "z-toast",
-    "z-toast__dot",
-    "z-toast__content",
-    "z-toast__title",
-    "z-toast__description",
+    "z-toast-viewport",
     "z-toast__action",
     "z-toast__close",
-    "z-toast-viewport"
+    "z-toast__content",
+    "z-toast__description",
+    "z-toast__dot",
+    "z-toast__spinner",
+    "z-toast__title"
    ],
    "behavior": "dom",
    "examples": [
@@ -2055,6 +2238,32 @@
      "html": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" id=\"save\">Save</button>",
      "source": "manual",
      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#save\").addEventListener(\"click\", () => {\n  toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" });\n});"
+    },
+    {
+     "title": "Aviso de una promesa",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"deploy\">Deploy</button>",
+     "source": "manual",
+     "script": "import { toastPromise } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#deploy\").addEventListener(\"click\", () => {\n  const job = new Promise((resolve) => setTimeout(() => resolve(\"v0.3.0\"), 1500));\n  toastPromise(job, {\n    loading: \"Deploying…\",\n    success: (version) => ({ title: \"Deployed\", description: `Version ${version} is live.` }),\n    error: \"Deploy failed\",\n  });\n});"
+    }
+   ]
+  },
+  "Toggletip": {
+   "group": "overlay",
+   "classes": [
+    "z-toggletip",
+    "z-toggletip__trigger"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Ayuda de un campo",
+     "html": "<span style=\"display:inline-flex;align-items:center;gap:4px\">Shipping\n  <button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"More about shipping\" aria-expanded=\"false\" data-z-toggletip=\"#tt-shipping\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </button>\n</span>\n\n<div id=\"tt-shipping\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  Free on orders over $50. Orders placed before 2pm ship the same day.\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Con enlace, a la derecha",
+     "html": "<button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"About API limits\" aria-expanded=\"false\" data-z-toggletip=\"#tt-limits\" data-z-placement=\"right\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"tt-limits\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  1,000 requests per hour. <a href=\"/docs/limits\">See the limits</a>.\n</div>",
+     "source": "manual"
     }
    ]
   },
@@ -2069,6 +2278,29 @@
      "title": "Tooltip en un botón de icono",
      "html": "<button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"md\" aria-label=\"Copy link\" data-z-tooltip=\"Copy link\">\n  <z-icon name=\"link\" size=\"16\"></z-icon>\n</button>",
      "source": "manual"
+    }
+   ]
+  },
+  "Tour": {
+   "group": "overlay",
+   "classes": [
+    "z-tour",
+    "z-tour__header",
+    "z-tour__progress",
+    "z-tour__title",
+    "z-tour__body",
+    "z-tour__footer",
+    "z-tour__primary",
+    "z-tour__close",
+    "z-tour__ring"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Recorrido de tres pasos",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"tour-start\">Take the tour</button>\n\n<div class=\"z-liquid z-tour\" role=\"group\" aria-label=\"Tour step preview\">\n  <header class=\"z-tour__header\">\n    <p class=\"z-tour__progress\">Step 1 of 3</p>\n    <h2 class=\"z-tour__title\">Create a project</h2>\n  </header>\n  <div class=\"z-tour__body\">Projects group your files and members.</div>\n  <footer class=\"z-tour__footer\">\n    <button type=\"button\" class=\"z-dialog-btn z-tour__skip\" data-variant=\"secondary\">Skip tour</button>\n    <span class=\"z-tour__spacer\"></span>\n    <button type=\"button\" class=\"z-dialog-btn z-tour__primary\" data-variant=\"primary\">Next</button>\n  </footer>\n</div>",
+     "source": "manual",
+     "script": "import { startTour } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#tour-start\").addEventListener(\"click\", () => {\n  startTour({\n    steps: [\n      { target: \"#tour-start\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n      { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n    ],\n  });\n});"
     }
    ]
   }

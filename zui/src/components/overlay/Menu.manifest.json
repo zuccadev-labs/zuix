@@ -2,7 +2,7 @@
   "name": "Menu",
   "group": "overlay",
   "description": "Menú desplegable de acciones anclado a un disparador.",
-  "import": "import { Menu, type MenuEntry } from \"@zuccadev-labs/zuix-zui\"",
+  "import": "import { Menu, type MenuEntry, type MenuCheckboxEntry, type MenuRadioGroupEntry } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "trigger",
@@ -13,7 +13,7 @@
       "name": "items",
       "type": "MenuEntry[]",
       "required": true,
-      "description": "Entradas: { id, label, icon?, shortcut?, danger?, disabled?, keepOpen?, onSelect?, items? } | { type: \"separator\" } | { type: \"label\", label }. `items` anida un submenú."
+      "description": "Entradas: { id, label, icon?, shortcut?, danger?, disabled?, keepOpen?, onSelect?, href?, items? } | { type: \"checkbox\", id, label, checked, onCheckedChange?, shortcut?, disabled? } | { type: \"radio-group\", id, label, value, onValueChange?, items: { value, label, shortcut?, disabled? }[] } | { type: \"separator\" } | { type: \"label\", label }. `items` anida un submenú; `href` hace de la entrada un enlace."
     },
     {
       "name": "label",
@@ -53,7 +53,7 @@
       "type": "(open: boolean) => void"
     }
   ],
-  "states": ["open", "closed", "highlighted", "disabled"],
+  "states": ["open", "closed", "highlighted", "disabled", "checked"],
   "tokens": [
     "duration-fast",
     "fg",
@@ -97,7 +97,9 @@
     "text-caption",
     "text-title",
     "touch-target",
-    "tracking-wide"
+    "tracking-wide",
+    "accent-text",
+    "radius-full"
   ],
   "classes": [
     "z-menu",
@@ -107,13 +109,19 @@
     "z-menu__shortcut",
     "z-menu__separator",
     "z-menu__label",
-    "z-menu__chevron"
+    "z-menu__chevron",
+    "z-menu__check",
+    "z-menu__group"
   ],
-  "a11y": "Al abrirse, con el teclado o con el puntero, el foco va a la primera entrada (patrón APG «menu button»), igual en React y sin React. React: menú propio, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena.",
+  "a11y": "Al abrirse, con el teclado o con el puntero, el foco va a la primera entrada (patrón APG «menu button»), igual en React y sin React. React: menú propio, con role=menu y menuitem, flechas, Inicio/Fin, búsqueda por letra, submenús y Escape, que cierra y devuelve el foco al disparador. Sin React (`@zuccadev-labs/zuix-zui/dom`): los roles, `aria-haspopup` y `aria-expanded` del disparador van en el marcado; el módulo mueve el foco con flechas, Inicio/Fin y búsqueda por letra, Tab cierra y Escape devuelve el foco al disparador. Una entrada con `data-z-submenu=\"#id\"` lleva `aria-haspopup=menu`, `aria-expanded` y `aria-controls`: Flecha derecha, Intro o Espacio abren el submenú y enfocan su primera entrada; Flecha izquierda o Escape cierran solo ese submenú y devuelven el foco a la entrada; elegir cierra toda la cadena. Casillas: role=menuitemcheckbox con aria-checked; Espacio la cambia y deja el menú abierto, Intro o el clic la cambian y cierran. Radios: role=menuitemradio con aria-checked dentro de un role=group con nombre (su título); elegir cierra. La señal (marca o punto) va en el hueco del icono, dibujada con borde para que sobreviva a los colores forzados. Una entrada con `href` es un enlace (`<a role=menuitem>`): Intro lo sigue y se puede abrir en otra pestaña.",
   "examples": [
     {
       "title": "Acciones de una fila",
       "code": "<Menu\n  label=\"Project actions\"\n  trigger={<button type=\"button\">Actions</button>}\n  items={[\n    { type: \"label\", label: \"Project\" },\n    { id: \"rename\", label: \"Rename\", icon: \"pencil\", shortcut: \"F2\", onSelect: () => rename() },\n    { id: \"duplicate\", label: \"Duplicate\", icon: \"copy\", onSelect: () => duplicate() },\n    { type: \"separator\" },\n    { id: \"delete\", label: \"Delete\", icon: \"trash\", danger: true, onSelect: () => remove() },\n  ]}\n/>"
+    },
+    {
+      "title": "Vista con casillas y radios",
+      "code": "<Menu\n  label=\"View options\"\n  trigger={<button type=\"button\">View</button>}\n  items={[\n    { type: \"checkbox\", id: \"minimap\", label: \"Minimap\", checked: minimap, onCheckedChange: setMinimap },\n    { type: \"checkbox\", id: \"wrap\", label: \"Word wrap\", shortcut: \"Alt Z\", checked: wrap, onCheckedChange: setWrap },\n    { type: \"separator\" },\n    { type: \"radio-group\", id: \"density\", label: \"Density\", value: density, onValueChange: setDensity, items: [\n      { value: \"compact\", label: \"Compact\" },\n      { value: \"comfortable\", label: \"Comfortable\" },\n    ] },\n    { type: \"separator\" },\n    { id: \"docs\", label: \"Keyboard shortcuts\", icon: \"command-line\", href: \"/docs/shortcuts\" },\n  ]}\n/>"
     }
   ],
   "origin": "Menu y `.ctx-menu` de zutool; accesibilidad según el patrón APG, con primitivas propias.",
@@ -123,6 +131,11 @@
       "title": "Menú de acciones con submenú",
       "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#actions\">Actions</button>\n\n<div id=\"actions\" popover class=\"z-liquid z-menu\" role=\"menu\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"pencil\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Rename</span>\n    <kbd class=\"z-menu__shortcut\">F2</kbd>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Duplicate</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"actions-share\" data-z-submenu=\"#actions-share\">\n    <span class=\"z-menu__icon\"><z-icon name=\"share\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Share</span>\n    <span class=\"z-menu__chevron\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger>\n    <span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Delete</span>\n  </button>\n</div>\n\n<div id=\"actions-share\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Share\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"link\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Copy link</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"envelope\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Email</span>\n  </button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"document-text\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Export as PDF</span>\n  </button>\n</div>",
       "script": "// z:select burbujea desde la entrada elegida; un submenú declarado fuera de su menú se escucha en un ancestro común.\ndocument.addEventListener(\"z:select\", (event) => { if (event.target.closest(\"#actions, #actions-share\")) console.log(event.target.textContent.trim()); });"
+    },
+    {
+      "title": "Vista con casillas y radios",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#view-options\">View</button>\n\n<div id=\"view-options\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"View options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Minimap</span>\n  </button>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Word wrap</span>\n    <kbd class=\"z-menu__shortcut\">Alt Z</kbd>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"view-options-density\">\n    <div class=\"z-menu__label\" id=\"view-options-density\">Density</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"compact\">\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span>\n      <span class=\"z-menu__text\">Compact</span>\n    </button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"comfortable\">\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span>\n      <span class=\"z-menu__text\">Comfortable</span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/docs/shortcuts\">\n    <span class=\"z-menu__icon\"><z-icon name=\"command-line\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Keyboard shortcuts</span>\n  </a>\n</div>",
+      "script": "// z:change en la casilla ({ checked }) o en el grupo de radio ({ value }).\ndocument.querySelector(\"#view-options\").addEventListener(\"z:change\", (event) => console.log(event.detail));"
     }
   ]
 }

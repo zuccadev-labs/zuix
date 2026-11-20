@@ -1,0 +1,59 @@
+{
+  "name": "Command",
+  "group": "overlay",
+  "description": "La paleta de comandos incrustada en la página: buscador y lista siempre a la vista, con grupos, atajos y pie.",
+  "import": "import { Command, type PaletteGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "apg": "combobox",
+  "props": [
+    {
+      "name": "groups",
+      "type": "PaletteGroup[]",
+      "required": true,
+      "description": "{ heading?, commands: { id, label, hint?, shortcut?, icon?, keywords?, disabled?, onSelect }[] }."
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "description": "Prefijo de los ids de la lista y sus opciones."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Commands",
+      "description": "Nombre accesible del campo y de la lista."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Search commands…"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "default": "No results"
+    },
+    {
+      "name": "filter",
+      "type": "(groups, query) => PaletteGroup[]",
+      "description": "Filtro propio."
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode",
+      "description": "Pie bajo la lista (atajos, ayuda)."
+    }
+  ],
+  "states": ["rest", "active", "disabled", "empty"],
+  "tokens": ["popup-bg", "card-radius", "line", "fg-muted", "surface-2", "text-caption"],
+  "cssVars": ["--z-command-height"],
+  "classes": ["z-command", "z-palette__search", "z-palette__input", "z-palette__list", "z-palette__item", "z-palette__footer"],
+  "a11y": "Patrón combobox con aria-activedescendant, como la CommandPalette: el foco se queda en el campo; Flecha arriba y abajo mueven la opción activa, Inicio y Fin van a los extremos e Intro ejecuta el comando. Escape vacía la búsqueda (si no hay búsqueda, sigue su curso: cierra el Popover que lo contenga). Las cabeceras de grupo nombran cada grupo; sin resultados, un mensaje con role=status. Para abrirla sobre la página con un atajo, CommandPalette.",
+  "examples": [
+    {
+      "title": "Acciones de un proyecto con pie",
+      "code": "<Command\n  id=\"project-commands\"\n  label=\"Project commands\"\n  groups={[\n    { heading: \"Project\", commands: [\n      { id: \"rename\", label: \"Rename project\", icon: \"pencil\", shortcut: \"F2\", onSelect: rename },\n      { id: \"duplicate\", label: \"Duplicate\", icon: \"document-duplicate\", onSelect: duplicate },\n    ] },\n    { heading: \"Go to\", commands: [\n      { id: \"settings\", label: \"Settings\", icon: \"gear\", hint: \"Project\", onSelect: openSettings },\n      { id: \"members\", label: \"Members\", icon: \"users\", onSelect: openMembers },\n    ] },\n  ]}\n  footer={<><span><Kbd>↑</Kbd> <Kbd>↓</Kbd> to move</span><span><Kbd>Enter</Kbd> to run</span></>}\n/>"
+    }
+  ],
+  "origin": "Nuevo, sobre la lista de CommandPalette. Material de QuickSwitcher de zutool. Referencia de variantes: Command de Shark UI."
+}

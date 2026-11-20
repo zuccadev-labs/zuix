@@ -1,10 +1,10 @@
 "use client";
-import { useId, useRef, type CSSProperties, type KeyboardEvent, type ReactElement, type ReactNode } from "react";
+import { useId, useRef, type CSSProperties, type KeyboardEvent, type ReactElement, type ReactNode, type RefObject } from "react";
 import { focusInto, focusQuiet, tabbable, trapTab } from "../../core/focus";
 import { cx } from "../../cx";
 import { useLayer, usePresence } from "../../primitives/hooks";
 import { ModalPopup, Popup, Portal, rectOf } from "../../primitives/popup";
-import { useDisclosure } from "./internal";
+import { CloseButton, useDisclosure } from "./internal";
 
 interface PopoverBaseProps {
   /** Elemento disparador. */
@@ -22,6 +22,16 @@ interface PopoverBaseProps {
    * lectores de pantalla), Tab da la vuelta dentro y una pulsación fuera solo lo cierra.
    */
   modal?: boolean;
+  /**
+   * Ancla distinta del disparador: el panel se coloca junto a este elemento (un campo, una fila, una zona), aunque lo
+   * abra el disparador. El foco sigue volviendo al disparador.
+   */
+  anchor?: RefObject<Element | null>;
+  /** Flecha que apunta al centro del ancla; sigue al lado en que quede el panel (también tras voltearse). */
+  arrow?: boolean;
+  /** Botón de cierre en la esquina del panel. */
+  showClose?: boolean;
+  closeLabel?: string;
   className?: string;
   children?: ReactNode;
 }
@@ -46,6 +56,10 @@ export function Popover({
   label,
   "aria-labelledby": labelledBy,
   modal,
+  anchor,
+  arrow,
+  showClose,
+  closeLabel = "Close",
   className,
   children,
 }: PopoverProps) {
@@ -57,6 +71,15 @@ export function Popover({
   };
   const present = usePresence(open, panel);
   const style: CSSProperties | undefined = width === undefined ? undefined : { width };
+  // Ancla de la colocación: la propia o el disparador. La flecha necesita su hueco entre el ancla y el panel.
+  const anchorOf = () => anchor?.current ?? triggerRef.current;
+  const gap = sideOffset + (arrow ? 7 : 0);
+  const body = (
+    <>
+      {arrow ? <div className="z-popover__body">{children}</div> : children}
+      {showClose ? <CloseButton label={closeLabel} className="z-popover__close" onClick={() => close(true)} /> : null}
+    </>
+  );
 
   const close = (refocus: boolean) => {
     const inside = panel.current?.contains(document.activeElement) ?? false;
@@ -98,10 +121,10 @@ export function Popover({
             ref={setPanel}
             id={id}
             open={open}
-            anchorRect={() => rectOf(triggerRef.current)}
-            watch={triggerRef}
+            anchorRect={() => rectOf(anchorOf())}
+            watch={anchor ?? triggerRef}
             placement={align === "center" ? side : `${side}-${align}`}
-            gap={sideOffset}
+            gap={gap}
             trigger={triggerRef}
             // El foco vuelve al disparador al desmontar (ModalPopup): mientras tanto es inerte.
             onDismiss={() => setOpen(false)}
@@ -110,11 +133,13 @@ export function Popover({
             aria-labelledby={label ? undefined : labelledBy}
             tabIndex={-1}
             className={cx("z-liquid z-popover", className)}
+            data-arrow={arrow || undefined}
+            data-close={showClose || undefined}
             style={style}
             onKeyDown={onKeyDown}
             onShown={focusInto}
           >
-            {children}
+            {body}
           </ModalPopup>
         </Portal>
       ) : present ? (
@@ -123,20 +148,24 @@ export function Popover({
             ref={setPanel}
             id={id}
             open={open}
-            anchorRect={() => rectOf(triggerRef.current)}
-            watch={triggerRef}
+            anchorRect={() => rectOf(anchorOf())}
+            // Mejora progresiva: con CSS anchor positioning el navegador lo coloca y lo sigue; sin ella, ./place.
+            anchorElement={anchorOf}
+            watch={anchor ?? triggerRef}
             placement={align === "center" ? side : `${side}-${align}`}
-            gap={sideOffset}
+            gap={gap}
             role="dialog"
             aria-label={label}
             aria-labelledby={label ? undefined : labelledBy}
             tabIndex={-1}
             className={cx("z-liquid z-popover", className)}
+            data-arrow={arrow || undefined}
+            data-close={showClose || undefined}
             style={style}
             onKeyDown={onKeyDown}
             onShown={focusInto}
           >
-            {children}
+            {body}
           </Popup>
         </Portal>
       ) : null}

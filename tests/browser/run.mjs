@@ -136,7 +136,15 @@ async function startServer() {
 
 // Avisos que no son de la aplicación: React DevTools, HMR de Vite, mensajes de rendimiento del driver GL por software
 // y el aviso con el que Firefox responde a `getContext("webgl2")` cuando el equipo no ofrece WebGL (tests/webgl.mjs).
-const IGNORED_CONSOLE = [/Download the React DevTools/, /\[vite\]/, /GL Driver Message/, WEBGL_UNAVAILABLE_WARNING];
+// Firefox avisa (aviso de rendimiento, no error) de que una capa anclada se recoloca al desplazar: es la colocación de
+// respaldo de las capas flotantes cuando la página se desplaza con una abierta (HoverCard, Popover, Tooltip).
+const IGNORED_CONSOLE = [
+  /Download the React DevTools/,
+  /\[vite\]/,
+  /GL Driver Message/,
+  WEBGL_UNAVAILABLE_WARNING,
+  /scroll-linked positioning effect/,
+];
 
 function makeContext(engine, baseUrl, record, shots) {
   const { browser, browserName } = engine;

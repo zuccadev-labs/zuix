@@ -1,10 +1,14 @@
 {
  "name": "@zuccadev-labs/zuix-zout",
- "count": 10,
+ "count": 14,
  "groups": {
   "layout": [
+   "Float",
+   "FloatingPanel",
    "Grid",
    "Page",
+   "PaneHeader",
+   "PaneLayout",
    "Rail",
    "ResizeHandle",
    "Shell",
@@ -16,6 +20,208 @@
   ]
  },
  "components": [
+  {
+   "name": "Float",
+   "group": "layout",
+   "description": "Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.",
+   "import": "import { Float } from \"@zuccadev-labs/zuix-zout\"",
+   "behavior": "none",
+   "props": [
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Elemento al que se ancla."
+    },
+    {
+     "name": "content",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Lo que flota sobre él."
+    },
+    {
+     "name": "placement",
+     "type": "enum",
+     "values": [
+      "top-start",
+      "top-center",
+      "top-end",
+      "middle-start",
+      "middle-end",
+      "bottom-start",
+      "bottom-center",
+      "bottom-end"
+     ],
+     "default": "top-end",
+     "description": "Lógico: `start` es la izquierda en LTR y la derecha en RTL."
+    },
+    {
+     "name": "offset",
+     "type": "string | number",
+     "description": "Desplazamiento hacia dentro (`--z-float-offset`), p. ej. `14%` sobre un avatar redondo."
+    }
+   ],
+   "tokens": [
+    "layer-raised"
+   ],
+   "cssVars": [
+    "--z-float-offset"
+   ],
+   "classes": [
+    "z-float",
+    "z-float__item"
+   ],
+   "a11y": "Solo presentación. Si lo que flota informa (un contador de no leídos), ese dato debe estar también en el nombre accesible del elemento ancla (`aria-label` con el número) o en un texto oculto; un punto decorativo lleva `aria-hidden`.",
+   "examples": [
+    {
+     "title": "Contador sobre un botón y estado sobre un avatar",
+     "code": "<div style={{ display: \"flex\", gap: 24, alignItems: \"center\" }}>\n  <Float content={<Badge tone=\"danger\" variant=\"solid\" size=\"sm\">3</Badge>}>\n    <IconButton icon=\"bell\" label=\"Notifications, 3 unread\" variant=\"secondary\" />\n  </Float>\n  <Float placement=\"bottom-end\" offset=\"14%\" content={<Badge tone=\"success\" variant=\"solid\" size=\"sm\">On</Badge>}>\n    <Avatar name=\"Ana Ruiz\" />\n  </Float>\n  <Float placement=\"top-start\" content={<Badge tone=\"accent\" variant=\"solid\" size=\"sm\">New</Badge>}>\n    <Button variant=\"secondary\">Reports</Button>\n  </Float>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencia de variantes: Float de Shark UI.",
+   "file": "zout/src/layouts/Float.manifest.json"
+  },
+  {
+   "name": "FloatingPanel",
+   "group": "layout",
+   "description": "Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.",
+   "import": "import { FloatingPanel } from \"@zuccadev-labs/zuix-zout\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Título: nombra el panel (aria-labelledby)."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "onClose",
+     "type": "() => void",
+     "description": "Botón de cierre y Escape con el foco dentro."
+    },
+    {
+     "name": "position",
+     "type": "{ x, y }",
+     "description": "Controlada, en px desde la esquina superior izquierda del área. También defaultPosition y onPositionChange."
+    },
+    {
+     "name": "size",
+     "type": "{ width, height }",
+     "description": "Controlado, en px. También defaultSize y onSizeChange."
+    },
+    {
+     "name": "minWidth",
+     "type": "number",
+     "default": 200
+    },
+    {
+     "name": "minHeight",
+     "type": "number",
+     "default": 120
+    },
+    {
+     "name": "resizable",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "strategy",
+     "type": "enum",
+     "values": [
+      "fixed",
+      "absolute"
+     ],
+     "default": "fixed",
+     "description": "`fixed` flota sobre la ventana; `absolute`, dentro de su contenedor posicionado."
+    },
+    {
+     "name": "autoFocus",
+     "type": "boolean",
+     "default": true,
+     "description": "Lleva el foco al panel al montarlo y lo devuelve al cerrarlo."
+    },
+    {
+     "name": "moveLabel",
+     "type": "string",
+     "default": "Move panel (arrow keys)"
+    },
+    {
+     "name": "resizeLabel",
+     "type": "string",
+     "default": "Resize panel (arrow keys)"
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Close"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "dragging",
+    "resizing",
+    "hidden"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-panel",
+    "layer-overlay",
+    "layer-raised",
+    "line",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius-sm",
+    "row-hover",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-small",
+    "weight-semibold",
+    "space-1",
+    "space-2",
+    "space-3"
+   ],
+   "classes": [
+    "z-floatpanel",
+    "z-floatpanel__header",
+    "z-floatpanel__handle",
+    "z-floatpanel__title",
+    "z-floatpanel__close",
+    "z-floatpanel__body",
+    "z-floatpanel__resize"
+   ],
+   "a11y": "`role=\"dialog\"` no modal (sin aria-modal), nombrado por su título; recibe el foco al abrirse y lo devuelve al cerrarse. El asa de la cabecera es un botón cuyo nombre menciona las flechas: las flechas mueven el panel 10 px (Mayús, 100 px). La esquina de redimensionar es otro botón: las flechas cambian el tamaño (en RTL la esquina va abajo a la izquierda). Arrastrar la cabecera es ayuda de puntero. El panel no sale de la ventana o de su contenedor. Con `onClose`, Escape lo cierra.",
+   "examples": [
+    {
+     "title": "Inspector dentro de un contenedor",
+     "code": "<div style={{ position: \"relative\", height: 300, width: \"100%\" }}>\n  <FloatingPanel\n    title=\"Inspector\"\n    strategy=\"absolute\"\n    defaultPosition={{ x: 16, y: 16 }}\n    defaultSize={{ width: 260, height: 200 }}\n    onClose={close}\n  >\n    <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>\n  </FloatingPanel>\n</div>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Inspector dentro de un contenedor",
+     "code": "<div style=\"display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-z-panel=\"#inspector-panel\">Toggle inspector</button>\n  <div style=\"position:relative;height:300px;width:100%\">\n    <section class=\"z-floatpanel z-liquid\" id=\"inspector-panel\" role=\"dialog\" aria-labelledby=\"inspector-panel-title\" tabindex=\"-1\" data-strategy=\"absolute\" style=\"left:16px;top:16px;width:260px;height:200px\">\n      <header class=\"z-floatpanel__header\">\n        <button type=\"button\" class=\"z-floatpanel__handle\" aria-label=\"Move panel (arrow keys)\" title=\"Move panel (arrow keys)\">\n          <z-icon name=\"bars-2\" size=\"14\"></z-icon>\n        </button>\n        <h2 class=\"z-floatpanel__title\" id=\"inspector-panel-title\">Inspector</h2>\n        <button type=\"button\" class=\"z-floatpanel__close\" aria-label=\"Close\" title=\"Close\">\n          <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n        </button>\n      </header>\n      <div class=\"z-floatpanel__body\">\n        <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>\n      </div>\n      <button type=\"button\" class=\"z-floatpanel__resize\" aria-label=\"Resize panel (arrow keys)\" title=\"Resize panel (arrow keys)\"></button>\n    </section>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "Paneles flotantes de zutool; referencia de variantes: Floating Panel de Shark UI.",
+   "file": "zout/src/layouts/FloatingPanel.manifest.json"
+  },
   {
    "name": "Grid",
    "group": "layout",
@@ -227,6 +433,176 @@
    "origin": "Contenedor y cabeceras del design system base.",
    "a11y": "Región desplazable (`role=\"region\"`, `tabindex=\"0\"`) con nombre accesible (`label`): el teclado la enfoca y la desplaza con las flechas aunque no contenga controles. Foco por contorno, por dentro.",
    "file": "zout/src/layouts/Page.manifest.json"
+  },
+  {
+   "name": "PaneHeader",
+   "group": "layout",
+   "description": "Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.",
+   "import": "import { PaneHeader } from \"@zuccadev-labs/zuix-zout\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "icon",
+     "type": "ReactNode",
+     "description": "Icono o marca antes del título."
+    },
+    {
+     "name": "subtitle",
+     "type": "ReactNode",
+     "description": "Línea secundaria o migas."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode",
+     "description": "Controles: van en una Toolbar plain sm (una sola parada de Tab)."
+    },
+    {
+     "name": "menu",
+     "type": "ReactNode",
+     "description": "Disparador de menú al final de la barra."
+    },
+    {
+     "name": "actionsLabel",
+     "type": "string",
+     "default": "Pane actions",
+     "description": "Nombre accesible de la barra."
+    },
+    {
+     "name": "focused",
+     "type": "boolean",
+     "description": "Resalta el título y el icono del panel con foco."
+    },
+    {
+     "name": "titleId",
+     "type": "string",
+     "description": "Id del título para nombrar el panel (aria-labelledby)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focused",
+    "unfocused"
+   ],
+   "tokens": [
+    "control-height-md",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "space-1",
+    "space-2",
+    "space-3",
+    "text-small",
+    "text-caption",
+    "weight-medium"
+   ],
+   "classes": [
+    "z-paneheader",
+    "z-paneheader__icon",
+    "z-paneheader__title",
+    "z-paneheader__subtitle",
+    "z-paneheader__actions"
+   ],
+   "a11y": "El título es texto: para nombrar el panel, `titleId` y `aria-labelledby` en el contenedor. Las acciones van en una Toolbar (`role=\"toolbar\"` con nombre): una sola parada de Tab, las flechas recorren los botones y el menú, Inicio y Fin van a los extremos. Los botones de solo icono llevan nombre accesible.",
+   "examples": [
+    {
+     "title": "Panel de editor con acciones y menú",
+     "code": "<div style={{ width: 420 }}>\n  <Pane\n    header={\n      <PaneHeader\n        icon={<Icon name=\"code-bracket\" size={14} />}\n        title=\"Button.tsx\"\n        subtitle=\"zui/src/components\"\n        focused\n        actionsLabel=\"Editor actions\"\n        actions={\n          <>\n            <IconButton icon=\"view-columns\" label=\"Split right\" size=\"sm\" />\n            <IconButton icon=\"arrows-pointing-out\" label=\"Maximize\" size=\"sm\" />\n          </>\n        }\n        menu={<IconButton icon=\"ellipsis-horizontal\" label=\"More actions\" size=\"sm\" />}\n      />\n    }\n  >\n    <div style={{ padding: 12 }}>export function Button() {}</div>\n  </Pane>\n</div>"
+    },
+    {
+     "title": "Solo título (panel sin foco)",
+     "code": "<div style={{ width: 320 }}>\n  <PaneHeader icon={<Icon name=\"command-line\" size={14} />} title=\"Terminal\" subtitle=\"zsh\" focused={false} />\n</div>"
+    }
+   ],
+   "origin": "`PaneHeaderButtons` y `PaneMark` de zutool.",
+   "file": "zout/src/layouts/PaneHeader.manifest.json"
+  },
+  {
+   "name": "PaneLayout",
+   "group": "layout",
+   "description": "Mosaico de paneles redimensionables: árbol de divisiones, cabecera y menú por panel, y arrastre de un panel al borde de otro.",
+   "import": "import { PaneLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "layout",
+     "type": "PaneNode",
+     "required": true,
+     "description": "Árbol controlado: { type: \"pane\", id } o { type: \"split\", direction: \"row\" | \"column\", sizes, children }."
+    },
+    {
+     "name": "onLayoutChange",
+     "type": "(layout: PaneNode) => void",
+     "required": true
+    },
+    {
+     "name": "panes",
+     "type": "Record<string, PaneInfo>",
+     "required": true,
+     "description": "Por id: { title, icon?, subtitle?, actions?, content, closable? }."
+    },
+    {
+     "name": "onSplit",
+     "type": "(id, direction) => string | undefined",
+     "description": "Devuelve el id del panel nuevo; sin él, el menú no ofrece dividir."
+    },
+    {
+     "name": "onClose",
+     "type": "(id: string) => void",
+     "description": "Tras cerrar un panel desde su menú."
+    },
+    {
+     "name": "focusedId",
+     "type": "string",
+     "description": "Panel con el foco (controlado). También onFocusedChange."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PaneLayoutLabels>",
+     "description": "menu(title), splitRight, splitDown, moveLeft, moveRight, moveUp, moveDown, close, divider, moved(title). En inglés por defecto."
+    }
+   ],
+   "states": [
+    "rest",
+    "focused",
+    "dragging",
+    "drop"
+   ],
+   "tokens": [
+    "accent",
+    "accent-soft",
+    "radius-lg",
+    "layer-raised",
+    "space-1"
+   ],
+   "classes": [
+    "z-panelayout",
+    "z-panelayout__pane",
+    "z-panelayout__grab",
+    "z-panelayout__drop",
+    "z-panelayout__menu",
+    "z-panelayout__status"
+   ],
+   "a11y": "Cada panel es una `section` nombrada por su título (aria-labelledby). Los divisores son el patrón «window splitter» de SplitPane: flechas, Inicio, Fin y doble clic. La cabecera de cada panel lleva sus acciones en una Toolbar (una sola parada de Tab) y un menú (patrón APG «menu button») con mover a la izquierda, derecha, arriba o abajo (intercambia con el vecino de ese lado), dividir y cerrar: es la vía de teclado del arrastre. Arrastrar la cabecera sobre otro panel señala con una zona el borde donde caerá (o el intercambio en el centro) y no cambia nada hasta soltar. Cada movimiento se anuncia en una región `status`; el foco vuelve al menú del panel movido.",
+   "examples": [
+    {
+     "title": "Editor, vista previa y terminal",
+     "code": "<div style={{ height: 360, width: \"100%\" }}>\n  <PaneLayout\n    layout={{\n      type: \"split\",\n      direction: \"row\",\n      sizes: [0.55, 0.45],\n      children: [\n        { type: \"pane\", id: \"editor\" },\n        {\n          type: \"split\",\n          direction: \"column\",\n          sizes: [0.35, 0.65],\n          children: [\n            { type: \"pane\", id: \"preview\" },\n            { type: \"pane\", id: \"terminal\" },\n          ],\n        },\n      ],\n    }}\n    onLayoutChange={setLayout}\n    panes={{\n      editor: { title: \"Editor\", icon: <Icon name=\"code-bracket\" size={14} />, content: <p style={{ padding: 12 }}>Drag a header onto another pane, or use its menu.</p> },\n      preview: { title: \"Preview\", icon: <Icon name=\"eye\" size={14} />, content: <p style={{ padding: 12 }}>Preview</p> },\n      terminal: { title: \"Terminal\", icon: <Icon name=\"command-line\" size={14} />, content: <p style={{ padding: 12 }}>zsh</p> },\n    }}\n  />\n</div>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Editor, vista previa y terminal",
+     "code": "<div style=\"height:360px;width:100%\">\n  <div class=\"z-panelayout\" id=\"pl-demo\" data-divider-label=\"Resize panes\">\n    <div class=\"z-split\" data-direction=\"row\">\n      <div class=\"z-split__pane\" id=\"pl-3-0\" style=\"flex-grow:0.55\">\n        <section class=\"z-panelayout__pane\" data-pane-id=\"editor\" aria-labelledby=\"pl-0-editor-title\">\n          <div class=\"z-pane\" data-focused=\"true\">\n            <div class=\"z-pane__header\">\n              <div class=\"z-panelayout__grab\">\n                <div class=\"z-paneheader\" data-focused=\"true\">\n                  <span class=\"z-paneheader__icon\">\n                    <z-icon name=\"code-bracket\" size=\"14\"></z-icon>\n                  </span>\n                  <div class=\"z-paneheader__titles\">\n                    <span class=\"z-paneheader__title\" id=\"pl-0-editor-title\">Editor</span>\n                  </div>\n                  <div role=\"toolbar\" aria-label=\"Editor pane actions\" aria-orientation=\"horizontal\" class=\"z-toolbar z-paneheader__actions\" data-variant=\"plain\" data-size=\"sm\">\n                    <button type=\"button\" title=\"Editor pane actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"pl-editor-menu\" data-z-open=\"#pl-editor-menu\" data-z-placement=\"bottom-end\" id=\"pl-1dcr-trigger\" aria-label=\"Editor pane actions\" class=\"z-btn z-btn--icon z-btn--ghost z-panelayout__menu\" data-size=\"sm\">\n                      <z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon>\n                    </button>\n                    <div class=\"z-liquid z-menu\" popover id=\"pl-editor-menu\" role=\"menu\" aria-label=\"Editor pane actions\" data-size=\"md\">\n                      <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-left\" data-pane-for=\"editor\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move left</span></button>\n                      <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-right\" data-pane-for=\"editor\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move right</span></button>\n                      <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-up\" data-pane-for=\"editor\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move up</span></button>\n                      <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-down\" data-pane-for=\"editor\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move down</span></button>\n                      <div role=\"separator\" class=\"z-menu__separator\"></div>\n                      <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-danger=\"true\" data-pane-action=\"close\" data-pane-for=\"editor\"><span class=\"z-menu__icon\"><z-icon name=\"x-mark\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Close pane</span></button>\n                    </div>\n                  </div>\n                </div>\n              </div>\n            </div>\n            <div class=\"z-pane__body\">\n              <p style=\"padding:12px\">Drag a header onto another pane, or use its menu.</p>\n            </div>\n          </div>\n        </section>\n      </div>\n      <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panes\" aria-controls=\"pl-3-0\" aria-valuenow=\"55\" aria-valuemin=\"10\" aria-valuemax=\"90\" class=\"z-split__divider\"></div>\n      <div class=\"z-split__pane\" id=\"pl-3-1\" style=\"flex-grow:0.45\">\n        <div class=\"z-split\" data-direction=\"column\">\n          <div class=\"z-split__pane\" id=\"pl-5b-0\" style=\"flex-grow:0.35\">\n            <section class=\"z-panelayout__pane\" data-pane-id=\"preview\" aria-labelledby=\"pl-0-preview-title\">\n              <div class=\"z-pane\" data-focused=\"false\">\n                <div class=\"z-pane__header\">\n                  <div class=\"z-panelayout__grab\">\n                    <div class=\"z-paneheader\" data-focused=\"false\">\n                      <span class=\"z-paneheader__icon\">\n                        <z-icon name=\"eye\" size=\"14\"></z-icon>\n                      </span>\n                      <div class=\"z-paneheader__titles\">\n                        <span class=\"z-paneheader__title\" id=\"pl-0-preview-title\">Preview</span>\n                      </div>\n                      <div role=\"toolbar\" aria-label=\"Preview pane actions\" aria-orientation=\"horizontal\" class=\"z-toolbar z-paneheader__actions\" data-variant=\"plain\" data-size=\"sm\">\n                        <button type=\"button\" title=\"Preview pane actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"pl-preview-menu\" data-z-open=\"#pl-preview-menu\" data-z-placement=\"bottom-end\" id=\"pl-1dctb-trigger\" aria-label=\"Preview pane actions\" class=\"z-btn z-btn--icon z-btn--ghost z-panelayout__menu\" data-size=\"sm\">\n                          <z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon>\n                        </button>\n                        <div class=\"z-liquid z-menu\" popover id=\"pl-preview-menu\" role=\"menu\" aria-label=\"Preview pane actions\" data-size=\"md\">\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-left\" data-pane-for=\"preview\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move left</span></button>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-right\" data-pane-for=\"preview\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move right</span></button>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-up\" data-pane-for=\"preview\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move up</span></button>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-down\" data-pane-for=\"preview\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move down</span></button>\n                          <div role=\"separator\" class=\"z-menu__separator\"></div>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-danger=\"true\" data-pane-action=\"close\" data-pane-for=\"preview\"><span class=\"z-menu__icon\"><z-icon name=\"x-mark\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Close pane</span></button>\n                        </div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n                <div class=\"z-pane__body\">\n                  <p style=\"padding:12px\">Preview</p>\n                </div>\n              </div>\n            </section>\n          </div>\n          <div role=\"separator\" tabindex=\"0\" aria-orientation=\"horizontal\" aria-label=\"Resize panes\" aria-controls=\"pl-5b-0\" aria-valuenow=\"35\" aria-valuemin=\"10\" aria-valuemax=\"90\" class=\"z-split__divider\"></div>\n          <div class=\"z-split__pane\" id=\"pl-5b-1\" style=\"flex-grow:0.65\">\n            <section class=\"z-panelayout__pane\" data-pane-id=\"terminal\" aria-labelledby=\"pl-0-terminal-title\">\n              <div class=\"z-pane\" data-focused=\"false\">\n                <div class=\"z-pane__header\">\n                  <div class=\"z-panelayout__grab\">\n                    <div class=\"z-paneheader\" data-focused=\"false\">\n                      <span class=\"z-paneheader__icon\">\n                        <z-icon name=\"command-line\" size=\"14\"></z-icon>\n                      </span>\n                      <div class=\"z-paneheader__titles\">\n                        <span class=\"z-paneheader__title\" id=\"pl-0-terminal-title\">Terminal</span>\n                      </div>\n                      <div role=\"toolbar\" aria-label=\"Terminal pane actions\" aria-orientation=\"horizontal\" class=\"z-toolbar z-paneheader__actions\" data-variant=\"plain\" data-size=\"sm\">\n                        <button type=\"button\" title=\"Terminal pane actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-controls=\"pl-terminal-menu\" data-z-open=\"#pl-terminal-menu\" data-z-placement=\"bottom-end\" id=\"pl-1dddb-trigger\" aria-label=\"Terminal pane actions\" class=\"z-btn z-btn--icon z-btn--ghost z-panelayout__menu\" data-size=\"sm\">\n                          <z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon>\n                        </button>\n                        <div class=\"z-liquid z-menu\" popover id=\"pl-terminal-menu\" role=\"menu\" aria-label=\"Terminal pane actions\" data-size=\"md\">\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-left\" data-pane-for=\"terminal\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move left</span></button>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-right\" data-pane-for=\"terminal\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move right</span></button>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-up\" data-pane-for=\"terminal\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move up</span></button>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-pane-action=\"move-down\" data-pane-for=\"terminal\"><span class=\"z-menu__icon\"></span><span class=\"z-menu__text\">Move down</span></button>\n                          <div role=\"separator\" class=\"z-menu__separator\"></div>\n                          <button type=\"button\" class=\"z-menu__item\" role=\"menuitem\" tabindex=\"-1\" data-danger=\"true\" data-pane-action=\"close\" data-pane-for=\"terminal\"><span class=\"z-menu__icon\"><z-icon name=\"x-mark\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Close pane</span></button>\n                        </div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n                <div class=\"z-pane__body\">\n                  <p style=\"padding:12px\">zsh</p>\n                </div>\n              </div>\n            </section>\n          </div>\n        </div>\n      </div>\n    </div>\n    <span class=\"z-panelayout__status z-sr-only\" role=\"status\"></span>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "`PaneTree`, `PaneDropZone`, `PaneDragGhost` y `PaneDropOverlay` de zutool.",
+   "file": "zout/src/layouts/PaneLayout.manifest.json"
   },
   {
    "name": "Rail",
@@ -627,16 +1003,29 @@
   {
    "name": "Sidebar",
    "group": "layout",
-   "description": "Navegación secundaria en acordeón: secciones plegables y pie fijo.",
-   "import": "import { Sidebar, SidebarSection } from \"@zuccadev-labs/zuix-zout\"",
+   "description": "Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.",
+   "import": "import { Sidebar, SidebarSection, SidebarItem, SidebarTrigger } from \"@zuccadev-labs/zuix-zout\"",
    "exports": [
     "Sidebar",
-    "SidebarSection"
+    "SidebarSection",
+    "SidebarItem",
+    "SidebarTrigger"
    ],
    "props": [
     {
      "name": "footer",
      "type": "ReactNode"
+    },
+    {
+     "name": "collapsed",
+     "type": "boolean",
+     "default": false,
+     "description": "Plegada a iconos: nombres en tooltip, cabeceras de sección ocultas y submenús en un panel flotante."
+    },
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Lo nombra `SidebarTrigger` en `aria-controls`."
     },
     {
      "name": "SidebarSection.title",
@@ -665,33 +1054,136 @@
      "name": "SidebarSection.grow",
      "type": "boolean",
      "description": "Reparte el alto libre."
+    },
+    {
+     "name": "SidebarItem.label",
+     "type": "string",
+     "required": true,
+     "description": "Texto; plegada, nombre accesible y tooltip."
+    },
+    {
+     "name": "SidebarItem.icon",
+     "type": "IconName"
+    },
+    {
+     "name": "SidebarItem.href",
+     "type": "string",
+     "description": "Enlace; sin él, botón."
+    },
+    {
+     "name": "SidebarItem.onClick",
+     "type": "(event) => void"
+    },
+    {
+     "name": "SidebarItem.active",
+     "type": "boolean",
+     "description": "aria-current=\"page\" y marca de acento."
+    },
+    {
+     "name": "SidebarItem.badge",
+     "type": "number | string"
+    },
+    {
+     "name": "SidebarItem.action",
+     "type": "ReactNode",
+     "description": "Acción al final (oculta plegada)."
+    },
+    {
+     "name": "SidebarItem.children",
+     "type": "SidebarItem[]",
+     "description": "Submenú: disclosure desplegada, panel flotante plegada."
+    },
+    {
+     "name": "SidebarItem.open",
+     "type": "boolean",
+     "description": "Submenú abierto (controlado). También defaultOpen y onOpenChange."
+    },
+    {
+     "name": "SidebarItem.disabled",
+     "type": "boolean"
+    },
+    {
+     "name": "SidebarTrigger.collapsed",
+     "type": "boolean",
+     "required": true
+    },
+    {
+     "name": "SidebarTrigger.onCollapsedChange",
+     "type": "(collapsed: boolean) => void",
+     "required": true
+    },
+    {
+     "name": "SidebarTrigger.controls",
+     "type": "string",
+     "description": "Id de la sidebar."
+    },
+    {
+     "name": "SidebarTrigger.label",
+     "type": "string",
+     "default": "Toggle sidebar"
+    },
+    {
+     "name": "SidebarTrigger.shortcut",
+     "type": "boolean",
+     "default": false,
+     "description": "Atajo Ctrl+B (⌘B) en el documento; opt-in."
     }
    ],
    "tokens": [
-    "line",
-    "fg-muted",
-    "fg",
-    "text-caption",
+    "accent",
     "accent-ring",
+    "accent-solid",
+    "control-height-sm",
+    "control-radius-sm",
+    "fg",
+    "fg-muted",
+    "fg-on-accent",
     "fg-subtle",
     "focus-offset",
     "focus-width",
+    "glass-highlight",
+    "item-radius",
+    "line",
+    "popup-bg",
+    "popup-blur",
+    "popup-radius",
+    "popup-shadow",
     "radius-xs",
+    "row-hover",
     "space-1",
     "space-2",
+    "space-2-5",
     "space-3",
+    "surface-2",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-fine",
     "text-small",
+    "touch-target",
     "weight-medium",
     "weight-regular"
    ],
    "classes": [
-    "z-sidebar"
+    "z-sidebar",
+    "z-sidebar__item",
+    "z-sidebar__link",
+    "z-sidebar__sub",
+    "z-sidebar__trigger"
    ],
-   "a11y": "Cada cabecera es un botón con aria-expanded y aria-controls.",
+   "a11y": "Cada cabecera de sección es un botón con aria-expanded y aria-controls. Un item es un enlace (o un botón) con `aria-current=\"page\"` si es la página actual; su contador forma parte del nombre. Un item con submenú es un botón disclosure con aria-expanded y aria-controls hacia un `role=\"group\"` con nombre. Plegada a iconos, el texto sigue en el nombre accesible (oculto a la vista) y se muestra en un tooltip al pasar el puntero o enfocar (Escape lo cierra); el submenú se abre en un panel flotante anclado al item, con Escape y pulsación fuera para cerrarlo y el foco de vuelta al item. `SidebarTrigger` lleva aria-expanded (desplegada o no) y aria-controls; con `shortcut`, Ctrl+B (⌘B en macOS) alterna desde cualquier punto (aria-keyshortcuts).",
    "examples": [
     {
      "title": "Dos secciones",
      "code": "<Sidebar footer={<NavLink icon=\"gear\">Settings</NavLink>}>\n  <SidebarSection title=\"Workspaces\" count={2} grow>…</SidebarSection>\n  <SidebarSection title=\"Recent\" defaultOpen={false}>…</SidebarSection>\n</Sidebar>"
+    },
+    {
+     "title": "Navegación con submenú y plegado",
+     "code": "<div style={{ display: \"flex\", flexDirection: \"column\", gap: 8, width: 240, height: 340 }}>\n  <SidebarTrigger collapsed={false} onCollapsedChange={setCollapsed} controls=\"nav-demo\" shortcut />\n  <Sidebar id=\"nav-demo\" footer={<SidebarItem icon=\"gear\" label=\"Settings\" href=\"/settings\" />}>\n    <SidebarItem icon=\"home\" label=\"Home\" href=\"/\" active />\n    <SidebarItem icon=\"inbox\" label=\"Inbox\" href=\"/inbox\" badge={4} />\n    <SidebarItem icon=\"folder\" label=\"Projects\" defaultOpen action={<IconButton icon=\"plus\" label=\"New project\" size=\"sm\" />}>\n      <SidebarItem label=\"Atlas\" href=\"/projects/atlas\" />\n      <SidebarItem label=\"Borealis\" href=\"/projects/borealis\" />\n    </SidebarItem>\n    <SidebarItem icon=\"chart-bar\" label=\"Reports\" href=\"/reports\" />\n  </Sidebar>\n</div>"
+    },
+    {
+     "title": "Plegada a iconos",
+     "code": "<div style={{ display: \"flex\", flexDirection: \"column\", gap: 8, width: 56, height: 340 }}>\n  <SidebarTrigger collapsed onCollapsedChange={setCollapsed} controls=\"nav-demo\" shortcut />\n  <Sidebar id=\"nav-demo\" collapsed footer={<SidebarItem icon=\"gear\" label=\"Settings\" href=\"/settings\" />}>\n    <SidebarItem icon=\"home\" label=\"Home\" href=\"/\" active />\n    <SidebarItem icon=\"inbox\" label=\"Inbox\" href=\"/inbox\" badge={4} />\n    <SidebarItem icon=\"folder\" label=\"Projects\" defaultOpen action={<IconButton icon=\"plus\" label=\"New project\" size=\"sm\" />}>\n      <SidebarItem label=\"Atlas\" href=\"/projects/atlas\" />\n      <SidebarItem label=\"Borealis\" href=\"/projects/borealis\" />\n    </SidebarItem>\n    <SidebarItem icon=\"chart-bar\" label=\"Reports\" href=\"/reports\" />\n  </Sidebar>\n</div>"
     }
    ],
    "behavior": "dom",
@@ -699,9 +1191,26 @@
     {
      "title": "Dos secciones y pie",
      "code": "<div style=\"width:240px;height:280px\">\n  <div class=\"z-sidebar\" id=\"sidebar-demo\">\n    <div class=\"z-sidebar__sections\">\n      <section class=\"z-sidebar__section\" data-open=\"true\" data-grow=\"true\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"sidebar-demo-workspaces\">\n            <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Workspaces</span>\n            <span class=\"z-sidebar__count\">2</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-workspaces\">\n          <nav aria-label=\"Workspaces\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Atlas</span>\n            </button>\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Borealis</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n      <section class=\"z-sidebar__section\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"false\" aria-controls=\"sidebar-demo-recent\">\n            <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Recent</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-recent\" hidden>\n          <nav aria-label=\"Recent\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"document-text\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Release notes</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <button type=\"button\" class=\"z-navlink\">\n        <span class=\"z-navlink__icon\">\n          <z-icon name=\"gear\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-navlink__label\">Settings</span>\n      </button>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Navegación con submenú y plegado",
+     "code": "<div style=\"display:flex;flex-direction:column;gap:8px;width:240px;height:340px\">\n  <button type=\"button\" class=\"z-sidebar__trigger\" aria-label=\"Toggle sidebar\" title=\"Toggle sidebar\" aria-expanded=\"true\" aria-controls=\"nav-demo\" aria-keyshortcuts=\"Control+B Meta+B\" data-shortcut=\"true\">\n    <z-icon name=\"chevron-double-left\" size=\"16\"></z-icon>\n  </button>\n  <div id=\"nav-demo\" class=\"z-sidebar\">\n    <div class=\"z-sidebar__sections\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" data-active=\"true\" aria-current=\"page\" href=\"/\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Home</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/inbox\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"inbox\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Inbox</span>\n            <span class=\"z-sidebar__badge\">4</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\" data-open=\"true\">\n        <div class=\"z-sidebar__row\">\n          <button type=\"button\" class=\"z-sidebar__link\" data-has-sub=\"\" aria-expanded=\"true\" aria-controls=\"nav-demo-projects\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"folder\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Projects</span>\n            <span class=\"z-sidebar__chevron\" aria-hidden=\"true\">\n              <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            </span>\n          </button>\n          <span class=\"z-sidebar__action\">\n            <button type=\"button\" title=\"New project\" aria-label=\"New project\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n              <z-icon name=\"plus\" size=\"14\"></z-icon>\n            </button>\n          </span>\n        </div>\n        <div class=\"z-sidebar__sub\" id=\"nav-demo-projects\" role=\"group\" aria-label=\"Projects\">\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/atlas\">\n                <span class=\"z-sidebar__label\">Atlas</span>\n              </a>\n            </div>\n          </div>\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/borealis\">\n                <span class=\"z-sidebar__label\">Borealis</span>\n              </a>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/reports\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Reports</span>\n          </a>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/settings\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"gear\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Settings</span>\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Plegada a iconos",
+     "code": "<div style=\"display:flex;flex-direction:column;gap:8px;width:56px;height:340px\">\n  <button type=\"button\" class=\"z-sidebar__trigger\" aria-label=\"Toggle sidebar\" title=\"Toggle sidebar\" aria-expanded=\"true\" aria-controls=\"nav-icons\" aria-keyshortcuts=\"Control+B Meta+B\" data-shortcut=\"true\">\n    <z-icon name=\"chevron-double-left\" size=\"16\"></z-icon>\n  </button>\n  <div id=\"nav-icons\" class=\"z-sidebar\" data-collapsed=\"true\">\n    <div class=\"z-sidebar__sections\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" data-active=\"true\" aria-current=\"page\" href=\"/\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Home</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/inbox\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"inbox\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Inbox</span>\n            <span class=\"z-sidebar__badge\">4</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\" data-open=\"true\">\n        <div class=\"z-sidebar__row\">\n          <button type=\"button\" class=\"z-sidebar__link\" data-has-sub=\"\" aria-expanded=\"true\" aria-controls=\"nav-icons-projects\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"folder\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Projects</span>\n            <span class=\"z-sidebar__chevron\" aria-hidden=\"true\">\n              <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            </span>\n          </button>\n          <span class=\"z-sidebar__action\">\n            <button type=\"button\" title=\"New project\" aria-label=\"New project\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n              <z-icon name=\"plus\" size=\"14\"></z-icon>\n            </button>\n          </span>\n        </div>\n        <div class=\"z-sidebar__sub\" id=\"nav-icons-projects\" role=\"group\" aria-label=\"Projects\">\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/atlas\">\n                <span class=\"z-sidebar__label\">Atlas</span>\n              </a>\n            </div>\n          </div>\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/borealis\">\n                <span class=\"z-sidebar__label\">Borealis</span>\n              </a>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/reports\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Reports</span>\n          </a>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/settings\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"gear\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Settings</span>\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
     }
    ],
-   "origin": "Barra izquierda de zutool.",
+   "origin": "Barra izquierda de zutool; plegado a iconos y submenús con referencia de variantes en Sidebar de Shark UI.",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "expanded",
+    "collapsed",
+    "disabled"
+   ],
    "file": "zout/src/layouts/Sidebar.manifest.json"
   },
   {
@@ -796,7 +1305,7 @@
   {
    "name": "TabStrip",
    "group": "layout",
-   "description": "Tira de pestañas de trabajo con cierre y alta.",
+   "description": "Tira de pestañas de trabajo con cierre, alta, grupos de color, indicadores y reordenación por arrastre o teclado.",
    "import": "import { TabStrip } from \"@zuccadev-labs/zuix-zout\"",
    "exports": [
     "TabStrip"
@@ -806,7 +1315,7 @@
      "name": "tabs",
      "type": "WorkTab[]",
      "required": true,
-     "description": "{ id, title, leading?, closable?, controls? }. `controls` es el id del panel de la pestaña (aria-controls)."
+     "description": "{ id, title, leading?, closable?, controls?, groupId?, modified?, busy? }. `controls` es el id del panel de la pestaña (aria-controls)."
     },
     {
      "name": "activeId",
@@ -835,38 +1344,91 @@
      "name": "addLabel",
      "type": "string",
      "default": "New tab"
+    },
+    {
+     "name": "groups",
+     "type": "TabGroup[]",
+     "description": "{ id, label, tone?, collapsed? }: un chip antes de la primera pestaña de cada grupo; plegado, sus pestañas se ocultan salvo la activa. `tone`: neutral | accent | info | success | warning | danger."
+    },
+    {
+     "name": "onGroupToggle",
+     "type": "(id: string) => void",
+     "description": "Pulsar el chip de un grupo."
+    },
+    {
+     "name": "onReorder",
+     "type": "(ids: string[]) => void",
+     "description": "Activa la reordenación (arrastre con marca de soltar y Ctrl+Mayús+flechas, Inicio o Fin). Recibe el orden nuevo."
+    },
+    {
+     "name": "modifiedLabel",
+     "type": "string",
+     "default": "modified"
+    },
+    {
+     "name": "busyLabel",
+     "type": "string",
+     "default": "busy"
+    },
+    {
+     "name": "movedLabel",
+     "type": "(title, position, total) => string",
+     "description": "Anuncio tras mover con el teclado. En /dom, `data-moved-label` en `.z-tabstrip__status` con {title}, {position} y {total}."
     }
    ],
    "tokens": [
-    "row-hover",
-    "surface-3",
-    "glass-highlight",
-    "fg",
-    "fg-muted",
+    "accent",
     "accent-ring",
     "control-height-sm",
     "control-radius-sm",
+    "danger",
     "duration-fast",
     "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
     "focus-offset",
     "focus-width",
     "glass-border",
+    "glass-highlight",
+    "info",
+    "layer-raised",
+    "line",
+    "radius-full",
     "radius-xs",
+    "row-hover",
+    "shadow-md",
     "shadow-sm",
     "space-1",
+    "space-1-5",
     "space-2",
     "space-3",
+    "success",
+    "surface-2",
+    "surface-3",
+    "text-caption",
     "text-small",
-    "weight-medium"
+    "warning",
+    "weight-medium",
+    "weight-semibold"
    ],
    "classes": [
-    "z-tabstrip"
+    "z-tabstrip",
+    "z-tabstrip__tab",
+    "z-tabstrip__group",
+    "z-tabstrip__chip",
+    "z-tabstrip__mark",
+    "z-tabstrip__status"
    ],
-   "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
+   "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe. Con `onReorder`, Ctrl+Mayús+flechas (reflejadas en RTL), Inicio o Fin mueven la pestaña activa y una región `role=\"status\"` anuncia la posición nueva; con el puntero, la pestaña se arrastra y una marca señala el hueco (el orden cambia al soltar, no mientras se arrastra). Cada pestaña de un grupo lleva el nombre del grupo en `aria-describedby`; el chip del grupo es una ayuda de puntero fuera del árbol accesible (un tablist solo admite pestañas): plegar un grupo necesita otra vía en la aplicación. Una pestaña con cambios sin guardar o en curso lo dice en su nombre (`modifiedLabel`, `busyLabel`) y la ocupada lleva aria-busy.",
    "examples": [
     {
      "title": "Pestañas con alta",
      "code": "<TabStrip tabs={[{ id: \"a\", title: \"main.ts\" }, { id: \"b\", title: \"README.md\" }]} activeId={active} onSelect={setActive} onClose={closeTab} onAdd={newTab} />"
+    },
+    {
+     "title": "Grupos, indicadores y reordenación",
+     "code": "<TabStrip\n  label=\"Open files\"\n  groups={[\n    { id: \"ui\", label: \"UI\", tone: \"info\" },\n    { id: \"api\", label: \"API\", tone: \"success\" },\n  ]}\n  tabs={[\n    { id: \"button\", title: \"Button.tsx\", groupId: \"ui\", modified: true },\n    { id: \"menu\", title: \"Menu.tsx\", groupId: \"ui\" },\n    { id: \"routes\", title: \"routes.ts\", groupId: \"api\", busy: true },\n    { id: \"readme\", title: \"README.md\" },\n  ]}\n  activeId=\"button\"\n  onSelect={setActive}\n  onClose={closeTab}\n  onReorder={setOrder}\n  onGroupToggle={toggleGroup}\n/>"
     }
    ],
    "behavior": "dom",
@@ -874,9 +1436,13 @@
     {
      "title": "Pestañas con cierre y alta",
      "code": "<div class=\"z-tabstrip\" id=\"tabs-demo\">\n  <div class=\"z-tabstrip__list\" role=\"tablist\" aria-label=\"Open files\">\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-selected=\"true\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"true\" tabindex=\"0\" data-tab-id=\"main\">\n        <span class=\"z-tabstrip__title\">main.ts</span>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" tabindex=\"-1\" data-tab-id=\"readme\">\n        <span class=\"z-tabstrip__title\">README.md</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" tabindex=\"-1\" data-tab-id=\"config\">\n        <span class=\"z-tabstrip__title\">package.json</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n  </div>\n  <button type=\"button\" class=\"z-tabstrip__add\" aria-label=\"New tab\" data-new-title=\"Untitled\">\n    <z-icon name=\"plus\" size=\"14\"></z-icon>\n  </button>\n</div>"
+    },
+    {
+     "title": "Grupos, indicadores y reordenación",
+     "code": "<div class=\"z-tabstrip\" id=\"tabs-groups\" data-reorderable=\"\">\n  <div class=\"z-tabstrip__list\" role=\"tablist\" aria-label=\"Open files\">\n    <div class=\"z-tabstrip__group\" role=\"presentation\" data-group-id=\"ui\" data-tone=\"info\">\n      <button type=\"button\" class=\"z-tabstrip__chip\" aria-hidden=\"true\" tabindex=\"-1\" aria-expanded=\"true\" title=\"UI\">UI</button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-selected=\"true\" data-group=\"ui\" data-tone=\"info\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"true\" aria-describedby=\"tabs-groups-ui\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" tabindex=\"0\" data-tab-id=\"button\">\n        <span class=\"z-tabstrip__title\">Button.tsx</span>\n        <span class=\"z-tabstrip__mark\" data-mark=\"modified\">\n          <span class=\"z-sr-only\">, modified</span>\n        </span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-group=\"ui\" data-tone=\"info\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" aria-describedby=\"tabs-groups-ui\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" tabindex=\"-1\" data-tab-id=\"menu\">\n        <span class=\"z-tabstrip__title\">Menu.tsx</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__group\" role=\"presentation\" data-group-id=\"api\" data-tone=\"success\">\n      <button type=\"button\" class=\"z-tabstrip__chip\" aria-hidden=\"true\" tabindex=\"-1\" aria-expanded=\"true\" title=\"API\">API</button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-group=\"api\" data-tone=\"success\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" aria-describedby=\"tabs-groups-api\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" aria-busy=\"true\" tabindex=\"-1\" data-tab-id=\"routes\">\n        <span class=\"z-tabstrip__title\">routes.ts</span>\n        <span class=\"z-tabstrip__mark\" data-mark=\"busy\">\n          <span class=\"z-sr-only\">, busy</span>\n        </span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" tabindex=\"-1\" data-tab-id=\"readme\">\n        <span class=\"z-tabstrip__title\">README.md</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n  </div>\n  <span id=\"tabs-groups-ui\" hidden=\"\">UI</span>\n  <span id=\"tabs-groups-api\" hidden=\"\">API</span>\n  <span class=\"z-tabstrip__status z-sr-only\" role=\"status\"></span>\n</div>"
     }
    ],
-   "origin": "`tabstrip` de zutool.",
+   "origin": "`tabstrip` y `tab-stack` de zutool (grupos, arrastre e indicadores).",
    "file": "zout/src/layouts/TabStrip.manifest.json"
   },
   {

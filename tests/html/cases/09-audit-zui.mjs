@@ -536,7 +536,10 @@ ${HEAD}<title>csp</title></head><body class="z-root z-canvas" data-z-dom><main>
       await tab.waitForTimeout(350);
       await tab.locator("#open").click();
       await tab.waitForTimeout(100);
-      const placed = await tab.locator("#pop").evaluate((el) => el.matches(":popover-open") && el.style.left !== "");
+      // Colocado por CSSOM: coordenadas propias o, donde hay CSS anchor positioning, su `position-area`.
+      const placed = await tab
+        .locator("#pop")
+        .evaluate((el) => el.matches(":popover-open") && (el.style.left !== "" || el.style.getPropertyValue("position-area") !== ""));
       await tab.keyboard.press("Escape");
       await tab.locator("#slider .z-slider__thumb").focus();
       await tab.keyboard.press("ArrowRight");

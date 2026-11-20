@@ -702,6 +702,147 @@
     color: var(--z-fg-subtle);
   }
 
+  /* ---- Menubar ---- */
+  /* Una sola tira continua (una parada de Tab): títulos sin borde entre ellos, radio concéntrico con la pista. */
+  .z-menubar {
+    --z-menubar-pad: var(--z-space-1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    padding: var(--z-menubar-pad);
+    border-radius: calc(var(--z-control-radius-sm) + var(--z-menubar-pad));
+  }
+  .z-menubar[data-variant="plain"] {
+    padding: 0;
+    border-radius: 0;
+  }
+  .z-menubar__trigger {
+    display: inline-flex;
+    align-items: center;
+    height: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-medium);
+    cursor: default;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-menubar[data-size="md"] .z-menubar__trigger {
+    height: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border-radius: var(--z-control-radius);
+  }
+  @media (hover: hover) {
+    .z-menubar__trigger:hover:not([aria-disabled="true"]) {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  /* El título con su menú abierto se marca: se sabe qué menú está a la vista. */
+  .z-menubar__trigger[aria-expanded="true"] {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  .z-menubar__trigger:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-menubar__trigger[aria-disabled="true"] {
+    opacity: 0.5;
+  }
+
+  /* ---- Collapsible ---- */
+  .z-collapsible {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .z-collapsible[data-variant="card"] {
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-card-radius);
+    background: var(--z-card-bg);
+    padding: var(--z-space-1);
+  }
+  .z-collapsible__trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    width: 100%;
+    min-height: var(--z-control-height-md);
+    padding: var(--z-space-1-5) var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-item-radius);
+    background: transparent;
+    color: var(--z-fg);
+    cursor: pointer;
+    text-align: start;
+    font: inherit;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-medium);
+    transition: background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-collapsible[data-variant="card"] .z-collapsible__trigger {
+    border-radius: calc(var(--z-card-radius) - var(--z-space-1));
+  }
+  @media (hover: hover) {
+    .z-collapsible__trigger:hover:not(:disabled) {
+      background: var(--z-row-hover);
+    }
+  }
+  .z-collapsible__trigger:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-collapsible__trigger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-collapsible__title {
+    flex: 1;
+    min-width: 0;
+  }
+  .z-collapsible__chevron {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: var(--z-fg-muted);
+    transition: transform var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  .z-collapsible[data-state="open"] > .z-collapsible__trigger .z-collapsible__chevron {
+    transform: rotate(180deg);
+  }
+  .z-collapsible__content {
+    padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-3);
+    color: var(--z-fg-prose);
+    font-size: var(--z-text-body);
+  }
+  /* Entrada: el contenido aparece con un fundido corto (sin animar el alto: la región sale de `hidden`). */
+  @media (prefers-reduced-motion: no-preference) {
+    .z-collapsible__content[data-state="open"] {
+      transition:
+        opacity var(--z-duration-normal) var(--z-ease-emphasized),
+        translate var(--z-duration-normal) var(--z-ease-emphasized);
+      @starting-style {
+        opacity: 0;
+        translate: 0 -4px;
+      }
+    }
+  }
+  /* Colapso parcial: se ve el principio, con un fundido hacia el final que indica que hay más. */
+  .z-collapsible[data-peek] > .z-collapsible__content[data-state="closed"] {
+    max-block-size: var(--z-collapsible-peek);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, var(--z-fg) 40%, transparent);
+    mask-image: linear-gradient(to bottom, var(--z-fg) 40%, transparent);
+  }
+
   @keyframes z-nav-accordion-open {
     from {
       height: 0;
@@ -729,6 +870,8 @@
     .z-accordion__trigger,
     .z-accordion__chevron,
     .z-accordion__content,
+    .z-collapsible__chevron,
+    .z-collapsible__trigger,
     .z-tree__row,
     .z-tree__toggle,
     .z-navlink {

@@ -5,6 +5,36 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Oleada 4, navegación y paneles de aplicación:
+  - `Sidebar` plegable a iconos (`collapsed`) con `SidebarItem` (icono, contador, acción, `aria-current`,
+    submenú en disclosure) y `SidebarTrigger` (aria-expanded, aria-controls, atajo Ctrl/⌘+B opcional). Plegada,
+    cada item muestra su nombre en un tooltip y el submenú se abre en un panel flotante. En `/dom`,
+    `setSidebarCollapsed()` y `setSidebarItemOpen()` (usa el tooltip y el popover de `@zuccadev-labs/zuix-zui/dom`).
+  - `TabStrip` con grupos de color (`groups`, `tab.groupId`, chip que pliega el grupo con `onGroupToggle`),
+    indicadores `modified` y `busy`, y reordenación con `onReorder`: arrastre con marca de soltar (el orden cambia
+    al soltar) y Ctrl+Mayús+flechas, Inicio o Fin con anuncio en una región `status`. En `/dom`,
+    `data-reorderable`, `moveWorkTab()`, `setTabGroupCollapsed()` y los eventos `z:reorder` y `z:grouptoggle`.
+  - `PaneHeader`: cabecera de panel con icono, título, línea secundaria y acciones en una `Toolbar` (una sola
+    parada de Tab) con menú opcional; `focused` y `titleId`. Dentro de `Pane.header` ocupa toda la franja.
+  - `FloatingPanel`: ventana flotante no modal (`role="dialog"` nombrado por su título) que se arrastra por la
+    cabecera o con las flechas en su asa, y se redimensiona desde la esquina final (en RTL, la izquierda) con puntero
+    o flechas; Mayús multiplica el paso; nunca sale de la ventana (`fixed`) o de su contenedor (`absolute`); Escape
+    y el botón de cierre con `onClose`; posición y tamaño controlados o no. En `/dom`, `.z-floatpanel`,
+    `data-z-panel`, `openFloatingPanel()`, `closeFloatingPanel()` y `setFloatingPanelRect()`.
+  - `PaneLayout`: mosaico de paneles redimensionables sobre un árbol de divisiones (`layout`, `panes`), con
+    cabecera (`PaneHeader`) y menú por panel para dividir (`onSplit`), mover junto al vecino de cada lado y cerrar;
+    arrastrar la cabecera sobre otro panel muestra la zona de soltar (borde o intercambio en el centro) y aplica el
+    cambio al soltar; los movimientos se anuncian. En `/dom`, `.z-panelayout` con `getPaneLayout()`,
+    `setPaneLayout()`, `splitLayoutPane()`, acciones `data-pane-action` en los menús de zui y los eventos
+    `z:layout`, `z:split` y `z:close`.
+  - `Float`: un elemento (insignia, contador) centrado sobre la esquina o el borde de otro, en lógicas (RTL), con
+    `offset` para formas circulares. Solo CSS.
+  - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore`,
+    `beforeFor`, `clampRect`, `moveDelta`, `resizeDelta`, `resizeRect`, y el árbol de paneles (`PaneNode`,
+    `paneIds`, `setSizesAt`, `splitPane`, `removePane`, `swapPanes`, `movePane`, `dropEdge`, `neighborPane`).
+
 ### Cambiado
 
 - Estándar liquid glass: nada en píldora. El rail es un panel de cromo con radio 20, concéntrico con sus items

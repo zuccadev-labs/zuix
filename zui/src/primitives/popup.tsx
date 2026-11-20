@@ -7,6 +7,7 @@ import { useRef, useState, type ComponentProps, type ReactNode, type Ref, type R
 import { createPortal } from "react-dom";
 import { activeElement, focusQuiet } from "../core/focus";
 import { notePress, pressedOnBackdrop } from "../core/layers";
+import { anchorWithCss, settleAnchoring } from "../core/anchor";
 import { place, type Box, type Placement } from "../core/place";
 import { lockScroll } from "../core/scroll-lock";
 import { useMergedRef } from "../refs";
@@ -43,6 +44,11 @@ export interface PopupProps extends ComponentProps<"div"> {
   anchorWidth?: boolean;
   /** Se llama una vez, con la capa ya visible y colocada: el momento de llevarle el foco. */
   onShown?: (el: HTMLDivElement) => void;
+  /**
+   * Elemento ancla para colocar con CSS anchor positioning donde el navegador lo admite (mejora progresiva: sigue
+   * al ancla sin recalcular y se voltea solo). Sin soporte, o sin este elemento, se coloca con `anchorRect`.
+   */
+  anchorElement?: () => Element | null;
   ref?: Ref<HTMLDivElement>;
 }
 
@@ -51,11 +57,19 @@ interface Anchoring {
   placement: Placement;
   gap: number;
   anchorWidth?: boolean;
+  anchorElement?: () => Element | null;
 }
 
 /** Coloca `el` junto a su ancla y lo recoloca cuando la página se desplaza o algo cambia de tamaño. Devuelve la limpieza. */
 function anchorTo(el: HTMLElement, latest: RefObject<Anchoring>, watch?: RefObject<Element | null>): () => void {
+  const anchorEl = latest.current.anchorElement?.();
+  let css = anchorEl ? anchorWithCss(el, anchorEl, latest.current.placement, latest.current.gap) : null;
   const position = () => {
+    // Con CSS anchor positioning el navegador ya la coloca: solo se mide el lado y la flecha. Si el motor la dejó
+    // lejos del ancla (un fallo de anclaje), se vuelve a la colocación propia.
+    if (css?.measure()) return;
+    css?.release();
+    css = null;
     const rect = latest.current.anchorRect();
     if (!rect || !el.isConnected) return;
     if (latest.current.anchorWidth) el.style.setProperty("--z-anchor-width", `${rect.width}px`);
@@ -82,19 +96,35 @@ function anchorTo(el: HTMLElement, latest: RefObject<Anchoring>, watch?: RefObje
   };
   const observer = typeof ResizeObserver === "function" ? new ResizeObserver(later) : undefined;
   observer?.observe(el);
+  // Con CSS anchor positioning, algún motor aplica el desplazamiento de la página con retraso: se vigila un momento.
+  const unsettle = css ? settleAnchoring(position) : undefined;
   if (watch?.current) observer?.observe(watch.current);
   return () => {
     wiring.abort();
     observer?.disconnect();
     cancelAnimationFrame(frame);
+    unsettle?.();
+    css?.release();
   };
 }
 
 /** Elemento `popover="manual"` abierto mientras está montado, colocado junto a su ancla y recolocado al desplazar. */
-export function Popup({ open, anchorRect, placement, gap = 4, watch, anchorWidth, onShown, ref, children, ...rest }: PopupProps) {
+export function Popup({
+  open,
+  anchorRect,
+  placement,
+  gap = 4,
+  watch,
+  anchorWidth,
+  onShown,
+  anchorElement,
+  ref,
+  children,
+  ...rest
+}: PopupProps) {
   const node = useRef<HTMLDivElement | null>(null);
   const setRef = useMergedRef(node, ref);
-  const latest = useLatest({ anchorRect, placement, gap, anchorWidth, onShown });
+  const latest = useLatest({ anchorRect, placement, gap, anchorWidth, onShown, anchorElement });
 
   useIsoLayoutEffect(() => {
     const el = node.current;
@@ -112,7 +142,7 @@ export function Popup({ open, anchorRect, placement, gap = 4, watch, anchorWidth
   // Los cambios de colocación con la capa abierta (otra `side`, otro punto) recolocan sin reabrir.
   useIsoLayoutEffect(() => {
     const el = node.current;
-    const rect = el ? anchorRect() : null;
+    const rect = el && !el.hasAttribute("data-anchored") ? anchorRect() : null;
     if (el && rect) place(el, rect, placement, gap);
   }, [placement, gap]);
 

@@ -69,6 +69,7 @@
 - [Swap](https://zuccadev-labs.github.io/zuix/components/actions/swap.md): Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna).
 - [Toggle](https://zuccadev-labs.github.io/zuix/components/actions/toggle.md): Botón de dos estados (activado o no), con texto, icono o ambos.
 - [ToggleGroup](https://zuccadev-labs.github.io/zuix/components/actions/toggle-group.md): Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).
+- [Toolbar](https://zuccadev-labs.github.io/zuix/components/actions/toolbar.md): Barra de herramientas: controles que actúan sobre otra cosa (un editor, un lienzo, un panel) con una sola parada de tabulación.
 
 ## Componentes: Formularios
 
@@ -134,6 +135,7 @@
 ## Componentes: Estado
 
 - [Alert](https://zuccadev-labs.github.io/zuix/components/feedback/alert.md): Aviso en línea sobre el resultado de una acción o el estado del sistema.
+- [Banner](https://zuccadev-labs.github.io/zuix/components/feedback/banner.md): Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.
 - [EmptyState](https://zuccadev-labs.github.io/zuix/components/feedback/empty-state.md): Estado vacío: explica por qué no hay contenido y qué hacer.
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
@@ -155,20 +157,27 @@
 
 ## Componentes: Superposición
 
+- [ActionBar](https://zuccadev-labs.github.io/zuix/components/overlay/action-bar.md): Barra flotante de acciones sobre una selección (filas, archivos, tarjetas): recuento, acciones y cierre.
+- [Command](https://zuccadev-labs.github.io/zuix/components/overlay/command.md): La paleta de comandos incrustada en la página: buscador y lista siempre a la vista, con grupos, atajos y pie.
 - [CommandPalette](https://zuccadev-labs.github.io/zuix/components/overlay/command-palette.md): Paleta de comandos con búsqueda difusa, grupos y manejo completo por teclado.
 - [ConfirmDialog](https://zuccadev-labs.github.io/zuix/components/overlay/confirm-dialog.md): Confirmación de una acción con cancelar y confirmar; la variante danger marca acciones destructivas.
 - [ContextMenu](https://zuccadev-labs.github.io/zuix/components/overlay/context-menu.md): Menú contextual que se abre con clic derecho o pulsación larga sobre una zona.
 - [Drawer](https://zuccadev-labs.github.io/zuix/components/overlay/drawer.md): Panel de cristal que entra desde un borde, flotando sobre un velo.
+- [HoverCard](https://zuccadev-labs.github.io/zuix/components/overlay/hover-card.md): Vista previa al pasar el puntero o enfocar un enlace: un perfil, una incidencia, un repositorio.
 - [Menu](https://zuccadev-labs.github.io/zuix/components/overlay/menu.md): Menú desplegable de acciones anclado a un disparador.
 - [Modal](https://zuccadev-labs.github.io/zuix/components/overlay/modal.md): Diálogo modal centrado sobre un velo, con título, descripción, cuerpo y pie.
 - [Popover](https://zuccadev-labs.github.io/zuix/components/overlay/popover.md): Panel flotante anclado a un disparador, para contenido interactivo breve.
 - [Toast](https://zuccadev-labs.github.io/zuix/components/overlay/toast.md): Avisos efímeros apilados en una esquina.
+- [Toggletip](https://zuccadev-labs.github.io/zuix/components/overlay/toggletip.md): Botón de ayuda («i») que muestra una explicación: se asoma al pasar o enfocar y el clic la deja fija.
 - [Tooltip](https://zuccadev-labs.github.io/zuix/components/overlay/tooltip.md): Burbuja de ayuda breve al pasar el cursor o enfocar un control.
+- [Tour](https://zuccadev-labs.github.io/zuix/components/overlay/tour.md): Recorrido guiado por una pantalla: una tarjeta anclada a cada elemento que explica, con anillo, progreso y saltar.
 
 ## Componentes: Navegación
 
 - [Accordion](https://zuccadev-labs.github.io/zuix/components/navigation/accordion.md): Secciones plegables apiladas.
 - [Breadcrumb](https://zuccadev-labs.github.io/zuix/components/navigation/breadcrumb.md): Ruta jerárquica hasta la página actual.
+- [Collapsible](https://zuccadev-labs.github.io/zuix/components/navigation/collapsible.md): Bloque que se pliega y despliega con un botón: un detalle opcional, una lista larga o un texto que se recorta.
+- [Menubar](https://zuccadev-labs.github.io/zuix/components/navigation/menubar.md): Barra de menús de aplicación (File, Edit, View): una sola parada de tabulación y paso entre menús con las flechas.
 - [NavList](https://zuccadev-labs.github.io/zuix/components/navigation/nav-list.md): Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.
 - [Pagination](https://zuccadev-labs.github.io/zuix/components/navigation/pagination.md): Navegación entre páginas numeradas con anterior, siguiente y huecos.
 - [Stepper](https://zuccadev-labs.github.io/zuix/components/navigation/stepper.md): Progreso por pasos numerados, horizontal o vertical.
@@ -181,15 +190,19 @@
 
 ## Componentes: Layouts
 
+- [Float](https://zuccadev-labs.github.io/zuix/components/layout/float.md): Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.
+- [FloatingPanel](https://zuccadev-labs.github.io/zuix/components/layout/floating-panel.md): Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.
 - [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.
 - [Page](https://zuccadev-labs.github.io/zuix/components/layout/page.md): Página con desplazamiento propio, cabecera y secciones.
+- [PaneHeader](https://zuccadev-labs.github.io/zuix/components/layout/pane-header.md): Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.
+- [PaneLayout](https://zuccadev-labs.github.io/zuix/components/layout/pane-layout.md): Mosaico de paneles redimensionables: árbol de divisiones, cabecera y menú por panel, y arrastre de un panel al borde de otro.
 - [Rail](https://zuccadev-labs.github.io/zuix/components/layout/rail.md): Barra estrecha de navegación principal, solo iconos.
 - [ResizeHandle](https://zuccadev-labs.github.io/zuix/components/layout/resize-handle.md): Tirador para redimensionar un panel, con puntero y teclado.
 - [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.
-- [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria en acordeón: secciones plegables y pie fijo.
+- [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.
 - [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.
 - [SplitPane](https://zuccadev-labs.github.io/zuix/components/layout/split-pane.md): Paneles divididos con divisores arrastrables y manejables con teclado.
-- [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre y alta.
+- [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre, alta, grupos de color, indicadores y reordenación por arrastre o teclado.
 - [TitleBar](https://zuccadev-labs.github.io/zuix/components/layout/title-bar.md): Barra de título para ventanas sin marco, transparente sobre el fondo.
 
 ## Contratos legibles por máquina
