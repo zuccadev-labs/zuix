@@ -154,10 +154,12 @@
 - [ConfirmDialog](https://zuccadev-labs.github.io/zuix/components/overlay/confirm-dialog.md): Confirmación de una acción con cancelar y confirmar; la variante danger marca acciones destructivas.
 - [ContextMenu](https://zuccadev-labs.github.io/zuix/components/overlay/context-menu.md): Menú contextual que se abre con clic derecho o pulsación larga sobre una zona.
 - [Drawer](https://zuccadev-labs.github.io/zuix/components/overlay/drawer.md): Panel de cristal que entra desde un borde, flotando sobre un velo.
+- [HoverCard](https://zuccadev-labs.github.io/zuix/components/overlay/hover-card.md): Vista previa al pasar el puntero o enfocar un enlace: un perfil, una incidencia, un repositorio.
 - [Menu](https://zuccadev-labs.github.io/zuix/components/overlay/menu.md): Menú desplegable de acciones anclado a un disparador.
 - [Modal](https://zuccadev-labs.github.io/zuix/components/overlay/modal.md): Diálogo modal centrado sobre un velo, con título, descripción, cuerpo y pie.
 - [Popover](https://zuccadev-labs.github.io/zuix/components/overlay/popover.md): Panel flotante anclado a un disparador, para contenido interactivo breve.
 - [Toast](https://zuccadev-labs.github.io/zuix/components/overlay/toast.md): Avisos efímeros apilados en una esquina.
+- [Toggletip](https://zuccadev-labs.github.io/zuix/components/overlay/toggletip.md): Botón de ayuda («i») que muestra una explicación: se asoma al pasar o enfocar y el clic la deja fija.
 - [Tooltip](https://zuccadev-labs.github.io/zuix/components/overlay/tooltip.md): Burbuja de ayuda breve al pasar el cursor o enfocar un control.
 
 ## Componentes: Navegación

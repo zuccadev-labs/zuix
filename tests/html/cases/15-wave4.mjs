@@ -287,4 +287,83 @@ export default async function ({ page, test, ok, card, browserName }) {
     ok(await activeIs("#w4-Popover-1 [data-z-open]"), "el foco vuelve al disparador");
     ok((await page.locator("#dns-help").getAttribute("data-anchored")) === null, "al cerrar se retira el ancla CSS");
   });
+
+  /* ---------- HoverCard ---------- */
+  await test("HoverCard: el puntero abre tras el retardo, cruza a la tarjeta sin cerrarla, Escape cierra; describe al enlace", async () => {
+    const link = card("HoverCard").locator("[data-z-hovercard]");
+    const layer = page.locator("#hc-ana");
+    await link.hover();
+    await page.waitForTimeout(200);
+    ok(await layer.isHidden(), "no abre antes del retardo");
+    await layer.waitFor({ state: "visible", timeout: 2000 });
+    ok((await link.getAttribute("aria-describedby"))?.includes("hc-ana"), "aria-describedby");
+    ok((await link.getAttribute("aria-expanded")) === null, "sin aria-expanded en el enlace");
+    const box = await layer.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+    await page.waitForTimeout(500);
+    ok(await layer.isVisible(), "sigue abierta con el puntero encima");
+    await press("Escape");
+    await layer.waitFor({ state: "hidden", timeout: 2000 });
+    ok((await link.getAttribute("aria-describedby")) === null, "sin descripción al cerrar");
+    await page.mouse.move(5, 5);
+  });
+  await test("HoverCard: con el teclado abre al enfocar; Tab entra en la tarjeta y sale tras el enlace", async () => {
+    const link = card("HoverCard").locator("[data-z-hovercard]");
+    const layer = page.locator("#hc-ana");
+    await link.evaluate((el) => {
+      const after = document.createElement("button");
+      after.id = "w4-after-hc";
+      after.textContent = "After";
+      el.closest("p").after(after);
+    });
+    await page.locator("[data-component='HoverCard'] .demo__head").click();
+    await link.focus();
+    await press("Shift+Tab", "Tab");
+    await layer.waitFor({ state: "visible", timeout: 2000 });
+    await press("Tab");
+    ok(await activeIs("#hc-ana a"), "Tab entra en la tarjeta");
+    await press("Shift+Tab");
+    ok(await activeIs("[data-z-hovercard]"), "Mayús+Tab vuelve al enlace");
+    await press("Tab", "Tab");
+    ok(await activeIs("#w4-after-hc"), "Tab sale hacia lo que sigue al enlace");
+    await layer.waitFor({ state: "hidden", timeout: 2000 });
+  });
+
+  /* ---------- Toggletip ---------- */
+  await test("Toggletip: el clic la fija (aria-expanded) y otro clic la cierra; Escape devuelve el foco", async () => {
+    const button = card("Toggletip").locator(".z-toggletip__trigger");
+    const layer = page.locator("#tt-shipping");
+    await button.click();
+    await layer.waitFor({ state: "visible", timeout: 2000 });
+    ok((await button.getAttribute("aria-expanded")) === "true", "aria-expanded");
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(500);
+    ok(await layer.isVisible(), "fijada: no se va al salir el puntero");
+    await button.click();
+    await layer.waitFor({ state: "hidden", timeout: 2000 });
+    ok((await button.getAttribute("aria-expanded")) === "false", "otro clic cierra");
+    await button.focus();
+    await press("Enter");
+    await layer.waitFor({ state: "visible", timeout: 2000 });
+    await press("Escape");
+    await layer.waitFor({ state: "hidden", timeout: 2000 });
+    ok(await activeIs(".z-toggletip__trigger"), "el foco sigue en el botón");
+  });
+  await test("Toggletip: el puntero la asoma sin fijarla; pulsar fuera la cierra; flecha hacia el botón", async () => {
+    const box = await inject("Toggletip", 1);
+    const button = box.locator(".z-toggletip__trigger");
+    const layer = page.locator("#tt-limits");
+    await button.hover();
+    await layer.waitFor({ state: "visible", timeout: 2000 });
+    const side = await layer.getAttribute("data-side");
+    ok(side === "right" || side === "left", `al lado: ${side}`);
+    const arrow = await layer.evaluate((el) => getComputedStyle(el, "::after").rotate);
+    ok(arrow === "-45deg" || arrow === "135deg", `flecha lateral: ${arrow}`);
+    await page.mouse.move(5, 5);
+    await layer.waitFor({ state: "hidden", timeout: 2000 });
+    await button.click();
+    await layer.waitFor({ state: "visible", timeout: 2000 });
+    await page.mouse.click(5, 300);
+    await layer.waitFor({ state: "hidden", timeout: 2000 });
+  });
 }

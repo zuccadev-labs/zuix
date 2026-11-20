@@ -11,7 +11,9 @@
   .z-tooltip,
   .z-menu,
   .z-palette,
-  .z-toast {
+  .z-toast,
+  .z-hovercard,
+  .z-toggletip {
     color: var(--z-fg);
     font-family: var(--z-font-sans);
     font-size: var(--z-text-body);
@@ -369,6 +371,83 @@
     position: absolute;
     inset-block-start: var(--z-space-1-5);
     inset-inline-end: var(--z-space-1-5);
+  }
+
+  /* ---------- HoverCard y Toggletip ---------- */
+  /* Cristal elevado como el popover; la tarjeta se lee (texto de 14) y el toggletip es una explicación corta. */
+  .z-hovercard,
+  .z-toggletip {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    z-index: var(--z-layer-popover);
+    max-width: min(320px, calc(100vw - var(--z-space-4)));
+    border-radius: var(--z-popup-radius);
+    cursor: default;
+  }
+  .z-hovercard {
+    padding: var(--z-space-4);
+  }
+  .z-toggletip {
+    max-width: min(280px, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-2-5) var(--z-space-3);
+    border-radius: var(--z-radius-md);
+    font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
+  }
+  :is(.z-hovercard, .z-toggletip)[data-state="closed"] {
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  .z-hovercard :where(a),
+  .z-toggletip :where(a) {
+    color: var(--z-accent-text);
+  }
+  .z-toggletip__trigger {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    vertical-align: middle;
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-toggletip__trigger[data-size="sm"] {
+    width: 20px;
+    height: 20px;
+  }
+  @media (hover: hover) {
+    .z-toggletip__trigger:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-toggletip__trigger[aria-expanded="true"] {
+    color: var(--z-accent-text);
+  }
+  .z-toggletip__trigger:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  @media (pointer: coarse) {
+    .z-toggletip__trigger {
+      position: relative;
+    }
+    .z-toggletip__trigger::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+      width: max(100%, var(--z-touch-target, 0px));
+      height: max(100%, var(--z-touch-target, 0px));
+    }
   }
 
   /* ---------- Flecha de las capas ancladas ---------- */
@@ -877,7 +956,7 @@
      desplazamiento y la escala, solo sin preferencia de movimiento reducido; con ella queda un fundido corto.
      `:where()`: sin especificidad, para que el gesto de deslizar un aviso conserve su propia transición. El cajón
      entra con su animación lateral. */
-  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
     opacity: 1;
     transition:
       opacity var(--z-duration-normal) var(--z-ease-emphasized),
@@ -885,20 +964,20 @@
       scale var(--z-duration-normal) var(--z-ease-emphasized);
   }
   @starting-style {
-    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
       opacity: 0;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast):where(:not([data-state="closed"])) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
       translate: 0 0;
       scale: 1;
     }
     @starting-style {
-      :where(.z-popover, .z-tooltip, .z-menu):where(:not([data-state="closed"])) {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip):where(:not([data-state="closed"])) {
         translate: 0 calc(var(--z-space-1) * -1);
       }
-      :where(.z-popover, .z-tooltip, .z-menu)[data-side="top"]:where(:not([data-state="closed"])) {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip)[data-side="top"]:where(:not([data-state="closed"])) {
         translate: 0 var(--z-space-1);
       }
       :where(.z-palette):where(:not([data-state="closed"])) {
@@ -953,8 +1032,9 @@
      reducido manda sobre las animaciones de entrada y salida de cada capa. */
   @media (prefers-reduced-motion: reduce) {
     :is(.z-modal, .z-drawer, .z-palette)::backdrop,
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox),
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox) :is(*, *::before, *::after) {
+    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox, .z-hovercard, .z-toggletip),
+    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox, .z-hovercard, .z-toggletip)
+      :is(*, *::before, *::after) {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;

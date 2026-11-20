@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
   Banner,
   Button,
   Card,
   CardHeader,
+  Avatar,
   Collapsible,
+  HoverCard,
   IconButton,
+  Input,
+  Popover,
+  Toggletip,
   Link,
   Menu,
   Menubar,
@@ -27,6 +32,7 @@ export function Commands() {
   const [details, setDetails] = useState(false);
   const [banner, setBanner] = useState(true);
   const [statusBar, setStatusBar] = useState(false);
+  const domain = useRef<HTMLInputElement | null>(null);
 
   const view: MenuEntry[] = [
     { type: "checkbox", id: "minimap", label: "Minimap", checked: minimap, onCheckedChange: setMinimap },
@@ -119,6 +125,65 @@ export function Commands() {
             Status bar: <output data-testid="c-statusbar">{String(statusBar)}</output>
           </p>
         </Card>
+      </PageSection>
+
+      <PageSection title="Light layers">
+        <Grid min={260}>
+          <Card className="app-demo">
+            <CardHeader title="HoverCard" subtitle="Preview on hover or focus" />
+            <p>
+              Reviewed by{" "}
+              <HoverCard
+                arrow
+                trigger={
+                  <a href="#ana" data-testid="c-hover-link">
+                    @ana
+                  </a>
+                }
+              >
+                <Stack gap={4}>
+                  <Avatar name="Ana Ruiz" size="md" />
+                  <strong>Ana Ruiz</strong>
+                  <span className="app-muted">Design systems · Madrid</span>
+                  <a href="#ana-projects" data-testid="c-hover-projects">
+                    12 projects
+                  </a>
+                </Stack>
+              </HoverCard>{" "}
+              yesterday.{" "}
+              <button type="button" data-testid="c-after-hover">
+                After
+              </button>
+            </p>
+          </Card>
+          <Card className="app-demo">
+            <CardHeader title="Toggletip" subtitle="Help you ask for" />
+            <span className="app-inline" data-testid="c-toggletip">
+              Shipping
+              <Toggletip label="More about shipping">
+                Free on orders over $50. <a href="#shipping">Shipping policy</a>.
+              </Toggletip>
+            </span>
+          </Card>
+          <Card className="app-demo">
+            <CardHeader title="Popover" subtitle="Arrow, close and another anchor" />
+            <Stack gap={8}>
+              <Input ref={domain} aria-label="Domain" defaultValue="zuix.dev" data-testid="c-domain" />
+              <Popover
+                label="DNS help"
+                anchor={domain}
+                arrow
+                showClose
+                align="start"
+                trigger={<IconButton icon="question-mark-circle" label="DNS help" data-testid="c-dns" />}
+              >
+                <p>
+                  Point an A record to <code>76.76.21.21</code>.
+                </p>
+              </Popover>
+            </Stack>
+          </Card>
+        </Grid>
       </PageSection>
 
       <PageSection title="Toolbar">

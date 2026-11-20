@@ -1907,6 +1907,20 @@ pnpm dev</code>
 </dialog>
   </div>
 </section>
+<section class="z-card demo" data-component="HoverCard" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">HoverCard</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<p>Reviewed by <a href="#ana" data-z-hovercard="#hc-ana" data-z-placement="bottom">@ana</a> yesterday.</p>
+
+<div id="hc-ana" popover="manual" class="z-liquid z-hovercard" role="tooltip" data-arrow>
+  <div style="display:grid;gap:4px;min-width:220px">
+    <strong>Ana Ruiz</strong>
+    <span>Design systems · Madrid</span>
+    <a href="#ana-projects">12 projects</a>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Menu" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Menu</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -1987,6 +2001,20 @@ pnpm dev</code>
   <header class="demo__head"><h3 class="demo__name">Toast</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <button type="button" class="z-btn z-btn--primary" data-size="md" id="save">Save</button>
+  </div>
+</section>
+<section class="z-card demo" data-component="Toggletip" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Toggletip</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span style="display:inline-flex;align-items:center;gap:4px">Shipping
+  <button type="button" class="z-toggletip__trigger" data-size="md" aria-label="More about shipping" aria-expanded="false" data-z-toggletip="#tt-shipping">
+    <z-icon name="information-circle" size="16"></z-icon>
+  </button>
+</span>
+
+<div id="tt-shipping" popover="manual" class="z-liquid z-toggletip" role="tooltip" data-arrow>
+  Free on orders over $50. Orders placed before 2pm ship the same day.
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="Tooltip" data-behavior="dom">

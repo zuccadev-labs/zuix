@@ -1999,6 +1999,20 @@
     }
    ]
   },
+  "HoverCard": {
+   "group": "overlay",
+   "classes": [
+    "z-hovercard"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Perfil de una persona",
+     "html": "<p>Reviewed by <a href=\"#ana\" data-z-hovercard=\"#hc-ana\" data-z-placement=\"bottom\">@ana</a> yesterday.</p>\n\n<div id=\"hc-ana\" popover=\"manual\" class=\"z-liquid z-hovercard\" role=\"tooltip\" data-arrow>\n  <div style=\"display:grid;gap:4px;min-width:220px\">\n    <strong>Ana Ruiz</strong>\n    <span>Design systems · Madrid</span>\n    <a href=\"#ana-projects\">12 projects</a>\n  </div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Menu": {
    "group": "overlay",
    "classes": [
@@ -2090,6 +2104,26 @@
      "html": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" id=\"save\">Save</button>",
      "source": "manual",
      "script": "import { toast } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#save\").addEventListener(\"click\", () => {\n  toast({ title: \"Changes saved\", description: \"Your profile is up to date.\", intent: \"success\" });\n});"
+    }
+   ]
+  },
+  "Toggletip": {
+   "group": "overlay",
+   "classes": [
+    "z-toggletip",
+    "z-toggletip__trigger"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Ayuda de un campo",
+     "html": "<span style=\"display:inline-flex;align-items:center;gap:4px\">Shipping\n  <button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"More about shipping\" aria-expanded=\"false\" data-z-toggletip=\"#tt-shipping\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </button>\n</span>\n\n<div id=\"tt-shipping\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  Free on orders over $50. Orders placed before 2pm ship the same day.\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Con enlace, a la derecha",
+     "html": "<button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"About API limits\" aria-expanded=\"false\" data-z-toggletip=\"#tt-limits\" data-z-placement=\"right\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"tt-limits\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  1,000 requests per hour. <a href=\"#limits\">See the limits</a>.\n</div>",
+     "source": "manual"
     }
    ]
   },

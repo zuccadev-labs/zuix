@@ -1,0 +1,107 @@
+{
+  "name": "Toggletip",
+  "group": "overlay",
+  "description": "Botón de ayuda («i») que muestra una explicación: se asoma al pasar o enfocar y el clic la deja fija.",
+  "import": "import { Toggletip } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre del botón: dice qué muestra («More about shipping»)."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "La explicación; puede llevar un enlace."
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "default": "information-circle"
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "openDelay",
+      "type": "number",
+      "default": 300
+    },
+    {
+      "name": "closeDelay",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": ["top", "right", "bottom", "left"],
+      "default": "top"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "center"
+    },
+    {
+      "name": "sideOffset",
+      "type": "number",
+      "default": 6
+    },
+    {
+      "name": "arrow",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md",
+      "description": "Botón de 20 o 24 px; con puntero grueso el área táctil crece."
+    },
+    {
+      "name": "width",
+      "type": "number | string"
+    }
+  ],
+  "states": ["closed", "open", "pinned"],
+  "tokens": ["popup-bg", "popup-radius", "radius-md", "radius-xs", "fg-muted", "accent-text", "surface-2", "text-small", "touch-target"],
+  "classes": ["z-toggletip", "z-toggletip__trigger"],
+  "a11y": "El botón tiene nombre propio (`label`: qué revela, no «?») y aria-expanded; la burbuja es role=tooltip. El clic, Intro o Espacio la abren y la dejan fija; otro clic, Escape o una pulsación fuera la cierran. Pasar el puntero o enfocar el botón con el teclado la asoman sin fijarla, y se va al salir (WCAG 1.4.13: se puede descartar, se puede pasar a ella y persiste). Con el foco dentro, Tab recorre sus enlaces y sale hacia lo que sigue al botón; Mayús+Tab vuelve al botón. Para información imprescindible, en línea; para el nombre de un icono, Tooltip.",
+  "examples": [
+    {
+      "title": "Ayuda de un campo",
+      "code": "<Field label={<>Shipping <Toggletip label=\"More about shipping\">Free on orders over $50. Orders placed before 2pm ship the same day.</Toggletip></>}>\n  <Input />\n</Field>"
+    },
+    {
+      "title": "Con enlace, a la derecha",
+      "code": "<Toggletip label=\"About API limits\" side=\"right\" icon=\"question-mark-circle\">\n  1,000 requests per hour. <a href=\"/docs/limits\">See the limits</a>.\n</Toggletip>"
+    }
+  ],
+  "origin": "Nuevo, con primitiva propia (core/interest). Material de HelpHint de zutool. Referencia de variantes: Toggle Tooltip de Shark UI.",
+  "html": [
+    {
+      "title": "Ayuda de un campo",
+      "code": "<span style=\"display:inline-flex;align-items:center;gap:4px\">Shipping\n  <button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"More about shipping\" aria-expanded=\"false\" data-z-toggletip=\"#tt-shipping\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </button>\n</span>\n\n<div id=\"tt-shipping\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  Free on orders over $50. Orders placed before 2pm ship the same day.\n</div>"
+    },
+    {
+      "title": "Con enlace, a la derecha",
+      "code": "<button type=\"button\" class=\"z-toggletip__trigger\" data-size=\"md\" aria-label=\"About API limits\" aria-expanded=\"false\" data-z-toggletip=\"#tt-limits\" data-z-placement=\"right\">\n  <z-icon name=\"question-mark-circle\" size=\"16\"></z-icon>\n</button>\n\n<div id=\"tt-limits\" popover=\"manual\" class=\"z-liquid z-toggletip\" role=\"tooltip\" data-arrow>\n  1,000 requests per hour. <a href=\"#limits\">See the limits</a>.\n</div>"
+    }
+  ]
+}

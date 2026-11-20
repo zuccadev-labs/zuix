@@ -131,5 +131,81 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         await gone(page, '.z-menu[role="menu"]');
       },
     },
+    {
+      name: "Oleada 4 · HoverCard: puntero con retardo y paso a la tarjeta, teclado con Tab dentro y fuera, Escape",
+      async run({ open }) {
+        const page = await screen(open);
+        const link = t("c-hover-link");
+        await page.hover(link);
+        await visible(page, ".z-hovercard", "abre al pasar el puntero");
+        const described = await page.locator(link).getAttribute("aria-describedby");
+        assert(
+          described && (await page.locator(`[id="${described}"]`).getAttribute("role")) === "tooltip",
+          "la tarjeta describe al enlace",
+        );
+        assert((await page.locator(link).getAttribute("aria-expanded")) === null, "sin aria-expanded");
+        const box = await page.locator(".z-hovercard").boundingBox();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+        await page.waitForTimeout(500);
+        await visible(page, ".z-hovercard", "sigue abierta con el puntero encima");
+        await press(page, "Escape");
+        await gone(page, ".z-hovercard");
+        await page.mouse.move(5, 5);
+        await page.locator(link).focus();
+        await press(page, "Shift+Tab", "Tab");
+        await visible(page, ".z-hovercard", "abre al enfocar con el teclado");
+        await press(page, "Tab");
+        await focusOn(page, t("c-hover-projects"), "Tab entra en la tarjeta");
+        await press(page, "Tab");
+        await focusOn(page, t("c-after-hover"), "Tab sale tras el enlace");
+        await gone(page, ".z-hovercard");
+      },
+    },
+    {
+      name: "Oleada 4 · Toggletip: clic fija y aria-expanded, Escape cierra, Tab entra en su enlace",
+      async run({ open }) {
+        const page = await screen(open);
+        const button = `${t("c-toggletip")} .z-toggletip__trigger`;
+        await expectAttr(page, button, "aria-label", "More about shipping");
+        await page.click(button);
+        await visible(page, ".z-toggletip");
+        await expectAttr(page, button, "aria-expanded", "true");
+        await page.mouse.move(5, 5);
+        await page.waitForTimeout(400);
+        await visible(page, ".z-toggletip", "fijada");
+        await page.locator(button).focus();
+        await press(page, "Tab");
+        await focusOn(page, '.z-toggletip a[href="#shipping"]', "Tab entra en su enlace");
+        await press(page, "Escape");
+        await gone(page, ".z-toggletip");
+        await focusOn(page, button, "Escape devuelve el foco al botón");
+        await expectAttr(page, button, "aria-expanded", "false");
+      },
+    },
+    {
+      name: "Oleada 4 · Popover: ancla distinta, flecha al centro del ancla y botón de cierre",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.click(t("c-dns"));
+        await visible(page, ".z-popover[data-arrow]");
+        await page.waitForTimeout(150);
+        const geo = await page.evaluate(() => {
+          const field = document.querySelector('[data-testid="c-domain"]').getBoundingClientRect();
+          const pop = document.querySelector(".z-popover[data-arrow]");
+          const r = pop.getBoundingClientRect();
+          return {
+            side: pop.dataset.side,
+            gap: r.top - field.bottom,
+            offset: parseFloat(pop.style.getPropertyValue("--z-arrow-offset")),
+            center: field.left + field.width / 2 - r.left,
+          };
+        });
+        assert(geo.side === "bottom" && geo.gap > 0 && geo.gap < 20, `bajo el campo: ${JSON.stringify(geo)}`);
+        assert(Math.abs(geo.offset - geo.center) <= 2 || geo.offset >= 12, `flecha: ${JSON.stringify(geo)}`);
+        await page.click(".z-popover__close");
+        await gone(page, ".z-popover[data-arrow]");
+        await focusOn(page, t("c-dns"), "el foco vuelve al disparador");
+      },
+    },
   ];
 }

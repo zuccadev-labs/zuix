@@ -242,3 +242,10 @@ body {
   align-items: center;
   gap: var(--z-space-2);
 }
+
+/* Texto y control en línea (etiqueta con su ayuda). */
+.app-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-1);
+}

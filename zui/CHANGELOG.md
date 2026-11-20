@@ -40,6 +40,12 @@ radios y material de los tokens.
     en el popover y `data-z-anchor="#id"` en el disparador; `openPopover()` acepta `{ trigger }`. Nuevos
     `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
     escribe `--z-arrow-offset`.
+  - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, que lo
+    describe (`aria-describedby`); el puntero cruza a la tarjeta sin cerrarla, Escape y una pulsación fuera la
+    cierran y Tab entra en ella y sale hacia lo que sigue al enlace. Flecha opcional.
+  - `Toggletip`: botón de ayuda con nombre propio y `aria-expanded`; el puntero o el foco la asoman, el clic la fija.
+  - Lógica común en `core/interest` (`createInterest`, `bridgeTab`). En `/dom`, `[data-z-hovercard]` y
+    `[data-z-toggletip]` con `.z-hovercard`/`.z-toggletip` en `popover=manual`, y `setHintOpen()`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
