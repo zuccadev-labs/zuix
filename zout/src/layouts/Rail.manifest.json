@@ -69,7 +69,7 @@
   "examples": [
     {
       "title": "Rail con pie",
-      "code": "<Rail brand={<Logo />} footer={<RailItem icon=\"gear\" label=\"Settings\" />}>\n  <RailItem icon=\"home\" label=\"Home\" active />\n  <RailItem icon=\"bell\" label=\"Notifications\" badge={3} />\n</Rail>"
+      "code": "<Rail brand={<Icon name=\"cube\" size={20} />} footer={<RailItem icon=\"gear\" label=\"Settings\" />}>\n  <RailItem icon=\"home\" label=\"Home\" active />\n  <RailItem icon=\"bell\" label=\"Notifications\" badge={3} />\n</Rail>"
     }
   ],
   "origin": "Rail de zutool."

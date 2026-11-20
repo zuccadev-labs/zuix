@@ -680,7 +680,7 @@
    "examples": [
     {
      "title": "Rail con pie",
-     "code": "<Rail brand={<Logo />} footer={<RailItem icon=\"gear\" label=\"Settings\" />}>\n  <RailItem icon=\"home\" label=\"Home\" active />\n  <RailItem icon=\"bell\" label=\"Notifications\" badge={3} />\n</Rail>"
+     "code": "<Rail brand={<Icon name=\"cube\" size={20} />} footer={<RailItem icon=\"gear\" label=\"Settings\" />}>\n  <RailItem icon=\"home\" label=\"Home\" active />\n  <RailItem icon=\"bell\" label=\"Notifications\" badge={3} />\n</Rail>"
     }
    ],
    "origin": "Rail de zutool.",
@@ -1496,7 +1496,7 @@
    "examples": [
     {
      "title": "Con pestañas",
-     "code": "<TitleBar brand={<Logo />} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={tabs} activeId={active} onSelect={setActive} />\n</TitleBar>"
+     "code": "<TitleBar brand={<><Icon name=\"cube\" size={18} /> Atlas</>} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={[{ id: \"main\", title: \"main.ts\" }, { id: \"readme\", title: \"README.md\" }]} activeId=\"main\" onSelect={setActive} />\n</TitleBar>"
     }
    ],
    "origin": "Barra de título de zutool.",
