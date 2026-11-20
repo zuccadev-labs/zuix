@@ -43,5 +43,23 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
         assert((await page.locator(input).count()) === 0, "el campo se quita");
       },
     },
+    {
+      name: "Oleada 5 · JsonTree: tipos, Map y Set, truncado, teclado y ruta (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const node = (path) => `${t("c-json")} [role=treeitem][data-value='${path}']`;
+        await expectText(page, `${node("$.roles")} > .z-tree__row .z-jsontree__value`, "Set(2)");
+        await expectText(page, `${node('$.limits.get("api")')} .z-jsontree__value`, "1000n");
+        const summary = page.locator(`${node("$.summary")} .z-jsontree__value`);
+        assert((await summary.textContent()).endsWith('…"'), "cadena larga truncada");
+        assert((await summary.getAttribute("title")).includes("platform"), "texto completo en title");
+        await page.focus(node("$"));
+        await press(page, "ArrowDown", "ArrowDown", "Enter");
+        await expectText(page, t("c-json-path"), "$.name");
+        await page.focus(node("$.tags"));
+        await press(page, "ArrowLeft");
+        await expectAttr(page, node("$.tags"), "aria-expanded", "false");
+      },
+    },
   ];
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Card, CardHeader, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
+import { Card, CardHeader, JsonTree, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
 
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
@@ -20,11 +20,24 @@ const FOLDERS: TreeNode[] = [
   { id: "notes", label: "Notes", icon: "document" },
 ];
 
+const JSON_SAMPLE = {
+  id: 42,
+  name: "Atlas",
+  active: true,
+  owner: null,
+  summary: "Design tokens rollout across every product surface and platform.",
+  tags: ["design", "tokens"],
+  created: new Date("2026-11-20T09:00:00Z"),
+  roles: new Set(["admin", "editor"]),
+  limits: new Map([["api", 1000n]]),
+};
+
 /** Piezas de la oleada 5 (contenido y navegación) con su valor a la vista, para las pruebas en navegador. */
 export function ContentWave5() {
   const [labels, setLabels] = useState<Record<string, string>>({});
   const [picked, setPicked] = useState<string[]>([]);
   const [checked, setChecked] = useState<string[]>(["photos/2025"]);
+  const [jsonPath, setJsonPath] = useState("none");
   const nodes = FOLDERS.map(function relabel(node): TreeNode {
     return { ...node, label: labels[node.id] ?? node.label, children: node.children?.map(relabel) };
   });
@@ -56,6 +69,23 @@ export function ContentWave5() {
                 Selected: <output data-testid="c-tree-selected">{show(picked)}</output>
                 <br />
                 Checked: <output data-testid="c-tree-checked">{show(checked)}</output>
+              </p>
+            </Stack>
+          </Card>
+          <Card className="app-demo">
+            <CardHeader title="JsonTree" subtitle="Types, Map and Set, depth and paths" />
+            <Stack gap={3}>
+              <div data-testid="c-json">
+                <JsonTree
+                  label="Project payload"
+                  defaultExpandDepth={2}
+                  maxStringLength={32}
+                  onSelect={(path) => setJsonPath(path)}
+                  value={JSON_SAMPLE}
+                />
+              </div>
+              <p className="app-muted">
+                Path: <output data-testid="c-json-path">{jsonPath}</output>
               </p>
             </Stack>
           </Card>

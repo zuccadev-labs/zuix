@@ -70,6 +70,7 @@ const APG = {
   PasswordInput: "button",
   Tooltip: "tooltip",
   Tree: "treeview",
+  JsonTree: "treeview",
 };
 
 /** `OTPInput` → `otp-input`, `DataTable` → `data-table`. */

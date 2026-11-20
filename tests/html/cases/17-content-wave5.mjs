@@ -9,7 +9,7 @@ const contract = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.
 export default async function ({ page, test, ok }) {
   await page.evaluate(() => {
     window.__w5c = [];
-    for (const name of ["z:change", "z:rename", "z:copy"])
+    for (const name of ["z:change", "z:rename", "z:copy", "z:select"])
       document.addEventListener(name, (event) =>
         window.__w5c.push({ name, cls: String(event.target.className), detail: JSON.parse(JSON.stringify(event.detail ?? null)) }),
       );
@@ -101,5 +101,37 @@ export default async function ({ page, test, ok }) {
     await press("Escape");
     ok((await music.locator(".z-tree__label").textContent()) === "Songs", "Escape cancela");
     ok((await music.locator(".z-tree__rename").count()) === 0, "sin campo");
+  });
+
+  /* ---------- JsonTree ---------- */
+  await test("JsonTree: pinta desde el script, tipos, profundidad, teclado de Tree y copia de la ruta", async () => {
+    const box = await inject("JsonTree", exampleIndex("JsonTree", /script JSON/));
+    const tree = box.locator('[role="tree"]');
+    ok((await tree.getAttribute("aria-label")) === "Response", "nombre accesible");
+    ok((await box.locator('[data-value="$.tags"]').getAttribute("aria-expanded")) === "true", "profundidad 2 expandida");
+    ok((await box.locator('[data-value="$.stats"] > .z-tree__group').isHidden()) === false, "stats visible");
+    ok((await box.locator('[data-value="$.name"] .z-jsontree__value').textContent()) === '"Atlas"', "cadena con comillas");
+    ok((await box.locator('[data-value="$.owner"] .z-jsontree__value').getAttribute("data-type")) === "null", "tipo null");
+    const root = box.locator('[data-value="$"]');
+    await root.focus();
+    await press("ArrowDown");
+    ok(await page.evaluate(() => document.activeElement?.dataset.value === "$.id"), "flecha abajo baja a la primera clave");
+    await events();
+    await press("Enter");
+    await page.waitForTimeout(150);
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:select" && e.detail.value === "$.id"),
+      `z:select con la ruta: ${JSON.stringify(log)}`,
+    );
+    await page.evaluate(
+      async (id) => {
+        const el = document.querySelector(`#${id} .z-jsontree`);
+        (await import("/zui/dist/zui.dom.js")).setJsonTreeValue(el, { roles: new Set(["admin"]), limits: new Map([["api", 10n]]) });
+      },
+      await box.getAttribute("id"),
+    );
+    ok((await box.locator('[data-value="$.roles"] .z-jsontree__value').first().textContent()) === "Set(1)", "Set");
+    ok((await box.locator("[data-value='$.limits.get(\"api\")'] .z-jsontree__value").textContent()) === "10n", "Map con bigint");
   });
 }

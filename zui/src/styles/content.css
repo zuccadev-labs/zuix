@@ -404,4 +404,44 @@
     display: inline-flex;
     gap: var(--z-space-1-5);
   }
+  /* ---- JsonTree ---- */
+  /* Visor de JSON sobre las filas de Tree: monoespaciada, clave en texto, valor con el color de su tipo (tokens de
+     texto: 4.5:1 en todas las superficies). La etiqueta no se recorta con puntos: cada valor lleva el suyo. */
+  .z-jsontree {
+    min-width: 0;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+  }
+  .z-jsontree .z-tree {
+    font-size: inherit;
+  }
+  .z-jsontree .z-tree__row {
+    height: max(28px, var(--z-touch-target, 0px));
+  }
+  .z-jsontree__key {
+    color: var(--z-fg);
+  }
+  .z-jsontree__sep {
+    color: var(--z-fg-subtle);
+    white-space: pre;
+  }
+  .z-jsontree__value {
+    color: var(--z-fg-muted);
+  }
+  .z-jsontree__value:is([data-type="string"], [data-type="date"]) {
+    color: var(--z-success-text);
+  }
+  .z-jsontree__value:is([data-type="number"], [data-type="bigint"]) {
+    color: var(--z-info-text);
+  }
+  .z-jsontree__value[data-type="boolean"] {
+    color: var(--z-warning-text);
+  }
+  .z-jsontree__value:is([data-type="null"], [data-type="undefined"], [data-type="circular"]) {
+    color: var(--z-fg-subtle);
+    font-style: italic;
+  }
+  .z-jsontree__value:is([data-type="function"], [data-type="symbol"]) {
+    color: var(--z-accent-text);
+  }
 }

@@ -1,0 +1,99 @@
+{
+  "name": "JsonTree",
+  "group": "content",
+  "description": "Visor de JSON y de valores de JavaScript como árbol: tipos con color, profundidad inicial, Map y Set, cadenas largas truncadas y copia de la ruta.",
+  "import": "import { JsonTree } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "unknown",
+      "required": true,
+      "description": "Objetos, arrays, Map, Set, fechas, bigint, cadenas, números, booleanos y null. Las referencias circulares se cortan con [Circular]."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "JSON",
+      "description": "Nombre accesible del árbol."
+    },
+    {
+      "name": "defaultExpandDepth",
+      "type": "number",
+      "default": 1,
+      "description": "Profundidad expandida al montar (1 = la raíz; 0 = todo plegado)."
+    },
+    {
+      "name": "maxStringLength",
+      "type": "number",
+      "default": 120,
+      "description": "Longitud a partir de la que una cadena se trunca con «…»; el texto completo queda en title."
+    },
+    {
+      "name": "rootName",
+      "type": "string",
+      "default": "$",
+      "description": "Nombre de la raíz en las rutas ($.users[0].name)."
+    },
+    {
+      "name": "onSelect",
+      "type": "(path: string, value: unknown) => void",
+      "description": "Nodo activado (clic o Intro)."
+    },
+    {
+      "name": "copyPath",
+      "type": "boolean",
+      "default": false,
+      "description": "Activar un nodo copia su ruta y lo anuncia en una región de estado."
+    },
+    {
+      "name": "copiedLabel",
+      "type": "string",
+      "default": "Copied {path}"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "selected",
+    "expanded",
+    "collapsed"
+  ],
+  "tokens": [
+    "font-mono",
+    "text-code",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "info-text",
+    "warning-text",
+    "accent-text",
+    "touch-target"
+  ],
+  "classes": [
+    "z-jsontree",
+    "z-jsontree__key",
+    "z-jsontree__sep",
+    "z-jsontree__value"
+  ],
+  "a11y": "Es un Tree (patrón APG treeview): roles tree, treeitem y group, foco itinerante, flechas para recorrer, derecha expande, izquierda pliega o sube, Inicio/Fin, una letra salta a la siguiente clave. El tipo no depende solo del color: el valor se escribe con su sintaxis (comillas en las cadenas, n en bigint, Array(3), Map(2)). Con copyPath, la ruta copiada se anuncia en un role=\"status\".",
+  "examples": [
+    {
+      "title": "Respuesta de una API",
+      "code": "<JsonTree\n  label=\"Response\"\n  defaultExpandDepth={2}\n  value={{ id: 42, name: \"Atlas\", active: true, owner: null, tags: [\"design\", \"tokens\"], stats: { views: 1204, ratio: 0.82 } }}\n/>"
+    },
+    {
+      "title": "Map, Set, fechas y copiar ruta",
+      "code": "<JsonTree\n  copyPath\n  value={{ when: new Date(\"2026-11-20T09:00:00Z\"), roles: new Set([\"admin\", \"editor\"]), limits: new Map([[\"api\", 1000n]]) }}\n/>"
+    }
+  ],
+  "origin": "JSON Tree View de Shark UI; sobre Tree.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Desde un script JSON (setJsonTreeValue(el, valor) para Map, Set y fechas; emite z:select y, con data-copy-path, z:copy)",
+      "code": "<div class=\"z-jsontree\" data-label=\"Response\" data-expand-depth=\"2\" data-copy-path>\n  <script type=\"application/json\" data-value>{\"id\": 42, \"name\": \"Atlas\", \"active\": true, \"owner\": null, \"tags\": [\"design\", \"tokens\"], \"stats\": {\"views\": 1204, \"ratio\": 0.82}}</script>\n</div>"
+    }
+  ]
+}

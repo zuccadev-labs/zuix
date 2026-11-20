@@ -7,3 +7,4 @@ export { CodeBlock, type CodeBlockProps } from "./CodeBlock";
 export { Divider, type DividerProps } from "./Divider";
 export { RelativeTime, type RelativeTimeProps } from "./RelativeTime";
 export { Timer, type TimerProps } from "./Timer";
+export { JsonTree, type JsonTreeProps } from "./JsonTree";

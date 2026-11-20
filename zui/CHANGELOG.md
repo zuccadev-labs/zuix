@@ -26,6 +26,10 @@ radios y material de los tokens.
   Escape cancela). Modo DOM: `aria-multiselectable`, `data-checkable`, `data-renamable`, `z:change` con
   `values` y `checked`, `z:rename` cancelable y `checkTreeItem()`/`renameTreeItem()` en `/dom`. Lógica en
   `core/tree` (cascada, rangos, profundidad).
+- `JsonTree`: visor de JSON y de valores de JavaScript sobre Tree (tipos con color de texto, `Array(3)`,
+  `Map(2)`, `Set(1)`, fechas, bigint, `[Circular]`), `defaultExpandDepth`, `maxStringLength` (texto completo en
+  `title`), rutas `$.a[0].b` con `onSelect` y `copyPath` (anuncio en `role="status"`). Modo DOM: `.z-jsontree` con
+  `<script type="application/json" data-value>` o `setJsonTreeValue(el, valor)`; `z:select` y `z:copy`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
