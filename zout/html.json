@@ -2,6 +2,26 @@
  "name": "@zuccadev-labs/zuix-zout",
  "note": "Contrato HTML: marcado que producen los componentes. Iconos como <z-icon>. `behavior`: none = solo CSS; dom = necesita @zuccadev-labs/zuix-zui/dom (layouts de zout: @zuccadev-labs/zuix-zout/dom); react = hoy solo disponible en el binding de React.",
  "components": {
+  "FloatingPanel": {
+   "group": "layout",
+   "classes": [
+    "z-floatpanel",
+    "z-floatpanel__header",
+    "z-floatpanel__handle",
+    "z-floatpanel__title",
+    "z-floatpanel__close",
+    "z-floatpanel__body",
+    "z-floatpanel__resize"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Inspector dentro de un contenedor",
+     "html": "<div style=\"display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-z-panel=\"#inspector-panel\">Toggle inspector</button>\n  <div style=\"position:relative;height:300px;width:100%\">\n    <section class=\"z-floatpanel z-liquid\" id=\"inspector-panel\" role=\"dialog\" aria-labelledby=\"inspector-panel-title\" tabindex=\"-1\" data-strategy=\"absolute\" style=\"left:16px;top:16px;width:260px;height:200px\">\n      <header class=\"z-floatpanel__header\">\n        <button type=\"button\" class=\"z-floatpanel__handle\" aria-label=\"Move panel (arrow keys)\" title=\"Move panel (arrow keys)\">\n          <z-icon name=\"bars-2\" size=\"14\"></z-icon>\n        </button>\n        <h2 class=\"z-floatpanel__title\" id=\"inspector-panel-title\">Inspector</h2>\n        <button type=\"button\" class=\"z-floatpanel__close\" aria-label=\"Close\" title=\"Close\">\n          <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n        </button>\n      </header>\n      <div class=\"z-floatpanel__body\">\n        <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>\n      </div>\n      <button type=\"button\" class=\"z-floatpanel__resize\" aria-label=\"Resize panel (arrow keys)\" title=\"Resize panel (arrow keys)\"></button>\n    </section>\n  </div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Grid": {
    "group": "layout",
    "classes": [

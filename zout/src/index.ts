@@ -7,6 +7,7 @@ export { SplitPane, Pane, type SplitPaneProps, type PaneProps } from "./layouts/
 export { TabStrip, type TabStripProps, type WorkTab, type TabGroup, type TabGroupTone } from "./layouts/TabStrip";
 export { TitleBar, type TitleBarProps } from "./layouts/TitleBar";
 export { PaneHeader, type PaneHeaderProps } from "./layouts/PaneHeader";
+export { FloatingPanel, type FloatingPanelProps } from "./layouts/FloatingPanel";
 export { ResizeHandle, type ResizeHandleProps } from "./layouts/ResizeHandle";
 export {
   Stack,

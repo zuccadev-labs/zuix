@@ -260,3 +260,20 @@ body {
 .app-sidebar-demo__frame[data-collapsed] {
   width: 56px;
 }
+.app-pane-demo {
+  height: 160px;
+}
+.app-pane-demo__body {
+  padding: var(--z-space-3);
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-small);
+}
+.app-float-area {
+  position: relative;
+  height: 280px;
+  border: 1px dashed var(--z-line);
+  border-radius: var(--z-radius-lg);
+}
+.app-float-text {
+  margin: 0;
+}

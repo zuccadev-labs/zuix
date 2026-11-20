@@ -82,5 +82,48 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         assert(name.includes("modified"), `cambios sin guardar en el nombre: ${name}`);
       },
     },
+    {
+      name: "Oleada 4 · PaneHeader y FloatingPanel: barra de acciones, arrastre, flechas, límites, Escape y foco",
+      async run({ open }) {
+        const page = await screen(open);
+        const bar = `${t("ws-paneheader")} [role=toolbar]`;
+        await expectAttr(page, bar, "aria-label", "Editor actions");
+        await page.focus(`${bar} button >> nth=0`);
+        await press(page, "End");
+        await focusOn(page, `${bar} [aria-label="More actions"]`, "Fin en la barra");
+        const value = t("ws-float-value");
+        const initial = await page.locator(value).textContent();
+        assert(initial === "16,16,220,180", `valor inicial: ${initial}`);
+        const area = page.locator(t("ws-float"));
+        await area.scrollIntoViewIfNeeded();
+        const title = await page.locator(`${t("ws-float")} .z-floatpanel__title`).boundingBox();
+        await page.mouse.move(title.x + 20, title.y + 5);
+        await page.mouse.down();
+        await page.mouse.move(title.x + 40, title.y + 25, { steps: 6 });
+        await page.mouse.up();
+        const afterDrag = await page.locator(value).textContent();
+        assert(afterDrag === "36,36,220,180", `tras arrastrar: ${afterDrag} (cabecera ${JSON.stringify(title)})`);
+        await page.focus(`${t("ws-float")} .z-floatpanel__handle`);
+        await press(page, "ArrowUp", "Shift+ArrowLeft");
+        await expectText(page, value, "8,26,220,180");
+        await page.focus(`${t("ws-float")} .z-floatpanel__resize`);
+        await press(page, "ArrowRight", "ArrowDown");
+        await expectText(page, value, "8,26,230,190");
+        for (let i = 0; i < 4; i++) await press(page, "Shift+ArrowDown");
+        const [, , , h] = (await page.locator(value).textContent()).split(",").map(Number);
+        const max = await area.evaluate((el) => el.clientHeight - 26 - 8);
+        assert(h === max, `alto acotado al área: ${h} / ${max}`);
+        await press(page, "Escape");
+        await expectText(page, value, "closed");
+        await page.click(t("ws-float-toggle"));
+        await focusOn(page, `${t("ws-float")} .z-floatpanel`, "el foco entra al abrir");
+        await expectAttr(page, `${t("ws-float")} .z-floatpanel`, "role", "dialog");
+        await page.click(`${t("ws-float")} .z-floatpanel__close`);
+        await expectText(page, value, "closed");
+        await focusOn(page, t("ws-float-toggle"), "el foco vuelve al botón");
+        void gone;
+        void visible;
+      },
+    },
   ];
 }

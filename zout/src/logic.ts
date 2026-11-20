@@ -185,3 +185,71 @@ export function beforeFor(visible: readonly string[], id: string, to: number): s
   const rest = visible.filter((x) => x !== id);
   return rest[to] ?? null;
 }
+
+/* ---------- FloatingPanel ---------- */
+
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** Margen mínimo entre un panel flotante y el borde de su área. */
+export const FLOAT_MARGIN = 8;
+/** Paso de las flechas al mover o redimensionar; con Mayús, ×10. */
+export const FLOAT_STEP = 10;
+
+/**
+ * Rectángulo acotado al área `bounds` (ancho y alto): el tamaño no pasa del área menos los márgenes ni baja del mínimo,
+ * y la posición deja el panel entero dentro (si no cabe, pegado al margen de inicio).
+ */
+export function clampRect(
+  rect: Rect,
+  bounds: { width: number; height: number },
+  min: { width: number; height: number } = { width: 0, height: 0 },
+  margin = FLOAT_MARGIN,
+): Rect {
+  const width = clamp(rect.width, min.width, Math.max(min.width, bounds.width - margin * 2));
+  const height = clamp(rect.height, min.height, Math.max(min.height, bounds.height - margin * 2));
+  const x = clamp(rect.x, margin, Math.max(margin, bounds.width - width - margin));
+  const y = clamp(rect.y, margin, Math.max(margin, bounds.height - height - margin));
+  return { x, y, width, height };
+}
+
+/** Desplazamiento que pide una flecha en el asa de mover (hacia donde apunta), o null si la tecla no mueve. */
+export function moveDelta(key: string, step: number): { dx: number; dy: number } | null {
+  if (key === "ArrowLeft") return { dx: -step, dy: 0 };
+  if (key === "ArrowRight") return { dx: step, dy: 0 };
+  if (key === "ArrowUp") return { dx: 0, dy: -step };
+  if (key === "ArrowDown") return { dx: 0, dy: step };
+  return null;
+}
+
+/**
+ * Rectángulo tras llevar la esquina de redimensionar `dw`, `dh` píxeles (positivos: hacia la derecha y abajo), acotado
+ * al mínimo y al área. La esquina está al final de la línea: en RTL, abajo a la izquierda, así que el panel crece hacia
+ * la izquierda y conserva su borde derecho.
+ */
+export function resizeRect(
+  rect: Rect,
+  dw: number,
+  dh: number,
+  bounds: { width: number; height: number },
+  min: { width: number; height: number },
+  rtl = false,
+  margin = FLOAT_MARGIN,
+): Rect {
+  const right = rect.x + rect.width;
+  const maxWidth = rtl ? right - margin : bounds.width - margin - rect.x;
+  const maxHeight = bounds.height - margin - rect.y;
+  const width = clamp(rect.width + (rtl ? -dw : dw), min.width, Math.max(min.width, maxWidth));
+  const height = clamp(rect.height + dh, min.height, Math.max(min.height, maxHeight));
+  return { x: rtl ? right - width : rect.x, y: rect.y, width, height };
+}
+
+/** Tamaño que pide una flecha en la esquina de redimensionar: derecha y abajo crecen (en RTL, izquierda crece). */
+export function resizeDelta(key: string, step: number): { dw: number; dh: number } | null {
+  const d = moveDelta(key, step);
+  return d ? { dw: d.dx, dh: d.dy } : null;
+}

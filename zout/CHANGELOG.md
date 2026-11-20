@@ -18,8 +18,13 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     `data-reorderable`, `moveWorkTab()`, `setTabGroupCollapsed()` y los eventos `z:reorder` y `z:grouptoggle`.
   - `PaneHeader`: cabecera de panel con icono, título, línea secundaria y acciones en una `Toolbar` (una sola
     parada de Tab) con menú opcional; `focused` y `titleId`. Dentro de `Pane.header` ocupa toda la franja.
-  - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore` y
-    `beforeFor`.
+  - `FloatingPanel`: ventana flotante no modal (`role="dialog"` nombrado por su título) que se arrastra por la
+    cabecera o con las flechas en su asa, y se redimensiona desde la esquina final (en RTL, la izquierda) con puntero
+    o flechas; Mayús multiplica el paso; nunca sale de la ventana (`fixed`) o de su contenedor (`absolute`); Escape
+    y el botón de cierre con `onClose`; posición y tamaño controlados o no. En `/dom`, `.z-floatpanel`,
+    `data-z-panel`, `openFloatingPanel()`, `closeFloatingPanel()` y `setFloatingPanelRect()`.
+  - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore`,
+    `beforeFor`, `clampRect`, `moveDelta`, `resizeDelta` y `resizeRect`.
 
 ### Cambiado
 

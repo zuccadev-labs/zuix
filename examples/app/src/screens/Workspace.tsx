@@ -1,6 +1,9 @@
 import { useState } from "react";
 import {
+  FloatingPanel,
   Grid,
+  Pane,
+  PaneHeader,
   Page,
   PageHeader,
   PageSection,
@@ -11,7 +14,8 @@ import {
   type TabGroup,
   type WorkTab,
 } from "@zuccadev-labs/zuix-zout";
-import { Card, CardHeader, IconButton } from "@zuccadev-labs/zuix-zui";
+import { Button, Card, CardHeader, IconButton } from "@zuccadev-labs/zuix-zui";
+import { Icon } from "@zuccadev-labs/zuix-zicon";
 
 const INITIAL_TABS: WorkTab[] = [
   { id: "button", title: "Button.tsx", groupId: "ui", modified: true },
@@ -27,6 +31,8 @@ export function Workspace() {
   const [page, setPage] = useState("home");
   const [tabs, setTabs] = useState(INITIAL_TABS);
   const [active, setActive] = useState("button");
+  const [inspector, setInspector] = useState(true);
+  const [panelRect, setPanelRect] = useState({ x: 16, y: 16, width: 220, height: 180 });
   const [groups, setGroups] = useState<TabGroup[]>([
     { id: "ui", label: "UI", tone: "info" },
     { id: "api", label: "API", tone: "success" },
@@ -85,6 +91,59 @@ export function Workspace() {
             </div>
             <output className="app-value" data-testid="ws-tabs-value">
               {tabs.map((t) => t.id).join(",")}
+            </output>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Panes and windows">
+        <Grid min={300}>
+          <Card className="app-demo">
+            <CardHeader title="PaneHeader" subtitle="Title, subtitle and a toolbar of actions" />
+            <div className="app-pane-demo" data-testid="ws-paneheader">
+              <Pane
+                header={
+                  <PaneHeader
+                    icon={<Icon name="code-bracket" size={14} />}
+                    title="Button.tsx"
+                    subtitle="zui/src/components"
+                    focused
+                    actionsLabel="Editor actions"
+                    actions={
+                      <>
+                        <IconButton icon="view-columns" label="Split right" size="sm" />
+                        <IconButton icon="arrows-pointing-out" label="Maximize" size="sm" />
+                      </>
+                    }
+                    menu={<IconButton icon="ellipsis-horizontal" label="More actions" size="sm" />}
+                  />
+                }
+              >
+                <div className="app-pane-demo__body">export function Button() {"{}"}</div>
+              </Pane>
+            </div>
+          </Card>
+          <Card className="app-demo">
+            <CardHeader title="FloatingPanel" subtitle="Drag, resize and keyboard; stays inside its area" />
+            <Button size="sm" onClick={() => setInspector((v) => !v)} data-testid="ws-float-toggle">
+              Toggle inspector
+            </Button>
+            <div className="app-float-area" data-testid="ws-float">
+              {inspector ? (
+                <FloatingPanel
+                  title="Inspector"
+                  strategy="absolute"
+                  position={{ x: panelRect.x, y: panelRect.y }}
+                  size={{ width: panelRect.width, height: panelRect.height }}
+                  onPositionChange={(p) => setPanelRect((r) => ({ ...r, ...p }))}
+                  onSizeChange={(sz) => setPanelRect((r) => ({ ...r, ...sz }))}
+                  onClose={() => setInspector(false)}
+                >
+                  <p className="app-float-text">Drag the header or use the arrow keys on its handle.</p>
+                </FloatingPanel>
+              ) : null}
+            </div>
+            <output className="app-value" data-testid="ws-float-value">
+              {inspector ? `${panelRect.x},${panelRect.y},${panelRect.width},${panelRect.height}` : "closed"}
             </output>
           </Card>
         </Grid>

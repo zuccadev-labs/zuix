@@ -937,6 +937,136 @@
     flex-wrap: nowrap;
   }
 
+  /* ── Panel flotante ────────────────────────────────────────────────────── */
+  /* Cristal elevado; la posición y el tamaño los escribe el comportamiento (left, top, width, height). */
+  .z-floatpanel {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    position: fixed;
+    z-index: var(--z-layer-overlay);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: var(--z-radius-panel);
+    color: var(--z-fg);
+  }
+  .z-floatpanel[data-strategy="absolute"] {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+  }
+  .z-floatpanel[hidden] {
+    display: none;
+  }
+  .z-floatpanel:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-floatpanel__header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--z-space-1);
+    min-height: var(--z-control-height-md);
+    padding-block: var(--z-space-1);
+    padding-inline: var(--z-space-1) var(--z-space-2);
+    border-block-end: 1px solid var(--z-line);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .z-floatpanel__header[data-dragging] {
+    cursor: grabbing;
+  }
+  .z-floatpanel__handle,
+  .z-floatpanel__close {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: var(--z-control-height-sm);
+    height: var(--z-control-height-sm);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: inherit;
+  }
+  .z-floatpanel__close {
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-floatpanel__handle:hover,
+    .z-floatpanel__close:hover {
+      background: var(--z-row-hover);
+      color: var(--z-fg);
+    }
+  }
+  .z-floatpanel__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-floatpanel__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: var(--z-space-3);
+  }
+  .z-floatpanel__footer {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: var(--z-space-2);
+    padding: var(--z-space-2) var(--z-space-3);
+    border-block-start: 1px solid var(--z-line);
+  }
+  /* Esquina de redimensionar: objetivo de 24 × 24 al final de la línea, con su marca en el canto. */
+  .z-floatpanel__resize {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-end-end-radius: var(--z-radius-panel);
+    background: transparent;
+    cursor: nwse-resize;
+    touch-action: none;
+  }
+  [dir="rtl"] .z-floatpanel__resize {
+    cursor: nesw-resize;
+  }
+  .z-floatpanel__resize::after {
+    content: "";
+    position: absolute;
+    inset-block-end: 6px;
+    inset-inline-end: 6px;
+    width: 8px;
+    height: 8px;
+    border-block-end: 2px solid var(--z-fg-subtle);
+    border-inline-end: 2px solid var(--z-fg-subtle);
+    border-end-end-radius: var(--z-radius-xs);
+  }
+  .z-floatpanel__handle:focus-visible,
+  .z-floatpanel__close:focus-visible,
+  .z-floatpanel__resize:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-floatpanel__resize:focus-visible::after,
+  .z-floatpanel__resize[data-dragging]::after {
+    border-color: var(--z-accent);
+  }
+
   /* ── Pestañas de trabajo ───────────────────────────────────────────────── */
   .z-tabstrip {
     display: flex;
@@ -1484,8 +1614,14 @@
     .z-pane[data-focused="true"] {
       border-color: Highlight;
     }
+    .z-floatpanel__handle:focus-visible,
+    .z-floatpanel__close:focus-visible,
+    .z-floatpanel__resize:focus-visible {
+      outline: 2px solid Highlight;
+    }
     .z-shell__drawer,
     .z-pane,
+    .z-floatpanel,
     .z-shell__skip {
       border: 1px solid CanvasText;
     }

@@ -1882,6 +1882,31 @@ pnpm dev</code>
 </div>
 <h2 class="page__group">layout</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="FloatingPanel" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FloatingPanel</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%">
+  <button type="button" class="z-btn z-btn--secondary" data-size="sm" data-z-panel="#inspector-panel">Toggle inspector</button>
+  <div style="position:relative;height:300px;width:100%">
+    <section class="z-floatpanel z-liquid" id="inspector-panel" role="dialog" aria-labelledby="inspector-panel-title" tabindex="-1" data-strategy="absolute" style="left:16px;top:16px;width:260px;height:200px">
+      <header class="z-floatpanel__header">
+        <button type="button" class="z-floatpanel__handle" aria-label="Move panel (arrow keys)" title="Move panel (arrow keys)">
+          <z-icon name="bars-2" size="14"></z-icon>
+        </button>
+        <h2 class="z-floatpanel__title" id="inspector-panel-title">Inspector</h2>
+        <button type="button" class="z-floatpanel__close" aria-label="Close" title="Close">
+          <z-icon name="x-mark" size="14"></z-icon>
+        </button>
+      </header>
+      <div class="z-floatpanel__body">
+        <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>
+      </div>
+      <button type="button" class="z-floatpanel__resize" aria-label="Resize panel (arrow keys)" title="Resize panel (arrow keys)"></button>
+    </section>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Grid" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Grid</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">

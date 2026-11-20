@@ -1,8 +1,9 @@
 {
  "name": "@zuccadev-labs/zuix-zout",
- "count": 11,
+ "count": 12,
  "groups": {
   "layout": [
+   "FloatingPanel",
    "Grid",
    "Page",
    "PaneHeader",
@@ -17,6 +18,147 @@
   ]
  },
  "components": [
+  {
+   "name": "FloatingPanel",
+   "group": "layout",
+   "description": "Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.",
+   "import": "import { FloatingPanel } from \"@zuccadev-labs/zuix-zout\"",
+   "behavior": "dom",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Título: nombra el panel (aria-labelledby)."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "onClose",
+     "type": "() => void",
+     "description": "Botón de cierre y Escape con el foco dentro."
+    },
+    {
+     "name": "position",
+     "type": "{ x, y }",
+     "description": "Controlada, en px desde la esquina superior izquierda del área. También defaultPosition y onPositionChange."
+    },
+    {
+     "name": "size",
+     "type": "{ width, height }",
+     "description": "Controlado, en px. También defaultSize y onSizeChange."
+    },
+    {
+     "name": "minWidth",
+     "type": "number",
+     "default": 200
+    },
+    {
+     "name": "minHeight",
+     "type": "number",
+     "default": 120
+    },
+    {
+     "name": "resizable",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "strategy",
+     "type": "enum",
+     "values": [
+      "fixed",
+      "absolute"
+     ],
+     "default": "fixed",
+     "description": "`fixed` flota sobre la ventana; `absolute`, dentro de su contenedor posicionado."
+    },
+    {
+     "name": "autoFocus",
+     "type": "boolean",
+     "default": true,
+     "description": "Lleva el foco al panel al montarlo y lo devuelve al cerrarlo."
+    },
+    {
+     "name": "moveLabel",
+     "type": "string",
+     "default": "Move panel (arrow keys)"
+    },
+    {
+     "name": "resizeLabel",
+     "type": "string",
+     "default": "Resize panel (arrow keys)"
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Close"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "dragging",
+    "resizing",
+    "hidden"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-panel",
+    "layer-overlay",
+    "layer-raised",
+    "line",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius-sm",
+    "row-hover",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-small",
+    "weight-semibold",
+    "space-1",
+    "space-2",
+    "space-3"
+   ],
+   "classes": [
+    "z-floatpanel",
+    "z-floatpanel__header",
+    "z-floatpanel__handle",
+    "z-floatpanel__title",
+    "z-floatpanel__close",
+    "z-floatpanel__body",
+    "z-floatpanel__resize"
+   ],
+   "a11y": "`role=\"dialog\"` no modal (sin aria-modal), nombrado por su título; recibe el foco al abrirse y lo devuelve al cerrarse. El asa de la cabecera es un botón cuyo nombre menciona las flechas: las flechas mueven el panel 10 px (Mayús, 100 px). La esquina de redimensionar es otro botón: las flechas cambian el tamaño (en RTL la esquina va abajo a la izquierda). Arrastrar la cabecera es ayuda de puntero. El panel no sale de la ventana o de su contenedor. Con `onClose`, Escape lo cierra.",
+   "examples": [
+    {
+     "title": "Inspector dentro de un contenedor",
+     "code": "<div style={{ position: \"relative\", height: 300, width: \"100%\" }}>\n  <FloatingPanel\n    title=\"Inspector\"\n    strategy=\"absolute\"\n    defaultPosition={{ x: 16, y: 16 }}\n    defaultSize={{ width: 260, height: 200 }}\n    onClose={close}\n  >\n    <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>\n  </FloatingPanel>\n</div>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Inspector dentro de un contenedor",
+     "code": "<div style=\"display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" data-z-panel=\"#inspector-panel\">Toggle inspector</button>\n  <div style=\"position:relative;height:300px;width:100%\">\n    <section class=\"z-floatpanel z-liquid\" id=\"inspector-panel\" role=\"dialog\" aria-labelledby=\"inspector-panel-title\" tabindex=\"-1\" data-strategy=\"absolute\" style=\"left:16px;top:16px;width:260px;height:200px\">\n      <header class=\"z-floatpanel__header\">\n        <button type=\"button\" class=\"z-floatpanel__handle\" aria-label=\"Move panel (arrow keys)\" title=\"Move panel (arrow keys)\">\n          <z-icon name=\"bars-2\" size=\"14\"></z-icon>\n        </button>\n        <h2 class=\"z-floatpanel__title\" id=\"inspector-panel-title\">Inspector</h2>\n        <button type=\"button\" class=\"z-floatpanel__close\" aria-label=\"Close\" title=\"Close\">\n          <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n        </button>\n      </header>\n      <div class=\"z-floatpanel__body\">\n        <p>Drag the header or use the arrow keys on its handle. Resize from the corner.</p>\n      </div>\n      <button type=\"button\" class=\"z-floatpanel__resize\" aria-label=\"Resize panel (arrow keys)\" title=\"Resize panel (arrow keys)\"></button>\n    </section>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "Paneles flotantes de zutool; referencia de variantes: Floating Panel de Shark UI.",
+   "file": "zout/src/layouts/FloatingPanel.manifest.json"
+  },
   {
    "name": "Grid",
    "group": "layout",

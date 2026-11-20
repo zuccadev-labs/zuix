@@ -24,6 +24,11 @@ import {
   tabMoveIndex,
   moveBefore,
   beforeFor,
+  clampRect,
+  moveDelta,
+  resizeDelta,
+  resizeRect,
+  FLOAT_MARGIN,
 } from "../../zout/src/logic.ts";
 
 const sum = (list) => list.reduce((a, b) => a + b, 0);
@@ -212,5 +217,42 @@ describe("TabStrip: reordenación", () => {
     assert.equal(beforeFor(["a", "b", "c"], "a", 1), "c");
     assert.equal(beforeFor(["a", "b", "c"], "a", 2), null);
     assert.equal(beforeFor(["a", "b", "c"], "c", 0), "a");
+  });
+});
+
+describe("FloatingPanel: posición y tamaño", () => {
+  const bounds = { width: 800, height: 600 };
+  const min = { width: 200, height: 120 };
+  test("clampRect deja el panel dentro del área con su margen", () => {
+    assert.deepEqual(clampRect({ x: -50, y: 900, width: 300, height: 200 }, bounds, min), {
+      x: FLOAT_MARGIN,
+      y: 392,
+      width: 300,
+      height: 200,
+    });
+    assert.deepEqual(clampRect({ x: 10, y: 10, width: 2000, height: 50 }, bounds, min), { x: 8, y: 10, width: 784, height: 120 });
+    // Área más pequeña que el mínimo: manda el mínimo, pegado al margen de inicio.
+    assert.deepEqual(clampRect({ x: 40, y: 40, width: 100, height: 100 }, { width: 150, height: 100 }, min), {
+      x: 8,
+      y: 8,
+      width: 200,
+      height: 120,
+    });
+  });
+  test("moveDelta y resizeDelta: las flechas apuntan hacia donde se mueve", () => {
+    assert.deepEqual(moveDelta("ArrowLeft", 10), { dx: -10, dy: 0 });
+    assert.deepEqual(moveDelta("ArrowDown", 5), { dx: 0, dy: 5 });
+    assert.deepEqual(moveDelta("ArrowUp", 5), { dx: 0, dy: -5 });
+    assert.deepEqual(moveDelta("ArrowRight", 5), { dx: 5, dy: 0 });
+    assert.equal(moveDelta("Enter", 5), null);
+    assert.deepEqual(resizeDelta("ArrowRight", 10), { dw: 10, dh: 0 });
+    assert.equal(resizeDelta("Home", 10), null);
+  });
+  test("resizeRect acota al mínimo y al área; en RTL conserva el borde derecho", () => {
+    const rect = { x: 100, y: 100, width: 300, height: 200 };
+    assert.deepEqual(resizeRect(rect, 50, -500, bounds, min), { x: 100, y: 100, width: 350, height: 120 });
+    assert.deepEqual(resizeRect(rect, 5000, 5000, bounds, min), { x: 100, y: 100, width: 692, height: 492 });
+    assert.deepEqual(resizeRect(rect, -50, 0, bounds, min, true), { x: 50, y: 100, width: 350, height: 200 });
+    assert.deepEqual(resizeRect(rect, 500, 0, bounds, min, true), { x: 200, y: 100, width: 200, height: 200 });
   });
 });

@@ -5,7 +5,8 @@
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zout/dom"; init();
 // Uso imperativo:    setPanelOpen, togglePanel, closeDrawers, getShellModes, resizeTo, getSplitSizes, setSplitSizes,
 //                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, setSidebarCollapsed,
-//                    setSidebarItemOpen, moveWorkTab, setTabGroupCollapsed, dispose
+//                    setSidebarItemOpen, moveWorkTab, setTabGroupCollapsed, openFloatingPanel,
+//                    closeFloatingPanel, setFloatingPanelRect, dispose
 //
 // Todo se activa dentro de un contenedor [data-z-dom], para no chocar con React en la misma página.
 // Atributos:
@@ -22,6 +23,11 @@
 //                                             .z-tabstrip__status[role=status] recibe el anuncio (data-moved-label con
 //                                             {title}, {position} y {total})
 //   .z-tabstrip__chip                         chip de grupo: pliega sus pestañas ([data-group]) y emite z:grouptoggle
+//   .z-floatpanel[role=dialog]                panel flotante: se arrastra por .z-floatpanel__header (o con flechas en
+//                                             .z-floatpanel__handle) y se redimensiona por .z-floatpanel__resize;
+//                                             data-strategy="absolute" lo acota a su contenedor; data-min-width/height;
+//                                             .z-floatpanel__close o Escape lo ocultan (z:close). data-z-panel="#id" en
+//                                             un botón lo abre y recibe el foco al cerrarlo. z:change { x, y, width, height }
 //   data-collapsed                            en .z-sidebar: plegada a iconos (setSidebarCollapsed la alterna)
 //   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
 // La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
@@ -51,7 +57,13 @@ import {
   resizeByKey,
   resizeSign,
   beforeFor,
+  clampRect,
   dropIndex,
+  FLOAT_STEP,
+  moveDelta,
+  resizeDelta,
+  resizeRect,
+  type Rect,
   finalIndex,
   revealOffset,
   tabKeyIndex,
@@ -757,6 +769,57 @@ export function setSidebarCollapsed(sidebar: HTMLElement, collapsed: boolean, si
   if (!silent) emit(sidebar, "change", { collapsed });
 }
 
+/* ---------- Panel flotante ---------- */
+
+const panelRect = (panel: HTMLElement): Rect => ({
+  x: panel.offsetLeft,
+  y: panel.offsetTop,
+  width: panel.offsetWidth,
+  height: panel.offsetHeight,
+});
+const panelBounds = (panel: HTMLElement) => {
+  const parent = panel.dataset.strategy === "absolute" ? (panel.offsetParent as HTMLElement | null) : null;
+  return parent
+    ? { width: parent.clientWidth, height: parent.clientHeight }
+    : { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight };
+};
+const panelMin = (panel: HTMLElement) => ({ width: num(panel.dataset.minWidth, 200), height: num(panel.dataset.minHeight, 120) });
+// Botón que abrió cada panel: recibe el foco al cerrarlo.
+const panelOpeners = new WeakMap<HTMLElement, HTMLElement>();
+
+/** Coloca y dimensiona un panel flotante (acotado a su área). Emite `z:change` con el rectángulo final. */
+export function setFloatingPanelRect(panel: HTMLElement, rect: Rect, silent = false): Rect {
+  const next = clampRect(rect, panelBounds(panel), panelMin(panel));
+  panel.style.left = `${next.x}px`;
+  panel.style.top = `${next.y}px`;
+  panel.style.width = `${next.width}px`;
+  panel.style.height = `${next.height}px`;
+  if (!silent) emit(panel, "change", next);
+  return next;
+}
+
+function resizePanel(panel: HTMLElement, start: Rect, dw: number, dh: number): void {
+  const next = resizeRect(start, dw, dh, panelBounds(panel), panelMin(panel), isRtl(panel));
+  setFloatingPanelRect(panel, next);
+}
+
+/** Muestra un panel flotante y le lleva el foco. `opener` lo recibe de vuelta al cerrarlo. */
+export function openFloatingPanel(panel: HTMLElement, opener?: HTMLElement | null): void {
+  panel.hidden = false;
+  if (opener) panelOpeners.set(panel, opener);
+  setFloatingPanelRect(panel, panelRect(panel), true);
+  panel.focus({ preventScroll: true });
+  emit(panel, "open");
+}
+
+/** Oculta un panel flotante (emite `z:close`, cancelable). El foco vuelve a quien lo abrió. */
+export function closeFloatingPanel(panel: HTMLElement): void {
+  if (!emit(panel, "close")) return;
+  const hadFocus = panel.contains(document.activeElement);
+  panel.hidden = true;
+  if (hadFocus) panelOpeners.get(panel)?.focus({ preventScroll: true });
+}
+
 /* ---------- Delegación de eventos ---------- */
 
 function onClick(event: MouseEvent): void {
@@ -805,6 +868,22 @@ function onClick(event: MouseEvent): void {
     return;
   }
 
+  const panelOpener = target.closest<HTMLElement>("[data-z-panel]");
+  if (panelOpener) {
+    const panel = document.getElementById((panelOpener.getAttribute("data-z-panel") ?? "").replace(/^#/, ""));
+    if (panel?.classList.contains("z-floatpanel")) {
+      if (panel.hidden) openFloatingPanel(panel, panelOpener);
+      else closeFloatingPanel(panel);
+    }
+    return;
+  }
+  const panelClose = target.closest(".z-floatpanel__close");
+  if (panelClose) {
+    const panel = panelClose.closest<HTMLElement>(".z-floatpanel");
+    if (panel) closeFloatingPanel(panel);
+    return;
+  }
+
   const trigger = target.closest<HTMLElement>(".z-sidebar__trigger");
   if (trigger) {
     const sidebar = document.getElementById(trigger.getAttribute("aria-controls") ?? "");
@@ -836,6 +915,12 @@ function onKeydown(event: KeyboardEvent): void {
   // Escape cierra el cajón abierto, salvo que lo haya gestionado otro (un diálogo o un menú por encima).
   if (event.key === "Escape") {
     if (event.defaultPrevented || target.closest("dialog[open], :popover-open")) return;
+    const panel = target.closest<HTMLElement>(".z-floatpanel");
+    if (panel && inDom(panel) && panel.querySelector(".z-floatpanel__close")) {
+      event.preventDefault();
+      closeFloatingPanel(panel);
+      return;
+    }
     for (const drawer of document.querySelectorAll(".z-shell__drawer")) {
       const shell = drawer.closest<HTMLElement>(".z-shell");
       if (shell && shells.has(shell)) closeDrawers(shell);
@@ -851,6 +936,25 @@ function onKeydown(event: KeyboardEvent): void {
     }
   }
   if (!inDom(target)) return;
+
+  const floatKey = target.closest<HTMLElement>(".z-floatpanel__handle, .z-floatpanel__resize");
+  const floating = floatKey?.closest<HTMLElement>(".z-floatpanel");
+  if (floatKey && floating) {
+    const step = event.shiftKey ? FLOAT_STEP * 10 : FLOAT_STEP;
+    const start = panelRect(floating);
+    if (floatKey.classList.contains("z-floatpanel__handle")) {
+      const d = moveDelta(event.key, step);
+      if (!d) return;
+      event.preventDefault();
+      setFloatingPanelRect(floating, { ...start, x: start.x + d.dx, y: start.y + d.dy });
+    } else {
+      const d = resizeDelta(event.key, step);
+      if (!d) return;
+      event.preventDefault();
+      resizePanel(floating, start, d.dw, d.dh);
+    }
+    return;
+  }
 
   const handle = target.closest<HTMLElement>(".z-resize");
   if (handle) {
@@ -922,6 +1026,29 @@ function onPointerDown(event: PointerEvent): void {
     };
     return;
   }
+  const grip = target.closest<HTMLElement>(".z-floatpanel__header, .z-floatpanel__resize");
+  const gripPanel = grip?.closest<HTMLElement>(".z-floatpanel");
+  if (grip && gripPanel) {
+    const control = target.closest("button, a, input, select, textarea");
+    if (control && control !== grip && !control.classList.contains("z-floatpanel__handle")) return;
+    const start = panelRect(gripPanel);
+    const [x, y] = [event.clientX, event.clientY];
+    const resizing = grip.classList.contains("z-floatpanel__resize");
+    grip.dataset.dragging = "";
+    drag = {
+      el: grip,
+      move: (e) =>
+        resizing
+          ? resizePanel(gripPanel, start, e.clientX - x, e.clientY - y)
+          : setFloatingPanelRect(gripPanel, { ...start, x: start.x + e.clientX - x, y: start.y + e.clientY - y }),
+    };
+    try {
+      grip.setPointerCapture(event.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
+    return;
+  }
   let move: ((event: PointerEvent) => void) | undefined;
   const el = target.closest<HTMLElement>(".z-resize, .z-split__divider");
   if (!el) return;
@@ -985,6 +1112,7 @@ export function hydrate(root: ParentNode = document): void {
   for (const split of all(root, ".z-split")) hydrateSplit(split);
   for (const strip of all(root, ".z-tabstrip")) hydrateStrip(strip);
   for (const sidebar of all(root, ".z-sidebar[data-collapsed]")) setSidebarCollapsed(sidebar, true, true);
+  for (const panel of all(root, ".z-floatpanel")) if (!panel.hidden) setFloatingPanelRect(panel, panelRect(panel), true);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");

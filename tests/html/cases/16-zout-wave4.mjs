@@ -104,6 +104,7 @@ export default async function ({ page, test, ok, card }) {
   });
   await test("TabStrip: arrastrar una pestaña con el puntero la suelta en el hueco marcado", async () => {
     const root = await inject("TabStrip", 1);
+    await root.scrollIntoViewIfNeeded();
     const order = () => root.locator(".z-tabstrip__select").evaluateAll((list) => list.map((el) => el.dataset.tabId));
     const from = await root.locator('[data-tab-id="button"]').boundingBox();
     const to = await root.locator('[data-tab-id="routes"]').locator("..").boundingBox();
@@ -128,5 +129,49 @@ export default async function ({ page, test, ok, card }) {
     await bar.locator("button").first().focus();
     await press("End");
     ok(await page.evaluate(() => document.activeElement?.getAttribute("aria-label") === "More actions"), "Fin llega al menú");
+  });
+
+  /* ---------- FloatingPanel ---------- */
+  await test("FloatingPanel: arrastre por la cabecera, flechas en el asa y en la esquina, acotado a su contenedor, Escape y reapertura", async () => {
+    const panel = card("FloatingPanel").locator(".z-floatpanel");
+    const rect = () => panel.evaluate((el) => ({ x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight }));
+    await panel.scrollIntoViewIfNeeded();
+    const before = await rect();
+    const head = await panel.locator(".z-floatpanel__title").boundingBox();
+    await page.mouse.move(head.x + 20, head.y + 5);
+    await page.mouse.down();
+    await page.mouse.move(head.x + 50, head.y + 25, { steps: 5 });
+    await page.mouse.up();
+    const moved = await rect();
+    ok(moved.x === before.x + 30 && moved.y === before.y + 20, `arrastre: ${JSON.stringify(before)} → ${JSON.stringify(moved)}`);
+    await panel.locator(".z-floatpanel__handle").focus();
+    await press("ArrowLeft", "ArrowDown");
+    const keyed = await rect();
+    ok(keyed.x === moved.x - 10 && keyed.y === moved.y + 10, `flechas: ${JSON.stringify(keyed)}`);
+    // Mayús + flecha muchas veces: no sale del contenedor (margen de 8 px).
+    for (let i = 0; i < 6; i++) await press("Shift+ArrowLeft");
+    ok((await rect()).x === 8, `acotado al borde: ${(await rect()).x}`);
+    await panel.locator(".z-floatpanel__resize").focus();
+    await press("ArrowRight", "ArrowRight", "ArrowUp");
+    const sized = await rect();
+    ok(sized.w === keyed.w + 20 && sized.h === keyed.h - 10, `redimensionar: ${JSON.stringify(sized)}`);
+    for (let i = 0; i < 10; i++) await press("Shift+ArrowUp");
+    ok((await rect()).h === 120, `alto mínimo: ${(await rect()).h}`);
+    const corner = await panel.locator(".z-floatpanel__resize").boundingBox();
+    await page.mouse.move(corner.x + 12, corner.y + 12);
+    await page.mouse.down();
+    await page.mouse.move(corner.x + 42, corner.y + 52, { steps: 5 });
+    await page.mouse.up();
+    const dragged = await rect();
+    ok(dragged.w === sized.w + 30 && dragged.h === 160, `esquina con puntero: ${JSON.stringify(dragged)}`);
+    await press("Escape");
+    ok(await panel.isHidden(), "Escape lo cierra");
+    const opener = card("FloatingPanel").locator("[data-z-panel]");
+    await opener.click();
+    ok(await panel.isVisible(), "el botón lo vuelve a abrir");
+    ok(await page.evaluate(() => document.activeElement?.classList.contains("z-floatpanel")), "el foco entra en el panel");
+    await panel.locator(".z-floatpanel__close").click();
+    ok(await page.evaluate(() => document.activeElement?.hasAttribute("data-z-panel")), "el foco vuelve al botón");
+    await opener.click();
   });
 }
