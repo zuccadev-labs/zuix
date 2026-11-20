@@ -26,6 +26,7 @@ import * as agenda from "./agenda";
 import * as widgets from "./widgets";
 import * as carousel from "./carousel";
 import * as collections from "./collections";
+import * as datatable from "./datatable";
 import * as forms from "./forms";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
@@ -44,9 +45,10 @@ import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [actions, forms, collections, carousel, time, agenda, widgets];
+const modules = [actions, forms, collections, datatable, carousel, time, agenda, widgets];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { checkTreeItem, openPalette, renameTreeItem, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
+export { dataTableSelection, setDataTablePage, setDataTableSelection } from "./datatable";
 export {
   setSelectValue,
   setComboboxOptions,

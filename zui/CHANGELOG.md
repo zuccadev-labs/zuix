@@ -11,6 +11,14 @@ radios y material de los tokens.
 
 ### Añadido
 
+- DataTable, oleada 5: selección de filas con casillas (`selectable`, `selectedKeys`, `defaultSelectedKeys`,
+  `onSelectionChange`, `isRowSelectable`), «seleccionar todo» de la página con estado indeterminado, Mayús +
+  clic para un rango y conteo visible anunciado (`role="status"`, `selectedLabel`); pie en `tfoot` por columna
+  (`footer`, contenido o función sobre todas las filas); paginación integrada con Pagination (`pageSize`,
+  `page`, `defaultPage`, `onPageChange`, `manualPagination` + `rowCount`, `rangeLabel`). Sin las props nuevas
+  el marcado no cambia. Modo DOM (`.z-datatable`): `data-page-size`, `data-selected-label`,
+  `data-range-label`, `z:selectionchange` y `z:pagechange`, y `setDataTableSelection()`,
+  `dataTableSelection()` y `setDataTablePage()` en `/dom`. Lógica en `core/selection`.
 - Tree, oleada 5: `selectionMode="multiple"` (`aria-multiselectable`; Ctrl/Cmd y Mayús con el puntero,
   Espacio, Mayús+flechas y Ctrl+A; `selectedIds`, `defaultSelectedIds`, `onSelectedChange`), casillas en
   cascada con estado mixto (`checkable`, `checked`, `defaultChecked`, `onCheckedChange`; `aria-checked`

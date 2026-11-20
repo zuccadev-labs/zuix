@@ -71,6 +71,7 @@ const COVERED = [
   "zui/src/core/roving.ts",
   "zui/src/core/scroll-lock.ts",
   "zui/src/core/segments.ts",
+  "zui/src/core/selection.ts",
   "zui/src/core/search.ts",
   "zui/src/core/slider.ts",
   "zui/src/core/spatial.ts",
@@ -88,6 +89,7 @@ const COVERED = [
   "zui/src/dom/forms-calendar.ts",
   "zui/src/dom/forms-datefield.ts",
   "zui/src/dom/collections.ts",
+  "zui/src/dom/datatable.ts",
   "zui/src/dom/time.ts",
   "zudocs/scripts/config.mjs",
 ];
