@@ -60,7 +60,7 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
     await press("End", " ");
     ok((await items.nth(2).getAttribute("aria-pressed")) === "true", "Espacio activa");
   });
-  await test("ToggleGroup single required: activar otra desactiva la anterior y no queda ninguna vacía", async () => {
+  await test("ToggleGroup single: activar otra desactiva la anterior y volver a pulsarla la apaga", async () => {
     const group = (await inject("ToggleGroup", 2)).locator(".z-toggle-group");
     const items = group.locator(".z-toggle");
     await items.nth(1).click();
@@ -69,7 +69,11 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
       "single",
     );
     await items.nth(1).click();
-    ok((await items.nth(1).getAttribute("aria-pressed")) === "true", "required: la activa no se apaga");
+    ok((await items.nth(1).getAttribute("aria-pressed")) === "false", "sin required, la activa se apaga");
+    await page.evaluate(() => document.querySelector("#inj-ToggleGroup-2 .z-toggle-group").setAttribute("data-required", ""));
+    await items.nth(0).click();
+    await items.nth(0).click();
+    ok((await items.nth(0).getAttribute("aria-pressed")) === "true", "data-required: la activa no se apaga");
     ok(await items.nth(2).isDisabled(), "item deshabilitado");
   });
 
@@ -157,6 +161,8 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
       form.append(box);
     });
     await toggle.click();
+    // El campo es obligatorio: con él vacío el formulario no llegaría a enviarse.
+    await input.fill("hunter2-secret");
     await page.evaluate(() => document.querySelector("#pw-form").requestSubmit());
     ok((await input.getAttribute("type")) === "password", "no se ocultó al enviar");
   });
