@@ -178,7 +178,6 @@ export function FloatingPanel({
         onClose();
       }}
     >
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: arrastrar por la cabecera es ayuda de puntero; la vía de teclado es el asa (botón con flechas). */}
       <header className="z-floatpanel__header" {...drags("move")}>
         <button type="button" className="z-floatpanel__handle" aria-label={moveLabel} title={moveLabel} onKeyDown={onKey("move")}>
           <Icon name="bars-2" size={14} />
