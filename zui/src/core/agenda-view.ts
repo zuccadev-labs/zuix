@@ -1427,7 +1427,7 @@ export function agendaTree(
       ),
     ),
     ...popovers(config, state, model, uid),
-    h("div", { class: "z-sr-only z-agenda__live", role: "status", "aria-live": "polite" }),
+    h("div", { key: "live", class: "z-sr-only z-agenda__live", role: "status", "aria-live": "polite" }),
   );
   return { tree, model };
 }

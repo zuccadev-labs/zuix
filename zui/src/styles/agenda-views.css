@@ -134,6 +134,8 @@
 
   /* ---------- Año perpetuo de una página ---------- */
   .z-perpetual {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
     container: z-perpetual / inline-size;
     color: var(--z-fg);
     font-variant-numeric: tabular-nums;
@@ -146,6 +148,10 @@
   }
   .z-agenda__perpetual .z-perpetual__frame {
     border-radius: 0;
+  }
+  .z-perpetual__sheet:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
   }
   .z-perpetual__sheet {
     display: flex;
@@ -160,12 +166,15 @@
     border-collapse: separate;
     border-spacing: var(--z-space-1) 0;
   }
+  /* Encabezados de fila solo para la tecnología de apoyo (los números se ven en el panel del año): fuera del flujo
+     de la tabla, como z-sr-only, para no ocupar ancho. */
   .z-perpetual__corner,
   .z-perpetual__rowhead {
-    inline-size: 0;
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
     padding: 0;
     overflow: hidden;
-    /* Encabezado de fila solo para la tecnología de apoyo: los números se ven en el panel del año. */
     clip-path: inset(50%);
     white-space: nowrap;
   }
@@ -351,6 +360,7 @@
     }
     .z-perpetual__month small {
       padding-inline-start: 0;
+      white-space: normal;
     }
     .z-perpetual__wd {
       font-size: var(--z-text-fine);
@@ -386,6 +396,8 @@
   /* ---------- Línea temporal (Gantt y recursos) y buscar hueco ---------- */
   .z-timeline,
   .z-freebusy {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
     container: z-timeline / inline-size;
     display: flex;
     flex-direction: column;
@@ -424,6 +436,10 @@
     overflow: auto;
     background: var(--z-reading-bg);
     scrollbar-width: thin;
+  }
+  .z-timeline__scroll:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
   }
   .z-timeline__scroll[data-virtual] {
     max-block-size: calc(var(--z-space-20) * 8);
@@ -983,6 +999,8 @@
 @layer zui.agenda {
   /* ---------- Franjas de cita (SlotPicker) ---------- */
   .z-slotpicker {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
     container: z-slotpicker / inline-size;
     min-inline-size: 0;
     overflow: hidden;
@@ -1146,6 +1164,8 @@
 @layer zui.agenda {
   /* ---------- Mapa de calor ---------- */
   .z-heatmap {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
     --z-hm-cell: var(--z-space-3);
     --z-hm-gap: 3px;
     container: z-heatmap / inline-size;
@@ -1788,5 +1808,15 @@
   }
   .z-event[data-selected] .z-event__cont {
     color: inherit;
+  }
+}
+
+@layer zui.agenda {
+  /* Puntero grueso: las opciones del zoom y de 12/24 h, de alto táctil completo (no solo por el pseudoelemento). */
+  @media (pointer: coarse) {
+    .z-timeline__zoom,
+    .z-slotpicker__cycle {
+      --z-segmented-height: calc(var(--z-touch-target) + 2 * var(--z-segmented-pad));
+    }
   }
 }

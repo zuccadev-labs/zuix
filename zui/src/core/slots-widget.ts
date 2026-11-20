@@ -258,7 +258,7 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
             ),
             h(
               "div",
-              { class: "z-segmented z-slotpicker__cycle", role: "group", "aria-label": labels.hourCycle, "data-size": "sm" },
+              { class: "z-segmented z-slotpicker__cycle", role: "group", "aria-label": labels.hourCycle },
               ...(["h12", "h23"] as const).map((c) =>
                 h(
                   "button",
@@ -267,7 +267,7 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
                     type: "button",
                     class: "z-segmented__item z-slotpicker__cycle-btn",
                     "data-cycle": c,
-                    "aria-pressed": state.hourCycle === c ? "true" : "false",
+                    "aria-current": state.hourCycle === c ? "true" : undefined,
                     "data-state": state.hourCycle === c ? "on" : "off",
                   },
                   h("span", { class: "z-segmented__label" }, c === "h12" ? labels.h12 : labels.h24),

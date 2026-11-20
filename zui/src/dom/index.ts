@@ -897,8 +897,9 @@ function onClick(event: MouseEvent): void {
     return;
   }
 
+  // Toggle suelto: no los botones de una pieza que lleva su propio estado (Calendar, mapa de calor).
   const pressed = target.closest<HTMLElement>("button[aria-pressed]");
-  if (pressed) {
+  if (pressed && !pressed.closest(".z-calendar, .z-heatmap")) {
     const next = pressed.getAttribute("aria-pressed") !== "true";
     pressed.setAttribute("aria-pressed", String(next));
     pressed.dataset.state = next ? "on" : "off";

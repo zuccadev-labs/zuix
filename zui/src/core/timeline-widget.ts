@@ -259,7 +259,7 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
                   type: "button",
                   class: "z-segmented__item",
                   "data-scale-option": s,
-                  "aria-pressed": s === state.scale ? "true" : "false",
+                  "aria-current": s === state.scale ? "true" : undefined,
                   "data-state": s === state.scale ? "on" : "off",
                 },
                 h("span", { class: "z-segmented__label" }, labels.scales[s]),
@@ -374,7 +374,7 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
       body,
       state.grabbed ? h("p", { class: "z-timeline__hint", "aria-hidden": "true" }, labels.grabHint) : null,
       legend,
-      h("div", { class: "z-sr-only", role: "status", "aria-live": "polite", "data-live": "" }),
+      h("div", { key: "live", class: "z-sr-only", role: "status", "aria-live": "polite", "data-live": "" }),
     );
   },
   attach(root, host) {

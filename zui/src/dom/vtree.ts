@@ -78,15 +78,31 @@ export function patchElement(
       if (style.getPropertyValue(k) !== String(value)) style.setProperty(k, String(value));
     if (!v.s && !style.length) el.removeAttribute("style");
   }
+  // Una región viva la escribe el anuncio (con retraso): su texto no se pisa al volver a pintar.
+  if (!fresh && !v.c?.length && (el.hasAttribute("data-live") || el.classList.contains("z-agenda__live"))) return;
   patchChildren(el, v.c ?? [], slots);
 }
 
 export function patchChildren(parent: Element, kids: VNode[], slots: SlotRenderers = {}): void {
   const doc = parent.ownerDocument;
   const existing = [...parent.childNodes];
+  // Nodos con clave propia que aún no se han usado: si una pieza cambia de posición (aparece o desaparece una
+  // anterior), se mueve en vez de crearse de nuevo (conserva el foco y el texto de las regiones vivas).
+  const keyed = new Map<string, ChildNode>();
+  for (const node of existing) {
+    const k = keys.get(node);
+    if (k && k.includes(":") && !keyed.has(k)) keyed.set(k, node);
+  }
   kids.forEach((v, i) => {
-    const cur = existing[i];
     const key = keyOf(v);
+    let cur = parent.childNodes[i] as ChildNode | undefined;
+    if (cur && keys.get(cur) !== key && key.includes(":") && typeof v === "object" && v && !("slot" in v) && v.k !== undefined) {
+      const moved = keyed.get(key);
+      if (moved && moved.parentNode === parent) {
+        parent.insertBefore(moved, cur);
+        cur = moved;
+      }
+    }
     if (cur && (cur.nodeType === Node.TEXT_NODE ? key === "#text" : keys.get(cur) === key)) {
       if (cur.nodeType === Node.TEXT_NODE) {
         if (cur.textContent !== v) cur.textContent = v as string;
@@ -97,5 +113,5 @@ export function patchChildren(parent: Element, kids: VNode[], slots: SlotRendere
     if (cur) parent.replaceChild(node, cur);
     else parent.append(node);
   });
-  for (let i = existing.length - 1; i >= kids.length; i--) existing[i]!.remove();
+  while (parent.childNodes.length > kids.length) parent.lastChild!.remove();
 }

@@ -160,8 +160,8 @@ function scaleHeader(
             s: { "--z-tl-at": i, "--z-tl-span": 1 },
             "data-weekend": on(weekend.has(parse(c.date).getUTCDay())),
             "data-today": on(c.date === input.today),
-            "aria-label": fmt(locale, { dateStyle: "full" }).format(parse(c.date)),
           },
+          h("span", { class: "z-sr-only" }, fmt(locale, { dateStyle: "full" }).format(parse(c.date))),
           h("small", { "aria-hidden": "true" }, fmt(locale, { weekday: "narrow" }).format(parse(c.date))),
           h("b", { "aria-hidden": "true" }, fmt(locale, { day: "numeric" }).format(parse(c.date))),
         ),
@@ -487,6 +487,8 @@ export interface ResourceTimelineInput {
   ) => VNode;
   /** Pinta la cabecera de una fila (por defecto, título y meta). */
   renderLabel?: (row: ResourceRow) => VNode[];
+  /** Sin piezas enfocables dentro (buscar hueco): el área desplazable es una región enfocable con nombre. */
+  focusableScroll?: boolean;
   /** Capas extra sobre las pistas (sugerencia de buscar hueco). */
   overlay?: VNode;
 }
@@ -575,7 +577,11 @@ export function resourceTimeline(input: ResourceTimelineInput): VEl {
   );
   return h(
     "div",
-    { class: "z-timeline__scroll", "data-virtual": on(Boolean(input.scroll)) },
+    {
+      class: "z-timeline__scroll",
+      "data-virtual": on(Boolean(input.scroll)),
+      ...(input.focusableScroll ? { tabindex: 0, role: "region", "aria-label": labels.resource } : {}),
+    },
     h(
       "div",
       {

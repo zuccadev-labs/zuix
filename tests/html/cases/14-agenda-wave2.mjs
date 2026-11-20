@@ -3,7 +3,23 @@
 // de React; teclado, eventos z:* y nombres accesibles. También la agenda en RTL, la vista de año y el perpetuo dentro
 // del EventCalendar, y renderEvent/loadEvents con setAgendaOptions.
 
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const contract = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../zui/html.json"), "utf8")).components;
+
 export default async function ({ page, test, ok, settle }) {
+  // Segundo ejemplo de un componente (la página muestra el primero): se inserta y se monta.
+  const inject = (name, title) =>
+    page.evaluate(
+      async ([component, html]) => {
+        const stage = document.querySelector(`[data-component="${component}"] .demo__stage`);
+        stage.insertAdjacentHTML("beforeend", html);
+        (await import("/zui/dist/zui.dom.js")).hydrate(stage);
+      },
+      [name, contract[name].examples.find((e) => e.title === title).html],
+    );
   await page.evaluate(() => {
     window.__zwave2 = [];
     for (const name of [
@@ -94,6 +110,7 @@ export default async function ({ page, test, ok, settle }) {
     await wait(async () => (await page.locator(`${root} [data-live]`).textContent()).startsWith("Moved Tokens v2"), "anuncio");
     await page.click(`${root} [data-scale-option="week"]`);
     ok((await page.getAttribute(root, "data-scale")) === "week", "zoom semanas");
+    ok((await page.getAttribute(`${root} [data-scale-option="week"]`, "aria-current")) === "true", "zoom con aria-current");
     ok(
       (await events()).some((e) => e.name === "scalechange" && e.detail.scale === "week"),
       "z:scalechange",
@@ -102,9 +119,10 @@ export default async function ({ page, test, ok, settle }) {
 
   await test("TimelineView (recursos): grid con conflicto en texto y navegación espacial", async () => {
     const root = "#plan-rooms";
+    await inject("TimelineView", "Recursos");
     await page.locator(root).scrollIntoViewIfNeeded();
     await settle();
-    ok((await page.locator(`${root} [role=grid] [role=rowheader]`).count()) === 3, "cabecera + dos salas");
+    ok((await page.locator(`${root} [role=grid] [role=rowheader]`).count()) === 2, "una cabecera de fila por sala");
     const conflict = `${root} .z-timeline__booking[data-conflict]`;
     ok((await page.locator(conflict).count()) === 2, "dos reservas en conflicto");
     ok((await page.locator(conflict).first().textContent()).includes("Overlaps"), "«Overlaps» en el nombre");
@@ -120,7 +138,11 @@ export default async function ({ page, test, ok, settle }) {
     await settle();
     const status = await page.locator(`${root} [role=status]`).textContent();
     ok(status.startsWith("All 2 free"), `estado: ${status}`);
-    ok((await page.locator(`${root} .z-freebusy__block`).first().textContent()).includes("Busy"), "ocupado en texto");
+    ok((await page.locator(`${root} .z-freebusy__block[data-kind="busy"]`).first().textContent()).includes("Busy"), "ocupado en texto");
+    ok(
+      (await page.locator(`${root} .z-freebusy__block[data-kind="outside"]`).first().textContent()).includes("Outside hours"),
+      "fuera de horario en texto",
+    );
     await page.click(`${root} .z-freebusy__next`);
     await page.click(`${root} .z-freebusy__use`);
     const select = (await events()).find((e) => e.name === "select");

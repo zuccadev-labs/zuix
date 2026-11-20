@@ -182,6 +182,7 @@ export const freeBusyWidget: Widget<FreeBusyProps, FreeBusyConfig, FreeBusyState
       locale,
       labels: { resource: labels.guests, overlaps: "", newBooking: "" },
       overlay,
+      focusableScroll: true,
       renderLabel: (r) => {
         const a = config.attendees.find((x) => x.id === r.id)!;
         const zone = a.timeZone ?? timeZone;

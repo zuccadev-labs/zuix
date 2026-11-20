@@ -184,7 +184,8 @@ export function perpetualTree(input: PerpetualInput): VEl {
     { class: "z-perpetual__frame" },
     h(
       "div",
-      { class: "z-perpetual__sheet" },
+      // Desplazable en estrecho y sin piezas enfocables: región enfocable con nombre (teclado para desplazar).
+      { class: "z-perpetual__sheet", tabindex: 0, role: "region", "aria-label": labels.title },
       h(
         "table",
         { class: "z-perpetual__table", "aria-describedby": howId },

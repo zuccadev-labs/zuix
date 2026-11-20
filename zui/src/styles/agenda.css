@@ -1254,6 +1254,8 @@
       flex-wrap: wrap;
       max-inline-size: 100%;
       height: auto;
+      /* Entre filas, el sobrante del área táctil (40 px sobre 30) de cada opción no pisa la de la otra fila. */
+      row-gap: var(--z-space-2-5);
     }
     .z-agenda__views .z-segmented__item {
       height: calc(var(--z-segmented-height) - var(--z-segmented-pad) * 2 - 2px);
