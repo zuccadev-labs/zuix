@@ -1,6 +1,19 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Accordion, Breadcrumb, Card, CardHeader, Input, JsonTree, Stepper, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
+import { Icon } from "@zuccadev-labs/zuix-zicon";
+import {
+  Accordion,
+  AspectRatio,
+  Breadcrumb,
+  Card,
+  CardHeader,
+  CardMedia,
+  Input,
+  JsonTree,
+  Stepper,
+  Tree,
+  type TreeNode,
+} from "@zuccadev-labs/zuix-zui";
 
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
@@ -91,6 +104,28 @@ export function ContentWave5() {
                 Path: <output data-testid="c-json-path">{jsonPath}</output>
               </p>
             </Stack>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Content">
+        <Grid min={240}>
+          <Card data-testid="c-card-media">
+            <CardMedia ratio={16 / 9}>
+              <Icon name="photo" size={32} />
+            </CardMedia>
+            <CardHeader icon="cube" title="Atlas" subtitle="Design tokens rollout" />
+          </Card>
+          <Card>
+            <CardMedia placement="inset" ratio={4 / 3}>
+              <Icon name="map" size={32} />
+            </CardMedia>
+            <CardHeader icon="map-pin" title="Lisbon office" subtitle="Inset media with a concentric radius" />
+          </Card>
+          <Card>
+            <CardHeader title="AspectRatio" subtitle="Square box" />
+            <AspectRatio ratio={1} data-testid="c-aspect">
+              <Icon name="photo" size={32} />
+            </AspectRatio>
           </Card>
         </Grid>
       </PageSection>

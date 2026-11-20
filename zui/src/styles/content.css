@@ -119,6 +119,63 @@
   .z-card__footer[data-align="between"] {
     justify-content: space-between;
   }
+  /* Icono de la cabecera: baldosa de radio corto con el color de acento en el trazo. */
+  .z-card__icon {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--z-control-height-md);
+    height: var(--z-control-height-md);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface-2);
+    color: var(--z-accent-text);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  .z-card__icon + .z-card__heading {
+    flex: 1;
+    align-self: center;
+  }
+  /* Media de cabecera. `top`: a sangre (cancela el relleno) con el radio interior de la tarjeta arriba;
+     `inset`: dentro del relleno, con el radio concéntrico (radio de la tarjeta − relleno). */
+  .z-card__media {
+    overflow: hidden;
+    background: var(--z-surface-2);
+  }
+  .z-card__media[data-placement="top"] {
+    margin: calc(var(--z-card-pad) * -1) calc(var(--z-card-pad) * -1) 0;
+    border-start-start-radius: calc(var(--z-card-radius) - 1px);
+    border-start-end-radius: calc(var(--z-card-radius) - 1px);
+  }
+  .z-card[data-padding="none"] > .z-card__media[data-placement="top"] {
+    margin: 0;
+  }
+  .z-card__media[data-placement="inset"] {
+    border-radius: max(var(--z-radius-xs), calc(var(--z-card-radius) - var(--z-card-pad)));
+  }
+
+  /* ---- AspectRatio ---- */
+  /* Caja con proporción fija; lo que va dentro (imagen, vídeo, iframe) la cubre. */
+  .z-aspect {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: var(--z-aspect, 1);
+    min-width: 0;
+    color: var(--z-fg-subtle);
+  }
+  .z-aspect > :is(img, video, iframe, canvas, svg, picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+  }
+  .z-aspect > picture > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   /* ---- Panel ---- */
   .z-panel {

@@ -22,6 +22,11 @@
       "name": "headingLevel",
       "type": "2 | 3 | 4",
       "default": 3
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Icono en una baldosa delante del título (decorativo)."
     }
   ],
   "states": ["rest"],
@@ -36,14 +41,24 @@
     "fg",
     "leading-ui",
     "text-title",
-    "tracking-snug"
+    "tracking-snug",
+    "control-height-md",
+    "control-radius",
+    "surface-2",
+    "accent-text",
+    "glass-highlight",
+    "line"
   ],
-  "classes": ["z-card__header", "z-card__heading", "z-card__title", "z-card__subtitle", "z-card__action"],
+  "classes": ["z-card__header", "z-card__heading", "z-card__title", "z-card__subtitle", "z-card__action", "z-card__icon"],
   "a11y": "El título es un encabezado real con nivel configurable.",
   "examples": [
     {
       "title": "Con acción",
       "code": "<Card>\n  <CardHeader title=\"Members\" subtitle=\"5 people\" action={<IconButton icon=\"plus\" label=\"Add member\" />} />\n</Card>"
+    },
+    {
+      "title": "Con icono",
+      "code": "<CardHeader icon=\"chart-bar\" title=\"Usage\" subtitle=\"Last 30 days\" />"
     }
   ],
   "origin": "CardHeader del design system base."

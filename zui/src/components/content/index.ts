@@ -1,6 +1,8 @@
 export { Card, type CardProps } from "./Card";
 export { CardHeader, type CardHeaderProps } from "./CardHeader";
 export { CardFooter, type CardFooterProps } from "./CardFooter";
+export { CardMedia, type CardMediaProps } from "./CardMedia";
+export { AspectRatio, type AspectRatioProps } from "./AspectRatio";
 export { Panel, type PanelProps } from "./Panel";
 export { Callout, type CalloutProps } from "./Callout";
 export { CodeBlock, type CodeBlockProps } from "./CodeBlock";

@@ -224,4 +224,17 @@ export default async function ({ page, test, ok }) {
       .evaluate((el) => getComputedStyle(el).borderTopLeftRadius);
     ok(radius !== "0px", `tarjeta con radio: ${radius}`);
   });
+
+  /* ---------- CardMedia y AspectRatio ---------- */
+  await test("CardMedia a sangre con el radio de la tarjeta y AspectRatio con su proporción", async () => {
+    const media = page.locator('[data-component="CardMedia"] .z-card__media');
+    const card = page.locator('[data-component="CardMedia"] .z-card');
+    const [m, c] = [await media.boundingBox(), await card.boundingBox()];
+    ok(Math.abs(m.x - c.x) <= 1.5 && Math.abs(m.width - c.width) <= 3, `a sangre: ${JSON.stringify([m, c])}`);
+    ok(Math.abs(m.width / m.height - 16 / 9) < 0.02, `16:9: ${m.width / m.height}`);
+    const radius = await media.evaluate((el) => getComputedStyle(el).borderStartStartRadius);
+    ok(Number.parseFloat(radius) > 10, `radio interior: ${radius}`);
+    const box = await page.locator('[data-component="AspectRatio"] .z-aspect').boundingBox();
+    ok(Math.abs(box.width / box.height - 3 / 4) < 0.02, `3:4: ${box.width / box.height}`);
+  });
 }

@@ -1,0 +1,42 @@
+{
+  "name": "AspectRatio",
+  "group": "content",
+  "description": "Caja que mantiene una proporción (CSS aspect-ratio); la imagen, el vídeo o el iframe de dentro la cubren.",
+  "import": "import { AspectRatio } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "ratio",
+      "type": "number | string",
+      "default": "16 / 9",
+      "description": "Ancho entre alto: 16 / 9, 1, 3 / 4 o \"4 / 3\". Llega a CSS como --z-aspect."
+    }
+  ],
+  "states": ["rest"],
+  "tokens": ["fg-subtle"],
+  "classes": ["z-aspect"],
+  "cssVars": [
+    {
+      "name": "--z-aspect",
+      "description": "Proporción (cualquier valor de aspect-ratio)."
+    }
+  ],
+  "a11y": "Solo maquetación: no añade semántica. La media de dentro lleva su propio texto alternativo o título (iframe).",
+  "examples": [
+    {
+      "title": "Vídeo 16:9",
+      "code": "<AspectRatio ratio={16 / 9}>\n  <iframe title=\"Product tour\" src=\"https://www.youtube-nocookie.com/embed/xyz\" allowFullScreen />\n</AspectRatio>"
+    },
+    {
+      "title": "Cuadrado con un icono",
+      "code": "<AspectRatio ratio={1} style={{ maxWidth: 160 }}>\n  <Icon name=\"photo\" size={32} />\n</AspectRatio>"
+    }
+  ],
+  "origin": "Aspect Ratio de Shark UI y Radix; solo CSS.",
+  "behavior": "none",
+  "html": [
+    {
+      "title": "Retrato 3:4 (solo CSS: style=\"--z-aspect: 3 / 4\")",
+      "code": "<div class=\"z-aspect\" style=\"--z-aspect: 3 / 4; max-width: 180px\">\n  <z-icon name=\"photo\" size=\"32\"></z-icon>\n</div>"
+    }
+  ]
+}
