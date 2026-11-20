@@ -169,4 +169,34 @@ export default async function ({ page, test, ok }) {
     ok(await box.locator(".z-stepper__panel[data-completed]").isVisible(), "panel final");
     ok(await box.locator(".z-stepper__nav").isHidden(), "sin botones al terminar");
   });
+
+  /* ---------- Breadcrumb colapsado ---------- */
+  await test("Breadcrumb colapsado: «…» abre el menú con las migas del medio, flechas y Escape", async () => {
+    // El ejemplo colapsado es el segundo del contrato: se inyecta con ids propios (el menú se busca por id).
+    const html = contract.Breadcrumb.examples[exampleIndex("Breadcrumb", /Colapsada con menú/)].html.replaceAll(
+      "crumbs-more",
+      "w5c-crumbs",
+    );
+    await page.evaluate(async (markup) => {
+      const box = document.createElement("div");
+      box.id = "w5c-breadcrumb";
+      box.innerHTML = markup;
+      document.querySelector(".page__main").append(box);
+      (await import("/zui/dist/zui.dom.js")).hydrate(box);
+    }, html);
+    const box = page.locator("#w5c-breadcrumb");
+    const more = box.locator(".z-breadcrumb__more");
+    ok((await more.getAttribute("aria-label")) === "Show more breadcrumbs", "nombre accesible");
+    await more.click();
+    const menu = box.locator(".z-menu");
+    ok(await menu.isVisible(), "menú abierto");
+    ok((await more.getAttribute("aria-expanded")) === "true", "aria-expanded");
+    await page.waitForFunction(() => document.activeElement?.matches?.(".z-breadcrumb .z-menu__item"));
+    await press("ArrowDown");
+    ok(await page.evaluate(() => document.activeElement?.textContent === "Projects"), "flecha abajo");
+    await press("Escape");
+    ok(await menu.isHidden(), "Escape cierra");
+    ok(await page.evaluate(() => document.activeElement?.classList.contains("z-breadcrumb__more")), "el foco vuelve al botón");
+    ok((await box.locator(".z-breadcrumb__separator").first().textContent()) === "/", "separador propio");
+  });
 }

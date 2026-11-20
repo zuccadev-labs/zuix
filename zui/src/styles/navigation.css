@@ -231,6 +231,40 @@
     place-items: center;
     color: var(--z-fg-subtle);
   }
+  .z-breadcrumb__separator[data-custom] {
+    min-width: 1ch;
+    padding-inline: 2px;
+  }
+  /* Migas colapsadas: «…» abre un menú con las del medio. Rectángulo de radio corto, no píldora. */
+  .z-breadcrumb__more {
+    display: inline-grid;
+    place-items: center;
+    min-width: max(24px, var(--z-touch-target, 0px));
+    height: max(24px, var(--z-touch-target, 0px));
+    padding: 0 var(--z-space-1);
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-breadcrumb__more:hover {
+      background: var(--z-row-hover);
+      color: var(--z-fg);
+    }
+  }
+  .z-breadcrumb__more[aria-expanded="true"] {
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+  }
+  .z-breadcrumb__more:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
   /* RTL: los iconos que señalan una dirección de lectura se reflejan. */
   [dir="rtl"] :is(.z-breadcrumb__separator, .z-pagination__btn) svg.z-icon {
     transform: scaleX(-1);

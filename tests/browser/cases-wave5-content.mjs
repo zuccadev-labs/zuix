@@ -81,5 +81,21 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
         assert((await page.locator(`${root} .z-stepper__nav`).count()) === 0, "sin botones al terminar");
       },
     },
+    {
+      name: "Oleada 5 · Breadcrumb colapsado: menú con las migas del medio y separador propio (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const root = t("c-breadcrumb");
+        const more = `${root} .z-breadcrumb__more`;
+        assert((await page.locator(`${root} .z-breadcrumb__item`).count()) === 3, "Home, «…» y la actual");
+        await expectText(page, `${root} .z-breadcrumb__separator >> nth=0`, "/");
+        await page.focus(more);
+        await press(page, "Enter");
+        await activeMatches(page, ".z-menu .z-menu__item", "el foco entra en el menú");
+        await press(page, "ArrowDown", "Enter");
+        await expectText(page, t("c-breadcrumb-value"), "Projects");
+        await activeMatches(page, more, "el foco vuelve al botón");
+      },
+    },
   ];
 }

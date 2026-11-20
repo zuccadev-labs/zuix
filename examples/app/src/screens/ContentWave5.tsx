@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Card, CardHeader, Input, JsonTree, Stepper, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
+import { Breadcrumb, Card, CardHeader, Input, JsonTree, Stepper, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
 
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
@@ -39,6 +39,7 @@ export function ContentWave5() {
   const [checked, setChecked] = useState<string[]>(["photos/2025"]);
   const [jsonPath, setJsonPath] = useState("none");
   const [step, setStep] = useState(0);
+  const [crumb, setCrumb] = useState("none");
   const nodes = FOLDERS.map(function relabel(node): TreeNode {
     return { ...node, label: labels[node.id] ?? node.label, children: node.children?.map(relabel) };
   });
@@ -94,6 +95,21 @@ export function ContentWave5() {
       </PageSection>
       <PageSection title="Navigation">
         <Grid min={320}>
+          <Card className="app-demo">
+            <CardHeader title="Breadcrumb" subtitle="Collapsed with a menu and a custom separator" />
+            <div data-testid="c-breadcrumb">
+              <Breadcrumb
+                maxItems={3}
+                separator="/"
+                items={["Home", "Workspace", "Projects", "Atlas", "Settings"].map((label, i, all) =>
+                  i === all.length - 1 ? { label } : { label, onClick: () => setCrumb(label) },
+                )}
+              />
+            </div>
+            <p className="app-muted">
+              Went to: <output data-testid="c-breadcrumb-value">{crumb}</output>
+            </p>
+          </Card>
           <Card className="app-demo">
             <CardHeader title="Stepper" subtitle="Panels, icons and loading" />
             <div data-testid="c-stepper">

@@ -34,6 +34,9 @@ radios y material de los tokens.
   paso (`content`) con Anterior/Siguiente (`onStepChange`, `completed`, `navLabels`, `nextDisabled`). El foco va
   al panel nuevo y los ocultos conservan lo escrito. Modo DOM: `.z-stepper-panels` (`data-current`, `z:change`,
   `setStep()` en `/dom`). Sin cambios para el Stepper sin paneles.
+- Breadcrumb: migas colapsadas (`maxItems`, `itemsBeforeCollapse`, `itemsAfterCollapse`, `collapsedLabel`): las
+  del medio pasan a un Menu tras un botón «…»; y separador propio (`separator`). Modo DOM con `data-z-open` y un
+  `.z-menu[popover]` de enlaces.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
