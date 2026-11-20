@@ -397,6 +397,109 @@
     }
    ]
   },
+  "AreaChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Apiladas",
+     "html": "<div class=\"z-chart\" data-type=\"area\" data-title=\"Traffic by source\" data-x-key=\"month\" data-stacked data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"costs\":38000},{\"month\":\"2026-02\",\"revenue\":48000,\"costs\":40000},{\"month\":\"2026-03\",\"revenue\":45000,\"costs\":41000},{\"month\":\"2026-04\",\"revenue\":61000,\"costs\":44000},{\"month\":\"2026-05\",\"revenue\":66000,\"costs\":47000},{\"month\":\"2026-06\",\"revenue\":72000,\"costs\":50000}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"costs\",\"label\":\"Costs\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "BarChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Agrupadas",
+     "html": "<div class=\"z-chart\" data-type=\"bar\" data-title=\"Tasks by team\" data-x-key=\"team\" data-patterns data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"team\":\"Design\",\"shipped\":18,\"review\":6},{\"team\":\"Platform\",\"shipped\":24,\"review\":9},{\"team\":\"Mobile\",\"shipped\":12,\"review\":4}],\"series\":[{\"key\":\"shipped\",\"label\":\"Shipped\"},{\"key\":\"review\",\"label\":\"In review\"}]}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Horizontales apiladas",
+     "html": "<div class=\"z-chart\" data-type=\"bar\" data-orientation=\"horizontal\" data-stacked data-title=\"Workload by team\" data-x-key=\"team\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"team\":\"Design\",\"shipped\":18,\"review\":6},{\"team\":\"Platform\",\"shipped\":24,\"review\":9},{\"team\":\"Mobile\",\"shipped\":12,\"review\":4}],\"series\":[{\"key\":\"shipped\",\"label\":\"Shipped\"},{\"key\":\"review\",\"label\":\"In review\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "DonutChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Almacenamiento",
+     "html": "<div class=\"z-chart\" data-type=\"donut\" data-title=\"Storage\" data-description=\"GB by type\" data-x-key=\"label\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"Media\",\"value\":412},{\"label\":\"Documents\",\"value\":186},{\"label\":\"Backups\",\"value\":132},{\"label\":\"Other\",\"value\":58}],\"series\":[{\"key\":\"value\",\"label\":\"GB\"}],\"valueFormat\":{\"style\":\"unit\",\"unit\":\"gigabyte\"}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "LineChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dos series en el tiempo",
+     "html": "<div class=\"z-chart\" data-type=\"line\" data-title=\"Revenue and costs\" data-description=\"Monthly, 2026\" data-x-key=\"month\" data-curve=\"monotone\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"costs\":38000},{\"month\":\"2026-02\",\"revenue\":48000,\"costs\":40000},{\"month\":\"2026-03\",\"revenue\":45000,\"costs\":41000},{\"month\":\"2026-04\",\"revenue\":61000,\"costs\":44000},{\"month\":\"2026-05\",\"revenue\":66000,\"costs\":47000},{\"month\":\"2026-06\",\"revenue\":72000,\"costs\":50000}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"costs\",\"label\":\"Costs\"}],\"valueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "PieChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con trama",
+     "html": "<div class=\"z-chart\" data-type=\"pie\" data-title=\"Storage share\" data-x-key=\"label\" data-patterns data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"Media\",\"value\":412},{\"label\":\"Documents\",\"value\":186},{\"label\":\"Backups\",\"value\":132},{\"label\":\"Other\",\"value\":58}],\"series\":[{\"key\":\"value\",\"label\":\"GB\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Sparkline": {
+   "group": "charts",
+   "classes": [
+    "z-sparkline"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Línea y barras",
+     "html": "<p>\n  Weekly visits <span class=\"z-sparkline\" data-values=\"120,132,101,154,190,230,210,340\" data-label=\"Weekly visits\" data-locale=\"en-US\"></span>\n  Errors <span class=\"z-sparkline\" data-values=\"9,7,8,4,5,3,2\" data-type=\"bar\" data-color=\"5\" data-label=\"Errors\" data-locale=\"en-US\"></span>\n</p>",
+     "source": "manual"
+    }
+   ]
+  },
+  "AspectRatio": {
+   "group": "content",
+   "classes": [
+    "z-aspect"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Retrato 3:4 (solo CSS: style=\"--z-aspect: 3 / 4\")",
+     "html": "<div class=\"z-aspect\" style=\"--z-aspect: 3 / 4; max-width: 180px\">\n  <z-icon name=\"photo\" size=\"32\"></z-icon>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Callout": {
    "group": "content",
    "classes": [
@@ -456,7 +559,8 @@
     "z-card__heading",
     "z-card__title",
     "z-card__subtitle",
-    "z-card__action"
+    "z-card__action",
+    "z-card__icon"
    ],
    "behavior": "none",
    "examples": [
@@ -464,6 +568,26 @@
      "title": "Con acción",
      "html": "<div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Members</h3>\n      <p class=\"z-card__subtitle\">5 people</p>\n    </div>\n    <div class=\"z-card__action\">\n      <button type=\"button\" title=\"Add member\" aria-label=\"Add member\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"plus\" size=\"16\"></z-icon>\n      </button>\n    </div>\n  </div>\n</div>",
      "source": "generated"
+    },
+    {
+     "title": "Con icono",
+     "html": "<div class=\"z-card__header\">\n  <span class=\"z-card__icon\" aria-hidden=\"true\">\n    <z-icon name=\"chart-bar\" size=\"18\"></z-icon>\n  </span>\n  <div class=\"z-card__heading\">\n    <h3 class=\"z-card__title\">Usage</h3>\n    <p class=\"z-card__subtitle\">Last 30 days</p>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "CardMedia": {
+   "group": "content",
+   "classes": [
+    "z-card__media",
+    "z-aspect"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tarjeta con media e icono",
+     "html": "<div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\" style=\"max-width: 320px\">\n  <div class=\"z-aspect z-card__media\" data-placement=\"top\" style=\"--z-aspect: 16 / 9\">\n    <z-icon name=\"photo\" size=\"32\"></z-icon>\n  </div>\n  <div class=\"z-card__header\">\n    <span class=\"z-card__icon\" aria-hidden=\"true\"><z-icon name=\"cube\" size=\"18\"></z-icon></span>\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Atlas</h3>\n      <p class=\"z-card__subtitle\">Design tokens rollout</p>\n    </div>\n  </div>\n</div>",
+     "source": "manual"
     }
    ]
   },
@@ -505,6 +629,96 @@
     }
    ]
   },
+  "FormatByte": {
+   "group": "content",
+   "classes": [
+    "z-format"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Decimal y binario",
+     "html": "<p>\n  <data class=\"z-format\" value=\"1500000\" data-format=\"byte\" data-locale=\"en-US\" data-system=\"decimal\" data-unit-display=\"short\" data-fraction=\"1\">1.5 MB</data>\n   · \n  <data class=\"z-format\" value=\"1572864\" data-format=\"byte\" data-locale=\"en-US\" data-system=\"binary\" data-unit-display=\"short\" data-fraction=\"1\">1.5 MiB</data>\n   · \n  <data class=\"z-format\" value=\"2048\" data-format=\"byte\" data-locale=\"en-US\" data-system=\"decimal\" data-unit-display=\"long\" data-fraction=\"1\">2 kilobytes</data>\n</p>",
+     "source": "generated"
+    }
+   ]
+  },
+  "FormatDate": {
+   "group": "content",
+   "classes": [
+    "z-format",
+    "z-relative-time"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Absoluta",
+     "html": "<time class=\"z-format\" dateTime=\"2026-11-20\" data-format=\"date\" data-locale=\"en-US\" data-options=\"{&quot;dateStyle&quot;:&quot;long&quot;}\">November 20, 2026</time>",
+     "source": "generated"
+    }
+   ]
+  },
+  "FormatNumber": {
+   "group": "content",
+   "classes": [
+    "z-format"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Compacto y moneda",
+     "html": "<p>\n  <data class=\"z-format\" value=\"1250000\" data-format=\"number\" data-locale=\"en-US\" data-options=\"{&quot;notation&quot;:&quot;compact&quot;}\">1.3M</data>\n   visits · \n  <data class=\"z-format\" value=\"1999.5\" data-format=\"number\" data-locale=\"en-US\" data-options=\"{&quot;style&quot;:&quot;currency&quot;,&quot;currency&quot;:&quot;EUR&quot;}\">€1,999.50</data>\n</p>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Highlight": {
+   "group": "content",
+   "classes": [
+    "z-highlight",
+    "z-highlight__mark"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Varias consultas sin acentos",
+     "html": "<span class=\"z-highlight\" data-variant=\"fill\" data-query=\"cafe\nmalaga\" data-ignore-accents=\"\">Un \n  <mark class=\"z-highlight__mark\">café</mark>\n   en \n  <mark class=\"z-highlight__mark\">Málaga</mark>\n   con vistas al mar\n</span>",
+     "source": "generated"
+    }
+   ]
+  },
+  "JsonTree": {
+   "group": "content",
+   "classes": [
+    "z-jsontree",
+    "z-jsontree__key",
+    "z-jsontree__sep",
+    "z-jsontree__value"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Desde un script JSON (setJsonTreeValue(el, valor) para Map, Set y fechas; emite z:select y, con data-copy-path, z:copy)",
+     "html": "<div class=\"z-jsontree\" data-label=\"Response\" data-expand-depth=\"2\" data-copy-path>\n  <script type=\"application/json\" data-value>{\"id\": 42, \"name\": \"Atlas\", \"active\": true, \"owner\": null, \"tags\": [\"design\", \"tokens\"], \"stats\": {\"views\": 1204, \"ratio\": 0.82}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Marquee": {
+   "group": "content",
+   "classes": [
+    "z-marquee",
+    "z-marquee__control"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Logos",
+     "html": "<div role=\"region\" aria-label=\"Customers\" class=\"z-marquee\" data-orientation=\"horizontal\" data-pause-on-hover=\"\" data-fade=\"\" style=\"--z-marquee-duration:20s\">\n  <div class=\"z-marquee__viewport\">\n    <div class=\"z-marquee__track\">\n      <div class=\"z-marquee__group\">\n        <span>Atlas</span>\n        <span>Borealis</span>\n        <span>Cobalt</span>\n        <span>Dune</span>\n        <span>Echo</span>\n      </div>\n      <div class=\"z-marquee__group\" aria-hidden=\"true\" inert=\"\">\n        <span>Atlas</span>\n        <span>Borealis</span>\n        <span>Cobalt</span>\n        <span>Dune</span>\n        <span>Echo</span>\n      </div>\n    </div>\n  </div>\n  <button type=\"button\" class=\"z-marquee__control\" data-pause-label=\"Pause\" data-play-label=\"Play\">\n    <z-icon name=\"pause\" size=\"14\"></z-icon>\n    <span class=\"z-sr-only\">Pause</span>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Panel": {
    "group": "content",
    "classes": [
@@ -520,6 +734,21 @@
     {
      "title": "Lateral opaco",
      "html": "<aside aria-label=\"Release notes\" class=\"z-panel z-solid\" data-padding=\"lg\">\n  <p>Version 2.4 adds keyboard navigation to every table.</p>\n</aside>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Prose": {
+   "group": "content",
+   "classes": [
+    "z-prose",
+    "z-not-prose"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Artículo",
+     "html": "<article class=\"z-prose\" data-size=\"md\">\n  <h2>Release notes</h2>\n  <p>Charts land in \n    <strong>zui</strong>\n     with \n    <a href=\"/tokens\">keyboard support</a>\n     and \n    <code>prefers-reduced-motion</code>\n    .\n  </p>\n  <ul>\n    <li>Line, area and bar charts</li>\n    <li>Donut and pie charts</li>\n  </ul>\n  <blockquote>Nothing depends on color alone.</blockquote>\n  <p>Press \n    <kbd>⌘</kbd>\n     \n    <kbd>K</kbd>\n     to search.\n  </p>\n</article>",
      "source": "generated"
     }
    ]
@@ -540,6 +769,20 @@
      "title": "Corto, sin segundos",
      "html": "<time class=\"z-relative-time\" datetime=\"2026-11-19T09:30:00Z\" data-format=\"short\" data-min-unit=\"minute\"></time>",
      "source": "manual"
+    }
+   ]
+  },
+  "ScrollArea": {
+   "group": "content",
+   "classes": [
+    "z-scroll-area"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Lista larga",
+     "html": "<div role=\"region\" tabindex=\"0\" aria-label=\"Changelog\" class=\"z-scroll-area\" data-orientation=\"vertical\" data-shadows=\"\" data-scrollbar=\"thin\" style=\"--z-scroll-max:10rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</div>",
+     "source": "generated"
     }
    ]
   },
@@ -628,7 +871,8 @@
   "Chip": {
    "group": "data",
    "classes": [
-    "z-chip"
+    "z-chip",
+    "z-chip__dot"
    ],
    "behavior": "none",
    "examples": [
@@ -641,6 +885,37 @@
      "title": "Etiqueta eliminable",
      "html": "<span class=\"z-chip\" data-size=\"md\">\n  <span class=\"z-chip__main\">\n    <span class=\"z-chip__label\">design</span>\n  </span>\n  <button type=\"button\" class=\"z-chip__remove\" aria-label=\"Remove design tag\" title=\"Remove design tag\">\n    <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n  </button>\n</span>",
      "source": "generated"
+    },
+    {
+     "title": "Chips de estado con tono",
+     "html": "<div style=\"display:flex;gap:8px;flex-wrap:wrap\">\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"success\">\n    <span class=\"z-chip__main\">\n      <span class=\"z-chip__dot\" aria-hidden=\"true\"></span>\n      <span class=\"z-chip__label\">Running</span>\n    </span>\n  </span>\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"warning\">\n    <span class=\"z-chip__main\">\n      <span class=\"z-chip__dot\" aria-hidden=\"true\"></span>\n      <span class=\"z-chip__label\">Paused</span>\n    </span>\n  </span>\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"danger\">\n    <span class=\"z-chip__main\">\n      <span class=\"z-chip__dot\" aria-hidden=\"true\"></span>\n      <span class=\"z-chip__label\">Errors</span>\n      <span class=\"z-chip__count\">3</span>\n    </span>\n  </span>\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"info\">\n    <span class=\"z-chip__main\">\n      <z-icon name=\"cloud\" size=\"14\"></z-icon>\n      <span class=\"z-chip__label\">Remote</span>\n    </span>\n  </span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "CircularProgress": {
+   "group": "data",
+   "classes": [
+    "z-progress-ring",
+    "z-progress-ring__bar",
+    "z-progress-ring__content"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con valor",
+     "html": "<div class=\"z-progress-ring\" data-size=\"lg\" data-tone=\"accent\" data-state=\"loading\" style=\"--z-ring-value:72\">\n  <progress class=\"z-progress-ring__bar\" aria-label=\"Upload\" max=\"100\" value=\"72\"></progress>\n  <span class=\"z-progress-ring__content\" aria-hidden=\"true\">72%</span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Indeterminado",
+     "html": "<div class=\"z-progress-ring\" data-size=\"sm\" data-tone=\"accent\" data-state=\"indeterminate\" style=\"--z-ring-value:0\">\n  <progress class=\"z-progress-ring__bar\" aria-label=\"Loading\" max=\"100\"></progress>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Tonos, grosor y contenido propio",
+     "html": "<div style=\"display:flex;gap:16px;align-items:center\">\n  <div class=\"z-progress-ring\" data-size=\"md\" data-tone=\"danger\" data-state=\"loading\" style=\"--z-ring-value:92\">\n    <progress class=\"z-progress-ring__bar\" aria-label=\"Storage\" max=\"100\" value=\"92\"></progress>\n    <span class=\"z-progress-ring__content\" aria-hidden=\"true\">92%</span>\n  </div>\n  <div class=\"z-progress-ring\" data-size=\"xl\" data-tone=\"success\" data-state=\"loading\" style=\"--z-ring-value:60;--z-ring-thickness:10px\">\n    <progress class=\"z-progress-ring__bar\" aria-label=\"Files\" max=\"5\" value=\"3\" aria-valuetext=\"3 of 5 files\"></progress>\n    <span class=\"z-progress-ring__content\" aria-hidden=\"true\">3/5</span>\n  </div>\n</div>",
+     "source": "generated"
     }
    ]
   },
@@ -648,7 +923,12 @@
    "group": "data",
    "classes": [
     "z-table",
-    "z-table-wrap"
+    "z-table-wrap",
+    "z-datatable",
+    "z-datatable__bar",
+    "z-datatable__count",
+    "z-datatable__range",
+    "z-table__select"
    ],
    "behavior": "dom",
    "examples": [
@@ -656,6 +936,71 @@
      "title": "Ordenable (data-sort en la cabecera, data-sort-value en la celda; emite z:sort)",
      "html": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Users</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" aria-sort=\"ascending\" data-key=\"name\">\n          <button type=\"button\" class=\"z-table__sort\" data-active=\"true\">\n            <span>Name</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Seats</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" aria-sort=\"none\" data-key=\"joined\" data-sort=\"date\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Joined</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Ana Ruiz</td>\n        <td data-align=\"end\" data-mono=\"true\">3</td>\n        <td data-sort-value=\"2025-03-02\">Mar 2, 2025</td>\n      </tr>\n      <tr>\n        <td>Leo Park</td>\n        <td data-align=\"end\" data-mono=\"true\">12</td>\n        <td data-sort-value=\"2026-01-15\">Jan 15, 2026</td>\n      </tr>\n      <tr>\n        <td>Mia Chen</td>\n        <td data-align=\"end\" data-mono=\"true\">1</td>\n        <td data-sort-value=\"2024-11-30\">Nov 30, 2024</td>\n      </tr>\n      <tr>\n        <td>Zoe Katz</td>\n        <td data-align=\"end\" data-mono=\"true\">7</td>\n        <td data-sort-value=\"2025-08-09\">Aug 9, 2025</td>\n      </tr>\n    </tbody>\n  </table>\n</div>",
      "source": "manual"
+    },
+    {
+     "title": "Selección, pie y paginación en el cliente (data-page-size; emite z:selectionchange y z:pagechange)",
+     "html": "<div class=\"z-datatable\" data-selectable=\"true\" data-paged=\"true\" data-page-size=\"3\" data-selected-label=\"{n} selected\" data-range-label=\"{from}–{to} of {total}\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-selectable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select all rows\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"indeterminate\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></th>\n          <th scope=\"col\" aria-sort=\"none\" data-key=\"name\"><button type=\"button\" class=\"z-table__sort\"><span>Name</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n          <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 1\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Ana Ruiz</td>\n          <td data-align=\"end\" data-mono=\"true\">3</td>\n        </tr>\n        <tr data-key=\"b2\" data-selected=\"true\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 2\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"checked\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"></label></td>\n          <td>Leo Park</td>\n          <td data-align=\"end\" data-mono=\"true\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 3\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Mia Chen</td>\n          <td data-align=\"end\" data-mono=\"true\">1</td>\n        </tr>\n        <tr data-key=\"d4\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 4\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Zoe Katz</td>\n          <td data-align=\"end\" data-mono=\"true\">7</td>\n        </tr>\n        <tr data-key=\"e5\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 5\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Iker Sanz</td>\n          <td data-align=\"end\" data-mono=\"true\">5</td>\n        </tr>\n      </tbody>\n      <tfoot>\n        <tr>\n          <td class=\"z-table__select\"></td>\n          <td>Total</td>\n          <td data-align=\"end\" data-mono=\"true\">28</td>\n        </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <span class=\"z-datatable__count\" role=\"status\">1 selected</span>\n    <span class=\"z-datatable__range\">1–3 of 5</span>\n    <nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"sm\" data-page-count=\"2\" data-page-label=\"Page {page}\">\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled><z-icon name=\"chevron-left\" size=\"14\"></z-icon></button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></button>\n    </nav>\n  </div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "DescriptionList": {
+   "group": "data",
+   "classes": [
+    "z-dl",
+    "z-dl__item",
+    "z-dl__term",
+    "z-dl__info",
+    "z-dl__description"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Horizontal con separadores",
+     "html": "<dl class=\"z-dl\" data-orientation=\"horizontal\" data-divided=\"true\" data-size=\"md\">\n  <div class=\"z-dl__item\">\n    <dt class=\"z-dl__term\">Status</dt>\n    <dd class=\"z-dl__description\">\n      <span class=\"z-badge\" data-tone=\"success\" data-variant=\"soft\" data-size=\"md\">Active</span>\n    </dd>\n  </div>\n  <div class=\"z-dl__item\">\n    <dt class=\"z-dl__term\">Region\n      <span class=\"z-dl__info\">Primary</span>\n    </dt>\n    <dd class=\"z-dl__description\">eu-west-1</dd>\n  </div>\n  <div class=\"z-dl__item\">\n    <dt class=\"z-dl__term\">Created</dt>\n    <dd class=\"z-dl__description\">Nov 2, 2026</dd>\n  </div>\n  <div class=\"z-dl__item\">\n    <dt class=\"z-dl__term\">Owner</dt>\n    <dd class=\"z-dl__description\">ana@example.com</dd>\n  </div>\n</dl>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical y compacta",
+     "html": "<dl class=\"z-dl\" data-orientation=\"vertical\" data-size=\"sm\">\n  <div class=\"z-dl__item\">\n    <dt class=\"z-dl__term\">Plan</dt>\n    <dd class=\"z-dl__description\">Team</dd>\n  </div>\n  <div class=\"z-dl__item\">\n    <dt class=\"z-dl__term\">Seats</dt>\n    <dd class=\"z-dl__description\">12 of 20</dd>\n  </div>\n</dl>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Item": {
+   "group": "data",
+   "classes": [
+    "z-item",
+    "z-item__media",
+    "z-item__icon",
+    "z-item__image",
+    "z-item__content",
+    "z-item__title",
+    "z-item__link",
+    "z-item__description",
+    "z-item__meta",
+    "z-item__actions",
+    "z-item-group",
+    "z-item-group__header",
+    "z-item-group__list",
+    "z-item-group__entry"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Grupo con avatar, metadato y acción",
+     "html": "<div class=\"z-item-group\" data-divided=\"true\" data-framed=\"true\">\n  <div class=\"z-item-group__header\" aria-hidden=\"true\">Team</div>\n  <div class=\"z-item-group__list\" role=\"list\" aria-label=\"Team\">\n    <div class=\"z-item-group__entry\" role=\"listitem\">\n      <div class=\"z-item\" data-variant=\"default\" data-size=\"md\">\n        <div class=\"z-item__media\">\n          <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana Ruiz\">\n            <span class=\"z-avatar__initials\" aria-hidden=\"true\">AR</span>\n          </span>\n        </div>\n        <div class=\"z-item__content\">\n          <div class=\"z-item__title\">Ana Ruiz</div>\n          <div class=\"z-item__description\">Owner</div>\n        </div>\n        <div class=\"z-item__meta\">Online</div>\n        <div class=\"z-item__actions\">\n          <button type=\"button\" title=\"More for Ana\" aria-label=\"More for Ana\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n            <z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon>\n          </button>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-item-group__entry\" role=\"listitem\">\n      <div class=\"z-item\" data-variant=\"default\" data-size=\"md\">\n        <div class=\"z-item__media\">\n          <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Leo Park\">\n            <span class=\"z-avatar__initials\" aria-hidden=\"true\">LP</span>\n          </span>\n        </div>\n        <div class=\"z-item__content\">\n          <div class=\"z-item__title\">Leo Park</div>\n          <div class=\"z-item__description\">Editor</div>\n        </div>\n        <div class=\"z-item__meta\">2 h ago</div>\n      </div>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Con icono y enlace",
+     "html": "<div class=\"z-item\" data-variant=\"outline\" data-size=\"md\" data-link=\"true\">\n  <div class=\"z-item__media\">\n    <span class=\"z-item__icon\">\n      <z-icon name=\"document-text\" size=\"18\"></z-icon>\n    </span>\n  </div>\n  <div class=\"z-item__content\">\n    <div class=\"z-item__title\">\n      <a class=\"z-item__link\" href=\"/tokens\">Quarterly report.pdf</a>\n    </div>\n    <div class=\"z-item__description\">2.4 MB · PDF</div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Atenuado y compacto",
+     "html": "<div class=\"z-item\" data-variant=\"muted\" data-size=\"sm\">\n  <div class=\"z-item__media\">\n    <span class=\"z-item__icon\">\n      <z-icon name=\"bell\" size=\"16\"></z-icon>\n    </span>\n  </div>\n  <div class=\"z-item__content\">\n    <div class=\"z-item__title\">Notifications</div>\n    <div class=\"z-item__description\">3 unread</div>\n  </div>\n</div>",
+     "source": "generated"
     }
    ]
   },
@@ -701,7 +1046,11 @@
   "Progress": {
    "group": "data",
    "classes": [
-    "z-progress"
+    "z-progress",
+    "z-progress__track",
+    "z-progress__fill",
+    "z-progress__segment",
+    "z-progress__value"
    ],
    "behavior": "none",
    "examples": [
@@ -713,6 +1062,16 @@
     {
      "title": "Indeterminada",
      "html": "<div class=\"z-progress\" data-size=\"sm\" data-tone=\"accent\" data-state=\"indeterminate\">\n  <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Syncing\" aria-valuemin=\"0\" aria-valuemax=\"100\">\n    <div class=\"z-progress__fill\" style=\"--z-progress-value:0%\"></div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Por tramos",
+     "html": "<div class=\"z-progress\" data-size=\"md\" data-tone=\"success\" data-state=\"loading\" data-segments=\"5\">\n  <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Onboarding\" aria-valuemin=\"0\" aria-valuemax=\"5\" aria-valuenow=\"3\" aria-valuetext=\"3 of 5 steps\">\n    <span class=\"z-progress__segment\" data-filled=\"true\">\n      <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n    </span>\n    <span class=\"z-progress__segment\" data-filled=\"true\">\n      <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n    </span>\n    <span class=\"z-progress__segment\" data-filled=\"true\">\n      <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n    </span>\n    <span class=\"z-progress__segment\">\n      <span class=\"z-progress__fill\" style=\"--z-progress-value:0%\"></span>\n    </span>\n    <span class=\"z-progress__segment\">\n      <span class=\"z-progress__fill\" style=\"--z-progress-value:0%\"></span>\n    </span>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical",
+     "html": "<div style=\"height:120px;display:flex;gap:16px\">\n  <div class=\"z-progress\" data-size=\"md\" data-tone=\"accent\" data-state=\"loading\" data-orientation=\"vertical\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"CPU\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"72\">\n      <div class=\"z-progress__fill\" style=\"--z-progress-value:72%\"></div>\n    </div>\n    <span class=\"z-progress__value\">72%</span>\n  </div>\n  <div class=\"z-progress\" data-size=\"md\" data-tone=\"info\" data-state=\"loading\" data-orientation=\"vertical\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Memory\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"38\">\n      <div class=\"z-progress__fill\" style=\"--z-progress-value:38%\"></div>\n    </div>\n    <span class=\"z-progress__value\">38%</span>\n  </div>\n  <div class=\"z-progress\" data-size=\"md\" data-tone=\"warning\" data-state=\"loading\" data-orientation=\"vertical\" data-segments=\"5\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Disk\" aria-valuemin=\"0\" aria-valuemax=\"5\" aria-valuenow=\"4\">\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:0%\"></span>\n      </span>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -744,7 +1103,8 @@
   "StatTile": {
    "group": "data",
    "classes": [
-    "z-stat"
+    "z-stat",
+    "z-sparkline"
    ],
    "behavior": "none",
    "examples": [
@@ -756,6 +1116,32 @@
     {
      "title": "Destacada y activable",
      "html": "<button type=\"button\" class=\"z-stat\" data-variant=\"solid\" data-interactive=\"true\">\n  <span class=\"z-stat__head\">\n    <span class=\"z-stat__label\">Open incidents</span>\n  </span>\n  <span class=\"z-stat__value\">3</span>\n</button>",
+     "source": "generated"
+    },
+    {
+     "title": "Con tendencia",
+     "html": "<div class=\"z-stat z-liquid\" data-variant=\"glass\">\n  <span class=\"z-stat__head\">\n    <span class=\"z-stat__label\">Revenue</span>\n  </span>\n  <span class=\"z-stat__value\">$112k</span>\n  <span class=\"z-sparkline z-stat__trend\" role=\"img\" aria-label=\"Revenue: from 42 to 112, low 42, high 112\" data-type=\"area\" data-color=\"1\" data-values=\"42,48,45,61,66,72,69,84,90,88,97,112\" data-label=\"Revenue\">\n    <svg class=\"z-sparkline__svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\" focusable=\"false\">\n      <path class=\"z-sparkline__area\" d=\"M0 93.103L9.091 85.714L18.182 89.409L27.273 69.704L36.364 63.547L45.455 56.158L54.545 59.852L63.636 41.379L72.727 33.99L81.818 36.453L90.909 25.369L100 6.897L100 100L90.909 100L81.818 100L72.727 100L63.636 100L54.545 100L45.455 100L36.364 100L27.273 100L18.182 100L9.091 100L0 100Z\">\n    </path>\n    <path class=\"z-sparkline__line\" d=\"M0 93.103L9.091 85.714L18.182 89.409L27.273 69.704L36.364 63.547L45.455 56.158L54.545 59.852L63.636 41.379L72.727 33.99L81.818 36.453L90.909 25.369L100 6.897\">\n  </path>\n</svg>\n<span class=\"z-sparkline__end\" aria-hidden=\"true\" style=\"--x:1;--y:0.931\"></span>\n</span>\n<span class=\"z-stat__foot\">\n<span class=\"z-stat__delta\" data-tone=\"success\">+15%</span>\n</span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "StatusDot": {
+   "group": "data",
+   "classes": [
+    "z-status",
+    "z-status__dot",
+    "z-status__label"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tonos",
+     "html": "<div style=\"display:flex;gap:16px;flex-wrap:wrap\">\n  <span class=\"z-status\" data-tone=\"success\" data-size=\"md\" data-pulse=\"true\">\n    <span class=\"z-status__dot\" aria-hidden=\"true\"></span>\n    <span class=\"z-status__label\">Online</span>\n  </span>\n  <span class=\"z-status\" data-tone=\"warning\" data-size=\"md\">\n    <span class=\"z-status__dot\" aria-hidden=\"true\"></span>\n    <span class=\"z-status__label\">Degraded</span>\n  </span>\n  <span class=\"z-status\" data-tone=\"danger\" data-size=\"md\">\n    <span class=\"z-status__dot\" aria-hidden=\"true\"></span>\n    <span class=\"z-status__label\">Unreachable</span>\n  </span>\n  <span class=\"z-status\" data-tone=\"info\" data-size=\"md\">\n    <span class=\"z-status__dot\" aria-hidden=\"true\"></span>\n    <span class=\"z-status__label\">Deploying</span>\n  </span>\n  <span class=\"z-status\" data-tone=\"neutral\" data-size=\"md\">\n    <span class=\"z-status__dot\" aria-hidden=\"true\"></span>\n    <span class=\"z-status__label\">Offline</span>\n  </span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Solo el punto (texto para lectores)",
+     "html": "<span class=\"z-status\" data-tone=\"success\" data-size=\"lg\">\n  <span class=\"z-status__dot\" aria-hidden=\"true\"></span>\n  <span class=\"z-sr-only\">Connected</span>\n</span>",
      "source": "generated"
     }
    ]
@@ -771,6 +1157,37 @@
     {
      "title": "Estática",
      "html": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table class=\"z-table\" data-density=\"comfortable\" data-hoverable=\"true\">\n    <caption class=\"z-table__caption z-sr-only\">Team members</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\">Name</th>\n        <th scope=\"col\">Role</th>\n        <th scope=\"col\" data-align=\"end\">Seats</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Ana Ruiz</td>\n        <td>Owner</td>\n        <td data-align=\"end\">3</td>\n      </tr>\n      <tr>\n        <td>Leo Park</td>\n        <td>Editor</td>\n        <td data-align=\"end\">1</td>\n      </tr>\n    </tbody>\n  </table>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Timeline": {
+   "group": "data",
+   "classes": [
+    "z-timeline-list",
+    "z-timeline-list__item",
+    "z-timeline-list__marker",
+    "z-timeline-list__dot",
+    "z-timeline-list__body",
+    "z-timeline-list__time",
+    "z-timeline-list__title",
+    "z-timeline-list__description"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Actividad con iconos y tonos",
+     "html": "<ol class=\"z-timeline-list\" data-align=\"start\" data-line=\"solid\" data-dot=\"circle\" data-size=\"md\">\n  <li class=\"z-timeline-list__item\" data-tone=\"success\" data-dot=\"icon\" data-status=\"done\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\">\n        <z-icon name=\"rocket-launch\" size=\"14\"></z-icon>\n      </span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-11-20T10:42\">10:42</time>\n      <div class=\"z-timeline-list__title\">Deployed to production</div>\n      <div class=\"z-timeline-list__description\">Build 4812 is live in all regions.</div>\n    </div>\n  </li>\n  <li class=\"z-timeline-list__item\" data-tone=\"info\" data-dot=\"icon\" data-status=\"done\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\">\n        <z-icon name=\"check\" size=\"14\"></z-icon>\n      </span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-11-20T09:15\">09:15</time>\n      <div class=\"z-timeline-list__title\">Review approved</div>\n    </div>\n  </li>\n  <li class=\"z-timeline-list__item\" data-tone=\"accent\" data-dot=\"icon\" data-status=\"current\" aria-current=\"step\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\">\n        <z-icon name=\"clock\" size=\"14\"></z-icon>\n      </span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <span class=\"z-timeline-list__time\">Running</span>\n      <div class=\"z-timeline-list__title\">Smoke tests</div>\n    </div>\n  </li>\n  <li class=\"z-timeline-list__item\" data-status=\"upcoming\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\"></span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <span class=\"z-timeline-list__time\">Next</span>\n      <div class=\"z-timeline-list__title\">Announce release</div>\n    </div>\n  </li>\n</ol>",
+     "source": "generated"
+    },
+    {
+     "title": "Alterna con anillos y línea discontinua",
+     "html": "<ol class=\"z-timeline-list\" data-align=\"alternate\" data-line=\"dashed\" data-dot=\"ring\" data-size=\"md\">\n  <li class=\"z-timeline-list__item\" data-tone=\"accent\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\"></span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-01-12\">Jan 12</time>\n      <div class=\"z-timeline-list__title\">Kick-off</div>\n      <div class=\"z-timeline-list__description\">Scope and team.</div>\n    </div>\n  </li>\n  <li class=\"z-timeline-list__item\" data-tone=\"info\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\"></span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-04-02\">Apr 2</time>\n      <div class=\"z-timeline-list__title\">Beta</div>\n      <div class=\"z-timeline-list__description\">First 200 customers.</div>\n    </div>\n  </li>\n  <li class=\"z-timeline-list__item\" data-tone=\"success\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\"></span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-09-30\">Sep 30</time>\n      <div class=\"z-timeline-list__title\">General availability</div>\n    </div>\n  </li>\n</ol>",
+     "source": "generated"
+    },
+    {
+     "title": "Al final, compacta y con puntos cuadrados",
+     "html": "<ol class=\"z-timeline-list\" data-align=\"end\" data-line=\"dotted\" data-dot=\"square\" data-size=\"sm\">\n  <li class=\"z-timeline-list__item\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\"></span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-11-02\">Nov 2</time>\n      <div class=\"z-timeline-list__title\">Invoice sent</div>\n    </div>\n  </li>\n  <li class=\"z-timeline-list__item\" data-tone=\"success\">\n    <span class=\"z-timeline-list__marker\" aria-hidden=\"true\">\n      <span class=\"z-timeline-list__dot\"></span>\n    </span>\n    <div class=\"z-timeline-list__body\">\n      <time class=\"z-timeline-list__time\" dateTime=\"2026-11-09\">Nov 9</time>\n      <div class=\"z-timeline-list__title\">Payment received</div>\n    </div>\n  </li>\n</ol>",
      "source": "generated"
     }
    ]
@@ -1777,6 +2194,11 @@
      "title": "Preguntas frecuentes (una abierta a la vez; data-type=\"multiple\" permite varias)",
      "html": "<div class=\"z-accordion\" data-type=\"single\">\n  <div class=\"z-accordion__item\" data-state=\"open\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"faq-1-content\" id=\"faq-1\">\n        <span class=\"z-accordion__title\">How does billing work?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"faq-1-content\" aria-labelledby=\"faq-1\">\n      <div class=\"z-accordion__body\">You are charged monthly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"faq-2-content\" id=\"faq-2\">\n        <span class=\"z-accordion__title\">Can I cancel anytime?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"faq-2-content\" aria-labelledby=\"faq-2\" hidden>\n      <div class=\"z-accordion__body\">Yes, from the billing page.</div>\n    </div>\n  </div>\n</div>",
      "source": "manual"
+    },
+    {
+     "title": "Tarjeta, siempre una abierta e item deshabilitado (data-variant=\"card\", data-collapsible=\"false\")",
+     "html": "<div class=\"z-accordion\" data-type=\"single\" data-variant=\"card\" data-collapsible=\"false\">\n  <div class=\"z-accordion__item\" data-state=\"open\" data-value=\"plan\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"acc-plan-content\" id=\"acc-plan\">\n        <span class=\"z-accordion__title\">Plan</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"acc-plan-content\" aria-labelledby=\"acc-plan\">\n      <div class=\"z-accordion__body\">Pro, billed yearly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\" data-value=\"seats\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"acc-seats-content\" id=\"acc-seats\">\n        <span class=\"z-accordion__title\">Seats</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"acc-seats-content\" aria-labelledby=\"acc-seats\" hidden>\n      <div class=\"z-accordion__body\">12 of 20 in use.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\" data-value=\"sso\" data-disabled>\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" data-disabled aria-expanded=\"false\" aria-controls=\"acc-sso-content\" id=\"acc-sso\" disabled>\n        <span class=\"z-accordion__title\">Single sign-on</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"acc-sso-content\" aria-labelledby=\"acc-sso\" hidden>\n      <div class=\"z-accordion__body\">Enterprise only.</div>\n    </div>\n  </div>\n</div>",
+     "source": "manual"
     }
    ]
   },
@@ -1788,14 +2210,20 @@
     "z-breadcrumb__item",
     "z-breadcrumb__link",
     "z-breadcrumb__current",
-    "z-breadcrumb__separator"
+    "z-breadcrumb__separator",
+    "z-breadcrumb__more"
    ],
-   "behavior": "none",
+   "behavior": "dom",
    "examples": [
     {
      "title": "Tres niveles",
      "html": "<nav aria-label=\"Breadcrumb\" class=\"z-breadcrumb\">\n  <ol class=\"z-breadcrumb__list\">\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/\">\n        <span class=\"z-breadcrumb__label\">Home</span>\n      </a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\">\n        <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n      </span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/projects\">\n        <span class=\"z-breadcrumb__label\">Projects</span>\n      </a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\">\n        <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n      </span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <span class=\"z-breadcrumb__current\" aria-current=\"page\">\n        <span class=\"z-breadcrumb__label\">Website redesign</span>\n      </span>\n    </li>\n  </ol>\n</nav>",
-     "source": "generated"
+     "source": "manual"
+    },
+    {
+     "title": "Colapsada con menú (data-z-open y un .z-menu[popover] con enlaces)",
+     "html": "<nav aria-label=\"Breadcrumb\" class=\"z-breadcrumb\">\n  <ol class=\"z-breadcrumb__list\">\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/\"><span class=\"z-breadcrumb__label\">Home</span></a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\" data-collapsed>\n      <button type=\"button\" class=\"z-breadcrumb__more\" aria-label=\"Show more breadcrumbs\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#crumbs-more\"><z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon></button>\n      <div id=\"crumbs-more\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Show more breadcrumbs\" data-size=\"md\">\n        <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/docs/agents\"><span class=\"z-menu__text\">Workspace</span></a>\n        <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/components\"><span class=\"z-menu__text\">Projects</span></a>\n      </div>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/tokens\"><span class=\"z-breadcrumb__label\">Atlas</span></a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <span class=\"z-breadcrumb__current\" aria-current=\"page\"><span class=\"z-breadcrumb__label\">Settings</span></span>\n    </li>\n  </ol>\n</nav>",
+     "source": "manual"
     }
    ]
   },
@@ -1847,14 +2275,24 @@
     "z-stepper__body",
     "z-stepper__marker",
     "z-stepper__label",
-    "z-stepper__description"
+    "z-stepper__description",
+    "z-stepper__spinner",
+    "z-stepper-panels",
+    "z-stepper__panels",
+    "z-stepper__panel",
+    "z-stepper__nav"
    ],
-   "behavior": "none",
+   "behavior": "dom",
    "examples": [
     {
      "title": "Alta en tres pasos",
      "html": "<ol class=\"z-stepper\" data-orientation=\"horizontal\" aria-label=\"Progress\">\n  <li class=\"z-stepper__step\" data-state=\"complete\">\n    <span class=\"z-stepper__body\">\n      <span class=\"z-stepper__marker\" aria-hidden=\"true\">\n        <z-icon name=\"check\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-stepper__text\">\n        <span class=\"z-stepper__label\">Account</span>\n        <span class=\"z-stepper__description\">Email and password</span>\n        <span class=\"z-sr-only\">Completed</span>\n      </span>\n    </span>\n  </li>\n  <li class=\"z-stepper__step\" data-state=\"current\" aria-current=\"step\">\n    <span class=\"z-stepper__body\">\n      <span class=\"z-stepper__marker\" aria-hidden=\"true\">2</span>\n      <span class=\"z-stepper__text\">\n        <span class=\"z-stepper__label\">Profile</span>\n        <span class=\"z-sr-only\">Current</span>\n      </span>\n    </span>\n  </li>\n  <li class=\"z-stepper__step\" data-state=\"upcoming\">\n    <span class=\"z-stepper__body\">\n      <span class=\"z-stepper__marker\" aria-hidden=\"true\">3</span>\n      <span class=\"z-stepper__text\">\n        <span class=\"z-stepper__label\">Confirm</span>\n        <span class=\"z-sr-only\">Upcoming</span>\n      </span>\n    </span>\n  </li>\n</ol>",
-     "source": "generated"
+     "source": "manual"
+    },
+    {
+     "title": "Con paneles (Anterior/Siguiente; el foco va al panel nuevo; emite z:change)",
+     "html": "<div class=\"z-stepper-panels\" data-orientation=\"horizontal\" data-current=\"0\">\n  <ol class=\"z-stepper\" data-orientation=\"horizontal\" aria-label=\"Progress\">\n    <li class=\"z-stepper__step\" data-state=\"current\" aria-current=\"step\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\"><z-icon name=\"user\" size=\"14\"></z-icon></span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-0\">Account</span><span class=\"z-sr-only\">Current</span></span>\n      </span>\n    </li>\n    <li class=\"z-stepper__step\" data-state=\"upcoming\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\"><z-icon name=\"credit-card\" size=\"14\"></z-icon></span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-1\">Plan</span><span class=\"z-sr-only\">Upcoming</span></span>\n      </span>\n    </li>\n    <li class=\"z-stepper__step\" data-state=\"upcoming\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\">3</span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-2\">Review</span><span class=\"z-sr-only\">Upcoming</span></span>\n      </span>\n    </li>\n  </ol>\n  <div class=\"z-stepper__panels\">\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-0\" tabindex=\"-1\"><p>Create your account.</p></div>\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-1\" tabindex=\"-1\" hidden><p>Pick a plan.</p></div>\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-2\" tabindex=\"-1\" hidden><p>Review and confirm.</p></div>\n    <div class=\"z-stepper__panel\" data-completed tabindex=\"-1\" hidden><p>All set.</p></div>\n  </div>\n  <div class=\"z-stepper__nav\">\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-step=\"prev\" disabled>Back</button>\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-step=\"next\">Next</button>\n  </div>\n</div>",
+     "source": "manual"
     }
    ]
   },
@@ -1885,13 +2323,20 @@
     "z-tree__toggle",
     "z-tree__icon",
     "z-tree__label",
-    "z-tree__group"
+    "z-tree__group",
+    "z-tree__check",
+    "z-tree__rename"
    ],
    "behavior": "dom",
    "examples": [
     {
      "title": "Explorador de archivos (las ramas plegadas llevan hidden; emite z:change)",
      "html": "<ul role=\"tree\" aria-label=\"Project files\" class=\"z-tree\">\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"true\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"1\" tabindex=\"0\" data-value=\"src\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"open\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">src</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\">\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"src/index.ts\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">index.ts</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"src/app.tsx\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">app.tsx</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"false\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"3\" tabindex=\"-1\" data-value=\"src/styles\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">styles</span>\n        </div>\n        <ul role=\"group\" class=\"z-tree__group\" hidden>\n          <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"3\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"src/styles/base.css\">\n            <div class=\"z-tree__row\" style=\"--z-tree-level:2\">\n              <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n              <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n              <span class=\"z-tree__label\">base.css</span>\n            </div>\n          </li>\n          <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"3\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"src/styles/theme.css\">\n            <div class=\"z-tree__row\" style=\"--z-tree-level:2\">\n              <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n              <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n              <span class=\"z-tree__label\">theme.css</span>\n            </div>\n          </li>\n        </ul>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"false\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"docs\" aria-disabled=\"true\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">docs</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\" hidden>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"1\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"docs/guide.md\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">guide.md</span>\n        </div>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"3\" tabindex=\"-1\" data-value=\"README.md\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">README.md</span>\n    </div>\n  </li>\n</ul>",
+     "source": "manual"
+    },
+    {
+     "title": "Selección múltiple, casillas en cascada y renombrar (z:change con values y checked; z:rename cancelable)",
+     "html": "<ul role=\"tree\" aria-label=\"Sync folders\" aria-multiselectable=\"true\" class=\"z-tree\" data-checkable data-renamable>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"true\" aria-selected=\"false\" aria-checked=\"mixed\" aria-level=\"1\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"0\" data-value=\"photos\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"open\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-check__box z-tree__check\" data-state=\"indeterminate\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">Photos</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\">\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"true\" aria-level=\"2\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"photos/2025\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-check__box z-tree__check\" data-state=\"checked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">2025</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"false\" aria-level=\"2\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"photos/2026\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-check__box z-tree__check\" data-state=\"unchecked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">2026</span>\n        </div>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"false\" aria-level=\"1\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"music\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n      <span class=\"z-check__box z-tree__check\" data-state=\"unchecked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">Music</span>\n    </div>\n  </li>\n</ul>",
      "source": "manual"
     }
    ]

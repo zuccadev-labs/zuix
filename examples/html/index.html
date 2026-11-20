@@ -275,8 +275,68 @@
   </div>
 </section>
 </div>
+<h2 class="page__group">charts</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="AreaChart" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">AreaChart</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-chart" data-type="area" data-title="Traffic by source" data-x-key="month" data-stacked data-locale="en-US">
+  <script type="application/json" data-props>{"data":[{"month":"2026-01","revenue":42000,"costs":38000},{"month":"2026-02","revenue":48000,"costs":40000},{"month":"2026-03","revenue":45000,"costs":41000},{"month":"2026-04","revenue":61000,"costs":44000},{"month":"2026-05","revenue":66000,"costs":47000},{"month":"2026-06","revenue":72000,"costs":50000}],"series":[{"key":"revenue","label":"Revenue"},{"key":"costs","label":"Costs"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="BarChart" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">BarChart</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-chart" data-type="bar" data-title="Tasks by team" data-x-key="team" data-patterns data-locale="en-US">
+  <script type="application/json" data-props>{"data":[{"team":"Design","shipped":18,"review":6},{"team":"Platform","shipped":24,"review":9},{"team":"Mobile","shipped":12,"review":4}],"series":[{"key":"shipped","label":"Shipped"},{"key":"review","label":"In review"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="DonutChart" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DonutChart</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-chart" data-type="donut" data-title="Storage" data-description="GB by type" data-x-key="label" data-locale="en-US">
+  <script type="application/json" data-props>{"data":[{"label":"Media","value":412},{"label":"Documents","value":186},{"label":"Backups","value":132},{"label":"Other","value":58}],"series":[{"key":"value","label":"GB"}],"valueFormat":{"style":"unit","unit":"gigabyte"}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="LineChart" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">LineChart</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-chart" data-type="line" data-title="Revenue and costs" data-description="Monthly, 2026" data-x-key="month" data-curve="monotone" data-markers data-locale="en-US">
+  <script type="application/json" data-props>{"data":[{"month":"2026-01","revenue":42000,"costs":38000},{"month":"2026-02","revenue":48000,"costs":40000},{"month":"2026-03","revenue":45000,"costs":41000},{"month":"2026-04","revenue":61000,"costs":44000},{"month":"2026-05","revenue":66000,"costs":47000},{"month":"2026-06","revenue":72000,"costs":50000}],"series":[{"key":"revenue","label":"Revenue"},{"key":"costs","label":"Costs"}],"valueFormat":{"style":"currency","currency":"USD","maximumFractionDigits":0}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="PieChart" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">PieChart</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-chart" data-type="pie" data-title="Storage share" data-x-key="label" data-patterns data-locale="en-US">
+  <script type="application/json" data-props>{"data":[{"label":"Media","value":412},{"label":"Documents","value":186},{"label":"Backups","value":132},{"label":"Other","value":58}],"series":[{"key":"value","label":"GB"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Sparkline" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Sparkline</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<p>
+  Weekly visits <span class="z-sparkline" data-values="120,132,101,154,190,230,210,340" data-label="Weekly visits" data-locale="en-US"></span>
+  Errors <span class="z-sparkline" data-values="9,7,8,4,5,3,2" data-type="bar" data-color="5" data-label="Errors" data-locale="en-US"></span>
+</p>
+  </div>
+</section>
+</div>
 <h2 class="page__group">content</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="AspectRatio" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">AspectRatio</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-aspect" style="--z-aspect: 3 / 4; max-width: 180px">
+  <z-icon name="photo" size="32"></z-icon>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Callout" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Callout</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -347,6 +407,23 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="CardMedia" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">CardMedia</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-card" data-variant="elevated" data-padding="md" style="max-width: 320px">
+  <div class="z-aspect z-card__media" data-placement="top" style="--z-aspect: 16 / 9">
+    <z-icon name="photo" size="32"></z-icon>
+  </div>
+  <div class="z-card__header">
+    <span class="z-card__icon" aria-hidden="true"><z-icon name="cube" size="18"></z-icon></span>
+    <div class="z-card__heading">
+      <h3 class="z-card__title">Atlas</h3>
+      <p class="z-card__subtitle">Design tokens rollout</p>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="CodeBlock" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">CodeBlock</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -371,6 +448,83 @@ pnpm dev</code>
   <div class="demo__stage">
 <div role="separator" aria-orientation="horizontal" class="z-divider" data-orientation="horizontal" data-spacing="md" data-emphasis="subtle" data-label="true">
   <span class="z-divider__label">or</span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="FormatByte" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FormatByte</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<p>
+  <data class="z-format" value="1500000" data-format="byte" data-locale="en-US" data-system="decimal" data-unit-display="short" data-fraction="1">1.5 MB</data>
+   · 
+  <data class="z-format" value="1572864" data-format="byte" data-locale="en-US" data-system="binary" data-unit-display="short" data-fraction="1">1.5 MiB</data>
+   · 
+  <data class="z-format" value="2048" data-format="byte" data-locale="en-US" data-system="decimal" data-unit-display="long" data-fraction="1">2 kilobytes</data>
+</p>
+  </div>
+</section>
+<section class="z-card demo" data-component="FormatDate" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FormatDate</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<time class="z-format" dateTime="2026-11-20" data-format="date" data-locale="en-US" data-options="{&quot;dateStyle&quot;:&quot;long&quot;}">November 20, 2026</time>
+  </div>
+</section>
+<section class="z-card demo" data-component="FormatNumber" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FormatNumber</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<p>
+  <data class="z-format" value="1250000" data-format="number" data-locale="en-US" data-options="{&quot;notation&quot;:&quot;compact&quot;}">1.3M</data>
+   visits · 
+  <data class="z-format" value="1999.5" data-format="number" data-locale="en-US" data-options="{&quot;style&quot;:&quot;currency&quot;,&quot;currency&quot;:&quot;EUR&quot;}">€1,999.50</data>
+</p>
+  </div>
+</section>
+<section class="z-card demo" data-component="Highlight" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Highlight</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-highlight" data-variant="fill" data-query="cafe
+malaga" data-ignore-accents="">Un 
+  <mark class="z-highlight__mark">café</mark>
+   en 
+  <mark class="z-highlight__mark">Málaga</mark>
+   con vistas al mar
+</span>
+  </div>
+</section>
+<section class="z-card demo" data-component="JsonTree" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">JsonTree</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-jsontree" data-label="Response" data-expand-depth="2" data-copy-path>
+  <script type="application/json" data-value>{"id": 42, "name": "Atlas", "active": true, "owner": null, "tags": ["design", "tokens"], "stats": {"views": 1204, "ratio": 0.82}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Marquee" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Marquee</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div role="region" aria-label="Customers" class="z-marquee" data-orientation="horizontal" data-pause-on-hover="" data-fade="" style="--z-marquee-duration:20s">
+  <div class="z-marquee__viewport">
+    <div class="z-marquee__track">
+      <div class="z-marquee__group">
+        <span>Atlas</span>
+        <span>Borealis</span>
+        <span>Cobalt</span>
+        <span>Dune</span>
+        <span>Echo</span>
+      </div>
+      <div class="z-marquee__group" aria-hidden="true" inert="">
+        <span>Atlas</span>
+        <span>Borealis</span>
+        <span>Cobalt</span>
+        <span>Dune</span>
+        <span>Echo</span>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="z-marquee__control" data-pause-label="Pause" data-play-label="Play">
+    <z-icon name="pause" size="14"></z-icon>
+    <span class="z-sr-only">Pause</span>
+  </button>
 </div>
   </div>
 </section>
@@ -399,10 +553,54 @@ pnpm dev</code>
 </section>
   </div>
 </section>
+<section class="z-card demo" data-component="Prose" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Prose</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article class="z-prose" data-size="md">
+  <h2>Release notes</h2>
+  <p>Charts land in 
+    <strong>zui</strong>
+     with 
+    <a href="/tokens">keyboard support</a>
+     and 
+    <code>prefers-reduced-motion</code>
+    .
+  </p>
+  <ul>
+    <li>Line, area and bar charts</li>
+    <li>Donut and pie charts</li>
+  </ul>
+  <blockquote>Nothing depends on color alone.</blockquote>
+  <p>Press 
+    <kbd>⌘</kbd>
+     
+    <kbd>K</kbd>
+     to search.
+  </p>
+</article>
+  </div>
+</section>
 <section class="z-card demo" data-component="RelativeTime" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">RelativeTime</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <time class="z-relative-time" datetime="2026-11-19T09:30:00Z" data-locale="en-US"></time>
+  </div>
+</section>
+<section class="z-card demo" data-component="ScrollArea" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">ScrollArea</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div role="region" tabindex="0" aria-label="Changelog" class="z-scroll-area" data-orientation="vertical" data-shadows="" data-scrollbar="thin" style="--z-scroll-max:10rem">
+  <ul>
+    <li>Charts</li>
+    <li>Data table selection</li>
+    <li>Tree rename</li>
+    <li>Timeline</li>
+    <li>Circular progress</li>
+    <li>Status dot</li>
+    <li>Marquee</li>
+    <li>Highlight</li>
+  </ul>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="Timer" data-behavior="dom">
@@ -469,6 +667,15 @@ pnpm dev</code>
 </span>
   </div>
 </section>
+<section class="z-card demo" data-component="CircularProgress" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">CircularProgress</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-progress-ring" data-size="lg" data-tone="accent" data-state="loading" style="--z-ring-value:72">
+  <progress class="z-progress-ring__bar" aria-label="Upload" max="100" value="72"></progress>
+  <span class="z-progress-ring__content" aria-hidden="true">72%</span>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="DataTable" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">DataTable</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -523,6 +730,76 @@ pnpm dev</code>
       </tr>
     </tbody>
   </table>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="DescriptionList" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">DescriptionList</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<dl class="z-dl" data-orientation="horizontal" data-divided="true" data-size="md">
+  <div class="z-dl__item">
+    <dt class="z-dl__term">Status</dt>
+    <dd class="z-dl__description">
+      <span class="z-badge" data-tone="success" data-variant="soft" data-size="md">Active</span>
+    </dd>
+  </div>
+  <div class="z-dl__item">
+    <dt class="z-dl__term">Region
+      <span class="z-dl__info">Primary</span>
+    </dt>
+    <dd class="z-dl__description">eu-west-1</dd>
+  </div>
+  <div class="z-dl__item">
+    <dt class="z-dl__term">Created</dt>
+    <dd class="z-dl__description">Nov 2, 2026</dd>
+  </div>
+  <div class="z-dl__item">
+    <dt class="z-dl__term">Owner</dt>
+    <dd class="z-dl__description">ana@example.com</dd>
+  </div>
+</dl>
+  </div>
+</section>
+<section class="z-card demo" data-component="Item" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Item</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-item-group" data-divided="true" data-framed="true">
+  <div class="z-item-group__header" aria-hidden="true">Team</div>
+  <div class="z-item-group__list" role="list" aria-label="Team">
+    <div class="z-item-group__entry" role="listitem">
+      <div class="z-item" data-variant="default" data-size="md">
+        <div class="z-item__media">
+          <span class="z-avatar" data-size="md" data-shape="circle" role="img" aria-label="Ana Ruiz">
+            <span class="z-avatar__initials" aria-hidden="true">AR</span>
+          </span>
+        </div>
+        <div class="z-item__content">
+          <div class="z-item__title">Ana Ruiz</div>
+          <div class="z-item__description">Owner</div>
+        </div>
+        <div class="z-item__meta">Online</div>
+        <div class="z-item__actions">
+          <button type="button" title="More for Ana" aria-label="More for Ana" class="z-btn z-btn--icon z-btn--ghost" data-size="sm">
+            <z-icon name="ellipsis-horizontal" size="14"></z-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="z-item-group__entry" role="listitem">
+      <div class="z-item" data-variant="default" data-size="md">
+        <div class="z-item__media">
+          <span class="z-avatar" data-size="md" data-shape="circle" role="img" aria-label="Leo Park">
+            <span class="z-avatar__initials" aria-hidden="true">LP</span>
+          </span>
+        </div>
+        <div class="z-item__content">
+          <div class="z-item__title">Leo Park</div>
+          <div class="z-item__description">Editor</div>
+        </div>
+        <div class="z-item__meta">2 h ago</div>
+      </div>
+    </div>
+  </div>
 </div>
   </div>
 </section>
@@ -599,6 +876,33 @@ pnpm dev</code>
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="StatusDot" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">StatusDot</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+  <span class="z-status" data-tone="success" data-size="md" data-pulse="true">
+    <span class="z-status__dot" aria-hidden="true"></span>
+    <span class="z-status__label">Online</span>
+  </span>
+  <span class="z-status" data-tone="warning" data-size="md">
+    <span class="z-status__dot" aria-hidden="true"></span>
+    <span class="z-status__label">Degraded</span>
+  </span>
+  <span class="z-status" data-tone="danger" data-size="md">
+    <span class="z-status__dot" aria-hidden="true"></span>
+    <span class="z-status__label">Unreachable</span>
+  </span>
+  <span class="z-status" data-tone="info" data-size="md">
+    <span class="z-status__dot" aria-hidden="true"></span>
+    <span class="z-status__label">Deploying</span>
+  </span>
+  <span class="z-status" data-tone="neutral" data-size="md">
+    <span class="z-status__dot" aria-hidden="true"></span>
+    <span class="z-status__label">Offline</span>
+  </span>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Table" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Table</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -626,6 +930,56 @@ pnpm dev</code>
     </tbody>
   </table>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Timeline" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Timeline</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<ol class="z-timeline-list" data-align="start" data-line="solid" data-dot="circle" data-size="md">
+  <li class="z-timeline-list__item" data-tone="success" data-dot="icon" data-status="done">
+    <span class="z-timeline-list__marker" aria-hidden="true">
+      <span class="z-timeline-list__dot">
+        <z-icon name="rocket-launch" size="14"></z-icon>
+      </span>
+    </span>
+    <div class="z-timeline-list__body">
+      <time class="z-timeline-list__time" dateTime="2026-11-20T10:42">10:42</time>
+      <div class="z-timeline-list__title">Deployed to production</div>
+      <div class="z-timeline-list__description">Build 4812 is live in all regions.</div>
+    </div>
+  </li>
+  <li class="z-timeline-list__item" data-tone="info" data-dot="icon" data-status="done">
+    <span class="z-timeline-list__marker" aria-hidden="true">
+      <span class="z-timeline-list__dot">
+        <z-icon name="check" size="14"></z-icon>
+      </span>
+    </span>
+    <div class="z-timeline-list__body">
+      <time class="z-timeline-list__time" dateTime="2026-11-20T09:15">09:15</time>
+      <div class="z-timeline-list__title">Review approved</div>
+    </div>
+  </li>
+  <li class="z-timeline-list__item" data-tone="accent" data-dot="icon" data-status="current" aria-current="step">
+    <span class="z-timeline-list__marker" aria-hidden="true">
+      <span class="z-timeline-list__dot">
+        <z-icon name="clock" size="14"></z-icon>
+      </span>
+    </span>
+    <div class="z-timeline-list__body">
+      <span class="z-timeline-list__time">Running</span>
+      <div class="z-timeline-list__title">Smoke tests</div>
+    </div>
+  </li>
+  <li class="z-timeline-list__item" data-status="upcoming">
+    <span class="z-timeline-list__marker" aria-hidden="true">
+      <span class="z-timeline-list__dot"></span>
+    </span>
+    <div class="z-timeline-list__body">
+      <span class="z-timeline-list__time">Next</span>
+      <div class="z-timeline-list__title">Announce release</div>
+    </div>
+  </li>
+</ol>
   </div>
 </section>
 </div>
@@ -1474,8 +1828,8 @@ pnpm dev</code>
 </div>
   </div>
 </section>
-<section class="z-card demo" data-component="Breadcrumb" data-behavior="none">
-  <header class="demo__head"><h3 class="demo__name">Breadcrumb</h3><span class="z-badge" data-tone="neutral">css</span></header>
+<section class="z-card demo" data-component="Breadcrumb" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Breadcrumb</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <nav aria-label="Breadcrumb" class="z-breadcrumb">
   <ol class="z-breadcrumb__list">
@@ -1551,8 +1905,8 @@ pnpm dev</code>
 </nav>
   </div>
 </section>
-<section class="z-card demo" data-component="Stepper" data-behavior="none">
-  <header class="demo__head"><h3 class="demo__name">Stepper</h3><span class="z-badge" data-tone="neutral">css</span></header>
+<section class="z-card demo" data-component="Stepper" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Stepper</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <ol class="z-stepper" data-orientation="horizontal" aria-label="Progress">
   <li class="z-stepper__step" data-state="complete">

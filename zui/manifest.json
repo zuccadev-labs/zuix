@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 94,
+ "count": 115,
  "groups": {
   "actions": [
    "Button",
@@ -25,15 +25,33 @@
   "carousel": [
    "Carousel"
   ],
+  "charts": [
+   "AreaChart",
+   "BarChart",
+   "DonutChart",
+   "LineChart",
+   "PieChart",
+   "Sparkline"
+  ],
   "content": [
+   "AspectRatio",
    "Callout",
    "Card",
    "CardFooter",
    "CardHeader",
+   "CardMedia",
    "CodeBlock",
    "Divider",
+   "FormatByte",
+   "FormatDate",
+   "FormatNumber",
+   "Highlight",
+   "JsonTree",
+   "Marquee",
    "Panel",
+   "Prose",
    "RelativeTime",
+   "ScrollArea",
    "Timer"
   ],
   "data": [
@@ -41,13 +59,18 @@
    "AvatarGroup",
    "Badge",
    "Chip",
+   "CircularProgress",
    "DataTable",
+   "DescriptionList",
+   "Item",
    "Kbd",
    "Meter",
    "Progress",
    "Rating",
    "StatTile",
-   "Table"
+   "StatusDot",
+   "Table",
+   "Timeline"
   ],
   "feedback": [
    "Alert",
@@ -2322,6 +2345,1290 @@
    "file": "zui/src/components/carousel/Carousel.manifest.json"
   },
   {
+   "name": "AreaChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "description": "Gráfico de áreas: como LineChart con relleno lavado (≈16 %) y base en cero; `stacked` apila las series (positivos hacia arriba, negativos hacia abajo) y el tooltip suma el total.",
+   "import": "import { AreaChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: una por posición del eje."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave de la categoría o del tiempo en cada fila."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "required": true,
+     "description": "{ key, label, color? (1–8), marker? }. El color sigue a la serie, no a su posición visible."
+    },
+    {
+     "name": "xType",
+     "type": "enum",
+     "values": [
+      "category",
+      "time",
+      "number"
+     ],
+     "description": "Por defecto, time si todos los valores son fechas (Date, ISO o ms)."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre del eje (cabecera de la tabla alternativa)."
+    },
+    {
+     "name": "xFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "description": "Formato de los rótulos de tiempo (por defecto, según la escala: horas, días, meses o años)."
+    },
+    {
+     "name": "yMin",
+     "type": "number"
+    },
+    {
+     "name": "yMax",
+     "type": "number"
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "stacked",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "curve",
+     "type": "enum",
+     "values": [
+      "linear",
+      "monotone",
+      "step"
+     ],
+     "default": "linear"
+    },
+    {
+     "name": "markers",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption (título y descripción) y un resumen en texto (series, número de puntos, primero y último, mínimo y máximo de cada serie). El área de trazado es un role=group con nombre y descripción (resumen + instrucciones). Cada posición del eje es un role=img enfocable con su nombre completo («March 2026: Revenue 45,000, Costs 41,000»): una parada de Tab y flechas ←→ (también ↑↓) entre posiciones, Inicio/Fin, Re Pág/Av Pág de 5 en 5, Intro o Espacio para onPointClick, Escape cierra el tooltip; en RTL las flechas siguen la dirección visual. El tooltip y la cruceta se ven al pasar y al enfocar (aria-hidden: el nombre ya lo dice). Leyenda: botones con aria-pressed (la última serie visible no se oculta). Tabla alternativa con caption y cabeceras en una región desplazable enfocable. Nada depende solo del color: leyenda, marcadores con forma (markers), trazos y tramas (patterns; siempre con colores forzados y al imprimir). Colores chart-1…8 a ≥ 3:1 contra cualquier superficie.",
+   "examples": [
+    {
+     "title": "Apiladas",
+     "code": "<AreaChart\n  title=\"Traffic by source\"\n  data={[{month: \"2026-01\",revenue: 42000,costs: 38000},{month: \"2026-02\",revenue: 48000,costs: 40000},{month: \"2026-03\",revenue: 45000,costs: 41000},{month: \"2026-04\",revenue: 61000,costs: 44000},{month: \"2026-05\",revenue: 66000,costs: 47000},{month: \"2026-06\",revenue: 72000,costs: 50000}]}\n  xKey=\"month\"\n  series={[{key: \"revenue\",label: \"Revenue\"},{key: \"costs\",label: \"Costs\"}]}\n  stacked\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Apiladas",
+     "code": "<div class=\"z-chart\" data-type=\"area\" data-title=\"Traffic by source\" data-x-key=\"month\" data-stacked data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"costs\":38000},{\"month\":\"2026-02\",\"revenue\":48000,\"costs\":40000},{\"month\":\"2026-03\",\"revenue\":45000,\"costs\":41000},{\"month\":\"2026-04\",\"revenue\":61000,\"costs\":44000},{\"month\":\"2026-05\",\"revenue\":66000,\"costs\":47000},{\"month\":\"2026-06\",\"revenue\":72000,\"costs\":50000}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"costs\",\"label\":\"Costs\"}]}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/AreaChart.manifest.json"
+  },
+  {
+   "name": "BarChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "description": "Gráfico de barras verticales u horizontales, agrupadas o apiladas, con valores negativos: grosor máximo, extremo del dato redondeado y base recta, hueco de 2 px entre las que se tocan, banda resaltada y tooltip por categoría, tramas por serie (`patterns`).",
+   "import": "import { BarChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: una por posición del eje."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave de la categoría o del tiempo en cada fila."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "required": true,
+     "description": "{ key, label, color? (1–8), marker? }. El color sigue a la serie, no a su posición visible."
+    },
+    {
+     "name": "xType",
+     "type": "enum",
+     "values": [
+      "category",
+      "time",
+      "number"
+     ],
+     "description": "Por defecto, time si todos los valores son fechas (Date, ISO o ms)."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre del eje (cabecera de la tabla alternativa)."
+    },
+    {
+     "name": "xFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "description": "Formato de los rótulos de tiempo (por defecto, según la escala: horas, días, meses o años)."
+    },
+    {
+     "name": "yMin",
+     "type": "number"
+    },
+    {
+     "name": "yMax",
+     "type": "number"
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "stacked",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption (título y descripción) y un resumen en texto (series, número de puntos, primero y último, mínimo y máximo de cada serie). El área de trazado es un role=group con nombre y descripción (resumen + instrucciones). Cada posición del eje es un role=img enfocable con su nombre completo («March 2026: Revenue 45,000, Costs 41,000»): una parada de Tab y flechas ←→ (también ↑↓) entre posiciones, Inicio/Fin, Re Pág/Av Pág de 5 en 5, Intro o Espacio para onPointClick, Escape cierra el tooltip; en RTL las flechas siguen la dirección visual. El tooltip y la cruceta se ven al pasar y al enfocar (aria-hidden: el nombre ya lo dice). Leyenda: botones con aria-pressed (la última serie visible no se oculta). Tabla alternativa con caption y cabeceras en una región desplazable enfocable. Nada depende solo del color: leyenda, marcadores con forma (markers), trazos y tramas (patterns; siempre con colores forzados y al imprimir). Colores chart-1…8 a ≥ 3:1 contra cualquier superficie.",
+   "examples": [
+    {
+     "title": "Agrupadas",
+     "code": "<BarChart\n  title=\"Tasks by team\"\n  data={[{team: \"Design\",shipped: 18,review: 6},{team: \"Platform\",shipped: 24,review: 9},{team: \"Mobile\",shipped: 12,review: 4}]}\n  xKey=\"team\"\n  series={[{key: \"shipped\",label: \"Shipped\"},{key: \"review\",label: \"In review\"}]}\n  patterns\n  locale=\"en-US\"\n/>"
+    },
+    {
+     "title": "Horizontales apiladas",
+     "code": "<BarChart\n  title=\"Workload by team\"\n  data={[{team: \"Design\",shipped: 18,review: 6},{team: \"Platform\",shipped: 24,review: 9},{team: \"Mobile\",shipped: 12,review: 4}]}\n  xKey=\"team\"\n  series={[{key: \"shipped\",label: \"Shipped\"},{key: \"review\",label: \"In review\"}]}\n  orientation=\"horizontal\"\n  stacked\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Agrupadas",
+     "code": "<div class=\"z-chart\" data-type=\"bar\" data-title=\"Tasks by team\" data-x-key=\"team\" data-patterns data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"team\":\"Design\",\"shipped\":18,\"review\":6},{\"team\":\"Platform\",\"shipped\":24,\"review\":9},{\"team\":\"Mobile\",\"shipped\":12,\"review\":4}],\"series\":[{\"key\":\"shipped\",\"label\":\"Shipped\"},{\"key\":\"review\",\"label\":\"In review\"}]}</script>\n</div>"
+    },
+    {
+     "title": "Horizontales apiladas",
+     "code": "<div class=\"z-chart\" data-type=\"bar\" data-orientation=\"horizontal\" data-stacked data-title=\"Workload by team\" data-x-key=\"team\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"team\":\"Design\",\"shipped\":18,\"review\":6},{\"team\":\"Platform\",\"shipped\":24,\"review\":9},{\"team\":\"Mobile\",\"shipped\":12,\"review\":4}],\"series\":[{\"key\":\"shipped\",\"label\":\"Shipped\"},{\"key\":\"review\",\"label\":\"In review\"}]}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/BarChart.manifest.json"
+  },
+  {
+   "name": "DonutChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "description": "Anillo: parte de un todo con el total en el centro (o el sector activo al pasar o enfocar), leyenda con porcentajes que oculta sectores, hueco entre sectores y trama opcional.",
+   "import": "import { DonutChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "{ label: string; value: number; color?: number }[]",
+     "required": true
+    },
+    {
+     "name": "valueLabel",
+     "type": "string",
+     "description": "Nombre de la medida (cabecera de la tabla)."
+    },
+    {
+     "name": "centerValue",
+     "type": "string",
+     "description": "Valor central (por defecto, el total formateado)."
+    },
+    {
+     "name": "centerLabel",
+     "type": "string",
+     "description": "Texto bajo el valor central (por defecto, «Total»)."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption y resumen en texto (total y cada sector con su porcentaje). Cada sector es un role=img enfocable con nombre («Media: 412 GB (52.3%)»): una parada de Tab y flechas entre sectores, Inicio/Fin, Intro o Espacio para onPointClick, Escape. Al pasar o enfocar, el anillo muestra el sector en el centro y la tarta un tooltip. Leyenda con porcentajes y botones aria-pressed que ocultan sectores. Tabla alternativa. Con patterns, trama por sector además del color; con colores forzados, sectores en CanvasText separados por Canvas y el activo en Highlight.",
+   "examples": [
+    {
+     "title": "Almacenamiento",
+     "code": "<DonutChart\n  title=\"Storage\"\n  description=\"GB by type\"\n  data={[{label: \"Media\",value: 412},{label: \"Documents\",value: 186},{label: \"Backups\",value: 132},{label: \"Other\",value: 58}]}\n  valueFormat={{ style: \"unit\", unit: \"gigabyte\" }}\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Almacenamiento",
+     "code": "<div class=\"z-chart\" data-type=\"donut\" data-title=\"Storage\" data-description=\"GB by type\" data-x-key=\"label\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"Media\",\"value\":412},{\"label\":\"Documents\",\"value\":186},{\"label\":\"Backups\",\"value\":132},{\"label\":\"Other\",\"value\":58}],\"series\":[{\"key\":\"value\",\"label\":\"GB\"}],\"valueFormat\":{\"style\":\"unit\",\"unit\":\"gigabyte\"}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/DonutChart.manifest.json"
+  },
+  {
+   "name": "LineChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "description": "Gráfico de líneas: una o varias series sobre un eje de categorías, tiempo (marcas de día, semana, mes o año y rótulos de Intl) o número; curva lineal, monótona o escalonada, huecos donde falta el dato, marcadores con forma por serie, cruceta y tooltip al pasar o enfocar, flechas entre puntos, leyenda que oculta series y tabla alternativa.",
+   "import": "import { LineChart } from \"@zuccadev-labs/zuix-zui\"",
+   "exports": [
+    "Chart"
+   ],
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: una por posición del eje."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave de la categoría o del tiempo en cada fila."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "required": true,
+     "description": "{ key, label, color? (1–8), marker? }. El color sigue a la serie, no a su posición visible."
+    },
+    {
+     "name": "xType",
+     "type": "enum",
+     "values": [
+      "category",
+      "time",
+      "number"
+     ],
+     "description": "Por defecto, time si todos los valores son fechas (Date, ISO o ms)."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre del eje (cabecera de la tabla alternativa)."
+    },
+    {
+     "name": "xFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "description": "Formato de los rótulos de tiempo (por defecto, según la escala: horas, días, meses o años)."
+    },
+    {
+     "name": "yMin",
+     "type": "number"
+    },
+    {
+     "name": "yMax",
+     "type": "number"
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "curve",
+     "type": "enum",
+     "values": [
+      "linear",
+      "monotone",
+      "step"
+     ],
+     "default": "linear"
+    },
+    {
+     "name": "markers",
+     "type": "boolean",
+     "default": false,
+     "description": "Marcador con forma propia por serie (círculo, cuadrado, rombo, triángulo)."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption (título y descripción) y un resumen en texto (series, número de puntos, primero y último, mínimo y máximo de cada serie). El área de trazado es un role=group con nombre y descripción (resumen + instrucciones). Cada posición del eje es un role=img enfocable con su nombre completo («March 2026: Revenue 45,000, Costs 41,000»): una parada de Tab y flechas ←→ (también ↑↓) entre posiciones, Inicio/Fin, Re Pág/Av Pág de 5 en 5, Intro o Espacio para onPointClick, Escape cierra el tooltip; en RTL las flechas siguen la dirección visual. El tooltip y la cruceta se ven al pasar y al enfocar (aria-hidden: el nombre ya lo dice). Leyenda: botones con aria-pressed (la última serie visible no se oculta). Tabla alternativa con caption y cabeceras en una región desplazable enfocable. Nada depende solo del color: leyenda, marcadores con forma (markers), trazos y tramas (patterns; siempre con colores forzados y al imprimir). Colores chart-1…8 a ≥ 3:1 contra cualquier superficie.",
+   "examples": [
+    {
+     "title": "Dos series en el tiempo",
+     "code": "<LineChart\n  title=\"Revenue and costs\"\n  description=\"Monthly, 2026\"\n  data={[{month: \"2026-01\",revenue: 42000,costs: 38000},{month: \"2026-02\",revenue: 48000,costs: 40000},{month: \"2026-03\",revenue: 45000,costs: 41000},{month: \"2026-04\",revenue: 61000,costs: 44000},{month: \"2026-05\",revenue: 66000,costs: 47000},{month: \"2026-06\",revenue: 72000,costs: 50000}]}\n  xKey=\"month\"\n  series={[{key: \"revenue\",label: \"Revenue\"},{key: \"costs\",label: \"Costs\"}]}\n  valueFormat={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }}\n  curve=\"monotone\"\n  markers\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Dos series en el tiempo",
+     "code": "<div class=\"z-chart\" data-type=\"line\" data-title=\"Revenue and costs\" data-description=\"Monthly, 2026\" data-x-key=\"month\" data-curve=\"monotone\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"costs\":38000},{\"month\":\"2026-02\",\"revenue\":48000,\"costs\":40000},{\"month\":\"2026-03\",\"revenue\":45000,\"costs\":41000},{\"month\":\"2026-04\",\"revenue\":61000,\"costs\":44000},{\"month\":\"2026-05\",\"revenue\":66000,\"costs\":47000},{\"month\":\"2026-06\",\"revenue\":72000,\"costs\":50000}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"costs\",\"label\":\"Costs\"}],\"valueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/LineChart.manifest.json"
+  },
+  {
+   "name": "PieChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "description": "Tarta: como DonutChart sin hueco central; los sectores se separan con un trazo de superficie y el tooltip sale junto al sector.",
+   "import": "import { PieChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "{ label: string; value: number; color?: number }[]",
+     "required": true
+    },
+    {
+     "name": "valueLabel",
+     "type": "string"
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption y resumen en texto (total y cada sector con su porcentaje). Cada sector es un role=img enfocable con nombre («Media: 412 GB (52.3%)»): una parada de Tab y flechas entre sectores, Inicio/Fin, Intro o Espacio para onPointClick, Escape. Al pasar o enfocar, el anillo muestra el sector en el centro y la tarta un tooltip. Leyenda con porcentajes y botones aria-pressed que ocultan sectores. Tabla alternativa. Con patterns, trama por sector además del color; con colores forzados, sectores en CanvasText separados por Canvas y el activo en Highlight.",
+   "examples": [
+    {
+     "title": "Con trama",
+     "code": "<PieChart title=\"Storage share\" data={[{label: \"Media\",value: 412},{label: \"Documents\",value: 186},{label: \"Backups\",value: 132},{label: \"Other\",value: 58}]} patterns locale=\"en-US\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Con trama",
+     "code": "<div class=\"z-chart\" data-type=\"pie\" data-title=\"Storage share\" data-x-key=\"label\" data-patterns data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"Media\",\"value\":412},{\"label\":\"Documents\",\"value\":186},{\"label\":\"Backups\",\"value\":132},{\"label\":\"Other\",\"value\":58}],\"series\":[{\"key\":\"value\",\"label\":\"GB\"}]}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/PieChart.manifest.json"
+  },
+  {
+   "name": "Sparkline",
+   "group": "charts",
+   "description": "Minigráfico en línea, área o barras: una serie sin ejes, con el último valor marcado. Imagen con nombre («Visits: from 120 to 340, low 98, high 340»); sin estado (vale en un Server Component). Lo usa StatTile con `trend`.",
+   "import": "import { Sparkline } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "values",
+     "type": "(number | null)[]",
+     "required": true
+    },
+    {
+     "name": "type",
+     "type": "enum",
+     "values": [
+      "line",
+      "area",
+      "bar"
+     ],
+     "default": "line"
+    },
+    {
+     "name": "color",
+     "type": "number",
+     "default": 1,
+     "description": "Color de serie 1–8 (chart-N)."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Qué se mide (entra en el nombre accesible)."
+    },
+    {
+     "name": "ariaLabel",
+     "type": "string",
+     "description": "Nombre accesible completo (sustituye al resumen)."
+    },
+    {
+     "name": "curve",
+     "type": "enum",
+     "values": [
+      "linear",
+      "monotone",
+      "step"
+     ],
+     "default": "linear"
+    },
+    {
+     "name": "showEnd",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "zero",
+     "type": "boolean",
+     "description": "Incluye el 0 en la escala (por defecto, en barras)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<SparklineLabels>",
+     "description": "summary, noData."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-area-opacity",
+    "surface-solid",
+    "radius-full",
+    "space-12",
+    "space-7"
+   ],
+   "classes": [
+    "z-sparkline"
+   ],
+   "a11y": "role=img con un nombre que resume la serie (primero, último, mínimo y máximo, con Intl). No es interactivo: el valor exacto va en el texto junto al minigráfico. Con colores forzados, trazo en CanvasText.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Línea y barras",
+     "code": "<p>\n  Weekly visits <Sparkline values={[120, 132, 101, 154, 190, 230, 210, 340]} label=\"Weekly visits\" locale=\"en-US\" />\n  Errors <Sparkline values={[9, 7, 8, 4, 5, 3, 2]} type=\"bar\" color={5} label=\"Errors\" locale=\"en-US\" />\n</p>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Línea y barras",
+     "code": "<p>\n  Weekly visits <span class=\"z-sparkline\" data-values=\"120,132,101,154,190,230,210,340\" data-label=\"Weekly visits\" data-locale=\"en-US\"></span>\n  Errors <span class=\"z-sparkline\" data-values=\"9,7,8,4,5,3,2\" data-type=\"bar\" data-color=\"5\" data-label=\"Errors\" data-locale=\"en-US\"></span>\n</p>"
+    }
+   ],
+   "origin": "Diseño propio; StatTile de NeonBlade (sparkline embebida).",
+   "file": "zui/src/components/charts/Sparkline.manifest.json"
+  },
+  {
+   "name": "AspectRatio",
+   "group": "content",
+   "description": "Caja que mantiene una proporción (CSS aspect-ratio); la imagen, el vídeo o el iframe de dentro la cubren.",
+   "import": "import { AspectRatio } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "ratio",
+     "type": "number | string",
+     "default": "16 / 9",
+     "description": "Ancho entre alto: 16 / 9, 1, 3 / 4 o \"4 / 3\". Llega a CSS como --z-aspect."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "fg-subtle"
+   ],
+   "classes": [
+    "z-aspect"
+   ],
+   "cssVars": [
+    {
+     "name": "--z-aspect",
+     "description": "Proporción (cualquier valor de aspect-ratio)."
+    }
+   ],
+   "a11y": "Solo maquetación: no añade semántica. La media de dentro lleva su propio texto alternativo o título (iframe).",
+   "examples": [
+    {
+     "title": "Vídeo 16:9",
+     "code": "<AspectRatio ratio={16 / 9}>\n  <iframe title=\"Product tour\" src=\"https://www.youtube-nocookie.com/embed/xyz\" allowFullScreen />\n</AspectRatio>"
+    },
+    {
+     "title": "Cuadrado con un icono",
+     "code": "<AspectRatio ratio={1} style={{ maxWidth: 160 }}>\n  <Icon name=\"photo\" size={32} />\n</AspectRatio>"
+    }
+   ],
+   "origin": "Aspect Ratio de Shark UI y Radix; solo CSS.",
+   "behavior": "none",
+   "html": [
+    {
+     "title": "Retrato 3:4 (solo CSS: style=\"--z-aspect: 3 / 4\")",
+     "code": "<div class=\"z-aspect\" style=\"--z-aspect: 3 / 4; max-width: 180px\">\n  <z-icon name=\"photo\" size=\"32\"></z-icon>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/content/AspectRatio.manifest.json"
+  },
+  {
    "name": "Callout",
    "group": "content",
    "description": "Nota destacada dentro de un contenido; estática.",
@@ -2561,6 +3868,11 @@
      "name": "headingLevel",
      "type": "2 | 3 | 4",
      "default": 3
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono en una baldosa delante del título (decorativo)."
     }
    ],
    "states": [
@@ -2577,24 +3889,111 @@
     "fg",
     "leading-ui",
     "text-title",
-    "tracking-snug"
+    "tracking-snug",
+    "control-height-md",
+    "control-radius",
+    "surface-2",
+    "accent-text",
+    "glass-highlight",
+    "line"
    ],
    "classes": [
     "z-card__header",
     "z-card__heading",
     "z-card__title",
     "z-card__subtitle",
-    "z-card__action"
+    "z-card__action",
+    "z-card__icon"
    ],
    "a11y": "El título es un encabezado real con nivel configurable.",
    "examples": [
     {
      "title": "Con acción",
      "code": "<Card>\n  <CardHeader title=\"Members\" subtitle=\"5 people\" action={<IconButton icon=\"plus\" label=\"Add member\" />} />\n</Card>"
+    },
+    {
+     "title": "Con icono",
+     "code": "<CardHeader icon=\"chart-bar\" title=\"Usage\" subtitle=\"Last 30 days\" />"
     }
    ],
    "origin": "CardHeader del design system base.",
    "file": "zui/src/components/content/CardHeader.manifest.json"
+  },
+  {
+   "name": "CardMedia",
+   "group": "content",
+   "description": "Media de cabecera de una Card (portada, imagen de producto) sobre AspectRatio, a sangre o dentro del relleno con radio concéntrico.",
+   "import": "import { Card, CardMedia, CardHeader } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "src",
+     "type": "string",
+     "description": "Imagen. Sin src, la media son los hijos (vídeo, mapa, ilustración)."
+    },
+    {
+     "name": "alt",
+     "type": "string",
+     "default": "",
+     "description": "Texto alternativo; vacío si es decorativa."
+    },
+    {
+     "name": "ratio",
+     "type": "number | string",
+     "default": "16 / 9"
+    },
+    {
+     "name": "placement",
+     "type": "enum",
+     "values": [
+      "top",
+      "inset"
+     ],
+     "default": "top",
+     "description": "`top`: a sangre arriba con el radio interior de la tarjeta; `inset`: dentro del relleno con radio concéntrico."
+    },
+    {
+     "name": "loading",
+     "type": "enum",
+     "values": [
+      "lazy",
+      "eager"
+     ],
+     "default": "lazy"
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "card-radius",
+    "radius-xs",
+    "surface-2",
+    "fg-subtle"
+   ],
+   "classes": [
+    "z-card__media",
+    "z-aspect"
+   ],
+   "a11y": "La imagen lleva alt; si la tarjeta ya nombra lo que muestra (título), alt=\"\" la deja como decorativa.",
+   "examples": [
+    {
+     "title": "Tarjeta con media e icono",
+     "code": "<Card>\n  <CardMedia ratio={16 / 9}>\n    <Icon name=\"photo\" size={32} />\n  </CardMedia>\n  <CardHeader icon=\"cube\" title=\"Atlas\" subtitle=\"Design tokens rollout\" />\n</Card>"
+    },
+    {
+     "title": "Imagen dentro del relleno",
+     "code": "<Card>\n  <CardMedia placement=\"inset\" ratio={4 / 3} src={cover} alt=\"Atlas dashboard\" />\n  <CardHeader title=\"Atlas\" />\n</Card>"
+    }
+   ],
+   "origin": "Card de producto de Shark UI.",
+   "behavior": "none",
+   "html": [
+    {
+     "title": "Tarjeta con media e icono",
+     "code": "<div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\" style=\"max-width: 320px\">\n  <div class=\"z-aspect z-card__media\" data-placement=\"top\" style=\"--z-aspect: 16 / 9\">\n    <z-icon name=\"photo\" size=\"32\"></z-icon>\n  </div>\n  <div class=\"z-card__header\">\n    <span class=\"z-card__icon\" aria-hidden=\"true\"><z-icon name=\"cube\" size=\"18\"></z-icon></span>\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Atlas</h3>\n      <p class=\"z-card__subtitle\">Design tokens rollout</p>\n    </div>\n  </div>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/content/CardMedia.manifest.json"
   },
   {
    "name": "CodeBlock",
@@ -2789,6 +4188,424 @@
    "file": "zui/src/components/content/Divider.manifest.json"
   },
   {
+   "name": "FormatByte",
+   "group": "content",
+   "import": "import { FormatByte } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Tamaño en bytes legible: decimal con las unidades de Intl («1.5 MB», «1,5 megabytes») o binario con símbolo IEC («1.4 MiB»), en un <data value> con los bytes exactos.",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "required": true,
+     "description": "Bytes."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "system",
+     "type": "enum",
+     "values": [
+      "decimal",
+      "binary"
+     ],
+     "default": "decimal"
+    },
+    {
+     "name": "unitDisplay",
+     "type": "enum",
+     "values": [
+      "short",
+      "long",
+      "narrow"
+     ],
+     "default": "short"
+    },
+    {
+     "name": "maximumFractionDigits",
+     "type": "number",
+     "default": 1
+    }
+   ],
+   "tokens": [
+    "fg"
+   ],
+   "classes": [
+    "z-format"
+   ],
+   "behavior": "dom",
+   "a11y": "Texto normal; los bytes exactos en el atributo value.",
+   "examples": [
+    {
+     "title": "Decimal y binario",
+     "code": "<p>\n  <FormatByte value={1500000} locale=\"en-US\" /> · <FormatByte value={1572864} system=\"binary\" locale=\"en-US\" /> ·{\" \"}\n  <FormatByte value={2048} unitDisplay=\"long\" locale=\"en-US\" />\n</p>"
+    }
+   ],
+   "file": "zui/src/components/content/FormatByte.manifest.json"
+  },
+  {
+   "name": "FormatDate",
+   "group": "content",
+   "import": "import { FormatDate } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Fecha en un <time datetime> con Intl.DateTimeFormat, o relativa («hace 3 min») con `relative`, que delega en RelativeTime y se actualiza sola.",
+   "props": [
+    {
+     "name": "value",
+     "type": "Date | number | string",
+     "required": true,
+     "description": "Fecha civil ISO, instante ISO, ms o Date."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "options",
+     "type": "Intl.DateTimeFormatOptions",
+     "default": {
+      "dateStyle": "medium"
+     }
+    },
+    {
+     "name": "relative",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "relativeOptions",
+     "type": "Omit<RelativeTimeProps, \"value\" | \"locale\">"
+    }
+   ],
+   "tokens": [
+    "fg"
+   ],
+   "classes": [
+    "z-format",
+    "z-relative-time"
+   ],
+   "behavior": "dom",
+   "a11y": "<time datetime> con la fecha en ISO; en relativo, la fecha completa en title.",
+   "examples": [
+    {
+     "title": "Absoluta",
+     "code": "<FormatDate value=\"2026-11-20\" options={{ dateStyle: \"long\" }} locale=\"en-US\" />"
+    }
+   ],
+   "file": "zui/src/components/content/FormatDate.manifest.json"
+  },
+  {
+   "name": "FormatNumber",
+   "group": "content",
+   "import": "import { FormatNumber } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Número con Intl.NumberFormat (compacto, moneda, porcentaje, unidad) en un <data value> que conserva el valor exacto. Sin estado: vale en un Server Component; en el modo DOM se reescribe con el locale del documento.",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "options",
+     "type": "Intl.NumberFormatOptions"
+    }
+   ],
+   "tokens": [
+    "fg"
+   ],
+   "classes": [
+    "z-format"
+   ],
+   "behavior": "dom",
+   "a11y": "Texto normal dentro de <data value> (el valor exacto para máquinas).",
+   "examples": [
+    {
+     "title": "Compacto y moneda",
+     "code": "<p>\n  <FormatNumber value={1250000} options={{ notation: \"compact\" }} locale=\"en-US\" /> visits ·{\" \"}\n  <FormatNumber value={1999.5} options={{ style: \"currency\", currency: \"EUR\" }} locale=\"en-US\" />\n</p>"
+    }
+   ],
+   "file": "zui/src/components/content/FormatNumber.manifest.json"
+  },
+  {
+   "name": "Highlight",
+   "group": "content",
+   "import": "import { Highlight } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Marca con <mark> las coincidencias de una o varias consultas en un texto: sin distinguir mayúsculas, opcionalmente sin acentos o solo palabras completas; relleno de acento o subrayado ondulado.",
+   "props": [
+    {
+     "name": "text",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "query",
+     "type": "string | string[]",
+     "required": true
+    },
+    {
+     "name": "ignoreCase",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "ignoreAccents",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "wholeWord",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "fill",
+      "underline"
+     ],
+     "default": "fill"
+    }
+   ],
+   "tokens": [
+    "accent-soft",
+    "accent-text",
+    "accent",
+    "radius-xs"
+   ],
+   "classes": [
+    "z-highlight",
+    "z-highlight__mark"
+   ],
+   "behavior": "dom",
+   "a11y": "El texto se lee igual; <mark> lo exponen algunos lectores como resaltado. Con colores forzados usa Mark/MarkText. El par accent-text sobre accent-soft se valida a 4.5:1.",
+   "examples": [
+    {
+     "title": "Varias consultas sin acentos",
+     "code": "<Highlight text=\"Un café en Málaga con vistas al mar\" query={[\"cafe\", \"malaga\"]} ignoreAccents />"
+    }
+   ],
+   "file": "zui/src/components/content/Highlight.manifest.json"
+  },
+  {
+   "name": "JsonTree",
+   "group": "content",
+   "description": "Visor de JSON y de valores de JavaScript como árbol: tipos con color, profundidad inicial, Map y Set, cadenas largas truncadas y copia de la ruta.",
+   "import": "import { JsonTree } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "unknown",
+     "required": true,
+     "description": "Objetos, arrays, Map, Set, fechas, bigint, cadenas, números, booleanos y null. Las referencias circulares se cortan con [Circular]."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "JSON",
+     "description": "Nombre accesible del árbol."
+    },
+    {
+     "name": "defaultExpandDepth",
+     "type": "number",
+     "default": 1,
+     "description": "Profundidad expandida al montar (1 = la raíz; 0 = todo plegado)."
+    },
+    {
+     "name": "maxStringLength",
+     "type": "number",
+     "default": 120,
+     "description": "Longitud a partir de la que una cadena se trunca con «…»; el texto completo queda en title."
+    },
+    {
+     "name": "rootName",
+     "type": "string",
+     "default": "$",
+     "description": "Nombre de la raíz en las rutas ($.users[0].name)."
+    },
+    {
+     "name": "onSelect",
+     "type": "(path: string, value: unknown) => void",
+     "description": "Nodo activado (clic o Intro)."
+    },
+    {
+     "name": "copyPath",
+     "type": "boolean",
+     "default": false,
+     "description": "Activar un nodo copia su ruta y lo anuncia en una región de estado."
+    },
+    {
+     "name": "copiedLabel",
+     "type": "string",
+     "default": "Copied {path}"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "selected",
+    "expanded",
+    "collapsed"
+   ],
+   "tokens": [
+    "font-mono",
+    "text-code",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "info-text",
+    "warning-text",
+    "accent-text",
+    "touch-target"
+   ],
+   "classes": [
+    "z-jsontree",
+    "z-jsontree__key",
+    "z-jsontree__sep",
+    "z-jsontree__value"
+   ],
+   "a11y": "Es un Tree (patrón APG treeview): roles tree, treeitem y group, foco itinerante, flechas para recorrer, derecha expande, izquierda pliega o sube, Inicio/Fin, una letra salta a la siguiente clave. El tipo no depende solo del color: el valor se escribe con su sintaxis (comillas en las cadenas, n en bigint, Array(3), Map(2)). Con copyPath, la ruta copiada se anuncia en un role=\"status\".",
+   "examples": [
+    {
+     "title": "Respuesta de una API",
+     "code": "<JsonTree\n  label=\"Response\"\n  defaultExpandDepth={2}\n  value={{ id: 42, name: \"Atlas\", active: true, owner: null, tags: [\"design\", \"tokens\"], stats: { views: 1204, ratio: 0.82 } }}\n/>"
+    },
+    {
+     "title": "Map, Set, fechas y copiar ruta",
+     "code": "<JsonTree\n  copyPath\n  value={{ when: new Date(\"2026-11-20T09:00:00Z\"), roles: new Set([\"admin\", \"editor\"]), limits: new Map([[\"api\", 1000n]]) }}\n/>"
+    }
+   ],
+   "origin": "JSON Tree View de Shark UI; sobre Tree.",
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Desde un script JSON (setJsonTreeValue(el, valor) para Map, Set y fechas; emite z:select y, con data-copy-path, z:copy)",
+     "code": "<div class=\"z-jsontree\" data-label=\"Response\" data-expand-depth=\"2\" data-copy-path>\n  <script type=\"application/json\" data-value>{\"id\": 42, \"name\": \"Atlas\", \"active\": true, \"owner\": null, \"tags\": [\"design\", \"tokens\"], \"stats\": {\"views\": 1204, \"ratio\": 0.82}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/content/JsonTree.manifest.json"
+  },
+  {
+   "name": "Marquee",
+   "group": "content",
+   "import": "import { Marquee } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Cinta que desfila sin fin (horizontal o vertical, inversa, velocidad, difuminado de bordes, separación): copias del contenido (las extra inert y aria-hidden), pausa al pasar o enfocar y botón de pausa visible; quieta con prefers-reduced-motion.",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 30,
+     "description": "Segundos por vuelta."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "reverse",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "pauseOnHover",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "fade",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "gap",
+     "type": "string"
+    },
+    {
+     "name": "repeat",
+     "type": "number",
+     "default": 2
+    },
+    {
+     "name": "showControl",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "pauseLabel",
+     "type": "string",
+     "default": "Pause"
+    },
+    {
+     "name": "playLabel",
+     "type": "string",
+     "default": "Play"
+    },
+    {
+     "name": "defaultPaused",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "tokens": [
+    "space-6",
+    "space-10",
+    "space-20",
+    "control-height-sm",
+    "control-radius-sm",
+    "glass-border",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "accent-ring",
+    "focus-width",
+    "focus-offset"
+   ],
+   "classes": [
+    "z-marquee",
+    "z-marquee__control"
+   ],
+   "behavior": "dom",
+   "a11y": "role=region con nombre; solo la primera copia llega a los lectores de pantalla (las demás aria-hidden e inert). Botón visible para pausar (WCAG 2.2.2), sin aria-pressed porque cambia su etiqueta. Se detiene al pasar el puntero o al enfocar dentro; con prefers-reduced-motion no se mueve y se desplaza a mano.",
+   "examples": [
+    {
+     "title": "Logos",
+     "code": "<Marquee label=\"Customers\" duration={20}>\n  <span>Atlas</span>\n  <span>Borealis</span>\n  <span>Cobalt</span>\n  <span>Dune</span>\n  <span>Echo</span>\n</Marquee>"
+    }
+   ],
+   "file": "zui/src/components/content/Marquee.manifest.json"
+  },
+  {
    "name": "Panel",
    "group": "content",
    "description": "Panel de cristal líquido: la pieza de cromo sobre la que flota la interfaz.",
@@ -2894,6 +4711,76 @@
    "file": "zui/src/components/content/Panel.manifest.json"
   },
   {
+   "name": "Prose",
+   "group": "content",
+   "import": "import { Prose } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Tipografía de contenido largo (`.z-prose`): h1–h6, párrafos, enlaces, listas, citas, código en línea y bloques, kbd, mark, tablas, separadores, figuras, details y dl con el ritmo de lectura de la suite; `.z-not-prose` deja fuera un bloque. Solo CSS.",
+   "props": [
+    {
+     "name": "as",
+     "type": "enum",
+     "values": [
+      "div",
+      "article",
+      "section",
+      "main"
+     ],
+     "default": "div"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    }
+   ],
+   "tokens": [
+    "fg",
+    "fg-prose",
+    "fg-muted",
+    "accent-text",
+    "accent-soft",
+    "accent-ring",
+    "line",
+    "line-strong",
+    "code-bg",
+    "code-radius",
+    "prose-max",
+    "text-reading",
+    "text-lead",
+    "text-body",
+    "text-display",
+    "text-display-sm",
+    "text-heading",
+    "text-heading-lg",
+    "leading-relaxed",
+    "leading-code",
+    "radius-md",
+    "radius-xs",
+    "item-radius"
+   ],
+   "classes": [
+    "z-prose",
+    "z-not-prose"
+   ],
+   "behavior": "none",
+   "a11y": "Solo estilo sobre el HTML semántico. Enlaces subrayados (no solo color) y con foco visible.",
+   "examples": [
+    {
+     "title": "Artículo",
+     "code": "<Prose as=\"article\">\n  <h2>Release notes</h2>\n  <p>Charts land in <strong>zui</strong> with <a href=\"/tokens\">keyboard support</a> and <code>prefers-reduced-motion</code>.</p>\n  <ul>\n    <li>Line, area and bar charts</li>\n    <li>Donut and pie charts</li>\n  </ul>\n  <blockquote>Nothing depends on color alone.</blockquote>\n  <p>Press <kbd>⌘</kbd> <kbd>K</kbd> to search.</p>\n</Prose>"
+    }
+   ],
+   "file": "zui/src/components/content/Prose.manifest.json"
+  },
+  {
    "name": "RelativeTime",
    "group": "content",
    "description": "Tiempo relativo («3 minutes ago», «in 2 days») sobre un instante, con Intl.RelativeTimeFormat. Se actualiza solo con una cadencia que se alarga con la distancia.",
@@ -2987,6 +4874,74 @@
    ],
    "origin": "Format de Shark UI; Intl.RelativeTimeFormat.",
    "file": "zui/src/components/content/RelativeTime.manifest.json"
+  },
+  {
+   "name": "ScrollArea",
+   "group": "content",
+   "import": "import { ScrollArea } from \"@zuccadev-labs/zuix-zui\"",
+   "states": [
+    "rest"
+   ],
+   "description": "Región desplazable con nombre y foco (para el teclado), barra con el color de la suite (scrollbar-color y scrollbar-width, ≥ 3:1 y más gruesa con prefers-contrast) y sombras que solo aparecen hacia donde queda contenido, sin JavaScript.",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre de la región."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal",
+      "both"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "maxHeight",
+     "type": "string"
+    },
+    {
+     "name": "shadows",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "scrollbar",
+     "type": "enum",
+     "values": [
+      "thin",
+      "auto"
+     ],
+     "default": "thin"
+    }
+   ],
+   "tokens": [
+    "control-border",
+    "surface-solid",
+    "fg",
+    "item-radius",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "space-8",
+    "space-3"
+   ],
+   "classes": [
+    "z-scroll-area"
+   ],
+   "behavior": "none",
+   "a11y": "role=region con aria-label y tabindex=0: se desplaza con las flechas y RePág/AvPág del navegador. Foco visible.",
+   "examples": [
+    {
+     "title": "Lista larga",
+     "code": "<ScrollArea label=\"Changelog\" maxHeight=\"10rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</ScrollArea>"
+    }
+   ],
+   "file": "zui/src/components/content/ScrollArea.manifest.json"
   },
   {
    "name": "Timer",
@@ -3479,6 +5434,25 @@
      "name": "disabled",
      "type": "boolean",
      "default": false
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "accent",
+      "success",
+      "warning",
+      "danger",
+      "info"
+     ],
+     "description": "Chip de estado: fondo suave, borde y texto del tono (texto con contraste 4.5:1). Sin tono, la ficha neutra."
+    },
+    {
+     "name": "dot",
+     "type": "boolean",
+     "default": false,
+     "description": "Punto de estado delante del texto."
     }
    ],
    "states": [
@@ -3518,10 +5492,25 @@
     "glass-highlight",
     "radius-xs",
     "space-1-5",
-    "weight-semibold"
+    "weight-semibold",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "warning-soft",
+    "warning-text",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "info",
+    "info-soft",
+    "info-text",
+    "fg-subtle",
+    "radius-full"
    ],
    "classes": [
-    "z-chip"
+    "z-chip",
+    "z-chip__dot"
    ],
    "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
    "examples": [
@@ -3532,15 +5521,129 @@
     {
      "title": "Etiqueta eliminable",
      "code": "<Chip onRemove={() => removeTag(\"design\")} removeLabel=\"Remove design tag\">design</Chip>"
+    },
+    {
+     "title": "Chips de estado con tono",
+     "code": "<div style={{ display: \"flex\", gap: 8, flexWrap: \"wrap\" }}>\n  <Chip tone=\"success\" dot>Running</Chip>\n  <Chip tone=\"warning\" dot>Paused</Chip>\n  <Chip tone=\"danger\" dot count={3}>Errors</Chip>\n  <Chip tone=\"info\" icon=\"cloud\">Remote</Chip>\n</div>"
     }
    ],
    "origin": "FilterChip del design system base y chip de zutool.",
    "file": "zui/src/components/data/Chip.manifest.json"
   },
   {
+   "name": "CircularProgress",
+   "group": "data",
+   "description": "Anillo de avance sobre un <progress> nativo: determinado o indeterminado, con el valor o contenido propio en el centro.",
+   "import": "import { CircularProgress } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number | null",
+     "description": "Sin valor, el anillo gira (indeterminado)."
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 100
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre accesible del <progress>."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg",
+      "xl"
+     ],
+     "default": "md",
+     "description": "24, 40, 64 y 96 px. En `sm` no hay contenido central."
+    },
+    {
+     "name": "thickness",
+     "type": "number",
+     "description": "Grosor del anillo en px (3, 4, 6 y 8 por tamaño)."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "success",
+      "warning",
+      "danger",
+      "info"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "showValue",
+     "type": "boolean",
+     "default": false,
+     "description": "Porcentaje en el centro."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Contenido propio en el centro (aria-hidden)."
+    },
+    {
+     "name": "valueText",
+     "type": "string",
+     "description": "aria-valuetext cuando el centro muestra el valor de otra forma."
+    }
+   ],
+   "states": [
+    "loading",
+    "complete",
+    "indeterminate"
+   ],
+   "tokens": [
+    "accent",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "surface-3",
+    "fg",
+    "radius-full",
+    "weight-semibold",
+    "duration-slow",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-progress-ring",
+    "z-progress-ring__bar",
+    "z-progress-ring__content"
+   ],
+   "a11y": "El <progress> nativo da el rol progressbar, el valor y el estado indeterminado (sin `value`). El centro repite el valor y va con aria-hidden; si lo muestra de otra forma, `valueText` lo da como aria-valuetext. Con colores forzados, el anillo se pinta con CanvasText sobre GrayText. El giro indeterminado se ralentiza con prefers-reduced-motion y la transición del valor solo se anima sin esa preferencia.",
+   "examples": [
+    {
+     "title": "Con valor",
+     "code": "<CircularProgress label=\"Upload\" value={72} showValue size=\"lg\" />"
+    },
+    {
+     "title": "Indeterminado",
+     "code": "<CircularProgress label=\"Loading\" size=\"sm\" />"
+    },
+    {
+     "title": "Tonos, grosor y contenido propio",
+     "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
+    }
+   ],
+   "origin": "Circular Progress de Shark y NeonBlade; guía progress-ring de modern-web-guidance (progress nativo, conic-gradient y máscara).",
+   "behavior": "none",
+   "file": "zui/src/components/data/CircularProgress.manifest.json"
+  },
+  {
    "name": "DataTable",
    "group": "data",
-   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables y filas activables.",
+   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.",
    "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -3552,7 +5655,7 @@
      "name": "columns",
      "type": "DataTableColumn<T>[]",
      "required": true,
-     "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono? }"
+     "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono?, footer? } — `footer`: contenido o función sobre todas las filas, en `tfoot`."
     },
     {
      "name": "rowKey",
@@ -3633,6 +5736,87 @@
      "name": "captionHidden",
      "type": "boolean",
      "default": false
+    },
+    {
+     "name": "selectable",
+     "type": "boolean",
+     "default": false,
+     "description": "Columna de casillas: selección múltiple, «seleccionar todo» de la página (indeterminada si hay algunas) y Mayús + clic para un rango."
+    },
+    {
+     "name": "selectedKeys",
+     "type": "RowKey[]",
+     "description": "Claves seleccionadas (controlado). `RowKey` = string | number, el valor de `rowKey`."
+    },
+    {
+     "name": "defaultSelectedKeys",
+     "type": "RowKey[]",
+     "default": "[]"
+    },
+    {
+     "name": "onSelectionChange",
+     "type": "(keys: RowKey[]) => void"
+    },
+    {
+     "name": "isRowSelectable",
+     "type": "(row: T) => boolean",
+     "description": "Filas con la casilla deshabilitada."
+    },
+    {
+     "name": "selectAllLabel",
+     "type": "string",
+     "default": "Select all rows"
+    },
+    {
+     "name": "selectRowLabel",
+     "type": "(row: T, index: number) => string",
+     "default": "Select row {n}"
+    },
+    {
+     "name": "selectedLabel",
+     "type": "(count: number, total: number) => string",
+     "default": "{n} selected",
+     "description": "Texto visible y anunciado (role=\"status\") del número seleccionado."
+    },
+    {
+     "name": "pageSize",
+     "type": "number",
+     "description": "Filas por página. Sin él no se pagina."
+    },
+    {
+     "name": "page",
+     "type": "number",
+     "description": "Página actual desde 1 (controlado)."
+    },
+    {
+     "name": "defaultPage",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "onPageChange",
+     "type": "(page: number) => void"
+    },
+    {
+     "name": "manualPagination",
+     "type": "boolean",
+     "default": false,
+     "description": "Paginación en servidor: `rows` ya es la página y `rowCount` el total."
+    },
+    {
+     "name": "rowCount",
+     "type": "number",
+     "description": "Total de filas con `manualPagination`."
+    },
+    {
+     "name": "rangeLabel",
+     "type": "(from: number, to: number, total: number) => string",
+     "default": "{from}–{to} of {total}"
+    },
+    {
+     "name": "paginationLabel",
+     "type": "string",
+     "default": "Pagination"
     }
    ],
    "states": [
@@ -3642,7 +5826,9 @@
     "active",
     "sorted",
     "selected",
-    "empty"
+    "indeterminate",
+    "empty",
+    "paged"
    ],
    "tokens": [
     "card-border",
@@ -3675,13 +5861,20 @@
     "leading-ui",
     "space-2-5",
     "text-body",
-    "weight-medium"
+    "weight-medium",
+    "line-strong",
+    "control-height-sm"
    ],
    "classes": [
     "z-table",
-    "z-table-wrap"
+    "z-table-wrap",
+    "z-datatable",
+    "z-datatable__bar",
+    "z-datatable__count",
+    "z-datatable__range",
+    "z-table__select"
    ],
-   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio.",
+   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre.",
    "examples": [
     {
      "title": "Ordenable",
@@ -3690,6 +5883,10 @@
     {
      "title": "Filas activables y celda propia",
      "code": "<DataTable\n  rows={orders}\n  rowKey={(order) => order.id}\n  onRowClick={(order) => openOrder(order.id)}\n  isRowSelected={(order) => order.id === selectedId}\n  empty=\"No orders yet\"\n  columns={[\n    { key: \"id\", header: \"Order\", accessor: (order) => order.id, mono: true, width: \"120px\" },\n    { key: \"status\", header: \"Status\", render: (order) => <Badge tone={order.paid ? \"success\" : \"warning\"}>{order.paid ? \"Paid\" : \"Pending\"}</Badge> },\n  ]}\n/>"
+    },
+    {
+     "title": "Selección, pie y paginación",
+     "code": "const members = [\n  { id: \"a1\", name: \"Ana Ruiz\", seats: 3 },\n  { id: \"b2\", name: \"Leo Park\", seats: 12 },\n  { id: \"c3\", name: \"Mia Chen\", seats: 1 },\n  { id: \"d4\", name: \"Zoe Katz\", seats: 7 },\n  { id: \"e5\", name: \"Iker Sanz\", seats: 5 },\n];\n\n<DataTable\n  caption=\"Members\"\n  captionHidden\n  rows={members}\n  rowKey={(member) => member.id}\n  selectable\n  defaultSelectedKeys={[\"b2\"]}\n  pageSize={3}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (member) => member.name, sortable: true, footer: \"Total\" },\n    {\n      key: \"seats\",\n      header: \"Seats\",\n      accessor: (member) => member.seats,\n      sortable: true,\n      align: \"end\",\n      mono: true,\n      footer: (all) => all.reduce((sum, member) => sum + member.seats, 0),\n    },\n  ]}\n/>"
     }
    ],
    "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
@@ -3698,9 +5895,261 @@
     {
      "title": "Ordenable (data-sort en la cabecera, data-sort-value en la celda; emite z:sort)",
      "code": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Users</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" aria-sort=\"ascending\" data-key=\"name\">\n          <button type=\"button\" class=\"z-table__sort\" data-active=\"true\">\n            <span>Name</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Seats</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" aria-sort=\"none\" data-key=\"joined\" data-sort=\"date\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Joined</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Ana Ruiz</td>\n        <td data-align=\"end\" data-mono=\"true\">3</td>\n        <td data-sort-value=\"2025-03-02\">Mar 2, 2025</td>\n      </tr>\n      <tr>\n        <td>Leo Park</td>\n        <td data-align=\"end\" data-mono=\"true\">12</td>\n        <td data-sort-value=\"2026-01-15\">Jan 15, 2026</td>\n      </tr>\n      <tr>\n        <td>Mia Chen</td>\n        <td data-align=\"end\" data-mono=\"true\">1</td>\n        <td data-sort-value=\"2024-11-30\">Nov 30, 2024</td>\n      </tr>\n      <tr>\n        <td>Zoe Katz</td>\n        <td data-align=\"end\" data-mono=\"true\">7</td>\n        <td data-sort-value=\"2025-08-09\">Aug 9, 2025</td>\n      </tr>\n    </tbody>\n  </table>\n</div>"
+    },
+    {
+     "title": "Selección, pie y paginación en el cliente (data-page-size; emite z:selectionchange y z:pagechange)",
+     "code": "<div class=\"z-datatable\" data-selectable=\"true\" data-paged=\"true\" data-page-size=\"3\" data-selected-label=\"{n} selected\" data-range-label=\"{from}–{to} of {total}\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-selectable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select all rows\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"indeterminate\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></th>\n          <th scope=\"col\" aria-sort=\"none\" data-key=\"name\"><button type=\"button\" class=\"z-table__sort\"><span>Name</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n          <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 1\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Ana Ruiz</td>\n          <td data-align=\"end\" data-mono=\"true\">3</td>\n        </tr>\n        <tr data-key=\"b2\" data-selected=\"true\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 2\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"checked\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"></label></td>\n          <td>Leo Park</td>\n          <td data-align=\"end\" data-mono=\"true\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 3\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Mia Chen</td>\n          <td data-align=\"end\" data-mono=\"true\">1</td>\n        </tr>\n        <tr data-key=\"d4\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 4\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Zoe Katz</td>\n          <td data-align=\"end\" data-mono=\"true\">7</td>\n        </tr>\n        <tr data-key=\"e5\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 5\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Iker Sanz</td>\n          <td data-align=\"end\" data-mono=\"true\">5</td>\n        </tr>\n      </tbody>\n      <tfoot>\n        <tr>\n          <td class=\"z-table__select\"></td>\n          <td>Total</td>\n          <td data-align=\"end\" data-mono=\"true\">28</td>\n        </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <span class=\"z-datatable__count\" role=\"status\">1 selected</span>\n    <span class=\"z-datatable__range\">1–3 of 5</span>\n    <nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"sm\" data-page-count=\"2\" data-page-label=\"Page {page}\">\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled><z-icon name=\"chevron-left\" size=\"14\"></z-icon></button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></button>\n    </nav>\n  </div>\n</div>"
     }
    ],
    "file": "zui/src/components/data/DataTable.manifest.json"
+  },
+  {
+   "name": "DescriptionList",
+   "group": "data",
+   "description": "Pares término–descripción en un <dl>: propiedades de un recurso, metadatos, resumen de una ficha.",
+   "import": "import { DescriptionList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "DescriptionItem[]",
+     "description": "{ term, description, info?, key? }. `info`: aclaración bajo el término."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "`horizontal` alinea términos y descripciones en dos columnas (subgrid) desde 28rem de contenedor; más estrecho, apila."
+    },
+    {
+     "name": "divided",
+     "type": "boolean",
+     "default": false,
+     "description": "Línea entre pares."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "termWidth",
+     "type": "string",
+     "description": "Ancho de la columna de términos (cualquier longitud CSS)."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Pares propios: <div className=\"z-dl__item\"><dt className=\"z-dl__term\">…</dt><dd className=\"z-dl__description\">…</dd></div>."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "space-1-5",
+    "space-2",
+    "space-4",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-regular",
+    "leading-ui"
+   ],
+   "classes": [
+    "z-dl",
+    "z-dl__item",
+    "z-dl__term",
+    "z-dl__info",
+    "z-dl__description"
+   ],
+   "a11y": "Marcado nativo <dl>/<dt>/<dd> (cada par en un <div>, permitido por HTML): los lectores anuncian la lista de descripciones y el número de términos. La disposición en columnas es solo visual.",
+   "examples": [
+    {
+     "title": "Horizontal con separadores",
+     "code": "<DescriptionList\n  divided\n  items={[\n    { term: \"Status\", description: <Badge tone=\"success\">Active</Badge> },\n    { term: \"Region\", description: \"eu-west-1\", info: \"Primary\" },\n    { term: \"Created\", description: \"Nov 2, 2026\" },\n    { term: \"Owner\", description: \"ana@example.com\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Vertical y compacta",
+     "code": "<DescriptionList\n  orientation=\"vertical\"\n  size=\"sm\"\n  items={[\n    { term: \"Plan\", description: \"Team\" },\n    { term: \"Seats\", description: \"12 of 20\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Data List de Shark y KeyValue de zutool.",
+   "behavior": "none",
+   "file": "zui/src/components/data/DescriptionList.manifest.json"
+  },
+  {
+   "name": "Item",
+   "exports": [
+    "ItemGroup"
+   ],
+   "group": "data",
+   "description": "Fila de contenido con medio (avatar, icono o imagen), título, descripción, metadato y acciones; enlace opcional que cubre toda la fila. ItemGroup las agrupa en una lista.",
+   "import": "import { Item, ItemGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "media",
+     "type": "ReactNode",
+     "description": "Medio inicial propio (Avatar, imagen)."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono inicial en un recuadro."
+    },
+    {
+     "name": "image",
+     "type": "string",
+     "description": "Imagen inicial (con `imageAlt`, vacío por defecto: decorativa)."
+    },
+    {
+     "name": "imageAlt",
+     "type": "string",
+     "default": ""
+    },
+    {
+     "name": "meta",
+     "type": "ReactNode",
+     "description": "Texto al final (hora, tamaño)."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode",
+     "description": "Acciones al final; quedan por encima del enlace."
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "El título pasa a ser un enlace cuya zona de clic cubre la fila."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "muted",
+      "outline"
+     ],
+     "default": "default"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "ItemGroup.header",
+     "type": "ReactNode",
+     "description": "Cabecera visible; si es texto, nombra la lista."
+    },
+    {
+     "name": "ItemGroup.divided",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "ItemGroup.framed",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "item-radius",
+    "space-1",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "surface-2",
+    "line",
+    "line-strong",
+    "glass-border",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "fg",
+    "fg-muted",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "leading-ui",
+    "leading-snug",
+    "tracking-wide",
+    "layer-raised",
+    "row-hover",
+    "accent-ring",
+    "focus-width",
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-item",
+    "z-item__media",
+    "z-item__icon",
+    "z-item__image",
+    "z-item__content",
+    "z-item__title",
+    "z-item__link",
+    "z-item__description",
+    "z-item__meta",
+    "z-item__actions",
+    "z-item-group",
+    "z-item-group__header",
+    "z-item-group__list",
+    "z-item-group__entry"
+   ],
+   "a11y": "Con `href`, el enlace es el título (su nombre accesible es el título) y su zona de clic se extiende a la fila con un ::after; las acciones siguen siendo controles propios, por encima. El foco del enlace se dibuja en la fila entera. ItemGroup es role=\"list\" y cada hijo un listitem; la cabecera de texto nombra la lista.",
+   "examples": [
+    {
+     "title": "Grupo con avatar, metadato y acción",
+     "code": "<ItemGroup header=\"Team\" divided framed>\n  <Item media={<Avatar name=\"Ana Ruiz\" />} title=\"Ana Ruiz\" description=\"Owner\" meta=\"Online\" actions={<IconButton icon=\"ellipsis-horizontal\" label=\"More for Ana\" variant=\"ghost\" size=\"sm\" />} />\n  <Item media={<Avatar name=\"Leo Park\" />} title=\"Leo Park\" description=\"Editor\" meta=\"2 h ago\" />\n</ItemGroup>"
+    },
+    {
+     "title": "Con icono y enlace",
+     "code": "<Item icon=\"document-text\" title=\"Quarterly report.pdf\" description=\"2.4 MB · PDF\" href=\"/tokens\" variant=\"outline\" />"
+    },
+    {
+     "title": "Atenuado y compacto",
+     "code": "<Item size=\"sm\" variant=\"muted\" icon=\"bell\" title=\"Notifications\" description=\"3 unread\" />"
+    }
+   ],
+   "origin": "Item de Shark; ListRow y MemberRow de zutool. Enlace de fila con el patrón Link Overlay.",
+   "behavior": "none",
+   "file": "zui/src/components/data/Item.manifest.json"
   },
   {
    "name": "Kbd",
@@ -3900,7 +6349,7 @@
   {
    "name": "Progress",
    "group": "data",
-   "description": "Barra de avance de una tarea, determinada o indeterminada.",
+   "description": "Barra de avance de una tarea, determinada o indeterminada; horizontal o vertical, continua o por tramos.",
    "import": "import { Progress } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -3946,6 +6395,26 @@
      "type": "boolean",
      "default": false,
      "description": "Muestra el porcentaje."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "`vertical` crece de abajo arriba y ocupa el alto del contenedor (mínimo 96 px)."
+    },
+    {
+     "name": "segments",
+     "type": "number",
+     "description": "Divide la barra en tramos iguales (2–100), con el tramo en curso lleno en parte. Solo con valor."
+    },
+    {
+     "name": "valueText",
+     "type": "string",
+     "description": "aria-valuetext («3 of 5 steps»)."
     }
    ],
    "states": [
@@ -3987,9 +6456,13 @@
     "warning-text"
    ],
    "classes": [
-    "z-progress"
+    "z-progress",
+    "z-progress__track",
+    "z-progress__fill",
+    "z-progress__segment",
+    "z-progress__value"
    ],
-   "a11y": "role=\"progressbar\" con aria-valuenow; sin valor queda indeterminada.",
+   "a11y": "role=\"progressbar\" con aria-valuenow (y aria-valuetext si se da); sin valor queda indeterminada. En vertical y por tramos sigue siendo una sola barra para las tecnologías de apoyo: los tramos son decorativos.",
    "examples": [
     {
      "title": "Determinada",
@@ -3998,6 +6471,14 @@
     {
      "title": "Indeterminada",
      "code": "<Progress label=\"Syncing\" size=\"sm\" />"
+    },
+    {
+     "title": "Por tramos",
+     "code": "<Progress label=\"Onboarding\" value={3} max={5} segments={5} valueText=\"3 of 5 steps\" tone=\"success\" />"
+    },
+    {
+     "title": "Vertical",
+     "code": "<div style={{ height: 120, display: \"flex\", gap: 16 }}>\n  <Progress label=\"CPU\" value={72} orientation=\"vertical\" showValue />\n  <Progress label=\"Memory\" value={38} orientation=\"vertical\" tone=\"info\" showValue />\n  <Progress label=\"Disk\" value={4} max={5} segments={5} orientation=\"vertical\" tone=\"warning\" />\n</div>"
     }
    ],
    "origin": "Barra de progreso de zutool.",
@@ -4164,6 +6645,16 @@
      "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta."
     },
     {
+     "name": "trend",
+     "type": "(number | null)[]",
+     "description": "Serie del minigráfico de tendencia bajo el valor (Sparkline)."
+    },
+    {
+     "name": "trendProps",
+     "type": "Omit<SparklineProps, \"values\">",
+     "description": "Forma (line, area, bar), color 1–8 y nombre del minigráfico. Por defecto, área con el color 1 y la etiqueta como nombre."
+    },
+    {
      "name": "onClick",
      "type": "() => void",
      "description": "Vuelve la tesela un botón."
@@ -4234,10 +6725,13 @@
     "warning-solid",
     "warning-text",
     "weight-display",
-    "weight-medium"
+    "weight-medium",
+    "chart-1",
+    "chart-area-opacity"
    ],
    "classes": [
-    "z-stat"
+    "z-stat",
+    "z-sparkline"
    ],
    "a11y": "div; con onClick pasa a ser button con todo el contenido como nombre.",
    "examples": [
@@ -4248,10 +6742,101 @@
     {
      "title": "Destacada y activable",
      "code": "<StatTile variant=\"solid\" label=\"Open incidents\" value={3} onClick={() => navigate(\"/incidents\")} />"
+    },
+    {
+     "title": "Con tendencia",
+     "code": "<StatTile label=\"Revenue\" value=\"$112k\" delta=\"+15%\" deltaTone=\"success\" trend={[42, 48, 45, 61, 66, 72, 69, 84, 90, 88, 97, 112]} />"
     }
    ],
    "origin": "StatTile de ui-glass y tarjeta KPI de zutool.",
    "file": "zui/src/components/data/StatTile.manifest.json"
+  },
+  {
+   "name": "StatusDot",
+   "group": "data",
+   "description": "Punto de estado con su texto (en línea, ocupado, caído). El texto siempre está: visible o solo para lectores.",
+   "import": "import { StatusDot } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Texto del estado."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "success",
+      "info",
+      "warning",
+      "danger"
+     ],
+     "default": "neutral"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "Punto de 6, 8 y 10 px."
+    },
+    {
+     "name": "hideLabel",
+     "type": "boolean",
+     "default": false,
+     "description": "El texto pasa a z-sr-only."
+    },
+    {
+     "name": "pulse",
+     "type": "boolean",
+     "default": false,
+     "description": "Halo que late; quieto con prefers-reduced-motion."
+    }
+   ],
+   "states": [
+    "rest",
+    "pulse"
+   ],
+   "tokens": [
+    "fg",
+    "fg-subtle",
+    "success",
+    "info",
+    "warning",
+    "danger",
+    "radius-full",
+    "space-1-5",
+    "text-small",
+    "text-caption",
+    "text-body",
+    "leading-ui",
+    "ease-out"
+   ],
+   "classes": [
+    "z-status",
+    "z-status__dot",
+    "z-status__label"
+   ],
+   "a11y": "El color no va solo: el texto del estado siempre está en el árbol de accesibilidad (visible o con z-sr-only). El punto es decorativo (aria-hidden). Con colores forzados el punto lleva borde CanvasText. El latido solo se anima sin prefers-reduced-motion.",
+   "examples": [
+    {
+     "title": "Tonos",
+     "code": "<div style={{ display: \"flex\", gap: 16, flexWrap: \"wrap\" }}>\n  <StatusDot tone=\"success\" label=\"Online\" pulse />\n  <StatusDot tone=\"warning\" label=\"Degraded\" />\n  <StatusDot tone=\"danger\" label=\"Unreachable\" />\n  <StatusDot tone=\"info\" label=\"Deploying\" />\n  <StatusDot label=\"Offline\" />\n</div>"
+    },
+    {
+     "title": "Solo el punto (texto para lectores)",
+     "code": "<StatusDot tone=\"success\" label=\"Connected\" hideLabel size=\"lg\" />"
+    }
+   ],
+   "origin": "Status de Shark; computer-dot de zutool.",
+   "behavior": "none",
+   "file": "zui/src/components/data/StatusDot.manifest.json"
   },
   {
    "name": "Table",
@@ -4361,6 +6946,198 @@
    ],
    "origin": "Tabla de datos de zutool y de ui-glass.",
    "file": "zui/src/components/data/Table.manifest.json"
+  },
+  {
+   "name": "Timeline",
+   "exports": [
+    "TimelineItem"
+   ],
+   "group": "data",
+   "description": "Lista ordenada de acontecimientos: punto o icono en una línea, hora en <time datetime>, título y descripción. Alineación al inicio, al final o alterna.",
+   "import": "import { Timeline, TimelineItem } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "end",
+      "alternate"
+     ],
+     "default": "start",
+     "description": "`alternate` reparte los elementos a los dos lados; en un contenedor de menos de 32rem vuelve a una columna."
+    },
+    {
+     "name": "line",
+     "type": "enum",
+     "values": [
+      "solid",
+      "dashed",
+      "dotted"
+     ],
+     "default": "solid",
+     "description": "Trazo entre puntos."
+    },
+    {
+     "name": "dot",
+     "type": "enum",
+     "values": [
+      "circle",
+      "ring",
+      "square"
+     ],
+     "default": "circle",
+     "description": "Forma del punto por defecto."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "animated",
+     "type": "boolean",
+     "default": false,
+     "description": "Entrada escalonada (con `index` en cada elemento); no se anima con prefers-reduced-motion."
+    },
+    {
+     "name": "TimelineItem.title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "TimelineItem.time",
+     "type": "string",
+     "description": "Instante ISO para <time datetime>."
+    },
+    {
+     "name": "TimelineItem.timeLabel",
+     "type": "ReactNode",
+     "description": "Texto visible de la hora (por defecto, `time`)."
+    },
+    {
+     "name": "TimelineItem.description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "TimelineItem.icon",
+     "type": "IconName",
+     "description": "Icono en lugar del punto."
+    },
+    {
+     "name": "TimelineItem.tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "accent",
+      "success",
+      "warning",
+      "danger",
+      "info"
+     ],
+     "default": "neutral"
+    },
+    {
+     "name": "TimelineItem.dot",
+     "type": "enum",
+     "values": [
+      "circle",
+      "ring",
+      "square"
+     ],
+     "description": "Forma del punto de este elemento."
+    },
+    {
+     "name": "TimelineItem.status",
+     "type": "enum",
+     "values": [
+      "done",
+      "current",
+      "upcoming"
+     ],
+     "description": "`current` lleva aria-current=\"step\"; `upcoming` atenúa y discontinúa la línea."
+    },
+    {
+     "name": "TimelineItem.index",
+     "type": "number",
+     "description": "Orden de entrada de la animación."
+    }
+   ],
+   "states": [
+    "rest",
+    "current",
+    "upcoming"
+   ],
+   "tokens": [
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-5",
+    "line",
+    "line-strong",
+    "surface-2",
+    "surface-solid",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "warning-soft",
+    "warning-text",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "info",
+    "info-soft",
+    "info-text",
+    "radius-full",
+    "radius-xs",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "leading-ui",
+    "leading-normal",
+    "duration-slow",
+    "ease-out"
+   ],
+   "classes": [
+    "z-timeline-list",
+    "z-timeline-list__item",
+    "z-timeline-list__marker",
+    "z-timeline-list__dot",
+    "z-timeline-list__body",
+    "z-timeline-list__time",
+    "z-timeline-list__title",
+    "z-timeline-list__description"
+   ],
+   "a11y": "Lista ordenada (<ol>): el lector anuncia el número de elementos y la posición. El punto y la línea son decorativos (aria-hidden); el estado no va solo en el color: el elemento en curso lleva aria-current=\"step\" y la hora va en <time datetime>. El tono acompaña, no sustituye, al texto.",
+   "examples": [
+    {
+     "title": "Actividad con iconos y tonos",
+     "code": "<Timeline>\n  <TimelineItem icon=\"rocket-launch\" tone=\"success\" title=\"Deployed to production\" time=\"2026-11-20T10:42\" timeLabel=\"10:42\" description=\"Build 4812 is live in all regions.\" status=\"done\" />\n  <TimelineItem icon=\"check\" tone=\"info\" title=\"Review approved\" time=\"2026-11-20T09:15\" timeLabel=\"09:15\" status=\"done\" />\n  <TimelineItem icon=\"clock\" tone=\"accent\" title=\"Smoke tests\" timeLabel=\"Running\" status=\"current\" />\n  <TimelineItem title=\"Announce release\" timeLabel=\"Next\" status=\"upcoming\" />\n</Timeline>"
+    },
+    {
+     "title": "Alterna con anillos y línea discontinua",
+     "code": "<Timeline align=\"alternate\" dot=\"ring\" line=\"dashed\">\n  <TimelineItem tone=\"accent\" title=\"Kick-off\" time=\"2026-01-12\" timeLabel=\"Jan 12\" description=\"Scope and team.\" />\n  <TimelineItem tone=\"info\" title=\"Beta\" time=\"2026-04-02\" timeLabel=\"Apr 2\" description=\"First 200 customers.\" />\n  <TimelineItem tone=\"success\" title=\"General availability\" time=\"2026-09-30\" timeLabel=\"Sep 30\" />\n</Timeline>"
+    },
+    {
+     "title": "Al final, compacta y con puntos cuadrados",
+     "code": "<Timeline align=\"end\" size=\"sm\" dot=\"square\" line=\"dotted\">\n  <TimelineItem title=\"Invoice sent\" time=\"2026-11-02\" timeLabel=\"Nov 2\" />\n  <TimelineItem title=\"Payment received\" time=\"2026-11-09\" timeLabel=\"Nov 9\" tone=\"success\" />\n</Timeline>"
+    }
+   ],
+   "origin": "NeonBlade Timeline y ActivityLogs de zutool, con el estándar liquid glass.",
+   "behavior": "none",
+   "file": "zui/src/components/data/Timeline.manifest.json"
   },
   {
    "name": "Alert",
@@ -10799,7 +13576,7 @@
      "name": "items",
      "type": "AccordionItem[]",
      "required": true,
-     "description": "{ value, title, content, icon?, disabled? }"
+     "description": "{ value, title, content, icon?, disabled? } `disabled` en un item lo deja sin abrir ni cerrar y fuera de las flechas."
     },
     {
      "name": "type",
@@ -10834,14 +13611,31 @@
       6
      ],
      "default": 3
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "card"
+     ],
+     "default": "plain",
+     "description": "`card`: cada sección es una tarjeta separada."
+    },
+    {
+     "name": "collapsible",
+     "type": "boolean",
+     "default": true,
+     "description": "Con type=\"single\", `false` impide cerrar la sección abierta: siempre queda una."
     }
    ],
    "states": [
-    "open",
     "closed",
-    "hover",
+    "disabled",
     "focus",
-    "disabled"
+    "hover",
+    "locked",
+    "open"
    ],
    "tokens": [
     "duration-fast",
@@ -10863,7 +13657,13 @@
     "focus-width",
     "item-radius",
     "space-2-5",
-    "weight-medium"
+    "weight-medium",
+    "card-border",
+    "card-bg",
+    "card-shadow",
+    "radius-lg",
+    "line-strong",
+    "space-1"
    ],
    "classes": [
     "z-accordion",
@@ -10874,11 +13674,15 @@
     "z-accordion__content",
     "z-accordion__body"
    ],
-   "a11y": "Patrón APG «accordion»: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
+   "a11y": "Patrón APG «accordion»: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras. Con collapsible={false}, la cabecera de la sección abierta lleva aria-disabled=\"true\" (sigue enfocable y en las flechas) y no la cierra. Un item deshabilitado es un botón disabled: no se abre y las flechas lo saltan.",
    "examples": [
     {
      "title": "Preguntas frecuentes",
      "code": "<Accordion\n  defaultValue={[\"billing\"]}\n  items={[\n    { value: \"billing\", title: \"How does billing work?\", content: <p>You are charged monthly.</p> },\n    { value: \"cancel\", title: \"Can I cancel anytime?\", content: <p>Yes, from your account settings.</p> },\n  ]}\n/>"
+    },
+    {
+     "title": "Tarjeta, siempre una abierta e item deshabilitado",
+     "code": "<Accordion\n  variant=\"card\"\n  collapsible={false}\n  defaultValue={[\"plan\"]}\n  items={[\n    { value: \"plan\", title: \"Plan\", content: \"Pro, billed yearly.\" },\n    { value: \"seats\", title: \"Seats\", content: \"12 of 20 in use.\" },\n    { value: \"sso\", title: \"Single sign-on\", content: \"Enterprise only.\", disabled: true },\n  ]}\n/>"
     }
    ],
    "origin": "Nuevo; accesibilidad según el patrón APG, con primitivas propias.",
@@ -10887,6 +13691,10 @@
     {
      "title": "Preguntas frecuentes (una abierta a la vez; data-type=\"multiple\" permite varias)",
      "code": "<div class=\"z-accordion\" data-type=\"single\">\n  <div class=\"z-accordion__item\" data-state=\"open\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"faq-1-content\" id=\"faq-1\">\n        <span class=\"z-accordion__title\">How does billing work?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"faq-1-content\" aria-labelledby=\"faq-1\">\n      <div class=\"z-accordion__body\">You are charged monthly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"faq-2-content\" id=\"faq-2\">\n        <span class=\"z-accordion__title\">Can I cancel anytime?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"faq-2-content\" aria-labelledby=\"faq-2\" hidden>\n      <div class=\"z-accordion__body\">Yes, from the billing page.</div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Tarjeta, siempre una abierta e item deshabilitado (data-variant=\"card\", data-collapsible=\"false\")",
+     "code": "<div class=\"z-accordion\" data-type=\"single\" data-variant=\"card\" data-collapsible=\"false\">\n  <div class=\"z-accordion__item\" data-state=\"open\" data-value=\"plan\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"acc-plan-content\" id=\"acc-plan\">\n        <span class=\"z-accordion__title\">Plan</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"acc-plan-content\" aria-labelledby=\"acc-plan\">\n      <div class=\"z-accordion__body\">Pro, billed yearly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\" data-value=\"seats\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"acc-seats-content\" id=\"acc-seats\">\n        <span class=\"z-accordion__title\">Seats</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"acc-seats-content\" aria-labelledby=\"acc-seats\" hidden>\n      <div class=\"z-accordion__body\">12 of 20 in use.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\" data-value=\"sso\" data-disabled>\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" data-disabled aria-expanded=\"false\" aria-controls=\"acc-sso-content\" id=\"acc-sso\" disabled>\n        <span class=\"z-accordion__title\">Single sign-on</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"acc-sso-content\" aria-labelledby=\"acc-sso\" hidden>\n      <div class=\"z-accordion__body\">Enterprise only.</div>\n    </div>\n  </div>\n</div>"
     }
    ],
    "file": "zui/src/components/navigation/Accordion.manifest.json"
@@ -10894,7 +13702,7 @@
   {
    "name": "Breadcrumb",
    "group": "navigation",
-   "description": "Ruta jerárquica hasta la página actual.",
+   "description": "Ruta jerárquica hasta la página actual, con separador propio y migas del medio colapsadas en un menú.",
    "import": "import { Breadcrumb } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -10907,13 +13715,42 @@
      "name": "label",
      "type": "string",
      "default": "Breadcrumb"
+    },
+    {
+     "name": "maxItems",
+     "type": "number",
+     "description": "Con más migas que esto, las del medio pasan a un menú «…» (patrón menu button)."
+    },
+    {
+     "name": "itemsBeforeCollapse",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "itemsAfterCollapse",
+     "type": "number",
+     "default": 1,
+     "description": "Migas visibles al final al colapsar (la actual incluida)."
+    },
+    {
+     "name": "collapsedLabel",
+     "type": "string",
+     "default": "Show more breadcrumbs",
+     "description": "Nombre accesible del botón «…»."
+    },
+    {
+     "name": "separator",
+     "type": "ReactNode",
+     "description": "Separador propio (\"/\", \"·\" o un nodo); por defecto, un chevrón que se refleja en RTL."
     }
    ],
    "states": [
     "rest",
     "hover",
     "focus",
-    "current"
+    "current",
+    "collapsed",
+    "expanded"
    ],
    "tokens": [
     "duration-fast",
@@ -10928,7 +13765,10 @@
     "accent-ring",
     "focus-width",
     "space-1-5",
-    "weight-medium"
+    "weight-medium",
+    "surface-2",
+    "touch-target",
+    "focus-offset"
    ],
    "classes": [
     "z-breadcrumb",
@@ -10936,16 +13776,32 @@
     "z-breadcrumb__item",
     "z-breadcrumb__link",
     "z-breadcrumb__current",
-    "z-breadcrumb__separator"
+    "z-breadcrumb__separator",
+    "z-breadcrumb__more"
    ],
-   "a11y": "nav con nombre accesible y lista ordenada; el último elemento lleva aria-current=page y los separadores son decorativos.",
+   "a11y": "nav con nombre accesible y lista ordenada; el último elemento lleva aria-current=page y los separadores son decorativos. Colapsadas, las migas del medio quedan tras un botón «…» con nombre accesible y aria-haspopup=menu que abre un Menu (flechas, Intro, Escape devuelve el foco al botón); cada entrada es un enlace o una acción. Un separador propio también es decorativo.",
    "examples": [
     {
      "title": "Tres niveles",
      "code": "<Breadcrumb\n  items={[\n    { label: \"Home\", href: \"/\" },\n    { label: \"Projects\", href: \"/projects\" },\n    { label: \"Website redesign\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Colapsada con separador propio",
+     "code": "<Breadcrumb\n  maxItems={3}\n  separator=\"/\"\n  items={[\n    { label: \"Home\", href: \"/\" },\n    { label: \"Workspace\", href: \"/w\" },\n    { label: \"Projects\", href: \"/w/projects\" },\n    { label: \"Atlas\", href: \"/w/projects/atlas\" },\n    { label: \"Settings\" },\n  ]}\n/>"
     }
    ],
    "origin": "Nuevo, sobre los tokens de fila de zutool.",
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Tres niveles",
+     "code": "<nav aria-label=\"Breadcrumb\" class=\"z-breadcrumb\">\n  <ol class=\"z-breadcrumb__list\">\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/\">\n        <span class=\"z-breadcrumb__label\">Home</span>\n      </a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\">\n        <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n      </span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/projects\">\n        <span class=\"z-breadcrumb__label\">Projects</span>\n      </a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\">\n        <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n      </span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <span class=\"z-breadcrumb__current\" aria-current=\"page\">\n        <span class=\"z-breadcrumb__label\">Website redesign</span>\n      </span>\n    </li>\n  </ol>\n</nav>"
+    },
+    {
+     "title": "Colapsada con menú (data-z-open y un .z-menu[popover] con enlaces)",
+     "code": "<nav aria-label=\"Breadcrumb\" class=\"z-breadcrumb\">\n  <ol class=\"z-breadcrumb__list\">\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/\"><span class=\"z-breadcrumb__label\">Home</span></a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\" data-collapsed>\n      <button type=\"button\" class=\"z-breadcrumb__more\" aria-label=\"Show more breadcrumbs\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#crumbs-more\"><z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon></button>\n      <div id=\"crumbs-more\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Show more breadcrumbs\" data-size=\"md\">\n        <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/docs/agents\"><span class=\"z-menu__text\">Workspace</span></a>\n        <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/components\"><span class=\"z-menu__text\">Projects</span></a>\n      </div>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/tokens\"><span class=\"z-breadcrumb__label\">Atlas</span></a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <span class=\"z-breadcrumb__current\" aria-current=\"page\"><span class=\"z-breadcrumb__label\">Settings</span></span>\n    </li>\n  </ol>\n</nav>"
+    }
+   ],
    "file": "zui/src/components/navigation/Breadcrumb.manifest.json"
   },
   {
@@ -11189,14 +14045,14 @@
   {
    "name": "Stepper",
    "group": "navigation",
-   "description": "Progreso por pasos numerados, horizontal o vertical.",
+   "description": "Progreso por pasos de un flujo, con icono y estado de carga por paso y, opcionalmente, un panel por paso con Anterior/Siguiente.",
    "import": "import { Stepper } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
      "name": "steps",
      "type": "StepItem[]",
      "required": true,
-     "description": "{ label, description? }"
+     "description": "{ label, description?, icon?, loading?, content? }. Con algún `content`, el Stepper muestra el panel del paso actual y Anterior/Siguiente."
     },
     {
      "name": "current",
@@ -11227,11 +14083,37 @@
      "name": "statusLabels",
      "type": "{ complete: string; current: string; upcoming: string }",
      "default": "{ complete: \"Completed\", current: \"Current\", upcoming: \"Upcoming\" }"
+    },
+    {
+     "name": "onStepChange",
+     "type": "(index: number) => void",
+     "description": "Con paneles: Anterior y Siguiente piden el índice nuevo (Siguiente en el último paso pide steps.length)."
+    },
+    {
+     "name": "completed",
+     "type": "ReactNode",
+     "description": "Con paneles: lo que se muestra cuando todos los pasos están completos."
+    },
+    {
+     "name": "navLabels",
+     "type": "{ previous: string; next: string; finish: string }",
+     "default": {
+      "previous": "Back",
+      "next": "Next",
+      "finish": "Finish"
+     }
+    },
+    {
+     "name": "nextDisabled",
+     "type": "boolean",
+     "default": false,
+     "description": "Con paneles: Siguiente desactivado (paso no válido). También mientras el paso actual está en `loading`."
     }
    ],
    "states": [
     "complete",
     "current",
+    "loading",
     "upcoming"
    ],
    "tokens": [
@@ -11263,7 +14145,8 @@
     "space-3-5",
     "space-8",
     "text-body",
-    "weight-medium"
+    "weight-medium",
+    "radius-full"
    ],
    "classes": [
     "z-stepper",
@@ -11271,16 +14154,36 @@
     "z-stepper__body",
     "z-stepper__marker",
     "z-stepper__label",
-    "z-stepper__description"
+    "z-stepper__description",
+    "z-stepper__spinner",
+    "z-stepper-panels",
+    "z-stepper__panels",
+    "z-stepper__panel",
+    "z-stepper__nav"
    ],
-   "a11y": "Lista ordenada con nombre; el paso actual lleva aria-current=step y cada paso anuncia su estado con texto oculto visualmente.",
+   "a11y": "Lista ordenada con nombre; el paso actual lleva aria-current=step y cada paso anuncia su estado con texto oculto visualmente. Un paso en carga lleva aria-busy y su marcador gira (fijo con movimiento reducido). Con paneles, cada panel es un group nombrado por la etiqueta de su paso; los demás llevan hidden (conservan lo escrito). Tras Anterior o Siguiente el foco va al panel nuevo, que lee el paso al que se llega; Siguiente se desactiva mientras el paso carga.",
    "examples": [
     {
      "title": "Alta en tres pasos",
      "code": "<Stepper\n  current={1}\n  steps={[\n    { label: \"Account\", description: \"Email and password\" },\n    { label: \"Profile\" },\n    { label: \"Confirm\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Con paneles, iconos y carga",
+     "code": "const [step, setStep] = useState(0);\n\n<Stepper\n  current={step}\n  onStepChange={setStep}\n  steps={[\n    { label: \"Account\", icon: \"user\", content: <AccountForm /> },\n    { label: \"Plan\", icon: \"credit-card\", content: <PlanPicker /> },\n    { label: \"Deploy\", icon: \"rocket-launch\", loading: deploying, content: <DeployLog /> },\n  ]}\n  completed={<p>All set.</p>}\n/>"
     }
    ],
    "origin": "Nuevo.",
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Alta en tres pasos",
+     "code": "<ol class=\"z-stepper\" data-orientation=\"horizontal\" aria-label=\"Progress\">\n  <li class=\"z-stepper__step\" data-state=\"complete\">\n    <span class=\"z-stepper__body\">\n      <span class=\"z-stepper__marker\" aria-hidden=\"true\">\n        <z-icon name=\"check\" size=\"14\"></z-icon>\n      </span>\n      <span class=\"z-stepper__text\">\n        <span class=\"z-stepper__label\">Account</span>\n        <span class=\"z-stepper__description\">Email and password</span>\n        <span class=\"z-sr-only\">Completed</span>\n      </span>\n    </span>\n  </li>\n  <li class=\"z-stepper__step\" data-state=\"current\" aria-current=\"step\">\n    <span class=\"z-stepper__body\">\n      <span class=\"z-stepper__marker\" aria-hidden=\"true\">2</span>\n      <span class=\"z-stepper__text\">\n        <span class=\"z-stepper__label\">Profile</span>\n        <span class=\"z-sr-only\">Current</span>\n      </span>\n    </span>\n  </li>\n  <li class=\"z-stepper__step\" data-state=\"upcoming\">\n    <span class=\"z-stepper__body\">\n      <span class=\"z-stepper__marker\" aria-hidden=\"true\">3</span>\n      <span class=\"z-stepper__text\">\n        <span class=\"z-stepper__label\">Confirm</span>\n        <span class=\"z-sr-only\">Upcoming</span>\n      </span>\n    </span>\n  </li>\n</ol>"
+    },
+    {
+     "title": "Con paneles (Anterior/Siguiente; el foco va al panel nuevo; emite z:change)",
+     "code": "<div class=\"z-stepper-panels\" data-orientation=\"horizontal\" data-current=\"0\">\n  <ol class=\"z-stepper\" data-orientation=\"horizontal\" aria-label=\"Progress\">\n    <li class=\"z-stepper__step\" data-state=\"current\" aria-current=\"step\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\"><z-icon name=\"user\" size=\"14\"></z-icon></span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-0\">Account</span><span class=\"z-sr-only\">Current</span></span>\n      </span>\n    </li>\n    <li class=\"z-stepper__step\" data-state=\"upcoming\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\"><z-icon name=\"credit-card\" size=\"14\"></z-icon></span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-1\">Plan</span><span class=\"z-sr-only\">Upcoming</span></span>\n      </span>\n    </li>\n    <li class=\"z-stepper__step\" data-state=\"upcoming\">\n      <span class=\"z-stepper__body\">\n        <span class=\"z-stepper__marker\" aria-hidden=\"true\">3</span>\n        <span class=\"z-stepper__text\"><span class=\"z-stepper__label\" id=\"signup-label-2\">Review</span><span class=\"z-sr-only\">Upcoming</span></span>\n      </span>\n    </li>\n  </ol>\n  <div class=\"z-stepper__panels\">\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-0\" tabindex=\"-1\"><p>Create your account.</p></div>\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-1\" tabindex=\"-1\" hidden><p>Pick a plan.</p></div>\n    <div class=\"z-stepper__panel\" role=\"group\" aria-labelledby=\"signup-label-2\" tabindex=\"-1\" hidden><p>Review and confirm.</p></div>\n    <div class=\"z-stepper__panel\" data-completed tabindex=\"-1\" hidden><p>All set.</p></div>\n  </div>\n  <div class=\"z-stepper__nav\">\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-step=\"prev\" disabled>Back</button>\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-step=\"next\">Next</button>\n  </div>\n</div>"
+    }
+   ],
    "file": "zui/src/components/navigation/Stepper.manifest.json"
   },
   {
@@ -11428,7 +14331,7 @@
   {
    "name": "Tree",
    "group": "navigation",
-   "description": "Árbol jerárquico con expansión, selección y navegación por teclado.",
+   "description": "Árbol jerárquico con expansión, selección simple o múltiple, casillas en cascada, renombrar y navegación por teclado.",
    "import": "import { Tree, type TreeNode } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -11467,6 +14370,64 @@
     {
      "name": "onSelect",
      "type": "(id: string, node: TreeNode) => void"
+    },
+    {
+     "name": "selectionMode",
+     "type": "enum",
+     "values": [
+      "single",
+      "multiple"
+     ],
+     "default": "single",
+     "description": "`multiple`: aria-multiselectable; Ctrl/Cmd y Mayús con el puntero, Espacio, Mayús+flechas y Ctrl+A."
+    },
+    {
+     "name": "selectedIds",
+     "type": "string[]",
+     "description": "Ids seleccionados (controlado, selección múltiple)."
+    },
+    {
+     "name": "defaultSelectedIds",
+     "type": "string[]"
+    },
+    {
+     "name": "onSelectedChange",
+     "type": "(ids: string[]) => void"
+    },
+    {
+     "name": "checkable",
+     "type": "boolean",
+     "default": false,
+     "description": "Casilla por nodo con aria-checked en cascada: una rama vale true, false o mixed según sus hijos."
+    },
+    {
+     "name": "checked",
+     "type": "string[]",
+     "description": "Ids marcados (controlado). Las ramas se deducen."
+    },
+    {
+     "name": "defaultChecked",
+     "type": "string[]"
+    },
+    {
+     "name": "onCheckedChange",
+     "type": "(ids: string[]) => void"
+    },
+    {
+     "name": "renamable",
+     "type": "boolean",
+     "default": false,
+     "description": "F2 o doble clic sobre la etiqueta abre un campo: Intro confirma, Escape cancela."
+    },
+    {
+     "name": "onRename",
+     "type": "(id: string, label: string, node: TreeNode) => void"
+    },
+    {
+     "name": "renameLabel",
+     "type": "string",
+     "default": "Rename",
+     "description": "Nombre accesible del campo de renombrar."
     }
    ],
    "states": [
@@ -11476,7 +14437,10 @@
     "selected",
     "expanded",
     "collapsed",
-    "disabled"
+    "disabled",
+    "checked",
+    "indeterminate",
+    "renaming"
    ],
    "tokens": [
     "duration-fast",
@@ -11496,7 +14460,13 @@
     "space-1-5",
     "text-body",
     "touch-target",
-    "weight-medium"
+    "weight-medium",
+    "accent",
+    "accent-soft",
+    "control-bg",
+    "control-border",
+    "control-radius-sm",
+    "space-1"
    ],
    "classes": [
     "z-tree",
@@ -11505,13 +14475,23 @@
     "z-tree__toggle",
     "z-tree__icon",
     "z-tree__label",
-    "z-tree__group"
+    "z-tree__group",
+    "z-tree__check",
+    "z-tree__rename"
    ],
-   "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten.",
+   "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten. Con selectionMode=\"multiple\" el árbol lleva aria-multiselectable: Espacio alterna la selección del nodo enfocado, Mayús+flechas extiende el rango desde el ancla, Ctrl+A selecciona todo lo visible; con el puntero, Ctrl/Cmd alterna y Mayús extiende. Con checkable cada treeitem lleva aria-checked (true, false o mixed) y Espacio marca o desmarca el nodo y todo lo que cuelga de él. Con renamable, F2 o doble clic abren un campo con nombre accesible; Intro confirma, Escape cancela y el foco vuelve al nodo.",
    "examples": [
     {
      "title": "Explorador de archivos",
      "code": "<Tree\n  label=\"Project files\"\n  defaultExpanded={[\"src\"]}\n  onSelect={(id) => openFile(id)}\n  nodes={[\n    { id: \"src\", label: \"src\", icon: \"folder\", children: [\n      { id: \"src/index.ts\", label: \"index.ts\", icon: \"document\" },\n      { id: \"src/app.tsx\", label: \"app.tsx\", icon: \"document\" },\n    ] },\n    { id: \"readme\", label: \"README.md\", icon: \"document\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Selección múltiple y casillas",
+     "code": "<Tree\n  label=\"Sync folders\"\n  selectionMode=\"multiple\"\n  checkable\n  defaultExpanded={[\"photos\"]}\n  defaultChecked={[\"photos/2025\"]}\n  onCheckedChange={(ids) => setSynced(ids)}\n  nodes={[\n    { id: \"photos\", label: \"Photos\", icon: \"folder\", children: [\n      { id: \"photos/2025\", label: \"2025\", icon: \"folder\" },\n      { id: \"photos/2026\", label: \"2026\", icon: \"folder\" },\n    ] },\n    { id: \"music\", label: \"Music\", icon: \"folder\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Renombrar",
+     "code": "<Tree\n  label=\"Files\"\n  renamable\n  onRename={(id, label) => rename(id, label)}\n  nodes={files}\n/>"
     }
    ],
    "origin": "Nuevo, con el aspecto de las filas de lista de zutool.",
@@ -11520,6 +14500,10 @@
     {
      "title": "Explorador de archivos (las ramas plegadas llevan hidden; emite z:change)",
      "code": "<ul role=\"tree\" aria-label=\"Project files\" class=\"z-tree\">\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"true\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"1\" tabindex=\"0\" data-value=\"src\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"open\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">src</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\">\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"src/index.ts\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">index.ts</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"src/app.tsx\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">app.tsx</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"false\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"3\" tabindex=\"-1\" data-value=\"src/styles\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">styles</span>\n        </div>\n        <ul role=\"group\" class=\"z-tree__group\" hidden>\n          <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"3\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"src/styles/base.css\">\n            <div class=\"z-tree__row\" style=\"--z-tree-level:2\">\n              <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n              <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n              <span class=\"z-tree__label\">base.css</span>\n            </div>\n          </li>\n          <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"3\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"src/styles/theme.css\">\n            <div class=\"z-tree__row\" style=\"--z-tree-level:2\">\n              <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n              <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n              <span class=\"z-tree__label\">theme.css</span>\n            </div>\n          </li>\n        </ul>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"false\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"docs\" aria-disabled=\"true\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">docs</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\" hidden>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"1\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"docs/guide.md\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">guide.md</span>\n        </div>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"3\" tabindex=\"-1\" data-value=\"README.md\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">README.md</span>\n    </div>\n  </li>\n</ul>"
+    },
+    {
+     "title": "Selección múltiple, casillas en cascada y renombrar (z:change con values y checked; z:rename cancelable)",
+     "code": "<ul role=\"tree\" aria-label=\"Sync folders\" aria-multiselectable=\"true\" class=\"z-tree\" data-checkable data-renamable>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"true\" aria-selected=\"false\" aria-checked=\"mixed\" aria-level=\"1\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"0\" data-value=\"photos\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"open\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-check__box z-tree__check\" data-state=\"indeterminate\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">Photos</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\">\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"true\" aria-level=\"2\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"photos/2025\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-check__box z-tree__check\" data-state=\"checked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">2025</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"false\" aria-level=\"2\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"photos/2026\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-check__box z-tree__check\" data-state=\"unchecked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">2026</span>\n        </div>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"false\" aria-level=\"1\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"music\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n      <span class=\"z-check__box z-tree__check\" data-state=\"unchecked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">Music</span>\n    </div>\n  </li>\n</ul>"
     }
    ],
    "file": "zui/src/components/navigation/Tree.manifest.json"
