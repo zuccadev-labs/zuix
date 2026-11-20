@@ -152,7 +152,10 @@ function occurrencesOf(config: TimelineConfig): Occurrence[] {
   const hit = byKey?.get(key);
   if (hit) return hit;
   const list = expandEvents({ events: config.events, from: config.date, to: config.date, timeZone: config.timeZone });
-  if (!byKey) dayCache.set(config.events, (byKey = new Map()));
+  if (!byKey) {
+    byKey = new Map();
+    dayCache.set(config.events, byKey);
+  }
   if (byKey.size > 16) byKey.clear();
   byKey.set(key, list);
   return list;

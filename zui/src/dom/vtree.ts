@@ -91,7 +91,7 @@ export function patchChildren(parent: Element, kids: VNode[], slots: SlotRendere
   const keyed = new Map<string, ChildNode>();
   for (const node of existing) {
     const k = keys.get(node);
-    if (k && k.includes(":") && !keyed.has(k)) keyed.set(k, node);
+    if (k?.includes(":") && !keyed.has(k)) keyed.set(k, node);
   }
   kids.forEach((v, i) => {
     const key = keyOf(v);

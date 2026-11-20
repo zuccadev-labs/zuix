@@ -156,7 +156,10 @@ export function eventSpan(event: CalendarEvent, tz: string): Span | null {
   const hit = byKey?.get(key);
   if (hit !== undefined) return hit && { ...hit };
   const span = computeSpan(event, tz);
-  if (!byKey) spans.set(event, (byKey = new Map()));
+  if (!byKey) {
+    byKey = new Map();
+    spans.set(event, byKey);
+  }
   if (byKey.size > 64) byKey.clear();
   byKey.set(key, span);
   return span && { ...span };
