@@ -356,8 +356,10 @@
   .z-select__control[data-state="open"] {
     border-color: var(--z-accent);
   }
+  /* El texto de ejemplo es texto real (no ::placeholder): fg-muted llega a 4,5:1 también sobre un campo en una
+     tarjeta clara; fg-subtle se quedaba en 4,46:1 (axe, zutool claro). */
   .z-select__control[data-placeholder] {
-    color: var(--z-fg-subtle);
+    color: var(--z-fg-muted);
   }
   .z-select__value {
     flex: 1 1 auto;
@@ -1672,7 +1674,7 @@
       color var(--z-duration-fast) var(--z-ease-standard);
   }
   .z-datefield__segment[data-placeholder] {
-    color: var(--z-fg-subtle);
+    color: var(--z-fg-muted);
   }
   .z-datefield__segment:focus {
     background: var(--z-accent-soft);

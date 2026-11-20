@@ -407,7 +407,14 @@ function collect({ TOKENS, families, coarse }) {
           gaps.push(Math.round((rects.get(sorted[i]).left - rects.get(sorted[i - 1]).right) * 10) / 10);
         const autoPushed = sorted.some((k) => {
           const s = getComputedStyle(k);
-          return Number.parseFloat(s.marginLeft) > 24 || Number.parseFloat(s.marginRight) > 24 || Number(s.flexGrow) > 0;
+          const map = k.computedStyleMap?.();
+          return (
+            map?.get("margin-left")?.toString() === "auto" ||
+            map?.get("margin-right")?.toString() === "auto" ||
+            Number.parseFloat(s.marginLeft) > 24 ||
+            Number.parseFloat(s.marginRight) > 24 ||
+            Number(s.flexGrow) > 0
+          );
         });
         const separators =
           [...parent.children].some((k) =>

@@ -258,6 +258,8 @@ radios y material de los tokens.
     de `--z-fg-muted` (4,4:1 → más de 7:1).
   - Botón de quitar de `Chip` de 24 px en la talla md (antes 20, por debajo de WCAG 2.5.8).
   - `ButtonGroup` sin `attached` centra en la fila botones de tallas distintas (quedaban alineados arriba).
+  - El texto de ejemplo de `Select` y de los segmentos vacíos de `DateField` pasa de `--z-fg-subtle` a
+    `--z-fg-muted`: es texto real y en zutool claro sobre tarjeta quedaba en 4,46:1.
 
 
 ## [0.2.0] - 2026-11-18
