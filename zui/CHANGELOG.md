@@ -64,6 +64,24 @@ radios y material de los tokens.
   `setTimeFieldValue()` y `setTimePickerValue()` en `@zuccadev-labs/zuix-zui/dom`. Lógica compartida en
   `core/segments` y `core/time`.
 
+- Formularios y acciones (oleada 3). Nuevos: `InputGroup` (con `InputGroupAddon`, `InputGroupText`,
+  `InputGroupInput`, `InputGroupTextarea`), `PasswordInput` (mostrar u ocultar con aria-pressed, medidor
+  opcional), `NumberInput` (spinbutton con pasos, topes, rueda opcional y formato con `Intl.NumberFormat`),
+  `Listbox` en línea (única o múltiple, grupos, búsqueda por letra), `TagsInput`, `CheckboxGroup` (con casilla
+  «todas»), `Fieldset` y `FieldGroup`, `Form` (validación nativa pintada en los campos y foco al primer error),
+  `Editable`, `ButtonGroup` (+ `ButtonGroupSeparator`), `ToggleGroup`, `CopyButton` y `Swap`.
+- Variantes: Button `outline` y `link`, tamaños `xs` y `xl` (también IconButton); Toggle `variant="ghost"`;
+  SegmentedControl `orientation="vertical"` y `variant="underline"`; Checkbox, Radio (por RadioGroup) y Switch
+  `variant="card"`, y Switch con `description` e `invalid`; Field `validate` (mensajes por `ValidityState`);
+  Select `multiple`, `maxSelected`, `formatValue` y `emptyText`; Combobox con grupos, `multiple` (piezas),
+  `allowCustomValue` (autocompletar) e `icon`; Slider `marks`; Rating `allowHalf`; OTPInput `groups` y
+  `placeholder`; NativeSelect con grupos (`<optgroup>`); FileUpload `showFiles` (miniatura, progreso y quitar),
+  `directory` y `capture`.
+- `/dom`: los mismos comportamientos sin React y `setNumberInputValue()`, `setListboxValue()`, `setTagsValue()`;
+  `setSelectValue()` acepta una lista con Select múltiple. Eventos nuevos: `z:copy`, `z:copyerror`, `z:invalid`,
+  `z:reject`.
+- Tipos `ButtonVariant`, `ButtonSize` y `CheckedState`, y hoja `styles/fields.css`.
+
 ### Cambiado
 
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y

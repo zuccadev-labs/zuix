@@ -21,6 +21,7 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
 - Movimiento: `duration-press` (90 ms) para la pulsación, `ease-emphasized` para entradas y `ease-exit` para
   salidas.
 - Foco: `focus-width` y `focus-offset` (2 px y 2 px; `focus-width` sube a 3 px con `prefers-contrast: more`).
+- Controles: `control-height-xl` (48 px) y `control-radius-xl` (14 px) para el botón `xl`.
 - Controles: `control-height-xs` (24 px), `control-radius-sm` (8 px), `control-radius-lg` (12 px),
   `control-bg-hover`, `field-radius-multiline` e `item-radius`.
 - Material: `glass-blur-elevated` (48 px), `popup-blur`, `popup-shadow`, `glass-rim`, `fg-prose` (texto de
