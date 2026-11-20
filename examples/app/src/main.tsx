@@ -5,6 +5,7 @@ import "@zuccadev-labs/zuix-tokens/tokens.css";
 import "@zuccadev-labs/zuix-zui/styles.css";
 import "@zuccadev-labs/zuix-zout/styles.css";
 import "@zuccadev-labs/zuix-zicon/all";
+import "../../fonts/fonts.css";
 import "./app.css";
 
 import { ToastProvider } from "@zuccadev-labs/zuix-zui";

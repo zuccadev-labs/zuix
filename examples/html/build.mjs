@@ -37,6 +37,7 @@ const html = `<!doctype html>
   <link rel="stylesheet" href="../../tokens/dist/tokens.css">
   <link rel="stylesheet" href="../../zui/dist/zui.css">
   <link rel="stylesheet" href="../../zout/dist/zout.css">
+  <link rel="stylesheet" href="../fonts/fonts.css">
   <link rel="stylesheet" href="./page.css">
 </head>
 <body class="z-root z-canvas" data-z-dom>
