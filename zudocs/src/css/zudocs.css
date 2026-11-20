@@ -217,6 +217,24 @@ a[class*="skipToContent"]:focus {
   padding-block: var(--z-space-4) var(--z-space-5);
   pointer-events: none;
 }
+/* Franja difuminada detrás de las barras: el texto que sube por debajo no asoma entre ellas. Se desvanece hacia
+   abajo para no cortar la página con un borde. */
+.zd-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to bottom, var(--z-bg), transparent);
+  -webkit-backdrop-filter: blur(var(--z-space-2));
+  backdrop-filter: blur(var(--z-space-2));
+  mask-image: linear-gradient(to bottom, black 55%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .zd-nav::before {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
 .zd-nav__inner {
   display: flex;
   align-items: center;
