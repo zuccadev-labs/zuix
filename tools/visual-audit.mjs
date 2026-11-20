@@ -313,7 +313,9 @@ function collect({ TOKENS, families, coarse }) {
       if (
         coarse &&
         /padding-(top|bottom)/.test(prop) &&
-        Math.abs(rects.get(el).height - Math.min(...scale.height.filter((h) => h >= 40))) <= 1
+        (Math.abs(rects.get(el).height - Math.min(...scale.height.filter((h) => h >= 40))) <= 1 ||
+          Math.abs(Number.parseFloat(value) - (Math.min(...scale.height.filter((h) => h >= 40)) - Number.parseFloat(cs.lineHeight)) / 2) <=
+            0.6)
       ) {
         add("relleno-tactil", el, `${prop} ${value} (completa el objetivo táctil)`);
         continue;
@@ -368,10 +370,14 @@ function collect({ TOKENS, families, coarse }) {
   for (const parent of shown) {
     const cs = getComputedStyle(parent);
     if (!/flex/.test(cs.display) || /column/.test(cs.flexDirection)) continue;
-    const kids = [...parent.children].filter(
-      (k) =>
-        rects.has(k) && visible(k, rects.get(k)) && getComputedStyle(k).position !== "absolute" && getComputedStyle(k).position !== "fixed",
-    );
+    // Hermanos que se ven, también los decorativos (aria-hidden: puntos suspensivos de la paginación).
+    const kids = [...parent.children].filter((k) => {
+      const r = rects.get(k);
+      if (!r || r.width < 1 || r.height < 1) return false;
+      if (k.checkVisibility && !k.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return false;
+      const ks = getComputedStyle(k);
+      return ks.position !== "absolute" && ks.position !== "fixed";
+    });
     if (kids.length < 2) continue;
     // por línea
     const lines = [];
@@ -809,7 +815,10 @@ async function audit(browser, job, axeSource) {
           loaded: [...document.fonts].some((ff) => ff.family.replace(/["']/g, "") === f && ff.status === "loaded"),
           // Una familia que la página no usa no se descarga: solo cuenta si algún texto la pide.
           used: [...document.querySelectorAll("body *")].some(
-            (el) => getComputedStyle(el).fontFamily.replace(/["']/g, "").startsWith(f) && el.textContent.trim(),
+            (el) =>
+              getComputedStyle(el).fontFamily.replace(/["']/g, "").startsWith(f) &&
+              el.textContent.trim() &&
+              el.checkVisibility?.({ visibilityProperty: true }),
           ),
         })),
       FIRST[job.brand],
@@ -856,6 +865,8 @@ async function audit(browser, job, axeSource) {
         scrollTo(0, 0);
         document.activeElement?.blur?.();
       });
+      // Sin transiciones: el indicador de foco se lee en su estado final, no a mitad de animación.
+      await page.addStyleTag({ content: "*, *::before, *::after { transition: none !important; animation-duration: 0s !important; }" });
       const seen = new Set();
       for (let i = 0; i < 60; i++) {
         await page.keyboard.press("Tab");
@@ -930,6 +941,18 @@ function classify(recs) {
       const info = { owner: i.owner, detail: `${i.sig}: ${i.detail}${i.text ? ` «${i.text}»` : ""}`, path: i.path };
       let verdict = "real";
       let why = "";
+      // Sumas de tokens revisadas a mano: el relleno de un evento deja sitio a su barra de color
+      // (space-1-5 + event-bar-width) y la nota de un mes del año perpetuo se alinea con el nombre (space-4 + space-1-5).
+      const SUMS = [
+        [/z-event/, /padding-left 9px/, "space-1-5 + ancho de la barra del evento"],
+        [/^small$/, /padding-left 22px/, "space-4 + space-1-5: alineado con el nombre del mes (año perpetuo)"],
+        [/z-sidebar__sub/, /margin-left 19px/, "space-3 + space-2 − 1 px: la guía bajo el centro del icono"],
+      ];
+      const sum = i.type === "escala-espaciado" && SUMS.find(([sig, detail]) => sig.test(i.sig) && detail.test(i.detail));
+      if (sum) {
+        bump(accepted, i.type, key, { ...info, why: `suma de tokens: ${sum[2]}` }, where);
+        continue;
+      }
       // Sangrado que el motor del carrusel calcula en px para que el 3D (lente, cover flow) no se recorte.
       if (i.type === "escala-espaciado" && /z-carousel__viewport/.test(i.sig) && /padding-(top|bottom)/.test(i.detail)) {
         bump(accepted, i.type, key, { ...info, why: "sangrado calculado por el motor del carrusel" }, where);
@@ -938,15 +961,17 @@ function classify(recs) {
       switch (i.type) {
         case "objetivo-tactil": {
           // Excepciones de WCAG 2.5.8 revisadas una a una (docs: auditoría visual).
-          const why2 = /z-heatmap__cell/.test(i.sig)
-            ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
-            : /z-rating__star/.test(i.sig)
-              ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
-              : /z-timeline__booking/.test(i.sig)
-                ? "reserva en conflicto partida en dos mitades de la fila; cada una se alcanza también con teclado"
-                : /z-datefield__segment/.test(i.sig) && Number(i.detail.split("×")[1]?.split(" ")[0]) >= 24
-                  ? "segmento de un campo de fecha (24 px de alto): el valor se escribe de corrido y salta de segmento; el selector de calendario es el control equivalente"
-                  : "";
+          const why2 = /z-resize|z-split__divider/.test(i.sig)
+            ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
+            : /z-heatmap__cell/.test(i.sig)
+              ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
+              : /z-rating__star/.test(i.sig)
+                ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
+                : /z-timeline__booking/.test(i.sig)
+                  ? "reserva en conflicto partida en dos mitades de la fila; cada una se alcanza también con teclado"
+                  : /z-datefield__segment/.test(i.sig) && Number(i.detail.split("×")[1]?.split(" ")[0]) >= 24
+                    ? "segmento de un campo de fecha (24 px de alto): el valor se escribe de corrido y salta de segmento; el selector de calendario es el control equivalente"
+                    : "";
           if (why2) {
             verdict = "aceptado";
             why = why2;

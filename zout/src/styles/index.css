@@ -667,7 +667,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--z-space-0-5);
-    margin-inline-start: calc(var(--z-space-3) + 7px);
+    /* La guía cae bajo el centro del icono del item (relleno 12 + medio icono de 16), menos su propio píxel. */
+    margin-inline-start: calc(var(--z-space-3) + var(--z-space-2) - 1px);
     padding-inline-start: var(--z-space-2);
     border-inline-start: 1px solid var(--z-line);
   }

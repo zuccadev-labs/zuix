@@ -777,7 +777,7 @@
     translate: 50% 0;
   }
   .z-slider[data-marks="labels"]:not([data-orientation="vertical"]) {
-    margin-block-end: calc(var(--z-space-4) + 2px);
+    margin-block-end: var(--z-space-5);
   }
   .z-slider[data-orientation="vertical"] .z-slider__mark-label {
     inset-block-start: 50%;

@@ -47,6 +47,10 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   - Página de búsqueda: titular con la escala de la suite y campo de 48 px.
   - El enlace de cada diapositiva de la portada mide 24 px de alto (objetivo de WCAG 2.5.8).
   - La 404 dice «Página no encontrada» (el tema traía «Página No Encontrada», con mayúsculas a la inglesa).
+  - La búsqueda ya no desborda 2 px a 390 (la fila de Infima salía por los lados) y las casillas de las listas de
+    tareas usan un hueco de la escala.
+  - Los bloques de código no registran la escucha de `resize` del ajuste de línea del tema (el sitio no muestra
+    ese botón): en un teléfono lanzaba «Cannot destructure property 'scrollWidth'» en algunas páginas.
 
 
 ## [0.2.0] - 2026-11-18

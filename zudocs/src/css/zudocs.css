@@ -853,6 +853,12 @@ a[class*="skipToContent"]:focus {
   box-decoration-break: clone;
   overflow-wrap: anywhere;
 }
+/* Listas de tareas de Markdown: la casilla con un hueco de la escala, no con el margen de 3 px del navegador. */
+.zd-markdown :is(ul, ol) > li > input[type="checkbox"] {
+  margin: 0 var(--z-space-2) 0 0;
+  vertical-align: middle;
+  accent-color: var(--z-accent);
+}
 .zd-markdown > blockquote {
   padding: var(--z-space-1) var(--z-space-4);
   border-inline-start: 2px solid var(--z-line-strong);
@@ -2081,6 +2087,10 @@ a[class*="skipToContent"]:focus {
   max-inline-size: 960px;
   margin-inline: auto;
   padding: var(--z-space-8) var(--z-docs-gutter) var(--z-space-16);
+}
+/* La rejilla de Infima saca la fila 16 px por cada lado: con el margen del sitio (14 px a 390) desbordaba 2 px. */
+.main-wrapper > .container .row {
+  margin-inline: 0;
 }
 .main-wrapper > .container h1 {
   margin-block: 0 var(--z-space-5);

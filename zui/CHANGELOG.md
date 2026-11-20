@@ -253,6 +253,7 @@ radios y material de los tokens.
   - Segmentos de `DateField` de 24 px de alto (40 con puntero grueso), objetivo mínimo de WCAG 2.5.8.
   - La primera hora de la rejilla de `EventCalendar` ya no se corta por arriba.
   - Los huecos y rellenos de `2px` y `3px` literales pasan a `--z-space-0-5`; `5px` a `--z-space-1`.
+  - `Slider` con etiquetas de marca reserva `--z-space-5` debajo (antes 18 px fuera de la escala).
 
 
 ## [0.2.0] - 2026-11-18
