@@ -211,7 +211,11 @@ export default async function ({ page, test, ok, card, shots, browserName }) {
       ok(painted.side > 0, "el lienzo WebGL no dibujó ningún píxel en las zonas laterales durante la animación");
       ok(painted.error === 0, `gl.getError() tras dibujar = ${painted.error}`);
       await atRest(covers, (start + 1) % 6);
-      await card("Carousel").screenshot({ path: join(shots, "carousel-gl.png") });
+      // La captura es un artefacto, no una comprobación: con la máquina cargada, SwiftShader puede tardar más que el
+      // tope de Playwright en dar dos fotogramas iguales, y eso no dice nada del carrusel.
+      await card("Carousel")
+        .screenshot({ path: join(shots, "carousel-gl.png"), timeout: 30000 })
+        .catch(() => {});
     });
 
     await test("Carousel gl: flechas, teclado, arrastre con inercia y z:change", async () => {
@@ -228,13 +232,16 @@ export default async function ({ page, test, ok, card, shots, browserName }) {
       });
       const next = page.locator(`${covers} .z-carousel__arrow[aria-label="Next slide"]`);
       const prev = page.locator(`${covers} .z-carousel__arrow[aria-label="Previous slide"]`);
-      await next.click();
+      // Activar la flecha sin la espera de «elemento estable» de Playwright (dos fotogramas con la misma caja, que con
+      // WebGL por software y la máquina cargada puede pasar de 15 s); lo que se comprueba es el estado al que llega.
+      const press = (arrow) => arrow.evaluate((el) => el.click());
+      await press(next);
       await atRest(covers, 1);
-      ok((await page.locator(`${covers} .z-carousel__counter`).textContent()) === "02/06", "contador tras la flecha");
+      await until((s) => document.querySelector(`${s} .z-carousel__counter`)?.textContent === "02/06", covers, "contador tras la flecha");
       ok((await page.locator(`${covers} .z-carousel__live`).textContent()) === "Slide 2 of 6", "anuncio tras la flecha");
-      await prev.click();
+      await press(prev);
       await atRest(covers, 0);
-      await prev.click();
+      await press(prev);
       await atRest(covers, 5); // bucle
       await next.focus();
       await page.keyboard.press("ArrowRight");
@@ -358,7 +365,9 @@ export default async function ({ page, test, ok, card, shots, browserName }) {
         for (const id of ["gl-missing", "gl-partial"]) zui.carousel(document.getElementById(id));
         // Sin WebGL2: el lienzo no entrega contexto.
         const original = HTMLCanvasElement.prototype.getContext;
+        window.__webgl2Asked = false;
         HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
+          if (type === "webgl2") window.__webgl2Asked = true;
           return type === "webgl2" ? null : original.call(this, type, ...rest);
         };
         window.__restoreContext = () => {
@@ -366,7 +375,10 @@ export default async function ({ page, test, ok, card, shots, browserName }) {
         };
         zui.carousel(document.getElementById("gl-nowebgl"), { rasterize: () => document.querySelector("#covers canvas[data-raster]") });
       });
-      await page.waitForTimeout(600);
+      // Se devuelve getContext cuando #gl-nowebgl ya lo pidió (no tras un tiempo fijo): con la máquina cargada la
+      // carga de los shaders tarda, y devolverlo antes haría que ese carrusel sí encontrase WebGL2.
+      await until(() => window.__webgl2Asked === true, null, "el carrusel sin WebGL2 no llegó a pedir el contexto");
+      await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
       await page.evaluate(() => window.__restoreContext());
       for (const id of ["gl-missing", "gl-partial", "gl-nowebgl"]) {
         ok((await mode(`#${id}`)) === "css", `#${id}: modo ${await mode(`#${id}`)}, se esperaba css`);
@@ -379,7 +391,7 @@ export default async function ({ page, test, ok, card, shots, browserName }) {
         "tras caer a css el lienzo sigue visible",
       );
       // Sigue navegando en css.
-      await page.locator('#gl-missing .z-carousel__arrow[aria-label="Next slide"]').click();
+      await page.locator('#gl-missing .z-carousel__arrow[aria-label="Next slide"]').evaluate((el) => el.click());
       await atRest("#gl-missing", 1);
       for (const id of ["gl-missing", "gl-partial", "gl-nowebgl"]) await remove(id);
 
