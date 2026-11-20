@@ -27,6 +27,35 @@ radios y material de los tokens.
 - `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
   `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
   (`DatePicker input`). Alt+Flecha abajo abre.
+- Agenda, oleada 2. `EventCalendar` añade las vistas `year` (12 minimeses con densidad en el fondo y en el
+  nombre, `density`), `perpetual` (año perpetuo de una página) y `timeline` (recursos del día, `resources`), un
+  contenido propio por evento (`renderEvent`, sin perder el nombre accesible completo), carga por rango visible
+  (`loadEvents`, `onRangeChange`; en `/dom`, `setAgendaOptions()` y `z:rangechange`), el chevrón de continuación en
+  las barras de varios días y la banda continua de la semana visible en el minicalendario.
+- Agenda con muchos eventos (5000 en un mes): la rejilla de horas pinta como mucho cuatro solapes lado a lado en la
+  semana (ocho en el día) y el resto en un «+N» por hora en la última columna del grupo (nombre «+3 more,
+  Thursday 19 November, 10:00–11:00», con tabulador y flechas, que abre el popover de ese intervalo); la lista
+  (`agenda`) pinta solo su ventana visible con un margen a partir de 150 filas (rellenos del alto del resto,
+  `aria-setsize`/`aria-posinset`, la fila con el foco siempre pintada; Inicio y Fin van al primero y al último
+  aunque no estén pintados). Arrastrar con el puntero en la vista `timeline` del EventCalendar (mover y alargar
+  por el asa del final, con desplazamiento automático horizontal). En `/dom`, `setAgendaOptions({ density })`
+  para la vista de año.
+- `layoutTimed` devuelve además el grupo de solape de cada trozo (`group`, `groupStart`) y acepta un tope de
+  columnas.
+- Piezas nuevas del grupo `agenda`, en React y sin framework (`/dom`, `setWidgetProps()`): `PerpetualYear`
+  (tabla con caption, instrucciones y buscador con respuesta en texto), `TimelineView` (Gantt con fases
+  plegables, progreso, hitos, dependencias, camino crítico, hoy y zoom día/semana/mes; recursos con conflictos
+  con trama y texto, crear arrastrando y ventana virtual de filas), `FreeBusy` (buscar hueco entre zonas),
+  `SlotPicker` (franjas de cita con zona del visitante y 12/24 h), `CalendarHeatmap` (5 niveles, leyenda,
+  etiqueta al enfocar, tabla alternativa, `encoding="size"`, filo con contraste alto) y `HabitCalendar` (rachas
+  con banda, estados con forma e icono, variante de semana).
+- Estancia en Calendar y DatePicker de rango: `isDateCheckoutOnly`, `rangeUnit="nights"`, aviso visible del
+  mínimo (`minRangeLabel`), flexibilidad de fechas (`flexibility`, `flexibilityOptions`, `onFlexibilityChange`)
+  y ajuste ±1 noche (`showLengthStepper`). En `/dom`: `data-checkout-only-dates`, `data-range-unit`,
+  `data-length-stepper`, `data-flexibility` y `z:flexibilitychange`.
+- Núcleo sin documento con pruebas: `core/perpetual`, `core/heatmap` (niveles por cuantiles, rachas),
+  `core/timeline` (escalas, rutas de dependencias, camino crítico), `core/freebusy`, `core/virtual` y
+  `core/slots`.
 - `EventCalendar` (grupo nuevo `agenda`): barra (Hoy, anterior, siguiente, título con `aria-live`, zona horaria,
   vistas), lateral con minicalendario (Calendar) y calendarios como leyenda, y vistas de día (con segunda zona),
   semana, semana laboral, mes con eventos (barras de varios días, «+N more» con popover, puntos y lista del día en
@@ -83,6 +112,19 @@ radios y material de los tokens.
 - Tipos `ButtonVariant`, `ButtonSize` y `CheckedState`, y hoja `styles/fields.css`.
 
 ### Cambiado
+
+- Rendimiento de la agenda (5000 eventos, build de producción, CPU del hilo principal por interacción): pasar de
+  semana, de 700–770 ms a 150–200 ms (una semana con 1156 eventos: se pintan 254 y el resto va a «+N»); abrir la
+  lista de 30 días, de 430–540 ms a 30–50 ms; el mes, el día y el año, de 120–150 ms a 55–75 ms.
+  `expandEvents` usa un índice por intervalos (búsqueda binaria; se vuelve a indexar si la lista o un evento cambian
+  en su sitio) con memoria por rango (la misma lista y las mismas ocurrencias para el mismo rango: no se
+  modifican), las vistas reparten las ocurrencias por día en una sola pasada, los carriles del mes dejan de buscar
+  más allá de `dayMaxEvents`, el marcado de cada evento se memoriza (mover el foco o arrastrar no vuelve a recorrer
+  los que no cambian, ni en React ni en el modo DOM, que además compara atributos con el pintado anterior en vez de
+  leer el documento) y el minicalendario no se vuelve a pintar si no cambia su mes. El aviso de rango
+  (`onRangeChange`, `z:rangechange`) y la carga (`loadEvents`) pasan a después del siguiente pintado.
+- Modo DOM: el parcheo con claves ya no sustituye un nodo que hará falta más adelante (lo recoloca) y devuelve el
+  foco a la pieza que mueve; los datos de los `<script type="application/json">` se analizan una vez por texto.
 
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
   punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal

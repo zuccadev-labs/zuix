@@ -1,18 +1,5 @@
 "use client";
-import {
-  createElement,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-  type Ref,
-} from "react";
-import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { createElement, type ReactNode, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState, type Ref } from "react";
 import type { AgendaView, CalendarEvent, CalendarSource } from "../../core/agenda";
 import { clockMinutes } from "../../core/agenda";
 import {
@@ -27,21 +14,37 @@ import {
 } from "../../core/agenda-control";
 import {
   agendaTree,
-  DEFAULT_LABELS,
+  mergeLabels,
   initialState,
   type AgendaConfig,
   type AgendaLabels,
+  type AgendaLabelsInput,
   type AgendaModel,
   type AgendaState,
   type BusinessHours,
-  type VNode,
 } from "../../core/agenda-view";
 import { localeWeekInfo, todayISO, valid } from "../../core/date";
+import { afterPaint } from "../../core/idle";
 import { safeTimeZone } from "../../core/zone";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
+import { toReact } from "./vtree";
 
-export type { AgendaView, CalendarEvent, CalendarSource, EventChange, SlotSelection, AgendaLabels, BusinessHours };
+export type { AgendaView, CalendarEvent, CalendarSource, EventChange, SlotSelection, AgendaLabels, AgendaLabelsInput, BusinessHours };
+
+/** Lo que recibe `renderEvent`: el evento, su ocurrencia, el intervalo mostrado y la variante de la vista. */
+export interface RenderEventDetail {
+  event: CalendarEvent;
+  occurrence: string;
+  seriesId?: string;
+  allDay: boolean;
+  /** Reloj de la zona de presentación, `YYYY-MM-DDTHH:mm`. */
+  start: string;
+  end: string;
+  variant: "timed" | "bar" | "dot" | "row" | "lane";
+  /** Hora ya formateada con el locale (vacía en todo el día). */
+  time: string;
+}
 
 export interface EventCalendarProps {
   /** Eventos (ISO; ver el modelo en el manifiesto). La agenda no los cambia: avisa con `onEventChange`. */
@@ -97,53 +100,35 @@ export interface EventCalendarProps {
   /** Hoy y ahora fijos (servidor y pruebas). */
   today?: string;
   now?: number | string;
-  labels?: Partial<AgendaLabels>;
+  labels?: AgendaLabelsInput;
+  /** Vista de línea temporal (`"timeline"`): salas o personas; los eventos las ocupan con `resourceIds`. Sin ellas,
+   *  una fila por calendario. */
+  resources?: { id: string; title: string; meta?: string }[];
+  /** Contenido visible de cada evento (sustituye título, hora y lugar; el nombre accesible completo se mantiene). */
+  renderEvent?: (detail: RenderEventDetail) => ReactNode;
+  /** Carga los eventos del rango visible (se añaden a `events`); se vuelve a llamar al cambiar de rango. */
+  loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+  /** Rango visible (primer y último día) al cambiar de vista, de fecha o de zona. */
+  onRangeChange?: (range: { from: string; to: string; view: AgendaView }) => void;
+  /** Vista de año: densidad 0…3 de un día (por defecto, por número de eventos: 1, 2–3, 4 o más). */
+  density?: (date: string, count: number) => number;
   id?: string;
   className?: string;
   ref?: Ref<HTMLDivElement>;
 }
 
 const ALL_VIEWS: AgendaView[] = ["day", "week", "workweek", "month", "agenda"];
-const ATTR: Record<string, string> = { class: "className", tabindex: "tabIndex", for: "htmlFor", readonly: "readOnly" };
-const noop = () => {};
-
-/** Árbol de core/agenda-view → elementos de React. Los eventos los atiende core/agenda-control en la raíz. */
-function toReact(node: VNode, minical: (p: Record<string, unknown>) => ReactNode): ReactNode {
-  if (node === null || node === undefined || node === false) return null;
-  if (typeof node === "string") return node;
-  if ("slot" in node) return node.slot === "icon" ? <Icon name={node.p.name as IconName} size={Number(node.p.size)} /> : minical(node.p);
-  const props: Record<string, unknown> = {};
-  let selectValue: string | undefined;
-  for (const [k, v] of Object.entries(node.a ?? {})) {
-    if (v === undefined || v === null || v === false) continue;
-    if (node.t === "option" && k === "selected") continue;
-    if (k === "value" && node.t === "input") props.defaultValue = v;
-    else if (k === "checked") {
-      props.checked = Boolean(v);
-      props.onChange = noop;
-    } else props[ATTR[k] ?? k] = v === true ? true : v;
-  }
-  if (node.t === "select") {
-    const chosen = (node.c ?? []).find((c) => c && typeof c === "object" && !("slot" in c) && c.a?.selected);
-    selectValue = chosen && typeof chosen === "object" && !("slot" in chosen) ? String(chosen.a?.value ?? "") : undefined;
-    props.value = selectValue;
-    props.onChange = noop;
-  }
-  if (node.s) props.style = node.s as CSSProperties;
-  if (node.k !== undefined) props.key = node.k;
-  // Hijos como argumentos de createElement: una lista fija, sin claves de array.
-  const kids = (node.c ?? []).map((c) => toReact(c, minical));
-  return createElement(node.t, props, ...kids);
-}
-
+// Valores por defecto con identidad fija: la agenda memoriza por lista de eventos y de calendarios.
+const NO_EVENTS: CalendarEvent[] = [];
+const NO_CALENDARS: CalendarSource[] = [];
 /**
  * Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral (minicalendario y calendarios) y las vistas
  * de día, semana, semana laboral, mes y agenda sobre el mismo modelo de eventos. Mover, redimensionar y crear con
  * puntero y teclado, y «Mover a…» como alternativa sin arrastre. El marcado y la interacción son los del modo DOM.
  */
 export function EventCalendar({
-  events = [],
-  calendars = [],
+  events = NO_EVENTS,
+  calendars = NO_CALENDARS,
   view,
   defaultView = "week",
   onViewChange,
@@ -179,6 +164,11 @@ export function EventCalendar({
   today,
   now,
   labels,
+  density,
+  resources,
+  renderEvent,
+  loadEvents,
+  onRangeChange,
   id,
   className,
   ref,
@@ -189,8 +179,12 @@ export function EventCalendar({
   const setRoot = useMergedRef(root, ref);
   const zone = useMemo(() => safeTimeZone(timeZone), [timeZone]);
   const nowMs = now === undefined ? undefined : typeof now === "number" ? now : Date.parse(now);
+  // Eventos cargados por rango (loadEvents): se suman a `events`.
+  const [loaded, setLoaded] = useState<{ key: string; events: CalendarEvent[] } | null>(null);
+  // Eventos propios más los cargados, con la misma lista mientras no cambien (la agenda indexa por lista).
+  const allEvents = useMemo(() => (loaded?.events.length ? [...events, ...loaded.events] : events), [events, loaded]);
   const config: AgendaConfig = {
-    events,
+    events: allEvents,
     calendars,
     views: views.length ? views : ALL_VIEWS,
     timeZone: zone,
@@ -212,7 +206,10 @@ export function EventCalendar({
     sidebar,
     showWeekNumber,
     createButton: Boolean(onQuickCreate),
-    labels: { ...DEFAULT_LABELS, ...labels, views: { ...DEFAULT_LABELS.views, ...labels?.views } },
+    labels: mergeLabels(labels),
+    density,
+    resources,
+    customEvents: Boolean(renderEvent),
     today: valid(today) ? today : undefined,
     now: Number.isFinite(nowMs) ? nowMs : undefined,
   };
@@ -301,7 +298,18 @@ export function EventCalendar({
   });
   model.current = built;
 
-  const minical = (p: Record<string, unknown>) => (
+  // El minicalendario solo cambia si cambian sus datos (las funciones del árbol tienen identidad fija por rango): el
+  // mismo elemento, y React no lo vuelve a pintar al mover el foco o navegar dentro del mismo mes.
+  const minicalMemo = useRef<{ deps: unknown[]; el: ReactNode } | null>(null);
+  const minical = (p: Record<string, unknown>) => {
+    const deps = [p.value, p.today, p.locale, p.weekStart, p.showWeekNumber, p.inView, p.hasEvents];
+    const prev = minicalMemo.current;
+    if (prev?.deps.every((d, i) => d === deps[i])) return prev.el;
+    const el = minicalElement(p);
+    minicalMemo.current = { deps, el };
+    return el;
+  };
+  const minicalElement = (p: Record<string, unknown>) => (
     <Calendar
       key="minical"
       className="z-agenda__minical"
@@ -321,7 +329,40 @@ export function EventCalendar({
       modifiers={{ "in-view": p.inView as (d: string) => boolean, "has-events": p.hasEvents as (d: string) => boolean }}
     />
   );
-  const { className: _c, ...rest } = (toReact(tree, minical) as { props: Record<string, unknown> }).props;
+  const event = (p: Record<string, unknown>) => (
+    <span key={String(p.key)} className="z-event__custom">
+      {renderEvent?.(p as unknown as RenderEventDetail)}
+    </span>
+  );
+  // Rango visible: avisa y, con loadEvents, carga sus eventos (cancelando la carga anterior).
+  const rangeKey = `${state.current.view}|${built.days[0]}|${built.days[built.days.length - 1]}|${state.current.timeZone}`;
+  const rangeHandlers = useRef({ loadEvents, onRangeChange });
+  rangeHandlers.current = { loadEvents, onRangeChange };
+  useEffect(() => {
+    const [view, from, to, timeZone] = rangeKey.split("|") as [AgendaView, string, string, string];
+    const abort = new AbortController();
+    // Fuera del camino de la interacción: el cambio de vista o de periodo se pinta primero; el aviso a la aplicación
+    // y la carga, justo después (navegar deprisa cancela lo que aún no empezó).
+    afterPaint(
+      () => {
+        rangeHandlers.current.onRangeChange?.({ from, to, view });
+        const load = rangeHandlers.current.loadEvents;
+        if (!load) return;
+        if (root.current) root.current.setAttribute("aria-busy", "true");
+        load({ from, to, timeZone }, abort.signal)
+          .then((list) => {
+            if (!abort.signal.aborted) setLoaded({ key: rangeKey, events: list });
+          })
+          .catch(() => {})
+          .finally(() => {
+            if (!abort.signal.aborted) root.current?.removeAttribute("aria-busy");
+          });
+      },
+      { signal: abort.signal },
+    );
+    return () => abort.abort();
+  }, [rangeKey]);
+  const { className: _c, ...rest } = (toReact(tree, { minical, event }) as { props: Record<string, unknown> }).props;
   // La raíz lleva la ref; lo demás es el árbol tal cual.
   return createElement("div", { ...rest, className: (tree.a?.class as string) ?? "z-agenda", ref: setRoot });
 }

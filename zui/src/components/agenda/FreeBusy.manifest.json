@@ -1,0 +1,80 @@
+{
+  "name": "FreeBusy",
+  "group": "agenda",
+  "description": "Buscar hueco: una fila por persona con sus ocupados («Busy», trama neutra) y lo que queda fuera de su horario en su propia zona («Outside hours», trama cálida), la franja común de `duration` minutos en verde con su texto, anterior y siguiente, y «Use …».",
+  "import": "import { FreeBusy } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "attendees",
+      "type": "FreeBusyAttendee[]",
+      "description": "{ id, name, meta?, timeZone?, busy: { start, end }[] (instantes), workingHours?: { days?, start, end }, optional? }."
+    },
+    {
+      "name": "date",
+      "type": "string"
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona de presentación (IANA)."
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 60
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 30
+    },
+    {
+      "name": "dayStart",
+      "type": "string",
+      "default": "08:00"
+    },
+    {
+      "name": "dayEnd",
+      "type": "string",
+      "default": "19:00"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "now",
+      "type": "number | string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<FreeBusyLabels>"
+    },
+    {
+      "name": "onSelect",
+      "type": "(detail: { start; end; timeZone; startMs; endMs }) => void"
+    }
+  ],
+  "states": ["rest", "suggested", "none"],
+  "tokens": ["success", "success-solid", "fg-on-accent", "warning", "line-strong", "reading-bg", "event-radius", "control-radius-sm"],
+  "classes": ["z-freebusy"],
+  "a11y": "Rejilla role=grid con rowheader por persona (nombre y su zona u hora local). Cada ocupado lleva su texto visible («Busy», «Outside hours») y la hora en el nombre («Busy 09:00–10:30»): no depende de la trama ni del color. La franja propuesta se anuncia en una región status («All 5 free: 14:00–15:00») y se usa con un botón («Use 14:00–15:00»); anterior y siguiente son botones con nombre. Sin React: .z-freebusy con data-date, data-time-zone, data-duration… y attendees en <script type=\"application/json\" data-props>; emite z:select.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Buscar hueco de 1 h",
+      "code": "<FreeBusy\n  date=\"2026-11-19\"\n  timeZone=\"Europe/Madrid\"\n  duration={60}\n  attendees={[\n    { id: \"m\", name: \"Marta\", timeZone: \"Europe/Madrid\", workingHours: { start: \"09:00\", end: \"18:00\" }, busy: [{ start: \"2026-11-19T08:00:00Z\", end: \"2026-11-19T09:30:00Z\" }] },\n    { id: \"d\", name: \"Dana\", timeZone: \"America/New_York\", workingHours: { start: \"08:00\", end: \"17:00\" }, busy: [] }\n  ]}\n  onSelect={(slot) => console.log(slot.start)}\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Buscar hueco de 1 h",
+      "code": "<div class=\"z-freebusy\" id=\"find-time\" data-date=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-duration=\"60\" data-locale=\"en-GB\" data-now=\"2026-11-19T09:42:00Z\">\n  <script type=\"application/json\" data-props>{ \"attendees\": [{ \"id\": \"m\", \"name\": \"Marta López\", \"timeZone\": \"Europe/Madrid\", \"workingHours\": { \"start\": \"09:00\", \"end\": \"18:00\" }, \"busy\": [{ \"start\": \"2026-11-19T08:00:00Z\", \"end\": \"2026-11-19T09:30:00Z\" }] }, { \"id\": \"d\", \"name\": \"Dana Price\", \"timeZone\": \"America/New_York\", \"workingHours\": { \"start\": \"08:00\", \"end\": \"17:00\" }, \"busy\": [{ \"start\": \"2026-11-19T15:00:00Z\", \"end\": \"2026-11-19T16:00:00Z\" }] }] }</script>\n</div>"
+    }
+  ],
+  "origin": "Especificación agenda.md §9; Outlook Scheduling Assistant."
+}

@@ -21,12 +21,13 @@ repetir una discusión que ya tuve conmigo mismo.
 | 10 | [Node, dependencias y cadena de suministro](./10-node-dependencias-y-cadena-de-suministro.md) | Qué versiones admito, cómo protejo la instalación y cómo publico sin tokens |
 | 11 | [Lint, pruebas y por qué no Barrits](./11-lint-pruebas-y-barrits.md) | Por qué Biome y no ESLint, por qué `node:test`, y por qué no uso aquí mi propio Barrits |
 | 12 | [El sitio de documentación, medido](./12-el-sitio-medido.md) | Qué encontré al auditar zudocs: seguridad, fuentes, rendimiento, `llms.txt` y despliegue |
+| 13 | [Rendimiento de la agenda, medido](./13-rendimiento-de-la-agenda.md) | Dónde iba el tiempo con 5000 eventos, qué cambié y qué cifras quedaron |
 
 ## Cómo leerlas
 
 - Los documentos 00 a 06 son anteriores a la construcción: describen el análisis y el plan. Donde la
   construcción se apartó del plan, lo digo en el propio documento.
-- El 07 es el registro de la `0.1.0`. Del 08 al 12, lo que investigué y cambié para la `0.2.0`.
+- El 07 es el registro de la `0.1.0`. Del 08 al 12, lo que investigué y cambié para la `0.2.0`; el 13, para la siguiente.
 - La guía de uso está en [`../users/`](../users/README.md): describe lo que hay, no cómo llegué a ello.
 
 ## Convención

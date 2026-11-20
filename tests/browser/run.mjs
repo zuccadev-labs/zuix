@@ -156,6 +156,7 @@ function makeContext(engine, baseUrl, record, shots) {
       hasTouch = false,
       touch = false,
       query = "",
+      timezoneId,
     } = {},
   ) {
     let target = browser;
@@ -167,7 +168,7 @@ function makeContext(engine, baseUrl, record, shots) {
     const context = await target.newContext(
       touch
         ? { ...touchContext(browserName, { width, height }), reducedMotion }
-        : { viewport: { width, height }, reducedMotion, hasTouch, deviceScaleFactor: 1 },
+        : { viewport: { width, height }, reducedMotion, hasTouch, deviceScaleFactor: 1, ...(timezoneId ? { timezoneId } : {}) },
     );
     const page = await context.newPage();
     if (reducedTransparency && browserName === "chromium") {

@@ -23,6 +23,7 @@ import { informationCircle } from "@zuccadev-labs/zuix-zicon/icons/information-c
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import * as actions from "./actions";
 import * as agenda from "./agenda";
+import * as widgets from "./widgets";
 import * as carousel from "./carousel";
 import * as collections from "./collections";
 import * as forms from "./forms";
@@ -43,7 +44,7 @@ import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [actions, forms, collections, carousel, time, agenda];
+const modules = [actions, forms, collections, carousel, time, agenda, widgets];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { openPalette, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
 export {
@@ -72,7 +73,16 @@ registerIcons([xMark, exclamationTriangle, informationCircle]);
 
 export { place, type Placement };
 export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
-export { destroyAgenda, setAgendaCalendars, setAgendaEvents, setAgendaView, type CalendarEvent, type CalendarSource } from "./agenda";
+export {
+  destroyAgenda,
+  setAgendaCalendars,
+  setAgendaEvents,
+  setAgendaOptions,
+  setAgendaView,
+  type CalendarEvent,
+  type CalendarSource,
+} from "./agenda";
+export { destroyWidget, setWidgetProps } from "./widgets";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
 const isBrowser = typeof document !== "undefined";
@@ -891,9 +901,10 @@ function onClick(event: MouseEvent): void {
     return;
   }
 
-  // Los toggles de un ToggleGroup y el botón de mostrar contraseña los atienden sus módulos (./actions, ./forms-fields).
+  // Toggle suelto: no los de un ToggleGroup ni el de mostrar contraseña (los atienden ./actions y ./forms-fields), ni
+  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor).
   const pressed = target.closest<HTMLElement>("button[aria-pressed]:not(.z-toggle-group > .z-toggle, .z-password__toggle)");
-  if (pressed) {
+  if (pressed && !pressed.closest(".z-calendar, .z-heatmap")) {
     const next = pressed.getAttribute("aria-pressed") !== "true";
     pressed.setAttribute("aria-pressed", String(next));
     pressed.dataset.state = next ? "on" : "off";

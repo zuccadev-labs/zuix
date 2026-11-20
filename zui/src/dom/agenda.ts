@@ -6,8 +6,10 @@
 // `z:eventclick`, `z:selectslot`, `z:datechange`, `z:viewchange`, `z:quickcreate`, `z:calendartoggle` y
 // `z:timezonechange`. El texto de la aplicación entra siempre como texto (nodos de texto, nunca marcado).
 
-import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowPath } from "@zuccadev-labs/zuix-zicon/icons/arrow-path";
+import { buildingOffice } from "@zuccadev-labs/zuix-zicon/icons/building-office";
+import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-triangle";
 import { calendar } from "@zuccadev-labs/zuix-zicon/icons/calendar";
 import { calendarDays } from "@zuccadev-labs/zuix-zicon/icons/calendar-days";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
@@ -18,59 +20,105 @@ import { globeAlt } from "@zuccadev-labs/zuix-zicon/icons/globe-alt";
 import { mapPin } from "@zuccadev-labs/zuix-zicon/icons/map-pin";
 import { plus } from "@zuccadev-labs/zuix-zicon/icons/plus";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
-import { AGENDA_VIEWS, clockMinutes, type AgendaView, type CalendarEvent, type CalendarSource } from "../core/agenda";
+import { AGENDA_VIEWS, ALL_AGENDA_VIEWS, clockMinutes, type AgendaView, type CalendarEvent, type CalendarSource } from "../core/agenda";
 import { attachAgenda, beginFocusMove, everyMinute, syncAgenda, type AgendaEventName, type AgendaHost } from "../core/agenda-control";
 import {
   agendaTree,
-  DEFAULT_LABELS,
+  mergeLabels,
   initialState,
   type AgendaConfig,
-  type AgendaLabels,
+  type AgendaLabelsInput,
   type AgendaModel,
   type AgendaState,
-  type VNode,
 } from "../core/agenda-view";
+import { findSlots } from "../core/vnode";
 import { localeWeekInfo, todayISO, valid } from "../core/date";
 import { safeTimeZone } from "../core/zone";
+import { afterPaint } from "../core/idle";
 import { setCalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
-import { fragment, type Listen } from "./shared";
+import type { Listen } from "./shared";
+import { patchChildren } from "./vtree";
 
-registerIcons([arrowPath, calendar, calendarDays, chevronLeft, chevronRight, chevronUpDown, clock, globeAlt, mapPin, plus, xMark]);
+registerIcons([
+  arrowPath,
+  buildingOffice,
+  exclamationTriangle,
+  calendar,
+  calendarDays,
+  chevronLeft,
+  chevronRight,
+  chevronUpDown,
+  clock,
+  globeAlt,
+  mapPin,
+  plus,
+  xMark,
+]);
 
 interface Entry {
   state: AgendaState;
   model: AgendaModel | null;
   events: CalendarEvent[] | null;
   calendars: CalendarSource[] | null;
-  labels: Partial<AgendaLabels>;
+  labels: AgendaLabelsInput;
+  /** Contenido propio de cada evento y carga por rango (setAgendaOptions). */
+  renderEvent?: (detail: Record<string, unknown>) => Node | string | null | undefined;
+  loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+  /** Vista de año: densidad 0…3 de un día (setAgendaOptions). */
+  density?: (date: string, count: number) => number;
+  loaded: CalendarEvent[];
+  /** Eventos propios más los cargados, con la misma lista mientras no cambien (la agenda indexa por lista). */
+  merged?: { own: CalendarEvent[]; loaded: CalendarEvent[]; list: CalendarEvent[] };
+  range: string;
+  abort?: AbortController;
   detach: () => void;
   stopClock: () => void;
 }
 const entries = new WeakMap<HTMLElement, Entry>();
-const keys = new WeakMap<Node, string>();
 
+// Datos de los `<script type="application/json">` hijos: se analizan una vez por texto, así cada pintado recibe la
+// misma lista (la agenda indexa y memoriza por lista) y no se vuelve a leer el JSON en cada tecla.
+const parsed = new WeakMap<HTMLScriptElement, { text: string; value: unknown }>();
 const json = <T>(el: HTMLElement, selector: string): T | null => {
   const script = el.querySelector<HTMLScriptElement>(`:scope > script[type="application/json"]${selector}`);
-  if (!script?.textContent) return null;
+  const text = script?.textContent;
+  if (!script || !text) return null;
+  const hit = parsed.get(script);
+  if (hit?.text === text) return hit.value as T | null;
+  let value: unknown = null;
   try {
-    return JSON.parse(script.textContent) as T;
+    value = JSON.parse(text);
   } catch {
-    return null;
+    value = null;
   }
+  parsed.set(script, { text, value });
+  return value as T | null;
 };
 const yes = (v: string | undefined) => v !== undefined && v !== "false";
 const num = (v: string | undefined, fallback: number) => (v !== undefined && Number.isFinite(Number(v)) ? Number(v) : fallback);
 
+const NO_EVENTS: CalendarEvent[] = [];
+const NO_CALENDARS: CalendarSource[] = [];
+function eventsOf(el: HTMLElement, entry: Entry): CalendarEvent[] {
+  const own = entry.events ?? json<CalendarEvent[]>(el, "[data-events]") ?? NO_EVENTS;
+  if (!entry.loaded.length) return own;
+  if (entry.merged?.own !== own || entry.merged.loaded !== entry.loaded)
+    entry.merged = { own, loaded: entry.loaded, list: [...own, ...entry.loaded] };
+  return entry.merged.list;
+}
+
 function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
   const d = el.dataset;
-  const views = (d.views ?? "").split(/[\s,]+/).filter((v): v is AgendaView => (AGENDA_VIEWS as readonly string[]).includes(v));
+  const views = (d.views ?? "").split(/[\s,]+/).filter((v): v is AgendaView => (ALL_AGENDA_VIEWS as readonly string[]).includes(v));
   const locale = d.locale;
   const zones = d.timeZones?.split(/[\s,]+/).filter(Boolean);
   const now = d.now ? Date.parse(d.now) : undefined;
   return {
-    events: entry.events ?? json<CalendarEvent[]>(el, "[data-events]") ?? [],
-    calendars: entry.calendars ?? json<CalendarSource[]>(el, "[data-calendars]") ?? [],
+    events: eventsOf(el, entry),
+    density: entry.density,
+    customEvents: Boolean(entry.renderEvent),
+    calendars: entry.calendars ?? json<CalendarSource[]>(el, "[data-calendars]") ?? NO_CALENDARS,
     views: views.length ? views : [...AGENDA_VIEWS],
     timeZone: safeTimeZone(d.timeZone),
     timeZones: zones?.length ? zones : undefined,
@@ -94,87 +142,11 @@ function configOf(el: HTMLElement, entry: Entry): AgendaConfig {
     sidebar: d.sidebar !== "false",
     showWeekNumber: d.weekNumbers !== "false",
     createButton: yes(d.createButton),
-    labels: { ...DEFAULT_LABELS, ...entry.labels, views: { ...DEFAULT_LABELS.views, ...entry.labels.views } },
+    labels: mergeLabels(entry.labels),
+    resources: json(el, "[data-resources]") ?? undefined,
     today: valid(d.today) ? d.today : undefined,
     now: Number.isFinite(now) ? now : undefined,
   };
-}
-
-/* ---------- Árbol → nodos ---------- */
-
-function create(v: VNode, doc: Document): Node {
-  if (typeof v === "string") return doc.createTextNode(v);
-  if (!v) return doc.createTextNode("");
-  if ("slot" in v) {
-    if (v.slot === "icon") {
-      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size) }));
-      const svg = frag.firstElementChild ?? doc.createElement("span");
-      keys.set(svg, `icon:${v.p.name}:${v.p.size}`);
-      return svg;
-    }
-    const cal = doc.createElement("div");
-    cal.className = "z-calendar z-agenda__minical";
-    keys.set(cal, "minical");
-    return cal;
-  }
-  const el = doc.createElement(v.t);
-  if (v.k !== undefined) keys.set(el, `${v.t}:${v.k}`);
-  else keys.set(el, v.t);
-  patchElement(el, v, true);
-  return el;
-}
-
-const keyOf = (v: VNode): string =>
-  typeof v === "string" || !v
-    ? "#text"
-    : "slot" in v
-      ? v.slot === "icon"
-        ? `icon:${v.p.name}:${v.p.size}`
-        : "minical"
-      : v.k !== undefined
-        ? `${v.t}:${v.k}`
-        : v.t;
-
-function patchElement(el: Element, v: Exclude<VNode, string | null | undefined | false | { slot: string }>, fresh = false): void {
-  if ("slot" in v) return;
-  const want = new Map<string, string>();
-  for (const [k, value] of Object.entries(v.a ?? {})) {
-    if (value === null || value === undefined || value === false) continue;
-    if (k === "value" && !fresh) continue; // lo que teclea la persona en un campo no se pisa
-    want.set(k, value === true ? "" : String(value));
-  }
-  for (const attr of [...el.attributes])
-    if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open") el.removeAttribute(attr.name);
-  for (const [k, value] of want) if (el.getAttribute(k) !== value) el.setAttribute(k, value);
-  if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = want.has("checked");
-  if (el instanceof HTMLOptionElement) el.selected = want.has("selected");
-  if (el instanceof HTMLElement) {
-    const style = el.style;
-    for (const name of [...style].filter((p) => p.startsWith("--") && !(v.s && p in v.s))) style.removeProperty(name);
-    for (const [k, value] of Object.entries(v.s ?? {}))
-      if (style.getPropertyValue(k) !== String(value)) style.setProperty(k, String(value));
-    if (!v.s && !style.length) el.removeAttribute("style");
-  }
-  patchChildren(el, v.c ?? []);
-}
-
-function patchChildren(parent: Element, kids: VNode[]): void {
-  const doc = parent.ownerDocument;
-  const existing = [...parent.childNodes];
-  kids.forEach((v, i) => {
-    const cur = existing[i];
-    const key = keyOf(v);
-    if (cur && (cur.nodeType === Node.TEXT_NODE ? key === "#text" : keys.get(cur) === key)) {
-      if (cur.nodeType === Node.TEXT_NODE) {
-        if (cur.textContent !== v) cur.textContent = v as string;
-      } else if (typeof v === "object" && v && !("slot" in v)) patchElement(cur as Element, v);
-      return;
-    }
-    const node = create(v, doc);
-    if (cur) parent.replaceChild(node, cur);
-    else parent.append(node);
-  });
-  for (let i = existing.length - 1; i >= kids.length; i--) existing[i]!.remove();
 }
 
 /* ---------- Pintado ---------- */
@@ -194,10 +166,44 @@ function render(el: HTMLElement, moveFocus = false): void {
   }
   el.classList.add("z-agenda");
   for (const s of scripts) s.remove();
-  patchChildren(el, tree.c ?? []);
+  // Una pieza con el foco que el parcheo mueve de sitio (la lista con ventana virtual al desplazarse) sale y vuelve
+  // a entrar en el documento: el foco se le devuelve, como hace React al reordenar.
+  const active = el.ownerDocument.activeElement;
+  patchChildren(el, tree.c ?? [], { event: entry.renderEvent });
+  if (active instanceof HTMLElement && active !== el.ownerDocument.activeElement && active.isConnected && el.contains(active))
+    active.focus({ preventScroll: true });
   el.append(...scripts);
+  // Rango visible: z:rangechange y, con loadEvents, la carga de sus eventos (cancela la anterior).
+  const range = `${entry.state.view}|${model.days[0]}|${model.days[model.days.length - 1]}|${entry.state.timeZone}`;
+  if (range !== entry.range) {
+    entry.range = range;
+    const [view, from, to, timeZone] = range.split("|") as [string, string, string, string];
+    entry.abort?.abort();
+    const abort = new AbortController();
+    entry.abort = abort;
+    // Fuera del camino de la interacción: primero se pinta la vista; el aviso y la carga, justo después.
+    afterPaint(
+      () => {
+        emit(el, "rangechange", { from, to, view });
+        if (!entry.loadEvents) return;
+        el.setAttribute("aria-busy", "true");
+        entry
+          .loadEvents({ from, to, timeZone }, abort.signal)
+          .then((list) => {
+            if (abort.signal.aborted) return;
+            entry.loaded = list;
+            render(el);
+          })
+          .catch(() => {})
+          .finally(() => {
+            if (!abort.signal.aborted) el.removeAttribute("aria-busy");
+          });
+      },
+      { signal: abort.signal },
+    );
+  }
   // Minicalendario: el Calendar del modo DOM, con el día de la vista y la semana visible.
-  const slot = findSlot(tree.c ?? []);
+  const slot = findSlots(tree.c ?? [], "minical")[0]?.p;
   const cal = el.querySelector<HTMLElement>(".z-agenda__minical");
   if (slot && cal) {
     const attrs = slot.attrs as Record<string, string | undefined>;
@@ -212,19 +218,6 @@ function render(el: HTMLElement, moveFocus = false): void {
     });
   }
   syncAgenda(el, hostOf(el), moveFocus, clockMinutes(el.dataset.scrollTime, 480));
-}
-
-function findSlot(nodes: VNode[]): Record<string, unknown> | null {
-  for (const n of nodes) {
-    if (!n || typeof n === "string") continue;
-    if ("slot" in n) {
-      if (n.slot === "minical") return n.p;
-      continue;
-    }
-    const inner = findSlot(n.c ?? []);
-    if (inner) return inner;
-  }
-  return null;
 }
 
 const EVENT_NAMES: Record<AgendaEventName, string> = {
@@ -273,14 +266,16 @@ function mount(el: HTMLElement): void {
   const today = valid(d.today) ? d.today : todayISO();
   const entry: Entry = {
     state: initialState(
-      { views: [...AGENDA_VIEWS], timeZone: safeTimeZone(d.timeZone) },
-      ((AGENDA_VIEWS as readonly string[]).includes(d.view ?? "") ? d.view : "week") as AgendaView,
+      { views: [...ALL_AGENDA_VIEWS], timeZone: safeTimeZone(d.timeZone) },
+      ((ALL_AGENDA_VIEWS as readonly string[]).includes(d.view ?? "") ? d.view : "week") as AgendaView,
       valid(d.date) ? d.date : today,
     ),
     model: null,
     events: null,
     calendars: null,
-    labels: json<Partial<AgendaLabels>>(el, "[data-labels]") ?? {},
+    labels: json<AgendaLabelsInput>(el, "[data-labels]") ?? {},
+    loaded: [],
+    range: "",
     detach: () => {},
     stopClock: () => {},
   };
@@ -319,6 +314,32 @@ export function setAgendaCalendars(el: HTMLElement, calendars: CalendarSource[])
   render(el);
 }
 
+/**
+ * Opciones con funciones de un EventCalendar del modo DOM: `renderEvent` (contenido visible de cada evento: texto o
+ * nodos), `loadEvents` (carga de los eventos del rango visible) y `density` (vista de año: nivel 0…3 de un día a
+ * partir de su número de eventos). Emite `z:rangechange` al cambiar de rango.
+ */
+export function setAgendaOptions(
+  el: HTMLElement,
+  options: {
+    renderEvent?: (detail: Record<string, unknown>) => Node | string | null | undefined;
+    loadEvents?: (range: { from: string; to: string; timeZone: string }, signal: AbortSignal) => Promise<CalendarEvent[]>;
+    density?: (date: string, count: number) => number;
+  },
+): void {
+  const entry = entries.get(el);
+  if (!entry) return;
+  if ("density" in options) entry.density = options.density;
+  if ("renderEvent" in options) entry.renderEvent = options.renderEvent;
+  if ("loadEvents" in options) {
+    entry.loadEvents = options.loadEvents;
+    entry.range = "";
+  }
+  // El contenido propio cambia: los eventos se vuelven a crear.
+  if ("renderEvent" in options) for (const child of [...el.childNodes]) if (!(child instanceof HTMLScriptElement)) child.remove();
+  render(el);
+}
+
 /** Cambia la vista o el día de un EventCalendar del modo DOM. */
 export function setAgendaView(el: HTMLElement, options: { view?: AgendaView; date?: string }): void {
   const entry = entries.get(el);
@@ -340,6 +361,7 @@ export function destroyAgenda(el: HTMLElement): void {
   if (!entry) return;
   entry.detach();
   entry.stopClock();
+  entry.abort?.abort();
   entries.delete(el);
 }
 

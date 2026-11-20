@@ -151,8 +151,23 @@
   .z-agenda__minical {
     inline-size: 100%;
   }
-  .z-agenda__minical .z-calendar__day[data-in-view]:not([data-selected]) {
+  /* Semana visible: una banda continua en las celdas (no un fondo por día), con los extremos redondeados. */
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view])::before {
+    content: "";
+    position: absolute;
+    inset-block: 1px;
+    inset-inline: 0;
     background: var(--z-calendar-range-bg);
+  }
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view]):not(.z-calendar__cell:has(> [data-in-view]) + .z-calendar__cell)::before {
+    inset-inline-start: 1px;
+    border-start-start-radius: var(--z-calendar-cell-radius);
+    border-end-start-radius: var(--z-calendar-cell-radius);
+  }
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view]):not(:has(+ .z-calendar__cell > [data-in-view]))::before {
+    inset-inline-end: 1px;
+    border-start-end-radius: var(--z-calendar-cell-radius);
+    border-end-end-radius: var(--z-calendar-cell-radius);
   }
   .z-agenda__minical .z-calendar__day[data-has-events]::after {
     content: "";
@@ -687,6 +702,29 @@
     inline-size: calc(var(--z-ev-w) / var(--z-ev-n) * 100% - 4px);
     block-size: max(calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px), calc(var(--z-space-5)));
   }
+  /* El que se mueve y no cabría en las columnas visibles: por encima, a todo el ancho. */
+  .z-timegrid__col .z-event--floating {
+    z-index: var(--z-layer-sticky);
+  }
+  /* «+N» de los solapes que no caben: en la última columna del grupo, al inicio de su hora. */
+  .z-timegrid__overflow {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) + 1px);
+    inset-inline-start: calc(var(--z-ev-col) / var(--z-ev-n) * 100% + 2px);
+    inline-size: calc(100% / var(--z-ev-n) - 4px);
+    block-size: var(--z-space-6);
+    padding: 0;
+    background: var(--z-surface-2);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    color: var(--z-fg);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .z-timegrid__overflow[aria-expanded="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
   /* Un evento corto amplía su área de pulsación a 24 px sin cambiar su aspecto (WCAG 2.5.8). */
   .z-timegrid__col .z-event::after {
     content: "";
@@ -950,8 +988,21 @@
     display: grid;
     grid-template-columns: calc(var(--z-space-20) + var(--z-space-4)) minmax(0, 1fr);
     border-block-end: 1px solid var(--z-line);
+  }
+  /* Solo bajo el pliegue (guía defer-rendering-heavy-content): los primeros días se pintan sin esperar; el resto
+     omite su trabajo de pintado hasta acercarse, con un tamaño estimado que el navegador recuerda. */
+  .z-agendalist__day:nth-child(n + 5) {
     content-visibility: auto;
     contain-intrinsic-size: auto 160px;
+  }
+  /* Lista larga con ventana virtual: relleno del alto de lo que no se pinta. */
+  .z-agendalist__spacer {
+    flex: none;
+    block-size: var(--z-vl-size);
+    list-style: none;
+  }
+  .z-agendalist[data-virtual] .z-agendalist__day {
+    content-visibility: visible;
   }
   .z-agendalist__date {
     position: sticky;
@@ -1235,6 +1286,8 @@
       flex-wrap: wrap;
       max-inline-size: 100%;
       height: auto;
+      /* Entre filas, el sobrante del área táctil (40 px sobre 30) de cada opción no pisa la de la otra fila. */
+      row-gap: var(--z-space-2-5);
     }
     .z-agenda__views .z-segmented__item {
       height: calc(var(--z-segmented-height) - var(--z-segmented-pad) * 2 - 2px);

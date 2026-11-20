@@ -34,8 +34,10 @@ import {
   dayKeyTarget,
   initialMonth,
   navStep,
+  rangeNights,
   readSelection,
   revealMonth,
+  stepRange,
   shiftMonth,
   unitKeyTarget,
   unitStart,
@@ -165,6 +167,31 @@ interface CalendarBaseProps {
   todayLabel?: string;
   weekLabel?: string;
   unavailableLabel?: string;
+  /** Estancia (rango): días en que se puede terminar pero no empezar (marca pequeña y «check-out only»). */
+  isDateCheckoutOnly?: (date: string) => boolean;
+  /** `minRange`/`maxRange` en noches (diferencia de días) en vez de días. */
+  rangeUnit?: "days" | "nights";
+  checkoutOnlyLabel?: string;
+  /** Aviso de un día que no llega al mínimo («{n}-night minimum»). */
+  minRangeLabel?: string;
+  /** Pie con −/+ que acortan o alargan el rango una noche (o un día). */
+  showLengthStepper?: boolean;
+  /** «{n} nights» y «1 night» (o días con `rangeUnit="days"`). */
+  lengthLabel?: string;
+  lengthOneLabel?: string;
+  decreaseLabel?: string;
+  increaseLabel?: string;
+  /** Flexibilidad de fechas (chips «Exact dates», «± 1 day»…): días de margen que la aplicación interpreta. */
+  flexibility?: number;
+  defaultFlexibility?: number;
+  onFlexibilityChange?: (days: number) => void;
+  /** Opciones de flexibilidad; con ellas aparecen los chips. Por defecto `[0, 1, 2, 3, 7]` si hay `flexibility`. */
+  flexibilityOptions?: number[];
+  flexibilityGroupLabel?: string;
+  exactDatesLabel?: string;
+  /** «± {n} days» y «± 1 day». */
+  flexibilityLabel?: string;
+  flexibilityOneLabel?: string;
   monthLabel?: string;
   yearLabel?: string;
   chooseMonthLabel?: string;
@@ -273,6 +300,23 @@ export function Calendar(props: CalendarProps) {
     todayLabel = "Today",
     weekLabel = "Week",
     unavailableLabel = "unavailable",
+    isDateCheckoutOnly,
+    rangeUnit = "days",
+    checkoutOnlyLabel = "check-out only",
+    minRangeLabel = rangeUnit === "nights" ? "{n}-night minimum" : "{n}-day minimum",
+    showLengthStepper = false,
+    lengthLabel = rangeUnit === "nights" ? "{n} nights" : "{n} days",
+    lengthOneLabel = rangeUnit === "nights" ? "1 night" : "1 day",
+    decreaseLabel = rangeUnit === "nights" ? "One night less" : "One day less",
+    increaseLabel = rangeUnit === "nights" ? "One night more" : "One day more",
+    flexibility: flexibilityProp,
+    defaultFlexibility,
+    onFlexibilityChange,
+    flexibilityOptions,
+    flexibilityGroupLabel = "Date flexibility",
+    exactDatesLabel = "Exact dates",
+    flexibilityLabel = "± {n} days",
+    flexibilityOneLabel = "± 1 day",
     monthLabel = "Month",
     yearLabel = "Year",
     chooseMonthLabel = "Choose month",
@@ -309,8 +353,10 @@ export function Calendar(props: CalendarProps) {
     minRange,
     maxRange,
     rangeCrossesUnavailable,
-    allowSingleDayRange,
+    allowSingleDayRange: rangeUnit === "nights" ? false : allowSingleDayRange,
     maxSelected,
+    isDateCheckoutOnly,
+    nights: rangeUnit === "nights",
   };
 
   // ---- Vista y mes visible ----
@@ -368,7 +414,14 @@ export function Calendar(props: CalendarProps) {
     preview,
     locale,
     weekdayFormat,
-    labels: { unavailable: unavailableLabel, week: weekLabel, chooseMonth: chooseMonthLabel, chooseYear: chooseYearLabel },
+    labels: {
+      unavailable: unavailableLabel,
+      week: weekLabel,
+      chooseMonth: chooseMonthLabel,
+      chooseYear: chooseYearLabel,
+      checkoutOnly: checkoutOnlyLabel,
+      minimum: minRangeLabel,
+    },
     modifiers,
     dayDescription: getDayDescription,
   });
@@ -407,6 +460,18 @@ export function Calendar(props: CalendarProps) {
     setInner(next);
     (props.onValueChange as ((value: CalendarValue) => void) | undefined)?.(next);
   };
+
+  const [innerFlex, setInnerFlex] = useState(defaultFlexibility ?? 0);
+  const flex = flexibilityProp ?? innerFlex;
+  const flexOptions = flexibilityOptions ?? (flexibilityProp !== undefined || defaultFlexibility !== undefined ? [0, 1, 2, 3, 7] : []);
+  const chooseFlex = (days: number) => {
+    setInnerFlex(days);
+    onFlexibilityChange?.(days);
+  };
+  const nights = mode === "range" ? rangeNights(selection.range) : null;
+  const length = nights === null ? null : nights + (rangeUnit === "nights" ? 0 : 1);
+  const shorter = mode === "range" ? stepRange(selection.range, -1, rules) : null;
+  const longer = mode === "range" ? stepRange(selection.range, 1, rules) : null;
 
   const pick = (value: string) => {
     const next = choose(mode, selection, value, rules, { unit: selectionUnit, weekStart });
@@ -780,6 +845,46 @@ export function Calendar(props: CalendarProps) {
             </div>
           )}
         </div>
+        {flexOptions.length && mode === "range" ? (
+          <div className="z-calendar__flex" role="group" aria-label={flexibilityGroupLabel}>
+            {flexOptions.map((days) => (
+              <button
+                key={days}
+                type="button"
+                className="z-calendar__flex-chip"
+                aria-pressed={flex === days}
+                onClick={() => chooseFlex(days)}
+              >
+                {days === 0 ? exactDatesLabel : days === 1 ? flexibilityOneLabel : flexibilityLabel.replace("{n}", String(days))}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {showLengthStepper && mode === "range" ? (
+          <div className="z-calendar__stepper">
+            <button
+              type="button"
+              className="z-calendar__stepper-btn"
+              aria-label={decreaseLabel}
+              aria-disabled={!shorter || undefined}
+              onClick={() => shorter && commit(shorter)}
+            >
+              <Icon name="minus" size={16} />
+            </button>
+            <output className="z-calendar__length" aria-live="polite">
+              {length === null ? "" : length === 1 ? lengthOneLabel : lengthLabel.replace("{n}", String(length))}
+            </output>
+            <button
+              type="button"
+              className="z-calendar__stepper-btn"
+              aria-label={increaseLabel}
+              aria-disabled={!longer || undefined}
+              onClick={() => longer && commit(longer)}
+            >
+              <Icon name="plus" size={16} />
+            </button>
+          </div>
+        ) : null}
         {showTodayButton || footer ? (
           <div className="z-calendar__footer">
             {showTodayButton ? (
@@ -846,6 +951,8 @@ function DayCellView({ cell, mode, unit, renderDay, onPick, onFocus, onHover }: 
         data-outside={on(cell.outside)}
         data-unavailable={on(cell.unavailable)}
         data-weekend={on(cell.weekend)}
+        data-checkout-only={on(cell.checkoutOnly)}
+        data-below-minimum={on(cell.belowMinimum)}
         {...extra}
         aria-disabled={cell.disabled || undefined}
         aria-current={cell.today ? "date" : undefined}
@@ -857,6 +964,11 @@ function DayCellView({ cell, mode, unit, renderDay, onPick, onFocus, onHover }: 
       >
         {cell.label}
       </button>
+      {cell.hint ? (
+        <span className="z-calendar__hint" aria-hidden="true">
+          {cell.hint}
+        </span>
+      ) : null}
       {/* Fuera del botón: decorativo, sin alterar su nombre visible ni recibir el puntero. */}
       {content != null && content !== false ? (
         <span className="z-calendar__day-content" aria-hidden="true">

@@ -1,0 +1,104 @@
+{
+  "name": "CalendarHeatmap",
+  "group": "agenda",
+  "description": "Mapa de calor / contribuciones: rejilla por semanas con 5 niveles (cuantiles o `levels`) y leyenda «Less → More», hoy con contorno, futuro vacío, etiqueta visible al enfocar o pasar, tabla alternativa («View as table»), variante `encoding=\"size\"` (el nivel también por el área), filo con contraste alto o `outline`, rachas y día más activo.",
+  "import": "import { CalendarHeatmap } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "values",
+      "type": "Record<string, number>",
+      "description": "Valor por fecha YYYY-MM-DD."
+    },
+    {
+      "name": "range",
+      "type": "{ from: string; to: string }",
+      "description": "Por defecto, las 53 semanas que acaban hoy."
+    },
+    {
+      "name": "levels",
+      "type": "number[]",
+      "description": "Umbrales de los niveles 1–4."
+    },
+    {
+      "name": "encoding",
+      "type": "enum",
+      "values": ["color", "size"],
+      "default": "color"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "showStats",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showLegend",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "defaultView",
+      "type": "enum",
+      "values": ["grid", "table"],
+      "default": "grid"
+    },
+    {
+      "name": "outline",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<HeatmapLabels>"
+    },
+    {
+      "name": "onDayClick",
+      "type": "(detail: { date; value }) => void"
+    }
+  ],
+  "states": ["rest", "hover", "focus", "today", "future"],
+  "tokens": [
+    "heatmap-hue",
+    "heatmap-0",
+    "heatmap-1",
+    "heatmap-2",
+    "heatmap-3",
+    "heatmap-4",
+    "line",
+    "fg",
+    "surface-solid",
+    "accent-ring",
+    "panel-radius"
+  ],
+  "classes": ["z-heatmap"],
+  "a11y": "role=grid por días de la semana (rowheader) y semanas, cada día un gridcell con nombre («14 contributions on Thursday 12 November»); una parada de Tab: ↑↓ un día, ←→ una semana (invertidas en RTL), RePág/AvPág un mes, Inicio/Fin. La celda enfocada o bajo el puntero muestra su valor en una etiqueta. Tabla alternativa en una región desplazable enfocable con caption y cabeceras. Los niveles bajos no llegan a 3:1 contra el panel (como cualquier rampa de cinco pasos de un tono): el valor está en el nombre y en la tabla, existe encoding=\"size\" y con prefers-contrast: more u outline todo día con actividad lleva un filo de heatmap-hue (≥ 3:1). Sin React: .z-heatmap con data-from, data-to, data-encoding… y values en <script type=\"application/json\" data-props>; emite z:dayclick y z:viewchange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Contribuciones del año",
+      "code": "<CalendarHeatmap title=\"1,470 contributions in 2026\" values={values} range={{ from: \"2026-01-01\", to: \"2026-12-31\" }} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Últimas semanas",
+      "code": "<div class=\"z-heatmap\" id=\"commits\" data-title=\"Commits\" data-from=\"2026-10-26\" data-to=\"2026-11-22\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"values\": { \"2026-10-27\": 2, \"2026-11-02\": 5, \"2026-11-03\": 1, \"2026-11-10\": 8, \"2026-11-12\": 14, \"2026-11-16\": 3, \"2026-11-17\": 6, \"2026-11-18\": 4, \"2026-11-19\": 2 } }</script>\n</div>"
+    }
+  ],
+  "origin": "Especificación agenda.md §12; contribuciones de GitHub."
+}

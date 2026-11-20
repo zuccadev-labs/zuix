@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 88,
+ "count": 94,
  "groups": {
   "actions": [
    "Button",
@@ -14,7 +14,13 @@
    "ToggleGroup"
   ],
   "agenda": [
-   "EventCalendar"
+   "CalendarHeatmap",
+   "EventCalendar",
+   "FreeBusy",
+   "HabitCalendar",
+   "PerpetualYear",
+   "SlotPicker",
+   "TimelineView"
   ],
   "carousel": [
    "Carousel"
@@ -1131,9 +1137,128 @@
    "file": "zui/src/components/actions/ToggleGroup.manifest.json"
   },
   {
+   "name": "CalendarHeatmap",
+   "group": "agenda",
+   "description": "Mapa de calor / contribuciones: rejilla por semanas con 5 niveles (cuantiles o `levels`) y leyenda «Less → More», hoy con contorno, futuro vacío, etiqueta visible al enfocar o pasar, tabla alternativa («View as table»), variante `encoding=\"size\"` (el nivel también por el área), filo con contraste alto o `outline`, rachas y día más activo.",
+   "import": "import { CalendarHeatmap } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "values",
+     "type": "Record<string, number>",
+     "description": "Valor por fecha YYYY-MM-DD."
+    },
+    {
+     "name": "range",
+     "type": "{ from: string; to: string }",
+     "description": "Por defecto, las 53 semanas que acaban hoy."
+    },
+    {
+     "name": "levels",
+     "type": "number[]",
+     "description": "Umbrales de los niveles 1–4."
+    },
+    {
+     "name": "encoding",
+     "type": "enum",
+     "values": [
+      "color",
+      "size"
+     ],
+     "default": "color"
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "showStats",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showLegend",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "grid",
+      "table"
+     ],
+     "default": "grid"
+    },
+    {
+     "name": "outline",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<HeatmapLabels>"
+    },
+    {
+     "name": "onDayClick",
+     "type": "(detail: { date; value }) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "today",
+    "future"
+   ],
+   "tokens": [
+    "heatmap-hue",
+    "heatmap-0",
+    "heatmap-1",
+    "heatmap-2",
+    "heatmap-3",
+    "heatmap-4",
+    "line",
+    "fg",
+    "surface-solid",
+    "accent-ring",
+    "panel-radius"
+   ],
+   "classes": [
+    "z-heatmap"
+   ],
+   "a11y": "role=grid por días de la semana (rowheader) y semanas, cada día un gridcell con nombre («14 contributions on Thursday 12 November»); una parada de Tab: ↑↓ un día, ←→ una semana (invertidas en RTL), RePág/AvPág un mes, Inicio/Fin. La celda enfocada o bajo el puntero muestra su valor en una etiqueta. Tabla alternativa en una región desplazable enfocable con caption y cabeceras. Los niveles bajos no llegan a 3:1 contra el panel (como cualquier rampa de cinco pasos de un tono): el valor está en el nombre y en la tabla, existe encoding=\"size\" y con prefers-contrast: more u outline todo día con actividad lleva un filo de heatmap-hue (≥ 3:1). Sin React: .z-heatmap con data-from, data-to, data-encoding… y values en <script type=\"application/json\" data-props>; emite z:dayclick y z:viewchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Contribuciones del año",
+     "code": "<CalendarHeatmap title=\"1,470 contributions in 2026\" values={values} range={{ from: \"2026-01-01\", to: \"2026-12-31\" }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Últimas semanas",
+     "code": "<div class=\"z-heatmap\" id=\"commits\" data-title=\"Commits\" data-from=\"2026-10-26\" data-to=\"2026-11-22\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"values\": { \"2026-10-27\": 2, \"2026-11-02\": 5, \"2026-11-03\": 1, \"2026-11-10\": 8, \"2026-11-12\": 14, \"2026-11-16\": 3, \"2026-11-17\": 6, \"2026-11-18\": 4, \"2026-11-19\": 2 } }</script>\n</div>"
+    }
+   ],
+   "origin": "Especificación agenda.md §12; contribuciones de GitHub.",
+   "file": "zui/src/components/agenda/CalendarHeatmap.manifest.json"
+  },
+  {
    "name": "EventCalendar",
    "group": "agenda",
-   "description": "Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral con minicalendario y calendarios, y las vistas de día, semana, semana laboral, mes con eventos y lista sobre un mismo modelo de eventos ISO. Zonas IANA, RRULE (subconjunto de RFC 5545), mover, redimensionar y crear con puntero y teclado, y «Move to…» como alternativa sin arrastre.",
+   "description": "Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral con minicalendario y calendarios, y las vistas de día, semana, semana laboral, mes con eventos, lista, año (12 minimeses con densidad), año perpetuo de una página y línea temporal de recursos sobre un mismo modelo de eventos ISO. Zonas IANA, RRULE (subconjunto de RFC 5545), mover, redimensionar y crear con puntero y teclado, y «Move to…» como alternativa sin arrastre.",
    "import": "import { EventCalendar } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -1154,10 +1279,13 @@
       "week",
       "workweek",
       "month",
-      "agenda"
+      "agenda",
+      "year",
+      "perpetual",
+      "timeline"
      ],
      "default": "week",
-     "description": "También defaultView y onViewChange."
+     "description": "También defaultView y onViewChange. year, perpetual y timeline se ofrecen con `views`."
     },
     {
      "name": "views",
@@ -1238,7 +1366,8 @@
     {
      "name": "dayMaxEvents",
      "type": "number",
-     "default": 3
+     "default": 3,
+     "description": "Mes y fila de todo el día: carriles visibles antes de «+N». En la rejilla de horas el tope es fijo: cuatro solapes lado a lado en la semana (ocho en el día) y el resto en un «+N» por hora que abre el popover del intervalo."
     },
     {
      "name": "fixedWeeks",
@@ -1248,7 +1377,8 @@
     {
      "name": "listDays",
      "type": "number",
-     "default": 14
+     "default": 14,
+     "description": "Días de la vista de agenda. A partir de 150 filas, la lista pinta solo su ventana visible (con margen) y rellena el resto."
     },
     {
      "name": "sidebar",
@@ -1294,6 +1424,31 @@
      "name": "labels",
      "type": "Partial<AgendaLabels>",
      "description": "Textos visibles (inglés por defecto)."
+    },
+    {
+     "name": "resources",
+     "type": "{ id; title; meta? }[]",
+     "description": "Filas de la vista timeline (eventos con resourceIds); sin ellas, una fila por calendario."
+    },
+    {
+     "name": "density",
+     "type": "(date: string, count: number) => number",
+     "description": "Vista de año: densidad 0…3 de un día. En `/dom`, con `setAgendaOptions(el, { density })`."
+    },
+    {
+     "name": "renderEvent",
+     "type": "(detail: RenderEventDetail) => ReactNode",
+     "description": "Contenido visible de cada evento; el nombre accesible completo se mantiene. Modo DOM: setAgendaOptions(el, { renderEvent })."
+    },
+    {
+     "name": "loadEvents",
+     "type": "(range: { from; to; timeZone }, signal: AbortSignal) => Promise<CalendarEvent[]>",
+     "description": "Carga los eventos del rango visible (aria-busy mientras carga; cancela la anterior). Modo DOM: setAgendaOptions(el, { loadEvents })."
+    },
+    {
+     "name": "onRangeChange",
+     "type": "(range: { from; to; view }) => void",
+     "description": "Modo DOM: z:rangechange."
     }
    ],
    "states": [
@@ -1337,7 +1492,9 @@
     "item-radius",
     "accent-solid",
     "fg-on-accent",
-    "line"
+    "line",
+    "perpetual-side-bg",
+    "calendar-today-ring"
    ],
    "classes": [
     "z-agenda",
@@ -1346,7 +1503,7 @@
     "z-monthgrid",
     "z-agendalist"
    ],
-   "a11y": "Rejilla de horas y mes con role=grid (columnheader por día con aria-current=date en hoy, gridcell por día); lista con role=list y un encabezado por día. Una sola parada de Tab por vista (tabindex itinerante): eventos como button con nombre completo (título, día, intervalo con formatRange, lugar, calendario, provisional, repite); flechas espaciales entre eventos (sin candidato no se evita el desplazamiento) y un único cursor de franja libre que se mueve por franjas y días; en el mes, flechas por días, Intro entra en los eventos del día y Escape vuelve a la celda. RePág/AvPág cambian de periodo. Intro en un evento abre su detalle; con editable, una segunda Intro lo agarra: flechas mueven (snapDuration, un día), Mayús+↑↓ redimensiona el fin (Alt+Mayús el inicio), Intro suelta, Escape cancela, salir con el foco suelta. Tecla Menú o Mayús+F10, o «Move to…» en el detalle: diálogo modal con fecha, inicio y fin (WCAG 2.5.7). Una región status por agenda con 500 ms de retraso y vaciado previo. Colores forzados, contraste alto, movimiento reducido e impresión cubiertos. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-agenda` dentro de `[data-z-dom]` con data-view, data-date, data-time-zone, data-locale, data-week-start, data-day-start, data-day-end, data-editable, data-selectable…, eventos y calendarios en <script type=\"application/json\" data-events> y data-calendars o con setAgendaEvents/setAgendaCalendars; emite z:eventchange, z:eventclick, z:selectslot, z:datechange, z:viewchange, z:quickcreate, z:calendartoggle y z:timezonechange.",
+   "a11y": "Rejilla de horas y mes con role=grid (columnheader por día con aria-current=date en hoy, gridcell por día); lista con role=list y un encabezado por día (con ventana virtual, aria-setsize y aria-posinset en días y filas; la fila con el foco siempre está pintada e Inicio/Fin llegan al primero y al último aunque no estén pintados). Una sola parada de Tab por vista (tabindex itinerante): eventos como button con nombre completo (título, día, intervalo con formatRange, lugar, calendario, provisional, repite); flechas espaciales entre eventos y los «+N» de la rejilla de horas (sin candidato no se evita el desplazamiento) y un único cursor de franja libre que se mueve por franjas y días; en el mes, flechas por días, Intro entra en los eventos del día y Escape vuelve a la celda. RePág/AvPág cambian de periodo. Intro en un evento abre su detalle; con editable, una segunda Intro lo agarra: flechas mueven (snapDuration, un día), Mayús+↑↓ redimensiona el fin (Alt+Mayús el inicio), Intro suelta, Escape cancela, salir con el foco suelta. Tecla Menú o Mayús+F10, o «Move to…» en el detalle: diálogo modal con fecha, inicio y fin (WCAG 2.5.7). Una región status por agenda con 500 ms de retraso y vaciado previo. Colores forzados, contraste alto, movimiento reducido e impresión cubiertos. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-agenda` dentro de `[data-z-dom]` con data-view, data-date, data-time-zone, data-locale, data-week-start, data-day-start, data-day-end, data-editable, data-selectable…, eventos y calendarios en <script type=\"application/json\" data-events> y data-calendars o con setAgendaEvents/setAgendaCalendars; emite z:eventchange, z:eventclick, z:selectslot, z:datechange, z:viewchange, z:quickcreate, z:calendartoggle y z:timezonechange. Año: 12 rejillas con la densidad en el nombre («4 events»); Intro abre el día. Perpetuo: tabla con caption, instrucciones y buscador con respuesta en texto. Línea temporal: grid con rowheader por recurso; conflicto con trama, borde y «overlaps».",
    "behavior": "dom",
    "examples": [
     {
@@ -1362,6 +1519,614 @@
    ],
    "origin": "Especificación agenda.md; Google Calendar, Fantastical, FullCalendar y Schedule-X como referencia.",
    "file": "zui/src/components/agenda/EventCalendar.manifest.json"
+  },
+  {
+   "name": "FreeBusy",
+   "group": "agenda",
+   "description": "Buscar hueco: una fila por persona con sus ocupados («Busy», trama neutra) y lo que queda fuera de su horario en su propia zona («Outside hours», trama cálida), la franja común de `duration` minutos en verde con su texto, anterior y siguiente, y «Use …».",
+   "import": "import { FreeBusy } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "attendees",
+     "type": "FreeBusyAttendee[]",
+     "description": "{ id, name, meta?, timeZone?, busy: { start, end }[] (instantes), workingHours?: { days?, start, end }, optional? }."
+    },
+    {
+     "name": "date",
+     "type": "string"
+    },
+    {
+     "name": "timeZone",
+     "type": "string",
+     "description": "Zona de presentación (IANA)."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 60
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 30
+    },
+    {
+     "name": "dayStart",
+     "type": "string",
+     "default": "08:00"
+    },
+    {
+     "name": "dayEnd",
+     "type": "string",
+     "default": "19:00"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "now",
+     "type": "number | string"
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<FreeBusyLabels>"
+    },
+    {
+     "name": "onSelect",
+     "type": "(detail: { start; end; timeZone; startMs; endMs }) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "suggested",
+    "none"
+   ],
+   "tokens": [
+    "success",
+    "success-solid",
+    "fg-on-accent",
+    "warning",
+    "line-strong",
+    "reading-bg",
+    "event-radius",
+    "control-radius-sm"
+   ],
+   "classes": [
+    "z-freebusy"
+   ],
+   "a11y": "Rejilla role=grid con rowheader por persona (nombre y su zona u hora local). Cada ocupado lleva su texto visible («Busy», «Outside hours») y la hora en el nombre («Busy 09:00–10:30»): no depende de la trama ni del color. La franja propuesta se anuncia en una región status («All 5 free: 14:00–15:00») y se usa con un botón («Use 14:00–15:00»); anterior y siguiente son botones con nombre. Sin React: .z-freebusy con data-date, data-time-zone, data-duration… y attendees en <script type=\"application/json\" data-props>; emite z:select.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Buscar hueco de 1 h",
+     "code": "<FreeBusy\n  date=\"2026-11-19\"\n  timeZone=\"Europe/Madrid\"\n  duration={60}\n  attendees={[\n    { id: \"m\", name: \"Marta\", timeZone: \"Europe/Madrid\", workingHours: { start: \"09:00\", end: \"18:00\" }, busy: [{ start: \"2026-11-19T08:00:00Z\", end: \"2026-11-19T09:30:00Z\" }] },\n    { id: \"d\", name: \"Dana\", timeZone: \"America/New_York\", workingHours: { start: \"08:00\", end: \"17:00\" }, busy: [] }\n  ]}\n  onSelect={(slot) => console.log(slot.start)}\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Buscar hueco de 1 h",
+     "code": "<div class=\"z-freebusy\" id=\"find-time\" data-date=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-duration=\"60\" data-locale=\"en-GB\" data-now=\"2026-11-19T09:42:00Z\">\n  <script type=\"application/json\" data-props>{ \"attendees\": [{ \"id\": \"m\", \"name\": \"Marta López\", \"timeZone\": \"Europe/Madrid\", \"workingHours\": { \"start\": \"09:00\", \"end\": \"18:00\" }, \"busy\": [{ \"start\": \"2026-11-19T08:00:00Z\", \"end\": \"2026-11-19T09:30:00Z\" }] }, { \"id\": \"d\", \"name\": \"Dana Price\", \"timeZone\": \"America/New_York\", \"workingHours\": { \"start\": \"08:00\", \"end\": \"17:00\" }, \"busy\": [{ \"start\": \"2026-11-19T15:00:00Z\", \"end\": \"2026-11-19T16:00:00Z\" }] }] }</script>\n</div>"
+    }
+   ],
+   "origin": "Especificación agenda.md §9; Outlook Scheduling Assistant.",
+   "file": "zui/src/components/agenda/FreeBusy.manifest.json"
+  },
+  {
+   "name": "HabitCalendar",
+   "group": "agenda",
+   "description": "Rachas y hábitos: mes con días cumplidos (sólido y marca), fallados (trama y cruz, texto en peligro), de descanso (guion; no rompen la racha), hoy en curso (anillo de progreso) y una banda que une los días de la racha actual, con leyenda; `variant=\"week\"`, tira compacta de la semana para la cabecera de una app.",
+   "import": "import { HabitCalendar } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "states",
+     "type": "Record<string, \"done\" | \"missed\" | \"rest\" | { progress: number }>"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "month",
+      "week"
+     ],
+     "default": "month"
+    },
+    {
+     "name": "subtitle",
+     "type": "string"
+    },
+    {
+     "name": "note",
+     "type": "string"
+    },
+    {
+     "name": "month",
+     "type": "string",
+     "description": "YYYY-MM; también defaultMonth y onMonthChange."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<HabitLabels>"
+    },
+    {
+     "name": "onDayClick",
+     "type": "(detail: { date; state }) => void"
+    }
+   ],
+   "states": [
+    "done",
+    "missed",
+    "rest",
+    "progress",
+    "today",
+    "future"
+   ],
+   "tokens": [
+    "success",
+    "success-solid",
+    "danger",
+    "danger-text",
+    "warning",
+    "warning-solid",
+    "warning-text",
+    "fg-on-accent",
+    "calendar-today-ring",
+    "calendar-cell-radius",
+    "panel-radius"
+   ],
+   "classes": [
+    "z-habit"
+   ],
+   "a11y": "Mes como rejilla (table role=grid etiquetada por el mes) con un botón por día: nombre con la fecha y el estado («Thursday 12 November, Done», «Today 60%»); tabindex itinerante: flechas, Inicio/Fin, RePág/AvPág. Cada estado tiene forma o icono además del color (marca, cruz con trama, guion, anillo) y la leyenda lo explica. La semana compacta es una lista con el estado de cada día en texto oculto. Sin React: .z-habit con data-variant, data-month, data-today… y states en <script type=\"application/json\" data-props>; emite z:dayclick y z:monthchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Racha del mes",
+     "code": "<HabitCalendar subtitle=\"Read 20 minutes\" states={{ \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { progress: 60 } }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Racha del mes",
+     "code": "<div class=\"z-habit\" id=\"reading-habit\" data-subtitle=\"Read 20 minutes\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"states\": { \"2026-11-12\": \"done\", \"2026-11-13\": \"done\", \"2026-11-14\": \"missed\", \"2026-11-15\": \"rest\", \"2026-11-16\": \"done\", \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { \"progress\": 60 } } }</script>\n</div>"
+    }
+   ],
+   "origin": "Especificación agenda.md §13; Duolingo, Streaks.",
+   "file": "zui/src/components/agenda/HabitCalendar.manifest.json"
+  },
+  {
+   "name": "PerpetualYear",
+   "group": "agenda",
+   "description": "Año perpetuo de una página: tabla de 7 × 7 días de la semana con cada mes sobre la columna que empieza por el día de la semana de su día 1, los números 1–31 en filas de 7 y un buscador de fecha que da el día de la semana en texto. También es la vista `perpetual` de EventCalendar.",
+   "import": "import { PerpetualYear } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "year",
+     "type": "number",
+     "description": "Año de la lámina. Por defecto, el de la fecha resaltada o el actual."
+    },
+    {
+     "name": "highlight",
+     "type": "string | null",
+     "description": "Fecha resaltada (cruz) YYYY-MM-DD; también defaultHighlight y onHighlightChange."
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PerpetualLabels>",
+     "description": "title, how, find, days ({n} days), dayOfMonth, result ({date} → {weekday})."
+    },
+    {
+     "name": "onHighlightChange",
+     "type": "(detail: { date: string | null }) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "highlight"
+   ],
+   "tokens": [
+    "perpetual-side-bg",
+    "reading-bg",
+    "accent-solid",
+    "fg-on-accent",
+    "line-strong",
+    "danger-text",
+    "success-solid",
+    "event-solid-5",
+    "control-radius-sm",
+    "panel-radius"
+   ],
+   "classes": [
+    "z-perpetual"
+   ],
+   "a11y": "<table> con caption (año y título) e instrucciones de lectura enlazadas con aria-describedby; los meses son th de columna y cada fila lleva un th de fila con sus números (1, 8, 15, 22, 29). El buscador es un <input type=\"date\"> etiquetado y la respuesta («19 Nov 2026 → Thursday») sale en un <output role=\"status\">: la tabla no es la única vía. El resaltado de fila, columna y cruce va además en forma (sólido y negrita), no solo en color. Sin React: un .z-perpetual dentro de [data-z-dom] con data-highlight, data-year, data-week-start, data-locale y data-today; emite z:highlightchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Año perpetuo",
+     "code": "<PerpetualYear defaultHighlight=\"2026-11-19\" locale=\"en-GB\" weekStartsOn={1} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Año perpetuo",
+     "code": "<div class=\"z-perpetual\" id=\"perpetual-2026\" data-highlight=\"2026-11-19\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\"></div>"
+    }
+   ],
+   "origin": "Especificación agenda.md §7; lámina de calendario perpetuo de una página.",
+   "file": "zui/src/components/agenda/PerpetualYear.manifest.json"
+  },
+  {
+   "name": "SlotPicker",
+   "group": "agenda",
+   "description": "Franjas de cita (estilo Calendly): Calendar con los días que tienen hueco realzados (los demás, deshabilitados pero enfocables y anunciados «no times available»), zona horaria del visitante y un listbox con las horas del día en 12 o 24 h; «Next» es un botón aparte. Las horas son instantes: la disponibilidad del anfitrión se calcula en su zona y se muestra en la del visitante.",
+   "import": "import { SlotPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "slots",
+     "type": "(string | number)[]",
+     "description": "Instantes de inicio. O availability + hostTimeZone + duration (+ step, from, to, busy)."
+    },
+    {
+     "name": "availability",
+     "type": "{ days: number[]; start: string; end: string }[]"
+    },
+    {
+     "name": "hostTimeZone",
+     "type": "string"
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 30
+    },
+    {
+     "name": "step",
+     "type": "number"
+    },
+    {
+     "name": "from",
+     "type": "string"
+    },
+    {
+     "name": "to",
+     "type": "string"
+    },
+    {
+     "name": "busy",
+     "type": "{ start; end }[]"
+    },
+    {
+     "name": "timeZone",
+     "type": "string",
+     "description": "Zona del visitante; con timeZones aparece un selector (onTimeZoneChange)."
+    },
+    {
+     "name": "timeZones",
+     "type": "string[]"
+    },
+    {
+     "name": "hourCycle",
+     "type": "enum",
+     "values": [
+      "h12",
+      "h23"
+     ],
+     "description": "También defaultHourCycle y onHourCycleChange; por defecto, el del locale."
+    },
+    {
+     "name": "value",
+     "type": "string | number | null",
+     "description": "Instante elegido; también defaultValue y onSelect."
+    },
+    {
+     "name": "date",
+     "type": "string",
+     "description": "Día del calendario (onDateChange)."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "now",
+     "type": "number | string",
+     "description": "No ofrece franjas anteriores."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<SlotPickerLabels>"
+    },
+    {
+     "name": "onSelect",
+     "type": "(detail: { start; startMs; timeZone }) => void"
+    },
+    {
+     "name": "onConfirm",
+     "type": "(detail: { start; startMs; timeZone }) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "selected",
+    "unavailable"
+   ],
+   "tokens": [
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "control-bg",
+    "control-border",
+    "control-height-lg",
+    "control-radius",
+    "surface",
+    "fg",
+    "surface-solid",
+    "panel-radius"
+   ],
+   "classes": [
+    "z-slotpicker"
+   ],
+   "a11y": "Calendar (rejilla APG) con los días sin hueco en aria-disabled y «no times available» en su nombre. Horas en role=listbox etiquetado por el día («Tuesday 24 November»), opciones con aria-selected y tabindex itinerante: ↑↓, Inicio/Fin, Intro o Espacio eligen. La elección se dice en texto («10:30 selected») y «Next» es un botón aparte, no una opción. 12/24 h en un grupo con aria-pressed. Sin React: .z-slotpicker con data-host-time-zone, data-duration, data-time-zone… y availability o slots en <script type=\"application/json\" data-props>; emite z:select, z:confirm, z:datechange, z:timezonechange y z:hourcyclechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Llamada de 30 min",
+     "code": "<SlotPicker\n  availability={[{ days: [1, 2, 3, 4, 5], start: \"09:00\", end: \"17:00\" }]}\n  hostTimeZone=\"Europe/Madrid\"\n  duration={30}\n  timeZone=\"America/New_York\"\n  timeZones={[\"America/New_York\", \"Europe/Madrid\"]}\n  onConfirm={(slot) => console.log(slot.start)}\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Llamada de 30 min",
+     "code": "<div class=\"z-slotpicker\" id=\"intro-call\" data-host-time-zone=\"Europe/Madrid\" data-duration=\"30\" data-from=\"2026-11-19\" data-to=\"2026-11-30\" data-time-zone=\"Europe/Madrid\" data-time-zones=\"Europe/Madrid,America/New_York\" data-today=\"2026-11-19\" data-now=\"2026-11-19T09:42:00Z\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"availability\": [{ \"days\": [1, 2, 3, 4, 5], \"start\": \"09:00\", \"end\": \"17:00\" }] }</script>\n</div>"
+    }
+   ],
+   "origin": "Especificación agenda.md §10; Calendly, Cal.com.",
+   "file": "zui/src/components/agenda/SlotPicker.manifest.json"
+  },
+  {
+   "name": "TimelineView",
+   "group": "agenda",
+   "description": "Línea temporal. `mode=\"tasks\"` (Gantt): fases plegables con barra resumen, tareas con progreso, hitos, dependencias fin → inicio en codo, camino crítico, línea de hoy, fines de semana y zoom día/semana/mes. `mode=\"resources\"`: una fila por sala o persona, reservas por hora con el color del calendario, conflictos con borde, trama y «Overlaps», crear arrastrando y ventana virtual de filas a partir de `virtualizeFrom`.",
+   "import": "import { TimelineView } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "tasks",
+      "resources"
+     ],
+     "default": "tasks"
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "tasks",
+     "type": "TimelineTask[]",
+     "description": "{ id, title, start, end? (exclusivo; sin end o milestone: hito), group?, progress?, dependsOn?, color?, editable? }."
+    },
+    {
+     "name": "groups",
+     "type": "TimelineGroup[]",
+     "description": "{ id, title, collapsed? }: fases."
+    },
+    {
+     "name": "scale",
+     "type": "enum",
+     "values": [
+      "day",
+      "week",
+      "month"
+     ],
+     "default": "day",
+     "description": "También defaultScale, scales y onScaleChange."
+    },
+    {
+     "name": "range",
+     "type": "{ from: string; to: string }",
+     "description": "Rango visible (to exclusivo). Por defecto, el de las tareas."
+    },
+    {
+     "name": "criticalPath",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "dependencies",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "resources",
+     "type": "Resource[]",
+     "description": "{ id, title, meta? }."
+    },
+    {
+     "name": "events",
+     "type": "CalendarEvent[]",
+     "description": "Reservas: eventos con resourceIds."
+    },
+    {
+     "name": "calendars",
+     "type": "CalendarSource[]"
+    },
+    {
+     "name": "date",
+     "type": "string"
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "dayStart",
+     "type": "string",
+     "default": "08:00"
+    },
+    {
+     "name": "dayEnd",
+     "type": "string",
+     "default": "19:00"
+    },
+    {
+     "name": "snapDuration",
+     "type": "number",
+     "default": 15
+    },
+    {
+     "name": "virtualizeFrom",
+     "type": "number",
+     "default": 60
+    },
+    {
+     "name": "editable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "selectable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "now",
+     "type": "number | string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TimelineLabels>"
+    },
+    {
+     "name": "onTaskChange",
+     "type": "(detail: { task; start; end; kind: move|resize }) => void"
+    },
+    {
+     "name": "onTaskClick",
+     "type": "(detail: { task }) => void"
+    },
+    {
+     "name": "onGroupToggle",
+     "type": "(detail: { groupId; collapsed }) => void"
+    },
+    {
+     "name": "onEventChange",
+     "type": "(detail: { event; occurrence; start; end; kind }) => void"
+    },
+    {
+     "name": "onEventClick",
+     "type": "(detail: { event; occurrence; resourceId }) => void"
+    },
+    {
+     "name": "onSelectSlot",
+     "type": "(detail: SlotSelection & { resourceId }) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "selected",
+    "grabbed",
+    "critical",
+    "conflict",
+    "collapsed"
+   ],
+   "tokens": [
+    "reading-bg",
+    "surface-solid",
+    "line",
+    "calendar-now",
+    "calendar-now-label-bg",
+    "calendar-weekend-bg",
+    "event-tint",
+    "event-radius",
+    "event-fg",
+    "event-fg-muted",
+    "warning",
+    "danger",
+    "danger-text",
+    "accent-ring",
+    "control-radius-sm",
+    "panel-radius"
+   ],
+   "classes": [
+    "z-timeline"
+   ],
+   "a11y": "Gantt con role=treegrid (fila de cabecera, rowheader por tarea, aria-level, aria-expanded en las fases, aria-rowcount/aria-rowindex) y recursos con role=grid. Una parada de Tab: ↑↓ entre filas, ←→ pliega y despliega una fase, Inicio/Fin. Las barras son button con nombre completo (fechas, días, progreso, camino crítico); las dependencias, en texto («Depends on Tokens v2») por aria-describedby; los hitos, button con «milestone». Intro elige; con editable, una segunda Intro agarra: ←→ ±1 día (recursos: ±snapDuration), Mayús cambia la duración, Intro suelta, Escape cancela; anuncio en una región status. Conflicto con trama, borde y «Overlaps» (no solo color). SVG de dependencias aria-hidden y reflejado en RTL. Sin React: .z-timeline con data-mode, data-scale, data-date… y los datos en <script type=\"application/json\" data-props> o setWidgetProps; emite z:taskchange, z:taskclick, z:grouptoggle, z:scalechange, z:eventchange, z:eventclick y z:selectslot.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Gantt",
+     "code": "<TimelineView\n  title=\"Design system Q4\"\n  groups={[{ id: \"ds\", title: \"Design system\" }]}\n  tasks={[\n    { id: \"tokens\", title: \"Tokens v2\", start: \"2026-11-16\", end: \"2026-11-24\", group: \"ds\", progress: 80 },\n    { id: \"beta\", title: \"Beta release\", start: \"2026-11-27\", milestone: true, group: \"ds\", dependsOn: [\"tokens\"] }\n  ]}\n  today=\"2026-11-19\"\n  editable\n  onTaskChange={(change) => console.log(change.start, change.end)}\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Gantt",
+     "code": "<div class=\"z-timeline\" id=\"plan-gantt\" data-title=\"Design system Q4\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\" data-editable>\n  <script type=\"application/json\" data-props>{ \"range\": { \"from\": \"2026-11-09\", \"to\": \"2026-11-30\" }, \"groups\": [{ \"id\": \"ds\", \"title\": \"Design system\" }], \"tasks\": [{ \"id\": \"tokens\", \"title\": \"Tokens v2\", \"start\": \"2026-11-16\", \"end\": \"2026-11-24\", \"group\": \"ds\", \"progress\": 80, \"color\": \"5\" }, { \"id\": \"docs\", \"title\": \"Docs site\", \"start\": \"2026-11-24\", \"end\": \"2026-11-27\", \"group\": \"ds\", \"dependsOn\": [\"tokens\"] }, { \"id\": \"beta\", \"title\": \"Beta release\", \"start\": \"2026-11-27\", \"milestone\": true, \"group\": \"ds\", \"dependsOn\": [\"docs\"] }] }</script>\n</div>"
+    },
+    {
+     "title": "Recursos",
+     "code": "<div class=\"z-timeline\" id=\"plan-rooms\" data-mode=\"resources\" data-title=\"Rooms\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-editable>\n  <script type=\"application/json\" data-props>{ \"resources\": [{ \"id\": \"atlas\", \"title\": \"Atlas\", \"meta\": \"8 seats\" }, { \"id\": \"kepler\", \"title\": \"Kepler\", \"meta\": \"4 seats\" }], \"calendars\": [{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }], \"events\": [{ \"id\": \"a\", \"title\": \"Sprint planning\", \"start\": \"2026-11-19T09:00\", \"end\": \"2026-11-19T10:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"atlas\"] }, { \"id\": \"b\", \"title\": \"Interview\", \"start\": \"2026-11-19T10:30\", \"end\": \"2026-11-19T11:30\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }, { \"id\": \"c\", \"title\": \"Supplier call\", \"start\": \"2026-11-19T11:00\", \"end\": \"2026-11-19T12:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }] }</script>\n</div>"
+    }
+   ],
+   "origin": "Especificación agenda.md §8–9; Asana, ClickUp, FullCalendar Scheduler.",
+   "file": "zui/src/components/agenda/TimelineView.manifest.json"
   },
   {
    "name": "Carousel",
@@ -4517,6 +5282,37 @@
      "type": "boolean",
      "default": false,
      "description": "Enfoca el día activo al montar."
+    },
+    {
+     "name": "isDateCheckoutOnly",
+     "type": "(date) => boolean",
+     "description": "Estancia: se puede terminar el rango ese día, no empezarlo (marca pequeña y «check-out only»). Modo DOM: data-checkout-only-dates o setCalendarOptions."
+    },
+    {
+     "name": "rangeUnit",
+     "type": "enum",
+     "values": [
+      "days",
+      "nights"
+     ],
+     "default": "days",
+     "description": "minRange y maxRange en noches; sin rangos de un día."
+    },
+    {
+     "name": "minRangeLabel",
+     "type": "string",
+     "description": "Aviso visible y en el nombre del día que no llega al mínimo («{n}-night minimum»)."
+    },
+    {
+     "name": "showLengthStepper",
+     "type": "boolean",
+     "default": false,
+     "description": "Pie con −/+ que acortan o alargan el rango (lengthLabel «{n} nights»)."
+    },
+    {
+     "name": "flexibility",
+     "type": "number",
+     "description": "Chips «Exact dates», «± 1 day»…; también defaultFlexibility, flexibilityOptions y onFlexibilityChange (modo DOM: data-flexibility y z:flexibilitychange)."
     }
    ],
    "states": [
@@ -4628,6 +5424,18 @@
     {
      "title": "Semana por su número",
      "code": "<Calendar mode=\"range\" showWeekNumber onWeekNumberClick={(week) => console.log(week.from)} defaultMonth=\"2026-11\" />"
+    },
+    {
+     "title": "Contenido por celda: precio por día",
+     "code": "<Calendar\n  defaultMonth=\"2026-12\"\n  cellSize=\"lg\"\n  // El precio se ve bajo el número; el nombre accesible lo dice («€39, lowest»).\n  renderDay={(date) => (prices[date] ? `€${prices[date]}` : \"—\")}\n  getDayDescription={(date) => (prices[date] ? `€${prices[date]}${prices[date] < 50 ? \", lowest\" : \"\"}` : \"sold out\")}\n  isDateDisabled={(date) => !prices[date]}\n  modifiers={{ cheap: (date) => prices[date] < 50 }}\n/>"
+    },
+    {
+     "title": "Contenido por celda: marcadores de ciclo con leyenda",
+     "code": "<Calendar\n  defaultMonth=\"2026-11\"\n  cellSize=\"lg\"\n  // Cada marcador es un modificador (data-period, data-fertile…) con su estilo en la hoja de la aplicación,\n  // su texto en getDayDescription y su entrada en la leyenda: no depende solo del color.\n  modifiers={{ period, predicted, fertile, ovulation }}\n  renderDay={(date) => (symptoms[date] ? \"•\".repeat(symptoms[date]) : null)}\n  getDayDescription={(date) => [period(date) && \"period\", fertile(date) && \"fertile window\", ovulation(date) && \"ovulation\"].filter(Boolean).join(\", \") || null}\n/>"
+    },
+    {
+     "title": "Estancia: noches, solo salida, flexibilidad y ajuste ±1",
+     "code": "<Calendar\n  mode=\"range\"\n  numberOfMonths={2}\n  rangeUnit=\"nights\"\n  minRange={2}\n  isDateUnavailable={(date) => booked.has(date)}\n  isDateCheckoutOnly={(date) => checkoutOnly.has(date)}\n  defaultFlexibility={1}\n  showLengthStepper\n/>"
     }
    ],
    "html": [
@@ -5816,6 +6624,37 @@
      "type": "boolean",
      "default": false,
      "description": "Fecha única: el disparador es un DateField tecleable con botón de calendario (DateTimePicker con granularity day)."
+    },
+    {
+     "name": "isDateCheckoutOnly",
+     "type": "(date) => boolean",
+     "description": "Estancia: se puede terminar el rango ese día, no empezarlo (marca pequeña y «check-out only»). Modo DOM: data-checkout-only-dates o setCalendarOptions."
+    },
+    {
+     "name": "rangeUnit",
+     "type": "enum",
+     "values": [
+      "days",
+      "nights"
+     ],
+     "default": "days",
+     "description": "minRange y maxRange en noches; sin rangos de un día."
+    },
+    {
+     "name": "minRangeLabel",
+     "type": "string",
+     "description": "Aviso visible y en el nombre del día que no llega al mínimo («{n}-night minimum»)."
+    },
+    {
+     "name": "showLengthStepper",
+     "type": "boolean",
+     "default": false,
+     "description": "Pie con −/+ que acortan o alargan el rango (lengthLabel «{n} nights»)."
+    },
+    {
+     "name": "flexibility",
+     "type": "number",
+     "description": "Chips «Exact dates», «± 1 day»…; también defaultFlexibility, flexibilityOptions y onFlexibilityChange (modo DOM: data-flexibility y z:flexibilitychange)."
     }
    ],
    "states": [
@@ -5969,6 +6808,37 @@
      "name": "...DatePicker",
      "type": "DatePickerProps",
      "description": "El resto de props de DatePicker."
+    },
+    {
+     "name": "isDateCheckoutOnly",
+     "type": "(date) => boolean",
+     "description": "Estancia: se puede terminar el rango ese día, no empezarlo (marca pequeña y «check-out only»). Modo DOM: data-checkout-only-dates o setCalendarOptions."
+    },
+    {
+     "name": "rangeUnit",
+     "type": "enum",
+     "values": [
+      "days",
+      "nights"
+     ],
+     "default": "days",
+     "description": "minRange y maxRange en noches; sin rangos de un día."
+    },
+    {
+     "name": "minRangeLabel",
+     "type": "string",
+     "description": "Aviso visible y en el nombre del día que no llega al mínimo («{n}-night minimum»)."
+    },
+    {
+     "name": "showLengthStepper",
+     "type": "boolean",
+     "default": false,
+     "description": "Pie con −/+ que acortan o alargan el rango (lengthLabel «{n} nights»)."
+    },
+    {
+     "name": "flexibility",
+     "type": "number",
+     "description": "Chips «Exact dates», «± 1 day»…; también defaultFlexibility, flexibilityOptions y onFlexibilityChange (modo DOM: data-flexibility y z:flexibilitychange)."
     }
    ],
    "states": [

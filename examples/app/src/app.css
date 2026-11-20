@@ -242,3 +242,192 @@ body {
   align-items: center;
   gap: var(--z-space-2);
 }
+/* Piezas de planificación de la agenda (oleada 2), una bajo otra. */
+.app-planning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-6);
+  min-inline-size: 0;
+}
+.app-planning__piece {
+  min-inline-size: 0;
+}
+.app-booking {
+  display: grid;
+  grid-template-columns: minmax(0, 17.5rem) minmax(0, 1fr);
+  max-inline-size: 65rem;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--z-panel-radius);
+}
+.app-booking__host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-3);
+  padding: var(--z-space-5);
+  border-inline-end: 1px solid var(--z-line);
+}
+.app-booking__host h3 {
+  margin: 0;
+  font-size: var(--z-text-heading);
+}
+.app-booking .z-slotpicker {
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+@media (max-width: 760px) {
+  .app-booking {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app-booking__host {
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--z-line);
+  }
+}
+.app-planning__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-4);
+}
+.app-planning__row > .z-heatmap {
+  flex: 1 1 20rem;
+  max-inline-size: 28rem;
+}
+.app-planning__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--z-space-4);
+}
+/* Estancia: cabecera y campos de entrada y salida de la aplicación sobre el Calendar de rango. */
+.app-stay {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-4);
+  max-inline-size: 49rem;
+  margin-inline: auto;
+  padding: var(--z-space-5);
+  border-radius: var(--z-panel-radius);
+}
+.app-stay__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--z-space-3);
+}
+.app-stay__head h3 {
+  margin: 0;
+  font-size: var(--z-text-heading);
+}
+.app-stay__head p {
+  margin: 2px 0 0;
+}
+.app-stay__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-inline-size: min(100%, 17.5rem);
+  overflow: hidden;
+  border: 1px solid var(--z-control-border);
+  border-radius: var(--z-control-radius-lg);
+}
+.app-stay__fields div {
+  display: flex;
+  flex-direction: column;
+  padding: var(--z-space-2) var(--z-space-3);
+}
+.app-stay__fields div + div {
+  border-inline-start: 1px solid var(--z-control-border);
+}
+.app-stay__fields small {
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-fine);
+  font-weight: var(--z-weight-bold);
+  letter-spacing: var(--z-tracking-wide);
+  text-transform: uppercase;
+}
+.app-stay__fields div[data-active] {
+  border-radius: var(--z-control-radius-lg);
+  background: var(--z-surface-2);
+  box-shadow: inset 0 0 0 2px var(--z-fg);
+}
+.app-stay__calendar {
+  inline-size: 100%;
+}
+.app-stay__actions {
+  display: inline-flex;
+  gap: var(--z-space-2);
+}
+/* Contenido por celda (ejemplos de renderDay, getDayDescription y modifiers). */
+.app-cells__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-2-5);
+  inline-size: min(100%, 24.75rem);
+  padding: var(--z-space-4);
+  border-radius: var(--z-panel-radius);
+}
+.app-cells__card h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-size: var(--z-text-title);
+}
+.app-cells__card h3 small {
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-caption);
+  font-weight: var(--z-weight-regular);
+}
+.app-cells__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--z-space-1-5) var(--z-space-3-5);
+  margin: 0;
+  padding-block-start: var(--z-space-2);
+  border-block-start: 1px solid var(--z-line);
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-caption);
+}
+.app-cells--prices .z-calendar__day[data-cheap] {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-success) 60%, transparent);
+}
+.app-cells--prices .z-calendar__cell:has([data-cheap]:not([data-selected])) {
+  --day-content-fg: var(--z-success-text);
+}
+.app-cells--stories .z-calendar__day[data-story] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--z-space-1);
+  background: color-mix(in srgb, var(--z-calendar-color-3) 55%, var(--z-surface-solid));
+}
+.app-cells--stories .z-calendar__day[data-story][data-story-a] {
+  background: color-mix(in srgb, var(--z-calendar-color-6) 55%, var(--z-surface-solid));
+}
+.app-cells--stories .z-calendar__day[data-story][data-story-b] {
+  background: color-mix(in srgb, var(--z-calendar-color-5) 55%, var(--z-surface-solid));
+}
+.app-cells--cycle .z-calendar__day[data-period] {
+  background: var(--z-danger-solid);
+  color: var(--z-fg-on-accent);
+  font-weight: var(--z-weight-semibold);
+}
+.app-cells--cycle .z-calendar__day[data-predicted] {
+  outline: 1.5px dashed var(--z-danger);
+  outline-offset: -4px;
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--z-danger) 14%, transparent) 0 4px, transparent 4px 8px);
+}
+.app-cells--cycle .z-calendar__day[data-fertile]:not([data-period]) {
+  background: color-mix(in srgb, var(--z-info) 20%, transparent);
+}
+.app-cells--cycle .z-calendar__day[data-ovulation] {
+  box-shadow: inset 0 0 0 2px var(--z-info);
+  color: var(--z-info-text);
+  font-weight: var(--z-weight-bold);
+}
+.app-cells--cycle .z-calendar__day-content {
+  color: var(--z-warning-text);
+  letter-spacing: 2px;
+}

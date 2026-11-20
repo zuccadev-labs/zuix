@@ -201,7 +201,15 @@
     "calendar-now": "{accent}",
     "calendar-now-label-bg": "{accent-solid}",
     "calendar-weekend-bg": "color-mix(in srgb, {fg} 2.5%, transparent)",
-    "calendar-drop-bg": "color-mix(in srgb, {accent} 7%, transparent)"
+    "calendar-drop-bg": "color-mix(in srgb, {accent} 7%, transparent)",
+
+    "perpetual-side-bg": "color-mix(in srgb, {accent-solid} 88%, black)",
+    "heatmap-hue": "{accent-text}",
+    "heatmap-0": "{surface-2}",
+    "heatmap-1": "color-mix(in srgb, {heatmap-hue} 34%, {surface-solid})",
+    "heatmap-2": "color-mix(in srgb, {heatmap-hue} 56%, {surface-solid})",
+    "heatmap-3": "color-mix(in srgb, {heatmap-hue} 78%, {surface-solid})",
+    "heatmap-4": "{heatmap-hue}"
   },
   "required": [
     "accent",
@@ -287,7 +295,9 @@
       { "fg": "fg-on-accent", "bg": "event-solid-4", "min": 4.5 },
       { "fg": "fg-on-accent", "bg": "event-solid-5", "min": 4.5 },
       { "fg": "fg-on-accent", "bg": "event-solid-6", "min": 4.5 },
-      { "fg": "fg-on-accent", "bg": "calendar-now-label-bg", "min": 4.5 }
+      { "fg": "fg-on-accent", "bg": "calendar-now-label-bg", "min": 4.5 },
+      { "fg": "fg-on-accent", "bg": "perpetual-side-bg", "min": 4.5 },
+      { "fg": "perpetual-side-bg", "bg": "fg-on-accent", "min": 4.5 }
     ],
     "nonText": [
       "control-border",
@@ -304,7 +314,10 @@
       "calendar-color-4",
       "calendar-color-5",
       "calendar-color-6",
-      "calendar-now"
+      "calendar-now",
+      "heatmap-hue",
+      "heatmap-3",
+      "heatmap-4"
     ],
     "ignore": [
       {

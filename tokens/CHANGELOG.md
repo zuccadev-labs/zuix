@@ -10,6 +10,10 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
 
 ### Añadido
 
+- Agenda, oleada 2: rampa del mapa de calor `heatmap-hue` (`accent-text`) y `heatmap-0…4`, y `perpetual-side-bg`
+  (panel del año perpetuo). El validador mide `fg-on-accent` sobre `perpetual-side-bg` (y al revés) y los
+  niveles 3 y 4 como indicadores; los niveles 1 y 2 no llegan a 3:1, como cualquier rampa de cinco pasos de un
+  tono, y el componente lo compensa (valor en el nombre, tabla, tamaño y filo con contraste alto).
 - Agenda (nivel component): paleta de calendarios `calendar-color-1…6` (derivada de los semánticos), evento
   (`event-tint`, `event-radius`, `event-bar-width`, `event-fg`, `event-fg-muted`, `event-solid-1…6` para el
   seleccionado), rejilla de horas (`timegrid-hour`, 64 px con puntero grueso; `timegrid-gutter`) y estados

@@ -1,0 +1,1841 @@
+/*
+  Agenda, oleada 2: año (12 minimeses con densidad), año perpetuo de una página, línea temporal (Gantt y recursos),
+  buscar hueco, franjas de cita, mapa de calor y rachas. Mismas reglas que agenda.css: cromo en cristal, lectura
+  sobre `reading-bg`, controles y celdas rectangulares (control-radius*, calendar-cell-radius, item-radius) y
+  `radius-full` solo para lo circular. Ningún estado depende solo del color: forma, trama, icono o texto además.
+*/
+@layer zui.agenda {
+  /* Botones propios de estas vistas: sin el aspecto del navegador (especificidad cero; cada pieza pone el suyo). */
+  :where(
+    .z-yeargrid__day,
+    .z-yeargrid__month-btn,
+    .z-timeline__toggle,
+    .z-timeline__bar,
+    .z-timeline__milestone,
+    .z-timeline__booking,
+    .z-slotpicker__slot,
+    .z-heatmap__cell,
+    .z-heatmap__toggle,
+    .z-habit__day
+  ) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+  }
+
+  /* ---------- Año: 12 minimeses ---------- */
+  .z-yeargrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--z-space-20) * 3 - var(--z-space-2)), 1fr));
+    gap: var(--z-space-5) var(--z-space-6);
+    padding: var(--z-space-5);
+    background: var(--z-reading-bg);
+  }
+  .z-yeargrid__month {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    min-inline-size: 0;
+  }
+  .z-yeargrid__title {
+    margin: 0;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-yeargrid__month-btn {
+    min-block-size: var(--z-space-7);
+    padding-inline: var(--z-space-1-5);
+    border-radius: var(--z-control-radius-sm);
+    color: inherit;
+    font: inherit;
+  }
+  @media (hover: hover) {
+    .z-yeargrid__month-btn:hover {
+      background: var(--z-surface-3);
+    }
+  }
+  .z-yeargrid__month-btn:focus-visible,
+  .z-yeargrid__day:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-yeargrid__month[data-current] .z-yeargrid__month-btn {
+    color: var(--z-accent-text);
+  }
+  .z-yeargrid__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0 2px;
+    table-layout: fixed;
+  }
+  .z-yeargrid__weekday {
+    block-size: var(--z-space-6);
+    padding: 0;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-yeargrid__cell {
+    padding: 0;
+    text-align: center;
+  }
+  .z-yeargrid__day {
+    display: inline-grid;
+    place-items: center;
+    inline-size: min(100%, var(--z-space-8));
+    aspect-ratio: 1;
+    border-radius: var(--z-calendar-cell-radius);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    transition: background-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-yeargrid__day:hover {
+      background: var(--z-surface-3);
+    }
+  }
+  /* Densidad: fondo creciente y, en lo más cargado, el número en negrita (no solo color: el nombre accesible dice
+     cuántos eventos tiene el día). */
+  .z-yeargrid__day[data-load="1"] {
+    background: color-mix(in srgb, var(--z-accent) 10%, transparent);
+  }
+  .z-yeargrid__day[data-load="2"] {
+    background: color-mix(in srgb, var(--z-accent) 20%, transparent);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-yeargrid__day[data-load="3"] {
+    background: color-mix(in srgb, var(--z-accent) 32%, transparent);
+    font-weight: var(--z-weight-bold);
+  }
+  .z-yeargrid__day[data-today] {
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+    box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
+  }
+  @container z-agenda (max-width: 640px) {
+    .z-yeargrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--z-space-3-5) var(--z-space-2-5);
+      padding: var(--z-space-3);
+    }
+    .z-yeargrid__day {
+      border-radius: var(--z-control-radius-sm);
+      font-size: var(--z-text-fine);
+    }
+    .z-yeargrid__weekday {
+      font-size: var(--z-text-fine);
+    }
+  }
+
+  /* ---------- Año perpetuo de una página ---------- */
+  .z-perpetual {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
+    container: z-perpetual / inline-size;
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-perpetual__frame {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(calc(var(--z-space-20) * 3 + var(--z-space-10)), 1fr);
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+  }
+  .z-agenda__perpetual .z-perpetual__frame {
+    border-radius: 0;
+  }
+  .z-perpetual__sheet:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
+  }
+  .z-perpetual__sheet {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--z-space-6);
+    overflow-x: auto;
+    background: var(--z-reading-bg);
+  }
+  .z-perpetual__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: var(--z-space-1) 0;
+  }
+  /* Encabezados de fila solo para la tecnología de apoyo (los números se ven en el panel del año): fuera del flujo
+     de la tabla, como z-sr-only, para no ocupar ancho. */
+  .z-perpetual__corner,
+  .z-perpetual__rowhead {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .z-perpetual__months {
+    vertical-align: bottom;
+    padding: 0 var(--z-space-1-5) var(--z-space-2);
+    text-align: start;
+    font-weight: inherit;
+  }
+  .z-perpetual__months[data-col-hl] {
+    background: color-mix(in srgb, var(--z-fg) 4%, transparent);
+    border-start-start-radius: var(--z-control-radius-sm);
+    border-start-end-radius: var(--z-control-radius-sm);
+  }
+  .z-perpetual__month {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-block-start: var(--z-space-2);
+  }
+  .z-perpetual__month b {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__month b i {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    border-radius: var(--z-radius-full);
+    background: var(--z-success-solid);
+    color: var(--z-fg-on-accent);
+    font-size: var(--z-text-fine);
+    font-style: normal;
+    font-weight: var(--z-weight-bold);
+  }
+  .z-perpetual__month[data-short] b i {
+    background: var(--z-event-solid-5);
+  }
+  .z-perpetual__month[data-current] b {
+    color: var(--z-accent-text);
+  }
+  .z-perpetual__month[data-current] b i {
+    background: var(--z-accent-solid);
+  }
+  .z-perpetual__month small {
+    white-space: nowrap;
+    padding-inline-start: calc(var(--z-space-4) + var(--z-space-1-5));
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-fine);
+  }
+  .z-perpetual__wd {
+    block-size: var(--z-space-10);
+    padding: 0;
+    border-block-end: 1px dashed var(--z-line-strong);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .z-perpetual__wd abbr {
+    text-decoration: none;
+  }
+  .z-perpetual__wd[data-rest] {
+    color: var(--z-danger-text);
+  }
+  .z-perpetual__wd[data-col-hl] {
+    background: color-mix(in srgb, var(--z-fg) 4%, transparent);
+  }
+  .z-perpetual__wd[data-row-hl] {
+    background: color-mix(in srgb, var(--z-accent) 9%, transparent);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__wd[data-hit] {
+    border-block-end-color: transparent;
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+  }
+  .z-perpetual__side {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    padding: var(--z-space-6);
+    background: var(--z-perpetual-side-bg);
+    color: var(--z-fg-on-accent);
+  }
+  .z-perpetual__year {
+    margin: 0;
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-lg);
+    font-weight: var(--z-weight-bold);
+    letter-spacing: var(--z-tracking-tight);
+    line-height: 1;
+  }
+  .z-perpetual__sub {
+    margin: calc(var(--z-space-3) * -1) 0 0;
+    font-size: var(--z-text-small);
+  }
+  .z-perpetual__dates {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: var(--z-space-10);
+  }
+  .z-perpetual__dates span {
+    display: grid;
+    place-items: center;
+    grid-row: var(--z-pp-row);
+    grid-column: var(--z-pp-col);
+    border-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__dates span[data-row-hl] {
+    background: color-mix(in srgb, var(--z-fg-on-accent) 14%, transparent);
+  }
+  .z-perpetual__dates span[data-hit] {
+    background: var(--z-fg-on-accent);
+    color: var(--z-perpetual-side-bg);
+  }
+  .z-perpetual__find {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    font-size: var(--z-text-small);
+  }
+  .z-perpetual__input {
+    min-block-size: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border: 1px solid color-mix(in srgb, var(--z-fg-on-accent) 40%, transparent);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+    font: inherit;
+    color-scheme: inherit;
+  }
+  .z-perpetual__input:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-fg-on-accent);
+    outline-offset: 1px;
+  }
+  .z-perpetual__result {
+    min-block-size: 1lh;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-perpetual__how {
+    margin: auto 0 0;
+    font-size: var(--z-text-caption);
+    line-height: 1.5;
+  }
+  @container z-perpetual (max-width: 860px) {
+    .z-perpetual__frame {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-perpetual__side {
+      order: -1;
+    }
+  }
+  @container z-perpetual (max-width: 560px) {
+    .z-perpetual__sheet,
+    .z-perpetual__side {
+      padding: var(--z-space-3);
+    }
+    .z-perpetual__table {
+      border-spacing: 2px 0;
+    }
+    .z-perpetual__months {
+      padding-inline: 2px;
+    }
+    .z-perpetual__month b {
+      font-size: var(--z-text-small);
+    }
+    .z-perpetual__month b i {
+      display: none;
+    }
+    .z-perpetual__month small {
+      padding-inline-start: 0;
+      white-space: normal;
+    }
+    .z-perpetual__wd {
+      font-size: var(--z-text-fine);
+      letter-spacing: 0;
+    }
+    .z-perpetual__year {
+      font-size: var(--z-text-display-sm);
+    }
+  }
+  @media (forced-colors: active) {
+    .z-perpetual__wd[data-hit],
+    .z-perpetual__dates span[data-hit] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .z-perpetual__side {
+      border: 1px solid CanvasText;
+    }
+  }
+  @media print {
+    .z-perpetual__side {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .z-perpetual__find {
+      display: none;
+    }
+  }
+}
+
+@layer zui.agenda {
+  /* ---------- Línea temporal (Gantt y recursos) y buscar hueco ---------- */
+  .z-timeline,
+  .z-freebusy {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
+    container: z-timeline / inline-size;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Variables de la rejilla en el contenedor desplazable: valen igual dentro de la pieza y en la vista de la agenda. */
+  .z-timeline__scroll {
+    --z-tl-label: calc(var(--z-space-20) * 2 + var(--z-space-10));
+    --z-tl-scale-h: var(--z-space-16);
+  }
+  .z-timeline__scroll:has(> [role="grid"]) {
+    --z-tl-scale-h: var(--z-space-9);
+  }
+  .z-timeline__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2) var(--z-space-3);
+    padding: var(--z-space-2-5) var(--z-space-3);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-timeline__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-timeline__spacer-flex {
+    flex: 1;
+  }
+  .z-timeline__scroll {
+    overflow: auto;
+    background: var(--z-reading-bg);
+    scrollbar-width: thin;
+  }
+  .z-timeline__scroll:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
+  }
+  .z-timeline__scroll[data-virtual] {
+    max-block-size: calc(var(--z-space-20) * 8);
+  }
+  .z-timeline__grid {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    inline-size: max-content;
+    min-inline-size: 100%;
+  }
+  .z-timeline__row {
+    display: grid;
+    grid-template-columns: var(--z-tl-label) calc(var(--z-tl-cols) * var(--z-tl-col));
+    min-block-size: var(--z-tl-row);
+  }
+  .z-timeline__head {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-layer-sticky);
+    block-size: var(--z-tl-scale-h);
+    background: var(--z-surface-solid);
+  }
+  .z-timeline__corner,
+  .z-timeline__label {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: var(--z-layer-raised);
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-inline-size: 0;
+    padding-inline: var(--z-space-3);
+    border-inline-end: 1px solid var(--z-line);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-surface-solid);
+    font-size: var(--z-text-body);
+    white-space: nowrap;
+  }
+  .z-timeline__corner {
+    align-items: flex-end;
+    padding-block-end: var(--z-space-2);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-timeline__row[data-group] .z-timeline__label {
+    background: color-mix(in srgb, var(--z-fg) 3%, var(--z-surface-solid));
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-timeline__label[data-indent] {
+    padding-inline-start: var(--z-space-8);
+  }
+  .z-timeline__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .z-timeline__sub {
+    margin-inline-start: auto;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-regular);
+  }
+  .z-timeline__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-inline-size: 0;
+    min-block-size: var(--z-control-height-xs);
+    padding-inline: var(--z-space-1) var(--z-space-2);
+    border-radius: var(--z-control-radius-sm);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-timeline__chevron {
+    display: inline-grid;
+    color: var(--z-fg-muted);
+    transition: rotate var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-timeline__toggle[aria-expanded="false"] .z-timeline__chevron {
+    rotate: -90deg;
+  }
+  [dir="rtl"] .z-timeline__toggle[aria-expanded="false"] .z-timeline__chevron {
+    rotate: 90deg;
+  }
+  .z-timeline__dot {
+    flex: none;
+    inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    border-radius: var(--z-radius-full);
+    background: var(--z-event-color);
+  }
+  .z-timeline__flag {
+    display: inline-grid;
+    color: var(--z-fg-muted);
+  }
+  .z-timeline__avatar {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--z-space-7);
+    block-size: var(--z-space-7);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface-3);
+    color: var(--z-fg-muted);
+  }
+  .z-freebusy__avatar {
+    border-radius: var(--z-radius-full);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-semibold);
+    color: var(--z-fg);
+  }
+  .z-timeline__meta {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    line-height: var(--z-leading-snug);
+  }
+  .z-timeline__meta small {
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+  }
+  .z-timeline__scale {
+    position: relative;
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-timeline__unit {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: calc(var(--z-tl-at) * var(--z-tl-col));
+    inline-size: calc(var(--z-tl-span) * var(--z-tl-col));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 2px var(--z-space-1-5);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-fine);
+    line-height: 1.3;
+  }
+  .z-timeline__unit b {
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-timeline__unit[data-weekend] b {
+    color: var(--z-fg-subtle);
+  }
+  .z-timeline__unit[data-today] b {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: var(--z-space-6);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-calendar-now-label-bg);
+    color: var(--z-fg-on-accent);
+  }
+  .z-timeline__unit--group {
+    inset-block: var(--z-space-1-5) auto;
+    align-items: flex-start;
+    padding: 0 var(--z-space-2);
+    border-inline-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    white-space: nowrap;
+  }
+  .z-timeline__unit--hour {
+    inset-block: 0;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 var(--z-space-1-5);
+    border-inline-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-timeline__body {
+    position: relative;
+  }
+  .z-timeline__track {
+    position: relative;
+    border-block-end: 1px solid var(--z-line);
+    background-image: repeating-linear-gradient(
+      to var(--z-tl-end, right),
+      var(--z-line) 0 1px,
+      transparent 1px calc(var(--z-tl-col) / var(--z-tl-sub, 1))
+    );
+  }
+  [dir="rtl"] .z-timeline__track {
+    --z-tl-end: left;
+  }
+  .z-timeline__row[data-group] .z-timeline__track {
+    background-color: color-mix(in srgb, var(--z-fg) 2%, transparent);
+  }
+  .z-timeline__shade {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--z-tl-label);
+    pointer-events: none;
+  }
+  .z-timeline__shade span {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--z-tl-at) * var(--z-tl-col));
+    inline-size: var(--z-tl-col);
+    background: var(--z-calendar-weekend-bg);
+  }
+  /* Barra de tarea y reserva: la pieza `.z-event` (tinte del calendario, barra de color, texto en event-fg). */
+  .z-timeline__bar,
+  .z-timeline__booking {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block: var(--z-space-2);
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col) + 3px);
+    inline-size: max(var(--z-space-3), calc(var(--z-tl-span) * var(--z-tl-col) - 6px));
+    flex-direction: row;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    isolation: isolate;
+  }
+  /* Progreso: un relleno más intenso hasta el porcentaje (el número también está en el texto). */
+  .z-timeline__bar::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-layer-below);
+    inline-size: var(--z-tl-progress, 0%);
+    background: color-mix(in srgb, var(--z-event-color) 30%, transparent);
+  }
+  .z-timeline__pct {
+    margin-inline-start: auto;
+    color: var(--z-event-fg-muted);
+  }
+  /* Seleccionada: el porcentaje hereda el texto del sólido del evento (fg-on-accent sobre event-solid-N). */
+  .z-timeline__bar[data-selected] .z-timeline__pct {
+    color: inherit;
+  }
+  .z-timeline__resize {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--z-space-2);
+    cursor: ew-resize;
+    touch-action: none;
+  }
+  .z-timeline__bar[data-editable],
+  .z-timeline__booking {
+    touch-action: none;
+  }
+  .z-timeline__summary {
+    position: absolute;
+    inset-block-start: calc(50% - var(--z-space-1));
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col));
+    inline-size: calc(var(--z-tl-span) * var(--z-tl-col));
+    block-size: var(--z-space-2);
+    border-radius: calc(var(--z-radius-xs) / 2);
+    background: var(--z-fg-muted);
+  }
+  .z-timeline__summary::before,
+  .z-timeline__summary::after {
+    content: "";
+    position: absolute;
+    inset-block-start: var(--z-space-1);
+    border: 5px solid transparent;
+    border-block-start-color: var(--z-fg-muted);
+  }
+  .z-timeline__summary::before {
+    inset-inline-start: 0;
+    border-inline-start-color: var(--z-fg-muted);
+  }
+  .z-timeline__summary::after {
+    inset-inline-end: 0;
+    border-inline-end-color: var(--z-fg-muted);
+  }
+  .z-timeline__milestone {
+    position: absolute;
+    z-index: calc(var(--z-layer-raised) + 1);
+    inset-block-start: 50%;
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col));
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    translate: -9px -50%;
+    padding: 2px;
+    border-radius: var(--z-control-radius-sm);
+  }
+  [dir="rtl"] .z-timeline__milestone {
+    translate: 9px -50%;
+  }
+  .z-timeline__milestone i {
+    inline-size: var(--z-space-3-5);
+    block-size: var(--z-space-3-5);
+    rotate: 45deg;
+    border-radius: calc(var(--z-radius-xs) / 2);
+    background: var(--z-warning);
+    box-shadow: 0 0 0 2px var(--z-surface-solid);
+  }
+  .z-timeline__milestone[data-selected] i {
+    background: var(--z-fg);
+  }
+  .z-timeline__milestone-text {
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    white-space: nowrap;
+  }
+  .z-timeline__milestone:focus-visible,
+  .z-timeline__toggle:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-timeline__deps {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: 0;
+    inset-inline-start: var(--z-tl-label);
+    overflow: visible;
+    pointer-events: none;
+  }
+  [dir="rtl"] .z-timeline__deps {
+    scale: -1 1;
+    transform-origin: center;
+  }
+  .z-timeline__deps path {
+    fill: none;
+    stroke: var(--z-fg-muted);
+    stroke-width: 1.5;
+  }
+  .z-timeline__deps path[data-critical] {
+    stroke: var(--z-calendar-now);
+    stroke-width: 2;
+  }
+  .z-timeline__deps marker path {
+    fill: var(--z-fg-muted);
+    stroke: none;
+  }
+  .z-timeline__deps .z-timeline__marker-critical path {
+    fill: var(--z-calendar-now);
+  }
+  .z-timeline__today {
+    position: absolute;
+    z-index: calc(var(--z-layer-raised) + 1);
+    inset-block: 0;
+    inset-inline-start: calc(var(--z-tl-label) + var(--z-tl-at) * var(--z-tl-col));
+    inline-size: 2px;
+    translate: -1px 0;
+    background: var(--z-calendar-now);
+    pointer-events: none;
+  }
+  .z-timeline__spacer {
+    block-size: var(--z-tl-space);
+  }
+  .z-timeline__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5) var(--z-space-4);
+    padding: var(--z-space-2-5) var(--z-space-3-5);
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-timeline__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+  }
+  .z-timeline__key-line {
+    inline-size: var(--z-space-4);
+    block-size: 2px;
+    background: var(--z-fg-muted);
+  }
+  .z-timeline__key-line[data-critical],
+  .z-timeline__key-today {
+    background: var(--z-calendar-now);
+  }
+  .z-timeline__key-today {
+    inline-size: 2px;
+    block-size: var(--z-space-3);
+  }
+  .z-timeline__key-ms {
+    inline-size: var(--z-space-2-5);
+    block-size: var(--z-space-2-5);
+    rotate: 45deg;
+    border-radius: 2px;
+    background: var(--z-warning);
+  }
+  .z-timeline__hint {
+    margin: 0;
+    padding: var(--z-space-1-5) var(--z-space-3);
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  /* Recursos: reservas en la fila; un conflicto, en mitades con borde y trama de peligro y «Overlaps». */
+  .z-timeline__booking {
+    inset-block: var(--z-space-1-5);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+  }
+  /* Asa de alargar en la línea temporal de la agenda: el borde final, en horizontal. */
+  .z-timeline__booking .z-event__resize {
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: var(--z-space-2);
+    block-size: auto;
+    cursor: ew-resize;
+  }
+  .z-timeline__booking .z-event__resize::after {
+    inset-block: 50% auto;
+    inset-inline: auto 2px;
+    translate: 0 -50%;
+    inline-size: 3px;
+    block-size: 18px;
+  }
+  .z-timeline__booking[data-half="top"] {
+    inset-block: var(--z-space-1) 50%;
+  }
+  .z-timeline__booking[data-half="bottom"] {
+    inset-block: 50% var(--z-space-1);
+  }
+  .z-timeline__booking[data-half] .z-event__meta {
+    display: none;
+  }
+  .z-timeline__booking[data-conflict] {
+    box-shadow: inset 0 0 0 1.5px var(--z-danger);
+    background: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--z-danger) 22%, var(--z-surface-solid)) 0 6px,
+      color-mix(in srgb, var(--z-danger) 10%, var(--z-surface-solid)) 6px 12px
+    );
+  }
+  .z-timeline__warn {
+    display: inline-grid;
+    margin-inline-end: var(--z-space-1);
+    color: var(--z-danger-text);
+    vertical-align: -2px;
+  }
+  .z-timeline__create {
+    position: absolute;
+    inset-block: var(--z-space-1-5);
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col) + 2px);
+    inline-size: calc(var(--z-tl-span) * var(--z-tl-col) - 4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-inline: var(--z-space-2);
+    border-radius: var(--z-event-radius);
+    outline: 1.5px dashed var(--z-accent-ring);
+    outline-offset: -1.5px;
+    background: color-mix(in srgb, var(--z-accent) 14%, transparent);
+    font-size: var(--z-text-caption);
+    pointer-events: none;
+  }
+  .z-timeline__create span {
+    color: var(--z-fg-muted);
+  }
+  .z-freebusy__block {
+    position: absolute;
+    inset-block: var(--z-space-2-5);
+    inset-inline-start: calc(var(--z-tl-start) * var(--z-tl-col) + 2px);
+    inline-size: calc(var(--z-tl-span) * var(--z-tl-col) - 4px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-inline: var(--z-space-2);
+    border-radius: var(--z-event-radius);
+    background: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--z-fg) 16%, var(--z-surface-solid)) 0 5px,
+      color-mix(in srgb, var(--z-fg) 9%, var(--z-surface-solid)) 5px 10px
+    );
+    box-shadow: inset 0 0 0 1px var(--z-line-strong);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    white-space: nowrap;
+  }
+  .z-freebusy__block[data-kind="outside"] {
+    background: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--z-warning) 18%, var(--z-surface-solid)) 0 5px,
+      color-mix(in srgb, var(--z-warning) 8%, var(--z-surface-solid)) 5px 10px
+    );
+  }
+  .z-freebusy__suggest {
+    position: absolute;
+    /* Por encima de la cabecera pegajosa: su etiqueta va en la fila de las horas, como en el prototipo. */
+    z-index: calc(var(--z-layer-sticky) + 1);
+    inset-block: calc(var(--z-tl-scale-h) * -1) 0;
+    inset-inline-start: calc(var(--z-tl-label) + var(--z-tl-start) * var(--z-tl-col));
+    inline-size: calc(var(--z-tl-span) * var(--z-tl-col));
+    border-inline: 2px solid var(--z-success);
+    background: color-mix(in srgb, var(--z-success) 14%, transparent);
+    pointer-events: none;
+  }
+  .z-freebusy__suggest span {
+    position: absolute;
+    inset-block-start: var(--z-space-1-5);
+    inset-inline-start: var(--z-space-1-5);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    padding: 2px var(--z-space-2);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-success-solid);
+    color: var(--z-fg-on-accent);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-semibold);
+    white-space: nowrap;
+  }
+  .z-freebusy__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+  }
+  .z-freebusy__none {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-freebusy .z-agenda__icon-btn:disabled {
+    color: var(--z-fg-subtle);
+    cursor: not-allowed;
+  }
+  @container z-timeline (max-width: 640px) {
+    .z-timeline__scroll {
+      --z-tl-label: calc(var(--z-space-20) + var(--z-space-12));
+    }
+    .z-timeline__sub,
+    .z-timeline__avatar {
+      display: none;
+    }
+    .z-timeline__label[data-indent] {
+      padding-inline-start: var(--z-space-4);
+    }
+  }
+  @media (forced-colors: active) {
+    .z-timeline__deps path,
+    .z-timeline__deps path[data-critical] {
+      stroke: CanvasText;
+    }
+    .z-timeline__deps marker path {
+      fill: CanvasText;
+    }
+    .z-timeline__today,
+    .z-timeline__summary {
+      forced-color-adjust: none;
+      background: Highlight;
+    }
+    .z-timeline__milestone i {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+    .z-freebusy__block,
+    .z-freebusy__suggest {
+      border: 1px solid CanvasText;
+    }
+  }
+  @media print {
+    .z-timeline__scroll {
+      max-block-size: none;
+      overflow: visible;
+    }
+    .z-timeline__zoom,
+    .z-freebusy__actions {
+      display: none;
+    }
+    .z-timeline,
+    .z-freebusy {
+      page: z-agenda-landscape;
+    }
+  }
+}
+
+@layer zui.agenda {
+  /* ---------- Franjas de cita (SlotPicker) ---------- */
+  .z-slotpicker {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
+    container: z-slotpicker / inline-size;
+    min-inline-size: 0;
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+  }
+  .z-slotpicker__frame {
+    display: grid;
+    grid-template-columns: auto minmax(calc(var(--z-space-20) * 3), 1fr);
+  }
+  .z-slotpicker__cal,
+  .z-slotpicker__times {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2-5);
+    min-inline-size: 0;
+    padding: var(--z-space-5);
+  }
+  .z-slotpicker__cal {
+    border-inline-end: 1px solid var(--z-line);
+  }
+  .z-slotpicker__title,
+  .z-slotpicker__day {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-slotpicker__count {
+    margin: 2px 0 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  /* Días con hueco: realzados con el tinte del acento (además, el resto dice «no times available»). */
+  .z-slotpicker__calendar .z-calendar__day[data-available]:not([data-selected]) {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-slotpicker__tz {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-slotpicker__select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+  }
+  .z-slotpicker__select-wrap:focus-within {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-slotpicker__select {
+    flex: 1;
+    min-inline-size: 0;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: none;
+  }
+  .z-slotpicker__select option {
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+  }
+  .z-slotpicker__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--z-space-3);
+  }
+  .z-slotpicker__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    max-block-size: calc(var(--z-space-20) * 4 + var(--z-space-10));
+    overflow: auto;
+    padding: 2px;
+    scrollbar-width: thin;
+  }
+  .z-slotpicker__slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    min-block-size: var(--z-control-height-lg);
+    border: 1px solid color-mix(in srgb, var(--z-accent) 45%, var(--z-line));
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-slotpicker__slot:hover:not([aria-selected="true"]) {
+      border-color: var(--z-accent);
+      background: var(--z-accent-soft);
+    }
+  }
+  .z-slotpicker__slot:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  /* Elegida: relleno neutro intenso y una marca; además, aria-selected y el texto «… selected». */
+  .z-slotpicker__slot[aria-selected="true"] {
+    border-color: transparent;
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+  }
+  .z-slotpicker__confirm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-slotpicker__chosen {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-slotpicker__confirm .z-btn {
+    inline-size: 100%;
+  }
+  @container z-slotpicker (max-width: 640px) {
+    .z-slotpicker__frame {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-slotpicker__cal {
+      align-items: center;
+      border-inline-end: 0;
+      border-block-end: 1px solid var(--z-line);
+    }
+    .z-slotpicker__cal,
+    .z-slotpicker__times {
+      padding: var(--z-space-4);
+    }
+    .z-slotpicker__tz {
+      align-self: stretch;
+    }
+  }
+  @media (forced-colors: active) {
+    .z-slotpicker__slot[aria-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}
+
+@layer zui.agenda {
+  /* ---------- Mapa de calor ---------- */
+  .z-heatmap {
+    /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
+    inline-size: 100%;
+    --z-hm-cell: var(--z-space-3);
+    --z-hm-gap: 3px;
+    container: z-heatmap / inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    min-inline-size: 0;
+    padding: var(--z-space-5);
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-heatmap__head {
+    /* Encima del área desplazable, que sube bajo la cabecera para no recortar la etiqueta de la primera fila. */
+    position: relative;
+    z-index: var(--z-layer-raised);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+  }
+  .z-heatmap__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-heatmap__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2-5);
+    border-radius: var(--z-control-radius-sm);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  @media (hover: hover) {
+    .z-heatmap__toggle:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-heatmap__toggle[aria-pressed="true"] {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+  }
+  .z-heatmap__toggle:focus-visible,
+  .z-heatmap__cell:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 2px;
+  }
+  .z-heatmap__scroll {
+    container-type: inline-size;
+    overflow-x: auto;
+    padding-block: var(--z-space-8) var(--z-space-1-5);
+    margin-block-start: calc(var(--z-space-8) * -1 + var(--z-space-1));
+    scrollbar-width: thin;
+  }
+  .z-heatmap__body {
+    /* Celdas que llenan el ancho disponible (entre 11 y 18 px), como en el prototipo. */
+    --z-hm-cell: clamp(11px, (100cqi - var(--z-space-8)) / var(--z-hm-weeks) - var(--z-hm-gap), 18px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    inline-size: max-content;
+  }
+  .z-heatmap__months {
+    display: grid;
+    grid-template-columns: var(--z-space-8) repeat(var(--z-hm-weeks), var(--z-hm-cell));
+    column-gap: var(--z-hm-gap);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-fine);
+  }
+  .z-heatmap__months span {
+    grid-column: var(--z-hm-col) / span 4;
+    grid-row: 1;
+  }
+  .z-heatmap__grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-hm-gap);
+  }
+  .z-heatmap__row {
+    display: grid;
+    grid-template-columns: var(--z-space-8) repeat(var(--z-hm-weeks), var(--z-hm-cell));
+    column-gap: var(--z-hm-gap);
+    align-items: center;
+  }
+  .z-heatmap__weekday {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-fine);
+    line-height: var(--z-hm-cell);
+  }
+  .z-heatmap__cell {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-hm-cell);
+    block-size: var(--z-hm-cell);
+    border-radius: calc(var(--z-radius-xs) / 2);
+    background: var(--z-heatmap-0);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-fg) 6%, transparent);
+  }
+  .z-heatmap__cell[data-level="1"] {
+    background: var(--z-heatmap-1);
+  }
+  .z-heatmap__cell[data-level="2"] {
+    background: var(--z-heatmap-2);
+  }
+  .z-heatmap__cell[data-level="3"] {
+    background: var(--z-heatmap-3);
+  }
+  .z-heatmap__cell[data-level="4"] {
+    background: var(--z-heatmap-4);
+  }
+  .z-heatmap__cell[data-future] {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--z-line);
+  }
+  .z-heatmap__cell[data-pad] {
+    visibility: hidden;
+  }
+  .z-heatmap__cell[data-today] {
+    outline: 2px solid var(--z-fg);
+    outline-offset: 1px;
+  }
+  .z-heatmap__grid .z-heatmap__cell[data-date]:not([data-future]) {
+    cursor: pointer;
+  }
+  /* Etiqueta al enfocar o pasar: el valor y la fecha en texto (también en el nombre accesible). */
+  .z-heatmap__tip {
+    position: absolute;
+    z-index: var(--z-layer-tooltip);
+    inset-block-end: calc(100% + var(--z-space-1-5));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    padding: var(--z-space-1) var(--z-space-2);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+    box-shadow: var(--z-shadow-md);
+    font-size: var(--z-text-caption);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  [dir="rtl"] .z-heatmap__tip {
+    translate: 50% 0;
+  }
+  .z-heatmap__tip[data-edge="end"] {
+    inset-inline: auto 0;
+    translate: none;
+  }
+  .z-heatmap__tip[data-edge="start"] {
+    inset-inline-start: 0;
+    translate: none;
+  }
+  .z-heatmap__tip b {
+    font-weight: var(--z-weight-semibold);
+  }
+  /* Variante de tamaño: el nivel también se lee por el área del cuadrado interior. */
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell:not([data-pad]) {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--z-line);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell::after {
+    content: "";
+    inline-size: var(--z-hm-size, 0%);
+    block-size: var(--z-hm-size, 0%);
+    border-radius: 2px;
+    background: var(--z-hm-fill, var(--z-heatmap-4));
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="1"] {
+    --z-hm-size: 32%;
+    --z-hm-fill: var(--z-heatmap-1);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="2"] {
+    --z-hm-size: 55%;
+    --z-hm-fill: var(--z-heatmap-2);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="3"] {
+    --z-hm-size: 78%;
+    --z-hm-fill: var(--z-heatmap-3);
+  }
+  .z-heatmap[data-encoding="size"] .z-heatmap__cell[data-level="4"] {
+    --z-hm-size: 100%;
+  }
+  .z-heatmap__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--z-space-3);
+  }
+  .z-heatmap__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-2) var(--z-space-6);
+    margin: 0;
+  }
+  .z-heatmap__stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .z-heatmap__stats dt {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-heatmap__stats dd {
+    margin: 0;
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-heatmap__legend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-heatmap__table-wrap {
+    max-block-size: calc(var(--z-space-20) * 4);
+    overflow: auto;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-item-radius);
+    background: var(--z-reading-bg);
+    container-type: inline-size;
+  }
+  .z-heatmap__table-wrap:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 2px;
+  }
+  .z-heatmap__table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--z-text-small);
+  }
+  .z-heatmap__table caption {
+    padding: var(--z-space-2) var(--z-space-3);
+    color: var(--z-fg-muted);
+    text-align: start;
+  }
+  .z-heatmap__table thead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-layer-raised);
+  }
+  .z-heatmap__table th,
+  .z-heatmap__table td {
+    padding: var(--z-space-1-5) var(--z-space-3);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-surface-solid);
+    font-weight: var(--z-weight-regular);
+    text-align: start;
+  }
+  .z-heatmap__table thead th {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-heatmap__table td {
+    text-align: end;
+  }
+  /* Contraste alto (o `outline`): todo día con actividad lleva un filo del tono, así «hay / no hay» se distingue a
+     ≥ 3:1 aunque los niveles bajos no lleguen por sí solos. */
+  @media (prefers-contrast: more) {
+    .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
+      box-shadow: inset 0 0 0 1.5px var(--z-heatmap-hue);
+    }
+  }
+  .z-heatmap[data-outline] .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
+    box-shadow: inset 0 0 0 1.5px var(--z-heatmap-hue);
+  }
+  @media (forced-colors: active) {
+    .z-heatmap__cell {
+      forced-color-adjust: none;
+      border: 1px solid CanvasText;
+    }
+    .z-heatmap__cell[data-level="0"] {
+      background: Canvas;
+    }
+    .z-heatmap__cell:not([data-level="0"], [data-future], [data-pad]) {
+      background: CanvasText;
+    }
+  }
+
+  /* ---------- Rachas y hábitos ---------- */
+  .z-habit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3-5);
+    inline-size: min(100%, calc(var(--z-space-20) * 5));
+    padding: var(--z-space-5);
+    border-radius: var(--z-panel-radius);
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-habit__head {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-3);
+  }
+  .z-habit__head p {
+    margin: 0;
+  }
+  .z-habit__flame {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: calc(var(--z-space-10) + var(--z-space-1));
+    block-size: calc(var(--z-space-10) + var(--z-space-1));
+    border-radius: var(--z-control-radius-lg);
+    background: color-mix(in srgb, var(--z-warning) 20%, var(--z-surface-solid));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-warning) 40%, transparent);
+    color: var(--z-warning-text);
+  }
+  .z-habit__count {
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-bold);
+    letter-spacing: var(--z-tracking-tight);
+    line-height: 1.1;
+  }
+  .z-habit__sub,
+  .z-habit__note {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-habit__note {
+    margin: 0;
+  }
+  .z-habit__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .z-habit__month {
+    margin: 0;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-habit__grid {
+    inline-size: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0 var(--z-space-1);
+  }
+  .z-habit__grid th {
+    padding-block-end: var(--z-space-1);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-habit__cell {
+    position: relative;
+    padding: 0;
+    text-align: center;
+  }
+  /* Banda de la racha actual: continua en la celda, con los extremos redondeados. */
+  .z-habit__cell[data-band]::before {
+    content: "";
+    position: absolute;
+    inset-block: 2px;
+    inset-inline: 0;
+    background: color-mix(in srgb, var(--z-success) 22%, transparent);
+  }
+  .z-habit__cell:is([data-band="start"], [data-band="single"])::before {
+    inset-inline-start: 2px;
+    border-start-start-radius: var(--z-calendar-cell-radius);
+    border-end-start-radius: var(--z-calendar-cell-radius);
+  }
+  .z-habit__cell:is([data-band="end"], [data-band="single"])::before {
+    inset-inline-end: 2px;
+    border-start-end-radius: var(--z-calendar-cell-radius);
+    border-end-end-radius: var(--z-calendar-cell-radius);
+  }
+  .z-habit__day {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    /* Hasta 40 px, menos si la columna no llega (teléfono): siempre cuadrado. */
+    inline-size: min(var(--z-space-10), 100%);
+    aspect-ratio: 1;
+    border-radius: var(--z-calendar-cell-radius);
+    font-size: var(--z-text-small);
+    isolation: isolate;
+  }
+  .z-habit__day:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-habit__day[data-future] {
+    color: var(--z-fg-muted);
+  }
+  .z-habit__mark {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
+    display: inline-grid;
+  }
+  .z-habit__day[data-state="done"] {
+    background: var(--z-success-solid);
+    color: var(--z-fg-on-accent);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-habit__day[data-state="missed"] {
+    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--z-danger) 14%, transparent) 0 4px, transparent 4px 8px);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--z-danger) 55%, transparent);
+    color: var(--z-danger-text);
+  }
+  .z-habit__day[data-state="rest"] {
+    color: var(--z-fg-subtle);
+  }
+  .z-habit__day[data-state="rest"]::after {
+    content: "";
+    position: absolute;
+    inset-block-end: var(--z-space-1-5);
+    inline-size: var(--z-space-2-5);
+    block-size: 2px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+  /* Hoy en curso: anillo de progreso (el porcentaje, también en el nombre accesible). */
+  .z-habit__day[data-state="progress"] {
+    background: conic-gradient(var(--z-success) var(--z-habit-progress), color-mix(in srgb, var(--z-fg) 14%, transparent) 0);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-habit__day[data-state="progress"]::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    z-index: var(--z-layer-below);
+    border-radius: calc(var(--z-calendar-cell-radius) - 2px);
+    background: var(--z-surface-solid);
+  }
+  .z-habit__day[data-today]:not([data-state]) {
+    box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
+    color: var(--z-accent-text);
+  }
+  .z-habit__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5) var(--z-space-3-5);
+    margin: 0;
+    padding: var(--z-space-2-5) 0 0;
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    list-style: none;
+  }
+  .z-habit__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+  }
+  .z-habit__legend i {
+    position: relative;
+    inline-size: var(--z-space-3-5);
+    block-size: var(--z-space-3-5);
+    border-radius: calc(var(--z-radius-xs) - 2px);
+  }
+  .z-habit__legend i[data-state="done"] {
+    background: var(--z-success-solid);
+  }
+  .z-habit__legend i[data-state="missed"] {
+    box-shadow: inset 0 0 0 1.5px var(--z-danger);
+    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--z-danger) 30%, transparent) 0 3px, transparent 3px 6px);
+  }
+  .z-habit__legend i[data-state="rest"] {
+    box-shadow: inset 0 0 0 1px var(--z-line-strong);
+  }
+  .z-habit__legend i[data-state="progress"] {
+    background: conic-gradient(var(--z-success) var(--z-habit-progress), color-mix(in srgb, var(--z-fg) 14%, transparent) 0);
+  }
+  .z-habit__week {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--z-space-1-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-habit__weekday {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-habit__box {
+    display: grid;
+    place-items: center;
+    inline-size: min(var(--z-space-9), 100%);
+    aspect-ratio: 1;
+    border-radius: var(--z-calendar-cell-radius);
+    box-shadow: inset 0 0 0 1.5px var(--z-line-strong);
+    color: var(--z-fg-subtle);
+  }
+  .z-habit__box[data-state="done"] {
+    background: var(--z-warning-solid);
+    box-shadow: none;
+    color: var(--z-fg-on-accent);
+  }
+  .z-habit__box[data-today]:not([data-state="done"]) {
+    box-shadow: inset 0 0 0 2px var(--z-warning);
+    color: var(--z-warning-text);
+  }
+  @media (forced-colors: active) {
+    .z-habit__day[data-state="done"],
+    .z-habit__box[data-state="done"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .z-habit__day[data-state="missed"] {
+      border: 1px dashed CanvasText;
+    }
+  }
+}
+
+/* Estancia (Calendar y DatePicker de rango): solo salida, aviso del mínimo, flexibilidad y ajuste de noches. En la capa
+   del Calendar (zui.forms); va aquí, con el resto de la familia de agenda, para no mezclarlo con los formularios. */
+@layer zui.forms {
+  /* Solo salida: una marca pequeña de anillo (se puede terminar ahí, no empezar) y «check-out only» en el nombre. */
+  .z-calendar__day[data-checkout-only]::before {
+    content: "";
+    position: absolute;
+    inset-block-start: var(--z-space-1);
+    inset-inline-end: var(--z-space-1);
+    inline-size: 5px;
+    block-size: 5px;
+    border-radius: var(--z-radius-full);
+    box-shadow: inset 0 0 0 1.5px currentColor;
+  }
+  .z-calendar__hint {
+    position: absolute;
+    z-index: var(--z-layer-tooltip);
+    inset-block-end: calc(100% + var(--z-space-1));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    padding: var(--z-space-1) var(--z-space-2);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+    box-shadow: var(--z-shadow-md);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  [dir="rtl"] .z-calendar__hint {
+    translate: 50% 0;
+  }
+  .z-calendar__flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-2);
+    padding-block-start: var(--z-space-3);
+  }
+  .z-calendar__flex-chip {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-3);
+    border: 1px solid var(--z-line-strong);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface);
+    color: var(--z-fg);
+    font: inherit;
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-calendar__flex-chip:not([aria-pressed="true"]):hover {
+      border-color: var(--z-fg-muted);
+    }
+  }
+  .z-calendar__flex-chip[aria-pressed="true"] {
+    border-color: var(--z-fg);
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+  }
+  .z-calendar__stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2-5);
+    padding-block-start: var(--z-space-3);
+    font-size: var(--z-text-body);
+  }
+  .z-calendar__stepper-btn {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-control-height-sm);
+    block-size: var(--z-control-height-sm);
+    padding: 0;
+    border: 1px solid var(--z-line-strong);
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg);
+    cursor: pointer;
+  }
+  .z-calendar__stepper-btn[aria-disabled="true"] {
+    border-color: var(--z-line);
+    color: var(--z-fg-subtle);
+    cursor: not-allowed;
+  }
+  .z-calendar__length {
+    min-inline-size: calc(var(--z-space-16) + var(--z-space-2));
+    font-weight: var(--z-weight-semibold);
+    text-align: center;
+  }
+  .z-calendar__flex-chip:focus-visible,
+  .z-calendar__stepper-btn:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  @media (forced-colors: active) {
+    .z-calendar__flex-chip[aria-pressed="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}
+
+@layer zui.agenda {
+  /* Chevrón de continuación en las barras de varios días que siguen en otra semana. */
+  .z-event__cont {
+    display: inline-grid;
+    flex: none;
+    margin-inline: -2px 0;
+    color: var(--z-event-fg-muted);
+  }
+  .z-event__cont[data-edge="end"] {
+    margin-inline: auto -2px;
+  }
+  [dir="rtl"] .z-event__cont .z-icon,
+  [dir="rtl"] .z-event__cont svg {
+    scale: -1 1;
+  }
+  .z-event[data-selected] .z-event__cont {
+    color: inherit;
+  }
+}
+
+@layer zui.agenda {
+  /* Puntero grueso: las opciones del zoom y de 12/24 h, de alto táctil completo (no solo por el pseudoelemento). */
+  @media (pointer: coarse) {
+    .z-timeline__zoom,
+    .z-slotpicker__cycle {
+      --z-segmented-height: calc(var(--z-touch-target) + 2 * var(--z-segmented-pad));
+    }
+  }
+}
