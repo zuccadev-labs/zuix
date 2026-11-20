@@ -142,7 +142,8 @@ function nudge(box: HTMLElement, delta: number, large = false): void {
   const input = numberInput(box);
   if (!input || input.disabled || input.readOnly) return;
   const { min, max, step, large: big } = numberConfig(box);
-  commitNumber(box, stepNumber(typedValue(box), delta, { min, max, step: large ? big : step }));
+  // El paso largo es un múltiplo del paso: el valor sigue en la rejilla de `step`.
+  commitNumber(box, stepNumber(typedValue(box), delta * (large ? Math.max(1, Math.round(big / step)) : 1), { min, max, step }));
 }
 
 function settleNumber(box: HTMLElement): void {
@@ -374,7 +375,8 @@ export function setup(on: Listen): void {
   );
   on(document, "submit", (event) => {
     const form = event.target as HTMLFormElement;
-    if (!(form instanceof HTMLFormElement) || event.defaultPrevented) return;
+    // Un Form que no envía por errores no oculta la contraseña (la persona la está corrigiendo).
+    if (!(form instanceof HTMLFormElement) || (form.matches(".z-form") && !form.checkValidity())) return;
     for (const box of form.querySelectorAll<HTMLElement>(".z-password"))
       if (inDom(box) && !box.hasAttribute("data-keep-visible")) setVisible(box, false);
   });

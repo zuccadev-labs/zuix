@@ -244,18 +244,35 @@
   .z-number__step:disabled {
     opacity: 0.4;
   }
+  /* Juntos al final (− +): dos botones de todo el alto, separados del valor por una línea. */
+  .z-number__steps[data-layout="row"] {
+    flex-direction: row;
+  }
+  .z-number__steps[data-layout="row"] .z-number__step,
+  .z-number__steps[data-layout="row"] .z-number__step[data-step] {
+    width: max(24px, calc(var(--z-input-height) * 0.8));
+    border-block-end: 0;
+    border-radius: 0;
+  }
+  .z-number__steps[data-layout="row"] .z-number__step[data-step="down"] {
+    border-inline-end: 1px solid var(--z-line);
+  }
+  .z-number__steps[data-layout="row"] .z-number__step[data-step="up"] {
+    border-start-end-radius: calc(var(--z-input-radius) - 1px);
+    border-end-end-radius: calc(var(--z-input-radius) - 1px);
+  }
   /* Con puntero grueso los botones apilados serían de 20 px: pasan a los lados del valor. */
   @media (pointer: coarse) {
-    .z-number__steps {
+    .z-number__steps:not([data-layout="row"]) {
       flex-direction: row-reverse;
       border-inline-start: 0;
       margin-inline-end: calc(var(--z-input-pad) * -1 + var(--z-space-1));
     }
-    .z-number__steps .z-number__step {
+    .z-number__steps:not([data-layout="row"]) .z-number__step {
       width: calc(var(--z-input-height) - 10px);
       border-radius: var(--z-radius-xs);
     }
-    .z-number__steps .z-number__step[data-step="up"] {
+    .z-number__steps:not([data-layout="row"]) .z-number__step[data-step="up"] {
       border-block-end: 0;
     }
   }

@@ -10,17 +10,65 @@
       "type": "ToggleGroupItem[]",
       "description": "{ value, label?, icon?, ariaLabel?, disabled? }. Sin `label`, `ariaLabel` es obligatorio."
     },
-    { "name": "label", "type": "string", "description": "Nombre accesible del grupo." },
-    { "name": "type", "type": "enum", "values": ["single", "multiple"], "default": "single" },
-    { "name": "value", "type": "string | string[]", "description": "Controlado: la opción activada (\"\" si ninguna) o la lista." },
-    { "name": "defaultValue", "type": "string | string[]" },
-    { "name": "onValueChange", "type": "(value) => void" },
-    { "name": "required", "type": "boolean", "default": false, "description": "Solo `single`: la opción activa no se puede desactivar." },
-    { "name": "variant", "type": "enum", "values": ["outline", "ghost"], "default": "outline" },
-    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md" },
-    { "name": "orientation", "type": "enum", "values": ["horizontal", "vertical"], "default": "horizontal" },
-    { "name": "attached", "type": "boolean", "default": true, "description": "Une las piezas; con `false` quedan separadas por 4 px." },
-    { "name": "disabled", "type": "boolean", "default": false }
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["single", "multiple"],
+      "default": "single"
+    },
+    {
+      "name": "value",
+      "type": "string | string[]",
+      "description": "Controlado: la opción activada (\"\" si ninguna) o la lista."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | string[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Solo `single`: la opción activa no se puede desactivar."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["outline", "ghost"],
+      "default": "outline"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "attached",
+      "type": "boolean",
+      "default": true,
+      "description": "Une las piezas; con `false` quedan separadas por 4 px."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
   ],
   "states": ["rest", "hover", "focus", "on", "disabled"],
   "tokens": ["space-1", "line", "accent-soft", "accent-ring", "accent-text", "control-radius-sm", "control-radius-lg"],
@@ -37,7 +85,7 @@
     },
     {
       "title": "Vista con texto, separada",
-      "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  required\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
+      "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
     },
     {
       "title": "Vertical",

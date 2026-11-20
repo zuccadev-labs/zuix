@@ -124,7 +124,7 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
 
   /* ---------- PasswordInput ---------- */
   await test("PasswordInput: mostrar/ocultar con aria-pressed y nombre fijo; medidor que no juzga vacío; se oculta al enviar", async () => {
-    const box = card("PasswordInput").locator(".z-password");
+    const box = card("PasswordInput").locator(".z-password").first();
     const input = box.locator("input.z-input__control");
     const toggle = box.locator(".z-password__toggle");
     ok((await input.getAttribute("autocomplete")) === "current-password", "autocomplete");
@@ -163,7 +163,7 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
 
   /* ---------- NumberInput ---------- */
   await test("NumberInput: flechas, Re Pág, Inicio/Fin, botones, lectura y formato al salir; topes", async () => {
-    const box = card("NumberInput").locator(".z-number");
+    const box = card("NumberInput").locator(".z-number").first();
     const input = box.locator("input[role='spinbutton']");
     ok((await input.inputValue()) === "3" && (await input.getAttribute("aria-valuenow")) === "3", "valor inicial");
     await input.focus();
@@ -217,6 +217,8 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
     const list = box.locator("[role='listbox']");
     ok((await list.getAttribute("aria-multiselectable")) === "true", "aria-multiselectable");
     const opt = (v) => list.locator(`[data-value='${v}']`);
+    // La búsqueda por letra del caso anterior sigue abierta un segundo: Espacio contaría como letra.
+    await page.waitForTimeout(1100);
     await opt("eu-west").focus();
     await press("ArrowDown", " ");
     ok((await opt("eu-central").getAttribute("aria-selected")) === "true", "Espacio marca");

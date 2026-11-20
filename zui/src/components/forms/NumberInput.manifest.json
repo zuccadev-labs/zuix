@@ -5,38 +5,98 @@
   "import": "import { NumberInput } from \"@zuccadev-labs/zuix-zui\"",
   "behavior": "dom",
   "props": [
-    { "name": "value", "type": "number | null", "description": "Valor; null es vacío." },
-    { "name": "defaultValue", "type": "number | null", "default": null },
+    {
+      "name": "value",
+      "type": "number | null",
+      "description": "Valor; null es vacío."
+    },
+    {
+      "name": "defaultValue",
+      "type": "number | null",
+      "default": null
+    },
     {
       "name": "onValueChange",
       "type": "(value: number | null) => void",
       "description": "Al pulsar una flecha o un botón, y al confirmar lo escrito (Intro o salir del campo)."
     },
-    { "name": "min", "type": "number" },
-    { "name": "max", "type": "number" },
-    { "name": "step", "type": "number", "default": 1 },
-    { "name": "largeStep", "type": "number", "description": "Paso de Re Pág y Av Pág; por defecto, 10 pasos." },
+    {
+      "name": "min",
+      "type": "number"
+    },
+    {
+      "name": "max",
+      "type": "number"
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "largeStep",
+      "type": "number",
+      "description": "Paso de Re Pág y Av Pág; por defecto, 10 pasos."
+    },
     {
       "name": "formatOptions",
       "type": "Intl.NumberFormatOptions",
       "description": "Moneda, porcentaje (el campo muestra 25 % y vale 0.25), unidad o decimales."
     },
-    { "name": "locale", "type": "string", "description": "Locale del formato y de la lectura; por defecto, el del navegador." },
-    { "name": "wheel", "type": "boolean", "default": false, "description": "La rueda cambia el valor solo con el campo enfocado." },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Locale del formato y de la lectura; por defecto, el del navegador."
+    },
+    {
+      "name": "wheel",
+      "type": "boolean",
+      "default": false,
+      "description": "La rueda cambia el valor solo con el campo enfocado."
+    },
     {
       "name": "controls",
       "type": "enum",
-      "values": ["stacked", "split", "none"],
-      "default": "stacked",
-      "description": "Botones apilados al final, a los lados (− valor +) o ninguno. Con puntero grueso los apilados pasan a los lados."
+      "values": ["end", "split", "stacked", "none"],
+      "default": "end",
+      "description": "Botones de paso: juntos al final (− +), a los lados (− valor +), apilados al final (compactos; de menos de 24 px de alto en sm y md, pasan a los lados con puntero grueso) o ninguno."
     },
-    { "name": "incrementLabel", "type": "string", "default": "Increase" },
-    { "name": "decrementLabel", "type": "string", "default": "Decrease" },
-    { "name": "name", "type": "string", "description": "Campo oculto con el número sin formato." },
-    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md" },
-    { "name": "invalid", "type": "boolean", "default": false },
-    { "name": "disabled", "type": "boolean", "default": false },
-    { "name": "readOnly", "type": "boolean", "default": false }
+    {
+      "name": "incrementLabel",
+      "type": "string",
+      "default": "Increase"
+    },
+    {
+      "name": "decrementLabel",
+      "type": "string",
+      "default": "Decrease"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo oculto con el número sin formato."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false
+    }
   ],
   "states": ["rest", "hover", "focus", "invalid", "disabled", "readonly"],
   "tokens": ["line", "space-1", "radius-xs"],

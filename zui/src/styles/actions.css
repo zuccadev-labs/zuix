@@ -625,7 +625,9 @@
   }
   .z-segmented[data-orientation="vertical"] .z-segmented__item {
     justify-content: flex-start;
-    height: calc(var(--z-segmented-height) - 2 * var(--z-segmented-pad) - 2px);
+    height: auto;
+    /* Con puntero grueso, cada opción llega al objetivo táctil. */
+    min-height: max(calc(var(--z-segmented-height) - 2 * var(--z-segmented-pad) - 2px), var(--z-touch-target, 0px));
   }
   /* Subrayado: sin pista ni elevación; la opción elegida lleva una barra de acento de 2 px bajo el texto (al
      inicio de la línea en vertical) y el conjunto se apoya en una línea. */
@@ -655,7 +657,7 @@
     border-inline-start: 1px solid var(--z-line);
   }
   .z-segmented[data-variant="underline"][data-orientation="vertical"] .z-segmented__item {
-    height: var(--z-segmented-height);
+    min-height: var(--z-segmented-height);
     border-radius: 0 var(--z-segmented-item-radius) var(--z-segmented-item-radius) 0;
   }
   .z-segmented[data-variant="underline"][data-orientation="vertical"] .z-segmented__item[data-state="on"] {

@@ -1120,7 +1120,7 @@
     },
     {
      "title": "Vista con texto, separada",
-     "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  required\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
+     "code": "<ToggleGroup\n  label=\"View\"\n  attached={false}\n  defaultValue=\"list\"\n  items={[\n    { value: \"list\", icon: \"list-bullet\", label: \"List\" },\n    { value: \"grid\", icon: \"squares-2x2\", label: \"Grid\" },\n    { value: \"board\", icon: \"view-columns\", label: \"Board\", disabled: true },\n  ]}\n/>"
     },
     {
      "title": "Vertical",
@@ -7536,12 +7536,13 @@
      "name": "controls",
      "type": "enum",
      "values": [
-      "stacked",
+      "end",
       "split",
+      "stacked",
       "none"
      ],
-     "default": "stacked",
-     "description": "Botones apilados al final, a los lados (− valor +) o ninguno. Con puntero grueso los apilados pasan a los lados."
+     "default": "end",
+     "description": "Botones de paso: juntos al final (− +), a los lados (− valor +), apilados al final (compactos; de menos de 24 px de alto en sm y md, pasan a los lados con puntero grueso) o ninguno."
     },
     {
      "name": "incrementLabel",

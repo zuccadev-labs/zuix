@@ -29,8 +29,11 @@ export interface NumberInputProps extends NativeProps {
   locale?: string;
   /** Rueda del ratón sobre el campo enfocado (desactivada por defecto). */
   wheel?: boolean;
-  /** Botones de paso: apilados al final, a los lados (− valor +) o ninguno. */
-  controls?: "stacked" | "split" | "none";
+  /**
+   * Botones de paso: juntos al final (− +, por defecto), a los lados (− valor +), apilados al final (más compactos,
+   * pero de menos de 24 px de alto en los tamaños sm y md) o ninguno.
+   */
+  controls?: "end" | "split" | "stacked" | "none";
   incrementLabel?: string;
   decrementLabel?: string;
   size?: ControlSize;
@@ -61,7 +64,7 @@ export function NumberInput({
   formatOptions,
   locale,
   wheel = false,
-  controls = "stacked",
+  controls = "end",
   incrementLabel = "Increase",
   decrementLabel = "Decrease",
   size = "md",
@@ -81,12 +84,18 @@ export function NumberInput({
   ...rest
 }: NumberInputProps) {
   const auto = useId();
-  const { invalid: isInvalid, ...control } = useFieldControl({
-    id: id ?? `${auto}-input`,
+  const {
+    invalid: isInvalid,
+    id: fieldId,
+    ...field
+  } = useFieldControl({
+    id,
     invalid,
     required,
     "aria-describedby": describedBy,
   });
+  // El id del Field (enlaza su <label>) o, sin Field, uno propio para aria-controls.
+  const control = { ...field, id: fieldId ?? `${auto}-input` };
   const [inner, setInner] = useState<number | null>(defaultValue);
   const current = value === undefined ? inner : value;
   const percent = formatOptions?.style === "percent";
@@ -105,7 +114,8 @@ export function NumberInput({
   const nudge = (delta: number, by = step) => {
     if (disabled || readOnly) return;
     const typed = draft === null ? current : parseNumber(draft, locale, percent);
-    const next = stepNumber(typed, delta, { ...range, step: by });
+    // El paso largo es un múltiplo del paso: el valor sigue en la rejilla de `step`.
+    const next = stepNumber(typed, delta * Math.max(1, Math.round(by / step)), range);
     setDraft(null);
     commit(next);
   };
@@ -204,8 +214,8 @@ export function NumberInput({
       }}
     >
       <Icon
-        name={controls === "split" ? (direction > 0 ? "plus" : "minus") : direction > 0 ? "chevron-up" : "chevron-down"}
-        size={controls === "split" ? ICON_SIZE[size] : ICON_SIZE[size] - 2}
+        name={controls === "stacked" ? (direction > 0 ? "chevron-up" : "chevron-down") : direction > 0 ? "plus" : "minus"}
+        size={controls === "stacked" ? ICON_SIZE[size] - 2 : ICON_SIZE[size]}
       />
     </button>
   );
@@ -263,6 +273,11 @@ export function NumberInput({
         <span className="z-number__steps">
           {stepButton(1)}
           {stepButton(-1)}
+        </span>
+      ) : controls === "end" ? (
+        <span className="z-number__steps" data-layout="row">
+          {stepButton(-1)}
+          {stepButton(1)}
         </span>
       ) : null}
       {name ? <input type="hidden" name={name} form={form} value={current ?? ""} /> : null}

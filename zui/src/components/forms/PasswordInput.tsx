@@ -73,12 +73,18 @@ export function PasswordInput({
   const auto = useId();
   const meterId = strength !== undefined && strength !== false ? `${auto}-strength` : undefined;
   const hintId = `${auto}-toggle-hint`;
-  const { invalid: isInvalid, ...control } = useFieldControl({
-    id: id ?? `${auto}-input`,
+  const {
+    invalid: isInvalid,
+    id: fieldId,
+    ...field
+  } = useFieldControl({
+    id,
     invalid,
     required,
     "aria-describedby": [describedBy, meterId].filter(Boolean).join(" ") || undefined,
   });
+  // El id del Field (enlaza su <label>) o, sin Field, uno propio para aria-controls.
+  const control = { ...field, id: fieldId ?? `${auto}-input` };
   const [visible, setVisible] = useControllable(visibleProp, defaultVisible, onVisibleChange);
   const [typed, setTyped] = useState(String(defaultValue ?? ""));
   const text = value === undefined ? typed : String(value);
