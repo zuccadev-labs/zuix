@@ -48,7 +48,7 @@ export function Overview({ onNavigate, onSelectProject }: { onNavigate: (id: Scr
       ) : null}
 
       <PageSection title="Metrics" description="Updated a few minutes ago.">
-        <Grid min={200}>
+        <Grid min={148}>
           <StatTile label="Projects" value={PROJECTS.length} icon="folder" hint="Across 4 teams" onClick={() => onNavigate("projects")} />
           <StatTile label="Active" value={active.length} icon="bolt" delta="+2" deltaTone="success" />
           <StatTile label="Open tasks" value={tasks} icon="queue-list" delta="-8%" deltaTone="success" variant="soft" />
