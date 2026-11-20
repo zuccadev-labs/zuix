@@ -37,6 +37,9 @@ radios y material de los tokens.
 - Breadcrumb: migas colapsadas (`maxItems`, `itemsBeforeCollapse`, `itemsAfterCollapse`, `collapsedLabel`): las
   del medio pasan a un Menu tras un botón «…»; y separador propio (`separator`). Modo DOM con `data-z-open` y un
   `.z-menu[popover]` de enlaces.
+- Accordion: variante tarjeta (`variant="card"`, radios concéntricos) y `collapsible={false}` (con una sola
+  abierta, su cabecera lleva `aria-disabled` y no la cierra; sigue en las flechas). Modo DOM: `data-variant="card"`
+  y `data-collapsible="false"`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

@@ -623,6 +623,35 @@
     color: var(--z-fg-prose);
     line-height: var(--z-leading-relaxed);
   }
+  /* Sección abierta que no se puede cerrar (collapsible={false}): la cabecera no cambia al pasar. */
+  .z-accordion__trigger[data-locked] {
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .z-accordion__trigger[data-locked]:hover {
+      background: transparent;
+    }
+  }
+  /* Variante tarjeta: cada sección es una tarjeta (radio 16) y su cabecera lleva el radio concéntrico (16 − 4). */
+  .z-accordion[data-variant="card"] {
+    gap: var(--z-space-2);
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item {
+    padding: var(--z-space-1);
+    border: 1px solid var(--z-card-border);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-card-bg);
+    box-shadow: var(--z-card-shadow);
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item:last-child {
+    border-bottom: 1px solid var(--z-card-border);
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item > .z-accordion__header > .z-accordion__trigger {
+    border-radius: calc(var(--z-radius-lg) - var(--z-space-1));
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item[data-state="open"] {
+    border-color: var(--z-line-strong);
+  }
 
   /* ---------- Árbol ---------- */
   .z-tree,

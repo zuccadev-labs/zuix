@@ -97,5 +97,26 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
         await activeMatches(page, more, "el foco vuelve al botón");
       },
     },
+    {
+      name: "Oleada 5 · Accordion tarjeta: siempre una abierta, aria-disabled en la abierta e item deshabilitado (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const trigger = (i) => `${t("c-accordion")} .z-accordion__trigger >> nth=${i}`;
+        await expectAttr(page, trigger(0), "aria-disabled", "true");
+        await page.locator(trigger(0)).click({ force: true });
+        await expectText(page, t("c-accordion-value"), "plan", "la abierta no se cierra");
+        await page.click(trigger(1));
+        await expectText(page, t("c-accordion-value"), "seats");
+        await expectAttr(page, trigger(1), "aria-disabled", "true");
+        await page.focus(trigger(1));
+        await press(page, "ArrowDown");
+        await activeMatches(
+          page,
+          `${t("c-accordion")} .z-accordion__item[data-value="plan"] .z-accordion__trigger`,
+          "salta la deshabilitada",
+        );
+        assert(await page.locator(trigger(2)).isDisabled(), "item deshabilitado");
+      },
+    },
   ];
 }

@@ -49,7 +49,16 @@ import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } 
 const modules = [actions, forms, collections, datatable, carousel, time, agenda, widgets, contentDom];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { setJsonTreeValue, setStep } from "./content";
-export { checkTreeItem, openPalette, renameTreeItem, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
+export {
+  checkTreeItem,
+  openPalette,
+  renameTreeItem,
+  selectTreeItem,
+  toggleTreeItem,
+  sortTable,
+  setPage,
+  type SortDirection,
+} from "./collections";
 export { dataTableSelection, setDataTablePage, setDataTableSelection } from "./datatable";
 export {
   setSelectValue,
@@ -704,6 +713,19 @@ function setSection(item: Element, open: boolean, animate = false): void {
   }
 }
 
+/** `data-collapsible="false"` (una sola abierta): la cabecera de la abierta no la cierra y lleva aria-disabled. */
+function lockAccordion(root: HTMLElement): void {
+  const lock = root.dataset.collapsible === "false" && root.dataset.type !== "multiple";
+  for (const item of accordionItems(root)) {
+    const trigger = ownPart<HTMLElement>(item, ".z-accordion__trigger");
+    if (!trigger || item.hasAttribute("data-disabled")) continue;
+    const locked = lock && item.dataset.state === "open";
+    trigger.toggleAttribute("data-locked", locked);
+    if (locked) trigger.setAttribute("aria-disabled", "true");
+    else if (trigger.hasAttribute("data-locked") || lock) trigger.removeAttribute("aria-disabled");
+  }
+}
+
 /* ---------- Delegación de eventos ---------- */
 
 const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
@@ -807,6 +829,8 @@ export function hydrate(root: ParentNode = document): void {
   }
   for (const section of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-accordion__item"))
     setSection(section, section.dataset.state === "open");
+  for (const accordion of root.querySelectorAll<HTMLElement>('[data-z-dom] .z-accordion[data-collapsible="false"]'))
+    lockAccordion(accordion);
   for (const trigger of root.querySelectorAll<HTMLElement>(".z-menu__item[data-z-submenu]")) describeSubmenu(trigger);
   for (const mod of modules) mod.hydrate(root);
 }
@@ -874,6 +898,7 @@ function onClick(event: MouseEvent): void {
     if (open && root && root.dataset.type !== "multiple")
       for (const other of accordionItems(root)) if (other !== section) setSection(other, false, true);
     setSection(section, open, true);
+    if (root) lockAccordion(root);
     // Secciones abiertas, como `onValueChange` del Accordion de React.
     if (root)
       emit(root, "change", {
@@ -992,7 +1017,7 @@ function onKeydown(event: KeyboardEvent): void {
     const next = root
       ? move(
           [...root.querySelectorAll<HTMLElement>(".z-accordion__trigger")].filter(
-            (t) => t.closest(".z-accordion") === root && !isDisabled(t),
+            (t) => t.closest(".z-accordion") === root && (t.hasAttribute("data-locked") || !isDisabled(t)),
           ),
           header,
           event.key,

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
-import { Breadcrumb, Card, CardHeader, Input, JsonTree, Stepper, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
+import { Accordion, Breadcrumb, Card, CardHeader, Input, JsonTree, Stepper, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
 
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
@@ -40,6 +40,7 @@ export function ContentWave5() {
   const [jsonPath, setJsonPath] = useState("none");
   const [step, setStep] = useState(0);
   const [crumb, setCrumb] = useState("none");
+  const [sections, setSections] = useState<string[]>(["plan"]);
   const nodes = FOLDERS.map(function relabel(node): TreeNode {
     return { ...node, label: labels[node.id] ?? node.label, children: node.children?.map(relabel) };
   });
@@ -95,6 +96,25 @@ export function ContentWave5() {
       </PageSection>
       <PageSection title="Navigation">
         <Grid min={320}>
+          <Card className="app-demo">
+            <CardHeader title="Accordion" subtitle="Card variant, always one open, disabled item" />
+            <div data-testid="c-accordion">
+              <Accordion
+                variant="card"
+                collapsible={false}
+                value={sections}
+                onValueChange={setSections}
+                items={[
+                  { value: "plan", title: "Plan", content: "Pro, billed yearly." },
+                  { value: "seats", title: "Seats", content: "12 of 20 in use." },
+                  { value: "sso", title: "Single sign-on", content: "Enterprise only.", disabled: true },
+                ]}
+              />
+            </div>
+            <p className="app-muted">
+              Open: <output data-testid="c-accordion-value">{show(sections)}</output>
+            </p>
+          </Card>
           <Card className="app-demo">
             <CardHeader title="Breadcrumb" subtitle="Collapsed with a menu and a custom separator" />
             <div data-testid="c-breadcrumb">

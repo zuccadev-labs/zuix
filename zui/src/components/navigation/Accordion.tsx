@@ -23,6 +23,10 @@ export interface AccordionProps {
   onValueChange?: (value: string[]) => void;
   /** Nivel del encabezado de cada sección. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
+  /** `card`: cada sección es una tarjeta separada. */
+  variant?: "plain" | "card";
+  /** Con `type="single"`, `false` impide cerrar la sección abierta (su cabecera lleva aria-disabled). */
+  collapsible?: boolean;
   className?: string;
 }
 
@@ -71,12 +75,16 @@ export function Accordion({
   defaultValue,
   onValueChange,
   headingLevel = 3,
+  variant = "plain",
+  collapsible = true,
   className,
 }: AccordionProps) {
   const baseId = useId();
   const [value, setValue] = useControllable(valueProp, defaultValue ?? NONE, onValueChange);
   const open = type === "single" ? value.slice(0, 1) : value;
+  const locked = (item: string) => !collapsible && type === "single" && open.includes(item);
   const toggle = (item: string) => {
+    if (locked(item)) return;
     if (open.includes(item)) setValue(open.filter((v) => v !== item));
     else setValue(type === "single" ? [item] : [...open, item]);
   };
@@ -94,7 +102,13 @@ export function Accordion({
   };
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: el contenedor solo reparte las flechas entre sus cabeceras, que son botones.
-    <div className={cx("z-accordion", className)} data-type={type} onKeyDown={onKeyDown}>
+    <div
+      className={cx("z-accordion", className)}
+      data-type={type}
+      data-variant={variant === "card" ? "card" : undefined}
+      data-collapsible={collapsible ? undefined : "false"}
+      onKeyDown={onKeyDown}
+    >
       {items.map((item) => {
         const isOpen = open.includes(item.value);
         const state = isOpen ? "open" : "closed";
@@ -120,6 +134,8 @@ export function Accordion({
                 data-disabled={item.disabled ? "" : undefined}
                 aria-expanded={isOpen}
                 aria-controls={contentId}
+                aria-disabled={locked(item.value) || undefined}
+                data-locked={locked(item.value) ? "" : undefined}
                 disabled={item.disabled}
                 onClick={() => toggle(item.value)}
               >

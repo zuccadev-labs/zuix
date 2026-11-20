@@ -199,4 +199,29 @@ export default async function ({ page, test, ok }) {
     ok(await page.evaluate(() => document.activeElement?.classList.contains("z-breadcrumb__more")), "el foco vuelve al botón");
     ok((await box.locator(".z-breadcrumb__separator").first().textContent()) === "/", "separador propio");
   });
+
+  /* ---------- Accordion tarjeta ---------- */
+  await test("Accordion tarjeta: collapsible=false bloquea la abierta, flechas la incluyen e item deshabilitado", async () => {
+    const box = await inject("Accordion", exampleIndex("Accordion", /Tarjeta/));
+    const triggers = box.locator(".z-accordion__trigger");
+    ok((await triggers.nth(0).getAttribute("aria-disabled")) === "true", "la abierta lleva aria-disabled");
+    // aria-disabled: Playwright no pulsa lo que se anuncia deshabilitado; se fuerza el clic.
+    await triggers.nth(0).click({ force: true });
+    ok((await triggers.nth(0).getAttribute("aria-expanded")) === "true", "no se cierra");
+    await triggers.nth(1).click();
+    ok((await triggers.nth(1).getAttribute("aria-expanded")) === "true", "abre la segunda");
+    ok((await triggers.nth(0).getAttribute("aria-expanded")) === "false", "cierra la primera");
+    ok((await triggers.nth(1).getAttribute("aria-disabled")) === "true", "el bloqueo pasa a la abierta");
+    ok((await triggers.nth(0).getAttribute("aria-disabled")) === null, "la cerrada se libera");
+    await triggers.nth(0).focus();
+    await press("ArrowDown");
+    ok(await page.evaluate(() => document.activeElement?.textContent.includes("Seats")), "la bloqueada sigue en las flechas");
+    await press("ArrowDown");
+    ok(await page.evaluate(() => document.activeElement?.textContent.includes("Plan")), "salta la deshabilitada y vuelve");
+    const radius = await box
+      .locator(".z-accordion__item")
+      .first()
+      .evaluate((el) => getComputedStyle(el).borderTopLeftRadius);
+    ok(radius !== "0px", `tarjeta con radio: ${radius}`);
+  });
 }
