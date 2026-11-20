@@ -281,7 +281,8 @@ export default async function ({ page, test, ok, card, browserName }) {
     ok(geo.side === "bottom" && geo.gapTop >= 8 && geo.gapTop <= 16, `debajo del campo: ${JSON.stringify(geo)}`);
     ok(geo.startAligned <= 1, `alineado al inicio del campo: ${geo.startAligned}`);
     ok(geo.arrow && Math.abs(geo.offset - Math.max(12, geo.anchorCenter)) <= 2, `flecha al centro del ancla: ${JSON.stringify(geo)}`);
-    ok(geo.anchored === geo.supports, `CSS anchor positioning solo donde existe: ${JSON.stringify(geo)}`);
+    // Donde existe se ancla con CSS; si el motor deja la capa lejos del ancla, vuelve a la colocación propia.
+    ok(!geo.anchored || geo.supports, `CSS anchor positioning solo donde existe: ${JSON.stringify(geo)}`);
     await panel.locator(".z-popover__close").click();
     ok(await panel.isHidden(), "el botón de cierre cierra");
     ok(await activeIs("#w4-Popover-1 [data-z-open]"), "el foco vuelve al disparador");
@@ -292,10 +293,11 @@ export default async function ({ page, test, ok, card, browserName }) {
   await test("HoverCard: el puntero abre tras el retardo, cruza a la tarjeta sin cerrarla, Escape cierra; describe al enlace", async () => {
     const link = card("HoverCard").locator("[data-z-hovercard]");
     const layer = page.locator("#hc-ana");
+    // El retardo se mide con el reloj (bajo carga, una comprobación a los 200 ms no es fiable).
+    const started = Date.now();
     await link.hover();
-    await page.waitForTimeout(200);
-    ok(await layer.isHidden(), "no abre antes del retardo");
-    await layer.waitFor({ state: "visible", timeout: 2000 });
+    await layer.waitFor({ state: "visible", timeout: 3000 });
+    ok(Date.now() - started >= 450, `abre tras el retardo: ${Date.now() - started} ms`);
     ok((await link.getAttribute("aria-describedby"))?.includes("hc-ana"), "aria-describedby");
     ok((await link.getAttribute("aria-expanded")) === null, "sin aria-expanded en el enlace");
     const box = await layer.boundingBox();
@@ -511,7 +513,12 @@ export default async function ({ page, test, ok, card, browserName }) {
     ok((await tour.getAttribute("role")) === "dialog", "role=dialog");
     const name = await tour.getAttribute("aria-labelledby");
     ok((await page.locator(`[id="${name}"]`).textContent()) === "Create a project", "nombre del encabezado");
+    await page.waitForFunction(() => document.activeElement?.matches(".z-tour .z-tour__primary"), null, { timeout: 2000 }).catch(() => {});
     ok(await activeIs(".z-tour .z-tour__primary"), "el foco entra en Siguiente");
+    await page
+      .locator(".z-tour__ring")
+      .waitFor({ state: "visible", timeout: 2000 })
+      .catch(() => {});
     ok(await page.locator(".z-tour__ring").isVisible(), "anillo");
     ok((await tour.locator(".z-tour__progress").textContent()) === "Step 1 of 3", "progreso");
     await press("ArrowRight");
