@@ -27,6 +27,25 @@ radios y material de los tokens.
 - `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
   `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
   (`DatePicker input`). Alt+Flecha abajo abre.
+- Agenda, oleada 2. `EventCalendar` añade las vistas `year` (12 minimeses con densidad en el fondo y en el
+  nombre, `density`), `perpetual` (año perpetuo de una página) y `timeline` (recursos del día, `resources`), un
+  contenido propio por evento (`renderEvent`, sin perder el nombre accesible completo), carga por rango visible
+  (`loadEvents`, `onRangeChange`; en `/dom`, `setAgendaOptions()` y `z:rangechange`), el chevrón de continuación en
+  las barras de varios días y la banda continua de la semana visible en el minicalendario.
+- Piezas nuevas del grupo `agenda`, en React y sin framework (`/dom`, `setWidgetProps()`): `PerpetualYear`
+  (tabla con caption, instrucciones y buscador con respuesta en texto), `TimelineView` (Gantt con fases
+  plegables, progreso, hitos, dependencias, camino crítico, hoy y zoom día/semana/mes; recursos con conflictos
+  con trama y texto, crear arrastrando y ventana virtual de filas), `FreeBusy` (buscar hueco entre zonas),
+  `SlotPicker` (franjas de cita con zona del visitante y 12/24 h), `CalendarHeatmap` (5 niveles, leyenda,
+  etiqueta al enfocar, tabla alternativa, `encoding="size"`, filo con contraste alto) y `HabitCalendar` (rachas
+  con banda, estados con forma e icono, variante de semana).
+- Estancia en Calendar y DatePicker de rango: `isDateCheckoutOnly`, `rangeUnit="nights"`, aviso visible del
+  mínimo (`minRangeLabel`), flexibilidad de fechas (`flexibility`, `flexibilityOptions`, `onFlexibilityChange`)
+  y ajuste ±1 noche (`showLengthStepper`). En `/dom`: `data-checkout-only-dates`, `data-range-unit`,
+  `data-length-stepper`, `data-flexibility` y `z:flexibilitychange`.
+- Núcleo sin documento con pruebas: `core/perpetual`, `core/heatmap` (niveles por cuantiles, rachas),
+  `core/timeline` (escalas, rutas de dependencias, camino crítico), `core/freebusy`, `core/virtual` y
+  `core/slots`.
 - `EventCalendar` (grupo nuevo `agenda`): barra (Hoy, anterior, siguiente, título con `aria-live`, zona horaria,
   vistas), lateral con minicalendario (Calendar) y calendarios como leyenda, y vistas de día (con segunda zona),
   semana, semana laboral, mes con eventos (barras de varios días, «+N more» con popover, puntos y lista del día en
