@@ -25,7 +25,7 @@ const bodyRows = (root: Element) =>
   [...(tableOf(root)?.tBodies[0]?.rows ?? [])].filter((row) => !row.querySelector(":scope > .z-table__empty"));
 const rowBox = (row: Element) => row.querySelector<HTMLElement>(':scope > .z-table__select [role="checkbox"]');
 const allBox = (root: Element) => root.querySelector<HTMLElement>('thead .z-table__select [role="checkbox"]');
-const keyOf = (row: HTMLElement) => row.dataset.key ?? String(row.sectionRowIndex);
+const keyOf = (row: HTMLTableRowElement) => row.dataset.key ?? String(row.sectionRowIndex);
 const off = (box: HTMLElement | null) => !box || box.hasAttribute("data-disabled") || (box as HTMLButtonElement).disabled;
 const on = (box: HTMLElement | null) => box?.getAttribute("aria-checked") === "true";
 
@@ -152,7 +152,7 @@ function onChange(event: Event): void {
     const others = now.filter((k) => !visible.includes(k));
     next = on(target) ? toggleAll(others, visible, order) : others;
   } else {
-    const row = target.closest<HTMLElement>("tr");
+    const row = target.closest<HTMLTableRowElement>("tr");
     if (!row) return;
     const key = keyOf(row);
     const before = toggleKey(now, key, order);

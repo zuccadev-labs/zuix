@@ -1,0 +1,69 @@
+{
+  "name": "StatusDot",
+  "group": "data",
+  "description": "Punto de estado con su texto (en línea, ocupado, caído). El texto siempre está: visible o solo para lectores.",
+  "import": "import { StatusDot } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Texto del estado."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["neutral", "success", "info", "warning", "danger"],
+      "default": "neutral"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Punto de 6, 8 y 10 px."
+    },
+    {
+      "name": "hideLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "El texto pasa a z-sr-only."
+    },
+    {
+      "name": "pulse",
+      "type": "boolean",
+      "default": false,
+      "description": "Halo que late; quieto con prefers-reduced-motion."
+    }
+  ],
+  "states": ["rest", "pulse"],
+  "tokens": [
+    "fg",
+    "fg-subtle",
+    "success",
+    "info",
+    "warning",
+    "danger",
+    "radius-full",
+    "space-1-5",
+    "text-small",
+    "text-caption",
+    "text-body",
+    "leading-ui",
+    "ease-out"
+  ],
+  "classes": ["z-status", "z-status__dot", "z-status__label"],
+  "a11y": "El color no va solo: el texto del estado siempre está en el árbol de accesibilidad (visible o con z-sr-only). El punto es decorativo (aria-hidden). Con colores forzados el punto lleva borde CanvasText. El latido solo se anima sin prefers-reduced-motion.",
+  "examples": [
+    {
+      "title": "Tonos",
+      "code": "<div style={{ display: \"flex\", gap: 16, flexWrap: \"wrap\" }}>\n  <StatusDot tone=\"success\" label=\"Online\" pulse />\n  <StatusDot tone=\"warning\" label=\"Degraded\" />\n  <StatusDot tone=\"danger\" label=\"Unreachable\" />\n  <StatusDot tone=\"info\" label=\"Deploying\" />\n  <StatusDot label=\"Offline\" />\n</div>"
+    },
+    {
+      "title": "Solo el punto (texto para lectores)",
+      "code": "<StatusDot tone=\"success\" label=\"Connected\" hideLabel size=\"lg\" />"
+    }
+  ],
+  "origin": "Status de Shark; computer-dot de zutool.",
+  "behavior": "none"
+}

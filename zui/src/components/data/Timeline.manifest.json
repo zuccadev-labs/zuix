@@ -1,0 +1,121 @@
+{
+  "name": "Timeline",
+  "exports": ["TimelineItem"],
+  "group": "data",
+  "description": "Lista ordenada de acontecimientos: punto o icono en una línea, hora en <time datetime>, título y descripción. Alineación al inicio, al final o alterna.",
+  "import": "import { Timeline, TimelineItem } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["start", "end", "alternate"],
+      "default": "start",
+      "description": "`alternate` reparte los elementos a los dos lados; en un contenedor de menos de 32rem vuelve a una columna."
+    },
+    { "name": "line", "type": "enum", "values": ["solid", "dashed", "dotted"], "default": "solid", "description": "Trazo entre puntos." },
+    {
+      "name": "dot",
+      "type": "enum",
+      "values": ["circle", "ring", "square"],
+      "default": "circle",
+      "description": "Forma del punto por defecto."
+    },
+    { "name": "size", "type": "enum", "values": ["sm", "md"], "default": "md" },
+    {
+      "name": "animated",
+      "type": "boolean",
+      "default": false,
+      "description": "Entrada escalonada (con `index` en cada elemento); no se anima con prefers-reduced-motion."
+    },
+    { "name": "TimelineItem.title", "type": "ReactNode", "required": true },
+    { "name": "TimelineItem.time", "type": "string", "description": "Instante ISO para <time datetime>." },
+    { "name": "TimelineItem.timeLabel", "type": "ReactNode", "description": "Texto visible de la hora (por defecto, `time`)." },
+    { "name": "TimelineItem.description", "type": "ReactNode" },
+    { "name": "TimelineItem.icon", "type": "IconName", "description": "Icono en lugar del punto." },
+    {
+      "name": "TimelineItem.tone",
+      "type": "enum",
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
+      "default": "neutral"
+    },
+    {
+      "name": "TimelineItem.dot",
+      "type": "enum",
+      "values": ["circle", "ring", "square"],
+      "description": "Forma del punto de este elemento."
+    },
+    {
+      "name": "TimelineItem.status",
+      "type": "enum",
+      "values": ["done", "current", "upcoming"],
+      "description": "`current` lleva aria-current=\"step\"; `upcoming` atenúa y discontinúa la línea."
+    },
+    { "name": "TimelineItem.index", "type": "number", "description": "Orden de entrada de la animación." }
+  ],
+  "states": ["rest", "current", "upcoming"],
+  "tokens": [
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-5",
+    "line",
+    "line-strong",
+    "surface-2",
+    "surface-solid",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "warning-soft",
+    "warning-text",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "info",
+    "info-soft",
+    "info-text",
+    "radius-full",
+    "radius-xs",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "leading-ui",
+    "leading-normal",
+    "duration-slow",
+    "ease-out"
+  ],
+  "classes": [
+    "z-timeline-list",
+    "z-timeline-list__item",
+    "z-timeline-list__marker",
+    "z-timeline-list__dot",
+    "z-timeline-list__body",
+    "z-timeline-list__time",
+    "z-timeline-list__title",
+    "z-timeline-list__description"
+  ],
+  "a11y": "Lista ordenada (<ol>): el lector anuncia el número de elementos y la posición. El punto y la línea son decorativos (aria-hidden); el estado no va solo en el color: el elemento en curso lleva aria-current=\"step\" y la hora va en <time datetime>. El tono acompaña, no sustituye, al texto.",
+  "examples": [
+    {
+      "title": "Actividad con iconos y tonos",
+      "code": "<Timeline>\n  <TimelineItem icon=\"rocket-launch\" tone=\"success\" title=\"Deployed to production\" time=\"2026-11-20T10:42\" timeLabel=\"10:42\" description=\"Build 4812 is live in all regions.\" status=\"done\" />\n  <TimelineItem icon=\"check\" tone=\"info\" title=\"Review approved\" time=\"2026-11-20T09:15\" timeLabel=\"09:15\" status=\"done\" />\n  <TimelineItem icon=\"clock\" tone=\"accent\" title=\"Smoke tests\" timeLabel=\"Running\" status=\"current\" />\n  <TimelineItem title=\"Announce release\" timeLabel=\"Next\" status=\"upcoming\" />\n</Timeline>"
+    },
+    {
+      "title": "Alterna con anillos y línea discontinua",
+      "code": "<Timeline align=\"alternate\" dot=\"ring\" line=\"dashed\">\n  <TimelineItem tone=\"accent\" title=\"Kick-off\" time=\"2026-01-12\" timeLabel=\"Jan 12\" description=\"Scope and team.\" />\n  <TimelineItem tone=\"info\" title=\"Beta\" time=\"2026-04-02\" timeLabel=\"Apr 2\" description=\"First 200 customers.\" />\n  <TimelineItem tone=\"success\" title=\"General availability\" time=\"2026-09-30\" timeLabel=\"Sep 30\" />\n</Timeline>"
+    },
+    {
+      "title": "Al final, compacta y con puntos cuadrados",
+      "code": "<Timeline align=\"end\" size=\"sm\" dot=\"square\" line=\"dotted\">\n  <TimelineItem title=\"Invoice sent\" time=\"2026-11-02\" timeLabel=\"Nov 2\" />\n  <TimelineItem title=\"Payment received\" time=\"2026-11-09\" timeLabel=\"Nov 9\" tone=\"success\" />\n</Timeline>"
+    }
+  ],
+  "origin": "NeonBlade Timeline y ActivityLogs de zutool, con el estándar liquid glass.",
+  "behavior": "none"
+}
