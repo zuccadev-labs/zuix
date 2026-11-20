@@ -241,5 +241,23 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         await visible(page, `${t("c-command")} .z-palette__footer`);
       },
     },
+    {
+      name: "Oleada 4 · ActionBar: aparece con la selección sin robar el foco, recuento, Toolbar y Escape la vacía",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.check(t("c-file-report.pdf"));
+        await visible(page, ".z-actionbar");
+        await focusOn(page, t("c-file-report.pdf"), "el foco sigue en la casilla");
+        await page.check(t("c-file-logo.svg"));
+        await expectText(page, ".z-actionbar__count", "2 selected");
+        await page.click('.z-actionbar [aria-label="Download"]');
+        await expectText(page, t("c-last"), "download:2");
+        await press(page, "End");
+        await focusOn(page, ".z-actionbar__close", "Fin llega al cierre");
+        await press(page, "Escape");
+        await gone(page, ".z-actionbar", "Escape vacía la selección");
+        assert(!(await page.isChecked(t("c-file-logo.svg"))), "selección vacía");
+      },
+    },
   ];
 }

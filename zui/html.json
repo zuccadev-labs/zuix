@@ -1916,6 +1916,23 @@
     }
    ]
   },
+  "ActionBar": {
+   "group": "overlay",
+   "classes": [
+    "z-actionbar",
+    "z-actionbar__count",
+    "z-actionbar__actions",
+    "z-actionbar__close"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Selección de filas",
+     "html": "<div data-position=\"inline\" role=\"toolbar\" aria-label=\"Selection actions\" aria-orientation=\"horizontal\" class=\"z-toolbar z-liquid z-actionbar\" data-variant=\"glass\" data-size=\"sm\">\n  <span class=\"z-actionbar__count\" aria-live=\"polite\" aria-atomic=\"true\">3 selected</span>\n  <span role=\"separator\" aria-orientation=\"vertical\" class=\"z-toolbar__separator\"></span>\n  <span class=\"z-actionbar__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"archive-box\" size=\"14\"></z-icon>\n      Archive\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\">\n      <z-icon name=\"tag\" size=\"14\"></z-icon>\n      Label\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"sm\">\n      <z-icon name=\"trash\" size=\"14\"></z-icon>\n      Delete\n    </button>\n  </span>\n  <button type=\"button\" class=\"z-actionbar__close\" aria-label=\"Clear selection\" title=\"Clear selection\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Command": {
    "group": "overlay",
    "classes": [

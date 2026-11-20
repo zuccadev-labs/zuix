@@ -150,6 +150,7 @@
 
 ## Componentes: Superposición
 
+- [ActionBar](https://zuccadev-labs.github.io/zuix/components/overlay/action-bar.md): Barra flotante de acciones sobre una selección (filas, archivos, tarjetas): recuento, acciones y cierre.
 - [Command](https://zuccadev-labs.github.io/zuix/components/overlay/command.md): La paleta de comandos incrustada en la página: buscador y lista siempre a la vista, con grupos, atajos y pie.
 - [CommandPalette](https://zuccadev-labs.github.io/zuix/components/overlay/command-palette.md): Paleta de comandos con búsqueda difusa, grupos y manejo completo por teclado.
 - [ConfirmDialog](https://zuccadev-labs.github.io/zuix/components/overlay/confirm-dialog.md): Confirmación de una acción con cancelar y confirmar; la variante danger marca acciones destructivas.

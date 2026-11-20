@@ -53,6 +53,9 @@ radios y material de los tokens.
   - `Command`: la paleta de comandos incrustada en la página (sin diálogo), con el mismo patrón combobox; Escape
     vacía la búsqueda. `CommandPalette` y `Command` aceptan `footer` (`.z-palette__footer`). En `/dom`,
     `.z-palette.z-command`.
+  - `ActionBar`: barra flotante de acciones sobre una selección (recuento vivo, acciones y cierre) sobre Toolbar;
+    `fixed`, `sticky` o `inline`; Escape y el cierre vacían la selección. En `/dom`, `.z-actionbar` con `z:close`
+    cancelable y `closeActionBar()`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

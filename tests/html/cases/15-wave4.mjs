@@ -432,4 +432,22 @@ export default async function ({ page, test, ok, card, browserName }) {
       "Escape vacía la búsqueda",
     );
   });
+
+  /* ---------- ActionBar ---------- */
+  await test("ActionBar: una parada de Tab (Toolbar), recuento vivo y Escape o el cierre la ocultan con z:close", async () => {
+    const box = await inject("ActionBar", 0);
+    const bar = box.locator(".z-actionbar");
+    ok((await bar.locator(".z-actionbar__count").getAttribute("aria-live")) === "polite", "recuento vivo");
+    const stops = await bar.locator("button").evaluateAll((list) => list.filter((el) => el.tabIndex === 0).length);
+    ok(stops === 1, `paradas: ${stops}`);
+    await bar.locator("button").first().focus();
+    await press("End");
+    ok(await activeIs(".z-actionbar__close"), "Fin llega al cierre");
+    await press("Home", "Escape");
+    ok(await bar.isHidden(), "Escape la oculta");
+    ok(
+      (await events()).some((e) => e.name === "z:close" && e.cls.includes("z-actionbar")),
+      "z:close",
+    );
+  });
 }

@@ -1796,6 +1796,32 @@ pnpm dev</code>
 </div>
 <h2 class="page__group">overlay</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="ActionBar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ActionBar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-position="inline" role="toolbar" aria-label="Selection actions" aria-orientation="horizontal" class="z-toolbar z-liquid z-actionbar" data-variant="glass" data-size="sm">
+  <span class="z-actionbar__count" aria-live="polite" aria-atomic="true">3 selected</span>
+  <span role="separator" aria-orientation="vertical" class="z-toolbar__separator"></span>
+  <span class="z-actionbar__actions">
+    <button type="button" class="z-btn z-btn--ghost" data-size="sm">
+      <z-icon name="archive-box" size="14"></z-icon>
+      Archive
+    </button>
+    <button type="button" class="z-btn z-btn--ghost" data-size="sm">
+      <z-icon name="tag" size="14"></z-icon>
+      Label
+    </button>
+    <button type="button" class="z-btn z-btn--danger" data-size="sm">
+      <z-icon name="trash" size="14"></z-icon>
+      Delete
+    </button>
+  </span>
+  <button type="button" class="z-actionbar__close" aria-label="Clear selection" title="Clear selection">
+    <z-icon name="x-mark" size="14"></z-icon>
+  </button>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Command" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Command</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">

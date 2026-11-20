@@ -10,6 +10,8 @@
 //              [role=tooltip]. Como HoverCard, y además el clic la deja fija (aria-expanded en el botón).
 //              En los dos: data-z-placement en el disparador (bottom / top por defecto), data-arrow en la capa,
 //              Tab entra en la capa y sale hacia lo que sigue al disparador. z:open y z:close en la capa.
+// ActionBar    .z-toolbar.z-actionbar[role=toolbar] (el foco itinerante es el de Toolbar). button.z-actionbar__close o
+//              Escape dentro de la barra emiten z:close (cancelable) y, si nadie lo cancela, la ocultan (`hidden`).
 import { focusQuiet, nextTabbable, tabbable } from "../core/focus";
 import { bridgeTab, createInterest, type Interest, type InterestSource } from "../core/interest";
 import { pushLayer } from "../core/layers";
@@ -25,6 +27,17 @@ export function dismissBanner(banner: HTMLElement): boolean {
   if (banner.hidden || !emit(banner, "dismiss")) return false;
   const next = banner.contains(document.activeElement) ? nextTabbable(banner) : undefined;
   banner.hidden = true;
+  focusQuiet(next);
+  return true;
+}
+
+/* ---------- ActionBar ---------- */
+
+/** Cierra una `.z-actionbar` (vaciar la selección): emite `z:close` y, si no se cancela, la oculta. */
+export function closeActionBar(bar: HTMLElement): boolean {
+  if (bar.hidden || !emit(bar, "close")) return false;
+  const next = bar.contains(document.activeElement) ? nextTabbable(bar) : undefined;
+  bar.hidden = true;
   focusQuiet(next);
   return true;
 }
@@ -182,6 +195,11 @@ export function setup(on: Listen): void {
     if (at && !(to?.hint === at.hint && to.zone === at.zone)) at.hint.interest.leave(zoneSource(at.zone, "focus"));
   });
   on(document, "keydown", (event) => {
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    const bar = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-actionbar") : null;
+    if (bar && inDom(bar) && closeActionBar(bar)) event.preventDefault();
+  });
+  on(document, "keydown", (event) => {
     if (event.key !== "Tab" || event.defaultPrevented) return;
     const at = hintAt(document.activeElement);
     if (!at || !openHints.has(at.hint)) return;
@@ -209,6 +227,11 @@ export function setup(on: Listen): void {
     const banner = close?.closest<HTMLElement>(".z-banner");
     if (banner) {
       dismissBanner(banner);
+      return;
+    }
+    const barClose = target.closest(".z-actionbar__close")?.closest<HTMLElement>(".z-actionbar");
+    if (barClose) {
+      closeActionBar(barClose);
       return;
     }
     // Toggletip: el clic la deja fija; otro clic con ella fija la cierra.

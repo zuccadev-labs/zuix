@@ -450,6 +450,85 @@
     }
   }
 
+  /* ---------- ActionBar ---------- */
+  /* Barra de cromo flotante sobre una selección: recuento, acciones y cierre. Sube desde abajo al aparecer. */
+  .z-actionbar {
+    gap: var(--z-space-2);
+    flex-wrap: nowrap;
+    max-inline-size: calc(100vw - var(--z-space-8));
+    padding-inline: var(--z-space-3) var(--z-space-1);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-popup-shadow);
+  }
+  .z-actionbar[data-position="fixed"] {
+    position: fixed;
+    inset-block-end: var(--z-space-6);
+    inset-inline: 0;
+    z-index: var(--z-layer-popover);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .z-actionbar[data-position="sticky"] {
+    position: sticky;
+    inset-block-end: var(--z-space-3);
+    z-index: var(--z-layer-raised);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-actionbar:not([data-position="inline"]) {
+      transition:
+        opacity var(--z-duration-normal) var(--z-ease-emphasized),
+        translate var(--z-duration-normal) var(--z-ease-emphasized);
+      @starting-style {
+        opacity: 0;
+        translate: 0 var(--z-space-3);
+      }
+    }
+  }
+  .z-actionbar__count {
+    flex: none;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-medium);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .z-actionbar__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .z-actionbar__close {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--z-control-height-sm);
+    height: var(--z-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-actionbar__close:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-actionbar__close:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-actionbar[hidden] {
+    display: none;
+  }
+
   /* ---------- Flecha de las capas ancladas ---------- */
   /* Media caja girada 45° sobre el borde que mira al ancla, en `--z-arrow-offset` (lo escribe la colocación). Mismo
      cristal y canto que la capa; el recorte deja solo la mitad de fuera, así no se suma al fondo de la capa. */

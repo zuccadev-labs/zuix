@@ -27,3 +27,4 @@ export {
 } from "./Toast";
 export { HoverCard, type HoverCardProps } from "./HoverCard";
 export { Toggletip, type ToggletipProps } from "./Toggletip";
+export { ActionBar, type ActionBarProps } from "./ActionBar";

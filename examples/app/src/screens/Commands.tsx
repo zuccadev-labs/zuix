@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
+  ActionBar,
   Banner,
   Button,
   Card,
@@ -48,6 +49,8 @@ export function Commands() {
   const [details, setDetails] = useState(false);
   const [banner, setBanner] = useState(true);
   const [statusBar, setStatusBar] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  const toggleFile = (name: string) => setSelected((list) => (list.includes(name) ? list.filter((n) => n !== name) : [...list, name]));
   const domain = useRef<HTMLInputElement | null>(null);
 
   const view: MenuEntry[] = [
@@ -140,6 +143,25 @@ export function Commands() {
           <p className="app-muted">
             Status bar: <output data-testid="c-statusbar">{String(statusBar)}</output>
           </p>
+        </Card>
+      </PageSection>
+
+      <PageSection title="Selection">
+        <Card className="app-demo">
+          <CardHeader title="ActionBar" subtitle="Floats while something is selected" />
+          <Stack gap={6}>
+            {["report.pdf", "tokens.json", "logo.svg"].map((name) => (
+              <label key={name} className="app-inline">
+                <input type="checkbox" checked={selected.includes(name)} onChange={() => toggleFile(name)} data-testid={`c-file-${name}`} />
+                {name}
+              </label>
+            ))}
+          </Stack>
+          <ActionBar open={selected.length > 0} count={`${selected.length} selected`} onClose={() => setSelected([])}>
+            <IconButton icon="arrow-down-tray" label="Download" size="sm" onClick={() => setLast(`download:${selected.length}`)} />
+            <IconButton icon="share" label="Share" size="sm" />
+            <IconButton icon="trash" label="Delete" size="sm" variant="danger" />
+          </ActionBar>
         </Card>
       </PageSection>
 
