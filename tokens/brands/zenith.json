@@ -88,7 +88,7 @@
       "fg-muted": "rgba(22, 24, 34, 0.68)",
       "fg-subtle": "rgba(22, 24, 34, 0.63)",
       "success": "#15803D",
-      "success-text": "color-mix(in srgb, {success} 74%, {fg})",
+      "success-text": "color-mix(in srgb, {success} 68%, {fg})",
       "warning": "#B45309",
       "warning-text": "color-mix(in srgb, {warning} 74%, {fg})",
       "danger": "#D11A5B",

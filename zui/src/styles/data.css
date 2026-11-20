@@ -307,6 +307,8 @@
     padding: 0 var(--z-space-1);
     border-radius: var(--z-radius-xs);
     background: var(--z-surface-3);
+    /* Texto pleno: con fg-muted, sobre una tarjeta clara el contador quedaba en 4,4:1 (axe, zutool). */
+    color: var(--z-fg);
     font-size: var(--z-text-fine);
     font-weight: var(--z-weight-semibold);
     font-variant-numeric: tabular-nums;
@@ -346,13 +348,14 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: calc(var(--z-chip-height) - 8px);
-    height: calc(var(--z-chip-height) - 8px);
+    /* 24 px en el chip md (objetivo mínimo de WCAG 2.5.8; antes 20), con 2 px de aire por cada lado. */
+    width: calc(var(--z-chip-height) - var(--z-space-1));
+    height: calc(var(--z-chip-height) - var(--z-space-1));
     margin-inline-end: var(--z-space-0-5);
     padding: 0;
     border: 0;
-    /* Concéntrico con el chip (su radio menos el margen de 4 px). */
-    border-radius: calc(var(--z-chip-radius) - var(--z-space-1));
+    /* Concéntrico con el chip (su radio menos el aire de 2 px). */
+    border-radius: calc(var(--z-chip-radius) - var(--z-space-0-5));
     background: transparent;
     color: inherit;
     cursor: pointer;
@@ -793,7 +796,8 @@
     border: 1px solid var(--z-glass-border);
     border-radius: var(--z-radius-xs);
     background: var(--z-surface-2);
-    color: var(--z-fg-muted);
+    /* fg y no fg-muted: a 12 px sobre una tarjeta clara el atenuado bajaba a 4,3:1 (axe, zutool claro). */
+    color: var(--z-fg);
     font-family: var(--z-font-mono);
     font-size: var(--z-text-caption);
     line-height: var(--z-leading-snug);

@@ -186,6 +186,10 @@
     align-items: stretch;
     gap: var(--z-space-2);
   }
+  /* Suelto, con tallas distintas: centrados en la fila (con alto fijo, `stretch` los dejaba alineados arriba). */
+  .z-btn-group:not([data-attached]):not([data-orientation="vertical"]) {
+    align-items: center;
+  }
   .z-btn-group[data-orientation="vertical"] {
     flex-direction: column;
   }
