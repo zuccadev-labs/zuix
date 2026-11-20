@@ -300,6 +300,10 @@ function collect({ TOKENS, families, coarse }) {
     const parentDisplay = el.parentElement ? getComputedStyle(el.parentElement).display : "";
     for (const [prop, value] of props) {
       if (!/px$/.test(value)) continue;
+      if (/gap/.test(prop) && !/(flex|grid)/.test(cs.display)) continue;
+      const signed = Number.parseFloat(value);
+      const v = Math.abs(signed);
+      if (v === 0 || near(v, scale.space)) continue;
       // Valor calculado (no el usado): `auto` se ve como tal en computedStyleMap aunque getComputedStyle dé px.
       const specified = el.computedStyleMap?.().get(prop)?.toString();
       if (
@@ -320,10 +324,6 @@ function collect({ TOKENS, families, coarse }) {
         add("relleno-tactil", el, `${prop} ${value} (completa el objetivo táctil)`);
         continue;
       }
-      if (/gap/.test(prop) && !/(flex|grid)/.test(cs.display)) continue;
-      const signed = Number.parseFloat(value);
-      const v = Math.abs(signed);
-      if (v === 0 || near(v, scale.space)) continue;
       if (/margin/.test(prop) && signed < 0 && v <= 2) {
         add("espaciado-compensado", el, `${prop} ${signed}px (bordes unidos)`);
         continue;
@@ -1112,7 +1112,12 @@ function classify(recs) {
     "## Aceptados",
     "",
   );
-  for (const [type, items] of Object.entries(report.accepted)) lines.push(`- ${type}: ${items.length} (${items[0]?.why})`);
+  // Aceptados agrupados por motivo, con un ejemplo de cada uno.
+  for (const [type, items] of Object.entries(report.accepted)) {
+    const reasons = new Map();
+    for (const it of items) reasons.set(it.why, [...(reasons.get(it.why) ?? []), it]);
+    for (const [why, group] of reasons) lines.push(`- ${type} · ${group.length} · ${why} (p. ej. ${group[0].detail.slice(0, 90)})`);
+  }
   writeFileSync(join(out, "report.md"), `${lines.join("\n")}\n`);
   const total = Object.values(report.real).reduce((s, v) => s + v.length, 0);
   console.log(`\n${total} defectos distintos en ${Object.keys(report.real).length} tipos:`);
