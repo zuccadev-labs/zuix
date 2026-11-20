@@ -174,4 +174,65 @@ export default async function ({ page, test, ok, card }) {
     ok(await page.evaluate(() => document.activeElement?.hasAttribute("data-z-panel")), "el foco vuelve al botón");
     await opener.click();
   });
+
+  /* ---------- PaneLayout ---------- */
+  await test("PaneLayout: menú del panel (mover y cerrar), arrastre al borde de otro panel y divisores", async () => {
+    const root = card("PaneLayout").locator(".z-panelayout");
+    await root.scrollIntoViewIfNeeded();
+    const ids = () => root.locator("[data-pane-id]").evaluateAll((list) => list.map((el) => el.dataset.paneId).join(","));
+    ok((await ids()) === "editor,preview,terminal", `orden inicial: ${await ids()}`);
+    // Teclado: el menú de Editor, «Move right» lo intercambia con su vecino de la derecha.
+    const trigger = root.locator('[data-pane-id="editor"] .z-panelayout__menu');
+    await trigger.focus();
+    await press("Enter");
+    await until(() => document.querySelector("#pl-editor-menu")?.matches(":popover-open"), "el menú no abrió");
+    await press("ArrowDown", "Enter");
+    ok((await ids()) === "preview,editor,terminal", `mover a la derecha: ${await ids()}`);
+    ok((await root.locator(".z-panelayout__status").textContent()) === "Editor moved", "anuncio del movimiento");
+    // Puntero: arrastrar Terminal sobre el borde superior de Preview lo pone encima.
+    const grab = await root.locator('[data-pane-id="terminal"] .z-paneheader__title').boundingBox();
+    const target = await root.locator('[data-pane-id="preview"]').boundingBox();
+    await page.mouse.move(grab.x + 10, grab.y + 5);
+    await page.mouse.down();
+    await page.mouse.move(grab.x + 30, grab.y + 20, { steps: 3 });
+    await page.mouse.move(target.x + target.width / 2, target.y + 12, { steps: 8 });
+    ok((await root.locator('.z-panelayout__drop[data-edge="block-start"]').count()) === 1, "zona de soltar arriba");
+    ok((await ids()) === "preview,editor,terminal", "nada cambia mientras se arrastra");
+    await page.mouse.up();
+    ok((await ids()) === "terminal,preview,editor", `soltar arriba: ${await ids()}`);
+    const column = await root
+      .locator(":scope > .z-split > .z-split__pane")
+      .first()
+      .locator(":scope > .z-split")
+      .getAttribute("data-direction");
+    ok(column === "column", `división en columna: ${column}`);
+    // El divisor nuevo funciona con teclado.
+    const divider = root.locator(":scope > .z-split > .z-split__divider");
+    const before = await divider.getAttribute("aria-valuenow");
+    await divider.focus();
+    await press("ArrowRight");
+    ok((await divider.getAttribute("aria-valuenow")) !== before, "el divisor se mueve con flechas");
+    // Cerrar desde el menú.
+    await root.locator('[data-pane-id="preview"] .z-panelayout__menu').click();
+    await page.locator('#pl-preview-menu [data-pane-action="close"]').click();
+    ok((await ids()) === "terminal,editor", `cerrar: ${await ids()}`);
+  });
+
+  /* ---------- Float ---------- */
+  await test("Float: la insignia queda centrada en la esquina final, también en RTL", async () => {
+    const float = card("Float").locator(".z-float").first();
+    await float.scrollIntoViewIfNeeded();
+    const measure = () =>
+      float.evaluate((el) => {
+        const a = el.firstElementChild.getBoundingClientRect();
+        const b = el.querySelector(".z-float__item").getBoundingClientRect();
+        return { ax: a.right, al: a.left, ay: a.top, cx: b.left + b.width / 2, cy: b.top + b.height / 2 };
+      });
+    const ltr = await measure();
+    ok(Math.abs(ltr.cx - ltr.ax) <= 1 && Math.abs(ltr.cy - ltr.ay) <= 1, `centro en la esquina superior derecha: ${JSON.stringify(ltr)}`);
+    await float.evaluate((el) => el.closest(".demo__stage").setAttribute("dir", "rtl"));
+    const rtl = await measure();
+    await float.evaluate((el) => el.closest(".demo__stage").removeAttribute("dir"));
+    ok(Math.abs(rtl.cx - rtl.al) <= 1, `en RTL, la esquina superior izquierda: ${JSON.stringify(rtl)}`);
+  });
 }

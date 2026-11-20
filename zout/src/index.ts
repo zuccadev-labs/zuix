@@ -8,6 +8,9 @@ export { TabStrip, type TabStripProps, type WorkTab, type TabGroup, type TabGrou
 export { TitleBar, type TitleBarProps } from "./layouts/TitleBar";
 export { PaneHeader, type PaneHeaderProps } from "./layouts/PaneHeader";
 export { FloatingPanel, type FloatingPanelProps } from "./layouts/FloatingPanel";
+export { PaneLayout, type PaneLayoutProps, type PaneInfo, type PaneLayoutLabels } from "./layouts/PaneLayout";
+export type { PaneNode, DropEdge } from "./logic";
+export { Float, type FloatProps, type FloatPlacement } from "./layouts/Float";
 export { ResizeHandle, type ResizeHandleProps } from "./layouts/ResizeHandle";
 export {
   Stack,

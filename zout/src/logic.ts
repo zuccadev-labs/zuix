@@ -253,3 +253,145 @@ export function resizeDelta(key: string, step: number): { dw: number; dh: number
   const d = moveDelta(key, step);
   return d ? { dw: d.dx, dh: d.dy } : null;
 }
+
+/* ---------- PaneLayout: mosaico de paneles ---------- */
+
+export type PaneNode = { type: "pane"; id: string } | { type: "split"; direction: "row" | "column"; sizes: number[]; children: PaneNode[] };
+
+/** Borde de un panel donde cae lo arrastrado. Lógico: `inline-start` es la izquierda en LTR y la derecha en RTL. */
+export type DropEdge = "inline-start" | "inline-end" | "block-start" | "block-end" | "center";
+
+/** Ids de los paneles en orden de lectura (profundidad primero). */
+export function paneIds(node: PaneNode | null): string[] {
+  if (!node) return [];
+  return node.type === "pane" ? [node.id] : node.children.flatMap(paneIds);
+}
+
+const normalize = (sizes: number[]) => {
+  const total = sizes.reduce((a, b) => a + b, 0);
+  return total > 0 ? sizes.map((s) => s / total) : evenFractions(sizes.length);
+};
+
+/** Reparto nuevo de la división en `path` (índices de hijos desde la raíz). */
+export function setSizesAt(node: PaneNode, path: readonly number[], sizes: number[]): PaneNode {
+  if (node.type !== "split") return node;
+  if (!path.length) return { ...node, sizes: [...sizes] };
+  const [head, ...rest] = path as [number, ...number[]];
+  return { ...node, children: node.children.map((child, i) => (i === head ? setSizesAt(child, rest, sizes) : child)) };
+}
+
+/**
+ * Divide el panel `target` y pone `id` delante (`before`) o detrás en `direction`. Si el padre ya divide en esa
+ * dirección, el panel nuevo entra como hermano y se queda con la mitad del espacio del panel dividido.
+ */
+export function splitPane(
+  node: PaneNode,
+  target: string,
+  id: string,
+  direction: "row" | "column",
+  position: "before" | "after" = "after",
+): PaneNode {
+  const pane: PaneNode = { type: "pane", id };
+  if (node.type === "pane") {
+    if (node.id !== target) return node;
+    return { type: "split", direction, sizes: [0.5, 0.5], children: position === "before" ? [pane, node] : [node, pane] };
+  }
+  const at = node.children.findIndex((c) => c.type === "pane" && c.id === target);
+  if (at >= 0 && node.direction === direction) {
+    const half = (node.sizes[at] ?? 0) / 2;
+    const children = [...node.children];
+    const sizes = [...node.sizes];
+    const index = position === "before" ? at : at + 1;
+    children.splice(index, 0, pane);
+    sizes.splice(at, 1, half, half);
+    return { ...node, children, sizes };
+  }
+  return { ...node, children: node.children.map((c) => splitPane(c, target, id, direction, position)) };
+}
+
+/** Quita el panel `id`. Una división que se queda con un hijo cede su sitio a ese hijo. Sin paneles, null. */
+export function removePane(node: PaneNode, id: string): PaneNode | null {
+  if (node.type === "pane") return node.id === id ? null : node;
+  const kept: { child: PaneNode; size: number }[] = [];
+  node.children.forEach((child, i) => {
+    const next = removePane(child, id);
+    if (next) kept.push({ child: next, size: node.sizes[i] ?? 0 });
+  });
+  if (!kept.length) return null;
+  if (kept.length === 1) return kept[0]!.child;
+  return { ...node, children: kept.map((k) => k.child), sizes: normalize(kept.map((k) => k.size)) };
+}
+
+/** Intercambia dos paneles de sitio. */
+export function swapPanes(node: PaneNode, a: string, b: string): PaneNode {
+  if (node.type === "pane") return node.id === a ? { type: "pane", id: b } : node.id === b ? { type: "pane", id: a } : node;
+  return { ...node, children: node.children.map((c) => swapPanes(c, a, b)) };
+}
+
+/**
+ * Lleva el panel `id` al borde `edge` del panel `target` (lo divide), o lo intercambia con él (`center`). En RTL un
+ * borde `inline-start` queda a la derecha, que en una fila es el primer hijo: el árbol guarda el orden lógico.
+ */
+export function movePane(node: PaneNode, id: string, target: string, edge: DropEdge): PaneNode {
+  if (id === target || !paneIds(node).includes(id) || !paneIds(node).includes(target)) return node;
+  if (edge === "center") return swapPanes(node, id, target);
+  const rest = removePane(node, id);
+  if (!rest) return node;
+  const direction = edge === "inline-start" || edge === "inline-end" ? "row" : "column";
+  const position = edge === "inline-start" || edge === "block-start" ? "before" : "after";
+  return splitPane(rest, target, id, direction, position);
+}
+
+/**
+ * Borde sobre el que está el punto dentro del rectángulo de un panel: el centro (la mitad interior en los dos ejes)
+ * intercambia; fuera de él, el borde más cercano en proporción.
+ */
+export function dropEdge(rect: Box, point: { x: number; y: number }, rtl = false): DropEdge {
+  const fx = rect.width > 0 ? (point.x - rect.left) / rect.width : 0.5;
+  const fy = rect.height > 0 ? (point.y - rect.top) / rect.height : 0.5;
+  if (fx > 0.25 && fx < 0.75 && fy > 0.25 && fy < 0.75) return "center";
+  const distances: [DropEdge, number][] = [
+    [rtl ? "inline-end" : "inline-start", fx],
+    [rtl ? "inline-start" : "inline-end", 1 - fx],
+    ["block-start", fy],
+    ["block-end", 1 - fy],
+  ];
+  return distances.reduce((best, d) => (d[1] < best[1] ? d : best))[0];
+}
+
+export interface Box {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Panel vecino de `id` en una dirección física de la pantalla, según los rectángulos de los paneles: el más cercano
+ * cuyo centro queda hacia ese lado y que se solapa en el otro eje. Null si no hay.
+ */
+export function neighborPane(
+  rects: readonly { id: string; rect: Box }[],
+  id: string,
+  direction: "left" | "right" | "up" | "down",
+): string | null {
+  const from = rects.find((r) => r.id === id)?.rect;
+  if (!from) return null;
+  const cx = from.left + from.width / 2;
+  const cy = from.top + from.height / 2;
+  let best: { id: string; d: number } | null = null;
+  for (const { id: other, rect } of rects) {
+    if (other === id) continue;
+    const ox = rect.left + rect.width / 2;
+    const oy = rect.top + rect.height / 2;
+    const horizontal = direction === "left" || direction === "right";
+    const ahead = direction === "left" ? ox < cx : direction === "right" ? ox > cx : direction === "up" ? oy < cy : oy > cy;
+    const overlap = horizontal
+      ? rect.top < from.top + from.height && rect.top + rect.height > from.top
+      : rect.left < from.left + from.width && rect.left + rect.width > from.left;
+    if (!ahead || !overlap) continue;
+    const d = horizontal ? Math.abs(ox - cx) : Math.abs(oy - cy);
+    if (!best || d < best.d) best = { id: other, d };
+  }
+  return best?.id ?? null;
+}

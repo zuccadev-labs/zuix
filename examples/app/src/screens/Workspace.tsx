@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   FloatingPanel,
   Grid,
   Pane,
   PaneHeader,
+  PaneLayout,
+  type PaneInfo,
+  type PaneNode,
   Page,
   PageHeader,
   PageSection,
@@ -16,6 +19,30 @@ import {
 } from "@zuccadev-labs/zuix-zout";
 import { Button, Card, CardHeader, IconButton } from "@zuccadev-labs/zuix-zui";
 import { Icon } from "@zuccadev-labs/zuix-zicon";
+
+const INITIAL_LAYOUT: PaneNode = {
+  type: "split",
+  direction: "row",
+  sizes: [0.55, 0.45],
+  children: [
+    { type: "pane", id: "editor" },
+    {
+      type: "split",
+      direction: "column",
+      sizes: [0.5, 0.5],
+      children: [
+        { type: "pane", id: "preview" },
+        { type: "pane", id: "terminal" },
+      ],
+    },
+  ],
+};
+
+const pane = (title: string, icon: "code-bracket" | "eye" | "command-line" | "document-text", text: string): PaneInfo => ({
+  title,
+  icon: <Icon name={icon} size={14} />,
+  content: <p className="app-pane-demo__body">{text}</p>,
+});
 
 const INITIAL_TABS: WorkTab[] = [
   { id: "button", title: "Button.tsx", groupId: "ui", modified: true },
@@ -32,6 +59,13 @@ export function Workspace() {
   const [tabs, setTabs] = useState(INITIAL_TABS);
   const [active, setActive] = useState("button");
   const [inspector, setInspector] = useState(true);
+  const [layout, setLayout] = useState<PaneNode>(INITIAL_LAYOUT);
+  const [panes, setPanes] = useState<Record<string, PaneInfo>>({
+    editor: pane("Editor", "code-bracket", "Drag a header onto another pane, or use its menu."),
+    preview: pane("Preview", "eye", "Preview"),
+    terminal: pane("Terminal", "command-line", "zsh"),
+  });
+  const created = useRef(0);
   const [panelRect, setPanelRect] = useState({ x: 16, y: 16, width: 220, height: 180 });
   const [groups, setGroups] = useState<TabGroup[]>([
     { id: "ui", label: "UI", tone: "info" },
@@ -94,6 +128,24 @@ export function Workspace() {
             </output>
           </Card>
         </Grid>
+      </PageSection>
+      <PageSection title="Pane layout">
+        <div className="app-panelayout" data-testid="ws-panelayout">
+          <PaneLayout
+            layout={layout}
+            onLayoutChange={setLayout}
+            panes={panes}
+            onSplit={() => {
+              created.current += 1;
+              const id = `notes-${created.current}`;
+              setPanes((list) => ({ ...list, [id]: pane(`Notes ${created.current}`, "document-text", "New pane") }));
+              return id;
+            }}
+          />
+        </div>
+        <output className="app-value" data-testid="ws-panelayout-value">
+          {JSON.stringify(layout, (key, value) => (key === "sizes" ? undefined : value))}
+        </output>
       </PageSection>
       <PageSection title="Panes and windows">
         <Grid min={300}>

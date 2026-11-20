@@ -29,6 +29,14 @@ import {
   resizeDelta,
   resizeRect,
   FLOAT_MARGIN,
+  paneIds,
+  setSizesAt,
+  splitPane,
+  removePane,
+  swapPanes,
+  movePane,
+  dropEdge,
+  neighborPane,
 } from "../../zout/src/logic.ts";
 
 const sum = (list) => list.reduce((a, b) => a + b, 0);
@@ -254,5 +262,85 @@ describe("FloatingPanel: posición y tamaño", () => {
     assert.deepEqual(resizeRect(rect, 5000, 5000, bounds, min), { x: 100, y: 100, width: 692, height: 492 });
     assert.deepEqual(resizeRect(rect, -50, 0, bounds, min, true), { x: 50, y: 100, width: 350, height: 200 });
     assert.deepEqual(resizeRect(rect, 500, 0, bounds, min, true), { x: 200, y: 100, width: 200, height: 200 });
+  });
+});
+
+describe("PaneLayout: árbol de paneles", () => {
+  const p = (id) => ({ type: "pane", id });
+  const tree = {
+    type: "split",
+    direction: "row",
+    sizes: [0.5, 0.5],
+    children: [p("a"), { type: "split", direction: "column", sizes: [0.5, 0.5], children: [p("b"), p("c")] }],
+  };
+  test("paneIds en orden de lectura; null vacío", () => {
+    assert.deepEqual(paneIds(tree), ["a", "b", "c"]);
+    assert.deepEqual(paneIds(null), []);
+  });
+  test("splitPane: hoja nueva o hermano en la misma dirección", () => {
+    assert.deepEqual(splitPane(p("a"), "a", "n", "column", "before"), {
+      type: "split",
+      direction: "column",
+      sizes: [0.5, 0.5],
+      children: [p("n"), p("a")],
+    });
+    assert.deepEqual(splitPane(p("a"), "x", "n", "row"), p("a"));
+    const sibling = splitPane(tree, "a", "n", "row");
+    assert.deepEqual(sibling.sizes, [0.25, 0.25, 0.5]);
+    assert.deepEqual(paneIds(sibling), ["a", "n", "b", "c"]);
+    const before = splitPane(tree, "b", "n", "column", "before");
+    assert.deepEqual(paneIds(before), ["a", "n", "b", "c"]);
+    const nested = splitPane(tree, "b", "n", "row");
+    assert.equal(nested.children[1].children[0].type, "split");
+  });
+  test("removePane: la división con un hijo cede su sitio y se renormaliza", () => {
+    const rest = removePane(tree, "b");
+    assert.deepEqual(rest, { type: "split", direction: "row", sizes: [0.5, 0.5], children: [p("a"), p("c")] });
+    assert.deepEqual(removePane(rest, "a"), p("c"));
+    assert.equal(removePane(p("a"), "a"), null);
+    const three = { type: "split", direction: "row", sizes: [0.2, 0.3, 0.5], children: [p("a"), p("b"), p("c")] };
+    assert.deepEqual(
+      removePane(three, "c").sizes.map((x) => Math.round(x * 100)),
+      [40, 60],
+    );
+    assert.equal(removePane({ type: "split", direction: "row", sizes: [1], children: [p("a")] }, "a"), null);
+  });
+  test("swapPanes y movePane (bordes y centro)", () => {
+    assert.deepEqual(paneIds(swapPanes(tree, "a", "c")), ["c", "b", "a"]);
+    assert.deepEqual(paneIds(movePane(tree, "a", "c", "center")), ["c", "b", "a"]);
+    const moved = movePane(tree, "a", "c", "inline-end");
+    assert.deepEqual(paneIds(moved), ["b", "c", "a"]);
+    assert.equal(moved.type, "split");
+    assert.deepEqual(paneIds(movePane(tree, "c", "a", "block-start")), ["c", "a", "b"]);
+    assert.equal(movePane(tree, "a", "a", "inline-end"), tree);
+    assert.equal(movePane(tree, "a", "zz", "inline-end"), tree);
+  });
+  test("setSizesAt cambia el reparto de una división por su ruta", () => {
+    assert.deepEqual(setSizesAt(tree, [1], [0.3, 0.7]).children[1].sizes, [0.3, 0.7]);
+    assert.deepEqual(setSizesAt(tree, [], [0.4, 0.6]).sizes, [0.4, 0.6]);
+    assert.deepEqual(setSizesAt(p("a"), [], [1]), p("a"));
+  });
+  test("dropEdge: centro, bordes y RTL", () => {
+    const r = { left: 0, top: 0, width: 100, height: 100 };
+    assert.equal(dropEdge(r, { x: 50, y: 50 }), "center");
+    assert.equal(dropEdge(r, { x: 5, y: 50 }), "inline-start");
+    assert.equal(dropEdge(r, { x: 5, y: 50 }, true), "inline-end");
+    assert.equal(dropEdge(r, { x: 95, y: 40 }), "inline-end");
+    assert.equal(dropEdge(r, { x: 50, y: 4 }), "block-start");
+    assert.equal(dropEdge(r, { x: 50, y: 96 }), "block-end");
+    assert.equal(dropEdge({ left: 0, top: 0, width: 0, height: 0 }, { x: 0, y: 0 }), "center");
+  });
+  test("neighborPane por geometría", () => {
+    const rects = [
+      { id: "a", rect: { left: 0, top: 0, width: 100, height: 200 } },
+      { id: "b", rect: { left: 100, top: 0, width: 100, height: 100 } },
+      { id: "c", rect: { left: 100, top: 100, width: 100, height: 100 } },
+    ];
+    assert.equal(neighborPane(rects, "a", "right"), "b");
+    assert.equal(neighborPane(rects, "b", "down"), "c");
+    assert.equal(neighborPane(rects, "c", "up"), "b");
+    assert.equal(neighborPane(rects, "c", "left"), "a");
+    assert.equal(neighborPane(rects, "a", "left"), null);
+    assert.equal(neighborPane(rects, "zz", "left"), null);
   });
 });

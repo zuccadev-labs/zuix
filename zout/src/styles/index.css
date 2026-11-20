@@ -937,6 +937,129 @@
     flex-wrap: nowrap;
   }
 
+  /* ── Mosaico de paneles ────────────────────────────────────────────────── */
+  .z-panelayout {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+  .z-panelayout > .z-split,
+  .z-panelayout > .z-panelayout__pane {
+    flex: 1 1 auto;
+  }
+  .z-panelayout__pane {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+  .z-panelayout__pane[data-dragging] {
+    opacity: 0.55;
+  }
+  .z-pane__header:has(> .z-panelayout__grab) {
+    padding: 0;
+  }
+  .z-panelayout__grab {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    align-self: stretch;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .z-panelayout[data-dragging] {
+    cursor: grabbing;
+  }
+  /* Zona de soltar: la mitad del panel en el borde señalado, o el panel entero (intercambio) en el centro. */
+  .z-panelayout__drop {
+    position: absolute;
+    inset: var(--z-space-1);
+    z-index: var(--z-layer-raised);
+    border: 2px solid var(--z-accent);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-accent-soft);
+    pointer-events: none;
+  }
+  .z-panelayout__drop[data-edge="inline-start"] {
+    inset-inline-end: 50%;
+  }
+  .z-panelayout__drop[data-edge="inline-end"] {
+    inset-inline-start: 50%;
+  }
+  .z-panelayout__drop[data-edge="block-start"] {
+    inset-block-end: 50%;
+  }
+  .z-panelayout__drop[data-edge="block-end"] {
+    inset-block-start: 50%;
+  }
+
+  /* ── Float: un elemento sobre la esquina o el borde de otro ───────────── */
+  .z-float {
+    --z-float-offset: 0px;
+    --z-float-x: 50%;
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  [dir="rtl"] .z-float {
+    --z-float-x: -50%;
+  }
+  .z-float__item {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    display: inline-flex;
+    pointer-events: auto;
+  }
+  .z-float:is([data-placement^="top"]) > .z-float__item {
+    inset-block-start: var(--z-float-offset);
+  }
+  .z-float:is([data-placement^="bottom"]) > .z-float__item {
+    inset-block-end: var(--z-float-offset);
+  }
+  .z-float:is([data-placement^="middle"]) > .z-float__item {
+    inset-block-start: 50%;
+  }
+  .z-float:is([data-placement$="-start"]) > .z-float__item {
+    inset-inline-start: var(--z-float-offset);
+  }
+  .z-float:is([data-placement$="-end"]) > .z-float__item {
+    inset-inline-end: var(--z-float-offset);
+  }
+  .z-float:is([data-placement$="-center"]) > .z-float__item {
+    inset-inline-start: 50%;
+  }
+  /* Centrado en el canto: mitad dentro, mitad fuera. */
+  .z-float[data-placement="top-end"] > .z-float__item {
+    translate: var(--z-float-x) -50%;
+  }
+  .z-float[data-placement="top-start"] > .z-float__item {
+    translate: calc(var(--z-float-x) * -1) -50%;
+  }
+  .z-float[data-placement="top-center"] > .z-float__item {
+    translate: calc(var(--z-float-x) * -1) -50%;
+  }
+  .z-float[data-placement="bottom-end"] > .z-float__item {
+    translate: var(--z-float-x) 50%;
+  }
+  .z-float[data-placement="bottom-start"] > .z-float__item,
+  .z-float[data-placement="bottom-center"] > .z-float__item {
+    translate: calc(var(--z-float-x) * -1) 50%;
+  }
+  .z-float[data-placement="middle-end"] > .z-float__item {
+    translate: var(--z-float-x) -50%;
+  }
+  .z-float[data-placement="middle-start"] > .z-float__item {
+    translate: calc(var(--z-float-x) * -1) -50%;
+  }
+
   /* ── Panel flotante ────────────────────────────────────────────────────── */
   /* Cristal elevado; la posición y el tamaño los escribe el comportamiento (left, top, width, height). */
   .z-floatpanel {

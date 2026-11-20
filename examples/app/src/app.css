@@ -277,3 +277,6 @@ body {
 .app-float-text {
   margin: 0;
 }
+.app-panelayout {
+  height: 380px;
+}

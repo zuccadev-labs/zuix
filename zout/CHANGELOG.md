@@ -23,8 +23,17 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     o flechas; Mayús multiplica el paso; nunca sale de la ventana (`fixed`) o de su contenedor (`absolute`); Escape
     y el botón de cierre con `onClose`; posición y tamaño controlados o no. En `/dom`, `.z-floatpanel`,
     `data-z-panel`, `openFloatingPanel()`, `closeFloatingPanel()` y `setFloatingPanelRect()`.
+  - `PaneLayout`: mosaico de paneles redimensionables sobre un árbol de divisiones (`layout`, `panes`), con
+    cabecera (`PaneHeader`) y menú por panel para dividir (`onSplit`), mover junto al vecino de cada lado y cerrar;
+    arrastrar la cabecera sobre otro panel muestra la zona de soltar (borde o intercambio en el centro) y aplica el
+    cambio al soltar; los movimientos se anuncian. En `/dom`, `.z-panelayout` con `getPaneLayout()`,
+    `setPaneLayout()`, `splitLayoutPane()`, acciones `data-pane-action` en los menús de zui y los eventos
+    `z:layout`, `z:split` y `z:close`.
+  - `Float`: un elemento (insignia, contador) centrado sobre la esquina o el borde de otro, en lógicas (RTL), con
+    `offset` para formas circulares. Solo CSS.
   - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore`,
-    `beforeFor`, `clampRect`, `moveDelta`, `resizeDelta` y `resizeRect`.
+    `beforeFor`, `clampRect`, `moveDelta`, `resizeDelta`, `resizeRect`, y el árbol de paneles (`PaneNode`,
+    `paneIds`, `setSizesAt`, `splitPane`, `removePane`, `swapPanes`, `movePane`, `dropEdge`, `neighborPane`).
 
 ### Cambiado
 

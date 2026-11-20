@@ -1,0 +1,34 @@
+{
+  "name": "Float",
+  "group": "layout",
+  "description": "Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.",
+  "import": "import { Float } from \"@zuccadev-labs/zuix-zout\"",
+  "behavior": "none",
+  "props": [
+    { "name": "children", "type": "ReactNode", "required": true, "description": "Elemento al que se ancla." },
+    { "name": "content", "type": "ReactNode", "required": true, "description": "Lo que flota sobre él." },
+    {
+      "name": "placement",
+      "type": "enum",
+      "values": ["top-start", "top-center", "top-end", "middle-start", "middle-end", "bottom-start", "bottom-center", "bottom-end"],
+      "default": "top-end",
+      "description": "Lógico: `start` es la izquierda en LTR y la derecha en RTL."
+    },
+    {
+      "name": "offset",
+      "type": "string | number",
+      "description": "Desplazamiento hacia dentro (`--z-float-offset`), p. ej. `14%` sobre un avatar redondo."
+    }
+  ],
+  "tokens": ["layer-raised"],
+  "cssVars": ["--z-float-offset"],
+  "classes": ["z-float", "z-float__item"],
+  "a11y": "Solo presentación. Si lo que flota informa (un contador de no leídos), ese dato debe estar también en el nombre accesible del elemento ancla (`aria-label` con el número) o en un texto oculto; un punto decorativo lleva `aria-hidden`.",
+  "examples": [
+    {
+      "title": "Contador sobre un botón y estado sobre un avatar",
+      "code": "<div style={{ display: \"flex\", gap: 24, alignItems: \"center\" }}>\n  <Float content={<Badge tone=\"danger\" variant=\"solid\" size=\"sm\">3</Badge>}>\n    <IconButton icon=\"bell\" label=\"Notifications, 3 unread\" variant=\"secondary\" />\n  </Float>\n  <Float placement=\"bottom-end\" offset=\"14%\" content={<Badge tone=\"success\" variant=\"solid\" size=\"sm\">On</Badge>}>\n    <Avatar name=\"Ana Ruiz\" />\n  </Float>\n  <Float placement=\"top-start\" content={<Badge tone=\"accent\" variant=\"solid\" size=\"sm\">New</Badge>}>\n    <Button variant=\"secondary\">Reports</Button>\n  </Float>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencia de variantes: Float de Shark UI."
+}

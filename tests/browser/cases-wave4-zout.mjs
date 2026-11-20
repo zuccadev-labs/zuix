@@ -125,5 +125,47 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         void visible;
       },
     },
+    {
+      name: "Oleada 4 · PaneLayout: menú (dividir, mover, cerrar), arrastre al borde con zona de soltar y foco",
+      async run({ open }) {
+        const page = await screen(open);
+        const root = t("ws-panelayout");
+        const ids = () => page.locator(`${root} [data-pane-id]`).evaluateAll((list) => list.map((el) => el.dataset.paneId).join(","));
+        await page.locator(root).scrollIntoViewIfNeeded();
+        assert((await ids()) === "editor,preview,terminal", `inicial: ${await ids()}`);
+        // Menú de Editor con teclado: Split right crea un panel nuevo a su derecha.
+        await page.focus(`${root} [data-pane-id="editor"] .z-panelayout__menu`);
+        await press(page, "Enter");
+        await visible(page, ".z-menu[role=menu]");
+        await press(page, "Enter");
+        await poll(async () => (await ids()) === "editor,notes-1,preview,terminal", "split right");
+        // Move right: intercambia Editor con su vecino de la derecha y lo anuncia.
+        await page.focus(`${root} [data-pane-id="editor"] .z-panelayout__menu`);
+        await press(page, "Enter");
+        await visible(page, ".z-menu[role=menu]");
+        await page.click(".z-menu[role=menu] >> text=Move right");
+        await poll(async () => (await ids()) === "notes-1,editor,preview,terminal", "move right");
+        await expectText(page, `${root} .z-panelayout__status`, "Editor moved");
+        // Arrastrar Terminal al borde izquierdo de Notes 1.
+        const grab = await page.locator(`${root} [data-pane-id="terminal"] .z-paneheader__title`).boundingBox();
+        const target = await page.locator(`${root} [data-pane-id="notes-1"]`).boundingBox();
+        await page.mouse.move(grab.x + 10, grab.y + 5);
+        await page.mouse.down();
+        await page.mouse.move(grab.x + 40, grab.y + 30, { steps: 4 });
+        await page.mouse.move(target.x + 10, target.y + target.height / 2, { steps: 8 });
+        await visible(page, `${root} .z-panelayout__drop[data-edge="inline-start"]`, "zona de soltar a la izquierda");
+        assert((await ids()) === "notes-1,editor,preview,terminal", "nada cambia mientras se arrastra");
+        await page.mouse.up();
+        await poll(async () => (await ids()) === "terminal,notes-1,editor,preview", `soltar: ${await ids()}`);
+        await gone(page, `${root} .z-panelayout__drop`);
+        // Cerrar Notes 1 desde su menú.
+        await page.click(`${root} [data-pane-id="notes-1"] .z-panelayout__menu`);
+        await page.click(".z-menu[role=menu] >> text=Close pane");
+        await poll(async () => (await ids()) === "terminal,editor,preview", `cerrar: ${await ids()}`);
+        // El panel pulsado pasa a tener el foco visual.
+        await page.click(`${root} [data-pane-id="preview"] .z-pane__body`);
+        await expectAttr(page, `${root} [data-pane-id="preview"] .z-pane`, "data-focused", "true");
+      },
+    },
   ];
 }

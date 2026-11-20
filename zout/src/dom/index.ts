@@ -6,7 +6,8 @@
 // Uso imperativo:    setPanelOpen, togglePanel, closeDrawers, getShellModes, resizeTo, getSplitSizes, setSplitSizes,
 //                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, setSidebarCollapsed,
 //                    setSidebarItemOpen, moveWorkTab, setTabGroupCollapsed, openFloatingPanel,
-//                    closeFloatingPanel, setFloatingPanelRect, dispose
+//                    closeFloatingPanel, setFloatingPanelRect, getPaneLayout, setPaneLayout,
+//                    splitLayoutPane, dispose
 //
 // Todo se activa dentro de un contenedor [data-z-dom], para no chocar con React en la misma página.
 // Atributos:
@@ -28,6 +29,12 @@
 //                                             data-strategy="absolute" lo acota a su contenedor; data-min-width/height;
 //                                             .z-floatpanel__close o Escape lo ocultan (z:close). data-z-panel="#id" en
 //                                             un botón lo abre y recibe el foco al cerrarlo. z:change { x, y, width, height }
+//   .z-panelayout                             mosaico: .z-split anidados y .z-panelayout__pane[data-pane-id]; arrastrar
+//                                             .z-panelayout__grab sobre otro panel lo deja en ese borde (o lo
+//                                             intercambia en el centro); items de menú [data-pane-action=move-left|
+//                                             move-right|move-up|move-down|close|split-right|split-down]. z:layout
+//                                             { layout } tras cada cambio; z:split { id, direction } para dividir
+//                                             (la aplicación llama a splitLayoutPane con el panel nuevo)
 //   data-collapsed                            en .z-sidebar: plegada a iconos (setSidebarCollapsed la alterna)
 //   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
 // La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
@@ -58,6 +65,13 @@ import {
   resizeSign,
   beforeFor,
   clampRect,
+  dropEdge as paneDropEdge,
+  movePane,
+  neighborPane,
+  removePane,
+  splitPane,
+  type DropEdge,
+  type PaneNode,
   dropIndex,
   FLOAT_STEP,
   moveDelta,
@@ -820,6 +834,170 @@ export function closeFloatingPanel(panel: HTMLElement): void {
   if (hadFocus) panelOpeners.get(panel)?.focus({ preventScroll: true });
 }
 
+/* ---------- Mosaico de paneles ---------- */
+
+const paneSections = (layout: Element) => [...layout.querySelectorAll<HTMLElement>(".z-panelayout__pane[data-pane-id]")];
+
+function readNode(el: Element): PaneNode | null {
+  if (el.classList.contains("z-panelayout__pane")) return { type: "pane", id: (el as HTMLElement).dataset.paneId ?? "" };
+  if (!el.classList.contains("z-split")) return null;
+  const cells = parts(el, "z-split__pane");
+  const children = cells.map((cell) => (cell.firstElementChild ? readNode(cell.firstElementChild) : null)).filter(Boolean) as PaneNode[];
+  return { type: "split", direction: directionOf(el as HTMLElement), sizes: getSplitSizes(el as HTMLElement), children };
+}
+
+/** Árbol del mosaico leído del marcado. */
+export function getPaneLayout(layout: HTMLElement): PaneNode | null {
+  const top = [...layout.children].find((c) => c.classList.contains("z-split") || c.classList.contains("z-panelayout__pane"));
+  return top ? readNode(top) : null;
+}
+
+/**
+ * Rehace el marcado del mosaico con el árbol `tree`, moviendo los paneles existentes (conservan su contenido y su
+ * estado). Un panel nuevo debe estar ya en el mosaico o pasarse en `extra`. Emite `z:layout` { layout }.
+ */
+export function setPaneLayout(layout: HTMLElement, tree: PaneNode, extra: HTMLElement[] = []): void {
+  const byId = new Map([...paneSections(layout), ...extra].map((el) => [el.dataset.paneId ?? "", el]));
+  const label = layout.dataset.dividerLabel ?? "Resize panes";
+  let count = 0;
+  const build = (node: PaneNode): HTMLElement | null => {
+    if (node.type === "pane") return byId.get(node.id) ?? null;
+    const split = document.createElement("div");
+    split.className = "z-split";
+    split.dataset.direction = node.direction;
+    node.children.forEach((child, i) => {
+      const built = build(child);
+      if (!built) return;
+      if (i > 0) {
+        const divider = document.createElement("div");
+        divider.className = "z-split__divider";
+        divider.setAttribute("aria-label", label);
+        split.append(divider);
+      }
+      const cell = document.createElement("div");
+      cell.className = "z-split__pane";
+      cell.id = `${layout.id || "panelayout"}-cell-${++count}`;
+      cell.append(built);
+      split.append(cell);
+    });
+    setSplitSizes(split, node.sizes);
+    return split;
+  };
+  const top = build(tree);
+  const status = layout.querySelector(":scope > .z-panelayout__status");
+  layout.replaceChildren(...(top ? [top] : []), ...(status ? [status] : []));
+  for (const split of layout.querySelectorAll<HTMLElement>(".z-split")) hydrateSplit(split);
+  syncPaneFocus(layout);
+  emit(layout, "layout", { layout: tree });
+}
+
+/** Divide el panel `id` y pone `pane` (un `.z-panelayout__pane[data-pane-id]` nuevo) a su lado. */
+export function splitLayoutPane(layout: HTMLElement, id: string, pane: HTMLElement, direction: "row" | "column"): void {
+  const tree = getPaneLayout(layout);
+  if (!tree || !pane.dataset.paneId) return;
+  setPaneLayout(layout, splitPane(tree, id, pane.dataset.paneId, direction), [pane]);
+}
+
+/** Marca el panel con el foco (el pulsado o enfocado) y atenúa el resto. */
+function syncPaneFocus(layout: HTMLElement, focused?: string): void {
+  const sections = paneSections(layout);
+  const current = focused ?? layout.dataset.focused ?? sections[0]?.dataset.paneId;
+  if (current) layout.dataset.focused = current;
+  for (const section of sections) {
+    const on = String(section.dataset.paneId === current);
+    if (sections.length < 2) {
+      section.querySelector(".z-pane")?.removeAttribute("data-focused");
+      section.querySelector(".z-paneheader")?.removeAttribute("data-focused");
+      continue;
+    }
+    section.querySelector(".z-pane")?.setAttribute("data-focused", on);
+    section.querySelector(".z-paneheader")?.setAttribute("data-focused", on);
+  }
+}
+
+function announcePane(layout: HTMLElement, id: string): void {
+  const status = layout.querySelector<HTMLElement>(":scope > .z-panelayout__status");
+  const title = layout.querySelector(`[data-pane-id="${CSS.escape(id)}"] .z-paneheader__title`)?.textContent ?? id;
+  if (status) status.textContent = (status.dataset.movedLabel ?? "{title} moved").replace("{title}", title);
+}
+
+function paneAction(item: HTMLElement): void {
+  const action = item.dataset.paneAction ?? "";
+  const section = document.querySelector<HTMLElement>(`[data-pane-id="${CSS.escape(item.dataset.paneFor ?? "")}"]`);
+  const layout = section?.closest<HTMLElement>(".z-panelayout");
+  const id = section?.dataset.paneId;
+  const tree = layout ? getPaneLayout(layout) : null;
+  if (!layout || !id || !tree) return;
+  if (action === "close") {
+    const next = removePane(tree, id);
+    if (next && emit(layout, "close", { id })) setPaneLayout(layout, next);
+    return;
+  }
+  if (action === "split-right" || action === "split-down") {
+    emit(layout, "split", { id, direction: action === "split-right" ? "row" : "column" });
+    return;
+  }
+  const direction = ({ "move-left": "left", "move-right": "right", "move-up": "up", "move-down": "down" } as const)[action as "move-left"];
+  if (!direction) return;
+  const rects = paneSections(layout).map((el) => ({ id: el.dataset.paneId ?? "", rect: el.getBoundingClientRect() }));
+  const other = neighborPane(rects, id, direction);
+  if (!other) return;
+  setPaneLayout(layout, movePane(tree, id, other, "center"));
+  announcePane(layout, id);
+  // El foco vuelve al menú del panel movido (zui/dom lo devuelve a su disparador, que sigue siendo el mismo botón).
+}
+
+// Arrastre de un panel por su cabecera.
+let paneDrag: {
+  layout: HTMLElement;
+  id: string;
+  pointerId: number;
+  x: number;
+  y: number;
+  active: boolean;
+  drop: { target: string; edge: DropEdge } | null;
+} | null = null;
+
+function paneDragMove(event: PointerEvent): void {
+  const d = paneDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  if (!d.active) {
+    if (Math.hypot(event.clientX - d.x, event.clientY - d.y) < 6) return;
+    d.active = true;
+    d.layout.dataset.dragging = "";
+    d.layout.querySelector(`[data-pane-id="${CSS.escape(d.id)}"]`)?.setAttribute("data-dragging", "");
+  }
+  d.layout.querySelector(".z-panelayout__drop")?.remove();
+  d.drop = null;
+  const hit = paneSections(d.layout).find((el) => {
+    const r = el.getBoundingClientRect();
+    return event.clientX >= r.left && event.clientX <= r.right && event.clientY >= r.top && event.clientY <= r.bottom;
+  });
+  if (!hit || hit.dataset.paneId === d.id) return;
+  const edge = paneDropEdge(hit.getBoundingClientRect(), { x: event.clientX, y: event.clientY }, isRtl(d.layout));
+  d.drop = { target: hit.dataset.paneId ?? "", edge };
+  const overlay = document.createElement("div");
+  overlay.className = "z-panelayout__drop";
+  overlay.dataset.edge = edge;
+  overlay.setAttribute("aria-hidden", "true");
+  hit.append(overlay);
+}
+
+function paneDragEnd(event: PointerEvent, cancelled: boolean): void {
+  const d = paneDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  paneDrag = null;
+  d.layout.querySelector(".z-panelayout__drop")?.remove();
+  delete d.layout.dataset.dragging;
+  d.layout.querySelector(`[data-pane-id="${CSS.escape(d.id)}"]`)?.removeAttribute("data-dragging");
+  const tree = getPaneLayout(d.layout);
+  if (!d.active || cancelled || !d.drop || !tree) return;
+  const next = movePane(tree, d.id, d.drop.target, d.drop.edge);
+  if (next === tree) return;
+  setPaneLayout(d.layout, next);
+  announcePane(d.layout, d.id);
+}
+
 /* ---------- Delegación de eventos ---------- */
 
 function onClick(event: MouseEvent): void {
@@ -1026,6 +1204,19 @@ function onPointerDown(event: PointerEvent): void {
     };
     return;
   }
+  const grab = target.closest<HTMLElement>(".z-panelayout__grab");
+  const grabLayout = grab?.closest<HTMLElement>(".z-panelayout");
+  if (grab && grabLayout && !target.closest("button, a, input, select, textarea") && paneSections(grabLayout).length > 1) {
+    const id = grab.closest<HTMLElement>(".z-panelayout__pane")?.dataset.paneId;
+    if (id)
+      paneDrag = { layout: grabLayout, id, pointerId: event.pointerId, x: event.clientX, y: event.clientY, active: false, drop: null };
+    try {
+      grab.setPointerCapture(event.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
+    return;
+  }
   const grip = target.closest<HTMLElement>(".z-floatpanel__header, .z-floatpanel__resize");
   const gripPanel = grip?.closest<HTMLElement>(".z-floatpanel");
   if (grip && gripPanel) {
@@ -1113,6 +1304,7 @@ export function hydrate(root: ParentNode = document): void {
   for (const strip of all(root, ".z-tabstrip")) hydrateStrip(strip);
   for (const sidebar of all(root, ".z-sidebar[data-collapsed]")) setSidebarCollapsed(sidebar, true, true);
   for (const panel of all(root, ".z-floatpanel")) if (!panel.hidden) setFloatingPanelRect(panel, panelRect(panel), true);
+  for (const layout of all(root, ".z-panelayout")) syncPaneFocus(layout);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
@@ -1159,15 +1351,32 @@ export function init(): void {
   document.addEventListener("pointermove", (event) => {
     drag?.move(event);
     tabDragMove(event);
+    paneDragMove(event);
   });
   document.addEventListener("pointerup", (event) => {
     onPointerEnd();
     tabDragEnd(event, false);
+    paneDragEnd(event, false);
   });
   document.addEventListener("pointercancel", (event) => {
     onPointerEnd();
     tabDragEnd(event, true);
+    paneDragEnd(event, true);
   });
+  // Elegir una acción del menú de un panel (los menús los mueve @zuccadev-labs/zuix-zui/dom, que emite z:select).
+  document.addEventListener("z:select", (event) => {
+    const item = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-pane-action]") : null;
+    if (item) paneAction(item);
+  });
+  // El panel pulsado o enfocado pasa a ser el del foco.
+  const markPane = (event: Event) => {
+    const section = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-panelayout__pane") : null;
+    const layout = section?.closest<HTMLElement>(".z-panelayout");
+    if (section && layout && inDom(layout) && layout.dataset.focused !== section.dataset.paneId)
+      syncPaneFocus(layout, section.dataset.paneId);
+  };
+  document.addEventListener("pointerdown", markPane, true);
+  document.addEventListener("focusin", markPane);
   document.addEventListener("dragstart", (event) => {
     if (event.target instanceof Element && event.target.closest(".z-tabstrip[data-reorderable] .z-tabstrip__select"))
       event.preventDefault();
