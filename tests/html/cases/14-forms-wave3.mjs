@@ -259,7 +259,10 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
       const input = document.querySelector("[data-component='TagsInput'] .z-tags__input");
       const data = new DataTransfer();
       data.setData("text/plain", "one\ntwo, three");
-      input.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+      // Firefox no asigna clipboardData desde el constructor: se fija en el evento.
+      const event = new ClipboardEvent("paste", { bubbles: true, cancelable: true });
+      Object.defineProperty(event, "clipboardData", { value: data });
+      input.dispatchEvent(event);
     });
     ok((await values()) === "design,tokens,glass,a11y,one,two,three", `pegar: ${await values()}`);
     await input.focus();
