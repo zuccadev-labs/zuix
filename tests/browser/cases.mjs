@@ -3482,6 +3482,30 @@ export const cases = [
     },
   },
   {
+    name: "Agenda: arrastrar y alargar con el puntero en la línea temporal del EventCalendar",
+    async run({ open }) {
+      const page = await open("agenda", { query: "agenda-view=timeline" });
+      const root = "#app-agenda";
+      const booking = `${root} .z-timeline__booking[data-key="release-review-2026-11-19-15-00"]`;
+      await visible(page, booking);
+      await page.locator(booking).evaluate((el) => el.scrollIntoView({ block: "center", inline: "center" }));
+      const hour = await page
+        .locator(`${root} .z-timeline__track`)
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().width / 14);
+      const box = await page.locator(booking).boundingBox();
+      await drag(page, { x: box.x + 12, y: box.y + box.height / 2 }, { x: box.x + 12 + hour, y: box.y + box.height / 2 });
+      await expectText(page, t("agenda-log"), "Release review: 2026-11-19T16:00 → 2026-11-19T17:00");
+      // Alargar por el asa del final (visible con la reserva elegida): media hora más.
+      await page.locator(booking).click();
+      const handle = await page.locator(`${booking} .z-event__resize`).boundingBox();
+      assert(handle, "asa de alargar visible");
+      const y = handle.y + handle.height / 2;
+      await drag(page, { x: handle.x + handle.width / 2, y }, { x: handle.x + handle.width / 2 + hour / 2, y });
+      await expectText(page, t("agenda-log"), "Release review: 2026-11-19T16:00 → 2026-11-19T17:30");
+    },
+  },
+  {
     name: "Gantt: arrastrar una barra dos días, zoom y dependencias reflejadas en RTL",
     async run({ open, shot }) {
       const page = await open("agenda");
@@ -3606,7 +3630,7 @@ export const cases = [
   },
   {
     name: "Rendimiento: 5000 eventos en el mes y 500 recursos sin tareas largas al navegar",
-    async run({ open, note }) {
+    async run({ open, note, browserName }) {
       const page = await open("perf-stage");
       const root = "#perf-agenda";
       await visible(page, `${root} .z-monthgrid`);
@@ -3617,9 +3641,8 @@ export const cases = [
             const observer = new PerformanceObserver((list) => {
               for (const entry of list.getEntries()) long.push(entry.duration);
             });
-            try {
-              observer.observe({ type: "longtask", buffered: false });
-            } catch {}
+            // Firefox y WebKit no tienen «longtask» (y Firefox avisa por consola si se pide): solo donde exista.
+            if (PerformanceObserver.supportedEntryTypes?.includes("longtask")) observer.observe({ type: "longtask", buffered: false });
             performance.mark(`${label}-start`);
             const target = document.querySelector(action);
             target.click();
@@ -3636,7 +3659,21 @@ export const cases = [
       results.monthBack = await measure("month-back", `${root} .z-agenda__nav [data-nav="previous"]`);
       results.week = await measure("week", `${root} .z-agenda__views [data-view="week"]`);
       results.weekNext = await measure("week-next", `${root} .z-agenda__nav [data-nav="next"]`);
+      const weekEvents = await page.locator(`${root} .z-timegrid .z-event`).count();
+      const chips = await page.locator(`${root} .z-timegrid__overflow`).count();
       results.agenda = await measure("agenda", `${root} .z-agenda__views [data-view="agenda"]`);
+      // Lista larga: ventana virtual; Fin lleva al último evento aunque no esté pintado y la ventana lo sigue.
+      const listRows = await page.locator(`${root} .z-agendalist__item`).count();
+      assert(listRows > 0 && listRows < 120, `lista con ventana virtual: ${listRows} filas pintadas`);
+      await page.locator(`${root} .z-agendalist .z-event`).first().focus();
+      await page.keyboard.press("End");
+      await until(
+        page,
+        (s) => document.activeElement?.closest(s) && document.querySelector(`${s} .z-agendalist`).scrollTop > 5000,
+        "Fin: el foco va al último evento y la lista se desplaza hasta él",
+        root,
+      );
+      assert((await page.locator(`${root} .z-agendalist__item`).count()) < 120, "la ventana sigue acotada tras desplazar");
       results.year = await measure("year", `${root} .z-agenda__views [data-view="year"]`);
       const rooms = "#perf-rooms";
       await page.locator(rooms).scrollIntoViewIfNeeded();
@@ -3657,6 +3694,14 @@ export const cases = [
           .join(" · ")}`,
       );
       note(`500 recursos: ${rows} filas pintadas de 500; desplazamiento ${scroll} ms por paso; ${rendered} filas tras desplazar`);
+      note(`semana: ${weekEvents} eventos pintados y ${chips} «+N»; lista: ${listRows} filas pintadas`);
+      assert(weekEvents < 600 && chips > 0, `semana acotada: ${weekEvents} eventos y ${chips} «+N»`);
+      // Tope holgado (el servidor de pruebas sirve React de desarrollo, varias veces más lento que el de producción;
+      // el umbral fino está en tests/html/cases/15-agenda-perf.mjs, sobre el build publicado).
+      const budget = Number(process.env.AGENDA_REACT_BUDGET) || 1500;
+      const slow = Object.entries(results).filter(([, v]) => v.ms > budget);
+      if (browserName === "chromium")
+        assert(!slow.length, `por encima de ${budget} ms: ${slow.map(([k, v]) => `${k} ${v.ms}`).join(", ")}`);
       assert(rows < 60, `ventana virtual: ${rows} filas pintadas`);
       assert(
         (await page.locator(`${rooms} .z-timeline__row[data-resource="r120"]`).count()) === 1 || rendered < 60,
