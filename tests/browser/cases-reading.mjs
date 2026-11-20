@@ -7,9 +7,23 @@ export default function ({ t, assert, poll, expectAttr, expectCount }) {
       async run({ open }) {
         const page = await open("content");
         await expectCount(page, `${t("c-scroll")} mark`, 1, "«cafe» marca «Café» (sin acentos)");
-        await poll(async () => (await page.locator(`${t("c-scroll")} mark`).first().textContent()) === "Café", "texto original");
+        await poll(
+          async () =>
+            (await page
+              .locator(`${t("c-scroll")} mark`)
+              .first()
+              .textContent()) === "Café",
+          "texto original",
+        );
         await page.fill('input[aria-label="Highlight query"]', "malaga");
-        await poll(async () => (await page.locator(`${t("c-scroll")} mark`).first().textContent()) === "Málaga", "nueva consulta");
+        await poll(
+          async () =>
+            (await page
+              .locator(`${t("c-scroll")} mark`)
+              .first()
+              .textContent()) === "Málaga",
+          "nueva consulta",
+        );
         await page.focus(t("c-scroll"));
         await page.keyboard.press("End");
         await poll(() => page.locator(t("c-scroll")).evaluate((el) => el.scrollTop > 0), "Fin desplaza la región enfocada");

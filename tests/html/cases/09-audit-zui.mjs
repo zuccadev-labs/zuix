@@ -194,6 +194,8 @@ window.__ready = true;
             'button[role="switch"]:not(:disabled):not([data-disabled]), button[role="checkbox"]:not(:disabled):not([data-disabled])',
           )
           .all()) {
+          // Una fila de otra página de la tabla (paginada en el cliente) está oculta: no se pulsa.
+          if (!(await control.isVisible())) continue;
           const before = await control.getAttribute("aria-checked");
           await control.click();
           interactions += 1;
@@ -207,10 +209,14 @@ window.__ready = true;
           interactions += 1;
           if ((await radio.getAttribute("aria-checked")) !== "true") failures.push(`${id}: el radio no queda marcado`);
         }
-        // La opción activa de un ToggleGroup `required` no se apaga: es su contrato.
+        // La opción activa de un ToggleGroup `required` no se apaga: es su contrato. Los botones de un gráfico (leyenda que
+        // no deja ocultar la última serie y vista de tabla que cambia el marcado) tienen su caso en 18-charts.
         for (const pressed of await tab
-          .locator('[data-z-dom] button[aria-pressed]:not(:disabled):not(.z-toggle-group[data-required] > [aria-pressed="true"])')
+          .locator(
+            '[data-z-dom] button[aria-pressed]:not(:disabled):not(.z-toggle-group[data-required] > [aria-pressed="true"]):not(.z-chart *)',
+          )
           .all()) {
+          if (!(await pressed.isVisible())) continue;
           const before = await pressed.getAttribute("aria-pressed");
           await pressed.click();
           interactions += 1;

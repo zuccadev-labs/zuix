@@ -23,8 +23,21 @@ export default async function ({ page, test, ok }) {
         box.id = wrap;
         box.setAttribute("data-z-dom", "");
         if (rtl) box.setAttribute("dir", rtl);
-        box.style.inlineSize = "640px";
         box.innerHTML = html;
+        // En una capa fija por encima de lo que otros casos dejan en pantalla; la anterior de este archivo se retira.
+        for (const old of document.querySelectorAll("[data-w5-layer]")) old.remove();
+        box.setAttribute("data-w5-layer", "");
+        Object.assign(box.style, {
+          position: "fixed",
+          insetBlockStart: "0",
+          insetInlineStart: "0",
+          zIndex: "2147483000",
+          inlineSize: "min(640px, 100vw)",
+          maxBlockSize: "100vh",
+          overflow: "auto",
+          background: "Canvas",
+        });
+
         document.querySelector(".page__main").append(box);
         (await import("/zui/dist/zui.dom.js")).hydrate(box);
       },
@@ -149,5 +162,8 @@ export default async function ({ page, test, ok }) {
       await spark.getAttribute("aria-label"),
     );
     ok((await box.locator(".z-sparkline rect").count()) === 7, "barras del segundo");
+  });
+  await page.evaluate(() => {
+    for (const old of document.querySelectorAll("[data-w5-layer]")) old.remove();
   });
 }

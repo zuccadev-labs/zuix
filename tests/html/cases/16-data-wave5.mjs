@@ -14,8 +14,9 @@ export default async function ({ page, test, ok }) {
       document.addEventListener(name, (event) => window.__w5d.push({ name, detail: JSON.parse(JSON.stringify(event.detail ?? null)) }));
   });
   const events = () => page.evaluate(() => window.__w5d.splice(0));
+  let seq = 0;
   const inject = async (name, index) => {
-    const id = `w5d-${name}-${index}`;
+    const id = `w5d-${name}-${index}-${++seq}`;
     await page.evaluate(
       async ([component, html, wrap]) => {
         const stage = document.querySelector(`[data-component="${component}"] .demo__stage`) ?? document.querySelector(".page__main");
@@ -23,6 +24,19 @@ export default async function ({ page, test, ok }) {
         box.id = wrap;
         box.setAttribute("data-z-dom", "");
         box.innerHTML = html;
+        // En una capa fija por encima de lo que otros casos dejan en pantalla; la anterior de este archivo se retira.
+        for (const old of document.querySelectorAll("[data-w5-layer]")) old.remove();
+        box.setAttribute("data-w5-layer", "");
+        Object.assign(box.style, {
+          position: "fixed",
+          insetBlockStart: "0",
+          insetInlineStart: "0",
+          zIndex: "2147483000",
+          inlineSize: "min(640px, 100vw)",
+          maxBlockSize: "100vh",
+          overflow: "auto",
+          background: "Canvas",
+        });
         stage.append(box);
         (await import("/zui/dist/zui.dom.js")).hydrate(box);
       },
@@ -122,5 +136,8 @@ export default async function ({ page, test, ok }) {
       return document.elementFromPoint(r.left + r.width - 8, r.top + r.height / 2)?.closest("a") !== null;
     });
     ok(covers, "el enlace cubre toda la fila");
+  });
+  await page.evaluate(() => {
+    for (const old of document.querySelectorAll("[data-w5-layer]")) old.remove();
   });
 }

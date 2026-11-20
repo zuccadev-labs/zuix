@@ -186,7 +186,8 @@ async function overflowReport(page) {
       for (let n = el.parentElement; n; n = n.parentElement) {
         const o = getComputedStyle(n).overflowX;
         if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
-        if (n.classList.contains("z-carousel__viewport")) return true;
+        // Recortes deliberados con su propio desplazamiento: el carrusel y la cinta de Marquee.
+        if (n.classList.contains("z-carousel__viewport") || n.classList.contains("z-marquee__viewport")) return true;
       }
       return false;
     };
@@ -608,7 +609,7 @@ export const cases = [
       await visible(page, "dialog.z-palette:modal");
       await focusOn(page, ".z-palette__input", "el foco entra en el buscador");
       await expectInViewport(page, ".z-palette");
-      await expectCount(page, ".z-palette__item", 21, "21 comandos sin filtro (pantallas Agenda e Inputs)");
+      await expectCount(page, ".z-palette__item", 24, "24 comandos sin filtro (pantallas Agenda, Inputs, Content, Data y Charts)");
       await settled(page);
       await shot(page, "overlay-palette");
       await page.keyboard.type("gal");
