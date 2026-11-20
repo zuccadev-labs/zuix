@@ -183,7 +183,7 @@
 - [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.
 - [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.
 - [SplitPane](https://zuccadev-labs.github.io/zuix/components/layout/split-pane.md): Paneles divididos con divisores arrastrables y manejables con teclado.
-- [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre y alta.
+- [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre, alta, grupos de color, indicadores y reordenación por arrastre o teclado.
 - [TitleBar](https://zuccadev-labs.github.io/zuix/components/layout/title-bar.md): Barra de título para ventanas sin marco, transparente sobre el fondo.
 
 ## Contratos legibles por máquina

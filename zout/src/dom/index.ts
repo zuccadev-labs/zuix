@@ -5,7 +5,7 @@
 // Uso declarativo:   import { init } from "@zuccadev-labs/zuix-zout/dom"; init();
 // Uso imperativo:    setPanelOpen, togglePanel, closeDrawers, getShellModes, resizeTo, getSplitSizes, setSplitSizes,
 //                    selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen, setSidebarCollapsed,
-//                    setSidebarItemOpen, dispose
+//                    setSidebarItemOpen, moveWorkTab, setTabGroupCollapsed, dispose
 //
 // Todo se activa dentro de un contenedor [data-z-dom], para no chocar con React en la misma página.
 // Atributos:
@@ -18,6 +18,10 @@
 //   data-default-size, data-step, data-var, data-z-resize="#id"   en .z-resize (data-side: left|right|top|bottom, o start|end, que siguen la dirección de escritura)
 //   data-min-fraction                         en .z-split
 //   data-new-title="Untitled"                 en .z-tabstrip__add: crea la pestaña sin código de la aplicación
+//   data-reorderable                          en .z-tabstrip: arrastrar pestañas y Ctrl+Mayús+flechas (z:reorder { ids });
+//                                             .z-tabstrip__status[role=status] recibe el anuncio (data-moved-label con
+//                                             {title}, {position} y {total})
+//   .z-tabstrip__chip                         chip de grupo: pliega sus pestañas ([data-group]) y emite z:grouptoggle
 //   data-collapsed                            en .z-sidebar: plegada a iconos (setSidebarCollapsed la alterna)
 //   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
 // La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
@@ -46,8 +50,12 @@ import {
   physicalSide,
   resizeByKey,
   resizeSign,
+  beforeFor,
+  dropIndex,
+  finalIndex,
   revealOffset,
   tabKeyIndex,
+  tabMoveIndex,
   type PanelMode,
   type PhysicalSide,
   type ResizeSide,
@@ -509,6 +517,120 @@ export function addWorkTab(
   return button;
 }
 
+const shownSelects = (strip: Element) => selects(strip).filter((s) => !s.parentElement?.hidden);
+
+/** Deja el chip de cada grupo delante de la primera pestaña del grupo (tras mover pestañas). */
+function placeChips(strip: Element): void {
+  for (const chip of strip.querySelectorAll<HTMLElement>(".z-tabstrip__group")) {
+    const id = chip.dataset.groupId;
+    const first = id ? strip.querySelector<HTMLElement>(`.z-tabstrip__tab[data-group="${CSS.escape(id)}"]`) : null;
+    if (first && first.previousElementSibling !== chip) first.before(chip);
+  }
+}
+
+/**
+ * Mueve la pestaña `id` delante de la pestaña `before` (al final con null). Emite `z:reorder` { ids } (cancelable) y
+ * devuelve si la movió.
+ */
+export function moveWorkTab(strip: HTMLElement, id: string, before: string | null): boolean {
+  const tab = findTab(strip, id)?.parentElement;
+  if (!tab) return false;
+  const ref = before === null ? null : findTab(strip, before)?.parentElement;
+  const ids = selects(strip).map((s) => s.dataset.tabId ?? "");
+  const rest = ids.filter((x) => x !== id);
+  const at = before === null ? rest.length : rest.indexOf(before);
+  rest.splice(at < 0 ? rest.length : at, 0, id);
+  if (rest.join("\u0000") === ids.join("\u0000") || !emit(strip, "reorder", { ids: rest })) return false;
+  const hadFocus = tab.contains(document.activeElement);
+  if (ref) ref.before(tab);
+  else selects(strip).at(-1)?.parentElement?.after(tab);
+  placeChips(strip);
+  if (hadFocus) findTab(strip, id)?.focus();
+  return true;
+}
+
+/** Pliega o despliega un grupo de pestañas: sus pestañas se ocultan, salvo la activa. Emite `z:grouptoggle`. */
+export function setTabGroupCollapsed(strip: HTMLElement, group: string, collapsed: boolean): void {
+  for (const tab of strip.querySelectorAll<HTMLElement>(`.z-tabstrip__tab[data-group="${CSS.escape(group)}"]`))
+    tab.hidden = collapsed && !tab.hasAttribute("data-selected");
+  strip
+    .querySelector(`.z-tabstrip__group[data-group-id="${CSS.escape(group)}"] .z-tabstrip__chip`)
+    ?.setAttribute("aria-expanded", String(!collapsed));
+  emit(strip, "grouptoggle", { id: group, collapsed });
+}
+
+function announceMove(strip: HTMLElement, id: string): void {
+  const status = strip.querySelector<HTMLElement>(".z-tabstrip__status");
+  const shown = shownSelects(strip);
+  const select = findTab(strip, id);
+  if (!status || !select) return;
+  const template = status.dataset.movedLabel ?? "{title} moved to position {position} of {total}";
+  status.textContent = template
+    .replace("{title}", select.querySelector(".z-tabstrip__title")?.textContent ?? id)
+    .replace("{position}", String(shown.indexOf(select) + 1))
+    .replace("{total}", String(shown.length));
+}
+
+// Arrastre de una pestaña: la marca de soltar va en el canto de la vecina; el orden cambia al soltar.
+// Los tramos de las pestañas se miden al empezar: durante el arrastre nada cambia de sitio salvo la propia pestaña.
+let tabDrag: {
+  strip: HTMLElement;
+  select: HTMLElement;
+  pointerId: number;
+  x: number;
+  active: boolean;
+  gap: number;
+  spans: { start: number; end: number }[];
+} | null = null;
+let swallowTabClick = false;
+
+function tabDragMove(event: PointerEvent): void {
+  const d = tabDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  const dx = event.clientX - d.x;
+  if (!d.active) {
+    if (Math.abs(dx) < 4) return;
+    d.active = true;
+    d.spans = shownSelects(d.strip).map((s) => {
+      const r = s.parentElement!.getBoundingClientRect();
+      return { start: r.left, end: r.right };
+    });
+    d.select.parentElement!.dataset.dragging = "";
+    try {
+      d.select.setPointerCapture(event.pointerId);
+    } catch {
+      /* puntero ya liberado */
+    }
+  }
+  d.select.parentElement!.style.setProperty("--z-tab-drag", `${dx}px`);
+  const shown = shownSelects(d.strip);
+  d.gap = dropIndex(event.clientX, d.spans, isRtl(d.strip));
+  const from = shown.indexOf(d.select);
+  for (const tab of d.strip.querySelectorAll<HTMLElement>(".z-tabstrip__tab[data-drop]")) delete tab.dataset.drop;
+  if (d.gap === from || d.gap === from + 1) return;
+  const target = shown[d.gap] ?? shown[shown.length - 1];
+  if (target?.parentElement) target.parentElement.dataset.drop = d.gap < shown.length ? "before" : "after";
+}
+
+function tabDragEnd(event: PointerEvent, cancelled: boolean): void {
+  const d = tabDrag;
+  if (!d || event.pointerId !== d.pointerId) return;
+  tabDrag = null;
+  const tab = d.select.parentElement!;
+  tab.style.removeProperty("--z-tab-drag");
+  delete tab.dataset.dragging;
+  for (const t of d.strip.querySelectorAll<HTMLElement>(".z-tabstrip__tab[data-drop]")) delete t.dataset.drop;
+  if (!d.active) return;
+  swallowTabClick = true;
+  setTimeout(() => {
+    swallowTabClick = false;
+  });
+  if (cancelled || d.gap < 0) return;
+  const shown = shownSelects(d.strip).map((s) => s.dataset.tabId ?? "");
+  const id = d.select.dataset.tabId ?? "";
+  moveWorkTab(d.strip, id, beforeFor(shown, id, finalIndex(shown.indexOf(id), d.gap)));
+}
+
 let created = 0;
 /** Botón de alta: emite `z:add`. Si nadie lo cancela y el botón trae `data-new-title`, crea aquí la pestaña. */
 function addRequested(strip: HTMLElement, button: HTMLElement): void {
@@ -669,6 +791,13 @@ function onClick(event: MouseEvent): void {
 
   const strip = target.closest<HTMLElement>(".z-tabstrip");
   if (strip) {
+    const chip = target.closest<HTMLElement>(".z-tabstrip__chip");
+    const groupId = chip?.closest<HTMLElement>(".z-tabstrip__group")?.dataset.groupId;
+    if (chip && groupId) {
+      setTabGroupCollapsed(strip, groupId, chip.getAttribute("aria-expanded") !== "false");
+      return;
+    }
+    if (swallowTabClick) return;
     const id = target.closest(".z-tabstrip__tab")?.querySelector<HTMLElement>(".z-tabstrip__select")?.dataset.tabId;
     if (id !== undefined && target.closest(".z-tabstrip__close")) closeWorkTab(strip, id);
     else if (id !== undefined && target.closest(".z-tabstrip__select")) selectWorkTab(strip, id);
@@ -748,7 +877,6 @@ function onKeydown(event: KeyboardEvent): void {
   const list = target.closest(".z-tabstrip__list");
   const strip = list?.closest<HTMLElement>(".z-tabstrip");
   if (list && strip) {
-    const tabs = selects(strip);
     const current = activeTab(strip);
     // Supr cierra la pestaña activa si tiene cierre (misma vía de teclado que el binding de React).
     if (event.key === "Delete" && current?.parentElement?.querySelector(".z-tabstrip__close")) {
@@ -757,7 +885,17 @@ function onKeydown(event: KeyboardEvent): void {
       activeTab(strip)?.focus();
       return;
     }
-    const next = tabs[tabKeyIndex(event.key, tabs.indexOf(activeTab(strip)!), tabs.length, isRtl(list))];
+    const shown = shownSelects(strip);
+    if (current && strip.hasAttribute("data-reorderable") && event.ctrlKey && event.shiftKey && !event.altKey) {
+      const to = tabMoveIndex(event.key, shown.indexOf(current), shown.length, isRtl(list));
+      if (to < 0) return;
+      event.preventDefault();
+      const ids = shown.map((x) => x.dataset.tabId ?? "");
+      const id = current.dataset.tabId ?? "";
+      if (moveWorkTab(strip, id, beforeFor(ids, id, to))) announceMove(strip, id);
+      return;
+    }
+    const next = shown[tabKeyIndex(event.key, shown.indexOf(activeTab(strip)!), shown.length, isRtl(list))];
     if (!next) return;
     event.preventDefault();
     selectWorkTab(strip, next.dataset.tabId ?? "");
@@ -771,6 +909,19 @@ let drag: { el: HTMLElement; move: (event: PointerEvent) => void } | null = null
 function onPointerDown(event: PointerEvent): void {
   const target = event.target;
   if (!(target instanceof Element) || event.button !== 0 || !inDom(target)) return;
+  const tabSelect = target.closest<HTMLElement>(".z-tabstrip[data-reorderable] .z-tabstrip__select");
+  if (tabSelect) {
+    tabDrag = {
+      strip: tabSelect.closest<HTMLElement>(".z-tabstrip")!,
+      select: tabSelect,
+      pointerId: event.pointerId,
+      x: event.clientX,
+      active: false,
+      gap: -1,
+      spans: [],
+    };
+    return;
+  }
   let move: ((event: PointerEvent) => void) | undefined;
   const el = target.closest<HTMLElement>(".z-resize, .z-split__divider");
   if (!el) return;
@@ -877,9 +1028,22 @@ export function init(): void {
   document.addEventListener("keydown", onKeydown);
   document.addEventListener("dblclick", onDoubleClick);
   document.addEventListener("pointerdown", onPointerDown);
-  document.addEventListener("pointermove", (event) => drag?.move(event));
-  document.addEventListener("pointerup", onPointerEnd);
-  document.addEventListener("pointercancel", onPointerEnd);
+  document.addEventListener("pointermove", (event) => {
+    drag?.move(event);
+    tabDragMove(event);
+  });
+  document.addEventListener("pointerup", (event) => {
+    onPointerEnd();
+    tabDragEnd(event, false);
+  });
+  document.addEventListener("pointercancel", (event) => {
+    onPointerEnd();
+    tabDragEnd(event, true);
+  });
+  document.addEventListener("dragstart", (event) => {
+    if (event.target instanceof Element && event.target.closest(".z-tabstrip[data-reorderable] .z-tabstrip__select"))
+      event.preventDefault();
+  });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => hydrate());
   else hydrate();
 }

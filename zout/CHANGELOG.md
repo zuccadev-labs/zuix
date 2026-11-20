@@ -12,6 +12,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     submenú en disclosure) y `SidebarTrigger` (aria-expanded, aria-controls, atajo Ctrl/⌘+B opcional). Plegada,
     cada item muestra su nombre en un tooltip y el submenú se abre en un panel flotante. En `/dom`,
     `setSidebarCollapsed()` y `setSidebarItemOpen()` (usa el tooltip y el popover de `@zuccadev-labs/zuix-zui/dom`).
+  - `TabStrip` con grupos de color (`groups`, `tab.groupId`, chip que pliega el grupo con `onGroupToggle`),
+    indicadores `modified` y `busy`, y reordenación con `onReorder`: arrastre con marca de soltar (el orden cambia
+    al soltar) y Ctrl+Mayús+flechas, Inicio o Fin con anuncio en una región `status`. En `/dom`,
+    `data-reorderable`, `moveWorkTab()`, `setTabGroupCollapsed()` y los eventos `z:reorder` y `z:grouptoggle`.
+  - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore` y
+    `beforeFor`.
 
 ### Cambiado
 

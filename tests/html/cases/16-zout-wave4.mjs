@@ -69,4 +69,54 @@ export default async function ({ page, test, ok, card }) {
     ok((await sub.isVisible()) && (await projects.getAttribute("aria-expanded")) === "true", "submenú en su sitio y abierto");
     ok((await inbox.getAttribute("data-z-tooltip")) === null, "sin tooltip desplegada");
   });
+
+  /* ---------- TabStrip ---------- */
+  await test("TabStrip: Ctrl+Mayús+flechas mueve la pestaña activa y lo anuncia; el chip pliega su grupo", async () => {
+    const root = await inject("TabStrip", 1);
+    const order = () => root.locator(".z-tabstrip__select").evaluateAll((list) => list.map((el) => el.dataset.tabId));
+    await page.evaluate(() => {
+      window.__reorder = [];
+      document.querySelector("#zw4-TabStrip-1 .z-tabstrip").addEventListener("z:reorder", (e) => window.__reorder.push(e.detail.ids));
+    });
+    await root.locator('[data-tab-id="button"]').focus();
+    await press("Control+Shift+ArrowRight");
+    ok((await order()).join() === "menu,button,routes,readme", `orden: ${await order()}`);
+    ok(await page.evaluate(() => document.activeElement?.dataset.tabId === "button"), "el foco sigue en la pestaña movida");
+    const status = await root.locator(".z-tabstrip__status").textContent();
+    ok(status === "Button.tsx moved to position 2 of 4", `anuncio: ${status}`);
+    // El chip del grupo sigue delante de su primera pestaña.
+    const chipNext = await root
+      .locator('.z-tabstrip__group[data-group-id="ui"]')
+      .evaluate((el) => el.nextElementSibling?.querySelector("[data-tab-id]")?.dataset.tabId);
+    ok(chipNext === "menu", `chip antes de la primera del grupo: ${chipNext}`);
+    await press("Control+Shift+End");
+    ok((await order()).at(-1) === "button", "Fin la lleva al final");
+    ok((await page.evaluate(() => window.__reorder.length)) === 2, "z:reorder por cada movimiento");
+    // Las flechas solas siguen cambiando de pestaña.
+    await press("ArrowLeft");
+    ok(await page.evaluate(() => document.activeElement?.dataset.tabId === "readme"), "flecha izquierda selecciona la anterior");
+    // Plegar el grupo API oculta sus pestañas no activas.
+    await root.locator('.z-tabstrip__group[data-group-id="api"] .z-tabstrip__chip').click();
+    ok(await root.locator('[data-tab-id="routes"]').isHidden(), "routes oculta con el grupo plegado");
+    ok(
+      (await root.locator('.z-tabstrip__group[data-group-id="api"] .z-tabstrip__chip').getAttribute("aria-expanded")) === "false",
+      "chip plegado",
+    );
+  });
+  await test("TabStrip: arrastrar una pestaña con el puntero la suelta en el hueco marcado", async () => {
+    const root = await inject("TabStrip", 1);
+    const order = () => root.locator(".z-tabstrip__select").evaluateAll((list) => list.map((el) => el.dataset.tabId));
+    const from = await root.locator('[data-tab-id="button"]').boundingBox();
+    const to = await root.locator('[data-tab-id="routes"]').locator("..").boundingBox();
+    await page.mouse.move(from.x + 10, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 30, from.y + from.height / 2, { steps: 3 });
+    await page.mouse.move(to.x + to.width - 4, to.y + to.height / 2, { steps: 6 });
+    const marked = await root.locator(".z-tabstrip__tab[data-drop]").count();
+    ok(marked === 1, `una marca de soltar: ${marked}`);
+    ok((await order()).join() === "button,menu,routes,readme", "no reordena mientras se arrastra");
+    await page.mouse.up();
+    ok((await order()).join() === "menu,routes,button,readme", `orden al soltar: ${await order()}`);
+    ok((await root.locator('[data-tab-id="button"]').getAttribute("aria-selected")) === "true", "el clic de soltar no selecciona otra");
+  });
 }

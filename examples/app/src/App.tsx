@@ -39,6 +39,7 @@ import { NavigationScreen } from "./screens/Navigation";
 import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
 import { AgendaScreen } from "./screens/Agenda";
+import { Workspace } from "./screens/Workspace";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -196,6 +197,8 @@ export function App() {
       <Gallery theme={theme} brand={brand} />
     ) : active === "agenda" ? (
       <AgendaScreen />
+    ) : active === "workspace" ? (
+      <Workspace />
     ) : (
       <Editor />
     );

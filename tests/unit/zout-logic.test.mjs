@@ -18,6 +18,12 @@ import {
   SPLIT_KEY_STEP,
   SPLIT_MIN_FRACTION,
   tabKeyIndex,
+  reorder,
+  dropIndex,
+  finalIndex,
+  tabMoveIndex,
+  moveBefore,
+  beforeFor,
 } from "../../zout/src/logic.ts";
 
 const sum = (list) => list.reduce((a, b) => a + b, 0);
@@ -152,5 +158,59 @@ describe("TabStrip", () => {
   });
   test("revealOffset: una pestaña más ancha que la tira se alinea por su inicio", () => {
     assert.equal(revealOffset({ left: 50, right: 400 }, { left: 100, right: 300 }), -50);
+  });
+});
+
+describe("TabStrip: reordenación", () => {
+  test("reorder mueve un elemento a su posición final", () => {
+    assert.deepEqual(reorder(["a", "b", "c"], 0, 2), ["b", "c", "a"]);
+    assert.deepEqual(reorder(["a", "b", "c"], 2, 0), ["c", "a", "b"]);
+    assert.deepEqual(reorder(["a", "b"], 1, 9), ["a", "b"]);
+    assert.deepEqual(reorder(["a", "b"], 5, 0), ["a", "b"]);
+    assert.deepEqual(reorder(["a", "b", "c"], 1, 1), ["a", "b", "c"]);
+  });
+  test("dropIndex por mitades, también en RTL", () => {
+    const spans = [
+      { start: 0, end: 100 },
+      { start: 100, end: 200 },
+      { start: 200, end: 300 },
+    ];
+    assert.equal(dropIndex(10, spans), 0);
+    assert.equal(dropIndex(60, spans), 1);
+    assert.equal(dropIndex(260, spans), 3);
+    // RTL: la primera pestaña está a la derecha.
+    const rtl = [
+      { start: 200, end: 300 },
+      { start: 100, end: 200 },
+      { start: 0, end: 100 },
+    ];
+    assert.equal(dropIndex(290, rtl, true), 0);
+    assert.equal(dropIndex(240, rtl, true), 1);
+    assert.equal(dropIndex(10, rtl, true), 3);
+  });
+  test("finalIndex descuenta el hueco que deja lo arrastrado", () => {
+    assert.equal(finalIndex(0, 3), 2);
+    assert.equal(finalIndex(2, 0), 0);
+    assert.equal(finalIndex(1, 1), 1);
+  });
+  test("tabMoveIndex: flechas reflejadas en RTL, Inicio, Fin y extremos", () => {
+    assert.equal(tabMoveIndex("ArrowRight", 0, 3), 1);
+    assert.equal(tabMoveIndex("ArrowLeft", 0, 3), -1);
+    assert.equal(tabMoveIndex("ArrowLeft", 0, 3, true), 1);
+    assert.equal(tabMoveIndex("End", 0, 3), 2);
+    assert.equal(tabMoveIndex("Home", 0, 3), -1);
+    assert.equal(tabMoveIndex("Home", 2, 3), 0);
+    assert.equal(tabMoveIndex("ArrowRight", 2, 3), -1);
+    assert.equal(tabMoveIndex("x", 1, 3), -1);
+  });
+  test("moveBefore y beforeFor", () => {
+    assert.deepEqual(moveBefore(["a", "b", "c"], "a", "c"), ["b", "a", "c"]);
+    assert.deepEqual(moveBefore(["a", "b", "c"], "a", null), ["b", "c", "a"]);
+    assert.deepEqual(moveBefore(["a", "b"], "z", null), ["a", "b"]);
+    assert.deepEqual(moveBefore(["a", "b"], "a", "a"), ["a", "b"]);
+    assert.deepEqual(moveBefore(["a", "b"], "a", "zz"), ["b", "a"]);
+    assert.equal(beforeFor(["a", "b", "c"], "a", 1), "c");
+    assert.equal(beforeFor(["a", "b", "c"], "a", 2), null);
+    assert.equal(beforeFor(["a", "b", "c"], "c", 0), "a");
   });
 });

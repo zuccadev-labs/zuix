@@ -4,7 +4,7 @@ export { Rail, RailItem, type RailProps, type RailItemProps } from "./layouts/Ra
 export { SidePanel, Sidebar, SidebarSection, type SidePanelProps, type SidebarProps, type SidebarSectionProps } from "./layouts/SidePanel";
 export { SidebarItem, SidebarTrigger, type SidebarItemProps, type SidebarTriggerProps } from "./layouts/SidebarItem";
 export { SplitPane, Pane, type SplitPaneProps, type PaneProps } from "./layouts/SplitPane";
-export { TabStrip, type TabStripProps, type WorkTab } from "./layouts/TabStrip";
+export { TabStrip, type TabStripProps, type WorkTab, type TabGroup, type TabGroupTone } from "./layouts/TabStrip";
 export { TitleBar, type TitleBarProps } from "./layouts/TitleBar";
 export { ResizeHandle, type ResizeHandleProps } from "./layouts/ResizeHandle";
 export {

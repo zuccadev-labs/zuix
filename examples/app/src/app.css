@@ -242,3 +242,21 @@ body {
   align-items: center;
   gap: var(--z-space-2);
 }
+
+/* Workspace: sidebar de demostración dentro de una tarjeta. */
+.app-sidebar-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-2);
+  height: 300px;
+}
+.app-sidebar-demo__frame {
+  width: 240px;
+  min-height: 0;
+  flex: 1;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-lg);
+}
+.app-sidebar-demo__frame[data-collapsed] {
+  width: 56px;
+}

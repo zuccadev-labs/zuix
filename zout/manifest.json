@@ -929,7 +929,7 @@
   {
    "name": "TabStrip",
    "group": "layout",
-   "description": "Tira de pestañas de trabajo con cierre y alta.",
+   "description": "Tira de pestañas de trabajo con cierre, alta, grupos de color, indicadores y reordenación por arrastre o teclado.",
    "import": "import { TabStrip } from \"@zuccadev-labs/zuix-zout\"",
    "exports": [
     "TabStrip"
@@ -939,7 +939,7 @@
      "name": "tabs",
      "type": "WorkTab[]",
      "required": true,
-     "description": "{ id, title, leading?, closable?, controls? }. `controls` es el id del panel de la pestaña (aria-controls)."
+     "description": "{ id, title, leading?, closable?, controls?, groupId?, modified?, busy? }. `controls` es el id del panel de la pestaña (aria-controls)."
     },
     {
      "name": "activeId",
@@ -968,38 +968,91 @@
      "name": "addLabel",
      "type": "string",
      "default": "New tab"
+    },
+    {
+     "name": "groups",
+     "type": "TabGroup[]",
+     "description": "{ id, label, tone?, collapsed? }: un chip antes de la primera pestaña de cada grupo; plegado, sus pestañas se ocultan salvo la activa. `tone`: neutral | accent | info | success | warning | danger."
+    },
+    {
+     "name": "onGroupToggle",
+     "type": "(id: string) => void",
+     "description": "Pulsar el chip de un grupo."
+    },
+    {
+     "name": "onReorder",
+     "type": "(ids: string[]) => void",
+     "description": "Activa la reordenación (arrastre con marca de soltar y Ctrl+Mayús+flechas, Inicio o Fin). Recibe el orden nuevo."
+    },
+    {
+     "name": "modifiedLabel",
+     "type": "string",
+     "default": "modified"
+    },
+    {
+     "name": "busyLabel",
+     "type": "string",
+     "default": "busy"
+    },
+    {
+     "name": "movedLabel",
+     "type": "(title, position, total) => string",
+     "description": "Anuncio tras mover con el teclado. En /dom, `data-moved-label` en `.z-tabstrip__status` con {title}, {position} y {total}."
     }
    ],
    "tokens": [
-    "row-hover",
-    "surface-3",
-    "glass-highlight",
-    "fg",
-    "fg-muted",
+    "accent",
     "accent-ring",
     "control-height-sm",
     "control-radius-sm",
+    "danger",
     "duration-fast",
     "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
     "focus-offset",
     "focus-width",
     "glass-border",
+    "glass-highlight",
+    "info",
+    "layer-raised",
+    "line",
+    "radius-full",
     "radius-xs",
+    "row-hover",
+    "shadow-md",
     "shadow-sm",
     "space-1",
+    "space-1-5",
     "space-2",
     "space-3",
+    "success",
+    "surface-2",
+    "surface-3",
+    "text-caption",
     "text-small",
-    "weight-medium"
+    "warning",
+    "weight-medium",
+    "weight-semibold"
    ],
    "classes": [
-    "z-tabstrip"
+    "z-tabstrip",
+    "z-tabstrip__tab",
+    "z-tabstrip__group",
+    "z-tabstrip__chip",
+    "z-tabstrip__mark",
+    "z-tabstrip__status"
    ],
-   "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe.",
+   "a11y": "Patrón de pestañas de WAI-ARIA con activación automática: role=tablist; las flechas (invertidas en RTL), Inicio y Fin cambian de pestaña y solo la activa está en el orden de tabulación. Supr cierra la pestaña activa (aria-keyshortcuts); el botón de cierre es una ayuda de puntero de 24 × 24 px, fuera del árbol accesible, porque un tablist solo admite pestañas. Un lector de pantalla táctil sin teclado no puede cerrar pestañas desde la tira: la aplicación debe ofrecer otra vía (un menú, un botón en el panel). La pestaña activa se desplaza sola a la vista cuando la tira no cabe. Con `onReorder`, Ctrl+Mayús+flechas (reflejadas en RTL), Inicio o Fin mueven la pestaña activa y una región `role=\"status\"` anuncia la posición nueva; con el puntero, la pestaña se arrastra y una marca señala el hueco (el orden cambia al soltar, no mientras se arrastra). Cada pestaña de un grupo lleva el nombre del grupo en `aria-describedby`; el chip del grupo es una ayuda de puntero fuera del árbol accesible (un tablist solo admite pestañas): plegar un grupo necesita otra vía en la aplicación. Una pestaña con cambios sin guardar o en curso lo dice en su nombre (`modifiedLabel`, `busyLabel`) y la ocupada lleva aria-busy.",
    "examples": [
     {
      "title": "Pestañas con alta",
      "code": "<TabStrip tabs={[{ id: \"a\", title: \"main.ts\" }, { id: \"b\", title: \"README.md\" }]} activeId={active} onSelect={setActive} onClose={closeTab} onAdd={newTab} />"
+    },
+    {
+     "title": "Grupos, indicadores y reordenación",
+     "code": "<TabStrip\n  label=\"Open files\"\n  groups={[\n    { id: \"ui\", label: \"UI\", tone: \"info\" },\n    { id: \"api\", label: \"API\", tone: \"success\" },\n  ]}\n  tabs={[\n    { id: \"button\", title: \"Button.tsx\", groupId: \"ui\", modified: true },\n    { id: \"menu\", title: \"Menu.tsx\", groupId: \"ui\" },\n    { id: \"routes\", title: \"routes.ts\", groupId: \"api\", busy: true },\n    { id: \"readme\", title: \"README.md\" },\n  ]}\n  activeId=\"button\"\n  onSelect={setActive}\n  onClose={closeTab}\n  onReorder={setOrder}\n  onGroupToggle={toggleGroup}\n/>"
     }
    ],
    "behavior": "dom",
@@ -1007,9 +1060,13 @@
     {
      "title": "Pestañas con cierre y alta",
      "code": "<div class=\"z-tabstrip\" id=\"tabs-demo\">\n  <div class=\"z-tabstrip__list\" role=\"tablist\" aria-label=\"Open files\">\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-selected=\"true\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"true\" tabindex=\"0\" data-tab-id=\"main\">\n        <span class=\"z-tabstrip__title\">main.ts</span>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" tabindex=\"-1\" data-tab-id=\"readme\">\n        <span class=\"z-tabstrip__title\">README.md</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" tabindex=\"-1\" data-tab-id=\"config\">\n        <span class=\"z-tabstrip__title\">package.json</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n  </div>\n  <button type=\"button\" class=\"z-tabstrip__add\" aria-label=\"New tab\" data-new-title=\"Untitled\">\n    <z-icon name=\"plus\" size=\"14\"></z-icon>\n  </button>\n</div>"
+    },
+    {
+     "title": "Grupos, indicadores y reordenación",
+     "code": "<div class=\"z-tabstrip\" id=\"tabs-groups\" data-reorderable=\"\">\n  <div class=\"z-tabstrip__list\" role=\"tablist\" aria-label=\"Open files\">\n    <div class=\"z-tabstrip__group\" role=\"presentation\" data-group-id=\"ui\" data-tone=\"info\">\n      <button type=\"button\" class=\"z-tabstrip__chip\" aria-hidden=\"true\" tabindex=\"-1\" aria-expanded=\"true\" title=\"UI\">UI</button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-selected=\"true\" data-group=\"ui\" data-tone=\"info\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"true\" aria-describedby=\"tabs-groups-ui\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" tabindex=\"0\" data-tab-id=\"button\">\n        <span class=\"z-tabstrip__title\">Button.tsx</span>\n        <span class=\"z-tabstrip__mark\" data-mark=\"modified\">\n          <span class=\"z-sr-only\">, modified</span>\n        </span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-group=\"ui\" data-tone=\"info\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" aria-describedby=\"tabs-groups-ui\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" tabindex=\"-1\" data-tab-id=\"menu\">\n        <span class=\"z-tabstrip__title\">Menu.tsx</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__group\" role=\"presentation\" data-group-id=\"api\" data-tone=\"success\">\n      <button type=\"button\" class=\"z-tabstrip__chip\" aria-hidden=\"true\" tabindex=\"-1\" aria-expanded=\"true\" title=\"API\">API</button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\" data-group=\"api\" data-tone=\"success\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" aria-describedby=\"tabs-groups-api\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" aria-busy=\"true\" tabindex=\"-1\" data-tab-id=\"routes\">\n        <span class=\"z-tabstrip__title\">routes.ts</span>\n        <span class=\"z-tabstrip__mark\" data-mark=\"busy\">\n          <span class=\"z-sr-only\">, busy</span>\n        </span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n    <div class=\"z-tabstrip__tab\" role=\"presentation\">\n      <button type=\"button\" role=\"tab\" class=\"z-tabstrip__select\" aria-selected=\"false\" aria-keyshortcuts=\"Delete Control+Shift+ArrowLeft Control+Shift+ArrowRight\" tabindex=\"-1\" data-tab-id=\"readme\">\n        <span class=\"z-tabstrip__title\">README.md</span>\n      </button>\n      <button type=\"button\" class=\"z-tabstrip__close\" title=\"Close tab\" aria-hidden=\"true\" tabindex=\"-1\">\n        <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n      </button>\n    </div>\n  </div>\n  <span id=\"tabs-groups-ui\" hidden=\"\">UI</span>\n  <span id=\"tabs-groups-api\" hidden=\"\">API</span>\n  <span class=\"z-tabstrip__status z-sr-only\" role=\"status\"></span>\n</div>"
     }
    ],
-   "origin": "`tabstrip` de zutool.",
+   "origin": "`tabstrip` y `tab-stack` de zutool (grupos, arrastre e indicadores).",
    "file": "zout/src/layouts/TabStrip.manifest.json"
   },
   {
