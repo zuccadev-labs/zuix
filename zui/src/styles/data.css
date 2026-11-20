@@ -348,7 +348,7 @@
     justify-content: center;
     width: calc(var(--z-chip-height) - 8px);
     height: calc(var(--z-chip-height) - 8px);
-    margin-inline-end: 3px;
+    margin-inline-end: var(--z-space-0-5);
     padding: 0;
     border: 0;
     /* Concéntrico con el chip (su radio menos el margen de 4 px). */
@@ -690,7 +690,7 @@
     justify-content: center;
     min-width: 24px;
     min-height: 24px;
-    padding: 2px;
+    padding: var(--z-space-0-5);
     border: 0;
     border-radius: var(--z-radius-xs);
     background: transparent;
@@ -729,7 +729,7 @@
     place-items: center;
     min-width: 24px;
     min-height: 24px;
-    padding: 2px;
+    padding: var(--z-space-0-5);
   }
   .z-rating__glyph {
     display: inline-flex;
@@ -789,7 +789,7 @@
     align-items: center;
     justify-content: center;
     min-width: 1.6em;
-    padding: 1px 5px;
+    padding: 1px var(--z-space-1);
     border: 1px solid var(--z-glass-border);
     border-radius: var(--z-radius-xs);
     background: var(--z-surface-2);

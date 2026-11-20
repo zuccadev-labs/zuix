@@ -311,7 +311,7 @@
     justify-content: space-between;
   }
   .z-switch[data-variant="card"] > .z-switch__track {
-    margin-block-start: 2px;
+    margin-block-start: var(--z-space-0-5);
   }
   .z-radio-group[data-variant="card"] {
     width: 100%;
@@ -493,7 +493,7 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     min-width: 0;
   }
   .z-listbox__content .z-listbox__text {
@@ -527,10 +527,10 @@
   .z-tags__tag {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     max-width: 100%;
     height: calc(var(--z-input-height) - 2 * var(--z-space-1) - 2px);
-    padding-inline: var(--z-space-2) 2px;
+    padding-inline: var(--z-space-2) var(--z-space-0-5);
     border: 1px solid var(--z-glass-border);
     border-radius: calc(var(--z-input-radius) - var(--z-space-1));
     background: var(--z-surface-3);
@@ -712,7 +712,7 @@
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     min-height: var(--z-ed-height);
   }
   .z-editable[data-state="preview"] .z-editable__controls [data-action="save"],

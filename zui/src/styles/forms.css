@@ -526,6 +526,8 @@
     display: inline-flex;
     flex-wrap: wrap;
     align-items: flex-start;
+    /* Ancho de su contenido aunque el padre estire (columna flex): la cabecera y la rejilla miden lo mismo. */
+    inline-size: fit-content;
     max-width: 100%;
     color: var(--z-fg);
     font-size: var(--z-text-body);
@@ -747,7 +749,8 @@
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0 2px;
-    margin: 0;
+    /* Dos meses apilados en un contenedor más ancho que un mes: cada rejilla, centrada bajo la cabecera. */
+    margin: 0 auto;
   }
   .z-calendar__weekday {
     height: calc(var(--z-control-height-sm) - var(--z-space-1));
@@ -1035,7 +1038,7 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     padding: var(--z-space-3) var(--z-space-2-5);
     border-inline-end: 1px solid var(--z-line);
   }
@@ -1172,7 +1175,7 @@
   .z-check__text {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     min-width: 0;
     padding-top: 1px;
   }
@@ -1654,7 +1657,11 @@
     white-space: nowrap;
   }
   .z-datefield__segment {
-    padding-inline: 2px;
+    /* Objetivo de 24 px de alto (40 con puntero grueso, WCAG 2.5.8) sin crecer el campo. */
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--z-control-height-xs);
+    padding-inline: var(--z-space-0-5);
     border-radius: var(--z-radius-xs);
     color: var(--z-fg);
     caret-color: transparent;
@@ -1702,7 +1709,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     max-height: min(224px, var(--z-available-height, 224px));
     overflow-y: auto;
     overscroll-behavior: contain;

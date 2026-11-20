@@ -51,6 +51,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- Auditoría visual: `RailItem` y los botones de `FloatingPanel` sin el relleno por defecto del navegador; huecos
+  de `2px` y `3px` a `--z-space-0-5`. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus pestañas (el
+  contrato HTML los pintaba vacíos).
+
 - `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
   accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía
   desplazar con el teclado (axe `scrollable-region-focusable`).

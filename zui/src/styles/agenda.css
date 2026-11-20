@@ -54,7 +54,7 @@
   }
   .z-agenda__nav {
     display: inline-flex;
-    gap: 2px;
+    gap: var(--z-space-0-5);
   }
   .z-agenda__icon-btn {
     display: inline-grid;
@@ -184,7 +184,7 @@
   .z-agenda__calendars {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
   }
   .z-agenda__calendars-label {
     margin: 0;
@@ -316,7 +316,7 @@
     min-inline-size: 0;
     overflow: hidden;
     margin: 0;
-    padding: 3px var(--z-space-1-5) 3px calc(var(--z-space-1-5) + var(--z-event-bar-width));
+    padding: var(--z-space-0-5) var(--z-space-1-5) var(--z-space-0-5) calc(var(--z-space-1-5) + var(--z-event-bar-width));
     border: 0;
     border-radius: var(--z-event-radius);
     background: color-mix(in srgb, var(--z-event-color) var(--z-event-tint), var(--z-surface-solid));
@@ -348,7 +348,7 @@
   }
   .z-event__icon {
     display: inline-flex;
-    margin-inline-start: 3px;
+    margin-inline-start: var(--z-space-0-5);
     vertical-align: -2px;
     color: var(--z-event-fg-muted);
   }
@@ -585,7 +585,7 @@
     grid-template-columns: repeat(var(--z-tg-days), minmax(0, 1fr));
     grid-auto-rows: var(--z-control-height-xs);
     align-items: center;
-    gap: 2px 0;
+    gap: var(--z-space-0-5) 0;
     min-block-size: calc(var(--z-control-height-xs) + var(--z-space-2));
     padding-block: var(--z-space-1);
     background-image: repeating-linear-gradient(to right, var(--z-line) 0 1px, transparent 1px calc(100% / var(--z-tg-days)));
@@ -599,7 +599,7 @@
     flex-direction: row;
     align-items: center;
     block-size: calc(var(--z-control-height-xs) - var(--z-space-1));
-    margin-inline: 3px;
+    margin-inline: var(--z-space-0-5);
     padding-block: 0;
   }
   .z-event[data-variant="bar"][data-cont-start] {
@@ -645,7 +645,8 @@
   .z-timegrid__gutter > span {
     position: absolute;
     inset-inline-end: var(--z-space-2);
-    inset-block-start: calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 7px);
+    /* Centrada en su línea; la primera hora no sube por encima del borde del área con desplazamiento (se cortaba). */
+    inset-block-start: max(0px, calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 7px));
     color: var(--z-fg-subtle);
     font-size: var(--z-text-fine);
     white-space: nowrap;
@@ -654,7 +655,7 @@
     z-index: var(--z-layer-raised);
     inset-inline-end: var(--z-space-1);
     inset-block-start: calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 9px);
-    padding: 1px 5px;
+    padding: 1px var(--z-space-1);
     border-radius: var(--z-control-radius-sm);
     background: var(--z-calendar-now-label-bg);
     color: var(--z-fg-on-accent);
@@ -791,7 +792,7 @@
     block-size: calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px);
     display: flex;
     align-items: flex-start;
-    padding: 2px var(--z-space-1-5);
+    padding: var(--z-space-0-5) var(--z-space-1-5);
     border: 0;
     border-radius: var(--z-event-radius);
     background: transparent;
@@ -836,7 +837,7 @@
     z-index: var(--z-layer-sticky);
     inset-inline-start: var(--z-space-1);
     inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - var(--z-space-6) - 2px);
-    padding: 3px var(--z-space-2);
+    padding: var(--z-space-0-5) var(--z-space-2);
     border-radius: var(--z-radius-xs);
     background: var(--z-surface-solid);
     box-shadow: var(--z-shadow-md);
@@ -1010,7 +1011,7 @@
     align-self: start;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     margin: 0;
     padding: var(--z-space-3-5) 0 var(--z-space-3-5) var(--z-space-4);
     font-weight: inherit;
@@ -1036,7 +1037,7 @@
   .z-agendalist__items {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     margin: 0;
     padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-2) 0;
     list-style: none;
@@ -1189,7 +1190,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--z-space-2);
-    padding: 2px 2px var(--z-space-1-5) var(--z-space-1-5);
+    padding: var(--z-space-0-5) var(--z-space-0-5) var(--z-space-1-5) var(--z-space-1-5);
   }
   .z-agenda__detail-title {
     display: flex;
@@ -1324,7 +1325,7 @@
     }
     .z-timegrid__dayhead {
       flex-direction: column;
-      gap: 2px;
+      gap: var(--z-space-0-5);
     }
     .z-timegrid__day {
       font-size: var(--z-text-title);
@@ -1340,7 +1341,7 @@
       align-items: center;
       gap: var(--z-space-1);
       min-block-size: var(--z-space-14);
-      padding: 3px 2px;
+      padding: var(--z-space-0-5);
     }
     .z-monthgrid__cell .z-event,
     .z-monthgrid__more {
@@ -1350,7 +1351,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 3px;
+      gap: var(--z-space-0-5);
       max-inline-size: var(--z-space-8);
     }
     .z-monthgrid__dots i {

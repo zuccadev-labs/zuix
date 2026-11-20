@@ -76,7 +76,7 @@
   .z-panel__heading {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     min-width: 0;
   }
   .z-card__title {
@@ -194,7 +194,7 @@
   .z-callout__icon {
     display: inline-flex;
     flex-shrink: 0;
-    margin-top: 2px;
+    margin-top: var(--z-space-0-5);
     color: var(--z-callout-tone);
   }
   .z-callout__body {

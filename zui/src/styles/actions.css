@@ -537,7 +537,7 @@
     --z-segmented-item-radius: var(--z-control-radius-sm);
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     box-sizing: border-box;
     height: var(--z-segmented-height);
     padding: var(--z-segmented-pad);
@@ -723,13 +723,13 @@
     align-self: stretch;
     inline-size: 0;
     margin-block: var(--z-space-1);
-    margin-inline: 2px;
+    margin-inline: var(--z-space-0-5);
     border-inline-start: 1px solid var(--z-line);
   }
   .z-toolbar__separator[aria-orientation="horizontal"] {
     inline-size: auto;
     block-size: 0;
-    margin-block: 2px;
+    margin-block: var(--z-space-0-5);
     margin-inline: var(--z-space-1);
     border-inline-start: 0;
     border-block-start: 1px solid var(--z-line);
