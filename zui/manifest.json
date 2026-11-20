@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 89,
+ "count": 90,
  "groups": {
   "actions": [
    "Button",
@@ -92,6 +92,7 @@
   "navigation": [
    "Accordion",
    "Breadcrumb",
+   "Collapsible",
    "NavList",
    "Pagination",
    "Stepper",
@@ -10175,6 +10176,109 @@
    ],
    "origin": "Nuevo, sobre los tokens de fila de zutool.",
    "file": "zui/src/components/navigation/Breadcrumb.manifest.json"
+  },
+  {
+   "name": "Collapsible",
+   "group": "navigation",
+   "description": "Bloque que se pliega y despliega con un botón: un detalle opcional, una lista larga o un texto que se recorta.",
+   "import": "import { Collapsible } from \"@zuccadev-labs/zuix-zui\"",
+   "behavior": "dom",
+   "apg": "disclosure",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Contenido del botón."
+    },
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Id del bloque; la región lleva `<id>-content`. Sin valor, uno generado."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono antes del título."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "peek",
+     "type": "number",
+     "description": "Colapso parcial: alto en px que se sigue viendo plegado, con fundido. El botón va tras el texto."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "plain",
+      "card"
+     ],
+     "default": "plain"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled"
+   ],
+   "tokens": [
+    "item-radius",
+    "row-hover",
+    "line",
+    "card-bg",
+    "card-radius",
+    "fg-muted",
+    "fg-prose",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-collapsible",
+    "z-collapsible__trigger",
+    "z-collapsible__content"
+   ],
+   "a11y": "Patrón APG «disclosure»: un button con aria-expanded y aria-controls. Intro o Espacio lo alternan. Plegada, la región lleva hidden=\"until-found\": no se ve ni se lee, pero la búsqueda en la página del navegador la encuentra y la abre (evento beforematch). Con `peek` el principio sigue visible y en el árbol accesible, y si el foco entra en la parte recortada se despliega para no quedar tapado. Para varias secciones con cabecera, Accordion.",
+   "examples": [
+    {
+     "title": "Detalle opcional",
+     "code": "<Collapsible id=\"advanced\" title=\"Advanced settings\" icon=\"adjustments-horizontal\">\n  <p>Retries, timeouts and the proxy used for outgoing requests.</p>\n</Collapsible>"
+    },
+    {
+     "title": "Tarjeta abierta",
+     "code": "<Collapsible id=\"editors\" title=\"3 people can edit\" variant=\"card\" defaultOpen>\n  <p>Ana Ruiz, Leo Park and Mia Chen.</p>\n</Collapsible>"
+    },
+    {
+     "title": "Colapso parcial",
+     "code": "<Collapsible id=\"release-notes\" title=\"Show full description\" peek={56}>\n  <p>The release adds a workspace layout with resizable panes, a floating inspector and grouped tabs. Panels can be docked, split and moved with the keyboard, and every layout is saved per project.</p>\n</Collapsible>"
+    },
+    {
+     "title": "Deshabilitado",
+     "code": "<Collapsible id=\"billing\" title=\"Billing history\" disabled>\n  <p>Only owners can see billing.</p>\n</Collapsible>"
+    }
+   ],
+   "origin": "Nuevo, con primitiva propia (APG «disclosure», hidden=\"until-found\"). Referencia de variantes: Collapsible de Shark UI y Radix.",
+   "file": "zui/src/components/navigation/Collapsible.manifest.json"
   },
   {
    "name": "NavList",

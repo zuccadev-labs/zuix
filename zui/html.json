@@ -1736,6 +1736,37 @@
     }
    ]
   },
+  "Collapsible": {
+   "group": "navigation",
+   "classes": [
+    "z-collapsible",
+    "z-collapsible__trigger",
+    "z-collapsible__content"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Detalle opcional",
+     "html": "<div id=\"advanced\" class=\"z-collapsible\" data-state=\"closed\" data-variant=\"plain\">\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"false\" aria-controls=\"advanced-content\">\n    <z-icon name=\"adjustments-horizontal\" size=\"16\"></z-icon>\n    <span class=\"z-collapsible__title\">Advanced settings</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n  <div id=\"advanced-content\" class=\"z-collapsible__content\" data-state=\"closed\" hidden=\"\">\n    <p>Retries, timeouts and the proxy used for outgoing requests.</p>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Tarjeta abierta",
+     "html": "<div id=\"editors\" class=\"z-collapsible\" data-state=\"open\" data-variant=\"card\">\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"true\" aria-controls=\"editors-content\">\n    <span class=\"z-collapsible__title\">3 people can edit</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n  <div id=\"editors-content\" class=\"z-collapsible__content\" data-state=\"open\">\n    <p>Ana Ruiz, Leo Park and Mia Chen.</p>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Colapso parcial",
+     "html": "<div id=\"release-notes\" class=\"z-collapsible\" data-state=\"closed\" data-variant=\"plain\" data-peek=\"true\" style=\"--z-collapsible-peek:56px\">\n  <div id=\"release-notes-content\" class=\"z-collapsible__content\" data-state=\"closed\">\n    <p>The release adds a workspace layout with resizable panes, a floating inspector and grouped tabs. Panels can be docked, split and moved with the keyboard, and every layout is saved per project.</p>\n  </div>\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"false\" aria-controls=\"release-notes-content\">\n    <span class=\"z-collapsible__title\">Show full description</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Deshabilitado",
+     "html": "<div id=\"billing\" class=\"z-collapsible\" data-state=\"closed\" data-variant=\"plain\" data-disabled=\"true\">\n  <button type=\"button\" class=\"z-collapsible__trigger\" aria-expanded=\"false\" aria-controls=\"billing-content\" disabled=\"\">\n    <span class=\"z-collapsible__title\">Billing history</span>\n    <span class=\"z-collapsible__chevron\" aria-hidden=\"true\">\n      <z-icon name=\"chevron-down\" size=\"16\"></z-icon>\n    </span>\n  </button>\n  <div id=\"billing-content\" class=\"z-collapsible__content\" data-state=\"closed\" hidden=\"\">\n    <p>Only owners can see billing.</p>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "NavList": {
    "group": "navigation",
    "classes": [

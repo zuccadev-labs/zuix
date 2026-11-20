@@ -163,6 +163,7 @@
 
 - [Accordion](https://zuccadev-labs.github.io/zuix/components/navigation/accordion.md): Secciones plegables apiladas.
 - [Breadcrumb](https://zuccadev-labs.github.io/zuix/components/navigation/breadcrumb.md): Ruta jerárquica hasta la página actual.
+- [Collapsible](https://zuccadev-labs.github.io/zuix/components/navigation/collapsible.md): Bloque que se pliega y despliega con un botón: un detalle opcional, una lista larga o un texto que se recorta.
 - [NavList](https://zuccadev-labs.github.io/zuix/components/navigation/nav-list.md): Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.
 - [Pagination](https://zuccadev-labs.github.io/zuix/components/navigation/pagination.md): Navegación entre páginas numeradas con anterior, siguiente y huecos.
 - [Stepper](https://zuccadev-labs.github.io/zuix/components/navigation/stepper.md): Progreso por pasos numerados, horizontal o vertical.

@@ -38,8 +38,6 @@ export default async function ({ page, test, ok, card, browserName }) {
     );
     return page.locator(`#${id}`);
   };
-  void inject;
-  void events;
   void browserName;
 
   /* ---------- Toolbar ---------- */
@@ -77,5 +75,55 @@ export default async function ({ page, test, ok, card, browserName }) {
     await press("End");
     ok((await activeLabel()) === "Zoom out", "Fin");
     ok(await activeIs('[role="toolbar"] button'), "foco en la barra");
+  });
+
+  /* ---------- Collapsible ---------- */
+  await test("Collapsible: botón con aria-expanded, región hidden=until-found y z:change; Intro y Espacio", async () => {
+    const root = card("Collapsible").locator(".z-collapsible").first();
+    const trigger = root.locator(".z-collapsible__trigger");
+    const content = root.locator(".z-collapsible__content");
+    ok((await content.getAttribute("hidden")) === "until-found", `plegado: hidden=${await content.getAttribute("hidden")}`);
+    await events();
+    await trigger.click();
+    ok((await trigger.getAttribute("aria-expanded")) === "true" && (await content.isVisible()), "se abre con clic");
+    const log = await events();
+    ok(
+      log.some((e) => e.name === "z:change" && e.detail.open === true),
+      `evento: ${JSON.stringify(log)}`,
+    );
+    await trigger.focus();
+    await press("Enter");
+    ok(
+      (await trigger.getAttribute("aria-expanded")) === "false" && (await content.getAttribute("hidden")) === "until-found",
+      "Intro pliega",
+    );
+    await press(" ");
+    ok((await trigger.getAttribute("aria-expanded")) === "true", "Espacio abre");
+  });
+  await test("Collapsible: la búsqueda en la página (beforematch) abre la región plegada", async () => {
+    const box = await inject("Collapsible", 0);
+    const root = box.locator(".z-collapsible");
+    const supported = await page.evaluate(() => "onbeforematch" in document.body);
+    // Se simula el evento del navegador: el comportamiento es el mismo en los motores que lo emiten.
+    await box.locator(".z-collapsible__content").evaluate((el) => el.dispatchEvent(new Event("beforematch", { bubbles: true })));
+    ok((await root.getAttribute("data-state")) === "open", `beforematch abre (nativo: ${supported})`);
+  });
+  await test("Collapsible parcial: se ve el principio, el botón va detrás y el foco dentro lo despliega", async () => {
+    const box = await inject("Collapsible", 2);
+    const root = box.locator(".z-collapsible");
+    const content = root.locator(".z-collapsible__content");
+    ok((await content.getAttribute("hidden")) === null, "no se oculta");
+    const height = await content.evaluate((el) => el.getBoundingClientRect().height);
+    ok(height <= 57, `recortado a 56px: ${height}`);
+    const order = await root.evaluate((el) => [...el.children].map((c) => c.className));
+    ok(order[1] === "z-collapsible__trigger", `orden: ${order}`);
+    await root.locator(".z-collapsible__trigger").click();
+    const open = await content.evaluate((el) => el.getBoundingClientRect().height);
+    ok(open > height, `se despliega: ${open}`);
+  });
+  await test("Collapsible deshabilitado: el clic no lo abre", async () => {
+    const box = await inject("Collapsible", 3);
+    await box.locator(".z-collapsible__trigger").click({ force: true });
+    ok((await box.locator(".z-collapsible").getAttribute("data-state")) === "closed", "sigue plegado");
   });
 }

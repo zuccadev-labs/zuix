@@ -26,6 +26,7 @@ import * as agenda from "./agenda";
 import * as carousel from "./carousel";
 import * as collections from "./collections";
 import * as forms from "./forms";
+import * as navigation from "./navigation";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
 import { escapeTop } from "../core/layers";
@@ -43,7 +44,7 @@ import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [actions, forms, collections, carousel, time, agenda];
+const modules = [actions, forms, collections, carousel, time, agenda, navigation];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { openPalette, selectTreeItem, toggleTreeItem, sortTable, setPage, type SortDirection } from "./collections";
 export {
@@ -72,6 +73,7 @@ registerIcons([xMark, exclamationTriangle, informationCircle]);
 
 export { place, type Placement };
 export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
+export { setCollapsibleOpen } from "./navigation";
 export { destroyAgenda, setAgendaCalendars, setAgendaEvents, setAgendaView, type CalendarEvent, type CalendarSource } from "./agenda";
 export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
 
