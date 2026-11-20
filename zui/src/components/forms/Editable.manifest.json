@@ -5,11 +5,30 @@
   "import": "import { Editable } from \"@zuccadev-labs/zuix-zui\"",
   "behavior": "dom",
   "props": [
-    { "name": "label", "type": "string", "description": "Nombre accesible del texto y del campo." },
-    { "name": "value", "type": "string" },
-    { "name": "defaultValue", "type": "string", "default": "" },
-    { "name": "onValueChange", "type": "(value: string) => void", "description": "Al guardar, no en cada tecla." },
-    { "name": "placeholder", "type": "string", "default": "Empty" },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del texto y del campo."
+    },
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void",
+      "description": "Al guardar, no en cada tecla."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Empty"
+    },
     {
       "name": "activationMode",
       "type": "enum",
@@ -17,26 +36,84 @@
       "default": "click",
       "description": "Cómo se entra a editar; con `none`, solo con el botón de editar (`controls`)."
     },
-    { "name": "submitOnBlur", "type": "boolean", "default": true, "description": "Salir del campo guarda; con `false`, descarta." },
+    {
+      "name": "submitOnBlur",
+      "type": "boolean",
+      "default": true,
+      "description": "Salir del campo guarda; con `false`, descarta."
+    },
     {
       "name": "multiline",
       "type": "boolean",
       "default": false,
       "description": "Textarea: Intro hace salto de línea y Ctrl/⌘+Intro guarda."
     },
-    { "name": "controls", "type": "boolean", "default": false, "description": "Botones de editar, guardar y cancelar." },
-    { "name": "editing", "type": "boolean" },
-    { "name": "defaultEditing", "type": "boolean", "default": false },
-    { "name": "onEditingChange", "type": "(editing: boolean) => void" },
-    { "name": "required", "type": "boolean", "default": false, "description": "No guarda un texto vacío." },
-    { "name": "maxLength", "type": "number" },
-    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md", "description": "`lg` sirve para títulos." },
-    { "name": "disabled", "type": "boolean", "default": false },
-    { "name": "name", "type": "string", "description": "Campo oculto con el valor guardado." },
-    { "name": "editLabel", "type": "string", "default": "Edit" },
-    { "name": "saveLabel", "type": "string", "default": "Save" },
-    { "name": "cancelLabel", "type": "string", "default": "Cancel" },
-    { "name": "hint", "type": "string", "default": "Press Enter to edit" }
+    {
+      "name": "controls",
+      "type": "boolean",
+      "default": false,
+      "description": "Botones de editar, guardar y cancelar."
+    },
+    {
+      "name": "editing",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultEditing",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onEditingChange",
+      "type": "(editing: boolean) => void"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "No guarda un texto vacío."
+    },
+    {
+      "name": "maxLength",
+      "type": "number"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "`lg` sirve para títulos."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo oculto con el valor guardado."
+    },
+    {
+      "name": "editLabel",
+      "type": "string",
+      "default": "Edit"
+    },
+    {
+      "name": "saveLabel",
+      "type": "string",
+      "default": "Save"
+    },
+    {
+      "name": "cancelLabel",
+      "type": "string",
+      "default": "Cancel"
+    },
+    {
+      "name": "hint",
+      "type": "string",
+      "default": "Press Enter to edit"
+    }
   ],
   "states": ["preview", "hover", "focus", "edit", "disabled"],
   "tokens": [
@@ -66,9 +143,12 @@
     "ease-standard"
   ],
   "classes": ["z-editable", "z-editable__preview", "z-editable__text", "z-editable__input", "z-editable__controls"],
-  "a11y": "El texto es un button cuyo nombre es la etiqueta más el valor («Project name, Borealis») y cuya descripción explica cómo editarlo. Clic, foco o doble clic (según `activationMode`) y también Intro o F2 lo pasan a un campo nativo con la misma etiqueta y el texto seleccionado. Intro guarda (Ctrl/⌘+Intro en varias líneas), Escape cancela y, al terminar, el foco vuelve al texto. Respeta la composición de un IME.",
+  "a11y": "El texto es un button cuyo nombre es la etiqueta (oculta) más el valor visible («Project name: Borealis») y cuya descripción explica cómo editarlo. Clic, foco o doble clic (según `activationMode`) y también Intro o F2 lo pasan a un campo nativo con la misma etiqueta y el texto seleccionado. Intro guarda (Ctrl/⌘+Intro en varias líneas), Escape cancela y, al terminar, el foco vuelve al texto. Respeta la composición de un IME.",
   "examples": [
-    { "title": "Título", "code": "<Editable label=\"Project name\" defaultValue=\"Borealis\" size=\"lg\" />" },
+    {
+      "title": "Título",
+      "code": "<Editable label=\"Project name\" defaultValue=\"Borealis\" size=\"lg\" />"
+    },
     {
       "title": "Con botones",
       "code": "<Editable label=\"Display name\" defaultValue=\"Ana Ruiz\" controls activationMode=\"none\" required />"

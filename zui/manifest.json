@@ -6415,7 +6415,7 @@
     "z-editable__input",
     "z-editable__controls"
    ],
-   "a11y": "El texto es un button cuyo nombre es la etiqueta más el valor («Project name, Borealis») y cuya descripción explica cómo editarlo. Clic, foco o doble clic (según `activationMode`) y también Intro o F2 lo pasan a un campo nativo con la misma etiqueta y el texto seleccionado. Intro guarda (Ctrl/⌘+Intro en varias líneas), Escape cancela y, al terminar, el foco vuelve al texto. Respeta la composición de un IME.",
+   "a11y": "El texto es un button cuyo nombre es la etiqueta (oculta) más el valor visible («Project name: Borealis») y cuya descripción explica cómo editarlo. Clic, foco o doble clic (según `activationMode`) y también Intro o F2 lo pasan a un campo nativo con la misma etiqueta y el texto seleccionado. Intro guarda (Ctrl/⌘+Intro en varias líneas), Escape cancela y, al terminar, el foco vuelve al texto. Respeta la composición de un IME.",
    "examples": [
     {
      "title": "Título",

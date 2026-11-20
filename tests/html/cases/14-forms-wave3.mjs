@@ -411,7 +411,7 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
     await field.fill("Aurora");
     await events();
     await press("Enter");
-    ok((await box.getAttribute("data-value")) === "Aurora" && (await preview.textContent()).trim() === "Aurora", "no guardó");
+    ok((await box.getAttribute("data-value")) === "Aurora" && (await preview.locator(".z-editable__text").textContent()).trim() === "Aurora", "no guardó");
     ok(await activeIs("[data-component='Editable'] .z-editable__preview"), "foco al texto");
     ok(
       (await events()).some((e) => e.name === "z:change" && e.detail.value === "Aurora"),
@@ -421,14 +421,8 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
     await field.fill("Nope");
     await press("Escape");
     ok((await box.getAttribute("data-value")) === "Aurora", "Escape no cancela");
-    const named = await preview.evaluate((el) =>
-      el
-        .getAttribute("aria-labelledby")
-        .split(" ")
-        .map((id) => document.getElementById(id).textContent)
-        .join(" "),
-    );
-    ok(named === "Project name Aurora", `nombre: ${named}`);
+    const named = (await preview.textContent()).replace(/\s+/g, " ").trim();
+    ok(named === "Project name: Aurora", `nombre: ${named}`);
   });
 
   /* ---------- Variantes ---------- */

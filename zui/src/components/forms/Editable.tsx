@@ -126,9 +126,6 @@ export function Editable({
       data-value={saved}
       data-placeholder={placeholder}
     >
-      <span id={`${auto}-label`} className="z-sr-only">
-        {label}
-      </span>
       <span id={`${auto}-hint`} className="z-sr-only">
         {hint}
       </span>
@@ -138,7 +135,6 @@ export function Editable({
         className="z-editable__preview"
         hidden={editing}
         disabled={disabled}
-        aria-labelledby={`${auto}-label ${auto}-text`}
         aria-describedby={activationMode === "none" ? undefined : `${auto}-hint`}
         tabIndex={activationMode === "none" ? -1 : undefined}
         data-placeholder={saved ? undefined : ""}
@@ -153,15 +149,15 @@ export function Editable({
           }
         }}
       >
-        <span id={`${auto}-text`} className="z-editable__text">
-          {saved || placeholder}
-        </span>
+        {/* El nombre es la etiqueta (oculta) más el texto visible: lo que se lee contiene lo que se ve. */}
+        <span className="z-sr-only">{`${label}: `}</span>
+        <span className="z-editable__text">{saved || placeholder}</span>
       </button>
       <Field
         ref={field}
         className="z-editable__input"
         hidden={!editing}
-        aria-labelledby={`${auto}-label`}
+        aria-label={label}
         value={draft}
         maxLength={maxLength}
         required={required}
