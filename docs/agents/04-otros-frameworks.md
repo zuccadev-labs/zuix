@@ -67,8 +67,16 @@ Lo que React monta por portal no aparece en el render estático. Su contrato se 
 
 ### Añadir comportamiento a `zui/dom`
 
-- Entrada: `zui/src/dom/index.ts`, con un módulo por grupo al lado. Sin dependencias; solo APIs del navegador
-  y la lógica de `zui/src/core/`.
+- Entradas: `zui/src/dom/core.ts` (núcleo, `init`, `use` y el registro de piezas), una por familia en
+  `zui/src/dom/families/` (`@zuccadev-labs/zuix-zui/dom/<familia>`) y `zui/src/dom/index.ts`, que lo reexporta todo
+  y registra todas las familias en `init()` y `hydrate()`. Un módulo por grupo al lado. Sin dependencias; solo APIs
+  del navegador y la lógica de `zui/src/core/`.
+- Un módulo nuevo es una pieza (`DomPart`: `rank`, `setup`, `hydrate`, `teardown`) del núcleo (`coreModule` en
+  `core.ts`) o de una familia. `rank` fija el orden de listeners y de preparación. Ningún archivo hace nada al
+  importarse salvo registrar sus iconos (`registerIcons`) o sus piezas de árbol: `sideEffects` de `zui` ya no
+  incluye `src/dom` ni `dist/esm/dom`, y una llamada de nivel superior sin `/* @__PURE__ */` arrastraría su
+  módulo a quien solo toma `toast()` (lo comprueba `pnpm test:pack`). Una familia nueva va en los dos mapas de
+  `exports`, en `suite/` y en `everything()` de `index.ts`.
 - Los listeners del documento se registran con la señal de `init()`, para que `destroy()` los retire.
 - Código pesado que casi nadie usa (los shaders del Carousel): módulo aparte cargado con `import()`
   (`zui/src/dom/carousel-gl.ts`). Necesita su entrada en `exports` y `publishConfig.exports`, su bundle en

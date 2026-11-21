@@ -3,7 +3,9 @@
 `@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 144 componentes en 12 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
-React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)).
+React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
+cargar todo (`/dom`) o el núcleo (`/dom/core`) más las familias que use la página (`/dom/dates`, `/dom/agenda`,
+`/dom/charts`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
 
 No depende de ninguna biblioteca de UI. En ejecución solo necesita `@zuccadev-labs/zuix-tokens`;
 `@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM 19 son peers opcionales.

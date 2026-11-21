@@ -12,7 +12,7 @@
 import { logicalKey } from "../core/dir";
 import { menubarIndex, menubarKey } from "../core/menubar";
 import { all, emit, inDom } from "./forms-popup";
-import { closePopover, openPopover } from "./index";
+import { closePopover, openPopover } from "./core";
 import { byRef, type Listen } from "./shared";
 
 /* ---------- Collapsible ---------- */

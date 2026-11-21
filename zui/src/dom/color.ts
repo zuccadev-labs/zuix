@@ -15,16 +15,20 @@ import {
   colorSwatchPickerWidget,
   colorTriggerWidget,
 } from "../core/color-widget";
-import { registerWidget, setWidgetProps } from "./widgets";
+import { setWidgetProps, widgetPart } from "./widgets";
 
 registerIcons([chevronUpDown, eyeDropper]);
-for (const widget of [colorPickerWidget, colorAreaWidget, colorSliderWidget, colorSwatchPickerWidget, colorFieldWidget, colorTriggerWidget])
-  registerWidget(widget);
+
+export const colorWidgets = /* @__PURE__ */ widgetPart(45.2, [
+  colorPickerWidget,
+  colorAreaWidget,
+  colorSliderWidget,
+  colorSwatchPickerWidget,
+  colorFieldWidget,
+  colorTriggerWidget,
+]);
 
 /** Cambia el color de una pieza de la familia ColorPicker (cualquier cadena CSS que entienda). */
 export function setColorValue(el: HTMLElement, value: string): void {
   setWidgetProps(el, { value });
 }
-
-export function setup(): void {}
-export function hydrate(): void {}

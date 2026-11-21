@@ -1,4 +1,6 @@
-// @zuccadev-labs/zuix-zui/dom — comportamiento sin framework para el contrato HTML de zui.
+// @zuccadev-labs/zuix-zui/dom/core — núcleo del comportamiento sin framework para el contrato HTML de zui.
+// `@zuccadev-labs/zuix-zui/dom` lo reexporta junto con todas las familias; esta entrada trae solo el núcleo y se
+// amplía con use(módulo) o init(módulo, …) (ver ./index y docs/users/06-frameworks.md).
 // Mismo marcado, mismas clases y mismos atributos de estado que el binding de React; aquí los mueve el
 // navegador (dialog, popover) y este módulo. Sirve en HTML plano, Vue, Svelte, Angular, Astro o plantillas de servidor.
 //
@@ -24,20 +26,13 @@ import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation
 import { informationCircle } from "@zuccadev-labs/zuix-zicon/icons/information-circle";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import * as actions from "./actions";
-import * as agenda from "./agenda";
-import * as widgets from "./widgets";
-import * as carousel from "./carousel";
-import * as collections from "./collections";
-import * as contentDom from "./content";
-import * as datatable from "./datatable";
-import * as forms from "./forms";
+import * as choice from "./forms-choice";
+import * as controls from "./forms-controls";
+import * as fields from "./forms-fields";
+import * as listbox from "./forms-listbox";
+import * as popup from "./forms-popup";
 import * as layers from "./layers";
 import * as navigation from "./navigation";
-import * as reading from "./reading";
-import * as effects from "./effects";
-import * as color from "./color";
-import * as media from "./media";
-import * as time from "./time";
 import { trapTab } from "../core/focus";
 import { trackScrollEdges } from "../core/edges";
 import { escapeTop } from "../core/layers";
@@ -53,85 +48,16 @@ import { move, moveBoth } from "../core/roving";
 import { swipeDirection, swipeToDismiss } from "../core/swipe";
 import { createTimer } from "../core/timer";
 import { createTypeahead } from "../core/typeahead";
-import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
+import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup, type DomModule, type DomPart } from "./shared";
 
-// Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [
-  actions,
-  forms,
-  collections,
-  datatable,
-  carousel,
-  time,
-  agenda,
-  color,
-  media,
-  widgets,
-  contentDom,
-  reading,
-  effects,
-  navigation,
-  layers,
-];
-export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
-export { setJsonTreeValue, setStep } from "./content";
-export { setHighlightQuery } from "./reading";
-export { setDotMatrixPattern } from "./effects";
-export { setColorValue } from "./color";
-export { setCompareValue } from "./media";
+export type { DomModule, DomPart } from "./shared";
 export { download, downloadBlob, downloadUrl, mimeFromName, type DownloadSource } from "../core/download";
-export { qrcodeSvg } from "../core/qr-widget";
-export { confetti, type ConfettiOptions } from "../core/confetti-runtime";
 export { matchesShortcut, normalizeShortcut, parseShortcut, shortcutLabels } from "../core/shortcut";
-export { signatureBlob, signatureValue, type SignatureValue } from "../core/signature-widget";
-export { cropImage, cropImageBlob, type CropImageOptions } from "../core/crop-image";
-export {
-  checkTreeItem,
-  openPalette,
-  renameTreeItem,
-  selectTreeItem,
-  toggleTreeItem,
-  sortTable,
-  setPage,
-  type SortDirection,
-} from "./collections";
-export { dataTableSelection, setDataTablePage, setDataTableSelection } from "./datatable";
-export {
-  setSelectValue,
-  setComboboxOptions,
-  setComboboxLoading,
-  setComboboxValue,
-  setCalendarOptions,
-  setCalendarValue,
-  setDatePickerValue,
-  setSliderValue,
-  setOtpValue,
-  setDateFieldValue,
-  setTimeFieldValue,
-  setTimePickerValue,
-  setNumberInputValue,
-  setListboxValue,
-  setTagsValue,
-  type CalendarOptions,
-  type ComboboxOption,
-  type DateRange,
-} from "./forms";
-
-// Los tres iconos que este módulo dibuja por su cuenta (cierre de aviso, confirmación).
-registerIcons([xMark, exclamationTriangle, informationCircle]);
-
+export { setOtpValue, setSliderValue } from "./forms-controls";
+export { setNumberInputValue } from "./forms-fields";
+export { setListboxValue, setTagsValue } from "./forms-choice";
+export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
 export { place, type Placement };
-export { pauseTimer, resetTimer, startTimer, updateRelativeTime } from "./time";
-export {
-  destroyAgenda,
-  setAgendaCalendars,
-  setAgendaEvents,
-  setAgendaOptions,
-  setAgendaView,
-  type CalendarEvent,
-  type CalendarSource,
-} from "./agenda";
-export { destroyWidget, setWidgetProps } from "./widgets";
 export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
 export {
   closeActionBar,
@@ -143,7 +69,67 @@ export {
   type TourInit,
   type TourStepInit,
 } from "./layers";
-export { formatDateRange, isoWeekText, PRESET_KEYS, rangePresets, resolvePreset, weekNumber, weekStartOf } from "../core/date";
+
+// Los tres iconos que este módulo dibuja por su cuenta (cierre de aviso, confirmación). Se registran al usarse,
+// no al importar: quien solo toma setTheme() no arrastra nada.
+let ownIcons = false;
+function registerOwnIcons(): void {
+  if (ownIcons) return;
+  ownIcons = true;
+  registerIcons([xMark, exclamationTriangle, informationCircle]);
+}
+
+/* ---------- Piezas registradas ---------- */
+
+// Las piezas de esta entrada: acciones, navegación, capas y lo básico de formularios (Select, Combobox, Slider,
+// OTPInput, FileUpload, campos, Listbox y TagsInput). Las familias (fechas, colecciones, contenido, agenda,
+// gráficos, multimedia, efectos) se añaden con use() o init(módulo, …).
+const coreModule = (): DomModule => ({
+  name: "core",
+  parts: [
+    { rank: 10, setup: actions.setup, hydrate: actions.hydrate },
+    { rank: 20, setup: popup.setup, hydrate: () => {} },
+    { rank: 21, setup: listbox.setup, hydrate: listbox.hydrate },
+    { rank: 23, setup: controls.setup, hydrate: controls.hydrate },
+    { rank: 26, setup: fields.setup, hydrate: fields.hydrate },
+    { rank: 27, setup: choice.setup, hydrate: choice.hydrate },
+    { rank: 60, setup: navigation.setup, hydrate: navigation.hydrate },
+    { rank: 61, setup: layers.setup, hydrate: layers.hydrate },
+  ],
+});
+
+const registered = new Set<string>();
+let parts: DomPart[] = [];
+
+// Una pieza compartida por varias familias (el montaje de piezas de árbol) se registra una sola vez.
+function collect(mods: readonly DomModule[], fresh: DomPart[]): DomPart[] {
+  for (const mod of mods) {
+    if (registered.has(mod.name)) continue;
+    registered.add(mod.name);
+    if (mod.requires) collect(mod.requires, fresh);
+    for (const p of mod.parts) if (!parts.includes(p) && !fresh.includes(p)) fresh.push(p);
+  }
+  return fresh;
+}
+
+function add(mods: readonly DomModule[]): DomPart[] {
+  const fresh = collect(mods, []);
+  if (fresh.length) parts = [...parts, ...fresh].sort((a, b) => a.rank - b.rank);
+  return fresh;
+}
+
+/**
+ * Registra familias de comportamiento (`agendaModule` de `@zuccadev-labs/zuix-zui/dom/agenda`, `chartsModule`…).
+ * Repetible: cada familia se registra una vez. Si `init()` ya corrió, conecta sus listeners y prepara el documento.
+ */
+export function use(...mods: DomModule[]): void {
+  add([coreModule()]);
+  const fresh = add(mods);
+  if (!wiring || !fresh.length) return;
+  const on = listener(wiring.signal);
+  for (const p of fresh) p.setup(on);
+  if (document.readyState !== "loading") for (const p of fresh) p.hydrate(document);
+}
 
 const isBrowser = typeof document !== "undefined";
 
@@ -369,7 +355,7 @@ export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
 
 let subTimer: ReturnType<typeof setTimeout> | undefined;
 
-const aim = createMenuAim();
+const aim = /* @__PURE__ */ createMenuAim();
 
 /**
  * Puntero sobre una entrada: la resalta y, con un pequeño retardo, abre su submenú o cierra el de otra entrada.
@@ -405,7 +391,7 @@ function checkItem(item: HTMLElement): void {
 }
 
 // Búsqueda por letra: enfoca la siguiente entrada cuyo texto empieza por lo tecleado.
-const menuSearch = createTypeahead(600);
+const menuSearch = /* @__PURE__ */ createTypeahead(600);
 
 function typeahead(menu: HTMLElement, key: string): boolean {
   const items = menuItems(menu);
@@ -563,6 +549,7 @@ export function toast({
   regionLabel = "Notifications (F8)",
   loading = false,
 }: ToastOptions): ToastHandle {
+  registerOwnIcons();
   const host = viewport(position, regionLabel);
   const item = document.createElement("div");
   item.className = "z-liquid z-toast";
@@ -738,6 +725,7 @@ export function confirm({
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
 }: ConfirmOptions): Promise<boolean> {
+  registerOwnIcons();
   const dialog = document.createElement("dialog");
   const id = `z-confirm-${++confirmId}`;
   dialog.className = "z-liquid z-modal z-confirm";
@@ -997,7 +985,8 @@ export function hydrate(root: ParentNode = document): void {
   for (const accordion of root.querySelectorAll<HTMLElement>('[data-z-dom] .z-accordion[data-collapsible="false"]'))
     lockAccordion(accordion);
   for (const trigger of root.querySelectorAll<HTMLElement>(".z-menu__item[data-z-submenu]")) describeSubmenu(trigger);
-  for (const mod of modules) mod.hydrate(root);
+  add([coreModule()]);
+  for (const p of parts) p.hydrate(root);
 }
 
 function onClick(event: MouseEvent): void {
@@ -1235,7 +1224,7 @@ function onKeydown(event: KeyboardEvent): void {
 }
 
 // Pulsación larga con dedo o lápiz: iOS no emite `contextmenu`, y un Chromium de escritorio con pantalla táctil tampoco.
-const contextPress = createLongPress((point, event) => {
+const contextPress = /* @__PURE__ */ createLongPress((point, event) => {
   const menu = contextMenuAt(event.target);
   if (!menu) return;
   openPopover(menu, point, "bottom-start");
@@ -1268,8 +1257,9 @@ let wiring: AbortController | undefined;
  * Conecta el comportamiento. Idempotente; llamar una vez al cargar. Devuelve `destroy`, que retira todos los
  * listeners del documento (pruebas, microfrontends, navegación con sustitución de página).
  */
-export function init(): () => void {
+export function init(...mods: DomModule[]): () => void {
   if (!isBrowser) return () => {};
+  use(...mods);
   if (wiring) return destroy;
   wiring = new AbortController();
   const on = listener(wiring.signal);
@@ -1366,7 +1356,7 @@ export function init(): () => void {
   on(document, "focusout", (event) => {
     if (!tipHost || tipHost.contains(event.target as Node)) hideTooltip();
   });
-  for (const mod of modules) mod.setup(on);
+  for (const p of parts) p.setup(on);
   const ready = () => {
     detectSourceNesting();
     hydrate();
@@ -1384,8 +1374,7 @@ export function init(): () => void {
 export function destroy(): void {
   wiring?.abort();
   wiring = undefined;
-  agenda.destroyAgendas();
-  widgets.destroyWidgets();
+  for (const p of parts) p.teardown?.();
   contextPress.cancel();
   clearTimeout(subTimer);
   aim.clear();

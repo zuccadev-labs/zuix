@@ -23,7 +23,7 @@ import { compare, parseNumber } from "../core/compare";
 import { checkStates, rangeIds, toggleCheck, type TreeShape } from "../core/tree";
 import { clampPage, pageRange, pageTotal } from "../core/pagination";
 import { score } from "../core/search";
-import { closeDialog, openDialog } from "./index";
+import { closeDialog, openDialog } from "./core";
 import { logicalKey, pressedOnBackdrop, setMarkup, type Listen } from "./shared";
 
 registerIcons([arrowUp, arrowDown]);

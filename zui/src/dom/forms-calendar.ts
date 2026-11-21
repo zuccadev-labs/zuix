@@ -60,7 +60,7 @@ import {
   type DateRange,
 } from "../core/date";
 import { all, emit, flag, hidePopup, inDom, isOpen, ownerOf, popupFor, showPopup } from "./forms-popup";
-import { closeDialog, openDialog } from "./index";
+import { closeDialog, openDialog } from "./core";
 import { logicalKey, setMarkup, type Listen } from "./shared";
 
 registerIcons([chevronLeft, chevronRight, chevronUpDown, minus, plus]);

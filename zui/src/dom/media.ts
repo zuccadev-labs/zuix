@@ -22,12 +22,17 @@ import { qrcodeSvg } from "../core/qr-widget";
 import { signatureBlob, signatureValue } from "../core/signature-widget";
 import { inDom } from "./forms-popup";
 import { byRef, setMarkup, type Listen } from "./shared";
-import { registerWidget } from "./widgets";
+import { widgetPart } from "./widgets";
 
 registerIcons([arrowsRightLeft, arrowsUpDown, pencil, language, arrowUturnDownLeft, trash, xMark]);
 
-for (const widget of [qrcodeWidget, circularSliderWidget, imageCropperWidget, signaturePadWidget, shortcutInputWidget])
-  registerWidget(widget);
+export const mediaWidgets = /* @__PURE__ */ widgetPart(45.3, [
+  qrcodeWidget,
+  circularSliderWidget,
+  imageCropperWidget,
+  signaturePadWidget,
+  shortcutInputWidget,
+]);
 
 function pick(root: ParentNode, selector: string): HTMLElement[] {
   const list = [...root.querySelectorAll<HTMLElement>(selector)];

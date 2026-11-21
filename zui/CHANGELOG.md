@@ -110,9 +110,12 @@ radios y material de los tokens.
     en el popover y `data-z-anchor="#id"` en el disparador; `openPopover()` acepta `{ trigger }`. Nuevos
     `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
     escribe `--z-arrow-offset`.
-  - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, que lo
-    describe (`aria-describedby`); el puntero cruza a la tarjeta sin cerrarla, Escape y una pulsación fuera la
-    cierran y Tab entra en ella y sale hacia lo que sigue al enlace. Flecha opcional.
+  - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, con el
+    patrón «hovercard» de modern-web-guidance: la tarjeta es `role="tooltip"` (el rol mínimo de una pista con
+    enlaces) y describe al enlace con `aria-describedby` desde que se monta, abierta o cerrada, sin
+    `aria-expanded` y sin mover el foco al abrirse; un `aria-describedby` del autor manda. El puntero cruza a la
+    tarjeta sin cerrarla, Escape y una pulsación fuera la cierran y Tab entra en ella y sale hacia lo que sigue al
+    enlace. Flecha opcional.
   - `Toggletip`: botón de ayuda con nombre propio y `aria-expanded`; el puntero o el foco la asoman, el clic la fija.
   - Lógica común en `core/interest` (`createInterest`, `bridgeTab`). En `/dom`, `[data-z-hovercard]` y
     `[data-z-toggletip]` con `.z-hovercard`/`.z-toggletip` en `popover=manual`, y `setHintOpen()`.
@@ -289,8 +292,19 @@ radios y material de los tokens.
   `z:reject`.
 - Tipos `ButtonVariant`, `ButtonSize` y `CheckedState`, y hoja `styles/fields.css`.
 
+- `/dom` por partes: `@zuccadev-labs/zuix-zui/dom/core` (núcleo con `init()`, diálogos, popovers, menús,
+  `toast`, `confirm`, pestañas, capas y lo básico de formularios) y una entrada por familia, `/dom/dates`,
+  `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media` y `/dom/effects`, cada
+  una con su módulo (`datesModule`, `agendaModule`…) para `init(módulo, …)` o para `use(módulo, …)`, que también
+  conecta una familia después de `init()`. Cada módulo registra sus propios iconos. `/dom` sigue exportando todo
+  y su `init()` sigue montando todo. Con esbuild, solo `toast()` pasa de 225 a 11 kB y `init()` del núcleo pesa
+  92 kB, frente a 515 kB del completo. Tipos `DomModule` y `DomPart`.
+
 ### Cambiado
 
+- `/dom` no hace nada al importarse: `sideEffects` ya no marca `src/dom` ni `dist/esm/dom`, los iconos de
+  `toast()` y `confirm()` se registran al usarse y `hydrate()` e `init()` registran las familias. Un bundler
+  descarta lo que no se usa (`dist/zui.dom.js` sigue siendo un solo archivo con todo).
 - `Button` e `IconButton` respetan un `aria-disabled` recibido (antes lo pisaba el estado de carga) y, con él,
   no ejecutan `onClick`: un botón apagado que conserva el foco, como pide una barra de herramientas.
 - Un menú que se vuelve a abrir durante su animación de salida se monta de nuevo: el foco vuelve a su primera
@@ -357,6 +371,8 @@ radios y material de los tokens.
 
 ### Corregido
 
+- El manifiesto de `Calendar` declara el valor por defecto de `showOutsideDays` (`true` con un mes, `false` con
+  varios).
 - `Accordion` y `Carousel` ocupan el ancho de su contenedor también dentro de una fila flex: el acordeón encogía
   y el chevron se pegaba al título, y el carrusel encogía hasta 139 px.
 - `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su

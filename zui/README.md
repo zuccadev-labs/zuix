@@ -42,6 +42,20 @@ init();
 toast({ title: "Ready", intent: "success" });
 ```
 
+`@zuccadev-labs/zuix-zui/dom` has no import-time side effects, so a bundler drops what you don't use (only
+`toast()` is about 11 kB), but its `init()` wires every family. To load less, start from the core and add the
+families the page needs:
+
+```js
+import { init } from "@zuccadev-labs/zuix-zui/dom/core";        // dialogs, popovers, menus, toast, basic forms…
+import { datesModule } from "@zuccadev-labs/zuix-zui/dom/dates"; // Calendar, DatePicker, DateField…
+
+init(datesModule); // later: use(agendaModule) from "@zuccadev-labs/zuix-zui/dom/agenda"
+```
+
+Families: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`. Which one covers what, and
+the sizes, in the [frameworks guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md).
+
 ```html
 <body class="z-root z-canvas" data-z-dom>
   <button type="button" class="z-btn z-btn--secondary" data-size="md" data-z-open="#edit">Edit profile</button>
@@ -102,7 +116,9 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | Entry | Contents |
 |---|---|
 | `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
-| `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
+| `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior, everything: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
+| `@zuccadev-labs/zuix-zui/dom/core` | Framework-free core (`init`, `use`, dialogs, popovers, menus, `toast`, basic forms), extended per family |
+| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |

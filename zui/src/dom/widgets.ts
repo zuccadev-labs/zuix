@@ -3,33 +3,14 @@
 // el binding de React (core/widget + core/vnode) y la misma interacción. Configuración en atributos `data-*` y en un hijo
 // `<script type="application/json" data-props>`; datos por propiedad con `setWidgetProps(el, props)`. Los avisos salen
 // como `z:<nombre>` (`z:select`, `z:taskchange`…). El texto de la aplicación entra siempre como texto.
+// Este archivo es solo el registro y el montaje: cada familia registra sus piezas (./widgets-agenda,
+// ./widgets-charts, ./color, ./media) y comparte `widgetsPart`.
 
-import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
-import { buildingOffice } from "@zuccadev-labs/zuix-zicon/icons/building-office";
-import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
-import { chevronDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-down";
-import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
-import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
-import { chevronUpDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-up-down";
-import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-triangle";
-import { fire } from "@zuccadev-labs/zuix-zicon/icons/fire";
-import { flag } from "@zuccadev-labs/zuix-zicon/icons/flag";
-import { globeAlt } from "@zuccadev-labs/zuix-zicon/icons/globe-alt";
-import { tableCells } from "@zuccadev-labs/zuix-zicon/icons/table-cells";
-import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
-import { findSlots, type VAttr } from "../core/vnode";
+import type { VNode } from "../core/vnode";
 import { domEventName, focusActive, type Widget, type WidgetHost } from "../core/widget";
-import { setCalendarOptions, type CalendarOptions } from "./forms-calendar";
 import { emit, inDom } from "./forms-popup";
+import type { DomPart } from "./shared";
 import { patchChildren } from "./vtree";
-import { chartWidget } from "../core/chart-widget";
-import { freeBusyWidget } from "../core/freebusy-widget";
-import { habitWidget } from "../core/habit-widget";
-import { heatmapWidget } from "../core/heatmap-widget";
-import { perpetualWidget } from "../core/perpetual-widget";
-import { slotPickerWidget } from "../core/slots-widget";
-import { sparklineWidget } from "../core/sparkline";
-import { timelineWidget } from "../core/timeline-widget";
 
 // biome-ignore lint/suspicious/noExplicitAny: el registro guarda piezas de props, configuración y estado distintos.
 type AnyWidget = Widget<any, any, any>;
@@ -46,35 +27,16 @@ const entries = new WeakMap<HTMLElement, Entry>();
 // elemento que la aplicación retira sin desmontarlo no queda retenido por esta lista.
 const mounted = new Set<WeakRef<HTMLElement>>();
 const refs = new WeakMap<HTMLElement, WeakRef<HTMLElement>>();
-const registry: AnyWidget[] = [];
 let seq = 0;
 
-registerIcons([
-  buildingOffice,
-  check,
-  chevronDown,
-  chevronLeft,
-  chevronRight,
-  chevronUpDown,
-  exclamationTriangle,
-  fire,
-  flag,
-  globeAlt,
-  tableCells,
-  xMark,
-]);
-registerWidget(perpetualWidget);
-registerWidget(timelineWidget);
-registerWidget(freeBusyWidget);
-registerWidget(slotPickerWidget);
-registerWidget(heatmapWidget);
-registerWidget(habitWidget);
-registerWidget(chartWidget);
-registerWidget(sparklineWidget);
+// Ranuras que una pieza rellena con otro componente del modo DOM (el Calendar incrustado de SlotPicker): las
+// registra la familia que lo trae, para que este registro no dependa de ella.
+type SlotFill = (el: HTMLElement, slots: VNode[]) => void;
+const slotFills: SlotFill[] = [];
 
-/** Registra una pieza para que `hydrate` la monte. */
-export function registerWidget(widget: AnyWidget): void {
-  if (!registry.includes(widget)) registry.push(widget);
+/** Añade un relleno de ranuras (lo usa la familia de agenda para el Calendar incrustado). */
+export function registerSlotFill(fill: SlotFill): void {
+  if (!slotFills.includes(fill)) slotFills.push(fill);
 }
 
 function propsJSON(el: HTMLElement): Record<string, unknown> {
@@ -117,17 +79,7 @@ function render(el: HTMLElement, focus = false): void {
   for (const s of scripts) s.remove();
   patchChildren(el, tree.c ?? []);
   el.append(...scripts);
-  // Calendar incrustados: atributos del modo DOM y funciones con setCalendarOptions (que lo pinta).
-  for (const slot of findSlots(tree.c ?? [], "calendar")) {
-    const cal = el.querySelector<HTMLElement>(`.z-calendar[data-slot="${CSS.escape(String(slot.p.name ?? ""))}"]`);
-    if (!cal) continue;
-    const attrs = (slot.p.attrs ?? {}) as Record<string, VAttr>;
-    for (const [k, value] of Object.entries(attrs)) {
-      if (value === undefined || value === null || value === false) cal.removeAttribute(k);
-      else if (cal.getAttribute(k) !== String(value === true ? "" : value)) cal.setAttribute(k, value === true ? "" : String(value));
-    }
-    setCalendarOptions(cal, (slot.p.options ?? {}) as CalendarOptions);
-  }
+  for (const fill of slotFills) fill(el, tree.c ?? []);
   if (widget.after) widget.after(el, entry.host, focus);
   else if (focus) focusActive(el);
 }
@@ -194,13 +146,20 @@ export function destroyWidgets(): void {
   }
 }
 
-export function hydrate(root: ParentNode): void {
-  for (const widget of registry) {
+/** Monta en `root` las piezas de `list` (las de una familia) que encuentre dentro de `[data-z-dom]`. */
+export function mountWidgets(root: ParentNode, list: readonly AnyWidget[]): void {
+  for (const widget of list) {
     const selector = `.${widget.root}`;
-    const list = [...root.querySelectorAll<HTMLElement>(selector)];
-    if (root instanceof HTMLElement && root.matches(selector)) list.unshift(root);
-    for (const el of list) if (inDom(el)) mount(el, widget);
+    const found = [...root.querySelectorAll<HTMLElement>(selector)];
+    if (root instanceof HTMLElement && root.matches(selector)) found.unshift(root);
+    for (const el of found) if (inDom(el)) mount(el, widget);
   }
 }
 
-export function setup(): void {}
+/** Pieza que monta las piezas de árbol de una familia. */
+export const widgetPart = (rank: number, list: readonly AnyWidget[]): DomPart => ({
+  rank,
+  setup() {},
+  hydrate: (root) => mountWidgets(root, list),
+  teardown: destroyWidgets,
+});
