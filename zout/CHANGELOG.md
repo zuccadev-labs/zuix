@@ -64,6 +64,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Navbar`: el margen lateral se mide sobre el ancho de la cabecera (`cqi`), no el de la ventana; dentro de un
+  contenedor estrecho las acciones («Get started») ya no se salen de la barra.
+- `TabStrip`: el lado de la tira con pestañas ocultas se difumina en vez de mostrar un icono cortado (sin
+  transparencia o con colores forzados, un canto normal), y la pestaña activa se deja entera a la vista fuera del
+  difuminado, también cuando cambia su ancho al cargar la fuente. Igual en React y en `/dom`.
 - Auditoría visual: `RailItem` y los botones de `FloatingPanel` sin el relleno por defecto del navegador; huecos
   de `2px` y `3px` a `--z-space-0-5`. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus pestañas (el
   contrato HTML los pintaba vacíos).

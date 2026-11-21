@@ -193,6 +193,10 @@
   }
   /* Sombras de desplazamiento: dos fondos «local» tapan dos «scroll»; solo se ve la sombra del lado con más
      contenido. Sin JavaScript. */
+  /* Con sombras es un panel: el contenido no toca sus cantos. */
+  .z-scroll-area[data-shadows] {
+    padding: var(--z-space-2) var(--z-space-3);
+  }
   .z-scroll-area[data-shadows][data-orientation="vertical"] {
     background:
       linear-gradient(var(--z-surface-solid) 30%, transparent) top / 100% var(--z-space-8) no-repeat local,

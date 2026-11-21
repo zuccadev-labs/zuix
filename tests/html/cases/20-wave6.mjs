@@ -77,7 +77,8 @@ export default async function ({ page, test, ok }) {
     await narrow.locator(".z-navbar__toggle").click();
     const menu = narrow.locator(".z-navbar__menu");
     await until(() => isOpen(menu), "el cajón abre");
-    ok((await narrow.locator(".z-navbar__toggle").getAttribute("aria-expanded")) === "true", "botón expandido");
+    // aria-expanded sigue al evento `toggle`, que llega en otra tarea: bajo carga, después de abrirse el cajón.
+    await until(async () => (await narrow.locator(".z-navbar__toggle").getAttribute("aria-expanded")) === "true", "botón expandido");
     ok((await menu.locator(".z-navmenu").getAttribute("data-orientation")) === "vertical", "menú vertical");
     const group = menu.locator(".z-navmenu__trigger").first();
     await group.click();

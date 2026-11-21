@@ -499,10 +499,10 @@ body {
 .app-demo--fluid {
   min-width: 0;
 }
-/* Valores de las demos de Workspace: listas de ids largas parten línea. */
+/* Valores de las demos de Workspace: listas de ids largas parten línea entre ids (<wbr> tras cada coma), no dentro
+   de un nombre («read/me» con overflow-wrap: anywhere). */
 [data-testid^="ws-"].app-value {
   display: block;
-  overflow-wrap: anywhere;
 }
 /* Gráficos */
 .app-charts {

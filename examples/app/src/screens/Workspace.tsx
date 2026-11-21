@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import {
   Float,
   FloatingPanel,
@@ -54,6 +54,18 @@ const INITIAL_TABS: WorkTab[] = [
 ];
 
 /** Pantalla Workspace: piezas de escritorio de zout (sidebar plegable, pestañas de trabajo, paneles y ventanas). */
+
+/** Texto de una lectura con puntos de corte tras `,` y `:` (el texto no cambia): la línea parte entre ids, no dentro. */
+function breakable(text: string) {
+  return text.split(/(?<=[,:])/).map((part, i) => (
+    // biome-ignore lint/suspicious/noArrayIndexKey: piezas de un texto que se vuelve a pintar entero
+    <Fragment key={i}>
+      {i ? <wbr /> : null}
+      {part}
+    </Fragment>
+  ));
+}
+
 export function Workspace() {
   const [collapsed, setCollapsed] = useState(false);
   const [page, setPage] = useState("home");
@@ -125,7 +137,7 @@ export function Workspace() {
               />
             </div>
             <output className="app-value" data-testid="ws-tabs-value">
-              {tabs.map((t) => t.id).join(",")}
+              {breakable(tabs.map((t) => t.id).join(","))}
             </output>
           </Card>
         </Grid>
@@ -145,7 +157,7 @@ export function Workspace() {
           />
         </div>
         <output className="app-value" data-testid="ws-panelayout-value">
-          {JSON.stringify(layout, (key, value) => (key === "sizes" ? undefined : value))}
+          {breakable(JSON.stringify(layout, (key, value) => (key === "sizes" ? undefined : value)))}
         </output>
       </PageSection>
       <PageSection title="Panes and windows">

@@ -2,6 +2,52 @@
 @import "./site.css";
 
 @layer zout {
+  /* Tira con desplazamiento horizontal: el lado con contenido oculto se difumina (data-scroll-edges lo pone el
+     binding al desplazar y al cambiar de tamaño). Sin transparencia o con colores forzados, un canto normal. */
+  .z-tabstrip__list[data-scroll-edges="start"] {
+    -webkit-mask-image: linear-gradient(to right, transparent, var(--z-fg) var(--z-space-6));
+    mask-image: linear-gradient(to right, transparent, var(--z-fg) var(--z-space-6));
+  }
+  .z-tabstrip__list[data-scroll-edges="end"] {
+    -webkit-mask-image: linear-gradient(to left, transparent, var(--z-fg) var(--z-space-6));
+    mask-image: linear-gradient(to left, transparent, var(--z-fg) var(--z-space-6));
+  }
+  .z-tabstrip__list[data-scroll-edges="start end"] {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--z-fg) var(--z-space-6),
+      var(--z-fg) calc(100% - var(--z-space-6)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--z-fg) var(--z-space-6),
+      var(--z-fg) calc(100% - var(--z-space-6)),
+      transparent
+    );
+  }
+  [dir="rtl"] .z-tabstrip__list[data-scroll-edges="start"] {
+    -webkit-mask-image: linear-gradient(to left, transparent, var(--z-fg) var(--z-space-6));
+    mask-image: linear-gradient(to left, transparent, var(--z-fg) var(--z-space-6));
+  }
+  [dir="rtl"] .z-tabstrip__list[data-scroll-edges="end"] {
+    -webkit-mask-image: linear-gradient(to right, transparent, var(--z-fg) var(--z-space-6));
+    mask-image: linear-gradient(to right, transparent, var(--z-fg) var(--z-space-6));
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-tabstrip__list[data-scroll-edges] {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .z-tabstrip__list[data-scroll-edges~="start"] {
+      border-inline-start: 1px solid var(--z-line-strong);
+    }
+    .z-tabstrip__list[data-scroll-edges~="end"] {
+      border-inline-end: 1px solid var(--z-line-strong);
+    }
+  }
   /* ── Shell ─────────────────────────────────────────────────────────────── */
   /* Contenedor con nombre: antes de que el comportamiento mida el shell, la hoja decide con él qué paneles caben. */
   .z-shell {

@@ -298,7 +298,7 @@ function collect({ TOKENS, families, coarse }) {
         const row = el.closest("a,button,li,[role=option],[role=treeitem],[role=menuitem],[role=row]")?.getBoundingClientRect() ?? r;
         // Un panel del alto de la pantalla (barra lateral, índice) con una lista larga desplaza como debe; el código
         // y los comandos desplazan en horizontal a propósito.
-        const panel = q.height >= vh * 0.6;
+        const panel = q.height >= vh * 0.4;
         const mono = /mono/i.test(getComputedStyle(el).fontFamily) || el.closest("pre,code");
         const short =
           (!panel &&
@@ -318,8 +318,9 @@ function collect({ TOKENS, families, coarse }) {
       } else hidden = true;
       break;
     }
-    // Un evento mide lo que dura y una diapositiva puede asomar a medias: su texto cortado es parte del diseño.
-    const byDesign = el.closest(".z-event,.z-carousel__slide");
+    // Un evento mide lo que dura, una diapositiva puede asomar a medias y en una marquesina los elementos entran y
+    // salen por el borde (cuál queda cortado depende del fotograma): su texto cortado es parte del diseño.
+    const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport");
     if (hidden && !byDesign && !/ellipsis/.test(getComputedStyle(el).textOverflow))
       add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
     const current = el.closest("[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
@@ -378,6 +379,54 @@ function collect({ TOKENS, families, coarse }) {
           text: el.textContent.trim().slice(0, 40),
         },
       );
+  }
+
+  // Palabra partida en mitad: un salto de línea entre dos letras de la misma palabra, sin guion, porque la caja
+  // permite partir en cualquier punto (`overflow-wrap: anywhere | break-word`, `word-break: break-all`). Se mide
+  // con un rango por letra: si la siguiente letra de la palabra empieza más abajo, la palabra se partió.
+  const LETTER = /[\p{L}\p{N}_]/u;
+  for (const el of shown) {
+    const st = getComputedStyle(el);
+    if (!/anywhere|break-word/.test(st.overflowWrap) && !/break-all|break-word/.test(st.wordBreak)) continue;
+    if (st.hyphens === "auto") continue;
+    for (const node of el.childNodes) {
+      if (node.nodeType !== 3) continue;
+      const t = node.textContent;
+      if (t.length < 2 || t.length > 600) continue;
+      const range = document.createRange();
+      let prevTop = null;
+      let prevLetter = false;
+      let split = null;
+      for (let i = 0; i < t.length && !split; i++) {
+        const letter = LETTER.test(t[i]);
+        range.setStart(node, i);
+        range.setEnd(node, i + 1);
+        const box = range.getClientRects()[0];
+        if (!box) {
+          prevLetter = false;
+          continue;
+        }
+        if (letter && prevLetter && prevTop !== null && box.top > prevTop + box.height / 2) {
+          let a = i;
+          let b = i;
+          while (a > 0 && LETTER.test(t[a - 1])) a--;
+          while (b < t.length && LETTER.test(t[b])) b++;
+          split = `${t.slice(a, i)}/${t.slice(i, b)}`;
+        }
+        prevTop = box.top;
+        prevLetter = letter;
+      }
+      if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
+    }
+  }
+
+  // Valor cortado: un campo de una línea cuyo valor corto (un número, un código) no cabe en su caja. Un texto largo
+  // que el usuario escribe puede desplazar dentro del campo; un valor de hasta 12 caracteres tiene que verse entero.
+  for (const el of shown) {
+    if (!el.matches("input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=file],[type=hidden])")) continue;
+    const v = el.value ?? "";
+    if (!v || v.length > 12 || el.scrollWidth <= el.clientWidth + 1) continue;
+    add("valor-cortado", el, `el valor «${v}» pide ${el.scrollWidth} px y el campo deja ${el.clientWidth}`, { text: v });
   }
 
   // Tapado: se recorre la página por tramos de una pantalla y en cada tramo se mira, en lo alto y en lo bajo de
@@ -519,6 +568,20 @@ function collect({ TOKENS, families, coarse }) {
             0.6)
       ) {
         add("relleno-tactil", el, `${prop} ${value} (completa el objetivo táctil)`);
+        continue;
+      }
+      // Centrado geométrico (marcador de un gráfico): margen negativo de medio tamaño propio.
+      if (
+        /margin/.test(prop) &&
+        signed < 0 &&
+        (Math.abs(v - rects.get(el).width / 2) <= 1 || Math.abs(v - rects.get(el).height / 2) <= 1)
+      ) {
+        add("centrado-geometrico", el, `${prop} ${signed}px (medio tamaño)`);
+        continue;
+      }
+      // Texto de lectura (Prose) y marcas en línea: el ritmo va en em y escala con la letra.
+      if (el.closest(".z-prose, .z-highlight__mark")) {
+        add("ritmo-em", el, `${prop} ${Math.round(v * 100) / 100}px`);
         continue;
       }
       if (/margin/.test(prop) && signed < 0 && v <= 2) {
@@ -762,6 +825,17 @@ function focusProbe() {
       .slice(0, 2)
       .map((c) => `.${c}`)
       .join("")}${e.getAttribute("role") ? `[role=${e.getAttribute("role")}]` : ""}`;
+  // Una pieza de SVG (porción de una tarta, punto de una línea) marca el foco con el trazo: cuenta si su trazo cambia
+  // respecto a una hermana sin foco.
+  if (el instanceof SVGElement) {
+    const sib = [...(el.parentElement?.children ?? [])].find(
+      (s) => s !== el && s.tagName === el.tagName && s.getAttribute("class") === el.getAttribute("class"),
+    );
+    const a = getComputedStyle(el);
+    const b = sib ? getComputedStyle(sib) : null;
+    const changed = !b || a.stroke !== b.stroke || a.strokeWidth !== b.strokeWidth || a.outlineStyle !== "none";
+    return { sig: sig(el), on: "", kind: changed ? "stroke" : "none", width: 0, ratio: null };
+  }
   // El anillo puede ir en el propio elemento o en el contenedor (:focus-within de un campo).
   for (let p = el, depth = 0; p && depth < 4; p = p.parentElement, depth++) {
     const cs = getComputedStyle(p);
@@ -1233,6 +1307,14 @@ function classify(recs) {
         case "alineacion-empujado":
           verdict = "aceptado";
           why = "grupo empujado al final de la fila (margen automático o justify)";
+          break;
+        case "centrado-geometrico":
+          verdict = "aceptado";
+          why = "margen negativo de medio tamaño: centra un marcador sobre su punto";
+          break;
+        case "ritmo-em":
+          verdict = "aceptado";
+          why = "ritmo de lectura en em (Prose, marcas en línea): escala con la letra";
           break;
         case "espaciado-linea":
           verdict = "aceptado";

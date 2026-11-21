@@ -125,6 +125,16 @@ export function createAutoplay(options: AutoplayOptions, start = true): Autoplay
 /** Número de posiciones de un carrusel sin bucle con `perPage` visibles: la última muestra los últimos `perPage`. */
 export const snapPositions = (count: number, perPage: number) => Math.max(1, Math.floor(count) - Math.max(1, Math.floor(perPage)) + 1);
 
+/**
+ * Slides por página que caben de verdad: los pedidos, o menos si la tira es más estrecha que esos slides a su ancho
+ * mínimo (cada slide mide `slide`, separados por `gap`, en una vista de `view`). Nunca menos de uno.
+ */
+export function fitPerPage(requested: number, view: number, slide: number, gap: number): number {
+  const wanted = perPageOf(requested);
+  if (!(view > 0) || !(slide > 0)) return wanted;
+  return Math.max(1, Math.min(wanted, Math.floor((view + gap + 0.5) / (slide + gap))));
+}
+
 /** Slides por página válidos (1–8). */
 export const perPageOf = (value: number | undefined) => (Number.isFinite(value) && value! >= 1 ? Math.min(8, Math.floor(value!)) : 1);
 

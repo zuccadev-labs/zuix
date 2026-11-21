@@ -39,6 +39,7 @@ import * as color from "./color";
 import * as media from "./media";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
+import { trackScrollEdges } from "../core/edges";
 import { escapeTop } from "../core/layers";
 import { lockScroll } from "../core/scroll-lock";
 import { createLongPress } from "../core/long-press";
@@ -961,7 +962,17 @@ function rate(group: HTMLElement, star: HTMLElement): void {
 }
 
 /** Prepara el marcado estático dentro de `[data-z-dom]`: orden de tabulación de pestañas y grupos de radio. */
+const edgeTracked = new WeakSet<HTMLElement>();
+
 export function hydrate(root: ParentNode = document): void {
+  // Tiras con desplazamiento horizontal: difuminado del borde con contenido oculto (data-scroll-edges).
+  for (const strip of root.querySelectorAll<HTMLElement>(
+    '[data-z-dom] .z-tabs__list:not([data-orientation="vertical"]), [data-z-dom] .z-listbox[data-orientation="horizontal"] > .z-listbox__viewport',
+  )) {
+    if (edgeTracked.has(strip)) continue;
+    edgeTracked.add(strip);
+    trackScrollEdges(strip);
+  }
   for (const tabs of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tabs, .z-tabs[data-z-dom]")) {
     const active = tabs.querySelector<HTMLElement>('.z-tabs__tab[data-state="active"]') ?? tabs.querySelector<HTMLElement>(".z-tabs__tab");
     if (active) selectTabQuiet(tabs, tabKey(active));

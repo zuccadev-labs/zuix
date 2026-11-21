@@ -460,8 +460,10 @@
   .z-progress-ring__content {
     grid-area: 1 / 1;
     max-width: calc(100% - var(--z-ring-thickness) * 2 - 4px);
-    overflow: hidden;
-    font-size: calc(var(--z-ring-size) * 0.26);
+    /* Recorta solo en horizontal: con interlineado 1 los rasgos de la letra sobresalen y se cortaban arriba. */
+    overflow-x: clip;
+    /* Tamaño de la escala según la talla del anillo (40 → 11, 64 → 16, 96 → 26 px). */
+    font-size: var(--z-text-fine);
     font-weight: var(--z-weight-semibold);
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -469,6 +471,12 @@
   }
   .z-progress-ring[data-size="sm"] .z-progress-ring__content {
     display: none;
+  }
+  .z-progress-ring[data-size="lg"] .z-progress-ring__content {
+    font-size: var(--z-text-title);
+  }
+  .z-progress-ring[data-size="xl"] .z-progress-ring__content {
+    font-size: var(--z-text-display-sm);
   }
   @media (forced-colors: active) {
     .z-progress-ring__bar {

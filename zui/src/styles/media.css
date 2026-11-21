@@ -56,6 +56,9 @@
     --z-compare-pos: 50%;
     position: relative;
     display: grid;
+    /* El ancho de su contenedor también en una fila flex: con dos capas sin ancho propio (un patrón, un degradado)
+       quedaba en 0 y solo se veía el divisor. */
+    inline-size: 100%;
     overflow: hidden;
     border-radius: var(--z-card-radius);
     box-shadow: inset 0 0 0 1px var(--z-line);

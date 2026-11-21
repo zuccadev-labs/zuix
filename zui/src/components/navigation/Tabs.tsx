@@ -1,7 +1,8 @@
 "use client";
-import { createContext, useContext, useId, type KeyboardEvent, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { logicalKey } from "../../core/dir";
+import { trackScrollEdges } from "../../core/edges";
 import { move } from "../../core/roving";
 import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
@@ -71,9 +72,14 @@ export function Tabs({
     if (next.dataset.value !== undefined) setValue(next.dataset.value);
   };
 
+  // Tira horizontal que desplaza: el borde con pestañas ocultas se difumina (data-scroll-edges, ver la hoja).
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => (listRef.current && orientation !== "vertical" ? trackScrollEdges(listRef.current) : undefined), [orientation]);
+
   return (
     <div className={cx("z-tabs", className)} data-orientation={orientation}>
       <div
+        ref={listRef}
         role="tablist"
         className="z-tabs__list"
         data-variant={variant}

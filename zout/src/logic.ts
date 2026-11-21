@@ -112,10 +112,15 @@ export function tabKeyIndex(key: string, current: number, count: number, rtl = f
   return -1;
 }
 
-/** Desplazamiento horizontal que deja a la vista una pestaña (`tab`) dentro de la tira (`list`); 0 si ya se ve. */
-export function revealOffset(tab: { left: number; right: number }, list: { left: number; right: number }): number {
-  if (tab.left < list.left) return tab.left - list.left;
-  if (tab.right > list.right) return tab.right - list.right;
+/**
+ * Desplazamiento horizontal que deja a la vista una pestaña (`tab`) dentro de la tira (`list`); 0 si ya se ve.
+ * `margin` aparta la pestaña del borde (el ancho del difuminado de la tira), para que no quede bajo la máscara.
+ */
+export function revealOffset(tab: { left: number; right: number }, list: { left: number; right: number }, margin = 0): number {
+  // Si la pestaña no cabe con el margen a los dos lados, se deja entera sin margen (mejor rozar el borde que cortarla).
+  const m = tab.right - tab.left + 2 * margin <= list.right - list.left ? margin : 0;
+  if (tab.left < list.left + m) return tab.left - list.left - m;
+  if (tab.right > list.right - m) return tab.right - list.right + m;
   return 0;
 }
 

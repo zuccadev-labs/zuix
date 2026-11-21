@@ -168,6 +168,8 @@ describe("TabStrip", () => {
     assert.equal(revealOffset({ left: 280, right: 340 }, list), 40);
     assert.equal(revealOffset({ left: 100, right: 300 }, list), 0);
     assert.equal(revealOffset({ left: 150, right: 200 }, list), 0);
+    assert.equal(revealOffset({ left: 120, right: 140 }, list, 24), -4); // fuera del difuminado de 24 px
+    assert.equal(revealOffset({ left: 90, right: 280 }, list, 24), -10); // no cabe con margen: entera, sin margen
   });
   test("revealOffset: una pestaña más ancha que la tira se alinea por su inicio", () => {
     assert.equal(revealOffset({ left: 50, right: 400 }, { left: 100, right: 300 }), -50);

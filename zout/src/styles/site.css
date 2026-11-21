@@ -264,14 +264,16 @@
   }
 
   /* ── Navbar ───────────────────────────────────────────────────────────── */
+  /* El margen lateral se mide sobre el ancho de la propia cabecera (cqi), no el de la ventana: en un contenedor
+     estrecho (una columna, una demo) 3,6vw de una ventana ancha empujaba las acciones fuera de la barra. */
   .z-navbar {
-    --z-navbar-gutter: clamp(var(--z-space-3), 3.6vw, var(--z-space-14));
     position: sticky;
     inset-block-start: 0;
     z-index: var(--z-layer-sticky);
+    container: z-navbar / inline-size;
     box-sizing: border-box;
     inline-size: 100%;
-    padding: var(--z-space-4) var(--z-navbar-gutter);
+    padding-block: var(--z-space-4);
     pointer-events: none;
   }
   .z-navbar[data-position="fixed"] {
@@ -282,10 +284,12 @@
     position: relative;
   }
   .z-navbar__inner {
+    --z-navbar-gutter: clamp(var(--z-space-3), 3.6cqi, var(--z-space-14));
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--z-space-3);
+    inline-size: calc(100% - var(--z-navbar-gutter) * 2);
     max-inline-size: var(--z-content-max);
     margin-inline: auto;
   }
@@ -447,7 +451,7 @@
     justify-content: center;
     gap: 0;
     inline-size: fit-content;
-    max-inline-size: 100%;
+    max-inline-size: calc(100% - var(--z-navbar-gutter) * 2);
     padding-inline: var(--z-space-1-5);
     border: 1px solid var(--z-glass-border);
     border-radius: var(--z-radius-lg);

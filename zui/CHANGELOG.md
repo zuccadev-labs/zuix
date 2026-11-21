@@ -369,6 +369,40 @@ radios y material de los tokens.
 
 ### Corregido
 
+- Revisión visual de la oleada 5:
+  - `AspectRatio` ocupa el ancho de su contenedor (en una fila flex encogía hasta su contenido) y sin medio (solo un
+    icono de relleno) se ve como un hueco de superficie con su proporción; antes era invisible.
+  - Rejilla de horas (`EventCalendar`, `TimeGrid`): la hora en punto a menos de media hora de «ahora» cede el sitio a
+    su rótulo (se pisaban), y el desplazamiento inicial no deja el rótulo de «ahora» a medias bajo la cabecera.
+  - `ColorPicker` y `ColorField`: los campos de canal recuperan su relleno compacto (la talla `sm` del campo lo
+    pisaba) y un valor de tres cifras («260» en H de OKLCH) se ve entero.
+  - `Carousel` y `CompareSlider` ocupan el ancho de su contenedor también dentro de una fila flex: el carrusel encogía
+    hasta 139 px (con tres por página, slides de 33 px y el texto letra a letra) y la comparación con capas sin
+    ancho propio quedaba en 0.
+  - `Carousel` con varias por página: cada slide tiene un ancho mínimo (`--z-carousel-slide-min`, 11rem) y en una tira
+    más estrecha se muestran las que caben (con sus posiciones, puntos, barra y flechas al día, en React y en
+    `/dom`); antes, tres por página a 390 dejaban tarjetas de 45 px con el título partido.
+  - `ColorPicker` y `ColorField` estrechos (menos de 18rem): el formato va en su propia línea y cada canal tiene un
+    suelo en el que caben tres cifras (antes, en 220 px, el canal A medía 18 px y cortaba «100»).
+  - `CardMedia` a sangre con ancho explícito: en WebKit salía más baja que su proporción (2,19 en vez de 16:9).
+  - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
+  - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al
+    título).
+  - El ejemplo apilado de `AreaChart` se titula como sus series («Revenue and costs, stacked»).
+  - `CircularProgress`: el texto central usa la escala (11, 16 y 26 px según la talla; antes un 26 % del
+    diámetro) y ya no se corta por arriba.
+  - `PieChart`: la porción enfocada muestra el anillo de foco (el canto separador lo tapaba).
+  - `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su
+    marcador (el nombre sigue para el lector de pantalla). Antes la fila se partía y el conector quedaba colgando. El paso
+    actual no encoge: su nombre se lee entero.
+  - El ejemplo de `ScrollArea` oculta varias filas (antes una sola, que parecía un recorte).
+  - `Avatar`: el tinte va sobre una base opaca; sobre una tarjeta o una fila con fondo las iniciales bajaban a
+    4,3:1 (axe, zutool y zenith claros).
+  - Escala de los gráficos (`niceTicks`): un valor apenas por fuera de una marca (−600 000,000001 con paso
+    200 000) quedaba fuera del eje; la holgura es ahora la del error de coma flotante.
+- `Tabs` y `Listbox` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con
+  degradado que sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto
+  normal. Igual en React y en `/dom`.
 - `TimePicker` sin React: el panel cerrado ya no se ve (su `display: flex` tapaba el `display: none` del popover
   cerrado y quedaba encima de lo que hubiera debajo).
 - `Carousel` con miniaturas: la tira se centra solo si cabe y lleva a la vista la miniatura actual.

@@ -35,6 +35,8 @@ const COVERED = [
   "tools/check-barrels.mjs",
   "tools/use-client.mjs",
   "zout/src/logic.ts",
+  "zout/src/edges.ts",
+  "zui/src/core/edges.ts",
   "zicon/src/svg.ts",
   "zicon/src/registry.ts",
   "zui/src/components/carousel/lens.ts",

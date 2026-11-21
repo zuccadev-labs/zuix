@@ -900,6 +900,11 @@ a[class*="skipToContent"]:focus {
   border-radius: var(--z-radius-xl);
   background: var(--z-surface);
 }
+/* En una celda el código no parte palabras (se partía «README.m/d» a 390): la tabla se ensancha y su marco desplaza,
+   con el lado oculto difuminado (data-scroll-edges, la regla genérica de zui). */
+.zd-markdown > .zd-table :is(td, th) code {
+  overflow-wrap: normal;
+}
 .zd-table > table {
   display: table;
   inline-size: 100%;
@@ -1447,7 +1452,9 @@ a[class*="skipToContent"]:focus {
       figure,
       details,
       summary
-    ) {
+    ):not([hidden]) {
+    /* Sin [hidden]: `revert` también deshace el atributo (Chromium lo trata como estilo del autor) y una fila
+       oculta de una tabla paginada se veía. */
     all: revert;
   }
 }
@@ -1457,9 +1464,25 @@ a[class*="skipToContent"]:focus {
     align-items: stretch;
   }
 }
-/* Tabla de props. */
-.zd-props td:first-child {
+/* Tabla de props. Ancha, una tabla; por debajo del ancho que piden sus cuatro columnas cada prop pasa a una
+   tarjeta (nombre y tipo arriba, valor por defecto, descripción debajo) en vez de partir el tipo letra a letra y
+   cortar la descripción por el borde. Se mide el propio bloque (consulta de contenedor), no la ventana. */
+.zd-table--props {
+  container: zd-props / inline-size;
+}
+.zd-props tbody th {
+  padding: var(--z-space-3-5) var(--z-space-5);
+  border-block-end: 1px solid var(--z-line);
+  background: none;
+  color: var(--z-fg);
+  font-size: var(--z-text-body);
+  font-weight: var(--z-weight-regular);
+  text-wrap: wrap;
+  vertical-align: top;
   white-space: nowrap;
+}
+.zd-props tr:last-child th {
+  border-block-end: 0;
 }
 .zd-props code {
   padding: var(--z-space-0-5) var(--z-space-1-5);
@@ -1477,7 +1500,6 @@ a[class*="skipToContent"]:focus {
   background: none;
   color: var(--z-info-text);
   font-weight: var(--z-weight-regular);
-  overflow-wrap: anywhere;
 }
 .zd-props .zd-props__default {
   padding: 0;
@@ -1485,6 +1507,90 @@ a[class*="skipToContent"]:focus {
   background: none;
   color: var(--z-fg-muted);
   font-weight: var(--z-weight-regular);
+}
+/* Tarjetas: las decide ComponentPage midiendo si la tabla cabe (`data-layout`); antes de hidratar, o sin JavaScript,
+   una consulta de contenedor a 36rem. */
+.zd-table--props[data-layout="cards"] .zd-props,
+.zd-table--props[data-layout="cards"] .zd-props :is(tbody, tr, th, td) {
+  display: block;
+}
+/* La cabecera de columnas sobra: cada dato lleva su rótulo. */
+.zd-table--props[data-layout="cards"] .zd-props thead {
+  display: none;
+}
+.zd-table--props[data-layout="cards"] .zd-props tbody tr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--z-space-1) var(--z-space-3);
+  padding: var(--z-space-4) var(--z-space-5);
+  border-block-end: 1px solid var(--z-line);
+}
+.zd-table--props[data-layout="cards"] .zd-props tbody tr:last-child {
+  border-block-end: 0;
+}
+.zd-table--props[data-layout="cards"] .zd-props tbody :is(th, td) {
+  padding: 0;
+  border: 0;
+}
+.zd-table--props[data-layout="cards"] .zd-props tbody th {
+  white-space: normal;
+}
+.zd-table--props[data-layout="cards"] .zd-props .zd-props__default-cell,
+.zd-table--props[data-layout="cards"] .zd-props .zd-props__desc {
+  flex-basis: 100%;
+}
+.zd-table--props[data-layout="cards"] .zd-props .zd-props__default-cell {
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+}
+.zd-table--props[data-layout="cards"] .zd-props .zd-props__default-cell::before {
+  content: "Por defecto: ";
+}
+.zd-table--props[data-layout="cards"] .zd-props .zd-props__desc:empty {
+  display: none;
+}
+@container zd-props (inline-size < 36rem) {
+  .zd-table--props:not([data-layout]) .zd-props,
+  .zd-table--props:not([data-layout]) .zd-props :is(tbody, tr, th, td) {
+    display: block;
+  }
+  /* La cabecera de columnas sobra: cada dato lleva su rótulo. */
+  .zd-table--props:not([data-layout]) .zd-props thead {
+    display: none;
+  }
+  .zd-table--props:not([data-layout]) .zd-props tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--z-space-1) var(--z-space-3);
+    padding: var(--z-space-4) var(--z-space-5);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .zd-table--props:not([data-layout]) .zd-props tbody tr:last-child {
+    border-block-end: 0;
+  }
+  .zd-table--props:not([data-layout]) .zd-props tbody :is(th, td) {
+    padding: 0;
+    border: 0;
+  }
+  .zd-table--props:not([data-layout]) .zd-props tbody th {
+    white-space: normal;
+  }
+  .zd-table--props:not([data-layout]) .zd-props .zd-props__default-cell,
+  .zd-table--props:not([data-layout]) .zd-props .zd-props__desc {
+    flex-basis: 100%;
+  }
+  .zd-table--props:not([data-layout]) .zd-props .zd-props__default-cell {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .zd-table--props:not([data-layout]) .zd-props .zd-props__default-cell::before {
+    content: "Por defecto: ";
+  }
+  .zd-table--props:not([data-layout]) .zd-props .zd-props__desc:empty {
+    display: none;
+  }
 }
 .zd-states {
   display: flex;
@@ -2453,11 +2559,12 @@ mark[data-markjs] {
   border-block-start: 1px solid var(--z-line);
   font-size: var(--z-text-small);
 }
+/* El nombre parte línea en vez de cortarse («Onda de es…» junto al botón de copiar en dos columnas a 390). */
 .zd-gallery__name {
   min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  line-height: var(--z-leading-snug);
   color: var(--z-fg);
   font-weight: var(--z-weight-medium);
 }

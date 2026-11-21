@@ -45,6 +45,19 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- Código en línea de los documentos: una ruta larga parte tras `/`, `.`, `-` o `_`, no dentro de una palabra.
+- Tablas de los documentos: el código de una celda no parte palabras («README.m/d» a 390); la tabla se desplaza en
+  su marco y el lado con contenido oculto se difumina.
+- Las vistas previas HTML ejecutan el script de su ejemplo (el de html.json) tras hidratar: los lienzos del
+  carrusel WebGL se pintan (antes salían negros) y el tour, los avisos o el diálogo de confirmación responden.
+- Tabla de API de cada componente: si no cabe en su caja, cada prop pasa a una tarjeta (nombre y tipo arriba, valor
+  por defecto y descripción debajo); si cabe, sigue siendo tabla. Antes, a 390, el tipo se partía letra a letra
+  («str/ing») y la descripción quedaba cortada por el borde. Los tipos y valores largos parten entre piezas (tras
+  `<`, `,`, `|`, `:`), nunca dentro de un nombre, y el nombre de la prop es la cabecera de su fila.
+- Galería de cargadores: el nombre de cada patrón parte línea en vez de cortarse junto al botón de copiar («Onda
+  de es…» a 390).
+- Vistas previas: el restablecimiento de estilos del navegador ya no anula el atributo `hidden`; las filas ocultas
+  de una `DataTable` paginada se veían todas.
 - Auditoría visual del sitio:
   - Rellenos, huecos, interlineados y pesos en tokens: tabla de props y de Markdown a 14/20 (antes 13/18 y
     10/18), índice con interlineado `leading-ui` y sangrías de la escala, código en línea con peso regular,

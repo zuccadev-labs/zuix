@@ -2,6 +2,7 @@
 import { Fragment, useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
+import { edgeMargin, trackScrollEdges } from "../edges";
 import { beforeFor, dropIndex, finalIndex, moveBefore, revealOffset, tabKeyIndex, tabMoveIndex } from "../logic";
 
 export interface WorkTab {
@@ -113,7 +114,7 @@ export function TabStrip({
     const reveal = () => {
       const tab = list.querySelector<HTMLElement>(`[data-tab-id="${CSS.escape(activeId)}"]`)?.parentElement;
       if (!tab) return;
-      const offset = revealOffset(tab.getBoundingClientRect(), list.getBoundingClientRect());
+      const offset = revealOffset(tab.getBoundingClientRect(), list.getBoundingClientRect(), edgeMargin(list));
       if (offset) list.scrollLeft += offset;
     };
     reveal();
@@ -122,10 +123,15 @@ export function TabStrip({
       list.querySelector<HTMLElement>(`[data-tab-id="${CSS.escape(activeId)}"]`)?.focus();
     }
     if (typeof ResizeObserver === "undefined") return;
+    // También cuando cambia el ancho de una pestaña (carga de la fuente, título nuevo) sin que cambie el de la tira.
     const ro = new ResizeObserver(reveal);
     ro.observe(list);
+    for (const tab of list.children) ro.observe(tab);
     return () => ro.disconnect();
   }, [activeId, tabs]);
+
+  // Borde difuminado del lado con pestañas ocultas (data-scroll-edges; la hoja pone la máscara).
+  useEffect(() => (listRef.current ? trackScrollEdges(listRef.current) : undefined), []);
 
   const rtlOf = (el: Element) => getComputedStyle(el).direction === "rtl";
 

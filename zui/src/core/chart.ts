@@ -62,8 +62,10 @@ export function niceTicks(min: number, max: number, count = 5, zero = false): Li
     hi = v === 0 ? 1 : v + pad;
   }
   const step = niceStep(hi - lo, Math.max(1, count));
-  const a = Math.floor(lo / step + 1e-9) * step;
-  const b = Math.ceil(hi / step - 1e-9) * step;
+  // Holgura solo del orden del error de coma flotante: con 1e-9 un valor 1e-6 por fuera de una marca (−600000,000001
+  // con paso 200000) se quedaba fuera de la escala (lo encontró la prueba de propiedades).
+  const a = Math.floor(lo / step + 1e-12) * step;
+  const b = Math.ceil(hi / step - 1e-12) * step;
   const ticks: number[] = [];
   const n = Math.round((b - a) / step);
   for (let i = 0; i <= n; i++) ticks.push(clean(a + i * step, step));
