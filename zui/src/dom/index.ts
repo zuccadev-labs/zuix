@@ -1377,12 +1377,15 @@ export function init(): () => void {
 }
 
 /**
- * Deshace `init()`: retira los listeners del documento y de la ventana y cierra la burbuja de ayuda. El marcado
- * queda como está (los diálogos y popovers abiertos siguen abiertos). `init()` se puede volver a llamar.
+ * Deshace `init()`: retira los listeners del documento y de la ventana, desmonta las agendas y las piezas de árbol
+ * (gráficos, línea de tiempo, mapa de calor…) que montó `hydrate()` y cierra la burbuja de ayuda. El marcado queda
+ * como está (los diálogos y popovers abiertos siguen abiertos). `init()` se puede volver a llamar.
  */
 export function destroy(): void {
   wiring?.abort();
   wiring = undefined;
+  agenda.destroyAgendas();
+  widgets.destroyWidgets();
   contextPress.cancel();
   clearTimeout(subTimer);
   aim.clear();

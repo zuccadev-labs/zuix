@@ -76,6 +76,10 @@ interface Entry {
   stopClock: () => void;
 }
 const entries = new WeakMap<HTMLElement, Entry>();
+// Los montados, para que `destroy()` retire también sus listeners del documento. Referencias débiles: un
+// elemento que la aplicación retira sin desmontarlo no queda retenido por esta lista.
+const mounted = new Set<WeakRef<HTMLElement>>();
+const refs = new WeakMap<HTMLElement, WeakRef<HTMLElement>>();
 
 // Datos de los `<script type="application/json">` hijos: se analizan una vez por texto, así cada pintado recibe la
 // misma lista (la agenda indexa y memoriza por lista) y no se vuelve a leer el JSON en cada tecla.
@@ -280,6 +284,9 @@ function mount(el: HTMLElement): void {
     stopClock: () => {},
   };
   entries.set(el, entry);
+  const ref = new WeakRef(el);
+  refs.set(el, ref);
+  mounted.add(ref);
   // Lo que hubiera de marcado de servidor se sustituye por el árbol.
   for (const child of [...el.childNodes]) if (!(child instanceof HTMLScriptElement)) child.remove();
   entry.detach = attachAgenda(el, hostOf(el));
@@ -363,6 +370,18 @@ export function destroyAgenda(el: HTMLElement): void {
   entry.stopClock();
   entry.abort?.abort();
   entries.delete(el);
+  const ref = refs.get(el);
+  if (ref) mounted.delete(ref);
+  refs.delete(el);
+}
+
+/** Desmonta todos los EventCalendar montados (lo llama `destroy()`). */
+export function destroyAgendas(): void {
+  for (const ref of [...mounted]) {
+    const el = ref.deref();
+    if (el) destroyAgenda(el);
+    else mounted.delete(ref);
+  }
 }
 
 export type { CalendarEvent, CalendarSource };

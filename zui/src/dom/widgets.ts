@@ -42,6 +42,10 @@ interface Entry {
   detach: () => void;
 }
 const entries = new WeakMap<HTMLElement, Entry>();
+// Las montadas, para que `destroy()` retire también sus listeners del documento. Referencias débiles: un
+// elemento que la aplicación retira sin desmontarlo no queda retenido por esta lista.
+const mounted = new Set<WeakRef<HTMLElement>>();
+const refs = new WeakMap<HTMLElement, WeakRef<HTMLElement>>();
 const registry: AnyWidget[] = [];
 let seq = 0;
 
@@ -135,6 +139,9 @@ function mount(el: HTMLElement, widget: AnyWidget): void {
   }
   const entry = { widget, extra: {}, state: null, detach: () => {} } as unknown as Entry;
   entries.set(el, entry);
+  const ref = new WeakRef(el);
+  refs.set(el, ref);
+  mounted.add(ref);
   entry.state = widget.initial(configOf(el, entry));
   entry.host = {
     config: () => configOf(el, entry),
@@ -173,6 +180,18 @@ export function destroyWidget(el: HTMLElement): void {
   if (!entry) return;
   entry.detach();
   entries.delete(el);
+  const ref = refs.get(el);
+  if (ref) mounted.delete(ref);
+  refs.delete(el);
+}
+
+/** Desmonta todas las piezas montadas (lo llama `destroy()`). */
+export function destroyWidgets(): void {
+  for (const ref of [...mounted]) {
+    const el = ref.deref();
+    if (el) destroyWidget(el);
+    else mounted.delete(ref);
+  }
 }
 
 export function hydrate(root: ParentNode): void {

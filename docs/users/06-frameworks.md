@@ -92,7 +92,8 @@ Después se escribe el marcado del contrato en la plantilla del framework. En Vu
 `CUSTOM_ELEMENTS_SCHEMA`.
 
 `init()` devuelve una función `destroy` (también exportada) que retira todos los listeners del documento y
-de la ventana; `init()` se puede volver a llamar. Sirve en pruebas, en microfrontends y en aplicaciones que
+de la ventana, también los de las agendas y las piezas que montó (`EventCalendar`, gráficos, `TimelineView`…);
+`init()` se puede volver a llamar. Sirve en pruebas, en microfrontends y en aplicaciones que
 montan y desmontan la interfaz.
 
 ## Con Next.js (App Router)
