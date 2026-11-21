@@ -374,6 +374,8 @@ radios y material de los tokens.
     icono de relleno) se ve como un hueco de superficie con su proporción; antes era invisible.
   - Rejilla de horas (`EventCalendar`, `TimeGrid`): la hora en punto a menos de media hora de «ahora» cede el sitio a
     su rótulo (se pisaban), y el desplazamiento inicial no deja el rótulo de «ahora» a medias bajo la cabecera.
+  - `ColorPicker` y `ColorField`: los campos de canal recuperan su relleno compacto (la talla `sm` del campo lo
+    pisaba) y un valor de tres cifras («260» en H de OKLCH) se ve entero.
   - `CardMedia` a sangre con ancho explícito: en WebKit salía más baja que su proporción (2,19 en vez de 16:9).
   - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
   - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al

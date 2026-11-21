@@ -420,6 +420,15 @@ function collect({ TOKENS, families, coarse }) {
     }
   }
 
+  // Valor cortado: un campo de una línea cuyo valor corto (un número, un código) no cabe en su caja. Un texto largo
+  // que el usuario escribe puede desplazar dentro del campo; un valor de hasta 12 caracteres tiene que verse entero.
+  for (const el of shown) {
+    if (!el.matches("input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=file],[type=hidden])")) continue;
+    const v = el.value ?? "";
+    if (!v || v.length > 12 || el.scrollWidth <= el.clientWidth + 1) continue;
+    add("valor-cortado", el, `el valor «${v}» pide ${el.scrollWidth} px y el campo deja ${el.clientWidth}`, { text: v });
+  }
+
   // Tapado: se recorre la página por tramos de una pantalla y en cada tramo se mira, en lo alto y en lo bajo de
   // cada texto que cabe entero, qué pinta encima. Lo pegajoso o fijo de la propia página (la barra del sitio) no
   // cuenta: tapa al desplazar, como debe; lo pegajoso dentro de un contenedor con desplazamiento sí (una cabecera

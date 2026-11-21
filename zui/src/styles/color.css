@@ -263,7 +263,10 @@
     font-weight: var(--z-weight-medium);
     line-height: var(--z-leading-tight);
   }
-  .z-colorpicker__field {
+  /* Con la talla en el selector: `.z-input[data-size="sm"]` pesa más que una clase sola y devolvía 10 px de relleno a
+     cada canal; «260» no cabía en el de H. */
+  .z-colorpicker__field,
+  .z-input.z-colorpicker__field[data-size] {
     --z-input-pad: var(--z-space-1);
     gap: var(--z-space-0-5);
     font-variant-numeric: tabular-nums;
