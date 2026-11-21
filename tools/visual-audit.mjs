@@ -318,8 +318,9 @@ function collect({ TOKENS, families, coarse }) {
       } else hidden = true;
       break;
     }
-    // Un evento mide lo que dura y una diapositiva puede asomar a medias: su texto cortado es parte del diseño.
-    const byDesign = el.closest(".z-event,.z-carousel__slide");
+    // Un evento mide lo que dura, una diapositiva puede asomar a medias y en una marquesina los elementos entran y
+    // salen por el borde (cuál queda cortado depende del fotograma): su texto cortado es parte del diseño.
+    const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport");
     if (hidden && !byDesign && !/ellipsis/.test(getComputedStyle(el).textOverflow))
       add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
     const current = el.closest("[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
