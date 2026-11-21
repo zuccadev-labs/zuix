@@ -44,6 +44,7 @@ import { Workspace } from "./screens/Workspace";
 import { ContentWave5 } from "./screens/ContentWave5";
 import { ChartsScreen } from "./screens/Charts";
 import { DataWave5 } from "./screens/DataWave5";
+import { Site } from "./screens/Site";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -211,6 +212,8 @@ export function App() {
       <ChartsScreen />
     ) : active === "data" ? (
       <DataWave5 />
+    ) : active === "site" ? (
+      <Site />
     ) : (
       <Editor />
     );

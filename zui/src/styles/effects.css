@@ -1,0 +1,426 @@
+/*
+  Efectos, oleada 6: Backdrop (rejilla, puntos, hexágonos, malla), BorderBeam (haz por el borde), Glow (brillo que
+  sigue al puntero), AttentionRing (anillo de atención) y TextEffect (aparición, degradado y brillo de texto).
+
+  Reglas comunes:
+  - Decorativos: capas `aria-hidden`, sin puntero, y el contenido se ve y se usa igual sin ellas.
+  - Movimiento solo dentro de `prefers-reduced-motion: no-preference`; con movimiento reducido queda un estado
+    quieto y final (nada oculto). Se anima `transform`, `rotate`, `translate`, `scale` y `opacity`.
+  - En pausa fuera de pantalla (`data-offscreen`, core/visibility) y con `data-paused`.
+  - `prefers-reduced-transparency` y `prefers-contrast: more` bajan o quitan los velos de color; con colores
+    forzados las capas desaparecen y el texto vuelve a CanvasText.
+  - El texto de color usa tokens -text (≥ 4,5:1). Nada en píldora: radios de tarjeta o de control.
+*/
+@layer zui.effects {
+  /* Tono de cada efecto: relleno o borde (no texto). */
+  :is(.z-beam, .z-glow, .z-attention) {
+    --z-effect-color: var(--z-accent);
+  }
+  :is(.z-beam, .z-glow, .z-attention)[data-tone="info"] {
+    --z-effect-color: var(--z-info);
+  }
+  :is(.z-beam, .z-glow, .z-attention)[data-tone="success"] {
+    --z-effect-color: var(--z-success);
+  }
+  :is(.z-beam, .z-glow, .z-attention)[data-tone="warning"] {
+    --z-effect-color: var(--z-warning);
+  }
+  :is(.z-beam, .z-glow, .z-attention)[data-tone="danger"] {
+    --z-effect-color: var(--z-danger);
+  }
+  :is(.z-beam, .z-glow)[data-tone="neutral"] {
+    --z-effect-color: var(--z-fg);
+  }
+
+  /* ---- Backdrop ---- */
+  .z-backdrop {
+    --z-backdrop-cell: 32px;
+    --z-backdrop-k: 1;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .z-backdrop[data-intensity="subtle"] {
+    --z-backdrop-k: 0.55;
+  }
+  .z-backdrop[data-intensity="strong"] {
+    --z-backdrop-k: 1.6;
+  }
+  .z-backdrop__content {
+    position: relative;
+  }
+  .z-backdrop__layer {
+    --z-backdrop-ink: color-mix(in srgb, var(--z-fg) calc(8% * var(--z-backdrop-k)), transparent);
+    --z-backdrop-dot: color-mix(in srgb, var(--z-fg) calc(16% * var(--z-backdrop-k)), transparent);
+    --z-backdrop-tile-x: var(--z-backdrop-cell);
+    --z-backdrop-tile-y: var(--z-backdrop-cell);
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .z-backdrop[data-fade="radial"] .z-backdrop__layer {
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 40%, var(--z-fg) 25%, transparent 100%);
+  }
+  .z-backdrop[data-fade="bottom"] .z-backdrop__layer {
+    mask-image: linear-gradient(to bottom, var(--z-fg) 30%, transparent);
+  }
+  /* El dibujo se extiende una tesela hacia el inicio: al derivar una tesela, el bucle no tiene costura. */
+  .z-backdrop__layer::before {
+    content: "";
+    position: absolute;
+    inset-block: calc(var(--z-backdrop-tile-y) * -1) 0;
+    inset-inline: calc(var(--z-backdrop-tile-x) * -1) 0;
+  }
+  .z-backdrop[data-pattern="grid"] .z-backdrop__layer::before {
+    background-image:
+      linear-gradient(to right, var(--z-backdrop-ink) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--z-backdrop-ink) 1px, transparent 1px);
+    background-size: var(--z-backdrop-cell) var(--z-backdrop-cell);
+  }
+  .z-backdrop[data-pattern="dots"] .z-backdrop__layer::before {
+    background-image: radial-gradient(circle at center, var(--z-backdrop-dot) 1.25px, transparent 1.75px);
+    background-size: var(--z-backdrop-cell) var(--z-backdrop-cell);
+  }
+  /* Hexágonos: una tesela SVG como máscara (solo cuenta su opacidad) sobre el color del token. */
+  .z-backdrop[data-pattern="hex"] .z-backdrop__layer {
+    --z-backdrop-tile-x: calc(var(--z-backdrop-cell) * 0.875);
+    --z-backdrop-tile-y: calc(var(--z-backdrop-cell) * 1.5);
+  }
+  .z-backdrop[data-pattern="hex"] .z-backdrop__layer::before {
+    background-color: color-mix(in srgb, var(--z-fg) calc(11% * var(--z-backdrop-k)), transparent);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Cpath d='M14 0L28 8V24L14 32L0 24V8ZM14 32V48' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
+    mask-size: var(--z-backdrop-tile-x) var(--z-backdrop-tile-y);
+  }
+  /* Malla: manchas de color del acento, la información y el éxito, muy rebajadas. */
+  .z-backdrop[data-pattern="mesh"] .z-backdrop__layer::before {
+    inset: -20%;
+    filter: blur(var(--z-space-8));
+    background:
+      radial-gradient(38% 46% at 22% 30%, color-mix(in srgb, var(--z-accent) calc(22% * var(--z-backdrop-k)), transparent), transparent 70%),
+      radial-gradient(34% 42% at 78% 22%, color-mix(in srgb, var(--z-info) calc(16% * var(--z-backdrop-k)), transparent), transparent 70%),
+      radial-gradient(
+        42% 48% at 62% 82%,
+        color-mix(in srgb, var(--z-success) calc(12% * var(--z-backdrop-k)), transparent),
+        transparent 72%
+      );
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-backdrop[data-animated]:not([data-pattern="mesh"]) .z-backdrop__layer::before {
+      animation: z-backdrop-drift 18s linear infinite;
+    }
+    .z-backdrop[data-animated][data-pattern="mesh"] .z-backdrop__layer::before {
+      animation: z-backdrop-flow 22s var(--z-ease-standard) infinite alternate;
+    }
+    .z-backdrop[data-offscreen] .z-backdrop__layer::before {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-backdrop-drift {
+    to {
+      translate: var(--z-backdrop-tile-x) var(--z-backdrop-tile-y);
+    }
+  }
+  @keyframes z-backdrop-flow {
+    to {
+      translate: 6% -4%;
+      rotate: 8deg;
+      scale: 1.08;
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .z-backdrop {
+      --z-backdrop-k: 0.5;
+    }
+  }
+  @media (prefers-contrast: more) {
+    .z-backdrop__layer {
+      display: none;
+    }
+  }
+
+  /* ---- BorderBeam ---- */
+  .z-beam {
+    --z-beam-radius: var(--z-card-radius);
+    position: relative;
+    border-radius: var(--z-beam-radius);
+  }
+  .z-beam__ring {
+    position: absolute;
+    inset: 0;
+    padding: var(--z-beam-width, 1px);
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+    container-type: size;
+    /* Solo el anillo del borde: el relleno (content-box) se resta del total. */
+    mask:
+      linear-gradient(var(--z-fg) 0 0) content-box,
+      linear-gradient(var(--z-fg) 0 0);
+    mask-composite: exclude;
+  }
+  /* Un cuadrado que cubre el anillo en cualquier giro (lado ≥ diagonal), con el haz en un degradado cónico. */
+  .z-beam__ring::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: calc(100cqi + 100cqb);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    rotate: 315deg;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0 calc(100% - var(--z-beam-length, 18%)),
+      color-mix(in srgb, var(--z-effect-color) 35%, transparent) calc(100% - var(--z-beam-length, 18%) * 0.55),
+      var(--z-effect-color) calc(100% - var(--z-beam-length, 18%) * 0.12),
+      color-mix(in srgb, var(--z-effect-color) 55%, var(--z-glass-highlight)) 100%
+    );
+  }
+  [dir="rtl"] .z-beam__ring::before {
+    translate: 50% -50%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-beam__ring::before {
+      animation: z-beam-spin var(--z-beam-duration, 6s) linear infinite;
+    }
+    .z-beam[data-reverse] .z-beam__ring::before {
+      animation-direction: reverse;
+    }
+    .z-beam:is([data-paused], [data-offscreen]) .z-beam__ring::before {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-beam-spin {
+    from {
+      rotate: 0deg;
+    }
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  /* ---- Glow ---- */
+  .z-glow {
+    --z-glow-radius: var(--z-card-radius);
+    --z-glow-size: 220px;
+    --z-glow-x: 50%;
+    --z-glow-y: 0px;
+    position: relative;
+    isolation: isolate;
+    border-radius: var(--z-glow-radius);
+  }
+  .z-glow > :not(.z-glow__fill, .z-glow__ring) {
+    position: relative;
+  }
+  .z-glow__fill,
+  .z-glow__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--z-duration-normal) var(--z-ease-standard);
+  }
+  .z-glow__fill {
+    background: radial-gradient(
+      circle var(--z-glow-size) at var(--z-glow-x) var(--z-glow-y),
+      color-mix(in srgb, var(--z-effect-color) 14%, transparent),
+      transparent 70%
+    );
+  }
+  .z-glow__ring {
+    padding: 1.5px;
+    background: radial-gradient(
+      circle calc(var(--z-glow-size) * 0.75) at var(--z-glow-x) var(--z-glow-y),
+      var(--z-effect-color),
+      color-mix(in srgb, var(--z-effect-color) 30%, transparent) 45%,
+      transparent 75%
+    );
+    mask:
+      linear-gradient(var(--z-fg) 0 0) content-box,
+      linear-gradient(var(--z-fg) 0 0);
+    mask-composite: exclude;
+  }
+  @media (hover: hover) {
+    .z-glow:hover > :is(.z-glow__fill, .z-glow__ring) {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-glow__fill,
+    .z-glow__ring {
+      transition: none;
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .z-glow__fill {
+      display: none;
+    }
+  }
+
+  /* ---- AttentionRing ---- */
+  .z-attention {
+    --z-attention-radius: var(--z-control-radius);
+    --z-attention-gap: var(--z-space-1);
+    position: relative;
+    display: inline-flex;
+    border-radius: var(--z-attention-radius);
+  }
+  .z-attention[data-active]::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--z-attention-gap) * -1);
+    border: 2px solid var(--z-effect-color);
+    border-radius: calc(var(--z-attention-radius) + var(--z-attention-gap));
+    pointer-events: none;
+  }
+  .z-attention[data-active][data-variant="glow"]::after {
+    border-color: color-mix(in srgb, var(--z-effect-color) 70%, transparent);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--z-effect-color) 22%, transparent),
+      0 0 18px color-mix(in srgb, var(--z-effect-color) 45%, transparent);
+  }
+  /* Late `repeat` veces (1,6 s cada una: menos de tres destellos por segundo) y queda fijo. */
+  @media (prefers-reduced-motion: no-preference) {
+    .z-attention[data-active]::after {
+      animation: z-attention-pulse 1.6s var(--z-ease-standard) var(--z-attention-repeat, 3) backwards;
+    }
+    .z-attention[data-active][data-variant="glow"]::after {
+      animation-name: z-attention-breathe;
+    }
+    .z-attention[data-offscreen]::after {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-attention-pulse {
+    0% {
+      opacity: 0.95;
+      scale: 0.96;
+    }
+    70% {
+      opacity: 0;
+      scale: 1.12;
+    }
+    71% {
+      opacity: 0;
+      scale: 0.96;
+    }
+    100% {
+      opacity: 0.95;
+      scale: 1;
+    }
+  }
+  @keyframes z-attention-breathe {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  /* ---- TextEffect ---- */
+  .z-texteffect {
+    --z-texteffect-stagger: 45ms;
+    --z-texteffect-duration: 640ms;
+    --z-texteffect-delay: 0ms;
+  }
+  /* inline-flex: los espacios del marcado entre letras no se ven (la palabra no se corta entre líneas). */
+  .z-texteffect__word {
+    display: inline-flex;
+    white-space: nowrap;
+  }
+  .z-texteffect__piece {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-texteffect:is([data-effect="reveal"], [data-effect="blur"]):not([data-state="pending"]) .z-texteffect__piece {
+      animation: z-texteffect-rise var(--z-texteffect-duration) var(--z-ease-emphasized) both;
+      animation-delay: calc(var(--z-texteffect-delay) + var(--z-i, 0) * var(--z-texteffect-stagger));
+    }
+    .z-texteffect[data-effect="blur"]:not([data-state="pending"]) .z-texteffect__piece {
+      animation-name: z-texteffect-focus;
+    }
+    /* Esperando a entrar en pantalla (solo lo pone el JavaScript: sin él, el texto se ve). */
+    .z-texteffect[data-state="pending"] .z-texteffect__piece {
+      opacity: 0;
+    }
+  }
+  @keyframes z-texteffect-rise {
+    from {
+      opacity: 0;
+      translate: 0 0.45em;
+    }
+  }
+  @keyframes z-texteffect-focus {
+    from {
+      opacity: 0;
+      filter: blur(8px);
+    }
+  }
+  /* Degradado y brillo: el texto se pinta con tokens -text (cada parada pasa 4,5:1 por sí sola). */
+  .z-texteffect:is([data-effect="gradient"], [data-effect="shimmer"]) {
+    color: var(--z-fg);
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .z-texteffect[data-effect="gradient"] {
+      background: linear-gradient(100deg, var(--z-accent-text), var(--z-info-text) 50%, var(--z-accent-text));
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .z-texteffect[data-effect="shimmer"] {
+      background: linear-gradient(100deg, var(--z-fg-muted) 0 40%, var(--z-fg) 50%, var(--z-fg-muted) 60% 100%);
+      background-size: 250% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-texteffect[data-effect="gradient"][data-animated] {
+      animation: z-texteffect-pan calc(var(--z-texteffect-duration) * 9) linear infinite;
+    }
+    .z-texteffect[data-effect="shimmer"][data-animated] {
+      animation: z-texteffect-shine calc(var(--z-texteffect-duration) * 3) linear infinite;
+    }
+    .z-texteffect[data-offscreen] {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-texteffect-pan {
+    to {
+      background-position: 200% 0;
+    }
+  }
+  @keyframes z-texteffect-shine {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -150% 0;
+    }
+  }
+
+  /* Colores forzados: fuera las capas de color; el texto con degradado vuelve al color del sistema. */
+  @media (forced-colors: active) {
+    .z-backdrop__layer,
+    .z-beam__ring,
+    .z-glow__fill,
+    .z-glow__ring {
+      display: none;
+    }
+    .z-attention[data-active]::after {
+      border-color: Highlight;
+      box-shadow: none;
+    }
+    .z-texteffect:is([data-effect="gradient"], [data-effect="shimmer"]) {
+      background: none;
+      color: CanvasText;
+    }
+  }
+}

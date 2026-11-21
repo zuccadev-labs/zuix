@@ -1,7 +1,7 @@
 {
   "name": "Spinner",
   "group": "feedback",
-  "description": "Anillo giratorio para esperas de duración desconocida.",
+  "description": "Indicador de espera de duración desconocida: anillo giratorio, tres puntos que laten o cuatro barras.",
   "import": "import { Spinner } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -18,6 +18,13 @@
       "description": "`current` hereda el color del texto."
     },
     {
+      "name": "shape",
+      "type": "enum",
+      "values": ["ring", "dots", "bars"],
+      "default": "ring",
+      "description": "Forma del indicador."
+    },
+    {
       "name": "label",
       "type": "string",
       "default": "Loading",
@@ -25,9 +32,9 @@
     }
   ],
   "states": ["spinning"],
-  "tokens": ["surface-3", "accent", "radius-full", "fg-muted"],
-  "classes": ["z-spinner"],
-  "a11y": "role=\"status\" con aria-label; decorativo si `label` está vacío.",
+  "tokens": ["surface-3", "accent", "radius-full", "fg-muted", "ease-standard"],
+  "classes": ["z-spinner", "z-spinner__part"],
+  "a11y": "role=\"status\" con aria-label; decorativo si `label` está vacío. Con movimiento reducido las formas de puntos y barras quedan quietas en un escalón de opacidad que se sigue leyendo como espera.",
   "examples": [
     {
       "title": "Básico",
@@ -36,6 +43,14 @@
     {
       "title": "Dentro de un texto",
       "code": "<p><Spinner size=\"sm\" tone=\"current\" label=\"\" /> Saving changes</p>"
+    },
+    {
+      "title": "Puntos y barras",
+      "code": "<>\n  <Spinner shape=\"dots\" />\n  <Spinner shape=\"bars\" />\n</>"
+    },
+    {
+      "title": "Barras en un botón",
+      "code": "<p><Spinner shape=\"dots\" size=\"sm\" tone=\"current\" label=\"\" /> Generating summary</p>"
     }
   ],
   "origin": "Spinner del design system base."

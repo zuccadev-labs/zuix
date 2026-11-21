@@ -11,6 +11,21 @@ radios y material de los tokens.
 
 ### Añadido
 
+- Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
+  React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único
+  `IntersectionObserver` compartido, `core/visibility`):
+  - `Spinner` con `shape`: `ring` (por defecto, sin cambios), `dots` (tres puntos) y `bars` (cuatro barras).
+  - `DotMatrix`: cargador de rejilla de puntos (2–16 × 2–16) con 12 patrones de diseño propio (`wave`, `rain`,
+    `spiral`, `pulse`, `sweep`, `checker`, `orbit`, `ripple`, `cross`, `snake`, `equalizer`, `sparkle`), CSS puro
+    (cada punto desfasa la misma animación de opacidad y escala), `role="status"`, fotograma quieto con movimiento
+    reducido. `DOT_PATTERNS` exportado; en `/dom`, `setDotMatrixPattern(el, patrón)` y dibujo de los puntos si el
+    marcado llega sin ellos.
+  - Grupo `effects`: `Backdrop` (rejilla, puntos, hexágonos y malla de color; tres intensidades, desvanecido y
+    deriva), `BorderBeam` (haz cónico que recorre el borde), `Glow` (brillo de borde o superficie que sigue al
+    puntero), `AttentionRing` (anillo o halo que late tres veces y queda fijo) y `TextEffect` (aparición por
+    palabras o letras, desenfoque, degradado con tokens de texto y brillo de espera; texto entero para los lectores
+    y visible sin JavaScript).
+
 - Oleada 4, capas y navegación de aplicación:
   - `Toolbar`, `ToolbarGroup` y `ToolbarSeparator` (patrón APG «toolbar»): una sola parada de tabulación para
     todos los controles de la barra, también los de un `ToggleGroup` anidado, flechas del eje con vuelta, Inicio y

@@ -1,11 +1,14 @@
 {
  "name": "@zuccadev-labs/zuix-zout",
- "count": 14,
+ "count": 19,
  "groups": {
   "layout": [
+   "BottomNavigation",
    "Float",
    "FloatingPanel",
    "Grid",
+   "Navbar",
+   "NavigationMenu",
    "Page",
    "PaneHeader",
    "PaneLayout",
@@ -14,12 +17,115 @@
    "Shell",
    "SidePanel",
    "Sidebar",
+   "SiteFooter",
+   "SkipLink",
    "SplitPane",
    "TabStrip",
    "TitleBar"
   ]
  },
  "components": [
+  {
+   "name": "BottomNavigation",
+   "group": "layout",
+   "status": "new",
+   "description": "Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura. Enlaces o botones, insignias, etiquetas siempre, solo en la actual o ninguna; flotante o de borde a borde.",
+   "import": "import { BottomNavigation } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "BottomNavItem[]",
+     "required": true,
+     "description": "{ value, label, icon, href?, badge?, badgeLabel? }."
+    },
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Destino actual."
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Para entradas sin href (botones)."
+    },
+    {
+     "name": "labels",
+     "type": "enum",
+     "values": [
+      "always",
+      "active",
+      "none"
+     ],
+     "default": "always"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "floating",
+      "bar"
+     ],
+     "default": "floating"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "fixed",
+      "static"
+     ],
+     "default": "fixed"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Primary"
+    }
+   ],
+   "states": [
+    "rest",
+    "current"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-shadow",
+    "radius-xl",
+    "radius-md",
+    "surface-3",
+    "accent",
+    "fg",
+    "fg-muted",
+    "danger-solid",
+    "fg-on-accent",
+    "text-caption",
+    "control-height-lg",
+    "layer-sticky"
+   ],
+   "classes": [
+    "z-bottomnav",
+    "z-bottomnav__list",
+    "z-bottomnav__item",
+    "z-bottomnav__icon",
+    "z-bottomnav__badge",
+    "z-bottomnav__label"
+   ],
+   "behavior": "dom",
+   "a11y": "<nav> con nombre y una lista. El destino actual lleva aria-current=\"page\" y se marca con baldosa, color de icono y peso. Sin etiqueta visible, el nombre queda para los lectores de pantalla. Objetivos de al menos 48 px de alto. La insignia puede llevar un texto para lectores (badgeLabel). Con botones, zout/dom mueve aria-current y emite z:select { value }.",
+   "examples": [
+    {
+     "title": "Con enlaces",
+     "code": "<BottomNavigation\n  position=\"static\"\n  value=\"home\"\n  items={[\n    { value: \"home\", label: \"Home\", icon: \"home\", href: \"/home\" },\n    { value: \"search\", label: \"Search\", icon: \"magnifying-glass\", href: \"/search\" },\n    { value: \"inbox\", label: \"Inbox\", icon: \"inbox\", href: \"/inbox\", badge: 3, badgeLabel: \"3 unread\" },\n    { value: \"profile\", label: \"Profile\", icon: \"user-circle\", href: \"/profile\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Solo la actual con etiqueta",
+     "code": "<BottomNavigation\n  position=\"static\"\n  variant=\"bar\"\n  labels=\"active\"\n  value=\"stats\"\n  items={[\n    { value: \"today\", label: \"Today\", icon: \"calendar-days\" },\n    { value: \"stats\", label: \"Stats\", icon: \"chart-bar\" },\n    { value: \"settings\", label: \"Settings\", icon: \"cog\" },\n  ]}\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/BottomNavigation.manifest.json"
+  },
   {
    "name": "Float",
    "group": "layout",
@@ -316,6 +422,209 @@
    ],
    "origin": "`kpi-grid` y `grid-2` de ui-glass.",
    "file": "zout/src/layouts/Grid.manifest.json"
+  },
+  {
+   "name": "Navbar",
+   "group": "layout",
+   "status": "new",
+   "description": "Barra de navegación de un sitio, de cristal: flotante (dos barras separadas), dock (una barra compacta centrada) o de borde a borde; pegajosa, fija o en su sitio. Sin punto de corte fijo: si la fila entera no cabe, los enlaces y grupos pasan a un cajón (popover nativo) con el NavigationMenu en vertical.",
+   "import": "import { Navbar } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "brand",
+     "type": "ReactNode"
+    },
+    {
+     "name": "items",
+     "type": "NavMenuItem[]",
+     "description": "Los de NavigationMenu."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode",
+     "description": "Búsqueda, tema, llamada a la acción; quedan fuera del cajón."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "floating",
+      "dock",
+      "bar"
+     ],
+     "default": "floating"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "sticky",
+      "fixed",
+      "static"
+     ],
+     "default": "sticky"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Primary"
+    },
+    {
+     "name": "menuLabel",
+     "type": "string",
+     "default": "Menu"
+    },
+    {
+     "name": "closeLabel",
+     "type": "string",
+     "default": "Close menu"
+    },
+    {
+     "name": "id",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest",
+    "collapsed",
+    "open"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-blur",
+    "glass-saturate",
+    "glass-border",
+    "glass-highlight",
+    "glass-shadow",
+    "glass-specular",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-lg",
+    "radius-panel",
+    "control-height-md",
+    "control-radius",
+    "scrim",
+    "layer-sticky",
+    "content-max"
+   ],
+   "classes": [
+    "z-navbar",
+    "z-navbar__inner",
+    "z-navbar__bar",
+    "z-navbar__brand",
+    "z-navbar__nav",
+    "z-navbar__toggle",
+    "z-navbar__menu",
+    "z-navbar__drawer-head",
+    "z-navbar__close",
+    "z-navbar__actions"
+   ],
+   "attributes": [
+    "data-collapsed",
+    "data-open",
+    "data-variant",
+    "data-position"
+   ],
+   "behavior": "dom",
+   "a11y": "Un solo árbol de navegación (<nav> con nombre) en los dos modos. El modo se decide midiendo si la fila cabe; sin JavaScript queda el cajón. El botón de menú tiene texto visible y abre el cajón con popovertarget (Escape y clic fuera lo cierran y el foco vuelve al botón); dentro hay un botón Cerrar. Seguir un enlace cierra el cajón. Con prefers-reduced-transparency las barras son opacas.",
+   "examples": [
+    {
+     "title": "Flotante",
+     "code": "<Navbar\n  id=\"site-nav\"\n  position=\"static\"\n  brand={<a href=\"/\">Acme</a>}\n  items={[\n    { label: \"Products\", columns: 2, links: [\n      { label: \"Analytics\", href: \"/analytics\", icon: \"chart-bar\", description: \"Events, funnels and retention.\" },\n      { label: \"Storage\", href: \"/storage\", icon: \"circle-stack\", description: \"Buckets with versioning.\" },\n      { label: \"Functions\", href: \"/functions\", icon: \"bolt\", description: \"Run code close to your users.\" },\n      { label: \"Auth\", href: \"/auth\", icon: \"key\", description: \"Passkeys and single sign-on.\" },\n    ] },\n    { label: \"Resources\", links: [\n      { label: \"Docs\", href: \"/docs\", icon: \"book\", description: \"Guides and API reference.\" },\n      { label: \"Changelog\", href: \"/changelog\", icon: \"newspaper\" },\n    ] },\n    { label: \"Pricing\", href: \"/pricing\" },\n  ]}\n  actions={<Button variant=\"primary\" size=\"sm\">Get started</Button>}\n/>"
+    },
+    {
+     "title": "Dock",
+     "code": "<Navbar\n  id=\"dock-nav\"\n  variant=\"dock\"\n  position=\"static\"\n  brand={<a href=\"/\">Acme</a>}\n  items={[\n    { label: \"Docs\", href: \"/docs\", current: true },\n    { label: \"Blog\", href: \"/blog\" },\n    { label: \"Pricing\", href: \"/pricing\" },\n  ]}\n  actions={<IconButton icon=\"magnifying-glass\" label=\"Search\" variant=\"ghost\" size=\"sm\" />}\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/Navbar.manifest.json"
+  },
+  {
+   "name": "NavigationMenu",
+   "group": "layout",
+   "status": "new",
+   "description": "Menús de un sitio con paneles: enlaces y grupos cuyo botón abre un panel de enlaces con icono y descripción, en una o varias columnas. Patrón disclosure de navegación (no menú de aplicación): los enlaces siguen en el orden de Tab. Horizontal, el panel flota (popover nativo, se abre también sin JavaScript); vertical, se despliega en su sitio.",
+   "import": "import { NavigationMenu } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "NavMenuItem[]",
+     "required": true,
+     "description": "{ label, href, current? } o { label, links: { label, href, description?, icon?, current? }[], columns?, footer? }."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Main",
+     "description": "Nombre del landmark nav."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Prefijo de los id de los paneles."
+    }
+   ],
+   "states": [
+    "rest",
+    "open",
+    "current"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "glass-border",
+    "glass-highlight",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "item-radius",
+    "control-radius",
+    "control-height-md",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-navmenu",
+    "z-navmenu__list",
+    "z-navmenu__item",
+    "z-navmenu__link",
+    "z-navmenu__trigger",
+    "z-navmenu__panel",
+    "z-navmenu__grid",
+    "z-navmenu__card",
+    "z-navmenu__icon",
+    "z-navmenu__title",
+    "z-navmenu__desc",
+    "z-navmenu__footer"
+   ],
+   "behavior": "dom",
+   "apg": "disclosure/examples/disclosure-navigation",
+   "a11y": "<nav> con nombre. Cada grupo es un button con aria-expanded y aria-controls seguido de su panel; sin role=menu ni flechas: Tab recorre los enlaces. Enter o Espacio abren y cierran el panel; Escape lo cierra y devuelve el foco al botón; al salir el foco del grupo se cierra. Con un puntero que pasa por encima el panel se previsualiza y un clic lo fija. La página actual lleva aria-current=\"page\" y se marca con fondo y peso, no solo con color.",
+   "examples": [
+    {
+     "title": "Producto con paneles",
+     "code": "<NavigationMenu id=\"site-menu\" items={[\n    { label: \"Products\", columns: 2, links: [\n      { label: \"Analytics\", href: \"/analytics\", icon: \"chart-bar\", description: \"Events, funnels and retention.\" },\n      { label: \"Storage\", href: \"/storage\", icon: \"circle-stack\", description: \"Buckets with versioning.\" },\n      { label: \"Functions\", href: \"/functions\", icon: \"bolt\", description: \"Run code close to your users.\" },\n      { label: \"Auth\", href: \"/auth\", icon: \"key\", description: \"Passkeys and single sign-on.\" },\n    ] },\n    { label: \"Resources\", links: [\n      { label: \"Docs\", href: \"/docs\", icon: \"book\", description: \"Guides and API reference.\" },\n      { label: \"Changelog\", href: \"/changelog\", icon: \"newspaper\" },\n    ] },\n    { label: \"Pricing\", href: \"/pricing\" },\n  ]} />"
+    },
+    {
+     "title": "Vertical",
+     "code": "<NavigationMenu id=\"side-menu\" orientation=\"vertical\" items={[\n    { label: \"Overview\", href: \"/overview\", current: true },\n    { label: \"Guides\", links: [\n      { label: \"Install\", href: \"/install\" },\n      { label: \"Theming\", href: \"/theming\" },\n    ] },\n  ]} />"
+    }
+   ],
+   "file": "zout/src/layouts/NavigationMenu.manifest.json"
   },
   {
    "name": "Page",
@@ -1212,6 +1521,165 @@
     "disabled"
    ],
    "file": "zout/src/layouts/Sidebar.manifest.json"
+  },
+  {
+   "name": "SiteFooter",
+   "group": "layout",
+   "status": "new",
+   "description": "Pie de un sitio: marca y frase, columnas de enlaces con título, enlaces con icono (redes, repositorio) y franja legal. Variantes en columnas, centrada o mínima; superficie de cristal, sólida o sin fondo. Solo marcado y CSS.",
+   "import": "import { SiteFooter } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "brand",
+     "type": "ReactNode"
+    },
+    {
+     "name": "tagline",
+     "type": "ReactNode"
+    },
+    {
+     "name": "columns",
+     "type": "SiteFooterColumn[]",
+     "description": "{ title, links: { label, href, external? }[] }."
+    },
+    {
+     "name": "social",
+     "type": "SiteFooterSocial[]",
+     "description": "{ label, href, icon }."
+    },
+    {
+     "name": "legal",
+     "type": "ReactNode"
+    },
+    {
+     "name": "bottomLinks",
+     "type": "SiteFooterLink[]"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Hueco junto a la marca (boletín, idioma)."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "columns",
+      "centered",
+      "minimal"
+     ],
+     "default": "columns"
+    },
+    {
+     "name": "surface",
+     "type": "enum",
+     "values": [
+      "glass",
+      "solid",
+      "plain"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Footer"
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-border",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "radius-panel",
+    "control-radius",
+    "control-height-md",
+    "text-small",
+    "font-display"
+   ],
+   "classes": [
+    "z-sitefooter",
+    "z-sitefooter__top",
+    "z-sitefooter__brand",
+    "z-sitefooter__logo",
+    "z-sitefooter__tagline",
+    "z-sitefooter__social",
+    "z-sitefooter__social-link",
+    "z-sitefooter__nav",
+    "z-sitefooter__column",
+    "z-sitefooter__title",
+    "z-sitefooter__link",
+    "z-sitefooter__bottom",
+    "z-sitefooter__legal",
+    "z-sitefooter__bottom-links"
+   ],
+   "behavior": "none",
+   "a11y": "<footer> (contentinfo en la página) con un <nav> con nombre para los enlaces; cada lista se nombra con el título de su columna. Los enlaces de icono llevan aria-label. Los externos llevan una flecha visible. Texto en fg-muted (≥ 4,5:1).",
+   "examples": [
+    {
+     "title": "Columnas",
+     "code": "<SiteFooter\n  brand=\"Acme\"\n  tagline=\"Interfaces that feel native, on any brand.\"\n  social={[\n    { label: \"Source code\", href: \"https://example.com/acme\", icon: \"code-bracket\" },\n    { label: \"Contact\", href: \"mailto:hello@example.com\", icon: \"envelope\" },\n  ]}\n  columns={[\n    { title: \"Product\", links: [{ label: \"Components\", href: \"/components\" }, { label: \"Pricing\", href: \"/pricing\" }] },\n    { title: \"Resources\", links: [{ label: \"Docs\", href: \"/docs\" }, { label: \"Status\", href: \"https://status.example.com\", external: true }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"/about\" }, { label: \"Careers\", href: \"/careers\" }] },\n  ]}\n  legal=\"© 2026 Acme Inc.\"\n  bottomLinks={[{ label: \"Privacy\", href: \"/privacy\" }, { label: \"Terms\", href: \"/terms\" }]}\n/>"
+    },
+    {
+     "title": "Mínimo",
+     "code": "<SiteFooter\n  variant=\"minimal\"\n  surface=\"plain\"\n  brand=\"Acme\"\n  columns={[{ title: \"Links\", links: [{ label: \"Docs\", href: \"/docs\" }, { label: \"Blog\", href: \"/blog\" }] }]}\n  legal=\"© 2026 Acme Inc.\"\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/SiteFooter.manifest.json"
+  },
+  {
+   "name": "SkipLink",
+   "group": "layout",
+   "status": "new",
+   "description": "Enlace para saltar la cabecera y la navegación e ir al contenido. Invisible hasta recibir el foco con Tab; al seguirlo, el foco entra en el destino aunque no sea enfocable.",
+   "import": "import { SkipLink } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "target",
+     "type": "string",
+     "default": "main",
+     "description": "Id del destino, sin #."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "default": "Skip to content"
+    }
+   ],
+   "states": [
+    "hidden",
+    "focus"
+   ],
+   "tokens": [
+    "surface-solid",
+    "glass-border",
+    "control-radius",
+    "control-height-md",
+    "shadow-md",
+    "layer-top",
+    "accent-ring",
+    "focus-width",
+    "focus-offset"
+   ],
+   "classes": [
+    "z-skiplink"
+   ],
+   "behavior": "dom",
+   "a11y": "Primer elemento enfocable de la página (WCAG 2.4.1). Aparece al enfocarse con Tab. Si el destino no es enfocable recibe tabindex=\"-1\" para que el foco y las lupas de pantalla lo sigan, sin entrar en el orden de Tab. Uno o dos por página; el Shell ya trae el suyo (skipLinkLabel).",
+   "examples": [
+    {
+     "title": "Al contenido",
+     "code": "<>\n  <SkipLink target=\"main-content\">Skip to content</SkipLink>\n  <section id=\"main-content\" aria-label=\"Content\">\n    <p>Press Tab to reveal the link, then Enter to land here.</p>\n  </section>\n</>"
+    }
+   ],
+   "file": "zout/src/layouts/SkipLink.manifest.json"
   },
   {
    "name": "SplitPane",

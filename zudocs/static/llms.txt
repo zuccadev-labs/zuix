@@ -150,12 +150,13 @@
 
 - [Alert](https://zuccadev-labs.github.io/zuix/components/feedback/alert.md): Aviso en línea sobre el resultado de una acción o el estado del sistema.
 - [Banner](https://zuccadev-labs.github.io/zuix/components/feedback/banner.md): Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.
+- [DotMatrix](https://zuccadev-labs.github.io/zuix/components/feedback/dot-matrix.md): Cargador de rejilla de puntos con 12 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos).
 - [EmptyState](https://zuccadev-labs.github.io/zuix/components/feedback/empty-state.md): Estado vacío: explica por qué no hay contenido y qué hacer.
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
 - [LoadingOverlay](https://zuccadev-labs.github.io/zuix/components/feedback/loading-overlay.md): Capa de espera sobre un contenedor o sobre toda la ventana.
 - [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido.
-- [Spinner](https://zuccadev-labs.github.io/zuix/components/feedback/spinner.md): Anillo giratorio para esperas de duración desconocida.
+- [Spinner](https://zuccadev-labs.github.io/zuix/components/feedback/spinner.md): Indicador de espera de duración desconocida: anillo giratorio, tres puntos que laten o cuatro barras.
 
 ## Componentes: Contenido
 
@@ -212,11 +213,22 @@
 
 - [Carousel](https://zuccadev-labs.github.io/zuix/components/carousel/carousel.md): Carrusel agnóstico al contenido: tira con bucle infinito, arrastre con inercia, ajuste al slide más cercano, flechas, contador, teclado y anuncios para lectores de pantalla.
 
+## Componentes: Efectos
+
+- [AttentionRing](https://zuccadev-labs.github.io/zuix/components/effects/attention-ring.md): Anillo o halo de atención alrededor de un control o un panel (actividad nueva, paso de un recorrido): late unas veces y queda fijo.
+- [Backdrop](https://zuccadev-labs.github.io/zuix/components/effects/backdrop.md): Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional.
+- [BorderBeam](https://zuccadev-labs.github.io/zuix/components/effects/border-beam.md): Haz de luz que recorre el borde de lo que envuelve (tarjeta, panel, botón): un anillo enmascarado gira un degradado cónico con transform.
+- [Glow](https://zuccadev-labs.github.io/zuix/components/effects/glow.md): Brillo que sigue al puntero sobre el borde, la superficie o ambos de lo que envuelve (spotlight de cristal).
+- [TextEffect](https://zuccadev-labs.github.io/zuix/components/effects/text-effect.md): Efectos de texto: aparición por palabras o letras (subiendo o desenfocada, al montarse o al entrar en pantalla), degradado con tokens de texto (fijo o en movimiento) y brillo que pasa (shimmer).
+
 ## Componentes: Layouts
 
+- [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.
 - [Float](https://zuccadev-labs.github.io/zuix/components/layout/float.md): Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.
 - [FloatingPanel](https://zuccadev-labs.github.io/zuix/components/layout/floating-panel.md): Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.
 - [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.
+- [Navbar](https://zuccadev-labs.github.io/zuix/components/layout/navbar.md): Barra de navegación de un sitio, de cristal: flotante (dos barras separadas), dock (una barra compacta centrada) o de borde a borde; pegajosa, fija o en su sitio.
+- [NavigationMenu](https://zuccadev-labs.github.io/zuix/components/layout/navigation-menu.md): Menús de un sitio con paneles: enlaces y grupos cuyo botón abre un panel de enlaces con icono y descripción, en una o varias columnas.
 - [Page](https://zuccadev-labs.github.io/zuix/components/layout/page.md): Página con desplazamiento propio, cabecera y secciones.
 - [PaneHeader](https://zuccadev-labs.github.io/zuix/components/layout/pane-header.md): Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.
 - [PaneLayout](https://zuccadev-labs.github.io/zuix/components/layout/pane-layout.md): Mosaico de paneles redimensionables: árbol de divisiones, cabecera y menú por panel, y arrastre de un panel al borde de otro.
@@ -225,6 +237,8 @@
 - [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.
 - [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.
 - [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.
+- [SiteFooter](https://zuccadev-labs.github.io/zuix/components/layout/site-footer.md): Pie de un sitio: marca y frase, columnas de enlaces con título, enlaces con icono (redes, repositorio) y franja legal.
+- [SkipLink](https://zuccadev-labs.github.io/zuix/components/layout/skip-link.md): Enlace para saltar la cabecera y la navegación e ir al contenido.
 - [SplitPane](https://zuccadev-labs.github.io/zuix/components/layout/split-pane.md): Paneles divididos con divisores arrastrables y manejables con teclado.
 - [TabStrip](https://zuccadev-labs.github.io/zuix/components/layout/tab-strip.md): Tira de pestañas de trabajo con cierre, alta, grupos de color, indicadores y reordenación por arrastre o teclado.
 - [TitleBar](https://zuccadev-labs.github.io/zuix/components/layout/title-bar.md): Barra de título para ventanas sin marco, transparente sobre el fondo.

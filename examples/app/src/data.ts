@@ -14,7 +14,8 @@ export type ScreenId =
   | "workspace"
   | "content"
   | "charts"
-  | "data";
+  | "data"
+  | "site";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -38,6 +39,7 @@ export const SCREENS: ScreenDef[] = [
   { id: "content", title: "Content", icon: "document-text", hint: "Trees, prose and formatting" },
   { id: "charts", title: "Charts", icon: "chart-bar", hint: "Lines, areas, bars and donuts" },
   { id: "data", title: "Data", icon: "table-cells", hint: "Selection, timeline and progress" },
+  { id: "site", title: "Site", icon: "globe-alt", hint: "Navbar, loaders and effects" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);

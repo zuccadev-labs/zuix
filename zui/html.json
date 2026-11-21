@@ -1218,6 +1218,129 @@
     }
    ]
   },
+  "AttentionRing": {
+   "group": "effects",
+   "classes": [
+    "z-attention"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Botón con actividad",
+     "html": "<span class=\"z-attention\" data-variant=\"ring\" data-tone=\"accent\" data-active=\"\" style=\"--z-attention-repeat:3\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"bell\" size=\"16\"></z-icon>\n    Inbox\n  </button>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Halo de aviso",
+     "html": "<span class=\"z-attention\" data-variant=\"glow\" data-tone=\"warning\" data-active=\"\" style=\"--z-attention-repeat:3;--z-attention-radius:var(--z-card-radius)\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Build queue</h3>\n        <p class=\"z-card__subtitle\">2 jobs waiting for approval.</p>\n      </div>\n    </div>\n  </div>\n</span>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Backdrop": {
+   "group": "effects",
+   "classes": [
+    "z-backdrop",
+    "z-backdrop__layer",
+    "z-backdrop__content"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Rejilla",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"grid\" data-intensity=\"medium\" data-fade=\"radial\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Ship with confidence</strong>\n      </p>\n      <p>Every release is checked against the same standard.</p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Puntos sutiles con deriva",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"dots\" data-intensity=\"subtle\" data-fade=\"radial\" data-animated=\"\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>Nothing here yet</p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Hexágonos",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"bottom\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Network</strong>\n      </p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Malla de color",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"mesh\" data-intensity=\"medium\" data-fade=\"radial\" data-animated=\"\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Liquid glass</strong>\n      </p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "BorderBeam": {
+   "group": "effects",
+   "classes": [
+    "z-beam",
+    "z-beam__ring"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tarjeta destacada",
+     "html": "<div class=\"z-beam\" data-tone=\"accent\" style=\"--z-beam-duration:6s;--z-beam-length:18%;--z-beam-width:1px\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Pro plan</h3>\n        <p class=\"z-card__subtitle\">Everything in Team, plus audit logs.</p>\n      </div>\n    </div>\n  </div>\n  <span class=\"z-beam__ring\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Tonos y grosor",
+     "html": "<div class=\"z-beam\" data-tone=\"success\" style=\"--z-beam-duration:4s;--z-beam-length:18%;--z-beam-width:2px;--z-beam-radius:var(--z-control-radius-lg)\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Deploying</button>\n  <span class=\"z-beam__ring\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Glow": {
+   "group": "effects",
+   "classes": [
+    "z-glow",
+    "z-glow__fill",
+    "z-glow__ring"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Borde",
+     "html": "<div class=\"z-glow\" data-variant=\"border\" data-tone=\"accent\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Analytics</h3>\n        <p class=\"z-card__subtitle\">Events, funnels and retention.</p>\n      </div>\n    </div>\n  </div>\n  <span class=\"z-glow__ring\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Borde y superficie",
+     "html": "<div class=\"z-glow\" data-variant=\"both\" data-tone=\"info\" style=\"--z-glow-size:260px\">\n  <span class=\"z-glow__fill\" aria-hidden=\"true\"></span>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Storage</h3>\n        <p class=\"z-card__subtitle\">Buckets with versioning.</p>\n      </div>\n    </div>\n  </div>\n  <span class=\"z-glow__ring\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "TextEffect": {
+   "group": "effects",
+   "classes": [
+    "z-texteffect",
+    "z-texteffect__text",
+    "z-texteffect__word",
+    "z-texteffect__piece"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Aparición por palabras",
+     "html": "<p class=\"z-texteffect\" data-effect=\"reveal\" data-by=\"word\">\n  <span class=\"z-sr-only\">Build interfaces that feel native</span>\n  <span class=\"z-texteffect__text\" aria-hidden=\"true\">\n    <span class=\"z-texteffect__piece\" style=\"--z-i:0\">Build</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:1\">interfaces</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:2\">that</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:3\">feel</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:4\">native</span>\n  </span>\n</p>",
+     "source": "generated"
+    },
+    {
+     "title": "Desenfoque por letras",
+     "html": "<span class=\"z-texteffect\" data-effect=\"blur\" data-by=\"letter\" style=\"--z-texteffect-stagger:18ms\">\n  <span class=\"z-sr-only\">Liquid glass</span>\n  <span class=\"z-texteffect__text\" aria-hidden=\"true\">\n    <span class=\"z-texteffect__word\">\n      <span class=\"z-texteffect__piece\" style=\"--z-i:0\">L</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:1\">i</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:2\">q</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:3\">u</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:4\">i</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:5\">d</span>\n    </span>\n     \n    <span class=\"z-texteffect__word\">\n      <span class=\"z-texteffect__piece\" style=\"--z-i:6\">g</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:7\">l</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:8\">a</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:9\">s</span>\n      <span class=\"z-texteffect__piece\" style=\"--z-i:10\">s</span>\n    </span>\n  </span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Degradado",
+     "html": "<span class=\"z-texteffect\" data-effect=\"gradient\" data-animated=\"\">One standard, any brand</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Brillo de espera",
+     "html": "<span class=\"z-texteffect\" data-effect=\"shimmer\" data-animated=\"\">Thinking…</span>",
+     "source": "generated"
+    }
+   ]
+  },
   "Alert": {
    "group": "feedback",
    "classes": [
@@ -1269,6 +1392,31 @@
     {
      "title": "En un panel (inline)",
      "html": "<div class=\"z-banner\" data-tone=\"neutral\" data-layout=\"inline\">\n  <span class=\"z-banner__icon\" aria-hidden=\"true\">\n    <z-icon name=\"information-circle\" size=\"16\"></z-icon>\n  </span>\n  <div class=\"z-banner__body\">\n    <span class=\"z-banner__text\">This branch is 4 commits behind main.</span>\n  </div>\n  <button type=\"button\" class=\"z-banner__close\" aria-label=\"Dismiss\" title=\"Dismiss\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "DotMatrix": {
+   "group": "feedback",
+   "classes": [
+    "z-dotmatrix",
+    "z-dotmatrix__dot"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Onda",
+     "html": "<span class=\"z-dotmatrix\" data-pattern=\"wave\" data-motion=\"breathe\" data-size=\"md\" data-tone=\"accent\" role=\"status\" aria-label=\"Loading\" style=\"--z-dotmatrix-cols:5;--z-dotmatrix-rows:5;--z-dotmatrix-duration:1.6s\">\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.111;--z-dot-rest:0.347\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.222;--z-dot-rest:0.533\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.444;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.111;--z-dot-rest:0.347\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.222;--z-dot-rest:0.533\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.444;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.556;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.222;--z-dot-rest:0.533\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.444;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.556;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.667;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.444;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.556;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.667;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.778;--z-dot-rest:0.533\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.444;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.556;--z-dot-rest:0.907\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.667;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.778;--z-dot-rest:0.533\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.889;--z-dot-rest:0.347\"></span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Patrones",
+     "html": "<span class=\"z-dotmatrix\" data-pattern=\"rain\" data-motion=\"trail\" data-size=\"md\" data-tone=\"accent\" role=\"status\" aria-label=\"Syncing\" style=\"--z-dotmatrix-cols:5;--z-dotmatrix-rows:5;--z-dotmatrix-duration:1.4s\">\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.011;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.712;--z-dot-rest:0.308\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.849;--z-dot-rest:0.639\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.419;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.593;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.111;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.812;--z-dot-rest:0.548\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.949;--z-dot-rest:0.879\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.519;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.693;--z-dot-rest:0.264\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.211;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.912;--z-dot-rest:0.788\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.049;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.619;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.793;--z-dot-rest:0.504\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.311;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.012;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.149;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.719;--z-dot-rest:0.326\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.893;--z-dot-rest:0.744\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.411;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.112;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.249;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.819;--z-dot-rest:0.566\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.993;--z-dot-rest:0.984\"></span>\n</span>\n<span class=\"z-dotmatrix\" data-pattern=\"spiral\" data-motion=\"trail\" data-size=\"md\" data-tone=\"accent\" role=\"status\" aria-label=\"Indexing\" style=\"--z-dotmatrix-cols:5;--z-dotmatrix-rows:5;--z-dotmatrix-duration:2.4s\">\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0;--z-dot-rest:1\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.04;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.08;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.12;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.16;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.6;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.64;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.68;--z-dot-rest:0.232\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.72;--z-dot-rest:0.328\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.2;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.56;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.92;--z-dot-rest:0.808\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.96;--z-dot-rest:0.904\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.76;--z-dot-rest:0.424\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.24;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.52;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.88;--z-dot-rest:0.712\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.84;--z-dot-rest:0.616\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.8;--z-dot-rest:0.52\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.28;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.48;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.44;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.4;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.36;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.32;--z-dot-rest:0.16\"></span>\n</span>\n<span class=\"z-dotmatrix\" data-pattern=\"orbit\" data-motion=\"trail\" data-size=\"md\" data-tone=\"accent\" role=\"status\" aria-label=\"Connecting\" style=\"--z-dotmatrix-cols:5;--z-dotmatrix-rows:5;--z-dotmatrix-duration:1.6s\">\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0;--z-dot-rest:1\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.063;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.125;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.188;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.25;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.938;--z-dot-rest:0.85\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.313;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.875;--z-dot-rest:0.7\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.375;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.813;--z-dot-rest:0.55\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" data-off=\"\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.438;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.75;--z-dot-rest:0.4\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.688;--z-dot-rest:0.25\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.625;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.563;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.5;--z-dot-rest:0.16\"></span>\n</span>\n<span class=\"z-dotmatrix\" data-pattern=\"equalizer\" data-motion=\"breathe\" data-size=\"md\" data-tone=\"accent\" role=\"status\" aria-label=\"Listening\" style=\"--z-dotmatrix-cols:5;--z-dotmatrix-rows:5;--z-dotmatrix-duration:1.2s\">\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.593;--z-dot-rest:0.843\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.76;--z-dot-rest:0.564\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.646;--z-dot-rest:0.755\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.498;--z-dot-rest:0.996\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.466;--z-dot-rest:0.943\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.523;--z-dot-rest:0.961\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.69;--z-dot-rest:0.681\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.576;--z-dot-rest:0.873\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.428;--z-dot-rest:0.879\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.396;--z-dot-rest:0.826\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.453;--z-dot-rest:0.921\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.62;--z-dot-rest:0.799\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.506;--z-dot-rest:0.99\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.358;--z-dot-rest:0.761\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.326;--z-dot-rest:0.708\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.383;--z-dot-rest:0.804\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.55;--z-dot-rest:0.917\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.436;--z-dot-rest:0.892\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.288;--z-dot-rest:0.644\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.256;--z-dot-rest:0.59\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.313;--z-dot-rest:0.686\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.48;--z-dot-rest:0.966\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.366;--z-dot-rest:0.774\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.218;--z-dot-rest:0.526\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.186;--z-dot-rest:0.473\"></span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Baldosa grande",
+     "html": "<span class=\"z-dotmatrix\" data-pattern=\"pulse\" data-motion=\"breathe\" data-size=\"lg\" data-tone=\"accent\" data-framed=\"\" role=\"status\" aria-label=\"Rendering preview\" style=\"--z-dotmatrix-cols:7;--z-dotmatrix-rows:7;--z-dotmatrix-duration:1.6s\">\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.5;--z-dot-rest:1\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.354;--z-dot-rest:0.754\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.5;--z-dot-rest:1\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.236;--z-dot-rest:0.556\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.167;--z-dot-rest:0.44\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.118;--z-dot-rest:0.358\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.167;--z-dot-rest:0.44\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.354;--z-dot-rest:0.754\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.236;--z-dot-rest:0.556\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.118;--z-dot-rest:0.358\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0;--z-dot-rest:0.16\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.118;--z-dot-rest:0.358\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.236;--z-dot-rest:0.556\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.354;--z-dot-rest:0.754\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.167;--z-dot-rest:0.44\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.118;--z-dot-rest:0.358\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.167;--z-dot-rest:0.44\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.236;--z-dot-rest:0.556\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.264;--z-dot-rest:0.603\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.333;--z-dot-rest:0.72\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.5;--z-dot-rest:1\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.354;--z-dot-rest:0.754\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.373;--z-dot-rest:0.786\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.425;--z-dot-rest:0.874\"></span>\n  <span class=\"z-dotmatrix__dot\" style=\"--z-dot-phase:0.5;--z-dot-rest:1\"></span>\n</span>",
      "source": "generated"
     }
    ]
@@ -1354,7 +1502,8 @@
   "Spinner": {
    "group": "feedback",
    "classes": [
-    "z-spinner"
+    "z-spinner",
+    "z-spinner__part"
    ],
    "behavior": "none",
    "examples": [
@@ -1366,6 +1515,16 @@
     {
      "title": "Dentro de un texto",
      "html": "<p>\n  <span class=\"z-spinner\" data-size=\"sm\" data-tone=\"current\" aria-hidden=\"true\"></span>\n   Saving changes\n</p>",
+     "source": "generated"
+    },
+    {
+     "title": "Puntos y barras",
+     "html": "<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" data-shape=\"dots\" role=\"status\" aria-label=\"Loading\">\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n</span>\n<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" data-shape=\"bars\" role=\"status\" aria-label=\"Loading\">\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Barras en un botón",
+     "html": "<p>\n  <span class=\"z-spinner\" data-size=\"sm\" data-tone=\"current\" data-shape=\"dots\" aria-hidden=\"true\">\n    <span class=\"z-spinner__part\"></span>\n    <span class=\"z-spinner__part\"></span>\n    <span class=\"z-spinner__part\"></span>\n  </span>\n   Generating summary\n</p>",
      "source": "generated"
     }
    ]

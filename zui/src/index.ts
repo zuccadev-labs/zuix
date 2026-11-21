@@ -9,7 +9,10 @@ export * from "./components/navigation";
 export * from "./components/carousel";
 export * from "./components/agenda";
 export * from "./components/charts";
+export * from "./components/effects";
 export { cx } from "./cx";
+// Patrones del cargador DotMatrix (los mismos que dibuja el modo sin framework).
+export { DOT_PATTERNS, type DotPattern } from "./core/dotmatrix";
 // Utilidades de fechas civiles (cadenas ISO, sin zona) que comparten Calendar y los selectores.
 export {
   formatDateRange,

@@ -1,4 +1,6 @@
 /* @zuccadev-labs/zuix-zout — estilos. Requiere antes: @zuccadev-labs/zuix-tokens/tokens.css y @zuccadev-labs/zuix-zui/styles.css (material y base). */
+@import "./site.css";
+
 @layer zout {
   /* ── Shell ─────────────────────────────────────────────────────────────── */
   /* Contenedor con nombre: antes de que el comportamiento mida el shell, la hoja decide con él qué paneles caben. */
