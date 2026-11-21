@@ -143,7 +143,7 @@ export function SiteNav({ extraLinks }: { extraLinks?: boolean }) {
   useEffect(() => {
     const box = scrollRef.current;
     const item = box?.querySelector<HTMLElement>('[aria-current="page"]');
-    if (!box || !item || tab !== here) return;
+    if (!box || !item || !current || tab !== here) return;
     const b = box.getBoundingClientRect();
     const r = item.getBoundingClientRect();
     if (r.top < b.top || r.bottom > b.bottom) box.scrollTop += r.top - b.top - (b.height - r.height) / 2;
