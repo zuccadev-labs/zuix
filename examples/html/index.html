@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../tokens/dist/tokens.css">
   <link rel="stylesheet" href="../../zui/dist/zui.css">
   <link rel="stylesheet" href="../../zout/dist/zout.css">
+  <link rel="stylesheet" href="../fonts/fonts.css">
   <link rel="stylesheet" href="./page.css">
 </head>
 <body class="z-root z-canvas" data-z-dom>
@@ -1550,7 +1551,7 @@ malaga" data-ignore-accents="">Un
     <option value="us">United States</option>
   </select>
   <span class="z-select__chevron">
-    <z-icon name="chevron-down" size="16"></z-icon>
+    <z-icon name="chevron-up-down" size="16"></z-icon>
   </span>
 </span>
   </div>
@@ -1692,7 +1693,7 @@ malaga" data-ignore-accents="">Un
   <button type="button" class="z-select__control" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="view-list" aria-label="View" data-state="closed" data-placeholder>
     <span class="z-select__value">Choose a view</span>
   </button>
-  <span class="z-select__chevron"><z-icon name="chevron-down" size="16"></z-icon></span>
+  <span class="z-select__chevron"><z-icon name="chevron-up-down" size="16"></z-icon></span>
   <input type="hidden" name="view" value="" />
 </span>
 
@@ -2799,7 +2800,9 @@ malaga" data-ignore-accents="">Un
   <header class="demo__head"><h3 class="demo__name">Rail</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
 <nav class="z-rail z-liquid" aria-label="Primary">
-  <div class="z-rail__brand"></div>
+  <div class="z-rail__brand">
+    <z-icon name="cube" size="20"></z-icon>
+  </div>
   <div class="z-rail__items">
     <button type="button" class="z-rail__item" aria-label="Home" title="Home" aria-current="page">
       <z-icon name="home" variant="solid" size="20"></z-icon>
@@ -3081,14 +3084,28 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
-<section class="z-card demo" data-component="TitleBar" data-behavior="none">
-  <header class="demo__head"><h3 class="demo__name">TitleBar</h3><span class="z-badge" data-tone="neutral">css</span></header>
+<section class="z-card demo" data-component="TitleBar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TitleBar</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <header class="z-titlebar">
-  <div class="z-titlebar__brand"></div>
+  <div class="z-titlebar__brand">
+    <z-icon name="cube" size="18"></z-icon>
+     Atlas
+  </div>
   <div class="z-titlebar__center">
     <div class="z-tabstrip">
-      <div class="z-tabstrip__list" role="tablist" aria-label="Tabs"></div>
+      <div class="z-tabstrip__list" role="tablist" aria-label="Tabs">
+        <div class="z-tabstrip__tab" role="presentation" data-selected="true">
+          <button type="button" role="tab" class="z-tabstrip__select" aria-selected="true" tabindex="0" data-tab-id="main">
+            <span class="z-tabstrip__title">main.ts</span>
+          </button>
+        </div>
+        <div class="z-tabstrip__tab" role="presentation">
+          <button type="button" role="tab" class="z-tabstrip__select" aria-selected="false" tabindex="-1" data-tab-id="readme">
+            <span class="z-tabstrip__title">README.md</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="z-titlebar__actions">

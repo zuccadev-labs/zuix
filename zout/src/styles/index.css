@@ -328,6 +328,7 @@
     width: 40px;
     height: 40px;
     flex-shrink: 0;
+    padding: 0;
     border: 1px solid transparent;
     /* Concéntrico con el rail: control lg (12). */
     border-radius: var(--z-control-radius-lg);
@@ -532,7 +533,7 @@
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     padding: var(--z-space-2);
     border-top: 1px solid var(--z-line);
   }
@@ -540,7 +541,7 @@
   /* ── Items de sidebar, plegado a iconos y submenús ─────────────────────── */
   /* Items sueltos, sin sección: el mismo relleno que el cuerpo de una sección. */
   .z-sidebar__sections:has(> .z-sidebar__item) {
-    gap: 2px;
+    gap: var(--z-space-0-5);
     padding: var(--z-space-2);
   }
   .z-sidebar[data-collapsed] .z-sidebar__sections:has(> .z-sidebar__item) {
@@ -550,7 +551,7 @@
   .z-sidebar__item {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     min-width: 0;
   }
   .z-sidebar__row {
@@ -665,8 +666,9 @@
   .z-sidebar__sub {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin-inline-start: calc(var(--z-space-3) + 7px);
+    gap: var(--z-space-0-5);
+    /* La guía cae bajo el centro del icono del item (relleno 12 + medio icono de 16), menos su propio píxel. */
+    margin-inline-start: calc(var(--z-space-3) + var(--z-space-2) - 1px);
     padding-inline-start: var(--z-space-2);
     border-inline-start: 1px solid var(--z-line);
   }
@@ -732,7 +734,7 @@
     inset-block-start: 1px;
     inset-inline-end: 1px;
     min-width: 14px;
-    padding-inline: 3px;
+    padding-inline: var(--z-space-0-5);
     background: var(--z-accent-solid);
     color: var(--z-fg-on-accent);
     font-size: var(--z-text-fine);
@@ -1111,6 +1113,7 @@
     place-items: center;
     width: var(--z-control-height-sm);
     height: var(--z-control-height-sm);
+    padding: 0;
     border: 0;
     border-radius: var(--z-control-radius-sm);
     background: transparent;
@@ -1208,8 +1211,12 @@
   .z-tabstrip__tab {
     display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
-    max-width: 220px;
+    /* Cada pestaña mide su contenido (hasta 220 px) mientras haya sitio. Si no caben todas, ceden primero las
+       inactivas, hasta quedarse en su icono; la activa no encoge: conserva su nombre si cabe en la tira y solo pasa a
+       elipsis cuando ni sola cabe (nunca más ancha que la tira). */
+    flex: 0 1 auto;
+    min-inline-size: min(var(--z-control-height-sm) + var(--z-space-3), 100%);
+    max-width: min(220px, 100%);
     height: var(--z-control-height-sm);
     /* Pestaña de trabajo: rectángulo de radio sm (8), no píldora. */
     border-radius: var(--z-control-radius-sm);
@@ -1223,6 +1230,13 @@
       background: var(--z-row-hover);
       color: var(--z-fg);
     }
+  }
+  /* Con botón de cerrar, el mínimo deja a la parte que selecciona su objetivo de 24 px (o 40) además del cerrar. */
+  .z-tabstrip__tab:has(> .z-tabstrip__close) {
+    min-inline-size: min(var(--z-control-height-sm) + var(--z-space-3) + 24px, 100%);
+  }
+  .z-tabstrip__tab[data-selected] {
+    flex-shrink: 0;
   }
   /* Canto dibujado con sombra interior: un borde restaría alto al objetivo táctil de la pestaña. */
   .z-tabstrip__tab[data-selected] {
@@ -1269,12 +1283,23 @@
     color: inherit;
     cursor: pointer;
   }
-  /* 24 × 24 px: el mínimo de WCAG 2.5.8 para un objetivo que tiene otro pegado (la propia pestaña). */
+  /* 24 × 24 px (40 con puntero grueso): el mínimo de WCAG 2.5.8 para un objetivo que tiene otro pegado (la propia
+     pestaña). */
   .z-tabstrip__close {
+    position: relative;
+    /* 24 px de dibujo también con puntero grueso: el objetivo de 40 lo da ::before, sin quitar ancho al título. */
     width: 24px;
     height: 24px;
     margin-inline-end: var(--z-space-1);
     opacity: 0.55;
+  }
+  @media (pointer: coarse) {
+    .z-tabstrip__close::before {
+      content: "";
+      position: absolute;
+      /* Centrada y simétrica (vale igual en RTL): 40 × 40 alrededor del dibujo de 24. */
+      inset: calc((100% - var(--z-touch-target, 40px)) / 2);
+    }
   }
   @media (hover: hover) {
     .z-tabstrip__close:hover {
@@ -1334,7 +1359,8 @@
     align-items: center;
     gap: var(--z-space-1-5);
     max-width: 140px;
-    height: 22px;
+    /* Control xs (24; 40 con puntero grueso): antes 22, fuera de la escala de alturas. */
+    height: var(--z-control-height-xs);
     padding-inline: var(--z-space-2);
     border: 1px solid var(--z-tab-tone);
     border-radius: var(--z-radius-xs);
@@ -1474,7 +1500,7 @@
     display: flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: 2px;
+    gap: var(--z-space-0-5);
   }
 
   /* ── Primitivas de maquetación ─────────────────────────────────────────── */

@@ -16,6 +16,10 @@
   .z-root :where(p) {
     text-wrap: pretty;
   }
+  /* Código en línea con la mono de la marca: sin esto, <code> y <kbd> caen en la monoespaciada del sistema. */
+  .z-root :where(code, kbd, samp, pre) {
+    font-family: var(--z-font-mono);
+  }
   .z-root ::selection {
     background: var(--z-accent-soft);
   }

@@ -51,6 +51,17 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- Auditoría visual: `RailItem` y los botones de `FloatingPanel` sin el relleno por defecto del navegador; huecos
+  de `2px` y `3px` a `--z-space-0-5`. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus pestañas (el
+  contrato HTML los pintaba vacíos).
+- La guía de los submenús de `Sidebar` se calcula con tokens (`space-3 + space-2 − 1px`, bajo el centro del icono).
+- `TabStrip`: cada pestaña mide su contenido (hasta 220 px) mientras hay sitio; si no caben todas, ceden primero
+  las inactivas (hasta su icono) y la activa conserva su nombre entero si cabe en la tira; la elipsis solo aparece
+  cuando ni sola cabe. El botón de cerrar se dibuja a 24 px y con puntero grueso amplía su objetivo a 40 con
+  `::before` (antes ocupaba 40 de ancho y dejaba el título en «Fo…»). El chip de grupo mide `control-height-xs`
+  (24; 40 con puntero grueso; medía 22).
+- Ejemplos de `Sidebar` con alto mínimo en vez de fijo: con puntero grueso el último item quedaba cortado.
+
 - `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
   accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía
   desplazar con el teclado (axe `scrollable-region-focusable`).

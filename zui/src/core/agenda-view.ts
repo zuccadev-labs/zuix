@@ -1747,6 +1747,20 @@ export function agendaTree(
           ),
         )
       : null,
+    // Selector compacto de vista: lo mismo en un solo control para cuando el segmentado no cabe en una fila (la hoja
+    // muestra uno u otro según el ancho de la agenda). Un <select> nativo: teclado y nombre accesible de serie.
+    config.views.length > 1
+      ? h(
+          "span",
+          { class: "z-agenda__view-picker" },
+          h(
+            "select",
+            { class: "z-agenda__view-select", "aria-label": labels.viewsLabel },
+            ...config.views.map((v) => h("option", { key: v, value: v, selected: v === state.view }, labels.views[v])),
+          ),
+          icon("chevron-up-down", 14),
+        )
+      : null,
   );
 
   const grabbing = Boolean(state.grabbed);

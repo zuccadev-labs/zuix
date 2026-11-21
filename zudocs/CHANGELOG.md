@@ -36,6 +36,26 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 - El sitio deja de cargar Poppins: con la base visual nueva, la marca `dazlabs` usa DM Sans también en los
   titulares. Quedan autoalojadas DM Sans y JetBrains Mono.
 
+### Corregido
+
+- Auditoría visual del sitio:
+  - Rellenos, huecos, interlineados y pesos en tokens: tabla de props y de Markdown a 14/20 (antes 13/18 y
+    10/18), índice con interlineado `leading-ui` y sangrías de la escala, código en línea con peso regular,
+    titular de portada con `text-hero` y `leading-tight`.
+  - Los chips (enlaces de la cabecera de componente) usaban Arial: heredan la fuente de la marca. El buscador de la
+    barra, el filtro de la barra lateral y los chips pierden el relleno por defecto del navegador.
+  - Página de búsqueda: titular con la escala de la suite y campo de 48 px.
+  - El enlace de cada diapositiva de la portada mide 24 px de alto (objetivo de WCAG 2.5.8).
+  - La 404 dice «Página no encontrada» (el tema traía «Página No Encontrada», con mayúsculas a la inglesa).
+  - La búsqueda ya no desborda 2 px a 390 (la fila de Infima salía por los lados) y las casillas de las listas de
+    tareas usan un hueco de la escala.
+  - Los bloques de código no registran la escucha de `resize` del ajuste de línea del tema (el sitio no muestra
+    ese botón): en un teléfono lanzaba «Cannot destructure property 'scrollWidth'» en algunas páginas.
+  - Las vistas previas en columna centran un `Calendar` (ahora mide su contenido) en vez de dejarlo a la izquierda.
+  - Las cabeceras de las tablas pueden partir línea: con una fuente más ancha la tabla de props desbordaba 3–4 px.
+  - La barra lateral centra en su área con desplazamiento la página actual si quedaba fuera o a medias (al final de
+    una lista larga).
+
 
 ## [0.2.0] - 2026-11-18
 

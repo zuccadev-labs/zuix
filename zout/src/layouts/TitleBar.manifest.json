@@ -36,7 +36,7 @@
   "examples": [
     {
       "title": "Con pestañas",
-      "code": "<TitleBar brand={<Logo />} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={tabs} activeId={active} onSelect={setActive} />\n</TitleBar>"
+      "code": "<TitleBar brand={<><Icon name=\"cube\" size={18} /> Atlas</>} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={[{ id: \"main\", title: \"main.ts\" }, { id: \"readme\", title: \"README.md\" }]} activeId=\"main\" onSelect={setActive} />\n</TitleBar>"
     }
   ],
   "origin": "Barra de título de zutool."

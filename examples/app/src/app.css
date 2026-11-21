@@ -32,6 +32,23 @@ body {
   letter-spacing: var(--z-tracking-tight);
   text-transform: capitalize;
 }
+/* En un teléfono el nombre de la marca deja el sitio a las pestañas de trabajo (a 390 px quedaban ~50 px y la
+   pestaña activa se cortaba por los dos lados); sigue siendo texto para el lector de pantalla. */
+@media (max-width: 480px) {
+  /* El cambio de marca sigue en la paleta de órdenes («Switch brand to…»): en un teléfono su sitio es de las
+     pestañas, que así muestran su nombre entero. */
+  .app-brand-toggle {
+    display: none;
+  }
+  .app-brand {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
 .app-logo {
   display: inline-grid;
   place-items: center;
@@ -324,7 +341,7 @@ body {
   font-size: var(--z-text-heading);
 }
 .app-stay__head p {
-  margin: 2px 0 0;
+  margin: var(--z-space-0-5) 0 0;
 }
 .app-stay__fields {
   display: grid;
@@ -443,7 +460,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--z-space-2);
-  height: 300px;
+  /* Alto de su contenido, como mínimo 300: con puntero grueso (items de 40) un alto fijo cortaba el submenú a media
+     fila bajo el pie. */
+  min-height: 300px;
 }
 .app-sidebar-demo__frame {
   width: min(240px, 100%);
@@ -459,6 +478,7 @@ body {
   height: 160px;
 }
 .app-pane-demo__body {
+  margin: 0;
   padding: var(--z-space-3);
   font-family: var(--z-font-mono);
   font-size: var(--z-text-small);
@@ -512,4 +532,10 @@ body {
   align-items: stretch;
   height: 140px;
   gap: var(--z-space-5);
+}
+
+/* Casillas nativas de la demo de ActionBar: sin el margen de 3 px del navegador. */
+.app-inline > input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--z-accent);
 }

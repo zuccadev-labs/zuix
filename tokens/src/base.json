@@ -2,6 +2,7 @@
   "$comment": "Contrato común a todas las marcas. `{nombre}` se resuelve a var(--z-nombre). Una marca puede sobrescribir cualquier clave de `scale`, `semantic` o `component` desde su archivo en brands/.",
   "scale": {
     "space-0": "0",
+    "space-0-5": "2px",
     "space-1": "4px",
     "space-1-5": "6px",
     "space-2": "8px",

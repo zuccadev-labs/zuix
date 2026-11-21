@@ -1170,7 +1170,7 @@
     flex-shrink: 0;
     width: 14px;
     height: 14px;
-    margin-top: 3px;
+    margin-block-start: var(--z-space-0-5);
     border: 2px solid var(--z-toast-tone);
     border-inline-end-color: transparent;
     border-radius: var(--z-radius-full);
@@ -1187,7 +1187,7 @@
     color: var(--z-fg);
   }
   .z-toast__description {
-    margin-top: 2px;
+    margin-top: var(--z-space-0-5);
     font-size: var(--z-text-small);
     line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);

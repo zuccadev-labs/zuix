@@ -350,7 +350,7 @@
       border-spacing: 2px 0;
     }
     .z-perpetual__months {
-      padding-inline: 2px;
+      padding-inline: var(--z-space-0-5);
     }
     .z-perpetual__month b {
       font-size: var(--z-text-small);
@@ -573,10 +573,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-block: 2px var(--z-space-1-5);
+    padding-block: var(--z-space-0-5) var(--z-space-1-5);
     color: var(--z-fg-subtle);
     font-size: var(--z-text-fine);
-    line-height: 1.3;
+    line-height: var(--z-leading-snug);
+  }
+  /* El <small> del navegador encoge un 17 % (9,2 px): la inicial del día va en la escala, como su número. */
+  .z-timeline__unit small {
+    font-size: inherit;
   }
   .z-timeline__unit b {
     color: var(--z-fg);
@@ -721,7 +725,7 @@
     align-items: center;
     gap: var(--z-space-2);
     translate: -9px -50%;
-    padding: 2px;
+    padding: var(--z-space-0-5);
     border-radius: var(--z-control-radius-sm);
   }
   [dir="rtl"] .z-timeline__milestone {
@@ -895,6 +899,13 @@
   .z-timeline__create span {
     color: var(--z-fg-muted);
   }
+  /* El rótulo de un bloque corto acaba en elipsis en vez de cortarse a media palabra. */
+  .z-freebusy__block > span {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .z-freebusy__block {
     position: absolute;
     inset-block: var(--z-space-2-5);
@@ -940,7 +951,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--z-space-1);
-    padding: 2px var(--z-space-2);
+    padding: var(--z-space-0-5) var(--z-space-2);
     border-radius: var(--z-control-radius-sm);
     background: var(--z-success-solid);
     color: var(--z-fg-on-accent);
@@ -1044,7 +1055,7 @@
     font-weight: var(--z-weight-semibold);
   }
   .z-slotpicker__count {
-    margin: 2px 0 0;
+    margin: var(--z-space-0-5) 0 0;
     color: var(--z-fg-muted);
     font-size: var(--z-text-small);
   }
@@ -1103,7 +1114,7 @@
     gap: var(--z-space-2);
     max-block-size: calc(var(--z-space-20) * 4 + var(--z-space-10));
     overflow: auto;
-    padding: 2px;
+    padding: var(--z-space-0-5);
     scrollbar-width: thin;
   }
   .z-slotpicker__slot {
@@ -1182,7 +1193,7 @@
     /* Contenedor de consulta: ancho del sitio que lo recibe (no del contenido). */
     inline-size: 100%;
     --z-hm-cell: var(--z-space-3);
-    --z-hm-gap: 3px;
+    --z-hm-gap: var(--z-space-0-5);
     container: z-heatmap / inline-size;
     display: flex;
     flex-direction: column;

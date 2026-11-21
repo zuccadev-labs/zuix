@@ -85,13 +85,18 @@ export function patchElement(
   previous.set(el, v);
   if (!same) {
     const want = new Map<string, string>();
+    // Lo que teclea la persona en un campo no se pisa: el `value` de un input o textarea solo se escribe la primera
+    // vez (y tampoco se quita). El de un <option> sí es parte del árbol: quitarlo hacía que la opción valiese su texto
+    // («Month» en vez de «month») tras volver a pintar.
+    const typed = !fresh && (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement);
     for (const [k, value] of Object.entries(v.a ?? {})) {
       if (value === null || value === undefined || value === false) continue;
-      if (k === "value" && !fresh) continue; // lo que teclea la persona en un campo no se pisa
+      if (k === "value" && typed) continue;
       want.set(k, value === true ? "" : String(value));
     }
     for (const attr of [...el.attributes])
-      if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open") el.removeAttribute(attr.name);
+      if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open" && !(typed && attr.name === "value"))
+        el.removeAttribute(attr.name);
     for (const [k, value] of want) if (el.getAttribute(k) !== value) el.setAttribute(k, value);
     if (el instanceof HTMLElement || el instanceof SVGElement) {
       const style = el.style;

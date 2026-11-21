@@ -270,9 +270,9 @@ export function Commands() {
                 </Stack>
               </HoverCard>{" "}
               yesterday.{" "}
-              <button type="button" data-testid="c-after-hover">
+              <Button size="sm" variant="ghost" data-testid="c-after-hover">
                 After
-              </button>
+              </Button>
             </p>
           </Card>
           <Card className="app-demo">

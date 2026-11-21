@@ -153,7 +153,7 @@ a[class*="skipToContent"]:focus {
   color: var(--z-accent-text);
   font-size: var(--z-text-fine);
   font-weight: var(--z-weight-semibold);
-  line-height: 1.45;
+  line-height: var(--z-leading-ui);
 }
 .zd-kbd {
   display: inline-grid;
@@ -188,12 +188,13 @@ a[class*="skipToContent"]:focus {
   align-items: center;
   gap: var(--z-space-1-5);
   min-block-size: var(--z-control-height-sm);
-  padding-inline: var(--z-space-3);
+  padding: 0 var(--z-space-3);
   border: 1px solid var(--z-glass-border);
   border-radius: var(--z-control-radius-sm);
   background: var(--z-surface-2);
   box-shadow: inset 0 1px 0 var(--z-glass-highlight);
   color: var(--z-fg);
+  font: inherit;
   font-size: var(--z-text-small);
   font-weight: var(--z-weight-medium);
   text-decoration: none;
@@ -245,7 +246,7 @@ a[class*="skipToContent"]:focus {
 .zd-nav__bar {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--z-space-0-5);
   min-block-size: var(--z-docs-navbar-height);
   padding-inline: var(--z-space-1-5);
   border-radius: var(--z-radius-lg);
@@ -320,7 +321,7 @@ a[class*="skipToContent"]:focus {
   gap: var(--z-space-2);
   min-inline-size: 196px;
   min-block-size: var(--z-control-height-sm);
-  padding-inline: var(--z-space-2-5) var(--z-space-1);
+  padding: 0 var(--z-space-1) 0 var(--z-space-2-5);
   border: 1px solid var(--z-glass-border);
   border-radius: var(--z-control-radius-sm);
   background: var(--z-inset);
@@ -413,7 +414,7 @@ a[class*="skipToContent"]:focus {
 .zd-sitenav__scroll {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--z-space-0-5);
   min-block-size: 0;
   margin-inline: calc(-1 * var(--z-space-2));
   padding: 0 var(--z-space-2) var(--z-space-2);
@@ -479,8 +480,8 @@ a[class*="skipToContent"]:focus {
   position: relative;
   display: flex;
   flex-direction: column;
-  margin-inline-start: 18px;
-  padding-block: 2px var(--z-space-1-5);
+  margin-inline-start: var(--z-space-4);
+  padding-block: var(--z-space-0) var(--z-space-1-5);
 }
 .zd-nav-group__items::before {
   content: "";
@@ -532,7 +533,7 @@ a[class*="skipToContent"]:focus {
 .zd-nav-item[aria-current="page"]::before {
   content: "";
   position: absolute;
-  inset-block: 7px;
+  inset-block: var(--z-space-2);
   inset-inline-start: 0;
   inline-size: 2px;
   border-radius: 2px;
@@ -549,7 +550,7 @@ a[class*="skipToContent"]:focus {
   gap: var(--z-space-2);
   min-block-size: var(--z-control-height-sm);
   margin-block: var(--z-space-1) var(--z-space-1-5);
-  margin-inline: 18px 0;
+  margin-inline: var(--z-space-4) 0;
   padding-inline: var(--z-space-2-5);
   border: 1px solid var(--z-control-border);
   border-radius: var(--z-control-radius);
@@ -564,6 +565,7 @@ a[class*="skipToContent"]:focus {
 .zd-filter input {
   flex: 1;
   min-inline-size: 0;
+  padding: 0;
   border: 0;
   background: none;
   color: var(--z-fg);
@@ -602,7 +604,7 @@ a[class*="skipToContent"]:focus {
 }
 .zd-prevnext {
   display: inline-flex;
-  gap: 2px;
+  gap: var(--z-space-0-5);
   padding: var(--z-space-1);
   border: 1px solid var(--z-glass-border);
   border-radius: var(--z-control-radius-lg);
@@ -744,7 +746,7 @@ a[class*="skipToContent"]:focus {
   max-inline-size: 62ch;
   color: var(--z-fg-muted);
   font-size: var(--z-text-lead);
-  line-height: 1.4;
+  line-height: var(--z-leading-ui);
   text-wrap: pretty;
 }
 .zd-meta {
@@ -794,7 +796,7 @@ a[class*="skipToContent"]:focus {
   margin-block-start: var(--z-space-4);
   font-size: var(--z-text-heading-lg);
   font-weight: var(--z-weight-semibold);
-  line-height: 1.4;
+  line-height: var(--z-leading-ui);
   letter-spacing: var(--z-tracking-snug);
 }
 .zd-markdown > h4 {
@@ -841,15 +843,21 @@ a[class*="skipToContent"]:focus {
 .zd-states code,
 .zd-token-list code,
 .zd-facts code {
-  padding: 2px var(--z-space-1-5);
+  padding: var(--z-space-0-5) var(--z-space-1-5);
   border: 1px solid var(--z-line);
   border-radius: var(--z-radius-xs);
   background: var(--z-surface-2);
   color: var(--z-fg);
-  font: 450 0.84em / 1.4 var(--z-font-mono);
+  font: var(--z-weight-regular) 0.84em / var(--z-leading-ui) var(--z-font-mono);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   overflow-wrap: anywhere;
+}
+/* Listas de tareas de Markdown: la casilla con un hueco de la escala, no con el margen de 3 px del navegador. */
+.zd-markdown :is(ul, ol) > li > input[type="checkbox"] {
+  margin: 0 var(--z-space-2) 0 0;
+  vertical-align: middle;
+  accent-color: var(--z-accent);
 }
 .zd-markdown > blockquote {
   padding: var(--z-space-1) var(--z-space-4);
@@ -905,7 +913,7 @@ a[class*="skipToContent"]:focus {
   background: transparent;
 }
 .zd-table > table th {
-  padding: 10px 18px;
+  padding: var(--z-space-2-5) var(--z-space-5);
   border: 0;
   border-block-end: 1px solid var(--z-line);
   background: var(--z-surface);
@@ -913,11 +921,10 @@ a[class*="skipToContent"]:focus {
   font-size: var(--z-text-small);
   font-weight: var(--z-weight-medium);
   text-align: start;
-  white-space: nowrap;
   text-wrap: balance;
 }
 .zd-table > table td {
-  padding: 13px 18px;
+  padding: var(--z-space-3-5) var(--z-space-5);
   border: 0;
   border-block-end: 1px solid var(--z-line);
   color: var(--z-fg-prose);
@@ -963,7 +970,7 @@ a[class*="skipToContent"]:focus {
 }
 .zd-code pre {
   margin: 0;
-  padding: var(--z-space-4) 18px 18px;
+  padding: var(--z-space-4) var(--z-space-5) var(--z-space-5);
   border-radius: 0;
   background: var(--z-code-bg);
   color: var(--z-fg);
@@ -1073,14 +1080,14 @@ a[class*="skipToContent"]:focus {
   --zd-tone: var(--z-info);
   --zd-tone-text: var(--z-info-text);
   margin: 0;
-  padding: 14px var(--z-space-4);
+  padding: var(--z-space-3-5) var(--z-space-4);
   border: 0;
   border-radius: var(--z-radius-lg);
   background: var(--ifm-alert-background-color);
   box-shadow: none;
   color: var(--z-fg-prose);
   font-size: var(--z-text-body);
-  line-height: 1.55;
+  line-height: var(--z-leading-normal);
 }
 .theme-admonition.alert--success {
   --ifm-alert-background-color: var(--z-success-soft);
@@ -1146,7 +1153,7 @@ a[class*="skipToContent"]:focus {
 /* Pestañas de Docusaurus (@theme/Tabs) con la forma del segmentado de zui. */
 .zd-markdown .tabs-container > .tabs {
   display: inline-flex;
-  gap: 2px;
+  gap: var(--z-space-0-5);
   margin-block-end: var(--z-space-3);
   padding: var(--z-space-1);
   border: 1px solid var(--z-glass-border);
@@ -1221,7 +1228,7 @@ a[class*="skipToContent"]:focus {
 
 /* ── Rail: índice de la página y tarjetas ─────────────────────────────────── */
 .zd-toc {
-  padding: 14px var(--z-space-2) 10px;
+  padding: var(--z-space-3-5) var(--z-space-2) var(--z-space-2-5);
   border-radius: var(--z-radius-panel);
 }
 .zd-toc__head {
@@ -1245,22 +1252,22 @@ a[class*="skipToContent"]:focus {
 }
 .zd-toc__list a {
   display: block;
-  padding-block: 5px;
-  padding-inline: 14px var(--z-space-2-5);
+  padding-block: var(--z-space-1);
+  padding-inline: var(--z-space-3-5) var(--z-space-2-5);
   border-radius: var(--z-item-radius);
   color: var(--z-fg-muted);
   font-size: var(--z-text-small);
-  line-height: 1.35;
+  line-height: var(--z-leading-ui);
   text-decoration: none;
   transition:
     background-color var(--z-duration-fast) var(--z-ease-standard),
     color var(--z-duration-fast) var(--z-ease-standard);
 }
 .zd-toc__list li[data-level="1"] a {
-  padding-inline-start: 26px;
+  padding-inline-start: var(--z-space-7);
 }
 .zd-toc__list li[data-level="2"] a {
-  padding-inline-start: 38px;
+  padding-inline-start: var(--z-space-10);
 }
 .zd-toc__list a code {
   font-size: 0.92em;
@@ -1278,7 +1285,7 @@ a[class*="skipToContent"]:focus {
 .zd-rail-card {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--z-space-2-5);
   padding: var(--z-space-4);
   border-radius: var(--z-radius-panel);
   color: var(--z-fg-muted);
@@ -1307,7 +1314,7 @@ a[class*="skipToContent"]:focus {
 .zd-facts div {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--z-space-0-5);
 }
 .zd-facts dt {
   color: var(--z-fg-subtle);
@@ -1401,6 +1408,10 @@ a[class*="skipToContent"]:focus {
 .zd-preview__stage > * {
   max-inline-size: 100%;
 }
+/* En columna se estira lo que llena el ancho (campos, tablas); lo que mide su contenido (Calendar) va centrado. */
+.zd-preview[data-column] > .zd-preview__stage > .z-calendar {
+  align-self: center;
+}
 /* Dentro de una vista previa manda el CSS de zui. Infima va en la capa `docusaurus.infima`, anterior a las de
    zui: lo que zui no declara (bordes y relleno de tablas, márgenes de listas y títulos…) lo seguiría poniendo
    Infima. Esta subcapa de `docusaurus`, posterior a Infima y anterior a zui, devuelve esos elementos a los
@@ -1451,11 +1462,11 @@ a[class*="skipToContent"]:focus {
   white-space: nowrap;
 }
 .zd-props code {
-  padding: 3px 7px;
+  padding: var(--z-space-0-5) var(--z-space-1-5);
   border: 1px solid var(--z-line);
   border-radius: var(--z-radius-xs);
   background: var(--z-surface-2);
-  font: 500 var(--z-text-small) / 1.5 var(--z-font-mono);
+  font: var(--z-weight-medium) var(--z-text-small) / var(--z-leading-normal) var(--z-font-mono);
 }
 .zd-props .zd-props__name {
   color: var(--z-fg);
@@ -1465,7 +1476,7 @@ a[class*="skipToContent"]:focus {
   border: 0;
   background: none;
   color: var(--z-info-text);
-  font-weight: 400;
+  font-weight: var(--z-weight-regular);
   overflow-wrap: anywhere;
 }
 .zd-props .zd-props__default {
@@ -1473,7 +1484,7 @@ a[class*="skipToContent"]:focus {
   border: 0;
   background: none;
   color: var(--z-fg-muted);
-  font-weight: 400;
+  font-weight: var(--z-weight-regular);
 }
 .zd-states {
   display: flex;
@@ -1523,7 +1534,7 @@ a[class*="skipToContent"]:focus {
   flex-direction: column;
   gap: var(--z-space-1-5);
   block-size: 100%;
-  padding: var(--z-space-4) 18px;
+  padding: var(--z-space-4) var(--z-space-5);
   border: 1px solid var(--z-line);
   border-radius: var(--z-radius-xl);
   background: var(--z-surface);
@@ -1559,7 +1570,7 @@ a[class*="skipToContent"]:focus {
 .zd-card__text {
   color: var(--z-fg-muted);
   font-size: var(--z-text-small);
-  line-height: 1.5;
+  line-height: var(--z-leading-normal);
 }
 .zd-card__meta {
   margin-block-start: auto;
@@ -1733,9 +1744,9 @@ a[class*="skipToContent"]:focus {
   margin: 0;
   max-inline-size: 14ch;
   color: var(--z-fg);
-  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.75rem);
+  font-size: var(--z-text-hero);
   font-weight: var(--z-weight-display);
-  line-height: 1.02;
+  line-height: var(--z-leading-tight);
   letter-spacing: var(--z-tracking-display);
 }
 .zd-hero__title em {
@@ -1747,7 +1758,7 @@ a[class*="skipToContent"]:focus {
   max-inline-size: 52ch;
   color: var(--z-fg-muted);
   font-size: var(--z-text-lead);
-  line-height: 1.45;
+  line-height: var(--z-leading-ui);
   text-wrap: pretty;
 }
 .zd-hero__actions {
@@ -1865,6 +1876,13 @@ a[class*="skipToContent"]:focus {
   margin: 0;
   color: var(--z-fg-muted);
   font-size: var(--z-text-small);
+}
+/* El enlace de la diapositiva es un objetivo por sí solo (no va dentro de una frase): 24 px de alto como mínimo. */
+.zd-slide > a {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-block-size: var(--z-control-height-xs);
 }
 
 /* ── Pie y 404 ────────────────────────────────────────────────────────────── */
@@ -2073,9 +2091,22 @@ a[class*="skipToContent"]:focus {
   margin-inline: auto;
   padding: var(--z-space-8) var(--z-docs-gutter) var(--z-space-16);
 }
+/* La rejilla de Infima saca la fila 16 px por cada lado: con el margen del sitio (14 px a 390) desbordaba 2 px. */
+.main-wrapper > .container .row {
+  margin-inline: 0;
+}
+.main-wrapper > .container h1 {
+  margin-block: 0 var(--z-space-5);
+  font-size: var(--z-text-display);
+  font-weight: var(--z-weight-display);
+  line-height: var(--z-leading-tight);
+  letter-spacing: var(--z-tracking-display);
+}
 input[class*="searchQueryInput"],
 select[class*="searchContextInput"] {
-  block-size: var(--z-control-height-lg);
+  box-sizing: border-box;
+  block-size: var(--z-control-height-xl);
+  font-size: var(--z-text-body);
   padding: 0 var(--z-space-4);
   border: 1px solid var(--z-control-border);
   border-radius: var(--z-control-radius-lg);

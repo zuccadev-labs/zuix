@@ -10,14 +10,14 @@ body {
 }
 .page__bar {
   position: sticky;
-  top: var(--z-space-3);
+  inset-block-start: var(--z-space-3);
   z-index: var(--z-layer-sticky);
   display: flex;
   align-items: center;
   gap: var(--z-space-2);
   margin: var(--z-space-3);
   padding: var(--z-space-2) var(--z-space-4);
-  border-radius: var(--z-radius-full);
+  border-radius: var(--z-radius-lg);
 }
 .page__spacer {
   flex: 1;
@@ -73,7 +73,8 @@ body {
 .demo__stage > * {
   max-width: 100%;
 }
-.demo[data-component="Carousel"] {
+.demo[data-component="Carousel"],
+.demo[data-component="EventCalendar"] {
   grid-column: 1 / -1;
 }
 .demo__stage > .z-carousel {

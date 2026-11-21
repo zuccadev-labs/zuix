@@ -216,7 +216,7 @@
   .z-alert__icon {
     display: inline-flex;
     flex-shrink: 0;
-    margin-top: 2px;
+    margin-top: var(--z-space-0-5);
     color: var(--z-alert-tone);
   }
   .z-alert__body {
@@ -347,7 +347,7 @@
     grid-area: 1 / 1;
     align-self: start;
     /* A la altura de la primera línea de texto. */
-    margin-block-start: 2px;
+    margin-block-start: var(--z-space-0-5);
     color: var(--z-banner-tone);
   }
   .z-banner__body {

@@ -15,6 +15,9 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
   series vecinas se distingan con daltonismo (ΔE OKLab de pares adyacentes ≥ 8 con protanopía/deuteranopía salvo
   un par de 7,6 en dazlabs claro, que cubren marcadores y tramas); `chart-grid`, `chart-baseline`, `chart-height`,
   `chart-bar-max`, `chart-bar-radius`, `chart-area-opacity` y `chart-line-width`.
+- `space-0-5` (2 px): el paso más pequeño de la escala de espacio, para los huecos entre opciones de una pista
+  (segmentado, pestañas) y los rellenos finos que antes eran `2px` literales.
+
 - Agenda, oleada 2: rampa del mapa de calor `heatmap-hue` (`accent-text`) y `heatmap-0…4`, y `perpetual-side-bg`
   (panel del año perpetuo). El validador mide `fg-on-accent` sobre `perpetual-side-bg` (y al revés) y los
   niveles 3 y 4 como indicadores; los niveles 1 y 2 no llegan a 3:1, como cualquier rampa de cinco pasos de un
@@ -67,6 +70,8 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
   la suite, Geist y Geist Mono (antes Inter y JetBrains Mono). Los paquetes no incluyen archivos de fuente.
 - Capas de compatibilidad `zutool` y `ui-glass`: notas nuevas para `card-radius`, `card-shadow`, `radius-xl` y
   `overlay`.
+- `success-text` en claro más oscuro en `zutool` (62 % de `success`, antes 68 %) y `zenith` (68 %, antes 74 %):
+  sobre `success-soft` compuesto en una tarjeta quedaba en 4,42–4,45:1 (axe en `examples/html`).
 
 
 ## [0.2.0] - 2026-11-18

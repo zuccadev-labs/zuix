@@ -8,5 +8,6 @@
   "theme.SearchPage.emptyResultsTitle": { "message": "Buscar en la documentación" },
   "theme.SearchPage.documentsFound.plurals": { "message": "1 documento encontrado|{count} documentos encontrados" },
   "theme.SearchPage.noResultsText": { "message": "No se encontraron documentos" },
-  "theme.SearchPage.searchContext.everywhere": { "message": "Todo el sitio" }
+  "theme.SearchPage.searchContext.everywhere": { "message": "Todo el sitio" },
+  "theme.NotFound.title": { "message": "Página no encontrada" }
 }

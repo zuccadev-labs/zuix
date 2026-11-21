@@ -259,6 +259,7 @@ export function App() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setBrand(brand === "dazlabs" ? "zutool" : "dazlabs")}
+                className="app-brand-toggle"
                 data-testid="toggle-brand"
               />
               <IconButton

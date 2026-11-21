@@ -55,6 +55,31 @@ export default async function ({ page, test, ok, settle }) {
     await events();
   });
 
+  await test("EventCalendar: en una agenda estrecha las vistas van en un selector compacto", async () => {
+    await page.locator(root).evaluate((el) => {
+      el.style.inlineSize = "400px";
+    });
+    await settle();
+    ok(!(await page.locator(`${root} .z-agenda__views`).isVisible()), "el segmentado se oculta");
+    const picker = page.locator(`${root} .z-agenda__view-select`);
+    ok(await picker.isVisible(), "el selector aparece");
+    ok((await picker.getAttribute("aria-label")) === "View", "nombre accesible del selector");
+    await picker.focus();
+    await picker.selectOption("month");
+    await wait(async () => (await page.locator(`${root} .z-monthgrid[role=grid]`).count()) === 1, "mes desde el selector");
+    ok(
+      (await events()).some((e) => e.name === "viewchange" && e.detail.view === "month"),
+      "z:viewchange desde el selector",
+    );
+    await page.locator(`${root} .z-agenda__view-select`).selectOption("week");
+    await wait(async () => (await page.locator(`${root} .z-timegrid[role=grid]`).count()) === 1, "vuelta a la semana");
+    await events();
+    await page.locator(root).evaluate((el) => {
+      el.style.inlineSize = "";
+    });
+    await settle();
+  });
+
   await test("EventCalendar: agarrar con teclado, mover y soltar emite z:eventchange", async () => {
     const ev = `${root} .z-agenda__view .z-event[data-key="a"]`;
     await page.locator(ev).focus();

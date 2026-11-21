@@ -54,7 +54,7 @@
   }
   .z-agenda__nav {
     display: inline-flex;
-    gap: 2px;
+    gap: var(--z-space-0-5);
   }
   .z-agenda__icon-btn {
     display: inline-grid;
@@ -92,7 +92,8 @@
   .z-agenda__spacer {
     flex: 1;
   }
-  .z-agenda__zone {
+  .z-agenda__zone,
+  .z-agenda__view-picker {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -108,14 +109,15 @@
     font-weight: var(--z-weight-medium);
     white-space: nowrap;
   }
-  .z-agenda__zone .z-icon {
+  :is(.z-agenda__zone, .z-agenda__view-picker) .z-icon {
     color: var(--z-fg-muted);
   }
   .z-agenda__zone-offset {
     color: var(--z-fg-muted);
     font-weight: var(--z-weight-regular);
   }
-  .z-agenda__zone-select {
+  .z-agenda__zone-select,
+  .z-agenda__view-select {
     appearance: none;
     padding: 0;
     border: 0;
@@ -124,15 +126,22 @@
     font: inherit;
     cursor: pointer;
   }
-  .z-agenda__zone:focus-within {
+  :is(.z-agenda__zone, .z-agenda__view-picker):focus-within {
     outline: var(--z-focus-width) solid var(--z-accent-ring);
     outline-offset: 1px;
   }
-  .z-agenda__zone-select:focus-visible {
+  :is(.z-agenda__zone-select, .z-agenda__view-select):focus-visible {
     outline: none;
   }
   .z-agenda__views {
     flex: none;
+  }
+  /* El selector compacto de vista solo aparece cuando el segmentado no cabe (consulta de contenedor, abajo). */
+  .z-agenda__view-picker {
+    display: none;
+  }
+  .z-agenda__view-select {
+    padding-inline-end: var(--z-space-1);
   }
   .z-agenda__view {
     min-inline-size: 0;
@@ -184,7 +193,7 @@
   .z-agenda__calendars {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
   }
   .z-agenda__calendars-label {
     margin: 0;
@@ -316,7 +325,7 @@
     min-inline-size: 0;
     overflow: hidden;
     margin: 0;
-    padding: 3px var(--z-space-1-5) 3px calc(var(--z-space-1-5) + var(--z-event-bar-width));
+    padding: var(--z-space-0-5) var(--z-space-1-5) var(--z-space-0-5) calc(var(--z-space-1-5) + var(--z-event-bar-width));
     border: 0;
     border-radius: var(--z-event-radius);
     background: color-mix(in srgb, var(--z-event-color) var(--z-event-tint), var(--z-surface-solid));
@@ -348,7 +357,7 @@
   }
   .z-event__icon {
     display: inline-flex;
-    margin-inline-start: 3px;
+    margin-inline-start: var(--z-space-0-5);
     vertical-align: -2px;
     color: var(--z-event-fg-muted);
   }
@@ -585,7 +594,7 @@
     grid-template-columns: repeat(var(--z-tg-days), minmax(0, 1fr));
     grid-auto-rows: var(--z-control-height-xs);
     align-items: center;
-    gap: 2px 0;
+    gap: var(--z-space-0-5) 0;
     min-block-size: calc(var(--z-control-height-xs) + var(--z-space-2));
     padding-block: var(--z-space-1);
     background-image: repeating-linear-gradient(to right, var(--z-line) 0 1px, transparent 1px calc(100% / var(--z-tg-days)));
@@ -599,7 +608,7 @@
     flex-direction: row;
     align-items: center;
     block-size: calc(var(--z-control-height-xs) - var(--z-space-1));
-    margin-inline: 3px;
+    margin-inline: var(--z-space-0-5);
     padding-block: 0;
   }
   .z-event[data-variant="bar"][data-cont-start] {
@@ -645,7 +654,8 @@
   .z-timegrid__gutter > span {
     position: absolute;
     inset-inline-end: var(--z-space-2);
-    inset-block-start: calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 7px);
+    /* Centrada en su línea; la primera y la última hora no salen de la columna (se cortaban arriba y abajo). */
+    inset-block-start: clamp(0px, calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 7px), calc(100% - 1lh));
     color: var(--z-fg-subtle);
     font-size: var(--z-text-fine);
     white-space: nowrap;
@@ -654,7 +664,7 @@
     z-index: var(--z-layer-raised);
     inset-inline-end: var(--z-space-1);
     inset-block-start: calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 9px);
-    padding: 1px 5px;
+    padding: 1px var(--z-space-1);
     border-radius: var(--z-control-radius-sm);
     background: var(--z-calendar-now-label-bg);
     color: var(--z-fg-on-accent);
@@ -791,7 +801,7 @@
     block-size: calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px);
     display: flex;
     align-items: flex-start;
-    padding: 2px var(--z-space-1-5);
+    padding: var(--z-space-0-5) var(--z-space-1-5);
     border: 0;
     border-radius: var(--z-event-radius);
     background: transparent;
@@ -836,7 +846,7 @@
     z-index: var(--z-layer-sticky);
     inset-inline-start: var(--z-space-1);
     inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - var(--z-space-6) - 2px);
-    padding: 3px var(--z-space-2);
+    padding: var(--z-space-0-5) var(--z-space-2);
     border-radius: var(--z-radius-xs);
     background: var(--z-surface-solid);
     box-shadow: var(--z-shadow-md);
@@ -1010,7 +1020,7 @@
     align-self: start;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     margin: 0;
     padding: var(--z-space-3-5) 0 var(--z-space-3-5) var(--z-space-4);
     font-weight: inherit;
@@ -1036,7 +1046,7 @@
   .z-agendalist__items {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     margin: 0;
     padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-2) 0;
     list-style: none;
@@ -1189,7 +1199,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--z-space-2);
-    padding: 2px 2px var(--z-space-1-5) var(--z-space-1-5);
+    padding: var(--z-space-0-5) var(--z-space-0-5) var(--z-space-1-5) var(--z-space-1-5);
   }
   .z-agenda__detail-title {
     display: flex;
@@ -1281,19 +1291,12 @@
     .z-agenda__zone {
       display: none;
     }
-    /* Las vistas pasan a otra fila si no caben (sin recortar el área táctil de cada opción). */
+    /* Las vistas no caben en una fila: un solo selector compacto en lugar del segmentado partido en filas. */
     .z-agenda__views {
-      flex-wrap: wrap;
-      max-inline-size: 100%;
-      height: auto;
-      /* Entre filas, el sobrante del área táctil (40 px sobre 30) de cada opción no pisa la de la otra fila. */
-      row-gap: var(--z-space-2-5);
+      display: none;
     }
-    .z-agenda__views .z-segmented__item {
-      height: calc(var(--z-segmented-height) - var(--z-segmented-pad) * 2 - 2px);
-    }
-    .z-agenda__views .z-segmented__item {
-      flex: none;
+    .z-agenda__view-picker {
+      display: inline-flex;
     }
     .z-timegrid {
       --z-tg-gutter: calc(var(--z-space-10) + var(--z-space-1));
@@ -1324,7 +1327,7 @@
     }
     .z-timegrid__dayhead {
       flex-direction: column;
-      gap: 2px;
+      gap: var(--z-space-0-5);
     }
     .z-timegrid__day {
       font-size: var(--z-text-title);
@@ -1340,7 +1343,7 @@
       align-items: center;
       gap: var(--z-space-1);
       min-block-size: var(--z-space-14);
-      padding: 3px 2px;
+      padding: var(--z-space-0-5);
     }
     .z-monthgrid__cell .z-event,
     .z-monthgrid__more {
@@ -1350,7 +1353,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 3px;
+      gap: var(--z-space-0-5);
       max-inline-size: var(--z-space-8);
     }
     .z-monthgrid__dots i {
@@ -1402,11 +1405,6 @@
 
   /* Puntero grueso: más alto por hora, para que un evento de 15 min tenga 16 px y su área táctil, 24. */
   @media (pointer: coarse) {
-    /* Con las vistas en dos filas, el área ampliada de una opción caería sobre la de la otra fila: la opción
-       mide el objetivo táctil entero. */
-    .z-agenda__views .z-segmented__item {
-      min-block-size: var(--z-touch-target);
-    }
     .z-monthgrid__cell {
       min-block-size: calc(var(--z-mg-head) + (var(--z-mg-lanes) + 0.5) * var(--z-mg-lane) + var(--z-space-2));
     }
@@ -1452,6 +1450,7 @@
   @media print {
     .z-agenda__side,
     .z-agenda__views,
+    .z-agenda__view-picker,
     .z-agenda__nav,
     .z-agenda__today,
     .z-agenda__hint {
