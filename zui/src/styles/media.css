@@ -353,7 +353,7 @@
     font-weight: var(--z-weight-medium);
     cursor: pointer;
   }
-  .z-signature__mode[aria-pressed="true"] {
+  .z-signature__mode[aria-checked="true"] {
     background: var(--z-surface-3);
     box-shadow:
       inset 0 1px 0 var(--z-glass-highlight),

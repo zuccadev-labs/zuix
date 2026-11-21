@@ -32,6 +32,8 @@ export function createSnap(o: SnapOptions): SnapController {
   const { viewport, vertical } = o;
   let index = 0;
   let frame = 0;
+  // Desplazamiento pedido por código: mientras dura, las posiciones intermedias no cambian el índice.
+  let pending: { target: number; until: number } | null = null;
   const count = () => slidesOf(viewport).length;
   const positions = () => snapPositions(count(), o.perPage);
   const stepSize = () => {
@@ -45,6 +47,10 @@ export function createSnap(o: SnapOptions): SnapController {
   const read = () => {
     frame = 0;
     const next = snapIndexAt(vertical ? viewport.scrollTop : viewport.scrollLeft, stepSize(), positions());
+    if (pending) {
+      if (next !== pending.target && performance.now() < pending.until) return;
+      pending = null;
+    }
     if (next !== index) {
       index = next;
       o.onIndex(index);
@@ -57,9 +63,11 @@ export function createSnap(o: SnapOptions): SnapController {
     const clamped = Math.min(positions() - 1, Math.max(0, Math.round(target)));
     const offset = clamped * stepSize();
     const rtl = !vertical && isRtl(viewport);
+    const animated = smooth && !o.reducedMotion();
+    pending = animated ? { target: clamped, until: performance.now() + 1200 } : null;
     viewport.scrollTo({
       [vertical ? "top" : "left"]: rtl ? -offset : offset,
-      behavior: smooth && !o.reducedMotion() ? "smooth" : "auto",
+      behavior: animated ? "smooth" : "auto",
     });
     if (clamped !== index) {
       index = clamped;

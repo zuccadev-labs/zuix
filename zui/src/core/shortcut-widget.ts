@@ -99,19 +99,19 @@ function tree(c: Config, s: State, uid: string): VEl {
       {
         type: "button",
         class: "z-shortcut__field",
-        "aria-label": spoken ? `${c.labels.field}: ${spoken}` : c.labels.field,
         "aria-describedby": `${uid}-help`,
-        "aria-pressed": s.recording ? "true" : "false",
         disabled: c.disabled || undefined,
       },
+      // Nombre por contenido (no aria-label): el texto visible queda dentro del nombre (WCAG 2.5.3).
+      h("span", { class: "z-sr-only" }, spoken ? `${c.labels.field}: ${spoken}` : `${c.labels.field}, `),
       keys.length
         ? h(
             "span",
             { class: "z-kbd-group z-shortcut__keys", "aria-hidden": "true" },
             ...keys.map((k, i) => h("kbd", { key: `${i}-${k}`, class: "z-kbd", "data-size": "sm" }, k)),
           )
-        : h("span", { class: "z-shortcut__placeholder", "aria-hidden": "true" }, s.recording ? c.labels.recording : c.labels.placeholder),
-      s.hint ? h("span", { class: "z-shortcut__hint", "aria-hidden": "true" }, c.labels.needsModifier) : null,
+        : h("span", { class: "z-shortcut__placeholder" }, s.recording ? c.labels.recording : c.labels.placeholder),
+      s.hint ? h("span", { class: "z-shortcut__hint" }, c.labels.needsModifier) : null,
     ),
     parsed && !s.recording
       ? h(
@@ -157,7 +157,9 @@ function attach(root: HTMLElement, host: Host): () => void {
       field()?.focus();
       return;
     }
-    if (event.target.closest(".z-shortcut__field") && !host.state().recording) host.update({ recording: true, partial: null, hint: false });
+    // Pulsar el campo empieza a grabar; volver a pulsarlo lo deja como estaba. El estado se ve y se oye en el propio
+    // contenido («Press keys…» forma parte del nombre), sin aria-pressed: no es un conmutador de dos estados.
+    if (event.target.closest(".z-shortcut__field")) host.update({ recording: !host.state().recording, partial: null, hint: false });
   };
   const keydown = (event: KeyboardEvent) => {
     if (!(event.target instanceof Element) || !event.target.closest(".z-shortcut__field")) return;

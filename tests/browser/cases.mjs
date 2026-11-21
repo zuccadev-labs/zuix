@@ -631,8 +631,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        27,
-        "27 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts y Site)",
+        28,
+        "28 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site y Media)",
       );
       await settled(page);
       await shot(page, "overlay-palette");

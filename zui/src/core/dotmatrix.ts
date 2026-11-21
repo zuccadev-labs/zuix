@@ -17,6 +17,12 @@ export const DOT_PATTERNS = [
   "snake",
   "equalizer",
   "sparkle",
+  "diamond",
+  "radar",
+  "zigzag",
+  "helix",
+  "heart",
+  "cascade",
 ] as const;
 export type DotPattern = (typeof DOT_PATTERNS)[number];
 
@@ -48,6 +54,12 @@ const MOTION: Record<DotPattern, DotMotion> = {
   snake: "trail",
   equalizer: "breathe",
   sparkle: "trail",
+  diamond: "breathe",
+  radar: "trail",
+  zigzag: "trail",
+  helix: "breathe",
+  heart: "breathe",
+  cascade: "trail",
 };
 
 /** Duración por defecto de un ciclo, en segundos, según el patrón. */
@@ -64,6 +76,12 @@ const DURATION: Record<DotPattern, number> = {
   snake: 2.4,
   equalizer: 1.2,
   sparkle: 2,
+  diamond: 1.6,
+  radar: 1.8,
+  zigzag: 2,
+  helix: 1.8,
+  heart: 1.2,
+  cascade: 1.6,
 };
 
 /** Brillo mínimo de un punto (su estado tenue). */
@@ -189,6 +207,42 @@ export function dotMatrixCells(pattern: DotPattern, colsIn?: number, rowsIn?: nu
           break;
         case "sparkle":
           phase = dotHash(x, y);
+          break;
+        // Oleada 7: rombo que late desde el centro (distancia de Manhattan).
+        case "diamond":
+          phase = ((Math.abs(x - cx) + Math.abs(y - cy)) / (cx + cy || 1)) * 0.5;
+          break;
+        // Barrido de radar: el ángulo alrededor del centro, en el sentido de las agujas desde arriba.
+        case "radar":
+          phase = (Math.atan2(x - cx, cy - y) / (2 * Math.PI) + 1) % 1;
+          break;
+        // Zigzag por columnas: baja por una y sube por la siguiente.
+        case "zigzag": {
+          const index = x * rows + (x % 2 === 0 ? y : rows - 1 - y);
+          phase = index / (cols * rows);
+          break;
+        }
+        // Doble hélice: dos senos en contrafase; solo los puntos cercanos a una de las curvas.
+        case "helix": {
+          const t = (x / Math.max(1, cols - 1)) * Math.PI * 2;
+          const a = cy + Math.sin(t) * cy;
+          const b = cy - Math.sin(t) * cy;
+          off = Math.abs(y - a) > 0.6 && Math.abs(y - b) > 0.6;
+          phase = x / cols;
+          break;
+        }
+        // Corazón que late: la silueta (x² + y² − 1)³ − x²y³ ≤ 0, escalada a la rejilla.
+        case "heart": {
+          const u = ((x - cx) / (cx || 1)) * 1.25;
+          const v = ((cy - y) / (cy || 1)) * 1.25 + 0.25;
+          off = (u * u + v * v - 1) ** 3 - u * u * v ** 3 > 0;
+          // Con la fase en la mitad del ciclo, el fotograma quieto (movimiento reducido) muestra la silueta encendida.
+          phase = 0.5 - (Math.hypot(x - cx, y - cy) / maxCenter) * 0.2;
+          break;
+        }
+        // Cascada: cada columna cae con un pequeño retraso respecto a la anterior.
+        case "cascade":
+          phase = (x / cols) * 0.35 + (y / rows) * 0.5;
           break;
       }
       phase = ((phase % 1) + 1) % 1;

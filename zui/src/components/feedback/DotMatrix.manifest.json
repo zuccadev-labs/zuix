@@ -2,17 +2,45 @@
   "name": "DotMatrix",
   "group": "feedback",
   "status": "new",
-  "description": "Cargador de rejilla de puntos con 12 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos). CSS puro: cada punto desfasa la misma animación de opacidad y escala; quieto con movimiento reducido y en pausa fuera de pantalla.",
+  "description": "Cargador de rejilla de puntos con 18 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos, rombo, radar, zigzag, hélice, corazón y cascada). CSS puro: cada punto desfasa la misma animación de opacidad y escala; quieto con movimiento reducido y en pausa fuera de pantalla.",
   "import": "import { DotMatrix } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "pattern",
       "type": "enum",
-      "values": ["wave", "rain", "spiral", "pulse", "sweep", "checker", "orbit", "ripple", "cross", "snake", "equalizer", "sparkle"],
+      "values": [
+        "wave",
+        "rain",
+        "spiral",
+        "pulse",
+        "sweep",
+        "checker",
+        "orbit",
+        "ripple",
+        "cross",
+        "snake",
+        "equalizer",
+        "sparkle",
+        "diamond",
+        "radar",
+        "zigzag",
+        "helix",
+        "heart",
+        "cascade"
+      ],
       "default": "wave"
     },
-    { "name": "cols", "type": "number", "default": 5, "description": "Columnas (2–16)." },
-    { "name": "rows", "type": "number", "description": "Filas (2–16); por defecto, tantas como columnas." },
+    {
+      "name": "cols",
+      "type": "number",
+      "default": 5,
+      "description": "Columnas (2–16)."
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "description": "Filas (2–16); por defecto, tantas como columnas."
+    },
     {
       "name": "size",
       "type": "enum",
@@ -20,11 +48,34 @@
       "default": "md",
       "description": "Diámetro de cada punto (2, 4 o 6 px)."
     },
-    { "name": "tone", "type": "enum", "values": ["accent", "muted", "current"], "default": "accent" },
-    { "name": "duration", "type": "number", "description": "Segundos por ciclo; cada patrón tiene el suyo (1,2–2,4 s)." },
-    { "name": "framed", "type": "boolean", "default": false, "description": "Sobre una baldosa de cristal." },
-    { "name": "paused", "type": "boolean", "default": false },
-    { "name": "label", "type": "string", "default": "Loading", "description": "Nombre accesible; cadena vacía lo vuelve decorativo." }
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["accent", "muted", "current"],
+      "default": "accent"
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "description": "Segundos por ciclo; cada patrón tiene el suyo (1,2–2,4 s)."
+    },
+    {
+      "name": "framed",
+      "type": "boolean",
+      "default": false,
+      "description": "Sobre una baldosa de cristal."
+    },
+    {
+      "name": "paused",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Loading",
+      "description": "Nombre accesible; cadena vacía lo vuelve decorativo."
+    }
   ],
   "states": ["rest", "paused", "offscreen"],
   "tokens": [
@@ -44,11 +95,17 @@
   "behavior": "none",
   "a11y": "role=\"status\" con aria-label (decorativo con label=\"\"). Con prefers-reduced-motion no se anima: muestra un fotograma quieto del patrón. Ningún punto parpadea más de tres veces por segundo. Con colores forzados los puntos usan CanvasText. Opcional en el modo sin framework: zui/dom lo pausa fuera de pantalla y setDotMatrixPattern(el, patrón) lo redibuja.",
   "examples": [
-    { "title": "Onda", "code": "<DotMatrix pattern=\"wave\" />" },
+    {
+      "title": "Onda",
+      "code": "<DotMatrix pattern=\"wave\" />"
+    },
     {
       "title": "Patrones",
       "code": "<>\n  <DotMatrix pattern=\"rain\" label=\"Syncing\" />\n  <DotMatrix pattern=\"spiral\" label=\"Indexing\" />\n  <DotMatrix pattern=\"orbit\" label=\"Connecting\" />\n  <DotMatrix pattern=\"equalizer\" label=\"Listening\" />\n</>"
     },
-    { "title": "Baldosa grande", "code": "<DotMatrix pattern=\"pulse\" size=\"lg\" cols={7} framed label=\"Rendering preview\" />" }
+    {
+      "title": "Baldosa grande",
+      "code": "<DotMatrix pattern=\"pulse\" size=\"lg\" cols={7} framed label=\"Rendering preview\" />"
+    }
   ]
 }

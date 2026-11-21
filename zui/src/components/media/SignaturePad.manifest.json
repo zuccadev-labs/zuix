@@ -53,7 +53,7 @@
     "focus-width"
   ],
   "classes": ["z-signature"],
-  "a11y": "role=\"group\" con nombre. Dibujar con el puntero no se puede hacer con el teclado: el modo «Type» es la alternativa (un campo de texto con etiqueta cuyo nombre se muestra como firma). Los modos son botones con aria-pressed; deshacer y borrar son botones con texto y quedan desactivados si no hay nada que quitar (el foco pasa al campo o al modo). El lienzo es role=\"img\" con nombre. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-signature dentro de [data-z-dom] (data-mode, data-typed, data-draw-only, data-stroke, data-height, data-name); avisa con z:change { empty, mode, strokes, typed, svg }; signatureValue(el) y signatureBlob(el).",
+  "a11y": "role=\"group\" con nombre. Dibujar con el puntero no se puede hacer con el teclado: el modo «Type» es la alternativa (un campo de texto con etiqueta cuyo nombre se muestra como firma). Los modos son un radiogroup (flechas para cambiar); deshacer y borrar son botones con texto y quedan desactivados si no hay nada que quitar (el foco pasa al campo o al modo). El lienzo es role=\"img\" con nombre. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-signature dentro de [data-z-dom] (data-mode, data-typed, data-draw-only, data-stroke, data-height, data-name); avisa con z:change { empty, mode, strokes, typed, svg }; signatureValue(el) y signatureBlob(el).",
   "behavior": "dom",
   "examples": [
     { "title": "Dibujar o escribir", "code": "<SignaturePad name=\"signature\" onChange={(value) => setSigned(!value.empty)} />" },

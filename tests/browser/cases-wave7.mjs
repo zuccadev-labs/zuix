@@ -57,19 +57,20 @@ export default function ({ t, assert, poll, expectAttr }) {
         await page.locator(field).scrollIntoViewIfNeeded();
         await page.focus(field);
         await page.keyboard.press("Enter");
-        await expectAttr(page, field, "aria-pressed", "true");
+        await expectAttr(page, t("m-shortcut") + " .z-shortcut", "data-recording", "");
+        assert((await page.locator(`${field}`).textContent()).includes("Press keys"), "el contenido dice que graba");
         await page.keyboard.press("Control+Shift+KeyP");
         await poll(async () => (await text(page, "m-shortcut-value")) === "Mod+Shift+P", "graba la combinación");
-        await expectAttr(page, field, "aria-pressed", "false");
+        await expectAttr(page, t("m-shortcut") + " .z-shortcut", "data-recording", null);
         assert(
-          (await page.locator(field).getAttribute("aria-label")).startsWith("Open command palette: Ctrl Shift P"),
-          "nombre con el atajo",
+          (await page.locator(`${field} .z-sr-only`).textContent()).startsWith("Open command palette: Ctrl Shift P"),
+          "nombre con el atajo (por contenido)",
         );
         await page.keyboard.press("Enter");
         await page.keyboard.press("KeyJ");
         await poll(async () => (await page.locator(`${t("m-shortcut")} .z-shortcut__hint`).count()) === 1, "sin modificador: aviso");
         await page.keyboard.press("Escape");
-        await expectAttr(page, field, "aria-pressed", "false");
+        await expectAttr(page, t("m-shortcut") + " .z-shortcut", "data-recording", null);
         assert((await text(page, "m-shortcut-value")) === "Mod+Shift+P", "Escape no cambia el valor");
         await page.keyboard.press("Enter");
         await page.keyboard.press("Backspace");
@@ -118,7 +119,7 @@ export default function ({ t, assert, poll, expectAttr }) {
         await page.click(`${root} .z-signature__clear`);
         await poll(async () => (await text(page, "m-signature-state")) === "empty", "borrar");
         await page.click(`${root} .z-signature__mode[data-mode="type"]`);
-        await expectAttr(page, `${root} .z-signature__mode[data-mode="type"]`, "aria-pressed", "true");
+        await expectAttr(page, `${root} .z-signature__mode[data-mode="type"]`, "aria-checked", "true");
         await page.locator(`${root} .z-signature__typed`).fill("Ana Ruiz");
         await poll(async () => (await text(page, "m-signature-state")) === "type:Ana Ruiz", "el nombre escrito firma");
         assert((await page.locator(`${root} .z-signature__preview`).textContent()) === "Ana Ruiz", "vista del nombre");

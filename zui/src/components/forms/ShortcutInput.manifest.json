@@ -49,7 +49,7 @@
     "focus-offset"
   ],
   "classes": ["z-shortcut"],
-  "a11y": "Un button con nombre que incluye el atajo en palabras («Keyboard shortcut: Command Shift K») e instrucciones enlazadas; aria-pressed mientras graba. Al grabar, Escape cancela, Retroceso o Supr sin modificadores borran y Tab sale sin grabar: el foco nunca queda atrapado. El resultado se anuncia en una región viva. Las teclas visibles son decorativas (aria-hidden). `ariaKeyshortcuts(parseShortcut(v), apple)` da el valor de aria-keyshortcuts para el control que lo use. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-shortcut dentro de [data-z-dom] (data-value, data-platform, data-require-modifier, data-name); avisa con z:change { value }; matchesShortcut(event, valor, apple) para escucharlo.",
+  "a11y": "Un button cuyo nombre sale de su contenido e incluye el atajo en palabras («Keyboard shortcut: Command Shift K»; el texto visible queda dentro del nombre, WCAG 2.5.3) e instrucciones enlazadas; mientras graba, el contenido («Press keys…») lo dice y forma parte del nombre. Al grabar, Escape cancela, Retroceso o Supr sin modificadores borran y Tab sale sin grabar: el foco nunca queda atrapado. El resultado se anuncia en una región viva. Las teclas visibles son decorativas (aria-hidden). `ariaKeyshortcuts(parseShortcut(v), apple)` da el valor de aria-keyshortcuts para el control que lo use. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-shortcut dentro de [data-z-dom] (data-value, data-platform, data-require-modifier, data-name); avisa con z:change { value }; matchesShortcut(event, valor, apple) para escucharlo.",
   "behavior": "dom",
   "examples": [
     { "title": "Por defecto", "code": "<ShortcutInput defaultValue=\"Mod+K\" onValueChange={setShortcut} />" },

@@ -64,6 +64,7 @@ radios y material de los tokens.
     asíncrona con estado de carga) o descarga una URL, con enlace temporal y URL liberada. En `/dom`,
     `data-z-download="#id"` descarga un QRCode (SVG o PNG), un SignaturePad, un canvas o un texto; `download`,
     `downloadBlob` y `downloadUrl`. `qrcodeSvg(props)` da el QR como SVG autónomo.
+  - `DotMatrix`: seis patrones propios más (`diamond`, `radar`, `zigzag`, `helix`, `heart`, `cascade`), 18 en total.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único

@@ -2103,7 +2103,8 @@ malaga" data-ignore-accents="">Un
   <header class="demo__head"><h3 class="demo__name">ShortcutInput</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <div data-size="md" data-value="Mod+K" id="z-shortcut-_R_0_" class="z-shortcut">
-  <button type="button" class="z-shortcut__field" aria-label="Keyboard shortcut: Ctrl K" aria-describedby="z-shortcut-_R_0_-help" aria-pressed="false">
+  <button type="button" class="z-shortcut__field" aria-describedby="z-shortcut-_R_0_-help">
+    <span class="z-sr-only">Keyboard shortcut: Ctrl K</span>
     <span class="z-kbd-group z-shortcut__keys" aria-hidden="true">
       <kbd class="z-kbd" data-size="sm">Ctrl</kbd>
       <kbd class="z-kbd" data-size="sm">K</kbd>
@@ -2278,12 +2279,12 @@ malaga" data-ignore-accents="">Un
   <header class="demo__head"><h3 class="demo__name">SignaturePad</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <div role="group" aria-label="Signature pad" data-mode="draw" data-empty="" data-stroke="2.5" data-height="180" data-name="signature" style="--z-signature-height:180px" id="z-signature-_R_0_" class="z-signature">
-  <div class="z-signature__modes" role="group" aria-label="Signature method">
-    <button type="button" class="z-signature__mode" data-mode="draw" aria-pressed="true">
+  <div class="z-signature__modes" role="radiogroup" aria-label="Signature method">
+    <button type="button" class="z-signature__mode" data-mode="draw" role="radio" aria-checked="true" tabindex="0">
       <z-icon name="pencil" size="14"></z-icon>
       Draw
     </button>
-    <button type="button" class="z-signature__mode" data-mode="type" aria-pressed="false">
+    <button type="button" class="z-signature__mode" data-mode="type" role="radio" aria-checked="false" tabindex="-1">
       <z-icon name="language" size="14"></z-icon>
       Type
     </button>

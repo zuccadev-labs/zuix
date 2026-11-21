@@ -19,8 +19,8 @@ import { glowPoint, pieceCount, splitText } from "../../zui/src/core/effects.ts"
 import { pauseOffscreen, resetVisibility, watchedCount } from "../../zui/src/core/visibility.ts";
 
 describe("DotMatrix", () => {
-  test("12 patrones propios, cada uno con movimiento y duración", () => {
-    assert.equal(DOT_PATTERNS.length, 12);
+  test("18 patrones propios, cada uno con movimiento y duración", () => {
+    assert.equal(DOT_PATTERNS.length, 18);
     for (const p of DOT_PATTERNS) {
       assert.ok(isDotPattern(p));
       assert.ok(["trail", "breathe"].includes(dotMotion(p)));
@@ -53,6 +53,19 @@ describe("DotMatrix", () => {
         .join(),
     );
     assert.equal(new Set(sig).size, DOT_PATTERNS.length);
+  });
+  test("oleada 7: rombo simétrico, radar en el sentido de las agujas, hélice y corazón con silueta", () => {
+    const diamond = dotMatrixCells("diamond", 5, 5);
+    assert.equal(diamond[12]?.phase, 0, "el centro late primero");
+    assert.equal(diamond[2]?.phase, diamond[10]?.phase, "simétrico");
+    const radar = dotMatrixCells("radar", 5, 5);
+    assert.ok(radar[2]!.phase < radar[14]!.phase && radar[14]!.phase < radar[22]!.phase, "arriba, derecha, abajo");
+    const helix = dotMatrixCells("helix", 7, 5);
+    assert.ok(helix.some((c) => c.off) && helix.some((c) => !c.off), "solo las curvas");
+    const heart = dotMatrixCells("heart", 7, 7);
+    assert.ok(heart[0]?.off && !heart[24]?.off, "esquina fuera, centro dentro");
+    const zigzag = dotMatrixCells("zigzag", 3, 3);
+    assert.ok(zigzag[1]!.phase > zigzag[7]!.phase, "la segunda columna sube");
   });
   test("órbita solo usa el borde; cruz, diagonales y ejes", () => {
     const orbit = dotMatrixCells("orbit", 5, 5);

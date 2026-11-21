@@ -159,7 +159,7 @@
 
 - [Alert](https://zuccadev-labs.github.io/zuix/components/feedback/alert.md): Aviso en línea sobre el resultado de una acción o el estado del sistema.
 - [Banner](https://zuccadev-labs.github.io/zuix/components/feedback/banner.md): Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.
-- [DotMatrix](https://zuccadev-labs.github.io/zuix/components/feedback/dot-matrix.md): Cargador de rejilla de puntos con 12 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos).
+- [DotMatrix](https://zuccadev-labs.github.io/zuix/components/feedback/dot-matrix.md): Cargador de rejilla de puntos con 18 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos, rombo, radar, zigzag, hélice…
 - [EmptyState](https://zuccadev-labs.github.io/zuix/components/feedback/empty-state.md): Estado vacío: explica por qué no hay contenido y qué hacer.
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.

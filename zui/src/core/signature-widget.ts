@@ -183,7 +183,9 @@ function tree(c: Config, s: State, uid: string): VEl {
         type: "button",
         class: "z-signature__mode",
         "data-mode": mode,
-        "aria-pressed": s.mode === mode ? "true" : "false",
+        role: "radio",
+        "aria-checked": s.mode === mode ? "true" : "false",
+        tabindex: s.mode === mode ? 0 : -1,
         disabled: c.disabled || undefined,
       },
       icon(mode === "draw" ? "pencil" : "language", 14),
@@ -209,7 +211,7 @@ function tree(c: Config, s: State, uid: string): VEl {
       ? null
       : h(
           "div",
-          { class: "z-signature__modes", role: "group", "aria-label": c.labels.mode },
+          { class: "z-signature__modes", role: "radiogroup", "aria-label": c.labels.mode },
           tab("draw", c.labels.draw),
           tab("type", c.labels.type),
         ),
@@ -352,9 +354,21 @@ function attach(root: HTMLElement, host: Host): () => void {
       changed(root, host);
       // El botón queda desactivado al vaciar: el foco pasa al lienzo o al campo.
       (
-        root.querySelector<HTMLElement>(".z-signature__typed") ?? root.querySelector<HTMLElement>(".z-signature__mode[aria-pressed='true']")
+        root.querySelector<HTMLElement>(".z-signature__typed") ?? root.querySelector<HTMLElement>(".z-signature__mode[aria-checked='true']")
       )?.focus();
     }
+  };
+  // Modos como grupo de radios (APG): las flechas cambian de modo y llevan el foco.
+  const keydown = (event: KeyboardEvent) => {
+    const target = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>(".z-signature__mode") : null;
+    if (!target || !root.contains(target) || host.config().disabled) return;
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+    event.preventDefault();
+    const next = target.dataset.mode === "draw" ? "type" : "draw";
+    host.update({ mode: next });
+    root.dataset.mode = next;
+    changed(root, host);
+    root.querySelector<HTMLElement>(`.z-signature__mode[data-mode="${next}"]`)?.focus();
   };
   const input = (event: Event) => {
     const target = event.target;
@@ -371,6 +385,7 @@ function attach(root: HTMLElement, host: Host): () => void {
   root.addEventListener("pointercancel", up);
   root.addEventListener("click", click);
   root.addEventListener("input", input);
+  root.addEventListener("keydown", keydown);
   redraw(root);
   return () => {
     resize?.disconnect();
@@ -380,6 +395,7 @@ function attach(root: HTMLElement, host: Host): () => void {
     root.removeEventListener("pointercancel", up);
     root.removeEventListener("click", click);
     root.removeEventListener("input", input);
+    root.removeEventListener("keydown", keydown);
   };
 }
 

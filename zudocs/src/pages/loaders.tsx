@@ -1,4 +1,4 @@
-// Galería de cargadores: las tres formas de Spinner y los 12 patrones de DotMatrix en vivo, con tamaño, tono,
+// Galería de cargadores: las tres formas de Spinner y los 18 patrones de DotMatrix en vivo, con tamaño, tono,
 // rejilla y baldosa. Cada tarjeta enseña el código de lo que muestra.
 import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
@@ -20,6 +20,12 @@ const NAMES: Record<DotPattern, string> = {
   snake: "Serpiente",
   equalizer: "Ecualizador",
   sparkle: "Destellos",
+  diamond: "Rombo",
+  radar: "Radar",
+  zigzag: "Zigzag",
+  helix: "Hélice",
+  heart: "Corazón",
+  cascade: "Cascada",
 };
 
 type Size = "sm" | "md" | "lg";
@@ -39,7 +45,7 @@ export default function Loaders() {
     .filter(Boolean)
     .join(" ");
   return (
-    <Layout title="Cargadores" description="Spinner con formas y los 12 patrones de DotMatrix, en vivo.">
+    <Layout title="Cargadores" description="Spinner con formas y los 18 patrones de DotMatrix, en vivo.">
       <DocsShell>
         <PageGrid>
           <Crumbs items={[{ label: "Referencia" }, { label: "Cargadores" }]} />
@@ -47,7 +53,7 @@ export default function Loaders() {
             <h1>Cargadores</h1>
             <p className="zd-lead">
               Indicadores de espera de duración desconocida: <Link to="/components/feedback/spinner">Spinner</Link> en anillo, puntos o
-              barras, y <Link to="/components/feedback/dot-matrix">DotMatrix</Link>, una rejilla de puntos con 12 patrones propios. Todos
+              barras, y <Link to="/components/feedback/dot-matrix">DotMatrix</Link>, una rejilla de puntos con 18 patrones propios. Todos
               llevan <code>role="status"</code> con nombre, se animan solo con CSS (opacidad y escala), quedan quietos con movimiento
               reducido y se detienen fuera de pantalla.
             </p>
