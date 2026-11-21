@@ -84,7 +84,7 @@ export function NativeSelect({
         {children}
       </select>
       <span className="z-select__chevron">
-        <Icon name="chevron-down" size={ICON_SIZE[size]} />
+        <Icon name="chevron-up-down" size={ICON_SIZE[size]} />
       </span>
     </span>
   );

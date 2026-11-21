@@ -260,6 +260,16 @@ radios y material de los tokens.
   - `ButtonGroup` sin `attached` centra en la fila botones de tallas distintas (quedaban alineados arriba).
   - El texto de ejemplo de `Select` y de los segmentos vacíos de `DateField` pasa de `--z-fg-subtle` a
     `--z-fg-muted`: es texto real y en zutool claro sobre tarjeta quedaba en 4,46:1.
+  - `EventCalendar`: al abrir la semana o el día, la rejilla deja aire sobre la primera hora visible (el rótulo
+    quedaba bajo la cabecera pegajosa) y la última hora no sale de la columna.
+  - `EventCalendar`: cuando el segmentado de vistas no cabe en una fila (agenda de menos de 640 px), se sustituye
+    por un único selector compacto (`.z-agenda__view-picker` con un `<select>` nativo, mismo nombre accesible);
+    antes se partía en tres filas. Igual en React y en `/dom`.
+  - `Select` y `NativeSelect` usan `chevron-up-down` como pide la especificación (antes `chevron-down`; cambia el
+    icono del contrato HTML, no se retira nada).
+  - Modo DOM: al volver a pintar, el árbol quitaba el atributo `value` de las `<option>` (solo debía respetar lo
+    tecleado en campos de texto): un `<select>` repintado valía el texto de la opción. Afectaba también al selector
+    de zona horaria de la agenda.
 
 
 ## [0.2.0] - 2026-11-18
