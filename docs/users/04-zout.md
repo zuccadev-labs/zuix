@@ -200,7 +200,7 @@ aplicación.
 | `z:layout` | `.z-panelayout` | `{ layout }` | (informativo) |
 | `z:split` | `.z-panelayout` | `{ id, direction }` | La aplicación llama a `splitLayoutPane` con el panel nuevo |
 | `z:close` | `.z-panelayout` | `{ id }` | No se cierra el panel |
-| `z:select` | `.z-bottomnav` | `{ value }` | (informativo) |
+| `z:select` | `.z-bottomnav` | `{ value }` | No se mueve `aria-current` |
 
 `z:modechange` se emite al medir por primera vez, dentro de `init()`: quien quiera el primer aviso se
 suscribe antes, o lee `getShellModes(shell)`. Los `z:resize` de un `SplitPane` anidado llegan también
