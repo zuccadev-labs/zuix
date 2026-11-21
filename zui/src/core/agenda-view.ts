@@ -30,6 +30,9 @@ import { resourceTimeline, type ResourceItem, type ResourceRow } from "./timelin
 /* ---------- Árbol ---------- */
 
 import { h, icon, on, type VAttr, type VEl, type VNode } from "./vnode";
+/** Minutos alrededor de «ahora» en los que el rótulo de la hora en punto cede el sitio al rótulo de ahora. */
+const NOW_LABEL_ROOM = 30;
+
 export { toHTML, type VAttr, type VEl, type VNode, type VSlot } from "./vnode";
 
 /* ---------- Configuración y estado ---------- */
@@ -915,8 +918,13 @@ function timeGrid(config: AgendaConfig, state: AgendaState, model: AgendaModel, 
           h(
             "div",
             { class: "z-timegrid__gutter", role: "rowheader", "aria-label": zone },
+            // La hora que cae bajo el rótulo de «ahora» (a menos de media hora) se calla: el rótulo la taparía a medias.
             ...hours.map((m) =>
-              h("span", { key: `h${m}`, s: { "--z-tg-at": m }, "aria-hidden": "true" }, m === first ? "" : timeText(m, locale)),
+              h(
+                "span",
+                { key: `h${m}`, s: { "--z-tg-at": m }, "aria-hidden": "true" },
+                m === first || (showNow && Math.abs(m - nowMin) < NOW_LABEL_ROOM) ? "" : timeText(m, locale),
+              ),
             ),
             showNow ? h("span", { class: "z-timegrid__now-label", s: { "--z-tg-at": nowMin } }, timeText(model.now, locale)) : null,
           ),

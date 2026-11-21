@@ -928,8 +928,16 @@ export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boole
       const hourPx = box.height / ((config.dayEnd - config.dayStart) / 60);
       // Posición de la columna dentro del contenido desplazable, menos la cabecera pegajosa que la tapa y menos el
       // medio rótulo que la hora pinta por encima de su línea: así la primera hora visible se lee entera.
-      const top = box.top - scroller.getBoundingClientRect().top + scroller.scrollTop;
-      scroller.scrollTop = Math.max(0, top + ((scrollMinute - config.dayStart) / 60) * hourPx - (head?.offsetHeight ?? 0) - LABEL_ROOM);
+      const origin = scroller.getBoundingClientRect().top - scroller.scrollTop;
+      const headPx = head?.offsetHeight ?? 0;
+      let target = box.top - origin + ((scrollMinute - config.dayStart) / 60) * hourPx - headPx - LABEL_ROOM;
+      // El rótulo de «ahora» justo antes de esa hora quedaría a medias bajo la cabecera: se sube lo justo para verlo.
+      const now = root.querySelector<HTMLElement>(".z-timegrid__gutter > .z-timegrid__now-label");
+      if (now) {
+        const at = now.getBoundingClientRect().top - origin;
+        if (at < target + headPx && at > target + headPx - hourPx) target = at - headPx - LABEL_ROOM / 2;
+      }
+      scroller.scrollTop = Math.max(0, target);
     }
   }
   // Lista: al cambiar de vista o de periodo, desde el principio; con ventana virtual, la medida de una fila (una
