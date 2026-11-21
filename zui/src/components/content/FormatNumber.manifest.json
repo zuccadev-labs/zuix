@@ -1,0 +1,32 @@
+{
+  "name": "FormatNumber",
+  "group": "content",
+  "import": "import { FormatNumber } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Número con Intl.NumberFormat (compacto, moneda, porcentaje, unidad) en un <data value> que conserva el valor exacto. Sin estado: vale en un Server Component; en el modo DOM se reescribe con el locale del documento.",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "options",
+      "type": "Intl.NumberFormatOptions"
+    }
+  ],
+  "tokens": ["fg"],
+  "classes": ["z-format"],
+  "behavior": "dom",
+  "a11y": "Texto normal dentro de <data value> (el valor exacto para máquinas).",
+  "examples": [
+    {
+      "title": "Compacto y moneda",
+      "code": "<p>\n  <FormatNumber value={1250000} options={{ notation: \"compact\" }} locale=\"en-US\" /> visits ·{\" \"}\n  <FormatNumber value={1999.5} options={{ style: \"currency\", currency: \"EUR\" }} locale=\"en-US\" />\n</p>"
+    }
+  ]
+}

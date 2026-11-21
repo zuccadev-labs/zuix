@@ -21,6 +21,7 @@ export const GROUPS = {
   forms: { label: "Formularios", icon: "pencil-square" },
   agenda: { label: "Agenda", icon: "calendar-days" },
   data: { label: "Datos", icon: "table-cells" },
+  charts: { label: "Gráficos", icon: "chart-bar" },
   feedback: { label: "Estado", icon: "bell" },
   content: { label: "Contenido", icon: "rectangle-stack" },
   overlay: { label: "Superposición", icon: "square-3-stack-3d" },
@@ -70,6 +71,7 @@ const APG = {
   PasswordInput: "button",
   Tooltip: "tooltip",
   Tree: "treeview",
+  JsonTree: "treeview",
 };
 
 /** `OTPInput` → `otp-input`, `DataTable` → `data-table`. */

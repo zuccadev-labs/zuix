@@ -1,0 +1,90 @@
+{
+  "name": "CircularProgress",
+  "group": "data",
+  "description": "Anillo de avance sobre un <progress> nativo: determinado o indeterminado, con el valor o contenido propio en el centro.",
+  "import": "import { CircularProgress } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | null",
+      "description": "Sin valor, el anillo gira (indeterminado)."
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible del <progress>."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg", "xl"],
+      "default": "md",
+      "description": "24, 40, 64 y 96 px. En `sm` no hay contenido central."
+    },
+    {
+      "name": "thickness",
+      "type": "number",
+      "description": "Grosor del anillo en px (3, 4, 6 y 8 por tamaño)."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["accent", "success", "warning", "danger", "info"],
+      "default": "accent"
+    },
+    {
+      "name": "showValue",
+      "type": "boolean",
+      "default": false,
+      "description": "Porcentaje en el centro."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Contenido propio en el centro (aria-hidden)."
+    },
+    {
+      "name": "valueText",
+      "type": "string",
+      "description": "aria-valuetext cuando el centro muestra el valor de otra forma."
+    }
+  ],
+  "states": ["loading", "complete", "indeterminate"],
+  "tokens": [
+    "accent",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "surface-3",
+    "fg",
+    "radius-full",
+    "weight-semibold",
+    "duration-slow",
+    "ease-standard"
+  ],
+  "classes": ["z-progress-ring", "z-progress-ring__bar", "z-progress-ring__content"],
+  "a11y": "El <progress> nativo da el rol progressbar, el valor y el estado indeterminado (sin `value`). El centro repite el valor y va con aria-hidden; si lo muestra de otra forma, `valueText` lo da como aria-valuetext. Con colores forzados, el anillo se pinta con CanvasText sobre GrayText. El giro indeterminado se ralentiza con prefers-reduced-motion y la transición del valor solo se anima sin esa preferencia.",
+  "examples": [
+    {
+      "title": "Con valor",
+      "code": "<CircularProgress label=\"Upload\" value={72} showValue size=\"lg\" />"
+    },
+    {
+      "title": "Indeterminado",
+      "code": "<CircularProgress label=\"Loading\" size=\"sm\" />"
+    },
+    {
+      "title": "Tonos, grosor y contenido propio",
+      "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
+    }
+  ],
+  "origin": "Circular Progress de Shark y NeonBlade; guía progress-ring de modern-web-guidance (progress nativo, conic-gradient y máscara).",
+  "behavior": "none"
+}

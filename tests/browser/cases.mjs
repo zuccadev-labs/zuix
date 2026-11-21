@@ -7,6 +7,10 @@ import layers from "./cases-layers.mjs";
 import wave3 from "./cases-wave3.mjs";
 import wave4 from "./cases-wave4.mjs";
 import wave4Zout from "./cases-wave4-zout.mjs";
+import wave5Content from "./cases-wave5-content.mjs";
+import wave5Data from "./cases-wave5-data.mjs";
+import charts from "./cases-charts.mjs";
+import reading from "./cases-reading.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -184,7 +188,8 @@ async function overflowReport(page) {
       for (let n = el.parentElement; n; n = n.parentElement) {
         const o = getComputedStyle(n).overflowX;
         if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
-        if (n.classList.contains("z-carousel__viewport")) return true;
+        // Recortes deliberados con su propio desplazamiento: el carrusel y la cinta de Marquee.
+        if (n.classList.contains("z-carousel__viewport") || n.classList.contains("z-marquee__viewport")) return true;
       }
       return false;
     };
@@ -228,7 +233,21 @@ async function inPageAndModal(page, fn) {
   await focusOn(page, t("open-forms-modal"), "al cerrar el modal el foco vuelve a su disparador");
 }
 
-const SCREENS = ["overview", "projects", "overlays", "navigation", "gallery", "editor", "forms", "agenda", "workspace", "commands"];
+const SCREENS = [
+  "overview",
+  "projects",
+  "overlays",
+  "navigation",
+  "gallery",
+  "editor",
+  "forms",
+  "agenda",
+  "workspace",
+  "commands",
+  "content",
+  "data",
+  "charts",
+];
 
 export const cases = [
   // ───────────────────────────── Overlays ─────────────────────────────
@@ -606,7 +625,12 @@ export const cases = [
       await visible(page, "dialog.z-palette:modal");
       await focusOn(page, ".z-palette__input", "el foco entra en el buscador");
       await expectInViewport(page, ".z-palette");
-      await expectCount(page, ".z-palette__item", 23, "23 comandos sin filtro (pantallas Agenda, Inputs, Commands y Workspace)");
+      await expectCount(
+        page,
+        ".z-palette__item",
+        26,
+        "26 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data y Charts)",
+      );
       await settled(page);
       await shot(page, "overlay-palette");
       await page.keyboard.type("gal");
@@ -3032,7 +3056,7 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, charts, reading].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {

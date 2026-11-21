@@ -33,15 +33,17 @@ const slotKey = (v: VSlot) =>
         ? `event:${v.k ?? ""}`
         : `calendar:${String(v.p.name ?? "")}`;
 
-function create(v: VNode, doc: Document, slots: SlotRenderers): Node {
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function create(v: VNode, doc: Document, slots: SlotRenderers, svg = false): Node {
   if (typeof v === "string") return doc.createTextNode(v);
   if (!v) return doc.createTextNode("");
   if ("slot" in v) {
     if (v.slot === "icon") {
       const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size) }));
-      const svg = frag.firstElementChild ?? doc.createElement("span");
-      keys.set(svg, slotKey(v));
-      return svg;
+      const glyph = frag.firstElementChild ?? doc.createElement("span");
+      keys.set(glyph, slotKey(v));
+      return glyph;
     }
     if (v.slot === "event") {
       const span = doc.createElement("span");
@@ -58,7 +60,8 @@ function create(v: VNode, doc: Document, slots: SlotRenderers): Node {
     keys.set(cal, slotKey(v));
     return cal;
   }
-  const el = doc.createElement(v.t);
+  // Dentro de un <svg> (y el propio <svg>) los elementos van en el espacio de nombres de SVG.
+  const el = svg || v.t === "svg" ? doc.createElementNS(SVG_NS, v.t) : doc.createElement(v.t);
   keys.set(el, v.k !== undefined ? `${v.t}:${v.k}` : v.t);
   patchElement(el, v, true, slots);
   if (v.m) painted.set(el, v);
@@ -90,7 +93,7 @@ export function patchElement(
     for (const attr of [...el.attributes])
       if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open") el.removeAttribute(attr.name);
     for (const [k, value] of want) if (el.getAttribute(k) !== value) el.setAttribute(k, value);
-    if (el instanceof HTMLElement) {
+    if (el instanceof HTMLElement || el instanceof SVGElement) {
       const style = el.style;
       for (const name of [...style].filter((p) => p.startsWith("--") && !(v.s && p in v.s))) style.removeProperty(name);
       for (const [k, value] of Object.entries(v.s ?? {}))
@@ -108,6 +111,7 @@ export function patchElement(
 
 export function patchChildren(parent: Element, kids: VNode[], slots: SlotRenderers = {}): void {
   const doc = parent.ownerDocument;
+  const svg = parent.namespaceURI === SVG_NS && parent.localName !== "foreignObject";
   const existing = [...parent.childNodes];
   // Nodos con clave propia que aún no se han usado: si una pieza cambia de posición (aparece o desaparece una
   // anterior), se mueve en vez de crearse de nuevo (conserva el foco y el texto de las regiones vivas).
@@ -141,7 +145,7 @@ export function patchChildren(parent: Element, kids: VNode[], slots: SlotRendere
       }
       return;
     }
-    const node = create(v, doc, slots);
+    const node = create(v, doc, slots, svg);
     // Un nodo con clave que hará falta más adelante (una fila que solo cambia de sitio) no se sustituye: el nuevo va
     // delante y el otro se recoloca al llegar a su clave (conserva foco y estado).
     const curKey = cur ? keys.get(cur) : undefined;

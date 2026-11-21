@@ -484,3 +484,32 @@ body {
   display: block;
   overflow-wrap: anywhere;
 }
+/* Gráficos */
+.app-charts {
+  display: grid;
+  gap: var(--z-space-4);
+}
+.app-charts__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--z-space-3);
+}
+.app-charts__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--z-space-4);
+}
+.app-charts__spark {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--z-space-2);
+  color: var(--z-fg-muted);
+}
+
+/* Barras verticales de la pantalla Data (oleada 5). */
+.app-row--tall {
+  align-items: stretch;
+  height: 140px;
+  gap: var(--z-space-5);
+}

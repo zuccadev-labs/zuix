@@ -41,6 +41,9 @@ import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
 import { AgendaScreen } from "./screens/Agenda";
 import { Workspace } from "./screens/Workspace";
+import { ContentWave5 } from "./screens/ContentWave5";
+import { ChartsScreen } from "./screens/Charts";
+import { DataWave5 } from "./screens/DataWave5";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -202,6 +205,12 @@ export function App() {
       <AgendaScreen />
     ) : active === "workspace" ? (
       <Workspace />
+    ) : active === "content" ? (
+      <ContentWave5 />
+    ) : active === "charts" ? (
+      <ChartsScreen />
+    ) : active === "data" ? (
+      <DataWave5 />
     ) : (
       <Editor />
     );

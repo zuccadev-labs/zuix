@@ -1,0 +1,147 @@
+{
+  "name": "Item",
+  "exports": ["ItemGroup"],
+  "group": "data",
+  "description": "Fila de contenido con medio (avatar, icono o imagen), título, descripción, metadato y acciones; enlace opcional que cubre toda la fila. ItemGroup las agrupa en una lista.",
+  "import": "import { Item, ItemGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "media",
+      "type": "ReactNode",
+      "description": "Medio inicial propio (Avatar, imagen)."
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Icono inicial en un recuadro."
+    },
+    {
+      "name": "image",
+      "type": "string",
+      "description": "Imagen inicial (con `imageAlt`, vacío por defecto: decorativa)."
+    },
+    {
+      "name": "imageAlt",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "meta",
+      "type": "ReactNode",
+      "description": "Texto al final (hora, tamaño)."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Acciones al final; quedan por encima del enlace."
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "description": "El título pasa a ser un enlace cuya zona de clic cubre la fila."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["default", "muted", "outline"],
+      "default": "default"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "ItemGroup.header",
+      "type": "ReactNode",
+      "description": "Cabecera visible; si es texto, nombra la lista."
+    },
+    {
+      "name": "ItemGroup.divided",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "ItemGroup.framed",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": ["rest", "hover", "focus"],
+  "tokens": [
+    "item-radius",
+    "space-1",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "surface-2",
+    "line",
+    "line-strong",
+    "glass-border",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "fg",
+    "fg-muted",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "leading-ui",
+    "leading-snug",
+    "tracking-wide",
+    "layer-raised",
+    "row-hover",
+    "accent-ring",
+    "focus-width",
+    "card-border",
+    "card-radius",
+    "card-bg",
+    "duration-fast",
+    "ease-standard"
+  ],
+  "classes": [
+    "z-item",
+    "z-item__media",
+    "z-item__icon",
+    "z-item__image",
+    "z-item__content",
+    "z-item__title",
+    "z-item__link",
+    "z-item__description",
+    "z-item__meta",
+    "z-item__actions",
+    "z-item-group",
+    "z-item-group__header",
+    "z-item-group__list",
+    "z-item-group__entry"
+  ],
+  "a11y": "Con `href`, el enlace es el título (su nombre accesible es el título) y su zona de clic se extiende a la fila con un ::after; las acciones siguen siendo controles propios, por encima. El foco del enlace se dibuja en la fila entera. ItemGroup es role=\"list\" y cada hijo un listitem; la cabecera de texto nombra la lista.",
+  "examples": [
+    {
+      "title": "Grupo con avatar, metadato y acción",
+      "code": "<ItemGroup header=\"Team\" divided framed>\n  <Item media={<Avatar name=\"Ana Ruiz\" />} title=\"Ana Ruiz\" description=\"Owner\" meta=\"Online\" actions={<IconButton icon=\"ellipsis-horizontal\" label=\"More for Ana\" variant=\"ghost\" size=\"sm\" />} />\n  <Item media={<Avatar name=\"Leo Park\" />} title=\"Leo Park\" description=\"Editor\" meta=\"2 h ago\" />\n</ItemGroup>"
+    },
+    {
+      "title": "Con icono y enlace",
+      "code": "<Item icon=\"document-text\" title=\"Quarterly report.pdf\" description=\"2.4 MB · PDF\" href=\"/tokens\" variant=\"outline\" />"
+    },
+    {
+      "title": "Atenuado y compacto",
+      "code": "<Item size=\"sm\" variant=\"muted\" icon=\"bell\" title=\"Notifications\" description=\"3 unread\" />"
+    }
+  ],
+  "origin": "Item de Shark; ListRow y MemberRow de zutool. Enlace de fila con el patrón Link Overlay.",
+  "behavior": "none"
+}

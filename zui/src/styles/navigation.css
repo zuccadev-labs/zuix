@@ -231,6 +231,40 @@
     place-items: center;
     color: var(--z-fg-subtle);
   }
+  .z-breadcrumb__separator[data-custom] {
+    min-width: 1ch;
+    padding-inline: 2px;
+  }
+  /* Migas colapsadas: «…» abre un menú con las del medio. Rectángulo de radio corto, no píldora. */
+  .z-breadcrumb__more {
+    display: inline-grid;
+    place-items: center;
+    min-width: max(24px, var(--z-touch-target, 0px));
+    height: max(24px, var(--z-touch-target, 0px));
+    padding: 0 var(--z-space-1);
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-breadcrumb__more:hover {
+      background: var(--z-row-hover);
+      color: var(--z-fg);
+    }
+  }
+  .z-breadcrumb__more[aria-expanded="true"] {
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+  }
+  .z-breadcrumb__more:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
   /* RTL: los iconos que señalan una dirección de lectura se reflejan. */
   [dir="rtl"] :is(.z-breadcrumb__separator, .z-pagination__btn) svg.z-icon {
     transform: scaleX(-1);
@@ -446,6 +480,73 @@
   .z-stepper .z-stepper__step[data-state="complete"]::after {
     background: var(--z-accent);
   }
+  /* Paso en proceso: anillo que gira dentro del marcador (sin giro con movimiento reducido: queda el arco fijo). */
+  .z-stepper__spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: var(--z-radius-full);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-stepper__spinner {
+      animation: z-stepper-spin 0.8s linear infinite;
+    }
+  }
+  @keyframes z-stepper-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  /* Con paneles: lista, panel del paso actual y Anterior/Siguiente al final. */
+  .z-stepper-panels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-5);
+    min-width: 0;
+  }
+  .z-stepper-panels[data-orientation="vertical"] {
+    display: grid;
+    grid-template-columns: minmax(10rem, max-content) minmax(0, 1fr);
+    grid-template-areas: "steps panel" "steps nav";
+    align-items: start;
+    column-gap: var(--z-space-8);
+  }
+  .z-stepper-panels[data-orientation="vertical"] > .z-stepper {
+    grid-area: steps;
+  }
+  .z-stepper-panels[data-orientation="vertical"] > .z-stepper__panels {
+    grid-area: panel;
+  }
+  .z-stepper-panels[data-orientation="vertical"] > .z-stepper__nav {
+    grid-area: nav;
+  }
+  .z-stepper__panel {
+    min-width: 0;
+    border-radius: var(--z-radius-sm);
+  }
+  .z-stepper__panel:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-stepper__panel:focus:not(:focus-visible) {
+    outline: none;
+  }
+  .z-stepper__nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--z-space-2);
+  }
+  .z-stepper__nav[hidden] {
+    display: none;
+  }
+  @media (width < 40rem) {
+    .z-stepper-panels[data-orientation="vertical"] {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "steps" "panel" "nav";
+      row-gap: var(--z-space-5);
+    }
+  }
 
   /* ---------- Acordeón ---------- */
   .z-accordion {
@@ -521,6 +622,35 @@
     padding: 0 var(--z-space-2-5) var(--z-space-4);
     color: var(--z-fg-prose);
     line-height: var(--z-leading-relaxed);
+  }
+  /* Sección abierta que no se puede cerrar (collapsible={false}): la cabecera no cambia al pasar. */
+  .z-accordion__trigger[data-locked] {
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .z-accordion__trigger[data-locked]:hover {
+      background: transparent;
+    }
+  }
+  /* Variante tarjeta: cada sección es una tarjeta (radio 16) y su cabecera lleva el radio concéntrico (16 − 4). */
+  .z-accordion[data-variant="card"] {
+    gap: var(--z-space-2);
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item {
+    padding: var(--z-space-1);
+    border: 1px solid var(--z-card-border);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-card-bg);
+    box-shadow: var(--z-card-shadow);
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item:last-child {
+    border-bottom: 1px solid var(--z-card-border);
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item > .z-accordion__header > .z-accordion__trigger {
+    border-radius: calc(var(--z-radius-lg) - var(--z-space-1));
+  }
+  .z-accordion[data-variant="card"] > .z-accordion__item[data-state="open"] {
+    border-color: var(--z-line-strong);
   }
 
   /* ---------- Árbol ---------- */
@@ -608,6 +738,34 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  /* Casilla del árbol: la apariencia de Checkbox (z-check__box), más pequeña; el estado lo lleva el treeitem. */
+  .z-tree__check {
+    width: 16px;
+    height: 16px;
+  }
+  /* Selección múltiple: el seleccionado lleva además un filo de acento (no solo el fondo). */
+  .z-tree[aria-multiselectable="true"] .z-tree__item[aria-selected="true"] > .z-tree__row {
+    background: var(--z-accent-soft);
+    box-shadow: inset 2px 0 0 var(--z-accent);
+  }
+  [dir="rtl"] .z-tree[aria-multiselectable="true"] .z-tree__item[aria-selected="true"] > .z-tree__row {
+    box-shadow: inset -2px 0 0 var(--z-accent);
+  }
+  .z-tree__rename {
+    flex: 1;
+    min-width: 0;
+    height: calc(100% - var(--z-space-1));
+    padding-inline: var(--z-space-1-5);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font: inherit;
+  }
+  .z-tree__rename:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
   }
 
   /* ---------- Enlaces de barra lateral ---------- */

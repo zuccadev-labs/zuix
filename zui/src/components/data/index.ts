@@ -1,5 +1,5 @@
 export { Table, type TableProps } from "./Table";
-export { DataTable, type DataTableProps, type DataTableColumn, type SortState, type SortDirection } from "./DataTable";
+export { DataTable, type DataTableProps, type DataTableColumn, type SortState, type SortDirection, type RowKey } from "./DataTable";
 export { Badge, type BadgeProps } from "./Badge";
 export { Chip, type ChipProps } from "./Chip";
 export { Avatar, type AvatarProps, type AvatarSize, type AvatarStatus } from "./Avatar";
@@ -9,3 +9,8 @@ export { Meter, type MeterProps } from "./Meter";
 export { Progress, type ProgressProps } from "./Progress";
 export { Rating, type RatingProps } from "./Rating";
 export { Kbd, type KbdProps } from "./Kbd";
+export { Timeline, TimelineItem, type TimelineProps, type TimelineItemProps } from "./Timeline";
+export { CircularProgress, type CircularProgressProps } from "./CircularProgress";
+export { DescriptionList, type DescriptionListProps, type DescriptionItem } from "./DescriptionList";
+export { Item, ItemGroup, type ItemProps, type ItemGroupProps } from "./Item";
+export { StatusDot, type StatusDotProps } from "./StatusDot";

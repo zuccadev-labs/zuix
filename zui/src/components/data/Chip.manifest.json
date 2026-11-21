@@ -43,6 +43,18 @@
       "name": "disabled",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
+      "description": "Chip de estado: fondo suave, borde y texto del tono (texto con contraste 4.5:1). Sin tono, la ficha neutra."
+    },
+    {
+      "name": "dot",
+      "type": "boolean",
+      "default": false,
+      "description": "Punto de estado delante del texto."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled", "selected"],
@@ -75,9 +87,23 @@
     "glass-highlight",
     "radius-xs",
     "space-1-5",
-    "weight-semibold"
+    "weight-semibold",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "warning-soft",
+    "warning-text",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "info",
+    "info-soft",
+    "info-text",
+    "fg-subtle",
+    "radius-full"
   ],
-  "classes": ["z-chip"],
+  "classes": ["z-chip", "z-chip__dot"],
   "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
   "examples": [
     {
@@ -87,6 +113,10 @@
     {
       "title": "Etiqueta eliminable",
       "code": "<Chip onRemove={() => removeTag(\"design\")} removeLabel=\"Remove design tag\">design</Chip>"
+    },
+    {
+      "title": "Chips de estado con tono",
+      "code": "<div style={{ display: \"flex\", gap: 8, flexWrap: \"wrap\" }}>\n  <Chip tone=\"success\" dot>Running</Chip>\n  <Chip tone=\"warning\" dot>Paused</Chip>\n  <Chip tone=\"danger\" dot count={3}>Errors</Chip>\n  <Chip tone=\"info\" icon=\"cloud\">Remote</Chip>\n</div>"
     }
   ],
   "origin": "FilterChip del design system base y chip de zutool."

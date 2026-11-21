@@ -65,6 +65,60 @@ radios y material de los tokens.
     que lo resalta, progreso, Anterior, Siguiente/Hecho y Saltar; el foco entra en la tarjeta en cada paso, Escape
     o Saltar lo cierran y el foco vuelve a donde estaba; las flechas laterales cambian de paso. Lógica en
     `core/tour`. En `/dom`, `startTour()`.
+- DataTable, oleada 5: selección de filas con casillas (`selectable`, `selectedKeys`, `defaultSelectedKeys`,
+  `onSelectionChange`, `isRowSelectable`), «seleccionar todo» de la página con estado indeterminado, Mayús +
+  clic para un rango y conteo visible anunciado (`role="status"`, `selectedLabel`); pie en `tfoot` por columna
+  (`footer`, contenido o función sobre todas las filas); paginación integrada con Pagination (`pageSize`,
+  `page`, `defaultPage`, `onPageChange`, `manualPagination` + `rowCount`, `rangeLabel`). Sin las props nuevas
+  el marcado no cambia. Modo DOM (`.z-datatable`): `data-page-size`, `data-selected-label`,
+  `data-range-label`, `z:selectionchange` y `z:pagechange`, y `setDataTableSelection()`,
+  `dataTableSelection()` y `setDataTablePage()` en `/dom`. Lógica en `core/selection`.
+- Tree, oleada 5: `selectionMode="multiple"` (`aria-multiselectable`; Ctrl/Cmd y Mayús con el puntero,
+  Espacio, Mayús+flechas y Ctrl+A; `selectedIds`, `defaultSelectedIds`, `onSelectedChange`), casillas en
+  cascada con estado mixto (`checkable`, `checked`, `defaultChecked`, `onCheckedChange`; `aria-checked`
+  true/false/mixed) y renombrar (`renamable`, `onRename`, `renameLabel`: F2 o doble clic, Intro confirma,
+  Escape cancela). Modo DOM: `aria-multiselectable`, `data-checkable`, `data-renamable`, `z:change` con
+  `values` y `checked`, `z:rename` cancelable y `checkTreeItem()`/`renameTreeItem()` en `/dom`. Lógica en
+  `core/tree` (cascada, rangos, profundidad).
+- `JsonTree`: visor de JSON y de valores de JavaScript sobre Tree (tipos con color de texto, `Array(3)`,
+  `Map(2)`, `Set(1)`, fechas, bigint, `[Circular]`), `defaultExpandDepth`, `maxStringLength` (texto completo en
+  `title`), rutas `$.a[0].b` con `onSelect` y `copyPath` (anuncio en `role="status"`). Modo DOM: `.z-jsontree` con
+  `<script type="application/json" data-value>` o `setJsonTreeValue(el, valor)`; `z:select` y `z:copy`.
+- Stepper: icono por paso (`icon`), estado de carga (`loading`: marcador que gira y `aria-busy`) y panel por
+  paso (`content`) con Anterior/Siguiente (`onStepChange`, `completed`, `navLabels`, `nextDisabled`). El foco va
+  al panel nuevo y los ocultos conservan lo escrito. Modo DOM: `.z-stepper-panels` (`data-current`, `z:change`,
+  `setStep()` en `/dom`). Sin cambios para el Stepper sin paneles.
+- Breadcrumb: migas colapsadas (`maxItems`, `itemsBeforeCollapse`, `itemsAfterCollapse`, `collapsedLabel`): las
+  del medio pasan a un Menu tras un botón «…»; y separador propio (`separator`). Modo DOM con `data-z-open` y un
+  `.z-menu[popover]` de enlaces.
+- Accordion: variante tarjeta (`variant="card"`, radios concéntricos) y `collapsible={false}` (con una sola
+  abierta, su cabecera lleva `aria-disabled` y no la cierra; sigue en las flechas). Modo DOM: `data-variant="card"`
+  y `data-collapsible="false"`.
+- Gráficos propios en SVG, sin dependencias (grupo `charts`): `LineChart`, `AreaChart` (apiladas con `stacked`),
+  `BarChart` (vertical u horizontal, agrupadas o apiladas, negativos), `DonutChart`, `PieChart` y el genérico
+  `Chart`. Escalas lineal, temporal (marcas de calendario) y de banda, marcas «bonitas» (1, 2, 2,5, 5 × 10ⁿ), apilado
+  por signo, sectores y curvas lineal, monótona y escalonada en `core/chart`; la pieza en `core/chart-widget` (un
+  árbol para React y para el modo DOM). Ejes con rótulos de `Intl` (compactos desde 10 000), cuadrícula, leyenda con
+  botones `aria-pressed` que ocultan series (`hidden`/`defaultHidden`/`onHiddenChange`; el color sigue a la serie),
+  tooltip y cruceta al pasar y al enfocar, una posición enfocable por punto con su nombre completo (flechas,
+  Inicio/Fin, Re Pág/Av Pág, Intro → `onPointClick`), tabla de datos alternativa («View as table»), `figure` +
+  `figcaption` con resumen calculado, marcadores con forma (`markers`) y trazos o tramas (`patterns`, siempre con
+  colores forzados e impresión), entrada animada que respeta `prefers-reduced-motion`, RTL y consultas de
+  contenedor. Marcas de línea, área y sector en SVG con trazos que no escalan; barras, puntos, ejes y tooltip en
+  HTML colocado por fracciones (nada se mide). Modo DOM: `.z-chart` con `data-type`, `data-x-key`… y datos en
+  `<script type="application/json" data-props>`; `z:pointclick`, `z:hiddenchange`, `z:viewchange`.
+- `Sparkline` (línea, área o barras; imagen con nombre que resume la serie; sin estado, vale en un Server
+  Component; modo DOM con `.z-sparkline[data-values]`) y `StatTile` con `trend` y `trendProps`.
+- Datos y contenido, oleada 5: `Timeline` (`<ol>`, formas de punto, estilos de línea, alineación inicio/fin/alterna
+  que pasa a una columna en estrecho, `<time datetime>`), `CircularProgress` (sobre `<progress>`), `Progress`
+  vertical y segmentada, `DescriptionList` (`<dl>`), `Item`/`ItemGroup`, `StatusDot` (tono, tamaño, pulso; nunca
+  solo color), `Chip` con `tone`, `CardMedia` y `AspectRatio`.
+- Lectura y formato: `Prose` (`.z-prose`, con `.z-not-prose` para salir), `ScrollArea` (región enfocable con nombre,
+  `scrollbar-color`/`scrollbar-width` y sombras solo hacia donde queda contenido, sin JavaScript), `Marquee` (copias
+  `inert`, pausa al pasar o enfocar, botón de pausa visible, quieto con `prefers-reduced-motion`), `Highlight`
+  (`<mark>`, varias consultas, sin mayúsculas, sin acentos o palabras completas; `setHighlightQuery()` en `/dom`) y
+  `FormatNumber`, `FormatByte` (decimal con unidades de `Intl` o binario IEC) y `FormatDate` (`<time datetime>`, o
+  relativa con RelativeTime). Lógica en `core/format`; modo DOM en `dom/reading`.
 - Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
   una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
   `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de

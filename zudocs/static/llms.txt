@@ -124,13 +124,27 @@
 - [AvatarGroup](https://zuccadev-labs.github.io/zuix/components/data/avatar-group.md): Avatares solapados con contador de sobrantes.
 - [Badge](https://zuccadev-labs.github.io/zuix/components/data/badge.md): Etiqueta de estado o categoría, no interactiva.
 - [Chip](https://zuccadev-labs.github.io/zuix/components/data/chip.md): Ficha compacta: filtro conmutable, etiqueta eliminable o ambas.
-- [DataTable](https://zuccadev-labs.github.io/zuix/components/data/data-table.md): Tabla de datos genérica sobre el tipo de fila, con columnas ordenables y filas activables.
+- [CircularProgress](https://zuccadev-labs.github.io/zuix/components/data/circular-progress.md): Anillo de avance sobre un <progress> nativo: determinado o indeterminado, con el valor o contenido propio en el centro.
+- [DataTable](https://zuccadev-labs.github.io/zuix/components/data/data-table.md): Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.
+- [DescriptionList](https://zuccadev-labs.github.io/zuix/components/data/description-list.md): Pares término–descripción en un <dl>: propiedades de un recurso, metadatos, resumen de una ficha.
+- [Item](https://zuccadev-labs.github.io/zuix/components/data/item.md): Fila de contenido con medio (avatar, icono o imagen), título, descripción, metadato y acciones; enlace opcional que cubre toda la fila.
 - [Kbd](https://zuccadev-labs.github.io/zuix/components/data/kbd.md): Tecla o atajo de teclado.
 - [Meter](https://zuccadev-labs.github.io/zuix/components/data/meter.md): Medidor de una magnitud dentro de un rango conocido.
-- [Progress](https://zuccadev-labs.github.io/zuix/components/data/progress.md): Barra de avance de una tarea, determinada o indeterminada.
+- [Progress](https://zuccadev-labs.github.io/zuix/components/data/progress.md): Barra de avance de una tarea, determinada o indeterminada; horizontal o vertical, continua o por tramos.
 - [Rating](https://zuccadev-labs.github.io/zuix/components/data/rating.md): Valoración con estrellas: lectura (admite decimales) o entrada.
 - [StatTile](https://zuccadev-labs.github.io/zuix/components/data/stat-tile.md): Tesela de indicador: etiqueta, valor destacado y contexto.
+- [StatusDot](https://zuccadev-labs.github.io/zuix/components/data/status-dot.md): Punto de estado con su texto (en línea, ocupado, caído).
 - [Table](https://zuccadev-labs.github.io/zuix/components/data/table.md): Tabla con estilo para marcado nativo (thead, tbody, tr, th, td).
+- [Timeline](https://zuccadev-labs.github.io/zuix/components/data/timeline.md): Lista ordenada de acontecimientos: punto o icono en una línea, hora en <time datetime>, título y descripción.
+
+## Componentes: Gráficos
+
+- [AreaChart](https://zuccadev-labs.github.io/zuix/components/charts/area-chart.md): Gráfico de áreas: como LineChart con relleno lavado (≈16 %) y base en cero; `stacked` apila las series (positivos hacia arriba, negativos hacia abajo) y el tooltip suma el total.
+- [BarChart](https://zuccadev-labs.github.io/zuix/components/charts/bar-chart.md): Gráfico de barras verticales u horizontales, agrupadas o apiladas, con valores negativos: grosor máximo, extremo del dato redondeado y base recta, hueco de 2 px entre las que se tocan, banda…
+- [DonutChart](https://zuccadev-labs.github.io/zuix/components/charts/donut-chart.md): Anillo: parte de un todo con el total en el centro (o el sector activo al pasar o enfocar), leyenda con porcentajes que oculta sectores, hueco entre sectores y trama opcional.
+- [LineChart](https://zuccadev-labs.github.io/zuix/components/charts/line-chart.md): Gráfico de líneas: una o varias series sobre un eje de categorías, tiempo (marcas de día, semana, mes o año y rótulos de Intl) o número; curva lineal, monótona o escalonada, huecos donde falta el…
+- [PieChart](https://zuccadev-labs.github.io/zuix/components/charts/pie-chart.md): Tarta: como DonutChart sin hueco central; los sectores se separan con un trazo de superficie y el tooltip sale junto al sector.
+- [Sparkline](https://zuccadev-labs.github.io/zuix/components/charts/sparkline.md): Minigráfico en línea, área o barras: una serie sin ejes, con el último valor marcado.
 
 ## Componentes: Estado
 
@@ -145,14 +159,24 @@
 
 ## Componentes: Contenido
 
+- [AspectRatio](https://zuccadev-labs.github.io/zuix/components/content/aspect-ratio.md): Caja que mantiene una proporción (CSS aspect-ratio); la imagen, el vídeo o el iframe de dentro la cubren.
 - [Callout](https://zuccadev-labs.github.io/zuix/components/content/callout.md): Nota destacada dentro de un contenido; estática.
 - [Card](https://zuccadev-labs.github.io/zuix/components/content/card.md): Superficie que agrupa contenido relacionado.
 - [CardFooter](https://zuccadev-labs.github.io/zuix/components/content/card-footer.md): Pie de una Card con sus acciones.
 - [CardHeader](https://zuccadev-labs.github.io/zuix/components/content/card-header.md): Cabecera de una Card: título, subtítulo y acción.
+- [CardMedia](https://zuccadev-labs.github.io/zuix/components/content/card-media.md): Media de cabecera de una Card (portada, imagen de producto) sobre AspectRatio, a sangre o dentro del relleno con radio concéntrico.
 - [CodeBlock](https://zuccadev-labs.github.io/zuix/components/content/code-block.md): Bloque de código sin resaltado, con botón de copiar.
 - [Divider](https://zuccadev-labs.github.io/zuix/components/content/divider.md): Línea separadora entre bloques o entre elementos de una barra.
+- [FormatByte](https://zuccadev-labs.github.io/zuix/components/content/format-byte.md): Tamaño en bytes legible: decimal con las unidades de Intl («1.5 MB», «1,5 megabytes») o binario con símbolo IEC («1.4 MiB»), en un <data value> con los bytes exactos.
+- [FormatDate](https://zuccadev-labs.github.io/zuix/components/content/format-date.md): Fecha en un <time datetime> con Intl.DateTimeFormat, o relativa («hace 3 min») con `relative`, que delega en RelativeTime y se actualiza sola.
+- [FormatNumber](https://zuccadev-labs.github.io/zuix/components/content/format-number.md): Número con Intl.NumberFormat (compacto, moneda, porcentaje, unidad) en un <data value> que conserva el valor exacto.
+- [Highlight](https://zuccadev-labs.github.io/zuix/components/content/highlight.md): Marca con <mark> las coincidencias de una o varias consultas en un texto: sin distinguir mayúsculas, opcionalmente sin acentos o solo palabras completas; relleno de acento o subrayado ondulado.
+- [JsonTree](https://zuccadev-labs.github.io/zuix/components/content/json-tree.md): Visor de JSON y de valores de JavaScript como árbol: tipos con color, profundidad inicial, Map y Set, cadenas largas truncadas y copia de la ruta.
+- [Marquee](https://zuccadev-labs.github.io/zuix/components/content/marquee.md): Cinta que desfila sin fin (horizontal o vertical, inversa, velocidad, difuminado de bordes, separación): copias del contenido (las extra inert y aria-hidden), pausa al pasar o enfocar y botón de…
 - [Panel](https://zuccadev-labs.github.io/zuix/components/content/panel.md): Panel de cristal líquido: la pieza de cromo sobre la que flota la interfaz.
+- [Prose](https://zuccadev-labs.github.io/zuix/components/content/prose.md): Tipografía de contenido largo (`.z-prose`): h1–h6, párrafos, enlaces, listas, citas, código en línea y bloques, kbd, mark, tablas, separadores, figuras, details y dl con el ritmo de lectura de la…
 - [RelativeTime](https://zuccadev-labs.github.io/zuix/components/content/relative-time.md): Tiempo relativo («3 minutes ago», «in 2 days») sobre un instante, con Intl.RelativeTimeFormat.
+- [ScrollArea](https://zuccadev-labs.github.io/zuix/components/content/scroll-area.md): Región desplazable con nombre y foco (para el teclado), barra con el color de la suite (scrollbar-color y scrollbar-width, ≥ 3:1 y más gruesa con prefers-contrast) y sombras que solo aparecen hacia…
 - [Timer](https://zuccadev-labs.github.io/zuix/components/content/timer.md): Cuenta atrás o cronómetro con iniciar, pausar, reanudar y reiniciar.
 
 ## Componentes: Superposición
@@ -175,14 +199,14 @@
 ## Componentes: Navegación
 
 - [Accordion](https://zuccadev-labs.github.io/zuix/components/navigation/accordion.md): Secciones plegables apiladas.
-- [Breadcrumb](https://zuccadev-labs.github.io/zuix/components/navigation/breadcrumb.md): Ruta jerárquica hasta la página actual.
+- [Breadcrumb](https://zuccadev-labs.github.io/zuix/components/navigation/breadcrumb.md): Ruta jerárquica hasta la página actual, con separador propio y migas del medio colapsadas en un menú.
 - [Collapsible](https://zuccadev-labs.github.io/zuix/components/navigation/collapsible.md): Bloque que se pliega y despliega con un botón: un detalle opcional, una lista larga o un texto que se recorta.
 - [Menubar](https://zuccadev-labs.github.io/zuix/components/navigation/menubar.md): Barra de menús de aplicación (File, Edit, View): una sola parada de tabulación y paso entre menús con las flechas.
 - [NavList](https://zuccadev-labs.github.io/zuix/components/navigation/nav-list.md): Navegación vertical para barras laterales: `NavList` agrupa y `NavLink` es cada destino con icono y estado activo.
 - [Pagination](https://zuccadev-labs.github.io/zuix/components/navigation/pagination.md): Navegación entre páginas numeradas con anterior, siguiente y huecos.
-- [Stepper](https://zuccadev-labs.github.io/zuix/components/navigation/stepper.md): Progreso por pasos numerados, horizontal o vertical.
+- [Stepper](https://zuccadev-labs.github.io/zuix/components/navigation/stepper.md): Progreso por pasos de un flujo, con icono y estado de carga por paso y, opcionalmente, un panel por paso con Anterior/Siguiente.
 - [Tabs](https://zuccadev-labs.github.io/zuix/components/navigation/tabs.md): Pestañas para alternar vistas: control segmentado, tira de pastillas o subrayado.
-- [Tree](https://zuccadev-labs.github.io/zuix/components/navigation/tree.md): Árbol jerárquico con expansión, selección y navegación por teclado.
+- [Tree](https://zuccadev-labs.github.io/zuix/components/navigation/tree.md): Árbol jerárquico con expansión, selección simple o múltiple, casillas en cascada, renombrar y navegación por teclado.
 
 ## Componentes: Carousel
 

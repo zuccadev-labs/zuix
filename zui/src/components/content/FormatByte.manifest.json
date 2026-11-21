@@ -1,0 +1,46 @@
+{
+  "name": "FormatByte",
+  "group": "content",
+  "import": "import { FormatByte } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Tamaño en bytes legible: decimal con las unidades de Intl («1.5 MB», «1,5 megabytes») o binario con símbolo IEC («1.4 MiB»), en un <data value> con los bytes exactos.",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true,
+      "description": "Bytes."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "system",
+      "type": "enum",
+      "values": ["decimal", "binary"],
+      "default": "decimal"
+    },
+    {
+      "name": "unitDisplay",
+      "type": "enum",
+      "values": ["short", "long", "narrow"],
+      "default": "short"
+    },
+    {
+      "name": "maximumFractionDigits",
+      "type": "number",
+      "default": 1
+    }
+  ],
+  "tokens": ["fg"],
+  "classes": ["z-format"],
+  "behavior": "dom",
+  "a11y": "Texto normal; los bytes exactos en el atributo value.",
+  "examples": [
+    {
+      "title": "Decimal y binario",
+      "code": "<p>\n  <FormatByte value={1500000} locale=\"en-US\" /> · <FormatByte value={1572864} system=\"binary\" locale=\"en-US\" /> ·{\" \"}\n  <FormatByte value={2048} unitDisplay=\"long\" locale=\"en-US\" />\n</p>"
+    }
+  ]
+}

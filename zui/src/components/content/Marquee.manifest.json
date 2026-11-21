@@ -1,0 +1,93 @@
+{
+  "name": "Marquee",
+  "group": "content",
+  "import": "import { Marquee } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Cinta que desfila sin fin (horizontal o vertical, inversa, velocidad, difuminado de bordes, separación): copias del contenido (las extra inert y aria-hidden), pausa al pasar o enfocar y botón de pausa visible; quieta con prefers-reduced-motion.",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 30,
+      "description": "Segundos por vuelta."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "reverse",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "pauseOnHover",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "fade",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "gap",
+      "type": "string"
+    },
+    {
+      "name": "repeat",
+      "type": "number",
+      "default": 2
+    },
+    {
+      "name": "showControl",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "pauseLabel",
+      "type": "string",
+      "default": "Pause"
+    },
+    {
+      "name": "playLabel",
+      "type": "string",
+      "default": "Play"
+    },
+    {
+      "name": "defaultPaused",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "tokens": [
+    "space-6",
+    "space-10",
+    "space-20",
+    "control-height-sm",
+    "control-radius-sm",
+    "glass-border",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "accent-ring",
+    "focus-width",
+    "focus-offset"
+  ],
+  "classes": ["z-marquee", "z-marquee__control"],
+  "behavior": "dom",
+  "a11y": "role=region con nombre; solo la primera copia llega a los lectores de pantalla (las demás aria-hidden e inert). Botón visible para pausar (WCAG 2.2.2), sin aria-pressed porque cambia su etiqueta. Se detiene al pasar el puntero o al enfocar dentro; con prefers-reduced-motion no se mueve y se desplaza a mano.",
+  "examples": [
+    {
+      "title": "Logos",
+      "code": "<Marquee label=\"Customers\" duration={20}>\n  <span>Atlas</span>\n  <span>Borealis</span>\n  <span>Cobalt</span>\n  <span>Dune</span>\n  <span>Echo</span>\n</Marquee>"
+    }
+  ]
+}

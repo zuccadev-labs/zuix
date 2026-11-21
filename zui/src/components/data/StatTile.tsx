@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import type { Tone } from "../actions/types";
+import { Sparkline, type SparklineProps } from "../charts/Sparkline";
 
 export interface StatTileProps {
   label: ReactNode;
@@ -15,13 +16,29 @@ export interface StatTileProps {
   deltaTone?: Tone;
   /** `glass` cristal, `solid` acento pleno, `soft` superficie tenue. */
   variant?: "glass" | "solid" | "soft";
+  /** Serie del minigráfico (tendencia) bajo el valor. */
+  trend?: ReadonlyArray<number | null>;
+  /** Forma, color y nombre del minigráfico. Por defecto, área con el color 1 y la etiqueta como nombre. */
+  trendProps?: Omit<SparklineProps, "values">;
   /** Convierte la tesela en botón. */
   onClick?: () => void;
   className?: string;
 }
 
 /** Tesela de indicador: etiqueta, valor destacado y contexto. */
-export function StatTile({ label, value, hint, icon, delta, deltaTone = "neutral", variant = "glass", onClick, className }: StatTileProps) {
+export function StatTile({
+  label,
+  value,
+  hint,
+  icon,
+  delta,
+  deltaTone = "neutral",
+  variant = "glass",
+  trend,
+  trendProps,
+  onClick,
+  className,
+}: StatTileProps) {
   const Tag = onClick ? "button" : "div";
   return (
     <Tag
@@ -40,6 +57,15 @@ export function StatTile({ label, value, hint, icon, delta, deltaTone = "neutral
         ) : null}
       </span>
       <span className="z-stat__value">{value}</span>
+      {trend?.length ? (
+        <Sparkline
+          type="area"
+          label={typeof label === "string" ? label : undefined}
+          {...trendProps}
+          values={trend}
+          className={cx("z-stat__trend", trendProps?.className)}
+        />
+      ) : null}
       {hint || delta ? (
         <span className="z-stat__foot">
           {delta ? (

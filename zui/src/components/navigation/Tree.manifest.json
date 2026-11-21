@@ -1,7 +1,7 @@
 {
   "name": "Tree",
   "group": "navigation",
-  "description": "Árbol jerárquico con expansión, selección y navegación por teclado.",
+  "description": "Árbol jerárquico con expansión, selección simple o múltiple, casillas en cascada, renombrar y navegación por teclado.",
   "import": "import { Tree, type TreeNode } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -40,9 +40,64 @@
     {
       "name": "onSelect",
       "type": "(id: string, node: TreeNode) => void"
+    },
+    {
+      "name": "selectionMode",
+      "type": "enum",
+      "values": ["single", "multiple"],
+      "default": "single",
+      "description": "`multiple`: aria-multiselectable; Ctrl/Cmd y Mayús con el puntero, Espacio, Mayús+flechas y Ctrl+A."
+    },
+    {
+      "name": "selectedIds",
+      "type": "string[]",
+      "description": "Ids seleccionados (controlado, selección múltiple)."
+    },
+    {
+      "name": "defaultSelectedIds",
+      "type": "string[]"
+    },
+    {
+      "name": "onSelectedChange",
+      "type": "(ids: string[]) => void"
+    },
+    {
+      "name": "checkable",
+      "type": "boolean",
+      "default": false,
+      "description": "Casilla por nodo con aria-checked en cascada: una rama vale true, false o mixed según sus hijos."
+    },
+    {
+      "name": "checked",
+      "type": "string[]",
+      "description": "Ids marcados (controlado). Las ramas se deducen."
+    },
+    {
+      "name": "defaultChecked",
+      "type": "string[]"
+    },
+    {
+      "name": "onCheckedChange",
+      "type": "(ids: string[]) => void"
+    },
+    {
+      "name": "renamable",
+      "type": "boolean",
+      "default": false,
+      "description": "F2 o doble clic sobre la etiqueta abre un campo: Intro confirma, Escape cancela."
+    },
+    {
+      "name": "onRename",
+      "type": "(id: string, label: string, node: TreeNode) => void"
+    },
+    {
+      "name": "renameLabel",
+      "type": "string",
+      "default": "Rename",
+      "description": "Nombre accesible del campo de renombrar."
     }
   ],
-  "states": ["rest", "hover", "focus", "selected", "expanded", "collapsed", "disabled"],
+  "states": ["rest", "hover", "focus", "selected", "expanded", "collapsed", "disabled", "checked", "indeterminate", "renaming"],
   "tokens": [
     "duration-fast",
     "ease-standard",
@@ -61,14 +116,38 @@
     "space-1-5",
     "text-body",
     "touch-target",
-    "weight-medium"
+    "weight-medium",
+    "accent",
+    "accent-soft",
+    "control-bg",
+    "control-border",
+    "control-radius-sm",
+    "space-1"
   ],
-  "classes": ["z-tree", "z-tree__item", "z-tree__row", "z-tree__toggle", "z-tree__icon", "z-tree__label", "z-tree__group"],
-  "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten.",
+  "classes": [
+    "z-tree",
+    "z-tree__item",
+    "z-tree__row",
+    "z-tree__toggle",
+    "z-tree__icon",
+    "z-tree__label",
+    "z-tree__group",
+    "z-tree__check",
+    "z-tree__rename"
+  ],
+  "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten. Con selectionMode=\"multiple\" el árbol lleva aria-multiselectable: Espacio alterna la selección del nodo enfocado, Mayús+flechas extiende el rango desde el ancla, Ctrl+A selecciona todo lo visible; con el puntero, Ctrl/Cmd alterna y Mayús extiende. Con checkable cada treeitem lleva aria-checked (true, false o mixed) y Espacio marca o desmarca el nodo y todo lo que cuelga de él. Con renamable, F2 o doble clic abren un campo con nombre accesible; Intro confirma, Escape cancela y el foco vuelve al nodo.",
   "examples": [
     {
       "title": "Explorador de archivos",
       "code": "<Tree\n  label=\"Project files\"\n  defaultExpanded={[\"src\"]}\n  onSelect={(id) => openFile(id)}\n  nodes={[\n    { id: \"src\", label: \"src\", icon: \"folder\", children: [\n      { id: \"src/index.ts\", label: \"index.ts\", icon: \"document\" },\n      { id: \"src/app.tsx\", label: \"app.tsx\", icon: \"document\" },\n    ] },\n    { id: \"readme\", label: \"README.md\", icon: \"document\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Selección múltiple y casillas",
+      "code": "<Tree\n  label=\"Sync folders\"\n  selectionMode=\"multiple\"\n  checkable\n  defaultExpanded={[\"photos\"]}\n  defaultChecked={[\"photos/2025\"]}\n  onCheckedChange={(ids) => setSynced(ids)}\n  nodes={[\n    { id: \"photos\", label: \"Photos\", icon: \"folder\", children: [\n      { id: \"photos/2025\", label: \"2025\", icon: \"folder\" },\n      { id: \"photos/2026\", label: \"2026\", icon: \"folder\" },\n    ] },\n    { id: \"music\", label: \"Music\", icon: \"folder\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Renombrar",
+      "code": "<Tree\n  label=\"Files\"\n  renamable\n  onRename={(id, label) => rename(id, label)}\n  nodes={files}\n/>"
     }
   ],
   "origin": "Nuevo, con el aspecto de las filas de lista de zutool.",
@@ -77,6 +156,10 @@
     {
       "title": "Explorador de archivos (las ramas plegadas llevan hidden; emite z:change)",
       "code": "<ul role=\"tree\" aria-label=\"Project files\" class=\"z-tree\">\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"true\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"1\" tabindex=\"0\" data-value=\"src\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"open\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">src</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\">\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"src/index.ts\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">index.ts</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"src/app.tsx\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">app.tsx</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"false\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"3\" aria-posinset=\"3\" tabindex=\"-1\" data-value=\"src/styles\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">styles</span>\n        </div>\n        <ul role=\"group\" class=\"z-tree__group\" hidden>\n          <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"3\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"src/styles/base.css\">\n            <div class=\"z-tree__row\" style=\"--z-tree-level:2\">\n              <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n              <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n              <span class=\"z-tree__label\">base.css</span>\n            </div>\n          </li>\n          <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"3\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"src/styles/theme.css\">\n            <div class=\"z-tree__row\" style=\"--z-tree-level:2\">\n              <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n              <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n              <span class=\"z-tree__label\">theme.css</span>\n            </div>\n          </li>\n        </ul>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"false\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"docs\" aria-disabled=\"true\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">docs</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\" hidden>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"2\" aria-setsize=\"1\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"docs/guide.md\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">guide.md</span>\n        </div>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-level=\"1\" aria-setsize=\"3\" aria-posinset=\"3\" tabindex=\"-1\" data-value=\"README.md\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"document\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">README.md</span>\n    </div>\n  </li>\n</ul>"
+    },
+    {
+      "title": "Selección múltiple, casillas en cascada y renombrar (z:change con values y checked; z:rename cancelable)",
+      "code": "<ul role=\"tree\" aria-label=\"Sync folders\" aria-multiselectable=\"true\" class=\"z-tree\" data-checkable data-renamable>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-expanded=\"true\" aria-selected=\"false\" aria-checked=\"mixed\" aria-level=\"1\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"0\" data-value=\"photos\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"open\" aria-hidden=\"true\"><z-icon name=\"chevron-right\" size=\"12\"></z-icon></span>\n      <span class=\"z-check__box z-tree__check\" data-state=\"indeterminate\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">Photos</span>\n    </div>\n    <ul role=\"group\" class=\"z-tree__group\">\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"true\" aria-level=\"2\" aria-setsize=\"2\" aria-posinset=\"1\" tabindex=\"-1\" data-value=\"photos/2025\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-check__box z-tree__check\" data-state=\"checked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">2025</span>\n        </div>\n      </li>\n      <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"false\" aria-level=\"2\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"photos/2026\">\n        <div class=\"z-tree__row\" style=\"--z-tree-level:1\">\n          <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n          <span class=\"z-check__box z-tree__check\" data-state=\"unchecked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n          <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n          <span class=\"z-tree__label\">2026</span>\n        </div>\n      </li>\n    </ul>\n  </li>\n  <li role=\"treeitem\" class=\"z-tree__item\" aria-selected=\"false\" aria-checked=\"false\" aria-level=\"1\" aria-setsize=\"2\" aria-posinset=\"2\" tabindex=\"-1\" data-value=\"music\">\n    <div class=\"z-tree__row\" style=\"--z-tree-level:0\">\n      <span class=\"z-tree__toggle\" data-state=\"closed\" aria-hidden=\"true\"></span>\n      <span class=\"z-check__box z-tree__check\" data-state=\"unchecked\" aria-hidden=\"true\"><span class=\"z-check__mark\"></span></span>\n      <span class=\"z-tree__icon\"><z-icon name=\"folder\" size=\"14\"></z-icon></span>\n      <span class=\"z-tree__label\">Music</span>\n    </div>\n  </li>\n</ul>"
     }
   ]
 }

@@ -11,7 +11,10 @@ export type ScreenId =
   | "inputs"
   | "commands"
   | "agenda"
-  | "workspace";
+  | "workspace"
+  | "content"
+  | "charts"
+  | "data";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -32,6 +35,9 @@ export const SCREENS: ScreenDef[] = [
   { id: "commands", title: "Commands", icon: "command-line", hint: "Toolbars, menus and light layers" },
   { id: "agenda", title: "Agenda", icon: "calendar-days", hint: "Day, week, month and list" },
   { id: "workspace", title: "Workspace", icon: "rectangle-group", hint: "Sidebar, work tabs and panes" },
+  { id: "content", title: "Content", icon: "document-text", hint: "Trees, prose and formatting" },
+  { id: "charts", title: "Charts", icon: "chart-bar", hint: "Lines, areas, bars and donuts" },
+  { id: "data", title: "Data", icon: "table-cells", hint: "Selection, timeline and progress" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);

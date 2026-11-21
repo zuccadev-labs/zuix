@@ -1,0 +1,72 @@
+{
+  "name": "DescriptionList",
+  "group": "data",
+  "description": "Pares término–descripción en un <dl>: propiedades de un recurso, metadatos, resumen de una ficha.",
+  "import": "import { DescriptionList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "DescriptionItem[]",
+      "description": "{ term, description, info?, key? }. `info`: aclaración bajo el término."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "`horizontal` alinea términos y descripciones en dos columnas (subgrid) desde 28rem de contenedor; más estrecho, apila."
+    },
+    {
+      "name": "divided",
+      "type": "boolean",
+      "default": false,
+      "description": "Línea entre pares."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "termWidth",
+      "type": "string",
+      "description": "Ancho de la columna de términos (cualquier longitud CSS)."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Pares propios: <div className=\"z-dl__item\"><dt className=\"z-dl__term\">…</dt><dd className=\"z-dl__description\">…</dd></div>."
+    }
+  ],
+  "states": ["rest"],
+  "tokens": [
+    "space-1-5",
+    "space-2",
+    "space-4",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-regular",
+    "leading-ui"
+  ],
+  "classes": ["z-dl", "z-dl__item", "z-dl__term", "z-dl__info", "z-dl__description"],
+  "a11y": "Marcado nativo <dl>/<dt>/<dd> (cada par en un <div>, permitido por HTML): los lectores anuncian la lista de descripciones y el número de términos. La disposición en columnas es solo visual.",
+  "examples": [
+    {
+      "title": "Horizontal con separadores",
+      "code": "<DescriptionList\n  divided\n  items={[\n    { term: \"Status\", description: <Badge tone=\"success\">Active</Badge> },\n    { term: \"Region\", description: \"eu-west-1\", info: \"Primary\" },\n    { term: \"Created\", description: \"Nov 2, 2026\" },\n    { term: \"Owner\", description: \"ana@example.com\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Vertical y compacta",
+      "code": "<DescriptionList\n  orientation=\"vertical\"\n  size=\"sm\"\n  items={[\n    { term: \"Plan\", description: \"Team\" },\n    { term: \"Seats\", description: \"12 of 20\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Data List de Shark y KeyValue de zutool.",
+  "behavior": "none"
+}
