@@ -327,6 +327,55 @@ function collect({ TOKENS, families, coarse }) {
       add("seleccionado-a-medias", el, `${sig(current)} visible a medias en su tira con desplazamiento`, { text: text.slice(0, 40) });
   }
 
+  // Elipsis con espacio libre: un texto truncado con elipsis cuando su fila (o la tira que la contiene) tiene hueco
+  // libre para lo que esconde, o cuando es el elemento activo y sus hermanos podrían ceder ese espacio (una pestaña
+  // activa en «Fo…» mientras una inactiva ocupa su ancho completo).
+  const flexRow = (n) => n && /flex/.test(getComputedStyle(n).display) && !/column/.test(getComputedStyle(n).flexDirection);
+  const freeIn = (box) => {
+    const bs = getComputedStyle(box);
+    const inner = box.clientWidth - Number.parseFloat(bs.paddingLeft) - Number.parseFloat(bs.paddingRight);
+    const kids = [...box.children].filter((k) => k.getBoundingClientRect().width > 0 && getComputedStyle(k).position !== "absolute");
+    const used =
+      kids.reduce((sum, k) => sum + k.getBoundingClientRect().width, 0) +
+      Math.max(0, kids.length - 1) * (Number.parseFloat(bs.columnGap) || 0);
+    return Math.max(0, inner - used);
+  };
+  for (const el of shown) {
+    const es = getComputedStyle(el);
+    if (es.textOverflow !== "ellipsis" || el.scrollWidth <= el.clientWidth + 1 || !el.textContent.trim()) continue;
+    const hidden = el.scrollWidth - el.clientWidth;
+    // Si es parte de lo activo (una pestaña), la fila que cuenta es la de sus hermanos (la tira), no su botón.
+    const current = el.closest("[data-selected],[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
+    let item = current?.parentElement?.closest("[data-selected]") ?? current ?? el;
+    while (item.parentElement && !(flexRow(item.parentElement) && item.parentElement.children.length > 1) && item !== document.body)
+      item = item.parentElement;
+    const row = item.parentElement;
+    if (!row || row === document.body) continue;
+    let free = freeIn(row);
+    if (flexRow(row.parentElement)) free += freeIn(row.parentElement);
+    const active =
+      Boolean(current) ||
+      item.matches("[aria-selected='true'],[data-selected],[aria-current]:not([aria-current='false']),[data-state='active']") ||
+      Boolean(item.querySelector("[aria-selected='true'],[aria-current]:not([aria-current='false'])"));
+    let give = 0;
+    if (active)
+      for (const sib of row.children) {
+        if (sib === item) continue;
+        const w = sib.getBoundingClientRect().width;
+        const min = Math.max(Number.parseFloat(getComputedStyle(sib).minWidth) || 0, 40);
+        give += Math.max(0, w - min);
+      }
+    if (free + give >= hidden)
+      add(
+        "elipsis-con-espacio",
+        el,
+        `esconde ${Math.round(hidden)} px con ${Math.round(free)} px libres${give ? ` y ${Math.round(give)} que pueden ceder sus hermanos` : ""}`,
+        {
+          text: el.textContent.trim().slice(0, 40),
+        },
+      );
+  }
+
   // Tapado: se recorre la página por tramos de una pantalla y en cada tramo se mira, en lo alto y en lo bajo de
   // cada texto que cabe entero, qué pinta encima. Lo pegajoso o fijo de la propia página (la barra del sitio) no
   // cuenta: tapa al desplazar, como debe; lo pegajoso dentro de un contenedor con desplazamiento sí (una cabecera
@@ -631,6 +680,15 @@ function collect({ TOKENS, families, coarse }) {
   for (const el of inter) {
     const r = rects.get(el);
     if (r.width >= min && r.height >= min) continue;
+    // Zona de pulsación ampliada con un ::before posicionado (dibujo pequeño, objetivo grande).
+    const pre = getComputedStyle(el, "::before");
+    if (
+      pre.content !== "none" &&
+      pre.position === "absolute" &&
+      Number.parseFloat(pre.width) >= min &&
+      Number.parseFloat(pre.height) >= min
+    )
+      continue;
     // Excepción WCAG 2.5.8: enlace dentro de una frase
     const inline = el.matches("a") && getComputedStyle(el).display === "inline" && el.parentElement && ownText(el.parentElement).length > 0;
     if (inline) continue;

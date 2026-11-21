@@ -1211,9 +1211,11 @@
   .z-tabstrip__tab {
     display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
-    /* Nunca más ancha que la tira: en una barra estrecha (teléfono) la activa se ve entera, con el título en elipsis,
-       en vez de cortarse por los dos lados. */
+    /* Cada pestaña mide su contenido (hasta 220 px) mientras haya sitio. Si no caben todas, ceden primero las
+       inactivas, hasta quedarse en su icono; la activa no encoge: conserva su nombre si cabe en la tira y solo pasa a
+       elipsis cuando ni sola cabe (nunca más ancha que la tira). */
+    flex: 0 1 auto;
+    min-inline-size: min(var(--z-control-height-sm) + var(--z-space-3), 100%);
     max-width: min(220px, 100%);
     height: var(--z-control-height-sm);
     /* Pestaña de trabajo: rectángulo de radio sm (8), no píldora. */
@@ -1228,6 +1230,9 @@
       background: var(--z-row-hover);
       color: var(--z-fg);
     }
+  }
+  .z-tabstrip__tab[data-selected] {
+    flex-shrink: 0;
   }
   /* Canto dibujado con sombra interior: un borde restaría alto al objetivo táctil de la pestaña. */
   .z-tabstrip__tab[data-selected] {
@@ -1277,10 +1282,20 @@
   /* 24 × 24 px (40 con puntero grueso): el mínimo de WCAG 2.5.8 para un objetivo que tiene otro pegado (la propia
      pestaña). */
   .z-tabstrip__close {
-    width: var(--z-control-height-xs);
-    height: var(--z-control-height-xs);
+    position: relative;
+    /* 24 px de dibujo también con puntero grueso: el objetivo de 40 lo da ::before, sin quitar ancho al título. */
+    width: 24px;
+    height: 24px;
     margin-inline-end: var(--z-space-1);
     opacity: 0.55;
+  }
+  @media (pointer: coarse) {
+    .z-tabstrip__close::before {
+      content: "";
+      position: absolute;
+      /* Centrada y simétrica (vale igual en RTL): 40 × 40 alrededor del dibujo de 24. */
+      inset: calc((100% - var(--z-touch-target, 40px)) / 2);
+    }
   }
   @media (hover: hover) {
     .z-tabstrip__close:hover {

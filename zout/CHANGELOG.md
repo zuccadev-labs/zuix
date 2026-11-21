@@ -55,9 +55,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   de `2px` y `3px` a `--z-space-0-5`. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus pestañas (el
   contrato HTML los pintaba vacíos).
 - La guía de los submenús de `Sidebar` se calcula con tokens (`space-3 + space-2 − 1px`, bajo el centro del icono).
-- `TabStrip`: una pestaña nunca es más ancha que su tira (`max-width: min(220px, 100%)`): en una barra estrecha la
-  activa se ve entera con el título en elipsis en vez de cortarse a media palabra. El botón de cerrar y el chip de
-  grupo miden `control-height-xs` (24; 40 con puntero grueso; el chip medía 22).
+- `TabStrip`: cada pestaña mide su contenido (hasta 220 px) mientras hay sitio; si no caben todas, ceden primero
+  las inactivas (hasta su icono) y la activa conserva su nombre entero si cabe en la tira; la elipsis solo aparece
+  cuando ni sola cabe. El botón de cerrar se dibuja a 24 px y con puntero grueso amplía su objetivo a 40 con
+  `::before` (antes ocupaba 40 de ancho y dejaba el título en «Fo…»). El chip de grupo mide `control-height-xs`
+  (24; 40 con puntero grueso; medía 22).
 - Ejemplos de `Sidebar` con alto mínimo en vez de fijo: con puntero grueso el último item quedaba cortado.
 
 - `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
