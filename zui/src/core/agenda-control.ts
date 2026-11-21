@@ -533,6 +533,8 @@ function onChange(host: AgendaHost, event: Event): void {
       host.update({ date: target.value });
       host.emit("date-change", { date: target.value });
     }
+  } else if (target instanceof HTMLSelectElement && target.matches(".z-agenda__view-select")) {
+    setView(host, target.value as AgendaView);
   } else if (target instanceof HTMLSelectElement && target.matches(".z-agenda__zone-select")) {
     host.update({ timeZone: target.value });
     host.emit("time-zone-change", { timeZone: target.value });
@@ -907,6 +909,9 @@ export function beginFocusMove(root: HTMLElement): void {
  * Efectos tras pintar: abre y coloca los popovers y el diálogo, lleva el foco a `state.focus` si se pidió,
  * desplaza la rejilla a `scrollTime` al cambiar de vista o de fecha.
  */
+/** Aire sobre la primera hora visible al desplazar la rejilla: el rótulo se centra en su línea (≈7 px por encima). */
+const LABEL_ROOM = 12;
+
 export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boolean, scrollMinute = 8 * 60): void {
   const state = host.state();
   const model = host.model();
@@ -921,9 +926,10 @@ export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boole
     if (body) {
       const box = body.getBoundingClientRect();
       const hourPx = box.height / ((config.dayEnd - config.dayStart) / 60);
-      // Posición de la columna dentro del contenido desplazable, menos la cabecera pegajosa que la tapa.
+      // Posición de la columna dentro del contenido desplazable, menos la cabecera pegajosa que la tapa y menos el
+      // medio rótulo que la hora pinta por encima de su línea: así la primera hora visible se lee entera.
       const top = box.top - scroller.getBoundingClientRect().top + scroller.scrollTop;
-      scroller.scrollTop = Math.max(0, top + ((scrollMinute - config.dayStart) / 60) * hourPx - (head?.offsetHeight ?? 0));
+      scroller.scrollTop = Math.max(0, top + ((scrollMinute - config.dayStart) / 60) * hourPx - (head?.offsetHeight ?? 0) - LABEL_ROOM);
     }
   }
   // Lista: al cambiar de vista o de periodo, desde el principio; con ventana virtual, la medida de una fila (una
