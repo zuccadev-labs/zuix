@@ -52,7 +52,7 @@ src/primitives/*                                   primitivas de React sobre cor
 src/dom/*.ts                                       comportamiento sin framework (@zuccadev-labs/zuix-zui/dom), sobre core
 ```
 
-Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `effects`, `overlay`, `navigation`, `carousel`.
+Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `media`, `effects`, `overlay`, `navigation`, `carousel`.
 
 ## Patrones
 
