@@ -746,8 +746,8 @@
     min-width: 0;
   }
   .z-calendar__grid {
-    width: calc(var(--z-calendar-cols) * var(--z-calendar-col));
-    max-width: 100%;
+    /* `min()` y no `max-width`: WebKit no aplica `max-width` a una tabla y la rejilla salía de un contenedor estrecho. */
+    width: min(calc(var(--z-calendar-cols) * var(--z-calendar-col)), 100%);
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0 2px;
