@@ -70,3 +70,19 @@ export {
 } from "./Listbox";
 export { TagsInput, type TagsInputProps } from "./TagsInput";
 export { Editable, type EditableProps } from "./Editable";
+export {
+  ColorArea,
+  ColorField,
+  ColorPicker,
+  ColorPickerTrigger,
+  ColorSlider,
+  ColorSwatchPicker,
+  type ColorAreaProps,
+  type ColorFieldProps,
+  type ColorFormat,
+  type ColorPickerLabels,
+  type ColorPickerProps,
+  type ColorSliderProps,
+  type ColorSwatch,
+  type ColorSwatchPickerProps,
+} from "./ColorPicker";

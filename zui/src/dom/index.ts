@@ -35,6 +35,7 @@ import * as layers from "./layers";
 import * as navigation from "./navigation";
 import * as reading from "./reading";
 import * as effects from "./effects";
+import * as color from "./color";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
 import { escapeTop } from "../core/layers";
@@ -53,11 +54,27 @@ import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup } from "./shared";
 
 // Módulos por grupo: cada uno aporta setup() (listeners, una vez) y hydrate(root) (marcado nuevo).
-const modules = [actions, forms, collections, datatable, carousel, time, agenda, widgets, contentDom, reading, effects, navigation, layers];
+const modules = [
+  actions,
+  forms,
+  collections,
+  datatable,
+  carousel,
+  time,
+  agenda,
+  color,
+  widgets,
+  contentDom,
+  reading,
+  effects,
+  navigation,
+  layers,
+];
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "./carousel";
 export { setJsonTreeValue, setStep } from "./content";
 export { setHighlightQuery } from "./reading";
 export { setDotMatrixPattern } from "./effects";
+export { setColorValue } from "./color";
 export {
   checkTreeItem,
   openPalette,

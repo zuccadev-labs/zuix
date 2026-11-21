@@ -29,3 +29,21 @@ export {
 export { expandEvents, layoutTimed, layoutRow, rewriteSpan, type CalendarColor, type Occurrence } from "./core/agenda";
 export { expandDates, parseRRule, formatRRule, type RRule } from "./core/rrule";
 export { fromWall, toWall, wallStatus, type Disambiguation, type Wall } from "./core/zone";
+// Color de la aplicación (el valor de ColorPicker): lectura de cadenas CSS, conversiones y escritura estable.
+export {
+  contrastRatio,
+  formatColor,
+  formatOf,
+  hslToRgb,
+  hsvToRgb,
+  normalizeColor,
+  oklchToRgb,
+  parseColor,
+  rgbToHsl,
+  rgbToHsv,
+  rgbToOklch,
+  type Hsla,
+  type Hsva,
+  type Oklch,
+  type Rgba,
+} from "./core/color";

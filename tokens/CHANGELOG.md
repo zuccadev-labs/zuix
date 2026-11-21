@@ -10,6 +10,9 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
 
 ### Añadido
 
+- ColorPicker: `colorpicker-spectrum` (paradas del espectro de tono para el deslizador), `colorpicker-white` y
+  `colorpicker-black` (extremos del área de saturación y brillo y anillo de los tiradores). Son colores de la
+  propia escala de color, no de marca: iguales en todas las marcas y temas.
 - Gráficos: series `chart-1…8` (nivel component, mezclas de `info`, `warning`, `danger`, `success`, `fg` y
   `surface-solid`), validadas a ≥ 3:1 contra todas las superficies en `contrast.nonText` y ordenadas para que las
   series vecinas se distingan con daltonismo (ΔE OKLab de pares adyacentes ≥ 8 con protanopía/deuteranopía salvo

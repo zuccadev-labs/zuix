@@ -14,6 +14,11 @@ const ATTR: Record<string, string> = {
   rowspan: "rowSpan",
   "marker-end": "markerEnd",
   datetime: "dateTime",
+  maxlength: "maxLength",
+  spellcheck: "spellCheck",
+  autocomplete: "autoComplete",
+  inputmode: "inputMode",
+  popovertarget: "popoverTarget",
 };
 const noop = () => {};
 
