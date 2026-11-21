@@ -139,7 +139,7 @@ function activateJson(item: HTMLElement): void {
 
 /* ---------- Stepper con paneles ---------- */
 
-const markerMarkup = new WeakMap<Element, string>();
+const markerNodes = new WeakMap<Element, Node[]>();
 
 /** Lleva un Stepper con paneles del modo DOM al paso `index` (igual a `pasos` = todo completo). */
 export function setStep(root: HTMLElement, index: number, focus = false): void {
@@ -160,9 +160,15 @@ export function setStep(root: HTMLElement, index: number, focus = false): void {
     else step.removeAttribute("aria-current");
     const marker = step.querySelector<HTMLElement>(".z-stepper__marker");
     if (marker && !marker.hasAttribute("data-loading")) {
-      if (!markerMarkup.has(marker)) markerMarkup.set(marker, marker.innerHTML);
-      // Marcado propio: el número o el icono del paso guardados al empezar, o la marca de hecho.
-      setMarkup(marker, state === "complete" ? iconSvg("check", { size: 14 }) : (markerMarkup.get(marker) ?? ""));
+      if (!markerNodes.has(marker))
+        markerNodes.set(
+          marker,
+          [...marker.childNodes].map((node) => node.cloneNode(true)),
+        );
+      // La marca de hecho es marcado propio; el número o el icono del paso son nodos de la página, guardados al
+      // empezar y devueltos como copias: no vuelven a pasar por una cadena de marcado.
+      if (state === "complete") setMarkup(marker, iconSvg("check", { size: 14 }));
+      else marker.replaceChildren(...(markerNodes.get(marker) ?? []).map((node) => node.cloneNode(true)));
     }
     const sr = step.querySelector<HTMLElement>(".z-stepper__text > .z-sr-only");
     if (sr) sr.textContent = status[state];
