@@ -464,7 +464,11 @@ function SnapCarousel<T>({
   const text = { ...DEFAULT_LABELS, ...labels };
   const perPage = perPageOf(slidesPerPage);
   const vertical = orientation === "vertical";
-  const positions = snapPositions(count, perPage);
+  // Las que caben de verdad (en una tira estrecha, menos de las pedidas); las mide el controlador al montar y al
+  // cambiar de tamaño. Antes de medir, las pedidas.
+  const [fits, setFits] = useState(perPage);
+  const shown = Math.min(fits, perPage);
+  const positions = snapPositions(count, shown);
   const reducedMotion = useSyncExternalStore(subscribeReducedMotion, readReducedMotion, serverReducedMotion);
   const [index, setIndex] = useState(() => Math.min(Math.max(defaultIndex, 0), positions - 1));
   const [announcement, setAnnouncement] = useState("");
@@ -491,8 +495,10 @@ function SnapCarousel<T>({
         setIndex(next);
         onIndexRef.current?.(next);
       },
+      onLayout: () => setFits(controller.perPage),
     });
     snap.current = controller;
+    setFits(controller.perPage);
     return () => {
       snap.current = null;
       controller.dispose();
@@ -521,7 +527,7 @@ function SnapCarousel<T>({
     }
   };
 
-  const vars: Record<string, string | number> = { "--z-carousel-per-page": perPage };
+  const vars: Record<string, string | number> = { "--z-carousel-per-page": shown };
   if (gap !== undefined) vars["--z-carousel-gap"] = length(gap);
   if (height !== undefined) vars["--z-carousel-height"] = length(height);
   const looping = loop && positions > 1;
@@ -548,7 +554,7 @@ function SnapCarousel<T>({
               key={getKey ? getKey(item, i) : i}
               className="z-carousel__slide"
               data-index={i}
-              data-active={i >= index && i < index + perPage ? true : undefined}
+              data-active={i >= index && i < index + shown ? true : undefined}
               role="group"
               aria-roledescription={text.slideRole}
               aria-label={text.slide(i, count)}

@@ -2,7 +2,7 @@
 // importar): el modo «snap» (varias por página y vertical, sobre el desplazamiento nativo con scroll-snap) y la
 // conexión de la reproducción automática con el puntero, el foco, la visibilidad de la pestaña y la pantalla.
 
-import { createAutoplay, snapIndexAt, snapPositions, stepIndex, type Autoplay } from "./carousel";
+import { createAutoplay, fitPerPage, snapIndexAt, snapPositions, stepIndex, type Autoplay } from "./carousel";
 import { isRtl } from "./dir";
 
 export interface SnapOptions {
@@ -14,6 +14,8 @@ export interface SnapOptions {
   reducedMotion: () => boolean;
   /** Cambio de posición (por desplazamiento, flechas, teclado o indicadores). */
   onIndex: (index: number) => void;
+  /** Cambió cuántos slides caben (la tira cambió de tamaño): se vuelven a pintar indicadores y flechas. */
+  onLayout?: () => void;
   initialIndex?: number;
 }
 
@@ -22,6 +24,8 @@ export interface SnapController {
   step(direction: 1 | -1): void;
   readonly index: number;
   readonly positions: number;
+  /** Slides que caben a la vez (los pedidos o menos si la tira es estrecha). */
+  readonly perPage: number;
   dispose(): void;
 }
 
@@ -35,7 +39,20 @@ export function createSnap(o: SnapOptions): SnapController {
   // Desplazamiento pedido por código: mientras dura, las posiciones intermedias no cambian el índice.
   let pending: { target: number; until: number } | null = null;
   const count = () => slidesOf(viewport).length;
-  const positions = () => snapPositions(count(), o.perPage);
+  // Los slides tienen un ancho mínimo: en una tira estrecha caben menos de los pedidos y hay más posiciones.
+  const fit = () => {
+    const [a, b] = slidesOf(viewport);
+    if (!a) return o.perPage;
+    // El ancho mínimo que la hoja da a un slide (no el actual, que ya se reparte entre los pedidos) y el hueco real.
+    const ra = a.getBoundingClientRect();
+    const size = vertical ? ra.height : ra.width;
+    const least = Number.parseFloat(getComputedStyle(a)[vertical ? "minHeight" : "minWidth"]) || 0;
+    const gap = b
+      ? Math.max(0, Math.abs(vertical ? b.getBoundingClientRect().top - ra.top : b.getBoundingClientRect().left - ra.left) - size)
+      : 0;
+    return fitPerPage(o.perPage, vertical ? viewport.clientHeight : viewport.clientWidth, least, gap);
+  };
+  const positions = () => snapPositions(count(), fit());
   const stepSize = () => {
     const [a, b] = slidesOf(viewport);
     if (!a) return 0;
@@ -75,6 +92,18 @@ export function createSnap(o: SnapOptions): SnapController {
     }
   };
   viewport.addEventListener("scroll", onScroll, { passive: true });
+  let fitted = fit();
+  const layout =
+    typeof ResizeObserver === "undefined"
+      ? null
+      : new ResizeObserver(() => {
+          const now = fit();
+          if (now === fitted) return;
+          fitted = now;
+          if (index > positions() - 1) goTo(positions() - 1, false);
+          o.onLayout?.();
+        });
+  layout?.observe(viewport);
   if (o.initialIndex) goTo(o.initialIndex, false);
   return {
     goTo,
@@ -85,9 +114,13 @@ export function createSnap(o: SnapOptions): SnapController {
     get positions() {
       return positions();
     },
+    get perPage() {
+      return fit();
+    },
     dispose() {
       cancelAnimationFrame(frame);
       viewport.removeEventListener("scroll", onScroll);
+      layout?.disconnect();
     },
   };
 }

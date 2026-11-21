@@ -287,11 +287,17 @@ function snapCarousel(root: HTMLElement): CarouselHandle {
   const looping = root.hasAttribute("data-loop") && root.dataset.loop !== "false" && positions > 1;
   const motion = matchMedia(REDUCED_MOTION);
   let index = 0;
+  // Las que caben y las posiciones salen del controlador: en una tira estrecha caben menos de las pedidas.
+  // Mientras se construye el controlador (posición inicial) aún no existe: se usan las pedidas.
+  let ready = false;
   const render = () => {
-    for (const [i, slide] of slides.entries()) slide.toggleAttribute("data-active", i >= index && i < index + perPage);
-    chrome.render(index, positions, count);
-    if (chrome.arrows[0]) chrome.arrows[0].disabled = positions <= 1 || (!looping && index === 0);
-    if (chrome.arrows[1]) chrome.arrows[1].disabled = positions <= 1 || (!looping && index === positions - 1);
+    const fits = ready ? snap.perPage : perPage;
+    const total = ready ? snap.positions : positions;
+    root.style.setProperty("--z-carousel-per-page", String(fits));
+    for (const [i, slide] of slides.entries()) slide.toggleAttribute("data-active", i >= index && i < index + fits);
+    chrome.render(index, total, count);
+    if (chrome.arrows[0]) chrome.arrows[0].disabled = total <= 1 || (!looping && index === 0);
+    if (chrome.arrows[1]) chrome.arrows[1].disabled = total <= 1 || (!looping && index === total - 1);
   };
   const announce = () => {
     live!.textContent = text.slide(index, count);
@@ -308,14 +314,16 @@ function snapCarousel(root: HTMLElement): CarouselHandle {
       render();
       root.dispatchEvent(new CustomEvent("z:change", { bubbles: true, detail: { index: next } }));
     },
+    onLayout: () => render(),
   });
+  ready = true;
   const chrome = controlsFor(
     root,
     vp,
     vertical,
     autoplayInterval(root.dataset.autoplay === "" ? true : Number(root.dataset.autoplay)) !== null,
     (i) => {
-      snap.goTo(Math.min(i, positions - 1));
+      snap.goTo(Math.min(i, snap.positions - 1));
       announce();
       player?.autoplay.restart();
     },
@@ -340,7 +348,7 @@ function snapCarousel(root: HTMLElement): CarouselHandle {
       announce();
     } else if (event.key === "Home" || event.key === "End") {
       event.preventDefault();
-      snap.goTo(event.key === "Home" ? 0 : positions - 1);
+      snap.goTo(event.key === "Home" ? 0 : snap.positions - 1);
       announce();
     }
   };

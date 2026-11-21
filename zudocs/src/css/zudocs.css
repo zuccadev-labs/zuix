@@ -900,6 +900,11 @@ a[class*="skipToContent"]:focus {
   border-radius: var(--z-radius-xl);
   background: var(--z-surface);
 }
+/* En una celda el código no parte palabras (se partía «README.m/d» a 390): la tabla se ensancha y su marco desplaza,
+   con el lado oculto difuminado (data-scroll-edges, la regla genérica de zui). */
+.zd-markdown > .zd-table :is(td, th) code {
+  overflow-wrap: normal;
+}
 .zd-table > table {
   display: table;
   inline-size: 100%;

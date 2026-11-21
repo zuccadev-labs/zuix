@@ -341,6 +341,9 @@
   .z-carousel[data-mode="snap"] .z-carousel__slide {
     display: grid;
     width: calc((100cqi - (var(--z-carousel-per-page) - 1) * var(--z-carousel-gap)) / var(--z-carousel-per-page));
+    /* Suelo de un slide en fila: por debajo, el motor muestra menos por página (una tarjeta de 45 px partía su
+       título letra a letra). Nunca más ancho que la tira. */
+    min-width: min(100cqi, var(--z-carousel-slide-min, 11rem));
     max-width: none;
     scroll-snap-align: start;
     scroll-snap-stop: always;

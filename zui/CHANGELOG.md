@@ -379,6 +379,11 @@ radios y material de los tokens.
   - `Carousel` y `CompareSlider` ocupan el ancho de su contenedor también dentro de una fila flex: el carrusel encogía
     hasta 139 px (con tres por página, slides de 33 px y el texto letra a letra) y la comparación con capas sin
     ancho propio quedaba en 0.
+  - `Carousel` con varias por página: cada slide tiene un ancho mínimo (`--z-carousel-slide-min`, 11rem) y en una tira
+    más estrecha se muestran las que caben (con sus posiciones, puntos, barra y flechas al día, en React y en
+    `/dom`); antes, tres por página a 390 dejaban tarjetas de 45 px con el título partido.
+  - `ColorPicker` y `ColorField` estrechos (menos de 18rem): el formato va en su propia línea y cada canal tiene un
+    suelo en el que caben tres cifras (antes, en 220 px, el canal A medía 18 px y cortaba «100»).
   - `CardMedia` a sangre con ancho explícito: en WebKit salía más baja que su proporción (2,19 en vez de 16:9).
   - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
   - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al

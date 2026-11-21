@@ -35,6 +35,12 @@
     inline-size: 20rem;
     max-inline-size: 100%;
   }
+  /* Ancho definido (20rem o el del contenedor): se pueden consultar para recolocar los campos cuando son estrechos. */
+  .z-colorpicker,
+  .z-colortrigger__picker,
+  .z-colorfield {
+    container: z-colorfields / inline-size;
+  }
   .z-colorpicker {
     padding: var(--z-space-3);
     border: 1px solid var(--z-card-border);
@@ -243,16 +249,27 @@
   .z-colorpicker__format .z-select__control {
     padding-inline-end: var(--z-space-6);
   }
+  /* Suelo de cada canal: tres cifras («260», «100») caben enteras; el hexadecimal, sus seis. */
   .z-colorpicker__channel {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
     align-items: center;
     gap: var(--z-space-0-5);
-    min-inline-size: 0;
+    min-inline-size: 2.75rem;
   }
   .z-colorpicker__channel[data-channel="hex"] {
     flex-grow: 2.6;
+    min-inline-size: 5.5rem;
+  }
+  /* Estrecho (un selector de 220 px en una columna): el formato va en su propia línea y los canales debajo. */
+  @container z-colorfields (inline-size < 18rem) {
+    .z-colorpicker__fields {
+      flex-wrap: wrap;
+    }
+    .z-colorpicker__format {
+      flex-basis: 100%;
+    }
   }
   .z-colorpicker__channel[data-channel="C"] {
     flex-grow: 1.35;

@@ -10,6 +10,7 @@ import {
   DEFAULT_INTERVAL,
   isIndicators,
   MIN_INTERVAL,
+  fitPerPage,
   perPageOf,
   slideText,
   snapIndexAt,
@@ -131,6 +132,17 @@ describe("Carousel · modo snap e indicadores", () => {
     assert.equal(perPageOf(2.7), 2);
     assert.equal(perPageOf(20), 8);
     assert.equal(perPageOf(0), 1);
+  });
+  test("slides que caben: los pedidos o menos en una tira estrecha, nunca menos de uno", () => {
+    // 3 pedidas de 176 px con 24 de hueco: caben en 576, en 300 solo una y en 400 dos.
+    assert.equal(fitPerPage(3, 576, 176, 24), 3);
+    assert.equal(fitPerPage(3, 1200, 176, 24), 3);
+    assert.equal(fitPerPage(3, 300, 176, 24), 1);
+    assert.equal(fitPerPage(3, 400, 176, 24), 2);
+    assert.equal(fitPerPage(3, 100, 176, 24), 1);
+    // Sin medida (sin ancho mínimo o sin vista) se usan las pedidas, acotadas a 1–8.
+    assert.equal(fitPerPage(3, 300, 0, 24), 3);
+    assert.equal(fitPerPage(20, 0, 176, 24), 8);
   });
   test("posición por desplazamiento (también negativo en RTL)", () => {
     assert.equal(snapIndexAt(0, 100, 4), 0);

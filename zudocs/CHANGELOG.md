@@ -45,6 +45,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- Tablas de los documentos: el código de una celda no parte palabras («README.m/d» a 390); la tabla se desplaza en
+  su marco y el lado con contenido oculto se difumina.
 - Las vistas previas HTML ejecutan el script de su ejemplo (el de html.json) tras hidratar: los lienzos del
   carrusel WebGL se pintan (antes salían negros) y el tour, los avisos o el diálogo de confirmación responden.
 - Tabla de API de cada componente: si no cabe en su caja, cada prop pasa a una tarjeta (nombre y tipo arriba, valor
