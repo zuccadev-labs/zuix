@@ -2455,11 +2455,12 @@ mark[data-markjs] {
   border-block-start: 1px solid var(--z-line);
   font-size: var(--z-text-small);
 }
+/* El nombre parte línea en vez de cortarse («Onda de es…» junto al botón de copiar en dos columnas a 390). */
 .zd-gallery__name {
   min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  line-height: var(--z-leading-snug);
   color: var(--z-fg);
   font-weight: var(--z-weight-medium);
 }

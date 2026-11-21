@@ -43,6 +43,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- Galería de cargadores: el nombre de cada patrón parte línea en vez de cortarse junto al botón de copiar («Onda
+  de es…» a 390).
 - Vistas previas: el restablecimiento de estilos del navegador ya no anula el atributo `hidden`; las filas ocultas
   de una `DataTable` paginada se veían todas.
 - Auditoría visual del sitio:
