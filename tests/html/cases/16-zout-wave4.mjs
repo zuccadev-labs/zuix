@@ -167,7 +167,13 @@ export default async function ({ page, test, ok, card, settle }) {
     await page.mouse.move(corner.x + 42, corner.y + 52, { steps: 5 });
     await page.mouse.up();
     const dragged = await rect();
-    ok(dragged.w === sized.w + 30 && dragged.h === 160, `esquina con puntero: ${JSON.stringify(dragged)}`);
+    // El arrastre pide +30 × +40; el contenedor (margen de 8 px) puede acotarlo según el ancho que deje la página.
+    const room = await panel.evaluate((el) => ({
+      w: el.offsetParent.clientWidth - el.offsetLeft - 8,
+      h: el.offsetParent.clientHeight - el.offsetTop - 8,
+    }));
+    const want = { w: Math.min(sized.w + 30, room.w), h: Math.min(160, room.h) };
+    ok(dragged.w === want.w && dragged.h === want.h, `esquina con puntero: ${JSON.stringify(dragged)}, esperado ${JSON.stringify(want)}`);
     await press("Escape");
     ok(await panel.isHidden(), "Escape lo cierra");
     const opener = card("FloatingPanel").locator("[data-z-panel]");
