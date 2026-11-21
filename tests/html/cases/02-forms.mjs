@@ -525,8 +525,10 @@ export default async function ({ page, test, ok, settle, shots }) {
     await settle();
     ok(await isOpen("#due-panel"), "no abrió");
     const [c, p] = [await control.boundingBox(), await page.locator("#due-panel").boundingBox()];
+    // El panel es un .z-popover: openPopover() lo separa 6 px del campo (la lista de un Select, 4) y place() redondea
+    // a píxel entero. Con 4 ± 2 el caso pasaba o fallaba según la fracción de la posición del campo en la página.
     ok(
-      Math.abs(p.x - c.x) < 2 && (Math.abs(p.y - (c.y + c.height + 4)) < 2 || Math.abs(p.y + p.height + 4 - c.y) < 2),
+      Math.abs(p.x - c.x) < 2 && (Math.abs(p.y - (c.y + c.height + 6)) < 1.5 || Math.abs(p.y + p.height + 6 - c.y) < 1.5),
       `mal anclado: ${JSON.stringify([c, p])}`,
     );
     ok((await focusedDate()) === "2026-11-13", `foco inicial: ${await focusedDate()}`);
