@@ -270,6 +270,8 @@ radios y material de los tokens.
   - Modo DOM: al volver a pintar, el árbol quitaba el atributo `value` de las `<option>` (solo debía respetar lo
     tecleado en campos de texto): un `<select>` repintado valía el texto de la opción. Afectaba también al selector
     de zona horaria de la agenda.
+  - `TimelineView`: la inicial del día de la escala ya no encoge con el `<small>` del navegador (9,2 px) y el
+    rótulo de un bloque de `FreeBusy` acaba en elipsis en vez de cortarse a media palabra.
 
 
 ## [0.2.0] - 2026-11-18

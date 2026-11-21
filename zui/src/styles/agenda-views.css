@@ -576,7 +576,11 @@
     padding-block: var(--z-space-0-5) var(--z-space-1-5);
     color: var(--z-fg-subtle);
     font-size: var(--z-text-fine);
-    line-height: 1.3;
+    line-height: var(--z-leading-snug);
+  }
+  /* El <small> del navegador encoge un 17 % (9,2 px): la inicial del día va en la escala, como su número. */
+  .z-timeline__unit small {
+    font-size: inherit;
   }
   .z-timeline__unit b {
     color: var(--z-fg);
@@ -894,6 +898,13 @@
   }
   .z-timeline__create span {
     color: var(--z-fg-muted);
+  }
+  /* El rótulo de un bloque corto acaba en elipsis en vez de cortarse a media palabra. */
+  .z-freebusy__block > span {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .z-freebusy__block {
     position: absolute;

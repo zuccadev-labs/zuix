@@ -268,6 +268,8 @@ function collect({ TOKENS, families, coarse }) {
       const cut = r.left < q.left - 1 || r.right > q.right + 1 || r.top < q.top - 1 || r.bottom > q.bottom + 1;
       const inside = r.right > q.left && r.left < q.right && r.bottom > q.top && r.top < q.bottom;
       if (!cut || !inside) continue;
+      // Un recorte con fundido (máscara) indica a propósito que hay más: colapso parcial, desvanecido de una tira.
+      if (ps.maskImage !== "none" || ps.webkitMaskImage !== "none") break;
       if (/(auto|scroll)/.test(ps.overflowX + ps.overflowY)) {
         scrolledOut = true;
         // Un contenedor que desborda menos de dos filas no es una lista larga: le falta alto, y la última fila
@@ -277,7 +279,7 @@ function collect({ TOKENS, families, coarse }) {
         const row = el.closest("a,button,li,[role=option],[role=treeitem],[role=menuitem],[role=row]")?.getBoundingClientRect() ?? r;
         const short =
           (extraY > 0 && extraY < Math.max(r.height, row.height) * 2 && (r.top < q.top - 1 || r.bottom > q.bottom + 1)) ||
-          (extraX > 0 && extraX < r.width * 0.5 && (r.left < q.left - 1 || r.right > q.right + 1));
+          (extraX > 0 && extraX < r.width * 0.5 && !p.matches("pre") && (r.left < q.left - 1 || r.right > q.right + 1));
         if (short)
           add("contenedor-justo", el, `${sig(p)} desborda ${Math.round(Math.max(extraY, extraX))} px y corta este texto`, {
             text: text.slice(0, 40),
@@ -285,7 +287,9 @@ function collect({ TOKENS, families, coarse }) {
       } else hidden = true;
       break;
     }
-    if (hidden && !/ellipsis/.test(getComputedStyle(el).textOverflow))
+    // Un evento mide lo que dura y una diapositiva puede asomar a medias: su texto cortado es parte del diseño.
+    const byDesign = el.closest(".z-event,.z-carousel__slide");
+    if (hidden && !byDesign && !/ellipsis/.test(getComputedStyle(el).textOverflow))
       add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
     const current = el.closest("[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
     if (scrolledOut && current)
@@ -318,18 +322,33 @@ function collect({ TOKENS, families, coarse }) {
       if (r.top < 0 || r.bottom > vh || r.right <= 0 || r.left >= vw) continue;
       done.add(el);
       const cx = Math.min(Math.max(r.left + Math.min(r.width, 24) / 2, 0), vw - 1);
-      let covered = null;
-      for (const py of [r.top + 2, r.bottom - 2]) {
-        if (covered) break;
+      // Solo cuenta si lo tapado es una parte: entero debajo de una cabecera es contenido que se desplazó, como debe.
+      const coverAt = (py) => {
         for (const hit of document.elementsFromPoint(cx, py)) {
-          if (hit === el || el.contains(hit) || hit.contains(el)) break;
+          if (hit === el || el.contains(hit) || hit.contains(el)) return null;
           const hs = getComputedStyle(hit);
-          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit)) {
-            covered = hit;
-            break;
-          }
+          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit)) return hit;
         }
+        return null;
+      };
+      // Se mira dentro de lo que el texto deja ver (recortado por sus antecesores con desbordamiento) y con
+      // pointer-events activos, que elementsFromPoint ignora los elementos que no reciben el puntero.
+      let ct = r.top;
+      let cb = r.bottom;
+      for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+        const ps = getComputedStyle(p);
+        if (!/(auto|scroll|hidden|clip)/.test(ps.overflowY)) continue;
+        const q = p.getBoundingClientRect();
+        ct = Math.max(ct, q.top);
+        cb = Math.min(cb, q.bottom);
       }
+      if (cb - ct < r.height - 1) continue; // ya recortado por su contenedor: no es tapar, es desplazar
+      const pe = el.style.pointerEvents;
+      el.style.pointerEvents = "auto";
+      const top = coverAt(r.top + 2);
+      const bottom = coverAt(r.bottom - 2);
+      el.style.pointerEvents = pe;
+      const covered = top && !bottom ? top : bottom && !top ? bottom : null;
       if (covered) add("texto-tapado", el, `tapado por ${sig(covered)}`, { text: ownText(el).slice(0, 40) });
     }
   }
