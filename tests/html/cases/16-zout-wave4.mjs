@@ -157,6 +157,9 @@ export default async function ({ page, test, ok, card }) {
     ok(sized.w === keyed.w + 20 && sized.h === keyed.h - 10, `redimensionar: ${JSON.stringify(sized)}`);
     for (let i = 0; i < 10; i++) await press("Shift+ArrowUp");
     ok((await rect()).h === 120, `alto mínimo: ${(await rect()).h}`);
+    // El arrastre baja 52 px desde la esquina: con el panel al pie de la ventana el puntero se saldría de ella
+    // (en Firefox, tras los casos anteriores, el alto se quedaba en 152).
+    await panel.evaluate((el) => el.scrollIntoView({ block: "center" }));
     const corner = await panel.locator(".z-floatpanel__resize").boundingBox();
     await page.mouse.move(corner.x + 12, corner.y + 12);
     await page.mouse.down();
