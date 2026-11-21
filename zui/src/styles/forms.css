@@ -1695,8 +1695,12 @@
     color: var(--z-fg);
   }
 
-  .z-timepicker__panel {
+  /* Flex solo abierto: un `display` propio taparía el `display: none` del popover cerrado (quedaba visible y
+     encima de lo que hubiera debajo en el modo DOM). */
+  .z-timepicker__panel:is(:popover-open, :not([popover])) {
     display: flex;
+  }
+  .z-timepicker__panel {
     flex-direction: column;
     gap: var(--z-space-1);
     padding: var(--z-space-1-5);

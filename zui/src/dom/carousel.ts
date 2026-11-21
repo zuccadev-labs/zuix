@@ -36,7 +36,7 @@ import { pause } from "@zuccadev-labs/zuix-zicon/icons/pause";
 import { play } from "@zuccadev-labs/zuix-zicon/icons/play";
 import { MIN_SIDE, createEngine } from "../components/carousel/engine";
 import { autoplayInterval, barProgress, isIndicators, perPageOf, snapPositions, type CarouselIndicators } from "../core/carousel";
-import { bindAutoplay, createSnap, type AutoplayBinding } from "../core/carousel-runtime";
+import { bindAutoplay, createSnap, revealThumb, type AutoplayBinding } from "../core/carousel-runtime";
 import { byRef, setMarkup } from "./shared";
 import type { CarouselRasterSize, CarouselRasterSource } from "../components/carousel/slideTexture";
 
@@ -192,6 +192,7 @@ function controlsFor(root: HTMLElement, after: Element, vertical: boolean, autop
         if (i === index) thumb.setAttribute("aria-current", "true");
         else thumb.removeAttribute("aria-current");
       });
+      if (thumbs.length) revealThumb(thumbs[0]!.parentElement, index);
     },
     dispose() {
       root.removeEventListener("click", onClick);

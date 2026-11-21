@@ -150,3 +150,13 @@ export function bindAutoplay(
     },
   };
 }
+
+/** Lleva la miniatura actual a la vista dentro de su tira (sin mover la página). */
+export function revealThumb(strip: HTMLElement | null, index: number): void {
+  const thumb = strip?.children[index];
+  if (!strip || !(thumb instanceof HTMLElement)) return;
+  const s = strip.getBoundingClientRect();
+  const t = thumb.getBoundingClientRect();
+  if (t.left < s.left) strip.scrollLeft -= s.left - t.left + 4;
+  else if (t.right > s.right) strip.scrollLeft += t.right - s.right + 4;
+}

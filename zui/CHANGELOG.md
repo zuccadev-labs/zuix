@@ -369,6 +369,10 @@ radios y material de los tokens.
 
 ### Corregido
 
+- `TimePicker` sin React: el panel cerrado ya no se ve (su `display: flex` tapaba el `display: none` del popover
+  cerrado y quedaba encima de lo que hubiera debajo).
+- `Carousel` con miniaturas: la tira se centra solo si cabe y lleva a la vista la miniatura actual.
+
 - Modo DOM de las piezas de árbol (`core/widget`): las variables locales de la raíz (`--z-*`) se escriben en cada
   pintado; antes solo se aplicaban los atributos y la raíz conservaba las del primer marcado.
 

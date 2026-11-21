@@ -249,13 +249,20 @@
     transition: width var(--z-duration-normal) var(--z-ease-standard);
   }
   /* Miniaturas: botones con la imagen; la actual con anillo de acento. */
+  /* Centradas si caben; si no, empiezan al principio y se desplazan (márgenes automáticos, no `center`, que cortaría
+     el principio sin poder llegar a él). */
   .z-carousel__thumbs {
     display: flex;
     gap: var(--z-space-2);
-    justify-content: center;
     overflow-x: auto;
     padding: var(--z-space-1);
     scrollbar-width: thin;
+  }
+  .z-carousel__thumb:first-child {
+    margin-inline-start: auto;
+  }
+  .z-carousel__thumb:last-child {
+    margin-inline-end: auto;
   }
   .z-carousel__thumb {
     flex: none;

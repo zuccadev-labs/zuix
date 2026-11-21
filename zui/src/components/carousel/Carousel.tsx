@@ -14,7 +14,7 @@ import {
 } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { autoplayInterval, barProgress, perPageOf, snapPositions, type CarouselIndicators } from "../../core/carousel";
-import { bindAutoplay, createSnap, type SnapController } from "../../core/carousel-runtime";
+import { bindAutoplay, createSnap, revealThumb, type SnapController } from "../../core/carousel-runtime";
 import { cx } from "../../cx";
 import { useLatest } from "../../primitives/hooks";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";
@@ -413,8 +413,10 @@ function CarouselThumbs<T>({
   renderThumbnail: (item: T, index: number) => ReactNode;
   onGoTo: (index: number) => void;
 }) {
+  const strip = useRef<HTMLDivElement>(null);
+  useEffect(() => revealThumb(strip.current, index), [index]);
   return (
-    <div className="z-carousel__thumbs" role="group" aria-label={text.indicators}>
+    <div ref={strip} className="z-carousel__thumbs" role="group" aria-label={text.indicators}>
       {items.map((item, i) => (
         <button
           // biome-ignore lint/suspicious/noArrayIndexKey: una miniatura por slide, en orden.

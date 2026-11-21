@@ -409,7 +409,9 @@
     font-size: var(--z-text-display);
     font-style: italic;
     font-weight: var(--z-weight-medium);
-    line-height: var(--z-leading-tight);
+    /* Interlineado holgado: la cursiva y los descendentes no se recortan. */
+    line-height: var(--z-leading-normal);
+    padding-inline: var(--z-space-1);
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
