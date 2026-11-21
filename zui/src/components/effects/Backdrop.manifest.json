@@ -33,7 +33,7 @@
   "examples": [
     {
       "title": "Rejilla",
-      "code": "<Backdrop pattern=\"grid\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Ship with confidence</h2>\n    <p>Every release is checked against the same standard.</p>\n  </div>\n</Backdrop>"
+      "code": "<Backdrop pattern=\"grid\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Ship with confidence</strong></p>\n    <p>Every release is checked against the same standard.</p>\n  </div>\n</Backdrop>"
     },
     {
       "title": "Puntos sutiles con deriva",
@@ -41,11 +41,11 @@
     },
     {
       "title": "Hexágonos",
-      "code": "<Backdrop pattern=\"hex\" intensity=\"strong\" fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Network</h2>\n  </div>\n</Backdrop>"
+      "code": "<Backdrop pattern=\"hex\" intensity=\"strong\" fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Network</strong></p>\n  </div>\n</Backdrop>"
     },
     {
       "title": "Malla de color",
-      "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Liquid glass</h2>\n  </div>\n</Backdrop>"
+      "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Liquid glass</strong></p>\n  </div>\n</Backdrop>"
     }
   ]
 }

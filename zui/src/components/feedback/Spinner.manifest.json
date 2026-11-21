@@ -45,8 +45,8 @@
       "code": "<p><Spinner size=\"sm\" tone=\"current\" label=\"\" /> Saving changes</p>"
     },
     {
-      "title": "Formas",
-      "code": "<>\n  <Spinner shape=\"ring\" />\n  <Spinner shape=\"dots\" />\n  <Spinner shape=\"bars\" />\n</>"
+      "title": "Puntos y barras",
+      "code": "<>\n  <Spinner shape=\"dots\" />\n  <Spinner shape=\"bars\" />\n</>"
     },
     {
       "title": "Barras en un botón",

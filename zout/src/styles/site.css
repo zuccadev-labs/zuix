@@ -50,6 +50,7 @@
   .z-navmenu__link,
   .z-navmenu__trigger,
   .z-navbar__toggle {
+    box-sizing: border-box;
     display: inline-flex;
     align-items: center;
     gap: var(--z-space-1-5);
@@ -106,11 +107,16 @@
   /* ── NavigationMenu ───────────────────────────────────────────────────── */
   .z-navmenu__list {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--z-space-0-5);
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  /* En el Navbar la fila no se parte: si no cabe, se mide y pasa al cajón. */
+  .z-navbar .z-navmenu__list {
+    flex-wrap: nowrap;
   }
   .z-navmenu__item {
     position: relative;

@@ -7415,7 +7415,7 @@
    "examples": [
     {
      "title": "Rejilla",
-     "code": "<Backdrop pattern=\"grid\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Ship with confidence</h2>\n    <p>Every release is checked against the same standard.</p>\n  </div>\n</Backdrop>"
+     "code": "<Backdrop pattern=\"grid\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Ship with confidence</strong></p>\n    <p>Every release is checked against the same standard.</p>\n  </div>\n</Backdrop>"
     },
     {
      "title": "Puntos sutiles con deriva",
@@ -7423,11 +7423,11 @@
     },
     {
      "title": "Hexágonos",
-     "code": "<Backdrop pattern=\"hex\" intensity=\"strong\" fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Network</h2>\n  </div>\n</Backdrop>"
+     "code": "<Backdrop pattern=\"hex\" intensity=\"strong\" fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Network</strong></p>\n  </div>\n</Backdrop>"
     },
     {
      "title": "Malla de color",
-     "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Liquid glass</h2>\n  </div>\n</Backdrop>"
+     "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Liquid glass</strong></p>\n  </div>\n</Backdrop>"
     }
    ],
    "file": "zui/src/components/effects/Backdrop.manifest.json"
@@ -7714,7 +7714,7 @@
    "examples": [
     {
      "title": "Aparición por palabras",
-     "code": "<TextEffect as=\"h2\">Build interfaces that feel native</TextEffect>"
+     "code": "<TextEffect as=\"p\">Build interfaces that feel native</TextEffect>"
     },
     {
      "title": "Desenfoque por letras",
@@ -8568,8 +8568,8 @@
      "code": "<p><Spinner size=\"sm\" tone=\"current\" label=\"\" /> Saving changes</p>"
     },
     {
-     "title": "Formas",
-     "code": "<>\n  <Spinner shape=\"ring\" />\n  <Spinner shape=\"dots\" />\n  <Spinner shape=\"bars\" />\n</>"
+     "title": "Puntos y barras",
+     "code": "<>\n  <Spinner shape=\"dots\" />\n  <Spinner shape=\"bars\" />\n</>"
     },
     {
      "title": "Barras en un botón",

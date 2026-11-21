@@ -2417,6 +2417,7 @@ mark[data-markjs] {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
 }
 .zd-gallery__card {
+  container-type: inline-size;
   display: grid;
   grid-template-rows: auto auto;
   margin: 0;
@@ -2452,6 +2453,10 @@ mark[data-markjs] {
   font-size: var(--z-text-small);
 }
 .zd-gallery__name {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--z-fg);
   font-weight: var(--z-weight-medium);
 }
@@ -2519,4 +2524,17 @@ mark[data-markjs] {
   border: 1px solid var(--z-line);
   border-radius: var(--z-radius-xl);
   background: var(--z-surface);
+}
+/* Tarjeta estrecha: el botón de copiar se queda en icono (su nombre accesible ya dice qué copia). */
+@container (inline-size < 200px) {
+  .zd-gallery__caption .zd-copy__button > span {
+    display: none;
+  }
+}
+/* Celdas iguales para comparar tamaños: los huecos entre piezas de distinto ancho quedan iguales. */
+.zd-gallery__cell {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--z-space-10);
+  block-size: var(--z-space-10);
 }

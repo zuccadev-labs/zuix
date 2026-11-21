@@ -58,7 +58,9 @@ export default function Loaders() {
                   <figure key={shape} className="zd-gallery__card">
                     <div className="zd-gallery__stage">
                       {(["sm", "md", "lg"] as const).map((s) => (
-                        <Spinner key={s} shape={shape} size={s} label={`Loading (${shape}, ${s})`} />
+                        <span key={s} className="zd-gallery__cell">
+                          <Spinner shape={shape} size={s} label={`Loading (${shape}, ${s})`} />
+                        </span>
                       ))}
                     </div>
                     <figcaption className="zd-gallery__caption">

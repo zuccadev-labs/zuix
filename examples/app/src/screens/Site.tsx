@@ -92,7 +92,6 @@ export function Site() {
         <div id="site-main" data-testid="s-main">
           <Stack gap={4}>
             <div className="app-row">
-              <Spinner />
               <Spinner shape="dots" />
               <Spinner shape="bars" />
             </div>

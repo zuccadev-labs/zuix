@@ -11,8 +11,7 @@
     align-items: center;
     justify-content: center;
     gap: calc(var(--z-spinner-size) / 8);
-    inline-size: auto;
-    min-inline-size: var(--z-spinner-size);
+    inline-size: var(--z-spinner-size);
     border: 0;
     border-radius: 0;
     animation: none;
@@ -40,7 +39,7 @@
   .z-spinner[data-shape="bars"] .z-spinner__part {
     inline-size: calc(var(--z-spinner-size) / 7);
     block-size: 70%;
-    border-radius: calc(var(--z-spinner-size) / 14);
+    border-radius: var(--z-radius-full);
   }
   /* Quieto: un escalón de opacidad que se sigue leyendo como «en curso». */
   .z-spinner__part:nth-child(2) {

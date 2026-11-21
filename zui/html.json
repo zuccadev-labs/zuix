@@ -1248,7 +1248,7 @@
    "examples": [
     {
      "title": "Rejilla",
-     "html": "<div class=\"z-backdrop\" data-pattern=\"grid\" data-intensity=\"medium\" data-fade=\"radial\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <h2>Ship with confidence</h2>\n      <p>Every release is checked against the same standard.</p>\n    </div>\n  </div>\n</div>",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"grid\" data-intensity=\"medium\" data-fade=\"radial\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Ship with confidence</strong>\n      </p>\n      <p>Every release is checked against the same standard.</p>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     },
     {
@@ -1258,12 +1258,12 @@
     },
     {
      "title": "Hexágonos",
-     "html": "<div class=\"z-backdrop\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"bottom\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <h2>Network</h2>\n    </div>\n  </div>\n</div>",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"bottom\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Network</strong>\n      </p>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     },
     {
      "title": "Malla de color",
-     "html": "<div class=\"z-backdrop\" data-pattern=\"mesh\" data-intensity=\"medium\" data-fade=\"radial\" data-animated=\"\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <h2>Liquid glass</h2>\n    </div>\n  </div>\n</div>",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"mesh\" data-intensity=\"medium\" data-fade=\"radial\" data-animated=\"\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Liquid glass</strong>\n      </p>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -1321,7 +1321,7 @@
    "examples": [
     {
      "title": "Aparición por palabras",
-     "html": "<h2 class=\"z-texteffect\" data-effect=\"reveal\" data-by=\"word\">\n  <span class=\"z-sr-only\">Build interfaces that feel native</span>\n  <span class=\"z-texteffect__text\" aria-hidden=\"true\">\n    <span class=\"z-texteffect__piece\" style=\"--z-i:0\">Build</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:1\">interfaces</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:2\">that</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:3\">feel</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:4\">native</span>\n  </span>\n</h2>",
+     "html": "<p class=\"z-texteffect\" data-effect=\"reveal\" data-by=\"word\">\n  <span class=\"z-sr-only\">Build interfaces that feel native</span>\n  <span class=\"z-texteffect__text\" aria-hidden=\"true\">\n    <span class=\"z-texteffect__piece\" style=\"--z-i:0\">Build</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:1\">interfaces</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:2\">that</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:3\">feel</span>\n     \n    <span class=\"z-texteffect__piece\" style=\"--z-i:4\">native</span>\n  </span>\n</p>",
      "source": "generated"
     },
     {
@@ -1518,8 +1518,8 @@
      "source": "generated"
     },
     {
-     "title": "Formas",
-     "html": "<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" role=\"status\" aria-label=\"Loading\"></span>\n<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" data-shape=\"dots\" role=\"status\" aria-label=\"Loading\">\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n</span>\n<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" data-shape=\"bars\" role=\"status\" aria-label=\"Loading\">\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n</span>",
+     "title": "Puntos y barras",
+     "html": "<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" data-shape=\"dots\" role=\"status\" aria-label=\"Loading\">\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n</span>\n<span class=\"z-spinner\" data-size=\"md\" data-tone=\"accent\" data-shape=\"bars\" role=\"status\" aria-label=\"Loading\">\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n  <span class=\"z-spinner__part\"></span>\n</span>",
      "source": "generated"
     },
     {

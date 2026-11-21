@@ -24,7 +24,7 @@
   "whenNotToUse": "En texto de lectura, etiquetas de controles o mensajes de error: el texto de la interfaz no se anima.",
   "a11y": "Las piezas son aria-hidden y el texto entero va en un z-sr-only: se lee una vez y sin cortes. El degradado usa accent-text e info-text (≥ 4,5:1 cada una) y el brillo, fg-muted y fg. Con prefers-reduced-motion no se anima y queda el estado final. Si espera a entrar en pantalla, solo el JavaScript lo oculta: sin él, el texto se ve. Con colores forzados el degradado vuelve a CanvasText. Usa el brillo solo mientras dura la espera.",
   "examples": [
-    { "title": "Aparición por palabras", "code": "<TextEffect as=\"h2\">Build interfaces that feel native</TextEffect>" },
+    { "title": "Aparición por palabras", "code": "<TextEffect as=\"p\">Build interfaces that feel native</TextEffect>" },
     { "title": "Desenfoque por letras", "code": "<TextEffect effect=\"blur\" by=\"letter\">Liquid glass</TextEffect>" },
     { "title": "Degradado", "code": "<TextEffect effect=\"gradient\" animated>One standard, any brand</TextEffect>" },
     { "title": "Brillo de espera", "code": "<TextEffect effect=\"shimmer\">Thinking…</TextEffect>" }
