@@ -152,7 +152,8 @@
     {
       "name": "showOutsideDays",
       "type": "boolean",
-      "description": "Días de los meses vecinos que completan las semanas. Por defecto solo con un mes (con varios, celdas vacías: no se duplican fechas)."
+      "default": true,
+      "description": "Días de los meses vecinos que completan las semanas. El valor por defecto depende de `months`: true con un mes (el caso por defecto) y false con varios (celdas vacías: no se duplican fechas)."
     },
     {
       "name": "outsideDaySelectable",
