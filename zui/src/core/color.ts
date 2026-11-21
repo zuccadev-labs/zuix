@@ -193,7 +193,7 @@ function parseHex(text: string): Rgba | null {
 type Arg = { n: number; unit: "" | "%" | "deg" | "rad" | "grad" | "turn" };
 function parseArg(raw: string): Arg | null {
   if (raw.toLowerCase() === "none") return { n: 0, unit: "" };
-  const m = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)(%|deg|rad|grad|turn)?$/i.exec(raw);
+  const m = /^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)(%|deg|rad|grad|turn)?$/i.exec(raw);
   if (!m) return null;
   return { n: Number(m[1]), unit: (m[2]?.toLowerCase() ?? "") as Arg["unit"] };
 }

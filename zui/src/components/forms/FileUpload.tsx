@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useId, useMemo, useRef, useState, type DragEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { matchesAccept } from "../../core/accept";
+import { drawThumbnail } from "../../core/thumbnail";
 import { cx } from "../../cx";
 import { useFieldControl } from "./Field";
 
@@ -56,12 +57,25 @@ function fileSize(bytes: number): string {
 
 function FileRow({ file, progress, removeLabel, onRemove }: { file: File; progress?: number; removeLabel: string; onRemove?: () => void }) {
   const image = file.type.startsWith("image/");
-  const url = useMemo(() => (image && typeof URL.createObjectURL === "function" ? URL.createObjectURL(file) : null), [file, image]);
-  useEffect(() => () => (url ? URL.revokeObjectURL(url) : undefined), [url]);
+  // La miniatura se dibuja en un lienzo: el archivo no pasa por ninguna URL ni atributo `src`.
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    setDrawn(false);
+    if (!image || !canvas.current) return;
+    let alive = true;
+    void drawThumbnail(canvas.current, file, 28).then((ok) => {
+      if (alive) setDrawn(ok);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [file, image]);
   return (
     <li className="z-upload__file" data-progress={progress === undefined ? undefined : Math.round(progress)}>
       <span className="z-upload__thumb" aria-hidden="true">
-        {url ? <img src={url} alt="" width={28} height={28} /> : <Icon name={image ? "photo" : "document"} size={16} />}
+        {image ? <canvas ref={canvas} hidden={!drawn} /> : null}
+        {drawn ? null : <Icon name={image ? "photo" : "document"} size={16} />}
       </span>
       <span className="z-upload__file-main">
         <span className="z-upload__file-name">{file.name}</span>

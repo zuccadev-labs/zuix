@@ -1,6 +1,7 @@
 // Slider, OTPInput y FileUpload sin framework.
 import { matchesAccept } from "../core/accept";
 import { isRtl } from "../core/dir";
+import { drawThumbnail } from "../core/thumbnail";
 import { closestThumb, keyValue, moveThumb as nextValues, percent as percentOf, snap, valueAt } from "../core/slider";
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { document as documentIcon } from "@zuccadev-labs/zuix-zicon/icons/document";
@@ -268,7 +269,6 @@ function fileSize(bytes: number): string {
 function renderFiles(zone: HTMLElement, files: File[]): void {
   const target = zone.querySelector<HTMLElement>(".z-upload__files");
   if (!target) return;
-  for (const img of target.querySelectorAll<HTMLImageElement>("img[data-object-url]")) URL.revokeObjectURL(img.src);
   const removable = !zone.hasAttribute("data-disabled");
   target.replaceChildren(
     ...files.map((file, index) => {
@@ -277,15 +277,14 @@ function renderFiles(zone: HTMLElement, files: File[]): void {
       const thumb = document.createElement("span");
       thumb.className = "z-upload__thumb";
       thumb.setAttribute("aria-hidden", "true");
-      if (file.type.startsWith("image/") && typeof URL.createObjectURL === "function") {
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-        img.alt = "";
-        img.width = 28;
-        img.height = 28;
-        img.dataset.objectUrl = "";
-        thumb.append(img);
-      } else setMarkup(thumb, iconSvg(file.type.startsWith("image/") ? "photo" : "document", { size: 16 }));
+      if (file.type.startsWith("image/")) {
+        // La miniatura se dibuja en un lienzo: el archivo no pasa por ninguna URL ni atributo `src`.
+        setMarkup(thumb, iconSvg("photo", { size: 16 }));
+        const canvas = document.createElement("canvas");
+        void drawThumbnail(canvas, file, 28).then((drawn) => {
+          if (drawn && thumb.isConnected) thumb.replaceChildren(canvas);
+        });
+      } else setMarkup(thumb, iconSvg("document", { size: 16 }));
       const main = document.createElement("span");
       main.className = "z-upload__file-main";
       const name = document.createElement("span");

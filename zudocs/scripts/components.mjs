@@ -172,6 +172,7 @@ export const behaviorLabel = (b) => BEHAVIOR[b] ?? b;
 
 const cell = (s) =>
   String(s ?? "")
+    .replace(/\\/g, "\\\\")
     .replace(/\|/g, "\\|")
     .replace(/\s+/g, " ");
 const typeOf = (p) => (p.values?.length ? p.values.map((v) => JSON.stringify(v)).join(" \\| ") : p.type);

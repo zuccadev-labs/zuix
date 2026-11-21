@@ -459,11 +459,19 @@ export default async function ({ page, test, ok, card, settle, browserName }) {
   await test("FileUpload con lista: elegir muestra el archivo y quitarlo lo saca del campo", async () => {
     const zone = card("FileUpload").locator(".z-upload");
     await zone.locator(".z-upload__input").setInputFiles([
-      { name: "a.png", mimeType: "image/png", buffer: Buffer.from([137, 80, 78, 71]) },
+      {
+        name: "a.png",
+        mimeType: "image/png",
+        buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==", "base64"),
+      },
       { name: "b.png", mimeType: "image/png", buffer: Buffer.from([137, 80, 78, 71]) },
     ]);
     ok((await zone.locator(".z-upload__file").count()) === 2, "lista");
-    ok((await zone.locator(".z-upload__thumb img").count()) === 2, "miniaturas");
+    // La imagen válida se dibuja en un lienzo; la dañada se queda con su icono.
+    await zone.locator(".z-upload__thumb canvas").first().waitFor({ timeout: 5000 });
+    ok((await zone.locator(".z-upload__thumb canvas").count()) === 1, "miniatura dibujada");
+    ok((await zone.locator(".z-upload__thumb svg").count()) === 1, "icono para la imagen que no se puede leer");
+    ok((await zone.locator(".z-upload__thumb img").count()) === 0, "sin URL de objeto");
     await zone.locator(".z-upload__remove").first().click();
     ok((await zone.locator(".z-upload__file").count()) === 1, "quitar");
     ok((await zone.locator(".z-upload__input").evaluate((el) => el.files.length)) === 1, "el campo pierde el archivo");

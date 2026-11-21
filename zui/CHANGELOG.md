@@ -373,6 +373,9 @@ radios y material de los tokens.
 
 ### Corregido
 
+- `FileUpload` dibuja la miniatura de una imagen en un `<canvas>` con `createImageBitmap`, sin crear una URL de
+  objeto ni asignar un `src` con el archivo elegido; si el navegador no puede leer la imagen, queda el icono.
+- El analizador de colores (`parseColor`) ya no tiene un caso de retroceso costoso con cadenas largas de ceros.
 - `/dom`: un menú abierto con el teclado bajo un puntero quieto ya no resalta la entrada que queda debajo: el
   foco sigue en la primera hasta que el puntero se mueve, como en el binding de React.
 - El manifiesto de `Calendar` declara el valor por defecto de `showOutsideDays` (`true` con un mes, `false` con

@@ -54,15 +54,15 @@
   "examples": [
     {
       "title": "Círculo completo con marcas",
-      "code": "<CircularSlider label=\"Hue\" defaultValue={210} max={360} step={15} marks caption=\"degrees\" />"
+      "code": "<CircularSlider locale=\"en-US\" label=\"Hue\" defaultValue={210} max={360} step={15} marks caption=\"degrees\" />"
     },
     {
       "title": "Dial de arco abierto",
-      "code": "<CircularSlider label=\"Volume\" defaultValue={40} arc={270} size={140} thickness={10} valueFormat={{ style: \"unit\", unit: \"percent\" }} />"
+      "code": "<CircularSlider locale=\"en-US\" label=\"Volume\" defaultValue={40} arc={270} size={140} thickness={10} valueFormat={{ style: \"unit\", unit: \"percent\" }} />"
     },
     {
       "title": "Temperatura",
-      "code": "<CircularSlider label=\"Target temperature\" defaultValue={21.5} min={10} max={30} step={0.5} arc={240} caption=\"°C\" name=\"temperature\" />"
+      "code": "<CircularSlider locale=\"en-US\" label=\"Target temperature\" defaultValue={21.5} min={10} max={30} step={0.5} arc={240} caption=\"°C\" name=\"temperature\" />"
     }
   ],
   "origin": "Oleada 7. Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código."

@@ -798,7 +798,7 @@
     background: var(--z-surface-3);
     color: var(--z-fg-muted);
   }
-  .z-upload__thumb img {
+  .z-upload__thumb canvas {
     width: 100%;
     height: 100%;
     object-fit: cover;

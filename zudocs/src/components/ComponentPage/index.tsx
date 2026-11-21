@@ -72,6 +72,15 @@ const anchor = (s: string) =>
 /** El índice pinta HTML (como el de los documentos): los títulos de los ejemplos van escapados. */
 const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Si la URL del repositorio es de github.com (por su host, no por una subcadena de la URL). */
+function isGitHub(url: string): boolean {
+  try {
+    return new URL(url).hostname === "github.com";
+  } catch {
+    return false;
+  }
+}
+
 /** Código de una celda con puntos de corte entre piezas (tras `<`, `,`, `|`, `:`, `(`, `{`, `=>`), nunca dentro de un nombre. */
 function breakable(text: string) {
   const parts = text.split(/(?<=[<,|:({]|=>)/);
@@ -165,9 +174,7 @@ export default function ComponentPage({ data }: { data: ComponentData }) {
     ...(data.related.length ? [{ id: "relacionados", value: "Relacionados", level: 2 }] : []),
   ];
   const manifestUrl =
-    site.repository && data.file && /github\.com/.test(site.repository)
-      ? `${site.repository.replace(/\/$/, "")}/blob/main/${data.file}`
-      : undefined;
+    site.repository && data.file && isGitHub(site.repository) ? `${site.repository.replace(/\/$/, "")}/blob/main/${data.file}` : undefined;
   const firstHtml = examples.find((e) => e.html)?.html;
   const firstReact = data.examples[0]?.code;
   const usage = [data.import, firstReact].filter(Boolean).join("\n\n");
