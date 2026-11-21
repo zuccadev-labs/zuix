@@ -1,0 +1,34 @@
+{
+  "name": "BorderBeam",
+  "group": "effects",
+  "status": "new",
+  "description": "Haz de luz que recorre el borde de lo que envuelve (tarjeta, panel, botón): un anillo enmascarado gira un degradado cónico con transform. Tono, largo, grosor, velocidad, sentido y pausa; quieto con movimiento reducido.",
+  "import": "import { BorderBeam } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "duration", "type": "number", "default": 6, "description": "Segundos por vuelta." },
+    { "name": "length", "type": "number", "default": 18, "description": "Largo del haz en % del contorno (5–50)." },
+    { "name": "width", "type": "enum", "values": ["1", "2"], "default": "1", "description": "Grosor en px." },
+    { "name": "tone", "type": "enum", "values": ["accent", "info", "success", "warning", "danger", "neutral"], "default": "accent" },
+    { "name": "reverse", "type": "boolean", "default": false },
+    { "name": "paused", "type": "boolean", "default": false },
+    { "name": "radius", "type": "string", "description": "Radio del contorno; por defecto, el de una tarjeta (card-radius)." }
+  ],
+  "states": ["rest", "paused", "offscreen"],
+  "tokens": ["accent", "info", "success", "warning", "danger", "fg", "glass-highlight", "card-radius"],
+  "classes": ["z-beam", "z-beam__ring"],
+  "cssVars": ["--z-beam-duration", "--z-beam-length", "--z-beam-width", "--z-beam-radius"],
+  "behavior": "none",
+  "whenToUse": "Para señalar una sola pieza destacada (plan recomendado, tarea en curso, panel activo).",
+  "whenNotToUse": "En varias piezas a la vez o en listas: el movimiento compite. Para pedir atención puntual, AttentionRing.",
+  "a11y": "Decorativo: el anillo es aria-hidden y no recibe el puntero; no tapa el contenido (solo el borde). Con prefers-reduced-motion el haz queda quieto en una esquina. Gira una vuelta cada varios segundos: nada destella. Fuera de pantalla se detiene. Con colores forzados desaparece.",
+  "examples": [
+    {
+      "title": "Tarjeta destacada",
+      "code": "<BorderBeam>\n  <Card>\n    <CardHeader title=\"Pro plan\" subtitle=\"Everything in Team, plus audit logs.\" />\n  </Card>\n</BorderBeam>"
+    },
+    {
+      "title": "Tonos y grosor",
+      "code": "<BorderBeam tone=\"success\" width={2} duration={4} radius=\"var(--z-control-radius-lg)\">\n  <Button variant=\"secondary\">Deploying</Button>\n</BorderBeam>"
+    }
+  ]
+}

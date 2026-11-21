@@ -1,0 +1,31 @@
+{
+  "name": "Glow",
+  "group": "effects",
+  "status": "new",
+  "description": "Brillo que sigue al puntero sobre el borde, la superficie o ambos de lo que envuelve (spotlight de cristal). Solo con un puntero que pasa por encima; las capas son aria-hidden y sin puntero.",
+  "import": "import { Glow } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "variant", "type": "enum", "values": ["border", "surface", "both"], "default": "border" },
+    { "name": "tone", "type": "enum", "values": ["accent", "info", "success", "warning", "danger", "neutral"], "default": "accent" },
+    { "name": "size", "type": "number", "default": 220, "description": "Radio del foco de luz en px." },
+    { "name": "radius", "type": "string", "description": "Radio del contorno; por defecto, el de una tarjeta." }
+  ],
+  "states": ["rest", "hover"],
+  "tokens": ["accent", "info", "success", "warning", "danger", "fg", "card-radius", "duration-normal", "ease-standard"],
+  "classes": ["z-glow", "z-glow__fill", "z-glow__ring"],
+  "cssVars": ["--z-glow-x", "--z-glow-y", "--z-glow-size", "--z-glow-radius"],
+  "behavior": "dom",
+  "whenToUse": "En rejillas de tarjetas o planes donde el puntero recorre opciones.",
+  "whenNotToUse": "Como única señal de estado o de foco: es un adorno y no existe con teclado ni en táctil.",
+  "a11y": "Mejora visual para puntero: el contenido se ve y se usa igual sin ella, y el foco de teclado sigue siendo el contorno propio de cada control. La capa de superficie va por debajo del contenido y no pasa del 14 % del tono. Sin transición con prefers-reduced-motion; sin superficie con prefers-reduced-transparency; fuera con colores forzados.",
+  "examples": [
+    {
+      "title": "Borde",
+      "code": "<Glow>\n  <Card>\n    <CardHeader title=\"Analytics\" subtitle=\"Events, funnels and retention.\" />\n  </Card>\n</Glow>"
+    },
+    {
+      "title": "Borde y superficie",
+      "code": "<Glow variant=\"both\" tone=\"info\" size={260}>\n  <Card>\n    <CardHeader title=\"Storage\" subtitle=\"Buckets with versioning.\" />\n  </Card>\n</Glow>"
+    }
+  ]
+}

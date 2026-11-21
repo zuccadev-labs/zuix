@@ -27,6 +27,7 @@ export const GROUPS = {
   overlay: { label: "Superposición", icon: "square-3-stack-3d" },
   navigation: { label: "Navegación", icon: "queue-list" },
   carousel: { label: "Carousel", icon: "photo" },
+  effects: { label: "Efectos", icon: "sparkles" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

@@ -1,0 +1,51 @@
+{
+  "name": "Backdrop",
+  "group": "effects",
+  "status": "new",
+  "description": "Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional. El dibujo es una capa aria-hidden sin puntero; el contenido va encima.",
+  "import": "import { Backdrop } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "pattern", "type": "enum", "values": ["grid", "dots", "hex", "mesh"], "default": "grid" },
+    { "name": "intensity", "type": "enum", "values": ["subtle", "medium", "strong"], "default": "medium" },
+    {
+      "name": "fade",
+      "type": "enum",
+      "values": ["radial", "bottom", "none"],
+      "default": "radial",
+      "description": "Desvanecido de la capa hacia los bordes."
+    },
+    {
+      "name": "animated",
+      "type": "boolean",
+      "default": false,
+      "description": "Deriva lenta (rejilla, puntos, hexágonos) o flujo de la malla; nunca con movimiento reducido."
+    },
+    { "name": "cell", "type": "number", "default": 32, "description": "Lado de la celda en px." }
+  ],
+  "states": ["rest", "animated", "offscreen"],
+  "tokens": ["fg", "accent", "info", "success", "ease-standard"],
+  "classes": ["z-backdrop", "z-backdrop__layer", "z-backdrop__content"],
+  "cssVars": ["--z-backdrop-cell"],
+  "behavior": "none",
+  "whenToUse": "Detrás de la cabecera de una página de producto, de un estado vacío o de una sección destacada, para dar profundidad al cristal.",
+  "whenNotToUse": "Detrás de texto largo o de tablas densas: el texto de lectura va sobre una superficie opaca (Panel solid, Prose).",
+  "a11y": "Decorativo: la capa es aria-hidden y no recibe el puntero. Las líneas no pasan del 13 % del color del texto, así que el texto encima conserva su contraste. Con prefers-reduced-motion no deriva; con prefers-reduced-transparency baja a la mitad; con prefers-contrast: more y colores forzados desaparece. Fuera de pantalla la animación se detiene.",
+  "examples": [
+    {
+      "title": "Rejilla",
+      "code": "<Backdrop pattern=\"grid\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Ship with confidence</h2>\n    <p>Every release is checked against the same standard.</p>\n  </div>\n</Backdrop>"
+    },
+    {
+      "title": "Puntos sutiles con deriva",
+      "code": "<Backdrop pattern=\"dots\" intensity=\"subtle\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p>Nothing here yet</p>\n  </div>\n</Backdrop>"
+    },
+    {
+      "title": "Hexágonos",
+      "code": "<Backdrop pattern=\"hex\" intensity=\"strong\" fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Network</h2>\n  </div>\n</Backdrop>"
+    },
+    {
+      "title": "Malla de color",
+      "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <h2>Liquid glass</h2>\n  </div>\n</Backdrop>"
+    }
+  ]
+}

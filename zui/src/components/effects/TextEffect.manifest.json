@@ -1,0 +1,32 @@
+{
+  "name": "TextEffect",
+  "group": "effects",
+  "status": "new",
+  "description": "Efectos de texto: aparición por palabras o letras (subiendo o desenfocada, al montarse o al entrar en pantalla), degradado con tokens de texto (fijo o en movimiento) y brillo que pasa (shimmer). El texto entero llega una vez a los lectores; sin movimiento reducido ni JavaScript se ve en su estado final.",
+  "import": "import { TextEffect } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "children", "type": "string", "required": true },
+    { "name": "effect", "type": "enum", "values": ["reveal", "blur", "gradient", "shimmer"], "default": "reveal" },
+    { "name": "by", "type": "enum", "values": ["word", "letter"], "default": "word", "description": "Unidad de la aparición." },
+    { "name": "stagger", "type": "number", "description": "ms entre piezas (45 por palabra, 18 por letra)." },
+    { "name": "duration", "type": "number", "default": 640, "description": "ms de cada pieza o de una pasada." },
+    { "name": "delay", "type": "number", "default": 0 },
+    { "name": "trigger", "type": "enum", "values": ["mount", "visible"], "default": "mount" },
+    { "name": "animated", "type": "boolean", "description": "Degradado en movimiento; el brillo se mueve por defecto." },
+    { "name": "as", "type": "ElementType", "default": "span" }
+  ],
+  "states": ["rest", "pending", "animated"],
+  "tokens": ["accent-text", "info-text", "fg", "fg-muted", "ease-emphasized"],
+  "classes": ["z-texteffect", "z-texteffect__text", "z-texteffect__word", "z-texteffect__piece"],
+  "cssVars": ["--z-texteffect-stagger", "--z-texteffect-duration", "--z-texteffect-delay"],
+  "behavior": "dom",
+  "whenToUse": "En un titular de portada, una cifra destacada o un texto de «pensando…» mientras algo carga (shimmer).",
+  "whenNotToUse": "En texto de lectura, etiquetas de controles o mensajes de error: el texto de la interfaz no se anima.",
+  "a11y": "Las piezas son aria-hidden y el texto entero va en un z-sr-only: se lee una vez y sin cortes. El degradado usa accent-text e info-text (≥ 4,5:1 cada una) y el brillo, fg-muted y fg. Con prefers-reduced-motion no se anima y queda el estado final. Si espera a entrar en pantalla, solo el JavaScript lo oculta: sin él, el texto se ve. Con colores forzados el degradado vuelve a CanvasText. Usa el brillo solo mientras dura la espera.",
+  "examples": [
+    { "title": "Aparición por palabras", "code": "<TextEffect as=\"h2\">Build interfaces that feel native</TextEffect>" },
+    { "title": "Desenfoque por letras", "code": "<TextEffect effect=\"blur\" by=\"letter\">Liquid glass</TextEffect>" },
+    { "title": "Degradado", "code": "<TextEffect effect=\"gradient\" animated>One standard, any brand</TextEffect>" },
+    { "title": "Brillo de espera", "code": "<TextEffect effect=\"shimmer\">Thinking…</TextEffect>" }
+  ]
+}

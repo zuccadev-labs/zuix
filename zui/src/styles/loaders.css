@@ -1,0 +1,188 @@
+/*
+  Cargadores, oleada 6: formas de Spinner (puntos y barras) y DotMatrix (rejilla de puntos con patrones propios).
+  Solo opacidad y escala animadas (compositor). El movimiento se declara dentro de
+  `prefers-reduced-motion: no-preference`: con movimiento reducido queda un fotograma quieto del patrón.
+  Fuera de pantalla (`data-offscreen`, core/visibility) y con `data-paused` la animación se detiene.
+*/
+@layer zui.feedback {
+  /* ---- Spinner: puntos y barras ---- */
+  .z-spinner:is([data-shape="dots"], [data-shape="bars"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--z-spinner-size) / 8);
+    inline-size: auto;
+    min-inline-size: var(--z-spinner-size);
+    border: 0;
+    border-radius: 0;
+    color: var(--z-accent);
+    animation: none;
+  }
+  .z-spinner[data-tone="muted"]:is([data-shape="dots"], [data-shape="bars"]) {
+    color: var(--z-fg-muted);
+  }
+  .z-spinner[data-tone="current"]:is([data-shape="dots"], [data-shape="bars"]) {
+    color: currentColor;
+  }
+  .z-spinner__part {
+    display: block;
+    flex-shrink: 0;
+    background: currentColor;
+  }
+  .z-spinner[data-shape="dots"] .z-spinner__part {
+    inline-size: calc(var(--z-spinner-size) / 4);
+    block-size: calc(var(--z-spinner-size) / 4);
+    border-radius: var(--z-radius-full);
+  }
+  .z-spinner[data-shape="bars"] .z-spinner__part {
+    inline-size: calc(var(--z-spinner-size) / 7);
+    block-size: 70%;
+    border-radius: calc(var(--z-spinner-size) / 14);
+  }
+  /* Quieto: un escalón de opacidad que se sigue leyendo como «en curso». */
+  .z-spinner__part:nth-child(2) {
+    opacity: 0.6;
+  }
+  .z-spinner__part:nth-child(3) {
+    opacity: 0.35;
+  }
+  .z-spinner__part:nth-child(4) {
+    opacity: 0.2;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-spinner[data-shape="dots"] .z-spinner__part {
+      opacity: 0.3;
+      animation: z-spinner-dot 1.2s var(--z-ease-standard) infinite;
+    }
+    .z-spinner[data-shape="bars"] .z-spinner__part {
+      opacity: 0.4;
+      animation: z-spinner-bar 1s var(--z-ease-standard) infinite;
+    }
+    .z-spinner__part:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    .z-spinner__part:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+    .z-spinner__part:nth-child(4) {
+      animation-delay: 0.45s;
+    }
+  }
+  @keyframes z-spinner-dot {
+    0%,
+    70%,
+    100% {
+      opacity: 0.3;
+      scale: 0.7;
+    }
+    35% {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+  @keyframes z-spinner-bar {
+    0%,
+    60%,
+    100% {
+      opacity: 0.4;
+      scale: 1 0.45;
+    }
+    30% {
+      opacity: 1;
+      scale: 1 1;
+    }
+  }
+
+  /* ---- DotMatrix ---- */
+  .z-dotmatrix {
+    --z-dotmatrix-dot: 4px;
+    --z-dotmatrix-gap: var(--z-space-0-5);
+    display: inline-grid;
+    flex-shrink: 0;
+    grid-template-columns: repeat(var(--z-dotmatrix-cols, 5), var(--z-dotmatrix-dot));
+    grid-auto-rows: var(--z-dotmatrix-dot);
+    gap: var(--z-dotmatrix-gap);
+    color: var(--z-accent);
+    vertical-align: middle;
+  }
+  .z-dotmatrix[data-size="sm"] {
+    --z-dotmatrix-dot: 2px;
+  }
+  .z-dotmatrix[data-size="lg"] {
+    --z-dotmatrix-dot: 6px;
+    --z-dotmatrix-gap: var(--z-space-1);
+  }
+  .z-dotmatrix[data-tone="muted"] {
+    color: var(--z-fg-muted);
+  }
+  .z-dotmatrix[data-tone="current"] {
+    color: currentColor;
+  }
+  /* Baldosa de cristal: el radio sigue al de la rejilla más su relleno. */
+  .z-dotmatrix[data-framed] {
+    padding: var(--z-space-2-5);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  .z-dotmatrix__dot {
+    border-radius: var(--z-radius-full);
+    background: currentColor;
+    opacity: var(--z-dot-rest, 0.16);
+    scale: calc(0.72 + (var(--z-dot-rest, 0.16) - 0.16) / 3);
+  }
+  .z-dotmatrix__dot[data-off] {
+    opacity: 0.16;
+    scale: 0.72;
+  }
+  /* Patrones con dirección (barrido, ola, serpiente): en RTL avanzan hacia el inicio de línea. */
+  [dir="rtl"] .z-dotmatrix,
+  .z-dotmatrix[dir="rtl"] {
+    scale: -1 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-dotmatrix__dot:not([data-off]) {
+      animation: z-dotmatrix-breathe var(--z-dotmatrix-duration, 1.6s) ease-in-out infinite;
+      animation-delay: calc((var(--z-dot-phase, 0) - 1) * var(--z-dotmatrix-duration, 1.6s));
+    }
+    .z-dotmatrix[data-motion="trail"] .z-dotmatrix__dot:not([data-off]) {
+      animation-name: z-dotmatrix-trail;
+      animation-timing-function: linear;
+    }
+    .z-dotmatrix:is([data-paused], [data-offscreen]) .z-dotmatrix__dot {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-dotmatrix-trail {
+    0% {
+      opacity: 1;
+      scale: 1;
+    }
+    35%,
+    100% {
+      opacity: 0.16;
+      scale: 0.72;
+    }
+  }
+  @keyframes z-dotmatrix-breathe {
+    0%,
+    100% {
+      opacity: 0.16;
+      scale: 0.72;
+    }
+    50% {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  /* Colores forzados: el relleno de los puntos y las barras se pinta con el color del texto del sistema. */
+  @media (forced-colors: active) {
+    .z-spinner__part,
+    .z-dotmatrix__dot {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
+}
