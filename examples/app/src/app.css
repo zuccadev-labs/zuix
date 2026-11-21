@@ -455,7 +455,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--z-space-2);
-  height: 300px;
+  /* Alto de su contenido, como mínimo 300: con puntero grueso (items de 40) un alto fijo cortaba el submenú a media
+     fila bajo el pie. */
+  min-height: 300px;
 }
 .app-sidebar-demo__frame {
   width: min(240px, 100%);
