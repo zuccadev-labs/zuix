@@ -2419,6 +2419,7 @@ mark[data-markjs] {
 .zd-gallery__card {
   container-type: inline-size;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto;
   margin: 0;
   overflow: hidden;
