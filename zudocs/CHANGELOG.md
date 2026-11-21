@@ -52,6 +52,7 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   - Los bloques de código no registran la escucha de `resize` del ajuste de línea del tema (el sitio no muestra
     ese botón): en un teléfono lanzaba «Cannot destructure property 'scrollWidth'» en algunas páginas.
   - Las vistas previas en columna centran un `Calendar` (ahora mide su contenido) en vez de dejarlo a la izquierda.
+  - Las cabeceras de las tablas pueden partir línea: con una fuente más ancha la tabla de props desbordaba 3–4 px.
 
 
 ## [0.2.0] - 2026-11-18

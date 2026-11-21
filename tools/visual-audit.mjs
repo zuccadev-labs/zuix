@@ -196,7 +196,7 @@ function collect({ TOKENS, families, coarse }) {
     "a[href],button,input:not([type=hidden]),select,textarea,summary,[role=button],[role=tab],[role=menuitem],[role=option],[role=checkbox],[role=radio],[role=switch],[role=slider],[role=combobox],[role=spinbutton],[role=gridcell][tabindex],[tabindex]:not([tabindex='-1'])";
   const isControlBox = (el, cs) =>
     el.matches(
-      "button,a.z-btn,a[class*='z-btn'],input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=hidden]):not([type=color]):not([type=file]),select,[role=combobox],[role=spinbutton],[role=tab],[class*='__trigger'],[class*='__control'],.z-input,.z-select,.z-chip,.z-segmented__item,[class*='z-btn']",
+      "button,a.z-btn,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=hidden]):not([type=color]):not([type=file]),select,[role=combobox],[role=spinbutton],[role=tab],[class*='__trigger'],[class*='__control'],.z-input,.z-select,.z-chip,.z-segmented__item,.z-btn",
     ) &&
     (Number.parseFloat(cs.borderTopWidth) > 0 ||
       (cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent") ||
@@ -267,7 +267,26 @@ function collect({ TOKENS, families, coarse }) {
       if (q.width <= 1 || q.height <= 1) break; // sr-only y similares
       const cut = r.left < q.left - 1 || r.right > q.right + 1 || r.top < q.top - 1 || r.bottom > q.bottom + 1;
       const inside = r.right > q.left && r.left < q.right && r.bottom > q.top && r.top < q.bottom;
+      const scroller = /(auto|scroll)/.test(ps.overflowX + ps.overflowY);
+      // Fuera de la vista de un contenedor con desplazamiento: contenido desplazado, no recortado.
+      if (scroller && cut && !inside) break;
       if (!cut || !inside) continue;
+      // Un recorte sin desplazamiento dentro de algo que sí desplaza (cabecera sincronizada de una rejilla, tira de
+      // pestañas) es el mismo desplazamiento: cuenta como tal.
+      if (!scroller) {
+        let outer = p.parentElement;
+        while (
+          outer &&
+          outer !== document.body &&
+          !/(auto|scroll)/.test(getComputedStyle(outer).overflowX + getComputedStyle(outer).overflowY)
+        )
+          outer = outer.parentElement;
+        const o = outer && outer !== document.body ? outer.getBoundingClientRect() : null;
+        if (o && (r.left < o.left - 1 || r.right > o.right + 1 || r.top < o.top - 1 || r.bottom > o.bottom + 1)) {
+          scrolledOut = true;
+          break;
+        }
+      }
       // Un recorte con fundido (máscara) indica a propósito que hay más: colapso parcial, desvanecido de una tira.
       if (ps.maskImage !== "none" || ps.webkitMaskImage !== "none") break;
       if (/(auto|scroll)/.test(ps.overflowX + ps.overflowY)) {
@@ -277,9 +296,16 @@ function collect({ TOKENS, families, coarse }) {
         const extraY = p.scrollHeight - p.clientHeight;
         const extraX = p.scrollWidth - p.clientWidth;
         const row = el.closest("a,button,li,[role=option],[role=treeitem],[role=menuitem],[role=row]")?.getBoundingClientRect() ?? r;
+        // Un panel del alto de la pantalla (barra lateral, índice) con una lista larga desplaza como debe; el código
+        // y los comandos desplazan en horizontal a propósito.
+        const panel = q.height >= vh * 0.6;
+        const mono = /mono/i.test(getComputedStyle(el).fontFamily) || el.closest("pre,code");
         const short =
-          (extraY > 0 && extraY < Math.max(r.height, row.height) * 2 && (r.top < q.top - 1 || r.bottom > q.bottom + 1)) ||
-          (extraX > 0 && extraX < r.width * 0.5 && !p.matches("pre") && (r.left < q.left - 1 || r.right > q.right + 1));
+          (!panel &&
+            extraY > 0 &&
+            extraY < Math.max(r.height, Math.min(row.height, 48)) * 2 &&
+            (r.top < q.top - 1 || r.bottom > q.bottom + 1)) ||
+          (!mono && extraX > 0 && extraX < r.width * 0.5 && (r.left < q.left - 1 || r.right > q.right + 1));
         if (short)
           add("contenedor-justo", el, `${sig(p)} desborda ${Math.round(Math.max(extraY, extraX))} px y corta este texto`, {
             text: text.slice(0, 40),
@@ -516,7 +542,7 @@ function collect({ TOKENS, families, coarse }) {
         const gaps = [];
         for (let i = 1; i < sorted.length; i++)
           gaps.push(Math.round((rects.get(sorted[i]).left - rects.get(sorted[i - 1]).right) * 10) / 10);
-        const autoPushed = sorted.some((k) => {
+        const autoPushed = [...parent.children].some((k) => {
           const s = getComputedStyle(k);
           const map = k.computedStyleMap?.();
           return (

@@ -921,7 +921,6 @@ a[class*="skipToContent"]:focus {
   font-size: var(--z-text-small);
   font-weight: var(--z-weight-medium);
   text-align: start;
-  white-space: nowrap;
   text-wrap: balance;
 }
 .zd-table > table td {
