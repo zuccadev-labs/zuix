@@ -302,6 +302,7 @@ radios y material de los tokens.
 - Revisión visual de la oleada 5:
   - `AspectRatio` ocupa el ancho de su contenedor (en una fila flex encogía hasta su contenido) y sin medio (solo un
     icono de relleno) se ve como un hueco de superficie con su proporción; antes era invisible.
+  - `CardMedia` a sangre con ancho explícito: en WebKit salía más baja que su proporción (2,19 en vez de 16:9).
   - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
   - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al
     título).
