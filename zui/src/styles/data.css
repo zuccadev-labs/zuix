@@ -382,7 +382,9 @@
     width: var(--z-avatar-size);
     height: var(--z-avatar-size);
     border-radius: var(--z-radius-full);
-    background: var(--z-accent-soft);
+    /* Tinte sobre base opaca: sobre una tarjeta o una fila con fondo, el tinte translúcido bajaba las iniciales a
+       4,3:1 (axe, zutool y zenith claros). */
+    background: linear-gradient(var(--z-accent-soft), var(--z-accent-soft)), var(--z-surface-solid);
     color: var(--z-accent-text);
     font-size: calc(var(--z-avatar-size) * 0.38);
     font-weight: var(--z-weight-bold);

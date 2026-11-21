@@ -298,7 +298,7 @@ function collect({ TOKENS, families, coarse }) {
         const row = el.closest("a,button,li,[role=option],[role=treeitem],[role=menuitem],[role=row]")?.getBoundingClientRect() ?? r;
         // Un panel del alto de la pantalla (barra lateral, índice) con una lista larga desplaza como debe; el código
         // y los comandos desplazan en horizontal a propósito.
-        const panel = q.height >= vh * 0.6;
+        const panel = q.height >= vh * 0.4;
         const mono = /mono/i.test(getComputedStyle(el).fontFamily) || el.closest("pre,code");
         const short =
           (!panel &&
