@@ -10,6 +10,7 @@ import wave4Zout from "./cases-wave4-zout.mjs";
 import wave5Content from "./cases-wave5-content.mjs";
 import wave5Data from "./cases-wave5-data.mjs";
 import wave6 from "./cases-wave6.mjs";
+import wave7 from "./cases-wave7.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import { carouselAtRest } from "../rest.mjs";
@@ -248,6 +249,7 @@ const SCREENS = [
   "content",
   "data",
   "charts",
+  "media",
 ];
 
 export const cases = [
@@ -629,8 +631,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        27,
-        "27 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts y Site)",
+        28,
+        "28 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site y Media)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -3057,7 +3059,7 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, charts, reading].flatMap((build) =>
+  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, wave7, charts, reading].flatMap((build) =>
     build(helpers()),
   ),
 

@@ -180,4 +180,193 @@
       --z-carousel-gap: var(--z-space-4);
     }
   }
+
+  /* ---------- Oleada 7: reproducción, puntos, barra, miniaturas y modo snap ---------- */
+  .z-carousel__play[data-state="playing"] {
+    color: var(--z-accent-text);
+  }
+  /* Puntos: objetivo de 24 × 24 con la marca dentro; el actual se alarga (rectángulo redondeado, no píldora). */
+  .z-carousel__dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+  }
+  .z-carousel__dot {
+    display: grid;
+    place-items: center;
+    width: max(var(--z-space-6), var(--z-touch-target));
+    height: max(var(--z-space-6), var(--z-touch-target));
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    cursor: pointer;
+  }
+  .z-carousel__dot::before {
+    content: "";
+    width: var(--z-space-2);
+    height: var(--z-space-2);
+    border-radius: var(--z-radius-full);
+    background: var(--z-line-strong);
+    transition:
+      width var(--z-duration-fast) var(--z-ease-standard),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-carousel__dot:hover::before {
+      background: var(--z-fg-muted);
+    }
+  }
+  .z-carousel__dot[aria-current="true"]::before {
+    width: var(--z-space-4);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent);
+  }
+  .z-carousel__dot:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
+  }
+  /* Barra: recorrido hecho hasta la posición actual. */
+  .z-carousel__bar {
+    position: relative;
+    flex: 0 1 var(--z-space-20);
+    height: var(--z-space-1);
+    min-width: var(--z-space-12);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    overflow: hidden;
+  }
+  .z-carousel__bar-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: calc(var(--z-carousel-progress, 0) * 100%);
+    border-radius: inherit;
+    background: var(--z-accent);
+    transition: width var(--z-duration-normal) var(--z-ease-standard);
+  }
+  /* Miniaturas: botones con la imagen; la actual con anillo de acento. */
+  /* Centradas si caben; si no, empiezan al principio y se desplazan (márgenes automáticos, no `center`, que cortaría
+     el principio sin poder llegar a él). */
+  .z-carousel__thumbs {
+    display: flex;
+    gap: var(--z-space-2);
+    overflow-x: auto;
+    padding: var(--z-space-1);
+    scrollbar-width: thin;
+  }
+  .z-carousel__thumb:first-child {
+    margin-inline-start: auto;
+  }
+  .z-carousel__thumb:last-child {
+    margin-inline-end: auto;
+  }
+  .z-carousel__thumb {
+    flex: none;
+    width: var(--z-space-16);
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface-2);
+    overflow: hidden;
+    opacity: 0.7;
+    cursor: pointer;
+    transition:
+      opacity var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-carousel__thumb > :where(img, picture, video, canvas, div) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (hover: hover) {
+    .z-carousel__thumb:hover {
+      opacity: 1;
+    }
+  }
+  .z-carousel__thumb[aria-current="true"] {
+    border-color: var(--z-accent);
+    box-shadow: 0 0 0 1px var(--z-accent);
+    opacity: 1;
+  }
+  .z-carousel__thumb:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+
+  /* Modo snap: desplazamiento nativo que se ajusta a cada slide; `--z-carousel-per-page` slides a la vez. */
+  .z-carousel[data-mode="snap"] {
+    --z-carousel-per-page: 1;
+  }
+  .z-carousel[data-mode="snap"] .z-carousel__viewport {
+    padding: 0;
+    direction: inherit;
+    cursor: auto;
+    touch-action: auto;
+    user-select: auto;
+    -webkit-user-select: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    border-radius: var(--z-carousel-radius);
+  }
+  .z-carousel[data-mode="snap"] .z-carousel__viewport::-webkit-scrollbar {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-carousel[data-mode="snap"] .z-carousel__viewport {
+      scroll-behavior: smooth;
+    }
+  }
+  .z-carousel[data-mode="snap"] .z-carousel__viewport:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-carousel[data-mode="snap"] .z-carousel__track {
+    width: auto;
+    will-change: auto;
+  }
+  /* El contenido del slide ocupa todo su alto (tarjetas de la misma altura en la fila o en la columna). */
+  .z-carousel[data-mode="snap"] .z-carousel__slide {
+    display: grid;
+    width: calc((100cqi - (var(--z-carousel-per-page) - 1) * var(--z-carousel-gap)) / var(--z-carousel-per-page));
+    max-width: none;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    transform-origin: 50% 50%;
+  }
+  [dir="rtl"] .z-carousel[data-mode="snap"] .z-carousel__slide {
+    direction: inherit;
+  }
+  .z-carousel[data-mode="snap"][data-orientation="vertical"] .z-carousel__viewport {
+    container-type: size;
+    height: var(--z-carousel-height, 20rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-x: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+  }
+  .z-carousel[data-mode="snap"][data-orientation="vertical"] .z-carousel__track {
+    flex-direction: column;
+  }
+  .z-carousel[data-mode="snap"][data-orientation="vertical"] .z-carousel__slide {
+    width: auto;
+    height: calc((100cqb - (var(--z-carousel-per-page) - 1) * var(--z-carousel-gap)) / var(--z-carousel-per-page));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-carousel__dot::before,
+    .z-carousel__bar-fill,
+    .z-carousel__thumb {
+      transition: none;
+    }
+  }
 }

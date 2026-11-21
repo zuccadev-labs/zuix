@@ -204,7 +204,8 @@ window.__ready = true;
         }
         for (const group of await tab.locator('[role="radiogroup"]').all()) {
           const radio = group.locator('[role="radio"]:not(:disabled):not([data-disabled])').last();
-          if (!(await radio.count())) continue;
+          // Un grupo dentro de un popover cerrado (ColorPickerTrigger) no se ve hasta abrirlo: tiene su caso propio.
+          if (!(await radio.count()) || !(await radio.isVisible())) continue;
           await radio.click();
           interactions += 1;
           if ((await radio.getAttribute("aria-checked")) !== "true") failures.push(`${id}: el radio no queda marcado`);

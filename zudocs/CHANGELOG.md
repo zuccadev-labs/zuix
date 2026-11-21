@@ -9,6 +9,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Añadido
 
+- Grupo «Medios» en el catálogo (QRCode, CompareSlider, ImageCropper, SignaturePad) y vistas previas de React de
+  ColorPicker y ColorPickerTrigger (oleada 7).
 - Galerías `/loaders` (Spinner con sus formas y los 12 patrones de DotMatrix con tamaño, tono, rejilla y baldosa, y
   código para copiar) y `/effects` (Backdrop, BorderBeam, Glow, AttentionRing y TextEffect en vivo, con sus
   variantes), con el armazón del sitio. Se activan con `pages.loaders` y `pages.effects` y aparecen en la sección

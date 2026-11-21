@@ -19,6 +19,8 @@ import {
   Checkbox,
   Chip,
   CodeBlock,
+  ColorPicker,
+  ColorPickerTrigger,
   Combobox,
   DatePicker,
   NativeSelect,
@@ -480,6 +482,20 @@ export function useDemos(): Record<string, ReactNode> {
           Deploy (promise)
         </Button>
       </>
+    ),
+    ColorPicker: (
+      <ColorPicker
+        defaultValue="#3b82f6"
+        swatches={["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899", "#64748b", "#0f172a"]}
+      />
+    ),
+    ColorPickerTrigger: (
+      <ColorPickerTrigger
+        id="demo-accent"
+        defaultValue="#8b5cf6"
+        label="Accent color"
+        swatches={["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"]}
+      />
     ),
     Tabs: (
       <Tabs

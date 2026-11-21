@@ -1,0 +1,159 @@
+{
+  "name": "ColorPicker",
+  "group": "forms",
+  "description": "Selector de color completo: área de saturación y brillo, deslizadores de tono y opacidad, campos por canal o hexadecimal con selector de formato (hex, rgb, hsl, oklch), muestrario, cuentagotas (EyeDropper como mejora progresiva) y selector del sistema (`<input type=\"color\">`, que también funciona sin JavaScript). El valor es una cadena CSS.",
+  "import": "import { ColorPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void",
+      "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+      "name": "onValueChangeEnd",
+      "type": "(value: string) => void",
+      "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+      "name": "format",
+      "type": "enum",
+      "values": ["hex", "rgb", "hsl", "oklch"],
+      "description": "Formato del valor (controlado)."
+    },
+    {
+      "name": "defaultFormat",
+      "type": "enum",
+      "values": ["hex", "rgb", "hsl", "oklch"],
+      "default": "hex",
+      "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+      "name": "onFormatChange",
+      "type": "(format: ColorFormat) => void"
+    },
+    {
+      "name": "formats",
+      "type": "ColorFormat[]",
+      "default": "[\"hex\", \"rgb\", \"hsl\", \"oklch\"]",
+      "description": "Formatos del selector; con uno solo no se muestra."
+    },
+    {
+      "name": "swatches",
+      "type": "(string | { value, label? })[]",
+      "description": "Muestras fijas; la que coincide con el valor queda marcada."
+    },
+    {
+      "name": "eyeDropper",
+      "type": "boolean",
+      "default": true,
+      "description": "Botón de cuentagotas donde el navegador tenga EyeDropper (Chromium de escritorio); en el resto no aparece."
+    },
+    {
+      "name": "systemPicker",
+      "type": "boolean",
+      "default": true,
+      "description": "Muestra que abre el selector de color del sistema."
+    },
+    {
+      "name": "fields",
+      "type": "boolean",
+      "default": true,
+      "description": "Campos de canal y de formato."
+    },
+    {
+      "name": "alpha",
+      "type": "boolean",
+      "default": true,
+      "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+      "name": "form",
+      "type": "string"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "\"Color picker\"",
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ColorPickerLabels>",
+      "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+  ],
+  "states": ["rest", "focus", "active", "disabled", "readonly"],
+  "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "card-bg",
+    "card-border",
+    "card-radius",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "fg-muted"
+  ],
+  "classes": ["z-colorpicker"],
+  "a11y": "role=\"group\" con nombre. El área es un deslizador en dos ejes (role=\"slider\", aria-roledescription «2D slider» y aria-valuetext con saturación y brillo): izquierda/derecha mueven la saturación, arriba/abajo el brillo, Mayús diez pasos, Re/Av Pág el brillo de diez en diez, Inicio/Fin la saturación. Tono y opacidad siguen el patrón APG «slider». Cada campo tiene nombre (Red, Hue, Hex color…); el muestrario es un radiogroup con flechas. El color no es la única pista: la muestra elegida lleva una marca. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorpicker dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Por defecto",
+      "code": "<ColorPicker defaultValue=\"#3b82f6\" name=\"brand\" />"
+    },
+    {
+      "title": "Con muestrario y OKLCH",
+      "code": "<ColorPicker\n  defaultValue=\"oklch(62% 0.19 260)\"\n  swatches={[\"#ef4444\", \"#f59e0b\", \"#10b981\", \"#3b82f6\", \"#8b5cf6\", \"#ec4899\", \"#64748b\", \"#0f172a\"]}\n/>"
+    },
+    {
+      "title": "Opaco, solo hex y RGB",
+      "code": "<ColorPicker defaultValue=\"rgb(16 185 129)\" alpha={false} formats={[\"hex\", \"rgb\"]} eyeDropper={false} />"
+    }
+  ],
+  "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+  "apg": "slider"
+}

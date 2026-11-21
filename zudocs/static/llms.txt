@@ -63,6 +63,7 @@
 - [Button](https://zuccadev-labs.github.io/zuix/components/actions/button.md): Acción principal o secundaria con texto, iconos opcionales y estado de carga.
 - [ButtonGroup](https://zuccadev-labs.github.io/zuix/components/actions/button-group.md): Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.
 - [CopyButton](https://zuccadev-labs.github.io/zuix/components/actions/copy-button.md): Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.
+- [DownloadTrigger](https://zuccadev-labs.github.io/zuix/components/actions/download-trigger.md): Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL.
 - [IconButton](https://zuccadev-labs.github.io/zuix/components/actions/icon-button.md): Botón cuadrado de solo icono con nombre accesible obligatorio.
 - [Link](https://zuccadev-labs.github.io/zuix/components/actions/link.md): Enlace de texto: dentro de un párrafo, discreto o como acción suelta.
 - [SegmentedControl](https://zuccadev-labs.github.io/zuix/components/actions/segmented-control.md): Selector de una opción entre pocas; siempre hay una elegida.
@@ -76,6 +77,13 @@
 - [Calendar](https://zuccadev-labs.github.io/zuix/components/forms/calendar.md): Rejilla de fechas: una, varias o un rango, en uno o varios meses, con vistas de mes y año, preajustes y fechas reservadas.
 - [Checkbox](https://zuccadev-labs.github.io/zuix/components/forms/checkbox.md): Casilla de verificación con etiqueta, descripción y estado indeterminado.
 - [CheckboxGroup](https://zuccadev-labs.github.io/zuix/components/forms/checkbox-group.md): Varias casillas de una misma pregunta en un fieldset con su título; valor como lista, casilla «todas» opcional y variante tarjeta.
+- [CircularSlider](https://zuccadev-labs.github.io/zuix/components/forms/circular-slider.md): Deslizador en un anillo, de círculo completo o de arco abierto (tipo dial), con el valor en el centro, marcas opcionales y el mismo tirador que Slider.
+- [ColorArea](https://zuccadev-labs.github.io/zuix/components/forms/color-area.md): Área de saturación y brillo del tono del color: un deslizador en dos ejes, suelto.
+- [ColorField](https://zuccadev-labs.github.io/zuix/components/forms/color-field.md): Campos del color sueltos: selector de formato, canales (o hexadecimal), opacidad y el selector del sistema.
+- [ColorPicker](https://zuccadev-labs.github.io/zuix/components/forms/color-picker.md): Selector de color completo: área de saturación y brillo, deslizadores de tono y opacidad, campos por canal o hexadecimal con selector de formato (hex, rgb, hsl, oklch), muestrario, cuentagotas…
+- [ColorPickerTrigger](https://zuccadev-labs.github.io/zuix/components/forms/color-picker-trigger.md): Botón con la muestra y el valor que abre el ColorPicker en un popover de cristal elevado (popover nativo: Escape y pulsación fuera lo cierran).
+- [ColorSlider](https://zuccadev-labs.github.io/zuix/components/forms/color-slider.md): Deslizador de tono o de opacidad del color, horizontal o vertical, suelto.
+- [ColorSwatchPicker](https://zuccadev-labs.github.io/zuix/components/forms/color-swatch-picker.md): Muestrario de colores fijos: un grupo de radios; la muestra elegida lleva una marca que contrasta con su color.
 - [Combobox](https://zuccadev-labs.github.io/zuix/components/forms/combobox.md): Campo de texto con lista filtrable para elegir una opción; admite carga asíncrona de opciones.
 - [DateField](https://zuccadev-labs.github.io/zuix/components/forms/date-field.md): Fecha (y hora) que se teclea por segmentos —día, mes, año y, con granularity, hora, minuto, segundo y AM/PM— en el orden y con los separadores del locale.
 - [DateInput](https://zuccadev-labs.github.io/zuix/components/forms/date-input.md): Campo de fecha, hora, fecha y hora o mes sobre el control nativo.
@@ -99,6 +107,7 @@
 - [RadioGroup](https://zuccadev-labs.github.io/zuix/components/forms/radio-group.md): Grupo de opciones excluyentes; contiene componentes `Radio`.
 - [SearchInput](https://zuccadev-labs.github.io/zuix/components/forms/search-input.md): Campo de búsqueda con icono, botón de borrado y estado de carga.
 - [Select](https://zuccadev-labs.github.io/zuix/components/forms/select.md): Lista desplegable con popup propio (material liquid): opciones con icono, grupos y placeholder.
+- [ShortcutInput](https://zuccadev-labs.github.io/zuix/components/forms/shortcut-input.md): Captura de atajos de teclado: se pulsa para grabar y la siguiente combinación queda guardada en forma portable («Mod+Shift+K»: Mod es ⌘ en Apple y Ctrl en el resto), mostrada con las teclas de la…
 - [Slider](https://zuccadev-labs.github.io/zuix/components/forms/slider.md): Deslizador de un valor o de un rango.
 - [Switch](https://zuccadev-labs.github.io/zuix/components/forms/switch.md): Interruptor de activación inmediata.
 - [TagsInput](https://zuccadev-labs.github.io/zuix/components/forms/tags-input.md): Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.
@@ -150,7 +159,7 @@
 
 - [Alert](https://zuccadev-labs.github.io/zuix/components/feedback/alert.md): Aviso en línea sobre el resultado de una acción o el estado del sistema.
 - [Banner](https://zuccadev-labs.github.io/zuix/components/feedback/banner.md): Franja de aviso de página o de panel: una novedad, un mantenimiento, un límite cerca o un fallo del sistema.
-- [DotMatrix](https://zuccadev-labs.github.io/zuix/components/feedback/dot-matrix.md): Cargador de rejilla de puntos con 12 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos).
+- [DotMatrix](https://zuccadev-labs.github.io/zuix/components/feedback/dot-matrix.md): Cargador de rejilla de puntos con 18 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos, rombo, radar, zigzag, hélice…
 - [EmptyState](https://zuccadev-labs.github.io/zuix/components/feedback/empty-state.md): Estado vacío: explica por qué no hay contenido y qué hacer.
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
@@ -218,8 +227,16 @@
 - [AttentionRing](https://zuccadev-labs.github.io/zuix/components/effects/attention-ring.md): Anillo o halo de atención alrededor de un control o un panel (actividad nueva, paso de un recorrido): late unas veces y queda fijo.
 - [Backdrop](https://zuccadev-labs.github.io/zuix/components/effects/backdrop.md): Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional.
 - [BorderBeam](https://zuccadev-labs.github.io/zuix/components/effects/border-beam.md): Haz de luz que recorre el borde de lo que envuelve (tarjeta, panel, botón): un anillo enmascarado gira un degradado cónico con transform.
+- [Confetti](https://zuccadev-labs.github.io/zuix/components/effects/confetti.md): Confeti de celebración: una ráfaga de papel (rectángulos y círculos con giro, gravedad y vaivén) en un lienzo fijo encima de la página, con los colores de gráfico de la marca.
 - [Glow](https://zuccadev-labs.github.io/zuix/components/effects/glow.md): Brillo que sigue al puntero sobre el borde, la superficie o ambos de lo que envuelve (spotlight de cristal).
 - [TextEffect](https://zuccadev-labs.github.io/zuix/components/effects/text-effect.md): Efectos de texto: aparición por palabras o letras (subiendo o desenfocada, al montarse o al entrar en pantalla), degradado con tokens de texto (fijo o en movimiento) y brillo que pasa (shimmer).
+
+## Componentes: Medios
+
+- [CompareSlider](https://zuccadev-labs.github.io/zuix/components/media/compare-slider.md): Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado.
+- [ImageCropper](https://zuccadev-labs.github.io/zuix/components/media/image-cropper.md): Recortador de imagen: área que se mueve y se redimensiona desde ocho asas, relación de aspecto fija o libre, forma rectangular o circular, rejilla de tercios y teclado.
+- [QRCode](https://zuccadev-labs.github.io/zuix/components/media/qr-code.md): Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con…
+- [SignaturePad](https://zuccadev-labs.github.io/zuix/components/media/signature-pad.md): Lienzo de firma: trazos con el puntero (con presión si el dispositivo la da, trazado suavizado), deshacer y borrar, y la alternativa accesible de escribir el nombre.
 
 ## Componentes: Layouts
 

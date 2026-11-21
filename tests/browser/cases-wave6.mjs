@@ -82,7 +82,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       async run({ open }) {
         const page = await screen(open);
         const mats = page.locator(`${t("s-dots")} .z-dotmatrix`);
-        assert((await mats.count()) === 12, "12 patrones");
+        assert((await mats.count()) === 18, "18 patrones");
         assert((await mats.first().getAttribute("role")) === "status", "role=status");
         assert((await mats.first().locator(".z-dotmatrix__dot").count()) === 25, "rejilla 5 × 5");
         const running = (p) =>

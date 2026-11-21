@@ -1,11 +1,12 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 130,
+ "count": 144,
  "groups": {
   "actions": [
    "Button",
    "ButtonGroup",
    "CopyButton",
+   "DownloadTrigger",
    "IconButton",
    "Link",
    "SegmentedControl",
@@ -77,6 +78,7 @@
    "AttentionRing",
    "Backdrop",
    "BorderBeam",
+   "Confetti",
    "Glow",
    "TextEffect"
   ],
@@ -95,6 +97,13 @@
    "Calendar",
    "Checkbox",
    "CheckboxGroup",
+   "CircularSlider",
+   "ColorArea",
+   "ColorField",
+   "ColorPicker",
+   "ColorPickerTrigger",
+   "ColorSlider",
+   "ColorSwatchPicker",
    "Combobox",
    "DateField",
    "DateInput",
@@ -118,6 +127,7 @@
    "RadioGroup",
    "SearchInput",
    "Select",
+   "ShortcutInput",
    "Slider",
    "Switch",
    "TagsInput",
@@ -126,6 +136,12 @@
    "TimePicker",
    "WeekPicker",
    "YearPicker"
+  ],
+  "media": [
+   "CompareSlider",
+   "ImageCropper",
+   "QRCode",
+   "SignaturePad"
   ],
   "navigation": [
    "Accordion",
@@ -501,6 +517,116 @@
    ],
    "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI.",
    "file": "zui/src/components/actions/CopyButton.manifest.json"
+  },
+  {
+   "name": "DownloadTrigger",
+   "group": "actions",
+   "description": "Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL. Usa un enlace `download` temporal y libera la URL después.",
+   "import": "import { DownloadTrigger } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "fileName",
+     "type": "string",
+     "required": true,
+     "description": "Nombre del archivo (se limpia de separadores y caracteres de control)."
+    },
+    {
+     "name": "data",
+     "type": "string | Blob | ArrayBuffer | Uint8Array | (() => … | Promise<…>)",
+     "description": "Contenido; una función se llama al pulsar."
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "URL que se descarga tal cual (mismo origen, `blob:` o `data:`)."
+    },
+    {
+     "name": "mimeType",
+     "type": "string",
+     "description": "Por defecto, el de la extensión (svg, png, json, csv, txt, ics…)."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "ghost"
+     ],
+     "default": "secondary"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "icon",
+     "type": "IconName | null",
+     "default": "\"arrow-down-tray\""
+    },
+    {
+     "name": "onDownload",
+     "type": "(blob: Blob | null) => void"
+    },
+    {
+     "name": "onError",
+     "type": "(error: unknown) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "loading",
+    "disabled"
+   ],
+   "tokens": [
+    "button-radius",
+    "control-height-md",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-download"
+   ],
+   "a11y": "Un button nativo con texto. Mientras genera el archivo lleva aria-busy y aria-disabled (conserva el foco) y un indicador de carga. Sin React (`@zuccadev-labs/zuix-zui/dom`): un botón con data-z-download=\"#id\" y data-file-name descarga el contenido de ese elemento (un .z-qrcode en SVG o PNG, un .z-signature, un <canvas>, o el texto de un <template> o de cualquier elemento); data-href descarga una URL; avisa con z:download { name, size, type } o z:downloaderror.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Texto",
+     "code": "<DownloadTrigger fileName=\"notes.txt\" data=\"Ship on Friday.\">Download notes</DownloadTrigger>"
+    },
+    {
+     "title": "Código QR en SVG",
+     "code": "<DownloadTrigger fileName=\"zuix-qr.svg\" data={() => qrcodeSvg({ value: \"https://zuccadev-labs.github.io/zuix/\" }) ?? \"\"} variant=\"ghost\">\n  Download QR\n</DownloadTrigger>"
+    },
+    {
+     "title": "Desde una promesa",
+     "code": "<DownloadTrigger fileName=\"report.csv\" data={() => fetch(\"/api/report\").then((r) => r.blob())} variant=\"primary\">\n  Export CSV\n</DownloadTrigger>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Descargar un QRCode en SVG o PNG",
+     "code": "<div class=\"z-qrcode\" id=\"qr-docs\" data-value=\"https://zuccadev-labs.github.io/zuix/\" data-size=\"120\"></div>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.svg\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>SVG</button>\n<button type=\"button\" class=\"z-btn z-btn--ghost z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.png\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>PNG</button>",
+     "script": "document.addEventListener(\"z:download\", (event) => console.log(event.detail.name, event.detail.size));"
+    },
+    {
+     "title": "Texto de una plantilla",
+     "code": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código.",
+   "file": "zui/src/components/actions/DownloadTrigger.manifest.json"
   },
   {
    "name": "IconButton",
@@ -2345,6 +2471,51 @@
      "name": "ref",
      "type": "Ref<HTMLDivElement>",
      "description": "Elemento raíz."
+    },
+    {
+     "name": "autoplay",
+     "type": "boolean | number",
+     "default": false,
+     "description": "Avance automático: `true` cada 5 s o un número de milisegundos (mínimo 1500). Lleva un botón de pausa visible (WCAG 2.2.2); se detiene con el puntero encima, con el foco dentro, con la pestaña oculta y fuera de pantalla, y no arranca sola con movimiento reducido."
+    },
+    {
+     "name": "indicators",
+     "type": "enum",
+     "values": [
+      "counter",
+      "dots",
+      "bar",
+      "thumbnails",
+      "none"
+     ],
+     "default": "counter",
+     "description": "Indicador de posición: contador (01/05), puntos, barra de recorrido, miniaturas (con `renderThumbnail`) o ninguno."
+    },
+    {
+     "name": "renderThumbnail",
+     "type": "(item: T, index: number) => ReactNode",
+     "description": "Contenido de cada miniatura con `indicators=\"thumbnails\"`."
+    },
+    {
+     "name": "slidesPerPage",
+     "type": "number",
+     "default": 1,
+     "description": "Slides visibles a la vez (1–8). Con más de uno el carrusel usa el desplazamiento nativo con scroll-snap (sin lente ni réplicas)."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "Vertical: desplazamiento nativo con scroll-snap en el eje de bloque."
+    },
+    {
+     "name": "height",
+     "type": "number | string",
+     "description": "Alto de la vista en vertical (por defecto 20rem)."
     }
    ],
    "states": [
@@ -2368,28 +2539,34 @@
     }
    ],
    "tokens": [
-    "fg",
-    "fg-subtle",
-    "surface-2",
-    "line",
     "accent",
-    "card-radius",
-    "control-height-md",
-    "space-4",
-    "space-6",
-    "font-mono",
-    "duration-fast",
-    "ease-standard",
     "accent-ring",
     "button-radius",
+    "card-radius",
+    "control-height-md",
+    "control-radius",
+    "duration-fast",
+    "duration-normal",
     "duration-press",
     "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-subtle",
     "focus-offset",
     "focus-width",
+    "font-mono",
     "glass-border",
     "glass-highlight",
+    "line",
+    "line-strong",
+    "radius-full",
+    "radius-xs",
+    "space-4",
+    "space-6",
+    "surface-2",
     "surface-3",
     "text-code",
+    "touch-target",
     "weight-medium"
    ],
    "cssVars": [
@@ -2423,7 +2600,7 @@
     "chevron-left",
     "chevron-right"
    ],
-   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden).",
+   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden). Con `autoplay`, el primer control es el botón de pausa/reproducción (nombre según el estado) y la región viva se calla mientras corre (aria-live=\"off\"); se detiene con el puntero encima o el foco dentro. Puntos y miniaturas son botones con nombre («Go to slide 2 of 5») y aria-current en el actual. En el modo snap (varias por página o vertical) la vista desplazable recibe el foco y se mueve con las flechas de su eje, Inicio y Fin.",
    "examples": [
     {
      "title": "Tarjetas con lente",
@@ -2436,6 +2613,22 @@
     {
      "title": "Zonas curvas en WebGL",
      "code": "<Carousel ariaLabel=\"Gallery\" items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} crossOrigin=\"anonymous\" />} rasterize={(photo) => photo.src} />"
+    },
+    {
+     "title": "Reproducción automática con puntos",
+     "code": "<Carousel\n  ariaLabel=\"Highlights\"\n  effect=\"none\"\n  autoplay={6000}\n  indicators=\"dots\"\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+     "title": "Tres por página con barra",
+     "code": "<Carousel\n  ariaLabel=\"Projects\"\n  slidesPerPage={3}\n  indicators=\"bar\"\n  loop={false}\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<Carousel\n  ariaLabel=\"Release notes\"\n  orientation=\"vertical\"\n  height={280}\n  slidesPerPage={2}\n  indicators=\"dots\"\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+     "title": "Miniaturas",
+     "code": "<Carousel\n  ariaLabel=\"Photos\"\n  effect=\"none\"\n  indicators=\"thumbnails\"\n  items={photos}\n  renderItem={(p) => <img src={p.src} alt={p.alt} />}\n  renderThumbnail={(p) => <img src={p.thumb} alt=\"\" />}\n/>"
     }
    ],
    "origin": "carousel con efecto lente de un proyecto previo",
@@ -2454,6 +2647,18 @@
      "title": "Zonas curvas en WebGL: cada slide declara su imagen con data-raster; los shaders se cargan bajo demanda",
      "code": "<div id=\"covers\" class=\"z-carousel\" data-z-carousel data-effect=\"lens\" data-loop aria-label=\"Project covers\" style=\"--z-carousel-slide-width:320px\">\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Atlas cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Beacon cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Cinder cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Drift cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Ember cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Flint cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n</div>",
      "script": "import { carousel } from \"@zuccadev-labs/zuix-zui/dom\";\n\n// Cada <canvas data-raster> es a la vez el slide y la textura de las zonas curvas. Se pinta con los tokens activos.\nconst covers = document.querySelector(\"#covers\");\nconst token = (name) => getComputedStyle(covers).getPropertyValue(name).trim();\ncovers.querySelectorAll(\"canvas[data-raster]\").forEach((canvas, index) => {\n  const ctx = canvas.getContext(\"2d\");\n  // Fondo opaco: la textura debe verse igual que el slide sobre cualquier fondo.\n  ctx.fillStyle = token(\"--z-reading-bg\");\n  ctx.fillRect(0, 0, canvas.width, canvas.height);\n  ctx.fillStyle = token(\"--z-accent\");\n  for (let bar = 0; bar < 6; bar++) {\n    const height = 60 + (((bar + 1) * (index + 3) * 37) % 170);\n    ctx.globalAlpha = 0.2 + ((bar + index) % 4) * 0.15;\n    ctx.fillRect(40 + bar * 96, canvas.height - 48 - height, 64, height);\n  }\n  ctx.globalAlpha = 1;\n  ctx.fillStyle = token(\"--z-fg\");\n  ctx.font = `700 56px ${token(\"--z-font-sans\") || \"sans-serif\"}`;\n  ctx.textBaseline = \"top\";\n  ctx.fillText(canvas.getAttribute(\"aria-label\"), 40, 36);\n});\n// Los lienzos se han pintado después de activar el carrusel: refresh() rehace las réplicas y las texturas.\ncarousel(covers).refresh();\n// Con contenido HTML en los slides, la imagen se declara aparte: data-raster=\"#id\", data-raster-src=\"url\"\n// o carousel(el, { rasterize: (slide, index, size) => imagen })."
+    },
+    {
+     "title": "Reproducción automática con puntos: botón de pausa visible y pausa con el puntero o el foco",
+     "code": "<div id=\"highlights\" class=\"z-carousel\" data-z-carousel data-effect=\"none\" data-autoplay=\"6000\" data-indicators=\"dots\" aria-label=\"Highlights\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Tres por página con barra (desplazamiento nativo con scroll-snap)",
+     "code": "<div id=\"per-page\" class=\"z-carousel\" data-z-carousel data-per-page=\"3\" data-indicators=\"bar\" aria-label=\"Projects\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Vertical, dos por vista",
+     "code": "<div id=\"notes\" class=\"z-carousel\" data-z-carousel data-orientation=\"vertical\" data-per-page=\"2\" data-indicators=\"dots\" data-loop aria-label=\"Release notes\" style=\"--z-carousel-height:280px\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
     }
    ],
    "file": "zui/src/components/carousel/Carousel.manifest.json"
@@ -7532,6 +7737,107 @@
    "file": "zui/src/components/effects/BorderBeam.manifest.json"
   },
   {
+   "name": "Confetti",
+   "group": "effects",
+   "description": "Confeti de celebración: una ráfaga de papel (rectángulos y círculos con giro, gravedad y vaivén) en un lienzo fijo encima de la página, con los colores de gráfico de la marca. Sin dependencias; con movimiento reducido no anima.",
+   "import": "import { Confetti, confetti } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "trigger",
+     "type": "unknown",
+     "required": true,
+     "description": "Cada cambio (distinto del primer valor) lanza una ráfaga: un contador o un identificador."
+    },
+    {
+     "name": "origin",
+     "type": "RefObject<Element> | { x, y }",
+     "description": "Elemento del que sale (su centro) o punto en fracciones de la ventana. Por defecto { x: 0.5, y: 0.6 }."
+    },
+    {
+     "name": "count",
+     "type": "number",
+     "default": 120,
+     "description": "Partículas (1–400)."
+    },
+    {
+     "name": "angle",
+     "type": "number",
+     "default": -90,
+     "description": "Dirección media en grados (−90 hacia arriba)."
+    },
+    {
+     "name": "spread",
+     "type": "number",
+     "default": 70,
+     "description": "Apertura en grados."
+    },
+    {
+     "name": "velocity",
+     "type": "number",
+     "default": 12
+    },
+    {
+     "name": "colors",
+     "type": "string[]",
+     "description": "Colores CSS propios; por defecto, chart-1…8 de la marca."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 3000,
+     "description": "Milisegundos aproximados."
+    },
+    {
+     "name": "ignoreReducedMotion",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onComplete",
+     "type": "() => void"
+    }
+   ],
+   "states": [
+    "idle",
+    "running"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "accent",
+    "layer-top"
+   ],
+   "classes": [
+    "z-confetti"
+   ],
+   "a11y": "Decorativo: el lienzo es aria-hidden, no captura el puntero ni el foco y se quita al terminar; el logro se anuncia con texto aparte (un Toast, un mensaje). Con prefers-reduced-motion: reduce no se dibuja nada. Dura unos 3 s y se detiene con la pestaña oculta. Sin React (`@zuccadev-labs/zuix-zui/dom`): data-z-confetti en un botón dentro de [data-z-dom] lanza la ráfaga desde él (data-count, data-spread); confetti(opciones) desde código.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Desde un botón",
+     "code": "<Button ref={button} onClick={() => setShots((n) => n + 1)}>Publish</Button>\n<Confetti trigger={shots} origin={button} />"
+    },
+    {
+     "title": "Desde código",
+     "code": "await confetti({ origin: { x: 0.5, y: 0.3 }, count: 200, spread: 120 });"
+    }
+   ],
+   "html": [
+    {
+     "title": "Botón que lanza confeti",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>"
+    }
+   ],
+   "origin": "Oleada 7. Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas.",
+   "file": "zui/src/components/effects/Confetti.manifest.json"
+  },
+  {
    "name": "Glow",
    "group": "effects",
    "status": "new",
@@ -7962,7 +8268,7 @@
    "name": "DotMatrix",
    "group": "feedback",
    "status": "new",
-   "description": "Cargador de rejilla de puntos con 12 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos). CSS puro: cada punto desfasa la misma animación de opacidad y escala; quieto con movimiento reducido y en pausa fuera de pantalla.",
+   "description": "Cargador de rejilla de puntos con 18 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos, rombo, radar, zigzag, hélice, corazón y cascada). CSS puro: cada punto desfasa la misma animación de opacidad y escala; quieto con movimiento reducido y en pausa fuera de pantalla.",
    "import": "import { DotMatrix } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -7980,7 +8286,13 @@
       "cross",
       "snake",
       "equalizer",
-      "sparkle"
+      "sparkle",
+      "diamond",
+      "radar",
+      "zigzag",
+      "helix",
+      "heart",
+      "cascade"
      ],
      "default": "wave"
     },
@@ -9390,6 +9702,1102 @@
    ],
    "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
    "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
+  },
+  {
+   "name": "CircularSlider",
+   "group": "forms",
+   "description": "Deslizador en un anillo, de círculo completo o de arco abierto (tipo dial), con el valor en el centro, marcas opcionales y el mismo tirador que Slider.",
+   "import": "import { CircularSlider } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "description": "Valor controlado."
+    },
+    {
+     "name": "defaultValue",
+     "type": "number"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: number) => void"
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: number) => void",
+     "description": "Al soltar el puntero o tras una tecla."
+    },
+    {
+     "name": "min",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 100
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "arc",
+     "type": "number",
+     "default": 360,
+     "description": "Grados del recorrido (30–360)."
+    },
+    {
+     "name": "startAngle",
+     "type": "number",
+     "description": "Ángulo del mínimo (0 arriba, en el sentido de las agujas). Un arco abierto deja el hueco abajo por defecto."
+    },
+    {
+     "name": "size",
+     "type": "number",
+     "default": 160,
+     "description": "Lado en píxeles."
+    },
+    {
+     "name": "thickness",
+     "type": "number",
+     "default": 8,
+     "description": "Grosor de la pista en píxeles."
+    },
+    {
+     "name": "marks",
+     "type": "boolean | number[]",
+     "description": "Marcas decorativas: una por paso (hasta 60) o una lista de valores."
+    },
+    {
+     "name": "showValue",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "caption",
+     "type": "string",
+     "description": "Texto bajo el valor (unidad); también entra en aria-valuetext."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Value\"",
+     "description": "Nombre accesible del tirador."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled"
+   ],
+   "tokens": [
+    "surface-3",
+    "accent",
+    "fg-on-accent",
+    "line-strong",
+    "shadow-sm",
+    "accent-ring",
+    "focus-width",
+    "radius-full",
+    "fg-muted",
+    "text-heading-lg",
+    "text-caption",
+    "font-display",
+    "duration-fast",
+    "ease-standard",
+    "space-6"
+   ],
+   "classes": [
+    "z-circular"
+   ],
+   "a11y": "Patrón APG «slider»: el tirador es role=\"slider\" con aria-valuetext (valor formateado y `caption`); flechas, Re/Av Pág (diez pasos), Inicio, Fin y Mayús. El puntero arrastra por todo el anillo. El valor del centro es decorativo (aria-hidden): lo anuncia el tirador. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-circular con data-value, data-min, data-max, data-step, data-arc, data-size, data-marks y data-caption dentro de [data-z-dom]; avisa con z:change y z:changeend { value }.",
+   "behavior": "dom",
+   "apg": "slider",
+   "examples": [
+    {
+     "title": "Círculo completo con marcas",
+     "code": "<CircularSlider label=\"Hue\" defaultValue={210} max={360} step={15} marks caption=\"degrees\" />"
+    },
+    {
+     "title": "Dial de arco abierto",
+     "code": "<CircularSlider label=\"Volume\" defaultValue={40} arc={270} size={140} thickness={10} valueFormat={{ style: \"unit\", unit: \"percent\" }} />"
+    },
+    {
+     "title": "Temperatura",
+     "code": "<CircularSlider label=\"Target temperature\" defaultValue={21.5} min={10} max={30} step={0.5} arc={240} caption=\"°C\" name=\"temperature\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código.",
+   "file": "zui/src/components/forms/CircularSlider.manifest.json"
+  },
+  {
+   "name": "ColorArea",
+   "group": "forms",
+   "description": "Área de saturación y brillo del tono del color: un deslizador en dos ejes, suelto.",
+   "import": "import { ColorArea } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-colorarea"
+   ],
+   "a11y": "role=\"slider\" con aria-roledescription «2D slider» y aria-valuetext con los dos canales; flechas en los dos ejes, Mayús diez pasos, Inicio/Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorarea dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Área",
+     "code": "<ColorArea defaultValue=\"#f59e0b\" label=\"Highlight color\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorArea.manifest.json"
+  },
+  {
+   "name": "ColorField",
+   "group": "forms",
+   "description": "Campos del color sueltos: selector de formato, canales (o hexadecimal), opacidad y el selector del sistema.",
+   "import": "import { ColorField } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "formats",
+     "type": "ColorFormat[]"
+    },
+    {
+     "name": "systemPicker",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-radius-sm",
+    "control-height-sm",
+    "fg-muted",
+    "font-mono"
+   ],
+   "classes": [
+    "z-colorfield"
+   ],
+   "a11y": "Cada campo tiene nombre (Hex color, Red, Lightness…); los numéricos aceptan flechas (paso propio del canal). Lo escrito que aún no es un color se conserva hasta salir del campo, que entonces se reescribe. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorfield dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Campos",
+     "code": "<ColorField defaultValue=\"#3b82f6\" />"
+    },
+    {
+     "title": "En RGB",
+     "code": "<ColorField defaultValue=\"rgb(236 72 153 / 0.8)\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorField.manifest.json"
+  },
+  {
+   "name": "ColorPicker",
+   "group": "forms",
+   "description": "Selector de color completo: área de saturación y brillo, deslizadores de tono y opacidad, campos por canal o hexadecimal con selector de formato (hex, rgb, hsl, oklch), muestrario, cuentagotas (EyeDropper como mejora progresiva) y selector del sistema (`<input type=\"color\">`, que también funciona sin JavaScript). El valor es una cadena CSS.",
+   "import": "import { ColorPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "formats",
+     "type": "ColorFormat[]",
+     "default": "[\"hex\", \"rgb\", \"hsl\", \"oklch\"]",
+     "description": "Formatos del selector; con uno solo no se muestra."
+    },
+    {
+     "name": "swatches",
+     "type": "(string | { value, label? })[]",
+     "description": "Muestras fijas; la que coincide con el valor queda marcada."
+    },
+    {
+     "name": "eyeDropper",
+     "type": "boolean",
+     "default": true,
+     "description": "Botón de cuentagotas donde el navegador tenga EyeDropper (Chromium de escritorio); en el resto no aparece."
+    },
+    {
+     "name": "systemPicker",
+     "type": "boolean",
+     "default": true,
+     "description": "Muestra que abre el selector de color del sistema."
+    },
+    {
+     "name": "fields",
+     "type": "boolean",
+     "default": true,
+     "description": "Campos de canal y de formato."
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active",
+    "disabled",
+    "readonly"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "card-bg",
+    "card-border",
+    "card-radius",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-colorpicker"
+   ],
+   "a11y": "role=\"group\" con nombre. El área es un deslizador en dos ejes (role=\"slider\", aria-roledescription «2D slider» y aria-valuetext con saturación y brillo): izquierda/derecha mueven la saturación, arriba/abajo el brillo, Mayús diez pasos, Re/Av Pág el brillo de diez en diez, Inicio/Fin la saturación. Tono y opacidad siguen el patrón APG «slider». Cada campo tiene nombre (Red, Hue, Hex color…); el muestrario es un radiogroup con flechas. El color no es la única pista: la muestra elegida lleva una marca. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorpicker dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Por defecto",
+     "code": "<ColorPicker defaultValue=\"#3b82f6\" name=\"brand\" />"
+    },
+    {
+     "title": "Con muestrario y OKLCH",
+     "code": "<ColorPicker\n  defaultValue=\"oklch(62% 0.19 260)\"\n  swatches={[\"#ef4444\", \"#f59e0b\", \"#10b981\", \"#3b82f6\", \"#8b5cf6\", \"#ec4899\", \"#64748b\", \"#0f172a\"]}\n/>"
+    },
+    {
+     "title": "Opaco, solo hex y RGB",
+     "code": "<ColorPicker defaultValue=\"rgb(16 185 129)\" alpha={false} formats={[\"hex\", \"rgb\"]} eyeDropper={false} />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "apg": "slider",
+   "file": "zui/src/components/forms/ColorPicker.manifest.json"
+  },
+  {
+   "name": "ColorPickerTrigger",
+   "group": "forms",
+   "description": "Botón con la muestra y el valor que abre el ColorPicker en un popover de cristal elevado (popover nativo: Escape y pulsación fuera lo cierran).",
+   "import": "import { ColorPickerTrigger } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "formats",
+     "type": "ColorFormat[]"
+    },
+    {
+     "name": "swatches",
+     "type": "(string | { value, label? })[]",
+     "description": "Muestras fijas; la que coincide con el valor queda marcada."
+    },
+    {
+     "name": "eyeDropper",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "systemPicker",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "fields",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-bg",
+    "control-bg-hover",
+    "control-border",
+    "control-border-hover",
+    "control-radius",
+    "control-height-md",
+    "popup-bg",
+    "popup-radius",
+    "font-mono",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-colortrigger"
+   ],
+   "a11y": "El botón abre el panel con `popovertarget` (aria-expanded lo expone el navegador y la pieza lo refleja); el panel es role=\"dialog\" con nombre y recibe el foco en el área al abrirse; Escape lo cierra y devuelve el foco al botón. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colortrigger dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con muestra",
+     "code": "<ColorPickerTrigger id=\"accent-color\" defaultValue=\"#8b5cf6\" label=\"Accent color\" swatches={[\"#ef4444\", \"#f59e0b\", \"#10b981\", \"#3b82f6\", \"#8b5cf6\", \"#ec4899\"]} />"
+    },
+    {
+     "title": "Pequeño, en HSL",
+     "code": "<ColorPickerTrigger id=\"tag-color\" defaultValue=\"hsl(160 84% 39%)\" size=\"sm\" label=\"Tag color\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorPickerTrigger.manifest.json"
+  },
+  {
+   "name": "ColorSlider",
+   "group": "forms",
+   "description": "Deslizador de tono o de opacidad del color, horizontal o vertical, suelto.",
+   "import": "import { ColorSlider } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "channel",
+     "type": "enum",
+     "values": [
+      "hue",
+      "alpha"
+     ],
+     "default": "hue"
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-colorslider"
+   ],
+   "a11y": "Patrón APG «slider»: role=\"slider\" con aria-valuetext («217 degrees», «50% opaque»); flechas, Inicio, Fin, Re/Av Pág y Mayús. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorslider (data-channel, data-orientation) dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tono",
+     "code": "<ColorSlider channel=\"hue\" defaultValue=\"#10b981\" />"
+    },
+    {
+     "title": "Opacidad",
+     "code": "<ColorSlider channel=\"alpha\" defaultValue=\"#3b82f680\" />"
+    },
+    {
+     "title": "Vertical",
+     "code": "<ColorSlider channel=\"hue\" orientation=\"vertical\" defaultValue=\"#ec4899\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorSlider.manifest.json"
+  },
+  {
+   "name": "ColorSwatchPicker",
+   "group": "forms",
+   "description": "Muestrario de colores fijos: un grupo de radios; la muestra elegida lleva una marca que contrasta con su color.",
+   "import": "import { ColorSwatchPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "swatches",
+     "type": "(string | { value, label? })[]",
+     "description": "Muestras fijas; la que coincide con el valor queda marcada.",
+     "required": true
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "checked",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-radius-sm",
+    "fg",
+    "space-7"
+   ],
+   "classes": [
+    "z-colorswatches"
+   ],
+   "a11y": "Patrón APG «radio»: role=\"radiogroup\" con nombre, una parada de Tab y flechas que eligen; cada muestra tiene nombre (su `label` o su valor). Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorswatches dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Muestrario",
+     "code": "<ColorSwatchPicker\n  defaultValue=\"#10b981\"\n  swatches={[\n    { value: \"#ef4444\", label: \"Red\" },\n    { value: \"#f59e0b\", label: \"Amber\" },\n    { value: \"#10b981\", label: \"Emerald\" },\n    { value: \"#3b82f6\", label: \"Blue\" },\n    { value: \"#8b5cf6\", label: \"Violet\" },\n    { value: \"#ec4899\", label: \"Pink\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "apg": "radio",
+   "file": "zui/src/components/forms/ColorSwatchPicker.manifest.json"
   },
   {
    "name": "Combobox",
@@ -12967,6 +14375,117 @@
    "file": "zui/src/components/forms/Select.manifest.json"
   },
   {
+   "name": "ShortcutInput",
+   "group": "forms",
+   "description": "Captura de atajos de teclado: se pulsa para grabar y la siguiente combinación queda guardada en forma portable («Mod+Shift+K»: Mod es ⌘ en Apple y Ctrl en el resto), mostrada con las teclas de la plataforma (⌘⇧K o Ctrl Shift K).",
+   "import": "import { ShortcutInput, matchesShortcut } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Atajo controlado en forma canónica."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string",
+     "description": "Acepta variantes («cmd+k», «Ctrl+Alt+Delete») y las normaliza."
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Atajo nuevo, o \"\" al borrarlo."
+    },
+    {
+     "name": "requireModifier",
+     "type": "boolean",
+     "default": true,
+     "description": "Sin modificador solo valen las teclas de función (F1–F24)."
+    },
+    {
+     "name": "platform",
+     "type": "enum",
+     "values": [
+      "apple",
+      "other"
+     ],
+     "description": "Teclas que se muestran; por defecto, las del navegador."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor canónico."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ShortcutInputLabels>",
+     "description": "field, placeholder, recording, instructions, clear, set («Shortcut set to {keys}»), cleared, needsModifier."
+    }
+   ],
+   "states": [
+    "empty",
+    "recording",
+    "set",
+    "disabled"
+   ],
+   "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-border",
+    "control-border-hover",
+    "control-radius",
+    "control-radius-sm",
+    "control-bg",
+    "control-bg-hover",
+    "accent",
+    "accent-ring",
+    "accent-text",
+    "warning-text",
+    "fg-muted",
+    "surface-2",
+    "focus-width",
+    "focus-offset"
+   ],
+   "classes": [
+    "z-shortcut"
+   ],
+   "a11y": "Un button cuyo nombre sale de su contenido e incluye el atajo en palabras («Keyboard shortcut: Command Shift K»; el texto visible queda dentro del nombre, WCAG 2.5.3) e instrucciones enlazadas; mientras graba, el contenido («Press keys…») lo dice y forma parte del nombre. Al grabar, Escape cancela, Retroceso o Supr sin modificadores borran y Tab sale sin grabar: el foco nunca queda atrapado. El resultado se anuncia en una región viva. Las teclas visibles son decorativas (aria-hidden). `ariaKeyshortcuts(parseShortcut(v), apple)` da el valor de aria-keyshortcuts para el control que lo use. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-shortcut dentro de [data-z-dom] (data-value, data-platform, data-require-modifier, data-name); avisa con z:change { value }; matchesShortcut(event, valor, apple) para escucharlo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Por defecto",
+     "code": "<ShortcutInput defaultValue=\"Mod+K\" onValueChange={setShortcut} />"
+    },
+    {
+     "title": "Vacío, en Apple",
+     "code": "<ShortcutInput platform=\"apple\" labels={{ field: \"Open command palette\" }} />"
+    },
+    {
+     "title": "Teclas de función sin modificador",
+     "code": "<ShortcutInput defaultValue=\"F5\" requireModifier={false} size=\"sm\" name=\"refresh\" />"
+    }
+   ],
+   "origin": "Oleada 7. Captura de combinación de teclas (ShortcutsEditor de zutool); normalización propia (core/shortcut).",
+   "file": "zui/src/components/forms/ShortcutInput.manifest.json"
+  },
+  {
    "name": "Slider",
    "group": "forms",
    "description": "Deslizador de un valor o de un rango.",
@@ -14432,6 +15951,462 @@
    ],
    "origin": "Year Picker de Shark UI.",
    "file": "zui/src/components/forms/YearPicker.manifest.json"
+  },
+  {
+   "name": "CompareSlider",
+   "group": "media",
+   "description": "Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado. Sirve para imágenes, capturas o cualquier contenido del mismo tamaño.",
+   "import": "import { CompareSlider } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "before",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Lo de antes (izquierda o arriba)."
+    },
+    {
+     "name": "after",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Lo de después (derecha o abajo)."
+    },
+    {
+     "name": "value",
+     "type": "number",
+     "description": "Posición del divisor de 0 a 100 (controlada)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "number",
+     "default": 50
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: number) => void"
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: number) => void",
+     "description": "Al soltar el puntero o tras una tecla."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "showLabels",
+     "type": "boolean",
+     "default": true,
+     "description": "Rótulos «Before» y «After» sobre cada lado."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CompareSliderLabels>",
+     "description": "`slider` (nombre accesible), `before`, `after` y `valueText` («{value}% {before}»)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active"
+   ],
+   "tokens": [
+    "card-radius",
+    "line",
+    "scrim",
+    "colorpicker-white",
+    "colorpicker-black",
+    "control-height-md",
+    "control-radius",
+    "glass-border",
+    "popup-bg",
+    "popup-blur",
+    "glass-highlight",
+    "shadow-sm",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "layer-raised",
+    "radius-xs",
+    "text-caption"
+   ],
+   "classes": [
+    "z-compare"
+   ],
+   "a11y": "El asa es role=\"slider\" (0–100) con nombre y aria-valuetext («50% Before»): flechas, Re/Av Pág y Mayús (diez pasos), Inicio y Fin; en vertical, arriba y abajo. Pulsar en cualquier punto lleva el divisor ahí. Los rótulos son decorativos; el contenido de cada lado conserva su texto alternativo. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-compare con dos hijos (antes y después) dentro de [data-z-dom] recibe divisor y asa; data-value, data-orientation, data-labels=\"false\", data-label-before/after/slider; avisa con z:change y z:changeend { value }; setCompareValue(el, valor).",
+   "behavior": "dom",
+   "apg": "slider",
+   "examples": [
+    {
+     "title": "Antes y después",
+     "code": "<CompareSlider\n  before={<img src=\"/photos/street-raw.jpg\" alt=\"Street, unedited\" />}\n  after={<img src=\"/photos/street-graded.jpg\" alt=\"Street, color graded\" />}\n/>"
+    },
+    {
+     "title": "Vertical, sin rótulos",
+     "code": "<CompareSlider orientation=\"vertical\" showLabels={false} defaultValue={35} before={<Backdrop className=\"z-solid\" pattern=\"dots\" intensity=\"strong\" />} after={<Backdrop className=\"z-solid\" pattern=\"hex\" intensity=\"strong\" />} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Antes y después (dos capas de contenido)",
+     "code": "<div class=\"z-compare\" data-value=\"50\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"grid\" data-intensity=\"medium\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"mesh\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>",
+     "script": "document.querySelector(\".z-compare\").addEventListener(\"z:changeend\", (event) => console.log(event.detail.value));"
+    },
+    {
+     "title": "Vertical, sin rótulos",
+     "code": "<div class=\"z-compare\" data-orientation=\"vertical\" data-labels=\"false\" data-value=\"35\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"dots\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>"
+    }
+   ],
+   "origin": "Oleada 7. Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio.",
+   "file": "zui/src/components/media/CompareSlider.manifest.json"
+  },
+  {
+   "name": "ImageCropper",
+   "group": "media",
+   "description": "Recortador de imagen: área que se mueve y se redimensiona desde ocho asas, relación de aspecto fija o libre, forma rectangular o circular, rejilla de tercios y teclado. El recorte se expresa en fracciones de la imagen (y en píxeles en los avisos); `cropImage` y `cropImageBlob` dibujan la salida en un canvas o un Blob.",
+   "import": "import { ImageCropper, cropImageBlob } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "src",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "alt",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "aspect",
+     "type": "number",
+     "description": "Relación del recorte (ancho / alto): 1, 16 / 9… Sin ella, libre."
+    },
+    {
+     "name": "crop",
+     "type": "Crop",
+     "description": "Recorte controlado { x, y, width, height } en fracciones de la imagen (0–1)."
+    },
+    {
+     "name": "defaultCrop",
+     "type": "Crop",
+     "description": "Por defecto, centrado y del 80 % con la relación pedida."
+    },
+    {
+     "name": "onCropChange",
+     "type": "(crop: Crop, pixels: PixelCrop) => void"
+    },
+    {
+     "name": "onCropChangeEnd",
+     "type": "(crop: Crop, pixels: PixelCrop) => void",
+     "description": "Al soltar el puntero o tras una tecla."
+    },
+    {
+     "name": "onImageLoad",
+     "type": "(crop: Crop, pixels: PixelCrop) => void"
+    },
+    {
+     "name": "shape",
+     "type": "enum",
+     "values": [
+      "rect",
+      "circle"
+     ],
+     "default": "rect",
+     "description": "Con `circle`, `cropImage` deja transparente lo de fuera."
+    },
+    {
+     "name": "minSize",
+     "type": "number",
+     "default": 0.05,
+     "description": "Lado mínimo del recorte, en fracción de la imagen."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true,
+     "description": "Rejilla de tercios mientras se arrastra o con el foco."
+    },
+    {
+     "name": "crossOrigin",
+     "type": "enum",
+     "values": [
+      "anonymous",
+      "use-credentials"
+     ],
+     "description": "Imágenes de otro origen con CORS (para poder exportar el recorte)."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ImageCropperLabels>",
+     "description": "`area`, `instructions` y `status` («Crop {w}% × {h}% at {x}%, {y}%»)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "dragging",
+    "disabled"
+   ],
+   "tokens": [
+    "card-radius",
+    "surface-solid",
+    "line",
+    "colorpicker-white",
+    "colorpicker-black",
+    "scrim",
+    "radius-full",
+    "radius-xs",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "shadow-sm",
+    "space-6",
+    "space-2-5",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-cropper"
+   ],
+   "a11y": "La imagen conserva su texto alternativo. El área de recorte es un grupo enfocable con nombre e instrucciones (aria-describedby): flechas mueven, Mayús + flechas redimensionan, Alt multiplica el paso, Inicio y Fin la llevan a los bordes; cada cambio por teclado se anuncia («Crop 60% × 40% at 20%, 30%») en una región viva. Las asas son solo para el puntero (aria-hidden): el teclado cubre lo mismo. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-cropper con un <img> dentro de [data-z-dom] (data-aspect, data-shape, data-default-crop=\"x,y,w,h\"; el recorte actual queda en data-crop); avisa con z:change y z:changeend { crop, pixels }; cropImageBlob(img, crop) exporta.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Cuadrado",
+     "code": "<ImageCropper src=\"/photos/coast.jpg\" alt=\"Coast at sunset\" aspect={1} onCropChangeEnd={(crop) => setCrop(crop)} />"
+    },
+    {
+     "title": "Avatar circular y exportación",
+     "code": "<ImageCropper src={file} alt=\"New avatar\" aspect={1} shape=\"circle\" onCropChangeEnd={setCrop} />\n<Button onClick={async () => upload(await cropImageBlob(imageRef.current, crop, { shape: \"circle\", maxSize: 512 }))}>\n  Save avatar\n</Button>"
+    },
+    {
+     "title": "Libre",
+     "code": "<ImageCropper src=\"/photos/coast.jpg\" alt=\"Coast at sunset\" grid={false} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Relación 16:9 con rejilla",
+     "code": "<div class=\"z-cropper\" data-aspect=\"1.7778\">\n  <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E\" alt=\"Hills at sunset\" />\n</div>",
+     "script": "document.querySelector(\".z-cropper\").addEventListener(\"z:changeend\", (event) => console.log(event.detail.pixels));"
+    },
+    {
+     "title": "Avatar circular",
+     "code": "<div class=\"z-cropper\" data-aspect=\"1\" data-shape=\"circle\" style=\"max-inline-size:320px\">\n  <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E\" alt=\"Hills at sunset\" />\n</div>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Image Cropper de shark-ui (MIT), sin su código.",
+   "file": "zui/src/components/media/ImageCropper.manifest.json"
+  },
+  {
+   "name": "QRCode",
+   "group": "media",
+   "description": "Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con la zona de silencio de la norma. Sin dependencias y sin estado: vale en un Server Component.",
+   "import": "import { QRCode } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "required": true,
+     "description": "Texto o URL que codifica."
+    },
+    {
+     "name": "level",
+     "type": "enum",
+     "values": [
+      "L",
+      "M",
+      "Q",
+      "H"
+     ],
+     "default": "M",
+     "description": "Corrección de errores: L 7 %, M 15 %, Q 25 %, H 30 %."
+    },
+    {
+     "name": "size",
+     "type": "number",
+     "default": 160,
+     "description": "Lado en píxeles."
+    },
+    {
+     "name": "margin",
+     "type": "number",
+     "default": 4,
+     "description": "Zona de silencio en módulos (la norma pide 4)."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono en el centro; sube la corrección a H para compensar los módulos que tapa."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible propio (por defecto «QR code: {value}»)."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<QRCodeLabels>",
+     "description": "`image` («QR code: {value}») y `tooLong`."
+    }
+   ],
+   "states": [
+    "rest",
+    "invalid"
+   ],
+   "tokens": [
+    "qrcode-dark",
+    "qrcode-light",
+    "control-radius-lg",
+    "line",
+    "radius-xs",
+    "surface-2",
+    "danger-text",
+    "space-1",
+    "space-3",
+    "text-small"
+   ],
+   "classes": [
+    "z-qrcode"
+   ],
+   "a11y": "role=\"img\" con nombre («QR code: https://…»): el contenido también se lee. El SVG es aria-hidden. Si el texto no cabe en la versión 40 se muestra un aviso en texto. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-qrcode con data-value, data-level, data-size, data-margin y data-icon dentro de [data-z-dom] se dibuja solo; setWidgetProps(el, { value }) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Enlace",
+     "code": "<QRCode value=\"https://zuccadev-labs.github.io/zuix/\" />"
+    },
+    {
+     "title": "Corrección alta con icono",
+     "code": "<QRCode value=\"https://zuccadev-labs.github.io/zuix/\" icon=\"bolt\" size={200} />"
+    },
+    {
+     "title": "Pequeño, corrección baja",
+     "code": "<QRCode value=\"WIFI:T:WPA;S:Studio;P:correct-horse;;\" level=\"L\" size={120} margin={2} label=\"Wi-Fi network Studio\" />"
+    }
+   ],
+   "origin": "Oleada 7. Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia.",
+   "file": "zui/src/components/media/QRCode.manifest.json"
+  },
+  {
+   "name": "SignaturePad",
+   "group": "media",
+   "description": "Lienzo de firma: trazos con el puntero (con presión si el dispositivo la da, trazado suavizado), deshacer y borrar, y la alternativa accesible de escribir el nombre. La firma se exporta en SVG (`signatureValue`) o PNG (`signatureBlob`).",
+   "import": "import { SignaturePad, signatureBlob, signatureValue } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "onChange",
+     "type": "(value: SignatureValue) => void",
+     "description": "Tras cada trazo, deshacer, borrar, cambio de modo o al escribir: { empty, mode, strokes, typed, svg }."
+    },
+    {
+     "name": "defaultMode",
+     "type": "enum",
+     "values": [
+      "draw",
+      "type"
+     ],
+     "default": "draw"
+    },
+    {
+     "name": "defaultName",
+     "type": "string",
+     "description": "Nombre escrito de partida (modo Type)."
+    },
+    {
+     "name": "drawOnly",
+     "type": "boolean",
+     "default": false,
+     "description": "Sin el modo Type (usar solo si hay otra vía accesible para firmar)."
+    },
+    {
+     "name": "strokeWidth",
+     "type": "number",
+     "default": 2.5,
+     "description": "Grosor base del trazo; la presión lo modula."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "default": 180,
+     "description": "Alto del lienzo en píxeles."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con la firma en SVG (o el nombre escrito) para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<SignaturePadLabels>",
+     "description": "pad, placeholder, draw, type, name, undo, clear, mode (inglés por defecto)."
+    }
+   ],
+   "states": [
+    "empty",
+    "drawing",
+    "typed",
+    "disabled"
+   ],
+   "tokens": [
+    "reading-bg",
+    "control-border",
+    "card-radius",
+    "fg",
+    "fg-muted",
+    "line-strong",
+    "glass-border",
+    "control-bg",
+    "surface-3",
+    "glass-highlight",
+    "shadow-sm",
+    "control-radius-sm",
+    "control-height-xs",
+    "font-display",
+    "text-display",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-signature"
+   ],
+   "a11y": "role=\"group\" con nombre. Dibujar con el puntero no se puede hacer con el teclado: el modo «Type» es la alternativa (un campo de texto con etiqueta cuyo nombre se muestra como firma). Los modos son un radiogroup (flechas para cambiar); deshacer y borrar son botones con texto y quedan desactivados si no hay nada que quitar (el foco pasa al campo o al modo). El lienzo es role=\"img\" con nombre. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-signature dentro de [data-z-dom] (data-mode, data-typed, data-draw-only, data-stroke, data-height, data-name); avisa con z:change { empty, mode, strokes, typed, svg }; signatureValue(el) y signatureBlob(el).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dibujar o escribir",
+     "code": "<SignaturePad name=\"signature\" onChange={(value) => setSigned(!value.empty)} />"
+    },
+    {
+     "title": "Empieza escribiendo",
+     "code": "<SignaturePad defaultMode=\"type\" defaultName=\"Ana Ruiz\" height={140} />"
+    },
+    {
+     "title": "Exportar en PNG",
+     "code": "<SignaturePad ref={pad} />\n<Button onClick={async () => save(await signatureBlob(pad.current))}>Save</Button>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature).",
+   "file": "zui/src/components/media/SignaturePad.manifest.json"
   },
   {
    "name": "Accordion",

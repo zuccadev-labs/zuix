@@ -28,6 +28,7 @@ export const GROUPS = {
   navigation: { label: "Navegación", icon: "queue-list" },
   carousel: { label: "Carousel", icon: "photo" },
   effects: { label: "Efectos", icon: "sparkles" },
+  media: { label: "Medios", icon: "camera" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

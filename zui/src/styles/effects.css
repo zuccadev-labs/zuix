@@ -423,4 +423,14 @@
       color: CanvasText;
     }
   }
+
+  /* Confetti: lienzo fijo encima de todo, sin puntero (decorativo). */
+  .z-confetti {
+    position: fixed;
+    z-index: var(--z-layer-top);
+    inset: 0;
+    inline-size: 100vw;
+    block-size: 100vh;
+    pointer-events: none;
+  }
 }

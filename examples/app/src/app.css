@@ -539,3 +539,19 @@ body {
   margin: 0;
   accent-color: var(--z-accent);
 }
+
+/* Media: miniaturas del carrusel (iniciales sobre el acento suave). */
+.app-thumb {
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+  background: var(--z-accent-soft);
+  color: var(--z-accent-text);
+  font-weight: var(--z-weight-semibold);
+  font-size: var(--z-text-small);
+}
+
+.app-compare {
+  block-size: 180px;
+}
