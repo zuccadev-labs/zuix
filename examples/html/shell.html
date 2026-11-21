@@ -163,7 +163,8 @@
       <main class="z-shell__main z-liquid" id="app-main" tabindex="-1">
         <div class="z-shell__content">
           <div class="app-screen" id="screen-overview" role="tabpanel">
-            <div class="z-page">
+            <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: región desplazable; sin foco el teclado no podría desplazarla. -->
+            <div class="z-page" role="region" aria-label="Page content" tabindex="0">
               <div class="z-container" data-width="content">
                 <header class="z-pagehead">
                   <div class="z-pagehead__row">
@@ -370,7 +371,7 @@
       screen.className = "app-screen";
       screen.id = `screen-${id}`;
       screen.setAttribute("role", "tabpanel");
-      screen.innerHTML = '<div class="z-page"><div class="z-container" data-width="content"><header class="z-pagehead"><h1 class="z-pagehead__title"></h1><p class="z-pagehead__description">An empty screen created from the new tab button.</p></header></div></div>';
+      screen.innerHTML = '<div class="z-page" role="region" aria-label="Page content" tabindex="0"><div class="z-container" data-width="content"><header class="z-pagehead"><h1 class="z-pagehead__title"></h1><p class="z-pagehead__description">An empty screen created from the new tab button.</p></header></div></div>';
       screen.querySelector("h1").textContent = `Draft ${drafts}`;
       shell.querySelector(".z-shell__content").append(screen);
       addWorkTab(tabs, { id, title: `Draft ${drafts}`, icon: "document-text", controls: screen.id });

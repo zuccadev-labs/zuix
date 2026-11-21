@@ -5,6 +5,81 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
+### Añadido
+
+- Navegación de sitio (React y `/dom`, con el mismo comportamiento en `src/site.ts`):
+  - `Navbar`: flotante (dos barras de cristal), `dock` (una barra compacta centrada) o `bar` (de borde a borde);
+    pegajosa, fija o en su sitio. Sin punto de corte fijo: mide si la fila cabe y, si no, los enlaces pasan a un
+    cajón de cristal (popover nativo, también sin JavaScript) con el `NavigationMenu` en vertical.
+  - `NavigationMenu`: menús de sitio con paneles (patrón disclosure de navegación, no menú de aplicación):
+    tarjetas con icono y descripción en 1–3 columnas, pie opcional, previsualización al pasar el puntero, Escape y
+    cierre al salir el foco; vertical, los grupos se despliegan en su sitio.
+  - `BottomNavigation`: navegación de móvil con icono, etiqueta (siempre, solo la actual o ninguna), insignia,
+    enlaces o botones (`onValueChange`; en `/dom`, `z:select`), flotante o de borde a borde, con zona segura.
+  - `SiteFooter`: marca, columnas de enlaces, redes, franja legal; en columnas, centrado o mínimo; cristal,
+    sólido o sin fondo.
+  - `SkipLink`: enlace de salto al contenido que lleva el foco al destino aunque no sea enfocable.
+- Navegación y paneles de aplicación:
+  - `Sidebar` plegable a iconos (`collapsed`) con `SidebarItem` (icono, contador, acción, `aria-current`,
+    submenú en disclosure) y `SidebarTrigger` (aria-expanded, aria-controls, atajo Ctrl/⌘+B opcional). Plegada,
+    cada item muestra su nombre en un tooltip y el submenú se abre en un panel flotante. En `/dom`,
+    `setSidebarCollapsed()` y `setSidebarItemOpen()` (usa el tooltip y el popover de `@zuccadev-labs/zuix-zui/dom`).
+  - `TabStrip` con grupos de color (`groups`, `tab.groupId`, chip que pliega el grupo con `onGroupToggle`),
+    indicadores `modified` y `busy`, y reordenación con `onReorder`: arrastre con marca de soltar (el orden cambia
+    al soltar) y Ctrl+Mayús+flechas, Inicio o Fin con anuncio en una región `status`. En `/dom`,
+    `data-reorderable`, `moveWorkTab()`, `setTabGroupCollapsed()` y los eventos `z:reorder` y `z:grouptoggle`.
+  - `PaneHeader`: cabecera de panel con icono, título, línea secundaria y acciones en una `Toolbar` (una sola
+    parada de Tab) con menú opcional; `focused` y `titleId`. Dentro de `Pane.header` ocupa toda la franja.
+  - `FloatingPanel`: ventana flotante no modal (`role="dialog"` nombrado por su título) que se arrastra por la
+    cabecera o con las flechas en su asa, y se redimensiona desde la esquina final (en RTL, la izquierda) con puntero
+    o flechas; Mayús multiplica el paso; nunca sale de la ventana (`fixed`) o de su contenedor (`absolute`); Escape
+    y el botón de cierre con `onClose`; posición y tamaño controlados o no. En `/dom`, `.z-floatpanel`,
+    `data-z-panel`, `openFloatingPanel()`, `closeFloatingPanel()` y `setFloatingPanelRect()`.
+  - `PaneLayout`: mosaico de paneles redimensionables sobre un árbol de divisiones (`layout`, `panes`), con
+    cabecera (`PaneHeader`) y menú por panel para dividir (`onSplit`), mover junto al vecino de cada lado y cerrar;
+    arrastrar la cabecera sobre otro panel muestra la zona de soltar (borde o intercambio en el centro) y aplica el
+    cambio al soltar; los movimientos se anuncian. En `/dom`, `.z-panelayout` con `getPaneLayout()`,
+    `setPaneLayout()`, `splitLayoutPane()`, acciones `data-pane-action` en los menús de zui y los eventos
+    `z:layout`, `z:split` y `z:close`.
+  - `Float`: un elemento (insignia, contador) centrado sobre la esquina o el borde de otro, en lógicas (RTL), con
+    `offset` para formas circulares. Solo CSS.
+  - Lógica pura nueva en `logic.ts`: `reorder`, `dropIndex`, `finalIndex`, `tabMoveIndex`, `moveBefore`,
+    `beforeFor`, `clampRect`, `moveDelta`, `resizeDelta`, `resizeRect`, y el árbol de paneles (`PaneNode`,
+    `paneIds`, `setSizesAt`, `splitPane`, `removePane`, `swapPanes`, `movePane`, `dropEdge`, `neighborPane`).
+
+### Cambiado
+
+- Estándar liquid glass: nada en píldora. El rail es un panel de cromo con radio 20, concéntrico con sus items
+  (`control-radius-lg`); el enlace «saltar al contenido» es transparente hasta recibir el foco; las pestañas de trabajo (`TabStrip`) son rectángulos de radio 8, la activa
+  levantada con canto, brillo y sombra corta; los tiradores y divisores dibujan su línea con `radius-xs`.
+  `radius-full` queda para el contador del rail.
+- Foco por contorno (`focus-width`, `accent-ring`) en el rail, la barra lateral, las pestañas de trabajo y el
+  enlace «saltar al contenido», en lugar de la sombra `focus-ring`.
+- Cajón del shell en cristal elevado (`popup-blur`, `popup-shadow`) y entrada de 320 ms; velo con
+  `blur(6px)`. Panel dividido con radio 16 y cabecera de 34 px; el panel enfocado se marca con contorno.
+- Tipografía: título de `PageHeader` con `weight-display` y `tracking-display`, entradilla en `text-lead`
+  (máx. 62ch), eyebrow sin mayúsculas; secciones y cabecera de `SidePanel` con peso de display e interletrado
+  `snug`; grupos de `Sidebar` de 34 px en 13/500 sin mayúsculas.
+
+### Corregido
+
+- `TabStrip`: el lado de la tira con pestañas ocultas se difumina en vez de mostrar un icono cortado (sin
+  transparencia o con colores forzados, un canto normal), y la pestaña activa se deja entera a la vista fuera del
+  difuminado, también cuando cambia su ancho al cargar la fuente. Igual en React y en `/dom`.
+- `RailItem` sin el relleno por defecto del navegador. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus
+  pestañas (el contrato HTML los pintaba vacíos).
+- `TabStrip`: cada pestaña mide su contenido (hasta 220 px) mientras hay sitio; si no caben todas, ceden primero
+  las inactivas (hasta su icono) y la activa conserva su nombre entero si cabe en la tira; la elipsis solo aparece
+  cuando ni sola cabe. El botón de cerrar se dibuja a 24 px y con puntero grueso amplía su objetivo a 40 con
+  `::before` (antes ocupaba 40 de ancho y dejaba el título en «Fo…»). El chip de grupo mide `control-height-xs`
+  (24; 40 con puntero grueso; medía 22).
+- Ejemplos de `Sidebar` con alto mínimo en vez de fijo: con puntero grueso el último item quedaba cortado.
+- `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
+  accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía
+  desplazar con el teclado (axe `scrollable-region-focusable`).
+
 ## [0.2.0] - 2026-11-18
 
 Qué hay que tocar en una aplicación está en la [guía de actualización](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/08-actualizar-de-0-1-a-0-2.md).

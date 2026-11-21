@@ -180,6 +180,27 @@ export default async function ({ page, test, ok, card, settle, shots, browserNam
     }
   });
 
+  await test("Menu: abierto con el teclado bajo un puntero quieto, el foco sigue en la primera entrada", async () => {
+    await menuTrigger.click();
+    await settle();
+    const items = page.locator("#actions > .z-menu__item");
+    const last = await items.nth((await items.count()) - 1).boundingBox();
+    await closeAll();
+    // El puntero queda donde va a aparecer la última entrada; el menú se abre encima con Intro, sin moverlo.
+    await page.mouse.move(last.x + last.width / 2, last.y + last.height / 2);
+    await settle();
+    await menuTrigger.focus();
+    await page.keyboard.press("Enter");
+    await settle();
+    const first = (await items.first().textContent()).trim().replace(/\s+/g, " ");
+    ok((await focusText()) === first, `foco: ${await focusText()}`);
+    // En cuanto el puntero se mueve, vuelve a resaltar lo que tiene debajo.
+    await page.mouse.move(last.x + last.width / 2 + 2, last.y + last.height / 2);
+    await settle();
+    ok((await focusText()) !== first, "el puntero que se mueve resalta su entrada");
+    await closeAll();
+  });
+
   await test("Menu: búsqueda por letra", async () => {
     await menuTrigger.click();
     await settle();

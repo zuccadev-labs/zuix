@@ -30,17 +30,22 @@ Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que 
 | `@zuccadev-labs/zuix` | Paraguas: la suite completa en una dependencia | [Instalar](#instalar) |
 | `@zuccadev-labs/zuix-tokens` | Fuente única de valores de diseño. Una marca es un archivo | [Tokens](./01-tokens.md) |
 | `@zuccadev-labs/zuix-zicon` | 346 iconos en outline y solid | [Zicon](./02-zicon.md) |
-| `@zuccadev-labs/zuix-zui` | 64 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
-| `@zuccadev-labs/zuix-zout` | 10 layouts: shell, paneles, pestañas, rejillas | [Zout](./04-zout.md) |
+| `@zuccadev-labs/zuix-zui` | 144 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
+| `@zuccadev-labs/zuix-zout` | 19 layouts: shell, paneles, pestañas, rejillas | [Zout](./04-zout.md) |
 | `@zuccadev-labs/zuix-zudocs` | Estándar de documentación y plantilla Docusaurus. No se publica en npm | [Zudocs](./05-zudocs.md) |
 
 ## Instalar
 
 Lo habitual es el paraguas, que trae los otros cuatro en la misma versión:
 
+```bash
+pnpm add @zuccadev-labs/zuix
 ```
-pnpm add @zuccadev-labs/zuix                 # o npm install, yarn add, bun add
-pnpm add react react-dom                     # solo para el binding de React
+
+Y, solo para el binding de React:
+
+```bash
+pnpm add react react-dom
 ```
 
 | Subruta del paraguas | Equivale a |
@@ -63,11 +68,10 @@ La entrada raíz (`import { zui, zout, zicon } from "@zuccadev-labs/zuix"`) expo
 Es cómoda para explorar, pero un espacio de nombres arrastra el paquete entero: importar `Stack` así añade
 todo `zout` al bundle. Para una aplicación conviene importar por subruta.
 
-También se puede instalar paquete a paquete:
+También se puede instalar paquete a paquete, con `@zuccadev-labs/zuix-zout` además si hacen falta los layouts:
 
-```
+```bash
 pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-zicon @zuccadev-labs/zuix-tokens
-pnpm add @zuccadev-labs/zuix-zout            # layouts
 ```
 
 `@zuccadev-labs/zuix-zicon` es un peer de `zui` y `zout`: la aplicación lo instala siempre. Los paquetes de

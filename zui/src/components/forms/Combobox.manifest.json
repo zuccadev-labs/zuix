@@ -5,12 +5,6 @@
   "import": "import { Combobox } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
-      "name": "options",
-      "type": "ComboboxOption[]",
-      "required": true,
-      "description": "{ value, label, icon?, disabled? }."
-    },
-    {
       "name": "value",
       "type": "string | null",
       "description": "Valor controlado; null es sin selección."
@@ -106,6 +100,39 @@
       "name": "aria-label",
       "type": "string",
       "description": "Nombre accesible cuando no hay `Field`."
+    },
+    {
+      "name": "options",
+      "type": "(ComboboxOption | ComboboxOptionGroup)[]",
+      "description": "Opciones sueltas o grupos { label, options }; un grupo sin coincidencias no se muestra."
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "default": false,
+      "description": "Varias opciones como piezas dentro del campo (`value: string[]`); elegir no cierra la lista y Retroceso con el campo vacío quita la última."
+    },
+    {
+      "name": "maxSelected",
+      "type": "number",
+      "description": "Solo con `multiple`."
+    },
+    {
+      "name": "removeLabel",
+      "type": "(label: string) => string",
+      "default": "Remove {label}",
+      "description": "Solo con `multiple`: nombre del botón de cada pieza."
+    },
+    {
+      "name": "allowCustomValue",
+      "type": "boolean",
+      "default": false,
+      "description": "Autocompletar: el texto escrito vale aunque no coincida con una opción (Intro sin opción activa o al salir). `onValueChange` recibe el texto y `null`."
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Icono decorativo al inicio del campo."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "loading", "empty", "disabled", "invalid"],
@@ -122,15 +149,11 @@
     "ease-standard",
     "control-border-hover",
     "accent",
-    "focus-ring",
-    "surface",
     "danger",
-    "danger-soft",
     "control-height-sm",
     "text-small",
     "control-height-lg",
     "space-4",
-    "text-title",
     "font-mono",
     "fg-subtle",
     "space-1",
@@ -142,16 +165,32 @@
     "layer-popover",
     "popup-radius",
     "font-sans",
-    "leading-normal",
     "line-strong",
     "weight-medium",
-    "row-hover",
     "text-caption",
     "weight-semibold",
-    "line"
+    "line",
+    "accent-ring",
+    "accent-text",
+    "control-bg-hover",
+    "control-radius-lg",
+    "control-radius-sm",
+    "duration-normal",
+    "ease-emphasized",
+    "focus-width",
+    "item-radius",
+    "leading-ui",
+    "popup-blur",
+    "popup-shadow",
+    "space-1-5",
+    "space-2-5",
+    "space-3-5",
+    "surface-2",
+    "touch-target",
+    "glass-border"
   ],
   "classes": ["z-input", "z-combobox", "z-listbox"],
-  "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado.",
+  "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado. Con `multiple` la lista es aria-multiselectable y cada pieza tiene un botón con nombre; con `allowCustomValue` (patrón «autocompletar») el texto escrito se conserva como valor.",
   "behavior": "dom",
   "examples": [
     {
@@ -165,6 +204,14 @@
     {
       "title": "Carga asíncrona",
       "code": "<Combobox aria-label=\"Repository\" placeholder=\"Search repositories\" options={[]} filter={false} loading loadingText=\"Searching\" onInputChange={(text) => console.log(text)} />"
+    },
+    {
+      "title": "Varias como piezas, con grupos",
+      "code": "<Field label=\"Labels\">\n  <Combobox\n    multiple\n    name=\"labels\"\n    placeholder=\"Add labels\"\n    defaultValue={[\"bug\"]}\n    options={[\n      { label: \"Type\", options: [\n        { value: \"bug\", label: \"Bug\" },\n        { value: \"feature\", label: \"Feature\" },\n      ] },\n      { label: \"Area\", options: [\n        { value: \"forms\", label: \"Forms\" },\n        { value: \"docs\", label: \"Docs\" },\n      ] },\n    ]}\n  />\n</Field>"
+    },
+    {
+      "title": "Autocompletar (texto libre) con icono",
+      "code": "<Field label=\"City\" hint=\"Pick a suggestion or type any city.\">\n  <Combobox\n    allowCustomValue\n    icon=\"map-pin\"\n    placeholder=\"Search a city\"\n    options={[\n      { value: \"lisbon\", label: \"Lisbon\" },\n      { value: \"madrid\", label: \"Madrid\" },\n      { value: \"montreal\", label: \"Montreal\" },\n    ]}\n  />\n</Field>"
     }
   ],
   "html": [
@@ -177,6 +224,14 @@
       "title": "Carga asíncrona",
       "code": "<span class=\"z-input z-combobox\" id=\"repo\" data-size=\"md\" data-state=\"closed\" data-filter=\"false\" data-empty-text=\"No repositories\" data-loading-text=\"Searching\">\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Repository\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"repo-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search repositories\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"repo-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"repo-list\" role=\"listbox\" aria-label=\"Repository\"></div>\n</div>",
       "script": "import { setComboboxLoading, setComboboxOptions } from \"@zuccadev-labs/zuix-zui/dom\";\n\nconst repo = document.querySelector(\"#repo\");\nrepo.addEventListener(\"z:input\", async (event) => {\n  setComboboxLoading(repo, true);\n  const found = await searchRepositories(event.detail.value);\n  setComboboxOptions(repo, found.map((item) => ({ value: item.id, label: item.name, icon: \"folder\" })));\n  setComboboxLoading(repo, false);\n});"
+    },
+    {
+      "title": "Varias como piezas, con grupos",
+      "code": "<span class=\"z-input z-combobox\" id=\"labels\" data-size=\"md\" data-state=\"closed\" data-multiple data-value=\"bug\" data-name=\"labels\">\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Labels\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"labels-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Add labels\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"labels-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"labels-list\" role=\"listbox\" aria-label=\"Labels\" aria-multiselectable=\"true\">\n    <div role=\"group\" class=\"z-listbox__group\" aria-labelledby=\"labels-type\">\n      <div id=\"labels-type\" class=\"z-listbox__label\">Type</div>\n    <div class=\"z-listbox__option\" id=\"labels-bug\" role=\"option\" data-value=\"bug\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Bug</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"labels-feature\" role=\"option\" data-value=\"feature\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Feature</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    </div>\n    <div role=\"group\" class=\"z-listbox__group\" aria-labelledby=\"labels-area\">\n      <div id=\"labels-area\" class=\"z-listbox__label\">Area</div>\n    <div class=\"z-listbox__option\" id=\"labels-forms\" role=\"option\" data-value=\"forms\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Forms</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"labels-docs\" role=\"option\" data-value=\"docs\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Docs</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Autocompletar (texto libre) con icono",
+      "code": "<span class=\"z-input z-combobox\" id=\"city\" data-size=\"md\" data-state=\"closed\" data-custom>\n  <span class=\"z-input__icon\"><z-icon name=\"map-pin\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"City\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"city-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a city\" />\n  <input type=\"hidden\" name=\"city\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"city-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"city-list\" role=\"listbox\" aria-label=\"City\">\n    <div class=\"z-listbox__option\" id=\"city-lisbon\" role=\"option\" data-value=\"lisbon\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Lisbon</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-madrid\" role=\"option\" data-value=\"madrid\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Madrid</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-montreal\" role=\"option\" data-value=\"montreal\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Montreal</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
   ],
   "origin": "Combobox del catálogo objetivo; patrón combobox de ARIA APG sobre el aspecto de Input."

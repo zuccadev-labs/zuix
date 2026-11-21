@@ -24,18 +24,19 @@ const baselineFile = join(root, "src/contrast-baseline.json");
 const baseline = existsSync(baselineFile) ? JSON.parse(readFileSync(baselineFile, "utf8")).pending : [];
 const THEMES = ["dark", "light"];
 
-// Hojas de los componentes, si este paquete está dentro del monorepo.
+// Hojas de los componentes y del tema del sitio de documentación, si este paquete está dentro del monorepo.
 const sheets = [];
 for (const [pkg, dir] of [
-  ["zui", "../zui/src/styles"],
-  ["zout", "../zout/src/styles"],
+  ["zui", "zui/src/styles"],
+  ["zout", "zout/src/styles"],
+  ["zudocs", "zudocs/src/css"],
 ]) {
-  const abs = join(root, dir);
+  const abs = join(root, "..", dir);
   if (!existsSync(abs)) continue;
   for (const f of readdirSync(abs)
     .filter((f) => f.endsWith(".css"))
     .sort())
-    sheets.push({ pkg, file: `${pkg}/src/styles/${f}`, css: readFileSync(join(abs, f), "utf8") });
+    sheets.push({ pkg, file: `${dir}/${f}`, css: readFileSync(join(abs, f), "utf8") });
 }
 const rules = sheets.flatMap((s) => parseRules(s.css, s.file));
 const isToken = (name) => brands.some((b) => THEMES.some((t) => expandToken(name, b, t) != null));

@@ -21,7 +21,7 @@ Escribí este documento para obligarme: antes de fusionar un cambio miro esta ta
 | Nombres de icono | `zicon/manifest.json`, tipo `IconName` | `bell`, `magnifying-glass`; identificadores del sprite `#bell`, `#bell-solid` |
 | Elemento `<z-icon>` | `@zuccadev-labs/zuix-zicon/element` | Atributos `name`, `variant`, `size`, `label` |
 | Componentes y props | `props` de cada componente en `manifest.json`, tipos `*Props` | `Button`, `ButtonProps` |
-| Funciones | Lo exportado por cada entrada | `init`, `destroy`, `hydrate`, `toast`, `confirm`, `registerIcons`, `iconSvg`, `iconElement`, `cx` |
+| Funciones | Lo exportado por cada entrada | `init`, `use`, `destroy`, `hydrate`, `toast`, `confirm`, `registerIcons`, `iconSvg`, `iconElement`, `cx`, y los módulos de familia de `zui/dom` (`datesModule`, `agendaModule`…) |
 | Política de Trusted Types | `@zuccadev-labs/zuix-zui/dom` | El nombre `zuix-zui` |
 | Entradas del paquete | `publishConfig.exports` de cada `package.json` | `@zuccadev-labs/zuix-zui/dom`, `@zuccadev-labs/zuix-zicon/icons/*`, `@zuccadev-labs/zuix-zui/dist/zui.css` |
 | Peers y entorno | `peerDependencies`, `engines`, la línea de navegadores | React 19, Node 22.12; Chrome y Edge 116, Firefox 125, Safari 17, Safari de iOS 18.3 |
@@ -32,9 +32,9 @@ Escribí este documento para obligarme: antes de fusionar un cambio miro esta ta
 |---|---|
 | `@zuccadev-labs/zuix-tokens` | `./tokens.css`, `./tailwind.css`, `./docusaurus.css`, `./tokens.json`, `./dtcg/*`, `./css/*` (y cada marca incluida, de forma explícita), `./brands/*`, `./schema/*`, `./compat/*` |
 | `@zuccadev-labs/zuix-zicon` | `.`, `./core`, `./all`, `./dom`, `./element`, `./icons/*`, `./manifest.json`, `./sprite.svg`, `./svg/*`, `./dist/zicon.element.js` |
-| `@zuccadev-labs/zuix-zui` | `.`, `./dom`, `./styles.css`, `./styles/*`, `./manifest.json`, `./html.json`, `./dom/carousel-gl`, `./dist/zui.css`, `./dist/zui.dom.js`, `./dist/zui.dom.carousel-gl.js` |
+| `@zuccadev-labs/zuix-zui` | `.`, `./dom`, `./dom/core`, `./dom/dates`, `./dom/data`, `./dom/content`, `./dom/agenda`, `./dom/charts`, `./dom/color`, `./dom/media`, `./dom/effects`, `./styles.css`, `./styles/*`, `./manifest.json`, `./html.json`, `./dom/carousel-gl`, `./dist/zui.css`, `./dist/zui.dom.js`, `./dist/zui.dom.carousel-gl.js` |
 | `@zuccadev-labs/zuix-zout` | `.`, `./dom`, `./styles.css`, `./manifest.json`, `./html.json`, `./dist/zout.css`, `./dist/zout.dom.js` |
-| `@zuccadev-labs/zuix` (paraguas) | `.`, `./zui`, `./zui/dom`, `./zui/dom/carousel-gl`, `./zout`, `./zout/dom`, `./zicon`, `./zicon/core`, `./zicon/dom`, `./zicon/all`, `./zicon/element`, `./styles.css`, `./tokens.css`, `./tokens/dazlabs.css`, `./tokens/zutool.css`, `./tokens/zenith.css`, `./tailwind.css`, `./docusaurus.css` |
+| `@zuccadev-labs/zuix` (paraguas) | `.`, `./zui`, `./zui/dom`, `./zui/dom/core`, `./zui/dom/dates`, `./zui/dom/data`, `./zui/dom/content`, `./zui/dom/agenda`, `./zui/dom/charts`, `./zui/dom/color`, `./zui/dom/media`, `./zui/dom/effects`, `./zui/dom/carousel-gl`, `./zout`, `./zout/dom`, `./zicon`, `./zicon/core`, `./zicon/dom`, `./zicon/all`, `./zicon/element`, `./styles.css`, `./tokens.css`, `./tokens/dazlabs.css`, `./tokens/zutool.css`, `./tokens/zenith.css`, `./tailwind.css`, `./docusaurus.css` |
 
 Todos exponen además `./package.json`. El paraguas no añade superficie: cada entrada reexporta la del paquete
 que nombra, y `./styles.css` importa las hojas de `tokens`, `zui` y `zout` en ese orden.

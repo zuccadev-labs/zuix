@@ -3,6 +3,7 @@
 [![npm](https://img.shields.io/npm/v/%40zuccadev-labs%2Fzuix?label=npm)](https://www.npmjs.com/package/@zuccadev-labs/zuix)
 [![ci](https://github.com/zuccadev-labs/zuix/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zuccadev-labs/zuix/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/zuccadev-labs/zuix/badge)](https://scorecard.dev/viewer/?uri=github.com/zuccadev-labs/zuix)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16943/badge)](https://www.bestpractices.dev/projects/16943)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 [English](./README.md) | **Español**
@@ -37,8 +38,8 @@ y el modo sin framework.
 | `@zuccadev-labs/zuix` | [`suite/`](./suite/README.md) | Paraguas: instala los cuatro siguientes y los reexporta bajo subrutas | Sí |
 | `@zuccadev-labs/zuix-tokens` | [`tokens/`](./tokens/README.md) | Fuente única de valores de diseño. Una marca es un archivo | Sí |
 | `@zuccadev-labs/zuix-zicon` | [`zicon/`](./zicon/README.md) | 346 iconos en `outline` y `solid`, elemento `<z-icon>` y componente de React | Sí |
-| `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 64 componentes accesibles que solo leen tokens | Sí |
-| `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 10 layouts: shell, paneles divididos, pestañas de trabajo, rejillas | Sí |
+| `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 144 componentes accesibles que solo leen tokens | Sí |
+| `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 19 layouts: shell, paneles divididos, pestañas de trabajo, rejillas | Sí |
 | `@zuccadev-labs/zuix-zudocs` | `zudocs/` | Estándar de documentación y plantilla Docusaurus | No |
 
 Los cinco paquetes publicados comparten número de versión y se instalan y actualizan juntos.

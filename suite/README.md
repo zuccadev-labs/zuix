@@ -68,6 +68,7 @@ These subpaths do not import React, and a project that only uses them does not i
 | `@zuccadev-labs/zuix/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` | A single brand on `:root` |
 | `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Token bridges to Tailwind 4 and Docusaurus |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | `@zuccadev-labs/zuix-zui`, its framework-free behavior and the WebGL carousel mode |
+| `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/dates`, `/zui/dom/data`, `/zui/dom/content`, `/zui/dom/agenda`, `/zui/dom/charts`, `/zui/dom/color`, `/zui/dom/media`, `/zui/dom/effects` | The framework-free behavior of `@zuccadev-labs/zuix-zui` split by family |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout` and its framework-free behavior |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | The entry points of `@zuccadev-labs/zuix-zicon` |
 | `@zuccadev-labs/zuix` | The `zui`, `zout` and `zicon` namespaces (requires React) |
@@ -98,8 +99,8 @@ from the other and render empty.
 |---|---|
 | [`@zuccadev-labs/zuix-tokens`](https://www.npmjs.com/package/@zuccadev-labs/zuix-tokens) | Design tokens; a brand is one file |
 | [`@zuccadev-labs/zuix-zicon`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon) | 346 icons in outline and solid |
-| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 64 components |
-| [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 10 layouts |
+| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 144 components |
+| [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 19 layouts |
 
 ## Documentation
 

@@ -1,7 +1,7 @@
 {
   "name": "Progress",
   "group": "data",
-  "description": "Barra de avance de una tarea, determinada o indeterminada.",
+  "description": "Barra de avance de una tarea, determinada o indeterminada; horizontal o vertical, continua o por tramos.",
   "import": "import { Progress } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -37,6 +37,23 @@
       "type": "boolean",
       "default": false,
       "description": "Muestra el porcentaje."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "`vertical` crece de abajo arriba y ocupa el alto del contenedor (mínimo 96 px)."
+    },
+    {
+      "name": "segments",
+      "type": "number",
+      "description": "Divide la barra en tramos iguales (2–100), con el tramo en curso lleno en parte. Solo con valor."
+    },
+    {
+      "name": "valueText",
+      "type": "string",
+      "description": "aria-valuetext («3 of 5 steps»)."
     }
   ],
   "states": ["loading", "complete", "indeterminate"],
@@ -54,13 +71,27 @@
     "info",
     "info-soft",
     "space-2",
-    "radius-full",
     "duration-slow",
     "ease-standard",
-    "text-caption"
+    "text-caption",
+    "accent-solid",
+    "accent-text",
+    "canvas",
+    "danger-solid",
+    "danger-text",
+    "fg",
+    "fg-on-accent",
+    "info-solid",
+    "info-text",
+    "line",
+    "radius-xs",
+    "success-solid",
+    "success-text",
+    "warning-solid",
+    "warning-text"
   ],
-  "classes": ["z-progress"],
-  "a11y": "role=\"progressbar\" con aria-valuenow; sin valor queda indeterminada.",
+  "classes": ["z-progress", "z-progress__track", "z-progress__fill", "z-progress__segment", "z-progress__value"],
+  "a11y": "role=\"progressbar\" con aria-valuenow (y aria-valuetext si se da); sin valor queda indeterminada. En vertical y por tramos sigue siendo una sola barra para las tecnologías de apoyo: los tramos son decorativos.",
   "examples": [
     {
       "title": "Determinada",
@@ -69,6 +100,14 @@
     {
       "title": "Indeterminada",
       "code": "<Progress label=\"Syncing\" size=\"sm\" />"
+    },
+    {
+      "title": "Por tramos",
+      "code": "<Progress label=\"Onboarding\" value={3} max={5} segments={5} valueText=\"3 of 5 steps\" tone=\"success\" />"
+    },
+    {
+      "title": "Vertical",
+      "code": "<div style={{ height: 120, display: \"flex\", gap: 16 }}>\n  <Progress label=\"CPU\" value={72} orientation=\"vertical\" showValue />\n  <Progress label=\"Memory\" value={38} orientation=\"vertical\" tone=\"info\" showValue />\n  <Progress label=\"Disk\" value={4} max={5} segments={5} orientation=\"vertical\" tone=\"warning\" />\n</div>"
     }
   ],
   "origin": "Barra de progreso de zutool."

@@ -2,6 +2,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import type { Tone } from "../actions/types";
 
 export interface ChipProps extends Omit<HTMLAttributes<HTMLSpanElement>, "onClick"> {
   /** Estado seleccionado (filtros). Solo tiene sentido con `onClick`. */
@@ -16,6 +17,10 @@ export interface ChipProps extends Omit<HTMLAttributes<HTMLSpanElement>, "onClic
   count?: number;
   size?: "sm" | "md";
   disabled?: boolean;
+  /** Tono de estado (chips de estado: en línea, en pausa, con error). Sin tono, la ficha neutra de siempre. */
+  tone?: Tone;
+  /** Punto de estado delante del texto, del color del tono. */
+  dot?: boolean;
   children?: ReactNode;
 }
 
@@ -29,12 +34,15 @@ export function Chip({
   count,
   size = "md",
   disabled,
+  tone,
+  dot,
   className,
   children,
   ...rest
 }: ChipProps) {
   const content = (
     <>
+      {dot ? <span className="z-chip__dot" aria-hidden="true" /> : null}
       {icon ? <Icon name={icon} size={size === "sm" ? 12 : 14} /> : null}
       <span className="z-chip__label">{children}</span>
       {count !== undefined ? <span className="z-chip__count">{count}</span> : null}
@@ -45,6 +53,7 @@ export function Chip({
       {...rest}
       className={cx("z-chip", className)}
       data-size={size}
+      data-tone={tone}
       data-selected={selected || undefined}
       data-interactive={onClick ? true : undefined}
       data-disabled={disabled || undefined}

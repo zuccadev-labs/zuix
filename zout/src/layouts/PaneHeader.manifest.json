@@ -1,0 +1,44 @@
+{
+  "name": "PaneHeader",
+  "group": "layout",
+  "description": "Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.",
+  "import": "import { PaneHeader } from \"@zuccadev-labs/zuix-zout\"",
+  "behavior": "dom",
+  "props": [
+    { "name": "title", "type": "ReactNode", "required": true },
+    { "name": "icon", "type": "ReactNode", "description": "Icono o marca antes del título." },
+    { "name": "subtitle", "type": "ReactNode", "description": "Línea secundaria o migas." },
+    { "name": "actions", "type": "ReactNode", "description": "Controles: van en una Toolbar plain sm (una sola parada de Tab)." },
+    { "name": "menu", "type": "ReactNode", "description": "Disparador de menú al final de la barra." },
+    { "name": "actionsLabel", "type": "string", "default": "Pane actions", "description": "Nombre accesible de la barra." },
+    { "name": "focused", "type": "boolean", "description": "Resalta el título y el icono del panel con foco." },
+    { "name": "titleId", "type": "string", "description": "Id del título para nombrar el panel (aria-labelledby)." }
+  ],
+  "states": ["rest", "focused", "unfocused"],
+  "tokens": [
+    "control-height-md",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "space-1",
+    "space-2",
+    "space-3",
+    "text-small",
+    "text-caption",
+    "weight-medium"
+  ],
+  "classes": ["z-paneheader", "z-paneheader__icon", "z-paneheader__title", "z-paneheader__subtitle", "z-paneheader__actions"],
+  "a11y": "El título es texto: para nombrar el panel, `titleId` y `aria-labelledby` en el contenedor. Las acciones van en una Toolbar (`role=\"toolbar\"` con nombre): una sola parada de Tab, las flechas recorren los botones y el menú, Inicio y Fin van a los extremos. Los botones de solo icono llevan nombre accesible.",
+  "examples": [
+    {
+      "title": "Panel de editor con acciones y menú",
+      "code": "<div style={{ width: 420 }}>\n  <Pane\n    header={\n      <PaneHeader\n        icon={<Icon name=\"code-bracket\" size={14} />}\n        title=\"Button.tsx\"\n        subtitle=\"zui/src/components\"\n        focused\n        actionsLabel=\"Editor actions\"\n        actions={\n          <>\n            <IconButton icon=\"view-columns\" label=\"Split right\" size=\"sm\" />\n            <IconButton icon=\"arrows-pointing-out\" label=\"Maximize\" size=\"sm\" />\n          </>\n        }\n        menu={<IconButton icon=\"ellipsis-horizontal\" label=\"More actions\" size=\"sm\" />}\n      />\n    }\n  >\n    <div style={{ padding: 12 }}>export function Button() {}</div>\n  </Pane>\n</div>"
+    },
+    {
+      "title": "Solo título (panel sin foco)",
+      "code": "<div style={{ width: 320 }}>\n  <PaneHeader icon={<Icon name=\"command-line\" size={14} />} title=\"Terminal\" subtitle=\"zsh\" focused={false} />\n</div>"
+    }
+  ],
+  "origin": "`PaneHeaderButtons` y `PaneMark` de zutool."
+}

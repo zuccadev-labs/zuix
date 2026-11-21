@@ -10,14 +10,22 @@ pantalla; no dibuja contenido. Usa los tokens para medidas y material, y depende
 |---|---|---|
 | `Shell` | Estructura general: barra de título, rail, sidebar, área principal, inspector | AppShell de zutool |
 | `Rail`, `RailItem` | Barra estrecha de navegación principal | zutool |
-| `Sidebar`, `SidebarSection` | Navegación secundaria en acordeón | zutool |
+| `Sidebar`, `SidebarSection`, `SidebarItem`, `SidebarTrigger` | Navegación secundaria en acordeón, plegable a iconos, con items que llevan contador, acción y submenú | zutool |
 | `SidePanel` | Andamiaje de panel: título, cuerpo con desplazamiento, pie | zutool |
 | `SplitPane`, `Pane` | Paneles divididos con divisores arrastrables | zutool |
-| `TabStrip` | Pestañas de trabajo con cierre y alta | zutool |
+| `TabStrip` | Pestañas de trabajo con cierre y alta, grupos de color, indicadores y reordenación | zutool |
+| `PaneHeader` | Cabecera de panel: icono, título, línea secundaria y acciones en una barra de herramientas | Propio |
+| `PaneLayout` | Mosaico de paneles redimensionables: dividir, mover, cerrar y arrastrar un panel al borde de otro | Propio |
+| `FloatingPanel` | Ventana flotante no modal que se arrastra y se redimensiona con puntero o teclado | Propio |
 | `TitleBar` | Cabecera para ventanas sin marco. Es un `<header>` | zutool |
 | `ResizeHandle` | Tirador de redimensionado | zutool |
 | `Page`, `PageHeader`, `PageSection`, `Container` | Página con cabecera y secciones | El design system de un proyecto privado anterior |
 | `Grid`, `Stack`, `Inline` | Rejilla intrínseca, pila y fila | `ui-glass` |
+| `Float` | Insignia, punto o contador sobre la esquina o el borde de otro elemento. Solo CSS | Propio |
+| `Navbar`, `NavigationMenu` | Barra de navegación de un sitio (flotante, `dock` o de borde a borde) y menús con paneles. Sin punto de corte fijo: si la fila no cabe, los enlaces pasan a un cajón | Propio |
+| `BottomNavigation` | Navegación de móvil: de tres a cinco destinos con icono y etiqueta | Propio |
+| `SiteFooter` | Pie de un sitio: marca, columnas de enlaces, redes y franja legal | Propio |
+| `SkipLink` | Enlace para saltar al contenido; lleva el foco al destino aunque no sea enfocable | Propio |
 
 ## Uso
 
@@ -133,6 +141,11 @@ Solo actúa dentro de un contenedor `[data-z-dom]`. Aplicación completa de ejem
 | `SplitPane` | `.z-split[data-direction] >` `.z-split__pane` (con `flex-grow`) y `.z-split__divider` | `data-min-fraction` (0.1) |
 | `TabStrip` | `.z-tabstrip > .z-tabstrip__list > .z-tabstrip__tab >` `.z-tabstrip__select[data-tab-id]` y `.z-tabstrip__close`; `.z-tabstrip__add` | `aria-controls="id"` en la pestaña muestra y oculta su panel; `data-new-title="Untitled"` en el botón de alta crea pestañas sin código |
 | `SidebarSection` | `.z-sidebar__section > .z-sidebar__head > .z-sidebar__fold` y `.z-sidebar__body` | `data-open`, `aria-expanded`, `hidden` |
+| `Sidebar` plegable | `.z-sidebar[data-collapsed]` y un botón `.z-sidebar__trigger[aria-controls]` | `data-shortcut` (Ctrl/⌘+B). Plegada, usa el tooltip y el popover de `@zuccadev-labs/zuix-zui/dom`: hay que cargarlo también |
+| `TabStrip` reordenable | `.z-tabstrip[data-reorderable]`, `.z-tabstrip__status[role=status]`, `.z-tabstrip__chip` por grupo | `data-moved-label` con `{title}`, `{position}` y `{total}` |
+| `FloatingPanel` | `.z-floatpanel[role=dialog]` con `.z-floatpanel__header`, `__handle`, `__resize` y `__close` | `data-strategy="absolute"` lo acota a su contenedor; `data-min-width`, `data-min-height`; `data-z-panel="#id"` en un botón lo abre |
+| `PaneLayout` | `.z-panelayout` con `.z-split` anidados y `.z-panelayout__pane[data-pane-id]` | `data-pane-action="move-left\|move-right\|move-up\|move-down\|close\|split-right\|split-down"` en los items de su menú |
+| Navegación de sitio | `.z-navbar`, `.z-navmenu`, `.z-skiplink`, `.z-bottomnav` | Los mismos atributos que produce el binding (`zout/html.json`) |
 
 El módulo escribe el mismo estado que React: `data-mode`, clase `z-shell__drawer`, `role="dialog"`,
 `aria-modal`, `inert` en lo que queda bajo el velo, `button.z-shell__scrim`, `--z-shell-panel-width`,
@@ -150,7 +163,10 @@ import {
   init, hydrate, dispose,
   setPanelOpen, togglePanel, closeDrawers, getShellModes,
   resizeTo, getSplitSizes, setSplitSizes,
-  selectWorkTab, closeWorkTab, addWorkTab, setSectionOpen,
+  selectWorkTab, closeWorkTab, addWorkTab, moveWorkTab, setTabGroupCollapsed, setSectionOpen,
+  setSidebarCollapsed, setSidebarItemOpen,
+  openFloatingPanel, closeFloatingPanel, setFloatingPanelRect,
+  getPaneLayout, setPaneLayout, splitLayoutPane,
 } from "@zuccadev-labs/zuix-zout/dom";
 
 setPanelOpen(shell, "inspector", true);
@@ -176,6 +192,15 @@ aplicación.
 | `z:close` | `.z-tabstrip` | `{ id }` | No se retira; por defecto se retira la pestaña, se oculta su panel y se activa la vecina |
 | `z:add` | `.z-tabstrip` | | No se crea la pestaña de `data-new-title` |
 | `z:change` | `.z-sidebar__section` | `{ open }` | (informativo) |
+| `z:change` | `.z-sidebar` | `{ collapsed }` | (informativo) |
+| `z:reorder` | `.z-tabstrip` | `{ ids }` | No cambia el orden |
+| `z:grouptoggle` | `.z-tabstrip` | `{ id, collapsed }` | (informativo) |
+| `z:change` | `.z-floatpanel` | `{ x, y, width, height }` | (informativo) |
+| `z:close` | `.z-floatpanel` | | (informativo) |
+| `z:layout` | `.z-panelayout` | `{ layout }` | (informativo) |
+| `z:split` | `.z-panelayout` | `{ id, direction }` | La aplicación llama a `splitLayoutPane` con el panel nuevo |
+| `z:close` | `.z-panelayout` | `{ id }` | No se cierra el panel |
+| `z:select` | `.z-bottomnav` | `{ value }` | No se mueve `aria-current` |
 
 `z:modechange` se emite al medir por primera vez, dentro de `init()`: quien quiera el primer aviso se
 suscribe antes, o lee `getShellModes(shell)`. Los `z:resize` de un `SplitPane` anidado llegan también

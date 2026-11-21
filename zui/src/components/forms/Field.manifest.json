@@ -41,6 +41,11 @@
       "default": "stacked"
     },
     {
+      "name": "validate",
+      "type": "boolean | ValidityMessages",
+      "description": "Muestra el error de la validación nativa del control (required, type, pattern, minLength, min, max…) tras interactuar: al salir del campo si se editó, o al enviar. Se quita en cuanto el valor es válido. `true` usa los mensajes del navegador; un objeto los sustituye por motivo de ValidityState (`valueMissing`, `typeMismatch`, `patternMismatch`, `tooShort`…). `error` manda sobre él."
+    },
+    {
       "name": "children",
       "type": "ReactNode",
       "required": true,
@@ -49,22 +54,22 @@
   ],
   "states": ["rest", "invalid"],
   "tokens": [
-    "space-2",
     "space-4",
     "control-height-md",
     "space-1",
     "fg",
     "text-small",
-    "weight-semibold",
     "leading-snug",
-    "danger",
     "fg-subtle",
     "weight-regular",
     "fg-muted",
-    "weight-medium"
+    "weight-medium",
+    "space-1-5",
+    "text-caption",
+    "danger-text"
   ],
   "classes": ["z-field"],
-  "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios.",
+  "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios. Con `validate`, el error solo se enlaza (aria-describedby) y se marca (aria-invalid) mientras existe, como :user-invalid: no se anuncia antes de interactuar ni en cada tecla.",
   "examples": [
     {
       "title": "Con ayuda",
@@ -77,6 +82,10 @@
     {
       "title": "En línea",
       "code": "<Field label=\"Region\" layout=\"inline\" optionalLabel=\"Optional\">\n  <NativeSelect options={[{ value: \"eu\", label: \"Europe\" }, { value: \"us\", label: \"United States\" }]} />\n</Field>"
+    },
+    {
+      "title": "Mensajes por ValidityState",
+      "code": "<Form>\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Subscribe</Button>\n</Form>"
     }
   ],
   "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común."

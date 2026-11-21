@@ -4,6 +4,15 @@
 import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
 import layers from "./cases-layers.mjs";
+import wave3 from "./cases-wave3.mjs";
+import wave4 from "./cases-wave4.mjs";
+import wave4Zout from "./cases-wave4-zout.mjs";
+import wave5Content from "./cases-wave5-content.mjs";
+import wave5Data from "./cases-wave5-data.mjs";
+import wave6 from "./cases-wave6.mjs";
+import wave7 from "./cases-wave7.mjs";
+import charts from "./cases-charts.mjs";
+import reading from "./cases-reading.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -181,7 +190,8 @@ async function overflowReport(page) {
       for (let n = el.parentElement; n; n = n.parentElement) {
         const o = getComputedStyle(n).overflowX;
         if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
-        if (n.classList.contains("z-carousel__viewport")) return true;
+        // Recortes deliberados con su propio desplazamiento: el carrusel y la cinta de Marquee.
+        if (n.classList.contains("z-carousel__viewport") || n.classList.contains("z-marquee__viewport")) return true;
       }
       return false;
     };
@@ -225,7 +235,22 @@ async function inPageAndModal(page, fn) {
   await focusOn(page, t("open-forms-modal"), "al cerrar el modal el foco vuelve a su disparador");
 }
 
-const SCREENS = ["overview", "projects", "overlays", "navigation", "gallery", "editor", "forms"];
+const SCREENS = [
+  "overview",
+  "projects",
+  "overlays",
+  "navigation",
+  "gallery",
+  "editor",
+  "forms",
+  "agenda",
+  "workspace",
+  "commands",
+  "content",
+  "data",
+  "charts",
+  "media",
+];
 
 export const cases = [
   // ───────────────────────────── Overlays ─────────────────────────────
@@ -543,6 +568,8 @@ export const cases = [
     name: "ContextMenu: abre con clic derecho en el puntero, teclado y Escape",
     async run({ open, shot }) {
       const page = await open("overlays");
+      // La zona puede quedar bajo el pliegue según la escala tipográfica: se trae a la vista antes de medirla.
+      await page.locator(t("context-area")).scrollIntoViewIfNeeded();
       const { x, y } = await center(page, t("context-area"));
       await page.mouse.click(x, y, { button: "right" });
       await visible(page, ".z-menu[role=menu]");
@@ -601,7 +628,12 @@ export const cases = [
       await visible(page, "dialog.z-palette:modal");
       await focusOn(page, ".z-palette__input", "el foco entra en el buscador");
       await expectInViewport(page, ".z-palette");
-      await expectCount(page, ".z-palette__item", 19, "19 comandos sin filtro");
+      await expectCount(
+        page,
+        ".z-palette__item",
+        28,
+        "28 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site y Media)",
+      );
       await settled(page);
       await shot(page, "overlay-palette");
       await page.keyboard.type("gal");
@@ -2173,6 +2205,265 @@ export const cases = [
     },
   },
 
+  {
+    name: "Familia de fecha: varios meses, múltiple, desplegables, preajustes, reservadas, vistas y RTL",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const activeValue = () =>
+        page.evaluate(() => document.activeElement?.dataset?.date ?? document.activeElement?.dataset?.value ?? null);
+      const focusedOn = (value, message) => poll(async () => (await activeValue()) === value, message ?? `foco en ${value}`);
+      const day = (root, date) => `${t(root)} .z-calendar__day[data-date="${date}"]:not([data-outside])`;
+
+      // Varias fechas: alterna con clic y con teclado, respeta el máximo.
+      await page.locator(t("family-multiple")).scrollIntoViewIfNeeded();
+      await page.click(day("family-multiple", "2026-11-18"));
+      await page.click(day("family-multiple", "2026-11-04"));
+      await expectText(page, t("family-multiple-value"), "2026-11-11,2026-11-18");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press(" ");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
+      await expectText(
+        page,
+        t("family-multiple-value"),
+        "2026-11-05,2026-11-06,2026-11-11,2026-11-18",
+        "maxSelected=4 no deja añadir una quinta",
+      );
+      await expectAttr(page, `${t("family-multiple")} [role=grid]`, "aria-multiselectable", "true");
+
+      // Dos meses: la rejilla es continua para el teclado y la vista solo se mueve al salir; rango con mínimo de 3 días.
+      const months = "family-months";
+      await page.locator(t(months)).scrollIntoViewIfNeeded();
+      await expectCount(page, `${t(months)} [role=grid]`, 2, "dos rejillas");
+      await expectCount(page, `${t(months)} .z-calendar__grid [tabindex="0"]`, 1, "una sola parada de tabulación entre los dos meses");
+      await page.click(day(months, "2026-11-27"));
+      await expectAttr(
+        page,
+        day(months, "2026-11-28"),
+        "aria-disabled",
+        "true",
+        "con minRange=3 el día siguiente no puede cerrar el rango",
+      );
+      await expectText(page, t("family-months-value"), "2026-11-27/");
+      await page.hover(day(months, "2026-12-02"));
+      await expectAttr(
+        page,
+        `${t(months)} .z-calendar__cell:has([data-date="2026-11-30"]:not([data-outside]))`,
+        "data-range",
+        "middle",
+        "la vista previa cruza de un mes a otro",
+      );
+      await page.click(day(months, "2026-12-02"));
+      await expectText(page, t("family-months-value"), "2026-11-27/2026-12-02");
+      await page.focus(day(months, "2026-11-30"));
+      await page.keyboard.press("ArrowDown");
+      await focusedOn("2026-12-07", "de noviembre a diciembre sin salir de la vista");
+      await expectText(page, `${t(months)} .z-calendar__title`, "November – December 2026");
+      await page.keyboard.press("PageDown");
+      await focusedOn("2027-01-07");
+      await expectText(page, `${t(months)} .z-calendar__title`, "December 2026 – January 2027", "la vista avanza un mes al salir");
+      await shot(page, "forms-calendar-two-months");
+
+      // Desplegables de mes y año, con límites.
+      const caption = t("family-caption");
+      await page.locator(caption).scrollIntoViewIfNeeded();
+      await page.selectOption(`${caption} select[data-part="month"]`, "2026-03");
+      await expectText(page, t("family-caption-value"), "2026-11-06@2026-03");
+      await page.selectOption(`${caption} select[data-part="year"]`, "2027");
+      await expectText(page, t("family-caption-value"), "2026-11-06@2027-03");
+      assert(
+        (await page.locator(`${caption} select[data-part="year"] option`).allTextContents()).join(",") === "2025,2026,2027",
+        "el select de año se acota a min/max",
+      );
+      await expectAttr(page, `${caption} .z-calendar__title`, "data-hidden", "", "el título sigue para el lector pero no se ve");
+
+      // Preajustes relativos a hoy.
+      const presets = t("family-presets");
+      await page.locator(presets).scrollIntoViewIfNeeded();
+      await page.click(`${presets} .z-calendar__preset:has-text("Next 7 days")`);
+      await expectText(page, t("family-presets-value"), "2026-11-19/2026-11-25");
+      await expectAttr(page, `${presets} .z-calendar__preset:has-text("Next 7 days")`, "aria-pressed", "true");
+      await page.click(`${presets} .z-calendar__preset:has-text("This month")`);
+      await expectText(page, t("family-presets-value"), "2026-11-01/2026-11-30");
+
+      // Reservadas: tachadas, con nombre «booked», no se eligen; las pasadas quedan fuera por min.
+      const booked = "family-booked";
+      await page.locator(t(booked)).scrollIntoViewIfNeeded();
+      await expectAttr(page, day(booked, "2026-11-20"), "aria-label", "Friday, November 20, 2026, booked");
+      await page.click(day(booked, "2026-11-20"), { force: true });
+      await page.click(day(booked, "2026-11-10"), { force: true });
+      await expectText(page, t("family-booked-value"), "none", "ni reservadas ni pasadas se eligen");
+      await page.click(day(booked, "2026-11-27"));
+      await expectText(page, t("family-booked-value"), "2026-11-27");
+      assert(
+        (await page.locator(day(booked, "2026-11-21")).evaluate((b) => getComputedStyle(b).textDecorationLine)) === "line-through",
+        "la reservada va tachada (no solo color)",
+      );
+      await expectCount(page, `${t(booked)} .z-calendar__legend li`, 3, "leyenda");
+
+      // Vistas: título → meses → años, con teclado; Escape vuelve a los días; botón Hoy.
+      const views = t("family-views");
+      await page.locator(views).scrollIntoViewIfNeeded();
+      await expectCount(page, `${views} .z-calendar__week-number`, 6, "semanas fijas con número");
+      await page.click(`${views} .z-calendar__view`);
+      await expectAttr(page, `${views} [role=grid]`, "aria-label", "Choose month");
+      await page.click(`${views} .z-calendar__view`);
+      await expectAttr(page, `${views} [role=grid]`, "aria-label", "Choose year");
+      await page.click(`${views} .z-calendar__unit[data-value="2027"]`);
+      await focusedOn("2027-11");
+      await page.keyboard.press("ArrowDown");
+      await focusedOn("2028-02", "abajo salta 3 meses");
+      await page.keyboard.press("Enter");
+      await focusedOn("2028-02-01", "Intro baja a los días de ese mes");
+      await page.click(`${views} .z-calendar__view`);
+      await page.keyboard.press("Escape");
+      await expectAttr(page, `${views} .z-calendar`, "data-view", "day", "Escape vuelve a los días");
+      await page.click(`${views} .z-calendar__today`);
+      await expectText(page, t("family-views-value"), "2026-11-19");
+      await focusedOn("2026-11-19");
+
+      // RTL: la flecha izquierda avanza.
+      const rtl = "family-rtl";
+      await page.locator(t(rtl)).scrollIntoViewIfNeeded();
+      await page.focus(day(rtl, "2026-11-10"));
+      await page.keyboard.press("ArrowLeft");
+      await focusedOn("2026-11-11", "en RTL la izquierda es el día siguiente");
+      await page.keyboard.press("ArrowRight");
+      await focusedOn("2026-11-10");
+    },
+  },
+  {
+    name: "Selectores de rango con confirmación, mes, año, semana y múltiple",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const panel = ".z-datepicker__panel";
+      const activeValue = () =>
+        page.evaluate(() => document.activeElement?.dataset?.date ?? document.activeElement?.dataset?.value ?? null);
+      const focusedOn = (value, message) => poll(async () => (await activeValue()) === value, message ?? `foco en ${value}`);
+      const trigger = (id) => `${t(id)} .z-select__control`;
+
+      // Rango con dos meses, preajustes y confirmación: Cancelar y Escape descartan; Aplicar guarda.
+      await page.locator(t("family-range-picker")).scrollIntoViewIfNeeded();
+      await page.click(trigger("family-range-picker"));
+      await visible(page, panel);
+      await expectCount(page, `${panel} [role=grid]`, 2, "dos meses");
+      await page.click(`${panel} .z-calendar__preset:has-text("Next 7 days")`);
+      await expectText(
+        page,
+        `${panel} .z-calendar__summary`,
+        await page.evaluate(() =>
+          new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).formatRange(
+            new Date(Date.UTC(2026, 10, 19)),
+            new Date(Date.UTC(2026, 10, 25)),
+          ),
+        ),
+      );
+      await expectText(page, t("family-range-picker-value"), "none", "con confirm el valor no cambia hasta Aplicar");
+      await shot(page, "forms-daterangepicker-confirm");
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+      await expectText(page, t("family-range-picker-value"), "none", "Escape descarta");
+      await page.click(trigger("family-range-picker"));
+      await visible(page, panel);
+      await page.click(`${panel} .z-calendar__day[data-date="2026-11-23"]:not([data-outside])`);
+      await page.click(`${panel} .z-calendar__day[data-date="2026-12-02"]:not([data-outside])`);
+      await page.click(`${panel} .z-calendar__apply`);
+      await gone(page, panel);
+      await expectText(page, t("family-range-picker-value"), "2026-11-23/2026-12-02");
+      assert(
+        (await page.locator(`${t("family-range-picker")} input[name="window"]`).inputValue()) === "2026-11-23/2026-12-02",
+        "formulario desde/hasta",
+      );
+      await focusOn(page, trigger("family-range-picker"), "el foco vuelve al campo");
+
+      // Mes: rejilla de meses con teclado; Escape en la vista de años vuelve a los meses sin cerrar.
+      await page.click(trigger("family-month-picker"));
+      await visible(page, panel);
+      await focusedOn("2026-11", "el foco va al mes elegido");
+      await page.keyboard.press("ArrowLeft");
+      await page.keyboard.press("ArrowUp");
+      await focusedOn("2026-07");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("family-month-picker-value"), "2026-07");
+      await page.click(trigger("family-month-picker"));
+      await visible(page, panel);
+      await page.click(`${panel} .z-calendar__view`);
+      await expectAttr(page, `${panel} [role=grid]`, "aria-label", "Choose year");
+      await page.keyboard.press("Escape");
+      await visible(page, panel, "Escape en la vista de años no cierra el selector");
+      await expectAttr(page, `${panel} [role=grid]`, "aria-label", "Choose month");
+      await expectAttr(page, `${panel} .z-calendar__unit[data-value="2026-02"]`, "aria-disabled", "true", "min=2026-03");
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+
+      // Año: década con los años del borde atenuados.
+      await page.click(trigger("family-year-picker"));
+      await visible(page, panel);
+      await focusedOn("2024");
+      await expectAttr(page, `${panel} .z-calendar__unit[data-value="2019"]`, "data-outside", "");
+      await page.keyboard.press("PageDown");
+      await focusedOn("2034", "RePág/AvPág por década");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("family-year-picker-value"), "2034");
+
+      // Semana ISO: el foco resalta la semana; el formulario recibe YYYY-Www.
+      await page.click(trigger("family-week-picker"));
+      await visible(page, panel);
+      await expectCount(page, `${panel} td[aria-selected=true]`, 7, "la semana elegida entera");
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("family-week-picker-value"), "2026-W48");
+      assert(
+        (await page.locator(`${t("family-week-picker")} input[name="week"]`).inputValue()) === "2026-W48",
+        "semana ISO en el formulario",
+      );
+      assert((await text(page, trigger("family-week-picker"))).includes("Week 48"), "texto del campo");
+
+      // Múltiple: no cierra al elegir; el campo cuenta.
+      await page.click(trigger("family-multiple-picker"));
+      await visible(page, panel);
+      for (const d of ["2026-11-02", "2026-11-03", "2026-11-04"])
+        await page.click(`${panel} .z-calendar__day[data-date="${d}"]:not([data-outside])`);
+      await visible(page, panel, "en múltiple el panel sigue abierto");
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+      await expectText(page, t("family-multiple-picker-value"), "2026-11-02,2026-11-03,2026-11-04");
+      assert((await text(page, trigger("family-multiple-picker"))).includes("3 shifts"), "texto con formatCount");
+
+      // Fecha y hora: campo tecleable + panel con calendario y hora; Aplicar junta los dos.
+      const dt = t("family-datetime");
+      await page.locator(dt).scrollIntoViewIfNeeded();
+      await page.focus(`${dt} [role="spinbutton"]`);
+      await page.keyboard.press("Alt+ArrowDown");
+      const dtPanel = ".z-datetimepicker__panel";
+      await visible(page, dtPanel);
+      await focusedOn("2026-11-24");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
+      await visible(page, dtPanel, "elegir día no cierra con hora");
+      await page.focus(`${dtPanel} .z-timefield [data-segment="hour"]`);
+      await page.keyboard.type("0945");
+      await page.click(`${dtPanel} .z-calendar__apply`);
+      await gone(page, dtPanel);
+      await expectText(page, t("family-datetime-value"), "2026-11-25T09:45");
+      // Teclear en el campo cambia el valor sin abrir nada.
+      await page.focus(`${t("family-date-input")} [data-segment="day"]`);
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("family-date-input-value"), "2026-11-25");
+      await page.click(`${t("family-date-input")} .z-datetimepicker__trigger`);
+      await visible(page, dtPanel);
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await gone(page, dtPanel);
+      await expectText(page, t("family-date-input-value"), "2026-12-02");
+    },
+  },
+
   // ───────────────────────────── Accesibilidad y preferencias ─────────────────────────────
   {
     name: "Accesibilidad (axe): ninguna pantalla tiene violaciones graves en tema claro ni oscuro",
@@ -2768,7 +3059,684 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers].flatMap((build) => build(helpers())),
+  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, wave7, charts, reading].flatMap((build) =>
+    build(helpers()),
+  ),
+
+  // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
+  {
+    name: "DateField: teclado de spinbutton, pegar fecha ISO y del locale, inválido al salir y RTL",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const seg = (id, type) => `${t(id)} [data-segment="${type}"]`;
+      const activeSegment = () => page.evaluate(() => document.activeElement?.getAttribute("data-segment"));
+      const texts = (id) => page.locator(`${t(id)} [data-segment]`).allTextContents();
+      await page.locator(t("df")).scrollIntoViewIfNeeded();
+      assert((await texts("df")).join("/") === "11/13/2026", `orden en-US: ${await texts("df")}`);
+      assert(
+        (await page.locator(`${t("df")} [role=group]`).getAttribute("aria-labelledby")) !== null,
+        "el grupo se nombra con la etiqueta del Field",
+      );
+      await page.click(seg("df", "month"));
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("df-value"), "2026-12-13");
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("df-value"), "2026-01-13", "ciclo 12 → 1");
+      await page.keyboard.type("02");
+      await poll(async () => (await activeSegment()) === "day", "dos cifras avanzan al día");
+      await page.keyboard.type("31");
+      await expectText(page, t("df-value"), "none", "31 de febrero: sin valor");
+      assert(!(await page.locator(`${t("df")} .z-datefield`).getAttribute("data-invalid")), "no se marca mientras se teclea");
+      await page.keyboard.press("Tab");
+      await expectAttr(page, `${t("df")} .z-datefield`, "data-invalid", "true", "inválido al salir");
+      await expectAttr(page, seg("df", "day"), "aria-invalid", "true");
+      await page.click(seg("df", "day"));
+      await page.keyboard.type("28");
+      await expectText(page, t("df-value"), "2026-02-28");
+      await poll(async () => (await page.locator(`${t("df")} .z-datefield`).getAttribute("data-invalid")) === null, "corregido: sin marca");
+      await page.keyboard.press("Backspace");
+      await expectText(page, t("df-value"), "none");
+      await page.keyboard.press("Backspace");
+      await poll(async () => (await activeSegment()) === "day", "Retroceso en un segmento vacío vuelve al anterior");
+      const paste = (selector, data) =>
+        page.locator(selector).evaluate((el, text) => {
+          el.focus();
+          const transfer = new DataTransfer();
+          transfer.setData("text", text);
+          // Firefox no acepta clipboardData al construir el evento: usa dataType y data.
+          el.dispatchEvent(
+            new ClipboardEvent("paste", { clipboardData: transfer, dataType: "text/plain", data: text, bubbles: true, cancelable: true }),
+          );
+        }, data);
+      await paste(seg("df", "year"), "2030-01-02");
+      await expectText(page, t("df-value"), "2030-01-02", "pegar ISO");
+      await paste(seg("df", "day"), "12/25/2031");
+      await expectText(page, t("df-value"), "2031-12-25", "pegar en formato en-US");
+      await page.click(`${t("df")} .z-datefield__clear`);
+      await expectText(page, t("df-value"), "none", "borrar");
+      // Fecha y hora en 24 h, en-GB.
+      assert((await texts("dtf")).join(" ") === "dd mm yyyy –– ––", `en-GB con hora: ${await texts("dtf")}`);
+      await page.click(seg("dtf", "day"));
+      await page.keyboard.type("13112026");
+      await page.keyboard.type("2105");
+      await expectText(page, t("dtf-value"), "2026-11-13T21:05");
+      await shot(page, "forms-datefield");
+      // RTL: la flecha izquierda va al segmento siguiente, que queda a la izquierda.
+      await page.click(seg("rtl-df", "month"));
+      await page.keyboard.press("ArrowLeft");
+      await poll(async () => (await activeSegment()) === "day", "RTL: flecha izquierda al siguiente");
+      const [month, day] = [
+        await page.locator(seg("rtl-df", "month")).boundingBox(),
+        await page.locator(seg("rtl-df", "day")).boundingBox(),
+      ];
+      assert(day.x < month.x, "RTL: el día queda a la izquierda del mes");
+    },
+  },
+  {
+    name: "TimeField: 12 h y AM/PM, pasos de minuto y franja que cruza la medianoche",
+    async run({ open }) {
+      const page = await open("forms");
+      const seg = (id, type) => `${t(id)} [data-segment="${type}"]`;
+      await page.locator(t("tf")).scrollIntoViewIfNeeded();
+      await page.click(seg("tf", "minute"));
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("tf-value"), "07:45", "paso de 15 minutos");
+      await page.keyboard.press("ArrowUp");
+      await expectText(page, t("tf-value"), "07:00", "ciclo 45 → 00");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.type("p");
+      await expectText(page, t("tf-value"), "19:00");
+      await page.click(seg("tf", "hour"));
+      await page.keyboard.type("12");
+      await expectText(page, t("tf-value"), "12:00", "12 PM es mediodía");
+      await page.click(seg("tf", "dayPeriod"));
+      await page.keyboard.type("a");
+      await expectText(page, t("tf-value"), "00:00", "12 AM es medianoche");
+      // 22:00–02:00.
+      await page.click(seg("night", "hour"));
+      await page.keyboard.type("2330");
+      await expectText(page, t("night-value"), "23:30");
+      await page.keyboard.press("Tab");
+      await sleep(100);
+      assert((await page.locator(`${t("night")} .z-datefield`).getAttribute("data-invalid")) === null, "23:30 está en la franja");
+      await page.click(seg("night", "hour"));
+      await page.keyboard.type("12");
+      await page.keyboard.press("Tab");
+      await expectAttr(page, `${t("night")} .z-datefield`, "data-invalid", "true", "12:30 queda fuera");
+      await page.click(seg("night", "hour"));
+      await page.keyboard.type("01");
+      await expectText(page, t("night-value"), "01:30");
+      await poll(
+        async () => (await page.locator(`${t("night")} .z-datefield`).getAttribute("data-invalid")) === null,
+        "01:30 vuelve a la franja",
+      );
+    },
+  },
+  {
+    name: "TimePicker: columnas y lista de franjas con teclado; Escape y foco",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      const panel = ".z-timepicker__panel";
+      const activeOption = () =>
+        page.evaluate(() => {
+          const el = document.activeElement;
+          return el?.getAttribute("role") === "option"
+            ? `${el.closest("[data-column]")?.dataset.column ?? "list"}:${el.textContent}`
+            : null;
+        });
+      await page.locator(t("tp")).scrollIntoViewIfNeeded();
+      const trigger = `${t("tp")} .z-timepicker__trigger`;
+      await page.click(trigger);
+      await visible(page, panel);
+      await expectAttr(page, trigger, "aria-expanded", "true");
+      await poll(async () => (await activeOption()) === "hour:09", "foco inicial en la hora elegida");
+      await expectOnTop(page, panel);
+      await shot(page, "forms-timepicker-columns");
+      await page.keyboard.press("ArrowDown");
+      await expectText(page, t("tp-value"), "10:30", "la selección sigue al foco");
+      await page.keyboard.press("Tab");
+      await poll(async () => (await activeOption()) === "minute:30", "Tab a los minutos");
+      await page.keyboard.press("ArrowDown");
+      await expectText(page, t("tp-value"), "10:35", "minutos de 5 en 5");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowDown");
+      await expectText(page, t("tp-value"), "22:35", "PM");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await focusOn(page, trigger, "Intro cierra y el foco vuelve al botón");
+      // Alt+Flecha abajo desde un segmento; Escape cierra sin cambiar.
+      await page.click(`${t("tp")} [data-segment="minute"]`);
+      await page.keyboard.press("Alt+ArrowDown");
+      await visible(page, panel);
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+      await expectText(page, t("tp-value"), "22:35");
+      await focusOn(page, trigger, "Escape devuelve el foco al botón");
+      // Lista de franjas.
+      const listTrigger = `${t("tpl")} .z-timepicker__trigger`;
+      await page.click(listTrigger);
+      await visible(page, panel);
+      await expectCount(page, `${panel} [role=option]`, 17, "franjas de 09:00 a 17:00");
+      await expectAttr(page, `${panel} [data-value="12:00"]`, "aria-disabled", "true");
+      await poll(async () => (await activeOption()) === "list:09:00", "foco inicial en la primera franja");
+      await page.keyboard.press("ArrowDown");
+      await poll(async () => (await activeOption()) === "list:09:30", "flecha abajo");
+      await expectText(page, t("tpl-value"), "none", "mover no elige");
+      await page.keyboard.type("15");
+      await expectCount(page, `${panel} [role=option]`, 2, "el filtro deja 15:00 y 15:30");
+      await poll(async () => (await activeOption()) === "list:15:00", "el foco va a la primera que coincide");
+      await shot(page, "forms-timepicker-list");
+      await page.keyboard.press("Escape");
+      await expectCount(page, `${panel} [role=option]`, 17, "Escape limpia el filtro");
+      assert(await page.isVisible(panel), "el primer Escape no cierra");
+      await page.keyboard.type("1530");
+      await page.keyboard.press("Enter");
+      await gone(page, panel);
+      await expectText(page, t("tpl-value"), "15:30");
+      await focusOn(page, listTrigger);
+    },
+  },
+  {
+    name: "DateField y TimeField en un formulario: name, required, envío inválido y form.reset()",
+    async run({ open }) {
+      const page = await open("forms");
+      const form = t("dt-form");
+      await page.locator(form).scrollIntoViewIfNeeded();
+      await page.click(t("dt-submit"));
+      await poll(
+        () =>
+          page.evaluate(
+            (s) => document.activeElement?.closest(s) !== null && document.activeElement?.getAttribute("data-segment") === "month",
+            form,
+          ),
+        "un envío con el campo obligatorio vacío lleva el foco a su primer segmento",
+      );
+      await expectText(page, t("dt-sent"), "none", "no se envía");
+      await expectAttr(page, `${form} .z-datefield:not(.z-timefield)`, "data-invalid", "true");
+      await page.keyboard.type("0315");
+      assert(
+        await page.evaluate(
+          (s) =>
+            document.querySelector(`${s} .z-datefield:not(.z-timefield) .z-native-input`).validationMessage === "Enter a complete date.",
+          form,
+        ),
+        "incompleto: mensaje propio",
+      );
+      await page.keyboard.type("2026");
+      await page.click(t("dt-submit"));
+      await expectText(page, t("dt-sent"), '{"date":"2026-03-15","time":"08:00"}');
+      await page.click(`${form} .z-timefield [data-segment="hour"]`);
+      await page.keyboard.press("ArrowUp");
+      await page.click(t("dt-reset"));
+      await expectText(page, t("dt-sent"), "reset");
+      await poll(
+        async () => (await page.locator(`${form} [data-segment]`).allTextContents()).join(" ") === "mm dd yyyy 08 00",
+        "form.reset() vuelve a los valores iniciales",
+      );
+    },
+  },
+
+  // ───────────────────────────── Familia de fecha: cierre ─────────────────────────────
+  {
+    name: "WeekPicker de rango, número de semana pulsable, horas del día límite, hoja inferior y Timer",
+    async run({ open, shot }) {
+      const page = await open("forms");
+      // Rango de semanas: dos pulsaciones eligen de una semana a otra.
+      await page.click(`${t("week-range")} button.z-select__control`);
+      const panel = ".z-datepicker__panel:popover-open";
+      await visible(page, panel);
+      await page.click(`${panel} .z-calendar__day[data-date="2026-11-03"]:not([data-outside])`);
+      await page.click(`${panel} .z-calendar__day[data-date="2026-11-24"]:not([data-outside])`);
+      await gone(page, panel);
+      await expectText(page, t("week-range-value"), "2026-W45/2026-W48");
+      assert((await text(page, `${t("week-range")} .z-select__value`)).includes("Week 45–48"), "texto del rango de semanas");
+
+      // Número de semana: un botón que elige la semana entera.
+      const weekButton = `${t("week-number-calendar")} .z-calendar__week-button`;
+      await expectCount(page, weekButton, 6, "un botón por semana");
+      await page.locator(weekButton).nth(3).click();
+      await expectText(page, t("week-number-value"), "47:2026-11-16 2026-11-16/2026-11-22");
+
+      // DateTimePicker: el día de `min` empieza a las 09:30.
+      await page.click(`${t("bounded-dt")} .z-datetimepicker__trigger`);
+      const dtPanel = ".z-datetimepicker__panel:popover-open";
+      await visible(page, dtPanel);
+      await page.click(`${dtPanel} .z-calendar__day[data-date="2026-11-19"]:not([data-outside])`);
+      await page.locator(`${dtPanel} .z-timefield [data-segment="hour"]`).click();
+      await page.keyboard.type("0800");
+      await page.click(`${dtPanel} .z-calendar__apply`);
+      await gone(page, dtPanel);
+      await expectText(page, t("bounded-dt-value"), "2026-11-19T09:30", "la hora antes de min se encaja en min");
+
+      // Hoja inferior: Drawer modal con el calendario; elegir cierra.
+      await page.click(`${t("sheet-picker")} button.z-select__control`);
+      await visible(page, "dialog.z-datepicker__drawer:modal");
+      await focusInside(page, "dialog.z-datepicker__drawer");
+      await shot(page, "datepicker-drawer");
+      await page.click(`dialog.z-datepicker__drawer .z-calendar__day[data-date="2026-11-20"]:not([data-outside])`);
+      await gone(page, "dialog.z-datepicker__drawer:modal");
+      await expectText(page, t("sheet-picker-value"), "2026-11-20");
+
+      // Preajustes encima.
+      await expectAttr(page, `${t("presets-top")}`, "data-testid", "presets-top");
+      await page.click(`${t("presets-top")} button.z-select__control`);
+      await visible(page, `${panel} .z-calendar[data-presets-placement="top"]`);
+      await page.keyboard.press("Escape");
+      await gone(page, panel);
+
+      // Timer: corre, pausa, reanuda y termina; los hitos van a la región status.
+      const timer = t("timer");
+      await page.click(`${timer} .z-timer__toggle`);
+      await expectText(page, t("timer-state"), "running");
+      await page.click(`${timer} .z-timer__toggle`);
+      await expectText(page, t("timer-state"), "paused");
+      await poll(async () => (await text(page, `${timer} .z-timer__status`)).startsWith("Paused"), "anuncio de pausa");
+      await page.click(`${timer} .z-timer__toggle`);
+      await poll(async () => (await page.locator(t("timer-state")).textContent()) === "done", "la cuenta atrás termina", 6000);
+      await poll(async () => (await text(page, `${timer} .z-timer__status`)) === "Time's up", "anuncio de fin");
+      assert((await page.locator(`${timer} [role="timer"]`).textContent()) === "00:00", "pantalla a cero");
+    },
+  },
+
+  // ───────────────────────────── Agenda ─────────────────────────────
+  {
+    name: "Agenda: semana con roles, una parada de Tab, vistas y navegación",
+    async run({ open, shot }) {
+      const page = await open("agenda");
+      const root = "#app-agenda";
+      await visible(page, `${root} .z-timegrid[role="grid"]`);
+      await expectCount(page, `${root} .z-timegrid__dayhead[role="columnheader"]`, 7, "siete días");
+      await expectAttr(page, `${root} .z-timegrid__dayhead[data-date="2026-11-19"]`, "aria-current", "date");
+      const tabbable = await page.locator(`${root} .z-agenda__view [tabindex="0"]`).count();
+      assert(tabbable === 1, `una sola parada de Tab en la vista: ${tabbable}`);
+      const label = await page.locator(`${root} .z-event[data-key="interview-frontend-2026-11-19-10-30"]`).evaluate((el) => el.textContent);
+      assert(
+        label?.includes("Interview: frontend") && label.includes("Room Kepler") && label.includes("Team"),
+        `nombre del evento: ${label}`,
+      );
+      const title = () => text(page, `${root} .z-agenda__title`);
+      assert(/16\s*–\s*22 November 2026 · W47/.test(await title()), `título: ${await title()}`);
+      await page.click(`${root} .z-agenda__nav [data-nav="next"]`);
+      await poll(async () => /23\s*–\s*29 November 2026 · W48/.test(await title()), "semana siguiente");
+      await page.click(`${root} .z-agenda__today`);
+      await page.click(`${root} .z-agenda__views [data-view="month"]`);
+      await visible(page, `${root} .z-monthgrid[role="grid"]`);
+      await page.click(`${root} .z-agenda__views [data-view="agenda"]`);
+      await visible(page, `${root} .z-agendalist[role="list"]`);
+      await page.click(`${root} .z-agenda__views [data-view="day"]`);
+      await expectCount(page, `${root} .z-timegrid__dayhead`, 1, "un día");
+      await visible(page, `${root} .z-timegrid__gutter--second`, "segunda zona en el día");
+      await shot(page, "agenda-day");
+    },
+  },
+  {
+    name: "Agenda: agarrar con teclado, mover, soltar y anunciar; Escape cancela",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-agenda";
+      const key = "lunch-2026-11-19-13-00";
+      const ev = `${root} .z-agenda__view .z-event[data-key="${key}"]`;
+      await page.locator(ev).focus();
+      await page.keyboard.press("Enter");
+      await visible(page, `${root} .z-agenda__detail:popover-open`, "Intro abre el detalle");
+      await page.keyboard.press("Escape");
+      await gone(page, `${root} .z-agenda__detail`);
+      await focusOn(page, ev, "el foco vuelve al evento");
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Escape");
+      await page.locator(ev).focus();
+      await page.keyboard.press("Enter");
+      await expectAttr(page, ev, "aria-pressed", "true", "la segunda Intro agarra");
+      await visible(page, `${root} .z-agenda__hint`);
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("ArrowRight");
+      await focusOn(page, ev, "el foco sigue en el evento al cambiar de día");
+      await page.keyboard.press("Enter");
+      await expectText(page, t("agenda-log"), "Lunch: 2026-11-20T13:30 → 2026-11-20T14:15");
+      await poll(async () => (await text(page, `${root} .z-agenda__live`)).startsWith("Moved Lunch"), "anuncio en la región viva");
+      // Escape cancela sin cambios.
+      const moved = `${root} .z-agenda__view .z-event[data-key="${key}"]`;
+      await page.locator(moved).focus();
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Escape");
+      await page.locator(moved).focus();
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("ArrowUp");
+      await page.keyboard.press("Escape");
+      await poll(async () => (await text(page, `${root} .z-agenda__live`)) === "Move cancelled", "anuncio de cancelación");
+      await expectText(page, t("agenda-log"), "Lunch: 2026-11-20T13:30 → 2026-11-20T14:15");
+    },
+  },
+  {
+    name: "Agenda: arrastrar, redimensionar y crear con puntero; «Move to…» sin arrastre",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-agenda";
+      const ev = `${root} .z-agenda__view .z-event[data-key="release-review-2026-11-19-15-00"]`;
+      const from = await center(page, ev);
+      // Una hora más abajo (48 px por hora en la semana) y un día a la derecha.
+      const col = await page.locator(`${root} .z-timegrid__col[data-date="2026-11-20"]`).boundingBox();
+      await drag(page, { x: from.x, y: from.box.y + 6 }, { x: col.x + col.width / 2, y: from.box.y + 6 + 48 });
+      await expectText(page, t("agenda-log"), "Release review: 2026-11-20T16:00 → 2026-11-20T17:00");
+      // Redimensionar desde el asa: 30 min más.
+      const moved = `${root} .z-agenda__view .z-event[data-key="release-review-2026-11-19-15-00"]`;
+      // Lejos del borde del contenedor: cerca de él, el arrastre desplaza solo (y alarga más).
+      await page.locator(moved).evaluate((el) => el.scrollIntoView({ block: "center" }));
+      await page.hover(moved);
+      const box = await page.locator(moved).boundingBox();
+      await drag(
+        page,
+        { x: box.x + box.width / 2, y: box.y + box.height - 3 },
+        { x: box.x + box.width / 2, y: box.y + box.height - 3 + 24 },
+      );
+      await poll(
+        async () => (await text(page, t("agenda-log"))) === "Release review: 2026-11-20T16:00 → 2026-11-20T17:30",
+        "redimensionar 30 min",
+      ).catch(async (e) => {
+        throw new Error(`${e.message}: ${await text(page, t("agenda-log"))}`);
+      });
+      // Crear arrastrando sobre una franja vacía del sábado (08:00 → 09:30), lejos del borde del contenedor.
+      await page.locator(`${root} .z-timegrid__scroll`).evaluate((el) => {
+        el.scrollTop = 0;
+      });
+      const sat = await page.locator(`${root} .z-timegrid__col[data-date="2026-11-21"]`).boundingBox();
+      await drag(page, { x: sat.x + sat.width / 2, y: sat.y + 48 + 4 }, { x: sat.x + sat.width / 2, y: sat.y + 48 * 2 + 20 });
+      await poll(
+        async () => (await text(page, t("agenda-log"))) === "New event: 2026-11-21T08:00 → 2026-11-21T09:30",
+        "selección de franja",
+      ).catch(async (e) => {
+        throw new Error(`${e.message}: ${await text(page, t("agenda-log"))}`);
+      });
+      // «Move to…»: detalle → diálogo con fecha y horas.
+      const lunch = `${root} .z-agenda__view .z-event[data-key="lunch-2026-11-19-13-00"]`;
+      await page.click(lunch);
+      await page.click(`${root} .z-agenda__move-open`);
+      await visible(page, `${root} dialog.z-agenda__move:modal`);
+      await page.fill(`${root} dialog.z-agenda__move input[name="start"]`, "14:00");
+      await page.fill(`${root} dialog.z-agenda__move input[name="end"]`, "14:45");
+      await page.click(`${root} .z-agenda__move-apply`);
+      await gone(page, `${root} dialog.z-agenda__move`);
+      await expectText(page, t("agenda-log"), "Lunch: 2026-11-19T14:00 → 2026-11-19T14:45");
+    },
+  },
+  {
+    name: "Agenda: mes con «+N más», teclado por días y lista del día en estrecho",
+    async run({ open, shot }) {
+      const page = await open("agenda", { query: "agenda-view=month" });
+      const root = "#app-agenda";
+      await visible(page, `${root} .z-monthgrid`);
+      const more = `${root} .z-monthgrid__more[data-more="2026-11-19"]`;
+      await page.click(more);
+      await visible(page, `${root} .z-agenda__pop[data-pop="more"]:popover-open`);
+      await focusInside(page, `${root} .z-agenda__pop[data-pop="more"]`);
+      await page.keyboard.press("Escape");
+      await gone(page, `${root} .z-agenda__pop[data-pop="more"]`);
+      await page.locator(`${root} .z-monthgrid__cell[data-date="2026-11-19"]`).focus();
+      await page.keyboard.press("ArrowRight");
+      await focusOn(page, `${root} .z-monthgrid__cell[data-date="2026-11-20"]`);
+      await page.keyboard.press("ArrowDown");
+      await focusOn(page, `${root} .z-monthgrid__cell[data-date="2026-11-27"]`);
+      await page.keyboard.press("Enter");
+      await focusInside(page, `${root} .z-monthgrid__cell[data-date="2026-11-27"] .z-event`);
+      await page.keyboard.press("Escape");
+      await focusOn(page, `${root} .z-monthgrid__cell[data-date="2026-11-27"]`);
+      const narrow = await open("agenda", { query: "agenda-view=month", width: 390, height: 844 });
+      await visible(narrow, `${root} .z-monthgrid__daylist`);
+      await shot(narrow, "agenda-month-390");
+    },
+  },
+  // ───────────────────────────── Agenda, oleada 2 ─────────────────────────────
+  {
+    name: "Agenda: vistas de año, perpetuo y línea temporal en el EventCalendar",
+    async run({ open, shot }) {
+      const page = await open("agenda", { query: "agenda-view=year" });
+      const root = "#app-agenda";
+      await visible(page, `${root} .z-yeargrid`);
+      await expectCount(page, `${root} .z-yeargrid__table[role="grid"]`, 12, "12 minimeses");
+      await expectCount(page, `${root} .z-agenda__view [tabindex="0"]`, 1, "una parada de Tab");
+      const day = `${root} .z-yeargrid__day[data-date="2026-11-19"]`;
+      await page.locator(day).focus();
+      await page.keyboard.press("ArrowRight");
+      await focusOn(page, `${root} .z-yeargrid__day[data-date="2026-11-20"]`);
+      await page.keyboard.press("Enter");
+      await visible(page, `${root} .z-timegrid`);
+      assert((await page.getAttribute(root, "data-view")) === "day", "Intro abre la vista de día");
+      await page.click(`${root} .z-agenda__views [data-view="perpetual"]`);
+      await visible(page, `${root} .z-perpetual__table`);
+      await expectText(page, `${root} .z-perpetual__result`, "20 Nov 2026 → Friday");
+      await page.click(`${root} .z-agenda__views [data-view="timeline"]`);
+      await visible(page, `${root} .z-timeline__grid[role="grid"]`);
+      await expectCount(page, `${root} .z-timeline__booking[data-key^="interview-frontend"]`, 0, "la línea temporal es del día 20");
+      await page.click(`${root} .z-agenda__nav [data-nav="previous"]`);
+      await visible(page, `${root} .z-timeline__booking[data-key^="interview-frontend"]`);
+      await shot(page, "agenda-timeline");
+    },
+  },
+  {
+    name: "Agenda: arrastrar y alargar con el puntero en la línea temporal del EventCalendar",
+    async run({ open }) {
+      const page = await open("agenda", { query: "agenda-view=timeline" });
+      const root = "#app-agenda";
+      const booking = `${root} .z-timeline__booking[data-key="release-review-2026-11-19-15-00"]`;
+      await visible(page, booking);
+      await page.locator(booking).evaluate((el) => el.scrollIntoView({ block: "center", inline: "center" }));
+      const hour = await page
+        .locator(`${root} .z-timeline__track`)
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().width / 14);
+      const box = await page.locator(booking).boundingBox();
+      await drag(page, { x: box.x + 12, y: box.y + box.height / 2 }, { x: box.x + 12 + hour, y: box.y + box.height / 2 });
+      await expectText(page, t("agenda-log"), "Release review: 2026-11-19T16:00 → 2026-11-19T17:00");
+      // Alargar por el asa del final (visible con la reserva elegida): media hora más.
+      await page.locator(booking).click();
+      const handle = await page.locator(`${booking} .z-event__resize`).boundingBox();
+      assert(handle, "asa de alargar visible");
+      const y = handle.y + handle.height / 2;
+      await drag(page, { x: handle.x + handle.width / 2, y }, { x: handle.x + handle.width / 2 + hour / 2, y });
+      await expectText(page, t("agenda-log"), "Release review: 2026-11-19T16:00 → 2026-11-19T17:30");
+    },
+  },
+  {
+    name: "Gantt: arrastrar una barra dos días, zoom y dependencias reflejadas en RTL",
+    async run({ open, shot }) {
+      const page = await open("agenda");
+      const root = "#app-gantt";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      const bar = `${root} [data-task="docs"]`;
+      await page.locator(bar).evaluate((el) => el.scrollIntoView({ block: "center" }));
+      const box = await page.locator(bar).boundingBox();
+      await drag(page, { x: box.x + 30, y: box.y + box.height / 2 }, { x: box.x + 30 + 60, y: box.y + box.height / 2 });
+      await expectText(page, t("planning-log"), "Docs site: 2026-11-26 → 2026-12-05");
+      await page.click(`${root} [data-scale-option="month"]`);
+      await expectAttr(page, root, "data-scale", "month");
+      const rtl = await open("agenda", { query: "dir=rtl" });
+      await rtl.locator(root).scrollIntoViewIfNeeded();
+      const scale = await rtl.locator(`${root} .z-timeline__deps`).evaluate((el) => getComputedStyle(el).scale);
+      assert(scale === "-1 1", `SVG reflejado en RTL: ${scale}`);
+      const a = await rtl.locator(`${root} [data-task="tokens"]`).boundingBox();
+      const b = await rtl.locator(`${root} [data-task="calendar"]`).boundingBox();
+      assert(b.x + b.width < a.x + a.width, "en RTL lo posterior queda a la izquierda");
+      await rtl.locator(`${root} [data-task="tokens"]`).focus();
+      await rtl.keyboard.press("Enter");
+      await rtl.keyboard.press("Enter");
+      await rtl.keyboard.press("ArrowLeft");
+      await rtl.keyboard.press("Enter");
+      await expectText(rtl, t("planning-log"), "Tokens v2: 2026-11-17 → 2026-11-25");
+      await shot(rtl, "gantt-rtl");
+    },
+  },
+  {
+    name: "Recursos y buscar hueco: crear arrastrando, conflicto en texto y «Use …»",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-rooms";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      await page.locator(`${root} .z-timeline__track[data-resource="vega"]`).evaluate((el) => el.scrollIntoView({ block: "center" }));
+      const track = await page.locator(`${root} .z-timeline__track[data-resource="vega"]`).boundingBox();
+      // 88 px por hora desde las 08:00: de 13:00 a 15:00.
+      await drag(
+        page,
+        { x: track.x + 88 * 5 + 2, y: track.y + track.height / 2 },
+        { x: track.x + 88 * 7 + 2, y: track.y + track.height / 2 },
+      );
+      await expectText(page, t("planning-log"), "New booking: vega 2026-11-19T13:00 → 2026-11-19T15:00");
+      const conflict = await page.locator(`${root} .z-timeline__booking[data-conflict]`).first().textContent();
+      assert(conflict.includes("overlaps") || conflict.includes("Overlaps"), `conflicto: ${conflict}`);
+      const fb = "#app-freebusy";
+      await page.locator(fb).scrollIntoViewIfNeeded();
+      await page.click(`${fb} .z-freebusy__use`);
+      await poll(async () => (await text(page, t("planning-log"))).startsWith("Use: 2026-11-19T"), "z:select / onSelect");
+    },
+  },
+  {
+    name: "SlotPicker y estancia: elegir hora con teclado, otra zona, noches y ajuste ±1",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-slots";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      const first = page.locator(`${root} [role="option"]`).first();
+      await first.focus();
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+      await poll(async () => (await text(page, t("planning-log"))).startsWith("Slot: 2026-11-24T"), "onSelect");
+      await page.selectOption(`${root} .z-slotpicker__select`, "America/New_York");
+      await poll(
+        async () => (await page.locator(`${root} [role="option"]`).first().textContent()).startsWith("03:00"),
+        "horas en Nueva York",
+      );
+      const stay = "#app-stay-calendar";
+      await page.locator(stay).scrollIntoViewIfNeeded();
+      await expectText(page, `${stay} .z-calendar__length`, "5 nights");
+      await page.click(`${stay} .z-calendar__stepper-btn >> nth=1`);
+      await expectText(page, `${stay} .z-calendar__length`, "6 nights");
+      await page.click(`${stay} .z-calendar__day[data-date="2026-11-25"]:not([data-outside])`);
+      await page.hover(`${stay} .z-calendar__day[data-date="2026-11-26"]:not([data-outside])`);
+      await visible(page, `${stay} .z-calendar__hint`);
+      await page.click(`${stay} .z-calendar__day[data-date="2026-11-28"]:not([data-outside])`);
+      await expectText(page, `${stay} .z-calendar__length`, "3 nights");
+    },
+  },
+  {
+    name: "Mapa de calor y rachas: etiqueta al enfocar, tabla y estados con nombre",
+    async run({ open }) {
+      const page = await open("agenda");
+      const root = "#app-heatmap";
+      await page.locator(root).scrollIntoViewIfNeeded();
+      const cell = `${root} .z-heatmap__cell[data-date="2026-11-12"]`;
+      await page.locator(cell).focus();
+      await visible(page, `${root} .z-heatmap__tip`);
+      await page.keyboard.press("ArrowLeft");
+      await focusOn(page, `${root} .z-heatmap__cell[data-date="2026-11-05"]`);
+      await page.click(`${root} .z-heatmap__toggle`);
+      await visible(page, `${root} .z-heatmap__table`);
+      const habit = "#app-habit";
+      await page.locator(habit).scrollIntoViewIfNeeded();
+      const label = await page.getAttribute(`${habit} .z-habit__day[data-date="2026-11-04"]`, "aria-label");
+      assert(label.endsWith("Missed"), `fallado: ${label}`);
+    },
+  },
+  {
+    name: "Agenda: zona del navegador distinta de timeZone, colores forzados e impresión",
+    async run({ open, shot }) {
+      // El navegador en Auckland; la agenda presenta Madrid: el jueves 19 a las 10:00 sigue en el jueves 19.
+      const page = await open("agenda", { timezoneId: "Pacific/Auckland" });
+      const root = "#app-agenda";
+      const ev = `${root} .z-agenda__view .z-event[data-key^="interview-frontend"]`;
+      const label = await page.locator(ev).textContent();
+      assert(label.includes("10:30–11:30") && label.includes("Thursday 19 November"), `hora de Madrid: ${label}`);
+      await page.emulateMedia({ forcedColors: "active" });
+      const border = await page.locator(ev).evaluate((el) => getComputedStyle(el).borderTopStyle);
+      assert(border === "solid", "evento con borde de sistema en colores forzados");
+      await page.locator(ev).focus();
+      const outline = await page.locator(ev).evaluate((el) => getComputedStyle(el).outlineStyle);
+      assert(outline !== "none", "foco visible con colores forzados");
+      await shot(page, "agenda-forced-colors");
+      await page.emulateMedia({ forcedColors: "none", media: "print" });
+      const side = await page.locator(`${root} .z-agenda__side`).evaluate((el) => getComputedStyle(el).display);
+      assert(side === "none", "sin lateral al imprimir");
+      const overflow = await page.locator(`${root} .z-timegrid__scroll`).evaluate((el) => getComputedStyle(el).overflowY);
+      assert(overflow === "visible", `sin desplazamiento interno al imprimir: ${overflow}`);
+      await page.emulateMedia({ media: "screen" });
+    },
+  },
+  {
+    name: "Rendimiento: 5000 eventos en el mes y 500 recursos sin tareas largas al navegar",
+    async run({ open, note }) {
+      const page = await open("perf-stage");
+      const root = "#perf-agenda";
+      await visible(page, `${root} .z-monthgrid`);
+      const measure = (label, action) =>
+        page.evaluate(
+          async ([label, action]) => {
+            const long = [];
+            const observer = new PerformanceObserver((list) => {
+              for (const entry of list.getEntries()) long.push(entry.duration);
+            });
+            // Firefox y WebKit no tienen «longtask» (y Firefox avisa por consola si se pide): solo donde exista.
+            if (PerformanceObserver.supportedEntryTypes?.includes("longtask")) observer.observe({ type: "longtask", buffered: false });
+            performance.mark(`${label}-start`);
+            const target = document.querySelector(action);
+            target.click();
+            await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+            performance.mark(`${label}-end`);
+            const m = performance.measure(label, `${label}-start`, `${label}-end`);
+            observer.disconnect();
+            return { ms: Math.round(m.duration), longest: Math.round(Math.max(0, ...long)) };
+          },
+          [label, action],
+        );
+      const results = {};
+      results.monthNext = await measure("month-next", `${root} .z-agenda__nav [data-nav="next"]`);
+      results.monthBack = await measure("month-back", `${root} .z-agenda__nav [data-nav="previous"]`);
+      results.week = await measure("week", `${root} .z-agenda__views [data-view="week"]`);
+      results.weekNext = await measure("week-next", `${root} .z-agenda__nav [data-nav="next"]`);
+      const weekEvents = await page.locator(`${root} .z-timegrid .z-event`).count();
+      const chips = await page.locator(`${root} .z-timegrid__overflow`).count();
+      results.agenda = await measure("agenda", `${root} .z-agenda__views [data-view="agenda"]`);
+      // Lista larga: ventana virtual; Fin lleva al último evento aunque no esté pintado y la ventana lo sigue.
+      const listRows = await page.locator(`${root} .z-agendalist__item`).count();
+      assert(listRows > 0 && listRows < 120, `lista con ventana virtual: ${listRows} filas pintadas`);
+      await page.locator(`${root} .z-agendalist .z-event`).first().focus();
+      await page.keyboard.press("End");
+      await until(
+        page,
+        (s) => document.activeElement?.closest(s) && document.querySelector(`${s} .z-agendalist`).scrollTop > 5000,
+        "Fin: el foco va al último evento y la lista se desplaza hasta él",
+        root,
+      );
+      assert((await page.locator(`${root} .z-agendalist__item`).count()) < 120, "la ventana sigue acotada tras desplazar");
+      results.year = await measure("year", `${root} .z-agenda__views [data-view="year"]`);
+      const rooms = "#perf-rooms";
+      await page.locator(rooms).scrollIntoViewIfNeeded();
+      const rows = await page.locator(`${rooms} .z-timeline__row[data-resource]`).count();
+      const scroll = await page.evaluate(async (sel) => {
+        const el = document.querySelector(`${sel} .z-timeline__scroll`);
+        const start = performance.now();
+        for (let i = 1; i <= 10; i++) {
+          el.scrollTop = i * 1200;
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        }
+        return Math.round((performance.now() - start) / 10);
+      }, rooms);
+      const rendered = await page.locator(`${rooms} .z-timeline__row[data-resource]`).count();
+      note(
+        `5000 eventos · ms por cambio (mayor tarea larga): ${Object.entries(results)
+          .map(([k, v]) => `${k} ${v.ms} (${v.longest})`)
+          .join(" · ")}`,
+      );
+      note(`500 recursos: ${rows} filas pintadas de 500; desplazamiento ${scroll} ms por paso; ${rendered} filas tras desplazar`);
+      note(`semana: ${weekEvents} eventos pintados y ${chips} «+N»; lista: ${listRows} filas pintadas`);
+      assert(weekEvents < 600 && chips > 0, `semana acotada: ${weekEvents} eventos y ${chips} «+N»`);
+      // Sin umbral de tiempo aquí: el servidor de pruebas sirve React de desarrollo y el tiempo de pared depende de la
+      // carga de la máquina. El umbral (CPU del hilo principal) está en tests/html/cases/15-agenda-perf.mjs.
+      assert(rows < 60, `ventana virtual: ${rows} filas pintadas`);
+      assert(
+        (await page.locator(`${rooms} .z-timeline__row[data-resource="r120"]`).count()) === 1 || rendered < 60,
+        "la ventana sigue al desplazamiento",
+      );
+    },
+  },
 ];
 
 /** Ayudantes compartidos con los archivos cases-audit-*.mjs. */

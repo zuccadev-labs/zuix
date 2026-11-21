@@ -271,8 +271,11 @@ export default async function ({ page, test, ok, card, settle, shots }) {
             .map((e) => `${e.tagName}.${e.className}`),
         ),
     );
-    await page.screenshot({ path: join(shots, "page-mobile.png"), fullPage: true });
-    await page.setViewportSize({ width: 1440, height: 1000 });
+    // Firefox no captura más de 32767 px de alto: la página entera a 390 px los pasa; entonces, solo la ventana.
+    await page
+      .screenshot({ path: join(shots, "page-mobile.png"), fullPage: true })
+      .catch(() => page.screenshot({ path: join(shots, "page-mobile.png") }))
+      .finally(() => page.setViewportSize({ width: 1440, height: 1000 }));
     ok(over <= 1, `desborda ${over}px: ${wide.join(", ")}`);
   });
 }

@@ -17,6 +17,8 @@ export interface RadioGroupProps extends Omit<ComponentProps<"div">, "onChange" 
   disabled?: boolean;
   orientation?: "horizontal" | "vertical";
   invalid?: boolean;
+  /** `card`: cada opción es un recuadro que se marca entero (planes, temas, métodos de envío). */
+  variant?: "default" | "card";
 }
 
 /** Radios habilitados que pertenecen a `group` (no a un grupo anidado). */
@@ -35,6 +37,7 @@ export function RadioGroup({
   invalid,
   className,
   orientation = "vertical",
+  variant = "default",
   id,
   required,
   "aria-describedby": describedBy,
@@ -83,13 +86,14 @@ export function RadioGroup({
       aria-labelledby={labelledBy}
       aria-disabled={disabled || undefined}
       data-orientation={orientation}
+      data-variant={variant === "card" ? "card" : undefined}
       data-invalid={isInvalid || undefined}
       data-disabled={disabled ? "" : undefined}
       className={cx("z-radio-group", className)}
       onKeyDown={handleKeyDown}
     >
       <RadioGroupContext.Provider
-        value={{ value, select: setValue, reset: () => setValue(defaultValue), name, required: isRequired, disabled, tabStop }}
+        value={{ value, select: setValue, reset: () => setValue(defaultValue), name, required: isRequired, disabled, tabStop, variant }}
       >
         {children}
       </RadioGroupContext.Provider>

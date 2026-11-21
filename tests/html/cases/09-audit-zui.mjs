@@ -190,9 +190,12 @@ window.__ready = true;
         }
         for (const control of await tab
           .locator(
-            'button[role="switch"]:not([disabled]):not([data-disabled]), button[role="checkbox"]:not([disabled]):not([data-disabled])',
+            // `:disabled` también cubre los botones de un <fieldset disabled>.
+            'button[role="switch"]:not(:disabled):not([data-disabled]), button[role="checkbox"]:not(:disabled):not([data-disabled])',
           )
           .all()) {
+          // Una fila de otra página de la tabla (paginada en el cliente) está oculta: no se pulsa.
+          if (!(await control.isVisible())) continue;
           const before = await control.getAttribute("aria-checked");
           await control.click();
           interactions += 1;
@@ -200,13 +203,21 @@ window.__ready = true;
             failures.push(`${id}: ${await control.getAttribute("role")} no cambia de estado`);
         }
         for (const group of await tab.locator('[role="radiogroup"]').all()) {
-          const radio = group.locator('[role="radio"]:not([disabled]):not([data-disabled])').last();
-          if (!(await radio.count())) continue;
+          const radio = group.locator('[role="radio"]:not(:disabled):not([data-disabled])').last();
+          // Un grupo dentro de un popover cerrado (ColorPickerTrigger) no se ve hasta abrirlo: tiene su caso propio.
+          if (!(await radio.count()) || !(await radio.isVisible())) continue;
           await radio.click();
           interactions += 1;
           if ((await radio.getAttribute("aria-checked")) !== "true") failures.push(`${id}: el radio no queda marcado`);
         }
-        for (const pressed of await tab.locator("[data-z-dom] button[aria-pressed]:not([disabled])").all()) {
+        // La opción activa de un ToggleGroup `required` no se apaga: es su contrato. Los botones de un gráfico (leyenda que
+        // no deja ocultar la última serie y vista de tabla que cambia el marcado) tienen su caso en 18-charts.
+        for (const pressed of await tab
+          .locator(
+            '[data-z-dom] button[aria-pressed]:not(:disabled):not(.z-toggle-group[data-required] > [aria-pressed="true"]):not(.z-chart *)',
+          )
+          .all()) {
+          if (!(await pressed.isVisible())) continue;
           const before = await pressed.getAttribute("aria-pressed");
           await pressed.click();
           interactions += 1;
@@ -234,6 +245,8 @@ window.__ready = true;
           }
           await tab.keyboard.press("End");
           await tab.keyboard.press("Enter");
+          // Un Select múltiple marca sin cerrar: se cierra con Escape.
+          if (await control.evaluate((b) => b.parentElement.hasAttribute("data-multiple"))) await tab.keyboard.press("Escape");
           await soon(async () => (await control.getAttribute("aria-expanded")) === "false");
           if ((await control.getAttribute("aria-expanded")) !== "false") failures.push(`${id}: Select no cierra al elegir`);
         }
@@ -246,10 +259,11 @@ window.__ready = true;
         }
         for (const control of await tab.locator(".z-datepicker > button.z-select__control:not([disabled])").all()) {
           await control.click();
-          await soon(() => tab.evaluate(() => document.activeElement?.classList.contains("z-calendar__day") === true));
+          // Un día, o un mes o un año en MonthPicker y YearPicker.
+          const onCell = () => tab.evaluate(() => document.activeElement?.matches(".z-calendar__day, .z-calendar__unit") === true);
+          await soon(onCell);
           interactions += 1;
-          if (!(await tab.evaluate(() => document.activeElement?.classList.contains("z-calendar__day"))))
-            failures.push(`${id}: DatePicker no enfoca un día al abrir`);
+          if (!(await onCell())) failures.push(`${id}: DatePicker no enfoca un día al abrir`);
           await tab.keyboard.press("Escape");
           await soon(async () => (await control.getAttribute("aria-expanded")) !== "true");
         }
@@ -529,7 +543,10 @@ ${HEAD}<title>csp</title></head><body class="z-root z-canvas" data-z-dom><main>
       await tab.waitForTimeout(350);
       await tab.locator("#open").click();
       await tab.waitForTimeout(100);
-      const placed = await tab.locator("#pop").evaluate((el) => el.matches(":popover-open") && el.style.left !== "");
+      // Colocado por CSSOM: coordenadas propias o, donde hay CSS anchor positioning, su `position-area`.
+      const placed = await tab
+        .locator("#pop")
+        .evaluate((el) => el.matches(":popover-open") && (el.style.left !== "" || el.style.getPropertyValue("position-area") !== ""));
       await tab.keyboard.press("Escape");
       await tab.locator("#slider .z-slider__thumb").focus();
       await tab.keyboard.press("ArrowRight");

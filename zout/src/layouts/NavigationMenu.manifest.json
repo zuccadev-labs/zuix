@@ -1,0 +1,78 @@
+{
+  "name": "NavigationMenu",
+  "group": "layout",
+  "status": "new",
+  "description": "Menús de un sitio con paneles: enlaces y grupos cuyo botón abre un panel de enlaces con icono y descripción, en una o varias columnas. Patrón disclosure de navegación (no menú de aplicación): los enlaces siguen en el orden de Tab. Horizontal, el panel flota (popover nativo, se abre también sin JavaScript); vertical, se despliega en su sitio.",
+  "import": "import { NavigationMenu } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "NavMenuItem[]",
+      "required": true,
+      "description": "{ label, href, current? } o { label, links: { label, href, description?, icon?, current? }[], columns?, footer? }."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Main",
+      "description": "Nombre del landmark nav."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "description": "Prefijo de los id de los paneles."
+    }
+  ],
+  "states": ["rest", "open", "current"],
+  "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "glass-border",
+    "glass-highlight",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "item-radius",
+    "control-radius",
+    "control-height-md",
+    "accent-ring",
+    "focus-width"
+  ],
+  "classes": [
+    "z-navmenu",
+    "z-navmenu__list",
+    "z-navmenu__item",
+    "z-navmenu__link",
+    "z-navmenu__trigger",
+    "z-navmenu__panel",
+    "z-navmenu__grid",
+    "z-navmenu__card",
+    "z-navmenu__icon",
+    "z-navmenu__title",
+    "z-navmenu__desc",
+    "z-navmenu__footer"
+  ],
+  "behavior": "dom",
+  "apg": "disclosure/examples/disclosure-navigation",
+  "a11y": "<nav> con nombre. Cada grupo es un button con aria-expanded y aria-controls seguido de su panel; sin role=menu ni flechas: Tab recorre los enlaces. Enter o Espacio abren y cierran el panel; Escape lo cierra y devuelve el foco al botón; al salir el foco del grupo se cierra. Con un puntero que pasa por encima el panel se previsualiza y un clic lo fija. La página actual lleva aria-current=\"page\" y se marca con fondo y peso, no solo con color.",
+  "examples": [
+    {
+      "title": "Producto con paneles",
+      "code": "<NavigationMenu id=\"site-menu\" items={[\n    { label: \"Products\", columns: 2, links: [\n      { label: \"Analytics\", href: \"/analytics\", icon: \"chart-bar\", description: \"Events, funnels and retention.\" },\n      { label: \"Storage\", href: \"/storage\", icon: \"circle-stack\", description: \"Buckets with versioning.\" },\n      { label: \"Functions\", href: \"/functions\", icon: \"bolt\", description: \"Run code close to your users.\" },\n      { label: \"Auth\", href: \"/auth\", icon: \"key\", description: \"Passkeys and single sign-on.\" },\n    ] },\n    { label: \"Resources\", links: [\n      { label: \"Docs\", href: \"/docs\", icon: \"book\", description: \"Guides and API reference.\" },\n      { label: \"Changelog\", href: \"/changelog\", icon: \"newspaper\" },\n    ] },\n    { label: \"Pricing\", href: \"/pricing\" },\n  ]} />"
+    },
+    {
+      "title": "Vertical",
+      "code": "<NavigationMenu id=\"side-menu\" orientation=\"vertical\" items={[\n    { label: \"Overview\", href: \"/overview\", current: true },\n    { label: \"Guides\", links: [\n      { label: \"Install\", href: \"/install\" },\n      { label: \"Theming\", href: \"/theming\" },\n    ] },\n  ]} />"
+    }
+  ]
+}

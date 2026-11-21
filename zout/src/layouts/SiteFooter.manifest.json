@@ -1,0 +1,101 @@
+{
+  "name": "SiteFooter",
+  "group": "layout",
+  "status": "new",
+  "description": "Pie de un sitio: marca y frase, columnas de enlaces con título, enlaces con icono (redes, repositorio) y franja legal. Variantes en columnas, centrada o mínima; superficie de cristal, sólida o sin fondo. Solo marcado y CSS.",
+  "import": "import { SiteFooter } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "brand",
+      "type": "ReactNode"
+    },
+    {
+      "name": "tagline",
+      "type": "ReactNode"
+    },
+    {
+      "name": "columns",
+      "type": "SiteFooterColumn[]",
+      "description": "{ title, links: { label, href, external? }[] }."
+    },
+    {
+      "name": "social",
+      "type": "SiteFooterSocial[]",
+      "description": "{ label, href, icon }."
+    },
+    {
+      "name": "legal",
+      "type": "ReactNode"
+    },
+    {
+      "name": "bottomLinks",
+      "type": "SiteFooterLink[]"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Hueco junto a la marca (boletín, idioma)."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["columns", "centered", "minimal"],
+      "default": "columns"
+    },
+    {
+      "name": "surface",
+      "type": "enum",
+      "values": ["glass", "solid", "plain"],
+      "default": "glass"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Footer"
+    }
+  ],
+  "states": ["rest"],
+  "tokens": [
+    "glass-bg",
+    "glass-border",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "radius-panel",
+    "control-radius",
+    "control-height-md",
+    "text-small",
+    "font-display"
+  ],
+  "classes": [
+    "z-sitefooter",
+    "z-sitefooter__top",
+    "z-sitefooter__brand",
+    "z-sitefooter__logo",
+    "z-sitefooter__tagline",
+    "z-sitefooter__social",
+    "z-sitefooter__social-link",
+    "z-sitefooter__nav",
+    "z-sitefooter__column",
+    "z-sitefooter__title",
+    "z-sitefooter__link",
+    "z-sitefooter__bottom",
+    "z-sitefooter__legal",
+    "z-sitefooter__bottom-links"
+  ],
+  "behavior": "none",
+  "a11y": "<footer> (contentinfo en la página) con un <nav> con nombre para los enlaces; cada lista se nombra con el título de su columna. Los enlaces de icono llevan aria-label. Los externos llevan una flecha visible. Texto en fg-muted (≥ 4,5:1).",
+  "examples": [
+    {
+      "title": "Columnas",
+      "code": "<SiteFooter\n  brand=\"Acme\"\n  tagline=\"Interfaces that feel native, on any brand.\"\n  social={[\n    { label: \"Source code\", href: \"https://example.com/acme\", icon: \"code-bracket\" },\n    { label: \"Contact\", href: \"mailto:hello@example.com\", icon: \"envelope\" },\n  ]}\n  columns={[\n    { title: \"Product\", links: [{ label: \"Components\", href: \"/components\" }, { label: \"Pricing\", href: \"/pricing\" }] },\n    { title: \"Resources\", links: [{ label: \"Docs\", href: \"/docs\" }, { label: \"Status\", href: \"https://status.example.com\", external: true }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"/about\" }, { label: \"Careers\", href: \"/careers\" }] },\n  ]}\n  legal=\"© 2026 Acme Inc.\"\n  bottomLinks={[{ label: \"Privacy\", href: \"/privacy\" }, { label: \"Terms\", href: \"/terms\" }]}\n/>"
+    },
+    {
+      "title": "Mínimo",
+      "code": "<SiteFooter\n  variant=\"minimal\"\n  surface=\"plain\"\n  brand=\"Acme\"\n  columns={[{ title: \"Links\", links: [{ label: \"Docs\", href: \"/docs\" }, { label: \"Blog\", href: \"/blog\" }] }]}\n  legal=\"© 2026 Acme Inc.\"\n/>"
+    }
+  ]
+}

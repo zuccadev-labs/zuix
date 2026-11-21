@@ -1,0 +1,96 @@
+{
+  "name": "Sparkline",
+  "group": "charts",
+  "description": "Minigráfico en línea, área o barras: una serie sin ejes, con el último valor marcado. Imagen con nombre («Visits: from 120 to 340, low 98, high 340»); sin estado (vale en un Server Component). Lo usa StatTile con `trend`.",
+  "import": "import { Sparkline } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "values",
+      "type": "(number | null)[]",
+      "required": true
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["line", "area", "bar"],
+      "default": "line"
+    },
+    {
+      "name": "color",
+      "type": "number",
+      "default": 1,
+      "description": "Color de serie 1–8 (chart-N)."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Qué se mide (entra en el nombre accesible)."
+    },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "description": "Nombre accesible completo (sustituye al resumen)."
+    },
+    {
+      "name": "curve",
+      "type": "enum",
+      "values": ["linear", "monotone", "step"],
+      "default": "linear"
+    },
+    {
+      "name": "showEnd",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "zero",
+      "type": "boolean",
+      "description": "Incluye el 0 en la escala (por defecto, en barras)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<SparklineLabels>",
+      "description": "summary, noData."
+    }
+  ],
+  "states": ["rest"],
+  "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-area-opacity",
+    "surface-solid",
+    "radius-full",
+    "space-12",
+    "space-7"
+  ],
+  "classes": ["z-sparkline"],
+  "a11y": "role=img con un nombre que resume la serie (primero, último, mínimo y máximo, con Intl). No es interactivo: el valor exacto va en el texto junto al minigráfico. Con colores forzados, trazo en CanvasText.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Línea y barras",
+      "code": "<p>\n  Weekly visits <Sparkline values={[120, 132, 101, 154, 190, 230, 210, 340]} label=\"Weekly visits\" locale=\"en-US\" />\n  Errors <Sparkline values={[9, 7, 8, 4, 5, 3, 2]} type=\"bar\" color={5} label=\"Errors\" locale=\"en-US\" />\n</p>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Línea y barras",
+      "code": "<p>\n  Weekly visits <span class=\"z-sparkline\" data-values=\"120,132,101,154,190,230,210,340\" data-label=\"Weekly visits\" data-locale=\"en-US\"></span>\n  Errors <span class=\"z-sparkline\" data-values=\"9,7,8,4,5,3,2\" data-type=\"bar\" data-color=\"5\" data-label=\"Errors\" data-locale=\"en-US\"></span>\n</p>"
+    }
+  ],
+  "origin": "Diseño propio; StatTile de NeonBlade (sparkline embebida)."
+}

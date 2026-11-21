@@ -1,0 +1,210 @@
+/*
+  Controles de la oleada 7 del grupo forms: CircularSlider (deslizador en un anillo) y ShortcutInput (captura de
+  atajos). Mismo lenguaje que Slider y que los campos: pista hundida con el radio de la escala, tirador de 24 × 24 con
+  el pomo dentro y foco por contorno.
+*/
+@layer zui.forms {
+  /* ---------- CircularSlider ---------- */
+  .z-circular {
+    --z-circular-size: 160px;
+    --z-circular-knob: 18px;
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-circular-size);
+    block-size: var(--z-circular-size);
+    max-inline-size: 100%;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    color: var(--z-fg);
+    /* El anillo es geométrico (el valor crece en el sentido de las agujas en cualquier idioma): coordenadas físicas. */
+    direction: ltr;
+  }
+  .z-circular[data-disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-circular__svg {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+  .z-circular__track,
+  .z-circular__range {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .z-circular__track {
+    stroke: var(--z-surface-3);
+  }
+  .z-circular__range {
+    stroke: var(--z-accent);
+  }
+  .z-circular__mark {
+    stroke: var(--z-line-strong);
+    stroke-width: 0.8;
+    stroke-linecap: round;
+  }
+  .z-circular__mark[data-in-range] {
+    stroke: var(--z-accent);
+  }
+  .z-circular__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--z-space-0-5);
+    pointer-events: none;
+  }
+  .z-circular__value {
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-heading-lg);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--z-tracking-snug);
+    line-height: var(--z-leading-tight);
+  }
+  .z-circular__caption {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  /* Tirador: objetivo de 24 × 24 sobre el anillo, con el pomo de 18 dentro (como Slider). */
+  .z-circular__thumb {
+    position: absolute;
+    inset-block-start: var(--z-circular-y);
+    inset-inline-start: var(--z-circular-x);
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-space-6);
+    block-size: var(--z-space-6);
+    translate: -50% -50%;
+    border-radius: var(--z-radius-full);
+    cursor: grab;
+  }
+  .z-circular__thumb::before {
+    content: "";
+    inline-size: var(--z-circular-knob);
+    block-size: var(--z-circular-knob);
+    box-sizing: border-box;
+    border: 2px solid var(--z-accent);
+    border-radius: var(--z-radius-full);
+    background: var(--z-fg-on-accent);
+    box-shadow: var(--z-shadow-sm);
+    transition: scale var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-circular__thumb:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
+  }
+  .z-circular__thumb:active {
+    cursor: grabbing;
+  }
+  .z-circular__thumb:active::before {
+    scale: 1.12;
+  }
+  @media (forced-colors: active) {
+    .z-circular__range {
+      stroke: Highlight;
+    }
+    .z-circular__track {
+      stroke: GrayText;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-circular__thumb::before {
+      transition: none;
+    }
+  }
+
+  /* ---------- ShortcutInput: campo con las teclas como Kbd; al grabar, anillo de acento ---------- */
+  .z-shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    max-inline-size: 100%;
+  }
+  .z-shortcut__field {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-inline-size: 11rem;
+    max-inline-size: 100%;
+    block-size: var(--z-control-height-md);
+    padding-inline: var(--z-space-2-5);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font: inherit;
+    font-size: var(--z-text-body);
+    text-align: start;
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-shortcut[data-size="sm"] .z-shortcut__field {
+    block-size: var(--z-control-height-sm);
+    border-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-small);
+  }
+  @media (hover: hover) {
+    .z-shortcut__field:hover:not(:disabled) {
+      background: var(--z-control-bg-hover);
+      border-color: var(--z-control-border-hover);
+    }
+  }
+  .z-shortcut__field:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-shortcut[data-recording] .z-shortcut__field {
+    border-color: var(--z-accent);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-shortcut__field:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-shortcut__placeholder {
+    color: var(--z-fg-muted);
+  }
+  .z-shortcut[data-recording] .z-shortcut__placeholder {
+    color: var(--z-accent-text);
+  }
+  .z-shortcut__keys {
+    flex-wrap: nowrap;
+  }
+  .z-shortcut__hint {
+    margin-inline-start: auto;
+    color: var(--z-warning-text);
+    font-size: var(--z-text-caption);
+    white-space: nowrap;
+  }
+  .z-shortcut__clear {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-control-height-sm);
+    block-size: var(--z-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-shortcut__clear:hover:not(:disabled) {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-shortcut__clear:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+}

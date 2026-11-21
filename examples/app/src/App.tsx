@@ -33,10 +33,19 @@ import { PROJECTS, SCREENS, STATUS_LABEL, STATUS_TONE, isScreen, type Brand, typ
 import { Overview } from "./screens/Overview";
 import { Projects } from "./screens/Projects";
 import { Forms } from "./screens/Forms";
+import { Inputs } from "./screens/Inputs";
+import { Commands } from "./screens/Commands";
 import { Overlays } from "./screens/Overlays";
 import { NavigationScreen } from "./screens/Navigation";
 import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
+import { AgendaScreen } from "./screens/Agenda";
+import { Workspace } from "./screens/Workspace";
+import { ContentWave5 } from "./screens/ContentWave5";
+import { ChartsScreen } from "./screens/Charts";
+import { DataWave5 } from "./screens/DataWave5";
+import { Site } from "./screens/Site";
+import { Media } from "./screens/Media";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -184,12 +193,30 @@ export function App() {
       <Projects selectedId={projectId} onSelect={selectProject} />
     ) : active === "forms" ? (
       <Forms />
+    ) : active === "inputs" ? (
+      <Inputs />
+    ) : active === "commands" ? (
+      <Commands />
     ) : active === "overlays" ? (
       <Overlays onOpenPalette={() => setPaletteOpen(true)} />
     ) : active === "navigation" ? (
       <NavigationScreen />
     ) : active === "gallery" ? (
       <Gallery theme={theme} brand={brand} />
+    ) : active === "agenda" ? (
+      <AgendaScreen />
+    ) : active === "workspace" ? (
+      <Workspace />
+    ) : active === "content" ? (
+      <ContentWave5 />
+    ) : active === "charts" ? (
+      <ChartsScreen />
+    ) : active === "data" ? (
+      <DataWave5 />
+    ) : active === "site" ? (
+      <Site />
+    ) : active === "media" ? (
+      <Media />
     ) : (
       <Editor />
     );
@@ -238,6 +265,7 @@ export function App() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setBrand(brand === "dazlabs" ? "zutool" : "dazlabs")}
+                className="app-brand-toggle"
                 data-testid="toggle-brand"
               />
               <IconButton
@@ -325,7 +353,7 @@ export function App() {
                 ))}
               </NavList>
             </SidebarSection>
-            <SidebarSection title="Projects" count={PROJECTS.length} grow>
+            <SidebarSection title="Projects" count={PROJECTS.length}>
               <NavList label="Projects">
                 {PROJECTS.map((p) => (
                   <NavLink

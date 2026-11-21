@@ -13,9 +13,10 @@
 //             axe-core WCAG 2.2 A/AA (serious y critical fallan), `lang`, título, descripción y canónica.
 //   enlaces   cada enlace interno lleva a una página o archivo que existe y cada ancla a un id que existe;
 //             los externos con target=_blank llevan rel=noopener.
-//   teclado   skip link, menú móvil, buscador, índice (TOC), sidebar y cambio de tema.
+//   teclado   skip link, cajón móvil (<dialog>), paleta de búsqueda (⌘K), índice (TOC), sidebar y cambio de tema.
 //   medios    prefers-reduced-motion, prefers-reduced-transparency (solo Chromium), forced-colors e impresión.
-//   páginas   portada, componentes (React/HTML), iconos, tokens, búsqueda y 404, si el sitio las tiene.
+//   páginas   portada, índice y página de cada componente (Vista previa/Código, React/HTML, gestor de paquetes,
+//             «Copiar página»), iconos, tokens, búsqueda y 404, si el sitio las tiene.
 //   archivos  sitemap.xml, robots.txt, llms.txt y llms-full.txt.
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -189,7 +190,11 @@ const wanted = Array.from({ length: repeat }, () => engines).flat();
 const WIDTHS = quick ? [1440] : [390, 768, 1440];
 const THEMES = quick ? ["dark"] : ["dark", "light"];
 const axeSource = noAxe ? "" : readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8");
-const SHOT_PAGES = new Set(["", "components", "icons", "tokens", "search", firstDoc].filter((p) => p !== undefined));
+const SHOT_PAGES = new Set(
+  ["", "components", "components/actions/button", "components/forms/calendar", "icons", "tokens", "search", firstDoc].filter(
+    (p) => p !== undefined,
+  ),
+);
 class Unverifiable extends Error {}
 let failedTotal = 0;
 
@@ -335,7 +340,8 @@ for (const browserName of wanted) {
                   theme: doc.dataset.theme,
                   lang: doc.lang,
                   title: document.title,
-                  h1: document.querySelectorAll("h1").length,
+                  // Las vistas previas de componentes pintan su propio marcado, que puede llevar un h1 (Page, Shell).
+                  h1: [...document.querySelectorAll("h1")].filter((h) => !h.closest(".zd-preview")).length,
                   description: document.querySelector('meta[name="description"]')?.content ?? "",
                   canonical: document.querySelector('link[rel="canonical"]')?.href ?? "",
                   ogImage: document.querySelector('meta[property="og:image"]')?.content ?? "",
@@ -369,7 +375,7 @@ for (const browserName of wanted) {
                     resultTypes: ["violations"],
                   });
                   return r.violations
-                    .filter((v) => v.impact === "serious" || v.impact === "critical")
+                    .filter((v) => v.nodes.length && (v.impact === "serious" || v.impact === "critical"))
                     .map(
                       (v) =>
                         `${v.id} (${v.impact}, ${v.nodes.length}): ${v.nodes
@@ -510,9 +516,9 @@ for (const browserName of wanted) {
 
     await test("teclado: la sidebar es alcanzable, marca la página actual y navega con Enter", () =>
       withPage({ path: firstDoc }, async (page) => {
-        const current = await page.locator(".theme-doc-sidebar-menu a[aria-current='page']").count();
+        const current = await page.locator(".zd-sidebar a[aria-current='page']").count();
         ok(current === 1, `la sidebar marca ${current} enlaces con aria-current=page`);
-        const { el } = await tabTo(page, (e) => /menu__link/.test(e.cls) && !!e.href && !/menu__link--active/.test(e.cls));
+        const { el } = await tabTo(page, (e) => /zd-nav-item/.test(e.cls) && !!e.href && e.href !== new URL(page.url()).pathname, 80);
         ok(el.outline || el.shadow, `el enlace de la sidebar "${el.text}" no muestra indicador de foco`);
         const before = page.url();
         await page.keyboard.press("Enter");
@@ -521,7 +527,7 @@ for (const browserName of wanted) {
 
     await test("teclado: el índice de la página (TOC) navega a la sección y no la deja bajo la barra", () =>
       withPage({ path: firstDoc }, async (page) => {
-        const toc = page.locator(".theme-doc-toc-desktop .table-of-contents__link");
+        const toc = page.locator(".zd-toc a");
         if (!(await toc.count())) throw new Unverifiable("la página no tiene índice");
         const link = toc.nth(Math.min(1, (await toc.count()) - 1));
         await link.focus();
@@ -531,7 +537,7 @@ for (const browserName of wanted) {
         await page.waitForTimeout(400);
         const pos = await page.evaluate((h) => {
           const el = document.getElementById(decodeURIComponent(h.slice(1)));
-          const nav = document.querySelector(".navbar").getBoundingClientRect();
+          const nav = document.querySelector(".zd-nav__bar").getBoundingClientRect();
           return { top: el.getBoundingClientRect().top, nav: nav.bottom, vh: innerHeight };
         }, hash);
         ok(
@@ -540,42 +546,49 @@ for (const browserName of wanted) {
         );
       }));
 
-    await test("teclado: el menú móvil se abre, deja navegar y se cierra sin ratón", () =>
+    await test("teclado: el cajón móvil (<dialog>) se abre, deja navegar, se cierra con Escape y devuelve el foco", () =>
       withPage({ path: firstDoc, width: 390, height: 800 }, async (page) => {
-        const hiddenFocusable = await page.evaluate(
-          () =>
-            [...document.querySelectorAll(".navbar-sidebar a, .navbar-sidebar button")].filter(
-              (el) => getComputedStyle(el).visibility !== "hidden" && el.getBoundingClientRect().right > 0,
-            ).length,
-        );
-        ok(hiddenFocusable === 0, `con el menú cerrado hay ${hiddenFocusable} controles suyos alcanzables`);
-        const { el: toggle } = await tabTo(page, (e) => /navbar__toggle/.test(e.cls), 10);
+        ok((await page.locator("dialog.zd-drawer").count()) === 0, "con el cajón cerrado su contenido está en la página");
+        ok((await page.locator(".zd-sidebar").isVisible()) === false, "a 390 px la barra lateral sigue visible");
+        const { el: toggle } = await tabTo(page, (e) => /zd-nav__menu/.test(e.cls), 12);
         ok(toggle.text.length > 0, "el botón del menú no tiene nombre accesible");
         ok(
-          (await page.locator(".navbar__toggle").getAttribute("aria-expanded")) === "false",
+          (await page.locator(".zd-nav__menu").getAttribute("aria-expanded")) === "false",
           "el botón del menú no declara aria-expanded=false",
         );
         await page.keyboard.press("Enter");
-        await page.waitForSelector(".navbar-sidebar--show");
+        await page.waitForSelector("dialog.zd-drawer[open]");
         await page.waitForTimeout(350);
         ok(
-          (await page.locator(".navbar__toggle").getAttribute("aria-expanded")) === "true",
+          (await page.locator(".zd-nav__menu").getAttribute("aria-expanded")) === "true",
           "el botón del menú no pasa a aria-expanded=true",
         );
-        const { el: inside } = await tabTo(page, (e) => /menu__link/.test(e.cls), 12);
-        ok(inside.visible, "el foco entra en un enlace del menú que no se ve");
-        const box = await page.locator(".navbar-sidebar").boundingBox();
-        ok(box && box.x >= 0 && box.width <= 390, "el menú móvil se sale de la pantalla");
+        ok(await page.evaluate(() => document.querySelector("dialog.zd-drawer").matches(":modal")), "el cajón no es un diálogo modal");
+        const { el: inside } = await tabTo(page, (e) => /zd-nav-item/.test(e.cls), 20);
+        ok(inside.visible, "el foco entra en un enlace del cajón que no se ve");
+        ok(
+          await page.evaluate(() => document.querySelector("dialog.zd-drawer").contains(document.activeElement)),
+          "el foco sale del cajón",
+        );
+        const box = await page.locator("dialog.zd-drawer").boundingBox();
+        ok(box && box.x >= 0 && box.x + box.width <= 390, "el cajón se sale de la pantalla");
         if (!noShots) await page.screenshot({ path: join(shots, "menu-movil-390.png") }).catch(() => {});
-        await page.locator(".navbar-sidebar__close").focus();
-        await page.keyboard.press("Enter");
-        await page.waitForSelector(".navbar-sidebar--show", { state: "detached" });
+        await page.keyboard.press("Escape");
+        await page.waitForSelector("dialog.zd-drawer", { state: "detached" });
+        ok(/zd-nav__menu/.test((await active(page)).cls), "al cerrar, el foco no vuelve al botón del menú");
+        // Desde la barra de migas del artículo también se abre, y navegar lo cierra.
+        await page.locator(".zd-mobile-crumb").click();
+        await page.waitForSelector("dialog.zd-drawer[open]");
+        const before = page.url();
+        await page.locator("dialog.zd-drawer a.zd-nav-item:not([aria-current]):visible").first().click();
+        await page.waitForFunction((u) => location.href !== u, before);
+        await page.waitForSelector("dialog.zd-drawer", { state: "detached" });
       }));
   }
 
   await test("teclado: el cambio de tema funciona con Enter y se recuerda al navegar", () =>
     withPage({ path: "" }, async (page) => {
-      const { el } = await tabTo(page, (e) => /toggleButton|colorModeToggle/i.test(e.cls), 30);
+      const { el } = await tabTo(page, (e) => /zd-theme-toggle/.test(e.cls), 30);
       ok(el.text.length > 0 || true, "");
       const label = await page.evaluate(() => document.activeElement.getAttribute("aria-label") ?? document.activeElement.title ?? "");
       ok(label.length > 0, "el botón de tema no tiene nombre accesible");
@@ -592,12 +605,15 @@ for (const browserName of wanted) {
       );
     }));
 
-  const searchInput = ".navbar__search-input";
-  await test("buscador: Ctrl K enfoca, las flechas eligen un resultado y Enter abre el documento", () =>
+  const searchInput = ".zd-palette .navbar__search-input";
+  const searchButton = ".zd-search-button";
+  await test("buscador: ⌘K / Ctrl K abre la paleta, las flechas eligen un resultado y Enter abre el documento", () =>
     withPage({ path: "" }, async (page) => {
-      if (!(await page.locator(searchInput).count())) throw new Unverifiable("el sitio no tiene buscador (search.enabled: false)");
+      if (!(await page.locator(searchButton).count())) throw new Unverifiable("el sitio no tiene buscador (search.enabled: false)");
       // El atajo es "mod+k": Cmd en macOS (el WebKit de Playwright se identifica como Safari de Mac), Ctrl en el resto.
       await page.keyboard.press(browserName === "webkit" ? "Meta+k" : "Control+k");
+      await page.waitForSelector("dialog.zd-palette[open]");
+      ok(await page.evaluate(() => document.querySelector("dialog.zd-palette").matches(":modal")), "la paleta no es un diálogo modal");
       await page.waitForFunction((s) => document.activeElement === document.querySelector(s), searchInput);
       const name = (await page.locator(searchInput).getAttribute("aria-label")) ?? "";
       ok(
@@ -606,7 +622,7 @@ for (const browserName of wanted) {
       );
       const word = searchWord;
       await page.keyboard.type(word, { delay: 30 });
-      const hit = page.locator(".navbar__search [class*='suggestion']").first();
+      const hit = page.locator(".zd-palette [class*='suggestion']").first();
       await hit.waitFor({ state: "visible" });
       if (!noShots) await page.screenshot({ path: join(shots, "buscador-1440.png") }).catch(() => {});
       const before = page.url();
@@ -615,6 +631,17 @@ for (const browserName of wanted) {
       await page.waitForFunction((u) => location.href !== u, before);
       ok(new URL(page.url()).pathname.startsWith(base), `el resultado lleva fuera del baseUrl: ${page.url()}`);
       await hydrated(page);
+      await page.waitForSelector("dialog.zd-palette", { state: "detached" });
+      // Escape cierra la paleta y el foco vuelve al botón que la abrió.
+      await page.locator(searchButton).click();
+      await page.waitForSelector("dialog.zd-palette[open]");
+      await page.keyboard.press("Escape");
+      await page.keyboard.press("Escape");
+      await page.waitForSelector("dialog.zd-palette", { state: "detached" });
+      ok(
+        await page.evaluate((s) => document.activeElement === document.querySelector(s), searchButton),
+        "el foco no vuelve al botón de búsqueda",
+      );
     }));
 
   // El buscador descarga su índice al recibir el foco y, al terminar, vuelve a enfocar el campo. Si para entonces
@@ -622,13 +649,15 @@ for (const browserName of wanted) {
   // saltar el foco de vuelta al buscador (y la tecla siguiente caía en el campo, no en el control elegido).
   await test("teclado: el buscador no recupera el foco cuando termina de cargar su índice", () =>
     withPage({ path: "" }, async (page) => {
-      if (!(await page.locator(searchInput).count())) throw new Unverifiable("el sitio no tiene buscador (search.enabled: false)");
+      if (!(await page.locator(searchButton).count())) throw new Unverifiable("el sitio no tiene buscador (search.enabled: false)");
       // Red lenta: todo lo que el buscador pida a partir de aquí tarda, y el Tab siguiente llega antes.
       await page.route("**/*", async (route) => {
         await new Promise((r) => setTimeout(r, 400));
         await route.continue().catch(() => {});
       });
-      await tabTo(page, (e) => /navbar__search-input/.test(e.cls), 30);
+      await tabTo(page, (e) => /zd-search-button/.test(e.cls), 30);
+      await page.keyboard.press("Enter");
+      await page.waitForFunction((s) => document.activeElement === document.querySelector(s), searchInput);
       await page.keyboard.press(TAB);
       const next = await page.evaluate(() => {
         document.activeElement.setAttribute("data-test-focus", "");
@@ -689,37 +718,132 @@ for (const browserName of wanted) {
     }));
 
   if (has("components")) {
-    await test("componentes: cada tarjeta tiene demo y la vista React/HTML cambia el código, también con teclado", () =>
+    // Una página por componente: la genera el sitio desde los manifiestos, así que cada componente de zui y zout
+    // con manifiesto debe tener la suya, y el índice debe enlazarlas todas.
+    const manifests = ["zui", "zout"].flatMap((p) => JSON.parse(readFileSync(join(root, p, "manifest.json"), "utf8")).components);
+    const slug = (n) =>
+      n
+        .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+        .replace(/([A-Z]+)([A-Z][a-z])/g, "$1-$2")
+        .toLowerCase();
+    await test(`componentes: una página por componente (${manifests.length}) y el índice las enlaza todas`, () =>
       withPage({ path: "components" }, async (page) => {
-        const cards = await page.locator("article.zd-demo").count();
-        ok(cards > 20, `solo ${cards} tarjetas en el catálogo`);
+        const missing = manifests.filter((c) => !has(`components/${c.group}/${slug(c.name)}`)).map((c) => c.name);
+        ok(missing.length === 0, `sin página: ${missing.join(", ")}`);
+        const cards = await page.locator("a.zd-card").evaluateAll((as) => as.map((a) => new URL(a.href).pathname));
+        ok(cards.length === manifests.length, `el índice tiene ${cards.length} tarjetas y hay ${manifests.length} componentes`);
+        await page.locator("main input").first().fill("calend");
+        await page.waitForFunction(() => document.querySelectorAll("a.zd-card").length < 10);
+        ok((await page.locator("a.zd-card").count()) >= 1, "el buscador del índice no encuentra Calendar");
         const empty = await page.evaluate(() =>
           [...document.querySelectorAll("svg.z-icon")].filter((s) => !s.querySelector("path")).map((s) => s.dataset.icon),
         );
         ok(empty.length === 0, `iconos sin dibujar: ${[...new Set(empty)].join(", ")}`);
-        const card = page
-          .locator("article.zd-demo")
-          .filter({ has: page.locator(".zd-demo__switch") })
-          .first();
-        const code = card.locator("pre").last();
-        const react = await code.textContent();
-        const htmlTab = card.locator(".zd-demo__switch").getByText("HTML", { exact: true });
-        await htmlTab.click();
-        await page.waitForFunction(([el, prev]) => el.textContent !== prev, [await code.elementHandle(), react]).catch(() => {});
-        const html = await card.locator("pre").last().textContent();
-        ok(html !== react && /class="z-/.test(html), "la vista HTML no muestra el marcado del contrato HTML");
-        // Con teclado: el control segmentado vuelve a React con la flecha izquierda.
-        await card
-          .locator(
-            ".zd-demo__switch [aria-checked='true'], .zd-demo__switch [aria-pressed='true'], .zd-demo__switch [aria-selected='true']",
-          )
-          .first()
-          .focus();
-        await page.keyboard.press("ArrowLeft");
-        await page.waitForTimeout(200);
-        ok((await card.locator("pre").last().textContent()) === react, "la flecha izquierda no vuelve a la vista React");
       }));
+
+    await test("componente: Vista previa / Código y React / HTML, también con teclado; el HTML de los ejemplos cobra vida", () =>
+      withPage({ path: "components/actions/button" }, async (page) => {
+        ok((await page.locator("h1").textContent()).trim() === "Button", "la página de Button no se titula Button");
+        const example = page.locator(".zd-example-block .zd-example").first();
+        ok((await example.locator(".zd-preview .z-btn").count()) > 0, "la vista previa del primer ejemplo no pinta el botón");
+        await example.getByRole("radio", { name: "Código" }).click();
+        const code = example.locator("pre");
+        const react = await code.textContent();
+        ok(/<Button/.test(react), "el código no empieza en React");
+        await example.getByRole("radio", { name: "HTML", exact: true }).click();
+        await page.waitForFunction(([el, prev]) => el.textContent !== prev, [await code.elementHandle(), react]);
+        const html = await code.textContent();
+        ok(/class="z-btn/.test(html), "la vista HTML no muestra el marcado del contrato HTML");
+        // La elección se comparte: el segundo ejemplo también enseña HTML al abrir su código.
+        const second = page.locator(".zd-example-block .zd-example").nth(1);
+        await second.getByRole("radio", { name: "Código" }).click();
+        ok(/class="z-/.test(await second.locator("pre").textContent()), "la elección React/HTML no se comparte entre ejemplos");
+        // Con teclado: el segmentado vuelve a React con la flecha izquierda.
+        await example.getByRole("radio", { name: "HTML", exact: true }).focus();
+        await page.keyboard.press("ArrowLeft");
+        await page.waitForFunction(([el, prev]) => el.textContent === prev, [await code.elementHandle(), react]);
+        // Un ejemplo con comportamiento (zui/dom): el calendario sin React se dibuja dentro de la vista previa.
+        await page.goto(`${at("components/forms/calendar")}?docusaurus-theme=dark`);
+        await hydrated(page);
+        await page.waitForFunction(() => !!document.querySelector(".zd-example-block .zd-preview [data-z-dom] .z-calendar table"));
+      }));
+
+    await test("componente: pestañas de gestor de paquetes que se recuerdan y «Copiar página» con el Markdown", () =>
+      withPage(
+        {
+          path: "components/actions/button",
+          contextOptions: browserName === "chromium" ? { permissions: ["clipboard-read", "clipboard-write"] } : {},
+        },
+        async (page) => {
+          const cmd = page.locator(".zd-install__cmd").first();
+          ok(/^\$?\s*pnpm add /.test((await cmd.textContent()).trim()), "el gestor por defecto no es pnpm");
+          await page.locator(".zd-install").first().getByRole("radio", { name: "npm", exact: true }).click();
+          ok(/npm install /.test(await cmd.textContent()), "la pestaña npm no cambia el comando");
+          await page.goto(`${at("")}?docusaurus-theme=dark`);
+          await hydrated(page);
+          await page.waitForFunction(() => /npm install/.test(document.querySelector(".zd-install__cmd")?.textContent ?? ""));
+          await page.goto(`${at("components/actions/button")}?docusaurus-theme=dark`);
+          await hydrated(page);
+          await page.getByRole("button", { name: "Copiar página" }).click();
+          await page.waitForFunction(() => /copiada/i.test(document.querySelector(".zd-split [role='status']")?.textContent ?? ""));
+          if (browserName === "chromium") {
+            const md = await page.evaluate(() => navigator.clipboard.readText());
+            ok(md.startsWith("# Button") && /## API/.test(md), `el portapapeles no recibió el Markdown de la página: ${md.slice(0, 60)}`);
+          } else note("portapapeles sin comprobar fuera de Chromium");
+        },
+      ));
+    await test("componente: la tabla de API es tabla si cabe y tarjetas si no, sin partir palabras ni desplazar en horizontal", async () => {
+      // Palabras partidas en la tabla: salto de línea entre dos letras de una misma palabra.
+      const check = (page) =>
+        page.evaluate(() => {
+          const box = document.querySelector(".zd-table--props");
+          const split = [];
+          for (const code of box.querySelectorAll("code, td, th")) {
+            for (const node of code.childNodes) {
+              if (node.nodeType !== 3) continue;
+              const range = document.createRange();
+              let prev = null;
+              for (let i = 0; i < node.textContent.length; i++) {
+                range.setStart(node, i);
+                range.setEnd(node, i + 1);
+                const r = range.getClientRects()[0];
+                const letter = /[\p{L}\p{N}]/u.test(node.textContent[i]);
+                if (r && letter && prev && r.top > prev.top + r.height / 2) split.push(node.textContent);
+                prev = r && letter ? r : null;
+              }
+            }
+          }
+          return { layout: box.dataset.layout, overflow: box.scrollWidth - box.clientWidth, split };
+        });
+      for (const [width, path, layout] of [
+        [390, "components/media/qr-code", "cards"],
+        [1440, "components/media/qr-code", "table"],
+        [1440, "components/forms/time-picker", "cards"],
+      ])
+        await withPage({ width, path }, async (page) => {
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForFunction(() => document.querySelector(".zd-table--props")?.dataset.layout);
+          const r = await check(page);
+          ok(r.layout === layout, `${path} a ${width}: ${r.layout}, se esperaba ${layout}`);
+          ok(r.overflow <= 1, `${path} a ${width}: la tabla desplaza ${r.overflow} px`);
+          ok(!r.split.length, `${path} a ${width}: palabras partidas en ${r.split.slice(0, 3).join(" · ")}`);
+        });
+    });
   }
+
+  if (firstDoc && existsSync(join(dir, `${firstDoc}.md`)))
+    await test("documento: «Copiar página» copia su copia .md publicada", () =>
+      withPage(
+        { path: firstDoc, contextOptions: browserName === "chromium" ? { permissions: ["clipboard-read", "clipboard-write"] } : {} },
+        async (page) => {
+          await page.getByRole("button", { name: "Copiar página" }).click();
+          await page.waitForFunction(() => /copiada/i.test(document.querySelector(".zd-split [role='status']")?.textContent ?? ""));
+          if (browserName !== "chromium") throw new Unverifiable("solo Chromium deja leer el portapapeles");
+          const md = await page.evaluate(() => navigator.clipboard.readText());
+          const expected = read(`${firstDoc}.md`);
+          ok(md === expected, `el portapapeles no tiene la copia .md de la página (${md.slice(0, 50)}…)`);
+        },
+      ));
 
   if (has("icons")) {
     await test("iconos: buscar filtra, la variante cambia el dibujo y un clic copia", () =>
@@ -782,7 +906,7 @@ for (const browserName of wanted) {
       const text = await page.locator("main").textContent();
       ok(!/page not found|we could not find/i.test(text), `la página 404 no está traducida: "${text.slice(0, 80).replace(/\n/g, " ")}"`);
       ok((await page.locator("h1").count()) === 1, "la página 404 no tiene un único h1");
-      const home = await page.locator(".navbar__brand").evaluate((a) => a.href);
+      const home = await page.locator(".zd-nav__brand").evaluate((a) => a.href);
       ok(new URL(home).pathname === base, `la marca de la barra lleva a ${home}`);
       ok((await page.evaluate(() => document.querySelector('meta[name="robots"]')?.content?.includes("noindex") ?? false)) || true, "");
       if (!noShots) await page.screenshot({ path: join(shots, "404-dark-1440.png") }).catch(() => {});
@@ -857,7 +981,7 @@ for (const browserName of wanted) {
             const s = getComputedStyle(el);
             return s.display !== "none" && s.visibility !== "hidden" && el.getBoundingClientRect().height > 0;
           });
-        const article = document.querySelector("div[class*='docItemContainer']") ?? document.querySelector("main");
+        const article = document.querySelector("main.zd-article") ?? document.querySelector("main");
         const s = getComputedStyle(article);
         const lum = (c) => {
           const m = c.match(/[\d.]+/g)?.map(Number) ?? [255, 255, 255, 1];
@@ -865,13 +989,13 @@ for (const browserName of wanted) {
         };
         return {
           chrome: [
-            ".navbar",
-            ".theme-doc-sidebar-container",
-            ".theme-doc-toc-desktop",
-            ".theme-doc-toc-mobile",
-            ".pagination-nav",
-            ".theme-doc-breadcrumbs",
-            ".footer",
+            ".zd-nav",
+            ".zd-sidebar",
+            ".zd-rail",
+            ".zd-article__bar",
+            ".zd-pager",
+            ".zd-crumbs",
+            ".zd-footer",
             "a[href='#__docusaurus_skipToContent_fallback']",
           ].filter(shown),
           over: document.documentElement.scrollWidth - document.documentElement.clientWidth,

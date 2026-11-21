@@ -1,0 +1,1479 @@
+/*
+  Agenda (EventCalendar): armazón, rejilla de horas (día, semana, semana laboral), mes con eventos y lista.
+  Cromo en cristal (`z-liquid`); la rejilla de eventos sobre `reading-bg`: el texto denso no va sobre cristal
+  transparente. Controles y celdas rectangulares con radio (control-radius*, calendar-cell-radius, item-radius);
+  `radius-full` solo para lo circular (puntos, el de «ahora»). Color del evento por calendario
+  (`calendar-color-1…6` o un semántico) y texto siempre en `event-fg`: nunca en el color del calendario.
+*/
+@layer zui.agenda {
+  /* ---------- Armazón ---------- */
+  .z-agenda {
+    --z-agenda-side: calc(var(--z-space-16) * 4 - var(--z-space-1));
+    container: z-agenda / inline-size;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  /* El contenedor de consulta es `.z-agenda`; la rejilla, su hijo (un contenedor no se consulta a sí mismo). */
+  .z-agenda__frame {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--z-space-3);
+  }
+  .z-agenda[data-sidebar] > .z-agenda__frame {
+    grid-template-columns: var(--z-agenda-side) minmax(0, 1fr);
+  }
+  .z-agenda__side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    min-inline-size: 0;
+    padding: var(--z-space-3);
+    border-radius: var(--z-panel-radius);
+  }
+  .z-agenda__create {
+    inline-size: 100%;
+    justify-content: flex-start;
+  }
+  .z-agenda__main {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+  }
+  .z-agenda__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2) var(--z-space-3);
+    padding: var(--z-space-2-5) var(--z-space-3);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-agenda__nav {
+    display: inline-flex;
+    gap: var(--z-space-0-5);
+  }
+  .z-agenda__icon-btn {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-control-height-sm);
+    block-size: var(--z-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-agenda__icon-btn:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  [dir="rtl"] .z-agenda__nav .z-icon {
+    scale: -1 1;
+  }
+  .z-agenda__title {
+    margin: 0;
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+    white-space: nowrap;
+  }
+  .z-agenda__week {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-regular);
+  }
+  .z-agenda__spacer {
+    flex: 1;
+  }
+  .z-agenda__zone,
+  .z-agenda__view-picker {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2-5) var(--z-space-2);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    white-space: nowrap;
+  }
+  :is(.z-agenda__zone, .z-agenda__view-picker) .z-icon {
+    color: var(--z-fg-muted);
+  }
+  .z-agenda__zone-offset {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-regular);
+  }
+  .z-agenda__zone-select,
+  .z-agenda__view-select {
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  :is(.z-agenda__zone, .z-agenda__view-picker):focus-within {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  :is(.z-agenda__zone-select, .z-agenda__view-select):focus-visible {
+    outline: none;
+  }
+  .z-agenda__views {
+    flex: none;
+  }
+  /* El selector compacto de vista solo aparece cuando el segmentado no cabe (consulta de contenedor, abajo). */
+  .z-agenda__view-picker {
+    display: none;
+  }
+  .z-agenda__view-select {
+    padding-inline-end: var(--z-space-1);
+  }
+  .z-agenda__view {
+    min-inline-size: 0;
+    background: var(--z-reading-bg);
+  }
+  .z-agenda__hint {
+    margin: 0;
+    padding: var(--z-space-2-5) var(--z-space-3-5);
+    border-block-start: 1px solid var(--z-line);
+    background: var(--z-reading-bg);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+
+  /* Lateral: minicalendario y calendarios (la leyenda de color de todas las vistas). */
+  .z-agenda__minical {
+    inline-size: 100%;
+  }
+  /* Semana visible: una banda continua en las celdas (no un fondo por día), con los extremos redondeados. */
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view])::before {
+    content: "";
+    position: absolute;
+    inset-block: 1px;
+    inset-inline: 0;
+    background: var(--z-calendar-range-bg);
+  }
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view]):not(.z-calendar__cell:has(> [data-in-view]) + .z-calendar__cell)::before {
+    inset-inline-start: 1px;
+    border-start-start-radius: var(--z-calendar-cell-radius);
+    border-end-start-radius: var(--z-calendar-cell-radius);
+  }
+  .z-agenda__minical .z-calendar__cell:has(> [data-in-view]):not(:has(+ .z-calendar__cell > [data-in-view]))::before {
+    inset-inline-end: 1px;
+    border-start-end-radius: var(--z-calendar-cell-radius);
+    border-end-end-radius: var(--z-calendar-cell-radius);
+  }
+  .z-agenda__minical .z-calendar__day[data-has-events]::after {
+    content: "";
+    position: absolute;
+    inset-block-end: 3px;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    inline-size: 4px;
+    block-size: 4px;
+    border-radius: var(--z-radius-full);
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .z-agenda__calendars {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+  }
+  .z-agenda__calendars-label {
+    margin: 0;
+    padding: var(--z-space-1) var(--z-space-1-5) var(--z-space-1-5);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-agenda__calendar {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2);
+    border-radius: var(--z-item-radius);
+    color: var(--z-fg);
+    cursor: pointer;
+  }
+  .z-agenda__calendar[data-off] {
+    color: var(--z-fg-muted);
+  }
+  @media (hover: hover) {
+    .z-agenda__calendar:hover {
+      background: var(--z-surface-2);
+    }
+  }
+  /* Casilla con el color del calendario: marcada, rellena; desmarcada, solo el filo. */
+  .z-agenda__check {
+    appearance: none;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    margin: 0;
+    border-radius: var(--z-space-1);
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--z-event-color);
+    cursor: pointer;
+  }
+  .z-agenda__check:checked {
+    background: var(--z-event-color);
+  }
+  .z-agenda__check:checked::after {
+    content: "";
+    inline-size: 9px;
+    block-size: 5px;
+    margin-block-start: -2px;
+    border-block-end: 2px solid var(--z-fg-on-accent);
+    border-inline-start: 2px solid var(--z-fg-on-accent);
+    rotate: -45deg;
+  }
+  .z-agenda__check:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-agenda__calendar-name {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-agenda__count {
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+  }
+
+  /* ---------- Color por calendario ---------- */
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="1"] {
+    --z-event-color: var(--z-calendar-color-1);
+    --z-event-solid: var(--z-event-solid-1);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="2"] {
+    --z-event-color: var(--z-calendar-color-2);
+    --z-event-solid: var(--z-event-solid-2);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="3"] {
+    --z-event-color: var(--z-calendar-color-3);
+    --z-event-solid: var(--z-event-solid-3);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="4"] {
+    --z-event-color: var(--z-calendar-color-4);
+    --z-event-solid: var(--z-event-solid-4);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="5"] {
+    --z-event-color: var(--z-calendar-color-5);
+    --z-event-solid: var(--z-event-solid-5);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="6"] {
+    --z-event-color: var(--z-calendar-color-6);
+    --z-event-solid: var(--z-event-solid-6);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="accent"] {
+    --z-event-color: var(--z-accent);
+    --z-event-solid: var(--z-accent-solid);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="info"] {
+    --z-event-color: var(--z-info);
+    --z-event-solid: var(--z-info-solid);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="success"] {
+    --z-event-color: var(--z-success);
+    --z-event-solid: var(--z-success-solid);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="warning"] {
+    --z-event-color: var(--z-warning);
+    --z-event-solid: var(--z-warning-solid);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="danger"] {
+    --z-event-color: var(--z-danger);
+    --z-event-solid: var(--z-danger-solid);
+  }
+  :is(.z-event, .z-agenda__calendar, .z-agenda__detail, .z-monthgrid__dots i, .z-agendalist__calendar)[data-color="neutral"] {
+    --z-event-color: var(--z-fg-subtle);
+    --z-event-solid: var(--z-accent-solid);
+  }
+
+  /* ---------- Evento (pieza común a todas las vistas) ---------- */
+  .z-event {
+    --z-event-color: var(--z-calendar-color-1);
+    --z-event-solid: var(--z-event-solid-1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-inline-size: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: var(--z-space-0-5) var(--z-space-1-5) var(--z-space-0-5) calc(var(--z-space-1-5) + var(--z-event-bar-width));
+    border: 0;
+    border-radius: var(--z-event-radius);
+    background: color-mix(in srgb, var(--z-event-color) var(--z-event-tint), var(--z-surface-solid));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-event-color) 26%, transparent);
+    color: var(--z-event-fg);
+    font: inherit;
+    font-size: var(--z-text-caption);
+    line-height: var(--z-leading-snug);
+    text-align: start;
+    cursor: pointer;
+    transition:
+      background-color var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-event::before {
+    content: "";
+    position: absolute;
+    inset-block: 3px;
+    inset-inline-start: 3px;
+    inline-size: var(--z-event-bar-width);
+    border-radius: 2px;
+    background: var(--z-event-color);
+  }
+  .z-event__title {
+    overflow: hidden;
+    font-weight: var(--z-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-event__icon {
+    display: inline-flex;
+    margin-inline-start: var(--z-space-0-5);
+    vertical-align: -2px;
+    color: var(--z-event-fg-muted);
+  }
+  .z-event__meta {
+    overflow: hidden;
+    color: var(--z-event-fg-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-event__meta bdi {
+    unicode-bidi: isolate;
+  }
+  @media (hover: hover) {
+    .z-event:hover:not([data-selected], [data-dragging]) {
+      background: color-mix(in srgb, var(--z-event-color) calc(var(--z-event-tint) + 10%), var(--z-surface-solid));
+    }
+  }
+  .z-event:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  /* Seleccionado: relleno sólido del calendario (event-solid-N) con fg-on-accent. */
+  .z-event[data-selected],
+  .z-event[data-dragging] {
+    background: var(--z-event-solid);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 22%, transparent),
+      var(--z-shadow-md);
+    color: var(--z-fg-on-accent);
+  }
+  .z-event[data-selected]::before,
+  .z-event[data-dragging]::before {
+    background: var(--z-fg-on-accent);
+    opacity: 0.7;
+  }
+  .z-event[data-selected] :is(.z-event__meta, .z-event__icon),
+  .z-event[data-dragging] :is(.z-event__meta, .z-event__icon) {
+    color: inherit;
+  }
+  /* Pasado: tinte más suave; el contraste del texto se mantiene (no se usa opacidad). */
+  .z-event[data-past]:not([data-selected]) {
+    background: color-mix(in srgb, var(--z-event-color) 9%, var(--z-surface-solid));
+    box-shadow: inset 0 0 0 1px var(--z-line);
+  }
+  .z-event[data-past]:not([data-selected]) .z-event__title {
+    font-weight: var(--z-weight-medium);
+  }
+  /* Provisional: trama diagonal y barra discontinua (no solo color). */
+  .z-event[data-tentative]:not([data-selected]) {
+    background: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--z-event-color) 14%, var(--z-surface-solid)) 0 6px,
+      color-mix(in srgb, var(--z-event-color) 6%, var(--z-surface-solid)) 6px 12px
+    );
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--z-event-color) 55%, transparent);
+  }
+  .z-event[data-tentative]::before {
+    background: repeating-linear-gradient(to bottom, var(--z-event-color) 0 4px, transparent 4px 7px);
+  }
+  /* Tarea: casilla en vez de barra. */
+  .z-event[data-task] {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    padding-inline-start: var(--z-space-1-5);
+  }
+  .z-event[data-task]::before {
+    display: none;
+  }
+  .z-event__box {
+    flex: none;
+    inline-size: var(--z-space-3);
+    block-size: var(--z-space-3);
+    border-radius: calc(var(--z-radius-xs) / 2);
+    box-shadow: inset 0 0 0 1.5px var(--z-event-color);
+  }
+  .z-event[data-done] .z-event__box {
+    background: var(--z-event-color);
+  }
+  .z-event[data-done] .z-event__title {
+    color: var(--z-event-fg-muted);
+    text-decoration: line-through;
+  }
+  /* Agarrado con teclado: anillo de foco y sombra; arrastrando, además escala. */
+  .z-event[data-grabbed] {
+    z-index: var(--z-layer-raised);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 2px;
+    box-shadow: var(--z-shadow-md);
+  }
+  .z-event[data-dragging] {
+    z-index: var(--z-layer-raised);
+    scale: 1.02;
+    outline: 2px solid var(--z-accent-ring);
+    cursor: grabbing;
+  }
+  .z-event[data-editable] {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-agenda[data-dragging],
+  .z-agenda[data-dragging] * {
+    cursor: grabbing;
+  }
+  /* Asa de redimensión: visible al pasar, enfocar o seleccionar. Área de 8 px; el trazo, centrado. */
+  .z-event__resize {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    display: none;
+    block-size: var(--z-space-2);
+    cursor: ns-resize;
+  }
+  .z-event__resize::after {
+    content: "";
+    position: absolute;
+    inset-block-end: 3px;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    inline-size: 18px;
+    block-size: 3px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.55;
+  }
+  .z-event:is(:focus-visible, [data-selected], [data-dragging]) .z-event__resize {
+    display: block;
+  }
+  @media (hover: hover) {
+    .z-event:hover .z-event__resize {
+      display: block;
+    }
+  }
+
+  /* ---------- Rejilla de horas (día, semana, semana laboral) ---------- */
+  .z-timegrid {
+    --z-tg-hour: var(--z-timegrid-hour);
+    --z-tg-gutter: var(--z-timegrid-gutter);
+    --z-tg-day-min: 0px;
+    --z-tg-cols: var(--z-tg-gutter) repeat(var(--z-tg-days), minmax(var(--z-tg-day-min), 1fr));
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    background: var(--z-reading-bg);
+  }
+  .z-timegrid[data-second-zone] {
+    --z-tg-cols: var(--z-tg-gutter) var(--z-tg-gutter) repeat(var(--z-tg-days), minmax(var(--z-tg-day-min), 1fr));
+  }
+  .z-agenda__view[data-view="day"] {
+    --z-timegrid-hour: calc(var(--z-space-14));
+  }
+  .z-timegrid__scroll {
+    max-block-size: var(--z-timegrid-max, calc(var(--z-tg-hour) * 12));
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: var(--z-line-strong) transparent;
+    scrollbar-width: thin;
+  }
+  .z-timegrid__row {
+    display: grid;
+    grid-template-columns: var(--z-tg-cols);
+    min-inline-size: calc(var(--z-tg-gutter) + var(--z-tg-days) * var(--z-tg-day-min));
+  }
+  .z-timegrid__head {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-layer-sticky);
+    background: var(--z-reading-bg);
+    border-block-end: 1px solid var(--z-line-strong);
+    -webkit-backdrop-filter: blur(var(--z-space-3));
+    backdrop-filter: blur(var(--z-space-3));
+  }
+  .z-timegrid__corner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 0 var(--z-space-2) var(--z-space-1-5) 0;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-timegrid__dayhead {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-1-5);
+    min-block-size: calc(var(--z-space-12) + var(--z-space-1));
+    padding: var(--z-space-1-5) var(--z-space-1);
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-timegrid__weekday {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-timegrid__day {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: var(--z-control-height-xs);
+    block-size: var(--z-control-height-xs);
+    padding-inline: var(--z-space-1);
+    border-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-timegrid__dayhead[data-today] .z-timegrid__weekday {
+    color: var(--z-accent-text);
+  }
+  .z-timegrid__dayhead[data-today] .z-timegrid__day {
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+  }
+  .z-timegrid__dayhead[data-weekend]:not([data-today]) :is(.z-timegrid__weekday, .z-timegrid__day) {
+    color: var(--z-fg-subtle);
+  }
+  .z-timegrid__allday {
+    border-block-start: 1px solid var(--z-line);
+  }
+  .z-timegrid__label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: var(--z-space-1-5) var(--z-space-2) 0 0;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-fine);
+  }
+  .z-timegrid__alltrack {
+    grid-column: span var(--z-tg-days);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--z-tg-days), minmax(0, 1fr));
+    grid-auto-rows: var(--z-control-height-xs);
+    align-items: center;
+    gap: var(--z-space-0-5) 0;
+    min-block-size: calc(var(--z-control-height-xs) + var(--z-space-2));
+    padding-block: var(--z-space-1);
+    background-image: repeating-linear-gradient(to right, var(--z-line) 0 1px, transparent 1px calc(100% / var(--z-tg-days)));
+  }
+  [dir="rtl"] .z-timegrid__alltrack {
+    background-image: repeating-linear-gradient(to left, var(--z-line) 0 1px, transparent 1px calc(100% / var(--z-tg-days)));
+  }
+  .z-timegrid__alltrack .z-event {
+    grid-row: var(--z-ev-lane);
+    grid-column: var(--z-ev-first) / span var(--z-ev-span);
+    flex-direction: row;
+    align-items: center;
+    block-size: calc(var(--z-control-height-xs) - var(--z-space-1));
+    margin-inline: var(--z-space-0-5);
+    padding-block: 0;
+  }
+  .z-event[data-variant="bar"][data-cont-start] {
+    margin-inline-start: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .z-event[data-variant="bar"][data-cont-end] {
+    margin-inline-end: 0;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .z-agenda__more {
+    padding: 0 var(--z-space-1-5);
+    border: 0;
+    border-radius: var(--z-event-radius);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-agenda__more:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-agenda__more:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
+  }
+  .z-timegrid__more {
+    grid-row: -1;
+  }
+  .z-timegrid__gutter {
+    position: relative;
+    block-size: calc((var(--z-tg-end) - var(--z-tg-start)) / 60 * var(--z-tg-hour));
+  }
+  .z-timegrid__gutter > span {
+    position: absolute;
+    inset-inline-end: var(--z-space-2);
+    /* Centrada en su línea; la primera y la última hora no salen de la columna (se cortaban arriba y abajo). */
+    inset-block-start: clamp(0px, calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 7px), calc(100% - 1lh));
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-fine);
+    white-space: nowrap;
+  }
+  .z-timegrid__gutter > .z-timegrid__now-label {
+    z-index: var(--z-layer-raised);
+    inset-inline-end: var(--z-space-1);
+    inset-block-start: calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - 9px);
+    padding: 1px var(--z-space-1);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-calendar-now-label-bg);
+    color: var(--z-fg-on-accent);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-timegrid__col {
+    position: relative;
+    container: z-timegrid-col / inline-size;
+    contain: layout style;
+    block-size: calc((var(--z-tg-end) - var(--z-tg-start)) / 60 * var(--z-tg-hour));
+    border-inline-start: 1px solid var(--z-line);
+    background-image:
+      repeating-linear-gradient(to bottom, var(--z-line) 0 1px, transparent 1px var(--z-tg-hour)),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 calc(var(--z-tg-hour) / 2),
+        color-mix(in srgb, var(--z-line) 45%, transparent) calc(var(--z-tg-hour) / 2) calc(var(--z-tg-hour) / 2 + 1px),
+        transparent calc(var(--z-tg-hour) / 2 + 1px) var(--z-tg-hour)
+      );
+  }
+  .z-timegrid__col[data-weekend] {
+    background-color: var(--z-calendar-weekend-bg);
+  }
+  .z-timegrid__col[data-today] {
+    background-color: color-mix(in srgb, var(--z-accent) 3%, transparent);
+  }
+  .z-timegrid__col[data-drop] {
+    background-color: var(--z-calendar-drop-bg);
+  }
+  /* Fuera del horario laboral: trama ligera. */
+  .z-timegrid__off {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour));
+    block-size: calc(var(--z-ev-d) / 60 * var(--z-tg-hour));
+    background: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--z-fg) 3.5%, transparent) 6px 7px);
+    pointer-events: none;
+  }
+  /* Evento con hora: posición por inicio y duración, columnas de solape (col, n, ancho w). */
+  .z-timegrid__col .z-event {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) + 1px);
+    inset-inline-start: calc(var(--z-ev-col) / var(--z-ev-n) * 100% + 2px);
+    inline-size: calc(var(--z-ev-w) / var(--z-ev-n) * 100% - 4px);
+    block-size: max(calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px), calc(var(--z-space-5)));
+  }
+  /* El que se mueve y no cabría en las columnas visibles: por encima, a todo el ancho. */
+  .z-timegrid__col .z-event--floating {
+    z-index: var(--z-layer-sticky);
+  }
+  /* «+N» de los solapes que no caben: en la última columna del grupo, al inicio de su hora. */
+  .z-timegrid__overflow {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) + 1px);
+    inset-inline-start: calc(var(--z-ev-col) / var(--z-ev-n) * 100% + 2px);
+    inline-size: calc(100% / var(--z-ev-n) - 4px);
+    block-size: var(--z-space-6);
+    padding: 0;
+    background: var(--z-surface-2);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    color: var(--z-fg);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .z-timegrid__overflow[aria-expanded="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  /* Un evento corto amplía su área de pulsación a 24 px sin cambiar su aspecto (WCAG 2.5.8). */
+  .z-timegrid__col .z-event::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block: 50%;
+    min-block-size: var(--z-space-6);
+    translate: 0 -50%;
+  }
+  .z-timegrid__col .z-event[data-short] {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    padding-block: 0;
+  }
+  .z-timegrid__col .z-event[data-cont-start] {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+  .z-timegrid__col .z-event[data-cont-end] {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  /* Columna estrecha: los solapados que no empiezan a la vez se escalonan sobre los anteriores, con un filo del
+     color del panel; así el título de cada uno sigue legible. */
+  @container z-timegrid-col (max-width: 220px) {
+    .z-timegrid__col .z-event:not(.z-event--side) {
+      inset-inline-start: calc(var(--z-ev-col) / var(--z-ev-n) * 62% + 2px);
+      inline-size: calc(100% - var(--z-ev-col) / var(--z-ev-n) * 62% - 4px);
+      box-shadow:
+        0 0 0 1px var(--z-surface-solid),
+        inset 0 0 0 1px color-mix(in srgb, var(--z-event-color) 26%, transparent);
+    }
+  }
+  /* Ahora: 2 px en hoy con punto; 1 px atenuado en el resto. */
+  .z-timegrid__now {
+    position: absolute;
+    inset-inline: 0;
+    z-index: var(--z-layer-raised);
+    inset-block-start: calc((var(--z-tg-at) - var(--z-tg-start)) / 60 * var(--z-tg-hour));
+    block-size: 0;
+    border-block-start: 1px solid color-mix(in srgb, var(--z-calendar-now) 45%, transparent);
+    pointer-events: none;
+  }
+  .z-timegrid__now[data-today] {
+    border-block-start: 2px solid var(--z-calendar-now);
+  }
+  .z-timegrid__now[data-today]::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: -5px;
+    inset-block-start: calc(var(--z-space-1-5) * -1);
+    inline-size: 10px;
+    block-size: 10px;
+    border-radius: var(--z-radius-full);
+    background: var(--z-calendar-now);
+    box-shadow: 0 0 0 2px var(--z-reading-bg);
+  }
+  /* Cursor de franja libre (una sola pieza que se mueve con las flechas). */
+  .z-timegrid__slot {
+    position: absolute;
+    inset-inline: 2px;
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) + 1px);
+    block-size: calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px);
+    display: flex;
+    align-items: flex-start;
+    padding: var(--z-space-0-5) var(--z-space-1-5);
+    border: 0;
+    border-radius: var(--z-event-radius);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    font-size: var(--z-text-caption);
+    cursor: pointer;
+  }
+  .z-timegrid__slot:focus-visible {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
+  }
+  .z-timegrid__slot:not(:focus-visible) .z-timegrid__slot-text {
+    visibility: hidden;
+  }
+  /* Selección al crear arrastrando y etiqueta de hora al mover. */
+  .z-timegrid__create {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-inline: 2px;
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) + 1px);
+    block-size: calc(var(--z-ev-d) / 60 * var(--z-tg-hour) - 2px);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: var(--z-space-1) var(--z-space-2);
+    border-radius: var(--z-event-radius);
+    background: color-mix(in srgb, var(--z-accent) 14%, transparent);
+    outline: 1.5px dashed var(--z-accent-ring);
+    outline-offset: -1.5px;
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    pointer-events: none;
+  }
+  .z-timegrid__create span {
+    color: var(--z-fg-muted);
+  }
+  .z-timegrid__tip {
+    position: absolute;
+    z-index: var(--z-layer-sticky);
+    inset-inline-start: var(--z-space-1);
+    inset-block-start: calc((var(--z-ev-s) - var(--z-tg-start)) / 60 * var(--z-tg-hour) - var(--z-space-6) - 2px);
+    padding: var(--z-space-0-5) var(--z-space-2);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-solid);
+    box-shadow: var(--z-shadow-md);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ---------- Mes con eventos ---------- */
+  .z-monthgrid {
+    --z-mg-lane: var(--z-space-6);
+    --z-mg-head: var(--z-space-8);
+    display: flex;
+    flex-direction: column;
+    background: var(--z-reading-bg);
+  }
+  .z-monthgrid__weekdays,
+  .z-monthgrid__week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-monthgrid__week:last-of-type {
+    border-block-end: 0;
+  }
+  .z-monthgrid__weekday {
+    padding: var(--z-space-2) var(--z-space-2-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-monthgrid__weekday[data-weekend] {
+    color: var(--z-fg-subtle);
+  }
+  .z-monthgrid__cell {
+    position: relative;
+    min-block-size: calc(var(--z-mg-head) + (var(--z-mg-lanes) + 0.5) * var(--z-mg-lane));
+    padding: var(--z-space-1);
+    border-inline-start: 1px solid var(--z-line);
+    cursor: pointer;
+  }
+  .z-monthgrid__cell:first-child {
+    border-inline-start: 0;
+  }
+  .z-monthgrid__cell[data-weekend] {
+    background: var(--z-calendar-weekend-bg);
+  }
+  .z-monthgrid__cell[data-drop] {
+    background: var(--z-calendar-drop-bg);
+  }
+  .z-monthgrid__cell[aria-selected="true"] {
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--z-accent) 45%, transparent);
+  }
+  .z-monthgrid__cell:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
+  }
+  .z-monthgrid__date {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--z-space-6);
+    block-size: var(--z-space-6);
+    padding-inline: var(--z-space-1);
+    border-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    white-space: nowrap;
+  }
+  .z-monthgrid__cell[data-outside] .z-monthgrid__date {
+    color: var(--z-fg-subtle);
+  }
+  .z-monthgrid__cell[data-today] .z-monthgrid__date {
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-monthgrid__cell .z-event,
+  .z-monthgrid__more {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: calc(var(--z-mg-head) + var(--z-ev-lane) * var(--z-mg-lane));
+    inset-inline-start: var(--z-space-1);
+    block-size: calc(var(--z-mg-lane) - 2px);
+  }
+  .z-monthgrid__cell .z-event {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    inline-size: calc(var(--z-ev-span, 1) * 100% + (var(--z-ev-span, 1) - 1) * 1px - var(--z-space-2));
+    padding-block: 0;
+  }
+  .z-monthgrid__cell .z-event[data-cont-start] {
+    inset-inline-start: 0;
+    inline-size: calc(var(--z-ev-span, 1) * 100% + (var(--z-ev-span, 1) - 1) * 1px - var(--z-space-1));
+  }
+  .z-monthgrid__cell .z-event[data-cont-start][data-cont-end] {
+    inline-size: calc(var(--z-ev-span, 1) * 100% + (var(--z-ev-span, 1) - 1) * 1px);
+  }
+  /* Un día con hora en el mes: punto, hora y título, sin relleno (más ligero que las barras). */
+  .z-event[data-variant="dot"]:not([data-selected], [data-dragging]) {
+    background: transparent;
+    box-shadow: none;
+  }
+  .z-event[data-variant="dot"] {
+    padding-inline-start: var(--z-space-1);
+  }
+  .z-event[data-variant="dot"]::before {
+    position: static;
+    flex: none;
+    order: -1;
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: var(--z-radius-full);
+  }
+  .z-event[data-variant="dot"] .z-event__meta {
+    flex: none;
+    order: -1;
+  }
+  @media (hover: hover) {
+    .z-event[data-variant="dot"]:hover:not([data-selected], [data-dragging]) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-monthgrid__more {
+    inset-inline-end: var(--z-space-1);
+    display: flex;
+    align-items: center;
+  }
+  .z-monthgrid__dots,
+  .z-monthgrid__daylist {
+    display: none;
+  }
+
+  /* ---------- Lista (agenda) ---------- */
+  .z-agendalist {
+    display: flex;
+    flex-direction: column;
+    max-block-size: var(--z-agendalist-max, calc(var(--z-timegrid-hour) * 13));
+    overflow: auto;
+    background: var(--z-reading-bg);
+    scrollbar-width: thin;
+  }
+  .z-agendalist__day {
+    display: grid;
+    grid-template-columns: calc(var(--z-space-20) + var(--z-space-4)) minmax(0, 1fr);
+    border-block-end: 1px solid var(--z-line);
+  }
+  /* Solo bajo el pliegue (guía defer-rendering-heavy-content): los primeros días se pintan sin esperar; el resto
+     omite su trabajo de pintado hasta acercarse, con un tamaño estimado que el navegador recuerda. */
+  .z-agendalist__day:nth-child(n + 5) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 160px;
+  }
+  /* Lista larga con ventana virtual: relleno del alto de lo que no se pinta. */
+  .z-agendalist__spacer {
+    flex: none;
+    block-size: var(--z-vl-size);
+    list-style: none;
+  }
+  .z-agendalist[data-virtual] .z-agendalist__day {
+    content-visibility: visible;
+  }
+  .z-agendalist__date {
+    position: sticky;
+    inset-block-start: 0;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    margin: 0;
+    padding: var(--z-space-3-5) 0 var(--z-space-3-5) var(--z-space-4);
+    font-weight: inherit;
+  }
+  .z-agendalist__num {
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-tight);
+    line-height: 1;
+  }
+  .z-agendalist__weekday {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .z-agendalist__day[data-today] :is(.z-agendalist__num, .z-agendalist__weekday) {
+    color: var(--z-accent-text);
+  }
+  .z-agendalist__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    margin: 0;
+    padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-2) 0;
+    list-style: none;
+  }
+  .z-agendalist__item {
+    position: relative;
+  }
+  .z-agendalist__calendar {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: var(--z-space-2-5);
+    translate: 0 -50%;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .z-agendalist__calendar::before {
+    content: "";
+    inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    border-radius: var(--z-radius-full);
+    background: var(--z-event-color);
+  }
+  .z-agendalist__now {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    padding-inline: var(--z-space-2-5);
+    color: var(--z-accent-text);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-agendalist__now::after {
+    content: "";
+    flex: 1;
+    block-size: 2px;
+    border-radius: 1px;
+    background: var(--z-calendar-now);
+  }
+  /* Fila de lista (agenda, popover «+N» y lista del día): hora en su columna, barra de color, título y lugar. */
+  .z-event--list {
+    --z-event-when: calc(var(--z-space-14) + var(--z-space-2));
+    display: grid;
+    grid-template-columns: var(--z-event-when) minmax(0, 1fr);
+    grid-auto-flow: dense;
+    align-content: center;
+    column-gap: var(--z-space-3);
+    inline-size: 100%;
+    min-block-size: var(--z-space-12);
+    padding-block: var(--z-space-1-5);
+    padding-inline: var(--z-space-2-5) calc(var(--z-space-20) + var(--z-space-4));
+    background: transparent;
+    box-shadow: none;
+    border-radius: var(--z-item-radius);
+    font-size: var(--z-text-body);
+  }
+  .z-event--list > :not(.z-event__when) {
+    grid-column: 2;
+  }
+  .z-event--list .z-event__when {
+    grid-row: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--z-event-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-event--list .z-event__when b {
+    color: var(--z-event-fg);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-event--list::before {
+    inset-block: var(--z-space-1-5);
+    inset-inline-start: calc(var(--z-space-2-5) + var(--z-event-when) + var(--z-space-1-5) - 2px);
+  }
+  .z-event--list > :not(.z-event__when) {
+    padding-inline-start: var(--z-space-2);
+  }
+  .z-event--list[data-selected] .z-event__when,
+  .z-event--list[data-selected] .z-event__when b {
+    color: inherit;
+  }
+  .z-agenda__pop .z-event--list,
+  .z-monthgrid__daylist .z-event--list {
+    padding-inline-end: var(--z-space-2);
+    background: color-mix(in srgb, var(--z-event-color) var(--z-event-tint), var(--z-surface-solid));
+    font-size: var(--z-text-small);
+  }
+  .z-event--list .z-event__meta {
+    font-size: var(--z-text-small);
+  }
+  @media (hover: hover) {
+    .z-agendalist .z-event--list:hover:not([data-selected]) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-agendalist .z-event--list[data-past]:not([data-selected]) {
+    background: transparent;
+    box-shadow: none;
+  }
+  .z-agendalist .z-event--list[data-past] .z-event__title {
+    color: var(--z-fg-muted);
+  }
+  .z-agenda__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-2-5);
+    padding: var(--z-space-10) var(--z-space-6);
+    text-align: center;
+  }
+  .z-agenda__empty-icon {
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-space-12);
+    block-size: var(--z-space-12);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+  }
+  .z-agenda__empty strong {
+    font-size: var(--z-text-title);
+  }
+  .z-agenda__empty p {
+    max-inline-size: 36ch;
+    margin: 0;
+    color: var(--z-fg-muted);
+  }
+
+  /* ---------- Popovers («+N más», detalle) y diálogo «Mover a…» ---------- */
+  .z-agenda__pop {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    inline-size: min(calc(var(--z-space-20) * 3 + var(--z-space-5)), var(--z-available-width, 100vw));
+    max-block-size: var(--z-available-height, 70vh);
+    margin: 0;
+    padding: var(--z-space-2-5);
+    overflow: auto;
+    border-radius: var(--z-popup-radius);
+  }
+  .z-agenda__pop-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+    padding: var(--z-space-0-5) var(--z-space-0-5) var(--z-space-1-5) var(--z-space-1-5);
+  }
+  .z-agenda__detail-title {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2-5);
+    font-size: var(--z-text-title);
+  }
+  .z-agenda__swatch {
+    flex: none;
+    inline-size: var(--z-space-3);
+    block-size: var(--z-space-3);
+    border-radius: calc(var(--z-radius-xs) * 2 / 3);
+    background: var(--z-event-color);
+  }
+  .z-agenda__detail-list {
+    display: grid;
+    grid-template-columns: var(--z-space-5) minmax(0, 1fr);
+    gap: var(--z-space-2-5);
+    margin: 0;
+    padding: var(--z-space-1) var(--z-space-1-5);
+  }
+  .z-agenda__detail-list dt {
+    color: var(--z-fg-muted);
+  }
+  .z-agenda__detail-list dd {
+    margin: 0;
+  }
+  .z-agenda__detail-actions {
+    display: flex;
+    gap: var(--z-space-2);
+    padding: var(--z-space-1) var(--z-space-1-5);
+  }
+  .z-agenda__move {
+    inline-size: min(calc(var(--z-space-20) * 4), calc(100vw - var(--z-space-8)));
+  }
+  .z-agenda__move-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    padding: var(--z-space-5);
+  }
+  .z-agenda__move-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-agenda__move-input {
+    min-block-size: var(--z-control-height-md);
+    padding-inline: var(--z-space-3);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font: inherit;
+    font-size: var(--z-text-body);
+  }
+  .z-agenda__move-input:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-agenda__move-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--z-space-2);
+  }
+
+  /* ---------- Contenedor estrecho: lateral fuera, semana con desplazamiento por días, mes con puntos ---------- */
+  @container z-agenda (max-width: 980px) {
+    .z-agenda[data-sidebar] > .z-agenda__frame {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-agenda__side {
+      display: none;
+    }
+  }
+  @container z-agenda (max-width: 640px) {
+    .z-agenda__toolbar {
+      gap: var(--z-space-2);
+      padding: var(--z-space-2);
+    }
+    .z-agenda__title {
+      order: -1;
+      inline-size: 100%;
+      font-size: var(--z-text-title);
+    }
+    .z-agenda__zone {
+      display: none;
+    }
+    /* Las vistas no caben en una fila: un solo selector compacto en lugar del segmentado partido en filas. */
+    .z-agenda__views {
+      display: none;
+    }
+    .z-agenda__view-picker {
+      display: inline-flex;
+    }
+    .z-timegrid {
+      --z-tg-gutter: calc(var(--z-space-10) + var(--z-space-1));
+    }
+    .z-agenda__view[data-view="week"] .z-timegrid {
+      --z-tg-day-min: calc(var(--z-space-20) + var(--z-space-6));
+    }
+    .z-agenda__view[data-view="week"] .z-timegrid__scroll {
+      scroll-padding-inline-start: var(--z-tg-gutter);
+      scroll-snap-type: x mandatory;
+    }
+    .z-agenda__view[data-view="week"] .z-timegrid__dayhead {
+      scroll-snap-align: start;
+    }
+    .z-timegrid__gutter,
+    .z-timegrid__corner,
+    .z-timegrid__label {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: var(--z-layer-raised);
+      background: var(--z-reading-bg);
+    }
+    .z-timegrid[data-second-zone] {
+      --z-tg-cols: 0 var(--z-tg-gutter) repeat(var(--z-tg-days), minmax(var(--z-tg-day-min), 1fr));
+    }
+    .z-timegrid__gutter--second {
+      display: none;
+    }
+    .z-timegrid__dayhead {
+      flex-direction: column;
+      gap: var(--z-space-0-5);
+    }
+    .z-timegrid__day {
+      font-size: var(--z-text-title);
+    }
+    .z-monthgrid__weekday {
+      padding: var(--z-space-1-5) 0;
+      font-size: var(--z-text-fine);
+      text-align: center;
+    }
+    .z-monthgrid__cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--z-space-1);
+      min-block-size: var(--z-space-14);
+      padding: var(--z-space-0-5);
+    }
+    .z-monthgrid__cell .z-event,
+    .z-monthgrid__more {
+      display: none;
+    }
+    .z-monthgrid__dots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--z-space-0-5);
+      max-inline-size: var(--z-space-8);
+    }
+    .z-monthgrid__dots i {
+      inline-size: 6px;
+      block-size: 6px;
+      border-radius: var(--z-radius-full);
+      background: var(--z-event-color);
+    }
+    .z-monthgrid__daylist {
+      display: flex;
+      flex-direction: column;
+      gap: var(--z-space-1-5);
+      padding: var(--z-space-3);
+      border-block-start: 1px solid var(--z-line);
+    }
+    .z-monthgrid__daylist-title {
+      margin: 0 0 var(--z-space-1);
+      font-size: var(--z-text-body);
+    }
+    .z-monthgrid__daylist-empty {
+      margin: 0;
+      color: var(--z-fg-muted);
+      font-size: var(--z-text-small);
+    }
+    .z-agendalist__day {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-agendalist__date {
+      z-index: var(--z-layer-raised);
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--z-space-2);
+      padding: var(--z-space-3) var(--z-space-3) var(--z-space-1);
+      background: var(--z-reading-bg);
+    }
+    .z-agendalist__num {
+      font-size: var(--z-text-heading);
+    }
+    .z-agendalist__items {
+      padding: 0 var(--z-space-1-5) var(--z-space-2);
+    }
+    .z-event--list {
+      padding-inline-end: var(--z-space-2);
+    }
+    .z-agendalist__calendar {
+      display: none;
+    }
+  }
+
+  /* Puntero grueso: más alto por hora, para que un evento de 15 min tenga 16 px y su área táctil, 24. */
+  @media (pointer: coarse) {
+    .z-monthgrid__cell {
+      min-block-size: calc(var(--z-mg-head) + (var(--z-mg-lanes) + 0.5) * var(--z-mg-lane) + var(--z-space-2));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-event[data-dragging] {
+      scale: 1;
+    }
+  }
+  @media (prefers-contrast: more) {
+    .z-event {
+      box-shadow: inset 0 0 0 1px var(--z-event-color);
+    }
+    .z-event[data-past]:not([data-selected]) {
+      box-shadow: inset 0 0 0 1px var(--z-line-strong);
+    }
+  }
+  /* Colores forzados: borde de sistema; seleccionado y arrastrado en Highlight; la línea de ahora, también. */
+  @media (forced-colors: active) {
+    .z-event {
+      forced-color-adjust: none;
+      border: 1px solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+    .z-event::before {
+      background: CanvasText;
+    }
+    .z-event:is([data-selected], [data-dragging]) {
+      background: Highlight;
+      color: HighlightText;
+    }
+    .z-timegrid__now,
+    .z-timegrid__now[data-today] {
+      border-color: Highlight;
+    }
+    .z-timegrid__create,
+    .z-event[data-grabbed] {
+      outline-color: Highlight;
+    }
+  }
+  /* Impresión: sin cristal, sin desplazamiento interno; la semana y el mes en apaisado. */
+  @media print {
+    .z-agenda__side,
+    .z-agenda__views,
+    .z-agenda__view-picker,
+    .z-agenda__nav,
+    .z-agenda__today,
+    .z-agenda__hint {
+      display: none;
+    }
+    .z-agenda[data-sidebar] > .z-agenda__frame {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-timegrid__scroll,
+    .z-agendalist {
+      max-block-size: none;
+      overflow: visible;
+    }
+    .z-event {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      break-inside: avoid;
+    }
+    .z-agenda__view:is([data-view="week"], [data-view="workweek"], [data-view="month"]) {
+      page: z-agenda-landscape;
+    }
+  }
+}
+@page z-agenda-landscape {
+  size: landscape;
+}

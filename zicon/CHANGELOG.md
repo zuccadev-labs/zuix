@@ -5,6 +5,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
+Sin cambios en este paquete. La versión sube para seguir alineada con la suite.
+
 ## [0.2.0] - 2026-11-18
 
 ### Cambios incompatibles

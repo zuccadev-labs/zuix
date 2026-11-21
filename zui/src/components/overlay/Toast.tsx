@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, isValidElement, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { followModalHost, modalHost, moveToHost, settleShown } from "../../core/modal-host";
 import { focusQuiet } from "../../core/focus";
@@ -19,13 +19,42 @@ export interface ToastOptions {
   duration?: number;
   /** Acción opcional dentro del aviso. */
   action?: { label: string; onClick: () => void };
+  /** En curso: anillo de carga en lugar del punto, `aria-busy` y sin cierre automático. */
+  loading?: boolean;
+}
+
+/** Mensaje de un estado de `toast.promise`: un texto o las opciones completas (salvo `loading`). */
+export type ToastPromiseMessage<T = unknown> =
+  | ReactNode
+  | Omit<ToastOptions, "loading">
+  | ((value: T) => ReactNode | Omit<ToastOptions, "loading">);
+
+export interface ToastPromiseMessages<T> {
+  loading: ReactNode | Omit<ToastOptions, "loading" | "duration">;
+  success: ToastPromiseMessage<T>;
+  error: ToastPromiseMessage<unknown>;
 }
 
 export interface ToastApi {
   /** Muestra un aviso y devuelve su id. */
   toast: (options: ToastOptions) => string;
+  /** Cambia un aviso abierto (texto, intención, duración, carga). */
+  update: (id: string, options: Partial<ToastOptions>) => void;
+  /**
+   * Un aviso que sigue a una promesa: «cargando» mientras está pendiente (sin cierre automático) y, al resolverse, el
+   * mensaje de éxito o de error en el mismo aviso, que entonces sí se cierra solo. Devuelve la misma promesa.
+   */
+  promise: <T>(promise: Promise<T>, messages: ToastPromiseMessages<T>) => Promise<T>;
   dismiss: (id: string) => void;
   dismissAll: () => void;
+}
+
+const isOptions = (value: unknown): value is ToastOptions =>
+  typeof value === "object" && value !== null && !isValidElement(value) && "title" in value;
+/** Opciones de un mensaje de `toast.promise`. */
+function messageOf<T>(message: ToastPromiseMessage<T>, value: T): ToastOptions {
+  const resolved = typeof message === "function" ? (message as (v: T) => unknown)(value) : message;
+  return isOptions(resolved) ? resolved : { title: resolved as ReactNode };
 }
 
 export interface ToastProviderProps {
@@ -77,7 +106,7 @@ function ToastView({ item, duration, position, closeLabel, dismiss, remove, retu
   // durante un gesto de descarte ni con la ventana sin foco; al volver continúa con lo que quedaba.
   useEffect(() => {
     const el = node.current;
-    if (!el || !open) return;
+    if (!el || !open || item.loading) return;
     const close = () => latest.current.dismiss(id);
     const timer = createTimer(duration, close);
     const wiring = new AbortController();
@@ -107,7 +136,7 @@ function ToastView({ item, duration, position, closeLabel, dismiss, remove, retu
       wiring.abort();
       unswipe();
     };
-  }, [id, open, duration, position, latest]);
+  }, [id, open, duration, position, latest, item.loading]);
 
   // Salida: se espera la animación y el aviso se retira; el foco no se queda en un aviso que desaparece.
   useIsoLayoutEffect(() => {
@@ -130,13 +159,15 @@ function ToastView({ item, duration, position, closeLabel, dismiss, remove, retu
       tabIndex={0}
       data-intent={intent}
       data-state={open ? "open" : "closed"}
+      data-loading={item.loading || undefined}
+      aria-busy={item.loading || undefined}
       onKeyDown={(event) => {
         if (event.key !== "Escape") return;
         event.preventDefault();
         dismiss(id);
       }}
     >
-      <span className="z-toast__dot" aria-hidden="true" />
+      {item.loading ? <span className="z-toast__spinner" aria-hidden="true" /> : <span className="z-toast__dot" aria-hidden="true" />}
       <div className="z-toast__content">
         <div className="z-toast__title">{item.title}</div>
         {item.description ? <div className="z-toast__description">{item.description}</div> : null}
@@ -193,6 +224,25 @@ export function ToastProvider({
         setHost((current) => current ?? createToastRoot());
         setItems((list) => [...list, { ...options, id, open: true }].slice(-limit));
         return id;
+      },
+      update: (id, options) => setItems((list) => list.map((item) => (item.id === id ? { ...item, ...options } : item))),
+      promise: <T,>(promise: Promise<T>, messages: ToastPromiseMessages<T>) => {
+        counter += 1;
+        const id = `z-toast-${counter}`;
+        const loading = isOptions(messages.loading) ? messages.loading : { title: messages.loading as ReactNode };
+        setHost((current) => current ?? createToastRoot());
+        setItems((list) => [...list, { intent: "info" as const, ...loading, id, open: true, loading: true }].slice(-limit));
+        const settle = (options: ToastOptions) =>
+          setItems((list) =>
+            list.map((item) =>
+              item.id === id ? { ...item, action: undefined, description: undefined, ...options, loading: false } : item,
+            ),
+          );
+        promise.then(
+          (value) => settle({ intent: "success", ...messageOf(messages.success, value) }),
+          (error: unknown) => settle({ intent: "danger", ...messageOf(messages.error, error) }),
+        );
+        return promise;
       },
       dismiss,
       dismissAll: () => setItems((list) => list.map((item) => ({ ...item, open: false }))),

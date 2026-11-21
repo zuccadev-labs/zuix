@@ -1,0 +1,27 @@
+{
+  "name": "Form",
+  "group": "forms",
+  "description": "Formulario que pinta la validación nativa en sus campos: sin globos del navegador, mensajes por ValidityState en cada Field y foco al primer error al enviar.",
+  "import": "import { Form } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    { "name": "onSubmit", "type": "(event) => void", "description": "Solo se llama si todos los controles son válidos." },
+    {
+      "name": "onInvalidSubmit",
+      "type": "(event) => void",
+      "description": "El envío se detuvo por errores (el foco ya está en el primero)."
+    },
+    { "name": "...rest", "type": "FormHTMLAttributes", "description": "action, method, aria-labelledby…" }
+  ],
+  "states": ["rest", "invalid"],
+  "tokens": ["space-5"],
+  "classes": ["z-form"],
+  "a11y": "form con noValidate: la validación es la nativa (required, type, pattern, minLength…) pero el mensaje va en el campo (Field con `validate`), enlazado con aria-describedby y marcado con aria-invalid solo mientras falla. Al enviar con errores el foco va al primer campo no válido (si es un control propio, a su botón). No deshabilita el botón de enviar. La validación del cliente es experiencia; la del servidor sigue siendo necesaria.",
+  "examples": [
+    {
+      "title": "Alta con validación",
+      "code": "<Form aria-label=\"Create account\" method=\"post\">\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Password\" required hint=\"Eight or more characters.\" validate={{ tooShort: \"Use at least 8 characters.\" }}>\n    <PasswordInput name=\"password\" autoComplete=\"new-password\" minLength={8} />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Create account</Button>\n</Form>"
+    }
+  ],
+  "origin": "Nuevo. Guías «forms» y «accessible-error-announcement» (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState)."
+}

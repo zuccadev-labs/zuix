@@ -1,25 +1,31 @@
-/* Acciones: botones, enlaces, conmutadores y control segmentado. Origen: primitivas de zutool (forma píldora). */
+/* Acciones: botones, enlaces, conmutadores y control segmentado. Origen: primitivas de zutool; forma del estándar
+   liquid glass: rectángulo de esquinas redondeadas, radios concéntricos por tamaño (sm 8, md 10, lg 12). */
 @layer zui.actions {
   /* ---- Button / IconButton ---- */
+  /* Variante por defecto (secondary): botón de cristal, con canto y brillo superior. */
   .z-btn {
     --z-btn-bg: var(--z-surface-2);
     --z-btn-bg-hover: var(--z-surface-3);
     --z-btn-fg: var(--z-fg);
-    --z-btn-line: var(--z-line);
+    --z-btn-line: var(--z-glass-border);
     --z-btn-height: var(--z-control-height-md);
+    --z-btn-radius: var(--z-button-radius);
+    --z-btn-shine: inset 0 1px 0 var(--z-glass-highlight);
+    --z-btn-shadow: 0 0 transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--z-space-2);
+    gap: var(--z-space-1-5);
     height: var(--z-btn-height);
-    padding: 0 var(--z-space-4);
+    padding: 0 var(--z-space-3-5);
     border: 1px solid var(--z-btn-line);
-    border-radius: var(--z-button-radius);
+    border-radius: var(--z-btn-radius);
     background: var(--z-btn-bg);
+    box-shadow: var(--z-btn-shine), var(--z-btn-shadow);
     color: var(--z-btn-fg);
     font-family: inherit;
     font-size: var(--z-text-body);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     line-height: 1;
     white-space: nowrap;
     text-decoration: none;
@@ -31,7 +37,7 @@
       border-color var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard),
       box-shadow var(--z-duration-fast) var(--z-ease-standard),
-      transform var(--z-duration-fast) var(--z-ease-standard);
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-btn:hover:not(:disabled, [aria-disabled="true"]) {
@@ -39,11 +45,12 @@
     }
   }
   .z-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
+  /* Pulsación: la pieza cede un 3 %. */
   .z-btn:active:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(1px);
+    scale: 0.97;
   }
   /* `aria-disabled`: en carga el botón no actúa pero conserva el foco del teclado. */
   .z-btn:disabled,
@@ -56,34 +63,53 @@
   }
   .z-btn[data-size="sm"] {
     --z-btn-height: var(--z-control-height-sm);
+    --z-btn-radius: var(--z-control-radius-sm);
     padding: 0 var(--z-space-3);
     gap: var(--z-space-1);
     font-size: var(--z-text-small);
   }
   .z-btn[data-size="lg"] {
     --z-btn-height: var(--z-control-height-lg);
+    --z-btn-radius: var(--z-control-radius-lg);
+    padding: 0 var(--z-space-4);
+  }
+  /* xs (24 px) y xl (48 px): los extremos de la escala, con su radio concéntrico (6 y 14). */
+  .z-btn[data-size="xs"] {
+    --z-btn-height: var(--z-control-height-xs);
+    --z-btn-radius: var(--z-radius-xs);
+    padding: 0 var(--z-space-2);
+    gap: var(--z-space-1);
+    font-size: var(--z-text-caption);
+  }
+  .z-btn[data-size="xl"] {
+    --z-btn-height: var(--z-control-height-xl);
+    --z-btn-radius: var(--z-control-radius-xl);
     padding: 0 var(--z-space-5);
+    gap: var(--z-space-2);
     font-size: var(--z-text-title);
   }
   .z-btn[data-block] {
     display: flex;
     width: 100%;
   }
+  /* Primario: acento sólido con brillo interior y sombra corta. */
   .z-btn--primary {
     --z-btn-bg: var(--z-button-primary-bg);
     --z-btn-bg-hover: var(--z-button-primary-bg-hover);
     --z-btn-fg: var(--z-button-primary-fg);
     --z-btn-line: transparent;
-    box-shadow: var(--z-shadow-sm);
+    --z-btn-shine: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
+    --z-btn-shadow: var(--z-shadow-sm);
   }
   .z-btn--ghost {
     --z-btn-bg: transparent;
-    --z-btn-bg-hover: var(--z-surface-3);
+    --z-btn-bg-hover: var(--z-surface-2);
     --z-btn-fg: var(--z-fg-muted);
     --z-btn-line: transparent;
+    --z-btn-shine: 0 0 transparent;
   }
   @media (hover: hover) {
-    .z-btn--ghost:hover:not(:disabled) {
+    .z-btn--ghost:hover:not(:disabled, [aria-disabled="true"]) {
       --z-btn-fg: var(--z-fg);
     }
   }
@@ -92,6 +118,37 @@
     --z-btn-bg-hover: color-mix(in srgb, var(--z-danger) 30%, transparent);
     --z-btn-fg: var(--z-danger-text);
     --z-btn-line: transparent;
+    --z-btn-shine: 0 0 transparent;
+  }
+  /* Contorno: sin relleno, con el canto fuerte; al pasar, la superficie del secundario. */
+  .z-btn--outline {
+    --z-btn-bg: transparent;
+    --z-btn-bg-hover: var(--z-surface-2);
+    --z-btn-line: var(--z-line-strong);
+    --z-btn-shine: 0 0 transparent;
+  }
+  /* Enlace: texto de acento subrayado al pasar. Sigue siendo un botón (acción, no navegación). */
+  .z-btn--link {
+    --z-btn-bg: transparent;
+    --z-btn-bg-hover: transparent;
+    --z-btn-fg: var(--z-accent-text);
+    --z-btn-line: transparent;
+    --z-btn-shine: 0 0 transparent;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+  }
+  @media (hover: hover) {
+    .z-btn--link:hover:not(:disabled, [aria-disabled="true"]) {
+      text-decoration-color: currentColor;
+    }
+  }
+  .z-btn--link,
+  .z-btn--link[data-size] {
+    padding-inline: var(--z-space-1);
+  }
+  .z-btn--link:active:not(:disabled, [aria-disabled="true"]) {
+    scale: 1;
   }
   .z-btn--icon {
     width: var(--z-btn-height);
@@ -121,6 +178,195 @@
     }
   }
 
+  /* ---- ButtonGroup ----
+     Unido: las piezas comparten canto (−1 px) y solo las de los extremos conservan el radio; la enfocada sube para
+     que su contorno no quede bajo la vecina. Separado: hueco de 8 px. */
+  .z-btn-group {
+    display: inline-flex;
+    align-items: stretch;
+    gap: var(--z-space-2);
+  }
+  /* Suelto, con tallas distintas: centrados en la fila (con alto fijo, `stretch` los dejaba alineados arriba). */
+  .z-btn-group:not([data-attached]):not([data-orientation="vertical"]) {
+    align-items: center;
+  }
+  .z-btn-group[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  .z-btn-group[data-attached] {
+    gap: 0;
+  }
+  .z-btn-group > * {
+    position: relative;
+  }
+  .z-btn-group > :focus-visible,
+  .z-btn-group > :focus-within {
+    z-index: var(--z-layer-raised);
+  }
+  .z-btn-group[data-attached]:not([data-orientation="vertical"]) > :not(:first-child) {
+    margin-inline-start: -1px;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .z-btn-group[data-attached]:not([data-orientation="vertical"]) > :not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .z-btn-group[data-attached][data-orientation="vertical"] > :not(:first-child) {
+    margin-block-start: -1px;
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+  .z-btn-group[data-attached][data-orientation="vertical"] > :not(:last-child) {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  /* Separador: una línea de 1 px entre dos piezas unidas, del color del canto. */
+  .z-btn-group__separator {
+    flex: 0 0 1px;
+    align-self: stretch;
+    background: var(--z-line-strong);
+  }
+  .z-btn-group[data-attached] > .z-btn-group__separator {
+    margin: 0;
+    z-index: var(--z-layer-raised);
+  }
+  .z-btn-group[data-orientation="vertical"] > .z-btn-group__separator {
+    flex-basis: 1px;
+    min-block-size: 1px;
+  }
+
+  /* ---- CopyButton ----
+     El icono de copiar pasa a una marca (o a una cruz si falla). La burbuja es la región viva: se muestra y se
+     oculta con opacidad (sigue en el árbol de accesibilidad) y queda encima del botón. */
+  .z-copy {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+  }
+  .z-copy__button {
+    min-inline-size: 24px;
+    min-block-size: 24px;
+  }
+  .z-copy__icons {
+    display: inline-grid;
+    place-items: center;
+  }
+  .z-copy__icon {
+    display: inline-flex;
+    grid-area: 1 / 1;
+    transition:
+      opacity var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-fast) var(--z-ease-spring);
+  }
+  .z-copy__icon:not([data-for="idle"]),
+  .z-copy__button:is([data-copied], [data-failed]) .z-copy__icon[data-for="idle"] {
+    opacity: 0;
+  }
+  .z-copy__button[data-copied] .z-copy__icon[data-for="copied"],
+  .z-copy__button[data-failed] .z-copy__icon[data-for="failed"] {
+    opacity: 1;
+  }
+  /* Con movimiento, el icono que sale encoge y el que entra crece; sin él, solo cambia la opacidad. */
+  @media (prefers-reduced-motion: no-preference) {
+    .z-copy__icon:not([data-for="idle"]),
+    .z-copy__button:is([data-copied], [data-failed]) .z-copy__icon[data-for="idle"] {
+      scale: 0.6;
+    }
+    .z-copy__button[data-copied] .z-copy__icon[data-for="copied"],
+    .z-copy__button[data-failed] .z-copy__icon[data-for="failed"] {
+      scale: 1;
+    }
+  }
+  .z-copy__button[data-copied] {
+    --z-btn-fg: var(--z-success-text);
+  }
+  .z-copy__button[data-failed] {
+    --z-btn-fg: var(--z-danger-text);
+  }
+  .z-copy__status {
+    position: absolute;
+    inset-block-end: calc(100% + var(--z-space-1-5));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    z-index: var(--z-layer-tooltip);
+    padding: var(--z-space-1) var(--z-space-2);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-tooltip-bg);
+    box-shadow: var(--z-shadow-md);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-ui);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--z-duration-fast) var(--z-ease-standard);
+  }
+  [dir="rtl"] .z-copy__status {
+    translate: 50% 0;
+  }
+  .z-copy__status:not(:empty) {
+    opacity: 1;
+  }
+
+  /* ---- Swap ----
+     Dos contenidos en la misma celda de rejilla. Activo: con data-state="on" propio o, sin él, dentro de un control
+     pulsado (aria-pressed), abierto (aria-expanded) o encendido (data-state="on"). */
+  .z-swap {
+    display: inline-grid;
+    place-items: center;
+    vertical-align: middle;
+  }
+  .z-swap__item {
+    display: inline-flex;
+    grid-area: 1 / 1;
+    transition:
+      opacity var(--z-duration-normal) var(--z-ease-standard),
+      transform var(--z-duration-normal) var(--z-ease-spring);
+  }
+  .z-swap__item[data-for="on"],
+  .z-swap[data-state="on"] > .z-swap__item[data-for="off"],
+  :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"]) .z-swap:not([data-state]) > .z-swap__item[data-for="off"] {
+    opacity: 0;
+  }
+  .z-swap[data-state="on"] > .z-swap__item[data-for="on"],
+  :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"]) .z-swap:not([data-state]) > .z-swap__item[data-for="on"] {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-swap[data-effect="rotate"] > .z-swap__item[data-for="on"] {
+      transform: rotate(-90deg) scale(0.6);
+    }
+    .z-swap[data-effect="rotate"][data-state="on"] > .z-swap__item[data-for="off"],
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"])
+      .z-swap[data-effect="rotate"]:not([data-state])
+      > .z-swap__item[data-for="off"] {
+      transform: rotate(90deg) scale(0.6);
+    }
+    .z-swap[data-effect="flip"] > .z-swap__item[data-for="on"] {
+      transform: rotateY(90deg);
+    }
+    .z-swap[data-effect="flip"][data-state="on"] > .z-swap__item[data-for="off"],
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"])
+      .z-swap[data-effect="flip"]:not([data-state])
+      > .z-swap__item[data-for="off"] {
+      transform: rotateY(-90deg);
+    }
+    .z-swap[data-effect="scale"] > .z-swap__item[data-for="on"],
+    .z-swap[data-effect="scale"][data-state="on"] > .z-swap__item[data-for="off"],
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"])
+      .z-swap[data-effect="scale"]:not([data-state])
+      > .z-swap__item[data-for="off"] {
+      transform: scale(0.4);
+    }
+    .z-swap[data-state="on"] > .z-swap__item[data-for="on"],
+    :is([aria-pressed="true"], [aria-expanded="true"], [data-state="on"]) .z-swap:not([data-state]) > .z-swap__item[data-for="on"] {
+      transform: none;
+    }
+  }
+
   /* ---- Link ---- */
   .z-link {
     display: inline-flex;
@@ -145,8 +391,8 @@
     }
   }
   .z-link:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-link:active {
     color: var(--z-accent-text);
@@ -192,7 +438,7 @@
       background var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard),
       border-color var(--z-duration-fast) var(--z-ease-standard),
-      transform var(--z-duration-fast) var(--z-ease-standard);
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-toggle:hover:not(:disabled) {
@@ -201,11 +447,11 @@
     }
   }
   .z-toggle:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-toggle:active:not(:disabled) {
-    transform: translateY(1px);
+    scale: 0.97;
   }
   .z-toggle[data-state="on"] {
     background: var(--z-accent-soft);
@@ -230,21 +476,84 @@
     aspect-ratio: 1;
     padding: 0;
   }
+  .z-toggle[data-size="sm"] {
+    border-radius: var(--z-control-radius-sm);
+  }
+  .z-toggle[data-size="lg"] {
+    border-radius: var(--z-control-radius-lg);
+  }
+  /* Fantasma: sin canto en reposo; activado conserva el relleno y el canto de acento. */
+  .z-toggle[data-variant="ghost"]:not([data-state="on"]) {
+    border-color: transparent;
+  }
+
+  /* ---- ToggleGroup ----
+     Toggles en un bloque. Unido: canto compartido y radios solo en los extremos (como ButtonGroup); la pieza activa o
+     enfocada sube para que su canto de acento y su contorno se vean enteros. Separado: hueco de 4 px. */
+  .z-toggle-group {
+    display: inline-flex;
+    align-items: stretch;
+    gap: var(--z-space-1);
+  }
+  .z-toggle-group[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  .z-toggle-group[data-attached] {
+    gap: 0;
+  }
+  .z-toggle-group > .z-toggle {
+    position: relative;
+  }
+  .z-toggle-group > .z-toggle[data-state="on"] {
+    z-index: var(--z-layer-raised);
+  }
+  .z-toggle-group > .z-toggle:focus-visible {
+    z-index: calc(var(--z-layer-raised) + 1);
+  }
+  .z-toggle-group[data-attached]:not([data-orientation="vertical"]) > .z-toggle:not(:first-child) {
+    margin-inline-start: -1px;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .z-toggle-group[data-attached]:not([data-orientation="vertical"]) > .z-toggle:not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .z-toggle-group[data-attached][data-orientation="vertical"] > .z-toggle:not(:first-child) {
+    margin-block-start: -1px;
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+  .z-toggle-group[data-attached][data-orientation="vertical"] > .z-toggle:not(:last-child) {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .z-toggle-group[data-orientation="vertical"] > .z-toggle:not([data-icon-only]) {
+    justify-content: flex-start;
+  }
 
   /* ---- SegmentedControl ---- */
+  /* Pista hundida con canto de cristal; la opción activa se levanta (superficie, brillo y sombra corta).
+     Radios concéntricos: radio de la pista = radio de la opción + relleno (md y lg: 8 + 4 = 12; sm: 6 + 2 = 8). */
   .z-segmented {
     --z-segmented-height: var(--z-control-height-md);
+    --z-segmented-pad: var(--z-space-1);
+    --z-segmented-item-radius: var(--z-control-radius-sm);
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: var(--z-space-0-5);
+    box-sizing: border-box;
     height: var(--z-segmented-height);
-    padding: 3px;
-    border: 1px solid var(--z-line);
-    border-radius: var(--z-button-radius);
+    padding: var(--z-segmented-pad);
+    border: 1px solid var(--z-glass-border);
+    border-radius: calc(var(--z-segmented-item-radius) + var(--z-segmented-pad));
     background: var(--z-control-bg);
   }
+  /* sm: opciones de 24 px (objetivo mínimo de WCAG 2.5.8); la pista suma el relleno y el canto. */
   .z-segmented[data-size="sm"] {
-    --z-segmented-height: var(--z-control-height-sm);
+    --z-segmented-height: calc(var(--z-control-height-xs) + 2 * var(--z-segmented-pad) + 2px);
+    --z-segmented-pad: 2px;
+    --z-segmented-item-radius: var(--z-radius-xs);
   }
   .z-segmented[data-size="lg"] {
     --z-segmented-height: var(--z-control-height-lg);
@@ -260,26 +569,28 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--z-space-2);
+    gap: var(--z-space-1-5);
     min-width: 0;
     height: 100%;
-    padding: 0 var(--z-space-3);
+    padding: 0 var(--z-space-2-5);
     border: 0;
-    border-radius: var(--z-button-radius);
+    border-radius: var(--z-segmented-item-radius);
     background: transparent;
     color: var(--z-fg-muted);
     font-family: inherit;
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      color var(--z-duration-fast) var(--z-ease-standard);
+      color var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   .z-segmented[data-size="lg"] .z-segmented__item {
-    padding: 0 var(--z-space-4);
+    padding: 0 var(--z-space-3-5);
     font-size: var(--z-text-body);
   }
   .z-segmented__label {
@@ -288,25 +599,79 @@
   }
   @media (hover: hover) {
     .z-segmented__item:hover:not(:disabled):not([data-state="on"]) {
-      background: var(--z-surface-2);
       color: var(--z-fg);
     }
   }
   .z-segmented__item:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-segmented__item:active:not(:disabled) {
-    transform: translateY(1px);
+    scale: 0.97;
   }
   .z-segmented__item[data-state="on"] {
-    background: var(--z-button-primary-bg);
-    color: var(--z-button-primary-fg);
-    box-shadow: var(--z-shadow-sm);
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
   }
   .z-segmented__item:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  /* Vertical: la pista crece hacia abajo y cada opción ocupa el ancho; el texto se alinea al inicio. */
+  .z-segmented[data-orientation="vertical"] {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+  }
+  .z-segmented[data-orientation="vertical"] .z-segmented__item {
+    justify-content: flex-start;
+    height: auto;
+    /* Con puntero grueso, cada opción llega al objetivo táctil. */
+    min-height: max(calc(var(--z-segmented-height) - 2 * var(--z-segmented-pad) - 2px), var(--z-touch-target, 0px));
+  }
+  /* Subrayado: sin pista ni elevación; la opción elegida lleva una barra de acento de 2 px bajo el texto (al
+     inicio de la línea en vertical) y el conjunto se apoya en una línea. */
+  .z-segmented[data-variant="underline"] {
+    gap: var(--z-space-1);
+    padding: 0;
+    border: 0;
+    border-block-end: 1px solid var(--z-line);
+    border-radius: 0;
+    background: transparent;
+  }
+  .z-segmented[data-variant="underline"] .z-segmented__item {
+    border-radius: var(--z-segmented-item-radius) var(--z-segmented-item-radius) 0 0;
+  }
+  @media (hover: hover) {
+    .z-segmented[data-variant="underline"] .z-segmented__item:hover:not(:disabled) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-segmented[data-variant="underline"] .z-segmented__item[data-state="on"] {
+    background: transparent;
+    color: var(--z-fg);
+    box-shadow: inset 0 -2px 0 var(--z-accent);
+  }
+  .z-segmented[data-variant="underline"][data-orientation="vertical"] {
+    border-block-end: 0;
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-segmented[data-variant="underline"][data-orientation="vertical"] .z-segmented__item {
+    min-height: var(--z-segmented-height);
+    border-radius: 0 var(--z-segmented-item-radius) var(--z-segmented-item-radius) 0;
+  }
+  .z-segmented[data-variant="underline"][data-orientation="vertical"] .z-segmented__item[data-state="on"] {
+    box-shadow: inset 2px 0 0 var(--z-accent);
+  }
+  [dir="rtl"] .z-segmented[data-variant="underline"][data-orientation="vertical"] .z-segmented__item {
+    border-radius: var(--z-segmented-item-radius) 0 0 var(--z-segmented-item-radius);
+  }
+  [dir="rtl"] .z-segmented[data-variant="underline"][data-orientation="vertical"] .z-segmented__item[data-state="on"] {
+    box-shadow: inset -2px 0 0 var(--z-accent);
   }
 
   /* Objetivo táctil: con puntero grueso cada opción del SegmentedControl se pulsa en todo el alto del control. */
@@ -322,5 +687,64 @@
       transform: translateY(-50%);
       height: max(100%, var(--z-touch-target, 0px));
     }
+  }
+
+  /* ---- Toolbar ---- */
+  /* Barra de cromo: pista con relleno 4 y radio concéntrico (radio de los controles + relleno: 8 + 4 en sm, 10 + 4 en md). */
+  .z-toolbar {
+    --z-toolbar-pad: var(--z-space-1);
+    --z-toolbar-radius: calc(var(--z-button-radius) + var(--z-toolbar-pad));
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+    max-inline-size: 100%;
+    padding: var(--z-toolbar-pad);
+    border-radius: var(--z-toolbar-radius);
+  }
+  .z-toolbar[data-size="sm"] {
+    --z-toolbar-radius: calc(var(--z-control-radius-sm) + var(--z-toolbar-pad));
+  }
+  .z-toolbar[data-variant="plain"] {
+    padding: 0;
+    border-radius: 0;
+  }
+  .z-toolbar[aria-orientation="vertical"] {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .z-toolbar__group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+  }
+  .z-toolbar[aria-orientation="vertical"] .z-toolbar__group {
+    flex-direction: column;
+  }
+  /* Separador con borde (no fondo): los colores forzados lo conservan. */
+  .z-toolbar__separator {
+    flex: none;
+    align-self: stretch;
+    inline-size: 0;
+    margin-block: var(--z-space-1);
+    margin-inline: var(--z-space-0-5);
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-toolbar__separator[aria-orientation="horizontal"] {
+    inline-size: auto;
+    block-size: 0;
+    margin-block: var(--z-space-0-5);
+    margin-inline: var(--z-space-1);
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--z-line);
+  }
+  .z-toolbar :is(.z-btn, .z-toggle):focus-visible {
+    position: relative;
+    z-index: var(--z-layer-raised);
+  }
+  /* Un control con `aria-disabled` sigue en el recorrido del teclado, apagado. */
+  .z-toolbar [aria-disabled="true"]:not([aria-busy="true"]) {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }

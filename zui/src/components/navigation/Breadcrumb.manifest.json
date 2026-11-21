@@ -1,7 +1,7 @@
 {
   "name": "Breadcrumb",
   "group": "navigation",
-  "description": "Ruta jerárquica hasta la página actual.",
+  "description": "Ruta jerárquica hasta la página actual, con separador propio y migas del medio colapsadas en un menú.",
   "import": "import { Breadcrumb } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -14,21 +14,53 @@
       "name": "label",
       "type": "string",
       "default": "Breadcrumb"
+    },
+    {
+      "name": "maxItems",
+      "type": "number",
+      "description": "Con más migas que esto, las del medio pasan a un menú «…» (patrón menu button)."
+    },
+    {
+      "name": "itemsBeforeCollapse",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "itemsAfterCollapse",
+      "type": "number",
+      "default": 1,
+      "description": "Migas visibles al final al colapsar (la actual incluida)."
+    },
+    {
+      "name": "collapsedLabel",
+      "type": "string",
+      "default": "Show more breadcrumbs",
+      "description": "Nombre accesible del botón «…»."
+    },
+    {
+      "name": "separator",
+      "type": "ReactNode",
+      "description": "Separador propio (\"/\", \"·\" o un nodo); por defecto, un chevrón que se refleja en RTL."
     }
   ],
-  "states": ["rest", "hover", "focus", "current"],
+  "states": ["rest", "hover", "focus", "current", "collapsed", "expanded"],
   "tokens": [
     "duration-fast",
     "ease-standard",
     "fg",
     "fg-muted",
     "fg-subtle",
-    "focus-ring",
     "radius-xs",
     "row-hover",
     "space-1",
     "text-small",
-    "weight-semibold"
+    "accent-ring",
+    "focus-width",
+    "space-1-5",
+    "weight-medium",
+    "surface-2",
+    "touch-target",
+    "focus-offset"
   ],
   "classes": [
     "z-breadcrumb",
@@ -36,14 +68,30 @@
     "z-breadcrumb__item",
     "z-breadcrumb__link",
     "z-breadcrumb__current",
-    "z-breadcrumb__separator"
+    "z-breadcrumb__separator",
+    "z-breadcrumb__more"
   ],
-  "a11y": "nav con nombre accesible y lista ordenada; el último elemento lleva aria-current=page y los separadores son decorativos.",
+  "a11y": "nav con nombre accesible y lista ordenada; el último elemento lleva aria-current=page y los separadores son decorativos. Colapsadas, las migas del medio quedan tras un botón «…» con nombre accesible y aria-haspopup=menu que abre un Menu (flechas, Intro, Escape devuelve el foco al botón); cada entrada es un enlace o una acción. Un separador propio también es decorativo.",
   "examples": [
     {
       "title": "Tres niveles",
       "code": "<Breadcrumb\n  items={[\n    { label: \"Home\", href: \"/\" },\n    { label: \"Projects\", href: \"/projects\" },\n    { label: \"Website redesign\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Colapsada con separador propio",
+      "code": "<Breadcrumb\n  maxItems={3}\n  separator=\"/\"\n  items={[\n    { label: \"Home\", href: \"/\" },\n    { label: \"Workspace\", href: \"/w\" },\n    { label: \"Projects\", href: \"/w/projects\" },\n    { label: \"Atlas\", href: \"/w/projects/atlas\" },\n    { label: \"Settings\" },\n  ]}\n/>"
     }
   ],
-  "origin": "Nuevo, sobre los tokens de fila de zutool."
+  "origin": "Nuevo, sobre los tokens de fila de zutool.",
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Tres niveles",
+      "code": "<nav aria-label=\"Breadcrumb\" class=\"z-breadcrumb\">\n  <ol class=\"z-breadcrumb__list\">\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/\">\n        <span class=\"z-breadcrumb__label\">Home</span>\n      </a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\">\n        <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n      </span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/projects\">\n        <span class=\"z-breadcrumb__label\">Projects</span>\n      </a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\">\n        <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n      </span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <span class=\"z-breadcrumb__current\" aria-current=\"page\">\n        <span class=\"z-breadcrumb__label\">Website redesign</span>\n      </span>\n    </li>\n  </ol>\n</nav>"
+    },
+    {
+      "title": "Colapsada con menú (data-z-open y un .z-menu[popover] con enlaces)",
+      "code": "<nav aria-label=\"Breadcrumb\" class=\"z-breadcrumb\">\n  <ol class=\"z-breadcrumb__list\">\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/\"><span class=\"z-breadcrumb__label\">Home</span></a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\" data-collapsed>\n      <button type=\"button\" class=\"z-breadcrumb__more\" aria-label=\"Show more breadcrumbs\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#crumbs-more\"><z-icon name=\"ellipsis-horizontal\" size=\"14\"></z-icon></button>\n      <div id=\"crumbs-more\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Show more breadcrumbs\" data-size=\"md\">\n        <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/docs/agents\"><span class=\"z-menu__text\">Workspace</span></a>\n        <a role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" href=\"/components\"><span class=\"z-menu__text\">Projects</span></a>\n      </div>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <a class=\"z-breadcrumb__link\" href=\"/tokens\"><span class=\"z-breadcrumb__label\">Atlas</span></a>\n      <span class=\"z-breadcrumb__separator\" aria-hidden=\"true\" data-custom>/</span>\n    </li>\n    <li class=\"z-breadcrumb__item\">\n      <span class=\"z-breadcrumb__current\" aria-current=\"page\"><span class=\"z-breadcrumb__label\">Settings</span></span>\n    </li>\n  </ol>\n</nav>"
+    }
+  ]
 }

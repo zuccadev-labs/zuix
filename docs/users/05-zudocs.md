@@ -136,7 +136,9 @@ se señala con su número de línea. El del sitio de zuix:
   "home": { "eyebrow": "Suite de UI/UX · marca {brand}", "title": "Un estándar.", "emphasis": "Cualquier marca.", "suite": true },
   "llms": { "append": "llms.append.md" },
   "search": { "enabled": true, "languages": ["es", "en"] },
-  "navbar": [{ "label": "Componentes", "to": "/components" }]
+  "navbar": [{ "label": "Componentes", "to": "/components" }],
+  "repository": "https://github.com/zuccadev-labs/zuix",
+  "cta": { "label": "Empezar", "to": "/docs/users" }
 }
 ```
 
@@ -183,7 +185,7 @@ explica qué va en cada una. `new` copia la plantilla al área, con el siguiente
 
 ### Fuentes
 
-Las fuentes del sitio de zuix están autoalojadas (`zudocs/src/fonts/`, diez archivos `woff2` con licencia
+Las fuentes del sitio de zuix están autoalojadas (`zudocs/src/fonts/`, cuatro archivos `woff2` con licencia
 OFL): ninguna visita hace una petición a un tercero, y eso permite además una política de contenido
 estricta. Para otro proyecto hay dos caminos:
 
@@ -214,7 +216,8 @@ zudocs usa la red.
 ### Buscador
 
 Búsqueda local, sin servicio externo: el índice se genera en el build y se consulta en el navegador.
-Está en la barra superior (`Ctrl K`) y tiene página de resultados en `/search`. Se configura con
+Se abre como paleta desde el botón de la barra superior, con `⌘K` / `Ctrl K` o con `/`, y tiene página de
+resultados en `/search`. Se configura con
 `search` en `zudocs.config.json`; `languages` fija los idiomas del índice. Solo funciona en el sitio
 compilado (`build`), no en `start`.
 
@@ -229,7 +232,7 @@ Cada build regenera tres cosas, con el formato de [llmstxt.org](https://llmstxt.
 |---|---|
 | `llms.txt` | Mapa de la documentación: una sección por área, la portada primero, cada documento con su URL absoluta y su primera frase |
 | `llms-full.txt` | Toda la documentación en un archivo. Se desactiva con `llms.full: false` |
-| `<ruta>.md` | Copia en Markdown de cada documento junto a su página |
+| `<ruta>.md` | Copia en Markdown de cada documento junto a su página, y de cada página de componente si el sitio publica el catálogo. Es lo que copia el botón «Copiar página» |
 
 `llms.append` añade un archivo propio al final de `llms.txt`. El de zuix está versionado en
 `zudocs/static/llms.txt`; lo regeneran `build` y `llms`, y el cambio se incluye en el mismo commit que la
@@ -272,9 +275,9 @@ mal escrito no rompe el build: la página muestra el error de Mermaid en su luga
 
 | Página | Contenido |
 |---|---|
-| Portada | Presentación y áreas; con `home.suite`, las cifras de la suite y el Carousel |
-| Documentación | Una sección por área, con sidebar generada desde la carpeta y la portada del área en primer lugar |
-| [Componentes](/components) | Catálogo en vivo de `zui` y `zout`, generado desde los manifiestos. Opcional: `pages.components` |
+| Portada | Presentación, llamada a la acción y áreas; con `home.suite`, la instalación con pestañas por gestor, una composición en vivo, las cifras de la suite, las categorías de componentes y el Carousel |
+| Documentación | Una sección por área, con la portada del área en primer lugar. Cada documento: anterior/siguiente, «Copiar página», migas, título, entradilla, fecha y tiempo de lectura, e índice «En esta página» |
+| [Componentes](/components) | Índice con tarjetas por categoría y buscador, y una página por componente de `zui` y `zout` (`/components/<grupo>/<componente>`), generada desde los manifiestos. Opcional: `pages.components` |
 | [Iconos](/icons) | Buscador de `zicon` por forma o concepto. Opcional: `pages.icons` |
 | [Tokens](/tokens) | Tokens de la marca activa, en vivo. Opcional: `pages.tokens` |
 | Buscador | Índice local de toda la documentación |
@@ -282,10 +285,26 @@ mal escrito no rompe el build: la página muestra el error de Mermaid en su luga
 
 ### Estilo
 
-- Tokens de la suite aplicados sobre las variables del tema de Docusaurus.
-- Cristal en navbar, sidebar, índice y tarjetas.
-- Artículo sobre superficie opaca, para que el texto largo se lea bien.
-- Temas claro y oscuro, estilos de impresión, `prefers-reduced-motion` y `forced-colors`.
+El tema es propio: Docusaurus queda debajo como motor y el aspecto sale de los tokens de la marca y de los
+componentes de `zui`.
+
+- Barra superior flotante en dos barras de cristal: marca y secciones; búsqueda, repositorio, tema y
+  llamada a la acción.
+- Barra lateral de cristal pegajosa con pestañas de sección por icono (documentación, componentes,
+  referencia), grupos plegables con contador, filtro en los grupos de ocho o más entradas e insignia «nuevo»
+  (`badge: nuevo` en el front matter de un documento, o `status: "new"` en el manifiesto de un
+  componente). Por debajo de 860 px pasa a un cajón (`<dialog>` modal), que también se abre desde la barra
+  de migas del artículo.
+- Artículo sobre superficie de lectura casi opaca, con el índice de la página a la derecha (desde 1180 px)
+  y la sección visible resaltada.
+- El primer párrafo tras el título `#` es la entradilla; detrás van la fecha de la última modificación
+  (`fecha:` del front matter o el historial de git, si no es un clon superficial) y el tiempo de lectura.
+- Bloques de código con cabecera (lenguaje o `title`) y botón «Copiar». Una orden de instalación de un
+  gestor (<code>```bash</code> con `pnpm add …`, `npm install …`) se muestra con pestañas pnpm, npm, yarn y bun;
+  la elección se recuerda.
+- Formas en rectángulo de esquinas redondeadas con radios concéntricos; ningún control en píldora.
+- Temas claro y oscuro, estilos de impresión, `prefers-reduced-motion`, `prefers-reduced-transparency`,
+  `prefers-contrast` y `forced-colors`.
 - En archivos `.mdx`, los componentes de `zui`, `zout` y `zicon` están disponibles sin importarlos.
 - El paquete común del sitio solo registra los iconos que el sitio puede dibujar; las páginas de iconos y de
   componentes cargan el set completo.
@@ -316,6 +335,8 @@ privado y el piloto no se versiona aquí. De él salió la marca `zenith` de los
 - El rendimiento del desenfoque en hardware real: las mediciones son de Lighthouse en móvil simulado.
 - Safari real y lectores de pantalla. El sitio se recorre en Chromium, Firefox y el WebKit de Playwright.
 - `prefers-reduced-transparency` solo se puede emular en Chromium.
+- El resaltado del índice con `scroll-target-group` (sin JavaScript) solo existe en Chromium 140+; en el resto
+  lo hace un IntersectionObserver.
 - Un sitio con `locale: "en"` muestra en español los textos de las páginas propias (portada y catálogos):
   todavía no están traducidos.
 - Usar el bin desde un proyecto que instale `@zuccadev-labs/zuix-zudocs` como dependencia publicada: el

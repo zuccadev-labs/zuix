@@ -17,9 +17,9 @@
     "sky-500": "#74B0FB"
   },
   "fonts": {
-    "display": "\"Inter\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
-    "sans": "\"Inter\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
-    "mono": "\"JetBrains Mono\", ui-monospace, SFMono-Regular, Menlo, monospace"
+    "display": "\"Geist Variable\", \"Geist\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "sans": "\"Geist Variable\", \"Geist\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "mono": "\"Geist Mono Variable\", \"Geist Mono\", ui-monospace, SFMono-Regular, Menlo, monospace"
   },
   "themes": {
     "dark": {
@@ -41,7 +41,7 @@
       "surface-2": "rgba(255, 255, 255, 0.09)",
       "surface-3": "rgba(255, 255, 255, 0.14)",
       "surface-solid": "{p.slate-900}",
-      "overlay": "rgba(22, 24, 35, 0.94)",
+      "overlay": "rgba(22, 24, 35, 0.88)",
       "inset": "rgba(0, 0, 0, 0.26)",
       "line": "rgba(255, 255, 255, 0.09)",
       "line-strong": "rgba(255, 255, 255, 0.18)",
@@ -79,7 +79,7 @@
       "surface-2": "rgba(22, 24, 34, 0.065)",
       "surface-3": "rgba(22, 24, 34, 0.10)",
       "surface-solid": "#FFFFFF",
-      "overlay": "rgba(251, 251, 254, 0.96)",
+      "overlay": "rgba(251, 251, 254, 0.90)",
       "inset": "rgba(22, 24, 34, 0.05)",
       "line": "rgba(22, 24, 34, 0.09)",
       "line-strong": "rgba(22, 24, 34, 0.18)",
@@ -88,11 +88,11 @@
       "fg-muted": "rgba(22, 24, 34, 0.68)",
       "fg-subtle": "rgba(22, 24, 34, 0.63)",
       "success": "#15803D",
-      "success-text": "color-mix(in srgb, {success} 74%, {fg})",
+      "success-text": "color-mix(in srgb, {success} 68%, {fg})",
       "warning": "#B45309",
       "warning-text": "color-mix(in srgb, {warning} 74%, {fg})",
       "danger": "#D11A5B",
-      "danger-text": "color-mix(in srgb, {danger} 74%, {fg})",
+      "danger-text": "color-mix(in srgb, {danger} 68%, {fg})",
       "info": "#1D4ED8",
       "info-text": "color-mix(in srgb, {info} 90%, {fg})",
       "shadow-sm": "0 1px 2px rgba(20, 22, 50, 0.10)",

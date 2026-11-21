@@ -1,0 +1,233 @@
+{
+  "name": "DateField",
+  "group": "forms",
+  "description": "Fecha (y hora) que se teclea por segmentos —día, mes, año y, con granularity, hora, minuto, segundo y AM/PM— en el orden y con los separadores del locale. Admite pegar una fecha completa (ISO o en el formato del locale) en cualquier segmento. Valor ISO civil, sin zona: YYYY-MM-DD o YYYY-MM-DDTHH:mm[:ss] (equivale a Temporal.PlainDate / PlainDateTime: `Temporal.PlainDate.from(value)`, `plainDate.toString()`). Para una fecha que el navegador autocompleta (nacimiento), mejor `DateInput` nativo con autocomplete=\"bday\".",
+  "import": "import { DateField } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | null",
+      "description": "Valor ISO controlado; null mientras está vacío o incompleto."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null",
+      "description": "Valor inicial; `form.reset()` vuelve a él."
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string | null) => void",
+      "description": "Cada cambio: el ISO cuando todos los segmentos forman un valor que existe; si no, null."
+    },
+    {
+      "name": "granularity",
+      "type": "enum",
+      "values": ["day", "hour", "minute", "second"],
+      "default": "day",
+      "description": "Segmento más fino. Con hora, el valor pasa a YYYY-MM-DDTHH:mm[:ss], sin zona."
+    },
+    {
+      "name": "min",
+      "type": "string",
+      "description": "Fecha (o fecha y hora) mínima ISO. Fuera de min/max el valor se emite, pero el campo queda inválido al salir."
+    },
+    {
+      "name": "max",
+      "type": "string",
+      "description": "Fecha (o fecha y hora) máxima ISO."
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": [12, 24],
+      "description": "Ciclo horario mostrado. Por defecto, el del locale (`resolvedOptions().hourCycle`); el valor siempre va en 24 h."
+    },
+    {
+      "name": "minuteStep",
+      "type": "number",
+      "default": 1,
+      "description": "Paso de las flechas en los minutos (1, 5, 10, 15, 30)."
+    },
+    {
+      "name": "secondStep",
+      "type": "number",
+      "default": 1,
+      "description": "Paso de las flechas en los segundos."
+    },
+    {
+      "name": "placeholderValue",
+      "type": "string",
+      "description": "Valor que siembran las flechas en un segmento vacío. Por defecto, hoy a las 00:00."
+    },
+    {
+      "name": "forceLeadingZeros",
+      "type": "boolean",
+      "default": true,
+      "description": "Mes, día y hora con dos cifras. Año, minuto y segundo van siempre rellenos."
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "default": false,
+      "description": "Botón (icono x-mark) que vacía el campo."
+    },
+    {
+      "name": "clearLabel",
+      "type": "string",
+      "default": "Clear"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false,
+      "description": "Se enfoca y se recorre, pero las teclas no cambian el valor."
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo nativo oculto con el valor ISO y su validez (obligatorio, incompleto, fuera de rango)."
+    },
+    {
+      "name": "form",
+      "type": "string",
+      "description": "id del formulario del campo oculto, si no lo contiene."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Etiqueta BCP 47: orden de los segmentos, separadores, dígitos y ciclo horario. Por defecto, la del entorno."
+    },
+    {
+      "name": "segmentLabels",
+      "type": "Partial<Record<SegmentType, string>>",
+      "description": "Nombre accesible de cada segmento. Por defecto Year, Month, Day, Hour, Minute, Second y AM/PM."
+    },
+    {
+      "name": "segmentPlaceholders",
+      "type": "Partial<Record<SegmentType, string>>",
+      "description": "Texto visible de cada segmento vacío. Por defecto yyyy, mm, dd y ––."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "default": "Empty",
+      "description": "aria-valuetext de un segmento vacío."
+    },
+    {
+      "name": "incompleteMessage",
+      "type": "string",
+      "default": "Enter a complete date.",
+      "description": "Mensaje de validación nativo con algún segmento vacío."
+    },
+    {
+      "name": "invalidMessage",
+      "type": "string",
+      "default": "Enter a date that exists.",
+      "description": "Mensaje de validación nativo cuando la fecha no existe (31 de febrero)."
+    },
+    {
+      "name": "rangeMessage",
+      "type": "string",
+      "default": "Enter a date within the allowed range.",
+      "description": "Mensaje de validación nativo fuera de min/max."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Se pinta dentro del campo, tras los segmentos (p. ej. un botón que abre un calendario)."
+    },
+    {
+      "name": "onKeyDown",
+      "type": "KeyboardEventHandler<HTMLDivElement>",
+      "description": "Teclado del grupo; llega después de que el segmento haya atendido la tecla."
+    },
+    {
+      "name": "ref",
+      "type": "Ref<HTMLDivElement>",
+      "description": "El elemento role=group."
+    }
+  ],
+  "states": ["rest", "hover", "focus", "placeholder", "invalid", "disabled", "readonly"],
+  "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-bg",
+    "control-bg-hover",
+    "control-border",
+    "control-border-hover",
+    "accent",
+    "accent-ring",
+    "focus-width",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-subtle",
+    "fg-muted",
+    "danger",
+    "radius-xs",
+    "surface-3",
+    "text-body",
+    "text-small",
+    "space-3",
+    "duration-fast",
+    "ease-standard"
+  ],
+  "classes": ["z-input", "z-datefield"],
+  "a11y": "role=group con nombre (aria-label, aria-labelledby o la etiqueta del Field) y aria-describedby del Field. Cada segmento es un spinbutton (APG) con aria-label, aria-valuemin, aria-valuemax, aria-valuenow y aria-valuetext (el mes con su nombre); los separadores son aria-hidden. Una sola parada de Tab (tabindex itinerante). Teclado: Flecha arriba/abajo ±1 (o ±paso) con ciclo; RePág/AvPág saltos grandes; Inicio/Fin mínimo y máximo; los dígitos escriben y avanzan al completar el segmento o cuando no cabe otra cifra; Retroceso y Supr vacían y, con el segmento vacío, Retroceso vuelve al anterior; Flecha izquierda/derecha entre segmentos en orden visual (invertidas en RTL); a/p eligen AM/PM; Intro envía el formulario. Los segmentos son contenteditable con inputmode numeric: en móvil sale el teclado numérico y la entrada llega por beforeinput. La validez (incompleto, fecha que no existe, fuera de rango) se marca al salir del grupo si se editó, y se limpia en cuanto el valor se corrige; el campo nativo oculto lleva setCustomValidity y un envío inválido lleva el foco al primer segmento vacío. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo marcado; el módulo rehace los segmentos si no siguen el orden del locale y emite `z:change` con `detail.value`. Guía de formularios: no se reparte el valor en varios <input> (OTP, tarjeta); aquí son spinbuttons en un grupo (patrón de APG y React Aria), se puede pegar y el valor viaja en un solo campo. Para fechas de nacimiento, `DateInput` con autocomplete=\"bday\".",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Fecha con borrar",
+      "code": "<DateField id=\"deadline\" aria-label=\"Deadline\" locale=\"en-US\" name=\"deadline\" defaultValue=\"2026-11-13\" clearable />"
+    },
+    {
+      "title": "Fecha y hora, 24 h, con mínimo",
+      "code": "<DateField id=\"meeting\" aria-label=\"Meeting\" locale=\"en-GB\" granularity=\"minute\" min=\"2026-11-01\" defaultValue=\"2026-11-13T09:30\" />"
+    },
+    {
+      "title": "Dentro de Field, obligatorio",
+      "code": "<Field label=\"Start date\" hint=\"Type or paste a date.\" required>\n  <DateField id=\"start-date\" locale=\"de\" name=\"start\" />\n</Field>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Fecha con borrar",
+      "code": "<div aria-label=\"Deadline\" role=\"group\" id=\"deadline\" class=\"z-input z-datefield\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"day\" data-clearable=\"true\" data-value=\"2026-11-13\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"month\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Month\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"11\" aria-valuetext=\"11 – November\">11</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"day\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Day\" aria-valuemin=\"1\" aria-valuemax=\"30\" aria-valuenow=\"13\" aria-valuetext=\"13\">13</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"year\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Year\" aria-valuemin=\"1\" aria-valuemax=\"9999\" aria-valuenow=\"2026\" aria-valuetext=\"2026\">2026</span>\n  </span>\n  <button type=\"button\" class=\"z-input__action z-datefield__clear\" aria-label=\"Clear\" title=\"Clear\" tabindex=\"-1\">\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"deadline\" value=\"2026-11-13\">\n</div>",
+      "script": "document.querySelector(\"#deadline\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Fecha y hora, 24 h, con mínimo",
+      "code": "<div aria-label=\"Meeting\" role=\"group\" id=\"meeting\" class=\"z-input z-datefield\" data-size=\"md\" data-locale=\"en-GB\" data-granularity=\"minute\" data-min=\"2026-11-01\" data-value=\"2026-11-13T09:30\">\n  <span class=\"z-datefield__input\">\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"day\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Day\" aria-valuemin=\"1\" aria-valuemax=\"30\" aria-valuenow=\"13\" aria-valuetext=\"13\">13</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"month\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Month\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuenow=\"11\" aria-valuetext=\"11 – November\">11</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">/</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"year\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Year\" aria-valuemin=\"1\" aria-valuemax=\"9999\" aria-valuenow=\"2026\" aria-valuetext=\"2026\">2026</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">, </span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"hour\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Hour\" aria-valuemin=\"0\" aria-valuemax=\"23\" aria-valuenow=\"9\" aria-valuetext=\"09\">09</span>\n    <span class=\"z-datefield__literal\" aria-hidden=\"true\">:</span>\n    <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"minute\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Minute\" aria-valuemin=\"0\" aria-valuemax=\"59\" aria-valuenow=\"30\" aria-valuetext=\"30\">30</span>\n  </span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"2026-11-13T09:30\">\n</div>"
+    },
+    {
+      "title": "Dentro de Field, obligatorio",
+      "code": "<div class=\"z-field\" data-layout=\"stacked\">\n  <label class=\"z-field__label\" id=\"start-date-label\" for=\"start-date\">Start date\n    <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n  </label>\n  <div class=\"z-field__body\">\n    <div aria-labelledby=\"start-date-label\" role=\"group\" id=\"start-date\" aria-describedby=\"start-date-hint\" class=\"z-input z-datefield\" data-size=\"md\" data-locale=\"de\" data-granularity=\"day\">\n      <span class=\"z-datefield__input\">\n        <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"day\" data-placeholder=\"\" tabindex=\"0\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Day\" aria-valuemin=\"1\" aria-valuemax=\"31\" aria-valuetext=\"Empty\" aria-required=\"true\">dd</span>\n        <span class=\"z-datefield__literal\" aria-hidden=\"true\">.</span>\n        <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"month\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Month\" aria-valuemin=\"1\" aria-valuemax=\"12\" aria-valuetext=\"Empty\" aria-required=\"true\">mm</span>\n        <span class=\"z-datefield__literal\" aria-hidden=\"true\">.</span>\n        <span role=\"spinbutton\" class=\"z-datefield__segment\" data-segment=\"year\" data-placeholder=\"\" tabindex=\"-1\" contenteditable=\"true\" inputmode=\"numeric\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" enterkeyhint=\"next\" aria-label=\"Year\" aria-valuemin=\"1\" aria-valuemax=\"9999\" aria-valuetext=\"Empty\" aria-required=\"true\">yyyy</span>\n      </span>\n      <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" required=\"\" name=\"start\" value=\"\">\n    </div>\n    <p class=\"z-field__hint\" id=\"start-date-hint\">Type or paste a date.</p>\n  </div>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Patrón de campo segmentado de React Aria (useDateField) sobre el spinbutton de APG."
+}

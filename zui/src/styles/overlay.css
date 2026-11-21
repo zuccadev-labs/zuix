@@ -11,7 +11,10 @@
   .z-tooltip,
   .z-menu,
   .z-palette,
-  .z-toast {
+  .z-toast,
+  .z-hovercard,
+  .z-toggletip,
+  .z-tour {
     color: var(--z-fg);
     font-family: var(--z-font-sans);
     font-size: var(--z-text-body);
@@ -44,23 +47,27 @@
     height: 28px;
     padding: 0;
     border: 0;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-control-radius-sm);
     background: transparent;
     color: var(--z-fg-muted);
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
-      color var(--z-duration-fast) var(--z-ease-standard);
+      color var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-overlay-close:hover {
-      background: var(--z-surface-3);
+      background: var(--z-surface-2);
       color: var(--z-fg);
     }
   }
   .z-overlay-close:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-overlay-close:active {
+    scale: 0.97;
   }
   /* Objetivo táctil: con puntero grueso la zona de pulsación crece hasta `--z-touch-target` sin cambiar el dibujo. */
   @media (pointer: coarse) {
@@ -78,30 +85,39 @@
     }
   }
 
+  /* Acciones del diálogo con la anatomía del botón: cristal (canto y brillo) o primario sólido; 34 px, radio 10. */
   .z-dialog-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--z-space-2);
-    height: var(--z-control-height-sm);
-    padding: 0 var(--z-space-4);
+    gap: var(--z-space-1-5);
+    height: var(--z-control-height-md);
+    padding: 0 var(--z-space-3-5);
     border-radius: var(--z-button-radius);
-    border: 1px solid var(--z-line);
-    background: var(--z-surface);
+    border: 1px solid var(--z-glass-border);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
     cursor: pointer;
-    font-weight: var(--z-weight-semibold);
-    font-size: var(--z-text-small);
-    transition: background var(--z-duration-fast) var(--z-ease-standard);
+    font-weight: var(--z-weight-medium);
+    font-size: var(--z-text-body);
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-dialog-btn:hover:not(:disabled) {
-      background: var(--z-surface-2);
+      background: var(--z-surface-3);
     }
   }
   .z-dialog-btn:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-dialog-btn:active:not(:disabled) {
+    scale: 0.97;
   }
   .z-dialog-btn:disabled {
     opacity: 0.5;
@@ -111,6 +127,9 @@
     background: var(--z-button-primary-bg);
     color: var(--z-button-primary-fg);
     border-color: transparent;
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+      var(--z-shadow-sm);
   }
   @media (hover: hover) {
     .z-dialog-btn[data-variant="primary"]:hover:not(:disabled) {
@@ -121,6 +140,9 @@
     background: var(--z-danger-solid);
     color: var(--z-fg-on-accent);
     border-color: transparent;
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+      var(--z-shadow-sm);
   }
   @media (hover: hover) {
     .z-dialog-btn[data-variant="danger"]:hover:not(:disabled) {
@@ -131,6 +153,8 @@
   /* ---------- Modal y confirmación ---------- */
   .z-modal {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     --z-modal-width: 560px;
     position: fixed;
     inset: 0;
@@ -142,7 +166,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: var(--z-radius-xl);
+    border-radius: var(--z-radius-panel);
   }
   .z-modal[data-size="sm"] {
     --z-modal-width: 400px;
@@ -153,21 +177,18 @@
   .z-modal.z-confirm {
     --z-modal-width: 440px;
   }
-  .z-modal[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-normal) var(--z-ease-out) both;
-  }
   .z-modal[data-state="closed"] {
-    animation: z-ov-rise-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-rise-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-modal__header {
     display: flex;
     align-items: flex-start;
     gap: var(--z-space-3);
-    padding: var(--z-space-5) var(--z-space-5) 0;
+    padding: var(--z-space-6) var(--z-space-6) 0;
     padding-inline-end: var(--z-space-12);
   }
   .z-confirm .z-modal__header {
-    padding-inline-end: var(--z-space-5);
+    padding-inline-end: var(--z-space-6);
   }
   .z-modal__heading {
     min-width: 0;
@@ -175,48 +196,56 @@
   }
   .z-modal__title {
     margin: 0;
-    font-size: var(--z-text-heading);
+    font-size: var(--z-text-title);
     font-weight: var(--z-weight-semibold);
     line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
+    text-wrap: balance;
     color: var(--z-fg);
   }
   .z-modal__description {
-    margin: 2px 0 0;
+    margin: var(--z-space-1) 0 0;
     font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);
+    text-wrap: pretty;
   }
   .z-modal__body {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--z-space-3) var(--z-space-5) 0;
+    /* Margen de 4 px abajo: el anillo de foco de un campo (contorno separado 1 px) no se recorta en el borde
+       del cuerpo desplazable. */
+    padding: var(--z-space-4) var(--z-space-6) var(--z-space-1);
     line-height: var(--z-leading-relaxed);
+    color: var(--z-fg-prose);
   }
   .z-modal__body:last-child {
-    padding-bottom: var(--z-space-5);
+    padding-bottom: var(--z-space-6);
   }
   .z-modal__header:last-child {
-    padding-bottom: var(--z-space-5);
+    padding-bottom: var(--z-space-6);
   }
   .z-modal__footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: var(--z-space-2);
-    padding: var(--z-space-4) var(--z-space-5) var(--z-space-5);
+    padding: var(--z-space-4) var(--z-space-6) var(--z-space-6);
   }
   .z-modal__close {
     position: absolute;
     top: var(--z-space-4);
     inset-inline-end: var(--z-space-4);
   }
+  /* Icono en baldosa (rectángulo redondeado, no círculo), como el de una tarjeta. */
   .z-confirm__icon {
     display: inline-grid;
     place-items: center;
     flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    border-radius: var(--z-radius-full);
+    width: var(--z-control-height-md);
+    height: var(--z-control-height-md);
+    border-radius: var(--z-control-radius);
     color: var(--z-accent-text);
     background: var(--z-accent-soft);
   }
@@ -227,6 +256,9 @@
 
   /* ---------- Panel lateral ---------- */
   .z-drawer {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     --z-drawer-size: var(--z-inspector-width);
     --z-drawer-from-x: 0px;
     --z-drawer-from-y: 0px;
@@ -264,26 +296,116 @@
     max-height: min(var(--z-drawer-size), calc(100dvh - 2 * var(--z-shell-gap)));
     --z-drawer-from-y: 18px;
   }
+  .z-drawer[data-side="top"] {
+    inset-block-start: var(--z-shell-gap);
+    inset-inline: var(--z-shell-gap);
+    width: auto;
+    max-height: min(var(--z-drawer-size), calc(100dvh - 2 * var(--z-shell-gap)));
+    --z-drawer-from-y: -18px;
+  }
+  /* Puntos de anclaje: el alto sale del anclaje activo (fracción de la ventana) menos lo que se arrastra. */
+  .z-drawer[data-snap] {
+    height: calc(var(--z-drawer-snap) * 100dvh - var(--z-drawer-drag, 0px));
+    max-height: calc(100dvh - 2 * var(--z-shell-gap));
+    min-height: var(--z-space-14);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-drawer[data-snap]:not([data-dragging]) {
+      transition: height var(--z-duration-slow) var(--z-ease-emphasized);
+    }
+  }
+  /* Sin anclajes, el cajón sigue al dedo hacia su borde; al soltar vuelve (o se cierra). */
+  .z-drawer[data-drag]:not([data-snap]) {
+    translate: var(--z-drawer-drag-x, 0) var(--z-drawer-drag-y, 0);
+  }
+  .z-drawer[data-drag][data-side="bottom"]:not([data-snap]) {
+    --z-drawer-drag-y: var(--z-drawer-drag, 0px);
+  }
+  .z-drawer[data-drag][data-side="top"]:not([data-snap]) {
+    --z-drawer-drag-y: calc(var(--z-drawer-drag, 0px) * -1);
+  }
+  .z-drawer[data-drag][data-side="right"]:not([data-snap]) {
+    --z-drawer-drag-x: var(--z-drawer-drag, 0px);
+  }
+  .z-drawer[data-drag][data-side="left"]:not([data-snap]) {
+    --z-drawer-drag-x: calc(var(--z-drawer-drag, 0px) * -1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-drawer[data-drag]:not([data-snap], [data-dragging]) {
+      transition: translate var(--z-duration-normal) var(--z-ease-emphasized);
+    }
+  }
+  /* Asa: una barra corta centrada en el borde libre; el área de pulsación cubre toda la franja. */
+  .z-drawer__handle {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 100%;
+    block-size: var(--z-space-6);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-drawer[data-dragging] .z-drawer__handle {
+    cursor: grabbing;
+  }
+  .z-drawer[data-side="top"] .z-drawer__handle {
+    order: 99;
+  }
+  .z-drawer:is([data-side="left"], [data-side="right"]) .z-drawer__handle {
+    position: absolute;
+    inset-block: 0;
+    inline-size: var(--z-space-4);
+    block-size: auto;
+    z-index: var(--z-layer-raised);
+  }
+  .z-drawer[data-side="right"] .z-drawer__handle {
+    inset-inline-start: 0;
+  }
+  .z-drawer[data-side="left"] .z-drawer__handle {
+    inset-inline-end: 0;
+  }
+  .z-drawer__grip {
+    inline-size: var(--z-space-9);
+    block-size: 4px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-line-strong);
+  }
+  .z-drawer:is([data-side="left"], [data-side="right"]) .z-drawer__grip {
+    inline-size: 4px;
+    block-size: var(--z-space-9);
+  }
+  .z-drawer__handle:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+    border-radius: var(--z-control-radius-sm);
+  }
   .z-drawer[data-state="open"] {
-    animation: z-ov-drawer-in var(--z-duration-normal) var(--z-ease-out) both;
+    animation: z-ov-drawer-in var(--z-duration-slow) var(--z-ease-emphasized) both;
   }
   .z-drawer[data-state="closed"] {
-    animation: z-ov-drawer-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-drawer-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-drawer__header {
-    padding: var(--z-space-5) var(--z-space-5) var(--z-space-3);
+    padding: var(--z-space-5) var(--z-space-5) var(--z-space-4);
     padding-inline-end: var(--z-space-12);
     border-bottom: 1px solid var(--z-line);
   }
   .z-drawer__title {
     margin: 0;
-    font-size: var(--z-text-heading);
+    font-size: var(--z-text-title);
     font-weight: var(--z-weight-semibold);
     line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
   }
   .z-drawer__description {
-    margin: 2px 0 0;
+    margin: var(--z-space-1) 0 0;
     font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);
   }
   .z-drawer__body {
@@ -309,6 +431,8 @@
   /* ---------- Popover ---------- */
   .z-popover {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     z-index: var(--z-layer-popover);
     max-width: calc(100vw - var(--z-space-4));
     max-height: var(--z-available-height, calc(100dvh - var(--z-space-4)));
@@ -316,33 +440,342 @@
     padding: var(--z-space-3);
     border-radius: var(--z-popup-radius);
   }
-  .z-popover[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-fast) var(--z-ease-out) both;
-  }
   .z-popover[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  /* Con flecha, el panel no recorta (la flecha sobresale): desplaza su cuerpo. */
+  /* Sin `display` propio: un popover cerrado debe seguir oculto por el navegador. */
+  .z-popover[data-arrow] {
+    overflow: visible;
+  }
+  .z-popover__body {
+    max-block-size: calc(var(--z-available-height, calc(100dvh - var(--z-space-4))) - 2 * var(--z-space-3));
+    overflow-y: auto;
+  }
+  /* Botón de cierre en la esquina, concéntrico con el panel; el texto no se mete debajo. */
+  .z-popover[data-close] {
+    padding-inline-end: calc(var(--z-space-3) + var(--z-space-7));
+  }
+  .z-popover__close {
+    position: absolute;
+    inset-block-start: var(--z-space-1-5);
+    inset-inline-end: var(--z-space-1-5);
+  }
+
+  /* ---------- HoverCard y Toggletip ---------- */
+  /* Cristal elevado como el popover; la tarjeta se lee (texto de 14) y el toggletip es una explicación corta. */
+  .z-hovercard,
+  .z-toggletip {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    z-index: var(--z-layer-popover);
+    max-width: min(320px, calc(100vw - var(--z-space-4)));
+    border-radius: var(--z-popup-radius);
+    cursor: default;
+  }
+  .z-hovercard {
+    padding: var(--z-space-4);
+  }
+  .z-toggletip {
+    max-width: min(280px, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-2-5) var(--z-space-3);
+    border-radius: var(--z-radius-md);
+    font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
+  }
+  :is(.z-hovercard, .z-toggletip)[data-state="closed"] {
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  .z-hovercard :where(a),
+  .z-toggletip :where(a) {
+    color: var(--z-accent-text);
+  }
+  .z-toggletip__trigger {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    vertical-align: middle;
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-toggletip__trigger[data-size="sm"] {
+    width: 20px;
+    height: 20px;
+  }
+  @media (hover: hover) {
+    .z-toggletip__trigger:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-toggletip__trigger[aria-expanded="true"] {
+    color: var(--z-accent-text);
+  }
+  .z-toggletip__trigger:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  @media (pointer: coarse) {
+    .z-toggletip__trigger {
+      position: relative;
+    }
+    .z-toggletip__trigger::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+      width: max(100%, var(--z-touch-target, 0px));
+      height: max(100%, var(--z-touch-target, 0px));
+    }
+  }
+
+  /* ---------- ActionBar ---------- */
+  /* Barra de cromo flotante sobre una selección: recuento, acciones y cierre. Sube desde abajo al aparecer. */
+  .z-actionbar {
+    gap: var(--z-space-2);
+    flex-wrap: nowrap;
+    max-inline-size: calc(100vw - var(--z-space-8));
+    padding-inline: var(--z-space-3) var(--z-space-1);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-popup-shadow);
+  }
+  .z-actionbar[data-position="fixed"] {
+    position: fixed;
+    inset-block-end: var(--z-space-6);
+    inset-inline: 0;
+    z-index: var(--z-layer-popover);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .z-actionbar[data-position="sticky"] {
+    position: sticky;
+    inset-block-end: var(--z-space-3);
+    z-index: var(--z-layer-raised);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-actionbar:not([data-position="inline"]) {
+      transition:
+        opacity var(--z-duration-normal) var(--z-ease-emphasized),
+        translate var(--z-duration-normal) var(--z-ease-emphasized);
+      @starting-style {
+        opacity: 0;
+        translate: 0 var(--z-space-3);
+      }
+    }
+  }
+  .z-actionbar__count {
+    flex: none;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-medium);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .z-actionbar__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .z-actionbar__close {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--z-control-height-sm);
+    height: var(--z-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-actionbar__close:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-actionbar__close:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-actionbar[hidden] {
+    display: none;
+  }
+
+  /* ---------- Tour ---------- */
+  /* Tarjeta de cristal elevado anclada al elemento del paso, con flecha; el anillo lo resalta sin tapar la página. */
+  .z-tour {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    z-index: var(--z-layer-popover);
+    width: min(340px, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-4);
+    border-radius: var(--z-popup-radius);
+  }
+  .z-tour[data-state="closed"] {
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  .z-tour__header {
+    display: grid;
+    gap: var(--z-space-1);
+    padding-inline-end: var(--z-space-8);
+  }
+  .z-tour__progress {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-tour__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-tour__body {
+    margin-block-start: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
+  }
+  .z-tour__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+    margin-block-start: var(--z-space-4);
+  }
+  .z-tour__spacer {
+    flex: 1;
+  }
+  .z-tour [hidden],
+  .z-tour__ring[hidden] {
+    display: none;
+  }
+  .z-tour__close {
+    position: absolute;
+    inset-block-start: var(--z-space-2);
+    inset-inline-end: var(--z-space-2);
+  }
+  /* Anillo: contorno del acento alrededor del elemento del paso; no recibe el puntero. */
+  .z-tour__ring {
+    position: fixed;
+    z-index: var(--z-layer-popover);
+    border-radius: var(--z-control-radius-lg);
+    outline: 2px solid var(--z-accent-ring);
+    outline-offset: 0;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--z-accent) 18%, transparent);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-tour__ring {
+      transition:
+        inset var(--z-duration-normal) var(--z-ease-emphasized),
+        width var(--z-duration-normal) var(--z-ease-emphasized),
+        height var(--z-duration-normal) var(--z-ease-emphasized);
+    }
+  }
+  .z-tour__ring[data-state="closed"] {
+    opacity: 0;
+  }
+
+  /* ---------- Flecha de las capas ancladas ---------- */
+  /* Media caja girada 45° sobre el borde que mira al ancla, en `--z-arrow-offset` (lo escribe la colocación). Mismo
+     cristal y canto que la capa; el recorte deja solo la mitad de fuera, así no se suma al fondo de la capa. */
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]::after {
+    content: "";
+    position: absolute;
+    inline-size: 12px;
+    block-size: 12px;
+    border: 1px solid var(--z-glass-border);
+    border-inline-end: 0;
+    border-block-end: 0;
+    background: var(--z-lg-bg, var(--z-popup-bg));
+    -webkit-backdrop-filter: blur(var(--z-lg-blur, var(--z-popup-blur)));
+    backdrop-filter: blur(var(--z-lg-blur, var(--z-popup-blur)));
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    pointer-events: none;
+  }
+  /* El recorte es físico (esquina superior izquierda): en RTL el canto pasa al otro borde para seguir dentro del recorte. */
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:dir(rtl)::after {
+    border-inline-start: 0;
+    border-inline-end: 1px solid var(--z-glass-border);
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:is([data-side="bottom"], [data-side="top"])::after {
+    inset-inline-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="bottom"]::after {
+    inset-block-start: -7px;
+    rotate: 45deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="top"]::after {
+    inset-block-end: -7px;
+    rotate: 225deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow]:is([data-side="left"], [data-side="right"])::after {
+    inset-block-start: calc(var(--z-arrow-offset, 50%) - var(--z-space-1-5));
+  }
+  /* El lado es físico (lo mide la colocación): en RTL la flecha de una capa a la derecha va en el borde final. */
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="right"]::after {
+    inset-inline-start: -7px;
+    rotate: -45deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="left"]::after {
+    inset-inline-end: -7px;
+    rotate: 135deg;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="right"]:dir(rtl)::after {
+    inset-inline-start: auto;
+    inset-inline-end: -7px;
+  }
+  :is(.z-popover, .z-hovercard, .z-toggletip, .z-tour)[data-arrow][data-side="left"]:dir(rtl)::after {
+    inset-inline-end: auto;
+    inset-inline-start: -7px;
   }
 
   /* ---------- Tooltip ---------- */
   .z-tooltip {
     --z-lg-bg: var(--z-tooltip-bg);
     z-index: var(--z-layer-tooltip);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-shadow-md);
     max-width: 280px;
     padding: var(--z-space-1-5) var(--z-space-2-5);
-    border-radius: var(--z-radius-sm);
+    border-radius: var(--z-control-radius-sm);
     font-size: var(--z-text-caption);
-    line-height: 1.45;
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-ui);
     /* Recibe el puntero: se puede pasar de su disparador a la burbuja sin que desaparezca (WCAG 1.4.13). */
     cursor: default;
-    animation: z-ov-fade-in var(--z-duration-fast) var(--z-ease-out) both;
   }
   .z-tooltip[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
 
   /* ---------- Menú desplegable y contextual ---------- */
   .z-menu {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     z-index: var(--z-layer-menu);
     /* En una ventana estrecha el menú se estrecha hasta el ancho útil (`--z-menu-fit`) en lugar de salirse. */
     --z-menu-fit: calc(100vw - var(--z-space-4));
@@ -352,21 +785,22 @@
     overflow-y: auto;
     padding: var(--z-space-1-5);
     border-radius: var(--z-popup-radius);
-    animation: z-ov-fade-in var(--z-duration-fast) var(--z-ease-standard) both;
   }
   .z-menu[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
+  /* Opción de 32 px (objetivo táctil con puntero grueso); radio concéntrico: popup-radius − relleno = item-radius. */
   .z-menu__item {
     display: flex;
     align-items: center;
-    gap: var(--z-space-2-5);
+    gap: var(--z-space-2);
     width: 100%;
-    min-height: var(--z-touch-target, 0px);
+    min-height: max(32px, var(--z-touch-target, 0px));
     padding: var(--z-space-1-5) var(--z-space-2-5);
-    border-radius: var(--z-radius-xs);
-    font-size: var(--z-text-small);
+    border-radius: var(--z-item-radius);
+    font-size: var(--z-text-body);
     font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg);
     cursor: default;
     user-select: none;
@@ -375,13 +809,18 @@
   }
   .z-menu__item[data-highlighted],
   .z-menu__item[data-state="open"] {
-    background: var(--z-row-hover);
+    background: var(--z-surface-2);
+  }
+  /* Foco de teclado sobre la opción: contorno por dentro para no recortarse en el borde del menú. */
+  .z-menu__item:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-menu__item[data-danger] {
     color: var(--z-danger-text);
   }
   .z-menu__item[data-danger][data-highlighted] {
-    background: color-mix(in srgb, var(--z-danger) 12%, transparent);
+    background: var(--z-danger-soft);
   }
   .z-menu__item[data-danger] .z-menu__icon {
     color: inherit;
@@ -393,8 +832,8 @@
     display: inline-grid;
     place-items: center;
     flex-shrink: 0;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     color: var(--z-fg-muted);
   }
   .z-menu__text {
@@ -407,8 +846,10 @@
   }
   .z-menu__shortcut {
     flex-shrink: 0;
+    margin-inline-start: var(--z-space-3);
     font-family: var(--z-font-mono);
-    font-size: var(--z-text-fine);
+    font-size: var(--z-text-caption);
+    letter-spacing: var(--z-tracking-wide);
     color: var(--z-fg-muted);
   }
   .z-menu__chevron {
@@ -423,22 +864,49 @@
   }
   .z-menu__separator {
     height: 0;
-    margin: var(--z-space-1) 0;
+    margin: var(--z-space-1) calc(var(--z-space-1-5) * -1);
     border-top: 1px solid var(--z-line);
   }
   .z-menu__label {
-    padding: var(--z-space-1-5) var(--z-space-2-5) var(--z-space-1);
-    font-size: var(--z-text-small);
+    padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-1);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
     color: var(--z-fg-muted);
+  }
+  /* Casillas y radios: la señal ocupa el hueco del icono. Enlaces: sin subrayado, como el resto de entradas. */
+  a.z-menu__item {
+    text-decoration: none;
+  }
+  .z-menu__check {
+    color: var(--z-accent-text);
+  }
+  .z-menu__item:not([aria-checked="true"]) > .z-menu__check > * {
+    visibility: hidden;
+  }
+  /* El punto del radio es un borde (no un fondo): los colores forzados lo conservan. */
+  .z-menu__check[data-kind="radio"]::before {
+    content: "";
+    inline-size: 0;
+    block-size: 0;
+    border: 3px solid transparent;
+    border-radius: var(--z-radius-full);
+  }
+  .z-menu__item[aria-checked="true"] > .z-menu__check[data-kind="radio"]::before {
+    border-color: currentColor;
+  }
+  .z-menu__group {
+    display: flex;
+    flex-direction: column;
   }
   .z-menu[data-size="lg"] {
     min-width: min(300px, var(--z-menu-fit));
     max-width: min(340px, var(--z-menu-fit));
   }
   .z-menu[data-size="lg"] .z-menu__item {
-    gap: 9px;
-    padding: 7px 9px;
-    font-size: var(--z-text-heading);
+    gap: var(--z-space-2-5);
+    min-height: max(var(--z-control-height-lg), var(--z-touch-target, 0px));
+    padding: var(--z-space-2) var(--z-space-2-5);
+    font-size: var(--z-text-title);
     font-weight: var(--z-weight-regular);
   }
   .z-menu[data-size="lg"] .z-menu__icon {
@@ -446,11 +914,14 @@
     height: 16px;
   }
   .z-menu[data-size="lg"] .z-menu__label {
-    padding: 5px 9px;
+    padding: var(--z-space-1-5) var(--z-space-2-5);
   }
 
   /* ---------- Paleta de comandos ---------- */
   .z-palette {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     position: fixed;
     top: 12vh;
     left: 0;
@@ -461,13 +932,33 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: var(--z-radius-xl);
-  }
-  .z-palette[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-fast) var(--z-ease-out) both;
+    border-radius: var(--z-radius-panel);
   }
   .z-palette[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
+  }
+  /* Comando en línea: la misma pieza incrustada en la página, sin capa ni velo. Panel de cromo con radio de tarjeta. */
+  .z-command {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    width: 100%;
+    margin: 0;
+    border-radius: var(--z-card-radius);
+  }
+  .z-command .z-palette__list {
+    max-height: var(--z-command-height, 320px);
+  }
+  /* Pie con atajos o ayuda bajo la lista. */
+  .z-palette__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2) var(--z-space-4);
+    padding: var(--z-space-2) var(--z-space-4);
+    border-top: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
   }
   .z-palette__search {
     display: flex;
@@ -497,12 +988,13 @@
     color: var(--z-fg-subtle);
   }
   .z-palette__kbd {
-    padding: 1px 5px;
+    padding: 1px var(--z-space-1-5);
     border-radius: var(--z-radius-xs);
-    border: 1px solid var(--z-line-strong);
+    border: 1px solid var(--z-glass-border);
     background: var(--z-surface-2);
+    box-shadow: inset 0 -1px 0 var(--z-line);
     font-family: var(--z-font-mono);
-    font-size: var(--z-text-fine);
+    font-size: var(--z-text-caption);
     color: var(--z-fg-muted);
   }
   .z-palette__list {
@@ -519,19 +1011,18 @@
     color: var(--z-fg-subtle);
   }
   .z-palette__heading {
-    padding: var(--z-space-2) var(--z-space-2-5) var(--z-space-1);
-    font-size: var(--z-text-fine);
-    font-weight: var(--z-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--z-tracking-wide);
-    color: var(--z-fg-subtle);
+    padding: var(--z-space-2-5) var(--z-space-2-5) var(--z-space-1);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    color: var(--z-fg-muted);
   }
   .z-palette__item {
     display: flex;
     align-items: center;
     gap: var(--z-space-3);
-    padding: var(--z-space-2) var(--z-space-2-5);
-    border-radius: var(--z-radius-sm);
+    min-height: max(36px, var(--z-touch-target, 0px));
+    padding: var(--z-space-1-5) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
     font-size: var(--z-text-body);
     color: var(--z-fg-muted);
     cursor: default;
@@ -542,8 +1033,12 @@
       color var(--z-duration-fast) var(--z-ease-standard);
   }
   .z-palette__item[aria-selected="true"] {
-    background: var(--z-accent-soft);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
+  }
+  .z-palette__item[aria-selected="true"] .z-palette__item-icon {
+    color: var(--z-accent-text);
   }
   .z-palette__item[aria-disabled="true"] {
     opacity: 0.5;
@@ -584,7 +1079,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--z-space-2);
-    width: min(340px, calc(100vw - var(--z-space-8)));
+    width: min(360px, calc(100vw - var(--z-space-8)));
     margin: 0;
     padding: 0;
     list-style: none;
@@ -610,13 +1105,18 @@
     top: var(--z-space-5);
     margin: 0 auto;
   }
+  /* Aviso en cristal elevado, rectángulo de radio de popup (no píldora). */
   .z-toast {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     --z-toast-tone: var(--z-info);
     display: flex;
     align-items: flex-start;
     gap: var(--z-space-3);
-    padding: var(--z-space-3);
-    border-radius: var(--z-radius-lg);
+    padding-block: var(--z-space-3);
+    padding-inline: var(--z-space-3-5) var(--z-space-3);
+    border-radius: var(--z-popup-radius);
     /* Deslizar para descartar: el gesto es del aviso en su eje; en el otro la página sigue desplazándose. */
     touch-action: pan-y;
     user-select: none;
@@ -638,11 +1138,8 @@
   .z-toast[data-intent="danger"] {
     --z-toast-tone: var(--z-danger);
   }
-  .z-toast[data-state="open"] {
-    animation: z-ov-rise-in var(--z-duration-normal) var(--z-ease-out) both;
-  }
   .z-toast[data-state="closed"] {
-    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
+    animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-exit) both;
   }
   .z-toast[data-swipe="move"] {
     transform: translate(var(--z-toast-swipe-move-x, 0), var(--z-toast-swipe-move-y, 0));
@@ -656,58 +1153,138 @@
     animation: z-ov-fade-out var(--z-duration-fast) var(--z-ease-standard) both;
   }
   .z-toast:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-toast__dot {
     flex-shrink: 0;
     width: 8px;
     height: 8px;
     margin-top: var(--z-space-1-5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--z-toast-tone) 22%, transparent);
     border-radius: var(--z-radius-full);
     background: var(--z-toast-tone);
+  }
+  /* Aviso en curso (`toast.promise`): anillo en lugar del punto, en el tono del aviso. */
+  .z-toast__spinner {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    margin-block-start: var(--z-space-0-5);
+    border: 2px solid var(--z-toast-tone);
+    border-inline-end-color: transparent;
+    border-radius: var(--z-radius-full);
+    animation: z-ov-spin 0.7s linear infinite;
   }
   .z-toast__content {
     flex: 1;
     min-width: 0;
   }
   .z-toast__title {
-    font-size: var(--z-text-small);
+    font-size: var(--z-text-body);
     font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg);
   }
   .z-toast__description {
-    margin-top: 2px;
+    margin-top: var(--z-space-0-5);
     font-size: var(--z-text-small);
+    line-height: var(--z-leading-ui);
     color: var(--z-fg-muted);
     overflow-wrap: anywhere;
   }
+  /* Acción: botón de cristal sm (28 px, radio 8). */
   .z-toast__action {
+    display: inline-flex;
+    align-items: center;
+    height: var(--z-control-height-sm);
     margin-top: var(--z-space-2);
-    padding: 2px var(--z-space-3);
-    border: 1px solid var(--z-line-strong);
-    border-radius: var(--z-button-radius);
-    background: transparent;
+    padding: 0 var(--z-space-3);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-fg);
     cursor: pointer;
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) {
     .z-toast__action:hover {
-      background: var(--z-surface-2);
+      background: var(--z-surface-3);
     }
   }
   .z-toast__action:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-toast__action:active {
+    scale: 0.97;
   }
   .z-toast__close {
     width: 24px;
     height: 24px;
+    border-radius: var(--z-radius-xs);
+  }
+
+  /* ---------- Entrada de las capas ----------
+     Con @starting-style (mejora progresiva: sin soporte, la capa aparece sin transición). La salida sigue siendo una
+     animación sobre `data-state="closed"`: la presencia espera su `animationend` antes de retirar la capa, también en
+     Firefox y Safari, que no transicionan `display` ni `overlay`. Las capas ancladas a un disparador (popover, menú,
+     tooltip) se deslizan desde él sin escalar: la colocación mide su tamaño al abrir y una escala lo falsearía. El
+     desplazamiento y la escala, solo sin preferencia de movimiento reducido; con ella queda un fundido corto.
+     `:where()`: sin especificidad, para que el gesto de deslizar un aviso conserve su propia transición. El cajón
+     entra con su animación lateral. */
+  :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+    :not([data-state="closed"])
+  ) {
+    opacity: 1;
+    transition:
+      opacity var(--z-duration-normal) var(--z-ease-emphasized),
+      translate var(--z-duration-normal) var(--z-ease-emphasized),
+      scale var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  @starting-style {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+        :not([data-state="closed"])
+      ) {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.z-modal, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-hovercard, .z-toggletip, .z-tour):where(
+        :not([data-state="closed"])
+      ) {
+      translate: 0 0;
+      scale: 1;
+    }
+    @starting-style {
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip, .z-tour):where(:not([data-state="closed"])) {
+        translate: 0 calc(var(--z-space-1) * -1);
+      }
+      :where(.z-popover, .z-tooltip, .z-menu, .z-hovercard, .z-toggletip, .z-tour)[data-side="top"]:where(:not([data-state="closed"])) {
+        translate: 0 var(--z-space-1);
+      }
+      :where(.z-palette):where(:not([data-state="closed"])) {
+        translate: 0 calc(var(--z-space-1) * -1);
+        scale: 0.98;
+      }
+      :where(.z-modal, .z-toast):where(:not([data-state="closed"])) {
+        translate: 0 var(--z-space-2);
+        scale: 0.98;
+      }
+    }
   }
 
   /* ---------- Animaciones ---------- */
+  @keyframes z-ov-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
   @keyframes z-ov-fade-in {
     from {
       opacity: 0;
@@ -748,8 +1325,37 @@
      reducido manda sobre las animaciones de entrada y salida de cada capa. */
   @media (prefers-reduced-motion: reduce) {
     :is(.z-modal, .z-drawer, .z-palette)::backdrop,
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox),
-    :is(.z-modal, .z-confirm, .z-drawer, .z-popover, .z-tooltip, .z-menu, .z-palette, .z-toast, .z-listbox) :is(*, *::before, *::after) {
+    :is(
+        .z-modal,
+        .z-confirm,
+        .z-drawer,
+        .z-popover,
+        .z-tooltip,
+        .z-menu,
+        .z-palette,
+        .z-toast,
+        .z-listbox,
+        .z-hovercard,
+        .z-toggletip,
+        .z-tour,
+        .z-tour__ring
+      ),
+    :is(
+        .z-modal,
+        .z-confirm,
+        .z-drawer,
+        .z-popover,
+        .z-tooltip,
+        .z-menu,
+        .z-palette,
+        .z-toast,
+        .z-listbox,
+        .z-hovercard,
+        .z-toggletip,
+        .z-tour,
+        .z-tour__ring
+      )
+      :is(*, *::before, *::after) {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;

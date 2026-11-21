@@ -17,8 +17,8 @@
     },
     {
       "name": "options",
-      "type": "NativeSelectOption[]",
-      "description": "{ value, label, disabled? }. Alternativa: hijos <option>."
+      "type": "(NativeSelectOption | NativeSelectOptionGroup)[]",
+      "description": "Opciones sueltas o grupos { label, options, disabled? }, que salen como <optgroup>. También valen hijos <option>."
     },
     {
       "name": "placeholder",
@@ -44,7 +44,6 @@
     "control-height-sm",
     "text-small",
     "control-height-lg",
-    "text-title",
     "space-8",
     "space-3",
     "control-border",
@@ -55,12 +54,16 @@
     "ease-standard",
     "control-border-hover",
     "accent",
-    "focus-ring",
-    "surface",
     "danger",
     "fg-subtle",
     "popup-bg",
-    "fg-muted"
+    "fg-muted",
+    "control-bg-hover",
+    "focus-width",
+    "accent-ring",
+    "control-radius-sm",
+    "control-radius-lg",
+    "space-2"
   ],
   "classes": ["z-select"],
   "a11y": "select nativo: teclado y lista del sistema. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required.",
@@ -72,6 +75,10 @@
     {
       "title": "Con hijos, en línea",
       "code": "<NativeSelect size=\"sm\" block={false} defaultValue=\"25\" aria-label=\"Rows per page\">\n  <option value=\"10\">10</option>\n  <option value=\"25\">25</option>\n</NativeSelect>"
+    },
+    {
+      "title": "Con grupos (optgroup)",
+      "code": "<Field label=\"Time zone\">\n  <NativeSelect\n    defaultValue=\"Europe/Madrid\"\n    options={[\n      { label: \"Europe\", options: [\n        { value: \"Europe/Lisbon\", label: \"Lisbon\" },\n        { value: \"Europe/Madrid\", label: \"Madrid\" },\n      ] },\n      { label: \"America\", options: [\n        { value: \"America/Mexico_City\", label: \"Mexico City\" },\n        { value: \"America/Bogota\", label: \"Bogotá\" },\n      ] },\n    ]}\n  />\n</Field>"
     }
   ],
   "origin": "Select de zutool; el chevron pasa a ser un icono de zicon."

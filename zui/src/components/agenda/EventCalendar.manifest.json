@@ -1,0 +1,239 @@
+{
+  "name": "EventCalendar",
+  "group": "agenda",
+  "description": "Agenda: barra (Hoy, anterior, siguiente, título, zona, vistas), lateral con minicalendario y calendarios, y las vistas de día, semana, semana laboral, mes con eventos, lista, año (12 minimeses con densidad), año perpetuo de una página y línea temporal de recursos sobre un mismo modelo de eventos ISO. Zonas IANA, RRULE (subconjunto de RFC 5545), mover, redimensionar y crear con puntero y teclado, y «Move to…» como alternativa sin arrastre.",
+  "import": "import { EventCalendar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "events",
+      "type": "CalendarEvent[]",
+      "description": "{ id, title, start, end (exclusivo), allDay?, timeZone?, calendarId, color?, kind?, status?, done?, location?, rrule?, exdate?, recurrenceId?, seriesId?, editable? }. start/end: YYYY-MM-DD (todo el día), YYYY-MM-DDTHH:mm con timeZone o flotante, o ISO con Z/desfase."
+    },
+    {
+      "name": "calendars",
+      "type": "CalendarSource[]",
+      "description": "{ id, name, color: \"1\"…\"6\" | token, visible?, editable? }. La lista del lateral es la leyenda."
+    },
+    {
+      "name": "view",
+      "type": "enum",
+      "values": ["day", "week", "workweek", "month", "agenda", "year", "perpetual", "timeline"],
+      "default": "week",
+      "description": "También defaultView y onViewChange. year, perpetual y timeline se ofrecen con `views`."
+    },
+    {
+      "name": "views",
+      "type": "AgendaView[]",
+      "description": "Vistas del selector."
+    },
+    {
+      "name": "date",
+      "type": "string",
+      "description": "Ancla YYYY-MM-DD; también defaultDate y onDateChange."
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona de presentación IANA. Por defecto, la del dispositivo."
+    },
+    {
+      "name": "timeZones",
+      "type": "string[]",
+      "description": "Zonas del selector de la barra (onTimeZoneChange)."
+    },
+    {
+      "name": "secondaryTimeZone",
+      "type": "string",
+      "description": "Segundo canal de horas en día y semana (solo presentación)."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "hiddenDays",
+      "type": "number[]"
+    },
+    {
+      "name": "dayStart",
+      "type": "string",
+      "default": "00:00"
+    },
+    {
+      "name": "dayEnd",
+      "type": "string",
+      "default": "24:00"
+    },
+    {
+      "name": "scrollTime",
+      "type": "string",
+      "default": "08:00"
+    },
+    {
+      "name": "slotDuration",
+      "type": "number",
+      "default": 30
+    },
+    {
+      "name": "snapDuration",
+      "type": "number",
+      "default": 15
+    },
+    {
+      "name": "businessHours",
+      "type": "{ days: number[]; start: string; end: string }[]"
+    },
+    {
+      "name": "editable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "selectable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "dayMaxEvents",
+      "type": "number",
+      "default": 3,
+      "description": "Mes y fila de todo el día: carriles visibles antes de «+N». En la rejilla de horas el tope es fijo: cuatro solapes lado a lado en la semana (ocho en el día) y el resto en un «+N» por hora que abre el popover del intervalo."
+    },
+    {
+      "name": "fixedWeeks",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "listDays",
+      "type": "number",
+      "default": 14,
+      "description": "Días de la vista de agenda. A partir de 150 filas, la lista pinta solo su ventana visible (con margen) y rellena el resto."
+    },
+    {
+      "name": "sidebar",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showWeekNumber",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "onEventClick",
+      "type": "(detail: { event; occurrence; seriesId? }) => void"
+    },
+    {
+      "name": "onEventChange",
+      "type": "(change: EventChange) => void",
+      "description": "{ event, occurrence, seriesId?, start, end, kind: move|resize, shifted? } en la forma ISO del evento. La agenda no cambia los eventos: lo hace la aplicación."
+    },
+    {
+      "name": "onSelectSlot",
+      "type": "(slot: SlotSelection) => void"
+    },
+    {
+      "name": "onQuickCreate",
+      "type": "(detail: { date: string }) => void",
+      "description": "Con ella aparece el botón «New event»."
+    },
+    {
+      "name": "onCalendarToggle",
+      "type": "(detail: { calendarId: string; visible: boolean }) => void"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "now",
+      "type": "number | string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AgendaLabels>",
+      "description": "Textos visibles (inglés por defecto)."
+    },
+    {
+      "name": "resources",
+      "type": "{ id; title; meta? }[]",
+      "description": "Filas de la vista timeline (eventos con resourceIds); sin ellas, una fila por calendario."
+    },
+    {
+      "name": "density",
+      "type": "(date: string, count: number) => number",
+      "description": "Vista de año: densidad 0…3 de un día. En `/dom`, con `setAgendaOptions(el, { density })`."
+    },
+    {
+      "name": "renderEvent",
+      "type": "(detail: RenderEventDetail) => ReactNode",
+      "description": "Contenido visible de cada evento; el nombre accesible completo se mantiene. Modo DOM: setAgendaOptions(el, { renderEvent })."
+    },
+    {
+      "name": "loadEvents",
+      "type": "(range: { from; to; timeZone }, signal: AbortSignal) => Promise<CalendarEvent[]>",
+      "description": "Carga los eventos del rango visible (aria-busy mientras carga; cancela la anterior). Modo DOM: setAgendaOptions(el, { loadEvents })."
+    },
+    {
+      "name": "onRangeChange",
+      "type": "(range: { from; to; view }) => void",
+      "description": "Modo DOM: z:rangechange."
+    }
+  ],
+  "states": ["rest", "hover", "focus", "selected", "grabbed", "dragging", "past", "tentative", "recurring"],
+  "tokens": [
+    "calendar-color-1",
+    "calendar-color-2",
+    "calendar-color-3",
+    "calendar-color-4",
+    "calendar-color-5",
+    "calendar-color-6",
+    "event-tint",
+    "event-radius",
+    "event-bar-width",
+    "event-fg",
+    "event-fg-muted",
+    "event-solid-1",
+    "event-solid-2",
+    "event-solid-3",
+    "event-solid-4",
+    "event-solid-5",
+    "event-solid-6",
+    "timegrid-hour",
+    "timegrid-gutter",
+    "calendar-now",
+    "calendar-now-label-bg",
+    "calendar-weekend-bg",
+    "calendar-drop-bg",
+    "reading-bg",
+    "panel-radius",
+    "control-radius-sm",
+    "item-radius",
+    "accent-solid",
+    "fg-on-accent",
+    "line",
+    "perpetual-side-bg",
+    "calendar-today-ring"
+  ],
+  "classes": ["z-agenda", "z-event", "z-timegrid", "z-monthgrid", "z-agendalist"],
+  "a11y": "Rejilla de horas y mes con role=grid (columnheader por día con aria-current=date en hoy, gridcell por día); lista con role=list y un encabezado por día (con ventana virtual, aria-setsize y aria-posinset en días y filas; la fila con el foco siempre está pintada e Inicio/Fin llegan al primero y al último aunque no estén pintados). Una sola parada de Tab por vista (tabindex itinerante): eventos como button con nombre completo (título, día, intervalo con formatRange, lugar, calendario, provisional, repite); flechas espaciales entre eventos y los «+N» de la rejilla de horas (sin candidato no se evita el desplazamiento) y un único cursor de franja libre que se mueve por franjas y días; en el mes, flechas por días, Intro entra en los eventos del día y Escape vuelve a la celda. RePág/AvPág cambian de periodo. Intro en un evento abre su detalle; con editable, una segunda Intro lo agarra: flechas mueven (snapDuration, un día), Mayús+↑↓ redimensiona el fin (Alt+Mayús el inicio), Intro suelta, Escape cancela, salir con el foco suelta. Tecla Menú o Mayús+F10, o «Move to…» en el detalle: diálogo modal con fecha, inicio y fin (WCAG 2.5.7). Una región status por agenda con 500 ms de retraso y vaciado previo. Colores forzados, contraste alto, movimiento reducido e impresión cubiertos. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-agenda` dentro de `[data-z-dom]` con data-view, data-date, data-time-zone, data-locale, data-week-start, data-day-start, data-day-end, data-editable, data-selectable…, eventos y calendarios en <script type=\"application/json\" data-events> y data-calendars o con setAgendaEvents/setAgendaCalendars; emite z:eventchange, z:eventclick, z:selectslot, z:datechange, z:viewchange, z:quickcreate, z:calendartoggle y z:timezonechange. Año: 12 rejillas con la densidad en el nombre («4 events»); Intro abre el día. Perpetuo: tabla con caption, instrucciones y buscador con respuesta en texto. Línea temporal: grid con rowheader por recurso; conflicto con trama, borde y «overlaps».",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Semana editable",
+      "code": "<EventCalendar\n  calendars={[{ id: \"work\", name: \"Work\", color: \"1\" }]}\n  events={[{ id: \"a\", title: \"Design review\", start: \"2026-11-19T10:00\", end: \"2026-11-19T11:00\", timeZone: \"Europe/Madrid\", calendarId: \"work\" }]}\n  defaultDate=\"2026-11-19\"\n  timeZone=\"Europe/Madrid\"\n  editable\n  onEventChange={(change) => console.log(change.start)}\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Semana editable",
+      "code": "<div class=\"z-agenda\" id=\"team-agenda\" data-view=\"week\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-week-start=\"1\" data-day-start=\"07:00\" data-day-end=\"21:00\" data-editable>\n  <script type=\"application/json\" data-calendars>[{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }]</script>\n  <script type=\"application/json\" data-events>[{ \"id\": \"a\", \"title\": \"Design review\", \"start\": \"2026-11-19T10:00\", \"end\": \"2026-11-19T11:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\" }]</script>\n</div>"
+    }
+  ],
+  "origin": "Especificación agenda.md; Google Calendar, Fantastical, FullCalendar y Schedule-X como referencia."
+}

@@ -1,0 +1,49 @@
+{
+  "name": "Swap",
+  "group": "actions",
+  "description": "Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna). Sigue al control que lo contiene.",
+  "import": "import { Swap } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "none",
+  "props": [
+    {
+      "name": "off",
+      "type": "ReactNode",
+      "description": "Contenido en reposo."
+    },
+    {
+      "name": "on",
+      "type": "ReactNode",
+      "description": "Contenido activado."
+    },
+    {
+      "name": "active",
+      "type": "boolean",
+      "description": "Estado propio. Sin él se activa dentro de un elemento con aria-pressed=\"true\", aria-expanded=\"true\" o data-state=\"on\"."
+    },
+    {
+      "name": "effect",
+      "type": "enum",
+      "values": ["fade", "rotate", "flip", "scale"],
+      "default": "fade"
+    }
+  ],
+  "states": ["off", "on"],
+  "tokens": ["duration-normal", "ease-standard", "ease-spring"],
+  "classes": ["z-swap", "z-swap__item"],
+  "a11y": "Decorativo (aria-hidden): el nombre y el estado los expone el control que lo contiene (un Toggle con aria-pressed o un botón con aria-expanded). Con movimiento reducido solo hay fundido.",
+  "examples": [
+    {
+      "title": "En un Toggle (sigue a aria-pressed)",
+      "code": "<Toggle label=\"Dark mode\">\n  <Swap effect=\"rotate\" off={<Icon name=\"sun\" />} on={<Icon name=\"moon\" />} />\n</Toggle>"
+    },
+    {
+      "title": "Estado propio",
+      "code": "<Swap active effect=\"scale\" off={<Icon name=\"bars-3\" />} on={<Icon name=\"x-mark\" />} />"
+    },
+    {
+      "title": "Volteo",
+      "code": "<Toggle label=\"Favourite\" variant=\"ghost\">\n  <Swap effect=\"flip\" off={<Icon name=\"heart\" />} on={<Icon name=\"heart\" variant=\"solid\" />} />\n</Toggle>"
+    }
+  ],
+  "origin": "Nuevo. Referencia de variantes: Swap de Shark UI (fundido, giro, volteo, escala)."
+}

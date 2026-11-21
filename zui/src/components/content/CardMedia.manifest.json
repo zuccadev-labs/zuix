@@ -1,0 +1,59 @@
+{
+  "name": "CardMedia",
+  "group": "content",
+  "description": "Media de cabecera de una Card (portada, imagen de producto) sobre AspectRatio, a sangre o dentro del relleno con radio concéntrico.",
+  "import": "import { Card, CardMedia, CardHeader } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "src",
+      "type": "string",
+      "description": "Imagen. Sin src, la media son los hijos (vídeo, mapa, ilustración)."
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "default": "",
+      "description": "Texto alternativo; vacío si es decorativa."
+    },
+    {
+      "name": "ratio",
+      "type": "number | string",
+      "default": "16 / 9"
+    },
+    {
+      "name": "placement",
+      "type": "enum",
+      "values": ["top", "inset"],
+      "default": "top",
+      "description": "`top`: a sangre arriba con el radio interior de la tarjeta; `inset`: dentro del relleno con radio concéntrico."
+    },
+    {
+      "name": "loading",
+      "type": "enum",
+      "values": ["lazy", "eager"],
+      "default": "lazy"
+    }
+  ],
+  "states": ["rest"],
+  "tokens": ["card-radius", "radius-xs", "surface-2", "fg-subtle"],
+  "classes": ["z-card__media", "z-aspect"],
+  "a11y": "La imagen lleva alt; si la tarjeta ya nombra lo que muestra (título), alt=\"\" la deja como decorativa.",
+  "examples": [
+    {
+      "title": "Tarjeta con media e icono",
+      "code": "<Card>\n  <CardMedia ratio={16 / 9}>\n    <Icon name=\"photo\" size={32} />\n  </CardMedia>\n  <CardHeader icon=\"cube\" title=\"Atlas\" subtitle=\"Design tokens rollout\" />\n</Card>"
+    },
+    {
+      "title": "Imagen dentro del relleno",
+      "code": "<Card>\n  <CardMedia placement=\"inset\" ratio={4 / 3} src={cover} alt=\"Atlas dashboard\" />\n  <CardHeader title=\"Atlas\" />\n</Card>"
+    }
+  ],
+  "origin": "Card de producto de Shark UI.",
+  "behavior": "none",
+  "html": [
+    {
+      "title": "Tarjeta con media e icono",
+      "code": "<div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\" style=\"max-width: 320px\">\n  <div class=\"z-aspect z-card__media\" data-placement=\"top\" style=\"--z-aspect: 16 / 9\">\n    <z-icon name=\"photo\" size=\"32\"></z-icon>\n  </div>\n  <div class=\"z-card__header\">\n    <span class=\"z-card__icon\" aria-hidden=\"true\"><z-icon name=\"cube\" size=\"18\"></z-icon></span>\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Atlas</h3>\n      <p class=\"z-card__subtitle\">Design tokens rollout</p>\n    </div>\n  </div>\n</div>"
+    }
+  ]
+}

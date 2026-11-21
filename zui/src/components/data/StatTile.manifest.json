@@ -41,6 +41,16 @@
       "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta."
     },
     {
+      "name": "trend",
+      "type": "(number | null)[]",
+      "description": "Serie del minigráfico de tendencia bajo el valor (Sparkline)."
+    },
+    {
+      "name": "trendProps",
+      "type": "Omit<SparklineProps, \"values\">",
+      "description": "Forma (line, area, bar), color 1–8 y nombre del minigráfico. Por defecto, área con el color 1 y la etiqueta como nombre."
+    },
+    {
       "name": "onClick",
       "type": "() => void",
       "description": "Vuelve la tesela un botón."
@@ -72,15 +82,11 @@
     "accent-ring",
     "duration-normal",
     "ease-standard",
-    "focus-ring",
     "space-2",
     "text-small",
     "weight-semibold",
-    "radius-full",
     "font-display",
     "text-display-sm",
-    "weight-bold",
-    "tracking-tight",
     "leading-tight",
     "text-caption",
     "fg-subtle",
@@ -90,9 +96,31 @@
     "glass-saturate",
     "glass-highlight",
     "glass-specular",
-    "glass-shadow"
+    "glass-shadow",
+    "accent-text",
+    "canvas",
+    "control-radius-sm",
+    "danger-solid",
+    "danger-text",
+    "duration-press",
+    "ease-emphasized",
+    "ease-out",
+    "focus-offset",
+    "focus-width",
+    "info-solid",
+    "info-text",
+    "space-5",
+    "success-solid",
+    "success-text",
+    "tracking-display",
+    "warning-solid",
+    "warning-text",
+    "weight-display",
+    "weight-medium",
+    "chart-1",
+    "chart-area-opacity"
   ],
-  "classes": ["z-stat"],
+  "classes": ["z-stat", "z-sparkline"],
   "a11y": "div; con onClick pasa a ser button con todo el contenido como nombre.",
   "examples": [
     {
@@ -102,6 +130,10 @@
     {
       "title": "Destacada y activable",
       "code": "<StatTile variant=\"solid\" label=\"Open incidents\" value={3} onClick={() => navigate(\"/incidents\")} />"
+    },
+    {
+      "title": "Con tendencia",
+      "code": "<StatTile label=\"Revenue\" value=\"$112k\" delta=\"+15%\" deltaTone=\"success\" trend={[42, 48, 45, 61, 66, 72, 69, 84, 90, 88, 97, 112]} />"
     }
   ],
   "origin": "StatTile de ui-glass y tarjeta KPI de zutool."

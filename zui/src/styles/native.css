@@ -31,8 +31,8 @@
   dialog.z-modal::backdrop,
   dialog.z-drawer::backdrop {
     background: var(--z-scrim);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   /* El velo (`::backdrop`) aparece y se va con el diálogo. */
@@ -45,7 +45,10 @@
 
   .z-popover[popover],
   .z-menu[popover],
-  .z-tooltip[popover] {
+  .z-tooltip[popover],
+  .z-hovercard[popover],
+  .z-toggletip[popover],
+  .z-tour[popover] {
     position: fixed;
     inset: auto;
     margin: 0;

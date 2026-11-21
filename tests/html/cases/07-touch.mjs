@@ -61,7 +61,10 @@ export default async function ({ page, test, ok, shots, browserName, note, Unver
       if (!coarse) throw new Unverifiable("el motor no emula (pointer: coarse) ni (hover: none)");
       const over = await tp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       ok(over <= 1, `desborda ${over}px con los controles a tamaño táctil`);
-      await tp.screenshot({ path: join(shots, "touch-page.png"), fullPage: true });
+      // Firefox no captura más de 32767 px de alto: entonces, solo la ventana.
+      await tp
+        .screenshot({ path: join(shots, "touch-page.png"), fullPage: true })
+        .catch(() => tp.screenshot({ path: join(shots, "touch-page.png") }));
     });
 
     await test("táctil · objetivos de 40 px o más en los controles principales", async () => {
@@ -449,7 +452,9 @@ export default async function ({ page, test, ok, shots, browserName, note, Unver
       await finger.tap(mid(await boxOf(control)));
       await settle();
       ok((await control.getAttribute("aria-expanded")) === "true", "el toque no abrió el Select");
-      const option = tp.locator(".z-listbox__option:visible:not([aria-disabled=true]):not([aria-selected=true])").first();
+      const option = tp
+        .locator(".z-listbox:not([data-inline]) .z-listbox__option:visible:not([aria-disabled=true]):not([aria-selected=true])")
+        .first();
       const label = (await option.textContent()).trim();
       await finger.tap(mid(await option.boundingBox()));
       await settle();

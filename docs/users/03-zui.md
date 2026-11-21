@@ -1,9 +1,11 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 64 componentes en 8 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 144 componentes en 12 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
-React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)).
+React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
+cargar todo (`/dom`) o el núcleo (`/dom/core`) más las familias que use la página (`/dom/dates`, `/dom/agenda`,
+`/dom/charts`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
 
 No depende de ninguna biblioteca de UI. En ejecución solo necesita `@zuccadev-labs/zuix-tokens`;
 `@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM 19 son peers opcionales.
@@ -14,21 +16,25 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 
 | Grupo | Componentes |
 |---|---|
-| Acciones | Button, IconButton, Link, Toggle, SegmentedControl |
-| Formularios | Field, Input, Textarea, Select, NativeSelect, Combobox, Checkbox, RadioGroup, Radio, Switch, Slider, DateInput, Calendar, DatePicker, OTPInput, FileUpload, SearchInput |
-| Datos | Table, DataTable, Badge, Chip, Avatar, AvatarGroup, StatTile, Meter, Progress, Rating, Kbd |
-| Estado | Spinner, Skeleton, LoadingOverlay, EmptyState, ErrorState, ErrorBoundary, Alert |
-| Contenido | Card, CardHeader, CardFooter, Panel, Callout, CodeBlock, Divider |
-| Capas | Modal, ConfirmDialog, Drawer, Popover, Tooltip, Menu, ContextMenu, CommandPalette, Toast |
-| Navegación | Tabs, Breadcrumb, Pagination, Stepper, Accordion, Tree, NavList |
-| Carousel | Carousel con efecto lente |
+| Acciones | Button, ButtonGroup, CopyButton, DownloadTrigger, IconButton, Link, SegmentedControl, Swap, Toggle, ToggleGroup, Toolbar |
+| Formularios | Calendar, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, WeekPicker, YearPicker |
+| Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
+| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, Item, Kbd, Meter, Progress, Rating, StatTile, StatusDot, Table, Timeline |
+| Gráficos | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline |
+| Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, Skeleton, Spinner |
+| Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
+| Medios | CompareSlider, ImageCropper, QRCode, SignaturePad |
+| Efectos | AttentionRing, Backdrop, BorderBeam, Confetti, Glow, TextEffect |
+| Capas | ActionBar, Command, CommandPalette, ConfirmDialog, ContextMenu, Drawer, HoverCard, Menu, Modal, Popover, Toast, Toggletip, Tooltip, Tour |
+| Navegación | Accordion, Breadcrumb, Collapsible, Menubar, NavList, Pagination, Stepper, Tabs, Tree |
+| Carousel | Carousel |
 
 Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 34 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 29 |
+| `none` | Solo CSS. Basta el marcado | 48 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 95 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
 

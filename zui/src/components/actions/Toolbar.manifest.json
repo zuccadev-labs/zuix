@@ -1,0 +1,67 @@
+{
+  "name": "Toolbar",
+  "group": "actions",
+  "description": "Barra de herramientas: controles que actúan sobre otra cosa (un editor, un lienzo, un panel) con una sola parada de tabulación.",
+  "import": "import { Toolbar, ToolbarGroup, ToolbarSeparator } from \"@zuccadev-labs/zuix-zui\"",
+  "exports": ["Toolbar", "ToolbarGroup", "ToolbarSeparator"],
+  "behavior": "dom",
+  "apg": "toolbar",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible de la barra. Obligatorio salvo que se pase `aria-labelledby`."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "Eje de las flechas (`aria-orientation`). En vertical, arriba y abajo."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["glass", "plain"],
+      "default": "glass",
+      "description": "`glass`: barra de cromo de cristal. `plain`: sin fondo, para la cabecera de un panel."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md",
+      "description": "Radio de la pista, concéntrico con el de los controles de ese tamaño."
+    },
+    {
+      "name": "controls",
+      "type": "string",
+      "description": "Id del elemento sobre el que actúa la barra (`aria-controls`)."
+    },
+    {
+      "name": "ToolbarGroup.label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre del grupo (`role=\"group\"`)."
+    }
+  ],
+  "states": ["rest", "focus", "disabled"],
+  "tokens": ["glass-bg", "glass-border", "line", "space-1", "button-radius", "control-radius-sm", "layer-raised"],
+  "classes": ["z-toolbar", "z-toolbar__group", "z-toolbar__separator"],
+  "a11y": "`role=\"toolbar\"` con nombre y `aria-orientation`; cada grupo es `role=\"group\"` con nombre y los separadores son `role=\"separator\"` perpendiculares a la barra. Una sola parada de Tab para todos los controles, también los de un ToggleGroup anidado: las flechas del eje los recorren con vuelta (en RTL la izquierda avanza), Inicio y Fin van al primero y al último, y la barra recuerda el último control enfocado. Un control con `aria-disabled` sigue en el recorrido; uno con `disabled` se salta. Un campo de texto o un select conserva sus flechas: se sale de él con Tab. Los botones de solo icono llevan `aria-label` y título nativo. Para un grupo de botones independientes (cada uno con su parada), ButtonGroup.",
+  "examples": [
+    {
+      "title": "Formato de texto con grupos",
+      "code": "<Toolbar label=\"Text formatting\">\n  <ToggleGroup\n    type=\"multiple\"\n    label=\"Style\"\n    variant=\"ghost\"\n    size=\"sm\"\n    defaultValue={[\"bold\"]}\n    items={[\n      { value: \"bold\", icon: \"bold\", ariaLabel: \"Bold\" },\n      { value: \"italic\", icon: \"italic\", ariaLabel: \"Italic\" },\n      { value: \"underline\", icon: \"underline\", ariaLabel: \"Underline\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <ToolbarGroup label=\"Insert\">\n    <IconButton icon=\"link\" label=\"Insert link\" size=\"sm\" />\n    <IconButton icon=\"photo\" label=\"Insert image\" size=\"sm\" />\n    <IconButton icon=\"code-bracket\" label=\"Insert code\" size=\"sm\" aria-disabled=\"true\" />\n  </ToolbarGroup>\n  <ToolbarSeparator />\n  <Button size=\"sm\" variant=\"ghost\" icon=\"arrow-uturn-up-left\">Undo</Button>\n</Toolbar>"
+    },
+    {
+      "title": "Barra de un panel (plain, sm)",
+      "code": "<Toolbar label=\"Terminal actions\" variant=\"plain\" size=\"sm\">\n  <IconButton icon=\"play\" label=\"Run\" size=\"sm\" />\n  <IconButton icon=\"stop\" label=\"Stop\" size=\"sm\" />\n  <IconButton icon=\"trash\" label=\"Clear\" size=\"sm\" />\n</Toolbar>"
+    },
+    {
+      "title": "Vertical (paleta de herramientas)",
+      "code": "<Toolbar label=\"Tools\" orientation=\"vertical\" size=\"sm\">\n  <ToggleGroup\n    label=\"Tool\"\n    variant=\"ghost\"\n    size=\"sm\"\n    orientation=\"vertical\"\n    defaultValue=\"select\"\n    items={[\n      { value: \"select\", icon: \"cursor-arrow-rays\", ariaLabel: \"Select\" },\n      { value: \"pen\", icon: \"pencil\", ariaLabel: \"Pen\" },\n      { value: \"shapes\", icon: \"square-2-stack\", ariaLabel: \"Shapes\" },\n    ]}\n  />\n  <ToolbarSeparator />\n  <IconButton icon=\"magnifying-glass-plus\" label=\"Zoom in\" size=\"sm\" />\n  <IconButton icon=\"magnifying-glass-minus\" label=\"Zoom out\" size=\"sm\" />\n</Toolbar>"
+    }
+  ],
+  "origin": "Nuevo, con primitiva propia (APG «toolbar»). Material de las barras de zutool (PaneHeaderButtons, FindBar). Referencia de variantes: Toolbar de Radix."
+}

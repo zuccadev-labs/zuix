@@ -1,9 +1,16 @@
 // Slider, OTPInput y FileUpload sin framework.
 import { matchesAccept } from "../core/accept";
 import { isRtl } from "../core/dir";
+import { drawThumbnail } from "../core/thumbnail";
 import { closestThumb, keyValue, moveThumb as nextValues, percent as percentOf, snap, valueAt } from "../core/slider";
+import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { document as documentIcon } from "@zuccadev-labs/zuix-zicon/icons/document";
+import { photo } from "@zuccadev-labs/zuix-zicon/icons/photo";
+import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { all, emit, flag, inDom } from "./forms-popup";
-import type { Listen } from "./shared";
+import { setMarkup, type Listen } from "./shared";
+
+registerIcons([documentIcon, photo, xMark]);
 
 /* ---------- Slider ---------- */
 
@@ -74,6 +81,13 @@ function paintSlider(slider: HTMLElement, values: number[]): void {
     flag(thumb, "aria-disabled", disabled, "true");
     thumb.tabIndex = disabled ? -1 : 0;
   });
+  // Marcas dentro del rango elegido, de acento.
+  const low = values.length > 1 ? Math.min(...values) : min;
+  const high = Math.max(...values, min);
+  for (const mark of slider.querySelectorAll<HTMLElement>(".z-slider__mark[data-value]")) {
+    const v = Number(mark.dataset.value);
+    flag(mark, "data-in-range", v >= low && v <= high);
+  }
   const inputs = [...slider.querySelectorAll<HTMLInputElement>("input")];
   if (inputs.length === 1) inputs[0]!.value = values.join(",");
   else
@@ -251,6 +265,67 @@ function fileSize(bytes: number): string {
   return `${(bytes / 1_000_000).toFixed(1)} MB`;
 }
 
+/** Pinta la lista de archivos de la zona (si tiene `ul.z-upload__files`): miniatura, nombre, tamaño y quitar. */
+function renderFiles(zone: HTMLElement, files: File[]): void {
+  const target = zone.querySelector<HTMLElement>(".z-upload__files");
+  if (!target) return;
+  const removable = !zone.hasAttribute("data-disabled");
+  target.replaceChildren(
+    ...files.map((file, index) => {
+      const item = document.createElement("li");
+      item.className = "z-upload__file";
+      const thumb = document.createElement("span");
+      thumb.className = "z-upload__thumb";
+      thumb.setAttribute("aria-hidden", "true");
+      if (file.type.startsWith("image/")) {
+        // La miniatura se dibuja en un lienzo: el archivo no pasa por ninguna URL ni atributo `src`.
+        setMarkup(thumb, iconSvg("photo", { size: 16 }));
+        const canvas = document.createElement("canvas");
+        void drawThumbnail(canvas, file, 28).then((drawn) => {
+          if (drawn && thumb.isConnected) thumb.replaceChildren(canvas);
+        });
+      } else setMarkup(thumb, iconSvg("document", { size: 16 }));
+      const main = document.createElement("span");
+      main.className = "z-upload__file-main";
+      const name = document.createElement("span");
+      name.className = "z-upload__file-name";
+      name.textContent = file.name;
+      main.append(name);
+      const size = document.createElement("span");
+      size.className = "z-upload__file-size";
+      size.textContent = fileSize(file.size);
+      item.append(thumb, main, size);
+      if (removable) {
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "z-upload__remove";
+        remove.dataset.index = String(index);
+        const label = (zone.dataset.removeLabel ?? "Remove {name}").replace("{name}", file.name);
+        remove.setAttribute("aria-label", label);
+        remove.title = label;
+        setMarkup(remove, iconSvg("x-mark", { size: 14 }));
+        item.append(remove);
+      }
+      return item;
+    }),
+  );
+}
+
+function removeFile(zone: HTMLElement, index: number): void {
+  const input = zone.querySelector<HTMLInputElement>(".z-upload__input");
+  if (!input) return;
+  const files = Array.from(input.files ?? []).filter((_, i) => i !== index);
+  try {
+    const transfer = new DataTransfer();
+    for (const file of files) transfer.items.add(file);
+    input.files = transfer.files;
+  } catch {
+    // Sin DataTransfer construible el campo no se puede recortar.
+  }
+  renderFiles(zone, files);
+  emit(zone, "change", { files, rejected: [] });
+}
+
 function deliver(zone: HTMLElement, list: FileList | null | undefined): void {
   const input = zone.querySelector<HTMLInputElement>(".z-upload__input");
   if (!input) return;
@@ -267,23 +342,7 @@ function deliver(zone: HTMLElement, list: FileList | null | undefined): void {
   } catch {
     // Navegador sin DataTransfer construible: el campo queda como estaba.
   }
-  const target = zone.querySelector<HTMLElement>(".z-upload__files");
-  if (target) {
-    target.replaceChildren(
-      ...files.map((file) => {
-        const item = document.createElement("li");
-        item.className = "z-upload__file";
-        const name = document.createElement("span");
-        name.className = "z-upload__file-name";
-        name.textContent = file.name;
-        const size = document.createElement("span");
-        size.className = "z-upload__file-size";
-        size.textContent = fileSize(file.size);
-        item.append(name, size);
-        return item;
-      }),
-    );
-  }
+  renderFiles(zone, files);
   emit(zone, "change", { files, rejected });
 }
 
@@ -350,6 +409,14 @@ export function setup(on: Listen): void {
     event.preventDefault();
     zone.removeAttribute("data-dragging");
     if (!uploadOff(zone)) deliver(zone, event.dataTransfer?.files);
+  });
+  on(document, "click", (event) => {
+    const remove = (event.target as Element).closest?.<HTMLElement>(".z-upload__remove");
+    const zone = remove ? uploadZone(remove) : null;
+    if (!remove || !zone) return;
+    // Dentro de la etiqueta: quitar no abre el selector.
+    event.preventDefault();
+    removeFile(zone, Number(remove.dataset.index));
   });
   on(document, "change", (event) => {
     const input = event.target as HTMLElement;

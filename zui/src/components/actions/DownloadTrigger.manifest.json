@@ -1,0 +1,54 @@
+{
+  "name": "DownloadTrigger",
+  "group": "actions",
+  "description": "Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL. Usa un enlace `download` temporal y libera la URL después.",
+  "import": "import { DownloadTrigger } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "fileName",
+      "type": "string",
+      "required": true,
+      "description": "Nombre del archivo (se limpia de separadores y caracteres de control)."
+    },
+    {
+      "name": "data",
+      "type": "string | Blob | ArrayBuffer | Uint8Array | (() => … | Promise<…>)",
+      "description": "Contenido; una función se llama al pulsar."
+    },
+    { "name": "href", "type": "string", "description": "URL que se descarga tal cual (mismo origen, `blob:` o `data:`)." },
+    { "name": "mimeType", "type": "string", "description": "Por defecto, el de la extensión (svg, png, json, csv, txt, ics…)." },
+    { "name": "variant", "type": "enum", "values": ["primary", "secondary", "ghost"], "default": "secondary" },
+    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md" },
+    { "name": "icon", "type": "IconName | null", "default": "\"arrow-down-tray\"" },
+    { "name": "onDownload", "type": "(blob: Blob | null) => void" },
+    { "name": "onError", "type": "(error: unknown) => void" }
+  ],
+  "states": ["rest", "hover", "focus", "loading", "disabled"],
+  "tokens": ["button-radius", "control-height-md", "surface-2", "surface-3", "glass-border", "accent-ring", "focus-width"],
+  "classes": ["z-download"],
+  "a11y": "Un button nativo con texto. Mientras genera el archivo lleva aria-busy y aria-disabled (conserva el foco) y un indicador de carga. Sin React (`@zuccadev-labs/zuix-zui/dom`): un botón con data-z-download=\"#id\" y data-file-name descarga el contenido de ese elemento (un .z-qrcode en SVG o PNG, un .z-signature, un <canvas>, o el texto de un <template> o de cualquier elemento); data-href descarga una URL; avisa con z:download { name, size, type } o z:downloaderror.",
+  "behavior": "dom",
+  "examples": [
+    { "title": "Texto", "code": "<DownloadTrigger fileName=\"notes.txt\" data=\"Ship on Friday.\">Download notes</DownloadTrigger>" },
+    {
+      "title": "Código QR en SVG",
+      "code": "<DownloadTrigger fileName=\"zuix-qr.svg\" data={() => qrcodeSvg({ value: \"https://zuccadev-labs.github.io/zuix/\" }) ?? \"\"} variant=\"ghost\">\n  Download QR\n</DownloadTrigger>"
+    },
+    {
+      "title": "Desde una promesa",
+      "code": "<DownloadTrigger fileName=\"report.csv\" data={() => fetch(\"/api/report\").then((r) => r.blob())} variant=\"primary\">\n  Export CSV\n</DownloadTrigger>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Descargar un QRCode en SVG o PNG",
+      "code": "<div class=\"z-qrcode\" id=\"qr-docs\" data-value=\"https://zuccadev-labs.github.io/zuix/\" data-size=\"120\"></div>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.svg\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>SVG</button>\n<button type=\"button\" class=\"z-btn z-btn--ghost z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.png\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>PNG</button>",
+      "script": "document.addEventListener(\"z:download\", (event) => console.log(event.detail.name, event.detail.size));"
+    },
+    {
+      "title": "Texto de una plantilla",
+      "code": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>"
+    }
+  ],
+  "origin": "Oleada 7. Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código."
+}

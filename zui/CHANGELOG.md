@@ -5,6 +5,400 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
+Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-tokens`. Botón, campo, select,
+pestañas, control segmentado e insignia son las piezas de referencia; el resto de componentes hereda escala,
+radios y material de los tokens.
+
+### Añadido
+
+- Color, medios y piezas sueltas (todo con contrato HTML, modo sin framework y binding de React sobre un solo
+  árbol de `core/vnode`):
+  - Familia `ColorPicker`: `ColorPicker` (área de saturación y brillo, tono, opacidad, campos por canal o
+    hexadecimal, formato hex/rgb/hsl/oklch, muestrario, cuentagotas con `EyeDropper` como mejora progresiva y
+    selector del sistema con `<input type="color">`, que también es el respaldo sin JavaScript),
+    `ColorPickerTrigger` (botón con muestra que lo abre en un popover nativo), `ColorArea`, `ColorSlider` (tono u
+    opacidad, horizontal o vertical), `ColorSwatchPicker` (radiogroup) y `ColorField`. El valor público es una cadena
+    CSS; dentro se guarda en HSV para que el tono no se pierda en los grises. El área es un deslizador en dos ejes
+    accesible con teclado; tono y alfa siguen el patrón APG «slider». En `/dom`, `setColorValue(el, valor)` y los
+    avisos `z:change`, `z:changeend` y `z:formatchange`.
+  - `core/color` (exportado desde la raíz: `parseColor`, `formatColor`, `normalizeColor`, `formatOf`,
+    `rgbToHsv`/`hsvToRgb`, `rgbToHsl`/`hslToRgb`, `rgbToOklch`/`oklchToRgb`, `contrastRatio`): lectura de hex,
+    `rgb()`, `hsl()`, `hwb()` y `oklch()` (con comas o espacios, porcentajes y ángulos), conversiones a OKLab según
+    Ottosson con el croma reducido dentro de sRGB y escritura con redondeos estables (escribir, leer y volver a
+    escribir da la misma cadena en los cuatro formatos, probado con fast-check).
+  - `Carousel` ampliado sin cambiar su contrato: `autoplay` (`true` o milisegundos) con botón de pausa visible como
+    primer control (WCAG 2.2.2), pausa con el puntero encima, con el foco dentro, con la pestaña oculta y fuera de
+    pantalla, sin arranque automático con movimiento reducido y región viva callada mientras corre; `indicators`
+    (`counter` por defecto, `dots`, `bar`, `thumbnails` con `renderThumbnail`, `none`); `slidesPerPage` (1–8) y
+    `orientation="vertical"` (con `height`), que usan el desplazamiento nativo con scroll-snap. En `/dom`, los mismos
+    con `data-autoplay`, `data-indicators`, `data-per-page` y `data-orientation`. Lógica en `core/carousel` y
+    `core/carousel-runtime`, compartida por los dos modos.
+  - Grupo `media`. `QRCode`: codificador propio (`core/qr`, ISO/IEC 18004: modo byte en UTF-8, versiones 1–40,
+    corrección L/M/Q/H, Reed–Solomon sobre GF(256), las ocho máscaras con la penalización de la norma, formato y
+    versión con BCH) probado contra los vectores de la norma; un solo `path` de SVG oscuro sobre claro con zona de
+    silencio, `role="img"` con nombre, icono central opcional (sube la corrección a H). Sin estado: vale en un Server
+    Component.
+  - `CircularSlider`: deslizador en un anillo (círculo completo o arco abierto tipo dial, `arc` y `startAngle`) con
+    el valor formateado en el centro, `caption`, marcas y el tirador de Slider; patrón APG «slider» y arrastre por
+    todo el anillo (lo que cae en el hueco de un arco abierto va al extremo más cercano). Cálculo en `core/circular`.
+  - `CompareSlider` (grupo `media`): antes/después con dos capas apiladas, divisor arrastrable y asa `role="slider"`
+    con teclado, horizontal o vertical, rótulos opcionales. En `/dom`, un `.z-compare` con dos hijos recibe divisor y
+    asa; `setCompareValue(el, valor)`.
+  - `ImageCropper` (grupo `media`): área de recorte con ocho asas, relación de aspecto fija o libre, forma
+    rectangular o circular, rejilla de tercios, teclado (flechas mueven, Mayús + flechas redimensionan, Alt
+    multiplica el paso) con anuncio en una región viva; recorte en fracciones y en píxeles. `cropImage` y
+    `cropImageBlob` (raíz y `/dom`) dibujan la salida en un canvas o un Blob (PNG, JPEG o WebP, `maxSize`, círculo
+    transparente). Cálculo en `core/crop`.
+  - `SignaturePad` (grupo `media`): firma con el puntero (presión, trazado suavizado, eventos fusionados), deshacer,
+    borrar y la alternativa accesible de escribir el nombre (modo «Type»); `signatureValue(el)` (trazos y SVG) y
+    `signatureBlob(el)` (PNG) en la raíz y en `/dom`; campo oculto con el SVG para formularios. Cálculo en
+    `core/signature`.
+  - `ShortcutInput`: captura de atajos con normalización portable («Mod+Shift+K»: ⌘ en Apple, Ctrl en el resto),
+    teclas por su posición física, vista con las teclas de la plataforma, Escape cancela, Retroceso borra, Tab sale
+    sin grabar y anuncio en una región viva. `core/shortcut` exporta `parseShortcut`, `normalizeShortcut`,
+    `shortcutLabels`, `ariaKeyshortcuts` y `matchesShortcut` para escuchar el atajo guardado.
+  - `Confetti` (grupo `effects`) y `confetti(opciones)`: ráfaga de papel en un lienzo fijo encima de la página, sin
+    puntero ni foco, con los colores `chart-1…8` de la marca; no anima con movimiento reducido y se quita al terminar o
+    con la pestaña oculta. En `/dom`, `data-z-confetti` en un botón. Física en `core/confetti`.
+  - `DownloadTrigger` (grupo `actions`): botón que genera el archivo al pulsar (texto, Blob, bytes o una función
+    asíncrona con estado de carga) o descarga una URL, con enlace temporal y URL liberada. En `/dom`,
+    `data-z-download="#id"` descarga un QRCode (SVG o PNG), un SignaturePad, un canvas o un texto; `download`,
+    `downloadBlob` y `downloadUrl`. `qrcodeSvg(props)` da el QR como SVG autónomo.
+  - `DotMatrix`: seis patrones propios más (`diamond`, `radar`, `zigzag`, `helix`, `heart`, `cascade`), 18 en total.
+
+- Efectos y cargadores con la estética liquid glass (todo con contrato HTML, modo sin framework y binding de
+  React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único
+  `IntersectionObserver` compartido, `core/visibility`):
+  - `Spinner` con `shape`: `ring` (por defecto, sin cambios), `dots` (tres puntos) y `bars` (cuatro barras).
+  - `DotMatrix`: cargador de rejilla de puntos (2–16 × 2–16) con 12 patrones de diseño propio (`wave`, `rain`,
+    `spiral`, `pulse`, `sweep`, `checker`, `orbit`, `ripple`, `cross`, `snake`, `equalizer`, `sparkle`), CSS puro
+    (cada punto desfasa la misma animación de opacidad y escala), `role="status"`, fotograma quieto con movimiento
+    reducido. `DOT_PATTERNS` exportado; en `/dom`, `setDotMatrixPattern(el, patrón)` y dibujo de los puntos si el
+    marcado llega sin ellos.
+  - Grupo `effects`: `Backdrop` (rejilla, puntos, hexágonos y malla de color; tres intensidades, desvanecido y
+    deriva), `BorderBeam` (haz cónico que recorre el borde), `Glow` (brillo de borde o superficie que sigue al
+    puntero), `AttentionRing` (anillo o halo que late tres veces y queda fijo) y `TextEffect` (aparición por
+    palabras o letras, desenfoque, degradado con tokens de texto y brillo de espera; texto entero para los lectores
+    y visible sin JavaScript).
+
+- Capas y navegación de aplicación:
+  - `Toolbar`, `ToolbarGroup` y `ToolbarSeparator` (patrón APG «toolbar»): una sola parada de tabulación para
+    todos los controles de la barra, también los de un `ToggleGroup` anidado, flechas del eje con vuelta, Inicio y
+    Fin, y la barra recuerda el último control. Variantes `glass` (cromo) y `plain`, horizontal y vertical. En
+    `/dom`, `.z-toolbar[role=toolbar]`.
+  - `Collapsible` (patrón APG «disclosure»): plegada, la región lleva `hidden="until-found"` y la búsqueda en la
+    página la abre; colapso parcial con `peek` (fundido, el botón tras el texto y el foco dentro lo despliega),
+    variante `card` y deshabilitado. En `/dom`, `.z-collapsible` y `setCollapsibleOpen()`.
+  - `Banner`: franja de aviso de página (`page`) o de panel (`inline`) en seis tonos, con insignia, acción (al lado
+    del texto si cabe, debajo si no: consulta de contenedor) y cierre con nombre que deja el foco en el siguiente
+    elemento tabulable. Persistente; `live` lo anuncia si se inserta tras una acción. En `/dom`, `.z-banner` con
+    `z:dismiss` cancelable y `dismissBanner()`. Utilidad `nextTabbable()` en `core/focus`.
+  - `Menu` y `ContextMenu`: entradas casilla (`{ type: "checkbox", checked, onCheckedChange }`,
+    `menuitemcheckbox`: Espacio la cambia y deja el menú abierto, Intro o el clic la cambian y cierran), grupos de
+    radio (`{ type: "radio-group", label, value, onValueChange, items }`, `menuitemradio` en un `group` con nombre) y
+    entradas enlace (`href`, `<a role=menuitem>`). Tipos `MenuCheckboxEntry`, `MenuRadioGroupEntry` y
+    `MenuRadioItem`. En `/dom`, `aria-checked` y `z:change` en la casilla o en el grupo.
+  - `Menubar` (patrón APG «menubar»): barra de menús de aplicación con una sola parada de tabulación, flechas entre
+    títulos y entre menús abiertos (también desde un submenú), Flecha arriba para entrar por la última entrada y
+    cambio de menú con el puntero cuando ya hay uno abierto. Cada menú es el de la suite (submenús, casillas,
+    radios). Lógica en `core/menubar`. En `/dom`, `.z-menubar[role=menubar]` con títulos `data-z-open` y
+    `openMenubarMenu()`.
+  - `Popover`: ancla distinta del disparador (`anchor`), flecha hacia el centro del ancla que sigue al lado en
+    que quede el panel (`arrow`) y botón de cierre (`showClose`, `closeLabel`). Donde el navegador tiene CSS anchor
+    positioning, el popover no modal se ancla con CSS (`position-area`, `position-try-fallbacks`) y la colocación
+    propia queda de respaldo; si el motor deja la capa lejos del ancla, se vuelve a ella. En `/dom`, `data-arrow`
+    en el popover y `data-z-anchor="#id"` en el disparador; `openPopover()` acepta `{ trigger }`. Nuevos
+    `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
+    escribe `--z-arrow-offset`.
+  - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, con el
+    patrón «hovercard» de modern-web-guidance: la tarjeta es `role="tooltip"` (el rol mínimo de una pista con
+    enlaces) y describe al enlace con `aria-describedby` desde que se monta, abierta o cerrada, sin
+    `aria-expanded` y sin mover el foco al abrirse; un `aria-describedby` del autor manda. El puntero cruza a la
+    tarjeta sin cerrarla, Escape y una pulsación fuera la cierran y Tab entra en ella y sale hacia lo que sigue al
+    enlace. Flecha opcional.
+  - `Toggletip`: botón de ayuda con nombre propio y `aria-expanded`; el puntero o el foco la asoman, el clic la fija.
+  - Lógica común en `core/interest` (`createInterest`, `bridgeTab`). En `/dom`, `[data-z-hovercard]` y
+    `[data-z-toggletip]` con `.z-hovercard`/`.z-toggletip` en `popover=manual`, y `setHintOpen()`.
+  - Avisos de promesa: `useToast().promise(promise, { loading, success, error })` y `update(id, options)`; el aviso
+    en curso lleva anillo y `aria-busy` y no se cierra solo, y el resultado (texto, opciones o función del valor) se
+    escribe en el mismo aviso, que entonces empieza su cuenta atrás. En `/dom`, `toastPromise()`; `toast()` devuelve
+    además `update()`. Opción `loading` en los dos.
+  - `Command`: la paleta de comandos incrustada en la página (sin diálogo), con el mismo patrón combobox; Escape
+    vacía la búsqueda. `CommandPalette` y `Command` aceptan `footer` (`.z-palette__footer`). En `/dom`,
+    `.z-palette.z-command`.
+  - `ActionBar`: barra flotante de acciones sobre una selección (recuento vivo, acciones y cierre) sobre Toolbar;
+    `fixed`, `sticky` o `inline`; Escape y el cierre vacían la selección. En `/dom`, `.z-actionbar` con `z:close`
+    cancelable y `closeActionBar()`.
+  - `Drawer`: lado `top`, asa para arrastrar y cerrar (`dragToClose`) y puntos de anclaje (`snapPoints`,
+    `snapPoint`, `defaultSnapPoint`, `onSnapPointChange`, `handleLabel`) en `top` y `bottom`: el asa es un slider
+    con flechas, Re Pág/Av Pág, Inicio y Fin, y el arrastre va al anclaje más cercano con su inercia o cierra por
+    debajo del menor. Lógica en `core/sheet` (`sheetRelease`, `snapKey`, `attachSheet`). En `/dom`,
+    `dialog.z-drawer[data-drag]` con `.z-drawer__handle`, `data-snap-points` y `setDrawerSnap()`.
+  - `Tour`: recorrido guiado no modal con una tarjeta (role=dialog con encabezado) anclada a cada elemento, anillo
+    que lo resalta, progreso, Anterior, Siguiente/Hecho y Saltar; el foco entra en la tarjeta en cada paso, Escape
+    o Saltar lo cierran y el foco vuelve a donde estaba; las flechas laterales cambian de paso. Lógica en
+    `core/tour`. En `/dom`, `startTour()`.
+- DataTable: selección de filas con casillas (`selectable`, `selectedKeys`, `defaultSelectedKeys`,
+  `onSelectionChange`, `isRowSelectable`), «seleccionar todo» de la página con estado indeterminado, Mayús +
+  clic para un rango y conteo visible anunciado (`role="status"`, `selectedLabel`); pie en `tfoot` por columna
+  (`footer`, contenido o función sobre todas las filas); paginación integrada con Pagination (`pageSize`,
+  `page`, `defaultPage`, `onPageChange`, `manualPagination` + `rowCount`, `rangeLabel`). Sin las props nuevas
+  el marcado no cambia. Modo DOM (`.z-datatable`): `data-page-size`, `data-selected-label`,
+  `data-range-label`, `z:selectionchange` y `z:pagechange`, y `setDataTableSelection()`,
+  `dataTableSelection()` y `setDataTablePage()` en `/dom`. Lógica en `core/selection`.
+- Tree: `selectionMode="multiple"` (`aria-multiselectable`; Ctrl/Cmd y Mayús con el puntero,
+  Espacio, Mayús+flechas y Ctrl+A; `selectedIds`, `defaultSelectedIds`, `onSelectedChange`), casillas en
+  cascada con estado mixto (`checkable`, `checked`, `defaultChecked`, `onCheckedChange`; `aria-checked`
+  true/false/mixed) y renombrar (`renamable`, `onRename`, `renameLabel`: F2 o doble clic, Intro confirma,
+  Escape cancela). Modo DOM: `aria-multiselectable`, `data-checkable`, `data-renamable`, `z:change` con
+  `values` y `checked`, `z:rename` cancelable y `checkTreeItem()`/`renameTreeItem()` en `/dom`. Lógica en
+  `core/tree` (cascada, rangos, profundidad).
+- `JsonTree`: visor de JSON y de valores de JavaScript sobre Tree (tipos con color de texto, `Array(3)`,
+  `Map(2)`, `Set(1)`, fechas, bigint, `[Circular]`), `defaultExpandDepth`, `maxStringLength` (texto completo en
+  `title`), rutas `$.a[0].b` con `onSelect` y `copyPath` (anuncio en `role="status"`). Modo DOM: `.z-jsontree` con
+  `<script type="application/json" data-value>` o `setJsonTreeValue(el, valor)`; `z:select` y `z:copy`.
+- Stepper: icono por paso (`icon`), estado de carga (`loading`: marcador que gira y `aria-busy`) y panel por
+  paso (`content`) con Anterior/Siguiente (`onStepChange`, `completed`, `navLabels`, `nextDisabled`). El foco va
+  al panel nuevo y los ocultos conservan lo escrito. Modo DOM: `.z-stepper-panels` (`data-current`, `z:change`,
+  `setStep()` en `/dom`). Sin cambios para el Stepper sin paneles.
+- Breadcrumb: migas colapsadas (`maxItems`, `itemsBeforeCollapse`, `itemsAfterCollapse`, `collapsedLabel`): las
+  del medio pasan a un Menu tras un botón «…»; y separador propio (`separator`). Modo DOM con `data-z-open` y un
+  `.z-menu[popover]` de enlaces.
+- Accordion: variante tarjeta (`variant="card"`, radios concéntricos) y `collapsible={false}` (con una sola
+  abierta, su cabecera lleva `aria-disabled` y no la cierra; sigue en las flechas). Modo DOM: `data-variant="card"`
+  y `data-collapsible="false"`.
+- Gráficos propios en SVG, sin dependencias (grupo `charts`): `LineChart`, `AreaChart` (apiladas con `stacked`),
+  `BarChart` (vertical u horizontal, agrupadas o apiladas, negativos), `DonutChart`, `PieChart` y el genérico
+  `Chart`. Escalas lineal, temporal (marcas de calendario) y de banda, marcas «bonitas» (1, 2, 2,5, 5 × 10ⁿ), apilado
+  por signo, sectores y curvas lineal, monótona y escalonada en `core/chart`; la pieza en `core/chart-widget` (un
+  árbol para React y para el modo DOM). Ejes con rótulos de `Intl` (compactos desde 10 000), cuadrícula, leyenda con
+  botones `aria-pressed` que ocultan series (`hidden`/`defaultHidden`/`onHiddenChange`; el color sigue a la serie),
+  tooltip y cruceta al pasar y al enfocar, una posición enfocable por punto con su nombre completo (flechas,
+  Inicio/Fin, Re Pág/Av Pág, Intro → `onPointClick`), tabla de datos alternativa («View as table»), `figure` +
+  `figcaption` con resumen calculado, marcadores con forma (`markers`) y trazos o tramas (`patterns`, siempre con
+  colores forzados e impresión), entrada animada que respeta `prefers-reduced-motion`, RTL y consultas de
+  contenedor. Marcas de línea, área y sector en SVG con trazos que no escalan; barras, puntos, ejes y tooltip en
+  HTML colocado por fracciones (nada se mide). Modo DOM: `.z-chart` con `data-type`, `data-x-key`… y datos en
+  `<script type="application/json" data-props>`; `z:pointclick`, `z:hiddenchange`, `z:viewchange`.
+- `Sparkline` (línea, área o barras; imagen con nombre que resume la serie; sin estado, vale en un Server
+  Component; modo DOM con `.z-sparkline[data-values]`) y `StatTile` con `trend` y `trendProps`.
+- Datos y contenido: `Timeline` (`<ol>`, formas de punto, estilos de línea, alineación inicio/fin/alterna
+  que pasa a una columna en estrecho, `<time datetime>`), `CircularProgress` (sobre `<progress>`), `Progress`
+  vertical y segmentada, `DescriptionList` (`<dl>`), `Item`/`ItemGroup`, `StatusDot` (tono, tamaño, pulso; nunca
+  solo color), `Chip` con `tone`, `CardMedia` y `AspectRatio`.
+- Lectura y formato: `Prose` (`.z-prose`, con `.z-not-prose` para salir), `ScrollArea` (región enfocable con nombre,
+  `scrollbar-color`/`scrollbar-width` y sombras solo hacia donde queda contenido, sin JavaScript), `Marquee` (copias
+  `inert`, pausa al pasar o enfocar, botón de pausa visible, quieto con `prefers-reduced-motion`), `Highlight`
+  (`<mark>`, varias consultas, sin mayúsculas, sin acentos o palabras completas; `setHighlightQuery()` en `/dom`) y
+  `FormatNumber`, `FormatByte` (decimal con unidades de `Intl` o binario IEC) y `FormatDate` (`<time datetime>`, o
+  relativa con RelativeTime). Lógica en `core/format`; modo DOM en `dom/reading`.
+- Calendar completo: modo `multiple` (`maxSelected`), varios meses (`numberOfMonths`, `pagedNavigation`) con
+  una sola rejilla para el teclado, vistas de mes, año y década (clic en el título, `view`, `minView`,
+  `maxView`), desplegables nativos de mes y año (`captionLayout`), preajustes (`presets`, claves de
+  `rangePresets`), fechas reservadas (`isDateUnavailable`, tachadas y con trama, cortan un rango),
+  `modifiers`, semanas fijas, números de semana (ISO o del locale), botón Hoy, `today`, tamaño de celda,
+  contenido por celda (`renderDay`, `getDayDescription`), leyenda, `minRange`/`maxRange` y Ctrl+Inicio/Fin.
+  Valores ISO civiles; acepta un `Temporal.PlainDate` en `value`.
+- DatePicker: modo `multiple`, dos meses, preajustes, `confirm` con Aplicar/Cancelar, `closeOnSelect`,
+  `formatValue`, `formatCount` y `serialize`. Nuevos `DateRangePicker` (dos meses por defecto),
+  `MonthPicker` (`YYYY-MM`), `YearPicker` (`YYYY`) y `WeekPicker` (`YYYY-Www`).
+- Utilidades de fechas civiles en la raíz y en `/dom`: `rangePresets`, `resolvePreset`, `formatDateRange`,
+  `isoWeekText`, `weekStartOf`, `weekNumber`, `localeWeekInfo`. En `/dom`, `setCalendarOptions()` para las
+  funciones del calendario y los eventos `z:monthchange` y `z:viewchange`.
+- `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
+  `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
+  (`DatePicker input`). Alt+Flecha abajo abre.
+- `EventCalendar`, vistas de año y de recursos: `year` (12 minimeses con densidad en el fondo y en el nombre,
+  `density`), `perpetual` (año perpetuo de una página) y `timeline` (recursos del día, `resources`), un
+  contenido propio por evento (`renderEvent`, sin perder el nombre accesible completo), carga por rango visible
+  (`loadEvents`, `onRangeChange`; en `/dom`, `setAgendaOptions()` y `z:rangechange`), el chevrón de continuación en
+  las barras de varios días y la banda continua de la semana visible en el minicalendario.
+- Agenda con muchos eventos (5000 en un mes): la rejilla de horas pinta como mucho cuatro solapes lado a lado en la
+  semana (ocho en el día) y el resto en un «+N» por hora en la última columna del grupo (nombre «+3 more,
+  Thursday 19 November, 10:00–11:00», con tabulador y flechas, que abre el popover de ese intervalo); la lista
+  (`agenda`) pinta solo su ventana visible con un margen a partir de 150 filas (rellenos del alto del resto,
+  `aria-setsize`/`aria-posinset`, la fila con el foco siempre pintada; Inicio y Fin van al primero y al último
+  aunque no estén pintados). Arrastrar con el puntero en la vista `timeline` del EventCalendar (mover y alargar
+  por el asa del final, con desplazamiento automático horizontal). En `/dom`, `setAgendaOptions({ density })`
+  para la vista de año.
+- `layoutTimed` devuelve además el grupo de solape de cada trozo (`group`, `groupStart`) y acepta un tope de
+  columnas.
+- Piezas nuevas del grupo `agenda`, en React y sin framework (`/dom`, `setWidgetProps()`): `PerpetualYear`
+  (tabla con caption, instrucciones y buscador con respuesta en texto), `TimelineView` (Gantt con fases
+  plegables, progreso, hitos, dependencias, camino crítico, hoy y zoom día/semana/mes; recursos con conflictos
+  con trama y texto, crear arrastrando y ventana virtual de filas), `FreeBusy` (buscar hueco entre zonas),
+  `SlotPicker` (franjas de cita con zona del visitante y 12/24 h), `CalendarHeatmap` (5 niveles, leyenda,
+  etiqueta al enfocar, tabla alternativa, `encoding="size"`, filo con contraste alto) y `HabitCalendar` (rachas
+  con banda, estados con forma e icono, variante de semana).
+- Estancia en Calendar y DatePicker de rango: `isDateCheckoutOnly`, `rangeUnit="nights"`, aviso visible del
+  mínimo (`minRangeLabel`), flexibilidad de fechas (`flexibility`, `flexibilityOptions`, `onFlexibilityChange`)
+  y ajuste ±1 noche (`showLengthStepper`). En `/dom`: `data-checkout-only-dates`, `data-range-unit`,
+  `data-length-stepper`, `data-flexibility` y `z:flexibilitychange`.
+- Núcleo sin documento con pruebas: `core/perpetual`, `core/heatmap` (niveles por cuantiles, rachas),
+  `core/timeline` (escalas, rutas de dependencias, camino crítico), `core/freebusy`, `core/virtual` y
+  `core/slots`.
+- `EventCalendar` (grupo nuevo `agenda`): barra (Hoy, anterior, siguiente, título con `aria-live`, zona horaria,
+  vistas), lateral con minicalendario (Calendar) y calendarios como leyenda, y vistas de día (con segunda zona),
+  semana, semana laboral, mes con eventos (barras de varios días, «+N more» con popover, puntos y lista del día en
+  estrecho) y lista. Eventos ISO con fin exclusivo: todo el día, con `timeZone`, flotantes o instantes; series RRULE
+  (subconjunto de RFC 5545) con `exdate` y excepciones. Mover, redimensionar y crear arrastrando con puntero;
+  agarrar–mover–soltar con teclado; «Move to…» (tecla Menú, Mayús+F10 o el detalle) como alternativa sin
+  arrastre; una región viva con retraso. Modo DOM con el mismo árbol (`setAgendaEvents`, `setAgendaCalendars`,
+  `setAgendaView`, `destroyAgenda`, eventos `z:eventchange`, `z:selectslot`…). En la raíz: `expandEvents`,
+  `layoutTimed`, `layoutRow`, `rewriteSpan`, `parseRRule`, `expandDates`, `formatRRule`, `toWall`, `fromWall` y
+  `wallStatus`.
+- `Timer`: cuenta atrás (`duration` en segundos o `PT…`) y cronómetro (`mode="stopwatch"`), con iniciar, pausar,
+  reanudar y reiniciar, décimas (`precision`), cifras del locale y modo DOM (`startTimer`, `pauseTimer`,
+  `resetTimer`, `z:statechange`, `z:complete`). La pantalla es `role="timer"` sin región viva; los hitos
+  (inicio, pausa, cada `announceEvery` segundos, los últimos `announceFinal`, fin) van a un `role="status"`.
+- `WeekPicker mode="range"`: de una semana a otra, valor `{ from, to }` con semanas `YYYY-Www`.
+- Calendar: `onWeekNumberClick` (y `data-week-select` en `/dom`, con `z:week`) convierte el número de semana en
+  un botón que elige la semana; `presetsPlacement="top"` pone los preajustes encima.
+- DatePicker y DateRangePicker: `drawer="auto" | "always"` abre el calendario en una hoja inferior (Drawer
+  modal) con puntero grueso o ventana estrecha; también en `/dom` con `data-drawer`.
+- DateTimePicker: `min` y `max` con hora limitan también las horas del día límite (el TimeField del panel y el
+  valor al aplicar).
+- `RelativeTime`: «3 minutes ago», «in 2 days» con `Intl.RelativeTimeFormat` sobre un instante, en un `<time>`
+  con `datetime` y la fecha completa en `title`; se repinta con una cadencia que se alarga con la distancia.
+- `DateField`: fecha (y hora, con `granularity`) que se teclea por segmentos, un spinbutton de APG por día, mes,
+  año, hora, minuto, segundo y AM/PM, en el orden y con los separadores del locale. Teclado completo (flechas con
+  ciclo, RePág/AvPág, Inicio/Fin, dígitos con avance, Retroceso, flechas laterales también en RTL, `a`/`p`), una
+  sola parada de Tab, pegado de una fecha entera (ISO o en el formato del locale), `min`/`max`, `minuteStep`,
+  `secondStep`, `hourCycle`, `placeholderValue`, `clearable`, `readOnly` y campo nativo oculto (`name`) con
+  validez propia. El 31 de febrero se acepta al teclear y se marca al salir. Valor ISO civil, sin zona.
+- `TimeField`: el mismo campo solo con hora; valor `HH:mm` o `HH:mm:ss` en 24 h, ciclos h11, h12, h23 y h24, y
+  `min`/`max` que cruzan la medianoche.
+- `TimePicker`: `TimeField` con un panel de columnas (horas, minutos, segundos, AM/PM; un listbox por columna) o
+  de franjas de `step` minutos filtrables al teclear; `isTimeDisabled`, `min`, `max` y botón «Now» opcional.
+- Modo sin framework de los tres (`.z-datefield`, `.z-timefield`, `.z-timepicker`) con `setDateFieldValue()`,
+  `setTimeFieldValue()` y `setTimePickerValue()` en `@zuccadev-labs/zuix-zui/dom`. Lógica compartida en
+  `core/segments` y `core/time`.
+
+- Formularios y acciones. Nuevos: `InputGroup` (con `InputGroupAddon`, `InputGroupText`,
+  `InputGroupInput`, `InputGroupTextarea`), `PasswordInput` (mostrar u ocultar con aria-pressed, medidor
+  opcional), `NumberInput` (spinbutton con pasos, topes, rueda opcional y formato con `Intl.NumberFormat`),
+  `Listbox` en línea (única o múltiple, grupos, búsqueda por letra), `TagsInput`, `CheckboxGroup` (con casilla
+  «todas»), `Fieldset` y `FieldGroup`, `Form` (validación nativa pintada en los campos y foco al primer error),
+  `Editable`, `ButtonGroup` (+ `ButtonGroupSeparator`), `ToggleGroup`, `CopyButton` y `Swap`.
+- Variantes: Button `outline` y `link`, tamaños `xs` y `xl` (también IconButton); Toggle `variant="ghost"`;
+  SegmentedControl `orientation="vertical"` y `variant="underline"`; Checkbox, Radio (por RadioGroup) y Switch
+  `variant="card"`, y Switch con `description` e `invalid`; Field `validate` (mensajes por `ValidityState`);
+  Select `multiple`, `maxSelected`, `formatValue` y `emptyText`; Combobox con grupos, `multiple` (piezas),
+  `allowCustomValue` (autocompletar) e `icon`; Slider `marks`; Rating `allowHalf`; OTPInput `groups` y
+  `placeholder`; NativeSelect con grupos (`<optgroup>`); FileUpload `showFiles` (miniatura, progreso y quitar),
+  `directory` y `capture`.
+- `/dom`: los mismos comportamientos sin React y `setNumberInputValue()`, `setListboxValue()`, `setTagsValue()`;
+  `setSelectValue()` acepta una lista con Select múltiple. Eventos nuevos: `z:copy`, `z:copyerror`, `z:invalid`,
+  `z:reject`.
+- Tipos `ButtonVariant`, `ButtonSize` y `CheckedState`, y hoja `styles/fields.css`.
+
+- `/dom` por partes: `@zuccadev-labs/zuix-zui/dom/core` (núcleo con `init()`, diálogos, popovers, menús,
+  `toast`, `confirm`, pestañas, capas y lo básico de formularios) y una entrada por familia, `/dom/dates`,
+  `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media` y `/dom/effects`, cada
+  una con su módulo (`datesModule`, `agendaModule`…) para `init(módulo, …)` o para `use(módulo, …)`, que también
+  conecta una familia después de `init()`. Cada módulo registra sus propios iconos. `/dom` sigue exportando todo
+  y su `init()` sigue montando todo. Con esbuild, solo `toast()` pasa de 225 a 11 kB y `init()` del núcleo pesa
+  92 kB, frente a 515 kB del completo. Tipos `DomModule` y `DomPart`.
+
+### Cambiado
+
+- `/dom` no hace nada al importarse: `sideEffects` ya no marca `src/dom` ni `dist/esm/dom`, los iconos de
+  `toast()` y `confirm()` se registran al usarse y `hydrate()` e `init()` registran las familias. Un bundler
+  descarta lo que no se usa (`dist/zui.dom.js` sigue siendo un solo archivo con todo).
+- `Button` e `IconButton` respetan un `aria-disabled` recibido (antes lo pisaba el estado de carga) y, con él,
+  no ejecutan `onClick`: un botón apagado que conserva el foco, como pide una barra de herramientas.
+- Un menú que se vuelve a abrir durante su animación de salida se monta de nuevo: el foco vuelve a su primera
+  entrada (antes se quedaba en el menú que se cerraba).
+- Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
+  punto, elegido en acento sólido con brillo, banda de rango redondeada en los extremos de cada fila, cristal
+  elevado con `className="z-liquid"`. Los días no elegibles ya no van tachados (lo va la fecha reservada).
+- Botones, campos, selects, pestañas y segmentados son rectángulos de esquinas redondeadas, no píldoras, con
+  radios concéntricos por tamaño (sm 8, md 10, lg 12) y alturas de 28, 34 y 40 px.
+- Foco por contorno (`outline` con `focus-width` y `accent-ring`) en lugar de sombra: sigue al radio y se
+  mantiene con colores forzados. En los campos va en el contenedor, separado 1 px; en rojo si el campo es
+  inválido.
+- Botón: la variante por defecto es de cristal (canto `glass-border` y brillo superior); el primario lleva
+  brillo interior y sombra corta; peso 500; al pulsar cede un 3 % (`scale`) en lugar de bajar un píxel.
+- Campo y select: fondo `control-bg-hover` al pasar el puntero; el icono inicial pasa a `fg-muted`; la
+  etiqueta pesa 500 y la ayuda baja a 12 px. `SearchInput` deja de ser una píldora. Textarea con
+  `field-radius-multiline`.
+- Lista de opciones (Select, Combobox): cristal elevado (`popup-blur`, `popup-shadow`), opciones de 32 px con
+  radio concéntrico, resaltado `surface-2`, marca en `accent-text` y entrada de 200 ms con `@starting-style`
+  (sin soporte aparece sin transición; sin desplazamiento con movimiento reducido).
+- Pestañas `segmented` y `SegmentedControl`: pista hundida con canto de cristal; la opción activa se levanta
+  (`surface-3`, brillo y sombra) en lugar de llenarse de acento.
+- Insignia: radio de 6 px y peso 500.
+- Material: `.z-liquid` acepta `--z-lg-blur` y `--z-lg-shadow`; menús, popovers, diálogos y listas los usan
+  para el cristal elevado. `.z-solid` desenfoca el 6 % del lienzo que deja ver. En `body.z-canvas` el
+  degradado va en una capa fija (Safari de iOS ignora `background-attachment: fixed`). Con
+  `prefers-reduced-transparency`, también `.z-solid` pasa a superficie opaca.
+- Base: texto de interfaz con `leading-ui`; titulares con `text-wrap: balance` y párrafos con `pretty`.
+- El resto de componentes pasa a la misma anatomía. Nada en píldora: chips, avisos,
+  paginación, pasos, flechas del carrusel, botón de copiar del código, cierres de diálogo y de alerta, iconos
+  de estado vacío, de confirmación, de subida y de `StatTile` son rectángulos de radios concéntricos (o
+  baldosas). `radius-full` queda para lo circular: avatar y su punto de estado, punto de insignia y de aviso,
+  radio, interruptor y su pulgar, pomo del deslizador y spinners. Las barras finas (progreso, medidor, pista
+  del deslizador) usan `radius-xs`.
+- Foco por contorno en todos los componentes que aún usaban `focus-ring` como sombra (enlace, alerta,
+  tarjeta interactiva, chip, tabla ordenable y fila pulsable, valoración, código, carrusel, migas,
+  paginación, pasos, acordeón, árbol, enlaces de barra lateral, casilla, radio, interruptor, OTP, subida,
+  avisos y diálogos); por dentro en las piezas de un control compuesto (fila, opción de menú, árbol, pestaña).
+- Capas (modal, confirmación, popover, tooltip, menú, paleta, aviso): entrada con `@starting-style` (fundido,
+  desplazamiento corto y, en modal, paleta y aviso, escala .98; sin desplazamiento ni escala con movimiento
+  reducido) y salida con la animación de `data-state="closed"` que ya espera la presencia, también en Firefox
+  y Safari. Panel lateral, paleta y avisos usan el cristal elevado (`popup-bg`, `popup-blur`,
+  `popup-shadow`); modal y paleta con radio de panel (24); velo de los diálogos con `blur(6px)`.
+- Diálogos: título 16/600, descripción 13, relleno 24; acciones con la anatomía del botón (cristal y
+  primario de 34 px). Menú: opciones de 32 px con `item-radius`, 14/500, iconos de 16, atajos en 12 mono,
+  destructivo sobre `danger-soft`. Paleta: opciones de 36 px, seleccionada levantada en `surface-2` con el
+  icono en acento. Aviso: título 14, acción como botón de cristal sm.
+- Tabla: cabecera 13/500 en `fg-muted` sin mayúsculas, celdas de 14 con relleno 12 × 16; fondo `surface` en
+  la cabecera de la tabla enmarcada. Tarjeta: relleno 20, título 16 con interletrado `snug`, elevación al
+  pasar con brillo y `shadow-md`. Código: `code-radius` (20), barra de 44 px, cuerpo 13/1,7.
+- Navegación: enlaces de barra lateral de 32 px con `item-radius` y barra de acento de 2 px en el activo;
+  página actual de la paginación levantada (cristal) en lugar de rellena de acento; árbol con filas de 32 px;
+  acordeón con disparador de 40 px y cuerpo en `fg-prose`; marcadores de pasos en baldosa.
+- `Slider`: el tirador es un objetivo de 24 × 24 px (WCAG 2.5.8) que dibuja dentro su pomo de 18 px (14 en
+  `sm`) con `::before`; el aspecto no cambia. `--z-slider-thumb` pasa a ser el tamaño del objetivo y
+  `--z-slider-knob` el del pomo.
+- Casilla y radio con borde `control-border` (3:1) y brillo interior al marcarse.
+- `SegmentedControl` sm: opciones de 24 px (antes 22) para el objetivo mínimo de WCAG 2.5.8; la pista mide 30 px
+  y fija `box-sizing: border-box`.
+- `Slider`: ancho mínimo de seis tiradores; en un contenedor ajustado a su contenido el 100 % era 0 y los
+  tiradores de un rango se solapaban.
+- `Select` y `NativeSelect` usan el icono `chevron-up-down` (antes `chevron-down`). Cambia el icono del contrato
+  HTML; no se retira nada.
+
+### Corregido
+
+- `FileUpload` dibuja la miniatura de una imagen en un `<canvas>` con `createImageBitmap`, sin crear una URL de
+  objeto ni asignar un `src` con el archivo elegido; si el navegador no puede leer la imagen, queda el icono.
+- El analizador de colores (`parseColor`) ya no tiene un caso de retroceso costoso con cadenas largas de ceros.
+- `/dom`: un menú abierto con el teclado bajo un puntero quieto ya no resalta la entrada que queda debajo: el
+  foco sigue en la primera hasta que el puntero se mueve, como en el binding de React.
+- El manifiesto de `Calendar` declara el valor por defecto de `showOutsideDays` (`true` con un mes, `false` con
+  varios).
+- `Accordion` y `Carousel` ocupan el ancho de su contenedor también dentro de una fila flex: el acordeón encogía
+  y el chevron se pegaba al título, y el carrusel encogía hasta 139 px.
+- `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su
+  marcador (el nombre sigue para el lector de pantalla) y el actual no encoge. Antes la fila se partía y el
+  conector quedaba colgando.
+- `Avatar`: el tinte va sobre una base opaca; sobre una tarjeta o una fila con fondo las iniciales bajaban a
+  4,3:1 en zutool y zenith claros.
+- `Tabs` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con degradado que
+  sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto normal. Igual
+  en React y en `/dom`.
+- `Calendar` mide lo que su contenido aunque el contenedor lo estire (`inline-size: fit-content`): la cabecera
+  ya no se separa de la rejilla.
+- `<code>`, `<kbd>`, `<samp>` y `<pre>` dentro de `.z-root` usan la mono de la marca; antes caían en la
+  monoespaciada del sistema.
+- Contraste sobre tarjeta en zutool y zenith claros: el contador de `Chip` y `Kbd` usan `--z-fg` en vez de
+  `--z-fg-muted` (de 4,4:1 a más de 7:1), y el texto de ejemplo de `Select` pasa de `--z-fg-subtle` a
+  `--z-fg-muted` (quedaba en 4,46:1).
+- Botón de quitar de `Chip` de 24 px en la talla md (antes 20, por debajo de WCAG 2.5.8).
+
 ## [0.2.0] - 2026-11-18
 
 Esta versión trae cambios incompatibles. Qué hay que tocar en una aplicación está en la

@@ -18,18 +18,26 @@ público. La publiqué a mano, con 2FA y sin procedencia. De la siguiente en ade
 
 ## Qué se publica
 
-| Paquete | Contenido | Tarball 0.1.0 | Tarball 0.2.0 |
-|---|---|---|---|
-| `@zuccadev-labs/zuix-tokens` (`tokens/`) | CSS y JSON generados, DTCG, marcas, capas de compatibilidad y esquemas | 20,9 kB · 24 archivos | 42,1 kB · 30 |
-| `@zuccadev-labs/zuix-zicon` (`zicon/`) | ESM por icono, declaraciones, sprite, SVG sueltos, `<z-icon>` para navegador | 715,1 kB · 1425 | 721,8 kB · 1425 |
-| `@zuccadev-labs/zuix-zui` (`zui/`) | ESM de componentes, lógica y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 416,7 kB · 292 | 556,3 kB · 383 |
-| `@zuccadev-labs/zuix-zout` (`zout/`) | ESM de layouts y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 69,1 kB · 44 | 81,7 kB · 44 |
-| `@zuccadev-labs/zuix` (`suite/`) | Paraguas: depende de los otros cuatro y los reexporta bajo subrutas. Sin código propio | 4,1 kB · 26 | 5,1 kB · 33 |
+| Paquete | Contenido | Tarball 0.1.0 | Tarball 0.2.0 | Tarball 0.3.0 |
+|---|---|---|---|---|
+| `@zuccadev-labs/zuix-tokens` (`tokens/`) | CSS y JSON generados, DTCG, marcas, capas de compatibilidad y esquemas | 20,9 kB · 24 archivos | 42,1 kB · 30 | 59,6 kB · 30 |
+| `@zuccadev-labs/zuix-zicon` (`zicon/`) | ESM por icono, declaraciones, sprite, SVG sueltos, `<z-icon>` para navegador | 715,1 kB · 1425 | 721,8 kB · 1425 | 723,4 kB · 1425 |
+| `@zuccadev-labs/zuix-zui` (`zui/`) | ESM de componentes, lógica y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 416,7 kB · 292 | 556,3 kB · 383 | 2029,8 kB · 886 |
+| `@zuccadev-labs/zuix-zout` (`zout/`) | ESM de layouts y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 69,1 kB · 44 | 81,7 kB · 44 | 202,0 kB · 89 |
+| `@zuccadev-labs/zuix` (`suite/`) | Paraguas: depende de los otros cuatro y los reexporta bajo subrutas. Sin código propio | 4,1 kB · 26 | 5,1 kB · 33 | 5,1 kB · 33 |
 
 Tamaño del tarball comprimido (en kB de 1024 bytes) y número de archivos, con `pnpm pack`. La columna de la
 `0.2.0` la medí el 2026-11-18 sobre los tarballs de la versión, antes de publicarla. `zui` crece porque ahora lleva dentro la lógica que
 antes venía de una dependencia: el paquete pesa más y lo que instala una aplicación, menos
 ([medidas](../investigations/08-primitivas-propias.md#qué-medí)).
+
+La de la `0.3.0` la medí el 2026-11-21, antes de subir la versión. `zui` pasa de 64 a 144 componentes y `zout`
+de 10 a 19. Descomprimido, `zui` ocupa 8,4 MB: 3,7 MB son mapas de fuente (con el código fuente dentro),
+2,2 MB JavaScript, 1 MB `manifest.json` y `html.json` y 0,9 MB CSS. Lo que llega a una aplicación no crece con
+el paquete: importar solo `Button` desde la raíz añade 1,5 kB de JavaScript minificado al de React (Vite 8).
+El modo sin framework es otra cosa: `@zuccadev-labs/zuix-zui/dom` es una sola pieza (cada módulo registra sus
+iconos al cargarse) y cualquier importación desde él trae todo el comportamiento, unos 535 kB minificados
+(`dist/zui.dom.js`; 99 kB en la `0.2.0`).
 
 Ninguno incluye `src/`, pruebas ni `compat/*.inventory.json`; todos llevan `README.md`, `CHANGELOG.md` y
 `LICENSE`. `zui` lleva además `AGENTS.md` y `THIRD_PARTY_NOTICES.md`, y `zicon`, `AGENTS.md`.

@@ -1,0 +1,68 @@
+{
+  "name": "CompareSlider",
+  "group": "media",
+  "description": "Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado. Sirve para imágenes, capturas o cualquier contenido del mismo tamaño.",
+  "import": "import { CompareSlider } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "before", "type": "ReactNode", "required": true, "description": "Lo de antes (izquierda o arriba)." },
+    { "name": "after", "type": "ReactNode", "required": true, "description": "Lo de después (derecha o abajo)." },
+    { "name": "value", "type": "number", "description": "Posición del divisor de 0 a 100 (controlada)." },
+    { "name": "defaultValue", "type": "number", "default": 50 },
+    { "name": "onValueChange", "type": "(value: number) => void" },
+    { "name": "onValueChangeEnd", "type": "(value: number) => void", "description": "Al soltar el puntero o tras una tecla." },
+    { "name": "orientation", "type": "enum", "values": ["horizontal", "vertical"], "default": "horizontal" },
+    { "name": "showLabels", "type": "boolean", "default": true, "description": "Rótulos «Before» y «After» sobre cada lado." },
+    {
+      "name": "labels",
+      "type": "Partial<CompareSliderLabels>",
+      "description": "`slider` (nombre accesible), `before`, `after` y `valueText` («{value}% {before}»)."
+    }
+  ],
+  "states": ["rest", "focus", "active"],
+  "tokens": [
+    "card-radius",
+    "line",
+    "scrim",
+    "colorpicker-white",
+    "colorpicker-black",
+    "control-height-md",
+    "control-radius",
+    "glass-border",
+    "popup-bg",
+    "popup-blur",
+    "glass-highlight",
+    "shadow-sm",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "layer-raised",
+    "radius-xs",
+    "text-caption"
+  ],
+  "classes": ["z-compare"],
+  "a11y": "El asa es role=\"slider\" (0–100) con nombre y aria-valuetext («50% Before»): flechas, Re/Av Pág y Mayús (diez pasos), Inicio y Fin; en vertical, arriba y abajo. Pulsar en cualquier punto lleva el divisor ahí. Los rótulos son decorativos; el contenido de cada lado conserva su texto alternativo. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-compare con dos hijos (antes y después) dentro de [data-z-dom] recibe divisor y asa; data-value, data-orientation, data-labels=\"false\", data-label-before/after/slider; avisa con z:change y z:changeend { value }; setCompareValue(el, valor).",
+  "behavior": "dom",
+  "apg": "slider",
+  "examples": [
+    {
+      "title": "Antes y después",
+      "code": "<CompareSlider\n  before={<img src=\"/photos/street-raw.jpg\" alt=\"Street, unedited\" />}\n  after={<img src=\"/photos/street-graded.jpg\" alt=\"Street, color graded\" />}\n/>"
+    },
+    {
+      "title": "Vertical, sin rótulos",
+      "code": "<CompareSlider orientation=\"vertical\" showLabels={false} defaultValue={35} before={<Backdrop className=\"z-solid\" pattern=\"dots\" intensity=\"strong\" />} after={<Backdrop className=\"z-solid\" pattern=\"hex\" intensity=\"strong\" />} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Antes y después (dos capas de contenido)",
+      "code": "<div class=\"z-compare\" data-value=\"50\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"grid\" data-intensity=\"medium\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"mesh\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>",
+      "script": "document.querySelector(\".z-compare\").addEventListener(\"z:changeend\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Vertical, sin rótulos",
+      "code": "<div class=\"z-compare\" data-orientation=\"vertical\" data-labels=\"false\" data-value=\"35\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"dots\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>"
+    }
+  ],
+  "origin": "Oleada 7. Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio."
+}

@@ -7,15 +7,16 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": ["primary", "secondary", "ghost", "danger"],
+      "values": ["primary", "secondary", "outline", "ghost", "link", "danger"],
       "default": "secondary",
-      "description": "Intención."
+      "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`)."
     },
     {
       "name": "size",
       "type": "enum",
-      "values": ["sm", "md", "lg"],
-      "default": "md"
+      "values": ["xs", "sm", "md", "lg", "xl"],
+      "default": "md",
+      "description": "Altura: 24, 28, 34, 40 o 48 px, con su radio concéntrico (6, 8, 10, 12, 14)."
     },
     {
       "name": "icon",
@@ -50,23 +51,17 @@
     "surface-2",
     "surface-3",
     "fg",
-    "line",
     "control-height-md",
-    "space-2",
     "space-4",
     "button-radius",
     "text-body",
-    "weight-semibold",
     "duration-fast",
     "ease-standard",
-    "focus-ring",
     "control-height-sm",
     "space-3",
     "space-1",
     "text-small",
     "control-height-lg",
-    "space-5",
-    "text-title",
     "button-primary-bg",
     "button-primary-bg-hover",
     "button-primary-fg",
@@ -75,8 +70,31 @@
     "danger-soft",
     "danger",
     "accent-soft",
-    "accent",
-    "radius-full"
+    "radius-full",
+    "glass-border",
+    "glass-highlight",
+    "space-1-5",
+    "space-3-5",
+    "weight-medium",
+    "duration-press",
+    "ease-out",
+    "focus-width",
+    "accent-ring",
+    "focus-offset",
+    "control-radius-sm",
+    "control-radius-lg",
+    "accent-text",
+    "danger-text",
+    "fg-on-accent",
+    "line-strong",
+    "control-height-xs",
+    "control-height-xl",
+    "control-radius-xl",
+    "radius-xs",
+    "space-2",
+    "space-5",
+    "text-caption",
+    "text-title"
   ],
   "classes": ["z-btn"],
   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
@@ -96,7 +114,15 @@
     {
       "title": "Fantasma con icono a la derecha",
       "code": "<Button variant=\"ghost\" size=\"sm\" iconRight=\"chevron-right\">View all</Button>"
+    },
+    {
+      "title": "Contorno y enlace",
+      "code": "<>\n  <Button variant=\"outline\" icon=\"arrow-down-tray\">Export</Button>\n  <Button variant=\"link\">Learn more</Button>\n</>"
+    },
+    {
+      "title": "Escala de tamaños",
+      "code": "<>\n  <Button size=\"xs\">Extra small</Button>\n  <Button size=\"sm\">Small</Button>\n  <Button>Medium</Button>\n  <Button size=\"lg\">Large</Button>\n  <Button size=\"xl\" variant=\"primary\">Extra large</Button>\n</>"
     }
   ],
-  "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes píldora de zutool."
+  "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes de zutool; forma (rectángulo de radios concéntricos) del estándar liquid glass."
 }

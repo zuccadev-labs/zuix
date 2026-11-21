@@ -108,13 +108,19 @@ export interface PageProps {
   header?: ReactNode;
   children: ReactNode;
   width?: ContainerProps["width"];
+  /**
+   * Nombre accesible de la región desplazable. La página es enfocable (`tabindex="0"`) para que el teclado pueda
+   * desplazarla aunque no tenga controles. Por defecto, "Page content".
+   */
+  label?: string;
   className?: string;
 }
 
 /** Página con desplazamiento propio dentro del área principal del Shell. */
-export function Page({ header, children, width = "content", className }: PageProps) {
+export function Page({ header, children, width = "content", label = "Page content", className }: PageProps) {
   return (
-    <div className={cx("z-page", className)}>
+    // biome-ignore lint/a11y/noNoninteractiveTabindex: región desplazable; sin foco el teclado no podría desplazarla (WCAG 2.1.1).
+    <div className={cx("z-page", className)} role="region" aria-label={label} tabIndex={0}>
       <Container width={width}>
         {header}
         <div className="z-page__body">{children}</div>

@@ -73,3 +73,26 @@ export interface Listen {
 export const listener = (signal: AbortSignal): Listen =>
   ((target: Document | Window, type: string, handler: (event: Event) => void, options?: boolean | AddEventListenerOptions) =>
     target.addEventListener(type, handler, { ...(typeof options === "boolean" ? { capture: options } : options), signal })) as Listen;
+
+/**
+ * Una pieza de comportamiento que `init()` conecta: `setup(on)` registra sus listeners una vez y `hydrate(root)`
+ * prepara el marcado nuevo. `rank` fija el orden entre piezas (el de listeners y el de preparación), sea cual sea
+ * el orden en que se registren. `teardown()` suelta lo que monte la pieza al llamar a `destroy()`.
+ */
+export interface DomPart {
+  readonly rank: number;
+  setup(on: Listen): void;
+  hydrate(root: ParentNode): void;
+  teardown?(): void;
+}
+
+/**
+ * Un grupo de piezas que se registra de una vez: lo que exportan las entradas por familia
+ * (`@zuccadev-labs/zuix-zui/dom/agenda`, `/dom/charts`…) para pasarlo a `init()` o a `use()`.
+ */
+export interface DomModule {
+  readonly name: string;
+  readonly parts: readonly DomPart[];
+  /** Familias que esta necesita (la agenda trae la de fechas); se registran con ella. */
+  readonly requires?: readonly DomModule[];
+}

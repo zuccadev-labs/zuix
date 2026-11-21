@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix-zui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Sistema de componentes de la suite zuix. Contrato HTML + CSS sobre tokens, comportamiento sin framework (dom) y binding de React, sin dependencias de terceros.",
   "license": "MIT",
@@ -35,6 +35,15 @@
     "./styles/*": "./src/styles/*",
     "./manifest.json": "./manifest.json",
     "./dom": "./src/dom/index.ts",
+    "./dom/core": "./src/dom/core.ts",
+    "./dom/dates": "./src/dom/families/dates.ts",
+    "./dom/data": "./src/dom/families/data.ts",
+    "./dom/content": "./src/dom/families/content.ts",
+    "./dom/agenda": "./src/dom/families/agenda.ts",
+    "./dom/charts": "./src/dom/families/charts.ts",
+    "./dom/color": "./src/dom/families/color.ts",
+    "./dom/media": "./src/dom/families/media.ts",
+    "./dom/effects": "./src/dom/families/effects.ts",
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
     "./html.json": "./html.json",
     "./dist/zui.css": "./dist/zui.css",
@@ -81,8 +90,6 @@
   ],
   "sideEffects": [
     "**/*.css",
-    "./src/dom/*.ts",
-    "./dist/esm/dom/*.js",
     "./dist/zui.dom.js"
   ],
   "publishConfig": {
@@ -96,6 +103,42 @@
       "./dom": {
         "types": "./dist/esm/dom/index.d.ts",
         "default": "./dist/esm/dom/index.js"
+      },
+      "./dom/core": {
+        "types": "./dist/esm/dom/core.d.ts",
+        "default": "./dist/esm/dom/core.js"
+      },
+      "./dom/dates": {
+        "types": "./dist/esm/dom/families/dates.d.ts",
+        "default": "./dist/esm/dom/families/dates.js"
+      },
+      "./dom/data": {
+        "types": "./dist/esm/dom/families/data.d.ts",
+        "default": "./dist/esm/dom/families/data.js"
+      },
+      "./dom/content": {
+        "types": "./dist/esm/dom/families/content.d.ts",
+        "default": "./dist/esm/dom/families/content.js"
+      },
+      "./dom/agenda": {
+        "types": "./dist/esm/dom/families/agenda.d.ts",
+        "default": "./dist/esm/dom/families/agenda.js"
+      },
+      "./dom/charts": {
+        "types": "./dist/esm/dom/families/charts.d.ts",
+        "default": "./dist/esm/dom/families/charts.js"
+      },
+      "./dom/color": {
+        "types": "./dist/esm/dom/families/color.d.ts",
+        "default": "./dist/esm/dom/families/color.js"
+      },
+      "./dom/media": {
+        "types": "./dist/esm/dom/families/media.d.ts",
+        "default": "./dist/esm/dom/families/media.js"
+      },
+      "./dom/effects": {
+        "types": "./dist/esm/dom/families/effects.d.ts",
+        "default": "./dist/esm/dom/families/effects.js"
       },
       "./dom/carousel-gl": {
         "types": "./dist/esm/dom/carousel-gl.d.ts",

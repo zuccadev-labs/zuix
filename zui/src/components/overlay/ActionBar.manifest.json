@@ -1,0 +1,64 @@
+{
+  "name": "ActionBar",
+  "group": "overlay",
+  "description": "Barra flotante de acciones sobre una selección (filas, archivos, tarjetas): recuento, acciones y cierre.",
+  "import": "import { ActionBar } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "apg": "toolbar",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true,
+      "description": "Visible mientras haya selección."
+    },
+    {
+      "name": "count",
+      "type": "ReactNode",
+      "required": true,
+      "description": "Recuento («3 selected»); se anuncia con cortesía al cambiar."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Acciones sobre la selección."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Selection actions"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "description": "Vacía la selección: botón de cierre y Escape dentro de la barra."
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Clear selection"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["fixed", "sticky", "inline"],
+      "default": "fixed",
+      "description": "`fixed`: abajo en el centro de la ventana. `sticky`: abajo dentro de su contenedor con desplazamiento. `inline`: en su sitio."
+    }
+  ],
+  "states": ["closed", "open"],
+  "tokens": ["glass-bg", "glass-highlight", "popup-shadow", "layer-popover", "control-height-sm", "control-radius-sm", "fg-muted"],
+  "classes": ["z-actionbar", "z-actionbar__count", "z-actionbar__actions", "z-actionbar__close"],
+  "a11y": "Es una Toolbar (role=toolbar con nombre): una sola parada de Tab para el recuento, las acciones y el cierre, con flechas, Inicio y Fin. El recuento es una región viva cortés (aria-live=polite): se anuncia cuando cambia la selección. No roba el foco al aparecer. Escape dentro de la barra y el botón de cierre («Clear selection») vacían la selección; al ocultarse con el foco dentro, el foco sigue hacia delante. Las acciones solo de icono llevan nombre.",
+  "examples": [
+    {
+      "title": "Selección de filas",
+      "code": "<ActionBar open count=\"3 selected\" position=\"inline\" onClose={clearSelection}>\n  <Button size=\"sm\" variant=\"ghost\" icon=\"archive-box\">Archive</Button>\n  <Button size=\"sm\" variant=\"ghost\" icon=\"tag\">Label</Button>\n  <Button size=\"sm\" variant=\"danger\" icon=\"trash\">Delete</Button>\n</ActionBar>"
+    },
+    {
+      "title": "Flotante sobre la página",
+      "code": "<ActionBar open={selected.length > 0} count={`${selected.length} files`} onClose={() => setSelected([])}>\n  <IconButton icon=\"arrow-down-tray\" label=\"Download\" size=\"sm\" />\n  <IconButton icon=\"share\" label=\"Share\" size=\"sm\" />\n  <IconButton icon=\"trash\" label=\"Delete\" size=\"sm\" variant=\"danger\" />\n</ActionBar>"
+    }
+  ],
+  "origin": "Nuevo, sobre Toolbar. Referencia de variantes: Action Bar de Shark UI."
+}

@@ -1,0 +1,68 @@
+{
+  "name": "PerpetualYear",
+  "group": "agenda",
+  "description": "Año perpetuo de una página: tabla de 7 × 7 días de la semana con cada mes sobre la columna que empieza por el día de la semana de su día 1, los números 1–31 en filas de 7 y un buscador de fecha que da el día de la semana en texto. También es la vista `perpetual` de EventCalendar.",
+  "import": "import { PerpetualYear } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "year",
+      "type": "number",
+      "description": "Año de la lámina. Por defecto, el de la fecha resaltada o el actual."
+    },
+    {
+      "name": "highlight",
+      "type": "string | null",
+      "description": "Fecha resaltada (cruz) YYYY-MM-DD; también defaultHighlight y onHighlightChange."
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<PerpetualLabels>",
+      "description": "title, how, find, days ({n} days), dayOfMonth, result ({date} → {weekday})."
+    },
+    {
+      "name": "onHighlightChange",
+      "type": "(detail: { date: string | null }) => void"
+    }
+  ],
+  "states": ["rest", "focus", "highlight"],
+  "tokens": [
+    "perpetual-side-bg",
+    "reading-bg",
+    "accent-solid",
+    "fg-on-accent",
+    "line-strong",
+    "danger-text",
+    "success-solid",
+    "event-solid-5",
+    "control-radius-sm",
+    "panel-radius"
+  ],
+  "classes": ["z-perpetual"],
+  "a11y": "<table> con caption (año y título) e instrucciones de lectura enlazadas con aria-describedby; los meses son th de columna y cada fila lleva un th de fila con sus números (1, 8, 15, 22, 29). El buscador es un <input type=\"date\"> etiquetado y la respuesta («19 Nov 2026 → Thursday») sale en un <output role=\"status\">: la tabla no es la única vía. El resaltado de fila, columna y cruce va además en forma (sólido y negrita), no solo en color. Sin React: un .z-perpetual dentro de [data-z-dom] con data-highlight, data-year, data-week-start, data-locale y data-today; emite z:highlightchange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Año perpetuo",
+      "code": "<PerpetualYear defaultHighlight=\"2026-11-19\" locale=\"en-GB\" weekStartsOn={1} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Año perpetuo",
+      "code": "<div class=\"z-perpetual\" id=\"perpetual-2026\" data-highlight=\"2026-11-19\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\"></div>"
+    }
+  ],
+  "origin": "Especificación agenda.md §7; lámina de calendario perpetuo de una página."
+}

@@ -1,0 +1,858 @@
+/* Formularios compuestos (oleada 3): InputGroup, PasswordInput, NumberInput, TagsInput, Listbox en línea,
+   CheckboxGroup, variantes tarjeta, Fieldset y Editable. Misma capa que forms.css (`zui.forms`) y el mismo estándar:
+   superficie de control hundida, canto de 3:1, radios concéntricos por tamaño (sm 8, md 10, lg 12) y anillo de foco
+   en el contenedor, separado 1 px. */
+@layer zui.forms {
+  /* ---- InputGroup ----
+     Un solo recuadro con adornos dentro. Los adornos `block-*` ocupan una fila propia (encima o debajo del control);
+     los `segment` son tramos con fondo y separador que llegan hasta el canto. */
+  .z-input-group {
+    --z-ig-height: var(--z-control-height-md);
+    --z-ig-pad: var(--z-space-3);
+    --z-ig-radius: var(--z-control-radius);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--z-space-2);
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--z-ig-height);
+    padding-inline: var(--z-ig-pad);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-ig-radius);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font-size: var(--z-text-body);
+    transition:
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-input-group[data-size="sm"] {
+    --z-ig-height: var(--z-control-height-sm);
+    --z-ig-pad: var(--z-space-2-5);
+    --z-ig-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-small);
+  }
+  .z-input-group[data-size="lg"] {
+    --z-ig-height: var(--z-control-height-lg);
+    --z-ig-pad: var(--z-space-3-5);
+    --z-ig-radius: var(--z-control-radius-lg);
+  }
+  @media (hover: hover) {
+    .z-input-group:hover:not([data-disabled]) {
+      border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
+    }
+  }
+  .z-input-group:focus-within {
+    border-color: var(--z-accent);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-input-group:is([data-invalid], :has(.z-input-group__control[aria-invalid="true"])) {
+    border-color: var(--z-danger);
+  }
+  .z-input-group:is([data-invalid], :has(.z-input-group__control[aria-invalid="true"])):focus-within {
+    outline-color: var(--z-danger);
+  }
+  .z-input-group:is([data-disabled], :has(.z-input-group__control:disabled)) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-input-group__control {
+    flex: 1 1 0;
+    order: 1;
+    min-width: 4ch;
+    min-height: calc(var(--z-ig-height) - 2px);
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  .z-input-group__control::placeholder {
+    color: var(--z-fg-subtle);
+  }
+  .z-input-group__control:disabled {
+    cursor: not-allowed;
+  }
+  .z-input-group__control[data-multiline] {
+    flex-basis: 100%;
+    min-height: calc(var(--z-ig-height) * 2);
+    padding-block: var(--z-space-2);
+    line-height: var(--z-leading-normal);
+    resize: vertical;
+  }
+  .z-input-group:has(.z-input-group__control[data-multiline]) {
+    --z-ig-radius: var(--z-field-radius-multiline);
+  }
+  .z-input-group__addon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-height: calc(var(--z-ig-height) - 2px);
+    color: var(--z-fg-muted);
+    cursor: text;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .z-input-group__addon[data-align="inline-start"] {
+    order: 0;
+  }
+  .z-input-group__addon[data-align="inline-end"] {
+    order: 2;
+  }
+  .z-input-group__addon[data-align="block-start"] {
+    flex-basis: 100%;
+    order: -1;
+    padding-block-start: var(--z-space-2);
+  }
+  .z-input-group__addon[data-align="block-end"] {
+    flex-basis: 100%;
+    order: 3;
+    justify-content: space-between;
+    padding-block-end: var(--z-space-1-5);
+  }
+  .z-input-group__addon[data-align^="block"] {
+    min-height: 0;
+  }
+  /* Un botón dentro del adorno se ciñe al recuadro: su radio es el del campo menos el aire que lo rodea. */
+  .z-input-group__addon .z-btn {
+    --z-btn-radius: max(var(--z-radius-xs), calc(var(--z-ig-radius) - 4px));
+  }
+  .z-input-group__addon[data-align="inline-end"]:has(> .z-btn:last-child) {
+    margin-inline-end: calc(var(--z-ig-pad) * -1 + var(--z-space-1));
+  }
+  .z-input-group__addon[data-align="inline-start"]:has(> .z-btn:first-child) {
+    margin-inline-start: calc(var(--z-ig-pad) * -1 + var(--z-space-1));
+  }
+  .z-input-group__text {
+    font-size: var(--z-text-small);
+    white-space: nowrap;
+  }
+  /* Tramo: fondo propio y separador, de canto a canto en su lado. */
+  .z-input-group__addon[data-variant="segment"] {
+    align-self: stretch;
+    padding-inline: var(--z-ig-pad);
+    background: var(--z-surface-2);
+  }
+  .z-input-group__addon[data-variant="segment"][data-align="inline-start"] {
+    margin-inline-start: calc(var(--z-ig-pad) * -1);
+    border-inline-end: 1px solid var(--z-line);
+    border-start-start-radius: calc(var(--z-ig-radius) - 1px);
+    border-end-start-radius: calc(var(--z-ig-radius) - 1px);
+  }
+  .z-input-group__addon[data-variant="segment"][data-align="inline-end"] {
+    margin-inline-end: calc(var(--z-ig-pad) * -1);
+    border-inline-start: 1px solid var(--z-line);
+    border-start-end-radius: calc(var(--z-ig-radius) - 1px);
+    border-end-end-radius: calc(var(--z-ig-radius) - 1px);
+  }
+
+  /* ---- PasswordInput ---- */
+  .z-password {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    width: 100%;
+    min-width: 0;
+  }
+  .z-password__toggle[aria-pressed="true"] {
+    color: var(--z-fg);
+  }
+  /* Medidor: cuatro tramos que se llenan con el nivel, con texto (no solo color). */
+  .z-password__meter {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    line-height: var(--z-leading-snug);
+  }
+  .z-password__bars {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--z-space-1);
+  }
+  .z-password__bar {
+    height: 4px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    transition: background var(--z-duration-normal) var(--z-ease-standard);
+  }
+  .z-password__label {
+    flex: 0 0 auto;
+    min-width: 9ch;
+    text-align: end;
+  }
+  .z-password__meter[data-score="1"] .z-password__bar:nth-child(-n + 1) {
+    background: var(--z-danger);
+  }
+  .z-password__meter[data-score="2"] .z-password__bar:nth-child(-n + 2) {
+    background: var(--z-warning);
+  }
+  .z-password__meter[data-score="3"] .z-password__bar:nth-child(-n + 3) {
+    background: var(--z-success);
+  }
+  .z-password__meter[data-score="4"] .z-password__bar {
+    background: var(--z-success);
+  }
+  .z-password__meter[data-score="1"] .z-password__label {
+    color: var(--z-danger-text);
+  }
+  .z-password__meter[data-score="4"] .z-password__label {
+    color: var(--z-success-text);
+  }
+
+  /* ---- NumberInput ----
+     Texto con cifras tabulares. Botones apilados al final (mitades del alto del campo) o a los lados (− valor +). */
+  .z-number {
+    font-variant-numeric: tabular-nums;
+  }
+  .z-number[data-controls="split"] .z-number__input {
+    text-align: center;
+  }
+  .z-number[data-controls="split"] .z-number__step[data-step="down"] {
+    margin-inline: calc(var(--z-input-pad) * -1 + var(--z-space-1)) 0;
+  }
+  .z-number__steps {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    margin-inline-end: calc(var(--z-input-pad) * -1);
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-number__steps .z-number__step {
+    flex: 1 1 0;
+    width: calc(var(--z-input-height) * 0.7);
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+  }
+  .z-number__steps .z-number__step[data-step="up"] {
+    border-start-end-radius: calc(var(--z-input-radius) - 1px);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-number__steps .z-number__step[data-step="down"] {
+    border-end-end-radius: calc(var(--z-input-radius) - 1px);
+  }
+  .z-number__step:disabled {
+    opacity: 0.4;
+  }
+  /* Juntos al final (− +): dos botones de todo el alto, separados del valor por una línea. */
+  .z-number__steps[data-layout="row"] {
+    flex-direction: row;
+  }
+  .z-number__steps[data-layout="row"] .z-number__step,
+  .z-number__steps[data-layout="row"] .z-number__step[data-step] {
+    width: max(24px, calc(var(--z-input-height) * 0.8));
+    border-block-end: 0;
+    border-radius: 0;
+  }
+  .z-number__steps[data-layout="row"] .z-number__step[data-step="down"] {
+    border-inline-end: 1px solid var(--z-line);
+  }
+  .z-number__steps[data-layout="row"] .z-number__step[data-step="up"] {
+    border-start-end-radius: calc(var(--z-input-radius) - 1px);
+    border-end-end-radius: calc(var(--z-input-radius) - 1px);
+  }
+  /* Con puntero grueso los botones apilados serían de 20 px: pasan a los lados del valor. */
+  @media (pointer: coarse) {
+    .z-number__steps:not([data-layout="row"]) {
+      flex-direction: row-reverse;
+      border-inline-start: 0;
+      margin-inline-end: calc(var(--z-input-pad) * -1 + var(--z-space-1));
+    }
+    .z-number__steps:not([data-layout="row"]) .z-number__step {
+      width: calc(var(--z-input-height) - 10px);
+      border-radius: var(--z-radius-xs);
+    }
+    .z-number__steps:not([data-layout="row"]) .z-number__step[data-step="up"] {
+      border-block-end: 0;
+    }
+  }
+
+  /* ---- Variante tarjeta: Checkbox, Radio y Switch ----
+     El recuadro entero es la etiqueta: se pulsa en cualquier punto. Marcado: canto de acento y fondo de acento suave
+     (el canto da el contraste de 3:1, no solo el fondo). El control conserva su foco propio. */
+  :is(.z-check, .z-radio, .z-switch)[data-variant="card"] {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--z-space-3);
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--z-space-3) var(--z-space-3-5);
+    border: 1px solid var(--z-line-strong);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-control-bg);
+    transition:
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    :is(.z-check, .z-radio, .z-switch)[data-variant="card"]:hover:not([data-disabled]) {
+      border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
+    }
+  }
+  :is(.z-check, .z-radio, .z-switch)[data-variant="card"]:has(> [role][data-state="checked"], > [role][data-state="indeterminate"]) {
+    border-color: var(--z-accent);
+    background: var(--z-accent-soft);
+  }
+  :is(.z-check, .z-radio)[data-variant="card"] .z-check__text {
+    flex: 1 1 auto;
+  }
+  .z-switch[data-variant="card"] {
+    justify-content: space-between;
+  }
+  .z-switch[data-variant="card"] > .z-switch__track {
+    margin-block-start: var(--z-space-0-5);
+  }
+  .z-radio-group[data-variant="card"] {
+    width: 100%;
+    gap: var(--z-space-2);
+  }
+  .z-radio-group[data-variant="card"][data-orientation="horizontal"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+  /* Switch con descripción y no válido. */
+  .z-switch:has(.z-check__description) {
+    align-items: flex-start;
+  }
+  .z-switch__track[data-invalid] {
+    box-shadow: 0 0 0 1px var(--z-danger);
+  }
+
+  /* ---- CheckboxGroup ---- */
+  .z-checkgroup {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .z-checkgroup__legend {
+    padding: 0;
+    margin-block-end: var(--z-space-1);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-snug);
+  }
+  .z-checkgroup__description {
+    margin: calc(var(--z-space-1) * -1) 0 var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-checkgroup__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+  }
+  .z-checkgroup[data-orientation="horizontal"] .z-checkgroup__items {
+    flex-flow: row wrap;
+    gap: var(--z-space-2) var(--z-space-4);
+  }
+  .z-checkgroup[data-variant="card"][data-orientation="horizontal"] .z-checkgroup__items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+  /* La casilla «todas» encabeza la lista, separada por una línea; las demás quedan sangradas bajo ella. */
+  .z-checkgroup__all {
+    padding-block-end: var(--z-space-2);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-checkgroup:has(> .z-checkgroup__all) > .z-checkgroup__items {
+    padding-inline-start: var(--z-space-6);
+  }
+
+  /* ---- Fieldset y FieldGroup ----
+     Más aire entre campos (16) que entre etiqueta y control (6): proximidad. */
+  .z-fieldset {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .z-fieldset[data-variant="card"] {
+    padding: var(--z-space-4) var(--z-space-5) var(--z-space-5);
+    border: 1px solid var(--z-card-border);
+    border-radius: var(--z-card-radius);
+    background: var(--z-card-bg);
+  }
+  .z-fieldset__legend {
+    float: inline-start;
+    width: 100%;
+    padding: 0;
+    color: var(--z-fg);
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+  }
+  .z-fieldset__legend + * {
+    clear: both;
+  }
+  .z-fieldset__description {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-fieldset__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    margin-block-start: var(--z-space-3);
+  }
+  .z-fieldset:disabled .z-fieldset__body {
+    opacity: 0.6;
+  }
+  .z-fieldset:disabled :is(.z-check, .z-radio, .z-switch, .z-input, .z-select) {
+    cursor: not-allowed;
+  }
+  .z-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-4);
+    min-width: 0;
+  }
+  .z-field-group[data-orientation="horizontal"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    align-items: start;
+  }
+  .z-form {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--z-space-5);
+  }
+
+  /* ---- Listbox en línea ----
+     La misma lista que el popup de Select, siempre visible y sobre la superficie de control. Radio concéntrico: el
+     de la caja (12) menos su relleno (6) es el de la opción. */
+  .z-listbox[data-inline] {
+    z-index: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    max-height: var(--z-listbox-max-height, 18rem);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-control-bg);
+    font-size: var(--z-text-body);
+  }
+  .z-listbox[data-inline] .z-listbox__option {
+    border-radius: calc(var(--z-control-radius-lg) - var(--z-space-1-5));
+  }
+  .z-listbox[data-inline]:focus-within {
+    border-color: var(--z-accent);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-listbox[data-inline] .z-listbox__option:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  @media (hover: hover) {
+    .z-listbox[data-inline] .z-listbox__option:hover:not([aria-disabled="true"]) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-listbox[data-inline] .z-listbox__option[aria-selected="true"] {
+    background: var(--z-accent-soft);
+  }
+  .z-listbox[data-inline][data-invalid] {
+    border-color: var(--z-danger);
+  }
+  .z-listbox[data-inline][data-disabled] {
+    opacity: 0.5;
+  }
+  .z-listbox[data-inline][data-orientation="horizontal"] .z-listbox__viewport {
+    display: flex;
+    gap: var(--z-space-1);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .z-listbox[data-inline][data-orientation="horizontal"] .z-listbox__option {
+    flex: 0 0 auto;
+  }
+  .z-listbox__content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+  }
+  .z-listbox__content .z-listbox__text {
+    flex: none;
+  }
+  .z-listbox__description {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-regular);
+    line-height: var(--z-leading-snug);
+    white-space: normal;
+  }
+
+  /* ---- TagsInput ----
+     Recuadro de campo que crece en filas; cada etiqueta es una pieza con el radio de un control sm menos el aire. */
+  .z-tags {
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+    height: auto;
+    min-height: var(--z-input-height);
+    padding-block: var(--z-space-1);
+    padding-inline-start: var(--z-space-1-5);
+    cursor: text;
+  }
+  .z-tags .z-tags__input {
+    flex: 1 1 8ch;
+    min-width: 8ch;
+    height: calc(var(--z-input-height) - 2 * var(--z-space-1) - 2px);
+    padding-inline-start: var(--z-space-1);
+  }
+  .z-tags__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-0-5);
+    max-width: 100%;
+    height: calc(var(--z-input-height) - 2 * var(--z-space-1) - 2px);
+    padding-inline: var(--z-space-2) var(--z-space-0-5);
+    border: 1px solid var(--z-glass-border);
+    border-radius: calc(var(--z-input-radius) - var(--z-space-1));
+    background: var(--z-surface-3);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    white-space: nowrap;
+    outline: none;
+  }
+  .z-tags__tag:focus-visible,
+  .z-tags__tag:focus {
+    border-color: var(--z-accent);
+    background: var(--z-accent-soft);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
+  }
+  .z-tags__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .z-tags__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-tags__remove:hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  .z-tags[data-size="sm"] .z-tags__remove {
+    width: 16px;
+    height: 16px;
+  }
+  .z-tags:has(.z-tags__tag) .z-tags__input::placeholder {
+    color: transparent;
+  }
+
+  /* ---- Select y Combobox múltiples ---- */
+  .z-select__count {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    margin-inline-start: auto;
+    padding-inline: var(--z-space-1-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-combobox[data-multiple] {
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+    height: auto;
+    min-height: var(--z-input-height);
+    padding-block: var(--z-space-1);
+    padding-inline-start: var(--z-space-1-5);
+  }
+  .z-combobox[data-multiple] .z-input__control {
+    flex: 1 1 8ch;
+    min-width: 8ch;
+    height: calc(var(--z-input-height) - 2 * var(--z-space-1) - 2px);
+    padding-inline-start: var(--z-space-1);
+  }
+  .z-combobox[data-multiple] .z-input__icon {
+    padding-inline-start: var(--z-space-1);
+  }
+  .z-combobox[data-multiple] .z-input__action {
+    align-self: center;
+  }
+
+  /* ---- Editable ----
+     Texto que ocupa lo mismo que su campo: misma altura, relleno y radio, así no salta al editar. El texto se marca
+     al pasar con la superficie de control; el campo es un control normal con su anillo de foco. */
+  .z-editable {
+    --z-ed-height: var(--z-control-height-md);
+    --z-ed-pad: var(--z-space-2);
+    --z-ed-radius: var(--z-control-radius);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--z-space-1);
+    min-width: 0;
+    font-size: var(--z-text-body);
+  }
+  .z-editable[data-size="sm"] {
+    --z-ed-height: var(--z-control-height-sm);
+    --z-ed-radius: var(--z-control-radius-sm);
+    font-size: var(--z-text-small);
+  }
+  .z-editable[data-size="lg"] {
+    --z-ed-height: var(--z-control-height-lg);
+    --z-ed-pad: var(--z-space-2-5);
+    --z-ed-radius: var(--z-control-radius-lg);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-editable__preview,
+  .z-editable__input {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: var(--z-ed-height);
+    padding: 0 var(--z-ed-pad);
+    border: 1px solid transparent;
+    border-radius: var(--z-ed-radius);
+    color: var(--z-fg);
+    font: inherit;
+    text-align: start;
+  }
+  .z-editable__preview {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    cursor: text;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-editable[data-multiline] .z-editable__preview {
+    align-items: flex-start;
+    padding-block: var(--z-space-1-5);
+    white-space: pre-wrap;
+  }
+  .z-editable__text {
+    overflow-wrap: anywhere;
+  }
+  .z-editable[data-activation="none"] .z-editable__preview {
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .z-editable:not([data-activation="none"], [data-disabled]) .z-editable__preview:hover {
+      border-color: var(--z-line);
+      background: var(--z-control-bg);
+    }
+  }
+  .z-editable__preview:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-editable__preview[data-placeholder] {
+    color: var(--z-fg-subtle);
+    font-style: italic;
+  }
+  .z-editable__preview:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-editable__input {
+    border-color: var(--z-accent);
+    background: var(--z-control-bg);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  textarea.z-editable__input {
+    padding-block: var(--z-space-1-5);
+    line-height: var(--z-leading-normal);
+    resize: vertical;
+  }
+  .z-editable__input[hidden],
+  .z-editable__preview[hidden] {
+    display: none;
+  }
+  .z-editable__controls {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--z-space-0-5);
+    min-height: var(--z-ed-height);
+  }
+  .z-editable[data-state="preview"] .z-editable__controls [data-action="save"],
+  .z-editable[data-state="preview"] .z-editable__controls [data-action="cancel"],
+  .z-editable[data-state="edit"] .z-editable__controls [data-action="edit"] {
+    display: none;
+  }
+
+  /* ---- Variantes de piezas existentes: OTP con separador, Slider con marcas, lista de FileUpload ---- */
+  .z-otp {
+    align-items: center;
+  }
+  .z-otp__separator {
+    flex: 0 0 auto;
+    width: var(--z-space-2-5);
+    height: 2px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-line-strong);
+  }
+  .z-otp__cell::placeholder {
+    color: var(--z-fg-subtle);
+  }
+  .z-otp__cell:focus::placeholder {
+    color: transparent;
+  }
+
+  /* Marcas: puntos sobre la pista centrados donde caería el centro del tirador; dentro del rango, de acento. */
+  .z-slider__marks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .z-slider__mark {
+    position: absolute;
+    inset-block-start: 50%;
+    width: 4px;
+    height: 4px;
+    margin-inline-start: -2px;
+    margin-block-start: -2px;
+    border-radius: var(--z-radius-full);
+    background: var(--z-fg-subtle);
+  }
+  .z-slider__mark[data-in-range] {
+    background: var(--z-fg-on-accent);
+  }
+  .z-slider[data-orientation="vertical"] .z-slider__mark {
+    inset-block-start: auto;
+    inset-inline-start: 50%;
+    margin-block: 0 -2px;
+  }
+  .z-slider__mark-label {
+    position: absolute;
+    inset-block-start: calc(var(--z-slider-thumb) / 2 + var(--z-space-1));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  [dir="rtl"] .z-slider__mark-label {
+    translate: 50% 0;
+  }
+  .z-slider[data-marks="labels"]:not([data-orientation="vertical"]) {
+    margin-block-end: var(--z-space-5);
+  }
+  .z-slider[data-orientation="vertical"] .z-slider__mark-label {
+    inset-block-start: 50%;
+    inset-inline-start: calc(var(--z-slider-thumb) / 2 + var(--z-space-1));
+    translate: 0 -50%;
+  }
+
+  /* Lista de archivos: miniatura, nombre con barra de progreso, tamaño y quitar. */
+  .z-upload__thumb {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    overflow: hidden;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    color: var(--z-fg-muted);
+  }
+  .z-upload__thumb canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .z-upload__file-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    min-width: 0;
+  }
+  .z-upload__progress {
+    width: 100%;
+    height: 4px;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    appearance: none;
+  }
+  .z-upload__progress::-webkit-progress-bar {
+    background: var(--z-surface-3);
+  }
+  .z-upload__progress::-webkit-progress-value {
+    background: var(--z-accent);
+  }
+  .z-upload__progress::-moz-progress-bar {
+    background: var(--z-accent);
+  }
+  .z-upload__remove {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-upload__remove:hover {
+      background: var(--z-surface-3);
+      color: var(--z-fg);
+    }
+  }
+  .z-upload__remove:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-upload:has(.z-upload__files:not(:empty)) {
+    cursor: default;
+  }
+}

@@ -4,7 +4,12 @@
 // CommandPalette  <dialog class="z-liquid z-palette" data-z-hotkey="mod+k">: se abre con data-z-open="#id", con el
 //                 atajo o con openPalette(el). Filtra por etiqueta, detalle, data-keywords="a,b" y cabecera de grupo.
 //                 Emite z:select (detail.value) en el comando elegido. data-keep-open: no cierra al elegir.
+// Command         .z-palette.z-command (sin diálogo): la misma lista en línea, siempre a la vista. Mismas teclas;
+//                 Escape vacía la búsqueda. z:select en el comando elegido.
 // Tree            [data-z-dom] .z-tree: expandir, seleccionar y teclado de árbol. z:change { value, expanded }.
+//                 aria-multiselectable="true": Ctrl/Cmd y Mayús con el puntero, Espacio, Mayús+flechas y Ctrl+A
+//                 (detail.values). data-checkable: casillas .z-tree__check con aria-checked en cascada (detail.checked).
+//                 data-renamable: F2 o doble clic en la etiqueta; z:rename { value, label } (cancelable).
 // DataTable       [data-z-dom] .z-table__sort: ordena las filas presentes. En el <th>: data-sort="number|text|date",
 //                 data-key; en el <td>: data-sort-value. En la tabla: data-manual-sort (solo avisa). z:sort.
 // Pagination      [data-z-dom] .z-pagination: data-page-count, data-siblings, data-page-label="Page {page}".
@@ -15,9 +20,10 @@ import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowDown } from "@zuccadev-labs/zuix-zicon/icons/arrow-down";
 import { arrowUp } from "@zuccadev-labs/zuix-zicon/icons/arrow-up";
 import { compare, parseNumber } from "../core/compare";
+import { checkStates, rangeIds, toggleCheck, type TreeShape } from "../core/tree";
 import { clampPage, pageRange, pageTotal } from "../core/pagination";
 import { score } from "../core/search";
-import { closeDialog, openDialog } from "./index";
+import { closeDialog, openDialog } from "./core";
 import { logicalKey, pressedOnBackdrop, setMarkup, type Listen } from "./shared";
 
 registerIcons([arrowUp, arrowDown]);
@@ -33,6 +39,8 @@ const isDisabled = (el: Element) =>
 /* ---------- Paleta de comandos: <dialog class="z-liquid z-palette"> ---------- */
 
 const PALETTE = "dialog.z-palette";
+// Paleta o comando en línea: comparten búsqueda, teclas y elección.
+const COMMAND = "dialog.z-palette, .z-command";
 let paletteId = 0;
 const order = new WeakMap<Element, number>();
 
@@ -71,7 +79,7 @@ function setPaletteActive(dialog: HTMLElement, index: number, scroll = true): vo
   if (scroll) active?.scrollIntoView({ block: "nearest" });
 }
 
-function filterPalette(dialog: HTMLElement): void {
+function filterPalette(dialog: HTMLElement, scroll = true): void {
   preparePalette(dialog);
   const list = dialog.querySelector<HTMLElement>(".z-palette__list");
   const q = (paletteInput(dialog)?.value ?? "").trim();
@@ -119,7 +127,7 @@ function filterPalette(dialog: HTMLElement): void {
     list.prepend(empty);
   }
   if (empty) empty.hidden = shown > 0;
-  setPaletteActive(dialog, 0);
+  setPaletteActive(dialog, 0, scroll);
 }
 
 function resetPalette(dialog: HTMLElement): void {
@@ -138,16 +146,25 @@ export function openPalette(dialog: HTMLDialogElement): void {
   resetPalette(dialog);
 }
 
-function runCommand(dialog: HTMLDialogElement, item: HTMLElement | undefined): void {
+function runCommand(dialog: HTMLElement, item: HTMLElement | undefined): void {
   if (!item || isDisabled(item)) return;
-  if (!dialog.hasAttribute("data-keep-open")) closeDialog(dialog, item.dataset.value ?? item.id);
+  if (dialog instanceof HTMLDialogElement && !dialog.hasAttribute("data-keep-open")) closeDialog(dialog, item.dataset.value ?? item.id);
   emit(item, "select", { value: item.dataset.value ?? item.id });
 }
 
-function onPaletteKey(dialog: HTMLDialogElement, event: KeyboardEvent): void {
+function onPaletteKey(dialog: HTMLElement, event: KeyboardEvent): void {
   const last = paletteVisible(dialog).length - 1;
   const index = paletteIndex(dialog);
   if (event.key === "Escape") {
+    if (!(dialog instanceof HTMLDialogElement)) {
+      // En línea: Escape vacía la búsqueda (si la hay); si no, sigue su curso.
+      const input = paletteInput(dialog);
+      if (!input?.value) return;
+      event.preventDefault();
+      input.value = "";
+      filterPalette(dialog);
+      return;
+    }
     event.preventDefault();
     if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
   } else if (event.key === "ArrowDown") {
@@ -210,6 +227,36 @@ const treeVisible = (tree: Element) => treeItems(tree).filter((item) => !item.pa
 const treeGroup = (item: Element) => item.querySelector<HTMLElement>(":scope > .z-tree__group");
 const treeLabel = (item: Element) => text(item.querySelector(":scope > .z-tree__row .z-tree__label"));
 const treeValue = (item: HTMLElement) => item.dataset.value ?? (item.id || treeLabel(item));
+const treeMulti = (tree: Element) => tree.getAttribute("aria-multiselectable") === "true";
+const treeCheckable = (tree: Element) => tree.hasAttribute("data-checkable");
+const treeAnchor = new WeakMap<Element, HTMLElement>();
+
+/** Forma del árbol leída del marcado (ids = data-value), para la cascada de casillas de core/tree. */
+function treeShape(tree: Element): TreeShape[] {
+  const read = (list: Element): TreeShape[] =>
+    [...list.children]
+      .filter((el): el is HTMLElement => el instanceof HTMLElement && el.getAttribute("role") === "treeitem")
+      .map((item) => {
+        const group = treeGroup(item);
+        return { id: treeValue(item), disabled: isDisabled(item), children: group ? read(group) : undefined };
+      });
+  return read(tree);
+}
+
+function paintChecks(tree: HTMLElement, ids: Iterable<string>): void {
+  const states = checkStates(treeShape(tree), ids);
+  for (const item of treeItems(tree)) {
+    const state = states.get(treeValue(item)) ?? "false";
+    item.setAttribute("aria-checked", state);
+    const box = item.querySelector<HTMLElement>(":scope > .z-tree__row > .z-tree__check");
+    if (box) box.dataset.state = state === "true" ? "checked" : state === "mixed" ? "indeterminate" : "unchecked";
+  }
+}
+
+const checkedValues = (tree: HTMLElement) =>
+  treeItems(tree)
+    .filter((item) => item.getAttribute("aria-checked") === "true")
+    .map(treeValue);
 
 function setExpanded(item: HTMLElement, open: boolean): void {
   const group = treeGroup(item);
@@ -228,9 +275,11 @@ function focusTreeItem(tree: Element, item: HTMLElement | null | undefined): voi
 
 function emitTree(tree: HTMLElement): void {
   const items = treeItems(tree);
-  const selected = items.find((item) => item.getAttribute("aria-selected") === "true");
+  const selected = items.filter((item) => item.getAttribute("aria-selected") === "true");
   emit(tree, "change", {
-    value: selected ? treeValue(selected) : null,
+    value: selected[0] ? treeValue(selected[0]) : null,
+    ...(treeMulti(tree) ? { values: selected.map(treeValue) } : {}),
+    ...(treeCheckable(tree) ? { checked: checkedValues(tree) } : {}),
     expanded: items.filter((item) => item.getAttribute("aria-expanded") === "true").map(treeValue),
   });
 }
@@ -246,11 +295,45 @@ export function toggleTreeItem(item: HTMLElement, open = item.getAttribute("aria
   emitTree(tree);
 }
 
-/** Selecciona un nodo del árbol. */
+function setSelection(tree: HTMLElement, chosen: HTMLElement[]): void {
+  const set = new Set(chosen.filter((item) => !isDisabled(item)));
+  for (const other of treeItems(tree)) other.setAttribute("aria-selected", String(set.has(other)));
+}
+
+/** Selecciona un nodo del árbol (solo él, también en selección múltiple). */
 export function selectTreeItem(item: HTMLElement): void {
   const tree = treeOf(item);
   if (!tree || isDisabled(item)) return;
-  for (const other of treeItems(tree)) other.setAttribute("aria-selected", String(other === item));
+  setSelection(tree, [item]);
+  treeAnchor.set(tree, item);
+  emitTree(tree);
+}
+
+/** Marca o desmarca la casilla de un nodo (con cascada a hijos y estado mixto en los padres). */
+export function checkTreeItem(item: HTMLElement): void {
+  const tree = treeOf(item);
+  if (!tree || isDisabled(item) || !treeCheckable(tree)) return;
+  paintChecks(tree, toggleCheck(treeShape(tree), checkedValues(tree), treeValue(item)));
+  emitTree(tree);
+}
+
+function togglePicked(tree: HTMLElement, item: HTMLElement): void {
+  if (isDisabled(item)) return;
+  item.setAttribute("aria-selected", String(item.getAttribute("aria-selected") !== "true"));
+  treeAnchor.set(tree, item);
+  emitTree(tree);
+}
+
+function extendTree(tree: HTMLElement, item: HTMLElement): void {
+  const rows = treeVisible(tree);
+  const from = treeAnchor.get(tree);
+  const start = from && rows.includes(from) ? from : item;
+  treeAnchor.set(tree, start);
+  const ids = new Set(rangeIds(rows.map(treeValue), treeValue(start), treeValue(item)));
+  setSelection(
+    tree,
+    rows.filter((row) => ids.has(treeValue(row))),
+  );
   emitTree(tree);
 }
 
@@ -258,29 +341,84 @@ export function selectTreeItem(item: HTMLElement): void {
 function activateTreeItem(tree: HTMLElement, item: HTMLElement): void {
   if (isDisabled(item)) return;
   if (treeGroup(item)) setExpanded(item, item.getAttribute("aria-expanded") !== "true");
-  for (const other of treeItems(tree)) other.setAttribute("aria-selected", String(other === item));
+  setSelection(tree, [item]);
+  treeAnchor.set(tree, item);
   emitTree(tree);
 }
 
+/** Abre el campo de renombrar de un nodo (F2 o doble clic con data-renamable en el árbol). Emite z:rename
+ *  { value, label } al confirmar; si nadie lo cancela con preventDefault, la etiqueta pasa a mostrar el texto nuevo. */
+export function renameTreeItem(item: HTMLElement): void {
+  const tree = treeOf(item);
+  const labelEl = item.querySelector<HTMLElement>(":scope > .z-tree__row .z-tree__label");
+  if (!tree || !labelEl || isDisabled(item) || item.querySelector(":scope > .z-tree__row > .z-tree__rename")) return;
+  const input = document.createElement("input");
+  input.className = "z-tree__rename";
+  input.value = text(labelEl);
+  input.setAttribute("aria-label", tree.dataset.renameLabel ?? "Rename");
+  labelEl.hidden = true;
+  labelEl.after(input);
+  let done = false;
+  const finish = (keep: boolean) => {
+    if (done) return;
+    done = true;
+    const next = input.value.trim();
+    input.remove();
+    labelEl.hidden = false;
+    if (keep && next && next !== text(labelEl) && emit(tree, "rename", { value: treeValue(item), label: next })) labelEl.textContent = next;
+    focusTreeItem(tree, item);
+  };
+  input.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+    if (event.key === "Enter") {
+      event.preventDefault();
+      finish(true);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      finish(false);
+    }
+  });
+  input.addEventListener("click", (event) => event.stopPropagation());
+  input.addEventListener("blur", () => finish(true));
+  input.focus();
+  input.select();
+}
+
 function onTreeKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): void {
-  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const multi = treeMulti(tree);
+  const mod = event.ctrlKey || event.metaKey;
+  if (multi && mod && !event.altKey && event.key.toLowerCase() === "a") {
+    setSelection(tree, treeVisible(tree));
+    emitTree(tree);
+    event.preventDefault();
+    return;
+  }
+  if (event.altKey || mod) return;
   const rows = treeVisible(tree);
   const at = rows.indexOf(item);
   const hasChildren = treeGroup(item) !== null;
   const open = item.getAttribute("aria-expanded") === "true";
+  const move = (target: HTMLElement | undefined) => {
+    if (!target) return;
+    // Sin Mayús, el nodo al que se llega es el ancla del próximo rango; con Mayús, el rango va del ancla a él.
+    if (multi && event.shiftKey && !treeAnchor.has(tree)) treeAnchor.set(tree, item);
+    focusTreeItem(tree, target);
+    if (multi && event.shiftKey) extendTree(tree, target);
+    else treeAnchor.set(tree, target);
+  };
   // En RTL la flecha que apunta hacia el final de la línea (izquierda) expande.
   switch (logicalKey(event.key, tree)) {
     case "ArrowDown":
-      focusTreeItem(tree, rows[at + 1]);
+      move(rows[at + 1]);
       break;
     case "ArrowUp":
-      focusTreeItem(tree, rows[at - 1]);
+      move(rows[at - 1]);
       break;
     case "Home":
-      focusTreeItem(tree, rows[0]);
+      move(rows[0]);
       break;
     case "End":
-      focusTreeItem(tree, rows[rows.length - 1]);
+      move(rows[rows.length - 1]);
       break;
     case "ArrowRight":
       if (hasChildren && !open) toggleTreeItem(item, true);
@@ -290,9 +428,17 @@ function onTreeKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): 
       if (hasChildren && open) toggleTreeItem(item, false);
       else focusTreeItem(tree, item.parentElement?.closest<HTMLElement>('[role="treeitem"]'));
       break;
+    case "F2":
+      if (!tree.hasAttribute("data-renamable")) return;
+      renameTreeItem(item);
+      break;
     case "Enter":
-    case " ":
       activateTreeItem(tree, item);
+      break;
+    case " ":
+      if (treeCheckable(tree)) checkTreeItem(item);
+      else if (multi) togglePicked(tree, item);
+      else activateTreeItem(tree, item);
       break;
     default: {
       // Letra: salta al siguiente nodo visible cuyo nombre empieza por ella.
@@ -306,9 +452,20 @@ function onTreeKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): 
   event.preventDefault();
 }
 
+function onTreeClick(tree: HTMLElement, item: HTMLElement, event: MouseEvent): void {
+  focusTreeItem(tree, item);
+  if ((event.target as Element).closest(".z-tree__check")) checkTreeItem(item);
+  else if (treeMulti(tree) && (event.ctrlKey || event.metaKey)) togglePicked(tree, item);
+  else if (treeMulti(tree) && event.shiftKey) extendTree(tree, item);
+  else activateTreeItem(tree, item);
+}
+
 function hydrateTree(tree: HTMLElement): void {
   const items = treeItems(tree);
   for (const item of items) if (treeGroup(item)) setExpanded(item, item.getAttribute("aria-expanded") === "true");
+  // Casillas: las hojas mandan; las ramas se recalculan (estado mixto).
+  if (treeCheckable(tree))
+    paintChecks(tree, items.filter((item) => item.getAttribute("aria-checked") === "true" && !treeGroup(item)).map(treeValue));
   const visible = treeVisible(tree);
   const stop =
     visible.find((item) => item.tabIndex === 0) ?? visible.find((item) => item.getAttribute("aria-selected") === "true") ?? visible[0];
@@ -458,9 +615,10 @@ function onClick(event: MouseEvent): void {
     if (!target.hasAttribute("data-z-static") && pressedOnBackdrop(target, event)) closeDialog(target);
     return;
   }
-  const command = target.closest<HTMLElement>(`${PALETTE} .z-palette__item`);
-  if (command) {
-    runCommand(command.closest<HTMLDialogElement>(PALETTE)!, command);
+  const command = target.closest<HTMLElement>(".z-palette__item");
+  const owner = command?.closest<HTMLElement>(COMMAND);
+  if (command && owner) {
+    runCommand(owner, command);
     return;
   }
 
@@ -470,8 +628,7 @@ function onClick(event: MouseEvent): void {
   const item = row?.parentElement;
   const tree = item && treeOf(item);
   if (item && tree) {
-    focusTreeItem(tree, item);
-    activateTreeItem(tree, item);
+    if (!target.closest(".z-tree__rename")) onTreeClick(tree, item, event);
     return;
   }
 
@@ -497,8 +654,8 @@ function onKeydown(event: KeyboardEvent): void {
   if (onHotkey(event)) return;
   const target = event.target;
   if (!(target instanceof Element)) return;
-  const palette = target.closest<HTMLDialogElement>(PALETTE);
-  if (palette) {
+  const palette = target.closest<HTMLElement>(COMMAND);
+  if (palette && (palette instanceof HTMLDialogElement || target.matches(".z-palette__input"))) {
     onPaletteKey(palette, event);
     return;
   }
@@ -509,15 +666,22 @@ function onKeydown(event: KeyboardEvent): void {
 
 export function setup(on: Listen): void {
   on(document, "click", onClick);
+  on(document, "dblclick", (event) => {
+    const target = event.target as Element;
+    const label = target.closest?.(".z-tree__label");
+    const item = label?.closest<HTMLElement>('[role="treeitem"]');
+    const tree = item && treeOf(item);
+    if (item && tree && inDom(tree) && tree.hasAttribute("data-renamable")) renameTreeItem(item);
+  });
   on(document, "keydown", onKeydown);
   on(document, "input", (event) => {
-    const palette = (event.target as Element).closest?.<HTMLElement>(PALETTE);
+    const palette = (event.target as Element).closest?.<HTMLElement>(COMMAND);
     if (palette && (event.target as Element).matches(".z-palette__input")) filterPalette(palette);
   });
   on(document, "pointermove", (event) => {
-    const item = (event.target as Element).closest?.<HTMLElement>(`${PALETTE} .z-palette__item`);
-    if (item && item.getAttribute("aria-selected") !== "true")
-      setPaletteActive(item.closest<HTMLElement>(PALETTE)!, paletteVisible(item.closest(PALETTE)!).indexOf(item), false);
+    const item = (event.target as Element).closest?.<HTMLElement>(".z-palette__item");
+    const owner = item?.closest<HTMLElement>(COMMAND);
+    if (item && owner && item.getAttribute("aria-selected") !== "true") setPaletteActive(owner, paletteVisible(owner).indexOf(item), false);
   });
   // Abierta con data-z-open: empieza limpia igual que con openPalette().
   on(document, "z:open", (event) => {
@@ -539,5 +703,10 @@ export function setup(on: Listen): void {
 
 export function hydrate(root: ParentNode): void {
   for (const dialog of root.querySelectorAll<HTMLElement>(PALETTE)) preparePalette(dialog);
+  // En línea, a la vista desde el principio: con su primer comando activo.
+  for (const command of root.querySelectorAll<HTMLElement>(".z-command")) {
+    preparePalette(command);
+    filterPalette(command, false);
+  }
   for (const tree of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tree, .z-tree[data-z-dom]")) hydrateTree(tree);
 }

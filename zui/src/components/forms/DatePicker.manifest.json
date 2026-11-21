@@ -1,23 +1,23 @@
 {
   "name": "DatePicker",
   "group": "forms",
-  "description": "Campo de fecha con calendario propio en un popover; fecha única o rango. Para escribir la fecha o usar el selector del sistema, `DateInput`.",
+  "description": "Campo de fecha con calendario propio en un popover: fecha única, rango o varias fechas, uno o varios meses, preajustes y confirmación. Valor ISO YYYY-MM-DD, { from, to } o lista.",
   "import": "import { DatePicker } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "mode",
       "type": "enum",
-      "values": ["single", "range"],
+      "values": ["single", "range", "multiple"],
       "default": "single"
     },
     {
       "name": "value",
-      "type": "string | null | DateRange",
+      "type": "string | null | DateRange | string[]",
       "description": "Fecha ISO YYYY-MM-DD; en modo range, { from, to }."
     },
     {
       "name": "defaultValue",
-      "type": "string | null | DateRange"
+      "type": "string | null | DateRange | string[]"
     },
     {
       "name": "onValueChange",
@@ -130,47 +130,167 @@
     {
       "name": "popupClassName",
       "type": "string"
+    },
+    {
+      "name": "numberOfMonths",
+      "type": "number",
+      "default": 1,
+      "description": "Meses del calendario (2 para un rango cómodo)."
+    },
+    {
+      "name": "pagedNavigation",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "presets",
+      "type": "{ label, value }[]",
+      "description": "Atajos al lado del mes (columna; fila en estrecho)."
+    },
+    {
+      "name": "presetsLabel",
+      "type": "string",
+      "default": "Quick pick"
+    },
+    {
+      "name": "closeOnSelect",
+      "type": "boolean",
+      "description": "Cierra al elegir. Por defecto: fecha única sí, rango al elegir el fin, múltiple no."
+    },
+    {
+      "name": "confirm",
+      "type": "boolean",
+      "default": false,
+      "description": "El valor solo cambia con Apply; Cancel y Escape lo descartan."
+    },
+    {
+      "name": "applyLabel",
+      "type": "string",
+      "default": "Apply"
+    },
+    {
+      "name": "cancelLabel",
+      "type": "string",
+      "default": "Cancel"
+    },
+    {
+      "name": "summary",
+      "type": "(value) => ReactNode",
+      "description": "Resumen del pie con confirm."
+    },
+    {
+      "name": "formatValue",
+      "type": "(value) => string",
+      "description": "Texto propio del campo."
+    },
+    {
+      "name": "formatCount",
+      "type": "(count: number) => string",
+      "description": "Texto con más de dos fechas en modo multiple. Por defecto «N dates»."
+    },
+    {
+      "name": "serialize",
+      "type": "(value) => string",
+      "description": "Valor que envía el formulario (por defecto el texto ISO)."
+    },
+    {
+      "name": "maxSelected",
+      "type": "number",
+      "description": "Solo multiple."
+    },
+    {
+      "name": "minView",
+      "type": "enum",
+      "values": ["day", "month", "year"],
+      "default": "day",
+      "description": "Unidad del valor: month (MonthPicker) o year (YearPicker)."
+    },
+    {
+      "name": "icon",
+      "type": "enum",
+      "values": ["calendar", "calendar-date-range", "calendar-days"],
+      "description": "Icono del campo."
+    },
+    {
+      "name": "...Calendar",
+      "type": "CalendarProps",
+      "description": "Se reenvían captionLayout, isDateUnavailable, modifiers, showOutsideDays, fixedWeeks, showWeekNumber, weekNumbering, weekdayFormat, today, showTodayButton, renderDay, getDayDescription, cellSize, minRange, maxRange, rangeCrossesUnavailable, legend y sus etiquetas."
+    },
+    {
+      "name": "input",
+      "type": "boolean",
+      "default": false,
+      "description": "Fecha única: el disparador es un DateField tecleable con botón de calendario (DateTimePicker con granularity day)."
+    },
+    {
+      "name": "isDateCheckoutOnly",
+      "type": "(date) => boolean",
+      "description": "Estancia: se puede terminar el rango ese día, no empezarlo (marca pequeña y «check-out only»). Modo DOM: data-checkout-only-dates o setCalendarOptions."
+    },
+    {
+      "name": "rangeUnit",
+      "type": "enum",
+      "values": ["days", "nights"],
+      "default": "days",
+      "description": "minRange y maxRange en noches; sin rangos de un día."
+    },
+    {
+      "name": "minRangeLabel",
+      "type": "string",
+      "description": "Aviso visible y en el nombre del día que no llega al mínimo («{n}-night minimum»)."
+    },
+    {
+      "name": "showLengthStepper",
+      "type": "boolean",
+      "default": false,
+      "description": "Pie con −/+ que acortan o alargan el rango (lengthLabel «{n} nights»)."
+    },
+    {
+      "name": "flexibility",
+      "type": "number",
+      "description": "Chips «Exact dates», «± 1 day»…; también defaultFlexibility, flexibilityOptions y onFlexibilityChange (modo DOM: data-flexibility y z:flexibilitychange)."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],
   "tokens": [
-    "control-height-md",
-    "text-body",
-    "control-height-sm",
-    "text-small",
-    "control-height-lg",
-    "text-title",
-    "space-8",
-    "space-3",
-    "control-border",
-    "control-radius",
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
     "control-bg",
-    "fg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
     "duration-fast",
     "ease-standard",
-    "control-border-hover",
-    "accent",
-    "focus-ring",
-    "surface",
-    "danger",
-    "fg-subtle",
-    "popup-bg",
+    "fg",
     "fg-muted",
-    "space-2",
-    "weight-semibold",
+    "fg-subtle",
+    "focus-width",
     "leading-snug",
-    "radius-full",
-    "surface-3",
-    "text-caption",
-    "weight-medium",
     "line-strong",
-    "button-primary-bg",
-    "button-primary-fg",
-    "accent-soft",
-    "row-hover"
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
   ],
   "classes": ["z-select", "z-datepicker", "z-popover", "z-calendar"],
-  "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog.",
+  "a11y": "Botón que abre un diálogo no modal (capa `popover` propia) con el calendario; al abrir, el foco va al día activo y al elegir vuelve al botón. Escape cierra. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el panel es un `[popover]` con role=dialog. Con confirm, el pie lleva el resumen y los botones Cancel y Apply (Tab recorre preajustes, rejilla y pie; el foco queda atrapado en el panel). En multiple el formulario recibe un campo por fecha con el mismo name. Escape en las vistas de mes o año vuelve a los días sin cerrar.",
   "behavior": "dom",
   "examples": [
     {
@@ -184,6 +304,14 @@
     {
       "title": "Vacío, pequeño",
       "code": "<DatePicker size=\"sm\" block={false} aria-label=\"Start date\" locale=\"en-US\" placeholder=\"Pick a date\" />"
+    },
+    {
+      "title": "Rango con dos meses, preajustes y confirmación",
+      "code": "<DatePicker\n  mode=\"range\"\n  aria-label=\"Trip\"\n  locale=\"en-US\"\n  numberOfMonths={2}\n  confirm\n  presets={[\n    { label: \"Next 7 days\", value: \"next-7-days\" },\n    { label: \"Next 30 days\", value: \"next-30-days\" },\n    { label: \"This month\", value: \"this-month\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Varias fechas",
+      "code": "<DatePicker mode=\"multiple\" aria-label=\"Shifts\" locale=\"en-US\" name=\"shifts\" formatCount={(n) => `${n} shifts`} />"
     }
   ],
   "html": [
@@ -199,6 +327,14 @@
     {
       "title": "Vacío",
       "code": "<span class=\"z-select z-datepicker\" id=\"start\" data-size=\"md\" data-block data-locale=\"en-US\" data-placeholder=\"Pick a date\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"start-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Start date</span>\n    <span class=\"z-select__value\">Pick a date</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n</span>\n\n<div id=\"start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+      "title": "Rango con dos meses, preajustes y confirmación",
+      "code": "<span class=\"z-select z-datepicker\" id=\"trip\" data-size=\"md\" data-block data-mode=\"range\" data-months=\"2\" data-confirm data-locale=\"en-US\" data-week-start=\"1\" data-presets='[{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"},{\"label\":\"Next 30 days\",\"value\":\"next-30-days\"},{\"label\":\"This month\",\"value\":\"this-month\"}]' data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"trip-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Trip</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"trip\" value=\"\" />\n</span>\n\n<div id=\"trip-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+      "title": "Varias fechas",
+      "code": "<span class=\"z-select z-datepicker\" id=\"shifts\" data-size=\"md\" data-block data-mode=\"multiple\" data-locale=\"en-US\" data-count-label=\"{count} shifts\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shifts-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Shifts</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-days\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"shifts\" value=\"\" />\n</span>\n\n<div id=\"shifts-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
     }
   ],
   "origin": "DatePicker del catálogo objetivo; reutiliza la envoltura de Select y el panel de Popover."

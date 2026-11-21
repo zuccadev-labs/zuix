@@ -18,19 +18,19 @@ comprueba.
 
 | Familia | Tokens |
 |---|---|
-| Texto | `fg`, `fg-muted`, `fg-subtle`, `fg-on-accent`, `canvas-fg`, `canvas-fg-muted` |
+| Texto | `fg`, `fg-prose`, `fg-muted`, `fg-subtle`, `fg-on-accent`, `canvas-fg`, `canvas-fg-muted` |
 | Superficie | `surface`, `surface-2`, `surface-3`, `surface-solid`, `overlay`, `inset`, `line`, `line-strong`, `row-hover` |
 | Acento | `accent`, `accent-hover`, `accent-soft`, `accent-text`, `accent-solid`, `accent-solid-hover`, `accent-ring` |
 | Estado | `success`, `warning`, `danger`, `info`, cada uno con `-soft`, `-text` y `-solid` |
-| Material | `glass-bg`, `glass-border`, `glass-highlight`, `glass-specular`, `glass-shadow`, `glass-blur`, `glass-saturate`, `canvas`, `canvas-gradient` |
+| Material | `glass-bg`, `glass-border`, `glass-highlight`, `glass-specular`, `glass-shadow`, `glass-blur`, `glass-blur-elevated`, `glass-saturate`, `canvas`, `canvas-gradient` |
 | Tipografía | `font-display`, `font-sans`, `font-mono`, `text-*`, `weight-*`, `leading-*`, `tracking-*` |
-| Espaciado | `space-0` a `space-20`, con los intermedios `space-1-5` (6 px) y `space-2-5` (10 px) |
+| Espaciado | `space-0` a `space-20`, con los intermedios `space-0-5` (2 px), `space-1-5` (6 px), `space-2-5` (10 px), `space-3-5` (14 px), `space-7`, `space-9` y `space-14` |
 | Forma | `radius-xs`, `sm`, `md`, `lg`, `xl`, `panel`, `full` |
 | Elevación | `shadow-sm`, `md`, `lg` |
-| Movimiento | `duration-fast`, `normal`, `slow`; `ease-standard`, `out`, `spring` |
+| Movimiento | `duration-press`, `fast`, `normal`, `slow`; `ease-standard`, `out`, `emphasized`, `exit`, `spring` |
 | Capas | `layer-sticky`, `overlay`, `menu`, `dialog`, `popover`, `tooltip`, `toast`, `top`; y `layer-below` y `layer-raised` para el apilamiento dentro de un componente |
-| Layout | `rail-width`, `sidebar-width`, `inspector-width`, `header-height`, `shell-gap`, `stage-pad-x`, `stage-pad-y`, `content-max`, `prose-max`, `touch-target` |
-| Componente | `focus-ring`, `scrim`, `control-height-sm`, `md`, `lg`, `control-radius`, `control-bg`, `control-border`, `control-border-hover`, `button-*`, `card-*`, `panel-radius`, `popup-*`, `tooltip-bg`, `reading-bg`, `code-bg` |
+| Layout | `rail-width`, `sidebar-width`, `inspector-width`, `header-height`, `shell-gap`, `stage-pad-x`, `stage-pad-y`, `content-max`, `prose-max`, `touch-target`; y los del sitio de documentación, `docs-*` |
+| Componente | `focus-width`, `focus-offset`, `focus-ring`, `scrim`, `control-height-xs`, `sm`, `md`, `lg`, `control-radius-sm`, `control-radius`, `control-radius-lg`, `control-bg`, `control-bg-hover`, `control-border`, `control-border-hover`, `field-radius-multiline`, `item-radius`, `button-*`, `card-*`, `panel-radius`, `popup-*`, `tooltip-bg`, `glass-rim`, `reading-bg`, `code-*`, `calendar-*` |
 
 La lista completa, con su valor por marca y tema, está en `tokens.json` y en la página [Tokens](/tokens).
 
@@ -48,24 +48,51 @@ frecuente de perder contraste.
 
 Los `-text` son el color original mezclado con `fg` hasta llegar al mínimo; los `-solid`, mezclado con negro.
 El anillo de foco (`accent-ring`, y con él `focus-ring`) usa `accent-text`, opaco: llega a 3:1 sobre
-cualquier superficie.
+cualquier superficie. Los componentes lo dibujan como contorno, `outline: var(--z-focus-width) solid
+var(--z-accent-ring)` con `outline-offset: var(--z-focus-offset)`: sigue al radio de la pieza y se mantiene
+con colores forzados. `focus-ring` (sombra doble) queda para quien ya lo usaba.
+
+### Escala tipográfica y forma
+
+Los tamaños de texto van en `rem`, así respetan el tamaño de letra que la persona fije en el navegador:
+`text-body` (14 px a tamaño normal) para la interfaz, `text-reading` (16) para el cuerpo de un documento,
+`text-code` (13) para el código. Los titulares (`text-lead`, `text-display-sm`, `text-display`,
+`text-display-lg`) crecen con el viewport entre un mínimo y un máximo, nunca más de 2,5 veces el mínimo.
+
+Botones, campos, selects, pestañas y segmentados son rectángulos de esquinas redondeadas, no píldoras, con
+radios concéntricos por tamaño: `control-radius-sm` (8 px), `control-radius` (10) y `control-radius-lg`
+(12). En una pista con opciones, el radio de la pista es el de la opción más el relleno. `radius-full` queda
+para lo circular: avatar, punto, interruptor, radio.
 
 ### Objetivo táctil
 
 `touch-target` es el objetivo táctil mínimo. Vale `0px` y pasa a `40px` cuando el puntero principal es el
-dedo (`@media (pointer: coarse)`). `control-height-sm` y `control-height-md` se definen como
-`max(30px, touch-target)` y `max(36px, touch-target)`: con ratón miden 30 y 36 px; en un teléfono, 40.
+dedo (`@media (pointer: coarse)`). `control-height-xs`, `control-height-sm` y `control-height-md` se definen
+como `max(24px, touch-target)`, `max(28px, touch-target)` y `max(34px, touch-target)`: con ratón miden 24, 28
+y 34 px; en un teléfono, 40, igual que `control-height-lg`.
 Para conservar los tamaños de ratón en táctil: `:root { --z-touch-target: 0px }` después de `tokens.css`.
 
 ## Marcas incluidas
 
 | Marca | Acento | Fuentes | Origen |
 |---|---|---|---|
-| `dazlabs` (por defecto) | `#E74327` | Poppins, DM Sans, JetBrains Mono | Manual de marca DAZLABS, sobre el material de zutool |
+| `dazlabs` (por defecto) | `#E74327` | DM Sans, JetBrains Mono | Manual de marca DAZLABS, sobre el material de zutool |
 | `zutool` | `#FF6118` | Plus Jakarta Sans | Tokens de zutool |
-| `zenith` | Índigo | Inter, JetBrains Mono | La creé para el piloto local de zudocs sobre Zenith |
+| `zenith` | Índigo | Geist, Geist Mono | La creé para el piloto local de zudocs sobre Zenith; usa la familia base |
 
 La marca por defecto se fija en `tokens/config.json`. Cómo crear una: [Cambiar de marca](../agents/01-marca.md).
+
+### Fuentes
+
+La familia base de la suite es **Geist** con **Geist Mono** (licencia OFL 1.1, variables): es la que lleva una
+marca sin tipografía propia y la de la plantilla de [Cambiar de marca](../agents/01-marca.md). Una marca con
+identidad declara la suya: `dazlabs` usa DM Sans también en los titulares y `zutool`, Plus Jakarta Sans.
+
+Los tokens solo declaran la pila (`font-display`, `font-sans`, `font-mono`), con alternativas del sistema
+detrás: los paquetes no incluyen archivos de fuente. Cargarlas es cosa de la aplicación, por ejemplo con
+`@fontsource-variable/geist` y `@fontsource-variable/geist-mono` o con sus `.woff2` autoalojados; sin ellas,
+el texto cae en `ui-sans-serif`, `system-ui` y `ui-monospace`. El sitio de documentación autoaloja las de su
+marca (ver [zudocs](./05-zudocs.md#fuentes)).
 
 ## Temas y preferencias del sistema
 

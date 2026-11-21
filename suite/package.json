@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -40,6 +40,42 @@
     "./zui/dom": {
       "types": "./zui-dom.d.ts",
       "default": "./zui-dom.js"
+    },
+    "./zui/dom/core": {
+      "types": "./zui-dom-core.d.ts",
+      "default": "./zui-dom-core.js"
+    },
+    "./zui/dom/dates": {
+      "types": "./zui-dom-dates.d.ts",
+      "default": "./zui-dom-dates.js"
+    },
+    "./zui/dom/data": {
+      "types": "./zui-dom-data.d.ts",
+      "default": "./zui-dom-data.js"
+    },
+    "./zui/dom/content": {
+      "types": "./zui-dom-content.d.ts",
+      "default": "./zui-dom-content.js"
+    },
+    "./zui/dom/agenda": {
+      "types": "./zui-dom-agenda.d.ts",
+      "default": "./zui-dom-agenda.js"
+    },
+    "./zui/dom/charts": {
+      "types": "./zui-dom-charts.d.ts",
+      "default": "./zui-dom-charts.js"
+    },
+    "./zui/dom/color": {
+      "types": "./zui-dom-color.d.ts",
+      "default": "./zui-dom-color.js"
+    },
+    "./zui/dom/media": {
+      "types": "./zui-dom-media.d.ts",
+      "default": "./zui-dom-media.js"
+    },
+    "./zui/dom/effects": {
+      "types": "./zui-dom-effects.d.ts",
+      "default": "./zui-dom-effects.js"
     },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
@@ -94,7 +130,6 @@
     "./zicon.js",
     "./zicon-all.js",
     "./zicon-element.js",
-    "./zui-dom.js",
     "./zout-dom.js",
     "**/*.css"
   ],

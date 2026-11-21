@@ -53,6 +53,19 @@
       "type": "boolean",
       "default": false,
       "description": "El formulario no se envía si no está marcada."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["default", "card"],
+      "default": "default",
+      "description": "`card`: casilla, etiqueta y descripción en un recuadro que se pulsa y se marca entero. Dentro de un CheckboxGroup la toma del grupo."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "default": "on",
+      "description": "Valor que envía el formulario. Dentro de un CheckboxGroup identifica la casilla: su estado sale del grupo."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "checked", "indeterminate", "invalid", "disabled"],
@@ -64,17 +77,27 @@
     "weight-medium",
     "fg-muted",
     "text-small",
-    "line-strong",
     "control-bg",
     "fg-on-accent",
     "duration-fast",
     "ease-standard",
     "radius-xs",
     "accent",
-    "focus-ring",
     "accent-solid",
     "danger",
-    "ease-spring"
+    "ease-spring",
+    "accent-ring",
+    "control-border",
+    "focus-offset",
+    "focus-width",
+    "touch-target",
+    "line-strong",
+    "control-radius-lg",
+    "control-bg-hover",
+    "control-border-hover",
+    "accent-soft",
+    "space-3",
+    "space-3-5"
   ],
   "classes": ["z-check"],
   "a11y": "Patrón APG «checkbox»: botón con role checkbox y un `input type=checkbox` oculto para formularios, Espacio para alternar, aria-checked mixed en indeterminado. La etiqueta envuelve al control.",
@@ -86,6 +109,10 @@
     {
       "title": "Indeterminado",
       "code": "<Checkbox checked=\"indeterminate\" onCheckedChange={toggleAll}>Select all</Checkbox>"
+    },
+    {
+      "title": "Tarjeta",
+      "code": "<Checkbox variant=\"card\" defaultChecked description=\"Get a summary of activity every Monday.\">\n  Weekly digest\n</Checkbox>"
     }
   ],
   "origin": "Nuevo, con primitiva propia (patrón APG)."

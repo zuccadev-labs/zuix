@@ -6,7 +6,8 @@
 //   3. .tmp/consumer/react: proyecto fuera del workspace (raíz propia), instalado desde los tarballs. Renderiza con
 //      react-dom/server, compila con Vite y pasa `tsc --noEmit` con skipLibCheck: false (bundler y nodenext), con
 //      TypeScript 5.9 y con TypeScript 7.
-//   4. .tmp/consumer/dom: lo mismo sin React instalado; importa los módulos `dom` en Node.
+//   4. .tmp/consumer/dom: lo mismo sin React instalado; importa los módulos `dom` en Node y comprueba con esbuild que
+//      las entradas por familia de zui/dom se descartan en un bundle (toast() solo no trae agenda, gráficos ni color).
 //   5. Con --next, .tmp/consumer/next: Next.js (última estable, App Router) instalado desde los tarballs. `next build`,
 //      `next start` y una prueba en Chrome con playwright-core: marcado de servidor con iconos, hidratación sin avisos
 //      e interacción (Modal, Menu, Tabs, Select, Toast, Accordion, Shell), y la ruta /umbrella, que lo importa todo por
@@ -22,6 +23,25 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+/**
+ * Cuántos iconos del set completo trae un bundle: se busca el primer trazado de cada icono de `zicon/src/icons`.
+ * Los componentes usan unos pocos por dentro (chevrones, cierre, marca…); el set completo son más de 300. Medir esto
+ * en vez del peso del bundle evita que el tope tenga que subir con cada componente nuevo.
+ */
+const ICON_LIMIT = 80;
+function iconsIn(js) {
+  const dir = join(root, "zicon", "src", "icons");
+  let found = 0;
+  let total = 0;
+  for (const file of readdirSync(dir)) {
+    const path = /"o":\["([^"]{24,})/.exec(readFileSync(join(dir, file), "utf8"))?.[1];
+    if (!path) continue;
+    total += 1;
+    if (js.includes(path)) found += 1;
+  }
+  return { found, total };
+}
 const args = new Set(process.argv.slice(2));
 // Carpetas de los paquetes publicables, en orden de dependencias. `suite` es el paraguas @zuccadev-labs/zuix.
 const PACKAGES = ["tokens", "zicon", "zui", "zout", "suite"];
@@ -267,7 +287,7 @@ function fileURLToPathSafe(u) { return decodeURIComponent(new URL(u).pathname); 
 const specs = [
   "@zuccadev-labs/zuix-zicon", "@zuccadev-labs/zuix-zicon/core", "@zuccadev-labs/zuix-zicon/all", "@zuccadev-labs/zuix-zicon/dom", "@zuccadev-labs/zuix-zicon/element", "@zuccadev-labs/zuix-zicon/icons/x-mark",
   "@zuccadev-labs/zuix-zicon/manifest.json", "@zuccadev-labs/zuix-zicon/sprite.svg", "@zuccadev-labs/zuix-zicon/svg/outline/bell.svg", "@zuccadev-labs/zuix-zicon/svg/solid/bell.svg", "@zuccadev-labs/zuix-zicon/dist/zicon.element.js",
-  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js",
+  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js",
   "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js",
   "@zuccadev-labs/zuix-tokens/tokens.css", "@zuccadev-labs/zuix-tokens/tokens.json", "@zuccadev-labs/zuix-tokens/css/dazlabs.css",
 ];
@@ -415,12 +435,12 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
     if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-"))
       bad("vite: el CSS compilado no trae zui, zout y tokens");
     else if (!js.includes("z-btn--")) bad("vite: el JS compilado no trae los componentes");
-    // Solo se registraron dos iconos: el set completo (≈580 kB) no debe entrar en el bundle.
-    else if (js.length > 450_000)
-      bad(`vite: el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el set completo de iconos no se está descartando`);
+    // Solo se registraron dos iconos: el set completo no debe entrar en el bundle.
+    else if (iconsIn(js).found > ICON_LIMIT)
+      bad(`vite: el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el set completo no se está descartando`);
     else
       ok(
-        `vite: CSS ${(css.length / 1024).toFixed(0)} kB con tokens, zui y zout · JS ${(js.length / 1024).toFixed(0)} kB sin el set completo de iconos`,
+        `vite: CSS ${(css.length / 1024).toFixed(0)} kB con tokens, zui y zout · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
       );
   }
   if (
@@ -438,11 +458,11 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
     if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-") || css.includes("@import"))
       bad("vite (paraguas): @zuccadev-labs/zuix/styles.css no trae tokens, zui y zout resueltos");
     else if (!js.includes("z-btn--")) bad("vite (paraguas): el JS compilado no trae los componentes");
-    else if (js.length > 450_000)
-      bad(`vite (paraguas): el bundle pesa ${(js.length / 1024).toFixed(0)} kB; el paraguas arrastra el set completo de iconos`);
+    else if (iconsIn(js).found > ICON_LIMIT)
+      bad(`vite (paraguas): el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el paraguas arrastra el set completo`);
     else
       ok(
-        `vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB sin el set completo de iconos`,
+        `vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
       );
   }
 }
@@ -468,6 +488,18 @@ assert.match(svg, /^<svg xmlns="http:\\/\\/www.w3.org\\/2000\\/svg" viewBox="0 0
 assert.ok(svg.includes('class="z-icon"') && svg.includes("<path"));
 const zui = await import("@zuccadev-labs/zuix-zui/dom");
 for (const fn of ["init", "hydrate", "toast", "confirm", "openDialog", "closeDialog", "openPopover", "setTheme", "setBrand", "carousel"]) assert.equal(typeof zui[fn], "function", "zui/dom." + fn);
+// Entradas por familia: el núcleo y cada familia cargan solas y exportan su módulo para init()/use().
+const core = await import("@zuccadev-labs/zuix-zui/dom/core");
+for (const fn of ["init", "use", "hydrate", "destroy", "toast", "confirm", "openDialog", "openPopover", "setSelectValue"]) assert.equal(typeof core[fn], "function", "zui/dom/core." + fn);
+assert.equal(zui.toast, core.toast, "zui/dom reexporta el núcleo de zui/dom/core");
+const families = { dates: "datesModule", data: "dataModule", content: "contentModule", agenda: "agendaModule", charts: "chartsModule", color: "colorModule", media: "mediaModule", effects: "effectsModule" };
+for (const [family, name] of Object.entries(families)) {
+  const mod = await import("@zuccadev-labs/zuix-zui/dom/" + family);
+  assert.ok(Array.isArray(mod[name]?.parts), "zui/dom/" + family + "." + name);
+  assert.equal(zui[name], mod[name], "zui/dom reexporta " + name);
+  assert.equal((await import("@zuccadev-labs/zuix/zui/dom/" + family))[name], mod[name], "el paraguas reexporta zui/dom/" + family);
+}
+assert.equal((await import("@zuccadev-labs/zuix/zui/dom/core")).toast, core.toast, "el paraguas reexporta zui/dom/core");
 const zout = await import("@zuccadev-labs/zuix-zout/dom");
 for (const fn of ["init", "hydrate", "setPanelOpen", "addWorkTab"]) assert.equal(typeof zout[fn], "function", "zout/dom." + fn);
 // Los módulos dom de zui registran sus iconos en el mismo registro que usa la aplicación.
@@ -489,6 +521,86 @@ console.log("dom: @zuccadev-labs/zuix-zicon/dom, @zuccadev-labs/zuix-zui/dom y @
 );
 if (step("dom: pnpm install desde los tarballs, sin React", "pnpm", install, domDir).ok) {
   step("dom: importar zicon/dom, zui/dom y zout/dom sin React", "node", ["dom.mjs"], domDir);
+  await domTreeShaking(domDir);
+}
+
+/**
+ * Lo que arrastra cada entrada de zui/dom en un bundler, con los paquetes instalados (dist/esm y su `sideEffects`).
+ * Se cuentan iconos y se buscan clases propias de cada familia, no kilobytes: así la prueba no depende del tamaño de
+ * cada componente. Quien solo toma toast() del núcleo (o de la entrada completa) no debe cargar la agenda, los
+ * gráficos ni el ColorPicker; init() del núcleo tampoco; init() de la entrada completa los trae todos.
+ */
+async function domTreeShaking(dir) {
+  const { build } = await import("esbuild");
+  const MARKS = { agenda: "z-agenda__move-field", charts: "z-chart__axis", color: "z-colorpicker__area", calendar: "z-calendar__grid" };
+  const bundle = async (code) => {
+    const out = await build({
+      stdin: { contents: code, resolveDir: dir, loader: "js" },
+      absWorkingDir: dir,
+      bundle: true,
+      format: "esm",
+      minify: true,
+      write: false,
+      logLevel: "silent",
+      external: ["*/carousel-gl.js"],
+    });
+    const js = out.outputFiles[0].text;
+    return {
+      js,
+      kb: (js.length / 1024).toFixed(1),
+      icons: iconsIn(js).found,
+      has: Object.keys(MARKS).filter((k) => js.includes(MARKS[k])),
+    };
+  };
+  const cases = [
+    [
+      "toast() de zui/dom/core",
+      'import { toast } from "@zuccadev-labs/zuix-zui/dom/core"; toast({ title: "x" });',
+      { maxIcons: 3, none: ["agenda", "charts", "color", "calendar"] },
+    ],
+    [
+      "toast() de zui/dom",
+      'import { toast } from "@zuccadev-labs/zuix-zui/dom"; toast({ title: "x" });',
+      { maxIcons: 3, none: ["agenda", "charts", "color", "calendar"] },
+    ],
+    [
+      "toast() del paraguas zui/dom/core",
+      'import { toast } from "@zuccadev-labs/zuix/zui/dom/core"; toast({ title: "x" });',
+      { maxIcons: 3, none: ["agenda", "charts", "color", "calendar"] },
+    ],
+    [
+      "init() de zui/dom/core",
+      'import { init } from "@zuccadev-labs/zuix-zui/dom/core"; init();',
+      { none: ["agenda", "charts", "color", "calendar"] },
+    ],
+    [
+      "init(agendaModule) de zui/dom/core",
+      'import { init } from "@zuccadev-labs/zuix-zui/dom/core"; import { agendaModule } from "@zuccadev-labs/zuix-zui/dom/agenda"; init(agendaModule);',
+      { all: ["agenda", "calendar"], none: ["charts", "color"] },
+    ],
+    [
+      "init() de zui/dom",
+      'import { init } from "@zuccadev-labs/zuix-zui/dom"; init();',
+      { all: ["agenda", "charts", "color", "calendar"] },
+    ],
+  ];
+  for (const [name, code, want] of cases) {
+    let r;
+    try {
+      r = await bundle(code);
+    } catch (error) {
+      bad(`dom (bundler): ${name} no compila: ${String(error.message).split("\n")[0]}`);
+      continue;
+    }
+    const extra = (want.none ?? []).filter((k) => r.has.includes(k));
+    const missing = (want.all ?? []).filter((k) => !r.has.includes(k));
+    const summary = `${r.kb} kB, ${r.icons} iconos${r.has.length ? `, con ${r.has.join(", ")}` : ""}`;
+    if (extra.length) bad(`dom (bundler): ${name} arrastra ${extra.join(", ")} (${summary})`);
+    else if (missing.length) bad(`dom (bundler): ${name} no trae ${missing.join(", ")} (${summary})`);
+    else if (want.maxIcons !== undefined && r.icons > want.maxIcons)
+      bad(`dom (bundler): ${name} trae ${r.icons} iconos (máximo ${want.maxIcons})`);
+    else ok(`dom (bundler): ${name} · ${summary}`);
+  }
 }
 
 // ── 5. Consumidor Next.js (App Router), con --next ────────────────────────────────────────────────

@@ -1,0 +1,81 @@
+{
+  "name": "HabitCalendar",
+  "group": "agenda",
+  "description": "Rachas y hábitos: mes con días cumplidos (sólido y marca), fallados (trama y cruz, texto en peligro), de descanso (guion; no rompen la racha), hoy en curso (anillo de progreso) y una banda que une los días de la racha actual, con leyenda; `variant=\"week\"`, tira compacta de la semana para la cabecera de una app.",
+  "import": "import { HabitCalendar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "states",
+      "type": "Record<string, \"done\" | \"missed\" | \"rest\" | { progress: number }>"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["month", "week"],
+      "default": "month"
+    },
+    {
+      "name": "subtitle",
+      "type": "string"
+    },
+    {
+      "name": "note",
+      "type": "string"
+    },
+    {
+      "name": "month",
+      "type": "string",
+      "description": "YYYY-MM; también defaultMonth y onMonthChange."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<HabitLabels>"
+    },
+    {
+      "name": "onDayClick",
+      "type": "(detail: { date; state }) => void"
+    }
+  ],
+  "states": ["done", "missed", "rest", "progress", "today", "future"],
+  "tokens": [
+    "success",
+    "success-solid",
+    "danger",
+    "danger-text",
+    "warning",
+    "warning-solid",
+    "warning-text",
+    "fg-on-accent",
+    "calendar-today-ring",
+    "calendar-cell-radius",
+    "panel-radius"
+  ],
+  "classes": ["z-habit"],
+  "a11y": "Mes como rejilla (table role=grid etiquetada por el mes) con un botón por día: nombre con la fecha y el estado («Thursday 12 November, Done», «Today 60%»); tabindex itinerante: flechas, Inicio/Fin, RePág/AvPág. Cada estado tiene forma o icono además del color (marca, cruz con trama, guion, anillo) y la leyenda lo explica. La semana compacta es una lista con el estado de cada día en texto oculto. Sin React: .z-habit con data-variant, data-month, data-today… y states en <script type=\"application/json\" data-props>; emite z:dayclick y z:monthchange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Racha del mes",
+      "code": "<HabitCalendar subtitle=\"Read 20 minutes\" states={{ \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { progress: 60 } }} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Racha del mes",
+      "code": "<div class=\"z-habit\" id=\"reading-habit\" data-subtitle=\"Read 20 minutes\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"states\": { \"2026-11-12\": \"done\", \"2026-11-13\": \"done\", \"2026-11-14\": \"missed\", \"2026-11-15\": \"rest\", \"2026-11-16\": \"done\", \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { \"progress\": 60 } } }</script>\n</div>"
+    }
+  ],
+  "origin": "Especificación agenda.md §13; Duolingo, Streaks."
+}

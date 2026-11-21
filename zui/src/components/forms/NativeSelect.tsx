@@ -11,11 +11,18 @@ export interface NativeSelectOption {
   disabled?: boolean;
 }
 
+/** Grupo de opciones (`<optgroup>`). */
+export interface NativeSelectOptionGroup {
+  label: string;
+  options: ReadonlyArray<NativeSelectOption>;
+  disabled?: boolean;
+}
+
 export interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
   size?: ControlSize;
   invalid?: boolean;
-  /** Opciones como datos; como alternativa se pasan `<option>` hijos. */
-  options?: ReadonlyArray<NativeSelectOption>;
+  /** Opciones como datos, sueltas o en grupos `{ label, options }` (`<optgroup>`); también valen hijos `<option>`. */
+  options?: ReadonlyArray<NativeSelectOption | NativeSelectOptionGroup>;
   /** Primera opción vacía, no seleccionable. */
   placeholder?: string;
   /** Ancho completo (por defecto) o intrínseco. */
@@ -59,15 +66,25 @@ export function NativeSelect({
             {placeholder}
           </option>
         ) : null}
-        {options?.map((option) => (
-          <option key={option.value} value={option.value} disabled={option.disabled}>
-            {option.label}
-          </option>
-        ))}
+        {options?.map((entry) =>
+          "options" in entry ? (
+            <optgroup key={`group-${entry.label}`} label={entry.label} disabled={entry.disabled}>
+              {entry.options.map((option) => (
+                <option key={option.value} value={option.value} disabled={option.disabled}>
+                  {option.label}
+                </option>
+              ))}
+            </optgroup>
+          ) : (
+            <option key={entry.value} value={entry.value} disabled={entry.disabled}>
+              {entry.label}
+            </option>
+          ),
+        )}
         {children}
       </select>
       <span className="z-select__chevron">
-        <Icon name="chevron-down" size={ICON_SIZE[size]} />
+        <Icon name="chevron-up-down" size={ICON_SIZE[size]} />
       </span>
     </span>
   );

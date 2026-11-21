@@ -1,0 +1,53 @@
+{
+  "name": "Timer",
+  "group": "content",
+  "description": "Cuenta atrás o cronómetro con iniciar, pausar, reanudar y reiniciar. Cifras tabulares del locale; los hitos se anuncian en una región status aparte, sin inundarla cada segundo.",
+  "import": "import { Timer } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "mode", "type": "enum", "values": ["countdown", "stopwatch"], "default": "countdown" },
+    { "name": "duration", "type": "number | string", "description": "Cuenta atrás: segundos o ISO 8601 (PT5M)." },
+    { "name": "autoStart", "type": "boolean", "default": false },
+    { "name": "precision", "type": "enum", "values": ["second", "tenth"], "default": "second" },
+    { "name": "showHours", "type": "boolean", "description": "Siempre con horas; por defecto solo desde una hora." },
+    { "name": "controls", "type": "boolean", "default": true },
+    {
+      "name": "announceEvery",
+      "type": "number",
+      "default": 60,
+      "description": "Segundos entre anuncios de la región viva (0: solo inicio, pausa y fin)."
+    },
+    { "name": "announceFinal", "type": "number", "default": 0, "description": "Cuenta atrás: anuncia cada uno de los últimos N segundos." },
+    { "name": "locale", "type": "string" },
+    { "name": "orientation", "type": "enum", "values": ["horizontal", "vertical"], "default": "horizontal" },
+    { "name": "label", "type": "string", "default": "Timer", "description": "Nombre accesible del grupo." },
+    { "name": "startLabel", "type": "string", "default": "Start" },
+    { "name": "pauseLabel", "type": "string", "default": "Pause" },
+    { "name": "resumeLabel", "type": "string", "default": "Resume" },
+    { "name": "resetLabel", "type": "string", "default": "Reset" },
+    { "name": "doneLabel", "type": "string", "default": "Time's up" },
+    { "name": "pausedLabel", "type": "string", "default": "Paused" },
+    { "name": "leftLabel", "type": "string", "default": "left" },
+    { "name": "onStateChange", "type": "(state: \"idle\" | \"running\" | \"paused\" | \"done\") => void" },
+    { "name": "onComplete", "type": "() => void" }
+  ],
+  "states": ["idle", "running", "paused", "done"],
+  "tokens": ["fg", "fg-muted", "accent-text", "text-display-sm", "weight-semibold", "space-1-5", "space-3"],
+  "classes": ["z-timer", "z-timer__display", "z-timer__actions", "z-timer__toggle", "z-timer__reset", "z-timer__status"],
+  "a11y": "Grupo con nombre (role=group, aria-label). La pantalla es un <time datetime=\"PT…\"> con un role=timer (sin región viva) cuyo nombre es el tiempo hablado («4 minutes, 30 seconds left», Intl.DurationFormat con respaldo de NumberFormat); el lector lo lee al llegar a él. Los anuncios van a un role=status oculto, vaciado antes de cada mensaje: al iniciar o reanudar, al pausar («Paused, …»), cada announceEvery segundos, en los últimos announceFinal segundos y al terminar (doneLabel). Nunca assertive. Botones nativos con icono y texto. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-timer` dentro de `[data-z-dom]` con data-mode, data-duration (segundos o PT…), data-precision, data-show-hours, data-announce-every, data-announce-final, data-autostart, data-locale y los textos en data-*-label; startTimer(el), pauseTimer(el), resetTimer(el); emite z:statechange { state } y z:complete.",
+  "behavior": "dom",
+  "examples": [
+    { "title": "Cuenta atrás de cinco minutos", "code": "<Timer label=\"Break\" duration=\"PT5M\" announceFinal={5} />" },
+    { "title": "Cronómetro con décimas", "code": "<Timer label=\"Lap\" mode=\"stopwatch\" precision=\"tenth\" announceEvery={0} />" }
+  ],
+  "html": [
+    {
+      "title": "Cuenta atrás de cinco minutos",
+      "code": "<div class=\"z-timer\" role=\"group\" aria-label=\"Break\" data-mode=\"countdown\" data-duration=\"PT5M\" data-announce-final=\"5\" data-state=\"idle\" data-orientation=\"horizontal\">\n  <time class=\"z-timer__display\" datetime=\"PT5M\"><span role=\"timer\" aria-label=\"5 minutes left\">05:00</span></time>\n  <span class=\"z-timer__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary z-timer__toggle\" data-size=\"sm\"><z-icon name=\"play\" size=\"16\"></z-icon>Start</button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-timer__reset\" data-size=\"sm\" disabled><z-icon name=\"arrow-path\" size=\"16\"></z-icon>Reset</button>\n  </span>\n  <span class=\"z-sr-only z-timer__status\" role=\"status\"></span>\n</div>"
+    },
+    {
+      "title": "Cronómetro con décimas",
+      "code": "<div class=\"z-timer\" role=\"group\" aria-label=\"Lap\" data-mode=\"stopwatch\" data-precision=\"tenth\" data-announce-every=\"0\" data-state=\"idle\" data-orientation=\"horizontal\">\n  <time class=\"z-timer__display\" datetime=\"PT0S\"><span role=\"timer\" aria-label=\"0 seconds\">00:00.0</span></time>\n  <span class=\"z-timer__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary z-timer__toggle\" data-size=\"sm\"><z-icon name=\"play\" size=\"16\"></z-icon>Start</button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-timer__reset\" data-size=\"sm\" disabled><z-icon name=\"arrow-path\" size=\"16\"></z-icon>Reset</button>\n  </span>\n  <span class=\"z-sr-only z-timer__status\" role=\"status\"></span>\n</div>"
+    }
+  ],
+  "origin": "Timer de Shark UI; role=timer de WAI-ARIA."
+}

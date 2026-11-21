@@ -37,7 +37,6 @@
   "tokens": [
     "radius-full",
     "accent-soft",
-    "accent",
     "weight-bold",
     "radius-sm",
     "fg-subtle",
@@ -46,7 +45,8 @@
     "danger",
     "warning",
     "surface-3",
-    "fg-muted"
+    "fg-muted",
+    "accent-text"
   ],
   "classes": ["z-avatar-group", "z-avatar"],
   "a11y": "role group; el contador expone su texto por aria-label.",

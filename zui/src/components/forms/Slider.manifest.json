@@ -85,10 +85,34 @@
       "name": "form",
       "type": "string",
       "description": "Id del formulario al que pertenece, si no está dentro de él."
+    },
+    {
+      "name": "marks",
+      "type": "boolean | (number | { value, label? })[]",
+      "description": "Marcas sobre la pista: `true` una por paso (hasta 21), una lista de valores o `{ value, label }` con texto bajo la marca. Decorativas: el valor lo anuncia el tirador."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled"],
-  "tokens": ["space-20", "radius-full", "surface-3", "accent", "fg-on-accent", "shadow-sm", "duration-fast", "ease-standard", "focus-ring"],
+  "tokens": [
+    "space-20",
+    "radius-full",
+    "surface-3",
+    "accent",
+    "fg-on-accent",
+    "shadow-sm",
+    "duration-fast",
+    "ease-standard",
+    "accent-ring",
+    "focus-width",
+    "line",
+    "radius-xs",
+    "touch-target",
+    "fg-subtle",
+    "fg-muted",
+    "text-caption",
+    "space-1",
+    "space-4"
+  ],
   "classes": ["z-slider"],
   "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
   "behavior": "dom",
@@ -100,6 +124,10 @@
     {
       "title": "Rango",
       "code": "<Slider value={range} onValueChange={setRange} min={0} max={500} thumbLabels={[\"Minimum\", \"Maximum\"]} />"
+    },
+    {
+      "title": "Con marcas y etiquetas",
+      "code": "<Field label=\"Quality\">\n  <Slider\n    defaultValue={[50]}\n    step={25}\n    marks={[\n      { value: 0, label: \"Low\" },\n      { value: 25 },\n      { value: 50, label: \"Medium\" },\n      { value: 75 },\n      { value: 100, label: \"High\" },\n    ]}\n  />\n</Field>"
     }
   ],
   "html": [
@@ -111,6 +139,10 @@
     {
       "title": "Rango",
       "code": "<span class=\"z-slider\" id=\"price\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"500\" data-step=\"10\" data-value=\"120,380\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Minimum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"120\" aria-orientation=\"horizontal\"></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Maximum\" aria-valuemin=\"0\" aria-valuemax=\"500\" aria-valuenow=\"380\" aria-orientation=\"horizontal\"></span>\n</span>"
+    },
+    {
+      "title": "Con marcas y etiquetas",
+      "code": "<span class=\"z-slider\" id=\"quality\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"25\" data-value=\"50\" data-marks=\"labels\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__marks\" aria-hidden=\"true\">\n    <span class=\"z-slider__mark\" data-value=\"0\" data-in-range style=\"inset-inline-start:calc(0.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Low</span></span>\n    <span class=\"z-slider__mark\" data-value=\"25\" data-in-range style=\"inset-inline-start:calc(0.25 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"50\" data-in-range style=\"inset-inline-start:calc(0.5 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Medium</span></span>\n    <span class=\"z-slider__mark\" data-value=\"75\" style=\"inset-inline-start:calc(0.75 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"100\" style=\"inset-inline-start:calc(1.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">High</span></span>\n  </span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Quality\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"50\" aria-orientation=\"horizontal\"></span>\n</span>"
     }
   ],
   "origin": "Nuevo, con primitiva propia (patrón APG)."

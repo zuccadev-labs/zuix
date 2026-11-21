@@ -30,13 +30,13 @@
       "description": "`header` es la cabecera de la aplicación (región banner). `div` para una barra que no lo es: un Shell anidado o una segunda ventana en la misma página."
     }
   ],
-  "tokens": ["canvas-fg", "layer-sticky", "text-body"],
+  "tokens": ["canvas-fg", "layer-sticky", "text-body", "space-1", "space-2"],
   "classes": ["z-titlebar"],
   "a11y": "Es un <header>: fuera de <main>, <section> o <article> el navegador lo expone como región banner, y solo debe haber una por página (`as=\"div\"` en las demás).",
   "examples": [
     {
       "title": "Con pestañas",
-      "code": "<TitleBar brand={<Logo />} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={tabs} activeId={active} onSelect={setActive} />\n</TitleBar>"
+      "code": "<TitleBar brand={<><Icon name=\"cube\" size={18} /> Atlas</>} actions={<IconButton icon=\"gear\" label=\"Settings\" />}>\n  <TabStrip tabs={[{ id: \"main\", title: \"main.ts\" }, { id: \"readme\", title: \"README.md\" }]} activeId=\"main\" onSelect={setActive} />\n</TitleBar>"
     }
   ],
   "origin": "Barra de título de zutool."

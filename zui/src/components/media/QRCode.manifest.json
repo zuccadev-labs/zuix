@@ -1,0 +1,50 @@
+{
+  "name": "QRCode",
+  "group": "media",
+  "description": "Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con la zona de silencio de la norma. Sin dependencias y sin estado: vale en un Server Component.",
+  "import": "import { QRCode } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "value", "type": "string", "required": true, "description": "Texto o URL que codifica." },
+    {
+      "name": "level",
+      "type": "enum",
+      "values": ["L", "M", "Q", "H"],
+      "default": "M",
+      "description": "Corrección de errores: L 7 %, M 15 %, Q 25 %, H 30 %."
+    },
+    { "name": "size", "type": "number", "default": 160, "description": "Lado en píxeles." },
+    { "name": "margin", "type": "number", "default": 4, "description": "Zona de silencio en módulos (la norma pide 4)." },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Icono en el centro; sube la corrección a H para compensar los módulos que tapa."
+    },
+    { "name": "label", "type": "string", "description": "Nombre accesible propio (por defecto «QR code: {value}»)." },
+    { "name": "labels", "type": "Partial<QRCodeLabels>", "description": "`image` («QR code: {value}») y `tooLong`." }
+  ],
+  "states": ["rest", "invalid"],
+  "tokens": [
+    "qrcode-dark",
+    "qrcode-light",
+    "control-radius-lg",
+    "line",
+    "radius-xs",
+    "surface-2",
+    "danger-text",
+    "space-1",
+    "space-3",
+    "text-small"
+  ],
+  "classes": ["z-qrcode"],
+  "a11y": "role=\"img\" con nombre («QR code: https://…»): el contenido también se lee. El SVG es aria-hidden. Si el texto no cabe en la versión 40 se muestra un aviso en texto. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-qrcode con data-value, data-level, data-size, data-margin y data-icon dentro de [data-z-dom] se dibuja solo; setWidgetProps(el, { value }) lo cambia.",
+  "behavior": "dom",
+  "examples": [
+    { "title": "Enlace", "code": "<QRCode value=\"https://zuccadev-labs.github.io/zuix/\" />" },
+    { "title": "Corrección alta con icono", "code": "<QRCode value=\"https://zuccadev-labs.github.io/zuix/\" icon=\"bolt\" size={200} />" },
+    {
+      "title": "Pequeño, corrección baja",
+      "code": "<QRCode value=\"WIFI:T:WPA;S:Studio;P:correct-horse;;\" level=\"L\" size={120} margin={2} label=\"Wi-Fi network Studio\" />"
+    }
+  ],
+  "origin": "Oleada 7. Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia."
+}

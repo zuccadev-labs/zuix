@@ -8,7 +8,7 @@
       "name": "items",
       "type": "AccordionItem[]",
       "required": true,
-      "description": "{ value, title, content, icon?, disabled? }"
+      "description": "{ value, title, content, icon?, disabled? } `disabled` en un item lo deja sin abrir ni cerrar y fuera de las flechas."
     },
     {
       "name": "type",
@@ -34,27 +34,49 @@
       "type": "enum",
       "values": [2, 3, 4, 5, 6],
       "default": 3
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["plain", "card"],
+      "default": "plain",
+      "description": "`card`: cada sección es una tarjeta separada."
+    },
+    {
+      "name": "collapsible",
+      "type": "boolean",
+      "default": true,
+      "description": "Con type=\"single\", `false` impide cerrar la sección abierta: siempre queda una."
     }
   ],
-  "states": ["open", "closed", "hover", "focus", "disabled"],
+  "states": ["closed", "disabled", "focus", "hover", "locked", "open"],
   "tokens": [
     "duration-fast",
     "duration-normal",
-    "ease-out",
     "ease-standard",
     "fg",
     "fg-muted",
-    "fg-subtle",
-    "focus-ring",
     "leading-relaxed",
     "line",
-    "radius-sm",
     "row-hover",
     "space-2",
-    "space-3",
     "space-4",
     "text-body",
-    "weight-semibold"
+    "accent-ring",
+    "control-height-lg",
+    "ease-emphasized",
+    "ease-exit",
+    "fg-prose",
+    "focus-width",
+    "item-radius",
+    "space-2-5",
+    "weight-medium",
+    "card-border",
+    "card-bg",
+    "card-shadow",
+    "radius-lg",
+    "line-strong",
+    "space-1"
   ],
   "classes": [
     "z-accordion",
@@ -65,11 +87,15 @@
     "z-accordion__content",
     "z-accordion__body"
   ],
-  "a11y": "Patrón APG «accordion»: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras.",
+  "a11y": "Patrón APG «accordion»: cada cabecera es un botón dentro de un encabezado con aria-expanded y aria-controls; flechas, Inicio y Fin mueven entre cabeceras. Con collapsible={false}, la cabecera de la sección abierta lleva aria-disabled=\"true\" (sigue enfocable y en las flechas) y no la cierra. Un item deshabilitado es un botón disabled: no se abre y las flechas lo saltan.",
   "examples": [
     {
       "title": "Preguntas frecuentes",
       "code": "<Accordion\n  defaultValue={[\"billing\"]}\n  items={[\n    { value: \"billing\", title: \"How does billing work?\", content: <p>You are charged monthly.</p> },\n    { value: \"cancel\", title: \"Can I cancel anytime?\", content: <p>Yes, from your account settings.</p> },\n  ]}\n/>"
+    },
+    {
+      "title": "Tarjeta, siempre una abierta e item deshabilitado",
+      "code": "<Accordion\n  variant=\"card\"\n  collapsible={false}\n  defaultValue={[\"plan\"]}\n  items={[\n    { value: \"plan\", title: \"Plan\", content: \"Pro, billed yearly.\" },\n    { value: \"seats\", title: \"Seats\", content: \"12 of 20 in use.\" },\n    { value: \"sso\", title: \"Single sign-on\", content: \"Enterprise only.\", disabled: true },\n  ]}\n/>"
     }
   ],
   "origin": "Nuevo; accesibilidad según el patrón APG, con primitivas propias.",
@@ -78,6 +104,10 @@
     {
       "title": "Preguntas frecuentes (una abierta a la vez; data-type=\"multiple\" permite varias)",
       "code": "<div class=\"z-accordion\" data-type=\"single\">\n  <div class=\"z-accordion__item\" data-state=\"open\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"faq-1-content\" id=\"faq-1\">\n        <span class=\"z-accordion__title\">How does billing work?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"faq-1-content\" aria-labelledby=\"faq-1\">\n      <div class=\"z-accordion__body\">You are charged monthly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"faq-2-content\" id=\"faq-2\">\n        <span class=\"z-accordion__title\">Can I cancel anytime?</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"faq-2-content\" aria-labelledby=\"faq-2\" hidden>\n      <div class=\"z-accordion__body\">Yes, from the billing page.</div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Tarjeta, siempre una abierta e item deshabilitado (data-variant=\"card\", data-collapsible=\"false\")",
+      "code": "<div class=\"z-accordion\" data-type=\"single\" data-variant=\"card\" data-collapsible=\"false\">\n  <div class=\"z-accordion__item\" data-state=\"open\" data-value=\"plan\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"acc-plan-content\" id=\"acc-plan\">\n        <span class=\"z-accordion__title\">Plan</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"open\" role=\"region\" id=\"acc-plan-content\" aria-labelledby=\"acc-plan\">\n      <div class=\"z-accordion__body\">Pro, billed yearly.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\" data-value=\"seats\">\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" aria-expanded=\"false\" aria-controls=\"acc-seats-content\" id=\"acc-seats\">\n        <span class=\"z-accordion__title\">Seats</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"acc-seats-content\" aria-labelledby=\"acc-seats\" hidden>\n      <div class=\"z-accordion__body\">12 of 20 in use.</div>\n    </div>\n  </div>\n  <div class=\"z-accordion__item\" data-state=\"closed\" data-value=\"sso\" data-disabled>\n    <h3 class=\"z-accordion__header\">\n      <button type=\"button\" class=\"z-accordion__trigger\" data-state=\"closed\" data-disabled aria-expanded=\"false\" aria-controls=\"acc-sso-content\" id=\"acc-sso\" disabled>\n        <span class=\"z-accordion__title\">Single sign-on</span>\n        <span class=\"z-accordion__chevron\"><z-icon name=\"chevron-down\" size=\"14\"></z-icon></span>\n      </button>\n    </h3>\n    <div class=\"z-accordion__content\" data-state=\"closed\" role=\"region\" id=\"acc-sso-content\" aria-labelledby=\"acc-sso\" hidden>\n      <div class=\"z-accordion__body\">Enterprise only.</div>\n    </div>\n  </div>\n</div>"
     }
   ]
 }

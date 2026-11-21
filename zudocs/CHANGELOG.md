@@ -7,6 +7,77 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
+### Añadido
+
+- Grupo «Medios» en el catálogo (QRCode, CompareSlider, ImageCropper, SignaturePad) y vistas previas de React de
+  ColorPicker y ColorPickerTrigger.
+- Galerías `/loaders` (Spinner con sus formas y los 12 patrones de DotMatrix con tamaño, tono, rejilla y baldosa, y
+  código para copiar) y `/effects` (Backdrop, BorderBeam, Glow, AttentionRing y TextEffect en vivo, con sus
+  variantes), con el armazón del sitio. Se activan con `pages.loaders` y `pages.effects` y aparecen en la sección
+  Referencia de la barra lateral; «Efectos» va también en la barra superior. Grupo «Efectos» en el índice de
+  componentes.
+- Una página por componente de `zui` y `zout` (`/components/<grupo>/<componente>`), generada en el build desde
+  `manifest.json` y `html.json`: título, entradilla, enlaces (APG, manifiesto, HTML sin React), vista previa en
+  vivo sobre el lienzo de la marca, instalación, ejemplos con pestañas Vista previa / Código y conmutador
+  React / HTML (el HTML se pinta con `zui/dom`), API, accesibilidad y teclado, tokens y clases, y
+  relacionados. Un componente nuevo aparece solo con existir su manifiesto. `/components` pasa a ser el
+  índice, con tarjetas por categoría y buscador.
+- «Copiar página» en cada documento y página de componente: copia el Markdown de la página (con menú para
+  verlo y para copiar el enlace). `llms.txt` lista también los componentes y cada uno tiene su copia `.md`.
+- Bloques de instalación con pestañas pnpm, npm, yarn y bun que recuerdan la elección; una orden de
+  instalación en un bloque `bash` se convierte sola.
+- Campos `repository` y `cta` en `zudocs.config.json`.
+
+### Cambiado
+
+- Tema rehecho con el estándar liquid glass: barra superior flotante en dos barras de cristal, barra lateral
+  de cristal con pestañas de sección, grupos plegables, contadores y filtro, artículo sobre superficie de
+  lectura con anterior/siguiente, migas, entradilla, fecha y tiempo de lectura, rail «En esta página» con la
+  sección visible resaltada, bloques de código con cabecera y portada nueva. Nada del aspecto del tema
+  clásico de Docusaurus queda a la vista.
+- El buscador local se abre como paleta de cristal (`⌘K` / `Ctrl K` o `/`) en un `<dialog>` modal.
+- En pantallas estrechas la navegación va en un cajón (`<dialog>` modal), que se abre desde la barra o desde
+  las migas del artículo.
+- El código se colorea con los tokens de texto de la marca, los mismos en claro y oscuro; el validador de
+  contraste de `@zuccadev-labs/zuix-tokens` mide ahora también la hoja del sitio.
+- El sitio deja de cargar Poppins: con la base visual nueva, la marca `dazlabs` usa DM Sans también en los
+  titulares. Quedan autoalojadas DM Sans y JetBrains Mono.
+
+### Corregido
+
+- Código en línea de los documentos: una ruta larga parte tras `/`, `.`, `-` o `_`, no dentro de una palabra.
+- Tablas de los documentos: el código de una celda no parte palabras («README.m/d» a 390); la tabla se desplaza en
+  su marco y el lado con contenido oculto se difumina.
+- Las vistas previas HTML ejecutan el script de su ejemplo (el de html.json) tras hidratar: los lienzos del
+  carrusel WebGL se pintan (antes salían negros) y el tour, los avisos o el diálogo de confirmación responden.
+- Tabla de API de cada componente: si no cabe en su caja, cada prop pasa a una tarjeta (nombre y tipo arriba, valor
+  por defecto y descripción debajo); si cabe, sigue siendo tabla. Antes, a 390, el tipo se partía letra a letra
+  («str/ing») y la descripción quedaba cortada por el borde. Los tipos y valores largos parten entre piezas (tras
+  `<`, `,`, `|`, `:`), nunca dentro de un nombre, y el nombre de la prop es la cabecera de su fila.
+- Galería de cargadores: el nombre de cada patrón parte línea en vez de cortarse junto al botón de copiar («Onda
+  de es…» a 390).
+- Vistas previas: el restablecimiento de estilos del navegador ya no anula el atributo `hidden`; las filas ocultas
+  de una `DataTable` paginada se veían todas.
+- Aspecto y medidas del sitio:
+  - Rellenos, huecos, interlineados y pesos en tokens: tabla de props y de Markdown a 14/20 (antes 13/18 y
+    10/18), índice con interlineado `leading-ui` y sangrías de la escala, código en línea con peso regular,
+    titular de portada con `text-hero` y `leading-tight`.
+  - Los chips (enlaces de la cabecera de componente) usaban Arial: heredan la fuente de la marca. El buscador de la
+    barra, el filtro de la barra lateral y los chips pierden el relleno por defecto del navegador.
+  - Página de búsqueda: titular con la escala de la suite y campo de 48 px.
+  - El enlace de cada diapositiva de la portada mide 24 px de alto (objetivo de WCAG 2.5.8).
+  - La 404 dice «Página no encontrada» (el tema traía «Página No Encontrada», con mayúsculas a la inglesa).
+  - La búsqueda ya no desborda 2 px a 390 (la fila de Infima salía por los lados) y las casillas de las listas de
+    tareas usan un hueco de la escala.
+  - Los bloques de código no registran la escucha de `resize` del ajuste de línea del tema (el sitio no muestra
+    ese botón): en un teléfono lanzaba «Cannot destructure property 'scrollWidth'» en algunas páginas.
+  - Las vistas previas en columna centran un `Calendar` (ahora mide su contenido) en vez de dejarlo a la izquierda.
+  - Las cabeceras de las tablas pueden partir línea: con una fuente más ancha la tabla de props desbordaba 3–4 px.
+  - La barra lateral centra en su área con desplazamiento la página actual si quedaba fuera o a medias (al final de
+    una lista larga).
+
 ## [0.2.0] - 2026-11-18
 
 ### Cambios incompatibles

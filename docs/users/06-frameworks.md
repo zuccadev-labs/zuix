@@ -92,7 +92,8 @@ Después se escribe el marcado del contrato en la plantilla del framework. En Vu
 `CUSTOM_ELEMENTS_SCHEMA`.
 
 `init()` devuelve una función `destroy` (también exportada) que retira todos los listeners del documento y
-de la ventana; `init()` se puede volver a llamar. Sirve en pruebas, en microfrontends y en aplicaciones que
+de la ventana, también los de las agendas y las piezas que montó (`EventCalendar`, gráficos, `TimelineView`…);
+`init()` se puede volver a llamar. Sirve en pruebas, en microfrontends y en aplicaciones que
 montan y desmontan la interfaz.
 
 ## Con Next.js (App Router)
@@ -183,6 +184,51 @@ Cada componente declara cómo se comporta:
 [Zicon](./02-zicon.md#uso-sin-react).
 
 ## Comportamiento: `@zuccadev-labs/zuix-zui/dom`
+
+### Elegir entrada: todo o por familias
+
+`@zuccadev-labs/zuix-zui/dom` es la suite completa: exporta todo y `init()` monta todo, como en 0.2.0. No hace
+nada al importarse, así que un bundler descarta lo que no se usa: quien toma solo `toast()` no carga la agenda ni
+los gráficos. Lo que no se puede descartar es `init()`: monta todas las familias, porque no sabe qué marcado va a
+encontrar. Para no cargarlas, se parte del núcleo y se añaden las familias que use la página:
+
+```js
+import { init } from "@zuccadev-labs/zuix-zui/dom/core";
+import { datesModule } from "@zuccadev-labs/zuix-zui/dom/dates";
+import { chartsModule } from "@zuccadev-labs/zuix-zui/dom/charts";
+
+init(datesModule, chartsModule);
+// Más tarde, una vista que trae la agenda (se conecta y prepara el documento en ese momento):
+// const { agendaModule } = await import("@zuccadev-labs/zuix-zui/dom/agenda"); use(agendaModule);
+```
+
+| Entrada | Qué conecta | Exporta además |
+|---|---|---|
+| `/dom/core` | Diálogos, popovers, menús y submenús, tooltip, `toast`, `confirm`, pestañas, acordeón, casillas, interruptores, radios, Rating, acciones (Toolbar, CopyButton…), navegación (Menubar, Collapsible), capas (Drawer, HoverCard, Toggletip, Tour, ActionBar, Banner) y lo básico de formularios: Select, Combobox, Slider, OTPInput, FileUpload, NumberInput, PasswordInput, Field, Listbox y TagsInput | `init`, `use`, `hydrate`, `destroy`, `download`, utilidades de atajos |
+| `/dom/dates` | Calendar, DatePicker y sus variantes, DateField, TimeField, TimePicker, DateTimePicker | `datesModule`, `setCalendarOptions`… |
+| `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable | `dataModule`, `sortTable`… |
+| `/dom/content` | FormatNumber, FormatByte, FormatDate, Highlight, Marquee, JsonTree, Stepper con paneles, Timer, RelativeTime | `contentModule`, `setJsonTreeValue`… |
+| `/dom/agenda` | EventCalendar, TimelineView, PerpetualYear, FreeBusy, SlotPicker, CalendarHeatmap, HabitCalendar (trae `/dom/dates`) | `agendaModule`, `setAgendaEvents`… |
+| `/dom/charts` | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline | `chartsModule`, `setWidgetProps` |
+| `/dom/color` | ColorPicker, ColorArea, ColorSlider, ColorSwatchPicker, ColorField, ColorPickerTrigger | `colorModule`, `setColorValue` |
+| `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti | `mediaModule`, `carousel`… |
+| `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
+
+`init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
+`init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
+reexporta las mismas funciones y los mismos módulos, así que mezclar entradas no duplica nada. Con el paraguas, las
+mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso con esbuild (minificado, sin gzip):
+
+| Consumidor | Antes, con una sola entrada | Ahora |
+|---|---|---|
+| Solo `toast()` | 225 kB (de `/dom`) | 11 kB, de `/dom` o de `/dom/core` (3 iconos) |
+| `init()` del núcleo | — | 92 kB (4 iconos) |
+| `init()` del núcleo con fechas | — | 168 kB |
+| `init()` del núcleo con agenda | — | 332 kB |
+| `init()` completo | 526 kB | 515 kB (33 iconos) |
+
+Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
+entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.
 
 ### Declarativo
 

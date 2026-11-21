@@ -10,6 +10,8 @@ export interface ToggleProps extends Omit<ComponentProps<"button">, "onChange"> 
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
   size?: ControlSize;
+  /** `outline` con canto (por defecto); `ghost` sin canto ni fondo hasta pasar el puntero o activarse. */
+  variant?: "outline" | "ghost";
   icon?: IconName;
   /** Nombre accesible; obligatorio cuando solo hay icono. */
   label?: string;
@@ -22,6 +24,7 @@ export function Toggle({
   defaultPressed = false,
   onPressedChange,
   size = "md",
+  variant = "outline",
   icon,
   label,
   className,
@@ -43,6 +46,7 @@ export function Toggle({
       disabled={disabled}
       className={cx("z-toggle", className)}
       data-size={size}
+      data-variant={variant}
       data-icon-only={children ? undefined : true}
       onClick={(event) => {
         onClick?.(event);

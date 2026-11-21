@@ -35,14 +35,17 @@
       }
     ]
   },
-  "pages": { "components": true, "icons": true, "tokens": true },
+  "pages": { "components": true, "icons": true, "tokens": true, "loaders": true, "effects": true },
   "home": { "eyebrow": "Suite de UI/UX · marca {brand}", "title": "Un estándar.", "emphasis": "Cualquier marca.", "suite": true },
   "llms": { "append": "llms.append.md" },
   "search": { "enabled": true, "languages": ["es", "en"] },
   "navbar": [
     { "label": "Componentes", "to": "/components" },
     { "label": "Iconos", "to": "/icons" },
-    { "label": "Tokens", "to": "/tokens" }
+    { "label": "Tokens", "to": "/tokens" },
+    { "label": "Efectos", "to": "/effects" }
   ],
+  "repository": "https://github.com/zuccadev-labs/zuix",
+  "cta": { "label": "Empezar", "to": "/docs/users" },
   "footer": "Zuix · suite de UI/UX de DAZLABS"
 }

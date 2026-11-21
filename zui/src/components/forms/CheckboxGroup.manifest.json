@@ -1,0 +1,61 @@
+{
+  "name": "CheckboxGroup",
+  "group": "forms",
+  "description": "Varias casillas de una misma pregunta en un fieldset con su título; valor como lista, casilla «todas» opcional y variante tarjeta.",
+  "import": "import { CheckboxGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "behavior": "dom",
+  "props": [
+    { "name": "label", "type": "ReactNode", "description": "Título del grupo (legend)." },
+    { "name": "description", "type": "ReactNode" },
+    {
+      "name": "options",
+      "type": "CheckboxGroupOption[]",
+      "description": "{ value, label, description?, disabled? }. También valen hijos <Checkbox value=\"…\">."
+    },
+    { "name": "value", "type": "string[]" },
+    { "name": "defaultValue", "type": "string[]", "default": [] },
+    { "name": "onValueChange", "type": "(value: string[]) => void" },
+    { "name": "name", "type": "string", "description": "Cada casilla marcada envía su valor con este nombre." },
+    {
+      "name": "selectAll",
+      "type": "ReactNode",
+      "description": "Texto de una casilla «todas» encima de las opciones; indeterminada si solo hay algunas."
+    },
+    { "name": "orientation", "type": "enum", "values": ["vertical", "horizontal"], "default": "vertical" },
+    { "name": "variant", "type": "enum", "values": ["default", "card"], "default": "default" },
+    { "name": "disabled", "type": "boolean", "default": false, "description": "Deshabilita el fieldset entero." },
+    { "name": "invalid", "type": "boolean", "default": false },
+    { "name": "error", "type": "ReactNode", "description": "Mensaje bajo el grupo; lo marca como no válido." }
+  ],
+  "states": ["rest", "checked", "indeterminate", "invalid", "disabled"],
+  "tokens": [
+    "space-1",
+    "space-2",
+    "space-4",
+    "space-6",
+    "fg",
+    "fg-muted",
+    "line",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "leading-snug"
+  ],
+  "classes": ["z-checkgroup", "z-checkgroup__legend", "z-checkgroup__description", "z-checkgroup__items", "z-checkgroup__all", "z-check"],
+  "a11y": "fieldset con legend como primer hijo: el título nombra el grupo y cada casilla conserva su etiqueta. Cada casilla es un checkbox (Espacio la cambia). La casilla «todas» expone aria-checked=\"mixed\" cuando hay algunas marcadas. La descripción y el error se enlazan al grupo con aria-describedby.",
+  "examples": [
+    {
+      "title": "Notificaciones con «todas»",
+      "code": "<CheckboxGroup\n  label=\"Notify me about\"\n  name=\"notify\"\n  selectAll=\"All activity\"\n  defaultValue={[\"mentions\"]}\n  options={[\n    { value: \"mentions\", label: \"Mentions\" },\n    { value: \"comments\", label: \"Comments\" },\n    { value: \"releases\", label: \"Releases\", description: \"New versions of projects you follow.\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Tarjetas en horizontal",
+      "code": "<CheckboxGroup\n  label=\"Platforms\"\n  variant=\"card\"\n  orientation=\"horizontal\"\n  defaultValue={[\"web\"]}\n  options={[\n    { value: \"web\", label: \"Web\", description: \"Browsers and PWAs\" },\n    { value: \"desktop\", label: \"Desktop\", description: \"macOS, Windows, Linux\" },\n    { value: \"mobile\", label: \"Mobile\", description: \"iOS and Android\", disabled: true },\n  ]}\n/>"
+    },
+    {
+      "title": "Con error",
+      "code": "<CheckboxGroup\n  label=\"Terms\"\n  error=\"Accept both to continue.\"\n  options={[\n    { value: \"terms\", label: \"I accept the terms of service\" },\n    { value: \"privacy\", label: \"I accept the privacy policy\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI."
+}

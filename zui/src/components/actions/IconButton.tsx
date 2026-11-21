@@ -1,14 +1,14 @@
 import type { ButtonHTMLAttributes, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
-import { ICON_SIZE, type ControlSize, type Intent } from "./types";
+import { BUTTON_ICON_SIZE, type ButtonSize, type ButtonVariant } from "./types";
 
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   icon: IconName;
   /** Nombre accesible; también se muestra como título nativo. */
   label: string;
-  variant?: Intent;
-  size?: ControlSize;
+  variant?: Exclude<ButtonVariant, "link">;
+  size?: ButtonSize;
   iconVariant?: "outline" | "solid";
   /** Marca el botón como activo (por ejemplo, un panel abierto). */
   active?: boolean;
@@ -42,11 +42,18 @@ export function IconButton({
       aria-busy={loading || undefined}
       // En carga el botón no se deshabilita (`disabled` le quitaría el foco del teclado): lleva `aria-disabled`, no
       // ejecuta `onClick` y deja de ser un botón de envío. Sin manejador propio: el componente sigue siendo estático.
-      aria-disabled={loading || undefined}
+      // Con `aria-disabled` (un botón apagado que conserva el foco, como en una Toolbar) tampoco ejecuta `onClick`.
+      aria-disabled={loading || rest["aria-disabled"] || undefined}
       disabled={disabled}
-      {...(loading ? { type: "button" as const, onClick: undefined } : { onClick })}
+      {...(loading ? { type: "button" as const, onClick: undefined } : { onClick: off(rest["aria-disabled"]) ? undefined : onClick })}
     >
-      {loading ? <span className="z-btn__spinner" aria-hidden="true" /> : <Icon name={icon} variant={iconVariant} size={ICON_SIZE[size]} />}
+      {loading ? (
+        <span className="z-btn__spinner" aria-hidden="true" />
+      ) : (
+        <Icon name={icon} variant={iconVariant} size={BUTTON_ICON_SIZE[size]} />
+      )}
     </button>
   );
 }
+
+const off = (value: unknown) => value === true || value === "true";

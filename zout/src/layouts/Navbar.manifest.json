@@ -1,0 +1,99 @@
+{
+  "name": "Navbar",
+  "group": "layout",
+  "status": "new",
+  "description": "Barra de navegación de un sitio, de cristal: flotante (dos barras separadas), dock (una barra compacta centrada) o de borde a borde; pegajosa, fija o en su sitio. Sin punto de corte fijo: si la fila entera no cabe, los enlaces y grupos pasan a un cajón (popover nativo) con el NavigationMenu en vertical.",
+  "import": "import { Navbar } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "brand",
+      "type": "ReactNode"
+    },
+    {
+      "name": "items",
+      "type": "NavMenuItem[]",
+      "description": "Los de NavigationMenu."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Búsqueda, tema, llamada a la acción; quedan fuera del cajón."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["floating", "dock", "bar"],
+      "default": "floating"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["sticky", "fixed", "static"],
+      "default": "sticky"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Primary"
+    },
+    {
+      "name": "menuLabel",
+      "type": "string",
+      "default": "Menu"
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "default": "Close menu"
+    },
+    {
+      "name": "id",
+      "type": "string"
+    }
+  ],
+  "states": ["rest", "collapsed", "open"],
+  "tokens": [
+    "glass-bg",
+    "glass-blur",
+    "glass-saturate",
+    "glass-border",
+    "glass-highlight",
+    "glass-shadow",
+    "glass-specular",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-lg",
+    "radius-panel",
+    "control-height-md",
+    "control-radius",
+    "scrim",
+    "layer-sticky",
+    "content-max"
+  ],
+  "classes": [
+    "z-navbar",
+    "z-navbar__inner",
+    "z-navbar__bar",
+    "z-navbar__brand",
+    "z-navbar__nav",
+    "z-navbar__toggle",
+    "z-navbar__menu",
+    "z-navbar__drawer-head",
+    "z-navbar__close",
+    "z-navbar__actions"
+  ],
+  "attributes": ["data-collapsed", "data-open", "data-variant", "data-position"],
+  "behavior": "dom",
+  "a11y": "Un solo árbol de navegación (<nav> con nombre) en los dos modos. El modo se decide midiendo si la fila cabe; sin JavaScript queda el cajón. El botón de menú tiene texto visible y abre el cajón con popovertarget (Escape y clic fuera lo cierran y el foco vuelve al botón); dentro hay un botón Cerrar. Seguir un enlace cierra el cajón. Con prefers-reduced-transparency las barras son opacas.",
+  "examples": [
+    {
+      "title": "Flotante",
+      "code": "<Navbar\n  id=\"site-nav\"\n  position=\"static\"\n  brand={<a href=\"/\">Acme</a>}\n  items={[\n    { label: \"Products\", columns: 2, links: [\n      { label: \"Analytics\", href: \"/analytics\", icon: \"chart-bar\", description: \"Events, funnels and retention.\" },\n      { label: \"Storage\", href: \"/storage\", icon: \"circle-stack\", description: \"Buckets with versioning.\" },\n      { label: \"Functions\", href: \"/functions\", icon: \"bolt\", description: \"Run code close to your users.\" },\n      { label: \"Auth\", href: \"/auth\", icon: \"key\", description: \"Passkeys and single sign-on.\" },\n    ] },\n    { label: \"Resources\", links: [\n      { label: \"Docs\", href: \"/docs\", icon: \"book\", description: \"Guides and API reference.\" },\n      { label: \"Changelog\", href: \"/changelog\", icon: \"newspaper\" },\n    ] },\n    { label: \"Pricing\", href: \"/pricing\" },\n  ]}\n  actions={<Button variant=\"primary\" size=\"sm\">Get started</Button>}\n/>"
+    },
+    {
+      "title": "Dock",
+      "code": "<Navbar\n  id=\"dock-nav\"\n  variant=\"dock\"\n  position=\"static\"\n  brand={<a href=\"/\">Acme</a>}\n  items={[\n    { label: \"Docs\", href: \"/docs\", current: true },\n    { label: \"Blog\", href: \"/blog\" },\n    { label: \"Pricing\", href: \"/pricing\" },\n  ]}\n  actions={<IconButton icon=\"magnifying-glass\" label=\"Search\" variant=\"ghost\" size=\"sm\" />}\n/>"
+    }
+  ]
+}

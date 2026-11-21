@@ -166,6 +166,16 @@
           "type": "boolean",
           "default": false,
           "description": "Tokens de la marca activa en /tokens."
+        },
+        "loaders": {
+          "type": "boolean",
+          "default": false,
+          "description": "Galería de cargadores (Spinner y los patrones de DotMatrix) en /loaders."
+        },
+        "effects": {
+          "type": "boolean",
+          "default": false,
+          "description": "Galería de efectos (Backdrop, BorderBeam, Glow, AttentionRing, TextEffect) en /effects."
         }
       }
     },
@@ -276,6 +286,26 @@
             "pattern": "^(https://|mailto:|pathname:///)\\S+$",
             "patternHint": "URL https, mailto o pathname:///ruta para un archivo de la carpeta de estáticos"
           }
+        }
+      }
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^https://\\S+$",
+      "patternHint": "URL https del repositorio, como https://github.com/organizacion/proyecto",
+      "description": "Repositorio del proyecto. La barra superior lo enlaza junto al buscador."
+    },
+    "cta": {
+      "type": "object",
+      "required": ["label", "to"],
+      "additionalProperties": false,
+      "description": "Llamada a la acción de la barra superior y de la portada. Por defecto, «Empezar» hacia la primera área de documentación.",
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 24 },
+        "to": {
+          "type": "string",
+          "pattern": "^/[^\\s]*$",
+          "patternHint": "ruta del sitio que empieza por /, sin el baseUrl"
         }
       }
     },

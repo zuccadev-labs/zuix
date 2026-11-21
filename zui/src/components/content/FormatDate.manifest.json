@@ -1,0 +1,45 @@
+{
+  "name": "FormatDate",
+  "group": "content",
+  "import": "import { FormatDate } from \"@zuccadev-labs/zuix-zui\"",
+  "states": ["rest"],
+  "description": "Fecha en un <time datetime> con Intl.DateTimeFormat, o relativa («hace 3 min») con `relative`, que delega en RelativeTime y se actualiza sola.",
+  "props": [
+    {
+      "name": "value",
+      "type": "Date | number | string",
+      "required": true,
+      "description": "Fecha civil ISO, instante ISO, ms o Date."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "options",
+      "type": "Intl.DateTimeFormatOptions",
+      "default": {
+        "dateStyle": "medium"
+      }
+    },
+    {
+      "name": "relative",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "relativeOptions",
+      "type": "Omit<RelativeTimeProps, \"value\" | \"locale\">"
+    }
+  ],
+  "tokens": ["fg"],
+  "classes": ["z-format", "z-relative-time"],
+  "behavior": "dom",
+  "a11y": "<time datetime> con la fecha en ISO; en relativo, la fecha completa en title.",
+  "examples": [
+    {
+      "title": "Absoluta",
+      "code": "<FormatDate value=\"2026-11-20\" options={{ dateStyle: \"long\" }} locale=\"en-US\" />"
+    }
+  ]
+}

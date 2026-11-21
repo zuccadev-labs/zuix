@@ -25,6 +25,10 @@ export interface OTPInputProps {
   cellLabel?: (position: number, total: number) => string;
   /** Nombre del campo oculto para envío en formularios. */
   name?: string;
+  /** Reparto en grupos con un separador entre ellos (por ejemplo `[3, 3]` para «123–456»). */
+  groups?: ReadonlyArray<number>;
+  /** Carácter que se ve en las casillas vacías (por ejemplo «·»). */
+  placeholder?: string;
   className?: string;
 }
 
@@ -44,8 +48,19 @@ export function OTPInput({
   label,
   cellLabel = (position, total) => `Character ${position} of ${total}`,
   name,
+  groups,
+  placeholder,
   className,
 }: OTPInputProps) {
+  // Posiciones tras las que va un separador (fin de cada grupo salvo el último).
+  const breaks = new Set<number>();
+  if (groups?.length) {
+    let at = 0;
+    for (const size of groups.slice(0, -1)) {
+      at += size;
+      if (at > 0 && at < length) breaks.add(at);
+    }
+  }
   const { invalid: isInvalid, "aria-describedby": describedBy } = useFieldControl({ invalid });
   // Dentro de un Field con etiqueta, el grupo se nombra con ella; si no, con `label`.
   const fieldLabel = useFieldLabel();
@@ -112,7 +127,9 @@ export function OTPInput({
       data-size={size}
       data-invalid={isInvalid || undefined}
     >
-      {Array.from({ length }, (_, index) => (
+      {Array.from({ length }, (_, index) => [
+        // biome-ignore lint/suspicious/noArrayIndexKey: el separador va tras una posición fija del código.
+        breaks.has(index) ? <span key={`separator-${index}`} className="z-otp__separator" aria-hidden="true" /> : null,
         <input
           // biome-ignore lint/suspicious/noArrayIndexKey: una casilla es su posición en el código; la lista solo cambia de longitud.
           key={index}
@@ -134,8 +151,9 @@ export function OTPInput({
           onKeyDown={(event) => handleKeyDown(index, event)}
           onPaste={handlePaste}
           onFocus={(event) => event.target.select()}
-        />
-      ))}
+          placeholder={placeholder}
+        />,
+      ])}
       {name ? <input type="hidden" name={name} value={current} /> : null}
     </div>
   );

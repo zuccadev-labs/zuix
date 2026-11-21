@@ -49,13 +49,16 @@
       "name": "closeOnSelect",
       "type": "boolean",
       "default": true
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode",
+      "description": "Pie bajo la lista: atajos de navegación, ayuda o una acción."
     }
   ],
   "states": ["open", "closed", "empty", "active-option", "disabled-option"],
   "tokens": [
-    "accent-soft",
     "duration-fast",
-    "ease-out",
     "ease-standard",
     "fg",
     "fg-muted",
@@ -73,8 +76,6 @@
     "leading-normal",
     "line",
     "line-strong",
-    "radius-sm",
-    "radius-xl",
     "radius-xs",
     "scrim",
     "space-1",
@@ -85,23 +86,34 @@
     "surface-2",
     "text-body",
     "text-caption",
-    "text-fine",
     "text-small",
     "text-title",
-    "tracking-wide",
-    "weight-semibold"
+    "accent-text",
+    "duration-normal",
+    "ease-emphasized",
+    "ease-exit",
+    "item-radius",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "radius-panel",
+    "space-1-5",
+    "space-2-5",
+    "touch-target",
+    "weight-medium"
   ],
   "classes": [
     "z-palette",
-    "z-palette__search",
-    "z-palette__input",
-    "z-palette__list",
+    "z-palette__empty",
+    "z-palette__footer",
     "z-palette__group",
     "z-palette__heading",
+    "z-palette__input",
     "z-palette__item",
     "z-palette__item-hint",
     "z-palette__kbd",
-    "z-palette__empty"
+    "z-palette__list",
+    "z-palette__search"
   ],
   "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
   "examples": [

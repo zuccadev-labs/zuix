@@ -5,6 +5,18 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
+### Añadido
+
+- Subrutas `./zui/dom/core`, `./zui/dom/dates`, `./zui/dom/data`, `./zui/dom/content`, `./zui/dom/agenda`,
+  `./zui/dom/charts`, `./zui/dom/color`, `./zui/dom/media` y `./zui/dom/effects`: el comportamiento sin framework
+  de `@zuccadev-labs/zuix-zui` por familias.
+
+### Cambiado
+
+- `./zui/dom` deja de figurar en `sideEffects`: como `@zuccadev-labs/zuix-zui/dom`, no hace nada al importarse.
+
 ## [0.2.0] - 2026-11-18
 
 El paraguas no tiene código propio: los cambios de esta versión, incluidos los incompatibles, están en el

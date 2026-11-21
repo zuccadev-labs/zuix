@@ -51,3 +51,13 @@ export function trapTab(container: HTMLElement, event: { key: string; shiftKey: 
   if (!event.shiftKey && active === last) return focusQuiet(first) || true;
   return false;
 }
+
+/**
+ * Primer elemento tabulable del documento que va detrás de `el` (fuera de él). Sirve para que el foco no se pierda
+ * cuando `el` desaparece con el foco dentro (un banner que se cierra): sigue hacia delante, como haría Tab.
+ */
+export function nextTabbable(el: Element): HTMLElement | undefined {
+  return tabbable(el.ownerDocument).find(
+    (candidate) => !el.contains(candidate) && Boolean(el.compareDocumentPosition(candidate) & Node.DOCUMENT_POSITION_FOLLOWING),
+  );
+}

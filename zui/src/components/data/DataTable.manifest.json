@@ -1,7 +1,7 @@
 {
   "name": "DataTable",
   "group": "data",
-  "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables y filas activables.",
+  "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.",
   "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -13,7 +13,7 @@
       "name": "columns",
       "type": "DataTableColumn<T>[]",
       "required": true,
-      "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono? }"
+      "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono?, footer? } — `footer`: contenido o función sobre todas las filas, en `tfoot`."
     },
     {
       "name": "rowKey",
@@ -91,9 +91,90 @@
       "name": "captionHidden",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "selectable",
+      "type": "boolean",
+      "default": false,
+      "description": "Columna de casillas: selección múltiple, «seleccionar todo» de la página (indeterminada si hay algunas) y Mayús + clic para un rango."
+    },
+    {
+      "name": "selectedKeys",
+      "type": "RowKey[]",
+      "description": "Claves seleccionadas (controlado). `RowKey` = string | number, el valor de `rowKey`."
+    },
+    {
+      "name": "defaultSelectedKeys",
+      "type": "RowKey[]",
+      "default": "[]"
+    },
+    {
+      "name": "onSelectionChange",
+      "type": "(keys: RowKey[]) => void"
+    },
+    {
+      "name": "isRowSelectable",
+      "type": "(row: T) => boolean",
+      "description": "Filas con la casilla deshabilitada."
+    },
+    {
+      "name": "selectAllLabel",
+      "type": "string",
+      "default": "Select all rows"
+    },
+    {
+      "name": "selectRowLabel",
+      "type": "(row: T, index: number) => string",
+      "default": "Select row {n}"
+    },
+    {
+      "name": "selectedLabel",
+      "type": "(count: number, total: number) => string",
+      "default": "{n} selected",
+      "description": "Texto visible y anunciado (role=\"status\") del número seleccionado."
+    },
+    {
+      "name": "pageSize",
+      "type": "number",
+      "description": "Filas por página. Sin él no se pagina."
+    },
+    {
+      "name": "page",
+      "type": "number",
+      "description": "Página actual desde 1 (controlado)."
+    },
+    {
+      "name": "defaultPage",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "onPageChange",
+      "type": "(page: number) => void"
+    },
+    {
+      "name": "manualPagination",
+      "type": "boolean",
+      "default": false,
+      "description": "Paginación en servidor: `rows` ya es la página y `rowCount` el total."
+    },
+    {
+      "name": "rowCount",
+      "type": "number",
+      "description": "Total de filas con `manualPagination`."
+    },
+    {
+      "name": "rangeLabel",
+      "type": "(from: number, to: number, total: number) => string",
+      "default": "{from}–{to} of {total}"
+    },
+    {
+      "name": "paginationLabel",
+      "type": "string",
+      "default": "Pagination"
     }
   ],
-  "states": ["rest", "hover", "focus", "active", "sorted", "selected", "empty"],
+  "states": ["rest", "hover", "focus", "active", "sorted", "selected", "indeterminate", "empty", "paged"],
   "tokens": [
     "card-border",
     "card-radius",
@@ -105,10 +186,6 @@
     "space-2",
     "fg-muted",
     "line",
-    "fg-subtle",
-    "text-fine",
-    "weight-bold",
-    "tracking-wide",
     "duration-fast",
     "ease-standard",
     "font-mono",
@@ -121,13 +198,20 @@
     "space-8",
     "space-4",
     "space-1",
-    "radius-xs",
     "surface-2",
-    "focus-ring",
-    "accent"
+    "accent-text",
+    "control-radius-sm",
+    "focus-width",
+    "layer-raised",
+    "leading-ui",
+    "space-2-5",
+    "text-body",
+    "weight-medium",
+    "line-strong",
+    "control-height-sm"
   ],
-  "classes": ["z-table", "z-table-wrap"],
-  "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio.",
+  "classes": ["z-table", "z-table-wrap", "z-datatable", "z-datatable__bar", "z-datatable__count", "z-datatable__range", "z-table__select"],
+  "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre.",
   "examples": [
     {
       "title": "Ordenable",
@@ -136,6 +220,10 @@
     {
       "title": "Filas activables y celda propia",
       "code": "<DataTable\n  rows={orders}\n  rowKey={(order) => order.id}\n  onRowClick={(order) => openOrder(order.id)}\n  isRowSelected={(order) => order.id === selectedId}\n  empty=\"No orders yet\"\n  columns={[\n    { key: \"id\", header: \"Order\", accessor: (order) => order.id, mono: true, width: \"120px\" },\n    { key: \"status\", header: \"Status\", render: (order) => <Badge tone={order.paid ? \"success\" : \"warning\"}>{order.paid ? \"Paid\" : \"Pending\"}</Badge> },\n  ]}\n/>"
+    },
+    {
+      "title": "Selección, pie y paginación",
+      "code": "const members = [\n  { id: \"a1\", name: \"Ana Ruiz\", seats: 3 },\n  { id: \"b2\", name: \"Leo Park\", seats: 12 },\n  { id: \"c3\", name: \"Mia Chen\", seats: 1 },\n  { id: \"d4\", name: \"Zoe Katz\", seats: 7 },\n  { id: \"e5\", name: \"Iker Sanz\", seats: 5 },\n];\n\n<DataTable\n  caption=\"Members\"\n  captionHidden\n  rows={members}\n  rowKey={(member) => member.id}\n  selectable\n  defaultSelectedKeys={[\"b2\"]}\n  pageSize={3}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (member) => member.name, sortable: true, footer: \"Total\" },\n    {\n      key: \"seats\",\n      header: \"Seats\",\n      accessor: (member) => member.seats,\n      sortable: true,\n      align: \"end\",\n      mono: true,\n      footer: (all) => all.reduce((sum, member) => sum + member.seats, 0),\n    },\n  ]}\n/>"
     }
   ],
   "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
@@ -144,6 +232,10 @@
     {
       "title": "Ordenable (data-sort en la cabecera, data-sort-value en la celda; emite z:sort)",
       "code": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Users</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" aria-sort=\"ascending\" data-key=\"name\">\n          <button type=\"button\" class=\"z-table__sort\" data-active=\"true\">\n            <span>Name</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Seats</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n        <th scope=\"col\" aria-sort=\"none\" data-key=\"joined\" data-sort=\"date\">\n          <button type=\"button\" class=\"z-table__sort\">\n            <span>Joined</span>\n            <span class=\"z-sr-only\">, Sort</span>\n            <z-icon name=\"arrow-up\" size=\"12\"></z-icon>\n          </button>\n        </th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Ana Ruiz</td>\n        <td data-align=\"end\" data-mono=\"true\">3</td>\n        <td data-sort-value=\"2025-03-02\">Mar 2, 2025</td>\n      </tr>\n      <tr>\n        <td>Leo Park</td>\n        <td data-align=\"end\" data-mono=\"true\">12</td>\n        <td data-sort-value=\"2026-01-15\">Jan 15, 2026</td>\n      </tr>\n      <tr>\n        <td>Mia Chen</td>\n        <td data-align=\"end\" data-mono=\"true\">1</td>\n        <td data-sort-value=\"2024-11-30\">Nov 30, 2024</td>\n      </tr>\n      <tr>\n        <td>Zoe Katz</td>\n        <td data-align=\"end\" data-mono=\"true\">7</td>\n        <td data-sort-value=\"2025-08-09\">Aug 9, 2025</td>\n      </tr>\n    </tbody>\n  </table>\n</div>"
+    },
+    {
+      "title": "Selección, pie y paginación en el cliente (data-page-size; emite z:selectionchange y z:pagechange)",
+      "code": "<div class=\"z-datatable\" data-selectable=\"true\" data-paged=\"true\" data-page-size=\"3\" data-selected-label=\"{n} selected\" data-range-label=\"{from}–{to} of {total}\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-selectable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select all rows\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"indeterminate\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></th>\n          <th scope=\"col\" aria-sort=\"none\" data-key=\"name\"><button type=\"button\" class=\"z-table__sort\"><span>Name</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n          <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 1\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Ana Ruiz</td>\n          <td data-align=\"end\" data-mono=\"true\">3</td>\n        </tr>\n        <tr data-key=\"b2\" data-selected=\"true\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 2\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"checked\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"></label></td>\n          <td>Leo Park</td>\n          <td data-align=\"end\" data-mono=\"true\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 3\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Mia Chen</td>\n          <td data-align=\"end\" data-mono=\"true\">1</td>\n        </tr>\n        <tr data-key=\"d4\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 4\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Zoe Katz</td>\n          <td data-align=\"end\" data-mono=\"true\">7</td>\n        </tr>\n        <tr data-key=\"e5\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 5\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Iker Sanz</td>\n          <td data-align=\"end\" data-mono=\"true\">5</td>\n        </tr>\n      </tbody>\n      <tfoot>\n        <tr>\n          <td class=\"z-table__select\"></td>\n          <td>Total</td>\n          <td data-align=\"end\" data-mono=\"true\">28</td>\n        </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <span class=\"z-datatable__count\" role=\"status\">1 selected</span>\n    <span class=\"z-datatable__range\">1–3 of 5</span>\n    <nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"sm\" data-page-count=\"2\" data-page-label=\"Page {page}\">\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled><z-icon name=\"chevron-left\" size=\"14\"></z-icon></button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></button>\n    </nav>\n  </div>\n</div>"
     }
   ]
 }

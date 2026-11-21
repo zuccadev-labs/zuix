@@ -29,18 +29,7 @@
     }
   ],
   "states": ["rest"],
-  "tokens": [
-    "line",
-    "space-3",
-    "fg-subtle",
-    "text-caption",
-    "weight-semibold",
-    "tracking-wide",
-    "line-strong",
-    "space-2",
-    "space-4",
-    "space-8"
-  ],
+  "tokens": ["line", "space-3", "fg-subtle", "text-caption", "line-strong", "space-2", "space-4", "space-8", "weight-medium"],
   "classes": ["z-divider"],
   "a11y": "role=\"separator\" con aria-orientation.",
   "examples": [

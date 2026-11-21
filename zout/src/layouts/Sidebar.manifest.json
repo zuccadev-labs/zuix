@@ -1,13 +1,24 @@
 {
   "name": "Sidebar",
   "group": "layout",
-  "description": "Navegación secundaria en acordeón: secciones plegables y pie fijo.",
-  "import": "import { Sidebar, SidebarSection } from \"@zuccadev-labs/zuix-zout\"",
-  "exports": ["Sidebar", "SidebarSection"],
+  "description": "Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.",
+  "import": "import { Sidebar, SidebarSection, SidebarItem, SidebarTrigger } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": ["Sidebar", "SidebarSection", "SidebarItem", "SidebarTrigger"],
   "props": [
     {
       "name": "footer",
       "type": "ReactNode"
+    },
+    {
+      "name": "collapsed",
+      "type": "boolean",
+      "default": false,
+      "description": "Plegada a iconos: nombres en tooltip, cabeceras de sección ocultas y submenús en un panel flotante."
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "description": "Lo nombra `SidebarTrigger` en `aria-controls`."
     },
     {
       "name": "SidebarSection.title",
@@ -36,15 +47,130 @@
       "name": "SidebarSection.grow",
       "type": "boolean",
       "description": "Reparte el alto libre."
+    },
+    {
+      "name": "SidebarItem.label",
+      "type": "string",
+      "required": true,
+      "description": "Texto; plegada, nombre accesible y tooltip."
+    },
+    {
+      "name": "SidebarItem.icon",
+      "type": "IconName"
+    },
+    {
+      "name": "SidebarItem.href",
+      "type": "string",
+      "description": "Enlace; sin él, botón."
+    },
+    {
+      "name": "SidebarItem.onClick",
+      "type": "(event) => void"
+    },
+    {
+      "name": "SidebarItem.active",
+      "type": "boolean",
+      "description": "aria-current=\"page\" y marca de acento."
+    },
+    {
+      "name": "SidebarItem.badge",
+      "type": "number | string"
+    },
+    {
+      "name": "SidebarItem.action",
+      "type": "ReactNode",
+      "description": "Acción al final (oculta plegada)."
+    },
+    {
+      "name": "SidebarItem.children",
+      "type": "SidebarItem[]",
+      "description": "Submenú: disclosure desplegada, panel flotante plegada."
+    },
+    {
+      "name": "SidebarItem.open",
+      "type": "boolean",
+      "description": "Submenú abierto (controlado). También defaultOpen y onOpenChange."
+    },
+    {
+      "name": "SidebarItem.disabled",
+      "type": "boolean"
+    },
+    {
+      "name": "SidebarTrigger.collapsed",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "SidebarTrigger.onCollapsedChange",
+      "type": "(collapsed: boolean) => void",
+      "required": true
+    },
+    {
+      "name": "SidebarTrigger.controls",
+      "type": "string",
+      "description": "Id de la sidebar."
+    },
+    {
+      "name": "SidebarTrigger.label",
+      "type": "string",
+      "default": "Toggle sidebar"
+    },
+    {
+      "name": "SidebarTrigger.shortcut",
+      "type": "boolean",
+      "default": false,
+      "description": "Atajo Ctrl+B (⌘B) en el documento; opt-in."
     }
   ],
-  "tokens": ["line", "fg-muted", "fg", "text-caption", "tracking-wide", "focus-ring"],
-  "classes": ["z-sidebar"],
-  "a11y": "Cada cabecera es un botón con aria-expanded y aria-controls.",
+  "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-solid",
+    "control-height-sm",
+    "control-radius-sm",
+    "fg",
+    "fg-muted",
+    "fg-on-accent",
+    "fg-subtle",
+    "focus-offset",
+    "focus-width",
+    "glass-highlight",
+    "item-radius",
+    "line",
+    "popup-bg",
+    "popup-blur",
+    "popup-radius",
+    "popup-shadow",
+    "radius-xs",
+    "row-hover",
+    "space-1",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "surface-2",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-fine",
+    "text-small",
+    "touch-target",
+    "weight-medium",
+    "weight-regular"
+  ],
+  "classes": ["z-sidebar", "z-sidebar__item", "z-sidebar__link", "z-sidebar__sub", "z-sidebar__trigger"],
+  "a11y": "Cada cabecera de sección es un botón con aria-expanded y aria-controls. Un item es un enlace (o un botón) con `aria-current=\"page\"` si es la página actual; su contador forma parte del nombre. Un item con submenú es un botón disclosure con aria-expanded y aria-controls hacia un `role=\"group\"` con nombre. Plegada a iconos, el texto sigue en el nombre accesible (oculto a la vista) y se muestra en un tooltip al pasar el puntero o enfocar (Escape lo cierra); el submenú se abre en un panel flotante anclado al item, con Escape y pulsación fuera para cerrarlo y el foco de vuelta al item. `SidebarTrigger` lleva aria-expanded (desplegada o no) y aria-controls; con `shortcut`, Ctrl+B (⌘B en macOS) alterna desde cualquier punto (aria-keyshortcuts).",
   "examples": [
     {
       "title": "Dos secciones",
       "code": "<Sidebar footer={<NavLink icon=\"gear\">Settings</NavLink>}>\n  <SidebarSection title=\"Workspaces\" count={2} grow>…</SidebarSection>\n  <SidebarSection title=\"Recent\" defaultOpen={false}>…</SidebarSection>\n</Sidebar>"
+    },
+    {
+      "title": "Navegación con submenú y plegado",
+      "code": "<div style={{ display: \"flex\", flexDirection: \"column\", gap: 8, width: 240, minHeight: 340 }}>\n  <SidebarTrigger collapsed={false} onCollapsedChange={setCollapsed} controls=\"nav-demo\" shortcut />\n  <Sidebar id=\"nav-demo\" footer={<SidebarItem icon=\"gear\" label=\"Settings\" href=\"/settings\" />}>\n    <SidebarItem icon=\"home\" label=\"Home\" href=\"/\" active />\n    <SidebarItem icon=\"inbox\" label=\"Inbox\" href=\"/inbox\" badge={4} />\n    <SidebarItem icon=\"folder\" label=\"Projects\" defaultOpen action={<IconButton icon=\"plus\" label=\"New project\" size=\"sm\" />}>\n      <SidebarItem label=\"Atlas\" href=\"/projects/atlas\" />\n      <SidebarItem label=\"Borealis\" href=\"/projects/borealis\" />\n    </SidebarItem>\n    <SidebarItem icon=\"chart-bar\" label=\"Reports\" href=\"/reports\" />\n  </Sidebar>\n</div>"
+    },
+    {
+      "title": "Plegada a iconos",
+      "code": "<div style={{ display: \"flex\", flexDirection: \"column\", gap: 8, width: 56, minHeight: 340 }}>\n  <SidebarTrigger collapsed onCollapsedChange={setCollapsed} controls=\"nav-demo\" shortcut />\n  <Sidebar id=\"nav-demo\" collapsed footer={<SidebarItem icon=\"gear\" label=\"Settings\" href=\"/settings\" />}>\n    <SidebarItem icon=\"home\" label=\"Home\" href=\"/\" active />\n    <SidebarItem icon=\"inbox\" label=\"Inbox\" href=\"/inbox\" badge={4} />\n    <SidebarItem icon=\"folder\" label=\"Projects\" defaultOpen action={<IconButton icon=\"plus\" label=\"New project\" size=\"sm\" />}>\n      <SidebarItem label=\"Atlas\" href=\"/projects/atlas\" />\n      <SidebarItem label=\"Borealis\" href=\"/projects/borealis\" />\n    </SidebarItem>\n    <SidebarItem icon=\"chart-bar\" label=\"Reports\" href=\"/reports\" />\n  </Sidebar>\n</div>"
     }
   ],
   "behavior": "dom",
@@ -52,7 +178,16 @@
     {
       "title": "Dos secciones y pie",
       "code": "<div style=\"width:240px;height:280px\">\n  <div class=\"z-sidebar\" id=\"sidebar-demo\">\n    <div class=\"z-sidebar__sections\">\n      <section class=\"z-sidebar__section\" data-open=\"true\" data-grow=\"true\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"true\" aria-controls=\"sidebar-demo-workspaces\">\n            <z-icon name=\"chevron-down-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Workspaces</span>\n            <span class=\"z-sidebar__count\">2</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-workspaces\">\n          <nav aria-label=\"Workspaces\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\" aria-current=\"page\" data-active=\"true\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" variant=\"solid\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Atlas</span>\n            </button>\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"folder\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Borealis</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n      <section class=\"z-sidebar__section\">\n        <div class=\"z-sidebar__head\">\n          <button type=\"button\" class=\"z-sidebar__fold\" aria-expanded=\"false\" aria-controls=\"sidebar-demo-recent\">\n            <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            <span class=\"z-sidebar__title\">Recent</span>\n          </button>\n        </div>\n        <div class=\"z-sidebar__body\" id=\"sidebar-demo-recent\" hidden>\n          <nav aria-label=\"Recent\" class=\"z-navlist\">\n            <button type=\"button\" class=\"z-navlink\">\n              <span class=\"z-navlink__icon\">\n                <z-icon name=\"document-text\" size=\"16\"></z-icon>\n              </span>\n              <span class=\"z-navlink__label\">Release notes</span>\n            </button>\n          </nav>\n        </div>\n      </section>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <button type=\"button\" class=\"z-navlink\">\n        <span class=\"z-navlink__icon\">\n          <z-icon name=\"gear\" size=\"16\"></z-icon>\n        </span>\n        <span class=\"z-navlink__label\">Settings</span>\n      </button>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Navegación con submenú y plegado",
+      "code": "<div style=\"display:flex;flex-direction:column;gap:8px;width:240px;min-height:340px\">\n  <button type=\"button\" class=\"z-sidebar__trigger\" aria-label=\"Toggle sidebar\" title=\"Toggle sidebar\" aria-expanded=\"true\" aria-controls=\"nav-demo\" aria-keyshortcuts=\"Control+B Meta+B\" data-shortcut=\"true\">\n    <z-icon name=\"chevron-double-left\" size=\"16\"></z-icon>\n  </button>\n  <div id=\"nav-demo\" class=\"z-sidebar\">\n    <div class=\"z-sidebar__sections\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" data-active=\"true\" aria-current=\"page\" href=\"/\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Home</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/inbox\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"inbox\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Inbox</span>\n            <span class=\"z-sidebar__badge\">4</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\" data-open=\"true\">\n        <div class=\"z-sidebar__row\">\n          <button type=\"button\" class=\"z-sidebar__link\" data-has-sub=\"\" aria-expanded=\"true\" aria-controls=\"nav-demo-projects\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"folder\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Projects</span>\n            <span class=\"z-sidebar__chevron\" aria-hidden=\"true\">\n              <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            </span>\n          </button>\n          <span class=\"z-sidebar__action\">\n            <button type=\"button\" title=\"New project\" aria-label=\"New project\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n              <z-icon name=\"plus\" size=\"14\"></z-icon>\n            </button>\n          </span>\n        </div>\n        <div class=\"z-sidebar__sub\" id=\"nav-demo-projects\" role=\"group\" aria-label=\"Projects\">\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/atlas\">\n                <span class=\"z-sidebar__label\">Atlas</span>\n              </a>\n            </div>\n          </div>\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/borealis\">\n                <span class=\"z-sidebar__label\">Borealis</span>\n              </a>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/reports\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Reports</span>\n          </a>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/settings\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"gear\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Settings</span>\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Plegada a iconos",
+      "code": "<div style=\"display:flex;flex-direction:column;gap:8px;width:56px;min-height:340px\">\n  <button type=\"button\" class=\"z-sidebar__trigger\" aria-label=\"Toggle sidebar\" title=\"Toggle sidebar\" aria-expanded=\"true\" aria-controls=\"nav-icons\" aria-keyshortcuts=\"Control+B Meta+B\" data-shortcut=\"true\">\n    <z-icon name=\"chevron-double-left\" size=\"16\"></z-icon>\n  </button>\n  <div id=\"nav-icons\" class=\"z-sidebar\" data-collapsed=\"true\">\n    <div class=\"z-sidebar__sections\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" data-active=\"true\" aria-current=\"page\" href=\"/\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Home</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/inbox\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"inbox\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Inbox</span>\n            <span class=\"z-sidebar__badge\">4</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\" data-open=\"true\">\n        <div class=\"z-sidebar__row\">\n          <button type=\"button\" class=\"z-sidebar__link\" data-has-sub=\"\" aria-expanded=\"true\" aria-controls=\"nav-icons-projects\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"folder\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Projects</span>\n            <span class=\"z-sidebar__chevron\" aria-hidden=\"true\">\n              <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            </span>\n          </button>\n          <span class=\"z-sidebar__action\">\n            <button type=\"button\" title=\"New project\" aria-label=\"New project\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n              <z-icon name=\"plus\" size=\"14\"></z-icon>\n            </button>\n          </span>\n        </div>\n        <div class=\"z-sidebar__sub\" id=\"nav-icons-projects\" role=\"group\" aria-label=\"Projects\">\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/atlas\">\n                <span class=\"z-sidebar__label\">Atlas</span>\n              </a>\n            </div>\n          </div>\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/borealis\">\n                <span class=\"z-sidebar__label\">Borealis</span>\n              </a>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/reports\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Reports</span>\n          </a>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/settings\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"gear\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Settings</span>\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
     }
   ],
-  "origin": "Barra izquierda de zutool."
+  "origin": "Barra izquierda de zutool; plegado a iconos y submenús con referencia de variantes en Sidebar de Shark UI.",
+  "states": ["rest", "hover", "focus", "active", "expanded", "collapsed", "disabled"]
 }

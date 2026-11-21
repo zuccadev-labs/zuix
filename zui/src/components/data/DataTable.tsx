@@ -1,8 +1,12 @@
 "use client";
-import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { compare, isDate } from "../../core/compare";
+import { headerState, pageCountOf, pageSlice, rangeKeys, toggleAll, toggleKey, type RowKey } from "../../core/selection";
 import { cx } from "../../cx";
+import { useControllable } from "../../primitives/hooks";
+import { Checkbox } from "../forms/Checkbox";
+import { Pagination } from "../navigation/Pagination";
 import { Table, type TableProps } from "./Table";
 
 export type SortDirection = "asc" | "desc";
@@ -10,6 +14,7 @@ export interface SortState {
   key: string;
   direction: SortDirection;
 }
+export type { RowKey };
 
 export interface DataTableColumn<T> {
   key: string;
@@ -24,6 +29,8 @@ export interface DataTableColumn<T> {
   /** Ancho de columna (cualquier longitud CSS). */
   width?: string;
   mono?: boolean;
+  /** Celda del pie (`tfoot`): contenido fijo o calculado sobre todas las filas (no solo la página). */
+  footer?: ReactNode | ((rows: ReadonlyArray<T>) => ReactNode);
 }
 
 export interface DataTableProps<T>
@@ -33,7 +40,7 @@ export interface DataTableProps<T>
   > {
   rows: ReadonlyArray<T>;
   columns: ReadonlyArray<DataTableColumn<T>>;
-  rowKey: (row: T, index: number) => string | number;
+  rowKey: (row: T, index: number) => RowKey;
   /** Orden controlado. Sin él, la tabla ordena por su cuenta. */
   sort?: SortState | null;
   defaultSort?: SortState | null;
@@ -47,9 +54,39 @@ export interface DataTableProps<T>
   empty?: ReactNode;
   /** Texto para lectores de pantalla en las cabeceras ordenables. */
   sortLabel?: string;
+
+  /** Columna de casillas: selección múltiple de filas, «seleccionar todo» (de la página) y Mayús para un rango. */
+  selectable?: boolean;
+  /** Claves seleccionadas (controlado). */
+  selectedKeys?: ReadonlyArray<RowKey>;
+  defaultSelectedKeys?: ReadonlyArray<RowKey>;
+  onSelectionChange?: (keys: RowKey[]) => void;
+  /** Filas que no se pueden seleccionar (casilla deshabilitada). */
+  isRowSelectable?: (row: T) => boolean;
+  /** Nombre de la casilla de cabecera. */
+  selectAllLabel?: string;
+  /** Nombre de la casilla de cada fila. */
+  selectRowLabel?: (row: T, index: number) => string;
+  /** Texto (visible y anunciado) del número de filas seleccionadas. */
+  selectedLabel?: (count: number, total: number) => string;
+
+  /** Filas por página. Sin él, no se pagina. */
+  pageSize?: number;
+  /** Página actual, desde 1 (controlado). */
+  page?: number;
+  defaultPage?: number;
+  onPageChange?: (page: number) => void;
+  /** Paginación en servidor: `rows` ya es la página y `rowCount` el total. */
+  manualPagination?: boolean;
+  rowCount?: number;
+  /** Texto del rango visible: «1–10 of 42». */
+  rangeLabel?: (from: number, to: number, total: number) => string;
+  paginationLabel?: string;
 }
 
-/** Tabla de datos genérica sobre el tipo de fila, con columnas ordenables. */
+const EMPTY: ReadonlyArray<RowKey> = [];
+
+/** Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, selección de filas, pie y paginación. */
 export function DataTable<T>({
   rows,
   columns,
@@ -62,10 +99,33 @@ export function DataTable<T>({
   isRowSelected,
   empty = "No data",
   sortLabel = "Sort",
+  selectable,
+  selectedKeys,
+  defaultSelectedKeys = EMPTY,
+  onSelectionChange,
+  isRowSelectable,
+  selectAllLabel = "Select all rows",
+  selectRowLabel = (_row, index) => `Select row ${index + 1}`,
+  selectedLabel = (count) => `${count} selected`,
+  pageSize,
+  page: pageProp,
+  defaultPage = 1,
+  onPageChange,
+  manualPagination,
+  rowCount,
+  rangeLabel = (from, to, total) => `${from}–${to} of ${total}`,
+  paginationLabel = "Pagination",
   ...tableProps
 }: DataTableProps<T>) {
   const [inner, setInner] = useState<SortState | null>(defaultSort);
   const active = sort === undefined ? inner : sort;
+  const [selected, setSelected] = useControllable<ReadonlyArray<RowKey>>(
+    selectedKeys,
+    defaultSelectedKeys,
+    onSelectionChange as ((keys: ReadonlyArray<RowKey>) => void) | undefined,
+  );
+  const [page, setPage] = useControllable<number>(pageProp, defaultPage, onPageChange);
+  const anchor = useRef<RowKey | null>(null);
 
   const sorted = useMemo(() => {
     if (!active || manualSort) return rows;
@@ -86,6 +146,25 @@ export function DataTable<T>({
       .map((entry) => entry.row);
   }, [rows, columns, active, manualSort]);
 
+  // Paginación: en el cliente, una porción de las filas ordenadas; en servidor, las filas recibidas.
+  const paged = pageSize !== undefined && pageSize > 0;
+  const total = manualPagination ? (rowCount ?? rows.length) : sorted.length;
+  const pageCount = paged ? pageCountOf(total, pageSize) : 1;
+  const current = Math.min(Math.max(1, Math.round(page) || 1), pageCount);
+  const slice = paged ? pageSlice(total, current, pageSize) : { start: 0, end: sorted.length, from: 1, to: sorted.length };
+  const offset = paged ? slice.start : 0;
+  const visible = paged && !manualPagination ? sorted.slice(slice.start, slice.end) : sorted;
+
+  const keyOf = (row: T) => rowKey(row, rows.indexOf(row));
+  const order = sorted.map(keyOf);
+  const canSelect = (row: T) => !isRowSelectable || isRowSelectable(row);
+  const visibleKeys = visible.filter(canSelect).map(keyOf);
+  const selectableKey = (key: RowKey) => {
+    const row = sorted[order.indexOf(key)];
+    return row !== undefined && canSelect(row);
+  };
+  const all = headerState(visibleKeys, selected);
+
   // Ciclo: ascendente, descendente, sin orden.
   const toggleSort = (key: string) => {
     const next: SortState | null =
@@ -100,11 +179,35 @@ export function DataTable<T>({
       onRowClick?.(row, index);
     }
   };
+  const onSelectRow = (event: MouseEvent<HTMLButtonElement>, key: RowKey) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const next = event.shiftKey ? rangeKeys(selected, order, anchor.current, key, selectableKey) : toggleKey(selected, key, order);
+    anchor.current = key;
+    setSelected(next);
+  };
+  const onSelectAll = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setSelected(toggleAll(selected, visibleKeys, order));
+  };
 
-  return (
-    <Table {...tableProps} hoverable={Boolean(onRowClick)}>
+  const footer = columns.some((c) => c.footer !== undefined);
+  const span = columns.length + (selectable ? 1 : 0);
+  const table = (
+    <Table {...tableProps} hoverable={Boolean(onRowClick)} data-selectable={selectable || undefined}>
       <thead>
         <tr>
+          {selectable ? (
+            <th scope="col" className="z-table__select">
+              <Checkbox
+                aria-label={selectAllLabel}
+                data-select-all=""
+                checked={all === "indeterminate" ? "indeterminate" : all === "checked"}
+                disabled={visibleKeys.length === 0}
+                onClick={onSelectAll}
+              />
+            </th>
+          ) : null}
           {columns.map((column) => {
             const direction = active?.key === column.key ? active.direction : undefined;
             const canSort = column.sortable && (column.accessor || manualSort);
@@ -136,34 +239,82 @@ export function DataTable<T>({
         </tr>
       </thead>
       <tbody>
-        {sorted.length === 0 ? (
+        {visible.length === 0 ? (
           <tr>
-            <td className="z-table__empty" colSpan={columns.length}>
+            <td className="z-table__empty" colSpan={span}>
               {empty}
             </td>
           </tr>
         ) : (
-          sorted.map((row, index) => (
-            <tr
-              key={rowKey(row, index)}
-              className={cx(onRowClick && "z-table__row--clickable")}
-              data-selected={isRowSelected?.(row) || undefined}
-              tabIndex={onRowClick ? 0 : undefined}
-              onClick={onRowClick ? () => onRowClick(row, index) : undefined}
-              onKeyDown={onRowClick ? (event) => onRowKey(event, row, index) : undefined}
-            >
-              {columns.map((column) => {
-                const value = column.render ? column.render(row, index) : column.accessor?.(row);
-                return (
-                  <td key={column.key} data-align={column.align} data-mono={column.mono || undefined}>
-                    {isDate(value) ? value.toLocaleDateString() : typeof value === "boolean" ? String(value) : (value as ReactNode)}
+          visible.map((row, i) => {
+            const index = offset + i;
+            const key = keyOf(row);
+            const checked = selectable && selected.includes(key);
+            return (
+              <tr
+                key={key}
+                className={cx(onRowClick && "z-table__row--clickable")}
+                data-key={selectable ? key : undefined}
+                data-selected={checked || isRowSelected?.(row) || undefined}
+                tabIndex={onRowClick ? 0 : undefined}
+                onClick={onRowClick ? () => onRowClick(row, index) : undefined}
+                onKeyDown={onRowClick ? (event) => onRowKey(event, row, index) : undefined}
+              >
+                {selectable ? (
+                  <td className="z-table__select">
+                    <Checkbox
+                      aria-label={selectRowLabel(row, index)}
+                      checked={Boolean(checked)}
+                      disabled={!canSelect(row)}
+                      onClick={(event) => onSelectRow(event, key)}
+                    />
                   </td>
-                );
-              })}
-            </tr>
-          ))
+                ) : null}
+                {columns.map((column) => {
+                  const value = column.render ? column.render(row, index) : column.accessor?.(row);
+                  return (
+                    <td key={column.key} data-align={column.align} data-mono={column.mono || undefined}>
+                      {isDate(value) ? value.toLocaleDateString() : typeof value === "boolean" ? String(value) : (value as ReactNode)}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })
         )}
       </tbody>
+      {footer ? (
+        <tfoot>
+          <tr>
+            {selectable ? <td className="z-table__select" /> : null}
+            {columns.map((column) => (
+              <td key={column.key} data-align={column.align} data-mono={column.mono || undefined}>
+                {typeof column.footer === "function" ? column.footer(rows) : column.footer}
+              </td>
+            ))}
+          </tr>
+        </tfoot>
+      ) : null}
     </Table>
+  );
+
+  if (!selectable && !paged) return table;
+  return (
+    <div className="z-datatable" data-selectable={selectable || undefined} data-paged={paged || undefined}>
+      {table}
+      <div className="z-datatable__bar">
+        {selectable ? (
+          <span className="z-datatable__count" role="status" data-empty={selected.length === 0 || undefined}>
+            {selected.length ? selectedLabel(selected.length, total) : ""}
+          </span>
+        ) : null}
+        {paged ? (
+          <>
+            <span className="z-datatable__range">{total ? rangeLabel(slice.from, slice.to, total) : rangeLabel(0, 0, 0)}</span>
+            <Pagination size="sm" page={current} pageCount={pageCount} onPageChange={setPage} label={paginationLabel} />
+          </>
+        ) : null}
+      </div>
+    </div>
   );
 }

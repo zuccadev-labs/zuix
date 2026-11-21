@@ -49,6 +49,12 @@
       "name": "valueLabel",
       "type": "(value: number, max: number) => string",
       "description": "Por defecto \"N out of M\"."
+    },
+    {
+      "name": "allowHalf",
+      "type": "boolean",
+      "default": false,
+      "description": "Con `onChange`: medias estrellas. Cada estrella tiene dos mitades pulsables y las flechas avanzan de 0,5 en 0,5. En lectura los decimales ya se dibujan."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled"],
@@ -58,14 +64,15 @@
     "text-small",
     "text-body",
     "warning",
-    "line-strong",
     "radius-xs",
     "duration-fast",
     "ease-standard",
     "ease-spring",
-    "focus-ring",
     "weight-semibold",
-    "fg-muted"
+    "fg-muted",
+    "accent-ring",
+    "control-border",
+    "focus-width"
   ],
   "classes": ["z-rating"],
   "a11y": "Lectura: role=\"img\" con el valor en texto. Entrada: radiogroup con foco itinerante; flechas (reflejadas en RTL), Inicio y Fin mueven y eligen. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo marcado dentro de `[data-z-dom]`; emite z:change { value } en `.z-rating`.",
@@ -77,6 +84,10 @@
     {
       "title": "Entrada",
       "code": "<Rating value={score} onChange={setScore} size=\"lg\" label=\"Your rating\" />"
+    },
+    {
+      "title": "Medias estrellas",
+      "code": "function HalfRating() {\n  const [stars, setStars] = React.useState(3.5);\n  return <Rating value={stars} onChange={setStars} allowHalf showValue label=\"Your rating\" />;\n}"
     }
   ],
   "origin": "Rating del design system base."

@@ -1,33 +1,60 @@
 {
   "name": "Calendar",
   "group": "forms",
-  "description": "Rejilla de un mes para elegir una fecha o un rango. Valores como cadenas ISO YYYY-MM-DD; sin librerías de fechas.",
+  "description": "Rejilla de fechas: una, varias o un rango, en uno o varios meses, con vistas de mes y año, preajustes y fechas reservadas. Valores como cadenas ISO civiles (YYYY-MM-DD; YYYY-MM y YYYY en las vistas de mes y año); sin librerías de fechas.",
   "import": "import { Calendar } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "mode",
       "type": "enum",
-      "values": ["single", "range"],
+      "values": ["single", "range", "multiple"],
       "default": "single"
     },
     {
       "name": "value",
-      "type": "string | null | DateRange",
-      "description": "Fecha ISO; en modo range, { from, to } (to es null mientras solo hay inicio)."
+      "type": "string | null | DateRange | string[]",
+      "description": "Fecha ISO; en range, { from, to } (to es null mientras solo hay inicio); en multiple, lista ordenada. Admite un Temporal.PlainDate en single."
     },
     {
       "name": "defaultValue",
-      "type": "string | null | DateRange"
+      "type": "string | null | DateRange | string[]"
     },
     {
       "name": "onValueChange",
       "type": "(value) => void",
-      "description": "Recibe la fecha ISO o el rango { from, to }."
+      "description": "Recibe la fecha ISO, el rango { from, to } o la lista."
+    },
+    {
+      "name": "maxSelected",
+      "type": "number",
+      "description": "Solo multiple: máximo de fechas."
+    },
+    {
+      "name": "minRange",
+      "type": "number",
+      "description": "Solo range: días mínimos (extremos incluidos)."
+    },
+    {
+      "name": "maxRange",
+      "type": "number",
+      "description": "Solo range: días máximos; durante la elección los días fuera quedan no elegibles."
+    },
+    {
+      "name": "rangeCrossesUnavailable",
+      "type": "enum",
+      "values": ["block", "allow"],
+      "default": "block",
+      "description": "Solo range: block impide que el rango cruce una fecha reservada."
+    },
+    {
+      "name": "allowSingleDayRange",
+      "type": "boolean",
+      "default": true
     },
     {
       "name": "month",
       "type": "string",
-      "description": "Mes visible controlado, YYYY-MM."
+      "description": "Primer mes visible controlado, YYYY-MM."
     },
     {
       "name": "defaultMonth",
@@ -39,6 +66,54 @@
       "type": "(month: string) => void"
     },
     {
+      "name": "numberOfMonths",
+      "type": "number",
+      "default": 1,
+      "description": "Meses visibles a la vez (1–12); se apilan en un contenedor estrecho."
+    },
+    {
+      "name": "pagedNavigation",
+      "type": "boolean",
+      "default": false,
+      "description": "Con varios meses, las flechas avanzan de numberOfMonths en numberOfMonths."
+    },
+    {
+      "name": "view",
+      "type": "enum",
+      "values": ["day", "month", "year"],
+      "description": "Vista controlada: días, meses de un año o años de una década."
+    },
+    {
+      "name": "defaultView",
+      "type": "enum",
+      "values": ["day", "month", "year"]
+    },
+    {
+      "name": "onViewChange",
+      "type": "(view) => void"
+    },
+    {
+      "name": "minView",
+      "type": "enum",
+      "values": ["day", "month", "year"],
+      "default": "day",
+      "description": "Vista en la que se elige el valor: month da YYYY-MM y year da YYYY."
+    },
+    {
+      "name": "maxView",
+      "type": "enum",
+      "values": ["day", "month", "year"],
+      "default": "year",
+      "description": "Vista más alta a la que lleva el título (clic en el título: mes → año → década). day desactiva el cambio de vista."
+    },
+    {
+      "name": "captionLayout",
+      "type": "enum",
+      "values": ["label", "dropdown", "dropdown-months", "dropdown-years"],
+      "default": "label",
+      "description": "Cabecera con título o con desplegables nativos de mes y año."
+    },
+    {
       "name": "min",
       "type": "string",
       "description": "Primera fecha elegible, YYYY-MM-DD."
@@ -46,7 +121,7 @@
     {
       "name": "max",
       "type": "string",
-      "description": "Última fecha elegible, YYYY-MM-DD."
+      "description": "Última fecha elegible, YYYY-MM-DD. Si min > max, se ignora max."
     },
     {
       "name": "isDateDisabled",
@@ -54,10 +129,20 @@
       "description": "true para fechas no elegibles."
     },
     {
+      "name": "isDateUnavailable",
+      "type": "(date: string) => boolean",
+      "description": "Fechas reservadas: enfocables, tachadas y con trama, con unavailableLabel en el nombre accesible; no se eligen y cortan un rango."
+    },
+    {
+      "name": "modifiers",
+      "type": "Record<string, (date) => boolean>",
+      "description": "Atributo data-<nombre> en el día para estilo propio (festivos, vacaciones)."
+    },
+    {
       "name": "weekStartsOn",
       "type": "enum",
       "values": [0, 1, 2, 3, 4, 5, 6],
-      "description": "Primer día de la semana (0 domingo). Por defecto el del locale; lunes si no se conoce."
+      "description": "Primer día de la semana (0 domingo). Por defecto el del locale (Intl.Locale#getWeekInfo); lunes si no se conoce."
     },
     {
       "name": "locale",
@@ -68,7 +153,98 @@
       "name": "showOutsideDays",
       "type": "boolean",
       "default": true,
-      "description": "Días de los meses vecinos que completan las semanas."
+      "description": "Días de los meses vecinos que completan las semanas. El valor por defecto depende de `months`: true con un mes (el caso por defecto) y false con varios (celdas vacías: no se duplican fechas)."
+    },
+    {
+      "name": "outsideDaySelectable",
+      "type": "boolean",
+      "default": true,
+      "description": "Los días de otro mes se pueden elegir."
+    },
+    {
+      "name": "fixedWeeks",
+      "type": "boolean",
+      "default": false,
+      "description": "Siempre seis semanas: el alto no cambia entre meses."
+    },
+    {
+      "name": "showWeekNumber",
+      "type": "boolean",
+      "default": false,
+      "description": "Columna con el número de semana."
+    },
+    {
+      "name": "weekNumbering",
+      "type": "enum",
+      "values": ["iso", "locale"],
+      "default": "iso",
+      "description": "Semana ISO 8601 o la del locale (minimalDays de weekInfo)."
+    },
+    {
+      "name": "onWeekNumberClick",
+      "type": "(week: { week: number; from: string; to: string }) => void",
+      "description": "Con showWeekNumber, el número de semana es un botón que elige la semana (rango: la semana entera; múltiple: sus días; única: su primer día elegible). Sin React: data-week-select y evento z:week."
+    },
+    {
+      "name": "weekdayFormat",
+      "type": "enum",
+      "values": ["narrow", "short", "long"],
+      "default": "short"
+    },
+    {
+      "name": "today",
+      "type": "string",
+      "description": "Hoy, YYYY-MM-DD (servidor y pruebas). Por defecto la fecha local tras montar."
+    },
+    {
+      "name": "showTodayButton",
+      "type": "boolean",
+      "default": false,
+      "description": "Botón al pie que lleva la vista y el foco a hoy y, si se puede, lo elige."
+    },
+    {
+      "name": "presets",
+      "type": "{ label, value }[]",
+      "description": "Atajos: value es una clave de rangePresets (today, next-7-days, this-month…), una fecha, un rango desde/hasta, un valor o una función de today."
+    },
+    {
+      "name": "presetsLabel",
+      "type": "string",
+      "default": "Quick pick"
+    },
+    {
+      "name": "renderDay",
+      "type": "(date, state) => ReactNode",
+      "description": "Contenido extra en cada día (puntos, precios). Es decorativo (aria-hidden): lo que deba oírse va en getDayDescription."
+    },
+    {
+      "name": "getDayDescription",
+      "type": "(date: string) => string",
+      "description": "Texto que se añade al nombre accesible del día."
+    },
+    {
+      "name": "cellSize",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Tamaño de celda: 28, 36 o 44 px. Con puntero grueso sube al objetivo táctil."
+    },
+    {
+      "name": "selectionUnit",
+      "type": "enum",
+      "values": ["day", "week"],
+      "default": "day",
+      "description": "week elige la semana entera (WeekPicker)."
+    },
+    {
+      "name": "legend",
+      "type": "{ today?, selected?, unavailable? }",
+      "description": "Leyenda al pie: el estado no depende solo del color."
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode",
+      "description": "Contenido del pie (resumen, botones)."
     },
     {
       "name": "previousMonthLabel",
@@ -81,40 +257,125 @@
       "default": "Next month"
     },
     {
+      "name": "todayLabel",
+      "type": "string",
+      "default": "Today"
+    },
+    {
+      "name": "weekLabel",
+      "type": "string",
+      "default": "Week"
+    },
+    {
+      "name": "unavailableLabel",
+      "type": "string",
+      "default": "unavailable"
+    },
+    {
+      "name": "monthLabel",
+      "type": "string",
+      "default": "Month"
+    },
+    {
+      "name": "yearLabel",
+      "type": "string",
+      "default": "Year"
+    },
+    {
+      "name": "chooseMonthLabel",
+      "type": "string",
+      "default": "Choose month"
+    },
+    {
+      "name": "chooseYearLabel",
+      "type": "string",
+      "default": "Choose year"
+    },
+    {
       "name": "autoFocus",
       "type": "boolean",
       "default": false,
       "description": "Enfoca el día activo al montar."
+    },
+    {
+      "name": "isDateCheckoutOnly",
+      "type": "(date) => boolean",
+      "description": "Estancia: se puede terminar el rango ese día, no empezarlo (marca pequeña y «check-out only»). Modo DOM: data-checkout-only-dates o setCalendarOptions."
+    },
+    {
+      "name": "rangeUnit",
+      "type": "enum",
+      "values": ["days", "nights"],
+      "default": "days",
+      "description": "minRange y maxRange en noches; sin rangos de un día."
+    },
+    {
+      "name": "minRangeLabel",
+      "type": "string",
+      "description": "Aviso visible y en el nombre del día que no llega al mínimo («{n}-night minimum»)."
+    },
+    {
+      "name": "showLengthStepper",
+      "type": "boolean",
+      "default": false,
+      "description": "Pie con −/+ que acortan o alargan el rango (lengthLabel «{n} nights»)."
+    },
+    {
+      "name": "flexibility",
+      "type": "number",
+      "description": "Chips «Exact dates», «± 1 day»…; también defaultFlexibility, flexibilityOptions y onFlexibilityChange (modo DOM: data-flexibility y z:flexibilitychange)."
     }
   ],
-  "states": ["rest", "hover", "focus", "selected", "today", "outside", "disabled", "range"],
+  "states": ["rest", "hover", "focus", "selected", "today", "outside", "disabled", "unavailable", "range", "preview", "weekend"],
   "tokens": [
-    "control-height-md",
-    "space-2",
-    "fg",
-    "text-small",
-    "text-body",
-    "weight-semibold",
-    "leading-snug",
+    "calendar-cell",
+    "calendar-cell-radius",
+    "calendar-range-bg",
+    "calendar-today-ring",
     "control-height-sm",
-    "radius-full",
+    "control-radius",
+    "item-radius",
+    "card-radius",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "space-1",
+    "space-2",
+    "space-3",
+    "fg",
     "fg-muted",
+    "fg-subtle",
+    "fg-on-accent",
+    "accent-solid",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "glass-highlight",
+    "line",
+    "line-strong",
+    "row-hover",
+    "focus-width",
+    "focus-offset",
+    "touch-target",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "weight-medium",
+    "weight-semibold",
+    "tracking-snug",
+    "tracking-wide",
     "duration-fast",
     "ease-standard",
-    "surface-3",
-    "focus-ring",
-    "fg-subtle",
-    "text-caption",
-    "weight-medium",
-    "line-strong",
-    "accent",
-    "button-primary-bg",
-    "button-primary-fg",
-    "accent-soft",
-    "row-hover"
+    "radius-full"
   ],
   "classes": ["z-calendar"],
-  "a11y": "Tabla con role=grid etiquetada por el título del mes (aria-live). Foco itinerante: un solo día en el orden de tabulación. Flechas mueven por día y semana (en RTL izquierda y derecha se invierten), Home/End al inicio/fin de la semana, PageUp/PageDown cambian de mes (con Mayús, de año), Enter/Espacio eligen. Cada día lleva la fecha completa como nombre accesible; hoy aria-current=date; no elegibles aria-disabled. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con la misma tabla (role=grid, título con aria-live, aria-multiselectable en modo rango) y las mismas teclas; el módulo mantiene aria-selected, aria-current=date, aria-disabled y el foco itinerante. Los nombres de los botones de mes salen de `data-previous-label` y `data-next-label` (en inglés por defecto) y las fechas se formatean con `data-locale`.",
+  "a11y": "Una tabla con role=grid por mes, etiquetada por el título (aria-live=polite) o, con varios meses, por el nombre del mes; cabeceras th con abbr del nombre largo; número de semana como th scope=row con «Week N». Foco itinerante: un solo día en el orden de tabulación, también con varios meses (la rejilla es continua: pasar del último día de un mes lleva al siguiente sin mover la vista hasta salir de lo visible). Teclado APG: flechas por día y semana (en RTL izquierda y derecha se invierten), Inicio/Fin a la semana, Ctrl+Inicio/Fin al mes, RePág/AvPág al mes (con Mayús, al año), Intro/Espacio eligen. En las vistas de mes y año (clic en el título), flechas por celda en 3 × 4, RePág/AvPág por año o década (con Mayús, década o siglo), Intro baja de vista o elige, Escape vuelve a la vista de días sin cambiar el valor. Cada día lleva la fecha completa como nombre accesible (más unavailableLabel si está reservado y getDayDescription); hoy aria-current=date; no elegibles y reservadas aria-disabled (siguen enfocables para que el lector las anuncie); reservadas además tachadas y con trama, no solo color. Selects de mes y año nativos con aria-label (appearance: base-select solo con puntero fino). Con prefers-reduced-motion no hay transiciones. Sin React (`@zuccadev-labs/zuix-zui/dom`): un `.z-calendar` vacío dentro de `[data-z-dom]` se dibuja con el mismo modelo (core/calendar) y el mismo marcado; la configuración va en atributos data-* (data-mode, data-value, data-months, data-caption, data-presets en JSON, data-unavailable-dates, data-week-numbers, data-fixed-weeks, data-today-button, data-legend en JSON, data-cell-size…) y las funciones con setCalendarOptions(cal, { isDateDisabled, isDateUnavailable, modifiers, dayContent, dayDescription }). Emite z:change { value }, z:monthchange, z:viewchange y, con data-week-select, z:week { week, from, to }. Con onWeekNumberClick (o data-week-select) cada número de semana es un button dentro del th, en el orden de tabulación, con el nombre «Week N». Para una tarjeta de cristal elevado: className z-liquid.",
   "behavior": "dom",
   "examples": [
     {
@@ -128,6 +389,50 @@
     {
       "title": "Sin fines de semana",
       "code": "<Calendar locale=\"en-US\" defaultMonth=\"2026-11\" isDateDisabled={(date) => [0, 6].includes(new Date(date).getUTCDay())} />"
+    },
+    {
+      "title": "Varias fechas",
+      "code": "<Calendar mode=\"multiple\" locale=\"en-US\" weekStartsOn={1} maxSelected={5} defaultValue={[\"2026-11-04\", \"2026-11-11\", \"2026-11-18\"]} />"
+    },
+    {
+      "title": "Dos meses",
+      "code": "<Calendar className=\"z-liquid\" mode=\"range\" numberOfMonths={2} locale=\"en-US\" weekStartsOn={1} defaultValue={{ from: \"2026-11-26\", to: \"2026-12-04\" }} />"
+    },
+    {
+      "title": "Selectores de mes y año",
+      "code": "<Calendar className=\"z-liquid\" captionLayout=\"dropdown\" locale=\"en-US\" weekStartsOn={1} defaultValue=\"2026-11-06\" />"
+    },
+    {
+      "title": "Con preajustes",
+      "code": "<Calendar\n  className=\"z-liquid\"\n  mode=\"range\"\n  locale=\"en-US\"\n  weekStartsOn={1}\n  presets={[\n    { label: \"Today\", value: \"today\" },\n    { label: \"Tomorrow\", value: \"tomorrow\" },\n    { label: \"Next 7 days\", value: \"next-7-days\" },\n    { label: \"Next 30 days\", value: \"next-30-days\" },\n    { label: \"This month\", value: \"this-month\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Fechas reservadas",
+      "code": "<Calendar\n  className=\"z-liquid\"\n  locale=\"en-US\"\n  weekStartsOn={1}\n  defaultMonth=\"2026-11\"\n  isDateUnavailable={(date) => [\"2026-11-20\", \"2026-11-21\", \"2026-11-22\", \"2026-11-25\"].includes(date)}\n  unavailableLabel=\"booked\"\n  legend={{ today: \"Today\", selected: \"Selected\", unavailable: \"Booked\" }}\n/>"
+    },
+    {
+      "title": "Semanas numeradas, semanas fijas y botón Hoy",
+      "code": "<Calendar locale=\"en-GB\" showWeekNumber fixedWeeks showTodayButton defaultMonth=\"2026-11\" />"
+    },
+    {
+      "title": "Contenido por celda",
+      "code": "<Calendar\n  locale=\"en-US\"\n  cellSize=\"lg\"\n  defaultMonth=\"2026-11\"\n  renderDay={(date) => (date.endsWith(\"0\") ? \"$89\" : null)}\n  getDayDescription={(date) => (date.endsWith(\"0\") ? \"from $89\" : null)}\n/>"
+    },
+    {
+      "title": "Semana por su número",
+      "code": "<Calendar mode=\"range\" showWeekNumber onWeekNumberClick={(week) => console.log(week.from)} defaultMonth=\"2026-11\" />"
+    },
+    {
+      "title": "Contenido por celda: precio por día",
+      "code": "<Calendar\n  defaultMonth=\"2026-12\"\n  cellSize=\"lg\"\n  // El precio se ve bajo el número; el nombre accesible lo dice («€39, lowest»).\n  renderDay={(date) => (prices[date] ? `€${prices[date]}` : \"—\")}\n  getDayDescription={(date) => (prices[date] ? `€${prices[date]}${prices[date] < 50 ? \", lowest\" : \"\"}` : \"sold out\")}\n  isDateDisabled={(date) => !prices[date]}\n  modifiers={{ cheap: (date) => prices[date] < 50 }}\n/>"
+    },
+    {
+      "title": "Contenido por celda: marcadores de ciclo con leyenda",
+      "code": "<Calendar\n  defaultMonth=\"2026-11\"\n  cellSize=\"lg\"\n  // Cada marcador es un modificador (data-period, data-fertile…) con su estilo en la hoja de la aplicación,\n  // su texto en getDayDescription y su entrada en la leyenda: no depende solo del color.\n  modifiers={{ period, predicted, fertile, ovulation }}\n  renderDay={(date) => (symptoms[date] ? \"•\".repeat(symptoms[date]) : null)}\n  getDayDescription={(date) => [period(date) && \"period\", fertile(date) && \"fertile window\", ovulation(date) && \"ovulation\"].filter(Boolean).join(\", \") || null}\n/>"
+    },
+    {
+      "title": "Estancia: noches, solo salida, flexibilidad y ajuste ±1",
+      "code": "<Calendar\n  mode=\"range\"\n  numberOfMonths={2}\n  rangeUnit=\"nights\"\n  minRange={2}\n  isDateUnavailable={(date) => booked.has(date)}\n  isDateCheckoutOnly={(date) => checkoutOnly.has(date)}\n  defaultFlexibility={1}\n  showLengthStepper\n/>"
     }
   ],
   "html": [
@@ -143,7 +448,37 @@
     {
       "title": "Sin fines de semana",
       "code": "<div class=\"z-calendar\" id=\"workdays\" data-locale=\"en-US\" data-month=\"2026-11\" data-disabled-weekdays=\"0,6\"></div>"
+    },
+    {
+      "title": "Varias fechas",
+      "code": "<div class=\"z-calendar\" id=\"meetings-calendar\" data-mode=\"multiple\" data-locale=\"en-US\" data-week-start=\"1\" data-max-selected=\"5\" data-value=\"2026-11-04,2026-11-11,2026-11-18\"></div>"
+    },
+    {
+      "title": "Dos meses",
+      "code": "<div class=\"z-calendar z-liquid\" id=\"trip-calendar\" data-mode=\"range\" data-months=\"2\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-26/2026-12-04\"></div>"
+    },
+    {
+      "title": "Selectores de mes y año",
+      "code": "<div class=\"z-calendar z-liquid\" id=\"caption-calendar\" data-caption=\"dropdown\" data-locale=\"en-US\" data-week-start=\"1\" data-value=\"2026-11-06\"></div>"
+    },
+    {
+      "title": "Con preajustes",
+      "code": "<div class=\"z-calendar z-liquid\" id=\"preset-calendar\" data-mode=\"range\" data-locale=\"en-US\" data-week-start=\"1\" data-presets='[{\"label\":\"Today\",\"value\":\"today\"},{\"label\":\"Tomorrow\",\"value\":\"tomorrow\"},{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"},{\"label\":\"Next 30 days\",\"value\":\"next-30-days\"},{\"label\":\"This month\",\"value\":\"this-month\"}]'></div>"
+    },
+    {
+      "title": "Fechas reservadas",
+      "code": "<div class=\"z-calendar z-liquid\" id=\"booking-calendar\" data-locale=\"en-US\" data-week-start=\"1\" data-month=\"2026-11\" data-unavailable-dates=\"2026-11-20,2026-11-21,2026-11-22,2026-11-25\" data-unavailable-label=\"booked\" data-legend='{\"today\":\"Today\",\"selected\":\"Selected\",\"unavailable\":\"Booked\"}'></div>"
+    },
+    {
+      "title": "Semanas numeradas, semanas fijas y botón Hoy",
+      "code": "<div class=\"z-calendar\" id=\"week-calendar\" data-locale=\"en-GB\" data-month=\"2026-11\" data-week-numbers data-fixed-weeks data-today-button></div>"
+    },
+    {
+      "title": "Contenido por celda",
+      "code": "<div class=\"z-calendar\" id=\"price-calendar\" data-locale=\"en-US\" data-month=\"2026-11\" data-cell-size=\"lg\"></div>",
+      "script": "import { setCalendarOptions } from \"@zuccadev-labs/zuix-zui/dom\";\nsetCalendarOptions(document.querySelector(\"#price-calendar\"), {\n  dayContent: (date) => (date.endsWith(\"0\") ? \"$89\" : null),\n  dayDescription: (date) => (date.endsWith(\"0\") ? \"from $89\" : null),\n});"
     }
   ],
-  "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG."
+  "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG.",
+  "exports": ["presetValue"]
 }

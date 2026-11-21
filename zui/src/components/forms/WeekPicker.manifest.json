@@ -1,0 +1,133 @@
+{
+  "name": "WeekPicker",
+  "group": "forms",
+  "description": "Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible. Valor YYYY-Www, como <input type=\"week\">; con mode=\"range\", un rango de semanas.",
+  "import": "import { WeekPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": ["single", "range"],
+      "default": "single",
+      "description": "`range`: de una semana a otra; el valor es { from, to } con semanas YYYY-Www y el formulario envía YYYY-Www/YYYY-Www."
+    },
+    {
+      "name": "value",
+      "type": "string | null | WeekRange"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null | WeekRange"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string | null) => void | (value: WeekRange) => void"
+    },
+    {
+      "name": "min",
+      "type": "string"
+    },
+    {
+      "name": "max",
+      "type": "string"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "required",
+      "type": "boolean"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "...DatePicker",
+      "type": "DatePickerProps",
+      "description": "El resto de props de DatePicker."
+    },
+    {
+      "name": "weekLabel",
+      "type": "string",
+      "default": "Week"
+    }
+  ],
+  "states": ["rest", "hover", "focus", "open", "disabled", "invalid"],
+  "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "calendar-cell",
+    "control-bg",
+    "control-border",
+    "control-border-hover",
+    "control-height-lg",
+    "control-height-md",
+    "control-height-sm",
+    "control-radius",
+    "danger",
+    "duration-fast",
+    "ease-standard",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "focus-width",
+    "leading-snug",
+    "line-strong",
+    "popup-bg",
+    "popup-radius",
+    "radius-full",
+    "row-hover",
+    "space-2",
+    "space-3",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-body",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "weight-medium",
+    "weight-semibold"
+  ],
+  "classes": ["z-datepicker", "z-calendar"],
+  "a11y": "Pasar el puntero o el foco por un día resalta su semana; Intro la elige. La columna del número de semana es th scope=row con «Week N». Sin React: data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers; el valor del campo oculto es YYYY-Www. Rango: data-mode=\"range\" y data-value=\"YYYY-Www/YYYY-Www\"; la primera pulsación fija la semana de inicio y la segunda la de fin.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Semana del informe",
+      "code": "<WeekPicker aria-label=\"Report week\" locale=\"en-GB\" defaultValue=\"2026-W47\" />"
+    },
+    {
+      "title": "Rango de semanas",
+      "code": "<WeekPicker mode=\"range\" aria-label=\"Sprint\" locale=\"en-GB\" defaultValue={{ from: \"2026-W46\", to: \"2026-W48\" }} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Semana del informe",
+      "code": "<span class=\"z-select z-datepicker\" id=\"report-week\" data-size=\"md\" data-block data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-value=\"2026-W47\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"report-week-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Report week</span>\n    <span class=\"z-select__value\">Week 47, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"report-week\" value=\"2026-W47\" />\n</span>\n\n<div id=\"report-week-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose week\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    },
+    {
+      "title": "Rango de semanas",
+      "code": "<span class=\"z-select z-datepicker\" id=\"sprint-weeks\" data-size=\"md\" data-block data-mode=\"range\" data-selection-unit=\"week\" data-week-start=\"1\" data-week-numbers data-locale=\"en-GB\" data-months=\"2\" data-value=\"2026-W46/2026-W48\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"sprint-weeks-panel\" data-state=\"closed\">\n    <span class=\"z-sr-only\">Sprint</span>\n    <span class=\"z-select__value\">Week 46–48, 2026</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"sprint-weeks\" value=\"2026-W46/2026-W48\" />\n</span>\n\n<div id=\"sprint-weeks-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose weeks\">\n  <div class=\"z-calendar\"></div>\n</div>"
+    }
+  ],
+  "origin": "Week Picker de Shark UI."
+}

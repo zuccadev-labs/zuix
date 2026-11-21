@@ -52,7 +52,7 @@ src/primitives/*                                   primitivas de React sobre cor
 src/dom/*.ts                                       comportamiento sin framework (@zuccadev-labs/zuix-zui/dom), sobre core
 ```
 
-Grupos: `actions`, `forms`, `data`, `feedback`, `content`, `overlay`, `navigation`, `carousel`.
+Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `media`, `effects`, `overlay`, `navigation`, `carousel`.
 
 ## Patrones
 
@@ -100,24 +100,31 @@ export function Button({ variant = "secondary", size = "md", icon, loading, clas
 @layer zui.actions {
   .z-btn {
     display: inline-flex; align-items: center; justify-content: center; gap: var(--z-space-2);
-    height: var(--z-control-height-md); padding-inline: var(--z-space-4);
-    border-radius: var(--z-button-radius); border: 1px solid var(--z-line);
+    height: var(--z-control-height-md); padding-inline: var(--z-space-3-5);
+    border-radius: var(--z-button-radius); border: 1px solid var(--z-glass-border);
     background: var(--z-surface-2); color: var(--z-fg);
-    font-weight: var(--z-weight-semibold); font-size: var(--z-text-body);
-    transition: background var(--z-duration-fast) var(--z-ease-standard);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    font-weight: var(--z-weight-medium); font-size: var(--z-text-body);
+    transition: background var(--z-duration-fast) var(--z-ease-standard), scale var(--z-duration-press) var(--z-ease-out);
   }
   @media (hover: hover) { .z-btn:hover:not(:disabled) { background: var(--z-surface-3); } }
-  .z-btn:focus-visible { outline: none; box-shadow: var(--z-focus-ring); }
+  .z-btn:focus-visible { outline: var(--z-focus-width) solid var(--z-accent-ring); outline-offset: var(--z-focus-offset); }
+  .z-btn:active:not(:disabled) { scale: 0.97; }
   .z-btn--primary { background: var(--z-button-primary-bg); color: var(--z-button-primary-fg); border-color: transparent; }
   .z-btn--danger { background: var(--z-danger-soft); color: var(--z-danger-text); }
-  .z-btn[data-size="sm"] { height: var(--z-control-height-sm); }
+  .z-btn[data-size="sm"] { height: var(--z-control-height-sm); border-radius: var(--z-control-radius-sm); }
 }
 ```
 
 - `:hover` va dentro de `@media (hover: hover)`.
-- El foco se dibuja con `box-shadow: var(--z-focus-ring)`. Con colores forzados el navegador quita las
-  sombras: `base.css` devuelve entonces un contorno del sistema a todo lo enfocable dentro de `.z-root`. Un
-  estado que solo cambia el fondo necesita además su regla en `@media (forced-colors: active)`.
+- El foco se dibuja con contorno: `outline: var(--z-focus-width) solid var(--z-accent-ring)` y
+  `outline-offset: var(--z-focus-offset)`. Sigue al radio de la pieza y sobrevive a los colores forzados. En
+  un campo, el anillo va en `:focus-within` del contenedor, separado 1 px; dentro de un control compuesto
+  (opción de una lista, pestaña de un segmentado), con desplazamiento negativo para no recortarse. Un estado
+  que solo cambia el fondo necesita además su regla en `@media (forced-colors: active)` de `base.css`.
+- Forma: rectángulo de esquinas redondeadas, no píldora. Radios concéntricos por tamaño
+  (`control-radius-sm` 8, `control-radius` 10, `control-radius-lg` 12); el radio de una pista es el de su
+  opción más el relleno. `radius-full` solo para lo circular (avatar, punto, interruptor, radio).
 - Texto de peligro con `--z-danger-text` sobre `--z-danger-soft`.
 
 ### Lógica compartida
@@ -168,7 +175,8 @@ Campos del contrato HTML: `behavior` (`none` | `dom` | `react`; se deduce si fal
 | `color: var(--z-accent)` en un texto | `var(--z-accent-text)` |
 | `background: var(--z-success)` con texto encima | `var(--z-success-solid)` y `var(--z-fg-on-accent)` |
 | `margin-left`, `right: 0`, `text-align: left` | `margin-inline-start`, `inset-inline-end: 0`, `text-align: start` |
-| Un foco sin indicador | `box-shadow: var(--z-focus-ring)` en `:focus-visible` |
+| Un foco sin indicador | `outline: var(--z-focus-width) solid var(--z-accent-ring)` en `:focus-visible` |
+| `border-radius: var(--z-radius-full)` en un botón, campo o pestaña | `var(--z-button-radius)` o `var(--z-control-radius*)` |
 | Un `div` flotante con `z-index` | Un elemento `popover` con las primitivas de `src/primitives/` |
 | `disabled` para un botón en carga | `aria-disabled` |
 | `forwardRef` | `ref` como prop |

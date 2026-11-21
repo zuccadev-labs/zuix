@@ -1,0 +1,123 @@
+{
+  "name": "ColorSwatchPicker",
+  "group": "forms",
+  "description": "Muestrario de colores fijos: un grupo de radios; la muestra elegida lleva una marca que contrasta con su color.",
+  "import": "import { ColorSwatchPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void",
+      "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+      "name": "onValueChangeEnd",
+      "type": "(value: string) => void",
+      "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+      "name": "swatches",
+      "type": "(string | { value, label? })[]",
+      "description": "Muestras fijas; la que coincide con el valor queda marcada.",
+      "required": true
+    },
+    {
+      "name": "format",
+      "type": "enum",
+      "values": ["hex", "rgb", "hsl", "oklch"],
+      "description": "Formato del valor (controlado)."
+    },
+    {
+      "name": "defaultFormat",
+      "type": "enum",
+      "values": ["hex", "rgb", "hsl", "oklch"],
+      "default": "hex",
+      "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+      "name": "onFormatChange",
+      "type": "(format: ColorFormat) => void"
+    },
+    {
+      "name": "alpha",
+      "type": "boolean",
+      "default": true,
+      "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+      "name": "form",
+      "type": "string"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "\"Color picker\"",
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ColorPickerLabels>",
+      "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+  ],
+  "states": ["rest", "focus", "checked", "disabled"],
+  "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-radius-sm",
+    "fg",
+    "space-7"
+  ],
+  "classes": ["z-colorswatches"],
+  "a11y": "Patrón APG «radio»: role=\"radiogroup\" con nombre, una parada de Tab y flechas que eligen; cada muestra tiene nombre (su `label` o su valor). Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorswatches dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Muestrario",
+      "code": "<ColorSwatchPicker\n  defaultValue=\"#10b981\"\n  swatches={[\n    { value: \"#ef4444\", label: \"Red\" },\n    { value: \"#f59e0b\", label: \"Amber\" },\n    { value: \"#10b981\", label: \"Emerald\" },\n    { value: \"#3b82f6\", label: \"Blue\" },\n    { value: \"#8b5cf6\", label: \"Violet\" },\n    { value: \"#ec4899\", label: \"Pink\" },\n  ]}\n/>"
+    }
+  ],
+  "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+  "apg": "radio"
+}

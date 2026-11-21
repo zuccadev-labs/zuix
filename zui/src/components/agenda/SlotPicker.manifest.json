@@ -1,0 +1,127 @@
+{
+  "name": "SlotPicker",
+  "group": "agenda",
+  "description": "Franjas de cita (estilo Calendly): Calendar con los días que tienen hueco realzados (los demás, deshabilitados pero enfocables y anunciados «no times available»), zona horaria del visitante y un listbox con las horas del día en 12 o 24 h; «Next» es un botón aparte. Las horas son instantes: la disponibilidad del anfitrión se calcula en su zona y se muestra en la del visitante.",
+  "import": "import { SlotPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "slots",
+      "type": "(string | number)[]",
+      "description": "Instantes de inicio. O availability + hostTimeZone + duration (+ step, from, to, busy)."
+    },
+    {
+      "name": "availability",
+      "type": "{ days: number[]; start: string; end: string }[]"
+    },
+    {
+      "name": "hostTimeZone",
+      "type": "string"
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 30
+    },
+    {
+      "name": "step",
+      "type": "number"
+    },
+    {
+      "name": "from",
+      "type": "string"
+    },
+    {
+      "name": "to",
+      "type": "string"
+    },
+    {
+      "name": "busy",
+      "type": "{ start; end }[]"
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona del visitante; con timeZones aparece un selector (onTimeZoneChange)."
+    },
+    {
+      "name": "timeZones",
+      "type": "string[]"
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": ["h12", "h23"],
+      "description": "También defaultHourCycle y onHourCycleChange; por defecto, el del locale."
+    },
+    {
+      "name": "value",
+      "type": "string | number | null",
+      "description": "Instante elegido; también defaultValue y onSelect."
+    },
+    {
+      "name": "date",
+      "type": "string",
+      "description": "Día del calendario (onDateChange)."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "now",
+      "type": "number | string",
+      "description": "No ofrece franjas anteriores."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<SlotPickerLabels>"
+    },
+    {
+      "name": "onSelect",
+      "type": "(detail: { start; startMs; timeZone }) => void"
+    },
+    {
+      "name": "onConfirm",
+      "type": "(detail: { start; startMs; timeZone }) => void"
+    }
+  ],
+  "states": ["rest", "hover", "focus", "selected", "unavailable"],
+  "tokens": [
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "control-bg",
+    "control-border",
+    "control-height-lg",
+    "control-radius",
+    "surface",
+    "fg",
+    "surface-solid",
+    "panel-radius"
+  ],
+  "classes": ["z-slotpicker"],
+  "a11y": "Calendar (rejilla APG) con los días sin hueco en aria-disabled y «no times available» en su nombre. Horas en role=listbox etiquetado por el día («Tuesday 24 November»), opciones con aria-selected y tabindex itinerante: ↑↓, Inicio/Fin, Intro o Espacio eligen. La elección se dice en texto («10:30 selected») y «Next» es un botón aparte, no una opción. 12/24 h en un grupo con aria-pressed. Sin React: .z-slotpicker con data-host-time-zone, data-duration, data-time-zone… y availability o slots en <script type=\"application/json\" data-props>; emite z:select, z:confirm, z:datechange, z:timezonechange y z:hourcyclechange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Llamada de 30 min",
+      "code": "<SlotPicker\n  availability={[{ days: [1, 2, 3, 4, 5], start: \"09:00\", end: \"17:00\" }]}\n  hostTimeZone=\"Europe/Madrid\"\n  duration={30}\n  timeZone=\"America/New_York\"\n  timeZones={[\"America/New_York\", \"Europe/Madrid\"]}\n  onConfirm={(slot) => console.log(slot.start)}\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Llamada de 30 min",
+      "code": "<div class=\"z-slotpicker\" id=\"intro-call\" data-host-time-zone=\"Europe/Madrid\" data-duration=\"30\" data-from=\"2026-11-19\" data-to=\"2026-11-30\" data-time-zone=\"Europe/Madrid\" data-time-zones=\"Europe/Madrid,America/New_York\" data-today=\"2026-11-19\" data-now=\"2026-11-19T09:42:00Z\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"availability\": [{ \"days\": [1, 2, 3, 4, 5], \"start\": \"09:00\", \"end\": \"17:00\" }] }</script>\n</div>"
+    }
+  ],
+  "origin": "Especificación agenda.md §10; Calendly, Cal.com."
+}

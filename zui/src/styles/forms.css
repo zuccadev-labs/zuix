@@ -1,10 +1,12 @@
-/* Formularios: campo, entradas de texto, selección y controles de elección. Origen: primitivas de zutool y campos del design system base. */
+/* Formularios: campo, entradas de texto, selección y controles de elección. Origen: primitivas de zutool y campos del design system base.
+   Campos del estándar liquid glass: superficie de control hundida (`control-bg`) con borde de 3:1 (`control-border`, su única
+   frontera visible), rectángulo de esquinas redondeadas (sm 8, md 10, lg 12) y foco por contorno en el contenedor. */
 @layer zui.forms {
   /* ---- Field ---- */
   .z-field {
     display: flex;
     flex-direction: column;
-    gap: var(--z-space-2);
+    gap: var(--z-space-1-5);
     min-width: 0;
   }
   .z-field[data-layout="inline"] {
@@ -29,7 +31,7 @@
     gap: var(--z-space-1);
     color: var(--z-fg);
     font-size: var(--z-text-small);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
     line-height: var(--z-leading-snug);
   }
   .z-field__required {
@@ -42,7 +44,7 @@
   .z-field__hint,
   .z-field__error {
     margin: 0;
-    font-size: var(--z-text-small);
+    font-size: var(--z-text-caption);
     line-height: var(--z-leading-snug);
   }
   .z-field__hint {
@@ -57,6 +59,7 @@
   .z-input {
     --z-input-height: var(--z-control-height-md);
     --z-input-pad: var(--z-space-3);
+    --z-input-radius: var(--z-control-radius);
     display: flex;
     align-items: center;
     gap: var(--z-space-2);
@@ -65,32 +68,35 @@
     height: var(--z-input-height);
     padding: 0 var(--z-input-pad);
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-input-radius);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font-size: var(--z-text-body);
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
       background var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      outline-color var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-input:hover:not([data-disabled]) {
       border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
     }
   }
+  /* El anillo va en el contenedor, separado 1 px: el campo entero se lee como enfocado. */
   .z-input:focus-within {
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-input:has(.z-input__control:active):not([data-disabled]) {
-    background: var(--z-surface);
+    background: var(--z-control-bg-hover);
   }
   .z-input[data-invalid] {
     border-color: var(--z-danger);
   }
   .z-input[data-invalid]:focus-within {
-    box-shadow: 0 0 0 3px var(--z-danger-soft);
+    outline-color: var(--z-danger);
   }
   .z-input[data-disabled] {
     opacity: 0.5;
@@ -98,13 +104,14 @@
   }
   .z-input[data-size="sm"] {
     --z-input-height: var(--z-control-height-sm);
-    --z-input-pad: var(--z-space-2);
+    --z-input-pad: var(--z-space-2-5);
+    --z-input-radius: var(--z-control-radius-sm);
     font-size: var(--z-text-small);
   }
   .z-input[data-size="lg"] {
     --z-input-height: var(--z-control-height-lg);
-    --z-input-pad: var(--z-space-4);
-    font-size: var(--z-text-title);
+    --z-input-pad: var(--z-space-3-5);
+    --z-input-radius: var(--z-control-radius-lg);
   }
   .z-input[data-mono] {
     font-family: var(--z-font-mono);
@@ -139,7 +146,7 @@
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    color: var(--z-fg-subtle);
+    color: var(--z-fg-muted);
   }
   .z-input__trailing {
     gap: var(--z-space-1);
@@ -170,8 +177,8 @@
     }
   }
   .z-input__action:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-input__action:active:not(:disabled) {
     transform: scale(0.94);
@@ -192,9 +199,6 @@
       transform: rotate(360deg);
     }
   }
-  .z-input--search {
-    border-radius: var(--z-radius-full);
-  }
 
   /* ---- Textarea ---- */
   .z-textarea {
@@ -203,7 +207,7 @@
     min-width: 0;
     padding: var(--z-space-2) var(--z-space-3);
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-field-radius-multiline);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font-family: inherit;
@@ -212,7 +216,7 @@
     resize: vertical;
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      background var(--z-duration-fast) var(--z-ease-standard);
   }
   .z-textarea::placeholder {
     color: var(--z-fg-subtle);
@@ -223,9 +227,9 @@
     }
   }
   .z-textarea:focus-visible {
-    outline: none;
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-textarea:active:not(:disabled) {
     background: var(--z-surface);
@@ -234,7 +238,7 @@
     border-color: var(--z-danger);
   }
   .z-textarea[data-invalid]:focus-visible {
-    box-shadow: 0 0 0 3px var(--z-danger-soft);
+    outline-color: var(--z-danger);
   }
   .z-textarea:disabled {
     opacity: 0.5;
@@ -255,6 +259,7 @@
   /* ---- Select (NativeSelect, Select y DatePicker comparten envoltura y control) ---- */
   .z-select {
     --z-select-height: var(--z-control-height-md);
+    --z-select-radius: var(--z-control-radius);
     position: relative;
     display: inline-flex;
     min-width: 0;
@@ -268,11 +273,12 @@
   }
   .z-select[data-size="sm"] {
     --z-select-height: var(--z-control-height-sm);
+    --z-select-radius: var(--z-control-radius-sm);
     font-size: var(--z-text-small);
   }
   .z-select[data-size="lg"] {
     --z-select-height: var(--z-control-height-lg);
-    font-size: var(--z-text-title);
+    --z-select-radius: var(--z-control-radius-lg);
   }
   .z-select__control {
     appearance: none;
@@ -283,7 +289,7 @@
     padding-block: 0;
     padding-inline: var(--z-space-3) var(--z-space-8);
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-select-radius);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font: inherit;
@@ -293,20 +299,24 @@
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
       background var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      outline-color var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-select__control:hover:not(:disabled) {
       border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
     }
   }
   .z-select__control:focus-visible {
-    outline: none;
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-select__control:active:not(:disabled) {
-    background: var(--z-surface);
+    background: var(--z-control-bg-hover);
+  }
+  .z-select[data-invalid] .z-select__control:focus-visible {
+    outline-color: var(--z-danger);
   }
   .z-select[data-invalid] .z-select__control {
     border-color: var(--z-danger);
@@ -346,8 +356,10 @@
   .z-select__control[data-state="open"] {
     border-color: var(--z-accent);
   }
+  /* El texto de ejemplo es texto real (no ::placeholder): fg-muted llega a 4,5:1 también sobre un campo en una
+     tarjeta clara; fg-subtle se quedaba en 4,46:1 (axe, zutool claro). */
   .z-select__control[data-placeholder] {
-    color: var(--z-fg-subtle);
+    color: var(--z-fg-muted);
   }
   .z-select__value {
     flex: 1 1 auto;
@@ -370,6 +382,8 @@
   /* Se monta por portal fuera de `.z-root`: fija su tipografía y color. Opción activa: [data-highlighted]; elegida: [data-state="checked"] o [aria-selected="true"]. */
   .z-listbox {
     --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
     z-index: var(--z-layer-popover);
     display: flex;
     flex-direction: column;
@@ -381,22 +395,45 @@
     border-radius: var(--z-popup-radius);
     color: var(--z-fg);
     font-family: var(--z-font-sans);
-    font-size: var(--z-text-small);
-    line-height: var(--z-leading-normal);
+    font-size: var(--z-text-body);
+    line-height: var(--z-leading-ui);
     -webkit-font-smoothing: antialiased;
-    animation: z-listbox-in var(--z-duration-fast) var(--z-ease-standard) both;
+    /* Entrada con @starting-style (mejora progresiva: sin soporte, la lista aparece sin transición). El
+       desplazamiento y la escala solo sin preferencia de movimiento reducido. */
+    opacity: 1;
+    transition:
+      opacity var(--z-duration-normal) var(--z-ease-emphasized),
+      translate var(--z-duration-normal) var(--z-ease-emphasized),
+      scale var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  @starting-style {
+    .z-listbox {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-listbox {
+      translate: 0 0;
+      scale: 1;
+    }
+    @starting-style {
+      .z-listbox {
+        translate: 0 calc(var(--z-space-1) * -1);
+        scale: 0.98;
+      }
+    }
   }
   .z-listbox:focus-visible {
     outline: none;
   }
-  .z-listbox[data-size="lg"] {
-    font-size: var(--z-text-body);
+  .z-listbox[data-size="sm"] {
+    font-size: var(--z-text-small);
   }
   .z-listbox__viewport {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--z-space-1);
+    padding: var(--z-space-1-5);
     scrollbar-width: thin;
     scrollbar-color: var(--z-line-strong) transparent;
   }
@@ -406,10 +443,11 @@
   .z-listbox__option {
     display: flex;
     align-items: center;
-    min-height: var(--z-touch-target, 0px);
+    /* 32 px con ratón; con puntero grueso, el objetivo táctil. Radio concéntrico: popup-radius − relleno = item-radius. */
+    min-height: max(32px, var(--z-touch-target, 0px));
     gap: var(--z-space-2);
-    padding: var(--z-space-2) var(--z-space-3);
-    border-radius: var(--z-radius-xs);
+    padding: var(--z-space-1-5) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
     color: var(--z-fg);
     font-weight: var(--z-weight-medium);
     cursor: default;
@@ -419,10 +457,11 @@
     scroll-margin: var(--z-space-1);
   }
   .z-listbox[data-size="sm"] .z-listbox__option {
+    min-height: max(28px, var(--z-touch-target, 0px));
     padding: var(--z-space-1) var(--z-space-2);
   }
   .z-listbox__option[data-highlighted] {
-    background: var(--z-row-hover);
+    background: var(--z-surface-2);
   }
   .z-listbox__option[data-disabled],
   .z-listbox__option[aria-disabled="true"] {
@@ -446,7 +485,7 @@
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    color: var(--z-accent);
+    color: var(--z-accent-text);
     visibility: hidden;
   }
   .z-listbox__option[data-state="checked"] .z-listbox__check,
@@ -470,11 +509,6 @@
     color: var(--z-fg-subtle);
     text-align: center;
   }
-  @keyframes z-listbox-in {
-    from {
-      opacity: 0;
-    }
-  }
 
   /* ---- Combobox (sobre .z-input) ---- */
   .z-combobox[data-state="open"] {
@@ -485,60 +519,133 @@
   }
 
   /* ---- Calendar ---- */
+  /* Celdas de 36 px en columnas de 40 (separación de 2 px entre filas), rectángulos redondeados con el radio de
+     control: nada en píldora. `radius-full` solo para el punto de hoy. */
   .z-calendar {
-    --z-calendar-cell: var(--z-control-height-md);
+    --z-calendar-size: var(--z-calendar-cell);
+    --z-calendar-col: calc(var(--z-calendar-size) + var(--z-space-1));
+    --z-calendar-cols: 7;
     display: inline-flex;
-    flex-direction: column;
-    /* Siete columnas a su tamaño; en un contenedor más estrecho (móvil) las celdas encogen en vez de desbordar. */
-    width: calc(7 * var(--z-calendar-cell));
+    flex-wrap: wrap;
+    align-items: flex-start;
+    /* Ancho de su contenido aunque el padre estire (columna flex): la cabecera y la rejilla miden lo mismo. */
+    inline-size: fit-content;
     max-width: 100%;
-    gap: var(--z-space-2);
     color: var(--z-fg);
-    font-size: var(--z-text-small);
+    font-size: var(--z-text-body);
+    font-variant-numeric: tabular-nums;
     user-select: none;
     -webkit-user-select: none;
+  }
+  .z-calendar[data-cell-size="sm"] {
+    --z-calendar-size: var(--z-control-height-sm);
+  }
+  .z-calendar[data-cell-size="lg"] {
+    --z-calendar-size: calc(var(--z-calendar-cell) + var(--z-space-2));
+  }
+  /* Puntero grueso: la celda llega al objetivo táctil; si no cabe, la tabla encoge las columnas. */
+  @media (pointer: coarse) {
+    .z-calendar:not([data-cell-size="lg"]) {
+      --z-calendar-size: max(var(--z-calendar-cell), var(--z-touch-target));
+    }
+  }
+  .z-calendar[data-week-numbers] {
+    --z-calendar-cols: 8;
+  }
+  /* Tarjeta de cristal elevado (`className="z-liquid"`): la misma receta que un popover. */
+  .z-calendar.z-liquid {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    padding: var(--z-space-3);
+    border-radius: var(--z-card-radius);
+  }
+  .z-calendar.z-liquid[data-presets] {
+    padding: 0;
+  }
+  .z-calendar__main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    min-width: 0;
+    max-width: 100%;
+  }
+  .z-calendar[data-presets] > .z-calendar__main {
+    padding: var(--z-space-3);
   }
   .z-calendar__header {
     display: flex;
     align-items: center;
-    gap: var(--z-space-2);
+    justify-content: space-between;
+    gap: var(--z-space-1-5);
+    min-height: var(--z-calendar-cell);
   }
   .z-calendar__title {
     flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
     min-width: 0;
     font-size: var(--z-text-body);
     font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
     line-height: var(--z-leading-snug);
     text-align: center;
   }
-  .z-calendar__title::first-letter {
+  .z-calendar__title::first-letter,
+  .z-calendar__view::first-letter {
     text-transform: uppercase;
   }
-  .z-calendar__nav {
-    display: inline-grid;
+  /* Con desplegables el título sigue anunciando el mes (aria-live), fuera de la vista. */
+  .z-calendar__title[data-hidden] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .z-calendar__nav,
+  .z-calendar__view,
+  .z-calendar__today {
+    display: inline-flex;
     flex-shrink: 0;
-    place-items: center;
-    width: var(--z-control-height-sm);
-    height: var(--z-control-height-sm);
+    align-items: center;
+    justify-content: center;
+    min-height: var(--z-control-height-sm);
     padding: 0;
     border: 0;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-control-radius);
     background: transparent;
     color: var(--z-fg-muted);
+    font: inherit;
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard);
   }
+  .z-calendar__nav {
+    width: var(--z-control-height-sm);
+  }
+  .z-calendar__view {
+    padding-inline: var(--z-space-2);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-calendar__today {
+    padding-inline: var(--z-space-2-5);
+    color: var(--z-accent-text);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+  }
   @media (hover: hover) {
-    .z-calendar__nav:hover:not(:disabled) {
-      background: var(--z-surface-3);
+    .z-calendar__nav:hover:not(:disabled),
+    .z-calendar__view:hover,
+    .z-calendar__today:hover {
+      background: var(--z-surface-2);
       color: var(--z-fg);
     }
-  }
-  .z-calendar__nav:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
   }
   .z-calendar__nav:disabled {
     opacity: 0.4;
@@ -548,15 +655,111 @@
   [dir="rtl"] .z-calendar__nav svg.z-icon {
     transform: scaleX(-1);
   }
+  .z-calendar__selects {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: var(--z-space-1-5);
+    min-width: 0;
+  }
+  /* Selects nativos (teclado, lector y selector del sistema gratis) con la forma de un control de cristal. La flecha
+     es el icono chevron-up-down de zicon, encima del select y sin recibir el puntero. */
+  .z-calendar__select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .z-calendar__select-wrap > svg {
+    position: absolute;
+    inset-inline-end: var(--z-space-2);
+    color: var(--z-fg-muted);
+    pointer-events: none;
+  }
+  .z-calendar__select {
+    min-width: 0;
+    min-height: var(--z-control-height-sm);
+    padding-inline: var(--z-space-3) var(--z-space-7);
+    appearance: none;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius);
+    background-color: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    color: var(--z-fg);
+    font: inherit;
+    font-weight: var(--z-weight-medium);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-calendar__select:hover {
+      background-color: var(--z-surface-3);
+    }
+  }
+  /* Select personalizable (mejora progresiva) solo con puntero fino: en el móvil se queda el selector del sistema. */
+  @supports (appearance: base-select) {
+    @media (pointer: fine) {
+      .z-calendar__select,
+      .z-calendar__select::picker(select) {
+        appearance: base-select;
+      }
+      .z-calendar__select {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--z-space-1-5);
+      }
+      .z-calendar__select::picker-icon {
+        display: none;
+      }
+      .z-calendar__select::picker(select) {
+        max-height: min(320px, 50dvh);
+        margin-block: var(--z-space-1);
+        padding: var(--z-space-1);
+        border: 1px solid var(--z-glass-border);
+        border-radius: var(--z-popup-radius);
+        background: var(--z-popup-bg);
+        box-shadow: var(--z-popup-shadow);
+        color: var(--z-fg);
+        -webkit-backdrop-filter: blur(var(--z-popup-blur));
+        backdrop-filter: blur(var(--z-popup-blur));
+      }
+      .z-calendar__select option {
+        padding: var(--z-space-1-5) var(--z-space-2-5);
+        border-radius: var(--z-item-radius);
+      }
+      .z-calendar__select option:checked {
+        background: var(--z-accent-soft);
+        color: var(--z-accent-text);
+      }
+      .z-calendar__select option::checkmark {
+        display: none;
+      }
+    }
+  }
+  .z-calendar__months {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-5);
+    max-width: 100%;
+  }
+  .z-calendar__month {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* El mes mide una rejilla completa y es contenedor de consultas: la rejilla se acota con `cqi` (WebKit no aplica
+       `max-width` a una tabla y salía de un contenedor estrecho). */
+    inline-size: calc(var(--z-calendar-cols) * var(--z-calendar-col));
+    max-inline-size: 100%;
+    container-type: inline-size;
+  }
   .z-calendar__grid {
-    width: 100%;
+    width: min(calc(var(--z-calendar-cols) * var(--z-calendar-col)), 100cqi);
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0 2px;
-    margin: 0;
+    /* Dos meses apilados en un contenedor más ancho que un mes: cada rejilla, centrada bajo la cabecera. */
+    margin: 0 auto;
   }
   .z-calendar__weekday {
-    height: var(--z-control-height-sm);
+    height: calc(var(--z-control-height-sm) - var(--z-space-1));
     padding: 0;
     color: var(--z-fg-subtle);
     font-size: var(--z-text-caption);
@@ -564,81 +767,377 @@
     text-align: center;
     text-transform: capitalize;
   }
+  .z-calendar__week-number {
+    padding: 0;
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    text-align: center;
+  }
+  /* Número de semana pulsable (`onWeekNumberClick`, `data-week-select`): elige la semana entera. */
+  .z-calendar__week-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 100%;
+    block-size: var(--z-calendar-size);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-calendar-cell-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-calendar__week-button:hover {
+      background: var(--z-surface-3);
+      color: var(--z-fg);
+    }
+  }
+  .z-calendar__week-button:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
   .z-calendar__cell {
+    position: relative;
+    height: var(--z-calendar-size);
     padding: 0;
     text-align: center;
   }
-  .z-calendar__day {
-    display: inline-grid;
-    place-items: center;
-    width: 100%;
-    aspect-ratio: 1;
+  .z-calendar__day,
+  .z-calendar__unit {
+    /* Posicionado y después de la banda (::before de la celda): se pinta encima sin z-index. */
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: min(var(--z-calendar-size), 100%);
+    height: var(--z-calendar-size);
     padding: 0;
     border: 0;
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-calendar-cell-radius);
     background: transparent;
     color: var(--z-fg);
     font: inherit;
     font-variant-numeric: tabular-nums;
+    line-height: 1;
     cursor: pointer;
     transition:
       background var(--z-duration-fast) var(--z-ease-standard),
       color var(--z-duration-fast) var(--z-ease-standard);
   }
+  /* Contenido por celda: bajo el número, encima del botón y sin recibir el puntero. */
+  .z-calendar__day-content {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: var(--z-space-1);
+    color: var(--day-content-fg, var(--z-fg-muted));
+    font-size: var(--z-text-fine);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .z-calendar__cell:has(.z-calendar__day-content) .z-calendar__day {
+    padding-block-end: var(--z-space-2-5);
+  }
+  /* Sobre el día elegido (accent-solid, como su número): variable local, el texto va encima del botón. */
+  .z-calendar__cell:has([data-selected]) {
+    --day-content-fg: var(--z-fg-on-accent);
+  }
   @media (hover: hover) {
-    .z-calendar__day:hover {
+    .z-calendar__day:hover:not([data-selected], [aria-disabled="true"]),
+    .z-calendar__unit:hover:not([data-selected], [aria-disabled="true"]) {
       background: var(--z-surface-3);
     }
   }
-  .z-calendar__day:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+  .z-calendar__day:focus-visible,
+  .z-calendar__unit:focus-visible,
+  .z-calendar__nav:focus-visible,
+  .z-calendar__view:focus-visible,
+  .z-calendar__today:focus-visible,
+  .z-calendar__preset:focus-visible,
+  .z-calendar__select:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
-  .z-calendar__day[data-outside] {
+  .z-calendar__day[data-outside],
+  .z-calendar__unit[data-outside] {
     color: var(--z-fg-subtle);
   }
-  .z-calendar__day[data-today] {
-    box-shadow: inset 0 0 0 1px var(--z-line-strong);
+  /* Hoy: anillo interior del acento, texto del acento y un punto (no solo color). */
+  .z-calendar__day[data-today],
+  .z-calendar__unit[data-current] {
+    box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
     color: var(--z-accent-text);
     font-weight: var(--z-weight-semibold);
   }
-  .z-calendar__day[data-today]:focus-visible {
-    box-shadow: var(--z-focus-ring);
+  .z-calendar__day[data-today]::after {
+    content: "";
+    position: absolute;
+    inset-block-end: var(--z-space-1);
+    width: var(--z-space-1);
+    height: var(--z-space-1);
+    border-radius: var(--z-radius-full);
+    background: currentColor;
   }
   .z-calendar__day[data-selected],
-  .z-calendar__day[data-selected]:hover {
-    background: var(--z-button-primary-bg);
-    color: var(--z-button-primary-fg);
+  .z-calendar__unit[data-selected] {
+    background: var(--z-accent-solid);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 30%, transparent),
+      0 6px 14px -6px var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
     font-weight: var(--z-weight-semibold);
   }
   .z-calendar__day[aria-disabled="true"],
-  .z-calendar__day[aria-disabled="true"]:hover {
-    background: transparent;
+  .z-calendar__unit[aria-disabled="true"] {
     color: var(--z-fg-subtle);
-    opacity: 0.45;
     cursor: not-allowed;
+  }
+  /* Reservada: tachada en el color de peligro y con trama diagonal; además, «…, booked» en el nombre accesible. */
+  .z-calendar__day[data-unavailable] {
+    background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--z-fg) 7%, transparent) 5px 6px);
+    color: var(--z-fg-subtle);
     text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    text-decoration-color: color-mix(in srgb, var(--z-danger) 70%, transparent);
   }
-  /* Rango: la banda va en la celda; los extremos, en el botón del día. */
-  .z-calendar__cell[data-range="start"],
-  .z-calendar__cell[data-range="middle"],
-  .z-calendar__cell[data-range="end"] {
-    background: var(--z-accent-soft);
+  /* Rango: banda continua en la celda; los extremos, en el botón. La banda se redondea al principio y al final de
+     cada fila y en los huecos del mes. */
+  .z-calendar__cell[data-range]::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 0;
+    background: var(--z-calendar-range-bg);
   }
-  .z-calendar__cell[data-range="start"] {
-    border-start-start-radius: var(--z-radius-full);
-    border-end-start-radius: var(--z-radius-full);
+  .z-calendar__cell[data-range="single"]::before {
+    content: none;
   }
-  .z-calendar__cell[data-range="end"] {
-    border-start-end-radius: var(--z-radius-full);
-    border-end-end-radius: var(--z-radius-full);
+  .z-calendar__cell[data-range="start"]::before {
+    inset-inline-start: 50%;
   }
-  .z-calendar__cell[data-range][data-preview] {
+  .z-calendar__cell[data-range="end"]::before {
+    inset-inline-end: 50%;
+  }
+  .z-calendar__cell[data-range][data-row-start]::before {
+    inset-inline-start: 2px;
+    border-start-start-radius: var(--z-calendar-cell-radius);
+    border-end-start-radius: var(--z-calendar-cell-radius);
+  }
+  .z-calendar__cell[data-range][data-row-end]::before {
+    inset-inline-end: 2px;
+    border-start-end-radius: var(--z-calendar-cell-radius);
+    border-end-end-radius: var(--z-calendar-cell-radius);
+  }
+  .z-calendar__cell[data-range="start"][data-row-start]::before {
+    inset-inline-start: 50%;
+  }
+  .z-calendar__cell[data-range="end"][data-row-end]::before {
+    inset-inline-end: 50%;
+  }
+  .z-calendar__cell[data-range="start"][data-row-end]::before,
+  .z-calendar__cell[data-range="end"][data-row-start]::before {
+    content: none;
+  }
+  .z-calendar__cell[data-range="middle"] :is(.z-calendar__day, .z-calendar__unit):not([aria-disabled="true"]) {
+    color: var(--z-accent-text);
+  }
+  /* Vista previa mientras se elige el fin: la misma banda, más tenue. */
+  .z-calendar__cell[data-range][data-preview]::before {
     background: var(--z-row-hover);
   }
+  .z-calendar__cell[data-preview][data-range="middle"] :is(.z-calendar__day, .z-calendar__unit):not([aria-disabled="true"]) {
+    color: var(--z-fg);
+  }
+  /* Vistas de mes y año: 3 × 4 celdas anchas. */
+  .z-calendar__grid[data-view] {
+    width: calc(7 * var(--z-calendar-col));
+  }
+  .z-calendar__grid[data-view] .z-calendar__cell {
+    height: calc(var(--z-calendar-size) + var(--z-space-3));
+  }
+  .z-calendar__grid[data-view] .z-calendar__unit {
+    width: calc(100% - var(--z-space-2));
+    height: calc(var(--z-calendar-size) + var(--z-space-1));
+    text-transform: capitalize;
+  }
+  .z-calendar__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+    padding: var(--z-space-2-5) var(--z-space-1) 0;
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-calendar__summary {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-calendar__actions {
+    display: inline-flex;
+    gap: var(--z-space-1-5);
+    margin-inline-start: auto;
+  }
+  .z-calendar__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--z-space-3-5);
+    margin: 0;
+    padding: var(--z-space-2) 0 0;
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    list-style: none;
+  }
+  .z-calendar__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+  }
+  .z-calendar__swatch {
+    width: var(--z-space-3);
+    height: var(--z-space-3);
+    border-radius: var(--z-radius-full);
+  }
+  [data-legend="today"] .z-calendar__swatch {
+    box-shadow: inset 0 0 0 1.5px var(--z-calendar-today-ring);
+  }
+  [data-legend="selected"] .z-calendar__swatch {
+    background: var(--z-accent-solid);
+  }
+  [data-legend="unavailable"] .z-calendar__swatch {
+    background: repeating-linear-gradient(135deg, transparent 0 2px, var(--z-fg-subtle) 2px 3px);
+    box-shadow: inset 0 0 0 1px var(--z-line-strong);
+  }
+  /* Preajustes: columna al lado del mes; en un contenedor estrecho, fila encima. */
+  .z-calendar[data-presets] {
+    /* Contenedor de consulta: su ancho no puede salir del contenido, así que se calcula (columna de preajustes +
+       meses) y se acota al hueco disponible. Dentro de un popover (ancho intrínseco) vale el calculado. */
+    container-type: inline-size;
+    box-sizing: border-box;
+    display: inline-grid;
+    grid-template-columns: var(--z-calendar-presets) minmax(0, 1fr);
+    --z-calendar-presets-width: calc(
+      var(--z-calendar-presets) +
+      var(--z-space-6) +
+      var(--z-calendar-months, 1) *
+      var(--z-calendar-cols) *
+      var(--z-calendar-col) +
+      (var(--z-calendar-months, 1) - 1) *
+      var(--z-space-5)
+    );
+    width: min(100%, var(--z-calendar-presets-width));
+    --z-calendar-presets: calc(var(--z-space-12) * 3 + var(--z-space-1-5));
+  }
+  /* En un popover (ancho intrínseco) el 100 % no se resuelve: vale el ancho calculado. */
+  .z-datepicker__panel .z-calendar[data-presets] {
+    width: min(var(--z-calendar-presets-width), calc(100vw - var(--z-space-10)));
+  }
+  .z-calendar__presets {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: var(--z-space-0-5);
+    padding: var(--z-space-3) var(--z-space-2-5);
+    border-inline-end: 1px solid var(--z-line);
+  }
+  .z-calendar__presets-label {
+    margin: 0;
+    padding: var(--z-space-1) var(--z-space-2-5) var(--z-space-2);
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-calendar__preset {
+    display: flex;
+    align-items: center;
+    min-height: var(--z-control-height-sm);
+    padding: 0 var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-control-radius);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .z-calendar__preset[aria-pressed="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+  }
   @media (hover: hover) {
-    .z-calendar__cell[data-range="middle"] .z-calendar__day:hover:not([data-selected]) {
-      background: var(--z-surface-3);
+    .z-calendar__preset:not([aria-pressed="true"]):hover {
+      background: var(--z-surface-2);
+      color: var(--z-fg);
+    }
+  }
+  @container (inline-size < 560px) {
+    .z-calendar__presets,
+    .z-calendar[data-presets] > .z-calendar__main {
+      grid-column: 1 / -1;
+    }
+    .z-calendar__presets {
+      flex-direction: row;
+      flex-wrap: wrap;
+      border-inline-end: 0;
+      border-block-end: 1px solid var(--z-line);
+    }
+    .z-calendar__presets-label {
+      flex: 1 1 100%;
+    }
+  }
+  /* Preajustes encima (`presetsPlacement="top"`): una sola columna, como en un contenedor estrecho. */
+  .z-calendar[data-presets-placement="top"] {
+    grid-template-columns: minmax(0, 1fr);
+    --z-calendar-presets: 0px;
+  }
+  .z-calendar[data-presets-placement="top"] > .z-calendar__presets {
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-calendar[data-presets-placement="top"] .z-calendar__presets-label {
+    flex: 1 1 100%;
+  }
+  /* Hoja inferior de DatePicker (`drawer`): el calendario ocupa el ancho, con celdas táctiles. */
+  .z-datepicker__drawer .z-drawer__body {
+    display: flex;
+    justify-content: center;
+  }
+  .z-datepicker__drawer .z-calendar {
+    --z-calendar-size: var(--z-control-height-lg);
+    inline-size: 100%;
+    max-inline-size: calc(var(--z-control-height-lg) * 8 + var(--z-space-6));
+  }
+  /* DateTimePicker: hora y «Aplicar» al pie del calendario. */
+  .z-datetimepicker__time {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-datetimepicker__time-label {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-datetimepicker__footer {
+    margin-block-start: var(--z-space-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-calendar :is(.z-calendar__day, .z-calendar__unit, .z-calendar__nav, .z-calendar__preset) {
+      transition: none;
     }
   }
 
@@ -682,7 +1181,7 @@
   .z-check__text {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--z-space-0-5);
     min-width: 0;
     padding-top: 1px;
   }
@@ -702,7 +1201,7 @@
     width: 18px;
     height: 18px;
     padding: 0;
-    border: 1px solid var(--z-line-strong);
+    border: 1px solid var(--z-control-border);
     background: var(--z-control-bg);
     color: var(--z-fg-on-accent);
     cursor: inherit;
@@ -726,18 +1225,20 @@
   }
   .z-check__box:focus-visible,
   .z-radio__dot:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-check__box:active:not(:disabled),
   .z-radio__dot:active:not(:disabled) {
     transform: scale(0.92);
   }
+  /* Marcado: acento sólido con el brillo interior del botón primario. */
   .z-check__box[data-state="checked"],
   .z-check__box[data-state="indeterminate"],
   .z-radio__dot[data-state="checked"] {
     border-color: transparent;
     background: var(--z-accent-solid);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
   }
   .z-check__box[data-invalid],
   .z-radio-group[data-invalid] .z-radio__dot {
@@ -819,6 +1320,7 @@
     border: 0;
     border-radius: var(--z-radius-full);
     background: var(--z-line-strong);
+    box-shadow: inset 0 1px 2px color-mix(in srgb, var(--z-canvas) 30%, transparent);
     cursor: inherit;
     transition:
       background var(--z-duration-normal) var(--z-ease-standard),
@@ -830,12 +1332,13 @@
     }
   }
   .z-switch__track:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
   }
   .z-switch__track[data-state="checked"],
   .z-switch__track[data-state="checked"]:hover:not(:disabled) {
     background: var(--z-accent-solid);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
   }
   .z-switch__thumb {
     position: absolute;
@@ -858,26 +1361,33 @@
     transform: translateX(calc(var(--z-switch-height) - var(--z-switch-width)));
   }
 
-  /* ---- Slider ---- */
+  /* ---- Slider ----
+     El tirador es un objetivo de 24 × 24 (WCAG 2.5.8) que dibuja dentro su pomo de 18 px (14 en sm): el aspecto no
+     cambia y el área que recibe el puntero, el foco y las medidas de accesibilidad es la del elemento. La pista es
+     una barra fina con el radio corto del estándar. */
   .z-slider {
-    --z-slider-thumb: 18px;
+    --z-slider-thumb: 24px;
+    --z-slider-knob: 18px;
     --z-slider-track: 4px;
     position: relative;
     display: flex;
     align-items: center;
     width: 100%;
+    /* En un contenedor que se ajusta a su contenido el 100 % sería 0: los tiradores se solaparían. */
+    min-width: calc(var(--z-slider-thumb) * 6);
     height: var(--z-slider-thumb);
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
   }
   .z-slider[data-size="sm"] {
-    --z-slider-thumb: 14px;
+    --z-slider-knob: 14px;
     --z-slider-track: 3px;
   }
   .z-slider[data-orientation="vertical"] {
     flex-direction: column;
     width: var(--z-slider-thumb);
+    min-width: 0;
     height: 100%;
     min-height: var(--z-space-20);
   }
@@ -888,8 +1398,9 @@
     position: relative;
     flex: 1 1 auto;
     height: var(--z-slider-track);
-    border-radius: var(--z-radius-full);
+    border-radius: var(--z-radius-xs);
     background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
   }
   .z-slider[data-orientation="vertical"] .z-slider__track {
     width: var(--z-slider-track);
@@ -898,7 +1409,7 @@
   .z-slider__range {
     position: absolute;
     height: 100%;
-    border-radius: var(--z-radius-full);
+    border-radius: inherit;
     background: var(--z-accent);
   }
   .z-slider[data-orientation="vertical"] .z-slider__range {
@@ -906,34 +1417,45 @@
     height: auto;
   }
   .z-slider__thumb {
-    display: block;
+    display: grid;
+    place-items: center;
     width: var(--z-slider-thumb);
     height: var(--z-slider-thumb);
+    border-radius: var(--z-radius-full);
+    background: transparent;
+    cursor: grab;
+  }
+  .z-slider__thumb::before {
+    content: "";
+    width: var(--z-slider-knob);
+    height: var(--z-slider-knob);
+    box-sizing: border-box;
     border: 2px solid var(--z-accent);
     border-radius: var(--z-radius-full);
     background: var(--z-fg-on-accent);
     box-shadow: var(--z-shadow-sm);
-    cursor: grab;
-    transition:
-      box-shadow var(--z-duration-fast) var(--z-ease-standard),
-      transform var(--z-duration-fast) var(--z-ease-standard);
+    transition: scale var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
-    .z-slider__thumb:hover {
-      transform: scale(1.1);
+    .z-slider__thumb:hover::before {
+      scale: 1.1;
     }
   }
   .z-slider__thumb:focus-visible {
-    outline: none;
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
   }
   .z-slider__thumb:active {
-    transform: scale(1.15);
     cursor: grabbing;
+  }
+  .z-slider__thumb:active::before {
+    scale: 1.15;
   }
   .z-slider[data-disabled] .z-slider__thumb {
     cursor: not-allowed;
-    transform: none;
+  }
+  .z-slider[data-disabled] .z-slider__thumb::before {
+    scale: 1;
   }
 
   /* ---- OTPInput ---- */
@@ -952,7 +1474,7 @@
     height: calc(var(--z-otp-size) + var(--z-space-1));
     padding: 0;
     border: 1px solid var(--z-control-border);
-    border-radius: var(--z-control-radius);
+    border-radius: var(--z-control-radius-lg);
     background: var(--z-control-bg);
     color: var(--z-fg);
     font-family: var(--z-font-mono);
@@ -962,17 +1484,18 @@
     caret-color: var(--z-accent);
     transition:
       border-color var(--z-duration-fast) var(--z-ease-standard),
-      box-shadow var(--z-duration-fast) var(--z-ease-standard);
+      background var(--z-duration-fast) var(--z-ease-standard);
   }
   @media (hover: hover) {
     .z-otp__cell:hover:not(:disabled) {
       border-color: var(--z-control-border-hover);
+      background: var(--z-control-bg-hover);
     }
   }
   .z-otp__cell:focus-visible {
-    outline: none;
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-otp__cell:active:not(:disabled) {
     background: var(--z-surface);
@@ -993,7 +1516,7 @@
     justify-content: center;
     gap: var(--z-space-2);
     padding: var(--z-space-6) var(--z-space-4);
-    border: 1px dashed var(--z-line-strong);
+    border: 1px dashed var(--z-control-border);
     border-radius: var(--z-card-radius);
     background: var(--z-control-bg);
     color: var(--z-fg-muted);
@@ -1015,7 +1538,8 @@
   }
   .z-upload:has(.z-upload__input:focus-visible) {
     border-color: var(--z-accent);
-    box-shadow: var(--z-focus-ring);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
   }
   .z-upload:active:not([data-disabled]),
   .z-upload[data-dragging] {
@@ -1035,14 +1559,16 @@
     justify-content: center;
     width: var(--z-space-10);
     height: var(--z-space-10);
-    border-radius: var(--z-radius-full);
+    /* Baldosa de radio concéntrico (12), no círculo. */
+    border-radius: var(--z-control-radius-lg);
     background: var(--z-accent-soft);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
     color: var(--z-accent-text);
   }
   .z-upload__label {
     color: var(--z-fg);
     font-size: var(--z-text-body);
-    font-weight: var(--z-weight-semibold);
+    font-weight: var(--z-weight-medium);
   }
   .z-upload__hint {
     font-size: var(--z-text-small);
@@ -1065,8 +1591,9 @@
     display: flex;
     align-items: center;
     gap: var(--z-space-3);
+    min-height: var(--z-control-height-sm);
     padding: var(--z-space-1) var(--z-space-3);
-    border-radius: var(--z-radius-xs);
+    border-radius: var(--z-control-radius-sm);
     background: var(--z-surface-2);
     color: var(--z-fg);
     font-size: var(--z-text-small);
@@ -1114,5 +1641,148 @@
       width: max(100%, var(--z-touch-target, 0px));
       height: max(100%, var(--z-touch-target, 0px));
     }
+  }
+
+  /* ---- DateField, TimeField, TimePicker ----
+     El campo es un `.z-input` (superficie de control, borde, radio por tamaño y anillo en `:focus-within`); cada
+     segmento es un spinbutton de texto. El activo se rellena de acento; los vacíos muestran su marcador atenuado.
+     El panel de TimePicker es un `.z-popover` con columnas o franjas de `item-radius`. */
+  .z-datefield {
+    position: relative;
+    cursor: text;
+    font-variant-numeric: tabular-nums;
+  }
+  .z-datefield[data-disabled] {
+    cursor: not-allowed;
+  }
+  .z-datefield__input {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .z-datefield__segment {
+    /* Objetivo de 24 px de alto (40 con puntero grueso, WCAG 2.5.8) sin crecer el campo. */
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--z-control-height-xs);
+    padding-inline: var(--z-space-0-5);
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg);
+    caret-color: transparent;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-datefield__segment[data-placeholder] {
+    color: var(--z-fg-muted);
+  }
+  .z-datefield__segment:focus {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-datefield[data-readonly] .z-datefield__segment:focus {
+    background: var(--z-surface-3);
+    color: var(--z-fg);
+  }
+  .z-datefield__literal {
+    color: var(--z-fg-muted);
+    white-space: pre;
+  }
+  .z-datefield .z-input__action[hidden] {
+    display: none;
+  }
+  .z-timepicker__trigger[aria-expanded="true"] {
+    color: var(--z-fg);
+  }
+
+  /* Flex solo abierto: un `display` propio taparía el `display: none` del popover cerrado (quedaba visible y
+     encima de lo que hubiera debajo en el modo DOM). */
+  .z-timepicker__panel:is(:popover-open, :not([popover])) {
+    display: flex;
+  }
+  .z-timepicker__panel {
+    flex-direction: column;
+    gap: var(--z-space-1);
+    padding: var(--z-space-1-5);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-timepicker__columns {
+    display: flex;
+    gap: var(--z-space-1);
+  }
+  .z-timepicker__column,
+  .z-timepicker__list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    max-height: min(224px, var(--z-available-height, 224px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--z-line-strong) transparent;
+  }
+  .z-timepicker__column {
+    min-width: 3.25rem;
+  }
+  .z-timepicker__column + .z-timepicker__column {
+    padding-inline-start: var(--z-space-1);
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-timepicker__list {
+    min-width: max(8rem, var(--z-anchor-width, 0px));
+    max-height: min(280px, var(--z-available-height, 280px));
+  }
+  .z-timepicker__option {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-height: max(32px, var(--z-touch-target, 0px));
+    padding: var(--z-space-1) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-medium);
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    scroll-margin: var(--z-space-1);
+  }
+  .z-timepicker__list .z-timepicker__option {
+    justify-content: flex-start;
+  }
+  @media (hover: hover) {
+    .z-timepicker__option:hover:not([aria-disabled="true"], [aria-selected="true"]) {
+      background: var(--z-surface-2);
+    }
+  }
+  .z-timepicker__option[aria-selected="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-timepicker__option:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-timepicker__option[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .z-timepicker__query {
+    padding: var(--z-space-1) var(--z-space-2-5);
+    border-radius: var(--z-item-radius);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-timepicker__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-block-start: var(--z-space-1);
+    border-block-start: 1px solid var(--z-line);
   }
 }

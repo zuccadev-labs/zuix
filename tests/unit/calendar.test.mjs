@@ -367,3 +367,189 @@ describe("hoy (zona horaria local)", () => {
     assert.equal(domCalendar({}).dataset.month, "2024-02");
   });
 });
+
+describe("familia completa: varios meses, vistas, múltiple, preajustes, reservadas y semanas", () => {
+  /** Atributos de estado de las celdas, para comparar el marcado de React con el del modo DOM. */
+  const cellsOf = (root) =>
+    [...root.querySelectorAll(".z-calendar__months .z-calendar__cell")].map((td) => {
+      const b = td.firstElementChild;
+      return [
+        td.getAttribute("aria-selected"),
+        td.getAttribute("data-range"),
+        td.hasAttribute("data-row-start"),
+        td.hasAttribute("data-row-end"),
+        b?.getAttribute("data-date") ?? b?.getAttribute("data-value") ?? null,
+        b?.getAttribute("aria-disabled") ?? null,
+        b?.hasAttribute("data-unavailable") ?? false,
+        b?.getAttribute("aria-label") ?? null,
+      ].join("|");
+    });
+  const reactRoot = (props) => {
+    const host = document.createElement("div");
+    host.innerHTML = render(Calendar, { locale: "en-US", today: "2026-11-19", ...props });
+    return host;
+  };
+
+  test("misma rejilla en React y en DOM con dos meses, semanas numeradas, reservadas y rango", () => {
+    const cal = domCalendar({
+      locale: "en-US",
+      today: "2026-11-19",
+      mode: "range",
+      months: 2,
+      "week-start": 1,
+      "week-numbers": "",
+      "unavailable-dates": "2026-12-10",
+      "unavailable-label": "booked",
+      value: "2026-11-26/2026-12-04",
+      month: "2026-11",
+    });
+    const react = reactRoot({
+      mode: "range",
+      numberOfMonths: 2,
+      weekStartsOn: 1,
+      showWeekNumber: true,
+      isDateUnavailable: (d) => d === "2026-12-10",
+      unavailableLabel: "booked",
+      defaultValue: { from: "2026-11-26", to: "2026-12-04" },
+      defaultMonth: "2026-11",
+    });
+    assert.deepEqual(cellsOf(cal), cellsOf(react));
+    assert.equal(cal.querySelectorAll(".z-calendar__grid").length, 2);
+    assert.equal(cal.querySelectorAll(".z-calendar__week-number").length, react.querySelectorAll(".z-calendar__week-number").length);
+    assert.equal(cal.querySelector(".z-calendar__title").textContent, react.querySelector(".z-calendar__title").textContent);
+    assert.equal(day(cal, "2026-12-10").getAttribute("aria-label"), "Thursday, December 10, 2026, booked");
+  });
+
+  test("dos meses: el teclado cruza de un mes al otro sin mover la vista y la mueve al salir", () => {
+    const cal = domCalendar({ locale: "en-US", months: 2, "week-start": 1, month: "2026-11", value: "2026-11-30" });
+    assert.equal(move(cal, "2026-11-30", "ArrowRight"), "2026-12-01");
+    assert.equal(cal.dataset.month, "2026-11");
+    assert.equal(move(cal, "2026-12-01", "PageDown"), "2027-01-01");
+    assert.equal(cal.dataset.month, "2026-12");
+    assert.equal(cal.querySelectorAll('.z-calendar__grid [tabindex="0"]').length, 1);
+  });
+
+  test("múltiple: clics que añaden y quitan, máximo y z:change con la lista", () => {
+    const cal = domCalendar({ locale: "en-US", mode: "multiple", month: "2026-11", "max-selected": 2 });
+    const seen = [];
+    cal.addEventListener("z:change", (e) => seen.push(e.detail.value));
+    click(day(cal, "2026-11-05"));
+    click(day(cal, "2026-11-03"));
+    click(day(cal, "2026-11-09"));
+    click(day(cal, "2026-11-05"));
+    assert.deepEqual(seen, [["2026-11-05"], ["2026-11-03", "2026-11-05"], ["2026-11-03"]]);
+    assert.equal(cal.dataset.value, "2026-11-03");
+    assert.equal(cal.querySelector(".z-calendar__grid").getAttribute("aria-multiselectable"), "true");
+  });
+
+  test("vistas: el título lleva a meses y a años; elegir baja de vista; Escape vuelve a los días", () => {
+    const cal = domCalendar({ locale: "en-US", month: "2026-11", value: "2026-11-24" });
+    click(cal.querySelector(".z-calendar__view"));
+    assert.equal(cal.dataset.view, "month");
+    assert.equal(cal.querySelector(".z-calendar__grid").getAttribute("aria-label"), "Choose month");
+    assert.equal(document.activeElement?.dataset.value, "2026-11");
+    click(cal.querySelector(".z-calendar__view"));
+    assert.equal(cal.dataset.view, "year");
+    assert.equal(cal.querySelector(".z-calendar__title").textContent, "2020 – 2029");
+    click(cal.querySelector('.z-calendar__unit[data-value="2028"]'));
+    assert.equal(cal.dataset.view, "month");
+    assert.equal(cal.dataset.month, "2028-11");
+    const feb = cal.querySelector('.z-calendar__unit[data-value="2028-02"]');
+    feb.focus();
+    press(feb, "ArrowDown");
+    assert.equal(document.activeElement?.dataset.value, "2028-05");
+    const may = cal.querySelector('.z-calendar__unit[data-value="2028-05"]');
+    const esc = press(may, "Escape");
+    assert.ok(esc.defaultPrevented);
+    assert.equal(cal.dataset.view, "day");
+    assert.equal(document.activeElement?.dataset.date, "2028-05-01");
+  });
+
+  test("selector de mes: minView=month da YYYY-MM y respeta los límites", () => {
+    const cal = domCalendar({ locale: "en-US", "min-view": "month", month: "2026-01", min: "2026-03-01" });
+    const seen = [];
+    cal.addEventListener("z:change", (e) => seen.push(e.detail.value));
+    assert.equal(cal.querySelector('.z-calendar__unit[data-value="2026-02"]').getAttribute("aria-disabled"), "true");
+    click(cal.querySelector('.z-calendar__unit[data-value="2026-02"]'));
+    click(cal.querySelector('.z-calendar__unit[data-value="2026-07"]'));
+    assert.deepEqual(seen, ["2026-07"]);
+    assert.equal(cal.querySelector('.z-calendar__nav[data-nav="previous"]').disabled, true);
+  });
+
+  test("desplegables de mes y año cambian el mes visible", () => {
+    const cal = domCalendar({ locale: "en-US", caption: "dropdown", month: "2026-11" });
+    const month = cal.querySelector('.z-calendar__select[data-part="month"]');
+    assert.equal(month.value, "2026-11");
+    month.focus();
+    month.value = "2026-03";
+    month.dispatchEvent(new window.Event("change", { bubbles: true }));
+    assert.equal(cal.dataset.month, "2026-03");
+    assert.equal(document.activeElement?.dataset.part, "month", "el foco sigue en el select tras rehacer el marcado");
+    const year = cal.querySelector('.z-calendar__select[data-part="year"]');
+    year.value = "2030";
+    year.dispatchEvent(new window.Event("change", { bubbles: true }));
+    assert.equal(cal.dataset.month, "2030-03");
+    assert.ok(cal.querySelector(".z-calendar__title").hasAttribute("data-hidden"));
+  });
+
+  test("preajustes, botón Hoy, semanas fijas y contenido por celda", () => {
+    const cal = domCalendar({
+      locale: "en-US",
+      mode: "range",
+      today: "2026-11-19",
+      "week-start": 1,
+      "fixed-weeks": "",
+      "today-button": "",
+      month: "2026-02",
+    });
+    // JSON en un atributo: con setAttribute (el ayudante `attrs` no escapa comillas).
+    cal.setAttribute("data-presets", JSON.stringify([{ label: "Next 7 days", value: "next-7-days" }]));
+    dom.hydrate(document.body);
+    assert.equal(cal.querySelectorAll("tbody tr").length, 6);
+    const preset = cal.querySelector(".z-calendar__preset");
+    click(preset);
+    assert.equal(cal.dataset.value, "2026-11-19/2026-11-25");
+    assert.equal(cal.dataset.month, "2026-11");
+    assert.equal(cal.querySelector(".z-calendar__preset").getAttribute("aria-pressed"), "true");
+    click(cal.querySelector(".z-calendar__today"));
+    assert.equal(cal.dataset.value, "2026-11-19/");
+    dom.setCalendarOptions(cal, { dayContent: (d) => (d === "2026-11-20" ? "$89" : null) });
+    assert.equal(day(cal, "2026-11-20").parentElement.querySelector(".z-calendar__day-content").textContent, "$89");
+  });
+
+  test("semana: un clic elige de lunes a domingo", () => {
+    const cal = domCalendar({ locale: "en-GB", "selection-unit": "week", "week-start": 1, month: "2026-11" });
+    click(day(cal, "2026-11-19"));
+    assert.equal(cal.dataset.value, "2026-11-16");
+    const selected = [...cal.querySelectorAll('.z-calendar__cell[aria-selected="true"] [data-date]')].map((b) => b.dataset.date);
+    assert.deepEqual(selected, ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22"]);
+  });
+
+  test("RTL: la flecha izquierda va al día siguiente", () => {
+    const cal = domCalendar({ locale: "ar-EG", month: "2026-11", value: "2026-11-10" });
+    cal.setAttribute("dir", "rtl");
+    cal.style.direction = "rtl";
+    assert.equal(move(cal, "2026-11-10", "ArrowLeft"), "2026-11-11");
+  });
+});
+
+describe("hoy en husos con cambio de hora y desfases raros", () => {
+  const zone = process.env.TZ;
+  before(() => mock.timers.enable({ apis: ["Date"], now: Date.parse("2026-11-19T02:30:00Z") }));
+  after(() => {
+    mock.timers.reset();
+    if (zone === undefined) delete process.env.TZ;
+    else process.env.TZ = zone;
+  });
+  for (const [tz, expected] of [
+    ["America/Sao_Paulo", "2026-11-18"],
+    ["Pacific/Apia", "2026-11-19"],
+    ["Asia/Kolkata", "2026-11-19"],
+  ])
+    test(`${tz}: hoy es ${expected} y el mes inicial no se desplaza`, () => {
+      process.env.TZ = tz;
+      const cal = domCalendar({});
+      assert.equal(cal.querySelector("[data-today]").dataset.date, expected);
+      assert.equal(cal.dataset.month, "2026-11");
+    });
+});

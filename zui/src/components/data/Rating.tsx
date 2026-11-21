@@ -20,6 +20,8 @@ export interface RatingProps {
   label?: string;
   /** Nombre accesible de cada estrella o del valor mostrado. */
   valueLabel?: (value: number, max: number) => string;
+  /** Con `onChange`, medias estrellas: cada estrella tiene dos mitades y las flechas avanzan de 0,5 en 0,5. */
+  allowHalf?: boolean;
   className?: string;
 }
 
@@ -34,6 +36,7 @@ export function Rating({
   disabled,
   label = "Rating",
   valueLabel = (v, m) => `${v} out of ${m}`,
+  allowHalf,
   className,
 }: RatingProps) {
   const [hover, setHover] = useState<number | null>(null);
@@ -78,10 +81,54 @@ export function Rating({
     const step = event.key === forward || event.key === "ArrowUp" ? 1 : event.key === backward || event.key === "ArrowDown" ? -1 : 0;
     if (!step && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
-    const next = event.key === "Home" ? 1 : event.key === "End" ? max : Math.max(1, Math.min(max, Math.round(value) + step));
+    const unit = allowHalf ? 0.5 : 1;
+    const base = Math.round(value / unit) * unit;
+    const next = event.key === "Home" ? unit : event.key === "End" ? max : Math.max(unit, Math.min(max, base + step * unit));
     onChange(next);
     event.currentTarget.querySelector<HTMLButtonElement>(`[data-star="${next}"]`)?.focus();
   };
+  if (allowHalf) {
+    const chosen = Math.round(Math.min(value, max) * 2) / 2;
+    const half = (star: number, side: "start" | "end") => {
+      const n = side === "start" ? star - 0.5 : star;
+      const checked = chosen === n;
+      return (
+        <button
+          type="button"
+          role="radio"
+          className="z-rating__star"
+          data-half={side}
+          data-star={n}
+          data-filled={n <= shown || undefined}
+          aria-checked={checked}
+          aria-label={valueLabel(n, max)}
+          tabIndex={checked || (chosen < 0.5 && n === 0.5) ? 0 : -1}
+          disabled={disabled}
+          onClick={() => onChange(n)}
+          onMouseEnter={() => setHover(n)}
+        />
+      );
+    };
+    return (
+      <span className={cx("z-rating", className)} data-size={size} data-interactive data-half data-disabled={disabled || undefined}>
+        <span className="z-rating__stars" role="radiogroup" aria-label={label} onKeyDown={onKeyDown} onMouseLeave={() => setHover(null)}>
+          {stars.map((star) => (
+            <span key={star} className="z-rating__cell">
+              <span className="z-rating__glyph" aria-hidden="true">
+                <Icon name="star" variant="outline" size={px} />
+              </span>
+              <span className="z-rating__glyph z-rating__glyph--filled" aria-hidden="true">
+                <Icon name="star" variant="solid" size={px} />
+              </span>
+              {half(star, "start")}
+              {half(star, "end")}
+            </span>
+          ))}
+        </span>
+        {tail}
+      </span>
+    );
+  }
   return (
     <span className={cx("z-rating", className)} data-size={size} data-interactive data-disabled={disabled || undefined}>
       <span className="z-rating__stars" role="radiogroup" aria-label={label} onKeyDown={onKeyDown} onMouseLeave={() => setHover(null)}>

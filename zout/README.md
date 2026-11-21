@@ -1,7 +1,7 @@
 # @zuccadev-labs/zuix-zout
 
 Layouts and dynamic windows for the zuix suite. It solves the structure of the screen (shell, panels, work
-tabs, grids) and draws no content. Measures and material come from the tokens.
+tabs, grids, site navigation) and draws no content. Measures and material come from the tokens.
 
 ## Install
 
@@ -21,14 +21,22 @@ To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://
 |---|---|
 | `Shell` | The overall structure: title bar, rail, sidebar, main area, inspector |
 | `Rail`, `RailItem` | Narrow bar for primary navigation |
-| `Sidebar`, `SidebarSection` | Secondary navigation as an accordion |
+| `Sidebar`, `SidebarSection`, `SidebarItem`, `SidebarTrigger` | Secondary navigation as an accordion, collapsible to icons, with counters, actions and submenus |
 | `SidePanel` | Panel with a title, a scrolling body and a footer |
 | `SplitPane`, `Pane` | Split panes with draggable dividers |
-| `TabStrip` | Work tabs with close and add |
+| `TabStrip` | Work tabs with close and add, color groups, indicators and reordering |
+| `PaneHeader` | Pane header: icon, title, secondary line and actions in a toolbar |
+| `PaneLayout` | Tiled resizable panes: split, move, close, and drag a pane onto the edge of another |
+| `FloatingPanel` | Non-modal floating window, moved and resized with pointer or keyboard |
 | `TitleBar` | Header for frameless windows. It is a `<header>` |
 | `ResizeHandle` | Resize handle |
 | `Page`, `PageHeader`, `PageSection`, `Container` | Page with a header and sections |
 | `Grid`, `Stack`, `Inline` | Intrinsic grid, stack and row |
+| `Float` | Badge, dot or counter on the corner or edge of another element. CSS only |
+| `Navbar`, `NavigationMenu` | Site navigation bar (floating, `dock` or edge to edge) and menus with panels; links move to a drawer when the row does not fit |
+| `BottomNavigation` | Mobile navigation: three to five destinations with icon and label |
+| `SiteFooter` | Site footer: brand, link columns, social links and legal strip |
+| `SkipLink` | Skip-to-content link that moves focus to the target even if it is not focusable |
 
 ## With React
 
