@@ -552,6 +552,9 @@
   .z-accordion {
     display: flex;
     flex-direction: column;
+    /* Ocupa el ancho de su contenedor también dentro de una fila flex: si encoge a su contenido, el chevron se
+       pega al título y cada sección mide distinto. */
+    inline-size: 100%;
     min-width: 0;
   }
   .z-accordion__item {

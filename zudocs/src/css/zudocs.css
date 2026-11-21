@@ -1447,7 +1447,9 @@ a[class*="skipToContent"]:focus {
       figure,
       details,
       summary
-    ) {
+    ):not([hidden]) {
+    /* Sin [hidden]: `revert` también deshace el atributo (Chromium lo trata como estilo del autor) y una fila
+       oculta de una tabla paginada se veía. */
     all: revert;
   }
 }

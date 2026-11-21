@@ -38,6 +38,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- Vistas previas: el restablecimiento de estilos del navegador ya no anula el atributo `hidden`; las filas ocultas
+  de una `DataTable` paginada se veían todas.
 - Auditoría visual del sitio:
   - Rellenos, huecos, interlineados y pesos en tokens: tabla de props y de Markdown a 14/20 (antes 13/18 y
     10/18), índice con interlineado `leading-ui` y sangrías de la escala, código en línea con peso regular,

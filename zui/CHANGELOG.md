@@ -299,6 +299,13 @@ radios y material de los tokens.
 
 ### Corregido
 
+- Revisión visual de la oleada 5:
+  - `AspectRatio` sin medio (solo un icono de relleno) se ve como un hueco de superficie con su proporción; antes
+    era invisible.
+  - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
+  - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al
+    título).
+  - El ejemplo apilado de `AreaChart` se titula como sus series («Revenue and costs, stacked»).
 - `Tabs` y `Listbox` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con
   degradado que sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto
   normal. Igual en React y en `/dom`.
