@@ -2214,6 +2214,15 @@ malaga" data-ignore-accents="">Un
 </div>
 <h2 class="page__group">media</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="CompareSlider" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">CompareSlider</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-compare" data-value="50" style="block-size:220px">
+  <div class="z-backdrop z-solid" data-pattern="grid" data-intensity="medium" data-fade="none" aria-hidden="true" style="block-size:100%"><div class="z-backdrop__layer"></div></div>
+  <div class="z-backdrop z-solid" data-pattern="mesh" data-intensity="strong" data-fade="none" aria-hidden="true" style="block-size:100%"><div class="z-backdrop__layer"></div></div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="QRCode" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">QRCode</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3891,6 +3900,9 @@ document.querySelector("#alarm").addEventListener("z:change", (event) => console
 
 // TimePicker
 document.querySelector("#start-time").addEventListener("z:change", (event) => console.log(event.detail.value));
+
+// CompareSlider
+document.querySelector(".z-compare").addEventListener("z:changeend", (event) => console.log(event.detail.value));
 
 // Menubar
 // z:select en la entrada elegida; z:change en las casillas.

@@ -41,6 +41,9 @@ radios y material de los tokens.
   - `CircularSlider`: deslizador en un anillo (círculo completo o arco abierto tipo dial, `arc` y `startAngle`) con
     el valor formateado en el centro, `caption`, marcas y el tirador de Slider; patrón APG «slider» y arrastre por
     todo el anillo (lo que cae en el hueco de un arco abierto va al extremo más cercano). Cálculo en `core/circular`.
+  - `CompareSlider` (grupo `media`): antes/después con dos capas apiladas, divisor arrastrable y asa `role="slider"`
+    con teclado, horizontal o vertical, rótulos opcionales. En `/dom`, un `.z-compare` con dos hijos recibe divisor y
+    asa; `setCompareValue(el, valor)`.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único

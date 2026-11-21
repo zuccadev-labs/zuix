@@ -551,3 +551,7 @@ body {
   font-weight: var(--z-weight-semibold);
   font-size: var(--z-text-small);
 }
+
+.app-compare {
+  block-size: 180px;
+}

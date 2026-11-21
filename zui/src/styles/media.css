@@ -50,4 +50,121 @@
   .z-qrcode__error {
     font-size: var(--z-text-small);
   }
+
+  /* ---------- CompareSlider: «antes» encima, recortado hasta el divisor; «después» debajo ---------- */
+  .z-compare {
+    --z-compare-pos: 50%;
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--z-card-radius);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: ew-resize;
+    /* Comparación geométrica (izquierda/derecha de la imagen), igual en cualquier idioma. */
+    direction: ltr;
+    isolation: isolate;
+  }
+  .z-compare[data-orientation="vertical"] {
+    cursor: ns-resize;
+  }
+  .z-compare__item {
+    position: relative;
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+  }
+  .z-compare__item > :where(img, picture, video, canvas, svg) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .z-compare__before {
+    clip-path: inset(0 calc(100% - var(--z-compare-pos)) 0 0);
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__before {
+    clip-path: inset(0 0 calc(100% - var(--z-compare-pos)) 0);
+  }
+  .z-compare__label {
+    position: absolute;
+    inset-block-start: var(--z-space-3);
+    padding: var(--z-space-0-5) var(--z-space-2);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    pointer-events: none;
+  }
+  .z-compare__label[data-side="before"] {
+    inset-inline-start: var(--z-space-3);
+  }
+  .z-compare__label[data-side="after"] {
+    inset-inline-end: var(--z-space-3);
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__label[data-side="after"] {
+    inset-block: auto var(--z-space-3);
+  }
+  .z-compare__divider {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block: 0;
+    inset-inline-start: var(--z-compare-pos);
+    inline-size: 2px;
+    margin-inline-start: -1px;
+    background: var(--z-colorpicker-white);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--z-colorpicker-black) 25%, transparent);
+    pointer-events: none;
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__divider {
+    inset-inline: 0;
+    inset-block: var(--z-compare-pos) auto;
+    inline-size: auto;
+    block-size: 2px;
+    margin-inline-start: 0;
+    margin-block-start: -1px;
+  }
+  /* Asa: cuadrado redondeado de cristal sobre el divisor (no un círculo de píldora), objetivo de 34 × 34. */
+  .z-compare__handle {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: 50%;
+    inset-inline-start: var(--z-compare-pos);
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-control-height-md);
+    block-size: var(--z-control-height-md);
+    translate: -50% -50%;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-popup-bg);
+    -webkit-backdrop-filter: blur(var(--z-popup-blur));
+    backdrop-filter: blur(var(--z-popup-blur));
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
+    color: var(--z-fg);
+    cursor: grab;
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__handle {
+    inset-block-start: var(--z-compare-pos);
+    inset-inline-start: 50%;
+  }
+  .z-compare__handle:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-compare__handle:active {
+    cursor: grabbing;
+  }
+  @media (forced-colors: active) {
+    .z-compare__divider {
+      background: CanvasText;
+    }
+  }
 }

@@ -217,4 +217,29 @@ export default async function ({ page, test, ok }) {
     await page.keyboard.press("PageUp");
     await until(async () => (await thumb.evaluate((el) => el.getBoundingClientRect().x)) !== x0, "el tirador se mueve");
   });
+
+  await test("Oleada 7 sin React: CompareSlider desde dos hijos recibe divisor y asa, teclado y setCompareValue", async () => {
+    const box = await inject(
+      '<div class="z-compare" data-value="30" style="block-size:120px"><div style="block-size:120px">A</div><div style="block-size:120px">B</div></div>',
+    );
+    const handle = box.locator('.z-compare [role="slider"]');
+    await until(async () => (await handle.count()) === 1, "asa creada");
+    ok((await box.locator(".z-compare__label").count()) === 2, "rótulos");
+    ok((await handle.getAttribute("aria-valuenow")) === "30", "valor de partida");
+    await handle.focus();
+    await page.keyboard.press("End");
+    await until(async () => (await handle.getAttribute("aria-valuenow")) === "100", "Fin");
+    ok(
+      (await events()).some(([t, v]) => t === "z:changeend" && v === 100),
+      "z:changeend",
+    );
+    await page.evaluate(async () => {
+      const { setCompareValue } = await import("/zui/dist/zui.dom.js");
+      setCompareValue(document.querySelector("[data-w7-layer] .z-compare"), 20);
+    });
+    await until(
+      async () => (await box.locator(".z-compare").evaluate((el) => el.style.getPropertyValue("--z-compare-pos"))) === "20%",
+      "setCompareValue",
+    );
+  });
 }

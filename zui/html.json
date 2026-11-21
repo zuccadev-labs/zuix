@@ -2551,6 +2551,26 @@
     }
    ]
   },
+  "CompareSlider": {
+   "group": "media",
+   "classes": [
+    "z-compare"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Antes y después (dos capas de contenido)",
+     "html": "<div class=\"z-compare\" data-value=\"50\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"grid\" data-intensity=\"medium\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"mesh\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\".z-compare\").addEventListener(\"z:changeend\", (event) => console.log(event.detail.value));"
+    },
+    {
+     "title": "Vertical, sin rótulos",
+     "html": "<div class=\"z-compare\" data-orientation=\"vertical\" data-labels=\"false\" data-value=\"35\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"dots\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "QRCode": {
    "group": "media",
    "classes": [

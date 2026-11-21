@@ -77,6 +77,7 @@ export { setJsonTreeValue, setStep } from "./content";
 export { setHighlightQuery } from "./reading";
 export { setDotMatrixPattern } from "./effects";
 export { setColorValue } from "./color";
+export { setCompareValue } from "./media";
 export {
   checkTreeItem,
   openPalette,

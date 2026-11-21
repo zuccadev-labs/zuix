@@ -230,6 +230,7 @@
 
 ## Componentes: Medios
 
+- [CompareSlider](https://zuccadev-labs.github.io/zuix/components/media/compare-slider.md): Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado.
 - [QRCode](https://zuccadev-labs.github.io/zuix/components/media/qr-code.md): Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con…
 
 ## Componentes: Layouts

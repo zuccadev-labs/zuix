@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
+  Backdrop,
   Card,
   CardHeader,
   Carousel,
   CircularSlider,
+  CompareSlider,
   ColorArea,
   ColorField,
   ColorPicker,
@@ -53,6 +55,7 @@ export function Media() {
   const [qrText, setQrText] = useState("https://zuccadev-labs.github.io/zuix/");
   const [qrLevel, setQrLevel] = useState<QrLevel>("M");
   const [dial, setDial] = useState(40);
+  const [split, setSplit] = useState(50);
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -128,6 +131,22 @@ export function Media() {
               </div>
               <p className="app-muted" data-testid="m-dial-value">
                 {dial}
+              </p>
+            </Stack>
+          </Card>
+          <Card>
+            <CardHeader title="Before and after" subtitle="Drag the divider or use the arrow keys." />
+            <Stack gap={2}>
+              <div data-testid="m-compare">
+                <CompareSlider
+                  value={split}
+                  onValueChange={setSplit}
+                  before={<Backdrop className="z-solid app-compare" pattern="grid" intensity="strong" fade="none" />}
+                  after={<Backdrop className="z-solid app-compare" pattern="hex" intensity="strong" fade="none" />}
+                />
+              </div>
+              <p className="app-muted" data-testid="m-compare-value">
+                {split}
               </p>
             </Stack>
           </Card>

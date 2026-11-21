@@ -11,6 +11,25 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · CompareSlider: asa role=slider con teclado y pulsación que lleva el divisor (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const handle = `${t("m-compare")} [role="slider"]`;
+        await page.locator(handle).scrollIntoViewIfNeeded();
+        await expectAttr(page, handle, "aria-valuetext", "50% Before");
+        await page.focus(handle);
+        await page.keyboard.press("Shift+ArrowRight");
+        await poll(async () => (await text(page, "m-compare-value")) === "60", "Mayús + flecha: diez pasos");
+        await page.keyboard.press("Home");
+        await poll(async () => (await text(page, "m-compare-value")) === "0", "Inicio");
+        const box = await page.locator(`${t("m-compare")} .z-compare`).boundingBox();
+        await page.mouse.click(box.x + box.width * 0.75, box.y + box.height / 2);
+        await poll(async () => Math.abs(Number(await text(page, "m-compare-value")) - 75) < 1.5, "pulsar lleva el divisor");
+        const clip = await page.locator(`${t("m-compare")} .z-compare__before`).evaluate((el) => getComputedStyle(el).clipPath);
+        assert(clip.startsWith("inset("), `la capa de antes se recorta: ${clip}`);
+      },
+    },
+    {
       name: "Oleada 7 · CircularSlider: teclado APG, arrastre por el anillo y hueco del arco abierto (React)",
       async run({ open }) {
         const page = await screen(open);
