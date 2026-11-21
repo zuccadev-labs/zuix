@@ -42,6 +42,7 @@
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { edgeMargin, trackScrollEdges } from "../edges";
 import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
 import { chevronDoubleRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-right";
 import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-small";
@@ -444,7 +445,7 @@ function reveal(strip: Element): void {
   const list = strip.querySelector<HTMLElement>(".z-tabstrip__list");
   const tab = activeTab(strip)?.parentElement;
   if (!list || !tab) return;
-  const offset = revealOffset(tab.getBoundingClientRect(), list.getBoundingClientRect());
+  const offset = revealOffset(tab.getBoundingClientRect(), list.getBoundingClientRect(), edgeMargin(list));
   if (offset) list.scrollLeft += offset;
 }
 
@@ -670,8 +671,15 @@ function addRequested(strip: HTMLElement, button: HTMLElement): void {
 
 let stripObserver: ResizeObserver | undefined;
 const observedLists = new WeakSet<Element>();
+const edgeLists = new WeakSet<Element>();
 
 function hydrateStrip(strip: HTMLElement): void {
+  // Borde difuminado del lado con pestañas ocultas (data-scroll-edges; la hoja pone la máscara).
+  const tabList = strip.querySelector<HTMLElement>(".z-tabstrip__list");
+  if (tabList && !edgeLists.has(tabList)) {
+    edgeLists.add(tabList);
+    trackScrollEdges(tabList);
+  }
   const active = activeTab(strip) ?? selects(strip)[0];
   if (active?.dataset.tabId !== undefined) applyTab(strip, active.dataset.tabId);
   const list = strip.querySelector(".z-tabstrip__list");
@@ -689,6 +697,8 @@ function hydrateStrip(strip: HTMLElement): void {
     }
   });
   stripObserver.observe(list);
+  // El ancho de una pestaña cambia (carga de la fuente, título nuevo) sin que cambie el de la tira.
+  for (const tab of list.children) stripObserver.observe(tab);
   observedLists.add(list);
 }
 

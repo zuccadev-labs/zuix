@@ -299,6 +299,9 @@ radios y material de los tokens.
 
 ### Corregido
 
+- `Tabs` y `Listbox` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con
+  degradado que sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto
+  normal. Igual en React y en `/dom`.
 - Auditoría visual (`pnpm audit:visual`):
   - `Calendar` mide lo que su contenido aunque el contenedor lo estire (`inline-size: fit-content`): la cabecera
     ya no se separa de la rejilla, y con dos meses apilados cada rejilla queda centrada bajo la cabecera.

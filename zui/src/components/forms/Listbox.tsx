@@ -1,7 +1,8 @@
 "use client";
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { logicalKey } from "../../core/dir";
+import { trackScrollEdges } from "../../core/edges";
 import { move } from "../../core/roving";
 import { createTypeahead, isPrintable } from "../../core/typeahead";
 import { cx } from "../../cx";
@@ -102,6 +103,8 @@ export function Listbox(props: ListboxProps) {
   const [active, setActive] = useState<string | null>(null);
   const stop = (usable.find((o) => o.value === active) ?? usable.find((o) => selected(o.value)) ?? usable[0])?.value;
   const list = useRef<HTMLDivElement | null>(null);
+  // En fila, la lista desplaza en horizontal: el borde con opciones ocultas se difumina.
+  useEffect(() => (list.current && orientation === "horizontal" ? trackScrollEdges(list.current) : undefined), [orientation]);
   const [search] = useState(() => createTypeahead());
   const optionId = (value: string) => `${listId}-${flat.findIndex((o) => o.value === value)}`;
 
