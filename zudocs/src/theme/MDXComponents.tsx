@@ -1,7 +1,7 @@
 // Componentes disponibles en cualquier .mdx sin importarlos.
 import { translate } from "@docusaurus/Translate";
 import MDXComponents from "@theme-original/MDXComponents";
-import { type ComponentProps, useEffect, useRef } from "react";
+import { type ComponentProps, Fragment, useEffect, useRef } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { Alert, Badge, Button, Callout, Card, CardHeader, Carousel, Kbd, Panel, StatTile, Stepper, Tabs } from "@zuccadev-labs/zuix-zui";
 import { Grid, Inline, Stack } from "@zuccadev-labs/zuix-zout";
@@ -47,6 +47,28 @@ function useScrollEdges() {
   return ref;
 }
 
+/**
+ * Código en línea con puntos de corte tras `/`, `.`, `-` y `_`: una ruta larga parte entre sus piezas
+ * («tokens/compat/<proyecto>.inventory.<wbr>json») y no dentro de una palabra. El de bloque (con clase de lenguaje o
+ * varias líneas) sigue al componente del tema.
+ */
+function Code(props: ComponentProps<"code">) {
+  const { children, className } = props;
+  if (className || typeof children !== "string" || children.includes("\n")) return <MDXComponents.code {...props} />;
+  const parts = children.split(/(?<=[/._-])/);
+  return (
+    <code {...props}>
+      {parts.map((part, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: piezas de un texto fijo
+        <Fragment key={i}>
+          {i ? <wbr /> : null}
+          {part}
+        </Fragment>
+      ))}
+    </code>
+  );
+}
+
 // Una tabla ancha se desplaza dentro de su marco, que es enfocable para poder desplazarla con el teclado.
 function Table(props: ComponentProps<"table">) {
   const ref = useScrollEdges();
@@ -61,6 +83,7 @@ function Table(props: ComponentProps<"table">) {
 export default {
   ...MDXComponents,
   input: TaskCheckbox,
+  code: Code,
   table: Table,
   DocMeta,
   PackageInstall,

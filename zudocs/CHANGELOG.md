@@ -45,6 +45,7 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- Código en línea de los documentos: una ruta larga parte tras `/`, `.`, `-` o `_`, no dentro de una palabra.
 - Tablas de los documentos: el código de una celda no parte palabras («README.m/d» a 390); la tabla se desplaza en
   su marco y el lado con contenido oculto se difumina.
 - Las vistas previas HTML ejecutan el script de su ejemplo (el de html.json) tras hidratar: los lienzos del
