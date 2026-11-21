@@ -135,9 +135,19 @@ export function NumberInput({
   }, [wheel, latest]);
 
   // Mantener pulsado un botón repite el paso.
-  const hold = useRef<{ timer?: ReturnType<typeof setTimeout> }>({});
-  const release = () => clearTimeout(hold.current.timer);
-  useEffect(() => () => clearTimeout(hold.current.timer), []);
+  const hold = useRef<{ timer?: ReturnType<typeof setTimeout>; listening?: AbortController }>({});
+  const release = () => {
+    clearTimeout(hold.current.timer);
+    hold.current.listening?.abort();
+    hold.current.listening = undefined;
+  };
+  useEffect(
+    () => () => {
+      clearTimeout(hold.current.timer);
+      hold.current.listening?.abort();
+    },
+    [],
+  );
   const press = (delta: number) => (event: PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
     event.preventDefault();
@@ -151,9 +161,12 @@ export function NumberInput({
     };
     release();
     repeat(HOLD_DELAY);
-    // El botón puede deshabilitarse al llegar al tope: se suelta escuchando a la ventana, no a él.
-    window.addEventListener("pointerup", release, { once: true });
-    window.addEventListener("pointercancel", release, { once: true });
+    // El botón puede deshabilitarse al llegar al tope: se suelta escuchando a la ventana, no a él. Los dos
+    // listeners se retiran juntos al soltar (con `once`, el que no se disparaba se quedaba en la ventana).
+    const listening = new AbortController();
+    hold.current.listening = listening;
+    window.addEventListener("pointerup", release, { signal: listening.signal });
+    window.addEventListener("pointercancel", release, { signal: listening.signal });
   };
 
   const jump = (to: number) => {
