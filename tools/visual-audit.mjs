@@ -345,22 +345,26 @@ function collect({ TOKENS, families, coarse }) {
     if (es.textOverflow !== "ellipsis" || el.scrollWidth <= el.clientWidth + 1 || !el.textContent.trim()) continue;
     const hidden = el.scrollWidth - el.clientWidth;
     // Si es parte de lo activo (una pestaña), la fila que cuenta es la de sus hermanos (la tira), no su botón.
-    const current = el.closest("[data-selected],[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
-    let item = current?.parentElement?.closest("[data-selected]") ?? current ?? el;
+    // Lo activo de una tira (pestaña, item actual), no un día marcado como hoy (aria-current="date").
+    const current = el.closest("[data-selected],[aria-selected='true'],[aria-current='page'],[aria-current='true'],[data-state='active']");
+    // Lo activo cuenta como pieza de una tira solo si es un elemento de una fila flex (pestaña en su lista).
+    const tab = current ? (current.parentElement?.closest("[data-selected]") ?? current) : null;
+    const inStrip =
+      tab && flexRow(tab.parentElement) && tab.parentElement.children.length > 1 && getComputedStyle(tab).position !== "absolute";
+    let item = inStrip ? tab : el;
     while (item.parentElement && !(flexRow(item.parentElement) && item.parentElement.children.length > 1) && item !== document.body)
       item = item.parentElement;
     const row = item.parentElement;
     if (!row || row === document.body) continue;
+    // Piezas colocadas a mano (eventos de una rejilla de tiempo) o filas que parten línea: el ancho no se reparte.
+    if (getComputedStyle(item).position === "absolute" || getComputedStyle(row).flexWrap !== "nowrap") continue;
     let free = freeIn(row);
     if (flexRow(row.parentElement)) free += freeIn(row.parentElement);
-    const active =
-      Boolean(current) ||
-      item.matches("[aria-selected='true'],[data-selected],[aria-current]:not([aria-current='false']),[data-state='active']") ||
-      Boolean(item.querySelector("[aria-selected='true'],[aria-current]:not([aria-current='false'])"));
+    const active = Boolean(inStrip);
     let give = 0;
     if (active)
       for (const sib of row.children) {
-        if (sib === item) continue;
+        if (sib === item || getComputedStyle(sib).position === "absolute") continue;
         const w = sib.getBoundingClientRect().width;
         const min = Math.max(Number.parseFloat(getComputedStyle(sib).minWidth) || 0, 40);
         give += Math.max(0, w - min);

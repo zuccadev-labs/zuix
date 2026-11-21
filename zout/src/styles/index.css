@@ -1231,6 +1231,10 @@
       color: var(--z-fg);
     }
   }
+  /* Con botón de cerrar, el mínimo deja a la parte que selecciona su objetivo de 24 px (o 40) además del cerrar. */
+  .z-tabstrip__tab:has(> .z-tabstrip__close) {
+    min-inline-size: min(var(--z-control-height-sm) + var(--z-space-3) + 24px, 100%);
+  }
   .z-tabstrip__tab[data-selected] {
     flex-shrink: 0;
   }
