@@ -11,6 +11,25 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · QRCode: imagen con nombre, la versión crece con el texto y el nivel H con icono (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const qr = `${t("m-qr")} .z-qrcode`;
+        await page.locator(qr).scrollIntoViewIfNeeded();
+        await expectAttr(page, qr, "role", "img");
+        await expectAttr(page, qr, "aria-label", "QR code: https://zuccadev-labs.github.io/zuix/");
+        await expectAttr(page, qr, "data-version", "3");
+        await page.fill(t("m-qr-input"), "x".repeat(200));
+        await poll(async () => Number(await page.locator(qr).getAttribute("data-version")) >= 8, "más texto, versión mayor");
+        await page.click(`${t("m-qr")} ~ * [role="radio"]:has-text("H"), [role="radio"]:has-text("H") >> nth=0`);
+        await expectAttr(page, qr, "data-level", "H");
+        const box = await page.locator(`${qr} svg`).boundingBox();
+        assert(Math.abs(box.width - 200) < 2, `200 px: ${box.width}`);
+        await expectAttr(page, `${t("m-qr-icon")} .z-qrcode`, "data-level", "H");
+        assert((await page.locator(`${t("m-qr-icon")} .z-qrcode__logo svg`).count()) === 1, "icono en el centro");
+      },
+    },
+    {
       name: "Oleada 7 · Carousel: reproducción automática con botón de pausa primero, pausa con el puntero y puntos (React)",
       async run({ open }) {
         const page = await screen(open);

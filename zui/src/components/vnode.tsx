@@ -19,6 +19,7 @@ const ATTR: Record<string, string> = {
   autocomplete: "autoComplete",
   inputmode: "inputMode",
   popovertarget: "popoverTarget",
+  "shape-rendering": "shapeRendering",
 };
 const noop = () => {};
 

@@ -62,6 +62,10 @@ export default async function ({ page, test, ok }) {
     await area.focus();
     await page.keyboard.press("End");
     await until(async () => (await area.getAttribute("aria-valuenow")) === "100", "Fin: saturación 100");
+    await until(
+      async () => (await root.evaluate((el) => el.style.getPropertyValue("--z-colorpicker-x"))) === "1",
+      "la variable de posición del área sigue al valor",
+    );
     const ev = await events();
     ok(ev.some(([t]) => t === "z:change") && ev.some(([t]) => t === "z:changeend"), `z:change y z:changeend: ${JSON.stringify(ev)}`);
     await root.locator('select[data-part="format"]').selectOption("hex");
@@ -178,5 +182,22 @@ export default async function ({ page, test, ok }) {
       async () => (await v.locator(".z-carousel__dot").nth(3).getAttribute("aria-current")) === "true",
       "con data-loop da la vuelta",
     );
+  });
+
+  await test("Oleada 7 sin React: QRCode desde marcado mínimo, nivel y setWidgetProps", async () => {
+    const box = await inject('<div class="z-qrcode" data-value="hello" data-level="Q" data-size="120"></div>');
+    const qr = box.locator(".z-qrcode");
+    await until(async () => (await qr.locator("svg path").count()) === 1, "se dibuja");
+    ok((await qr.getAttribute("aria-label")) === "QR code: hello", "nombre accesible");
+    ok((await qr.getAttribute("data-version")) === "1", "versión 1");
+    const d = await qr.locator("svg path").getAttribute("d");
+    ok(d.startsWith("M4 4h7"), `zona de silencio de 4 y patrón de posición de 7: ${d.slice(0, 12)}`);
+    const w = (await qr.boundingBox()).width;
+    ok(Math.abs(w - 120) < 2, `120 px: ${w}`);
+    await page.evaluate(async () => {
+      const { setWidgetProps } = await import("/zui/dist/zui.dom.js");
+      setWidgetProps(document.querySelector("[data-w7-layer] .z-qrcode"), { value: "x".repeat(100) });
+    });
+    await until(async () => Number(await qr.getAttribute("data-version")) >= 5, "setWidgetProps cambia el contenido");
   });
 }

@@ -36,6 +36,7 @@ import * as navigation from "./navigation";
 import * as reading from "./reading";
 import * as effects from "./effects";
 import * as color from "./color";
+import * as media from "./media";
 import * as time from "./time";
 import { trapTab } from "../core/focus";
 import { escapeTop } from "../core/layers";
@@ -63,6 +64,7 @@ const modules = [
   time,
   agenda,
   color,
+  media,
   widgets,
   contentDom,
   reading,

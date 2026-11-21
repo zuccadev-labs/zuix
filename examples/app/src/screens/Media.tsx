@@ -10,7 +10,12 @@ import {
   ColorPickerTrigger,
   ColorSlider,
   ColorSwatchPicker,
+  Field,
+  Input,
+  QRCode,
+  SegmentedControl,
   type ColorFormat,
+  type QrLevel,
 } from "@zuccadev-labs/zuix-zui";
 
 const SWATCHES = [
@@ -44,6 +49,8 @@ export function Media() {
   const [color, setColor] = useState("#3b82f6");
   const [format, setFormat] = useState<ColorFormat>("hex");
   const [ended, setEnded] = useState("");
+  const [qrText, setQrText] = useState("https://zuccadev-labs.github.io/zuix/");
+  const [qrLevel, setQrLevel] = useState<QrLevel>("M");
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -99,6 +106,35 @@ export function Media() {
               </div>
             </Stack>
           </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="QR code">
+        <Grid min="260px" gap={4}>
+          <Card>
+            <CardHeader title="Generator" subtitle="Own encoder: byte mode, levels L to H." />
+            <Stack gap={3}>
+              <Field label="Text or URL">
+                <Input value={qrText} onChange={(e) => setQrText(e.target.value)} data-testid="m-qr-input" />
+              </Field>
+              <SegmentedControl
+                label="Error correction"
+                value={qrLevel}
+                onValueChange={setQrLevel}
+                items={[
+                  { value: "L", label: "L" },
+                  { value: "M", label: "M" },
+                  { value: "Q", label: "Q" },
+                  { value: "H", label: "H" },
+                ]}
+              />
+            </Stack>
+          </Card>
+          <div data-testid="m-qr">
+            <QRCode value={qrText} level={qrLevel} size={200} />
+          </div>
+          <div data-testid="m-qr-icon">
+            <QRCode value={qrText} icon="bolt" size={200} label="Project link" />
+          </div>
         </Grid>
       </PageSection>
       <PageSection title="Carousel">

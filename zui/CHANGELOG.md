@@ -33,6 +33,11 @@ radios y material de los tokens.
     `orientation="vertical"` (con `height`), que usan el desplazamiento nativo con scroll-snap. En `/dom`, los mismos
     con `data-autoplay`, `data-indicators`, `data-per-page` y `data-orientation`. Lógica en `core/carousel` y
     `core/carousel-runtime`, compartida por los dos modos.
+  - Grupo `media`. `QRCode`: codificador propio (`core/qr`, ISO/IEC 18004: modo byte en UTF-8, versiones 1–40,
+    corrección L/M/Q/H, Reed–Solomon sobre GF(256), las ocho máscaras con la penalización de la norma, formato y
+    versión con BCH) probado contra los vectores de la norma; un solo `path` de SVG oscuro sobre claro con zona de
+    silencio, `role="img"` con nombre, icono central opcional (sube la corrección a H). Sin estado: vale en un Server
+    Component.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único
@@ -336,6 +341,9 @@ radios y material de los tokens.
   tiradores de un rango se solapaban.
 
 ### Corregido
+
+- Modo DOM de las piezas de árbol (`core/widget`): las variables locales de la raíz (`--z-*`) se escriben en cada
+  pintado; antes solo se aplicaban los atributos y la raíz conservaba las del primer marcado.
 
 - Auditoría visual (`pnpm audit:visual`):
   - `Calendar` mide lo que su contenido aunque el contenedor lo estire (`inline-size: fit-content`): la cabecera

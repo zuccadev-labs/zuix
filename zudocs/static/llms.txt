@@ -227,6 +227,10 @@
 - [Glow](https://zuccadev-labs.github.io/zuix/components/effects/glow.md): Brillo que sigue al puntero sobre el borde, la superficie o ambos de lo que envuelve (spotlight de cristal).
 - [TextEffect](https://zuccadev-labs.github.io/zuix/components/effects/text-effect.md): Efectos de texto: aparición por palabras o letras (subiendo o desenfocada, al montarse o al entrar en pantalla), degradado con tokens de texto (fijo o en movimiento) y brillo que pasa (shimmer).
 
+## Componentes: Medios
+
+- [QRCode](https://zuccadev-labs.github.io/zuix/components/media/qr-code.md): Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con…
+
 ## Componentes: Layouts
 
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.
