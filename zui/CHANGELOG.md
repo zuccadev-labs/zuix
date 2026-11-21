@@ -371,6 +371,8 @@ radios y material de los tokens.
 
 ### Corregido
 
+- `/dom`: un menú abierto con el teclado bajo un puntero quieto ya no resalta la entrada que queda debajo: el
+  foco sigue en la primera hasta que el puntero se mueve, como en el binding de React.
 - El manifiesto de `Calendar` declara el valor por defecto de `showOutsideDays` (`true` con un mes, `false` con
   varios).
 - `Accordion` y `Carousel` ocupan el ancho de su contenedor también dentro de una fila flex: el acordeón encogía

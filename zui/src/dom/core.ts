@@ -245,7 +245,10 @@ export function openPopover(
     owner.setAttribute("aria-expanded", "true");
     if (options.follow !== false) followers.set(el, position);
   }
-  if (el.classList.contains("z-menu")) highlight(el, menuItems(el)[0]);
+  if (el.classList.contains("z-menu")) {
+    openedUnder.set(el, { ...pointerAt });
+    highlight(el, menuItems(el)[0]);
+  }
   emit(el, "open");
 }
 
@@ -356,6 +359,16 @@ export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
 let subTimer: ReturnType<typeof setTimeout> | undefined;
 
 const aim = /* @__PURE__ */ createMenuAim();
+
+// Dónde estaba el puntero al abrirse cada menú. Un menú que aparece bajo un puntero quieto recibe `pointerover`
+// sin que nadie lo haya movido: esa entrada no se resalta, para que el foco que puso el teclado (la primera
+// entrada) no salte a la que quedó debajo. Es lo que hace el binding de React, que resalta con `pointermove`.
+let pointerAt = { x: Number.NaN, y: Number.NaN };
+const openedUnder = new WeakMap<HTMLElement, { x: number; y: number }>();
+const stillSinceOpen = (menu: HTMLElement, event: PointerEvent) => {
+  const at = openedUnder.get(menu);
+  return at !== undefined && at.x === event.clientX && at.y === event.clientY;
+};
 
 /**
  * Puntero sobre una entrada: la resalta y, con un pequeño retardo, abre su submenú o cierra el de otra entrada.
@@ -1324,9 +1337,23 @@ export function init(...mods: DomModule[]): () => void {
   on(document, "pointermove", (event) => contextPress.move(event), true);
   on(document, "pointerup", () => contextPress.cancel(), true);
   on(document, "pointercancel", () => contextPress.cancel(), true);
+  on(
+    document,
+    "pointermove",
+    (event) => {
+      pointerAt = { x: event.clientX, y: event.clientY };
+      // Primer movimiento tras abrir un menú bajo el puntero: ahora sí resalta la entrada que tiene debajo.
+      const item = (event.target as Element).closest?.<HTMLElement>(".z-menu[popover] .z-menu__item");
+      const menu = item?.closest<HTMLElement>(".z-menu");
+      if (!item || !menu || !openedUnder.has(menu) || stillSinceOpen(menu, event)) return;
+      openedUnder.delete(menu);
+      if (!isDisabled(item)) onMenuPointer(item, event);
+    },
+    { capture: true, passive: true },
+  );
   on(document, "pointerover", (event) => {
     const item = (event.target as Element).closest?.<HTMLElement>(".z-menu[popover] .z-menu__item");
-    if (item && !isDisabled(item)) onMenuPointer(item, event);
+    if (item && !isDisabled(item) && !stillSinceOpen(item.closest<HTMLElement>(".z-menu")!, event)) onMenuPointer(item, event);
     const host = (event.target as Element).closest?.<HTMLElement>("[data-z-tooltip]");
     if (host) showTooltip(host);
     // El puntero llegó a la burbuja: sigue abierta.
