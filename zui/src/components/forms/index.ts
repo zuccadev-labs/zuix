@@ -87,3 +87,16 @@ export {
   type ColorSwatchPickerProps,
 } from "./ColorPicker";
 export { CircularSlider, type CircularSliderProps } from "./CircularSlider";
+export { ShortcutInput, type ShortcutInputLabels, type ShortcutInputProps } from "./ShortcutInput";
+// Atajos de teclado (ShortcutInput): normalización portable, etiquetas por plataforma y comparación con un evento.
+export {
+  ariaKeyshortcuts,
+  formatShortcutValue,
+  isApplePlatform,
+  matchesShortcut,
+  normalizeShortcut,
+  parseShortcut,
+  shortcutFromEvent,
+  shortcutLabels,
+  type Shortcut,
+} from "../../core/shortcut";

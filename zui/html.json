@@ -2373,6 +2373,30 @@
     }
    ]
   },
+  "ShortcutInput": {
+   "group": "forms",
+   "classes": [
+    "z-shortcut"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Por defecto",
+     "html": "<div data-size=\"md\" data-value=\"Mod+K\" id=\"z-shortcut-_R_0_\" class=\"z-shortcut\">\n  <button type=\"button\" class=\"z-shortcut__field\" aria-label=\"Keyboard shortcut: Ctrl K\" aria-describedby=\"z-shortcut-_R_0_-help\" aria-pressed=\"false\">\n    <span class=\"z-kbd-group z-shortcut__keys\" aria-hidden=\"true\">\n      <kbd class=\"z-kbd\" data-size=\"sm\">Ctrl</kbd>\n      <kbd class=\"z-kbd\" data-size=\"sm\">K</kbd>\n    </span>\n  </button>\n  <button type=\"button\" class=\"z-shortcut__clear\" aria-label=\"Clear shortcut\" title=\"Clear shortcut\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n  <span id=\"z-shortcut-_R_0_-help\" class=\"z-sr-only\">Press Enter to record, then the key combination. Escape cancels; Backspace clears.</span>\n  <span class=\"z-sr-only\" data-live=\"\" aria-live=\"polite\"></span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Vacío, en Apple",
+     "html": "<div data-size=\"md\" data-empty=\"\" data-platform=\"apple\" id=\"z-shortcut-_R_0_\" class=\"z-shortcut\">\n  <button type=\"button\" class=\"z-shortcut__field\" aria-label=\"Open command palette\" aria-describedby=\"z-shortcut-_R_0_-help\" aria-pressed=\"false\">\n    <span class=\"z-shortcut__placeholder\" aria-hidden=\"true\">Record shortcut</span>\n  </button>\n  <span id=\"z-shortcut-_R_0_-help\" class=\"z-sr-only\">Press Enter to record, then the key combination. Escape cancels; Backspace clears.</span>\n  <span class=\"z-sr-only\" data-live=\"\" aria-live=\"polite\"></span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Teclas de función sin modificador",
+     "html": "<div data-size=\"sm\" data-value=\"F5\" data-require-modifier=\"false\" data-name=\"refresh\" id=\"z-shortcut-_R_0_\" class=\"z-shortcut\">\n  <button type=\"button\" class=\"z-shortcut__field\" aria-label=\"Keyboard shortcut: F5\" aria-describedby=\"z-shortcut-_R_0_-help\" aria-pressed=\"false\">\n    <span class=\"z-kbd-group z-shortcut__keys\" aria-hidden=\"true\">\n      <kbd class=\"z-kbd\" data-size=\"sm\">F5</kbd>\n    </span>\n  </button>\n  <button type=\"button\" class=\"z-shortcut__clear\" aria-label=\"Clear shortcut\" title=\"Clear shortcut\">\n    <z-icon name=\"x-mark\" size=\"14\"></z-icon>\n  </button>\n  <span id=\"z-shortcut-_R_0_-help\" class=\"z-sr-only\">Press Enter to record, then the key combination. Escape cancels; Backspace clears.</span>\n  <span class=\"z-sr-only\" data-live=\"\" aria-live=\"polite\"></span>\n  <input type=\"hidden\" name=\"refresh\" value=\"F5\"/>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Slider": {
    "group": "forms",
    "classes": [

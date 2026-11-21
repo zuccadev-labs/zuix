@@ -53,6 +53,10 @@ radios y material de los tokens.
     borrar y la alternativa accesible de escribir el nombre (modo «Type»); `signatureValue(el)` (trazos y SVG) y
     `signatureBlob(el)` (PNG) en la raíz y en `/dom`; campo oculto con el SVG para formularios. Cálculo en
     `core/signature`.
+  - `ShortcutInput`: captura de atajos con normalización portable («Mod+Shift+K»: ⌘ en Apple, Ctrl en el resto),
+    teclas por su posición física, vista con las teclas de la plataforma, Escape cancela, Retroceso borra, Tab sale
+    sin grabar y anuncio en una región viva. `core/shortcut` exporta `parseShortcut`, `normalizeShortcut`,
+    `shortcutLabels`, `ariaKeyshortcuts` y `matchesShortcut` para escuchar el atajo guardado.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único

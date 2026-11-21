@@ -11,6 +11,40 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · ShortcutInput: graba con modificadores, exige uno, Escape cancela, Retroceso borra y Tab no queda atrapado (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const field = `${t("m-shortcut")} .z-shortcut__field`;
+        await page.locator(field).scrollIntoViewIfNeeded();
+        await page.focus(field);
+        await page.keyboard.press("Enter");
+        await expectAttr(page, field, "aria-pressed", "true");
+        await page.keyboard.press("Control+Shift+KeyP");
+        await poll(async () => (await text(page, "m-shortcut-value")) === "Mod+Shift+P", "graba la combinación");
+        await expectAttr(page, field, "aria-pressed", "false");
+        assert(
+          (await page.locator(field).getAttribute("aria-label")).startsWith("Open command palette: Ctrl Shift P"),
+          "nombre con el atajo",
+        );
+        await page.keyboard.press("Enter");
+        await page.keyboard.press("KeyJ");
+        await poll(async () => (await page.locator(`${t("m-shortcut")} .z-shortcut__hint`).count()) === 1, "sin modificador: aviso");
+        await page.keyboard.press("Escape");
+        await expectAttr(page, field, "aria-pressed", "false");
+        assert((await text(page, "m-shortcut-value")) === "Mod+Shift+P", "Escape no cambia el valor");
+        await page.keyboard.press("Enter");
+        await page.keyboard.press("Backspace");
+        await poll(async () => (await text(page, "m-shortcut-value")) === "none", "Retroceso borra");
+        await poll(
+          async () => ((await page.locator(`${t("m-shortcut")} [data-live]`).textContent()) ?? "") === "Shortcut cleared",
+          "se anuncia",
+        );
+        await page.keyboard.press("Enter");
+        await page.keyboard.press("Tab");
+        await poll(() => page.evaluate(() => !document.activeElement?.closest(".z-shortcut")), "Tab sale del campo");
+      },
+    },
+    {
       name: "Oleada 7 · SignaturePad: dibujar, deshacer, borrar, escribir el nombre como alternativa y exportar PNG (React)",
       async run({ open }) {
         const page = await screen(open);

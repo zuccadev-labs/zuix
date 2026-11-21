@@ -78,6 +78,7 @@ export { setHighlightQuery } from "./reading";
 export { setDotMatrixPattern } from "./effects";
 export { setColorValue } from "./color";
 export { setCompareValue } from "./media";
+export { matchesShortcut, normalizeShortcut, parseShortcut, shortcutLabels } from "../core/shortcut";
 export { signatureBlob, signatureValue, type SignatureValue } from "../core/signature-widget";
 export { cropImage, cropImageBlob, type CropImageOptions } from "../core/crop-image";
 export {

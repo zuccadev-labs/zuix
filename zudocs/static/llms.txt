@@ -106,6 +106,7 @@
 - [RadioGroup](https://zuccadev-labs.github.io/zuix/components/forms/radio-group.md): Grupo de opciones excluyentes; contiene componentes `Radio`.
 - [SearchInput](https://zuccadev-labs.github.io/zuix/components/forms/search-input.md): Campo de búsqueda con icono, botón de borrado y estado de carga.
 - [Select](https://zuccadev-labs.github.io/zuix/components/forms/select.md): Lista desplegable con popup propio (material liquid): opciones con icono, grupos y placeholder.
+- [ShortcutInput](https://zuccadev-labs.github.io/zuix/components/forms/shortcut-input.md): Captura de atajos de teclado: se pulsa para grabar y la siguiente combinación queda guardada en forma portable («Mod+Shift+K»: Mod es ⌘ en Apple y Ctrl en el resto), mostrada con las teclas de la…
 - [Slider](https://zuccadev-labs.github.io/zuix/components/forms/slider.md): Deslizador de un valor o de un rango.
 - [Switch](https://zuccadev-labs.github.io/zuix/components/forms/switch.md): Interruptor de activación inmediata.
 - [TagsInput](https://zuccadev-labs.github.io/zuix/components/forms/tags-input.md): Campo de etiquetas: Intro o un delimitador las crean, pegar una lista crea varias, y se quitan con su botón o con Retroceso.

@@ -5,6 +5,7 @@
 import { circularSliderWidget } from "../core/circular-widget";
 import { imageCropperWidget } from "../core/cropper-widget";
 import { qrcodeWidget } from "../core/qr-widget";
+import { shortcutInputWidget } from "../core/shortcut-widget";
 import { signaturePadWidget } from "../core/signature-widget";
 import { registerIcons, iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowsRightLeft } from "@zuccadev-labs/zuix-zicon/icons/arrows-right-left";
@@ -13,14 +14,16 @@ import { arrowUturnDownLeft } from "@zuccadev-labs/zuix-zicon/icons/arrow-uturn-
 import { language } from "@zuccadev-labs/zuix-zicon/icons/language";
 import { pencil } from "@zuccadev-labs/zuix-zicon/icons/pencil";
 import { trash } from "@zuccadev-labs/zuix-zicon/icons/trash";
+import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { compareKey, comparePosition } from "../core/compare-slider";
 import { inDom } from "./forms-popup";
 import { setMarkup } from "./shared";
 import { registerWidget } from "./widgets";
 
-registerIcons([arrowsRightLeft, arrowsUpDown, pencil, language, arrowUturnDownLeft, trash]);
+registerIcons([arrowsRightLeft, arrowsUpDown, pencil, language, arrowUturnDownLeft, trash, xMark]);
 
-for (const widget of [qrcodeWidget, circularSliderWidget, imageCropperWidget, signaturePadWidget]) registerWidget(widget);
+for (const widget of [qrcodeWidget, circularSliderWidget, imageCropperWidget, signaturePadWidget, shortcutInputWidget])
+  registerWidget(widget);
 
 function pick(root: ParentNode, selector: string): HTMLElement[] {
   const list = [...root.querySelectorAll<HTMLElement>(selector)];

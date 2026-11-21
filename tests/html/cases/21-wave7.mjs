@@ -298,4 +298,22 @@ export default async function ({ page, test, ok }) {
     );
     ok((await typed.locator(".z-signature__typed").inputValue()) === "Ana Ruiz", "campo con el nombre");
   });
+
+  await test("Oleada 7 sin React: ShortcutInput graba, normaliza y avisa con z:change", async () => {
+    const box = await inject('<div class="z-shortcut" data-value="cmd+option+k" data-platform="apple"></div>');
+    const root = box.locator(".z-shortcut");
+    const field = root.locator(".z-shortcut__field");
+    await until(async () => (await field.count()) === 1, "campo");
+    ok((await root.getAttribute("data-value")) === "Alt+Meta+K", "normaliza el valor de partida");
+    ok((await root.locator("kbd").allTextContents()).join("") === "⌥⌘K", "teclas de Apple");
+    await field.click();
+    await page.keyboard.press("Meta+Shift+KeyS");
+    await until(async () => (await root.getAttribute("data-value")) === "Mod+Shift+S", "graba con ⌘ como Mod");
+    ok(
+      (await events()).some(([t, v]) => t === "z:change" && v === "Mod+Shift+S"),
+      "z:change",
+    );
+    await root.locator(".z-shortcut__clear").click();
+    await until(async () => (await root.getAttribute("data-value")) === null, "borrar");
+  });
 }

@@ -21,6 +21,7 @@ import {
   Input,
   QRCode,
   SegmentedControl,
+  ShortcutInput,
   SignaturePad,
   signatureBlob,
   type ColorFormat,
@@ -70,6 +71,7 @@ export function Media() {
   const [cropped, setCropped] = useState("");
   const [signed, setSigned] = useState("empty");
   const [png, setPng] = useState("");
+  const [shortcut, setShortcut] = useState("Mod+K");
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -230,6 +232,19 @@ export function Media() {
             </Stack>
           </Card>
         </Grid>
+      </PageSection>
+      <PageSection title="Shortcuts">
+        <Card>
+          <CardHeader title="Command palette" subtitle="Click, then press a key combination. Escape cancels." />
+          <Stack gap={2}>
+            <div data-testid="m-shortcut">
+              <ShortcutInput value={shortcut} onValueChange={setShortcut} name="palette" labels={{ field: "Open command palette" }} />
+            </div>
+            <p className="app-muted" data-testid="m-shortcut-value">
+              {shortcut || "none"}
+            </p>
+          </Stack>
+        </Card>
       </PageSection>
       <PageSection title="QR code">
         <Grid min="260px" gap={4}>

@@ -1,0 +1,63 @@
+{
+  "name": "ShortcutInput",
+  "group": "forms",
+  "description": "Captura de atajos de teclado: se pulsa para grabar y la siguiente combinación queda guardada en forma portable («Mod+Shift+K»: Mod es ⌘ en Apple y Ctrl en el resto), mostrada con las teclas de la plataforma (⌘⇧K o Ctrl Shift K).",
+  "import": "import { ShortcutInput, matchesShortcut } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "value", "type": "string", "description": "Atajo controlado en forma canónica." },
+    { "name": "defaultValue", "type": "string", "description": "Acepta variantes («cmd+k», «Ctrl+Alt+Delete») y las normaliza." },
+    { "name": "onValueChange", "type": "(value: string) => void", "description": "Atajo nuevo, o \"\" al borrarlo." },
+    {
+      "name": "requireModifier",
+      "type": "boolean",
+      "default": true,
+      "description": "Sin modificador solo valen las teclas de función (F1–F24)."
+    },
+    {
+      "name": "platform",
+      "type": "enum",
+      "values": ["apple", "other"],
+      "description": "Teclas que se muestran; por defecto, las del navegador."
+    },
+    { "name": "size", "type": "enum", "values": ["sm", "md"], "default": "md" },
+    { "name": "disabled", "type": "boolean", "default": false },
+    { "name": "name", "type": "string", "description": "Campo oculto con el valor canónico." },
+    { "name": "form", "type": "string" },
+    {
+      "name": "labels",
+      "type": "Partial<ShortcutInputLabels>",
+      "description": "field, placeholder, recording, instructions, clear, set («Shortcut set to {keys}»), cleared, needsModifier."
+    }
+  ],
+  "states": ["empty", "recording", "set", "disabled"],
+  "tokens": [
+    "control-height-md",
+    "control-height-sm",
+    "control-border",
+    "control-border-hover",
+    "control-radius",
+    "control-radius-sm",
+    "control-bg",
+    "control-bg-hover",
+    "accent",
+    "accent-ring",
+    "accent-text",
+    "warning-text",
+    "fg-muted",
+    "surface-2",
+    "focus-width",
+    "focus-offset"
+  ],
+  "classes": ["z-shortcut"],
+  "a11y": "Un button con nombre que incluye el atajo en palabras («Keyboard shortcut: Command Shift K») e instrucciones enlazadas; aria-pressed mientras graba. Al grabar, Escape cancela, Retroceso o Supr sin modificadores borran y Tab sale sin grabar: el foco nunca queda atrapado. El resultado se anuncia en una región viva. Las teclas visibles son decorativas (aria-hidden). `ariaKeyshortcuts(parseShortcut(v), apple)` da el valor de aria-keyshortcuts para el control que lo use. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-shortcut dentro de [data-z-dom] (data-value, data-platform, data-require-modifier, data-name); avisa con z:change { value }; matchesShortcut(event, valor, apple) para escucharlo.",
+  "behavior": "dom",
+  "examples": [
+    { "title": "Por defecto", "code": "<ShortcutInput defaultValue=\"Mod+K\" onValueChange={setShortcut} />" },
+    { "title": "Vacío, en Apple", "code": "<ShortcutInput platform=\"apple\" labels={{ field: \"Open command palette\" }} />" },
+    {
+      "title": "Teclas de función sin modificador",
+      "code": "<ShortcutInput defaultValue=\"F5\" requireModifier={false} size=\"sm\" name=\"refresh\" />"
+    }
+  ],
+  "origin": "Oleada 7. Captura de combinación de teclas (ShortcutsEditor de zutool); normalización propia (core/shortcut)."
+}
