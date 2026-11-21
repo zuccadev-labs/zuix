@@ -7,6 +7,19 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Oleada 6, navegación de sitio con estética liquid glass (React y `/dom`, mismo comportamiento en `src/site.ts`):
+  - `Navbar`: flotante (dos barras de cristal), `dock` (una barra compacta centrada) o `bar` (de borde a borde);
+    pegajosa, fija o en su sitio. Sin punto de corte fijo: mide si la fila cabe y, si no, los enlaces pasan a un
+    cajón de cristal (popover nativo, también sin JavaScript) con el `NavigationMenu` en vertical.
+  - `NavigationMenu`: menús de sitio con paneles (patrón disclosure de navegación, no menú de aplicación):
+    tarjetas con icono y descripción en 1–3 columnas, pie opcional, previsualización al pasar el puntero, Escape y
+    cierre al salir el foco; vertical, los grupos se despliegan en su sitio.
+  - `BottomNavigation`: navegación de móvil con icono, etiqueta (siempre, solo la actual o ninguna), insignia,
+    enlaces o botones (`onValueChange`; en `/dom`, `z:select`), flotante o de borde a borde, con zona segura.
+  - `SiteFooter`: marca, columnas de enlaces, redes, franja legal; en columnas, centrado o mínimo; cristal,
+    sólido o sin fondo.
+  - `SkipLink`: enlace de salto al contenido que lleva el foco al destino aunque no sea enfocable.
+
 - Oleada 4, navegación y paneles de aplicación:
   - `Sidebar` plegable a iconos (`collapsed`) con `SidebarItem` (icono, contador, acción, `aria-current`,
     submenú en disclosure) y `SidebarTrigger` (aria-expanded, aria-controls, atajo Ctrl/⌘+B opcional). Plegada,

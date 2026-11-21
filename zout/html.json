@@ -2,6 +2,30 @@
  "name": "@zuccadev-labs/zuix-zout",
  "note": "Contrato HTML: marcado que producen los componentes. Iconos como <z-icon>. `behavior`: none = solo CSS; dom = necesita @zuccadev-labs/zuix-zui/dom (layouts de zout: @zuccadev-labs/zuix-zout/dom); react = hoy solo disponible en el binding de React.",
  "components": {
+  "BottomNavigation": {
+   "group": "layout",
+   "classes": [
+    "z-bottomnav",
+    "z-bottomnav__list",
+    "z-bottomnav__item",
+    "z-bottomnav__icon",
+    "z-bottomnav__badge",
+    "z-bottomnav__label"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con enlaces",
+     "html": "<nav class=\"z-bottomnav\" aria-label=\"Primary\" data-labels=\"always\" data-variant=\"floating\" data-position=\"static\">\n  <ul class=\"z-bottomnav__list\">\n    <li>\n      <a class=\"z-bottomnav__item\" href=\"/home\" data-value=\"home\" aria-current=\"page\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"home\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Home</span>\n      </a>\n    </li>\n    <li>\n      <a class=\"z-bottomnav__item\" href=\"/search\" data-value=\"search\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"magnifying-glass\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Search</span>\n      </a>\n    </li>\n    <li>\n      <a class=\"z-bottomnav__item\" href=\"/inbox\" data-value=\"inbox\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"inbox\" size=\"22\"></z-icon>\n          <span class=\"z-bottomnav__badge\" aria-hidden=\"true\">3</span>\n        </span>\n        <span class=\"z-bottomnav__label\">Inbox</span>\n        <span class=\"z-sr-only\">, 3 unread</span>\n      </a>\n    </li>\n    <li>\n      <a class=\"z-bottomnav__item\" href=\"/profile\" data-value=\"profile\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"user-circle\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Profile</span>\n      </a>\n    </li>\n  </ul>\n</nav>",
+     "source": "generated"
+    },
+    {
+     "title": "Solo la actual con etiqueta",
+     "html": "<nav class=\"z-bottomnav\" aria-label=\"Primary\" data-labels=\"active\" data-variant=\"bar\" data-position=\"static\">\n  <ul class=\"z-bottomnav__list\">\n    <li>\n      <button type=\"button\" class=\"z-bottomnav__item\" data-value=\"today\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"calendar-days\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Today</span>\n      </button>\n    </li>\n    <li>\n      <button type=\"button\" class=\"z-bottomnav__item\" data-value=\"stats\" aria-current=\"page\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"chart-bar\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Stats</span>\n      </button>\n    </li>\n    <li>\n      <button type=\"button\" class=\"z-bottomnav__item\" data-value=\"settings\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"cog\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Settings</span>\n      </button>\n    </li>\n  </ul>\n</nav>",
+     "source": "generated"
+    }
+   ]
+  },
   "Float": {
    "group": "layout",
    "classes": [
@@ -49,6 +73,64 @@
     {
      "title": "Rejilla de métricas",
      "html": "<div class=\"z-grid\" data-gap=\"4\" style=\"--z-grid-min:200px\">\n  <div class=\"z-stat z-liquid\" data-variant=\"glass\">\n    <span class=\"z-stat__head\">\n      <span class=\"z-stat__label\">Users</span>\n    </span>\n    <span class=\"z-stat__value\">1,284</span>\n  </div>\n  <div class=\"z-stat z-liquid\" data-variant=\"glass\">\n    <span class=\"z-stat__head\">\n      <span class=\"z-stat__label\">Revenue</span>\n    </span>\n    <span class=\"z-stat__value\">$12.4k</span>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Navbar": {
+   "group": "layout",
+   "classes": [
+    "z-navbar",
+    "z-navbar__inner",
+    "z-navbar__bar",
+    "z-navbar__brand",
+    "z-navbar__nav",
+    "z-navbar__toggle",
+    "z-navbar__menu",
+    "z-navbar__drawer-head",
+    "z-navbar__close",
+    "z-navbar__actions"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Flotante",
+     "html": "<header class=\"z-navbar\" data-variant=\"floating\" data-position=\"static\" data-collapsed=\"\">\n  <div class=\"z-navbar__inner\">\n    <div class=\"z-navbar__bar z-navbar__main\">\n      <div class=\"z-navbar__brand\">\n        <a href=\"/\">Acme</a>\n      </div>\n      <nav class=\"z-navbar__nav\" aria-label=\"Primary\">\n        <button type=\"button\" class=\"z-navbar__toggle\" aria-expanded=\"false\" aria-controls=\"site-nav-menu\" popoverTarget=\"site-nav-menu\">\n          <z-icon name=\"bars-3\" size=\"18\"></z-icon>\n          <span class=\"z-navbar__toggle-label\">Menu</span>\n        </button>\n        <div id=\"site-nav-menu\" class=\"z-navbar__menu\" popover=\"auto\">\n          <div class=\"z-navbar__drawer-head\">\n            <span class=\"z-navbar__drawer-title\">Menu</span>\n            <button type=\"button\" class=\"z-navbar__close\" popoverTarget=\"site-nav-menu\" popoverTargetAction=\"hide\" aria-label=\"Close menu\">\n              <z-icon name=\"x-mark\" size=\"18\"></z-icon>\n            </button>\n          </div>\n          <div class=\"z-navmenu\" data-orientation=\"vertical\">\n            <ul class=\"z-navmenu__list\">\n              <li class=\"z-navmenu__item\">\n                <button type=\"button\" class=\"z-navmenu__trigger\" aria-expanded=\"false\" aria-controls=\"site-nav-nav-p0\">Products\n                  <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"currentColor\" focusable=\"false\" aria-hidden=\"true\" data-icon=\"chevron-down-small\" data-variant=\"outline\" class=\"z-icon z-navmenu__chevron\">\n                    <path d=\"M12 14.97C11.81 14.97 11.62 14.9 11.47 14.75L7.03 10.31C6.74 10.02 6.74 9.54 7.03 9.25C7.32 8.96 7.8 8.96 8.09 9.25L12 13.16L15.91 9.25C16.2 8.96 16.68 8.96 16.97 9.25C17.26 9.54 17.26 10.02 16.97 10.31L12.53 14.75C12.38 14.9 12.19 14.97 12 14.97Z\">\n                  </path>\n                </svg>\n              </button>\n              <div id=\"site-nav-nav-p0\" class=\"z-navmenu__panel\">\n                <ul class=\"z-navmenu__grid\" data-columns=\"2\">\n                  <li>\n                    <a class=\"z-navmenu__card\" href=\"/analytics\">\n                      <span class=\"z-navmenu__icon\">\n                        <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navmenu__text\">\n                        <span class=\"z-navmenu__title\">Analytics</span>\n                        <span class=\"z-navmenu__desc\">Events, funnels and retention.</span>\n                      </span>\n                    </a>\n                  </li>\n                  <li>\n                    <a class=\"z-navmenu__card\" href=\"/storage\">\n                      <span class=\"z-navmenu__icon\">\n                        <z-icon name=\"circle-stack\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navmenu__text\">\n                        <span class=\"z-navmenu__title\">Storage</span>\n                        <span class=\"z-navmenu__desc\">Buckets with versioning.</span>\n                      </span>\n                    </a>\n                  </li>\n                  <li>\n                    <a class=\"z-navmenu__card\" href=\"/functions\">\n                      <span class=\"z-navmenu__icon\">\n                        <z-icon name=\"bolt\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navmenu__text\">\n                        <span class=\"z-navmenu__title\">Functions</span>\n                        <span class=\"z-navmenu__desc\">Run code close to your users.</span>\n                      </span>\n                    </a>\n                  </li>\n                  <li>\n                    <a class=\"z-navmenu__card\" href=\"/auth\">\n                      <span class=\"z-navmenu__icon\">\n                        <z-icon name=\"key\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-navmenu__text\">\n                        <span class=\"z-navmenu__title\">Auth</span>\n                        <span class=\"z-navmenu__desc\">Passkeys and single sign-on.</span>\n                      </span>\n                    </a>\n                  </li>\n                </ul>\n              </div>\n            </li>\n            <li class=\"z-navmenu__item\">\n              <button type=\"button\" class=\"z-navmenu__trigger\" aria-expanded=\"false\" aria-controls=\"site-nav-nav-p1\">Resources\n                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"currentColor\" focusable=\"false\" aria-hidden=\"true\" data-icon=\"chevron-down-small\" data-variant=\"outline\" class=\"z-icon z-navmenu__chevron\">\n                  <path d=\"M12 14.97C11.81 14.97 11.62 14.9 11.47 14.75L7.03 10.31C6.74 10.02 6.74 9.54 7.03 9.25C7.32 8.96 7.8 8.96 8.09 9.25L12 13.16L15.91 9.25C16.2 8.96 16.68 8.96 16.97 9.25C17.26 9.54 17.26 10.02 16.97 10.31L12.53 14.75C12.38 14.9 12.19 14.97 12 14.97Z\">\n                </path>\n              </svg>\n            </button>\n            <div id=\"site-nav-nav-p1\" class=\"z-navmenu__panel\">\n              <ul class=\"z-navmenu__grid\" data-columns=\"1\">\n                <li>\n                  <a class=\"z-navmenu__card\" href=\"/docs\">\n                    <span class=\"z-navmenu__icon\">\n                      <z-icon name=\"book\" size=\"16\"></z-icon>\n                    </span>\n                    <span class=\"z-navmenu__text\">\n                      <span class=\"z-navmenu__title\">Docs</span>\n                      <span class=\"z-navmenu__desc\">Guides and API reference.</span>\n                    </span>\n                  </a>\n                </li>\n                <li>\n                  <a class=\"z-navmenu__card\" href=\"/changelog\">\n                    <span class=\"z-navmenu__icon\">\n                      <z-icon name=\"newspaper\" size=\"16\"></z-icon>\n                    </span>\n                    <span class=\"z-navmenu__text\">\n                      <span class=\"z-navmenu__title\">Changelog</span>\n                    </span>\n                  </a>\n                </li>\n              </ul>\n            </div>\n          </li>\n          <li class=\"z-navmenu__item\">\n            <a class=\"z-navmenu__link\" href=\"/pricing\">Pricing</a>\n          </li>\n        </ul>\n      </div>\n    </div>\n  </nav>\n</div>\n<div class=\"z-navbar__bar z-navbar__actions\">\n  <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"sm\">Get started</button>\n</div>\n</div>\n</header>",
+     "source": "generated"
+    },
+    {
+     "title": "Dock",
+     "html": "<header class=\"z-navbar\" data-variant=\"dock\" data-position=\"static\" data-collapsed=\"\">\n  <div class=\"z-navbar__inner\">\n    <div class=\"z-navbar__bar z-navbar__main\">\n      <div class=\"z-navbar__brand\">\n        <a href=\"/\">Acme</a>\n      </div>\n      <nav class=\"z-navbar__nav\" aria-label=\"Primary\">\n        <button type=\"button\" class=\"z-navbar__toggle\" aria-expanded=\"false\" aria-controls=\"dock-nav-menu\" popoverTarget=\"dock-nav-menu\">\n          <z-icon name=\"bars-3\" size=\"18\"></z-icon>\n          <span class=\"z-navbar__toggle-label\">Menu</span>\n        </button>\n        <div id=\"dock-nav-menu\" class=\"z-navbar__menu\" popover=\"auto\">\n          <div class=\"z-navbar__drawer-head\">\n            <span class=\"z-navbar__drawer-title\">Menu</span>\n            <button type=\"button\" class=\"z-navbar__close\" popoverTarget=\"dock-nav-menu\" popoverTargetAction=\"hide\" aria-label=\"Close menu\">\n              <z-icon name=\"x-mark\" size=\"18\"></z-icon>\n            </button>\n          </div>\n          <div class=\"z-navmenu\" data-orientation=\"vertical\">\n            <ul class=\"z-navmenu__list\">\n              <li class=\"z-navmenu__item\">\n                <a class=\"z-navmenu__link\" href=\"/docs\" aria-current=\"page\">Docs</a>\n              </li>\n              <li class=\"z-navmenu__item\">\n                <a class=\"z-navmenu__link\" href=\"/blog\">Blog</a>\n              </li>\n              <li class=\"z-navmenu__item\">\n                <a class=\"z-navmenu__link\" href=\"/pricing\">Pricing</a>\n              </li>\n            </ul>\n          </div>\n        </div>\n      </nav>\n    </div>\n    <div class=\"z-navbar__bar z-navbar__actions\">\n      <button type=\"button\" title=\"Search\" aria-label=\"Search\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n        <z-icon name=\"magnifying-glass\" size=\"14\"></z-icon>\n      </button>\n    </div>\n  </div>\n</header>",
+     "source": "generated"
+    }
+   ]
+  },
+  "NavigationMenu": {
+   "group": "layout",
+   "classes": [
+    "z-navmenu",
+    "z-navmenu__list",
+    "z-navmenu__item",
+    "z-navmenu__link",
+    "z-navmenu__trigger",
+    "z-navmenu__panel",
+    "z-navmenu__grid",
+    "z-navmenu__card",
+    "z-navmenu__icon",
+    "z-navmenu__title",
+    "z-navmenu__desc",
+    "z-navmenu__footer"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Producto con paneles",
+     "html": "<nav class=\"z-navmenu\" aria-label=\"Main\" data-orientation=\"horizontal\">\n  <ul class=\"z-navmenu__list\">\n    <li class=\"z-navmenu__item\">\n      <button type=\"button\" class=\"z-navmenu__trigger\" aria-expanded=\"false\" aria-controls=\"site-menu-p0\" popoverTarget=\"site-menu-p0\">Products\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"currentColor\" focusable=\"false\" aria-hidden=\"true\" data-icon=\"chevron-down-small\" data-variant=\"outline\" class=\"z-icon z-navmenu__chevron\">\n          <path d=\"M12 14.97C11.81 14.97 11.62 14.9 11.47 14.75L7.03 10.31C6.74 10.02 6.74 9.54 7.03 9.25C7.32 8.96 7.8 8.96 8.09 9.25L12 13.16L15.91 9.25C16.2 8.96 16.68 8.96 16.97 9.25C17.26 9.54 17.26 10.02 16.97 10.31L12.53 14.75C12.38 14.9 12.19 14.97 12 14.97Z\">\n        </path>\n      </svg>\n    </button>\n    <div id=\"site-menu-p0\" class=\"z-navmenu__panel\" popover=\"auto\">\n      <ul class=\"z-navmenu__grid\" data-columns=\"2\">\n        <li>\n          <a class=\"z-navmenu__card\" href=\"/analytics\">\n            <span class=\"z-navmenu__icon\">\n              <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-navmenu__text\">\n              <span class=\"z-navmenu__title\">Analytics</span>\n              <span class=\"z-navmenu__desc\">Events, funnels and retention.</span>\n            </span>\n          </a>\n        </li>\n        <li>\n          <a class=\"z-navmenu__card\" href=\"/storage\">\n            <span class=\"z-navmenu__icon\">\n              <z-icon name=\"circle-stack\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-navmenu__text\">\n              <span class=\"z-navmenu__title\">Storage</span>\n              <span class=\"z-navmenu__desc\">Buckets with versioning.</span>\n            </span>\n          </a>\n        </li>\n        <li>\n          <a class=\"z-navmenu__card\" href=\"/functions\">\n            <span class=\"z-navmenu__icon\">\n              <z-icon name=\"bolt\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-navmenu__text\">\n              <span class=\"z-navmenu__title\">Functions</span>\n              <span class=\"z-navmenu__desc\">Run code close to your users.</span>\n            </span>\n          </a>\n        </li>\n        <li>\n          <a class=\"z-navmenu__card\" href=\"/auth\">\n            <span class=\"z-navmenu__icon\">\n              <z-icon name=\"key\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-navmenu__text\">\n              <span class=\"z-navmenu__title\">Auth</span>\n              <span class=\"z-navmenu__desc\">Passkeys and single sign-on.</span>\n            </span>\n          </a>\n        </li>\n      </ul>\n    </div>\n  </li>\n  <li class=\"z-navmenu__item\">\n    <button type=\"button\" class=\"z-navmenu__trigger\" aria-expanded=\"false\" aria-controls=\"site-menu-p1\" popoverTarget=\"site-menu-p1\">Resources\n      <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"currentColor\" focusable=\"false\" aria-hidden=\"true\" data-icon=\"chevron-down-small\" data-variant=\"outline\" class=\"z-icon z-navmenu__chevron\">\n        <path d=\"M12 14.97C11.81 14.97 11.62 14.9 11.47 14.75L7.03 10.31C6.74 10.02 6.74 9.54 7.03 9.25C7.32 8.96 7.8 8.96 8.09 9.25L12 13.16L15.91 9.25C16.2 8.96 16.68 8.96 16.97 9.25C17.26 9.54 17.26 10.02 16.97 10.31L12.53 14.75C12.38 14.9 12.19 14.97 12 14.97Z\">\n      </path>\n    </svg>\n  </button>\n  <div id=\"site-menu-p1\" class=\"z-navmenu__panel\" popover=\"auto\">\n    <ul class=\"z-navmenu__grid\" data-columns=\"1\">\n      <li>\n        <a class=\"z-navmenu__card\" href=\"/docs\">\n          <span class=\"z-navmenu__icon\">\n            <z-icon name=\"book\" size=\"16\"></z-icon>\n          </span>\n          <span class=\"z-navmenu__text\">\n            <span class=\"z-navmenu__title\">Docs</span>\n            <span class=\"z-navmenu__desc\">Guides and API reference.</span>\n          </span>\n        </a>\n      </li>\n      <li>\n        <a class=\"z-navmenu__card\" href=\"/changelog\">\n          <span class=\"z-navmenu__icon\">\n            <z-icon name=\"newspaper\" size=\"16\"></z-icon>\n          </span>\n          <span class=\"z-navmenu__text\">\n            <span class=\"z-navmenu__title\">Changelog</span>\n          </span>\n        </a>\n      </li>\n    </ul>\n  </div>\n</li>\n<li class=\"z-navmenu__item\">\n  <a class=\"z-navmenu__link\" href=\"/pricing\">Pricing</a>\n</li>\n</ul>\n</nav>",
+     "source": "generated"
+    },
+    {
+     "title": "Vertical",
+     "html": "<nav class=\"z-navmenu\" aria-label=\"Main\" data-orientation=\"vertical\">\n  <ul class=\"z-navmenu__list\">\n    <li class=\"z-navmenu__item\">\n      <a class=\"z-navmenu__link\" href=\"/overview\" aria-current=\"page\">Overview</a>\n    </li>\n    <li class=\"z-navmenu__item\">\n      <button type=\"button\" class=\"z-navmenu__trigger\" aria-expanded=\"false\" aria-controls=\"side-menu-p1\">Guides\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"currentColor\" focusable=\"false\" aria-hidden=\"true\" data-icon=\"chevron-down-small\" data-variant=\"outline\" class=\"z-icon z-navmenu__chevron\">\n          <path d=\"M12 14.97C11.81 14.97 11.62 14.9 11.47 14.75L7.03 10.31C6.74 10.02 6.74 9.54 7.03 9.25C7.32 8.96 7.8 8.96 8.09 9.25L12 13.16L15.91 9.25C16.2 8.96 16.68 8.96 16.97 9.25C17.26 9.54 17.26 10.02 16.97 10.31L12.53 14.75C12.38 14.9 12.19 14.97 12 14.97Z\">\n        </path>\n      </svg>\n    </button>\n    <div id=\"side-menu-p1\" class=\"z-navmenu__panel\">\n      <ul class=\"z-navmenu__grid\" data-columns=\"1\">\n        <li>\n          <a class=\"z-navmenu__card\" href=\"/install\">\n            <span class=\"z-navmenu__text\">\n              <span class=\"z-navmenu__title\">Install</span>\n            </span>\n          </a>\n        </li>\n        <li>\n          <a class=\"z-navmenu__card\" href=\"/theming\">\n            <span class=\"z-navmenu__text\">\n              <span class=\"z-navmenu__title\">Theming</span>\n            </span>\n          </a>\n        </li>\n      </ul>\n    </div>\n  </li>\n</ul>\n</nav>",
      "source": "generated"
     }
    ]
@@ -193,6 +275,52 @@
      "title": "Plegada a iconos",
      "html": "<div style=\"display:flex;flex-direction:column;gap:8px;width:56px;min-height:340px\">\n  <button type=\"button\" class=\"z-sidebar__trigger\" aria-label=\"Toggle sidebar\" title=\"Toggle sidebar\" aria-expanded=\"true\" aria-controls=\"nav-icons\" aria-keyshortcuts=\"Control+B Meta+B\" data-shortcut=\"true\">\n    <z-icon name=\"chevron-double-left\" size=\"16\"></z-icon>\n  </button>\n  <div id=\"nav-icons\" class=\"z-sidebar\" data-collapsed=\"true\">\n    <div class=\"z-sidebar__sections\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" data-active=\"true\" aria-current=\"page\" href=\"/\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"home\" variant=\"solid\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Home</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/inbox\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"inbox\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Inbox</span>\n            <span class=\"z-sidebar__badge\">4</span>\n          </a>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\" data-open=\"true\">\n        <div class=\"z-sidebar__row\">\n          <button type=\"button\" class=\"z-sidebar__link\" data-has-sub=\"\" aria-expanded=\"true\" aria-controls=\"nav-icons-projects\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"folder\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Projects</span>\n            <span class=\"z-sidebar__chevron\" aria-hidden=\"true\">\n              <z-icon name=\"chevron-right-small\" size=\"12\"></z-icon>\n            </span>\n          </button>\n          <span class=\"z-sidebar__action\">\n            <button type=\"button\" title=\"New project\" aria-label=\"New project\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\">\n              <z-icon name=\"plus\" size=\"14\"></z-icon>\n            </button>\n          </span>\n        </div>\n        <div class=\"z-sidebar__sub\" id=\"nav-icons-projects\" role=\"group\" aria-label=\"Projects\">\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/atlas\">\n                <span class=\"z-sidebar__label\">Atlas</span>\n              </a>\n            </div>\n          </div>\n          <div class=\"z-sidebar__item\">\n            <div class=\"z-sidebar__row\">\n              <a class=\"z-sidebar__link\" href=\"/projects/borealis\">\n                <span class=\"z-sidebar__label\">Borealis</span>\n              </a>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/reports\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"chart-bar\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Reports</span>\n          </a>\n        </div>\n      </div>\n    </div>\n    <div class=\"z-sidebar__foot\">\n      <div class=\"z-sidebar__item\">\n        <div class=\"z-sidebar__row\">\n          <a class=\"z-sidebar__link\" href=\"/settings\">\n            <span class=\"z-sidebar__icon\">\n              <z-icon name=\"gear\" size=\"16\"></z-icon>\n            </span>\n            <span class=\"z-sidebar__label\">Settings</span>\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>",
      "source": "manual"
+    }
+   ]
+  },
+  "SiteFooter": {
+   "group": "layout",
+   "classes": [
+    "z-sitefooter",
+    "z-sitefooter__top",
+    "z-sitefooter__brand",
+    "z-sitefooter__logo",
+    "z-sitefooter__tagline",
+    "z-sitefooter__social",
+    "z-sitefooter__social-link",
+    "z-sitefooter__nav",
+    "z-sitefooter__column",
+    "z-sitefooter__title",
+    "z-sitefooter__link",
+    "z-sitefooter__bottom",
+    "z-sitefooter__legal",
+    "z-sitefooter__bottom-links"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Columnas",
+     "html": "<footer class=\"z-sitefooter z-liquid\" data-variant=\"columns\" data-surface=\"glass\">\n  <div class=\"z-sitefooter__top\">\n    <div class=\"z-sitefooter__brand\">\n      <div class=\"z-sitefooter__logo\">Acme</div>\n      <p class=\"z-sitefooter__tagline\">Interfaces that feel native, on any brand.</p>\n      <ul class=\"z-sitefooter__social\">\n        <li>\n          <a class=\"z-sitefooter__social-link\" href=\"https://example.com/acme\" aria-label=\"Source code\" title=\"Source code\">\n            <z-icon name=\"code-bracket\" size=\"18\"></z-icon>\n          </a>\n        </li>\n        <li>\n          <a class=\"z-sitefooter__social-link\" href=\"mailto:hello@example.com\" aria-label=\"Contact\" title=\"Contact\">\n            <z-icon name=\"envelope\" size=\"18\"></z-icon>\n          </a>\n        </li>\n      </ul>\n    </div>\n    <nav class=\"z-sitefooter__nav\" aria-label=\"Footer\">\n      <div class=\"z-sitefooter__column\">\n        <p class=\"z-sitefooter__title\" id=\"z-sitefooter-0-product\">Product</p>\n        <ul aria-labelledby=\"z-sitefooter-0-product\">\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/components\">Components</a>\n          </li>\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/pricing\">Pricing</a>\n          </li>\n        </ul>\n      </div>\n      <div class=\"z-sitefooter__column\">\n        <p class=\"z-sitefooter__title\" id=\"z-sitefooter-1-resources\">Resources</p>\n        <ul aria-labelledby=\"z-sitefooter-1-resources\">\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/docs\">Docs</a>\n          </li>\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"https://status.example.com\" rel=\"noopener\">Status\n              <z-icon name=\"arrow-up-right\" size=\"12\"></z-icon>\n            </a>\n          </li>\n        </ul>\n      </div>\n      <div class=\"z-sitefooter__column\">\n        <p class=\"z-sitefooter__title\" id=\"z-sitefooter-2-company\">Company</p>\n        <ul aria-labelledby=\"z-sitefooter-2-company\">\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/about\">About</a>\n          </li>\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/careers\">Careers</a>\n          </li>\n        </ul>\n      </div>\n    </nav>\n  </div>\n  <div class=\"z-sitefooter__bottom\">\n    <p class=\"z-sitefooter__legal\">© 2026 Acme Inc.</p>\n    <ul class=\"z-sitefooter__bottom-links\">\n      <li>\n        <a class=\"z-sitefooter__link\" href=\"/privacy\">Privacy</a>\n      </li>\n      <li>\n        <a class=\"z-sitefooter__link\" href=\"/terms\">Terms</a>\n      </li>\n    </ul>\n  </div>\n</footer>",
+     "source": "generated"
+    },
+    {
+     "title": "Mínimo",
+     "html": "<footer class=\"z-sitefooter\" data-variant=\"minimal\" data-surface=\"plain\">\n  <div class=\"z-sitefooter__top\">\n    <div class=\"z-sitefooter__brand\">\n      <div class=\"z-sitefooter__logo\">Acme</div>\n    </div>\n    <nav class=\"z-sitefooter__nav\" aria-label=\"Footer\">\n      <div class=\"z-sitefooter__column\">\n        <p class=\"z-sitefooter__title\" id=\"z-sitefooter-0-links\">Links</p>\n        <ul aria-labelledby=\"z-sitefooter-0-links\">\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/docs\">Docs</a>\n          </li>\n          <li>\n            <a class=\"z-sitefooter__link\" href=\"/blog\">Blog</a>\n          </li>\n        </ul>\n      </div>\n    </nav>\n  </div>\n  <div class=\"z-sitefooter__bottom\">\n    <p class=\"z-sitefooter__legal\">© 2026 Acme Inc.</p>\n  </div>\n</footer>",
+     "source": "generated"
+    }
+   ]
+  },
+  "SkipLink": {
+   "group": "layout",
+   "classes": [
+    "z-skiplink"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Al contenido",
+     "html": "<a class=\"z-skiplink\" href=\"#main-content\">Skip to content</a>",
+     "source": "generated"
     }
    ]
   },

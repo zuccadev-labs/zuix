@@ -1,0 +1,41 @@
+{
+  "name": "SkipLink",
+  "group": "layout",
+  "status": "new",
+  "description": "Enlace para saltar la cabecera y la navegación e ir al contenido. Invisible hasta recibir el foco con Tab; al seguirlo, el foco entra en el destino aunque no sea enfocable.",
+  "import": "import { SkipLink } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "target",
+      "type": "string",
+      "default": "main",
+      "description": "Id del destino, sin #."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "default": "Skip to content"
+    }
+  ],
+  "states": ["hidden", "focus"],
+  "tokens": [
+    "surface-solid",
+    "glass-border",
+    "control-radius",
+    "control-height-md",
+    "shadow-md",
+    "layer-top",
+    "accent-ring",
+    "focus-width",
+    "focus-offset"
+  ],
+  "classes": ["z-skiplink"],
+  "behavior": "dom",
+  "a11y": "Primer elemento enfocable de la página (WCAG 2.4.1). Aparece al enfocarse con Tab. Si el destino no es enfocable recibe tabindex=\"-1\" para que el foco y las lupas de pantalla lo sigan, sin entrar en el orden de Tab. Uno o dos por página; el Shell ya trae el suyo (skipLinkLabel).",
+  "examples": [
+    {
+      "title": "Al contenido",
+      "code": "<SkipLink target=\"main-content\">Skip to content</SkipLink>"
+    }
+  ]
+}
