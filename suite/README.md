@@ -98,8 +98,8 @@ from the other and render empty.
 |---|---|
 | [`@zuccadev-labs/zuix-tokens`](https://www.npmjs.com/package/@zuccadev-labs/zuix-tokens) | Design tokens; a brand is one file |
 | [`@zuccadev-labs/zuix-zicon`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon) | 346 icons in outline and solid |
-| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 64 components |
-| [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 10 layouts |
+| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 144 components |
+| [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 19 layouts |
 
 ## Documentation
 
