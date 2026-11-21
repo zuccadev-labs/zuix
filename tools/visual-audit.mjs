@@ -132,7 +132,7 @@ function collect({ TOKENS, families, coarse }) {
     if (r.width < 1 || r.height < 1) return false;
     const cs = getComputedStyle(el);
     if (cs.visibility === "hidden" || Number(cs.opacity) === 0) return false;
-    if (el.closest("[hidden],[inert],.zd-sr-only,.z-sr-only,[aria-hidden='true']")) return false;
+    if (el.closest("[hidden],[inert],.zd-sr-only,.z-sr-only")) return false;
     // Contenido de un <details> cerrado, content-visibility o un antecesor invisible
     if (el.checkVisibility && !el.checkVisibility({ contentVisibilityAuto: true, opacityProperty: true, visibilityProperty: true }))
       return false;
@@ -242,6 +242,98 @@ function collect({ TOKENS, families, coarse }) {
     else if (clipsX && cs.textOverflow === "ellipsis" && el.scrollWidth > el.clientWidth + 1)
       add("elipsis", el, "texto con elipsis", { text: text.slice(0, 40) });
   }
+
+  // 2b. Texto tapado o cortado desde fuera de su caja:
+  //   - tapado: otro elemento con fondo (una cabecera pegajosa, una capa) pinta encima de una parte del texto;
+  //   - cortado por un antecesor que no desplaza (overflow hidden/clip): se ve solo una parte;
+  //   - lo seleccionado (pestaña activa, item actual) a medias dentro de una tira con desplazamiento.
+  const alphaOf = (c) => {
+    const m = c.match(/rgba?\(([^)]+)\)/);
+    if (!m) return 0;
+    const parts = m[1].split(/[ ,/]+/).filter(Boolean);
+    return parts.length > 3 ? Number.parseFloat(parts[3]) : 1;
+  };
+  for (const el of shown) {
+    const text = ownText(el);
+    if (!text || el.matches("input,textarea,select,option")) continue;
+    const r = rects.get(el);
+    // Cortado por un antecesor
+    let hidden = false;
+    let scrolledOut = false;
+    for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+      const ps = getComputedStyle(p);
+      if (!/(auto|scroll|hidden|clip)/.test(ps.overflowX + ps.overflowY)) continue;
+      const q = p.getBoundingClientRect();
+      if (q.width <= 1 || q.height <= 1) break; // sr-only y similares
+      const cut = r.left < q.left - 1 || r.right > q.right + 1 || r.top < q.top - 1 || r.bottom > q.bottom + 1;
+      const inside = r.right > q.left && r.left < q.right && r.bottom > q.top && r.top < q.bottom;
+      if (!cut || !inside) continue;
+      if (/(auto|scroll)/.test(ps.overflowX + ps.overflowY)) {
+        scrolledOut = true;
+        // Un contenedor que desborda menos de dos filas no es una lista larga: le falta alto, y la última fila
+        // queda cortada a media altura sin que nada invite a desplazar.
+        const extraY = p.scrollHeight - p.clientHeight;
+        const extraX = p.scrollWidth - p.clientWidth;
+        const row = el.closest("a,button,li,[role=option],[role=treeitem],[role=menuitem],[role=row]")?.getBoundingClientRect() ?? r;
+        const short =
+          (extraY > 0 && extraY < Math.max(r.height, row.height) * 2 && (r.top < q.top - 1 || r.bottom > q.bottom + 1)) ||
+          (extraX > 0 && extraX < r.width * 0.5 && (r.left < q.left - 1 || r.right > q.right + 1));
+        if (short)
+          add("contenedor-justo", el, `${sig(p)} desborda ${Math.round(Math.max(extraY, extraX))} px y corta este texto`, {
+            text: text.slice(0, 40),
+          });
+      } else hidden = true;
+      break;
+    }
+    if (hidden && !/ellipsis/.test(getComputedStyle(el).textOverflow))
+      add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
+    const current = el.closest("[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
+    if (scrolledOut && current)
+      add("seleccionado-a-medias", el, `${sig(current)} visible a medias en su tira con desplazamiento`, { text: text.slice(0, 40) });
+  }
+
+  // Tapado: se recorre la página por tramos de una pantalla y en cada tramo se mira, en lo alto y en lo bajo de
+  // cada texto que cabe entero, qué pinta encima. Lo pegajoso o fijo de la propia página (la barra del sitio) no
+  // cuenta: tapa al desplazar, como debe; lo pegajoso dentro de un contenedor con desplazamiento sí (una cabecera
+  // de rejilla que se come la primera hora).
+  const pageChrome = (hit) => {
+    for (let p = hit; p && p !== document.body; p = p.parentElement) {
+      const pos = getComputedStyle(p).position;
+      if (pos !== "sticky" && pos !== "fixed") continue;
+      if (pos === "fixed") return true;
+      for (let q = p.parentElement; q && q !== document.body; q = q.parentElement)
+        if (/(auto|scroll)/.test(getComputedStyle(q).overflowY + getComputedStyle(q).overflowX)) return false;
+      return true;
+    }
+    return false;
+  };
+  const texts = shown.filter((el) => ownText(el) && !el.matches("input,textarea,select,option"));
+  const done = new Set();
+  const total = Math.min(document.documentElement.scrollHeight, 20000);
+  for (let y = 0; y < total; y += Math.max(200, vh * 0.8)) {
+    scrollTo(0, y);
+    for (const el of texts) {
+      if (done.has(el)) continue;
+      const r = el.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > vh || r.right <= 0 || r.left >= vw) continue;
+      done.add(el);
+      const cx = Math.min(Math.max(r.left + Math.min(r.width, 24) / 2, 0), vw - 1);
+      let covered = null;
+      for (const py of [r.top + 2, r.bottom - 2]) {
+        if (covered) break;
+        for (const hit of document.elementsFromPoint(cx, py)) {
+          if (hit === el || el.contains(hit) || hit.contains(el)) break;
+          const hs = getComputedStyle(hit);
+          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit)) {
+            covered = hit;
+            break;
+          }
+        }
+      }
+      if (covered) add("texto-tapado", el, `tapado por ${sig(covered)}`, { text: ownText(el).slice(0, 40) });
+    }
+  }
+  scrollTo(0, 0);
 
   // 3. Tipografía, escala, radios, alturas
   const fontEls = [];
@@ -839,7 +931,10 @@ async function audit(browser, job, axeSource) {
       const attrs = (await cdp.send("DOM.getAttributes", { nodeId })).attributes;
       const idx = Number(attrs[attrs.indexOf("data-va-font") + 1]);
       const { fonts } = await cdp.send("CSS.getPlatformFontsForNode", { nodeId }).catch(() => ({ fonts: [] }));
-      const main = [...fonts].sort((a, b) => b.glyphCount - a.glyphCount)[0];
+      // La de la marca si pinta algún glifo (un «⌘» suelto cae en otra fuente sin que el texto deje de ser de la marca);
+      // si no, la que más glifos pinta.
+      const want = res.fontEls[idx]?.first.replace(/ Variable$/, "");
+      const main = fonts.find((f) => f.familyName.startsWith(want)) ?? [...fonts].sort((a, b) => b.glyphCount - a.glyphCount)[0];
       if (main)
         record.fonts.push({ ...res.fontEls[idx], platform: main.familyName, postscript: main.postScriptName, glyphs: main.glyphCount });
     }
