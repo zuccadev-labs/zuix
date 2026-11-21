@@ -271,4 +271,31 @@ export default async function ({ page, test, ok }) {
     });
     ok(size[0] === size[1] && size[2] === "image/png", `PNG cuadrado: ${size}`);
   });
+
+  await test("Oleada 7 sin React: SignaturePad dibuja, avisa con z:change y exporta SVG y PNG; modo Type desde el contrato", async () => {
+    const box = await inject(html("SignaturePad"));
+    const root = box.locator(".z-signature");
+    const canvas = root.locator("canvas");
+    await until(async () => (await canvas.count()) === 1, "lienzo");
+    const c = await canvas.boundingBox();
+    await page.mouse.move(c.x + 30, c.y + 50);
+    await page.mouse.down();
+    await page.mouse.move(c.x + 200, c.y + 90, { steps: 12 });
+    await page.mouse.up();
+    await until(async () => (await events()).some(([t]) => t === "z:change"), "z:change");
+    const out = await page.evaluate(async () => {
+      const z = await import("/zui/dist/zui.dom.js");
+      const el = document.querySelector("[data-w7-layer] .z-signature");
+      const v = z.signatureValue(el);
+      const blob = await z.signatureBlob(el);
+      return [v.empty, v.strokes.length, v.svg.includes("<path"), blob.type];
+    });
+    ok(out[0] === false && out[1] === 1 && out[2] && out[3] === "image/png", JSON.stringify(out));
+    const typed = await inject(html("SignaturePad", 1));
+    await until(
+      async () => (await typed.locator(".z-signature__preview").textContent()) === "Ana Ruiz",
+      "el nombre de partida sobrevive al modo DOM",
+    );
+    ok((await typed.locator(".z-signature__typed").inputValue()) === "Ana Ruiz", "campo con el nombre");
+  });
 }

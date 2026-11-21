@@ -21,6 +21,8 @@ import {
   Input,
   QRCode,
   SegmentedControl,
+  SignaturePad,
+  signatureBlob,
   type ColorFormat,
   type QrLevel,
 } from "@zuccadev-labs/zuix-zui";
@@ -66,6 +68,8 @@ export function Media() {
   const [split, setSplit] = useState(50);
   const [crop, setCrop] = useState<Crop | null>(null);
   const [cropped, setCropped] = useState("");
+  const [signed, setSigned] = useState("empty");
+  const [png, setPng] = useState("");
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -190,6 +194,38 @@ export function Media() {
               </Button>
               <p className="app-muted" data-testid="m-crop-out">
                 {cropped}
+              </p>
+            </Stack>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Signature">
+        <Grid min="320px" gap={4}>
+          <div data-testid="m-signature">
+            <SignaturePad
+              name="signature"
+              onChange={(v) => setSigned(v.empty ? "empty" : `${v.mode}:${v.mode === "type" ? v.typed : v.strokes.length}`)}
+            />
+          </div>
+          <Card>
+            <CardHeader title="State" subtitle="Strokes or typed name, and PNG export." />
+            <Stack gap={3}>
+              <p className="app-muted" data-testid="m-signature-state">
+                {signed}
+              </p>
+              <Button
+                data-testid="m-signature-export"
+                onClick={async () => {
+                  const el = document.querySelector<HTMLElement>('[data-testid="m-signature"] .z-signature');
+                  if (!el) return;
+                  const blob = await signatureBlob(el, { scale: 1 });
+                  setPng(`${blob.type} ${blob.size > 100 ? "ok" : "small"}`);
+                }}
+              >
+                Export PNG
+              </Button>
+              <p className="app-muted" data-testid="m-signature-png">
+                {png}
               </p>
             </Stack>
           </Card>

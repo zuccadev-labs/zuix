@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 140,
+ "count": 141,
  "groups": {
   "actions": [
    "Button",
@@ -137,7 +137,8 @@
   "media": [
    "CompareSlider",
    "ImageCropper",
-   "QRCode"
+   "QRCode",
+   "SignaturePad"
   ],
   "navigation": [
    "Accordion",
@@ -15965,6 +15966,116 @@
    ],
    "origin": "Oleada 7. Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia.",
    "file": "zui/src/components/media/QRCode.manifest.json"
+  },
+  {
+   "name": "SignaturePad",
+   "group": "media",
+   "description": "Lienzo de firma: trazos con el puntero (con presión si el dispositivo la da, trazado suavizado), deshacer y borrar, y la alternativa accesible de escribir el nombre. La firma se exporta en SVG (`signatureValue`) o PNG (`signatureBlob`).",
+   "import": "import { SignaturePad, signatureBlob, signatureValue } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "onChange",
+     "type": "(value: SignatureValue) => void",
+     "description": "Tras cada trazo, deshacer, borrar, cambio de modo o al escribir: { empty, mode, strokes, typed, svg }."
+    },
+    {
+     "name": "defaultMode",
+     "type": "enum",
+     "values": [
+      "draw",
+      "type"
+     ],
+     "default": "draw"
+    },
+    {
+     "name": "defaultName",
+     "type": "string",
+     "description": "Nombre escrito de partida (modo Type)."
+    },
+    {
+     "name": "drawOnly",
+     "type": "boolean",
+     "default": false,
+     "description": "Sin el modo Type (usar solo si hay otra vía accesible para firmar)."
+    },
+    {
+     "name": "strokeWidth",
+     "type": "number",
+     "default": 2.5,
+     "description": "Grosor base del trazo; la presión lo modula."
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "default": 180,
+     "description": "Alto del lienzo en píxeles."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con la firma en SVG (o el nombre escrito) para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<SignaturePadLabels>",
+     "description": "pad, placeholder, draw, type, name, undo, clear, mode (inglés por defecto)."
+    }
+   ],
+   "states": [
+    "empty",
+    "drawing",
+    "typed",
+    "disabled"
+   ],
+   "tokens": [
+    "reading-bg",
+    "control-border",
+    "card-radius",
+    "fg",
+    "fg-muted",
+    "line-strong",
+    "glass-border",
+    "control-bg",
+    "surface-3",
+    "glass-highlight",
+    "shadow-sm",
+    "control-radius-sm",
+    "control-height-xs",
+    "font-display",
+    "text-display",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-signature"
+   ],
+   "a11y": "role=\"group\" con nombre. Dibujar con el puntero no se puede hacer con el teclado: el modo «Type» es la alternativa (un campo de texto con etiqueta cuyo nombre se muestra como firma). Los modos son botones con aria-pressed; deshacer y borrar son botones con texto y quedan desactivados si no hay nada que quitar (el foco pasa al campo o al modo). El lienzo es role=\"img\" con nombre. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-signature dentro de [data-z-dom] (data-mode, data-typed, data-draw-only, data-stroke, data-height, data-name); avisa con z:change { empty, mode, strokes, typed, svg }; signatureValue(el) y signatureBlob(el).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dibujar o escribir",
+     "code": "<SignaturePad name=\"signature\" onChange={(value) => setSigned(!value.empty)} />"
+    },
+    {
+     "title": "Empieza escribiendo",
+     "code": "<SignaturePad defaultMode=\"type\" defaultName=\"Ana Ruiz\" height={140} />"
+    },
+    {
+     "title": "Exportar en PNG",
+     "code": "<SignaturePad ref={pad} />\n<Button onClick={async () => save(await signatureBlob(pad.current))}>Save</Button>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature).",
+   "file": "zui/src/components/media/SignaturePad.manifest.json"
   },
   {
    "name": "Accordion",

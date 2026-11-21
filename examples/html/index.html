@@ -2242,6 +2242,39 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="SignaturePad" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">SignaturePad</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div role="group" aria-label="Signature pad" data-mode="draw" data-empty="" data-stroke="2.5" data-height="180" data-name="signature" style="--z-signature-height:180px" id="z-signature-_R_0_" class="z-signature">
+  <div class="z-signature__modes" role="group" aria-label="Signature method">
+    <button type="button" class="z-signature__mode" data-mode="draw" aria-pressed="true">
+      <z-icon name="pencil" size="14"></z-icon>
+      Draw
+    </button>
+    <button type="button" class="z-signature__mode" data-mode="type" aria-pressed="false">
+      <z-icon name="language" size="14"></z-icon>
+      Type
+    </button>
+  </div>
+  <div class="z-signature__pad">
+    <canvas class="z-signature__canvas" role="img" aria-label="Signature pad"></canvas>
+    <span class="z-signature__line" aria-hidden="true"></span>
+    <span class="z-signature__placeholder" aria-hidden="true">Sign here</span>
+  </div>
+  <div class="z-signature__actions">
+    <button type="button" class="z-btn z-btn--ghost z-signature__undo" data-size="sm" data-action="undo" disabled="">
+      <z-icon name="arrow-uturn-down-left" size="14"></z-icon>
+      Undo last stroke
+    </button>
+    <button type="button" class="z-btn z-btn--ghost z-signature__clear" data-size="sm" data-action="clear" disabled="">
+      <z-icon name="trash" size="14"></z-icon>
+      Clear signature
+    </button>
+  </div>
+  <input type="hidden" data-signature="" name="signature" value=""/>
+</div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">navigation</h2>
 <div class="page__grid">

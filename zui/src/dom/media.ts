@@ -5,17 +5,22 @@
 import { circularSliderWidget } from "../core/circular-widget";
 import { imageCropperWidget } from "../core/cropper-widget";
 import { qrcodeWidget } from "../core/qr-widget";
+import { signaturePadWidget } from "../core/signature-widget";
 import { registerIcons, iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowsRightLeft } from "@zuccadev-labs/zuix-zicon/icons/arrows-right-left";
 import { arrowsUpDown } from "@zuccadev-labs/zuix-zicon/icons/arrows-up-down";
+import { arrowUturnDownLeft } from "@zuccadev-labs/zuix-zicon/icons/arrow-uturn-down-left";
+import { language } from "@zuccadev-labs/zuix-zicon/icons/language";
+import { pencil } from "@zuccadev-labs/zuix-zicon/icons/pencil";
+import { trash } from "@zuccadev-labs/zuix-zicon/icons/trash";
 import { compareKey, comparePosition } from "../core/compare-slider";
 import { inDom } from "./forms-popup";
 import { setMarkup } from "./shared";
 import { registerWidget } from "./widgets";
 
-registerIcons([arrowsRightLeft, arrowsUpDown]);
+registerIcons([arrowsRightLeft, arrowsUpDown, pencil, language, arrowUturnDownLeft, trash]);
 
-for (const widget of [qrcodeWidget, circularSliderWidget, imageCropperWidget]) registerWidget(widget);
+for (const widget of [qrcodeWidget, circularSliderWidget, imageCropperWidget, signaturePadWidget]) registerWidget(widget);
 
 function pick(root: ParentNode, selector: string): HTMLElement[] {
   const list = [...root.querySelectorAll<HTMLElement>(selector)];

@@ -49,6 +49,10 @@ radios y material de los tokens.
     multiplica el paso) con anuncio en una región viva; recorte en fracciones y en píxeles. `cropImage` y
     `cropImageBlob` (raíz y `/dom`) dibujan la salida en un canvas o un Blob (PNG, JPEG o WebP, `maxSize`, círculo
     transparente). Cálculo en `core/crop`.
+  - `SignaturePad` (grupo `media`): firma con el puntero (presión, trazado suavizado, eventos fusionados), deshacer,
+    borrar y la alternativa accesible de escribir el nombre (modo «Type»); `signatureValue(el)` (trazos y SVG) y
+    `signatureBlob(el)` (PNG) en la raíz y en `/dom`; campo oculto con el SVG para formularios. Cálculo en
+    `core/signature`.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único

@@ -11,6 +11,49 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · SignaturePad: dibujar, deshacer, borrar, escribir el nombre como alternativa y exportar PNG (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const root = `${t("m-signature")} .z-signature`;
+        await page.locator(root).scrollIntoViewIfNeeded();
+        await expectAttr(page, `${root} .z-signature__undo`, "disabled", "");
+        const c = await page.locator(`${root} canvas`).boundingBox();
+        const stroke = async (y) => {
+          await page.mouse.move(c.x + 40, c.y + y);
+          await page.mouse.down();
+          for (let i = 1; i <= 12; i++) await page.mouse.move(c.x + 40 + i * 15, c.y + y + (i % 2 ? 10 : -10));
+          await page.mouse.up();
+        };
+        await stroke(60);
+        await stroke(100);
+        await poll(async () => (await text(page, "m-signature-state")) === "draw:2", "dos trazos");
+        const ink = await page.locator(`${root} canvas`).evaluate((el) => {
+          const d = el.getContext("2d").getImageData(0, 0, el.width, el.height).data;
+          let n = 0;
+          for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+          return n;
+        });
+        assert(ink > 100, `el lienzo tiene tinta: ${ink}`);
+        await page.click(`${root} .z-signature__undo`);
+        await poll(async () => (await text(page, "m-signature-state")) === "draw:1", "deshacer quita un trazo");
+        await page.click(t("m-signature-export"));
+        await poll(async () => (await text(page, "m-signature-png")) === "image/png ok", "PNG");
+        assert(
+          (await page.locator(`${root} input[type="hidden"][name="signature"]`).inputValue()).startsWith("<svg"),
+          "campo oculto con el SVG",
+        );
+        await page.click(`${root} .z-signature__clear`);
+        await poll(async () => (await text(page, "m-signature-state")) === "empty", "borrar");
+        await page.click(`${root} .z-signature__mode[data-mode="type"]`);
+        await expectAttr(page, `${root} .z-signature__mode[data-mode="type"]`, "aria-pressed", "true");
+        await page.locator(`${root} .z-signature__typed`).fill("Ana Ruiz");
+        await poll(async () => (await text(page, "m-signature-state")) === "type:Ana Ruiz", "el nombre escrito firma");
+        assert((await page.locator(`${root} .z-signature__preview`).textContent()) === "Ana Ruiz", "vista del nombre");
+        const label = await page.locator(`${root} .z-signature__typed`).evaluate((el) => el.labels?.[0]?.textContent ?? "");
+        assert(label.includes("Type your full name"), "el campo tiene etiqueta");
+      },
+    },
+    {
       name: "Oleada 7 · ImageCropper: teclado (mover, redimensionar con Mayús), asa de esquina con relación 1:1 y exportación a PNG (React)",
       async run({ open }) {
         const page = await screen(open);

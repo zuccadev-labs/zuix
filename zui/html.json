@@ -2615,6 +2615,30 @@
     }
    ]
   },
+  "SignaturePad": {
+   "group": "media",
+   "classes": [
+    "z-signature"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dibujar o escribir",
+     "html": "<div role=\"group\" aria-label=\"Signature pad\" data-mode=\"draw\" data-empty=\"\" data-stroke=\"2.5\" data-height=\"180\" data-name=\"signature\" style=\"--z-signature-height:180px\" id=\"z-signature-_R_0_\" class=\"z-signature\">\n  <div class=\"z-signature__modes\" role=\"group\" aria-label=\"Signature method\">\n    <button type=\"button\" class=\"z-signature__mode\" data-mode=\"draw\" aria-pressed=\"true\">\n      <z-icon name=\"pencil\" size=\"14\"></z-icon>\n      Draw\n    </button>\n    <button type=\"button\" class=\"z-signature__mode\" data-mode=\"type\" aria-pressed=\"false\">\n      <z-icon name=\"language\" size=\"14\"></z-icon>\n      Type\n    </button>\n  </div>\n  <div class=\"z-signature__pad\">\n    <canvas class=\"z-signature__canvas\" role=\"img\" aria-label=\"Signature pad\"></canvas>\n    <span class=\"z-signature__line\" aria-hidden=\"true\"></span>\n    <span class=\"z-signature__placeholder\" aria-hidden=\"true\">Sign here</span>\n  </div>\n  <div class=\"z-signature__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-signature__undo\" data-size=\"sm\" data-action=\"undo\" disabled=\"\">\n      <z-icon name=\"arrow-uturn-down-left\" size=\"14\"></z-icon>\n      Undo last stroke\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-signature__clear\" data-size=\"sm\" data-action=\"clear\" disabled=\"\">\n      <z-icon name=\"trash\" size=\"14\"></z-icon>\n      Clear signature\n    </button>\n  </div>\n  <input type=\"hidden\" data-signature=\"\" name=\"signature\" value=\"\"/>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Empieza escribiendo",
+     "html": "<div role=\"group\" aria-label=\"Signature pad\" data-mode=\"type\" data-stroke=\"2.5\" data-height=\"140\" data-typed=\"Ana Ruiz\" style=\"--z-signature-height:140px\" id=\"z-signature-_R_0_\" class=\"z-signature\">\n  <div class=\"z-signature__modes\" role=\"group\" aria-label=\"Signature method\">\n    <button type=\"button\" class=\"z-signature__mode\" data-mode=\"draw\" aria-pressed=\"false\">\n      <z-icon name=\"pencil\" size=\"14\"></z-icon>\n      Draw\n    </button>\n    <button type=\"button\" class=\"z-signature__mode\" data-mode=\"type\" aria-pressed=\"true\">\n      <z-icon name=\"language\" size=\"14\"></z-icon>\n      Type\n    </button>\n  </div>\n  <div class=\"z-signature__pad\">\n    <canvas class=\"z-signature__canvas\" role=\"img\" aria-label=\"Signature pad\" hidden=\"\"></canvas>\n    <span class=\"z-signature__preview\" aria-hidden=\"true\">Ana Ruiz</span>\n    <span class=\"z-signature__line\" aria-hidden=\"true\"></span>\n  </div>\n  <label class=\"z-signature__field\">\n    <span class=\"z-signature__field-label\">Type your full name</span>\n    <span class=\"z-input\" data-size=\"md\">\n      <input id=\"z-signature-_R_0_-name\" class=\"z-input__control z-signature__typed\" type=\"text\" autoComplete=\"name\" value=\"Ana Ruiz\"/>\n    </span>\n  </label>\n  <div class=\"z-signature__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-signature__clear\" data-size=\"sm\" data-action=\"clear\">\n      <z-icon name=\"trash\" size=\"14\"></z-icon>\n      Clear signature\n    </button>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Exportar en PNG",
+     "html": "<div role=\"group\" aria-label=\"Signature pad\" data-mode=\"draw\" data-empty=\"\" data-stroke=\"2.5\" data-height=\"180\" style=\"--z-signature-height:180px\" id=\"z-signature-_R_1_\" class=\"z-signature\">\n  <div class=\"z-signature__modes\" role=\"group\" aria-label=\"Signature method\">\n    <button type=\"button\" class=\"z-signature__mode\" data-mode=\"draw\" aria-pressed=\"true\">\n      <z-icon name=\"pencil\" size=\"14\"></z-icon>\n      Draw\n    </button>\n    <button type=\"button\" class=\"z-signature__mode\" data-mode=\"type\" aria-pressed=\"false\">\n      <z-icon name=\"language\" size=\"14\"></z-icon>\n      Type\n    </button>\n  </div>\n  <div class=\"z-signature__pad\">\n    <canvas class=\"z-signature__canvas\" role=\"img\" aria-label=\"Signature pad\"></canvas>\n    <span class=\"z-signature__line\" aria-hidden=\"true\"></span>\n    <span class=\"z-signature__placeholder\" aria-hidden=\"true\">Sign here</span>\n  </div>\n  <div class=\"z-signature__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-signature__undo\" data-size=\"sm\" data-action=\"undo\" disabled=\"\">\n      <z-icon name=\"arrow-uturn-down-left\" size=\"14\"></z-icon>\n      Undo last stroke\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-signature__clear\" data-size=\"sm\" data-action=\"clear\" disabled=\"\">\n      <z-icon name=\"trash\" size=\"14\"></z-icon>\n      Clear signature\n    </button>\n  </div>\n</div>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Save</button>",
+     "source": "generated"
+    }
+   ]
+  },
   "Accordion": {
    "group": "navigation",
    "classes": [

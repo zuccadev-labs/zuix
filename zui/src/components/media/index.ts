@@ -3,3 +3,13 @@ export { CompareSlider, type CompareSliderLabels, type CompareSliderProps } from
 export { ImageCropper, type Crop, type ImageCropperLabels, type ImageCropperProps, type PixelCrop } from "./ImageCropper";
 // Dibujo del recorte de ImageCropper en un canvas o un Blob.
 export { cropImage, cropImageBlob, type CropImageOptions } from "../../core/crop-image";
+export {
+  SignaturePad,
+  signatureBlob,
+  signatureValue,
+  type SignaturePadLabels,
+  type SignaturePadProps,
+  type SignaturePoint,
+  type SignatureStroke,
+  type SignatureValue,
+} from "./SignaturePad";
