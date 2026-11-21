@@ -55,6 +55,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   de `2px` y `3px` a `--z-space-0-5`. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus pestañas (el
   contrato HTML los pintaba vacíos).
 - La guía de los submenús de `Sidebar` se calcula con tokens (`space-3 + space-2 − 1px`, bajo el centro del icono).
+- `TabStrip`: una pestaña nunca es más ancha que su tira (`max-width: min(220px, 100%)`): en una barra estrecha la
+  activa se ve entera con el título en elipsis en vez de cortarse a media palabra. El botón de cerrar y el chip de
+  grupo miden `control-height-xs` (24; 40 con puntero grueso; el chip medía 22).
 
 - `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
   accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía

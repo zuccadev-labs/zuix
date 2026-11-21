@@ -1212,7 +1212,9 @@
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    max-width: 220px;
+    /* Nunca más ancha que la tira: en una barra estrecha (teléfono) la activa se ve entera, con el título en elipsis,
+       en vez de cortarse por los dos lados. */
+    max-width: min(220px, 100%);
     height: var(--z-control-height-sm);
     /* Pestaña de trabajo: rectángulo de radio sm (8), no píldora. */
     border-radius: var(--z-control-radius-sm);
@@ -1272,10 +1274,11 @@
     color: inherit;
     cursor: pointer;
   }
-  /* 24 × 24 px: el mínimo de WCAG 2.5.8 para un objetivo que tiene otro pegado (la propia pestaña). */
+  /* 24 × 24 px (40 con puntero grueso): el mínimo de WCAG 2.5.8 para un objetivo que tiene otro pegado (la propia
+     pestaña). */
   .z-tabstrip__close {
-    width: 24px;
-    height: 24px;
+    width: var(--z-control-height-xs);
+    height: var(--z-control-height-xs);
     margin-inline-end: var(--z-space-1);
     opacity: 0.55;
   }
@@ -1337,7 +1340,8 @@
     align-items: center;
     gap: var(--z-space-1-5);
     max-width: 140px;
-    height: 22px;
+    /* Control xs (24; 40 con puntero grueso): antes 22, fuera de la escala de alturas. */
+    height: var(--z-control-height-xs);
     padding-inline: var(--z-space-2);
     border: 1px solid var(--z-tab-tone);
     border-radius: var(--z-radius-xs);
