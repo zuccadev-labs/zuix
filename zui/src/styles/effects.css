@@ -149,6 +149,7 @@
     position: absolute;
     inset: 0;
     padding: var(--z-beam-width, 1px);
+    overflow: hidden;
     border-radius: inherit;
     pointer-events: none;
     container-type: size;

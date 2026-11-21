@@ -2407,7 +2407,7 @@ mark[data-markjs] {
 /* ── Galerías de cargadores y efectos (/loaders, /effects) ─────────────────────────────────────────────── */
 .zd-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 156px), 1fr));
   gap: var(--z-space-3);
   margin: 0;
   padding: 0;

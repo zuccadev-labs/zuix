@@ -87,7 +87,7 @@ export default async function ({ page, test, ok }) {
   });
 
   await test("Oleada 6 sin React: SkipLink y BottomNavigation de botones", async () => {
-    const box = await inject(`${html("SkipLink")}<main id="main-content"><h1>Content</h1></main>${html("BottomNavigation", 1)}`);
+    const box = await inject(`${html("SkipLink")}${html("BottomNavigation", 1)}`);
     await box.locator(".z-skiplink").focus();
     await page.keyboard.press("Enter");
     await until(() => page.evaluate(() => document.activeElement?.id === "main-content"), "foco en el destino");

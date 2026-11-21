@@ -1676,7 +1676,7 @@
    "examples": [
     {
      "title": "Al contenido",
-     "code": "<SkipLink target=\"main-content\">Skip to content</SkipLink>"
+     "code": "<>\n  <SkipLink target=\"main-content\">Skip to content</SkipLink>\n  <section id=\"main-content\" aria-label=\"Content\">\n    <p>Press Tab to reveal the link, then Enter to land here.</p>\n  </section>\n</>"
     }
    ],
    "file": "zout/src/layouts/SkipLink.manifest.json"

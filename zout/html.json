@@ -319,7 +319,7 @@
    "examples": [
     {
      "title": "Al contenido",
-     "html": "<a class=\"z-skiplink\" href=\"#main-content\">Skip to content</a>",
+     "html": "<a class=\"z-skiplink\" href=\"#main-content\">Skip to content</a>\n<section id=\"main-content\" aria-label=\"Content\">\n  <p>Press Tab to reveal the link, then Enter to land here.</p>\n</section>",
      "source": "generated"
     }
    ]

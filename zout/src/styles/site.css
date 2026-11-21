@@ -580,7 +580,7 @@
   }
   .z-bottomnav__item[aria-current="page"] .z-bottomnav__icon {
     background: var(--z-surface-3);
-    color: var(--z-accent);
+    color: var(--z-accent-text);
     box-shadow: inset 0 1px 0 var(--z-glass-highlight);
   }
   .z-bottomnav__badge {
