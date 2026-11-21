@@ -286,7 +286,12 @@ export default async function ({ page, test, ok, card, browserName }) {
     await panel.locator(".z-popover__close").click();
     ok(await panel.isHidden(), "el botón de cierre cierra");
     ok(await activeIs("#w4-Popover-1 [data-z-open]"), "el foco vuelve al disparador");
-    ok((await page.locator("#dns-help").getAttribute("data-anchored")) === null, "al cerrar se retira el ancla CSS");
+    // El ancla CSS se retira en el evento toggle, que el navegador emite en una tarea aparte tras hidePopover().
+    const released = await page
+      .waitForFunction(() => !document.getElementById("dns-help").hasAttribute("data-anchored"), null, { timeout: 2000 })
+      .then(() => true)
+      .catch(() => false);
+    ok(released, "al cerrar se retira el ancla CSS");
   });
 
   /* ---------- HoverCard ---------- */
