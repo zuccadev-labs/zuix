@@ -376,6 +376,9 @@ radios y material de los tokens.
     su rótulo (se pisaban), y el desplazamiento inicial no deja el rótulo de «ahora» a medias bajo la cabecera.
   - `ColorPicker` y `ColorField`: los campos de canal recuperan su relleno compacto (la talla `sm` del campo lo
     pisaba) y un valor de tres cifras («260» en H de OKLCH) se ve entero.
+  - `Carousel` y `CompareSlider` ocupan el ancho de su contenedor también dentro de una fila flex: el carrusel encogía
+    hasta 139 px (con tres por página, slides de 33 px y el texto letra a letra) y la comparación con capas sin
+    ancho propio quedaba en 0.
   - `CardMedia` a sangre con ancho explícito: en WebKit salía más baja que su proporción (2,19 en vez de 16:9).
   - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
   - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al

@@ -36,8 +36,26 @@ const withoutSamplePaths = (html: string) =>
     .replace(/<img\b[^>]*\ssrc="\/[^"]*"[^>]*>/g, "")
     .replace(/\shref="\/[^"]*"/g, ' href="#"');
 
+/**
+ * Script del ejemplo (el que acompaña al marcado en html.json: pintar un lienzo, escuchar un evento, abrir un tour).
+ * Sus `import { … } from "@zuccadev-labs/zuix-zui/dom"` (o zout) se resuelven con los módulos ya cargados; otro
+ * import no se puede ejecutar aquí y el script se omite.
+ */
+function runScript(script: string, modules: { zui: unknown; zout: unknown }) {
+  const body = script.replace(
+    /^import\s*\{([^}]*)\}\s*from\s*"@zuccadev-labs\/zuix-(zui|zout)\/dom";?[ \t]*$/gm,
+    (_, names: string, pkg: string) => `const {${names}} = __${pkg};`,
+  );
+  if (/^\s*import\s/m.test(body)) return;
+  try {
+    new Function("__zui", "__zout", body)(modules.zui, modules.zout);
+  } catch (error) {
+    console.error("zudocs: el script del ejemplo falló", error);
+  }
+}
+
 /** Marcado del contrato HTML en vivo: el mismo que emite el binding de React, movido por zui/dom. */
-export function HtmlPreview({ html }: { html: string }) {
+export function HtmlPreview({ html, script }: { html: string; script?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let alive = true;
@@ -46,11 +64,12 @@ export function HtmlPreview({ html }: { html: string }) {
       const [zui, zout] = await Promise.all([import("@zuccadev-labs/zuix-zui/dom"), import("@zuccadev-labs/zuix-zout/dom")]);
       zui.hydrate(ref.current);
       zout.hydrate(ref.current);
+      if (script) runScript(script, { zui, zout });
     });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [script]);
   const markup = { __html: withoutSamplePaths(html) };
   // biome-ignore lint/security/noDangerouslySetInnerHtml: marcado del contrato HTML de la suite (html.json), generado en el repositorio
   return <div ref={ref} className="zd-preview__stage z-root" data-z-dom="" dangerouslySetInnerHTML={markup} />;
@@ -62,10 +81,13 @@ export function Example({
   html,
   preview,
   column,
+  script,
 }: {
   title: string;
   react?: string;
   html?: string;
+  /** Script del ejemplo HTML (se ejecuta tras hidratar la vista previa). */
+  script?: string;
   /** Vista previa propia (demo de React). Sin ella se pinta el HTML. */
   preview?: ReactNode;
   column?: boolean;
@@ -109,7 +131,7 @@ export function Example({
       </div>
       {current === "preview" ? (
         <div className="zd-preview" data-column={column || undefined}>
-          {preview ? <div className="zd-preview__stage z-root">{preview}</div> : html ? <HtmlPreview html={html} /> : null}
+          {preview ? <div className="zd-preview__stage z-root">{preview}</div> : html ? <HtmlPreview html={html} script={script} /> : null}
         </div>
       ) : code ? (
         <CodeBlock language={shown === "react" ? "tsx" : "html"}>{code}</CodeBlock>

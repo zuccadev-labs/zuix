@@ -45,6 +45,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- Las vistas previas HTML ejecutan el script de su ejemplo (el de html.json) tras hidratar: los lienzos del
+  carrusel WebGL se pintan (antes salían negros) y el tour, los avisos o el diálogo de confirmación responden.
 - Tabla de API de cada componente: si no cabe en su caja, cada prop pasa a una tarjeta (nombre y tipo arriba, valor
   por defecto y descripción debajo); si cabe, sigue siendo tabla. Antes, a 390, el tipo se partía letra a letra
   («str/ing») y la descripción quedaba cortada por el borde. Los tipos y valores largos parten entre piezas (tras

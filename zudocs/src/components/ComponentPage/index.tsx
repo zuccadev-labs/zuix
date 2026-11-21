@@ -295,7 +295,7 @@ export default function ComponentPage({ data }: { data: ComponentData }) {
                     <Heading as="h3" id={ids[i]}>
                       {e.title}
                     </Heading>
-                    <Example title={e.title} react={e.code} html={e.html} />
+                    <Example title={e.title} react={e.code} html={e.html} script={e.script} />
                   </div>
                 ))}
               </section>
