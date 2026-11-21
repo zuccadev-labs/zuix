@@ -10,7 +10,7 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 ### Añadido
 
 - Grupo «Medios» en el catálogo (QRCode, CompareSlider, ImageCropper, SignaturePad) y vistas previas de React de
-  ColorPicker y ColorPickerTrigger (oleada 7).
+  ColorPicker y ColorPickerTrigger.
 - Galerías `/loaders` (Spinner con sus formas y los 12 patrones de DotMatrix con tamaño, tono, rejilla y baldosa, y
   código para copiar) y `/effects` (Backdrop, BorderBeam, Glow, AttentionRing y TextEffect en vivo, con sus
   variantes), con el armazón del sitio. Se activan con `pages.loaders` y `pages.effects` y aparecen en la sección
@@ -58,7 +58,7 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   de es…» a 390).
 - Vistas previas: el restablecimiento de estilos del navegador ya no anula el atributo `hidden`; las filas ocultas
   de una `DataTable` paginada se veían todas.
-- Auditoría visual del sitio:
+- Aspecto y medidas del sitio:
   - Rellenos, huecos, interlineados y pesos en tokens: tabla de props y de Markdown a 14/20 (antes 13/18 y
     10/18), índice con interlineado `leading-ui` y sangrías de la escala, código en línea con peso regular,
     titular de portada con `text-hero` y `leading-tight`.

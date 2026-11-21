@@ -11,7 +11,7 @@ radios y material de los tokens.
 
 ### Añadido
 
-- Oleada 7, medios y piezas tardías (todo con contrato HTML, modo sin framework y binding de React sobre un solo
+- Color, medios y piezas sueltas (todo con contrato HTML, modo sin framework y binding de React sobre un solo
   árbol de `core/vnode`):
   - Familia `ColorPicker`: `ColorPicker` (área de saturación y brillo, tono, opacidad, campos por canal o
     hexadecimal, formato hex/rgb/hsl/oklch, muestrario, cuentagotas con `EyeDropper` como mejora progresiva y
@@ -66,7 +66,7 @@ radios y material de los tokens.
     `downloadBlob` y `downloadUrl`. `qrcodeSvg(props)` da el QR como SVG autónomo.
   - `DotMatrix`: seis patrones propios más (`diamond`, `radar`, `zigzag`, `helix`, `heart`, `cascade`), 18 en total.
 
-- Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
+- Efectos y cargadores con la estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único
   `IntersectionObserver` compartido, `core/visibility`):
   - `Spinner` con `shape`: `ring` (por defecto, sin cambios), `dots` (tres puntos) y `bars` (cuatro barras).
@@ -81,7 +81,7 @@ radios y material de los tokens.
     palabras o letras, desenfoque, degradado con tokens de texto y brillo de espera; texto entero para los lectores
     y visible sin JavaScript).
 
-- Oleada 4, capas y navegación de aplicación:
+- Capas y navegación de aplicación:
   - `Toolbar`, `ToolbarGroup` y `ToolbarSeparator` (patrón APG «toolbar»): una sola parada de tabulación para
     todos los controles de la barra, también los de un `ToggleGroup` anidado, flechas del eje con vuelta, Inicio y
     Fin, y la barra recuerda el último control. Variantes `glass` (cromo) y `plain`, horizontal y vertical. En
@@ -135,7 +135,7 @@ radios y material de los tokens.
     que lo resalta, progreso, Anterior, Siguiente/Hecho y Saltar; el foco entra en la tarjeta en cada paso, Escape
     o Saltar lo cierran y el foco vuelve a donde estaba; las flechas laterales cambian de paso. Lógica en
     `core/tour`. En `/dom`, `startTour()`.
-- DataTable, oleada 5: selección de filas con casillas (`selectable`, `selectedKeys`, `defaultSelectedKeys`,
+- DataTable: selección de filas con casillas (`selectable`, `selectedKeys`, `defaultSelectedKeys`,
   `onSelectionChange`, `isRowSelectable`), «seleccionar todo» de la página con estado indeterminado, Mayús +
   clic para un rango y conteo visible anunciado (`role="status"`, `selectedLabel`); pie en `tfoot` por columna
   (`footer`, contenido o función sobre todas las filas); paginación integrada con Pagination (`pageSize`,
@@ -143,7 +143,7 @@ radios y material de los tokens.
   el marcado no cambia. Modo DOM (`.z-datatable`): `data-page-size`, `data-selected-label`,
   `data-range-label`, `z:selectionchange` y `z:pagechange`, y `setDataTableSelection()`,
   `dataTableSelection()` y `setDataTablePage()` en `/dom`. Lógica en `core/selection`.
-- Tree, oleada 5: `selectionMode="multiple"` (`aria-multiselectable`; Ctrl/Cmd y Mayús con el puntero,
+- Tree: `selectionMode="multiple"` (`aria-multiselectable`; Ctrl/Cmd y Mayús con el puntero,
   Espacio, Mayús+flechas y Ctrl+A; `selectedIds`, `defaultSelectedIds`, `onSelectedChange`), casillas en
   cascada con estado mixto (`checkable`, `checked`, `defaultChecked`, `onCheckedChange`; `aria-checked`
   true/false/mixed) y renombrar (`renamable`, `onRename`, `renameLabel`: F2 o doble clic, Intro confirma,
@@ -179,7 +179,7 @@ radios y material de los tokens.
   `<script type="application/json" data-props>`; `z:pointclick`, `z:hiddenchange`, `z:viewchange`.
 - `Sparkline` (línea, área o barras; imagen con nombre que resume la serie; sin estado, vale en un Server
   Component; modo DOM con `.z-sparkline[data-values]`) y `StatTile` con `trend` y `trendProps`.
-- Datos y contenido, oleada 5: `Timeline` (`<ol>`, formas de punto, estilos de línea, alineación inicio/fin/alterna
+- Datos y contenido: `Timeline` (`<ol>`, formas de punto, estilos de línea, alineación inicio/fin/alterna
   que pasa a una columna en estrecho, `<time datetime>`), `CircularProgress` (sobre `<progress>`), `Progress`
   vertical y segmentada, `DescriptionList` (`<dl>`), `Item`/`ItemGroup`, `StatusDot` (tono, tamaño, pulso; nunca
   solo color), `Chip` con `tone`, `CardMedia` y `AspectRatio`.
@@ -205,8 +205,8 @@ radios y material de los tokens.
 - `DateTimePicker`: campo tecleable (DateField) con calendario y TimeField en el mismo panel, valor
   `YYYY-MM-DDTHH:mm[:ss]` sin zona; con `granularity="day"` es el DatePicker con campo tecleable
   (`DatePicker input`). Alt+Flecha abajo abre.
-- Agenda, oleada 2. `EventCalendar` añade las vistas `year` (12 minimeses con densidad en el fondo y en el
-  nombre, `density`), `perpetual` (año perpetuo de una página) y `timeline` (recursos del día, `resources`), un
+- `EventCalendar`, vistas de año y de recursos: `year` (12 minimeses con densidad en el fondo y en el nombre,
+  `density`), `perpetual` (año perpetuo de una página) y `timeline` (recursos del día, `resources`), un
   contenido propio por evento (`renderEvent`, sin perder el nombre accesible completo), carga por rango visible
   (`loadEvents`, `onRangeChange`; en `/dom`, `setAgendaOptions()` y `z:rangechange`), el chevrón de continuación en
   las barras de varios días y la banda continua de la semana visible en el minicalendario.
@@ -271,7 +271,7 @@ radios y material de los tokens.
   `setTimeFieldValue()` y `setTimePickerValue()` en `@zuccadev-labs/zuix-zui/dom`. Lógica compartida en
   `core/segments` y `core/time`.
 
-- Formularios y acciones (oleada 3). Nuevos: `InputGroup` (con `InputGroupAddon`, `InputGroupText`,
+- Formularios y acciones. Nuevos: `InputGroup` (con `InputGroupAddon`, `InputGroupText`,
   `InputGroupInput`, `InputGroupTextarea`), `PasswordInput` (mostrar u ocultar con aria-pressed, medidor
   opcional), `NumberInput` (spinbutton con pasos, topes, rueda opcional y formato con `Intl.NumberFormat`),
   `Listbox` en línea (única o múltiple, grupos, búsqueda por letra), `TagsInput`, `CheckboxGroup` (con casilla
@@ -291,22 +291,8 @@ radios y material de los tokens.
 
 ### Cambiado
 
-- Rendimiento de la agenda (5000 eventos, build de producción, CPU del hilo principal por interacción): pasar de
-  semana, de 700–770 ms a 150–200 ms (una semana con 1156 eventos: se pintan 254 y el resto va a «+N»); abrir la
-  lista de 30 días, de 430–540 ms a 30–50 ms; el mes, el día y el año, de 120–150 ms a 55–75 ms.
-  `expandEvents` usa un índice por intervalos (búsqueda binaria; se vuelve a indexar si la lista o un evento cambian
-  en su sitio) con memoria por rango (la misma lista y las mismas ocurrencias para el mismo rango: no se
-  modifican), las vistas reparten las ocurrencias por día en una sola pasada, los carriles del mes dejan de buscar
-  más allá de `dayMaxEvents`, el marcado de cada evento se memoriza (mover el foco o arrastrar no vuelve a recorrer
-  los que no cambian, ni en React ni en el modo DOM, que además compara atributos con el pintado anterior en vez de
-  leer el documento) y el minicalendario no se vuelve a pintar si no cambia su mes. El aviso de rango
-  (`onRangeChange`, `z:rangechange`) y la carga (`loadEvents`) pasan a después del siguiente pintado.
-- Modo DOM: el parcheo con claves ya no sustituye un nodo que hará falta más adelante (lo recoloca) y devuelve el
-  foco a la pieza que mueve; los datos de los `<script type="application/json">` se analizan una vez por texto.
-
 - `Button` e `IconButton` respetan un `aria-disabled` recibido (antes lo pisaba el estado de carga) y, con él,
   no ejecutan `onClick`: un botón apagado que conserva el foco, como pide una barra de herramientas.
-- `ToggleGroup` dentro de una `Toolbar` deja a la barra la parada de tabulación y las flechas.
 - Un menú que se vuelve a abrir durante su animación de salida se monta de nuevo: el foco vuelve a su primera
   entrada (antes se quedaba en el menú que se cerraba).
 - Calendario con la base liquid glass: celdas de 36 px con radio de control (no círculos), hoy con anillo y
@@ -333,7 +319,7 @@ radios y material de los tokens.
   degradado va en una capa fija (Safari de iOS ignora `background-attachment: fixed`). Con
   `prefers-reduced-transparency`, también `.z-solid` pasa a superficie opaca.
 - Base: texto de interfaz con `leading-ui`; titulares con `text-wrap: balance` y párrafos con `pretty`.
-- Fase D: el resto de componentes pasa a la anatomía del estándar. Nada en píldora: chips, avisos,
+- El resto de componentes pasa a la misma anatomía. Nada en píldora: chips, avisos,
   paginación, pasos, flechas del carrusel, botón de copiar del código, cierres de diálogo y de alerta, iconos
   de estado vacío, de confirmación, de subida y de `StatTile` son rectángulos de radios concéntricos (o
   baldosas). `radius-full` queda para lo circular: avatar y su punto de estado, punto de insignia y de aviso,
@@ -366,78 +352,29 @@ radios y material de los tokens.
   y fija `box-sizing: border-box`.
 - `Slider`: ancho mínimo de seis tiradores; en un contenedor ajustado a su contenido el 100 % era 0 y los
   tiradores de un rango se solapaban.
+- `Select` y `NativeSelect` usan el icono `chevron-up-down` (antes `chevron-down`). Cambia el icono del contrato
+  HTML; no se retira nada.
 
 ### Corregido
 
-- Revisión visual de la oleada 5:
-  - `AspectRatio` ocupa el ancho de su contenedor (en una fila flex encogía hasta su contenido) y sin medio (solo un
-    icono de relleno) se ve como un hueco de superficie con su proporción; antes era invisible.
-  - Rejilla de horas (`EventCalendar`, `TimeGrid`): la hora en punto a menos de media hora de «ahora» cede el sitio a
-    su rótulo (se pisaban), y el desplazamiento inicial no deja el rótulo de «ahora» a medias bajo la cabecera.
-  - `ColorPicker` y `ColorField`: los campos de canal recuperan su relleno compacto (la talla `sm` del campo lo
-    pisaba) y un valor de tres cifras («260» en H de OKLCH) se ve entero.
-  - `Carousel` y `CompareSlider` ocupan el ancho de su contenedor también dentro de una fila flex: el carrusel encogía
-    hasta 139 px (con tres por página, slides de 33 px y el texto letra a letra) y la comparación con capas sin
-    ancho propio quedaba en 0.
-  - `Carousel` con varias por página: cada slide tiene un ancho mínimo (`--z-carousel-slide-min`, 11rem) y en una tira
-    más estrecha se muestran las que caben (con sus posiciones, puntos, barra y flechas al día, en React y en
-    `/dom`); antes, tres por página a 390 dejaban tarjetas de 45 px con el título partido.
-  - `ColorPicker` y `ColorField` estrechos (menos de 18rem): el formato va en su propia línea y cada canal tiene un
-    suelo en el que caben tres cifras (antes, en 220 px, el canal A medía 18 px y cortaba «100»).
-  - `CardMedia` a sangre con ancho explícito: en WebKit salía más baja que su proporción (2,19 en vez de 16:9).
-  - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
-  - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al
-    título).
-  - El ejemplo apilado de `AreaChart` se titula como sus series («Revenue and costs, stacked»).
-  - `CircularProgress`: el texto central usa la escala (11, 16 y 26 px según la talla; antes un 26 % del
-    diámetro) y ya no se corta por arriba.
-  - `PieChart`: la porción enfocada muestra el anillo de foco (el canto separador lo tapaba).
-  - `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su
-    marcador (el nombre sigue para el lector de pantalla). Antes la fila se partía y el conector quedaba colgando. El paso
-    actual no encoge: su nombre se lee entero.
-  - El ejemplo de `ScrollArea` oculta varias filas (antes una sola, que parecía un recorte).
-  - `Avatar`: el tinte va sobre una base opaca; sobre una tarjeta o una fila con fondo las iniciales bajaban a
-    4,3:1 (axe, zutool y zenith claros).
-  - Escala de los gráficos (`niceTicks`): un valor apenas por fuera de una marca (−600 000,000001 con paso
-    200 000) quedaba fuera del eje; la holgura es ahora la del error de coma flotante.
-- `Tabs` y `Listbox` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con
-  degradado que sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto
-  normal. Igual en React y en `/dom`.
-- `TimePicker` sin React: el panel cerrado ya no se ve (su `display: flex` tapaba el `display: none` del popover
-  cerrado y quedaba encima de lo que hubiera debajo).
-- `Carousel` con miniaturas: la tira se centra solo si cabe y lleva a la vista la miniatura actual.
-
-- Modo DOM de las piezas de árbol (`core/widget`): las variables locales de la raíz (`--z-*`) se escriben en cada
-  pintado; antes solo se aplicaban los atributos y la raíz conservaba las del primer marcado.
-
-- Auditoría visual (`pnpm audit:visual`):
-  - `Calendar` mide lo que su contenido aunque el contenedor lo estire (`inline-size: fit-content`): la cabecera
-    ya no se separa de la rejilla, y con dos meses apilados cada rejilla queda centrada bajo la cabecera.
-  - `<code>`, `<kbd>`, `<samp>` y `<pre>` dentro de `.z-root` usan la mono de la marca; antes caían en la
-    monoespaciada del sistema.
-  - Segmentos de `DateField` de 24 px de alto (40 con puntero grueso), objetivo mínimo de WCAG 2.5.8.
-  - La primera hora de la rejilla de `EventCalendar` ya no se corta por arriba.
-  - Los huecos y rellenos de `2px` y `3px` literales pasan a `--z-space-0-5`; `5px` a `--z-space-1`.
-  - `Slider` con etiquetas de marca reserva `--z-space-5` debajo (antes 18 px fuera de la escala).
-  - Contraste (axe, zutool y zenith claros sobre tarjeta): el contador de `Chip` y `Kbd` usan `--z-fg` en vez
-    de `--z-fg-muted` (4,4:1 → más de 7:1).
-  - Botón de quitar de `Chip` de 24 px en la talla md (antes 20, por debajo de WCAG 2.5.8).
-  - `ButtonGroup` sin `attached` centra en la fila botones de tallas distintas (quedaban alineados arriba).
-  - El texto de ejemplo de `Select` y de los segmentos vacíos de `DateField` pasa de `--z-fg-subtle` a
-    `--z-fg-muted`: es texto real y en zutool claro sobre tarjeta quedaba en 4,46:1.
-  - `EventCalendar`: al abrir la semana o el día, la rejilla deja aire sobre la primera hora visible (el rótulo
-    quedaba bajo la cabecera pegajosa) y la última hora no sale de la columna.
-  - `EventCalendar`: cuando el segmentado de vistas no cabe en una fila (agenda de menos de 640 px), se sustituye
-    por un único selector compacto (`.z-agenda__view-picker` con un `<select>` nativo, mismo nombre accesible);
-    antes se partía en tres filas. Igual en React y en `/dom`.
-  - `Select` y `NativeSelect` usan `chevron-up-down` como pide la especificación (antes `chevron-down`; cambia el
-    icono del contrato HTML, no se retira nada).
-  - Modo DOM: al volver a pintar, el árbol quitaba el atributo `value` de las `<option>` (solo debía respetar lo
-    tecleado en campos de texto): un `<select>` repintado valía el texto de la opción. Afectaba también al selector
-    de zona horaria de la agenda.
-  - `TimelineView`: la inicial del día de la escala ya no encoge con el `<small>` del navegador (9,2 px) y el
-    rótulo de un bloque de `FreeBusy` acaba en elipsis en vez de cortarse a media palabra.
-
+- `Accordion` y `Carousel` ocupan el ancho de su contenedor también dentro de una fila flex: el acordeón encogía
+  y el chevron se pegaba al título, y el carrusel encogía hasta 139 px.
+- `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su
+  marcador (el nombre sigue para el lector de pantalla) y el actual no encoge. Antes la fila se partía y el
+  conector quedaba colgando.
+- `Avatar`: el tinte va sobre una base opaca; sobre una tarjeta o una fila con fondo las iniciales bajaban a
+  4,3:1 en zutool y zenith claros.
+- `Tabs` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con degradado que
+  sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto normal. Igual
+  en React y en `/dom`.
+- `Calendar` mide lo que su contenido aunque el contenedor lo estire (`inline-size: fit-content`): la cabecera
+  ya no se separa de la rejilla.
+- `<code>`, `<kbd>`, `<samp>` y `<pre>` dentro de `.z-root` usan la mono de la marca; antes caían en la
+  monoespaciada del sistema.
+- Contraste sobre tarjeta en zutool y zenith claros: el contador de `Chip` y `Kbd` usan `--z-fg` en vez de
+  `--z-fg-muted` (de 4,4:1 a más de 7:1), y el texto de ejemplo de `Select` pasa de `--z-fg-subtle` a
+  `--z-fg-muted` (quedaba en 4,46:1).
+- Botón de quitar de `Chip` de 24 px en la talla md (antes 20, por debajo de WCAG 2.5.8).
 
 ## [0.2.0] - 2026-11-18
 

@@ -7,7 +7,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
-- Oleada 6, navegación de sitio con estética liquid glass (React y `/dom`, mismo comportamiento en `src/site.ts`):
+- Navegación de sitio (React y `/dom`, con el mismo comportamiento en `src/site.ts`):
   - `Navbar`: flotante (dos barras de cristal), `dock` (una barra compacta centrada) o `bar` (de borde a borde);
     pegajosa, fija o en su sitio. Sin punto de corte fijo: mide si la fila cabe y, si no, los enlaces pasan a un
     cajón de cristal (popover nativo, también sin JavaScript) con el `NavigationMenu` en vertical.
@@ -19,8 +19,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   - `SiteFooter`: marca, columnas de enlaces, redes, franja legal; en columnas, centrado o mínimo; cristal,
     sólido o sin fondo.
   - `SkipLink`: enlace de salto al contenido que lleva el foco al destino aunque no sea enfocable.
-
-- Oleada 4, navegación y paneles de aplicación:
+- Navegación y paneles de aplicación:
   - `Sidebar` plegable a iconos (`collapsed`) con `SidebarItem` (icono, contador, acción, `aria-current`,
     submenú en disclosure) y `SidebarTrigger` (aria-expanded, aria-controls, atajo Ctrl/⌘+B opcional). Plegada,
     cada item muestra su nombre en un tooltip y el submenú se abre en un panel flotante. En `/dom`,
@@ -64,22 +63,17 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
-- `Navbar`: el margen lateral se mide sobre el ancho de la cabecera (`cqi`), no el de la ventana; dentro de un
-  contenedor estrecho las acciones («Get started») ya no se salen de la barra.
 - `TabStrip`: el lado de la tira con pestañas ocultas se difumina en vez de mostrar un icono cortado (sin
   transparencia o con colores forzados, un canto normal), y la pestaña activa se deja entera a la vista fuera del
   difuminado, también cuando cambia su ancho al cargar la fuente. Igual en React y en `/dom`.
-- Auditoría visual: `RailItem` y los botones de `FloatingPanel` sin el relleno por defecto del navegador; huecos
-  de `2px` y `3px` a `--z-space-0-5`. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus pestañas (el
-  contrato HTML los pintaba vacíos).
-- La guía de los submenús de `Sidebar` se calcula con tokens (`space-3 + space-2 − 1px`, bajo el centro del icono).
+- `RailItem` sin el relleno por defecto del navegador. Los ejemplos de `TitleBar` y `Rail` traen su marca y sus
+  pestañas (el contrato HTML los pintaba vacíos).
 - `TabStrip`: cada pestaña mide su contenido (hasta 220 px) mientras hay sitio; si no caben todas, ceden primero
   las inactivas (hasta su icono) y la activa conserva su nombre entero si cabe en la tira; la elipsis solo aparece
   cuando ni sola cabe. El botón de cerrar se dibuja a 24 px y con puntero grueso amplía su objetivo a 40 con
   `::before` (antes ocupaba 40 de ancho y dejaba el título en «Fo…»). El chip de grupo mide `control-height-xs`
   (24; 40 con puntero grueso; medía 22).
 - Ejemplos de `Sidebar` con alto mínimo en vez de fijo: con puntero grueso el último item quedaba cortado.
-
 - `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
   accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía
   desplazar con el teclado (axe `scrollable-region-focusable`).
