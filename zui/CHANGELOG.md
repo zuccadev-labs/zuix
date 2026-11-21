@@ -314,6 +314,8 @@ radios y material de los tokens.
   - El ejemplo de `ScrollArea` oculta varias filas (antes una sola, que parecía un recorte).
   - `Avatar`: el tinte va sobre una base opaca; sobre una tarjeta o una fila con fondo las iniciales bajaban a
     4,3:1 (axe, zutool y zenith claros).
+  - Escala de los gráficos (`niceTicks`): un valor apenas por fuera de una marca (−600 000,000001 con paso
+    200 000) quedaba fuera del eje; la holgura es ahora la del error de coma flotante.
 - `Tabs` y `Listbox` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con
   degradado que sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto
   normal. Igual en React y en `/dom`.

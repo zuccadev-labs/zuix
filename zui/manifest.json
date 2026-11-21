@@ -2689,13 +2689,13 @@
    "examples": [
     {
      "title": "Apiladas",
-     "code": "<AreaChart\n  title=\"Traffic by source\"\n  data={[{month: \"2026-01\",revenue: 42000,costs: 38000},{month: \"2026-02\",revenue: 48000,costs: 40000},{month: \"2026-03\",revenue: 45000,costs: 41000},{month: \"2026-04\",revenue: 61000,costs: 44000},{month: \"2026-05\",revenue: 66000,costs: 47000},{month: \"2026-06\",revenue: 72000,costs: 50000}]}\n  xKey=\"month\"\n  series={[{key: \"revenue\",label: \"Revenue\"},{key: \"costs\",label: \"Costs\"}]}\n  stacked\n  locale=\"en-US\"\n/>"
+     "code": "<AreaChart\n  title=\"Revenue and costs, stacked\"\n  data={[{month: \"2026-01\",revenue: 42000,costs: 38000},{month: \"2026-02\",revenue: 48000,costs: 40000},{month: \"2026-03\",revenue: 45000,costs: 41000},{month: \"2026-04\",revenue: 61000,costs: 44000},{month: \"2026-05\",revenue: 66000,costs: 47000},{month: \"2026-06\",revenue: 72000,costs: 50000}]}\n  xKey=\"month\"\n  series={[{key: \"revenue\",label: \"Revenue\"},{key: \"costs\",label: \"Costs\"}]}\n  stacked\n  locale=\"en-US\"\n/>"
     }
    ],
    "html": [
     {
      "title": "Apiladas",
-     "code": "<div class=\"z-chart\" data-type=\"area\" data-title=\"Traffic by source\" data-x-key=\"month\" data-stacked data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"costs\":38000},{\"month\":\"2026-02\",\"revenue\":48000,\"costs\":40000},{\"month\":\"2026-03\",\"revenue\":45000,\"costs\":41000},{\"month\":\"2026-04\",\"revenue\":61000,\"costs\":44000},{\"month\":\"2026-05\",\"revenue\":66000,\"costs\":47000},{\"month\":\"2026-06\",\"revenue\":72000,\"costs\":50000}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"costs\",\"label\":\"Costs\"}]}</script>\n</div>"
+     "code": "<div class=\"z-chart\" data-type=\"area\" data-title=\"Revenue and costs, stacked\" data-x-key=\"month\" data-stacked data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"costs\":38000},{\"month\":\"2026-02\",\"revenue\":48000,\"costs\":40000},{\"month\":\"2026-03\",\"revenue\":45000,\"costs\":41000},{\"month\":\"2026-04\",\"revenue\":61000,\"costs\":44000},{\"month\":\"2026-05\",\"revenue\":66000,\"costs\":47000},{\"month\":\"2026-06\",\"revenue\":72000,\"costs\":50000}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"costs\",\"label\":\"Costs\"}]}</script>\n</div>"
     }
    ],
    "file": "zui/src/components/charts/AreaChart.manifest.json"
@@ -5044,7 +5044,7 @@
    "examples": [
     {
      "title": "Lista larga",
-     "code": "<ScrollArea label=\"Changelog\" maxHeight=\"10rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</ScrollArea>"
+     "code": "<ScrollArea label=\"Changelog\" maxHeight=\"8rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</ScrollArea>"
     }
    ],
    "file": "zui/src/components/content/ScrollArea.manifest.json"
