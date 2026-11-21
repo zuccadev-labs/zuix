@@ -583,6 +583,11 @@
     stroke-width: 2px;
     stroke-linejoin: round;
   }
+  /* El canto separador de la tarta tapaba el anillo de foco (selector más específico): la porción enfocada lo recupera. */
+  .z-chart[data-type="pie"] .z-chart__svg .z-chart__slice:focus-visible {
+    stroke: var(--z-accent-ring);
+    stroke-width: var(--z-focus-width);
+  }
   .z-chart__slice-hatch {
     pointer-events: none;
   }

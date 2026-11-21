@@ -521,6 +521,20 @@ function collect({ TOKENS, families, coarse }) {
         add("relleno-tactil", el, `${prop} ${value} (completa el objetivo táctil)`);
         continue;
       }
+      // Centrado geométrico (marcador de un gráfico): margen negativo de medio tamaño propio.
+      if (
+        /margin/.test(prop) &&
+        signed < 0 &&
+        (Math.abs(v - rects.get(el).width / 2) <= 1 || Math.abs(v - rects.get(el).height / 2) <= 1)
+      ) {
+        add("centrado-geometrico", el, `${prop} ${signed}px (medio tamaño)`);
+        continue;
+      }
+      // Texto de lectura (Prose) y marcas en línea: el ritmo va en em y escala con la letra.
+      if (el.closest(".z-prose, .z-highlight__mark")) {
+        add("ritmo-em", el, `${prop} ${Math.round(v * 100) / 100}px`);
+        continue;
+      }
       if (/margin/.test(prop) && signed < 0 && v <= 2) {
         add("espaciado-compensado", el, `${prop} ${signed}px (bordes unidos)`);
         continue;
@@ -762,6 +776,17 @@ function focusProbe() {
       .slice(0, 2)
       .map((c) => `.${c}`)
       .join("")}${e.getAttribute("role") ? `[role=${e.getAttribute("role")}]` : ""}`;
+  // Una pieza de SVG (porción de una tarta, punto de una línea) marca el foco con el trazo: cuenta si su trazo cambia
+  // respecto a una hermana sin foco.
+  if (el instanceof SVGElement) {
+    const sib = [...(el.parentElement?.children ?? [])].find(
+      (s) => s !== el && s.tagName === el.tagName && s.getAttribute("class") === el.getAttribute("class"),
+    );
+    const a = getComputedStyle(el);
+    const b = sib ? getComputedStyle(sib) : null;
+    const changed = !b || a.stroke !== b.stroke || a.strokeWidth !== b.strokeWidth || a.outlineStyle !== "none";
+    return { sig: sig(el), on: "", kind: changed ? "stroke" : "none", width: 0, ratio: null };
+  }
   // El anillo puede ir en el propio elemento o en el contenedor (:focus-within de un campo).
   for (let p = el, depth = 0; p && depth < 4; p = p.parentElement, depth++) {
     const cs = getComputedStyle(p);
@@ -1233,6 +1258,14 @@ function classify(recs) {
         case "alineacion-empujado":
           verdict = "aceptado";
           why = "grupo empujado al final de la fila (margen automático o justify)";
+          break;
+        case "centrado-geometrico":
+          verdict = "aceptado";
+          why = "margen negativo de medio tamaño: centra un marcador sobre su punto";
+          break;
+        case "ritmo-em":
+          verdict = "aceptado";
+          why = "ritmo de lectura en em (Prose, marcas en línea): escala con la letra";
           break;
         case "espaciado-linea":
           verdict = "aceptado";

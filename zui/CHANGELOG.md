@@ -306,6 +306,12 @@ radios y material de los tokens.
   - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al
     título).
   - El ejemplo apilado de `AreaChart` se titula como sus series («Revenue and costs, stacked»).
+  - `CircularProgress`: el texto central usa la escala (11, 16 y 26 px según la talla; antes un 26 % del
+    diámetro) y ya no se corta por arriba.
+  - `PieChart`: la porción enfocada muestra el anillo de foco (el canto separador lo tapaba).
+  - `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su
+    marcador (el nombre sigue para el lector de pantalla). Antes la fila se partía y el conector quedaba colgando.
+  - El ejemplo de `ScrollArea` oculta varias filas (antes una sola, que parecía un recorte).
 - `Tabs` y `Listbox` en fila: cuando la tira desplaza, el lado con contenido oculto se difumina (máscara con
   degradado que sigue al desplazamiento, `data-scroll-edges`); sin transparencia o con colores forzados, un canto
   normal. Igual en React y en `/dom`.

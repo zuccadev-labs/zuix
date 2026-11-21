@@ -40,7 +40,7 @@
   "examples": [
     {
       "title": "Lista larga",
-      "code": "<ScrollArea label=\"Changelog\" maxHeight=\"10rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</ScrollArea>"
+      "code": "<ScrollArea label=\"Changelog\" maxHeight=\"8rem\">\n  <ul>\n    <li>Charts</li>\n    <li>Data table selection</li>\n    <li>Tree rename</li>\n    <li>Timeline</li>\n    <li>Circular progress</li>\n    <li>Status dot</li>\n    <li>Marquee</li>\n    <li>Highlight</li>\n  </ul>\n</ScrollArea>"
     }
   ]
 }
