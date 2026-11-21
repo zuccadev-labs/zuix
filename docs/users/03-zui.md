@@ -1,6 +1,6 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 124 componentes en 10 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 130 componentes en 11 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)).
@@ -19,8 +19,9 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
 | Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, Item, Kbd, Meter, Progress, Rating, StatTile, StatusDot, Table, Timeline |
 | Gráficos | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline |
-| Estado | Alert, Banner, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, Skeleton, Spinner |
+| Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, Skeleton, Spinner |
 | Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
+| Efectos | AttentionRing, Backdrop, BorderBeam, Glow, TextEffect |
 | Capas | ActionBar, Command, CommandPalette, ConfirmDialog, ContextMenu, Drawer, HoverCard, Menu, Modal, Popover, Toast, Toggletip, Tooltip, Tour |
 | Navegación | Accordion, Breadcrumb, Collapsible, Menubar, NavList, Pagination, Stepper, Tabs, Tree |
 | Carousel | Carousel |
@@ -29,8 +30,8 @@ Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 44 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 79 |
+| `none` | Solo CSS. Basta el marcado | 48 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 81 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
 
