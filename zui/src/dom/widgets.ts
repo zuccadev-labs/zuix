@@ -104,6 +104,12 @@ function render(el: HTMLElement, focus = false): void {
     else el.setAttribute(k, value === true ? "" : String(value));
   }
   for (const cls of String(tree.a?.class ?? widget.root).split(/\s+/)) if (cls) el.classList.add(cls);
+  // Variables locales de la raíz (posición de un tirador, color actual…): se escriben y se quitan las que sobran.
+  const vars = tree.s ?? {};
+  for (const name of [...el.style].filter((p) => p.startsWith("--z-") && !(p in vars) && el.dataset.zVars?.split(" ").includes(p)))
+    el.style.removeProperty(name);
+  for (const [k, value] of Object.entries(vars)) if (el.style.getPropertyValue(k) !== String(value)) el.style.setProperty(k, String(value));
+  if (Object.keys(vars).length) el.dataset.zVars = Object.keys(vars).join(" ");
   for (const s of scripts) s.remove();
   patchChildren(el, tree.c ?? []);
   el.append(...scripts);

@@ -11,6 +11,61 @@ radios y material de los tokens.
 
 ### Añadido
 
+- Oleada 7, medios y piezas tardías (todo con contrato HTML, modo sin framework y binding de React sobre un solo
+  árbol de `core/vnode`):
+  - Familia `ColorPicker`: `ColorPicker` (área de saturación y brillo, tono, opacidad, campos por canal o
+    hexadecimal, formato hex/rgb/hsl/oklch, muestrario, cuentagotas con `EyeDropper` como mejora progresiva y
+    selector del sistema con `<input type="color">`, que también es el respaldo sin JavaScript),
+    `ColorPickerTrigger` (botón con muestra que lo abre en un popover nativo), `ColorArea`, `ColorSlider` (tono u
+    opacidad, horizontal o vertical), `ColorSwatchPicker` (radiogroup) y `ColorField`. El valor público es una cadena
+    CSS; dentro se guarda en HSV para que el tono no se pierda en los grises. El área es un deslizador en dos ejes
+    accesible con teclado; tono y alfa siguen el patrón APG «slider». En `/dom`, `setColorValue(el, valor)` y los
+    avisos `z:change`, `z:changeend` y `z:formatchange`.
+  - `core/color` (exportado desde la raíz: `parseColor`, `formatColor`, `normalizeColor`, `formatOf`,
+    `rgbToHsv`/`hsvToRgb`, `rgbToHsl`/`hslToRgb`, `rgbToOklch`/`oklchToRgb`, `contrastRatio`): lectura de hex,
+    `rgb()`, `hsl()`, `hwb()` y `oklch()` (con comas o espacios, porcentajes y ángulos), conversiones a OKLab según
+    Ottosson con el croma reducido dentro de sRGB y escritura con redondeos estables (escribir, leer y volver a
+    escribir da la misma cadena en los cuatro formatos, probado con fast-check).
+  - `Carousel` ampliado sin cambiar su contrato: `autoplay` (`true` o milisegundos) con botón de pausa visible como
+    primer control (WCAG 2.2.2), pausa con el puntero encima, con el foco dentro, con la pestaña oculta y fuera de
+    pantalla, sin arranque automático con movimiento reducido y región viva callada mientras corre; `indicators`
+    (`counter` por defecto, `dots`, `bar`, `thumbnails` con `renderThumbnail`, `none`); `slidesPerPage` (1–8) y
+    `orientation="vertical"` (con `height`), que usan el desplazamiento nativo con scroll-snap. En `/dom`, los mismos
+    con `data-autoplay`, `data-indicators`, `data-per-page` y `data-orientation`. Lógica en `core/carousel` y
+    `core/carousel-runtime`, compartida por los dos modos.
+  - Grupo `media`. `QRCode`: codificador propio (`core/qr`, ISO/IEC 18004: modo byte en UTF-8, versiones 1–40,
+    corrección L/M/Q/H, Reed–Solomon sobre GF(256), las ocho máscaras con la penalización de la norma, formato y
+    versión con BCH) probado contra los vectores de la norma; un solo `path` de SVG oscuro sobre claro con zona de
+    silencio, `role="img"` con nombre, icono central opcional (sube la corrección a H). Sin estado: vale en un Server
+    Component.
+  - `CircularSlider`: deslizador en un anillo (círculo completo o arco abierto tipo dial, `arc` y `startAngle`) con
+    el valor formateado en el centro, `caption`, marcas y el tirador de Slider; patrón APG «slider» y arrastre por
+    todo el anillo (lo que cae en el hueco de un arco abierto va al extremo más cercano). Cálculo en `core/circular`.
+  - `CompareSlider` (grupo `media`): antes/después con dos capas apiladas, divisor arrastrable y asa `role="slider"`
+    con teclado, horizontal o vertical, rótulos opcionales. En `/dom`, un `.z-compare` con dos hijos recibe divisor y
+    asa; `setCompareValue(el, valor)`.
+  - `ImageCropper` (grupo `media`): área de recorte con ocho asas, relación de aspecto fija o libre, forma
+    rectangular o circular, rejilla de tercios, teclado (flechas mueven, Mayús + flechas redimensionan, Alt
+    multiplica el paso) con anuncio en una región viva; recorte en fracciones y en píxeles. `cropImage` y
+    `cropImageBlob` (raíz y `/dom`) dibujan la salida en un canvas o un Blob (PNG, JPEG o WebP, `maxSize`, círculo
+    transparente). Cálculo en `core/crop`.
+  - `SignaturePad` (grupo `media`): firma con el puntero (presión, trazado suavizado, eventos fusionados), deshacer,
+    borrar y la alternativa accesible de escribir el nombre (modo «Type»); `signatureValue(el)` (trazos y SVG) y
+    `signatureBlob(el)` (PNG) en la raíz y en `/dom`; campo oculto con el SVG para formularios. Cálculo en
+    `core/signature`.
+  - `ShortcutInput`: captura de atajos con normalización portable («Mod+Shift+K»: ⌘ en Apple, Ctrl en el resto),
+    teclas por su posición física, vista con las teclas de la plataforma, Escape cancela, Retroceso borra, Tab sale
+    sin grabar y anuncio en una región viva. `core/shortcut` exporta `parseShortcut`, `normalizeShortcut`,
+    `shortcutLabels`, `ariaKeyshortcuts` y `matchesShortcut` para escuchar el atajo guardado.
+  - `Confetti` (grupo `effects`) y `confetti(opciones)`: ráfaga de papel en un lienzo fijo encima de la página, sin
+    puntero ni foco, con los colores `chart-1…8` de la marca; no anima con movimiento reducido y se quita al terminar o
+    con la pestaña oculta. En `/dom`, `data-z-confetti` en un botón. Física en `core/confetti`.
+  - `DownloadTrigger` (grupo `actions`): botón que genera el archivo al pulsar (texto, Blob, bytes o una función
+    asíncrona con estado de carga) o descarga una URL, con enlace temporal y URL liberada. En `/dom`,
+    `data-z-download="#id"` descarga un QRCode (SVG o PNG), un SignaturePad, un canvas o un texto; `download`,
+    `downloadBlob` y `downloadUrl`. `qrcodeSvg(props)` da el QR como SVG autónomo.
+  - `DotMatrix`: seis patrones propios más (`diamond`, `radar`, `zigzag`, `helix`, `heart`, `cascade`), 18 en total.
+
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único
   `IntersectionObserver` compartido, `core/visibility`):
@@ -313,6 +368,13 @@ radios y material de los tokens.
   tiradores de un rango se solapaban.
 
 ### Corregido
+
+- `TimePicker` sin React: el panel cerrado ya no se ve (su `display: flex` tapaba el `display: none` del popover
+  cerrado y quedaba encima de lo que hubiera debajo).
+- `Carousel` con miniaturas: la tira se centra solo si cabe y lleva a la vista la miniatura actual.
+
+- Modo DOM de las piezas de árbol (`core/widget`): las variables locales de la raíz (`--z-*`) se escriben en cada
+  pintado; antes solo se aplicaban los atributos y la raíz conservaba las del primer marcado.
 
 - Auditoría visual (`pnpm audit:visual`):
   - `Calendar` mide lo que su contenido aunque el contenedor lo estire (`inline-size: fit-content`): la cabecera

@@ -75,6 +75,42 @@
       "name": "ref",
       "type": "Ref<HTMLDivElement>",
       "description": "Elemento raíz."
+    },
+    {
+      "name": "autoplay",
+      "type": "boolean | number",
+      "default": false,
+      "description": "Avance automático: `true` cada 5 s o un número de milisegundos (mínimo 1500). Lleva un botón de pausa visible (WCAG 2.2.2); se detiene con el puntero encima, con el foco dentro, con la pestaña oculta y fuera de pantalla, y no arranca sola con movimiento reducido."
+    },
+    {
+      "name": "indicators",
+      "type": "enum",
+      "values": ["counter", "dots", "bar", "thumbnails", "none"],
+      "default": "counter",
+      "description": "Indicador de posición: contador (01/05), puntos, barra de recorrido, miniaturas (con `renderThumbnail`) o ninguno."
+    },
+    {
+      "name": "renderThumbnail",
+      "type": "(item: T, index: number) => ReactNode",
+      "description": "Contenido de cada miniatura con `indicators=\"thumbnails\"`."
+    },
+    {
+      "name": "slidesPerPage",
+      "type": "number",
+      "default": 1,
+      "description": "Slides visibles a la vez (1–8). Con más de uno el carrusel usa el desplazamiento nativo con scroll-snap (sin lente ni réplicas)."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal",
+      "description": "Vertical: desplazamiento nativo con scroll-snap en el eje de bloque."
+    },
+    {
+      "name": "height",
+      "type": "number | string",
+      "description": "Alto de la vista en vertical (por defecto 20rem)."
     }
   ],
   "states": ["rest", "dragging", "focus", "disabled"],
@@ -93,28 +129,34 @@
     }
   ],
   "tokens": [
-    "fg",
-    "fg-subtle",
-    "surface-2",
-    "line",
     "accent",
-    "card-radius",
-    "control-height-md",
-    "space-4",
-    "space-6",
-    "font-mono",
-    "duration-fast",
-    "ease-standard",
     "accent-ring",
     "button-radius",
+    "card-radius",
+    "control-height-md",
+    "control-radius",
+    "duration-fast",
+    "duration-normal",
     "duration-press",
     "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-subtle",
     "focus-offset",
     "focus-width",
+    "font-mono",
     "glass-border",
     "glass-highlight",
+    "line",
+    "line-strong",
+    "radius-full",
+    "radius-xs",
+    "space-4",
+    "space-6",
+    "surface-2",
     "surface-3",
     "text-code",
+    "touch-target",
     "weight-medium"
   ],
   "cssVars": ["--z-carousel-slide-width", "--z-carousel-gap", "--z-carousel-radius"],
@@ -132,7 +174,7 @@
   ],
   "attributes": ["data-effect", "data-mode", "data-dragging", "data-active", "data-copy", "data-index", "data-raster", "data-raster-src"],
   "icons": ["chevron-left", "chevron-right"],
-  "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden).",
+  "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden). Con `autoplay`, el primer control es el botón de pausa/reproducción (nombre según el estado) y la región viva se calla mientras corre (aria-live=\"off\"); se detiene con el puntero encima o el foco dentro. Puntos y miniaturas son botones con nombre («Go to slide 2 of 5») y aria-current en el actual. En el modo snap (varias por página o vertical) la vista desplazable recibe el foco y se mueve con las flechas de su eje, Inicio y Fin.",
   "examples": [
     {
       "title": "Tarjetas con lente",
@@ -145,6 +187,22 @@
     {
       "title": "Zonas curvas en WebGL",
       "code": "<Carousel ariaLabel=\"Gallery\" items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} crossOrigin=\"anonymous\" />} rasterize={(photo) => photo.src} />"
+    },
+    {
+      "title": "Reproducción automática con puntos",
+      "code": "<Carousel\n  ariaLabel=\"Highlights\"\n  effect=\"none\"\n  autoplay={6000}\n  indicators=\"dots\"\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+      "title": "Tres por página con barra",
+      "code": "<Carousel\n  ariaLabel=\"Projects\"\n  slidesPerPage={3}\n  indicators=\"bar\"\n  loop={false}\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+      "title": "Vertical",
+      "code": "<Carousel\n  ariaLabel=\"Release notes\"\n  orientation=\"vertical\"\n  height={280}\n  slidesPerPage={2}\n  indicators=\"dots\"\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+      "title": "Miniaturas",
+      "code": "<Carousel\n  ariaLabel=\"Photos\"\n  effect=\"none\"\n  indicators=\"thumbnails\"\n  items={photos}\n  renderItem={(p) => <img src={p.src} alt={p.alt} />}\n  renderThumbnail={(p) => <img src={p.thumb} alt=\"\" />}\n/>"
     }
   ],
   "origin": "carousel con efecto lente de un proyecto previo",
@@ -163,6 +221,18 @@
       "title": "Zonas curvas en WebGL: cada slide declara su imagen con data-raster; los shaders se cargan bajo demanda",
       "code": "<div id=\"covers\" class=\"z-carousel\" data-z-carousel data-effect=\"lens\" data-loop aria-label=\"Project covers\" style=\"--z-carousel-slide-width:320px\">\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Atlas cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Beacon cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Cinder cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Drift cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Ember cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Flint cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n</div>",
       "script": "import { carousel } from \"@zuccadev-labs/zuix-zui/dom\";\n\n// Cada <canvas data-raster> es a la vez el slide y la textura de las zonas curvas. Se pinta con los tokens activos.\nconst covers = document.querySelector(\"#covers\");\nconst token = (name) => getComputedStyle(covers).getPropertyValue(name).trim();\ncovers.querySelectorAll(\"canvas[data-raster]\").forEach((canvas, index) => {\n  const ctx = canvas.getContext(\"2d\");\n  // Fondo opaco: la textura debe verse igual que el slide sobre cualquier fondo.\n  ctx.fillStyle = token(\"--z-reading-bg\");\n  ctx.fillRect(0, 0, canvas.width, canvas.height);\n  ctx.fillStyle = token(\"--z-accent\");\n  for (let bar = 0; bar < 6; bar++) {\n    const height = 60 + (((bar + 1) * (index + 3) * 37) % 170);\n    ctx.globalAlpha = 0.2 + ((bar + index) % 4) * 0.15;\n    ctx.fillRect(40 + bar * 96, canvas.height - 48 - height, 64, height);\n  }\n  ctx.globalAlpha = 1;\n  ctx.fillStyle = token(\"--z-fg\");\n  ctx.font = `700 56px ${token(\"--z-font-sans\") || \"sans-serif\"}`;\n  ctx.textBaseline = \"top\";\n  ctx.fillText(canvas.getAttribute(\"aria-label\"), 40, 36);\n});\n// Los lienzos se han pintado después de activar el carrusel: refresh() rehace las réplicas y las texturas.\ncarousel(covers).refresh();\n// Con contenido HTML en los slides, la imagen se declara aparte: data-raster=\"#id\", data-raster-src=\"url\"\n// o carousel(el, { rasterize: (slide, index, size) => imagen })."
+    },
+    {
+      "title": "Reproducción automática con puntos: botón de pausa visible y pausa con el puntero o el foco",
+      "code": "<div id=\"highlights\" class=\"z-carousel\" data-z-carousel data-effect=\"none\" data-autoplay=\"6000\" data-indicators=\"dots\" aria-label=\"Highlights\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Tres por página con barra (desplazamiento nativo con scroll-snap)",
+      "code": "<div id=\"per-page\" class=\"z-carousel\" data-z-carousel data-per-page=\"3\" data-indicators=\"bar\" aria-label=\"Projects\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "title": "Vertical, dos por vista",
+      "code": "<div id=\"notes\" class=\"z-carousel\" data-z-carousel data-orientation=\"vertical\" data-per-page=\"2\" data-indicators=\"dots\" data-loop aria-label=\"Release notes\" style=\"--z-carousel-height:280px\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
     }
   ]
 }

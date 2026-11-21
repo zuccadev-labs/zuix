@@ -15,3 +15,4 @@ export {
 export { CopyButton, type CopyButtonProps } from "./CopyButton";
 export { Swap, type SwapProps } from "./Swap";
 export { Toolbar, ToolbarGroup, ToolbarSeparator, type ToolbarProps, type ToolbarGroupProps } from "./Toolbar";
+export { DownloadTrigger, download, mimeFromName, type DownloadSource, type DownloadTriggerProps } from "./DownloadTrigger";

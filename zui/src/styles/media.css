@@ -1,0 +1,438 @@
+/*
+  Grupo media (oleada 7): QRCode, CompareSlider, ImageCropper y SignaturePad. Lo que es imagen de la aplicación
+  (la foto, la firma, el código) no se tiñe: se enmarca con el material de la suite.
+*/
+@layer zui.media {
+  /* ---------- QRCode: oscuro sobre claro siempre (los lectores lo necesitan), con su zona de silencio ---------- */
+  .z-qrcode {
+    --z-qrcode-size: 160px;
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-qrcode-size);
+    block-size: var(--z-qrcode-size);
+    max-inline-size: 100%;
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-qrcode-light);
+    color: var(--z-qrcode-dark);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    forced-color-adjust: none;
+    overflow: hidden;
+  }
+  .z-qrcode__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .z-qrcode__modules {
+    fill: currentColor;
+  }
+  .z-qrcode__logo {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    inline-size: calc(var(--z-qrcode-hole) * 100% - var(--z-space-1));
+    block-size: calc(var(--z-qrcode-hole) * 100% - var(--z-space-1));
+    border-radius: var(--z-radius-xs);
+    background: var(--z-qrcode-light);
+    color: var(--z-qrcode-dark);
+  }
+  .z-qrcode__logo svg {
+    inline-size: 70%;
+    block-size: 70%;
+  }
+  .z-qrcode[data-invalid] {
+    padding: var(--z-space-3);
+    background: var(--z-danger-soft);
+    color: var(--z-danger-text);
+    text-align: center;
+  }
+  .z-qrcode__error {
+    font-size: var(--z-text-small);
+  }
+
+  /* ---------- CompareSlider: «antes» encima, recortado hasta el divisor; «después» debajo ---------- */
+  .z-compare {
+    --z-compare-pos: 50%;
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--z-card-radius);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: ew-resize;
+    /* Comparación geométrica (izquierda/derecha de la imagen), igual en cualquier idioma. */
+    direction: ltr;
+    isolation: isolate;
+  }
+  .z-compare[data-orientation="vertical"] {
+    cursor: ns-resize;
+  }
+  .z-compare__item {
+    position: relative;
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+  }
+  .z-compare__item > :where(img, picture, video, canvas, svg) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .z-compare__before {
+    clip-path: inset(0 calc(100% - var(--z-compare-pos)) 0 0);
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__before {
+    clip-path: inset(0 0 calc(100% - var(--z-compare-pos)) 0);
+  }
+  .z-compare__label {
+    position: absolute;
+    inset-block-start: var(--z-space-3);
+    padding: var(--z-space-0-5) var(--z-space-2);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    pointer-events: none;
+  }
+  .z-compare__label[data-side="before"] {
+    inset-inline-start: var(--z-space-3);
+  }
+  .z-compare__label[data-side="after"] {
+    inset-inline-end: var(--z-space-3);
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__label[data-side="after"] {
+    inset-block: auto var(--z-space-3);
+  }
+  .z-compare__divider {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block: 0;
+    inset-inline-start: var(--z-compare-pos);
+    inline-size: 2px;
+    margin-inline-start: -1px;
+    background: var(--z-colorpicker-white);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--z-colorpicker-black) 25%, transparent);
+    pointer-events: none;
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__divider {
+    inset-inline: 0;
+    inset-block: var(--z-compare-pos) auto;
+    inline-size: auto;
+    block-size: 2px;
+    margin-inline-start: 0;
+    margin-block-start: -1px;
+  }
+  /* Asa: cuadrado redondeado de cristal sobre el divisor (no un círculo de píldora), objetivo de 34 × 34. */
+  .z-compare__handle {
+    position: absolute;
+    z-index: var(--z-layer-raised);
+    inset-block-start: 50%;
+    inset-inline-start: var(--z-compare-pos);
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-control-height-md);
+    block-size: var(--z-control-height-md);
+    translate: -50% -50%;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-control-radius);
+    background: var(--z-popup-bg);
+    -webkit-backdrop-filter: blur(var(--z-popup-blur));
+    backdrop-filter: blur(var(--z-popup-blur));
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
+    color: var(--z-fg);
+    cursor: grab;
+  }
+  .z-compare[data-orientation="vertical"] .z-compare__handle {
+    inset-block-start: var(--z-compare-pos);
+    inset-inline-start: 50%;
+  }
+  .z-compare__handle:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-compare__handle:active {
+    cursor: grabbing;
+  }
+  @media (forced-colors: active) {
+    .z-compare__divider {
+      background: CanvasText;
+    }
+  }
+
+  /* ---------- ImageCropper: la imagen entera, fuera del recorte velada; ocho asas de 24 × 24 ---------- */
+  .z-cropper {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 40rem;
+    overflow: hidden;
+    border-radius: var(--z-card-radius);
+    background: var(--z-surface-solid);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    /* Coordenadas de la imagen, no del texto: el recorte no se refleja en RTL. */
+    direction: ltr;
+  }
+  .z-cropper[data-disabled] {
+    opacity: 0.6;
+  }
+  .z-cropper__image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .z-cropper__area {
+    position: absolute;
+    inset-inline-start: var(--z-crop-x);
+    inset-block-start: var(--z-crop-y);
+    inline-size: var(--z-crop-w);
+    block-size: var(--z-crop-h);
+    border: 1px solid var(--z-colorpicker-white);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--z-colorpicker-black) 35%, transparent),
+      0 0 0 100vmax var(--z-scrim);
+    cursor: move;
+  }
+  .z-cropper[data-shape="circle"] .z-cropper__area {
+    border-radius: var(--z-radius-full);
+  }
+  .z-cropper__area:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-cropper__grid {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      linear-gradient(
+        to right,
+        transparent calc(100% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(100% / 3 + 0.5px),
+        transparent 0 calc(200% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(200% / 3 + 0.5px),
+        transparent 0
+      ),
+      linear-gradient(
+        to bottom,
+        transparent calc(100% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(100% / 3 + 0.5px),
+        transparent 0 calc(200% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(200% / 3 + 0.5px),
+        transparent 0
+      );
+    opacity: 0;
+    transition: opacity var(--z-duration-fast) var(--z-ease-standard);
+    pointer-events: none;
+  }
+  .z-cropper:is([data-dragging], :focus-within) .z-cropper__grid {
+    opacity: 1;
+  }
+  /* Asa: objetivo de 24 × 24 centrado en el borde, con una marca cuadrada de 10 dentro. */
+  .z-cropper__handle {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-space-6);
+    block-size: var(--z-space-6);
+    margin: calc(var(--z-space-6) / -2);
+  }
+  .z-cropper__handle::before {
+    content: "";
+    inline-size: var(--z-space-2-5);
+    block-size: var(--z-space-2-5);
+    border: 1px solid color-mix(in srgb, var(--z-colorpicker-black) 35%, transparent);
+    border-radius: calc(var(--z-radius-xs) / 3);
+    background: var(--z-colorpicker-white);
+    box-shadow: var(--z-shadow-sm);
+  }
+  .z-cropper__handle[data-handle="nw"] {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    cursor: nwse-resize;
+  }
+  .z-cropper__handle[data-handle="n"] {
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    cursor: ns-resize;
+  }
+  .z-cropper__handle[data-handle="ne"] {
+    inset-block-start: 0;
+    inset-inline-start: 100%;
+    cursor: nesw-resize;
+  }
+  .z-cropper__handle[data-handle="e"] {
+    inset-block-start: 50%;
+    inset-inline-start: 100%;
+    cursor: ew-resize;
+  }
+  .z-cropper__handle[data-handle="se"] {
+    inset-block-start: 100%;
+    inset-inline-start: 100%;
+    cursor: nwse-resize;
+  }
+  .z-cropper__handle[data-handle="s"] {
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    cursor: ns-resize;
+  }
+  .z-cropper__handle[data-handle="sw"] {
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    cursor: nesw-resize;
+  }
+  .z-cropper__handle[data-handle="w"] {
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    cursor: ew-resize;
+  }
+  .z-cropper[data-disabled] :is(.z-cropper__area, .z-cropper__handle) {
+    cursor: not-allowed;
+  }
+  @media (forced-colors: active) {
+    .z-cropper__area {
+      border-color: Highlight;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-cropper__grid {
+      transition: none;
+    }
+  }
+
+  /* ---------- SignaturePad: lienzo sobre superficie de lectura con línea base; modos Draw / Type ---------- */
+  .z-signature {
+    --z-signature-height: 180px;
+    --z-signature-ink: var(--z-fg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    inline-size: 100%;
+    max-inline-size: 32rem;
+  }
+  .z-signature :where(*) {
+    box-sizing: border-box;
+  }
+  .z-signature[data-disabled] {
+    opacity: 0.6;
+  }
+  .z-signature__modes {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: var(--z-space-0-5);
+    padding: var(--z-space-0-5);
+    border: 1px solid var(--z-glass-border);
+    border-radius: calc(var(--z-control-radius-sm) + var(--z-space-0-5));
+    background: var(--z-control-bg);
+  }
+  .z-signature__mode {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    block-size: var(--z-control-height-xs);
+    padding-inline: var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font: inherit;
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    cursor: pointer;
+  }
+  .z-signature__mode[aria-checked="true"] {
+    background: var(--z-surface-3);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
+    color: var(--z-fg);
+  }
+  .z-signature__mode:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -1px;
+  }
+  .z-signature__pad {
+    position: relative;
+    block-size: var(--z-signature-height);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-card-radius);
+    background: var(--z-reading-bg);
+    overflow: hidden;
+  }
+  .z-signature__canvas {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    color: var(--z-signature-ink);
+    touch-action: none;
+    cursor: crosshair;
+  }
+  .z-signature[data-disabled] .z-signature__canvas {
+    cursor: not-allowed;
+  }
+  .z-signature__line {
+    position: absolute;
+    inset-inline: var(--z-space-6);
+    inset-block-end: 28%;
+    border-block-end: 1px dashed var(--z-line-strong);
+    pointer-events: none;
+  }
+  .z-signature__placeholder {
+    position: absolute;
+    inset-inline-start: var(--z-space-6);
+    inset-block-end: calc(28% + var(--z-space-2));
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    pointer-events: none;
+  }
+  .z-signature__preview {
+    position: absolute;
+    inset-inline: var(--z-space-6);
+    inset-block-end: calc(28% + var(--z-space-1));
+    overflow: hidden;
+    color: var(--z-signature-ink);
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display);
+    font-style: italic;
+    font-weight: var(--z-weight-medium);
+    /* Interlineado holgado: la cursiva y los descendentes no se recortan. */
+    line-height: var(--z-leading-normal);
+    padding-inline: var(--z-space-1);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-signature__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-signature__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--z-space-1);
+  }
+  @media (forced-colors: active) {
+    .z-signature__canvas,
+    .z-signature__preview {
+      color: CanvasText;
+    }
+  }
+}
