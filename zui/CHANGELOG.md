@@ -310,7 +310,8 @@ radios y material de los tokens.
     diámetro) y ya no se corta por arriba.
   - `PieChart`: la porción enfocada muestra el anillo de foco (el canto separador lo tapaba).
   - `Stepper` horizontal en un teléfono: los pasos siguen en una fila; los que no son el actual muestran solo su
-    marcador (el nombre sigue para el lector de pantalla). Antes la fila se partía y el conector quedaba colgando.
+    marcador (el nombre sigue para el lector de pantalla). Antes la fila se partía y el conector quedaba colgando. El paso
+    actual no encoge: su nombre se lee entero.
   - El ejemplo de `ScrollArea` oculta varias filas (antes una sola, que parecía un recorte).
   - `Avatar`: el tinte va sobre una base opaca; sobre una tarjeta o una fila con fondo las iniciales bajaban a
     4,3:1 (axe, zutool y zenith claros).

@@ -347,7 +347,7 @@ export function App() {
                 ))}
               </NavList>
             </SidebarSection>
-            <SidebarSection title="Projects" count={PROJECTS.length} grow>
+            <SidebarSection title="Projects" count={PROJECTS.length}>
               <NavList label="Projects">
                 {PROJECTS.map((p) => (
                   <NavLink

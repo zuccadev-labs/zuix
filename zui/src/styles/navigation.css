@@ -469,6 +469,10 @@
     .z-stepper[data-orientation="horizontal"] .z-stepper__step:not(:last-child) {
       flex: 1 1 auto;
     }
+    /* El paso actual no encoge: su nombre se lee entero y los demás ceden el sitio. */
+    .z-stepper[data-orientation="horizontal"] .z-stepper__step[data-state="current"] {
+      flex-shrink: 0;
+    }
   }
   .z-stepper[data-orientation="vertical"] {
     flex-direction: column;
