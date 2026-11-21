@@ -1139,6 +1139,12 @@ function classify(recs) {
           }
           break;
         }
+        case "contenedor-justo":
+          if (r.injected) {
+            verdict = "aceptado";
+            why = "marca inyectada sin cargar su fuente: el sitio se compila con la suya y otra métrica desborda unos px";
+          }
+          break;
         case "objetivo-espaciado":
           verdict = "aceptado";
           why = "menor de 24 px pero con la excepción de espaciado de WCAG 2.5.8";

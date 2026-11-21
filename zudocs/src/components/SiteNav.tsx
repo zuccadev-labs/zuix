@@ -6,7 +6,7 @@ import { useLocation } from "@docusaurus/router";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { SegmentedControl } from "@zuccadev-labs/zuix-zui";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { type NavItem, useSiteData, useZudocs } from "../site";
 
 interface Group {
@@ -137,6 +137,17 @@ export function SiteNav({ extraLinks }: { extraLinks?: boolean }) {
   const section = sections.find((s) => s.id === tab) ?? sections[0];
   const withBase = (p: string) => clean(p.startsWith(base) ? p : `${base}${p.replace(/^\//, "")}`);
   const openId = section.groups.find((g) => g.items.some((i) => withBase(i.path) === current))?.id;
+  // La página actual se ve entera en la barra lateral: si cae fuera de su área con desplazamiento (al final de una
+  // lista larga), se centra ahí, sin mover la página.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = scrollRef.current;
+    const item = box?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!box || !item || tab !== here) return;
+    const b = box.getBoundingClientRect();
+    const r = item.getBoundingClientRect();
+    if (r.top < b.top || r.bottom > b.bottom) box.scrollTop += r.top - b.top - (b.height - r.height) / 2;
+  }, [current, tab, here]);
   return (
     <div className="zd-sitenav">
       {sections.length > 1 ? (
@@ -150,7 +161,7 @@ export function SiteNav({ extraLinks }: { extraLinks?: boolean }) {
         />
       ) : null}
       <p className="zd-sitenav__title">{section.label}</p>
-      <div className="zd-sitenav__scroll">
+      <div className="zd-sitenav__scroll" ref={scrollRef}>
         {section.links.length ? (
           <ul className="zd-nav-links">
             {section.links.map((i) => (
