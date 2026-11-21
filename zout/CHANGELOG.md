@@ -58,6 +58,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `TabStrip`: una pestaña nunca es más ancha que su tira (`max-width: min(220px, 100%)`): en una barra estrecha la
   activa se ve entera con el título en elipsis en vez de cortarse a media palabra. El botón de cerrar y el chip de
   grupo miden `control-height-xs` (24; 40 con puntero grueso; el chip medía 22).
+- Ejemplos de `Sidebar` con alto mínimo en vez de fijo: con puntero grueso el último item quedaba cortado.
 
 - `Page` es una región desplazable enfocable con teclado (`role="region"`, `tabindex="0"`) con nombre
   accesible: la prop nueva `label` (por defecto, "Page content"). Antes, una página sin controles no se podía

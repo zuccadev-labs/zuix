@@ -305,7 +305,12 @@ function collect({ TOKENS, families, coarse }) {
             extraY > 0 &&
             extraY < Math.max(r.height, Math.min(row.height, 48)) * 2 &&
             (r.top < q.top - 1 || r.bottom > q.bottom + 1)) ||
-          (!mono && extraX > 0 && extraX < r.width * 0.5 && (r.left < q.left - 1 || r.right > q.right + 1));
+          // Una región con desplazamiento declarada (role=region, enfocable) desplaza en horizontal a propósito: tablas.
+          (!mono &&
+            !p.matches("[role=region],[tabindex]") &&
+            extraX > 0 &&
+            extraX < r.width * 0.5 &&
+            (r.left < q.left - 1 || r.right > q.right + 1));
         if (short)
           add("contenedor-justo", el, `${sig(p)} desborda ${Math.round(Math.max(extraY, extraX))} px y corta este texto`, {
             text: text.slice(0, 40),
@@ -353,7 +358,9 @@ function collect({ TOKENS, families, coarse }) {
         for (const hit of document.elementsFromPoint(cx, py)) {
           if (hit === el || el.contains(hit) || hit.contains(el)) return null;
           const hs = getComputedStyle(hit);
-          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit)) return hit;
+          // La insignia de un Float se monta a propósito sobre la esquina de lo que acompaña.
+          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit) && !hit.closest(".z-float"))
+            return hit;
         }
         return null;
       };
