@@ -95,10 +95,12 @@ export function FloatingPanel({
   const moveTo = (start: Rect, dx: number, dy: number) => commit(clampRect({ ...start, x: start.x + dx, y: start.y + dy }, bounds(), min));
   const resizeTo = (start: Rect, dw: number, dh: number) => commit(resizeRect(start, dw, dh, bounds(), min, rtl()));
 
-  // Al montar (y si la ventana se estrecha) el panel vuelve dentro del área.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: solo al montar; después lo acotan los gestos y el redimensionado de la ventana.
+  // Al montar (y si la ventana se estrecha) el panel vuelve dentro del área. El redimensionado lee la posición y el
+  // tamaño de ese momento, no los del montaje: si no, devolvería el panel a donde estaba al abrirse.
+  const fitLatest = useRef(() => {});
+  fitLatest.current = () => commit(clampRect(rect, bounds(), min));
   useLayoutEffect(() => {
-    const fit = () => commit(clampRect(rect, bounds(), min));
+    const fit = () => fitLatest.current();
     fit();
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);

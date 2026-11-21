@@ -103,6 +103,16 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
         await page.mouse.up();
         const afterDrag = await page.locator(value).textContent();
         assert(afterDrag === "36,36,220,180", `tras arrastrar: ${afterDrag} (cabecera ${JSON.stringify(title)})`);
+        // Al estrecharse el área, el redimensionado de la ventana acota la posición actual (no la del montaje).
+        await area.evaluate((el) => {
+          el.style.inlineSize = "250px"; // 248 px por dentro: x = 248 − 220 − 8
+          window.dispatchEvent(new Event("resize"));
+        });
+        await expectText(page, value, "20,36,220,180");
+        await area.evaluate((el) => {
+          el.style.inlineSize = "";
+          window.dispatchEvent(new Event("resize"));
+        });
         await page.focus(`${t("ws-float")} .z-floatpanel__handle`);
         await press(page, "ArrowUp", "Shift+ArrowLeft");
         await expectText(page, value, "8,26,220,180");
