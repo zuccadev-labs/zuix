@@ -1,9 +1,10 @@
 import { cloneElement, type ReactElement } from "react";
-import { qrcodeTree, type QRCodeLabels, type QRCodeProps as CoreProps } from "../../core/qr-widget";
+import { qrcodeSvg, qrcodeTree, type QRCodeLabels, type QRCodeProps as CoreProps } from "../../core/qr-widget";
 import type { QrLevel } from "../../core/qr";
 import { cx } from "../../cx";
 import { toReact } from "../vnode";
 
+export { qrcodeSvg };
 export type { QRCodeLabels, QrLevel };
 
 export interface QRCodeProps extends Omit<CoreProps, "icon"> {

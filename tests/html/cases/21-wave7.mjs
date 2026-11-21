@@ -11,7 +11,10 @@ export default async function ({ page, test, ok }) {
   let seq = 0;
   const inject = async (raw, width = "min(900px, 100vw)") => {
     const id = `w7-${++seq}`;
-    const html = raw.replace(/\bid="([^"]+)"/g, `id="$1-${id}"`).replace(/\bpopovertarget="([^"]+)"/g, `popovertarget="$1-${id}"`);
+    const html = raw
+      .replace(/\bid="([^"]+)"/g, `id="$1-${id}"`)
+      .replace(/\bpopovertarget="([^"]+)"/g, `popovertarget="$1-${id}"`)
+      .replace(/\bdata-z-download="#([^"]+)"/g, `data-z-download="#$1-${id}"`);
     await page.evaluate(
       async ([markup, wrap, w]) => {
         for (const old of document.querySelectorAll("[data-w7-layer]")) old.remove();
@@ -315,5 +318,20 @@ export default async function ({ page, test, ok }) {
     );
     await root.locator(".z-shortcut__clear").click();
     await until(async () => (await root.getAttribute("data-value")) === null, "borrar");
+  });
+
+  await test("Oleada 7 sin React: data-z-confetti lanza un lienzo decorativo y data-z-download descarga un QRCode en SVG y PNG", async () => {
+    const box = await inject(html("Confetti"));
+    await box.locator("[data-z-confetti]").click();
+    await until(async () => (await page.locator("canvas.z-confetti").count()) >= 1, "lienzo de confeti");
+    const dl = await inject(html("DownloadTrigger"));
+    await until(async () => (await dl.locator(".z-qrcode svg").count()) === 1, "QR dibujado");
+    const [svg] = await Promise.all([page.waitForEvent("download"), dl.locator('[data-file-name="zuix-qr.svg"]').click()]);
+    ok(svg.suggestedFilename() === "zuix-qr.svg", svg.suggestedFilename());
+    const [png] = await Promise.all([page.waitForEvent("download"), dl.locator('[data-file-name="zuix-qr.png"]').click()]);
+    ok(png.suggestedFilename() === "zuix-qr.png", png.suggestedFilename());
+    const txt = await inject(html("DownloadTrigger", 1));
+    const [notes] = await Promise.all([page.waitForEvent("download"), txt.locator("[data-z-download]").click()]);
+    ok(notes.suggestedFilename() === "notes.txt", notes.suggestedFilename());
   });
 }

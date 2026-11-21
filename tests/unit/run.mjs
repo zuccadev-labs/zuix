@@ -66,6 +66,7 @@ const COVERED = [
   "zui/src/core/crop.ts",
   "zui/src/core/signature.ts",
   "zui/src/core/shortcut.ts",
+  "zui/src/core/confetti.ts",
   "zui/src/core/date.ts",
   "zui/src/core/dir.ts",
   "zui/src/core/focus.ts",

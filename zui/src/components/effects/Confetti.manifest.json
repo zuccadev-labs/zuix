@@ -1,0 +1,46 @@
+{
+  "name": "Confetti",
+  "group": "effects",
+  "description": "Confeti de celebración: una ráfaga de papel (rectángulos y círculos con giro, gravedad y vaivén) en un lienzo fijo encima de la página, con los colores de gráfico de la marca. Sin dependencias; con movimiento reducido no anima.",
+  "import": "import { Confetti, confetti } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "trigger",
+      "type": "unknown",
+      "required": true,
+      "description": "Cada cambio (distinto del primer valor) lanza una ráfaga: un contador o un identificador."
+    },
+    {
+      "name": "origin",
+      "type": "RefObject<Element> | { x, y }",
+      "description": "Elemento del que sale (su centro) o punto en fracciones de la ventana. Por defecto { x: 0.5, y: 0.6 }."
+    },
+    { "name": "count", "type": "number", "default": 120, "description": "Partículas (1–400)." },
+    { "name": "angle", "type": "number", "default": -90, "description": "Dirección media en grados (−90 hacia arriba)." },
+    { "name": "spread", "type": "number", "default": 70, "description": "Apertura en grados." },
+    { "name": "velocity", "type": "number", "default": 12 },
+    { "name": "colors", "type": "string[]", "description": "Colores CSS propios; por defecto, chart-1…8 de la marca." },
+    { "name": "duration", "type": "number", "default": 3000, "description": "Milisegundos aproximados." },
+    { "name": "ignoreReducedMotion", "type": "boolean", "default": false },
+    { "name": "onComplete", "type": "() => void" }
+  ],
+  "states": ["idle", "running"],
+  "tokens": ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5", "chart-6", "chart-7", "chart-8", "accent", "layer-top"],
+  "classes": ["z-confetti"],
+  "a11y": "Decorativo: el lienzo es aria-hidden, no captura el puntero ni el foco y se quita al terminar; el logro se anuncia con texto aparte (un Toast, un mensaje). Con prefers-reduced-motion: reduce no se dibuja nada. Dura unos 3 s y se detiene con la pestaña oculta. Sin React (`@zuccadev-labs/zuix-zui/dom`): data-z-confetti en un botón dentro de [data-z-dom] lanza la ráfaga desde él (data-count, data-spread); confetti(opciones) desde código.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Desde un botón",
+      "code": "<Button ref={button} onClick={() => setShots((n) => n + 1)}>Publish</Button>\n<Confetti trigger={shots} origin={button} />"
+    },
+    { "title": "Desde código", "code": "await confetti({ origin: { x: 0.5, y: 0.3 }, count: 200, spread: 120 });" }
+  ],
+  "html": [
+    {
+      "title": "Botón que lanza confeti",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>"
+    }
+  ],
+  "origin": "Oleada 7. Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas."
+}

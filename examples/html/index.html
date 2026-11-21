@@ -70,6 +70,14 @@
 </span>
   </div>
 </section>
+<section class="z-card demo" data-component="DownloadTrigger" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DownloadTrigger</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-qrcode" id="qr-docs" data-value="https://zuccadev-labs.github.io/zuix/" data-size="120"></div>
+<button type="button" class="z-btn z-btn--secondary z-download" data-size="md" data-z-download="#qr-docs" data-file-name="zuix-qr.svg"><z-icon name="arrow-down-tray" size="16"></z-icon>SVG</button>
+<button type="button" class="z-btn z-btn--ghost z-download" data-size="md" data-z-download="#qr-docs" data-file-name="zuix-qr.png"><z-icon name="arrow-down-tray" size="16"></z-icon>PNG</button>
+  </div>
+</section>
 <section class="z-card demo" data-component="IconButton" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">IconButton</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1062,6 +1070,12 @@ malaga" data-ignore-accents="">Un
   </div>
   <span class="z-beam__ring" aria-hidden="true"></span>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Confetti" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Confetti</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-btn z-btn--primary" data-size="md" data-z-confetti data-count="150">Celebrate</button>
   </div>
 </section>
 <section class="z-card demo" data-component="Glow" data-behavior="dom">
@@ -3925,6 +3939,9 @@ document.querySelector("#brand").addEventListener("click", (event) => {
   event.currentTarget.textContent = "Brand: " + html.dataset.brand;
 });
 const removeProject = () => toast({ title: "Project deleted", intent: "danger" });
+// DownloadTrigger
+document.addEventListener("z:download", (event) => console.log(event.detail.name, event.detail.size));
+
 // Carousel
 const projects = document.querySelector("#projects");
 projects.addEventListener("z:change", (event) => console.debug("slide", event.detail.index));

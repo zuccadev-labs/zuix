@@ -11,6 +11,45 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · Confetti: lienzo fijo aria-hidden que no captura el puntero y se quita al terminar; nada con movimiento reducido (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.locator(t("m-confetti")).scrollIntoViewIfNeeded();
+        await page.click(t("m-confetti"));
+        await poll(async () => (await page.locator("canvas.z-confetti").count()) === 1, "aparece el lienzo");
+        const info = await page.locator("canvas.z-confetti").evaluate((el) => {
+          const s = getComputedStyle(el);
+          return [s.position, s.pointerEvents, el.getAttribute("aria-hidden")];
+        });
+        assert(info.join() === "fixed,none,true", `fijo, sin puntero y oculto: ${info}`);
+        await poll(async () => (await page.locator("canvas.z-confetti").count()) === 0, "se quita al terminar", 6000);
+        await poll(async () => (await text(page, "m-confetti-done")).includes("1 bursts finished"), "onComplete");
+        const reduced = await screen(open, { reducedMotion: "reduce" });
+        await reduced.locator(t("m-confetti")).scrollIntoViewIfNeeded();
+        await reduced.click(t("m-confetti"));
+        await reduced.waitForTimeout(300);
+        assert((await reduced.locator("canvas.z-confetti").count()) === 0, "con movimiento reducido no hay confeti");
+      },
+    },
+    {
+      name: "Oleada 7 · DownloadTrigger: descarga un SVG generado al pulsar y muestra carga con una promesa (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.locator(t("m-download-qr")).scrollIntoViewIfNeeded();
+        const [file] = await Promise.all([page.waitForEvent("download"), page.click(t("m-download-qr"))]);
+        assert(file.suggestedFilename() === "zuix-qr.svg", file.suggestedFilename());
+        await poll(async () => (await text(page, "m-download-out")).startsWith("image/svg+xml "), "Blob SVG");
+        const slow = t("m-download-slow");
+        const waiting = page.waitForEvent("download");
+        await page.click(slow);
+        await expectAttr(page, slow, "aria-busy", "true");
+        assert((await page.locator(`${slow} .z-btn__spinner`).count()) === 1, "indicador de carga");
+        const notes = await waiting;
+        assert(notes.suggestedFilename() === "notes.txt", notes.suggestedFilename());
+        await expectAttr(page, slow, "aria-busy", null);
+      },
+    },
+    {
       name: "Oleada 7 · ShortcutInput: graba con modificadores, exige uno, Escape cancela, Retroceso borra y Tab no queda atrapado (React)",
       async run({ open }) {
         const page = await screen(open);

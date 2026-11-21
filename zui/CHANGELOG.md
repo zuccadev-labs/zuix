@@ -57,6 +57,13 @@ radios y material de los tokens.
     teclas por su posición física, vista con las teclas de la plataforma, Escape cancela, Retroceso borra, Tab sale
     sin grabar y anuncio en una región viva. `core/shortcut` exporta `parseShortcut`, `normalizeShortcut`,
     `shortcutLabels`, `ariaKeyshortcuts` y `matchesShortcut` para escuchar el atajo guardado.
+  - `Confetti` (grupo `effects`) y `confetti(opciones)`: ráfaga de papel en un lienzo fijo encima de la página, sin
+    puntero ni foco, con los colores `chart-1…8` de la marca; no anima con movimiento reducido y se quita al terminar o
+    con la pestaña oculta. En `/dom`, `data-z-confetti` en un botón. Física en `core/confetti`.
+  - `DownloadTrigger` (grupo `actions`): botón que genera el archivo al pulsar (texto, Blob, bytes o una función
+    asíncrona con estado de carga) o descarga una URL, con enlace temporal y URL liberada. En `/dom`,
+    `data-z-download="#id"` descarga un QRCode (SVG o PNG), un SignaturePad, un canvas o un texto; `download`,
+    `downloadBlob` y `downloadUrl`. `qrcodeSvg(props)` da el QR como SVG autónomo.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único

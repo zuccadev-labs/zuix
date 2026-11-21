@@ -16,8 +16,12 @@ import { pencil } from "@zuccadev-labs/zuix-zicon/icons/pencil";
 import { trash } from "@zuccadev-labs/zuix-zicon/icons/trash";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { compareKey, comparePosition } from "../core/compare-slider";
+import { confetti } from "../core/confetti-runtime";
+import { download, downloadUrl, mimeFromName, type DownloadSource } from "../core/download";
+import { qrcodeSvg } from "../core/qr-widget";
+import { signatureBlob, signatureValue } from "../core/signature-widget";
 import { inDom } from "./forms-popup";
-import { setMarkup } from "./shared";
+import { byRef, setMarkup, type Listen } from "./shared";
 import { registerWidget } from "./widgets";
 
 registerIcons([arrowsRightLeft, arrowsUpDown, pencil, language, arrowUturnDownLeft, trash, xMark]);
@@ -124,7 +128,84 @@ function compare(el: HTMLElement): void {
   });
 }
 
-export function setup(): void {}
+/* ---------- DownloadTrigger ---------- */
+
+/** Contenido de lo que nombra `data-z-download`: un QRCode, un SignaturePad, un canvas o el texto de un elemento. */
+function sourceOf(target: Element, name: string): DownloadSource {
+  const png = /\.png$/i.test(name);
+  if (target instanceof HTMLElement && target.classList.contains("z-signature"))
+    return png ? () => signatureBlob(target) : () => signatureValue(target).svg;
+  if (target instanceof HTMLElement && target.classList.contains("z-qrcode")) {
+    const svg =
+      qrcodeSvg({
+        value: target.dataset.value ?? "",
+        level: target.dataset.level as "L" | "M" | "Q" | "H" | undefined,
+        size: Number(target.dataset.size) || undefined,
+        margin: target.dataset.margin ? Number(target.dataset.margin) : undefined,
+      }) ?? "";
+    return png ? () => rasterSvg(svg, Number(target.dataset.size) || 160) : svg;
+  }
+  if (target instanceof HTMLCanvasElement)
+    return () =>
+      new Promise<Blob>((resolve, reject) =>
+        target.toBlob((b) => (b ? resolve(b) : reject(new Error("canvas vacío"))), mimeFromName(name)),
+      );
+  if (target instanceof HTMLTemplateElement) return target.content.textContent ?? "";
+  return target.textContent ?? "";
+}
+
+/** Un SVG dibujado en un canvas de `size` × 2 y exportado en PNG. */
+function rasterSvg(svg: string, size: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = size * 2;
+      canvas.getContext("2d")?.drawImage(img, 0, 0, size * 2, size * 2);
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("PNG vacío"))), "image/png");
+    };
+    img.onerror = () => reject(new Error("SVG no válido"));
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  });
+}
+
+export function setup(on: Listen): void {
+  // `data-z-download="#id"` (con data-file-name) descarga el contenido de ese elemento; `data-href` una URL.
+  on(document, "click", (event) => {
+    const el = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-z-download]") : null;
+    if (!el || !inDom(el) || el.matches(":disabled, [aria-busy='true']")) return;
+    const name = el.dataset.fileName ?? "download";
+    if (el.dataset.href) {
+      downloadUrl(el.dataset.href, name);
+      el.dispatchEvent(new CustomEvent("z:download", { bubbles: true, detail: { name } }));
+      return;
+    }
+    const target = byRef(el.dataset.zDownload ?? "");
+    if (!target) return;
+    el.setAttribute("aria-busy", "true");
+    el.dataset.loading = "";
+    void download(sourceOf(target, name), name, el.dataset.mime ?? mimeFromName(name))
+      .then((blob) =>
+        el.dispatchEvent(new CustomEvent("z:download", { bubbles: true, detail: { name, size: blob.size, type: blob.type } })),
+      )
+      .catch((error: unknown) => el.dispatchEvent(new CustomEvent("z:downloaderror", { bubbles: true, detail: { name, error } })))
+      .finally(() => {
+        el.removeAttribute("aria-busy");
+        delete el.dataset.loading;
+      });
+  });
+
+  // `data-z-confetti` en un botón (o cualquier elemento pulsable): la ráfaga sale de él. `data-count`, `data-spread`.
+  on(document, "click", (event) => {
+    const el = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-z-confetti]") : null;
+    if (!el || !inDom(el) || el.matches(":disabled, [aria-disabled='true']")) return;
+    void confetti({
+      origin: el,
+      count: el.dataset.count ? Number(el.dataset.count) : undefined,
+      spread: el.dataset.spread ? Number(el.dataset.spread) : undefined,
+    });
+  });
+}
 
 export function hydrate(root: ParentNode): void {
   for (const el of pick(root, ".z-compare")) compare(el);

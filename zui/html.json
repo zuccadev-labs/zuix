@@ -98,6 +98,26 @@
     }
    ]
   },
+  "DownloadTrigger": {
+   "group": "actions",
+   "classes": [
+    "z-download"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Descargar un QRCode en SVG o PNG",
+     "html": "<div class=\"z-qrcode\" id=\"qr-docs\" data-value=\"https://zuccadev-labs.github.io/zuix/\" data-size=\"120\"></div>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.svg\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>SVG</button>\n<button type=\"button\" class=\"z-btn z-btn--ghost z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.png\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>PNG</button>",
+     "source": "manual",
+     "script": "document.addEventListener(\"z:download\", (event) => console.log(event.detail.name, event.detail.size));"
+    },
+    {
+     "title": "Texto de una plantilla",
+     "html": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>",
+     "source": "manual"
+    }
+   ]
+  },
   "IconButton": {
    "group": "actions",
    "classes": [
@@ -1300,6 +1320,20 @@
      "title": "Tonos y grosor",
      "html": "<div class=\"z-beam\" data-tone=\"success\" style=\"--z-beam-duration:4s;--z-beam-length:18%;--z-beam-width:2px;--z-beam-radius:var(--z-control-radius-lg)\">\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Deploying</button>\n  <span class=\"z-beam__ring\" aria-hidden=\"true\"></span>\n</div>",
      "source": "generated"
+    }
+   ]
+  },
+  "Confetti": {
+   "group": "effects",
+   "classes": [
+    "z-confetti"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Botón que lanza confeti",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>",
+     "source": "manual"
     }
    ]
   },

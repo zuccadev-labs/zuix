@@ -1,11 +1,12 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 142,
+ "count": 144,
  "groups": {
   "actions": [
    "Button",
    "ButtonGroup",
    "CopyButton",
+   "DownloadTrigger",
    "IconButton",
    "Link",
    "SegmentedControl",
@@ -77,6 +78,7 @@
    "AttentionRing",
    "Backdrop",
    "BorderBeam",
+   "Confetti",
    "Glow",
    "TextEffect"
   ],
@@ -515,6 +517,116 @@
    ],
    "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI.",
    "file": "zui/src/components/actions/CopyButton.manifest.json"
+  },
+  {
+   "name": "DownloadTrigger",
+   "group": "actions",
+   "description": "Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL. Usa un enlace `download` temporal y libera la URL después.",
+   "import": "import { DownloadTrigger } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "fileName",
+     "type": "string",
+     "required": true,
+     "description": "Nombre del archivo (se limpia de separadores y caracteres de control)."
+    },
+    {
+     "name": "data",
+     "type": "string | Blob | ArrayBuffer | Uint8Array | (() => … | Promise<…>)",
+     "description": "Contenido; una función se llama al pulsar."
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "URL que se descarga tal cual (mismo origen, `blob:` o `data:`)."
+    },
+    {
+     "name": "mimeType",
+     "type": "string",
+     "description": "Por defecto, el de la extensión (svg, png, json, csv, txt, ics…)."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "ghost"
+     ],
+     "default": "secondary"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "icon",
+     "type": "IconName | null",
+     "default": "\"arrow-down-tray\""
+    },
+    {
+     "name": "onDownload",
+     "type": "(blob: Blob | null) => void"
+    },
+    {
+     "name": "onError",
+     "type": "(error: unknown) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "loading",
+    "disabled"
+   ],
+   "tokens": [
+    "button-radius",
+    "control-height-md",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-download"
+   ],
+   "a11y": "Un button nativo con texto. Mientras genera el archivo lleva aria-busy y aria-disabled (conserva el foco) y un indicador de carga. Sin React (`@zuccadev-labs/zuix-zui/dom`): un botón con data-z-download=\"#id\" y data-file-name descarga el contenido de ese elemento (un .z-qrcode en SVG o PNG, un .z-signature, un <canvas>, o el texto de un <template> o de cualquier elemento); data-href descarga una URL; avisa con z:download { name, size, type } o z:downloaderror.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Texto",
+     "code": "<DownloadTrigger fileName=\"notes.txt\" data=\"Ship on Friday.\">Download notes</DownloadTrigger>"
+    },
+    {
+     "title": "Código QR en SVG",
+     "code": "<DownloadTrigger fileName=\"zuix-qr.svg\" data={() => qrcodeSvg({ value: \"https://zuccadev-labs.github.io/zuix/\" }) ?? \"\"} variant=\"ghost\">\n  Download QR\n</DownloadTrigger>"
+    },
+    {
+     "title": "Desde una promesa",
+     "code": "<DownloadTrigger fileName=\"report.csv\" data={() => fetch(\"/api/report\").then((r) => r.blob())} variant=\"primary\">\n  Export CSV\n</DownloadTrigger>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Descargar un QRCode en SVG o PNG",
+     "code": "<div class=\"z-qrcode\" id=\"qr-docs\" data-value=\"https://zuccadev-labs.github.io/zuix/\" data-size=\"120\"></div>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.svg\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>SVG</button>\n<button type=\"button\" class=\"z-btn z-btn--ghost z-download\" data-size=\"md\" data-z-download=\"#qr-docs\" data-file-name=\"zuix-qr.png\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>PNG</button>",
+     "script": "document.addEventListener(\"z:download\", (event) => console.log(event.detail.name, event.detail.size));"
+    },
+    {
+     "title": "Texto de una plantilla",
+     "code": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código.",
+   "file": "zui/src/components/actions/DownloadTrigger.manifest.json"
   },
   {
    "name": "IconButton",
@@ -7623,6 +7735,107 @@
     }
    ],
    "file": "zui/src/components/effects/BorderBeam.manifest.json"
+  },
+  {
+   "name": "Confetti",
+   "group": "effects",
+   "description": "Confeti de celebración: una ráfaga de papel (rectángulos y círculos con giro, gravedad y vaivén) en un lienzo fijo encima de la página, con los colores de gráfico de la marca. Sin dependencias; con movimiento reducido no anima.",
+   "import": "import { Confetti, confetti } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "trigger",
+     "type": "unknown",
+     "required": true,
+     "description": "Cada cambio (distinto del primer valor) lanza una ráfaga: un contador o un identificador."
+    },
+    {
+     "name": "origin",
+     "type": "RefObject<Element> | { x, y }",
+     "description": "Elemento del que sale (su centro) o punto en fracciones de la ventana. Por defecto { x: 0.5, y: 0.6 }."
+    },
+    {
+     "name": "count",
+     "type": "number",
+     "default": 120,
+     "description": "Partículas (1–400)."
+    },
+    {
+     "name": "angle",
+     "type": "number",
+     "default": -90,
+     "description": "Dirección media en grados (−90 hacia arriba)."
+    },
+    {
+     "name": "spread",
+     "type": "number",
+     "default": 70,
+     "description": "Apertura en grados."
+    },
+    {
+     "name": "velocity",
+     "type": "number",
+     "default": 12
+    },
+    {
+     "name": "colors",
+     "type": "string[]",
+     "description": "Colores CSS propios; por defecto, chart-1…8 de la marca."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 3000,
+     "description": "Milisegundos aproximados."
+    },
+    {
+     "name": "ignoreReducedMotion",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onComplete",
+     "type": "() => void"
+    }
+   ],
+   "states": [
+    "idle",
+    "running"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "accent",
+    "layer-top"
+   ],
+   "classes": [
+    "z-confetti"
+   ],
+   "a11y": "Decorativo: el lienzo es aria-hidden, no captura el puntero ni el foco y se quita al terminar; el logro se anuncia con texto aparte (un Toast, un mensaje). Con prefers-reduced-motion: reduce no se dibuja nada. Dura unos 3 s y se detiene con la pestaña oculta. Sin React (`@zuccadev-labs/zuix-zui/dom`): data-z-confetti en un botón dentro de [data-z-dom] lanza la ráfaga desde él (data-count, data-spread); confetti(opciones) desde código.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Desde un botón",
+     "code": "<Button ref={button} onClick={() => setShots((n) => n + 1)}>Publish</Button>\n<Confetti trigger={shots} origin={button} />"
+    },
+    {
+     "title": "Desde código",
+     "code": "await confetti({ origin: { x: 0.5, y: 0.3 }, count: 200, spread: 120 });"
+    }
+   ],
+   "html": [
+    {
+     "title": "Botón que lanza confeti",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>"
+    }
+   ],
+   "origin": "Oleada 7. Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas.",
+   "file": "zui/src/components/effects/Confetti.manifest.json"
   },
   {
    "name": "Glow",

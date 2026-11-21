@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
   Backdrop,
@@ -6,6 +6,9 @@ import {
   Card,
   CardHeader,
   Carousel,
+  Confetti,
+  DownloadTrigger,
+  qrcodeSvg,
   CircularSlider,
   CompareSlider,
   ColorArea,
@@ -72,6 +75,10 @@ export function Media() {
   const [signed, setSigned] = useState("empty");
   const [png, setPng] = useState("");
   const [shortcut, setShortcut] = useState("Mod+K");
+  const [shots, setShots] = useState(0);
+  const [celebrated, setCelebrated] = useState(0);
+  const [downloaded, setDownloaded] = useState("");
+  const party = useRef<HTMLButtonElement>(null);
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -246,6 +253,17 @@ export function Media() {
           </Stack>
         </Card>
       </PageSection>
+      <PageSection title="Celebrate">
+        <Stack gap={2}>
+          <Button ref={party} variant="primary" data-testid="m-confetti" onClick={() => setShots((n) => n + 1)}>
+            Publish release
+          </Button>
+          <Confetti trigger={shots} origin={party} duration={1200} onComplete={() => setCelebrated((n) => n + 1)} />
+          <p className="app-muted" role="status" data-testid="m-confetti-done">
+            {shots ? `Release published (${celebrated} bursts finished)` : ""}
+          </p>
+        </Stack>
+      </PageSection>
       <PageSection title="QR code">
         <Grid min="260px" gap={4}>
           <Card>
@@ -273,6 +291,31 @@ export function Media() {
           <div data-testid="m-qr-icon">
             <QRCode value={qrText} icon="bolt" size={200} label="Project link" />
           </div>
+          <Card>
+            <CardHeader title="Download" subtitle="Generated on click, as SVG or text." />
+            <Stack gap={3}>
+              <DownloadTrigger
+                data-testid="m-download-qr"
+                fileName="zuix-qr.svg"
+                data={() => qrcodeSvg({ value: qrText, level: qrLevel, size: 256 }) ?? ""}
+                onDownload={(blob) => setDownloaded(blob ? `${blob.type} ${blob.size}` : "url")}
+              >
+                Download QR
+              </DownloadTrigger>
+              <DownloadTrigger
+                data-testid="m-download-slow"
+                variant="ghost"
+                fileName="notes.txt"
+                data={() => new Promise<string>((resolve) => setTimeout(() => resolve("Ship on Friday."), 600))}
+                onDownload={(blob) => setDownloaded(blob ? `${blob.type} ${blob.size}` : "url")}
+              >
+                Download notes (slow)
+              </DownloadTrigger>
+              <p className="app-muted" data-testid="m-download-out">
+                {downloaded}
+              </p>
+            </Stack>
+          </Card>
         </Grid>
       </PageSection>
       <PageSection title="Carousel">

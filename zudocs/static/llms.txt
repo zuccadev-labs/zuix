@@ -63,6 +63,7 @@
 - [Button](https://zuccadev-labs.github.io/zuix/components/actions/button.md): Acción principal o secundaria con texto, iconos opcionales y estado de carga.
 - [ButtonGroup](https://zuccadev-labs.github.io/zuix/components/actions/button-group.md): Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.
 - [CopyButton](https://zuccadev-labs.github.io/zuix/components/actions/copy-button.md): Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.
+- [DownloadTrigger](https://zuccadev-labs.github.io/zuix/components/actions/download-trigger.md): Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL.
 - [IconButton](https://zuccadev-labs.github.io/zuix/components/actions/icon-button.md): Botón cuadrado de solo icono con nombre accesible obligatorio.
 - [Link](https://zuccadev-labs.github.io/zuix/components/actions/link.md): Enlace de texto: dentro de un párrafo, discreto o como acción suelta.
 - [SegmentedControl](https://zuccadev-labs.github.io/zuix/components/actions/segmented-control.md): Selector de una opción entre pocas; siempre hay una elegida.
@@ -226,6 +227,7 @@
 - [AttentionRing](https://zuccadev-labs.github.io/zuix/components/effects/attention-ring.md): Anillo o halo de atención alrededor de un control o un panel (actividad nueva, paso de un recorrido): late unas veces y queda fijo.
 - [Backdrop](https://zuccadev-labs.github.io/zuix/components/effects/backdrop.md): Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional.
 - [BorderBeam](https://zuccadev-labs.github.io/zuix/components/effects/border-beam.md): Haz de luz que recorre el borde de lo que envuelve (tarjeta, panel, botón): un anillo enmascarado gira un degradado cónico con transform.
+- [Confetti](https://zuccadev-labs.github.io/zuix/components/effects/confetti.md): Confeti de celebración: una ráfaga de papel (rectángulos y círculos con giro, gravedad y vaivén) en un lienzo fijo encima de la página, con los colores de gráfico de la marca.
 - [Glow](https://zuccadev-labs.github.io/zuix/components/effects/glow.md): Brillo que sigue al puntero sobre el borde, la superficie o ambos de lo que envuelve (spotlight de cristal).
 - [TextEffect](https://zuccadev-labs.github.io/zuix/components/effects/text-effect.md): Efectos de texto: aparición por palabras o letras (subiendo o desenfocada, al montarse o al entrar en pantalla), degradado con tokens de texto (fijo o en movimiento) y brillo que pasa (shimmer).
 

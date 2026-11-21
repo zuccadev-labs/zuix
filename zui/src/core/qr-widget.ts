@@ -94,3 +94,17 @@ export const qrcodeWidget: Widget<QRCodeProps, QRCodeProps, null> = {
     };
   },
 };
+
+/**
+ * El código como SVG autónomo (para descargarlo o incrustarlo fuera de la suite): oscuro sobre claro, con su zona de
+ * silencio y `size` píxeles de lado. `dark` y `light` son colores CSS (por defecto negro sobre blanco).
+ */
+export function qrcodeSvg(p: QRCodeProps, colors: { dark?: string; light?: string } = {}): string | null {
+  const level: QrLevel = isQrLevel(p.level) ? p.level : "M";
+  const code = encodeQr(String(p.value ?? ""), { level });
+  if (!code) return null;
+  const margin = Number.isFinite(p.margin) ? Math.max(0, Math.min(8, Math.floor(p.margin!))) : 4;
+  const size = Number.isFinite(p.size) && p.size! > 0 ? p.size! : 160;
+  const n = code.size + margin * 2;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" width="${size}" height="${size}" shape-rendering="crispEdges"><rect width="${n}" height="${n}" fill="${colors.light ?? "white"}"/><path fill="${colors.dark ?? "black"}" d="${qrPath(code, margin)}"/></svg>`;
+}
