@@ -1409,6 +1409,10 @@ a[class*="skipToContent"]:focus {
 .zd-preview__stage > * {
   max-inline-size: 100%;
 }
+/* En columna se estira lo que llena el ancho (campos, tablas); lo que mide su contenido (Calendar) va centrado. */
+.zd-preview[data-column] > .zd-preview__stage > .z-calendar {
+  align-self: center;
+}
 /* Dentro de una vista previa manda el CSS de zui. Infima va en la capa `docusaurus.infima`, anterior a las de
    zui: lo que zui no declara (bordes y relleno de tablas, márgenes de listas y títulos…) lo seguiría poniendo
    Infima. Esta subcapa de `docusaurus`, posterior a Infima y anterior a zui, devuelve esos elementos a los

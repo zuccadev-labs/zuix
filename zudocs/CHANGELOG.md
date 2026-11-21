@@ -51,6 +51,7 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
     tareas usan un hueco de la escala.
   - Los bloques de código no registran la escucha de `resize` del ajuste de línea del tema (el sitio no muestra
     ese botón): en un teléfono lanzaba «Cannot destructure property 'scrollWidth'» en algunas páginas.
+  - Las vistas previas en columna centran un `Calendar` (ahora mide su contenido) en vez de dejarlo a la izquierda.
 
 
 ## [0.2.0] - 2026-11-18
