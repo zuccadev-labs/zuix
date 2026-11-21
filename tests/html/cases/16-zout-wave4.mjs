@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const contract = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../zout/html.json"), "utf8")).components;
 
-export default async function ({ page, test, ok, card }) {
+export default async function ({ page, test, ok, card, settle }) {
   const press = async (...keys) => {
     for (const key of keys) await page.keyboard.press(key);
   };
@@ -159,7 +159,8 @@ export default async function ({ page, test, ok, card }) {
     ok((await rect()).h === 120, `alto mínimo: ${(await rect()).h}`);
     // El arrastre baja 52 px desde la esquina: con el panel al pie de la ventana el puntero se saldría de ella
     // (en Firefox, tras los casos anteriores, el alto se quedaba en 152).
-    await panel.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await panel.evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+    await settle();
     const corner = await panel.locator(".z-floatpanel__resize").boundingBox();
     await page.mouse.move(corner.x + 12, corner.y + 12);
     await page.mouse.down();

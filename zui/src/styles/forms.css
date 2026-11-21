@@ -744,10 +744,14 @@
   .z-calendar__month {
     flex: 1 1 auto;
     min-width: 0;
+    /* El mes mide una rejilla completa y es contenedor de consultas: la rejilla se acota con `cqi` (WebKit no aplica
+       `max-width` a una tabla y salía de un contenedor estrecho). */
+    inline-size: calc(var(--z-calendar-cols) * var(--z-calendar-col));
+    max-inline-size: 100%;
+    container-type: inline-size;
   }
   .z-calendar__grid {
-    /* `min()` y no `max-width`: WebKit no aplica `max-width` a una tabla y la rejilla salía de un contenedor estrecho. */
-    width: min(calc(var(--z-calendar-cols) * var(--z-calendar-col)), 100%);
+    width: min(calc(var(--z-calendar-cols) * var(--z-calendar-col)), 100cqi);
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0 2px;
