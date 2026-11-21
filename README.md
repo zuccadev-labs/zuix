@@ -38,8 +38,8 @@ and the framework-free mode.
 | `@zuccadev-labs/zuix` | [`suite/`](./suite/README.md) | Umbrella: installs the four below and re-exports them under subpaths | Yes |
 | `@zuccadev-labs/zuix-tokens` | [`tokens/`](./tokens/README.md) | Single source of design values. A brand is one file | Yes |
 | `@zuccadev-labs/zuix-zicon` | [`zicon/`](./zicon/README.md) | 346 icons in `outline` and `solid`, a `<z-icon>` element and a React component | Yes |
-| `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 64 accessible components that only read tokens | Yes |
-| `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 10 layouts: shell, split panes, work tabs, grids | Yes |
+| `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 103 accessible components that only read tokens | Yes |
+| `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 14 layouts: shell, split panes, work tabs, grids | Yes |
 | `@zuccadev-labs/zuix-zudocs` | `zudocs/` | Documentation standard and Docusaurus template | No |
 
 The five published packages share one version number and are installed and upgraded together.
