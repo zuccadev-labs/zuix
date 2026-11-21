@@ -9,6 +9,11 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Añadido
 
+- Galerías `/loaders` (Spinner con sus formas y los 12 patrones de DotMatrix con tamaño, tono, rejilla y baldosa, y
+  código para copiar) y `/effects` (Backdrop, BorderBeam, Glow, AttentionRing y TextEffect en vivo, con sus
+  variantes), con el armazón del sitio. Se activan con `pages.loaders` y `pages.effects` y aparecen en la sección
+  Referencia de la barra lateral; «Efectos» va también en la barra superior. Grupo «Efectos» en el índice de
+  componentes.
 - Una página por componente de `zui` y `zout` (`/components/<grupo>/<componente>`), generada en el build desde
   `manifest.json` y `html.json`: título, entradilla, enlaces (APG, manifiesto, HTML sin React), vista previa en
   vivo sobre el lienzo de la marca, instalación, ejemplos con pestañas Vista previa / Código y conmutador
