@@ -41,13 +41,13 @@ export interface CarouselLabels {
   /** Valor de aria-roledescription de cada slide. */
   slideRole: string;
   /** Botón de reproducción automática mientras corre. */
-  pause: string;
+  pause?: string;
   /** Botón de reproducción automática en pausa. */
-  play: string;
+  play?: string;
   /** Nombre de cada punto o miniatura. `index` empieza en 0. */
-  goTo: (index: number, count: number) => string;
+  goTo?: (index: number, count: number) => string;
   /** Nombre del grupo de puntos o miniaturas. */
-  indicators: string;
+  indicators?: string;
 }
 
 export type { CarouselIndicators };
@@ -93,7 +93,7 @@ export interface CarouselProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "
   ref?: Ref<HTMLDivElement>;
 }
 
-const DEFAULT_LABELS: CarouselLabels = {
+const DEFAULT_LABELS: Required<CarouselLabels> = {
   previous: "Previous slide",
   next: "Next slide",
   slide: (index, count) => `Slide ${index + 1} of ${count}`,
@@ -336,7 +336,7 @@ function CarouselControls({
   play,
   vertical,
 }: {
-  text: CarouselLabels;
+  text: Required<CarouselLabels>;
   count: number;
   index: number;
   positions?: number;
@@ -407,7 +407,7 @@ function CarouselThumbs<T>({
   renderThumbnail,
   onGoTo,
 }: {
-  text: CarouselLabels;
+  text: Required<CarouselLabels>;
   items: readonly T[];
   index: number;
   renderThumbnail: (item: T, index: number) => ReactNode;
