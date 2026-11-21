@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
 ### Añadido
 
 - Navegación de sitio (React y `/dom`, con el mismo comportamiento en `src/site.ts`):

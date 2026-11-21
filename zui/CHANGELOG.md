@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
 Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-tokens`. Botón, campo, select,
 pestañas, control segmentado e insignia son las piezas de referencia; el resto de componentes hereda escala,
 radios y material de los tokens.

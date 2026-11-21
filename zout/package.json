@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix-zout",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Layouts y ventanas dinámicas de la suite zuix.",
   "license": "MIT",

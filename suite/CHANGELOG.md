@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
 ### Añadido
 
 - Subrutas `./zui/dom/core`, `./zui/dom/dates`, `./zui/dom/data`, `./zui/dom/content`, `./zui/dom/agenda`,

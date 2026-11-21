@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix-tokens",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Fuente única de tokens de diseño de la suite zuix. Una marca es un archivo en brands/.",
   "license": "MIT",

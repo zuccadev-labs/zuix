@@ -7,6 +7,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
 ### Añadido
 
 - Grupo «Medios» en el catálogo (QRCode, CompareSlider, ImageCropper, SignaturePad) y vistas previas de React de
@@ -75,7 +77,6 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   - Las cabeceras de las tablas pueden partir línea: con una fuente más ancha la tabla de props desbordaba 3–4 px.
   - La barra lateral centra en su área con desplazamiento la página actual si quedaba fuera o a medias (al final de
     una lista larga).
-
 
 ## [0.2.0] - 2026-11-18
 

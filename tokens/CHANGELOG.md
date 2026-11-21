@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
 Base visual nueva, «liquid glass»: escala tipográfica en `rem`, radios concéntricos, capas de material y foco
 por contorno. Ningún token se elimina ni se renombra; cambian valores y se añaden tokens.
 
@@ -75,7 +77,6 @@ por contorno. Ningún token se elimina ni se renombra; cambian valores y se aña
   `overlay`.
 - `success-text` en claro más oscuro en `zutool` (62 % de `success`, antes 68 %) y `zenith` (68 %, antes 74 %):
   sobre `success-soft` compuesto en una tarjeta quedaba en 4,42–4,45:1 (axe en `examples/html`).
-
 
 ## [0.2.0] - 2026-11-18
 
