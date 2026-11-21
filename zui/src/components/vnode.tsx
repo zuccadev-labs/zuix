@@ -20,6 +20,7 @@ const ATTR: Record<string, string> = {
   inputmode: "inputMode",
   popovertarget: "popoverTarget",
   "shape-rendering": "shapeRendering",
+  "stroke-width": "strokeWidth",
 };
 const noop = () => {};
 

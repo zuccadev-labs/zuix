@@ -11,6 +11,38 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · CircularSlider: teclado APG, arrastre por el anillo y hueco del arco abierto (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const thumb = `${t("m-dial")} [role="slider"]`;
+        await page.locator(thumb).scrollIntoViewIfNeeded();
+        await page.focus(thumb);
+        await page.keyboard.press("ArrowUp");
+        await poll(async () => (await text(page, "m-dial-value")) === "41", "flecha arriba suma un paso");
+        await page.keyboard.press("PageUp");
+        await poll(async () => (await text(page, "m-dial-value")) === "51", "Re Pág diez pasos");
+        await page.keyboard.press("End");
+        await expectAttr(page, thumb, "aria-valuenow", "100");
+        await expectAttr(page, thumb, "aria-valuetext", "100 volume");
+        const box = await page.locator(`${t("m-dial")} .z-circular`).boundingBox();
+        const cx = box.x + box.width / 2;
+        const cy = box.y + box.height / 2;
+        // Arriba del todo es la mitad del arco de 270°.
+        await page.mouse.move(cx, cy - box.height * 0.42);
+        await page.mouse.down();
+        await page.mouse.up();
+        await poll(async () => (await text(page, "m-dial-value")) === "50", "arriba: 50");
+        // En el hueco de abajo, a la izquierda: el mínimo.
+        await page.mouse.click(cx - 4, cy + box.height * 0.42);
+        await poll(async () => (await text(page, "m-dial-value")) === "0", "hueco a la izquierda: mínimo");
+        const ring = `${t("m-ring")} [role="slider"]`;
+        await page.focus(ring);
+        await page.keyboard.press("ArrowRight");
+        await expectAttr(page, ring, "aria-valuenow", "225");
+        assert((await page.locator(`${t("m-ring")} .z-circular__mark`).count()) === 24, "una marca por paso (sin repetir 360)");
+      },
+    },
+    {
       name: "Oleada 7 · QRCode: imagen con nombre, la versión crece con el texto y el nivel H con icono (React)",
       async run({ open }) {
         const page = await screen(open);

@@ -4,6 +4,7 @@ import {
   Card,
   CardHeader,
   Carousel,
+  CircularSlider,
   ColorArea,
   ColorField,
   ColorPicker,
@@ -51,6 +52,7 @@ export function Media() {
   const [ended, setEnded] = useState("");
   const [qrText, setQrText] = useState("https://zuccadev-labs.github.io/zuix/");
   const [qrLevel, setQrLevel] = useState<QrLevel>("M");
+  const [dial, setDial] = useState(40);
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -105,6 +107,35 @@ export function Media() {
                 <ColorSlider channel="alpha" defaultValue="#3b82f680" />
               </div>
             </Stack>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Sliders">
+        <Grid min="220px" gap={4}>
+          <Card>
+            <CardHeader title="Circular slider" subtitle="Controlled dial with an open arc." />
+            <Stack gap={2}>
+              <div data-testid="m-dial">
+                <CircularSlider
+                  label="Volume"
+                  value={dial}
+                  onValueChange={setDial}
+                  arc={270}
+                  thickness={10}
+                  caption="volume"
+                  name="volume"
+                />
+              </div>
+              <p className="app-muted" data-testid="m-dial-value">
+                {dial}
+              </p>
+            </Stack>
+          </Card>
+          <Card>
+            <CardHeader title="Full circle" subtitle="Hue in steps of 15 degrees with marks." />
+            <div data-testid="m-ring">
+              <CircularSlider label="Hue" defaultValue={210} max={360} step={15} marks caption="degrees" />
+            </div>
           </Card>
         </Grid>
       </PageSection>

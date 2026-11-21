@@ -86,3 +86,4 @@ export {
   type ColorSwatch,
   type ColorSwatchPickerProps,
 } from "./ColorPicker";
+export { CircularSlider, type CircularSliderProps } from "./CircularSlider";

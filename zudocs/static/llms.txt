@@ -76,6 +76,7 @@
 - [Calendar](https://zuccadev-labs.github.io/zuix/components/forms/calendar.md): Rejilla de fechas: una, varias o un rango, en uno o varios meses, con vistas de mes y año, preajustes y fechas reservadas.
 - [Checkbox](https://zuccadev-labs.github.io/zuix/components/forms/checkbox.md): Casilla de verificación con etiqueta, descripción y estado indeterminado.
 - [CheckboxGroup](https://zuccadev-labs.github.io/zuix/components/forms/checkbox-group.md): Varias casillas de una misma pregunta en un fieldset con su título; valor como lista, casilla «todas» opcional y variante tarjeta.
+- [CircularSlider](https://zuccadev-labs.github.io/zuix/components/forms/circular-slider.md): Deslizador en un anillo, de círculo completo o de arco abierto (tipo dial), con el valor en el centro, marcas opcionales y el mismo tirador que Slider.
 - [ColorArea](https://zuccadev-labs.github.io/zuix/components/forms/color-area.md): Área de saturación y brillo del tono del color: un deslizador en dos ejes, suelto.
 - [ColorField](https://zuccadev-labs.github.io/zuix/components/forms/color-field.md): Campos del color sueltos: selector de formato, canales (o hexadecimal), opacidad y el selector del sistema.
 - [ColorPicker](https://zuccadev-labs.github.io/zuix/components/forms/color-picker.md): Selector de color completo: área de saturación y brillo, deslizadores de tono y opacidad, campos por canal o hexadecimal con selector de formato (hex, rgb, hsl, oklch), muestrario, cuentagotas…

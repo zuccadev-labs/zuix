@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 137,
+ "count": 138,
  "groups": {
   "actions": [
    "Button",
@@ -95,6 +95,7 @@
    "Calendar",
    "Checkbox",
    "CheckboxGroup",
+   "CircularSlider",
    "ColorArea",
    "ColorField",
    "ColorPicker",
@@ -9478,6 +9479,159 @@
    ],
    "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
    "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
+  },
+  {
+   "name": "CircularSlider",
+   "group": "forms",
+   "description": "Deslizador en un anillo, de círculo completo o de arco abierto (tipo dial), con el valor en el centro, marcas opcionales y el mismo tirador que Slider.",
+   "import": "import { CircularSlider } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "description": "Valor controlado."
+    },
+    {
+     "name": "defaultValue",
+     "type": "number"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: number) => void"
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: number) => void",
+     "description": "Al soltar el puntero o tras una tecla."
+    },
+    {
+     "name": "min",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 100
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "arc",
+     "type": "number",
+     "default": 360,
+     "description": "Grados del recorrido (30–360)."
+    },
+    {
+     "name": "startAngle",
+     "type": "number",
+     "description": "Ángulo del mínimo (0 arriba, en el sentido de las agujas). Un arco abierto deja el hueco abajo por defecto."
+    },
+    {
+     "name": "size",
+     "type": "number",
+     "default": 160,
+     "description": "Lado en píxeles."
+    },
+    {
+     "name": "thickness",
+     "type": "number",
+     "default": 8,
+     "description": "Grosor de la pista en píxeles."
+    },
+    {
+     "name": "marks",
+     "type": "boolean | number[]",
+     "description": "Marcas decorativas: una por paso (hasta 60) o una lista de valores."
+    },
+    {
+     "name": "showValue",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "caption",
+     "type": "string",
+     "description": "Texto bajo el valor (unidad); también entra en aria-valuetext."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Value\"",
+     "description": "Nombre accesible del tirador."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled"
+   ],
+   "tokens": [
+    "surface-3",
+    "accent",
+    "fg-on-accent",
+    "line-strong",
+    "shadow-sm",
+    "accent-ring",
+    "focus-width",
+    "radius-full",
+    "fg-muted",
+    "text-heading-lg",
+    "text-caption",
+    "font-display",
+    "duration-fast",
+    "ease-standard",
+    "space-6"
+   ],
+   "classes": [
+    "z-circular"
+   ],
+   "a11y": "Patrón APG «slider»: el tirador es role=\"slider\" con aria-valuetext (valor formateado y `caption`); flechas, Re/Av Pág (diez pasos), Inicio, Fin y Mayús. El puntero arrastra por todo el anillo. El valor del centro es decorativo (aria-hidden): lo anuncia el tirador. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-circular con data-value, data-min, data-max, data-step, data-arc, data-size, data-marks y data-caption dentro de [data-z-dom]; avisa con z:change y z:changeend { value }.",
+   "behavior": "dom",
+   "apg": "slider",
+   "examples": [
+    {
+     "title": "Círculo completo con marcas",
+     "code": "<CircularSlider label=\"Hue\" defaultValue={210} max={360} step={15} marks caption=\"degrees\" />"
+    },
+    {
+     "title": "Dial de arco abierto",
+     "code": "<CircularSlider label=\"Volume\" defaultValue={40} arc={270} size={140} thickness={10} valueFormat={{ style: \"unit\", unit: \"percent\" }} />"
+    },
+    {
+     "title": "Temperatura",
+     "code": "<CircularSlider label=\"Target temperature\" defaultValue={21.5} min={10} max={30} step={0.5} arc={240} caption=\"°C\" name=\"temperature\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código.",
+   "file": "zui/src/components/forms/CircularSlider.manifest.json"
   },
   {
    "name": "ColorArea",

@@ -200,4 +200,21 @@ export default async function ({ page, test, ok }) {
     });
     await until(async () => Number(await qr.getAttribute("data-version")) >= 5, "setWidgetProps cambia el contenido");
   });
+
+  await test("Oleada 7 sin React: CircularSlider del contrato con teclado, formato conservado y eventos", async () => {
+    const box = await inject(html("CircularSlider", 1));
+    const thumb = box.locator('.z-circular [role="slider"]');
+    await until(async () => (await thumb.count()) === 1, "tirador");
+    ok((await box.locator(".z-circular__value").textContent()) === "40%", "el formato del valor sobrevive al modo DOM");
+    await thumb.focus();
+    await page.keyboard.press("Home");
+    await until(async () => (await thumb.getAttribute("aria-valuenow")) === "0", "Inicio");
+    ok(
+      (await events()).some(([t, v]) => t === "z:changeend" && v === 0),
+      "z:changeend",
+    );
+    const x0 = await thumb.evaluate((el) => el.getBoundingClientRect().x);
+    await page.keyboard.press("PageUp");
+    await until(async () => (await thumb.evaluate((el) => el.getBoundingClientRect().x)) !== x0, "el tirador se mueve");
+  });
 }
