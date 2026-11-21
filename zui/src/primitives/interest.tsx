@@ -111,9 +111,11 @@ export function InterestLayer({
   const host = slot(triggerProp, {
     ref: trigger,
     // HoverCard: el disparador (un enlace) hace otra cosa al activarse, así que la capa lo describe y no lleva
-    // aria-expanded. Toggletip: el botón solo la muestra, así que lleva aria-expanded y no la descripción.
+    // aria-expanded. La relación está desde el principio, abierta o no (un lector en modo exploración la necesita
+    // antes de interactuar, y una capa oculta es un destino válido); si el autor ya puso una, manda la suya.
+    // Toggletip: el botón solo la muestra, así que lleva aria-expanded y no la descripción.
     ...(mode === "hover"
-      ? { "aria-describedby": present ? [describedBy, id].filter(Boolean).join(" ") : describedBy }
+      ? { "aria-describedby": describedBy ?? id }
       : { "aria-expanded": open, "aria-controls": present ? id : undefined }),
     "data-state": open ? "open" : "closed",
     onPointerEnter: (event: { pointerType: string }) => {
@@ -166,6 +168,14 @@ export function InterestLayer({
           >
             {children}
           </Popup>
+        </Portal>
+      ) : mode === "hover" ? (
+        // Cerrada, la tarjeta sigue en el documento como popover sin abrir (oculta, fuera del orden de Tab): es el
+        // destino de aria-describedby del enlace.
+        <Portal anchor={trigger}>
+          <div id={id} popover="manual" role="tooltip" className={cx("z-liquid", className)} data-state="closed" style={style}>
+            {children}
+          </div>
         </Portal>
       ) : null}
     </>

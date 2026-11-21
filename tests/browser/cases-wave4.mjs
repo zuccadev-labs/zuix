@@ -136,6 +136,13 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       async run({ open }) {
         const page = await screen(open);
         const link = t("c-hover-link");
+        // La relación está antes de abrir (patrón «hovercard» de modern-web-guidance): la tarjeta oculta describe al enlace.
+        const upfront = await page.locator(link).getAttribute("aria-describedby");
+        assert(
+          upfront && (await page.locator(`[id="${upfront}"]`).getAttribute("role")) === "tooltip",
+          "describe al enlace antes de abrir",
+        );
+        assert(!(await page.locator(`[id="${upfront}"]`).isVisible()), "cerrada, la tarjeta no se ve");
         await page.hover(link);
         await visible(page, ".z-hovercard", "abre al pasar el puntero");
         const described = await page.locator(link).getAttribute("aria-describedby");
@@ -149,7 +156,8 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
         await page.waitForTimeout(500);
         await visible(page, ".z-hovercard", "sigue abierta con el puntero encima");
         await press(page, "Escape");
-        await gone(page, ".z-hovercard");
+        await gone(page, ".z-hovercard:popover-open");
+        assert((await page.locator(link).getAttribute("aria-describedby")) === described, "sigue describiendo al enlace al cerrar");
         await page.mouse.move(5, 5);
         await page.locator(link).focus();
         await press(page, "Shift+Tab", "Tab");
@@ -158,7 +166,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
         await focusOn(page, t("c-hover-projects"), "Tab entra en la tarjeta");
         await press(page, "Tab");
         await focusOn(page, t("c-after-hover"), "Tab sale tras el enlace");
-        await gone(page, ".z-hovercard");
+        await gone(page, ".z-hovercard:popover-open");
       },
     },
     {

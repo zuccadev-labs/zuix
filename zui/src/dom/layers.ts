@@ -5,7 +5,9 @@
 //              cancela, lo oculta (`hidden`). El foco sigue hacia delante, al siguiente elemento tabulable.
 // HoverCard    [data-z-hovercard="#id"] (un enlace) + #id.z-hovercard[popover=manual][role=tooltip]. Se abre al pasar
 //              el puntero (data-open-delay, 500 ms) o al enfocar con el teclado, y se cierra al irse de los dos
-//              (data-close-delay, 300 ms), con Escape o con una pulsación fuera. La tarjeta describe al enlace.
+//              (data-close-delay, 300 ms), con Escape o con una pulsación fuera. La tarjeta describe al enlace desde
+//              hydrate() (aria-describedby, abierta o no; si el enlace ya trae uno, manda el suyo), nunca aria-expanded:
+//              Intro sigue el enlace. Patrón «hovercard» de modern-web-guidance (pista rica de interestfor).
 // Toggletip    button.z-toggletip__trigger[data-z-toggletip="#id"][aria-label] + #id.z-toggletip[popover=manual]
 //              [role=tooltip]. Como HoverCard, y además el clic la deja fija (aria-expanded en el botón).
 //              En los dos: data-z-placement en el disparador (bottom / top por defecto), data-arrow en la capa,
@@ -19,7 +21,8 @@
 //              (role=dialog con encabezado) anclada al elemento de cada paso, con anillo, progreso, Anterior,
 //              Siguiente/Hecho y Saltar. El foco entra en la tarjeta en cada paso; Escape o Saltar cierran y el foco
 //              vuelve a donde estaba; flechas laterales cambian de paso. z:step { step } y z:close en la tarjeta.
-import { iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
+import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { isRtl } from "../core/dir";
 import { activeElement, focusQuiet, nextTabbable, tabbable } from "../core/focus";
 import { bridgeTab, createInterest, type Interest, type InterestSource } from "../core/interest";
@@ -29,8 +32,10 @@ import { place, type Placement } from "../core/place";
 import { afterExit, reducedMotion } from "../core/presence";
 import { centerBox, clampStep, ringBox, tourKey, tourProgress } from "../core/tour";
 import { emit, inDom } from "./forms-popup";
-import { closeDialog } from "./index";
+import { closeDialog } from "./core";
 import { byRef, setMarkup, type Listen } from "./shared";
+
+registerIcons([xMark]);
 
 /* ---------- Banner ---------- */
 
@@ -287,9 +292,6 @@ function showHint(hint: Hint): void {
   if (hint.toggle) {
     trigger.setAttribute("aria-expanded", "true");
     if (layer.id) trigger.setAttribute("aria-controls", layer.id);
-  } else if (layer.id) {
-    const ids = (trigger.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
-    if (!ids.includes(layer.id)) trigger.setAttribute("aria-describedby", [...ids, layer.id].join(" "));
   }
   openHints.add(hint);
   hint.release ??= pushLayer({
@@ -307,11 +309,6 @@ function hideHint(hint: Hint): void {
   hint.release = undefined;
   openHints.delete(hint);
   if (hint.toggle) trigger.setAttribute("aria-expanded", "false");
-  else if (layer.id) {
-    const ids = (trigger.getAttribute("aria-describedby") ?? "").split(/\s+/).filter((id) => id && id !== layer.id);
-    if (ids.length) trigger.setAttribute("aria-describedby", ids.join(" "));
-    else trigger.removeAttribute("aria-describedby");
-  }
   if (layer.dataset.state === "closed") return;
   layer.dataset.state = "closed";
   hint.cancelExit = afterExit(layer, () => {
@@ -476,5 +473,15 @@ export function hydrate(root: ParentNode): void {
   for (const trigger of root.querySelectorAll<HTMLElement>("[data-z-toggletip]")) {
     if (!inDom(trigger)) continue;
     if (!trigger.hasAttribute("aria-expanded")) trigger.setAttribute("aria-expanded", "false");
+  }
+  // HoverCard: la relación se escribe al preparar el marcado, no al abrir. Un lector en modo exploración la necesita
+  // antes de cualquier interacción, y una capa oculta es un destino válido de aria-describedby. La tarjeta es
+  // role=tooltip (el rol mínimo de una pista rica) y no se fuerza abierta; lo que escribe el autor manda.
+  for (const trigger of root.querySelectorAll<HTMLElement>("[data-z-hovercard]")) {
+    const layer = inDom(trigger) ? layerOf(trigger) : null;
+    if (!layer?.id) continue;
+    if (!layer.hasAttribute("role")) layer.setAttribute("role", "tooltip");
+    if (!trigger.hasAttribute("aria-describedby") && !trigger.hasAttribute("aria-labelledby"))
+      trigger.setAttribute("aria-describedby", layer.id);
   }
 }

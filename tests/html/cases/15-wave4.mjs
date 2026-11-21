@@ -294,6 +294,9 @@ export default async function ({ page, test, ok, card, browserName }) {
     const link = card("HoverCard").locator("[data-z-hovercard]");
     const layer = page.locator("#hc-ana");
     // El retardo se mide con el reloj (bajo carga, una comprobación a los 200 ms no es fiable).
+    // La relación está antes de abrir (patrón «hovercard» de modern-web-guidance): la tarjeta oculta describe al enlace.
+    ok((await link.getAttribute("aria-describedby")) === "hc-ana", "aria-describedby antes de abrir");
+    ok((await layer.getAttribute("role")) === "tooltip", "role=tooltip");
     const started = Date.now();
     await link.hover();
     await layer.waitFor({ state: "visible", timeout: 3000 });
@@ -306,7 +309,7 @@ export default async function ({ page, test, ok, card, browserName }) {
     ok(await layer.isVisible(), "sigue abierta con el puntero encima");
     await press("Escape");
     await layer.waitFor({ state: "hidden", timeout: 2000 });
-    ok((await link.getAttribute("aria-describedby")) === null, "sin descripción al cerrar");
+    ok((await link.getAttribute("aria-describedby")) === "hc-ana", "sigue describiendo al enlace al cerrar");
     await page.mouse.move(5, 5);
   });
   await test("HoverCard: con el teclado abre al enfocar; Tab entra en la tarjeta y sale tras el enlace", async () => {
