@@ -161,6 +161,8 @@
     display: grid;
     place-items: center;
     aspect-ratio: var(--z-aspect, 1);
+    /* El ancho de su contenedor (acotado con max-width): sin él, en una fila flex encogía hasta su icono. */
+    inline-size: 100%;
     min-width: 0;
     color: var(--z-fg-subtle);
   }

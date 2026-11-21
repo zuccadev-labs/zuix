@@ -300,8 +300,8 @@ radios y material de los tokens.
 ### Corregido
 
 - Revisión visual de la oleada 5:
-  - `AspectRatio` sin medio (solo un icono de relleno) se ve como un hueco de superficie con su proporción; antes
-    era invisible.
+  - `AspectRatio` ocupa el ancho de su contenedor (en una fila flex encogía hasta su contenido) y sin medio (solo un
+    icono de relleno) se ve como un hueco de superficie con su proporción; antes era invisible.
   - `ScrollArea` con sombras lleva relleno: el contenido ya no toca sus cantos.
   - `Accordion` ocupa el ancho de su contenedor también dentro de una fila flex (encogía y el chevron se pegaba al
     título).
