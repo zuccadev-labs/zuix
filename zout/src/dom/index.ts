@@ -1288,7 +1288,10 @@ function onPointerDown(event: PointerEvent): void {
   }
 }
 
-function onPointerEnd(): void {
+function onPointerEnd(event?: PointerEvent): void {
+  // El último pointermove puede no llegar antes de soltar (Firefox los agrupa con la página ocupada): la posición
+  // final es la del pointerup.
+  if (drag && event) drag.move(event);
   if (drag) delete drag.el.dataset.dragging;
   drag = null;
 }
@@ -1371,7 +1374,7 @@ export function init(): void {
     paneDragMove(event);
   });
   document.addEventListener("pointerup", (event) => {
-    onPointerEnd();
+    onPointerEnd(event);
     tabDragEnd(event, false);
     paneDragEnd(event, false);
   });

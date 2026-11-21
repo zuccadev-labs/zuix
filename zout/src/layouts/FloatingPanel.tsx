@@ -140,6 +140,8 @@ export function FloatingPanel({
     else resizeTo(d.start, dx, dy);
   };
   const onEnd = (e: PointerEvent<HTMLElement>) => {
+    // El último pointermove puede no llegar antes de soltar: la posición final es la del pointerup.
+    if (e.type === "pointerup") onMove(e);
     drag.current = null;
     delete e.currentTarget.dataset.dragging;
   };
