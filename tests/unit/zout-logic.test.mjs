@@ -346,3 +346,13 @@ describe("PaneLayout: árbol de paneles", () => {
     assert.equal(neighborPane(rects, "zz", "left"), null);
   });
 });
+
+describe("Navbar de sitio", async () => {
+  const { navbarShouldMeasure } = await import("../../zout/src/logic.ts");
+  test("en fila mide siempre; plegado, solo al crecer", () => {
+    assert.equal(navbarShouldMeasure(false, 800, 800), true);
+    assert.equal(navbarShouldMeasure(true, 0, 0), false);
+    assert.equal(navbarShouldMeasure(true, 900, 800), true);
+    assert.equal(navbarShouldMeasure(true, 700, 800), false);
+  });
+});

@@ -1,0 +1,80 @@
+{
+  "name": "BottomNavigation",
+  "group": "layout",
+  "status": "new",
+  "description": "Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura. Enlaces o botones, insignias, etiquetas siempre, solo en la actual o ninguna; flotante o de borde a borde.",
+  "import": "import { BottomNavigation } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "BottomNavItem[]",
+      "required": true,
+      "description": "{ value, label, icon, href?, badge?, badgeLabel? }."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Destino actual."
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void",
+      "description": "Para entradas sin href (botones)."
+    },
+    {
+      "name": "labels",
+      "type": "enum",
+      "values": ["always", "active", "none"],
+      "default": "always"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["floating", "bar"],
+      "default": "floating"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["fixed", "static"],
+      "default": "fixed"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Primary"
+    }
+  ],
+  "states": ["rest", "current"],
+  "tokens": [
+    "glass-bg",
+    "glass-blur",
+    "glass-border",
+    "glass-highlight",
+    "glass-shadow",
+    "radius-xl",
+    "radius-md",
+    "surface-3",
+    "accent",
+    "fg",
+    "fg-muted",
+    "danger-solid",
+    "fg-on-accent",
+    "text-caption",
+    "control-height-lg",
+    "layer-sticky"
+  ],
+  "classes": ["z-bottomnav", "z-bottomnav__list", "z-bottomnav__item", "z-bottomnav__icon", "z-bottomnav__badge", "z-bottomnav__label"],
+  "behavior": "dom",
+  "a11y": "<nav> con nombre y una lista. El destino actual lleva aria-current=\"page\" y se marca con baldosa, color de icono y peso. Sin etiqueta visible, el nombre queda para los lectores de pantalla. Objetivos de al menos 48 px de alto. La insignia puede llevar un texto para lectores (badgeLabel). Con botones, zout/dom mueve aria-current y emite z:select { value }.",
+  "examples": [
+    {
+      "title": "Con enlaces",
+      "code": "<BottomNavigation\n  position=\"static\"\n  value=\"home\"\n  items={[\n    { value: \"home\", label: \"Home\", icon: \"home\", href: \"/home\" },\n    { value: \"search\", label: \"Search\", icon: \"magnifying-glass\", href: \"/search\" },\n    { value: \"inbox\", label: \"Inbox\", icon: \"inbox\", href: \"/inbox\", badge: 3, badgeLabel: \"3 unread\" },\n    { value: \"profile\", label: \"Profile\", icon: \"user-circle\", href: \"/profile\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Solo la actual con etiqueta",
+      "code": "<BottomNavigation\n  position=\"static\"\n  variant=\"bar\"\n  labels=\"active\"\n  value=\"stats\"\n  items={[\n    { value: \"today\", label: \"Today\", icon: \"calendar-days\" },\n    { value: \"stats\", label: \"Stats\", icon: \"chart-bar\" },\n    { value: \"settings\", label: \"Settings\", icon: \"cog\" },\n  ]}\n/>"
+    }
+  ]
+}

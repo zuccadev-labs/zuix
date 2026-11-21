@@ -60,6 +60,8 @@ export function useSections(): Section[] {
     const reference: NavItem[] = [];
     if (site.pages.icons) reference.push({ title: "Iconos", path: "/icons" });
     if (site.pages.tokens) reference.push({ title: "Tokens", path: "/tokens" });
+    if (site.pages.loaders) reference.push({ title: "Cargadores", path: "/loaders" });
+    if (site.pages.effects) reference.push({ title: "Efectos", path: "/effects" });
     if (reference.length) out.push({ id: "reference", label: "Referencia", icon: "swatch", links: reference, groups: [] });
     return out;
   }, [site, data]);
@@ -69,7 +71,7 @@ export function useSections(): Section[] {
 function sectionOf(sections: Section[], path: string, base: string): Section["id"] {
   const rel = `/${path.slice(base.length)}`;
   if (/^\/components(\/|$)/.test(rel) && sections.some((s) => s.id === "components")) return "components";
-  if (/^\/(icons|tokens)(\/|$)/.test(rel) && sections.some((s) => s.id === "reference")) return "reference";
+  if (/^\/(icons|tokens|loaders|effects)(\/|$)/.test(rel) && sections.some((s) => s.id === "reference")) return "reference";
   return "docs";
 }
 

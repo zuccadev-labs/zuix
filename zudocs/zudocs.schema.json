@@ -166,6 +166,16 @@
           "type": "boolean",
           "default": false,
           "description": "Tokens de la marca activa en /tokens."
+        },
+        "loaders": {
+          "type": "boolean",
+          "default": false,
+          "description": "Galería de cargadores (Spinner y los patrones de DotMatrix) en /loaders."
+        },
+        "effects": {
+          "type": "boolean",
+          "default": false,
+          "description": "Galería de efectos (Backdrop, BorderBeam, Glow, AttentionRing, TextEffect) en /effects."
         }
       }
     },

@@ -2405,3 +2405,139 @@ mark[data-markjs] {
   align-items: center;
   gap: var(--z-space-1);
 }
+
+/* ── Galerías de cargadores y efectos (/loaders, /effects) ─────────────────────────────────────────────── */
+.zd-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 156px), 1fr));
+  gap: var(--z-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zd-gallery--tight {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+.zd-gallery__card {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-xl);
+  background: var(--z-surface);
+}
+.zd-gallery__stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--z-space-5);
+  min-block-size: 148px;
+  padding: var(--z-space-6) var(--z-space-4);
+  color: var(--z-fg);
+}
+.zd-gallery__stage--row {
+  min-block-size: 120px;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-xl);
+  background: var(--z-surface);
+}
+.zd-gallery__caption {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--z-space-2);
+  margin: 0;
+  padding: var(--z-space-2) var(--z-space-2) var(--z-space-2) var(--z-space-4);
+  border-block-start: 1px solid var(--z-line);
+  font-size: var(--z-text-small);
+}
+.zd-gallery__name {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--z-fg);
+  font-weight: var(--z-weight-medium);
+}
+.zd-gallery__caption .zd-copy {
+  margin-inline-start: auto;
+}
+.zd-gallery__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--z-space-2) var(--z-space-4);
+  margin-block-end: var(--z-space-4);
+}
+.zd-gallery__snippet {
+  margin: var(--z-space-3) 0 0;
+  padding: var(--z-space-3) var(--z-space-4);
+  overflow-x: auto;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-md);
+  background: var(--z-code-bg);
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-code);
+}
+.zd-effect-frame {
+  margin-block-start: var(--z-space-4);
+}
+.zd-effect-stage {
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-xl);
+  background: var(--z-surface);
+}
+.zd-effect-hero {
+  display: grid;
+  justify-items: center;
+  gap: var(--z-space-2);
+  padding: var(--z-space-16) var(--z-space-6);
+  text-align: center;
+}
+.zd-effect-hero p,
+.zd-effect-texts p {
+  margin: 0;
+}
+.zd-effect-eyebrow {
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+  font-weight: var(--z-weight-medium);
+}
+/* Sin color propio: el de TextEffect (degradado, brillo) manda; si no, se hereda fg. */
+.zd-effect-title {
+  font-family: var(--z-font-display);
+  font-size: var(--z-text-display-sm);
+  font-weight: var(--z-weight-display);
+  letter-spacing: var(--z-tracking-display);
+  line-height: var(--z-leading-snug);
+  text-wrap: balance;
+}
+.zd-effect-text {
+  max-inline-size: 46ch;
+  color: var(--z-fg-muted);
+}
+.zd-effect-texts {
+  display: grid;
+  gap: var(--z-space-4);
+  padding: var(--z-space-8) var(--z-space-6);
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-xl);
+  background: var(--z-surface);
+}
+/* Tarjeta estrecha: el botón de copiar se queda en icono (su nombre accesible ya dice qué copia). */
+@container (inline-size < 200px) {
+  .zd-gallery__caption .zd-copy__button > span {
+    display: none;
+  }
+}
+/* Celdas iguales para comparar tamaños: los huecos entre piezas de distinto ancho quedan iguales. */
+.zd-gallery__cell {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--z-space-10);
+  block-size: var(--z-space-10);
+}

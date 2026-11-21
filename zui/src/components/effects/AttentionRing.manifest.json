@@ -1,0 +1,32 @@
+{
+  "name": "AttentionRing",
+  "group": "effects",
+  "status": "new",
+  "description": "Anillo o halo de atención alrededor de un control o un panel (actividad nueva, paso de un recorrido): late unas veces y queda fijo. Tono, variante, repeticiones y radio.",
+  "import": "import { AttentionRing } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    { "name": "active", "type": "boolean", "default": true },
+    { "name": "variant", "type": "enum", "values": ["ring", "glow"], "default": "ring" },
+    { "name": "tone", "type": "enum", "values": ["accent", "info", "success", "warning", "danger"], "default": "accent" },
+    { "name": "repeat", "type": "number", "default": 3, "description": "Pulsos antes de quedar fijo (Infinity: sin fin)." },
+    { "name": "radius", "type": "string", "description": "Radio del contorno; por defecto, el de un control." }
+  ],
+  "states": ["rest", "active", "offscreen"],
+  "tokens": ["accent", "info", "success", "warning", "danger", "control-radius", "space-1", "ease-standard"],
+  "classes": ["z-attention"],
+  "cssVars": ["--z-attention-repeat", "--z-attention-radius"],
+  "behavior": "none",
+  "whenToUse": "Para señalar algo que acaba de cambiar fuera de la vista de la persona (una pestaña con actividad, un panel con un aviso).",
+  "whenNotToUse": "Como única forma de comunicar el cambio: acompáñalo de texto, una insignia o una región viva. Para destacar sin urgencia, BorderBeam.",
+  "a11y": "Solo visual: no cambia el nombre ni el estado del elemento; el motivo se anuncia aparte. Por defecto late tres veces (unos 5 s, WCAG 2.2.2) y queda fijo; cada pulso dura 1,6 s (menos de tres destellos por segundo). Con prefers-reduced-motion se ve el anillo fijo. Con colores forzados usa Highlight.",
+  "examples": [
+    {
+      "title": "Botón con actividad",
+      "code": "<AttentionRing>\n  <Button variant=\"secondary\" icon=\"bell\">Inbox</Button>\n</AttentionRing>"
+    },
+    {
+      "title": "Halo de aviso",
+      "code": "<AttentionRing variant=\"glow\" tone=\"warning\" radius=\"var(--z-card-radius)\">\n  <Card>\n    <CardHeader title=\"Build queue\" subtitle=\"2 jobs waiting for approval.\" />\n  </Card>\n</AttentionRing>"
+    }
+  ]
+}

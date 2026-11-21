@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 124,
+ "count": 130,
  "groups": {
   "actions": [
    "Button",
@@ -73,9 +73,17 @@
    "Table",
    "Timeline"
   ],
+  "effects": [
+   "AttentionRing",
+   "Backdrop",
+   "BorderBeam",
+   "Glow",
+   "TextEffect"
+  ],
   "feedback": [
    "Alert",
    "Banner",
+   "DotMatrix",
    "EmptyState",
    "ErrorBoundary",
    "ErrorState",
@@ -7246,6 +7254,484 @@
    "file": "zui/src/components/data/Timeline.manifest.json"
   },
   {
+   "name": "AttentionRing",
+   "group": "effects",
+   "status": "new",
+   "description": "Anillo o halo de atención alrededor de un control o un panel (actividad nueva, paso de un recorrido): late unas veces y queda fijo. Tono, variante, repeticiones y radio.",
+   "import": "import { AttentionRing } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "active",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "ring",
+      "glow"
+     ],
+     "default": "ring"
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "repeat",
+     "type": "number",
+     "default": 3,
+     "description": "Pulsos antes de quedar fijo (Infinity: sin fin)."
+    },
+    {
+     "name": "radius",
+     "type": "string",
+     "description": "Radio del contorno; por defecto, el de un control."
+    }
+   ],
+   "states": [
+    "rest",
+    "active",
+    "offscreen"
+   ],
+   "tokens": [
+    "accent",
+    "info",
+    "success",
+    "warning",
+    "danger",
+    "control-radius",
+    "space-1",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-attention"
+   ],
+   "cssVars": [
+    "--z-attention-repeat",
+    "--z-attention-radius"
+   ],
+   "behavior": "none",
+   "whenToUse": "Para señalar algo que acaba de cambiar fuera de la vista de la persona (una pestaña con actividad, un panel con un aviso).",
+   "whenNotToUse": "Como única forma de comunicar el cambio: acompáñalo de texto, una insignia o una región viva. Para destacar sin urgencia, BorderBeam.",
+   "a11y": "Solo visual: no cambia el nombre ni el estado del elemento; el motivo se anuncia aparte. Por defecto late tres veces (unos 5 s, WCAG 2.2.2) y queda fijo; cada pulso dura 1,6 s (menos de tres destellos por segundo). Con prefers-reduced-motion se ve el anillo fijo. Con colores forzados usa Highlight.",
+   "examples": [
+    {
+     "title": "Botón con actividad",
+     "code": "<AttentionRing>\n  <Button variant=\"secondary\" icon=\"bell\">Inbox</Button>\n</AttentionRing>"
+    },
+    {
+     "title": "Halo de aviso",
+     "code": "<AttentionRing variant=\"glow\" tone=\"warning\" radius=\"var(--z-card-radius)\">\n  <Card>\n    <CardHeader title=\"Build queue\" subtitle=\"2 jobs waiting for approval.\" />\n  </Card>\n</AttentionRing>"
+    }
+   ],
+   "file": "zui/src/components/effects/AttentionRing.manifest.json"
+  },
+  {
+   "name": "Backdrop",
+   "group": "effects",
+   "status": "new",
+   "description": "Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional. El dibujo es una capa aria-hidden sin puntero; el contenido va encima.",
+   "import": "import { Backdrop } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "pattern",
+     "type": "enum",
+     "values": [
+      "grid",
+      "dots",
+      "hex",
+      "mesh"
+     ],
+     "default": "grid"
+    },
+    {
+     "name": "intensity",
+     "type": "enum",
+     "values": [
+      "subtle",
+      "medium",
+      "strong"
+     ],
+     "default": "medium"
+    },
+    {
+     "name": "fade",
+     "type": "enum",
+     "values": [
+      "radial",
+      "bottom",
+      "none"
+     ],
+     "default": "radial",
+     "description": "Desvanecido de la capa hacia los bordes."
+    },
+    {
+     "name": "animated",
+     "type": "boolean",
+     "default": false,
+     "description": "Deriva lenta (rejilla, puntos, hexágonos) o flujo de la malla; nunca con movimiento reducido."
+    },
+    {
+     "name": "cell",
+     "type": "number",
+     "default": 32,
+     "description": "Lado de la celda en px."
+    }
+   ],
+   "states": [
+    "rest",
+    "animated",
+    "offscreen"
+   ],
+   "tokens": [
+    "fg",
+    "accent",
+    "info",
+    "success",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-backdrop",
+    "z-backdrop__layer",
+    "z-backdrop__content"
+   ],
+   "cssVars": [
+    "--z-backdrop-cell"
+   ],
+   "behavior": "none",
+   "whenToUse": "Detrás de la cabecera de una página de producto, de un estado vacío o de una sección destacada, para dar profundidad al cristal.",
+   "whenNotToUse": "Detrás de texto largo o de tablas densas: el texto de lectura va sobre una superficie opaca (Panel solid, Prose).",
+   "a11y": "Decorativo: la capa es aria-hidden y no recibe el puntero. Las líneas no pasan del 13 % del color del texto, así que el texto encima conserva su contraste. Con prefers-reduced-motion no deriva; con prefers-reduced-transparency baja a la mitad; con prefers-contrast: more y colores forzados desaparece. Fuera de pantalla la animación se detiene.",
+   "examples": [
+    {
+     "title": "Rejilla",
+     "code": "<Backdrop pattern=\"grid\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Ship with confidence</strong></p>\n    <p>Every release is checked against the same standard.</p>\n  </div>\n</Backdrop>"
+    },
+    {
+     "title": "Puntos sutiles con deriva",
+     "code": "<Backdrop pattern=\"dots\" intensity=\"subtle\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p>Nothing here yet</p>\n  </div>\n</Backdrop>"
+    },
+    {
+     "title": "Hexágonos",
+     "code": "<Backdrop pattern=\"hex\" intensity=\"strong\" fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Network</strong></p>\n  </div>\n</Backdrop>"
+    },
+    {
+     "title": "Malla de color",
+     "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Liquid glass</strong></p>\n  </div>\n</Backdrop>"
+    }
+   ],
+   "file": "zui/src/components/effects/Backdrop.manifest.json"
+  },
+  {
+   "name": "BorderBeam",
+   "group": "effects",
+   "status": "new",
+   "description": "Haz de luz que recorre el borde de lo que envuelve (tarjeta, panel, botón): un anillo enmascarado gira un degradado cónico con transform. Tono, largo, grosor, velocidad, sentido y pausa; quieto con movimiento reducido.",
+   "import": "import { BorderBeam } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 6,
+     "description": "Segundos por vuelta."
+    },
+    {
+     "name": "length",
+     "type": "number",
+     "default": 18,
+     "description": "Largo del haz en % del contorno (5–50)."
+    },
+    {
+     "name": "width",
+     "type": "enum",
+     "values": [
+      "1",
+      "2"
+     ],
+     "default": "1",
+     "description": "Grosor en px."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "neutral"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "reverse",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "paused",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "radius",
+     "type": "string",
+     "description": "Radio del contorno; por defecto, el de una tarjeta (card-radius)."
+    }
+   ],
+   "states": [
+    "rest",
+    "paused",
+    "offscreen"
+   ],
+   "tokens": [
+    "accent",
+    "info",
+    "success",
+    "warning",
+    "danger",
+    "fg",
+    "glass-highlight",
+    "card-radius"
+   ],
+   "classes": [
+    "z-beam",
+    "z-beam__ring"
+   ],
+   "cssVars": [
+    "--z-beam-duration",
+    "--z-beam-length",
+    "--z-beam-width",
+    "--z-beam-radius"
+   ],
+   "behavior": "none",
+   "whenToUse": "Para señalar una sola pieza destacada (plan recomendado, tarea en curso, panel activo).",
+   "whenNotToUse": "En varias piezas a la vez o en listas: el movimiento compite. Para pedir atención puntual, AttentionRing.",
+   "a11y": "Decorativo: el anillo es aria-hidden y no recibe el puntero; no tapa el contenido (solo el borde). Con prefers-reduced-motion el haz queda quieto en una esquina. Gira una vuelta cada varios segundos: nada destella. Fuera de pantalla se detiene. Con colores forzados desaparece.",
+   "examples": [
+    {
+     "title": "Tarjeta destacada",
+     "code": "<BorderBeam>\n  <Card>\n    <CardHeader title=\"Pro plan\" subtitle=\"Everything in Team, plus audit logs.\" />\n  </Card>\n</BorderBeam>"
+    },
+    {
+     "title": "Tonos y grosor",
+     "code": "<BorderBeam tone=\"success\" width={2} duration={4} radius=\"var(--z-control-radius-lg)\">\n  <Button variant=\"secondary\">Deploying</Button>\n</BorderBeam>"
+    }
+   ],
+   "file": "zui/src/components/effects/BorderBeam.manifest.json"
+  },
+  {
+   "name": "Glow",
+   "group": "effects",
+   "status": "new",
+   "description": "Brillo que sigue al puntero sobre el borde, la superficie o ambos de lo que envuelve (spotlight de cristal). Solo con un puntero que pasa por encima; las capas son aria-hidden y sin puntero.",
+   "import": "import { Glow } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "border",
+      "surface",
+      "both"
+     ],
+     "default": "border"
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "neutral"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "size",
+     "type": "number",
+     "default": 220,
+     "description": "Radio del foco de luz en px."
+    },
+    {
+     "name": "radius",
+     "type": "string",
+     "description": "Radio del contorno; por defecto, el de una tarjeta."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover"
+   ],
+   "tokens": [
+    "accent",
+    "info",
+    "success",
+    "warning",
+    "danger",
+    "fg",
+    "card-radius",
+    "duration-normal",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-glow",
+    "z-glow__fill",
+    "z-glow__ring"
+   ],
+   "cssVars": [
+    "--z-glow-x",
+    "--z-glow-y",
+    "--z-glow-size",
+    "--z-glow-radius"
+   ],
+   "behavior": "dom",
+   "whenToUse": "En rejillas de tarjetas o planes donde el puntero recorre opciones.",
+   "whenNotToUse": "Como única señal de estado o de foco: es un adorno y no existe con teclado ni en táctil.",
+   "a11y": "Mejora visual para puntero: el contenido se ve y se usa igual sin ella, y el foco de teclado sigue siendo el contorno propio de cada control. La capa de superficie va por debajo del contenido y no pasa del 14 % del tono. Sin transición con prefers-reduced-motion; sin superficie con prefers-reduced-transparency; fuera con colores forzados.",
+   "examples": [
+    {
+     "title": "Borde",
+     "code": "<Glow>\n  <Card>\n    <CardHeader title=\"Analytics\" subtitle=\"Events, funnels and retention.\" />\n  </Card>\n</Glow>"
+    },
+    {
+     "title": "Borde y superficie",
+     "code": "<Glow variant=\"both\" tone=\"info\" size={260}>\n  <Card>\n    <CardHeader title=\"Storage\" subtitle=\"Buckets with versioning.\" />\n  </Card>\n</Glow>"
+    }
+   ],
+   "file": "zui/src/components/effects/Glow.manifest.json"
+  },
+  {
+   "name": "TextEffect",
+   "group": "effects",
+   "status": "new",
+   "description": "Efectos de texto: aparición por palabras o letras (subiendo o desenfocada, al montarse o al entrar en pantalla), degradado con tokens de texto (fijo o en movimiento) y brillo que pasa (shimmer). El texto entero llega una vez a los lectores; sin movimiento reducido ni JavaScript se ve en su estado final.",
+   "import": "import { TextEffect } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "children",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "effect",
+     "type": "enum",
+     "values": [
+      "reveal",
+      "blur",
+      "gradient",
+      "shimmer"
+     ],
+     "default": "reveal"
+    },
+    {
+     "name": "by",
+     "type": "enum",
+     "values": [
+      "word",
+      "letter"
+     ],
+     "default": "word",
+     "description": "Unidad de la aparición."
+    },
+    {
+     "name": "stagger",
+     "type": "number",
+     "description": "ms entre piezas (45 por palabra, 18 por letra)."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 640,
+     "description": "ms de cada pieza o de una pasada."
+    },
+    {
+     "name": "delay",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "trigger",
+     "type": "enum",
+     "values": [
+      "mount",
+      "visible"
+     ],
+     "default": "mount"
+    },
+    {
+     "name": "animated",
+     "type": "boolean",
+     "description": "Degradado en movimiento; el brillo se mueve por defecto."
+    },
+    {
+     "name": "as",
+     "type": "ElementType",
+     "default": "span"
+    }
+   ],
+   "states": [
+    "rest",
+    "pending",
+    "animated"
+   ],
+   "tokens": [
+    "accent-text",
+    "info-text",
+    "fg",
+    "fg-muted",
+    "ease-emphasized"
+   ],
+   "classes": [
+    "z-texteffect",
+    "z-texteffect__text",
+    "z-texteffect__word",
+    "z-texteffect__piece"
+   ],
+   "cssVars": [
+    "--z-texteffect-stagger",
+    "--z-texteffect-duration",
+    "--z-texteffect-delay"
+   ],
+   "behavior": "dom",
+   "whenToUse": "En un titular de portada, una cifra destacada o un texto de «pensando…» mientras algo carga (shimmer).",
+   "whenNotToUse": "En texto de lectura, etiquetas de controles o mensajes de error: el texto de la interfaz no se anima.",
+   "a11y": "Las piezas son aria-hidden y el texto entero va en un z-sr-only: se lee una vez y sin cortes. El degradado usa accent-text e info-text (≥ 4,5:1 cada una) y el brillo, fg-muted y fg. Con prefers-reduced-motion no se anima y queda el estado final. Si espera a entrar en pantalla, solo el JavaScript lo oculta: sin él, el texto se ve. Con colores forzados el degradado vuelve a CanvasText. Usa el brillo solo mientras dura la espera.",
+   "examples": [
+    {
+     "title": "Aparición por palabras",
+     "code": "<TextEffect as=\"p\">Build interfaces that feel native</TextEffect>"
+    },
+    {
+     "title": "Desenfoque por letras",
+     "code": "<TextEffect effect=\"blur\" by=\"letter\">Liquid glass</TextEffect>"
+    },
+    {
+     "title": "Degradado",
+     "code": "<TextEffect effect=\"gradient\" animated>One standard, any brand</TextEffect>"
+    },
+    {
+     "title": "Brillo de espera",
+     "code": "<TextEffect effect=\"shimmer\">Thinking…</TextEffect>"
+    }
+   ],
+   "file": "zui/src/components/effects/TextEffect.manifest.json"
+  },
+  {
    "name": "Alert",
    "group": "feedback",
    "description": "Aviso en línea sobre el resultado de una acción o el estado del sistema.",
@@ -7471,6 +7957,133 @@
    ],
    "origin": "Nuevo. Material de update-bar, SetupOffer y PaneMarkBanner de zutool. Referencia de variantes: Announcement de Shark UI.",
    "file": "zui/src/components/feedback/Banner.manifest.json"
+  },
+  {
+   "name": "DotMatrix",
+   "group": "feedback",
+   "status": "new",
+   "description": "Cargador de rejilla de puntos con 12 patrones propios (onda, lluvia, espiral, pulso, barrido, ajedrez, órbita, onda de esquina, cruz, serpiente, ecualizador, destellos). CSS puro: cada punto desfasa la misma animación de opacidad y escala; quieto con movimiento reducido y en pausa fuera de pantalla.",
+   "import": "import { DotMatrix } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "pattern",
+     "type": "enum",
+     "values": [
+      "wave",
+      "rain",
+      "spiral",
+      "pulse",
+      "sweep",
+      "checker",
+      "orbit",
+      "ripple",
+      "cross",
+      "snake",
+      "equalizer",
+      "sparkle"
+     ],
+     "default": "wave"
+    },
+    {
+     "name": "cols",
+     "type": "number",
+     "default": 5,
+     "description": "Columnas (2–16)."
+    },
+    {
+     "name": "rows",
+     "type": "number",
+     "description": "Filas (2–16); por defecto, tantas como columnas."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "Diámetro de cada punto (2, 4 o 6 px)."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "muted",
+      "current"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "description": "Segundos por ciclo; cada patrón tiene el suyo (1,2–2,4 s)."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": false,
+     "description": "Sobre una baldosa de cristal."
+    },
+    {
+     "name": "paused",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Loading",
+     "description": "Nombre accesible; cadena vacía lo vuelve decorativo."
+    }
+   ],
+   "states": [
+    "rest",
+    "paused",
+    "offscreen"
+   ],
+   "tokens": [
+    "accent",
+    "fg-muted",
+    "radius-full",
+    "space-0-5",
+    "space-1",
+    "space-2-5",
+    "control-radius-lg",
+    "surface-2",
+    "glass-border",
+    "glass-highlight"
+   ],
+   "classes": [
+    "z-dotmatrix",
+    "z-dotmatrix__dot"
+   ],
+   "cssVars": [
+    "--z-dotmatrix-cols",
+    "--z-dotmatrix-rows",
+    "--z-dotmatrix-duration",
+    "--z-dot-phase",
+    "--z-dot-rest"
+   ],
+   "behavior": "none",
+   "a11y": "role=\"status\" con aria-label (decorativo con label=\"\"). Con prefers-reduced-motion no se anima: muestra un fotograma quieto del patrón. Ningún punto parpadea más de tres veces por segundo. Con colores forzados los puntos usan CanvasText. Opcional en el modo sin framework: zui/dom lo pausa fuera de pantalla y setDotMatrixPattern(el, patrón) lo redibuja.",
+   "examples": [
+    {
+     "title": "Onda",
+     "code": "<DotMatrix pattern=\"wave\" />"
+    },
+    {
+     "title": "Patrones",
+     "code": "<>\n  <DotMatrix pattern=\"rain\" label=\"Syncing\" />\n  <DotMatrix pattern=\"spiral\" label=\"Indexing\" />\n  <DotMatrix pattern=\"orbit\" label=\"Connecting\" />\n  <DotMatrix pattern=\"equalizer\" label=\"Listening\" />\n</>"
+    },
+    {
+     "title": "Baldosa grande",
+     "code": "<DotMatrix pattern=\"pulse\" size=\"lg\" cols={7} framed label=\"Rendering preview\" />"
+    }
+   ],
+   "file": "zui/src/components/feedback/DotMatrix.manifest.json"
   },
   {
    "name": "EmptyState",
@@ -7888,7 +8501,7 @@
   {
    "name": "Spinner",
    "group": "feedback",
-   "description": "Anillo giratorio para esperas de duración desconocida.",
+   "description": "Indicador de espera de duración desconocida: anillo giratorio, tres puntos que laten o cuatro barras.",
    "import": "import { Spinner } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -7913,6 +8526,17 @@
      "description": "`current` hereda el color del texto."
     },
     {
+     "name": "shape",
+     "type": "enum",
+     "values": [
+      "ring",
+      "dots",
+      "bars"
+     ],
+     "default": "ring",
+     "description": "Forma del indicador."
+    },
+    {
      "name": "label",
      "type": "string",
      "default": "Loading",
@@ -7926,12 +8550,14 @@
     "surface-3",
     "accent",
     "radius-full",
-    "fg-muted"
+    "fg-muted",
+    "ease-standard"
    ],
    "classes": [
-    "z-spinner"
+    "z-spinner",
+    "z-spinner__part"
    ],
-   "a11y": "role=\"status\" con aria-label; decorativo si `label` está vacío.",
+   "a11y": "role=\"status\" con aria-label; decorativo si `label` está vacío. Con movimiento reducido las formas de puntos y barras quedan quietas en un escalón de opacidad que se sigue leyendo como espera.",
    "examples": [
     {
      "title": "Básico",
@@ -7940,6 +8566,14 @@
     {
      "title": "Dentro de un texto",
      "code": "<p><Spinner size=\"sm\" tone=\"current\" label=\"\" /> Saving changes</p>"
+    },
+    {
+     "title": "Puntos y barras",
+     "code": "<>\n  <Spinner shape=\"dots\" />\n  <Spinner shape=\"bars\" />\n</>"
+    },
+    {
+     "title": "Barras en un botón",
+     "code": "<p><Spinner shape=\"dots\" size=\"sm\" tone=\"current\" label=\"\" /> Generating summary</p>"
     }
    ],
    "origin": "Spinner del design system base.",
