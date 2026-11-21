@@ -587,10 +587,16 @@ export function setup(on: Listen): void {
     if (pasted) commit(field, { values: { ...entryOf(field).state.values, ...pasted }, typed: null });
   });
   on(document, "focusin", (event) => {
-    // La validación nativa enfoca el campo oculto inválido: el foco pasa al primer segmento vacío.
-    const native = event.target instanceof HTMLInputElement && event.target.matches(".z-native-input") ? fieldAt(event.target) : null;
+    // La validación nativa enfoca el campo oculto inválido: el foco pasa al primer segmento vacío. En la tarea
+    // siguiente, no aquí: el navegador muestra su burbuja de validación después de enfocar el campo y la cierra
+    // cuando este pierde el foco. Si el foco se fuera ya, la burbuja de Firefox quedaría abierta sin nada que la
+    // cerrase y se quedaría con los arrastres de puntero posteriores de la página.
+    const input = event.target;
+    const native = input instanceof HTMLInputElement && input.matches(".z-native-input") ? fieldAt(input) : null;
     if (native) {
-      focusSegment(native, firstEditable(entryOf(native).state.values, configOf(native)));
+      setTimeout(() => {
+        if (document.activeElement === input) focusSegment(native, firstEditable(entryOf(native).state.values, configOf(native)));
+      }, 0);
       return;
     }
     const segment = segmentAt(event.target);
