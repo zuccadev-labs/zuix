@@ -21,6 +21,7 @@ const ATTR: Record<string, string> = {
   popovertarget: "popoverTarget",
   "shape-rendering": "shapeRendering",
   "stroke-width": "strokeWidth",
+  crossorigin: "crossOrigin",
 };
 const noop = () => {};
 

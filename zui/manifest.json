@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 139,
+ "count": 140,
  "groups": {
   "actions": [
    "Button",
@@ -136,6 +136,7 @@
   ],
   "media": [
    "CompareSlider",
+   "ImageCropper",
    "QRCode"
   ],
   "navigation": [
@@ -15731,6 +15732,149 @@
    ],
    "origin": "Oleada 7. Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio.",
    "file": "zui/src/components/media/CompareSlider.manifest.json"
+  },
+  {
+   "name": "ImageCropper",
+   "group": "media",
+   "description": "Recortador de imagen: área que se mueve y se redimensiona desde ocho asas, relación de aspecto fija o libre, forma rectangular o circular, rejilla de tercios y teclado. El recorte se expresa en fracciones de la imagen (y en píxeles en los avisos); `cropImage` y `cropImageBlob` dibujan la salida en un canvas o un Blob.",
+   "import": "import { ImageCropper, cropImageBlob } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "src",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "alt",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "aspect",
+     "type": "number",
+     "description": "Relación del recorte (ancho / alto): 1, 16 / 9… Sin ella, libre."
+    },
+    {
+     "name": "crop",
+     "type": "Crop",
+     "description": "Recorte controlado { x, y, width, height } en fracciones de la imagen (0–1)."
+    },
+    {
+     "name": "defaultCrop",
+     "type": "Crop",
+     "description": "Por defecto, centrado y del 80 % con la relación pedida."
+    },
+    {
+     "name": "onCropChange",
+     "type": "(crop: Crop, pixels: PixelCrop) => void"
+    },
+    {
+     "name": "onCropChangeEnd",
+     "type": "(crop: Crop, pixels: PixelCrop) => void",
+     "description": "Al soltar el puntero o tras una tecla."
+    },
+    {
+     "name": "onImageLoad",
+     "type": "(crop: Crop, pixels: PixelCrop) => void"
+    },
+    {
+     "name": "shape",
+     "type": "enum",
+     "values": [
+      "rect",
+      "circle"
+     ],
+     "default": "rect",
+     "description": "Con `circle`, `cropImage` deja transparente lo de fuera."
+    },
+    {
+     "name": "minSize",
+     "type": "number",
+     "default": 0.05,
+     "description": "Lado mínimo del recorte, en fracción de la imagen."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true,
+     "description": "Rejilla de tercios mientras se arrastra o con el foco."
+    },
+    {
+     "name": "crossOrigin",
+     "type": "enum",
+     "values": [
+      "anonymous",
+      "use-credentials"
+     ],
+     "description": "Imágenes de otro origen con CORS (para poder exportar el recorte)."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ImageCropperLabels>",
+     "description": "`area`, `instructions` y `status` («Crop {w}% × {h}% at {x}%, {y}%»)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "dragging",
+    "disabled"
+   ],
+   "tokens": [
+    "card-radius",
+    "surface-solid",
+    "line",
+    "colorpicker-white",
+    "colorpicker-black",
+    "scrim",
+    "radius-full",
+    "radius-xs",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "shadow-sm",
+    "space-6",
+    "space-2-5",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-cropper"
+   ],
+   "a11y": "La imagen conserva su texto alternativo. El área de recorte es un grupo enfocable con nombre e instrucciones (aria-describedby): flechas mueven, Mayús + flechas redimensionan, Alt multiplica el paso, Inicio y Fin la llevan a los bordes; cada cambio por teclado se anuncia («Crop 60% × 40% at 20%, 30%») en una región viva. Las asas son solo para el puntero (aria-hidden): el teclado cubre lo mismo. Sin React (`@zuccadev-labs/zuix-zui/dom`): un .z-cropper con un <img> dentro de [data-z-dom] (data-aspect, data-shape, data-default-crop=\"x,y,w,h\"; el recorte actual queda en data-crop); avisa con z:change y z:changeend { crop, pixels }; cropImageBlob(img, crop) exporta.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Cuadrado",
+     "code": "<ImageCropper src=\"/photos/coast.jpg\" alt=\"Coast at sunset\" aspect={1} onCropChangeEnd={(crop) => setCrop(crop)} />"
+    },
+    {
+     "title": "Avatar circular y exportación",
+     "code": "<ImageCropper src={file} alt=\"New avatar\" aspect={1} shape=\"circle\" onCropChangeEnd={setCrop} />\n<Button onClick={async () => upload(await cropImageBlob(imageRef.current, crop, { shape: \"circle\", maxSize: 512 }))}>\n  Save avatar\n</Button>"
+    },
+    {
+     "title": "Libre",
+     "code": "<ImageCropper src=\"/photos/coast.jpg\" alt=\"Coast at sunset\" grid={false} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Relación 16:9 con rejilla",
+     "code": "<div class=\"z-cropper\" data-aspect=\"1.7778\">\n  <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E\" alt=\"Hills at sunset\" />\n</div>",
+     "script": "document.querySelector(\".z-cropper\").addEventListener(\"z:changeend\", (event) => console.log(event.detail.pixels));"
+    },
+    {
+     "title": "Avatar circular",
+     "code": "<div class=\"z-cropper\" data-aspect=\"1\" data-shape=\"circle\" style=\"max-inline-size:320px\">\n  <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E\" alt=\"Hills at sunset\" />\n</div>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento del Image Cropper de shark-ui (MIT), sin su código.",
+   "file": "zui/src/components/media/ImageCropper.manifest.json"
   },
   {
    "name": "QRCode",

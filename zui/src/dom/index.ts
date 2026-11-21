@@ -78,6 +78,7 @@ export { setHighlightQuery } from "./reading";
 export { setDotMatrixPattern } from "./effects";
 export { setColorValue } from "./color";
 export { setCompareValue } from "./media";
+export { cropImage, cropImageBlob, type CropImageOptions } from "../core/crop-image";
 export {
   checkTreeItem,
   openPalette,

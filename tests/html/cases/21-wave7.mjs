@@ -242,4 +242,33 @@ export default async function ({ page, test, ok }) {
       "setCompareValue",
     );
   });
+
+  await test("Oleada 7 sin React: ImageCropper desde un <img>, teclado con anuncio y cropImageBlob", async () => {
+    const box = await inject(html("ImageCropper", 1));
+    const root = box.locator(".z-cropper");
+    await until(async () => (await root.locator(".z-cropper__area").count()) === 1, "área");
+    await until(() => root.locator("img").evaluate((img) => img.complete && img.naturalWidth > 0), "la imagen se conserva y carga");
+    const crop = async () => (await root.getAttribute("data-crop")).split(",").map(Number);
+    await until(async () => Math.abs((await crop())[2] * 1.6 - (await crop())[3]) < 0.01, "círculo: cuadrado en píxeles");
+    await root.locator(".z-cropper__area").focus();
+    await page.keyboard.press("End");
+    await until(async () => {
+      const c = await crop();
+      return Math.abs(c[0] + c[2] - 1) < 1e-6;
+    }, "Fin lo lleva al borde derecho");
+    await until(async () => ((await root.locator("[data-live]").textContent()) ?? "").startsWith("Crop "), "se anuncia");
+    ok(
+      (await events()).some(([t]) => t === "z:changeend"),
+      "z:changeend",
+    );
+    const size = await page.evaluate(async () => {
+      const { cropImageBlob } = await import("/zui/dist/zui.dom.js");
+      const el = document.querySelector("[data-w7-layer] .z-cropper");
+      const [x, y, width, height] = el.dataset.crop.split(",").map(Number);
+      const blob = await cropImageBlob(el.querySelector("img"), { x, y, width, height }, { shape: "circle" });
+      const bmp = await createImageBitmap(blob);
+      return [bmp.width, bmp.height, blob.type];
+    });
+    ok(size[0] === size[1] && size[2] === "image/png", `PNG cuadrado: ${size}`);
+  });
 }

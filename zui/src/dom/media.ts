@@ -3,6 +3,7 @@
 // (core/vnode) y la misma interacción (core/widget), dentro de `[data-z-dom]`. Configuración en `data-*` o en
 // `<script type="application/json" data-props>`; datos por propiedad con setWidgetProps(el, props).
 import { circularSliderWidget } from "../core/circular-widget";
+import { imageCropperWidget } from "../core/cropper-widget";
 import { qrcodeWidget } from "../core/qr-widget";
 import { registerIcons, iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowsRightLeft } from "@zuccadev-labs/zuix-zicon/icons/arrows-right-left";
@@ -14,7 +15,7 @@ import { registerWidget } from "./widgets";
 
 registerIcons([arrowsRightLeft, arrowsUpDown]);
 
-for (const widget of [qrcodeWidget, circularSliderWidget]) registerWidget(widget);
+for (const widget of [qrcodeWidget, circularSliderWidget, imageCropperWidget]) registerWidget(widget);
 
 function pick(root: ParentNode, selector: string): HTMLElement[] {
   const list = [...root.querySelectorAll<HTMLElement>(selector)];

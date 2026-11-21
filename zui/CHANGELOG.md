@@ -44,6 +44,11 @@ radios y material de los tokens.
   - `CompareSlider` (grupo `media`): antes/después con dos capas apiladas, divisor arrastrable y asa `role="slider"`
     con teclado, horizontal o vertical, rótulos opcionales. En `/dom`, un `.z-compare` con dos hijos recibe divisor y
     asa; `setCompareValue(el, valor)`.
+  - `ImageCropper` (grupo `media`): área de recorte con ocho asas, relación de aspecto fija o libre, forma
+    rectangular o circular, rejilla de tercios, teclado (flechas mueven, Mayús + flechas redimensionan, Alt
+    multiplica el paso) con anuncio en una región viva; recorte en fracciones y en píxeles. `cropImage` y
+    `cropImageBlob` (raíz y `/dom`) dibujan la salida en un canvas o un Blob (PNG, JPEG o WebP, `maxSize`, círculo
+    transparente). Cálculo en `core/crop`.
 
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único

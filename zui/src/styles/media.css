@@ -167,4 +167,149 @@
       background: CanvasText;
     }
   }
+
+  /* ---------- ImageCropper: la imagen entera, fuera del recorte velada; ocho asas de 24 × 24 ---------- */
+  .z-cropper {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 40rem;
+    overflow: hidden;
+    border-radius: var(--z-card-radius);
+    background: var(--z-surface-solid);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    /* Coordenadas de la imagen, no del texto: el recorte no se refleja en RTL. */
+    direction: ltr;
+  }
+  .z-cropper[data-disabled] {
+    opacity: 0.6;
+  }
+  .z-cropper__image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .z-cropper__area {
+    position: absolute;
+    inset-inline-start: var(--z-crop-x);
+    inset-block-start: var(--z-crop-y);
+    inline-size: var(--z-crop-w);
+    block-size: var(--z-crop-h);
+    border: 1px solid var(--z-colorpicker-white);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--z-colorpicker-black) 35%, transparent),
+      0 0 0 100vmax var(--z-scrim);
+    cursor: move;
+  }
+  .z-cropper[data-shape="circle"] .z-cropper__area {
+    border-radius: var(--z-radius-full);
+  }
+  .z-cropper__area:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-cropper__grid {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      linear-gradient(
+        to right,
+        transparent calc(100% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(100% / 3 + 0.5px),
+        transparent 0 calc(200% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(200% / 3 + 0.5px),
+        transparent 0
+      ),
+      linear-gradient(
+        to bottom,
+        transparent calc(100% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(100% / 3 + 0.5px),
+        transparent 0 calc(200% / 3 - 0.5px),
+        color-mix(in srgb, var(--z-colorpicker-white) 45%, transparent) 0 calc(200% / 3 + 0.5px),
+        transparent 0
+      );
+    opacity: 0;
+    transition: opacity var(--z-duration-fast) var(--z-ease-standard);
+    pointer-events: none;
+  }
+  .z-cropper:is([data-dragging], :focus-within) .z-cropper__grid {
+    opacity: 1;
+  }
+  /* Asa: objetivo de 24 × 24 centrado en el borde, con una marca cuadrada de 10 dentro. */
+  .z-cropper__handle {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-space-6);
+    block-size: var(--z-space-6);
+    margin: calc(var(--z-space-6) / -2);
+  }
+  .z-cropper__handle::before {
+    content: "";
+    inline-size: var(--z-space-2-5);
+    block-size: var(--z-space-2-5);
+    border: 1px solid color-mix(in srgb, var(--z-colorpicker-black) 35%, transparent);
+    border-radius: calc(var(--z-radius-xs) / 3);
+    background: var(--z-colorpicker-white);
+    box-shadow: var(--z-shadow-sm);
+  }
+  .z-cropper__handle[data-handle="nw"] {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    cursor: nwse-resize;
+  }
+  .z-cropper__handle[data-handle="n"] {
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    cursor: ns-resize;
+  }
+  .z-cropper__handle[data-handle="ne"] {
+    inset-block-start: 0;
+    inset-inline-start: 100%;
+    cursor: nesw-resize;
+  }
+  .z-cropper__handle[data-handle="e"] {
+    inset-block-start: 50%;
+    inset-inline-start: 100%;
+    cursor: ew-resize;
+  }
+  .z-cropper__handle[data-handle="se"] {
+    inset-block-start: 100%;
+    inset-inline-start: 100%;
+    cursor: nwse-resize;
+  }
+  .z-cropper__handle[data-handle="s"] {
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    cursor: ns-resize;
+  }
+  .z-cropper__handle[data-handle="sw"] {
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    cursor: nesw-resize;
+  }
+  .z-cropper__handle[data-handle="w"] {
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    cursor: ew-resize;
+  }
+  .z-cropper[data-disabled] :is(.z-cropper__area, .z-cropper__handle) {
+    cursor: not-allowed;
+  }
+  @media (forced-colors: active) {
+    .z-cropper__area {
+      border-color: Highlight;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-cropper__grid {
+      transition: none;
+    }
+  }
 }

@@ -63,6 +63,7 @@ const COVERED = [
   "zui/src/core/qr.ts",
   "zui/src/core/circular.ts",
   "zui/src/core/compare-slider.ts",
+  "zui/src/core/crop.ts",
   "zui/src/core/date.ts",
   "zui/src/core/dir.ts",
   "zui/src/core/focus.ts",

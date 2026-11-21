@@ -11,6 +11,47 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
+      name: "Oleada 7 · ImageCropper: teclado (mover, redimensionar con Mayús), asa de esquina con relación 1:1 y exportación a PNG (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        const root = `${t("m-cropper")} .z-cropper`;
+        await page.locator(root).scrollIntoViewIfNeeded();
+        await poll(() => page.locator(`${root} img`).evaluate((img) => img.complete && img.naturalWidth > 0), "la imagen carga");
+        const area = `${root} .z-cropper__area`;
+        const crop = () =>
+          page
+            .locator(root)
+            .getAttribute("data-crop")
+            .then((v) => v.split(",").map(Number));
+        await poll(async () => Math.abs((await crop())[2] * 1.6 - (await crop())[3]) < 0.01, "cuadrado en píxeles sobre una imagen 16:10");
+        const [x0] = await crop();
+        await page.focus(area);
+        await page.keyboard.press("ArrowLeft");
+        await poll(async () => Math.abs((await crop())[0] - (x0 - 0.01)) < 1e-6, "flecha izquierda mueve un 1 %");
+        const [, , w0, h0] = await crop();
+        await page.keyboard.press("Shift+ArrowUp");
+        await poll(async () => (await crop())[3] < h0, "Mayús + flecha arriba encoge");
+        const [, , w1, h1] = await crop();
+        assert(Math.abs(w1 * 1.6 - h1) < 0.01, "conserva la relación");
+        assert(w1 < w0, "encoge también el ancho");
+        await poll(
+          async () => ((await page.locator(`${root} [data-live]`).textContent()) ?? "").startsWith("Crop "),
+          "se anuncia el recorte",
+        );
+        const handle = await page.locator(`${root} .z-cropper__handle[data-handle="se"]`).boundingBox();
+        await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(handle.x + handle.width / 2 - 40, handle.y + handle.height / 2 - 40, { steps: 4 });
+        await page.mouse.up();
+        const after = await crop();
+        assert(after[2] < w1 && Math.abs(after[2] * 1.6 - after[3]) < 0.01, `asa de esquina encoge con la relación: ${after}`);
+        await page.click(t("m-crop-export"));
+        await poll(async () => /^(\d+)×\1 image\/png$/.test(await text(page, "m-crop-out")), "PNG cuadrado");
+        const side = Number((await text(page, "m-crop-out")).split("×")[0]);
+        assert(side > 50 && side <= 256, `lado acotado a 256: ${side}`);
+      },
+    },
+    {
       name: "Oleada 7 · CompareSlider: asa role=slider con teclado y pulsación que lleva el divisor (React)",
       async run({ open }) {
         const page = await screen(open);

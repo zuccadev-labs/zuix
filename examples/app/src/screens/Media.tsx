@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
   Backdrop,
+  Button,
   Card,
   CardHeader,
   Carousel,
@@ -14,6 +15,9 @@ import {
   ColorSlider,
   ColorSwatchPicker,
   Field,
+  ImageCropper,
+  cropImageBlob,
+  type Crop,
   Input,
   QRCode,
   SegmentedControl,
@@ -31,6 +35,10 @@ const SWATCHES = [
   { value: "#64748b", label: "Slate" },
   { value: "#0f172a", label: "Ink" },
 ];
+
+/** Imagen de muestra (SVG en línea): un atardecer de 640 × 400. */
+const SUNSET =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E";
 
 const PROJECTS = [
   { id: "atlas", title: "Atlas", subtitle: "Maps and routing" },
@@ -56,6 +64,8 @@ export function Media() {
   const [qrLevel, setQrLevel] = useState<QrLevel>("M");
   const [dial, setDial] = useState(40);
   const [split, setSplit] = useState(50);
+  const [crop, setCrop] = useState<Crop | null>(null);
+  const [cropped, setCropped] = useState("");
   return (
     <Page>
       <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
@@ -155,6 +165,33 @@ export function Media() {
             <div data-testid="m-ring">
               <CircularSlider label="Hue" defaultValue={210} max={360} step={15} marks caption="degrees" />
             </div>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Image cropper">
+        <Grid min="300px" gap={4}>
+          <div data-testid="m-cropper">
+            <ImageCropper src={SUNSET} alt="Hills at sunset" aspect={1} onCropChangeEnd={setCrop} onImageLoad={setCrop} />
+          </div>
+          <Card>
+            <CardHeader title="Export" subtitle="Draws the crop on a canvas and returns a PNG." />
+            <Stack gap={3}>
+              <Button
+                data-testid="m-crop-export"
+                onClick={async () => {
+                  const img = document.querySelector<HTMLImageElement>('[data-testid="m-cropper"] img');
+                  if (!img || !crop) return;
+                  const blob = await cropImageBlob(img, crop, { maxSize: 256 });
+                  const bitmap = await createImageBitmap(blob);
+                  setCropped(`${bitmap.width}×${bitmap.height} ${blob.type}`);
+                }}
+              >
+                Export crop
+              </Button>
+              <p className="app-muted" data-testid="m-crop-out">
+                {cropped}
+              </p>
+            </Stack>
           </Card>
         </Grid>
       </PageSection>
