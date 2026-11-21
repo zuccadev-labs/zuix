@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 130,
+ "count": 136,
  "groups": {
   "actions": [
    "Button",
@@ -95,6 +95,12 @@
    "Calendar",
    "Checkbox",
    "CheckboxGroup",
+   "ColorArea",
+   "ColorField",
+   "ColorPicker",
+   "ColorPickerTrigger",
+   "ColorSlider",
+   "ColorSwatchPicker",
    "Combobox",
    "DateField",
    "DateInput",
@@ -2345,6 +2351,51 @@
      "name": "ref",
      "type": "Ref<HTMLDivElement>",
      "description": "Elemento raíz."
+    },
+    {
+     "name": "autoplay",
+     "type": "boolean | number",
+     "default": false,
+     "description": "Avance automático: `true` cada 5 s o un número de milisegundos (mínimo 1500). Lleva un botón de pausa visible (WCAG 2.2.2); se detiene con el puntero encima, con el foco dentro, con la pestaña oculta y fuera de pantalla, y no arranca sola con movimiento reducido."
+    },
+    {
+     "name": "indicators",
+     "type": "enum",
+     "values": [
+      "counter",
+      "dots",
+      "bar",
+      "thumbnails",
+      "none"
+     ],
+     "default": "counter",
+     "description": "Indicador de posición: contador (01/05), puntos, barra de recorrido, miniaturas (con `renderThumbnail`) o ninguno."
+    },
+    {
+     "name": "renderThumbnail",
+     "type": "(item: T, index: number) => ReactNode",
+     "description": "Contenido de cada miniatura con `indicators=\"thumbnails\"`."
+    },
+    {
+     "name": "slidesPerPage",
+     "type": "number",
+     "default": 1,
+     "description": "Slides visibles a la vez (1–8). Con más de uno el carrusel usa el desplazamiento nativo con scroll-snap (sin lente ni réplicas)."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal",
+     "description": "Vertical: desplazamiento nativo con scroll-snap en el eje de bloque."
+    },
+    {
+     "name": "height",
+     "type": "number | string",
+     "description": "Alto de la vista en vertical (por defecto 20rem)."
     }
    ],
    "states": [
@@ -2368,28 +2419,34 @@
     }
    ],
    "tokens": [
-    "fg",
-    "fg-subtle",
-    "surface-2",
-    "line",
     "accent",
-    "card-radius",
-    "control-height-md",
-    "space-4",
-    "space-6",
-    "font-mono",
-    "duration-fast",
-    "ease-standard",
     "accent-ring",
     "button-radius",
+    "card-radius",
+    "control-height-md",
+    "control-radius",
+    "duration-fast",
+    "duration-normal",
     "duration-press",
     "ease-out",
+    "ease-standard",
+    "fg",
+    "fg-subtle",
     "focus-offset",
     "focus-width",
+    "font-mono",
     "glass-border",
     "glass-highlight",
+    "line",
+    "line-strong",
+    "radius-full",
+    "radius-xs",
+    "space-4",
+    "space-6",
+    "surface-2",
     "surface-3",
     "text-code",
+    "touch-target",
     "weight-medium"
    ],
    "cssVars": [
@@ -2423,7 +2480,7 @@
     "chevron-left",
     "chevron-right"
    ],
-   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden).",
+   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden). Con `autoplay`, el primer control es el botón de pausa/reproducción (nombre según el estado) y la región viva se calla mientras corre (aria-live=\"off\"); se detiene con el puntero encima o el foco dentro. Puntos y miniaturas son botones con nombre («Go to slide 2 of 5») y aria-current en el actual. En el modo snap (varias por página o vertical) la vista desplazable recibe el foco y se mueve con las flechas de su eje, Inicio y Fin.",
    "examples": [
     {
      "title": "Tarjetas con lente",
@@ -2436,6 +2493,22 @@
     {
      "title": "Zonas curvas en WebGL",
      "code": "<Carousel ariaLabel=\"Gallery\" items={photos} renderItem={(photo) => <img src={photo.src} alt={photo.alt} crossOrigin=\"anonymous\" />} rasterize={(photo) => photo.src} />"
+    },
+    {
+     "title": "Reproducción automática con puntos",
+     "code": "<Carousel\n  ariaLabel=\"Highlights\"\n  effect=\"none\"\n  autoplay={6000}\n  indicators=\"dots\"\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+     "title": "Tres por página con barra",
+     "code": "<Carousel\n  ariaLabel=\"Projects\"\n  slidesPerPage={3}\n  indicators=\"bar\"\n  loop={false}\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<Carousel\n  ariaLabel=\"Release notes\"\n  orientation=\"vertical\"\n  height={280}\n  slidesPerPage={2}\n  indicators=\"dots\"\n  items={[\n    { id: \"atlas\", title: \"Atlas\", subtitle: \"Maps and routing\" },\n    { id: \"beacon\", title: \"Beacon\", subtitle: \"Status pages\" },\n    { id: \"cinder\", title: \"Cinder\", subtitle: \"Build cache\" },\n    { id: \"drift\", title: \"Drift\", subtitle: \"Schema migrations\" },\n    { id: \"ember\", title: \"Ember\", subtitle: \"Realtime sync\" },\n  ]}\n  getKey={(p) => p.id}\n  renderItem={(p) => <Card><CardHeader title={p.title} subtitle={p.subtitle} /></Card>}\n/>"
+    },
+    {
+     "title": "Miniaturas",
+     "code": "<Carousel\n  ariaLabel=\"Photos\"\n  effect=\"none\"\n  indicators=\"thumbnails\"\n  items={photos}\n  renderItem={(p) => <img src={p.src} alt={p.alt} />}\n  renderThumbnail={(p) => <img src={p.thumb} alt=\"\" />}\n/>"
     }
    ],
    "origin": "carousel con efecto lente de un proyecto previo",
@@ -2454,6 +2527,18 @@
      "title": "Zonas curvas en WebGL: cada slide declara su imagen con data-raster; los shaders se cargan bajo demanda",
      "code": "<div id=\"covers\" class=\"z-carousel\" data-z-carousel data-effect=\"lens\" data-loop aria-label=\"Project covers\" style=\"--z-carousel-slide-width:320px\">\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Atlas cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Beacon cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Cinder cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Drift cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Ember cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n  <canvas data-raster width=\"640\" height=\"400\" role=\"img\" aria-label=\"Flint cover\" style=\"display:block;width:100%;height:auto\"></canvas>\n</div>",
      "script": "import { carousel } from \"@zuccadev-labs/zuix-zui/dom\";\n\n// Cada <canvas data-raster> es a la vez el slide y la textura de las zonas curvas. Se pinta con los tokens activos.\nconst covers = document.querySelector(\"#covers\");\nconst token = (name) => getComputedStyle(covers).getPropertyValue(name).trim();\ncovers.querySelectorAll(\"canvas[data-raster]\").forEach((canvas, index) => {\n  const ctx = canvas.getContext(\"2d\");\n  // Fondo opaco: la textura debe verse igual que el slide sobre cualquier fondo.\n  ctx.fillStyle = token(\"--z-reading-bg\");\n  ctx.fillRect(0, 0, canvas.width, canvas.height);\n  ctx.fillStyle = token(\"--z-accent\");\n  for (let bar = 0; bar < 6; bar++) {\n    const height = 60 + (((bar + 1) * (index + 3) * 37) % 170);\n    ctx.globalAlpha = 0.2 + ((bar + index) % 4) * 0.15;\n    ctx.fillRect(40 + bar * 96, canvas.height - 48 - height, 64, height);\n  }\n  ctx.globalAlpha = 1;\n  ctx.fillStyle = token(\"--z-fg\");\n  ctx.font = `700 56px ${token(\"--z-font-sans\") || \"sans-serif\"}`;\n  ctx.textBaseline = \"top\";\n  ctx.fillText(canvas.getAttribute(\"aria-label\"), 40, 36);\n});\n// Los lienzos se han pintado después de activar el carrusel: refresh() rehace las réplicas y las texturas.\ncarousel(covers).refresh();\n// Con contenido HTML en los slides, la imagen se declara aparte: data-raster=\"#id\", data-raster-src=\"url\"\n// o carousel(el, { rasterize: (slide, index, size) => imagen })."
+    },
+    {
+     "title": "Reproducción automática con puntos: botón de pausa visible y pausa con el puntero o el foco",
+     "code": "<div id=\"highlights\" class=\"z-carousel\" data-z-carousel data-effect=\"none\" data-autoplay=\"6000\" data-indicators=\"dots\" aria-label=\"Highlights\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Tres por página con barra (desplazamiento nativo con scroll-snap)",
+     "code": "<div id=\"per-page\" class=\"z-carousel\" data-z-carousel data-per-page=\"3\" data-indicators=\"bar\" aria-label=\"Projects\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Vertical, dos por vista",
+     "code": "<div id=\"notes\" class=\"z-carousel\" data-z-carousel data-orientation=\"vertical\" data-per-page=\"2\" data-indicators=\"dots\" data-loop aria-label=\"Release notes\" style=\"--z-carousel-height:280px\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
     }
    ],
    "file": "zui/src/components/carousel/Carousel.manifest.json"
@@ -9390,6 +9475,949 @@
    ],
    "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
    "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
+  },
+  {
+   "name": "ColorArea",
+   "group": "forms",
+   "description": "Área de saturación y brillo del tono del color: un deslizador en dos ejes, suelto.",
+   "import": "import { ColorArea } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-colorarea"
+   ],
+   "a11y": "role=\"slider\" con aria-roledescription «2D slider» y aria-valuetext con los dos canales; flechas en los dos ejes, Mayús diez pasos, Inicio/Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorarea dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Área",
+     "code": "<ColorArea defaultValue=\"#f59e0b\" label=\"Highlight color\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorArea.manifest.json"
+  },
+  {
+   "name": "ColorField",
+   "group": "forms",
+   "description": "Campos del color sueltos: selector de formato, canales (o hexadecimal), opacidad y el selector del sistema.",
+   "import": "import { ColorField } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "formats",
+     "type": "ColorFormat[]"
+    },
+    {
+     "name": "systemPicker",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-radius-sm",
+    "control-height-sm",
+    "fg-muted",
+    "font-mono"
+   ],
+   "classes": [
+    "z-colorfield"
+   ],
+   "a11y": "Cada campo tiene nombre (Hex color, Red, Lightness…); los numéricos aceptan flechas (paso propio del canal). Lo escrito que aún no es un color se conserva hasta salir del campo, que entonces se reescribe. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorfield dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Campos",
+     "code": "<ColorField defaultValue=\"#3b82f6\" />"
+    },
+    {
+     "title": "En RGB",
+     "code": "<ColorField defaultValue=\"rgb(236 72 153 / 0.8)\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorField.manifest.json"
+  },
+  {
+   "name": "ColorPicker",
+   "group": "forms",
+   "description": "Selector de color completo: área de saturación y brillo, deslizadores de tono y opacidad, campos por canal o hexadecimal con selector de formato (hex, rgb, hsl, oklch), muestrario, cuentagotas (EyeDropper como mejora progresiva) y selector del sistema (`<input type=\"color\">`, que también funciona sin JavaScript). El valor es una cadena CSS.",
+   "import": "import { ColorPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "formats",
+     "type": "ColorFormat[]",
+     "default": "[\"hex\", \"rgb\", \"hsl\", \"oklch\"]",
+     "description": "Formatos del selector; con uno solo no se muestra."
+    },
+    {
+     "name": "swatches",
+     "type": "(string | { value, label? })[]",
+     "description": "Muestras fijas; la que coincide con el valor queda marcada."
+    },
+    {
+     "name": "eyeDropper",
+     "type": "boolean",
+     "default": true,
+     "description": "Botón de cuentagotas donde el navegador tenga EyeDropper (Chromium de escritorio); en el resto no aparece."
+    },
+    {
+     "name": "systemPicker",
+     "type": "boolean",
+     "default": true,
+     "description": "Muestra que abre el selector de color del sistema."
+    },
+    {
+     "name": "fields",
+     "type": "boolean",
+     "default": true,
+     "description": "Campos de canal y de formato."
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active",
+    "disabled",
+    "readonly"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "card-bg",
+    "card-border",
+    "card-radius",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-colorpicker"
+   ],
+   "a11y": "role=\"group\" con nombre. El área es un deslizador en dos ejes (role=\"slider\", aria-roledescription «2D slider» y aria-valuetext con saturación y brillo): izquierda/derecha mueven la saturación, arriba/abajo el brillo, Mayús diez pasos, Re/Av Pág el brillo de diez en diez, Inicio/Fin la saturación. Tono y opacidad siguen el patrón APG «slider». Cada campo tiene nombre (Red, Hue, Hex color…); el muestrario es un radiogroup con flechas. El color no es la única pista: la muestra elegida lleva una marca. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorpicker dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Por defecto",
+     "code": "<ColorPicker defaultValue=\"#3b82f6\" name=\"brand\" />"
+    },
+    {
+     "title": "Con muestrario y OKLCH",
+     "code": "<ColorPicker\n  defaultValue=\"oklch(62% 0.19 260)\"\n  swatches={[\"#ef4444\", \"#f59e0b\", \"#10b981\", \"#3b82f6\", \"#8b5cf6\", \"#ec4899\", \"#64748b\", \"#0f172a\"]}\n/>"
+    },
+    {
+     "title": "Opaco, solo hex y RGB",
+     "code": "<ColorPicker defaultValue=\"rgb(16 185 129)\" alpha={false} formats={[\"hex\", \"rgb\"]} eyeDropper={false} />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "apg": "slider",
+   "file": "zui/src/components/forms/ColorPicker.manifest.json"
+  },
+  {
+   "name": "ColorPickerTrigger",
+   "group": "forms",
+   "description": "Botón con la muestra y el valor que abre el ColorPicker en un popover de cristal elevado (popover nativo: Escape y pulsación fuera lo cierran).",
+   "import": "import { ColorPickerTrigger } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "formats",
+     "type": "ColorFormat[]"
+    },
+    {
+     "name": "swatches",
+     "type": "(string | { value, label? })[]",
+     "description": "Muestras fijas; la que coincide con el valor queda marcada."
+    },
+    {
+     "name": "eyeDropper",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "systemPicker",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "fields",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-bg",
+    "control-bg-hover",
+    "control-border",
+    "control-border-hover",
+    "control-radius",
+    "control-height-md",
+    "popup-bg",
+    "popup-radius",
+    "font-mono",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-colortrigger"
+   ],
+   "a11y": "El botón abre el panel con `popovertarget` (aria-expanded lo expone el navegador y la pieza lo refleja); el panel es role=\"dialog\" con nombre y recibe el foco en el área al abrirse; Escape lo cierra y devuelve el foco al botón. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colortrigger dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con muestra",
+     "code": "<ColorPickerTrigger id=\"accent-color\" defaultValue=\"#8b5cf6\" label=\"Accent color\" swatches={[\"#ef4444\", \"#f59e0b\", \"#10b981\", \"#3b82f6\", \"#8b5cf6\", \"#ec4899\"]} />"
+    },
+    {
+     "title": "Pequeño, en HSL",
+     "code": "<ColorPickerTrigger id=\"tag-color\" defaultValue=\"hsl(160 84% 39%)\" size=\"sm\" label=\"Tag color\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorPickerTrigger.manifest.json"
+  },
+  {
+   "name": "ColorSlider",
+   "group": "forms",
+   "description": "Deslizador de tono o de opacidad del color, horizontal o vertical, suelto.",
+   "import": "import { ColorSlider } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "channel",
+     "type": "enum",
+     "values": [
+      "hue",
+      "alpha"
+     ],
+     "default": "hue"
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "active",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-colorslider"
+   ],
+   "a11y": "Patrón APG «slider»: role=\"slider\" con aria-valuetext («217 degrees», «50% opaque»); flechas, Inicio, Fin, Re/Av Pág y Mayús. Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorslider (data-channel, data-orientation) dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tono",
+     "code": "<ColorSlider channel=\"hue\" defaultValue=\"#10b981\" />"
+    },
+    {
+     "title": "Opacidad",
+     "code": "<ColorSlider channel=\"alpha\" defaultValue=\"#3b82f680\" />"
+    },
+    {
+     "title": "Vertical",
+     "code": "<ColorSlider channel=\"hue\" orientation=\"vertical\" defaultValue=\"#ec4899\" />"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "file": "zui/src/components/forms/ColorSlider.manifest.json"
+  },
+  {
+   "name": "ColorSwatchPicker",
+   "group": "forms",
+   "description": "Muestrario de colores fijos: un grupo de radios; la muestra elegida lleva una marca que contrasta con su color.",
+   "import": "import { ColorSwatchPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor controlado: cualquier color CSS que entienda la pieza (hex, rgb, hsl, hwb, oklch)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void",
+     "description": "Cada cambio, con el valor escrito en el formato elegido."
+    },
+    {
+     "name": "onValueChangeEnd",
+     "type": "(value: string) => void",
+     "description": "Al soltar el puntero, tras una tecla, al elegir una muestra o al terminar de escribir."
+    },
+    {
+     "name": "swatches",
+     "type": "(string | { value, label? })[]",
+     "description": "Muestras fijas; la que coincide con el valor queda marcada.",
+     "required": true
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "description": "Formato del valor (controlado)."
+    },
+    {
+     "name": "defaultFormat",
+     "type": "enum",
+     "values": [
+      "hex",
+      "rgb",
+      "hsl",
+      "oklch"
+     ],
+     "default": "hex",
+     "description": "Por defecto, el de `value` o `defaultValue`."
+    },
+    {
+     "name": "onFormatChange",
+     "type": "(format: ColorFormat) => void"
+    },
+    {
+     "name": "alpha",
+     "type": "boolean",
+     "default": true,
+     "description": "Opacidad (deslizador y campo). Sin ella el valor es siempre opaco."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Campo oculto con el valor, para enviar un formulario."
+    },
+    {
+     "name": "form",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "\"Color picker\"",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ColorPickerLabels>",
+     "description": "Textos visibles y accesibles (inglés por defecto): área, tono, alfa, canales, formatos, cuentagotas, muestrario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "checked",
+    "disabled"
+   ],
+   "tokens": [
+    "colorpicker-white",
+    "colorpicker-black",
+    "colorpicker-spectrum",
+    "line",
+    "line-strong",
+    "surface-solid",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "radius-full",
+    "radius-xs",
+    "control-radius-lg",
+    "shadow-sm",
+    "touch-target",
+    "control-radius-sm",
+    "fg",
+    "space-7"
+   ],
+   "classes": [
+    "z-colorswatches"
+   ],
+   "a11y": "Patrón APG «radio»: role=\"radiogroup\" con nombre, una parada de Tab y flechas que eligen; cada muestra tiene nombre (su `label` o su valor). Sin React (`@zuccadev-labs/zuix-zui/dom`): .z-colorswatches dentro de [data-z-dom] con data-value, data-format, data-formats, data-alpha, data-swatches (separadas por `;`), data-name; avisa con z:change { value }, z:changeend y z:formatchange; setColorValue(el, valor) lo cambia.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Muestrario",
+     "code": "<ColorSwatchPicker\n  defaultValue=\"#10b981\"\n  swatches={[\n    { value: \"#ef4444\", label: \"Red\" },\n    { value: \"#f59e0b\", label: \"Amber\" },\n    { value: \"#10b981\", label: \"Emerald\" },\n    { value: \"#3b82f6\", label: \"Blue\" },\n    { value: \"#8b5cf6\", label: \"Violet\" },\n    { value: \"#ec4899\", label: \"Pink\" },\n  ]}\n/>"
+    }
+   ],
+   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "apg": "radio",
+   "file": "zui/src/components/forms/ColorSwatchPicker.manifest.json"
   },
   {
    "name": "Combobox",

@@ -58,6 +58,8 @@ const COVERED = [
   "zui/src/core/format.ts",
   "zui/src/core/clipboard.ts",
   "zui/src/core/compare.ts",
+  "zui/src/core/color.ts",
+  "zui/src/core/carousel.ts",
   "zui/src/core/date.ts",
   "zui/src/core/dir.ts",
   "zui/src/core/focus.ts",

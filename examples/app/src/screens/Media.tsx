@@ -1,0 +1,162 @@
+import { useState } from "react";
+import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
+import {
+  Card,
+  CardHeader,
+  Carousel,
+  ColorArea,
+  ColorField,
+  ColorPicker,
+  ColorPickerTrigger,
+  ColorSlider,
+  ColorSwatchPicker,
+  type ColorFormat,
+} from "@zuccadev-labs/zuix-zui";
+
+const SWATCHES = [
+  { value: "#ef4444", label: "Red" },
+  { value: "#f59e0b", label: "Amber" },
+  { value: "#10b981", label: "Emerald" },
+  { value: "#3b82f6", label: "Blue" },
+  { value: "#8b5cf6", label: "Violet" },
+  { value: "#ec4899", label: "Pink" },
+  { value: "#64748b", label: "Slate" },
+  { value: "#0f172a", label: "Ink" },
+];
+
+const PROJECTS = [
+  { id: "atlas", title: "Atlas", subtitle: "Maps and routing" },
+  { id: "beacon", title: "Beacon", subtitle: "Status pages" },
+  { id: "cinder", title: "Cinder", subtitle: "Build cache" },
+  { id: "drift", title: "Drift", subtitle: "Schema migrations" },
+  { id: "ember", title: "Ember", subtitle: "Realtime sync" },
+  { id: "flint", title: "Flint", subtitle: "Feature flags" },
+];
+type Project = (typeof PROJECTS)[number];
+const slide = (p: Project) => (
+  <Card>
+    <CardHeader title={p.title} subtitle={p.subtitle} />
+  </Card>
+);
+
+/** Oleada 7: medios y piezas tardías (color, deslizadores, imágenes, firma, QR, atajos, confeti, descargas). */
+export function Media() {
+  const [color, setColor] = useState("#3b82f6");
+  const [format, setFormat] = useState<ColorFormat>("hex");
+  const [ended, setEnded] = useState("");
+  return (
+    <Page>
+      <PageHeader title="Media" description="Color, sliders, images, signature, QR codes, shortcuts and downloads." />
+      <PageSection title="Color">
+        <Grid min="300px" gap={4}>
+          <Card>
+            <CardHeader title="Color picker" subtitle="Controlled, with swatches." />
+            <Stack gap={3}>
+              <div data-testid="m-picker">
+                <ColorPicker
+                  value={color}
+                  onValueChange={setColor}
+                  onValueChangeEnd={setEnded}
+                  format={format}
+                  onFormatChange={setFormat}
+                  swatches={SWATCHES}
+                  name="brand"
+                />
+              </div>
+              <p className="app-muted" data-testid="m-picker-value">
+                {color}
+              </p>
+              <p className="app-muted" data-testid="m-picker-end">
+                {ended}
+              </p>
+            </Stack>
+          </Card>
+          <Card>
+            <CardHeader title="In a popover" subtitle="Trigger with a swatch, area, sliders and fields." />
+            <Stack gap={4}>
+              <div data-testid="m-trigger">
+                <ColorPickerTrigger id="m-trigger-picker" defaultValue="#8b5cf6" label="Accent color" swatches={SWATCHES.slice(0, 6)} />
+              </div>
+              <div data-testid="m-swatches">
+                <ColorSwatchPicker defaultValue="#10b981" swatches={SWATCHES} label="Tag color" />
+              </div>
+              <div data-testid="m-field">
+                <ColorField defaultValue="rgb(236 72 153 / 0.8)" />
+              </div>
+            </Stack>
+          </Card>
+          <Card>
+            <CardHeader title="Parts" subtitle="Area and sliders on their own." />
+            <Stack gap={3}>
+              <div data-testid="m-area">
+                <ColorArea defaultValue="#f59e0b" label="Highlight color" />
+              </div>
+              <div data-testid="m-hue">
+                <ColorSlider channel="hue" defaultValue="#10b981" />
+              </div>
+              <div data-testid="m-alpha">
+                <ColorSlider channel="alpha" defaultValue="#3b82f680" />
+              </div>
+            </Stack>
+          </Card>
+        </Grid>
+      </PageSection>
+      <PageSection title="Carousel">
+        <Stack gap={6}>
+          <div data-testid="m-car-auto">
+            <Carousel
+              ariaLabel="Highlights"
+              effect="none"
+              autoplay={2000}
+              indicators="dots"
+              items={PROJECTS}
+              getKey={(p) => p.id}
+              renderItem={slide}
+            />
+          </div>
+          <div data-testid="m-car-page">
+            <Carousel
+              ariaLabel="Projects"
+              slidesPerPage={3}
+              indicators="bar"
+              loop={false}
+              items={PROJECTS}
+              getKey={(p) => p.id}
+              renderItem={slide}
+            />
+          </div>
+          <Grid min="300px" gap={4}>
+            <div data-testid="m-car-vertical">
+              <Carousel
+                ariaLabel="Release notes"
+                orientation="vertical"
+                height={260}
+                slidesPerPage={2}
+                indicators="dots"
+                items={PROJECTS}
+                getKey={(p) => p.id}
+                renderItem={slide}
+              />
+            </div>
+            <div data-testid="m-car-thumbs">
+              <Carousel
+                ariaLabel="Covers"
+                effect="none"
+                loop={false}
+                indicators="thumbnails"
+                items={PROJECTS}
+                getKey={(p) => p.id}
+                renderItem={slide}
+                renderThumbnail={(p) => (
+                  <span className="app-thumb" aria-hidden="true">
+                    {p.title.slice(0, 2)}
+                  </span>
+                )}
+              />
+            </div>
+          </Grid>
+        </Stack>
+      </PageSection>
+    </Page>
+  );
+}

@@ -11,6 +11,29 @@ radios y material de los tokens.
 
 ### Añadido
 
+- Oleada 7, medios y piezas tardías (todo con contrato HTML, modo sin framework y binding de React sobre un solo
+  árbol de `core/vnode`):
+  - Familia `ColorPicker`: `ColorPicker` (área de saturación y brillo, tono, opacidad, campos por canal o
+    hexadecimal, formato hex/rgb/hsl/oklch, muestrario, cuentagotas con `EyeDropper` como mejora progresiva y
+    selector del sistema con `<input type="color">`, que también es el respaldo sin JavaScript),
+    `ColorPickerTrigger` (botón con muestra que lo abre en un popover nativo), `ColorArea`, `ColorSlider` (tono u
+    opacidad, horizontal o vertical), `ColorSwatchPicker` (radiogroup) y `ColorField`. El valor público es una cadena
+    CSS; dentro se guarda en HSV para que el tono no se pierda en los grises. El área es un deslizador en dos ejes
+    accesible con teclado; tono y alfa siguen el patrón APG «slider». En `/dom`, `setColorValue(el, valor)` y los
+    avisos `z:change`, `z:changeend` y `z:formatchange`.
+  - `core/color` (exportado desde la raíz: `parseColor`, `formatColor`, `normalizeColor`, `formatOf`,
+    `rgbToHsv`/`hsvToRgb`, `rgbToHsl`/`hslToRgb`, `rgbToOklch`/`oklchToRgb`, `contrastRatio`): lectura de hex,
+    `rgb()`, `hsl()`, `hwb()` y `oklch()` (con comas o espacios, porcentajes y ángulos), conversiones a OKLab según
+    Ottosson con el croma reducido dentro de sRGB y escritura con redondeos estables (escribir, leer y volver a
+    escribir da la misma cadena en los cuatro formatos, probado con fast-check).
+  - `Carousel` ampliado sin cambiar su contrato: `autoplay` (`true` o milisegundos) con botón de pausa visible como
+    primer control (WCAG 2.2.2), pausa con el puntero encima, con el foco dentro, con la pestaña oculta y fuera de
+    pantalla, sin arranque automático con movimiento reducido y región viva callada mientras corre; `indicators`
+    (`counter` por defecto, `dots`, `bar`, `thumbnails` con `renderThumbnail`, `none`); `slidesPerPage` (1–8) y
+    `orientation="vertical"` (con `height`), que usan el desplazamiento nativo con scroll-snap. En `/dom`, los mismos
+    con `data-autoplay`, `data-indicators`, `data-per-page` y `data-orientation`. Lógica en `core/carousel` y
+    `core/carousel-runtime`, compartida por los dos modos.
+
 - Oleada 6, efectos y cargadores con estética liquid glass (todo con contrato HTML, modo sin framework y binding de
   React; movimiento solo con `prefers-reduced-motion: no-preference`, en pausa fuera de pantalla con un único
   `IntersectionObserver` compartido, `core/visibility`):

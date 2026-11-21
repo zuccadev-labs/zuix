@@ -1308,6 +1308,209 @@ malaga" data-ignore-accents="">Un
 </fieldset>
   </div>
 </section>
+<section class="z-card demo" data-component="ColorArea" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ColorArea</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-label="Highlight color" data-size="md" data-value="#f59e0b" role="group" aria-label="Highlight color" style="--z-colorpicker-color:#f59e0b;--z-colorpicker-opaque:#f59e0b;--z-colorpicker-hue:#ffa000;--z-colorpicker-x:0.9551;--z-colorpicker-y:0.0392;--z-colorpicker-h:0.1047;--z-colorpicker-a:1" id="z-colorarea-_R_0_" class="z-colorarea">
+  <div class="z-colorpicker__area" data-part="area">
+    <span class="z-colorpicker__thumb" data-part="area-thumb" role="slider" tabindex="0" aria-label="Color" aria-roledescription="2D slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="96" aria-valuetext="Saturation 96%, brightness 96%"></span>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ColorField" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ColorField</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-size="md" data-value="#3b82f6" role="group" aria-label="Color picker" style="--z-colorpicker-color:#3b82f6;--z-colorpicker-opaque:#3b82f6;--z-colorpicker-hue:#0061ff;--z-colorpicker-x:0.7602;--z-colorpicker-y:0.0353;--z-colorpicker-h:0.6034;--z-colorpicker-a:1" id="z-colorfield-_R_0_" class="z-colorfield">
+  <div class="z-colorpicker__fields" data-format="hex">
+    <span class="z-select z-colorpicker__format" data-size="sm">
+      <select class="z-select__control" data-part="format" aria-label="Color format">
+        <option value="hex" selected="">HEX</option>
+        <option value="rgb">RGB</option>
+        <option value="hsl">HSL</option>
+        <option value="oklch">OKLCH</option>
+      </select>
+      <span class="z-select__chevron">
+        <z-icon name="chevron-up-down" size="14"></z-icon>
+      </span>
+    </span>
+    <span class="z-colorpicker__channel" data-channel="hex">
+      <span class="z-input z-colorpicker__field" data-size="sm" data-channel="hex">
+        <span class="z-input__icon z-colorpicker__field-prefix" aria-hidden="true">#</span>
+        <input class="z-input__control" type="text" data-channel="hex" aria-label="Hex color" maxLength="7" spellCheck="false" autoComplete="off" value="3B82F6"/>
+      </span>
+      <span class="z-colorpicker__channel-label" aria-hidden="true">HEX</span>
+    </span>
+    <span class="z-colorpicker__channel" data-channel="alpha">
+      <span class="z-input z-colorpicker__field" data-size="sm" data-channel="alpha">
+        <input class="z-input__control" type="number" inputMode="decimal" data-channel="alpha" aria-label="Alpha" min="0" max="100" step="1" autoComplete="off" value="100"/>
+      </span>
+      <span class="z-colorpicker__channel-label" aria-hidden="true">A</span>
+    </span>
+    <label class="z-colorpicker__system z-colorpicker__system--field">
+      <input type="color" class="z-colorpicker__system-input" data-part="system" aria-label="System color picker" value="#3b82f6"/>
+      <span class="z-colorpicker__system-swatch" aria-hidden="true"></span>
+    </label>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ColorPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ColorPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-name="brand" data-size="md" data-value="#3b82f6" role="group" aria-label="Color picker" style="--z-colorpicker-color:#3b82f6;--z-colorpicker-opaque:#3b82f6;--z-colorpicker-hue:#0061ff;--z-colorpicker-x:0.7602;--z-colorpicker-y:0.0353;--z-colorpicker-h:0.6034;--z-colorpicker-a:1" id="z-colorpicker-_R_0_" class="z-colorpicker">
+  <div class="z-colorpicker__area" data-part="area">
+    <span class="z-colorpicker__thumb" data-part="area-thumb" role="slider" tabindex="0" aria-label="Color" aria-roledescription="2D slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="76" aria-valuetext="Saturation 76%, brightness 96%"></span>
+  </div>
+  <div class="z-colorpicker__controls">
+    <button type="button" class="z-btn z-btn--icon z-btn--ghost z-colorpicker__eyedropper" data-size="sm" title="Pick a color from the screen" data-part="eyedropper" aria-label="Pick a color from the screen" hidden="">
+      <z-icon name="eye-dropper" size="16"></z-icon>
+    </button>
+    <div class="z-colorpicker__sliders">
+      <div class="z-colorpicker__slider" data-part="hue" data-channel="hue" data-orientation="horizontal">
+        <span class="z-colorpicker__slider-track" aria-hidden="true"></span>
+        <span class="z-colorpicker__slider-thumb" data-part="hue-thumb" role="slider" tabindex="0" aria-label="Hue" aria-valuemin="0" aria-valuemax="360" aria-valuenow="217" aria-valuetext="217 degrees" aria-orientation="horizontal"></span>
+      </div>
+      <div class="z-colorpicker__slider" data-part="alpha" data-channel="alpha" data-orientation="horizontal">
+        <span class="z-colorpicker__slider-track" aria-hidden="true"></span>
+        <span class="z-colorpicker__slider-thumb" data-part="alpha-thumb" role="slider" tabindex="0" aria-label="Alpha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="100% opaque" aria-orientation="horizontal"></span>
+      </div>
+    </div>
+    <label class="z-colorpicker__system z-colorpicker__preview">
+      <input type="color" class="z-colorpicker__system-input" data-part="system" aria-label="System color picker" value="#3b82f6"/>
+      <span class="z-colorpicker__system-swatch" aria-hidden="true"></span>
+    </label>
+  </div>
+  <div class="z-colorpicker__fields" data-format="hex">
+    <span class="z-select z-colorpicker__format" data-size="sm">
+      <select class="z-select__control" data-part="format" aria-label="Color format">
+        <option value="hex" selected="">HEX</option>
+        <option value="rgb">RGB</option>
+        <option value="hsl">HSL</option>
+        <option value="oklch">OKLCH</option>
+      </select>
+      <span class="z-select__chevron">
+        <z-icon name="chevron-up-down" size="14"></z-icon>
+      </span>
+    </span>
+    <span class="z-colorpicker__channel" data-channel="hex">
+      <span class="z-input z-colorpicker__field" data-size="sm" data-channel="hex">
+        <span class="z-input__icon z-colorpicker__field-prefix" aria-hidden="true">#</span>
+        <input class="z-input__control" type="text" data-channel="hex" aria-label="Hex color" maxLength="7" spellCheck="false" autoComplete="off" value="3B82F6"/>
+      </span>
+      <span class="z-colorpicker__channel-label" aria-hidden="true">HEX</span>
+    </span>
+    <span class="z-colorpicker__channel" data-channel="alpha">
+      <span class="z-input z-colorpicker__field" data-size="sm" data-channel="alpha">
+        <input class="z-input__control" type="number" inputMode="decimal" data-channel="alpha" aria-label="Alpha" min="0" max="100" step="1" autoComplete="off" value="100"/>
+      </span>
+      <span class="z-colorpicker__channel-label" aria-hidden="true">A</span>
+    </span>
+  </div>
+  <input type="hidden" name="brand" value="#3b82f6"/>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ColorPickerTrigger" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ColorPickerTrigger</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-swatches="[{&quot;value&quot;:&quot;#ef4444&quot;},{&quot;value&quot;:&quot;#f59e0b&quot;},{&quot;value&quot;:&quot;#10b981&quot;},{&quot;value&quot;:&quot;#3b82f6&quot;},{&quot;value&quot;:&quot;#8b5cf6&quot;},{&quot;value&quot;:&quot;#ec4899&quot;}]" data-label="Accent color" data-size="md" data-value="#8b5cf6" data-state="closed" style="--z-colorpicker-color:#8b5cf6;--z-colorpicker-opaque:#8b5cf6;--z-colorpicker-hue:#4e00ff;--z-colorpicker-x:0.626;--z-colorpicker-y:0.0353;--z-colorpicker-h:0.7175;--z-colorpicker-a:1" id="accent-color" class="z-colortrigger">
+  <button type="button" class="z-colortrigger__button" popoverTarget="accent-color-panel" aria-haspopup="dialog" aria-expanded="false" data-part="trigger">
+    <span class="z-colortrigger__swatch" aria-hidden="true"></span>
+    <span class="z-colortrigger__value">#8b5cf6</span>
+    <span class="z-colortrigger__chevron" aria-hidden="true">
+      <z-icon name="chevron-up-down" size="14"></z-icon>
+    </span>
+  </button>
+  <div id="accent-color-panel" class="z-liquid z-popover z-colortrigger__panel" popover="auto" role="dialog" aria-label="Accent color" data-state="closed">
+    <div class="z-colortrigger__picker" role="group" aria-label="Accent color" data-size="md">
+      <div class="z-colorpicker__area" data-part="area">
+        <span class="z-colorpicker__thumb" data-part="area-thumb" role="slider" tabindex="0" aria-label="Color" aria-roledescription="2D slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="63" aria-valuetext="Saturation 63%, brightness 96%"></span>
+      </div>
+      <div class="z-colorpicker__controls">
+        <button type="button" class="z-btn z-btn--icon z-btn--ghost z-colorpicker__eyedropper" data-size="sm" title="Pick a color from the screen" data-part="eyedropper" aria-label="Pick a color from the screen" hidden="">
+          <z-icon name="eye-dropper" size="16"></z-icon>
+        </button>
+        <div class="z-colorpicker__sliders">
+          <div class="z-colorpicker__slider" data-part="hue" data-channel="hue" data-orientation="horizontal">
+            <span class="z-colorpicker__slider-track" aria-hidden="true"></span>
+            <span class="z-colorpicker__slider-thumb" data-part="hue-thumb" role="slider" tabindex="0" aria-label="Hue" aria-valuemin="0" aria-valuemax="360" aria-valuenow="258" aria-valuetext="258 degrees" aria-orientation="horizontal"></span>
+          </div>
+          <div class="z-colorpicker__slider" data-part="alpha" data-channel="alpha" data-orientation="horizontal">
+            <span class="z-colorpicker__slider-track" aria-hidden="true"></span>
+            <span class="z-colorpicker__slider-thumb" data-part="alpha-thumb" role="slider" tabindex="0" aria-label="Alpha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="100% opaque" aria-orientation="horizontal"></span>
+          </div>
+        </div>
+        <label class="z-colorpicker__system z-colorpicker__preview">
+          <input type="color" class="z-colorpicker__system-input" data-part="system" aria-label="System color picker" value="#8b5cf6"/>
+          <span class="z-colorpicker__system-swatch" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div class="z-colorpicker__fields" data-format="hex">
+        <span class="z-select z-colorpicker__format" data-size="sm">
+          <select class="z-select__control" data-part="format" aria-label="Color format">
+            <option value="hex" selected="">HEX</option>
+            <option value="rgb">RGB</option>
+            <option value="hsl">HSL</option>
+            <option value="oklch">OKLCH</option>
+          </select>
+          <span class="z-select__chevron">
+            <z-icon name="chevron-up-down" size="14"></z-icon>
+          </span>
+        </span>
+        <span class="z-colorpicker__channel" data-channel="hex">
+          <span class="z-input z-colorpicker__field" data-size="sm" data-channel="hex">
+            <span class="z-input__icon z-colorpicker__field-prefix" aria-hidden="true">#</span>
+            <input class="z-input__control" type="text" data-channel="hex" aria-label="Hex color" maxLength="7" spellCheck="false" autoComplete="off" value="8B5CF6"/>
+          </span>
+          <span class="z-colorpicker__channel-label" aria-hidden="true">HEX</span>
+        </span>
+        <span class="z-colorpicker__channel" data-channel="alpha">
+          <span class="z-input z-colorpicker__field" data-size="sm" data-channel="alpha">
+            <input class="z-input__control" type="number" inputMode="decimal" data-channel="alpha" aria-label="Alpha" min="0" max="100" step="1" autoComplete="off" value="100"/>
+          </span>
+          <span class="z-colorpicker__channel-label" aria-hidden="true">A</span>
+        </span>
+      </div>
+      <div class="z-colorpicker__swatches" role="radiogroup" aria-label="Swatches">
+        <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="#ef4444" tabindex="-1" data-value="#ef4444" data-ink="dark" style="--z-swatch:#ef4444"></button>
+        <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="#f59e0b" tabindex="-1" data-value="#f59e0b" data-ink="dark" style="--z-swatch:#f59e0b"></button>
+        <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="#10b981" tabindex="-1" data-value="#10b981" data-ink="dark" style="--z-swatch:#10b981"></button>
+        <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="#3b82f6" tabindex="-1" data-value="#3b82f6" data-ink="dark" style="--z-swatch:#3b82f6"></button>
+        <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="true" aria-label="#8b5cf6" tabindex="0" data-value="#8b5cf6" data-ink="dark" style="--z-swatch:#8b5cf6"></button>
+        <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="#ec4899" tabindex="-1" data-value="#ec4899" data-ink="dark" style="--z-swatch:#ec4899"></button>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ColorSlider" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ColorSlider</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-channel="hue" data-size="md" data-value="#10b981" data-orientation="horizontal" style="--z-colorpicker-color:#10b981;--z-colorpicker-opaque:#10b981;--z-colorpicker-hue:#00ffab;--z-colorpicker-x:0.9135;--z-colorpicker-y:0.2745;--z-colorpicker-h:0.4448;--z-colorpicker-a:1" id="z-colorslider-_R_0_" class="z-colorslider">
+  <div class="z-colorpicker__slider" data-part="hue" data-channel="hue" data-orientation="horizontal">
+    <span class="z-colorpicker__slider-track" aria-hidden="true"></span>
+    <span class="z-colorpicker__slider-thumb" data-part="hue-thumb" role="slider" tabindex="0" aria-label="Hue" aria-valuemin="0" aria-valuemax="360" aria-valuenow="160" aria-valuetext="160 degrees" aria-orientation="horizontal"></span>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ColorSwatchPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ColorSwatchPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div data-swatches="[{&quot;value&quot;:&quot;#ef4444&quot;,&quot;label&quot;:&quot;Red&quot;},{&quot;value&quot;:&quot;#f59e0b&quot;,&quot;label&quot;:&quot;Amber&quot;},{&quot;value&quot;:&quot;#10b981&quot;,&quot;label&quot;:&quot;Emerald&quot;},{&quot;value&quot;:&quot;#3b82f6&quot;,&quot;label&quot;:&quot;Blue&quot;},{&quot;value&quot;:&quot;#8b5cf6&quot;,&quot;label&quot;:&quot;Violet&quot;},{&quot;value&quot;:&quot;#ec4899&quot;,&quot;label&quot;:&quot;Pink&quot;}]" data-size="md" data-value="#10b981" style="--z-colorpicker-color:#10b981;--z-colorpicker-opaque:#10b981;--z-colorpicker-hue:#00ffab;--z-colorpicker-x:0.9135;--z-colorpicker-y:0.2745;--z-colorpicker-h:0.4448;--z-colorpicker-a:1" id="z-colorswatches-_R_0_" class="z-colorswatches">
+  <div class="z-colorpicker__swatches" role="radiogroup" aria-label="Swatches">
+    <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="Red" tabindex="-1" data-value="#ef4444" data-ink="dark" style="--z-swatch:#ef4444"></button>
+    <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="Amber" tabindex="-1" data-value="#f59e0b" data-ink="dark" style="--z-swatch:#f59e0b"></button>
+    <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="true" aria-label="Emerald" tabindex="0" data-value="#10b981" data-ink="dark" style="--z-swatch:#10b981"></button>
+    <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="Blue" tabindex="-1" data-value="#3b82f6" data-ink="dark" style="--z-swatch:#3b82f6"></button>
+    <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="Violet" tabindex="-1" data-value="#8b5cf6" data-ink="dark" style="--z-swatch:#8b5cf6"></button>
+    <button type="button" class="z-colorpicker__swatch" role="radio" aria-checked="false" aria-label="Pink" tabindex="-1" data-value="#ec4899" data-ink="dark" style="--z-swatch:#ec4899"></button>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Combobox" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Combobox</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
