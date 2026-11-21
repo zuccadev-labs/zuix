@@ -7,7 +7,7 @@
 - [Zuix para usuarios](https://zuccadev-labs.github.io/zuix/docs/users.md): zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación con un solo estándar.
 - [Tokens](https://zuccadev-labs.github.io/zuix/docs/users/tokens.md): @zuccadev-labs/zuix-tokens es la fuente única de los valores de diseño.
 - [Zicon](https://zuccadev-labs.github.io/zuix/docs/users/zicon.md): @zuccadev-labs/zuix-zicon es el estándar iconográfico de la suite.
-- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 130 componentes en 11 grupos.
+- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 144 componentes en 12 grupos.
 - [Zout](https://zuccadev-labs.github.io/zuix/docs/users/zout.md): @zuccadev-labs/zuix-zout es el paquete de layouts y ventanas dinámicas.
 - [Zudocs](https://zuccadev-labs.github.io/zuix/docs/users/zudocs.md): @zuccadev-labs/zuix-zudocs es el estándar de documentación de la suite y su plantilla: un sitio Docusaurus con el estilo liquid glass, que se adapta a otro proyecto o marca editando un solo archivo.
 - [Usar zuix con cualquier framework](https://zuccadev-labs.github.io/zuix/docs/users/frameworks.md): zuix no es una biblioteca de React.

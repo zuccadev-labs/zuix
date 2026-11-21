@@ -792,6 +792,43 @@ for (const browserName of wanted) {
           } else note("portapapeles sin comprobar fuera de Chromium");
         },
       ));
+    await test("componente: la tabla de API es tabla si cabe y tarjetas si no, sin partir palabras ni desplazar en horizontal", async () => {
+      // Palabras partidas en la tabla: salto de línea entre dos letras de una misma palabra.
+      const check = (page) =>
+        page.evaluate(() => {
+          const box = document.querySelector(".zd-table--props");
+          const split = [];
+          for (const code of box.querySelectorAll("code, td, th")) {
+            for (const node of code.childNodes) {
+              if (node.nodeType !== 3) continue;
+              const range = document.createRange();
+              let prev = null;
+              for (let i = 0; i < node.textContent.length; i++) {
+                range.setStart(node, i);
+                range.setEnd(node, i + 1);
+                const r = range.getClientRects()[0];
+                const letter = /[\p{L}\p{N}]/u.test(node.textContent[i]);
+                if (r && letter && prev && r.top > prev.top + r.height / 2) split.push(node.textContent);
+                prev = r && letter ? r : null;
+              }
+            }
+          }
+          return { layout: box.dataset.layout, overflow: box.scrollWidth - box.clientWidth, split };
+        });
+      for (const [width, path, layout] of [
+        [390, "components/media/qr-code", "cards"],
+        [1440, "components/media/qr-code", "table"],
+        [1440, "components/forms/time-picker", "cards"],
+      ])
+        await withPage({ width, path }, async (page) => {
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForFunction(() => document.querySelector(".zd-table--props")?.dataset.layout);
+          const r = await check(page);
+          ok(r.layout === layout, `${path} a ${width}: ${r.layout}, se esperaba ${layout}`);
+          ok(r.overflow <= 1, `${path} a ${width}: la tabla desplaza ${r.overflow} px`);
+          ok(!r.split.length, `${path} a ${width}: palabras partidas en ${r.split.slice(0, 3).join(" · ")}`);
+        });
+    });
   }
 
   if (firstDoc && existsSync(join(dir, `${firstDoc}.md`)))

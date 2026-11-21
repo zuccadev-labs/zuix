@@ -12,6 +12,7 @@ import { useSiteData, useZudocs } from "../../site";
 import { CopyPage } from "../CopyPage";
 import { PackageInstall } from "../PackageInstall";
 import { ArticleBar, Crumbs, DocsShell, Pager, PageGrid, RailCard } from "../Shell";
+import { Fragment, useEffect, useRef } from "react";
 import { Toc, type TocEntry } from "../Toc";
 import { COLUMN, useDemos } from "./demos";
 import { Example, useCodeMode } from "./Example";
@@ -71,12 +72,64 @@ const anchor = (s: string) =>
 /** El índice pinta HTML (como el de los documentos): los títulos de los ejemplos van escapados. */
 const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Código de una celda con puntos de corte entre piezas (tras `<`, `,`, `|`, `:`, `(`, `{`, `=>`), nunca dentro de un nombre. */
+function breakable(text: string) {
+  const parts = text.split(/(?<=[<,|:({]|=>)/);
+  return parts.map((part, i) => (
+    // biome-ignore lint/suspicious/noArrayIndexKey: las piezas de un texto fijo no se reordenan
+    <Fragment key={i}>
+      {i ? <wbr /> : null}
+      {part}
+    </Fragment>
+  ));
+}
+
 function typeOf(p: Prop) {
   if (p.values?.length) return p.values.map((v) => JSON.stringify(v)).join(" | ");
   return p.type;
 }
 
+/**
+ * Tabla de props que pasa a tarjetas cuando no cabe: mide una vez el ancho mínimo de la tabla (sin partir palabras) y
+ * lo compara con su caja al cambiar de tamaño. Escribe `data-layout` ("table" o "cards"); la hoja hace el resto.
+ */
+function usePropsLayout() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = ref.current;
+    const table = box?.querySelector("table");
+    if (!box || !table || typeof ResizeObserver === "undefined") return;
+    let need = 0;
+    const measure = () => {
+      box.dataset.layout = "table";
+      table.style.inlineSize = "min-content";
+      need = table.getBoundingClientRect().width;
+      table.style.inlineSize = "";
+    };
+    const decide = () => {
+      box.dataset.layout = need > box.clientWidth + 1 ? "cards" : "table";
+    };
+    measure();
+    decide();
+    const ro = new ResizeObserver(decide);
+    ro.observe(box);
+    // La fuente de la marca llega después y cambia el ancho de las palabras.
+    let live = true;
+    document.fonts?.ready.then(() => {
+      if (!live) return;
+      measure();
+      decide();
+    });
+    return () => {
+      live = false;
+      ro.disconnect();
+    };
+  }, []);
+  return ref;
+}
+
 export default function ComponentPage({ data }: { data: ComponentData }) {
+  const propsRef = usePropsLayout();
   const site = useZudocs();
   const { groups } = useSiteData();
   const demos = useDemos();
@@ -254,7 +307,7 @@ export default function ComponentPage({ data }: { data: ComponentData }) {
                   API
                 </Heading>
                 {/* biome-ignore lint/a11y/noNoninteractiveTabindex: región desplazable en pantallas estrechas */}
-                <div className="zd-table" role="region" aria-label={`Props de ${data.name}`} tabIndex={0}>
+                <div ref={propsRef} className="zd-table zd-table--props" role="region" aria-label={`Props de ${data.name}`} tabIndex={0}>
                   <table className="zd-props">
                     <thead>
                       <tr>
@@ -267,14 +320,20 @@ export default function ComponentPage({ data }: { data: ComponentData }) {
                     <tbody>
                       {data.props.map((p) => (
                         <tr key={p.name}>
-                          <td>
+                          <th scope="row">
                             <code className="zd-props__name">{p.name}</code>
+                          </th>
+                          <td className="zd-props__type-cell">
+                            <code className="zd-props__type">{breakable(typeOf(p))}</code>
                           </td>
-                          <td>
-                            <code className="zd-props__type">{typeOf(p)}</code>
+                          <td className="zd-props__default-cell">
+                            {p.default === undefined ? (
+                              "—"
+                            ) : (
+                              <code className="zd-props__default">{breakable(JSON.stringify(p.default))}</code>
+                            )}
                           </td>
-                          <td>{p.default === undefined ? "—" : <code className="zd-props__default">{JSON.stringify(p.default)}</code>}</td>
-                          <td>{p.description ?? ""}</td>
+                          <td className="zd-props__desc">{p.description ?? ""}</td>
                         </tr>
                       ))}
                     </tbody>

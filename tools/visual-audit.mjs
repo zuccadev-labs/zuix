@@ -381,6 +381,45 @@ function collect({ TOKENS, families, coarse }) {
       );
   }
 
+  // Palabra partida en mitad: un salto de línea entre dos letras de la misma palabra, sin guion, porque la caja
+  // permite partir en cualquier punto (`overflow-wrap: anywhere | break-word`, `word-break: break-all`). Se mide
+  // con un rango por letra: si la siguiente letra de la palabra empieza más abajo, la palabra se partió.
+  const LETTER = /[\p{L}\p{N}_]/u;
+  for (const el of shown) {
+    const st = getComputedStyle(el);
+    if (!/anywhere|break-word/.test(st.overflowWrap) && !/break-all|break-word/.test(st.wordBreak)) continue;
+    if (st.hyphens === "auto") continue;
+    for (const node of el.childNodes) {
+      if (node.nodeType !== 3) continue;
+      const t = node.textContent;
+      if (t.length < 2 || t.length > 600) continue;
+      const range = document.createRange();
+      let prevTop = null;
+      let prevLetter = false;
+      let split = null;
+      for (let i = 0; i < t.length && !split; i++) {
+        const letter = LETTER.test(t[i]);
+        range.setStart(node, i);
+        range.setEnd(node, i + 1);
+        const box = range.getClientRects()[0];
+        if (!box) {
+          prevLetter = false;
+          continue;
+        }
+        if (letter && prevLetter && prevTop !== null && box.top > prevTop + box.height / 2) {
+          let a = i;
+          let b = i;
+          while (a > 0 && LETTER.test(t[a - 1])) a--;
+          while (b < t.length && LETTER.test(t[b])) b++;
+          split = `${t.slice(a, i)}/${t.slice(i, b)}`;
+        }
+        prevTop = box.top;
+        prevLetter = letter;
+      }
+      if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
+    }
+  }
+
   // Tapado: se recorre la página por tramos de una pantalla y en cada tramo se mira, en lo alto y en lo bajo de
   // cada texto que cabe entero, qué pinta encima. Lo pegajoso o fijo de la propia página (la barra del sitio) no
   // cuenta: tapa al desplazar, como debe; lo pegajoso dentro de un contenedor con desplazamiento sí (una cabecera
