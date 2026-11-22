@@ -9,8 +9,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 - Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de
   `core/vnode`):
-  - `MessageList`: grupos por autor y tiempo con la cola en la última burbuja, separadores de día pegajosos (encabezados
-    reales), marca de no leídos, indicador de escritura, historial hacia arriba sin saltos (se conserva el mensaje que
+  - `MessageList`: grupos por autor y tiempo con la cola en la última burbuja, separadores de día en su propia franja (encabezados
+    reales) y el día flotante mientras se desplaza, sin tapar mensajes, marca de no leídos, indicador de escritura, historial hacia arriba sin saltos (se conserva el mensaje que
     tenías delante), «ir al final» con los nuevos contados y ventana virtual con altos medidos a partir de 150 filas.
     Una sola parada de Tab con ↑/↓, Inicio/Fin y RePág/AvPág; Intro lleva a la barra de acciones del mensaje
     (reaccionar, responder, reenviar, copiar, editar, borrar) y R responde. Los mensajes nuevos de otros se anuncian
@@ -116,6 +116,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   incluida en `@zuccadev-labs/zuix-zui/dom`.
 - Entrada `@zuccadev-labs/zuix-zui/dom/time` (`timeModule`, `refreshTimeZoneSelect`), también incluida en
   `@zuccadev-labs/zuix-zui/dom`.
+
+### Corregido
+
+- `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
+  un filtro) a veces no dejaba de seguir el final: se ignoraba el desplazamiento de la persona si llegaba fundido
+  con el de la pieza. Ahora solo se ignora el que llega a la posición que pidió la pieza.
 
 ## [0.3.0] - 2026-11-21
 

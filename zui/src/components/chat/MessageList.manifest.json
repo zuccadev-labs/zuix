@@ -1,7 +1,7 @@
 {
   "name": "MessageList",
   "group": "chat",
-  "description": "Lista de mensajes de una conversación: grupos por autor y tiempo, separadores de día pegajosos, marca de no leídos, indicador de escritura, historial hacia arriba sin saltos, «ir al final» con los nuevos contados y ventana virtual (con altos medidos) cuando hay muchos. Las burbujas llevan cita, adjuntos (imágenes, archivo, nota de voz con onda, ubicación, vista previa de enlace), texto con enlaces seguros y menciones, hora, «editado», entrega, reacciones, hilo y una barra de acciones.",
+  "description": "Lista de mensajes de una conversación: grupos por autor y tiempo, separadores de día en su propia franja (y el día flotante mientras se desplaza, sin tapar mensajes), marca de no leídos, indicador de escritura, historial hacia arriba sin saltos, «ir al final» con los nuevos contados y ventana virtual (con altos medidos) cuando hay muchos. Las burbujas llevan cita, adjuntos (imágenes, archivo, nota de voz con onda, ubicación, vista previa de enlace), texto con enlaces seguros y menciones, hora, «editado», entrega, reacciones, hilo y una barra de acciones.",
   "import": "import { MessageList } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {

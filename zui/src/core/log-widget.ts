@@ -178,8 +178,12 @@ function attach(root: HTMLElement, host: Host): () => void {
     const vp = event.target as HTMLElement;
     if (!vp.matches?.(".z-log-console__viewport")) return;
     const atEnd = vp.scrollTop + vp.clientHeight >= vp.scrollHeight - 4;
-    // Subir a leer deja de seguir el final; volver abajo del todo no lo reactiva (es un botón).
-    if (!atEnd && host.state().follow && state.follow && vp.dataset.programmatic !== "1") {
+    // Subir a leer deja de seguir el final; volver abajo del todo no lo reactiva (es un botón). Se ignora solo el
+    // desplazamiento que hizo la pieza (llega a la posición que ella pidió): si la persona desplaza antes de que llegue
+    // el evento de ese, los dos se funden en uno que no está en esa posición y cuenta como suyo.
+    const target = Number(vp.dataset.programmatic);
+    const ours = vp.dataset.programmatic !== "" && vp.dataset.programmatic !== undefined && Math.abs(vp.scrollTop - target) <= 2;
+    if (!atEnd && host.state().follow && state.follow && !ours) {
       state.follow = false;
       host.update({ follow: false });
     }
@@ -494,7 +498,7 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
     if (vp && host.state().follow) {
       const end = vp.scrollHeight - vp.clientHeight;
       if (Math.abs(vp.scrollTop - end) > 1) {
-        vp.dataset.programmatic = "1";
+        vp.dataset.programmatic = String(end);
         vp.scrollTop = end;
       }
     }

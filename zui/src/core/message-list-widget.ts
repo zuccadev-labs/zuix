@@ -144,6 +144,9 @@ interface State {
   voice: Readonly<Record<string, VoiceState>>;
   pending: number;
   away: boolean;
+  /** Día de lo que se ve arriba, en la pastilla flotante que aparece solo mientras se desplaza. */
+  day: string | null;
+  scrolling: boolean;
   scroll: number;
   viewport: number;
   /** Altos medidos por clave de fila (mutable, compartido entre pintados). */
@@ -237,6 +240,7 @@ interface Live {
   typingTimer: ReturnType<typeof setTimeout> | undefined;
   askedOlder: boolean;
   wasLoading: boolean;
+  scrollTimer: ReturnType<typeof setTimeout> | undefined;
   measureFrame: number;
   flashTimer: ReturnType<typeof setTimeout> | undefined;
   unwatch: Map<string, () => void>;
@@ -259,6 +263,7 @@ function attach(root: HTMLElement, host: Host): () => void {
     typingTimer: undefined,
     askedOlder: false,
     wasLoading: false,
+    scrollTimer: undefined,
     measureFrame: 0,
     flashTimer: undefined,
     unwatch: new Map(),
@@ -317,6 +322,23 @@ function attach(root: HTMLElement, host: Host): () => void {
       host.emit("load-older", {});
     }
     const patch: Partial<State> = {};
+    // Día de lo que queda arriba: una pastilla flotante mientras se desplaza (no tapa nada en reposo) y oculta si el
+    // separador de ese día ya está a la vista arriba.
+    const first = live.anchor ? vp.querySelector<HTMLElement>(`:scope > ol > li[data-key="${CSS.escape(live.anchor.key)}"]`) : null;
+    const iso = first?.querySelector("time")?.getAttribute("datetime");
+    const separatorAtTop = [...vp.querySelectorAll<HTMLElement>(".z-date-separator")].some(
+      (sep) => sep.offsetTop + sep.offsetHeight > vp.scrollTop && sep.offsetTop < vp.scrollTop + 56,
+    );
+    const at = iso ? Date.parse(iso) : Number.NaN;
+    const now = c.now ?? Date.now();
+    const day =
+      Number.isFinite(at) && !separatorAtTop && vp.scrollTop > 0
+        ? dayLabel(dayKey(at, c.timeZone ?? ""), dayKey(now, c.timeZone ?? ""), c.labels, c.locale)
+        : null;
+    if (day !== s.day) patch.day = day;
+    if (!s.scrolling) patch.scrolling = true;
+    clearTimeout(live.scrollTimer);
+    live.scrollTimer = setTimeout(() => host.update({ scrolling: false }), 1200);
     if (s.away === end) patch.away = !end;
     if (end && s.pending) {
       patch.pending = 0;
@@ -589,6 +611,7 @@ function attach(root: HTMLElement, host: Host): () => void {
     clearTimeout(live.arrivalTimer);
     clearTimeout(live.typingTimer);
     clearTimeout(live.flashTimer);
+    clearTimeout(live.scrollTimer);
     cancelAnimationFrame(live.measureFrame);
     for (const off of live.unwatch.values()) off();
     apis.delete(root);
@@ -740,6 +763,8 @@ export const messageListWidget: Widget<MessageListProps, Config, State> = {
       voice: {},
       pending: 0,
       away: false,
+      day: null,
+      scrolling: false,
       scroll: c.anchor === "end" ? Number.MAX_SAFE_INTEGER : 0,
       viewport: 0,
       heights: new Map(),
@@ -833,6 +858,7 @@ export const messageListWidget: Widget<MessageListProps, Config, State> = {
           h("li", { class: "z-message-list__end", key: "end", "aria-hidden": "true" }),
         ),
       ),
+      h("div", { class: "z-message-list__day", "aria-hidden": "true", "data-visible": on(s.scrolling && Boolean(s.day)) }, s.day ?? ""),
       h(
         "button",
         {

@@ -1073,14 +1073,44 @@
   }
 
   /* ---- Separadores ---- */
+  /* El separador va en su franja, en el flujo: nunca encima de un mensaje. Mientras se desplaza, el día de lo que
+     queda arriba aparece en una pastilla flotante (.z-message-list__day) que desaparece al parar. */
   .z-date-separator {
-    position: sticky;
-    inset-block-start: var(--z-space-2);
-    z-index: var(--z-layer-raised);
     display: flex;
     justify-content: center;
     padding-block: var(--z-space-3) var(--z-space-1);
+  }
+  .z-message-list__day {
+    position: absolute;
+    inset-block-start: var(--z-space-2);
+    inset-inline: 0;
+    z-index: var(--z-layer-raised);
+    inline-size: fit-content;
+    margin-inline: auto;
+    padding: var(--z-space-1) var(--z-space-3);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-sm);
+    background: var(--z-popup-bg);
+    -webkit-backdrop-filter: blur(var(--z-popup-blur));
+    backdrop-filter: blur(var(--z-popup-blur));
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    box-shadow: var(--z-shadow-sm);
     pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--z-duration-normal) var(--z-ease-standard),
+      visibility 0s linear var(--z-duration-normal);
+  }
+  .z-message-list__day[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .z-message-list__day:empty {
+    display: none;
   }
   .z-date-separator__label {
     margin: 0;

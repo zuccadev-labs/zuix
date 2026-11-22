@@ -246,6 +246,22 @@ export default async function ({ page, test, ok }) {
       (await events()).some(([t]) => t === "z:loadolder"),
       "pide historial arriba del todo",
     );
+    // El separador de día va en su franja; el día de lo de arriba flota solo mientras se desplaza.
+    ok(
+      (await box
+        .locator(".z-date-separator")
+        .first()
+        .evaluate((el) => getComputedStyle(el).position)) === "static",
+      "separador en el flujo",
+    );
+    await vp.evaluate((el) => {
+      el.scrollTop = 300;
+      el.dispatchEvent(new Event("scroll"));
+    });
+    const day = box.locator(".z-message-list__day");
+    await until(async () => (await day.getAttribute("data-visible")) !== null, "el día flota al desplazar");
+    ok((await day.getAttribute("aria-hidden")) === "true", "la pastilla no se lee (los días son h3)");
+    await until(async () => (await day.getAttribute("data-visible")) === null, "y se va al parar", 80);
     await vp.evaluate((el) => {
       el.scrollTop = 200;
       el.dispatchEvent(new Event("scroll"));

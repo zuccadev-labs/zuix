@@ -445,6 +445,10 @@ function collect({ TOKENS, families, coarse }) {
     return false;
   };
   const texts = shown.filter((el) => ownText(el) && !el.matches("input,textarea,select,option"));
+  const stickies = shown.filter((el) => {
+    const cs = getComputedStyle(el);
+    return cs.position === "sticky" && cs.pointerEvents === "none";
+  });
   const done = new Set();
   const total = Math.min(document.documentElement.scrollHeight, 20000);
   for (let y = 0; y < total; y += Math.max(200, vh * 0.8)) {
@@ -454,15 +458,30 @@ function collect({ TOKENS, families, coarse }) {
       const r = el.getBoundingClientRect();
       if (r.top < 0 || r.bottom > vh || r.right <= 0 || r.left >= vw) continue;
       done.add(el);
-      const cx = Math.min(Math.max(r.left + Math.min(r.width, 24) / 2, 0), vw - 1);
+      // Varios puntos a lo ancho del texto: lo que tapa puede estar en el centro (un separador pegajoso centrado) y no al
+      // principio de la línea.
+      const xs = [0.1, 0.5, 0.9].map((f) => Math.min(Math.max(r.left + Math.min(r.width * f, r.width - 2), 0), vw - 1));
+      const paints = (hit) => {
+        const hs = getComputedStyle(hit);
+        return alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none";
+      };
       // Solo cuenta si lo tapado es una parte: entero debajo de una cabecera es contenido que se desplazó, como debe.
-      const coverAt = (py) => {
+      const coverAt = (cx, py) => {
         for (const hit of document.elementsFromPoint(cx, py)) {
-          if (hit === el || el.contains(hit) || hit.contains(el)) return null;
-          const hs = getComputedStyle(hit);
+          if (hit === el || el.contains(hit) || hit.contains(el)) break;
           // La insignia de un Float se monta a propósito sobre la esquina de lo que acompaña.
-          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit) && !hit.closest(".z-float"))
-            return hit;
+          if (paints(hit) && !pageChrome(hit) && !hit.closest(".z-float")) return hit;
+        }
+        // elementsFromPoint no ve lo que tiene pointer-events: none. Un pegajoso así (un separador de fecha, una
+        // cabecera decorativa) sigue pintando encima: se busca a mano lo que pinta dentro de él en ese punto.
+        for (const sticky of stickies) {
+          if (sticky.contains(el) || el.contains(sticky)) continue;
+          const sr = sticky.getBoundingClientRect();
+          if (cx < sr.left || cx > sr.right || py < sr.top || py > sr.bottom) continue;
+          for (const part of [sticky, ...sticky.querySelectorAll("*")]) {
+            const pr = part.getBoundingClientRect();
+            if (cx >= pr.left && cx <= pr.right && py >= pr.top && py <= pr.bottom && paints(part)) return part;
+          }
         }
         return null;
       };
@@ -480,10 +499,19 @@ function collect({ TOKENS, families, coarse }) {
       if (cb - ct < r.height - 1) continue; // ya recortado por su contenedor: no es tapar, es desplazar
       const pe = el.style.pointerEvents;
       el.style.pointerEvents = "auto";
-      const top = coverAt(r.top + 2);
-      const bottom = coverAt(r.bottom - 2);
+      // Tapado a medias: en vertical (arriba sí y abajo no, o al revés) o en horizontal (unos puntos de la línea sí y
+      // otros no: una pastilla encima de la mitad de una frase).
+      let covered = null;
+      const across = [];
+      for (const cx of xs) {
+        const top = coverAt(cx, r.top + 2);
+        const bottom = coverAt(cx, r.bottom - 2);
+        covered = top && !bottom ? top : bottom && !top ? bottom : null;
+        if (covered) break;
+        across.push(top && bottom ? top : null);
+      }
+      if (!covered && across.some(Boolean) && across.some((c) => !c)) covered = across.find(Boolean);
       el.style.pointerEvents = pe;
-      const covered = top && !bottom ? top : bottom && !top ? bottom : null;
       if (covered) add("texto-tapado", el, `tapado por ${sig(covered)}`, { text: ownText(el).slice(0, 40) });
     }
   }
