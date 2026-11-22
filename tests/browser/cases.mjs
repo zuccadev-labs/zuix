@@ -208,8 +208,14 @@ async function overflowReport(page) {
       for (let n = el.parentElement; n; n = n.parentElement) {
         const o = getComputedStyle(n).overflowX;
         if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
-        // Recortes deliberados con su propio desplazamiento: el carrusel y la cinta de Marquee.
-        if (n.classList.contains("z-carousel__viewport") || n.classList.contains("z-marquee__viewport")) return true;
+        // Recortes deliberados con su propio desplazamiento: el carrusel, la cinta de Marquee y el lienzo de nodos (en un
+        // teléfono el grafo no cabe a un zoom legible y se recorre desplazando el lienzo).
+        if (
+          n.classList.contains("z-carousel__viewport") ||
+          n.classList.contains("z-marquee__viewport") ||
+          n.classList.contains("z-node-canvas")
+        )
+          return true;
       }
       return false;
     };
