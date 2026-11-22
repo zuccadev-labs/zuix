@@ -59,6 +59,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background: var(--z-fg-subtle);
     color: var(--z-surface-solid);
   }
   .z-avatar__status:is([data-status="dnd"]) {

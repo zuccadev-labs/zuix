@@ -7235,7 +7235,7 @@
     {
      "name": "period",
      "type": "string",
-     "description": "«vs last month»: se ve junto a la variación y entra en su frase."
+     "description": "Periodo de comparación («last month»): se ve como «vs last month» y entra en la frase de la variación."
     },
     {
      "name": "trend",
@@ -7323,7 +7323,7 @@
     {
      "name": "labels",
      "type": "Partial<MetricCardLabels> & { delta?, goal? }",
-     "description": "empty, error, target; y los de DeltaBadge y ProgressGoal."
+     "description": "empty, error, target, versus («vs {period}»); y los de DeltaBadge (delta) y ProgressGoal (goal)."
     }
    ],
    "states": [
@@ -7381,11 +7381,11 @@
    "examples": [
     {
      "title": "Ingresos con variación, tendencia y meta",
-     "code": "<MetricCard label=\"Revenue\" icon=\"banknotes\" value={128400} format={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }} previous={114200} period=\"vs last month\" trend={[42, 44, 41, 48, 52, 50, 57, 61, 59, 66, 70, 74]} target={150000} elapsed={0.7} locale=\"en-US\" />"
+     "code": "<MetricCard label=\"Revenue\" icon=\"banknotes\" value={128400} format={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }} previous={114200} period=\"last month\" trend={[42, 44, 41, 48, 52, 50, 57, 61, 59, 66, 70, 74]} target={150000} elapsed={0.7} locale=\"en-US\" />"
     },
     {
      "title": "Lo que es bueno que baje",
-     "code": "<MetricCard label=\"Error rate\" icon=\"exclamation-triangle\" value={0.012} format={{ style: \"percent\", maximumFractionDigits: 1 }} delta={-0.21} positive=\"down\" period=\"vs last week\" trend={[3, 2.6, 2.8, 2.1, 1.9, 1.6, 1.4, 1.2]} trendType=\"line\" color={2} locale=\"en-US\" />"
+     "code": "<MetricCard label=\"Error rate\" icon=\"exclamation-triangle\" value={0.012} format={{ style: \"percent\", maximumFractionDigits: 1 }} delta={-0.21} positive=\"down\" period=\"last week\" trend={[3, 2.6, 2.8, 2.1, 1.9, 1.6, 1.4, 1.2]} trendType=\"line\" color={2} locale=\"en-US\" />"
     },
     {
      "title": "Cargando",
@@ -7450,7 +7450,7 @@
    "examples": [
     {
      "title": "Cuatro KPI en una banda",
-     "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"vs last month\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"vs last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"vs last month\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"vs last month\" />\n</MetricGroup>"
+     "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" />\n</MetricGroup>"
     }
    ],
    "origin": "Fila de KPI de los bloques dashboard-01 de shadcn y de las plantillas de Tremor.",
@@ -7655,7 +7655,7 @@
    "html": [
     {
      "title": "Disponibilidad de la API",
-     "code": "<div class=\"z-tracker\" data-label=\"API\" data-days='[{\"status\":\"ok\",\"label\":\"Nov 1\"},{\"status\":\"ok\",\"label\":\"Nov 2\"},{\"status\":\"warning\",\"label\":\"Nov 3\",\"note\":\"12 min\"},{\"status\":\"ok\",\"label\":\"Nov 4\"},{\"status\":\"error\",\"label\":\"Nov 5\",\"note\":\"Outage, 41 min\"},{\"status\":\"ok\",\"label\":\"Nov 6\"},{\"status\":\"maintenance\",\"label\":\"Nov 7\"},{\"status\":\"ok\",\"label\":\"Nov 8\"}]'></div>"
+     "code": "<div class=\"z-tracker\" data-label=\"API\" data-days='[{\"status\":\"ok\",\"label\":\"Nov 1\"},{\"status\":\"ok\",\"label\":\"Nov 2\"},{\"status\":\"warning\",\"label\":\"Nov 3\",\"note\":\"12 min\"},{\"status\":\"ok\",\"label\":\"Nov 4\"},{\"status\":\"error\",\"label\":\"Nov 5\",\"note\":\"41 min\"},{\"status\":\"ok\",\"label\":\"Nov 6\"},{\"status\":\"maintenance\",\"label\":\"Nov 7\"},{\"status\":\"ok\",\"label\":\"Nov 8\"}]'></div>"
     }
    ],
    "origin": "Tracker de Tremor y las páginas de estado tipo uptime.",
@@ -18686,15 +18686,18 @@
     "radius-md",
     "surface-2",
     "surface-solid",
-    "scrim",
     "fg",
-    "fg-on-accent",
     "space-2",
     "text-small",
     "text-caption",
     "weight-semibold",
     "focus-width",
-    "accent-ring"
+    "accent-ring",
+    "popup-bg",
+    "popup-blur",
+    "glass-border",
+    "glass-saturate",
+    "radius-sm"
    ],
    "classes": [
     "z-image-list",

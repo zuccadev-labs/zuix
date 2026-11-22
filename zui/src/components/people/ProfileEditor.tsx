@@ -126,8 +126,12 @@ export function ProfileEditor({
     // Tras el primer error, el campo se revalida al escribir: el aviso desaparece en cuanto se corrige.
     if (touched[key]) setErrors((e) => ({ ...e, [key]: check(next, [key])[key] }));
   };
-  const blur = (key: keyof ProfileValues) => {
+  // Pulsar «Guardar» con un campo enfocado: su error no se pinta al salir (movería el botón bajo el puntero y el clic
+  // se perdería); lo pinta el propio envío.
+  const pressing = useRef(false);
+  const blur = (key: keyof ProfileValues, next: EventTarget | null) => {
     setTouched((s) => ({ ...s, [key]: true }));
+    if (pressing.current || (next as HTMLElement | null)?.matches?.('button[type="submit"]')) return;
     setErrors((e) => ({ ...e, [key]: check(values, [key])[key] }));
   };
 
@@ -205,7 +209,7 @@ export function ProfileEditor({
         aria-invalid={touched[key] && errors[key] ? true : undefined}
         aria-describedby={describe(key, Boolean(opts.hint))}
         onChange={(e) => change(key, e.target.value)}
-        onBlur={() => blur(key)}
+        onBlur={(e) => blur(key, e.relatedTarget)}
       />
     </span>
   );
@@ -311,7 +315,7 @@ export function ProfileEditor({
           aria-invalid={touched.bio && errors.bio ? true : undefined}
           aria-describedby={describe("bio", true)}
           onChange={(e) => change("bio", e.target.value)}
-          onBlur={() => blur("bio")}
+          onBlur={(e) => blur("bio", e.relatedTarget)}
         />,
         t.bioHint,
         <span className="z-profile-editor__counter" data-over={over ? "" : undefined}>

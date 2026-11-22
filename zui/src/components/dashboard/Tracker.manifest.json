@@ -81,7 +81,7 @@
   "html": [
     {
       "title": "Disponibilidad de la API",
-      "code": "<div class=\"z-tracker\" data-label=\"API\" data-days='[{\"status\":\"ok\",\"label\":\"Nov 1\"},{\"status\":\"ok\",\"label\":\"Nov 2\"},{\"status\":\"warning\",\"label\":\"Nov 3\",\"note\":\"12 min\"},{\"status\":\"ok\",\"label\":\"Nov 4\"},{\"status\":\"error\",\"label\":\"Nov 5\",\"note\":\"Outage, 41 min\"},{\"status\":\"ok\",\"label\":\"Nov 6\"},{\"status\":\"maintenance\",\"label\":\"Nov 7\"},{\"status\":\"ok\",\"label\":\"Nov 8\"}]'></div>"
+      "code": "<div class=\"z-tracker\" data-label=\"API\" data-days='[{\"status\":\"ok\",\"label\":\"Nov 1\"},{\"status\":\"ok\",\"label\":\"Nov 2\"},{\"status\":\"warning\",\"label\":\"Nov 3\",\"note\":\"12 min\"},{\"status\":\"ok\",\"label\":\"Nov 4\"},{\"status\":\"error\",\"label\":\"Nov 5\",\"note\":\"41 min\"},{\"status\":\"ok\",\"label\":\"Nov 6\"},{\"status\":\"maintenance\",\"label\":\"Nov 7\"},{\"status\":\"ok\",\"label\":\"Nov 8\"}]'></div>"
     }
   ],
   "origin": "Tracker de Tremor y las páginas de estado tipo uptime."

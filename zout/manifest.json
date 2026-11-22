@@ -436,7 +436,7 @@
    "examples": [
     {
      "title": "Con filtros y panel",
-     "code": "<DashboardLayout eyebrow=\"Acme Inc.\" title=\"Overview\" description=\"Sales and product health for November.\" actions={<><Button icon=\"arrow-down-tray\">Export</Button><Button variant=\"primary\" icon=\"pencil\">Edit layout</Button></>} filters={<><SegmentedControl aria-label=\"Period\" items={[{ value: \"7d\", label: \"7 days\" }, { value: \"30d\", label: \"30 days\" }, { value: \"90d\", label: \"90 days\" }]} defaultValue=\"30d\" /><Chip>Region: EU</Chip></>} aside={<Card>Details</Card>}>\n  <MetricGroup label=\"KPIs\"><MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} /><MetricCard variant=\"plain\" label=\"Orders\" value={1284} delta={0.04} /></MetricGroup>\n</DashboardLayout>"
+     "code": "<DashboardLayout eyebrow=\"Acme Inc.\" title=\"Overview\" description=\"Sales and product health for November.\" actions={<><Button icon=\"arrow-down-tray\">Export</Button><Button variant=\"primary\" icon=\"pencil\">Edit layout</Button></>} filters={<><SegmentedControl label=\"Period\" items={[{ value: \"7d\", label: \"7 days\" }, { value: \"30d\", label: \"30 days\" }, { value: \"90d\", label: \"90 days\" }]} defaultValue=\"30d\" /><Chip>Region: EU</Chip></>} aside={<Card>Details</Card>}>\n  <MetricGroup label=\"KPIs\"><MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} /><MetricCard variant=\"plain\" label=\"Orders\" value={1284} delta={0.04} /></MetricGroup>\n</DashboardLayout>"
     }
    ],
    "origin": "dashboard-01 de los bloques de shadcn, ProLayout de Ant Design Pro y las plantillas de Tremor.",
@@ -522,7 +522,7 @@
    "examples": [
     {
      "title": "Artículo con índice",
-     "code": "<DocsLayout sidebar={<NavList label=\"Guides\" items={[{ id: \"start\", label: \"Getting started\", href: \"#\" }, { id: \"tokens\", label: \"Tokens\", href: \"#\" }]} />} toc={[{ id: \"install\", label: \"Install\" }, { id: \"usage\", label: \"Usage\" }, { id: \"theming\", label: \"Theming\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"install\">Install</h2><p>…</p><h2 id=\"usage\">Usage</h2><p>…</p></Prose>\n</DocsLayout>"
+     "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"install\", label: \"Install\" }, { id: \"usage\", label: \"Usage\" }, { id: \"theming\", label: \"Theming\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"install\">Install</h2><p>…</p><h2 id=\"usage\">Usage</h2><p>…</p></Prose>\n</DocsLayout>"
     }
    ],
    "origin": "El propio sitio zudocs y los bloques de documentación; índice con seguimiento de la sección.",
@@ -1093,7 +1093,7 @@
    "examples": [
     {
      "title": "Tres paneles",
-     "code": "<MailLayout folders={<NavList label=\"Folders\" items={[{ id: \"inbox\", label: \"Inbox\", href: \"#\", icon: \"inbox\" }, { id: \"sent\", label: \"Sent\", href: \"#\", icon: \"paper-airplane\" }]} />} list={<p>Messages</p>} reader={<p>Message</p>} />"
+     "code": "<MailLayout folders={<NavList label=\"Folders\"><NavLink href=\"#\" icon=\"inbox\" trailing=\"12\" active>Inbox</NavLink><NavLink href=\"#\" icon=\"paper-airplane\">Sent</NavLink></NavList>} list={<p>Messages</p>} reader={<p>Message</p>} />"
     }
    ],
    "origin": "Bloque mail de shadcn.",

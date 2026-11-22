@@ -75,7 +75,8 @@ interface State {
   query: string;
   roleOf: Record<string, string>;
   removed: string[];
-  source: readonly Member[];
+  /** Firma de las `members` de la aplicación: el modo DOM las vuelve a leer en cada pintado (otro array, mismo contenido). */
+  source: string;
 }
 type Host = WidgetHost<Config, State>;
 
@@ -127,8 +128,11 @@ export const memberListWidget: Widget<MemberListProps, Config, State> = {
     labels: { ...MEMBER_LIST_LABELS, ...p.labels },
     presence: { ...PRESENCE_LABELS, ...p.presenceLabels },
   }),
-  initial: (c) => ({ query: "", roleOf: {}, removed: [], source: c.members }),
-  control: (c, s) => (c.members === s.source ? s : { ...s, roleOf: {}, removed: [], source: c.members }),
+  initial: (c) => ({ query: "", roleOf: {}, removed: [], source: JSON.stringify(c.members) }),
+  control(c, s) {
+    const key = JSON.stringify(c.members);
+    return key === s.source ? s : { ...s, roleOf: {}, removed: [], source: key };
+  },
   tree(c, s, uid) {
     const l = c.labels;
     const live = c.members.filter((m) => !s.removed.includes(m.id)).map((m) => (s.roleOf[m.id] ? { ...m, role: s.roleOf[m.id]! } : m));
@@ -239,8 +243,9 @@ export const memberListWidget: Widget<MemberListProps, Config, State> = {
       const t = e.target as HTMLSelectElement;
       const id = t.dataset?.member;
       if (!id || !t.matches("select")) return;
-      host.update({ roleOf: { ...host.state().roleOf, [id]: t.value } });
-      host.emit("role-change", { memberId: id, role: t.value });
+      const role = t.value;
+      host.update({ roleOf: { ...host.state().roleOf, [id]: role } });
+      host.emit("role-change", { memberId: id, role });
     };
     const onClick = (e: MouseEvent) => {
       const t = (e.target as HTMLElement).closest?.<HTMLElement>("[data-remove], [data-invite]");

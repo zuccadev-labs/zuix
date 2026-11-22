@@ -60,9 +60,9 @@ const REVENUE = [
 const UPTIME: TrackerDay[] = Array.from({ length: 45 }, (_, i) => {
   const day = new Date(Date.UTC(2026, 9, 9 + i));
   const label = day.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-  if (i === 17) return { status: "error", label, note: "Outage, 41 min" };
-  if (i === 29 || i === 30) return { status: "warning", label, note: "Degraded, 12 min" };
-  if (i === 8) return { status: "maintenance", label, note: "Planned maintenance" };
+  if (i === 17) return { status: "error", label, note: "41 min" };
+  if (i === 29 || i === 30) return { status: "warning", label, note: "12 min" };
+  if (i === 8) return { status: "maintenance", label, note: "planned" };
   return { status: "ok", label };
 });
 

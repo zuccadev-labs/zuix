@@ -212,21 +212,30 @@
   .z-image-list[data-variant="masonry"] .z-image-list__image {
     block-size: auto;
   }
+  /* Barra del título sobre la imagen: una lámina de cristal elevado en el borde inferior. */
   .z-image-list__bar {
     position: absolute;
-    inset-inline: 0;
-    inset-block-end: 0;
+    inset-inline: var(--z-space-1-5);
+    inset-block-end: var(--z-space-1-5);
     display: flex;
     align-items: center;
     gap: var(--z-space-2);
-    padding: var(--z-space-2) var(--z-space-3);
-    background: linear-gradient(to top, var(--z-scrim), transparent);
-    color: var(--z-fg-on-accent);
+    padding: var(--z-space-1-5) var(--z-space-2-5);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-sm);
+    background: var(--z-popup-bg);
+    color: var(--z-fg);
+    -webkit-backdrop-filter: blur(var(--z-popup-blur)) saturate(var(--z-glass-saturate));
+    backdrop-filter: blur(var(--z-popup-blur)) saturate(var(--z-glass-saturate));
   }
   .z-image-list[data-caption="below"] .z-image-list__bar {
     position: static;
+    border: 0;
+    border-radius: 0;
     background: var(--z-surface-solid);
     color: var(--z-fg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
   .z-image-list__text {
     display: flex;

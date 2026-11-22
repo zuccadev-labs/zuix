@@ -12,6 +12,7 @@ import dataCases from "./cases-data.mjs";
 import siteCases from "./cases-site.mjs";
 import mediaCases from "./cases-media.mjs";
 import timeTerminal from "./cases-time-terminal.mjs";
+import dashboardPeople from "./cases-dashboard-people.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
@@ -266,6 +267,11 @@ const SCREENS = [
   "carousels",
   "time",
   "terminal",
+  "dashboard",
+  "profile",
+  "settings",
+  "kanban",
+  "login",
 ];
 
 export const cases = [
@@ -647,8 +653,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        31,
-        "31 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time y Terminal)",
+        36,
+        "36 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Dashboard, Profile, Settings, Board y Sign in)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -3089,6 +3095,7 @@ export const cases = [
     charts,
     reading,
     timeTerminal,
+    dashboardPeople,
     carouselsCases,
   ].flatMap((build) => build(helpers())),
 

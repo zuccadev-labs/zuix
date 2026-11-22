@@ -13,6 +13,7 @@
 import { announce } from "./announcer";
 import {
   cellAt,
+  compact,
   describeItem,
   GRID_LABELS,
   keyStep,
@@ -139,6 +140,8 @@ export function attachDashboardGrid(root: HTMLElement, host: DashboardGridHost):
     root.removeAttribute("data-dragging");
     setDrop(null);
     d.handle.setAttribute("aria-pressed", "false");
+    // La definitiva se compacta sin fijar la pieza: un hueco que deje encima se cierra al soltar.
+    d.current = compact(d.current, cols());
     const changed = !sameLayout(d.original, d.current);
     const name = nameOf(d.id);
     if (commit && changed) {

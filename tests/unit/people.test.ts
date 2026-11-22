@@ -157,7 +157,8 @@ describe("MemberList", () => {
     assert.equal(props.groupBy, "presence");
     assert.equal(props.editable, true);
     assert.equal(props.currentUserId, "1");
-    assert.equal(memberListWidget.control!(c, { ...s, source: [] }).removed.length, 0);
+    assert.equal(memberListWidget.control!(c, { ...s, source: "[]", removed: ["1"] }).removed.length, 0);
+    assert.equal(memberListWidget.control!(c, { ...s, removed: ["1"] }).removed.length, 1);
     assert.match(toHTML(memberListWidget.tree(c, { ...s, query: "zzz" }, "ml")), /No one matches/);
   });
   test("interacción: buscar, cambiar de rol, quitar e invitar", () => {

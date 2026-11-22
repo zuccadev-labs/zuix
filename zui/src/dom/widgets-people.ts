@@ -108,12 +108,27 @@ function mountEditor(form: HTMLFormElement): void {
   };
   const validate = (key: keyof ProfileValues) => showError(form, key, validateProfile(valuesOf(form), { ...opts(), fields: [key] })[key]);
   form.noValidate = true;
+  // Pulsar «Guardar» con un campo enfocado: el error de ese campo no se pinta al salir (movería el botón bajo el
+  // puntero y el clic se perdería); lo pinta el propio envío.
+  let pressing = false;
+  form.addEventListener(
+    "pointerdown",
+    (e) => {
+      pressing = (e.target as HTMLElement).closest?.('button[type="submit"]') !== null;
+      if (pressing)
+        setTimeout(() => {
+          pressing = false;
+        }, 600);
+    },
+    { signal, capture: true },
+  );
   form.addEventListener(
     "focusout",
     (e) => {
       const key = (e.target as HTMLInputElement).name as keyof ProfileValues;
       if (!FIELDS.includes(key)) return;
       entry.touched.add(key);
+      if (pressing || (e.relatedTarget as HTMLElement | null)?.matches?.('button[type="submit"]')) return;
       validate(key);
     },
     { signal },

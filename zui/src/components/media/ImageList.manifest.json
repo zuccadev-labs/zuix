@@ -43,15 +43,18 @@
     "radius-md",
     "surface-2",
     "surface-solid",
-    "scrim",
     "fg",
-    "fg-on-accent",
     "space-2",
     "text-small",
     "text-caption",
     "weight-semibold",
     "focus-width",
-    "accent-ring"
+    "accent-ring",
+    "popup-bg",
+    "popup-blur",
+    "glass-border",
+    "glass-saturate",
+    "radius-sm"
   ],
   "classes": [
     "z-image-list",

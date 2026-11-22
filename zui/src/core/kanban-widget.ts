@@ -53,7 +53,8 @@ interface PointerDrag {
 interface State {
   /** Columnas pintadas (copia local: la aplicación manda al cambiar `columns`). */
   columns: readonly KanbanColumn[];
-  source: readonly KanbanColumn[];
+  /** Firma de las columnas de la aplicación: el modo DOM las vuelve a leer en cada pintado (otro array, mismo contenido). */
+  source: string;
   /** Tarjeta con la parada de tabulación. */
   active: string | null;
   /** Con la tarjeta cogida por teclado: las columnas de antes, para Escape. */
@@ -152,18 +153,19 @@ export const kanbanWidget: Widget<KanbanBoardProps, Config, State> = {
   }),
   initial: (c) => ({
     columns: c.columns,
-    source: c.columns,
+    source: JSON.stringify(c.columns),
     active: c.columns.find((col) => col.cards.length)?.cards[0]?.id ?? null,
     grabbed: null,
     drag: null,
   }),
   control(c, s) {
-    if (c.columns === s.source) return s;
+    const key = JSON.stringify(c.columns);
+    if (key === s.source) return s;
     // Columnas nuevas de la aplicación: mandan, salvo durante un agarre (se aplican al soltar).
-    if (s.grabbed || s.drag) return { ...s, source: c.columns };
+    if (s.grabbed || s.drag) return { ...s, source: key };
     const active =
       s.active && locateCard(c.columns, s.active) ? s.active : (c.columns.find((col) => col.cards.length)?.cards[0]?.id ?? null);
-    return { ...s, columns: c.columns, source: c.columns, active };
+    return { ...s, columns: c.columns, source: key, active };
   },
   tree(c, s, uid) {
     const l = c.labels;
