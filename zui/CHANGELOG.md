@@ -192,7 +192,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   ocupan casi todo el círculo) y las iniciales de cada avatar tapado se centran en la parte que se ve. El siguiente
   avatar ya no tapa las iniciales del anterior.
 - `Table` y `DataTable`: una columna `mono` (fechas, códigos) no parte línea («2026-11-\n10»), y el borde con columnas
-  ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco.
+  ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco. En una
+  tabla cuenta desde 1 px escondido (en una tira, desde 8): la última columna llega al borde y unos pocos píxeles ya
+  cortan su texto.
 - `KanbanBoard`, `CalendarHeatmap` y las miniaturas de `Carousel` y `Gallery`: el borde con contenido oculto se difumina en
   lugar de cortar una tarjeta, un mes o una miniatura en seco (también en `/dom`).
 - `PromptInput`: modelo, herramientas y uso van en una sola fila que desplaza, con el borde oculto difuminado; en un
