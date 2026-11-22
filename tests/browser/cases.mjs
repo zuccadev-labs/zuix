@@ -3059,9 +3059,20 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, inputsCases, commandsCases, workspaceCases, contentCases, dataCases, siteCases, mediaCases, charts, reading].flatMap((build) =>
-    build(helpers()),
-  ),
+  ...[
+    auditReact,
+    auditCss,
+    layers,
+    inputsCases,
+    commandsCases,
+    workspaceCases,
+    contentCases,
+    dataCases,
+    siteCases,
+    mediaCases,
+    charts,
+    reading,
+  ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {
