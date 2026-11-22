@@ -343,7 +343,12 @@ window.__ready = true;
         await soon(
           () =>
             tab.evaluate(() =>
-              document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+              document
+                .getAnimations()
+                .every(
+                  (a) =>
+                    a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity || a.timeline !== document.timeline,
+                ),
             ),
           3000,
         );

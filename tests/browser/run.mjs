@@ -206,7 +206,12 @@ function makeContext(engine, baseUrl, record, shots) {
     // La captura espera a que terminen las animaciones finitas (entrada de capas).
     await page
       .waitForFunction(
-        () => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+        () =>
+          document
+            .getAnimations()
+            .every(
+              (a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity || a.timeline !== document.timeline,
+            ),
         null,
         { timeout: 10000 },
       )
