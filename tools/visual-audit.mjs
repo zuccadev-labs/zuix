@@ -13,7 +13,8 @@
 //   teléfono         navegación lateral acoplada que se come el ancho del contenido
 //   solape           elementos interactivos que se pisan
 //   fuente           familia computada fuera de la marca, fuente que no cargó y fuente real del sistema
-//                    (CSS.getPlatformFontsForNode del protocolo de depuración: qué tipografía pinta de verdad)
+//                    (CSS.getPlatformFontsForNode del protocolo de depuración: qué tipografía pinta de verdad) y
+//                    texto que una transformación deja por debajo de 9 px en pantalla (lienzo con poco zoom)
 //   escala           tamaño, interlineado y peso fuera de los tokens; márgenes, rellenos y huecos fuera de
 //                    --z-space-* (±0,5 px); radios fuera de la familia de radios; alturas de control fuera de
 //                    --z-control-height-* (24/28/34/40/48 o el objetivo táctil con puntero grueso)
@@ -634,6 +635,31 @@ function collect({ TOKENS, families, coarse }) {
         text: ownText(hit).slice(0, 40),
       });
   }
+  // Lo mismo en vertical para listas de navegación (barra lateral, menú): una fila que el borde corta a media altura,
+  // sin fundido ni barra a la vista, parece un elemento roto y no una lista que sigue.
+  for (const box of shown) {
+    const bs = getComputedStyle(box);
+    if (!/(auto|scroll)/.test(bs.overflowY) || box.scrollHeight - box.clientHeight <= 8 || masked(bs)) continue;
+    if (!box.closest("nav,aside,[role=navigation],[role=menu],[role=listbox],.z-sidebar")) continue;
+    const q = rects.get(box);
+    if (q.width < 60 || q.height < 60) continue;
+    const bar = box.offsetWidth - box.clientWidth - Number.parseFloat(bs.borderLeftWidth) - Number.parseFloat(bs.borderRightWidth);
+    if (bar > 2 && bs.scrollbarWidth !== "none") continue;
+    let hit = null;
+    for (const el of box.querySelectorAll("a,button,[role=menuitem],[role=option],[role=treeitem]")) {
+      if (!shownSet.has(el) || el.closest("[role=grid],table")) continue;
+      const r = rects.get(el);
+      if (r.right <= q.left || r.left >= q.right) continue;
+      if ((r.top < q.top - 1 && r.bottom > q.top + 4) || (r.bottom > q.bottom + 1 && r.top < q.bottom - 4)) {
+        hit = el;
+        break;
+      }
+    }
+    if (hit)
+      add("corte-sin-fundido", box, `desplaza ${box.scrollHeight - box.clientHeight} px en vertical y corta una fila en seco`, {
+        text: (hit.textContent ?? "").trim().slice(0, 40),
+      });
+  }
 
   // Texto pisado por un trazo: una cifra de una esfera sobre las marcas, el valor de un indicador que roza su arco. Se
   // muestrea el área de las letras (sin el hueco de ascendentes y descendentes) más una holgura de 0,12 em contra el
@@ -911,6 +937,13 @@ function collect({ TOKENS, families, coarse }) {
         fontEls.push({ first, weight: cs.fontWeight, style: cs.fontStyle, sig: sig(el), text: text.slice(0, 30) });
       }
       const size = Number.parseFloat(cs.fontSize);
+      // Tamaño en pantalla: un antecesor con transform (el mundo de un lienzo con zoom, una tarjeta en perspectiva)
+      // encoge las letras aunque el tamaño computado esté en la escala. Por debajo de 9 px no se leen.
+      const drawn = el.offsetWidth > 0 ? rects.get(el).width / el.offsetWidth : 1;
+      if (drawn < 0.99 && size * drawn < 9)
+        add("texto-ilegible", el, `${(size * drawn).toFixed(1)} px en pantalla (${size} px × ${drawn.toFixed(2)})`, {
+          text: text.slice(0, 40),
+        });
       if (!near(size, scale.text)) {
         const parentSize = Number.parseFloat(getComputedStyle(el.parentElement).fontSize);
         if (el.matches("code,kbd,samp") && !near(parentSize, scale.text) === false && size < parentSize)
@@ -1803,6 +1836,15 @@ function classify(recs) {
           ) {
             verdict = "aceptado";
             why = "pieza circular o pista fina (avatar, punto, interruptor, pista)";
+          }
+          break;
+        case "texto-tapado":
+          // El mundo del lienzo es más grande que la vista: el minimapa y los controles flotan sobre él como sobre un
+          // mapa, y lo que queda debajo se alcanza desplazando (y desde la vista en lista).
+          if (i.world && /z-node-(minimap|controls)/.test(i.detail)) {
+            verdict = "aceptado";
+            why =
+              "nodo bajo el minimapa o los controles flotantes del lienzo: se alcanza desplazando, con el teclado y desde la vista en lista";
           }
           break;
         case "solape":
