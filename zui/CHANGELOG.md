@@ -195,6 +195,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco. En una
   tabla cuenta desde 1 px escondido (en una tira, desde 8): la última columna llega al borde y unos pocos píxeles ya
   cortan su texto.
+- `SlotPicker`: con más horas de las que caben, el borde de la lista con horas ocultas se difumina en vez de cortar una
+  hora a media altura.
 - `KanbanBoard`, `CalendarHeatmap` y las miniaturas de `Carousel` y `Gallery`: el borde con contenido oculto se difumina en
   lugar de cortar una tarjeta, un mes o una miniatura en seco (también en `/dom`).
 - `PromptInput`: modelo, herramientas y uso van en una sola fila que desplaza, con el borde oculto difuminado; en un

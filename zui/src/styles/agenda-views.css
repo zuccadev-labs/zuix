@@ -1117,6 +1117,31 @@
     padding: var(--z-space-0-5);
     scrollbar-width: thin;
   }
+  /* Más horas de las que caben: el borde con horas ocultas se difumina y la que queda a medias se lee como «sigue».
+     Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+  @supports (animation-timeline: scroll()) {
+    .z-slotpicker__list {
+      animation: z-slotpicker-fade linear both;
+      animation-timeline: scroll(self block);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-slotpicker__list {
+      animation: none;
+    }
+  }
+  @keyframes z-slotpicker-fade {
+    from {
+      mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+    }
+  }
   .z-slotpicker__slot {
     display: flex;
     align-items: center;
