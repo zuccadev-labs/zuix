@@ -80,10 +80,11 @@ export default function ({ t, assert, poll }) {
         );
         await page.keyboard.press("Escape");
         await poll(() => page.evaluate((sel) => document.activeElement === document.querySelector(sel), canvas), "otra vez: al lienzo");
-        const x0 = await page.locator(canvas).evaluate((el) => el.style.getPropertyValue("--z-vp-x"));
+        const x0 = await page.locator(`${canvas} .z-node-canvas__world`).evaluate((el) => el.style.getPropertyValue("--z-vp-x"));
         await page.keyboard.press("ArrowLeft");
         await poll(
-          async () => (await page.locator(canvas).evaluate((el) => el.style.getPropertyValue("--z-vp-x"))) !== x0,
+          async () =>
+            (await page.locator(`${canvas} .z-node-canvas__world`).evaluate((el) => el.style.getPropertyValue("--z-vp-x"))) !== x0,
           "en el lienzo, las flechas desplazan",
         );
         await page.keyboard.press("Enter");
@@ -167,7 +168,10 @@ export default function ({ t, assert, poll }) {
           const x = await nodeX(page, "notify");
           return x !== before && x % 16 === 0;
         }, "se mueve y cae en la cuadrícula");
-        const vp = () => page.locator(canvas).evaluate((el) => [el.style.getPropertyValue("--z-vp-x"), el.dataset.zoom]);
+        const vp = () =>
+          page
+            .locator(canvas)
+            .evaluate((el) => [el.querySelector(".z-node-canvas__world").style.getPropertyValue("--z-vp-x"), el.dataset.zoom]);
         const [x0, z0] = await vp();
         const box = await page.locator(canvas).boundingBox();
         await page.mouse.move(box.x + 60, box.y + 40);
@@ -331,7 +335,7 @@ export default function ({ t, assert, poll }) {
         );
         // El intervalo depende de la máquina (el raster por software de un entorno sin GPU domina); el umbral es sobre el
         // trabajo de script, que es lo que pone el lienzo.
-        if (frames.loaf) assert(frames.script95 < 33, `script por fotograma p95 ${frames.script95.toFixed(1)} ms`);
+        if (frames.loaf) assert(frames.script95 < 16, `script por fotograma p95 ${frames.script95.toFixed(1)} ms`);
       },
     },
   ];

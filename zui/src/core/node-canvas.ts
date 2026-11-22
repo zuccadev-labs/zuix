@@ -768,23 +768,24 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
   };
 
   const paintView = () => {
-    const vars: Record<string, string> = {
-      "--z-vp-x": px(vp.x),
-      "--z-vp-y": px(vp.y),
-      "--z-vp-zoom": String(Math.round(vp.zoom * 10000) / 10000),
+    // La vista va en la capa del mundo y el desplazamiento del fondo en el fondo, no en la raíz: así un fotograma de
+    // desplazamiento no recalcula el estilo de todos los nodos (las variables se registran sin herencia en la hoja).
+    const set = (el: HTMLElement, k: string, v: string) => {
+      if (el.style.getPropertyValue(k) !== v) el.style.setProperty(k, v);
     };
-    for (const [k, v] of Object.entries(vars)) if (root.style.getPropertyValue(k) !== v) root.style.setProperty(k, v);
+    set(world, "--z-vp-x", px(vp.x));
+    set(world, "--z-vp-y", px(vp.y));
+    set(world, "--z-vp-zoom", String(Math.round(vp.zoom * 10000) / 10000));
     // Paso de los puntos del fondo en pantalla: el de la cuadrícula, duplicado mientras quede por debajo de 12 px (con
-    // poco zoom los puntos se juntarían en una trama sucia).
+    // poco zoom los puntos se juntarían en una trama sucia). El fondo se desplaza con una transformación (resto del
+    // paso), no con background-position: al desplazar no se vuelve a pintar, solo se compone.
     const grid = typeof o.snap === "number" && o.snap > 0 ? o.snap : 16;
     let step = grid * vp.zoom;
     for (let i = 0; i < 8 && step < 12; i++) step *= 2;
-    root.style.setProperty("--z-grid-step", px(step));
-    // El fondo se desplaza con una transformación (resto del paso), no con background-position: al desplazar no se
-    // vuelve a pintar, solo se compone.
     const mod = (v: number) => ((v % step) + step) % step;
-    root.style.setProperty("--z-grid-x", px(mod(vp.x)));
-    root.style.setProperty("--z-grid-y", px(mod(vp.y)));
+    set(background, "--z-grid-step", px(step));
+    set(background, "--z-grid-x", px(mod(vp.x)));
+    set(background, "--z-grid-y", px(mod(vp.y)));
     root.dataset.zoom = String(Math.round(vp.zoom * 100));
   };
 
@@ -993,6 +994,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     const edges = [...selEdges];
     if (!nodes.length && !edges.length) return;
     const fallback = current && nodes.includes(current) ? nearestOther(current, new Set(nodes)) : current;
+    // Antes de quitar nada: quien monta puede retirar el elemento enfocado en el mismo aviso.
+    const hadFocus = root.contains(doc.activeElement) || doc.activeElement === doc.body;
     const next = removeElements(graph, nodes, edges);
     const count = graph.nodes.length - next.nodes.length || graph.edges.length - next.edges.length;
     selNodes = new Set();
@@ -1001,7 +1004,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     emitSelection();
     say(fill(labels.deleted, { count }));
     current = fallback && index.has(fallback) ? fallback : firstNode();
-    if (current && root.contains(doc.activeElement)) goTo(current);
+    if (current && hadFocus) goTo(current);
   };
   const nearestOther = (id: string, exclude: Set<string>) => {
     const r = rects.get(id);
@@ -1220,7 +1223,9 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     connecting = null;
     connect(c.from, c.fromKind, to);
     invalidate({ nodes: true, chrome: true });
-    focusSoon(() => portElement(to));
+    // De vuelta al puerto de origen: se sigue desde donde se empezó.
+    reveal(c.from.node);
+    focusSoon(() => portElement(c.from));
   };
 
   // Puntero.

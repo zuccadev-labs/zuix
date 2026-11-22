@@ -3,6 +3,23 @@
    con las variables de la vista (`--z-vp-x`, `--z-vp-y`, `--z-vp-zoom`); el texto de cada nodo sigue la dirección del
    documento. Los nodos son HTML (admiten cualquier pieza de zui) y no llevan desenfoque: con cientos a la vez, el
    cristal va solo en el cromo (minimapa y controles). */
+/* La vista y el fondo cambian en cada fotograma de desplazamiento: sin herencia, el cambio no recalcula el estilo de
+   los nodos que cuelgan del mundo. */
+@property --z-vp-x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --z-vp-y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --z-vp-zoom {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
 @layer zui.nodes {
   .z-node-canvas {
     --z-node-dir: ltr;
