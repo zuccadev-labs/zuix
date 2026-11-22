@@ -910,6 +910,9 @@
     background: var(--z-row-hover);
     box-shadow: inset 3px 0 0 var(--z-accent);
   }
+  .z-leaderboard__row[data-current] .z-leaderboard__secondary {
+    color: var(--z-fg-muted);
+  }
   [dir="rtl"] .z-leaderboard__row[data-current] {
     box-shadow: inset -3px 0 0 var(--z-accent);
   }
