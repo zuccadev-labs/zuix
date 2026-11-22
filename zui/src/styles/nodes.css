@@ -718,6 +718,15 @@
     display: grid;
     gap: var(--z-space-4);
   }
+  .z-node-list__scroll {
+    min-inline-size: 0;
+    overflow-x: auto;
+    border-radius: var(--z-radius-md);
+  }
+  .z-node-list__scroll:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
   .z-node-list__caption {
     padding-block-end: var(--z-space-2);
     color: var(--z-fg);

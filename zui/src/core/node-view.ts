@@ -248,77 +248,85 @@ export function listViewTree(graph: Graph, labels: NodeCanvasLabels = NODE_CANVA
     "div",
     { class: "z-node-list" },
     h(
-      "table",
-      { class: "z-table z-node-list__table" },
-      h("caption", { class: "z-node-list__caption" }, labels.listNodes),
+      "div",
+      { class: "z-node-list__scroll", role: "region", "aria-label": labels.listNodes, tabindex: 0 },
       h(
-        "thead",
-        null,
-        h("tr", null, th(labels.listName), th(labels.listStatus), th(labels.listInputs), th(labels.listOutputs), th(labels.listActions)),
-      ),
-      h(
-        "tbody",
-        null,
-        ...(nodes.length
-          ? nodes.map((n) =>
-              h(
-                "tr",
-                { key: n.id, "data-id": n.id },
-                h("th", { scope: "row" }, nodeLabel(n)),
-                h("td", null, n.data.status ? labels.status[n.data.status] || "—" : "—"),
-                h("td", null, count(n, "target")),
-                h("td", null, count(n, "source")),
+        "table",
+        { class: "z-table z-node-list__table" },
+        h("caption", { class: "z-node-list__caption" }, labels.listNodes),
+        h(
+          "thead",
+          null,
+          h("tr", null, th(labels.listName), th(labels.listStatus), th(labels.listInputs), th(labels.listOutputs), th(labels.listActions)),
+        ),
+        h(
+          "tbody",
+          null,
+          ...(nodes.length
+            ? nodes.map((n) =>
                 h(
-                  "td",
-                  null,
+                  "tr",
+                  { key: n.id, "data-id": n.id },
+                  h("th", { scope: "row" }, nodeLabel(n)),
+                  h("td", null, n.data.status ? labels.status[n.data.status] || "—" : "—"),
+                  h("td", null, count(n, "target")),
+                  h("td", null, count(n, "source")),
                   h(
-                    "button",
-                    { type: "button", class: "z-btn z-btn--ghost", "data-size": "sm", "data-node-action": "show", "data-node": n.id },
-                    labels.showNode,
-                    h("span", { class: "z-sr-only" }, ` ${nodeLabel(n)}`),
+                    "td",
+                    null,
+                    h(
+                      "button",
+                      { type: "button", class: "z-btn z-btn--ghost", "data-size": "sm", "data-node-action": "show", "data-node": n.id },
+                      labels.showNode,
+                      h("span", { class: "z-sr-only" }, ` ${nodeLabel(n)}`),
+                    ),
                   ),
                 ),
-              ),
-            )
-          : [h("tr", null, h("td", { colspan: 5 }, labels.emptyList))]),
+              )
+            : [h("tr", null, h("td", { colspan: 5 }, labels.emptyList))]),
+        ),
       ),
     ),
     h(
-      "table",
-      { class: "z-table z-node-list__table" },
-      h("caption", { class: "z-node-list__caption" }, labels.listEdges),
-      h("thead", null, h("tr", null, th(labels.listFrom), th(labels.listTo), th(labels.listActions))),
+      "div",
+      { class: "z-node-list__scroll", role: "region", "aria-label": labels.listEdges, tabindex: 0 },
       h(
-        "tbody",
-        null,
-        ...graph.edges.map((e) => {
-          const from = `${nodeLabel(index.get(e.source))}${e.sourcePort ? ` · ${e.sourcePort}` : ""}`;
-          const to = `${nodeLabel(index.get(e.target))}${e.targetPort ? ` · ${e.targetPort}` : ""}`;
-          return h(
-            "tr",
-            { key: e.id, "data-edge": e.id },
-            h("td", null, from),
-            h("td", null, e.label ? `${to} (${e.label})` : to),
-            h(
-              "td",
-              null,
-              readOnly
-                ? "—"
-                : h(
-                    "button",
-                    {
-                      type: "button",
-                      class: "z-btn z-btn--ghost",
-                      "data-size": "sm",
-                      "data-node-action": "remove-edge",
-                      "data-edge": e.id,
-                    },
-                    labels.removeEdge,
-                    h("span", { class: "z-sr-only" }, ` ${from} → ${to}`),
-                  ),
-            ),
-          );
-        }),
+        "table",
+        { class: "z-table z-node-list__table" },
+        h("caption", { class: "z-node-list__caption" }, labels.listEdges),
+        h("thead", null, h("tr", null, th(labels.listFrom), th(labels.listTo), th(labels.listActions))),
+        h(
+          "tbody",
+          null,
+          ...graph.edges.map((e) => {
+            const from = `${nodeLabel(index.get(e.source))}${e.sourcePort ? ` · ${e.sourcePort}` : ""}`;
+            const to = `${nodeLabel(index.get(e.target))}${e.targetPort ? ` · ${e.targetPort}` : ""}`;
+            return h(
+              "tr",
+              { key: e.id, "data-edge": e.id },
+              h("td", null, from),
+              h("td", null, e.label ? `${to} (${e.label})` : to),
+              h(
+                "td",
+                null,
+                readOnly
+                  ? "—"
+                  : h(
+                      "button",
+                      {
+                        type: "button",
+                        class: "z-btn z-btn--ghost",
+                        "data-size": "sm",
+                        "data-node-action": "remove-edge",
+                        "data-edge": e.id,
+                      },
+                      labels.removeEdge,
+                      h("span", { class: "z-sr-only" }, ` ${from} → ${to}`),
+                    ),
+              ),
+            );
+          }),
+        ),
       ),
     ),
   );

@@ -780,7 +780,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     set(world, "--z-vp-zoom", String(Math.round(vp.zoom * 10000) / 10000));
     // Con poco zoom los puertos conservan su objetivo de 24 px en pantalla (WCAG 2.5.8). Esta variable sí se hereda,
     // pero solo cambia con el zoom, no al desplazar.
-    set(world, "--z-port-scale", String(Math.round(Math.max(1, 1 / vp.zoom) * 1000) / 1000));
+    set(world, "--z-port-scale", String(Math.ceil(Math.max(1, 1 / vp.zoom) * 1000) / 1000));
     // Paso de los puntos del fondo en pantalla: el de la cuadrícula, duplicado mientras quede por debajo de 12 px (con
     // poco zoom los puntos se juntarían en una trama sucia). El fondo se desplaza con una transformación (resto del
     // paso), no con background-position: al desplazar no se vuelve a pintar, solo se compone.

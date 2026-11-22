@@ -2787,63 +2787,67 @@ malaga" data-ignore-accents="">Un
   <header class="demo__head"><h3 class="demo__name">NodeListView</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <div class="z-node-list">
-  <table class="z-table z-node-list__table">
-    <caption class="z-node-list__caption">Nodes</caption>
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Status</th>
-        <th scope="col">Inputs</th>
-        <th scope="col">Outputs</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr data-id="a">
-        <th scope="row">Fetch</th>
-        <td>—</td>
-        <td>0</td>
-        <td>1</td>
-        <td>
-          <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="a">Show
-            <span class="z-sr-only"> Fetch</span>
-          </button>
-        </td>
-      </tr>
-      <tr data-id="b">
-        <th scope="row">Store</th>
-        <td>—</td>
-        <td>1</td>
-        <td>0</td>
-        <td>
-          <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="b">Show
-            <span class="z-sr-only"> Store</span>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <table class="z-table z-node-list__table">
-    <caption class="z-node-list__caption">Connections</caption>
-    <thead>
-      <tr>
-        <th scope="col">From</th>
-        <th scope="col">To</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr data-edge="e">
-        <td>Fetch</td>
-        <td>Store</td>
-        <td>
-          <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="remove-edge" data-edge="e">Remove connection
-            <span class="z-sr-only"> Fetch → Store</span>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="z-node-list__scroll" role="region" aria-label="Nodes" tabindex="0">
+    <table class="z-table z-node-list__table">
+      <caption class="z-node-list__caption">Nodes</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Status</th>
+          <th scope="col">Inputs</th>
+          <th scope="col">Outputs</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-id="a">
+          <th scope="row">Fetch</th>
+          <td>—</td>
+          <td>0</td>
+          <td>1</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="a">Show
+              <span class="z-sr-only"> Fetch</span>
+            </button>
+          </td>
+        </tr>
+        <tr data-id="b">
+          <th scope="row">Store</th>
+          <td>—</td>
+          <td>1</td>
+          <td>0</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="b">Show
+              <span class="z-sr-only"> Store</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="z-node-list__scroll" role="region" aria-label="Connections" tabindex="0">
+    <table class="z-table z-node-list__table">
+      <caption class="z-node-list__caption">Connections</caption>
+      <thead>
+        <tr>
+          <th scope="col">From</th>
+          <th scope="col">To</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-edge="e">
+          <td>Fetch</td>
+          <td>Store</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="remove-edge" data-edge="e">Remove connection
+              <span class="z-sr-only"> Fetch → Store</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
   </div>
 </section>

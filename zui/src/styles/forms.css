@@ -1826,7 +1826,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--z-space-0-5);
-    block-size: var(--z-transfer-height, 240px);
+    block-size: var(--z-transfer-height, 320px);
     overflow: auto;
     overscroll-behavior: contain;
     border-radius: var(--z-control-radius);

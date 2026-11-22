@@ -852,6 +852,15 @@
     -webkit-user-select: none;
     user-select: none;
   }
+  /* Con puntero grueso la zona del asa crece hasta 40 px sin cambiar el dibujo. */
+  @media (pointer: coarse) {
+    .z-table__resize::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline: calc(var(--z-space-4) * -1);
+    }
+  }
   .z-table__resize::after {
     content: "";
     position: absolute;
