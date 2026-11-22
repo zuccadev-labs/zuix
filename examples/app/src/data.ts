@@ -17,7 +17,9 @@ export type ScreenId =
   | "data"
   | "site"
   | "media"
-  | "carousels";
+  | "carousels"
+  | "time"
+  | "terminal";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -44,6 +46,8 @@ export const SCREENS: ScreenDef[] = [
   { id: "site", title: "Site", icon: "globe-alt", hint: "Navbar, loaders and effects" },
   { id: "media", title: "Media", icon: "swatch", hint: "Color, sliders, images and capture" },
   { id: "carousels", title: "Carousels", icon: "photo", hint: "Prism, layouts, stories and skeletons" },
+  { id: "time", title: "Time", icon: "clock", hint: "Clocks, countdowns and durations" },
+  { id: "terminal", title: "Terminal", icon: "command-line", hint: "Terminal, logs, code and diffs" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);

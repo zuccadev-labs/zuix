@@ -69,5 +69,5 @@
       "code": "<div id=\"resize-demo\" class=\"z-solid\" style=\"position:relative;box-sizing:border-box;width:240px;padding:var(--z-space-4);border-radius:var(--z-radius-md)\">\n  Drag the right edge, or focus it and use the arrow keys.\n  <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panel\" aria-valuenow=\"240\" aria-valuemin=\"160\" aria-valuemax=\"320\" class=\"z-resize\" data-side=\"right\" data-default-size=\"240\"></div>\n</div>"
     }
   ],
-  "origin": "ResizeHandle de zutool; se añadió el teclado."
+  "origin": "ResizeHandle de zutool; le añadí el teclado."
 }

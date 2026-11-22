@@ -1,4 +1,4 @@
-// Lógica del Carousel ampliado (oleada 7) que comparten React y el modo DOM: reproducción automática con pausa
+// Lógica del Carousel ampliado que comparten React y el modo DOM: reproducción automática con pausa
 // (WCAG 2.2.2: botón visible, pausa al pasar el puntero, con el foco dentro, con la pestaña oculta o fuera de
 // pantalla; sin arranque automático con movimiento reducido), posiciones del modo «snap» (varias por página y
 // vertical, sobre el desplazamiento nativo con scroll-snap) e indicadores. Sin documento al importar.

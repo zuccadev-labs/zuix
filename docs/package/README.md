@@ -2,9 +2,9 @@
 
 Cómo se versionan, se construyen y se publican los paquetes de la suite.
 
-La `0.1.0` está en npmjs.com desde el 2026-11-14, bajo el scope `@zuccadev-labs`, con licencia MIT y acceso
-público. La publiqué a mano, con 2FA y sin procedencia. De la siguiente en adelante publica el workflow
-`release` al fusionar en `main` una subida de versión
+Los paquetes están en npmjs.com desde el 2026-11-14, bajo el scope `@zuccadev-labs`, con licencia MIT y
+acceso público. La `0.1.0` la publiqué a mano, con 2FA y sin procedencia. La `0.2.0` y la `0.3.0` las publicó
+el workflow `release` al fusionar en `main` la subida de versión
 ([Publicación automática](./02-publicacion.md#publicación-automática-desde-main)).
 
 ## Documentos
@@ -233,8 +233,6 @@ y `pnpm test:browser`).
 
 ## Lo que no he comprobado
 
-- **La publicación automática.** El workflow `release` no ha publicado nunca: la primera vez será con la
-  `0.2.0` ([Publicación](./02-publicacion.md#lo-que-no-he-comprobado)).
 - **webpack, Parcel y Rspack contra el paquete publicado.** Pruebo Vite 8 y Next.js con Turbopack. El sitio
   de documentación usa Rspack, pero contra el fuente.
 - **`attw` en modo estricto.** Lo ejecuto con el perfil `esm-only`: los paquetes no tienen salida CommonJS.

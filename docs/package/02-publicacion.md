@@ -146,8 +146,8 @@ Lo que no se puede dejar hecho desde el código y hago yo con mi cuenta.
 |---|---|
 | Entorno `npm` en GitHub, limitado a `main` | Hecho |
 | Etiqueta `v0.1.0` y su Release, sobre el commit publicado | Hecho |
-| Publicador de confianza en npmjs.com, en los cinco paquetes | Lo registro justo antes de fusionar la subida a `0.2.0`: una configuración nueva caduca si no publica en dos días |
-| Origen de GitHub Pages: "GitHub Actions" (Settings → Pages) | Necesario para que el workflow `pages` despliegue el sitio |
+| Publicador de confianza en npmjs.com, en los cinco paquetes | Hecho. La `0.2.0` fue la primera versión publicada con él |
+| Origen de GitHub Pages: "GitHub Actions" (Settings → Pages) | Hecho. El workflow `pages` despliega el sitio |
 
 Mientras la versión de `main` sea una que ya está en el registro, el workflow se queda en `detect` (verde,
 "nada que publicar").
@@ -202,7 +202,7 @@ for p in zuix-tokens zuix-zicon zuix-zui zuix-zout zuix; do npm trust list "@zuc
 ```
 
 **Cuándo hacerlo.** Según la documentación de npm, una configuración nueva debe completar su primera
-publicación en un plazo de 2 días; si no, caduca y hay que crearla otra vez. Por eso la registro justo antes
+publicación en un plazo de 2 días; si no, caduca y hay que crearla otra vez. Por eso la registré justo antes
 de fusionar la subida a `0.2.0`, no semanas antes.
 
 Después de la primera publicación automática correcta, npm recomienda cerrar la vía de los tokens: en la
@@ -374,13 +374,8 @@ El último caso no lo evita ningún diseño: quien usa el paraguas importa los i
 
 ## Lo que no he comprobado
 
-- **El workflow `release` no ha publicado todavía.** Lo validé en local: `actionlint`, y los guiones de
-  `detect`, del bucle de publicación y de las notas ejecutados contra el registro real en solo lectura. La
-  primera publicación real será la `0.2.0`.
-- **La publicación de confianza.** No he comprobado todavía que npm acepte la identidad OIDC al publicar un
-  tarball con `npm publish <archivo>`, ni la procedencia resultante. Los requisitos son los de la
-  documentación de npm.
-- **Las atestaciones** del trabajo `attest` y los adjuntos del Release: se estrenan con la primera
-  publicación.
+- **Reintentar una publicación que falló a medias.** La `0.2.0` y la `0.3.0` salieron por el workflow
+  `release`, con procedencia SLSA en npm, etiqueta, Release con los tarballs y atestaciones. Si npm acepta
+  unos paquetes y rechaza otros, el reintento salta los que ya están en el registro; no lo he visto ocurrir.
 - **Versiones preliminares**: el cálculo de `next` como etiqueta de distribución no se ha estrenado.
 - **CDN** (unpkg, jsDelivr): las rutas `dist/` existen en los tarballs; no las he probado servidas.

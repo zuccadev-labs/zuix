@@ -50,5 +50,5 @@
       "code": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>"
     }
   ],
-  "origin": "Oleada 7. Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código."
+  "origin": "Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código."
 }

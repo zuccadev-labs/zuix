@@ -1,4 +1,4 @@
-/* Formularios compuestos (oleada 3): InputGroup, PasswordInput, NumberInput, TagsInput, Listbox en línea,
+/* Formularios compuestos: InputGroup, PasswordInput, NumberInput, TagsInput, Listbox en línea,
    CheckboxGroup, variantes tarjeta, Fieldset y Editable. Misma capa que forms.css (`zui.forms`) y el mismo estándar:
    superficie de control hundida, canto de 3:1, radios concéntricos por tamaño (sm 8, md 10, lg 12) y anillo de foco
    en el contenedor, separado 1 px. */

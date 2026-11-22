@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EventCalendar, TimelineView, type AgendaView, type CalendarEvent, type Resource } from "@zuccadev-labs/zuix-zui";
 
-// Rendimiento (agenda.md §6): 5000 eventos en un mes y 500 recursos. Datos deterministas.
+// Rendimiento: 5000 eventos en un mes y 500 recursos. Datos deterministas.
 const TZ = "Europe/Madrid";
 const CALS = ["work", "product", "team", "personal", "health", "travel"];
 

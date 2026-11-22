@@ -999,7 +999,7 @@
     grid-template-columns: calc(var(--z-space-20) + var(--z-space-4)) minmax(0, 1fr);
     border-block-end: 1px solid var(--z-line);
   }
-  /* Solo bajo el pliegue (guía defer-rendering-heavy-content): los primeros días se pintan sin esperar; el resto
+  /* Solo bajo el pliegue: los primeros días se pintan sin esperar; el resto
      omite su trabajo de pintado hasta acercarse, con un tamaño estimado que el navegador recuerda. */
   .z-agendalist__day:nth-child(n + 5) {
     content-visibility: auto;

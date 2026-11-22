@@ -1,4 +1,4 @@
-// Ejes del Carousel (v0.4): `layout` (cómo se reparte el espacio) y `effect` (cómo se transforma cada slide según su
+// Ejes del Carousel: `layout` (cómo se reparte el espacio) y `effect` (cómo se transforma cada slide según su
 // distancia al centro). Los efectos son CSS sobre una sola variable por slide, `--z-slide-progress` (−n … 0 … n,
 // distancia al punto de ajuste en slides, en orden de lectura). Donde hay animaciones ligadas al desplazamiento la
 // variable la anima el navegador; donde no, la escribe el motor con `slideProgress`. Sin documento al importar.

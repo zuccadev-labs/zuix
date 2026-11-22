@@ -1,7 +1,7 @@
 {
   "$schema": "./zudocs.schema.json",
   "name": "Zuix",
-  "tagline": "Componentes, layouts, iconos y documentación con un solo estándar. Cambia la marca, conserva el sistema.",
+  "tagline": "Componentes, layouts, iconos y documentación sobre un solo estándar de HTML, CSS y tokens. Una marca nueva es un archivo.",
   "brand": "dazlabs",
   "defaultTheme": "dark",
   "locale": "es",
@@ -36,7 +36,12 @@
     ]
   },
   "pages": { "components": true, "icons": true, "tokens": true, "loaders": true, "effects": true, "carousels": true },
-  "home": { "eyebrow": "Suite de UI/UX · marca {brand}", "title": "Un estándar.", "emphasis": "Cualquier marca.", "suite": true },
+  "home": {
+    "eyebrow": "Suite de UI/UX · este sitio usa la marca {brand}",
+    "title": "Un estándar.",
+    "emphasis": "Cualquier marca.",
+    "suite": true
+  },
   "llms": { "append": "llms.append.md" },
   "search": { "enabled": true, "languages": ["es", "en"] },
   "navbar": [
@@ -48,5 +53,5 @@
   ],
   "repository": "https://github.com/zuccadev-labs/zuix",
   "cta": { "label": "Empezar", "to": "/docs/users" },
-  "footer": "Zuix · suite de UI/UX de DAZLABS"
+  "footer": "Zuix · suite de UI/UX de código abierto, licencia MIT"
 }

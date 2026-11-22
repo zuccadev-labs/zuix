@@ -4,14 +4,15 @@
 import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
 import layers from "./cases-layers.mjs";
-import wave3 from "./cases-wave3.mjs";
-import wave4 from "./cases-wave4.mjs";
-import wave4Zout from "./cases-wave4-zout.mjs";
-import wave5Content from "./cases-wave5-content.mjs";
-import wave5Data from "./cases-wave5-data.mjs";
-import wave6 from "./cases-wave6.mjs";
-import wave7 from "./cases-wave7.mjs";
-import v04 from "./cases-v04.mjs";
+import inputsCases from "./cases-inputs.mjs";
+import commandsCases from "./cases-commands.mjs";
+import workspaceCases from "./cases-workspace.mjs";
+import contentCases from "./cases-content.mjs";
+import dataCases from "./cases-data.mjs";
+import siteCases from "./cases-site.mjs";
+import mediaCases from "./cases-media.mjs";
+import timeTerminal from "./cases-time-terminal.mjs";
+import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import { carouselAtRest } from "../rest.mjs";
@@ -263,6 +264,8 @@ const SCREENS = [
   "charts",
   "media",
   "carousels",
+  "time",
+  "terminal",
 ];
 
 export const cases = [
@@ -644,8 +647,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        29,
-        "29 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media y Carousels)",
+        31,
+        "31 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time y Terminal)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -3072,9 +3075,22 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, wave7, v04, charts, reading].flatMap((build) =>
-    build(helpers()),
-  ),
+  ...[
+    auditReact,
+    auditCss,
+    layers,
+    inputsCases,
+    commandsCases,
+    workspaceCases,
+    contentCases,
+    dataCases,
+    siteCases,
+    mediaCases,
+    charts,
+    reading,
+    timeTerminal,
+    carouselsCases,
+  ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {
@@ -3499,7 +3515,7 @@ export const cases = [
       await shot(narrow, "agenda-month-390");
     },
   },
-  // ───────────────────────────── Agenda, oleada 2 ─────────────────────────────
+  // ───────────────────────────── Agenda: vistas ─────────────────────────────
   {
     name: "Agenda: vistas de año, perpetuo y línea temporal en el EventCalendar",
     async run({ open, shot }) {

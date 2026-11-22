@@ -111,10 +111,10 @@ versión es única. `tools/version.mjs` no tiene dependencias, tiene pruebas uni
 CI solo necesita comparar esa versión con el registro. Si la suite pasa algún día a versiones
 independientes, Changesets es el reemplazo natural.
 
+El flujo completo (subida, pull request, fusión y publicación automática) lo he recorrido dos veces, con
+la `0.2.0` el 2026-11-19 y con la `0.3.0` el 2026-11-21.
+
 ## Lo que no he comprobado
 
-- El flujo completo (subida, pull request, fusión y publicación automática) no lo he recorrido todavía: la
-  primera vez será con la `0.2.0`. `pnpm bump` lo he ejecutado con `check` y con `--dry-run` sobre el
-  repositorio, y su lógica tiene pruebas unitarias.
 - Versiones preliminares (`0.2.0-beta.1`): el script las acepta y el workflow las publica con la etiqueta
   `next`; no he publicado ninguna.

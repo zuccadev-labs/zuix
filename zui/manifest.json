@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 147,
+ "count": 158,
  "groups": {
   "actions": [
    "Button",
@@ -49,6 +49,7 @@
    "Divider",
    "FormatByte",
    "FormatDate",
+   "FormatDuration",
    "FormatNumber",
    "Highlight",
    "JsonTree",
@@ -172,6 +173,20 @@
    "Toggletip",
    "Tooltip",
    "Tour"
+  ],
+  "terminal": [
+   "CodeViewer",
+   "DiffViewer",
+   "LogConsole",
+   "Terminal"
+  ],
+  "time": [
+   "AnalogClock",
+   "Clock",
+   "Countdown",
+   "DurationField",
+   "TimeZoneSelect",
+   "WorldClock"
   ]
  },
  "components": [
@@ -518,7 +533,7 @@
      "code": "<>\n  <code id=\"invite-link\">https://example.com/i/8d2k</code>\n  <CopyButton target=\"invite-link\" label=\"Copy invite link\" />\n</>"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI.",
+   "origin": "Nuevo. Patrón habitual de botón de copiar accesible (burbuja como región viva, sin deshabilitar el botón, con el caso de VoiceOver en cuenta). Referencia de variantes: Clipboard de Shark UI.",
    "file": "zui/src/components/actions/CopyButton.manifest.json"
   },
   {
@@ -628,7 +643,7 @@
      "code": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código.",
+   "origin": "Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código.",
    "file": "zui/src/components/actions/DownloadTrigger.manifest.json"
   },
   {
@@ -1518,7 +1533,7 @@
      "code": "<div class=\"z-heatmap\" id=\"commits\" data-title=\"Commits\" data-from=\"2026-10-26\" data-to=\"2026-11-22\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"values\": { \"2026-10-27\": 2, \"2026-11-02\": 5, \"2026-11-03\": 1, \"2026-11-10\": 8, \"2026-11-12\": 14, \"2026-11-16\": 3, \"2026-11-17\": 6, \"2026-11-18\": 4, \"2026-11-19\": 2 } }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §12; contribuciones de GitHub.",
+   "origin": "Diseño propio para la agenda; referencia: el gráfico de contribuciones de GitHub.",
    "file": "zui/src/components/agenda/CalendarHeatmap.manifest.json"
   },
   {
@@ -1783,7 +1798,7 @@
      "code": "<div class=\"z-agenda\" id=\"team-agenda\" data-view=\"week\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-week-start=\"1\" data-day-start=\"07:00\" data-day-end=\"21:00\" data-editable>\n  <script type=\"application/json\" data-calendars>[{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }]</script>\n  <script type=\"application/json\" data-events>[{ \"id\": \"a\", \"title\": \"Design review\", \"start\": \"2026-11-19T10:00\", \"end\": \"2026-11-19T11:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\" }]</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md; Google Calendar, Fantastical, FullCalendar y Schedule-X como referencia.",
+   "origin": "Diseño propio para la agenda; referencias: Google Calendar, Fantastical, FullCalendar y Schedule-X.",
    "file": "zui/src/components/agenda/EventCalendar.manifest.json"
   },
   {
@@ -1879,7 +1894,7 @@
      "code": "<div class=\"z-freebusy\" id=\"find-time\" data-date=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-duration=\"60\" data-locale=\"en-GB\" data-now=\"2026-11-19T09:42:00Z\">\n  <script type=\"application/json\" data-props>{ \"attendees\": [{ \"id\": \"m\", \"name\": \"Marta López\", \"timeZone\": \"Europe/Madrid\", \"workingHours\": { \"start\": \"09:00\", \"end\": \"18:00\" }, \"busy\": [{ \"start\": \"2026-11-19T08:00:00Z\", \"end\": \"2026-11-19T09:30:00Z\" }] }, { \"id\": \"d\", \"name\": \"Dana Price\", \"timeZone\": \"America/New_York\", \"workingHours\": { \"start\": \"08:00\", \"end\": \"17:00\" }, \"busy\": [{ \"start\": \"2026-11-19T15:00:00Z\", \"end\": \"2026-11-19T16:00:00Z\" }] }] }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §9; Outlook Scheduling Assistant.",
+   "origin": "Diseño propio para la agenda; referencia: el asistente de programación de Outlook.",
    "file": "zui/src/components/agenda/FreeBusy.manifest.json"
   },
   {
@@ -1973,7 +1988,7 @@
      "code": "<div class=\"z-habit\" id=\"reading-habit\" data-subtitle=\"Read 20 minutes\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"states\": { \"2026-11-12\": \"done\", \"2026-11-13\": \"done\", \"2026-11-14\": \"missed\", \"2026-11-15\": \"rest\", \"2026-11-16\": \"done\", \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { \"progress\": 60 } } }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §13; Duolingo, Streaks.",
+   "origin": "Diseño propio para la agenda; referencias: Duolingo y Streaks.",
    "file": "zui/src/components/agenda/HabitCalendar.manifest.json"
   },
   {
@@ -2048,7 +2063,7 @@
      "code": "<div class=\"z-perpetual\" id=\"perpetual-2026\" data-highlight=\"2026-11-19\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\"></div>"
     }
    ],
-   "origin": "Especificación agenda.md §7; lámina de calendario perpetuo de una página.",
+   "origin": "Diseño propio para la agenda; referencia: la lámina de calendario perpetuo de una página.",
    "file": "zui/src/components/agenda/PerpetualYear.manifest.json"
   },
   {
@@ -2187,7 +2202,7 @@
      "code": "<div class=\"z-slotpicker\" id=\"intro-call\" data-host-time-zone=\"Europe/Madrid\" data-duration=\"30\" data-from=\"2026-11-19\" data-to=\"2026-11-30\" data-time-zone=\"Europe/Madrid\" data-time-zones=\"Europe/Madrid,America/New_York\" data-today=\"2026-11-19\" data-now=\"2026-11-19T09:42:00Z\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"availability\": [{ \"days\": [1, 2, 3, 4, 5], \"start\": \"09:00\", \"end\": \"17:00\" }] }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §10; Calendly, Cal.com.",
+   "origin": "Diseño propio para la agenda; referencias: Calendly y Cal.com.",
    "file": "zui/src/components/agenda/SlotPicker.manifest.json"
   },
   {
@@ -2391,7 +2406,7 @@
      "code": "<div class=\"z-timeline\" id=\"plan-rooms\" data-mode=\"resources\" data-title=\"Rooms\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-editable>\n  <script type=\"application/json\" data-props>{ \"resources\": [{ \"id\": \"atlas\", \"title\": \"Atlas\", \"meta\": \"8 seats\" }, { \"id\": \"kepler\", \"title\": \"Kepler\", \"meta\": \"4 seats\" }], \"calendars\": [{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }], \"events\": [{ \"id\": \"a\", \"title\": \"Sprint planning\", \"start\": \"2026-11-19T09:00\", \"end\": \"2026-11-19T10:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"atlas\"] }, { \"id\": \"b\", \"title\": \"Interview\", \"start\": \"2026-11-19T10:30\", \"end\": \"2026-11-19T11:30\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }, { \"id\": \"c\", \"title\": \"Supplier call\", \"start\": \"2026-11-19T11:00\", \"end\": \"2026-11-19T12:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }] }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §8–9; Asana, ClickUp, FullCalendar Scheduler.",
+   "origin": "Diseño propio para la agenda; referencias: Asana, ClickUp y FullCalendar Scheduler.",
    "file": "zui/src/components/agenda/TimelineView.manifest.json"
   },
   {
@@ -3222,7 +3237,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Gráfico de áreas: como LineChart con relleno lavado (≈16 %) y base en cero; `stacked` apila las series (positivos hacia arriba, negativos hacia abajo) y el tooltip suma el total.",
    "import": "import { AreaChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -3472,7 +3487,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Gráfico de barras verticales u horizontales, agrupadas o apiladas, con valores negativos: grosor máximo, extremo del dato redondeado y base recta, hueco de 2 px entre las que se tocan, banda resaltada y tooltip por categoría, tramas por serie (`patterns`).",
    "import": "import { BarChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -3724,7 +3739,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Anillo: parte de un todo con el total en el centro (o el sector activo al pasar o enfocar), leyenda con porcentajes que oculta sectores, hueco entre sectores y trama opcional.",
    "import": "import { DonutChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -3917,7 +3932,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Gráfico de líneas: una o varias series sobre un eje de categorías, tiempo (marcas de día, semana, mes o año y rótulos de Intl) o número; curva lineal, monótona o escalonada, huecos donde falta el dato, marcadores con forma por serie, cruceta y tooltip al pasar o enfocar, flechas entre puntos, leyenda que oculta series y tabla alternativa.",
    "import": "import { LineChart } from \"@zuccadev-labs/zuix-zui\"",
    "exports": [
@@ -4166,7 +4181,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Tarta: como DonutChart sin hueco central; los sectores se separan con un trazo de superficie y el tooltip sale junto al sector.",
    "import": "import { PieChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -5119,6 +5134,86 @@
     }
    ],
    "file": "zui/src/components/content/FormatDate.manifest.json"
+  },
+  {
+   "name": "FormatDuration",
+   "group": "content",
+   "description": "Duración legible en un <time datetime=\"PT…\"> con Intl.DurationFormat: «1 hour, 30 minutes» (`long`), «1 hr, 30 min» (`short`), «1h 30m» (`narrow`) o «1:30:00» (`digital`). Acepta ISO 8601, milisegundos o partes; donde falta Intl.DurationFormat, un respaldo con unidades de Intl.NumberFormat da el mismo estilo.",
+   "import": "import { FormatDuration } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | number | DurationParts",
+     "required": true,
+     "description": "ISO 8601 (PT1H30M), ms o { hours, minutes… }."
+    },
+    {
+     "name": "format",
+     "type": "enum",
+     "values": [
+      "long",
+      "short",
+      "narrow",
+      "digital"
+     ],
+     "default": "short"
+    },
+    {
+     "name": "largestUnit",
+     "type": "enum",
+     "values": [
+      "weeks",
+      "days",
+      "hours",
+      "minutes",
+      "seconds"
+     ],
+     "description": "Por defecto días si llega a uno, si no horas."
+    },
+    {
+     "name": "smallestUnit",
+     "type": "enum",
+     "values": [
+      "weeks",
+      "days",
+      "hours",
+      "minutes",
+      "seconds"
+     ],
+     "default": "seconds"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "fg"
+   ],
+   "classes": [
+    "z-format"
+   ],
+   "a11y": "<time datetime> con la duración en ISO 8601 para máquinas y el texto del locale para personas. Sin React: <time class=\"z-format\" data-format=\"duration\" datetime=\"PT1H30M\" data-style data-largest-unit data-smallest-unit data-locale> dentro de [data-z-dom]: el texto se escribe al hidratar.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Corta",
+     "code": "<FormatDuration value=\"PT1H30M\" locale=\"en-US\" />"
+    },
+    {
+     "title": "Larga, en días",
+     "code": "<FormatDuration value=\"P1DT2H\" format=\"long\" locale=\"en-US\" />"
+    },
+    {
+     "title": "Reloj",
+     "code": "<FormatDuration value={5_400_000} format=\"digital\" locale=\"en-US\" />"
+    }
+   ],
+   "origin": "Intl.DurationFormat.",
+   "file": "zui/src/components/content/FormatDuration.manifest.json"
   },
   {
    "name": "FormatNumber",
@@ -6456,7 +6551,7 @@
      "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
     }
    ],
-   "origin": "Circular Progress de Shark y NeonBlade; guía progress-ring de modern-web-guidance (progress nativo, conic-gradient y máscara).",
+   "origin": "Circular Progress de Shark y NeonBlade; anillo hecho con `<progress>` nativo, conic-gradient y máscara.",
    "behavior": "none",
    "file": "zui/src/components/data/CircularProgress.manifest.json"
   },
@@ -8335,7 +8430,7 @@
      "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>"
     }
    ],
-   "origin": "Oleada 7. Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas.",
+   "origin": "Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas.",
    "file": "zui/src/components/effects/Confetti.manifest.json"
   },
   {
@@ -10076,7 +10171,7 @@
      "script": "import { setCalendarOptions } from \"@zuccadev-labs/zuix-zui/dom\";\nsetCalendarOptions(document.querySelector(\"#price-calendar\"), {\n  dayContent: (date) => (date.endsWith(\"0\") ? \"$89\" : null),\n  dayDescription: (date) => (date.endsWith(\"0\") ? \"from $89\" : null),\n});"
     }
    ],
-   "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG.",
+   "origin": "Calendario propio del DatePicker; rejilla de fechas de ARIA APG.",
    "exports": [
     "presetValue"
    ],
@@ -10338,7 +10433,7 @@
      "code": "<CheckboxGroup\n  label=\"Terms\"\n  error=\"Accept both to continue.\"\n  options={[\n    { value: \"terms\", label: \"I accept the terms of service\" },\n    { value: \"privacy\", label: \"I accept the privacy policy\" },\n  ]}\n/>"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
+   "origin": "Nuevo. Patrón habitual de formularios accesibles (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
    "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
   },
   {
@@ -10491,7 +10586,7 @@
      "code": "<CircularSlider locale=\"en-US\" label=\"Target temperature\" defaultValue={21.5} min={10} max={30} step={0.5} arc={240} caption=\"°C\" name=\"temperature\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código.",
+   "origin": "Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código.",
    "file": "zui/src/components/forms/CircularSlider.manifest.json"
   },
   {
@@ -10625,7 +10720,7 @@
      "code": "<ColorArea defaultValue=\"#f59e0b\" label=\"Highlight color\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorArea.manifest.json"
   },
   {
@@ -10776,7 +10871,7 @@
      "code": "<ColorField defaultValue=\"rgb(236 72 153 / 0.8)\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorField.manifest.json"
   },
   {
@@ -10956,7 +11051,7 @@
      "code": "<ColorPicker defaultValue=\"rgb(16 185 129)\" alpha={false} formats={[\"hex\", \"rgb\"]} eyeDropper={false} />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "apg": "slider",
    "file": "zui/src/components/forms/ColorPicker.manifest.json"
   },
@@ -11130,7 +11225,7 @@
      "code": "<ColorPickerTrigger id=\"tag-color\" defaultValue=\"hsl(160 84% 39%)\" size=\"sm\" label=\"Tag color\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorPickerTrigger.manifest.json"
   },
   {
@@ -11290,7 +11385,7 @@
      "code": "<ColorSlider channel=\"hue\" orientation=\"vertical\" defaultValue=\"#ec4899\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorSlider.manifest.json"
   },
   {
@@ -11433,7 +11528,7 @@
      "code": "<ColorSwatchPicker\n  defaultValue=\"#10b981\"\n  swatches={[\n    { value: \"#ef4444\", label: \"Red\" },\n    { value: \"#f59e0b\", label: \"Amber\" },\n    { value: \"#10b981\", label: \"Emerald\" },\n    { value: \"#3b82f6\", label: \"Blue\" },\n    { value: \"#8b5cf6\", label: \"Violet\" },\n    { value: \"#ec4899\", label: \"Pink\" },\n  ]}\n/>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "apg": "radio",
    "file": "zui/src/components/forms/ColorSwatchPicker.manifest.json"
   },
@@ -11690,7 +11785,7 @@
      "code": "<span class=\"z-input z-combobox\" id=\"city\" data-size=\"md\" data-state=\"closed\" data-custom>\n  <span class=\"z-input__icon\"><z-icon name=\"map-pin\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"City\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"city-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a city\" />\n  <input type=\"hidden\" name=\"city\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"city-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"city-list\" role=\"listbox\" aria-label=\"City\">\n    <div class=\"z-listbox__option\" id=\"city-lisbon\" role=\"option\" data-value=\"lisbon\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Lisbon</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-madrid\" role=\"option\" data-value=\"madrid\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Madrid</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-montreal\" role=\"option\" data-value=\"montreal\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Montreal</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
    ],
-   "origin": "Combobox del catálogo objetivo; patrón combobox de ARIA APG sobre el aspecto de Input.",
+   "origin": "Combobox propio; patrón combobox de ARIA APG sobre el aspecto de Input.",
    "file": "zui/src/components/forms/Combobox.manifest.json"
   },
   {
@@ -12446,7 +12541,7 @@
      "code": "<span class=\"z-select z-datepicker\" id=\"shifts\" data-size=\"md\" data-block data-mode=\"multiple\" data-locale=\"en-US\" data-count-label=\"{count} shifts\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shifts-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Shifts</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-days\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"shifts\" value=\"\" />\n</span>\n\n<div id=\"shifts-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
     }
    ],
-   "origin": "DatePicker del catálogo objetivo; reutiliza la envoltura de Select y el panel de Popover.",
+   "origin": "DatePicker propio; reutiliza la envoltura de Select y el panel de Popover.",
    "file": "zui/src/components/forms/DatePicker.manifest.json"
   },
   {
@@ -13178,7 +13273,7 @@
      "code": "<Fieldset legend=\"Advanced\" disabled>\n  <Switch defaultChecked>Telemetry</Switch>\n  <Checkbox>Beta channel</Checkbox>\n</Fieldset>"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «forms» (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI.",
+   "origin": "Nuevo. Patrón habitual de formularios accesibles (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI.",
    "file": "zui/src/components/forms/Fieldset.manifest.json"
   },
   {
@@ -13411,7 +13506,7 @@
      "code": "<Form aria-label=\"Create account\" method=\"post\">\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Password\" required hint=\"Eight or more characters.\" validate={{ tooShort: \"Use at least 8 characters.\" }}>\n    <PasswordInput name=\"password\" autoComplete=\"new-password\" minLength={8} />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Create account</Button>\n</Form>"
     }
    ],
-   "origin": "Nuevo. Guías «forms» y «accessible-error-announcement» (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState).",
+   "origin": "Nuevo. Pautas habituales de formularios accesibles y de anuncio de errores (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState).",
    "file": "zui/src/components/forms/Form.manifest.json"
   },
   {
@@ -14492,7 +14587,7 @@
      "code": "<PasswordInput aria-label=\"Access token\" size=\"sm\" defaultVisible defaultValue=\"zx-demo-token\" autoComplete=\"off\" />"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «forms» (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
+   "origin": "Nuevo. Patrón habitual de formularios accesibles (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
    "file": "zui/src/components/forms/PasswordInput.manifest.json"
   },
   {
@@ -15009,7 +15104,7 @@
      "code": "<span class=\"z-select\" id=\"reviewers\" data-size=\"md\" data-block=\"true\" data-multiple data-max-selected=\"2\" data-value=\"ana\" data-placeholder=\"Choose reviewers\">\n  <button type=\"button\" role=\"combobox\" class=\"z-select__control\" aria-label=\"Reviewers\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"reviewers-list\" data-state=\"closed\">\n    <span class=\"z-select__value\">Ana Ruiz</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-up-down\" size=\"16\"></z-icon></span>\n  <select class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"reviewers\" multiple>\n    <option value=\"ana\" selected>Ana Ruiz</option>\n    <option value=\"leo\">Leo Park</option>\n    <option value=\"mia\">Mia Chen</option>\n    <option value=\"noor\">Noor Rahman</option>\n  </select>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\">\n  <div class=\"z-listbox__viewport\" id=\"reviewers-list\" role=\"listbox\" aria-label=\"Reviewers\" aria-multiselectable=\"true\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"ana\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Ana Ruiz</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"leo\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Leo Park</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"mia\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Mia Chen</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"noor\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Noor Rahman</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
    ],
-   "origin": "Select no nativo del catálogo objetivo; comparte envoltura con NativeSelect y el aspecto del popup con Menu.",
+   "origin": "Select no nativo propio; comparte envoltura con NativeSelect y el aspecto del popup con Menu.",
    "file": "zui/src/components/forms/Select.manifest.json"
   },
   {
@@ -15120,7 +15215,7 @@
      "code": "<ShortcutInput defaultValue=\"F5\" requireModifier={false} size=\"sm\" name=\"refresh\" />"
     }
    ],
-   "origin": "Oleada 7. Captura de combinación de teclas (ShortcutsEditor de zutool); normalización propia (core/shortcut).",
+   "origin": "Captura de combinación de teclas (ShortcutsEditor de zutool); normalización propia (core/shortcut).",
    "file": "zui/src/components/forms/ShortcutInput.manifest.json"
   },
   {
@@ -16700,7 +16795,7 @@
      "code": "<div class=\"z-compare\" data-orientation=\"vertical\" data-labels=\"false\" data-value=\"35\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"dots\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>"
     }
    ],
-   "origin": "Oleada 7. Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio.",
+   "origin": "Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio.",
    "file": "zui/src/components/media/CompareSlider.manifest.json"
   },
   {
@@ -16843,7 +16938,7 @@
      "code": "<div class=\"z-cropper\" data-aspect=\"1\" data-shape=\"circle\" style=\"max-inline-size:320px\">\n  <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E\" alt=\"Hills at sunset\" />\n</div>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Image Cropper de shark-ui (MIT), sin su código.",
+   "origin": "Inspirado en el comportamiento del Image Cropper de shark-ui (MIT), sin su código.",
    "file": "zui/src/components/media/ImageCropper.manifest.json"
   },
   {
@@ -16933,7 +17028,7 @@
      "code": "<QRCode value=\"WIFI:T:WPA;S:Studio;P:correct-horse;;\" level=\"L\" size={120} margin={2} label=\"Wi-Fi network Studio\" />"
     }
    ],
-   "origin": "Oleada 7. Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia.",
+   "origin": "Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia.",
    "file": "zui/src/components/media/QRCode.manifest.json"
   },
   {
@@ -17043,7 +17138,7 @@
      "code": "<SignaturePad ref={pad} />\n<Button onClick={async () => save(await signatureBlob(pad.current))}>Save</Button>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature).",
+   "origin": "Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature).",
    "file": "zui/src/components/media/SignaturePad.manifest.json"
   },
   {
@@ -19065,7 +19160,7 @@
    "classes": [
     "z-hovercard"
    ],
-   "a11y": "Patrón «hovercard» de modern-web-guidance (la pista rica de interestfor): la tarjeta es role=tooltip, el rol mínimo de una pista con enlaces, y describe al enlace con aria-describedby desde que se monta, abierta o no (un lector en modo exploración la necesita antes de interactuar; cerrada es un popover oculto). Si el enlace ya trae aria-describedby, manda el suyo. El enlace no lleva aria-expanded porque Intro lo sigue, y abrir la tarjeta no mueve el foco (WCAG 3.2.1). Se abre con el puntero tras `openDelay` o al enfocar el enlace con el teclado, y sigue abierta mientras el puntero o el foco estén en el enlace o en la tarjeta (WCAG 1.4.13). Escape la cierra sin mover el puntero y una pulsación fuera también. Montada en la capa superior, el orden de Tab sigue al visual: Tab desde el enlace entra en la tarjeta, Mayús+Tab desde su primer control vuelve al enlace y Tab desde el último sale hacia lo que sigue al enlace. Con el dedo no se abre (el toque sigue el enlace): su contenido debe ser prescindible. Para una ayuda que se pide, Toggletip; para una etiqueta corta, Tooltip.",
+   "a11y": "Sigue el patrón de pista rica de la propuesta `interestfor`: la tarjeta es role=tooltip, el rol mínimo de una pista con enlaces, y describe al enlace con aria-describedby desde que se monta, abierta o no (un lector en modo exploración la necesita antes de interactuar; cerrada es un popover oculto). Si el enlace ya trae aria-describedby, manda el suyo. El enlace no lleva aria-expanded porque Intro lo sigue, y abrir la tarjeta no mueve el foco (WCAG 3.2.1). Se abre con el puntero tras `openDelay` o al enfocar el enlace con el teclado, y sigue abierta mientras el puntero o el foco estén en el enlace o en la tarjeta (WCAG 1.4.13). Escape la cierra sin mover el puntero y una pulsación fuera también. Montada en la capa superior, el orden de Tab sigue al visual: Tab desde el enlace entra en la tarjeta, Mayús+Tab desde su primer control vuelve al enlace y Tab desde el último sale hacia lo que sigue al enlace. Con el dedo no se abre (el toque sigue el enlace): su contenido debe ser prescindible. Para una ayuda que se pide, Toggletip; para una etiqueta corta, Tooltip.",
    "examples": [
     {
      "title": "Perfil de una persona",
@@ -20105,6 +20200,1330 @@
     }
    ],
    "file": "zui/src/components/overlay/Tour.manifest.json"
+  },
+  {
+   "name": "CodeViewer",
+   "group": "terminal",
+   "description": "CodeBlock ampliado: números de línea, líneas resaltadas, pestañas de archivos, copiar y resaltado mínimo sin dependencias (JavaScript y TypeScript con JSX, JSON, CSS, HTML y XML, shell y Python); un lenguaje desconocido va como texto. `highlight` admite el resaltado de la aplicación como tokens por línea.",
+   "import": "import { CodeViewer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "code",
+     "type": "string"
+    },
+    {
+     "name": "files",
+     "type": "{ name: string; code: string; language?: string }[]",
+     "description": "Varios archivos, en pestañas; el lenguaje sale de la extensión si falta."
+    },
+    {
+     "name": "language",
+     "type": "string"
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "lineNumbers",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "highlightLines",
+     "type": "string | number[]",
+     "description": "\"3-5,9\" o [3, 4, 5, 9]."
+    },
+    {
+     "name": "startLine",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "wrap",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "maxHeight",
+     "type": "string",
+     "description": "Longitud CSS; a partir de ahí desplaza."
+    },
+    {
+     "name": "highlight",
+     "type": "(code: string, language?: string) => CodeToken[][]"
+    },
+    {
+     "name": "defaultFile",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "onFileChange",
+     "type": "(detail: { index, name }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CodeViewerLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "highlighted",
+    "copied"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "success-text",
+    "warning-text",
+    "info-text",
+    "danger-text",
+    "font-mono",
+    "text-code",
+    "leading-code"
+   ],
+   "classes": [
+    "z-code-viewer",
+    "z-code-viewer__bar",
+    "z-code-viewer__title",
+    "z-code-viewer__tabs",
+    "z-code-viewer__tab",
+    "z-code-viewer__language",
+    "z-code-viewer__copy",
+    "z-code-viewer__body",
+    "z-code-viewer__line",
+    "z-code-viewer__number",
+    "z-code-viewer__text",
+    "z-tok"
+   ],
+   "a11y": "El código es una región con nombre (el título o «Code»), enfocable para desplazarla con el teclado; con varios archivos, pestañas del patrón APG (tablist, flechas, Inicio y Fin, activación automática) y la región es su tabpanel. Los números de línea van con aria-hidden y no se seleccionan ni se copian. Una línea resaltada lleva una barra en el borde además del fondo. El botón de copiar copia el código sin números y confirma en el botón y en una región status, sin deshabilitarse. Sin React: .z-code-viewer con un <pre><code> (o template[data-file] por archivo), data-language, data-title, data-highlight-lines, data-start-line, data-line-numbers=\"false\", data-wrap y data-max-height; emite z:filechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Archivo con líneas resaltadas",
+     "code": "<CodeViewer title=\"server.ts\" language=\"ts\" highlightLines=\"5-8\" code={serverCode} />"
+    },
+    {
+     "title": "Varios archivos",
+     "code": "<CodeViewer files={[{ name: \"package.json\", code: pkg }, { name: \"styles.css\", code: css }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Archivo con líneas resaltadas",
+     "code": "<div class=\"z-code-viewer\" data-title=\"server.ts\" data-language=\"ts\" data-highlight-lines=\"5-8\">\n  <script type=\"application/json\" data-props>{\"code\": \"import { createServer } from \\\"node:http\\\";\\n\\n// Answers every request with the same JSON.\\nconst port = Number(process.env.PORT ?? 3000);\\nconst server = createServer((req, res) => {\\n  res.writeHead(200, { \\\"content-type\\\": \\\"application/json\\\" });\\n  res.end(JSON.stringify({ ok: true, path: req.url }));\\n});\\n\\nserver.listen(port, () => console.log(`Listening on ${port}`));\\n\"}</script>\n</div>"
+    },
+    {
+     "title": "Varios archivos",
+     "code": "<div class=\"z-code-viewer\">\n  <template data-file=\"package.json\">{\n  \"name\": \"demo\",\n  \"private\": true,\n  \"scripts\": { \"dev\": \"vite\" }\n}\n</template>\n  <template data-file=\"styles.css\">.card {\n  padding: var(--z-space-4);\n  border-radius: var(--z-card-radius);\n}\n</template>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio sobre CodeBlock; referencias: CodeHighlight de Mantine y Code snippet de Carbon.",
+   "file": "zui/src/components/terminal/CodeViewer.manifest.json"
+  },
+  {
+   "name": "DiffViewer",
+   "group": "terminal",
+   "description": "Diferencias de dos textos (diff de líneas de Myers) o de un parche unificado (`git diff`, varios archivos), en vista unificada o lado a lado, con las palabras cambiadas marcadas, cabecera por archivo con +N −M y las regiones sin cambios plegadas tras un botón.",
+   "import": "import { DiffViewer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "before",
+     "type": "string"
+    },
+    {
+     "name": "after",
+     "type": "string"
+    },
+    {
+     "name": "patch",
+     "type": "string",
+     "description": "Parche unificado, en lugar de before y after."
+    },
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "unified",
+      "split"
+     ],
+     "description": "Controlado; sin él, defaultMode y el selector."
+    },
+    {
+     "name": "defaultMode",
+     "type": "enum",
+     "values": [
+      "unified",
+      "split"
+     ],
+     "default": "unified"
+    },
+    {
+     "name": "context",
+     "type": "number",
+     "default": 3
+    },
+    {
+     "name": "wordDiff",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "fileName",
+     "type": "string"
+    },
+    {
+     "name": "hideModeToggle",
+     "type": "boolean",
+     "default": false,
+     "description": "Sin el conmutador de vista."
+    },
+    {
+     "name": "onModeChange",
+     "type": "(detail: { mode }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DiffViewerLabels>"
+    }
+   ],
+   "states": [
+    "unified",
+    "split",
+    "collapsed",
+    "expanded"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-soft",
+    "danger-soft",
+    "success-text",
+    "danger-text",
+    "success",
+    "danger",
+    "info-soft",
+    "info-text",
+    "surface-2",
+    "font-mono"
+   ],
+   "classes": [
+    "z-diff",
+    "z-diff__bar",
+    "z-diff__mode",
+    "z-diff__file",
+    "z-diff__file-head",
+    "z-diff__name",
+    "z-diff__stats",
+    "z-diff__table",
+    "z-diff__row",
+    "z-diff__num",
+    "z-diff__sign",
+    "z-diff__code",
+    "z-diff__word",
+    "z-diff__gap",
+    "z-diff__expand",
+    "z-diff__hunk"
+   ],
+   "a11y": "Una tabla por archivo, con cabeceras (ocultas a la vista) y una región enfocable con el nombre del archivo para desplazarla. Cada línea dice su tipo en texto oculto («added: », «removed: »); el signo va con aria-hidden y el color no es la única señal. Las cifras +N −M tienen su texto («12 additions, 3 deletions»). Las palabras cambiadas llevan subrayado además del fondo. El botón de una región plegada dice cuántas líneas muestra y, al pulsarlo, el foco pasa a la primera. La vista lado a lado es un conmutador («Split view», aria-pressed). Sin React: .z-diff con template[data-before] y template[data-after] (o template[data-patch], o los textos en <script type=\"application/json\" data-props>), data-mode, data-context, data-word-diff=\"false\", data-file-name y data-hide-mode-toggle; emite z:modechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dos versiones de un archivo",
+     "code": "<DiffViewer fileName=\"src/total.js\" before={oldCode} after={newCode} />"
+    },
+    {
+     "title": "Parche lado a lado",
+     "code": "<DiffViewer patch={gitDiff} defaultMode=\"split\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Dos versiones de un archivo",
+     "code": "<div class=\"z-diff\" data-file-name=\"src/total.js\">\n  <script type=\"application/json\" data-props>{ \"before\": \"export function total(items) {\\n  let sum = 0;\\n  for (const item of items) {\\n    sum += item.price;\\n  }\\n  return sum;\\n}\\n\", \"after\": \"export function total(items, tax = 0) {\\n  let sum = 0;\\n  for (const item of items) {\\n    sum += item.price * item.quantity;\\n  }\\n  return sum * (1 + tax);\\n}\\n\" }</script>\n</div>"
+    },
+    {
+     "title": "Parche lado a lado",
+     "code": "<div class=\"z-diff\" data-mode=\"split\">\n  <script type=\"application/json\" data-props>{ \"patch\": \"diff --git a/src/total.js b/src/total.js\\n--- a/src/total.js\\n+++ b/src/total.js\\n@@ -1,7 +1,7 @@\\n-export function total(items) {\\n+export function total(items, tax = 0) {\\n   let sum = 0;\\n   for (const item of items) {\\n-    sum += item.price;\\n+    sum += item.price * item.quantity;\\n   }\\n-  return sum;\\n+  return sum * (1 + tax);\\n }\\n\" }</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; algoritmo de Myers (1986). Referencias: Diff de Mantine y la vista de cambios de GitHub.",
+   "file": "zui/src/components/terminal/DiffViewer.manifest.json"
+  },
+  {
+   "name": "LogConsole",
+   "group": "terminal",
+   "description": "Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado. Pinta por ventana: con miles de entradas solo existen en el documento las filas que se ven.",
+   "import": "import { LogConsole } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "entries",
+     "type": "{ id?, time?, level?, source?, message }[]",
+     "description": "level: debug | info | warn | error."
+    },
+    {
+     "name": "levels",
+     "type": "LogLevel[]",
+     "default": [
+      "debug",
+      "info",
+      "warn",
+      "error"
+     ],
+     "description": "Filtros que se ofrecen."
+    },
+    {
+     "name": "defaultLevels",
+     "type": "LogLevel[]",
+     "description": "Activos al empezar; por defecto, todos."
+    },
+    {
+     "name": "follow",
+     "type": "boolean",
+     "default": true,
+     "description": "Seguir el final al llegar entradas; subir a leer lo desactiva."
+    },
+    {
+     "name": "wrap",
+     "type": "boolean",
+     "default": false,
+     "description": "Ajusta líneas largas (sin ventana por encima de virtualizeAt filas)."
+    },
+    {
+     "name": "virtualizeAt",
+     "type": "number",
+     "default": 200
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "timeFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "description": "Por defecto HH:mm:ss.SSS."
+    },
+    {
+     "name": "downloadName",
+     "type": "string",
+     "description": "Con él, botón de descargar (texto plano)."
+    },
+    {
+     "name": "clearable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "onLevelsChange",
+     "type": "(detail: { levels }) => void"
+    },
+    {
+     "name": "onClear",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<LogConsoleLabels>"
+    }
+   ],
+   "states": [
+    "following",
+    "paused",
+    "filtered",
+    "empty"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "card-radius",
+    "line",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "info-text",
+    "warning-text",
+    "danger-text",
+    "warning-soft",
+    "warning",
+    "danger",
+    "font-mono",
+    "control-height-sm",
+    "surface-solid"
+   ],
+   "classes": [
+    "z-log-console",
+    "z-log-console__bar",
+    "z-log-console__levels",
+    "z-log-console__level",
+    "z-log-console__count",
+    "z-log-console__find",
+    "z-log-console__search",
+    "z-log-console__follow",
+    "z-log-console__copy",
+    "z-log-console__download",
+    "z-log-console__grid",
+    "z-log-console__viewport",
+    "z-log-console__row",
+    "z-log-console__cell",
+    "z-log-console__badge",
+    "z-log-console__match"
+   ],
+   "a11y": "Rejilla (role=grid, aria-readonly) con fila de cabeceras, aria-rowcount con el total filtrado y aria-rowindex en cada fila, también con la ventana virtual; la fila activa nunca sale del documento. Una sola parada de Tab: ↑/↓ entre filas, ←/→ entre columnas, RePág/AvPág, Inicio/Fin y Ctrl+Inicio/Ctrl+Fin. El nivel va en texto («Error») además del color, y los avisos y errores llevan una barra en el borde. Los filtros son botones con aria-pressed y su contador; «Follow» también. Las entradas nuevas no se anuncian; al buscar se anuncia el número de coincidencias en una región status, con retraso corto. Las coincidencias van en <mark> con subrayado. Sin React: .z-log-console con data-levels, data-default-levels, data-follow=\"false\", data-wrap, data-time-zone, data-download-name, data-clearable, data-title, data-locale y entries en <script type=\"application/json\" data-props>; setWidgetProps(el, { entries }) o appendLogEntries(el, nuevas); emite z:levelschange y z:clear.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Servicio con filtros y búsqueda",
+     "code": "<LogConsole title=\"api logs\" timeZone=\"UTC\" downloadName=\"api.log\" entries={entries} />"
+    },
+    {
+     "title": "Solo avisos y errores, con ajuste de línea",
+     "code": "<LogConsole wrap defaultLevels={[\"warn\", \"error\"]} entries={entries} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Servicio con filtros y búsqueda",
+     "code": "<div class=\"z-log-console\" data-title=\"api logs\" data-time-zone=\"UTC\" data-download-name=\"api.log\">\n  <script type=\"application/json\" data-props>{ \"entries\": [{\"id\": 1, \"time\": \"2026-11-21T10:42:01.120Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"GET /v1/projects 200 in 38 ms\"}, {\"id\": 2, \"time\": \"2026-11-21T10:42:01.512Z\", \"level\": \"debug\", \"source\": \"cache\", \"message\": \"hit projects:list (ttl 52 s)\"}, {\"id\": 3, \"time\": \"2026-11-21T10:42:02.004Z\", \"level\": \"warn\", \"source\": \"api\", \"message\": \"Slow query on invoices: 812 ms\"}, {\"id\": 4, \"time\": \"2026-11-21T10:42:02.980Z\", \"level\": \"error\", \"source\": \"worker\", \"message\": \"Job export-42 failed: timeout after 30 s\"}, {\"id\": 5, \"time\": \"2026-11-21T10:42:03.300Z\", \"level\": \"info\", \"source\": \"worker\", \"message\": \"Retrying export-42 (attempt 2 of 3)\"}, {\"id\": 6, \"time\": \"2026-11-21T10:42:04.010Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"POST /v1/exports 202 in 12 ms\"}] }</script>\n</div>"
+    },
+    {
+     "title": "Solo avisos y errores, con ajuste de línea",
+     "code": "<div class=\"z-log-console\" data-wrap data-default-levels=\"warn error\" data-time-zone=\"UTC\">\n  <script type=\"application/json\" data-props>{ \"entries\": [{\"id\": 1, \"time\": \"2026-11-21T10:42:01.120Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"GET /v1/projects 200 in 38 ms\"}, {\"id\": 2, \"time\": \"2026-11-21T10:42:01.512Z\", \"level\": \"debug\", \"source\": \"cache\", \"message\": \"hit projects:list (ttl 52 s)\"}, {\"id\": 3, \"time\": \"2026-11-21T10:42:02.004Z\", \"level\": \"warn\", \"source\": \"api\", \"message\": \"Slow query on invoices: 812 ms\"}, {\"id\": 4, \"time\": \"2026-11-21T10:42:02.980Z\", \"level\": \"error\", \"source\": \"worker\", \"message\": \"Job export-42 failed: timeout after 30 s\"}, {\"id\": 5, \"time\": \"2026-11-21T10:42:03.300Z\", \"level\": \"info\", \"source\": \"worker\", \"message\": \"Retrying export-42 (attempt 2 of 3)\"}, {\"id\": 6, \"time\": \"2026-11-21T10:42:04.010Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"POST /v1/exports 202 in 12 ms\"}] }</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: las consolas de logs de Vercel y Datadog.",
+   "file": "zui/src/components/terminal/LogConsole.manifest.json"
+  },
+  {
+   "name": "Terminal",
+   "group": "terminal",
+   "description": "Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y 24 bits, negrita, subrayado, enlaces OSC 8) y copiar. No emula una VT100 completa: es una consola de líneas con barras de progreso por retorno de carro.",
+   "import": "import { Terminal } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "prompt",
+     "type": "string",
+     "default": "$"
+    },
+    {
+     "name": "defaultOutput",
+     "type": "string",
+     "description": "Salida inicial (admite ANSI)."
+    },
+    {
+     "name": "onCommand",
+     "type": "(command: string, run: { write, signal }) => void | string | number | Promise<…> | AsyncIterable<string>",
+     "description": "Texto, código de salida, promesa o flujo de trozos. Ctrl+C aborta `signal`."
+    },
+    {
+     "name": "onComplete",
+     "type": "(input: string) => string[] | Promise<string[]>",
+     "description": "Opciones para Tab. Sin él, Tab sale de la terminal."
+    },
+    {
+     "name": "history",
+     "type": "string[]",
+     "description": "Historial inicial."
+    },
+    {
+     "name": "maxLines",
+     "type": "number",
+     "default": 5000
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false,
+     "description": "Solo salida, sin línea de entrada."
+    },
+    {
+     "name": "busy",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "theme",
+     "type": "enum",
+     "values": [
+      "glass",
+      "solid"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "announce",
+     "type": "enum",
+     "values": [
+      "end",
+      "all",
+      "none"
+     ],
+     "default": "end",
+     "description": "Anuncia el final de cada orden, cada línea nueva o nada."
+    },
+    {
+     "name": "onInterrupt",
+     "type": "() => void"
+    },
+    {
+     "name": "onClear",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TerminalLabels>"
+    },
+    {
+     "name": "ref",
+     "type": "Ref<TerminalHandle>",
+     "description": "write(chunk), writeln(line), clear(), focus(), text()."
+    }
+   ],
+   "states": [
+    "idle",
+    "busy"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "danger-text",
+    "warning-text",
+    "info-text",
+    "accent-text",
+    "accent-soft",
+    "font-mono",
+    "text-code",
+    "leading-code"
+   ],
+   "classes": [
+    "z-terminal",
+    "z-terminal__bar",
+    "z-terminal__title",
+    "z-terminal__actions",
+    "z-terminal__copy",
+    "z-terminal__clear",
+    "z-terminal__screen",
+    "z-terminal__line",
+    "z-terminal__input",
+    "z-terminal__prompt",
+    "z-terminal__field",
+    "z-ansi"
+   ],
+   "a11y": "Región con nombre. La salida es role=log con aria-live=off: una terminal habla demasiado para anunciar cada línea (announce=\"all\" la vuelve polite); al terminar una orden se anuncia «Command finished» o el código de salida en una región status aparte. La entrada es un <input> real con etiqueta («Command») dentro de un <form>: Intro envía con el envío nativo, que no salta mientras un IME compone. ↑/↓ recorren el historial conservando lo que se estaba escribiendo; Tab completa solo con onComplete (si no, sale: el foco no queda atrapado); Ctrl+C interrumpe solo sin texto seleccionado (con selección, copia). La salida es una parada de Tab para leerla y desplazarla; Escape vuelve a la entrada. Los colores van además de negrita y subrayado, y los de 256 y 24 bits se acotan en luminosidad para leerse en claro y en oscuro. La salida se pinta como nodos de texto, nunca como marcado; los enlaces OSC 8 solo admiten http y https. Sin React: .z-terminal con data-prompt, data-title, data-max-lines, data-read-only, data-theme, data-announce, y el historial y la salida inicial en <script type=\"application/json\" data-props>{\"history\": […], \"output\": \"…\"}</script>; terminal(el) devuelve write, writeln, clear, focus y text; emite z:command { command }, z:interrupt y z:clear; setWidgetProps(el, { onCommand, onComplete }) para responder con un flujo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Salida de un build",
+     "code": "<Terminal title=\"build\" prompt=\"~/app $\" defaultOutput={buildLog} onCommand={(cmd) => (cmd === \"help\" ? \"help · clear · build\" : `command not found: ${cmd}`)} />"
+    },
+    {
+     "title": "Solo lectura",
+     "code": "<Terminal readOnly theme=\"solid\" title=\"deploy.log\" defaultOutput={deployLog} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Salida de un build",
+     "code": "<div class=\"z-terminal\" data-title=\"build\" data-prompt=\"~/app $\">\n  <script type=\"application/json\" data-props>{ \"history\": [\"pnpm build\", \"pnpm test\"], \"output\": \"\\u001b[1;32m✓\\u001b[0m Compiled 128 modules in \\u001b[1m1.4s\\u001b[0m\\n\\u001b[33mwarn\\u001b[0m  2 unused exports in \\u001b[4msrc/legacy.ts\\u001b[0m\\n\\u001b[38;5;39mdist/app.js\\u001b[0m   \\u001b[2m84.2 kB\\u001b[0m\\n\" }</script>\n</div>"
+    },
+    {
+     "title": "Solo lectura",
+     "code": "<div class=\"z-terminal\" data-read-only data-theme=\"solid\" data-title=\"deploy.log\">\n  <script type=\"application/json\" data-props>{ \"output\": \"\\u001b[2m12:04:01\\u001b[0m Uploading 24 files\\n\\u001b[2m12:04:03\\u001b[0m \\u001b[32mDeployed\\u001b[0m to \\u001b]8;;https://example.com\\u0007example.com\\u001b]8;;\\u0007\\n\" }</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: xterm.js para el juego de secuencias y las terminales de Vercel y AI Elements.",
+   "file": "zui/src/components/terminal/Terminal.manifest.json"
+  },
+  {
+   "name": "AnalogClock",
+   "group": "time",
+   "description": "Reloj de esfera en SVG: agujas de horas y minutos, segundero opcional (a saltos o continuo), marcas de horas o de minutos, números (ninguno, cuartos o todos), zona IANA y tres tamaños. La geometría de la esfera sale de core/clock.",
+   "import": "import { AnalogClock } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number | string | Date",
+     "description": "Instante fijo; sin él, la hora actual."
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "seconds",
+     "type": "boolean",
+     "default": true,
+     "description": "Segundero (decorativo)."
+    },
+    {
+     "name": "marks",
+     "type": "enum",
+     "values": [
+      "hours",
+      "minutes",
+      "none"
+     ],
+     "default": "hours"
+    },
+    {
+     "name": "numerals",
+     "type": "enum",
+     "values": [
+      "none",
+      "quarters",
+      "all"
+     ],
+     "default": "none"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md",
+     "description": "64, 160 o 240 px."
+    },
+    {
+     "name": "smooth",
+     "type": "boolean",
+     "default": false,
+     "description": "Segundero continuo (solo sin movimiento reducido)."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Lugar que acompaña a la hora en el nombre accesible."
+    },
+    {
+     "name": "caption",
+     "type": "boolean",
+     "default": false,
+     "description": "Rótulo y hora digital bajo la esfera."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "live",
+    "fixed"
+   ],
+   "tokens": [
+    "surface-2",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "font-display",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-analog-clock",
+    "z-analog-clock__time",
+    "z-analog-clock__face",
+    "z-analog-clock__dial",
+    "z-analog-clock__mark",
+    "z-analog-clock__numeral",
+    "z-analog-clock__hand",
+    "z-analog-clock__second",
+    "z-analog-clock__pin",
+    "z-analog-clock__caption"
+   ],
+   "a11y": "La esfera es role=img dentro de un <time datetime>, con nombre «10:42, Madrid» que cambia una vez por minuto, nunca por segundo; el segundero y las marcas no se leen. Con movimiento reducido el segundero continuo se oculta. Sin React: .z-analog-clock con data-time-zone, data-seconds=\"false\", data-marks, data-numerals, data-size, data-smooth, data-label, data-caption, data-value y data-locale.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Esfera con números en los cuartos",
+     "code": "<AnalogClock locale=\"en-GB\" numerals=\"quarters\" marks=\"minutes\" label=\"Madrid\" timeZone=\"Europe/Madrid\" caption />"
+    },
+    {
+     "title": "Pequeño, sin segundero",
+     "code": "<AnalogClock locale=\"en-GB\" size=\"sm\" seconds={false} timeZone=\"America/New_York\" label=\"New York\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Esfera con números en los cuartos",
+     "code": "<div class=\"z-analog-clock\" data-locale=\"en-GB\" data-numerals=\"quarters\" data-marks=\"minutes\" data-label=\"Madrid\" data-time-zone=\"Europe/Madrid\" data-caption></div>"
+    },
+    {
+     "title": "Pequeño, sin segundero",
+     "code": "<div class=\"z-analog-clock\" data-locale=\"en-GB\" data-size=\"sm\" data-seconds=\"false\" data-time-zone=\"America/New_York\" data-label=\"New York\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; esfera de M3 TimeClock como referencia de proporciones.",
+   "file": "zui/src/components/time/AnalogClock.manifest.json"
+  },
+  {
+   "name": "Clock",
+   "group": "time",
+   "description": "Reloj digital: 12 o 24 h según el locale (o `hourCycle`), segundos y fecha opcionales, zona IANA, nombre de la zona y separadores que laten. Avanza con el temporizador compartido de la suite, que se para fuera de pantalla y con la pestaña oculta.",
+   "import": "import { Clock } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number | string | Date",
+     "description": "Instante fijo; sin él, la hora actual."
+    },
+    {
+     "name": "timeZone",
+     "type": "string",
+     "description": "Zona IANA; por defecto la del dispositivo."
+    },
+    {
+     "name": "hourCycle",
+     "type": "enum",
+     "values": [
+      "h11",
+      "h12",
+      "h23",
+      "h24"
+     ],
+     "description": "Por defecto, el del locale."
+    },
+    {
+     "name": "seconds",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "date",
+     "type": "boolean | Intl.DateTimeFormatOptions",
+     "default": false,
+     "description": "Fecha bajo la hora."
+    },
+    {
+     "name": "blink",
+     "type": "boolean",
+     "default": false,
+     "description": "Separadores que laten (solo sin movimiento reducido)."
+    },
+    {
+     "name": "zone",
+     "type": "boolean | \"short\" | \"long\"",
+     "default": false,
+     "description": "Nombre de la zona: «GMT+1» o el largo."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Rótulo encima de la hora (una ciudad)."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "live",
+    "fixed"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "font-display",
+    "text-display-sm",
+    "text-title",
+    "text-display-lg",
+    "weight-semibold",
+    "tracking-tight"
+   ],
+   "classes": [
+    "z-clock",
+    "z-clock__label",
+    "z-clock__time",
+    "z-clock__digits",
+    "z-clock__sep",
+    "z-clock__period",
+    "z-clock__meta",
+    "z-clock__date",
+    "z-clock__zone"
+   ],
+   "a11y": "Texto en un <time datetime> con el desfase de la zona (`2026-11-21T10:42+01:00`). Sin región viva: un reloj no se anuncia solo; el lector lo lee al llegar a él. Los separadores que laten solo cambian la opacidad y se paran con movimiento reducido. Sin React: un .z-clock dentro de [data-z-dom] con data-time-zone, data-hour-cycle, data-seconds, data-date, data-blink, data-zone (\"short\"|\"long\"), data-label, data-size, data-value y data-locale.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Hora local con segundos y fecha",
+     "code": "<Clock locale=\"en-GB\" seconds date blink label=\"Local\" />"
+    },
+    {
+     "title": "Otra zona, 24 h",
+     "code": "<Clock locale=\"en-GB\" timeZone=\"Asia/Tokyo\" hourCycle=\"h23\" zone label=\"Tokyo\" size=\"sm\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Hora local con segundos y fecha",
+     "code": "<div class=\"z-clock\" data-locale=\"en-GB\" data-seconds data-date data-blink data-label=\"Local\"></div>"
+    },
+    {
+     "title": "Otra zona, 24 h",
+     "code": "<div class=\"z-clock\" data-locale=\"en-GB\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; formato con Intl.DateTimeFormat.",
+   "file": "zui/src/components/time/Clock.manifest.json"
+  },
+  {
+   "name": "Countdown",
+   "group": "time",
+   "description": "Cuenta atrás hasta un instante (un lanzamiento, el fin de una oferta): días, horas, minutos y segundos en cajas (`segments`), en línea o con cifras que giran (`flip`). La diferencia es entre instantes absolutos, así que un cambio de hora en medio no la altera. A diferencia de Timer, no tiene controles: cuenta hacia una fecha.",
+   "import": "import { Countdown } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "to",
+     "type": "number | string | Date",
+     "required": true,
+     "description": "Instante objetivo (ISO con zona, ms o Date)."
+    },
+    {
+     "name": "units",
+     "type": "(\"days\" | \"hours\" | \"minutes\" | \"seconds\")[]",
+     "default": [
+      "days",
+      "hours",
+      "minutes",
+      "seconds"
+     ],
+     "description": "La mayor absorbe lo de las que faltan."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "segments",
+      "inline",
+      "flip"
+     ],
+     "default": "segments"
+    },
+    {
+     "name": "announceEvery",
+     "type": "number",
+     "description": "Segundos entre anuncios; sin él, cada hora, cada 15 min en la última hora y cada minuto en los últimos cinco; 0 solo anuncia el final."
+    },
+    {
+     "name": "showTarget",
+     "type": "boolean",
+     "default": false,
+     "description": "Fecha y hora objetivo bajo las cifras."
+    },
+    {
+     "name": "timeZone",
+     "type": "string",
+     "description": "Zona en la que se muestra el objetivo."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "onComplete",
+     "type": "(detail: { to: number }) => void"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CountdownLabels>",
+     "description": "days, hours, minutes, seconds, timer, complete, left, target."
+    },
+    {
+     "name": "now",
+     "type": "number | string | Date",
+     "description": "Momento de referencia fijo (capturas y pruebas)."
+    }
+   ],
+   "states": [
+    "running",
+    "done"
+   ],
+   "tokens": [
+    "surface-2",
+    "line",
+    "control-radius-lg",
+    "control-radius",
+    "glass-highlight",
+    "fg",
+    "fg-muted",
+    "success-text",
+    "font-display",
+    "text-display-sm",
+    "duration-normal",
+    "ease-out"
+   ],
+   "classes": [
+    "z-countdown",
+    "z-countdown__timer",
+    "z-countdown__units",
+    "z-countdown__unit",
+    "z-countdown__value",
+    "z-countdown__digit",
+    "z-countdown__label",
+    "z-countdown__complete",
+    "z-countdown__target",
+    "z-countdown__live"
+   ],
+   "a11y": "role=timer (vivo implícito off) con nombre «Countdown: 2 days, 3 hours, 5 minutes»; los segundos solo entran en el nombre en el último minuto. Las cajas van con aria-hidden. Los hitos («2 hours left») y el final («Time's up») se anuncian en una región status aparte, con retraso corto y nunca cada segundo; un salto largo (pestaña oculta) cuenta como un solo hito. Cifras tabulares; las que giran (`flip`) no se animan con movimiento reducido. El final llega aunque la pieza esté fuera de pantalla. Sin React: .z-countdown con data-to, data-units=\"days hours minutes\", data-variant, data-announce-every, data-show-target, data-time-zone, data-size, data-locale y los textos en data-*-label (data-complete-label…); emite z:complete { to }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Cajas hasta el lanzamiento",
+     "code": "<Countdown locale=\"en-GB\" to=\"2027-01-15T17:00:00Z\" showTarget labels={{ timer: \"Launch countdown\", target: \"Launch {date}\" }} />"
+    },
+    {
+     "title": "En línea, sin segundos",
+     "code": "<Countdown locale=\"en-GB\" variant=\"inline\" units={[\"days\", \"hours\", \"minutes\"]} to=\"2026-12-31T23:00:00Z\" labels={{ timer: \"Offer ends in\" }} />"
+    },
+    {
+     "title": "Cifras que giran",
+     "code": "<Countdown locale=\"en-GB\" variant=\"flip\" units={[\"hours\", \"minutes\", \"seconds\"]} to={Date.now() + 90 * 60_000} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Cajas hasta el lanzamiento",
+     "code": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>"
+    },
+    {
+     "title": "En línea, sin segundos",
+     "code": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>"
+    },
+    {
+     "title": "Cifras que giran",
+     "code": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>"
+    }
+   ],
+   "origin": "Statistic.Countdown de Ant Design; role=timer de WAI-ARIA.",
+   "file": "zui/src/components/time/Countdown.manifest.json"
+  },
+  {
+   "name": "DurationField",
+   "group": "time",
+   "description": "Entrada de duración por segmentos (horas, minutos, segundos), con paso para los minutos, tope y preajustes («15 min», «30 min», «1 h»). Se teclean las cifras, se cambian con las flechas o se pega «1:30», «90m» o «PT1H30M». El valor es ISO 8601.",
+   "import": "import { DurationField } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | number | null",
+     "description": "ISO 8601 (PT1H30M) o ms; controlado."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | number | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string, ms: number) => void"
+    },
+    {
+     "name": "units",
+     "type": "(\"hours\" | \"minutes\" | \"seconds\")[]",
+     "default": [
+      "hours",
+      "minutes"
+     ]
+    },
+    {
+     "name": "max",
+     "type": "string | number",
+     "description": "Tope (ISO o ms)."
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 1,
+     "description": "Paso del segmento de minutos."
+    },
+    {
+     "name": "presets",
+     "type": "(string | number)[]",
+     "description": "Preajustes (ISO o ms)."
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Envía el valor ISO con el formulario."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Duration",
+     "description": "Nombre accesible del grupo."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DurationFieldLabels>",
+     "description": "hours, minutes, seconds, hoursShort, minutesShort, secondsShort, presets."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "accent-soft",
+    "accent-text",
+    "accent",
+    "accent-ring",
+    "fg",
+    "fg-muted",
+    "radius-xs",
+    "control-height-xs"
+   ],
+   "classes": [
+    "z-duration-field",
+    "z-duration-field__control",
+    "z-duration-field__input",
+    "z-duration-field__unit",
+    "z-duration-field__segment",
+    "z-duration-field__suffix",
+    "z-duration-field__presets",
+    "z-duration-field__preset"
+   ],
+   "a11y": "Grupo con nombre (role=group) y un spinbutton por unidad con aria-valuenow, aria-valuemin, aria-valuemax y aria-valuetext hablado («2 hours»); los sufijos visibles («h», «min») van con aria-hidden. Una sola parada de Tab con foco itinerante entre segmentos: ↑/↓ cambian (los menores dan la vuelta), RePág/AvPág de diez en diez, Inicio/Fin, ←/→ entre segmentos, cifras con avance automático y Retroceso para borrar. Admite pegar. Los preajustes son botones de acción; el que coincide con el valor se marca con data-active. Sin React: .z-duration-field con data-value, data-units, data-max, data-step, data-presets=\"PT15M PT30M PT1H\", data-name, data-label, data-size, data-disabled y data-locale; emite z:change { value, ms }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Horas y minutos con preajustes",
+     "code": "<DurationField locale=\"en-GB\" label=\"Meeting length\" defaultValue=\"PT45M\" step={5} presets={[\"PT15M\", \"PT30M\", \"PT1H\"]} name=\"length\" />"
+    },
+    {
+     "title": "Minutos y segundos, con tope",
+     "code": "<DurationField locale=\"en-GB\" label=\"Lap time\" units={[\"minutes\", \"seconds\"]} max=\"PT59M59S\" defaultValue=\"PT4M30S\" size=\"sm\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Horas y minutos con preajustes",
+     "code": "<div class=\"z-duration-field\" data-locale=\"en-GB\" data-label=\"Meeting length\" data-value=\"PT45M\" data-step=\"5\" data-presets=\"PT15M PT30M PT1H\" data-name=\"length\"></div>"
+    },
+    {
+     "title": "Minutos y segundos, con tope",
+     "code": "<div class=\"z-duration-field\" data-locale=\"en-GB\" data-label=\"Lap time\" data-units=\"minutes seconds\" data-max=\"PT59M59S\" data-value=\"PT4M30S\" data-size=\"sm\"></div>"
+    }
+   ],
+   "origin": "Diseño propio sobre el segmentado de DateField; referencia: el selector de duración de Android.",
+   "file": "zui/src/components/time/DurationField.manifest.json"
+  },
+  {
+   "name": "TimeZoneSelect",
+   "group": "time",
+   "description": "Selector de zona horaria buscable sobre Combobox: opciones «Madrid · GMT+1 · 10:42» agrupadas por región o por desfase, con la lista del navegador (`Intl.supportedValuesOf`) o una restringida. Se busca por ciudad, por identificador IANA o por desfase («+5:30»).",
+   "import": "import { TimeZoneSelect } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | null"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(timeZone: string | null, option: ZoneOption | null) => void"
+    },
+    {
+     "name": "zones",
+     "type": "string[]",
+     "description": "Zonas que se ofrecen; por defecto todas."
+    },
+    {
+     "name": "names",
+     "type": "Record<string, string>",
+     "description": "Nombre visible de cada zona."
+    },
+    {
+     "name": "showOffset",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showTime",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "groupBy",
+     "type": "enum",
+     "values": [
+      "region",
+      "offset",
+      "none"
+     ],
+     "default": "region"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "Search a time zone"
+    },
+    {
+     "name": "aria-label",
+     "type": "string",
+     "default": "Time zone"
+    }
+   ],
+   "states": [
+    "closed",
+    "open",
+    "selected"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "popup-bg",
+    "accent-soft"
+   ],
+   "classes": [
+    "z-combobox"
+   ],
+   "a11y": "El patrón combobox de la suite (foco en el campo, opción activa con aria-activedescendant, grupos con nombre). Cada opción se lee entera: ciudad, desfase y hora. Desfases y horas se calculan al abrir la lista, no en cada segundo. Sin React: un Combobox del modo DOM con data-z-tz-select (data-zones, data-show-offset=\"false\", data-show-time=\"false\", data-locale); la lista se rellena al hidratar y se renueva al enfocar. refreshTimeZoneSelect(el) la recalcula.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Zona del evento",
+     "code": "<TimeZoneSelect aria-label=\"Event time zone\" defaultValue=\"Europe/Madrid\" name=\"tz\" />"
+    },
+    {
+     "title": "Lista corta por desfase",
+     "code": "<TimeZoneSelect groupBy=\"offset\" zones={[\"America/Los_Angeles\", \"America/New_York\", \"Europe/London\", \"Europe/Madrid\", \"Asia/Kolkata\", \"Asia/Tokyo\"]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Zona del evento",
+     "code": "<span class=\"z-input z-combobox\" id=\"event-tz\" data-size=\"md\" data-state=\"closed\" data-z-tz-select data-locale=\"en-GB\" data-zones=\"America/Los_Angeles America/New_York America/Caracas Europe/London Europe/Madrid Asia/Kolkata Asia/Tokyo Australia/Sydney\">\n  <span class=\"z-input__icon\"><z-icon name=\"globe-alt\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Event time zone\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a time zone\" />\n  <input type=\"hidden\" name=\"tz\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"event-tz-list\" role=\"listbox\" aria-label=\"Event time zone\"></div>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio sobre Combobox; zonas de Intl.supportedValuesOf.",
+   "file": "zui/src/components/time/TimeZoneSelect.manifest.json"
+  },
+  {
+   "name": "WorldClock",
+   "group": "time",
+   "description": "Varias zonas a la vez, en lista o rejilla: hora, diferencia con la zona de referencia («+6 h»), día distinto («Tomorrow») y día o noche (sol o luna, aproximado de 7 a 19 h). Variante con esferas pequeñas y botón para quitar cada ciudad.",
+   "import": "import { WorldClock } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "zones",
+     "type": "{ timeZone: string; label?: string }[]",
+     "required": true
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "list",
+      "grid"
+     ],
+     "default": "list"
+    },
+    {
+     "name": "reference",
+     "type": "string",
+     "description": "Zona base de las diferencias; por defecto la del dispositivo."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "digital",
+      "analog"
+     ],
+     "default": "digital"
+    },
+    {
+     "name": "seconds",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "hourCycle",
+     "type": "enum",
+     "values": [
+      "h11",
+      "h12",
+      "h23",
+      "h24"
+     ]
+    },
+    {
+     "name": "value",
+     "type": "number | string | Date",
+     "description": "Instante fijo."
+    },
+    {
+     "name": "removable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onRemove",
+     "type": "(detail: { timeZone: string; index: number }) => void"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<WorldClockLabels>",
+     "description": "ahead, behind, same, today, tomorrow, yesterday, day, night, remove, list."
+    }
+   ],
+   "states": [
+    "day",
+    "night",
+    "tomorrow",
+    "yesterday"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "accent-text",
+    "warning",
+    "info",
+    "line",
+    "card-bg",
+    "card-radius",
+    "font-display",
+    "text-title"
+   ],
+   "classes": [
+    "z-world-clock",
+    "z-world-clock__list",
+    "z-world-clock__city",
+    "z-world-clock__body",
+    "z-world-clock__place",
+    "z-world-clock__name",
+    "z-world-clock__diff",
+    "z-world-clock__day",
+    "z-world-clock__now",
+    "z-world-clock__icon",
+    "z-world-clock__time",
+    "z-world-clock__remove"
+   ],
+   "a11y": "Lista con nombre; cada ciudad se lee como una frase completa en texto oculto («Tokyo, 18:42, 14 hours ahead, Tomorrow, Night») y lo visual va con aria-hidden, así que el sol y la luna también tienen su texto. Sin región viva. El botón de quitar dice qué ciudad quita y deja el foco en la siguiente. Sin React: .z-world-clock con un ul de li[data-time-zone][data-label] (o zones en <script type=\"application/json\" data-props>), data-layout, data-reference, data-variant, data-seconds, data-removable y data-locale; emite z:remove { timeZone, index }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Rejilla de ciudades",
+     "code": "<WorldClock locale=\"en-GB\" layout=\"grid\" reference=\"Europe/Madrid\" zones={[{ timeZone: \"Europe/Madrid\", label: \"Madrid\" }, { timeZone: \"America/New_York\", label: \"New York\" }, { timeZone: \"Asia/Tokyo\", label: \"Tokyo\" }, { timeZone: \"Australia/Sydney\", label: \"Sydney\" }]} />"
+    },
+    {
+     "title": "Lista con esferas",
+     "code": "<WorldClock locale=\"en-GB\" variant=\"analog\" removable zones={[{ timeZone: \"America/Caracas\", label: \"Caracas\" }, { timeZone: \"Europe/London\", label: \"London\" }, { timeZone: \"Asia/Kolkata\", label: \"Mumbai\" }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Rejilla de ciudades",
+     "code": "<div class=\"z-world-clock\" data-locale=\"en-GB\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>"
+    },
+    {
+     "title": "Lista con esferas",
+     "code": "<div class=\"z-world-clock\" data-locale=\"en-GB\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: el reloj mundial de iOS y Android.",
+   "file": "zui/src/components/time/WorldClock.manifest.json"
   }
  ]
 }

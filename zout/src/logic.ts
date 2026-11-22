@@ -405,7 +405,7 @@ export function neighborPane(
 
 /**
  * Si hay que volver a medir si la fila del Navbar cabe. En fila se mide en cada cambio; plegado (cajón), solo
- * cuando la barra crece: medir en fila a cada estrechamiento haría parpadear el diseño (guía «navbar»).
+ * cuando la barra crece: medir en fila a cada estrechamiento haría parpadear el diseño.
  */
 export function navbarShouldMeasure(collapsed: boolean, width: number, lastWidth: number): boolean {
   if (!collapsed) return true;

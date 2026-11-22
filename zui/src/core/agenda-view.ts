@@ -703,7 +703,7 @@ function restOfLabel(
 /* ---------- Rejilla de horas: solapes con tope ---------- */
 
 /**
- * Columnas de solape de un grupo, contando la de «+N» (agenda.md §9: «a partir del quinto, un indicador»): en la
+ * Columnas de solape de un grupo, contando la de «+N» (a partir del quinto solape va un indicador): en la
  * semana, cuatro eventos lado a lado y el quinto carril para «+N»; en el día, ocho y el noveno.
  */
 export const timeGridStack = (days: number) => (days === 1 ? 9 : 5);
@@ -1185,7 +1185,7 @@ function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel
       children.push(listGroup(config, state, model, uid, g.d, g.items, null, i, groups.length));
     });
   } else {
-    // Ventana virtual (agenda.md §6): de cada día solo las filas que se ven (con un margen), la que lleva el foco y
+    // Ventana virtual (para 5000 eventos en un mes): de cada día solo las filas que se ven (con un margen), la que lleva el foco y
     // un relleno del alto de las demás; los días enteros fuera de la ventana se juntan en un solo relleno. Las
     // alturas salen de una medida (una lectura tras el primer pintado), no de medir cada fila.
     const m = state.listMetrics ?? LIST_METRICS;

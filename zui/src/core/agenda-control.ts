@@ -77,7 +77,7 @@ const wallISO = (min: number) =>
 
 /* ---------- Región viva ---------- */
 
-/** Anuncio educado con ~500 ms de retraso y vaciado previo (guía drag-and-drop): no se lo come el anuncio del foco. */
+/** Anuncio educado con ~500 ms de retraso y vaciado previo: no se lo come el anuncio del foco. */
 export function announce(root: HTMLElement, text: string): void {
   const live = root.querySelector<HTMLElement>(".z-agenda__live");
   if (live) announceTo(live, text, 500);

@@ -57,5 +57,5 @@
       "code": "<CheckboxGroup\n  label=\"Terms\"\n  error=\"Accept both to continue.\"\n  options={[\n    { value: \"terms\", label: \"I accept the terms of service\" },\n    { value: \"privacy\", label: \"I accept the privacy policy\" },\n  ]}\n/>"
     }
   ],
-  "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI."
+  "origin": "Nuevo. Patrón habitual de formularios accesibles (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI."
 }

@@ -11,6 +11,8 @@ export * from "./components/agenda";
 export * from "./components/charts";
 export * from "./components/effects";
 export * from "./components/media";
+export * from "./components/time";
+export * from "./components/terminal";
 export { cx } from "./cx";
 // Patrones del cargador DotMatrix (los mismos que dibuja el modo sin framework).
 export { DOT_PATTERNS, type DotPattern } from "./core/dotmatrix";
@@ -48,3 +50,19 @@ export {
   type Oklch,
   type Rgba,
 } from "./core/color";
+// Duraciones y zonas horarias (las que usan FormatDuration, DurationField, Countdown y TimeZoneSelect).
+export {
+  formatDuration,
+  parseISODuration,
+  toISODuration,
+  toMs as durationToMs,
+  type DurationInput,
+  type DurationParts,
+  type DurationStyle,
+  type DurationUnit,
+} from "./core/duration";
+export { groupZones, listTimeZones, offsetText, zoneOptions, type ZoneGroup, type ZoneOption } from "./core/timezones";
+// Terminal y código: ANSI, diferencias y resaltado (los que usan Terminal, DiffViewer y CodeViewer).
+export { createAnsiScreen, parseAnsi, stripAnsi, type AnsiLine, type AnsiScreen, type AnsiSpan, type AnsiStyle } from "./core/ansi";
+export { diffLines, parsePatch, toHunks, wordDiff, type DiffFile, type DiffHunk, type DiffLine } from "./core/diff";
+export { tokenize, tokenizeLines, type CodeToken, type TokenType } from "./core/code-tokens";

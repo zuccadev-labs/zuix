@@ -123,5 +123,5 @@
       "code": "<div class=\"z-slotpicker\" id=\"intro-call\" data-host-time-zone=\"Europe/Madrid\" data-duration=\"30\" data-from=\"2026-11-19\" data-to=\"2026-11-30\" data-time-zone=\"Europe/Madrid\" data-time-zones=\"Europe/Madrid,America/New_York\" data-today=\"2026-11-19\" data-now=\"2026-11-19T09:42:00Z\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"availability\": [{ \"days\": [1, 2, 3, 4, 5], \"start\": \"09:00\", \"end\": \"17:00\" }] }</script>\n</div>"
     }
   ],
-  "origin": "Especificación agenda.md §10; Calendly, Cal.com."
+  "origin": "Diseño propio para la agenda; referencias: Calendly y Cal.com."
 }

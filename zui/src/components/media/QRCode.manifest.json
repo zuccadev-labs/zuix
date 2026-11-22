@@ -46,5 +46,5 @@
       "code": "<QRCode value=\"WIFI:T:WPA;S:Studio;P:correct-horse;;\" level=\"L\" size={120} margin={2} label=\"Wi-Fi network Studio\" />"
     }
   ],
-  "origin": "Oleada 7. Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia."
+  "origin": "Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia."
 }

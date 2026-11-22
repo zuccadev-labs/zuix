@@ -1,4 +1,4 @@
-// Oleada 7: codificador QR propio (core/qr). Vectores conocidos de la norma ISO/IEC 18004 (anexo I: «01234567» 1-M)
+// Codificador QR propio (core/qr). Vectores conocidos de la norma ISO/IEC 18004 (anexo I: «01234567» 1-M)
 // y del ejemplo «HELLO WORLD» 1-Q para Reed–Solomon; tablas de formato y versión; capacidades de modo byte; y una
 // lectura independiente de la matriz (desenmascarar y recorrer el zigzag) que debe devolver las palabras codificadas.
 import assert from "node:assert/strict";

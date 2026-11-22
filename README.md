@@ -182,9 +182,11 @@ Code of conduct: [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md).
 ## Status
 
 The suite is on npm under the `@zuccadev-labs` organization
-([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). `0.2.0` breaks with `0.1.0`:
-it drops the third-party UI library the React binding was built on, moves dialogs to the native `<dialog>`
-and raises the minimum Node version. While the version is `0.x`, a `MINOR` bump may break
+([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). The current version is
+`0.3.0`. It grows the catalog to 144 components and 19 layouts and gives every component a new visual base;
+no token, class or export was removed, but most components look different. `0.2.0` was the one that broke
+with `0.1.0`: I dropped the third-party UI library the React binding was built on, moved dialogs to the
+native `<dialog>` and raised the minimum Node version. While the version is `0.x`, a `MINOR` bump may break
 ([Versioning](./docs/package/01-versionado.md)). Releases are published automatically when a version bump
 reaches `main` ([Publishing](./docs/package/02-publicacion.md)).
 

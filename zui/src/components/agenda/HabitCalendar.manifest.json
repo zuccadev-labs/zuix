@@ -77,5 +77,5 @@
       "code": "<div class=\"z-habit\" id=\"reading-habit\" data-subtitle=\"Read 20 minutes\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"states\": { \"2026-11-12\": \"done\", \"2026-11-13\": \"done\", \"2026-11-14\": \"missed\", \"2026-11-15\": \"rest\", \"2026-11-16\": \"done\", \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { \"progress\": 60 } } }</script>\n</div>"
     }
   ],
-  "origin": "Especificación agenda.md §13; Duolingo, Streaks."
+  "origin": "Diseño propio para la agenda; referencias: Duolingo y Streaks."
 }

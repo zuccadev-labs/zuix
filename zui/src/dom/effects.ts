@@ -1,4 +1,4 @@
-// Efectos y cargadores sin framework, oleada 6. Todo dentro de `[data-z-dom]`; el texto entra siempre como texto.
+// Efectos y cargadores sin framework. Todo dentro de `[data-z-dom]`; el texto entra siempre como texto.
 //
 // DotMatrix   .z-dotmatrix[data-pattern]: si llega sin puntos, los dibuja (data-cols, data-rows); en pausa fuera de
 //             pantalla. setDotMatrixPattern(el, patrón, { cols, rows }) lo redibuja.

@@ -3,7 +3,7 @@ import { Page, PageHeader } from "@zuccadev-labs/zuix-zout";
 import { PlanningPieces } from "./Planning";
 import { EventCalendar, type AgendaView, type CalendarEvent, type CalendarSource, type EventChange } from "@zuccadev-labs/zuix-zui";
 
-// Semana del prototipo (agenda.md): jueves 19 de noviembre de 2026, 10:42 en Madrid.
+// Semana de referencia de la agenda: jueves 19 de noviembre de 2026, 10:42 en Madrid.
 export const AGENDA_TODAY = "2026-11-19";
 export const AGENDA_NOW = "2026-11-19T09:42:00Z";
 const TZ = "Europe/Madrid";

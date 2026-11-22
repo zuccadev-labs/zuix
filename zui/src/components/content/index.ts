@@ -10,7 +10,16 @@ export { Divider, type DividerProps } from "./Divider";
 export { RelativeTime, type RelativeTimeProps } from "./RelativeTime";
 export { Timer, type TimerProps } from "./Timer";
 export { JsonTree, type JsonTreeProps } from "./JsonTree";
-export { FormatNumber, FormatByte, FormatDate, type FormatNumberProps, type FormatByteProps, type FormatDateProps } from "./Format";
+export {
+  FormatNumber,
+  FormatByte,
+  FormatDate,
+  FormatDuration,
+  type FormatNumberProps,
+  type FormatByteProps,
+  type FormatDateProps,
+  type FormatDurationProps,
+} from "./Format";
 export { Highlight, type HighlightProps } from "./Highlight";
 export { Prose, type ProseProps } from "./Prose";
 export { ScrollArea, type ScrollAreaProps } from "./ScrollArea";

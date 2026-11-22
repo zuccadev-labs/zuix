@@ -1,4 +1,4 @@
-// Comportamiento sin framework de la navegación de la oleada 4: Collapsible y Menubar. `setup()` conecta los
+// Comportamiento sin framework de la navegación de aplicación: Collapsible y Menubar. `setup()` conecta los
 // listeners delegados una vez; `hydrate(root)` prepara marcado nuevo. Todo se activa dentro de `[data-z-dom]`.
 //
 // Collapsible  .z-collapsible > button.z-collapsible__trigger[aria-expanded][aria-controls] + .z-collapsible__content.

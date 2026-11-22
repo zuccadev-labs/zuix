@@ -1,4 +1,4 @@
-// Contenido sin framework, oleada 5: JsonTree y Stepper con paneles. Todo dentro de `[data-z-dom]`; el texto de la aplicación entra
+// Contenido sin framework: JsonTree y Stepper con paneles. Todo dentro de `[data-z-dom]`; el texto de la aplicación entra
 // siempre como texto (textContent), nunca como marcado.
 //
 // JsonTree   <div class="z-jsontree"> con un hijo <script type="application/json" data-value> (o setJsonTreeValue(el,

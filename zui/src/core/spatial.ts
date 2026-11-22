@@ -1,5 +1,5 @@
-// Navegación espacial con flechas entre piezas de una rejilla irregular (eventos de la agenda), con el algoritmo de
-// la guía `spatial-navigation`: un candidato está en la dirección pulsada solo si su borde cercano está en o más
+// Navegación espacial con flechas entre piezas de una rejilla irregular (eventos de la agenda), con el algoritmo
+// habitual de navegación espacial: un candidato está en la dirección pulsada solo si su borde cercano está en o más
 // allá del borde lejano del actual en ese eje; se prefieren los que se solapan en el eje perpendicular (menor
 // distancia, y a igualdad menor desvío del centro) y, si no hay, se puntúa `distancia + peso × desvío`. Sin
 // candidato devuelve -1: quien llama no debe hacer `preventDefault()`, para que el navegador desplace.

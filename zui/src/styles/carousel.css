@@ -184,7 +184,7 @@
     }
   }
 
-  /* ---------- Oleada 7: reproducción, puntos, barra, miniaturas y modo snap ---------- */
+  /* ---------- Reproducción, puntos, barra, miniaturas y modo snap ---------- */
   .z-carousel__play[data-state="playing"] {
     color: var(--z-accent-text);
   }
@@ -377,7 +377,7 @@
   }
 }
 
-/* ---------- v0.4: layouts de M3, efectos de profundidad, mazo, bucle sin réplicas y progreso ---------- */
+/* ---------- Layouts de M3, efectos de profundidad, mazo, bucle sin réplicas y progreso ---------- */
 
 /* Distancia de cada slide a su punto de ajuste, en slides (−3 … 3, en orden de lectura). La anima el navegador
    (animaciones ligadas al desplazamiento) o la escribe el motor donde no las hay. Heredable: la leen las capas. */

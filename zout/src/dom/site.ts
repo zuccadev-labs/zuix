@@ -1,4 +1,4 @@
-// Navegación de sitio sin framework (oleada 6): conecta cada Navbar y NavigationMenu de un contenedor [data-z-dom]
+// Navegación de sitio sin framework: conecta cada Navbar y NavigationMenu de un contenedor [data-z-dom]
 // con el mismo comportamiento que usa React (../site), SkipLink y la BottomNavigation de botones.
 //   .z-navbar                  mide si la fila cabe; si no, cajón (popover) con el botón .z-navbar__toggle
 //   .z-navmenu                 grupos de disclosure: paneles popover (horizontal) o desplegables (vertical)

@@ -208,7 +208,7 @@ export function dotMatrixCells(pattern: DotPattern, colsIn?: number, rowsIn?: nu
         case "sparkle":
           phase = dotHash(x, y);
           break;
-        // Oleada 7: rombo que late desde el centro (distancia de Manhattan).
+        // Rombo que late desde el centro (distancia de Manhattan).
         case "diamond":
           phase = ((Math.abs(x - cx) + Math.abs(y - cy)) / (cx + cy || 1)) * 0.5;
           break;

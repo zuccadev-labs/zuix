@@ -1,5 +1,5 @@
 /*
-  Familia ColorPicker (oleada 7): área de saturación y brillo, deslizadores de tono y alfa, campos, muestrario,
+  Familia ColorPicker: área de saturación y brillo, deslizadores de tono y alfa, campos, muestrario,
   cuentagotas, selector del sistema y la variante en popover. El color mostrado es el valor de la aplicación
   (variables locales que escribe la pieza); los extremos del área y el espectro del tono son tokens
   (`colorpicker-white`, `colorpicker-black`, `colorpicker-spectrum`). Sin píldoras: el área y las pistas son

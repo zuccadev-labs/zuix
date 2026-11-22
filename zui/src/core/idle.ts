@@ -1,5 +1,4 @@
-// Trabajo que no es urgente, fuera del camino de una interacción (guías break-up-long-tasks y
-// schedule-tasks-by-priority): avisar del rango visible, cargar sus eventos o medir tras pintar va después del
+// Trabajo que no es urgente, fuera del camino de una interacción, para no alargar las tareas largas: avisar del rango visible, cargar sus eventos o medir tras pintar va después del
 // siguiente fotograma, con `scheduler.postTask` donde exista y `setTimeout` donde no. Sin efectos al importar.
 
 type Priority = "user-blocking" | "user-visible" | "background";

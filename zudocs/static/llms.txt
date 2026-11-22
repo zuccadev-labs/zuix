@@ -1,6 +1,6 @@
 # Zuix
 
-> Componentes, layouts, iconos y documentación con un solo estándar. Cambia la marca, conserva el sistema.
+> Componentes, layouts, iconos y documentación sobre un solo estándar de HTML, CSS y tokens. Una marca nueva es un archivo.
 
 ## Uso
 
@@ -48,7 +48,7 @@
 - [Node, dependencias y cadena de suministro](https://zuccadev-labs.github.io/zuix/docs/investigations/node-dependencias-y-cadena-de-suministro.md): Qué versiones admito y por qué, cómo protejo la instalación de dependencias y cómo publico sin guardar un token en ningún sitio.
 - [Lint, pruebas y por qué no Barrits](https://zuccadev-labs.github.io/zuix/docs/investigations/lint-pruebas-y-barrits.md): La 0.1.0 salió sin linter, sin formateador y sin pruebas unitarias: tenía auditoría de estilo, tipos y pruebas de navegador.
 - [El sitio de documentación, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/el-sitio-medido.md): zudocs lo había tratado como una plantilla que funcionaba: compilaba y no tenía enlaces rotos.
-- [Rendimiento de la agenda, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/rendimiento-de-la-agenda.md): La especificación de la agenda pide 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (objetivo de 50 ms por interacción; INP «bueno», por debajo de 200 ms, como mínimo).
+- [Rendimiento de la agenda, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/rendimiento-de-la-agenda.md): Cuando diseñé la agenda me puse un objetivo: 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (50 ms por interacción como meta; un INP «bueno», por debajo de 200 ms, como mínimo).
 
 ## Publicación
 
@@ -179,6 +179,7 @@
 - [Divider](https://zuccadev-labs.github.io/zuix/components/content/divider.md): Línea separadora entre bloques o entre elementos de una barra.
 - [FormatByte](https://zuccadev-labs.github.io/zuix/components/content/format-byte.md): Tamaño en bytes legible: decimal con las unidades de Intl («1.5 MB», «1,5 megabytes») o binario con símbolo IEC («1.4 MiB»), en un <data value> con los bytes exactos.
 - [FormatDate](https://zuccadev-labs.github.io/zuix/components/content/format-date.md): Fecha en un <time datetime> con Intl.DateTimeFormat, o relativa («hace 3 min») con `relative`, que delega en RelativeTime y se actualiza sola.
+- [FormatDuration](https://zuccadev-labs.github.io/zuix/components/content/format-duration.md): Duración legible en un <time datetime="PT…"> con Intl.DurationFormat: «1 hour, 30 minutes» (`long`), «1 hr, 30 min» (`short`), «1h 30m» (`narrow`) o «1:30:00» (`digital`).
 - [FormatNumber](https://zuccadev-labs.github.io/zuix/components/content/format-number.md): Número con Intl.NumberFormat (compacto, moneda, porcentaje, unidad) en un <data value> que conserva el valor exacto.
 - [Highlight](https://zuccadev-labs.github.io/zuix/components/content/highlight.md): Marca con <mark> las coincidencias de una o varias consultas en un texto: sin distinguir mayúsculas, opcionalmente sin acentos o solo palabras completas; relleno de acento o subrayado ondulado.
 - [JsonTree](https://zuccadev-labs.github.io/zuix/components/content/json-tree.md): Visor de JSON y de valores de JavaScript como árbol: tipos con color, profundidad inicial, Map y Set, cadenas largas truncadas y copia de la ruta.
@@ -240,6 +241,22 @@
 - [ImageCropper](https://zuccadev-labs.github.io/zuix/components/media/image-cropper.md): Recortador de imagen: área que se mueve y se redimensiona desde ocho asas, relación de aspecto fija o libre, forma rectangular o circular, rejilla de tercios y teclado.
 - [QRCode](https://zuccadev-labs.github.io/zuix/components/media/qr-code.md): Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con…
 - [SignaturePad](https://zuccadev-labs.github.io/zuix/components/media/signature-pad.md): Lienzo de firma: trazos con el puntero (con presión si el dispositivo la da, trazado suavizado), deshacer y borrar, y la alternativa accesible de escribir el nombre.
+
+## Componentes: Tiempo
+
+- [AnalogClock](https://zuccadev-labs.github.io/zuix/components/time/analog-clock.md): Reloj de esfera en SVG: agujas de horas y minutos, segundero opcional (a saltos o continuo), marcas de horas o de minutos, números (ninguno, cuartos o todos), zona IANA y tres tamaños.
+- [Clock](https://zuccadev-labs.github.io/zuix/components/time/clock.md): Reloj digital: 12 o 24 h según el locale (o `hourCycle`), segundos y fecha opcionales, zona IANA, nombre de la zona y separadores que laten.
+- [Countdown](https://zuccadev-labs.github.io/zuix/components/time/countdown.md): Cuenta atrás hasta un instante (un lanzamiento, el fin de una oferta): días, horas, minutos y segundos en cajas (`segments`), en línea o con cifras que giran (`flip`).
+- [DurationField](https://zuccadev-labs.github.io/zuix/components/time/duration-field.md): Entrada de duración por segmentos (horas, minutos, segundos), con paso para los minutos, tope y preajustes («15 min», «30 min», «1 h»).
+- [TimeZoneSelect](https://zuccadev-labs.github.io/zuix/components/time/time-zone-select.md): Selector de zona horaria buscable sobre Combobox: opciones «Madrid · GMT+1 · 10:42» agrupadas por región o por desfase, con la lista del navegador (`Intl.supportedValuesOf`) o una restringida.
+- [WorldClock](https://zuccadev-labs.github.io/zuix/components/time/world-clock.md): Varias zonas a la vez, en lista o rejilla: hora, diferencia con la zona de referencia («+6 h»), día distinto («Tomorrow») y día o noche (sol o luna, aproximado de 7 a 19 h).
+
+## Componentes: Terminal y código
+
+- [CodeViewer](https://zuccadev-labs.github.io/zuix/components/terminal/code-viewer.md): CodeBlock ampliado: números de línea, líneas resaltadas, pestañas de archivos, copiar y resaltado mínimo sin dependencias (JavaScript y TypeScript con JSX, JSON, CSS, HTML y XML, shell y Python); un…
+- [DiffViewer](https://zuccadev-labs.github.io/zuix/components/terminal/diff-viewer.md): Diferencias de dos textos (diff de líneas de Myers) o de un parche unificado (`git diff`, varios archivos), en vista unificada o lado a lado, con las palabras cambiadas marcadas, cabecera por archivo…
+- [LogConsole](https://zuccadev-labs.github.io/zuix/components/terminal/log-console.md): Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado.
+- [Terminal](https://zuccadev-labs.github.io/zuix/components/terminal/terminal.md): Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y…
 
 ## Componentes: Layouts
 

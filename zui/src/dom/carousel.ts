@@ -10,12 +10,12 @@
 // data-label-slide="Slide {index} of {count}". Variables: --z-carousel-slide-width, --z-carousel-gap.
 // Evento: z:change con detail.index. API: carousel(el, opciones?) → { next, prev, goTo, refresh, destroy, index }.
 //
-// Oleada 7: data-autoplay (vacío = 5 s, o milisegundos) con botón de pausa visible, data-indicators="dots|bar|none"
+// data-autoplay (vacío = 5 s, o milisegundos) con botón de pausa visible, data-indicators="dots|bar|none"
 // (por defecto el contador) y miniaturas del contrato (.z-carousel__thumbs > button.z-carousel__thumb). Con
 // data-per-page="3" o data-orientation="vertical" el carrusel usa el desplazamiento nativo con scroll-snap (sin lente
 // ni réplicas); --z-carousel-height fija el alto en vertical. Textos: data-label-play, data-label-pause, data-label-goto.
 //
-// v0.4: data-layout="multi-browse|hero|hero-center|uncontained|fullscreen|stack" y data-effect="prism|coverflow|fade|
+// data-layout="multi-browse|hero|hero-center|uncontained|fullscreen|stack" y data-effect="prism|coverflow|fade|
 // parallax|wheel" (además de lens y none); data-indicators="progress", data-per-move="2|page", data-per-page="auto",
 // data-auto-height, data-depth="0–2", data-peek="3rem", data-kenburns y capas data-parallax-layer="0.4". Fuera de la
 // tira con lente, el motor es core/carousel-runtime (desplazamiento nativo o mazo); con data-loop y uno por vista, el

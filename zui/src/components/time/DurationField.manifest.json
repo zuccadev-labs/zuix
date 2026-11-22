@@ -1,0 +1,130 @@
+{
+  "name": "DurationField",
+  "group": "time",
+  "description": "Entrada de duración por segmentos (horas, minutos, segundos), con paso para los minutos, tope y preajustes («15 min», «30 min», «1 h»). Se teclean las cifras, se cambian con las flechas o se pega «1:30», «90m» o «PT1H30M». El valor es ISO 8601.",
+  "import": "import { DurationField } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | number | null",
+      "description": "ISO 8601 (PT1H30M) o ms; controlado."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | number | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string, ms: number) => void"
+    },
+    {
+      "name": "units",
+      "type": "(\"hours\" | \"minutes\" | \"seconds\")[]",
+      "default": ["hours", "minutes"]
+    },
+    {
+      "name": "max",
+      "type": "string | number",
+      "description": "Tope (ISO o ms)."
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 1,
+      "description": "Paso del segmento de minutos."
+    },
+    {
+      "name": "presets",
+      "type": "(string | number)[]",
+      "description": "Preajustes (ISO o ms)."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Envía el valor ISO con el formulario."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Duration",
+      "description": "Nombre accesible del grupo."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DurationFieldLabels>",
+      "description": "hours, minutes, seconds, hoursShort, minutesShort, secondsShort, presets."
+    }
+  ],
+  "states": ["rest", "focus", "disabled", "invalid"],
+  "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "accent-soft",
+    "accent-text",
+    "accent",
+    "accent-ring",
+    "fg",
+    "fg-muted",
+    "radius-xs",
+    "control-height-xs"
+  ],
+  "classes": [
+    "z-duration-field",
+    "z-duration-field__control",
+    "z-duration-field__input",
+    "z-duration-field__unit",
+    "z-duration-field__segment",
+    "z-duration-field__suffix",
+    "z-duration-field__presets",
+    "z-duration-field__preset"
+  ],
+  "a11y": "Grupo con nombre (role=group) y un spinbutton por unidad con aria-valuenow, aria-valuemin, aria-valuemax y aria-valuetext hablado («2 hours»); los sufijos visibles («h», «min») van con aria-hidden. Una sola parada de Tab con foco itinerante entre segmentos: ↑/↓ cambian (los menores dan la vuelta), RePág/AvPág de diez en diez, Inicio/Fin, ←/→ entre segmentos, cifras con avance automático y Retroceso para borrar. Admite pegar. Los preajustes son botones de acción; el que coincide con el valor se marca con data-active. Sin React: .z-duration-field con data-value, data-units, data-max, data-step, data-presets=\"PT15M PT30M PT1H\", data-name, data-label, data-size, data-disabled y data-locale; emite z:change { value, ms }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Horas y minutos con preajustes",
+      "code": "<DurationField locale=\"en-GB\" label=\"Meeting length\" defaultValue=\"PT45M\" step={5} presets={[\"PT15M\", \"PT30M\", \"PT1H\"]} name=\"length\" />"
+    },
+    {
+      "title": "Minutos y segundos, con tope",
+      "code": "<DurationField locale=\"en-GB\" label=\"Lap time\" units={[\"minutes\", \"seconds\"]} max=\"PT59M59S\" defaultValue=\"PT4M30S\" size=\"sm\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Horas y minutos con preajustes",
+      "code": "<div class=\"z-duration-field\" data-locale=\"en-GB\" data-label=\"Meeting length\" data-value=\"PT45M\" data-step=\"5\" data-presets=\"PT15M PT30M PT1H\" data-name=\"length\"></div>"
+    },
+    {
+      "title": "Minutos y segundos, con tope",
+      "code": "<div class=\"z-duration-field\" data-locale=\"en-GB\" data-label=\"Lap time\" data-units=\"minutes seconds\" data-max=\"PT59M59S\" data-value=\"PT4M30S\" data-size=\"sm\"></div>"
+    }
+  ],
+  "origin": "Diseño propio sobre el segmentado de DateField; referencia: el selector de duración de Android."
+}

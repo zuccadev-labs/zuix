@@ -1,5 +1,5 @@
 /*
-  Cargadores, oleada 6: formas de Spinner (puntos y barras) y DotMatrix (rejilla de puntos con patrones propios).
+  Cargadores: formas de Spinner (puntos y barras) y DotMatrix (rejilla de puntos con patrones propios).
   Solo opacidad y escala animadas (compositor). El movimiento se declara dentro de
   `prefers-reduced-motion: no-preference`: con movimiento reducido queda un fotograma quieto del patrón.
   Fuera de pantalla (`data-offscreen`, core/visibility) y con `data-paused` la animación se detiene.

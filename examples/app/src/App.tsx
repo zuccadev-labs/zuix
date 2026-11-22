@@ -41,12 +41,14 @@ import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
 import { AgendaScreen } from "./screens/Agenda";
 import { Workspace } from "./screens/Workspace";
-import { ContentWave5 } from "./screens/ContentWave5";
+import { ContentScreen } from "./screens/Content";
 import { ChartsScreen } from "./screens/Charts";
-import { DataWave5 } from "./screens/DataWave5";
+import { DataScreen } from "./screens/Data";
 import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
 import { CarouselsScreen } from "./screens/Carousels";
+import { TerminalScreen } from "./screens/TerminalScreen";
+import { TimeScreen } from "./screens/Time";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -209,17 +211,21 @@ export function App() {
     ) : active === "workspace" ? (
       <Workspace />
     ) : active === "content" ? (
-      <ContentWave5 />
+      <ContentScreen />
     ) : active === "charts" ? (
       <ChartsScreen />
     ) : active === "data" ? (
-      <DataWave5 />
+      <DataScreen />
     ) : active === "site" ? (
       <Site />
     ) : active === "media" ? (
       <Media />
     ) : active === "carousels" ? (
       <CarouselsScreen />
+    ) : active === "time" ? (
+      <TimeScreen />
+    ) : active === "terminal" ? (
+      <TerminalScreen />
     ) : (
       <Editor />
     );

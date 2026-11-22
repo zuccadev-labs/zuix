@@ -48,7 +48,7 @@
   ],
   "classes": ["z-chart"],
   "behavior": "dom",
-  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
   "description": "Gráfico de líneas: una o varias series sobre un eje de categorías, tiempo (marcas de día, semana, mes o año y rótulos de Intl) o número; curva lineal, monótona o escalonada, huecos donde falta el dato, marcadores con forma por serie, cruceta y tooltip al pasar o enfocar, flechas entre puntos, leyenda que oculta series y tabla alternativa.",
   "import": "import { LineChart } from \"@zuccadev-labs/zuix-zui\"",
   "exports": ["Chart"],

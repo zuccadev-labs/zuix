@@ -1,4 +1,4 @@
-// Oleada 7: CircularSlider (core/circular): geometría del anillo, ángulo ↔ valor y trazados SVG.
+// CircularSlider (core/circular): geometría del anillo, ángulo ↔ valor y trazados SVG.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import fc from "fast-check";

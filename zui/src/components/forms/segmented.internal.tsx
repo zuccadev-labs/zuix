@@ -320,7 +320,7 @@ export function SegmentedField(props: InternalProps) {
       setState(latest.current.state);
     }
     if (group.current?.contains(event.relatedTarget as Node | null)) return;
-    // Validar al salir, y solo si se editó (guía de formularios): no se avisa mientras se teclea.
+    // Valido al salir, y solo si se editó: avisar mientras se teclea interrumpe a quien escribe.
     if (!edited.current) return;
     edited.current = false;
     const result = validity(current.values, config);
