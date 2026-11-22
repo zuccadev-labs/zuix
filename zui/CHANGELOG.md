@@ -5,6 +5,38 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
+  corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
+  nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y
+  la región de la agenda usan ya la misma cola.
+- `Carousel` con dos ejes:
+  - `layout`: `strip`, los de Material 3 (`multi-browse`, `hero` y `hero-center` con máscaras por keylines,
+    `uncontained`, `fullscreen`) y `stack` (mazo que se descarta deslizando).
+  - `effect`: además de `lens` y `none`, `prism` (coverflow de cristal con profundidad, la variante de marca),
+    `coverflow`, `fade` (con `kenBurns`), `parallax` (capas `[data-parallax-layer]`) y `wheel` (cilindro vertical).
+  - Los efectos se pintan desde `--z-slide-progress`, que anima el navegador con animaciones ligadas al
+    desplazamiento (`view()`) o escribe el motor donde no existen. Con `prefers-reduced-motion` todo queda plano.
+  - `indicators="progress"` (el punto actual se alarga y se llena durante el intervalo), `slidesPerMove`,
+    `slidesPerPage="auto"`, `autoHeight`, `depth` y `peek`. En `/dom`, los mismos como `data-*`.
+- `Stories` (historias por persona con barras de progreso, toque para avanzar o retroceder, pulsación larga para
+  pausar; empieza en pausa con movimiento reducido), `Lightbox` (visor a pantalla completa sobre `<dialog>` con zoom y
+  encuadre, `core/zoom`) y `Gallery` (carrusel con miniaturas sincronizadas y botón de pantalla completa). En `/dom`:
+  `[data-z-stories]`, `dialog[data-z-lightbox]` con `openLightbox(dialog, índice)` y `[data-z-gallery]`.
+- `Skeleton` por patrón: `pattern` (`card`, `list`, `table`, `profile`, `chat`, `chart`, `article`, `calendar`, también
+  como `Skeleton.Card`, `Skeleton.List`…), `loading` para envolver el contenido real y `SkeletonGroup` (contenedor con
+  `aria-busy` y un solo brillo sincronizado). Los anchos salen de una semilla: servidor y cliente pintan lo mismo. En
+  `/dom`, un `.z-skeleton-pattern[data-pattern]` vacío se expande solo.
+
+### Cambiado
+
+- El bucle del `Carousel` en desplazamiento nativo ya no salta del final al principio: aparca el primer o el último
+  slide con CSS `order` junto al actual y compensa el salto (guía `carousel`), sin clonar nada. La tira con lente
+  sigue con réplicas, porque allí la pista es transformada y no desplazamiento nativo.
+- En el desplazamiento nativo y en el mazo, la posición se anuncia tras asentarse (`scrollend`) y solo si cambió;
+  antes se anunciaba al pulsar. El teclado (flechas, Inicio y Fin) lo lleva el motor común de React y `/dom`.
+
 ## [0.3.0] - 2026-11-21
 
 Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-tokens`. Botón, campo, select,

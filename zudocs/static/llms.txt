@@ -164,7 +164,7 @@
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
 - [LoadingOverlay](https://zuccadev-labs.github.io/zuix/components/feedback/loading-overlay.md): Capa de espera sobre un contenedor o sobre toda la ventana.
-- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido.
+- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones (tarjeta, lista, tabla, perfil, chat, gráfico, artículo y calendario) y un…
 - [Spinner](https://zuccadev-labs.github.io/zuix/components/feedback/spinner.md): Indicador de espera de duración desconocida: anillo giratorio, tres puntos que laten o cuatro barras.
 
 ## Componentes: Contenido
@@ -220,7 +220,10 @@
 
 ## Componentes: Carousel
 
-- [Carousel](https://zuccadev-labs.github.io/zuix/components/carousel/carousel.md): Carrusel agnóstico al contenido: tira con bucle infinito, arrastre con inercia, ajuste al slide más cercano, flechas, contador, teclado y anuncios para lectores de pantalla.
+- [Carousel](https://zuccadev-labs.github.io/zuix/components/carousel/carousel.md): Carrusel agnóstico al contenido con dos ejes: `layout` (tira, los de Material 3 y mazo) y `effect` (lente, prisma de cristal, coverflow, fundido, parallax, rueda).
+- [Gallery](https://zuccadev-labs.github.io/zuix/components/carousel/gallery.md): Galería: carrusel con tira de miniaturas sincronizada (debajo o al lado) y botón para abrir la imagen actual en el visor a pantalla completa.
+- [Lightbox](https://zuccadev-labs.github.io/zuix/components/carousel/lightbox.md): Visor de imágenes a pantalla completa sobre `<dialog>` modal: anterior y siguiente, contador, zoom con botones, teclado, doble clic y Ctrl + rueda, y encuadre arrastrando.
+- [Stories](https://zuccadev-labs.github.io/zuix/components/carousel/stories.md): Historias al estilo de Instagram: grupos por persona, una barra por historia que se llena con el tiempo, tocar a un lado o al otro para retroceder o avanzar y mantener pulsado para pausar.
 
 ## Componentes: Efectos
 

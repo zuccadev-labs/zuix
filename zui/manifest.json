@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 144,
+ "count": 147,
  "groups": {
   "actions": [
    "Button",
@@ -25,7 +25,10 @@
    "TimelineView"
   ],
   "carousel": [
-   "Carousel"
+   "Carousel",
+   "Gallery",
+   "Lightbox",
+   "Stories"
   ],
   "charts": [
    "AreaChart",
@@ -2394,7 +2397,7 @@
   {
    "name": "Carousel",
    "group": "carousel",
-   "description": "Carrusel agnóstico al contenido: tira con bucle infinito, arrastre con inercia, ajuste al slide más cercano, flechas, contador, teclado y anuncios para lectores de pantalla. Efecto de lente opcional: el centro queda plano y los bordes se curvan como a través de un cristal.",
+   "description": "Carrusel agnóstico al contenido con dos ejes: `layout` (tira, los de Material 3 y mazo) y `effect` (lente, prisma de cristal, coverflow, fundido, parallax, rueda). Tira con bucle, arrastre con inercia y lente; o desplazamiento nativo con scroll-snap y bucle sin réplicas. Flechas, indicadores, reproducción automática con pausa, teclado y anuncios para lectores de pantalla.",
    "import": "import { Carousel } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -2419,16 +2422,65 @@
      "type": "enum",
      "values": [
       "lens",
+      "prism",
+      "coverflow",
+      "fade",
+      "parallax",
+      "wheel",
       "none"
      ],
      "default": "lens",
-     "description": "Lente curva o tira plana. Con prefers-reduced-motion siempre es plana y sin animación."
+     "description": "Cómo se transforma cada slide según su distancia al centro: lente curva (motor propio), prisma (coverflow de cristal con profundidad, la variante de marca), coverflow, fundido (mazo), parallax (capas [data-parallax-layer]) o rueda (cilindro vertical). Con prefers-reduced-motion todo queda plano y sin animación."
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "strip",
+      "multi-browse",
+      "uncontained",
+      "hero",
+      "hero-center",
+      "fullscreen",
+      "stack"
+     ],
+     "default": "strip",
+     "description": "Cómo se reparte el espacio: tira, layouts de Material 3 (multi-browse y hero con máscaras por keylines, uncontained, pantalla completa) o mazo de tarjetas apiladas que se descartan deslizando."
+    },
+    {
+     "name": "slidesPerMove",
+     "type": "number | \"page\"",
+     "default": 1,
+     "description": "Posiciones por paso de las flechas y de la reproducción automática."
+    },
+    {
+     "name": "autoHeight",
+     "type": "boolean",
+     "default": false,
+     "description": "La vista toma el alto del slide activo."
+    },
+    {
+     "name": "depth",
+     "type": "number",
+     "default": 1,
+     "description": "Intensidad del giro y la profundidad de prism, coverflow y wheel (0–2)."
+    },
+    {
+     "name": "peek",
+     "type": "number | string",
+     "description": "Avance visible del siguiente slide (px o longitud CSS)."
+    },
+    {
+     "name": "kenBurns",
+     "type": "boolean",
+     "default": false,
+     "description": "Con effect=\"fade\": zoom lento sobre `.z-carousel__media` del slide activo."
     },
     {
      "name": "loop",
      "type": "boolean",
      "default": true,
-     "description": "Bucle infinito. Sin bucle la tira tiene topes y las flechas se deshabilitan en los extremos."
+     "description": "Bucle. En la tira con lente, con réplicas inertes; en el desplazamiento nativo, sin réplicas: el primer o el último slide se aparca con `order` junto al actual (guía `carousel`). Sin bucle las flechas se deshabilitan en los extremos."
     },
     {
      "name": "ariaLabel",
@@ -2486,10 +2538,11 @@
       "dots",
       "bar",
       "thumbnails",
+      "progress",
       "none"
      ],
      "default": "counter",
-     "description": "Indicador de posición: contador (01/05), puntos, barra de recorrido, miniaturas (con `renderThumbnail`) o ninguno."
+     "description": "Indicador de posición: contador (01/05), puntos, barra de recorrido, miniaturas (con `renderThumbnail`), progreso (puntos cuyo actual se alarga y se llena durante el intervalo de `autoplay`) o ninguno."
     },
     {
      "name": "renderThumbnail",
@@ -2498,9 +2551,9 @@
     },
     {
      "name": "slidesPerPage",
-     "type": "number",
+     "type": "number | \"auto\"",
      "default": 1,
-     "description": "Slides visibles a la vez (1–8). Con más de uno el carrusel usa el desplazamiento nativo con scroll-snap (sin lente ni réplicas)."
+     "description": "Slides visibles a la vez (1–8) o \"auto\" (cada uno con su ancho). Con más de uno, en vertical o con un layout o efecto que no sea la tira con lente, el carrusel usa el desplazamiento nativo con scroll-snap. Con uno por página, `loop` aparca el primer o el último slide con CSS `order` (sin réplicas)."
     },
     {
      "name": "orientation",
@@ -2536,18 +2589,30 @@
     {
      "name": "flat",
      "description": "effect=\"none\" o prefers-reduced-motion: tira plana; el ajuste es inmediato."
+    },
+    {
+     "name": "snap",
+     "description": "Desplazamiento nativo con scroll-snap: varias por página, vertical, layouts de M3 y efectos prism, coverflow, parallax y wheel. Los efectos leen `--z-slide-progress`, que anima el navegador con animaciones ligadas al desplazamiento (view()) o escribe el motor donde no existen."
+    },
+    {
+     "name": "deck",
+     "description": "Mazo sin desplazamiento (effect=\"fade\" o layout=\"stack\"): los slides se superponen; el actual es el único interactivo y los demás quedan inertes. Se arrastra con ratón, lápiz o dedo."
     }
    ],
    "tokens": [
     "accent",
     "accent-ring",
+    "accent-text",
     "button-radius",
     "card-radius",
     "control-height-md",
+    "control-height-sm",
     "control-radius",
     "duration-fast",
     "duration-normal",
     "duration-press",
+    "duration-slow",
+    "ease-emphasized",
     "ease-out",
     "ease-standard",
     "fg",
@@ -2555,16 +2620,32 @@
     "focus-offset",
     "focus-width",
     "font-mono",
+    "glass-bg",
+    "glass-blur",
     "glass-border",
     "glass-highlight",
+    "glass-saturate",
+    "glass-shadow",
+    "glass-specular",
+    "layer-raised",
     "line",
     "line-strong",
+    "overlay",
     "radius-full",
+    "radius-lg",
+    "radius-panel",
     "radius-xs",
+    "scrim",
+    "shadow-md",
+    "space-1",
+    "space-2",
+    "space-3",
     "space-4",
     "space-6",
+    "space-8",
     "surface-2",
     "surface-3",
+    "surface-solid",
     "text-code",
     "touch-target",
     "weight-medium"
@@ -2572,7 +2653,14 @@
    "cssVars": [
     "--z-carousel-slide-width",
     "--z-carousel-gap",
-    "--z-carousel-radius"
+    "--z-carousel-radius",
+    "--z-carousel-height",
+    "--z-carousel-peek",
+    "--z-carousel-depth",
+    "--z-carousel-interval",
+    "--z-slide-progress",
+    "--z-carousel-current",
+    "--z-carousel-count"
    ],
    "classes": [
     "z-carousel",
@@ -2584,7 +2672,16 @@
     "z-carousel__controls",
     "z-carousel__arrow",
     "z-carousel__counter",
-    "z-carousel__live"
+    "z-carousel__live",
+    "z-carousel__face",
+    "z-carousel__media",
+    "z-carousel__caption",
+    "z-carousel__dots",
+    "z-carousel__dot",
+    "z-carousel__bar",
+    "z-carousel__thumbs",
+    "z-carousel__thumb",
+    "z-carousel__play"
    ],
    "attributes": [
     "data-effect",
@@ -2594,13 +2691,29 @@
     "data-copy",
     "data-index",
     "data-raster",
-    "data-raster-src"
+    "data-raster-src",
+    "data-layout",
+    "data-align",
+    "data-park",
+    "data-auto-height",
+    "data-kenburns",
+    "data-peek",
+    "data-depth",
+    "data-per-move",
+    "data-per-page",
+    "data-parallax-layer",
+    "data-small",
+    "data-cycle"
    ],
    "icons": [
+    "chevron-down",
     "chevron-left",
-    "chevron-right"
+    "chevron-right",
+    "chevron-up",
+    "pause",
+    "play"
    ],
-   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden). Con `autoplay`, el primer control es el botón de pausa/reproducción (nombre según el estado) y la región viva se calla mientras corre (aria-live=\"off\"); se detiene con el puntero encima o el foco dentro. Puntos y miniaturas son botones con nombre («Go to slide 2 of 5») y aria-current en el actual. En el modo snap (varias por página o vertical) la vista desplazable recibe el foco y se mueve con las flechas de su eje, Inicio y Fin.",
+   "a11y": "Región con aria-roledescription=\"carousel\" y nombre por `ariaLabel`; cada slide es un group con aria-roledescription=\"slide\" y nombre por `labels.slide`. Flechas son button nativos con nombre accesible. Teclado sobre el carrusel: ArrowLeft/ArrowRight cambian de slide, Home/End van al primero y al último. El foco que entra en un slide lo centra. La navegación explícita se anuncia en una región aria-live. Las réplicas del bucle son inertes y aria-hidden. El contador es decorativo (aria-hidden). Con `autoplay`, el primer control es el botón de pausa/reproducción (nombre según el estado) y la región viva se calla mientras corre (aria-live=\"off\"); se detiene con el puntero encima o el foco dentro. Puntos y miniaturas son botones con nombre («Go to slide 2 of 5») y aria-current en el actual. En el modo snap (varias por página o vertical) la vista desplazable recibe el foco y se mueve con las flechas de su eje, Inicio y Fin. En el desplazamiento nativo el estado se anuncia («Slide 3 of 8») tras asentarse (scrollend) y solo si cambió el slide; nada al cargar ni al aparcar slides para el bucle. Los slides laterales de los efectos 3D siguen accesibles (el giro es visual) y el velo oscurece el fondo, no el texto. En el mazo solo el slide actual es interactivo; los demás son inert y aria-hidden. El indicador `progress` marca el actual también por tamaño, no solo por color.",
    "examples": [
     {
      "title": "Tarjetas con lente",
@@ -2629,6 +2742,26 @@
     {
      "title": "Miniaturas",
      "code": "<Carousel\n  ariaLabel=\"Photos\"\n  effect=\"none\"\n  indicators=\"thumbnails\"\n  items={photos}\n  renderItem={(p) => <img src={p.src} alt={p.alt} />}\n  renderThumbnail={(p) => <img src={p.thumb} alt=\"\" />}\n/>"
+    },
+    {
+     "title": "Prisma: coverflow de cristal con progreso",
+     "code": "<Carousel\n  ariaLabel=\"Destinations\"\n  effect=\"prism\"\n  autoplay={5000}\n  indicators=\"progress\"\n  items={places}\n  getKey={(p) => p.id}\n  renderItem={(p) => (\n    <>\n      <img className=\"z-carousel__media\" src={p.src} alt={p.alt} />\n      <div className=\"z-carousel__caption\"><strong>{p.title}</strong><span>{p.text}</span></div>\n    </>\n  )}\n/>"
+    },
+    {
+     "title": "Multi-browse de Material 3",
+     "code": "<Carousel ariaLabel=\"Albums\" layout=\"multi-browse\" effect=\"none\" items={albums} renderItem={(a) => <img className=\"z-carousel__media\" src={a.cover} alt={a.title} />} />"
+    },
+    {
+     "title": "Pantalla completa con fundido",
+     "code": "<Carousel ariaLabel=\"Stories of the week\" layout=\"fullscreen\" effect=\"fade\" kenBurns autoplay indicators=\"dots\" items={photos} renderItem={(p) => <img className=\"z-carousel__media\" src={p.src} alt={p.alt} />} />"
+    },
+    {
+     "title": "Mazo de tarjetas",
+     "code": "<Carousel ariaLabel=\"Onboarding\" layout=\"stack\" items={steps} renderItem={(s) => <Card><CardHeader title={s.title} subtitle={s.text} /></Card>} />"
+    },
+    {
+     "title": "Rueda",
+     "code": "<Carousel ariaLabel=\"Hour\" effect=\"wheel\" loop={false} indicators=\"none\" items={hours} renderItem={(h) => <span>{h}</span>} />"
     }
    ],
    "origin": "carousel con efecto lente de un proyecto previo",
@@ -2659,9 +2792,377 @@
     {
      "title": "Vertical, dos por vista",
      "code": "<div id=\"notes\" class=\"z-carousel\" data-z-carousel data-orientation=\"vertical\" data-per-page=\"2\" data-indicators=\"dots\" data-loop aria-label=\"Release notes\" style=\"--z-carousel-height:280px\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Prisma: coverflow de cristal con bucle sin réplicas y progreso de la reproducción",
+     "code": "<div id=\"prism\" class=\"z-carousel\" data-z-carousel data-effect=\"prism\" data-loop data-autoplay=\"5000\" data-indicators=\"progress\" aria-label=\"Highlights\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Multi-browse de Material 3: máscaras por keylines sobre el desplazamiento nativo",
+     "code": "<div id=\"browse\" class=\"z-carousel\" data-z-carousel data-layout=\"multi-browse\" data-effect=\"none\" data-indicators=\"dots\" aria-label=\"Projects\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Fundido (mazo): solo el slide actual es interactivo",
+     "code": "<div id=\"fade\" class=\"z-carousel\" data-z-carousel data-effect=\"fade\" data-loop data-indicators=\"dots\" aria-label=\"Release highlights\" style=\"--z-carousel-height:12rem\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Mazo de tarjetas que se descartan deslizando",
+     "code": "<div id=\"stack\" class=\"z-carousel\" data-z-carousel data-layout=\"stack\" data-loop aria-label=\"Onboarding\" style=\"--z-carousel-height:10rem\">\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Atlas</h3>\n        <p class=\"z-card__subtitle\">Maps and routing</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Beacon</h3>\n        <p class=\"z-card__subtitle\">Status pages</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Cinder</h3>\n        <p class=\"z-card__subtitle\">Build cache</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Drift</h3>\n        <p class=\"z-card__subtitle\">Schema migrations</p>\n      </div>\n    </div>\n  </div>\n  <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">\n    <div class=\"z-card__header\">\n      <div class=\"z-card__heading\">\n        <h3 class=\"z-card__title\">Ember</h3>\n        <p class=\"z-card__subtitle\">Realtime sync</p>\n      </div>\n    </div>\n  </div>\n</div>"
+    },
+    {
+     "title": "Rueda (cilindro vertical)",
+     "code": "<div id=\"wheel\" class=\"z-carousel\" data-z-carousel data-effect=\"wheel\" data-indicators=\"none\" aria-label=\"Hour\">\n  <div class=\"z-carousel__slide\">00:00</div>\n  <div class=\"z-carousel__slide\">02:00</div>\n  <div class=\"z-carousel__slide\">04:00</div>\n  <div class=\"z-carousel__slide\">06:00</div>\n  <div class=\"z-carousel__slide\">08:00</div>\n  <div class=\"z-carousel__slide\">10:00</div>\n  <div class=\"z-carousel__slide\">12:00</div>\n  <div class=\"z-carousel__slide\">14:00</div>\n  <div class=\"z-carousel__slide\">16:00</div>\n  <div class=\"z-carousel__slide\">18:00</div>\n  <div class=\"z-carousel__slide\">20:00</div>\n  <div class=\"z-carousel__slide\">22:00</div>\n</div>"
     }
    ],
    "file": "zui/src/components/carousel/Carousel.manifest.json"
+  },
+  {
+   "name": "Gallery",
+   "group": "carousel",
+   "description": "Galería: carrusel con tira de miniaturas sincronizada (debajo o al lado) y botón para abrir la imagen actual en el visor a pantalla completa.",
+   "import": "import { Gallery } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "GalleryItem[]",
+     "required": true,
+     "description": "`{ src, alt, thumb?, caption?, width?, height? }[]`."
+    },
+    {
+     "name": "ariaLabel",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "thumbnails",
+     "type": "enum",
+     "values": [
+      "bottom",
+      "side",
+      "none"
+     ],
+     "default": "bottom"
+    },
+    {
+     "name": "lightbox",
+     "type": "boolean",
+     "default": true,
+     "description": "Botón de pantalla completa que abre Lightbox en la imagen actual."
+    },
+    {
+     "name": "layout",
+     "type": "CarouselLayout",
+     "description": "Por defecto, fullscreen con el fundido."
+    },
+    {
+     "name": "effect",
+     "type": "CarouselEffect",
+     "default": "fade"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CarouselLabels> & { expand?: string; lightbox?: Partial<LightboxLabels> }"
+    }
+   ],
+   "tokens": [
+    "overlay",
+    "layer-raised",
+    "space-3",
+    "space-6",
+    "space-16",
+    "button-radius",
+    "control-height-md",
+    "glass-border",
+    "glass-highlight"
+   ],
+   "classes": [
+    "z-gallery",
+    "z-gallery__expand"
+   ],
+   "attributes": [
+    "data-thumbnails",
+    "data-z-gallery"
+   ],
+   "icons": [
+    "arrows-pointing-out"
+   ],
+   "a11y": "El carrusel sigue el patrón de APG (región, slides con posición, miniaturas como botones con aria-current). El botón de pantalla completa tiene nombre («View full screen») y abre un Lightbox modal que devuelve el foco al botón al cerrarse.",
+   "examples": [
+    {
+     "title": "Con miniaturas al lado",
+     "code": "<Gallery ariaLabel=\"Trip photos\" items={photos} thumbnails=\"side\" />"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Carrusel con miniaturas y visor; zui/dom añade el botón de pantalla completa",
+     "code": "<div class=\"z-gallery\" data-z-gallery data-thumbnails=\"bottom\">\n  <div class=\"z-carousel\" data-z-carousel data-effect=\"fade\" data-loop data-indicators=\"thumbnails\" aria-label=\"Projects\" style=\"--z-carousel-height:12rem\">\n    <div class=\"z-carousel__slide\"><div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Atlas</p></div></div>\n    <div class=\"z-carousel__slide\"><div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Beacon</p></div></div>\n    <div class=\"z-carousel__slide\"><div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Cinder</p></div></div>\n    <div class=\"z-carousel__thumbs\">\n      <button type=\"button\" class=\"z-carousel__thumb\"><span>A</span></button>\n      <button type=\"button\" class=\"z-carousel__thumb\"><span>B</span></button>\n      <button type=\"button\" class=\"z-carousel__thumb\"><span>C</span></button>\n    </div>\n  </div>\n  <dialog class=\"z-lightbox\" data-z-lightbox aria-label=\"Image viewer\">\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Atlas</p></div>\n    <figcaption class=\"z-lightbox__caption\">Atlas</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Beacon</p></div>\n    <figcaption class=\"z-lightbox__caption\">Beacon</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Cinder</p></div>\n    <figcaption class=\"z-lightbox__caption\">Cinder</figcaption>\n  </figure>\n  </dialog>\n</div>"
+    }
+   ],
+   "origin": "Swiper thumbs, Splide sync y PrimeReact Galleria; implementación propia.",
+   "file": "zui/src/components/carousel/Gallery.manifest.json"
+  },
+  {
+   "name": "Lightbox",
+   "group": "carousel",
+   "description": "Visor de imágenes a pantalla completa sobre `<dialog>` modal: anterior y siguiente, contador, zoom con botones, teclado, doble clic y Ctrl + rueda, y encuadre arrastrando.",
+   "import": "import { Lightbox } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "LightboxItem[]",
+     "required": true,
+     "description": "`{ src, alt, caption?, width?, height? }[]`."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "required": true
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void",
+     "required": true
+    },
+    {
+     "name": "index",
+     "type": "number",
+     "default": 0,
+     "description": "Imagen visible."
+    },
+    {
+     "name": "onIndexChange",
+     "type": "(index: number) => void"
+    },
+    {
+     "name": "zoom",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "loop",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<LightboxLabels>",
+     "description": "dialog, close, previous, next, zoomIn, zoomOut e image (\"Image {index} of {count}\")."
+    }
+   ],
+   "states": [
+    "open",
+    "zoomed",
+    "dragging"
+   ],
+   "tokens": [
+    "surface-solid",
+    "scrim",
+    "fg",
+    "fg-muted",
+    "font-mono",
+    "text-code",
+    "text-small",
+    "radius-lg",
+    "button-radius",
+    "control-height-md",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "glass-highlight",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "duration-normal",
+    "ease-emphasized",
+    "space-2",
+    "space-3",
+    "space-6",
+    "space-10",
+    "space-16",
+    "space-20"
+   ],
+   "classes": [
+    "z-lightbox",
+    "z-lightbox__bar",
+    "z-lightbox__counter",
+    "z-lightbox__button",
+    "z-lightbox__stage",
+    "z-lightbox__item",
+    "z-lightbox__caption",
+    "z-lightbox__nav"
+   ],
+   "attributes": [
+    "data-z-lightbox",
+    "data-zoomed",
+    "data-active",
+    "data-lightbox-action",
+    "data-no-zoom"
+   ],
+   "cssVars": [
+    "--z-lightbox-scale",
+    "--z-lightbox-x",
+    "--z-lightbox-y"
+   ],
+   "icons": [
+    "chevron-left",
+    "chevron-right",
+    "magnifying-glass-minus",
+    "magnifying-glass-plus",
+    "x-mark"
+   ],
+   "a11y": "<dialog> modal con nombre: el resto de la página queda inerte, el foco entra en el visor y Escape cierra y devuelve el foco al disparador. Flechas izquierda y derecha cambian de imagen (con zoom, desplazan la imagen), + y − amplían y reducen, 0 restablece. Botones nativos con nombre. El cambio de imagen se anuncia («Image 3 of 8») en una región viva dentro del diálogo.",
+   "examples": [
+    {
+     "title": "Controlado",
+     "code": "<Lightbox items={photos} open={open} onOpenChange={setOpen} index={index} onIndexChange={setIndex} />"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Visor que se abre con openLightbox(dialog, índice)",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" id=\"open-viewer\">Open viewer</button>\n<dialog id=\"viewer\" class=\"z-lightbox\" data-z-lightbox aria-label=\"Image viewer\">\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Atlas</p></div>\n    <figcaption class=\"z-lightbox__caption\">Atlas</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Beacon</p></div>\n    <figcaption class=\"z-lightbox__caption\">Beacon</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Cinder</p></div>\n    <figcaption class=\"z-lightbox__caption\">Cinder</figcaption>\n  </figure>\n</dialog>",
+     "script": "import { openLightbox } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#open-viewer\").addEventListener(\"click\", () => openLightbox(document.querySelector(\"#viewer\"), 0));"
+    }
+   ],
+   "origin": "Patrón común de galerías (PhotoSwipe, Fancybox); implementación propia sobre <dialog>.",
+   "file": "zui/src/components/carousel/Lightbox.manifest.json"
+  },
+  {
+   "name": "Stories",
+   "group": "carousel",
+   "description": "Historias al estilo de Instagram: grupos por persona, una barra por historia que se llena con el tiempo, tocar a un lado o al otro para retroceder o avanzar y mantener pulsado para pausar.",
+   "import": "import { Stories } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "groups",
+     "type": "StoryGroup[]",
+     "required": true,
+     "description": "`{ id, author: { name, avatar? }, items: { id, media, alt?, caption?, duration? }[] }[]`. `media` es una URL de imagen o contenido."
+    },
+    {
+     "name": "ariaLabel",
+     "type": "string",
+     "required": true,
+     "description": "Nombre accesible de la región."
+    },
+    {
+     "name": "defaultGroup",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 5000,
+     "description": "Duración por defecto de cada historia (ms, mínimo 1000). Ajustable por historia (WCAG 2.2.1)."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<StoriesLabels>",
+     "description": "stories, story, previous, next, pause, previousGroup, nextGroup y position (\"Story {index} of {count}, {author}\"). En inglés por defecto."
+    },
+    {
+     "name": "onGroupChange",
+     "type": "(group: number) => void"
+    },
+    {
+     "name": "onComplete",
+     "type": "() => void",
+     "description": "Terminó la última historia del último grupo."
+    }
+   ],
+   "states": [
+    "playing",
+    "paused",
+    "held"
+   ],
+   "tokens": [
+    "accent",
+    "overlay",
+    "glass-border",
+    "glass-highlight",
+    "glass-shadow",
+    "scrim",
+    "surface-solid",
+    "radius-panel",
+    "radius-lg",
+    "radius-xs",
+    "radius-full",
+    "button-radius",
+    "control-height-md",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "layer-raised",
+    "text-small",
+    "weight-semibold",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-5",
+    "space-7"
+   ],
+   "classes": [
+    "z-stories",
+    "z-stories__viewer",
+    "z-stories__group",
+    "z-stories__bars",
+    "z-stories__bar",
+    "z-stories__fill",
+    "z-stories__head",
+    "z-stories__avatar",
+    "z-stories__author",
+    "z-stories__item",
+    "z-stories__media",
+    "z-stories__caption",
+    "z-stories__nav",
+    "z-stories__controls",
+    "z-stories__control"
+   ],
+   "attributes": [
+    "data-state",
+    "data-held",
+    "data-active",
+    "data-author",
+    "data-avatar",
+    "data-duration",
+    "data-stories-action",
+    "data-start"
+   ],
+   "cssVars": [
+    "--z-story-fill",
+    "--z-stories-width"
+   ],
+   "icons": [
+    "chevron-double-left",
+    "chevron-double-right",
+    "pause",
+    "play"
+   ],
+   "a11y": "Región con nombre y aria-roledescription=\"stories\"; cada historia es un group con aria-roledescription=\"story\" y nombre «Story 2 of 5, Ana». Zonas de paso como botones nativos («Previous story», «Next story»), pausa como botón conmutador (aria-pressed) y saltos de persona. Mantener pulsado o Espacio pausa; flechas izquierda y derecha cambian de historia. Las barras son decorativas (aria-hidden). La posición se anuncia en la región viva central (core/announcer) solo tras una navegación de la persona. Con movimiento reducido empieza en pausa: no avanza sola. Se detiene con la pestaña oculta y fuera de pantalla.",
+   "examples": [
+    {
+     "title": "Dos personas",
+     "code": "<Stories\n  ariaLabel=\"Team stories\"\n  groups={[\n    { id: \"ana\", author: { name: \"Ana\", avatar: \"/ana.jpg\" }, items: [{ id: \"1\", media: \"/dawn.jpg\", alt: \"Dawn over the bay\" }] },\n    { id: \"leo\", author: { name: \"Leo\" }, items: [{ id: \"2\", media: \"/ridge.jpg\", alt: \"Mountain ridge\", duration: 8000 }] },\n  ]}\n/>"
+    }
+   ],
+   "behavior": "dom",
+   "html": [
+    {
+     "title": "Marcado mínimo: zui/dom crea barras, cabecera, zonas de paso y controles",
+     "code": "<div id=\"stories\" class=\"z-stories\" data-z-stories aria-label=\"Team stories\">\n  <article class=\"z-stories__group\" data-author=\"Ana\">\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Dawn</p></div>\n    </figure>\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Coast</p></div>\n    </figure>\n  </article>\n  <article class=\"z-stories__group\" data-author=\"Leo\">\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Ridge</p></div>\n    </figure>\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Valley</p></div>\n    </figure>\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Night</p></div>\n    </figure>\n  </article>\n</div>",
+     "script": "import { storiesWidget } from \"@zuccadev-labs/zuix-zui/dom\";\n\nconst stories = document.querySelector(\"#stories\");\nstories.addEventListener(\"z:change\", (event) => console.debug(\"story\", event.detail.group, event.detail.item));\n// storiesWidget(stories).nextGroup();"
+    }
+   ],
+   "origin": "Patrón de producto (Instagram); sin biblioteca de terceros.",
+   "file": "zui/src/components/carousel/Stories.manifest.json"
   },
   {
    "name": "AreaChart",
@@ -8741,7 +9242,7 @@
   {
    "name": "Skeleton",
    "group": "feedback",
-   "description": "Marcador de posición mientras llega el contenido.",
+   "description": "Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones (tarjeta, lista, tabla, perfil, chat, gráfico, artículo y calendario) y un grupo con el brillo sincronizado.",
    "import": "import { Skeleton } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -8778,6 +9279,66 @@
      "type": "number",
      "default": 1,
      "description": "Con `text`: número de líneas; la última queda más corta."
+    },
+    {
+     "name": "pattern",
+     "type": "enum",
+     "values": [
+      "card",
+      "list",
+      "table",
+      "profile",
+      "chat",
+      "chart",
+      "article",
+      "calendar"
+     ],
+     "description": "Patrón completo. También como `Skeleton.Card`, `Skeleton.List`… Anchos estables por semilla (`seed`): servidor y cliente pintan lo mismo."
+    },
+    {
+     "name": "loading",
+     "type": "boolean",
+     "description": "Envuelve el contenido real: con `true` se ve el hueso con su tamaño (contenido oculto e inerte); con `false`, el contenido."
+    },
+    {
+     "name": "rows",
+     "type": "number",
+     "description": "list y table: filas."
+    },
+    {
+     "name": "columns",
+     "type": "number",
+     "description": "table: columnas."
+    },
+    {
+     "name": "messages",
+     "type": "number",
+     "description": "chat: mensajes."
+    },
+    {
+     "name": "paragraphs",
+     "type": "number",
+     "description": "article: párrafos."
+    },
+    {
+     "name": "type",
+     "type": "enum",
+     "values": [
+      "bar",
+      "line",
+      "donut"
+     ],
+     "description": "chart: forma del gráfico."
+    },
+    {
+     "name": "media",
+     "type": "boolean",
+     "description": "card: imagen (por defecto sí). También avatar, meta, actions, header, cover e image para quitar partes."
+    },
+    {
+     "name": "seed",
+     "type": "number",
+     "default": 1
     }
    ],
    "states": [
@@ -8785,18 +9346,42 @@
     "wave"
    ],
    "tokens": [
-    "surface-3",
-    "radius-xs",
-    "radius-full",
+    "canvas",
+    "card-bg",
+    "card-radius",
+    "control-height-sm",
+    "control-radius",
+    "fg-muted",
     "glass-highlight",
+    "line",
+    "line-strong",
+    "radius-full",
+    "radius-lg",
+    "radius-xs",
+    "space-1",
+    "space-10",
+    "space-12",
     "space-2",
-    "control-radius"
+    "space-2-5",
+    "space-20",
+    "space-3",
+    "space-4",
+    "space-5",
+    "space-6",
+    "space-7",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-small"
    ],
    "classes": [
     "z-skeleton",
-    "z-skeleton-lines"
+    "z-skeleton-lines",
+    "z-skeleton-pattern",
+    "z-skeleton-group",
+    "z-skeleton-group__label"
    ],
-   "a11y": "aria-hidden: el contenedor debe anunciar la carga con aria-busy.",
+   "a11y": "Decorativo (aria-hidden): el contenedor que espera lleva aria-busy=\"true\" (SkeletonGroup lo pone). No se anuncia «cargando»; si la espera es larga, `label` de SkeletonGroup deja una línea visible. Al llegar el contenido no se mueve el foco y el tamaño coincide para no provocar saltos. Con movimiento reducido no hay brillo ni pulso.",
    "examples": [
     {
      "title": "Párrafo",
@@ -8805,9 +9390,61 @@
     {
      "title": "Fila de lista",
      "code": "<div aria-busy=\"true\">\n  <Skeleton variant=\"circular\" width={36} />\n  <Skeleton width=\"40%\" />\n  <Skeleton variant=\"rounded\" height={120} animation=\"wave\" />\n</div>"
+    },
+    {
+     "title": "Lista",
+     "code": "<SkeletonGroup>\n  <Skeleton.List rows={4} />\n</SkeletonGroup>"
+    },
+    {
+     "title": "Tarjeta",
+     "code": "<SkeletonGroup>\n  <Skeleton pattern=\"card\" />\n</SkeletonGroup>"
+    },
+    {
+     "title": "Tabla",
+     "code": "<Skeleton pattern=\"table\" rows={4} columns={4} />"
+    },
+    {
+     "title": "Perfil",
+     "code": "<Skeleton pattern=\"profile\" />"
+    },
+    {
+     "title": "Chat",
+     "code": "<Skeleton pattern=\"chat\" messages={5} />"
+    },
+    {
+     "title": "Gráfico",
+     "code": "<Skeleton pattern=\"chart\" type=\"bar\" />"
+    },
+    {
+     "title": "Artículo",
+     "code": "<Skeleton pattern=\"article\" paragraphs={2} />"
+    },
+    {
+     "title": "Calendario",
+     "code": "<Skeleton pattern=\"calendar\" />"
+    },
+    {
+     "title": "Envolver el contenido",
+     "code": "<Skeleton loading>\n  <Button>Save changes</Button>\n</Skeleton>"
     }
    ],
    "origin": "Skeleton del design system base.",
+   "exports": [
+    "Skeleton",
+    "SkeletonGroup"
+   ],
+   "attributes": [
+    "data-variant",
+    "data-animation",
+    "data-loading",
+    "data-pattern",
+    "data-rows",
+    "data-columns",
+    "data-messages",
+    "data-paragraphs",
+    "data-type",
+    "data-seed"
+   ],
    "file": "zui/src/components/feedback/Skeleton.manifest.json"
   },
   {

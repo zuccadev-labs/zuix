@@ -318,6 +318,83 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Gallery" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Gallery</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-gallery" data-z-gallery data-thumbnails="bottom">
+  <div class="z-carousel" data-z-carousel data-effect="fade" data-loop data-indicators="thumbnails" aria-label="Projects" style="--z-carousel-height:12rem">
+    <div class="z-carousel__slide"><div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Atlas</p></div></div>
+    <div class="z-carousel__slide"><div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Beacon</p></div></div>
+    <div class="z-carousel__slide"><div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Cinder</p></div></div>
+    <div class="z-carousel__thumbs">
+      <button type="button" class="z-carousel__thumb"><span>A</span></button>
+      <button type="button" class="z-carousel__thumb"><span>B</span></button>
+      <button type="button" class="z-carousel__thumb"><span>C</span></button>
+    </div>
+  </div>
+  <dialog class="z-lightbox" data-z-lightbox aria-label="Image viewer">
+  <figure class="z-lightbox__item">
+    <div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Atlas</p></div>
+    <figcaption class="z-lightbox__caption">Atlas</figcaption>
+  </figure>
+  <figure class="z-lightbox__item">
+    <div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Beacon</p></div>
+    <figcaption class="z-lightbox__caption">Beacon</figcaption>
+  </figure>
+  <figure class="z-lightbox__item">
+    <div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Cinder</p></div>
+    <figcaption class="z-lightbox__caption">Cinder</figcaption>
+  </figure>
+  </dialog>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Lightbox" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Lightbox</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-btn z-btn--secondary" id="open-viewer">Open viewer</button>
+<dialog id="viewer" class="z-lightbox" data-z-lightbox aria-label="Image viewer">
+  <figure class="z-lightbox__item">
+    <div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Atlas</p></div>
+    <figcaption class="z-lightbox__caption">Atlas</figcaption>
+  </figure>
+  <figure class="z-lightbox__item">
+    <div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Beacon</p></div>
+    <figcaption class="z-lightbox__caption">Beacon</figcaption>
+  </figure>
+  <figure class="z-lightbox__item">
+    <div class="z-card" data-variant="elevated" data-padding="lg"><p class="z-card__title">Cinder</p></div>
+    <figcaption class="z-lightbox__caption">Cinder</figcaption>
+  </figure>
+</dialog>
+  </div>
+</section>
+<section class="z-card demo" data-component="Stories" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Stories</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div id="stories" class="z-stories" data-z-stories aria-label="Team stories">
+  <article class="z-stories__group" data-author="Ana">
+    <figure class="z-stories__item" data-duration="5000">
+      <div class="z-card" data-variant="elevated" data-padding="md"><p class="z-card__title">Dawn</p></div>
+    </figure>
+    <figure class="z-stories__item" data-duration="5000">
+      <div class="z-card" data-variant="elevated" data-padding="md"><p class="z-card__title">Coast</p></div>
+    </figure>
+  </article>
+  <article class="z-stories__group" data-author="Leo">
+    <figure class="z-stories__item" data-duration="5000">
+      <div class="z-card" data-variant="elevated" data-padding="md"><p class="z-card__title">Ridge</p></div>
+    </figure>
+    <figure class="z-stories__item" data-duration="5000">
+      <div class="z-card" data-variant="elevated" data-padding="md"><p class="z-card__title">Valley</p></div>
+    </figure>
+    <figure class="z-stories__item" data-duration="5000">
+      <div class="z-card" data-variant="elevated" data-padding="md"><p class="z-card__title">Night</p></div>
+    </figure>
+  </article>
+</div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">charts</h2>
 <div class="page__grid">
@@ -3947,6 +4024,14 @@ document.addEventListener("z:download", (event) => console.log(event.detail.name
 const projects = document.querySelector("#projects");
 projects.addEventListener("z:change", (event) => console.debug("slide", event.detail.index));
 // carousel(projects).next();   // también prev(), goTo(index) y destroy()
+
+// Lightbox
+document.querySelector("#open-viewer").addEventListener("click", () => openLightbox(document.querySelector("#viewer"), 0));
+
+// Stories
+const stories = document.querySelector("#stories");
+stories.addEventListener("z:change", (event) => console.debug("story", event.detail.group, event.detail.item));
+// storiesWidget(stories).nextGroup();
 
 // Calendar
 document.querySelector("#due-calendar").addEventListener("z:change", (event) => console.log(event.detail.value));
