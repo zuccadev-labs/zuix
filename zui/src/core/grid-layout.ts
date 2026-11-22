@@ -59,18 +59,25 @@ export const layoutRows = (layout: readonly GridItem[]) => layout.reduce((m, i) 
 export function compact(layout: readonly GridItem[], cols = GRID_COLUMNS, pinned?: string): GridItem[] {
   const placed: GridItem[] = layout.filter((i) => i.static).map((i) => clampItem(i, cols));
   const pin = layout.find((i) => i.id === pinned && !i.static);
+  let pinItem: GridItem | null = null;
   if (pin) {
     // La fijada no pisa a una estática: baja hasta el primer hueco.
     const item = clampItem(pin, cols);
     let y = item.y;
     while (placed.some((p) => overlaps(p, { ...item, y }))) y++;
-    placed.push({ ...item, y });
+    pinItem = { ...item, y };
+    placed.push(pinItem);
   }
   const free = sortLayout(layout.filter((i) => !i.static && i.id !== pinned));
   for (const raw of free) {
     const item = clampItem(raw, cols);
     const hits = (y: number) => placed.some((p) => overlaps(p, { ...item, y }));
     let y = item.y;
+    // Pisada por la que se mueve: si cabe justo encima de ella, salta allí (intercambio); si no, baja.
+    if (pinItem && overlaps(pinItem, { ...item, y })) {
+      const above = pinItem.y - item.h;
+      if (above >= 0 && !hits(above)) y = above;
+    }
     while (hits(y)) y++;
     while (y > 0 && !hits(y - 1)) y--;
     placed.push({ ...item, y });
@@ -145,7 +152,8 @@ export function keyStep(item: GridItem, key: string, shift: boolean, rtl = false
   const dx = key === "ArrowRight" ? (rtl ? -1 : 1) : key === "ArrowLeft" ? (rtl ? 1 : -1) : 0;
   const dy = key === "ArrowDown" ? 1 : key === "ArrowUp" ? -1 : 0;
   if (!dx && !dy) return null;
-  if (shift) return { type: "resize", w: item.w + (rtl ? -dx : dx), h: item.h + dy };
+  // `dx` ya es lógico (hacia columnas mayores): en RTL la flecha izquierda ensancha hacia el final de la fila.
+  if (shift) return { type: "resize", w: item.w + dx, h: item.h + dy };
   return { type: "move", x: item.x + dx, y: item.y + dy };
 }
 

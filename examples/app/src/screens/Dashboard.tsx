@@ -25,7 +25,7 @@ import {
 const STORE = "zuix-example-dashboard";
 
 const DEFAULT_LAYOUT: GridLayout = [
-  { id: "revenue", x: 0, y: 0, w: 8, h: 4, minW: 4, minH: 3 },
+  { id: "revenue", x: 0, y: 0, w: 8, h: 4, minW: 4, minH: 4 },
   { id: "cpu", x: 8, y: 0, w: 4, h: 4, minW: 3, minH: 3 },
   { id: "sources", x: 0, y: 4, w: 4, h: 4, minW: 3 },
   { id: "funnel", x: 4, y: 4, w: 4, h: 4, minW: 3 },
@@ -192,7 +192,8 @@ export function DashboardScreen() {
             >
               <AreaChart
                 summary="Revenue by day this period against the previous one: up from $3.8k to $6.0k."
-                height={210}
+                framed={false}
+                height={180}
                 data={REVENUE}
                 xKey="day"
                 series={[

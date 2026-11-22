@@ -414,6 +414,27 @@
     color: var(--z-canvas-fg-muted);
     font-size: var(--z-text-caption);
   }
+  /* Enlaces sueltos (sin clase) del formulario y del pie: el color de enlace de la marca, subrayado al pasar. */
+  .z-auth-layout :is(.z-auth-layout__body, .z-auth-layout__footer, .z-auth-layout__legal) a:not([class]) {
+    border-radius: var(--z-radius-xs);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-medium);
+    text-decoration: none;
+  }
+  .z-auth-layout__legal a:not([class]) {
+    color: var(--z-canvas-fg-muted);
+    font-weight: var(--z-weight-regular);
+  }
+  @media (hover: hover) {
+    .z-auth-layout a:not([class]):hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+  .z-auth-layout a:not([class]):focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
   .z-auth-layout__media {
     display: none;
     position: relative;

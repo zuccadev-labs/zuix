@@ -271,7 +271,7 @@ export function SettingsScreen() {
         }
       >
         <SettingsSection id="settings-profile" title="Profile" description="How other people see you across the workspace.">
-          <div className="app-editor" data-testid="st-editor">
+          <div className="app-profile-form" data-testid="st-editor">
             <ProfileEditor
               defaultValues={{
                 name: "Ana López",

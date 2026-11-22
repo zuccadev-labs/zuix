@@ -285,7 +285,7 @@
   .z-metric-group {
     container: z-metric-group / inline-size;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
     border-radius: var(--z-card-radius);
   }
   .z-metric-group[data-variant="split"] {
@@ -301,6 +301,9 @@
   }
   .z-metric-group[data-variant="glass"] > .z-metric::before {
     content: none;
+  }
+  .z-metric-group[data-variant="glass"] > .z-metric {
+    padding: var(--z-space-4) var(--z-space-5);
   }
   /* Separadores entre KPI: una línea en el borde de inicio de cada uno salvo el primero de la fila (la fila se
      deduce del contenedor), y arriba cuando se apilan. */
@@ -481,9 +484,12 @@
     background: var(--z-fg);
   }
   .z-progress-goal__foot {
+    flex-wrap: wrap;
+    gap: var(--z-space-1) var(--z-space-3);
     font-size: var(--z-text-caption);
   }
   .z-progress-goal__status {
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: var(--z-space-1);
@@ -492,6 +498,7 @@
   }
   .z-progress-goal__pace {
     color: var(--z-fg-subtle);
+    white-space: nowrap;
   }
   .z-progress-goal[data-size="sm"] .z-progress-goal__head {
     font-size: var(--z-text-caption);
@@ -877,6 +884,7 @@
 
   /* ---- Leaderboard ---- */
   .z-leaderboard {
+    container: z-leaderboard / inline-size;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-1);
@@ -888,7 +896,7 @@
   }
   .z-leaderboard__row {
     display: grid;
-    grid-template-columns: 1.75rem auto minmax(0, 1fr) minmax(4.5rem, 0.4fr) 3.75rem;
+    grid-template-columns: 1.5rem auto minmax(5rem, 1fr) auto auto;
     align-items: center;
     gap: var(--z-space-2-5);
     min-block-size: 44px;
@@ -896,7 +904,11 @@
     border-radius: var(--z-radius-md);
   }
   .z-leaderboard__row[data-current] {
-    background: var(--z-accent-soft);
+    background: var(--z-row-hover);
+    box-shadow: inset 3px 0 0 var(--z-accent);
+  }
+  [dir="rtl"] .z-leaderboard__row[data-current] {
+    box-shadow: inset -3px 0 0 var(--z-accent);
   }
   .z-leaderboard__rank {
     display: inline-flex;
@@ -952,13 +964,36 @@
     font-weight: var(--z-weight-semibold);
   }
   .z-leaderboard__bar {
-    inline-size: calc(var(--z-bar, 0) * 100%);
+    inline-size: calc(var(--z-bar, 0) * 4.5rem);
     block-size: 3px;
     border-radius: var(--z-radius-xs);
-    background: var(--z-accent);
+    background: var(--z-chart-1);
   }
   .z-leaderboard__row > .z-delta {
     justify-self: end;
+    min-inline-size: 3.25rem;
+    justify-content: flex-end;
+  }
+  /* Estrecho: sin avatar ni barra; la variación baja bajo el valor y el nombre gana el ancho. */
+  @container z-leaderboard (inline-size < 320px) {
+    .z-leaderboard__row {
+      grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+      row-gap: 0;
+      padding-block: var(--z-space-1-5);
+    }
+    .z-leaderboard__row > .z-avatar,
+    .z-leaderboard__bar,
+    .z-leaderboard__delta-gap {
+      display: none;
+    }
+    .z-leaderboard__rank,
+    .z-leaderboard__who {
+      grid-row: span 2;
+    }
+    .z-leaderboard__row > .z-delta {
+      grid-column: 3;
+      min-inline-size: 0;
+    }
   }
 
   /* ---- DashboardGrid ---- */
