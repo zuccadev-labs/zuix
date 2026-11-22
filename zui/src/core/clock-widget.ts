@@ -111,7 +111,7 @@ export const clockWidget: Widget<ClockProps, ClockConfig, TickState> = {
     });
     return h(
       "div",
-      { class: "z-clock", "data-size": c.size, "data-blink": on(c.blink && c.fixed === null) },
+      { class: "z-clock", "data-size": c.size, "data-blinking": on(c.blink && c.fixed === null) },
       c.label ? h("span", { class: "z-clock__label" }, c.label) : null,
       h("time", { class: "z-clock__time", datetime: zonedISO(s.now, c.timeZone, c.seconds) }, ...parts),
       c.date || c.zone

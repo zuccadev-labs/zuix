@@ -46,7 +46,8 @@
     {
       "name": "hideModeToggle",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Sin el conmutador de vista."
     },
     {
       "name": "onModeChange",
@@ -80,7 +81,6 @@
   "classes": [
     "z-diff",
     "z-diff__bar",
-    "z-diff__modes",
     "z-diff__mode",
     "z-diff__file",
     "z-diff__file-head",
@@ -96,7 +96,7 @@
     "z-diff__expand",
     "z-diff__hunk"
   ],
-  "a11y": "Una tabla por archivo, con cabeceras (ocultas a la vista) y una región enfocable con el nombre del archivo para desplazarla. Cada línea dice su tipo en texto oculto («added: », «removed: »); el signo va con aria-hidden y el color no es la única señal. Las cifras +N −M tienen su texto («12 additions, 3 deletions»). Las palabras cambiadas llevan subrayado además del fondo. El botón de una región plegada dice cuántas líneas muestra y, al pulsarlo, el foco pasa a la primera. El selector de vista son botones con aria-pressed. Sin React: .z-diff con template[data-before] y template[data-after] (o template[data-patch], o los textos en <script type=\"application/json\" data-props>), data-mode, data-context, data-word-diff=\"false\", data-file-name y data-hide-mode-toggle; emite z:modechange.",
+  "a11y": "Una tabla por archivo, con cabeceras (ocultas a la vista) y una región enfocable con el nombre del archivo para desplazarla. Cada línea dice su tipo en texto oculto («added: », «removed: »); el signo va con aria-hidden y el color no es la única señal. Las cifras +N −M tienen su texto («12 additions, 3 deletions»). Las palabras cambiadas llevan subrayado además del fondo. El botón de una región plegada dice cuántas líneas muestra y, al pulsarlo, el foco pasa a la primera. La vista lado a lado es un conmutador («Split view», aria-pressed). Sin React: .z-diff con template[data-before] y template[data-after] (o template[data-patch], o los textos en <script type=\"application/json\" data-props>), data-mode, data-context, data-word-diff=\"false\", data-file-name y data-hide-mode-toggle; emite z:modechange.",
   "behavior": "dom",
   "examples": [
     {

@@ -303,6 +303,7 @@ export const durationFieldWidget: Widget<DurationFieldProps, Config, State> = {
             "aria-valuetext": spokenUnit(value, unit, c.locale),
             "aria-disabled": c.disabled ? "true" : undefined,
             "aria-invalid": c.invalid ? "true" : undefined,
+            "aria-required": c.required ? "true" : undefined,
           },
           shown,
         ),
@@ -324,14 +325,11 @@ export const durationFieldWidget: Widget<DurationFieldProps, Config, State> = {
         },
         h("span", { class: "z-duration-field__input", dir: "ltr" }, ...segments),
         h("input", {
-          type: "text",
-          class: "z-native-input",
-          "aria-hidden": "true",
-          tabindex: -1,
+          type: "hidden",
+          class: "z-duration-field__value",
           name: c.name,
           form: c.form,
           value: iso,
-          required: on(c.required),
           disabled: on(c.disabled),
         }),
       ),
@@ -348,7 +346,8 @@ export const durationFieldWidget: Widget<DurationFieldProps, Config, State> = {
                   class: "z-btn z-btn--secondary z-duration-field__preset",
                   "data-size": "sm",
                   "data-ms": ms,
-                  "aria-pressed": ms === s.ms ? "true" : "false",
+                  // Un preajuste es una acción (fijar 15 min), no un conmutador: el que coincide con el valor solo se marca.
+                  "data-active": on(ms === s.ms),
                   disabled: on(c.disabled),
                 },
                 formatDuration(ms, { style: "short", locale: c.locale }),
@@ -361,7 +360,7 @@ export const durationFieldWidget: Widget<DurationFieldProps, Config, State> = {
   attach,
   after(root, host, focus) {
     // El campo oculto no se repinta como atributo (es un campo): su valor se escribe aquí.
-    const input = root.querySelector<HTMLInputElement>(".z-duration-field__control > input.z-native-input");
+    const input = root.querySelector<HTMLInputElement>(".z-duration-field__value");
     const iso = toISODuration(host.state().ms);
     if (input && input.value !== iso) input.value = iso;
     if (!focus) return;

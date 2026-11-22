@@ -77,21 +77,21 @@
   "examples": [
     {
       "title": "Hora local con segundos y fecha",
-      "code": "<Clock seconds date blink label=\"Local\" />"
+      "code": "<Clock locale=\"en-GB\" seconds date blink label=\"Local\" />"
     },
     {
       "title": "Otra zona, 24 h",
-      "code": "<Clock timeZone=\"Asia/Tokyo\" hourCycle=\"h23\" zone label=\"Tokyo\" size=\"sm\" />"
+      "code": "<Clock locale=\"en-GB\" timeZone=\"Asia/Tokyo\" hourCycle=\"h23\" zone label=\"Tokyo\" size=\"sm\" />"
     }
   ],
   "html": [
     {
       "title": "Hora local con segundos y fecha",
-      "code": "<div class=\"z-clock\" data-seconds data-date data-blink data-label=\"Local\"></div>"
+      "code": "<div class=\"z-clock\" data-locale=\"en-GB\" data-seconds data-date data-blink data-label=\"Local\"></div>"
     },
     {
       "title": "Otra zona, 24 h",
-      "code": "<div class=\"z-clock\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>"
+      "code": "<div class=\"z-clock\" data-locale=\"en-GB\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>"
     }
   ],
   "origin": "Diseño propio; formato con Intl.DateTimeFormat."

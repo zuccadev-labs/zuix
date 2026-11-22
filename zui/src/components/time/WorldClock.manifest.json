@@ -81,21 +81,21 @@
   "examples": [
     {
       "title": "Rejilla de ciudades",
-      "code": "<WorldClock layout=\"grid\" reference=\"Europe/Madrid\" zones={[{ timeZone: \"Europe/Madrid\", label: \"Madrid\" }, { timeZone: \"America/New_York\", label: \"New York\" }, { timeZone: \"Asia/Tokyo\", label: \"Tokyo\" }, { timeZone: \"Australia/Sydney\", label: \"Sydney\" }]} />"
+      "code": "<WorldClock locale=\"en-GB\" layout=\"grid\" reference=\"Europe/Madrid\" zones={[{ timeZone: \"Europe/Madrid\", label: \"Madrid\" }, { timeZone: \"America/New_York\", label: \"New York\" }, { timeZone: \"Asia/Tokyo\", label: \"Tokyo\" }, { timeZone: \"Australia/Sydney\", label: \"Sydney\" }]} />"
     },
     {
       "title": "Lista con esferas",
-      "code": "<WorldClock variant=\"analog\" removable zones={[{ timeZone: \"America/Caracas\", label: \"Caracas\" }, { timeZone: \"Europe/London\", label: \"London\" }, { timeZone: \"Asia/Kolkata\", label: \"Mumbai\" }]} />"
+      "code": "<WorldClock locale=\"en-GB\" variant=\"analog\" removable zones={[{ timeZone: \"America/Caracas\", label: \"Caracas\" }, { timeZone: \"Europe/London\", label: \"London\" }, { timeZone: \"Asia/Kolkata\", label: \"Mumbai\" }]} />"
     }
   ],
   "html": [
     {
       "title": "Rejilla de ciudades",
-      "code": "<div class=\"z-world-clock\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>"
+      "code": "<div class=\"z-world-clock\" data-locale=\"en-GB\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>"
     },
     {
       "title": "Lista con esferas",
-      "code": "<div class=\"z-world-clock\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>"
+      "code": "<div class=\"z-world-clock\" data-locale=\"en-GB\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>"
     }
   ],
   "origin": "Diseño propio; referencias: el reloj mundial de iOS y Android."

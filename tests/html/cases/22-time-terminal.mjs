@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const contract = JSON.parse(readFileSync(join(here, "../../../zui/html.json"), "utf8")).components;
 
-export default async function ({ page, test, ok }) {
+export default async function ({ page, test, ok, note }) {
   let seq = 0;
   const inject = async (raw, width = "min(900px, 100vw)") => {
     const id = `tt-${++seq}`;
@@ -51,7 +51,7 @@ export default async function ({ page, test, ok }) {
     ok(false, message);
   };
 
-  await test("Relojes sin React: <time> con desfase, esfera con nombre por minuto y ciudades como frases", async () => {
+  await test("Familia de tiempo · Relojes sin React: <time> con desfase, esfera con nombre por minuto y ciudades como frases", async () => {
     const box = await inject(`${html("Clock", 1)}${html("AnalogClock", 0)}${html("WorldClock", 0)}`);
     const time = await box.locator(".z-clock__time").getAttribute("datetime");
     ok(/^\d{4}-\d\d-\d\dT\d\d:\d\d\+09:00$/.test(time ?? ""), `datetime de Tokio: ${time}`);
@@ -64,7 +64,7 @@ export default async function ({ page, test, ok }) {
     ok((await box.locator(".z-world-clock__city").count()) === 4, "cuatro ciudades del marcado");
   });
 
-  await test("Clock avanza con el temporizador compartido y se para con la pestaña oculta", async () => {
+  await test("Familia de tiempo · Clock avanza con el temporizador compartido y se para con la pestaña oculta", async () => {
     const box = await inject('<div class="z-clock" data-seconds data-time-zone="UTC" data-hour-cycle="h23"></div>');
     const read = () => box.locator(".z-clock__time").textContent();
     const a = await read();
@@ -85,7 +85,7 @@ export default async function ({ page, test, ok }) {
     ok(ticks.after !== ticks.hidden, "al volver se pone al día");
   });
 
-  await test("Countdown: role=timer con nombre, hitos en una región aparte y z:complete al llegar", async () => {
+  await test("Familia de tiempo · Countdown: role=timer con nombre, hitos en una región aparte y z:complete al llegar", async () => {
     const box = await inject(html("Countdown", 0));
     const timer = box.locator('[role="timer"]');
     ok(/^Launch countdown: \d+ days?/.test((await timer.getAttribute("aria-label")) ?? ""), "nombre con lo que falta");
@@ -111,7 +111,7 @@ export default async function ({ page, test, ok }) {
     );
   });
 
-  await test("DurationField: spinbuttons, flechas, cifras con avance, pegar y preajustes; valor ISO en el formulario", async () => {
+  await test("Familia de tiempo · DurationField: spinbuttons, flechas, cifras con avance, pegar y preajustes; valor ISO en el formulario", async () => {
     const box = await inject(`<form>${html("DurationField", 0)}</form>`);
     const hours = box.locator('[role="spinbutton"][data-unit="hours"]');
     const minutes = box.locator('[role="spinbutton"][data-unit="minutes"]');
@@ -127,32 +127,39 @@ export default async function ({ page, test, ok }) {
     ok((await minutes.getAttribute("aria-valuenow")) === "7", "teclear 07");
     const value = await box.locator('input[name="length"]').inputValue();
     ok(value === "PT1H7M", `campo del formulario: ${value}`);
-    await page.evaluate(() => {
+    // Un ClipboardEvent sintético solo lleva datos donde el motor admite `clipboardData` en el constructor.
+    const pasted = await page.evaluate(() => {
       const seg = document.activeElement;
       const data = new DataTransfer();
       data.setData("text", "2:15");
-      seg.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+      const event = new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true });
+      if (!event.clipboardData?.getData("text")) return false;
+      seg.dispatchEvent(event);
+      return true;
     });
-    ok((await box.locator('input[name="length"]').inputValue()) === "PT2H15M", "pegar «2:15»");
+    if (pasted) ok((await box.locator('input[name="length"]').inputValue()) === "PT2H15M", "pegar «2:15»");
+    else note("este motor no deja simular un pegado con datos: el pegado no se comprueba aquí");
     await box.locator(".z-duration-field__preset", { hasText: "30 min" }).click();
     ok((await box.locator('input[name="length"]').inputValue()) === "PT30M", "preajuste");
-    ok((await box.locator('.z-duration-field__preset[aria-pressed="true"]').textContent()) === "30 min", "el preajuste queda marcado");
+    const marked = await box.locator(".z-duration-field__preset[data-active]").allTextContents();
+    ok(/^30 mins?$/.test(marked.join()), `el preajuste queda marcado: ${marked}`);
     const changes = (await events()).filter(([type]) => type === "z:change");
     ok(changes.at(-1)?.[1]?.value === "PT30M", "z:change con el valor ISO");
   });
 
-  await test("TimeZoneSelect sin React: opciones con desfase y hora, búsqueda por desfase", async () => {
+  await test("Familia de tiempo · TimeZoneSelect sin React: opciones con desfase y hora, búsqueda por desfase", async () => {
     const box = await inject(html("TimeZoneSelect", 0));
     const input = box.locator('input[role="combobox"]');
     await input.click();
     await input.fill("+5:30");
-    await until(async () => (await page.locator(".z-listbox__option:visible").count()) >= 1, "aparece una opción");
-    const label = await page.locator(".z-listbox__option:visible").first().textContent();
+    const options = page.locator(`#${await input.getAttribute("aria-controls")} .z-listbox__option:visible`);
+    await until(async () => (await options.count()) >= 1, "aparece una opción");
+    const label = (await options.first().textContent())?.trim();
     ok(/Kolkata · GMT\+5:30 · \d\d:\d\d/.test(label ?? ""), `opción: ${label}`);
     await page.keyboard.press("Escape");
   });
 
-  await test("Terminal sin React: salida ANSI como nodos, orden con z:command, historial, Ctrl+L y copiar", async () => {
+  await test("Familia de terminal · Terminal sin React: salida ANSI como nodos, orden con z:command, historial, Ctrl+L y copiar", async () => {
     const box = await inject(html("Terminal", 0));
     const term = box.locator(".z-terminal");
     ok((await term.locator('.z-terminal__screen[role="log"][aria-live="off"]').count()) === 1, "salida role=log sin anunciar cada línea");
@@ -186,7 +193,7 @@ export default async function ({ page, test, ok }) {
     ok((await term.locator(".z-terminal__line").count()) === 0, "Ctrl+L limpia");
   });
 
-  await test("Terminal sin React: flujo con onCommand, Tab con onComplete y Ctrl+C interrumpe", async () => {
+  await test("Familia de terminal · Terminal sin React: flujo con onCommand, Tab con onComplete y Ctrl+C interrumpe", async () => {
     const box = await inject('<div class="z-terminal" data-prompt="$"></div>');
     await page.evaluate(async () => {
       const el = document.querySelector("[data-tt-layer] .z-terminal");
@@ -215,9 +222,9 @@ export default async function ({ page, test, ok }) {
     await field.fill("build");
     await page.keyboard.press("Enter");
     await until(async () => (await term.locator(".z-terminal__line").count()) > 4, "la salida llega a trozos");
-    ok((await term.getAttribute("data-busy")) === "", "ocupada mientras corre");
+    ok((await term.getAttribute("data-running")) === "", "ocupada mientras corre");
     await page.keyboard.press("Control+c");
-    await until(async () => (await term.getAttribute("data-busy")) === null, "Ctrl+C interrumpe");
+    await until(async () => (await term.getAttribute("data-running")) === null, "Ctrl+C interrumpe");
     await until(async () => (await term.locator(".z-terminal__live").textContent()) === "Interrupted", "anuncia la interrupción");
     ok(
       (await events()).some(([type]) => type === "z:interrupt"),
@@ -225,7 +232,7 @@ export default async function ({ page, test, ok }) {
     );
   });
 
-  await test("LogConsole sin React: filtros con contadores, búsqueda con <mark>, rejilla con teclado y miles de filas por ventana", async () => {
+  await test("Familia de terminal · LogConsole sin React: filtros con contadores, búsqueda con <mark>, rejilla con teclado y miles de filas por ventana", async () => {
     const box = await inject(html("LogConsole", 0));
     const log = box.locator(".z-log-console");
     ok((await log.locator('[role="grid"]').getAttribute("aria-rowcount")) === "7", "aria-rowcount con la cabecera");
@@ -237,8 +244,8 @@ export default async function ({ page, test, ok }) {
     );
     await log.locator('.z-log-console__level[data-level="info"]').click();
     await log.locator(".z-log-console__search").fill("export");
-    await until(async () => (await log.locator("mark.z-log-console__match").count()) === 2, "dos coincidencias marcadas");
-    await until(async () => (await log.locator(".z-log-console__live").textContent()) === "2 matches", "anuncia el número");
+    await until(async () => (await log.locator("mark.z-log-console__match").count()) === 3, "tres coincidencias marcadas");
+    await until(async () => (await log.locator(".z-log-console__live").textContent()) === "3 matches", "anuncia el número");
     await log.locator(".z-log-console__search").fill("");
     const cell = log.locator('.z-log-console__cell[tabindex="0"]');
     await cell.focus();
@@ -260,7 +267,7 @@ export default async function ({ page, test, ok }) {
     ok(rows < 60, `solo la ventana: ${rows} filas en el documento`);
   });
 
-  await test("CodeViewer y DiffViewer sin React: pestañas, números ocultos, copiar, vista lado a lado y huecos plegados", async () => {
+  await test("Familia de terminal · CodeViewer y DiffViewer sin React: pestañas, números ocultos, copiar, vista lado a lado y huecos plegados", async () => {
     const box = await inject(`${html("CodeViewer", 1)}${html("DiffViewer", 0)}`);
     const viewer = box.locator(".z-code-viewer");
     ok((await viewer.locator('[role="tab"]').count()) === 2, "dos pestañas");
@@ -271,7 +278,7 @@ export default async function ({ page, test, ok }) {
     ok((await viewer.locator('.z-tok[data-tok="property"]').count()) >= 2, "resaltado de CSS");
     const diff = box.locator(".z-diff");
     ok((await diff.locator(".z-sr-only", { hasText: "removed:" }).count()) === 3, "tipo de línea en texto");
-    await diff.locator('.z-diff__mode[data-mode="split"]').click();
+    await diff.locator(".z-diff__mode").click();
     ok((await diff.locator('.z-diff__table[data-mode="split"]').count()) === 1, "lado a lado");
     ok(
       (await events()).some(([type, d]) => type === "z:modechange" && d.mode === "split"),

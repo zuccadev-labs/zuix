@@ -3266,7 +3266,6 @@
    "classes": [
     "z-diff",
     "z-diff__bar",
-    "z-diff__modes",
     "z-diff__mode",
     "z-diff__file",
     "z-diff__file-head",
@@ -3349,7 +3348,7 @@
    "examples": [
     {
      "title": "Salida de un build",
-     "html": "<div class=\"z-terminal\" data-title=\"build\" data-prompt=\"~/app $\" data-history=\"pnpm build, pnpm test\">\n  <script type=\"application/json\" data-props>{ \"output\": \"\\u001b[1;32m✓\\u001b[0m Compiled 128 modules in \\u001b[1m1.4s\\u001b[0m\\n\\u001b[33mwarn\\u001b[0m  2 unused exports in \\u001b[4msrc/legacy.ts\\u001b[0m\\n\\u001b[38;5;39mdist/app.js\\u001b[0m   \\u001b[2m84.2 kB\\u001b[0m\\n\" }</script>\n</div>",
+     "html": "<div class=\"z-terminal\" data-title=\"build\" data-prompt=\"~/app $\">\n  <script type=\"application/json\" data-props>{ \"history\": [\"pnpm build\", \"pnpm test\"], \"output\": \"\\u001b[1;32m✓\\u001b[0m Compiled 128 modules in \\u001b[1m1.4s\\u001b[0m\\n\\u001b[33mwarn\\u001b[0m  2 unused exports in \\u001b[4msrc/legacy.ts\\u001b[0m\\n\\u001b[38;5;39mdist/app.js\\u001b[0m   \\u001b[2m84.2 kB\\u001b[0m\\n\" }</script>\n</div>",
      "source": "manual"
     },
     {
@@ -3377,12 +3376,12 @@
    "examples": [
     {
      "title": "Esfera con números en los cuartos",
-     "html": "<div class=\"z-analog-clock\" data-numerals=\"quarters\" data-marks=\"minutes\" data-label=\"Madrid\" data-time-zone=\"Europe/Madrid\" data-caption></div>",
+     "html": "<div class=\"z-analog-clock\" data-locale=\"en-GB\" data-numerals=\"quarters\" data-marks=\"minutes\" data-label=\"Madrid\" data-time-zone=\"Europe/Madrid\" data-caption></div>",
      "source": "manual"
     },
     {
      "title": "Pequeño, sin segundero",
-     "html": "<div class=\"z-analog-clock\" data-size=\"sm\" data-seconds=\"false\" data-time-zone=\"America/New_York\" data-label=\"New York\"></div>",
+     "html": "<div class=\"z-analog-clock\" data-locale=\"en-GB\" data-size=\"sm\" data-seconds=\"false\" data-time-zone=\"America/New_York\" data-label=\"New York\"></div>",
      "source": "manual"
     }
    ]
@@ -3404,12 +3403,12 @@
    "examples": [
     {
      "title": "Hora local con segundos y fecha",
-     "html": "<div class=\"z-clock\" data-seconds data-date data-blink data-label=\"Local\"></div>",
+     "html": "<div class=\"z-clock\" data-locale=\"en-GB\" data-seconds data-date data-blink data-label=\"Local\"></div>",
      "source": "manual"
     },
     {
      "title": "Otra zona, 24 h",
-     "html": "<div class=\"z-clock\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>",
+     "html": "<div class=\"z-clock\" data-locale=\"en-GB\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>",
      "source": "manual"
     }
    ]
@@ -3432,17 +3431,17 @@
    "examples": [
     {
      "title": "Cajas hasta el lanzamiento",
-     "html": "<div class=\"z-countdown\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>",
+     "html": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>",
      "source": "manual"
     },
     {
      "title": "En línea, sin segundos",
-     "html": "<div class=\"z-countdown\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>",
+     "html": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>",
      "source": "manual"
     },
     {
      "title": "Cifras que giran",
-     "html": "<div class=\"z-countdown\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>",
+     "html": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>",
      "source": "manual"
     }
    ]
@@ -3462,12 +3461,12 @@
    "examples": [
     {
      "title": "Horas y minutos con preajustes",
-     "html": "<div class=\"z-duration-field\" data-label=\"Meeting length\" data-value=\"PT45M\" data-step=\"5\" data-presets=\"PT15M PT30M PT1H\" data-name=\"length\"></div>",
+     "html": "<div class=\"z-duration-field\" data-locale=\"en-GB\" data-label=\"Meeting length\" data-value=\"PT45M\" data-step=\"5\" data-presets=\"PT15M PT30M PT1H\" data-name=\"length\"></div>",
      "source": "manual"
     },
     {
      "title": "Minutos y segundos, con tope",
-     "html": "<div class=\"z-duration-field\" data-label=\"Lap time\" data-units=\"minutes seconds\" data-max=\"PT59M59S\" data-value=\"PT4M30S\" data-size=\"sm\"></div>",
+     "html": "<div class=\"z-duration-field\" data-locale=\"en-GB\" data-label=\"Lap time\" data-units=\"minutes seconds\" data-max=\"PT59M59S\" data-value=\"PT4M30S\" data-size=\"sm\"></div>",
      "source": "manual"
     }
    ]
@@ -3481,7 +3480,7 @@
    "examples": [
     {
      "title": "Zona del evento",
-     "html": "<span class=\"z-input z-combobox\" id=\"event-tz\" data-size=\"md\" data-state=\"closed\" data-z-tz-select data-zones=\"America/Los_Angeles America/New_York America/Caracas Europe/London Europe/Madrid Asia/Kolkata Asia/Tokyo Australia/Sydney\">\n  <span class=\"z-input__icon\"><z-icon name=\"globe-alt\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Event time zone\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a time zone\" />\n  <input type=\"hidden\" name=\"tz\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"event-tz-list\" role=\"listbox\" aria-label=\"Event time zone\"></div>\n</div>",
+     "html": "<span class=\"z-input z-combobox\" id=\"event-tz\" data-size=\"md\" data-state=\"closed\" data-z-tz-select data-locale=\"en-GB\" data-zones=\"America/Los_Angeles America/New_York America/Caracas Europe/London Europe/Madrid Asia/Kolkata Asia/Tokyo Australia/Sydney\">\n  <span class=\"z-input__icon\"><z-icon name=\"globe-alt\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Event time zone\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a time zone\" />\n  <input type=\"hidden\" name=\"tz\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"event-tz-list\" role=\"listbox\" aria-label=\"Event time zone\"></div>\n</div>",
      "source": "manual"
     }
    ]
@@ -3506,12 +3505,12 @@
    "examples": [
     {
      "title": "Rejilla de ciudades",
-     "html": "<div class=\"z-world-clock\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>",
+     "html": "<div class=\"z-world-clock\" data-locale=\"en-GB\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>",
      "source": "manual"
     },
     {
      "title": "Lista con esferas",
-     "html": "<div class=\"z-world-clock\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>",
+     "html": "<div class=\"z-world-clock\" data-locale=\"en-GB\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>",
      "source": "manual"
     }
    ]

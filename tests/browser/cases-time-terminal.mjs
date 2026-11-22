@@ -126,7 +126,7 @@ export default function ({ t, assert, poll }) {
         assert((await page.locator(`${term} .z-terminal__line`, { hasText: "building" }).count()) === 1, "una sola línea para la barra");
         await field.fill("build");
         await page.keyboard.press("Enter");
-        await poll(async () => (await page.locator(term).locator(".z-terminal").getAttribute("data-busy")) === "", "ocupada");
+        await poll(async () => (await page.locator(term).locator(".z-terminal").getAttribute("data-running")) === "", "ocupada");
         await page.keyboard.press("Control+c");
         await poll(async () => (await text(page, "x-interrupts")) === "1 interrupts", "onInterrupt");
         await page.keyboard.press("ArrowUp");
@@ -199,7 +199,7 @@ export default function ({ t, assert, poll }) {
         assert(selectable === "none", "los números no se seleccionan");
         const diff = t("x-diff");
         assert((await page.locator(`${diff} .z-diff__word`).count()) === 3, "palabras cambiadas");
-        await page.locator(`${diff} .z-diff__mode[data-mode="split"]`).click();
+        await page.locator(`${diff} .z-diff__mode`).click();
         await poll(async () => (await page.locator(`${diff} table[data-mode="split"]`).count()) === 1, "lado a lado");
       },
     },

@@ -484,7 +484,7 @@ describe("árboles de la familia", () => {
     assert.match(html(terminalWidget, { announce: "all" }), /aria-live="polite"/);
     const ro = html(terminalWidget, { readOnly: true, busy: true });
     assert.ok(!ro.includes("z-terminal__input"));
-    assert.match(ro, /data-busy/);
+    assert.match(ro, /data-running/);
     assert.match(ro, /z-terminal__status/);
   });
   test("LogConsole: rejilla con aria-rowcount y solo la ventana visible", () => {
@@ -548,7 +548,7 @@ describe("árboles de la familia", () => {
     assert.match(expanded, /data-gap-start="f0g0" tabindex="-1"/);
     const split = html(diffViewerWidget, { before: "a\nb", after: "a\nc", defaultMode: "split", hideModeToggle: true });
     assert.match(split, /data-left="delete" data-right="insert"/);
-    assert.ok(!split.includes("z-diff__modes"));
+    assert.ok(!split.includes('z-diff__mode"'));
     const patch = html(diffViewerWidget, { patch: "--- a/x\n+++ b/x\n@@ -1 +1 @@ top\n-a\n+b\n" });
     assert.match(patch, /z-diff__hunk"><td colspan="4">@@ -1 \+1 @@ top/);
     assert.match(html(diffViewerWidget, { before: "same", after: "same" }), /No changes/);

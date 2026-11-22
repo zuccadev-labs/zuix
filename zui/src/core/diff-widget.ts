@@ -25,9 +25,8 @@ export interface DiffViewerLabels {
   unchanged: string;
   /** «Show {n} unchanged lines». */
   expand: string;
-  unified: string;
+  /** Conmutador de la vista lado a lado. */
   split: string;
-  view: string;
   /** «{n} additions» y «{n} deletions» (texto oculto de las cifras). */
   additions: string;
   deletions: string;
@@ -44,9 +43,7 @@ export const DIFF_VIEWER_LABELS: DiffViewerLabels = {
   removed: "removed",
   unchanged: "unchanged",
   expand: "Show {n} unchanged lines",
-  unified: "Unified",
-  split: "Split",
-  view: "View",
+  split: "Split view",
   additions: "{n} additions",
   deletions: "{n} deletions",
   oldLine: "Old line",
@@ -174,11 +171,10 @@ function attach(root: HTMLElement, host: Host): () => void {
     const target = event.target as Element | null;
     const mode = target?.closest?.<HTMLButtonElement>(".z-diff__mode");
     if (mode && root.contains(mode)) {
-      const next = mode.dataset.mode === "split" ? "split" : "unified";
-      if (next !== host.state().mode) {
-        host.update({ mode: next });
-        host.emit("mode-change", { mode: next });
-      }
+      // Un conmutador: pulsado, lado a lado; sin pulsar, unificado.
+      const next = host.state().mode === "split" ? "unified" : "split";
+      host.update({ mode: next });
+      host.emit("mode-change", { mode: next });
       return;
     }
     const expand = target?.closest?.<HTMLButtonElement>(".z-diff__expand");
@@ -338,22 +334,15 @@ export const diffViewerWidget: Widget<DiffViewerProps, Config, State> = {
             c.files.length > 1 ? stats(totals.added, totals.removed) : null,
             c.toggle
               ? h(
-                  "div",
-                  { class: "z-diff__modes", role: "group", "aria-label": labels.view },
-                  ...(["unified", "split"] as const).map((mode) =>
-                    h(
-                      "button",
-                      {
-                        type: "button",
-                        key: mode,
-                        class: "z-btn z-btn--ghost z-diff__mode",
-                        "data-size": "sm",
-                        "data-mode": mode,
-                        "aria-pressed": s.mode === mode ? "true" : "false",
-                      },
-                      labels[mode],
-                    ),
-                  ),
+                  "button",
+                  {
+                    type: "button",
+                    class: "z-btn z-btn--ghost z-diff__mode",
+                    "data-size": "sm",
+                    "aria-pressed": split ? "true" : "false",
+                  },
+                  icon("view-columns", 14),
+                  labels.split,
                 )
               : null,
           )

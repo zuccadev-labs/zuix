@@ -176,7 +176,7 @@
         .z-calendar__day[data-selected],
         .z-datefield__segment:focus,
         .z-duration-field__segment:focus,
-        .z-duration-field__preset[aria-pressed="true"],
+        .z-duration-field__preset[data-active],
         .z-log-console__level[aria-pressed="true"],
         .z-log-console__follow[aria-pressed="true"],
         .z-diff__mode[aria-pressed="true"],

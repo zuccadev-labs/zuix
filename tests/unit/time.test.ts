@@ -371,7 +371,7 @@ describe("árboles de la familia", () => {
     assert.match(out, /<span class="z-clock__sep">:<\/span>/);
     assert.match(out, /z-clock__date">Saturday 21 November</);
     assert.match(out, /z-clock__zone">GMT\+1</);
-    assert.ok(!out.includes("data-blink"), "un reloj fijo no late");
+    assert.ok(!out.includes("data-blinking"), "un reloj fijo no late");
     assert.ok(!/aria-live|role="status"/.test(out), "un reloj no es región viva");
   });
   test("AnalogClock: imagen con nombre por minuto y segundero decorativo", () => {
@@ -427,7 +427,7 @@ describe("árboles de la familia", () => {
     assert.match(out, /aria-valuetext="1 hour"/);
     assert.match(out, /aria-valuetext="5 minutes"/);
     assert.match(out, /name="len" value="PT1H5M"/);
-    assert.match(out, /aria-pressed="true"[^>]*>1 hr, 5 min</);
+    assert.match(out, /data-active[^>]*>1 hr, 5 min</);
   });
   test("DurationField: segmentos, topes y vuelta", () => {
     const units = ["hours", "minutes"] as const;

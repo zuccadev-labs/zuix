@@ -228,7 +228,7 @@
     font: inherit;
     outline: none;
   }
-  .z-terminal[data-busy] .z-terminal__field {
+  .z-terminal[data-running] .z-terminal__field {
     color: var(--z-fg-muted);
   }
 
@@ -377,13 +377,13 @@
     outline: var(--z-focus-width) solid var(--z-accent-ring);
     outline-offset: calc(var(--z-focus-width) * -1);
   }
-  .z-log-console[data-wrap] .z-log-console__row {
+  .z-log-console[data-wrapped] .z-log-console__row {
     align-items: start;
     block-size: auto;
     min-block-size: var(--z-log-row-height);
     padding-block: var(--z-space-1);
   }
-  .z-log-console[data-wrap] .z-log-console__cell[data-column="message"] {
+  .z-log-console[data-wrapped] .z-log-console__cell[data-column="message"] {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
@@ -543,9 +543,10 @@
     padding-inline: var(--z-space-4) var(--z-space-5);
     border-inline-start: 3px solid transparent;
   }
+  /* Tinte muy suave: los colores del código tienen que seguir llegando a 4.5:1 encima. La barra es la señal. */
   .z-code-viewer__line[data-highlighted] {
     border-inline-start-color: var(--z-accent);
-    background: var(--z-accent-soft);
+    background: color-mix(in oklab, var(--z-accent) 5%, transparent);
   }
   .z-code-viewer__number {
     flex: none;
@@ -600,10 +601,6 @@
     align-items: center;
     justify-content: flex-end;
     gap: var(--z-space-3);
-  }
-  .z-diff__modes {
-    display: inline-flex;
-    gap: var(--z-space-1);
   }
   .z-diff__file {
     min-width: 0;

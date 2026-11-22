@@ -53,7 +53,7 @@
     font-variant-numeric: tabular-nums;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .z-clock[data-blink] .z-clock__sep {
+    .z-clock[data-blinking] .z-clock__sep {
       animation: z-clock-blink 1s steps(1, end) infinite;
     }
     .z-clock[data-offscreen] .z-clock__sep {
@@ -470,7 +470,7 @@
     flex-wrap: wrap;
     gap: var(--z-space-1-5);
   }
-  .z-duration-field__preset[aria-pressed="true"] {
+  .z-duration-field__preset[data-active] {
     border-color: var(--z-accent);
     background: var(--z-accent-soft);
     color: var(--z-accent-text);

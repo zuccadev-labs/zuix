@@ -263,7 +263,8 @@ function attach(root: HTMLElement, host: Host): () => void {
     }
     if (ctrl && event.key.toLowerCase() === "c") {
       // Con texto seleccionado (en el campo o en la página), Ctrl+C copia como siempre.
-      const selected = !noSelection || Boolean(root.ownerDocument.getSelection?.()?.toString());
+      const selection = root.ownerDocument.getSelection?.();
+      const selected = !noSelection || Boolean(selection?.toString() && selection.anchorNode && root.contains(selection.anchorNode));
       if (selected) return;
       event.preventDefault();
       if (state.controller) {
@@ -356,7 +357,7 @@ export const terminalWidget: Widget<TerminalProps, Config, State> = {
       );
     return h(
       "div",
-      { class: "z-terminal", role: "region", "aria-label": c.title || labels.terminal, "data-theme": c.theme, "data-busy": on(busy) },
+      { class: "z-terminal", role: "region", "aria-label": c.title || labels.terminal, "data-theme": c.theme, "data-running": on(busy) },
       h(
         "div",
         { class: "z-terminal__bar" },
@@ -429,7 +430,7 @@ export const terminalWidget: Widget<TerminalProps, Config, State> = {
     return {
       prompt: d.prompt,
       defaultOutput: (json.output as string | undefined) ?? script?.content.textContent ?? undefined,
-      history: d.history ? list(d.history) : (json.history as string[] | undefined),
+      history: json.history as string[] | undefined,
       maxLines: d.maxLines ? num(d.maxLines, 5000) : undefined,
       readOnly: yes(d.readOnly),
       busy: yes(d.busy),

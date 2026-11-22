@@ -394,7 +394,7 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
     );
     return h(
       "div",
-      { class: "z-log-console", role: "region", "aria-label": c.title || labels.console, "data-wrap": on(c.wrap && !virtual) },
+      { class: "z-log-console", role: "region", "aria-label": c.title || labels.console, "data-wrapped": on(c.wrap && !virtual) },
       h(
         "div",
         { class: "z-log-console__bar" },

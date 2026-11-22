@@ -95,29 +95,29 @@
   "examples": [
     {
       "title": "Cajas hasta el lanzamiento",
-      "code": "<Countdown to=\"2027-01-15T17:00:00Z\" showTarget labels={{ timer: \"Launch countdown\", target: \"Launch {date}\" }} />"
+      "code": "<Countdown locale=\"en-GB\" to=\"2027-01-15T17:00:00Z\" showTarget labels={{ timer: \"Launch countdown\", target: \"Launch {date}\" }} />"
     },
     {
       "title": "En línea, sin segundos",
-      "code": "<Countdown variant=\"inline\" units={[\"days\", \"hours\", \"minutes\"]} to=\"2026-12-31T23:00:00Z\" labels={{ timer: \"Offer ends in\" }} />"
+      "code": "<Countdown locale=\"en-GB\" variant=\"inline\" units={[\"days\", \"hours\", \"minutes\"]} to=\"2026-12-31T23:00:00Z\" labels={{ timer: \"Offer ends in\" }} />"
     },
     {
       "title": "Cifras que giran",
-      "code": "<Countdown variant=\"flip\" units={[\"hours\", \"minutes\", \"seconds\"]} to={Date.now() + 90 * 60_000} />"
+      "code": "<Countdown locale=\"en-GB\" variant=\"flip\" units={[\"hours\", \"minutes\", \"seconds\"]} to={Date.now() + 90 * 60_000} />"
     }
   ],
   "html": [
     {
       "title": "Cajas hasta el lanzamiento",
-      "code": "<div class=\"z-countdown\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>"
+      "code": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>"
     },
     {
       "title": "En línea, sin segundos",
-      "code": "<div class=\"z-countdown\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>"
+      "code": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>"
     },
     {
       "title": "Cifras que giran",
-      "code": "<div class=\"z-countdown\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>"
+      "code": "<div class=\"z-countdown\" data-locale=\"en-GB\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>"
     }
   ],
   "origin": "Statistic.Countdown de Ant Design; role=timer de WAI-ARIA."
