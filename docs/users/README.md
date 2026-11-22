@@ -4,8 +4,10 @@ zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación c
 marca replica el sistema cambiando un archivo. El estándar es HTML, CSS y tokens: sirve con cualquier
 framework o sin ninguno, y trae un binding de React.
 
-Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que cambia entre una y otra en
-[Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
+Esta documentación describe la `0.3.0`. De la `0.2.0` a la `0.3.0` no retiré nada: cambia el aspecto y
+se añaden componentes. Si sobrescribes variables de algún componente, repasa el apartado «Cambiado» del
+`CHANGELOG.md` de zui. Si vienes de la
+`0.1.0`, lo que se rompe y cómo arreglarlo está en [Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
 
 ## Documentos
 
