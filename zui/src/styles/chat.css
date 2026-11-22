@@ -72,7 +72,6 @@
     align-items: center;
     gap: var(--z-space-3);
     inline-size: 100%;
-    min-block-size: calc(var(--z-touch-target) + var(--z-space-5));
     padding: var(--z-space-2) var(--z-space-2-5);
     border: 0;
     border-radius: var(--z-item-radius);
@@ -758,14 +757,17 @@
     background: var(--z-accent);
     vertical-align: middle;
   }
+  /* El botón mide lo mismo que reproducir (objetivo cómodo); la píldora visible es su texto. */
   .z-voice-note__rate {
+    display: grid;
+    place-items: center;
     flex: none;
-    min-inline-size: 36px;
-    block-size: var(--z-control-height-xs);
-    padding-inline: var(--z-space-1-5);
+    min-inline-size: var(--z-control-height-lg);
+    block-size: var(--z-control-height-lg);
+    padding: 0;
     border: 0;
     border-radius: var(--z-control-radius-sm);
-    background: var(--z-surface-3);
+    background: transparent;
     color: var(--z-fg);
     font: inherit;
     font-size: var(--z-text-caption);
@@ -773,8 +775,18 @@
     font-variant-numeric: tabular-nums;
     cursor: pointer;
   }
+  .z-voice-note__rate-chip {
+    padding: var(--z-space-0-5) var(--z-space-1-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+  }
   .z-voice-note__audio {
     display: none;
+  }
+  @media (pointer: coarse) {
+    .z-voice-note__wave {
+      block-size: var(--z-touch-target);
+    }
   }
 
   /* ---- Ubicación y enlace ---- */
@@ -904,14 +916,14 @@
   }
   .z-message .z-reactions {
     position: relative;
-    margin-block-start: calc(var(--z-space-1-5) * -1);
-    padding-inline: var(--z-space-2);
+    margin-block-start: var(--z-space-1);
+    padding-inline: var(--z-space-1);
   }
   .z-reaction {
     display: inline-flex;
     align-items: center;
     gap: var(--z-space-1);
-    block-size: 26px;
+    block-size: var(--z-control-height-sm);
     padding-inline: var(--z-space-1-5);
     border: 1px solid var(--z-line);
     border-radius: var(--z-control-radius-sm);
@@ -1156,8 +1168,8 @@
     z-index: var(--z-layer-raised);
     display: grid;
     place-items: center;
-    inline-size: var(--z-touch-target);
-    block-size: var(--z-touch-target);
+    inline-size: var(--z-control-height-lg);
+    block-size: var(--z-control-height-lg);
     border: 1px solid var(--z-glass-border);
     border-radius: var(--z-radius-full);
     background: var(--z-popup-bg);
@@ -1344,8 +1356,8 @@
     display: grid;
     place-items: center;
     flex: none;
-    inline-size: 42px;
-    block-size: 42px;
+    inline-size: var(--z-control-height-lg);
+    block-size: var(--z-control-height-lg);
     border: 0;
     border-radius: var(--z-radius-full);
     background: var(--z-accent-solid);
@@ -1646,12 +1658,21 @@
     display: grid;
     grid-template-columns: repeat(var(--z-emoji-columns, 8), minmax(0, 1fr));
   }
+  /* Con puntero grueso caben las columnas que dé el ancho con el objetivo táctil; el teclado las mide. */
+  @media (pointer: coarse) {
+    .z-emoji-picker__options {
+      grid-template-columns: repeat(auto-fill, minmax(var(--z-touch-target), 1fr));
+    }
+    .z-emoji-picker {
+      --z-emoji-cell: var(--z-touch-target);
+    }
+  }
   .z-emoji-picker__option {
     display: grid;
     place-items: center;
     block-size: var(--z-emoji-cell);
     border-radius: var(--z-control-radius-sm);
-    font-size: calc(var(--z-text-heading) * 1.05);
+    font-size: var(--z-text-heading);
     line-height: 1;
     cursor: pointer;
     transition:
@@ -1704,15 +1725,26 @@
     display: flex;
     gap: var(--z-space-1);
   }
+  /* El botón mide el objetivo mínimo; la muestra de color es su ::before. */
   .z-emoji-picker__tone {
     --z-tone: var(--z-surface-3);
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-control-height-xs);
+    block-size: var(--z-control-height-xs);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-full);
+    background: transparent;
+    cursor: pointer;
+  }
+  .z-emoji-picker__tone::before {
+    content: "";
     inline-size: 18px;
     block-size: 18px;
-    padding: 0;
     border: 1px solid var(--z-line-strong);
     border-radius: var(--z-radius-full);
     background: var(--z-tone);
-    cursor: pointer;
   }
   /* Muestras de tono de piel, de claro a oscuro y las mismas en los dos temas: se mezclan con los extremos fijos del
      código QR (blanco y negro de la marca), no con la superficie. */
@@ -1734,9 +1766,9 @@
   .z-emoji-picker__tone[data-tone="5"] {
     --z-tone: color-mix(in oklab, var(--z-warning) 28%, var(--z-qrcode-dark));
   }
-  .z-emoji-picker__tone[aria-checked="true"] {
+  .z-emoji-picker__tone[aria-checked="true"]::before {
     outline: 2px solid var(--z-accent);
-    outline-offset: 2px;
+    outline-offset: 1px;
   }
   .z-emoji-picker__tone:focus-visible,
   .z-emoji-picker__tab:focus-visible {
@@ -1798,8 +1830,8 @@
   .z-call__button {
     display: grid;
     place-items: center;
-    inline-size: var(--z-touch-target);
-    block-size: var(--z-touch-target);
+    inline-size: var(--z-control-height-xl);
+    block-size: var(--z-control-height-xl);
     border: 0;
     border-radius: var(--z-radius-full);
     background: var(--z-surface-3);

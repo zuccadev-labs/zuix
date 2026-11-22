@@ -274,11 +274,12 @@ export function emojiPickerKey(
   if (!all.length) return null;
   const empty = !(event.target as HTMLInputElement).value;
   const rtl = isRtl(event.target as Element);
+  const columns = measuredColumns((event.target as Element).closest?.(".z-emoji-picker"), c.columns);
   const step =
     event.key === "ArrowDown"
-      ? c.columns
+      ? columns
       : event.key === "ArrowUp"
-        ? -c.columns
+        ? -columns
         : empty && event.key === (rtl ? "ArrowLeft" : "ArrowRight")
           ? 1
           : empty && event.key === (rtl ? "ArrowRight" : "ArrowLeft")
@@ -326,6 +327,16 @@ export function emojiPickerClick(
   const tone = target.closest<HTMLElement>(".z-emoji-picker__tone");
   if (tone && picker.contains(tone)) set({ tone: Number(tone.dataset.tone ?? 0) });
   return null;
+}
+
+/** Columnas que pinta la rejilla (con puntero grueso dependen del ancho), o `fallback` sin documento. */
+function measuredColumns(picker: Element | null | undefined, fallback: number): number {
+  const options = picker?.querySelector(".z-emoji-picker__options")?.children;
+  if (!options?.length) return fallback;
+  const top = (options[0] as HTMLElement).offsetTop;
+  let n = 0;
+  for (const o of options) if ((o as HTMLElement).offsetTop === top) n++;
+  return n > 0 ? n : fallback;
 }
 
 /** ←/→ entre los tonos (radios de una parada): elige y lleva el foco. Devuelve si atendió la tecla. */

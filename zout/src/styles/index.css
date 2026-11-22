@@ -1831,7 +1831,7 @@
     container: z-chat / inline-size;
     position: relative;
     display: grid;
-    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
     block-size: 100%;
     min-block-size: 0;
     overflow: hidden;
@@ -1839,8 +1839,9 @@
     background: var(--z-surface-solid);
     color: var(--z-fg);
   }
+  /* Mínimos a 0: las pistas fijas crecen hasta su máximo antes que la flexible, y en estrecho caben en una. */
   .z-chat-layout[data-details] {
-    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) minmax(280px, 320px);
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr) minmax(0, 320px);
   }
   .z-chat-layout__list,
   .z-chat-layout__main,

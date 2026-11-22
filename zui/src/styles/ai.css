@@ -620,6 +620,7 @@
     cursor: pointer;
   }
   .z-approval__always-input {
+    margin: 0;
     accent-color: var(--z-accent);
   }
   .z-approval__decision {
@@ -786,7 +787,7 @@
     font-weight: var(--z-weight-bold);
   }
   .z-sources__favicon + .z-sources__favicon {
-    margin-inline-start: -7px;
+    margin-inline-start: calc(var(--z-space-2) * -1);
   }
   .z-sources__chevron {
     display: inline-flex;
@@ -996,8 +997,8 @@
   }
   .z-prompt-input .z-composer__send {
     grid-area: send;
-    inline-size: 36px;
-    block-size: 36px;
+    inline-size: var(--z-control-height-md);
+    block-size: var(--z-control-height-md);
   }
   .z-prompt-input .z-composer__send[data-mode="stop"] {
     background: var(--z-fg);
@@ -1117,13 +1118,18 @@
     display: flex;
     justify-content: space-between;
     gap: var(--z-space-2);
+    min-inline-size: 0;
   }
   .z-usage__label {
     font-weight: var(--z-weight-medium);
   }
   .z-usage__value {
+    min-inline-size: 0;
+    overflow: hidden;
     color: var(--z-fg-muted);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .z-usage[data-level="warning"] .z-usage__value {
     color: var(--z-warning-text);

@@ -238,7 +238,7 @@ export function typingNode(
       ? h(
           "span",
           { class: "z-typing__avatars", "aria-hidden": "true" },
-          ...o.people.slice(0, 3).map((p) => avatarNode(p, { size: "xs", decorative: true })),
+          ...o.people.slice(0, 3).map((p) => avatarNode(p, { size: "sm", decorative: true })),
         )
       : null,
     h(
@@ -266,7 +266,7 @@ export function threadNode(
       ? h(
           "span",
           { class: "z-avatar-group z-thread-summary__people", "aria-hidden": "true" },
-          ...thread.participants.slice(0, 3).map((p) => avatarNode(p, { size: "xs", decorative: true })),
+          ...thread.participants.slice(0, 3).map((p) => avatarNode(p, { size: "sm", decorative: true })),
         )
       : null,
     h("span", { class: "z-thread-summary__count" }, fill(labels.replies, { n: thread.count })),
@@ -370,7 +370,11 @@ export function voiceNode(
       { class: "z-voice-note__time", "aria-hidden": "true" },
       clockText(state.playing || state.position > 0 ? state.position : duration),
     ),
-    h("button", { type: "button", class: "z-voice-note__rate", "aria-label": fill(labels.speed, { rate: state.rate }) }, `${state.rate}×`),
+    h(
+      "button",
+      { type: "button", class: "z-voice-note__rate", "aria-label": fill(labels.speed, { rate: state.rate }) },
+      h("span", { class: "z-voice-note__rate-chip" }, `${state.rate}×`),
+    ),
     src ? h("audio", { class: "z-voice-note__audio", src, preload: "none", id: o.id }) : null,
   );
 }
