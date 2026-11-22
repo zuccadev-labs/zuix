@@ -1,0 +1,89 @@
+{
+  "name": "ToolCall",
+  "group": "ai",
+  "description": "Llamada a una herramienta: icono, nombre, estado en texto (pendiente, preparando, en curso, esperando aprobación, hecho, error, cancelado), duración y entrada/salida plegables como JSON con el tokenizador propio; esperando aprobación, aprobar y rechazar.",
+  "import": "import { ToolCall } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": "ToolStatus",
+      "required": true
+    },
+    {
+      "name": "input · output",
+      "type": "unknown"
+    },
+    {
+      "name": "error",
+      "type": "string"
+    },
+    {
+      "name": "startedAt · endedAt",
+      "type": "string | number"
+    },
+    {
+      "name": "callId",
+      "type": "string"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean"
+    },
+    {
+      "name": "onApprove · onReject",
+      "type": "(detail: { id }) => void"
+    }
+  ],
+  "states": ["pending", "input-streaming", "running", "awaiting-approval", "success", "error", "cancelled"],
+  "tokens": [
+    "surface-solid",
+    "surface-3",
+    "line",
+    "radius-md",
+    "code-bg",
+    "font-mono",
+    "info-text",
+    "success-text",
+    "danger-text",
+    "warning-text",
+    "warning",
+    "danger",
+    "fg-muted",
+    "fg-subtle"
+  ],
+  "classes": [
+    "z-tool-call-block",
+    "z-tool-call",
+    "z-tool-call__summary",
+    "z-tool-call__name",
+    "z-tool-call__status",
+    "z-tool-call__time",
+    "z-tool-call__body",
+    "z-tool-call__code",
+    "z-tool-call__approval"
+  ],
+  "a11y": "details/summary nativos; el estado va en texto además del icono y el color, y la sección se nombra con «nombre, estado». Cambiar a «esperando aprobación» o a «error» se anuncia (el error, asertivo); los intermedios no. Sin React: .z-tool-call-block con data-name, data-title, data-status, data-started-at, data-ended-at y input/output en <script type=\"application/json\" data-props>; emite z:approve y z:reject.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Terminada con entrada y salida",
+      "code": "<ToolCall name=\"get_weather\" title=\"Weather\" status=\"success\" input={{ city: \"Madrid\" }} output={{ temp: 18, sky: \"clear\" }} startedAt=\"2026-11-21T09:00:00Z\" endedAt=\"2026-11-21T09:00:01.4Z\" defaultOpen />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Terminada con entrada y salida",
+      "code": "<div class=\"z-tool-call-block\" data-name=\"get_weather\" data-title=\"Weather\" data-status=\"success\" data-open data-started-at=\"2026-11-21T09:00:00Z\" data-ended-at=\"2026-11-21T09:00:01.4Z\">\n  <script type=\"application/json\" data-props>{\"input\": {\"city\": \"Madrid\"}, \"output\": {\"temp\": 18, \"sky\": \"clear\"}}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: Vercel AI Elements (Tool), assistant-ui y Claude."
+}

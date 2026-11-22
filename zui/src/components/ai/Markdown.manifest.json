@@ -1,0 +1,43 @@
+{
+  "name": "Markdown",
+  "group": "ai",
+  "description": "Markdown mínimo propio: párrafos, encabezados, listas (anidadas, ordenadas y de tareas), citas, código en línea y en bloque (con el CodeViewer de la suite), tablas sencillas, énfasis, tachado, enlaces y citas a fuentes [n]. Se construye como nodos, nunca como marcado; con streaming cierra a título provisional lo abierto y pinta el cursor.",
+  "import": "import { Markdown } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "children / text",
+      "type": "string"
+    },
+    {
+      "name": "streaming",
+      "type": "boolean"
+    },
+    {
+      "name": "sources",
+      "type": "{ title, url }[]",
+      "description": "Para las citas [n]."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AiLabels>"
+    }
+  ],
+  "states": ["static", "streaming"],
+  "tokens": ["fg", "fg-muted", "accent-text", "line", "line-strong", "surface-2", "surface-3", "code-bg", "code-radius", "font-mono"],
+  "classes": ["z-markdown-view", "z-markdown", "z-markdown__table", "z-markdown__task", "z-markdown__cite", "z-caret"],
+  "a11y": "Encabezados desde h3 (no compiten con la página), listas y tablas nativas, enlaces con destino http, https o mailto (lo demás queda como texto) y target=_blank con rel=noopener. Los bloques de código son regiones del CodeViewer con copiar. Sin React: .z-markdown-view con el texto en <template data-markdown> o text en <script type=\"application/json\" data-props>, y data-streaming.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Lista, código y enlace",
+      "code": "<Markdown sources={sources}>{answer}</Markdown>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Lista, código y enlace",
+      "code": "<div class=\"z-markdown-view\">\n  <script type=\"application/json\" data-props>{\"text\": \"Here is a **minimal** plan to ship the docs [1]:\\n\\n1. Freeze the API surface.\\n2. Generate the HTML contract.\\n3. Publish the site.\\n\\n```ts\\nexport const ready = true;\\n```\\n\\nSee the [release checklist](https://example.com/checklist) for details.\", \"sources\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio, sin bibliotecas de Markdown. Sin marcado de por medio según las guías trusted-types y sanitize-untrusted-html."
+}

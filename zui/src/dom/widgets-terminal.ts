@@ -19,7 +19,11 @@ import { widgetPart } from "./widgets";
 
 registerIcons([arrowDown, arrowDownTray, check, chevronUpDown, commandLine, copy, documentText, magnifyingGlass, trash]);
 
-export const terminalWidgets = /* @__PURE__ */ widgetPart(45.7, [terminalWidget, logConsoleWidget, codeViewerWidget, diffViewerWidget]);
+export const terminalWidgets = /* @__PURE__ */ widgetPart(
+  45.7,
+  [terminalWidget, logConsoleWidget, codeViewerWidget, diffViewerWidget],
+  ".z-assistant-message, .z-artifact, .z-markdown-view",
+);
 
 /**
  * API de una Terminal montada (`write`, `writeln`, `clear`, `focus`, `text`), o `null` si `el` no lo es. Las órdenes

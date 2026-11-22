@@ -1,0 +1,117 @@
+{
+  "name": "AssistantMessage",
+  "group": "ai",
+  "description": "Respuesta de un asistente con partes en orden: texto en streaming con Markdown propio y cursor, razonamiento plegable, llamadas a herramientas, peticiones de aprobación, fuentes con citas en línea y artefactos. Al terminar, acciones (copiar, regenerar, valorar) y ramas «‹ 2 / 3 ›». Sin burbuja: es lectura.",
+  "import": "import { AssistantMessage } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "parts",
+      "type": "AssistantPart[]",
+      "description": "text · reasoning · tool · approval · sources · artifact"
+    },
+    {
+      "name": "state",
+      "type": "\"submitted\" | \"streaming\" | \"done\" | \"error\" | \"stopped\"",
+      "default": "done"
+    },
+    {
+      "name": "author",
+      "type": "{ name, avatar? }"
+    },
+    {
+      "name": "actions",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "feedback",
+      "type": "\"up\" | \"down\" | null"
+    },
+    {
+      "name": "branch",
+      "type": "{ index, count }"
+    },
+    {
+      "name": "announce",
+      "type": "\"done\" | \"summary\" | \"none\"",
+      "default": "done"
+    },
+    {
+      "name": "onCopy · onRegenerate · onRetry",
+      "type": "() => void"
+    },
+    {
+      "name": "onFeedback",
+      "type": "(detail: { value }) => void"
+    },
+    {
+      "name": "onBranchChange",
+      "type": "(detail: { index }) => void"
+    },
+    {
+      "name": "onApprove · onReject",
+      "type": "(detail: { id, always? }) => void"
+    },
+    {
+      "name": "onOpenArtifact",
+      "type": "(detail: { id }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AiLabels>"
+    }
+  ],
+  "states": ["submitted", "streaming", "done", "error", "stopped"],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "surface-solid",
+    "surface-3",
+    "code-bg",
+    "code-radius",
+    "line",
+    "line-strong",
+    "font-mono",
+    "danger-text",
+    "glass-border"
+  ],
+  "classes": [
+    "z-assistant-message",
+    "z-assistant-message__avatar",
+    "z-assistant-message__content",
+    "z-assistant-message__text",
+    "z-assistant-message__actions",
+    "z-assistant-message__action",
+    "z-assistant-message__note",
+    "z-markdown",
+    "z-caret",
+    "z-citation",
+    "z-artifact-card"
+  ],
+  "a11y": "article nombrado por el asistente; con aria-busy=\"true\" mientras llega, sin anunciar cada trozo; al terminar se anuncia una vez «Response complete» (o con la primera frase, announce=\"summary\") por el anunciador central; parar y fallar también se anuncian. Una herramienta solo se anuncia cuando espera aprobación o falla. El cursor y el brillo de «Thinking…» son decorativos. El Markdown se construye como nodos (nunca marcado) y los enlaces solo salen con destino http, https o mailto; las imágenes del modelo no se cargan. Las acciones son una barra con una sola parada (←/→). Las citas son enlaces «Source 1: título». Sin React: .z-assistant-message con data-state y parts en <script type=\"application/json\" data-props>; setWidgetProps(el, { parts, state }) en cada trozo; emite z:copy, z:regenerate, z:feedback, z:branchchange, z:retry, z:approve, z:reject y z:openartifact.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Respuesta con razonamiento, herramienta y fuentes",
+      "code": "<AssistantMessage parts={[\n  { type: \"reasoning\", state: \"done\", startedAt: \"2026-11-21T09:00:00Z\", endedAt: \"2026-11-21T09:00:12Z\", text: \"Check the release process first.\" },\n  { type: \"tool\", id: \"t1\", name: \"search_docs\", title: \"Search docs\", status: \"success\", input: { query: \"release\" }, output: { hits: 2 }, startedAt: \"2026-11-21T09:00:12Z\", endedAt: \"2026-11-21T09:00:13Z\" },\n  { type: \"text\", text: answer },\n  { type: \"sources\", items: sources },\n]} branch={{ index: 2, count: 3 }} />"
+    },
+    {
+      "title": "En streaming",
+      "code": "<AssistantMessage state=\"streaming\" parts={[{ type: \"text\", text: \"Drafting the **release** notes\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Respuesta con razonamiento, herramienta y fuentes",
+      "code": "<div class=\"z-assistant-message\">\n  <script type=\"application/json\" data-props>{\"branch\": {\"index\": 2, \"count\": 3}, \"parts\": [{\"type\": \"reasoning\", \"state\": \"done\", \"startedAt\": \"2026-11-21T09:00:00Z\", \"endedAt\": \"2026-11-21T09:00:12Z\", \"text\": \"Check the release process first, then the contract.\"}, {\"type\": \"tool\", \"id\": \"t1\", \"name\": \"search_docs\", \"title\": \"Search docs\", \"status\": \"success\", \"input\": {\"query\": \"release\"}, \"output\": {\"hits\": 2}, \"startedAt\": \"2026-11-21T09:00:12Z\", \"endedAt\": \"2026-11-21T09:00:13Z\"}, {\"type\": \"text\", \"text\": \"Here is a **minimal** plan to ship the docs [1]:\\n\\n1. Freeze the API surface.\\n2. Generate the HTML contract.\\n3. Publish the site.\\n\\n```ts\\nexport const ready = true;\\n```\\n\\nSee the [release checklist](https://example.com/checklist) for details.\"}, {\"type\": \"sources\", \"items\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}]}</script>\n</div>"
+    },
+    {
+      "title": "En streaming",
+      "code": "<div class=\"z-assistant-message\" data-state=\"streaming\">\n  <script type=\"application/json\" data-props>{\"parts\": [{\"type\": \"text\", \"text\": \"Drafting the **release** notes\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: ChatGPT, Claude, Vercel AI Elements (Message, Response) y assistant-ui."
+}

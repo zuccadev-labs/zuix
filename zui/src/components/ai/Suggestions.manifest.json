@@ -1,0 +1,51 @@
+{
+  "name": "Suggestions",
+  "group": "ai",
+  "description": "Sugerencias de prompt: fila desplazable (con fundido en el borde solo si queda más) o rejilla de tarjetas para la pantalla de inicio.",
+  "import": "import { Suggestions } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "(string | { id?, text, icon?, description? })[]"
+    },
+    {
+      "name": "layout",
+      "type": "\"row\" | \"grid\"",
+      "default": "row"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Suggestions"
+    },
+    {
+      "name": "onSelect",
+      "type": "(detail: { id?, text }) => void"
+    }
+  ],
+  "states": ["row", "grid"],
+  "tokens": ["surface-solid", "surface-2", "line", "line-strong", "radius-md", "fg", "fg-muted", "accent-text"],
+  "classes": [
+    "z-suggestions",
+    "z-suggestions__list",
+    "z-suggestion",
+    "z-suggestion__icon",
+    "z-suggestion__text",
+    "z-suggestion__description"
+  ],
+  "a11y": "Lista con nombre de botones nativos. El fundido usa una animación ligada al desplazamiento y solo aparece si hay más por ese lado. Sin React: .z-suggestions con data-layout, data-label e items en <script type=\"application/json\" data-props>; emite z:select { id, text }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Rejilla de inicio",
+      "code": "<Suggestions layout=\"grid\" items={[{ text: \"Summarize this thread\", icon: \"document-text\", description: \"Key points and decisions\" }, { text: \"Draft release notes\", icon: \"pencil\", description: \"From the last 20 commits\" }, { text: \"Plan the week\", icon: \"calendar-days\", description: \"With the team's calendar\" }]} onSelect={({ text }) => ask(text)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Rejilla de inicio",
+      "code": "<div class=\"z-suggestions\" data-layout=\"grid\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"text\": \"Summarize this thread\", \"icon\": \"document-text\", \"description\": \"Key points and decisions\"}, {\"text\": \"Draft release notes\", \"icon\": \"pencil\", \"description\": \"From the last 20 commits\"}, {\"text\": \"Plan the week\", \"icon\": \"calendar-days\", \"description\": \"With the team's calendar\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: ChatGPT y Vercel AI Elements (Suggestion). Fundido según la guía scrollability-affordance-hints."
+}
