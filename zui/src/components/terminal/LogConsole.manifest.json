@@ -95,7 +95,7 @@
     "danger",
     "font-mono",
     "control-height-sm",
-    "layer-raised"
+    "surface-solid"
   ],
   "classes": [
     "z-log-console",
@@ -108,6 +108,7 @@
     "z-log-console__follow",
     "z-log-console__copy",
     "z-log-console__download",
+    "z-log-console__grid",
     "z-log-console__viewport",
     "z-log-console__row",
     "z-log-console__cell",

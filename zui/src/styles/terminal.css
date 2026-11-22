@@ -234,7 +234,8 @@
 
   /* ---- LogConsole ---- */
   .z-log-console {
-    --z-log-row-height: var(--z-control-height-sm);
+    /* Con puntero grueso la fila (y su celda) llega al objetivo táctil. */
+    --z-log-row-height: max(var(--z-control-height-sm), var(--z-touch-target, 0px));
     container: z-log-console / inline-size;
     inline-size: 100%;
     display: flex;
@@ -300,6 +301,8 @@
     text-align: center;
   }
   .z-log-console__find {
+    /* El campo de dentro también llega al objetivo táctil (el borde va aparte). */
+    --z-input-height: max(var(--z-control-height-md), calc(var(--z-touch-target, 0px) + 2px));
     flex: 1 1 calc(var(--z-space-20) * 2);
     inline-size: auto;
     max-inline-size: calc(var(--z-space-20) * 3.5);
@@ -327,12 +330,16 @@
     block-size: var(--z-log-row-height);
     box-shadow: inset 2px 0 0 transparent;
   }
+  .z-log-console__grid {
+    direction: ltr;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    text-align: left;
+  }
   .z-log-console__head {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: var(--z-layer-raised);
     border-block-end: 1px solid var(--z-line);
-    background: var(--z-code-bar-bg);
+    /* Opaca: las filas pasan por debajo al desplazar. */
+    background: var(--z-surface-solid);
     color: var(--z-fg-muted);
     font-family: var(--z-font-sans);
     font-size: var(--z-text-caption);
@@ -360,7 +367,11 @@
       background: var(--z-surface-2);
     }
   }
+  /* La celda ocupa el alto de la fila: es el objetivo de puntero (24 px, o el táctil con puntero grueso). */
   .z-log-console__cell {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
     min-width: 0;
     overflow: hidden;
     padding-inline: var(--z-space-2);
@@ -384,6 +395,7 @@
     padding-block: var(--z-space-1);
   }
   .z-log-console[data-wrapped] .z-log-console__cell[data-column="message"] {
+    display: block;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
@@ -663,17 +675,16 @@
     outline: var(--z-focus-width) solid var(--z-accent-ring);
     outline-offset: calc(var(--z-focus-width) * -1);
   }
+  /* El código no se parte dentro de una palabra: la tabla crece y la región se desplaza en horizontal. */
   .z-diff__table {
-    inline-size: 100%;
+    inline-size: max-content;
+    min-inline-size: 100%;
     border-collapse: collapse;
     font-family: var(--z-font-mono);
     font-size: var(--z-text-code);
     line-height: var(--z-leading-code);
     direction: ltr;
     text-align: left;
-  }
-  .z-diff__table[data-mode="split"] {
-    table-layout: fixed;
   }
   .z-diff__table td {
     padding-block: 0;
@@ -688,17 +699,13 @@
     white-space: nowrap;
     user-select: none;
   }
-  .z-diff__table[data-mode="split"] .z-diff__num {
-    inline-size: 5ch;
-  }
   .z-diff__sign {
     inline-size: 1%;
     color: var(--z-fg-muted);
     user-select: none;
   }
   .z-diff__code {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+    white-space: pre;
   }
   .z-diff__row[data-kind="insert"] > td,
   .z-diff__row[data-right="insert"] > :is(td:nth-child(3), td:nth-child(4)) {

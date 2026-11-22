@@ -162,7 +162,8 @@ function attach(root: HTMLElement, host: Host): () => void {
   const measure = () => {
     const vp = viewport();
     if (!vp) return;
-    const row = vp.querySelector<HTMLElement>(".z-log-console__row[aria-rowindex]:not(.z-log-console__head)");
+    // El alto de fila sale del CSS (la cabecera lo comparte; con puntero grueso, el objetivo táctil).
+    const row = root.querySelector<HTMLElement>(".z-log-console__head");
     const rowHeight = row?.offsetHeight || host.state().rowHeight;
     const s = host.state();
     if (vp.clientHeight !== s.viewport || rowHeight !== s.rowHeight) host.update({ viewport: vp.clientHeight, rowHeight });
@@ -401,8 +402,8 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
         h("div", { class: "z-log-console__levels", role: "group", "aria-label": labels.levels }, ...levelButtons),
         h(
           "span",
-          { class: "z-input z-input--search z-log-console__find", "data-size": "sm" },
-          h("span", { class: "z-input__icon" }, icon("magnifying-glass", 14)),
+          { class: "z-input z-input--search z-log-console__find", "data-size": "md" },
+          h("span", { class: "z-input__icon" }, icon("magnifying-glass", 16)),
           h("input", {
             class: "z-input__control z-log-console__search",
             type: "search",
@@ -458,24 +459,28 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
       h(
         "div",
         {
-          class: "z-log-console__viewport",
+          class: "z-log-console__grid",
           id: `${uid}-grid`,
           role: "grid",
           "aria-label": c.title || labels.console,
           "aria-rowcount": total + 1,
           "aria-colcount": COLUMNS.length,
           "aria-readonly": "true",
-          "data-virtual": on(virtual),
         },
+        // La cabecera queda fuera de lo que se desplaza: no tapa ninguna fila.
         h(
           "div",
-          { class: "z-log-console__row z-log-console__head", role: "row", "aria-rowindex": 1 },
-          ...COLUMNS.map((col) => h("div", { class: "z-log-console__cell", role: "columnheader", "data-column": col }, labels[col])),
+          { class: "z-log-console__headgroup", role: "rowgroup" },
+          h(
+            "div",
+            { class: "z-log-console__row z-log-console__head", role: "row", "aria-rowindex": 1 },
+            ...COLUMNS.map((col) => h("div", { class: "z-log-console__cell", role: "columnheader", "data-column": col }, labels[col])),
+          ),
         ),
         h(
           "div",
-          { class: "z-log-console__body", role: "rowgroup", s: { "--z-log-total": total, "--z-log-row-height": `${s.rowHeight}px` } },
-          ...rows,
+          { class: "z-log-console__viewport", "data-virtual": on(virtual) },
+          h("div", { class: "z-log-console__body", role: "rowgroup", s: { "--z-log-total": total } }, ...rows),
         ),
       ),
       total ? null : h("p", { class: "z-log-console__empty" }, labels.empty),

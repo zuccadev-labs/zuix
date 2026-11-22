@@ -435,8 +435,13 @@
   .z-duration-field__input {
     display: flex;
     align-items: center;
-    gap: var(--z-space-0-5);
+    gap: var(--z-space-2);
     white-space: nowrap;
+  }
+  .z-duration-field__unit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-0-5);
   }
   .z-duration-field__segment {
     display: inline-flex;
@@ -458,12 +463,8 @@
     color: var(--z-accent-text);
   }
   .z-duration-field__suffix {
-    margin-inline-end: var(--z-space-1-5);
     color: var(--z-fg-muted);
     font-size: var(--z-text-small);
-  }
-  .z-duration-field__suffix:last-of-type {
-    margin-inline-end: 0;
   }
   .z-duration-field__presets {
     display: flex;

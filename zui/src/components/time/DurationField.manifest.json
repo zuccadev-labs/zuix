@@ -98,6 +98,7 @@
     "z-duration-field",
     "z-duration-field__control",
     "z-duration-field__input",
+    "z-duration-field__unit",
     "z-duration-field__segment",
     "z-duration-field__suffix",
     "z-duration-field__presets",
