@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Pane, SplitPane } from "@zuccadev-labs/zuix-zout";
 import { Badge, CodeBlock, IconButton, Textarea, Tree, type TreeNode } from "@zuccadev-labs/zuix-zui";
 
@@ -25,15 +25,31 @@ const SOURCE: Record<string, string> = {
 
 type PaneId = "files" | "editor" | "output";
 
+const NARROW = "(max-width: 600px)";
+const subscribeNarrow = (notify: () => void) => {
+  const query = matchMedia(NARROW);
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+};
+const readNarrow = () => matchMedia(NARROW).matches;
+
 export function Editor() {
   const [file, setFile] = useState("App.tsx");
   const [focused, setFocused] = useState<PaneId>("editor");
-  const [sizes, setSizes] = useState([0.25, 0.75]);
+  const [sizes, setSizes] = useState(() => (readNarrow() ? [0.36, 0.64] : [0.25, 0.75]));
+  // En un teléfono la lista de archivos va encima: al lado le quedaban 90 px y los nombres no se leían.
+  const narrow = useSyncExternalStore(subscribeNarrow, readNarrow, () => false);
   const [text, setText] = useState(SOURCE);
 
   return (
     <div className="app-editor" data-testid="editor">
-      <SplitPane sizes={sizes} onSizesChange={setSizes} dividerLabel="Resize file list" className="app-split-main">
+      <SplitPane
+        direction={narrow ? "column" : "row"}
+        sizes={sizes}
+        onSizesChange={setSizes}
+        dividerLabel="Resize file list"
+        className="app-split-main"
+      >
         {/* biome-ignore lint/a11y/noStaticElementInteractions: no es un control; solo anota qué panel tiene el foco para resaltarlo. La interacción está en los controles de dentro. */}
         <div
           className="app-pane-slot"
