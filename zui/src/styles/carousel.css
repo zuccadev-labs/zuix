@@ -411,8 +411,22 @@
   .z-carousel[data-mode="snap"][data-align="center"] .z-carousel__slide {
     scroll-snap-align: center;
   }
-  .z-carousel[data-mode="snap"][data-align="center"]:not([data-orientation="vertical"]) .z-carousel__track {
-    padding-inline: max(0px, calc((100cqi - var(--z-carousel-slide-width)) / 2));
+  /* Medio hueco a cada lado con dos separadores (no relleno: es geometría calculada, no espacio de la escala). Van
+     antes y después de cualquier slide aparcado (`order` ±2). */
+  .z-carousel[data-mode="snap"][data-align="center"] .z-carousel__track::before,
+  .z-carousel[data-mode="snap"][data-align="center"] .z-carousel__track::after {
+    content: "";
+    flex: none;
+    order: -2;
+    inline-size: max(0px, calc((100cqi - var(--z-carousel-slide-width)) / 2 - var(--z-carousel-gap)));
+  }
+  .z-carousel[data-mode="snap"][data-align="center"] .z-carousel__track::after {
+    order: 2;
+  }
+  .z-carousel[data-mode="snap"][data-align="center"][data-orientation="vertical"] .z-carousel__track::before,
+  .z-carousel[data-mode="snap"][data-align="center"][data-orientation="vertical"] .z-carousel__track::after {
+    inline-size: auto;
+    block-size: max(0px, calc((100cqb - var(--z-carousel-slide-width)) / 2 - var(--z-carousel-gap)));
   }
 
   /* Bucle sin réplicas (guía `carousel`): el primer slide se aparca detrás del último en los dos últimos índices y
@@ -535,7 +549,7 @@
 
   /* ---- Prisma y coverflow: profundidad 3D sobre el desplazamiento nativo ---- */
   .z-carousel:is([data-effect="prism"], [data-effect="coverflow"]) {
-    --z-carousel-slide-width: min(54cqi, 32rem);
+    --z-carousel-slide-width: min(46cqi, 30rem);
     --z-carousel-gap: var(--z-space-4);
     --z-carousel-radius: var(--z-radius-panel);
   }
@@ -624,7 +638,6 @@
     perspective: 700px;
   }
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__track {
-    padding-block: max(0px, calc((100cqb - var(--z-carousel-slide-width)) / 2));
     transform-style: preserve-3d;
   }
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide {
@@ -660,7 +673,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .z-carousel[data-mode="snap"]:is([data-effect="coverflow"], [data-effect="prism"]) .z-carousel__face {
-      transform: translateX(calc(clamp(-2.5, var(--z-slide-progress), 2.5) * var(--z-carousel-dir) * -26%))
+      transform: translateX(calc(clamp(-2.5, var(--z-slide-progress), 2.5) * var(--z-carousel-dir) * -30%))
         translateZ(calc(min(var(--z-slide-abs), 2) * -150px * var(--z-carousel-depth)))
         rotateY(calc(var(--z-slide-side) * -38deg * var(--z-carousel-depth)));
       opacity: clamp(0, calc(2.6 - var(--z-slide-abs)), 1);
