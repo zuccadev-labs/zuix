@@ -258,8 +258,10 @@ function attach(root: HTMLElement, host: Host): () => void {
     else if (key === "ArrowLeft") col--;
     else if (key === "PageDown") row += page;
     else if (key === "PageUp") row -= page;
-    else if (key === "Home") event.ctrlKey ? (row = 0) : (col = 0);
-    else if (key === "End") event.ctrlKey ? (row = total - 1) : (col = COLUMNS.length - 1);
+    else if (key === "Home" && event.ctrlKey) row = 0;
+    else if (key === "Home") col = 0;
+    else if (key === "End" && event.ctrlKey) row = total - 1;
+    else if (key === "End") col = COLUMNS.length - 1;
     else return;
     event.preventDefault();
     row = Math.max(0, Math.min(total - 1, row));

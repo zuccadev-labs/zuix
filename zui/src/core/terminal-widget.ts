@@ -51,6 +51,7 @@ export interface TerminalRun {
 }
 
 /** Lo que puede devolver una orden: nada, texto, un código de salida, una promesa de eso o un flujo de trozos. */
+// biome-ignore lint/suspicious/noConfusingVoidType: es el valor de retorno de un callback; una orden que no devuelve nada es lo habitual.
 export type TerminalResult = void | string | number | Promise<void | string | number> | AsyncIterable<string>;
 
 export interface TerminalProps {
@@ -120,7 +121,13 @@ export const terminalApi = (el: HTMLElement | null | undefined): TerminalApi | n
 
 const lineCache = new WeakMap<AnsiLine, VEl>();
 // Lo que la persona escribe no lleva secuencias: se quitan los caracteres de control antes de repetirlo en la salida.
-const visible = (text: string) => text.replace(/[\x00-\x08\x0b-\x1f\x7f]/g, "");
+const visible = (text: string) =>
+  [...text]
+    .filter((ch) => {
+      const code = ch.charCodeAt(0);
+      return code === 9 || (code >= 32 && code !== 127);
+    })
+    .join("");
 const isIterable = (v: unknown): v is AsyncIterable<string> => typeof (v as AsyncIterable<string>)?.[Symbol.asyncIterator] === "function";
 const isPromise = (v: unknown): v is Promise<unknown> => typeof (v as Promise<unknown>)?.then === "function";
 

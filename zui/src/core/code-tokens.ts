@@ -153,7 +153,7 @@ export function tokenize(code: string, language?: string): CodeToken[] {
     for (const [type, re] of rules) {
       re.lastIndex = at;
       const m = re.exec(code);
-      if (m && m[0].length) {
+      if (m?.[0].length) {
         push(type, m[0]);
         at += m[0].length;
         matched = true;
