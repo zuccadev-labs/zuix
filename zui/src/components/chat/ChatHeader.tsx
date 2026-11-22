@@ -1,7 +1,20 @@
 import type { MouseEventHandler, ReactNode } from "react";
+import type { IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { IconButton } from "../actions/IconButton";
 import { Avatar, type AvatarStatus } from "../data/Avatar";
+import { Menu } from "../overlay/Menu";
+
+/** Acción secundaria de la cabecera: botón de icono en ancho, entrada del menú «Más» en estrecho. */
+export interface ChatHeaderAction {
+  id: string;
+  icon: IconName;
+  label: string;
+  onSelect?: () => void;
+  /** Botón pulsado (un panel abierto). */
+  active?: boolean;
+  disabled?: boolean;
+}
 
 export interface ChatHeaderProps {
   title: ReactNode;
@@ -20,8 +33,15 @@ export interface ChatHeaderProps {
   onBack?: MouseEventHandler<HTMLButtonElement>;
   /** Nombre del botón de volver: dice adónde vuelve («Back to chats»). */
   backLabel?: string;
-  /** Acciones (llamada, vídeo, buscar, menú): IconButton. */
+  /** Acciones (llamada, vídeo, buscar, menú): IconButton. Siempre a la vista. */
   actions?: ReactNode;
+  /**
+   * Acciones secundarias (vídeo, detalles, buscar). En una cabecera ancha son botones de icono junto a `actions`; en
+   * una estrecha (420 px o menos) pasan a un menú «Más» y el nombre conserva su sitio.
+   */
+  moreActions?: ChatHeaderAction[];
+  /** Nombre del botón del menú «Más». */
+  moreLabel?: string;
   /** Nivel del título (2 por defecto). */
   level?: 2 | 3;
   /** Id del título, para nombrar la conversación con `aria-labelledby`. */
@@ -45,6 +65,8 @@ export function ChatHeader({
   onBack,
   backLabel = "Back",
   actions,
+  moreActions,
+  moreLabel = "More actions",
   level = 2,
   titleId,
   onTitleClick,
@@ -77,7 +99,26 @@ export function ChatHeader({
       ) : (
         <span className="z-chat-header__identity">{identity}</span>
       )}
-      {actions ? <span className="z-chat-header__actions">{actions}</span> : null}
+      {actions || moreActions?.length ? (
+        <span className="z-chat-header__actions">
+          {actions}
+          {moreActions?.length ? (
+            <>
+              <span className="z-chat-header__secondary">
+                {moreActions.map((a) => (
+                  <IconButton key={a.id} icon={a.icon} label={a.label} active={a.active} disabled={a.disabled} onClick={a.onSelect} />
+                ))}
+              </span>
+              <span className="z-chat-header__more">
+                <Menu
+                  trigger={<IconButton icon="ellipsis-vertical" label={moreLabel} />}
+                  items={moreActions.map((a) => ({ id: a.id, label: a.label, icon: a.icon, onSelect: a.onSelect, disabled: a.disabled }))}
+                />
+              </span>
+            </>
+          ) : null}
+        </span>
+      ) : null}
     </header>
   );
 }

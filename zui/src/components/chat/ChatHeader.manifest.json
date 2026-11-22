@@ -48,7 +48,19 @@
     },
     {
       "name": "actions",
-      "type": "ReactNode"
+      "type": "ReactNode",
+      "description": "Acciones que se ven siempre (IconButton)."
+    },
+    {
+      "name": "moreActions",
+      "type": "ChatHeaderAction[]",
+      "description": "Acciones secundarias `{ id, icon, label, onSelect?, active?, disabled? }`: botones de icono en una cabecera ancha y menú «Más» en una de 420 px o menos, para que el nombre no se corte."
+    },
+    {
+      "name": "moreLabel",
+      "type": "string",
+      "default": "More actions",
+      "description": "Nombre del botón del menú «Más»."
     },
     {
       "name": "onTitleClick",
@@ -74,14 +86,20 @@
     "z-chat-header__titles",
     "z-chat-header__title",
     "z-chat-header__status",
-    "z-chat-header__actions"
+    "z-chat-header__actions",
+    "z-chat-header__secondary",
+    "z-chat-header__more"
   ],
-  "a11y": "El nombre es un encabezado (h2 por defecto) y puede nombrar la conversación con titleId. El botón de volver dice adónde vuelve. La presencia del avatar tiene nombre propio. Las acciones son IconButton con nombre.",
-  "behavior": "none",
+  "a11y": "El nombre es un encabezado (h2 por defecto) y puede nombrar la conversación con titleId. El botón de volver dice adónde vuelve. La presencia del avatar tiene nombre propio. Las acciones son IconButton con nombre. Las acciones secundarias son botones con nombre en ancho y, en estrecho, entradas de un menú (patrón APG «menu button»).",
+  "behavior": "dom",
   "examples": [
     {
       "title": "Contacto en línea con acciones",
       "code": "<ChatHeader title=\"Ana López\" presence=\"online\" presenceLabel=\"Online\" status=\"online\" statusTone=\"accent\" actions={<>\n  <IconButton icon=\"phone\" label=\"Voice call\" />\n  <IconButton icon=\"video-camera\" label=\"Video call\" />\n  <IconButton icon=\"magnifying-glass\" label=\"Search in chat\" />\n</>} />"
+    },
+    {
+      "title": "Acciones secundarias que pasan a un menú en estrecho",
+      "code": "<ChatHeader title=\"Ana López\" presence=\"online\" presenceLabel=\"Online\" status=\"online\" statusTone=\"accent\" actions={<IconButton icon=\"phone\" label=\"Voice call\" />} moreActions={[\n  { id: \"video\", icon: \"video-camera\", label: \"Video call\" },\n  { id: \"search\", icon: \"magnifying-glass\", label: \"Search in chat\" },\n]} />"
     },
     {
       "title": "Grupo con volver (móvil)",

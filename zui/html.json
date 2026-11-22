@@ -1038,13 +1038,20 @@
     "z-chat-header__titles",
     "z-chat-header__title",
     "z-chat-header__status",
-    "z-chat-header__actions"
+    "z-chat-header__actions",
+    "z-chat-header__secondary",
+    "z-chat-header__more"
    ],
-   "behavior": "none",
+   "behavior": "dom",
    "examples": [
     {
      "title": "Contacto en línea con acciones",
      "html": "<header class=\"z-chat-header\">\n  <span class=\"z-chat-header__identity\">\n    <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n      <span class=\"z-avatar__status\" data-status=\"online\" role=\"img\" aria-label=\"Online\">\n        <z-icon name=\"check\" size=\"8\"></z-icon>\n      </span>\n    </span>\n    <span class=\"z-chat-header__titles\">\n      <h2 class=\"z-chat-header__title\">Ana López</h2>\n      <span class=\"z-chat-header__status\" data-tone=\"accent\">online</span>\n    </span>\n  </span>\n  <span class=\"z-chat-header__actions\">\n    <button type=\"button\" title=\"Voice call\" aria-label=\"Voice call\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"phone\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Video call\" aria-label=\"Video call\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"video-camera\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Search in chat\" aria-label=\"Search in chat\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"magnifying-glass\" size=\"16\"></z-icon>\n    </button>\n  </span>\n</header>",
+     "source": "generated"
+    },
+    {
+     "title": "Acciones secundarias que pasan a un menú en estrecho",
+     "html": "<header class=\"z-chat-header\">\n  <span class=\"z-chat-header__identity\">\n    <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n      <span class=\"z-avatar__status\" data-status=\"online\" role=\"img\" aria-label=\"Online\">\n        <z-icon name=\"check\" size=\"8\"></z-icon>\n      </span>\n    </span>\n    <span class=\"z-chat-header__titles\">\n      <h2 class=\"z-chat-header__title\">Ana López</h2>\n      <span class=\"z-chat-header__status\" data-tone=\"accent\">online</span>\n    </span>\n  </span>\n  <span class=\"z-chat-header__actions\">\n    <button type=\"button\" title=\"Voice call\" aria-label=\"Voice call\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"phone\" size=\"16\"></z-icon>\n    </button>\n    <span class=\"z-chat-header__secondary\">\n      <button type=\"button\" title=\"Video call\" aria-label=\"Video call\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"video-camera\" size=\"16\"></z-icon>\n      </button>\n      <button type=\"button\" title=\"Search in chat\" aria-label=\"Search in chat\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"magnifying-glass\" size=\"16\"></z-icon>\n      </button>\n    </span>\n    <span class=\"z-chat-header__more\">\n      <button type=\"button\" title=\"More actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-state=\"closed\" id=\"_R_1b_-trigger\" aria-label=\"More actions\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"ellipsis-vertical\" size=\"16\"></z-icon>\n      </button>\n    </span>\n  </span>\n</header>",
      "source": "generated"
     },
     {

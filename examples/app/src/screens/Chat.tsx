@@ -287,21 +287,21 @@ export function ChatScreen() {
         setDetails(true);
         setView("details");
       }}
-      actions={
-        <>
-          <IconButton icon="phone" label="Voice call" data-testid="c-call" onClick={() => setCall("incoming")} />
-          <IconButton icon="video-camera" label="Video call" />
-          <IconButton
-            icon="information-circle"
-            label="Details"
-            active={details}
-            onClick={() => {
-              setDetails(!details);
-              setView(details ? "conversation" : "details");
-            }}
-          />
-        </>
-      }
+      actions={<IconButton icon="phone" label="Voice call" data-testid="c-call" onClick={() => setCall("incoming")} />}
+      // En estrecho, vídeo y detalles pasan al menú «Más» y el nombre se ve entero.
+      moreActions={[
+        { id: "video", icon: "video-camera", label: "Video call" },
+        {
+          id: "details",
+          icon: "information-circle",
+          label: "Details",
+          active: details,
+          onSelect: () => {
+            setDetails(!details);
+            setView(details ? "conversation" : "details");
+          },
+        },
+      ]}
     />
   );
 

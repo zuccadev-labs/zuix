@@ -201,6 +201,7 @@
 
   /* ---- Cabecera de chat ---- */
   .z-chat-header {
+    container: z-chat-header / inline-size;
     display: flex;
     align-items: center;
     gap: var(--z-space-3);
@@ -269,6 +270,22 @@
     display: flex;
     align-items: center;
     gap: var(--z-space-1);
+  }
+  .z-chat-header__secondary {
+    display: contents;
+  }
+  .z-chat-header__more {
+    display: none;
+  }
+  /* Estrecha: las acciones secundarias pasan al menú «Más» y el nombre conserva su sitio (con tres iconos quedaba en
+     «An…»). */
+  @container z-chat-header (max-width: 420px) {
+    .z-chat-header__secondary {
+      display: none;
+    }
+    .z-chat-header__more {
+      display: contents;
+    }
   }
 
   /* ---- Lista de mensajes ---- */

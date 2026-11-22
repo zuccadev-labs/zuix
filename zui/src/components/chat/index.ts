@@ -1,5 +1,5 @@
 export { CallCard, type CallCardLabels, type CallCardProps } from "./CallCard";
-export { ChatHeader, type ChatHeaderProps } from "./ChatHeader";
+export { ChatHeader, type ChatHeaderAction, type ChatHeaderProps } from "./ChatHeader";
 export { Composer, type ComposerFile, type ComposerLabels, type ComposerProps, type ComposerSend, type ComposerVoice } from "./Composer";
 export {
   ConversationList,
