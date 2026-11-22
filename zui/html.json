@@ -719,6 +719,30 @@
     }
    ]
   },
+  "FormatDuration": {
+   "group": "content",
+   "classes": [
+    "z-format"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Corta",
+     "html": "<time class=\"z-format\" dateTime=\"PT1H30M\" data-format=\"duration\" data-style=\"short\" data-locale=\"en-US\">1 hr, 30 min</time>",
+     "source": "generated"
+    },
+    {
+     "title": "Larga, en días",
+     "html": "<time class=\"z-format\" dateTime=\"P1DT2H\" data-format=\"duration\" data-style=\"long\" data-locale=\"en-US\">1 day, 2 hours</time>",
+     "source": "generated"
+    },
+    {
+     "title": "Reloj",
+     "html": "<time class=\"z-format\" dateTime=\"PT1H30M\" data-format=\"duration\" data-style=\"digital\" data-locale=\"en-US\">1:30:00</time>",
+     "source": "generated"
+    }
+   ]
+  },
   "FormatNumber": {
    "group": "content",
    "classes": [
@@ -3204,6 +3228,163 @@
      "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" id=\"tour-start\">Take the tour</button>\n\n<div class=\"z-liquid z-tour\" role=\"group\" aria-label=\"Tour step preview\">\n  <header class=\"z-tour__header\">\n    <p class=\"z-tour__progress\">Step 1 of 3</p>\n    <h2 class=\"z-tour__title\">Create a project</h2>\n  </header>\n  <div class=\"z-tour__body\">Projects group your files and members.</div>\n  <footer class=\"z-tour__footer\">\n    <button type=\"button\" class=\"z-dialog-btn z-tour__skip\" data-variant=\"secondary\">Skip tour</button>\n    <span class=\"z-tour__spacer\"></span>\n    <button type=\"button\" class=\"z-dialog-btn z-tour__primary\" data-variant=\"primary\">Next</button>\n  </footer>\n</div>",
      "source": "manual",
      "script": "import { startTour } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#tour-start\").addEventListener(\"click\", () => {\n  startTour({\n    steps: [\n      { target: \"#tour-start\", title: \"Create a project\", content: \"Projects group your files and members.\" },\n      { title: \"You are ready\", content: \"You can restart this tour from Help.\" },\n    ],\n  });\n});"
+    }
+   ]
+  },
+  "AnalogClock": {
+   "group": "time",
+   "classes": [
+    "z-analog-clock",
+    "z-analog-clock__time",
+    "z-analog-clock__face",
+    "z-analog-clock__dial",
+    "z-analog-clock__mark",
+    "z-analog-clock__numeral",
+    "z-analog-clock__hand",
+    "z-analog-clock__second",
+    "z-analog-clock__pin",
+    "z-analog-clock__caption"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Esfera con números en los cuartos",
+     "html": "<div class=\"z-analog-clock\" data-numerals=\"quarters\" data-marks=\"minutes\" data-label=\"Madrid\" data-time-zone=\"Europe/Madrid\" data-caption></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Pequeño, sin segundero",
+     "html": "<div class=\"z-analog-clock\" data-size=\"sm\" data-seconds=\"false\" data-time-zone=\"America/New_York\" data-label=\"New York\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Clock": {
+   "group": "time",
+   "classes": [
+    "z-clock",
+    "z-clock__label",
+    "z-clock__time",
+    "z-clock__digits",
+    "z-clock__sep",
+    "z-clock__period",
+    "z-clock__meta",
+    "z-clock__date",
+    "z-clock__zone"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Hora local con segundos y fecha",
+     "html": "<div class=\"z-clock\" data-seconds data-date data-blink data-label=\"Local\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Otra zona, 24 h",
+     "html": "<div class=\"z-clock\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Countdown": {
+   "group": "time",
+   "classes": [
+    "z-countdown",
+    "z-countdown__timer",
+    "z-countdown__units",
+    "z-countdown__unit",
+    "z-countdown__value",
+    "z-countdown__digit",
+    "z-countdown__label",
+    "z-countdown__complete",
+    "z-countdown__target",
+    "z-countdown__live"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Cajas hasta el lanzamiento",
+     "html": "<div class=\"z-countdown\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "En línea, sin segundos",
+     "html": "<div class=\"z-countdown\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Cifras que giran",
+     "html": "<div class=\"z-countdown\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "DurationField": {
+   "group": "time",
+   "classes": [
+    "z-duration-field",
+    "z-duration-field__control",
+    "z-duration-field__input",
+    "z-duration-field__segment",
+    "z-duration-field__suffix",
+    "z-duration-field__presets",
+    "z-duration-field__preset"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Horas y minutos con preajustes",
+     "html": "<div class=\"z-duration-field\" data-label=\"Meeting length\" data-value=\"PT45M\" data-step=\"5\" data-presets=\"PT15M PT30M PT1H\" data-name=\"length\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Minutos y segundos, con tope",
+     "html": "<div class=\"z-duration-field\" data-label=\"Lap time\" data-units=\"minutes seconds\" data-max=\"PT59M59S\" data-value=\"PT4M30S\" data-size=\"sm\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "TimeZoneSelect": {
+   "group": "time",
+   "classes": [
+    "z-combobox"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Zona del evento",
+     "html": "<span class=\"z-input z-combobox\" id=\"event-tz\" data-size=\"md\" data-state=\"closed\" data-z-tz-select data-zones=\"America/Los_Angeles America/New_York America/Caracas Europe/London Europe/Madrid Asia/Kolkata Asia/Tokyo Australia/Sydney\">\n  <span class=\"z-input__icon\"><z-icon name=\"globe-alt\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Event time zone\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a time zone\" />\n  <input type=\"hidden\" name=\"tz\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"event-tz-list\" role=\"listbox\" aria-label=\"Event time zone\"></div>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "WorldClock": {
+   "group": "time",
+   "classes": [
+    "z-world-clock",
+    "z-world-clock__list",
+    "z-world-clock__city",
+    "z-world-clock__body",
+    "z-world-clock__place",
+    "z-world-clock__name",
+    "z-world-clock__diff",
+    "z-world-clock__day",
+    "z-world-clock__now",
+    "z-world-clock__icon",
+    "z-world-clock__time",
+    "z-world-clock__remove"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Rejilla de ciudades",
+     "html": "<div class=\"z-world-clock\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Lista con esferas",
+     "html": "<div class=\"z-world-clock\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>",
+     "source": "manual"
     }
    ]
   }

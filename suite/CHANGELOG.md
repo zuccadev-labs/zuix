@@ -5,6 +5,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Subruta `./zui/dom/time`: el comportamiento sin framework de la familia de tiempo de `@zuccadev-labs/zuix-zui`.
+
 ## [0.3.0] - 2026-11-21
 
 ### Añadido

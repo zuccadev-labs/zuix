@@ -1,0 +1,102 @@
+{
+  "name": "WorldClock",
+  "group": "time",
+  "description": "Varias zonas a la vez, en lista o rejilla: hora, diferencia con la zona de referencia («+6 h»), día distinto («Tomorrow») y día o noche (sol o luna, aproximado de 7 a 19 h). Variante con esferas pequeñas y botón para quitar cada ciudad.",
+  "import": "import { WorldClock } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "zones",
+      "type": "{ timeZone: string; label?: string }[]",
+      "required": true
+    },
+    {
+      "name": "layout",
+      "type": "enum",
+      "values": ["list", "grid"],
+      "default": "list"
+    },
+    {
+      "name": "reference",
+      "type": "string",
+      "description": "Zona base de las diferencias; por defecto la del dispositivo."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["digital", "analog"],
+      "default": "digital"
+    },
+    {
+      "name": "seconds",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": ["h11", "h12", "h23", "h24"]
+    },
+    {
+      "name": "value",
+      "type": "number | string | Date",
+      "description": "Instante fijo."
+    },
+    {
+      "name": "removable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onRemove",
+      "type": "(detail: { timeZone: string; index: number }) => void"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<WorldClockLabels>",
+      "description": "ahead, behind, same, today, tomorrow, yesterday, day, night, remove, list."
+    }
+  ],
+  "states": ["day", "night", "tomorrow", "yesterday"],
+  "tokens": ["fg", "fg-muted", "accent-text", "warning", "info", "line", "card-bg", "card-radius", "font-display", "text-title"],
+  "classes": [
+    "z-world-clock",
+    "z-world-clock__list",
+    "z-world-clock__city",
+    "z-world-clock__body",
+    "z-world-clock__place",
+    "z-world-clock__name",
+    "z-world-clock__diff",
+    "z-world-clock__day",
+    "z-world-clock__now",
+    "z-world-clock__icon",
+    "z-world-clock__time",
+    "z-world-clock__remove"
+  ],
+  "a11y": "Lista con nombre; cada ciudad se lee como una frase completa en texto oculto («Tokyo, 18:42, 14 hours ahead, Tomorrow, Night») y lo visual va con aria-hidden, así que el sol y la luna también tienen su texto. Sin región viva. El botón de quitar dice qué ciudad quita y deja el foco en la siguiente. Sin React: .z-world-clock con un ul de li[data-time-zone][data-label] (o zones en <script type=\"application/json\" data-props>), data-layout, data-reference, data-variant, data-seconds, data-removable y data-locale; emite z:remove { timeZone, index }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Rejilla de ciudades",
+      "code": "<WorldClock layout=\"grid\" reference=\"Europe/Madrid\" zones={[{ timeZone: \"Europe/Madrid\", label: \"Madrid\" }, { timeZone: \"America/New_York\", label: \"New York\" }, { timeZone: \"Asia/Tokyo\", label: \"Tokyo\" }, { timeZone: \"Australia/Sydney\", label: \"Sydney\" }]} />"
+    },
+    {
+      "title": "Lista con esferas",
+      "code": "<WorldClock variant=\"analog\" removable zones={[{ timeZone: \"America/Caracas\", label: \"Caracas\" }, { timeZone: \"Europe/London\", label: \"London\" }, { timeZone: \"Asia/Kolkata\", label: \"Mumbai\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Rejilla de ciudades",
+      "code": "<div class=\"z-world-clock\" data-layout=\"grid\" data-reference=\"Europe/Madrid\">\n  <ul>\n    <li data-time-zone=\"Europe/Madrid\" data-label=\"Madrid\"></li>\n    <li data-time-zone=\"America/New_York\" data-label=\"New York\"></li>\n    <li data-time-zone=\"Asia/Tokyo\" data-label=\"Tokyo\"></li>\n    <li data-time-zone=\"Australia/Sydney\" data-label=\"Sydney\"></li>\n  </ul>\n</div>"
+    },
+    {
+      "title": "Lista con esferas",
+      "code": "<div class=\"z-world-clock\" data-variant=\"analog\" data-removable>\n  <ul>\n    <li data-time-zone=\"America/Caracas\" data-label=\"Caracas\"></li>\n    <li data-time-zone=\"Europe/London\" data-label=\"London\"></li>\n    <li data-time-zone=\"Asia/Kolkata\" data-label=\"Mumbai\"></li>\n  </ul>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: el reloj mundial de iOS y Android."
+}

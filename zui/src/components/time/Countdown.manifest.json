@@ -1,0 +1,124 @@
+{
+  "name": "Countdown",
+  "group": "time",
+  "description": "Cuenta atrás hasta un instante (un lanzamiento, el fin de una oferta): días, horas, minutos y segundos en cajas (`segments`), en línea o con cifras que giran (`flip`). La diferencia es entre instantes absolutos, así que un cambio de hora en medio no la altera. A diferencia de Timer, no tiene controles: cuenta hacia una fecha.",
+  "import": "import { Countdown } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "to",
+      "type": "number | string | Date",
+      "required": true,
+      "description": "Instante objetivo (ISO con zona, ms o Date)."
+    },
+    {
+      "name": "units",
+      "type": "(\"days\" | \"hours\" | \"minutes\" | \"seconds\")[]",
+      "default": ["days", "hours", "minutes", "seconds"],
+      "description": "La mayor absorbe lo de las que faltan."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["segments", "inline", "flip"],
+      "default": "segments"
+    },
+    {
+      "name": "announceEvery",
+      "type": "number",
+      "description": "Segundos entre anuncios; sin él, cada hora, cada 15 min en la última hora y cada minuto en los últimos cinco; 0 solo anuncia el final."
+    },
+    {
+      "name": "showTarget",
+      "type": "boolean",
+      "default": false,
+      "description": "Fecha y hora objetivo bajo las cifras."
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona en la que se muestra el objetivo."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "onComplete",
+      "type": "(detail: { to: number }) => void"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<CountdownLabels>",
+      "description": "days, hours, minutes, seconds, timer, complete, left, target."
+    },
+    {
+      "name": "now",
+      "type": "number | string | Date",
+      "description": "Momento de referencia fijo (capturas y pruebas)."
+    }
+  ],
+  "states": ["running", "done"],
+  "tokens": [
+    "surface-2",
+    "line",
+    "control-radius-lg",
+    "control-radius",
+    "glass-highlight",
+    "fg",
+    "fg-muted",
+    "success-text",
+    "font-display",
+    "text-display-sm",
+    "duration-normal",
+    "ease-out"
+  ],
+  "classes": [
+    "z-countdown",
+    "z-countdown__timer",
+    "z-countdown__units",
+    "z-countdown__unit",
+    "z-countdown__value",
+    "z-countdown__digit",
+    "z-countdown__label",
+    "z-countdown__complete",
+    "z-countdown__target",
+    "z-countdown__live"
+  ],
+  "a11y": "role=timer (vivo implícito off) con nombre «Countdown: 2 days, 3 hours, 5 minutes»; los segundos solo entran en el nombre en el último minuto. Las cajas van con aria-hidden. Los hitos («2 hours left») y el final («Time's up») se anuncian en una región status aparte, con retraso corto y nunca cada segundo; un salto largo (pestaña oculta) cuenta como un solo hito. Cifras tabulares; las que giran (`flip`) no se animan con movimiento reducido. El final llega aunque la pieza esté fuera de pantalla. Sin React: .z-countdown con data-to, data-units=\"days hours minutes\", data-variant, data-announce-every, data-show-target, data-time-zone, data-size, data-locale y los textos en data-*-label (data-complete-label…); emite z:complete { to }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Cajas hasta el lanzamiento",
+      "code": "<Countdown to=\"2027-01-15T17:00:00Z\" showTarget labels={{ timer: \"Launch countdown\", target: \"Launch {date}\" }} />"
+    },
+    {
+      "title": "En línea, sin segundos",
+      "code": "<Countdown variant=\"inline\" units={[\"days\", \"hours\", \"minutes\"]} to=\"2026-12-31T23:00:00Z\" labels={{ timer: \"Offer ends in\" }} />"
+    },
+    {
+      "title": "Cifras que giran",
+      "code": "<Countdown variant=\"flip\" units={[\"hours\", \"minutes\", \"seconds\"]} to={Date.now() + 90 * 60_000} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Cajas hasta el lanzamiento",
+      "code": "<div class=\"z-countdown\" data-to=\"2027-01-15T17:00:00Z\" data-show-target data-timer-label=\"Launch countdown\" data-target-label=\"Launch {date}\"></div>"
+    },
+    {
+      "title": "En línea, sin segundos",
+      "code": "<div class=\"z-countdown\" data-variant=\"inline\" data-units=\"days hours minutes\" data-to=\"2026-12-31T23:00:00Z\" data-timer-label=\"Offer ends in\"></div>"
+    },
+    {
+      "title": "Cifras que giran",
+      "code": "<div class=\"z-countdown\" data-variant=\"flip\" data-units=\"hours minutes seconds\" data-to=\"2027-03-01T09:00:00Z\"></div>"
+    }
+  ],
+  "origin": "Statistic.Countdown de Ant Design; role=timer de WAI-ARIA."
+}

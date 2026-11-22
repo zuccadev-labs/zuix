@@ -1,0 +1,82 @@
+{
+  "name": "TimeZoneSelect",
+  "group": "time",
+  "description": "Selector de zona horaria buscable sobre Combobox: opciones «Madrid · GMT+1 · 10:42» agrupadas por región o por desfase, con la lista del navegador (`Intl.supportedValuesOf`) o una restringida. Se busca por ciudad, por identificador IANA o por desfase («+5:30»).",
+  "import": "import { TimeZoneSelect } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | null"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(timeZone: string | null, option: ZoneOption | null) => void"
+    },
+    {
+      "name": "zones",
+      "type": "string[]",
+      "description": "Zonas que se ofrecen; por defecto todas."
+    },
+    {
+      "name": "names",
+      "type": "Record<string, string>",
+      "description": "Nombre visible de cada zona."
+    },
+    {
+      "name": "showOffset",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showTime",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "groupBy",
+      "type": "enum",
+      "values": ["region", "offset", "none"],
+      "default": "region"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Search a time zone"
+    },
+    {
+      "name": "aria-label",
+      "type": "string",
+      "default": "Time zone"
+    }
+  ],
+  "states": ["closed", "open", "selected"],
+  "tokens": ["control-bg", "control-border", "control-radius", "popup-bg", "accent-soft"],
+  "classes": ["z-combobox"],
+  "a11y": "El patrón combobox de la suite (foco en el campo, opción activa con aria-activedescendant, grupos con nombre). Cada opción se lee entera: ciudad, desfase y hora. Desfases y horas se calculan al abrir la lista, no en cada segundo. Sin React: un Combobox del modo DOM con data-z-tz-select (data-zones, data-show-offset=\"false\", data-show-time=\"false\", data-locale); la lista se rellena al hidratar y se renueva al enfocar. refreshTimeZoneSelect(el) la recalcula.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Zona del evento",
+      "code": "<TimeZoneSelect aria-label=\"Event time zone\" defaultValue=\"Europe/Madrid\" name=\"tz\" />"
+    },
+    {
+      "title": "Lista corta por desfase",
+      "code": "<TimeZoneSelect groupBy=\"offset\" zones={[\"America/Los_Angeles\", \"America/New_York\", \"Europe/London\", \"Europe/Madrid\", \"Asia/Kolkata\", \"Asia/Tokyo\"]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Zona del evento",
+      "code": "<span class=\"z-input z-combobox\" id=\"event-tz\" data-size=\"md\" data-state=\"closed\" data-z-tz-select data-zones=\"America/Los_Angeles America/New_York America/Caracas Europe/London Europe/Madrid Asia/Kolkata Asia/Tokyo Australia/Sydney\">\n  <span class=\"z-input__icon\"><z-icon name=\"globe-alt\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"Event time zone\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a time zone\" />\n  <input type=\"hidden\" name=\"tz\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"event-tz-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"event-tz-list\" role=\"listbox\" aria-label=\"Event time zone\"></div>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio sobre Combobox; zonas de Intl.supportedValuesOf."
+}

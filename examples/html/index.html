@@ -513,6 +513,12 @@ pnpm dev</code>
 <time class="z-format" dateTime="2026-11-20" data-format="date" data-locale="en-US" data-options="{&quot;dateStyle&quot;:&quot;long&quot;}">November 20, 2026</time>
   </div>
 </section>
+<section class="z-card demo" data-component="FormatDuration" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FormatDuration</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<time class="z-format" dateTime="PT1H30M" data-format="duration" data-style="short" data-locale="en-US">1 hr, 30 min</time>
+  </div>
+</section>
 <section class="z-card demo" data-component="FormatNumber" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">FormatNumber</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -2984,6 +2990,60 @@ malaga" data-ignore-accents="">Un
     <span class="z-tour__spacer"></span>
     <button type="button" class="z-dialog-btn z-tour__primary" data-variant="primary">Next</button>
   </footer>
+</div>
+  </div>
+</section>
+</div>
+<h2 class="page__group">time</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="AnalogClock" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">AnalogClock</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-analog-clock" data-numerals="quarters" data-marks="minutes" data-label="Madrid" data-time-zone="Europe/Madrid" data-caption></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Clock" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Clock</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-clock" data-seconds data-date data-blink data-label="Local"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Countdown" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Countdown</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-countdown" data-to="2027-01-15T17:00:00Z" data-show-target data-timer-label="Launch countdown" data-target-label="Launch {date}"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="DurationField" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DurationField</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-duration-field" data-label="Meeting length" data-value="PT45M" data-step="5" data-presets="PT15M PT30M PT1H" data-name="length"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="TimeZoneSelect" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TimeZoneSelect</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-input z-combobox" id="event-tz" data-size="md" data-state="closed" data-z-tz-select data-zones="America/Los_Angeles America/New_York America/Caracas Europe/London Europe/Madrid Asia/Kolkata Asia/Tokyo Australia/Sydney">
+  <span class="z-input__icon"><z-icon name="globe-alt" size="16"></z-icon></span>
+  <input class="z-input__control" type="text" role="combobox" aria-label="Event time zone" aria-autocomplete="list" aria-expanded="false" aria-controls="event-tz-list" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Search a time zone" />
+  <input type="hidden" name="tz" value="" />
+  <button type="button" class="z-input__action z-combobox__toggle" aria-label="Show options" aria-expanded="false" aria-controls="event-tz-list" tabindex="-1"><z-icon name="chevron-down" size="16"></z-icon></button>
+</span>
+<div popover="manual" class="z-liquid z-listbox" data-size="md" role="presentation">
+  <div class="z-listbox__viewport" id="event-tz-list" role="listbox" aria-label="Event time zone"></div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="WorldClock" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">WorldClock</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-world-clock" data-layout="grid" data-reference="Europe/Madrid">
+  <ul>
+    <li data-time-zone="Europe/Madrid" data-label="Madrid"></li>
+    <li data-time-zone="America/New_York" data-label="New York"></li>
+    <li data-time-zone="Asia/Tokyo" data-label="Tokyo"></li>
+    <li data-time-zone="Australia/Sydney" data-label="Sydney"></li>
+  </ul>
 </div>
   </div>
 </section>

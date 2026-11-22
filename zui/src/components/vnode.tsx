@@ -22,6 +22,13 @@ const ATTR: Record<string, string> = {
   "shape-rendering": "shapeRendering",
   "stroke-width": "strokeWidth",
   crossorigin: "crossOrigin",
+  "text-anchor": "textAnchor",
+  "dominant-baseline": "dominantBaseline",
+  "stroke-linecap": "strokeLinecap",
+  contenteditable: "contentEditable",
+  enterkeyhint: "enterKeyHint",
+  autocapitalize: "autoCapitalize",
+  autocorrect: "autoCorrect",
 };
 const noop = () => {};
 
@@ -64,6 +71,8 @@ function element(node: VEl, slots: Partial<Record<"minical" | "calendar" | "even
     props.value = chosen && typeof chosen === "object" && !("slot" in chosen) ? String(chosen.a?.value ?? "") : undefined;
     props.onChange = noop;
   }
+  // Un segmento editable lo escribe la interacción, no React: sin el aviso de contenido gestionado por React.
+  if (props.contentEditable) props.suppressContentEditableWarning = true;
   if (node.s) props.style = node.s as CSSProperties;
   if (node.k !== undefined) props.key = node.k;
   // Hijos como argumentos de createElement: una lista fija, sin claves de array.

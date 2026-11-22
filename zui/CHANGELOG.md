@@ -5,6 +5,34 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Familia de tiempo y hora (grupo `time`; contrato HTML, modo sin framework y binding de React sobre un solo árbol
+  de `core/vnode`):
+  - `Clock`: reloj digital con 12 o 24 h según el locale (o `hourCycle`), segundos, fecha y nombre de la zona
+    opcionales, zona IANA y separadores que laten.
+  - `AnalogClock`: esfera en SVG con marcas de horas o de minutos, números (cuartos o todos), segundero a saltos o
+    continuo y tres tamaños. Es una imagen con nombre («10:42, Madrid») que cambia una vez por minuto.
+  - `WorldClock`: varias zonas en lista o rejilla, con diferencia frente a una zona de referencia («+6 h»), día
+    distinto («Tomorrow»), día o noche y, con `removable`, botón para quitar cada ciudad (`onRemove`, `z:remove`).
+    Cada ciudad se lee como una frase completa.
+  - `Countdown`: cuenta atrás hasta un instante, en cajas, en línea o con cifras que giran. `role="timer"` sin
+    región viva; los hitos (cada hora, cada cuarto en la última hora, cada minuto en los últimos cinco, o
+    `announceEvery`) y el final van a una región `status` aparte, nunca cada segundo. `onComplete` y `z:complete`.
+  - `DurationField`: duración por segmentos (horas, minutos, segundos) con `spinbutton` por unidad, paso, tope,
+    preajustes y pegado de «1:30», «90m» o «PT1H30M». Valor ISO 8601 (`onValueChange`, `z:change`).
+  - `TimeZoneSelect`: Combobox de zonas IANA agrupadas por región o desfase, con desfase y hora en cada opción;
+    se busca por ciudad, identificador o desfase. En el modo DOM, `data-z-tz-select` sobre un Combobox.
+  - `FormatDuration` (grupo `content`): duración legible con `Intl.DurationFormat` en `long`, `short`, `narrow` o
+    `digital`, con respaldo donde falte, en un `<time datetime="PT…">`.
+- Un único temporizador compartido para todos los relojes (`core/ticker`): se programa al siguiente borde de segundo
+  o de minuto, se para con la pestaña oculta y para cada pieza fuera de pantalla, y la pone al día al volver.
+- `core/duration`, `core/clock`, `core/countdown` y `core/timezones`, con pruebas (también de propiedades con
+  fast-check). Desde la raíz: `formatDuration`, `parseISODuration`, `toISODuration`, `durationToMs`,
+  `listTimeZones`, `zoneOptions`, `groupZones` y `offsetText`.
+- Entrada `@zuccadev-labs/zuix-zui/dom/time` (`timeModule`, `refreshTimeZoneSelect`), también incluida en
+  `@zuccadev-labs/zuix-zui/dom`.
+
 ## [0.3.0] - 2026-11-21
 
 Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-tokens`. Botón, campo, select,

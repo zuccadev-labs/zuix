@@ -11,6 +11,7 @@ export * from "./components/agenda";
 export * from "./components/charts";
 export * from "./components/effects";
 export * from "./components/media";
+export * from "./components/time";
 export { cx } from "./cx";
 // Patrones del cargador DotMatrix (los mismos que dibuja el modo sin framework).
 export { DOT_PATTERNS, type DotPattern } from "./core/dotmatrix";
@@ -48,3 +49,15 @@ export {
   type Oklch,
   type Rgba,
 } from "./core/color";
+// Duraciones y zonas horarias (las que usan FormatDuration, DurationField, Countdown y TimeZoneSelect).
+export {
+  formatDuration,
+  parseISODuration,
+  toISODuration,
+  toMs as durationToMs,
+  type DurationInput,
+  type DurationParts,
+  type DurationStyle,
+  type DurationUnit,
+} from "./core/duration";
+export { groupZones, listTimeZones, offsetText, zoneOptions, type ZoneGroup, type ZoneOption } from "./core/timezones";

@@ -1,0 +1,98 @@
+{
+  "name": "Clock",
+  "group": "time",
+  "description": "Reloj digital: 12 o 24 h según el locale (o `hourCycle`), segundos y fecha opcionales, zona IANA, nombre de la zona y separadores que laten. Avanza con el temporizador compartido de la suite, que se para fuera de pantalla y con la pestaña oculta.",
+  "import": "import { Clock } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | string | Date",
+      "description": "Instante fijo; sin él, la hora actual."
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona IANA; por defecto la del dispositivo."
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": ["h11", "h12", "h23", "h24"],
+      "description": "Por defecto, el del locale."
+    },
+    {
+      "name": "seconds",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "date",
+      "type": "boolean | Intl.DateTimeFormatOptions",
+      "default": false,
+      "description": "Fecha bajo la hora."
+    },
+    {
+      "name": "blink",
+      "type": "boolean",
+      "default": false,
+      "description": "Separadores que laten (solo sin movimiento reducido)."
+    },
+    {
+      "name": "zone",
+      "type": "boolean | \"short\" | \"long\"",
+      "default": false,
+      "description": "Nombre de la zona: «GMT+1» o el largo."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Rótulo encima de la hora (una ciudad)."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "states": ["live", "fixed"],
+  "tokens": ["fg", "fg-muted", "font-display", "text-display-sm", "text-title", "text-display-lg", "weight-semibold", "tracking-tight"],
+  "classes": [
+    "z-clock",
+    "z-clock__label",
+    "z-clock__time",
+    "z-clock__digits",
+    "z-clock__sep",
+    "z-clock__period",
+    "z-clock__meta",
+    "z-clock__date",
+    "z-clock__zone"
+  ],
+  "a11y": "Texto en un <time datetime> con el desfase de la zona (`2026-11-21T10:42+01:00`). Sin región viva: un reloj no se anuncia solo; el lector lo lee al llegar a él. Los separadores que laten solo cambian la opacidad y se paran con movimiento reducido. Sin React: un .z-clock dentro de [data-z-dom] con data-time-zone, data-hour-cycle, data-seconds, data-date, data-blink, data-zone (\"short\"|\"long\"), data-label, data-size, data-value y data-locale.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Hora local con segundos y fecha",
+      "code": "<Clock seconds date blink label=\"Local\" />"
+    },
+    {
+      "title": "Otra zona, 24 h",
+      "code": "<Clock timeZone=\"Asia/Tokyo\" hourCycle=\"h23\" zone label=\"Tokyo\" size=\"sm\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Hora local con segundos y fecha",
+      "code": "<div class=\"z-clock\" data-seconds data-date data-blink data-label=\"Local\"></div>"
+    },
+    {
+      "title": "Otra zona, 24 h",
+      "code": "<div class=\"z-clock\" data-time-zone=\"Asia/Tokyo\" data-hour-cycle=\"h23\" data-zone data-label=\"Tokyo\" data-size=\"sm\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; formato con Intl.DateTimeFormat."
+}

@@ -1,0 +1,100 @@
+{
+  "name": "AnalogClock",
+  "group": "time",
+  "description": "Reloj de esfera en SVG: agujas de horas y minutos, segundero opcional (a saltos o continuo), marcas de horas o de minutos, números (ninguno, cuartos o todos), zona IANA y tres tamaños. La geometría de la esfera sale de core/clock.",
+  "import": "import { AnalogClock } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | string | Date",
+      "description": "Instante fijo; sin él, la hora actual."
+    },
+    {
+      "name": "timeZone",
+      "type": "string"
+    },
+    {
+      "name": "seconds",
+      "type": "boolean",
+      "default": true,
+      "description": "Segundero (decorativo)."
+    },
+    {
+      "name": "marks",
+      "type": "enum",
+      "values": ["hours", "minutes", "none"],
+      "default": "hours"
+    },
+    {
+      "name": "numerals",
+      "type": "enum",
+      "values": ["none", "quarters", "all"],
+      "default": "none"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "64, 160 o 240 px."
+    },
+    {
+      "name": "smooth",
+      "type": "boolean",
+      "default": false,
+      "description": "Segundero continuo (solo sin movimiento reducido)."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Lugar que acompaña a la hora en el nombre accesible."
+    },
+    {
+      "name": "caption",
+      "type": "boolean",
+      "default": false,
+      "description": "Rótulo y hora digital bajo la esfera."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "states": ["live", "fixed"],
+  "tokens": ["surface-2", "line-strong", "fg", "fg-muted", "fg-subtle", "accent", "font-display", "text-caption", "weight-semibold"],
+  "classes": [
+    "z-analog-clock",
+    "z-analog-clock__time",
+    "z-analog-clock__face",
+    "z-analog-clock__dial",
+    "z-analog-clock__mark",
+    "z-analog-clock__numeral",
+    "z-analog-clock__hand",
+    "z-analog-clock__second",
+    "z-analog-clock__pin",
+    "z-analog-clock__caption"
+  ],
+  "a11y": "La esfera es role=img dentro de un <time datetime>, con nombre «10:42, Madrid» que cambia una vez por minuto, nunca por segundo; el segundero y las marcas no se leen. Con movimiento reducido el segundero continuo se oculta. Sin React: .z-analog-clock con data-time-zone, data-seconds=\"false\", data-marks, data-numerals, data-size, data-smooth, data-label, data-caption, data-value y data-locale.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Esfera con números en los cuartos",
+      "code": "<AnalogClock numerals=\"quarters\" marks=\"minutes\" label=\"Madrid\" timeZone=\"Europe/Madrid\" caption />"
+    },
+    {
+      "title": "Pequeño, sin segundero",
+      "code": "<AnalogClock size=\"sm\" seconds={false} timeZone=\"America/New_York\" label=\"New York\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Esfera con números en los cuartos",
+      "code": "<div class=\"z-analog-clock\" data-numerals=\"quarters\" data-marks=\"minutes\" data-label=\"Madrid\" data-time-zone=\"Europe/Madrid\" data-caption></div>"
+    },
+    {
+      "title": "Pequeño, sin segundero",
+      "code": "<div class=\"z-analog-clock\" data-size=\"sm\" data-seconds=\"false\" data-time-zone=\"America/New_York\" data-label=\"New York\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; esfera de M3 TimeClock como referencia de proporciones."
+}

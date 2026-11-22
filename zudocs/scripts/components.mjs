@@ -29,6 +29,8 @@ export const GROUPS = {
   carousel: { label: "Carousel", icon: "photo" },
   effects: { label: "Efectos", icon: "sparkles" },
   media: { label: "Medios", icon: "camera" },
+  time: { label: "Tiempo", icon: "clock" },
+  terminal: { label: "Terminal y código", icon: "command-line" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

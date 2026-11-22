@@ -1,0 +1,56 @@
+{
+  "name": "FormatDuration",
+  "group": "content",
+  "description": "Duración legible en un <time datetime=\"PT…\"> con Intl.DurationFormat: «1 hour, 30 minutes» (`long`), «1 hr, 30 min» (`short`), «1h 30m» (`narrow`) o «1:30:00» (`digital`). Acepta ISO 8601, milisegundos o partes; donde falta Intl.DurationFormat, un respaldo con unidades de Intl.NumberFormat da el mismo estilo.",
+  "import": "import { FormatDuration } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | number | DurationParts",
+      "required": true,
+      "description": "ISO 8601 (PT1H30M), ms o { hours, minutes… }."
+    },
+    {
+      "name": "format",
+      "type": "enum",
+      "values": ["long", "short", "narrow", "digital"],
+      "default": "short"
+    },
+    {
+      "name": "largestUnit",
+      "type": "enum",
+      "values": ["weeks", "days", "hours", "minutes", "seconds"],
+      "description": "Por defecto días si llega a uno, si no horas."
+    },
+    {
+      "name": "smallestUnit",
+      "type": "enum",
+      "values": ["weeks", "days", "hours", "minutes", "seconds"],
+      "default": "seconds"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "states": ["rest"],
+  "tokens": ["fg"],
+  "classes": ["z-format"],
+  "a11y": "<time datetime> con la duración en ISO 8601 para máquinas y el texto del locale para personas. Sin React: <time class=\"z-format\" data-format=\"duration\" datetime=\"PT1H30M\" data-style data-largest-unit data-smallest-unit data-locale> dentro de [data-z-dom]: el texto se escribe al hidratar.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Corta",
+      "code": "<FormatDuration value=\"PT1H30M\" locale=\"en-US\" />"
+    },
+    {
+      "title": "Larga, en días",
+      "code": "<FormatDuration value=\"P1DT2H\" format=\"long\" locale=\"en-US\" />"
+    },
+    {
+      "title": "Reloj",
+      "code": "<FormatDuration value={5_400_000} format=\"digital\" locale=\"en-US\" />"
+    }
+  ],
+  "origin": "Intl.DurationFormat."
+}

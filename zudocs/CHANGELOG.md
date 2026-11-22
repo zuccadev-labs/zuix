@@ -7,6 +7,10 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Añadido
+
+- Grupos «Tiempo» y «Terminal y código» en el catálogo de componentes, con su icono.
+
 ## [0.3.0] - 2026-11-21
 
 ### Añadido
