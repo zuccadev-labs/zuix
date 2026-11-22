@@ -19,7 +19,9 @@ export type ScreenId =
   | "media"
   | "carousels"
   | "time"
-  | "terminal";
+  | "terminal"
+  | "chat"
+  | "assistant";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -48,6 +50,8 @@ export const SCREENS: ScreenDef[] = [
   { id: "carousels", title: "Carousels", icon: "photo", hint: "Prism, layouts, stories and skeletons" },
   { id: "time", title: "Time", icon: "clock", hint: "Clocks, countdowns and durations" },
   { id: "terminal", title: "Terminal", icon: "command-line", hint: "Terminal, logs, code and diffs" },
+  { id: "chat", title: "Chat", icon: "chat-bubble-left-right", hint: "Conversations, messages and composer" },
+  { id: "assistant", title: "Assistant", icon: "sparkles", hint: "Streaming answers, tools and approvals" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);

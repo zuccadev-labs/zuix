@@ -558,3 +558,156 @@ body {
 .app-narrow {
   max-inline-size: 24rem;
 }
+
+/* ---- Chat ---- */
+.app-chat {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+}
+.app-chat > .z-chat-layout {
+  height: 100%;
+}
+.app-chat__list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--z-space-3) var(--z-space-3) 0 var(--z-space-4);
+}
+.app-chat__title {
+  margin: 0;
+  font-size: var(--z-text-title);
+  font-weight: var(--z-weight-bold);
+}
+.app-chat__fill,
+.app-chat__messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.app-chat__fill > *,
+.app-chat__messages > * {
+  flex: 1;
+  min-height: 0;
+}
+.app-chat__details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--z-space-2);
+  padding: var(--z-space-8) var(--z-space-4);
+  text-align: center;
+}
+.app-chat__details-name {
+  margin: var(--z-space-2) 0 0;
+  font-size: var(--z-text-title);
+}
+.app-chat__call {
+  position: absolute;
+  inset-block-start: var(--z-space-4);
+  inset-inline: 0;
+  z-index: var(--z-layer-overlay);
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--z-space-4);
+  pointer-events: none;
+}
+.app-chat__call > * {
+  width: min(440px, 100%);
+  pointer-events: auto;
+}
+
+/* ---- Asistente ---- */
+.app-assistant {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+}
+.app-assistant--split {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+}
+.app-assistant__main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.app-assistant__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--z-space-3);
+  padding: var(--z-space-3) var(--z-space-5);
+  border-block-end: 1px solid var(--z-line);
+}
+.app-assistant__title {
+  margin: 0;
+  font-size: var(--z-text-body);
+  font-weight: var(--z-weight-semibold);
+}
+.app-assistant__usage {
+  margin-inline-start: auto;
+}
+.app-assistant__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.app-assistant__thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-6);
+  max-width: 800px;
+  margin-inline: auto;
+  padding: var(--z-space-6) var(--z-space-5) var(--z-space-8);
+}
+.app-assistant__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-5);
+  padding-block-start: var(--z-space-10);
+}
+.app-assistant__hello {
+  margin: 0;
+  font-family: var(--z-font-display);
+  font-size: var(--z-text-display-sm);
+  font-weight: var(--z-weight-semibold);
+  letter-spacing: var(--z-tracking-tight);
+  text-align: center;
+}
+.app-assistant__user {
+  display: flex;
+  justify-content: flex-end;
+}
+.app-assistant__input {
+  max-width: 820px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 0 var(--z-space-4) var(--z-space-3);
+}
+.app-assistant__note {
+  margin: var(--z-space-2) 0 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-caption);
+  text-align: center;
+}
+.app-assistant__side {
+  display: flex;
+  min-height: 0;
+  padding: var(--z-space-3);
+  border-inline-start: 1px solid var(--z-line);
+}
+.app-assistant__side > * {
+  flex: 1;
+}
+@media (width < 900px) {
+  .app-assistant--split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 0.9fr);
+  }
+  .app-assistant__side {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--z-line);
+  }
+}

@@ -49,6 +49,8 @@ import { Media } from "./screens/Media";
 import { CarouselsScreen } from "./screens/Carousels";
 import { TerminalScreen } from "./screens/TerminalScreen";
 import { TimeScreen } from "./screens/Time";
+import { ChatScreen } from "./screens/Chat";
+import { AssistantScreen } from "./screens/Assistant";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -226,6 +228,10 @@ export function App() {
       <TimeScreen />
     ) : active === "terminal" ? (
       <TerminalScreen />
+    ) : active === "chat" ? (
+      <ChatScreen />
+    ) : active === "assistant" ? (
+      <AssistantScreen />
     ) : (
       <Editor />
     );
@@ -235,7 +241,7 @@ export function App() {
       className="app-shell"
       // ?skip=1: enlace «saltar al contenido» (lo recorre tests/browser).
       skipLinkLabel={params.get("skip") === "1" ? "Skip to content" : undefined}
-      surface={active === "editor" ? "none" : "glass"}
+      surface={active === "editor" || active === "chat" ? "none" : "glass"}
       onCloseOverlay={closeOverlays}
       onModeChange={onModeChange}
       titlebar={
@@ -389,7 +395,8 @@ export function App() {
       }}
       inspector={{
         label: "Details",
-        open: inspectorOpen,
+        // Chat y asistente ocupan el ancho: traen sus propios paneles de detalles.
+        open: inspectorOpen && active !== "chat" && active !== "assistant",
         content: (
           <SidePanel
             title={project.name}
