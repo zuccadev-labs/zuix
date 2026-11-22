@@ -49,6 +49,10 @@ import { Media } from "./screens/Media";
 import { CarouselsScreen } from "./screens/Carousels";
 import { TerminalScreen } from "./screens/TerminalScreen";
 import { TimeScreen } from "./screens/Time";
+import { DashboardScreen } from "./screens/Dashboard";
+import { KanbanScreen } from "./screens/Kanban";
+import { LoginScreen } from "./screens/Login";
+import { ProfileScreen, SettingsScreen } from "./screens/People";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -226,6 +230,16 @@ export function App() {
       <TimeScreen />
     ) : active === "terminal" ? (
       <TerminalScreen />
+    ) : active === "dashboard" ? (
+      <DashboardScreen />
+    ) : active === "profile" ? (
+      <ProfileScreen />
+    ) : active === "settings" ? (
+      <SettingsScreen />
+    ) : active === "kanban" ? (
+      <KanbanScreen />
+    ) : active === "login" ? (
+      <LoginScreen />
     ) : (
       <Editor />
     );

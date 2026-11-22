@@ -35,19 +35,33 @@
     {
       "name": "view",
       "type": "enum",
-      "values": ["list", "reader"],
+      "values": [
+        "list",
+        "reader"
+      ],
       "default": "list",
       "description": "La vista en estrecho."
     }
   ],
-  "tokens": ["panel-radius", "space-3", "space-5", "space-6"],
-  "classes": ["z-mail-layout", "z-mail-layout__grid", "z-mail-layout__folders", "z-mail-layout__list", "z-mail-layout__reader"],
+  "tokens": [
+    "panel-radius",
+    "space-3",
+    "space-5",
+    "space-6"
+  ],
+  "classes": [
+    "z-mail-layout",
+    "z-mail-layout__grid",
+    "z-mail-layout__folders",
+    "z-mail-layout__list",
+    "z-mail-layout__reader"
+  ],
   "a11y": "Carpetas en un nav con nombre; lista y lectura son regiones con nombre. En estrecho solo se ve una; la aplicación cambia `view` al abrir un mensaje, pone un botón de volver en la lectura y sincroniza el historial para que el gesto atrás vuelva a la lista.",
   "behavior": "none",
   "examples": [
     {
       "title": "Tres paneles",
-      "code": "<MailLayout folders={<NavList label=\"Folders\" items={[{ id: \"inbox\", label: \"Inbox\", href: \"#\", icon: \"inbox\" }, { id: \"sent\", label: \"Sent\", href: \"#\", icon: \"paper-airplane\" }]} />} list={<p>Messages</p>} reader={<p>Message</p>} />"
+      "code": "<MailLayout folders={<NavList label=\"Folders\"><NavLink href=\"#\" icon=\"inbox\" trailing=\"12\" active>Inbox</NavLink><NavLink href=\"#\" icon=\"paper-airplane\">Sent</NavLink></NavList>} list={<p>Messages</p>} reader={<p>Message</p>} />"
     }
   ],
   "origin": "Bloque mail de shadcn."

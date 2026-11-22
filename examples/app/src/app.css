@@ -558,3 +558,67 @@ body {
 .app-narrow {
   max-inline-size: 24rem;
 }
+
+/* Contenido centrado en una pieza del dashboard (el Gauge). */
+.app-center {
+  display: grid;
+  place-items: center;
+  block-size: 100%;
+}
+
+/* Pantallas de perfil, tablero y acceso. */
+.app-presence,
+.app-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--z-space-3) var(--z-space-5);
+  margin-block-start: var(--z-space-3);
+}
+.app-people {
+  align-items: center;
+  gap: var(--z-space-6);
+}
+.app-editor {
+  padding: var(--z-space-5);
+}
+.app-fab {
+  position: sticky;
+  inset-block-end: var(--z-space-4);
+  display: flex;
+  justify-content: flex-end;
+  padding-inline-end: var(--z-space-4);
+  pointer-events: none;
+}
+.app-fab > * {
+  pointer-events: auto;
+}
+.app-auth {
+  min-block-size: 40rem;
+  display: grid;
+}
+.app-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-4);
+}
+.app-auth-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--z-space-2);
+  font-size: var(--z-text-small);
+}
+.app-brand-mark {
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: var(--z-radius-sm);
+  background: linear-gradient(135deg, var(--z-accent), var(--z-chart-2));
+}
+.app-auth-media {
+  block-size: 100%;
+  min-block-size: 24rem;
+  background:
+    radial-gradient(70% 60% at 20% 20%, color-mix(in srgb, var(--z-accent) 70%, transparent), transparent 70%),
+    radial-gradient(60% 70% at 80% 80%, color-mix(in srgb, var(--z-chart-3) 60%, transparent), transparent 70%), var(--z-surface-3);
+}

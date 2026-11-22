@@ -19,7 +19,12 @@ export type ScreenId =
   | "media"
   | "carousels"
   | "time"
-  | "terminal";
+  | "terminal"
+  | "dashboard"
+  | "profile"
+  | "settings"
+  | "kanban"
+  | "login";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -48,6 +53,11 @@ export const SCREENS: ScreenDef[] = [
   { id: "carousels", title: "Carousels", icon: "photo", hint: "Prism, layouts, stories and skeletons" },
   { id: "time", title: "Time", icon: "clock", hint: "Clocks, countdowns and durations" },
   { id: "terminal", title: "Terminal", icon: "command-line", hint: "Terminal, logs, code and diffs" },
+  { id: "dashboard", title: "Dashboard", icon: "presentation-chart-line", hint: "KPIs, gauges and an editable grid" },
+  { id: "profile", title: "Profile", icon: "user-circle", hint: "Profile header, members and presence" },
+  { id: "settings", title: "Settings", icon: "cog", hint: "Settings sections and profile editor" },
+  { id: "kanban", title: "Board", icon: "view-columns", hint: "Kanban board with drag and keyboard" },
+  { id: "login", title: "Sign in", icon: "lock-closed", hint: "Glass sign-in page" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);
