@@ -463,8 +463,8 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
     const d = el.dataset;
     return {
       items: json.items as ConversationItem[] | undefined,
-      selectedId: d.selectedId,
-      defaultSelectedId: d.defaultSelectedId,
+      // Sin framework, el atributo es la abierta al empezar: elegir otra la cambia sin esperar a la aplicación.
+      defaultSelectedId: d.selectedId ?? d.defaultSelectedId,
       search: d.search === "false" ? false : undefined,
       filters: d.filters === "none" ? false : d.filters ? (d.filters.split(/[\s,]+/).filter(Boolean) as ConversationFilter[]) : undefined,
       sort: d.sort === "false" ? false : undefined,

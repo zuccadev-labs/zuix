@@ -12,6 +12,7 @@ import dataCases from "./cases-data.mjs";
 import siteCases from "./cases-site.mjs";
 import mediaCases from "./cases-media.mjs";
 import timeTerminal from "./cases-time-terminal.mjs";
+import chatAi from "./cases-chat-ai.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
@@ -647,8 +648,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        31,
-        "31 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time y Terminal)",
+        33,
+        "33 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Chat y Assistant)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -3089,6 +3090,7 @@ export const cases = [
     charts,
     reading,
     timeTerminal,
+    chatAi,
     carouselsCases,
   ].flatMap((build) => build(helpers())),
 

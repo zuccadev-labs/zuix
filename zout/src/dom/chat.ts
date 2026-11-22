@@ -49,7 +49,12 @@ function cycle(layout: HTMLElement, backwards: boolean): boolean {
   const next = nextPane(panes.map(viewOf), current ? viewOf(current) : null, backwards);
   const pane = panes.find((p) => viewOf(p) === next);
   if (!pane) return false;
-  (pane.querySelector<HTMLElement>('[tabindex="0"], input, textarea, button:not([disabled]), a[href]') ?? pane).focus();
+  const target = [...pane.querySelectorAll<HTMLElement>('[tabindex="0"], input, textarea, button:not([disabled]), a[href]')].find(
+    (el) => el.getClientRects().length > 0,
+  );
+  // Un panel sin nada enfocable recibe el foco él mismo (programático, fuera del orden de Tab).
+  if (!target && !pane.hasAttribute("tabindex")) pane.tabIndex = -1;
+  (target ?? pane).focus();
   return true;
 }
 

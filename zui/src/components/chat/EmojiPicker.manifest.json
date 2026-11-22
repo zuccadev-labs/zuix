@@ -54,7 +54,7 @@
     "z-emoji-picker__tones",
     "z-emoji-picker__tone"
   ],
-  "a11y": "El foco se queda en el buscador (role=combobox, aria-controls a la rejilla role=listbox, aria-activedescendant a la opción activa); cada categoría es un group con su encabezado. ↑/↓ por filas, ←/→ por opciones con el campo vacío, Intro elige y Escape cierra. Cada opción se nombra con su nombre CLDR («thumbs up»). Los tonos son botones con aria-pressed y nombre. Sin React: .z-emoji-picker con data-columns y data-default-tone; emite z:select { emoji } y z:close.",
+  "a11y": "El foco se queda en el buscador (role=combobox, aria-controls a la rejilla role=listbox, aria-activedescendant a la opción activa); cada categoría es un group con su encabezado. ↑/↓ por filas, ←/→ por opciones con el campo vacío, Intro elige y Escape cierra. Cada opción se nombra con su nombre CLDR («thumbs up»). Los tonos son un grupo de radios con nombre (←/→). Sin React: .z-emoji-picker con data-columns y data-default-tone; emite z:select { emoji } y z:close.",
   "behavior": "dom",
   "examples": [
     {

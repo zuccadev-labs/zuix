@@ -6075,7 +6075,7 @@
     "z-conversation__mention",
     "z-conversation-list__empty"
    ],
-   "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son botones con aria-pressed. Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id, data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange.",
+   "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son un grupo de radios (una parada, ←/→). Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id (la abierta al empezar), data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange.",
    "behavior": "dom",
    "examples": [
     {
@@ -6205,7 +6205,7 @@
     "z-emoji-picker__tones",
     "z-emoji-picker__tone"
    ],
-   "a11y": "El foco se queda en el buscador (role=combobox, aria-controls a la rejilla role=listbox, aria-activedescendant a la opción activa); cada categoría es un group con su encabezado. ↑/↓ por filas, ←/→ por opciones con el campo vacío, Intro elige y Escape cierra. Cada opción se nombra con su nombre CLDR («thumbs up»). Los tonos son botones con aria-pressed y nombre. Sin React: .z-emoji-picker con data-columns y data-default-tone; emite z:select { emoji } y z:close.",
+   "a11y": "El foco se queda en el buscador (role=combobox, aria-controls a la rejilla role=listbox, aria-activedescendant a la opción activa); cada categoría es un group con su encabezado. ↑/↓ por filas, ←/→ por opciones con el campo vacío, Intro elige y Escape cierra. Cada opción se nombra con su nombre CLDR («thumbs up»). Los tonos son un grupo de radios con nombre (←/→). Sin React: .z-emoji-picker con data-columns y data-default-tone; emite z:select { emoji } y z:close.",
    "behavior": "dom",
    "examples": [
     {

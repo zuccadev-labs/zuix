@@ -1849,7 +1849,10 @@
     flex-direction: column;
     min-inline-size: 0;
     min-block-size: 0;
-    outline: none;
+  }
+  .z-chat-layout > :focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
   }
   .z-chat-layout__list {
     border-inline-end: 1px solid var(--z-line);
