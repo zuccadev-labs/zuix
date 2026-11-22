@@ -109,7 +109,7 @@ export function createSnap(o: SnapOptions): SnapController {
   /** La persona tocó la tira (puntero, rueda, teclado, foco): el próximo asiento es suyo. */
   let touched = false;
   // Desplazamiento pedido por código: mientras dura, las posiciones intermedias no cambian el índice.
-  let pending: { target: number; from: number; until: number } | null = null;
+  let pending: { target: number; from: number; to: number; until: number } | null = null;
   let arrangement: Arrangement | null = null;
 
   const fit = () => {
@@ -250,9 +250,11 @@ export function createSnap(o: SnapOptions): SnapController {
     vp.style.scrollSnapType = "none";
     if (lock) vp.style[prop] = "hidden";
     scrollByU(g1, delta, false);
+    // El ajuste vuelve en el mismo paso, ya compensado: si se devolviera más tarde, WebKit cancelaría el desplazamiento
+    // que empieza justo después (el viaje de un marcador). El bloqueo del desbordamiento sí espera dos fotogramas.
+    vp.style.scrollSnapType = "";
     win.requestAnimationFrame(() =>
       win.requestAnimationFrame(() => {
-        vp.style.scrollSnapType = "";
         if (lock) vp.style[prop] = "";
         compensating = false;
         if (disposed) return;
@@ -274,8 +276,9 @@ export function createSnap(o: SnapOptions): SnapController {
     const it = g.items.find((x) => x.index === target);
     if (!it) return;
     const animated = smooth && !o.reducedMotion();
-    pending = animated ? { target, from: g.win, until: performance.now() + 1500 } : null;
-    scrollByU(g, Math.max(g.min, Math.min(g.max, it.snap)) - g.win, animated);
+    const to = Math.max(g.min, Math.min(g.max, it.snap));
+    pending = animated ? { target, from: g.win, to, until: performance.now() + 1500 } : null;
+    scrollByU(g, to - g.win, animated);
     setIndex(target);
   };
 
@@ -291,8 +294,9 @@ export function createSnap(o: SnapOptions): SnapController {
     const g = geometry();
     const clamped = Math.min(g.points.length - 1, Math.max(0, Math.round(target)));
     const animated = smooth && !o.reducedMotion();
-    pending = animated ? { target: clamped, from: g.win, until: performance.now() + 1500 } : null;
-    scrollByU(g, g.points[clamped]!.at + g.min - g.win, animated);
+    const to = g.points[clamped]!.at + g.min;
+    pending = animated ? { target: clamped, from: g.win, to, until: performance.now() + 1500 } : null;
+    scrollByU(g, to - g.win, animated);
     setIndex(clamped);
   };
 
@@ -340,6 +344,10 @@ export function createSnap(o: SnapOptions): SnapController {
     if (pending) {
       // Un `scrollend` del desplazamiento anterior (o de una compensación) en el punto de partida: no es el nuestro.
       if (Math.abs(g.win - pending.from) < 1 && pending.target !== positionOf(g) && performance.now() < pending.until) return;
+      // Un `scrollend` atrasado (de un ajuste del navegador) llega con el desplazamiento pedido aún a medio camino.
+      const lo = Math.min(pending.from, pending.to);
+      const hi = Math.max(pending.from, pending.to);
+      if (!touched && performance.now() < pending.until && g.win > lo + 1 && g.win < hi - 1) return;
       pending = null;
     } else if (!touched) {
       // Nadie lo pidió (ni la persona ni el código): el desplazamiento vino de maquetar (fuentes, cambio de tamaño,
