@@ -67,6 +67,29 @@
   .z-carousel__slide a {
     -webkit-user-drag: none;
   }
+  /* Con lente, los vecinos se funden en los bordes de la tira en vez de cortarse en seco contra ellos. */
+  .z-carousel:is([data-mode="css"], [data-mode="gl"]) .z-carousel__viewport {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--z-fg) var(--z-space-8),
+      var(--z-fg) calc(100% - var(--z-space-8)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--z-fg) var(--z-space-8),
+      var(--z-fg) calc(100% - var(--z-space-8)),
+      transparent
+    );
+  }
+  @media (forced-colors: active) {
+    .z-carousel:is([data-mode="css"], [data-mode="gl"]) .z-carousel__viewport {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+  }
   .z-carousel[data-mode="css"] .z-carousel__slide {
     will-change: transform;
     backface-visibility: hidden;
@@ -624,6 +647,14 @@
   .z-carousel[data-effect="prism"] .z-carousel__caption {
     z-index: var(--z-layer-raised);
   }
+  /* Un vecino girado se pinta detrás del slide central, pero Chromium lo encuentra antes al buscar qué hay bajo el
+     puntero: tapaba el borde del pie central y se llevaba sus clics. Solo el central recibe el puntero; el arrastre
+     sobre un vecino lo recibe la tira. */
+  .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"])
+    .z-carousel__slide:not([data-active])
+    > .z-carousel__face {
+    pointer-events: none;
+  }
   .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"], [data-effect="wheel"]) .z-carousel__caption {
     opacity: clamp(0, calc(1 - var(--z-slide-abs, 0) * 2), 1);
   }
@@ -633,9 +664,12 @@
     --z-carousel-slide-width: var(--z-carousel-wheel-item, 3rem);
     --z-carousel-gap: var(--z-space-1);
   }
+  /* El cilindro se apaga hacia arriba y hacia abajo: los extremos se van, no se cortan. */
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__viewport {
     height: var(--z-carousel-height, 15rem);
     perspective: 700px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, var(--z-fg) 30%, var(--z-fg) 70%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, var(--z-fg) 30%, var(--z-fg) 70%, transparent);
   }
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__track {
     transform-style: preserve-3d;
@@ -654,9 +688,28 @@
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide:not([data-active]) > .z-carousel__face {
     color: var(--z-fg-muted);
   }
+  /* La opción elegida va en una banda de cristal del ancho de la rueda, con el texto a tamaño de título. */
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__face {
+    inline-size: 100%;
+    block-size: 100%;
+  }
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide[data-active] > .z-carousel__face {
     background: var(--z-surface-2);
-    box-shadow: inset 0 0 0 1px var(--z-glass-border);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      inset 0 0 0 1px var(--z-glass-border),
+      var(--z-shadow-sm);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  @media (forced-colors: active) {
+    .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__viewport {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide[data-active] > .z-carousel__face {
+      outline: 1px solid CanvasText;
+    }
   }
 
   /* ---- Parallax: las capas `[data-parallax-layer]` se mueven a otra velocidad que el slide ---- */
@@ -773,6 +826,14 @@
     transition:
       transform var(--z-duration-slow) var(--z-ease-emphasized),
       opacity var(--z-duration-slow) var(--z-ease-standard);
+  }
+  /* La de arriba se separa del mazo: superficie un tono más clara y sombra alta. Con el mismo fondo y la misma sombra
+     que las de debajo, el mazo se leía plano. */
+  .z-carousel[data-mode="deck"][data-layout="stack"] .z-carousel__slide[data-active] {
+    background: linear-gradient(var(--z-surface-2), var(--z-surface-2)), var(--z-surface-solid);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-lg);
   }
   .z-carousel[data-mode="deck"][data-layout="stack"] .z-carousel__viewport[data-dragging] .z-carousel__slide[data-active] {
     translate: var(--z-deck-drag, 0px) 0;

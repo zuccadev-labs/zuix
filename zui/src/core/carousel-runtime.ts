@@ -209,7 +209,13 @@ export function createSnap(o: SnapOptions): SnapController {
     // `scroll-snap-stop: always` (no pasar de largo con un gesto) también frena un salto pedido por código: mientras
     // dura, el CSS lo relaja (`data-jump`) y el asiento lo repone.
     if (smooth) vp.setAttribute("data-jump", "");
+    // Sin animación pasa lo mismo, y no hay asiento que lo reponga: se relaja solo durante el salto. Sin esto, la
+    // vuelta al slide inicial tras montar se paraba en el primer slide del camino (Prism abría en «Scene 3» con el
+    // índice en 0).
+    const relax = !smooth && !vp.hasAttribute("data-jump");
+    if (relax) vp.setAttribute("data-jump", "");
     vp.scrollBy({ [vertical ? "top" : "left"]: physical, behavior: smooth ? "smooth" : "instant" } as ScrollToOptions);
+    if (relax) vp.removeAttribute("data-jump");
   };
 
   /**

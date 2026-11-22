@@ -23,7 +23,7 @@ export type CarouselMode = "css" | "gl" | "flat";
 /** Réplicas a cada lado de la copia principal: mínimo y máximo. */
 export const MIN_SIDE = 1;
 const MAX_SIDE = 4;
-/** Margen vertical (fracción del alto del slide) que deja sitio al estiramiento de la lente. */
+/** Tope del margen vertical (fracción del alto del slide) que deja sitio al estiramiento de la lente. */
 const BLEED = 0.45;
 /** Muelle del desplazamiento: rigidez (1/s²) y amortiguación (1/s), casi crítico. */
 const STIFFNESS = 90;
@@ -160,9 +160,6 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
     state.width = viewport.clientWidth;
     state.slideH = track.offsetHeight;
     state.trackW = track.offsetWidth;
-    const bleed = lensOn ? Math.round(state.slideH * BLEED) : 0;
-    root.style.setProperty("--z-carousel-bleed", `${bleed}px`);
-    state.height = state.slideH + bleed * 2;
 
     const mains = slots.filter((slot) => slot.copy === main).sort((a, b) => a.index - b.index);
     state.centers = mains.map((slot) => slot.left + slot.width / 2);
@@ -172,6 +169,11 @@ export function createEngine(elements: EngineElements, options: EngineOptions) {
     state.radius = first ? parseFloat(getComputedStyle(first.el).borderTopLeftRadius) || 0 : 0;
     state.background = backgroundBehind(viewport);
     const widest = mains.reduce((max, slot) => Math.max(max, slot.width), 0);
+    // El margen vertical cubre el estiramiento en reposo (el de la forma, que depende del ancho), con BLEED de tope.
+    const stretch = createLensShape(state.width, state.slideH, state.slideH, widest).stretch;
+    const bleed = lensOn ? Math.round(state.slideH * Math.min(BLEED, stretch)) : 0;
+    root.style.setProperty("--z-carousel-bleed", `${bleed}px`);
+    state.height = state.slideH + bleed * 2;
     state.shape = createLensShape(state.width, state.height, state.slideH, widest);
   };
 
