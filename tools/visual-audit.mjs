@@ -184,7 +184,19 @@ function collect({ TOKENS, families, coarse }) {
     const key = `${type}|${sig(el)}|${detail}`;
     const prev = found.get(key);
     if (prev) prev.count += 1;
-    else found.set(key, { type, sig: sig(el), owner: owner(el), detail, path: path(el), count: 1, ...extra });
+    else
+      found.set(key, {
+        type,
+        sig: sig(el),
+        owner: owner(el),
+        detail,
+        path: path(el),
+        count: 1,
+        // Dentro de un lienzo de nodos: su contenido vive en un plano con zoom bajo controles flotantes.
+        canvas: !!el.closest(".z-node-canvas"),
+        world: !!el.closest(".z-node-canvas__world"),
+        ...extra,
+      });
   };
   const near = (v, set, tol = 0.5) => set.some((s) => Math.abs(s - v) <= tol);
   const all = [...document.body.querySelectorAll("*")].filter(
@@ -325,9 +337,10 @@ function collect({ TOKENS, families, coarse }) {
       } else hidden = true;
       break;
     }
-    // Un evento mide lo que dura, una diapositiva puede asomar a medias y en una marquesina los elementos entran y
-    // salen por el borde (cuál queda cortado depende del fotograma): su texto cortado es parte del diseño.
-    const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport");
+    // Un evento mide lo que dura, una diapositiva puede asomar a medias, en una marquesina los elementos entran y
+    // salen por el borde (cuál queda cortado depende del fotograma) y un lienzo de nodos recorta lo que queda fuera de
+    // la vista (se ve desplazando): su texto cortado es parte del diseño.
+    const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport,.z-node-canvas__world");
     if (hidden && !byDesign && !/ellipsis/.test(getComputedStyle(el).textOverflow))
       add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
     // Lo seleccionado de una tira: no un panel de pestañas activo, que es contenido corriente.
@@ -1659,7 +1672,7 @@ function classify(recs) {
               ? "evento de la rejilla de tiempo en un teléfono: su ancho lo fija la duración y el solape; se abre también desde la vista de lista"
               : /z-segmented__item/.test(i.sig) && / < 40$/.test(i.detail)
                 ? "opción de segmentado: con puntero grueso la zona táctil crece a 40 px con ::before"
-                : /z-resize|z-split__divider/.test(i.sig)
+                : /z-resize|z-table__resize|z-split__divider/.test(i.sig)
                   ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
                   : /z-heatmap__cell/.test(i.sig)
                     ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
@@ -1673,6 +1686,10 @@ function classify(recs) {
           if (why2) {
             verdict = "aceptado";
             why = why2;
+          } else if (i.world) {
+            verdict = "aceptado";
+            why =
+              "control dentro de un lienzo de nodos con zoom: su tamaño en pantalla sigue al zoom (a 100 % mide lo suyo); los puertos conservan 24 px a cualquier zoom";
           }
           break;
         }
@@ -1795,6 +1812,10 @@ function classify(recs) {
           } else if (i.offscreen) {
             verdict = "aceptado";
             why = "fuera de la pantalla (capa cerrada o carrusel)";
+          } else if (i.canvas) {
+            verdict = "aceptado";
+            why =
+              "lienzo de nodos: los nodos pasan bajo el minimapa y los controles flotantes y con poco zoom se acercan; se alcanzan desplazando, acercando, con el teclado y desde la vista en lista";
           }
           break;
         default:

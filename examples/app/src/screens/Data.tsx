@@ -44,6 +44,8 @@ export function DataScreen() {
   const [selected, setSelected] = useState<RowKey[]>(["leo"]);
   const [page, setPage] = useState(1);
   const [upload, setUpload] = useState(64);
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [resized, setResized] = useState("none");
 
   return (
     <Page width="full">
@@ -88,6 +90,48 @@ export function DataScreen() {
           <p className="app-muted">
             Selected: <output data-testid="d-table-selected">{show(selected)}</output> · Page:{" "}
             <output data-testid="d-table-page">{page}</output>
+          </p>
+        </Stack>
+      </PageSection>
+      <PageSection title="Data grid">
+        <Stack gap={3}>
+          <div data-testid="d-grid">
+            <DataTable
+              caption="Members grid"
+              captionHidden
+              rows={MEMBERS}
+              rowKey={(member) => member.id}
+              exportable
+              exportFileName="members.csv"
+              filters={filters}
+              onFiltersChange={setFilters}
+              onColumnResize={(key, width) => setResized(`${key} ${width}`)}
+              columns={[
+                {
+                  key: "name",
+                  header: "Name",
+                  accessor: (m) => m.name,
+                  sortable: true,
+                  filterable: true,
+                  resizable: true,
+                  pinned: "start",
+                  width: "180px",
+                },
+                { key: "role", header: "Role", accessor: (m) => m.role, sortable: true, filterable: true, resizable: true, width: "160px" },
+                { key: "seats", header: "Seats", accessor: (m) => m.seats, sortable: true, align: "end", mono: true, width: "120px" },
+                {
+                  key: "active",
+                  header: "Status",
+                  text: (m) => (m.active ? "Active" : "Invited"),
+                  render: (m) => (m.active ? "Active" : "Invited"),
+                  filterable: true,
+                },
+              ]}
+            />
+          </div>
+          <p className="app-muted">
+            Filters: <output data-testid="d-grid-filters">{JSON.stringify(filters)}</output> · Resized:{" "}
+            <output data-testid="d-grid-resized">{resized}</output>
           </p>
         </Stack>
       </PageSection>

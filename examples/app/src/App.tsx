@@ -48,6 +48,7 @@ import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
 import { CarouselsScreen } from "./screens/Carousels";
 import { TerminalScreen } from "./screens/TerminalScreen";
+import { Flows } from "./screens/Flows";
 import { TimeScreen } from "./screens/Time";
 import { ChatScreen } from "./screens/Chat";
 import { AssistantScreen } from "./screens/Assistant";
@@ -246,6 +247,8 @@ export function App() {
       <KanbanScreen />
     ) : active === "login" ? (
       <LoginScreen />
+    ) : active === "flows" ? (
+      <Flows />
     ) : (
       <Editor />
     );

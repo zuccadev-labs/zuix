@@ -215,6 +215,11 @@ tallas distintas, objetivo pequeño con espacio alrededor…) queda contado como
 informe; no se descarta nada en bloque. La medida en bruto se guarda, así que `--report` reclasifica sin abrir
 el navegador.
 
+Dentro de un lienzo de nodos (`.z-node-canvas`) el solape entre su contenido y su cromo es parte del diseño: los
+nodos pasan bajo el minimapa y los controles flotantes, y con poco zoom se acercan entre sí. Los controles del cuerpo
+de un nodo miden en pantalla lo que dicta el zoom. Los dos casos se cuentan como aceptados con su motivo; los
+puertos mantienen el objetivo de 24 px a cualquier zoom.
+
 ```
 pnpm audit:visual --target site --brands dazlabs --widths 1440 --themes dark   # una pasada rápida
 pnpm audit:visual --target app --filter forms --shots                          # una pantalla, con capturas

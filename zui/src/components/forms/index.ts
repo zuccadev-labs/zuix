@@ -100,3 +100,4 @@ export {
   shortcutLabels,
   type Shortcut,
 } from "../../core/shortcut";
+export { TransferList, type TransferItem, type TransferListLabels, type TransferListProps } from "./TransferList";

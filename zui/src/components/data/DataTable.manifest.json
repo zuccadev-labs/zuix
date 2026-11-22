@@ -1,7 +1,7 @@
 {
   "name": "DataTable",
   "group": "data",
-  "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.",
+  "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación. Además: filtro por columna, ancho ajustable, columnas fijadas al inicio y exportar a CSV.",
   "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -172,46 +172,105 @@
       "name": "paginationLabel",
       "type": "string",
       "default": "Pagination"
+    },
+    {
+      "name": "filters",
+      "type": "Record<string, string>",
+      "description": "Filtros por columna (controlado). Una columna con `filterable: true` lleva un campo bajo la cabecera; filtra por `text(row)` o `accessor`, sin acentos ni mayúsculas, y vuelve a la página 1."
+    },
+    {
+      "name": "defaultFilters",
+      "type": "Record<string, string>"
+    },
+    {
+      "name": "onFiltersChange",
+      "type": "(filters) => void"
+    },
+    {
+      "name": "filterLabel",
+      "type": "(column) => string",
+      "default": "Filter {header}"
+    },
+    {
+      "name": "onColumnResize",
+      "type": "(key: string, width: number) => void",
+      "description": "Una columna con `resizable: true` lleva un asa (separador enfocable): arrastrar o flechas (Mayús, más rápido); Escape cancela el arrastre."
+    },
+    {
+      "name": "resizeLabel",
+      "type": "(column) => string",
+      "default": "Resize {header}"
+    },
+    {
+      "name": "exportable",
+      "type": "boolean",
+      "default": false,
+      "description": "Botón que descarga en CSV las filas filtradas y ordenadas de todas las páginas (`dataTableCSV(rows, columns)` hace lo mismo sin descargar). Los textos que empiezan por = + - @ se escapan para que una hoja de cálculo no los ejecute."
+    },
+    {
+      "name": "exportLabel",
+      "type": "string",
+      "default": "Export CSV"
+    },
+    {
+      "name": "exportFileName",
+      "type": "string",
+      "default": "table.csv"
     }
   ],
   "states": ["rest", "hover", "focus", "active", "sorted", "selected", "indeterminate", "empty", "paged"],
   "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "accent-text",
+    "card-bg",
     "card-border",
     "card-radius",
-    "card-bg",
     "card-shadow",
-    "space-3",
-    "fg",
-    "text-small",
-    "space-2",
-    "fg-muted",
-    "line",
+    "control-bg",
+    "control-border",
+    "control-height-sm",
+    "control-radius-sm",
     "duration-fast",
     "ease-standard",
-    "font-mono",
-    "surface-solid",
-    "surface",
-    "row-hover",
-    "accent-soft",
-    "accent-ring",
-    "surface-3",
-    "space-8",
-    "space-4",
-    "space-1",
-    "surface-2",
-    "accent-text",
-    "control-radius-sm",
+    "fg",
+    "fg-muted",
     "focus-width",
+    "font-mono",
     "layer-raised",
     "leading-ui",
-    "space-2-5",
-    "text-body",
-    "weight-medium",
+    "line",
     "line-strong",
-    "control-height-sm"
+    "row-hover",
+    "space-1",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-4",
+    "space-8",
+    "surface",
+    "surface-2",
+    "surface-3",
+    "surface-solid",
+    "text-body",
+    "text-small",
+    "weight-medium"
   ],
-  "classes": ["z-table", "z-table-wrap", "z-datatable", "z-datatable__bar", "z-datatable__count", "z-datatable__range", "z-table__select"],
-  "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre.",
+  "classes": [
+    "z-table",
+    "z-table-wrap",
+    "z-datatable",
+    "z-datatable__bar",
+    "z-datatable__count",
+    "z-datatable__range",
+    "z-table__select",
+    "z-table__filters",
+    "z-table__filter",
+    "z-table__resize",
+    "z-datatable__export"
+  ],
+  "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre. Cada filtro es un campo de búsqueda con nombre («Filter Name»). El asa de ancho es un separador enfocable con aria-valuenow (patrón de separador de ventanas): flechas izquierda y derecha cambian el ancho. Sin React: tr.z-table__filters con input.z-table__filter, span.z-table__resize en la cabecera, th[data-pinned] y button.z-datatable__export (data-export-name); emite z:filterchange y z:columnresize.",
   "examples": [
     {
       "title": "Ordenable",
@@ -224,6 +283,10 @@
     {
       "title": "Selección, pie y paginación",
       "code": "const members = [\n  { id: \"a1\", name: \"Ana Ruiz\", seats: 3 },\n  { id: \"b2\", name: \"Leo Park\", seats: 12 },\n  { id: \"c3\", name: \"Mia Chen\", seats: 1 },\n  { id: \"d4\", name: \"Zoe Katz\", seats: 7 },\n  { id: \"e5\", name: \"Iker Sanz\", seats: 5 },\n];\n\n<DataTable\n  caption=\"Members\"\n  captionHidden\n  rows={members}\n  rowKey={(member) => member.id}\n  selectable\n  defaultSelectedKeys={[\"b2\"]}\n  pageSize={3}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (member) => member.name, sortable: true, footer: \"Total\" },\n    {\n      key: \"seats\",\n      header: \"Seats\",\n      accessor: (member) => member.seats,\n      sortable: true,\n      align: \"end\",\n      mono: true,\n      footer: (all) => all.reduce((sum, member) => sum + member.seats, 0),\n    },\n  ]}\n/>"
+    },
+    {
+      "title": "Filtros, ancho, columna fijada y exportar",
+      "code": "<DataTable caption=\"Members\" captionHidden exportable rowKey={(r) => r.id} rows={[{ id: \"a1\", name: \"Ana Torres\", team: \"Design\", seats: 4 }, { id: \"b2\", name: \"Ben Okafor\", team: \"Engineering\", seats: 12 }, { id: \"c3\", name: \"Chen Wei\", team: \"Engineering\", seats: 7 }]} columns={[{ key: \"name\", header: \"Name\", accessor: (r) => r.name, pinned: \"start\", width: \"180px\", filterable: true, resizable: true }, { key: \"team\", header: \"Team\", accessor: (r) => r.team, filterable: true, resizable: true }, { key: \"seats\", header: \"Seats\", accessor: (r) => r.seats, align: \"end\", sortable: true }]} />"
     }
   ],
   "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
@@ -236,6 +299,10 @@
     {
       "title": "Selección, pie y paginación en el cliente (data-page-size; emite z:selectionchange y z:pagechange)",
       "code": "<div class=\"z-datatable\" data-selectable=\"true\" data-paged=\"true\" data-page-size=\"3\" data-selected-label=\"{n} selected\" data-range-label=\"{from}–{to} of {total}\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-selectable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select all rows\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"indeterminate\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></th>\n          <th scope=\"col\" aria-sort=\"none\" data-key=\"name\"><button type=\"button\" class=\"z-table__sort\"><span>Name</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n          <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 1\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Ana Ruiz</td>\n          <td data-align=\"end\" data-mono=\"true\">3</td>\n        </tr>\n        <tr data-key=\"b2\" data-selected=\"true\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 2\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"checked\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"></label></td>\n          <td>Leo Park</td>\n          <td data-align=\"end\" data-mono=\"true\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 3\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Mia Chen</td>\n          <td data-align=\"end\" data-mono=\"true\">1</td>\n        </tr>\n        <tr data-key=\"d4\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 4\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Zoe Katz</td>\n          <td data-align=\"end\" data-mono=\"true\">7</td>\n        </tr>\n        <tr data-key=\"e5\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 5\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Iker Sanz</td>\n          <td data-align=\"end\" data-mono=\"true\">5</td>\n        </tr>\n      </tbody>\n      <tfoot>\n        <tr>\n          <td class=\"z-table__select\"></td>\n          <td>Total</td>\n          <td data-align=\"end\" data-mono=\"true\">28</td>\n        </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <span class=\"z-datatable__count\" role=\"status\">1 selected</span>\n    <span class=\"z-datatable__range\">1–3 of 5</span>\n    <nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"sm\" data-page-count=\"2\" data-page-label=\"Page {page}\">\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled><z-icon name=\"chevron-left\" size=\"14\"></z-icon></button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></button>\n    </nav>\n  </div>\n</div>"
+    },
+    {
+      "title": "Filtros, ancho, columna fijada y exportar",
+      "code": "<div class=\"z-datatable\" data-export-name=\"members.csv\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-resizable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" data-key=\"name\" data-pinned=\"\" style=\"width: 180px\">Name<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Name\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"180\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"team\">Team<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Team\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"160\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"seats\" data-align=\"end\" aria-sort=\"none\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n        <tr class=\"z-table__filters\">\n          <th scope=\"col\" data-pinned=\"\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Name\" placeholder=\"Name\"></th>\n          <th scope=\"col\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Team\" placeholder=\"Team\"></th>\n          <th scope=\"col\" data-align=\"end\"></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td data-pinned=\"\">Ana Torres</td>\n          <td>Design</td>\n          <td data-align=\"end\">4</td>\n        </tr>\n        <tr data-key=\"b2\">\n          <td data-pinned=\"\">Ben Okafor</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td data-pinned=\"\">Chen Wei</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">7</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-datatable__export\" data-size=\"sm\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Export CSV</button>\n  </div>\n</div>"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 210,
+ "count": 216,
  "groups": {
   "actions": [
    "Button",
@@ -186,6 +186,7 @@
    "Textarea",
    "TimeField",
    "TimePicker",
+   "TransferList",
    "WeekPicker",
    "YearPicker"
   ],
@@ -207,6 +208,13 @@
    "Stepper",
    "Tabs",
    "Tree"
+  ],
+  "nodes": [
+   "Node",
+   "NodeCanvas",
+   "NodeControls",
+   "NodeListView",
+   "NodeMinimap"
   ],
   "overlay": [
    "ActionBar",
@@ -10536,6 +10544,11 @@
      "type": "boolean",
      "default": false,
      "description": "Punto de estado delante del texto."
+    },
+    {
+     "name": "avatar",
+     "type": "ReactNode",
+     "description": "Avatar delante del texto (ficha de persona). Decorativo: el nombre va en el texto de la ficha."
     }
    ],
    "states": [
@@ -10593,7 +10606,8 @@
    ],
    "classes": [
     "z-chip",
-    "z-chip__dot"
+    "z-chip__dot",
+    "z-chip__avatar"
    ],
    "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
    "examples": [
@@ -10608,6 +10622,10 @@
     {
      "title": "Chips de estado con tono",
      "code": "<div style={{ display: \"flex\", gap: 8, flexWrap: \"wrap\" }}>\n  <Chip tone=\"success\" dot>Running</Chip>\n  <Chip tone=\"warning\" dot>Paused</Chip>\n  <Chip tone=\"danger\" dot count={3}>Errors</Chip>\n  <Chip tone=\"info\" icon=\"cloud\">Remote</Chip>\n</div>"
+    },
+    {
+     "title": "Ficha de persona",
+     "code": "<Chip avatar={<Avatar name=\"Ana Torres\" size=\"xs\" />} onRemove={() => {}} removeLabel=\"Remove Ana Torres\">Ana Torres</Chip>"
     }
    ],
    "origin": "FilterChip del design system base y chip de zutool.",
@@ -10726,7 +10744,7 @@
   {
    "name": "DataTable",
    "group": "data",
-   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.",
+   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación. Además: filtro por columna, ancho ajustable, columnas fijadas al inicio y exportar a CSV.",
    "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -10900,6 +10918,50 @@
      "name": "paginationLabel",
      "type": "string",
      "default": "Pagination"
+    },
+    {
+     "name": "filters",
+     "type": "Record<string, string>",
+     "description": "Filtros por columna (controlado). Una columna con `filterable: true` lleva un campo bajo la cabecera; filtra por `text(row)` o `accessor`, sin acentos ni mayúsculas, y vuelve a la página 1."
+    },
+    {
+     "name": "defaultFilters",
+     "type": "Record<string, string>"
+    },
+    {
+     "name": "onFiltersChange",
+     "type": "(filters) => void"
+    },
+    {
+     "name": "filterLabel",
+     "type": "(column) => string",
+     "default": "Filter {header}"
+    },
+    {
+     "name": "onColumnResize",
+     "type": "(key: string, width: number) => void",
+     "description": "Una columna con `resizable: true` lleva un asa (separador enfocable): arrastrar o flechas (Mayús, más rápido); Escape cancela el arrastre."
+    },
+    {
+     "name": "resizeLabel",
+     "type": "(column) => string",
+     "default": "Resize {header}"
+    },
+    {
+     "name": "exportable",
+     "type": "boolean",
+     "default": false,
+     "description": "Botón que descarga en CSV las filas filtradas y ordenadas de todas las páginas (`dataTableCSV(rows, columns)` hace lo mismo sin descargar). Los textos que empiezan por = + - @ se escapan para que una hoja de cálculo no los ejecute."
+    },
+    {
+     "name": "exportLabel",
+     "type": "string",
+     "default": "Export CSV"
+    },
+    {
+     "name": "exportFileName",
+     "type": "string",
+     "default": "table.csv"
     }
    ],
    "states": [
@@ -10914,39 +10976,42 @@
     "paged"
    ],
    "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "accent-text",
+    "card-bg",
     "card-border",
     "card-radius",
-    "card-bg",
     "card-shadow",
-    "space-3",
-    "fg",
-    "text-small",
-    "space-2",
-    "fg-muted",
-    "line",
+    "control-bg",
+    "control-border",
+    "control-height-sm",
+    "control-radius-sm",
     "duration-fast",
     "ease-standard",
-    "font-mono",
-    "surface-solid",
-    "surface",
-    "row-hover",
-    "accent-soft",
-    "accent-ring",
-    "surface-3",
-    "space-8",
-    "space-4",
-    "space-1",
-    "surface-2",
-    "accent-text",
-    "control-radius-sm",
+    "fg",
+    "fg-muted",
     "focus-width",
+    "font-mono",
     "layer-raised",
     "leading-ui",
-    "space-2-5",
-    "text-body",
-    "weight-medium",
+    "line",
     "line-strong",
-    "control-height-sm"
+    "row-hover",
+    "space-1",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-4",
+    "space-8",
+    "surface",
+    "surface-2",
+    "surface-3",
+    "surface-solid",
+    "text-body",
+    "text-small",
+    "weight-medium"
    ],
    "classes": [
     "z-table",
@@ -10955,9 +11020,13 @@
     "z-datatable__bar",
     "z-datatable__count",
     "z-datatable__range",
-    "z-table__select"
+    "z-table__select",
+    "z-table__filters",
+    "z-table__filter",
+    "z-table__resize",
+    "z-datatable__export"
    ],
-   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre.",
+   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre. Cada filtro es un campo de búsqueda con nombre («Filter Name»). El asa de ancho es un separador enfocable con aria-valuenow (patrón de separador de ventanas): flechas izquierda y derecha cambian el ancho. Sin React: tr.z-table__filters con input.z-table__filter, span.z-table__resize en la cabecera, th[data-pinned] y button.z-datatable__export (data-export-name); emite z:filterchange y z:columnresize.",
    "examples": [
     {
      "title": "Ordenable",
@@ -10970,6 +11039,10 @@
     {
      "title": "Selección, pie y paginación",
      "code": "const members = [\n  { id: \"a1\", name: \"Ana Ruiz\", seats: 3 },\n  { id: \"b2\", name: \"Leo Park\", seats: 12 },\n  { id: \"c3\", name: \"Mia Chen\", seats: 1 },\n  { id: \"d4\", name: \"Zoe Katz\", seats: 7 },\n  { id: \"e5\", name: \"Iker Sanz\", seats: 5 },\n];\n\n<DataTable\n  caption=\"Members\"\n  captionHidden\n  rows={members}\n  rowKey={(member) => member.id}\n  selectable\n  defaultSelectedKeys={[\"b2\"]}\n  pageSize={3}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (member) => member.name, sortable: true, footer: \"Total\" },\n    {\n      key: \"seats\",\n      header: \"Seats\",\n      accessor: (member) => member.seats,\n      sortable: true,\n      align: \"end\",\n      mono: true,\n      footer: (all) => all.reduce((sum, member) => sum + member.seats, 0),\n    },\n  ]}\n/>"
+    },
+    {
+     "title": "Filtros, ancho, columna fijada y exportar",
+     "code": "<DataTable caption=\"Members\" captionHidden exportable rowKey={(r) => r.id} rows={[{ id: \"a1\", name: \"Ana Torres\", team: \"Design\", seats: 4 }, { id: \"b2\", name: \"Ben Okafor\", team: \"Engineering\", seats: 12 }, { id: \"c3\", name: \"Chen Wei\", team: \"Engineering\", seats: 7 }]} columns={[{ key: \"name\", header: \"Name\", accessor: (r) => r.name, pinned: \"start\", width: \"180px\", filterable: true, resizable: true }, { key: \"team\", header: \"Team\", accessor: (r) => r.team, filterable: true, resizable: true }, { key: \"seats\", header: \"Seats\", accessor: (r) => r.seats, align: \"end\", sortable: true }]} />"
     }
    ],
    "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
@@ -10982,6 +11055,10 @@
     {
      "title": "Selección, pie y paginación en el cliente (data-page-size; emite z:selectionchange y z:pagechange)",
      "code": "<div class=\"z-datatable\" data-selectable=\"true\" data-paged=\"true\" data-page-size=\"3\" data-selected-label=\"{n} selected\" data-range-label=\"{from}–{to} of {total}\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-selectable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select all rows\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"indeterminate\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></th>\n          <th scope=\"col\" aria-sort=\"none\" data-key=\"name\"><button type=\"button\" class=\"z-table__sort\"><span>Name</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n          <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 1\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Ana Ruiz</td>\n          <td data-align=\"end\" data-mono=\"true\">3</td>\n        </tr>\n        <tr data-key=\"b2\" data-selected=\"true\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 2\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"checked\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"></label></td>\n          <td>Leo Park</td>\n          <td data-align=\"end\" data-mono=\"true\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 3\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Mia Chen</td>\n          <td data-align=\"end\" data-mono=\"true\">1</td>\n        </tr>\n        <tr data-key=\"d4\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 4\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Zoe Katz</td>\n          <td data-align=\"end\" data-mono=\"true\">7</td>\n        </tr>\n        <tr data-key=\"e5\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 5\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Iker Sanz</td>\n          <td data-align=\"end\" data-mono=\"true\">5</td>\n        </tr>\n      </tbody>\n      <tfoot>\n        <tr>\n          <td class=\"z-table__select\"></td>\n          <td>Total</td>\n          <td data-align=\"end\" data-mono=\"true\">28</td>\n        </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <span class=\"z-datatable__count\" role=\"status\">1 selected</span>\n    <span class=\"z-datatable__range\">1–3 of 5</span>\n    <nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"sm\" data-page-count=\"2\" data-page-label=\"Page {page}\">\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled><z-icon name=\"chevron-left\" size=\"14\"></z-icon></button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></button>\n    </nav>\n  </div>\n</div>"
+    },
+    {
+     "title": "Filtros, ancho, columna fijada y exportar",
+     "code": "<div class=\"z-datatable\" data-export-name=\"members.csv\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-resizable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" data-key=\"name\" data-pinned=\"\" style=\"width: 180px\">Name<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Name\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"180\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"team\">Team<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Team\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"160\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"seats\" data-align=\"end\" aria-sort=\"none\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n        <tr class=\"z-table__filters\">\n          <th scope=\"col\" data-pinned=\"\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Name\" placeholder=\"Name\"></th>\n          <th scope=\"col\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Team\" placeholder=\"Team\"></th>\n          <th scope=\"col\" data-align=\"end\"></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td data-pinned=\"\">Ana Torres</td>\n          <td>Design</td>\n          <td data-align=\"end\">4</td>\n        </tr>\n        <tr data-key=\"b2\">\n          <td data-pinned=\"\">Ben Okafor</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td data-pinned=\"\">Chen Wei</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">7</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-datatable__export\" data-size=\"sm\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Export CSV</button>\n  </div>\n</div>"
     }
    ],
    "file": "zui/src/components/data/DataTable.manifest.json"
@@ -20566,6 +20643,117 @@
    "file": "zui/src/components/forms/TimePicker.manifest.json"
   },
   {
+   "name": "TransferList",
+   "group": "forms",
+   "description": "Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible. El valor es la lista de elegidos, en el orden en que llegaron.",
+   "import": "import { TransferList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ value: string; label: string; description?: string; disabled?: boolean }[]",
+     "required": true
+    },
+    {
+     "name": "value",
+     "type": "string[]",
+     "description": "Elegidos (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string[]) => void"
+    },
+    {
+     "name": "searchable",
+     "type": "boolean",
+     "default": false,
+     "description": "Búsqueda en cada lista (sin acentos ni mayúsculas)."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Un input oculto por valor elegido para el formulario."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TransferListLabels>",
+     "description": "Títulos, búsqueda, recuento («{count} of {total} selected»), botones y anuncio, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "checked",
+    "disabled",
+    "empty"
+   ],
+   "tokens": [
+    "line",
+    "surface-solid",
+    "surface-3",
+    "row-hover",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "control-border",
+    "control-bg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-height-sm",
+    "radius-xs",
+    "text-caption",
+    "text-small",
+    "weight-semibold",
+    "focus-width",
+    "focus-offset"
+   ],
+   "classes": [
+    "z-transfer",
+    "z-transfer__list",
+    "z-transfer__head",
+    "z-transfer__title",
+    "z-transfer__count",
+    "z-transfer__search",
+    "z-transfer__options",
+    "z-transfer__option",
+    "z-transfer__check",
+    "z-transfer__text",
+    "z-transfer__label",
+    "z-transfer__description",
+    "z-transfer__empty",
+    "z-transfer__actions"
+   ],
+   "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Miembros de un equipo",
+     "code": "<TransferList searchable name=\"members\" labels={{ source: \"People\", target: \"Team\" }} items={[{ value: \"ana\", label: \"Ana Torres\", description: \"Design\" }, { value: \"ben\", label: \"Ben Okafor\", description: \"Engineering\" }, { value: \"chen\", label: \"Chen Wei\", description: \"Engineering\" }, { value: \"dara\", label: \"Dara Singh\", description: \"Product\", disabled: true }]} defaultValue={[\"chen\"]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Miembros de un equipo",
+     "code": "<div class=\"z-transfer\" data-searchable data-name=\"members\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"value\": \"ana\", \"label\": \"Ana Torres\", \"description\": \"Design\"}, {\"value\": \"ben\", \"label\": \"Ben Okafor\", \"description\": \"Engineering\"}, {\"value\": \"chen\", \"label\": \"Chen Wei\", \"description\": \"Engineering\"}, {\"value\": \"dara\", \"label\": \"Dara Singh\", \"description\": \"Product\", \"disabled\": true}, {\"value\": \"eli\", \"label\": \"Eli Moreau\", \"description\": \"Support\"}, {\"value\": \"femi\", \"label\": \"Femi Adeyemi\", \"description\": \"Sales\"}], \"value\": [\"chen\"], \"labels\": {\"source\": \"People\", \"target\": \"Team\"}}</script>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: Transfer list de MUI, Transfer de Ant Design y PickList de PrimeReact.",
+   "file": "zui/src/components/forms/TransferList.manifest.json"
+  },
+  {
    "name": "WeekPicker",
    "group": "forms",
    "description": "Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible. Valor YYYY-Www, como <input type=\"week\">; con mode=\"range\", un rango de semanas.",
@@ -22578,6 +22766,552 @@
     }
    ],
    "file": "zui/src/components/navigation/Tree.manifest.json"
+  },
+  {
+   "name": "Node",
+   "group": "nodes",
+   "exports": [
+    "NodeGroup",
+    "NodePort"
+   ],
+   "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
+   "import": "import { Node, NodeGroup, NodePort } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "node",
+     "type": "GraphNode",
+     "description": "El nodo del modelo."
+    },
+    {
+     "name": "x",
+     "type": "number",
+     "description": "Posición absoluta para el primer pintado."
+    },
+    {
+     "name": "y",
+     "type": "number"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Cuerpo propio (sin él, data.description)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "selected",
+    "running",
+    "success",
+    "error",
+    "entered"
+   ],
+   "tokens": [
+    "surface",
+    "surface-solid",
+    "card-bg",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "shadow-sm",
+    "shadow-md",
+    "radius-lg",
+    "panel-radius",
+    "focus-width",
+    "focus-offset",
+    "glass-highlight",
+    "radius-full",
+    "text-caption",
+    "text-body",
+    "weight-semibold",
+    "weight-medium",
+    "control-height-xs",
+    "control-radius-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-node",
+    "z-node__header",
+    "z-node__icon",
+    "z-node__title",
+    "z-node__status",
+    "z-node__body",
+    "z-node__resize",
+    "z-node-port",
+    "z-node-port__label",
+    "z-node-group",
+    "z-node-group__header",
+    "z-node-group__title"
+   ],
+   "a11y": "group con aria-roledescription «node» y el título como nombre. El estado se dice en texto («running», «error»), no solo con color. Cada puerto es un <button> con nombre («Input json», «Output true») y objetivo de 24 px. En el lienzo, los controles del cuerpo salen del orden de Tab hasta que se entra en el nodo con Intro.",
+   "examples": [
+    {
+     "title": "Nodo con dos salidas",
+     "code": "<Node node={{ id: \"filter\", position: { x: 0, y: 0 }, data: { label: \"Filter\", icon: \"funnel\", description: \"total > 100\", status: \"success\" }, ports: [{ id: \"in\", kind: \"target\" }, { id: \"true\", kind: \"source\", label: \"true\" }, { id: \"false\", kind: \"source\", label: \"false\" }] }} />"
+    },
+    {
+     "title": "Grupo",
+     "code": "<NodeGroup node={{ id: \"g\", position: { x: 0, y: 0 }, size: { width: 360, height: 200 }, data: { label: \"Retry block\" } }} />"
+    }
+   ],
+   "file": "zui/src/components/nodes/Node.manifest.json"
+  },
+  {
+   "name": "NodeCanvas",
+   "group": "nodes",
+   "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y trazo animado), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez.",
+   "import": "import { NodeCanvas } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "nodes",
+     "type": "GraphNode[]",
+     "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él."
+    },
+    {
+     "name": "edges",
+     "type": "GraphEdge[]",
+     "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?, animated?, label?, markerEnd?, tone? }."
+    },
+    {
+     "name": "defaultNodes",
+     "type": "GraphNode[]"
+    },
+    {
+     "name": "defaultEdges",
+     "type": "GraphEdge[]"
+    },
+    {
+     "name": "onNodesChange",
+     "type": "(nodes, change) => void",
+     "description": "Cambio de nodos. `change.type`: move, resize, remove, paste, duplicate, group, ungroup, layout, undo, redo; `change.done` es false en los pasos intermedios de un arrastre."
+    },
+    {
+     "name": "onEdgesChange",
+     "type": "(edges, change) => void"
+    },
+    {
+     "name": "onChange",
+     "type": "(graph, change) => void",
+     "description": "Cualquier cambio, con el modelo { nodes, edges } completo (serializable)."
+    },
+    {
+     "name": "onConnect",
+     "type": "(edge) => void"
+    },
+    {
+     "name": "isValidConnection",
+     "type": "(edge) => boolean",
+     "description": "Validación propia, además de sentido, tipos (`port.type`), límites (`port.max`) y duplicadas."
+    },
+    {
+     "name": "allowCycles",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "renderNode",
+     "type": "(node, { x, y }) => ReactNode",
+     "description": "Cuerpo de cada nodo. Sin él, `data.description`."
+    },
+    {
+     "name": "viewport",
+     "type": "{ x, y, zoom }"
+    },
+    {
+     "name": "defaultViewport",
+     "type": "{ x, y, zoom }"
+    },
+    {
+     "name": "onViewportChange",
+     "type": "(viewport) => void"
+    },
+    {
+     "name": "minZoom",
+     "type": "number",
+     "default": 0.1
+    },
+    {
+     "name": "maxZoom",
+     "type": "number",
+     "default": 4
+    },
+    {
+     "name": "snap",
+     "type": "number | false",
+     "default": 16,
+     "description": "Cuadrícula del imán en unidades del mundo."
+    },
+    {
+     "name": "fitOnMount",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "selection",
+     "type": "{ nodes?: string[]; edges?: string[] }"
+    },
+    {
+     "name": "onSelectionChange",
+     "type": "(selection) => void"
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "edgeType",
+     "type": "enum",
+     "values": [
+      "bezier",
+      "straight",
+      "step",
+      "smoothstep"
+     ],
+     "default": "bezier"
+    },
+    {
+     "name": "layoutDirection",
+     "type": "enum",
+     "values": [
+      "LR",
+      "TB"
+     ],
+     "default": "LR",
+     "description": "Sentido del botón de ordenar de los controles."
+    },
+    {
+     "name": "background",
+     "type": "enum",
+     "values": [
+      "dots",
+      "grid",
+      "none"
+     ],
+     "default": "dots"
+    },
+    {
+     "name": "minimap",
+     "type": "boolean | NodeMinimapProps",
+     "default": true
+    },
+    {
+     "name": "controls",
+     "type": "boolean | NodeControlsProps",
+     "default": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>",
+     "description": "Textos y anuncios, en inglés por defecto."
+    },
+    {
+     "name": "ref",
+     "type": "Ref<NodeCanvasHandle>",
+     "description": "fitView, zoomIn, zoomOut, zoomTo, undo, redo, layout('LR' | 'TB'), focusNode, removeSelection, removeEdge, graph, viewport, selection."
+    }
+   ],
+   "states": [
+    "rest",
+    "panning",
+    "dragging",
+    "connecting",
+    "selected",
+    "locked",
+    "readonly"
+   ],
+   "tokens": [
+    "surface",
+    "surface-solid",
+    "card-bg",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "shadow-sm",
+    "shadow-md",
+    "radius-lg",
+    "panel-radius",
+    "focus-width",
+    "focus-offset",
+    "glass-highlight",
+    "shadow-lg",
+    "radius-sm",
+    "radius-xl",
+    "text-caption",
+    "text-small",
+    "weight-semibold",
+    "layer-raised",
+    "control-height-md",
+    "control-height-xs",
+    "control-radius-sm"
+   ],
+   "classes": [
+    "z-node-canvas",
+    "z-node-canvas__background",
+    "z-node-canvas__world",
+    "z-node-canvas__groups",
+    "z-node-canvas__edges",
+    "z-node-canvas__edge-layer",
+    "z-node-canvas__labels",
+    "z-node-canvas__nodes",
+    "z-node-canvas__selection",
+    "z-node-canvas__draft",
+    "z-node-canvas__marker",
+    "z-node-canvas__desc",
+    "z-node-canvas__descs",
+    "z-edge",
+    "z-edge__path",
+    "z-edge__hit",
+    "z-edge__end",
+    "z-edge__label"
+   ],
+   "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Flujo con puertos tipados",
+     "code": "<NodeCanvas aria-label=\"Order flow\" defaultNodes={[{ id: \"hook\", position: { x: 0, y: 40 }, data: { label: \"Webhook\", icon: \"bolt\", description: \"POST /orders\", tone: \"accent\" }, ports: [{ id: \"out\", kind: \"source\", type: \"json\" }] }, { id: \"save\", position: { x: 320, y: 40 }, data: { label: \"Save order\", icon: \"circle-stack\", status: \"running\" }, ports: [{ id: \"in\", kind: \"target\", type: \"json\" }] }]} defaultEdges={[{ id: \"e1\", source: \"hook\", sourcePort: \"out\", target: \"save\", targetPort: \"in\", animated: true }]} />"
+    },
+    {
+     "title": "Controlado, con cuerpo propio",
+     "code": "<NodeCanvas nodes={nodes} edges={edges} onNodesChange={setNodes} onEdgesChange={setEdges} edgeType=\"smoothstep\" renderNode={(node) => <Switch label=\"Enabled\" />} controls={{ showLayout: true }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Flujo en el marcado",
+     "code": "<div class=\"z-node-canvas\" data-z-node-canvas data-snap=\"16\" aria-label=\"Order flow\">\n  <div class=\"z-node\" data-id=\"hook\" data-tone=\"accent\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Webhook\" data-x=\"0\" data-y=\"40\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"bolt\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Webhook</span></div><div class=\"z-node__body\">POST /orders</div><button type=\"button\" class=\"z-node-port\" data-port=\"out\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output out\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"filter\" data-status=\"success\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Filter\" data-x=\"300\" data-y=\"0\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"funnel\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Filter</span><span class=\"z-node__status\" data-status=\"success\">succeeded</span></div><div class=\"z-node__body\">total &gt; 100</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><button type=\"button\" class=\"z-node-port\" data-port=\"true\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output true\" style=\"--z-port-t: 0.33\"><span class=\"z-node-port__label\">true</span></button><button type=\"button\" class=\"z-node-port\" data-port=\"false\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output false\" style=\"--z-port-t: 0.67\"><span class=\"z-node-port__label\">false</span></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"save\" data-status=\"running\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Save order\" data-x=\"600\" data-y=\"60\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"circle-stack\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Save order</span><span class=\"z-node__status\" data-status=\"running\">running</span></div><div class=\"z-node__body\">orders table</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <script type=\"application/json\" class=\"z-node-canvas__edges\">[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]</script>\n</div>"
+    },
+    {
+     "title": "Grafo en JSON, solo lectura, con vista en lista",
+     "code": "<div class=\"z-node-canvas\" data-z-node-canvas data-readonly data-minimap=\"false\" aria-label=\"Pipeline\" id=\"pipeline\">\n  <script type=\"application/json\" data-graph>{\"nodes\":[{\"id\":\"hook\",\"position\":{\"x\":0,\"y\":40},\"data\":{\"label\":\"Webhook\",\"icon\":\"bolt\",\"description\":\"POST /orders\",\"tone\":\"accent\"},\"ports\":[{\"id\":\"out\",\"kind\":\"source\",\"type\":\"json\"}]},{\"id\":\"filter\",\"position\":{\"x\":300,\"y\":0},\"data\":{\"label\":\"Filter\",\"icon\":\"funnel\",\"description\":\"total > 100\",\"status\":\"success\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"},{\"id\":\"true\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"true\"},{\"id\":\"false\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"false\"}]},{\"id\":\"save\",\"position\":{\"x\":600,\"y\":60},\"data\":{\"label\":\"Save order\",\"icon\":\"circle-stack\",\"description\":\"orders table\",\"status\":\"running\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"}]}],\"edges\":[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]}</script>\n</div>\n<div class=\"z-node-list\" data-for=\"#pipeline\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias de interacción: React Flow (xyflow) y el editor de n8n. Sin código ni dependencias de terceros.",
+   "file": "zui/src/components/nodes/NodeCanvas.manifest.json"
+  },
+  {
+   "name": "NodeControls",
+   "group": "nodes",
+   "description": "Controles de un NodeCanvas: acercar, alejar, encajar, bloquear y deshacer/rehacer, y ordenar si se pide. Es una Toolbar de cristal, vertical por defecto.",
+   "import": "import { NodeControls } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "showZoom",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showFit",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showLock",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showHistory",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showLayout",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "bottom-left",
+      "top-left",
+      "top-right"
+     ],
+     "default": "bottom-left"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "disabled",
+    "pressed"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-border",
+    "layer-raised",
+    "fg-muted",
+    "text-caption"
+   ],
+   "classes": [
+    "z-node-controls"
+   ],
+   "a11y": "role=toolbar con nombre: una parada de Tab y flechas entre botones. Cada botón tiene nombre; bloquear es un conmutador con aria-pressed; deshacer, rehacer y los límites de zoom van con aria-disabled (siguen en el recorrido). Cada acción se anuncia en la región central.",
+   "examples": [
+    {
+     "title": "Horizontal arriba",
+     "code": "<NodeCanvas defaultNodes={[]} controls={{ orientation: \"horizontal\", position: \"top-left\", showLayout: true }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Controles",
+     "code": "<div role=\"toolbar\" aria-label=\"Canvas controls\" aria-orientation=\"vertical\" class=\"z-toolbar z-liquid z-node-controls\" data-variant=\"glass\" data-size=\"sm\"><button type=\"button\" title=\"Zoom in\" aria-label=\"Zoom in\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-in\"><z-icon name=\"magnifying-glass-plus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Zoom out\" aria-label=\"Zoom out\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-out\"><z-icon name=\"magnifying-glass-minus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Fit view\" aria-label=\"Fit view\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"fit\"><z-icon name=\"arrows-pointing-in\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Lock canvas\" aria-label=\"Lock canvas\" aria-pressed=\"false\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"lock\"><span data-lock-icon=\"open\" class=\"z-node-controls__lock\"><span data-when=\"open\"><z-icon name=\"lock-open\" size=\"16\"></z-icon></span><span data-when=\"closed\"><z-icon name=\"lock-closed\" size=\"16\"></z-icon></span></span></button><div role=\"separator\" aria-orientation=\"horizontal\" class=\"z-toolbar__separator\"></div><button type=\"button\" title=\"Undo\" aria-label=\"Undo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"undo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-left\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Redo\" aria-label=\"Redo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"redo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-right\" size=\"16\"></z-icon></button></div>"
+    }
+   ],
+   "file": "zui/src/components/nodes/NodeControls.manifest.json"
+  },
+  {
+   "name": "NodeListView",
+   "group": "nodes",
+   "description": "Vista en lista de un grafo: una tabla de nodos (estado, entradas, salidas) y otra de conexiones, con «Show» para volver al nodo en el lienzo y quitar conexión. La alternativa accesible al diagrama, con el mismo modelo.",
+   "import": "import { NodeListView } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "graph",
+     "type": "{ nodes, edges }"
+    },
+    {
+     "name": "onShowNode",
+     "type": "(id) => void"
+    },
+    {
+     "name": "onRemoveEdge",
+     "type": "(id) => void"
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "fg",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-node-list",
+    "z-node-list__table",
+    "z-node-list__caption"
+   ],
+   "a11y": "Tablas con caption y cabeceras de fila y columna. Los botones nombran el nodo o la conexión («Remove connection Webhook → Filter»). Sin React: .z-node-list[data-for=\"#lienzo\"] se pinta y se mantiene al día con el lienzo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Lista",
+     "code": "<NodeListView graph={{ nodes: [{ id: \"a\", position: { x: 0, y: 0 }, data: { label: \"Fetch\" }, ports: [{ id: \"out\", kind: \"source\" }] }, { id: \"b\", position: { x: 0, y: 0 }, data: { label: \"Store\" }, ports: [{ id: \"in\", kind: \"target\" }] }], edges: [{ id: \"e\", source: \"a\", target: \"b\" }] }} onRemoveEdge={() => {}} />"
+    }
+   ],
+   "file": "zui/src/components/nodes/NodeListView.manifest.json"
+  },
+  {
+   "name": "NodeMinimap",
+   "group": "nodes",
+   "description": "Minimapa de un NodeCanvas: todos los nodos reducidos y el rectángulo visible. Pulsar o arrastrar mueve la vista; con el foco, las flechas desplazan y + y − hacen zoom.",
+   "import": "import { NodeMinimap } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "bottom-right",
+      "bottom-left",
+      "top-right",
+      "top-left"
+     ],
+     "default": "bottom-right"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus"
+   ],
+   "tokens": [
+    "glass-bg",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "danger",
+    "overlay",
+    "radius-md",
+    "layer-raised"
+   ],
+   "classes": [
+    "z-node-minimap",
+    "z-node-minimap__svg",
+    "z-node-minimap__node",
+    "z-node-minimap__mask",
+    "z-node-minimap__view"
+   ],
+   "a11y": "nav con nombre («Minimap») y la descripción del lienzo; una parada de Tab. El dibujo es aria-hidden: la información está en los nodos y en NodeListView.",
+   "examples": [
+    {
+     "title": "Arriba a la derecha",
+     "code": "<NodeCanvas defaultNodes={[]} minimap={{ position: \"top-right\" }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Minimapa",
+     "code": "<nav class=\"z-node-minimap z-liquid\" aria-label=\"Minimap\" tabindex=\"0\"></nav>"
+    }
+   ],
+   "file": "zui/src/components/nodes/NodeMinimap.manifest.json"
   },
   {
    "name": "ActionBar",

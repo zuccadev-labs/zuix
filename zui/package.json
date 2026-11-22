@@ -50,6 +50,7 @@
     "./dom/ai": "./src/dom/families/ai.ts",
     "./dom/dashboard": "./src/dom/families/dashboard.ts",
     "./dom/people": "./src/dom/families/people.ts",
+    "./dom/nodes": "./src/dom/families/nodes.ts",
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
     "./html.json": "./html.json",
     "./dist/zui.css": "./dist/zui.css",
@@ -169,6 +170,10 @@
       "./dom/people": {
         "types": "./dist/esm/dom/families/people.d.ts",
         "default": "./dist/esm/dom/families/people.js"
+      },
+      "./dom/nodes": {
+        "types": "./dist/esm/dom/families/nodes.d.ts",
+        "default": "./dist/esm/dom/families/nodes.js"
       },
       "./dom/carousel-gl": {
         "types": "./dist/esm/dom/carousel-gl.d.ts",

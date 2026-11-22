@@ -17,6 +17,7 @@ export * from "./components/chat";
 export * from "./components/ai";
 export * from "./components/dashboard";
 export * from "./components/people";
+export * from "./components/nodes";
 export { cx } from "./cx";
 // Patrones del cargador DotMatrix (los mismos que dibuja el modo sin framework).
 export { DOT_PATTERNS, type DotPattern } from "./core/dotmatrix";

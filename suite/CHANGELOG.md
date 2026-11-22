@@ -11,6 +11,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   terminal y código de `@zuccadev-labs/zuix-zui`.
 - Subrutas `./zui/dom/chat` y `./zui/dom/ai`: chat y mensajería, e IA y agentes, sin framework.
 - Subrutas `./zui/dom/dashboard` y `./zui/dom/people`: dashboard y tableros, y usuarios y perfiles.
+- Subruta `./zui/dom/nodes`: el lienzo de nodos sin framework de `@zuccadev-labs/zuix-zui`.
 
 ## [0.3.0] - 2026-11-21
 

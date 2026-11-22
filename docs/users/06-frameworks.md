@@ -219,6 +219,7 @@ init(datesModule, chartsModule);
 | `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
 | `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
 | `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
+| `/dom/nodes` | NodeCanvas (nodos, puertos, aristas, grupos, minimapa, controles), NodeListView | `nodesModule`, `nodeCanvas(el)`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -236,10 +237,11 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 | `init()` del núcleo con chat | — | 234 kB |
 | `init()` del núcleo con IA | — | 225 kB |
 | `init()` del núcleo con chat e IA | — | 301 kB |
-| `init()` del núcleo con dashboard | — | 156 kB |
+| `init()` del núcleo con dashboard | — | 157 kB |
 | `init()` del núcleo con usuarios y perfiles | — | 128 kB |
 | `init()` del núcleo con dashboard y usuarios | — | 178 kB |
-| `init()` completo | 526 kB | 856 kB |
+| `init()` del núcleo con nodos | — | 183 kB |
+| `init()` completo | 526 kB | 943 kB |
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.

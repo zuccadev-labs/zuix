@@ -74,6 +74,35 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `Fab` (tres tamaños, extendido y plegable, fijo en una esquina), `FabMenu` y `SplitButton`, de Material 3.
 - `ImageList` (`standard`, `quilted`, `woven`, `masonry`) y `Masonry` (carriles nativos donde existen, columnas CSS
   donde no).
+- Familia de nodos (grupo `nodes`, entrada `/dom/nodes`), sin bibliotecas de terceros:
+  - `NodeCanvas`: lienzo con zoom (Ctrl/⌘ + rueda o pellizco), desplazamiento (rueda, arrastre del fondo, Espacio +
+    arrastre, flechas), fondo de puntos o rejilla que sigue la vista, imán a la cuadrícula, caja de selección con
+    Mayús, arrastrar y redimensionar nodos, conectar arrastrando desde un puerto, con dos clics o con el teclado,
+    reconectar arrastrando el extremo de una arista, borrar, copiar/cortar/pegar (también con el portapapeles del
+    sistema como JSON), duplicar, agrupar y desagrupar, deshacer/rehacer y disposición automática por capas. Modelo
+    `{ nodes, edges }` serializable, controlado o no, con `onNodesChange`, `onEdgesChange`, `onChange` y `onConnect`.
+    Solo pinta los nodos y aristas que se ven.
+  - `Node`, `NodeGroup` y `NodePort`: nodo con cabecera (icono, título, estado), cuerpo libre, estados seleccionado,
+    ejecutando, correcto y error, y puertos de entrada y salida con tipo y límite de conexiones.
+  - Aristas recta, bézier, escalonada y escalonada suave, con flecha, etiqueta, tono y trazo animado (quieto con
+    movimiento reducido y pausado fuera de pantalla).
+  - `NodeMinimap`, `NodeControls` (una Toolbar) y `NodeListView` (tablas de nodos y conexiones con las mismas
+    acciones).
+  - Teclado: una parada de Tab con foco itinerante, flechas al nodo más cercano en esa dirección, Intro y Escape para
+    entrar y salir de un nodo, Alt + flechas para moverlo, `]` y `[` para seguir conexiones (con varias, un menú para
+    elegir), conectar eligiendo origen y destino, Supr, Ctrl+Z/Y/A/C/X/V/D/G. Descripción textual del grafo y de cada
+    nodo, y anuncios en el anunciador central.
+  - `core/`: `viewport`, `edge-path`, `graph`, `graph-edit`, `ports`, `undo`, `layout-layers`, `minimap`, `node-view`
+    y la caja de selección en `selection` (`boxSelection`), con pruebas de propiedades de geometría e historial.
+- `TransferList` (grupo `forms`): disponibles y elegidos con casillas, búsqueda opcional, mover lo marcado o todo lo
+  visible, Intro y doble clic para mover, rango con Mayús y anuncio de lo movido. En `/dom/data`, `.z-transfer` con los
+  elementos en `data-props` y `z:change`. Lógica pura en `core/transfer`.
+- `DataTable`, funciones de tabla de datos avanzada: filtro por columna (`filterable`, `filters`, `onFiltersChange`), ancho
+  ajustable con puntero o flechas (`resizable`, `onColumnResize`), columnas fijadas al inicio (`pinned: "start"`) y
+  exportar a CSV (`exportable`, `dataTableCSV`), con los textos que empiezan por `=`, `+`, `-` o `@` neutralizados. En
+  `/dom/data`, lo mismo sobre el marcado (`tr.z-table__filters`, `.z-table__resize`, `th[data-pinned]`,
+  `.z-datatable__export`), con `z:filterchange`, `z:columnresize` y `dataTableCSVFromDom`.
+- `Chip` con `avatar`: ficha de persona («input chip» de Material 3) con un avatar delante del texto.
 - `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
   corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
   nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y

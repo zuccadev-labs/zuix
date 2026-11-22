@@ -118,7 +118,7 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
 | `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior, everything: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
 | `@zuccadev-labs/zuix-zui/dom/core` | Framework-free core (`init`, `use`, dialogs, popovers, menus, `toast`, basic forms), extended per family |
-| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people` | One behavior family each, registered with `init(module)` or `use(module)` |
+| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people`, `/dom/nodes` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |

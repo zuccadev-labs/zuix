@@ -35,6 +35,7 @@ export const GROUPS = {
   ai: { label: "IA y agentes", icon: "sparkles" },
   dashboard: { label: "Dashboard y tableros", icon: "presentation-chart-line" },
   people: { label: "Usuarios y perfiles", icon: "user-group" },
+  nodes: { label: "Nodos", icon: "share" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

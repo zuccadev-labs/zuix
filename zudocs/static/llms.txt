@@ -117,6 +117,7 @@
 - [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
 - [TimeField](https://zuccadev-labs.github.io/zuix/components/forms/time-field.md): Hora de reloj que se teclea por segmentos (hora, minuto, segundo, AM/PM).
 - [TimePicker](https://zuccadev-labs.github.io/zuix/components/forms/time-picker.md): TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear.
+- [TransferList](https://zuccadev-labs.github.io/zuix/components/forms/transfer-list.md): Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible.
 - [WeekPicker](https://zuccadev-labs.github.io/zuix/components/forms/week-picker.md): Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible.
 - [YearPicker](https://zuccadev-labs.github.io/zuix/components/forms/year-picker.md): Selector de año: DatePicker en la vista de década (rejilla 3 × 4 con los años del borde atenuados).
 
@@ -321,6 +322,14 @@
 - [ProfileHeader](https://zuccadev-labs.github.io/zuix/components/people/profile-header.md): Cabecera de perfil: portada a sangre, avatar superpuesto con anillo de cristal, nombre (h1), insignias, usuario, rol, biografía, metadatos, estadísticas, acciones y pestañas.
 - [SettingsSection](https://zuccadev-labs.github.io/zuix/components/people/settings-section.md): Sección de ajustes con filas: título, descripción, superficie de lectura con filas etiqueta–descripción–control (SettingRow) y pie con acciones.
 - [UserCard](https://zuccadev-labs.github.io/zuix/components/people/user-card.md): Tarjeta de persona: portada, avatar superpuesto, nombre, usuario, rol, biografía corta, estadísticas y acciones (seguir, mensaje).
+
+## Componentes: Nodos
+
+- [Node](https://zuccadev-labs.github.io/zuix/components/nodes/node.md): Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y…
+- [NodeCanvas](https://zuccadev-labs.github.io/zuix/components/nodes/node-canvas.md): Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y…
+- [NodeControls](https://zuccadev-labs.github.io/zuix/components/nodes/node-controls.md): Controles de un NodeCanvas: acercar, alejar, encajar, bloquear y deshacer/rehacer, y ordenar si se pide.
+- [NodeListView](https://zuccadev-labs.github.io/zuix/components/nodes/node-list-view.md): Vista en lista de un grafo: una tabla de nodos (estado, entradas, salidas) y otra de conexiones, con «Show» para volver al nodo en el lienzo y quitar conexión.
+- [NodeMinimap](https://zuccadev-labs.github.io/zuix/components/nodes/node-minimap.md): Minimapa de un NodeCanvas: todos los nodos reducidos y el rectángulo visible.
 
 ## Componentes: Layouts
 

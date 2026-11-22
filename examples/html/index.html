@@ -3122,6 +3122,14 @@ malaga" data-ignore-accents="">Un
 <div id="start-time-panel" popover="manual" class="z-liquid z-popover z-timepicker__panel" role="dialog" aria-label="Choose time"></div>
   </div>
 </section>
+<section class="z-card demo" data-component="TransferList" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TransferList</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-transfer" data-searchable data-name="members">
+  <script type="application/json" data-props>{"items": [{"value": "ana", "label": "Ana Torres", "description": "Design"}, {"value": "ben", "label": "Ben Okafor", "description": "Engineering"}, {"value": "chen", "label": "Chen Wei", "description": "Engineering"}, {"value": "dara", "label": "Dara Singh", "description": "Product", "disabled": true}, {"value": "eli", "label": "Eli Moreau", "description": "Support"}, {"value": "femi", "label": "Femi Adeyemi", "description": "Sales"}], "value": ["chen"], "labels": {"source": "People", "target": "Team"}}</script>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="WeekPicker" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">WeekPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3626,6 +3634,123 @@ malaga" data-ignore-accents="">Un
     </div>
   </li>
 </ul>
+  </div>
+</section>
+</div>
+<h2 class="page__group">nodes</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="Node" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Node</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-node" data-id="filter" data-status="success" role="group" aria-roledescription="node" aria-label="Filter" style="--z-node-x:0px;--z-node-y:0px">
+  <div class="z-node__header">
+    <span class="z-node__icon" aria-hidden="true">
+      <z-icon name="funnel" size="16"></z-icon>
+    </span>
+    <span class="z-node__title">Filter</span>
+    <span class="z-node__status" data-status="success">succeeded</span>
+  </div>
+  <div class="z-node__body">total &gt; 100</div>
+  <button type="button" class="z-node-port" data-port="in" data-kind="target" data-side="left" aria-label="Input in" style="--z-port-t:0.5"></button>
+  <button type="button" class="z-node-port" data-port="true" data-kind="source" data-side="right" aria-label="Output true" style="--z-port-t:0.33">
+    <span class="z-node-port__label">true</span>
+  </button>
+  <button type="button" class="z-node-port" data-port="false" data-kind="source" data-side="right" aria-label="Output false" style="--z-port-t:0.67">
+    <span class="z-node-port__label">false</span>
+  </button>
+  <span class="z-node__resize" aria-hidden="true"></span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeCanvas" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NodeCanvas</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-node-canvas" data-z-node-canvas data-snap="16" aria-label="Order flow">
+  <div class="z-node" data-id="hook" data-tone="accent" role="group" aria-roledescription="node" aria-label="Webhook" data-x="0" data-y="40"><div class="z-node__header"><span class="z-node__icon" aria-hidden="true"><z-icon name="bolt" size="16"></z-icon></span><span class="z-node__title">Webhook</span></div><div class="z-node__body">POST /orders</div><button type="button" class="z-node-port" data-port="out" data-kind="source" data-side="right" data-type="json" aria-label="Output out" style="--z-port-t: 0.5"></button><span class="z-node__resize" aria-hidden="true"></span></div>
+  <div class="z-node" data-id="filter" data-status="success" role="group" aria-roledescription="node" aria-label="Filter" data-x="300" data-y="0"><div class="z-node__header"><span class="z-node__icon" aria-hidden="true"><z-icon name="funnel" size="16"></z-icon></span><span class="z-node__title">Filter</span><span class="z-node__status" data-status="success">succeeded</span></div><div class="z-node__body">total &gt; 100</div><button type="button" class="z-node-port" data-port="in" data-kind="target" data-side="left" data-type="json" aria-label="Input in" style="--z-port-t: 0.5"></button><button type="button" class="z-node-port" data-port="true" data-kind="source" data-side="right" data-type="json" aria-label="Output true" style="--z-port-t: 0.33"><span class="z-node-port__label">true</span></button><button type="button" class="z-node-port" data-port="false" data-kind="source" data-side="right" data-type="json" aria-label="Output false" style="--z-port-t: 0.67"><span class="z-node-port__label">false</span></button><span class="z-node__resize" aria-hidden="true"></span></div>
+  <div class="z-node" data-id="save" data-status="running" role="group" aria-roledescription="node" aria-label="Save order" data-x="600" data-y="60"><div class="z-node__header"><span class="z-node__icon" aria-hidden="true"><z-icon name="circle-stack" size="16"></z-icon></span><span class="z-node__title">Save order</span><span class="z-node__status" data-status="running">running</span></div><div class="z-node__body">orders table</div><button type="button" class="z-node-port" data-port="in" data-kind="target" data-side="left" data-type="json" aria-label="Input in" style="--z-port-t: 0.5"></button><span class="z-node__resize" aria-hidden="true"></span></div>
+  <script type="application/json" class="z-node-canvas__edges">[{"id":"e1","source":"hook","sourcePort":"out","target":"filter","targetPort":"in","animated":true},{"id":"e2","source":"filter","sourcePort":"true","target":"save","targetPort":"in","label":"yes"}]</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeControls" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NodeControls</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div role="toolbar" aria-label="Canvas controls" aria-orientation="vertical" class="z-toolbar z-liquid z-node-controls" data-variant="glass" data-size="sm"><button type="button" title="Zoom in" aria-label="Zoom in" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="zoom-in"><z-icon name="magnifying-glass-plus" size="16"></z-icon></button><button type="button" title="Zoom out" aria-label="Zoom out" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="zoom-out"><z-icon name="magnifying-glass-minus" size="16"></z-icon></button><button type="button" title="Fit view" aria-label="Fit view" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="fit"><z-icon name="arrows-pointing-in" size="16"></z-icon></button><button type="button" title="Lock canvas" aria-label="Lock canvas" aria-pressed="false" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="lock"><span data-lock-icon="open" class="z-node-controls__lock"><span data-when="open"><z-icon name="lock-open" size="16"></z-icon></span><span data-when="closed"><z-icon name="lock-closed" size="16"></z-icon></span></span></button><div role="separator" aria-orientation="horizontal" class="z-toolbar__separator"></div><button type="button" title="Undo" aria-label="Undo" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="undo" aria-disabled="true"><z-icon name="arrow-uturn-up-left" size="16"></z-icon></button><button type="button" title="Redo" aria-label="Redo" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="redo" aria-disabled="true"><z-icon name="arrow-uturn-up-right" size="16"></z-icon></button></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeListView" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NodeListView</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-node-list">
+  <div class="z-node-list__scroll" role="region" aria-label="Nodes" tabindex="0">
+    <table class="z-table z-node-list__table">
+      <caption class="z-node-list__caption">Nodes</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Status</th>
+          <th scope="col">Inputs</th>
+          <th scope="col">Outputs</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-id="a">
+          <th scope="row">Fetch</th>
+          <td>—</td>
+          <td>0</td>
+          <td>1</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="a">Show
+              <span class="z-sr-only"> Fetch</span>
+            </button>
+          </td>
+        </tr>
+        <tr data-id="b">
+          <th scope="row">Store</th>
+          <td>—</td>
+          <td>1</td>
+          <td>0</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="b">Show
+              <span class="z-sr-only"> Store</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="z-node-list__scroll" role="region" aria-label="Connections" tabindex="0">
+    <table class="z-table z-node-list__table">
+      <caption class="z-node-list__caption">Connections</caption>
+      <thead>
+        <tr>
+          <th scope="col">From</th>
+          <th scope="col">To</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-edge="e">
+          <td>Fetch</td>
+          <td>Store</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="remove-edge" data-edge="e">Remove connection
+              <span class="z-sr-only"> Fetch → Store</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeMinimap" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">NodeMinimap</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<nav class="z-node-minimap z-liquid" aria-label="Minimap" tabindex="0"></nav>
   </div>
 </section>
 </div>
