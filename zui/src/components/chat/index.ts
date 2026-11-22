@@ -21,3 +21,11 @@ export type { BubblePosition, ChatAttachment, ChatMessage, ChatPerson, ChatReact
 export type { ChatLabels, MessageAction } from "../../core/chat-tree";
 export type { MentionItem } from "../../core/mentions";
 export type { Emoji, EmojiCategory, EmojiSet } from "../../core/emoji-data";
+// Lógica que la aplicación usa junto a las piezas: fusionar estados de entrega que llegan desordenados, reacciones,
+// menciones como tokens y el conjunto de emojis.
+export { mergeDelivery } from "../../core/delivery";
+export { toggleReaction } from "../../core/chat-widgets";
+export { encodeMentions, mentionParts } from "../../core/mentions";
+export { linkify, safeHref } from "../../core/linkify";
+export { EMOJI_SET, QUICK_REACTIONS, searchEmoji } from "../../core/emoji-data";
+export { peaksFrom } from "../../core/waveform";

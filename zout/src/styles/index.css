@@ -1879,9 +1879,19 @@
     overflow-y: auto;
   }
   /* Media: los detalles van encima de la conversación, como una hoja lateral. */
+  /* Con la lista a la vista, volver a ella no hace falta. */
+  @container z-chat (width >= 720px) {
+    .z-chat-layout__main .z-chat-header__back {
+      display: none;
+    }
+  }
+  /* La consulta de contenedor no alcanza al propio layout: las columnas se ajustan desde los paneles. */
   @container z-chat (width < 1100px) {
-    .z-chat-layout[data-details] {
-      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    .z-chat-layout > .z-chat-layout__main {
+      grid-column: 2 / -1;
+    }
+    .z-chat-layout > .z-chat-layout__main:first-child {
+      grid-column: 1 / -1;
     }
     .z-chat-layout__details {
       position: absolute;
@@ -1894,9 +1904,9 @@
   }
   /* Estrecha: una pila. Solo se ve la vista actual; las otras salen del árbol de accesibilidad. */
   @container z-chat (width < 720px) {
-    .z-chat-layout,
-    .z-chat-layout[data-details] {
-      grid-template-columns: minmax(0, 1fr);
+    .z-chat-layout > :is(.z-chat-layout__list, .z-chat-layout__main, .z-chat-layout__details) {
+      grid-column: 1 / -1;
+      grid-row: 1;
     }
     .z-chat-layout:not([data-view="list"]) > .z-chat-layout__list,
     .z-chat-layout:not([data-view="conversation"], [data-view="details"]:not([data-details])) > .z-chat-layout__main,

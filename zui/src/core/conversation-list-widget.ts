@@ -393,14 +393,17 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
                       "span",
                       { class: "z-conversation__bottom" },
                       typing
-                        ? h("span", { class: "z-conversation__preview z-conversation__preview--typing" }, typing)
+                        ? h(
+                            "span",
+                            { class: "z-conversation__preview z-conversation__preview--typing" },
+                            h("span", { class: "z-conversation__text" }, typing),
+                          )
                         : it.draft
                           ? h(
                               "span",
                               { class: "z-conversation__preview" },
                               h("span", { class: "z-conversation__draft" }, `${labels.draft}:`),
-                              " ",
-                              it.draft,
+                              h("span", { class: "z-conversation__text" }, it.draft),
                             )
                           : h(
                               "span",
@@ -411,7 +414,7 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
                                 : it.lastAuthor
                                   ? h("span", { class: "z-conversation__author" }, `${it.lastAuthor}: `)
                                   : null,
-                              it.lastMessage ?? "",
+                              h("span", { class: "z-conversation__text" }, it.lastMessage ?? ""),
                             ),
                       h(
                         "span",

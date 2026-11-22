@@ -14,3 +14,6 @@ export { ToolCall, type ToolCallProps } from "./ToolCall";
 export { UsageMeter, type UsageMeterLabels, type UsageMeterProps } from "./UsageMeter";
 export type { ResponseState, ToolStatus } from "../../core/agent-state";
 export type { BranchNode, BranchSelection } from "../../core/branches";
+// Árbol de la conversación (ramas al editar o regenerar) y acumulador de texto en streaming.
+export { activePath, addBranch, branchInfo, selectBranch, siblings, stepBranch } from "../../core/branches";
+export { createTextStream, provisional } from "../../core/stream-text";

@@ -93,6 +93,8 @@ export interface MessageListProps {
   typing?: readonly ChatPerson[];
   /** Texto buscado: las coincidencias se marcan. */
   highlight?: string;
+  /** Nombres de las menciones `<@id>` del texto (miembros de la conversación). */
+  mentions?: readonly { id: string; label: string }[];
   /** Acciones de la barra de cada mensaje (`false`: sin barra). */
   actions?: readonly MessageAction[] | false;
   /** Reacciones rápidas (seis por defecto). */
@@ -124,6 +126,7 @@ interface Config {
   loadingOlder: boolean;
   typing: readonly ChatPerson[];
   highlight: string;
+  mention?: (id: string) => string | undefined;
   actions: readonly MessageAction[] | false;
   quick: readonly string[];
   virtualize: number | false;
@@ -196,6 +199,7 @@ function rowNode(row: ChatRow, c: Config, s: State, uid: string, today: string, 
       active: s.active === m.id,
       flash: s.flash === m.id,
       highlight: c.highlight,
+      mention: c.mention,
       voice,
       actions: c.actions === false ? [] : c.actions,
       reacting: s.reacting === m.id,
@@ -717,6 +721,7 @@ export const messageListWidget: Widget<MessageListProps, Config, State> = {
     loadingOlder: Boolean(p.loadingOlder),
     typing: p.typing ?? [],
     highlight: p.highlight ?? "",
+    mention: p.mentions?.length ? (id) => p.mentions?.find((m) => m.id === id)?.label : undefined,
     actions: p.actions === false ? false : (p.actions ?? ["react", "reply", "forward", "copy", "edit", "delete"]),
     quick: p.quickReactions?.length ? p.quickReactions : QUICK_REACTIONS,
     virtualize: p.virtualize === false ? false : Math.max(20, Math.floor(Number(p.virtualize ?? 150))),
@@ -862,6 +867,7 @@ export const messageListWidget: Widget<MessageListProps, Config, State> = {
       loadingOlder: yes(d.loadingOlder),
       typing: json.typing as ChatPerson[] | undefined,
       highlight: d.highlight,
+      mentions: json.mentions as MessageListProps["mentions"],
       actions: d.actions === "none" ? false : d.actions ? (list(d.actions) as MessageAction[]) : undefined,
       virtualize: d.virtualize === "false" ? false : d.virtualize ? num(d.virtualize, 150) : undefined,
       announce: d.announce === "log" || d.announce === "none" ? d.announce : undefined,

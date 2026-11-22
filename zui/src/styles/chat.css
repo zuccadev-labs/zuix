@@ -138,7 +138,9 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .z-conversation__preview > :last-child {
+  .z-conversation__text {
+    flex: 1;
+    min-inline-size: 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -447,6 +449,12 @@
   }
   .z-message[data-mine] .z-message__text::after {
     inline-size: 84px;
+  }
+  .z-message:has(.z-message__edited) .z-message__text::after {
+    inline-size: 124px;
+  }
+  .z-message[data-mine]:has(.z-message__edited) .z-message__text::after {
+    inline-size: 144px;
   }
   .z-message__text a {
     color: var(--z-accent-text);
@@ -1706,24 +1714,25 @@
     background: var(--z-tone);
     cursor: pointer;
   }
-  /* Muestras de tono de piel: colores de la escala Fitzpatrick, como en todos los selectores (no son de marca). */
+  /* Muestras de tono de piel, de claro a oscuro y las mismas en los dos temas: se mezclan con los extremos fijos del
+     código QR (blanco y negro de la marca), no con la superficie. */
   .z-emoji-picker__tone[data-tone="0"] {
     --z-tone: var(--z-warning);
   }
   .z-emoji-picker__tone[data-tone="1"] {
-    --z-tone: color-mix(in oklab, var(--z-warning) 35%, var(--z-surface-solid));
+    --z-tone: color-mix(in oklab, var(--z-warning) 25%, var(--z-qrcode-light));
   }
   .z-emoji-picker__tone[data-tone="2"] {
-    --z-tone: color-mix(in oklab, var(--z-warning) 60%, var(--z-surface-solid));
+    --z-tone: color-mix(in oklab, var(--z-warning) 50%, var(--z-qrcode-light));
   }
   .z-emoji-picker__tone[data-tone="3"] {
-    --z-tone: color-mix(in oklab, var(--z-warning) 70%, var(--z-fg-muted));
+    --z-tone: color-mix(in oklab, var(--z-warning) 72%, var(--z-qrcode-dark));
   }
   .z-emoji-picker__tone[data-tone="4"] {
-    --z-tone: color-mix(in oklab, var(--z-warning) 45%, var(--z-fg));
+    --z-tone: color-mix(in oklab, var(--z-warning) 48%, var(--z-qrcode-dark));
   }
   .z-emoji-picker__tone[data-tone="5"] {
-    --z-tone: color-mix(in oklab, var(--z-warning) 25%, var(--z-fg));
+    --z-tone: color-mix(in oklab, var(--z-warning) 28%, var(--z-qrcode-dark));
   }
   .z-emoji-picker__tone[aria-checked="true"] {
     outline: 2px solid var(--z-accent);

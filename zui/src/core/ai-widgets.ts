@@ -565,7 +565,7 @@ export function richText(
 ): VEl {
   const tree = markdownTree(o.streaming ? provisional(text) : text, {
     code: (code, lang, key) => {
-      const config = codeViewerWidget.configure({ code, language: lang || undefined, title: lang || o.labels.code, lineNumbers: false });
+      const config = codeViewerWidget.configure({ code, language: lang || undefined, title: "", lineNumbers: false });
       const node = codeViewerWidget.tree(config, { file: 0, copied: o.copied?.[key] ?? "idle" }, `${o.uid}-${key}`);
       node.k = key;
       node.a = { ...node.a, "data-block": key };
@@ -855,22 +855,27 @@ function attachAssistant(root: HTMLElement, host: AssistantHost): () => void {
     const artifact = target.closest<HTMLElement>(".z-artifact-card");
     if (artifact) host.emit("open-artifact", { id: artifact.dataset.artifact });
   };
-  const onToggle = (event: Event) => {
-    const details = event.target as HTMLDetailsElement;
+  // Lo que la persona pliega o despliega (clic o Intro/Espacio en el summary) se respeta en los pintados siguientes;
+  // lo que abre o cierra el propio árbol (el razonamiento al terminar) no cuenta como elección.
+  const onSummary = (event: MouseEvent) => {
+    const summary = (event.target as Element).closest?.("summary");
+    const details = summary?.parentElement;
     if (!(details instanceof HTMLDetailsElement) || !root.contains(details)) return;
-    const part = details.closest<HTMLElement>("[data-part]")?.dataset.part ?? partKey(root, details);
-    if (part && host.state().open[part] !== details.open) host.update({ open: { ...host.state().open, [part]: details.open } });
+    requestAnimationFrame(() => {
+      const part = partKey(root, details);
+      if (part && host.state().open[part] !== details.open) host.update({ open: { ...host.state().open, [part]: details.open } });
+    });
   };
   const onKey = (event: KeyboardEvent) => {
     const bar = (event.target as Element).closest?.<HTMLElement>(".z-assistant-message__actions");
     if (bar) toolbarKeys(event, bar);
   };
   root.addEventListener("click", onClick);
-  root.addEventListener("toggle", onToggle, true);
+  root.addEventListener("click", onSummary);
   root.addEventListener("keydown", onKey);
   return () => {
     root.removeEventListener("click", onClick);
-    root.removeEventListener("toggle", onToggle, true);
+    root.removeEventListener("click", onSummary);
     root.removeEventListener("keydown", onKey);
     assistantLives.delete(root);
   };
