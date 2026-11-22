@@ -114,6 +114,7 @@
 - [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
 - [TimeField](https://zuccadev-labs.github.io/zuix/components/forms/time-field.md): Hora de reloj que se teclea por segmentos (hora, minuto, segundo, AM/PM).
 - [TimePicker](https://zuccadev-labs.github.io/zuix/components/forms/time-picker.md): TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear.
+- [TransferList](https://zuccadev-labs.github.io/zuix/components/forms/transfer-list.md): Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible.
 - [WeekPicker](https://zuccadev-labs.github.io/zuix/components/forms/week-picker.md): Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible.
 - [YearPicker](https://zuccadev-labs.github.io/zuix/components/forms/year-picker.md): Selector de año: DatePicker en la vista de década (rejilla 3 × 4 con los años del borde atenuados).
 

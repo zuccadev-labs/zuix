@@ -27,6 +27,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     nodo, y anuncios en el anunciador central.
   - `core/`: `viewport`, `edge-path`, `graph`, `graph-edit`, `ports`, `undo`, `layout-layers`, `minimap`, `node-view`
     y la caja de selección en `selection` (`boxSelection`), con pruebas de propiedades de geometría e historial.
+- `TransferList` (grupo `forms`): disponibles y elegidos con casillas, búsqueda opcional, mover lo marcado o todo lo
+  visible, Intro y doble clic para mover, rango con Mayús y anuncio de lo movido. En `/dom/data`, `.z-transfer` con los
+  elementos en `data-props` y `z:change`. Lógica pura en `core/transfer`.
 - `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
   corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
   nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y

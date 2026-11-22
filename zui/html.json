@@ -2746,6 +2746,33 @@
     }
    ]
   },
+  "TransferList": {
+   "group": "forms",
+   "classes": [
+    "z-transfer",
+    "z-transfer__list",
+    "z-transfer__head",
+    "z-transfer__title",
+    "z-transfer__count",
+    "z-transfer__search",
+    "z-transfer__options",
+    "z-transfer__option",
+    "z-transfer__check",
+    "z-transfer__text",
+    "z-transfer__label",
+    "z-transfer__description",
+    "z-transfer__empty",
+    "z-transfer__actions"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Miembros de un equipo",
+     "html": "<div class=\"z-transfer\" data-searchable data-name=\"members\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"value\": \"ana\", \"label\": \"Ana Torres\", \"description\": \"Design\"}, {\"value\": \"ben\", \"label\": \"Ben Okafor\", \"description\": \"Engineering\"}, {\"value\": \"chen\", \"label\": \"Chen Wei\", \"description\": \"Engineering\"}, {\"value\": \"dara\", \"label\": \"Dara Singh\", \"description\": \"Product\", \"disabled\": true}, {\"value\": \"eli\", \"label\": \"Eli Moreau\", \"description\": \"Support\"}, {\"value\": \"femi\", \"label\": \"Femi Adeyemi\", \"description\": \"Sales\"}], \"value\": [\"chen\"], \"labels\": {\"source\": \"People\", \"target\": \"Team\"}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "WeekPicker": {
    "group": "forms",
    "classes": [

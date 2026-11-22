@@ -13,6 +13,7 @@ import siteCases from "./cases-site.mjs";
 import mediaCases from "./cases-media.mjs";
 import timeTerminal from "./cases-time-terminal.mjs";
 import nodesCases from "./cases-nodes.mjs";
+import transferCases from "./cases-transfer.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
@@ -3093,6 +3094,7 @@ export const cases = [
     timeTerminal,
     carouselsCases,
     nodesCases,
+    transferCases,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
