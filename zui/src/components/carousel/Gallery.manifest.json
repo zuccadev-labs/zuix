@@ -1,0 +1,74 @@
+{
+  "name": "Gallery",
+  "group": "carousel",
+  "description": "Galería: carrusel con tira de miniaturas sincronizada (debajo o al lado) y botón para abrir la imagen actual en el visor a pantalla completa.",
+  "import": "import { Gallery } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "GalleryItem[]",
+      "required": true,
+      "description": "`{ src, alt, thumb?, caption?, width?, height? }[]`."
+    },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "thumbnails",
+      "type": "enum",
+      "values": ["bottom", "side", "none"],
+      "default": "bottom"
+    },
+    {
+      "name": "lightbox",
+      "type": "boolean",
+      "default": true,
+      "description": "Botón de pantalla completa que abre Lightbox en la imagen actual."
+    },
+    {
+      "name": "layout",
+      "type": "CarouselLayout",
+      "description": "Por defecto, fullscreen con el fundido."
+    },
+    {
+      "name": "effect",
+      "type": "CarouselEffect",
+      "default": "fade"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<CarouselLabels> & { expand?: string; lightbox?: Partial<LightboxLabels> }"
+    }
+  ],
+  "tokens": [
+    "overlay",
+    "layer-raised",
+    "space-3",
+    "space-6",
+    "space-16",
+    "button-radius",
+    "control-height-md",
+    "glass-border",
+    "glass-highlight"
+  ],
+  "classes": ["z-gallery", "z-gallery__expand"],
+  "attributes": ["data-thumbnails", "data-z-gallery"],
+  "icons": ["arrows-pointing-out"],
+  "a11y": "El carrusel sigue el patrón de APG (región, slides con posición, miniaturas como botones con aria-current). El botón de pantalla completa tiene nombre («View full screen») y abre un Lightbox modal que devuelve el foco al botón al cerrarse.",
+  "examples": [
+    {
+      "title": "Con miniaturas al lado",
+      "code": "<Gallery ariaLabel=\"Trip photos\" items={photos} thumbnails=\"side\" />"
+    }
+  ],
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Carrusel con miniaturas y visor; zui/dom añade el botón de pantalla completa",
+      "code": "<div class=\"z-gallery\" data-z-gallery data-thumbnails=\"bottom\">\n  <div class=\"z-carousel\" data-z-carousel data-effect=\"fade\" data-loop data-indicators=\"thumbnails\" aria-label=\"Projects\" style=\"--z-carousel-height:12rem\">\n    <div class=\"z-carousel__slide\"><div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Atlas</p></div></div>\n    <div class=\"z-carousel__slide\"><div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Beacon</p></div></div>\n    <div class=\"z-carousel__slide\"><div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Cinder</p></div></div>\n    <div class=\"z-carousel__thumbs\">\n      <button type=\"button\" class=\"z-carousel__thumb\"><span>A</span></button>\n      <button type=\"button\" class=\"z-carousel__thumb\"><span>B</span></button>\n      <button type=\"button\" class=\"z-carousel__thumb\"><span>C</span></button>\n    </div>\n  </div>\n  <dialog class=\"z-lightbox\" data-z-lightbox aria-label=\"Image viewer\">\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Atlas</p></div>\n    <figcaption class=\"z-lightbox__caption\">Atlas</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Beacon</p></div>\n    <figcaption class=\"z-lightbox__caption\">Beacon</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Cinder</p></div>\n    <figcaption class=\"z-lightbox__caption\">Cinder</figcaption>\n  </figure>\n  </dialog>\n</div>"
+    }
+  ],
+  "origin": "Swiper thumbs, Splide sync y PrimeReact Galleria; implementación propia."
+}

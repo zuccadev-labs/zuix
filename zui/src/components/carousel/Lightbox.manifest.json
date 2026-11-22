@@ -1,0 +1,106 @@
+{
+  "name": "Lightbox",
+  "group": "carousel",
+  "description": "Visor de imágenes a pantalla completa sobre `<dialog>` modal: anterior y siguiente, contador, zoom con botones, teclado, doble clic y Ctrl + rueda, y encuadre arrastrando.",
+  "import": "import { Lightbox } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "LightboxItem[]",
+      "required": true,
+      "description": "`{ src, alt, caption?, width?, height? }[]`."
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void",
+      "required": true
+    },
+    {
+      "name": "index",
+      "type": "number",
+      "default": 0,
+      "description": "Imagen visible."
+    },
+    {
+      "name": "onIndexChange",
+      "type": "(index: number) => void"
+    },
+    {
+      "name": "zoom",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "loop",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "labels",
+      "type": "Partial<LightboxLabels>",
+      "description": "dialog, close, previous, next, zoomIn, zoomOut e image (\"Image {index} of {count}\")."
+    }
+  ],
+  "states": ["open", "zoomed", "dragging"],
+  "tokens": [
+    "surface-solid",
+    "scrim",
+    "fg",
+    "fg-muted",
+    "font-mono",
+    "text-code",
+    "text-small",
+    "radius-lg",
+    "button-radius",
+    "control-height-md",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "glass-highlight",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "duration-normal",
+    "ease-emphasized",
+    "space-2",
+    "space-3",
+    "space-6",
+    "space-10",
+    "space-16",
+    "space-20"
+  ],
+  "classes": [
+    "z-lightbox",
+    "z-lightbox__bar",
+    "z-lightbox__counter",
+    "z-lightbox__button",
+    "z-lightbox__stage",
+    "z-lightbox__item",
+    "z-lightbox__caption",
+    "z-lightbox__nav"
+  ],
+  "attributes": ["data-z-lightbox", "data-zoomed", "data-active", "data-lightbox-action", "data-no-zoom"],
+  "cssVars": ["--z-lightbox-scale", "--z-lightbox-x", "--z-lightbox-y"],
+  "icons": ["chevron-left", "chevron-right", "magnifying-glass-minus", "magnifying-glass-plus", "x-mark"],
+  "a11y": "<dialog> modal con nombre: el resto de la página queda inerte, el foco entra en el visor y Escape cierra y devuelve el foco al disparador. Flechas izquierda y derecha cambian de imagen (con zoom, desplazan la imagen), + y − amplían y reducen, 0 restablece. Botones nativos con nombre. El cambio de imagen se anuncia («Image 3 of 8») en una región viva dentro del diálogo.",
+  "examples": [
+    {
+      "title": "Controlado",
+      "code": "<Lightbox items={photos} open={open} onOpenChange={setOpen} index={index} onIndexChange={setIndex} />"
+    }
+  ],
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Visor que se abre con openLightbox(dialog, índice)",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" id=\"open-viewer\">Open viewer</button>\n<dialog id=\"viewer\" class=\"z-lightbox\" data-z-lightbox aria-label=\"Image viewer\">\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Atlas</p></div>\n    <figcaption class=\"z-lightbox__caption\">Atlas</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Beacon</p></div>\n    <figcaption class=\"z-lightbox__caption\">Beacon</figcaption>\n  </figure>\n  <figure class=\"z-lightbox__item\">\n    <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"lg\"><p class=\"z-card__title\">Cinder</p></div>\n    <figcaption class=\"z-lightbox__caption\">Cinder</figcaption>\n  </figure>\n</dialog>",
+      "script": "import { openLightbox } from \"@zuccadev-labs/zuix-zui/dom\";\n\ndocument.querySelector(\"#open-viewer\").addEventListener(\"click\", () => openLightbox(document.querySelector(\"#viewer\"), 0));"
+    }
+  ],
+  "origin": "Patrón común de galerías (PhotoSwipe, Fancybox); implementación propia sobre <dialog>."
+}
