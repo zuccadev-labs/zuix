@@ -12,12 +12,7 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "standard",
-        "quilted",
-        "woven",
-        "masonry"
-      ],
+      "values": ["standard", "quilted", "woven", "masonry"],
       "default": "standard"
     },
     {

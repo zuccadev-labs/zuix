@@ -312,7 +312,7 @@
   }
   .z-user-card__names {
     display: flex;
-    flex: 1;
+    flex: 1 1 8rem;
     flex-direction: column;
     min-inline-size: 0;
   }
@@ -571,6 +571,8 @@
 
   /* ---- MemberList ---- */
   .z-member-list {
+    container: z-member-list / inline-size;
+    inline-size: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-3);
@@ -657,6 +659,18 @@
   .z-member-list__role-text {
     color: var(--z-fg-muted);
     font-size: var(--z-text-small);
+  }
+  /* Estrecho: la persona ocupa la fila entera y el rol y quitar bajan debajo. */
+  @container z-member-list (inline-size < 440px) {
+    .z-member-list__row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .z-member-list__row > .z-persona {
+      grid-column: 1 / -1;
+    }
+    .z-member-list__role {
+      inline-size: 100%;
+    }
   }
 
   /* ---- AccountMenu ---- */
