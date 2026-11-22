@@ -46,6 +46,7 @@ import { ChartsScreen } from "./screens/Charts";
 import { DataWave5 } from "./screens/DataWave5";
 import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
+import { CarouselsScreen } from "./screens/Carousels";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -217,6 +218,8 @@ export function App() {
       <Site />
     ) : active === "media" ? (
       <Media />
+    ) : active === "carousels" ? (
+      <CarouselsScreen />
     ) : (
       <Editor />
     );

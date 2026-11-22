@@ -206,6 +206,9 @@ export function createSnap(o: SnapOptions): SnapController {
   const scrollByU = (g: Geometry, delta: number, smooth: boolean) => {
     if (Math.abs(delta) < 0.5) return;
     const physical = g.rtl ? -delta : delta;
+    // `scroll-snap-stop: always` (no pasar de largo con un gesto) también frena un salto pedido por código: mientras
+    // dura, el CSS lo relaja (`data-jump`) y el asiento lo repone.
+    if (smooth) vp.setAttribute("data-jump", "");
     vp.scrollBy({ [vertical ? "top" : "left"]: physical, behavior: smooth ? "smooth" : "instant" } as ScrollToOptions);
   };
 
@@ -332,6 +335,7 @@ export function createSnap(o: SnapOptions): SnapController {
 
   function settle() {
     if (disposed || compensating) return;
+    vp.removeAttribute("data-jump");
     const g = geometry();
     if (pending) {
       // Un `scrollend` del desplazamiento anterior (o de una compensación) en el punto de partida: no es el nuestro.
@@ -540,7 +544,10 @@ export function createDeck(o: DeckOptions): DeckController {
     }
   };
   const onDown = (event: PointerEvent) => {
-    if (event.button !== 0 || drag || (event.target instanceof Element && event.target.closest(INTERACTIVE) && event.target !== vp)) return;
+    if (event.button !== 0 || drag) return;
+    // Un control de dentro del slide (enlace, botón, campo) no arrastra; la propia vista (enfocable) sí.
+    const hit = event.target instanceof Element ? event.target.closest(INTERACTIVE) : null;
+    if (hit && hit !== vp && vp.contains(hit)) return;
     drag = { id: event.pointerId, x: event.clientX, t: performance.now(), moved: false };
   };
   const onMove = (event: PointerEvent) => {

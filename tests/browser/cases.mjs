@@ -11,6 +11,7 @@ import wave5Content from "./cases-wave5-content.mjs";
 import wave5Data from "./cases-wave5-data.mjs";
 import wave6 from "./cases-wave6.mjs";
 import wave7 from "./cases-wave7.mjs";
+import v04 from "./cases-v04.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import { carouselAtRest } from "../rest.mjs";
@@ -250,6 +251,7 @@ const SCREENS = [
   "data",
   "charts",
   "media",
+  "carousels",
 ];
 
 export const cases = [
@@ -3059,7 +3061,7 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, wave7, charts, reading].flatMap((build) =>
+  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, wave7, v04, charts, reading].flatMap((build) =>
     build(helpers()),
   ),
 

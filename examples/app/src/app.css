@@ -555,3 +555,6 @@ body {
 .app-compare {
   block-size: 180px;
 }
+.app-narrow {
+  max-inline-size: 24rem;
+}

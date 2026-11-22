@@ -82,8 +82,9 @@
 
   /* Envuelve contenido real: toma su tamaño y lo oculta mientras carga. */
   .z-skeleton[data-loading] {
-    display: inline-block;
+    display: inline-flex;
     max-inline-size: 100%;
+    vertical-align: top;
   }
   .z-skeleton[data-loading] > * {
     visibility: hidden;

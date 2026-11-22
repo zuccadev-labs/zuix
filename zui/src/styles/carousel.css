@@ -426,6 +426,11 @@
     order: calc(-1 * clamp(0, min(2, var(--z-carousel-count, sibling-count()) - 2) - var(--z-carousel-current, none), 1));
   }
 
+  /* Un salto pedido por código (Fin, un marcador lejano) no se detiene en cada slide. */
+  .z-carousel[data-mode="snap"] .z-carousel__viewport[data-jump] .z-carousel__slide {
+    scroll-snap-stop: normal;
+  }
+
   /* La pista mide lo que suman sus slides: así una traslación (keylines, profundidad) no cambia el recorrido. */
   .z-carousel[data-mode="snap"]:not([data-orientation="vertical"]) .z-carousel__track {
     width: max-content;
@@ -633,6 +638,9 @@
     place-items: center;
     border-radius: var(--z-control-radius);
   }
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide:not([data-active]) > .z-carousel__face {
+    color: var(--z-fg-muted);
+  }
   .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide[data-active] > .z-carousel__face {
     background: var(--z-surface-2);
     box-shadow: inset 0 0 0 1px var(--z-glass-border);
@@ -662,7 +670,8 @@
     }
     .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__face {
       transform: rotateX(calc(clamp(-3, var(--z-slide-progress), 3) * -24deg)) scale(calc(1 - min(var(--z-slide-abs), 3) * 0.06));
-      opacity: clamp(0.15, calc(1 - var(--z-slide-abs) * 0.3), 1);
+      /* Sin transparencia parcial (el texto perdería contraste): los lejanos desaparecen de golpe. */
+      opacity: clamp(0, calc((2.6 - var(--z-slide-abs)) * 100), 1);
     }
     .z-carousel[data-effect="parallax"] [data-parallax-layer] {
       translate: calc(var(--z-slide-progress) * var(--z-parallax, 0.4) * var(--z-carousel-slide-width) * var(--z-carousel-dir) * -1) 0;

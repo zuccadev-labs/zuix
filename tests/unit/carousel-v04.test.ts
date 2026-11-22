@@ -272,7 +272,10 @@ describe("core/carousel-loop", () => {
       fc.property(fc.integer({ min: 3, max: 40 }), fc.nat(), (count, n) => {
         const current = n % count;
         const order = visualOrder(current, count);
-        assert.deepEqual([...order].sort((a, b) => a - b), Array.from({ length: count }, (_, i) => i));
+        assert.deepEqual(
+          [...order].sort((a, b) => a - b),
+          Array.from({ length: count }, (_, i) => i),
+        );
         const at = order.indexOf(current);
         assert.ok(at >= 1 && at <= count - 2, `current ${current} of ${count} at ${at}`);
         // Los vecinos visuales son los de la secuencia (el bucle no salta).
