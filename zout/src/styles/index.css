@@ -1823,4 +1823,172 @@
       border: 1px solid CanvasText;
     }
   }
+
+  /* ---------- ChatLayout ---------- */
+  /* Tres paneles: lista, conversación y detalles. Las columnas dependen del ancho del propio layout (consultas de
+     contenedor), no de la ventana: el mismo layout sirve a pantalla completa o dentro de otro panel. */
+  .z-chat-layout {
+    container: z-chat / inline-size;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    block-size: 100%;
+    min-block-size: 0;
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+  }
+  .z-chat-layout[data-details] {
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) minmax(280px, 320px);
+  }
+  .z-chat-layout__list,
+  .z-chat-layout__main,
+  .z-chat-layout__details {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+    outline: none;
+  }
+  .z-chat-layout__list {
+    border-inline-end: 1px solid var(--z-line);
+    background: var(--z-surface-solid);
+  }
+  /* Fondo de la conversación: un velo del acento sobre la superficie, como el papel de un cliente de mensajería. */
+  .z-chat-layout__main {
+    position: relative;
+    background:
+      radial-gradient(70% 55% at 85% 0%, var(--z-accent-soft), transparent 70%),
+      radial-gradient(60% 50% at 0% 100%, var(--z-accent-soft), transparent 70%), var(--z-canvas);
+  }
+  .z-chat-layout__main > .z-message-list {
+    flex: 1;
+  }
+  .z-chat-layout__main > :is(.z-chat-header, .z-pinned-bar) {
+    position: relative;
+    z-index: var(--z-layer-raised);
+    border-block-end: 1px solid var(--z-glass-border);
+    background: var(--z-glass-bg);
+    -webkit-backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+    backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+  }
+  .z-chat-layout__details {
+    border-inline-start: 1px solid var(--z-line);
+    background: var(--z-surface-solid);
+    overflow-y: auto;
+  }
+  /* Media: los detalles van encima de la conversación, como una hoja lateral. */
+  @container z-chat (width < 1100px) {
+    .z-chat-layout[data-details] {
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    }
+    .z-chat-layout__details {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-end: 0;
+      z-index: var(--z-layer-overlay);
+      inline-size: min(340px, 90%);
+      box-shadow: var(--z-shadow-lg);
+    }
+  }
+  /* Estrecha: una pila. Solo se ve la vista actual; las otras salen del árbol de accesibilidad. */
+  @container z-chat (width < 720px) {
+    .z-chat-layout,
+    .z-chat-layout[data-details] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-chat-layout:not([data-view="list"]) > .z-chat-layout__list,
+    .z-chat-layout:not([data-view="conversation"], [data-view="details"]:not([data-details])) > .z-chat-layout__main,
+    .z-chat-layout:not([data-view="details"]) > .z-chat-layout__details {
+      display: none;
+    }
+    .z-chat-layout__list {
+      border-inline-end: 0;
+    }
+    .z-chat-layout__details {
+      position: static;
+      inline-size: auto;
+      border-inline-start: 0;
+      box-shadow: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @container z-chat (width < 720px) {
+      .z-chat-layout > :is(.z-chat-layout__main, .z-chat-layout__details) {
+        animation: z-chat-push var(--z-duration-normal) var(--z-ease-out);
+      }
+    }
+  }
+  @keyframes z-chat-push {
+    from {
+      opacity: 0;
+      translate: var(--z-space-6) 0;
+    }
+  }
+
+  /* Widget: botón flotante y panel de cristal (asistente en una esquina). */
+  .z-chat-layout[data-variant="widget"] {
+    position: fixed;
+    inset-block-end: var(--z-space-5);
+    inset-inline-end: var(--z-space-5);
+    z-index: var(--z-layer-overlay);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--z-space-3);
+    block-size: auto;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+  .z-chat-layout[data-variant="widget"] > * {
+    pointer-events: auto;
+  }
+  .z-chat-layout__panel {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    display: flex;
+    flex-direction: column;
+    inline-size: min(400px, calc(100vw - var(--z-space-10)));
+    block-size: min(620px, calc(100dvh - var(--z-space-20)));
+    overflow: hidden;
+    border-radius: var(--z-panel-radius);
+  }
+  .z-chat-layout__panel[hidden] {
+    display: none;
+  }
+  .z-chat-layout__panel > .z-chat-layout__main {
+    flex: 1;
+    background: transparent;
+  }
+  .z-chat-layout__launcher {
+    display: grid;
+    place-items: center;
+    inline-size: 56px;
+    block-size: 56px;
+    border: 0;
+    border-radius: var(--z-radius-full);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+    box-shadow: var(--z-shadow-lg);
+    cursor: pointer;
+    transition:
+      scale var(--z-duration-press) var(--z-ease-out),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  @media (hover: hover) {
+    .z-chat-layout__launcher:hover {
+      background: var(--z-accent-solid-hover);
+    }
+  }
+  .z-chat-layout__launcher:active {
+    scale: 0.94;
+  }
+  .z-chat-layout__launcher:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
 }

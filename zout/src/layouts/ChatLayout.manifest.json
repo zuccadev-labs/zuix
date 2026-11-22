@@ -1,0 +1,102 @@
+{
+  "name": "ChatLayout",
+  "group": "layout",
+  "description": "Layout de mensajería en tres paneles: lista de conversaciones, conversación y detalles. Columnas en pantalla ancha, detalles encima en media y una pila (lista → conversación → detalles) en estrecha, decidido por el ancho del propio layout. F6 salta entre paneles; la pila puede sincronizarse con el historial. variant=\"widget\": asistente flotante en una esquina.",
+  "import": "import { ChatLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "list",
+      "type": "ReactNode"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "La conversación: ChatHeader, MessageList, Composer."
+    },
+    {
+      "name": "details",
+      "type": "ReactNode"
+    },
+    {
+      "name": "detailsOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "view",
+      "type": "\"list\" | \"conversation\" | \"details\"",
+      "default": "conversation",
+      "description": "Vista en pantalla estrecha."
+    },
+    {
+      "name": "onViewChange",
+      "type": "(view) => void"
+    },
+    {
+      "name": "history",
+      "type": "boolean",
+      "default": false,
+      "description": "Atrás del navegador vuelve en la pila."
+    },
+    {
+      "name": "variant",
+      "type": "\"panes\" | \"widget\"",
+      "default": "panes"
+    },
+    {
+      "name": "open · onOpenChange",
+      "type": "boolean · (open) => void",
+      "description": "Widget abierto."
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Nombre del panel del widget."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChatLayoutLabels>"
+    }
+  ],
+  "states": ["three-columns", "two-columns", "stack", "widget-open", "widget-closed"],
+  "tokens": [
+    "panel-radius",
+    "surface-solid",
+    "canvas",
+    "accent-soft",
+    "line",
+    "glass-bg",
+    "glass-border",
+    "glass-blur",
+    "shadow-lg",
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow"
+  ],
+  "classes": [
+    "z-chat-layout",
+    "z-chat-layout__list",
+    "z-chat-layout__main",
+    "z-chat-layout__details",
+    "z-chat-layout__panel",
+    "z-chat-layout__launcher"
+  ],
+  "a11y": "Cada panel es una región con nombre (Chats, Conversation, Details). En la pila solo existe en el árbol de accesibilidad la vista actual, y el botón de volver de ChatHeader dice adónde vuelve; con history, el atrás del sistema vuelve a la lista (guía stack-drill-down). F6 y Mayús+F6 llevan al siguiente panel visible. El widget es un botón con aria-expanded y un panel no modal; Escape lo cierra y devuelve el foco al botón. Sin React: .z-chat-layout con data-view y data-details; [data-z-chat-view] dentro cambia de vista (z:viewchange), data-history sincroniza la pila; widget con .z-chat-layout__launcher (z:open, z:close).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Tres paneles",
+      "code": "<div style={{ height: 480 }}>\n  <ChatLayout view=\"conversation\" list={<ConversationList items={chats} />} details={<p style={{ padding: 16 }}>Shared files</p>} detailsOpen>\n    <ChatHeader title=\"Ana López\" status=\"online\" statusTone=\"accent\" />\n    <MessageList messages={messages} currentUserId=\"me\" />\n    <Composer onSend={send} />\n  </ChatLayout>\n</div>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Tres paneles",
+      "code": "<div class=\"z-chat-layout\" data-view=\"conversation\" data-details style=\"height: 480px\">\n  <section class=\"z-chat-layout__list\" aria-label=\"Chats\">\n    <div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\" data-filters=\"none\">\n      <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Shipping the docs next.\", \"lastMine\": true, \"status\": \"delivered\", \"lastAt\": \"2026-11-21T09:05:00Z\"}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"lastMessage\": \"See you at 10\", \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 3}]}</script>\n    </div>\n  </section>\n  <section class=\"z-chat-layout__main\" aria-label=\"Conversation\">\n    <header class=\"z-chat-header\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost z-chat-header__back\" data-size=\"md\" data-z-chat-view=\"list\" aria-label=\"Back to chats\"><z-icon name=\"chevron-left\" size=\"16\"></z-icon></button><span class=\"z-chat-header__identity\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span><span class=\"z-chat-header__titles\"><h2 class=\"z-chat-header__title\">Ana López</h2><span class=\"z-chat-header__status\" data-tone=\"accent\">online</span></span></span><span class=\"z-chat-header__actions\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" data-z-chat-view=\"details\" aria-label=\"Details\"><z-icon name=\"information-circle\" size=\"16\"></z-icon></button></span></header>\n    <div class=\"z-message-list\" data-current-user=\"me\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n      <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}]}</script>\n    </div>\n    <div class=\"z-composer\"></div>\n  </section>\n  <aside class=\"z-chat-layout__details\" aria-label=\"Details\"><p style=\"padding: 16px\">Shared files</p></aside>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: WhatsApp Web, Telegram Desktop y el ChatLayout de MUI X. Pila con historial según la guía stack-drill-down."
+}

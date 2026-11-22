@@ -39,6 +39,9 @@
 //   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
 // La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
 // (`data-z-open`) para el submenú: cargar también @zuccadev-labs/zuix-zui/dom.
+//   .z-chat-layout                            ChatLayout (./chat): data-view en estrecho, [data-z-chat-view] cambia de vista
+//                                             (z:viewchange), data-history sincroniza la pila, F6 entre paneles y
+//                                             variante widget con .z-chat-layout__launcher (z:open, z:close)
 //   .z-navbar / .z-navmenu                     navegación de sitio (./site): fila o cajón medido sin punto de corte fijo y
 //                                             grupos de disclosure con panel; .z-skiplink; .z-bottomnav con botones
 //                                             (aria-current y z:select { value })
@@ -47,6 +50,7 @@
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { edgeMargin, trackScrollEdges } from "../edges";
 import { disposeSite, hydrateSite, onSiteClick } from "./site";
+import { hydrateChat, onChatClick, onChatKeydown, onChatPopState } from "./chat";
 import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
 import { chevronDoubleRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-right";
 import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-small";
@@ -1313,6 +1317,8 @@ function onDoubleClick(event: MouseEvent): void {
   if (defaultSize !== undefined) resizeTo(handle, defaultSize);
 }
 
+export { setChatView, setChatWidgetOpen } from "./chat";
+
 /** Prepara el marcado bajo `[data-z-dom]`: mide los shells, completa divisores y pestañas. Repetible. */
 export function hydrate(root: ParentNode = document): void {
   if (!isBrowser) return;
@@ -1323,6 +1329,7 @@ export function hydrate(root: ParentNode = document): void {
   for (const panel of all(root, ".z-floatpanel")) if (!panel.hidden) setFloatingPanelRect(panel, panelRect(panel), true);
   for (const layout of all(root, ".z-panelayout")) syncPaneFocus(layout);
   hydrateSite(root);
+  hydrateChat(root);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
@@ -1365,7 +1372,10 @@ export function init(): void {
   wired = true;
   document.addEventListener("click", onClick);
   document.addEventListener("click", onSiteClick);
+  document.addEventListener("click", onChatClick);
+  document.addEventListener("keydown", onChatKeydown);
   document.addEventListener("keydown", onKeydown);
+  window.addEventListener("popstate", onChatPopState);
   document.addEventListener("dblclick", onDoubleClick);
   document.addEventListener("pointerdown", onPointerDown);
   document.addEventListener("pointermove", (event) => {

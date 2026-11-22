@@ -33,3 +33,4 @@ export { NavigationMenu, type NavigationMenuProps, type NavMenuItem, type NavMen
 export { BottomNavigation, type BottomNavigationProps, type BottomNavItem } from "./layouts/BottomNavigation";
 export { SiteFooter, type SiteFooterProps, type SiteFooterColumn, type SiteFooterLink, type SiteFooterSocial } from "./layouts/SiteFooter";
 export { SkipLink, type SkipLinkProps } from "./layouts/SkipLink";
+export { ChatLayout, CHAT_LAYOUT_LABELS, type ChatLayoutLabels, type ChatLayoutProps, type ChatView } from "./layouts/ChatLayout";
