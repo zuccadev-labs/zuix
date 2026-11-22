@@ -225,7 +225,7 @@
     padding: 0;
     border: 0;
     font: inherit;
-    font-size: calc(var(--z-avatar-size) * 0.34);
+    font-size: var(--z-text-caption);
     font-weight: var(--z-weight-bold);
     cursor: pointer;
   }
@@ -440,6 +440,7 @@
   }
   .z-profile-header__avatar > .z-avatar {
     --z-avatar-size: 96px;
+    font-size: var(--z-text-display);
     box-shadow:
       0 0 0 4px var(--z-surface-solid),
       0 0 0 5px var(--z-glass-border),

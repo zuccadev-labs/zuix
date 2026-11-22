@@ -28,14 +28,14 @@ export function LoginScreen() {
             <>
               <a href="#terms">Terms</a>
               <a href="#privacy">Privacy</a>
-              <button
-                type="button"
-                className="z-link"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setVariant(variant === "centered" ? "split" : "centered")}
                 data-testid="auth-variant"
               >
                 {variant === "centered" ? "Split layout" : "Centered layout"}
-              </button>
+              </Button>
             </>
           }
         >
