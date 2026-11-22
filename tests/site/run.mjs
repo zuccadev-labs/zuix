@@ -370,7 +370,9 @@ for (const browserName of wanted) {
               if (axeSource) {
                 await page.evaluate(axeSource);
                 const violations = await page.evaluate(async () => {
+                  // Sin iframes: los de la suite van aislados (sandbox sin scripts), axe no puede entrar y en Firefox su postMessage al marco es un error de consola.
                   const r = await globalThis.axe.run(document, {
+                    iframes: false,
                     runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
                     resultTypes: ["violations"],
                   });

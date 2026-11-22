@@ -10,14 +10,28 @@ const ZOUT = Object.keys(
 );
 
 export default async function ({ page, test, ok, settle, browserName, note, Unverifiable }) {
+  // Firefox cambia lo que responde matchMedia al emular, pero no vuelve a aplicar las reglas @media de las hojas ya
+  // cargadas: se desactivan y reactivan para que las evalúe otra vez.
+  const restyle = () =>
+    page.evaluate(() => {
+      for (const sheet of document.styleSheets) {
+        sheet.disabled = true;
+        sheet.disabled = false;
+      }
+    });
   const media = async (features) => {
     try {
       await page.emulateMedia(features);
     } catch (error) {
       throw new Unverifiable(`${browserName} no emula ${Object.keys(features).join(", ")}: ${String(error.message).split("\n")[0]}`);
     }
+    await restyle();
   };
-  const reset = () => page.emulateMedia({ forcedColors: null, contrast: null }).catch(() => {});
+  const reset = () =>
+    page
+      .emulateMedia({ forcedColors: null, contrast: null })
+      .then(restyle)
+      .catch(() => {});
 
   await test("forced-colors: el foco de teclado se ve en todos los controles y los estados no dependen solo del fondo", async () => {
     await media({ forcedColors: "active" });

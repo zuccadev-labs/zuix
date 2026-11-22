@@ -224,7 +224,8 @@ function makeContext(engine, baseUrl, record, shots) {
     if (!(await page.evaluate(() => typeof window.axe !== "undefined"))) await page.evaluate(axeSource);
     return page.evaluate(
       async ([scope, ruleOptions]) => {
-        const result = await window.axe.run(scope ?? document, { resultTypes: ["violations"], rules: ruleOptions ?? {} });
+        // Sin iframes: los de la suite van aislados (sandbox sin scripts), axe no puede entrar y en Firefox su postMessage al marco es un error de consola.
+        const result = await window.axe.run(scope ?? document, { resultTypes: ["violations"], rules: ruleOptions ?? {}, iframes: false });
         return result.violations.map((v) => ({
           id: v.id,
           impact: v.impact,

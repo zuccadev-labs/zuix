@@ -237,6 +237,9 @@ export default async function ({ page, test, ok, card, settle, shots }) {
     }
   });
   await test("tema claro y marca zutool cambian los tokens", async () => {
+    // Firefox no captura más de 32767 px de alto: la página de ejemplos ya los pasa; entonces, solo la ventana.
+    const pageShot = (name) =>
+      page.screenshot({ path: join(shots, name), fullPage: true }).catch(() => page.screenshot({ path: join(shots, name) }));
     const read = () =>
       page.evaluate(() => {
         const s = getComputedStyle(document.documentElement);
@@ -247,12 +250,12 @@ export default async function ({ page, test, ok, card, settle, shots }) {
     ok((await read())[1] !== canvas, "el tema no cambió el lienzo");
     await page.mouse.move(5, 5);
     await settle();
-    await page.screenshot({ path: join(shots, "page-light.png"), fullPage: true });
+    await pageShot("page-light.png");
     await page.locator("#brand").click();
     ok((await read())[0] !== accent, "la marca no cambió el acento");
     await page.mouse.move(5, 5);
     await settle();
-    await page.screenshot({ path: join(shots, "page-zutool-light.png"), fullPage: true });
+    await pageShot("page-zutool-light.png");
     await page.locator("#theme").click();
     await page.locator("#brand").click();
   });
