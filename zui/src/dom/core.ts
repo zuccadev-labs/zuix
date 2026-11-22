@@ -33,6 +33,7 @@ import * as listbox from "./forms-listbox";
 import * as popup from "./forms-popup";
 import * as layers from "./layers";
 import * as navigation from "./navigation";
+import * as skeleton from "./skeleton";
 import { trapTab } from "../core/focus";
 import { trackScrollEdges } from "../core/edges";
 import { escapeTop } from "../core/layers";
@@ -59,6 +60,8 @@ export { setListboxValue, setTagsValue } from "./forms-choice";
 export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
 export { place, type Placement };
 export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
+export { expandSkeleton } from "./skeleton";
+export { announce, type AnnounceOptions, type Politeness } from "../core/announcer";
 export {
   closeActionBar,
   dismissBanner,
@@ -88,6 +91,7 @@ const coreModule = (): DomModule => ({
   name: "core",
   parts: [
     { rank: 10, setup: actions.setup, hydrate: actions.hydrate },
+    { rank: 12, setup: skeleton.setup, hydrate: skeleton.hydrate },
     { rank: 20, setup: popup.setup, hydrate: () => {} },
     { rank: 21, setup: listbox.setup, hydrate: listbox.hydrate },
     { rank: 23, setup: controls.setup, hydrate: controls.hydrate },

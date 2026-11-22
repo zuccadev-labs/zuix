@@ -1,7 +1,7 @@
 {
   "name": "Skeleton",
   "group": "feedback",
-  "description": "Marcador de posición mientras llega el contenido.",
+  "description": "Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones (tarjeta, lista, tabla, perfil, chat, gráfico, artículo y calendario) y un grupo con el brillo sincronizado.",
   "import": "import { Skeleton } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -29,12 +29,87 @@
       "type": "number",
       "default": 1,
       "description": "Con `text`: número de líneas; la última queda más corta."
+    },
+    {
+      "name": "pattern",
+      "type": "enum",
+      "values": ["card", "list", "table", "profile", "chat", "chart", "article", "calendar"],
+      "description": "Patrón completo. También como `Skeleton.Card`, `Skeleton.List`… Anchos estables por semilla (`seed`): servidor y cliente pintan lo mismo."
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "description": "Envuelve el contenido real: con `true` se ve el hueso con su tamaño (contenido oculto e inerte); con `false`, el contenido."
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "description": "list y table: filas."
+    },
+    {
+      "name": "columns",
+      "type": "number",
+      "description": "table: columnas."
+    },
+    {
+      "name": "messages",
+      "type": "number",
+      "description": "chat: mensajes."
+    },
+    {
+      "name": "paragraphs",
+      "type": "number",
+      "description": "article: párrafos."
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": ["bar", "line", "donut"],
+      "description": "chart: forma del gráfico."
+    },
+    {
+      "name": "media",
+      "type": "boolean",
+      "description": "card: imagen (por defecto sí). También avatar, meta, actions, header, cover e image para quitar partes."
+    },
+    {
+      "name": "seed",
+      "type": "number",
+      "default": 1
     }
   ],
   "states": ["pulse", "wave"],
-  "tokens": ["surface-3", "radius-xs", "radius-full", "glass-highlight", "space-2", "control-radius"],
-  "classes": ["z-skeleton", "z-skeleton-lines"],
-  "a11y": "aria-hidden: el contenedor debe anunciar la carga con aria-busy.",
+  "tokens": [
+    "canvas",
+    "card-bg",
+    "card-radius",
+    "control-height-sm",
+    "control-radius",
+    "fg-muted",
+    "glass-highlight",
+    "line",
+    "line-strong",
+    "radius-full",
+    "radius-lg",
+    "radius-xs",
+    "space-1",
+    "space-10",
+    "space-12",
+    "space-2",
+    "space-2-5",
+    "space-20",
+    "space-3",
+    "space-4",
+    "space-5",
+    "space-6",
+    "space-7",
+    "space-8",
+    "surface",
+    "surface-3",
+    "text-small"
+  ],
+  "classes": ["z-skeleton", "z-skeleton-lines", "z-skeleton-pattern", "z-skeleton-group", "z-skeleton-group__label"],
+  "a11y": "Decorativo (aria-hidden): el contenedor que espera lleva aria-busy=\"true\" (SkeletonGroup lo pone). No se anuncia «cargando»; si la espera es larga, `label` de SkeletonGroup deja una línea visible. Al llegar el contenido no se mueve el foco y el tamaño coincide para no provocar saltos. Con movimiento reducido no hay brillo ni pulso.",
   "examples": [
     {
       "title": "Párrafo",
@@ -43,7 +118,56 @@
     {
       "title": "Fila de lista",
       "code": "<div aria-busy=\"true\">\n  <Skeleton variant=\"circular\" width={36} />\n  <Skeleton width=\"40%\" />\n  <Skeleton variant=\"rounded\" height={120} animation=\"wave\" />\n</div>"
+    },
+    {
+      "title": "Lista",
+      "code": "<SkeletonGroup>\n  <Skeleton.List rows={4} />\n</SkeletonGroup>"
+    },
+    {
+      "title": "Tarjeta",
+      "code": "<SkeletonGroup>\n  <Skeleton pattern=\"card\" />\n</SkeletonGroup>"
+    },
+    {
+      "title": "Tabla",
+      "code": "<Skeleton pattern=\"table\" rows={4} columns={4} />"
+    },
+    {
+      "title": "Perfil",
+      "code": "<Skeleton pattern=\"profile\" />"
+    },
+    {
+      "title": "Chat",
+      "code": "<Skeleton pattern=\"chat\" messages={5} />"
+    },
+    {
+      "title": "Gráfico",
+      "code": "<Skeleton pattern=\"chart\" type=\"bar\" />"
+    },
+    {
+      "title": "Artículo",
+      "code": "<Skeleton pattern=\"article\" paragraphs={2} />"
+    },
+    {
+      "title": "Calendario",
+      "code": "<Skeleton pattern=\"calendar\" />"
+    },
+    {
+      "title": "Envolver el contenido",
+      "code": "<Skeleton loading>\n  <Button>Save changes</Button>\n</Skeleton>"
     }
   ],
-  "origin": "Skeleton del design system base."
+  "origin": "Skeleton del design system base.",
+  "exports": ["Skeleton", "SkeletonGroup"],
+  "attributes": [
+    "data-variant",
+    "data-animation",
+    "data-loading",
+    "data-pattern",
+    "data-rows",
+    "data-columns",
+    "data-messages",
+    "data-paragraphs",
+    "data-type",
+    "data-seed"
+  ]
 }

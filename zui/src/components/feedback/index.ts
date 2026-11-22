@@ -1,5 +1,13 @@
 export { Spinner, type SpinnerProps } from "./Spinner";
-export { Skeleton, type SkeletonProps } from "./Skeleton";
+export {
+  Skeleton,
+  SkeletonGroup,
+  type SkeletonAnimation,
+  type SkeletonGroupProps,
+  type SkeletonPattern,
+  type SkeletonPatternOptions,
+  type SkeletonProps,
+} from "./Skeleton";
 export { LoadingOverlay, type LoadingOverlayProps } from "./LoadingOverlay";
 export { EmptyState, type EmptyStateProps } from "./EmptyState";
 export { ErrorState, type ErrorStateProps } from "./ErrorState";
