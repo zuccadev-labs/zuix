@@ -407,6 +407,7 @@ function collect({ TOKENS, families, coarse }) {
       let prevTop = null;
       let prevLetter = false;
       let split = null;
+      let token = "";
       for (let i = 0; i < t.length && !split; i++) {
         const letter = LETTER.test(t[i]);
         range.setStart(node, i);
@@ -422,12 +423,16 @@ function collect({ TOKENS, families, coarse }) {
           while (a > 0 && LETTER.test(t[a - 1])) a--;
           while (b < t.length && LETTER.test(t[b])) b++;
           split = `${t.slice(a, i)}/${t.slice(i, b)}`;
+          let c = i;
+          let d = i;
+          while (c > 0 && /\S/.test(t[c - 1])) c--;
+          while (d < t.length && /\S/.test(t[d])) d++;
+          token = t.slice(c, d);
         }
         prevTop = box.top;
         prevLetter = letter;
       }
       // Un código largo sin espacios (atributos, una ruta) más ancho que la línea solo puede partirse.
-      const token = split ? (t.match(/\S+/g) ?? []).find((w) => w.includes(split.replace("/", ""))) : null;
       if (split && token && token.length > 30)
         add("token-partido", el, `código largo partido «${token.slice(0, 40)}»`, { text: t.trim().slice(0, 40) });
       else if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
