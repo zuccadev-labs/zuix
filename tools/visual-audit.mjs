@@ -330,7 +330,10 @@ function collect({ TOKENS, families, coarse }) {
     const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport");
     if (hidden && !byDesign && !/ellipsis/.test(getComputedStyle(el).textOverflow))
       add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
-    const current = el.closest("[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
+    // Lo seleccionado de una tira: no un panel de pestañas activo, que es contenido corriente.
+    const current = el.closest(
+      "[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']:not([role=tabpanel])",
+    );
     if (scrolledOut && current)
       add("seleccionado-a-medias", el, `${sig(current)} visible a medias en su tira con desplazamiento`, { text: text.slice(0, 40) });
   }
@@ -574,7 +577,14 @@ function collect({ TOKENS, families, coarse }) {
         break;
       }
     }
-    if (hit)
+    // Una rejilla con ejes fijos (cabecera o columna pegajosa: línea de tiempo, semana) desplaza en los dos ejes como
+    // una hoja de cálculo: el eje fijo dice dónde se está y el corte del contenido es el de cualquier rejilla.
+    const axes = hit && [...box.querySelectorAll("*")].some((e) => getComputedStyle(e).position === "sticky");
+    if (hit && axes)
+      add("corte-rejilla", box, `rejilla con ejes fijos que desplaza ${box.scrollWidth - box.clientWidth} px`, {
+        text: ownText(hit).slice(0, 40),
+      });
+    else if (hit)
       add("corte-sin-fundido", box, `desplaza ${box.scrollWidth - box.clientWidth} px en horizontal y corta un texto en seco`, {
         text: ownText(hit).slice(0, 40),
       });
@@ -609,6 +619,8 @@ function collect({ TOKENS, families, coarse }) {
         Number(gs.opacity) > 0.2 &&
         gs.display !== "none" &&
         gs.visibility !== "hidden" &&
+        // Solo las piezas de un componente (con clase): marcas, pistas, arcos; no un conector o un adorno sin nombre.
+        /^z-/.test(String(g.getAttribute("class") ?? "")) &&
         !/(hand|needle|pointer)/.test(String(g.getAttribute("class") ?? "")) &&
         typeof g.isPointInStroke === "function"
       );
@@ -682,6 +694,8 @@ function collect({ TOKENS, families, coarse }) {
     const ps = getComputedStyle(parent);
     if (/(auto|scroll|hidden|clip)/.test(ps.overflowX) || /contents/.test(ps.display)) continue;
     if (Number.parseFloat(cs.marginLeft) < 0 || Number.parseFloat(cs.marginRight) < 0) continue;
+    // Las filas de una rejilla que desplaza son más anchas que su grupo a propósito.
+    if (el.matches("[role=row],[role=rowgroup]") || parent.matches("[role=grid],[role=treegrid]")) continue;
     const r = rects.get(el);
     const pr = rects.get(parent) ?? parent.getBoundingClientRect();
     if (pr.width < 1) continue;
@@ -700,7 +714,10 @@ function collect({ TOKENS, families, coarse }) {
     if (r.width < 40) continue;
     let far = null;
     for (const k of row.children) {
-      if (!shownSet.has(k) || /absolute|fixed/.test(getComputedStyle(k).position)) continue;
+      const ks = getComputedStyle(k);
+      if (!shownSet.has(k) || /absolute|fixed/.test(ks.position)) continue;
+      // Girada o animada (un indicador que da vueltas), su caja no es su sitio.
+      if (ks.transform !== "none" || ks.rotate !== "none" || ks.animationName !== "none") continue;
       const kr = rects.get(k);
       if (kr.right > r.right + 8 || kr.left < r.left - 8) far = k;
     }
@@ -799,6 +816,8 @@ function collect({ TOKENS, families, coarse }) {
     const vp = root.querySelector(":scope > .z-carousel__viewport");
     const active = root.querySelector(".z-carousel__slide[data-active]");
     if (!vp || !active || root.querySelectorAll(".z-carousel__slide[data-active]").length !== 1) continue;
+    // Con reproducción automática se mueve solo: el centro y el activo coinciden al asentarse, no en cada fotograma.
+    if (root.dataset.autoplayState === "playing") continue;
     if (!root.matches('[data-align="center"],[data-effect="prism"],[data-effect="coverflow"],[data-effect="wheel"]')) continue;
     const q = vp.getBoundingClientRect();
     const vertical = root.dataset.orientation === "vertical";
@@ -1625,6 +1644,10 @@ function classify(recs) {
             verdict = "aceptado";
             why = "marca inyectada sin cargar su fuente: el sitio se compila con la suya y otra métrica desborda unos px";
           }
+          break;
+        case "corte-rejilla":
+          verdict = "aceptado";
+          why = "rejilla con ejes fijos (cabecera o columna pegajosa) que desplaza en los dos ejes";
           break;
         case "objetivo-espaciado":
           verdict = "aceptado";
