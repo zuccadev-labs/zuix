@@ -1011,20 +1011,29 @@
     background: var(--z-fg);
     color: var(--z-surface-solid);
   }
+  /* Modelo, herramientas y uso en una sola fila. Si no caben (un teléfono), la fila desplaza y el borde con
+     controles ocultos se difumina (data-scroll-edges); partir línea los apilaba uno debajo de otro. El relleno de
+     un paso deja sitio al anillo de foco, que el desplazamiento recortaría. */
   .z-composer__footer {
     grid-area: footer;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: var(--z-space-1-5);
     min-inline-size: 0;
+    margin: calc(var(--z-space-1) * -1);
+    padding: var(--z-space-1);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+  .z-composer__footer > * {
+    flex: none;
   }
   .z-composer__model {
     inline-size: auto;
   }
   .z-composer__toolset {
     display: flex;
-    flex-wrap: wrap;
     gap: var(--z-space-1);
   }
   .z-composer__tool {

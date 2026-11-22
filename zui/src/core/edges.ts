@@ -36,3 +36,18 @@ export function trackScrollEdges(el: HTMLElement): () => void {
     mo?.disconnect();
   };
 }
+
+const followed = new WeakMap<HTMLElement, { el: HTMLElement; stop: () => void }>();
+
+/**
+ * Sigue la tira `selector` de un widget que se repinta: si el repintado la sustituye o la quita, deja de vigilar la
+ * anterior y vigila la nueva. Se llama tras cada pintado (`after`) y con `null` al desmontar.
+ */
+export function followScrollEdges(root: HTMLElement, selector: string | null): void {
+  const el = selector ? root.querySelector<HTMLElement>(selector) : null;
+  const prev = followed.get(root);
+  if (prev?.el === el) return;
+  prev?.stop();
+  if (el) followed.set(root, { el, stop: trackScrollEdges(el) });
+  else followed.delete(root);
+}

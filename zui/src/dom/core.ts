@@ -972,7 +972,7 @@ const edgeTracked = new WeakSet<HTMLElement>();
 export function hydrate(root: ParentNode = document): void {
   // Tiras con desplazamiento horizontal: difuminado del borde con contenido oculto (data-scroll-edges).
   for (const strip of root.querySelectorAll<HTMLElement>(
-    '[data-z-dom] .z-tabs__list:not([data-orientation="vertical"]), [data-z-dom] .z-listbox[data-orientation="horizontal"] > .z-listbox__viewport',
+    '[data-z-dom] .z-tabs__list:not([data-orientation="vertical"]), [data-z-dom] .z-listbox[data-orientation="horizontal"] > .z-listbox__viewport, [data-z-dom] .z-table-wrap',
   )) {
     if (edgeTracked.has(strip)) continue;
     edgeTracked.add(strip);

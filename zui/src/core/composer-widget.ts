@@ -5,6 +5,7 @@
 // «editando». Composer graba notas de voz con MediaRecorder si el navegador lo ofrece (pulsar para empezar, pulsar para
 // enviar, Cancelar); PromptInput añade modelo, herramientas activables, uso de contexto y enviar ↔ parar.
 
+import { followScrollEdges } from "./edges";
 import { announce } from "./announcer";
 import { avatarNode } from "./chat-tree";
 import {
@@ -611,6 +612,7 @@ function attach(root: HTMLElement, host: Host): () => void {
   root.addEventListener("drop", onDrop);
   root.addEventListener("focusout", onFocusOut);
   return () => {
+    followScrollEdges(root, null);
     root.removeEventListener("submit", onSubmit);
     root.removeEventListener("input", onInput);
     root.removeEventListener("keydown", onKey);
@@ -1039,6 +1041,8 @@ function makeWidget(root: "z-composer" | "z-prompt-input", kind: "chat" | "promp
     tree: tree(kind),
     attach,
     after(rootEl, host) {
+      // Pie del asistente (modelo, herramientas, uso): una fila que desplaza, con el borde oculto difuminado.
+      followScrollEdges(rootEl, ".z-composer__footer");
       const live = lives.get(rootEl);
       const el = rootEl.querySelector<HTMLTextAreaElement>(".z-composer__input");
       const c = host.config();

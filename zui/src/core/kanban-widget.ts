@@ -6,6 +6,7 @@
 // región viva central; el orden del DOM es siempre el de las columnas.
 
 import { announce } from "./announcer";
+import { followScrollEdges } from "./edges";
 import { initialsOf } from "./initials";
 import {
   dropIndexAt,
@@ -419,6 +420,7 @@ export const kanbanWidget: Widget<KanbanBoardProps, Config, State> = {
     doc.addEventListener("pointercancel", onUp);
     doc.addEventListener("keydown", onEscape);
     return () => {
+      followScrollEdges(root, null);
       root.removeEventListener("keydown", onKey);
       root.removeEventListener("focusout", onFocusOut);
       root.removeEventListener("focusin", onFocusIn);
@@ -431,6 +433,8 @@ export const kanbanWidget: Widget<KanbanBoardProps, Config, State> = {
     };
   },
   after(root, host, focus) {
+    // El tablero desplaza en horizontal: el borde con columnas ocultas se difumina en lugar de cortar una en seco.
+    followScrollEdges(root, ".z-kanban__board");
     if (!focus) return;
     const id = host.state().active;
     const el = id ? root.querySelector<HTMLElement>(`.z-kanban__card[data-id="${CSS.escape(id)}"]`) : null;

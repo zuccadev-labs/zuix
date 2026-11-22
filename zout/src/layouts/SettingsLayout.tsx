@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
+import { ScrollEdgesList } from "./edges.internal";
 
 export interface SettingsNavItem {
   /** Ancla de la sección (`#id`) o ruta. */
@@ -51,7 +52,8 @@ export function SettingsLayout({
           {description ? <p className="z-settings-layout__description">{description}</p> : null}
         </header>
         <nav className="z-settings-layout__nav" aria-label={navLabel}>
-          <ul className="z-settings-layout__links">
+          {/* En estrecho la navegación es una tira que desplaza: el borde con secciones ocultas se difumina. */}
+          <ScrollEdgesList className="z-settings-layout__links">
             {nav.map((item) => (
               <li key={item.href}>
                 <a className="z-settings-layout__link" href={item.href} aria-current={item.current ? "page" : undefined}>
@@ -60,7 +62,7 @@ export function SettingsLayout({
                 </a>
               </li>
             ))}
-          </ul>
+          </ScrollEdgesList>
         </nav>
         <div className="z-settings-layout__content">{children}</div>
         {dirty && saveBar ? (

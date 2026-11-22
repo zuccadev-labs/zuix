@@ -1,5 +1,6 @@
 import type { ReactNode, Ref, TableHTMLAttributes } from "react";
 import { cx } from "../../cx";
+import { ScrollEdges } from "./edges.internal";
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
   density?: "compact" | "comfortable";
@@ -37,7 +38,8 @@ export function Table({
   ...rest
 }: TableProps) {
   return (
-    <div className={cx("z-table-wrap", wrapperClassName)} data-framed={framed || undefined}>
+    // El borde que esconde columnas se difumina (data-scroll-edges): en estrecho, la tabla se ve cortada a propósito.
+    <ScrollEdges className={cx("z-table-wrap", wrapperClassName)} data-framed={framed || undefined}>
       <table
         {...rest}
         className={cx("z-table", className)}
@@ -50,6 +52,6 @@ export function Table({
         {caption ? <caption className={cx("z-table__caption", captionHidden && "z-sr-only")}>{caption}</caption> : null}
         {children}
       </table>
-    </div>
+    </ScrollEdges>
   );
 }
