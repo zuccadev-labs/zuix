@@ -381,7 +381,11 @@ export const worldClockWidget: Widget<WorldClockProps, WorldConfig, TickState> =
   control: (c, s) => (c.fixed !== null && c.fixed !== s.now ? { now: c.fixed } : s),
   tree(c, s) {
     const { labels } = c;
+    const seen = new Map<string, number>();
     const items = c.zones.map((z, i) => {
+      // Clave por zona (no por posición): al quitar una ciudad, las demás conservan su nodo y el foco.
+      const n = seen.get(z.timeZone) ?? 0;
+      seen.set(z.timeZone, n + 1);
       const time = clockText(s.now, { timeZone: z.timeZone, locale: c.locale, hourCycle: c.hourCycle, seconds: c.seconds });
       const diff = zoneDifference(s.now, z.timeZone, c.reference);
       const shortDiff = differenceText(diff.minutes, c.locale);
@@ -394,7 +398,7 @@ export const worldClockWidget: Widget<WorldClockProps, WorldConfig, TickState> =
       const sentence = [z.label, time, spokenDiff, diff.day ? dayWord : "", day ? labels.day : labels.night].filter(Boolean).join(", ");
       return h(
         "li",
-        { class: "z-world-clock__city", key: `${z.timeZone}-${i}`, "data-day": day ? "day" : "night" },
+        { class: "z-world-clock__city", key: n ? `${z.timeZone}#${n}` : z.timeZone, "data-day": day ? "day" : "night" },
         h("span", { class: "z-sr-only" }, sentence),
         h(
           "span",
@@ -458,13 +462,18 @@ export const worldClockWidget: Widget<WorldClockProps, WorldConfig, TickState> =
       const index = Number(button.dataset.index);
       const zone = host.config().zones[index];
       if (!zone) return;
-      // El foco pasa a la ciudad siguiente (o a la anterior) para no perderse al quitar esta.
-      const buttons = [...root.querySelectorAll<HTMLButtonElement>(".z-world-clock__remove")];
-      const next = buttons[index + 1] ?? buttons[index - 1];
+      // El foco pasa a la ciudad siguiente (o a la anterior) para no perderse al quitar esta: se busca por su nombre
+      // cuando la aplicación ya ha quitado la ciudad.
+      const zones = host.config().zones;
+      const neighbour = zones[index + 1] ?? zones[index - 1];
+      const name = neighbour ? fill(host.config().labels.remove, { city: neighbour.label }) : null;
       host.emit("remove", { timeZone: zone.timeZone, index });
       requestAnimationFrame(() => {
-        if (!root.contains(root.ownerDocument.activeElement) || root.ownerDocument.activeElement === root.ownerDocument.body)
-          (next?.isConnected ? next : root.querySelector<HTMLElement>(".z-world-clock__remove"))?.focus();
+        // Si la aplicación no la quitó (el botón sigue ahí) o el foco ya está en otra parte, no se toca.
+        const active = root.ownerDocument.activeElement;
+        if (button.isConnected || (active && active !== root.ownerDocument.body)) return;
+        const target = [...root.querySelectorAll<HTMLElement>(".z-world-clock__remove")].find((b) => b.getAttribute("aria-label") === name);
+        (target ?? root.querySelector<HTMLElement>(".z-world-clock__remove"))?.focus();
       });
     };
     root.addEventListener("click", click);

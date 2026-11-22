@@ -213,6 +213,8 @@ init(datesModule, chartsModule);
 | `/dom/color` | ColorPicker, ColorArea, ColorSlider, ColorSwatchPicker, ColorField, ColorPickerTrigger | `colorModule`, `setColorValue` |
 | `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti | `mediaModule`, `carousel`… |
 | `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
+| `/dom/time` | Clock, AnalogClock, WorldClock, Countdown, DurationField, TimeZoneSelect (sobre el Combobox del núcleo) | `timeModule`, `refreshTimeZoneSelect`, `formatDuration` |
+| `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -222,10 +224,12 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 | Consumidor | Antes, con una sola entrada | Ahora |
 |---|---|---|
 | Solo `toast()` | 225 kB (de `/dom`) | 11 kB, de `/dom` o de `/dom/core` (3 iconos) |
-| `init()` del núcleo | — | 92 kB (4 iconos) |
-| `init()` del núcleo con fechas | — | 168 kB |
-| `init()` del núcleo con agenda | — | 332 kB |
-| `init()` completo | 526 kB | 515 kB (33 iconos) |
+| `init()` del núcleo | — | 95 kB |
+| `init()` del núcleo con fechas | — | 173 kB |
+| `init()` del núcleo con agenda | — | 341 kB |
+| `init()` del núcleo con tiempo | — | 140 kB |
+| `init()` del núcleo con terminal y código | — | 156 kB |
+| `init()` completo | 526 kB | 621 kB |
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.

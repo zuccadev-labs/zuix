@@ -53,7 +53,7 @@ import { datesModule } from "@zuccadev-labs/zuix-zui/dom/dates"; // Calendar, Da
 init(datesModule); // later: use(agendaModule) from "@zuccadev-labs/zuix-zui/dom/agenda"
 ```
 
-Families: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`. Which one covers what, and
+Families: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`, `time`, `terminal`. Which one covers what, and
 the sizes, in the [frameworks guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md).
 
 ```html
@@ -118,7 +118,7 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
 | `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior, everything: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
 | `@zuccadev-labs/zuix-zui/dom/core` | Framework-free core (`init`, `use`, dialogs, popovers, menus, `toast`, basic forms), extended per family |
-| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects` | One behavior family each, registered with `init(module)` or `use(module)` |
+| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |

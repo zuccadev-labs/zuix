@@ -196,7 +196,7 @@ function attach(root: HTMLElement, host: Host): () => void {
     host.update({ query: field.value, row: 0 });
     const c = host.config();
     const n = view(c, host.state()).filtered.matches;
-    announceIn(root, field.value.trim() ? fill(c.labels.matches, { n }) : "");
+    announceIn(root, field.value.trim() ? fill(c.labels.matches, { n }) : "", ".z-log-console__live");
   };
 
   const click = (event: MouseEvent) => {
@@ -479,7 +479,7 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
         ),
       ),
       total ? null : h("p", { class: "z-log-console__empty" }, labels.empty),
-      h("span", { class: "z-sr-only", role: "status", "data-live": "" }),
+      h("span", { class: "z-sr-only z-log-console__live", role: "status", "data-live": "" }),
     );
   },
   attach,

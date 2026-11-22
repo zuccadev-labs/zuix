@@ -46,6 +46,8 @@ import { ChartsScreen } from "./screens/Charts";
 import { DataScreen } from "./screens/Data";
 import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
+import { TerminalScreen } from "./screens/TerminalScreen";
+import { TimeScreen } from "./screens/Time";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -217,6 +219,10 @@ export function App() {
       <Site />
     ) : active === "media" ? (
       <Media />
+    ) : active === "time" ? (
+      <TimeScreen />
+    ) : active === "terminal" ? (
+      <TerminalScreen />
     ) : (
       <Editor />
     );

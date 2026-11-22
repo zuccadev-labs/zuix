@@ -154,7 +154,7 @@ export const countdownWidget: Widget<CountdownProps, Config, State> = {
       if (left === 0) {
         if (host.state().doneFor !== c.to) {
           host.update({ now, doneFor: c.to });
-          announceIn(root, c.labels.complete);
+          announceIn(root, c.labels.complete, ".z-countdown__live");
           host.emit("complete", { to: c.to });
         }
         return;
@@ -162,7 +162,8 @@ export const countdownWidget: Widget<CountdownProps, Config, State> = {
       const hit = countdownMilestone(last, left, c.every);
       last = left;
       host.update({ now });
-      if (hit !== null) announceIn(root, fill(c.labels.left, { time: countdownSpoken(until(c.to, now, c.units), c.locale) }));
+      if (hit !== null)
+        announceIn(root, fill(c.labels.left, { time: countdownSpoken(until(c.to, now, c.units), c.locale) }), ".z-countdown__live");
     };
     const arm = () => {
       clearTimeout(finish);

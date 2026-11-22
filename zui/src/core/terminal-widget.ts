@@ -174,7 +174,7 @@ function attach(root: HTMLElement, host: Host): () => void {
     host.update({ running: false });
     const { labels, announce } = host.config();
     if (announce === "none") return;
-    announceIn(root, interrupted ? labels.interrupted : code ? fill(labels.failed, { code }) : labels.done);
+    announceIn(root, interrupted ? labels.interrupted : code ? fill(labels.failed, { code }) : labels.done, ".z-terminal__live");
   };
 
   const execute = async (command: string) => {
@@ -250,7 +250,7 @@ function attach(root: HTMLElement, host: Host): () => void {
         field.setSelectionRange(value.length, value.length);
         if (shown.length) {
           write(`\x1b[2m${shown.map(visible).join("  ")}\x1b[0m\n`);
-          announceIn(root, fill(host.config().labels.completions, { n: shown.length, list: shown.join(", ") }));
+          announceIn(root, fill(host.config().labels.completions, { n: shown.length, list: shown.join(", ") }), ".z-terminal__live");
         }
       });
       return;

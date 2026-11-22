@@ -11,6 +11,7 @@ import contentCases from "./cases-content.mjs";
 import dataCases from "./cases-data.mjs";
 import siteCases from "./cases-site.mjs";
 import mediaCases from "./cases-media.mjs";
+import timeTerminal from "./cases-time-terminal.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import { carouselAtRest } from "../rest.mjs";
@@ -250,6 +251,8 @@ const SCREENS = [
   "data",
   "charts",
   "media",
+  "time",
+  "terminal",
 ];
 
 export const cases = [
@@ -3072,6 +3075,7 @@ export const cases = [
     mediaCases,
     charts,
     reading,
+    timeTerminal,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
