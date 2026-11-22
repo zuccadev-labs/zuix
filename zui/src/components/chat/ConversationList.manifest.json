@@ -1,0 +1,117 @@
+{
+  "name": "ConversationList",
+  "group": "chat",
+  "description": "Lista de conversaciones de mensajería: avatar con presencia, nombre, último mensaje (o quién escribe, o el borrador), hora corta, no leídos y menciones, silenciado y fijado, y la entrega de tu último mensaje. Búsqueda sin acentos, filtros (todas, no leídas, grupos) y orden con las fijadas arriba.",
+  "import": "import { ConversationList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "ConversationItem[]",
+      "description": "{ id, title, avatar?, presence?, lastMessage?, lastAuthor?, lastMine?, lastAt?, status?, unread?, mention?, muted?, pinned?, draft?, typing?, group? }"
+    },
+    {
+      "name": "selectedId",
+      "type": "string",
+      "description": "Conversación abierta (controlada)."
+    },
+    {
+      "name": "defaultSelectedId",
+      "type": "string"
+    },
+    {
+      "name": "search",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "filters",
+      "type": "(\"all\" | \"unread\" | \"groups\")[] | false",
+      "default": ["all", "unread", "groups"]
+    },
+    {
+      "name": "sort",
+      "type": "boolean",
+      "default": true,
+      "description": "Fijadas arriba y el resto por actividad."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "timeZone",
+      "type": "string"
+    },
+    {
+      "name": "hourCycle",
+      "type": "\"h12\" | \"h23\""
+    },
+    {
+      "name": "onSelect",
+      "type": "(detail: { id }) => void"
+    },
+    {
+      "name": "onSearch",
+      "type": "(detail: { query }) => void"
+    },
+    {
+      "name": "onFilterChange",
+      "type": "(detail: { filter }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ConversationListLabels>"
+    }
+  ],
+  "states": ["rest", "hover", "selected", "unread", "muted", "pinned", "typing", "empty"],
+  "tokens": [
+    "item-radius",
+    "row-hover",
+    "accent-soft",
+    "accent-solid",
+    "accent-text",
+    "fg-on-accent",
+    "surface-solid",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "danger-text",
+    "line",
+    "control-height-sm",
+    "control-radius-sm",
+    "touch-target"
+  ],
+  "classes": [
+    "z-conversation-list",
+    "z-conversation-list__search",
+    "z-conversation-list__filters",
+    "z-conversation-list__filter",
+    "z-conversation-list__items",
+    "z-conversation",
+    "z-conversation__body",
+    "z-conversation__title",
+    "z-conversation__time",
+    "z-conversation__preview",
+    "z-conversation__draft",
+    "z-conversation__badges",
+    "z-conversation__unread",
+    "z-conversation__mention",
+    "z-conversation-list__empty"
+  ],
+  "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son botones con aria-pressed. Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id, data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Chats con no leídos, fijado y silenciado",
+      "code": "<ConversationList selectedId=\"ana\" timeZone=\"UTC\" items={[\n  { id: \"ana\", title: \"Ana López\", presence: \"online\", lastMessage: \"Morning! Did the new build land?\", lastAt: \"2026-11-21T08:58:00Z\", unread: 2, pinned: true },\n  { id: \"team\", title: \"Design team\", group: true, typing: [\"Luis\"], lastAt: \"2026-11-21T08:40:00Z\", unread: 12, mention: true },\n  { id: \"marta\", title: \"Marta Ruiz\", lastMessage: \"See you then\", lastMine: true, status: \"read\", lastAt: \"2026-11-20T21:10:00Z\" },\n  { id: \"ops\", title: \"Ops alerts\", lastMessage: \"Deploy finished\", lastAt: \"2026-11-18T07:00:00Z\", muted: true, unread: 4 },\n]} onSelect={({ id }) => open(id)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Chats con no leídos, fijado y silenciado",
+      "code": "<div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Morning! Did the new build land?\", \"lastAt\": \"2026-11-21T08:58:00Z\", \"unread\": 2, \"pinned\": true}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"typing\": [\"Luis\"], \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 12, \"mention\": true}, {\"id\": \"marta\", \"title\": \"Marta Ruiz\", \"lastMessage\": \"See you then\", \"lastMine\": true, \"status\": \"read\", \"lastAt\": \"2026-11-20T21:10:00Z\"}, {\"id\": \"ops\", \"title\": \"Ops alerts\", \"lastMessage\": \"Deploy finished\", \"lastAt\": \"2026-11-18T07:00:00Z\", \"muted\": true, \"unread\": 4}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: las listas de chats de WhatsApp y Telegram."
+}

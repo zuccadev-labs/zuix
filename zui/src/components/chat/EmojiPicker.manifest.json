@@ -1,0 +1,72 @@
+{
+  "name": "EmojiPicker",
+  "group": "chat",
+  "description": "Selector de emojis: buscador que hace de combobox sobre una rejilla por categorías, pestañas, recientes, tono de piel y la vista de la opción activa con su nombre CLDR. Trae un conjunto propio pequeño (unos 120) y acepta el de la aplicación, ya cargado o como función que lo carga al abrir.",
+  "import": "import { EmojiPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "data",
+      "type": "EmojiSet | () => Promise<EmojiSet>"
+    },
+    {
+      "name": "recent",
+      "type": "string[]"
+    },
+    {
+      "name": "defaultTone",
+      "type": "0–5",
+      "default": 0
+    },
+    {
+      "name": "columns",
+      "type": "number",
+      "default": 8
+    },
+    {
+      "name": "onSelect",
+      "type": "(detail: { emoji }) => void"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void",
+      "description": "Escape desde el buscador."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<EmojiPickerLabels>"
+    }
+  ],
+  "states": ["browsing", "searching", "empty", "loading"],
+  "tokens": ["surface-3", "accent-soft", "accent", "fg-muted", "line", "popup-bg", "control-radius-sm", "warning"],
+  "classes": [
+    "z-emoji-picker",
+    "z-emoji-picker__search",
+    "z-emoji-picker__field",
+    "z-emoji-picker__tabs",
+    "z-emoji-picker__tab",
+    "z-emoji-picker__grid",
+    "z-emoji-picker__section",
+    "z-emoji-picker__heading",
+    "z-emoji-picker__options",
+    "z-emoji-picker__option",
+    "z-emoji-picker__footer",
+    "z-emoji-picker__preview",
+    "z-emoji-picker__tones",
+    "z-emoji-picker__tone"
+  ],
+  "a11y": "El foco se queda en el buscador (role=combobox, aria-controls a la rejilla role=listbox, aria-activedescendant a la opción activa); cada categoría es un group con su encabezado. ↑/↓ por filas, ←/→ por opciones con el campo vacío, Intro elige y Escape cierra. Cada opción se nombra con su nombre CLDR («thumbs up»). Los tonos son botones con aria-pressed y nombre. Sin React: .z-emoji-picker con data-columns y data-default-tone; emite z:select { emoji } y z:close.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Selector suelto",
+      "code": "<EmojiPicker onSelect={({ emoji }) => insert(emoji)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Selector suelto",
+      "code": "<div class=\"z-emoji-picker\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; datos de nombres CLDR (Unicode, dominio público). Referencias: los selectores de Slack y Telegram."
+}

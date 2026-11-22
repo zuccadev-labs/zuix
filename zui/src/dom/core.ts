@@ -1107,9 +1107,15 @@ function onClick(event: MouseEvent): void {
   }
 
   // Toggle suelto: no los de un ToggleGroup ni el de mostrar contraseña (los atienden ./actions y ./forms-fields), ni
-  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor, gráficos, historias, consola de logs, diff).
+  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor, gráficos, historias, consola de logs, diff,
+  // chat e IA).
   const pressed = target.closest<HTMLElement>("button[aria-pressed]:not(.z-toggle-group > .z-toggle, .z-password__toggle)");
-  if (pressed && !pressed.closest(".z-calendar, .z-heatmap, .z-chart, .z-stories, .z-log-console, .z-diff, .z-duration-field")) {
+  if (
+    pressed &&
+    !pressed.closest(
+      ".z-calendar, .z-heatmap, .z-chart, .z-stories, .z-log-console, .z-diff, .z-duration-field, .z-reactions, .z-conversation-list, .z-composer, .z-emoji-picker, .z-call, .z-message-list, .z-assistant-message, .z-suggestions, .z-artifact",
+    )
+  ) {
     const next = pressed.getAttribute("aria-pressed") !== "true";
     pressed.setAttribute("aria-pressed", String(next));
     pressed.dataset.state = next ? "on" : "off";
@@ -1213,7 +1219,8 @@ function onKeydown(event: KeyboardEvent): void {
     return;
   }
   const radio = target.closest<HTMLElement>('[role="radio"]');
-  if (radio) {
+  // Una pieza que mueve sus propios radios (los filtros de un chat, los tonos de un selector) ya atendió la tecla.
+  if (radio && !event.defaultPrevented) {
     const list = [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])].filter(
       (r) => !isDisabled(r),
     );

@@ -1,0 +1,165 @@
+{
+  "name": "Composer",
+  "group": "chat",
+  "description": "Caja de texto de chat: crece con el texto, Intro envía y Mayús+Intro salta de línea (nunca durante la composición de un IME), botón de enviar siempre presente, adjuntos (elegir, pegar o soltar) con quitar, selector de emojis, menciones con @ (combobox sobre el campo), barra de «respondiendo a» o «editando» y notas de voz con MediaRecorder cuando el navegador lo ofrece.",
+  "import": "import { Composer } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Controlado (con onValueChange)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "sendOn",
+      "type": "\"enter\" | \"mod-enter\"",
+      "default": "enter"
+    },
+    {
+      "name": "attach",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "accept",
+      "type": "string"
+    },
+    {
+      "name": "maxFiles",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "name": "emoji",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "emojiData",
+      "type": "EmojiSet | () => Promise<EmojiSet>",
+      "description": "Conjunto propio o cargado a demanda."
+    },
+    {
+      "name": "voice",
+      "type": "boolean",
+      "default": false,
+      "description": "Grabar notas de voz (mejora progresiva)."
+    },
+    {
+      "name": "mentions",
+      "type": "{ trigger?, items: MentionItem[] }"
+    },
+    {
+      "name": "replyTo",
+      "type": "{ id, author?, text? }"
+    },
+    {
+      "name": "editing",
+      "type": "{ id, text }"
+    },
+    {
+      "name": "maxLength",
+      "type": "number"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean"
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "onSend",
+      "type": "(detail: { text, attachments, replyTo?, editing? }) => void",
+      "description": "Las menciones van como <@id>."
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void"
+    },
+    {
+      "name": "onAttach",
+      "type": "(detail: { files }) => void"
+    },
+    {
+      "name": "onVoice",
+      "type": "(detail: { blob, duration, peaks, type }) => void"
+    },
+    {
+      "name": "onCancelReply · onCancelEdit",
+      "type": "() => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ComposerLabels>"
+    }
+  ],
+  "states": ["empty", "typing", "replying", "editing", "with-attachments", "recording", "mentioning", "emoji-open", "disabled"],
+  "tokens": [
+    "control-bg",
+    "control-border",
+    "field-radius-multiline",
+    "accent",
+    "accent-ring",
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "surface-solid",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "popup-bg",
+    "popup-radius",
+    "popup-shadow",
+    "danger",
+    "font-mono"
+  ],
+  "classes": [
+    "z-composer",
+    "z-composer__form",
+    "z-composer__row",
+    "z-composer__tools",
+    "z-composer__attach",
+    "z-composer__emoji",
+    "z-composer__field",
+    "z-composer__input",
+    "z-composer__send",
+    "z-composer__context",
+    "z-composer__attachments",
+    "z-composer__attachment",
+    "z-composer__remove",
+    "z-composer__recording",
+    "z-composer__mentions",
+    "z-composer__mention",
+    "z-composer__popover",
+    "z-composer__files"
+  ],
+  "a11y": "Formulario con textarea etiquetado; Intro envía con requestSubmit salvo durante la composición de un IME (isComposing o keyCode 229) y Mayús+Intro salta de línea; el botón Enviar existe siempre (aria-disabled vacío, conserva el foco). Con menciones, el campo es un combobox (aria-autocomplete=list, aria-controls, aria-activedescendant): ↑/↓ eligen, Intro o Tab insertan, Escape cierra. Escape también cancela respondiendo/editando. Cada adjunto tiene «Remove {name}» y el foco pasa al siguiente al quitarlo. Grabar: pulsar para empezar y otra vez para enviar, con Cancelar y la duración en un role=timer; sin MediaRecorder el botón no aparece y sin permiso se anuncia el error. Sin React: .z-composer con data-send-on, data-voice, data-accept, data-max-length, data-placeholder y mentions/replyTo/editing en <script type=\"application/json\" data-props>; emite z:send, z:valuechange, z:attach, z:voice, z:cancelreply y z:canceledit.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Con menciones y notas de voz",
+      "code": "<Composer voice mentions={{ items: [{ id: \"ana\", label: \"Ana López\" }, { id: \"luis\", label: \"Luis Gil\" }] }} onSend={({ text, attachments }) => send(text, attachments)} onVoice={({ blob }) => upload(blob)} />"
+    },
+    {
+      "title": "Respondiendo a un mensaje",
+      "code": "<Composer replyTo={{ id: \"m3\", author: \"Ana López\", text: \"Morning! Did the new build land?\" }} onCancelReply={() => setReply(null)} onSend={send} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Con menciones y notas de voz",
+      "code": "<div class=\"z-composer\" data-voice>\n  <script type=\"application/json\" data-props>{\"mentions\": {\"items\": [{\"id\": \"ana\", \"label\": \"Ana López\"}, {\"id\": \"luis\", \"label\": \"Luis Gil\"}]}}</script>\n</div>"
+    },
+    {
+      "title": "Respondiendo a un mensaje",
+      "code": "<div class=\"z-composer\">\n  <script type=\"application/json\" data-props>{\"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: WhatsApp Web, Telegram y Slack. Intro seguro con IME según la guía ime-safe-enter-submit."
+}

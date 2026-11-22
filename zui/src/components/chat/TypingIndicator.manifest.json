@@ -1,0 +1,33 @@
+{
+  "name": "TypingIndicator",
+  "group": "chat",
+  "description": "Indicador de escritura: tres puntos en una burbuja y el texto («Ana is typing…», «Ana and Luis are typing…», «Ana and 2 others are typing…»).",
+  "import": "import { TypingIndicator } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "people",
+      "type": "ChatPerson[]",
+      "required": true
+    },
+    {
+      "name": "avatars",
+      "type": "boolean"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TypingLabels>"
+    }
+  ],
+  "states": ["one", "two", "many"],
+  "tokens": ["surface-solid", "line", "fg-subtle", "fg-muted", "radius-lg", "radius-xs", "shadow-sm"],
+  "classes": ["z-typing", "z-typing__avatars", "z-typing__bubble", "z-typing__dot", "z-typing__text"],
+  "a11y": "Los puntos son decorativos; el texto se lee. No es región viva: dentro de MessageList se anuncia una vez por persona y episodio. Los puntos no se animan con movimiento reducido.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Dos personas",
+      "code": "<TypingIndicator avatars people={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }]} />"
+    }
+  ],
+  "origin": "Diseño propio."
+}

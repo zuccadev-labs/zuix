@@ -1,0 +1,29 @@
+{
+  "name": "DeliveryStatus",
+  "group": "chat",
+  "description": "Estado de entrega de un mensaje propio: enviando (reloj), enviado (una marca), entregado (dos), leído (dos marcas más gruesas y en acento, con otro texto) y fallido.",
+  "import": "import { DeliveryStatus } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "status",
+      "type": "\"sending\" | \"sent\" | \"delivered\" | \"read\" | \"failed\"",
+      "required": true
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DeliveryLabels>"
+    }
+  ],
+  "states": ["sending", "sent", "delivered", "read", "failed"],
+  "tokens": ["fg-muted", "accent-text", "danger-text"],
+  "classes": ["z-delivery", "z-delivery__icons"],
+  "a11y": "Los iconos son decorativos y el estado va en texto oculto («Read», «Delivered»): nunca solo color. mergeDelivery (core) no deja retroceder de leído a entregado.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Los cinco estados",
+      "code": "<div style={{ display: \"flex\", gap: 16 }}>\n  <DeliveryStatus status=\"sending\" />\n  <DeliveryStatus status=\"sent\" />\n  <DeliveryStatus status=\"delivered\" />\n  <DeliveryStatus status=\"read\" />\n  <DeliveryStatus status=\"failed\" />\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencia: las marcas de WhatsApp."
+}

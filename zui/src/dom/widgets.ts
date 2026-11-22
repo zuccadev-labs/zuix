@@ -146,20 +146,24 @@ export function destroyWidgets(): void {
   }
 }
 
-/** Monta en `root` las piezas de `list` (las de una familia) que encuentre dentro de `[data-z-dom]`. */
-export function mountWidgets(root: ParentNode, list: readonly AnyWidget[]): void {
+/**
+ * Monta en `root` las piezas de `list` (las de una familia) que encuentre dentro de `[data-z-dom]`. `inside`: selector
+ * de piezas que pintan dentro otra con la misma clase (el selector de emojis de la caja de texto, la nota de voz de una
+ * lista de mensajes); lo que está dentro de ellas lo pinta su pieza y no se monta aparte.
+ */
+export function mountWidgets(root: ParentNode, list: readonly AnyWidget[], inside?: string): void {
   for (const widget of list) {
     const selector = `.${widget.root}`;
     const found = [...root.querySelectorAll<HTMLElement>(selector)];
     if (root instanceof HTMLElement && root.matches(selector)) found.unshift(root);
-    for (const el of found) if (inDom(el)) mount(el, widget);
+    for (const el of found) if (inDom(el) && !(inside && !entries.has(el) && el.parentElement?.closest(inside))) mount(el, widget);
   }
 }
 
 /** Pieza que monta las piezas de árbol de una familia. */
-export const widgetPart = (rank: number, list: readonly AnyWidget[]): DomPart => ({
+export const widgetPart = (rank: number, list: readonly AnyWidget[], inside?: string): DomPart => ({
   rank,
   setup() {},
-  hydrate: (root) => mountWidgets(root, list),
+  hydrate: (root) => mountWidgets(root, list, inside),
   teardown: destroyWidgets,
 });

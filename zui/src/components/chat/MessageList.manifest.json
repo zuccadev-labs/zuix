@@ -1,0 +1,196 @@
+{
+  "name": "MessageList",
+  "group": "chat",
+  "description": "Lista de mensajes de una conversación: grupos por autor y tiempo, separadores de día pegajosos, marca de no leídos, indicador de escritura, historial hacia arriba sin saltos, «ir al final» con los nuevos contados y ventana virtual (con altos medidos) cuando hay muchos. Las burbujas llevan cita, adjuntos (imágenes, archivo, nota de voz con onda, ubicación, vista previa de enlace), texto con enlaces seguros y menciones, hora, «editado», entrega, reacciones, hilo y una barra de acciones.",
+  "import": "import { MessageList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "messages",
+      "type": "ChatMessage[]",
+      "description": "{ id, authorId, author?, createdAt, text?, attachments?, replyTo?, forwarded?, editedAt?, deletedAt?, status?, reactions?, thread?, kind? }"
+    },
+    {
+      "name": "currentUserId",
+      "type": "string"
+    },
+    {
+      "name": "group",
+      "type": "boolean",
+      "default": false,
+      "description": "Nombre y avatar en los mensajes de otros."
+    },
+    {
+      "name": "groupWithin",
+      "type": "number",
+      "default": 300000,
+      "description": "Ventana para agrupar (ms)."
+    },
+    {
+      "name": "timeZone",
+      "type": "string"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "unreadFrom",
+      "type": "string",
+      "description": "Primer mensaje sin leer."
+    },
+    {
+      "name": "initialAnchor",
+      "type": "\"end\" | \"first-unread\" | string",
+      "description": "Por defecto, el primer no leído si lo hay; si no, el final."
+    },
+    {
+      "name": "hasOlder",
+      "type": "boolean"
+    },
+    {
+      "name": "loadingOlder",
+      "type": "boolean"
+    },
+    {
+      "name": "typing",
+      "type": "ChatPerson[]"
+    },
+    {
+      "name": "highlight",
+      "type": "string",
+      "description": "Texto buscado: coincidencias en <mark>."
+    },
+    {
+      "name": "actions",
+      "type": "MessageAction[] | false",
+      "default": ["react", "reply", "forward", "copy", "edit", "delete"]
+    },
+    {
+      "name": "quickReactions",
+      "type": "string[]",
+      "description": "Seis por defecto."
+    },
+    {
+      "name": "virtualize",
+      "type": "number | false",
+      "default": 150,
+      "description": "Ventana virtual a partir de este número de filas."
+    },
+    {
+      "name": "announce",
+      "type": "\"new\" | \"log\" | \"none\"",
+      "default": "new"
+    },
+    {
+      "name": "composer",
+      "type": "string",
+      "description": "Id del elemento al que vuelve Escape."
+    },
+    {
+      "name": "onLoadOlder",
+      "type": "() => void"
+    },
+    {
+      "name": "onReachEnd",
+      "type": "() => void"
+    },
+    {
+      "name": "onReply · onForward · onEdit · onDelete · onRetry · onOpenThread · onQuote",
+      "type": "(detail: { id }) => void"
+    },
+    {
+      "name": "onReact",
+      "type": "(detail: { id, emoji }) => void"
+    },
+    {
+      "name": "onReactMore",
+      "type": "(detail: { id }) => void"
+    },
+    {
+      "name": "onOpenMedia",
+      "type": "(detail: { id, index }) => void"
+    },
+    {
+      "name": "ref",
+      "type": "Ref<MessageListHandle>",
+      "description": "scrollToEnd(focus?), jumpTo(id), focus()."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<MessageListLabels>"
+    }
+  ],
+  "states": ["following", "reading-history", "loading-older", "new-below", "virtual", "typing"],
+  "tokens": [
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "radius-lg",
+    "radius-md",
+    "radius-xs",
+    "shadow-sm",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "glass-border",
+    "warning-soft",
+    "danger-soft",
+    "danger-text",
+    "touch-target"
+  ],
+  "classes": [
+    "z-message-list",
+    "z-message-list__viewport",
+    "z-message-list__items",
+    "z-message-list__older",
+    "z-message-row",
+    "z-message",
+    "z-message__bubble",
+    "z-message__author",
+    "z-message__text",
+    "z-message__meta",
+    "z-message__actions",
+    "z-message__action",
+    "z-quoted",
+    "z-message__media",
+    "z-message-file",
+    "z-voice-note",
+    "z-message-location",
+    "z-link-preview",
+    "z-reactions",
+    "z-reaction",
+    "z-thread-summary",
+    "z-delivery",
+    "z-date-separator",
+    "z-unread-marker",
+    "z-message-system",
+    "z-typing",
+    "z-scroll-to-bottom"
+  ],
+  "a11y": "Región con nombre y lista ordenada de article; el contenedor no es región viva (leería lo propio, las ediciones y el historial): los mensajes nuevos de otros se anuncian por el anunciador central, cortos («Ana: …») y agrupados («3 new messages from Ana»); quien escribe, una vez por persona y episodio, con un segundo de retraso y nunca mientras tecleas. announce=\"log\" usa role=log para quien lo prefiera. Cada article se nombra con su autor y se describe con hora, «edited» y entrega en texto. Una sola parada de Tab: ↑/↓ entre mensajes, Inicio/Fin, RePág/AvPág; Intro lleva a la barra de acciones (←/→ entre botones, Escape vuelve), R responde y Escape va a la caja de texto. Al llegar arriba se piden los anteriores y el foco se queda en su mensaje. Se abre en el primer no leído o al final con scroll-initial-target sin mover el foco. Los días son encabezados h3 con <time>. La nota de voz es un slider (←/→ cinco segundos). Sin React: .z-message-list con data-current-user, data-group, data-time-zone, data-unread-from, data-anchor, data-has-older, data-composer y messages/typing en <script type=\"application/json\" data-props>; setWidgetProps(el, { messages }); messageList(el).jumpTo(id); emite z:reply, z:react, z:reactmore, z:forward, z:copy, z:edit, z:delete, z:retry, z:openmedia, z:openthread, z:quote, z:loadolder, z:reachend y z:escape.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Conversación con cita, nota de voz, reacción y no leídos",
+      "code": "<div style={{ height: 520 }}>\n  <MessageList messages={messages} currentUserId=\"me\" timeZone=\"UTC\" unreadFrom=\"m3\" typing={[{ name: \"Ana López\" }]} onReply={({ id }) => reply(id)} onReact={({ id, emoji }) => react(id, emoji)} />\n</div>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Conversación con cita, nota de voz, reacción y no leídos",
+      "code": "<div class=\"z-message-list\" style=\"height: 520px\" data-current-user=\"me\" data-time-zone=\"UTC\" data-unread-from=\"m3\" data-now=\"1795253400000\">\n  <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m1\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-20T18:02:00Z\", \"text\": \"Can you send me the release notes before tomorrow?\"}, {\"id\": \"m2\", \"authorId\": \"me\", \"createdAt\": \"2026-11-20T18:05:00Z\", \"text\": \"Sure, drafting them tonight.\", \"status\": \"read\"}, {\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}], \"typing\": [{\"name\": \"Ana López\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: WhatsApp, Telegram, Stream Chat (MessageList, VirtualizedMessageList) y MUI X Chat."
+}

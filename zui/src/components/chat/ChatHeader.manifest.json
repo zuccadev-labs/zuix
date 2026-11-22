@@ -1,0 +1,92 @@
+{
+  "name": "ChatHeader",
+  "group": "chat",
+  "description": "Cabecera de una conversación: volver (en móvil, a la lista), avatar con presencia, nombre, línea de estado («online», «last seen…», «typing…») y acciones (llamada, vídeo, buscar, menú).",
+  "import": "import { ChatHeader } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "avatar",
+      "type": "string"
+    },
+    {
+      "name": "avatarName",
+      "type": "string",
+      "description": "Nombre para las iniciales (por defecto, title si es texto)."
+    },
+    {
+      "name": "presence",
+      "type": "\"online\" | \"away\" | \"busy\" | \"offline\""
+    },
+    {
+      "name": "presenceLabel",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": "ReactNode"
+    },
+    {
+      "name": "statusTone",
+      "type": "\"muted\" | \"accent\"",
+      "default": "muted"
+    },
+    {
+      "name": "onBack",
+      "type": "MouseEventHandler",
+      "description": "Con él, botón de volver."
+    },
+    {
+      "name": "backLabel",
+      "type": "string",
+      "default": "Back",
+      "description": "Dice adónde vuelve: «Back to chats»."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "onTitleClick",
+      "type": "MouseEventHandler",
+      "description": "La identidad es un botón que abre los detalles."
+    },
+    {
+      "name": "level",
+      "type": "2 | 3",
+      "default": 2
+    },
+    {
+      "name": "titleId",
+      "type": "string"
+    }
+  ],
+  "states": ["rest", "typing", "with-back"],
+  "tokens": ["header-height", "fg", "fg-muted", "accent-text", "row-hover", "item-radius"],
+  "classes": [
+    "z-chat-header",
+    "z-chat-header__back",
+    "z-chat-header__identity",
+    "z-chat-header__titles",
+    "z-chat-header__title",
+    "z-chat-header__status",
+    "z-chat-header__actions"
+  ],
+  "a11y": "El nombre es un encabezado (h2 por defecto) y puede nombrar la conversación con titleId. El botón de volver dice adónde vuelve. La presencia del avatar tiene nombre propio. Las acciones son IconButton con nombre.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Contacto en línea con acciones",
+      "code": "<ChatHeader title=\"Ana López\" presence=\"online\" presenceLabel=\"Online\" status=\"online\" statusTone=\"accent\" actions={<>\n  <IconButton icon=\"phone\" label=\"Voice call\" />\n  <IconButton icon=\"video-camera\" label=\"Video call\" />\n  <IconButton icon=\"magnifying-glass\" label=\"Search in chat\" />\n</>} />"
+    },
+    {
+      "title": "Grupo con volver (móvil)",
+      "code": "<ChatHeader title=\"Design team\" status=\"Luis is typing…\" statusTone=\"accent\" onBack={() => {}} backLabel=\"Back to chats\" actions={<IconButton icon=\"ellipsis-vertical\" label=\"More\" />} />"
+    }
+  ],
+  "origin": "Diseño propio; referencias: WhatsApp, Telegram y el ConversationHeader de MUI X Chat."
+}

@@ -1,0 +1,51 @@
+{
+  "name": "Reactions",
+  "group": "chat",
+  "description": "Reacciones con contador: botones conmutables (la propia se marca), y añadir con la fila rápida de seis y «más».",
+  "import": "import { Reactions } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ emoji, count, mine? }[]"
+    },
+    {
+      "name": "add",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "quick",
+      "type": "string[]"
+    },
+    {
+      "name": "onToggle",
+      "type": "(detail: { emoji, active }) => void"
+    },
+    {
+      "name": "onMore",
+      "type": "() => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChatLabels>"
+    }
+  ],
+  "states": ["rest", "mine", "picking"],
+  "tokens": ["surface-solid", "line", "accent", "accent-soft", "accent-text", "fg", "fg-muted", "control-radius-sm", "shadow-sm"],
+  "classes": ["z-reactions", "z-reaction", "z-reaction__emoji", "z-reaction__count", "z-reaction--add", "z-reactions__quick"],
+  "a11y": "Grupo «Reactions» de botones con aria-pressed y nombre con el nombre CLDR del emoji, la cuenta y «you reacted» («thumbs up, 3, you reacted»); el emoji y el número no se leen sueltos. Escape cierra la fila rápida y devuelve el foco a añadir. Sin React: .z-reactions con items en <script type=\"application/json\" data-props>; emite z:toggle { emoji, active } y z:more.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Tres reacciones, una tuya",
+      "code": "<Reactions items={[{ emoji: \"👍\", count: 3, mine: true }, { emoji: \"❤️\", count: 2 }, { emoji: \"😂\", count: 1 }]} onToggle={({ emoji }) => toggle(emoji)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Tres reacciones, una tuya",
+      "code": "<div class=\"z-reactions\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"emoji\": \"👍\", \"count\": 3, \"mine\": true}, {\"emoji\": \"❤️\", \"count\": 2}, {\"emoji\": \"😂\", \"count\": 1}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: Slack, Telegram y WhatsApp."
+}
