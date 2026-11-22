@@ -1,7 +1,10 @@
 "use client";
-import { useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { compare, isDate } from "../../core/compare";
+import { bindColumnResize, layoutPinned } from "../../core/datagrid-runtime";
+import { clampWidth, filterRows, toCSV } from "../../core/datagrid";
+import { download } from "../../core/download";
 import { headerState, pageCountOf, pageSlice, rangeKeys, toggleAll, toggleKey, type RowKey } from "../../core/selection";
 import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
@@ -31,6 +34,16 @@ export interface DataTableColumn<T> {
   mono?: boolean;
   /** Celda del pie (`tfoot`): contenido fijo o calculado sobre todas las filas (no solo la página). */
   footer?: ReactNode | ((rows: ReadonlyArray<T>) => ReactNode);
+  /** Campo de filtro bajo la cabecera (texto que contiene, sin acentos ni mayúsculas). */
+  filterable?: boolean;
+  /** Texto con el que se filtra y se exporta. Por defecto, el valor de `accessor`. */
+  text?: (row: T) => string;
+  /** Asa para cambiar el ancho (puntero o flechas). */
+  resizable?: boolean;
+  /** Fija la columna al inicio al desplazar en horizontal. */
+  pinned?: "start";
+  /** Ancho mínimo al redimensionar (px). Por defecto 64. */
+  minWidth?: number;
 }
 
 export interface DataTableProps<T>
@@ -82,9 +95,40 @@ export interface DataTableProps<T>
   /** Texto del rango visible: «1–10 of 42». */
   rangeLabel?: (from: number, to: number, total: number) => string;
   paginationLabel?: string;
+
+  /** Filtros por columna (controlado): `{ clave: texto }`. */
+  filters?: Readonly<Record<string, string>>;
+  defaultFilters?: Readonly<Record<string, string>>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  /** Nombre de cada campo de filtro. */
+  filterLabel?: (column: DataTableColumn<T>) => string;
+  /** Anchos en px por clave tras redimensionar. */
+  onColumnResize?: (key: string, width: number) => void;
+  /** Nombre del asa de redimensionado. */
+  resizeLabel?: (column: DataTableColumn<T>) => string;
+  /** Botón para descargar las filas filtradas y ordenadas (todas las páginas) en CSV. */
+  exportable?: boolean;
+  exportLabel?: string;
+  /** Nombre del archivo. Por defecto `table.csv`. */
+  exportFileName?: string;
+}
+
+const headerText = <T,>(column: DataTableColumn<T>) => (typeof column.header === "string" ? column.header : column.key);
+/** Texto de una celda para filtrar y exportar. */
+export function cellText<T>(column: DataTableColumn<T>, row: T): string {
+  if (column.text) return column.text(row);
+  const v = column.accessor?.(row);
+  if (v === null || v === undefined) return "";
+  return isDate(v) ? v.toISOString().slice(0, 10) : String(v);
+}
+
+/** Filas como CSV (cabecera con el texto de cada columna). */
+export function dataTableCSV<T>(rows: ReadonlyArray<T>, columns: ReadonlyArray<DataTableColumn<T>>): string {
+  return toCSV([columns.map(headerText), ...rows.map((row) => columns.map((c) => cellText(c, row)))]);
 }
 
 const EMPTY: ReadonlyArray<RowKey> = [];
+const NO_FILTERS: Readonly<Record<string, string>> = {};
 
 /** Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, selección de filas, pie y paginación. */
 export function DataTable<T>({
@@ -115,6 +159,15 @@ export function DataTable<T>({
   rowCount,
   rangeLabel = (from, to, total) => `${from}–${to} of ${total}`,
   paginationLabel = "Pagination",
+  filters: filtersProp,
+  defaultFilters = NO_FILTERS,
+  onFiltersChange,
+  filterLabel = (column) => `Filter ${headerText(column)}`,
+  onColumnResize,
+  resizeLabel = (column) => `Resize ${headerText(column)}`,
+  exportable,
+  exportLabel = "Export CSV",
+  exportFileName = "table.csv",
   ...tableProps
 }: DataTableProps<T>) {
   const [inner, setInner] = useState<SortState | null>(defaultSort);
@@ -125,9 +178,33 @@ export function DataTable<T>({
     onSelectionChange as ((keys: ReadonlyArray<RowKey>) => void) | undefined,
   );
   const [page, setPage] = useControllable<number>(pageProp, defaultPage, onPageChange);
+  const [filters, setFilters] = useControllable<Readonly<Record<string, string>>>(filtersProp, defaultFilters, onFiltersChange);
   const anchor = useRef<RowKey | null>(null);
+  const tableRef = useRef<HTMLTableElement | null>(null);
+  const resizeRef = useRef(onColumnResize);
+  resizeRef.current = onColumnResize;
+  const resizable = columns.some((c) => c.resizable);
+  const pinned = columns.some((c) => c.pinned);
+  useEffect(() => {
+    const table = tableRef.current;
+    if (!table || !(resizable || pinned)) return;
+    return bindColumnResize(table, { onResize: (key, width) => resizeRef.current?.(key, width) });
+  }, [resizable, pinned]);
+  // Tras cada pintado: el desplazamiento de las columnas fijadas depende de los anchos reales.
+  useEffect(() => {
+    if (pinned && tableRef.current) layoutPinned(tableRef.current);
+  });
+
+  const filtered = useMemo(() => {
+    const byKey = new Map(columns.map((c) => [c.key, c]));
+    return filterRows(rows, filters, (row, key) => {
+      const column = byKey.get(key);
+      return column ? cellText(column, row) : "";
+    });
+  }, [rows, columns, filters]);
 
   const sorted = useMemo(() => {
+    const rows = filtered;
     if (!active || manualSort) return rows;
     const column = columns.find((c) => c.key === active.key);
     const accessor = column?.accessor;
@@ -144,7 +221,7 @@ export function DataTable<T>({
         return compare(a, b) * factor || x.index - y.index;
       })
       .map((entry) => entry.row);
-  }, [rows, columns, active, manualSort]);
+  }, [filtered, columns, active, manualSort]);
 
   // Paginación: en el cliente, una porción de las filas ordenadas; en servidor, las filas recibidas.
   const paged = pageSize !== undefined && pageSize > 0;
@@ -192,9 +269,22 @@ export function DataTable<T>({
   };
 
   const footer = columns.some((c) => c.footer !== undefined);
+  const filterable = columns.some((c) => c.filterable);
+  const setFilter = (key: string, value: string) => {
+    const next = { ...filters, [key]: value };
+    if (!value) delete next[key];
+    setFilters(next);
+    if (paged) setPage(1);
+  };
   const span = columns.length + (selectable ? 1 : 0);
   const table = (
-    <Table {...tableProps} hoverable={Boolean(onRowClick)} data-selectable={selectable || undefined}>
+    <Table
+      {...tableProps}
+      ref={tableRef}
+      hoverable={Boolean(onRowClick)}
+      data-selectable={selectable || undefined}
+      data-resizable={resizable || undefined}
+    >
       <thead>
         <tr>
           {selectable ? (
@@ -215,7 +305,9 @@ export function DataTable<T>({
               <th
                 key={column.key}
                 scope="col"
+                data-key={column.key}
                 data-align={column.align}
+                data-pinned={column.pinned ? "" : undefined}
                 aria-sort={canSort ? (direction === "asc" ? "ascending" : direction === "desc" ? "descending" : "none") : undefined}
                 style={column.width ? { width: column.width } : undefined}
               >
@@ -233,10 +325,41 @@ export function DataTable<T>({
                 ) : (
                   column.header
                 )}
+                {column.resizable ? (
+                  <span
+                    className="z-table__resize"
+                    role="separator"
+                    aria-orientation="vertical"
+                    aria-label={resizeLabel(column)}
+                    aria-valuemin={column.minWidth ?? 64}
+                    aria-valuemax={1200}
+                    aria-valuenow={column.width && /px$/.test(column.width) ? clampWidth(Number.parseFloat(column.width)) : undefined}
+                    tabIndex={0}
+                  />
+                ) : null}
               </th>
             );
           })}
         </tr>
+        {filterable ? (
+          <tr className="z-table__filters">
+            {selectable ? <td className="z-table__select" /> : null}
+            {columns.map((column) => (
+              <th key={column.key} scope="col" data-align={column.align} data-pinned={column.pinned ? "" : undefined}>
+                {column.filterable ? (
+                  <input
+                    type="search"
+                    className="z-input__control z-table__filter"
+                    aria-label={filterLabel(column)}
+                    placeholder={headerText(column)}
+                    value={filters[column.key] ?? ""}
+                    onChange={(event) => setFilter(column.key, event.target.value)}
+                  />
+                ) : null}
+              </th>
+            ))}
+          </tr>
+        ) : null}
       </thead>
       <tbody>
         {visible.length === 0 ? (
@@ -273,7 +396,12 @@ export function DataTable<T>({
                 {columns.map((column) => {
                   const value = column.render ? column.render(row, index) : column.accessor?.(row);
                   return (
-                    <td key={column.key} data-align={column.align} data-mono={column.mono || undefined}>
+                    <td
+                      key={column.key}
+                      data-align={column.align}
+                      data-mono={column.mono || undefined}
+                      data-pinned={column.pinned ? "" : undefined}
+                    >
                       {isDate(value) ? value.toLocaleDateString() : typeof value === "boolean" ? String(value) : (value as ReactNode)}
                     </td>
                   );
@@ -288,7 +416,12 @@ export function DataTable<T>({
           <tr>
             {selectable ? <td className="z-table__select" /> : null}
             {columns.map((column) => (
-              <td key={column.key} data-align={column.align} data-mono={column.mono || undefined}>
+              <td
+                key={column.key}
+                data-align={column.align}
+                data-mono={column.mono || undefined}
+                data-pinned={column.pinned ? "" : undefined}
+              >
                 {typeof column.footer === "function" ? column.footer(rows) : column.footer}
               </td>
             ))}
@@ -298,7 +431,7 @@ export function DataTable<T>({
     </Table>
   );
 
-  if (!selectable && !paged) return table;
+  if (!selectable && !paged && !exportable) return table;
   return (
     <div className="z-datatable" data-selectable={selectable || undefined} data-paged={paged || undefined}>
       {table}
@@ -307,6 +440,17 @@ export function DataTable<T>({
           <span className="z-datatable__count" role="status" data-empty={selected.length === 0 || undefined}>
             {selected.length ? selectedLabel(selected.length, total) : ""}
           </span>
+        ) : null}
+        {exportable ? (
+          <button
+            type="button"
+            className="z-btn z-btn--ghost z-datatable__export"
+            data-size="sm"
+            onClick={() => void download(dataTableCSV(sorted, columns), exportFileName, "text/csv")}
+          >
+            <Icon name="arrow-down-tray" size={16} />
+            {exportLabel}
+          </button>
         ) : null}
         {paged ? (
           <>

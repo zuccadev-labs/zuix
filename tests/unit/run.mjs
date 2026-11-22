@@ -136,6 +136,7 @@ const COVERED = [
   "zui/src/core/minimap.ts",
   "zui/src/core/node-view.ts",
   "zui/src/core/transfer.ts",
+  "zui/src/core/datagrid.ts",
   "zui/src/primitives/slot.ts",
   "zui/src/dom/shared.ts",
   "zui/src/dom/forms-calendar.ts",

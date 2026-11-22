@@ -1,4 +1,5 @@
-// Sin React: TransferList desde el contrato HTML (elementos en data-props), teclado y z:change.
+// Sin React: TransferList desde el contrato HTML (elementos en data-props), teclado y z:change; DataTable con filtros,
+// ancho de columna, columna fijada y exportar a CSV.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -41,5 +42,55 @@ export default async function ({ page, test, ok }) {
     ok((await box.locator('input[type=hidden][name="members"]').count()) === 2, "inputs ocultos");
     await box.locator('[data-transfer-action="all-source"]').click();
     ok((await box.locator('.z-transfer__options[data-side="target"] .z-transfer__option').count()) === 0, "mover todo de vuelta");
+  });
+
+  await test("DataTable sin React · filtro por columna, ancho con flechas, columna fijada y CSV", async () => {
+    const examples = contract.DataTable.examples;
+    const markup = examples[examples.length - 1].html;
+    await page.evaluate(async (html) => {
+      for (const old of document.querySelectorAll("[data-tr-layer]")) old.remove();
+      const box = document.createElement("div");
+      box.setAttribute("data-z-dom", "");
+      box.setAttribute("data-tr-layer", "");
+      box.innerHTML = html;
+      Object.assign(box.style, {
+        position: "fixed",
+        insetBlockStart: "0",
+        insetInlineStart: "0",
+        zIndex: "2147483000",
+        inlineSize: "min(520px, 100vw)",
+        padding: "16px",
+        background: "Canvas",
+      });
+      document.querySelector(".page__main").append(box);
+      window.__dg = [];
+      for (const type of ["z:filterchange", "z:columnresize"])
+        box.addEventListener(type, (event) => window.__dg.push([type, event.detail]));
+      (await import("/zui/dist/zui.dom.js")).hydrate(box);
+    }, markup);
+    const box = page.locator("[data-tr-layer]");
+    await box.locator('input[aria-label="Filter Team"]').fill("engin");
+    const visible = () => box.locator("tbody tr:not([hidden])").count();
+    ok((await visible()) === 2, `filtra: ${await visible()}`);
+    const csv = await box.evaluate(async (el) =>
+      (await import("/zui/dist/zui.dom.js")).dataTableCSVFromDom(el.querySelector(".z-datatable")),
+    );
+    ok(csv === "Name,Team,Seats\r\nBen Okafor,Engineering,12\r\nChen Wei,Engineering,7", `CSV: ${JSON.stringify(csv)}`);
+    await box.locator('.z-table__resize[aria-label="Resize Team"]').focus();
+    await page.keyboard.press("ArrowRight");
+    const events = await page.evaluate(() => window.__dg.splice(0));
+    ok(
+      events.some(([type, d]) => type === "z:filterchange" && d.value.team === "engin"),
+      "z:filterchange",
+    );
+    ok(
+      events.some(([type, d]) => type === "z:columnresize" && d.key === "team" && d.width > 0),
+      "z:columnresize",
+    );
+    const position = await box
+      .locator("tbody td[data-pinned]")
+      .first()
+      .evaluate((el) => getComputedStyle(el).position);
+    ok(position === "sticky", `columna fijada: ${position}`);
   });
 }

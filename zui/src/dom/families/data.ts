@@ -16,7 +16,7 @@ export {
   setPage,
   type SortDirection,
 } from "../collections";
-export { dataTableSelection, setDataTablePage, setDataTableSelection } from "../datatable";
+export { dataTableCSVFromDom, dataTableSelection, setDataTablePage, setDataTableSelection } from "../datatable";
 export { destroyWidget, setWidgetProps } from "../widgets";
 
 export const dataModule: DomModule = {
