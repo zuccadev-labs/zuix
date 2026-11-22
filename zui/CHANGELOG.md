@@ -35,6 +35,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   exportar a CSV (`exportable`, `dataTableCSV`), con los textos que empiezan por `=`, `+`, `-` o `@` neutralizados. En
   `/dom/data`, lo mismo sobre el marcado (`tr.z-table__filters`, `.z-table__resize`, `th[data-pinned]`,
   `.z-datatable__export`), con `z:filterchange`, `z:columnresize` y `dataTableCSVFromDom`.
+- `Chip` con `avatar`: ficha de persona («input chip» de Material 3) con un avatar delante del texto.
 - `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
   corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
   nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y

@@ -903,3 +903,29 @@
     }
   }
 }
+
+/* Chip con avatar: el avatar ocupa el alto de la ficha y la ficha se pega a él por el inicio. */
+@layer zui.data {
+  .z-chip[data-avatar] .z-chip__main {
+    padding-inline-start: var(--z-space-0-5);
+  }
+  .z-chip__avatar {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--z-space-5);
+    block-size: var(--z-space-5);
+    overflow: hidden;
+    border-radius: var(--z-radius-full);
+  }
+  .z-chip[data-size="sm"] .z-chip__avatar {
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+  }
+  .z-chip__avatar > :is(img, .z-avatar) {
+    inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    font-size: var(--z-text-fine);
+  }
+}

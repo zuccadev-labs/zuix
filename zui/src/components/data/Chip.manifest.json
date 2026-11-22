@@ -55,6 +55,11 @@
       "type": "boolean",
       "default": false,
       "description": "Punto de estado delante del texto."
+    },
+    {
+      "name": "avatar",
+      "type": "ReactNode",
+      "description": "Avatar delante del texto (ficha de persona). Decorativo: el nombre va en el texto de la ficha."
     }
   ],
   "states": ["rest", "hover", "focus", "active", "disabled", "selected"],
@@ -103,7 +108,7 @@
     "fg-subtle",
     "radius-full"
   ],
-  "classes": ["z-chip", "z-chip__dot"],
+  "classes": ["z-chip", "z-chip__dot", "z-chip__avatar"],
   "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
   "examples": [
     {
@@ -117,6 +122,10 @@
     {
       "title": "Chips de estado con tono",
       "code": "<div style={{ display: \"flex\", gap: 8, flexWrap: \"wrap\" }}>\n  <Chip tone=\"success\" dot>Running</Chip>\n  <Chip tone=\"warning\" dot>Paused</Chip>\n  <Chip tone=\"danger\" dot count={3}>Errors</Chip>\n  <Chip tone=\"info\" icon=\"cloud\">Remote</Chip>\n</div>"
+    },
+    {
+      "title": "Ficha de persona",
+      "code": "<Chip avatar={<Avatar name=\"Ana Torres\" size=\"xs\" />} onRemove={() => {}} removeLabel=\"Remove Ana Torres\">Ana Torres</Chip>"
     }
   ],
   "origin": "FilterChip del design system base y chip de zutool."

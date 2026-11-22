@@ -1057,7 +1057,8 @@
    "group": "data",
    "classes": [
     "z-chip",
-    "z-chip__dot"
+    "z-chip__dot",
+    "z-chip__avatar"
    ],
    "behavior": "none",
    "examples": [
@@ -1074,6 +1075,11 @@
     {
      "title": "Chips de estado con tono",
      "html": "<div style=\"display:flex;gap:8px;flex-wrap:wrap\">\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"success\">\n    <span class=\"z-chip__main\">\n      <span class=\"z-chip__dot\" aria-hidden=\"true\"></span>\n      <span class=\"z-chip__label\">Running</span>\n    </span>\n  </span>\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"warning\">\n    <span class=\"z-chip__main\">\n      <span class=\"z-chip__dot\" aria-hidden=\"true\"></span>\n      <span class=\"z-chip__label\">Paused</span>\n    </span>\n  </span>\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"danger\">\n    <span class=\"z-chip__main\">\n      <span class=\"z-chip__dot\" aria-hidden=\"true\"></span>\n      <span class=\"z-chip__label\">Errors</span>\n      <span class=\"z-chip__count\">3</span>\n    </span>\n  </span>\n  <span class=\"z-chip\" data-size=\"md\" data-tone=\"info\">\n    <span class=\"z-chip__main\">\n      <z-icon name=\"cloud\" size=\"14\"></z-icon>\n      <span class=\"z-chip__label\">Remote</span>\n    </span>\n  </span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Ficha de persona",
+     "html": "<span class=\"z-chip\" data-size=\"md\" data-avatar=\"true\">\n  <span class=\"z-chip__main\">\n    <span class=\"z-chip__avatar\" aria-hidden=\"true\">\n      <span class=\"z-avatar\" data-size=\"xs\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana Torres\">\n        <span class=\"z-avatar__initials\" aria-hidden=\"true\">AT</span>\n      </span>\n    </span>\n    <span class=\"z-chip__label\">Ana Torres</span>\n  </span>\n  <button type=\"button\" class=\"z-chip__remove\" aria-label=\"Remove Ana Torres\" title=\"Remove Ana Torres\">\n    <z-icon name=\"x-mark\" size=\"12\"></z-icon>\n  </button>\n</span>",
      "source": "generated"
     }
    ]
