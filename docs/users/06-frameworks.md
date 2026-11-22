@@ -215,6 +215,8 @@ init(datesModule, chartsModule);
 | `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
 | `/dom/time` | Clock, AnalogClock, WorldClock, Countdown, DurationField, TimeZoneSelect (sobre el Combobox del núcleo) | `timeModule`, `refreshTimeZoneSelect`, `formatDuration` |
 | `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
+| `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
+| `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -229,7 +231,10 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 | `init()` del núcleo con agenda | — | 341 kB |
 | `init()` del núcleo con tiempo | — | 140 kB |
 | `init()` del núcleo con terminal y código | — | 156 kB |
-| `init()` completo | 526 kB | 621 kB |
+| `init()` del núcleo con chat | — | 258 kB |
+| `init()` del núcleo con IA | — | 227 kB |
+| `init()` del núcleo con chat e IA | — | 322 kB |
+| `init()` completo | 526 kB | 812 kB |
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.

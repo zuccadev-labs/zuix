@@ -7,6 +7,41 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de
+  `core/vnode`):
+  - `MessageList`: grupos por autor y tiempo con la cola en la última burbuja, separadores de día pegajosos (encabezados
+    reales), marca de no leídos, indicador de escritura, historial hacia arriba sin saltos (se conserva el mensaje que
+    tenías delante), «ir al final» con los nuevos contados y ventana virtual con altos medidos a partir de 150 filas.
+    Una sola parada de Tab con ↑/↓, Inicio/Fin y RePág/AvPág; Intro lleva a la barra de acciones del mensaje
+    (reaccionar, responder, reenviar, copiar, editar, borrar) y R responde. Los mensajes nuevos de otros se anuncian
+    por el anunciador central, cortos y agrupados; las reacciones responden al instante.
+  - `MessageBubble`: el mismo marcado suelto, con cita, reenviado, editado, borrado, fallido con reintentar, emojis
+    grandes, y adjuntos: álbum de imágenes, archivo con tamaño y progreso, nota de voz con onda, ubicación (imagen de la
+    aplicación o un plano decorativo, sin mapas de terceros) y vista previa de enlace. Los enlaces del texto solo salen
+    con destino http, https o mailto (`core/linkify`, con el analizador de URL).
+  - `Composer`: crece con el texto, Intro envía y Mayús+Intro salta de línea sin enviar durante la composición de un
+    IME, adjuntos (elegir, pegar o soltar), emojis, menciones con `@` como combobox (`core/mentions`, tokens `<@id>`),
+    respondiendo/editando y notas de voz con MediaRecorder cuando existe (pulsar para grabar y para enviar, Cancelar).
+  - `ConversationList` (presencia, último mensaje o quién escribe o el borrador, hora corta, no leídos y menciones,
+    silenciado, fijado, búsqueda y filtros), `ChatHeader`, `EmojiPicker` (conjunto propio de unos 120 emojis con
+    nombres CLDR, recientes, tono de piel y carga a demanda de otro conjunto), `VoiceNote`, `Reactions`,
+    `TypingIndicator`, `DeliveryStatus` (leído con otro texto y otro trazo, no solo color), `ThreadSummary`, `CallCard`
+    (entrante con aviso asertivo, saliente y en curso) y `PinnedBar`.
+  - `core/`: `chat-group`, `chat-anchor`, `delivery`, `linkify`, `mentions`, `waveform`, `emoji-data` y `chat-tree`.
+- Familia de IA, chatbots y agentes (grupo `ai`; `/dom/ai`):
+  - `AssistantMessage`: partes en orden (texto en streaming con cursor, razonamiento, herramientas, aprobaciones,
+    fuentes con citas en línea y artefactos), `aria-busy` mientras llega y un solo anuncio al terminar; acciones
+    (copiar, regenerar, valorar) y ramas «‹ 2 / 3 ›».
+  - `Markdown`: Markdown mínimo propio (`core/markdown-lite`) que construye nodos, nunca marcado: párrafos,
+    encabezados, listas anidadas y de tareas, citas, tablas, énfasis, enlaces http(s), citas `[n]` y código con el
+    `CodeViewer`. Mientras llega, `core/stream-text` cierra a título provisional el código y el énfasis abiertos.
+  - `PromptInput` (la forma de prompt de Composer: modelo, herramientas, uso de contexto y enviar ↔ parar), `Reasoning`,
+    `ToolCall`, `ApprovalCard` (con riesgo alto, aprobar pide confirmar), `AgentPlan`, `Sources`, `Citation`,
+    `Suggestions`, `Artifact` (vista previa en un iframe aislado sin scripts, código, versiones, copiar y descargar),
+    `BranchPicker`, `AgentStatus` y `UsageMeter`.
+  - `core/`: `agent-state` (transiciones y qué se anuncia), `branches` (árbol de la conversación y rama activa),
+    `usage` y `stream-text`.
+
 - `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
   corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
   nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y

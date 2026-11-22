@@ -5,6 +5,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- `ChatLayout`: lista de conversaciones, conversación y detalles. Tres columnas en pantalla ancha, detalles encima en
+  media y una pila (lista → conversación → detalles) en estrecha, decidido por consultas de contenedor sobre el propio
+  layout. Con `history`, la pila se sincroniza con el historial del navegador; F6 salta entre paneles; `variant="widget"`
+  es un asistente flotante (botón y panel de cristal). En `/dom`: `data-view`, `[data-z-chat-view]`, `data-history`,
+  `setChatView` y `setChatWidgetOpen`.
+
 ## [0.3.0] - 2026-11-21
 
 ### Añadido

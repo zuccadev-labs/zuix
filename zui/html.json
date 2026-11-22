@@ -408,6 +408,312 @@
     }
    ]
   },
+  "AgentPlan": {
+   "group": "ai",
+   "classes": [
+    "z-agent-plan",
+    "z-agent-plan__header",
+    "z-agent-plan__heading",
+    "z-agent-plan__count",
+    "z-agent-plan__progress",
+    "z-agent-plan__steps",
+    "z-agent-plan__step",
+    "z-agent-plan__marker",
+    "z-agent-plan__title",
+    "z-agent-plan__detail"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Plan en curso",
+     "html": "<div class=\"z-agent-plan\" data-title=\"Ship the docs\">\n  <script type=\"application/json\" data-props>{\"steps\": [{\"id\": \"1\", \"title\": \"Read the manifests\", \"status\": \"done\"}, {\"id\": \"2\", \"title\": \"Generate the contract\", \"status\": \"running\", \"detail\": \"zui/html.json\"}, {\"id\": \"3\", \"title\": \"Build the site\", \"status\": \"pending\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "AgentStatus": {
+   "group": "ai",
+   "classes": [
+    "z-agent-status",
+    "z-agent-status__indicator",
+    "z-agent-status__spinner",
+    "z-agent-status__label",
+    "z-agent-status__detail",
+    "z-agent-status__time"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Estados",
+     "html": "<div style=\"display:flex;flex-wrap:wrap;gap:8px\">\n  <span class=\"z-agent-status\" data-state=\"thinking\" role=\"status\">\n    <span class=\"z-agent-status__indicator\" aria-hidden=\"true\">\n      <span class=\"z-agent-status__spinner\"></span>\n    </span>\n    <span class=\"z-agent-status__label\">Thinking</span>\n  </span>\n  <span class=\"z-agent-status\" data-state=\"tool\" role=\"status\">\n    <span class=\"z-agent-status__indicator\" aria-hidden=\"true\">\n      <span class=\"z-agent-status__spinner\"></span>\n    </span>\n    <span class=\"z-agent-status__label\">Using search_web</span>\n  </span>\n  <span class=\"z-agent-status\" data-state=\"waiting\" role=\"status\">\n    <span class=\"z-agent-status__indicator\" aria-hidden=\"true\">\n      <z-icon name=\"hand\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-agent-status__label\">Waiting for approval</span>\n  </span>\n  <span class=\"z-agent-status\" data-state=\"done\" role=\"status\">\n    <span class=\"z-agent-status__indicator\" aria-hidden=\"true\">\n      <z-icon name=\"check-circle\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-agent-status__label\">Done</span>\n  </span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "ApprovalCard": {
+   "group": "ai",
+   "classes": [
+    "z-approval-card",
+    "z-approval",
+    "z-approval__header",
+    "z-approval__title",
+    "z-approval__risk",
+    "z-approval__description",
+    "z-approval__details",
+    "z-approval__actions",
+    "z-approval__approve",
+    "z-approval__reject",
+    "z-approval__always",
+    "z-approval__decision"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Riesgo alto",
+     "html": "<div class=\"z-approval-card\" data-id=\"deploy\" data-risk=\"high\" data-allow-always data-title=\"Deploy to production\" data-description=\"The agent wants to run the deploy workflow.\">\n  <script type=\"application/json\" data-props>{\"details\": [{\"label\": \"Workflow\", \"value\": \"release.yml\"}, {\"label\": \"Branch\", \"value\": \"main\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Artifact": {
+   "group": "ai",
+   "classes": [
+    "z-artifact",
+    "z-artifact__bar",
+    "z-artifact__title",
+    "z-artifact__views",
+    "z-artifact__view",
+    "z-artifact__versions",
+    "z-artifact__actions",
+    "z-artifact__panel",
+    "z-artifact__frame",
+    "z-artifact__doc"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "HTML con dos versiones",
+     "html": "<div class=\"z-artifact\" data-title=\"Pricing card\" data-kind=\"HTML\" data-download-name=\"card.html\" style=\"height: 360px\">\n  <script type=\"application/json\" data-props>{\"versions\": [{\"code\": \"<h1>Pro</h1>\", \"language\": \"html\", \"preview\": \"html\"}, {\"code\": \"<h1 style=\\\"font-family: sans-serif\\\">Pro</h1><p>$12 / month</p>\", \"language\": \"html\", \"preview\": \"html\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "AssistantMessage": {
+   "group": "ai",
+   "classes": [
+    "z-assistant-message",
+    "z-assistant-message__avatar",
+    "z-assistant-message__content",
+    "z-assistant-message__text",
+    "z-assistant-message__actions",
+    "z-assistant-message__action",
+    "z-assistant-message__note",
+    "z-markdown",
+    "z-caret",
+    "z-citation",
+    "z-artifact-card"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Respuesta con razonamiento, herramienta y fuentes",
+     "html": "<div class=\"z-assistant-message\">\n  <script type=\"application/json\" data-props>{\"branch\": {\"index\": 2, \"count\": 3}, \"parts\": [{\"type\": \"reasoning\", \"state\": \"done\", \"startedAt\": \"2026-11-21T09:00:00Z\", \"endedAt\": \"2026-11-21T09:00:12Z\", \"text\": \"Check the release process first, then the contract.\"}, {\"type\": \"tool\", \"id\": \"t1\", \"name\": \"search_docs\", \"title\": \"Search docs\", \"status\": \"success\", \"input\": {\"query\": \"release\"}, \"output\": {\"hits\": 2}, \"startedAt\": \"2026-11-21T09:00:12Z\", \"endedAt\": \"2026-11-21T09:00:13Z\"}, {\"type\": \"text\", \"text\": \"Here is a **minimal** plan to ship the docs [1]:\\n\\n1. Freeze the API surface.\\n2. Generate the HTML contract.\\n3. Publish the site.\\n\\n```ts\\nexport const ready = true;\\n```\\n\\nSee the [release checklist](https://example.com/checklist) for details.\"}, {\"type\": \"sources\", \"items\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}]}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "En streaming",
+     "html": "<div class=\"z-assistant-message\" data-state=\"streaming\">\n  <script type=\"application/json\" data-props>{\"parts\": [{\"type\": \"text\", \"text\": \"Drafting the **release** notes\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "BranchPicker": {
+   "group": "ai",
+   "classes": [
+    "z-branch",
+    "z-branch-picker",
+    "z-branch-picker__button",
+    "z-branch-picker__value"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Segunda de tres",
+     "html": "<div class=\"z-branch\" data-index=\"2\" data-count=\"3\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Citation": {
+   "group": "ai",
+   "classes": [
+    "z-citation",
+    "z-citation__index",
+    "z-citation__card",
+    "z-citation__title",
+    "z-citation__domain"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Cita en una frase",
+     "html": "<p>Ship on Friday \n  <a class=\"z-citation\" href=\"https://example.com/release\" target=\"_blank\" rel=\"noopener noreferrer nofollow\" aria-label=\"Source 1: Release process\" data-source=\"1\">\n    <span class=\"z-citation__index\" aria-hidden=\"true\">1</span>\n    <span class=\"z-citation__card\" aria-hidden=\"true\">\n      <span class=\"z-citation__title\">Release process</span>\n      <span class=\"z-citation__domain\">example.com</span>\n    </span>\n  </a>\n</p>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Markdown": {
+   "group": "ai",
+   "classes": [
+    "z-markdown-view",
+    "z-markdown",
+    "z-markdown__table",
+    "z-markdown__task",
+    "z-markdown__cite",
+    "z-caret"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Lista, código y enlace",
+     "html": "<div class=\"z-markdown-view\">\n  <script type=\"application/json\" data-props>{\"text\": \"Here is a **minimal** plan to ship the docs [1]:\\n\\n1. Freeze the API surface.\\n2. Generate the HTML contract.\\n3. Publish the site.\\n\\n```ts\\nexport const ready = true;\\n```\\n\\nSee the [release checklist](https://example.com/checklist) for details.\", \"sources\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "PromptInput": {
+   "group": "ai",
+   "classes": [
+    "z-prompt-input",
+    "z-composer",
+    "z-composer__form",
+    "z-composer__input",
+    "z-composer__send",
+    "z-composer__stop",
+    "z-composer__footer",
+    "z-composer__model",
+    "z-composer__toolset",
+    "z-composer__tool",
+    "z-composer__usage",
+    "z-composer__usage-meter"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con modelo, herramientas y uso",
+     "html": "<div class=\"z-prompt-input\">\n  <script type=\"application/json\" data-props>{\"models\": [{\"id\": \"fast\", \"label\": \"Fast\"}, {\"id\": \"deep\", \"label\": \"Deep reasoning\"}], \"tools\": [{\"id\": \"web\", \"label\": \"Web search\", \"icon\": \"globe-alt\"}], \"usage\": {\"used\": 12400, \"limit\": 200000}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Reasoning": {
+   "group": "ai",
+   "classes": [
+    "z-reasoning-block",
+    "z-reasoning",
+    "z-reasoning__summary",
+    "z-reasoning__label",
+    "z-reasoning__body"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Terminado",
+     "html": "<div class=\"z-reasoning-block\" data-state=\"done\" data-started-at=\"2026-11-21T09:00:00Z\" data-ended-at=\"2026-11-21T09:00:12Z\">\n  <script type=\"application/json\" data-props>{\"text\": \"Compare both options, then pick the cheaper one.\"}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Sources": {
+   "group": "ai",
+   "classes": [
+    "z-sources-block",
+    "z-sources",
+    "z-sources__summary",
+    "z-sources__list",
+    "z-sources__item",
+    "z-sources__link",
+    "z-sources__index",
+    "z-sources__title",
+    "z-sources__domain"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dos fuentes abiertas",
+     "html": "<div class=\"z-sources-block\" data-open>\n  <script type=\"application/json\" data-props>{\"items\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Suggestions": {
+   "group": "ai",
+   "classes": [
+    "z-suggestions",
+    "z-suggestions__list",
+    "z-suggestion",
+    "z-suggestion__icon",
+    "z-suggestion__text",
+    "z-suggestion__description"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Rejilla de inicio",
+     "html": "<div class=\"z-suggestions\" data-layout=\"grid\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"text\": \"Summarize this thread\", \"icon\": \"document-text\", \"description\": \"Key points and decisions\"}, {\"text\": \"Draft release notes\", \"icon\": \"pencil\", \"description\": \"From the last 20 commits\"}, {\"text\": \"Plan the week\", \"icon\": \"calendar-days\", \"description\": \"With the team's calendar\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "ToolCall": {
+   "group": "ai",
+   "classes": [
+    "z-tool-call-block",
+    "z-tool-call",
+    "z-tool-call__summary",
+    "z-tool-call__name",
+    "z-tool-call__status",
+    "z-tool-call__time",
+    "z-tool-call__body",
+    "z-tool-call__code",
+    "z-tool-call__approval"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Terminada con entrada y salida",
+     "html": "<div class=\"z-tool-call-block\" data-name=\"get_weather\" data-title=\"Weather\" data-status=\"success\" data-open data-started-at=\"2026-11-21T09:00:00Z\" data-ended-at=\"2026-11-21T09:00:01.4Z\">\n  <script type=\"application/json\" data-props>{\"input\": {\"city\": \"Madrid\"}, \"output\": {\"temp\": 18, \"sky\": \"clear\"}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "UsageMeter": {
+   "group": "ai",
+   "classes": [
+    "z-usage",
+    "z-usage__main",
+    "z-usage__head",
+    "z-usage__label",
+    "z-usage__value",
+    "z-usage__meter",
+    "z-usage__breakdown",
+    "z-usage__ring",
+    "z-usage__arc"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Barra con desglose y coste",
+     "html": "<div class=\"z-usage\" data-variant=\"bar\" data-level=\"ok\" style=\"--z-usage:0.760\">\n  <div class=\"z-usage__main\">\n    <div class=\"z-usage__head\">\n      <span class=\"z-usage__label\">Context</span>\n      <span class=\"z-usage__value\">152K / 200K tokens · 76%</span>\n    </div>\n    <meter class=\"z-usage__meter\" min=\"0\" max=\"200000\" value=\"152000\" low=\"160000\" high=\"190000\" optimum=\"0\" aria-label=\"Context: 152K / 200K tokens (76%)\"></meter>\n    <dl class=\"z-usage__breakdown\">\n      <div class=\"z-usage__row\">\n        <dt>Input</dt>\n        <dd>120K</dd>\n      </div>\n      <div class=\"z-usage__row\">\n        <dt>Output</dt>\n        <dd>28K</dd>\n      </div>\n      <div class=\"z-usage__row\">\n        <dt>Cached</dt>\n        <dd>4K</dd>\n      </div>\n      <div class=\"z-usage__row\">\n        <dt>Cost</dt>\n        <dd>$0.84</dd>\n      </div>\n    </dl>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Anillo cerca del límite",
+     "html": "<div class=\"z-usage\" data-variant=\"ring\" data-level=\"danger\" style=\"--z-usage:0.960\">\n  <span class=\"z-usage__ring\" aria-hidden=\"true\">\n    <svg viewBox=\"0 0 36 36\" class=\"z-usage__svg\">\n      <circle class=\"z-usage__track\" cx=\"18\" cy=\"18\" r=\"15.5\" pathLength=\"100\"></circle>\n      <circle class=\"z-usage__arc\" cx=\"18\" cy=\"18\" r=\"15.5\" pathLength=\"100\"></circle>\n    </svg>\n    <span class=\"z-usage__percent\">96%</span>\n  </span>\n  <div class=\"z-usage__main\">\n    <div class=\"z-usage__head\">\n      <span class=\"z-usage__label\">Context</span>\n      <span class=\"z-usage__value\">192K / 200K tokens</span>\n    </div>\n    <meter class=\"z-usage__meter\" min=\"0\" max=\"200000\" value=\"192000\" low=\"160000\" high=\"190000\" optimum=\"0\" aria-label=\"Context: 192K / 200K tokens (96%)\"></meter>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Carousel": {
    "group": "carousel",
    "classes": [
@@ -643,6 +949,336 @@
     {
      "title": "Línea y barras",
      "html": "<p>\n  Weekly visits <span class=\"z-sparkline\" data-values=\"120,132,101,154,190,230,210,340\" data-label=\"Weekly visits\" data-locale=\"en-US\"></span>\n  Errors <span class=\"z-sparkline\" data-values=\"9,7,8,4,5,3,2\" data-type=\"bar\" data-color=\"5\" data-label=\"Errors\" data-locale=\"en-US\"></span>\n</p>",
+     "source": "manual"
+    }
+   ]
+  },
+  "CallCard": {
+   "group": "chat",
+   "classes": [
+    "z-call",
+    "z-call__avatar",
+    "z-call__body",
+    "z-call__name",
+    "z-call__status",
+    "z-call__timer",
+    "z-call__actions",
+    "z-call__button",
+    "z-call__accept",
+    "z-call__decline",
+    "z-call__hangup",
+    "z-call__toggle"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Llamada entrante de vídeo",
+     "html": "<div class=\"z-call\" data-kind=\"incoming\" data-video data-caller=\"Ana López\" style=\"max-width: 420px\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "En curso",
+     "html": "<div class=\"z-call\" data-kind=\"ongoing\" data-caller=\"Design team\" data-started-at=\"2026-11-21T09:28:55Z\" style=\"max-width: 420px\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "ChatHeader": {
+   "group": "chat",
+   "classes": [
+    "z-chat-header",
+    "z-chat-header__back",
+    "z-chat-header__identity",
+    "z-chat-header__titles",
+    "z-chat-header__title",
+    "z-chat-header__status",
+    "z-chat-header__actions"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Contacto en línea con acciones",
+     "html": "<header class=\"z-chat-header\">\n  <span class=\"z-chat-header__identity\">\n    <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n      <span class=\"z-avatar__status\" data-status=\"online\" role=\"img\" aria-label=\"Online\"></span>\n    </span>\n    <span class=\"z-chat-header__titles\">\n      <h2 class=\"z-chat-header__title\">Ana López</h2>\n      <span class=\"z-chat-header__status\" data-tone=\"accent\">online</span>\n    </span>\n  </span>\n  <span class=\"z-chat-header__actions\">\n    <button type=\"button\" title=\"Voice call\" aria-label=\"Voice call\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"phone\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Video call\" aria-label=\"Video call\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"video-camera\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Search in chat\" aria-label=\"Search in chat\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"magnifying-glass\" size=\"16\"></z-icon>\n    </button>\n  </span>\n</header>",
+     "source": "generated"
+    },
+    {
+     "title": "Grupo con volver (móvil)",
+     "html": "<header class=\"z-chat-header\">\n  <button type=\"button\" title=\"Back to chats\" aria-label=\"Back to chats\" class=\"z-btn z-btn--icon z-btn--ghost z-chat-header__back\" data-size=\"md\">\n    <z-icon name=\"chevron-left\" size=\"16\"></z-icon>\n  </button>\n  <span class=\"z-chat-header__identity\">\n    <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Design team\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">DT</span>\n    </span>\n    <span class=\"z-chat-header__titles\">\n      <h2 class=\"z-chat-header__title\">Design team</h2>\n      <span class=\"z-chat-header__status\" data-tone=\"accent\">Luis is typing…</span>\n    </span>\n  </span>\n  <span class=\"z-chat-header__actions\">\n    <button type=\"button\" title=\"More\" aria-label=\"More\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"ellipsis-vertical\" size=\"16\"></z-icon>\n    </button>\n  </span>\n</header>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Composer": {
+   "group": "chat",
+   "classes": [
+    "z-composer",
+    "z-composer__form",
+    "z-composer__row",
+    "z-composer__tools",
+    "z-composer__attach",
+    "z-composer__emoji",
+    "z-composer__field",
+    "z-composer__input",
+    "z-composer__send",
+    "z-composer__context",
+    "z-composer__attachments",
+    "z-composer__attachment",
+    "z-composer__remove",
+    "z-composer__recording",
+    "z-composer__mentions",
+    "z-composer__mention",
+    "z-composer__popover",
+    "z-composer__files"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con menciones y notas de voz",
+     "html": "<div class=\"z-composer\" data-voice>\n  <script type=\"application/json\" data-props>{\"mentions\": {\"items\": [{\"id\": \"ana\", \"label\": \"Ana López\"}, {\"id\": \"luis\", \"label\": \"Luis Gil\"}]}}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Respondiendo a un mensaje",
+     "html": "<div class=\"z-composer\">\n  <script type=\"application/json\" data-props>{\"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "ConversationList": {
+   "group": "chat",
+   "classes": [
+    "z-conversation-list",
+    "z-conversation-list__search",
+    "z-conversation-list__filters",
+    "z-conversation-list__filter",
+    "z-conversation-list__items",
+    "z-conversation",
+    "z-conversation__body",
+    "z-conversation__title",
+    "z-conversation__time",
+    "z-conversation__preview",
+    "z-conversation__draft",
+    "z-conversation__badges",
+    "z-conversation__unread",
+    "z-conversation__mention",
+    "z-conversation-list__empty"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Chats con no leídos, fijado y silenciado",
+     "html": "<div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Morning! Did the new build land?\", \"lastAt\": \"2026-11-21T08:58:00Z\", \"unread\": 2, \"pinned\": true}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"typing\": [\"Luis\"], \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 12, \"mention\": true}, {\"id\": \"marta\", \"title\": \"Marta Ruiz\", \"lastMessage\": \"See you then\", \"lastMine\": true, \"status\": \"read\", \"lastAt\": \"2026-11-20T21:10:00Z\"}, {\"id\": \"ops\", \"title\": \"Ops alerts\", \"lastMessage\": \"Deploy finished\", \"lastAt\": \"2026-11-18T07:00:00Z\", \"muted\": true, \"unread\": 4}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "DeliveryStatus": {
+   "group": "chat",
+   "classes": [
+    "z-delivery",
+    "z-delivery__icons"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Los cinco estados",
+     "html": "<div style=\"display:flex;gap:16px\">\n  <span class=\"z-delivery\" data-status=\"sending\">\n    <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n      <z-icon name=\"clock\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-sr-only\">Sending</span>\n  </span>\n  <span class=\"z-delivery\" data-status=\"sent\">\n    <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n      <z-icon name=\"check\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-sr-only\">Sent</span>\n  </span>\n  <span class=\"z-delivery\" data-status=\"delivered\">\n    <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n      <z-icon name=\"check\" size=\"14\"></z-icon>\n      <z-icon name=\"check\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-sr-only\">Delivered</span>\n  </span>\n  <span class=\"z-delivery\" data-status=\"read\">\n    <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n      <z-icon name=\"check\" size=\"14\"></z-icon>\n      <z-icon name=\"check\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-sr-only\">Read</span>\n  </span>\n  <span class=\"z-delivery\" data-status=\"failed\">\n    <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n      <z-icon name=\"exclamation-circle\" size=\"14\"></z-icon>\n    </span>\n    <span class=\"z-sr-only\">Not sent</span>\n  </span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "EmojiPicker": {
+   "group": "chat",
+   "classes": [
+    "z-emoji-picker",
+    "z-emoji-picker__search",
+    "z-emoji-picker__field",
+    "z-emoji-picker__tabs",
+    "z-emoji-picker__tab",
+    "z-emoji-picker__grid",
+    "z-emoji-picker__section",
+    "z-emoji-picker__heading",
+    "z-emoji-picker__options",
+    "z-emoji-picker__option",
+    "z-emoji-picker__footer",
+    "z-emoji-picker__preview",
+    "z-emoji-picker__tones",
+    "z-emoji-picker__tone"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Selector suelto",
+     "html": "<div class=\"z-emoji-picker\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "MessageBubble": {
+   "group": "chat",
+   "classes": [
+    "z-message-row",
+    "z-message",
+    "z-message__bubble",
+    "z-message__author",
+    "z-message__forwarded",
+    "z-message__text",
+    "z-message__meta",
+    "z-message__edited",
+    "z-message__retry",
+    "z-delivery"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Recibido y enviado (leído)",
+     "html": "<div style=\"display:grid;gap:8px;max-width:520px\">\n  <div class=\"z-message-row\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-a\" data-z-message=\"\" data-id=\"a\" data-position=\"single\" tabindex=\"-1\" aria-labelledby=\"bubble-m-a-author\" aria-describedby=\"bubble-m-a-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-message__author\" id=\"bubble-m-a-author\">Ana López</span>\n        <div class=\"z-message__text\" dir=\"auto\">Morning! Did the new build land?</div>\n        <span class=\"z-message__meta\" id=\"bubble-m-a-meta\">\n          <time dateTime=\"2026-11-21T08:58:00.000Z\">8:58 a. m.</time>\n        </span>\n      </div>\n    </article>\n  </div>\n  <div class=\"z-message-row\" data-mine=\"\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-b\" data-z-message=\"\" data-id=\"b\" data-mine=\"\" data-position=\"single\" data-status=\"read\" tabindex=\"-1\" aria-labelledby=\"bubble-m-b-author\" aria-describedby=\"bubble-m-b-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-sr-only\" id=\"bubble-m-b-author\">You</span>\n        <div class=\"z-message__text\" dir=\"auto\">It did. Notes are at \n          <a href=\"https://example.com/notes\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">https://example.com/notes</a>\n        </div>\n        <span class=\"z-message__meta\" id=\"bubble-m-b-meta\">\n          <time dateTime=\"2026-11-21T09:04:00.000Z\">9:04 a. m.</time>\n          <span class=\"z-delivery\" data-status=\"read\">\n            <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n              <z-icon name=\"check\" size=\"14\"></z-icon>\n              <z-icon name=\"check\" size=\"14\"></z-icon>\n            </span>\n            <span class=\"z-sr-only\">Read</span>\n          </span>\n        </span>\n      </div>\n    </article>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Reenviado, editado y eliminado",
+     "html": "<div style=\"display:grid;gap:8px;max-width:520px\">\n  <div class=\"z-message-row\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-c\" data-z-message=\"\" data-id=\"c\" data-position=\"single\" tabindex=\"-1\" aria-labelledby=\"bubble-m-c-author\" aria-describedby=\"bubble-m-c-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-sr-only\" id=\"bubble-m-c-author\">luis</span>\n        <span class=\"z-message__forwarded\">\n          <z-icon name=\"arrow-turn-up-right\" size=\"12\"></z-icon>\n          Forwarded\n        </span>\n        <div class=\"z-message__text\" dir=\"auto\">Standup moved to 10:30</div>\n        <span class=\"z-message__meta\" id=\"bubble-m-c-meta\">\n          <time dateTime=\"2026-11-21T09:10:00.000Z\">9:10 a. m.</time>\n          <span class=\"z-sr-only\">Forwarded</span>\n        </span>\n      </div>\n    </article>\n  </div>\n  <div class=\"z-message-row\" data-mine=\"\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-d\" data-z-message=\"\" data-id=\"d\" data-mine=\"\" data-position=\"single\" data-status=\"delivered\" tabindex=\"-1\" aria-labelledby=\"bubble-m-d-author\" aria-describedby=\"bubble-m-d-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-sr-only\" id=\"bubble-m-d-author\">You</span>\n        <div class=\"z-message__text\" dir=\"auto\">Got it, thanks</div>\n        <span class=\"z-message__meta\" id=\"bubble-m-d-meta\">\n          <span class=\"z-message__edited\">edited</span>\n          <time dateTime=\"2026-11-21T09:11:00.000Z\">9:11 a. m.</time>\n          <span class=\"z-delivery\" data-status=\"delivered\">\n            <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n              <z-icon name=\"check\" size=\"14\"></z-icon>\n              <z-icon name=\"check\" size=\"14\"></z-icon>\n            </span>\n            <span class=\"z-sr-only\">Delivered</span>\n          </span>\n        </span>\n      </div>\n    </article>\n  </div>\n  <div class=\"z-message-row\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-e\" data-z-message=\"\" data-id=\"e\" data-position=\"single\" data-deleted=\"\" tabindex=\"-1\" aria-labelledby=\"bubble-m-e-author\" aria-describedby=\"bubble-m-e-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-sr-only\" id=\"bubble-m-e-author\">luis</span>\n        <div class=\"z-message__text z-message__text--deleted\">\n          <z-icon name=\"no-circle\" size=\"14\"></z-icon>\n          This message was deleted\n        </div>\n        <span class=\"z-message__meta\" id=\"bubble-m-e-meta\">\n          <time dateTime=\"2026-11-21T09:13:00.000Z\">9:13 a. m.</time>\n        </span>\n      </div>\n    </article>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Ubicación y archivo",
+     "html": "<div style=\"display:grid;gap:8px;max-width:520px\">\n  <div class=\"z-message-row\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-f\" data-z-message=\"\" data-id=\"f\" data-position=\"single\" tabindex=\"-1\" aria-labelledby=\"bubble-m-f-author\" aria-describedby=\"bubble-m-f-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-sr-only\" id=\"bubble-m-f-author\">ana</span>\n        <a class=\"z-message-location\" href=\"https://www.openstreetmap.org/?mlat=40.4168&amp;mlon=-3.7038\" target=\"_blank\" rel=\"noopener noreferrer\">\n          <span class=\"z-message-location__map\" aria-hidden=\"true\">\n            <span class=\"z-message-location__pin\">\n              <z-icon name=\"map-pin\" size=\"22\"></z-icon>\n            </span>\n          </span>\n          <span class=\"z-message-location__body\">\n            <span class=\"z-message-location__title\">Studio</span>\n            <span class=\"z-message-location__address\">Calle Mayor 12, Madrid</span>\n            <span class=\"z-message-location__open\">Open in maps\n              <z-icon name=\"arrow-top-right-on-square\" size=\"12\"></z-icon>\n            </span>\n          </span>\n        </a>\n        <span class=\"z-message__meta\" id=\"bubble-m-f-meta\">\n          <time dateTime=\"2026-11-21T09:20:00.000Z\">9:20 a. m.</time>\n        </span>\n      </div>\n    </article>\n  </div>\n  <div class=\"z-message-row\" data-mine=\"\" data-position=\"single\">\n    <article class=\"z-message\" id=\"bubble-m-g\" data-z-message=\"\" data-id=\"g\" data-mine=\"\" data-position=\"single\" data-status=\"sent\" tabindex=\"-1\" aria-labelledby=\"bubble-m-g-author\" aria-describedby=\"bubble-m-g-meta\">\n      <div class=\"z-message__bubble\">\n        <span class=\"z-sr-only\" id=\"bubble-m-g-author\">You</span>\n        <div class=\"z-message-file\">\n          <span class=\"z-message-file__icon\" aria-hidden=\"true\">\n            <z-icon name=\"document-text\" size=\"20\"></z-icon>\n          </span>\n          <span class=\"z-message-file__body\">\n            <span class=\"z-message-file__name\">release-notes.pdf</span>\n            <span class=\"z-message-file__meta\">482 kB · PDF</span>\n          </span>\n        </div>\n        <span class=\"z-message__meta\" id=\"bubble-m-g-meta\">\n          <time dateTime=\"2026-11-21T09:21:00.000Z\">9:21 a. m.</time>\n          <span class=\"z-delivery\" data-status=\"sent\">\n            <span class=\"z-delivery__icons\" aria-hidden=\"true\">\n              <z-icon name=\"check\" size=\"14\"></z-icon>\n            </span>\n            <span class=\"z-sr-only\">Sent</span>\n          </span>\n        </span>\n      </div>\n    </article>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "MessageList": {
+   "group": "chat",
+   "classes": [
+    "z-message-list",
+    "z-message-list__viewport",
+    "z-message-list__items",
+    "z-message-list__older",
+    "z-message-row",
+    "z-message",
+    "z-message__bubble",
+    "z-message__author",
+    "z-message__text",
+    "z-message__meta",
+    "z-message__actions",
+    "z-message__action",
+    "z-quoted",
+    "z-message__media",
+    "z-message-file",
+    "z-voice-note",
+    "z-message-location",
+    "z-link-preview",
+    "z-reactions",
+    "z-reaction",
+    "z-thread-summary",
+    "z-delivery",
+    "z-date-separator",
+    "z-unread-marker",
+    "z-message-system",
+    "z-typing",
+    "z-scroll-to-bottom"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Conversación con cita, nota de voz, reacción y no leídos",
+     "html": "<div class=\"z-message-list\" style=\"height: 520px\" data-current-user=\"me\" data-time-zone=\"UTC\" data-unread-from=\"m3\" data-now=\"1795253400000\">\n  <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m1\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-20T18:02:00Z\", \"text\": \"Can you send me the release notes before tomorrow?\"}, {\"id\": \"m2\", \"authorId\": \"me\", \"createdAt\": \"2026-11-20T18:05:00Z\", \"text\": \"Sure, drafting them tonight.\", \"status\": \"read\"}, {\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}], \"typing\": [{\"name\": \"Ana López\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "PinnedBar": {
+   "group": "chat",
+   "classes": [
+    "z-pinned-bar",
+    "z-pinned-bar__main",
+    "z-pinned-bar__track",
+    "z-pinned-bar__segment",
+    "z-pinned-bar__icon",
+    "z-pinned-bar__body",
+    "z-pinned-bar__title",
+    "z-pinned-bar__text",
+    "z-pinned-bar__unpin"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres fijados",
+     "html": "<div class=\"z-pinned-bar\" data-unpinnable>\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"p1\", \"author\": \"Ana\", \"text\": \"Release on Friday\"}, {\"id\": \"p2\", \"text\": \"Docs live at /docs\"}, {\"id\": \"p3\", \"author\": \"Luis\", \"text\": \"Standup moved to 10:30\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Reactions": {
+   "group": "chat",
+   "classes": [
+    "z-reactions",
+    "z-reaction",
+    "z-reaction__emoji",
+    "z-reaction__count",
+    "z-reaction--add",
+    "z-reactions__quick"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres reacciones, una tuya",
+     "html": "<div class=\"z-reactions\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"emoji\": \"👍\", \"count\": 3, \"mine\": true}, {\"emoji\": \"❤️\", \"count\": 2}, {\"emoji\": \"😂\", \"count\": 1}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "ThreadSummary": {
+   "group": "chat",
+   "classes": [
+    "z-thread-summary",
+    "z-thread-summary__people",
+    "z-thread-summary__count",
+    "z-thread-summary__last"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Hilo con tres personas",
+     "html": "<button type=\"button\" class=\"z-thread-summary\">\n  <span class=\"z-avatar-group z-thread-summary__people\" aria-hidden=\"true\">\n    <span class=\"z-avatar\" data-size=\"xs\" data-shape=\"circle\" aria-hidden=\"true\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n    </span>\n    <span class=\"z-avatar\" data-size=\"xs\" data-shape=\"circle\" aria-hidden=\"true\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">LG</span>\n    </span>\n    <span class=\"z-avatar\" data-size=\"xs\" data-shape=\"circle\" aria-hidden=\"true\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">MR</span>\n    </span>\n  </span>\n  <span class=\"z-thread-summary__count\">12 replies</span>\n  <span class=\"z-thread-summary__last\">Last reply hace 3 min</span>\n  <span class=\"z-thread-summary__chevron\" aria-hidden=\"true\">\n    <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n  </span>\n</button>",
+     "source": "generated"
+    }
+   ]
+  },
+  "TypingIndicator": {
+   "group": "chat",
+   "classes": [
+    "z-typing",
+    "z-typing__avatars",
+    "z-typing__bubble",
+    "z-typing__dot",
+    "z-typing__text"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Dos personas",
+     "html": "<div class=\"z-typing\">\n  <span class=\"z-typing__avatars\" aria-hidden=\"true\">\n    <span class=\"z-avatar\" data-size=\"xs\" data-shape=\"circle\" aria-hidden=\"true\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n    </span>\n    <span class=\"z-avatar\" data-size=\"xs\" data-shape=\"circle\" aria-hidden=\"true\">\n      <span class=\"z-avatar__initials\" aria-hidden=\"true\">LG</span>\n    </span>\n  </span>\n  <span class=\"z-typing__bubble\" aria-hidden=\"true\">\n    <span class=\"z-typing__dot\"></span>\n    <span class=\"z-typing__dot\"></span>\n    <span class=\"z-typing__dot\"></span>\n  </span>\n  <span class=\"z-typing__text\">Ana López and Luis Gil are typing…</span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "VoiceNote": {
+   "group": "chat",
+   "classes": [
+    "z-voice-note",
+    "z-voice-note__play",
+    "z-voice-note__wave",
+    "z-voice-note__bar",
+    "z-voice-note__time",
+    "z-voice-note__rate",
+    "z-voice-note__audio"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Nota de 14 segundos",
+     "html": "<div class=\"z-voice-note\" data-duration=\"14\" data-peaks=\"2 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3\" style=\"max-width: 340px\"></div>",
      "source": "manual"
     }
    ]

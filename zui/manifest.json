@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 158,
+ "count": 185,
  "groups": {
   "actions": [
    "Button",
@@ -24,6 +24,22 @@
    "SlotPicker",
    "TimelineView"
   ],
+  "ai": [
+   "AgentPlan",
+   "AgentStatus",
+   "ApprovalCard",
+   "Artifact",
+   "AssistantMessage",
+   "BranchPicker",
+   "Citation",
+   "Markdown",
+   "PromptInput",
+   "Reasoning",
+   "Sources",
+   "Suggestions",
+   "ToolCall",
+   "UsageMeter"
+  ],
   "carousel": [
    "Carousel",
    "Gallery",
@@ -37,6 +53,21 @@
    "LineChart",
    "PieChart",
    "Sparkline"
+  ],
+  "chat": [
+   "CallCard",
+   "ChatHeader",
+   "Composer",
+   "ConversationList",
+   "DeliveryStatus",
+   "EmojiPicker",
+   "MessageBubble",
+   "MessageList",
+   "PinnedBar",
+   "Reactions",
+   "ThreadSummary",
+   "TypingIndicator",
+   "VoiceNote"
   ],
   "content": [
    "AspectRatio",
@@ -2410,6 +2441,1134 @@
    "file": "zui/src/components/agenda/TimelineView.manifest.json"
   },
   {
+   "name": "AgentPlan",
+   "group": "ai",
+   "description": "Plan de un agente: pasos y subpasos con su estado (pendiente, en curso, hecho, fallido, omitido) y el progreso «3 of 7» en un <progress>; plegable.",
+   "import": "import { AgentPlan } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "steps",
+     "type": "{ id, title, status, detail?, children? }[]"
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "default": "Plan"
+    },
+    {
+     "name": "collapsible",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AgentPlanLabels>"
+    }
+   ],
+   "states": [
+    "pending",
+    "running",
+    "done",
+    "failed",
+    "skipped"
+   ],
+   "tokens": [
+    "surface-solid",
+    "surface-3",
+    "line",
+    "radius-md",
+    "accent",
+    "info-text",
+    "success-text",
+    "danger-text",
+    "fg-muted",
+    "fg-subtle"
+   ],
+   "classes": [
+    "z-agent-plan",
+    "z-agent-plan__header",
+    "z-agent-plan__heading",
+    "z-agent-plan__count",
+    "z-agent-plan__progress",
+    "z-agent-plan__steps",
+    "z-agent-plan__step",
+    "z-agent-plan__marker",
+    "z-agent-plan__title",
+    "z-agent-plan__detail"
+   ],
+   "a11y": "Lista ordenada nombrada por el título; el paso en curso lleva aria-current=\"step\" y cada estado va en texto oculto («, Done»). El progreso es un <progress> con nombre «Plan: 3 of 7». Plegable con details/summary. Sin React: .z-agent-plan con data-title, data-collapsible y steps en <script type=\"application/json\" data-props>.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Plan en curso",
+     "code": "<AgentPlan title=\"Ship the docs\" steps={[\n  { id: \"1\", title: \"Read the manifests\", status: \"done\" },\n  { id: \"2\", title: \"Generate the contract\", status: \"running\", detail: \"zui/html.json\" },\n  { id: \"3\", title: \"Build the site\", status: \"pending\" },\n]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Plan en curso",
+     "code": "<div class=\"z-agent-plan\" data-title=\"Ship the docs\">\n  <script type=\"application/json\" data-props>{\"steps\": [{\"id\": \"1\", \"title\": \"Read the manifests\", \"status\": \"done\"}, {\"id\": \"2\", \"title\": \"Generate the contract\", \"status\": \"running\", \"detail\": \"zui/html.json\"}, {\"id\": \"3\", \"title\": \"Build the site\", \"status\": \"pending\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: los planes de Claude Code y Vercel AI Elements (Plan, Task).",
+   "file": "zui/src/components/ai/AgentPlan.manifest.json"
+  },
+  {
+   "name": "AgentStatus",
+   "group": "ai",
+   "description": "Estado de un agente en una etiqueta: inactivo, pensando, usando una herramienta, esperando aprobación, error o hecho, con la duración mientras trabaja.",
+   "import": "import { AgentStatus } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "state",
+     "type": "\"idle\" | \"thinking\" | \"tool\" | \"waiting\" | \"error\" | \"done\"",
+     "default": "idle"
+    },
+    {
+     "name": "detail",
+     "type": "string",
+     "description": "Herramienta en uso o detalle."
+    },
+    {
+     "name": "since",
+     "type": "string | number"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AgentStatusLabels>"
+    }
+   ],
+   "states": [
+    "idle",
+    "thinking",
+    "tool",
+    "waiting",
+    "error",
+    "done"
+   ],
+   "tokens": [
+    "surface-solid",
+    "line",
+    "control-height-sm",
+    "control-radius-sm",
+    "accent",
+    "accent-soft",
+    "warning-text",
+    "danger-text",
+    "success-text",
+    "fg-muted",
+    "fg-subtle"
+   ],
+   "classes": [
+    "z-agent-status",
+    "z-agent-status__indicator",
+    "z-agent-status__spinner",
+    "z-agent-status__label",
+    "z-agent-status__detail",
+    "z-agent-status__time"
+   ],
+   "a11y": "role=status con el estado en texto («Using search_web»); el indicador es decorativo y no gira con movimiento reducido. Es un rectángulo redondeado, no una píldora.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Estados",
+     "code": "<div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 8 }}>\n  <AgentStatus state=\"thinking\" />\n  <AgentStatus state=\"tool\" detail=\"search_web\" />\n  <AgentStatus state=\"waiting\" />\n  <AgentStatus state=\"done\" />\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: assistant-ui (Agent status) y Vercel AI Elements.",
+   "file": "zui/src/components/ai/AgentStatus.manifest.json"
+  },
+  {
+   "name": "ApprovalCard",
+   "group": "ai",
+   "description": "Petición de permiso de un agente: qué hará, con qué datos y su riesgo; Rechazar y Aprobar, y «Always allow in this session». Con riesgo alto, Aprobar pide una confirmación antes de valer.",
+   "import": "import { ApprovalCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "string"
+    },
+    {
+     "name": "details",
+     "type": "{ label, value }[]"
+    },
+    {
+     "name": "risk",
+     "type": "\"low\" | \"medium\" | \"high\"",
+     "default": "medium"
+    },
+    {
+     "name": "allowAlways",
+     "type": "boolean"
+    },
+    {
+     "name": "decision",
+     "type": "\"approved\" | \"rejected\""
+    },
+    {
+     "name": "requestId",
+     "type": "string"
+    },
+    {
+     "name": "onApprove",
+     "type": "(detail: { id, always }) => void"
+    },
+    {
+     "name": "onReject",
+     "type": "(detail: { id }) => void"
+    }
+   ],
+   "states": [
+    "pending",
+    "confirming",
+    "approved",
+    "rejected"
+   ],
+   "tokens": [
+    "surface-solid",
+    "surface-2",
+    "line",
+    "warning",
+    "warning-soft",
+    "warning-text",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "info",
+    "info-soft",
+    "info-text",
+    "success-text",
+    "radius-md",
+    "font-mono"
+   ],
+   "classes": [
+    "z-approval-card",
+    "z-approval",
+    "z-approval__header",
+    "z-approval__title",
+    "z-approval__risk",
+    "z-approval__description",
+    "z-approval__details",
+    "z-approval__actions",
+    "z-approval__approve",
+    "z-approval__reject",
+    "z-approval__always",
+    "z-approval__decision"
+   ],
+   "a11y": "Región con encabezado propio; al aparecer se anuncia «Approval needed: …». Aprobar y Rechazar son botones normales (nada se aprueba con Intro en otro sitio). Con riesgo alto, el primer Aprobar se convierte en «Confirm approval» con Cancelar, y el foco se queda en él. El riesgo va en texto además del color. Sin React: .z-approval-card con data-title, data-description, data-risk, data-allow-always, data-decision y details en <script type=\"application/json\" data-props>; emite z:approve { id, always } y z:reject { id }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Riesgo alto",
+     "code": "<ApprovalCard requestId=\"deploy\" risk=\"high\" allowAlways title=\"Deploy to production\" description=\"The agent wants to run the deploy workflow.\" details={[{ label: \"Workflow\", value: \"release.yml\" }, { label: \"Branch\", value: \"main\" }]} onApprove={approve} onReject={reject} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Riesgo alto",
+     "code": "<div class=\"z-approval-card\" data-id=\"deploy\" data-risk=\"high\" data-allow-always data-title=\"Deploy to production\" data-description=\"The agent wants to run the deploy workflow.\">\n  <script type=\"application/json\" data-props>{\"details\": [{\"label\": \"Workflow\", \"value\": \"release.yml\"}, {\"label\": \"Branch\", \"value\": \"main\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: los permisos de herramientas de Claude y Vercel AI Elements (Confirmation).",
+   "file": "zui/src/components/ai/ApprovalCard.manifest.json"
+  },
+  {
+   "name": "Artifact",
+   "group": "ai",
+   "description": "Artefacto generado por un asistente, en panel o tarjeta: título, tipo, Vista previa (HTML en un iframe aislado sin scripts, o Markdown) y Código (CodeViewer), versiones «‹ v3 ›», copiar y descargar.",
+   "import": "import { Artifact } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "kind",
+     "type": "string"
+    },
+    {
+     "name": "versions",
+     "type": "{ code, language?, preview?: \"html\" | \"markdown\" }[]"
+    },
+    {
+     "name": "version",
+     "type": "number"
+    },
+    {
+     "name": "downloadName",
+     "type": "string"
+    },
+    {
+     "name": "closable",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultView",
+     "type": "\"code\" | \"preview\"",
+     "default": "preview"
+    },
+    {
+     "name": "onVersionChange",
+     "type": "(detail: { index }) => void"
+    },
+    {
+     "name": "onDownload",
+     "type": "(detail: { name, code }) => void"
+    },
+    {
+     "name": "onClose",
+     "type": "() => void"
+    }
+   ],
+   "states": [
+    "preview",
+    "code",
+    "versions"
+   ],
+   "tokens": [
+    "card-radius",
+    "line",
+    "surface-3",
+    "surface-solid",
+    "reading-bg",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "control-radius",
+    "control-radius-sm",
+    "shadow-sm"
+   ],
+   "classes": [
+    "z-artifact",
+    "z-artifact__bar",
+    "z-artifact__title",
+    "z-artifact__views",
+    "z-artifact__view",
+    "z-artifact__versions",
+    "z-artifact__actions",
+    "z-artifact__panel",
+    "z-artifact__frame",
+    "z-artifact__doc"
+   ],
+   "a11y": "Región nombrada por su título; Vista previa y Código son pestañas (role=tab con ←/→); las versiones son botones «Previous version» y «Next version» en un grupo «Version 2 of 3». La vista previa HTML va en un iframe con sandbox vacío (sin scripts ni formularios) y título. Sin React: .z-artifact con data-title, data-kind, data-download-name y versions en <script type=\"application/json\" data-props>; emite z:versionchange, z:download y z:close.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "HTML con dos versiones",
+     "code": "<Artifact title=\"Pricing card\" kind=\"HTML\" downloadName=\"card.html\" versions={[{ code: \"<h1>Pro</h1>\", language: \"html\", preview: \"html\" }, { code: \"<h1>Pro</h1><p>$12 / month</p>\", language: \"html\", preview: \"html\" }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "HTML con dos versiones",
+     "code": "<div class=\"z-artifact\" data-title=\"Pricing card\" data-kind=\"HTML\" data-download-name=\"card.html\" style=\"height: 360px\">\n  <script type=\"application/json\" data-props>{\"versions\": [{\"code\": \"<h1>Pro</h1>\", \"language\": \"html\", \"preview\": \"html\"}, {\"code\": \"<h1 style=\\\"font-family: sans-serif\\\">Pro</h1><p>$12 / month</p>\", \"language\": \"html\", \"preview\": \"html\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: los artefactos de Claude y Vercel AI Elements (Artifact, Web Preview).",
+   "file": "zui/src/components/ai/Artifact.manifest.json"
+  },
+  {
+   "name": "AssistantMessage",
+   "group": "ai",
+   "description": "Respuesta de un asistente con partes en orden: texto en streaming con Markdown propio y cursor, razonamiento plegable, llamadas a herramientas, peticiones de aprobación, fuentes con citas en línea y artefactos. Al terminar, acciones (copiar, regenerar, valorar) y ramas «‹ 2 / 3 ›». Sin burbuja: es lectura.",
+   "import": "import { AssistantMessage } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "parts",
+     "type": "AssistantPart[]",
+     "description": "text · reasoning · tool · approval · sources · artifact"
+    },
+    {
+     "name": "state",
+     "type": "\"submitted\" | \"streaming\" | \"done\" | \"error\" | \"stopped\"",
+     "default": "done"
+    },
+    {
+     "name": "author",
+     "type": "{ name, avatar? }"
+    },
+    {
+     "name": "actions",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "feedback",
+     "type": "\"up\" | \"down\" | null"
+    },
+    {
+     "name": "branch",
+     "type": "{ index, count }"
+    },
+    {
+     "name": "announce",
+     "type": "\"done\" | \"summary\" | \"none\"",
+     "default": "done"
+    },
+    {
+     "name": "onCopy · onRegenerate · onRetry",
+     "type": "() => void"
+    },
+    {
+     "name": "onFeedback",
+     "type": "(detail: { value }) => void"
+    },
+    {
+     "name": "onBranchChange",
+     "type": "(detail: { index }) => void"
+    },
+    {
+     "name": "onApprove · onReject",
+     "type": "(detail: { id, always? }) => void"
+    },
+    {
+     "name": "onOpenArtifact",
+     "type": "(detail: { id }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AiLabels>"
+    }
+   ],
+   "states": [
+    "submitted",
+    "streaming",
+    "done",
+    "error",
+    "stopped"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "surface-solid",
+    "surface-3",
+    "code-bg",
+    "code-radius",
+    "line",
+    "line-strong",
+    "font-mono",
+    "danger-text",
+    "glass-border"
+   ],
+   "classes": [
+    "z-assistant-message",
+    "z-assistant-message__avatar",
+    "z-assistant-message__content",
+    "z-assistant-message__text",
+    "z-assistant-message__actions",
+    "z-assistant-message__action",
+    "z-assistant-message__note",
+    "z-markdown",
+    "z-caret",
+    "z-citation",
+    "z-artifact-card"
+   ],
+   "a11y": "article nombrado por el asistente; con aria-busy=\"true\" mientras llega, sin anunciar cada trozo; al terminar se anuncia una vez «Response complete» (o con la primera frase, announce=\"summary\") por el anunciador central; parar y fallar también se anuncian. Una herramienta solo se anuncia cuando espera aprobación o falla. El cursor y el brillo de «Thinking…» son decorativos. El Markdown se construye como nodos (nunca marcado) y los enlaces solo salen con destino http, https o mailto; las imágenes del modelo no se cargan. Las acciones son una barra con una sola parada (←/→). Las citas son enlaces «Source 1: título». Sin React: .z-assistant-message con data-state y parts en <script type=\"application/json\" data-props>; setWidgetProps(el, { parts, state }) en cada trozo; emite z:copy, z:regenerate, z:feedback, z:branchchange, z:retry, z:approve, z:reject y z:openartifact.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Respuesta con razonamiento, herramienta y fuentes",
+     "code": "<AssistantMessage parts={[\n  { type: \"reasoning\", state: \"done\", startedAt: \"2026-11-21T09:00:00Z\", endedAt: \"2026-11-21T09:00:12Z\", text: \"Check the release process first.\" },\n  { type: \"tool\", id: \"t1\", name: \"search_docs\", title: \"Search docs\", status: \"success\", input: { query: \"release\" }, output: { hits: 2 }, startedAt: \"2026-11-21T09:00:12Z\", endedAt: \"2026-11-21T09:00:13Z\" },\n  { type: \"text\", text: answer },\n  { type: \"sources\", items: sources },\n]} branch={{ index: 2, count: 3 }} />"
+    },
+    {
+     "title": "En streaming",
+     "code": "<AssistantMessage state=\"streaming\" parts={[{ type: \"text\", text: \"Drafting the **release** notes\" }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Respuesta con razonamiento, herramienta y fuentes",
+     "code": "<div class=\"z-assistant-message\">\n  <script type=\"application/json\" data-props>{\"branch\": {\"index\": 2, \"count\": 3}, \"parts\": [{\"type\": \"reasoning\", \"state\": \"done\", \"startedAt\": \"2026-11-21T09:00:00Z\", \"endedAt\": \"2026-11-21T09:00:12Z\", \"text\": \"Check the release process first, then the contract.\"}, {\"type\": \"tool\", \"id\": \"t1\", \"name\": \"search_docs\", \"title\": \"Search docs\", \"status\": \"success\", \"input\": {\"query\": \"release\"}, \"output\": {\"hits\": 2}, \"startedAt\": \"2026-11-21T09:00:12Z\", \"endedAt\": \"2026-11-21T09:00:13Z\"}, {\"type\": \"text\", \"text\": \"Here is a **minimal** plan to ship the docs [1]:\\n\\n1. Freeze the API surface.\\n2. Generate the HTML contract.\\n3. Publish the site.\\n\\n```ts\\nexport const ready = true;\\n```\\n\\nSee the [release checklist](https://example.com/checklist) for details.\"}, {\"type\": \"sources\", \"items\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}]}</script>\n</div>"
+    },
+    {
+     "title": "En streaming",
+     "code": "<div class=\"z-assistant-message\" data-state=\"streaming\">\n  <script type=\"application/json\" data-props>{\"parts\": [{\"type\": \"text\", \"text\": \"Drafting the **release** notes\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: ChatGPT, Claude, Vercel AI Elements (Message, Response) y assistant-ui.",
+   "file": "zui/src/components/ai/AssistantMessage.manifest.json"
+  },
+  {
+   "name": "BranchPicker",
+   "group": "ai",
+   "description": "«‹ 2 / 3 ›»: versiones de un mensaje editado o regenerado. El árbol de la conversación (ramas, camino activo, cambio de rama) lo lleva core/branches.",
+   "import": "import { BranchPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "index",
+     "type": "number",
+     "description": "1…count."
+    },
+    {
+     "name": "count",
+     "type": "number"
+    },
+    {
+     "name": "onChange",
+     "type": "(detail: { index }) => void"
+    }
+   ],
+   "states": [
+    "first",
+    "middle",
+    "last"
+   ],
+   "tokens": [
+    "fg-muted",
+    "surface-3",
+    "control-radius-sm"
+   ],
+   "classes": [
+    "z-branch",
+    "z-branch-picker",
+    "z-branch-picker__button",
+    "z-branch-picker__value"
+   ],
+   "a11y": "Grupo «Version 2 of 3» con dos botones con nombre («Previous version», «Next version»), deshabilitados en los extremos; el texto «2 / 3» no se lee aparte. Sin React: .z-branch con data-index y data-count; emite z:change { index }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Segunda de tres",
+     "code": "<BranchPicker index={2} count={3} onChange={({ index }) => setBranch(index)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Segunda de tres",
+     "code": "<div class=\"z-branch\" data-index=\"2\" data-count=\"3\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: ChatGPT y assistant-ui (BranchPicker).",
+   "file": "zui/src/components/ai/BranchPicker.manifest.json"
+  },
+  {
+   "name": "Citation",
+   "group": "ai",
+   "description": "Cita en línea a una fuente: un número que es un enlace, con una tarjeta (título y dominio) al pasar el puntero o enfocarla.",
+   "import": "import { Citation } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "index",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "source",
+     "type": "{ title, url }",
+     "required": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AiLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "surface-3",
+    "fg-muted",
+    "accent-soft",
+    "accent-text",
+    "popup-bg",
+    "popup-shadow",
+    "glass-border"
+   ],
+   "classes": [
+    "z-citation",
+    "z-citation__index",
+    "z-citation__card",
+    "z-citation__title",
+    "z-citation__domain"
+   ],
+   "a11y": "Enlace con nombre «Source 1: título»; la tarjeta es decorativa (aria-hidden) y aparece también con el foco. Dentro de AssistantMessage y Markdown, las citas [n] salen solas.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Cita en una frase",
+     "code": "<p>Ship on Friday <Citation index={1} source={{ title: \"Release process\", url: \"https://example.com/release\" }} /></p>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: Perplexity y Claude.",
+   "file": "zui/src/components/ai/Citation.manifest.json"
+  },
+  {
+   "name": "Markdown",
+   "group": "ai",
+   "description": "Markdown mínimo propio: párrafos, encabezados, listas (anidadas, ordenadas y de tareas), citas, código en línea y en bloque (con el CodeViewer de la suite), tablas sencillas, énfasis, tachado, enlaces y citas a fuentes [n]. Se construye como nodos, nunca como marcado; con streaming cierra a título provisional lo abierto y pinta el cursor.",
+   "import": "import { Markdown } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "children / text",
+     "type": "string"
+    },
+    {
+     "name": "streaming",
+     "type": "boolean"
+    },
+    {
+     "name": "sources",
+     "type": "{ title, url }[]",
+     "description": "Para las citas [n]."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AiLabels>"
+    }
+   ],
+   "states": [
+    "static",
+    "streaming"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "accent-text",
+    "line",
+    "line-strong",
+    "surface-2",
+    "surface-3",
+    "code-bg",
+    "code-radius",
+    "font-mono"
+   ],
+   "classes": [
+    "z-markdown-view",
+    "z-markdown",
+    "z-markdown__table",
+    "z-markdown__task",
+    "z-markdown__cite",
+    "z-caret"
+   ],
+   "a11y": "Encabezados desde h3 (no compiten con la página), listas y tablas nativas, enlaces con destino http, https o mailto (lo demás queda como texto) y target=_blank con rel=noopener. Los bloques de código son regiones del CodeViewer con copiar. Sin React: .z-markdown-view con el texto en <template data-markdown> o text en <script type=\"application/json\" data-props>, y data-streaming.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Lista, código y enlace",
+     "code": "<Markdown sources={sources}>{answer}</Markdown>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Lista, código y enlace",
+     "code": "<div class=\"z-markdown-view\">\n  <script type=\"application/json\" data-props>{\"text\": \"Here is a **minimal** plan to ship the docs [1]:\\n\\n1. Freeze the API surface.\\n2. Generate the HTML contract.\\n3. Publish the site.\\n\\n```ts\\nexport const ready = true;\\n```\\n\\nSee the [release checklist](https://example.com/checklist) for details.\", \"sources\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio, sin bibliotecas de Markdown. Sin marcado de por medio según las guías trusted-types y sanitize-untrusted-html.",
+   "file": "zui/src/components/ai/Markdown.manifest.json"
+  },
+  {
+   "name": "PromptInput",
+   "group": "ai",
+   "description": "Entrada de un asistente: campo que crece (Intro envía sin enviar durante un IME), adjuntos, selector de modelo, herramientas activables, uso de contexto y enviar ↔ parar en el mismo sitio. Es la misma pieza que Composer en su forma de prompt.",
+   "import": "import { PromptInput } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string"
+    },
+    {
+     "name": "status",
+     "type": "\"ready\" | \"submitted\" | \"streaming\" | \"error\"",
+     "default": "ready"
+    },
+    {
+     "name": "models",
+     "type": "{ id, label, description? }[]"
+    },
+    {
+     "name": "model",
+     "type": "string"
+    },
+    {
+     "name": "tools",
+     "type": "{ id, label, icon?, active? }[]"
+    },
+    {
+     "name": "usage",
+     "type": "{ used, limit }"
+    },
+    {
+     "name": "attach",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "accept",
+     "type": "string"
+    },
+    {
+     "name": "sendOn",
+     "type": "\"enter\" | \"mod-enter\"",
+     "default": "enter"
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "Ask anything"
+    },
+    {
+     "name": "onSubmit",
+     "type": "(detail: { text, attachments }) => void"
+    },
+    {
+     "name": "onStop",
+     "type": "() => void"
+    },
+    {
+     "name": "onModelChange",
+     "type": "(detail: { model }) => void"
+    },
+    {
+     "name": "onToolToggle",
+     "type": "(detail: { id, active }) => void"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ComposerLabels>"
+    }
+   ],
+   "states": [
+    "ready",
+    "submitted",
+    "streaming",
+    "error",
+    "with-attachments"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "glass-border",
+    "glass-highlight",
+    "radius-xl",
+    "accent",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "surface-3",
+    "line",
+    "warning",
+    "danger"
+   ],
+   "classes": [
+    "z-prompt-input",
+    "z-composer",
+    "z-composer__form",
+    "z-composer__input",
+    "z-composer__send",
+    "z-composer__stop",
+    "z-composer__footer",
+    "z-composer__model",
+    "z-composer__toolset",
+    "z-composer__tool",
+    "z-composer__usage",
+    "z-composer__usage-meter"
+   ],
+   "a11y": "Como Composer: textarea etiquetado, Intro envía salvo con un IME componiendo, botón siempre presente. Mientras responde, el botón pasa a «Stop generating» en el mismo sitio (el foco no se pierde) y al pulsarlo se anuncia «Stopped». El modelo es un select nativo con nombre; las herramientas, botones con aria-pressed; el uso, un <meter> con nombre «12K of 200K tokens (6 %)». Sin React: .z-prompt-input con data-status, data-model, data-placeholder y models/tools/usage en <script type=\"application/json\" data-props>; emite z:send, z:stop, z:modelchange, z:tooltoggle y z:attach.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con modelo, herramientas y uso",
+     "code": "<PromptInput models={[{ id: \"fast\", label: \"Fast\" }, { id: \"deep\", label: \"Deep reasoning\" }]} tools={[{ id: \"web\", label: \"Web search\", icon: \"globe-alt\" }]} usage={{ used: 12400, limit: 200000 }} onSubmit={({ text }) => ask(text)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Con modelo, herramientas y uso",
+     "code": "<div class=\"z-prompt-input\">\n  <script type=\"application/json\" data-props>{\"models\": [{\"id\": \"fast\", \"label\": \"Fast\"}, {\"id\": \"deep\", \"label\": \"Deep reasoning\"}], \"tools\": [{\"id\": \"web\", \"label\": \"Web search\", \"icon\": \"globe-alt\"}], \"usage\": {\"used\": 12400, \"limit\": 200000}}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: ChatGPT, Claude, Vercel AI Elements (Prompt Input) y prompt-kit.",
+   "file": "zui/src/components/ai/PromptInput.manifest.json"
+  },
+  {
+   "name": "Reasoning",
+   "group": "ai",
+   "description": "Razonamiento de un modelo plegable: «Thinking…» con brillo mientras dura y «Thought for 12 s» al terminar, cuando se pliega solo (salvo que tengas el foco dentro).",
+   "import": "import { Reasoning } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "text",
+     "type": "string"
+    },
+    {
+     "name": "state",
+     "type": "\"thinking\" | \"done\"",
+     "default": "thinking"
+    },
+    {
+     "name": "startedAt · endedAt",
+     "type": "string | number"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "thinking",
+    "done",
+    "open",
+    "closed"
+   ],
+   "tokens": [
+    "fg-muted",
+    "surface-3",
+    "line",
+    "control-radius-sm"
+   ],
+   "classes": [
+    "z-reasoning-block",
+    "z-reasoning",
+    "z-reasoning__summary",
+    "z-reasoning__label",
+    "z-reasoning__body"
+   ],
+   "a11y": "details/summary nativos (Intro y Espacio); el brillo es decorativo y se para con movimiento reducido. Sin React: .z-reasoning-block con data-state, data-started-at, data-ended-at y text en <script type=\"application/json\" data-props>.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Terminado",
+     "code": "<Reasoning state=\"done\" startedAt=\"2026-11-21T09:00:00Z\" endedAt=\"2026-11-21T09:00:12Z\" text=\"Compare both options, then pick the cheaper one.\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Terminado",
+     "code": "<div class=\"z-reasoning-block\" data-state=\"done\" data-started-at=\"2026-11-21T09:00:00Z\" data-ended-at=\"2026-11-21T09:00:12Z\">\n  <script type=\"application/json\" data-props>{\"text\": \"Compare both options, then pick the cheaper one.\"}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: ChatGPT, Claude y Vercel AI Elements (Reasoning).",
+   "file": "zui/src/components/ai/Reasoning.manifest.json"
+  },
+  {
+   "name": "Sources",
+   "group": "ai",
+   "description": "Fuentes de una respuesta: resumen «4 sources» con iniciales de dominio y lista plegable numerada como sus citas, con título, dominio y extracto.",
+   "import": "import { Sources } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ title, url, snippet? }[]"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AiLabels>"
+    }
+   ],
+   "states": [
+    "closed",
+    "open"
+   ],
+   "tokens": [
+    "surface-solid",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "accent-text",
+    "control-radius",
+    "radius-sm"
+   ],
+   "classes": [
+    "z-sources-block",
+    "z-sources",
+    "z-sources__summary",
+    "z-sources__list",
+    "z-sources__item",
+    "z-sources__link",
+    "z-sources__index",
+    "z-sources__title",
+    "z-sources__domain"
+   ],
+   "a11y": "aside nombrado «N sources» con details/summary; cada enlace se llama «Source 1: título» y solo sale con destino http(s). Sin React: .z-sources-block con data-open e items en <script type=\"application/json\" data-props>.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dos fuentes abiertas",
+     "code": "<Sources defaultOpen items={sources} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Dos fuentes abiertas",
+     "code": "<div class=\"z-sources-block\" data-open>\n  <script type=\"application/json\" data-props>{\"items\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: Perplexity, ChatGPT y Vercel AI Elements (Sources).",
+   "file": "zui/src/components/ai/Sources.manifest.json"
+  },
+  {
+   "name": "Suggestions",
+   "group": "ai",
+   "description": "Sugerencias de prompt: fila desplazable (con fundido en el borde solo si queda más) o rejilla de tarjetas para la pantalla de inicio.",
+   "import": "import { Suggestions } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "(string | { id?, text, icon?, description? })[]"
+    },
+    {
+     "name": "layout",
+     "type": "\"row\" | \"grid\"",
+     "default": "row"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Suggestions"
+    },
+    {
+     "name": "onSelect",
+     "type": "(detail: { id?, text }) => void"
+    }
+   ],
+   "states": [
+    "row",
+    "grid"
+   ],
+   "tokens": [
+    "surface-solid",
+    "surface-2",
+    "line",
+    "line-strong",
+    "radius-md",
+    "fg",
+    "fg-muted",
+    "accent-text"
+   ],
+   "classes": [
+    "z-suggestions",
+    "z-suggestions__list",
+    "z-suggestion",
+    "z-suggestion__icon",
+    "z-suggestion__text",
+    "z-suggestion__description"
+   ],
+   "a11y": "Lista con nombre de botones nativos. El fundido usa una animación ligada al desplazamiento y solo aparece si hay más por ese lado. Sin React: .z-suggestions con data-layout, data-label e items en <script type=\"application/json\" data-props>; emite z:select { id, text }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Rejilla de inicio",
+     "code": "<Suggestions layout=\"grid\" items={[{ text: \"Summarize this thread\", icon: \"document-text\", description: \"Key points and decisions\" }, { text: \"Draft release notes\", icon: \"pencil\", description: \"From the last 20 commits\" }, { text: \"Plan the week\", icon: \"calendar-days\", description: \"With the team's calendar\" }]} onSelect={({ text }) => ask(text)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Rejilla de inicio",
+     "code": "<div class=\"z-suggestions\" data-layout=\"grid\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"text\": \"Summarize this thread\", \"icon\": \"document-text\", \"description\": \"Key points and decisions\"}, {\"text\": \"Draft release notes\", \"icon\": \"pencil\", \"description\": \"From the last 20 commits\"}, {\"text\": \"Plan the week\", \"icon\": \"calendar-days\", \"description\": \"With the team's calendar\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: ChatGPT y Vercel AI Elements (Suggestion). Fundido según la guía scrollability-affordance-hints.",
+   "file": "zui/src/components/ai/Suggestions.manifest.json"
+  },
+  {
+   "name": "ToolCall",
+   "group": "ai",
+   "description": "Llamada a una herramienta: icono, nombre, estado en texto (pendiente, preparando, en curso, esperando aprobación, hecho, error, cancelado), duración y entrada/salida plegables como JSON con el tokenizador propio; esperando aprobación, aprobar y rechazar.",
+   "import": "import { ToolCall } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "name",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "status",
+     "type": "ToolStatus",
+     "required": true
+    },
+    {
+     "name": "input · output",
+     "type": "unknown"
+    },
+    {
+     "name": "error",
+     "type": "string"
+    },
+    {
+     "name": "startedAt · endedAt",
+     "type": "string | number"
+    },
+    {
+     "name": "callId",
+     "type": "string"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean"
+    },
+    {
+     "name": "onApprove · onReject",
+     "type": "(detail: { id }) => void"
+    }
+   ],
+   "states": [
+    "pending",
+    "input-streaming",
+    "running",
+    "awaiting-approval",
+    "success",
+    "error",
+    "cancelled"
+   ],
+   "tokens": [
+    "surface-solid",
+    "surface-3",
+    "line",
+    "radius-md",
+    "code-bg",
+    "font-mono",
+    "info-text",
+    "success-text",
+    "danger-text",
+    "warning-text",
+    "warning",
+    "danger",
+    "fg-muted",
+    "fg-subtle"
+   ],
+   "classes": [
+    "z-tool-call-block",
+    "z-tool-call",
+    "z-tool-call__summary",
+    "z-tool-call__name",
+    "z-tool-call__status",
+    "z-tool-call__time",
+    "z-tool-call__body",
+    "z-tool-call__code",
+    "z-tool-call__approval"
+   ],
+   "a11y": "details/summary nativos; el estado va en texto además del icono y el color, y la sección se nombra con «nombre, estado». Cambiar a «esperando aprobación» o a «error» se anuncia (el error, asertivo); los intermedios no. Sin React: .z-tool-call-block con data-name, data-title, data-status, data-started-at, data-ended-at y input/output en <script type=\"application/json\" data-props>; emite z:approve y z:reject.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Terminada con entrada y salida",
+     "code": "<ToolCall name=\"get_weather\" title=\"Weather\" status=\"success\" input={{ city: \"Madrid\" }} output={{ temp: 18, sky: \"clear\" }} startedAt=\"2026-11-21T09:00:00Z\" endedAt=\"2026-11-21T09:00:01.4Z\" defaultOpen />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Terminada con entrada y salida",
+     "code": "<div class=\"z-tool-call-block\" data-name=\"get_weather\" data-title=\"Weather\" data-status=\"success\" data-open data-started-at=\"2026-11-21T09:00:00Z\" data-ended-at=\"2026-11-21T09:00:01.4Z\">\n  <script type=\"application/json\" data-props>{\"input\": {\"city\": \"Madrid\"}, \"output\": {\"temp\": 18, \"sky\": \"clear\"}}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: Vercel AI Elements (Tool), assistant-ui y Claude.",
+   "file": "zui/src/components/ai/ToolCall.manifest.json"
+  },
+  {
+   "name": "UsageMeter",
+   "group": "ai",
+   "description": "Uso de la ventana de contexto: <meter> con aviso al 80 % y al 95 %, tokens compactos, desglose (entrada, salida, caché) y coste; en barra, anillo o en línea.",
+   "import": "import { UsageMeter } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "used",
+     "type": "number"
+    },
+    {
+     "name": "limit",
+     "type": "number"
+    },
+    {
+     "name": "breakdown",
+     "type": "{ input?, output?, cached? }"
+    },
+    {
+     "name": "cost",
+     "type": "{ value, currency? }"
+    },
+    {
+     "name": "variant",
+     "type": "\"bar\" | \"ring\" | \"inline\"",
+     "default": "bar"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Context"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "ok",
+    "warning",
+    "danger"
+   ],
+   "tokens": [
+    "surface-3",
+    "accent",
+    "warning",
+    "danger",
+    "warning-text",
+    "danger-text",
+    "fg",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-usage",
+    "z-usage__main",
+    "z-usage__head",
+    "z-usage__label",
+    "z-usage__value",
+    "z-usage__meter",
+    "z-usage__breakdown",
+    "z-usage__ring",
+    "z-usage__arc"
+   ],
+   "a11y": "<meter> nativo con low/high y nombre «Context: 152K / 200K tokens (76 %)»; el anillo es decorativo. El nivel cambia el texto además del color.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Barra con desglose y coste",
+     "code": "<UsageMeter used={152000} limit={200000} breakdown={{ input: 120000, output: 28000, cached: 4000 }} cost={{ value: 0.84, currency: \"USD\" }} locale=\"en\" />"
+    },
+    {
+     "title": "Anillo cerca del límite",
+     "code": "<UsageMeter variant=\"ring\" used={192000} limit={200000} locale=\"en\" />"
+    }
+   ],
+   "origin": "Diseño propio; referencia: Vercel AI Elements (Context).",
+   "file": "zui/src/components/ai/UsageMeter.manifest.json"
+  },
+  {
    "name": "Carousel",
    "group": "carousel",
    "description": "Carrusel agnóstico al contenido con dos ejes: `layout` (tira, los de Material 3 y mazo) y `effect` (lente, prisma de cristal, coverflow, fundido, parallax, rueda). Tira con bucle, arrastre con inercia y lente; o desplazamiento nativo con scroll-snap y bucle sin réplicas. Flechas, indicadores, reproducción automática con pausa, teclado y anuncios para lectores de pantalla.",
@@ -4413,6 +5572,1302 @@
    ],
    "origin": "Diseño propio; StatTile de NeonBlade (sparkline embebida).",
    "file": "zui/src/components/charts/Sparkline.manifest.json"
+  },
+  {
+   "name": "CallCard",
+   "group": "chat",
+   "description": "Tarjeta de llamada de cristal: entrante (aceptar, rechazar, avatar que suena), saliente («Calling…», colgar) y en curso (duración, silenciar, cámara, colgar).",
+   "import": "import { CallCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "kind",
+     "type": "\"incoming\" | \"outgoing\" | \"ongoing\"",
+     "default": "incoming"
+    },
+    {
+     "name": "caller",
+     "type": "{ name, avatar? }"
+    },
+    {
+     "name": "video",
+     "type": "boolean"
+    },
+    {
+     "name": "startedAt",
+     "type": "string | number"
+    },
+    {
+     "name": "muted",
+     "type": "boolean"
+    },
+    {
+     "name": "camera",
+     "type": "boolean"
+    },
+    {
+     "name": "onAccept",
+     "type": "(detail: { video }) => void"
+    },
+    {
+     "name": "onDecline · onHangUp",
+     "type": "() => void"
+    },
+    {
+     "name": "onMute",
+     "type": "(detail: { muted }) => void"
+    },
+    {
+     "name": "onCamera",
+     "type": "(detail: { camera }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CallCardLabels>"
+    }
+   ],
+   "states": [
+    "incoming",
+    "outgoing",
+    "ongoing",
+    "muted"
+   ],
+   "tokens": [
+    "card-radius",
+    "success",
+    "success-solid",
+    "danger-solid",
+    "fg-on-accent",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "touch-target"
+   ],
+   "classes": [
+    "z-call",
+    "z-call__avatar",
+    "z-call__body",
+    "z-call__name",
+    "z-call__status",
+    "z-call__timer",
+    "z-call__actions",
+    "z-call__button",
+    "z-call__accept",
+    "z-call__decline",
+    "z-call__hangup",
+    "z-call__toggle"
+   ],
+   "a11y": "Región nombrada por quien llama y descrita por el estado. La entrante se anuncia una vez y de forma asertiva («Incoming call from Ana») y no roba el foco. Los botones tienen nombre; silenciar y cámara llevan aria-pressed. La duración es role=timer (no se lee cada segundo). Los anillos no se animan con movimiento reducido. Sin React: .z-call con data-kind, data-video, data-started-at, data-caller y data-avatar; emite z:accept, z:decline, z:hangup, z:mute y z:camera.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Llamada entrante de vídeo",
+     "code": "<CallCard kind=\"incoming\" video caller={{ name: \"Ana López\" }} onAccept={accept} onDecline={decline} />"
+    },
+    {
+     "title": "En curso",
+     "code": "<CallCard kind=\"ongoing\" caller={{ name: \"Design team\" }} startedAt={Date.now() - 65000} onHangUp={hangUp} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Llamada entrante de vídeo",
+     "code": "<div class=\"z-call\" data-kind=\"incoming\" data-video data-caller=\"Ana López\" style=\"max-width: 420px\"></div>"
+    },
+    {
+     "title": "En curso",
+     "code": "<div class=\"z-call\" data-kind=\"ongoing\" data-caller=\"Design team\" data-started-at=\"2026-11-21T09:28:55Z\" style=\"max-width: 420px\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: las llamadas de WhatsApp y Telegram. Aviso persistente según la guía persistent-toast-notifications.",
+   "file": "zui/src/components/chat/CallCard.manifest.json"
+  },
+  {
+   "name": "ChatHeader",
+   "group": "chat",
+   "description": "Cabecera de una conversación: volver (en móvil, a la lista), avatar con presencia, nombre, línea de estado («online», «last seen…», «typing…») y acciones (llamada, vídeo, buscar, menú).",
+   "import": "import { ChatHeader } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "avatar",
+     "type": "string"
+    },
+    {
+     "name": "avatarName",
+     "type": "string",
+     "description": "Nombre para las iniciales (por defecto, title si es texto)."
+    },
+    {
+     "name": "presence",
+     "type": "\"online\" | \"away\" | \"busy\" | \"offline\""
+    },
+    {
+     "name": "presenceLabel",
+     "type": "string"
+    },
+    {
+     "name": "status",
+     "type": "ReactNode"
+    },
+    {
+     "name": "statusTone",
+     "type": "\"muted\" | \"accent\"",
+     "default": "muted"
+    },
+    {
+     "name": "onBack",
+     "type": "MouseEventHandler",
+     "description": "Con él, botón de volver."
+    },
+    {
+     "name": "backLabel",
+     "type": "string",
+     "default": "Back",
+     "description": "Dice adónde vuelve: «Back to chats»."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "onTitleClick",
+     "type": "MouseEventHandler",
+     "description": "La identidad es un botón que abre los detalles."
+    },
+    {
+     "name": "level",
+     "type": "2 | 3",
+     "default": 2
+    },
+    {
+     "name": "titleId",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest",
+    "typing",
+    "with-back"
+   ],
+   "tokens": [
+    "header-height",
+    "fg",
+    "fg-muted",
+    "accent-text",
+    "row-hover",
+    "item-radius"
+   ],
+   "classes": [
+    "z-chat-header",
+    "z-chat-header__back",
+    "z-chat-header__identity",
+    "z-chat-header__titles",
+    "z-chat-header__title",
+    "z-chat-header__status",
+    "z-chat-header__actions"
+   ],
+   "a11y": "El nombre es un encabezado (h2 por defecto) y puede nombrar la conversación con titleId. El botón de volver dice adónde vuelve. La presencia del avatar tiene nombre propio. Las acciones son IconButton con nombre.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Contacto en línea con acciones",
+     "code": "<ChatHeader title=\"Ana López\" presence=\"online\" presenceLabel=\"Online\" status=\"online\" statusTone=\"accent\" actions={<>\n  <IconButton icon=\"phone\" label=\"Voice call\" />\n  <IconButton icon=\"video-camera\" label=\"Video call\" />\n  <IconButton icon=\"magnifying-glass\" label=\"Search in chat\" />\n</>} />"
+    },
+    {
+     "title": "Grupo con volver (móvil)",
+     "code": "<ChatHeader title=\"Design team\" status=\"Luis is typing…\" statusTone=\"accent\" onBack={() => {}} backLabel=\"Back to chats\" actions={<IconButton icon=\"ellipsis-vertical\" label=\"More\" />} />"
+    }
+   ],
+   "origin": "Diseño propio; referencias: WhatsApp, Telegram y el ConversationHeader de MUI X Chat.",
+   "file": "zui/src/components/chat/ChatHeader.manifest.json"
+  },
+  {
+   "name": "Composer",
+   "group": "chat",
+   "description": "Caja de texto de chat: crece con el texto, Intro envía y Mayús+Intro salta de línea (nunca durante la composición de un IME), botón de enviar siempre presente, adjuntos (elegir, pegar o soltar) con quitar, selector de emojis, menciones con @ (combobox sobre el campo), barra de «respondiendo a» o «editando» y notas de voz con MediaRecorder cuando el navegador lo ofrece.",
+   "import": "import { Composer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Controlado (con onValueChange)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "sendOn",
+     "type": "\"enter\" | \"mod-enter\"",
+     "default": "enter"
+    },
+    {
+     "name": "attach",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "accept",
+     "type": "string"
+    },
+    {
+     "name": "maxFiles",
+     "type": "number",
+     "default": 10
+    },
+    {
+     "name": "emoji",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "emojiData",
+     "type": "EmojiSet | () => Promise<EmojiSet>",
+     "description": "Conjunto propio o cargado a demanda."
+    },
+    {
+     "name": "voice",
+     "type": "boolean",
+     "default": false,
+     "description": "Grabar notas de voz (mejora progresiva)."
+    },
+    {
+     "name": "mentions",
+     "type": "{ trigger?, items: MentionItem[] }"
+    },
+    {
+     "name": "replyTo",
+     "type": "{ id, author?, text? }"
+    },
+    {
+     "name": "editing",
+     "type": "{ id, text }"
+    },
+    {
+     "name": "maxLength",
+     "type": "number"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean"
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "onSend",
+     "type": "(detail: { text, attachments, replyTo?, editing? }) => void",
+     "description": "Las menciones van como <@id>."
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value) => void"
+    },
+    {
+     "name": "onAttach",
+     "type": "(detail: { files }) => void"
+    },
+    {
+     "name": "onVoice",
+     "type": "(detail: { blob, duration, peaks, type }) => void"
+    },
+    {
+     "name": "onCancelReply · onCancelEdit",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ComposerLabels>"
+    }
+   ],
+   "states": [
+    "empty",
+    "typing",
+    "replying",
+    "editing",
+    "with-attachments",
+    "recording",
+    "mentioning",
+    "emoji-open",
+    "disabled"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "field-radius-multiline",
+    "accent",
+    "accent-ring",
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "surface-solid",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "popup-bg",
+    "popup-radius",
+    "popup-shadow",
+    "danger",
+    "font-mono"
+   ],
+   "classes": [
+    "z-composer",
+    "z-composer__form",
+    "z-composer__row",
+    "z-composer__tools",
+    "z-composer__attach",
+    "z-composer__emoji",
+    "z-composer__field",
+    "z-composer__input",
+    "z-composer__send",
+    "z-composer__context",
+    "z-composer__attachments",
+    "z-composer__attachment",
+    "z-composer__remove",
+    "z-composer__recording",
+    "z-composer__mentions",
+    "z-composer__mention",
+    "z-composer__popover",
+    "z-composer__files"
+   ],
+   "a11y": "Formulario con textarea etiquetado; Intro envía con requestSubmit salvo durante la composición de un IME (isComposing o keyCode 229) y Mayús+Intro salta de línea; el botón Enviar existe siempre (aria-disabled vacío, conserva el foco). Con menciones, el campo es un combobox (aria-autocomplete=list, aria-controls, aria-activedescendant): ↑/↓ eligen, Intro o Tab insertan, Escape cierra. Escape también cancela respondiendo/editando. Cada adjunto tiene «Remove {name}» y el foco pasa al siguiente al quitarlo. Grabar: pulsar para empezar y otra vez para enviar, con Cancelar y la duración en un role=timer; sin MediaRecorder el botón no aparece y sin permiso se anuncia el error. Sin React: .z-composer con data-send-on, data-voice, data-accept, data-max-length, data-placeholder y mentions/replyTo/editing en <script type=\"application/json\" data-props>; emite z:send, z:valuechange, z:attach, z:voice, z:cancelreply y z:canceledit.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con menciones y notas de voz",
+     "code": "<Composer voice mentions={{ items: [{ id: \"ana\", label: \"Ana López\" }, { id: \"luis\", label: \"Luis Gil\" }] }} onSend={({ text, attachments }) => send(text, attachments)} onVoice={({ blob }) => upload(blob)} />"
+    },
+    {
+     "title": "Respondiendo a un mensaje",
+     "code": "<Composer replyTo={{ id: \"m3\", author: \"Ana López\", text: \"Morning! Did the new build land?\" }} onCancelReply={() => setReply(null)} onSend={send} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Con menciones y notas de voz",
+     "code": "<div class=\"z-composer\" data-voice>\n  <script type=\"application/json\" data-props>{\"mentions\": {\"items\": [{\"id\": \"ana\", \"label\": \"Ana López\"}, {\"id\": \"luis\", \"label\": \"Luis Gil\"}]}}</script>\n</div>"
+    },
+    {
+     "title": "Respondiendo a un mensaje",
+     "code": "<div class=\"z-composer\">\n  <script type=\"application/json\" data-props>{\"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: WhatsApp Web, Telegram y Slack. Intro seguro con IME según la guía ime-safe-enter-submit.",
+   "file": "zui/src/components/chat/Composer.manifest.json"
+  },
+  {
+   "name": "ConversationList",
+   "group": "chat",
+   "description": "Lista de conversaciones de mensajería: avatar con presencia, nombre, último mensaje (o quién escribe, o el borrador), hora corta, no leídos y menciones, silenciado y fijado, y la entrega de tu último mensaje. Búsqueda sin acentos, filtros (todas, no leídas, grupos) y orden con las fijadas arriba.",
+   "import": "import { ConversationList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "ConversationItem[]",
+     "description": "{ id, title, avatar?, presence?, lastMessage?, lastAuthor?, lastMine?, lastAt?, status?, unread?, mention?, muted?, pinned?, draft?, typing?, group? }"
+    },
+    {
+     "name": "selectedId",
+     "type": "string",
+     "description": "Conversación abierta (controlada)."
+    },
+    {
+     "name": "defaultSelectedId",
+     "type": "string"
+    },
+    {
+     "name": "search",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "filters",
+     "type": "(\"all\" | \"unread\" | \"groups\")[] | false",
+     "default": [
+      "all",
+      "unread",
+      "groups"
+     ]
+    },
+    {
+     "name": "sort",
+     "type": "boolean",
+     "default": true,
+     "description": "Fijadas arriba y el resto por actividad."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "hourCycle",
+     "type": "\"h12\" | \"h23\""
+    },
+    {
+     "name": "onSelect",
+     "type": "(detail: { id }) => void"
+    },
+    {
+     "name": "onSearch",
+     "type": "(detail: { query }) => void"
+    },
+    {
+     "name": "onFilterChange",
+     "type": "(detail: { filter }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ConversationListLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "selected",
+    "unread",
+    "muted",
+    "pinned",
+    "typing",
+    "empty"
+   ],
+   "tokens": [
+    "item-radius",
+    "row-hover",
+    "accent-soft",
+    "accent-solid",
+    "accent-text",
+    "fg-on-accent",
+    "surface-solid",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "danger-text",
+    "line",
+    "control-height-sm",
+    "control-radius-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-conversation-list",
+    "z-conversation-list__search",
+    "z-conversation-list__filters",
+    "z-conversation-list__filter",
+    "z-conversation-list__items",
+    "z-conversation",
+    "z-conversation__body",
+    "z-conversation__title",
+    "z-conversation__time",
+    "z-conversation__preview",
+    "z-conversation__draft",
+    "z-conversation__badges",
+    "z-conversation__unread",
+    "z-conversation__mention",
+    "z-conversation-list__empty"
+   ],
+   "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son botones con aria-pressed. Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id, data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Chats con no leídos, fijado y silenciado",
+     "code": "<ConversationList selectedId=\"ana\" timeZone=\"UTC\" items={[\n  { id: \"ana\", title: \"Ana López\", presence: \"online\", lastMessage: \"Morning! Did the new build land?\", lastAt: \"2026-11-21T08:58:00Z\", unread: 2, pinned: true },\n  { id: \"team\", title: \"Design team\", group: true, typing: [\"Luis\"], lastAt: \"2026-11-21T08:40:00Z\", unread: 12, mention: true },\n  { id: \"marta\", title: \"Marta Ruiz\", lastMessage: \"See you then\", lastMine: true, status: \"read\", lastAt: \"2026-11-20T21:10:00Z\" },\n  { id: \"ops\", title: \"Ops alerts\", lastMessage: \"Deploy finished\", lastAt: \"2026-11-18T07:00:00Z\", muted: true, unread: 4 },\n]} onSelect={({ id }) => open(id)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Chats con no leídos, fijado y silenciado",
+     "code": "<div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Morning! Did the new build land?\", \"lastAt\": \"2026-11-21T08:58:00Z\", \"unread\": 2, \"pinned\": true}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"typing\": [\"Luis\"], \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 12, \"mention\": true}, {\"id\": \"marta\", \"title\": \"Marta Ruiz\", \"lastMessage\": \"See you then\", \"lastMine\": true, \"status\": \"read\", \"lastAt\": \"2026-11-20T21:10:00Z\"}, {\"id\": \"ops\", \"title\": \"Ops alerts\", \"lastMessage\": \"Deploy finished\", \"lastAt\": \"2026-11-18T07:00:00Z\", \"muted\": true, \"unread\": 4}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: las listas de chats de WhatsApp y Telegram.",
+   "file": "zui/src/components/chat/ConversationList.manifest.json"
+  },
+  {
+   "name": "DeliveryStatus",
+   "group": "chat",
+   "description": "Estado de entrega de un mensaje propio: enviando (reloj), enviado (una marca), entregado (dos), leído (dos marcas más gruesas y en acento, con otro texto) y fallido.",
+   "import": "import { DeliveryStatus } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "status",
+     "type": "\"sending\" | \"sent\" | \"delivered\" | \"read\" | \"failed\"",
+     "required": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DeliveryLabels>"
+    }
+   ],
+   "states": [
+    "sending",
+    "sent",
+    "delivered",
+    "read",
+    "failed"
+   ],
+   "tokens": [
+    "fg-muted",
+    "accent-text",
+    "danger-text"
+   ],
+   "classes": [
+    "z-delivery",
+    "z-delivery__icons"
+   ],
+   "a11y": "Los iconos son decorativos y el estado va en texto oculto («Read», «Delivered»): nunca solo color. mergeDelivery (core) no deja retroceder de leído a entregado.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Los cinco estados",
+     "code": "<div style={{ display: \"flex\", gap: 16 }}>\n  <DeliveryStatus status=\"sending\" />\n  <DeliveryStatus status=\"sent\" />\n  <DeliveryStatus status=\"delivered\" />\n  <DeliveryStatus status=\"read\" />\n  <DeliveryStatus status=\"failed\" />\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencia: las marcas de WhatsApp.",
+   "file": "zui/src/components/chat/DeliveryStatus.manifest.json"
+  },
+  {
+   "name": "EmojiPicker",
+   "group": "chat",
+   "description": "Selector de emojis: buscador que hace de combobox sobre una rejilla por categorías, pestañas, recientes, tono de piel y la vista de la opción activa con su nombre CLDR. Trae un conjunto propio pequeño (unos 120) y acepta el de la aplicación, ya cargado o como función que lo carga al abrir.",
+   "import": "import { EmojiPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "EmojiSet | () => Promise<EmojiSet>"
+    },
+    {
+     "name": "recent",
+     "type": "string[]"
+    },
+    {
+     "name": "defaultTone",
+     "type": "0–5",
+     "default": 0
+    },
+    {
+     "name": "columns",
+     "type": "number",
+     "default": 8
+    },
+    {
+     "name": "onSelect",
+     "type": "(detail: { emoji }) => void"
+    },
+    {
+     "name": "onClose",
+     "type": "() => void",
+     "description": "Escape desde el buscador."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<EmojiPickerLabels>"
+    }
+   ],
+   "states": [
+    "browsing",
+    "searching",
+    "empty",
+    "loading"
+   ],
+   "tokens": [
+    "surface-3",
+    "accent-soft",
+    "accent",
+    "fg-muted",
+    "line",
+    "popup-bg",
+    "control-radius-sm",
+    "warning"
+   ],
+   "classes": [
+    "z-emoji-picker",
+    "z-emoji-picker__search",
+    "z-emoji-picker__field",
+    "z-emoji-picker__tabs",
+    "z-emoji-picker__tab",
+    "z-emoji-picker__grid",
+    "z-emoji-picker__section",
+    "z-emoji-picker__heading",
+    "z-emoji-picker__options",
+    "z-emoji-picker__option",
+    "z-emoji-picker__footer",
+    "z-emoji-picker__preview",
+    "z-emoji-picker__tones",
+    "z-emoji-picker__tone"
+   ],
+   "a11y": "El foco se queda en el buscador (role=combobox, aria-controls a la rejilla role=listbox, aria-activedescendant a la opción activa); cada categoría es un group con su encabezado. ↑/↓ por filas, ←/→ por opciones con el campo vacío, Intro elige y Escape cierra. Cada opción se nombra con su nombre CLDR («thumbs up»). Los tonos son botones con aria-pressed y nombre. Sin React: .z-emoji-picker con data-columns y data-default-tone; emite z:select { emoji } y z:close.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Selector suelto",
+     "code": "<EmojiPicker onSelect={({ emoji }) => insert(emoji)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Selector suelto",
+     "code": "<div class=\"z-emoji-picker\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; datos de nombres CLDR (Unicode, dominio público). Referencias: los selectores de Slack y Telegram.",
+   "file": "zui/src/components/chat/EmojiPicker.manifest.json"
+  },
+  {
+   "name": "MessageBubble",
+   "group": "chat",
+   "description": "Burbuja de un mensaje suelta (el mismo marcado que pinta MessageList): rectángulo redondeado con la esquina de la cola más cerrada, autor, cita, reenviado, adjuntos, texto con enlaces seguros y menciones, hora, «editado», entrega y reacciones. Solo marcado: la interacción la da MessageList.",
+   "import": "import { MessageBubble } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "message",
+     "type": "ChatMessage",
+     "required": true
+    },
+    {
+     "name": "mine",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "position",
+     "type": "\"single\" | \"first\" | \"middle\" | \"last\"",
+     "default": "single"
+    },
+    {
+     "name": "showAuthor",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "showAvatar",
+     "type": "boolean"
+    },
+    {
+     "name": "group",
+     "type": "boolean"
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChatLabels>"
+    }
+   ],
+   "states": [
+    "mine",
+    "other",
+    "first",
+    "middle",
+    "last",
+    "forwarded",
+    "edited",
+    "deleted",
+    "failed",
+    "jumbo"
+   ],
+   "tokens": [
+    "surface-solid",
+    "accent-soft",
+    "fg",
+    "fg-muted",
+    "accent-text",
+    "line",
+    "radius-lg",
+    "radius-xs",
+    "shadow-sm"
+   ],
+   "classes": [
+    "z-message-row",
+    "z-message",
+    "z-message__bubble",
+    "z-message__author",
+    "z-message__forwarded",
+    "z-message__text",
+    "z-message__meta",
+    "z-message__edited",
+    "z-message__retry",
+    "z-delivery"
+   ],
+   "a11y": "article nombrado por el autor («You» en los propios) y descrito por la hora, «edited» y la entrega en texto. Leído se distingue de entregado por el texto y por el trazo, no solo por el color. Los enlaces solo salen con destino http, https o mailto.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Recibido y enviado (leído)",
+     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" showAuthor message={{ id: \"a\", authorId: \"ana\", author: { name: \"Ana López\" }, createdAt: \"2026-11-21T08:58:00Z\", text: \"Morning! Did the new build land?\" }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"b\", authorId: \"me\", createdAt: \"2026-11-21T09:04:00Z\", text: \"It did. Notes are at https://example.com/notes\", status: \"read\" }} />\n</div>"
+    },
+    {
+     "title": "Reenviado, editado y eliminado",
+     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"c\", authorId: \"luis\", createdAt: \"2026-11-21T09:10:00Z\", text: \"Standup moved to 10:30\", forwarded: true }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"d\", authorId: \"me\", createdAt: \"2026-11-21T09:11:00Z\", text: \"Got it, thanks\", status: \"delivered\", editedAt: \"2026-11-21T09:12:00Z\" }} />\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"e\", authorId: \"luis\", createdAt: \"2026-11-21T09:13:00Z\", deletedAt: \"2026-11-21T09:14:00Z\" }} />\n</div>"
+    },
+    {
+     "title": "Ubicación y archivo",
+     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"f\", authorId: \"ana\", createdAt: \"2026-11-21T09:20:00Z\", attachments: [{ kind: \"location\", title: \"Studio\", address: \"Calle Mayor 12, Madrid\", href: \"https://www.openstreetmap.org/?mlat=40.4168&mlon=-3.7038\" }] }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"g\", authorId: \"me\", createdAt: \"2026-11-21T09:21:00Z\", status: \"sent\", attachments: [{ kind: \"file\", name: \"release-notes.pdf\", size: 482000, type: \"PDF\" }] }} />\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: las burbujas de WhatsApp, Telegram e iMessage.",
+   "file": "zui/src/components/chat/MessageBubble.manifest.json"
+  },
+  {
+   "name": "MessageList",
+   "group": "chat",
+   "description": "Lista de mensajes de una conversación: grupos por autor y tiempo, separadores de día pegajosos, marca de no leídos, indicador de escritura, historial hacia arriba sin saltos, «ir al final» con los nuevos contados y ventana virtual (con altos medidos) cuando hay muchos. Las burbujas llevan cita, adjuntos (imágenes, archivo, nota de voz con onda, ubicación, vista previa de enlace), texto con enlaces seguros y menciones, hora, «editado», entrega, reacciones, hilo y una barra de acciones.",
+   "import": "import { MessageList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "messages",
+     "type": "ChatMessage[]",
+     "description": "{ id, authorId, author?, createdAt, text?, attachments?, replyTo?, forwarded?, editedAt?, deletedAt?, status?, reactions?, thread?, kind? }"
+    },
+    {
+     "name": "currentUserId",
+     "type": "string"
+    },
+    {
+     "name": "group",
+     "type": "boolean",
+     "default": false,
+     "description": "Nombre y avatar en los mensajes de otros."
+    },
+    {
+     "name": "groupWithin",
+     "type": "number",
+     "default": 300000,
+     "description": "Ventana para agrupar (ms)."
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "unreadFrom",
+     "type": "string",
+     "description": "Primer mensaje sin leer."
+    },
+    {
+     "name": "initialAnchor",
+     "type": "\"end\" | \"first-unread\" | string",
+     "description": "Por defecto, el primer no leído si lo hay; si no, el final."
+    },
+    {
+     "name": "hasOlder",
+     "type": "boolean"
+    },
+    {
+     "name": "loadingOlder",
+     "type": "boolean"
+    },
+    {
+     "name": "typing",
+     "type": "ChatPerson[]"
+    },
+    {
+     "name": "highlight",
+     "type": "string",
+     "description": "Texto buscado: coincidencias en <mark>."
+    },
+    {
+     "name": "actions",
+     "type": "MessageAction[] | false",
+     "default": [
+      "react",
+      "reply",
+      "forward",
+      "copy",
+      "edit",
+      "delete"
+     ]
+    },
+    {
+     "name": "quickReactions",
+     "type": "string[]",
+     "description": "Seis por defecto."
+    },
+    {
+     "name": "virtualize",
+     "type": "number | false",
+     "default": 150,
+     "description": "Ventana virtual a partir de este número de filas."
+    },
+    {
+     "name": "announce",
+     "type": "\"new\" | \"log\" | \"none\"",
+     "default": "new"
+    },
+    {
+     "name": "composer",
+     "type": "string",
+     "description": "Id del elemento al que vuelve Escape."
+    },
+    {
+     "name": "onLoadOlder",
+     "type": "() => void"
+    },
+    {
+     "name": "onReachEnd",
+     "type": "() => void"
+    },
+    {
+     "name": "onReply · onForward · onEdit · onDelete · onRetry · onOpenThread · onQuote",
+     "type": "(detail: { id }) => void"
+    },
+    {
+     "name": "onReact",
+     "type": "(detail: { id, emoji }) => void"
+    },
+    {
+     "name": "onReactMore",
+     "type": "(detail: { id }) => void"
+    },
+    {
+     "name": "onOpenMedia",
+     "type": "(detail: { id, index }) => void"
+    },
+    {
+     "name": "ref",
+     "type": "Ref<MessageListHandle>",
+     "description": "scrollToEnd(focus?), jumpTo(id), focus()."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<MessageListLabels>"
+    }
+   ],
+   "states": [
+    "following",
+    "reading-history",
+    "loading-older",
+    "new-below",
+    "virtual",
+    "typing"
+   ],
+   "tokens": [
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "radius-lg",
+    "radius-md",
+    "radius-xs",
+    "shadow-sm",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "glass-border",
+    "warning-soft",
+    "danger-soft",
+    "danger-text",
+    "touch-target"
+   ],
+   "classes": [
+    "z-message-list",
+    "z-message-list__viewport",
+    "z-message-list__items",
+    "z-message-list__older",
+    "z-message-row",
+    "z-message",
+    "z-message__bubble",
+    "z-message__author",
+    "z-message__text",
+    "z-message__meta",
+    "z-message__actions",
+    "z-message__action",
+    "z-quoted",
+    "z-message__media",
+    "z-message-file",
+    "z-voice-note",
+    "z-message-location",
+    "z-link-preview",
+    "z-reactions",
+    "z-reaction",
+    "z-thread-summary",
+    "z-delivery",
+    "z-date-separator",
+    "z-unread-marker",
+    "z-message-system",
+    "z-typing",
+    "z-scroll-to-bottom"
+   ],
+   "a11y": "Región con nombre y lista ordenada de article; el contenedor no es región viva (leería lo propio, las ediciones y el historial): los mensajes nuevos de otros se anuncian por el anunciador central, cortos («Ana: …») y agrupados («3 new messages from Ana»); quien escribe, una vez por persona y episodio, con un segundo de retraso y nunca mientras tecleas. announce=\"log\" usa role=log para quien lo prefiera. Cada article se nombra con su autor y se describe con hora, «edited» y entrega en texto. Una sola parada de Tab: ↑/↓ entre mensajes, Inicio/Fin, RePág/AvPág; Intro lleva a la barra de acciones (←/→ entre botones, Escape vuelve), R responde y Escape va a la caja de texto. Al llegar arriba se piden los anteriores y el foco se queda en su mensaje. Se abre en el primer no leído o al final con scroll-initial-target sin mover el foco. Los días son encabezados h3 con <time>. La nota de voz es un slider (←/→ cinco segundos). Sin React: .z-message-list con data-current-user, data-group, data-time-zone, data-unread-from, data-anchor, data-has-older, data-composer y messages/typing en <script type=\"application/json\" data-props>; setWidgetProps(el, { messages }); messageList(el).jumpTo(id); emite z:reply, z:react, z:reactmore, z:forward, z:copy, z:edit, z:delete, z:retry, z:openmedia, z:openthread, z:quote, z:loadolder, z:reachend y z:escape.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Conversación con cita, nota de voz, reacción y no leídos",
+     "code": "<div style={{ height: 520 }}>\n  <MessageList messages={messages} currentUserId=\"me\" timeZone=\"UTC\" unreadFrom=\"m3\" typing={[{ name: \"Ana López\" }]} onReply={({ id }) => reply(id)} onReact={({ id, emoji }) => react(id, emoji)} />\n</div>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Conversación con cita, nota de voz, reacción y no leídos",
+     "code": "<div class=\"z-message-list\" style=\"height: 520px\" data-current-user=\"me\" data-time-zone=\"UTC\" data-unread-from=\"m3\" data-now=\"1795253400000\">\n  <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m1\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-20T18:02:00Z\", \"text\": \"Can you send me the release notes before tomorrow?\"}, {\"id\": \"m2\", \"authorId\": \"me\", \"createdAt\": \"2026-11-20T18:05:00Z\", \"text\": \"Sure, drafting them tonight.\", \"status\": \"read\"}, {\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}], \"typing\": [{\"name\": \"Ana López\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: WhatsApp, Telegram, Stream Chat (MessageList, VirtualizedMessageList) y MUI X Chat.",
+   "file": "zui/src/components/chat/MessageList.manifest.json"
+  },
+  {
+   "name": "PinnedBar",
+   "group": "chat",
+   "description": "Barra de mensajes fijados sobre la conversación: el último fijado y, con varios, «Pinned message 2 of 3» con un segmento por fijado; pulsar salta al mensaje y pasa al anterior.",
+   "import": "import { PinnedBar } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ id, author?, text }[]"
+    },
+    {
+     "name": "unpinnable",
+     "type": "boolean"
+    },
+    {
+     "name": "onJump",
+     "type": "(detail: { id }) => void"
+    },
+    {
+     "name": "onUnpin",
+     "type": "(detail: { id }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PinnedBarLabels>"
+    }
+   ],
+   "states": [
+    "one",
+    "many",
+    "empty"
+   ],
+   "tokens": [
+    "accent",
+    "accent-text",
+    "line",
+    "line-strong",
+    "row-hover",
+    "item-radius"
+   ],
+   "classes": [
+    "z-pinned-bar",
+    "z-pinned-bar__main",
+    "z-pinned-bar__track",
+    "z-pinned-bar__segment",
+    "z-pinned-bar__icon",
+    "z-pinned-bar__body",
+    "z-pinned-bar__title",
+    "z-pinned-bar__text",
+    "z-pinned-bar__unpin"
+   ],
+   "a11y": "Un botón con nombre completo («Pinned message 2 of 3: Ana, Standup moved to 10:30»); los segmentos son decorativos. Sin React: .z-pinned-bar con items en <script type=\"application/json\" data-props> y data-unpinnable; emite z:jump { id } y z:unpin { id }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres fijados",
+     "code": "<PinnedBar unpinnable items={[{ id: \"p1\", author: \"Ana\", text: \"Release on Friday\" }, { id: \"p2\", text: \"Docs live at /docs\" }, { id: \"p3\", author: \"Luis\", text: \"Standup moved to 10:30\" }]} onJump={({ id }) => jumpTo(id)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Tres fijados",
+     "code": "<div class=\"z-pinned-bar\" data-unpinnable>\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"p1\", \"author\": \"Ana\", \"text\": \"Release on Friday\"}, {\"id\": \"p2\", \"text\": \"Docs live at /docs\"}, {\"id\": \"p3\", \"author\": \"Luis\", \"text\": \"Standup moved to 10:30\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencia: los mensajes fijados de Telegram.",
+   "file": "zui/src/components/chat/PinnedBar.manifest.json"
+  },
+  {
+   "name": "Reactions",
+   "group": "chat",
+   "description": "Reacciones con contador: botones conmutables (la propia se marca), y añadir con la fila rápida de seis y «más».",
+   "import": "import { Reactions } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ emoji, count, mine? }[]"
+    },
+    {
+     "name": "add",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "quick",
+     "type": "string[]"
+    },
+    {
+     "name": "onToggle",
+     "type": "(detail: { emoji, active }) => void"
+    },
+    {
+     "name": "onMore",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChatLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "mine",
+    "picking"
+   ],
+   "tokens": [
+    "surface-solid",
+    "line",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "control-radius-sm",
+    "shadow-sm"
+   ],
+   "classes": [
+    "z-reactions",
+    "z-reaction",
+    "z-reaction__emoji",
+    "z-reaction__count",
+    "z-reaction--add",
+    "z-reactions__quick"
+   ],
+   "a11y": "Grupo «Reactions» de botones con aria-pressed y nombre con el nombre CLDR del emoji, la cuenta y «you reacted» («thumbs up, 3, you reacted»); el emoji y el número no se leen sueltos. Escape cierra la fila rápida y devuelve el foco a añadir. Sin React: .z-reactions con items en <script type=\"application/json\" data-props>; emite z:toggle { emoji, active } y z:more.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres reacciones, una tuya",
+     "code": "<Reactions items={[{ emoji: \"👍\", count: 3, mine: true }, { emoji: \"❤️\", count: 2 }, { emoji: \"😂\", count: 1 }]} onToggle={({ emoji }) => toggle(emoji)} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Tres reacciones, una tuya",
+     "code": "<div class=\"z-reactions\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"emoji\": \"👍\", \"count\": 3, \"mine\": true}, {\"emoji\": \"❤️\", \"count\": 2}, {\"emoji\": \"😂\", \"count\": 1}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: Slack, Telegram y WhatsApp.",
+   "file": "zui/src/components/chat/Reactions.manifest.json"
+  },
+  {
+   "name": "ThreadSummary",
+   "group": "chat",
+   "description": "Resumen de un hilo bajo un mensaje: avatares de quien respondió, «12 replies» y la última respuesta en relativo. Es un botón que abre el hilo.",
+   "import": "import { ThreadSummary } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "count",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "lastAt",
+     "type": "string | number"
+    },
+    {
+     "name": "participants",
+     "type": "ChatPerson[]"
+    },
+    {
+     "name": "onClick",
+     "type": "MouseEventHandler"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChatLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover"
+   ],
+   "tokens": [
+    "accent-text",
+    "fg-muted",
+    "row-hover",
+    "control-radius-sm"
+   ],
+   "classes": [
+    "z-thread-summary",
+    "z-thread-summary__people",
+    "z-thread-summary__count",
+    "z-thread-summary__last"
+   ],
+   "a11y": "Botón con su texto como nombre («12 replies, Last reply 3 min ago»); los avatares son decorativos.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Hilo con tres personas",
+     "code": "<ThreadSummary count={12} lastAt=\"2026-11-21T09:27:00Z\" now={1795253400000} participants={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }, { name: \"Marta Ruiz\" }]} />"
+    }
+   ],
+   "origin": "Diseño propio; referencia: los hilos de Slack.",
+   "file": "zui/src/components/chat/ThreadSummary.manifest.json"
+  },
+  {
+   "name": "TypingIndicator",
+   "group": "chat",
+   "description": "Indicador de escritura: tres puntos en una burbuja y el texto («Ana is typing…», «Ana and Luis are typing…», «Ana and 2 others are typing…»).",
+   "import": "import { TypingIndicator } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "people",
+     "type": "ChatPerson[]",
+     "required": true
+    },
+    {
+     "name": "avatars",
+     "type": "boolean"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TypingLabels>"
+    }
+   ],
+   "states": [
+    "one",
+    "two",
+    "many"
+   ],
+   "tokens": [
+    "surface-solid",
+    "line",
+    "fg-subtle",
+    "fg-muted",
+    "radius-lg",
+    "radius-xs",
+    "shadow-sm"
+   ],
+   "classes": [
+    "z-typing",
+    "z-typing__avatars",
+    "z-typing__bubble",
+    "z-typing__dot",
+    "z-typing__text"
+   ],
+   "a11y": "Los puntos son decorativos; el texto se lee. No es región viva: dentro de MessageList se anuncia una vez por persona y episodio. Los puntos no se animan con movimiento reducido.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Dos personas",
+     "code": "<TypingIndicator avatars people={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }]} />"
+    }
+   ],
+   "origin": "Diseño propio.",
+   "file": "zui/src/components/chat/TypingIndicator.manifest.json"
+  },
+  {
+   "name": "VoiceNote",
+   "group": "chat",
+   "description": "Nota de voz: reproducir y pausar, onda (que es el deslizador de posición), tiempo y velocidad (1×, 1.5×, 2×), sobre un <audio>. Una sola suena a la vez en el documento.",
+   "import": "import { VoiceNote } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "src",
+     "type": "string"
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "description": "Segundos."
+    },
+    {
+     "name": "peaks",
+     "type": "number[]",
+     "description": "Onda precalculada (cualquier escala)."
+    },
+    {
+     "name": "rates",
+     "type": "number[]",
+     "default": [
+      1,
+      1.5,
+      2
+     ]
+    },
+    {
+     "name": "played",
+     "type": "boolean",
+     "description": "false: punto de «sin escuchar»."
+    },
+    {
+     "name": "bars",
+     "type": "number",
+     "default": 36
+    },
+    {
+     "name": "onPlay · onPause · onEnded",
+     "type": "() => void"
+    },
+    {
+     "name": "onRateChange",
+     "type": "(detail: { rate }) => void"
+    }
+   ],
+   "states": [
+    "paused",
+    "playing",
+    "unplayed"
+   ],
+   "tokens": [
+    "accent-solid",
+    "fg-on-accent",
+    "accent",
+    "line-strong",
+    "surface-3",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-voice-note",
+    "z-voice-note__play",
+    "z-voice-note__wave",
+    "z-voice-note__bar",
+    "z-voice-note__time",
+    "z-voice-note__rate",
+    "z-voice-note__audio"
+   ],
+   "a11y": "Grupo «Voice message»: botón Play/Pause con nombre que cambia; la onda es role=slider con aria-valuenow en segundos y aria-valuetext «0:07 / 0:14» (←/→ cinco segundos, RePág/AvPág quince, Inicio/Fin); la velocidad es un botón «Playback speed 1.5×». Sin React: .z-voice-note con data-src, data-duration y data-peaks; emite z:play, z:pause, z:ended y z:ratechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Nota de 14 segundos",
+     "code": "<VoiceNote src=\"/audio/note.webm\" duration={14} peaks={[2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Nota de 14 segundos",
+     "code": "<div class=\"z-voice-note\" data-duration=\"14\" data-peaks=\"2 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3\" style=\"max-width: 340px\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: las notas de voz de WhatsApp y Telegram.",
+   "file": "zui/src/components/chat/VoiceNote.manifest.json"
   },
   {
    "name": "AspectRatio",
