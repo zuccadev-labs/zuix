@@ -102,7 +102,7 @@ function PrismDemo() {
         getKey={(s) => s.id}
         renderItem={(s) => <Media scene={s} />}
       />
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>{`<Carousel effect="${effect}"${autoplay ? ' autoplay={5000} indicators="progress"' : ' indicators="dots"'} items={photos} renderItem={…} />`}</code>
       </pre>
     </>
@@ -123,8 +123,8 @@ function MaterialDemo() {
           items={[
             { value: "multi-browse", label: "Multi-browse" },
             { value: "hero", label: "Hero" },
-            { value: "hero-center", label: "Hero centrado" },
-            { value: "uncontained", label: "Uncontained" },
+            { value: "hero-center", label: "Centrado" },
+            { value: "uncontained", label: "Libre" },
           ]}
         />
       </div>
@@ -140,7 +140,7 @@ function MaterialDemo() {
         getKey={(s) => s.id}
         renderItem={(s) => <Media scene={s} />}
       />
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>{`<Carousel layout="${layout}" effect="none" items={photos} renderItem={…} />`}</code>
       </pre>
     </>
@@ -176,7 +176,7 @@ function FullscreenDemo() {
         getKey={(s) => s.id}
         renderItem={(s) => <Media scene={s} layer={effect === "parallax"} />}
       />
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>
           {effect === "parallax"
             ? '<Carousel layout="fullscreen" effect="parallax" items={photos} renderItem={(p) => <img className="z-carousel__media" data-parallax-layer="0.35" … />} />'
@@ -216,7 +216,7 @@ function StackDemo() {
           )}
         />
       </div>
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>{'<Carousel layout="stack" items={steps} renderItem={(s) => <Step {...s} />} />'}</code>
       </pre>
     </>
@@ -245,7 +245,7 @@ function WheelDemo() {
           Hora elegida: <strong>{HOURS[hour]}</strong>
         </p>
       </div>
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>
           {'<Carousel effect="wheel" loop={false} indicators="none" items={hours} onIndexChange={setHour} renderItem={(h) => h} />'}
         </code>
@@ -281,7 +281,7 @@ function StoriesDemo() {
           { id: "mar", author: { name: "Mar", avatar: scenes[5]!.src }, items: by(["reef", "city", "volcano"]) },
         ]}
       />
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>
           {
             '<Stories ariaLabel="Historias del equipo" groups={[{ id: "ana", author: { name: "Ana", avatar }, items: [{ id, media, alt }] }]} />'
@@ -327,7 +327,7 @@ function GalleryDemo() {
         }}
         items={scenes.map((s) => ({ src: s.src, alt: s.alt, caption: s.title, width: 1600, height: 1000 }))}
       />
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>{`<Gallery ariaLabel="Galería" thumbnails="${thumbs}" items={photos} />`}</code>
       </pre>
     </>
@@ -356,7 +356,7 @@ function LogoCloudDemo() {
           </span>
         ))}
       </Marquee>
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>{'<Marquee className="logo-cloud" label="Clientes" fade pauseOnHover showControl>{logos}</Marquee>'}</code>
       </pre>
     </>
@@ -402,7 +402,7 @@ function TestimonialsDemo() {
           </figure>
         )}
       />
-      <pre className="zd-gallery__snippet">
+      <pre className="zd-gallery__snippet zd-gallery__snippet--wrap">
         <code>
           {'<Carousel layout="uncontained" autoplay={7000} indicators="progress" items={quotes} renderItem={(q) => <Quote {...q} />} />'}
         </code>

@@ -63,7 +63,18 @@ const gone = (page, selector, message = `${selector} retirado`) =>
 const settled = (page) =>
   until(
     page,
-    () => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+    // Fuera: las infinitas, las ligadas al desplazamiento (no terminan: siguen a la tira) y el llenado del indicador
+    // `progress` del carrusel, que vuelve a empezar en cada intervalo mientras dura la reproducción automática.
+    () =>
+      document
+        .getAnimations()
+        .every(
+          (a) =>
+            a.playState !== "running" ||
+            a.effect?.getComputedTiming().iterations === Infinity ||
+            a.timeline !== document.timeline ||
+            String(a.animationName ?? "").startsWith("z-carousel-fill"),
+        ),
     "las animaciones terminan",
   );
 
@@ -633,8 +644,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        28,
-        "28 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site y Media)",
+        29,
+        "29 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media y Carousels)",
       );
       await settled(page);
       await shot(page, "overlay-palette");

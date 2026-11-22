@@ -2918,3 +2918,12 @@ mark[data-markjs] {
   display: block;
   padding: var(--z-space-4);
 }
+/* Fragmentos largos que parten línea: sin desplazamiento horizontal no hace falta que sean enfocables. */
+.zd-gallery__snippet--wrap {
+  overflow-x: visible;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.zd-gallery__snippet--wrap code {
+  white-space: inherit;
+}

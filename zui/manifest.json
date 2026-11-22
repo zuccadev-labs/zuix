@@ -9242,7 +9242,7 @@
   {
    "name": "Skeleton",
    "group": "feedback",
-   "description": "Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones (tarjeta, lista, tabla, perfil, chat, gráfico, artículo y calendario) y un grupo con el brillo sincronizado.",
+   "description": "Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones de pantalla completos (`pattern`) y un grupo con el brillo sincronizado.",
    "import": "import { Skeleton } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {

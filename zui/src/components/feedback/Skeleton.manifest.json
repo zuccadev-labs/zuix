@@ -1,7 +1,7 @@
 {
   "name": "Skeleton",
   "group": "feedback",
-  "description": "Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones (tarjeta, lista, tabla, perfil, chat, gráfico, artículo y calendario) y un grupo con el brillo sincronizado.",
+  "description": "Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones de pantalla completos (`pattern`) y un grupo con el brillo sincronizado.",
   "import": "import { Skeleton } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -15,13 +15,22 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": ["text", "circular", "rectangular", "rounded"],
+      "values": [
+        "text",
+        "circular",
+        "rectangular",
+        "rounded"
+      ],
       "default": "text"
     },
     {
       "name": "animation",
       "type": "enum",
-      "values": ["pulse", "wave", "none"],
+      "values": [
+        "pulse",
+        "wave",
+        "none"
+      ],
       "default": "pulse"
     },
     {
@@ -33,7 +42,16 @@
     {
       "name": "pattern",
       "type": "enum",
-      "values": ["card", "list", "table", "profile", "chat", "chart", "article", "calendar"],
+      "values": [
+        "card",
+        "list",
+        "table",
+        "profile",
+        "chat",
+        "chart",
+        "article",
+        "calendar"
+      ],
       "description": "Patrón completo. También como `Skeleton.Card`, `Skeleton.List`… Anchos estables por semilla (`seed`): servidor y cliente pintan lo mismo."
     },
     {
@@ -64,7 +82,11 @@
     {
       "name": "type",
       "type": "enum",
-      "values": ["bar", "line", "donut"],
+      "values": [
+        "bar",
+        "line",
+        "donut"
+      ],
       "description": "chart: forma del gráfico."
     },
     {
@@ -78,7 +100,10 @@
       "default": 1
     }
   ],
-  "states": ["pulse", "wave"],
+  "states": [
+    "pulse",
+    "wave"
+  ],
   "tokens": [
     "canvas",
     "card-bg",
@@ -108,7 +133,13 @@
     "surface-3",
     "text-small"
   ],
-  "classes": ["z-skeleton", "z-skeleton-lines", "z-skeleton-pattern", "z-skeleton-group", "z-skeleton-group__label"],
+  "classes": [
+    "z-skeleton",
+    "z-skeleton-lines",
+    "z-skeleton-pattern",
+    "z-skeleton-group",
+    "z-skeleton-group__label"
+  ],
   "a11y": "Decorativo (aria-hidden): el contenedor que espera lleva aria-busy=\"true\" (SkeletonGroup lo pone). No se anuncia «cargando»; si la espera es larga, `label` de SkeletonGroup deja una línea visible. Al llegar el contenido no se mueve el foco y el tamaño coincide para no provocar saltos. Con movimiento reducido no hay brillo ni pulso.",
   "examples": [
     {
@@ -157,7 +188,10 @@
     }
   ],
   "origin": "Skeleton del design system base.",
-  "exports": ["Skeleton", "SkeletonGroup"],
+  "exports": [
+    "Skeleton",
+    "SkeletonGroup"
+  ],
   "attributes": [
     "data-variant",
     "data-animation",

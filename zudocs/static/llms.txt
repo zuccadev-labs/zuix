@@ -164,7 +164,7 @@
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
 - [LoadingOverlay](https://zuccadev-labs.github.io/zuix/components/feedback/loading-overlay.md): Capa de espera sobre un contenedor o sobre toda la ventana.
-- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones (tarjeta, lista, tabla, perfil, chat, gráfico, artículo y calendario) y un…
+- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones de pantalla completos (`pattern`) y un grupo con el brillo sincronizado.
 - [Spinner](https://zuccadev-labs.github.io/zuix/components/feedback/spinner.md): Indicador de espera de duración desconocida: anillo giratorio, tres puntos que laten o cuatro barras.
 
 ## Componentes: Contenido
