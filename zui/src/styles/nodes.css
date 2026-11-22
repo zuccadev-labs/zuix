@@ -47,21 +47,28 @@
   .z-node-canvas[data-panning] {
     cursor: grabbing;
   }
+  /* La trama va en un pseudoelemento más grande que el lienzo que se desplaza con una transformación (resto del paso):
+     el fondo no se vuelve a pintar al desplazar y la caja visible no sale del lienzo. */
   .z-node-canvas__background {
     position: absolute;
-    inset: calc(var(--z-grid-step, 16px) * -2);
+    inset: 0;
+    overflow: hidden;
     pointer-events: none;
+  }
+  .z-node-canvas__background::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--z-grid-step, 16px) * -2);
     translate: var(--z-grid-x, 0) var(--z-grid-y, 0);
     will-change: translate;
     background-image: radial-gradient(circle at center, var(--z-line-strong) 0 1px, transparent 1.5px);
     background-size: var(--z-grid-step, 16px) var(--z-grid-step, 16px);
-    background-position: 0 0;
   }
-  .z-node-canvas[data-background="grid"] .z-node-canvas__background {
+  .z-node-canvas[data-background="grid"] .z-node-canvas__background::before {
     background-image:
       linear-gradient(to right, var(--z-line) 1px, transparent 1px), linear-gradient(to bottom, var(--z-line) 1px, transparent 1px);
   }
-  .z-node-canvas[data-background="none"] .z-node-canvas__background {
+  .z-node-canvas[data-background="none"] .z-node-canvas__background::before {
     background-image: none;
   }
   .z-node-canvas__world {
@@ -403,6 +410,7 @@
     margin: 0;
     padding: 0;
     translate: -50% -50%;
+    scale: var(--z-port-scale, 1);
     border: 0;
     border-radius: var(--z-radius-full);
     background: transparent;

@@ -333,7 +333,7 @@ export function DataTable<T>({
                     aria-label={resizeLabel(column)}
                     aria-valuemin={column.minWidth ?? 64}
                     aria-valuemax={1200}
-                    aria-valuenow={column.width && /px$/.test(column.width) ? clampWidth(Number.parseFloat(column.width)) : undefined}
+                    aria-valuenow={column.width && /px$/.test(column.width) ? clampWidth(Number.parseFloat(column.width)) : 160}
                     tabIndex={0}
                   />
                 ) : null}

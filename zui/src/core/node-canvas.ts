@@ -778,6 +778,9 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     set(world, "--z-vp-x", px(vp.x));
     set(world, "--z-vp-y", px(vp.y));
     set(world, "--z-vp-zoom", String(Math.round(vp.zoom * 10000) / 10000));
+    // Con poco zoom los puertos conservan su objetivo de 24 px en pantalla (WCAG 2.5.8). Esta variable sí se hereda,
+    // pero solo cambia con el zoom, no al desplazar.
+    set(world, "--z-port-scale", String(Math.round(Math.max(1, 1 / vp.zoom) * 1000) / 1000));
     // Paso de los puntos del fondo en pantalla: el de la cuadrícula, duplicado mientras quede por debajo de 12 px (con
     // poco zoom los puntos se juntarían en una trama sucia). El fondo se desplaza con una transformación (resto del
     // paso), no con background-position: al desplazar no se vuelve a pintar, solo se compone.
@@ -900,8 +903,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     const lock = bar.querySelector<HTMLElement>('[data-node-action="lock"]');
     if (lock) {
       lock.setAttribute("aria-pressed", String(locked));
-      if (o.readOnly) lock.setAttribute("aria-disabled", "true");
-      else lock.removeAttribute("aria-disabled");
+      // En solo lectura no hay nada que bloquear: el botón no se muestra.
+      lock.hidden = !!o.readOnly;
       const glyph = lock.querySelector<HTMLElement>("[data-lock-icon]");
       if (glyph) glyph.dataset.lockIcon = locked ? "closed" : "open";
     }
@@ -1995,16 +1998,15 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     invalidate({ nodes: true });
   };
   const onFocusOut = (e: FocusEvent) => {
+    // Si el foco sale del nodo en el que se entró (a otro sitio de la página), sus controles vuelven a salir del orden
+    // de tabulación. Sin destino (la ventana pierde el foco) se conserva el estado.
     const next = e.relatedTarget as Node | null;
-    if (entered && (!next || !elementOf(entered)?.contains(next))) {
-      const el = elementOf(entered);
-      if (el && next && el !== next) {
-        tame(el, false);
-        entered = null;
-        invalidate({ nodes: true });
-      } else if (!next) {
-        // El foco salió de la página: se conserva el estado.
-      }
+    if (!entered || !next) return;
+    const el = elementOf(entered);
+    if (el && el !== next && !el.contains(next)) {
+      tame(el, false);
+      entered = null;
+      invalidate({ nodes: true });
     }
   };
 

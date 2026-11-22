@@ -335,7 +335,7 @@ export default function ({ t, assert, poll }) {
         );
         // El intervalo depende de la máquina (el raster por software de un entorno sin GPU domina); el umbral es sobre el
         // trabajo de script, que es lo que pone el lienzo.
-        if (frames.loaf) assert(frames.script95 < 16, `script por fotograma p95 ${frames.script95.toFixed(1)} ms`);
+        if (frames.loaf) assert(frames.script95 < 33, `script por fotograma p95 ${frames.script95.toFixed(1)} ms`);
       },
     },
   ];

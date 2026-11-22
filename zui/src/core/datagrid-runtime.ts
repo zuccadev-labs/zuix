@@ -93,6 +93,12 @@ export function bindColumnResize(table: HTMLTableElement, o: ResizeOptions = {})
     const w = set(th, handle, th.getBoundingClientRect().width + step);
     o.onResize?.(keyOf(th), w);
   };
+  // El valor del separador es el ancho real (el marcado de servidor solo puede dar uno aproximado).
+  for (const handle of table.querySelectorAll<HTMLElement>("thead .z-table__resize")) {
+    const th = handle.closest("th");
+    const w = th ? Math.round(th.getBoundingClientRect().width) : 0;
+    if (w > 0) handle.setAttribute("aria-valuenow", String(w));
+  }
   table.addEventListener("pointerdown", down);
   table.addEventListener("pointermove", move);
   table.addEventListener("pointerup", up);
