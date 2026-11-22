@@ -83,14 +83,13 @@ export const emojiPickerInitial = (c: EmojiPickerConfig): EmojiPickerState => ({
 interface Section {
   id: string;
   label: string;
-  icon: string;
   emojis: Emoji[];
 }
 
 /** Lo que se ve: el resultado de la búsqueda, o recientes y categorías. */
 export function pickerSections(c: EmojiPickerConfig, s: EmojiPickerState): Section[] {
   const set = s.set ?? [];
-  if (s.query.trim()) return [{ id: "results", label: c.labels.emojis, icon: "magnifying-glass", emojis: searchEmoji(set, s.query) }];
+  if (s.query.trim()) return [{ id: "results", label: c.labels.emojis, emojis: searchEmoji(set, s.query) }];
   const all = set.flatMap((cat) => cat.emojis);
   const recent = s.recent
     .map((char) => all.find((e) => e.char === char || withTone(e, SKIN_TONES[s.tone] ?? "") === char) ?? { char, name: char, keywords: [] })
@@ -98,10 +97,9 @@ export function pickerSections(c: EmojiPickerConfig, s: EmojiPickerState): Secti
   const sections = set.map((cat) => ({
     id: cat.id,
     label: c.labels.categories?.[cat.id] ?? cat.label,
-    icon: cat.icon,
     emojis: [...cat.emojis],
   }));
-  return recent.length ? [{ id: "recent", label: c.labels.recent, icon: "clock", emojis: recent }, ...sections] : sections;
+  return recent.length ? [{ id: "recent", label: c.labels.recent, emojis: recent }, ...sections] : sections;
 }
 
 const flat = (sections: readonly Section[]) => sections.flatMap((sec) => sec.emojis);
@@ -162,7 +160,10 @@ export function emojiPickerTree(c: EmojiPickerConfig, s: EmojiPickerState, uid: 
                 title: sec.label,
                 tabindex: -1,
               },
-              icon(sec.icon, 16),
+              // La pestaña muestra el primer emoji de su categoría (o un reloj para los recientes): sin iconos de más.
+              sec.id === "recent"
+                ? icon("clock", 16)
+                : h("span", { class: "z-emoji-picker__tab-glyph", "aria-hidden": "true" }, sec.emojis[0]?.char ?? ""),
             ),
           ),
         ),

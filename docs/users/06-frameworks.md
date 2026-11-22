@@ -231,10 +231,10 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 | `init()` del núcleo con agenda | — | 341 kB |
 | `init()` del núcleo con tiempo | — | 140 kB |
 | `init()` del núcleo con terminal y código | — | 156 kB |
-| `init()` del núcleo con chat | — | 258 kB |
-| `init()` del núcleo con IA | — | 227 kB |
-| `init()` del núcleo con chat e IA | — | 322 kB |
-| `init()` completo | 526 kB | 812 kB |
+| `init()` del núcleo con chat | — | 233 kB |
+| `init()` del núcleo con IA | — | 225 kB |
+| `init()` del núcleo con chat e IA | — | 300 kB |
+| `init()` completo | 526 kB | 798 kB |
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.

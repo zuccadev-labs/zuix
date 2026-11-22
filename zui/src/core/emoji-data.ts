@@ -17,8 +17,6 @@ export interface EmojiCategory {
   id: string;
   /** Nombre visible de la categoría (en inglés por defecto; la aplicación lo traduce). */
   label: string;
-  /** Icono de la pestaña (zicon). */
-  icon: string;
   emojis: readonly Emoji[];
 }
 
@@ -29,11 +27,10 @@ export const fromCodes = (codes: string) => String.fromCodePoint(...codes.split(
 
 type Row = readonly [codes: string, name: string, keywords: string, tone?: 1];
 
-const RAW: readonly (readonly [id: string, label: string, icon: string, rows: readonly Row[]])[] = [
+const RAW: readonly (readonly [id: string, label: string, rows: readonly Row[]])[] = [
   [
     "smileys",
     "Smileys",
-    "face-smile",
     [
       ["1f600", "grinning face", "happy smile grin"],
       ["1f603", "grinning face with big eyes", "happy joy smile"],
@@ -71,7 +68,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "people",
     "People",
-    "hand",
     [
       ["1f44d", "thumbs up", "like yes ok +1", 1],
       ["1f44e", "thumbs down", "dislike no -1", 1],
@@ -91,7 +87,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "nature",
     "Animals & nature",
-    "sun",
     [
       ["1f436", "dog face", "dog puppy pet"],
       ["1f431", "cat face", "cat kitten pet"],
@@ -112,7 +107,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "food",
     "Food & drink",
-    "cake",
     [
       ["1f34e", "red apple", "apple fruit"],
       ["1f34b", "lemon", "lemon fruit"],
@@ -132,7 +126,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "activities",
     "Activities",
-    "trophy",
     [
       ["26bd", "soccer ball", "football sport"],
       ["1f3c0", "basketball", "sport ball"],
@@ -149,7 +142,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "travel",
     "Travel & places",
-    "globe-alt",
     [
       ["1f697", "automobile", "car drive"],
       ["1f6b2", "bicycle", "bike"],
@@ -164,7 +156,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "objects",
     "Objects",
-    "light-bulb",
     [
       ["1f4f1", "mobile phone", "phone cell"],
       ["1f4bb", "laptop", "computer"],
@@ -185,7 +176,6 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
   [
     "symbols",
     "Symbols",
-    "heart",
     [
       ["2764-fe0f", "red heart", "love heart like"],
       ["1f9e1", "orange heart", "love heart"],
@@ -207,10 +197,9 @@ const RAW: readonly (readonly [id: string, label: string, icon: string, rows: re
 ];
 
 /** Conjunto por defecto de la suite. */
-export const EMOJI_SET: EmojiSet = RAW.map(([id, label, icon, rows]) => ({
+export const EMOJI_SET: EmojiSet = RAW.map(([id, label, rows]) => ({
   id,
   label,
-  icon,
   emojis: rows.map(([codes, name, keywords, tone]) => ({
     char: fromCodes(codes),
     name,

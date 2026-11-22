@@ -472,7 +472,7 @@ function attachmentNodes(m: ChatMessage, ctx: BubbleContext): VNode[] {
           { class: "z-message-location__body", key: "body" },
           h("span", { class: "z-message-location__title" }, a.title ?? ctx.labels.location),
           a.address ? h("span", { class: "z-message-location__address" }, a.address) : null,
-          href ? h("span", { class: "z-message-location__open" }, ctx.labels.openMap, icon("arrow-top-right-on-square", 12)) : null,
+          href ? h("span", { class: "z-message-location__open" }, ctx.labels.openMap, icon("chevron-right", 12)) : null,
         ),
       ];
       out.push(

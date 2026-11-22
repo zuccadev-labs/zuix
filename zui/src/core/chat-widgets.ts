@@ -365,11 +365,11 @@ export const callCardWidget: Widget<CallCardProps, CallConfig, CallState> = {
           : c.kind === "outgoing"
             ? [callButton("z-call__decline z-call__hangup", "phone-x-mark", labels.hangUp)]
             : [
-                callButton("z-call__toggle z-call__mute", s.muted ? "microphone-slash" : "microphone", labels.mute, {
+                callButton("z-call__toggle z-call__mute", "microphone", labels.mute, {
                   "aria-pressed": s.muted ? "true" : "false",
                 }),
                 c.video
-                  ? callButton("z-call__toggle z-call__camera", s.camera ? "video-camera" : "video-camera-slash", labels.camera, {
+                  ? callButton("z-call__toggle z-call__camera", "video-camera", labels.camera, {
                       "aria-pressed": s.camera ? "true" : "false",
                     })
                   : null,

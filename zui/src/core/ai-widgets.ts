@@ -168,7 +168,7 @@ export const AI_LABELS: AiLabels = {
 
 const TOOL_ICON: Record<ToolStatus, string> = {
   pending: "clock",
-  "input-streaming": "ellipsis-horizontal",
+  "input-streaming": "clock",
   running: "arrow-path",
   "awaiting-approval": "hand",
   success: "check-circle",
@@ -663,7 +663,7 @@ function assistantTree(c: AssistantConfig, s: AssistantState, uid: string): VEl 
         : null,
       ...body,
       c.state === "stopped"
-        ? h("p", { class: "z-assistant-message__note", "data-tone": "muted" }, icon("stop-circle", 14), labels.stoppedNote)
+        ? h("p", { class: "z-assistant-message__note", "data-tone": "muted" }, icon("stop", 14), labels.stoppedNote)
         : null,
       c.state === "error"
         ? h(
@@ -1119,7 +1119,7 @@ const STEP_ICON: Record<StepStatus, string> = {
   running: "arrow-path",
   done: "check-circle",
   failed: "x-circle",
-  skipped: "chevron-double-right",
+  skipped: "minus-circle",
 };
 
 export interface AgentPlanProps {

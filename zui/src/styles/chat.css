@@ -1646,6 +1646,18 @@
       color: var(--z-fg);
     }
   }
+  .z-emoji-picker__tab-glyph {
+    font-size: var(--z-text-reading);
+    line-height: 1;
+    filter: grayscale(1);
+    opacity: 0.75;
+  }
+  @media (hover: hover) {
+    .z-emoji-picker__tab:hover .z-emoji-picker__tab-glyph {
+      filter: none;
+      opacity: 1;
+    }
+  }
   .z-emoji-picker__grid {
     block-size: 252px;
     overflow-y: auto;

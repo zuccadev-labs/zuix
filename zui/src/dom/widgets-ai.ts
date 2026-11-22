@@ -7,7 +7,6 @@ import { arrowPath } from "@zuccadev-labs/zuix-zicon/icons/arrow-path";
 import { arrowUp } from "@zuccadev-labs/zuix-zicon/icons/arrow-up";
 import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
 import { checkCircle } from "@zuccadev-labs/zuix-zicon/icons/check-circle";
-import { chevronDoubleRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-right";
 import { chevronDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-down";
 import { chevronLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-left";
 import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
@@ -16,7 +15,6 @@ import { clock } from "@zuccadev-labs/zuix-zicon/icons/clock";
 import { codeBracket } from "@zuccadev-labs/zuix-zicon/icons/code-bracket";
 import { copy } from "@zuccadev-labs/zuix-zicon/icons/copy";
 import { documentText } from "@zuccadev-labs/zuix-zicon/icons/document-text";
-import { ellipsisHorizontal } from "@zuccadev-labs/zuix-zicon/icons/ellipsis-horizontal";
 import { exclamationCircle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-circle";
 import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-triangle";
 import { hand } from "@zuccadev-labs/zuix-zicon/icons/hand";
@@ -31,7 +29,6 @@ import { shieldCheck } from "@zuccadev-labs/zuix-zicon/icons/shield-check";
 import { shieldExclamation } from "@zuccadev-labs/zuix-zicon/icons/shield-exclamation";
 import { sparkles } from "@zuccadev-labs/zuix-zicon/icons/sparkles";
 import { stop } from "@zuccadev-labs/zuix-zicon/icons/stop";
-import { stopCircle } from "@zuccadev-labs/zuix-zicon/icons/stop-circle";
 import { user } from "@zuccadev-labs/zuix-zicon/icons/user";
 import { wrench } from "@zuccadev-labs/zuix-zicon/icons/wrench";
 import { xCircle } from "@zuccadev-labs/zuix-zicon/icons/x-circle";
@@ -57,7 +54,6 @@ registerIcons([
   arrowUp,
   check,
   checkCircle,
-  chevronDoubleRight,
   chevronDown,
   chevronLeft,
   chevronRight,
@@ -66,7 +62,6 @@ registerIcons([
   codeBracket,
   copy,
   documentText,
-  ellipsisHorizontal,
   exclamationCircle,
   exclamationTriangle,
   hand,
@@ -81,7 +76,6 @@ registerIcons([
   shieldExclamation,
   sparkles,
   stop,
-  stopCircle,
   user,
   wrench,
   xCircle,
