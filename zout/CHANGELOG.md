@@ -37,8 +37,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `SettingsLayout`: en estrecho, la tira de secciones difumina el borde con secciones ocultas (`data-scroll-edges`,
   también en `/dom`) en lugar de cortar la última en seco.
 - `Sidebar`: una lista más alta que la barra difumina el borde con filas ocultas (arriba, abajo o los dos) en vez de
-  cortar la última fila a media altura, donde parecía un elemento roto. Solo con algo por ese lado; donde no hay
-  animaciones ligadas al desplazamiento (Firefox), la lista se corta como antes.
+  cortar la última fila a media altura, donde parecía un elemento roto. Solo con algo por ese lado; en un navegador sin
+  animaciones ligadas al desplazamiento, la lista se corta como antes.
 
 ## [0.3.0] - 2026-11-21
 
