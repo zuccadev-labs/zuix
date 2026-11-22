@@ -187,6 +187,22 @@ export default async function ({ page, test, ok, note }) {
       nodeCanvas(el).setViewport({ x: 16, y: 16, zoom: 0.8 });
       await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
       const mount = performance.now() - t0;
+      // Calentamiento: los primeros desplazamientos compilan el camino del recorte y pintan nodos nuevos por primera vez.
+      // Un único fotograma largo ahí era toda la muestra (la mediana de uno) y decidía la prueba.
+      const r0 = el.getBoundingClientRect();
+      for (let i = 0; i < 12; i++) {
+        el.dispatchEvent(
+          new WheelEvent("wheel", {
+            deltaX: 16,
+            deltaY: 10,
+            clientX: r0.left + 100,
+            clientY: r0.top + 100,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+        await new Promise((done) => requestAnimationFrame(done));
+      }
       const loaf = [];
       const supported = PerformanceObserver.supportedEntryTypes?.includes("long-animation-frame");
       const observer = supported
