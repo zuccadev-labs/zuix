@@ -20,7 +20,7 @@
 //
 // Uso (desde la raíz; antes `pnpm check` y, para el sitio, el build de zudocs):
 //   pnpm audit:visual [--target site,app,html] [--brands dazlabs,zutool,zenith] [--themes dark,light]
-//                     [--widths 1440,768,390] [--filter <texto>] [--out <carpeta>] [--shots] [--no-axe]
+//                     [--widths 1440,768,390] [--filter <texto>[,<texto>…]] [--out <carpeta>] [--shots] [--no-axe]
 //                     [--site <carpeta compilada>] [--base /ruta/] [--max <n páginas>] [--report]
 //   AUDIT_OUT=<carpeta>  carpeta de salida (por defecto .tmp/visual-audit, fuera del control de versiones)
 //   --report             reclasifica el último raw.json sin abrir el navegador (para afinar los detectores)
@@ -1003,7 +1003,8 @@ async function run() {
       const srv = await viteServer();
       servers.push(srv);
       for (const screen of appScreens()) {
-        if (filter && !screen.includes(filter)) continue;
+        // Varias pantallas separadas por comas: `--filter dashboard,kanban`.
+        if (filter && !filter.split(",").some((f) => f && screen.includes(f))) continue;
         for (const brand of brands)
           for (const theme of themes)
             for (const width of widths)

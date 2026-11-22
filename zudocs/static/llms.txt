@@ -64,9 +64,12 @@
 - [ButtonGroup](https://zuccadev-labs.github.io/zuix/components/actions/button-group.md): Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.
 - [CopyButton](https://zuccadev-labs.github.io/zuix/components/actions/copy-button.md): Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.
 - [DownloadTrigger](https://zuccadev-labs.github.io/zuix/components/actions/download-trigger.md): Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL.
+- [Fab](https://zuccadev-labs.github.io/zuix/components/actions/fab.md): Botón de acción flotante (FAB de Material 3): un cuadrado de esquinas redondeadas con la acción principal de la pantalla, en tres tamaños; extendido con texto que se pliega con `collapsed`; fijo en…
+- [FabMenu](https://zuccadev-labs.github.io/zuix/components/actions/fab-menu.md): FAB que abre un menú de acciones por encima (FAB menu de Material 3, Speed Dial de MUI).
 - [IconButton](https://zuccadev-labs.github.io/zuix/components/actions/icon-button.md): Botón cuadrado de solo icono con nombre accesible obligatorio.
 - [Link](https://zuccadev-labs.github.io/zuix/components/actions/link.md): Enlace de texto: dentro de un párrafo, discreto o como acción suelta.
 - [SegmentedControl](https://zuccadev-labs.github.io/zuix/components/actions/segmented-control.md): Selector de una opción entre pocas; siempre hay una elegida.
+- [SplitButton](https://zuccadev-labs.github.io/zuix/components/actions/split-button.md): Botón dividido: la acción principal y, pegado a ella, un botón con flecha que abre las alternativas; la flecha gira al abrir.
 - [Swap](https://zuccadev-labs.github.io/zuix/components/actions/swap.md): Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna).
 - [Toggle](https://zuccadev-labs.github.io/zuix/components/actions/toggle.md): Botón de dos estados (activado o no), con texto, icono o ambos.
 - [ToggleGroup](https://zuccadev-labs.github.io/zuix/components/actions/toggle-group.md): Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).
@@ -239,6 +242,8 @@
 
 - [CompareSlider](https://zuccadev-labs.github.io/zuix/components/media/compare-slider.md): Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado.
 - [ImageCropper](https://zuccadev-labs.github.io/zuix/components/media/image-cropper.md): Recortador de imagen: área que se mueve y se redimensiona desde ocho asas, relación de aspecto fija o libre, forma rectangular o circular, rejilla de tercios y teclado.
+- [ImageList](https://zuccadev-labs.github.io/zuix/components/media/image-list.md): Lista de imágenes: rejilla regular (`standard`), acolchada con piezas de distinto tamaño (`quilted`), tejida (`woven`) o en mampostería (`masonry`), con título opcional encima o debajo.
+- [Masonry](https://zuccadev-labs.github.io/zuix/components/media/masonry.md): Mampostería: piezas de alto distinto en columnas sin huecos (tarjetas, notas, fotos).
 - [QRCode](https://zuccadev-labs.github.io/zuix/components/media/qr-code.md): Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con…
 - [SignaturePad](https://zuccadev-labs.github.io/zuix/components/media/signature-pad.md): Lienzo de firma: trazos con el puntero (con presión si el dispositivo la da, trazado suavizado), deshacer y borrar, y la alternativa accesible de escribir el nombre.
 
@@ -258,19 +263,54 @@
 - [LogConsole](https://zuccadev-labs.github.io/zuix/components/terminal/log-console.md): Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado.
 - [Terminal](https://zuccadev-labs.github.io/zuix/components/terminal/terminal.md): Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y…
 
+## Componentes: Dashboard y tableros
+
+- [ActivityFeed](https://zuccadev-labs.github.io/zuix/components/dashboard/activity-feed.md): Actividad reciente: avatar o icono, «Ana **closed** #42», hora relativa con la absoluta en <time>, agrupada por día en la zona de la persona y con «Load more».
+- [BarList](https://zuccadev-labs.github.io/zuix/components/dashboard/bar-list.md): Barras horizontales con etiqueta y valor: los primeros de algo (páginas, fuentes de tráfico, países).
+- [DashboardGrid](https://zuccadev-labs.github.io/zuix/components/dashboard/dashboard-grid.md): Rejilla de tarjetas de un dashboard: 12 columnas, cada pieza con columna, fila, ancho y alto.
+- [DeltaBadge](https://zuccadev-labs.github.io/zuix/components/dashboard/delta-badge.md): Variación frente al periodo anterior: flecha, magnitud y una frase para el lector con el sentido («up 12.4%, better than last month»).
+- [FunnelChart](https://zuccadev-labs.github.io/zuix/components/dashboard/funnel-chart.md): Embudo: etapas con su valor, la conversión frente a la anterior y la total, y lo perdido entre etapas en trama tenue.
+- [Gauge](https://zuccadev-labs.github.io/zuix/components/dashboard/gauge.md): Indicador radial: semicírculo (180°), 240° o anillo completo, con zonas (cada una con su nombre y su trazo), arco de valor y aguja opcional.
+- [KanbanBoard](https://zuccadev-labs.github.io/zuix/components/dashboard/kanban-board.md): Tablero kanban: columnas con contador (y límite de trabajo en curso) y tarjetas con etiquetas, prioridad, fecha y personas, que se arrastran entre columnas con el puntero o se mueven con el teclado.
+- [Leaderboard](https://zuccadev-labs.github.io/zuix/components/dashboard/leaderboard.md): Clasificación sencilla: rango (con empates), persona, valor con barra y variación.
+- [MetricCard](https://zuccadev-labs.github.io/zuix/components/dashboard/metric-card.md): Tarjeta de KPI completa: etiqueta, valor, variación con su sentido, minigráfico, meta con ritmo, nota y acciones; estados de carga, vacío y error.
+- [MetricGroup](https://zuccadev-labs.github.io/zuix/components/dashboard/metric-group.md): Fila de KPI: varias MetricCard en una banda de cristal con separadores (`glass`) o sueltas (`split`).
+- [ProgressGoal](https://zuccadev-labs.github.io/zuix/components/dashboard/progress-goal.md): Avance hacia una meta con la marca del ritmo esperado: con `elapsed` dice si vas por delante, en ritmo o por detrás («92% of expected pace»).
+- [Tracker](https://zuccadev-labs.github.io/zuix/components/dashboard/tracker.md): Tira de estados por día (disponibilidad de un servicio, ejecuciones de un trabajo) con la disponibilidad calculada y la etiqueta del día activo al pasar el puntero o con el foco.
+
+## Componentes: Usuarios y perfiles
+
+- [AccountMenu](https://zuccadev-labs.github.io/zuix/components/people/account-menu.md): Menú de cuenta: botón con el avatar que abre un Menu con la persona en la cabecera, cambio de cuenta (radio), entradas propias, tema y salir.
+- [MemberList](https://zuccadev-labs.github.io/zuix/components/people/member-list.md): Lista de miembros: búsqueda que anuncia los resultados, grupos por rol o por presencia, rol en un selector nativo, quitar con nombre propio e invitar.
+- [Persona](https://zuccadev-labs.github.io/zuix/components/people/persona.md): Persona: avatar, nombre, línea secundaria (rol, correo) y presencia, en fila o en columna y en cinco tamaños.
+- [PresenceBadge](https://zuccadev-labs.github.io/zuix/components/people/presence-badge.md): Presencia de una persona: disponible, ausente, ocupada, no molestar, desconectada o fuera de la oficina, con «visto hace…» cuando se sabe.
+- [ProfileEditor](https://zuccadev-labs.github.io/zuix/components/people/profile-editor.md): Editor de perfil: foto (elegir y quitar), nombre, usuario, correo, web, ubicación y biografía con contador.
+- [ProfileHeader](https://zuccadev-labs.github.io/zuix/components/people/profile-header.md): Cabecera de perfil: portada a sangre, avatar superpuesto con anillo de cristal, nombre (h1), insignias, usuario, rol, biografía, metadatos, estadísticas, acciones y pestañas.
+- [SettingsSection](https://zuccadev-labs.github.io/zuix/components/people/settings-section.md): Sección de ajustes con filas: título, descripción, superficie de lectura con filas etiqueta–descripción–control (SettingRow) y pie con acciones.
+- [UserCard](https://zuccadev-labs.github.io/zuix/components/people/user-card.md): Tarjeta de persona: portada, avatar superpuesto, nombre, usuario, rol, biografía corta, estadísticas y acciones (seguir, mensaje).
+
 ## Componentes: Layouts
 
+- [AppBar](https://zuccadev-labs.github.io/zuix/components/layout/app-bar.md): Barra de aplicación superior (top app bar de Material 3): pequeña, mediana o grande.
+- [AuthLayout](https://zuccadev-labs.github.io/zuix/components/layout/auth-layout.md): Página de acceso (entrar, registrarse, recuperar): tarjeta de cristal centrada sobre el lienzo (`centered`) o dividida con un lado de imagen (`split`).
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.
+- [DashboardLayout](https://zuccadev-labs.github.io/zuix/components/layout/dashboard-layout.md): Página de dashboard: cabecera con título y acciones, barra de filtros fija bajo ella, contenido (DashboardGrid, MetricGroup) y panel lateral opcional.
+- [DocsLayout](https://zuccadev-labs.github.io/zuix/components/layout/docs-layout.md): Página de documentación: barra superior, navegación de páginas, artículo, índice con la sección que se lee marcada y paginación anterior/siguiente.
 - [Float](https://zuccadev-labs.github.io/zuix/components/layout/float.md): Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.
 - [FloatingPanel](https://zuccadev-labs.github.io/zuix/components/layout/floating-panel.md): Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.
 - [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.
+- [KanbanLayout](https://zuccadev-labs.github.io/zuix/components/layout/kanban-layout.md): Página de tablero: cabecera con título, acciones y filtros, y el tablero (KanbanBoard) a todo el ancho con desplazamiento horizontal por columnas (una por pantalla en móvil).
+- [LandingLayout](https://zuccadev-labs.github.io/zuix/components/layout/landing-layout.md): Página de presentación: barra del sitio, héroe (el único h1), secciones (funciones en rejilla, banda de llamada en cristal, bloque tenue) y pie.
+- [MailLayout](https://zuccadev-labs.github.io/zuix/components/layout/mail-layout.md): Correo: carpetas, lista de mensajes y lectura.
 - [Navbar](https://zuccadev-labs.github.io/zuix/components/layout/navbar.md): Barra de navegación de un sitio, de cristal: flotante (dos barras separadas), dock (una barra compacta centrada) o de borde a borde; pegajosa, fija o en su sitio.
 - [NavigationMenu](https://zuccadev-labs.github.io/zuix/components/layout/navigation-menu.md): Menús de un sitio con paneles: enlaces y grupos cuyo botón abre un panel de enlaces con icono y descripción, en una o varias columnas.
 - [Page](https://zuccadev-labs.github.io/zuix/components/layout/page.md): Página con desplazamiento propio, cabecera y secciones.
 - [PaneHeader](https://zuccadev-labs.github.io/zuix/components/layout/pane-header.md): Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.
 - [PaneLayout](https://zuccadev-labs.github.io/zuix/components/layout/pane-layout.md): Mosaico de paneles redimensionables: árbol de divisiones, cabecera y menú por panel, y arrastre de un panel al borde de otro.
+- [ProfileLayout](https://zuccadev-labs.github.io/zuix/components/layout/profile-layout.md): Página de perfil: cabecera (ProfileHeader), pestañas, contenido y una columna lateral (UserCard, miembros, actividad) que baja bajo el contenido en estrecho.
 - [Rail](https://zuccadev-labs.github.io/zuix/components/layout/rail.md): Barra estrecha de navegación principal, solo iconos.
 - [ResizeHandle](https://zuccadev-labs.github.io/zuix/components/layout/resize-handle.md): Tirador para redimensionar un panel, con puntero y teclado.
+- [SettingsLayout](https://zuccadev-labs.github.io/zuix/components/layout/settings-layout.md): Página de ajustes: navegación lateral con anclas a las secciones, contenido (SettingsSection) y barra de guardar fija al pie cuando hay cambios sin guardar.
 - [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.
 - [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.
 - [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.

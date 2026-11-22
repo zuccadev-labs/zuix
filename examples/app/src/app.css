@@ -579,7 +579,7 @@ body {
   gap: var(--z-space-6);
 }
 .app-profile-form {
-  padding: var(--z-space-5);
+  padding-block: var(--z-space-5);
 }
 .app-fab {
   position: sticky;

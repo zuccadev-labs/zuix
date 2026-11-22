@@ -391,6 +391,7 @@
   /* ---- ProfileHeader ---- */
   .z-profile-header {
     container: z-profile-header / inline-size;
+    inline-size: 100%;
     display: flex;
     flex-direction: column;
     min-inline-size: 0;
@@ -790,6 +791,7 @@
     border-block-start: 1px solid var(--z-line);
   }
   .z-profile-editor__status {
+    flex: 1 1 10rem;
     margin-inline-end: auto;
     color: var(--z-fg-muted);
     font-size: var(--z-text-small);
@@ -820,6 +822,7 @@
   }
   .z-settings-section__body {
     container: z-settings / inline-size;
+    inline-size: 100%;
     display: flex;
     flex-direction: column;
     padding-inline: var(--z-space-5);
@@ -873,6 +876,11 @@
     align-items: flex-end;
     gap: var(--z-space-1);
     min-inline-size: 0;
+  }
+  /* Un interruptor sin texto (lo nombra la fila): su caja llega al objetivo táctil. */
+  .z-setting-row__control > .z-switch {
+    min-inline-size: var(--z-touch-target);
+    justify-content: flex-end;
   }
   .z-setting-row[data-stacked] .z-setting-row__control {
     align-items: stretch;

@@ -284,6 +284,7 @@
   /* ---- MetricGroup (fila de KPI) ---- */
   .z-metric-group {
     container: z-metric-group / inline-size;
+    inline-size: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
     border-radius: var(--z-card-radius);
@@ -580,6 +581,7 @@
   /* ---- FunnelChart ---- */
   .z-funnel {
     container: z-funnel / inline-size;
+    inline-size: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-4);
@@ -885,6 +887,7 @@
   /* ---- Leaderboard ---- */
   .z-leaderboard {
     container: z-leaderboard / inline-size;
+    inline-size: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-1);
@@ -999,6 +1002,7 @@
   /* ---- DashboardGrid ---- */
   .z-dashboard-grid {
     container: z-dashboard-grid / inline-size;
+    inline-size: 100%;
     min-inline-size: 0;
   }
   .z-dashboard-grid__canvas {
@@ -1086,7 +1090,13 @@
     user-select: none;
     transition: background var(--z-duration-fast) var(--z-ease-standard);
   }
-  .z-dashboard-grid__handle:is(:hover, :focus-visible) {
+  @media (hover: hover) {
+    .z-dashboard-grid__handle:hover {
+      background: var(--z-surface-3);
+      color: var(--z-fg);
+    }
+  }
+  .z-dashboard-grid__handle:focus-visible {
     background: var(--z-surface-3);
     color: var(--z-fg);
   }
@@ -1215,7 +1225,7 @@
     .z-dashboard-grid__item {
       grid-column: 1 / -1;
       grid-row: auto;
-      min-block-size: calc(var(--z-h, 1) * var(--z-grid-row, 88px) * 0.85);
+      min-block-size: 0;
     }
     .z-dashboard-grid__resize,
     .z-dashboard-grid__canvas[data-drop]::after {
@@ -1226,6 +1236,7 @@
   /* ---- KanbanBoard ---- */
   .z-kanban {
     container: z-kanban / inline-size;
+    inline-size: 100%;
     min-inline-size: 0;
   }
   .z-kanban__board {

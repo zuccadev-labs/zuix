@@ -153,6 +153,7 @@
   /* ---- ImageList ---- */
   .z-image-list {
     container: z-image-list / inline-size;
+    inline-size: 100%;
     display: grid;
     grid-template-columns: repeat(var(--z-image-cols, 3), minmax(0, 1fr));
     grid-auto-rows: var(--z-image-row, 164px);
