@@ -1,6 +1,7 @@
 "use client";
-import type { KeyboardEvent, ReactNode } from "react";
+import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { trackScrollEdges } from "../../core/edges";
 import { cx } from "../../cx";
 import { Toolbar } from "../actions/Toolbar";
 
@@ -38,6 +39,9 @@ export function ActionBar({
   position = "fixed",
   className,
 }: ActionBarProps) {
+  // Las acciones desplazan si no caben: el borde con acciones ocultas se difumina.
+  const actions = useRef<HTMLSpanElement>(null);
+  useEffect(() => (open && actions.current ? trackScrollEdges(actions.current) : undefined), [open]);
   if (!open) return null;
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== "Escape" || event.defaultPrevented || !onClose) return;
@@ -50,7 +54,9 @@ export function ActionBar({
         {count}
       </span>
       <span role="separator" aria-orientation="vertical" className="z-toolbar__separator" />
-      <span className="z-actionbar__actions">{children}</span>
+      <span ref={actions} className="z-actionbar__actions">
+        {children}
+      </span>
       {onClose ? (
         <button type="button" className="z-actionbar__close" aria-label={closeLabel} title={closeLabel} onClick={onClose}>
           <Icon name="x-mark" size={14} />

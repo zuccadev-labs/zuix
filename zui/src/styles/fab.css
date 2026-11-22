@@ -155,7 +155,12 @@
     container: z-image-list / inline-size;
     inline-size: 100%;
     display: grid;
-    grid-template-columns: repeat(var(--z-image-cols, 3), minmax(0, 1fr));
+    /* Hasta `--z-image-cols` columnas de 7rem como mínimo: en estrecho caben menos y cada una conserva sitio para su
+       pie. La consulta de contenedor que lo hacía no podía funcionar: un elemento no consulta su propio tamaño. */
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(max(7rem, calc((100% - (var(--z-image-cols, 3) - 1) * var(--z-space-2)) / var(--z-image-cols, 3))), 1fr)
+      );
     grid-auto-rows: var(--z-image-row, 164px);
     gap: var(--z-space-2);
     margin: 0;
@@ -203,7 +208,7 @@
   }
   .z-image-list[data-variant="masonry"] {
     display: block;
-    columns: var(--z-image-cols, 3);
+    columns: 7rem var(--z-image-cols, 3);
     column-gap: var(--z-space-2);
   }
   .z-image-list[data-variant="masonry"] .z-image-list__item {
@@ -256,14 +261,6 @@
     font-size: var(--z-text-caption);
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  @container z-image-list (inline-size < 480px) {
-    .z-image-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .z-image-list[data-variant="masonry"] {
-      columns: 2;
-    }
   }
 
   /* ---- Masonry ---- */

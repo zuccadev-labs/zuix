@@ -803,7 +803,7 @@
    "examples": [
     {
      "title": "Tamaños y extendido",
-     "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <Fab icon=\"plus\" label=\"New\" size=\"sm\" />\n  <Fab icon=\"pencil\" label=\"Compose\" />\n  <Fab icon=\"plus\" label=\"Create\" size=\"lg\" variant=\"secondary\" />\n  <Fab icon=\"pencil-square\" label=\"New message\" extended />\n</div>"
+     "code": "<div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 16, alignItems: \"center\" }}>\n  <Fab icon=\"plus\" label=\"New\" size=\"sm\" />\n  <Fab icon=\"pencil\" label=\"Compose\" />\n  <Fab icon=\"plus\" label=\"Create\" size=\"lg\" variant=\"secondary\" />\n  <Fab icon=\"pencil-square\" label=\"New message\" extended />\n</div>"
     }
    ],
    "origin": "FAB, medium/large FAB y extended FAB de Material 3; FloatButton de Ant Design.",

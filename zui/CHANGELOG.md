@@ -185,6 +185,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `OTPInput`: las casillas ceden ancho (hasta la altura de un control pequeño) en una columna más estrecha que el
   código; la sexta casilla se salía del grupo.
 - `VoiceNote`: las barras de la onda se reparten su ancho sin hueco fijo; en una burbuja de teléfono pasaban del borde.
+- `ChatHeader`: el avatar no sale de su identidad aunque las acciones aprieten.
+- `Artifact`: en una barra estrecha los controles bajan a otra línea; el título quedaba en 0 px y las acciones se
+  salían.
+- `ToolCall`: el nombre de la herramienta no cede ancho; lo cede el identificador.
+- `ImageList`: hasta `--z-image-cols` columnas de 7rem como mínimo; en estrecho caben menos y el pie de cada imagen
+  se lee. La consulta de contenedor que pasaba a dos columnas no se aplicaba (el elemento consultaba su propio
+  tamaño). `StatTile`: la cifra no parte línea. `AccountMenu` con avatar no se estira con su contenedor. `ActionBar`:
+  el borde con acciones ocultas se difumina.
 - `CodeViewer` y `LogConsole`: el tinte del código va sobre una base opaca. Sobre un fondo oscuro, los comentarios, los
   números de línea y el filtro de niveles bajaban a 4,46:1 en zutool claro.
 - `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar

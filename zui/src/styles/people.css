@@ -679,6 +679,12 @@
     text-align: start;
     cursor: pointer;
   }
+  /* Con avatar es un círculo: no se estira con su contenedor (una columna flex lo dejaba en 310 × 36). */
+  .z-account-menu[data-variant="avatar"] {
+    align-self: flex-start;
+    justify-self: start;
+    inline-size: fit-content;
+  }
   .z-account-menu[data-variant="full"] {
     inline-size: 100%;
     min-block-size: var(--z-control-height-lg);

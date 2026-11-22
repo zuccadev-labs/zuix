@@ -400,7 +400,10 @@
     background: var(--z-surface-3);
     color: var(--z-fg-muted);
   }
+  /* El nombre de la herramienta no cede: lo hace el identificador, que es un código. */
   .z-tool-call__name {
+    flex-shrink: 0;
+    max-inline-size: 60%;
     overflow: hidden;
     font-weight: var(--z-weight-semibold);
     white-space: nowrap;
@@ -1377,8 +1380,10 @@
     overflow: hidden;
     color: var(--z-fg);
   }
+  /* Estrecha, los controles bajan a otra línea: en la misma, el título quedaba en 0 px y las acciones se salían. */
   .z-artifact__bar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--z-space-2);
     padding: var(--z-space-2) var(--z-space-2) var(--z-space-2) var(--z-space-3);
@@ -1390,7 +1395,7 @@
   }
   .z-artifact__titles {
     display: flex;
-    flex: 1;
+    flex: 1 1 8rem;
     flex-direction: column;
     min-inline-size: 0;
   }

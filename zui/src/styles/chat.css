@@ -229,6 +229,10 @@
     font: inherit;
     text-align: start;
   }
+  /* El avatar no sale de su identidad aunque las acciones aprieten (sin moreActions, en una cabecera estrecha). */
+  .z-chat-header__identity {
+    min-inline-size: calc(var(--z-control-height-lg) + var(--z-space-1));
+  }
   button.z-chat-header__identity {
     cursor: pointer;
   }
@@ -738,7 +742,7 @@
     justify-content: space-between;
     flex: 1;
     block-size: 32px;
-    min-inline-size: 96px;
+    min-inline-size: var(--z-space-12);
     border-radius: var(--z-radius-xs);
     cursor: pointer;
     touch-action: none;

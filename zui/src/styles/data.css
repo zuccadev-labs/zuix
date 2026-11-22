@@ -615,8 +615,11 @@
     background: var(--z-accent-soft);
     color: var(--z-accent-text);
   }
+  /* Una cifra no parte línea («$12.4k» partía en «$12.4» y «k» en una baldosa estrecha). */
   .z-stat__value {
     margin-top: auto;
+    overflow-wrap: normal;
+    white-space: nowrap;
     font-family: var(--z-font-display);
     font-size: var(--z-text-display-sm);
     font-weight: var(--z-weight-display);
