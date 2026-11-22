@@ -376,3 +376,793 @@
     }
   }
 }
+
+/* ---------- v0.4: layouts de M3, efectos de profundidad, mazo, bucle sin réplicas y progreso ---------- */
+
+/* Distancia de cada slide a su punto de ajuste, en slides (−3 … 3, en orden de lectura). La anima el navegador
+   (animaciones ligadas al desplazamiento) o la escribe el motor donde no las hay. Heredable: la leen las capas. */
+@property --z-slide-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+/* Llenado del indicador `progress` durante un intervalo de la reproducción automática. */
+@property --z-carousel-fill {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+
+@layer zui.carousel {
+  .z-carousel {
+    --z-carousel-depth: 1;
+    --z-carousel-dir: 1;
+    --z-carousel-interval: 5000ms;
+  }
+  [dir="rtl"] .z-carousel {
+    --z-carousel-dir: -1;
+  }
+  .z-carousel__slide {
+    /* Paso de la tira (slide + hueco): fija el tramo de las animaciones ligadas al desplazamiento. */
+    --z-carousel-step: calc(var(--z-carousel-slide-width) + var(--z-carousel-gap));
+  }
+
+  /* Ajuste al centro (efectos de profundidad, hero centrado): la pista deja medio hueco a cada lado. */
+  .z-carousel[data-mode="snap"][data-align="center"] .z-carousel__slide {
+    scroll-snap-align: center;
+  }
+  .z-carousel[data-mode="snap"][data-align="center"]:not([data-orientation="vertical"]) .z-carousel__track {
+    padding-inline: max(0px, calc((100cqi - var(--z-carousel-slide-width)) / 2));
+  }
+
+  /* Bucle sin réplicas (guía `carousel`): el primer slide se aparca detrás del último en los dos últimos índices y
+     el último delante del primero en los dos primeros. Con tres slides, solo en el propio extremo (si no, el del
+     medio tendría los dos aparcados y el orden saldría al revés). Sin script `--z-carousel-current` no existe. */
+  .z-carousel[data-park] .z-carousel__track > .z-carousel__slide:first-child {
+    /* Respaldo inválido a propósito: sin `--z-carousel-current` el cálculo no vale y `order` queda en 0. */
+    order: clamp(0, var(--z-carousel-current, none) - max(var(--z-carousel-count, sibling-count()) - 3, 1), 1);
+  }
+  .z-carousel[data-park] .z-carousel__track > .z-carousel__slide:last-child {
+    order: calc(-1 * clamp(0, min(2, var(--z-carousel-count, sibling-count()) - 2) - var(--z-carousel-current, none), 1));
+  }
+
+  /* La pista mide lo que suman sus slides: así una traslación (keylines, profundidad) no cambia el recorrido. */
+  .z-carousel[data-mode="snap"]:not([data-orientation="vertical"]) .z-carousel__track {
+    width: max-content;
+    min-width: 100%;
+  }
+  .z-carousel:is([data-layout="fullscreen"], [data-layout="multi-browse"], [data-layout="hero"], [data-layout="hero-center"])
+    .z-carousel__track {
+    block-size: 100%;
+  }
+
+  /* Avance del siguiente slide (peek): la página deja ver ese trozo al final. */
+  .z-carousel[data-mode="snap"][data-peek]:not([data-orientation="vertical"]) .z-carousel__slide {
+    width: calc((100cqi - var(--z-carousel-peek, 0px) - var(--z-carousel-per-page) * var(--z-carousel-gap)) / var(--z-carousel-per-page));
+  }
+
+  /* Uncontained y slidesPerPage="auto": cada slide con su ancho; el último se corta en el borde. */
+  .z-carousel[data-mode="snap"]:is([data-layout="uncontained"], [data-per-page="auto"]) .z-carousel__slide {
+    width: var(--z-carousel-slide-width);
+    min-width: 0;
+  }
+
+  /* Pantalla completa: un slide a sangre por vista, con el texto sobre la imagen. */
+  .z-carousel[data-layout="fullscreen"] {
+    --z-carousel-slide-width: 100cqi;
+    --z-carousel-gap: 0px;
+  }
+  .z-carousel[data-layout="fullscreen"] .z-carousel__viewport {
+    block-size: var(--z-carousel-height, min(72vh, 36rem));
+  }
+  .z-carousel[data-mode="snap"][data-layout="fullscreen"] .z-carousel__slide {
+    width: 100cqi;
+    min-width: 0;
+    border-radius: 0;
+  }
+
+  /* Keylines de M3 (multi-browse, hero, hero centrado): cada slide mide el hueco grande; el motor escribe la máscara
+     (`--z-kl-inset`) y la traslación que junta las máscaras (`--z-kl-shift`). */
+  .z-carousel:is([data-layout="multi-browse"], [data-layout="hero"], [data-layout="hero-center"]) {
+    --z-carousel-slide-width: var(--z-kl-item, 70cqi);
+    --z-carousel-gap: var(--z-space-2);
+  }
+  .z-carousel:is([data-layout="multi-browse"], [data-layout="hero"], [data-layout="hero-center"]) .z-carousel__viewport {
+    block-size: var(--z-carousel-height, 20rem);
+  }
+  .z-carousel[data-mode="snap"]:is([data-layout="multi-browse"], [data-layout="hero"], [data-layout="hero-center"]) .z-carousel__slide {
+    width: var(--z-carousel-slide-width);
+    min-width: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+  .z-carousel[data-mode="snap"]:is([data-layout="multi-browse"], [data-layout="hero"], [data-layout="hero-center"]) .z-carousel__face {
+    translate: var(--z-kl-shift, 0px) 0;
+    clip-path: inset(0 var(--z-kl-inset, 0px) round var(--z-carousel-radius));
+  }
+  .z-carousel:is([data-layout="multi-browse"], [data-layout="hero"], [data-layout="hero-center"])
+    .z-carousel__slide[data-small]
+    .z-carousel__caption {
+    opacity: 0;
+  }
+
+  /* Cara del slide: lo que se transforma (giro, profundidad, máscara). El slide queda quieto y su área de ajuste no
+     se mueve con la transformación (el navegador ajustaría a la caja transformada). */
+  .z-carousel__face {
+    position: relative;
+    display: grid;
+    min-block-size: 100%;
+    border-radius: var(--z-carousel-radius);
+    overflow: clip;
+  }
+  .z-carousel[data-mode="snap"] .z-carousel__slide:has(> .z-carousel__face) {
+    overflow: visible;
+    border-radius: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* Medios y pie que entienden todos los efectos: la imagen cubre el slide y el pie va encima, en cristal. */
+  .z-carousel__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  :is(.z-carousel__slide, .z-carousel__face):has(> .z-carousel__media) {
+    min-block-size: var(--z-carousel-media-height, 14rem);
+  }
+  .z-carousel__caption {
+    position: relative;
+    align-self: end;
+    display: grid;
+    gap: var(--z-space-1);
+    margin: var(--z-space-3);
+    padding: var(--z-space-3) var(--z-space-4);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-overlay);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    -webkit-backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+    backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+    color: var(--z-fg);
+  }
+
+  /* ---- Prisma y coverflow: profundidad 3D sobre el desplazamiento nativo ---- */
+  .z-carousel:is([data-effect="prism"], [data-effect="coverflow"]) {
+    --z-carousel-slide-width: min(54cqi, 32rem);
+    --z-carousel-gap: var(--z-space-4);
+    --z-carousel-radius: var(--z-radius-panel);
+  }
+  .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"]) .z-carousel__viewport {
+    perspective: 1600px;
+    padding-block: var(--z-space-6);
+  }
+  .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"]) .z-carousel__track {
+    transform-style: preserve-3d;
+  }
+  /* En una tira estrecha (móvil) el slide central ocupa casi todo y asoman los vecinos. */
+  @container z-carousel (max-width: 560px) {
+    .z-carousel:is([data-effect="prism"], [data-effect="coverflow"]) .z-carousel__track {
+      --z-carousel-slide-width: 76cqi;
+      --z-carousel-gap: var(--z-space-3);
+    }
+  }
+  .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"]) .z-carousel__slide {
+    --z-slide-abs: max(var(--z-slide-progress), calc(var(--z-slide-progress) * -1));
+    --z-slide-side: clamp(-1, calc(var(--z-slide-progress) * var(--z-carousel-dir)), 1);
+    width: var(--z-carousel-slide-width);
+    min-width: 0;
+    transform-origin: 50% 50%;
+  }
+  /* Prisma: el slide es una tarjeta de cristal; el central, nítido y con el anillo del acento. */
+  .z-carousel[data-effect="prism"] .z-carousel__face {
+    border: 1px solid var(--z-glass-border);
+    background: var(--z-glass-bg);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-glass-shadow);
+  }
+  .z-carousel[data-effect="prism"] .z-carousel__face::before {
+    /* Canto especular que sigue al giro. */
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-layer-raised);
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      calc(115deg + var(--z-slide-side) * 50deg),
+      var(--z-glass-highlight),
+      transparent 32%,
+      transparent 68%,
+      var(--z-glass-specular)
+    );
+    mask:
+      linear-gradient(var(--z-fg) 0 0) content-box,
+      linear-gradient(var(--z-fg) 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .z-carousel[data-effect="prism"] .z-carousel__face::after {
+    /* Velo que oscurece los laterales: el texto no pierde contraste, se apaga lo de detrás. */
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--z-scrim);
+    opacity: clamp(0, calc(var(--z-slide-abs) * 0.7), 0.7);
+    pointer-events: none;
+  }
+  .z-carousel[data-effect="prism"] .z-carousel__slide[data-active] > .z-carousel__face {
+    border-color: color-mix(in srgb, var(--z-accent) 55%, var(--z-glass-border));
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      0 0 0 1px color-mix(in srgb, var(--z-accent) 35%, transparent),
+      0 28px 80px -30px color-mix(in srgb, var(--z-accent) 55%, transparent),
+      var(--z-glass-shadow);
+  }
+  .z-carousel[data-effect="prism"] .z-carousel__caption {
+    z-index: var(--z-layer-raised);
+  }
+  .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"], [data-effect="wheel"]) .z-carousel__caption {
+    opacity: clamp(0, calc(1 - var(--z-slide-abs, 0) * 2), 1);
+  }
+
+  /* ---- Rueda: cilindro vertical ---- */
+  .z-carousel[data-effect="wheel"] {
+    --z-carousel-slide-width: var(--z-carousel-wheel-item, 3rem);
+    --z-carousel-gap: var(--z-space-1);
+  }
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__viewport {
+    height: var(--z-carousel-height, 15rem);
+    perspective: 700px;
+  }
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__track {
+    padding-block: max(0px, calc((100cqb - var(--z-carousel-slide-width)) / 2));
+    transform-style: preserve-3d;
+  }
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide {
+    --z-slide-abs: max(var(--z-slide-progress), calc(var(--z-slide-progress) * -1));
+    height: var(--z-carousel-slide-width);
+    min-height: 0;
+    place-items: center;
+    border-radius: var(--z-control-radius);
+  }
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__face {
+    place-items: center;
+    border-radius: var(--z-control-radius);
+  }
+  .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide[data-active] > .z-carousel__face {
+    background: var(--z-surface-2);
+    box-shadow: inset 0 0 0 1px var(--z-glass-border);
+  }
+
+  /* ---- Parallax: las capas `[data-parallax-layer]` se mueven a otra velocidad que el slide ---- */
+  .z-carousel[data-effect="parallax"] :is(img, picture, video, canvas, .z-carousel__media)[data-parallax-layer] {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--z-parallax, 0.4) * var(--z-carousel-slide-width) * -1);
+    width: calc(100% + 2 * var(--z-parallax, 0.4) * var(--z-carousel-slide-width));
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .z-carousel[data-mode="snap"]:is([data-effect="coverflow"], [data-effect="prism"]) .z-carousel__face {
+      transform: translateX(calc(clamp(-2.5, var(--z-slide-progress), 2.5) * var(--z-carousel-dir) * -26%))
+        translateZ(calc(min(var(--z-slide-abs), 2) * -150px * var(--z-carousel-depth)))
+        rotateY(calc(var(--z-slide-side) * -38deg * var(--z-carousel-depth)));
+      opacity: clamp(0, calc(2.6 - var(--z-slide-abs)), 1);
+    }
+    .z-carousel[data-mode="snap"][data-effect="prism"] .z-carousel__face > .z-carousel__media {
+      filter: saturate(calc(1 - min(var(--z-slide-abs), 1) * 0.55)) blur(calc(min(var(--z-slide-abs), 2) * 3px));
+    }
+    .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__face {
+      transform: rotateX(calc(clamp(-3, var(--z-slide-progress), 3) * -24deg)) scale(calc(1 - min(var(--z-slide-abs), 3) * 0.06));
+      opacity: clamp(0.15, calc(1 - var(--z-slide-abs) * 0.3), 1);
+    }
+    .z-carousel[data-effect="parallax"] [data-parallax-layer] {
+      translate: calc(var(--z-slide-progress) * var(--z-parallax, 0.4) * var(--z-carousel-slide-width) * var(--z-carousel-dir) * -1) 0;
+    }
+    .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"], [data-effect="wheel"]) .z-carousel__caption {
+      translate: 0 calc(min(var(--z-slide-abs, 0), 1) * var(--z-space-3));
+    }
+    /* El navegador anima la variable con la posición de cada slide (guía `carousel-slide-effects`). */
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+      .z-carousel[data-mode="snap"]:is([data-effect="prism"], [data-effect="coverflow"], [data-effect="parallax"]) .z-carousel__slide {
+        animation: z-slide-progress auto linear both;
+        animation-timeline: view(inline);
+        animation-range: cover calc(50% - var(--z-carousel-step) * 3) cover calc(50% + var(--z-carousel-step) * 3);
+      }
+      .z-carousel[data-mode="snap"][data-effect="wheel"] .z-carousel__slide {
+        animation: z-slide-progress auto linear both;
+        animation-timeline: view(block);
+        animation-range: cover calc(50% - var(--z-carousel-step) * 3) cover calc(50% + var(--z-carousel-step) * 3);
+      }
+    }
+  }
+  @keyframes z-slide-progress {
+    from {
+      --z-slide-progress: 3;
+    }
+    to {
+      --z-slide-progress: -3;
+    }
+  }
+
+  /* ---- Mazo: fundido y tarjetas apiladas (sin desplazamiento) ---- */
+  .z-carousel[data-mode="deck"] .z-carousel__viewport {
+    padding: 0;
+    direction: inherit;
+    border-radius: var(--z-carousel-radius);
+  }
+  .z-carousel[data-mode="deck"] .z-carousel__viewport:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-carousel[data-mode="deck"] .z-carousel__track {
+    display: grid;
+    width: auto;
+    will-change: auto;
+  }
+  .z-carousel[data-mode="deck"] .z-carousel__slide {
+    display: grid;
+    grid-area: 1 / 1;
+    width: auto;
+    max-width: none;
+    min-block-size: var(--z-carousel-height, 18rem);
+    transform-origin: 50% 100%;
+  }
+  [dir="rtl"] .z-carousel[data-mode="deck"] .z-carousel__slide {
+    direction: inherit;
+  }
+  .z-carousel[data-mode="deck"][data-effect="fade"] .z-carousel__slide {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--z-duration-slow) var(--z-ease-standard),
+      visibility 0s linear var(--z-duration-slow);
+  }
+  .z-carousel[data-mode="deck"][data-effect="fade"] .z-carousel__slide[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .z-carousel[data-mode="deck"][data-layout="stack"] .z-carousel__viewport {
+    overflow: visible;
+    padding-block-end: var(--z-space-8);
+  }
+  .z-carousel[data-mode="deck"][data-layout="stack"] .z-carousel__slide {
+    --z-deck-ahead: max(0, var(--z-deck-offset, 0));
+    --z-deck-behind: max(0, calc(var(--z-deck-offset, 0) * -1));
+    z-index: calc(var(--z-carousel-count, 10) - var(--z-deck-ahead));
+    border: 1px solid var(--z-glass-border);
+    background: var(--z-surface-solid);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-md);
+    transform: translateY(calc(min(var(--z-deck-ahead), 3) * var(--z-space-3))) scale(calc(1 - min(var(--z-deck-ahead), 3) * 0.05))
+      translateX(calc(var(--z-deck-behind) * -118% * var(--z-carousel-dir)))
+      rotate(calc(var(--z-deck-behind) * -9deg * var(--z-carousel-dir)));
+    opacity: clamp(0, calc(1 - max(0, var(--z-deck-ahead) - 2) - var(--z-deck-behind)), 1);
+    transition:
+      transform var(--z-duration-slow) var(--z-ease-emphasized),
+      opacity var(--z-duration-slow) var(--z-ease-standard);
+  }
+  .z-carousel[data-mode="deck"][data-layout="stack"] .z-carousel__viewport[data-dragging] .z-carousel__slide[data-active] {
+    translate: var(--z-deck-drag, 0px) 0;
+    transition: none;
+  }
+  .z-carousel[data-mode="deck"] .z-carousel__viewport[data-dragging] {
+    cursor: grabbing;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-carousel[data-mode="deck"][data-kenburns] .z-carousel__slide[data-active] > .z-carousel__media {
+      animation: z-carousel-kenburns calc(var(--z-carousel-interval) * 2) var(--z-ease-out) both;
+    }
+  }
+  @keyframes z-carousel-kenburns {
+    from {
+      scale: 1;
+    }
+    to {
+      scale: 1.08;
+    }
+  }
+
+  /* ---- Altura automática: la vista toma el alto del slide activo ---- */
+  .z-carousel[data-auto-height] .z-carousel__track {
+    align-items: flex-start;
+  }
+  .z-carousel[data-auto-height] .z-carousel__viewport {
+    block-size: var(--z-carousel-auto-height, auto);
+    transition: block-size var(--z-duration-normal) var(--z-ease-standard);
+  }
+
+  /* ---- Indicador `progress`: el punto actual se alarga y se llena durante el intervalo ---- */
+  .z-carousel[data-indicators="progress"] .z-carousel__dot[aria-current="true"]::before {
+    width: var(--z-space-8);
+    border-radius: var(--z-radius-xs);
+    background: linear-gradient(to right, var(--z-accent) var(--z-carousel-fill), var(--z-line-strong) var(--z-carousel-fill));
+  }
+  [dir="rtl"] .z-carousel[data-indicators="progress"] .z-carousel__dot[aria-current="true"]::before {
+    background: linear-gradient(to left, var(--z-accent) var(--z-carousel-fill), var(--z-line-strong) var(--z-carousel-fill));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-carousel[data-indicators="progress"][data-autoplay-state="playing"][data-cycle="a"] .z-carousel__dot[aria-current="true"]::before {
+      animation: z-carousel-fill-a var(--z-carousel-interval) linear both;
+    }
+    .z-carousel[data-indicators="progress"][data-autoplay-state="playing"][data-cycle="b"] .z-carousel__dot[aria-current="true"]::before {
+      animation: z-carousel-fill-b var(--z-carousel-interval) linear both;
+    }
+  }
+  /* Dos nombres iguales: cambiar de uno a otro vuelve a empezar la animación cuando el intervalo se reinicia. */
+  @keyframes z-carousel-fill-a {
+    from {
+      --z-carousel-fill: 0%;
+    }
+    to {
+      --z-carousel-fill: 100%;
+    }
+  }
+  @keyframes z-carousel-fill-b {
+    from {
+      --z-carousel-fill: 0%;
+    }
+    to {
+      --z-carousel-fill: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .z-carousel[data-mode="deck"] .z-carousel__slide,
+    .z-carousel[data-auto-height] .z-carousel__viewport {
+      transition: none;
+    }
+  }
+}
+
+/* ---------- Stories, Gallery y Lightbox ---------- */
+@layer zui.carousel {
+  /* ---- Stories ---- */
+  .z-stories {
+    display: grid;
+    justify-items: center;
+    gap: var(--z-space-3);
+    color: var(--z-fg);
+  }
+  .z-stories__viewer {
+    position: relative;
+    inline-size: min(100%, var(--z-stories-width, 22rem));
+    aspect-ratio: 9 / 16;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-panel);
+    background: var(--z-surface-solid);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-glass-shadow);
+    overflow: clip;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .z-stories__group,
+  .z-stories__item {
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
+  .z-stories__group[data-active],
+  .z-stories:not([data-state]) .z-stories__group:first-of-type {
+    display: block;
+  }
+  .z-stories__item[data-active],
+  .z-stories:not([data-state]) .z-stories__group:first-of-type .z-stories__item:first-of-type {
+    display: grid;
+  }
+  .z-stories__item {
+    margin: 0;
+    align-content: end;
+  }
+  .z-stories__media,
+  .z-stories__item > :where(img, video, picture, canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-user-drag: none;
+  }
+  .z-stories__caption {
+    position: relative;
+    z-index: var(--z-layer-raised);
+    margin: var(--z-space-3);
+    padding: var(--z-space-2) var(--z-space-3);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-overlay);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+  }
+  /* Barras y cabecera sobre la imagen, por encima de las zonas de paso y sin capturar el puntero. */
+  .z-stories__bars {
+    position: absolute;
+    inset-block-start: var(--z-space-2);
+    inset-inline: var(--z-space-2);
+    z-index: var(--z-layer-raised);
+    display: flex;
+    gap: var(--z-space-1);
+    pointer-events: none;
+  }
+  .z-stories__bar {
+    position: relative;
+    flex: 1;
+    height: var(--z-space-1);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-glass-highlight);
+    box-shadow: 0 0 0 1px var(--z-scrim);
+    overflow: hidden;
+  }
+  .z-stories__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--z-accent);
+    scale: var(--z-story-fill, 0) 1;
+    transform-origin: left center;
+  }
+  [dir="rtl"] .z-stories__fill {
+    transform-origin: right center;
+  }
+  .z-stories__head {
+    position: absolute;
+    inset-block-start: var(--z-space-5);
+    inset-inline-start: var(--z-space-2);
+    z-index: var(--z-layer-raised);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    padding: var(--z-space-1) var(--z-space-3) var(--z-space-1) var(--z-space-1);
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-overlay);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    pointer-events: none;
+  }
+  .z-stories__avatar {
+    width: var(--z-space-7);
+    height: var(--z-space-7);
+    border-radius: var(--z-radius-full);
+    object-fit: cover;
+  }
+  .z-stories__nav {
+    position: absolute;
+    inset-block: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .z-stories__nav[data-dir="prev"] {
+    inset-inline-start: 0;
+    inline-size: 33%;
+  }
+  .z-stories__nav[data-dir="next"] {
+    inset-inline-end: 0;
+    inline-size: 67%;
+  }
+  .z-stories__nav:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -2);
+    border-radius: var(--z-radius-panel);
+  }
+  .z-stories__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-stories__control,
+  .z-lightbox__button,
+  .z-gallery__expand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--z-control-height-md);
+    height: var(--z-control-height-md);
+    padding: 0;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-button-radius);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+    color: var(--z-fg);
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out);
+  }
+  @media (hover: hover) {
+    :is(.z-stories__control, .z-lightbox__button, .z-gallery__expand):hover:not(:disabled) {
+      background: var(--z-surface-3);
+    }
+  }
+  :is(.z-stories__control, .z-lightbox__button, .z-gallery__expand):focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  :is(.z-stories__control, .z-lightbox__button, .z-gallery__expand):active:not(:disabled) {
+    scale: 0.97;
+  }
+  :is(.z-stories__control, .z-lightbox__button):disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .z-stories__control[aria-pressed="true"] .z-stories__icon-pause,
+  .z-stories__control[aria-pressed="false"] .z-stories__icon-play,
+  .z-stories__control:not([aria-pressed]) .z-stories__icon-play {
+    display: none;
+  }
+  .z-stories__control[aria-pressed="false"],
+  .z-stories__control:not([aria-pressed]):has(.z-stories__icon-pause) {
+    color: var(--z-accent-text);
+  }
+  [dir="rtl"] .z-stories__control :is(.z-icon, svg) {
+    scale: -1 1;
+  }
+
+  /* ---- Gallery: carrusel con miniaturas y botón de pantalla completa ---- */
+  .z-gallery {
+    position: relative;
+    display: grid;
+  }
+  .z-gallery .z-carousel {
+    --z-carousel-height: min(62vh, 30rem);
+  }
+  .z-gallery__expand {
+    position: absolute;
+    inset-block-start: var(--z-space-3);
+    inset-inline-end: var(--z-space-3);
+    z-index: var(--z-layer-raised);
+    background: var(--z-overlay);
+  }
+  .z-gallery[data-thumbnails="side"] .z-carousel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+  .z-gallery[data-thumbnails="side"] .z-carousel__viewport,
+  .z-gallery[data-thumbnails="side"] .z-carousel__controls {
+    grid-column: 1;
+  }
+  .z-gallery[data-thumbnails="side"] .z-carousel__thumbs {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    max-block-size: var(--z-carousel-height);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .z-gallery[data-thumbnails="side"] .z-carousel__thumb:first-child {
+    margin-inline-start: 0;
+  }
+  .z-gallery[data-thumbnails="side"] .z-carousel__thumb:last-child {
+    margin-inline-end: 0;
+  }
+  @container (max-width: 560px) {
+    .z-gallery[data-thumbnails="side"] .z-carousel {
+      display: flex;
+    }
+  }
+  .z-gallery[data-thumbnails="side"] .z-gallery__expand {
+    inset-inline-end: calc(var(--z-space-16) + var(--z-space-6));
+  }
+
+  /* ---- Lightbox: <dialog> modal a pantalla completa ---- */
+  .z-lightbox {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--z-surface-solid) 94%, transparent);
+    color: var(--z-fg);
+    overflow: hidden;
+  }
+  .z-lightbox[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .z-lightbox::backdrop {
+    background: var(--z-scrim);
+  }
+  .z-lightbox__bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--z-space-2);
+    padding: var(--z-space-3);
+  }
+  .z-lightbox__counter {
+    margin-inline-end: auto;
+    padding-inline: var(--z-space-2);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+    font-variant-numeric: tabular-nums;
+    color: var(--z-fg-muted);
+  }
+  .z-lightbox__stage {
+    position: relative;
+    display: grid;
+    min-height: 0;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .z-lightbox__item {
+    display: none;
+    grid-area: 1 / 1;
+    place-items: center;
+    align-content: center;
+    gap: var(--z-space-2);
+    min-height: 0;
+    margin: 0;
+    padding: 0 var(--z-space-16) var(--z-space-6);
+  }
+  .z-lightbox__item[data-active] {
+    display: grid;
+  }
+  .z-lightbox__item > :where(img, picture, video, canvas, svg) {
+    max-width: 100%;
+    max-height: calc(100dvh - var(--z-space-20) - var(--z-space-10));
+    object-fit: contain;
+    border-radius: var(--z-radius-lg);
+    translate: var(--z-lightbox-x, 0px) var(--z-lightbox-y, 0px);
+    scale: var(--z-lightbox-scale, 1);
+    transition: scale var(--z-duration-normal) var(--z-ease-emphasized);
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .z-lightbox[data-zoomed] .z-lightbox__item > * {
+    cursor: grab;
+  }
+  .z-lightbox__stage[data-dragging] .z-lightbox__item > * {
+    cursor: grabbing;
+    transition: none;
+  }
+  .z-lightbox__caption {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-lightbox[data-zoomed] .z-lightbox__caption {
+    visibility: hidden;
+  }
+  .z-lightbox__nav {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+  }
+  .z-lightbox__nav[data-dir="prev"] {
+    inset-inline-start: var(--z-space-3);
+  }
+  .z-lightbox__nav[data-dir="next"] {
+    inset-inline-end: var(--z-space-3);
+  }
+  [dir="rtl"] .z-lightbox__nav :is(.z-icon, svg) {
+    scale: -1 1;
+  }
+  @media (max-width: 640px) {
+    .z-lightbox__item {
+      padding-inline: var(--z-space-2);
+    }
+    .z-lightbox__nav {
+      inset-block-start: auto;
+      inset-block-end: var(--z-space-3);
+      translate: none;
+    }
+  }
+}

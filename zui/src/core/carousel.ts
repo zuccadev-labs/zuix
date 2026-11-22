@@ -13,6 +13,8 @@ export interface AutoplayOptions {
   onTick: () => void;
   /** Cambia el estado visible (botón de pausa, aria-live). */
   onChange?: (playing: boolean) => void;
+  /** Empieza a contar un intervalo entero (el indicador `progress` vuelve a llenarse desde cero). */
+  onSchedule?: () => void;
   /** Temporizadores inyectables (pruebas). */
   setTimer?: (fn: () => void, ms: number) => unknown;
   clearTimer?: (id: unknown) => void;
@@ -72,6 +74,7 @@ export function createAutoplay(options: AutoplayOptions, start = true): Autoplay
       options.onTick();
       schedule();
     }, interval);
+    options.onSchedule?.();
   };
   const sync = () => {
     const now = playing();
@@ -155,9 +158,9 @@ export function stepIndex(index: number, direction: 1 | -1, positions: number, l
   return next;
 }
 
-/** Tipos de indicador. `counter` es el de siempre (01/05). */
-export type CarouselIndicators = "counter" | "dots" | "bar" | "thumbnails" | "none";
-export const INDICATORS: readonly CarouselIndicators[] = ["counter", "dots", "bar", "thumbnails", "none"];
+/** Tipos de indicador. `counter` es el de siempre (01/05); `progress` son puntos cuyo actual se llena con el autoplay. */
+export type CarouselIndicators = "counter" | "dots" | "bar" | "thumbnails" | "progress" | "none";
+export const INDICATORS: readonly CarouselIndicators[] = ["counter", "dots", "bar", "thumbnails", "progress", "none"];
 export const isIndicators = (v: unknown): v is CarouselIndicators => typeof v === "string" && (INDICATORS as readonly string[]).includes(v);
 
 /** Progreso de la barra: fracción (0–1) del recorrido en la posición `index` de `positions`. */

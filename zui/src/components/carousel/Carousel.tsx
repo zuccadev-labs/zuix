@@ -6,15 +6,35 @@ import {
   useSyncExternalStore,
   type CSSProperties,
   type HTMLAttributes,
-  type KeyboardEvent,
   type Key,
   type ReactNode,
   type Ref,
   type RefObject,
 } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { announceTo } from "../../core/announcer";
 import { autoplayInterval, barProgress, perPageOf, snapPositions, type CarouselIndicators } from "../../core/carousel";
-import { bindAutoplay, createSnap, revealThumb, type SnapController } from "../../core/carousel-runtime";
+import {
+  carouselMode,
+  depthOf,
+  isVertical,
+  KEYLINE_LAYOUTS,
+  needsFace,
+  PROGRESS_EFFECTS,
+  snapAlign,
+  type CarouselEffect,
+  type CarouselLayout,
+} from "../../core/carousel-effects";
+import {
+  bindAutoplay,
+  createDeck,
+  createSnap,
+  revealThumb,
+  scrollDrivenSupported,
+  type DeckController,
+  type SnapController,
+} from "../../core/carousel-runtime";
+import type { KeylineLayout } from "../../core/keylines";
 import { cx } from "../../cx";
 import { useLatest } from "../../primitives/hooks";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";
@@ -50,14 +70,33 @@ export interface CarouselLabels {
   indicators?: string;
 }
 
-export type { CarouselIndicators };
+export type { CarouselIndicators, CarouselEffect, CarouselLayout };
 
 export interface CarouselProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "aria-label"> {
   items: readonly T[];
   renderItem: (item: T, index: number, state: CarouselSlideState) => ReactNode;
   getKey?: (item: T, index: number) => Key;
-  /** "lens": el centro queda plano y los bordes se curvan como a través de un cristal. */
-  effect?: "lens" | "none";
+  /**
+   * Cómo se transforma cada slide según su distancia al centro. "lens" (por defecto): el centro plano y los bordes
+   * curvos como a través de un cristal. "prism": coverflow de cristal con profundidad (la variante de marca).
+   * "coverflow", "parallax" (capas `[data-parallax-layer]`), "wheel" (cilindro vertical) y "fade" (fundido).
+   */
+  effect?: CarouselEffect;
+  /**
+   * Cómo se reparte el espacio. "strip" (por defecto), los de Material 3 ("multi-browse", "hero", "hero-center",
+   * "uncontained", "fullscreen") y "stack" (mazo de tarjetas que se descartan deslizando).
+   */
+  layout?: CarouselLayout;
+  /** Posiciones por paso de las flechas y la reproducción: un número o "page" (las que caben). */
+  slidesPerMove?: number | "page";
+  /** La vista toma el alto del slide activo. */
+  autoHeight?: boolean;
+  /** Intensidad del giro y la profundidad de "prism", "coverflow" y "wheel" (0–2). */
+  depth?: number;
+  /** Avance visible del siguiente slide: número en px o cualquier longitud CSS. */
+  peek?: number | string;
+  /** Con "fade": zoom lento sobre la imagen (`.z-carousel__media`) del slide activo. */
+  kenBurns?: boolean;
   loop?: boolean;
   ariaLabel: string;
   labels?: Partial<CarouselLabels>;
@@ -83,10 +122,11 @@ export interface CarouselProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "
   /** Contenido de cada miniatura con `indicators="thumbnails"` (una imagen pequeña). */
   renderThumbnail?: (item: T, index: number) => ReactNode;
   /**
-   * Slides visibles a la vez (1–8). Con más de uno, o en vertical, el carrusel pasa al modo de desplazamiento nativo
-   * con scroll-snap (sin lente ni réplicas: `loop` solo hace que las flechas vuelvan al principio).
+   * Slides visibles a la vez (1–8) o "auto" (cada uno con su ancho). Con más de uno, en vertical o con un layout o
+   * efecto que no sea la tira con lente, el carrusel usa el desplazamiento nativo con scroll-snap. El bucle aparca el
+   * primer o el último slide con `order` (sin réplicas) cuando se ve uno por página.
    */
-  slidesPerPage?: number;
+  slidesPerPage?: number | "auto";
   orientation?: "horizontal" | "vertical";
   /** Alto de la vista en vertical: número en px o cualquier longitud CSS. */
   height?: number | string;
@@ -122,8 +162,15 @@ const length = (value: number | string) => (typeof value === "number" ? `${value
  * automática con pausa.
  */
 export function Carousel<T>(props: CarouselProps<T>) {
-  const snap = props.orientation === "vertical" || perPageOf(props.slidesPerPage) > 1;
-  return snap ? <SnapCarousel {...props} /> : <EngineCarousel {...props} />;
+  const effect = props.effect ?? "lens";
+  const mode = carouselMode({
+    layout: props.layout,
+    effect,
+    perPage: props.slidesPerPage === "auto" ? "auto" : perPageOf(props.slidesPerPage),
+    vertical: isVertical(props.orientation, effect),
+  });
+  if (mode === "engine") return <EngineCarousel {...props} />;
+  return <ScrollCarousel {...props} deck={mode === "deck"} />;
 }
 
 function EngineCarousel<T>({
@@ -143,8 +190,14 @@ function EngineCarousel<T>({
   indicators = "counter",
   renderThumbnail,
   slidesPerPage: _perPage,
+  slidesPerMove: _perMove,
   orientation: _orientation,
   height: _height,
+  layout: _layout,
+  autoHeight: _autoHeight,
+  depth: _depth,
+  peek: _peek,
+  kenBurns: _kenBurns,
   className,
   style,
   ref,
@@ -215,6 +268,7 @@ function EngineCarousel<T>({
       data-effect={effect}
       data-indicators={indicators === "counter" ? undefined : indicators}
       data-autoplay-state={play.enabled ? (play.playing ? "playing" : "paused") : undefined}
+      data-cycle={play.enabled ? play.cycle : undefined}
     >
       <div ref={viewportRef} className="z-carousel__viewport">
         <div ref={stageRef} className="z-carousel__stage">
@@ -281,6 +335,9 @@ function EngineCarousel<T>({
 
 interface AutoplayState {
   enabled: boolean;
+  interval: number | null;
+  /** Cambia cada vez que empieza un intervalo entero: reinicia el llenado del indicador `progress`. */
+  cycle: "a" | "b";
   playing: boolean;
   wanted: boolean;
   toggle: () => void;
@@ -290,6 +347,7 @@ interface AutoplayState {
 function useCarouselAutoplay(root: RefObject<HTMLElement | null>, autoplay: boolean | number | undefined, tick: () => void): AutoplayState {
   const interval = autoplayInterval(autoplay);
   const [state, setState] = useState({ playing: false, wanted: false });
+  const [cycle, setCycle] = useState<"a" | "b">("a");
   const tickRef = useLatest(tick);
   const binding = useRef<ReturnType<typeof bindAutoplay> | null>(null);
   useEffect(() => {
@@ -300,6 +358,7 @@ function useCarouselAutoplay(root: RefObject<HTMLElement | null>, autoplay: bool
       interval,
       () => tickRef.current(),
       (playing, wanted) => setState({ playing, wanted }),
+      () => setCycle((c) => (c === "a" ? "b" : "a")),
     );
     binding.current = b;
     return () => {
@@ -309,6 +368,8 @@ function useCarouselAutoplay(root: RefObject<HTMLElement | null>, autoplay: bool
   }, [root, interval, tickRef]);
   return {
     enabled: interval !== null,
+    interval,
+    cycle,
     playing: state.playing,
     wanted: state.wanted,
     toggle: () => {
@@ -365,7 +426,7 @@ function CarouselControls({
       <button type="button" className="z-carousel__arrow" aria-label={text.previous} disabled={!canPrev} onClick={() => onStep(-1)}>
         <Icon name={vertical ? "chevron-up" : "chevron-left"} size={16} />
       </button>
-      {indicators === "dots" ? (
+      {indicators === "dots" || indicators === "progress" ? (
         <div className="z-carousel__dots" role="group" aria-label={text.indicators}>
           {Array.from({ length: positions }, (_, i) => (
             <button
@@ -434,9 +495,9 @@ function CarouselThumbs<T>({
   );
 }
 
-/* ---------- Modo snap: varias por página y vertical ---------- */
+/* ---------- Desplazamiento nativo (snap) y mazo (deck) ---------- */
 
-function SnapCarousel<T>({
+function ScrollCarousel<T>({
   items,
   renderItem,
   getKey,
@@ -445,91 +506,120 @@ function SnapCarousel<T>({
   labels,
   defaultIndex = 0,
   onIndexChange,
-  slideWidth: _slideWidth,
+  slideWidth,
   gap,
   autoplay,
   indicators = "counter",
   renderThumbnail,
   slidesPerPage,
+  slidesPerMove,
   orientation = "horizontal",
   height,
-  effect: _effect,
+  effect = "lens",
+  layout = "strip",
+  autoHeight,
+  depth,
+  peek,
+  kenBurns,
   rasterize: _rasterize,
   className,
   style,
   ref,
+  deck,
   ...rest
-}: CarouselProps<T>) {
+}: CarouselProps<T> & { deck: boolean }) {
   const count = items.length;
   const text = { ...DEFAULT_LABELS, ...labels };
-  const perPage = perPageOf(slidesPerPage);
-  const vertical = orientation === "vertical";
+  const auto = slidesPerPage === "auto" || layout === "uncontained";
+  const perPage = auto ? 0 : perPageOf(slidesPerPage);
+  const vertical = !deck && isVertical(orientation, effect);
+  const align = snapAlign(layout, effect);
+  const shownEffect = effect === "lens" ? "none" : effect;
+  const face = !deck && needsFace(layout, effect);
   // Las que caben de verdad (en una tira estrecha, menos de las pedidas); las mide el controlador al montar y al
   // cambiar de tamaño. Antes de medir, las pedidas.
-  const [fits, setFits] = useState(perPage);
-  const shown = Math.min(fits, perPage);
-  const positions = snapPositions(count, shown);
+  const [fits, setFits] = useState(Math.max(1, perPage));
+  const shown = Math.min(fits, Math.max(1, perPage));
+  const [positions, setPositions] = useState(() => (deck || auto ? count : snapPositions(count, shown)));
   const reducedMotion = useSyncExternalStore(subscribeReducedMotion, readReducedMotion, serverReducedMotion);
-  const [index, setIndex] = useState(() => Math.min(Math.max(defaultIndex, 0), positions - 1));
-  const [announcement, setAnnouncement] = useState("");
+  const [index, setIndex] = useState(() => Math.min(Math.max(defaultIndex, 0), Math.max(0, count - 1)));
+  const [parking, setParking] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const liveRef = useRef<HTMLParagraphElement>(null);
   const setRoot = useMergedRef(rootRef, ref);
-  const snap = useRef<SnapController | null>(null);
+  const controller = useRef<SnapController | DeckController | null>(null);
   const onIndexRef = useLatest(onIndexChange);
   const reducedRef = useLatest(reducedMotion);
   const indexRef = useLatest(index);
+  const textRef = useLatest(text);
+  const play = useCarouselAutoplay(rootRef, autoplay, () => controller.current?.step(1));
+  const restartRef = useLatest(play.restart);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `count` no se lee dentro; cambia cuando cambian los slides y obliga a volver a medir.
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-    const controller = createSnap({
+    const common = {
       viewport,
-      perPage,
-      vertical,
       loop,
       reducedMotion: () => reducedRef.current,
       initialIndex: indexRef.current,
-      onIndex: (next) => {
+      keyboard: true,
+      onIndex: (next: number) => {
         setIndex(next);
         onIndexRef.current?.(next);
       },
-      onLayout: () => setFits(controller.perPage),
-    });
-    snap.current = controller;
-    setFits(controller.perPage);
-    return () => {
-      snap.current = null;
-      controller.dispose();
+      onSettle: (next: number) => {
+        if (liveRef.current)
+          announceTo(liveRef.current, textRef.current.slide(next, viewport.querySelectorAll(".z-carousel__slide").length), 300);
+      },
+      onUser: () => restartRef.current(),
     };
-  }, [perPage, vertical, loop, count, onIndexRef, reducedRef, indexRef]);
+    const c = deck
+      ? createDeck(common)
+      : createSnap({
+          ...common,
+          perPage,
+          vertical,
+          align,
+          perMove: slidesPerMove,
+          progress: PROGRESS_EFFECTS.includes(effect) && !reducedRef.current && !scrollDrivenSupported(),
+          keylines: KEYLINE_LAYOUTS.includes(layout) ? (layout as KeylineLayout) : null,
+          onLayout: () => {
+            const snap = controller.current as SnapController | null;
+            if (!snap) return;
+            setFits(snap.perPage);
+            setPositions(snap.positions);
+            setParking(snap.parking);
+          },
+        });
+    controller.current = c;
+    setPositions(c.positions);
+    if ("perPage" in c) {
+      setFits(c.perPage);
+      setParking(c.parking);
+    }
+    return () => {
+      controller.current = null;
+      c.dispose();
+    };
+  }, [deck, perPage, vertical, align, loop, count, layout, effect, slidesPerMove, onIndexRef, reducedRef, indexRef, textRef, restartRef]);
 
-  const navigate = (fn: (c: SnapController) => void) => {
-    const c = snap.current;
+  const navigate = (fn: (c: SnapController | DeckController) => void) => {
+    const c = controller.current;
     if (!c) return;
     fn(c);
-    setAnnouncement(text.slide(c.index, count));
-  };
-  const play = useCarouselAutoplay(rootRef, autoplay, () => snap.current?.step(1));
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) return;
-    const back = vertical ? "ArrowUp" : "ArrowLeft";
-    const forward = vertical ? "ArrowDown" : "ArrowRight";
-    const rtl = !vertical && rootRef.current !== null && getComputedStyle(rootRef.current).direction === "rtl";
-    const dir = event.key === back ? (rtl ? 1 : -1) : event.key === forward ? (rtl ? -1 : 1) : 0;
-    if (dir !== 0) {
-      event.preventDefault();
-      navigate((c) => c.step(dir as 1 | -1));
-    } else if (event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      navigate((c) => c.goTo(event.key === "Home" ? 0 : positions - 1));
-    }
+    play.restart();
   };
 
   const vars: Record<string, string | number> = { "--z-carousel-per-page": shown };
+  if (slideWidth !== undefined) vars["--z-carousel-slide-width"] = length(slideWidth);
   if (gap !== undefined) vars["--z-carousel-gap"] = length(gap);
   if (height !== undefined) vars["--z-carousel-height"] = length(height);
+  if (peek !== undefined) vars["--z-carousel-peek"] = length(peek);
+  if (depth !== undefined) vars["--z-carousel-depth"] = depthOf(depth);
+  if (play.interval !== null) vars["--z-carousel-interval"] = `${play.interval}ms`;
   const looping = loop && positions > 1;
   return (
     <div
@@ -540,28 +630,44 @@ function SnapCarousel<T>({
       role="region"
       aria-roledescription={text.carousel}
       aria-label={ariaLabel}
-      data-effect="none"
-      data-mode="snap"
-      data-orientation={orientation}
+      data-effect={shownEffect}
+      data-mode={deck ? "deck" : "snap"}
+      data-layout={layout === "strip" ? undefined : layout}
+      data-align={align === "center" ? "center" : undefined}
+      data-orientation={deck ? undefined : vertical ? "vertical" : "horizontal"}
+      data-per-page={auto ? "auto" : undefined}
+      data-peek={peek !== undefined ? "" : undefined}
+      data-park={parking ? "" : undefined}
+      data-auto-height={autoHeight ? "" : undefined}
+      data-kenburns={kenBurns ? "" : undefined}
       data-indicators={indicators === "counter" ? undefined : indicators}
       data-autoplay-state={play.enabled ? (play.playing ? "playing" : "paused") : undefined}
+      data-cycle={play.enabled ? play.cycle : undefined}
     >
       {/* biome-ignore lint/a11y/noNoninteractiveTabindex: la vista desplazable recibe el foco para moverse con las flechas (también lo haría el navegador por ser desplazable). */}
-      <div ref={viewportRef} className="z-carousel__viewport" tabIndex={0} aria-label={ariaLabel} role="group" onKeyDown={onKeyDown}>
+      <div ref={viewportRef} className="z-carousel__viewport" tabIndex={0} aria-label={ariaLabel} role="group">
         <div className="z-carousel__track">
-          {items.map((item, i) => (
-            <div
-              key={getKey ? getKey(item, i) : i}
-              className="z-carousel__slide"
-              data-index={i}
-              data-active={i >= index && i < index + shown ? true : undefined}
-              role="group"
-              aria-roledescription={text.slideRole}
-              aria-label={text.slide(i, count)}
-            >
-              {renderItem(item, i, { index: i, count, active: i === index, clone: false })}
-            </div>
-          ))}
+          {items.map((item, i) => {
+            const active = deck ? i === index : i >= index && i < index + shown;
+            return (
+              <div
+                key={getKey ? getKey(item, i) : i}
+                className="z-carousel__slide"
+                data-index={i}
+                // En el mazo el motor marca el activo (y deja inertes los demás).
+                data-active={!deck && active ? true : undefined}
+                role="group"
+                aria-roledescription={text.slideRole}
+                aria-label={text.slide(i, count)}
+              >
+                {face ? (
+                  <div className="z-carousel__face">{renderItem(item, i, { index: i, count, active: i === index, clone: false })}</div>
+                ) : (
+                  renderItem(item, i, { index: i, count, active: i === index, clone: false })
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
       <CarouselControls
@@ -573,14 +679,8 @@ function SnapCarousel<T>({
         vertical={vertical}
         canPrev={positions > 1 && (looping || index > 0)}
         canNext={positions > 1 && (looping || index < positions - 1)}
-        onStep={(direction) => {
-          navigate((c) => c.step(direction));
-          play.restart();
-        }}
-        onGoTo={(i) => {
-          navigate((c) => c.goTo(i));
-          play.restart();
-        }}
+        onStep={(direction) => navigate((c) => c.step(direction))}
+        onGoTo={(i) => navigate((c) => c.goTo(i))}
         play={play}
       />
       {indicators === "thumbnails" && renderThumbnail ? (
@@ -592,9 +692,7 @@ function SnapCarousel<T>({
           onGoTo={(i) => navigate((c) => c.goTo(Math.min(i, positions - 1)))}
         />
       ) : null}
-      <p className="z-carousel__live" aria-live={play.playing ? "off" : "polite"} aria-atomic="true">
-        {announcement}
-      </p>
+      <p ref={liveRef} className="z-carousel__live" aria-live={play.playing ? "off" : "polite"} aria-atomic="true" />
     </div>
   );
 }

@@ -15,6 +15,12 @@
 // data-per-page="3" o data-orientation="vertical" el carrusel usa el desplazamiento nativo con scroll-snap (sin lente
 // ni réplicas); --z-carousel-height fija el alto en vertical. Textos: data-label-play, data-label-pause, data-label-goto.
 //
+// v0.4: data-layout="multi-browse|hero|hero-center|uncontained|fullscreen|stack" y data-effect="prism|coverflow|fade|
+// parallax|wheel" (además de lens y none); data-indicators="progress", data-per-move="2|page", data-per-page="auto",
+// data-auto-height, data-depth="0–2", data-peek="3rem", data-kenburns y capas data-parallax-layer="0.4". Fuera de la
+// tira con lente, el motor es core/carousel-runtime (desplazamiento nativo o mazo); con data-loop y uno por vista, el
+// bucle aparca el primer o el último slide con `order` en lugar de clonar.
+//
 // Modo gl (zonas curvas dibujadas en un lienzo WebGL2, como `rasterize` en React). Se pide de dos formas:
 //   - Marcado: con data-effect="lens", TODOS los slides declaran su imagen. En el slide o en un descendiente:
 //       <img data-raster …> | <canvas data-raster …>   el propio elemento es la fuente
@@ -36,7 +42,31 @@ import { pause } from "@zuccadev-labs/zuix-zicon/icons/pause";
 import { play } from "@zuccadev-labs/zuix-zicon/icons/play";
 import { MIN_SIDE, createEngine } from "../components/carousel/engine";
 import { autoplayInterval, barProgress, isIndicators, perPageOf, snapPositions, type CarouselIndicators } from "../core/carousel";
-import { bindAutoplay, createSnap, revealThumb, type AutoplayBinding } from "../core/carousel-runtime";
+import { announceTo } from "../core/announcer";
+import {
+  carouselMode,
+  depthOf,
+  isEffect,
+  isLayout,
+  isVertical,
+  KEYLINE_LAYOUTS,
+  needsFace,
+  PROGRESS_EFFECTS,
+  snapAlign,
+  type CarouselEffect,
+  type CarouselLayout,
+} from "../core/carousel-effects";
+import {
+  bindAutoplay,
+  createDeck,
+  createSnap,
+  revealThumb,
+  scrollDrivenSupported,
+  type AutoplayBinding,
+  type DeckController,
+  type SnapController,
+} from "../core/carousel-runtime";
+import type { KeylineLayout } from "../core/keylines";
 import { byRef, setMarkup } from "./shared";
 import type { CarouselRasterSize, CarouselRasterSource } from "../components/carousel/slideTexture";
 
@@ -119,7 +149,7 @@ function controlsFor(root: HTMLElement, after: Element, vertical: boolean, autop
   if (!controls) {
     const created = make("div", "z-carousel__controls");
     const indicator =
-      indicators === "dots"
+      indicators === "dots" || indicators === "progress"
         ? '<div class="z-carousel__dots" role="group"></div>'
         : indicators === "bar"
           ? '<span class="z-carousel__bar" aria-hidden="true"><span class="z-carousel__bar-fill"></span></span>'
@@ -214,7 +244,12 @@ function autoplayFor(root: HTMLElement, chrome: Chrome, live: HTMLElement | null
     root.dataset.autoplayState = playing ? "playing" : "paused";
     live?.setAttribute("aria-live", playing ? "off" : "polite");
   };
-  const binding = bindAutoplay(root, interval, tick, paint);
+  // Cada intervalo entero cambia de animación: el punto `progress` vuelve a llenarse desde cero.
+  const cycle = () => {
+    root.dataset.cycle = root.dataset.cycle === "a" ? "b" : "a";
+  };
+  root.dataset.cycle = "a";
+  const binding = bindAutoplay(root, interval, tick, paint, cycle);
   // La pausa de la persona cambia el botón aunque la reproducción ya estuviera retenida (puntero encima).
   const onClick = () => {
     binding.autoplay.toggle();
@@ -230,11 +265,18 @@ function autoplayFor(root: HTMLElement, chrome: Chrome, live: HTMLElement | null
   };
 }
 
-/** Modo snap (varias por página o vertical): desplazamiento nativo; aquí solo flechas, indicadores y anuncios. */
-function snapCarousel(root: HTMLElement): CarouselHandle {
+/**
+ * Desplazamiento nativo (varias por página, vertical, layouts de M3, efectos de profundidad) o mazo (fundido y tarjetas
+ * apiladas): el motor es core/carousel-runtime, el mismo del binding de React; aquí flechas, indicadores y anuncios.
+ */
+function scrollCarousel(root: HTMLElement, deck: boolean): CarouselHandle {
   const text = labelsOf(root);
-  const vertical = root.dataset.orientation === "vertical";
-  const perPage = perPageOf(Number(root.dataset.perPage) || (vertical ? 1 : 1));
+  const effect: CarouselEffect = isEffect(root.dataset.effect) ? root.dataset.effect : "lens";
+  const layout: CarouselLayout = isLayout(root.dataset.layout) ? root.dataset.layout : "strip";
+  const auto = root.dataset.perPage === "auto" || layout === "uncontained";
+  const vertical = !deck && isVertical(root.dataset.orientation, effect);
+  const perPage = auto ? 0 : perPageOf(Number(root.dataset.perPage) || 1);
+  const align = snapAlign(layout, effect);
   const undo: Array<() => void> = [];
   let viewport = root.querySelector<HTMLElement>(":scope > .z-carousel__viewport");
   if (!viewport) {
@@ -260,19 +302,34 @@ function snapCarousel(root: HTMLElement): CarouselHandle {
   vp.tabIndex = 0;
   if (!vp.hasAttribute("role")) vp.setAttribute("role", "group");
   if (!vp.hasAttribute("aria-label") && root.getAttribute("aria-label")) vp.setAttribute("aria-label", root.getAttribute("aria-label")!);
-  const slides = [...vp.querySelectorAll<HTMLElement>(".z-carousel__slide")];
+  const slides = [...vp.querySelectorAll<HTMLElement>(":scope > .z-carousel__track > .z-carousel__slide")];
   const count = slides.length;
-  const positions = snapPositions(count, perPage);
   slides.forEach((slide, i) => {
     slide.dataset.index = String(i);
     if (!slide.hasAttribute("role")) slide.setAttribute("role", "group");
     if (!slide.hasAttribute("aria-roledescription")) slide.setAttribute("aria-roledescription", "slide");
     if (!slide.hasAttribute("aria-label")) slide.setAttribute("aria-label", text.slide(i, count));
   });
-  root.dataset.mode = "snap";
-  root.dataset.effect = "none";
-  if (!root.dataset.orientation) root.dataset.orientation = "horizontal";
-  root.style.setProperty("--z-carousel-per-page", String(perPage));
+  if (!deck && needsFace(layout, effect)) {
+    for (const slide of slides) {
+      if (slide.querySelector(":scope > .z-carousel__face")) continue;
+      const face = make("div", "z-carousel__face");
+      face.append(...slide.childNodes);
+      slide.append(face);
+      undo.push(() => {
+        slide.append(...face.childNodes);
+        face.remove();
+      });
+    }
+  }
+  root.dataset.mode = deck ? "deck" : "snap";
+  root.dataset.effect = effect === "lens" ? "none" : effect;
+  if (align === "center") root.dataset.align = "center";
+  if (!deck) root.dataset.orientation = vertical ? "vertical" : "horizontal";
+  const depth = root.dataset.depth;
+  if (depth !== undefined) root.style.setProperty("--z-carousel-depth", String(depthOf(depth)));
+  if (root.dataset.peek) root.style.setProperty("--z-carousel-peek", root.dataset.peek);
+  root.style.setProperty("--z-carousel-per-page", String(Math.max(1, perPage)));
   if (!root.hasAttribute("role")) root.setAttribute("role", "region");
   if (!root.hasAttribute("aria-roledescription")) root.setAttribute("aria-roledescription", "carousel");
   let live = root.querySelector<HTMLElement>(":scope > .z-carousel__live");
@@ -284,90 +341,83 @@ function snapCarousel(root: HTMLElement): CarouselHandle {
     live = created;
     undo.push(() => created.remove());
   }
-  const looping = root.hasAttribute("data-loop") && root.dataset.loop !== "false" && positions > 1;
+  const region = live;
+  const looping = root.hasAttribute("data-loop") && root.dataset.loop !== "false";
   const motion = matchMedia(REDUCED_MOTION);
   let index = 0;
-  // Las que caben y las posiciones salen del controlador: en una tira estrecha caben menos de las pedidas.
   // Mientras se construye el controlador (posición inicial) aún no existe: se usan las pedidas.
   let ready = false;
   const render = () => {
-    const fits = ready ? snap.perPage : perPage;
-    const total = ready ? snap.positions : positions;
+    const snap = ready ? (controller as SnapController) : null;
+    const fits = snap && "perPage" in snap ? snap.perPage : Math.max(1, perPage);
+    const total = ready ? controller.positions : deck || auto ? count : snapPositions(count, Math.max(1, perPage));
     root.style.setProperty("--z-carousel-per-page", String(fits));
-    for (const [i, slide] of slides.entries()) slide.toggleAttribute("data-active", i >= index && i < index + fits);
+    root.toggleAttribute("data-park", Boolean(snap && "parking" in snap && snap.parking));
+    if (!deck) for (const [i, slide] of slides.entries()) slide.toggleAttribute("data-active", i >= index && i < index + fits);
     chrome.render(index, total, count);
-    if (chrome.arrows[0]) chrome.arrows[0].disabled = total <= 1 || (!looping && index === 0);
-    if (chrome.arrows[1]) chrome.arrows[1].disabled = total <= 1 || (!looping && index === total - 1);
+    const wraps = looping && total > 1;
+    if (chrome.arrows[0]) chrome.arrows[0].disabled = total <= 1 || (!wraps && index === 0);
+    if (chrome.arrows[1]) chrome.arrows[1].disabled = total <= 1 || (!wraps && index === total - 1);
   };
-  const announce = () => {
-    live!.textContent = text.slide(index, count);
-  };
-  const snap = createSnap({
+  const common = {
     viewport: vp,
-    perPage,
-    vertical,
     loop: looping,
     reducedMotion: () => motion.matches,
-    initialIndex: Math.min(Math.max(Number(root.dataset.start) || 0, 0), positions - 1),
-    onIndex: (next) => {
+    initialIndex: Math.min(Math.max(Number(root.dataset.start) || 0, 0), Math.max(0, count - 1)),
+    keyboard: true,
+    onIndex: (next: number) => {
       index = next;
-      render();
+      if (ready) render();
       root.dispatchEvent(new CustomEvent("z:change", { bubbles: true, detail: { index: next } }));
     },
-    onLayout: () => render(),
-  });
+    onSettle: (next: number) => announceTo(region, text.slide(next, count), 300),
+    onUser: () => player?.autoplay.restart(),
+  };
+  const perMove = root.dataset.perMove === "page" ? "page" : Number(root.dataset.perMove) || undefined;
+  const controller: SnapController | DeckController = deck
+    ? createDeck(common)
+    : createSnap({
+        ...common,
+        perPage,
+        vertical,
+        align,
+        perMove,
+        progress: PROGRESS_EFFECTS.includes(effect) && !motion.matches && !scrollDrivenSupported(),
+        keylines: KEYLINE_LAYOUTS.includes(layout) ? (layout as KeylineLayout) : null,
+        onLayout: () => render(),
+      });
+  index = controller.index;
   ready = true;
-  const chrome = controlsFor(
-    root,
-    vp,
-    vertical,
-    autoplayInterval(root.dataset.autoplay === "" ? true : Number(root.dataset.autoplay)) !== null,
-    (i) => {
-      snap.goTo(Math.min(i, snap.positions - 1));
-      announce();
-      player?.autoplay.restart();
-    },
-  );
-  const player = autoplayFor(root, chrome, live, () => snap.step(1));
+  const interval = autoplayInterval(root.dataset.autoplay === "" ? true : Number(root.dataset.autoplay));
+  if (interval !== null) root.style.setProperty("--z-carousel-interval", `${interval}ms`);
+  const chrome = controlsFor(root, vp, vertical, interval !== null, (i) => {
+    controller.goTo(Math.min(i, controller.positions - 1));
+    player?.autoplay.restart();
+  });
+  const player = autoplayFor(root, chrome, live, () => controller.step(1));
   const onArrow = (event: MouseEvent) => {
     const arrow = event.target instanceof Element ? event.target.closest<HTMLButtonElement>(".z-carousel__arrow") : null;
     if (!arrow || !chrome.arrows.includes(arrow)) return;
-    snap.step(arrow === chrome.arrows[0] ? -1 : 1);
-    announce();
+    controller.step(arrow === chrome.arrows[0] ? -1 : 1);
     player?.autoplay.restart();
   };
-  const onKey = (event: KeyboardEvent) => {
-    if (event.target !== vp) return;
-    const rtl = !vertical && getComputedStyle(root).direction === "rtl";
-    const back = vertical ? "ArrowUp" : "ArrowLeft";
-    const forward = vertical ? "ArrowDown" : "ArrowRight";
-    const dir = event.key === back ? (rtl ? 1 : -1) : event.key === forward ? (rtl ? -1 : 1) : 0;
-    if (dir) {
-      event.preventDefault();
-      snap.step(dir as 1 | -1);
-      announce();
-    } else if (event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      snap.goTo(event.key === "Home" ? 0 : snap.positions - 1);
-      announce();
-    }
-  };
   chrome.controls.addEventListener("click", onArrow);
-  vp.addEventListener("keydown", onKey);
   render();
   let destroyed = false;
   const handle: CarouselHandle = {
-    next: () => snap.step(1),
-    prev: () => snap.step(-1),
-    goTo: (i) => snap.goTo(i),
-    refresh: () => render(),
+    next: () => controller.step(1),
+    prev: () => controller.step(-1),
+    goTo: (i) => controller.goTo(i),
+    refresh: () => {
+      controller.refresh();
+      render();
+    },
     destroy: () => {
       if (destroyed) return;
       destroyed = true;
-      snap.dispose();
+      controller.dispose();
       player?.dispose();
       chrome.controls.removeEventListener("click", onArrow);
-      vp.removeEventListener("keydown", onKey);
       chrome.dispose();
       for (const step of undo.reverse()) step();
       instances.delete(root);
@@ -390,8 +440,17 @@ export function carousel(root: HTMLElement, options?: CarouselOptions): Carousel
     if (options) configure.get(root)?.(options);
     return existing;
   }
-  if (root.dataset.orientation === "vertical" || perPageOf(Number(root.dataset.perPage)) > 1 || root.dataset.mode === "snap")
-    return snapCarousel(root);
+  const effect: CarouselEffect = isEffect(root.dataset.effect) ? root.dataset.effect : "lens";
+  const mode =
+    root.dataset.mode === "snap" || root.dataset.mode === "deck"
+      ? root.dataset.mode
+      : carouselMode({
+          layout: isLayout(root.dataset.layout) ? root.dataset.layout : "strip",
+          effect,
+          perPage: root.dataset.perPage === "auto" ? "auto" : perPageOf(Number(root.dataset.perPage)),
+          vertical: isVertical(root.dataset.orientation, effect),
+        });
+  if (mode !== "engine") return scrollCarousel(root, mode === "deck");
 
   const text = {
     previous: root.dataset.labelPrevious ?? "Previous slide",
