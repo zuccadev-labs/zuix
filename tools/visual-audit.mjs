@@ -705,9 +705,14 @@ function collect({ TOKENS, families, coarse }) {
       if (kr.right > r.right + 8 || kr.left < r.left - 8) far = k;
     }
     if (far && !far.closest(".z-carousel__track,.z-marquee__track,[data-scroll-edges]"))
-      add("fila-desborda", row, `${sig(far)} pasa ${Math.round(Math.max(rects.get(far).right - r.right, r.left - rects.get(far).left))} px del borde de la fila`, {
-        text: far.textContent.trim().slice(0, 40),
-      });
+      add(
+        "fila-desborda",
+        row,
+        `${sig(far)} pasa ${Math.round(Math.max(rects.get(far).right - r.right, r.left - rects.get(far).left))} px del borde de la fila`,
+        {
+          text: far.textContent.trim().slice(0, 40),
+        },
+      );
   }
 
   // Etiqueta cortada: el nombre de algo (un dato, una persona, un título de tarjeta) de hasta tres palabras cortado con
@@ -752,10 +757,13 @@ function collect({ TOKENS, families, coarse }) {
     }
     const tops = { size: lines.length };
     const width = rects.get(row).width;
-    // Si todas ocupan casi el ancho, apilarlas es la forma (una lista); si alguna deja hueco al lado, la fila se rompió.
+    // Si todas miden lo mismo (una lista de botones a todo el ancho), apilarlas es la forma; con anchos muy distintos,
+    // una debajo de otra, la fila se rompió.
+    const ws = kids.map((k) => rects.get(k).width);
     if (
       tops.size === kids.length &&
-      kids.some((k) => rects.get(k).width < width * 0.6) &&
+      Math.max(...ws) > Math.min(...ws) * 1.5 &&
+      Math.min(...ws) < width * 0.8 &&
       kids.some((k) => k.matches(INTERACTIVE) || k.querySelector(INTERACTIVE))
     )
       add("fila-apilada", row, `${kids.length} piezas de una fila, cada una en su línea`);
