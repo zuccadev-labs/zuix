@@ -106,6 +106,8 @@ export function createSnap(o: SnapOptions): SnapController {
   /** Paso pedido durante un viaje de un marcador (con el orden del DOM): se repite al asentarse. */
   let replay: 0 | 1 | -1 = 0;
   let replaying = false;
+  /** La persona tocó la tira (puntero, rueda, teclado, foco): el próximo asiento es suyo. */
+  let touched = false;
   // Desplazamiento pedido por código: mientras dura, las posiciones intermedias no cambian el índice.
   let pending: { target: number; from: number; until: number } | null = null;
   let arrangement: Arrangement | null = null;
@@ -207,6 +209,26 @@ export function createSnap(o: SnapOptions): SnapController {
     vp.scrollBy({ [vertical ? "top" : "left"]: physical, behavior: smooth ? "smooth" : "instant" } as ScrollToOptions);
   };
 
+  /**
+   * Devuelve la tira a la posición actual sin animación. Tras un cambio de tamaño (o al volver el ajuste después de
+   * aparcar) el navegador puede quedarse en otro slide.
+   */
+  const realign = () => {
+    if (pending || compensating) return;
+    const g = geometry();
+    let target: number | undefined;
+    if (parks()) target = g.items.find((it) => it.index === index)?.snap;
+    else target = g.points[Math.min(index, g.points.length - 1)]!.at + g.min;
+    if (target === undefined) return;
+    const at = Math.max(g.min, Math.min(g.max, target));
+    if (Math.abs(at - g.win) <= 1) return;
+    compensating = true;
+    scrollByU(g, at - g.win, false);
+    win.requestAnimationFrame(() => {
+      compensating = false;
+    });
+  };
+
   /** Cambia el aparcamiento y compensa el salto en el mismo paso, con el ajuste (y el desbordamiento) quietos. */
   const park = (value: number | null, lock: boolean) => {
     if (value === parked) return;
@@ -230,7 +252,9 @@ export function createSnap(o: SnapOptions): SnapController {
         vp.style.scrollSnapType = "";
         if (lock) vp.style[prop] = "";
         compensating = false;
-        if (!disposed) paint(geometry());
+        if (disposed) return;
+        realign();
+        paint(geometry());
       }),
     );
   };
@@ -313,7 +337,13 @@ export function createSnap(o: SnapOptions): SnapController {
       // Un `scrollend` del desplazamiento anterior (o de una compensación) en el punto de partida: no es el nuestro.
       if (Math.abs(g.win - pending.from) < 1 && pending.target !== positionOf(g) && performance.now() < pending.until) return;
       pending = null;
+    } else if (!touched) {
+      // Nadie lo pidió (ni la persona ni el código): el desplazamiento vino de maquetar (fuentes, cambio de tamaño,
+      // emulación móvil). Se vuelve al slide actual en vez de cambiarlo.
+      realign();
+      return;
     }
+    touched = false;
     setIndex(positionOf(g));
     if (parks()) park(index, replay === 0);
     paint(geometry());
@@ -337,7 +367,7 @@ export function createSnap(o: SnapOptions): SnapController {
     const g = geometry();
     paint(g);
     // Con un destino pedido no se recalcula en cada fotograma (Safari tartamudea): los marcadores ya lo muestran.
-    if (!pending || performance.now() > pending.until) setIndex(positionOf(g));
+    if (touched && (!pending || performance.now() > pending.until)) setIndex(positionOf(g));
   };
   const onScroll = () => {
     if (!frame) frame = win.requestAnimationFrame(read);
@@ -347,6 +377,10 @@ export function createSnap(o: SnapOptions): SnapController {
     }
   };
   const onScrollEnd = () => settle();
+  const touch = () => {
+    touched = true;
+  };
+  const INTENT = ["pointerdown", "wheel", "touchstart", "keydown", "focusin"] as const;
 
   const onKey = (event: KeyboardEvent) => {
     if (event.target !== vp || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -367,6 +401,7 @@ export function createSnap(o: SnapOptions): SnapController {
 
   vp.addEventListener("scroll", onScroll, { passive: true });
   vp.addEventListener("scrollend", onScrollEnd);
+  for (const type of INTENT) vp.addEventListener(type, touch, { passive: true });
   if (o.keyboard) vp.addEventListener("keydown", onKey);
   measureLayout();
   const layout =
@@ -380,6 +415,7 @@ export function createSnap(o: SnapOptions): SnapController {
           fitted = now;
           if (parks() && parked === null) park(index, false);
           if (index > positions() - 1) goTo(positions() - 1, false);
+          else realign();
           paint(geometry());
           autoHeight();
           if (changed) o.onLayout?.();
@@ -422,6 +458,7 @@ export function createSnap(o: SnapOptions): SnapController {
       clearTimeout(settleTimer);
       vp.removeEventListener("scroll", onScroll);
       vp.removeEventListener("scrollend", onScrollEnd);
+      for (const type of INTENT) vp.removeEventListener(type, touch);
       vp.removeEventListener("keydown", onKey);
       layout?.disconnect();
       track.style.removeProperty("--z-carousel-current");

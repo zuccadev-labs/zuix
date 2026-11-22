@@ -1,8 +1,18 @@
 // Galería de cargadores: las tres formas de Spinner y los 18 patrones de DotMatrix en vivo, con tamaño, tono,
-// rejilla y baldosa. Cada tarjeta enseña el código de lo que muestra.
+// rejilla y baldosa, y los ocho patrones de Skeleton. Cada tarjeta enseña el código de lo que muestra.
 import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
-import { DOT_PATTERNS, DotMatrix, type DotPattern, SegmentedControl, Spinner, Switch } from "@zuccadev-labs/zuix-zui";
+import {
+  DOT_PATTERNS,
+  DotMatrix,
+  type DotPattern,
+  SegmentedControl,
+  Skeleton,
+  SkeletonGroup,
+  type SkeletonPattern,
+  Spinner,
+  Switch,
+} from "@zuccadev-labs/zuix-zui";
 import { useState } from "react";
 import { CopyButton } from "../components/Copy";
 import { Crumbs, DocsShell, PageGrid } from "../components/Shell";
@@ -27,6 +37,17 @@ const NAMES: Record<DotPattern, string> = {
   heart: "Corazón",
   cascade: "Cascada",
 };
+
+const SKELETONS: [SkeletonPattern, string][] = [
+  ["card", "Tarjeta"],
+  ["list", "Lista"],
+  ["table", "Tabla"],
+  ["profile", "Perfil"],
+  ["chat", "Chat"],
+  ["chart", "Gráfico"],
+  ["article", "Artículo"],
+  ["calendar", "Calendario"],
+];
 
 type Size = "sm" | "md" | "lg";
 type Tone = "accent" | "muted" | "current";
@@ -131,6 +152,27 @@ export default function Loaders() {
                   );
                 })}
               </ul>
+            </section>
+            <section className="zd-section" aria-labelledby="skeletons">
+              <h2 id="skeletons">Skeletons por patrón</h2>
+              <p>
+                Cuando sé qué forma tendrá lo que llega, enseño esa forma: <Link to="/components/feedback/skeleton">Skeleton</Link> trae
+                ocho patrones. El contenedor lleva <code>aria-busy</code> (lo pone <code>SkeletonGroup</code>), los huesos no se leen y el
+                brillo va sincronizado; con movimiento reducido es un tono plano.
+              </p>
+              <SkeletonGroup className="zd-gallery zd-gallery--tight z-root">
+                {SKELETONS.map(([pattern, name]) => (
+                  <figure key={pattern} className="zd-gallery__card">
+                    <div className="zd-gallery__stage zd-skeleton-stage">
+                      <Skeleton pattern={pattern} rows={3} messages={4} paragraphs={1} columns={3} />
+                    </div>
+                    <figcaption className="zd-gallery__caption">
+                      <span className="zd-gallery__name">{name}</span>
+                      <CopyButton text={`<Skeleton pattern="${pattern}" />`} name={`el código de ${name}`} />
+                    </figcaption>
+                  </figure>
+                ))}
+              </SkeletonGroup>
             </section>
           </div>
         </PageGrid>

@@ -418,11 +418,11 @@
   /* Bucle sin réplicas (guía `carousel`): el primer slide se aparca detrás del último en los dos últimos índices y
      el último delante del primero en los dos primeros. Con tres slides, solo en el propio extremo (si no, el del
      medio tendría los dos aparcados y el orden saldría al revés). Sin script `--z-carousel-current` no existe. */
-  .z-carousel[data-park] .z-carousel__track > .z-carousel__slide:first-child {
+  .z-carousel[data-mode="snap"] .z-carousel__track > .z-carousel__slide:first-child {
     /* Respaldo inválido a propósito: sin `--z-carousel-current` el cálculo no vale y `order` queda en 0. */
     order: clamp(0, var(--z-carousel-current, none) - max(var(--z-carousel-count, sibling-count()) - 3, 1), 1);
   }
-  .z-carousel[data-park] .z-carousel__track > .z-carousel__slide:last-child {
+  .z-carousel[data-mode="snap"] .z-carousel__track > .z-carousel__slide:last-child {
     order: calc(-1 * clamp(0, min(2, var(--z-carousel-count, sibling-count()) - 2) - var(--z-carousel-current, none), 1));
   }
 
@@ -639,14 +639,15 @@
   }
 
   /* ---- Parallax: las capas `[data-parallax-layer]` se mueven a otra velocidad que el slide ---- */
+  /* La capa crece lo justo para que el desplazamiento no deje ver el borde (escala, no ancho: así no depende de
+     max-width ni de otras hojas). */
   .z-carousel[data-effect="parallax"] :is(img, picture, video, canvas, .z-carousel__media)[data-parallax-layer] {
     position: absolute;
-    inset-block: 0;
-    inset-inline-start: calc(var(--z-parallax, 0.4) * var(--z-carousel-slide-width) * -1);
-    width: calc(100% + 2 * var(--z-parallax, 0.4) * var(--z-carousel-slide-width));
-    max-width: none;
+    inset: 0;
+    width: 100%;
     height: 100%;
     object-fit: cover;
+    scale: calc(1 + 2 * var(--z-parallax, 0.4));
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -782,6 +783,10 @@
   }
 
   /* ---- Indicador `progress`: el punto actual se alarga y se llena durante el intervalo ---- */
+  /* El punto actual crece: su objetivo también, para que la marca no se salga de él. */
+  .z-carousel[data-indicators="progress"] .z-carousel__dot[aria-current="true"] {
+    width: calc(var(--z-space-8) + var(--z-space-2));
+  }
   .z-carousel[data-indicators="progress"] .z-carousel__dot[aria-current="true"]::before {
     width: var(--z-space-8);
     border-radius: var(--z-radius-xs);
@@ -813,6 +818,21 @@
     }
     to {
       --z-carousel-fill: 100%;
+    }
+  }
+
+  /* En una pantalla estrecha los puntos van en su propia fila, bajo las flechas: con objetivos táctiles de 40 px no
+     caben junto a ellas. */
+  @media (max-width: 640px) {
+    .z-carousel__controls:has(.z-carousel__dots) {
+      flex-wrap: wrap;
+      row-gap: var(--z-space-1);
+    }
+    .z-carousel__controls > .z-carousel__dots {
+      order: 1;
+      flex: 1 0 100%;
+      flex-wrap: nowrap;
+      gap: 0;
     }
   }
 

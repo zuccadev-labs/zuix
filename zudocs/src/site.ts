@@ -17,7 +17,7 @@ export interface ZudocsSite {
   cta?: { label: string; to: string };
   docs: { path: string; areas: ZudocsArea[] };
   /** Páginas de catálogo activas (`pages` en la configuración). */
-  pages: { components: boolean; icons: boolean; tokens: boolean; loaders?: boolean; effects?: boolean };
+  pages: { components: boolean; icons: boolean; tokens: boolean; loaders?: boolean; effects?: boolean; carousels?: boolean };
   home?: { eyebrow?: string; title?: string; emphasis?: string; suite?: boolean };
   navbar?: { label: string; to?: string; href?: string }[];
   footer?: string;
