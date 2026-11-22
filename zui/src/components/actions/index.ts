@@ -16,3 +16,6 @@ export { CopyButton, type CopyButtonProps } from "./CopyButton";
 export { Swap, type SwapProps } from "./Swap";
 export { Toolbar, ToolbarGroup, ToolbarSeparator, type ToolbarProps, type ToolbarGroupProps } from "./Toolbar";
 export { DownloadTrigger, download, mimeFromName, type DownloadSource, type DownloadTriggerProps } from "./DownloadTrigger";
+export { Fab, type FabProps } from "./Fab";
+export { FabMenu, type FabMenuProps } from "./FabMenu";
+export { SplitButton, type SplitButtonProps } from "./SplitButton";

@@ -1,0 +1,76 @@
+{
+  "name": "ImageList",
+  "group": "media",
+  "description": "Lista de imágenes: rejilla regular (`standard`), acolchada con piezas de distinto tamaño (`quilted`), tejida (`woven`) o en mampostería (`masonry`), con título opcional encima o debajo.",
+  "import": "import { ImageList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ src, alt, title?, subtitle?, cols?, rows?, width?, height?, href? }[]",
+      "required": true
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["standard", "quilted", "woven", "masonry"],
+      "default": "standard"
+    },
+    {
+      "name": "columns",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "rowHeight",
+      "type": "number",
+      "default": 164
+    },
+    {
+      "name": "captionBelow",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "label",
+      "type": "string"
+    },
+    {
+      "name": "renderAction",
+      "type": "(item, index) => ReactNode"
+    }
+  ],
+  "tokens": [
+    "radius-md",
+    "surface-2",
+    "surface-solid",
+    "scrim",
+    "fg",
+    "fg-on-accent",
+    "space-2",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-image-list",
+    "z-image-list__item",
+    "z-image-list__link",
+    "z-image-list__image",
+    "z-image-list__bar",
+    "z-image-list__text",
+    "z-image-list__title",
+    "z-image-list__subtitle",
+    "z-image-list__action"
+  ],
+  "a11y": "ul con nombre; cada imagen con su alt y carga diferida (loading=lazy, decoding=async). El título es texto, no parte de la imagen. En `masonry` el orden de lectura es el del marcado, columna a columna.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Acolchada",
+      "code": "<ImageList variant=\"quilted\" columns={4} rowHeight={120} label=\"Trips\" items={[{ src: \"https://picsum.photos/seed/zuix0/600/400\", alt: \"Mountain lake at dawn\", title: \"Lake\", cols: 2, rows: 2 }, { src: \"https://picsum.photos/seed/zuix1/600/400\", alt: \"Desert dunes\", title: \"Dunes\" }, { src: \"https://picsum.photos/seed/zuix2/600/400\", alt: \"City at night\", title: \"City\" }, { src: \"https://picsum.photos/seed/zuix3/600/400\", alt: \"Forest path\", title: \"Forest\", cols: 2 }, { src: \"https://picsum.photos/seed/zuix4/600/400\", alt: \"Coastline\", title: \"Coast\" }, { src: \"https://picsum.photos/seed/zuix5/600/400\", alt: \"Snowy peaks\", title: \"Peaks\" }]} />"
+    }
+  ],
+  "origin": "Image List (standard, quilted, woven, masonry) de MUI y Material."
+}

@@ -1,0 +1,300 @@
+/* @zuccadev-labs/zuix-zui — acciones de Material 3 que faltaban: Fab (y extendido), FabMenu y SplitButton; y en medios,
+   ImageList y Masonry. El FAB es un cuadrado de esquinas redondeadas, como en Material 3, nunca una píldora; el botón
+   dividido une sus dos mitades con un canto de 2 px. La mampostería usa los carriles nativos donde existen y columnas
+   CSS donde no. */
+@layer zui.actions {
+  /* ---- Fab ---- */
+  .z-fab {
+    --z-fab-size: 56px;
+    --z-fab-radius: var(--z-radius-lg);
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-2);
+    min-inline-size: var(--z-fab-size);
+    block-size: var(--z-fab-size);
+    padding-inline: 0;
+    border: 1px solid transparent;
+    border-radius: var(--z-fab-radius);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+      var(--z-shadow-md);
+    font: inherit;
+    font-weight: var(--z-weight-semibold);
+    cursor: pointer;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-normal) var(--z-ease-standard),
+      scale var(--z-duration-press) var(--z-ease-out),
+      padding var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  .z-fab[data-size="sm"] {
+    --z-fab-size: 40px;
+    --z-fab-radius: var(--z-radius-md);
+  }
+  .z-fab[data-size="lg"] {
+    --z-fab-size: 96px;
+    --z-fab-radius: var(--z-radius-xl);
+  }
+  .z-fab[data-variant="secondary"] {
+    border-color: var(--z-glass-border);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-fab[data-variant="surface"] {
+    border-color: var(--z-glass-border);
+    background: var(--z-popup-bg);
+    color: var(--z-accent-text);
+    -webkit-backdrop-filter: blur(var(--z-popup-blur)) saturate(var(--z-glass-saturate));
+    backdrop-filter: blur(var(--z-popup-blur)) saturate(var(--z-glass-saturate));
+  }
+  @media (hover: hover) {
+    .z-fab:hover {
+      background: var(--z-accent-solid-hover);
+      box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent),
+        var(--z-shadow-lg);
+    }
+    .z-fab:is([data-variant="secondary"], [data-variant="surface"]):hover {
+      background: var(--z-surface-3);
+    }
+  }
+  .z-fab:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-fab:active {
+    scale: 0.96;
+  }
+  .z-fab[data-extended] {
+    padding-inline: var(--z-space-4) var(--z-space-5);
+  }
+  .z-fab__label {
+    overflow: hidden;
+    white-space: nowrap;
+    transition:
+      max-inline-size var(--z-duration-normal) var(--z-ease-emphasized),
+      opacity var(--z-duration-fast) var(--z-ease-standard);
+    max-inline-size: 16rem;
+  }
+  .z-fab[data-collapsed] {
+    padding-inline: 0;
+  }
+  .z-fab[data-collapsed] .z-fab__label {
+    max-inline-size: 0;
+    opacity: 0;
+  }
+  .z-fab[data-collapsed] {
+    gap: 0;
+  }
+  .z-fab[data-position] {
+    position: fixed;
+    z-index: var(--z-layer-sticky);
+  }
+  .z-fab[data-position^="bottom"] {
+    inset-block-end: max(var(--z-space-6), env(safe-area-inset-bottom));
+  }
+  .z-fab[data-position^="top"] {
+    inset-block-start: max(var(--z-space-6), env(safe-area-inset-top));
+  }
+  .z-fab[data-position$="-end"] {
+    inset-inline-end: max(var(--z-space-6), env(safe-area-inset-right));
+  }
+  .z-fab[data-position$="-start"] {
+    inset-inline-start: max(var(--z-space-6), env(safe-area-inset-left));
+  }
+  .z-fab[data-position="bottom-center"] {
+    inset-inline-start: 50%;
+    translate: -50% 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-fab,
+    .z-fab__label {
+      transition: none;
+    }
+  }
+  /* El menú del FAB: entradas altas, con su icono en baldosa. */
+  .z-fab-menu {
+    min-inline-size: 13rem;
+  }
+
+  /* ---- SplitButton ---- */
+  .z-split-button {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 2px;
+  }
+  .z-split-button__main {
+    border-start-end-radius: var(--z-radius-xs);
+    border-end-end-radius: var(--z-radius-xs);
+  }
+  .z-split-button__toggle {
+    border-start-start-radius: var(--z-radius-xs);
+    border-end-start-radius: var(--z-radius-xs);
+  }
+  .z-split-button__toggle > :is(svg, z-icon) {
+    transition: rotate var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  .z-split-button__toggle[aria-expanded="true"] > :is(svg, z-icon) {
+    rotate: 180deg;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-split-button__toggle > :is(svg, z-icon) {
+      transition: none;
+    }
+  }
+}
+
+@layer zui.media {
+  /* ---- ImageList ---- */
+  .z-image-list {
+    container: z-image-list / inline-size;
+    display: grid;
+    grid-template-columns: repeat(var(--z-image-cols, 3), minmax(0, 1fr));
+    grid-auto-rows: var(--z-image-row, 164px);
+    gap: var(--z-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-image-list__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: hidden;
+    border-radius: var(--z-radius-md);
+    background: var(--z-surface-2);
+  }
+  .z-image-list__link {
+    display: block;
+    flex: 1;
+    min-block-size: 0;
+    border-radius: inherit;
+  }
+  .z-image-list__link:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-image-list__image {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 0;
+    object-fit: cover;
+  }
+  .z-image-list[data-variant="quilted"] .z-image-list__item {
+    grid-column: span min(var(--z-image-span-c, 1), var(--z-image-cols, 3));
+    grid-row: span var(--z-image-span-r, 1);
+  }
+  .z-image-list[data-variant="woven"] {
+    grid-auto-rows: auto;
+  }
+  .z-image-list[data-variant="woven"] .z-image-list__item {
+    aspect-ratio: 1;
+  }
+  .z-image-list[data-variant="woven"] .z-image-list__item:nth-child(even) {
+    aspect-ratio: 3 / 4;
+  }
+  .z-image-list[data-variant="masonry"] {
+    display: block;
+    columns: var(--z-image-cols, 3);
+    column-gap: var(--z-space-2);
+  }
+  .z-image-list[data-variant="masonry"] .z-image-list__item {
+    margin-block-end: var(--z-space-2);
+    break-inside: avoid;
+  }
+  .z-image-list[data-variant="masonry"] .z-image-list__image {
+    block-size: auto;
+  }
+  .z-image-list__bar {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    padding: var(--z-space-2) var(--z-space-3);
+    background: linear-gradient(to top, var(--z-scrim), transparent);
+    color: var(--z-fg-on-accent);
+  }
+  .z-image-list[data-caption="below"] .z-image-list__bar {
+    position: static;
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+  }
+  .z-image-list__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+  .z-image-list__title {
+    overflow: hidden;
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-image-list__subtitle {
+    overflow: hidden;
+    font-size: var(--z-text-caption);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @container z-image-list (inline-size < 480px) {
+    .z-image-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .z-image-list[data-variant="masonry"] {
+      columns: 2;
+    }
+  }
+
+  /* ---- Masonry ---- */
+  .z-masonry {
+    --z-masonry-gap: var(--z-space-4);
+    display: block;
+    columns: var(--z-masonry-cols, 3) var(--z-masonry-min, 220px);
+    column-gap: var(--z-masonry-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-masonry[data-gap="sm"] {
+    --z-masonry-gap: var(--z-space-2);
+  }
+  .z-masonry[data-gap="lg"] {
+    --z-masonry-gap: var(--z-space-6);
+  }
+  .z-masonry > * {
+    margin-block: 0 var(--z-masonry-gap);
+    break-inside: avoid;
+  }
+  /* Carriles nativos: el orden visual sigue al del marcado fila a fila. */
+  @supports (display: grid-lanes) {
+    .z-masonry {
+      display: grid-lanes;
+      grid-template-columns: repeat(
+          auto-fill,
+          minmax(
+            max(
+              var(--z-masonry-min, 220px),
+              calc((100% - var(--z-masonry-gap) * (var(--z-masonry-cols, 3) - 1)) / var(--z-masonry-cols, 3))
+            ),
+            1fr
+          )
+        );
+      gap: var(--z-masonry-gap);
+      columns: auto;
+    }
+    .z-masonry > * {
+      margin: 0;
+    }
+  }
+}
