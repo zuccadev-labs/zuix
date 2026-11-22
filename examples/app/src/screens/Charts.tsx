@@ -81,6 +81,7 @@ export function ChartsScreen() {
         markers
         onPointClick={({ index }) => setLast(`Line: ${MONTHS[index]}`)}
         id="chart-line"
+        locale="en-US"
       />
       <AreaChart
         title="Traffic by source"
@@ -95,6 +96,7 @@ export function ChartsScreen() {
         hidden={hidden}
         onHiddenChange={({ hidden: next }) => setHidden(next)}
         id="chart-area"
+        locale="en-US"
       />
       <div className="app-charts__row">
         <BarChart
@@ -108,6 +110,7 @@ export function ChartsScreen() {
           ]}
           patterns
           id="chart-bar"
+          locale="en-US"
         />
         <BarChart
           title="Workload by team"
@@ -121,6 +124,7 @@ export function ChartsScreen() {
             { key: "blocked", label: "Blocked" },
           ]}
           id="chart-hbar"
+          locale="en-US"
         />
       </div>
       <div className="app-charts__row">
@@ -130,8 +134,9 @@ export function ChartsScreen() {
           data={STORAGE}
           valueFormat={{ style: "unit", unit: "gigabyte" }}
           id="chart-donut"
+          locale="en-US"
         />
-        <PieChart title="Storage share" data={STORAGE} patterns id="chart-pie" />
+        <PieChart title="Storage share" data={STORAGE} patterns id="chart-pie" locale="en-US" />
         <BarChart
           title="Net balance"
           data={BALANCE}
@@ -139,11 +144,12 @@ export function ChartsScreen() {
           series={[{ key: "net", label: "Net" }]}
           valueFormat={money}
           id="chart-net"
+          locale="en-US"
         />
       </div>
       <p className="app-charts__spark">
-        Weekly visits <Sparkline values={[120, 132, 101, 154, 190, 230, 210, 340]} label="Weekly visits" /> Errors{" "}
-        <Sparkline values={[9, 7, 8, 4, 5, 3, 2]} type="bar" color={5} label="Errors" />
+        Weekly visits <Sparkline values={[120, 132, 101, 154, 190, 230, 210, 340]} label="Weekly visits" locale="en-US" /> Errors{" "}
+        <Sparkline values={[9, 7, 8, 4, 5, 3, 2]} type="bar" color={5} label="Errors" locale="en-US" />
       </p>
       <output data-testid="chart-last">{last}</output>
     </div>

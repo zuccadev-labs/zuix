@@ -30,7 +30,6 @@ body {
   font-family: var(--z-font-display);
   font-weight: var(--z-weight-bold);
   letter-spacing: var(--z-tracking-tight);
-  text-transform: capitalize;
 }
 /* En un teléfono el nombre de la marca deja el sitio a las pestañas de trabajo (a 390 px quedaban ~50 px y la
    pestaña activa se cortaba por los dos lados); sigue siendo texto para el lector de pantalla. */
@@ -634,10 +633,12 @@ body {
   min-height: 0;
   min-width: 0;
 }
+/* En estrecho el uso de contexto baja a otra línea: en la misma, la fila se salía por el borde del panel. */
 .app-assistant__bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--z-space-3);
+  gap: var(--z-space-2) var(--z-space-3);
   padding: var(--z-space-3) var(--z-space-5);
   border-block-end: 1px solid var(--z-line);
 }
@@ -647,6 +648,7 @@ body {
   font-weight: var(--z-weight-semibold);
 }
 .app-assistant__usage {
+  min-inline-size: 0;
   margin-inline-start: auto;
 }
 .app-assistant__scroll {

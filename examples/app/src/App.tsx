@@ -271,8 +271,9 @@ export function App() {
                 aria-expanded={sidebarOpen}
                 data-testid="toggle-sidebar"
               />
-              <span className="app-brand" data-testid="brand-name">
-                {brand}
+              {/* Nombre de la aplicación de ejemplo, no de la marca: la marca es un tema y se elige en el selector. */}
+              <span className="app-brand" data-testid="app-name">
+                Acme
               </span>
             </>
           }
