@@ -1,0 +1,140 @@
+{
+  "name": "LogConsole",
+  "group": "terminal",
+  "description": "Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado. Pinta por ventana: con miles de entradas solo existen en el documento las filas que se ven.",
+  "import": "import { LogConsole } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "entries",
+      "type": "{ id?, time?, level?, source?, message }[]",
+      "description": "level: debug | info | warn | error."
+    },
+    {
+      "name": "levels",
+      "type": "LogLevel[]",
+      "default": ["debug", "info", "warn", "error"],
+      "description": "Filtros que se ofrecen."
+    },
+    {
+      "name": "defaultLevels",
+      "type": "LogLevel[]",
+      "description": "Activos al empezar; por defecto, todos."
+    },
+    {
+      "name": "follow",
+      "type": "boolean",
+      "default": true,
+      "description": "Seguir el final al llegar entradas; subir a leer lo desactiva."
+    },
+    {
+      "name": "wrap",
+      "type": "boolean",
+      "default": false,
+      "description": "Ajusta líneas largas (sin ventana por encima de virtualizeAt filas)."
+    },
+    {
+      "name": "virtualizeAt",
+      "type": "number",
+      "default": 200
+    },
+    {
+      "name": "timeZone",
+      "type": "string"
+    },
+    {
+      "name": "timeFormat",
+      "type": "Intl.DateTimeFormatOptions",
+      "description": "Por defecto HH:mm:ss.SSS."
+    },
+    {
+      "name": "downloadName",
+      "type": "string",
+      "description": "Con él, botón de descargar (texto plano)."
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "onLevelsChange",
+      "type": "(detail: { levels }) => void"
+    },
+    {
+      "name": "onClear",
+      "type": "() => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<LogConsoleLabels>"
+    }
+  ],
+  "states": ["following", "paused", "filtered", "empty"],
+  "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "card-radius",
+    "line",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "info-text",
+    "warning-text",
+    "danger-text",
+    "warning-soft",
+    "warning",
+    "danger",
+    "font-mono",
+    "control-height-sm",
+    "layer-raised"
+  ],
+  "classes": [
+    "z-log-console",
+    "z-log-console__bar",
+    "z-log-console__levels",
+    "z-log-console__level",
+    "z-log-console__count",
+    "z-log-console__find",
+    "z-log-console__search",
+    "z-log-console__follow",
+    "z-log-console__copy",
+    "z-log-console__download",
+    "z-log-console__viewport",
+    "z-log-console__row",
+    "z-log-console__cell",
+    "z-log-console__badge",
+    "z-log-console__match"
+  ],
+  "a11y": "Rejilla (role=grid, aria-readonly) con fila de cabeceras, aria-rowcount con el total filtrado y aria-rowindex en cada fila, también con la ventana virtual; la fila activa nunca sale del documento. Una sola parada de Tab: ↑/↓ entre filas, ←/→ entre columnas, RePág/AvPág, Inicio/Fin y Ctrl+Inicio/Ctrl+Fin. El nivel va en texto («Error») además del color, y los avisos y errores llevan una barra en el borde. Los filtros son botones con aria-pressed y su contador; «Follow» también. Las entradas nuevas no se anuncian; al buscar se anuncia el número de coincidencias en una región status, con retraso corto. Las coincidencias van en <mark> con subrayado. Sin React: .z-log-console con data-levels, data-default-levels, data-follow=\"false\", data-wrap, data-time-zone, data-download-name, data-clearable, data-title, data-locale y entries en <script type=\"application/json\" data-props>; setWidgetProps(el, { entries }) o appendLogEntries(el, nuevas); emite z:levelschange y z:clear.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Servicio con filtros y búsqueda",
+      "code": "<LogConsole title=\"api logs\" timeZone=\"UTC\" downloadName=\"api.log\" entries={entries} />"
+    },
+    {
+      "title": "Solo avisos y errores, con ajuste de línea",
+      "code": "<LogConsole wrap defaultLevels={[\"warn\", \"error\"]} entries={entries} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Servicio con filtros y búsqueda",
+      "code": "<div class=\"z-log-console\" data-title=\"api logs\" data-time-zone=\"UTC\" data-download-name=\"api.log\">\n  <script type=\"application/json\" data-props>{ \"entries\": [{\"id\": 1, \"time\": \"2026-11-21T10:42:01.120Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"GET /v1/projects 200 in 38 ms\"}, {\"id\": 2, \"time\": \"2026-11-21T10:42:01.512Z\", \"level\": \"debug\", \"source\": \"cache\", \"message\": \"hit projects:list (ttl 52 s)\"}, {\"id\": 3, \"time\": \"2026-11-21T10:42:02.004Z\", \"level\": \"warn\", \"source\": \"api\", \"message\": \"Slow query on invoices: 812 ms\"}, {\"id\": 4, \"time\": \"2026-11-21T10:42:02.980Z\", \"level\": \"error\", \"source\": \"worker\", \"message\": \"Job export-42 failed: timeout after 30 s\"}, {\"id\": 5, \"time\": \"2026-11-21T10:42:03.300Z\", \"level\": \"info\", \"source\": \"worker\", \"message\": \"Retrying export-42 (attempt 2 of 3)\"}, {\"id\": 6, \"time\": \"2026-11-21T10:42:04.010Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"POST /v1/exports 202 in 12 ms\"}] }</script>\n</div>"
+    },
+    {
+      "title": "Solo avisos y errores, con ajuste de línea",
+      "code": "<div class=\"z-log-console\" data-wrap data-default-levels=\"warn error\" data-time-zone=\"UTC\">\n  <script type=\"application/json\" data-props>{ \"entries\": [{\"id\": 1, \"time\": \"2026-11-21T10:42:01.120Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"GET /v1/projects 200 in 38 ms\"}, {\"id\": 2, \"time\": \"2026-11-21T10:42:01.512Z\", \"level\": \"debug\", \"source\": \"cache\", \"message\": \"hit projects:list (ttl 52 s)\"}, {\"id\": 3, \"time\": \"2026-11-21T10:42:02.004Z\", \"level\": \"warn\", \"source\": \"api\", \"message\": \"Slow query on invoices: 812 ms\"}, {\"id\": 4, \"time\": \"2026-11-21T10:42:02.980Z\", \"level\": \"error\", \"source\": \"worker\", \"message\": \"Job export-42 failed: timeout after 30 s\"}, {\"id\": 5, \"time\": \"2026-11-21T10:42:03.300Z\", \"level\": \"info\", \"source\": \"worker\", \"message\": \"Retrying export-42 (attempt 2 of 3)\"}, {\"id\": 6, \"time\": \"2026-11-21T10:42:04.010Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"POST /v1/exports 202 in 12 ms\"}] }</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: las consolas de logs de Vercel y Datadog."
+}

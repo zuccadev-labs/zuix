@@ -248,6 +248,13 @@
 - [TimeZoneSelect](https://zuccadev-labs.github.io/zuix/components/time/time-zone-select.md): Selector de zona horaria buscable sobre Combobox: opciones «Madrid · GMT+1 · 10:42» agrupadas por región o por desfase, con la lista del navegador (`Intl.supportedValuesOf`) o una restringida.
 - [WorldClock](https://zuccadev-labs.github.io/zuix/components/time/world-clock.md): Varias zonas a la vez, en lista o rejilla: hora, diferencia con la zona de referencia («+6 h»), día distinto («Tomorrow») y día o noche (sol o luna, aproximado de 7 a 19 h).
 
+## Componentes: Terminal y código
+
+- [CodeViewer](https://zuccadev-labs.github.io/zuix/components/terminal/code-viewer.md): CodeBlock ampliado: números de línea, líneas resaltadas, pestañas de archivos, copiar y resaltado mínimo sin dependencias (JavaScript y TypeScript con JSX, JSON, CSS, HTML y XML, shell y Python); un…
+- [DiffViewer](https://zuccadev-labs.github.io/zuix/components/terminal/diff-viewer.md): Diferencias de dos textos (diff de líneas de Myers) o de un parche unificado (`git diff`, varios archivos), en vista unificada o lado a lado, con las palabras cambiadas marcadas, cabecera por archivo…
+- [LogConsole](https://zuccadev-labs.github.io/zuix/components/terminal/log-console.md): Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado.
+- [Terminal](https://zuccadev-labs.github.io/zuix/components/terminal/terminal.md): Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y…
+
 ## Componentes: Layouts
 
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.

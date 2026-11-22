@@ -2994,6 +2994,41 @@ malaga" data-ignore-accents="">Un
   </div>
 </section>
 </div>
+<h2 class="page__group">terminal</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="CodeViewer" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">CodeViewer</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-code-viewer" data-title="server.ts" data-language="ts" data-highlight-lines="5-8">
+  <script type="application/json" data-props>{"code": "import { createServer } from \"node:http\";\n\n// Answers every request with the same JSON.\nconst port = Number(process.env.PORT ?? 3000);\nconst server = createServer((req, res) => {\n  res.writeHead(200, { \"content-type\": \"application/json\" });\n  res.end(JSON.stringify({ ok: true, path: req.url }));\n});\n\nserver.listen(port, () => console.log(`Listening on ${port}`));\n"}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="DiffViewer" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DiffViewer</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-diff" data-file-name="src/total.js">
+  <script type="application/json" data-props>{ "before": "export function total(items) {\n  let sum = 0;\n  for (const item of items) {\n    sum += item.price;\n  }\n  return sum;\n}\n", "after": "export function total(items, tax = 0) {\n  let sum = 0;\n  for (const item of items) {\n    sum += item.price * item.quantity;\n  }\n  return sum * (1 + tax);\n}\n" }</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="LogConsole" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">LogConsole</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-log-console" data-title="api logs" data-time-zone="UTC" data-download-name="api.log">
+  <script type="application/json" data-props>{ "entries": [{"id": 1, "time": "2026-11-21T10:42:01.120Z", "level": "info", "source": "api", "message": "GET /v1/projects 200 in 38 ms"}, {"id": 2, "time": "2026-11-21T10:42:01.512Z", "level": "debug", "source": "cache", "message": "hit projects:list (ttl 52 s)"}, {"id": 3, "time": "2026-11-21T10:42:02.004Z", "level": "warn", "source": "api", "message": "Slow query on invoices: 812 ms"}, {"id": 4, "time": "2026-11-21T10:42:02.980Z", "level": "error", "source": "worker", "message": "Job export-42 failed: timeout after 30 s"}, {"id": 5, "time": "2026-11-21T10:42:03.300Z", "level": "info", "source": "worker", "message": "Retrying export-42 (attempt 2 of 3)"}, {"id": 6, "time": "2026-11-21T10:42:04.010Z", "level": "info", "source": "api", "message": "POST /v1/exports 202 in 12 ms"}] }</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Terminal" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Terminal</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-terminal" data-title="build" data-prompt="~/app $" data-history="pnpm build, pnpm test">
+  <script type="application/json" data-props>{ "output": "\u001b[1;32m✓\u001b[0m Compiled 128 modules in \u001b[1m1.4s\u001b[0m\n\u001b[33mwarn\u001b[0m  2 unused exports in \u001b[4msrc/legacy.ts\u001b[0m\n\u001b[38;5;39mdist/app.js\u001b[0m   \u001b[2m84.2 kB\u001b[0m\n" }</script>
+</div>
+  </div>
+</section>
+</div>
 <h2 class="page__group">time</h2>
 <div class="page__grid">
 <section class="z-card demo" data-component="AnalogClock" data-behavior="dom">

@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 151,
+ "count": 155,
  "groups": {
   "actions": [
    "Button",
@@ -170,6 +170,12 @@
    "Toggletip",
    "Tooltip",
    "Tour"
+  ],
+  "terminal": [
+   "CodeViewer",
+   "DiffViewer",
+   "LogConsole",
+   "Terminal"
   ],
   "time": [
    "AnalogClock",
@@ -19557,6 +19563,570 @@
     }
    ],
    "file": "zui/src/components/overlay/Tour.manifest.json"
+  },
+  {
+   "name": "CodeViewer",
+   "group": "terminal",
+   "description": "CodeBlock ampliado: números de línea, líneas resaltadas, pestañas de archivos, copiar y resaltado mínimo sin dependencias (JavaScript y TypeScript con JSX, JSON, CSS, HTML y XML, shell y Python); un lenguaje desconocido va como texto. `highlight` admite el resaltado de la aplicación como tokens por línea.",
+   "import": "import { CodeViewer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "code",
+     "type": "string"
+    },
+    {
+     "name": "files",
+     "type": "{ name: string; code: string; language?: string }[]",
+     "description": "Varios archivos, en pestañas; el lenguaje sale de la extensión si falta."
+    },
+    {
+     "name": "language",
+     "type": "string"
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "lineNumbers",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "highlightLines",
+     "type": "string | number[]",
+     "description": "\"3-5,9\" o [3, 4, 5, 9]."
+    },
+    {
+     "name": "startLine",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "wrap",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "maxHeight",
+     "type": "string",
+     "description": "Longitud CSS; a partir de ahí desplaza."
+    },
+    {
+     "name": "highlight",
+     "type": "(code: string, language?: string) => CodeToken[][]"
+    },
+    {
+     "name": "defaultFile",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "onFileChange",
+     "type": "(detail: { index, name }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CodeViewerLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "highlighted",
+    "copied"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "success-text",
+    "warning-text",
+    "info-text",
+    "danger-text",
+    "font-mono",
+    "text-code",
+    "leading-code"
+   ],
+   "classes": [
+    "z-code-viewer",
+    "z-code-viewer__bar",
+    "z-code-viewer__title",
+    "z-code-viewer__tabs",
+    "z-code-viewer__tab",
+    "z-code-viewer__language",
+    "z-code-viewer__copy",
+    "z-code-viewer__body",
+    "z-code-viewer__line",
+    "z-code-viewer__number",
+    "z-code-viewer__text",
+    "z-tok"
+   ],
+   "a11y": "El código es una región con nombre (el título o «Code»), enfocable para desplazarla con el teclado; con varios archivos, pestañas del patrón APG (tablist, flechas, Inicio y Fin, activación automática) y la región es su tabpanel. Los números de línea van con aria-hidden y no se seleccionan ni se copian. Una línea resaltada lleva una barra en el borde además del fondo. El botón de copiar copia el código sin números y confirma en el botón y en una región status, sin deshabilitarse. Sin React: .z-code-viewer con un <pre><code> (o template[data-file] por archivo), data-language, data-title, data-highlight-lines, data-start-line, data-line-numbers=\"false\", data-wrap y data-max-height; emite z:filechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Archivo con líneas resaltadas",
+     "code": "<CodeViewer title=\"server.ts\" language=\"ts\" highlightLines=\"5-8\" code={serverCode} />"
+    },
+    {
+     "title": "Varios archivos",
+     "code": "<CodeViewer files={[{ name: \"package.json\", code: pkg }, { name: \"styles.css\", code: css }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Archivo con líneas resaltadas",
+     "code": "<div class=\"z-code-viewer\" data-title=\"server.ts\" data-language=\"ts\" data-highlight-lines=\"5-8\">\n  <script type=\"application/json\" data-props>{\"code\": \"import { createServer } from \\\"node:http\\\";\\n\\n// Answers every request with the same JSON.\\nconst port = Number(process.env.PORT ?? 3000);\\nconst server = createServer((req, res) => {\\n  res.writeHead(200, { \\\"content-type\\\": \\\"application/json\\\" });\\n  res.end(JSON.stringify({ ok: true, path: req.url }));\\n});\\n\\nserver.listen(port, () => console.log(`Listening on ${port}`));\\n\"}</script>\n</div>"
+    },
+    {
+     "title": "Varios archivos",
+     "code": "<div class=\"z-code-viewer\">\n  <template data-file=\"package.json\">{\n  \"name\": \"demo\",\n  \"private\": true,\n  \"scripts\": { \"dev\": \"vite\" }\n}\n</template>\n  <template data-file=\"styles.css\">.card {\n  padding: var(--z-space-4);\n  border-radius: var(--z-card-radius);\n}\n</template>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio sobre CodeBlock; referencias: CodeHighlight de Mantine y Code snippet de Carbon.",
+   "file": "zui/src/components/terminal/CodeViewer.manifest.json"
+  },
+  {
+   "name": "DiffViewer",
+   "group": "terminal",
+   "description": "Diferencias de dos textos (diff de líneas de Myers) o de un parche unificado (`git diff`, varios archivos), en vista unificada o lado a lado, con las palabras cambiadas marcadas, cabecera por archivo con +N −M y las regiones sin cambios plegadas tras un botón.",
+   "import": "import { DiffViewer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "before",
+     "type": "string"
+    },
+    {
+     "name": "after",
+     "type": "string"
+    },
+    {
+     "name": "patch",
+     "type": "string",
+     "description": "Parche unificado, en lugar de before y after."
+    },
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "unified",
+      "split"
+     ],
+     "description": "Controlado; sin él, defaultMode y el selector."
+    },
+    {
+     "name": "defaultMode",
+     "type": "enum",
+     "values": [
+      "unified",
+      "split"
+     ],
+     "default": "unified"
+    },
+    {
+     "name": "context",
+     "type": "number",
+     "default": 3
+    },
+    {
+     "name": "wordDiff",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "fileName",
+     "type": "string"
+    },
+    {
+     "name": "hideModeToggle",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onModeChange",
+     "type": "(detail: { mode }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DiffViewerLabels>"
+    }
+   ],
+   "states": [
+    "unified",
+    "split",
+    "collapsed",
+    "expanded"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-soft",
+    "danger-soft",
+    "success-text",
+    "danger-text",
+    "success",
+    "danger",
+    "info-soft",
+    "info-text",
+    "surface-2",
+    "font-mono"
+   ],
+   "classes": [
+    "z-diff",
+    "z-diff__bar",
+    "z-diff__modes",
+    "z-diff__mode",
+    "z-diff__file",
+    "z-diff__file-head",
+    "z-diff__name",
+    "z-diff__stats",
+    "z-diff__table",
+    "z-diff__row",
+    "z-diff__num",
+    "z-diff__sign",
+    "z-diff__code",
+    "z-diff__word",
+    "z-diff__gap",
+    "z-diff__expand",
+    "z-diff__hunk"
+   ],
+   "a11y": "Una tabla por archivo, con cabeceras (ocultas a la vista) y una región enfocable con el nombre del archivo para desplazarla. Cada línea dice su tipo en texto oculto («added: », «removed: »); el signo va con aria-hidden y el color no es la única señal. Las cifras +N −M tienen su texto («12 additions, 3 deletions»). Las palabras cambiadas llevan subrayado además del fondo. El botón de una región plegada dice cuántas líneas muestra y, al pulsarlo, el foco pasa a la primera. El selector de vista son botones con aria-pressed. Sin React: .z-diff con template[data-before] y template[data-after] (o template[data-patch], o los textos en <script type=\"application/json\" data-props>), data-mode, data-context, data-word-diff=\"false\", data-file-name y data-hide-mode-toggle; emite z:modechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dos versiones de un archivo",
+     "code": "<DiffViewer fileName=\"src/total.js\" before={oldCode} after={newCode} />"
+    },
+    {
+     "title": "Parche lado a lado",
+     "code": "<DiffViewer patch={gitDiff} defaultMode=\"split\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Dos versiones de un archivo",
+     "code": "<div class=\"z-diff\" data-file-name=\"src/total.js\">\n  <script type=\"application/json\" data-props>{ \"before\": \"export function total(items) {\\n  let sum = 0;\\n  for (const item of items) {\\n    sum += item.price;\\n  }\\n  return sum;\\n}\\n\", \"after\": \"export function total(items, tax = 0) {\\n  let sum = 0;\\n  for (const item of items) {\\n    sum += item.price * item.quantity;\\n  }\\n  return sum * (1 + tax);\\n}\\n\" }</script>\n</div>"
+    },
+    {
+     "title": "Parche lado a lado",
+     "code": "<div class=\"z-diff\" data-mode=\"split\">\n  <script type=\"application/json\" data-props>{ \"patch\": \"diff --git a/src/total.js b/src/total.js\\n--- a/src/total.js\\n+++ b/src/total.js\\n@@ -1,7 +1,7 @@\\n-export function total(items) {\\n+export function total(items, tax = 0) {\\n   let sum = 0;\\n   for (const item of items) {\\n-    sum += item.price;\\n+    sum += item.price * item.quantity;\\n   }\\n-  return sum;\\n+  return sum * (1 + tax);\\n }\\n\" }</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; algoritmo de Myers (1986). Referencias: Diff de Mantine y la vista de cambios de GitHub.",
+   "file": "zui/src/components/terminal/DiffViewer.manifest.json"
+  },
+  {
+   "name": "LogConsole",
+   "group": "terminal",
+   "description": "Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado. Pinta por ventana: con miles de entradas solo existen en el documento las filas que se ven.",
+   "import": "import { LogConsole } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "entries",
+     "type": "{ id?, time?, level?, source?, message }[]",
+     "description": "level: debug | info | warn | error."
+    },
+    {
+     "name": "levels",
+     "type": "LogLevel[]",
+     "default": [
+      "debug",
+      "info",
+      "warn",
+      "error"
+     ],
+     "description": "Filtros que se ofrecen."
+    },
+    {
+     "name": "defaultLevels",
+     "type": "LogLevel[]",
+     "description": "Activos al empezar; por defecto, todos."
+    },
+    {
+     "name": "follow",
+     "type": "boolean",
+     "default": true,
+     "description": "Seguir el final al llegar entradas; subir a leer lo desactiva."
+    },
+    {
+     "name": "wrap",
+     "type": "boolean",
+     "default": false,
+     "description": "Ajusta líneas largas (sin ventana por encima de virtualizeAt filas)."
+    },
+    {
+     "name": "virtualizeAt",
+     "type": "number",
+     "default": 200
+    },
+    {
+     "name": "timeZone",
+     "type": "string"
+    },
+    {
+     "name": "timeFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "description": "Por defecto HH:mm:ss.SSS."
+    },
+    {
+     "name": "downloadName",
+     "type": "string",
+     "description": "Con él, botón de descargar (texto plano)."
+    },
+    {
+     "name": "clearable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "onLevelsChange",
+     "type": "(detail: { levels }) => void"
+    },
+    {
+     "name": "onClear",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<LogConsoleLabels>"
+    }
+   ],
+   "states": [
+    "following",
+    "paused",
+    "filtered",
+    "empty"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "card-radius",
+    "line",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "info-text",
+    "warning-text",
+    "danger-text",
+    "warning-soft",
+    "warning",
+    "danger",
+    "font-mono",
+    "control-height-sm",
+    "layer-raised"
+   ],
+   "classes": [
+    "z-log-console",
+    "z-log-console__bar",
+    "z-log-console__levels",
+    "z-log-console__level",
+    "z-log-console__count",
+    "z-log-console__find",
+    "z-log-console__search",
+    "z-log-console__follow",
+    "z-log-console__copy",
+    "z-log-console__download",
+    "z-log-console__viewport",
+    "z-log-console__row",
+    "z-log-console__cell",
+    "z-log-console__badge",
+    "z-log-console__match"
+   ],
+   "a11y": "Rejilla (role=grid, aria-readonly) con fila de cabeceras, aria-rowcount con el total filtrado y aria-rowindex en cada fila, también con la ventana virtual; la fila activa nunca sale del documento. Una sola parada de Tab: ↑/↓ entre filas, ←/→ entre columnas, RePág/AvPág, Inicio/Fin y Ctrl+Inicio/Ctrl+Fin. El nivel va en texto («Error») además del color, y los avisos y errores llevan una barra en el borde. Los filtros son botones con aria-pressed y su contador; «Follow» también. Las entradas nuevas no se anuncian; al buscar se anuncia el número de coincidencias en una región status, con retraso corto. Las coincidencias van en <mark> con subrayado. Sin React: .z-log-console con data-levels, data-default-levels, data-follow=\"false\", data-wrap, data-time-zone, data-download-name, data-clearable, data-title, data-locale y entries en <script type=\"application/json\" data-props>; setWidgetProps(el, { entries }) o appendLogEntries(el, nuevas); emite z:levelschange y z:clear.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Servicio con filtros y búsqueda",
+     "code": "<LogConsole title=\"api logs\" timeZone=\"UTC\" downloadName=\"api.log\" entries={entries} />"
+    },
+    {
+     "title": "Solo avisos y errores, con ajuste de línea",
+     "code": "<LogConsole wrap defaultLevels={[\"warn\", \"error\"]} entries={entries} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Servicio con filtros y búsqueda",
+     "code": "<div class=\"z-log-console\" data-title=\"api logs\" data-time-zone=\"UTC\" data-download-name=\"api.log\">\n  <script type=\"application/json\" data-props>{ \"entries\": [{\"id\": 1, \"time\": \"2026-11-21T10:42:01.120Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"GET /v1/projects 200 in 38 ms\"}, {\"id\": 2, \"time\": \"2026-11-21T10:42:01.512Z\", \"level\": \"debug\", \"source\": \"cache\", \"message\": \"hit projects:list (ttl 52 s)\"}, {\"id\": 3, \"time\": \"2026-11-21T10:42:02.004Z\", \"level\": \"warn\", \"source\": \"api\", \"message\": \"Slow query on invoices: 812 ms\"}, {\"id\": 4, \"time\": \"2026-11-21T10:42:02.980Z\", \"level\": \"error\", \"source\": \"worker\", \"message\": \"Job export-42 failed: timeout after 30 s\"}, {\"id\": 5, \"time\": \"2026-11-21T10:42:03.300Z\", \"level\": \"info\", \"source\": \"worker\", \"message\": \"Retrying export-42 (attempt 2 of 3)\"}, {\"id\": 6, \"time\": \"2026-11-21T10:42:04.010Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"POST /v1/exports 202 in 12 ms\"}] }</script>\n</div>"
+    },
+    {
+     "title": "Solo avisos y errores, con ajuste de línea",
+     "code": "<div class=\"z-log-console\" data-wrap data-default-levels=\"warn error\" data-time-zone=\"UTC\">\n  <script type=\"application/json\" data-props>{ \"entries\": [{\"id\": 1, \"time\": \"2026-11-21T10:42:01.120Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"GET /v1/projects 200 in 38 ms\"}, {\"id\": 2, \"time\": \"2026-11-21T10:42:01.512Z\", \"level\": \"debug\", \"source\": \"cache\", \"message\": \"hit projects:list (ttl 52 s)\"}, {\"id\": 3, \"time\": \"2026-11-21T10:42:02.004Z\", \"level\": \"warn\", \"source\": \"api\", \"message\": \"Slow query on invoices: 812 ms\"}, {\"id\": 4, \"time\": \"2026-11-21T10:42:02.980Z\", \"level\": \"error\", \"source\": \"worker\", \"message\": \"Job export-42 failed: timeout after 30 s\"}, {\"id\": 5, \"time\": \"2026-11-21T10:42:03.300Z\", \"level\": \"info\", \"source\": \"worker\", \"message\": \"Retrying export-42 (attempt 2 of 3)\"}, {\"id\": 6, \"time\": \"2026-11-21T10:42:04.010Z\", \"level\": \"info\", \"source\": \"api\", \"message\": \"POST /v1/exports 202 in 12 ms\"}] }</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: las consolas de logs de Vercel y Datadog.",
+   "file": "zui/src/components/terminal/LogConsole.manifest.json"
+  },
+  {
+   "name": "Terminal",
+   "group": "terminal",
+   "description": "Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y 24 bits, negrita, subrayado, enlaces OSC 8) y copiar. No emula una VT100 completa: es una consola de líneas con barras de progreso por retorno de carro.",
+   "import": "import { Terminal } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "prompt",
+     "type": "string",
+     "default": "$"
+    },
+    {
+     "name": "defaultOutput",
+     "type": "string",
+     "description": "Salida inicial (admite ANSI)."
+    },
+    {
+     "name": "onCommand",
+     "type": "(command: string, run: { write, signal }) => void | string | number | Promise<…> | AsyncIterable<string>",
+     "description": "Texto, código de salida, promesa o flujo de trozos. Ctrl+C aborta `signal`."
+    },
+    {
+     "name": "onComplete",
+     "type": "(input: string) => string[] | Promise<string[]>",
+     "description": "Opciones para Tab. Sin él, Tab sale de la terminal."
+    },
+    {
+     "name": "history",
+     "type": "string[]",
+     "description": "Historial inicial."
+    },
+    {
+     "name": "maxLines",
+     "type": "number",
+     "default": 5000
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false,
+     "description": "Solo salida, sin línea de entrada."
+    },
+    {
+     "name": "busy",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "theme",
+     "type": "enum",
+     "values": [
+      "glass",
+      "solid"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "announce",
+     "type": "enum",
+     "values": [
+      "end",
+      "all",
+      "none"
+     ],
+     "default": "end",
+     "description": "Anuncia el final de cada orden, cada línea nueva o nada."
+    },
+    {
+     "name": "onInterrupt",
+     "type": "() => void"
+    },
+    {
+     "name": "onClear",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TerminalLabels>"
+    },
+    {
+     "name": "ref",
+     "type": "Ref<TerminalHandle>",
+     "description": "write(chunk), writeln(line), clear(), focus(), text()."
+    }
+   ],
+   "states": [
+    "idle",
+    "busy"
+   ],
+   "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "danger-text",
+    "warning-text",
+    "info-text",
+    "accent-text",
+    "accent-soft",
+    "font-mono",
+    "text-code",
+    "leading-code"
+   ],
+   "classes": [
+    "z-terminal",
+    "z-terminal__bar",
+    "z-terminal__title",
+    "z-terminal__actions",
+    "z-terminal__copy",
+    "z-terminal__clear",
+    "z-terminal__screen",
+    "z-terminal__line",
+    "z-terminal__input",
+    "z-terminal__prompt",
+    "z-terminal__field",
+    "z-ansi"
+   ],
+   "a11y": "Región con nombre. La salida es role=log con aria-live=off: una terminal habla demasiado para anunciar cada línea (announce=\"all\" la vuelve polite); al terminar una orden se anuncia «Command finished» o el código de salida en una región status aparte. La entrada es un <input> real con etiqueta («Command») dentro de un <form>: Intro envía con el envío nativo, que no salta mientras un IME compone. ↑/↓ recorren el historial conservando lo que se estaba escribiendo; Tab completa solo con onComplete (si no, sale: el foco no queda atrapado); Ctrl+C interrumpe solo sin texto seleccionado (con selección, copia). La salida es una parada de Tab para leerla y desplazarla; Escape vuelve a la entrada. Los colores van además de negrita y subrayado, y los de 256 y 24 bits se acotan en luminosidad para leerse en claro y en oscuro. La salida se pinta como nodos de texto, nunca como marcado; los enlaces OSC 8 solo admiten http y https. Sin React: .z-terminal con data-prompt, data-title, data-max-lines, data-read-only, data-theme, data-announce, data-history y la salida inicial en <script type=\"application/json\" data-props>{\"output\": \"…\"}</script>; terminal(el) devuelve write, writeln, clear, focus y text; emite z:command { command }, z:interrupt y z:clear; setWidgetProps(el, { onCommand, onComplete }) para responder con un flujo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Salida de un build",
+     "code": "<Terminal title=\"build\" prompt=\"~/app $\" defaultOutput={buildLog} onCommand={(cmd) => (cmd === \"help\" ? \"help · clear · build\" : `command not found: ${cmd}`)} />"
+    },
+    {
+     "title": "Solo lectura",
+     "code": "<Terminal readOnly theme=\"solid\" title=\"deploy.log\" defaultOutput={deployLog} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Salida de un build",
+     "code": "<div class=\"z-terminal\" data-title=\"build\" data-prompt=\"~/app $\" data-history=\"pnpm build, pnpm test\">\n  <script type=\"application/json\" data-props>{ \"output\": \"\\u001b[1;32m✓\\u001b[0m Compiled 128 modules in \\u001b[1m1.4s\\u001b[0m\\n\\u001b[33mwarn\\u001b[0m  2 unused exports in \\u001b[4msrc/legacy.ts\\u001b[0m\\n\\u001b[38;5;39mdist/app.js\\u001b[0m   \\u001b[2m84.2 kB\\u001b[0m\\n\" }</script>\n</div>"
+    },
+    {
+     "title": "Solo lectura",
+     "code": "<div class=\"z-terminal\" data-read-only data-theme=\"solid\" data-title=\"deploy.log\">\n  <script type=\"application/json\" data-props>{ \"output\": \"\\u001b[2m12:04:01\\u001b[0m Uploading 24 files\\n\\u001b[2m12:04:03\\u001b[0m \\u001b[32mDeployed\\u001b[0m to \\u001b]8;;https://example.com\\u0007example.com\\u001b]8;;\\u0007\\n\" }</script>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: xterm.js para el juego de secuencias y las terminales de Vercel y AI Elements.",
+   "file": "zui/src/components/terminal/Terminal.manifest.json"
   },
   {
    "name": "AnalogClock",

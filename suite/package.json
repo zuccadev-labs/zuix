@@ -81,6 +81,10 @@
       "types": "./zui-dom-time.d.ts",
       "default": "./zui-dom-time.js"
     },
+    "./zui/dom/terminal": {
+      "types": "./zui-dom-terminal.d.ts",
+      "default": "./zui-dom-terminal.js"
+    },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"

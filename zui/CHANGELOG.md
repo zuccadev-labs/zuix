@@ -30,6 +30,26 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `core/duration`, `core/clock`, `core/countdown` y `core/timezones`, con pruebas (también de propiedades con
   fast-check). Desde la raíz: `formatDuration`, `parseISODuration`, `toISODuration`, `durationToMs`,
   `listTimeZones`, `zoneOptions`, `groupZones` y `offsetText`.
+- Familia de terminal y código (grupo `terminal`; mismo modelo de un solo árbol):
+  - `Terminal`: prompt, historial con ↑/↓ (conserva lo que se estaba escribiendo), autocompletado con Tab solo si
+    hay `onComplete` (si no, Tab sale), Ctrl+L, Ctrl+C (interrumpe sin selección; con selección, copia), salida en
+    streaming con colores ANSI de 16, 256 y 24 bits, negrita, subrayado, enlaces OSC 8 (solo http y https), retorno
+    de carro y borrado de línea, límite de líneas y copiar. `onCommand` devuelve texto, un código de salida, una
+    promesa o un iterable asíncrono; la `ref` (`TerminalHandle`) escribe desde fuera. La salida es `role="log"` sin
+    anunciar cada línea; se anuncia el final de cada orden.
+  - `LogConsole`: hora, nivel, origen y mensaje; filtros por nivel con contadores, búsqueda con `<mark>`, seguir el
+    final, copiar y descargar. Pinta por ventana (`core/virtual`): miles de entradas sin miles de nodos. Rejilla con
+    `aria-rowcount` y `aria-rowindex` y una sola parada de Tab.
+  - `CodeViewer`: CodeBlock ampliado con números de línea, líneas resaltadas, pestañas de archivos, copiar y un
+    resaltado mínimo propio (JavaScript, TypeScript, JSX, JSON, CSS, HTML, XML, shell y Python), o el de la aplicación
+    con `highlight`.
+  - `DiffViewer`: diff de dos textos (Myers) o de un parche unificado con varios archivos, en vista unificada o lado a
+    lado, con palabras cambiadas, regiones sin cambios plegadas y el tipo de cada línea en texto oculto.
+- `core/ansi`, `core/diff`, `core/code-tokens`, `core/history` y `core/log-filter`, con pruebas (también de
+  propiedades con fast-check). Desde la raíz: `createAnsiScreen`, `parseAnsi`, `stripAnsi`, `diffLines`, `parsePatch`,
+  `toHunks`, `wordDiff`, `tokenize` y `tokenizeLines`.
+- Entrada `@zuccadev-labs/zuix-zui/dom/terminal` (`terminalModule`, `terminal(el)`, `appendLogEntries`), también
+  incluida en `@zuccadev-labs/zuix-zui/dom`.
 - Entrada `@zuccadev-labs/zuix-zui/dom/time` (`timeModule`, `refreshTimeZoneSelect`), también incluida en
   `@zuccadev-labs/zuix-zui/dom`.
 
