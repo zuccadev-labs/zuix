@@ -81,7 +81,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     reconectar arrastrando el extremo de una arista, borrar, copiar/cortar/pegar (también con el portapapeles del
     sistema como JSON), duplicar, agrupar y desagrupar, deshacer/rehacer y disposición automática por capas. Modelo
     `{ nodes, edges }` serializable, controlado o no, con `onNodesChange`, `onEdgesChange`, `onChange` y `onConnect`.
-    Solo pinta los nodos y aristas que se ven.
+    Solo pinta los nodos y aristas que se ven. Al montar encuadra el grafo sin bajar del 80 % (el texto de los nodos
+    se lee); si a ese zoom no cabe, empieza por su principio y el resto se ve desplazando o con el botón de encuadrar.
   - `Node`, `NodeGroup` y `NodePort`: nodo con cabecera (icono, título, estado), cuerpo libre, estados seleccionado,
     ejecutando, correcto y error, y puertos de entrada y salida con tipo y límite de conexiones.
   - Aristas recta, bézier, escalonada y escalonada suave, con flecha, etiqueta, tono y trazo animado (quieto con

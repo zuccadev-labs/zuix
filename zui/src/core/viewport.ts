@@ -68,7 +68,9 @@ export function visibleRect(vp: Viewport, size: Size): Rect {
 
 /**
  * Vista que encuadra `rect` en una vista de `size` con `padding` px de margen (en pantalla) y el zoom acotado. Sin
- * caja (o vacía) centra el origen a escala 1.
+ * caja (o vacía) centra el origen a escala 1. Si el zoom mínimo no deja que la caja quepa, en ese eje se ve su
+ * principio (arriba, a la izquierda) con el margen, y el resto se alcanza desplazando: centrada, se cortarían los
+ * dos extremos.
  */
 export function fitRect(rect: Rect | null, size: Size, o: { padding?: number; min?: number; max?: number } = {}): Viewport {
   const padding = Math.max(0, o.padding ?? 48);
@@ -76,9 +78,9 @@ export function fitRect(rect: Rect | null, size: Size, o: { padding?: number; mi
   const aw = Math.max(1, size.width - padding * 2);
   const ah = Math.max(1, size.height - padding * 2);
   const zoom = clampZoom(Math.min(aw / Math.max(1, rect.width), ah / Math.max(1, rect.height)), o.min, o.max ?? 1.5);
-  const cx = rect.x + rect.width / 2;
-  const cy = rect.y + rect.height / 2;
-  return { zoom, x: size.width / 2 - cx * zoom, y: size.height / 2 - cy * zoom };
+  const axis = (start: number, length: number, room: number, view: number) =>
+    length * zoom > room + 0.5 ? padding - start * zoom : view / 2 - (start + length / 2) * zoom;
+  return { zoom, x: axis(rect.x, rect.width, aw, size.width), y: axis(rect.y, rect.height, ah, size.height) };
 }
 
 /** Vista que centra el punto del mundo `p` sin cambiar el zoom. */

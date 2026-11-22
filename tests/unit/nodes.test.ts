@@ -176,6 +176,13 @@ describe("viewport", () => {
     );
     assert.deepEqual(fitRect(null, { width: 100, height: 50 }), { x: 50, y: 25, zoom: 1 });
   });
+  test("fitRect con zoom mínimo: el eje que no cabe empieza por el principio de la caja", () => {
+    // 300×1000 en 800×600 pediría 0,52; con mínimo 0,8 el alto no cabe y el ancho sí.
+    const vp = fitRect({ x: 100, y: 200, width: 300, height: 1000 }, { width: 800, height: 600 }, { padding: 40, min: 0.8 });
+    assert.equal(vp.zoom, 0.8);
+    assert.ok(close(toScreen(vp, { x: 100, y: 200 }).y, 40, 1e-9), "arriba con el margen");
+    assert.ok(close(toScreen(vp, { x: 250, y: 0 }).x, 400, 1e-9), "centrada en el eje que cabe");
+  });
   test("visibleRect y revealRect", () => {
     const vp: Viewport = { x: 100, y: 50, zoom: 2 };
     assert.deepEqual(visibleRect(vp, { width: 400, height: 200 }), { x: -50, y: -25, width: 200, height: 100 });

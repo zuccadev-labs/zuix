@@ -49,7 +49,10 @@ export interface NodeCanvasProps {
   maxZoom?: number;
   /** Cuadrícula del imán (unidades del mundo) o `false`. Por defecto 16. */
   snap?: number | false;
-  /** Encuadra todo al montar si no llega `viewport` ni `defaultViewport`. Por defecto sí. */
+  /**
+   * Encuadra el grafo al montar si no llega `viewport` ni `defaultViewport`, sin bajar del 80 % (el texto de los nodos
+   * sigue legible); si a ese zoom no cabe, empieza por su principio y el resto se ve desplazando. Por defecto sí.
+   */
   fitOnMount?: boolean;
   /** Ids seleccionados (controlado). */
   selection?: Partial<CanvasSelection>;

@@ -19,6 +19,14 @@ export default function ({ t, assert, poll }) {
     await poll(async () => (await page.locator(`${canvas} .z-edge`).count()) === 6, "seis aristas pintadas");
     return page;
   };
+  // Al montar, el lienzo empieza a un zoom legible y el grafo puede no caber: las pruebas de puntero que usan nodos de
+  // todo el grafo lo encuadran entero antes con el control de encuadrar.
+  const overview = async (page) => {
+    const zoom = () => page.locator(canvas).evaluate((el) => Number(el.dataset.zoom));
+    const z0 = await zoom();
+    await page.click(`${canvas} [data-node-action="fit"]`);
+    await poll(async () => (await zoom()) < z0, "encuadrar enseña el grafo entero");
+  };
 
   return [
     {
@@ -28,6 +36,8 @@ export default function ({ t, assert, poll }) {
         const root = page.locator(canvas);
         assert((await root.getAttribute("role")) === "group", "el lienzo es un group");
         assert((await root.getAttribute("aria-roledescription")) === "diagram", "roledescription");
+        const zoom0 = Number(await root.getAttribute("data-zoom"));
+        assert(zoom0 >= 0.8, `al montar, zoom legible: ${zoom0}`);
         const desc = await page.evaluate((sel) => {
           const el = document.querySelector(sel);
           return document.getElementById(el.getAttribute("aria-describedby"))?.textContent;
@@ -157,6 +167,7 @@ export default function ({ t, assert, poll }) {
       name: "NodeCanvas (React): arrastrar un nodo con imán, desplazar el fondo, Ctrl+rueda acerca y Mayús+arrastre selecciona",
       async run({ open: o }) {
         const page = await open(o);
+        await overview(page);
         const before = await nodeX(page, "notify");
         const start = await center(page, `${node("notify")} .z-node__title`);
         await page.mouse.move(start.x, start.y);
@@ -199,6 +210,7 @@ export default function ({ t, assert, poll }) {
       name: "NodeCanvas (React): conectar arrastrando desde un puerto y reconectar arrastrando el extremo",
       async run({ open: o }) {
         const page = await open(o);
+        await overview(page);
         const from = await center(page, `${node("validate")} .z-node-port[data-kind="source"]`);
         const to = await center(page, `${node("done")} .z-node-port[data-kind="target"]`);
         await page.mouse.move(from.x, from.y);

@@ -118,7 +118,10 @@ export interface NodeCanvasOptions {
   allowCycles?: boolean;
   /** Validación propia, además de sentido, tipos y límites. */
   isValidConnection?: (edge: Omit<GraphEdge, "id">) => boolean;
-  /** Encuadra todo al montar (si no llega `viewport`). Por defecto sí. */
+  /**
+   * Encuadra el grafo al montar (si no llega `viewport`) sin bajar del 80 %, donde el texto de los nodos aún se lee;
+   * si a ese zoom no cabe, empieza por su principio y el resto se ve desplazando. Por defecto sí.
+   */
   fitOnMount?: boolean;
   labels?: Partial<NodeCanvasLabels>;
   locale?: string;
@@ -169,6 +172,8 @@ const CONTROL =
 const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex], [contenteditable]:not([contenteditable="false"])';
 const EDITABLE = ':read-write, select, input[type="range"], [role="slider"], [role="combobox"], [role="spinbutton"]';
 const THRESHOLD = 4;
+/** Zoom más bajo al que se lee el texto de un nodo: el que se usa como suelo al encuadrar al montar. */
+const READABLE_ZOOM = 0.8;
 const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
 const px = (n: number) => `${Math.round(n * 100) / 100}px`;
 
@@ -2069,8 +2074,10 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     paintView();
     cull(true);
     paintNodes();
-    // Al montar no se baja del 40 %: en una pantalla estrecha se ve el centro del grafo legible, no un sello.
-    fitView(48, Math.max(o.minZoom ?? MIN_ZOOM, 0.4));
+    // Al montar no se baja de READABLE_ZOOM: el texto de los nodos (12 px el más pequeño) sigue por encima de 9 px en
+    // pantalla. Si el grafo no cabe a ese zoom se ve su principio y el resto se alcanza desplazando; el botón de
+    // encuadrar y F siguen enseñándolo entero.
+    fitView(48, Math.min(Math.max(o.minZoom ?? MIN_ZOOM, READABLE_ZOOM), o.maxZoom ?? MAX_ZOOM));
   }
   flush();
 
