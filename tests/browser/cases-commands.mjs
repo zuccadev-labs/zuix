@@ -1,4 +1,4 @@
-// Oleada 4 en el binding de React (pantalla `?screen=commands` de examples/app): barras, menús con estado, capas
+// Binding de React (pantalla `?screen=commands` de examples/app): barras, menús con estado, capas
 // ligeras y avisos de aplicación, con teclado y puntero. Se ejecutan también en Firefox y WebKit.
 // Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, visible, gone, settled, focusOn, expectAttr, expectText }) {
@@ -12,7 +12,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
 
   return [
     {
-      name: "Oleada 4 · Toolbar: una parada de Tab, flechas entre grupos (ToggleGroup anidado) y aria-disabled sin acción",
+      name: "Toolbar: una parada de Tab, flechas entre grupos (ToggleGroup anidado) y aria-disabled sin acción",
       async run({ open }) {
         const page = await screen(open);
         const bar = t("c-toolbar");
@@ -38,7 +38,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Menu: casilla con Espacio (sigue abierto) e Intro (cierra), radio excluyente y deshabilitado",
+      name: "Menu: casilla con Espacio (sigue abierto) e Intro (cierra), radio excluyente y deshabilitado",
       async run({ open }) {
         const page = await screen(open);
         await page.click(t("c-view"));
@@ -71,7 +71,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Collapsible: aria-expanded, hidden=until-found plegado y colapso parcial que se abre con el foco",
+      name: "Collapsible: aria-expanded, hidden=until-found plegado y colapso parcial que se abre con el foco",
       async run({ open }) {
         const page = await screen(open);
         const trigger = "#c-advanced > .z-collapsible__trigger";
@@ -89,7 +89,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Banner: cierre con nombre, el foco sigue hacia delante",
+      name: "Banner: cierre con nombre, el foco sigue hacia delante",
       async run({ open }) {
         const page = await screen(open);
         const close = `${t("c-banner")} .z-banner__close`;
@@ -102,7 +102,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Menubar: una parada de Tab, flechas entre títulos y entre menús abiertos, puntero y Escape",
+      name: "Menubar: una parada de Tab, flechas entre títulos y entre menús abiertos, puntero y Escape",
       async run({ open }) {
         const page = await screen(open);
         const bar = '[role="menubar"][aria-label="Application"]';
@@ -132,7 +132,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · HoverCard: puntero con retardo y paso a la tarjeta, teclado con Tab dentro y fuera, Escape",
+      name: "HoverCard: puntero con retardo y paso a la tarjeta, teclado con Tab dentro y fuera, Escape",
       async run({ open }) {
         const page = await screen(open);
         const link = t("c-hover-link");
@@ -170,7 +170,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Toggletip: clic fija y aria-expanded, Escape cierra, Tab entra en su enlace",
+      name: "Toggletip: clic fija y aria-expanded, Escape cierra, Tab entra en su enlace",
       async run({ open }) {
         const page = await screen(open);
         const button = `${t("c-toggletip")} .z-toggletip__trigger`;
@@ -191,7 +191,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Popover: ancla distinta, flecha al centro del ancla y botón de cierre",
+      name: "Popover: ancla distinta, flecha al centro del ancla y botón de cierre",
       async run({ open }) {
         const page = await screen(open);
         await page.click(t("c-dns"));
@@ -216,7 +216,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · toast.promise: en curso sin cierre automático y resultado en el mismo aviso",
+      name: "toast.promise: en curso sin cierre automático y resultado en el mismo aviso",
       async run({ open }) {
         const page = await screen(open);
         await page.click(t("c-deploy"));
@@ -233,7 +233,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Command en línea: filtro, flechas, Intro ejecuta sin cerrar y Escape vacía la búsqueda",
+      name: "Command en línea: filtro, flechas, Intro ejecuta sin cerrar y Escape vacía la búsqueda",
       async run({ open }) {
         const page = await screen(open);
         const input = `${t("c-command")} .z-palette__input`;
@@ -250,7 +250,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · ActionBar: aparece con la selección sin robar el foco, recuento, Toolbar y Escape la vacía",
+      name: "ActionBar: aparece con la selección sin robar el foco, recuento, Toolbar y Escape la vacía",
       async run({ open }) {
         const page = await screen(open);
         await page.check(t("c-file-report.pdf"));
@@ -268,7 +268,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Drawer: anclajes con el asa (slider) y arrastre; cajón superior que se cierra arrastrando",
+      name: "Drawer: anclajes con el asa (slider) y arrastre; cajón superior que se cierra arrastrando",
       async run({ open }) {
         const page = await screen(open);
         await page.click(t("c-sheet"));
@@ -306,7 +306,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 4 · Tour: foco en la tarjeta en cada paso, anillo, flechas y Atrás, Hecho y Escape devuelven el foco",
+      name: "Tour: foco en la tarjeta en cada paso, anillo, flechas y Atrás, Hecho y Escape devuelven el foco",
       async run({ open }) {
         const page = await screen(open);
         await page.click(t("c-tour-start"));

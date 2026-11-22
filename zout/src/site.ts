@@ -1,4 +1,4 @@
-// Navegación de sitio (oleada 6): NavigationMenu, Navbar y SkipLink. Un solo comportamiento para el binding de React
+// Navegación de sitio: NavigationMenu, Navbar y SkipLink. Un solo comportamiento para el binding de React
 // y el modo sin framework: los dos llaman a estas funciones sobre el marcado del contrato. Sin efectos al importar.
 //
 // Es navegación, no un menú de aplicación (guía «navbar»): los enlaces siguen en el orden de Tab, sin role=menu ni

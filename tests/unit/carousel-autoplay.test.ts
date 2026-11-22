@@ -1,4 +1,4 @@
-// Oleada 7: Carousel ampliado (core/carousel): reproducción automática con pausa, posiciones del modo snap e
+// Carousel ampliado (core/carousel): reproducción automática con pausa, posiciones del modo snap e
 // indicadores. Temporizadores inyectados: sin esperas reales.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";

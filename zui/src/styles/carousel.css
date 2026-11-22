@@ -184,7 +184,7 @@
     }
   }
 
-  /* ---------- Oleada 7: reproducción, puntos, barra, miniaturas y modo snap ---------- */
+  /* ---------- Reproducción, puntos, barra, miniaturas y modo snap ---------- */
   .z-carousel__play[data-state="playing"] {
     color: var(--z-accent-text);
   }

@@ -1,4 +1,4 @@
-// Oleada 7: ImageCropper (core/crop): recorte inicial, límites, mover, redimensionar con y sin relación, teclado y
+// ImageCropper (core/crop): recorte inicial, límites, mover, redimensionar con y sin relación, teclado y
 // paso a píxeles.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";

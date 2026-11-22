@@ -1,4 +1,4 @@
-// Oleada 4: lógica compartida de las capas y la navegación de aplicación (`zui/src/core`). Cada módulo la usan a la
+// Lógica compartida de las capas y la navegación de aplicación (`zui/src/core`). Cada módulo la usan a la
 // vez el binding de React y `@zuccadev-labs/zuix-zui/dom`; aquí se prueba directamente, sobre happy-dom.
 import { mount } from "./helpers/dom.mjs";
 import assert from "node:assert/strict";

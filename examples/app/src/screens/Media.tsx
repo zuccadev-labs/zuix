@@ -61,7 +61,7 @@ const slide = (p: Project) => (
   </Card>
 );
 
-/** Oleada 7: medios y piezas tardías (color, deslizadores, imágenes, firma, QR, atajos, confeti, descargas). */
+/** Medios y piezas sueltas (color, deslizadores, imágenes, firma, QR, atajos, confeti, descargas). */
 export function Media() {
   const [color, setColor] = useState("#3b82f6");
   const [format, setFormat] = useState<ColorFormat>("hex");

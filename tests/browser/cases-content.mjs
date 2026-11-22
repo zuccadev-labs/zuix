@@ -1,4 +1,4 @@
-// Oleada 5 en el binding de React (pantalla `?screen=content` de examples/app): Tree con selección múltiple, casillas y
+// Binding de React (pantalla `?screen=content` de examples/app): Tree con selección múltiple, casillas y
 // renombrar, y las piezas de contenido. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, expectAttr, expectText }) {
   const screen = (open) => open("content");
@@ -10,7 +10,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
 
   return [
     {
-      name: "Oleada 5 · Tree: casillas en cascada, selección múltiple y renombrar (React)",
+      name: "Tree: casillas en cascada, selección múltiple y renombrar (React)",
       async run({ open }) {
         const page = await screen(open);
         const item = (id) => `${t("c-tree")} [role=treeitem][data-value="${id}"]`;
@@ -44,7 +44,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 5 · JsonTree: tipos, Map y Set, truncado, teclado y ruta (React)",
+      name: "JsonTree: tipos, Map y Set, truncado, teclado y ruta (React)",
       async run({ open }) {
         const page = await screen(open);
         const node = (path) => `${t("c-json")} [role=treeitem][data-value='${path}']`;
@@ -62,7 +62,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 5 · Stepper con paneles: Siguiente, Anterior, foco y lo escrito se conserva (React)",
+      name: "Stepper con paneles: Siguiente, Anterior, foco y lo escrito se conserva (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = t("c-stepper");
@@ -82,7 +82,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 5 · Breadcrumb colapsado: menú con las migas del medio y separador propio (React)",
+      name: "Breadcrumb colapsado: menú con las migas del medio y separador propio (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = t("c-breadcrumb");
@@ -98,7 +98,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 5 · Accordion tarjeta: siempre una abierta, aria-disabled en la abierta e item deshabilitado (React)",
+      name: "Accordion tarjeta: siempre una abierta, aria-disabled en la abierta e item deshabilitado (React)",
       async run({ open }) {
         const page = await screen(open);
         const trigger = (i) => `${t("c-accordion")} .z-accordion__trigger >> nth=${i}`;

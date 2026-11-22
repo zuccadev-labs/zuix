@@ -75,7 +75,7 @@ const CITIES = [
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
 
-/** Piezas de la oleada 3 (formularios y acciones) con su valor a la vista, para las pruebas en navegador. */
+/** Piezas de formularios y acciones con su valor a la vista, para las pruebas en navegador. */
 export function Inputs() {
   const [seats, setSeats] = useState<number | null>(3);
   const [budget, setBudget] = useState<number | null>(1250);

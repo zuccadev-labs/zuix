@@ -1,4 +1,4 @@
-// Oleada 6 en el binding de React (pantalla `?screen=site` de examples/app): Navbar, NavigationMenu, SkipLink,
+// Binding de React (pantalla `?screen=site` de examples/app): Navbar, NavigationMenu, SkipLink,
 // BottomNavigation, DotMatrix, Spinner con formas y efectos. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, expectAttr, expectText }) {
   const screen = (open, options) => open("site", options);
@@ -11,7 +11,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
 
   return [
     {
-      name: "Oleada 6 · NavigationMenu: panel popover con aria-expanded, Escape devuelve el foco y salir lo cierra (React)",
+      name: "NavigationMenu: panel popover con aria-expanded, Escape devuelve el foco y salir lo cierra (React)",
       async run({ open }) {
         const page = await screen(open);
         const trigger = `${t("s-navmenu")} .z-navmenu__trigger >> nth=0`;
@@ -34,7 +34,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 6 · Navbar: en fila a 1440 y en cajón a 390, con el NavigationMenu en vertical (React)",
+      name: "Navbar: en fila a 1440 y en cajón a 390, con el NavigationMenu en vertical (React)",
       async run({ open }) {
         const wide = await screen(open);
         await expectAttr(wide, `${t("s-navbar")} .z-navbar`, "data-collapsed", null);
@@ -58,7 +58,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 6 · SkipLink visible con el foco y lleva el foco al contenido; BottomNavigation mueve aria-current (React)",
+      name: "SkipLink visible con el foco y lleva el foco al contenido; BottomNavigation mueve aria-current (React)",
       async run({ open }) {
         const page = await screen(open);
         const skip = t("s-skip");
@@ -78,7 +78,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 6 · DotMatrix y Spinner: estado con nombre, animación solo sin movimiento reducido (React)",
+      name: "DotMatrix y Spinner: estado con nombre, animación solo sin movimiento reducido (React)",
       async run({ open }) {
         const page = await screen(open);
         const mats = page.locator(`${t("s-dots")} .z-dotmatrix`);
@@ -100,7 +100,7 @@ export default function ({ t, assert, poll, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 6 · Efectos: texto entero para lectores, capas aria-hidden y pausa fuera de pantalla (React)",
+      name: "Efectos: texto entero para lectores, capas aria-hidden y pausa fuera de pantalla (React)",
       async run({ open }) {
         const page = await screen(open, { height: 400 });
         const text = t("s-text");

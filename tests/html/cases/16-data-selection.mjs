@@ -1,4 +1,4 @@
-// Oleada 5 sin framework, datos: DataTable con selección, pie y paginación en el cliente (puntero y teclado), y el
+// Sin framework, datos: DataTable con selección, pie y paginación en el cliente (puntero y teclado), y el
 // marcado de Timeline, CircularProgress, Progress (vertical y por tramos), DescriptionList, Item, StatusDot y Chip con
 // tono, sobre zui/html.json.
 import { readFileSync } from "node:fs";

@@ -1,4 +1,4 @@
-// Oleada 7: CompareSlider (core/compare-slider): posición bajo el puntero y teclado APG.
+// CompareSlider (core/compare-slider): posición bajo el puntero y teclado APG.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import fc from "fast-check";

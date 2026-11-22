@@ -1,4 +1,4 @@
-// Comportamiento sin framework de las capas y avisos de la oleada 4. `setup()` conecta los listeners delegados una
+// Comportamiento sin framework de las capas y avisos. `setup()` conecta los listeners delegados una
 // vez; `hydrate(root)` prepara marcado nuevo. Todo se activa dentro de `[data-z-dom]`.
 //
 // Banner       .z-banner con button.z-banner__close: el cierre emite z:dismiss (cancelable) en el banner y, si nadie lo

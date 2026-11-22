@@ -1,4 +1,4 @@
-// Oleada 3 sin framework: acciones (ToggleGroup, CopyButton, Swap) y formularios (InputGroup, PasswordInput,
+// Sin framework: acciones (ToggleGroup, CopyButton, Swap) y formularios (InputGroup, PasswordInput,
 // NumberInput, Listbox, TagsInput, CheckboxGroup, Field validate y Form, Select y Combobox múltiples, autocompletar,
 // Editable, Slider con marcas, Rating con medias y FileUpload con lista). Puntero y teclado sobre zui/html.json.
 import { readFileSync } from "node:fs";

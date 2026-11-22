@@ -1,4 +1,4 @@
-// Oleada 4 de zout sin framework (@zuccadev-labs/zuix-zout/dom con @zuccadev-labs/zuix-zui/dom): Sidebar plegable a
+// zout sin framework (@zuccadev-labs/zuix-zout/dom con @zuccadev-labs/zuix-zui/dom): Sidebar plegable a
 // iconos con submenús, TabStrip con grupos y reordenación, PaneHeader, FloatingPanel, PaneLayout y Float.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";

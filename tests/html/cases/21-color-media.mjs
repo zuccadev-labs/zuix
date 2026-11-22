@@ -1,4 +1,4 @@
-// Oleada 7 sin React: familia ColorPicker y el resto de piezas de medios (zui/dom), desde el contrato HTML y desde
+// Sin React: familia ColorPicker y el resto de piezas de medios (zui/dom), desde el contrato HTML y desde
 // marcado mínimo escrito a mano.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -54,7 +54,7 @@ export default async function ({ page, test, ok }) {
     ok(false, message);
   };
 
-  await test("Oleada 7 sin React: ColorPicker del contrato con teclado, campos, formato y eventos", async () => {
+  await test("Sin React: ColorPicker del contrato con teclado, campos, formato y eventos", async () => {
     const box = await inject(html("ColorPicker", 1));
     const root = box.locator(".z-colorpicker");
     ok(
@@ -91,7 +91,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => (await hue.getAttribute("aria-valuenow")) === "0", "Inicio: tono 0");
   });
 
-  await test("Oleada 7 sin React: marcado mínimo, RTL invierte las flechas y el campo oculto sigue al valor", async () => {
+  await test("Sin React: marcado mínimo, RTL invierte las flechas y el campo oculto sigue al valor", async () => {
     const box = await inject(
       '<div dir="rtl"><div class="z-colorpicker" data-value="#808080" data-alpha="false" data-formats="hex" data-name="c" data-eyedropper="false"></div></div>',
     );
@@ -111,7 +111,7 @@ export default async function ({ page, test, ok }) {
     ok((await root.locator('input[type="color"]').count()) === 1, "selector del sistema (respaldo nativo)");
   });
 
-  await test("Oleada 7 sin React: ColorPickerTrigger abre el popover nativo y setColorValue cambia el color", async () => {
+  await test("Sin React: ColorPickerTrigger abre el popover nativo y setColorValue cambia el color", async () => {
     const box = await inject(html("ColorPickerTrigger"));
     const button = box.locator(".z-colortrigger__button");
     const panel = box.locator(".z-colortrigger__panel");
@@ -132,7 +132,7 @@ export default async function ({ page, test, ok }) {
 
   const carouselHtml = (title) => contract.Carousel.examples.find((e) => e.title.startsWith(title)).html;
 
-  await test("Oleada 7 sin React: Carousel con reproducción automática, botón de pausa primero y puntos", async () => {
+  await test("Sin React: Carousel con reproducción automática, botón de pausa primero y puntos", async () => {
     const box = await inject(carouselHtml("Reproducción automática").replace('data-autoplay="6000"', 'data-autoplay="1500"'));
     const root = box.locator(".z-carousel");
     await page.mouse.move(1200, 5);
@@ -152,7 +152,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => (await current()) === "4", "un punto lleva a su slide");
   });
 
-  await test("Oleada 7 sin React: Carousel de tres por página (scroll-snap) y vertical con teclado", async () => {
+  await test("Sin React: Carousel de tres por página (scroll-snap) y vertical con teclado", async () => {
     const box = await inject(carouselHtml("Tres por página"));
     const root = box.locator(".z-carousel");
     await until(async () => (await root.getAttribute("data-mode")) === "snap", "modo snap");
@@ -187,7 +187,7 @@ export default async function ({ page, test, ok }) {
     );
   });
 
-  await test("Oleada 7 sin React: QRCode desde marcado mínimo, nivel y setWidgetProps", async () => {
+  await test("Sin React: QRCode desde marcado mínimo, nivel y setWidgetProps", async () => {
     const box = await inject('<div class="z-qrcode" data-value="hello" data-level="Q" data-size="120"></div>');
     const qr = box.locator(".z-qrcode");
     await until(async () => (await qr.locator("svg path").count()) === 1, "se dibuja");
@@ -204,7 +204,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => Number(await qr.getAttribute("data-version")) >= 5, "setWidgetProps cambia el contenido");
   });
 
-  await test("Oleada 7 sin React: CircularSlider del contrato con teclado, formato conservado y eventos", async () => {
+  await test("Sin React: CircularSlider del contrato con teclado, formato conservado y eventos", async () => {
     const box = await inject(html("CircularSlider", 1));
     const thumb = box.locator('.z-circular [role="slider"]');
     await until(async () => (await thumb.count()) === 1, "tirador");
@@ -221,7 +221,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => (await thumb.evaluate((el) => el.getBoundingClientRect().x)) !== x0, "el tirador se mueve");
   });
 
-  await test("Oleada 7 sin React: CompareSlider desde dos hijos recibe divisor y asa, teclado y setCompareValue", async () => {
+  await test("Sin React: CompareSlider desde dos hijos recibe divisor y asa, teclado y setCompareValue", async () => {
     const box = await inject(
       '<div class="z-compare" data-value="30" style="block-size:120px"><div style="block-size:120px">A</div><div style="block-size:120px">B</div></div>',
     );
@@ -246,7 +246,7 @@ export default async function ({ page, test, ok }) {
     );
   });
 
-  await test("Oleada 7 sin React: ImageCropper desde un <img>, teclado con anuncio y cropImageBlob", async () => {
+  await test("Sin React: ImageCropper desde un <img>, teclado con anuncio y cropImageBlob", async () => {
     const box = await inject(html("ImageCropper", 1));
     const root = box.locator(".z-cropper");
     await until(async () => (await root.locator(".z-cropper__area").count()) === 1, "área");
@@ -275,7 +275,7 @@ export default async function ({ page, test, ok }) {
     ok(size[0] === size[1] && size[2] === "image/png", `PNG cuadrado: ${size}`);
   });
 
-  await test("Oleada 7 sin React: SignaturePad dibuja, avisa con z:change y exporta SVG y PNG; modo Type desde el contrato", async () => {
+  await test("Sin React: SignaturePad dibuja, avisa con z:change y exporta SVG y PNG; modo Type desde el contrato", async () => {
     const box = await inject(html("SignaturePad"));
     const root = box.locator(".z-signature");
     const canvas = root.locator("canvas");
@@ -302,7 +302,7 @@ export default async function ({ page, test, ok }) {
     ok((await typed.locator(".z-signature__typed").inputValue()) === "Ana Ruiz", "campo con el nombre");
   });
 
-  await test("Oleada 7 sin React: ShortcutInput graba, normaliza y avisa con z:change", async () => {
+  await test("Sin React: ShortcutInput graba, normaliza y avisa con z:change", async () => {
     const box = await inject('<div class="z-shortcut" data-value="cmd+option+k" data-platform="apple"></div>');
     const root = box.locator(".z-shortcut");
     const field = root.locator(".z-shortcut__field");
@@ -320,7 +320,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => (await root.getAttribute("data-value")) === null, "borrar");
   });
 
-  await test("Oleada 7 sin React: data-z-confetti lanza un lienzo decorativo y data-z-download descarga un QRCode en SVG y PNG", async () => {
+  await test("Sin React: data-z-confetti lanza un lienzo decorativo y data-z-download descarga un QRCode en SVG y PNG", async () => {
     const box = await inject(html("Confetti"));
     await box.locator("[data-z-confetti]").click();
     await until(async () => (await page.locator("canvas.z-confetti").count()) >= 1, "lienzo de confeti");

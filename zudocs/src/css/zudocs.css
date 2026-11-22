@@ -2498,7 +2498,7 @@ mark[data-markjs] {
   }
 }
 
-/* Demos de la oleada 4: tarjeta de vista previa y etiqueta con su ayuda en línea. */
+/* Demos de capas: tarjeta de vista previa y etiqueta con su ayuda en línea. */
 .zd-demo-card {
   display: grid;
   gap: var(--z-space-1);

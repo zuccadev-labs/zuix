@@ -1,4 +1,4 @@
-// Oleada 4 sin framework: capas y navegación de aplicación (Toolbar, Collapsible, Banner, Menubar, HoverCard,
+// Sin framework: capas y navegación de aplicación (Toolbar, Collapsible, Banner, Menubar, HoverCard,
 // Toggletip, ActionBar, Popover con flecha, Menu con casillas y radios, Command en línea, Tour, Drawer con
 // arrastre y anclajes, aviso de promesa). Puntero y teclado sobre zui/html.json.
 import { readFileSync } from "node:fs";

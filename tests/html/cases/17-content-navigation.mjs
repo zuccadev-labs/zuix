@@ -1,5 +1,5 @@
-// Oleada 5 sin framework, contenido y navegación: Tree (selección múltiple, casillas en cascada, renombrar) y las
-// piezas de contenido de la oleada. Puntero y teclado sobre zui/html.json.
+// Sin framework, contenido y navegación: Tree (selección múltiple, casillas en cascada, renombrar) y las
+// piezas de contenido. Puntero y teclado sobre zui/html.json.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";

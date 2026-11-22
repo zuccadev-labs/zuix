@@ -1,4 +1,4 @@
-// Oleada 3 en el binding de React (pantalla `?screen=inputs` de examples/app): acciones y formularios compuestos
+// Binding de React (pantalla `?screen=inputs` de examples/app): acciones y formularios compuestos
 // con teclado, puntero y formulario. Los casos de teclado y formulario se ejecutan también en Firefox y WebKit.
 // Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, visible, gone, settled, focusOn, expectAttr, expectText, expectCount }) {
@@ -11,7 +11,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
 
   return [
     {
-      name: "Oleada 3 · ToggleGroup y SegmentedControl subrayado: una parada de Tab, flechas y estado",
+      name: "ToggleGroup y SegmentedControl subrayado: una parada de Tab, flechas y estado",
       async run({ open }) {
         const page = await screen(open);
         const multi = `${t("i-toggle-multi")} .z-toggle`;
@@ -35,7 +35,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 3 · NumberInput: teclado del spinbutton, botones, lectura del locale y formato de moneda",
+      name: "NumberInput: teclado del spinbutton, botones, lectura del locale y formato de moneda",
       async run({ open }) {
         const page = await screen(open);
         const input = `${t("i-number")} input[role=spinbutton]`;
@@ -58,7 +58,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 3 · PasswordInput y TagsInput: mostrar con aria-pressed, medidor y etiquetas con teclado",
+      name: "PasswordInput y TagsInput: mostrar con aria-pressed, medidor y etiquetas con teclado",
       async run({ open }) {
         const page = await screen(open);
         const toggle = `${t("i-password")} .z-password__toggle`;
@@ -82,7 +82,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 3 · Listbox, Select y Combobox múltiples y autocompletar",
+      name: "Listbox, Select y Combobox múltiples y autocompletar",
       async run({ open }) {
         const page = await screen(open);
         await page.locator(`${t("i-listbox")} [role=option][aria-selected=true]`).focus();
@@ -128,7 +128,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 3 · Form: mensajes por ValidityState, foco al primer error y envío válido",
+      name: "Form: mensajes por ValidityState, foco al primer error y envío válido",
       async run({ open }) {
         const page = await screen(open);
         await page.click(t("i-form-submit"));
@@ -159,7 +159,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       },
     },
     {
-      name: "Oleada 3 · CheckboxGroup, Editable, Rating con medias y CopyButton",
+      name: "CheckboxGroup, Editable, Rating con medias y CopyButton",
       async run({ open, browserName }) {
         const page = await screen(open);
         const all = `${t("i-checkgroup")} [data-select-all]`;

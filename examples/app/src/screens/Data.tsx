@@ -39,7 +39,7 @@ const MEMBERS: Member[] = [
 
 const show = (keys: ReadonlyArray<RowKey>) => (keys.length ? keys.join(",") : "none");
 
-/** Piezas de la oleada 5 (datos) con su valor a la vista, para las pruebas en navegador. */
+/** Piezas de datos con su valor a la vista, para las pruebas en navegador. */
 export function DataScreen() {
   const [selected, setSelected] = useState<RowKey[]>(["leo"]);
   const [page, setPage] = useState(1);

@@ -1,4 +1,4 @@
-// Familia ColorPicker sin framework (oleada 7): .z-colorpicker, .z-colorarea, .z-colorslider, .z-colorswatches,
+// Familia ColorPicker sin framework: .z-colorpicker, .z-colorarea, .z-colorslider, .z-colorswatches,
 // .z-colorfield y .z-colortrigger dentro de `[data-z-dom]` se pintan con el mismo árbol que el binding de React
 // (core/color-widget). Configuración en `data-*` (data-value, data-format, data-formats="hex rgb", data-alpha="false",
 // data-swatches="#f00;#0f0", data-channel, data-orientation, data-name…) o en `<script type="application/json" data-props>`.

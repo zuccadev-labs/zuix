@@ -1,4 +1,4 @@
-// Oleada 4 de zout en el binding de React (pantalla `?screen=workspace` de examples/app): Sidebar plegable a iconos,
+// zout en el binding de React (pantalla `?screen=workspace` de examples/app): Sidebar plegable a iconos,
 // TabStrip con grupos y reordenación, PaneHeader, FloatingPanel, PaneLayout y Float. Se ejecutan también en Firefox
 // y WebKit. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, expectText }) {
@@ -9,7 +9,7 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
 
   return [
     {
-      name: "Oleada 4 · Sidebar: submenú en su sitio, plegado a iconos con tooltip y submenú flotante",
+      name: "Sidebar: submenú en su sitio, plegado a iconos con tooltip y submenú flotante",
       async run({ open }) {
         const page = await screen(open);
         const root = t("ws-sidebar");
@@ -48,7 +48,7 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
       },
     },
     {
-      name: "Oleada 4 · TabStrip: Ctrl+Mayús+flechas reordena con anuncio; arrastrar suelta en el hueco; grupo plegable",
+      name: "TabStrip: Ctrl+Mayús+flechas reordena con anuncio; arrastrar suelta en el hueco; grupo plegable",
       async run({ open }) {
         const page = await screen(open);
         const root = t("ws-tabs");
@@ -83,7 +83,7 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
       },
     },
     {
-      name: "Oleada 4 · PaneHeader y FloatingPanel: barra de acciones, arrastre, flechas, límites, Escape y foco",
+      name: "PaneHeader y FloatingPanel: barra de acciones, arrastre, flechas, límites, Escape y foco",
       async run({ open }) {
         const page = await screen(open);
         const bar = `${t("ws-paneheader")} [role=toolbar]`;
@@ -136,7 +136,7 @@ export default function ({ t, assert, poll, visible, gone, focusOn, expectAttr, 
       },
     },
     {
-      name: "Oleada 4 · PaneLayout: menú (dividir, mover, cerrar), arrastre al borde con zona de soltar y foco",
+      name: "PaneLayout: menú (dividir, mover, cerrar), arrastre al borde con zona de soltar y foco",
       async run({ open }) {
         const page = await screen(open);
         const root = t("ws-panelayout");

@@ -1,4 +1,4 @@
-// Contenido de lectura sin framework, oleada 5. Todo dentro de `[data-z-dom]`; el texto entra siempre como texto.
+// Contenido de lectura sin framework. Todo dentro de `[data-z-dom]`; el texto entra siempre como texto.
 //
 // Format     <data class="z-format" data-format="number|byte" value="1234" data-locale data-options='{…}'> y
 //            <time class="z-format" data-format="date" datetime="…">: el texto se escribe con Intl al hidratar.

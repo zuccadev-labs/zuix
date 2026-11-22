@@ -1,4 +1,4 @@
-// Agenda, oleada 2, sin framework (zui/html.json): año perpetuo, línea temporal (Gantt y recursos), buscar hueco,
+// Vistas de la agenda sin framework (zui/html.json): año perpetuo, línea temporal (Gantt y recursos), buscar hueco,
 // franjas de cita, mapa de calor y rachas, montados por @zuccadev-labs/zuix-zui/dom con el mismo árbol que el binding
 // de React; teclado, eventos z:* y nombres accesibles. También la agenda en RTL, la vista de año y el perpetuo dentro
 // del EventCalendar, y renderEvent/loadEvents con setAgendaOptions.

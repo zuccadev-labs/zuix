@@ -1,4 +1,4 @@
-// Lógica de los campos de la oleada 3: números por locale y por pasos, fortaleza de contraseña y portapapeles.
+// Lógica de los campos compuestos: números por locale y por pasos, fortaleza de contraseña y portapapeles.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import fc from "fast-check";

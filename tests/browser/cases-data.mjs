@@ -1,4 +1,4 @@
-// Oleada 5 en el binding de React (pantalla `?screen=data` de examples/app): DataTable con selección, pie y
+// Binding de React (pantalla `?screen=data` de examples/app): DataTable con selección, pie y
 // paginación; Timeline, CircularProgress, Progress vertical y por tramos, DescriptionList, Item, StatusDot y Chip con
 // tono. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, settled, expectAttr, expectText }) {
@@ -6,7 +6,7 @@ export default function ({ t, assert, poll, settled, expectAttr, expectText }) {
 
   return [
     {
-      name: "Oleada 5 · DataTable: casillas, seleccionar todo indeterminado, Mayús para un rango, conteo, pie y paginación (React)",
+      name: "DataTable: casillas, seleccionar todo indeterminado, Mayús para un rango, conteo, pie y paginación (React)",
       async run({ open }) {
         const page = await screen(open);
         const table = t("d-table");
@@ -46,7 +46,7 @@ export default function ({ t, assert, poll, settled, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 5 · Datos: anillo con <progress>, barras vertical y por tramos, línea temporal, lista de descripciones e items (React)",
+      name: "Datos: anillo con <progress>, barras vertical y por tramos, línea temporal, lista de descripciones e items (React)",
       async run({ open, axe }) {
         for (const theme of ["dark", "light"]) {
           const page = await screen(open, { theme });
@@ -87,7 +87,7 @@ export default function ({ t, assert, poll, settled, expectAttr, expectText }) {
       },
     },
     {
-      name: "Oleada 5 · Datos a 390 px: la línea alterna pasa a una columna y la barra de la tabla no desborda (React)",
+      name: "Datos a 390 px: la línea alterna pasa a una columna y la barra de la tabla no desborda (React)",
       async run({ open }) {
         const page = await screen(open, { width: 390, height: 844 });
         await settled(page);

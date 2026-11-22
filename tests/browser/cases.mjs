@@ -3486,7 +3486,7 @@ export const cases = [
       await shot(narrow, "agenda-month-390");
     },
   },
-  // ───────────────────────────── Agenda, oleada 2 ─────────────────────────────
+  // ───────────────────────────── Agenda: vistas ─────────────────────────────
   {
     name: "Agenda: vistas de año, perpetuo y línea temporal en el EventCalendar",
     async run({ open, shot }) {

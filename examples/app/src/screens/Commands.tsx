@@ -28,7 +28,7 @@ import {
   type MenuEntry,
 } from "@zuccadev-labs/zuix-zui";
 
-/** Oleada 4 en React: barras, menús con estado, capas ligeras y avisos de aplicación. Cada pieza deja su valor a la vista. */
+/** Barras, menús con estado, capas ligeras y avisos de aplicación. Cada pieza deja su valor a la vista. */
 export function Commands() {
   const { promise } = useToast();
   // Promesa que la prueba resuelve o rechaza a mano (window.__deploy).

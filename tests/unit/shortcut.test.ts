@@ -1,4 +1,4 @@
-// Oleada 7: ShortcutInput (core/shortcut): normalización portable, etiquetas por plataforma, aria-keyshortcuts y
+// ShortcutInput (core/shortcut): normalización portable, etiquetas por plataforma, aria-keyshortcuts y
 // comparación con eventos.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";

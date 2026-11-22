@@ -1,4 +1,4 @@
-/* Datos, oleada 5: selección, pie y paginación de DataTable. */
+/* Datos: selección, pie y paginación de DataTable. */
 @layer zui.data {
   /* ---- DataTable: selección, pie y barra ---- */
   .z-datatable {

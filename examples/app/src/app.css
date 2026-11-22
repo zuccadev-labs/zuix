@@ -259,7 +259,7 @@ body {
   align-items: center;
   gap: var(--z-space-2);
 }
-/* Piezas de planificación de la agenda (oleada 2), una bajo otra. */
+/* Piezas de planificación de la agenda, una bajo otra. */
 .app-planning {
   display: flex;
   flex-direction: column;
@@ -527,7 +527,7 @@ body {
   color: var(--z-fg-muted);
 }
 
-/* Barras verticales de la pantalla Data (oleada 5). */
+/* Barras verticales de la pantalla Data. */
 .app-row--tall {
   align-items: stretch;
   height: 140px;

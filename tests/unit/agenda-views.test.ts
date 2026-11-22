@@ -1,4 +1,4 @@
-// Agenda, oleada 2: año perpetuo, mapa de calor y rachas, línea temporal (escalas, filas, dependencias, camino
+// Vistas de la agenda: año perpetuo, mapa de calor y rachas, línea temporal (escalas, filas, dependencias, camino
 // crítico), «buscar hueco», ventana virtual y franjas de cita. Propiedades con fast-check donde las hay.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
@@ -492,7 +492,7 @@ describe("calendar: estancia", () => {
   });
 });
 
-describe("vistas de la oleada 2: árboles", () => {
+describe("vistas de la agenda: árboles", () => {
   test("año: 12 meses con densidad, hoy y una parada de Tab", () => {
     const html = toHTML(
       yearGrid({

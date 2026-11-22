@@ -1,4 +1,4 @@
-// Oleada 6 sin React: Navbar, NavigationMenu, SkipLink y BottomNavigation (zout/dom) y DotMatrix, TextEffect y Glow
+// Sin React: Navbar, NavigationMenu, SkipLink y BottomNavigation (zout/dom) y DotMatrix, TextEffect y Glow
 // (zui/dom), desde el contrato HTML y desde marcado mínimo escrito a mano.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -52,7 +52,7 @@ export default async function ({ page, test, ok }) {
     ok(false, message);
   };
 
-  await test("Oleada 6 sin React: NavigationMenu abre su panel bajo el botón y Escape lo cierra", async () => {
+  await test("Sin React: NavigationMenu abre su panel bajo el botón y Escape lo cierra", async () => {
     const box = await inject(html("NavigationMenu"));
     const trigger = box.locator(".z-navmenu__trigger").first();
     const panel = box.locator(".z-navmenu__panel").first();
@@ -68,7 +68,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => (await trigger.getAttribute("aria-expanded")) === "false", "aria-expanded vuelve");
   });
 
-  await test("Oleada 6 sin React: Navbar en fila si cabe y en cajón si no", async () => {
+  await test("Sin React: Navbar en fila si cabe y en cajón si no", async () => {
     const wide = await inject(html("Navbar"));
     await until(async () => (await wide.locator(".z-navbar").getAttribute("data-collapsed")) === null, "en fila a 1100 px");
     ok((await wide.locator(".z-navbar__menu").getAttribute("popover")) === null, "la lista no es popover en fila");
@@ -87,7 +87,7 @@ export default async function ({ page, test, ok }) {
     await until(async () => !(await isOpen(menu)), "Cerrar");
   });
 
-  await test("Oleada 6 sin React: SkipLink y BottomNavigation de botones", async () => {
+  await test("Sin React: SkipLink y BottomNavigation de botones", async () => {
     const box = await inject(`${html("SkipLink")}${html("BottomNavigation", 1)}`);
     await box.locator(".z-skiplink").focus();
     await page.keyboard.press("Enter");
@@ -101,7 +101,7 @@ export default async function ({ page, test, ok }) {
     ok((await box.locator('.z-bottomnav__item[aria-current="page"]').count()) === 1, "solo uno actual");
   });
 
-  await test("Oleada 6 sin React: DotMatrix y TextEffect desde marcado mínimo; Glow sigue al puntero", async () => {
+  await test("Sin React: DotMatrix y TextEffect desde marcado mínimo; Glow sigue al puntero", async () => {
     const box = await inject(
       '<span class="z-dotmatrix" data-pattern="spiral" data-cols="4" role="status" aria-label="Loading"></span>' +
         '<p class="z-texteffect" data-effect="reveal" data-by="letter">Hi there</p>' +

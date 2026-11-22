@@ -1,4 +1,4 @@
-// Oleada 7 en el binding de React (pantalla `?screen=media` de examples/app): familia ColorPicker y el resto de piezas
+// Binding de React (pantalla `?screen=media` de examples/app): familia ColorPicker y el resto de piezas
 // de medios. Exporta una función que recibe los ayudantes de cases.mjs.
 export default function ({ t, assert, poll, expectAttr }) {
   const screen = (open, options) => open("media", options);
@@ -11,7 +11,7 @@ export default function ({ t, assert, poll, expectAttr }) {
 
   return [
     {
-      name: "Oleada 7 · Confetti: lienzo fijo aria-hidden que no captura el puntero y se quita al terminar; nada con movimiento reducido (React)",
+      name: "Confetti: lienzo fijo aria-hidden que no captura el puntero y se quita al terminar; nada con movimiento reducido (React)",
       async run({ open }) {
         const page = await screen(open);
         await page.locator(t("m-confetti")).scrollIntoViewIfNeeded();
@@ -32,7 +32,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · DownloadTrigger: descarga un SVG generado al pulsar y muestra carga con una promesa (React)",
+      name: "DownloadTrigger: descarga un SVG generado al pulsar y muestra carga con una promesa (React)",
       async run({ open }) {
         const page = await screen(open);
         await page.locator(t("m-download-qr")).scrollIntoViewIfNeeded();
@@ -50,7 +50,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · ShortcutInput: graba con modificadores, exige uno, Escape cancela, Retroceso borra y Tab no queda atrapado (React)",
+      name: "ShortcutInput: graba con modificadores, exige uno, Escape cancela, Retroceso borra y Tab no queda atrapado (React)",
       async run({ open }) {
         const page = await screen(open);
         const field = `${t("m-shortcut")} .z-shortcut__field`;
@@ -85,7 +85,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · SignaturePad: dibujar, deshacer, borrar, escribir el nombre como alternativa y exportar PNG (React)",
+      name: "SignaturePad: dibujar, deshacer, borrar, escribir el nombre como alternativa y exportar PNG (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = `${t("m-signature")} .z-signature`;
@@ -128,7 +128,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · ImageCropper: teclado (mover, redimensionar con Mayús), asa de esquina con relación 1:1 y exportación a PNG (React)",
+      name: "ImageCropper: teclado (mover, redimensionar con Mayús), asa de esquina con relación 1:1 y exportación a PNG (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = `${t("m-cropper")} .z-cropper`;
@@ -169,7 +169,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · CompareSlider: asa role=slider con teclado y pulsación que lleva el divisor (React)",
+      name: "CompareSlider: asa role=slider con teclado y pulsación que lleva el divisor (React)",
       async run({ open }) {
         const page = await screen(open);
         const handle = `${t("m-compare")} [role="slider"]`;
@@ -188,7 +188,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · CircularSlider: teclado APG, arrastre por el anillo y hueco del arco abierto (React)",
+      name: "CircularSlider: teclado APG, arrastre por el anillo y hueco del arco abierto (React)",
       async run({ open }) {
         const page = await screen(open);
         const thumb = `${t("m-dial")} [role="slider"]`;
@@ -220,7 +220,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · QRCode: imagen con nombre, la versión crece con el texto y el nivel H con icono (React)",
+      name: "QRCode: imagen con nombre, la versión crece con el texto y el nivel H con icono (React)",
       async run({ open }) {
         const page = await screen(open);
         const qr = `${t("m-qr")} .z-qrcode`;
@@ -239,7 +239,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · Carousel: reproducción automática con botón de pausa primero, pausa con el puntero y puntos (React)",
+      name: "Carousel: reproducción automática con botón de pausa primero, pausa con el puntero y puntos (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = `${t("m-car-auto")} .z-carousel`;
@@ -268,7 +268,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · Carousel: tres por página con barra y vertical con scroll-snap y teclado (React)",
+      name: "Carousel: tres por página con barra y vertical con scroll-snap y teclado (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = `${t("m-car-page")} .z-carousel`;
@@ -308,7 +308,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · Carousel: miniaturas con aria-current que llevan a su slide (React)",
+      name: "Carousel: miniaturas con aria-current que llevan a su slide (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = `${t("m-car-thumbs")} .z-carousel`;
@@ -322,7 +322,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · ColorPicker: teclado del área y del tono, campo hex, formato y muestrario controlados (React)",
+      name: "ColorPicker: teclado del área y del tono, campo hex, formato y muestrario controlados (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = t("m-picker");
@@ -364,7 +364,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · ColorPicker: arrastre en el área y en el alfa con el puntero (React)",
+      name: "ColorPicker: arrastre en el área y en el alfa con el puntero (React)",
       async run({ open }) {
         const page = await screen(open);
         const root = t("m-picker");
@@ -388,7 +388,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · ColorPickerTrigger: popover nativo bajo el botón, foco en el área, Escape devuelve el foco (React)",
+      name: "ColorPickerTrigger: popover nativo bajo el botón, foco en el área, Escape devuelve el foco (React)",
       async run({ open }) {
         const page = await screen(open);
         const button = `${t("m-trigger")} .z-colortrigger__button`;
@@ -415,7 +415,7 @@ export default function ({ t, assert, poll, expectAttr }) {
       },
     },
     {
-      name: "Oleada 7 · ColorSlider y ColorSwatchPicker sueltos: teclado APG y radios (React)",
+      name: "ColorSlider y ColorSwatchPicker sueltos: teclado APG y radios (React)",
       async run({ open }) {
         const page = await screen(open);
         const hue = `${t("m-hue")} [role="slider"]`;

@@ -1,4 +1,4 @@
-// Oleada 7: color de ColorPicker (core/color). Conversiones contra valores de referencia (CSS Color 4 y la
+// Color de ColorPicker (core/color). Conversiones contra valores de referencia (CSS Color 4 y la
 // calculadora de OKLCH de Ottosson), lectura de cadenas CSS y redondeos estables con fast-check.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
