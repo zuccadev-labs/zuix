@@ -32,6 +32,7 @@
 // WebGL2, si falta la fuente de algún slide o si falla la carga, la lente sigue en modo css.
 // Si las imágenes cambian después de activar el carrusel (un <canvas> pintado más tarde): refresh().
 // `setup()` conecta los listeners delegados una vez; `hydrate(root)` prepara marcado nuevo.
+import { trackScrollEdges } from "../core/edges";
 import type { Listen } from "./shared";
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { chevronDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-down";
@@ -182,6 +183,8 @@ function controlsFor(root: HTMLElement, after: Element, vertical: boolean, autop
   const dots = controls.querySelector<HTMLElement>(".z-carousel__dots");
   const bar = controls.querySelector<HTMLElement>(".z-carousel__bar");
   const thumbs = [...root.querySelectorAll<HTMLButtonElement>(":scope > .z-carousel__thumbs > .z-carousel__thumb")];
+  const thumbStrip = root.querySelector<HTMLElement>(":scope > .z-carousel__thumbs");
+  if (thumbStrip) undo.push(trackScrollEdges(thumbStrip));
   const onClick = (event: MouseEvent) => {
     const target = event.target instanceof Element ? event.target.closest<HTMLElement>(".z-carousel__dot, .z-carousel__thumb") : null;
     if (!target || !root.contains(target)) return;

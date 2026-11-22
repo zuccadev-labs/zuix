@@ -3,6 +3,7 @@
 // pasar, tabla alternativa («View as table») y variante por tamaño (`encoding="size"`): el nivel no depende solo del
 // color. Sin documento al importar.
 
+import { followScrollEdges } from "./edges";
 import { addDays, addMonths, diffDays, localeWeekInfo, parse, startOfWeek, todayISO, valid } from "./date";
 import { busiestWeekday, heatmapLevel, heatmapThresholds, heatmapTotal, heatmapWeeks, monthStarts, streaks } from "./heatmap";
 import { fill, fmt, h, icon, on } from "./vnode";
@@ -308,6 +309,9 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
   attach(root, host) {
     const abort = new AbortController();
     const signal = abort.signal;
+    // 53 semanas no caben en una columna estrecha: el borde con semanas ocultas se difumina.
+    queueMicrotask(() => followScrollEdges(root, ".z-heatmap__scroll"));
+    signal.addEventListener("abort", () => followScrollEdges(root, null));
     root.addEventListener(
       "click",
       (event) => {

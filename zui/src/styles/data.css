@@ -538,6 +538,7 @@
 
   /* ---- StatTile ---- */
   .z-stat {
+    container: z-stat / inline-size;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-1);
@@ -595,6 +596,12 @@
     font-weight: var(--z-weight-medium);
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  /* En una baldosa estrecha (cuatro en 620 px) el icono cede su sitio al nombre: «Completion» quedaba en «Complet…». */
+  @container z-stat (inline-size < 7.5rem) {
+    .z-stat .z-stat__icon {
+      display: none;
+    }
   }
   /* Icono en baldosa: rectángulo redondeado (28 px, radio 8), no círculo. */
   .z-stat__icon {

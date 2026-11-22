@@ -35,6 +35,7 @@ import {
   type SnapController,
 } from "../../core/carousel-runtime";
 import type { KeylineLayout } from "../../core/keylines";
+import { trackScrollEdges } from "../../core/edges";
 import { cx } from "../../cx";
 import { useLatest } from "../../primitives/hooks";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";
@@ -476,6 +477,8 @@ function CarouselThumbs<T>({
 }) {
   const strip = useRef<HTMLDivElement>(null);
   useEffect(() => revealThumb(strip.current, index), [index]);
+  // La tira de miniaturas desplaza: el borde con miniaturas ocultas se difumina.
+  useEffect(() => (strip.current ? trackScrollEdges(strip.current) : undefined), []);
   return (
     <div ref={strip} className="z-carousel__thumbs" role="group" aria-label={text.indicators}>
       {items.map((item, i) => (

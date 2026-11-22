@@ -1469,7 +1469,11 @@
   .z-otp[data-size="lg"] {
     --z-otp-size: var(--z-space-12);
   }
+  /* En una columna más estrecha que el código, las casillas ceden ancho (hasta la altura de un control pequeño) en vez
+     de salirse del grupo: en una tarjeta de 282 px la sexta casilla quedaba fuera. */
   .z-otp__cell {
+    flex: 0 1 auto;
+    min-inline-size: var(--z-control-height-sm);
     width: var(--z-otp-size);
     height: calc(var(--z-otp-size) + var(--z-space-1));
     padding: 0;

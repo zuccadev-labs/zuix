@@ -730,10 +730,12 @@
     outline: var(--z-focus-width) solid var(--z-accent-ring);
     outline-offset: var(--z-focus-offset);
   }
+  /* Las barras se reparten el ancho de la onda (sin hueco fijo): con 36 barras y 2 px de hueco pedían 142 px y en una
+     burbuja de teléfono pasaban del borde de la onda. */
   .z-voice-note__wave {
     display: flex;
     align-items: center;
-    gap: 2px;
+    justify-content: space-between;
     flex: 1;
     block-size: 32px;
     min-inline-size: 96px;
@@ -746,9 +748,8 @@
     outline-offset: var(--z-focus-offset);
   }
   .z-voice-note__bar {
-    flex: 1;
-    min-inline-size: 2px;
-    max-inline-size: 4px;
+    flex: 0 1 2px;
+    min-inline-size: 1px;
     block-size: max(4px, calc(var(--z-peak, 0.2) * 100%));
     border-radius: 2px;
     background: var(--z-line-strong);

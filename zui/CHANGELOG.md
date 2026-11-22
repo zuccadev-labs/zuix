@@ -163,7 +163,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   avatar ya no tapa las iniciales del anterior.
 - `Table` y `DataTable`: una columna `mono` (fechas, códigos) no parte línea («2026-11-\n10»), y el borde con columnas
   ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco.
-- `KanbanBoard`: el borde del tablero con columnas ocultas se difumina en lugar de cortar una tarjeta en seco.
+- `KanbanBoard`, `CalendarHeatmap` y las miniaturas de `Carousel` y `Gallery`: el borde con contenido oculto se difumina en
+  lugar de cortar una tarjeta, un mes o una miniatura en seco (también en `/dom`).
 - `PromptInput`: modelo, herramientas y uso van en una sola fila que desplaza, con el borde oculto difuminado; en un
   teléfono partían línea y quedaban uno debajo de otro.
 - `MetricCard`: la etiqueta usa hasta dos líneas antes de cortarse («New custom…» cabía entera).
@@ -180,6 +181,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   abajo del slide.
 - `ColorPicker`: el formato pasa a su propia línea por debajo de 21rem (antes 18rem). Entre 288 y 336 px la fila de
   canales con alfa y el selector del sistema se salía de la tarjeta.
+- `StatTile`: en una baldosa de menos de 7,5rem de contenido el icono cede su sitio al nombre («Complet…»).
+- `OTPInput`: las casillas ceden ancho (hasta la altura de un control pequeño) en una columna más estrecha que el
+  código; la sexta casilla se salía del grupo.
+- `VoiceNote`: las barras de la onda se reparten su ancho sin hueco fijo; en una burbuja de teléfono pasaban del borde.
 - `CodeViewer` y `LogConsole`: el tinte del código va sobre una base opaca. Sobre un fondo oscuro, los comentarios, los
   números de línea y el filtro de niveles bajaban a 4,46:1 en zutool claro.
 - `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
