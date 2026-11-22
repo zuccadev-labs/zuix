@@ -62,6 +62,10 @@ leer las reglas de protección de rama; `Packaging` y `Signed-Releases`, porque 
 publicación hecha desde un workflow. La definición de cada una está en la
 [documentación de Scorecard](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
+Esa tabla es del 2026-11-18. Después registré el proyecto en bestpractices.dev (el distintivo está en el
+`README.md`) y la `0.2.0` y la `0.3.0` salieron desde el workflow `release`. No he vuelto a apuntar aquí la
+puntuación.
+
 ### Endurecimiento de los workflows
 
 Sigo la guía de GitHub para el
@@ -156,11 +160,9 @@ de contenido que genera `zudocs headers` no tiene efecto allí; sirve en un aloj
 
 ## Lo que no he comprobado
 
-- El workflow `release` no ha publicado todavía ninguna versión: la primera será la `0.2.0`. Lo validé en
-  local y con la ejecución de ensayo.
 - El trabajo de Windows no ha corrido todavía en ningún runner: repasé los scripts que ejecuta (rutas,
   finales de línea, procesos hijos) sin tener un Windows donde probarlos. Por eso se ve en el pull request
   y no forma parte de la verificación de una publicación.
-- El despliegue de `pages` en el alojamiento real: Pages no está activado todavía. La consulta que lo detecta
-  la probé en local contra la API, no en un runner.
+- La rama de `pages` que omite el despliegue cuando Pages está desactivado. Pages ya está activado y el
+  sitio se despliega con cada cambio en `main`; esa consulta solo la probé en local contra la API.
 - La puntuación de Scorecard con estos cambios ya en `main`; en particular, que `Fuzzing` pase a 10.

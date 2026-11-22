@@ -233,8 +233,6 @@ y `pnpm test:browser`).
 
 ## Lo que no he comprobado
 
-- **La publicación automática.** El workflow `release` no ha publicado nunca: la primera vez será con la
-  `0.2.0` ([Publicación](./02-publicacion.md#lo-que-no-he-comprobado)).
 - **webpack, Parcel y Rspack contra el paquete publicado.** Pruebo Vite 8 y Next.js con Turbopack. El sitio
   de documentación usa Rspack, pero contra el fuente.
 - **`attw` en modo estricto.** Lo ejecuto con el perfil `esm-only`: los paquetes no tienen salida CommonJS.
