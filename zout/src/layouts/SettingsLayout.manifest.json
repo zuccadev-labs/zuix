@@ -44,10 +44,7 @@
       "required": true
     }
   ],
-  "states": [
-    "rest",
-    "dirty"
-  ],
+  "states": ["rest", "dirty"],
   "tokens": [
     "font-display",
     "text-heading-lg",
