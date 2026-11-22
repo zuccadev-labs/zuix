@@ -262,8 +262,9 @@
     flex-grow: 2.6;
     min-inline-size: 5.5rem;
   }
-  /* Estrecho (un selector de 220 px en una columna): el formato va en su propia línea y los canales debajo. */
-  @container z-colorfields (inline-size < 18rem) {
+  /* Estrecho: el formato va en su propia línea y los canales debajo. La fila entera (formato, cuatro canales con
+     alfa y el selector del sistema) pide unos 326 px: con el corte en 18rem, entre 288 y 336 px se salía de la tarjeta. */
+  @container z-colorfields (inline-size < 21rem) {
     .z-colorpicker__fields {
       flex-wrap: wrap;
     }

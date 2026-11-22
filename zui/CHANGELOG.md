@@ -178,6 +178,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `Gallery` con lente: los vecinos se funden en los bordes de la tira en vez de cortarse en seco, y el margen vertical
   sigue al estiramiento real de la forma, que crece con el tramo curvo: en un teléfono sobraban unos 60 px arriba y
   abajo del slide.
+- `ColorPicker`: el formato pasa a su propia línea por debajo de 21rem (antes 18rem). Entre 288 y 336 px la fila de
+  canales con alfa y el selector del sistema se salía de la tarjeta.
 - `CodeViewer` y `LogConsole`: el tinte del código va sobre una base opaca. Sobre un fondo oscuro, los comentarios, los
   números de línea y el filtro de niveles bajaban a 4,46:1 en zutool claro.
 - `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
