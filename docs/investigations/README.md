@@ -21,7 +21,7 @@ repetir una discusión que ya tuve conmigo mismo.
 | 10 | [Node, dependencias y cadena de suministro](./10-node-dependencias-y-cadena-de-suministro.md) | Qué versiones admito, cómo protejo la instalación y cómo publico sin tokens |
 | 11 | [Lint, pruebas y por qué no Barrits](./11-lint-pruebas-y-barrits.md) | Por qué Biome y no ESLint, por qué `node:test`, y por qué no uso aquí mi propio Barrits |
 | 12 | [El sitio de documentación, medido](./12-el-sitio-medido.md) | Qué encontré al auditar zudocs: seguridad, fuentes, rendimiento, `llms.txt` y despliegue |
-| 13 | [Rendimiento de la agenda, medido](./13-rendimiento-de-la-agenda.md) | Dónde iba el tiempo con 5000 eventos, qué cambié y qué cifras quedaron |
+| 13 | [Rendimiento de la agenda, medido](./13-rendimiento-de-la-agenda.md) | Dónde iba el tiempo con 5000 eventos, qué cambié y cómo evito que vuelva a subir |
 
 ## Cómo leerlas
 

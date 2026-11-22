@@ -1,9 +1,10 @@
 # Rendimiento de la agenda, medido
 
-La especificación de la agenda pide 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (objetivo
-de 50 ms por interacción; INP «bueno», por debajo de 200 ms, como mínimo). Tras la segunda oleada, la etapa de
-rendimiento de la aplicación de ejemplo (`?screen=perf-stage`) daba entre 600 ms y 2 s por cambio de vista o de
-periodo. Estas son las notas de la medida, del cambio y de la medida de después, del 20 de noviembre de 2026.
+Cuando diseñé la agenda me puse un objetivo: 5000 eventos en un mes y 500 recursos sin tareas largas al
+navegar (50 ms por interacción como meta; un INP «bueno», por debajo de 200 ms, como mínimo). Con la segunda
+tanda de vistas de la agenda ya construida, la etapa de rendimiento de la aplicación de ejemplo
+(`?screen=perf-stage`) daba entre 600 ms y 2 s por cambio de vista o de periodo. Estas son mis notas de la
+medida, del cambio y de la medida de después, del 20 de noviembre de 2026.
 
 ## Cómo medí
 
@@ -41,9 +42,9 @@ menos, no moviendo la lectura.
 - **Índice por día**: las vistas reparten las ocurrencias por día en una pasada; los carriles del mes reciben solo
   las de su semana y dejan de buscar más allá de `dayMaxEvents`.
 - **Lo que cabe en la rejilla de horas**: cuatro solapes lado a lado en la semana (ocho en el día) y el resto en un
-  «+N» por hora en la última columna del grupo, que abre el popover de ese intervalo (agenda.md §9, «a partir del
-  quinto»). El «+N» lleva el tabulador y entra en la navegación espacial; lo oculto no puede llevar el foco; el
-  evento que se mueve nunca se oculta.
+  «+N» por hora en la última columna del grupo, que abre el popover de ese intervalo (en mi diseño de la
+  agenda, el indicador aparece a partir del quinto solape). El «+N» lleva el tabulador y entra en la navegación
+  espacial; lo oculto no puede llevar el foco; el evento que se mueve nunca se oculta.
 - **Ventana virtual en la lista** a partir de 150 filas (`core/virtual` en espíritu: alturas de una medida, una
   lectura tras el primer pintado): de cada día, las filas que se ven más un margen, y rellenos del alto del resto;
   la fila con el foco siempre se pinta; Inicio y Fin salen del modelo, no del documento.
@@ -53,13 +54,15 @@ menos, no moviendo la lectura.
 - **Trabajo no urgente después del pintado** (`core/idle`: `scheduler.postTask` o `setTimeout`, tras un
   fotograma): el aviso de rango, la carga por rango y la medida de la lista.
 
-Guías aplicadas: «*the performance benefit comes entirely from the CSS containments*»
-(`interactions-in-complex-layouts`, que ya seguía cada columna de día); «*high layout duration points to
-expensive geometry calculations or synchronous layout thrashing (remediated by batching DOM reads before writes,
-simplifying DOM structure, or using CSS containment)*» (`identify-inp-causes`: aquí, simplificar el DOM);
-«*Skips rendering calculations when off-screen*» (`defer-rendering-heavy-content`, que se mantiene para listas de
-menos de 150 filas); «*degrade gracefully to `setTimeout(callback, 0)` when `scheduler.postTask` is unavailable*»
-(`schedule-tasks-by-priority`).
+El criterio detrás de cada cambio:
+
+- La contención de CSS es lo que de verdad ahorra en una maquetación compleja. Ya la tenía en cada columna de
+  día, así que no había más que ganar por ahí.
+- Una maquetación larga dentro de una interacción se arregla agrupando lecturas antes de escrituras,
+  simplificando el DOM o conteniendo. Aquí tocaba simplificar el DOM: pintar menos.
+- `content-visibility` evita el trabajo de lo que está fuera de pantalla. Lo mantengo en las listas de menos
+  de 150 filas, que no usan la ventana virtual.
+- `scheduler.postTask` no está en todos los motores; el respaldo es `setTimeout(callback, 0)`.
 
 ## Lo que no cambié, y por qué
 
@@ -73,12 +76,13 @@ menos de 150 filas); «*degrade gracefully to `setTimeout(callback, 0)` when `sc
 
 ## Después
 
-Las cifras finales están en el informe de la rama y se repiten en el `CHANGELOG.md` de zui. Para que no vuelvan a
-subir, `tests/html/cases/15-agenda-perf.mjs` recorre mes, semana, día, lista y año con 5000 eventos en el modo sin
-framework (el build publicado) y falla si un paso pasa de 300 ms de CPU en Chromium (`AGENDA_BUDGET`) o de 3000 ms
-de pared en cualquier motor (`AGENDA_WALL`), con la mejor de tres vueltas.
+No copié aquí la tabla del después con el mismo detalle que la del antes; los cambios de comportamiento están
+en el `CHANGELOG.md` de zui. Para que las cifras no vuelvan a subir, `tests/html/cases/15-agenda-perf.mjs`
+recorre mes, semana, día, lista y año con 5000 eventos en el modo sin framework (el build publicado) y falla si
+un paso pasa de 300 ms de CPU en Chromium (`AGENDA_BUDGET`) o de 3000 ms de pared en cualquier motor
+(`AGENDA_WALL`), con la mejor de tres vueltas.
 
-## Sin comprobar
+## Lo que no he comprobado
 
 - Las cifras en una máquina sin carga: todas las de este documento son con otros procesos ocupando la CPU.
 - El efecto en un teléfono real; la medida es de escritorio.
