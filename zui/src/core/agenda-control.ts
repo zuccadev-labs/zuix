@@ -5,6 +5,7 @@
 // retraso. Lee la geometría en cada tecla o movimiento (getBoundingClientRect) y calcula con core/agenda.
 // Sin efectos al importar: todo empieza en `attachAgenda`.
 
+import { announceTo } from "./announcer";
 import {
   dateOf,
   dayStart,
@@ -76,19 +77,10 @@ const wallISO = (min: number) =>
 
 /* ---------- Región viva ---------- */
 
-const liveTimers = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
 /** Anuncio educado con ~500 ms de retraso y vaciado previo (guía drag-and-drop): no se lo come el anuncio del foco. */
 export function announce(root: HTMLElement, text: string): void {
   const live = root.querySelector<HTMLElement>(".z-agenda__live");
-  if (!live) return;
-  clearTimeout(liveTimers.get(live));
-  live.textContent = "";
-  liveTimers.set(
-    live,
-    setTimeout(() => {
-      live.textContent = text;
-    }, 500),
-  );
+  if (live) announceTo(live, text, 500);
 }
 
 /* ---------- Ayudas ---------- */
