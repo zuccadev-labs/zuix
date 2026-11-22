@@ -68,7 +68,7 @@ These subpaths do not import React, and a project that only uses them does not i
 | `@zuccadev-labs/zuix/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` | A single brand on `:root` |
 | `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Token bridges to Tailwind 4 and Docusaurus |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | `@zuccadev-labs/zuix-zui`, its framework-free behavior and the WebGL carousel mode |
-| `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/dates`, `/zui/dom/data`, `/zui/dom/content`, `/zui/dom/agenda`, `/zui/dom/charts`, `/zui/dom/color`, `/zui/dom/media`, `/zui/dom/effects`, `/zui/dom/time`, `/zui/dom/terminal` | The framework-free behavior of `@zuccadev-labs/zuix-zui` split by family |
+| `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/dates`, `/zui/dom/data`, `/zui/dom/content`, `/zui/dom/agenda`, `/zui/dom/charts`, `/zui/dom/color`, `/zui/dom/media`, `/zui/dom/effects`, `/zui/dom/time`, `/zui/dom/terminal`, `/zui/dom/dashboard`, `/zui/dom/people` | The framework-free behavior of `@zuccadev-labs/zuix-zui` split by family |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout` and its framework-free behavior |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | The entry points of `@zuccadev-labs/zuix-zicon` |
 | `@zuccadev-labs/zuix` | The `zui`, `zout` and `zicon` namespaces (requires React) |

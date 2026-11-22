@@ -215,6 +215,8 @@ init(datesModule, chartsModule);
 | `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
 | `/dom/time` | Clock, AnalogClock, WorldClock, Countdown, DurationField, TimeZoneSelect (sobre el Combobox del núcleo) | `timeModule`, `refreshTimeZoneSelect`, `formatDuration` |
 | `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
+| `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
+| `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`

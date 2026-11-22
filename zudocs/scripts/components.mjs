@@ -31,6 +31,8 @@ export const GROUPS = {
   media: { label: "Medios", icon: "camera" },
   time: { label: "Tiempo", icon: "clock" },
   terminal: { label: "Terminal y código", icon: "command-line" },
+  dashboard: { label: "Dashboard y tableros", icon: "presentation-chart-line" },
+  people: { label: "Usuarios y perfiles", icon: "user-group" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

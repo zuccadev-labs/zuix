@@ -287,7 +287,7 @@ function fileURLToPathSafe(u) { return decodeURIComponent(new URL(u).pathname); 
 const specs = [
   "@zuccadev-labs/zuix-zicon", "@zuccadev-labs/zuix-zicon/core", "@zuccadev-labs/zuix-zicon/all", "@zuccadev-labs/zuix-zicon/dom", "@zuccadev-labs/zuix-zicon/element", "@zuccadev-labs/zuix-zicon/icons/x-mark",
   "@zuccadev-labs/zuix-zicon/manifest.json", "@zuccadev-labs/zuix-zicon/sprite.svg", "@zuccadev-labs/zuix-zicon/svg/outline/bell.svg", "@zuccadev-labs/zuix-zicon/svg/solid/bell.svg", "@zuccadev-labs/zuix-zicon/dist/zicon.element.js",
-  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js",
+  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal", "dashboard", "people"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js",
   "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js",
   "@zuccadev-labs/zuix-tokens/tokens.css", "@zuccadev-labs/zuix-tokens/tokens.json", "@zuccadev-labs/zuix-tokens/css/dazlabs.css",
 ];
@@ -492,7 +492,7 @@ for (const fn of ["init", "hydrate", "toast", "confirm", "openDialog", "closeDia
 const core = await import("@zuccadev-labs/zuix-zui/dom/core");
 for (const fn of ["init", "use", "hydrate", "destroy", "toast", "confirm", "openDialog", "openPopover", "setSelectValue"]) assert.equal(typeof core[fn], "function", "zui/dom/core." + fn);
 assert.equal(zui.toast, core.toast, "zui/dom reexporta el núcleo de zui/dom/core");
-const families = { dates: "datesModule", data: "dataModule", content: "contentModule", agenda: "agendaModule", charts: "chartsModule", color: "colorModule", media: "mediaModule", effects: "effectsModule", time: "timeModule", terminal: "terminalModule" };
+const families = { dates: "datesModule", data: "dataModule", content: "contentModule", agenda: "agendaModule", charts: "chartsModule", color: "colorModule", media: "mediaModule", effects: "effectsModule", time: "timeModule", terminal: "terminalModule", dashboard: "dashboardModule", people: "peopleModule" };
 for (const [family, name] of Object.entries(families)) {
   const mod = await import("@zuccadev-labs/zuix-zui/dom/" + family);
   assert.ok(Array.isArray(mod[name]?.parts), "zui/dom/" + family + "." + name);
