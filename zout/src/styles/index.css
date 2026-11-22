@@ -610,6 +610,33 @@
   .z-sidebar__body[hidden] {
     display: none;
   }
+  /* Una lista más alta que la barra desplaza: el borde con filas ocultas se difumina, así la fila que queda a medias se
+     lee como «sigue» y no como un elemento roto. Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+  @supports (animation-timeline: scroll()) {
+    .z-sidebar__sections,
+    .z-sidebar__body {
+      animation: z-sidebar-fade linear both;
+      animation-timeline: scroll(self block);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-sidebar__sections,
+    .z-sidebar__body {
+      animation: none;
+    }
+  }
+  @keyframes z-sidebar-fade {
+    from {
+      mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+    }
+  }
   .z-sidebar__foot {
     display: flex;
     flex: 0 0 auto;
