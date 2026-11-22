@@ -1226,6 +1226,23 @@ export const cases = [
     },
   },
   {
+    name: "Shell a 390 px: el rail no ocupa columna y entra en el cajón de la sidebar",
+    async run({ open, shot }) {
+      const page = await open("overview", { width: 390 });
+      await expectCount(page, ".z-shell__body > .z-shell__rail", 0, "a 390 px el rail no ocupa columna");
+      const main = await page.locator(".z-shell__main").boundingBox();
+      assert(main.x < 20, `el área principal empieza en ${main.x}px: el rail le sigue quitando ancho`);
+      await page.click(t("toggle-sidebar"));
+      await visible(page, ".z-shell__side.z-shell__drawer > .z-shell__rail .z-rail");
+      await expectInViewport(page, ".z-shell__side");
+      await shot(page, "shell-390-rail-drawer");
+      await page.click('.z-shell__side .z-rail__item[aria-label="Navigation"]');
+      await visible(page, t("screen-navigation"));
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await visible(page, ".z-shell__body > .z-shell__rail .z-rail");
+    },
+  },
+  {
     name: "Shell: cambia de modo al redimensionar la ventana",
     async run({ open }) {
       const page = await open("overview", { width: 1440 });
@@ -1756,7 +1773,9 @@ export const cases = [
       assert((await bg()) !== before, "el fondo del shell cambia con el tema");
       await page.click(t("toggle-brand"));
       await until(page, () => document.documentElement.dataset.brand === "zutool", "data-brand=zutool");
-      await expectText(page, t("brand-name"), "zutool");
+      // La marca se nombra en el selector; la barra lleva el nombre de la aplicación, que no cambia con ella.
+      assert((await page.getAttribute(t("toggle-brand"), "aria-label"))?.includes("zutool"), "el selector nombra la marca actual");
+      await expectText(page, t("app-name"), "Acme");
       await page.click(t("toggle-theme"));
       await until(page, () => document.documentElement.dataset.theme === "dark", "data-theme=dark");
     },

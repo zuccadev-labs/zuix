@@ -7,6 +7,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- `Shell`: `railBreakpoint` (600 px por defecto; `data-rail-breakpoint` en `/dom`). Por debajo, con la sidebar en
+  cajón, el rail deja su columna y se muestra dentro del cajón, a su lado. En un teléfono una columna de iconos fija
+  se comía una quinta parte del ancho.
 - `ChatLayout`: lista de conversaciones, conversación y detalles. Tres columnas en pantalla ancha, detalles encima en
   media y una pila (lista → conversación → detalles) en estrecha, decidido por consultas de contenedor sobre el propio
   layout. Con `history`, la pila se sincroniza con el historial del navegador; F6 salta entre paneles; `variant="widget"`
@@ -26,6 +29,13 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   - `KanbanLayout` y `MailLayout` (carpetas, lista y lectura; en estrecho, una sola vista según `view`).
 - `appBarProgress` y `activeSection` en la lógica compartida; en `/dom`, `.z-appbar[data-collapse]` y
   `.z-docs-layout__toc` se conectan solos.
+
+### Corregido
+
+- `Navbar`: plegada y aun así sin sitio (una columna estrecha), las acciones bajan a otra línea en vez de salirse de la
+  cabecera.
+- `SettingsLayout`: en estrecho, la tira de secciones difumina el borde con secciones ocultas (`data-scroll-edges`,
+  también en `/dom`) en lugar de cortar la última en seco.
 
 ## [0.3.0] - 2026-11-21
 

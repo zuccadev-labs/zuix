@@ -14,6 +14,7 @@
 //   data-z-shell-toggle="sidebar|inspector"   botón que abre o cierra ese panel (data-z-shell="#id" si está fuera del shell)
 //   data-z-close                              dentro de un cajón del shell: lo cierra
 //   data-sidebar-breakpoint, data-inspector-breakpoint   en .z-shell: cortes en px (880 y 1180 por defecto)
+//   data-rail-breakpoint                      en .z-shell: bajo este ancho (600 por defecto) el rail va dentro del cajón de la sidebar
 //   data-panel-mode="auto|docked|overlay"     en el <aside>: preferencia de modo (auto por defecto)
 //   hidden                                    en el <aside>: panel cerrado
 //   data-close-label                          en .z-shell: nombre accesible del velo
@@ -65,6 +66,7 @@ import {
   RESIZE_MAX,
   RESIZE_MIN,
   RESIZE_STEP,
+  RAIL_BREAKPOINT,
   SIDEBAR_BREAKPOINT,
   SPLIT_MIN_FRACTION,
   clamp,
@@ -73,6 +75,7 @@ import {
   isHorizontal,
   moveDivider,
   panelMode,
+  railInDrawer,
   physicalSide,
   resizeByKey,
   resizeSign,
@@ -206,6 +209,20 @@ function syncShell(shell: HTMLElement): void {
     }
     // Con un cajón abierto, el panel que siga acoplado queda bajo el velo.
     el.inert = drawerOpen && mode === "docked";
+  }
+  // Estrecho: el rail no ocupa columna; con el cajón de la sidebar abierto entra en él (y vuelve al cuerpo al cerrarse).
+  const rail = shell.querySelector<HTMLElement>(
+    ":scope > .z-shell__body > .z-shell__rail, :scope > .z-shell__body > .z-shell__side > .z-shell__rail",
+  );
+  const side = panels[0]?.el;
+  if (rail) {
+    const toDrawer =
+      Boolean(side) && railInDrawer(state.width, num(shell.getAttribute("data-rail-breakpoint"), RAIL_BREAKPOINT), auto.sidebar);
+    const inDrawer = toDrawer && side && panels[0]?.mode === "overlay";
+    if (inDrawer && rail.parentElement !== side) side.prepend(rail);
+    else if (!inDrawer && rail.parentElement !== body) body.prepend(rail);
+    rail.hidden = toDrawer && !inDrawer;
+    if (inDrawer) rail.inert = false;
   }
   for (const zone of body.querySelectorAll<HTMLElement>(":scope > .z-shell__rail, :scope > .z-shell__main")) zone.inert = drawerOpen;
 

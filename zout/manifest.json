@@ -2101,6 +2101,12 @@
      "default": 1180
     },
     {
+     "name": "railBreakpoint",
+     "type": "number",
+     "default": 600,
+     "description": "Ancho del shell (px) bajo el cual el rail deja su columna y se muestra dentro del cajón de la sidebar, si la sidebar es un cajón. En el modo DOM, `data-rail-breakpoint` en `.z-shell`."
+    },
+    {
      "name": "onCloseOverlay",
      "type": "() => void",
      "description": "Cierra el cajón abierto (velo o Escape)."
@@ -2167,7 +2173,7 @@
    "classes": [
     "z-shell"
    ],
-   "a11y": "Regiones: la TitleBar es <header> (banner), el Rail es <nav> (navigation), el área principal es <main> (o lo que diga `mainAs`) y los paneles son <aside> con nombre (complementary). `skipLinkLabel` añade un enlace para saltar al contenido. En modo cajón el panel es role=dialog con aria-modal, recibe el foco al abrirse y lo devuelve al cerrarse; el rail, el área principal y el otro panel quedan inertes, y Escape o el velo lo cierran. La barra de título sigue operable para poder alternar los paneles. Escape no cierra el cajón si lo gestiona una capa por encima (un <dialog> o un popover abiertos). Sigue la dirección de escritura: en RTL la sidebar y su cajón quedan a la derecha. Antes de medirse (HTML de servidor, o antes de init()), un panel `auto` que no cabe no se muestra.",
+   "a11y": "Regiones: la TitleBar es <header> (banner), el Rail es <nav> (navigation), el área principal es <main> (o lo que diga `mainAs`) y los paneles son <aside> con nombre (complementary). `skipLinkLabel` añade un enlace para saltar al contenido. En estrecho (`railBreakpoint`) el rail entra en el cajón de la sidebar, dentro del diálogo, y sale del orden de tabulación mientras está cerrado. En modo cajón el panel es role=dialog con aria-modal, recibe el foco al abrirse y lo devuelve al cerrarse; el rail, el área principal y el otro panel quedan inertes, y Escape o el velo lo cierran. La barra de título sigue operable para poder alternar los paneles. Escape no cierra el cajón si lo gestiona una capa por encima (un <dialog> o un popover abiertos). Sigue la dirección de escritura: en RTL la sidebar y su cajón quedan a la derecha. Antes de medirse (HTML de servidor, o antes de init()), un panel `auto` que no cabe no se muestra.",
    "examples": [
     {
      "title": "Aplicación con rail, sidebar e inspector",

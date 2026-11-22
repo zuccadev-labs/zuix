@@ -111,6 +111,32 @@
     flex: 0 0 auto;
     min-height: 0;
   }
+  .z-shell__rail[hidden] {
+    display: none;
+  }
+  /* Estrecho (railBreakpoint, 600 px): el rail no ocupa columna y entra en el cajón de la sidebar, a su lado y sin su
+     propio cristal (el cajón ya lo es). */
+  .z-shell__drawer:has(> .z-shell__rail) {
+    flex-direction: row;
+    width: calc(var(--z-shell-panel-width, var(--z-sidebar-width)) + var(--z-rail-width));
+  }
+  .z-shell__drawer > .z-shell__rail {
+    border-inline-end: 1px solid var(--z-line);
+  }
+  .z-shell__drawer > .z-shell__rail > .z-rail {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .z-shell__drawer > .z-shell__rail > .z-rail::before {
+    display: none;
+  }
+  .z-shell__drawer > .z-shell__rail + .z-shell__panel-body {
+    flex: 1 1 auto;
+  }
   .z-shell__side,
   .z-shell__inspector {
     container: side / inline-size;
@@ -218,6 +244,12 @@
      ni un instante. Los cortes son los de por defecto (880 y 1180 px); al medir manda el comportamiento. */
   @container z-shell (max-width: 879.98px) {
     .z-shell:not([data-measured]) > .z-shell__body > .z-shell__side:not([data-panel-mode="docked"], [data-panel-mode="overlay"]) {
+      display: none;
+    }
+  }
+  /* Sin medir y estrecho, con sidebar: el rail tampoco ocupa columna (al medir, irá dentro del cajón). */
+  @container z-shell (max-width: 599.98px) {
+    .z-shell:not([data-measured]) > .z-shell__body:has(> .z-shell__side) > .z-shell__rail {
       display: none;
     }
   }

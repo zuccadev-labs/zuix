@@ -8,6 +8,8 @@ export type PanelMode = "docked" | "overlay";
 /** Anchos del shell (px) bajo los cuales un panel en modo `auto` pasa a cajón. */
 export const SIDEBAR_BREAKPOINT = 880;
 export const INSPECTOR_BREAKPOINT = 1180;
+/** Ancho del shell (px) bajo el cual el rail deja de ocupar una columna y pasa al cajón de la sidebar. */
+export const RAIL_BREAKPOINT = 600;
 
 /**
  * Modo que corresponde a un panel, esté abierto o no. `width` es el ancho medido del shell (`null` sin medir:
@@ -16,6 +18,15 @@ export const INSPECTOR_BREAKPOINT = 1180;
 export function panelMode(width: number | null, breakpoint: number, mode?: PanelMode | "auto" | null): PanelMode {
   if (mode && mode !== "auto") return mode;
   return width !== null && width < breakpoint ? "overlay" : "docked";
+}
+
+/**
+ * Si el rail va dentro del cajón de la sidebar. En un teléfono una columna de iconos fija se come una quinta parte
+ * del ancho; la navegación ya está en la sidebar, que ahí es un cajón, y el rail entra en él. Hace falta medir
+ * (`width`), que haya sidebar y que esta sea un cajón.
+ */
+export function railInDrawer(width: number | null, breakpoint: number, sidebar: PanelMode | null): boolean {
+  return width !== null && width < breakpoint && sidebar === "overlay";
 }
 
 /* ---------- ResizeHandle ---------- */

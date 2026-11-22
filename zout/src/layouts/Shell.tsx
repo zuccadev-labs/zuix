@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cx } from "../cx";
-import { INSPECTOR_BREAKPOINT, SIDEBAR_BREAKPOINT, panelMode } from "../logic";
+import { INSPECTOR_BREAKPOINT, RAIL_BREAKPOINT, SIDEBAR_BREAKPOINT, panelMode, railInDrawer } from "../logic";
 import { ResizeHandle } from "./ResizeHandle";
 
 export type ShellPanelMode = "docked" | "overlay";
@@ -42,6 +42,11 @@ export interface ShellProps {
   sidebarBreakpoint?: number;
   /** Ancho del shell (px) bajo el cual el inspector en modo `auto` pasa a cajón. */
   inspectorBreakpoint?: number;
+  /**
+   * Ancho del shell (px) bajo el cual el rail deja su columna y se muestra dentro del cajón de la sidebar (si la
+   * sidebar es un cajón). Por defecto, 600.
+   */
+  railBreakpoint?: number;
   /** Cierra el cajón abierto (clic en el velo o Escape). */
   onCloseOverlay?: () => void;
   /**
@@ -86,7 +91,20 @@ function useWidth() {
   return [ref, width] as const;
 }
 
-function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | "right"; mode: ShellPanelMode; inert?: boolean }) {
+function Side({
+  panel,
+  side,
+  mode,
+  inert,
+  rail,
+}: {
+  panel: ShellPanel;
+  side: "left" | "right";
+  mode: ShellPanelMode;
+  inert?: boolean;
+  /** Rail dentro del cajón (shell estrecho). */
+  rail?: ReactNode;
+}) {
   const id = useId();
   const overlay = mode === "overlay";
   const ref = useRef<HTMLElement>(null);
@@ -118,6 +136,7 @@ function Side({ panel, side, mode, inert }: { panel: ShellPanel; side: "left" | 
       data-side={side}
       inert={inert || undefined}
     >
+      {rail ? <div className="z-shell__rail">{rail}</div> : null}
       <div className="z-shell__panel-body">{panel.content}</div>
       {!overlay && panel.onResize && panel.width !== undefined ? (
         <ResizeHandle
@@ -150,6 +169,7 @@ export function Shell({
   surface = "glass",
   sidebarBreakpoint = SIDEBAR_BREAKPOINT,
   inspectorBreakpoint = INSPECTOR_BREAKPOINT,
+  railBreakpoint = RAIL_BREAKPOINT,
   onCloseOverlay,
   onModeChange,
   closeOverlayLabel = "Close panel",
@@ -171,6 +191,7 @@ export function Shell({
   const auto = (panel: ShellPanel | undefined, breakpoint: number): ShellPanelMode => panelMode(width, breakpoint, panel?.mode);
   const sidebarAuto = auto(sidebar, sidebarBreakpoint);
   const inspectorAuto = auto(inspector, inspectorBreakpoint);
+  const railToDrawer = Boolean(rail && sidebar) && railInDrawer(width, railBreakpoint, sidebarAuto);
   const modeChange = useRef(onModeChange);
   modeChange.current = onModeChange;
   // Antes del pintado: si la aplicación cierra un panel al pasar a cajón, no llega a verse abierto.
@@ -204,12 +225,21 @@ export function Shell({
       {titlebar}
       <div className="z-shell__body">
         {/* Con un cajón abierto todo lo que queda bajo el velo es inerte: rail, área principal y el panel que siga acoplado. */}
-        {rail ? (
+        {/* Estrecho: el rail no ocupa columna; va dentro del cajón de la sidebar cuando está abierto. */}
+        {rail && !railToDrawer ? (
           <div className="z-shell__rail" inert={drawerOpen ? true : undefined}>
             {rail}
           </div>
         ) : null}
-        {sidebar && sideMode ? <Side panel={sidebar} side="left" mode={sideMode} inert={drawerOpen && sideMode === "docked"} /> : null}
+        {sidebar && sideMode ? (
+          <Side
+            panel={sidebar}
+            side="left"
+            mode={sideMode}
+            inert={drawerOpen && sideMode === "docked"}
+            rail={railToDrawer && sideMode === "overlay" ? rail : undefined}
+          />
+        ) : null}
         <Main
           id={mainId}
           tabIndex={skipLinkLabel ? -1 : undefined}

@@ -373,6 +373,12 @@
     }
   }
   /* En fila: el botón de menú no se ve y la lista va en la barra. */
+  /* Plegada y aun así sin sitio (una columna estrecha): las acciones bajan a otra línea en vez de salirse de la
+     cabecera. Midiendo no, para que la medida vea la fila entera. */
+  .z-navbar[data-collapsed]:not([data-measuring]) .z-navbar__inner {
+    flex-wrap: wrap;
+    row-gap: var(--z-space-2);
+  }
   .z-navbar:not([data-collapsed]) .z-navbar__toggle {
     display: none;
   }
