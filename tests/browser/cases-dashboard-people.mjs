@@ -153,7 +153,7 @@ export default function ({ t, assert, poll }) {
       async run({ open }) {
         const page = await open("profile");
         const trigger = page.locator(".z-account-menu");
-        assert((await trigger.getAttribute("aria-label")) === "Account of Ana López", "nombre del botón");
+        assert((await trigger.locator(".z-sr-only").textContent()) === "Account of Ana López", "nombre del botón");
         await trigger.click();
         await poll(async () => (await page.locator(".z-account-menu__menu[role=menu]").count()) === 1, "abre el menú");
         await page.locator('.z-account-menu__menu [role=menuitemradio]:has-text("Light")').click();
@@ -170,7 +170,7 @@ export default function ({ t, assert, poll }) {
         );
         const more = page.locator(`${t("pp-group")} .z-avatar-group__more`);
         await more.scrollIntoViewIfNeeded();
-        assert((await more.getAttribute("aria-label")) === "Show 2 more people", "nombre del +N");
+        assert((await more.locator(".z-sr-only").textContent()) === "Show 2 more people", "nombre del +N");
         await more.click();
         await poll(async () => (await page.locator(".z-avatar-group__popover .z-persona").count()) === 2, "lista de sobrantes");
         await page.keyboard.press("Escape");

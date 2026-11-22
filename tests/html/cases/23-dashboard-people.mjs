@@ -242,7 +242,7 @@ export default async function ({ page, test, ok }) {
   await test("Usuarios · AvatarGroup sin React: el +N abre la lista de sobrantes y Escape la cierra", async () => {
     const box = await inject(zui.AvatarGroup.examples.at(-1).html);
     const more = box.locator(".z-avatar-group__more");
-    ok((await more.getAttribute("aria-label")) === "2 more", "nombre del botón");
+    ok((await more.locator(".z-sr-only").textContent()) === "2 more", "nombre del botón");
     await more.click();
     await until(
       () => page.evaluate(() => document.querySelector(".z-avatar-group__popover")?.matches(":popover-open") ?? false),

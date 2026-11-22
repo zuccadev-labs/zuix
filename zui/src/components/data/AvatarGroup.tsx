@@ -78,13 +78,8 @@ export function AvatarGroup({
                 align="start"
                 className="z-avatar-group__popover"
                 trigger={
-                  <button
-                    type="button"
-                    className="z-avatar z-avatar--overflow z-avatar-group__more"
-                    data-size={size}
-                    data-shape="circle"
-                    aria-label={overflowLabel(hidden)}
-                  >
+                  <button type="button" className="z-avatar z-avatar--overflow z-avatar-group__more" data-size={size} data-shape="circle">
+                    <span className="z-sr-only">{overflowLabel(hidden)}</span>
                     <span className="z-avatar__initials" aria-hidden="true">
                       +{hidden}
                     </span>

@@ -357,6 +357,7 @@
   }
   .z-auth-layout__grid {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     min-block-size: inherit;
   }
   .z-auth-layout__stage {

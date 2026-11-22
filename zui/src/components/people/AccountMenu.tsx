@@ -130,12 +130,10 @@ export function AccountMenu({
     entries.push({ type: "separator" }, { id: "sign-out", label: l.signOut, icon: "arrow-right-start-on-rectangle", onSelect: onSignOut });
   const status = user.presence ? presenceOf(user.presence) : undefined;
   const trigger = (
-    <button
-      type="button"
-      className={cx("z-account-menu", className)}
-      data-variant={variant}
-      aria-label={l.trigger.replace("{name}", user.name)}
-    >
+    // El nombre sale del contenido (texto oculto), no de aria-label: así el texto visible (iniciales, nombre) no
+    // contradice al nombre accesible.
+    <button type="button" className={cx("z-account-menu", className)} data-variant={variant}>
+      <span className="z-sr-only">{l.trigger.replace("{name}", user.name)}</span>
       <Avatar size={variant === "full" ? "sm" : "md"} name={user.name} src={user.avatar} alt="" status={status} />
       {variant === "full" ? (
         <>
