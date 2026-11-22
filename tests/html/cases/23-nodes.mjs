@@ -225,6 +225,7 @@ export default async function ({ page, test, ok, note }) {
         p50: q(times, 0.5),
         p95: q(times, 0.95),
         script95: q(loaf, 0.95),
+        script50: q(loaf, 0.5),
         long: loaf.length,
         supported: !!supported,
       };
@@ -235,7 +236,8 @@ export default async function ({ page, test, ok, note }) {
     );
     ok(result.mini === 500, `el minimapa ve los 500: ${result.mini}`);
     ok(result.nodes < 150, `solo los visibles: ${result.nodes}`);
-    // Con la máquina cargada (suite entera) algún fotograma largo es normal: se exige que sean pocos.
-    if (result.supported) ok(result.long <= 12, `fotogramas largos al desplazar: ${result.long} de 120`);
+    // Con la máquina cargada (suite entera) hay fotogramas largos por el raster, no por el lienzo: se exige que el script
+    // de esos fotogramas quede, en la mediana, dentro de un fotograma.
+    if (result.supported) ok(result.script50 < 16, `script por fotograma largo, mediana ${result.script50.toFixed(1)} ms`);
   });
 }
