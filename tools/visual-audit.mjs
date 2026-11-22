@@ -4,6 +4,13 @@
 //
 //   desbordamiento   horizontal del documento y elementos que se salen del viewport sin contenedor que desplace
 //   recorte          texto cortado (scrollWidth > clientWidth) sin elipsis ni line-clamp
+//   tapado           texto que otra capa tapa a medias (dentro de lo que sus contenedores dejan ver, en los dos ejes)
+//   cortes           tira o tabla que desplaza y corta un texto en seco sin fundido; fila flex que pasa de su borde;
+//                    pieza que sale de la caja de su padre; fila de controles apilados uno por línea; dato (fecha,
+//                    código) partido en dos líneas; nombre corto cortado con elipsis
+//   trazos           letras que pisan o rozan el trazo de un SVG de su componente (cifras de una esfera, arco)
+//   carrusel         lente cortada en seco o con sangrado vacío; slide activo fuera del centro; mazo plano
+//   teléfono         navegación lateral acoplada que se come el ancho del contenido
 //   solape           elementos interactivos que se pisan
 //   fuente           familia computada fuera de la marca, fuente que no cargó y fuente real del sistema
 //                    (CSS.getPlatformFontsForNode del protocolo de depuración: qué tipografía pinta de verdad)
@@ -466,9 +473,15 @@ function collect({ TOKENS, families, coarse }) {
         return alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none";
       };
       // Solo cuenta si lo tapado es una parte: entero debajo de una cabecera es contenido que se desplazó, como debe.
+      // Dentro de una pieza deformada en 3D (una diapositiva con lente) la caja del texto es la del cuadrilátero
+      // proyectado: abarca lo que tiene al lado en su mismo plano sin que nada lo tape.
+      let warped = null;
+      for (let p = el.parentElement; p && p !== document.body && !warped; p = p.parentElement)
+        if (/matrix3d/.test(getComputedStyle(p).transform)) warped = p;
       const coverAt = (cx, py) => {
         for (const hit of document.elementsFromPoint(cx, py)) {
           if (hit === el || el.contains(hit) || hit.contains(el)) break;
+          if (warped?.contains(hit)) continue;
           // La insignia de un Float se monta a propósito sobre la esquina de lo que acompaña.
           if (paints(hit) && !pageChrome(hit) && !hit.closest(".z-float")) return hit;
         }
@@ -485,25 +498,35 @@ function collect({ TOKENS, families, coarse }) {
         }
         return null;
       };
-      // Se mira dentro de lo que el texto deja ver (recortado por sus antecesores con desbordamiento) y con
-      // pointer-events activos, que elementsFromPoint ignora los elementos que no reciben el puntero.
+      // Se mira dentro de lo que el texto deja ver (recortado por sus antecesores con desbordamiento, en los dos ejes)
+      // y con pointer-events activos, que elementsFromPoint ignora los elementos que no reciben el puntero. Lo que un
+      // contenedor recorta no se ve: lo que pinte encima de esa parte (el panel de al lado) no lo tapa.
       let ct = r.top;
       let cb = r.bottom;
+      let cl = r.left;
+      let cr = r.right;
       for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
         const ps = getComputedStyle(p);
-        if (!/(auto|scroll|hidden|clip)/.test(ps.overflowY)) continue;
         const q = p.getBoundingClientRect();
-        ct = Math.max(ct, q.top);
-        cb = Math.min(cb, q.bottom);
+        if (/(auto|scroll|hidden|clip)/.test(ps.overflowY)) {
+          ct = Math.max(ct, q.top);
+          cb = Math.min(cb, q.bottom);
+        }
+        if (/(auto|scroll|hidden|clip)/.test(ps.overflowX)) {
+          cl = Math.max(cl, q.left);
+          cr = Math.min(cr, q.right);
+        }
       }
       if (cb - ct < r.height - 1) continue; // ya recortado por su contenedor: no es tapar, es desplazar
+      if (cr - cl < 4) continue;
       const pe = el.style.pointerEvents;
       el.style.pointerEvents = "auto";
       // Tapado a medias: en vertical (arriba sí y abajo no, o al revés) o en horizontal (unos puntos de la línea sí y
       // otros no: una pastilla encima de la mitad de una frase).
       let covered = null;
       const across = [];
-      for (const cx of xs) {
+      for (const cx0 of xs) {
+        const cx = Math.min(Math.max(cx0, cl + 1), cr - 1);
         const top = coverAt(cx, r.top + 2);
         const bottom = coverAt(cx, r.bottom - 2);
         covered = top && !bottom ? top : bottom && !top ? bottom : null;
@@ -516,6 +539,284 @@ function collect({ TOKENS, families, coarse }) {
     }
   }
   scrollTo(0, 0);
+
+  // 2c. Lo que se ve mal sin que nada se salga del viewport.
+  const shownSet = new Set(shown);
+  const masked = (s) => s.maskImage !== "none" || s.webkitMaskImage !== "none";
+  const mono = (el) => /mono/i.test(getComputedStyle(el).fontFamily) || el.closest("pre,code,kbd,samp");
+  const textRects = (el) => {
+    const out = [];
+    for (const node of el.childNodes) {
+      if (node.nodeType !== 3 || !node.textContent.trim()) continue;
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      for (const b of range.getClientRects()) if (b.width > 1 && b.height > 1) out.push(b);
+    }
+    return out;
+  };
+
+  // Corte sin fundido: una tira o una tabla que desplaza en horizontal y corta un texto en seco por su borde, sin
+  // fundido (máscara) ni barra de desplazamiento a la vista: no hay nada que diga que sigue.
+  for (const box of shown) {
+    const bs = getComputedStyle(box);
+    if (!/(auto|scroll)/.test(bs.overflowX) || box.scrollWidth - box.clientWidth <= 8 || masked(bs)) continue;
+    const q = rects.get(box);
+    if (q.width < 60 || q.height < 16) continue;
+    const bar = box.offsetHeight - box.clientHeight - Number.parseFloat(bs.borderTopWidth) - Number.parseFloat(bs.borderBottomWidth);
+    if (bar > 2 && bs.scrollbarWidth !== "none") continue;
+    let hit = null;
+    for (const el of box.querySelectorAll("*")) {
+      if (!shownSet.has(el) || !ownText(el) || mono(el)) continue;
+      const r = rects.get(el);
+      if (r.bottom <= q.top || r.top >= q.bottom) continue;
+      if ((r.left < q.left - 1 && r.right > q.left + 4) || (r.right > q.right + 1 && r.left < q.right - 4)) {
+        hit = el;
+        break;
+      }
+    }
+    if (hit)
+      add("corte-sin-fundido", box, `desplaza ${box.scrollWidth - box.clientWidth} px en horizontal y corta un texto en seco`, {
+        text: ownText(hit).slice(0, 40),
+      });
+  }
+
+  // Texto pisado por un trazo: una cifra de una esfera sobre las marcas, el valor de un indicador que roza su arco. Se
+  // muestrea el área de las letras (sin el hueco de ascendentes y descendentes) más una holgura de 0,12 em contra el
+  // trazo real de cada figura fija del SVG del mismo componente (isPointInStroke). Las agujas se mueven: no cuentan.
+  const block = (el) => {
+    let top = null;
+    for (let p = el; p && p !== document.body; p = p.parentElement)
+      if (
+        String(p.getAttribute?.("class") ?? "")
+          .split(/\s+/)
+          .some((c) => /^z-[a-z0-9-]+$/.test(c) && !/^z-(root|liquid|solid|stack|row|card|section|page|container|shell.*)$/.test(c))
+      ) {
+        top = p;
+        break;
+      }
+    return top;
+  };
+  const strokeDone = new Set();
+  for (const svg of document.querySelectorAll("svg")) {
+    const sr = svg.getBoundingClientRect();
+    if (sr.width < 24 || sr.height < 24 || svg.closest("z-icon,.z-icon,button,[hidden]")) continue;
+    const geoms = [...svg.querySelectorAll("line,path,circle,ellipse,polyline,polygon")].filter((g) => {
+      const gs = getComputedStyle(g);
+      return (
+        gs.stroke !== "none" &&
+        Number.parseFloat(gs.strokeWidth) > 0 &&
+        Number(gs.strokeOpacity) > 0.2 &&
+        Number(gs.opacity) > 0.2 &&
+        gs.display !== "none" &&
+        gs.visibility !== "hidden" &&
+        !/(hand|needle|pointer)/.test(String(g.getAttribute("class") ?? "")) &&
+        typeof g.isPointInStroke === "function"
+      );
+    });
+    if (!geoms.length) continue;
+    const owner = block(svg.parentElement) ?? svg.parentElement;
+    const candidates = [...svg.querySelectorAll("text"), ...[...owner.querySelectorAll("*")].filter((e) => shownSet.has(e) && ownText(e))];
+    for (const el of candidates) {
+      if (strokeDone.has(el)) continue;
+      const boxes = el instanceof SVGElement ? [el.getBoundingClientRect()] : textRects(el);
+      let crossed = null;
+      const em = Number.parseFloat(getComputedStyle(el).fontSize) || 12;
+      const clear = Math.max(2, em * 0.12);
+      for (const b of boxes) {
+        const t = b.top + b.height * 0.25 - clear;
+        const bt = b.bottom - b.height * 0.2 + clear;
+        const l = b.left + 1 - clear;
+        const rr = b.right - 1 + clear;
+        if (bt <= t || rr <= l) continue;
+        for (const g of geoms) {
+          const gr = g.getBoundingClientRect();
+          const pad = Number.parseFloat(getComputedStyle(g).strokeWidth) * 2;
+          if (gr.right + pad < l || gr.left - pad > rr || gr.bottom + pad < t || gr.top - pad > bt) continue;
+          const m = g.getScreenCTM()?.inverse();
+          if (!m) continue;
+          for (let y = t; y <= bt && !crossed; y += 1.5)
+            for (let x = l; x <= rr && !crossed; x += 1.5) {
+              const p = new DOMPoint(x, y).matrixTransform(m);
+              if (g.isPointInStroke(p)) crossed = g;
+            }
+          if (crossed) break;
+        }
+        if (crossed) break;
+      }
+      if (crossed) {
+        strokeDone.add(el);
+        add("texto-sobre-trazo", el, `sus letras pisan el trazo de ${sig(crossed)}`, { text: el.textContent.trim().slice(0, 40) });
+      }
+    }
+  }
+
+  // Dato partido: una fecha, una hora o un código (una sola palabra con cifras) que parte línea por un guion o una
+  // barra. Un dato se lee entero: va en una línea.
+  for (const el of shown) {
+    for (const node of el.childNodes) {
+      if (node.nodeType !== 3) continue;
+      const t = node.textContent.trim();
+      if (!/^\S{4,32}$/.test(t) || !/\d/.test(t) || !/[-/.]/.test(t)) continue;
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const tops = [...new Set([...range.getClientRects()].filter((b) => b.width > 0.5).map((b) => Math.round(b.top / 3)))];
+      if (tops.length > 1) add("dato-partido", el, `«${t}» parte en ${tops.length} líneas`, { text: t });
+    }
+  }
+
+  // Fuera de su contenedor: una pieza que se ve (un botón, una barra con fondo) sale de la caja de su padre sin que
+  // este la recorte ni desplace: el padre no le deja sitio.
+  const paintsBox = (s) =>
+    alphaOf(s.backgroundColor) >= 0.3 ||
+    s.backdropFilter !== "none" ||
+    Number.parseFloat(s.borderTopWidth) > 0 ||
+    s.backgroundImage !== "none";
+  for (const el of shown) {
+    const cs = getComputedStyle(el);
+    if (!/^(static|relative|sticky)$/.test(cs.position)) continue;
+    // Una pieza transformada (la cara de un carrusel 3D) sale de su caja a propósito.
+    if (cs.transform !== "none" || cs.translate !== "none" || cs.scale !== "none" || cs.rotate !== "none") continue;
+    if (!(el.matches(INTERACTIVE) || (paintsBox(cs) && ownText(el) === "" && el.children.length))) continue;
+    const parent = el.parentElement;
+    if (!parent || parent === document.body) continue;
+    const ps = getComputedStyle(parent);
+    if (/(auto|scroll|hidden|clip)/.test(ps.overflowX) || /contents/.test(ps.display)) continue;
+    if (Number.parseFloat(cs.marginLeft) < 0 || Number.parseFloat(cs.marginRight) < 0) continue;
+    const r = rects.get(el);
+    const pr = rects.get(parent) ?? parent.getBoundingClientRect();
+    if (pr.width < 1) continue;
+    const over = Math.max(r.right - pr.right, pr.left - r.left);
+    if (over > 8)
+      add("fuera-del-contenedor", el, `sale ${Math.round(over)} px de ${sig(parent)}`, { text: el.textContent.trim().slice(0, 40) });
+  }
+
+  // Fila que desborda: una fila flex sin salto de línea ni desplazamiento cuyas piezas pasan de su borde; lo que sobra
+  // queda fuera del panel (o recortado por él) sin que nada lo diga.
+  for (const row of shown) {
+    const cs = getComputedStyle(row);
+    if (!/flex/.test(cs.display) || /column/.test(cs.flexDirection) || cs.flexWrap !== "nowrap") continue;
+    if (!/visible/.test(cs.overflowX)) continue;
+    const r = rects.get(row);
+    if (r.width < 40) continue;
+    let far = null;
+    for (const k of row.children) {
+      if (!shownSet.has(k) || /absolute|fixed/.test(getComputedStyle(k).position)) continue;
+      const kr = rects.get(k);
+      if (kr.right > r.right + 8 || kr.left < r.left - 8) far = k;
+    }
+    if (far && !far.closest(".z-carousel__track,.z-marquee__track,[data-scroll-edges]"))
+      add("fila-desborda", row, `${sig(far)} pasa ${Math.round(Math.max(rects.get(far).right - r.right, r.left - rects.get(far).left))} px del borde de la fila`, {
+        text: far.textContent.trim().slice(0, 40),
+      });
+  }
+
+  // Etiqueta cortada: el nombre de algo (un dato, una persona, un título de tarjeta) de hasta tres palabras cortado con
+  // elipsis. Un nombre corto pasa a dos líneas o le cede sitio lo secundario; la elipsis es para lo largo.
+  for (const el of shown) {
+    const es = getComputedStyle(el);
+    if (es.textOverflow !== "ellipsis" || el.scrollWidth <= el.clientWidth + 1) continue;
+    const t = el.textContent.trim();
+    if (!t || t.length > 24 || t.split(/\s+/).length > 3) continue;
+    if (!/__(label|title|name)\b/.test(String(el.getAttribute("class") ?? ""))) continue;
+    if (
+      el.closest(
+        ".z-event,.z-timeline,.z-tabstrip,[role=tab],[role=gridcell],[role=columnheader],[role=row],.z-jsontree,[role=option],.z-paneheader",
+      )
+    )
+      continue;
+    add("etiqueta-cortada", el, `muestra ${Math.round((el.clientWidth / el.scrollWidth) * 100)} % de un nombre corto`, { text: t });
+  }
+
+  // Navegación lateral fija en un teléfono: una columna de navegación acoplada que se come el ancho del contenido.
+  if (vw <= 480)
+    for (const nav of shown.filter((e) => e.matches("nav,[role=navigation]"))) {
+      if (nav.closest("dialog,[popover],[role=dialog],.z-shell__drawer")) continue;
+      const r = rects.get(nav);
+      if (r.height >= vh * 0.5 && r.width >= 40 && r.width <= 120 && r.left < vw * 0.3)
+        add("navegacion-lateral-en-telefono", nav, `${Math.round(r.width)} px de ${vw} acoplados al lado del contenido`);
+    }
+
+  // Fila apilada: una fila de controles que parte línea en cada pieza (una debajo de otra, de anchos distintos).
+  for (const row of shown) {
+    const cs = getComputedStyle(row);
+    if (!/flex/.test(cs.display) || /column/.test(cs.flexDirection) || cs.flexWrap === "nowrap") continue;
+    const kids = [...row.children].filter((k) => shownSet.has(k) && getComputedStyle(k).position !== "absolute");
+    if (kids.length < 3) continue;
+    // Líneas por solape vertical: un texto y un botón centrados en la misma línea tienen `top` distintos.
+    const lines = [];
+    for (const k of [...kids].sort((a, b) => rects.get(a).top - rects.get(b).top)) {
+      const r = rects.get(k);
+      const line = lines.find((l) => r.top < l.bottom - 2 && r.bottom > l.top + 2);
+      if (line) line.bottom = Math.max(line.bottom, r.bottom);
+      else lines.push({ top: r.top, bottom: r.bottom });
+    }
+    const tops = { size: lines.length };
+    const width = rects.get(row).width;
+    // Si todas ocupan casi el ancho, apilarlas es la forma (una lista); si alguna deja hueco al lado, la fila se rompió.
+    if (
+      tops.size === kids.length &&
+      kids.some((k) => rects.get(k).width < width * 0.6) &&
+      kids.some((k) => k.matches(INTERACTIVE) || k.querySelector(INTERACTIVE))
+    )
+      add("fila-apilada", row, `${kids.length} piezas de una fila, cada una en su línea`);
+  }
+
+  // Lente del carrusel: las diapositivas laterales cortadas en seco por el borde (sin fundido) y el sangrado vertical
+  // que el motor reserva para el estiramiento sin que nada lo ocupe.
+  for (const vp of shown.filter((e) => e.matches(".z-carousel__viewport"))) {
+    const bleed = Number.parseFloat(getComputedStyle(vp.closest(".z-carousel")).getPropertyValue("--z-carousel-bleed")) || 0;
+    if (!bleed) continue;
+    // Con WebGL las zonas curvas las pinta el lienzo, no las diapositivas: su caja no dice cuánto ocupa la lente.
+    const cssLens = vp.closest(".z-carousel").dataset.mode === "css";
+    const q = rects.get(vp);
+    const slides = [...vp.querySelectorAll(".z-carousel__slide")]
+      .map((s) => s.getBoundingClientRect())
+      .filter((r) => r.right > q.left && r.left < q.right);
+    if (
+      !masked(getComputedStyle(vp)) &&
+      slides.some((r) => (r.left < q.left - 1 && r.right > q.left + 8) || (r.right > q.right + 1 && r.left < q.right - 8))
+    )
+      add("lente-cortada", vp, "diapositivas laterales cortadas en seco por el borde del carrusel");
+    if (cssLens && slides.length) {
+      const top = Math.min(...slides.map((r) => r.top)) - q.top;
+      const bottom = q.bottom - Math.max(...slides.map((r) => r.bottom));
+      if (Math.min(top, bottom) > 24)
+        add("sangrado-sobrante", vp, `${Math.round(Math.min(top, bottom))} px vacíos encima y debajo de las diapositivas`);
+    }
+  }
+
+  // Carrusel con ajuste al centro (prisma, coverflow, rueda): el slide marcado como activo es el que está en el centro.
+  // Si otro ocupa el centro, la persona ve uno y el carrusel (indicadores, índice, estilo de la selección) dice otro.
+  for (const root of shown.filter((e) => e.matches('.z-carousel[data-mode="snap"]'))) {
+    const vp = root.querySelector(":scope > .z-carousel__viewport");
+    const active = root.querySelector(".z-carousel__slide[data-active]");
+    if (!vp || !active || root.querySelectorAll(".z-carousel__slide[data-active]").length !== 1) continue;
+    if (!root.matches('[data-align="center"],[data-effect="prism"],[data-effect="coverflow"],[data-effect="wheel"]')) continue;
+    const q = vp.getBoundingClientRect();
+    const vertical = root.dataset.orientation === "vertical";
+    const mid = vertical ? q.top + q.height / 2 : q.left + q.width / 2;
+    let centered = null;
+    for (const s of root.querySelectorAll(".z-carousel__slide")) {
+      const r = s.getBoundingClientRect();
+      if (vertical ? r.top <= mid && r.bottom >= mid : r.left <= mid && r.right >= mid) centered = s;
+    }
+    if (centered && centered !== active)
+      add("activo-descentrado", root, `el centro muestra el slide ${centered.dataset.index} y el activo es el ${active.dataset.index}`, {
+        text: centered.textContent.trim().slice(0, 40),
+      });
+  }
+
+  // Mazo plano: la tarjeta de arriba de un mazo (`layout="stack"`) tiene el mismo fondo y la misma sombra que las de
+  // debajo; solo el desplazamiento la separa y el mazo se lee como una tarjeta suelta.
+  for (const root of shown.filter((e) => e.matches('.z-carousel[data-layout="stack"]'))) {
+    const top = root.querySelector(".z-carousel__slide[data-active]");
+    const under = [...root.querySelectorAll(".z-carousel__slide:not([data-active])")].find((s) => getComputedStyle(s).opacity !== "0");
+    if (!top || !under) continue;
+    const a = getComputedStyle(top);
+    const b = getComputedStyle(under);
+    if (a.backgroundColor === b.backgroundColor && a.backgroundImage === b.backgroundImage && a.boxShadow === b.boxShadow)
+      add("mazo-plano", top, "la tarjeta de arriba tiene el fondo y la sombra de las de debajo");
+  }
 
   // 3. Tipografía, escala, radios, alturas
   const fontEls = [];

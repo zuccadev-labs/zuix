@@ -196,6 +196,11 @@ compila con una marca: las otras se inyectan con su hoja de `tokens/dist/brands/
 |---|---|
 | Desbordamiento | El documento se desplaza en horizontal, o un elemento se sale del viewport sin contenedor que desplace |
 | Recorte | Texto con `scrollWidth > clientWidth` sin elipsis ni `line-clamp` |
+| Tapado | Otra capa pinta encima de una parte de un texto, dentro de lo que sus contenedores dejan ver en los dos ejes |
+| Cortes | Una tira o una tabla que desplaza corta un texto en seco, sin fundido ni barra; una fila flex pasa de su borde; un botón o una barra con fondo sale de la caja de su padre; una fila de controles parte línea en cada pieza; una fecha o un código parte en dos líneas; un nombre corto (hasta tres palabras) se corta con elipsis |
+| Trazos | Las letras (con una holgura de 0,12 em) pisan el trazo fijo de un SVG de su componente: las cifras de una esfera, el valor de un indicador sobre su arco |
+| Carrusel | La lente corta los vecinos en seco o reserva un sangrado que nada ocupa; el slide activo no es el del centro; la tarjeta de arriba de un mazo no se distingue de las de debajo |
+| Teléfono | A 480 px o menos, una navegación lateral acoplada se come el ancho del contenido |
 | Solape | Dos elementos interactivos que se pisan donde se ven |
 | Fuente | La familia computada no es la de la marca, la fuente no cargó (`document.fonts`) o el sistema pinta otra (`CSS.getPlatformFontsForNode`) |
 | Escala | Tamaño, interlineado o peso fuera de los tokens; relleno, margen o hueco fuera de `--z-space-*` (±0,5 px); radio fuera de la familia; altura de control fuera de `--z-control-height-*` |
