@@ -182,15 +182,20 @@
     background: var(--z-accent-soft);
     color: var(--z-accent-text);
   }
+  /* Hasta dos líneas: un nombre como «New customers» se cortaba en «New custom…» con sitio debajo. Más allá de dos,
+     elipsis. */
   .z-metric__label {
+    display: -webkit-box;
     flex: 1;
     min-inline-size: 0;
     overflow: hidden;
     color: var(--z-fg-muted);
     font-size: var(--z-text-small);
     font-weight: var(--z-weight-medium);
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: var(--z-leading-snug);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
   a.z-metric__link {
     text-decoration: none;
@@ -338,6 +343,7 @@
   /* ---- Gauge ---- */
   .z-gauge {
     --z-gauge-size: 200px;
+    container: z-gauge / inline-size;
     position: relative;
     display: inline-grid;
     inline-size: min(100%, var(--z-gauge-size));
@@ -424,6 +430,18 @@
   }
   .z-gauge[data-size="lg"] .z-gauge__number {
     font-size: var(--z-text-display-sm);
+  }
+  /* La esfera encoge con su contenedor y la cifra no: a 168 px un «72%» de 26 px rozaba el arco. Por debajo de su
+     medida, la cifra baja de talla para quedar dentro del hueco del arco. */
+  @container z-gauge (max-width: 219.98px) {
+    .z-gauge[data-size="lg"] .z-gauge__number {
+      font-size: var(--z-text-heading-lg);
+    }
+  }
+  @container z-gauge (max-width: 179.98px) {
+    .z-gauge:not([data-size="sm"]) .z-gauge__number {
+      font-size: var(--z-text-title);
+    }
   }
   .z-gauge__zone-label {
     color: var(--z-t-text);

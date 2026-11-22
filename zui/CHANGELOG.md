@@ -7,6 +7,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en
+  una cabecera ancha y pasan a un menú «Más» en una de 420 px o menos: con tres iconos el nombre quedaba en «An…».
 - Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de
   `core/vnode`):
   - `MessageList`: grupos por autor y tiempo con la cola en la última burbuja, separadores de día en su propia franja (encabezados
@@ -155,6 +157,29 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `AnalogClock`: con marcas, las cifras van a radio 31 (antes 35) y no pisan las marcas del 3, el 6 y el 9.
+- `AvatarGroup`: el solape depende de la talla (0,28 del diámetro; 0,2 en `sm`; ninguno en `xs`, donde dos iniciales
+  ocupan casi todo el círculo) y las iniciales de cada avatar tapado se centran en la parte que se ve. El siguiente
+  avatar ya no tapa las iniciales del anterior.
+- `Table` y `DataTable`: una columna `mono` (fechas, códigos) no parte línea («2026-11-\n10»), y el borde con columnas
+  ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco.
+- `KanbanBoard`: el borde del tablero con columnas ocultas se difumina en lugar de cortar una tarjeta en seco.
+- `PromptInput`: modelo, herramientas y uso van en una sola fila que desplaza, con el borde oculto difuminado; en un
+  teléfono partían línea y quedaban uno debajo de otro.
+- `MetricCard`: la etiqueta usa hasta dos líneas antes de cortarse («New custom…» cabía entera).
+- `Gauge`: la cifra baja de talla cuando el indicador encoge por debajo de su medida; a 168 px rozaba el arco.
+- `Carousel`: un salto sin animación (volver al slide inicial al montar, ajustar tras un cambio de tamaño) relaja
+  `scroll-snap-stop` durante el salto. Se paraba en el primer slide del camino: Prism abría en «Scene 3» con el
+  índice en 0 y la rueda con `defaultIndex` en otra hora.
+- `Carousel` `prism` y `coverflow`: solo el slide central recibe el puntero. Chromium encontraba antes un vecino girado
+  que se pinta detrás, que tapaba el borde del pie central y se llevaba sus clics.
+- `Carousel` `wheel`: la opción elegida va en una banda de cristal del ancho de la rueda y el cilindro se funde arriba
+  y abajo; `layout="stack"`: la tarjeta de arriba se separa del mazo con un tono más claro y sombra alta.
+- `Gallery` con lente: los vecinos se funden en los bordes de la tira en vez de cortarse en seco, y el margen vertical
+  sigue al estiramiento real de la forma, que crece con el tramo curvo: en un teléfono sobraban unos 60 px arriba y
+  abajo del slide.
+- `CodeViewer` y `LogConsole`: el tinte del código va sobre una base opaca. Sobre un fondo oscuro, los comentarios, los
+  números de línea y el filtro de niveles bajaban a 4,46:1 en zutool claro.
 - `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
   un filtro) a veces no dejaba de seguir el final: se ignoraba el desplazamiento de la persona si llegaba fundido
   con el de la pieza. Ahora solo se ignora el que llega a la posición que pidió la pieza.

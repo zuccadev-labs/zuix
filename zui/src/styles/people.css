@@ -178,9 +178,6 @@
   .z-avatar-group__item > .z-avatar-group__more {
     box-shadow: 0 0 0 2px var(--z-surface-solid);
   }
-  .z-avatar-group__item + .z-avatar-group__item {
-    margin-inline-start: calc(var(--z-avatar-size, 36px) * -0.28);
-  }
   .z-avatar-group[data-size="xs"] {
     --z-avatar-size: 20px;
   }
@@ -192,12 +189,6 @@
   }
   .z-avatar-group[data-size="xl"] {
     --z-avatar-size: 64px;
-  }
-  .z-avatar-group[data-spacing="tight"] > :is(.z-avatar, .z-avatar-group__item) + :is(.z-avatar, .z-avatar-group__item) {
-    margin-inline-start: calc(var(--z-avatar-size, 36px) * -0.4);
-  }
-  .z-avatar-group[data-spacing="loose"] > :is(.z-avatar, .z-avatar-group__item) + :is(.z-avatar, .z-avatar-group__item) {
-    margin-inline-start: calc(var(--z-avatar-size, 36px) * -0.12);
   }
   /* Apilado inverso: el primero encima de los siguientes. */
   .z-avatar-group[data-reverse] > :is(.z-avatar, .z-avatar-group__item) {

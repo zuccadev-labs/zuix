@@ -70,9 +70,12 @@
   .z-table :is(th, td)[data-align="end"] {
     text-align: end;
   }
+  /* Una columna de datos (fechas, horas, códigos) no parte línea: «2026-11-10» partía por el guion. La tabla
+     desplaza si no cabe. */
   .z-table td[data-mono] {
     font-family: var(--z-font-mono);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
   .z-table[data-sticky] thead th {
     position: sticky;
@@ -449,8 +452,88 @@
   .z-avatar-group > .z-avatar {
     box-shadow: 0 0 0 2px var(--z-surface-solid);
   }
-  .z-avatar-group > .z-avatar + .z-avatar {
-    margin-inline-start: calc(var(--z-avatar-size) * -0.28);
+  /* Solape: lo que el siguiente avatar tapa del anterior, un paso de la escala por talla. Es el justo para que las
+     iniciales se lean enteras: cada avatar tapado lleva sus iniciales al centro de la parte que se ve. En xs (20 px)
+     dos iniciales ocupan casi todo el círculo: los avatares no se solapan, solo los une el anillo. La talla es la del
+     avatar (o la del grupo en la lista). */
+  .z-avatar-group {
+    --z-avatar-group-flip: 1;
+  }
+  .z-avatar-group:dir(rtl) {
+    --z-avatar-group-flip: -1;
+  }
+  .z-avatar-group > .z-avatar,
+  .z-avatar-group > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-2-5);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar,
+  .z-avatar-group[data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-3);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar,
+  .z-avatar-group[data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1);
+  }
+  .z-avatar-group > .z-avatar[data-size="sm"],
+  .z-avatar-group[data-size="sm"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1-5);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="sm"],
+  .z-avatar-group[data-size="sm"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-2);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="sm"],
+  .z-avatar-group[data-size="sm"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1);
+  }
+  .z-avatar-group > .z-avatar[data-size="xs"],
+  .z-avatar-group[data-size="xs"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-0);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="xs"],
+  .z-avatar-group[data-size="xs"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-0);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="xs"],
+  .z-avatar-group[data-size="xs"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-0);
+  }
+  .z-avatar-group > .z-avatar[data-size="lg"],
+  .z-avatar-group[data-size="lg"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-3);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="lg"],
+  .z-avatar-group[data-size="lg"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-4);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="lg"],
+  .z-avatar-group[data-size="lg"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1-5);
+  }
+  .z-avatar-group > .z-avatar[data-size="xl"],
+  .z-avatar-group[data-size="xl"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-4);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="xl"],
+  .z-avatar-group[data-size="xl"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-5);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="xl"],
+  .z-avatar-group[data-size="xl"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-2);
+  }
+  .z-avatar-group > :is(.z-avatar, .z-avatar-group__item) + :is(.z-avatar, .z-avatar-group__item) {
+    margin-inline-start: calc(var(--z-avatar-group-shift) * -1);
+  }
+  /* Iniciales al centro de lo que se ve: el borde final de cada avatar queda bajo el siguiente (en apilado inverso,
+     el inicial bajo el anterior). */
+  .z-avatar-group:not([data-reverse]) > .z-avatar:not(:last-child) > .z-avatar__initials,
+  .z-avatar-group:not([data-reverse]) > .z-avatar-group__item:not(:last-child) > .z-avatar > .z-avatar__initials {
+    translate: calc(var(--z-avatar-group-shift) * -0.5 * var(--z-avatar-group-flip)) 0;
+  }
+  .z-avatar-group[data-reverse] > .z-avatar:not(:first-child) > .z-avatar__initials,
+  .z-avatar-group[data-reverse] > .z-avatar-group__item:not(:first-child) > .z-avatar > .z-avatar__initials {
+    translate: calc(var(--z-avatar-group-shift) * 0.5 * var(--z-avatar-group-flip)) 0;
   }
 
   /* ---- StatTile ---- */

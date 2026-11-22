@@ -244,7 +244,8 @@
     overflow: hidden;
     border: 1px solid var(--z-line);
     border-radius: var(--z-card-radius);
-    background: var(--z-code-bg);
+    /* Base opaca, como CodeViewer: el filtro de niveles no pierde contraste sobre un fondo oscuro. */
+    background: linear-gradient(var(--z-code-bg), var(--z-code-bg)), var(--z-surface-solid);
     color: var(--z-fg);
   }
   .z-log-console__bar {
@@ -450,7 +451,9 @@
     overflow: hidden;
     border: 1px solid var(--z-line);
     border-radius: var(--z-code-radius);
-    background: var(--z-code-bg);
+    /* Tinte del código sobre base opaca: translúcido, sobre un fondo oscuro (una demo, una tarjeta tintada) bajaba
+       los comentarios y los números de línea a 4,46:1 (zutool claro). Así el par es el que mide `pnpm tokens`. */
+    background: linear-gradient(var(--z-code-bg), var(--z-code-bg)), var(--z-surface-solid);
     color: var(--z-fg);
   }
   .z-code-viewer__bar {

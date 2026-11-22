@@ -177,6 +177,13 @@ interface AnalogConfig {
   locale?: string;
 }
 
+/**
+ * Radio de las cifras cuando hay marcas. Las marcas largas empiezan en 40 (46 − 6) y una cifra del tamaño de la
+ * esfera mide unas 8 unidades de alto y hasta 14 de ancho («12»): a 31 queda una holgura de 3 unidades. A 35 la
+ * cifra pisaba las marcas del 3 y del 9.
+ */
+const NUMERAL_RADIUS = 31;
+
 /** Esfera en SVG: la comparten AnalogClock y la variante analógica de WorldClock. */
 function face(c: Pick<AnalogConfig, "timeZone" | "seconds" | "marks" | "numerals" | "smooth" | "locale">, now: number, name: string): VEl {
   const wall = wallAt(now, c.timeZone);
@@ -218,7 +225,7 @@ function face(c: Pick<AnalogConfig, "timeZone" | "seconds" | "marks" | "numerals
       : h(
           "g",
           { class: "z-analog-clock__numerals" },
-          ...faceNumerals(c.numerals, c.marks === "none" ? 40 : 35).map((n) =>
+          ...faceNumerals(c.numerals, c.marks === "none" ? 40 : NUMERAL_RADIUS).map((n) =>
             h(
               "text",
               { class: "z-analog-clock__numeral", x: n.x, y: n.y, "text-anchor": "middle", "dominant-baseline": "central" },
