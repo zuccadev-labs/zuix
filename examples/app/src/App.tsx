@@ -41,9 +41,9 @@ import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
 import { AgendaScreen } from "./screens/Agenda";
 import { Workspace } from "./screens/Workspace";
-import { ContentWave5 } from "./screens/ContentWave5";
+import { ContentScreen } from "./screens/Content";
 import { ChartsScreen } from "./screens/Charts";
-import { DataWave5 } from "./screens/DataWave5";
+import { DataScreen } from "./screens/Data";
 import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
 
@@ -208,11 +208,11 @@ export function App() {
     ) : active === "workspace" ? (
       <Workspace />
     ) : active === "content" ? (
-      <ContentWave5 />
+      <ContentScreen />
     ) : active === "charts" ? (
       <ChartsScreen />
     ) : active === "data" ? (
-      <DataWave5 />
+      <DataScreen />
     ) : active === "site" ? (
       <Site />
     ) : active === "media" ? (

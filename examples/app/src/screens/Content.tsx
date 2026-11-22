@@ -53,7 +53,7 @@ const JSON_SAMPLE = {
 };
 
 /** Piezas de la oleada 5 (contenido y navegación) con su valor a la vista, para las pruebas en navegador. */
-export function ContentWave5() {
+export function ContentScreen() {
   const [labels, setLabels] = useState<Record<string, string>>({});
   const [picked, setPicked] = useState<string[]>([]);
   const [checked, setChecked] = useState<string[]>(["photos/2025"]);
