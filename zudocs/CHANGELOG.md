@@ -21,6 +21,10 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   los componentes reales, pase automático con progreso y botón de pausa. Sube justo debajo del titular.
 - Grupos «Tiempo» y «Terminal y código» en el catálogo de componentes, con su icono.
 
+### Corregido
+
+- Navegación: el nombre de un grupo («Dashboard y tableros») pasa a dos líneas antes de cortarse con elipsis.
+
 ## [0.3.0] - 2026-11-21
 
 ### Añadido

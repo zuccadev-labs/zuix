@@ -459,12 +459,15 @@ a[class*="skipToContent"]:focus {
 .zd-nav-group__icon {
   color: var(--z-fg-muted);
 }
+/* Un grupo de dos o tres palabras («Dashboard y tableros») pasa a dos líneas antes de cortarse. */
 .zd-nav-group__label {
+  display: -webkit-box;
   flex: 1;
   min-inline-size: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 .zd-nav-group__chevron {
   color: var(--z-fg-subtle);
