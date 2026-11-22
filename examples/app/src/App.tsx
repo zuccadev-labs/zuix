@@ -48,6 +48,7 @@ import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
 import { CarouselsScreen } from "./screens/Carousels";
 import { TerminalScreen } from "./screens/TerminalScreen";
+import { Flows } from "./screens/Flows";
 import { TimeScreen } from "./screens/Time";
 
 const params = new URLSearchParams(window.location.search);
@@ -226,6 +227,8 @@ export function App() {
       <TimeScreen />
     ) : active === "terminal" ? (
       <TerminalScreen />
+    ) : active === "flows" ? (
+      <Flows />
     ) : (
       <Editor />
     );

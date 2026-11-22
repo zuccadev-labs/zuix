@@ -558,3 +558,28 @@ body {
 .app-narrow {
   max-inline-size: 24rem;
 }
+
+/* Editor de flujos: el lienzo ocupa el ancho y el inspector flota a la derecha. */
+.app-flow {
+  position: relative;
+}
+.app-flow__canvas {
+  block-size: min(640px, 72vh);
+}
+.app-flow__canvas--big {
+  block-size: 520px;
+}
+.app-flow__inspector {
+  position: absolute;
+  inset-block-start: var(--z-space-3);
+  inset-inline-end: var(--z-space-3);
+  z-index: var(--z-layer-raised);
+  display: grid;
+  gap: var(--z-space-2);
+  inline-size: min(260px, calc(100% - var(--z-space-6)));
+  padding: var(--z-space-3);
+  border-radius: var(--z-radius-lg);
+}
+.app-flow-bar {
+  flex-wrap: wrap;
+}
