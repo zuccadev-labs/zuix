@@ -13,6 +13,7 @@ export * from "./components/effects";
 export * from "./components/media";
 export * from "./components/time";
 export * from "./components/terminal";
+export * from "./components/nodes";
 export { cx } from "./cx";
 // Patrones del cargador DotMatrix (los mismos que dibuja el modo sin framework).
 export { DOT_PATTERNS, type DotPattern } from "./core/dotmatrix";

@@ -3080,6 +3080,120 @@
     }
    ]
   },
+  "Node": {
+   "group": "nodes",
+   "classes": [
+    "z-node",
+    "z-node__header",
+    "z-node__icon",
+    "z-node__title",
+    "z-node__status",
+    "z-node__body",
+    "z-node__resize",
+    "z-node-port",
+    "z-node-port__label",
+    "z-node-group",
+    "z-node-group__header",
+    "z-node-group__title"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Nodo con dos salidas",
+     "html": "<div class=\"z-node\" data-id=\"filter\" data-status=\"success\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Filter\" style=\"--z-node-x:0px;--z-node-y:0px\">\n  <div class=\"z-node__header\">\n    <span class=\"z-node__icon\" aria-hidden=\"true\">\n      <z-icon name=\"funnel\" size=\"16\"></z-icon>\n    </span>\n    <span class=\"z-node__title\">Filter</span>\n    <span class=\"z-node__status\" data-status=\"success\">succeeded</span>\n  </div>\n  <div class=\"z-node__body\">total &gt; 100</div>\n  <button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" aria-label=\"Input in\" style=\"--z-port-t:0.5\"></button>\n  <button type=\"button\" class=\"z-node-port\" data-port=\"true\" data-kind=\"source\" data-side=\"right\" aria-label=\"Output true\" style=\"--z-port-t:0.33\">\n    <span class=\"z-node-port__label\">true</span>\n  </button>\n  <button type=\"button\" class=\"z-node-port\" data-port=\"false\" data-kind=\"source\" data-side=\"right\" aria-label=\"Output false\" style=\"--z-port-t:0.67\">\n    <span class=\"z-node-port__label\">false</span>\n  </button>\n  <span class=\"z-node__resize\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Grupo",
+     "html": "<div class=\"z-node-group\" data-id=\"g\" data-type=\"group\" role=\"group\" aria-roledescription=\"group\" aria-label=\"Retry block\" style=\"--z-node-x:0px;--z-node-y:0px;--z-node-w:360px;--z-node-h:200px\">\n  <div class=\"z-node-group__header\">\n    <span class=\"z-node-group__title\">Retry block</span>\n  </div>\n  <span class=\"z-node__resize\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "NodeCanvas": {
+   "group": "nodes",
+   "classes": [
+    "z-node-canvas",
+    "z-node-canvas__background",
+    "z-node-canvas__world",
+    "z-node-canvas__groups",
+    "z-node-canvas__edges",
+    "z-node-canvas__edge-layer",
+    "z-node-canvas__labels",
+    "z-node-canvas__nodes",
+    "z-node-canvas__selection",
+    "z-node-canvas__draft",
+    "z-node-canvas__marker",
+    "z-node-canvas__desc",
+    "z-node-canvas__descs",
+    "z-edge",
+    "z-edge__path",
+    "z-edge__hit",
+    "z-edge__end",
+    "z-edge__label"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Flujo en el marcado",
+     "html": "<div class=\"z-node-canvas\" data-z-node-canvas data-snap=\"16\" aria-label=\"Order flow\">\n  <div class=\"z-node\" data-id=\"hook\" data-tone=\"accent\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Webhook\" data-x=\"0\" data-y=\"40\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"bolt\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Webhook</span></div><div class=\"z-node__body\">POST /orders</div><button type=\"button\" class=\"z-node-port\" data-port=\"out\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output out\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"filter\" data-status=\"success\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Filter\" data-x=\"300\" data-y=\"0\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"funnel\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Filter</span><span class=\"z-node__status\" data-status=\"success\">succeeded</span></div><div class=\"z-node__body\">total &gt; 100</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><button type=\"button\" class=\"z-node-port\" data-port=\"true\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output true\" style=\"--z-port-t: 0.33\"><span class=\"z-node-port__label\">true</span></button><button type=\"button\" class=\"z-node-port\" data-port=\"false\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output false\" style=\"--z-port-t: 0.67\"><span class=\"z-node-port__label\">false</span></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"save\" data-status=\"running\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Save order\" data-x=\"600\" data-y=\"60\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"circle-stack\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Save order</span><span class=\"z-node__status\" data-status=\"running\">running</span></div><div class=\"z-node__body\">orders table</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <script type=\"application/json\" class=\"z-node-canvas__edges\">[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Grafo en JSON, solo lectura, con vista en lista",
+     "html": "<div class=\"z-node-canvas\" data-z-node-canvas data-readonly data-minimap=\"false\" aria-label=\"Pipeline\" id=\"pipeline\">\n  <script type=\"application/json\" data-graph>{\"nodes\":[{\"id\":\"hook\",\"position\":{\"x\":0,\"y\":40},\"data\":{\"label\":\"Webhook\",\"icon\":\"bolt\",\"description\":\"POST /orders\",\"tone\":\"accent\"},\"ports\":[{\"id\":\"out\",\"kind\":\"source\",\"type\":\"json\"}]},{\"id\":\"filter\",\"position\":{\"x\":300,\"y\":0},\"data\":{\"label\":\"Filter\",\"icon\":\"funnel\",\"description\":\"total > 100\",\"status\":\"success\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"},{\"id\":\"true\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"true\"},{\"id\":\"false\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"false\"}]},{\"id\":\"save\",\"position\":{\"x\":600,\"y\":60},\"data\":{\"label\":\"Save order\",\"icon\":\"circle-stack\",\"description\":\"orders table\",\"status\":\"running\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"}]}],\"edges\":[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]}</script>\n</div>\n<div class=\"z-node-list\" data-for=\"#pipeline\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "NodeControls": {
+   "group": "nodes",
+   "classes": [
+    "z-node-controls"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Controles",
+     "html": "<div role=\"toolbar\" aria-label=\"Canvas controls\" aria-orientation=\"vertical\" class=\"z-toolbar z-liquid z-node-controls\" data-variant=\"glass\" data-size=\"sm\"><button type=\"button\" title=\"Zoom in\" aria-label=\"Zoom in\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-in\"><z-icon name=\"magnifying-glass-plus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Zoom out\" aria-label=\"Zoom out\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-out\"><z-icon name=\"magnifying-glass-minus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Fit view\" aria-label=\"Fit view\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"fit\"><z-icon name=\"arrows-pointing-in\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Lock canvas\" aria-label=\"Lock canvas\" aria-pressed=\"false\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"lock\"><span data-lock-icon=\"open\" class=\"z-node-controls__lock\"><span data-when=\"open\"><z-icon name=\"lock-open\" size=\"16\"></z-icon></span><span data-when=\"closed\"><z-icon name=\"lock-closed\" size=\"16\"></z-icon></span></span></button><div role=\"separator\" aria-orientation=\"horizontal\" class=\"z-toolbar__separator\"></div><button type=\"button\" title=\"Undo\" aria-label=\"Undo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"undo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-left\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Redo\" aria-label=\"Redo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"redo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-right\" size=\"16\"></z-icon></button></div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "NodeListView": {
+   "group": "nodes",
+   "classes": [
+    "z-node-list",
+    "z-node-list__table",
+    "z-node-list__caption"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Lista",
+     "html": "<div class=\"z-node-list\">\n  <table class=\"z-table z-node-list__table\">\n    <caption class=\"z-node-list__caption\">Nodes</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\">Name</th>\n        <th scope=\"col\">Status</th>\n        <th scope=\"col\">Inputs</th>\n        <th scope=\"col\">Outputs</th>\n        <th scope=\"col\">Actions</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr data-id=\"a\">\n        <th scope=\"row\">Fetch</th>\n        <td>—</td>\n        <td>0</td>\n        <td>1</td>\n        <td>\n          <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\" data-node-action=\"show\" data-node=\"a\">Show\n            <span class=\"z-sr-only\"> Fetch</span>\n          </button>\n        </td>\n      </tr>\n      <tr data-id=\"b\">\n        <th scope=\"row\">Store</th>\n        <td>—</td>\n        <td>1</td>\n        <td>0</td>\n        <td>\n          <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\" data-node-action=\"show\" data-node=\"b\">Show\n            <span class=\"z-sr-only\"> Store</span>\n          </button>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n  <table class=\"z-table z-node-list__table\">\n    <caption class=\"z-node-list__caption\">Connections</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\">From</th>\n        <th scope=\"col\">To</th>\n        <th scope=\"col\">Actions</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr data-edge=\"e\">\n        <td>Fetch</td>\n        <td>Store</td>\n        <td>\n          <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\" data-node-action=\"remove-edge\" data-edge=\"e\">Remove connection\n            <span class=\"z-sr-only\"> Fetch → Store</span>\n          </button>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "NodeMinimap": {
+   "group": "nodes",
+   "classes": [
+    "z-node-minimap",
+    "z-node-minimap__svg",
+    "z-node-minimap__node",
+    "z-node-minimap__mask",
+    "z-node-minimap__view"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Minimapa",
+     "html": "<nav class=\"z-node-minimap z-liquid\" aria-label=\"Minimap\" tabindex=\"0\"></nav>",
+     "source": "manual"
+    }
+   ]
+  },
   "ActionBar": {
    "group": "overlay",
    "classes": [

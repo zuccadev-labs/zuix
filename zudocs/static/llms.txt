@@ -258,6 +258,14 @@
 - [LogConsole](https://zuccadev-labs.github.io/zuix/components/terminal/log-console.md): Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado.
 - [Terminal](https://zuccadev-labs.github.io/zuix/components/terminal/terminal.md): Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y…
 
+## Componentes: Nodos
+
+- [Node](https://zuccadev-labs.github.io/zuix/components/nodes/node.md): Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y…
+- [NodeCanvas](https://zuccadev-labs.github.io/zuix/components/nodes/node-canvas.md): Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y…
+- [NodeControls](https://zuccadev-labs.github.io/zuix/components/nodes/node-controls.md): Controles de un NodeCanvas: acercar, alejar, encajar, bloquear y deshacer/rehacer, y ordenar si se pide.
+- [NodeListView](https://zuccadev-labs.github.io/zuix/components/nodes/node-list-view.md): Vista en lista de un grafo: una tabla de nodos (estado, entradas, salidas) y otra de conexiones, con «Show» para volver al nodo en el lienzo y quitar conexión.
+- [NodeMinimap](https://zuccadev-labs.github.io/zuix/components/nodes/node-minimap.md): Minimapa de un NodeCanvas: todos los nodos reducidos y el rectángulo visible.
+
 ## Componentes: Layouts
 
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.

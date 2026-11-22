@@ -85,6 +85,10 @@
       "types": "./zui-dom-terminal.d.ts",
       "default": "./zui-dom-terminal.js"
     },
+    "./zui/dom/nodes": {
+      "types": "./zui-dom-nodes.d.ts",
+      "default": "./zui-dom-nodes.js"
+    },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"

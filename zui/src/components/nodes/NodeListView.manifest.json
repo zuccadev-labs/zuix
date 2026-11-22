@@ -1,0 +1,40 @@
+{
+  "name": "NodeListView",
+  "group": "nodes",
+  "description": "Vista en lista de un grafo: una tabla de nodos (estado, entradas, salidas) y otra de conexiones, con «Show» para volver al nodo en el lienzo y quitar conexión. La alternativa accesible al diagrama, con el mismo modelo.",
+  "import": "import { NodeListView } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "graph",
+      "type": "{ nodes, edges }"
+    },
+    {
+      "name": "onShowNode",
+      "type": "(id) => void"
+    },
+    {
+      "name": "onRemoveEdge",
+      "type": "(id) => void"
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "labels",
+      "type": "Partial<NodeCanvasLabels>"
+    }
+  ],
+  "states": ["rest"],
+  "tokens": ["fg", "weight-semibold"],
+  "classes": ["z-node-list", "z-node-list__table", "z-node-list__caption"],
+  "a11y": "Tablas con caption y cabeceras de fila y columna. Los botones nombran el nodo o la conexión («Remove connection Webhook → Filter»). Sin React: .z-node-list[data-for=\"#lienzo\"] se pinta y se mantiene al día con el lienzo.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Lista",
+      "code": "<NodeListView graph={{ nodes: [{ id: \"a\", position: { x: 0, y: 0 }, data: { label: \"Fetch\" }, ports: [{ id: \"out\", kind: \"source\" }] }, { id: \"b\", position: { x: 0, y: 0 }, data: { label: \"Store\" }, ports: [{ id: \"in\", kind: \"target\" }] }], edges: [{ id: \"e\", source: \"a\", target: \"b\" }] }} onRemoveEdge={() => {}} />"
+    }
+  ]
+}
