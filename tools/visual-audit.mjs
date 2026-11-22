@@ -426,7 +426,11 @@ function collect({ TOKENS, families, coarse }) {
         prevTop = box.top;
         prevLetter = letter;
       }
-      if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
+      // Un código largo sin espacios (atributos, una ruta) más ancho que la línea solo puede partirse.
+      const token = split ? (t.match(/\S+/g) ?? []).find((w) => w.includes(split.replace("/", ""))) : null;
+      if (split && token && token.length > 30)
+        add("token-partido", el, `código largo partido «${token.slice(0, 40)}»`, { text: t.trim().slice(0, 40) });
+      else if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
     }
   }
 
@@ -470,7 +474,25 @@ function collect({ TOKENS, families, coarse }) {
       done.add(el);
       // Varios puntos a lo ancho del texto: lo que tapa puede estar en el centro (un separador pegajoso centrado) y no al
       // principio de la línea.
-      const xs = [0.1, 0.5, 0.9].map((f) => Math.min(Math.max(r.left + Math.min(r.width * f, r.width - 2), 0), vw - 1));
+      // A lo ancho de las letras, no de la caja: un bloque a todo el ancho con un título corto no está tapado por lo que
+      // ocupa su hueco libre (el botón de ampliar en la esquina de una tarjeta).
+      let ink = r;
+      {
+        let left = Number.POSITIVE_INFINITY;
+        let right = Number.NEGATIVE_INFINITY;
+        for (const node of el.childNodes) {
+          if (node.nodeType !== 3 || !node.textContent.trim()) continue;
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          const b = range.getBoundingClientRect();
+          if (b.width > 0) {
+            left = Math.min(left, b.left);
+            right = Math.max(right, b.right);
+          }
+        }
+        if (right > left) ink = { left, width: right - left };
+      }
+      const xs = [0.1, 0.5, 0.9].map((f) => Math.min(Math.max(ink.left + Math.min(ink.width * f, ink.width - 2), 0), vw - 1));
       const paints = (hit) => {
         const hs = getComputedStyle(hit);
         return alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none";
@@ -492,6 +514,8 @@ function collect({ TOKENS, families, coarse }) {
         // cabecera decorativa) sigue pintando encima: se busca a mano lo que pinta dentro de él en ese punto.
         for (const sticky of stickies) {
           if (sticky.contains(el) || el.contains(sticky)) continue;
+          // La barra pegajosa de la propia página tapa al desplazar, como debe.
+          if (pageChrome(sticky)) continue;
           const sr = sticky.getBoundingClientRect();
           if (cx < sr.left || cx > sr.right || py < sr.top || py > sr.bottom) continue;
           for (const part of [sticky, ...sticky.querySelectorAll("*")]) {
@@ -580,7 +604,10 @@ function collect({ TOKENS, families, coarse }) {
     // Una rejilla con ejes fijos (cabecera o columna pegajosa: línea de tiempo, semana) desplaza en los dos ejes como
     // una hoja de cálculo: el eje fijo dice dónde se está y el corte del contenido es el de cualquier rejilla.
     const axes = hit && [...box.querySelectorAll("*")].some((e) => getComputedStyle(e).position === "sticky");
-    if (hit && axes)
+    // En un carrusel la diapositiva siguiente asoma a propósito: es lo que invita a desplazar.
+    if (hit && box.matches(".z-carousel__viewport"))
+      add("asoma-diapositiva", box, "la diapositiva siguiente asoma por el borde", { text: ownText(hit).slice(0, 40) });
+    else if (hit && axes)
       add("corte-rejilla", box, `rejilla con ejes fijos que desplaza ${box.scrollWidth - box.clientWidth} px`, {
         text: ownText(hit).slice(0, 40),
       });
@@ -738,7 +765,10 @@ function collect({ TOKENS, families, coarse }) {
     const es = getComputedStyle(el);
     if (es.textOverflow !== "ellipsis" || el.scrollWidth <= el.clientWidth + 1) continue;
     const t = el.textContent.trim();
-    if (!t || t.length > 24 || t.split(/\s+/).length > 3) continue;
+    // Un nombre de archivo puede ser largo: se corta con elipsis y conserva la extensión a la vista en su propio dato.
+    // Tampoco un identificador (un nombre de icono, una ruta): es un código, no un nombre que se lea.
+    if (!t || t.length > 24 || t.split(/\s+/).length > 3 || /\.[a-z0-9]{1,5}$/i.test(t) || /^[a-z0-9]+([-_/][a-z0-9]+)+$/i.test(t))
+      continue;
     if (!/__(label|title|name)\b/.test(String(el.getAttribute("class") ?? ""))) continue;
     if (
       el.closest(
@@ -781,6 +811,8 @@ function collect({ TOKENS, families, coarse }) {
       tops.size === kids.length &&
       Math.max(...ws) > Math.min(...ws) * 1.5 &&
       Math.min(...ws) < width * 0.8 &&
+      // Una pieza a todo el ancho (un campo de búsqueda) apila la fila a propósito.
+      Math.max(...ws) < width * 0.9 &&
       kids.some((k) => k.matches(INTERACTIVE) || k.querySelector(INTERACTIVE))
     )
       add("fila-apilada", row, `${kids.length} piezas de una fila, cada una en su línea`);
@@ -1643,6 +1675,20 @@ function classify(recs) {
           if (r.injected) {
             verdict = "aceptado";
             why = "marca inyectada sin cargar su fuente: el sitio se compila con la suya y otra métrica desborda unos px";
+          }
+          break;
+        case "asoma-diapositiva":
+          verdict = "aceptado";
+          why = "la diapositiva siguiente de un carrusel asoma a propósito";
+          break;
+        case "token-partido":
+          verdict = "aceptado";
+          why = "código sin espacios más ancho que la línea: solo puede partirse";
+          break;
+        case "escala-tamano":
+          if (/hero__title/.test(i.sig)) {
+            verdict = "aceptado";
+            why = "titular fluido entre dos tokens (display-sm y hero) según el ancho de su contenedor";
           }
           break;
         case "corte-rejilla":
