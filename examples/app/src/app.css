@@ -564,7 +564,7 @@ body {
   position: relative;
 }
 .app-flow__canvas {
-  block-size: min(640px, 72vh);
+  block-size: clamp(420px, 62vh, 680px);
 }
 .app-flow__canvas--big {
   block-size: 520px;

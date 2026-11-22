@@ -56,8 +56,8 @@ export default function ({ t, assert, poll }) {
           .count();
         assert(tabStops === 1, `una sola parada entre los nodos: ${tabStops}`);
         await page.locator(node("hook")).focus();
-        await page.keyboard.press("ArrowRight");
-        await poll(async () => (await active(page)) === "validate", "flecha derecha va al vecino de la derecha");
+        await page.keyboard.press("ArrowDown");
+        await poll(async () => (await active(page)) === "validate", "flecha abajo va al vecino de abajo");
         await page.keyboard.press("]");
         await poll(async () => (await active(page)) === "route", "] sigue la conexión de salida");
         await page.keyboard.press("]");

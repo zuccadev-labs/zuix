@@ -112,6 +112,8 @@ export interface NodeCanvasOptions {
   readOnly?: boolean;
   /** Tipo de arista por defecto. */
   edgeType?: EdgeType;
+  /** Sentido de la disposición automática del botón «Arrange nodes»: `LR` (por defecto) o `TB`. */
+  layoutDirection?: "LR" | "TB";
   /** Ciclos permitidos al conectar. Por defecto sí. */
   allowCycles?: boolean;
   /** Validación propia, además de sentido, tipos y límites. */
@@ -1663,7 +1665,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     } else if (name === "lock") toggleLock();
     else if (name === "undo") doUndo();
     else if (name === "redo") doRedo();
-    else if (name === "layout") doLayout();
+    else if (name === "layout") doLayout(o.layoutDirection);
     else if (name === "layout-tb") doLayout("TB");
   };
 

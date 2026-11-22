@@ -15,32 +15,39 @@ import {
   Switch,
 } from "@zuccadev-labs/zuix-zui";
 
-const port = (id: string, kind: "source" | "target", type = "json", label?: string) => ({ id, kind, type, label });
+/** Puerto de un flujo de arriba abajo: entradas arriba y salidas abajo, salvo que se diga otro lado. */
+const port = (id: string, kind: "source" | "target", type = "json", label?: string, side?: "left" | "right" | "top" | "bottom") => ({
+  id,
+  kind,
+  type,
+  label,
+  side: side ?? (kind === "target" ? ("top" as const) : ("bottom" as const)),
+});
 
 const FLOW_NODES: GraphNode[] = [
   {
     id: "hook",
-    position: { x: 0, y: 96 },
+    position: { x: 208, y: 0 },
     data: { label: "Order webhook", icon: "bolt", description: "POST /orders", tone: "accent" },
     ports: [port("out", "source")],
   },
   {
     id: "validate",
-    position: { x: 272, y: 96 },
+    position: { x: 208, y: 144 },
     data: { label: "Validate", icon: "shield-check", description: "Schema v3 · 14 fields", status: "success", tone: "success" },
     ports: [port("in", "target"), port("out", "source")],
   },
   {
     id: "route",
-    position: { x: 544, y: 96 },
+    position: { x: 208, y: 288 },
     data: { label: "Total over 100", icon: "funnel", description: "order.total > 100", tone: "warning" },
-    ports: [port("in", "target"), port("yes", "source", "json", "true"), port("no", "source", "json", "false")],
+    ports: [port("in", "target"), port("yes", "source", "json", "true"), port("no", "source", "json", "false", "right")],
   },
   {
     id: "retry",
     type: "group",
-    position: { x: 832, y: -16 },
-    size: { width: 272, height: 288 },
+    position: { x: 160, y: 448 },
+    size: { width: 320, height: 304 },
     data: { label: "Retry block", icon: "arrow-path" },
   },
   {
@@ -48,24 +55,24 @@ const FLOW_NODES: GraphNode[] = [
     parentId: "retry",
     position: { x: 32, y: 48 },
     data: { label: "Enrich customer", icon: "globe-alt", description: "GET /crm/customers/:id", status: "running", tone: "info" },
-    ports: [port("in", "target"), { ...port("out", "source"), side: "bottom" }],
+    ports: [port("in", "target"), port("out", "source")],
   },
   {
     id: "save",
     parentId: "retry",
-    position: { x: 32, y: 176 },
+    position: { x: 32, y: 192 },
     data: { label: "Save order", icon: "circle-stack", description: "orders · upsert", tone: "accent" },
-    ports: [{ ...port("in", "target"), side: "top" }, port("out", "source")],
+    ports: [port("in", "target"), port("out", "source")],
   },
   {
     id: "notify",
-    position: { x: 864, y: 336 },
+    position: { x: 576, y: 432 },
     data: { label: "Notify sales", icon: "megaphone", description: "#sales-alerts", status: "error", tone: "danger" },
-    ports: [port("in", "target", "json text")],
+    ports: [port("in", "target", "json text", undefined, "left")],
   },
   {
     id: "done",
-    position: { x: 1184, y: 144 },
+    position: { x: 208, y: 816 },
     data: { label: "Respond 201", icon: "paper-airplane", description: "application/json" },
     ports: [port("in", "target", "any")],
   },
@@ -136,7 +143,7 @@ export function Flows() {
                 { value: "list", label: "List" },
               ]}
             />
-            <Button size="sm" icon="squares-2x2" onClick={() => canvas.current?.layout()} data-testid="f-layout">
+            <Button size="sm" icon="squares-2x2" onClick={() => canvas.current?.layout("TB")} data-testid="f-layout">
               Arrange
             </Button>
           </Inline>
@@ -175,6 +182,7 @@ export function Flows() {
               onEdgesChange={setEdges}
               onSelectionChange={setSelection}
               controls={{ showLayout: true }}
+              layoutDirection="TB"
               renderNode={(node) =>
                 node.id === "notify" ? (
                   <Stack gap={2}>

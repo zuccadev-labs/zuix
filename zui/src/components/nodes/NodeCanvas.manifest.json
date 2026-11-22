@@ -108,6 +108,13 @@
       "default": "bezier"
     },
     {
+      "name": "layoutDirection",
+      "type": "enum",
+      "values": ["LR", "TB"],
+      "default": "LR",
+      "description": "Sentido del botón de ordenar de los controles."
+    },
+    {
       "name": "background",
       "type": "enum",
       "values": ["dots", "grid", "none"],

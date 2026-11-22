@@ -58,6 +58,8 @@ export interface NodeCanvasProps {
   readOnly?: boolean;
   onLockChange?: (locked: boolean) => void;
   edgeType?: GraphEdge["type"];
+  /** Sentido del botón de ordenar de los controles. Por defecto `LR`. */
+  layoutDirection?: "LR" | "TB";
   background?: "dots" | "grid" | "none";
   /** Minimapa: `false` lo quita; un objeto lo configura. Por defecto sí. */
   minimap?: boolean | NodeMinimapProps;
@@ -123,6 +125,7 @@ export function NodeCanvas({
   readOnly,
   onLockChange,
   edgeType,
+  layoutDirection,
   background = "dots",
   minimap = true,
   controls = true,
@@ -160,6 +163,7 @@ export function NodeCanvas({
     snap,
     readOnly,
     edgeType,
+    layoutDirection,
     allowCycles,
     labels,
     locale,
