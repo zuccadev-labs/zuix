@@ -1,0 +1,54 @@
+{
+  "name": "PresenceBadge",
+  "group": "people",
+  "description": "Presencia de una persona: disponible, ausente, ocupada, no molestar, desconectada o fuera de la oficina, con «visto hace…» cuando se sabe.",
+  "import": "import { PresenceBadge } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "status",
+      "type": "enum",
+      "values": ["online", "away", "busy", "dnd", "offline", "oof"],
+      "required": true
+    },
+    {
+      "name": "lastSeen",
+      "type": "number | string | Date"
+    },
+    {
+      "name": "showLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "Texto visible; sin él, el texto queda para el lector."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "now",
+      "type": "number"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<PresenceLabels>"
+    }
+  ],
+  "states": ["online", "away", "busy", "dnd", "offline", "oof"],
+  "tokens": ["success", "warning", "danger", "info", "fg-subtle", "fg-muted", "surface-solid", "radius-full", "text-small"],
+  "classes": ["z-presence-badge", "z-presence", "z-presence-badge__label"],
+  "a11y": "Nunca solo color: cada estado tiene su forma (marca, reloj, punto lleno, raya, aspa en anillo, flecha) y su texto, visible con showLabel o en un z-sr-only. El punto es decorativo.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Los seis estados",
+      "code": "<div style={{ display: \"flex\", gap: 16, flexWrap: \"wrap\" }}>\n  <PresenceBadge status=\"online\" showLabel />\n  <PresenceBadge status=\"away\" showLabel />\n  <PresenceBadge status=\"busy\" showLabel />\n  <PresenceBadge status=\"dnd\" showLabel />\n  <PresenceBadge status=\"oof\" showLabel />\n  <PresenceBadge status=\"offline\" showLabel lastSeen=\"2026-11-22T11:00:00Z\" now={Date.parse(\"2026-11-22T14:00:00Z\")} locale=\"en-US\" />\n</div>"
+    }
+  ],
+  "origin": "PresenceBadge de Fluent UI (available, busy, dnd, away, offline, oof)."
+}

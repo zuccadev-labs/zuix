@@ -1,0 +1,108 @@
+{
+  "name": "Persona",
+  "group": "people",
+  "description": "Persona: avatar, nombre, línea secundaria (rol, correo) y presencia, en fila o en columna y en cinco tamaños.",
+  "import": "import { Persona } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "secondary",
+      "type": "ReactNode"
+    },
+    {
+      "name": "tertiary",
+      "type": "ReactNode"
+    },
+    {
+      "name": "avatar",
+      "type": "string"
+    },
+    {
+      "name": "presence",
+      "type": "enum",
+      "values": ["online", "away", "busy", "dnd", "offline", "oof"]
+    },
+    {
+      "name": "lastSeen",
+      "type": "number | string | Date"
+    },
+    {
+      "name": "showPresence",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["xs", "sm", "md", "lg", "xl"],
+      "default": "md"
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "href",
+      "type": "string"
+    },
+    {
+      "name": "trailing",
+      "type": "ReactNode"
+    },
+    {
+      "name": "now",
+      "type": "number"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "presenceLabels",
+      "type": "Partial<PresenceLabels>"
+    }
+  ],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "surface-3",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "text-body",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-persona",
+    "z-persona__media",
+    "z-persona__text",
+    "z-persona__name",
+    "z-persona__secondary",
+    "z-persona__tertiary",
+    "z-persona__tag",
+    "z-persona__status",
+    "z-persona__trailing"
+  ],
+  "a11y": "El avatar es decorativo (alt vacío): el nombre está en el texto. La presencia se dice con texto (visible con showPresence o para el lector) y su punto tiene forma propia.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Con presencia",
+      "code": "<Persona name=\"Ana López\" secondary=\"Product designer\" presence=\"online\" showPresence />"
+    },
+    {
+      "title": "Vertical y grande",
+      "code": "<Persona name=\"Marco Rossi\" secondary=\"Engineering lead\" tertiary=\"Milan\" size=\"lg\" orientation=\"vertical\" presence=\"dnd\" />"
+    }
+  ],
+  "origin": "Persona de Fluent UI y User de HeroUI."
+}
