@@ -213,7 +213,11 @@ export interface ToolCallInput {
 }
 
 /** Tarjeta de herramienta: icono, nombre, estado en texto (además del icono y el color), duración y entrada/salida plegables. */
-export function toolCallNode(t: ToolCallInput, labels: AiLabels, o: { key?: string; open?: boolean; locale?: string } = {}): VEl {
+export function toolCallNode(
+  t: ToolCallInput,
+  labels: AiLabels,
+  o: { key?: string; open?: boolean; locale?: string; approval?: boolean } = {},
+): VEl {
   const duration = ms(t.startedAt, t.endedAt);
   const has = t.input !== undefined || t.output !== undefined || t.error;
   return h(
@@ -253,7 +257,7 @@ export function toolCallNode(t: ToolCallInput, labels: AiLabels, o: { key?: stri
           )
         : null,
     ),
-    t.status === "awaiting-approval"
+    t.status === "awaiting-approval" && o.approval !== false
       ? h(
           "div",
           { class: "z-tool-call__approval" },
@@ -599,7 +603,13 @@ function assistantTree(c: AssistantConfig, s: AssistantState, uid: string): VEl 
       case "reasoning":
         return reasoningNode(p, labels, { key, open: s.open[key] ?? p.state !== "done", locale: c.locale });
       case "tool":
-        return toolCallNode(p, labels, { key, open: s.open[key], locale: c.locale });
+        // Con una petición de aprobación en la misma respuesta, se decide en ella y no dos veces.
+        return toolCallNode(p, labels, {
+          key,
+          open: s.open[key],
+          locale: c.locale,
+          approval: !c.parts.some((x) => x.type === "approval" && !x.decision),
+        });
       case "approval":
         return approvalNode(p, labels, { key, uid, confirming: s.confirming[p.id], always: s.always[p.id] });
       case "sources":

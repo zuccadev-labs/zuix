@@ -290,10 +290,17 @@
   [dir="rtl"] .z-citation__card {
     translate: 50% 0;
   }
-  .z-citation:is(:hover, :focus-visible) .z-citation__card {
+  .z-citation:focus-visible .z-citation__card {
     opacity: 1;
     visibility: visible;
     transition-delay: 0.25s, 0s;
+  }
+  @media (hover: hover) {
+    .z-citation:hover .z-citation__card {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0.25s, 0s;
+    }
   }
   .z-citation__title {
     font-weight: var(--z-weight-semibold);

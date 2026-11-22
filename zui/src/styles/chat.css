@@ -993,12 +993,20 @@
   .z-message-row[data-mine] .z-message__actions {
     inset-inline-start: 0;
   }
-  .z-message-row:is(:hover, :focus-within) .z-message__actions,
+  .z-message-row:focus-within .z-message__actions,
   .z-message__actions[data-open] {
     opacity: 1;
     visibility: visible;
     translate: 0 0;
     transition-delay: 0s;
+  }
+  @media (hover: hover) {
+    .z-message-row:hover .z-message__actions {
+      opacity: 1;
+      visibility: visible;
+      translate: 0 0;
+      transition-delay: 0s;
+    }
   }
   @media (hover: none) {
     .z-message-row:not(:focus-within) .z-message__actions:not([data-open]) {
