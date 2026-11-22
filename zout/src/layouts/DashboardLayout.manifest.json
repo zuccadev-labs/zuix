@@ -1,0 +1,93 @@
+{
+  "name": "DashboardLayout",
+  "group": "layout",
+  "description": "Página de dashboard: cabecera con título y acciones, barra de filtros fija bajo ella, contenido (DashboardGrid, MetricGroup) y panel lateral opcional. Responde al ancho de su contenedor.",
+  "import": "import { DashboardLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "eyebrow",
+      "type": "ReactNode"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "filters",
+      "type": "ReactNode",
+      "description": "Barra de filtros fija."
+    },
+    {
+      "name": "nav",
+      "type": "ReactNode",
+      "description": "Navegación propia; en estrecho, tira arriba."
+    },
+    {
+      "name": "navLabel",
+      "type": "string",
+      "default": "Dashboard"
+    },
+    {
+      "name": "aside",
+      "type": "ReactNode"
+    },
+    {
+      "name": "asideLabel",
+      "type": "string",
+      "default": "Details"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": [
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "leading-tight",
+    "fg-muted",
+    "fg-subtle",
+    "text-small",
+    "text-caption",
+    "control-radius-xl",
+    "layer-sticky",
+    "space-5",
+    "space-6"
+  ],
+  "classes": [
+    "z-dashboard-layout",
+    "z-dashboard-layout__grid",
+    "z-dashboard-layout__nav",
+    "z-dashboard-layout__main",
+    "z-dashboard-layout__header",
+    "z-dashboard-layout__titles",
+    "z-dashboard-layout__eyebrow",
+    "z-dashboard-layout__title",
+    "z-dashboard-layout__description",
+    "z-dashboard-layout__actions",
+    "z-dashboard-layout__filters",
+    "z-dashboard-layout__content",
+    "z-dashboard-layout__aside"
+  ],
+  "a11y": "Un h1 con el título. La navegación y el panel lateral son nav y aside con nombre. Los filtros quedan fijos arriba al desplazar sin tapar el foco (los controles de debajo tienen margen de desplazamiento). En estrecho todo se apila en el orden del marcado.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Con filtros y panel",
+      "code": "<DashboardLayout eyebrow=\"Acme Inc.\" title=\"Overview\" description=\"Sales and product health for November.\" actions={<><Button icon=\"arrow-down-tray\">Export</Button><Button variant=\"primary\" icon=\"pencil\">Edit layout</Button></>} filters={<><SegmentedControl aria-label=\"Period\" items={[{ value: \"7d\", label: \"7 days\" }, { value: \"30d\", label: \"30 days\" }, { value: \"90d\", label: \"90 days\" }]} defaultValue=\"30d\" /><Chip>Region: EU</Chip></>} aside={<Card>Details</Card>}>\n  <MetricGroup label=\"KPIs\"><MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} /><MetricCard variant=\"plain\" label=\"Orders\" value={1284} delta={0.04} /></MetricGroup>\n</DashboardLayout>"
+    }
+  ],
+  "origin": "dashboard-01 de los bloques de shadcn, ProLayout de Ant Design Pro y las plantillas de Tremor."
+}

@@ -1,0 +1,89 @@
+{
+  "name": "SettingsLayout",
+  "group": "layout",
+  "description": "Página de ajustes: navegación lateral con anclas a las secciones, contenido (SettingsSection) y barra de guardar fija al pie cuando hay cambios sin guardar. En estrecho la navegación pasa a una tira desplazable arriba.",
+  "import": "import { SettingsLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "nav",
+      "type": "{ href, label, icon?, current? }[]",
+      "required": true
+    },
+    {
+      "name": "navLabel",
+      "type": "string",
+      "default": "Settings"
+    },
+    {
+      "name": "dirty",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "saveBar",
+      "type": "ReactNode",
+      "description": "Botones de la barra de guardar."
+    },
+    {
+      "name": "dirtyLabel",
+      "type": "string",
+      "default": "You have unsaved changes"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "states": ["rest", "dirty"],
+  "tokens": [
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "fg",
+    "fg-muted",
+    "accent-soft",
+    "accent-text",
+    "row-hover",
+    "control-radius",
+    "control-radius-xl",
+    "control-height-md",
+    "text-small",
+    "weight-medium",
+    "layer-sticky",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-settings-layout",
+    "z-settings-layout__grid",
+    "z-settings-layout__header",
+    "z-settings-layout__title",
+    "z-settings-layout__description",
+    "z-settings-layout__nav",
+    "z-settings-layout__links",
+    "z-settings-layout__link",
+    "z-settings-layout__content",
+    "z-settings-layout__savebar",
+    "z-settings-layout__dirty",
+    "z-settings-layout__save-actions"
+  ],
+  "a11y": "nav con nombre y la sección actual con aria-current=page. La barra de guardar es una región con nombre y un status que dice «You have unsaved changes» al aparecer. Las secciones tienen margen de desplazamiento para que el ancla no quede bajo una barra fija.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Con cambios sin guardar",
+      "code": "<SettingsLayout title=\"Settings\" description=\"Manage your account and workspace.\" dirty nav={[{ href: \"#profile\", label: \"Profile\", icon: \"user\", current: true }, { href: \"#notifications\", label: \"Notifications\", icon: \"bell\" }, { href: \"#security\", label: \"Security\", icon: \"lock-closed\" }]} saveBar={<><Button variant=\"ghost\">Discard</Button><Button variant=\"primary\">Save changes</Button></>}>\n  <SettingsSection id=\"profile\" title=\"Profile\"><SettingRow label=\"Public profile\" control={<Switch aria-label=\"Public profile\" defaultChecked />} /></SettingsSection>\n</SettingsLayout>"
+    }
+  ],
+  "origin": "Páginas de ajustes de los bloques de shadcn y de Carbon."
+}

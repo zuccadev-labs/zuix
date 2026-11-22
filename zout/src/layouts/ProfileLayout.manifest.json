@@ -1,0 +1,49 @@
+{
+  "name": "ProfileLayout",
+  "group": "layout",
+  "description": "Página de perfil: cabecera (ProfileHeader), pestañas, contenido y una columna lateral (UserCard, miembros, actividad) que baja bajo el contenido en estrecho.",
+  "import": "import { ProfileLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "header",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "tabs",
+      "type": "ReactNode"
+    },
+    {
+      "name": "aside",
+      "type": "ReactNode"
+    },
+    {
+      "name": "asideLabel",
+      "type": "string",
+      "default": "About"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": ["space-4", "space-5"],
+  "classes": [
+    "z-profile-layout",
+    "z-profile-layout__header",
+    "z-profile-layout__tabs",
+    "z-profile-layout__body",
+    "z-profile-layout__content",
+    "z-profile-layout__aside"
+  ],
+  "a11y": "El h1 es el nombre en ProfileHeader. La columna lateral es un aside con nombre. En estrecho el orden es el del marcado: cabecera, pestañas, contenido y lateral.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Perfil",
+      "code": "<ProfileLayout header={<ProfileHeader user={{ name: \"Ana López\", handle: \"ana\", role: \"Principal designer\" }} />} aside={<Card>Teams</Card>}>\n  <Card>Recent work</Card>\n</ProfileLayout>"
+    }
+  ],
+  "origin": "Páginas de perfil de GitHub y LinkedIn."
+}

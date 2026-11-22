@@ -1,0 +1,54 @@
+{
+  "name": "MailLayout",
+  "group": "layout",
+  "description": "Correo: carpetas, lista de mensajes y lectura. Ancho: tres columnas; medio: lista y lectura con las carpetas arriba; estrecho: una sola vista (`view`), la lista o el mensaje.",
+  "import": "import { MailLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "folders",
+      "type": "ReactNode"
+    },
+    {
+      "name": "foldersLabel",
+      "type": "string",
+      "default": "Folders"
+    },
+    {
+      "name": "list",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "listLabel",
+      "type": "string",
+      "default": "Messages"
+    },
+    {
+      "name": "reader",
+      "type": "ReactNode"
+    },
+    {
+      "name": "readerLabel",
+      "type": "string",
+      "default": "Message"
+    },
+    {
+      "name": "view",
+      "type": "enum",
+      "values": ["list", "reader"],
+      "default": "list",
+      "description": "La vista en estrecho."
+    }
+  ],
+  "tokens": ["panel-radius", "space-3", "space-5", "space-6"],
+  "classes": ["z-mail-layout", "z-mail-layout__grid", "z-mail-layout__folders", "z-mail-layout__list", "z-mail-layout__reader"],
+  "a11y": "Carpetas en un nav con nombre; lista y lectura son regiones con nombre. En estrecho solo se ve una; la aplicación cambia `view` al abrir un mensaje, pone un botón de volver en la lectura y sincroniza el historial para que el gesto atrás vuelva a la lista.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Tres paneles",
+      "code": "<MailLayout folders={<NavList label=\"Folders\" items={[{ id: \"inbox\", label: \"Inbox\", href: \"#\", icon: \"inbox\" }, { id: \"sent\", label: \"Sent\", href: \"#\", icon: \"paper-airplane\" }]} />} list={<p>Messages</p>} reader={<p>Message</p>} />"
+    }
+  ],
+  "origin": "Bloque mail de shadcn."
+}

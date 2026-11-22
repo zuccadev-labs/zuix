@@ -1,0 +1,25 @@
+// Layouts de página sin framework (../pages): AppBar que se pliega al desplazar (`.z-appbar[data-collapse]`, con
+// respaldo donde no hay animaciones ligadas al desplazamiento) e índice de DocsLayout con la sección actual marcada
+// (`.z-docs-layout__toc`). El resto de layouts de página es solo marcado y CSS.
+import { wireAppBar, wireScrollspy } from "../pages";
+
+const wired = new WeakMap<HTMLElement, () => void>();
+const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
+
+function all(root: ParentNode, selector: string): HTMLElement[] {
+  const list = [...root.querySelectorAll<HTMLElement>(selector)];
+  if (root instanceof HTMLElement && root.matches(selector)) list.unshift(root);
+  return list.filter(inDom);
+}
+
+export function hydratePages(root: ParentNode): void {
+  for (const bar of all(root, ".z-appbar")) if (!wired.has(bar)) wired.set(bar, wireAppBar(bar));
+  for (const nav of all(root, ".z-docs-layout__toc")) if (!wired.has(nav)) wired.set(nav, wireScrollspy(nav));
+}
+
+export function disposePages(root: ParentNode): void {
+  for (const el of all(root, ".z-appbar, .z-docs-layout__toc")) {
+    wired.get(el)?.();
+    wired.delete(el);
+  }
+}
