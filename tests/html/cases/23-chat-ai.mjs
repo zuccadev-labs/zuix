@@ -34,6 +34,13 @@ export default async function ({ page, test, ok }) {
         });
         document.querySelector(".page__main").append(box);
         window.__ca = [];
+        // Todo lo que dicen las regiones vivas del anunciador, también lo que otro anuncio pisa después.
+        window.__said = [];
+        window.__saidObserver?.disconnect();
+        window.__saidObserver = new MutationObserver(() => {
+          for (const r of document.querySelectorAll("[data-z-announcer] [aria-live]")) if (r.textContent) window.__said.push(r.textContent);
+        });
+        window.__saidObserver.observe(document.body, { subtree: true, childList: true, characterData: true });
         for (const type of [
           "z:select",
           "z:send",
@@ -71,7 +78,9 @@ export default async function ({ page, test, ok }) {
     ok(false, message);
   };
   const announced = () =>
-    page.evaluate(() => [...document.querySelectorAll("[data-z-announcer] [aria-live]")].map((r) => r.textContent).join(" | "));
+    page.evaluate(() =>
+      [...window.__said, ...[...document.querySelectorAll("[data-z-announcer] [aria-live]")].map((r) => r.textContent)].join(" | "),
+    );
 
   await test("Chat · ConversationList sin React: una parada, flechas, selección con aria-current, filtros como radios y búsqueda sin acentos", async () => {
     const box = await inject(html("ConversationList", 0));
@@ -100,7 +109,7 @@ export default async function ({ page, test, ok }) {
     await box.locator(".z-conversation-list__search input").fill("lopez");
     await until(async () => (await rows.count()) === 1, "búsqueda sin acentos");
     ok((await rows.first().textContent()).includes("Ana López"), "encuentra a Ana López");
-    await until(async () => (await announced()).includes("1 chats"), "anuncia el número de resultados");
+    await until(async () => (await announced()).includes("1 chats"), "anuncia el número de resultados", 160);
   });
 
   await test("Chat · MessageList sin React: lista con nombre, burbujas descritas, días como h3, no leídos, una parada y acciones del mensaje", async () => {
@@ -398,8 +407,18 @@ export default async function ({ page, test, ok }) {
   });
 
   await test("IA · herramientas, aprobación de riesgo alto con confirmación y razonamiento nativo", async () => {
+    // La página de ejemplos hidrata todas las piezas; un anuncio suyo pendiente pisaría este (en la cola educada manda el
+    // último). Se deja que se vacíe antes.
+    await page.waitForTimeout(1500);
     const box = await inject(`${html("ApprovalCard", 0)}${html("ToolCall", 0)}${html("AssistantMessage", 0)}`);
-    await until(async () => (await announced()).includes("Approval needed: Deploy to production"), "se anuncia la petición");
+    await until(
+      async () => {
+        const said = await announced();
+        return said.includes("Approval needed: Deploy to production");
+      },
+      "se anuncia la petición",
+      120,
+    );
     const approve = box.locator(".z-approval__approve");
     await approve.click();
     ok((await approve.textContent()) === "Confirm approval", "riesgo alto: pide confirmar");
