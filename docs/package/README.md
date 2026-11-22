@@ -2,9 +2,9 @@
 
 Cómo se versionan, se construyen y se publican los paquetes de la suite.
 
-La `0.1.0` está en npmjs.com desde el 2026-11-14, bajo el scope `@zuccadev-labs`, con licencia MIT y acceso
-público. La publiqué a mano, con 2FA y sin procedencia. De la siguiente en adelante publica el workflow
-`release` al fusionar en `main` una subida de versión
+Los paquetes están en npmjs.com desde el 2026-11-14, bajo el scope `@zuccadev-labs`, con licencia MIT y
+acceso público. La `0.1.0` la publiqué a mano, con 2FA y sin procedencia. La `0.2.0` y la `0.3.0` las publicó
+el workflow `release` al fusionar en `main` la subida de versión
 ([Publicación automática](./02-publicacion.md#publicación-automática-desde-main)).
 
 ## Documentos

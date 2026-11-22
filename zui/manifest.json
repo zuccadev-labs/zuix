@@ -515,7 +515,7 @@
      "code": "<>\n  <code id=\"invite-link\">https://example.com/i/8d2k</code>\n  <CopyButton target=\"invite-link\" label=\"Copy invite link\" />\n</>"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI.",
+   "origin": "Nuevo. Patrón habitual de botón de copiar accesible (burbuja como región viva, sin deshabilitar el botón, con el caso de VoiceOver en cuenta). Referencia de variantes: Clipboard de Shark UI.",
    "file": "zui/src/components/actions/CopyButton.manifest.json"
   },
   {
@@ -625,7 +625,7 @@
      "code": "<template id=\"release-notes\">zuix 0.3: color picker, carousel autoplay and QR codes.</template>\n<button type=\"button\" class=\"z-btn z-btn--secondary z-download\" data-size=\"md\" data-z-download=\"#release-notes\" data-file-name=\"notes.txt\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Download notes</button>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código.",
+   "origin": "Inspirado en el comportamiento del Download Trigger de shark-ui (MIT), sin su código.",
    "file": "zui/src/components/actions/DownloadTrigger.manifest.json"
   },
   {
@@ -1515,7 +1515,7 @@
      "code": "<div class=\"z-heatmap\" id=\"commits\" data-title=\"Commits\" data-from=\"2026-10-26\" data-to=\"2026-11-22\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"values\": { \"2026-10-27\": 2, \"2026-11-02\": 5, \"2026-11-03\": 1, \"2026-11-10\": 8, \"2026-11-12\": 14, \"2026-11-16\": 3, \"2026-11-17\": 6, \"2026-11-18\": 4, \"2026-11-19\": 2 } }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §12; contribuciones de GitHub.",
+   "origin": "Diseño propio para la agenda; referencia: el gráfico de contribuciones de GitHub.",
    "file": "zui/src/components/agenda/CalendarHeatmap.manifest.json"
   },
   {
@@ -1780,7 +1780,7 @@
      "code": "<div class=\"z-agenda\" id=\"team-agenda\" data-view=\"week\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-week-start=\"1\" data-day-start=\"07:00\" data-day-end=\"21:00\" data-editable>\n  <script type=\"application/json\" data-calendars>[{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }]</script>\n  <script type=\"application/json\" data-events>[{ \"id\": \"a\", \"title\": \"Design review\", \"start\": \"2026-11-19T10:00\", \"end\": \"2026-11-19T11:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\" }]</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md; Google Calendar, Fantastical, FullCalendar y Schedule-X como referencia.",
+   "origin": "Diseño propio para la agenda; referencias: Google Calendar, Fantastical, FullCalendar y Schedule-X.",
    "file": "zui/src/components/agenda/EventCalendar.manifest.json"
   },
   {
@@ -1876,7 +1876,7 @@
      "code": "<div class=\"z-freebusy\" id=\"find-time\" data-date=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-duration=\"60\" data-locale=\"en-GB\" data-now=\"2026-11-19T09:42:00Z\">\n  <script type=\"application/json\" data-props>{ \"attendees\": [{ \"id\": \"m\", \"name\": \"Marta López\", \"timeZone\": \"Europe/Madrid\", \"workingHours\": { \"start\": \"09:00\", \"end\": \"18:00\" }, \"busy\": [{ \"start\": \"2026-11-19T08:00:00Z\", \"end\": \"2026-11-19T09:30:00Z\" }] }, { \"id\": \"d\", \"name\": \"Dana Price\", \"timeZone\": \"America/New_York\", \"workingHours\": { \"start\": \"08:00\", \"end\": \"17:00\" }, \"busy\": [{ \"start\": \"2026-11-19T15:00:00Z\", \"end\": \"2026-11-19T16:00:00Z\" }] }] }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §9; Outlook Scheduling Assistant.",
+   "origin": "Diseño propio para la agenda; referencia: el asistente de programación de Outlook.",
    "file": "zui/src/components/agenda/FreeBusy.manifest.json"
   },
   {
@@ -1970,7 +1970,7 @@
      "code": "<div class=\"z-habit\" id=\"reading-habit\" data-subtitle=\"Read 20 minutes\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"states\": { \"2026-11-12\": \"done\", \"2026-11-13\": \"done\", \"2026-11-14\": \"missed\", \"2026-11-15\": \"rest\", \"2026-11-16\": \"done\", \"2026-11-17\": \"done\", \"2026-11-18\": \"done\", \"2026-11-19\": { \"progress\": 60 } } }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §13; Duolingo, Streaks.",
+   "origin": "Diseño propio para la agenda; referencias: Duolingo y Streaks.",
    "file": "zui/src/components/agenda/HabitCalendar.manifest.json"
   },
   {
@@ -2045,7 +2045,7 @@
      "code": "<div class=\"z-perpetual\" id=\"perpetual-2026\" data-highlight=\"2026-11-19\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\"></div>"
     }
    ],
-   "origin": "Especificación agenda.md §7; lámina de calendario perpetuo de una página.",
+   "origin": "Diseño propio para la agenda; referencia: la lámina de calendario perpetuo de una página.",
    "file": "zui/src/components/agenda/PerpetualYear.manifest.json"
   },
   {
@@ -2184,7 +2184,7 @@
      "code": "<div class=\"z-slotpicker\" id=\"intro-call\" data-host-time-zone=\"Europe/Madrid\" data-duration=\"30\" data-from=\"2026-11-19\" data-to=\"2026-11-30\" data-time-zone=\"Europe/Madrid\" data-time-zones=\"Europe/Madrid,America/New_York\" data-today=\"2026-11-19\" data-now=\"2026-11-19T09:42:00Z\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"availability\": [{ \"days\": [1, 2, 3, 4, 5], \"start\": \"09:00\", \"end\": \"17:00\" }] }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §10; Calendly, Cal.com.",
+   "origin": "Diseño propio para la agenda; referencias: Calendly y Cal.com.",
    "file": "zui/src/components/agenda/SlotPicker.manifest.json"
   },
   {
@@ -2388,7 +2388,7 @@
      "code": "<div class=\"z-timeline\" id=\"plan-rooms\" data-mode=\"resources\" data-title=\"Rooms\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-editable>\n  <script type=\"application/json\" data-props>{ \"resources\": [{ \"id\": \"atlas\", \"title\": \"Atlas\", \"meta\": \"8 seats\" }, { \"id\": \"kepler\", \"title\": \"Kepler\", \"meta\": \"4 seats\" }], \"calendars\": [{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }], \"events\": [{ \"id\": \"a\", \"title\": \"Sprint planning\", \"start\": \"2026-11-19T09:00\", \"end\": \"2026-11-19T10:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"atlas\"] }, { \"id\": \"b\", \"title\": \"Interview\", \"start\": \"2026-11-19T10:30\", \"end\": \"2026-11-19T11:30\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }, { \"id\": \"c\", \"title\": \"Supplier call\", \"start\": \"2026-11-19T11:00\", \"end\": \"2026-11-19T12:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\", \"resourceIds\": [\"kepler\"] }] }</script>\n</div>"
     }
    ],
-   "origin": "Especificación agenda.md §8–9; Asana, ClickUp, FullCalendar Scheduler.",
+   "origin": "Diseño propio para la agenda; referencias: Asana, ClickUp y FullCalendar Scheduler.",
    "file": "zui/src/components/agenda/TimelineView.manifest.json"
   },
   {
@@ -2721,7 +2721,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Gráfico de áreas: como LineChart con relleno lavado (≈16 %) y base en cero; `stacked` apila las series (positivos hacia arriba, negativos hacia abajo) y el tooltip suma el total.",
    "import": "import { AreaChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -2971,7 +2971,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Gráfico de barras verticales u horizontales, agrupadas o apiladas, con valores negativos: grosor máximo, extremo del dato redondeado y base recta, hueco de 2 px entre las que se tocan, banda resaltada y tooltip por categoría, tramas por serie (`patterns`).",
    "import": "import { BarChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -3223,7 +3223,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Anillo: parte de un todo con el total en el centro (o el sector activo al pasar o enfocar), leyenda con porcentajes que oculta sectores, hueco entre sectores y trama opcional.",
    "import": "import { DonutChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -3416,7 +3416,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Gráfico de líneas: una o varias series sobre un eje de categorías, tiempo (marcas de día, semana, mes o año y rótulos de Intl) o número; curva lineal, monótona o escalonada, huecos donde falta el dato, marcadores con forma por serie, cruceta y tooltip al pasar o enfocar, flechas entre puntos, leyenda que oculta series y tabla alternativa.",
    "import": "import { LineChart } from \"@zuccadev-labs/zuix-zui\"",
    "exports": [
@@ -3665,7 +3665,7 @@
     "z-chart"
    ],
    "behavior": "dom",
-   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
    "description": "Tarta: como DonutChart sin hueco central; los sectores se separan con un trazo de superficie y el tooltip sale junto al sector.",
    "import": "import { PieChart } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
@@ -5955,7 +5955,7 @@
      "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
     }
    ],
-   "origin": "Circular Progress de Shark y NeonBlade; guía progress-ring de modern-web-guidance (progress nativo, conic-gradient y máscara).",
+   "origin": "Circular Progress de Shark y NeonBlade; anillo hecho con `<progress>` nativo, conic-gradient y máscara.",
    "behavior": "none",
    "file": "zui/src/components/data/CircularProgress.manifest.json"
   },
@@ -7834,7 +7834,7 @@
      "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>"
     }
    ],
-   "origin": "Oleada 7. Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas.",
+   "origin": "Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas.",
    "file": "zui/src/components/effects/Confetti.manifest.json"
   },
   {
@@ -9439,7 +9439,7 @@
      "script": "import { setCalendarOptions } from \"@zuccadev-labs/zuix-zui/dom\";\nsetCalendarOptions(document.querySelector(\"#price-calendar\"), {\n  dayContent: (date) => (date.endsWith(\"0\") ? \"$89\" : null),\n  dayDescription: (date) => (date.endsWith(\"0\") ? \"from $89\" : null),\n});"
     }
    ],
-   "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG.",
+   "origin": "Calendario propio del DatePicker; rejilla de fechas de ARIA APG.",
    "exports": [
     "presetValue"
    ],
@@ -9701,7 +9701,7 @@
      "code": "<CheckboxGroup\n  label=\"Terms\"\n  error=\"Accept both to continue.\"\n  options={[\n    { value: \"terms\", label: \"I accept the terms of service\" },\n    { value: \"privacy\", label: \"I accept the privacy policy\" },\n  ]}\n/>"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «forms» (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
+   "origin": "Nuevo. Patrón habitual de formularios accesibles (fieldset y legend; casillas para elegir varias). Referencia de variantes: Checkbox Group y Checkbox Card de Shark UI.",
    "file": "zui/src/components/forms/CheckboxGroup.manifest.json"
   },
   {
@@ -9854,7 +9854,7 @@
      "code": "<CircularSlider locale=\"en-US\" label=\"Target temperature\" defaultValue={21.5} min={10} max={30} step={0.5} arc={240} caption=\"°C\" name=\"temperature\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código.",
+   "origin": "Inspirado en el comportamiento del Circular Slider de shark-ui (MIT), sin su código.",
    "file": "zui/src/components/forms/CircularSlider.manifest.json"
   },
   {
@@ -9988,7 +9988,7 @@
      "code": "<ColorArea defaultValue=\"#f59e0b\" label=\"Highlight color\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorArea.manifest.json"
   },
   {
@@ -10139,7 +10139,7 @@
      "code": "<ColorField defaultValue=\"rgb(236 72 153 / 0.8)\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorField.manifest.json"
   },
   {
@@ -10319,7 +10319,7 @@
      "code": "<ColorPicker defaultValue=\"rgb(16 185 129)\" alpha={false} formats={[\"hex\", \"rgb\"]} eyeDropper={false} />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "apg": "slider",
    "file": "zui/src/components/forms/ColorPicker.manifest.json"
   },
@@ -10493,7 +10493,7 @@
      "code": "<ColorPickerTrigger id=\"tag-color\" defaultValue=\"hsl(160 84% 39%)\" size=\"sm\" label=\"Tag color\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorPickerTrigger.manifest.json"
   },
   {
@@ -10653,7 +10653,7 @@
      "code": "<ColorSlider channel=\"hue\" orientation=\"vertical\" defaultValue=\"#ec4899\" />"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "file": "zui/src/components/forms/ColorSlider.manifest.json"
   },
   {
@@ -10796,7 +10796,7 @@
      "code": "<ColorSwatchPicker\n  defaultValue=\"#10b981\"\n  swatches={[\n    { value: \"#ef4444\", label: \"Red\" },\n    { value: \"#f59e0b\", label: \"Amber\" },\n    { value: \"#10b981\", label: \"Emerald\" },\n    { value: \"#3b82f6\", label: \"Blue\" },\n    { value: \"#8b5cf6\", label: \"Violet\" },\n    { value: \"#ec4899\", label: \"Pink\" },\n  ]}\n/>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+   "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
    "apg": "radio",
    "file": "zui/src/components/forms/ColorSwatchPicker.manifest.json"
   },
@@ -11053,7 +11053,7 @@
      "code": "<span class=\"z-input z-combobox\" id=\"city\" data-size=\"md\" data-state=\"closed\" data-custom>\n  <span class=\"z-input__icon\"><z-icon name=\"map-pin\" size=\"16\"></z-icon></span>\n  <input class=\"z-input__control\" type=\"text\" role=\"combobox\" aria-label=\"City\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"city-list\" autocomplete=\"off\" autocapitalize=\"none\" spellcheck=\"false\" placeholder=\"Search a city\" />\n  <input type=\"hidden\" name=\"city\" value=\"\" />\n  <button type=\"button\" class=\"z-input__action z-combobox__toggle\" aria-label=\"Show options\" aria-expanded=\"false\" aria-controls=\"city-list\" tabindex=\"-1\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\" role=\"presentation\">\n  <div class=\"z-listbox__viewport\" id=\"city-list\" role=\"listbox\" aria-label=\"City\">\n    <div class=\"z-listbox__option\" id=\"city-lisbon\" role=\"option\" data-value=\"lisbon\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Lisbon</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-madrid\" role=\"option\" data-value=\"madrid\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Madrid</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" id=\"city-montreal\" role=\"option\" data-value=\"montreal\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Montreal</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
    ],
-   "origin": "Combobox del catálogo objetivo; patrón combobox de ARIA APG sobre el aspecto de Input.",
+   "origin": "Combobox propio; patrón combobox de ARIA APG sobre el aspecto de Input.",
    "file": "zui/src/components/forms/Combobox.manifest.json"
   },
   {
@@ -11809,7 +11809,7 @@
      "code": "<span class=\"z-select z-datepicker\" id=\"shifts\" data-size=\"md\" data-block data-mode=\"multiple\" data-locale=\"en-US\" data-count-label=\"{count} shifts\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shifts-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Shifts</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-days\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"shifts\" value=\"\" />\n</span>\n\n<div id=\"shifts-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
     }
    ],
-   "origin": "DatePicker del catálogo objetivo; reutiliza la envoltura de Select y el panel de Popover.",
+   "origin": "DatePicker propio; reutiliza la envoltura de Select y el panel de Popover.",
    "file": "zui/src/components/forms/DatePicker.manifest.json"
   },
   {
@@ -12541,7 +12541,7 @@
      "code": "<Fieldset legend=\"Advanced\" disabled>\n  <Switch defaultChecked>Telemetry</Switch>\n  <Checkbox>Beta channel</Checkbox>\n</Fieldset>"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «forms» (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI.",
+   "origin": "Nuevo. Patrón habitual de formularios accesibles (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI.",
    "file": "zui/src/components/forms/Fieldset.manifest.json"
   },
   {
@@ -12774,7 +12774,7 @@
      "code": "<Form aria-label=\"Create account\" method=\"post\">\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Password\" required hint=\"Eight or more characters.\" validate={{ tooShort: \"Use at least 8 characters.\" }}>\n    <PasswordInput name=\"password\" autoComplete=\"new-password\" minLength={8} />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Create account</Button>\n</Form>"
     }
    ],
-   "origin": "Nuevo. Guías «forms» y «accessible-error-announcement» (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState).",
+   "origin": "Nuevo. Pautas habituales de formularios accesibles y de anuncio de errores (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState).",
    "file": "zui/src/components/forms/Form.manifest.json"
   },
   {
@@ -13855,7 +13855,7 @@
      "code": "<PasswordInput aria-label=\"Access token\" size=\"sm\" defaultVisible defaultValue=\"zx-demo-token\" autoComplete=\"off\" />"
     }
    ],
-   "origin": "Nuevo. Patrón de la guía «forms» (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
+   "origin": "Nuevo. Patrón habitual de formularios accesibles (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
    "file": "zui/src/components/forms/PasswordInput.manifest.json"
   },
   {
@@ -14372,7 +14372,7 @@
      "code": "<span class=\"z-select\" id=\"reviewers\" data-size=\"md\" data-block=\"true\" data-multiple data-max-selected=\"2\" data-value=\"ana\" data-placeholder=\"Choose reviewers\">\n  <button type=\"button\" role=\"combobox\" class=\"z-select__control\" aria-label=\"Reviewers\" aria-haspopup=\"listbox\" aria-expanded=\"false\" aria-controls=\"reviewers-list\" data-state=\"closed\">\n    <span class=\"z-select__value\">Ana Ruiz</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"chevron-up-down\" size=\"16\"></z-icon></span>\n  <select class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"reviewers\" multiple>\n    <option value=\"ana\" selected>Ana Ruiz</option>\n    <option value=\"leo\">Leo Park</option>\n    <option value=\"mia\">Mia Chen</option>\n    <option value=\"noor\">Noor Rahman</option>\n  </select>\n</span>\n\n<div popover=\"manual\" class=\"z-liquid z-listbox\" data-size=\"md\">\n  <div class=\"z-listbox__viewport\" id=\"reviewers-list\" role=\"listbox\" aria-label=\"Reviewers\" aria-multiselectable=\"true\">\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"ana\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Ana Ruiz</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"leo\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Leo Park</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"mia\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Mia Chen</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n    <div class=\"z-listbox__option\" role=\"option\" data-value=\"noor\" aria-selected=\"false\" data-state=\"unchecked\">\n      <span class=\"z-listbox__text\">Noor Rahman</span>\n      <span class=\"z-listbox__check\"><z-icon name=\"check\" size=\"16\"></z-icon></span>\n    </div>\n  </div>\n</div>"
     }
    ],
-   "origin": "Select no nativo del catálogo objetivo; comparte envoltura con NativeSelect y el aspecto del popup con Menu.",
+   "origin": "Select no nativo propio; comparte envoltura con NativeSelect y el aspecto del popup con Menu.",
    "file": "zui/src/components/forms/Select.manifest.json"
   },
   {
@@ -14483,7 +14483,7 @@
      "code": "<ShortcutInput defaultValue=\"F5\" requireModifier={false} size=\"sm\" name=\"refresh\" />"
     }
    ],
-   "origin": "Oleada 7. Captura de combinación de teclas (ShortcutsEditor de zutool); normalización propia (core/shortcut).",
+   "origin": "Captura de combinación de teclas (ShortcutsEditor de zutool); normalización propia (core/shortcut).",
    "file": "zui/src/components/forms/ShortcutInput.manifest.json"
   },
   {
@@ -16063,7 +16063,7 @@
      "code": "<div class=\"z-compare\" data-orientation=\"vertical\" data-labels=\"false\" data-value=\"35\" style=\"block-size:220px\">\n  <div class=\"z-backdrop z-solid\" data-pattern=\"dots\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n  <div class=\"z-backdrop z-solid\" data-pattern=\"hex\" data-intensity=\"strong\" data-fade=\"none\" aria-hidden=\"true\" style=\"block-size:100%\"><div class=\"z-backdrop__layer\"></div></div>\n</div>"
     }
    ],
-   "origin": "Oleada 7. Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio.",
+   "origin": "Comparador antes/después genérico (en la referencia era un vídeo de remocn); diseño propio.",
    "file": "zui/src/components/media/CompareSlider.manifest.json"
   },
   {
@@ -16206,7 +16206,7 @@
      "code": "<div class=\"z-cropper\" data-aspect=\"1\" data-shape=\"circle\" style=\"max-inline-size:320px\">\n  <img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 400'%3E%3Cdefs%3E%3ClinearGradient id='s' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23s)'/%3E%3Ccircle cx='470' cy='140' r='60' fill='%23fff3c4'/%3E%3Cpath d='M0 300 L160 190 L300 290 L420 210 L640 330 V400 H0Z' fill='%232d2a4a'/%3E%3C/svg%3E\" alt=\"Hills at sunset\" />\n</div>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Image Cropper de shark-ui (MIT), sin su código.",
+   "origin": "Inspirado en el comportamiento del Image Cropper de shark-ui (MIT), sin su código.",
    "file": "zui/src/components/media/ImageCropper.manifest.json"
   },
   {
@@ -16296,7 +16296,7 @@
      "code": "<QRCode value=\"WIFI:T:WPA;S:Studio;P:correct-horse;;\" level=\"L\" size={120} margin={2} label=\"Wi-Fi network Studio\" />"
     }
    ],
-   "origin": "Oleada 7. Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia.",
+   "origin": "Codificador propio (core/qr), probado contra los vectores de la norma; sin dependencia.",
    "file": "zui/src/components/media/QRCode.manifest.json"
   },
   {
@@ -16406,7 +16406,7 @@
      "code": "<SignaturePad ref={pad} />\n<Button onClick={async () => save(await signatureBlob(pad.current))}>Save</Button>"
     }
    ],
-   "origin": "Oleada 7. Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature).",
+   "origin": "Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature).",
    "file": "zui/src/components/media/SignaturePad.manifest.json"
   },
   {
@@ -18428,7 +18428,7 @@
    "classes": [
     "z-hovercard"
    ],
-   "a11y": "Patrón «hovercard» de modern-web-guidance (la pista rica de interestfor): la tarjeta es role=tooltip, el rol mínimo de una pista con enlaces, y describe al enlace con aria-describedby desde que se monta, abierta o no (un lector en modo exploración la necesita antes de interactuar; cerrada es un popover oculto). Si el enlace ya trae aria-describedby, manda el suyo. El enlace no lleva aria-expanded porque Intro lo sigue, y abrir la tarjeta no mueve el foco (WCAG 3.2.1). Se abre con el puntero tras `openDelay` o al enfocar el enlace con el teclado, y sigue abierta mientras el puntero o el foco estén en el enlace o en la tarjeta (WCAG 1.4.13). Escape la cierra sin mover el puntero y una pulsación fuera también. Montada en la capa superior, el orden de Tab sigue al visual: Tab desde el enlace entra en la tarjeta, Mayús+Tab desde su primer control vuelve al enlace y Tab desde el último sale hacia lo que sigue al enlace. Con el dedo no se abre (el toque sigue el enlace): su contenido debe ser prescindible. Para una ayuda que se pide, Toggletip; para una etiqueta corta, Tooltip.",
+   "a11y": "Sigue el patrón de pista rica de la propuesta `interestfor`: la tarjeta es role=tooltip, el rol mínimo de una pista con enlaces, y describe al enlace con aria-describedby desde que se monta, abierta o no (un lector en modo exploración la necesita antes de interactuar; cerrada es un popover oculto). Si el enlace ya trae aria-describedby, manda el suyo. El enlace no lleva aria-expanded porque Intro lo sigue, y abrir la tarjeta no mueve el foco (WCAG 3.2.1). Se abre con el puntero tras `openDelay` o al enfocar el enlace con el teclado, y sigue abierta mientras el puntero o el foco estén en el enlace o en la tarjeta (WCAG 1.4.13). Escape la cierra sin mover el puntero y una pulsación fuera también. Montada en la capa superior, el orden de Tab sigue al visual: Tab desde el enlace entra en la tarjeta, Mayús+Tab desde su primer control vuelve al enlace y Tab desde el último sale hacia lo que sigue al enlace. Con el dedo no se abre (el toque sigue el enlace): su contenido debe ser prescindible. Para una ayuda que se pide, Toggletip; para una etiqueta corta, Tooltip.",
    "examples": [
     {
      "title": "Perfil de una persona",
