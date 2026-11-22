@@ -119,7 +119,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     `slidesPerPage="auto"`, `autoHeight`, `depth` y `peek`. En `/dom`, los mismos como `data-*`.
 - `Stories` (historias por persona con barras de progreso, toque para avanzar o retroceder, pulsación larga para
   pausar; empieza en pausa con movimiento reducido), `Lightbox` (visor a pantalla completa sobre `<dialog>` con zoom y
-  encuadre, `core/zoom`) y `Gallery` (carrusel con miniaturas sincronizadas y botón de pantalla completa). En `/dom`:
+  encuadre, `core/zoom`; al abrir, el foco empieza en «Acercar», o en «Cerrar» sin zoom, también en Safari) y `Gallery` (carrusel con miniaturas sincronizadas y botón de pantalla completa). En `/dom`:
   `[data-z-stories]`, `dialog[data-z-lightbox]` con `openLightbox(dialog, índice)` y `[data-z-gallery]`.
 - `Skeleton` por patrón: `pattern` (`card`, `list`, `table`, `profile`, `chat`, `chart`, `article`, `calendar`, también
   como `Skeleton.Card`, `Skeleton.List`…), `loading` para envolver el contenido real y `SkeletonGroup` (contenedor con

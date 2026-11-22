@@ -134,6 +134,11 @@ export default function ({ t, assert, poll }) {
         await page.click(`${root} .z-gallery__expand`);
         await poll(() => page.locator("dialog.z-lightbox").evaluate((d) => d.open && d.matches(":modal")), "visor modal");
         await poll(async () => (await page.locator(".z-lightbox__counter").textContent()) === "3 / 6", "imagen actual");
+        // Las teclas solo llegan al visor si el foco está dentro (Safari lo sacaba al documento al abrir).
+        await poll(
+          () => page.evaluate(() => document.querySelector("dialog.z-lightbox")?.contains(document.activeElement)),
+          "foco dentro del visor",
+        );
         await page.keyboard.press("ArrowRight");
         await poll(async () => (await page.locator(".z-lightbox__counter").textContent()) === "4 / 6", "flecha");
         await page.keyboard.press("+");

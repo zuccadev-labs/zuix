@@ -93,6 +93,13 @@ export function Lightbox({
       ref={dialog}
       open={open}
       onDismiss={() => onOpenChange(false)}
+      // El primer botón al abrir sería «Alejar», que el visor desactiva en cuanto se conecta (sin zoom no hay nada que
+      // alejar). Safari saca entonces el foco al documento y las flechas, + y Escape dejan de llegar al visor: el foco
+      // empieza en «Acercar» (o en «Cerrar» sin zoom), como en el modo sin framework.
+      initialFocus={(d) =>
+        d.querySelector<HTMLElement>('[data-lightbox-action="zoom-in"]') ??
+        d.querySelector<HTMLElement>(".z-lightbox__bar > button:not([data-lightbox-action])")
+      }
       className={cx("z-lightbox", className)}
       aria-label={text.dialog}
       data-zoom={zoom ? undefined : "off"}
