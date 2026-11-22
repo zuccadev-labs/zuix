@@ -33,6 +33,8 @@ export const GROUPS = {
   terminal: { label: "Terminal y código", icon: "command-line" },
   chat: { label: "Chat y mensajería", icon: "chat-bubble-left-right" },
   ai: { label: "IA y agentes", icon: "sparkles" },
+  dashboard: { label: "Dashboard y tableros", icon: "presentation-chart-line" },
+  people: { label: "Usuarios y perfiles", icon: "user-group" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

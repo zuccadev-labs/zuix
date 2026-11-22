@@ -1,0 +1,108 @@
+{
+  "name": "KanbanBoard",
+  "group": "dashboard",
+  "description": "Tablero kanban: columnas con contador (y límite de trabajo en curso) y tarjetas con etiquetas, prioridad, fecha y personas, que se arrastran entre columnas con el puntero o se mueven con el teclado.",
+  "import": "import { KanbanBoard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "columns",
+      "type": "{ id, title, cards: KanbanCard[], limit?, tone? }[]",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "addable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onMove",
+      "type": "(move: { cardId, fromColumn, toColumn, index, columns }) => void",
+      "description": "Tras soltar en otro sitio: guarda `columns`."
+    },
+    {
+      "name": "onOpen",
+      "type": "(detail: { cardId }) => void",
+      "description": "Intro sobre una tarjeta."
+    },
+    {
+      "name": "onAdd",
+      "type": "(detail: { columnId }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<KanbanLabels>",
+      "description": "moved, grabbed, cancelled, instructions, count, countLimit, overLimit, add, empty, prioridades, due, assigned."
+    }
+  ],
+  "states": ["rest", "focus", "grabbed", "dragging", "over-limit"],
+  "tokens": [
+    "surface",
+    "line",
+    "line-strong",
+    "panel-radius",
+    "card-radius",
+    "card-border",
+    "reading-bg",
+    "shadow-sm",
+    "shadow-lg",
+    "accent",
+    "accent-soft",
+    "danger-soft",
+    "danger-text",
+    "warning-text",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "weight-semibold",
+    "focus-width",
+    "focus-offset",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-kanban",
+    "z-kanban__board",
+    "z-kanban__column",
+    "z-kanban__column-head",
+    "z-kanban__column-title",
+    "z-kanban__count",
+    "z-kanban__add",
+    "z-kanban__cards",
+    "z-kanban__card",
+    "z-kanban__labels",
+    "z-kanban__label",
+    "z-kanban__title",
+    "z-kanban__description",
+    "z-kanban__foot",
+    "z-kanban__meta",
+    "z-kanban__priority",
+    "z-kanban__due",
+    "z-kanban__people",
+    "z-kanban__placeholder",
+    "z-kanban__empty"
+  ],
+  "a11y": "region con nombre; cada columna es una section con su encabezado y una lista ordenada. Una sola parada de tabulación para todo el tablero: las flechas van de tarjeta en tarjeta (se saltan columnas vacías). Espacio coge la tarjeta; arriba y abajo la mueven en su columna, izquierda y derecha a la columna vecina; Intro o Espacio la sueltan, Escape la devuelve y salir de ella la suelta. Intro sin coger abre la tarjeta. Cada paso se anuncia en la región viva central con la columna y la posición. La prioridad lleva icono y texto; las personas, su nombre para el lector. Con el puntero, umbral de 4 px, captura y un hueco discontinuo en el destino. Sin React: .z-kanban con data-label, data-addable y las columnas en <script type=\"application/json\" data-props>; emite z:move, z:open y z:add.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Tres columnas",
+      "code": "<KanbanBoard label=\"Sprint 14\" addable columns={[{ id: \"todo\", title: \"To do\", cards: [{ id: \"c1\", title: \"Audit color contrast\", labels: [{ text: \"Design\", tone: \"info\" }], priority: \"high\", due: \"Nov 28\" }, { id: \"c2\", title: \"Write release notes\" }] }, { id: \"doing\", title: \"In progress\", limit: 3, tone: \"accent\", cards: [{ id: \"c3\", title: \"Dashboard grid keyboard\", assignees: [{ name: \"Ana López\" }], priority: \"urgent\" }] }, { id: \"done\", title: \"Done\", tone: \"success\", cards: [] }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Tres columnas",
+      "code": "<div class=\"z-kanban\" data-label=\"Sprint 14\" data-addable>\n  <script type=\"application/json\" data-props>{\"columns\":[{\"id\":\"todo\",\"title\":\"To do\",\"cards\":[{\"id\":\"c1\",\"title\":\"Audit color contrast\",\"priority\":\"high\",\"due\":\"Nov 28\"},{\"id\":\"c2\",\"title\":\"Write release notes\"}]},{\"id\":\"doing\",\"title\":\"In progress\",\"limit\":3,\"tone\":\"accent\",\"cards\":[{\"id\":\"c3\",\"title\":\"Dashboard grid keyboard\",\"assignees\":[{\"name\":\"Ana López\"}]}]},{\"id\":\"done\",\"title\":\"Done\",\"tone\":\"success\",\"cards\":[]}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Tableros de Ant Design Pro y de los bloques de shadcn; agarre con teclado como en el patrón de arrastre accesible de Atlassian."
+}

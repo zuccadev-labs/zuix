@@ -93,6 +93,14 @@
       "types": "./zui-dom-ai.d.ts",
       "default": "./zui-dom-ai.js"
     },
+    "./zui/dom/dashboard": {
+      "types": "./zui-dom-dashboard.d.ts",
+      "default": "./zui-dom-dashboard.js"
+    },
+    "./zui/dom/people": {
+      "types": "./zui-dom-people.d.ts",
+      "default": "./zui-dom-people.js"
+    },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"

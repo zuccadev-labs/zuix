@@ -41,7 +41,37 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     `BranchPicker`, `AgentStatus` y `UsageMeter`.
   - `core/`: `agent-state` (transiciones y qué se anuncia), `branches` (árbol de la conversación y rama activa),
     `usage` y `stream-text`.
-
+- Dashboard y tableros (grupo `dashboard`, entrada `/dom/dashboard`):
+  - `MetricCard`: etiqueta, valor, variación frente al periodo anterior con su sentido (`positive="down"` para lo
+    que es bueno que baje), minigráfico, meta con ritmo, nota y acciones; estados `loading` (huesos con
+    `aria-busy`), `empty` y `error`; enlace que cubre la tarjeta. `MetricGroup` reúne varias en una fila de KPI.
+  - `DeltaBadge`: flecha, magnitud y una frase para el lector («up 12.4%, better than last month»).
+  - `Gauge`: semicírculo, 240° o anillo con zonas (cada una con nombre y trazo propio) y aguja opcional; es un
+    `role="meter"` con la zona en `aria-valuetext`.
+  - `ProgressGoal`: avance hacia una meta con la marca del ritmo esperado (delante, en ritmo, detrás, conseguido).
+  - `BarList`, `FunnelChart` (conversión frente a la etapa anterior y la total) y `Leaderboard` (rangos con empates).
+  - `Tracker`: tira de estados por día con la disponibilidad calculada, una sola parada de tabulación y la etiqueta
+    del día activo.
+  - `ActivityFeed`: actividad agrupada por día en la zona de la persona, hora relativa con la absoluta en `<time>`.
+  - `DashboardGrid` y `DashboardGridItem`: rejilla de 12 columnas que se mueve y se redimensiona con el puntero y
+    con el teclado (Espacio coge, flechas mueven, Mayús + flechas redimensionan, Intro suelta, Escape cancela), con
+    anuncios en la región central, el orden del DOM igual al de lectura y `onLayoutChange` para guardar la
+    disposición. En un contenedor estrecho se apila. Sin `/dom`: `z:layoutchange`, `getDashboardLayout` y
+    `setDashboardLayout`.
+  - `KanbanBoard`: columnas con contador y límite de trabajo en curso, tarjetas que se arrastran con el puntero o
+    se mueven con el teclado, `onMove`, `onOpen` y `onAdd` (en `/dom`, `z:move`, `z:open` y `z:add`).
+  - Lógica en `core/`: `metric`, `gauge`, `funnel`, `tracker`, `grid-layout` (colocación, colisiones, compactación
+    y serialización), `kanban`, `activity` e `initials`. Se exportan `computeDelta`, `computePace`,
+    `normalizeLayout`, `moveGridItem`, `resizeGridItem`, `serializeLayout`, `parseLayout`, `moveCard` y más.
+- Usuarios y perfiles (grupo `people`, entrada `/dom/people`): `Persona`, `PresenceBadge` (seis estados, cada uno
+  con su forma y su texto, y «visto hace…»), `UserCard`, `ProfileHeader`, `MemberList` (búsqueda que anuncia los
+  resultados, grupos por rol o presencia, rol en un selector nativo, quitar e invitar), `AccountMenu` (cuentas, tema
+  y salir sobre `Menu`), `ProfileEditor` (validación al salir de cada campo y al guardar, contador de la biografía,
+  foto; en `/dom`, `z:submit`) y `SettingsSection` con `SettingRow` (etiqueta unida al control y estado de guardado).
+  Lógica en `core/user-presence`, `core/members` y `core/profile`.
+- `Fab` (tres tamaños, extendido y plegable, fijo en una esquina), `FabMenu` y `SplitButton`, de Material 3.
+- `ImageList` (`standard`, `quilted`, `woven`, `masonry`) y `Masonry` (carriles nativos donde existen, columnas CSS
+  donde no).
 - `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
   corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
   nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y
@@ -65,6 +95,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   `/dom`, un `.z-skeleton-pattern[data-pattern]` vacío se expande solo.
 
 ### Cambiado
+
+- `Avatar`: estados `dnd` y `oof`, una forma dentro del punto de estado desde el tamaño `md` y, sin `statusLabel`,
+  el texto del estado («Available», «Do not disturb») como nombre accesible. Las iniciales ya no parten caracteres
+  compuestos.
+- `AvatarGroup`: con `items` es una lista y, con `overflow="list"`, el «+N» abre la lista de sobrantes; además
+  `reverse` y `spacing`.
 
 - El bucle del `Carousel` en desplazamiento nativo ya no salta del final al principio: aparca el primer o el último
   slide con CSS `order` junto al actual y compensa el salto (guía `carousel`), sin clonar nada. La tira con lente

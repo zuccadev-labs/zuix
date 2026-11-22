@@ -1,0 +1,71 @@
+{
+  "name": "ProfileEditor",
+  "group": "people",
+  "description": "Editor de perfil: foto (elegir y quitar), nombre, usuario, correo, web, ubicación y biografía con contador. Valida al salir de cada campo y al guardar, nunca mientras se escribe por primera vez.",
+  "import": "import { ProfileEditor } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "defaultValues",
+      "type": "Partial<ProfileValues> & { avatar?: string }"
+    },
+    {
+      "name": "onSubmit",
+      "type": "(values: ProfileValues & { avatar?: File | null }) => void | Promise<void>"
+    },
+    {
+      "name": "onCancel",
+      "type": "() => void"
+    },
+    {
+      "name": "isHandleTaken",
+      "type": "(handle: string) => boolean"
+    },
+    {
+      "name": "bioMax",
+      "type": "number",
+      "default": 160
+    },
+    {
+      "name": "children",
+      "type": "ReactNode"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ProfileLabels>",
+      "description": "Mensajes de error y contador."
+    },
+    {
+      "name": "text",
+      "type": "Partial<ProfileEditorText>",
+      "description": "Etiquetas de los campos y botones."
+    }
+  ],
+  "states": ["rest", "invalid", "saving", "saved"],
+  "tokens": ["fg", "fg-muted", "line", "danger-text", "text-heading", "text-small", "weight-semibold", "weight-medium"],
+  "classes": [
+    "z-profile-editor",
+    "z-profile-editor__title",
+    "z-profile-editor__photo",
+    "z-profile-editor__photo-actions",
+    "z-profile-editor__photo-label",
+    "z-profile-editor__photo-buttons",
+    "z-profile-editor__file",
+    "z-profile-editor__grid",
+    "z-profile-editor__field",
+    "z-profile-editor__at",
+    "z-profile-editor__hint",
+    "z-profile-editor__error",
+    "z-profile-editor__counter",
+    "z-profile-editor__actions",
+    "z-profile-editor__status"
+  ],
+  "a11y": "Formulario con nombre; cada campo con <label for>, autocompletado correcto (name, username, email, url, address-level2) y la pista encima del error. El error se muestra tras salir del campo o al guardar, empieza por un icono con el texto «Error» y dice cómo corregirlo; se une al campo con aria-describedby solo mientras existe y aria-invalid lo acompaña. Al guardar con errores, el foco va al primero y la región status dice cuántos hay. Sin React: el mismo marcado en un [data-z-dom] (form.z-profile-editor); emite z:submit { values } y z:photochange { file }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Perfil",
+      "code": "<ProfileEditor defaultValues={{ name: \"Ana López\", handle: \"ana\", email: \"ana@example.com\", website: \"https://ana.design\", location: \"Madrid\", bio: \"I design systems that ship.\" }} />"
+    }
+  ],
+  "origin": "ProForm de Ant Design Pro y los formularios de cuenta de los bloques de shadcn; validación tras la interacción con :user-invalid como referencia."
+}

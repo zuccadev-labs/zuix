@@ -1,6 +1,6 @@
 # @zuccadev-labs/zuix-zui
 
-The component system of the zuix suite: 144 accessible components in 12 groups. Each component is an HTML and
+The component system of the zuix suite: 183 accessible components in 16 groups. Each component is an HTML and
 CSS contract on top of tokens; the framework-free behavior lives in `@zuccadev-labs/zuix-zui/dom` and the
 React binding in the main entry.
 
@@ -54,7 +54,7 @@ init(datesModule); // later: use(agendaModule) from "@zuccadev-labs/zuix-zui/dom
 ```
 
 Families: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`, `time`, `terminal`, `chat`,
-`ai`. Which one covers what, and the sizes, in the [frameworks guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md).
+`ai`, `dashboard`, `people`. Which one covers what, and the sizes, in the [frameworks guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md).
 
 ```html
 <body class="z-root z-canvas" data-z-dom>
@@ -118,7 +118,7 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
 | `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior, everything: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
 | `@zuccadev-labs/zuix-zui/dom/core` | Framework-free core (`init`, `use`, dialogs, popovers, menus, `toast`, basic forms), extended per family |
-| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai` | One behavior family each, registered with `init(module)` or `use(module)` |
+| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |
@@ -146,7 +146,7 @@ The guides are written in Spanish.
 
 ## Español
 
-Sistema de componentes de la suite zuix: 144 componentes sobre un contrato de HTML y CSS, sin bibliotecas de
+Sistema de componentes de la suite zuix: 183 componentes sobre un contrato de HTML y CSS, sin bibliotecas de
 UI de terceros. La guía está en español en [`docs/users/03-zui.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/03-zui.md).
 
 ## License

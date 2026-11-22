@@ -45,10 +45,14 @@
 //   .z-navbar / .z-navmenu                     navegación de sitio (./site): fila o cajón medido sin punto de corte fijo y
 //                                             grupos de disclosure con panel; .z-skiplink; .z-bottomnav con botones
 //                                             (aria-current y z:select { value })
+//   .z-appbar[data-collapse]                  barra que se pliega al desplazar (respaldo sin animaciones ligadas al
+//                                             desplazamiento) y data-scrolled con algo desplazado (./pages)
+//   .z-docs-layout__toc                        índice con la sección que se lee marcada con aria-current
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { edgeMargin, trackScrollEdges } from "../edges";
+import { disposePages, hydratePages } from "./pages";
 import { disposeSite, hydrateSite, onSiteClick } from "./site";
 import { hydrateChat, onChatClick, onChatKeydown, onChatPopState } from "./chat";
 import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
@@ -1330,6 +1334,7 @@ export function hydrate(root: ParentNode = document): void {
   for (const layout of all(root, ".z-panelayout")) syncPaneFocus(layout);
   hydrateSite(root);
   hydrateChat(root);
+  hydratePages(root);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
@@ -1352,6 +1357,7 @@ export function hydrate(root: ParentNode = document): void {
 export function dispose(root: ParentNode = document): void {
   if (!isBrowser) return;
   disposeSite(root);
+  disposePages(root);
   for (const shell of all(root, ".z-shell")) {
     shellObserver?.unobserve(shell);
     shells.delete(shell);

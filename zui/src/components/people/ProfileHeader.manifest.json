@@ -1,0 +1,108 @@
+{
+  "name": "ProfileHeader",
+  "group": "people",
+  "description": "Cabecera de perfil: portada a sangre, avatar superpuesto con anillo de cristal, nombre (h1), insignias, usuario, rol, biografía, metadatos, estadísticas, acciones y pestañas.",
+  "import": "import { ProfileHeader } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "user",
+      "type": "{ name, handle?, avatar?, cover?, coverAlt?, role?, bio?, presence? }",
+      "required": true
+    },
+    {
+      "name": "stats",
+      "type": "{ label, value }[]"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "badges",
+      "type": "ReactNode"
+    },
+    {
+      "name": "meta",
+      "type": "{ icon: IconName; label: string; href?: string }[]"
+    },
+    {
+      "name": "tabs",
+      "type": "ReactNode"
+    },
+    {
+      "name": "coverAction",
+      "type": "ReactNode",
+      "description": "Botón sobre la portada para editarla."
+    },
+    {
+      "name": "avatarAction",
+      "type": "ReactNode",
+      "description": "Botón sobre el avatar."
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [1, 2, 3],
+      "default": 1
+    }
+  ],
+  "tokens": [
+    "panel-radius",
+    "surface-3",
+    "surface-solid",
+    "glass-border",
+    "accent",
+    "accent-text",
+    "chart-2",
+    "chart-3",
+    "shadow-md",
+    "fg",
+    "fg-muted",
+    "line",
+    "font-display",
+    "text-display-sm",
+    "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "text-body",
+    "text-small",
+    "leading-relaxed",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-profile-header",
+    "z-profile-header__cover",
+    "z-profile-header__cover-image",
+    "z-profile-header__cover-action",
+    "z-profile-header__main",
+    "z-profile-header__top",
+    "z-profile-header__avatar",
+    "z-profile-header__presence",
+    "z-profile-header__avatar-action",
+    "z-profile-header__actions",
+    "z-profile-header__identity",
+    "z-profile-header__title",
+    "z-profile-header__name",
+    "z-profile-header__badges",
+    "z-profile-header__subtitle",
+    "z-profile-header__handle",
+    "z-profile-header__role",
+    "z-profile-header__bio",
+    "z-profile-header__meta",
+    "z-profile-header__meta-item",
+    "z-profile-header__stats",
+    "z-profile-header__stat",
+    "z-profile-header__tabs"
+  ],
+  "a11y": "El nombre es el h1 de la página (nivel configurable). La portada es decorativa salvo que llegue coverAlt. Las estadísticas son una lista de pares (dl) y los metadatos una lista. En estrecho, las acciones ocupan el ancho.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Perfil completo",
+      "code": "<ProfileHeader user={{ name: \"Ana López\", handle: \"ana\", role: \"Principal designer\", bio: \"I design systems that ship. Previously at a studio in Lisbon.\", presence: \"online\" }} badges={<Badge tone=\"accent\">Staff</Badge>} meta={[{ icon: \"map-pin\", label: \"Madrid\" }, { icon: \"link\", label: \"ana.design\", href: \"#\" }, { icon: \"calendar\", label: \"Joined March 2021\" }]} stats={[{ label: \"Followers\", value: \"1.2k\" }, { label: \"Following\", value: 184 }, { label: \"Projects\", value: 34 }]} actions={<><Button icon=\"chat-bubble-left-right\">Message</Button><Button variant=\"primary\" icon=\"user-plus\">Follow</Button></>} />"
+    }
+  ],
+  "origin": "Cabeceras de perfil de GitHub, X y LinkedIn."
+}

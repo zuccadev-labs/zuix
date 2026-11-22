@@ -1,0 +1,88 @@
+{
+  "name": "Tracker",
+  "group": "dashboard",
+  "description": "Tira de estados por día (disponibilidad de un servicio, ejecuciones de un trabajo) con la disponibilidad calculada y la etiqueta del día activo al pasar el puntero o con el foco.",
+  "import": "import { Tracker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "days",
+      "type": "{ status: \"ok\" | \"warning\" | \"error\" | \"maintenance\" | \"empty\"; label: string; note?: string }[]",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "description": "Texto a la derecha; por defecto, la disponibilidad."
+    },
+    {
+      "name": "hideHeader",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TrackerLabels>",
+      "description": "ok, warning, error, maintenance, empty, summary, day."
+    }
+  ],
+  "states": ["rest", "hover", "focus"],
+  "tokens": [
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "surface-3",
+    "tooltip-bg",
+    "glass-border",
+    "fg",
+    "fg-muted",
+    "radius-xs",
+    "radius-sm",
+    "shadow-md",
+    "text-small",
+    "text-caption",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-tracker",
+    "z-tracker__head",
+    "z-tracker__label",
+    "z-tracker__summary",
+    "z-tracker__bars",
+    "z-tracker__bar",
+    "z-tracker__tip",
+    "z-tracker__tip-dot",
+    "z-tracker__tip-text"
+  ],
+  "a11y": "Lista ordenada con nombre y una sola parada de tabulación: flechas, Inicio, Fin y Re Pág/Av Pág entre días (en RTL las flechas se invierten). Cada día tiene su texto («3 Nov: Degraded, 12 min»), así que el estado no depende del color; además cada estado tiene su dibujo (franja, muesca, trama). La etiqueta flotante es decorativa. Sin React: .z-tracker con data-label y data-days (JSON o «ok ok warning error»).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Disponibilidad de la API",
+      "code": "<Tracker label=\"API\" locale=\"en-US\" days={[...Array(30)].map((_, i) => ({ status: i === 12 ? \"error\" : i === 20 || i === 21 ? \"warning\" : i === 5 ? \"maintenance\" : \"ok\", label: `Nov ${i + 1}` }))} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Disponibilidad de la API",
+      "code": "<div class=\"z-tracker\" data-label=\"API\" data-days='[{\"status\":\"ok\",\"label\":\"Nov 1\"},{\"status\":\"ok\",\"label\":\"Nov 2\"},{\"status\":\"warning\",\"label\":\"Nov 3\",\"note\":\"12 min\"},{\"status\":\"ok\",\"label\":\"Nov 4\"},{\"status\":\"error\",\"label\":\"Nov 5\",\"note\":\"41 min\"},{\"status\":\"ok\",\"label\":\"Nov 6\"},{\"status\":\"maintenance\",\"label\":\"Nov 7\"},{\"status\":\"ok\",\"label\":\"Nov 8\"}]'></div>"
+    }
+  ],
+  "origin": "Tracker de Tremor y las páginas de estado tipo uptime."
+}

@@ -1,0 +1,96 @@
+{
+  "name": "ActivityFeed",
+  "group": "dashboard",
+  "description": "Actividad reciente: avatar o icono, «Ana **closed** #42», hora relativa con la absoluta en <time>, agrupada por día en la zona de la persona y con «Load more».",
+  "import": "import { ActivityFeed } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ id, actor: { name, avatar? }, verb, object?, href?, at, icon?, tone?, detail? }[]",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string"
+    },
+    {
+      "name": "groupBy",
+      "type": "enum",
+      "values": ["day", "none"],
+      "default": "day"
+    },
+    {
+      "name": "hasMore",
+      "type": "boolean"
+    },
+    {
+      "name": "onLoadMore",
+      "type": "() => void"
+    },
+    {
+      "name": "loading",
+      "type": "boolean"
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona IANA para agrupar por día."
+    },
+    {
+      "name": "now",
+      "type": "number | string | Date",
+      "description": "Momento de referencia (capturas)."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ActivityFeedLabels>",
+      "description": "today, yesterday, loadMore, empty."
+    }
+  ],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line",
+    "surface-2",
+    "radius-md",
+    "control-radius-sm",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide",
+    "accent-ring",
+    "focus-width"
+  ],
+  "classes": [
+    "z-activity",
+    "z-activity__group",
+    "z-activity__day",
+    "z-activity__list",
+    "z-activity__item",
+    "z-activity__marker",
+    "z-activity__icon",
+    "z-activity__body",
+    "z-activity__text",
+    "z-activity__actor",
+    "z-activity__verb",
+    "z-activity__object",
+    "z-activity__detail",
+    "z-activity__time",
+    "z-activity__empty",
+    "z-activity__more"
+  ],
+  "a11y": "section con nombre; cada día es una región con su encabezado y una lista ordenada. La hora relativa va en <time datetime> con el instante ISO. Los avatares son decorativos: el nombre está en el texto. Cargar más es un botón; en espera lleva aria-busy en la región.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Agrupada por día",
+      "code": "<ActivityFeed label=\"Recent activity\" now=\"2026-11-22T15:00:00Z\" timeZone=\"UTC\" locale=\"en-US\" items={[{ id: \"1\", actor: { name: \"Ana López\" }, verb: \"closed\", object: \"#42 Login timeout\", href: \"#\", at: \"2026-11-22T13:10:00Z\" }, { id: \"2\", actor: { name: \"Deploy bot\" }, icon: \"rocket-launch\", tone: \"success\", verb: \"shipped\", object: \"v2.8.0 to production\", at: \"2026-11-22T09:30:00Z\" }, { id: \"3\", actor: { name: \"Marco Rossi\" }, verb: \"commented on\", object: \"Pricing page\", at: \"2026-11-21T17:45:00Z\", detail: \"The annual toggle should default to monthly.\" }]} />"
+    }
+  ],
+  "origin": "Activity de los bloques de shadcn, Timeline de Carbon y los feeds de GitHub y Linear."
+}

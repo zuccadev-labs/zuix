@@ -217,6 +217,8 @@ init(datesModule, chartsModule);
 | `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
 | `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
 | `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
+| `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
+| `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -226,15 +228,18 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 | Consumidor | Antes, con una sola entrada | Ahora |
 |---|---|---|
 | Solo `toast()` | 225 kB (de `/dom`) | 11 kB, de `/dom` o de `/dom/core` (3 iconos) |
-| `init()` del núcleo | — | 95 kB |
-| `init()` del núcleo con fechas | — | 173 kB |
-| `init()` del núcleo con agenda | — | 341 kB |
-| `init()` del núcleo con tiempo | — | 140 kB |
-| `init()` del núcleo con terminal y código | — | 156 kB |
-| `init()` del núcleo con chat | — | 233 kB |
+| `init()` del núcleo | — | 99 kB |
+| `init()` del núcleo con fechas | — | 175 kB |
+| `init()` del núcleo con agenda | — | 340 kB |
+| `init()` del núcleo con tiempo | — | 144 kB |
+| `init()` del núcleo con terminal y código | — | 160 kB |
+| `init()` del núcleo con chat | — | 234 kB |
 | `init()` del núcleo con IA | — | 225 kB |
-| `init()` del núcleo con chat e IA | — | 300 kB |
-| `init()` completo | 526 kB | 798 kB |
+| `init()` del núcleo con chat e IA | — | 301 kB |
+| `init()` del núcleo con dashboard | — | 156 kB |
+| `init()` del núcleo con usuarios y perfiles | — | 128 kB |
+| `init()` del núcleo con dashboard y usuarios | — | 178 kB |
+| `init()` completo | 526 kB | 856 kB |
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.

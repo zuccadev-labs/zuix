@@ -1,0 +1,111 @@
+{
+  "name": "AppBar",
+  "group": "layout",
+  "description": "Barra de aplicación superior (top app bar de Material 3): pequeña, mediana o grande. La grande pliega su título a la fila superior al desplazar, con una animación ligada al desplazamiento y un respaldo donde no la hay; gana sombra en cuanto hay algo desplazado.",
+  "import": "import { AppBar } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "subtitle",
+      "type": "ReactNode"
+    },
+    {
+      "name": "leading",
+      "type": "ReactNode",
+      "description": "Menú o atrás."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["small", "medium", "large"],
+      "default": "small"
+    },
+    {
+      "name": "collapseOnScroll",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "collapseDistance",
+      "type": "number",
+      "default": 96
+    },
+    {
+      "name": "sticky",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "surface",
+      "type": "enum",
+      "values": ["glass", "plain"],
+      "default": "glass"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [1, 2],
+      "default": 1
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Fila extra (búsqueda, pestañas)."
+    }
+  ],
+  "states": ["rest", "scrolled", "collapsed"],
+  "tokens": [
+    "panel-radius",
+    "layer-sticky",
+    "shadow-md",
+    "glass-bg",
+    "glass-border",
+    "glass-blur",
+    "glass-saturate",
+    "fg",
+    "fg-muted",
+    "control-height-lg",
+    "text-title",
+    "text-heading-lg",
+    "text-display-sm",
+    "font-display",
+    "weight-display",
+    "weight-semibold",
+    "tracking-display",
+    "text-small",
+    "duration-normal",
+    "ease-standard"
+  ],
+  "classes": [
+    "z-appbar",
+    "z-appbar__row",
+    "z-appbar__leading",
+    "z-appbar__title",
+    "z-appbar__compact-title",
+    "z-appbar__actions",
+    "z-appbar__headline",
+    "z-appbar__subtitle",
+    "z-appbar__extra"
+  ],
+  "a11y": "header con el título como encabezado (h1 por defecto). Con el título grande, la copia pequeña de la fila es aria-hidden: el lector solo oye uno. El pliegue solo anima transform y opacity, y no se anima con movimiento reducido. Sin React: .z-appbar[data-collapse][data-collapse-distance] (con @zuccadev-labs/zuix-zout/dom para el respaldo y data-scrolled).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Grande que se pliega",
+      "code": "<AppBar size=\"large\" collapseOnScroll title=\"Inbox\" subtitle=\"12 unread\" leading={<IconButton icon=\"bars-3\" label=\"Menu\" variant=\"ghost\" />} actions={<><IconButton icon=\"magnifying-glass\" label=\"Search\" variant=\"ghost\" /><IconButton icon=\"ellipsis-vertical\" label=\"More\" variant=\"ghost\" /></>} />"
+    },
+    {
+      "title": "Pequeña",
+      "code": "<AppBar title=\"Settings\" leading={<IconButton icon=\"arrow-left\" label=\"Back\" variant=\"ghost\" />} />"
+    }
+  ],
+  "origin": "Top app bar (small, medium, large) de Material 3 y AppBar de MUI; pliegue con animaciones ligadas al desplazamiento."
+}

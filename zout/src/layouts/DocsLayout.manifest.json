@@ -1,0 +1,85 @@
+{
+  "name": "DocsLayout",
+  "group": "layout",
+  "description": "Página de documentación: barra superior, navegación de páginas, artículo, índice con la sección que se lee marcada y paginación anterior/siguiente. En estrecho el índice pasa a un desplegable sobre el artículo.",
+  "import": "import { DocsLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "header",
+      "type": "ReactNode"
+    },
+    {
+      "name": "sidebar",
+      "type": "ReactNode"
+    },
+    {
+      "name": "toc",
+      "type": "{ id, label, level? }[]"
+    },
+    {
+      "name": "previous",
+      "type": "{ href, label }"
+    },
+    {
+      "name": "next",
+      "type": "{ href, label }"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DocsLayoutLabels>",
+      "description": "nav, toc, onThisPage, previous, next, pager."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": [
+    "prose-max",
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-text",
+    "line",
+    "line-strong",
+    "surface",
+    "row-hover",
+    "radius-sm",
+    "radius-md",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "weight-medium",
+    "control-height-md",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-docs-layout",
+    "z-docs-layout__grid",
+    "z-docs-layout__header",
+    "z-docs-layout__sidebar",
+    "z-docs-layout__main",
+    "z-docs-layout__toc-compact",
+    "z-docs-layout__toc-summary",
+    "z-docs-layout__article",
+    "z-docs-layout__pager",
+    "z-docs-layout__page",
+    "z-docs-layout__page-hint",
+    "z-docs-layout__page-title",
+    "z-docs-layout__toc",
+    "z-docs-layout__toc-title",
+    "z-docs-layout__toc-list",
+    "z-docs-layout__toc-link"
+  ],
+  "a11y": "Dos nav con nombres distintos (Documentation y On this page) y una tercera para la paginación (rel=prev y rel=next). El enlace de la sección que se lee lleva aria-current. En estrecho el índice es un <details> nativo.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Artículo con índice",
+      "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"docs-install\", label: \"Install\" }, { id: \"docs-usage\", label: \"Usage\" }, { id: \"docs-usage-react\", label: \"With React\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"docs-install\">Install</h2><p>…</p><h2 id=\"docs-usage\">Usage</h2><p>…</p><h3 id=\"docs-usage-react\">With React</h3><p>…</p></Prose>\n</DocsLayout>"
+    }
+  ],
+  "origin": "El propio sitio zudocs y los bloques de documentación; índice con seguimiento de la sección."
+}

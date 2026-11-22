@@ -12,6 +12,20 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   layout. Con `history`, la pila se sincroniza con el historial del navegador; F6 salta entre paneles; `variant="widget"`
   es un asistente flotante (botón y panel de cristal). En `/dom`: `data-view`, `[data-z-chat-view]`, `data-history`,
   `setChatView` y `setChatWidgetOpen`.
+- `AppBar`: barra de aplicación superior pequeña, mediana o grande; la grande pliega el título a la fila superior al
+  desplazar (animación ligada al desplazamiento, con respaldo en `/dom` y en React donde no la hay) y gana sombra con
+  algo desplazado.
+- Layouts de página, todos con consultas de contenedor (responden a su hueco, no al viewport):
+  - `DashboardLayout`: cabecera, barra de filtros fija, contenido y panel lateral; navegación propia opcional.
+  - `SettingsLayout`: navegación con anclas, secciones y barra de guardar fija cuando hay cambios sin guardar.
+  - `AuthLayout`: acceso en una tarjeta de cristal centrada o dividido con un lado de imagen.
+  - `ProfileLayout`: cabecera de perfil, pestañas, contenido y columna lateral.
+  - `DocsLayout`: navegación, artículo, índice con la sección que se lee marcada (`aria-current`) y paginación;
+    en estrecho el índice es un `<details>` sobre el artículo.
+  - `LandingLayout` con `LandingHero` y `LandingSection` (rejilla de funciones, banda de llamada y bloque tenue).
+  - `KanbanLayout` y `MailLayout` (carpetas, lista y lectura; en estrecho, una sola vista según `view`).
+- `appBarProgress` y `activeSection` en la lógica compartida; en `/dom`, `.z-appbar[data-collapse]` y
+  `.z-docs-layout__toc` se conectan solos.
 
 ## [0.3.0] - 2026-11-21
 

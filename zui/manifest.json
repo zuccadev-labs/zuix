@@ -1,15 +1,18 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 185,
+ "count": 210,
  "groups": {
   "actions": [
    "Button",
    "ButtonGroup",
    "CopyButton",
    "DownloadTrigger",
+   "Fab",
+   "FabMenu",
    "IconButton",
    "Link",
    "SegmentedControl",
+   "SplitButton",
    "Swap",
    "Toggle",
    "ToggleGroup",
@@ -90,6 +93,20 @@
    "RelativeTime",
    "ScrollArea",
    "Timer"
+  ],
+  "dashboard": [
+   "ActivityFeed",
+   "BarList",
+   "DashboardGrid",
+   "DeltaBadge",
+   "FunnelChart",
+   "Gauge",
+   "KanbanBoard",
+   "Leaderboard",
+   "MetricCard",
+   "MetricGroup",
+   "ProgressGoal",
+   "Tracker"
   ],
   "data": [
    "Avatar",
@@ -175,6 +192,8 @@
   "media": [
    "CompareSlider",
    "ImageCropper",
+   "ImageList",
+   "Masonry",
    "QRCode",
    "SignaturePad"
   ],
@@ -204,6 +223,16 @@
    "Toggletip",
    "Tooltip",
    "Tour"
+  ],
+  "people": [
+   "AccountMenu",
+   "MemberList",
+   "Persona",
+   "PresenceBadge",
+   "ProfileEditor",
+   "ProfileHeader",
+   "SettingsSection",
+   "UserCard"
   ],
   "terminal": [
    "CodeViewer",
@@ -678,6 +707,211 @@
    "file": "zui/src/components/actions/DownloadTrigger.manifest.json"
   },
   {
+   "name": "Fab",
+   "group": "actions",
+   "description": "Botón de acción flotante (FAB de Material 3): un cuadrado de esquinas redondeadas con la acción principal de la pantalla, en tres tamaños; extendido con texto que se pliega con `collapsed`; fijo en una esquina con `position`.",
+   "import": "import { Fab } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "icon",
+     "type": "IconName",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre accesible; con extended también el texto."
+    },
+    {
+     "name": "extended",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "collapsed",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "surface"
+     ],
+     "default": "primary"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "bottom-end",
+      "bottom-start",
+      "top-end",
+      "top-start",
+      "bottom-center"
+     ]
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "collapsed"
+   ],
+   "tokens": [
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "accent-soft",
+    "accent-text",
+    "popup-bg",
+    "popup-blur",
+    "glass-border",
+    "glass-saturate",
+    "surface-3",
+    "shadow-md",
+    "shadow-lg",
+    "radius-md",
+    "radius-lg",
+    "radius-xl",
+    "focus-width",
+    "focus-offset",
+    "accent-ring",
+    "layer-sticky",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-fab",
+    "z-fab__label"
+   ],
+   "a11y": "button nativo. Sin texto visible lleva aria-label y title; extendido, el texto es su nombre (y al plegarse vuelve el aria-label). Fijo, respeta las zonas seguras del dispositivo.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tamaños y extendido",
+     "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <Fab icon=\"plus\" label=\"New\" size=\"sm\" />\n  <Fab icon=\"pencil\" label=\"Compose\" />\n  <Fab icon=\"plus\" label=\"Create\" size=\"lg\" variant=\"secondary\" />\n  <Fab icon=\"pencil-square\" label=\"New message\" extended />\n</div>"
+    }
+   ],
+   "origin": "FAB, medium/large FAB y extended FAB de Material 3; FloatButton de Ant Design.",
+   "file": "zui/src/components/actions/Fab.manifest.json"
+  },
+  {
+   "name": "FabMenu",
+   "group": "actions",
+   "description": "FAB que abre un menú de acciones por encima (FAB menu de Material 3, Speed Dial de MUI).",
+   "import": "import { FabMenu } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "icon",
+     "type": "IconName",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "items",
+     "type": "MenuEntry[]",
+     "required": true
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "surface"
+     ],
+     "default": "primary"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "bottom-end",
+      "bottom-start",
+      "top-end",
+      "top-start",
+      "bottom-center"
+     ]
+    },
+    {
+     "name": "extended",
+     "type": "boolean"
+    },
+    {
+     "name": "collapsed",
+     "type": "boolean"
+    },
+    {
+     "name": "open",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    }
+   ],
+   "tokens": [
+    "accent-solid",
+    "fg-on-accent",
+    "popup-bg",
+    "shadow-md",
+    "radius-lg",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-fab",
+    "z-fab-menu"
+   ],
+   "a11y": "Patrón menu button de WAI-ARIA sobre el FAB: aria-haspopup=menu y aria-expanded; flechas entre acciones, Escape cierra y devuelve el foco al FAB.",
+   "behavior": "react",
+   "examples": [
+    {
+     "title": "Crear",
+     "code": "<FabMenu icon=\"plus\" label=\"Create\" items={[{ id: \"doc\", label: \"Document\", icon: \"document-text\" }, { id: \"image\", label: \"Image\", icon: \"photo\" }, { id: \"folder\", label: \"Folder\", icon: \"folder-plus\" }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Crear",
+     "code": "<button type=\"button\" title=\"Create\" aria-label=\"Create\" class=\"z-fab\" data-size=\"md\" data-variant=\"primary\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#fab-actions\" data-z-placement=\"top-end\"><z-icon name=\"plus\" size=\"22\"></z-icon></button>\n\n<div id=\"fab-actions\" popover class=\"z-liquid z-menu z-fab-menu\" role=\"menu\" aria-label=\"Create\" data-size=\"lg\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"document-text\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Document</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"photo\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Image</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"folder-plus\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Folder</span></button>\n</div>"
+    }
+   ],
+   "origin": "FAB menu de Material 3 Expressive y SpeedDial de MUI.",
+   "file": "zui/src/components/actions/FabMenu.manifest.json"
+  },
+  {
    "name": "IconButton",
    "group": "actions",
    "description": "Botón cuadrado de solo icono con nombre accesible obligatorio.",
@@ -1046,6 +1280,87 @@
    ],
    "origin": "Tabs (control segmentado) de zutool, con primitiva propia (patrón APG).",
    "file": "zui/src/components/actions/SegmentedControl.manifest.json"
+  },
+  {
+   "name": "SplitButton",
+   "group": "actions",
+   "description": "Botón dividido: la acción principal y, pegado a ella, un botón con flecha que abre las alternativas; la flecha gira al abrir.",
+   "import": "import { SplitButton } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "icon",
+     "type": "IconName"
+    },
+    {
+     "name": "onClick",
+     "type": "() => void"
+    },
+    {
+     "name": "items",
+     "type": "MenuEntry[]",
+     "required": true
+    },
+    {
+     "name": "menuLabel",
+     "type": "string",
+     "default": "More options"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "primary",
+      "secondary",
+      "ghost"
+     ],
+     "default": "primary"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean"
+    }
+   ],
+   "tokens": [
+    "radius-xs",
+    "duration-normal",
+    "ease-emphasized"
+   ],
+   "classes": [
+    "z-split-button",
+    "z-split-button__main",
+    "z-split-button__toggle"
+   ],
+   "a11y": "Grupo con dos botones nativos: la acción y un menu button con nombre («More options»), aria-haspopup=menu y aria-expanded. Escape devuelve el foco a la flecha.",
+   "behavior": "react",
+   "examples": [
+    {
+     "title": "Publicar",
+     "code": "<SplitButton icon=\"paper-airplane\" items={[{ id: \"schedule\", label: \"Schedule\", icon: \"clock\" }, { id: \"draft\", label: \"Save as draft\", icon: \"document-duplicate\" }]}>Publish</SplitButton>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Publicar",
+     "code": "<div class=\"z-split-button\" role=\"group\" data-variant=\"primary\" data-size=\"md\">\n  <button type=\"button\" class=\"z-btn z-btn--primary z-split-button__main\" data-size=\"md\"><z-icon name=\"paper-airplane\" size=\"16\"></z-icon>Publish</button>\n  <button type=\"button\" class=\"z-btn z-btn--icon z-btn--primary z-split-button__toggle\" data-size=\"md\" aria-label=\"More options\" title=\"More options\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#publish-more\" data-z-placement=\"bottom-end\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</div>\n\n<div id=\"publish-more\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"More options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Schedule</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Save as draft</span></button>\n</div>"
+    }
+   ],
+   "origin": "Split button de Material 3 Expressive y SplitButton de Fluent UI.",
+   "file": "zui/src/components/actions/SplitButton.manifest.json"
   },
   {
    "name": "Swap",
@@ -8481,6 +8796,1327 @@
    "file": "zui/src/components/content/Timer.manifest.json"
   },
   {
+   "name": "ActivityFeed",
+   "group": "dashboard",
+   "description": "Actividad reciente: avatar o icono, «Ana **closed** #42», hora relativa con la absoluta en <time>, agrupada por día en la zona de la persona y con «Load more».",
+   "import": "import { ActivityFeed } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ id, actor: { name, avatar? }, verb, object?, href?, at, icon?, tone?, detail? }[]",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string"
+    },
+    {
+     "name": "groupBy",
+     "type": "enum",
+     "values": [
+      "day",
+      "none"
+     ],
+     "default": "day"
+    },
+    {
+     "name": "hasMore",
+     "type": "boolean"
+    },
+    {
+     "name": "onLoadMore",
+     "type": "() => void"
+    },
+    {
+     "name": "loading",
+     "type": "boolean"
+    },
+    {
+     "name": "timeZone",
+     "type": "string",
+     "description": "Zona IANA para agrupar por día."
+    },
+    {
+     "name": "now",
+     "type": "number | string | Date",
+     "description": "Momento de referencia (capturas)."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ActivityFeedLabels>",
+     "description": "today, yesterday, loadMore, empty."
+    }
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line",
+    "surface-2",
+    "radius-md",
+    "control-radius-sm",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide",
+    "accent-ring",
+    "focus-width"
+   ],
+   "classes": [
+    "z-activity",
+    "z-activity__group",
+    "z-activity__day",
+    "z-activity__list",
+    "z-activity__item",
+    "z-activity__marker",
+    "z-activity__icon",
+    "z-activity__body",
+    "z-activity__text",
+    "z-activity__actor",
+    "z-activity__verb",
+    "z-activity__object",
+    "z-activity__detail",
+    "z-activity__time",
+    "z-activity__empty",
+    "z-activity__more"
+   ],
+   "a11y": "section con nombre; cada día es una región con su encabezado y una lista ordenada. La hora relativa va en <time datetime> con el instante ISO. Los avatares son decorativos: el nombre está en el texto. Cargar más es un botón; en espera lleva aria-busy en la región.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Agrupada por día",
+     "code": "<ActivityFeed label=\"Recent activity\" now=\"2026-11-22T15:00:00Z\" timeZone=\"UTC\" locale=\"en-US\" items={[{ id: \"1\", actor: { name: \"Ana López\" }, verb: \"closed\", object: \"#42 Login timeout\", href: \"#\", at: \"2026-11-22T13:10:00Z\" }, { id: \"2\", actor: { name: \"Deploy bot\" }, icon: \"rocket-launch\", tone: \"success\", verb: \"shipped\", object: \"v2.8.0 to production\", at: \"2026-11-22T09:30:00Z\" }, { id: \"3\", actor: { name: \"Marco Rossi\" }, verb: \"commented on\", object: \"Pricing page\", at: \"2026-11-21T17:45:00Z\", detail: \"The annual toggle should default to monthly.\" }]} />"
+    }
+   ],
+   "origin": "Activity de los bloques de shadcn, Timeline de Carbon y los feeds de GitHub y Linear.",
+   "file": "zui/src/components/dashboard/ActivityFeed.manifest.json"
+  },
+  {
+   "name": "BarList",
+   "group": "dashboard",
+   "description": "Barras horizontales con etiqueta y valor: los primeros de algo (páginas, fuentes de tráfico, países). Las filas pueden ser enlaces.",
+   "import": "import { BarList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ label: string; value: number; href?: string; icon?: IconName; display?: string }[]",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "description": "Escala; por defecto, el mayor valor."
+    },
+    {
+     "name": "sort",
+     "type": "enum",
+     "values": [
+      "none",
+      "desc"
+     ],
+     "default": "none"
+    },
+    {
+     "name": "color",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "fg",
+    "fg-muted",
+    "radius-sm",
+    "text-small",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-bar-list",
+    "z-bar-list__row",
+    "z-bar-list__bar",
+    "z-bar-list__label",
+    "z-bar-list__icon",
+    "z-bar-list__text",
+    "z-bar-list__value"
+   ],
+   "a11y": "ul con nombre; cada fila se lee como «Google, 4,021». La barra es decorativa. Sin React: .z-bar-list con data-items (JSON), data-label, data-sort, data-color y data-locale.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Fuentes de tráfico",
+     "code": "<BarList label=\"Top sources\" sort=\"desc\" locale=\"en-US\" items={[{ label: \"Google\", value: 4021, icon: \"globe-alt\" }, { label: \"Direct\", value: 2390, icon: \"link\" }, { label: \"GitHub\", value: 1310, icon: \"code-bracket\" }, { label: \"Newsletter\", value: 864, icon: \"envelope\" }, { label: \"X\", value: 512, icon: \"chat-bubble-left-right\" }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Fuentes de tráfico",
+     "code": "<ul class=\"z-bar-list\" data-label=\"Top sources\" data-sort=\"desc\" data-locale=\"en-US\" data-items='[{\"label\":\"Google\",\"value\":4021},{\"label\":\"Direct\",\"value\":2390},{\"label\":\"GitHub\",\"value\":1310}]'></ul>"
+    }
+   ],
+   "origin": "BarList de Tremor y BarsList de Mantine.",
+   "file": "zui/src/components/dashboard/BarList.manifest.json"
+  },
+  {
+   "name": "DashboardGrid",
+   "group": "dashboard",
+   "exports": [
+    "DashboardGridItem"
+   ],
+   "description": "Rejilla de tarjetas de un dashboard: 12 columnas, cada pieza con columna, fila, ancho y alto. En edición se mueve y se redimensiona con el puntero y con el teclado; las demás se apartan y la rejilla compacta hacia arriba. Persiste con `onLayoutChange` (la disposición es serializable).",
+   "import": "import { DashboardGrid, DashboardGridItem } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "layout",
+     "type": "{ id, x, y, w, h, minW?, minH?, maxW?, maxH?, static? }[]",
+     "description": "Controlada."
+    },
+    {
+     "name": "defaultLayout",
+     "type": "GridLayout",
+     "description": "Sin controlar."
+    },
+    {
+     "name": "onLayoutChange",
+     "type": "(layout: GridLayout) => void",
+     "description": "Tras soltar, con la disposición nueva."
+    },
+    {
+     "name": "editable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "columns",
+     "type": "number",
+     "default": 12
+    },
+    {
+     "name": "rowHeight",
+     "type": "number",
+     "default": 88
+    },
+    {
+     "name": "label",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<GridLabels>",
+     "description": "position, grabbed, dropped, cancelled, hint, hintGrabbed, handle, resize, instructions."
+    },
+    {
+     "name": "DashboardGridItem.id",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "DashboardGridItem.title",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "DashboardGridItem.description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "DashboardGridItem.actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "DashboardGridItem.bare",
+     "type": "boolean",
+     "description": "Sin marco: el contenido ya es la tarjeta."
+    },
+    {
+     "name": "DashboardGridItem.surface",
+     "type": "enum",
+     "values": [
+      "glass",
+      "solid"
+     ],
+     "default": "glass"
+    }
+   ],
+   "states": [
+    "rest",
+    "editable",
+    "grabbed",
+    "dragging",
+    "resizing"
+   ],
+   "tokens": [
+    "card-radius",
+    "space-4",
+    "accent",
+    "accent-soft",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "line-strong",
+    "shadow-lg",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "tooltip-bg",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "control-height-sm",
+    "control-radius-sm",
+    "touch-target",
+    "duration-normal",
+    "ease-emphasized"
+   ],
+   "classes": [
+    "z-dashboard-grid",
+    "z-dashboard-grid__canvas",
+    "z-dashboard-grid__item",
+    "z-dashboard-grid__head",
+    "z-dashboard-grid__titles",
+    "z-dashboard-grid__title",
+    "z-dashboard-grid__description",
+    "z-dashboard-grid__actions",
+    "z-dashboard-grid__body",
+    "z-dashboard-grid__float",
+    "z-dashboard-grid__handle",
+    "z-dashboard-grid__hint",
+    "z-dashboard-grid__hint-rest",
+    "z-dashboard-grid__hint-grabbed",
+    "z-dashboard-grid__resize"
+   ],
+   "a11y": "region con nombre; cada pieza es una section con el nombre de su título. En edición, cada pieza tiene un asa (botón «Move Revenue», aria-pressed) descrita por las instrucciones: sin coger, las flechas van de asa en asa por geometría; Espacio o Intro la coge, las flechas la mueven una celda, Mayús + flechas cambian su tamaño, Intro o Espacio la sueltan, Escape la devuelve y salir del asa la suelta. Cada paso se anuncia en la región viva central («Revenue, column 5, row 1, 4 by 2»). Con el puntero, el asa arrastra (captura, un solo puntero, Escape cancela) y la esquina redimensiona; el destino lo marca un hueco discontinuo. El orden del DOM es el de lectura (fila, columna) y se rehace al soltar; en un contenedor estrecho todo se apila en ese orden y la edición con el puntero se apaga. Sin React: .z-dashboard-grid[data-cols][data-editable] > .z-dashboard-grid__canvas > .z-dashboard-grid__item[data-id][data-x][data-y][data-w][data-h]; emite z:layoutchange { layout }; getDashboardLayout y setDashboardLayout.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Rejilla editable",
+     "code": "<DashboardGrid label=\"Overview\" editable defaultLayout={[{ id: \"revenue\", x: 0, y: 0, w: 8, h: 3 }, { id: \"uptime\", x: 8, y: 0, w: 4, h: 3 }, { id: \"sources\", x: 0, y: 3, w: 6, h: 3 }, { id: \"activity\", x: 6, y: 3, w: 6, h: 3 }]}>\n  <DashboardGridItem id=\"revenue\" title=\"Revenue\" description=\"Last 30 days\">Chart</DashboardGridItem>\n  <DashboardGridItem id=\"uptime\" title=\"Uptime\">Tracker</DashboardGridItem>\n  <DashboardGridItem id=\"sources\" title=\"Top sources\">BarList</DashboardGridItem>\n  <DashboardGridItem id=\"activity\" title=\"Activity\">Feed</DashboardGridItem>\n</DashboardGrid>"
+    }
+   ],
+   "origin": "Rejilla de ProCard (Ant Design Pro) y dashboard-01 de shadcn; compactación vertical como en las rejillas de widgets de escritorio. Sin react-grid-layout: lógica propia en core/grid-layout.",
+   "file": "zui/src/components/dashboard/DashboardGrid.manifest.json"
+  },
+  {
+   "name": "DeltaBadge",
+   "group": "dashboard",
+   "description": "Variación frente al periodo anterior: flecha, magnitud y una frase para el lector con el sentido («up 12.4%, better than last month»). `positive=\"down\"` para lo que es bueno que baje (errores, latencia, coste).",
+   "import": "import { DeltaBadge } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "description": "Valor actual (con `previous`)."
+    },
+    {
+     "name": "previous",
+     "type": "number",
+     "description": "Valor del periodo anterior."
+    },
+    {
+     "name": "delta",
+     "type": "number",
+     "description": "Variación ya calculada, como fracción (0.124 = 12,4 %); gana sobre value/previous."
+    },
+    {
+     "name": "positive",
+     "type": "enum",
+     "values": [
+      "up",
+      "down"
+     ],
+     "default": "up",
+     "description": "Lo que es bueno para la métrica."
+    },
+    {
+     "name": "period",
+     "type": "string",
+     "description": "Periodo en la frase hablada («last month»)."
+    },
+    {
+     "name": "absFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de la diferencia absoluta cuando el anterior es 0."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "soft",
+      "plain"
+     ],
+     "default": "soft"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DeltaLabels>",
+     "description": "up, down, flat, better, worse, period."
+    }
+   ],
+   "states": [
+    "up",
+    "down",
+    "flat",
+    "good",
+    "bad",
+    "neutral"
+   ],
+   "tokens": [
+    "success-soft",
+    "success-text",
+    "danger-soft",
+    "danger-text",
+    "surface-3",
+    "fg-muted",
+    "radius-xs",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-delta",
+    "z-delta__arrow",
+    "z-delta__value"
+   ],
+   "a11y": "La flecha y la cifra son decorativas (aria-hidden); el lector oye la frase completa en un z-sr-only: dirección, magnitud y si es mejor o peor que el periodo. El sentido no depende del color: la flecha sube, baja o es una raya. Sin React: .z-delta con data-value, data-previous o data-delta, data-positive=\"down\" y data-period se vuelve a pintar igual.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Ventas que suben",
+     "code": "<DeltaBadge value={128400} previous={114200} period=\"last month\" />"
+    },
+    {
+     "title": "Errores que bajan (bueno)",
+     "code": "<DeltaBadge delta={-0.18} positive=\"down\" period=\"last week\" />"
+    },
+    {
+     "title": "Sin cambio",
+     "code": "<DeltaBadge value={50} previous={50} size=\"sm\" />"
+    }
+   ],
+   "origin": "BadgeDelta de Tremor; el sentido de la variación (`positive`) como en Statistic de Ant Design Pro.",
+   "file": "zui/src/components/dashboard/DeltaBadge.manifest.json"
+  },
+  {
+   "name": "FunnelChart",
+   "group": "dashboard",
+   "description": "Embudo: etapas con su valor, la conversión frente a la anterior y la total, y lo perdido entre etapas en trama tenue.",
+   "import": "import { FunnelChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "stages",
+     "type": "{ label: string; value: number }[]",
+     "required": true
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "string"
+    },
+    {
+     "name": "color",
+     "type": "number",
+     "default": 1
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<FunnelLabels>",
+     "description": "ofPrevious, ofFirst, dropped, summary."
+    }
+   ],
+   "tokens": [
+    "chart-1",
+    "surface-2",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-funnel",
+    "z-funnel__caption",
+    "z-funnel__title",
+    "z-funnel__summary",
+    "z-funnel__description",
+    "z-funnel__stages",
+    "z-funnel__stage",
+    "z-funnel__name",
+    "z-funnel__value",
+    "z-funnel__track",
+    "z-funnel__drop",
+    "z-funnel__bar",
+    "z-funnel__rate"
+   ],
+   "a11y": "figure con figcaption (título y conversión total) y una lista ordenada: cada etapa se lee con su valor, su conversión y lo que se perdió. Las barras son decorativas. Sin React: .z-funnel con data-stages (JSON), data-title y data-locale.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Embudo de compra",
+     "code": "<FunnelChart title=\"Checkout funnel\" locale=\"en-US\" stages={[{ label: \"Visited\", value: 12400 }, { label: \"Added to cart\", value: 4210 }, { label: \"Started checkout\", value: 2380 }, { label: \"Paid\", value: 1612 }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Embudo de compra",
+     "code": "<figure class=\"z-funnel\" data-title=\"Checkout funnel\" data-locale=\"en-US\" data-stages='[{\"label\":\"Visited\",\"value\":12400},{\"label\":\"Added to cart\",\"value\":4210},{\"label\":\"Paid\",\"value\":1612}]'></figure>"
+    }
+   ],
+   "origin": "Funnel de MUI X y FunnelChart de Mantine.",
+   "file": "zui/src/components/dashboard/FunnelChart.manifest.json"
+  },
+  {
+   "name": "Gauge",
+   "group": "dashboard",
+   "description": "Indicador radial: semicírculo (180°), 240° o anillo completo, con zonas (cada una con su nombre y su trazo), arco de valor y aguja opcional. Para lo que tiene un rango con umbrales: uso de CPU, cuota, satisfacción.",
+   "import": "import { Gauge } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "min",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 100
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "hint",
+     "type": "string",
+     "description": "Texto bajo la cifra."
+    },
+    {
+     "name": "zones",
+     "type": "{ to: number; tone: GaugeTone; label?: string }[]",
+     "description": "Zonas contiguas desde min."
+    },
+    {
+     "name": "arc",
+     "type": "enum",
+     "values": [
+      180,
+      240,
+      360
+     ],
+     "default": 180
+    },
+    {
+     "name": "needle",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<GaugeLabels>",
+     "description": "valueText: «{value}, {zone}»."
+    }
+   ],
+   "tokens": [
+    "surface-3",
+    "success",
+    "warning",
+    "danger",
+    "accent",
+    "info",
+    "fg",
+    "fg-subtle",
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "text-caption",
+    "weight-semibold",
+    "success-text",
+    "warning-text",
+    "danger-text",
+    "accent-text"
+   ],
+   "classes": [
+    "z-gauge",
+    "z-gauge__svg",
+    "z-gauge__track",
+    "z-gauge__zone",
+    "z-gauge__value",
+    "z-gauge__needle",
+    "z-gauge__hub",
+    "z-gauge__readout",
+    "z-gauge__number",
+    "z-gauge__zone-label",
+    "z-gauge__hint"
+   ],
+   "a11y": "role=meter con aria-valuenow, min, max y aria-valuetext con la zona («72%, Warning»). El SVG y la cifra visible son decorativos. Las zonas se distinguen por su nombre y por el trazo (continuo, discontinuo, punteado), no solo por el color. Sin React: .z-gauge con data-value, data-min, data-max, data-label, data-hint, data-arc, data-needle y data-zones=\"60:success:Healthy|85:warning:Warning|100:danger:Critical\".",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "CPU con zonas",
+     "code": "<Gauge label=\"CPU\" value={72} valueFormat={{ style: \"unit\", unit: \"percent\" }} hint=\"Last 5 min\" zones={[{ to: 60, tone: \"success\", label: \"Healthy\" }, { to: 85, tone: \"warning\", label: \"Warning\" }, { to: 100, tone: \"danger\", label: \"Critical\" }]} locale=\"en-US\" />"
+    },
+    {
+     "title": "Anillo completo",
+     "code": "<Gauge label=\"Storage used\" arc={360} value={412} max={512} hint=\"of 512 GB\" size=\"sm\" />"
+    },
+    {
+     "title": "240° con aguja",
+     "code": "<Gauge label=\"Satisfaction\" arc={240} needle value={8.4} min={0} max={10} valueFormat={{ maximumFractionDigits: 1 }} zones={[{ to: 6, tone: \"danger\", label: \"Low\" }, { to: 8, tone: \"warning\", label: \"Fair\" }, { to: 10, tone: \"success\", label: \"Great\" }]} locale=\"en-US\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "CPU con zonas",
+     "code": "<div class=\"z-gauge\" data-value=\"72\" data-label=\"CPU\" data-hint=\"Last 5 min\" data-zones=\"60:success:Healthy|85:warning:Warning|100:danger:Critical\" data-locale=\"en-US\"></div>"
+    },
+    {
+     "title": "Anillo completo",
+     "code": "<div class=\"z-gauge\" data-arc=\"360\" data-value=\"412\" data-max=\"512\" data-label=\"Storage used\" data-hint=\"of 512 GB\" data-size=\"sm\"></div>"
+    }
+   ],
+   "origin": "Gauge de MUI X y GaugeChart de Mantine; role=meter de WAI-ARIA 1.2.",
+   "file": "zui/src/components/dashboard/Gauge.manifest.json"
+  },
+  {
+   "name": "KanbanBoard",
+   "group": "dashboard",
+   "description": "Tablero kanban: columnas con contador (y límite de trabajo en curso) y tarjetas con etiquetas, prioridad, fecha y personas, que se arrastran entre columnas con el puntero o se mueven con el teclado.",
+   "import": "import { KanbanBoard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "columns",
+     "type": "{ id, title, cards: KanbanCard[], limit?, tone? }[]",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "addable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onMove",
+     "type": "(move: { cardId, fromColumn, toColumn, index, columns }) => void",
+     "description": "Tras soltar en otro sitio: guarda `columns`."
+    },
+    {
+     "name": "onOpen",
+     "type": "(detail: { cardId }) => void",
+     "description": "Intro sobre una tarjeta."
+    },
+    {
+     "name": "onAdd",
+     "type": "(detail: { columnId }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<KanbanLabels>",
+     "description": "moved, grabbed, cancelled, instructions, count, countLimit, overLimit, add, empty, prioridades, due, assigned."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "grabbed",
+    "dragging",
+    "over-limit"
+   ],
+   "tokens": [
+    "surface",
+    "line",
+    "line-strong",
+    "panel-radius",
+    "card-radius",
+    "card-border",
+    "reading-bg",
+    "shadow-sm",
+    "shadow-lg",
+    "accent",
+    "accent-soft",
+    "danger-soft",
+    "danger-text",
+    "warning-text",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "weight-semibold",
+    "focus-width",
+    "focus-offset",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-kanban",
+    "z-kanban__board",
+    "z-kanban__column",
+    "z-kanban__column-head",
+    "z-kanban__column-title",
+    "z-kanban__count",
+    "z-kanban__add",
+    "z-kanban__cards",
+    "z-kanban__card",
+    "z-kanban__labels",
+    "z-kanban__label",
+    "z-kanban__title",
+    "z-kanban__description",
+    "z-kanban__foot",
+    "z-kanban__meta",
+    "z-kanban__priority",
+    "z-kanban__due",
+    "z-kanban__people",
+    "z-kanban__placeholder",
+    "z-kanban__empty"
+   ],
+   "a11y": "region con nombre; cada columna es una section con su encabezado y una lista ordenada. Una sola parada de tabulación para todo el tablero: las flechas van de tarjeta en tarjeta (se saltan columnas vacías). Espacio coge la tarjeta; arriba y abajo la mueven en su columna, izquierda y derecha a la columna vecina; Intro o Espacio la sueltan, Escape la devuelve y salir de ella la suelta. Intro sin coger abre la tarjeta. Cada paso se anuncia en la región viva central con la columna y la posición. La prioridad lleva icono y texto; las personas, su nombre para el lector. Con el puntero, umbral de 4 px, captura y un hueco discontinuo en el destino. Sin React: .z-kanban con data-label, data-addable y las columnas en <script type=\"application/json\" data-props>; emite z:move, z:open y z:add.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres columnas",
+     "code": "<KanbanBoard label=\"Sprint 14\" addable columns={[{ id: \"todo\", title: \"To do\", cards: [{ id: \"c1\", title: \"Audit color contrast\", labels: [{ text: \"Design\", tone: \"info\" }], priority: \"high\", due: \"Nov 28\" }, { id: \"c2\", title: \"Write release notes\" }] }, { id: \"doing\", title: \"In progress\", limit: 3, tone: \"accent\", cards: [{ id: \"c3\", title: \"Dashboard grid keyboard\", assignees: [{ name: \"Ana López\" }], priority: \"urgent\" }] }, { id: \"done\", title: \"Done\", tone: \"success\", cards: [] }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Tres columnas",
+     "code": "<div class=\"z-kanban\" data-label=\"Sprint 14\" data-addable>\n  <script type=\"application/json\" data-props>{\"columns\":[{\"id\":\"todo\",\"title\":\"To do\",\"cards\":[{\"id\":\"c1\",\"title\":\"Audit color contrast\",\"priority\":\"high\",\"due\":\"Nov 28\"},{\"id\":\"c2\",\"title\":\"Write release notes\"}]},{\"id\":\"doing\",\"title\":\"In progress\",\"limit\":3,\"tone\":\"accent\",\"cards\":[{\"id\":\"c3\",\"title\":\"Dashboard grid keyboard\",\"assignees\":[{\"name\":\"Ana López\"}]}]},{\"id\":\"done\",\"title\":\"Done\",\"tone\":\"success\",\"cards\":[]}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Tableros de Ant Design Pro y de los bloques de shadcn; agarre con teclado como en el patrón de arrastre accesible de Atlassian.",
+   "file": "zui/src/components/dashboard/KanbanBoard.manifest.json"
+  },
+  {
+   "name": "Leaderboard",
+   "group": "dashboard",
+   "description": "Clasificación sencilla: rango (con empates), persona, valor con barra y variación. Una lista ordenada; para ordenar por columnas usa DataTable.",
+   "import": "import { Leaderboard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "entries",
+     "type": "{ id, name, secondary?, avatar?, value, previous?, href? }[]",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "positive",
+     "type": "enum",
+     "values": [
+      "up",
+      "down"
+     ],
+     "default": "up"
+    },
+    {
+     "name": "limit",
+     "type": "number"
+    },
+    {
+     "name": "highlight",
+     "type": "string",
+     "description": "Id de la fila destacada (quien mira)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "rankLabel",
+     "type": "string",
+     "default": "Rank {rank}"
+    }
+   ],
+   "tokens": [
+    "accent",
+    "accent-soft",
+    "warning-soft",
+    "warning-text",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-md",
+    "radius-sm",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-leaderboard",
+    "z-leaderboard__row",
+    "z-leaderboard__rank",
+    "z-leaderboard__who",
+    "z-leaderboard__name",
+    "z-leaderboard__secondary",
+    "z-leaderboard__value",
+    "z-leaderboard__number",
+    "z-leaderboard__bar"
+   ],
+   "a11y": "ol con nombre; cada fila empieza por «Rank 1» para el lector. La fila destacada lleva aria-current. La variación es un DeltaBadge con su frase.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Ventas del equipo",
+     "code": "<Leaderboard label=\"Top sellers\" highlight=\"u3\" valueFormat={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }} locale=\"en-US\" entries={[{ id: \"u1\", name: \"Ana López\", secondary: \"Enterprise\", value: 48200, previous: 41000 }, { id: \"u2\", name: \"Marco Rossi\", secondary: \"SMB\", value: 41900, previous: 44100 }, { id: \"u3\", name: \"Yuki Tanaka\", secondary: \"Mid-market\", value: 36700, previous: 30200 }, { id: \"u4\", name: \"Lea Martin\", secondary: \"SMB\", value: 29100, previous: 29000 }]} />"
+    }
+   ],
+   "origin": "Leaderboard de Aceternity UI como receta; rangos con empates por competición.",
+   "file": "zui/src/components/dashboard/Leaderboard.manifest.json"
+  },
+  {
+   "name": "MetricCard",
+   "group": "dashboard",
+   "description": "Tarjeta de KPI completa: etiqueta, valor, variación con su sentido, minigráfico, meta con ritmo, nota y acciones; estados de carga, vacío y error. StatTile sigue como tesela mínima; MetricCard es la del dashboard.",
+   "import": "import { MetricCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "value",
+     "type": "number | string | null",
+     "description": "Número (pasa por `format`) o texto ya formateado."
+    },
+    {
+     "name": "format",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "previous",
+     "type": "number",
+     "description": "Valor del periodo anterior: calcula la variación."
+    },
+    {
+     "name": "delta",
+     "type": "number",
+     "description": "Variación ya calculada (fracción)."
+    },
+    {
+     "name": "positive",
+     "type": "enum",
+     "values": [
+      "up",
+      "down"
+     ],
+     "default": "up"
+    },
+    {
+     "name": "period",
+     "type": "string",
+     "description": "Periodo de comparación («last month»): se ve como «vs last month» y entra en la frase de la variación."
+    },
+    {
+     "name": "trend",
+     "type": "(number | null)[]",
+     "description": "Serie del minigráfico."
+    },
+    {
+     "name": "trendType",
+     "type": "enum",
+     "values": [
+      "area",
+      "line",
+      "bar"
+     ],
+     "default": "area"
+    },
+    {
+     "name": "color",
+     "type": "number",
+     "description": "Color de serie 1–8 del minigráfico."
+    },
+    {
+     "name": "target",
+     "type": "number",
+     "description": "Meta: barra de avance hacia ella."
+    },
+    {
+     "name": "elapsed",
+     "type": "number",
+     "description": "Fracción del periodo transcurrida (0–1) para el ritmo."
+    },
+    {
+     "name": "hint",
+     "type": "ReactNode"
+    },
+    {
+     "name": "icon",
+     "type": "IconName"
+    },
+    {
+     "name": "state",
+     "type": "enum",
+     "values": [
+      "ready",
+      "loading",
+      "empty",
+      "error"
+     ],
+     "default": "ready"
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "La etiqueta es un enlace que cubre la tarjeta."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode",
+     "description": "IconButton o Menu en la cabecera, por encima del enlace."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "glass",
+      "soft",
+      "solid",
+      "plain"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<MetricCardLabels> & { delta?, goal? }",
+     "description": "empty, error, target, versus («vs {period}»); y los de DeltaBadge (delta) y ProgressGoal (goal)."
+    }
+   ],
+   "states": [
+    "ready",
+    "loading",
+    "empty",
+    "error",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "card-radius",
+    "card-bg",
+    "card-border",
+    "card-shadow",
+    "accent-soft",
+    "accent-text",
+    "accent-solid",
+    "fg-on-accent",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "danger-text",
+    "font-display",
+    "text-display-sm",
+    "weight-display",
+    "tracking-display",
+    "text-small",
+    "text-caption",
+    "focus-width",
+    "focus-offset",
+    "accent-ring",
+    "control-radius-sm",
+    "control-height-sm"
+   ],
+   "classes": [
+    "z-metric",
+    "z-metric__head",
+    "z-metric__icon",
+    "z-metric__label",
+    "z-metric__link",
+    "z-metric__actions",
+    "z-metric__main",
+    "z-metric__value",
+    "z-metric__delta",
+    "z-metric__period",
+    "z-metric__trend",
+    "z-metric__goal",
+    "z-metric__hint",
+    "z-metric__message",
+    "z-metric__bone"
+   ],
+   "a11y": "article con nombre (la etiqueta). El valor va en <data value>. La variación se lee como frase («up 12.4%, better than last month»), no por su color. En carga, aria-busy y huesos decorativos, sin anunciar «cargando». Con href, la etiqueta es el enlace y su zona cubre la tarjeta; las acciones quedan por encima y siguen siendo alcanzables.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Ingresos con variación, tendencia y meta",
+     "code": "<MetricCard label=\"Revenue\" icon=\"banknotes\" value={128400} format={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }} previous={114200} period=\"last month\" trend={[42, 44, 41, 48, 52, 50, 57, 61, 59, 66, 70, 74]} target={150000} elapsed={0.7} locale=\"en-US\" />"
+    },
+    {
+     "title": "Lo que es bueno que baje",
+     "code": "<MetricCard label=\"Error rate\" icon=\"exclamation-triangle\" value={0.012} format={{ style: \"percent\", maximumFractionDigits: 1 }} delta={-0.21} positive=\"down\" period=\"last week\" trend={[3, 2.6, 2.8, 2.1, 1.9, 1.6, 1.4, 1.2]} trendType=\"line\" color={2} locale=\"en-US\" />"
+    },
+    {
+     "title": "Cargando",
+     "code": "<MetricCard label=\"Active users\" state=\"loading\" />"
+    },
+    {
+     "title": "Sin datos",
+     "code": "<MetricCard label=\"Refunds\" state=\"empty\" variant=\"soft\" />"
+    }
+   ],
+   "origin": "StatisticCard de Ant Design Pro y las tarjetas KPI de Tremor y de los bloques dashboard de shadcn.",
+   "file": "zui/src/components/dashboard/MetricCard.manifest.json"
+  },
+  {
+   "name": "MetricGroup",
+   "group": "dashboard",
+   "description": "Fila de KPI: varias MetricCard en una banda de cristal con separadores (`glass`) o sueltas (`split`). Se reparte por el ancho del contenedor y se apila en estrecho.",
+   "import": "import { MetricGroup, MetricCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre de la región."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "glass",
+      "split"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "columns",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "description": "Columnas fijas en anchos grandes."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "card-radius",
+    "line",
+    "space-4"
+   ],
+   "classes": [
+    "z-metric-group"
+   ],
+   "a11y": "section con nombre: el lector la ofrece como región. Cada KPI conserva su article con nombre. En estrecho las piezas se apilan en el orden del marcado.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Cuatro KPI en una banda",
+     "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" />\n</MetricGroup>"
+    }
+   ],
+   "origin": "Fila de KPI de los bloques dashboard-01 de shadcn y de las plantillas de Tremor.",
+   "file": "zui/src/components/dashboard/MetricGroup.manifest.json"
+  },
+  {
+   "name": "ProgressGoal",
+   "group": "dashboard",
+   "description": "Avance hacia una meta con la marca del ritmo esperado: con `elapsed` dice si vas por delante, en ritmo o por detrás («92% of expected pace»).",
+   "import": "import { ProgressGoal } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "value",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "target",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "start",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "elapsed",
+     "type": "number",
+     "description": "Fracción del periodo transcurrida (0–1)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ProgressGoalLabels>",
+     "description": "ofTarget, valueText, pace, ahead, onTrack, behind, done, expected."
+    }
+   ],
+   "states": [
+    "ahead",
+    "on-track",
+    "behind",
+    "done"
+   ],
+   "tokens": [
+    "surface-3",
+    "accent",
+    "success",
+    "warning",
+    "success-text",
+    "warning-text",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-progress-goal",
+    "z-progress-goal__head",
+    "z-progress-goal__label",
+    "z-progress-goal__amount",
+    "z-progress-goal__track",
+    "z-progress-goal__fill",
+    "z-progress-goal__expected",
+    "z-progress-goal__foot",
+    "z-progress-goal__status",
+    "z-progress-goal__pace"
+   ],
+   "a11y": "La pista es role=meter con el nombre de la etiqueta y aria-valuetext «72% of goal, Behind pace». El estado se dice con texto e icono además del color. La marca del ritmo esperado es decorativa (su dato va en el texto). Sin React: .z-progress-goal con data-label, data-value, data-target, data-elapsed y data-value-format (JSON).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Por detrás del ritmo",
+     "code": "<ProgressGoal label=\"Q4 revenue\" value={96000} target={150000} elapsed={0.72} valueFormat={{ style: \"currency\", currency: \"USD\", notation: \"compact\" }} locale=\"en-US\" />"
+    },
+    {
+     "title": "Conseguido",
+     "code": "<ProgressGoal label=\"Signups\" value={1240} target={1200} locale=\"en-US\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Por detrás del ritmo",
+     "code": "<div class=\"z-progress-goal\" data-label=\"Q4 revenue\" data-value=\"96000\" data-target=\"150000\" data-elapsed=\"0.72\" data-locale=\"en-US\" data-value-format='{\"style\":\"currency\",\"currency\":\"USD\",\"notation\":\"compact\"}'></div>"
+    }
+   ],
+   "origin": "ProgressBar con marcador de Tremor y BulletChart de Mantine.",
+   "file": "zui/src/components/dashboard/ProgressGoal.manifest.json"
+  },
+  {
+   "name": "Tracker",
+   "group": "dashboard",
+   "description": "Tira de estados por día (disponibilidad de un servicio, ejecuciones de un trabajo) con la disponibilidad calculada y la etiqueta del día activo al pasar el puntero o con el foco.",
+   "import": "import { Tracker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "days",
+     "type": "{ status: \"ok\" | \"warning\" | \"error\" | \"maintenance\" | \"empty\"; label: string; note?: string }[]",
+     "required": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Texto a la derecha; por defecto, la disponibilidad."
+    },
+    {
+     "name": "hideHeader",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TrackerLabels>",
+     "description": "ok, warning, error, maintenance, empty, summary, day."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "surface-3",
+    "tooltip-bg",
+    "glass-border",
+    "fg",
+    "fg-muted",
+    "radius-xs",
+    "radius-sm",
+    "shadow-md",
+    "text-small",
+    "text-caption",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-tracker",
+    "z-tracker__head",
+    "z-tracker__label",
+    "z-tracker__summary",
+    "z-tracker__bars",
+    "z-tracker__bar",
+    "z-tracker__tip",
+    "z-tracker__tip-dot",
+    "z-tracker__tip-text"
+   ],
+   "a11y": "Lista ordenada con nombre y una sola parada de tabulación: flechas, Inicio, Fin y Re Pág/Av Pág entre días (en RTL las flechas se invierten). Cada día tiene su texto («3 Nov: Degraded, 12 min»), así que el estado no depende del color; además cada estado tiene su dibujo (franja, muesca, trama). La etiqueta flotante es decorativa. Sin React: .z-tracker con data-label y data-days (JSON o «ok ok warning error»).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Disponibilidad de la API",
+     "code": "<Tracker label=\"API\" locale=\"en-US\" days={[...Array(30)].map((_, i) => ({ status: i === 12 ? \"error\" : i === 20 || i === 21 ? \"warning\" : i === 5 ? \"maintenance\" : \"ok\", label: `Nov ${i + 1}` }))} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Disponibilidad de la API",
+     "code": "<div class=\"z-tracker\" data-label=\"API\" data-days='[{\"status\":\"ok\",\"label\":\"Nov 1\"},{\"status\":\"ok\",\"label\":\"Nov 2\"},{\"status\":\"warning\",\"label\":\"Nov 3\",\"note\":\"12 min\"},{\"status\":\"ok\",\"label\":\"Nov 4\"},{\"status\":\"error\",\"label\":\"Nov 5\",\"note\":\"41 min\"},{\"status\":\"ok\",\"label\":\"Nov 6\"},{\"status\":\"maintenance\",\"label\":\"Nov 7\"},{\"status\":\"ok\",\"label\":\"Nov 8\"}]'></div>"
+    }
+   ],
+   "origin": "Tracker de Tremor y las páginas de estado tipo uptime.",
+   "file": "zui/src/components/dashboard/Tracker.manifest.json"
+  },
+  {
    "name": "Avatar",
    "group": "data",
    "description": "Imagen de persona o entidad, con iniciales o icono como respaldo.",
@@ -8528,13 +10164,16 @@
       "online",
       "offline",
       "busy",
-      "away"
-     ]
+      "away",
+      "dnd",
+      "oof"
+     ],
+     "description": "Estado; cada uno con su forma dentro del punto (desde md) además del color."
     },
     {
      "name": "statusLabel",
      "type": "string",
-     "description": "Nombre accesible del estado; por defecto el propio valor."
+     "description": "Nombre accesible del estado. Por defecto, su texto («Available», «Do not disturb»)."
     }
    ],
    "states": [
@@ -8576,7 +10215,7 @@
   {
    "name": "AvatarGroup",
    "group": "data",
-   "description": "Avatares solapados con contador de sobrantes.",
+   "description": "Avatares solapados con contador de sobrantes. Con `items` es una lista (`ul`) y, con `overflow=\"list\"`, el «+N» es un botón que abre la lista de las personas que no se ven.",
    "import": "import { AvatarGroup } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -8611,7 +10250,43 @@
     {
      "name": "children",
      "type": "ReactNode",
-     "required": true
+     "description": "Avatares sueltos (sin `items`)."
+    },
+    {
+     "name": "items",
+     "type": "{ name, src?, secondary?, status? }[]",
+     "description": "Personas como datos: el grupo es una lista."
+    },
+    {
+     "name": "overflow",
+     "type": "enum",
+     "values": [
+      "count",
+      "list"
+     ],
+     "default": "count",
+     "description": "`list`: el «+N» abre la lista de sobrantes (con `items`)."
+    },
+    {
+     "name": "overflowTitle",
+     "type": "(hidden: number) => string",
+     "description": "Título de la lista de sobrantes. Por defecto \"N more people\"."
+    },
+    {
+     "name": "reverse",
+     "type": "boolean",
+     "default": false,
+     "description": "Apilado inverso: el primero queda encima."
+    },
+    {
+     "name": "spacing",
+     "type": "enum",
+     "values": [
+      "tight",
+      "normal",
+      "loose"
+     ],
+     "default": "normal"
     }
    ],
    "states": [
@@ -8632,17 +10307,37 @@
     "accent-text"
    ],
    "classes": [
+    "z-avatar",
     "z-avatar-group",
-    "z-avatar"
+    "z-avatar-group__item",
+    "z-avatar-group__list",
+    "z-avatar-group__more",
+    "z-avatar-group__popover",
+    "z-avatar-group__title"
    ],
-   "a11y": "role group; el contador expone su texto por aria-label.",
+   "a11y": "role group; el contador expone su texto por aria-label. Con items: lista ul de avatares con nombre; el «+N» es un botón «5 more» que abre un Popover (diálogo no modal con nombre) con la lista de sobrantes como Persona, y Escape devuelve el foco al botón.",
    "examples": [
     {
      "title": "Con sobrantes",
      "code": "<AvatarGroup max={3} aria-label=\"Project members\">\n  <Avatar name=\"Ana Ruiz\" />\n  <Avatar name=\"Leo Park\" />\n  <Avatar name=\"Mia Chen\" />\n  <Avatar name=\"Sam Diaz\" />\n  <Avatar name=\"Noa Levi\" />\n</AvatarGroup>"
+    },
+    {
+     "title": "Con lista de sobrantes",
+     "code": "<AvatarGroup max={3} overflow=\"list\" items={[{ name: \"Ana López\", status: \"online\" }, { name: \"Marco Rossi\" }, { name: \"Yuki Tanaka\" }, { name: \"Lea Martin\", secondary: \"Design\" }, { name: \"Omar Haddad\", secondary: \"Support\" }]} />"
     }
    ],
    "origin": "AvatarGroup del design system base.",
+   "html": [
+    {
+     "title": "Con sobrantes",
+     "code": "<div aria-label=\"Project members\" role=\"group\" class=\"z-avatar-group\" data-size=\"md\">\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana Ruiz\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">AR</span>\n  </span>\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Leo Park\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">LP</span>\n  </span>\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Mia Chen\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">MC</span>\n  </span>\n  <span class=\"z-avatar z-avatar--overflow\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"2 more\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">+2</span>\n  </span>\n</div>"
+    },
+    {
+     "title": "Con lista de sobrantes",
+     "code": "<ul class=\"z-avatar-group\" data-size=\"md\">\n  <li class=\"z-avatar-group__item\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span></li>\n  <li class=\"z-avatar-group__item\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Marco Rossi\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">MR</span></span></li>\n  <li class=\"z-avatar-group__item\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Yuki Tanaka\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">YT</span></span></li>\n  <li class=\"z-avatar-group__item\"><button type=\"button\" class=\"z-avatar z-avatar--overflow z-avatar-group__more\" data-size=\"md\" data-shape=\"circle\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#team-more\"><span class=\"z-sr-only\">2 more</span><span class=\"z-avatar__initials\" aria-hidden=\"true\">+2</span></button></li>\n</ul>\n<div id=\"team-more\" popover class=\"z-liquid z-popover z-avatar-group__popover\" role=\"dialog\" aria-label=\"2 more people\">\n  <p class=\"z-avatar-group__title\">2 more people</p>\n  <ul class=\"z-avatar-group__list\">\n    <li><div class=\"z-persona\" data-size=\"sm\" data-orientation=\"horizontal\"><span class=\"z-persona__media\"><span class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">LM</span></span></span><span class=\"z-persona__text\"><span class=\"z-persona__name\">Lea Martin</span><span class=\"z-persona__secondary\">Design</span></span></div></li>\n    <li><div class=\"z-persona\" data-size=\"sm\" data-orientation=\"horizontal\"><span class=\"z-persona__media\"><span class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">OH</span></span></span><span class=\"z-persona__text\"><span class=\"z-persona__name\">Omar Haddad</span><span class=\"z-persona__secondary\">Support</span></span></div></li>\n  </ul>\n</div>"
+    }
+   ],
+   "behavior": "dom",
    "file": "zui/src/components/data/AvatarGroup.manifest.json"
   },
   {
@@ -19397,6 +21092,152 @@
    "file": "zui/src/components/media/ImageCropper.manifest.json"
   },
   {
+   "name": "ImageList",
+   "group": "media",
+   "description": "Lista de imágenes: rejilla regular (`standard`), acolchada con piezas de distinto tamaño (`quilted`), tejida (`woven`) o en mampostería (`masonry`), con título opcional encima o debajo.",
+   "import": "import { ImageList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ src, alt, title?, subtitle?, cols?, rows?, width?, height?, href? }[]",
+     "required": true
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "standard",
+      "quilted",
+      "woven",
+      "masonry"
+     ],
+     "default": "standard"
+    },
+    {
+     "name": "columns",
+     "type": "number",
+     "default": 3
+    },
+    {
+     "name": "rowHeight",
+     "type": "number",
+     "default": 164
+    },
+    {
+     "name": "captionBelow",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "label",
+     "type": "string"
+    },
+    {
+     "name": "renderAction",
+     "type": "(item, index) => ReactNode"
+    }
+   ],
+   "tokens": [
+    "radius-md",
+    "surface-2",
+    "surface-solid",
+    "fg",
+    "space-2",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring",
+    "popup-bg",
+    "popup-blur",
+    "glass-border",
+    "glass-saturate",
+    "radius-sm"
+   ],
+   "classes": [
+    "z-image-list",
+    "z-image-list__item",
+    "z-image-list__link",
+    "z-image-list__image",
+    "z-image-list__bar",
+    "z-image-list__text",
+    "z-image-list__title",
+    "z-image-list__subtitle",
+    "z-image-list__action"
+   ],
+   "a11y": "ul con nombre; cada imagen con su alt y carga diferida (loading=lazy, decoding=async). El título es texto, no parte de la imagen. En `masonry` el orden de lectura es el del marcado, columna a columna.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Acolchada",
+     "code": "<ImageList variant=\"quilted\" columns={4} rowHeight={120} label=\"Trips\" items={[{ src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Mountain lake at dawn\", title: \"Lake\", cols: 2, rows: 2 }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236ac3f8'/%3E%3Cstop offset='1' stop-color='%233b5bdb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Desert dunes\", title: \"Dunes\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%239be15d'/%3E%3Cstop offset='1' stop-color='%2300a3a3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"City at night\", title: \"City\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f5d76e'/%3E%3Cstop offset='1' stop-color='%23f08a5d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Forest path\", title: \"Forest\", cols: 2 }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23b388eb'/%3E%3Cstop offset='1' stop-color='%236a4c93'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Coastline\", title: \"Coast\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238ec5fc'/%3E%3Cstop offset='1' stop-color='%23e0c3fc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Snowy peaks\", title: \"Peaks\" }]} />"
+    }
+   ],
+   "origin": "Image List (standard, quilted, woven, masonry) de MUI y Material.",
+   "file": "zui/src/components/media/ImageList.manifest.json"
+  },
+  {
+   "name": "Masonry",
+   "group": "media",
+   "description": "Mampostería: piezas de alto distinto en columnas sin huecos (tarjetas, notas, fotos). Usa carriles nativos donde el navegador los tiene y columnas CSS donde no.",
+   "import": "import { Masonry } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "columns",
+     "type": "number",
+     "default": 3
+    },
+    {
+     "name": "minColumnWidth",
+     "type": "number",
+     "default": 220
+    },
+    {
+     "name": "gap",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "as",
+     "type": "enum",
+     "values": [
+      "div",
+      "ul",
+      "ol"
+     ],
+     "default": "div"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "space-2",
+    "space-4",
+    "space-6"
+   ],
+   "classes": [
+    "z-masonry"
+   ],
+   "a11y": "El orden del DOM es el de lectura. Con columnas CSS se recorre columna a columna; con carriles nativos, fila a fila. Si el orden importa, usa `as=\"ol\"`.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Notas",
+     "code": "<Masonry columns={3}>\n  <Card>Short note.</Card>\n  <Card>A longer note that wraps over a few lines so the columns show different heights.</Card>\n  <Card>Medium note with two lines of text.</Card>\n  <Card>Another short one.</Card>\n  <Card>The tallest note of the set, with enough text to push it down past its neighbours and show how the layout packs pieces without gaps.</Card>\n</Masonry>"
+    }
+   ],
+   "origin": "Masonry de MUI Lab y de Ant Design; grid-lanes de CSS como mejora progresiva.",
+   "file": "zui/src/components/media/Masonry.manifest.json"
+  },
+  {
    "name": "QRCode",
    "group": "media",
    "description": "Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con la zona de silencio de la norma. Sin dependencias y sin estado: vale en un Server Component.",
@@ -22655,6 +24496,891 @@
     }
    ],
    "file": "zui/src/components/overlay/Tour.manifest.json"
+  },
+  {
+   "name": "AccountMenu",
+   "group": "people",
+   "description": "Menú de cuenta: botón con el avatar que abre un Menu con la persona en la cabecera, cambio de cuenta (radio), entradas propias, tema y salir.",
+   "import": "import { AccountMenu } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "user",
+     "type": "{ id?, name, email?, avatar?, presence? }",
+     "required": true
+    },
+    {
+     "name": "accounts",
+     "type": "AccountUser[]"
+    },
+    {
+     "name": "currentAccount",
+     "type": "string"
+    },
+    {
+     "name": "onSwitch",
+     "type": "(id: string) => void"
+    },
+    {
+     "name": "onAddAccount",
+     "type": "() => void"
+    },
+    {
+     "name": "items",
+     "type": "MenuEntry[]"
+    },
+    {
+     "name": "theme",
+     "type": "enum",
+     "values": [
+      "light",
+      "dark",
+      "system"
+     ]
+    },
+    {
+     "name": "onThemeChange",
+     "type": "(theme) => void"
+    },
+    {
+     "name": "onSignOut",
+     "type": "() => void"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "avatar",
+      "full"
+     ],
+     "default": "avatar"
+    },
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "top",
+      "right",
+      "bottom",
+      "left"
+     ],
+     "default": "bottom"
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end"
+     ],
+     "default": "end"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AccountMenuLabels>"
+    }
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "row-hover",
+    "radius-full",
+    "control-radius",
+    "control-height-lg",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-account-menu",
+    "z-account-menu__text",
+    "z-account-menu__name",
+    "z-account-menu__email",
+    "z-account-menu__menu",
+    "z-account-menu__persona"
+   ],
+   "a11y": "Botón con nombre «Account of Ana López» y aria-haspopup=menu (patrón menu button de WAI-ARIA). Las cuentas y el tema son grupos de menuitemradio con nombre. Escape cierra y devuelve el foco al botón.",
+   "behavior": "react",
+   "examples": [
+    {
+     "title": "Cuenta con tema",
+     "code": "<AccountMenu user={{ name: \"Ana López\", email: \"ana@example.com\", presence: \"online\" }} items={[{ id: \"profile\", label: \"Profile\", icon: \"user\" }, { id: \"settings\", label: \"Settings\", icon: \"cog\" }]} theme=\"dark\" onThemeChange={() => {}} onSignOut={() => {}} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Cuenta con tema",
+     "code": "<button type=\"button\" class=\"z-account-menu\" data-variant=\"avatar\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#account\">\n  <span class=\"z-sr-only\">Account of Ana López</span>\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span>\n</button>\n\n<div id=\"account\" popover class=\"z-liquid z-menu z-account-menu__menu\" role=\"menu\" aria-label=\"Account of Ana López\" data-size=\"md\">\n  <div class=\"z-menu__label\"><div class=\"z-persona z-account-menu__persona\" data-size=\"sm\" data-orientation=\"horizontal\"><span class=\"z-persona__media\"><span class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span></span><span class=\"z-persona__text\"><span class=\"z-persona__name\">Ana López</span><span class=\"z-persona__secondary\">ana@example.com</span></span></div></div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"user\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Profile</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"cog\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Settings</span></button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"account-theme\">\n    <div class=\"z-menu__label\" id=\"account-theme\">Theme</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"light\"><span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span><span class=\"z-menu__text\">Light</span></button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"dark\"><span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span><span class=\"z-menu__text\">Dark</span></button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"arrow-right-start-on-rectangle\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Sign out</span></button>\n</div>",
+     "script": "document.querySelector(\"#account\").addEventListener(\"z:select\", (event) => console.log(event.target.textContent.trim()));"
+    }
+   ],
+   "origin": "nav-user de los bloques de sidebar de shadcn y avatarProps de ProLayout (Ant Design Pro).",
+   "file": "zui/src/components/people/AccountMenu.manifest.json"
+  },
+  {
+   "name": "MemberList",
+   "group": "people",
+   "description": "Lista de miembros: búsqueda que anuncia los resultados, grupos por rol o por presencia, rol en un selector nativo, quitar con nombre propio e invitar.",
+   "import": "import { MemberList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "members",
+     "type": "{ id, name, email?, avatar?, role, presence?, pending? }[]",
+     "required": true
+    },
+    {
+     "name": "roles",
+     "type": "{ id, label, locked? }[]",
+     "required": true
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "searchable",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "groupBy",
+     "type": "enum",
+     "values": [
+      "role",
+      "presence",
+      "none"
+     ],
+     "default": "role"
+    },
+    {
+     "name": "invitable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "editable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "currentUserId",
+     "type": "string",
+     "description": "Su fila dice «You» y no se puede quitar."
+    },
+    {
+     "name": "onRoleChange",
+     "type": "(detail: { memberId, role }) => void"
+    },
+    {
+     "name": "onRemove",
+     "type": "(detail: { memberId }) => void"
+    },
+    {
+     "name": "onInvite",
+     "type": "() => void"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<MemberListLabels>"
+    },
+    {
+     "name": "presenceLabels",
+     "type": "Partial<PresenceLabels>"
+    }
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line-strong",
+    "row-hover",
+    "warning-text",
+    "radius-md",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide"
+   ],
+   "classes": [
+    "z-member-list",
+    "z-member-list__head",
+    "z-member-list__title",
+    "z-member-list__count",
+    "z-member-list__invite",
+    "z-member-list__search",
+    "z-member-list__empty",
+    "z-member-list__group",
+    "z-member-list__group-title",
+    "z-member-list__group-count",
+    "z-member-list__rows",
+    "z-member-list__row",
+    "z-member-list__role",
+    "z-member-list__role-text",
+    "z-member-list__remove"
+   ],
+   "a11y": "Búsqueda con nombre; el número de resultados se anuncia en la región status de la pieza («3 results») tras teclear, no por tecla. Cada grupo es una sección con encabezado. El rol es un <select> nativo con nombre «Role for Ana López»; quitar es un botón «Remove Ana López» y al quitar el foco pasa a la fila siguiente. La presencia se lee con texto. Sin React: .z-member-list con data-title, data-editable, data-invitable, data-group-by, data-current-user y los datos en <script type=\"application/json\" data-props>{ \"members\": [...], \"roles\": [...] }; emite z:rolechange, z:remove y z:invite.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Equipo editable",
+     "code": "<MemberList title=\"Team\" editable invitable currentUserId=\"m1\" roles={[{ id: \"owner\", label: \"Owner\", locked: true }, { id: \"admin\", label: \"Admin\" }, { id: \"member\", label: \"Member\" }]} members={[{ id: \"m1\", name: \"Ana López\", email: \"ana@example.com\", role: \"owner\", presence: \"online\" }, { id: \"m2\", name: \"Marco Rossi\", email: \"marco@example.com\", role: \"admin\", presence: \"busy\" }, { id: \"m3\", name: \"Yuki Tanaka\", email: \"yuki@example.com\", role: \"member\", presence: \"away\" }, { id: \"m4\", name: \"Lea Martin\", email: \"lea@example.com\", role: \"member\", pending: true }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Equipo editable",
+     "code": "<div class=\"z-member-list\" data-title=\"Team\" data-editable data-invitable data-current-user=\"m1\">\n  <script type=\"application/json\" data-props>{\"roles\":[{\"id\":\"owner\",\"label\":\"Owner\",\"locked\":true},{\"id\":\"admin\",\"label\":\"Admin\"},{\"id\":\"member\",\"label\":\"Member\"}],\"members\":[{\"id\":\"m1\",\"name\":\"Ana López\",\"email\":\"ana@example.com\",\"role\":\"owner\",\"presence\":\"online\"},{\"id\":\"m2\",\"name\":\"Marco Rossi\",\"email\":\"marco@example.com\",\"role\":\"admin\",\"presence\":\"busy\"},{\"id\":\"m3\",\"name\":\"Yuki Tanaka\",\"email\":\"yuki@example.com\",\"role\":\"member\",\"presence\":\"away\"}]}</script>\n</div>"
+    }
+   ],
+   "origin": "GroupMembers de CometChat y las listas de miembros de los bloques de shadcn.",
+   "file": "zui/src/components/people/MemberList.manifest.json"
+  },
+  {
+   "name": "Persona",
+   "group": "people",
+   "description": "Persona: avatar, nombre, línea secundaria (rol, correo) y presencia, en fila o en columna y en cinco tamaños.",
+   "import": "import { Persona } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "name",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "secondary",
+     "type": "ReactNode"
+    },
+    {
+     "name": "tertiary",
+     "type": "ReactNode"
+    },
+    {
+     "name": "avatar",
+     "type": "string"
+    },
+    {
+     "name": "presence",
+     "type": "enum",
+     "values": [
+      "online",
+      "away",
+      "busy",
+      "dnd",
+      "offline",
+      "oof"
+     ]
+    },
+    {
+     "name": "lastSeen",
+     "type": "number | string | Date"
+    },
+    {
+     "name": "showPresence",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "href",
+     "type": "string"
+    },
+    {
+     "name": "trailing",
+     "type": "ReactNode"
+    },
+    {
+     "name": "now",
+     "type": "number"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "presenceLabels",
+     "type": "Partial<PresenceLabels>"
+    }
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "surface-3",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "text-body",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-persona",
+    "z-persona__media",
+    "z-persona__text",
+    "z-persona__name",
+    "z-persona__secondary",
+    "z-persona__tertiary",
+    "z-persona__tag",
+    "z-persona__status",
+    "z-persona__trailing"
+   ],
+   "a11y": "El avatar es decorativo (alt vacío): el nombre está en el texto. La presencia se dice con texto (visible con showPresence o para el lector) y su punto tiene forma propia.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con presencia",
+     "code": "<Persona name=\"Ana López\" secondary=\"Product designer\" presence=\"online\" showPresence />"
+    },
+    {
+     "title": "Vertical y grande",
+     "code": "<Persona name=\"Marco Rossi\" secondary=\"Engineering lead\" tertiary=\"Milan\" size=\"lg\" orientation=\"vertical\" presence=\"dnd\" />"
+    }
+   ],
+   "origin": "Persona de Fluent UI y User de HeroUI.",
+   "file": "zui/src/components/people/Persona.manifest.json"
+  },
+  {
+   "name": "PresenceBadge",
+   "group": "people",
+   "description": "Presencia de una persona: disponible, ausente, ocupada, no molestar, desconectada o fuera de la oficina, con «visto hace…» cuando se sabe.",
+   "import": "import { PresenceBadge } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "status",
+     "type": "enum",
+     "values": [
+      "online",
+      "away",
+      "busy",
+      "dnd",
+      "offline",
+      "oof"
+     ],
+     "required": true
+    },
+    {
+     "name": "lastSeen",
+     "type": "number | string | Date"
+    },
+    {
+     "name": "showLabel",
+     "type": "boolean",
+     "default": false,
+     "description": "Texto visible; sin él, el texto queda para el lector."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "now",
+     "type": "number"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PresenceLabels>"
+    }
+   ],
+   "states": [
+    "online",
+    "away",
+    "busy",
+    "dnd",
+    "offline",
+    "oof"
+   ],
+   "tokens": [
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "fg-subtle",
+    "fg-muted",
+    "surface-solid",
+    "radius-full",
+    "text-small"
+   ],
+   "classes": [
+    "z-presence-badge",
+    "z-presence",
+    "z-presence-badge__label"
+   ],
+   "a11y": "Nunca solo color: cada estado tiene su forma (marca, reloj, punto lleno, raya, aspa en anillo, flecha) y su texto, visible con showLabel o en un z-sr-only. El punto es decorativo.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Los seis estados",
+     "code": "<div style={{ display: \"flex\", gap: 16, flexWrap: \"wrap\" }}>\n  <PresenceBadge status=\"online\" showLabel />\n  <PresenceBadge status=\"away\" showLabel />\n  <PresenceBadge status=\"busy\" showLabel />\n  <PresenceBadge status=\"dnd\" showLabel />\n  <PresenceBadge status=\"oof\" showLabel />\n  <PresenceBadge status=\"offline\" showLabel lastSeen=\"2026-11-22T11:00:00Z\" now={Date.parse(\"2026-11-22T14:00:00Z\")} locale=\"en-US\" />\n</div>"
+    }
+   ],
+   "origin": "PresenceBadge de Fluent UI (available, busy, dnd, away, offline, oof).",
+   "file": "zui/src/components/people/PresenceBadge.manifest.json"
+  },
+  {
+   "name": "ProfileEditor",
+   "group": "people",
+   "description": "Editor de perfil: foto (elegir y quitar), nombre, usuario, correo, web, ubicación y biografía con contador. Valida al salir de cada campo y al guardar, nunca mientras se escribe por primera vez.",
+   "import": "import { ProfileEditor } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "defaultValues",
+     "type": "Partial<ProfileValues> & { avatar?: string }"
+    },
+    {
+     "name": "onSubmit",
+     "type": "(values: ProfileValues & { avatar?: File | null }) => void | Promise<void>"
+    },
+    {
+     "name": "onCancel",
+     "type": "() => void"
+    },
+    {
+     "name": "isHandleTaken",
+     "type": "(handle: string) => boolean"
+    },
+    {
+     "name": "bioMax",
+     "type": "number",
+     "default": 160
+    },
+    {
+     "name": "children",
+     "type": "ReactNode"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ProfileLabels>",
+     "description": "Mensajes de error y contador."
+    },
+    {
+     "name": "text",
+     "type": "Partial<ProfileEditorText>",
+     "description": "Etiquetas de los campos y botones."
+    }
+   ],
+   "states": [
+    "rest",
+    "invalid",
+    "saving",
+    "saved"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "line",
+    "danger-text",
+    "text-heading",
+    "text-small",
+    "weight-semibold",
+    "weight-medium"
+   ],
+   "classes": [
+    "z-profile-editor",
+    "z-profile-editor__title",
+    "z-profile-editor__photo",
+    "z-profile-editor__photo-actions",
+    "z-profile-editor__photo-label",
+    "z-profile-editor__photo-buttons",
+    "z-profile-editor__file",
+    "z-profile-editor__grid",
+    "z-profile-editor__field",
+    "z-profile-editor__at",
+    "z-profile-editor__hint",
+    "z-profile-editor__error",
+    "z-profile-editor__counter",
+    "z-profile-editor__actions",
+    "z-profile-editor__status"
+   ],
+   "a11y": "Formulario con nombre; cada campo con <label for>, autocompletado correcto (name, username, email, url, address-level2) y la pista encima del error. El error se muestra tras salir del campo o al guardar, empieza por un icono con el texto «Error» y dice cómo corregirlo; se une al campo con aria-describedby solo mientras existe y aria-invalid lo acompaña. Al guardar con errores, el foco va al primero y la región status dice cuántos hay. Sin React: el mismo marcado en un [data-z-dom] (form.z-profile-editor); emite z:submit { values } y z:photochange { file }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Perfil",
+     "code": "<ProfileEditor defaultValues={{ name: \"Ana López\", handle: \"ana\", email: \"ana@example.com\", website: \"https://ana.design\", location: \"Madrid\", bio: \"I design systems that ship.\" }} />"
+    }
+   ],
+   "origin": "ProForm de Ant Design Pro y los formularios de cuenta de los bloques de shadcn; validación tras la interacción con :user-invalid como referencia.",
+   "file": "zui/src/components/people/ProfileEditor.manifest.json"
+  },
+  {
+   "name": "ProfileHeader",
+   "group": "people",
+   "description": "Cabecera de perfil: portada a sangre, avatar superpuesto con anillo de cristal, nombre (h1), insignias, usuario, rol, biografía, metadatos, estadísticas, acciones y pestañas.",
+   "import": "import { ProfileHeader } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "user",
+     "type": "{ name, handle?, avatar?, cover?, coverAlt?, role?, bio?, presence? }",
+     "required": true
+    },
+    {
+     "name": "stats",
+     "type": "{ label, value }[]"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "badges",
+     "type": "ReactNode"
+    },
+    {
+     "name": "meta",
+     "type": "{ icon: IconName; label: string; href?: string }[]"
+    },
+    {
+     "name": "tabs",
+     "type": "ReactNode"
+    },
+    {
+     "name": "coverAction",
+     "type": "ReactNode",
+     "description": "Botón sobre la portada para editarla."
+    },
+    {
+     "name": "avatarAction",
+     "type": "ReactNode",
+     "description": "Botón sobre el avatar."
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      1,
+      2,
+      3
+     ],
+     "default": 1
+    }
+   ],
+   "tokens": [
+    "panel-radius",
+    "surface-3",
+    "surface-solid",
+    "glass-border",
+    "accent",
+    "accent-text",
+    "chart-2",
+    "chart-3",
+    "shadow-md",
+    "fg",
+    "fg-muted",
+    "line",
+    "font-display",
+    "text-display-sm",
+    "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "text-body",
+    "text-small",
+    "leading-relaxed",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-profile-header",
+    "z-profile-header__cover",
+    "z-profile-header__cover-image",
+    "z-profile-header__cover-action",
+    "z-profile-header__main",
+    "z-profile-header__top",
+    "z-profile-header__avatar",
+    "z-profile-header__presence",
+    "z-profile-header__avatar-action",
+    "z-profile-header__actions",
+    "z-profile-header__identity",
+    "z-profile-header__title",
+    "z-profile-header__name",
+    "z-profile-header__badges",
+    "z-profile-header__subtitle",
+    "z-profile-header__handle",
+    "z-profile-header__role",
+    "z-profile-header__bio",
+    "z-profile-header__meta",
+    "z-profile-header__meta-item",
+    "z-profile-header__stats",
+    "z-profile-header__stat",
+    "z-profile-header__tabs"
+   ],
+   "a11y": "El nombre es el h1 de la página (nivel configurable). La portada es decorativa salvo que llegue coverAlt. Las estadísticas son una lista de pares (dl) y los metadatos una lista. En estrecho, las acciones ocupan el ancho.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Perfil completo",
+     "code": "<ProfileHeader user={{ name: \"Ana López\", handle: \"ana\", role: \"Principal designer\", bio: \"I design systems that ship. Previously at a studio in Lisbon.\", presence: \"online\" }} badges={<Badge tone=\"accent\">Staff</Badge>} meta={[{ icon: \"map-pin\", label: \"Madrid\" }, { icon: \"link\", label: \"ana.design\", href: \"#\" }, { icon: \"calendar\", label: \"Joined March 2021\" }]} stats={[{ label: \"Followers\", value: \"1.2k\" }, { label: \"Following\", value: 184 }, { label: \"Projects\", value: 34 }]} actions={<><Button icon=\"chat-bubble-left-right\">Message</Button><Button variant=\"primary\" icon=\"user-plus\">Follow</Button></>} />"
+    }
+   ],
+   "origin": "Cabeceras de perfil de GitHub, X y LinkedIn.",
+   "file": "zui/src/components/people/ProfileHeader.manifest.json"
+  },
+  {
+   "name": "SettingsSection",
+   "group": "people",
+   "exports": [
+    "SettingRow"
+   ],
+   "description": "Sección de ajustes con filas: título, descripción, superficie de lectura con filas etiqueta–descripción–control (SettingRow) y pie con acciones. La fila muestra el estado del guardado.",
+   "import": "import { SettingsSection, SettingRow } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "id",
+     "type": "string",
+     "description": "Ancla de la sección."
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "default",
+      "danger"
+     ],
+     "default": "default"
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      2,
+      3
+     ],
+     "default": 2
+    },
+    {
+     "name": "SettingRow.label",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "SettingRow.description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "SettingRow.control",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "SettingRow.htmlFor",
+     "type": "string",
+     "description": "Id del control: la etiqueta es un <label for>."
+    },
+    {
+     "name": "SettingRow.status",
+     "type": "enum",
+     "values": [
+      "saving",
+      "saved",
+      "error"
+     ]
+    },
+    {
+     "name": "SettingRow.error",
+     "type": "string"
+    },
+    {
+     "name": "SettingRow.danger",
+     "type": "boolean"
+    },
+    {
+     "name": "SettingRow.stacked",
+     "type": "boolean"
+    },
+    {
+     "name": "SettingRow.labels",
+     "type": "Partial<SettingRowLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "saving",
+    "saved",
+    "error"
+   ],
+   "tokens": [
+    "card-radius",
+    "line",
+    "danger",
+    "danger-text",
+    "success-text",
+    "fg",
+    "fg-muted",
+    "text-title",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "weight-medium",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-settings-section",
+    "z-settings-section__head",
+    "z-settings-section__title",
+    "z-settings-section__description",
+    "z-settings-section__body",
+    "z-settings-section__footer",
+    "z-setting-row",
+    "z-setting-row__text",
+    "z-setting-row__label",
+    "z-setting-row__description",
+    "z-setting-row__control",
+    "z-setting-row__status"
+   ],
+   "a11y": "La sección se nombra por su título. En cada fila la etiqueta es un <label for> del control (htmlFor) y la descripción le llega por aria-describedby. El estado de guardado está en una región status por fila: «Saved» se anuncia una vez.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Notificaciones",
+     "code": "<SettingsSection id=\"notifications\" title=\"Notifications\" description=\"Choose what reaches your inbox.\">\n  <SettingRow htmlFor=\"n-mentions\" label=\"Mentions\" description=\"When someone mentions you in a comment.\" control={<Switch id=\"n-mentions\" defaultChecked aria-label=\"Mentions\" />} status=\"saved\" />\n  <SettingRow htmlFor=\"n-digest\" label=\"Weekly digest\" description=\"A summary every Monday.\" control={<NativeSelect id=\"n-digest\" block={false} defaultValue=\"monday\" options={[{ value: \"monday\", label: \"Monday\" }, { value: \"friday\", label: \"Friday\" }, { value: \"never\", label: \"Never\" }]} />} />\n</SettingsSection>"
+    }
+   ],
+   "origin": "Páginas de ajustes de los bloques de shadcn y de Carbon.",
+   "file": "zui/src/components/people/SettingsSection.manifest.json"
+  },
+  {
+   "name": "UserCard",
+   "group": "people",
+   "description": "Tarjeta de persona: portada, avatar superpuesto, nombre, usuario, rol, biografía corta, estadísticas y acciones (seguir, mensaje).",
+   "import": "import { UserCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "user",
+     "type": "{ name, handle?, avatar?, cover?, role?, bio?, presence? }",
+     "required": true
+    },
+    {
+     "name": "stats",
+     "type": "{ label, value }[]"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "cover",
+      "compact"
+     ],
+     "default": "cover"
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4
+     ],
+     "default": 3
+    },
+    {
+     "name": "href",
+     "type": "string"
+    }
+   ],
+   "tokens": [
+    "card-radius",
+    "surface-2",
+    "surface-solid",
+    "glass-border",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "chart-2",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line",
+    "font-display",
+    "text-title",
+    "text-heading",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "weight-display",
+    "leading-relaxed"
+   ],
+   "classes": [
+    "z-user-card",
+    "z-user-card__cover",
+    "z-user-card__cover-image",
+    "z-user-card__identity",
+    "z-user-card__avatar",
+    "z-user-card__presence",
+    "z-user-card__names",
+    "z-user-card__name",
+    "z-user-card__handle",
+    "z-user-card__role",
+    "z-user-card__bio",
+    "z-user-card__stats",
+    "z-user-card__stat",
+    "z-user-card__actions"
+   ],
+   "a11y": "article con el nombre; el nombre es un encabezado (h3 por defecto). La portada es decorativa. Las estadísticas son una lista de pares (dl) que se lee «Followers 1.2k».",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con portada",
+     "code": "<UserCard user={{ name: \"Ana López\", handle: \"ana\", role: \"Design\", bio: \"Design systems and the odd typeface.\", presence: \"online\" }} stats={[{ label: \"Followers\", value: \"1.2k\" }, { label: \"Projects\", value: 34 }, { label: \"Reviews\", value: 210 }]} actions={<><Button variant=\"primary\" icon=\"user-plus\">Follow</Button><Button icon=\"chat-bubble-left-right\">Message</Button></>} />"
+    }
+   ],
+   "origin": "Card.Meta de Ant Design, User de HeroUI y las tarjetas de perfil de los bloques de shadcn.",
+   "file": "zui/src/components/people/UserCard.manifest.json"
   },
   {
    "name": "CodeViewer",

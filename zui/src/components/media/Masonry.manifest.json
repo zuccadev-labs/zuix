@@ -1,0 +1,46 @@
+{
+  "name": "Masonry",
+  "group": "media",
+  "description": "Mampostería: piezas de alto distinto en columnas sin huecos (tarjetas, notas, fotos). Usa carriles nativos donde el navegador los tiene y columnas CSS donde no.",
+  "import": "import { Masonry } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "columns",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "minColumnWidth",
+      "type": "number",
+      "default": 220
+    },
+    {
+      "name": "gap",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "as",
+      "type": "enum",
+      "values": ["div", "ul", "ol"],
+      "default": "div"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": ["space-2", "space-4", "space-6"],
+  "classes": ["z-masonry"],
+  "a11y": "El orden del DOM es el de lectura. Con columnas CSS se recorre columna a columna; con carriles nativos, fila a fila. Si el orden importa, usa `as=\"ol\"`.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Notas",
+      "code": "<Masonry columns={3}>\n  <Card>Short note.</Card>\n  <Card>A longer note that wraps over a few lines so the columns show different heights.</Card>\n  <Card>Medium note with two lines of text.</Card>\n  <Card>Another short one.</Card>\n  <Card>The tallest note of the set, with enough text to push it down past its neighbours and show how the layout packs pieces without gaps.</Card>\n</Masonry>"
+    }
+  ],
+  "origin": "Masonry de MUI Lab y de Ant Design; grid-lanes de CSS como mejora progresiva."
+}

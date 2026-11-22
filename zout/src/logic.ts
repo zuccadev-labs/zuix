@@ -411,3 +411,26 @@ export function navbarShouldMeasure(collapsed: boolean, width: number, lastWidth
   if (!collapsed) return true;
   return width > lastWidth;
 }
+
+/* ---------- AppBar y DocsLayout ---------- */
+
+/** Avance 0…1 del pliegue de una AppBar tras desplazar `scroll` px sobre una distancia de pliegue. */
+export function appBarProgress(scroll: number, distance: number): number {
+  if (!(distance > 0) || !Number.isFinite(scroll)) return scroll > 0 ? 1 : 0;
+  return clamp(scroll / distance, 0, 1);
+}
+
+/**
+ * Índice de la sección activa de un índice de contenidos: la última cuyo inicio queda por encima de la línea de
+ * lectura (`line`, px desde arriba). `tops` son los inicios de cada sección relativos al viewport, en orden. Si
+ * ninguna ha llegado, la primera; con la página al final (`atEnd`), la última.
+ */
+export function activeSection(tops: readonly number[], line: number, atEnd = false): number {
+  if (!tops.length) return -1;
+  if (atEnd) return tops.length - 1;
+  let active = 0;
+  tops.forEach((top, i) => {
+    if (top <= line) active = i;
+  });
+  return active;
+}

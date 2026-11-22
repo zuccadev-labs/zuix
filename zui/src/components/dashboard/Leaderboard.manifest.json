@@ -1,0 +1,81 @@
+{
+  "name": "Leaderboard",
+  "group": "dashboard",
+  "description": "Clasificación sencilla: rango (con empates), persona, valor con barra y variación. Una lista ordenada; para ordenar por columnas usa DataTable.",
+  "import": "import { Leaderboard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "entries",
+      "type": "{ id, name, secondary?, avatar?, value, previous?, href? }[]",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "positive",
+      "type": "enum",
+      "values": ["up", "down"],
+      "default": "up"
+    },
+    {
+      "name": "limit",
+      "type": "number"
+    },
+    {
+      "name": "highlight",
+      "type": "string",
+      "description": "Id de la fila destacada (quien mira)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "rankLabel",
+      "type": "string",
+      "default": "Rank {rank}"
+    }
+  ],
+  "tokens": [
+    "accent",
+    "accent-soft",
+    "warning-soft",
+    "warning-text",
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-md",
+    "radius-sm",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-leaderboard",
+    "z-leaderboard__row",
+    "z-leaderboard__rank",
+    "z-leaderboard__who",
+    "z-leaderboard__name",
+    "z-leaderboard__secondary",
+    "z-leaderboard__value",
+    "z-leaderboard__number",
+    "z-leaderboard__bar"
+  ],
+  "a11y": "ol con nombre; cada fila empieza por «Rank 1» para el lector. La fila destacada lleva aria-current. La variación es un DeltaBadge con su frase.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Ventas del equipo",
+      "code": "<Leaderboard label=\"Top sellers\" highlight=\"u3\" valueFormat={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }} locale=\"en-US\" entries={[{ id: \"u1\", name: \"Ana López\", secondary: \"Enterprise\", value: 48200, previous: 41000 }, { id: \"u2\", name: \"Marco Rossi\", secondary: \"SMB\", value: 41900, previous: 44100 }, { id: \"u3\", name: \"Yuki Tanaka\", secondary: \"Mid-market\", value: 36700, previous: 30200 }, { id: \"u4\", name: \"Lea Martin\", secondary: \"SMB\", value: 29100, previous: 29000 }]} />"
+    }
+  ],
+  "origin": "Leaderboard de Aceternity UI como receta; rangos con empates por competición."
+}

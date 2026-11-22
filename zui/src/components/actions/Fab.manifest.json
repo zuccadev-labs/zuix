@@ -1,0 +1,79 @@
+{
+  "name": "Fab",
+  "group": "actions",
+  "description": "Botón de acción flotante (FAB de Material 3): un cuadrado de esquinas redondeadas con la acción principal de la pantalla, en tres tamaños; extendido con texto que se pliega con `collapsed`; fijo en una esquina con `position`.",
+  "import": "import { Fab } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "icon",
+      "type": "IconName",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible; con extended también el texto."
+    },
+    {
+      "name": "extended",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "collapsed",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["primary", "secondary", "surface"],
+      "default": "primary"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["bottom-end", "bottom-start", "top-end", "top-start", "bottom-center"]
+    }
+  ],
+  "states": ["rest", "hover", "focus", "active", "collapsed"],
+  "tokens": [
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "accent-soft",
+    "accent-text",
+    "popup-bg",
+    "popup-blur",
+    "glass-border",
+    "glass-saturate",
+    "surface-3",
+    "shadow-md",
+    "shadow-lg",
+    "radius-md",
+    "radius-lg",
+    "radius-xl",
+    "focus-width",
+    "focus-offset",
+    "accent-ring",
+    "layer-sticky",
+    "weight-semibold"
+  ],
+  "classes": ["z-fab", "z-fab__label"],
+  "a11y": "button nativo. Sin texto visible lleva aria-label y title; extendido, el texto es su nombre (y al plegarse vuelve el aria-label). Fijo, respeta las zonas seguras del dispositivo.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Tamaños y extendido",
+      "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <Fab icon=\"plus\" label=\"New\" size=\"sm\" />\n  <Fab icon=\"pencil\" label=\"Compose\" />\n  <Fab icon=\"plus\" label=\"Create\" size=\"lg\" variant=\"secondary\" />\n  <Fab icon=\"pencil-square\" label=\"New message\" extended />\n</div>"
+    }
+  ],
+  "origin": "FAB, medium/large FAB y extended FAB de Material 3; FloatButton de Ant Design."
+}

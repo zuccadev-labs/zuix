@@ -1,7 +1,7 @@
 {
   "name": "AvatarGroup",
   "group": "data",
-  "description": "Avatares solapados con contador de sobrantes.",
+  "description": "Avatares solapados con contador de sobrantes. Con `items` es una lista (`ul`) y, con `overflow=\"list\"`, el «+N» es un botón que abre la lista de las personas que no se ven.",
   "import": "import { AvatarGroup } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -30,7 +30,36 @@
     {
       "name": "children",
       "type": "ReactNode",
-      "required": true
+      "description": "Avatares sueltos (sin `items`)."
+    },
+    {
+      "name": "items",
+      "type": "{ name, src?, secondary?, status? }[]",
+      "description": "Personas como datos: el grupo es una lista."
+    },
+    {
+      "name": "overflow",
+      "type": "enum",
+      "values": ["count", "list"],
+      "default": "count",
+      "description": "`list`: el «+N» abre la lista de sobrantes (con `items`)."
+    },
+    {
+      "name": "overflowTitle",
+      "type": "(hidden: number) => string",
+      "description": "Título de la lista de sobrantes. Por defecto \"N more people\"."
+    },
+    {
+      "name": "reverse",
+      "type": "boolean",
+      "default": false,
+      "description": "Apilado inverso: el primero queda encima."
+    },
+    {
+      "name": "spacing",
+      "type": "enum",
+      "values": ["tight", "normal", "loose"],
+      "default": "normal"
     }
   ],
   "states": ["rest"],
@@ -48,13 +77,36 @@
     "fg-muted",
     "accent-text"
   ],
-  "classes": ["z-avatar-group", "z-avatar"],
-  "a11y": "role group; el contador expone su texto por aria-label.",
+  "classes": [
+    "z-avatar",
+    "z-avatar-group",
+    "z-avatar-group__item",
+    "z-avatar-group__list",
+    "z-avatar-group__more",
+    "z-avatar-group__popover",
+    "z-avatar-group__title"
+  ],
+  "a11y": "role group; el contador expone su texto por aria-label. Con items: lista ul de avatares con nombre; el «+N» es un botón «5 more» que abre un Popover (diálogo no modal con nombre) con la lista de sobrantes como Persona, y Escape devuelve el foco al botón.",
   "examples": [
     {
       "title": "Con sobrantes",
       "code": "<AvatarGroup max={3} aria-label=\"Project members\">\n  <Avatar name=\"Ana Ruiz\" />\n  <Avatar name=\"Leo Park\" />\n  <Avatar name=\"Mia Chen\" />\n  <Avatar name=\"Sam Diaz\" />\n  <Avatar name=\"Noa Levi\" />\n</AvatarGroup>"
+    },
+    {
+      "title": "Con lista de sobrantes",
+      "code": "<AvatarGroup max={3} overflow=\"list\" items={[{ name: \"Ana López\", status: \"online\" }, { name: \"Marco Rossi\" }, { name: \"Yuki Tanaka\" }, { name: \"Lea Martin\", secondary: \"Design\" }, { name: \"Omar Haddad\", secondary: \"Support\" }]} />"
     }
   ],
-  "origin": "AvatarGroup del design system base."
+  "origin": "AvatarGroup del design system base.",
+  "html": [
+    {
+      "title": "Con sobrantes",
+      "code": "<div aria-label=\"Project members\" role=\"group\" class=\"z-avatar-group\" data-size=\"md\">\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana Ruiz\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">AR</span>\n  </span>\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Leo Park\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">LP</span>\n  </span>\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Mia Chen\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">MC</span>\n  </span>\n  <span class=\"z-avatar z-avatar--overflow\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"2 more\">\n    <span class=\"z-avatar__initials\" aria-hidden=\"true\">+2</span>\n  </span>\n</div>"
+    },
+    {
+      "title": "Con lista de sobrantes",
+      "code": "<ul class=\"z-avatar-group\" data-size=\"md\">\n  <li class=\"z-avatar-group__item\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span></li>\n  <li class=\"z-avatar-group__item\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Marco Rossi\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">MR</span></span></li>\n  <li class=\"z-avatar-group__item\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Yuki Tanaka\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">YT</span></span></li>\n  <li class=\"z-avatar-group__item\"><button type=\"button\" class=\"z-avatar z-avatar--overflow z-avatar-group__more\" data-size=\"md\" data-shape=\"circle\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#team-more\"><span class=\"z-sr-only\">2 more</span><span class=\"z-avatar__initials\" aria-hidden=\"true\">+2</span></button></li>\n</ul>\n<div id=\"team-more\" popover class=\"z-liquid z-popover z-avatar-group__popover\" role=\"dialog\" aria-label=\"2 more people\">\n  <p class=\"z-avatar-group__title\">2 more people</p>\n  <ul class=\"z-avatar-group__list\">\n    <li><div class=\"z-persona\" data-size=\"sm\" data-orientation=\"horizontal\"><span class=\"z-persona__media\"><span class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">LM</span></span></span><span class=\"z-persona__text\"><span class=\"z-persona__name\">Lea Martin</span><span class=\"z-persona__secondary\">Design</span></span></div></li>\n    <li><div class=\"z-persona\" data-size=\"sm\" data-orientation=\"horizontal\"><span class=\"z-persona__media\"><span class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">OH</span></span></span><span class=\"z-persona__text\"><span class=\"z-persona__name\">Omar Haddad</span><span class=\"z-persona__secondary\">Support</span></span></div></li>\n  </ul>\n</div>"
+    }
+  ],
+  "behavior": "dom"
 }

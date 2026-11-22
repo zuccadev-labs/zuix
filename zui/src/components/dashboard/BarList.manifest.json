@@ -1,0 +1,67 @@
+{
+  "name": "BarList",
+  "group": "dashboard",
+  "description": "Barras horizontales con etiqueta y valor: los primeros de algo (páginas, fuentes de tráfico, países). Las filas pueden ser enlaces.",
+  "import": "import { BarList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ label: string; value: number; href?: string; icon?: IconName; display?: string }[]",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "description": "Escala; por defecto, el mayor valor."
+    },
+    {
+      "name": "sort",
+      "type": "enum",
+      "values": ["none", "desc"],
+      "default": "none"
+    },
+    {
+      "name": "color",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "tokens": ["chart-1", "chart-2", "chart-3", "fg", "fg-muted", "radius-sm", "text-small", "weight-semibold", "focus-width", "accent-ring"],
+  "classes": [
+    "z-bar-list",
+    "z-bar-list__row",
+    "z-bar-list__bar",
+    "z-bar-list__label",
+    "z-bar-list__icon",
+    "z-bar-list__text",
+    "z-bar-list__value"
+  ],
+  "a11y": "ul con nombre; cada fila se lee como «Google, 4,021». La barra es decorativa. Sin React: .z-bar-list con data-items (JSON), data-label, data-sort, data-color y data-locale.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Fuentes de tráfico",
+      "code": "<BarList label=\"Top sources\" sort=\"desc\" locale=\"en-US\" items={[{ label: \"Google\", value: 4021, icon: \"globe-alt\" }, { label: \"Direct\", value: 2390, icon: \"link\" }, { label: \"GitHub\", value: 1310, icon: \"code-bracket\" }, { label: \"Newsletter\", value: 864, icon: \"envelope\" }, { label: \"X\", value: 512, icon: \"chat-bubble-left-right\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Fuentes de tráfico",
+      "code": "<ul class=\"z-bar-list\" data-label=\"Top sources\" data-sort=\"desc\" data-locale=\"en-US\" data-items='[{\"label\":\"Google\",\"value\":4021},{\"label\":\"Direct\",\"value\":2390},{\"label\":\"GitHub\",\"value\":1310}]'></ul>"
+    }
+  ],
+  "origin": "BarList de Tremor y BarsList de Mantine."
+}

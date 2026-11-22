@@ -386,7 +386,8 @@
        4,3:1 (axe, zutool y zenith claros). */
     background: linear-gradient(var(--z-accent-soft), var(--z-accent-soft)), var(--z-surface-solid);
     color: var(--z-accent-text);
-    font-size: calc(var(--z-avatar-size) * 0.38);
+    /* Iniciales en la escala tipográfica, una talla por tamaño de avatar (cerca del 38 % del diámetro). */
+    font-size: var(--z-text-small);
     font-weight: var(--z-weight-bold);
     line-height: 1;
     user-select: none;
@@ -394,15 +395,19 @@
   }
   .z-avatar[data-size="xs"] {
     --z-avatar-size: 20px;
+    font-size: var(--z-text-fine);
   }
   .z-avatar[data-size="sm"] {
     --z-avatar-size: 28px;
+    font-size: var(--z-text-caption);
   }
   .z-avatar[data-size="lg"] {
     --z-avatar-size: 48px;
+    font-size: var(--z-text-heading);
   }
   .z-avatar[data-size="xl"] {
     --z-avatar-size: 64px;
+    font-size: var(--z-text-display-sm);
   }
   .z-avatar[data-shape="rounded"] {
     border-radius: var(--z-radius-sm);

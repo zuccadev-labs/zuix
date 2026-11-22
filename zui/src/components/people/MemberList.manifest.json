@@ -1,0 +1,118 @@
+{
+  "name": "MemberList",
+  "group": "people",
+  "description": "Lista de miembros: búsqueda que anuncia los resultados, grupos por rol o por presencia, rol en un selector nativo, quitar con nombre propio e invitar.",
+  "import": "import { MemberList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "members",
+      "type": "{ id, name, email?, avatar?, role, presence?, pending? }[]",
+      "required": true
+    },
+    {
+      "name": "roles",
+      "type": "{ id, label, locked? }[]",
+      "required": true
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "groupBy",
+      "type": "enum",
+      "values": ["role", "presence", "none"],
+      "default": "role"
+    },
+    {
+      "name": "invitable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "editable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "currentUserId",
+      "type": "string",
+      "description": "Su fila dice «You» y no se puede quitar."
+    },
+    {
+      "name": "onRoleChange",
+      "type": "(detail: { memberId, role }) => void"
+    },
+    {
+      "name": "onRemove",
+      "type": "(detail: { memberId }) => void"
+    },
+    {
+      "name": "onInvite",
+      "type": "() => void"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<MemberListLabels>"
+    },
+    {
+      "name": "presenceLabels",
+      "type": "Partial<PresenceLabels>"
+    }
+  ],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line-strong",
+    "row-hover",
+    "warning-text",
+    "radius-md",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide"
+  ],
+  "classes": [
+    "z-member-list",
+    "z-member-list__head",
+    "z-member-list__title",
+    "z-member-list__count",
+    "z-member-list__invite",
+    "z-member-list__search",
+    "z-member-list__empty",
+    "z-member-list__group",
+    "z-member-list__group-title",
+    "z-member-list__group-count",
+    "z-member-list__rows",
+    "z-member-list__row",
+    "z-member-list__role",
+    "z-member-list__role-text",
+    "z-member-list__remove"
+  ],
+  "a11y": "Búsqueda con nombre; el número de resultados se anuncia en la región status de la pieza («3 results») tras teclear, no por tecla. Cada grupo es una sección con encabezado. El rol es un <select> nativo con nombre «Role for Ana López»; quitar es un botón «Remove Ana López» y al quitar el foco pasa a la fila siguiente. La presencia se lee con texto. Sin React: .z-member-list con data-title, data-editable, data-invitable, data-group-by, data-current-user y los datos en <script type=\"application/json\" data-props>{ \"members\": [...], \"roles\": [...] }; emite z:rolechange, z:remove y z:invite.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Equipo editable",
+      "code": "<MemberList title=\"Team\" editable invitable currentUserId=\"m1\" roles={[{ id: \"owner\", label: \"Owner\", locked: true }, { id: \"admin\", label: \"Admin\" }, { id: \"member\", label: \"Member\" }]} members={[{ id: \"m1\", name: \"Ana López\", email: \"ana@example.com\", role: \"owner\", presence: \"online\" }, { id: \"m2\", name: \"Marco Rossi\", email: \"marco@example.com\", role: \"admin\", presence: \"busy\" }, { id: \"m3\", name: \"Yuki Tanaka\", email: \"yuki@example.com\", role: \"member\", presence: \"away\" }, { id: \"m4\", name: \"Lea Martin\", email: \"lea@example.com\", role: \"member\", pending: true }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Equipo editable",
+      "code": "<div class=\"z-member-list\" data-title=\"Team\" data-editable data-invitable data-current-user=\"m1\">\n  <script type=\"application/json\" data-props>{\"roles\":[{\"id\":\"owner\",\"label\":\"Owner\",\"locked\":true},{\"id\":\"admin\",\"label\":\"Admin\"},{\"id\":\"member\",\"label\":\"Member\"}],\"members\":[{\"id\":\"m1\",\"name\":\"Ana López\",\"email\":\"ana@example.com\",\"role\":\"owner\",\"presence\":\"online\"},{\"id\":\"m2\",\"name\":\"Marco Rossi\",\"email\":\"marco@example.com\",\"role\":\"admin\",\"presence\":\"busy\"},{\"id\":\"m3\",\"name\":\"Yuki Tanaka\",\"email\":\"yuki@example.com\",\"role\":\"member\",\"presence\":\"away\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "GroupMembers de CometChat y las listas de miembros de los bloques de shadcn."
+}

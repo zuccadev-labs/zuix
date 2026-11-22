@@ -1,0 +1,79 @@
+{
+  "name": "ImageList",
+  "group": "media",
+  "description": "Lista de imágenes: rejilla regular (`standard`), acolchada con piezas de distinto tamaño (`quilted`), tejida (`woven`) o en mampostería (`masonry`), con título opcional encima o debajo.",
+  "import": "import { ImageList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ src, alt, title?, subtitle?, cols?, rows?, width?, height?, href? }[]",
+      "required": true
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["standard", "quilted", "woven", "masonry"],
+      "default": "standard"
+    },
+    {
+      "name": "columns",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "rowHeight",
+      "type": "number",
+      "default": 164
+    },
+    {
+      "name": "captionBelow",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "label",
+      "type": "string"
+    },
+    {
+      "name": "renderAction",
+      "type": "(item, index) => ReactNode"
+    }
+  ],
+  "tokens": [
+    "radius-md",
+    "surface-2",
+    "surface-solid",
+    "fg",
+    "space-2",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring",
+    "popup-bg",
+    "popup-blur",
+    "glass-border",
+    "glass-saturate",
+    "radius-sm"
+  ],
+  "classes": [
+    "z-image-list",
+    "z-image-list__item",
+    "z-image-list__link",
+    "z-image-list__image",
+    "z-image-list__bar",
+    "z-image-list__text",
+    "z-image-list__title",
+    "z-image-list__subtitle",
+    "z-image-list__action"
+  ],
+  "a11y": "ul con nombre; cada imagen con su alt y carga diferida (loading=lazy, decoding=async). El título es texto, no parte de la imagen. En `masonry` el orden de lectura es el del marcado, columna a columna.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Acolchada",
+      "code": "<ImageList variant=\"quilted\" columns={4} rowHeight={120} label=\"Trips\" items={[{ src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Mountain lake at dawn\", title: \"Lake\", cols: 2, rows: 2 }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236ac3f8'/%3E%3Cstop offset='1' stop-color='%233b5bdb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Desert dunes\", title: \"Dunes\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%239be15d'/%3E%3Cstop offset='1' stop-color='%2300a3a3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"City at night\", title: \"City\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f5d76e'/%3E%3Cstop offset='1' stop-color='%23f08a5d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Forest path\", title: \"Forest\", cols: 2 }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23b388eb'/%3E%3Cstop offset='1' stop-color='%236a4c93'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Coastline\", title: \"Coast\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238ec5fc'/%3E%3Cstop offset='1' stop-color='%23e0c3fc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='url(%23g)'/%3E%3Ccircle cx='430' cy='120' r='70' fill='%23ffffff' fill-opacity='.35'/%3E%3C/svg%3E\", alt: \"Snowy peaks\", title: \"Peaks\" }]} />"
+    }
+  ],
+  "origin": "Image List (standard, quilted, woven, masonry) de MUI y Material."
+}

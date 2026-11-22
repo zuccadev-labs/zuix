@@ -13,6 +13,7 @@ import siteCases from "./cases-site.mjs";
 import mediaCases from "./cases-media.mjs";
 import timeTerminal from "./cases-time-terminal.mjs";
 import chatAi from "./cases-chat-ai.mjs";
+import dashboardPeople from "./cases-dashboard-people.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
@@ -267,6 +268,11 @@ const SCREENS = [
   "carousels",
   "time",
   "terminal",
+  "dashboard",
+  "profile",
+  "settings",
+  "kanban",
+  "login",
 ];
 
 export const cases = [
@@ -648,8 +654,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        33,
-        "33 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Chat y Assistant)",
+        38,
+        "38 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Chat, Assistant, Dashboard, Profile, Settings, Board y Sign in)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -3052,7 +3058,17 @@ export const cases = [
         { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.6 },
         { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.3 },
       );
-      await sleep(400);
+      // Con la lista de pantallas más alta que el cajón, el gesto deja una inercia en marcha; un toque durante la
+      // inercia solo la frena y no llega como clic, así que se espera a que el desplazamiento se detenga.
+      const scrollTop = () => page.evaluate(() => document.querySelector(".z-shell__side .z-sidebar__sections")?.scrollTop ?? 0);
+      let last = -1;
+      await poll(async () => {
+        await sleep(150);
+        const now = await scrollTop();
+        const still = now === last;
+        last = now;
+        return still;
+      }, "la inercia del desplazamiento dentro del cajón se detiene");
       await expectCount(page, ".z-shell__side.z-shell__drawer", 1, "desplazar dentro del cajón no lo cierra");
       const size = page.viewportSize();
       assert(drawer.x + drawer.width < size.width - 24, `el cajón deja velo que tocar: ${JSON.stringify(drawer)}`);
@@ -3091,6 +3107,7 @@ export const cases = [
     reading,
     timeTerminal,
     chatAi,
+    dashboardPeople,
     carouselsCases,
   ].flatMap((build) => build(helpers())),
 
