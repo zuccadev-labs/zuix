@@ -78,7 +78,7 @@
   "examples": [
     {
       "title": "Artículo con índice",
-      "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"docs-install\", label: \"Install\" }, { id: \"docs-usage\", label: \"Usage\" }, { id: \"docs-theming\", label: \"Theming\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"docs-install\">Install</h2><p>…</p><h2 id=\"docs-usage\">Usage</h2><p>…</p></Prose>\n</DocsLayout>"
+      "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"docs-install\", label: \"Install\" }, { id: \"docs-usage\", label: \"Usage\" }, { id: \"docs-usage-react\", label: \"With React\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"docs-install\">Install</h2><p>…</p><h2 id=\"docs-usage\">Usage</h2><p>…</p><h3 id=\"docs-usage-react\">With React</h3><p>…</p></Prose>\n</DocsLayout>"
     }
   ],
   "origin": "El propio sitio zudocs y los bloques de documentación; índice con seguimiento de la sección."

@@ -522,7 +522,7 @@
    "examples": [
     {
      "title": "Artículo con índice",
-     "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"docs-install\", label: \"Install\" }, { id: \"docs-usage\", label: \"Usage\" }, { id: \"docs-theming\", label: \"Theming\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"docs-install\">Install</h2><p>…</p><h2 id=\"docs-usage\">Usage</h2><p>…</p></Prose>\n</DocsLayout>"
+     "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"docs-install\", label: \"Install\" }, { id: \"docs-usage\", label: \"Usage\" }, { id: \"docs-usage-react\", label: \"With React\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"docs-install\">Install</h2><p>…</p><h2 id=\"docs-usage\">Usage</h2><p>…</p><h3 id=\"docs-usage-react\">With React</h3><p>…</p></Prose>\n</DocsLayout>"
     }
    ],
    "origin": "El propio sitio zudocs y los bloques de documentación; índice con seguimiento de la sección.",
@@ -1904,7 +1904,7 @@
    "examples": [
     {
      "title": "Con cambios sin guardar",
-     "code": "<SettingsLayout title=\"Settings\" description=\"Manage your account and workspace.\" dirty nav={[{ href: \"#profile\", label: \"Profile\", icon: \"user\", current: true }, { href: \"#notifications\", label: \"Notifications\", icon: \"bell\" }, { href: \"#security\", label: \"Security\", icon: \"lock-closed\" }]} saveBar={<><Button variant=\"ghost\">Discard</Button><Button variant=\"primary\">Save changes</Button></>}>\n  <SettingsSection id=\"profile\" title=\"Profile\"><SettingRow label=\"Public profile\" control={<Switch aria-label=\"Public profile\" defaultChecked />} /></SettingsSection>\n</SettingsLayout>"
+     "code": "<SettingsLayout title=\"Settings\" description=\"Manage your account and workspace.\" dirty nav={[{ href: \"#profile\", label: \"Profile\", icon: \"user\", current: true }, { href: \"#notifications\", label: \"Notifications\", icon: \"bell\" }]} saveBar={<><Button variant=\"ghost\">Discard</Button><Button variant=\"primary\">Save changes</Button></>}>\n  <SettingsSection id=\"profile\" title=\"Profile\"><SettingRow label=\"Public profile\" control={<Switch aria-label=\"Public profile\" defaultChecked />} /></SettingsSection>\n  <SettingsSection id=\"notifications\" title=\"Notifications\"><SettingRow label=\"Mentions\" control={<Switch aria-label=\"Mentions\" />} /></SettingsSection>\n</SettingsLayout>"
     }
    ],
    "origin": "Páginas de ajustes de los bloques de shadcn y de Carbon.",
