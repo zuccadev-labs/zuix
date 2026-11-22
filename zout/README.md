@@ -37,6 +37,12 @@ To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://
 | `BottomNavigation` | Mobile navigation: three to five destinations with icon and label |
 | `SiteFooter` | Site footer: brand, link columns, social links and legal strip |
 | `SkipLink` | Skip-to-content link that moves focus to the target even if it is not focusable |
+| `AppBar` | Top app bar (small, medium, large); the large title folds into the top row on scroll |
+| `DashboardLayout`, `SettingsLayout`, `ProfileLayout`, `KanbanLayout` | Page layouts for a dashboard (sticky filters), settings (anchored navigation and a save bar), a profile and a board |
+| `AuthLayout` | Sign-in page: a glass card on the canvas, or split with an image side |
+| `DocsLayout` | Documentation page: navigation, article, table of contents that tracks the section being read, pager |
+| `LandingLayout`, `LandingHero`, `LandingSection` | Landing page with a hero, feature grid, call to action and footer |
+| `MailLayout` | Folders, message list and reader; one view at a time on narrow screens |
 
 ## With React
 
