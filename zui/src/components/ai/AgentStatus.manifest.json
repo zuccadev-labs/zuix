@@ -1,0 +1,57 @@
+{
+  "name": "AgentStatus",
+  "group": "ai",
+  "description": "Estado de un agente en una etiqueta: inactivo, pensando, usando una herramienta, esperando aprobación, error o hecho, con la duración mientras trabaja.",
+  "import": "import { AgentStatus } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "state",
+      "type": "\"idle\" | \"thinking\" | \"tool\" | \"waiting\" | \"error\" | \"done\"",
+      "default": "idle"
+    },
+    {
+      "name": "detail",
+      "type": "string",
+      "description": "Herramienta en uso o detalle."
+    },
+    {
+      "name": "since",
+      "type": "string | number"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AgentStatusLabels>"
+    }
+  ],
+  "states": ["idle", "thinking", "tool", "waiting", "error", "done"],
+  "tokens": [
+    "surface-solid",
+    "line",
+    "control-height-sm",
+    "control-radius-sm",
+    "accent",
+    "accent-soft",
+    "warning-text",
+    "danger-text",
+    "success-text",
+    "fg-muted",
+    "fg-subtle"
+  ],
+  "classes": [
+    "z-agent-status",
+    "z-agent-status__indicator",
+    "z-agent-status__spinner",
+    "z-agent-status__label",
+    "z-agent-status__detail",
+    "z-agent-status__time"
+  ],
+  "a11y": "role=status con el estado en texto («Using search_web»); el indicador es decorativo y no gira con movimiento reducido. Es un rectángulo redondeado, no una píldora.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Estados",
+      "code": "<div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 8 }}>\n  <AgentStatus state=\"thinking\" />\n  <AgentStatus state=\"tool\" detail=\"search_web\" />\n  <AgentStatus state=\"waiting\" />\n  <AgentStatus state=\"done\" />\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: assistant-ui (Agent status) y Vercel AI Elements."
+}

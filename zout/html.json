@@ -26,6 +26,25 @@
     }
    ]
   },
+  "ChatLayout": {
+   "group": "layout",
+   "classes": [
+    "z-chat-layout",
+    "z-chat-layout__list",
+    "z-chat-layout__main",
+    "z-chat-layout__details",
+    "z-chat-layout__panel",
+    "z-chat-layout__launcher"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres paneles",
+     "html": "<div class=\"z-chat-layout\" data-view=\"conversation\" data-details style=\"height: 480px\">\n  <section class=\"z-chat-layout__list\" aria-label=\"Chats\">\n    <div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\" data-filters=\"none\">\n      <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Shipping the docs next.\", \"lastMine\": true, \"status\": \"delivered\", \"lastAt\": \"2026-11-21T09:05:00Z\"}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"lastMessage\": \"See you at 10\", \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 3}]}</script>\n    </div>\n  </section>\n  <section class=\"z-chat-layout__main\" aria-label=\"Conversation\">\n    <header class=\"z-chat-header\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost z-chat-header__back\" data-size=\"md\" data-z-chat-view=\"list\" aria-label=\"Back to chats\"><z-icon name=\"chevron-left\" size=\"16\"></z-icon></button><span class=\"z-chat-header__identity\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span><span class=\"z-chat-header__titles\"><h2 class=\"z-chat-header__title\">Ana López</h2><span class=\"z-chat-header__status\" data-tone=\"accent\">online</span></span></span><span class=\"z-chat-header__actions\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" data-z-chat-view=\"details\" aria-label=\"Details\"><z-icon name=\"information-circle\" size=\"16\"></z-icon></button></span></header>\n    <div class=\"z-message-list\" data-current-user=\"me\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n      <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}]}</script>\n    </div>\n    <div class=\"z-composer\"></div>\n  </section>\n  <aside class=\"z-chat-layout__details\" aria-label=\"Details\"><p style=\"padding: 16px\">Shared files</p></aside>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Float": {
    "group": "layout",
    "classes": [

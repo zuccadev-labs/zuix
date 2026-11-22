@@ -1,0 +1,64 @@
+{
+  "name": "UsageMeter",
+  "group": "ai",
+  "description": "Uso de la ventana de contexto: <meter> con aviso al 80 % y al 95 %, tokens compactos, desglose (entrada, salida, caché) y coste; en barra, anillo o en línea.",
+  "import": "import { UsageMeter } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "used",
+      "type": "number"
+    },
+    {
+      "name": "limit",
+      "type": "number"
+    },
+    {
+      "name": "breakdown",
+      "type": "{ input?, output?, cached? }"
+    },
+    {
+      "name": "cost",
+      "type": "{ value, currency? }"
+    },
+    {
+      "name": "variant",
+      "type": "\"bar\" | \"ring\" | \"inline\"",
+      "default": "bar"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Context"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "states": ["ok", "warning", "danger"],
+  "tokens": ["surface-3", "accent", "warning", "danger", "warning-text", "danger-text", "fg", "fg-muted"],
+  "classes": [
+    "z-usage",
+    "z-usage__main",
+    "z-usage__head",
+    "z-usage__label",
+    "z-usage__value",
+    "z-usage__meter",
+    "z-usage__breakdown",
+    "z-usage__ring",
+    "z-usage__arc"
+  ],
+  "a11y": "<meter> nativo con low/high y nombre «Context: 152K / 200K tokens (76 %)»; el anillo es decorativo. El nivel cambia el texto además del color.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Barra con desglose y coste",
+      "code": "<UsageMeter used={152000} limit={200000} breakdown={{ input: 120000, output: 28000, cached: 4000 }} cost={{ value: 0.84, currency: \"USD\" }} locale=\"en\" />"
+    },
+    {
+      "title": "Anillo cerca del límite",
+      "code": "<UsageMeter variant=\"ring\" used={192000} limit={200000} locale=\"en\" />"
+    }
+  ],
+  "origin": "Diseño propio; referencia: Vercel AI Elements (Context)."
+}

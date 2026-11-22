@@ -1,0 +1,34 @@
+{
+  "name": "Citation",
+  "group": "ai",
+  "description": "Cita en línea a una fuente: un número que es un enlace, con una tarjeta (título y dominio) al pasar el puntero o enfocarla.",
+  "import": "import { Citation } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "index",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "source",
+      "type": "{ title, url }",
+      "required": true
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AiLabels>"
+    }
+  ],
+  "states": ["rest", "hover", "focus"],
+  "tokens": ["surface-3", "fg-muted", "accent-soft", "accent-text", "popup-bg", "popup-shadow", "glass-border"],
+  "classes": ["z-citation", "z-citation__index", "z-citation__card", "z-citation__title", "z-citation__domain"],
+  "a11y": "Enlace con nombre «Source 1: título»; la tarjeta es decorativa (aria-hidden) y aparece también con el foco. Dentro de AssistantMessage y Markdown, las citas [n] salen solas.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Cita en una frase",
+      "code": "<p>Ship on Friday <Citation index={1} source={{ title: \"Release process\", url: \"https://example.com/release\" }} /></p>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: Perplexity y Claude."
+}

@@ -1,0 +1,70 @@
+{
+  "name": "AgentPlan",
+  "group": "ai",
+  "description": "Plan de un agente: pasos y subpasos con su estado (pendiente, en curso, hecho, fallido, omitido) y el progreso «3 of 7» en un <progress>; plegable.",
+  "import": "import { AgentPlan } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "steps",
+      "type": "{ id, title, status, detail?, children? }[]"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "default": "Plan"
+    },
+    {
+      "name": "collapsible",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AgentPlanLabels>"
+    }
+  ],
+  "states": ["pending", "running", "done", "failed", "skipped"],
+  "tokens": [
+    "surface-solid",
+    "surface-3",
+    "line",
+    "radius-md",
+    "accent",
+    "info-text",
+    "success-text",
+    "danger-text",
+    "fg-muted",
+    "fg-subtle"
+  ],
+  "classes": [
+    "z-agent-plan",
+    "z-agent-plan__header",
+    "z-agent-plan__heading",
+    "z-agent-plan__count",
+    "z-agent-plan__progress",
+    "z-agent-plan__steps",
+    "z-agent-plan__step",
+    "z-agent-plan__marker",
+    "z-agent-plan__title",
+    "z-agent-plan__detail"
+  ],
+  "a11y": "Lista ordenada nombrada por el título; el paso en curso lleva aria-current=\"step\" y cada estado va en texto oculto («, Done»). El progreso es un <progress> con nombre «Plan: 3 of 7». Plegable con details/summary. Sin React: .z-agent-plan con data-title, data-collapsible y steps en <script type=\"application/json\" data-props>.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Plan en curso",
+      "code": "<AgentPlan title=\"Ship the docs\" steps={[\n  { id: \"1\", title: \"Read the manifests\", status: \"done\" },\n  { id: \"2\", title: \"Generate the contract\", status: \"running\", detail: \"zui/html.json\" },\n  { id: \"3\", title: \"Build the site\", status: \"pending\" },\n]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Plan en curso",
+      "code": "<div class=\"z-agent-plan\" data-title=\"Ship the docs\">\n  <script type=\"application/json\" data-props>{\"steps\": [{\"id\": \"1\", \"title\": \"Read the manifests\", \"status\": \"done\"}, {\"id\": \"2\", \"title\": \"Generate the contract\", \"status\": \"running\", \"detail\": \"zui/html.json\"}, {\"id\": \"3\", \"title\": \"Build the site\", \"status\": \"pending\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: los planes de Claude Code y Vercel AI Elements (Plan, Task)."
+}

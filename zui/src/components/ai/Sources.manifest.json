@@ -1,0 +1,48 @@
+{
+  "name": "Sources",
+  "group": "ai",
+  "description": "Fuentes de una respuesta: resumen «4 sources» con iniciales de dominio y lista plegable numerada como sus citas, con título, dominio y extracto.",
+  "import": "import { Sources } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ title, url, snippet? }[]"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AiLabels>"
+    }
+  ],
+  "states": ["closed", "open"],
+  "tokens": ["surface-solid", "surface-3", "line", "fg", "fg-muted", "accent-text", "control-radius", "radius-sm"],
+  "classes": [
+    "z-sources-block",
+    "z-sources",
+    "z-sources__summary",
+    "z-sources__list",
+    "z-sources__item",
+    "z-sources__link",
+    "z-sources__index",
+    "z-sources__title",
+    "z-sources__domain"
+  ],
+  "a11y": "aside nombrado «N sources» con details/summary; cada enlace se llama «Source 1: título» y solo sale con destino http(s). Sin React: .z-sources-block con data-open e items en <script type=\"application/json\" data-props>.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Dos fuentes abiertas",
+      "code": "<Sources defaultOpen items={sources} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Dos fuentes abiertas",
+      "code": "<div class=\"z-sources-block\" data-open>\n  <script type=\"application/json\" data-props>{\"items\": [{\"title\": \"Release process\", \"url\": \"https://example.com/release\"}, {\"title\": \"HTML contract\", \"url\": \"https://example.org/contract\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: Perplexity, ChatGPT y Vercel AI Elements (Sources)."
+}

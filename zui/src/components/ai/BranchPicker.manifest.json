@@ -1,0 +1,39 @@
+{
+  "name": "BranchPicker",
+  "group": "ai",
+  "description": "«‹ 2 / 3 ›»: versiones de un mensaje editado o regenerado. El árbol de la conversación (ramas, camino activo, cambio de rama) lo lleva core/branches.",
+  "import": "import { BranchPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "index",
+      "type": "number",
+      "description": "1…count."
+    },
+    {
+      "name": "count",
+      "type": "number"
+    },
+    {
+      "name": "onChange",
+      "type": "(detail: { index }) => void"
+    }
+  ],
+  "states": ["first", "middle", "last"],
+  "tokens": ["fg-muted", "surface-3", "control-radius-sm"],
+  "classes": ["z-branch", "z-branch-picker", "z-branch-picker__button", "z-branch-picker__value"],
+  "a11y": "Grupo «Version 2 of 3» con dos botones con nombre («Previous version», «Next version»), deshabilitados en los extremos; el texto «2 / 3» no se lee aparte. Sin React: .z-branch con data-index y data-count; emite z:change { index }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Segunda de tres",
+      "code": "<BranchPicker index={2} count={3} onChange={({ index }) => setBranch(index)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Segunda de tres",
+      "code": "<div class=\"z-branch\" data-index=\"2\" data-count=\"3\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: ChatGPT y assistant-ui (BranchPicker)."
+}

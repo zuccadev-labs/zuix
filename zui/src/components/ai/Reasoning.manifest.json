@@ -1,0 +1,47 @@
+{
+  "name": "Reasoning",
+  "group": "ai",
+  "description": "Razonamiento de un modelo plegable: «Thinking…» con brillo mientras dura y «Thought for 12 s» al terminar, cuando se pliega solo (salvo que tengas el foco dentro).",
+  "import": "import { Reasoning } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "text",
+      "type": "string"
+    },
+    {
+      "name": "state",
+      "type": "\"thinking\" | \"done\"",
+      "default": "thinking"
+    },
+    {
+      "name": "startedAt · endedAt",
+      "type": "string | number"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "states": ["thinking", "done", "open", "closed"],
+  "tokens": ["fg-muted", "surface-3", "line", "control-radius-sm"],
+  "classes": ["z-reasoning-block", "z-reasoning", "z-reasoning__summary", "z-reasoning__label", "z-reasoning__body"],
+  "a11y": "details/summary nativos (Intro y Espacio); el brillo es decorativo y se para con movimiento reducido. Sin React: .z-reasoning-block con data-state, data-started-at, data-ended-at y text en <script type=\"application/json\" data-props>.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Terminado",
+      "code": "<Reasoning state=\"done\" startedAt=\"2026-11-21T09:00:00Z\" endedAt=\"2026-11-21T09:00:12Z\" text=\"Compare both options, then pick the cheaper one.\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Terminado",
+      "code": "<div class=\"z-reasoning-block\" data-state=\"done\" data-started-at=\"2026-11-21T09:00:00Z\" data-ended-at=\"2026-11-21T09:00:12Z\">\n  <script type=\"application/json\" data-props>{\"text\": \"Compare both options, then pick the cheaper one.\"}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: ChatGPT, Claude y Vercel AI Elements (Reasoning)."
+}

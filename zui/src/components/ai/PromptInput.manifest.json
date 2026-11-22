@@ -1,0 +1,125 @@
+{
+  "name": "PromptInput",
+  "group": "ai",
+  "description": "Entrada de un asistente: campo que crece (Intro envía sin enviar durante un IME), adjuntos, selector de modelo, herramientas activables, uso de contexto y enviar ↔ parar en el mismo sitio. Es la misma pieza que Composer en su forma de prompt.",
+  "import": "import { PromptInput } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": "\"ready\" | \"submitted\" | \"streaming\" | \"error\"",
+      "default": "ready"
+    },
+    {
+      "name": "models",
+      "type": "{ id, label, description? }[]"
+    },
+    {
+      "name": "model",
+      "type": "string"
+    },
+    {
+      "name": "tools",
+      "type": "{ id, label, icon?, active? }[]"
+    },
+    {
+      "name": "usage",
+      "type": "{ used, limit }"
+    },
+    {
+      "name": "attach",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "accept",
+      "type": "string"
+    },
+    {
+      "name": "sendOn",
+      "type": "\"enter\" | \"mod-enter\"",
+      "default": "enter"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Ask anything"
+    },
+    {
+      "name": "onSubmit",
+      "type": "(detail: { text, attachments }) => void"
+    },
+    {
+      "name": "onStop",
+      "type": "() => void"
+    },
+    {
+      "name": "onModelChange",
+      "type": "(detail: { model }) => void"
+    },
+    {
+      "name": "onToolToggle",
+      "type": "(detail: { id, active }) => void"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ComposerLabels>"
+    }
+  ],
+  "states": ["ready", "submitted", "streaming", "error", "with-attachments"],
+  "tokens": [
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "glass-border",
+    "glass-highlight",
+    "radius-xl",
+    "accent",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "surface-3",
+    "line",
+    "warning",
+    "danger"
+  ],
+  "classes": [
+    "z-prompt-input",
+    "z-composer",
+    "z-composer__form",
+    "z-composer__input",
+    "z-composer__send",
+    "z-composer__stop",
+    "z-composer__footer",
+    "z-composer__model",
+    "z-composer__toolset",
+    "z-composer__tool",
+    "z-composer__usage",
+    "z-composer__usage-meter"
+  ],
+  "a11y": "Como Composer: textarea etiquetado, Intro envía salvo con un IME componiendo, botón siempre presente. Mientras responde, el botón pasa a «Stop generating» en el mismo sitio (el foco no se pierde) y al pulsarlo se anuncia «Stopped». El modelo es un select nativo con nombre; las herramientas, botones con aria-pressed; el uso, un <meter> con nombre «12K of 200K tokens (6 %)». Sin React: .z-prompt-input con data-status, data-model, data-placeholder y models/tools/usage en <script type=\"application/json\" data-props>; emite z:send, z:stop, z:modelchange, z:tooltoggle y z:attach.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Con modelo, herramientas y uso",
+      "code": "<PromptInput models={[{ id: \"fast\", label: \"Fast\" }, { id: \"deep\", label: \"Deep reasoning\" }]} tools={[{ id: \"web\", label: \"Web search\", icon: \"globe-alt\" }]} usage={{ used: 12400, limit: 200000 }} onSubmit={({ text }) => ask(text)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Con modelo, herramientas y uso",
+      "code": "<div class=\"z-prompt-input\">\n  <script type=\"application/json\" data-props>{\"models\": [{\"id\": \"fast\", \"label\": \"Fast\"}, {\"id\": \"deep\", \"label\": \"Deep reasoning\"}], \"tools\": [{\"id\": \"web\", \"label\": \"Web search\", \"icon\": \"globe-alt\"}], \"usage\": {\"used\": 12400, \"limit\": 200000}}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: ChatGPT, Claude, Vercel AI Elements (Prompt Input) y prompt-kit."
+}

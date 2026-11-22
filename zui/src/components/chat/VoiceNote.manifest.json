@@ -1,0 +1,71 @@
+{
+  "name": "VoiceNote",
+  "group": "chat",
+  "description": "Nota de voz: reproducir y pausar, onda (que es el deslizador de posición), tiempo y velocidad (1×, 1.5×, 2×), sobre un <audio>. Una sola suena a la vez en el documento.",
+  "import": "import { VoiceNote } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "src",
+      "type": "string"
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "description": "Segundos."
+    },
+    {
+      "name": "peaks",
+      "type": "number[]",
+      "description": "Onda precalculada (cualquier escala)."
+    },
+    {
+      "name": "rates",
+      "type": "number[]",
+      "default": [1, 1.5, 2]
+    },
+    {
+      "name": "played",
+      "type": "boolean",
+      "description": "false: punto de «sin escuchar»."
+    },
+    {
+      "name": "bars",
+      "type": "number",
+      "default": 36
+    },
+    {
+      "name": "onPlay · onPause · onEnded",
+      "type": "() => void"
+    },
+    {
+      "name": "onRateChange",
+      "type": "(detail: { rate }) => void"
+    }
+  ],
+  "states": ["paused", "playing", "unplayed"],
+  "tokens": ["accent-solid", "fg-on-accent", "accent", "line-strong", "surface-3", "fg-muted"],
+  "classes": [
+    "z-voice-note",
+    "z-voice-note__play",
+    "z-voice-note__wave",
+    "z-voice-note__bar",
+    "z-voice-note__time",
+    "z-voice-note__rate",
+    "z-voice-note__audio"
+  ],
+  "a11y": "Grupo «Voice message»: botón Play/Pause con nombre que cambia; la onda es role=slider con aria-valuenow en segundos y aria-valuetext «0:07 / 0:14» (←/→ cinco segundos, RePág/AvPág quince, Inicio/Fin); la velocidad es un botón «Playback speed 1.5×». Sin React: .z-voice-note con data-src, data-duration y data-peaks; emite z:play, z:pause, z:ended y z:ratechange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Nota de 14 segundos",
+      "code": "<VoiceNote src=\"/audio/note.webm\" duration={14} peaks={[2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Nota de 14 segundos",
+      "code": "<div class=\"z-voice-note\" data-duration=\"14\" data-peaks=\"2 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3\" style=\"max-width: 340px\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: las notas de voz de WhatsApp y Telegram."
+}

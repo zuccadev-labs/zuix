@@ -85,6 +85,14 @@
       "types": "./zui-dom-terminal.d.ts",
       "default": "./zui-dom-terminal.js"
     },
+    "./zui/dom/chat": {
+      "types": "./zui-dom-chat.d.ts",
+      "default": "./zui-dom-chat.js"
+    },
+    "./zui/dom/ai": {
+      "types": "./zui-dom-ai.d.ts",
+      "default": "./zui-dom-ai.js"
+    },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"

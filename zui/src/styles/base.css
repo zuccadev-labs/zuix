@@ -159,7 +159,14 @@
     .z-progress__track,
     .z-meter__track,
     .z-table-wrap,
-    .z-code {
+    .z-code,
+    .z-message__bubble,
+    .z-composer__field,
+    .z-tool-call,
+    .z-approval,
+    .z-agent-plan,
+    .z-artifact,
+    .z-prompt-input .z-composer__form {
       border: 1px solid CanvasText !important;
     }
     /* Seleccionado, marcado, activo o resaltado: par de colores de selección del sistema. */
@@ -181,6 +188,14 @@
         .z-log-console__follow[aria-pressed="true"],
         .z-diff__mode[aria-pressed="true"],
         .z-code-viewer__tab[aria-selected="true"],
+        .z-conversation[aria-current="true"],
+        .z-conversation-list__filter[aria-checked="true"],
+        .z-reaction[aria-pressed="true"],
+        .z-emoji-picker__option[aria-selected="true"],
+        .z-composer__mention[aria-selected="true"],
+        .z-composer__tool[aria-pressed="true"],
+        .z-assistant-message__action[aria-pressed="true"],
+        .z-artifact__view[aria-selected="true"],
         .z-timepicker__option[aria-selected="true"],
         .z-pagination__btn[aria-current="page"],
         .z-navlink[data-active],
@@ -201,7 +216,19 @@
       outline-offset: -3px;
     }
     /* Rellenos e indicadores que solo existían como fondo. */
-    .z-root :is(.z-progress__fill, .z-meter__fill, .z-slider__range, .z-radio__mark, .z-toast__dot, .z-badge__dot, .z-avatar__status) {
+    .z-root
+      :is(
+        .z-progress__fill,
+        .z-meter__fill,
+        .z-slider__range,
+        .z-radio__mark,
+        .z-toast__dot,
+        .z-badge__dot,
+        .z-avatar__status,
+        .z-voice-note__bar[data-played],
+        .z-caret,
+        .z-pinned-bar__segment[data-current]
+      ) {
       forced-color-adjust: none;
       background: Highlight !important;
     }

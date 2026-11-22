@@ -243,6 +243,172 @@
   </div>
 </section>
 </div>
+<h2 class="page__group">ai</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="AgentPlan" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">AgentPlan</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-agent-plan" data-title="Ship the docs">
+  <script type="application/json" data-props>{"steps": [{"id": "1", "title": "Read the manifests", "status": "done"}, {"id": "2", "title": "Generate the contract", "status": "running", "detail": "zui/html.json"}, {"id": "3", "title": "Build the site", "status": "pending"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="AgentStatus" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">AgentStatus</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+  <span class="z-agent-status" data-state="thinking" role="status">
+    <span class="z-agent-status__indicator" aria-hidden="true">
+      <span class="z-agent-status__spinner"></span>
+    </span>
+    <span class="z-agent-status__label">Thinking</span>
+  </span>
+  <span class="z-agent-status" data-state="tool" role="status">
+    <span class="z-agent-status__indicator" aria-hidden="true">
+      <span class="z-agent-status__spinner"></span>
+    </span>
+    <span class="z-agent-status__label">Using search_web</span>
+  </span>
+  <span class="z-agent-status" data-state="waiting" role="status">
+    <span class="z-agent-status__indicator" aria-hidden="true">
+      <z-icon name="hand" size="14"></z-icon>
+    </span>
+    <span class="z-agent-status__label">Waiting for approval</span>
+  </span>
+  <span class="z-agent-status" data-state="done" role="status">
+    <span class="z-agent-status__indicator" aria-hidden="true">
+      <z-icon name="check-circle" size="14"></z-icon>
+    </span>
+    <span class="z-agent-status__label">Done</span>
+  </span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ApprovalCard" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ApprovalCard</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-approval-card" data-id="deploy" data-risk="high" data-allow-always data-title="Deploy to production" data-description="The agent wants to run the deploy workflow.">
+  <script type="application/json" data-props>{"details": [{"label": "Workflow", "value": "release.yml"}, {"label": "Branch", "value": "main"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Artifact" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Artifact</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-artifact" data-title="Pricing card" data-kind="HTML" data-download-name="card.html" style="height: 360px">
+  <script type="application/json" data-props>{"versions": [{"code": "<h1>Pro</h1>", "language": "html", "preview": "html"}, {"code": "<h1 style=\"font-family: sans-serif\">Pro</h1><p>$12 / month</p>", "language": "html", "preview": "html"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="AssistantMessage" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">AssistantMessage</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-assistant-message">
+  <script type="application/json" data-props>{"branch": {"index": 2, "count": 3}, "parts": [{"type": "reasoning", "state": "done", "startedAt": "2026-11-21T09:00:00Z", "endedAt": "2026-11-21T09:00:12Z", "text": "Check the release process first, then the contract."}, {"type": "tool", "id": "t1", "name": "search_docs", "title": "Search docs", "status": "success", "input": {"query": "release"}, "output": {"hits": 2}, "startedAt": "2026-11-21T09:00:12Z", "endedAt": "2026-11-21T09:00:13Z"}, {"type": "text", "text": "Here is a **minimal** plan to ship the docs [1]:\n\n1. Freeze the API surface.\n2. Generate the HTML contract.\n3. Publish the site.\n\n```ts\nexport const ready = true;\n```\n\nSee the [release checklist](https://example.com/checklist) for details."}, {"type": "sources", "items": [{"title": "Release process", "url": "https://example.com/release"}, {"title": "HTML contract", "url": "https://example.org/contract"}]}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="BranchPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">BranchPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-branch" data-index="2" data-count="3"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Citation" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Citation</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<p>Ship on Friday 
+  <a class="z-citation" href="https://example.com/release" target="_blank" rel="noopener noreferrer nofollow" aria-label="Source 1: Release process" data-source="1">
+    <span class="z-citation__index" aria-hidden="true">1</span>
+    <span class="z-citation__card" aria-hidden="true">
+      <span class="z-citation__title">Release process</span>
+      <span class="z-citation__domain">example.com</span>
+    </span>
+  </a>
+</p>
+  </div>
+</section>
+<section class="z-card demo" data-component="Markdown" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Markdown</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-markdown-view">
+  <script type="application/json" data-props>{"text": "Here is a **minimal** plan to ship the docs [1]:\n\n1. Freeze the API surface.\n2. Generate the HTML contract.\n3. Publish the site.\n\n```ts\nexport const ready = true;\n```\n\nSee the [release checklist](https://example.com/checklist) for details.", "sources": [{"title": "Release process", "url": "https://example.com/release"}, {"title": "HTML contract", "url": "https://example.org/contract"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="PromptInput" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">PromptInput</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-prompt-input">
+  <script type="application/json" data-props>{"models": [{"id": "fast", "label": "Fast"}, {"id": "deep", "label": "Deep reasoning"}], "tools": [{"id": "web", "label": "Web search", "icon": "globe-alt"}], "usage": {"used": 12400, "limit": 200000}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Reasoning" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Reasoning</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-reasoning-block" data-state="done" data-started-at="2026-11-21T09:00:00Z" data-ended-at="2026-11-21T09:00:12Z">
+  <script type="application/json" data-props>{"text": "Compare both options, then pick the cheaper one."}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Sources" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Sources</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-sources-block" data-open>
+  <script type="application/json" data-props>{"items": [{"title": "Release process", "url": "https://example.com/release"}, {"title": "HTML contract", "url": "https://example.org/contract"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Suggestions" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Suggestions</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-suggestions" data-layout="grid">
+  <script type="application/json" data-props>{"items": [{"text": "Summarize this thread", "icon": "document-text", "description": "Key points and decisions"}, {"text": "Draft release notes", "icon": "pencil", "description": "From the last 20 commits"}, {"text": "Plan the week", "icon": "calendar-days", "description": "With the team's calendar"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ToolCall" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ToolCall</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-tool-call-block" data-name="get_weather" data-title="Weather" data-status="success" data-open data-started-at="2026-11-21T09:00:00Z" data-ended-at="2026-11-21T09:00:01.4Z">
+  <script type="application/json" data-props>{"input": {"city": "Madrid"}, "output": {"temp": 18, "sky": "clear"}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="UsageMeter" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">UsageMeter</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-usage" data-variant="bar" data-level="ok" style="--z-usage:0.760">
+  <div class="z-usage__main">
+    <div class="z-usage__head">
+      <span class="z-usage__label">Context</span>
+      <span class="z-usage__value">152K / 200K tokens · 76%</span>
+    </div>
+    <meter class="z-usage__meter" min="0" max="200000" value="152000" low="160000" high="190000" optimum="0" aria-label="Context: 152K / 200K tokens (76%)"></meter>
+    <dl class="z-usage__breakdown">
+      <div class="z-usage__row">
+        <dt>Input</dt>
+        <dd>120K</dd>
+      </div>
+      <div class="z-usage__row">
+        <dt>Output</dt>
+        <dd>28K</dd>
+      </div>
+      <div class="z-usage__row">
+        <dt>Cached</dt>
+        <dd>4K</dd>
+      </div>
+      <div class="z-usage__row">
+        <dt>Cost</dt>
+        <dd>$0.84</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+  </div>
+</section>
+</div>
 <h2 class="page__group">carousel</h2>
 <div class="page__grid">
 <section class="z-card demo" data-component="Carousel" data-behavior="dom">
@@ -445,6 +611,216 @@
   Weekly visits <span class="z-sparkline" data-values="120,132,101,154,190,230,210,340" data-label="Weekly visits" data-locale="en-US"></span>
   Errors <span class="z-sparkline" data-values="9,7,8,4,5,3,2" data-type="bar" data-color="5" data-label="Errors" data-locale="en-US"></span>
 </p>
+  </div>
+</section>
+</div>
+<h2 class="page__group">chat</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="CallCard" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">CallCard</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-call" data-kind="incoming" data-video data-caller="Ana López" style="max-width: 420px"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ChatHeader" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">ChatHeader</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<header class="z-chat-header">
+  <span class="z-chat-header__identity">
+    <span class="z-avatar" data-size="md" data-shape="circle" role="img" aria-label="Ana López">
+      <span class="z-avatar__initials" aria-hidden="true">AL</span>
+      <span class="z-avatar__status" data-status="online" role="img" aria-label="Online"></span>
+    </span>
+    <span class="z-chat-header__titles">
+      <h2 class="z-chat-header__title">Ana López</h2>
+      <span class="z-chat-header__status" data-tone="accent">online</span>
+    </span>
+  </span>
+  <span class="z-chat-header__actions">
+    <button type="button" title="Voice call" aria-label="Voice call" class="z-btn z-btn--icon z-btn--ghost" data-size="md">
+      <z-icon name="phone" size="16"></z-icon>
+    </button>
+    <button type="button" title="Video call" aria-label="Video call" class="z-btn z-btn--icon z-btn--ghost" data-size="md">
+      <z-icon name="video-camera" size="16"></z-icon>
+    </button>
+    <button type="button" title="Search in chat" aria-label="Search in chat" class="z-btn z-btn--icon z-btn--ghost" data-size="md">
+      <z-icon name="magnifying-glass" size="16"></z-icon>
+    </button>
+  </span>
+</header>
+  </div>
+</section>
+<section class="z-card demo" data-component="Composer" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Composer</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-composer" data-voice>
+  <script type="application/json" data-props>{"mentions": {"items": [{"id": "ana", "label": "Ana López"}, {"id": "luis", "label": "Luis Gil"}]}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ConversationList" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ConversationList</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-conversation-list" data-selected-id="ana" data-time-zone="UTC" data-now="1795253400000">
+  <script type="application/json" data-props>{"items": [{"id": "ana", "title": "Ana López", "presence": "online", "lastMessage": "Morning! Did the new build land?", "lastAt": "2026-11-21T08:58:00Z", "unread": 2, "pinned": true}, {"id": "team", "title": "Design team", "group": true, "typing": ["Luis"], "lastAt": "2026-11-21T08:40:00Z", "unread": 12, "mention": true}, {"id": "marta", "title": "Marta Ruiz", "lastMessage": "See you then", "lastMine": true, "status": "read", "lastAt": "2026-11-20T21:10:00Z"}, {"id": "ops", "title": "Ops alerts", "lastMessage": "Deploy finished", "lastAt": "2026-11-18T07:00:00Z", "muted": true, "unread": 4}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="DeliveryStatus" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">DeliveryStatus</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div style="display:flex;gap:16px">
+  <span class="z-delivery" data-status="sending">
+    <span class="z-delivery__icons" aria-hidden="true">
+      <z-icon name="clock" size="14"></z-icon>
+    </span>
+    <span class="z-sr-only">Sending</span>
+  </span>
+  <span class="z-delivery" data-status="sent">
+    <span class="z-delivery__icons" aria-hidden="true">
+      <z-icon name="check" size="14"></z-icon>
+    </span>
+    <span class="z-sr-only">Sent</span>
+  </span>
+  <span class="z-delivery" data-status="delivered">
+    <span class="z-delivery__icons" aria-hidden="true">
+      <z-icon name="check" size="14"></z-icon>
+      <z-icon name="check" size="14"></z-icon>
+    </span>
+    <span class="z-sr-only">Delivered</span>
+  </span>
+  <span class="z-delivery" data-status="read">
+    <span class="z-delivery__icons" aria-hidden="true">
+      <z-icon name="check" size="14"></z-icon>
+      <z-icon name="check" size="14"></z-icon>
+    </span>
+    <span class="z-sr-only">Read</span>
+  </span>
+  <span class="z-delivery" data-status="failed">
+    <span class="z-delivery__icons" aria-hidden="true">
+      <z-icon name="exclamation-circle" size="14"></z-icon>
+    </span>
+    <span class="z-sr-only">Not sent</span>
+  </span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="EmojiPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">EmojiPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-emoji-picker"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="MessageBubble" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">MessageBubble</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div style="display:grid;gap:8px;max-width:520px">
+  <div class="z-message-row" data-position="single">
+    <article class="z-message" id="bubble-m-a" data-z-message="" data-id="a" data-position="single" tabindex="-1" aria-labelledby="bubble-m-a-author" aria-describedby="bubble-m-a-meta">
+      <div class="z-message__bubble">
+        <span class="z-message__author" id="bubble-m-a-author">Ana López</span>
+        <div class="z-message__text" dir="auto">Morning! Did the new build land?</div>
+        <span class="z-message__meta" id="bubble-m-a-meta">
+          <time dateTime="2026-11-21T08:58:00.000Z">8:58 a. m.</time>
+        </span>
+      </div>
+    </article>
+  </div>
+  <div class="z-message-row" data-mine="" data-position="single">
+    <article class="z-message" id="bubble-m-b" data-z-message="" data-id="b" data-mine="" data-position="single" data-status="read" tabindex="-1" aria-labelledby="bubble-m-b-author" aria-describedby="bubble-m-b-meta">
+      <div class="z-message__bubble">
+        <span class="z-sr-only" id="bubble-m-b-author">You</span>
+        <div class="z-message__text" dir="auto">It did. Notes are at 
+          <a href="https://example.com/notes" target="_blank" rel="noopener noreferrer nofollow">https://example.com/notes</a>
+        </div>
+        <span class="z-message__meta" id="bubble-m-b-meta">
+          <time dateTime="2026-11-21T09:04:00.000Z">9:04 a. m.</time>
+          <span class="z-delivery" data-status="read">
+            <span class="z-delivery__icons" aria-hidden="true">
+              <z-icon name="check" size="14"></z-icon>
+              <z-icon name="check" size="14"></z-icon>
+            </span>
+            <span class="z-sr-only">Read</span>
+          </span>
+        </span>
+      </div>
+    </article>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="MessageList" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">MessageList</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-message-list" style="height: 520px" data-current-user="me" data-time-zone="UTC" data-unread-from="m3" data-now="1795253400000">
+  <script type="application/json" data-props>{"messages": [{"id": "m1", "authorId": "ana", "author": {"name": "Ana López"}, "createdAt": "2026-11-20T18:02:00Z", "text": "Can you send me the release notes before tomorrow?"}, {"id": "m2", "authorId": "me", "createdAt": "2026-11-20T18:05:00Z", "text": "Sure, drafting them tonight.", "status": "read"}, {"id": "m3", "authorId": "ana", "author": {"name": "Ana López"}, "createdAt": "2026-11-21T08:58:00Z", "text": "Morning! Did the new build land?"}, {"id": "m4", "authorId": "ana", "author": {"name": "Ana López"}, "createdAt": "2026-11-21T08:59:00Z", "attachments": [{"kind": "voice", "src": "", "duration": 14, "peaks": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {"id": "m5", "authorId": "me", "createdAt": "2026-11-21T09:04:00Z", "text": "It did. Notes are at https://example.com/notes", "status": "read", "replyTo": {"id": "m3", "author": "Ana López", "text": "Morning! Did the new build land?"}, "reactions": [{"emoji": "👍", "count": 1}]}, {"id": "m6", "authorId": "me", "createdAt": "2026-11-21T09:05:00Z", "text": "Shipping the docs next.", "status": "delivered", "editedAt": "2026-11-21T09:06:00Z"}], "typing": [{"name": "Ana López"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="PinnedBar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">PinnedBar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-pinned-bar" data-unpinnable>
+  <script type="application/json" data-props>{"items": [{"id": "p1", "author": "Ana", "text": "Release on Friday"}, {"id": "p2", "text": "Docs live at /docs"}, {"id": "p3", "author": "Luis", "text": "Standup moved to 10:30"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Reactions" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Reactions</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-reactions">
+  <script type="application/json" data-props>{"items": [{"emoji": "👍", "count": 3, "mine": true}, {"emoji": "❤️", "count": 2}, {"emoji": "😂", "count": 1}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="ThreadSummary" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">ThreadSummary</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-thread-summary">
+  <span class="z-avatar-group z-thread-summary__people" aria-hidden="true">
+    <span class="z-avatar" data-size="sm" data-shape="circle" aria-hidden="true">
+      <span class="z-avatar__initials" aria-hidden="true">AL</span>
+    </span>
+    <span class="z-avatar" data-size="sm" data-shape="circle" aria-hidden="true">
+      <span class="z-avatar__initials" aria-hidden="true">LG</span>
+    </span>
+    <span class="z-avatar" data-size="sm" data-shape="circle" aria-hidden="true">
+      <span class="z-avatar__initials" aria-hidden="true">MR</span>
+    </span>
+  </span>
+  <span class="z-thread-summary__count">12 replies</span>
+  <span class="z-thread-summary__last">Last reply hace 3 min</span>
+  <span class="z-thread-summary__chevron" aria-hidden="true">
+    <z-icon name="chevron-right" size="14"></z-icon>
+  </span>
+</button>
+  </div>
+</section>
+<section class="z-card demo" data-component="TypingIndicator" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">TypingIndicator</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-typing">
+  <span class="z-typing__avatars" aria-hidden="true">
+    <span class="z-avatar" data-size="sm" data-shape="circle" aria-hidden="true">
+      <span class="z-avatar__initials" aria-hidden="true">AL</span>
+    </span>
+    <span class="z-avatar" data-size="sm" data-shape="circle" aria-hidden="true">
+      <span class="z-avatar__initials" aria-hidden="true">LG</span>
+    </span>
+  </span>
+  <span class="z-typing__bubble" aria-hidden="true">
+    <span class="z-typing__dot"></span>
+    <span class="z-typing__dot"></span>
+    <span class="z-typing__dot"></span>
+  </span>
+  <span class="z-typing__text">Ana López and Luis Gil are typing…</span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="VoiceNote" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">VoiceNote</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-voice-note" data-duration="14" data-peaks="2 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3" style="max-width: 340px"></div>
   </div>
 </section>
 </div>
@@ -3203,6 +3579,26 @@ malaga" data-ignore-accents="">Un
     </li>
   </ul>
 </nav>
+  </div>
+</section>
+<section class="z-card demo" data-component="ChatLayout" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ChatLayout</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-chat-layout" data-view="conversation" data-details style="height: 480px">
+  <section class="z-chat-layout__list" aria-label="Chats">
+    <div class="z-conversation-list" data-selected-id="ana" data-time-zone="UTC" data-now="1795253400000" data-filters="none">
+      <script type="application/json" data-props>{"items": [{"id": "ana", "title": "Ana López", "presence": "online", "lastMessage": "Shipping the docs next.", "lastMine": true, "status": "delivered", "lastAt": "2026-11-21T09:05:00Z"}, {"id": "team", "title": "Design team", "group": true, "lastMessage": "See you at 10", "lastAt": "2026-11-21T08:40:00Z", "unread": 3}]}</script>
+    </div>
+  </section>
+  <section class="z-chat-layout__main" aria-label="Conversation">
+    <header class="z-chat-header"><button type="button" class="z-btn z-btn--icon z-btn--ghost z-chat-header__back" data-size="md" data-z-chat-view="list" aria-label="Back to chats"><z-icon name="chevron-left" size="16"></z-icon></button><span class="z-chat-header__identity"><span class="z-avatar" data-size="md" data-shape="circle" role="img" aria-label="Ana López"><span class="z-avatar__initials" aria-hidden="true">AL</span></span><span class="z-chat-header__titles"><h2 class="z-chat-header__title">Ana López</h2><span class="z-chat-header__status" data-tone="accent">online</span></span></span><span class="z-chat-header__actions"><button type="button" class="z-btn z-btn--icon z-btn--ghost" data-size="md" data-z-chat-view="details" aria-label="Details"><z-icon name="information-circle" size="16"></z-icon></button></span></header>
+    <div class="z-message-list" data-current-user="me" data-time-zone="UTC" data-now="1795253400000">
+      <script type="application/json" data-props>{"messages": [{"id": "m3", "authorId": "ana", "author": {"name": "Ana López"}, "createdAt": "2026-11-21T08:58:00Z", "text": "Morning! Did the new build land?"}, {"id": "m4", "authorId": "ana", "author": {"name": "Ana López"}, "createdAt": "2026-11-21T08:59:00Z", "attachments": [{"kind": "voice", "src": "", "duration": 14, "peaks": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {"id": "m5", "authorId": "me", "createdAt": "2026-11-21T09:04:00Z", "text": "It did. Notes are at https://example.com/notes", "status": "read", "replyTo": {"id": "m3", "author": "Ana López", "text": "Morning! Did the new build land?"}, "reactions": [{"emoji": "👍", "count": 1}]}, {"id": "m6", "authorId": "me", "createdAt": "2026-11-21T09:05:00Z", "text": "Shipping the docs next.", "status": "delivered", "editedAt": "2026-11-21T09:06:00Z"}]}</script>
+    </div>
+    <div class="z-composer"></div>
+  </section>
+  <aside class="z-chat-layout__details" aria-label="Details"><p style="padding: 16px">Shared files</p></aside>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="Float" data-behavior="none">

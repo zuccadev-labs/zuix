@@ -258,9 +258,43 @@
 - [LogConsole](https://zuccadev-labs.github.io/zuix/components/terminal/log-console.md): Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado.
 - [Terminal](https://zuccadev-labs.github.io/zuix/components/terminal/terminal.md): Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y…
 
+## Componentes: Chat y mensajería
+
+- [CallCard](https://zuccadev-labs.github.io/zuix/components/chat/call-card.md): Tarjeta de llamada de cristal: entrante (aceptar, rechazar, avatar que suena), saliente («Calling…», colgar) y en curso (duración, silenciar, cámara, colgar).
+- [ChatHeader](https://zuccadev-labs.github.io/zuix/components/chat/chat-header.md): Cabecera de una conversación: volver (en móvil, a la lista), avatar con presencia, nombre, línea de estado («online», «last seen…», «typing…») y acciones (llamada, vídeo, buscar, menú).
+- [Composer](https://zuccadev-labs.github.io/zuix/components/chat/composer.md): Caja de texto de chat: crece con el texto, Intro envía y Mayús+Intro salta de línea (nunca durante la composición de un IME), botón de enviar siempre presente, adjuntos (elegir, pegar o soltar) con…
+- [ConversationList](https://zuccadev-labs.github.io/zuix/components/chat/conversation-list.md): Lista de conversaciones de mensajería: avatar con presencia, nombre, último mensaje (o quién escribe, o el borrador), hora corta, no leídos y menciones, silenciado y fijado, y la entrega de tu último…
+- [DeliveryStatus](https://zuccadev-labs.github.io/zuix/components/chat/delivery-status.md): Estado de entrega de un mensaje propio: enviando (reloj), enviado (una marca), entregado (dos), leído (dos marcas más gruesas y en acento, con otro texto) y fallido.
+- [EmojiPicker](https://zuccadev-labs.github.io/zuix/components/chat/emoji-picker.md): Selector de emojis: buscador que hace de combobox sobre una rejilla por categorías, pestañas, recientes, tono de piel y la vista de la opción activa con su nombre CLDR.
+- [MessageBubble](https://zuccadev-labs.github.io/zuix/components/chat/message-bubble.md): Burbuja de un mensaje suelta (el mismo marcado que pinta MessageList): rectángulo redondeado con la esquina de la cola más cerrada, autor, cita, reenviado, adjuntos, texto con enlaces seguros y…
+- [MessageList](https://zuccadev-labs.github.io/zuix/components/chat/message-list.md): Lista de mensajes de una conversación: grupos por autor y tiempo, separadores de día en su propia franja (y el día flotante mientras se desplaza, sin tapar mensajes), marca de no leídos, indicador de…
+- [PinnedBar](https://zuccadev-labs.github.io/zuix/components/chat/pinned-bar.md): Barra de mensajes fijados sobre la conversación: el último fijado y, con varios, «Pinned message 2 of 3» con un segmento por fijado; pulsar salta al mensaje y pasa al anterior.
+- [Reactions](https://zuccadev-labs.github.io/zuix/components/chat/reactions.md): Reacciones con contador: botones conmutables (la propia se marca), y añadir con la fila rápida de seis y «más».
+- [ThreadSummary](https://zuccadev-labs.github.io/zuix/components/chat/thread-summary.md): Resumen de un hilo bajo un mensaje: avatares de quien respondió, «12 replies» y la última respuesta en relativo.
+- [TypingIndicator](https://zuccadev-labs.github.io/zuix/components/chat/typing-indicator.md): Indicador de escritura: tres puntos en una burbuja y el texto («Ana is typing…», «Ana and Luis are typing…», «Ana and 2 others are typing…»).
+- [VoiceNote](https://zuccadev-labs.github.io/zuix/components/chat/voice-note.md): Nota de voz: reproducir y pausar, onda (que es el deslizador de posición), tiempo y velocidad (1×, 1.5×, 2×), sobre un <audio>.
+
+## Componentes: IA y agentes
+
+- [AgentPlan](https://zuccadev-labs.github.io/zuix/components/ai/agent-plan.md): Plan de un agente: pasos y subpasos con su estado (pendiente, en curso, hecho, fallido, omitido) y el progreso «3 of 7» en un <progress>; plegable.
+- [AgentStatus](https://zuccadev-labs.github.io/zuix/components/ai/agent-status.md): Estado de un agente en una etiqueta: inactivo, pensando, usando una herramienta, esperando aprobación, error o hecho, con la duración mientras trabaja.
+- [ApprovalCard](https://zuccadev-labs.github.io/zuix/components/ai/approval-card.md): Petición de permiso de un agente: qué hará, con qué datos y su riesgo; Rechazar y Aprobar, y «Always allow in this session».
+- [Artifact](https://zuccadev-labs.github.io/zuix/components/ai/artifact.md): Artefacto generado por un asistente, en panel o tarjeta: título, tipo, Vista previa (HTML en un iframe aislado sin scripts, o Markdown) y Código (CodeViewer), versiones «‹ v3 ›», copiar y descargar.
+- [AssistantMessage](https://zuccadev-labs.github.io/zuix/components/ai/assistant-message.md): Respuesta de un asistente con partes en orden: texto en streaming con Markdown propio y cursor, razonamiento plegable, llamadas a herramientas, peticiones de aprobación, fuentes con citas en línea y…
+- [BranchPicker](https://zuccadev-labs.github.io/zuix/components/ai/branch-picker.md): «‹ 2 / 3 ›»: versiones de un mensaje editado o regenerado.
+- [Citation](https://zuccadev-labs.github.io/zuix/components/ai/citation.md): Cita en línea a una fuente: un número que es un enlace, con una tarjeta (título y dominio) al pasar el puntero o enfocarla.
+- [Markdown](https://zuccadev-labs.github.io/zuix/components/ai/markdown.md): Markdown mínimo propio: párrafos, encabezados, listas (anidadas, ordenadas y de tareas), citas, código en línea y en bloque (con el CodeViewer de la suite), tablas sencillas, énfasis, tachado…
+- [PromptInput](https://zuccadev-labs.github.io/zuix/components/ai/prompt-input.md): Entrada de un asistente: campo que crece (Intro envía sin enviar durante un IME), adjuntos, selector de modelo, herramientas activables, uso de contexto y enviar ↔ parar en el mismo sitio.
+- [Reasoning](https://zuccadev-labs.github.io/zuix/components/ai/reasoning.md): Razonamiento de un modelo plegable: «Thinking…» con brillo mientras dura y «Thought for 12 s» al terminar, cuando se pliega solo (salvo que tengas el foco dentro).
+- [Sources](https://zuccadev-labs.github.io/zuix/components/ai/sources.md): Fuentes de una respuesta: resumen «4 sources» con iniciales de dominio y lista plegable numerada como sus citas, con título, dominio y extracto.
+- [Suggestions](https://zuccadev-labs.github.io/zuix/components/ai/suggestions.md): Sugerencias de prompt: fila desplazable (con fundido en el borde solo si queda más) o rejilla de tarjetas para la pantalla de inicio.
+- [ToolCall](https://zuccadev-labs.github.io/zuix/components/ai/tool-call.md): Llamada a una herramienta: icono, nombre, estado en texto (pendiente, preparando, en curso, esperando aprobación, hecho, error, cancelado), duración y entrada/salida plegables como JSON con el…
+- [UsageMeter](https://zuccadev-labs.github.io/zuix/components/ai/usage-meter.md): Uso de la ventana de contexto: <meter> con aviso al 80 % y al 95 %, tokens compactos, desglose (entrada, salida, caché) y coste; en barra, anillo o en línea.
+
 ## Componentes: Layouts
 
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.
+- [ChatLayout](https://zuccadev-labs.github.io/zuix/components/layout/chat-layout.md): Layout de mensajería en tres paneles: lista de conversaciones, conversación y detalles.
 - [Float](https://zuccadev-labs.github.io/zuix/components/layout/float.md): Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.
 - [FloatingPanel](https://zuccadev-labs.github.io/zuix/components/layout/floating-panel.md): Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.
 - [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.

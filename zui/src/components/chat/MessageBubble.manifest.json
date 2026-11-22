@@ -1,0 +1,79 @@
+{
+  "name": "MessageBubble",
+  "group": "chat",
+  "description": "Burbuja de un mensaje suelta (el mismo marcado que pinta MessageList): rectángulo redondeado con la esquina de la cola más cerrada, autor, cita, reenviado, adjuntos, texto con enlaces seguros y menciones, hora, «editado», entrega y reacciones. Solo marcado: la interacción la da MessageList.",
+  "import": "import { MessageBubble } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "message",
+      "type": "ChatMessage",
+      "required": true
+    },
+    {
+      "name": "mine",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "position",
+      "type": "\"single\" | \"first\" | \"middle\" | \"last\"",
+      "default": "single"
+    },
+    {
+      "name": "showAuthor",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "showAvatar",
+      "type": "boolean"
+    },
+    {
+      "name": "group",
+      "type": "boolean"
+    },
+    {
+      "name": "timeZone",
+      "type": "string"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChatLabels>"
+    }
+  ],
+  "states": ["mine", "other", "first", "middle", "last", "forwarded", "edited", "deleted", "failed", "jumbo"],
+  "tokens": ["surface-solid", "accent-soft", "fg", "fg-muted", "accent-text", "line", "radius-lg", "radius-xs", "shadow-sm"],
+  "classes": [
+    "z-message-row",
+    "z-message",
+    "z-message__bubble",
+    "z-message__author",
+    "z-message__forwarded",
+    "z-message__text",
+    "z-message__meta",
+    "z-message__edited",
+    "z-message__retry",
+    "z-delivery"
+  ],
+  "a11y": "article nombrado por el autor («You» en los propios) y descrito por la hora, «edited» y la entrega en texto. Leído se distingue de entregado por el texto y por el trazo, no solo por el color. Los enlaces solo salen con destino http, https o mailto.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Recibido y enviado (leído)",
+      "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" showAuthor message={{ id: \"a\", authorId: \"ana\", author: { name: \"Ana López\" }, createdAt: \"2026-11-21T08:58:00Z\", text: \"Morning! Did the new build land?\" }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"b\", authorId: \"me\", createdAt: \"2026-11-21T09:04:00Z\", text: \"It did. Notes are at https://example.com/notes\", status: \"read\" }} />\n</div>"
+    },
+    {
+      "title": "Reenviado, editado y eliminado",
+      "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"c\", authorId: \"luis\", createdAt: \"2026-11-21T09:10:00Z\", text: \"Standup moved to 10:30\", forwarded: true }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"d\", authorId: \"me\", createdAt: \"2026-11-21T09:11:00Z\", text: \"Got it, thanks\", status: \"delivered\", editedAt: \"2026-11-21T09:12:00Z\" }} />\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"e\", authorId: \"luis\", createdAt: \"2026-11-21T09:13:00Z\", deletedAt: \"2026-11-21T09:14:00Z\" }} />\n</div>"
+    },
+    {
+      "title": "Ubicación y archivo",
+      "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"f\", authorId: \"ana\", createdAt: \"2026-11-21T09:20:00Z\", attachments: [{ kind: \"location\", title: \"Studio\", address: \"Calle Mayor 12, Madrid\", href: \"https://www.openstreetmap.org/?mlat=40.4168&mlon=-3.7038\" }] }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"g\", authorId: \"me\", createdAt: \"2026-11-21T09:21:00Z\", status: \"sent\", attachments: [{ kind: \"file\", name: \"release-notes.pdf\", size: 482000, type: \"PDF\" }] }} />\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: las burbujas de WhatsApp, Telegram e iMessage."
+}
