@@ -42,5 +42,5 @@
       "code": "<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-z-confetti data-count=\"150\">Celebrate</button>"
     }
   ],
-  "origin": "Oleada 7. Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas."
+  "origin": "Confeti de la referencia (vídeo de remocn), con física propia (core/confetti) y lienzo en canvas."
 }

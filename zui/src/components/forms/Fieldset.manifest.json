@@ -57,5 +57,5 @@
       "code": "<Fieldset legend=\"Advanced\" disabled>\n  <Switch defaultChecked>Telemetry</Switch>\n  <Checkbox>Beta channel</Checkbox>\n</Fieldset>"
     }
   ],
-  "origin": "Nuevo. Patrón de la guía «forms» (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI."
+  "origin": "Nuevo. Patrón habitual de formularios accesibles (fieldset con legend, proximidad entre etiqueta y campo). Referencia de variantes: Field (grupo de campos) de Shark UI."
 }

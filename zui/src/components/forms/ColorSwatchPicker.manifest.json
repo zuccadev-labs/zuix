@@ -118,6 +118,6 @@
       "code": "<ColorSwatchPicker\n  defaultValue=\"#10b981\"\n  swatches={[\n    { value: \"#ef4444\", label: \"Red\" },\n    { value: \"#f59e0b\", label: \"Amber\" },\n    { value: \"#10b981\", label: \"Emerald\" },\n    { value: \"#3b82f6\", label: \"Blue\" },\n    { value: \"#8b5cf6\", label: \"Violet\" },\n    { value: \"#ec4899\", label: \"Pink\" },\n  ]}\n/>"
     }
   ],
-  "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
+  "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color).",
   "apg": "radio"
 }

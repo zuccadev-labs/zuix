@@ -235,5 +235,5 @@
       "code": "<div class=\"z-agenda\" id=\"team-agenda\" data-view=\"week\" data-date=\"2026-11-19\" data-today=\"2026-11-19\" data-time-zone=\"Europe/Madrid\" data-locale=\"en-GB\" data-week-start=\"1\" data-day-start=\"07:00\" data-day-end=\"21:00\" data-editable>\n  <script type=\"application/json\" data-calendars>[{ \"id\": \"work\", \"name\": \"Work\", \"color\": \"1\" }]</script>\n  <script type=\"application/json\" data-events>[{ \"id\": \"a\", \"title\": \"Design review\", \"start\": \"2026-11-19T10:00\", \"end\": \"2026-11-19T11:00\", \"timeZone\": \"Europe/Madrid\", \"calendarId\": \"work\" }]</script>\n</div>"
     }
   ],
-  "origin": "Especificación agenda.md; Google Calendar, Fantastical, FullCalendar y Schedule-X como referencia."
+  "origin": "Diseño propio para la agenda; referencias: Google Calendar, Fantastical, FullCalendar y Schedule-X."
 }

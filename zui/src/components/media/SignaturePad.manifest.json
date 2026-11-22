@@ -63,5 +63,5 @@
       "code": "<SignaturePad ref={pad} />\n<Button onClick={async () => save(await signatureBlob(pad.current))}>Save</Button>"
     }
   ],
-  "origin": "Oleada 7. Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature)."
+  "origin": "Inspirado en el comportamiento del Signature Pad de shark-ui (MIT), sin su código; trazado suavizado propio (core/signature)."
 }

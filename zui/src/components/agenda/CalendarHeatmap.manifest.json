@@ -100,5 +100,5 @@
       "code": "<div class=\"z-heatmap\" id=\"commits\" data-title=\"Commits\" data-from=\"2026-10-26\" data-to=\"2026-11-22\" data-today=\"2026-11-19\" data-locale=\"en-GB\" data-week-start=\"1\">\n  <script type=\"application/json\" data-props>{ \"values\": { \"2026-10-27\": 2, \"2026-11-02\": 5, \"2026-11-03\": 1, \"2026-11-10\": 8, \"2026-11-12\": 14, \"2026-11-16\": 3, \"2026-11-17\": 6, \"2026-11-18\": 4, \"2026-11-19\": 2 } }</script>\n</div>"
     }
   ],
-  "origin": "Especificación agenda.md §12; contribuciones de GitHub."
+  "origin": "Diseño propio para la agenda; referencia: el gráfico de contribuciones de GitHub."
 }

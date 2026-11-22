@@ -113,7 +113,7 @@ radios y material de los tokens.
     `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
     escribe `--z-arrow-offset`.
   - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, con el
-    patrón «hovercard» de modern-web-guidance: la tarjeta es `role="tooltip"` (el rol mínimo de una pista con
+    patrón de pista rica de la propuesta `interestfor`: la tarjeta es `role="tooltip"` (el rol mínimo de una pista con
     enlaces) y describe al enlace con `aria-describedby` desde que se monta, abierta o cerrada, sin
     `aria-expanded` y sin mover el foco al abrirse; un `aria-describedby` del autor manda. El puntero cruza a la
     tarjeta sin cerrarla, Escape y una pulsación fuera la cierran y Tab entra en ella y sale hacia lo que sigue al

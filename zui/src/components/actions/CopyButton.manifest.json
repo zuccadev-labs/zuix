@@ -56,5 +56,5 @@
       "code": "<>\n  <code id=\"invite-link\">https://example.com/i/8d2k</code>\n  <CopyButton target=\"invite-link\" label=\"Copy invite link\" />\n</>"
     }
   ],
-  "origin": "Nuevo. Patrón de la guía «copy-button» (burbuja como región viva, sin deshabilitar, VoiceOver). Referencia de variantes: Clipboard de Shark UI."
+  "origin": "Nuevo. Patrón habitual de botón de copiar accesible (burbuja como región viva, sin deshabilitar el botón, con el caso de VoiceOver en cuenta). Referencia de variantes: Clipboard de Shark UI."
 }

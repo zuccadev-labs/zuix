@@ -48,7 +48,7 @@
   ],
   "classes": ["z-chart"],
   "behavior": "dom",
-  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
   "description": "Tarta: como DonutChart sin hueco central; los sectores se separan con un trazo de superficie y el tooltip sale junto al sector.",
   "import": "import { PieChart } from \"@zuccadev-labs/zuix-zui\"",
   "props": [

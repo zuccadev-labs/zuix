@@ -85,6 +85,6 @@
       "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
     }
   ],
-  "origin": "Circular Progress de Shark y NeonBlade; guía progress-ring de modern-web-guidance (progress nativo, conic-gradient y máscara).",
+  "origin": "Circular Progress de Shark y NeonBlade; anillo hecho con `<progress>` nativo, conic-gradient y máscara.",
   "behavior": "none"
 }
