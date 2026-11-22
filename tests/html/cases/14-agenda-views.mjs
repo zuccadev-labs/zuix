@@ -21,7 +21,7 @@ export default async function ({ page, test, ok, settle }) {
       [name, contract[name].examples.find((e) => e.title === title).html],
     );
   await page.evaluate(() => {
-    window.__zwave2 = [];
+    window.__zagendaEvents = [];
     for (const name of [
       "highlightchange",
       "taskchange",
@@ -38,10 +38,10 @@ export default async function ({ page, test, ok, settle }) {
       "flexibilitychange",
     ])
       document.addEventListener(`z:${name}`, (event) =>
-        window.__zwave2.push({ name, detail: JSON.parse(JSON.stringify(event.detail ?? null)) }),
+        window.__zagendaEvents.push({ name, detail: JSON.parse(JSON.stringify(event.detail ?? null)) }),
       );
   });
-  const events = () => page.evaluate(() => window.__zwave2.splice(0));
+  const events = () => page.evaluate(() => window.__zagendaEvents.splice(0));
   const wait = async (fn, message, timeout = 4000) => {
     const start = Date.now();
     for (;;) {

@@ -7,7 +7,7 @@
 //              el puntero (data-open-delay, 500 ms) o al enfocar con el teclado, y se cierra al irse de los dos
 //              (data-close-delay, 300 ms), con Escape o con una pulsación fuera. La tarjeta describe al enlace desde
 //              hydrate() (aria-describedby, abierta o no; si el enlace ya trae uno, manda el suyo), nunca aria-expanded:
-//              Intro sigue el enlace. Patrón «hovercard» de modern-web-guidance (pista rica de interestfor).
+//              Intro sigue el enlace. Patrón de pista rica de la propuesta `interestfor`.
 // Toggletip    button.z-toggletip__trigger[data-z-toggletip="#id"][aria-label] + #id.z-toggletip[popover=manual]
 //              [role=tooltip]. Como HoverCard, y además el clic la deja fija (aria-expanded en el botón).
 //              En los dos: data-z-placement en el disparador (bottom / top por defecto), data-arrow en la capa,

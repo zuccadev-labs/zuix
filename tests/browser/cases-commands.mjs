@@ -136,7 +136,7 @@ export default function ({ t, assert, poll, visible, gone, settled, focusOn, exp
       async run({ open }) {
         const page = await screen(open);
         const link = t("c-hover-link");
-        // La relación está antes de abrir (patrón «hovercard» de modern-web-guidance): la tarjeta oculta describe al enlace.
+        // La relación está antes de abrir (patrón de pista rica de `interestfor`): la tarjeta oculta describe al enlace.
         const upfront = await page.locator(link).getAttribute("aria-describedby");
         assert(
           upfront && (await page.locator(`[id="${upfront}"]`).getAttribute("role")) === "tooltip",

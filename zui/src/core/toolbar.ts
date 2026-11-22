@@ -1,7 +1,7 @@
 // Barra de herramientas (patrón APG «toolbar»): una sola parada de tabulación para todos los controles de la barra,
 // también los de sus grupos y los de un ToggleGroup anidado. Las flechas del eje recorren los controles con vuelta,
 // Inicio y Fin van a los extremos. Un control deshabilitado con `disabled` se salta; con `aria-disabled` sigue en el
-// recorrido (la guía lo recomienda para que no desaparezca del teclado). Lo usan Toolbar y ActionBar (React) y el modo DOM.
+// recorrido (así no desaparece del teclado). Lo usan Toolbar y ActionBar (React) y el modo DOM.
 // Sin efectos al importar: las funciones tocan el elemento que reciben.
 import { logicalKey } from "./dir";
 import { move } from "./roving";

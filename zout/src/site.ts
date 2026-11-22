@@ -1,7 +1,7 @@
 // Navegación de sitio: NavigationMenu, Navbar y SkipLink. Un solo comportamiento para el binding de React
 // y el modo sin framework: los dos llaman a estas funciones sobre el marcado del contrato. Sin efectos al importar.
 //
-// Es navegación, no un menú de aplicación (guía «navbar»): los enlaces siguen en el orden de Tab, sin role=menu ni
+// Es navegación, no un menú de aplicación: los enlaces siguen en el orden de Tab, sin role=menu ni
 // flechas. Cada grupo es un disclosure: un <button aria-expanded aria-controls> seguido de su panel.
 //   - Horizontal: el panel es `popover="auto"` y el botón lo abre con `popovertarget` (funciona sin JavaScript);
 //     aquí se coloca bajo el botón, se sincroniza aria-expanded con `toggle`, se previsualiza al pasar el puntero y

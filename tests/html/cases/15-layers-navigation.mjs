@@ -299,7 +299,7 @@ export default async function ({ page, test, ok, card, browserName }) {
     const link = card("HoverCard").locator("[data-z-hovercard]");
     const layer = page.locator("#hc-ana");
     // El retardo se mide con el reloj (bajo carga, una comprobación a los 200 ms no es fiable).
-    // La relación está antes de abrir (patrón «hovercard» de modern-web-guidance): la tarjeta oculta describe al enlace.
+    // La relación está antes de abrir (patrón de pista rica de `interestfor`): la tarjeta oculta describe al enlace.
     ok((await link.getAttribute("aria-describedby")) === "hc-ana", "aria-describedby antes de abrir");
     ok((await layer.getAttribute("role")) === "tooltip", "role=tooltip");
     const started = Date.now();
