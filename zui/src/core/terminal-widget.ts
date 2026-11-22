@@ -9,7 +9,7 @@ import { createAnsiScreen, type AnsiLine, type AnsiScreen } from "./ansi";
 import { completeInput, createHistory, type CommandHistory } from "./history";
 import { ansiSpan, copyControl, copyFromButton, memoLine, type CopyLabels, type CopyState } from "./terminal-shared";
 import { fill, h, icon, on, type VEl } from "./vnode";
-import { announceIn, list, num, yes, type Widget, type WidgetHost } from "./widget";
+import { announceIn, num, yes, type Widget, type WidgetHost } from "./widget";
 
 export interface TerminalLabels extends CopyLabels {
   /** Nombre de la pieza. */
