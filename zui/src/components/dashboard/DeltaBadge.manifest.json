@@ -1,0 +1,91 @@
+{
+  "name": "DeltaBadge",
+  "group": "dashboard",
+  "description": "Variación frente al periodo anterior: flecha, magnitud y una frase para el lector con el sentido («up 12.4%, better than last month»). `positive=\"down\"` para lo que es bueno que baje (errores, latencia, coste).",
+  "import": "import { DeltaBadge } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "description": "Valor actual (con `previous`)."
+    },
+    {
+      "name": "previous",
+      "type": "number",
+      "description": "Valor del periodo anterior."
+    },
+    {
+      "name": "delta",
+      "type": "number",
+      "description": "Variación ya calculada, como fracción (0.124 = 12,4 %); gana sobre value/previous."
+    },
+    {
+      "name": "positive",
+      "type": "enum",
+      "values": ["up", "down"],
+      "default": "up",
+      "description": "Lo que es bueno para la métrica."
+    },
+    {
+      "name": "period",
+      "type": "string",
+      "description": "Periodo en la frase hablada («last month»)."
+    },
+    {
+      "name": "absFormat",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Formato de la diferencia absoluta cuando el anterior es 0."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["soft", "plain"],
+      "default": "soft"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DeltaLabels>",
+      "description": "up, down, flat, better, worse, period."
+    }
+  ],
+  "states": ["up", "down", "flat", "good", "bad", "neutral"],
+  "tokens": [
+    "success-soft",
+    "success-text",
+    "danger-soft",
+    "danger-text",
+    "surface-3",
+    "fg-muted",
+    "radius-xs",
+    "text-caption",
+    "weight-semibold"
+  ],
+  "classes": ["z-delta", "z-delta__arrow", "z-delta__value"],
+  "a11y": "La flecha y la cifra son decorativas (aria-hidden); el lector oye la frase completa en un z-sr-only: dirección, magnitud y si es mejor o peor que el periodo. El sentido no depende del color: la flecha sube, baja o es una raya. Sin React: .z-delta con data-value, data-previous o data-delta, data-positive=\"down\" y data-period se vuelve a pintar igual.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Ventas que suben",
+      "code": "<DeltaBadge value={128400} previous={114200} period=\"last month\" />"
+    },
+    {
+      "title": "Errores que bajan (bueno)",
+      "code": "<DeltaBadge delta={-0.18} positive=\"down\" period=\"last week\" />"
+    },
+    {
+      "title": "Sin cambio",
+      "code": "<DeltaBadge value={50} previous={50} size=\"sm\" />"
+    }
+  ],
+  "origin": "BadgeDelta de Tremor; el sentido de la variación (`positive`) como en Statistic de Ant Design Pro."
+}

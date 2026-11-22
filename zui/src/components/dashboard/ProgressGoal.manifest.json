@@ -1,0 +1,100 @@
+{
+  "name": "ProgressGoal",
+  "group": "dashboard",
+  "description": "Avance hacia una meta con la marca del ritmo esperado: con `elapsed` dice si vas por delante, en ritmo o por detrás («92% of expected pace»).",
+  "import": "import { ProgressGoal } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "target",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "start",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "elapsed",
+      "type": "number",
+      "description": "Fracción del periodo transcurrida (0–1)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ProgressGoalLabels>",
+      "description": "ofTarget, valueText, pace, ahead, onTrack, behind, done, expected."
+    }
+  ],
+  "states": ["ahead", "on-track", "behind", "done"],
+  "tokens": [
+    "surface-3",
+    "accent",
+    "success",
+    "warning",
+    "success-text",
+    "warning-text",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-xs",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-progress-goal",
+    "z-progress-goal__head",
+    "z-progress-goal__label",
+    "z-progress-goal__amount",
+    "z-progress-goal__track",
+    "z-progress-goal__fill",
+    "z-progress-goal__expected",
+    "z-progress-goal__foot",
+    "z-progress-goal__status",
+    "z-progress-goal__pace"
+  ],
+  "a11y": "La pista es role=meter con el nombre de la etiqueta y aria-valuetext «72% of goal, Behind pace». El estado se dice con texto e icono además del color. La marca del ritmo esperado es decorativa (su dato va en el texto). Sin React: .z-progress-goal con data-label, data-value, data-target, data-elapsed y data-value-format (JSON).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Por detrás del ritmo",
+      "code": "<ProgressGoal label=\"Q4 revenue\" value={96000} target={150000} elapsed={0.72} valueFormat={{ style: \"currency\", currency: \"USD\", notation: \"compact\" }} locale=\"en-US\" />"
+    },
+    {
+      "title": "Conseguido",
+      "code": "<ProgressGoal label=\"Signups\" value={1240} target={1200} locale=\"en-US\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Por detrás del ritmo",
+      "code": "<div class=\"z-progress-goal\" data-label=\"Q4 revenue\" data-value=\"96000\" data-target=\"150000\" data-elapsed=\"0.72\" data-locale=\"en-US\" data-value-format='{\"style\":\"currency\",\"currency\":\"USD\",\"notation\":\"compact\"}'></div>"
+    }
+  ],
+  "origin": "ProgressBar con marcador de Tremor y BulletChart de Mantine."
+}

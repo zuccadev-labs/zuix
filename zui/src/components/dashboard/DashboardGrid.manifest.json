@@ -1,0 +1,129 @@
+{
+  "name": "DashboardGrid",
+  "group": "dashboard",
+  "exports": ["DashboardGridItem"],
+  "description": "Rejilla de tarjetas de un dashboard: 12 columnas, cada pieza con columna, fila, ancho y alto. En edición se mueve y se redimensiona con el puntero y con el teclado; las demás se apartan y la rejilla compacta hacia arriba. Persiste con `onLayoutChange` (la disposición es serializable).",
+  "import": "import { DashboardGrid, DashboardGridItem } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "layout",
+      "type": "{ id, x, y, w, h, minW?, minH?, maxW?, maxH?, static? }[]",
+      "description": "Controlada."
+    },
+    {
+      "name": "defaultLayout",
+      "type": "GridLayout",
+      "description": "Sin controlar."
+    },
+    {
+      "name": "onLayoutChange",
+      "type": "(layout: GridLayout) => void",
+      "description": "Tras soltar, con la disposición nueva."
+    },
+    {
+      "name": "editable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "columns",
+      "type": "number",
+      "default": 12
+    },
+    {
+      "name": "rowHeight",
+      "type": "number",
+      "default": 88
+    },
+    {
+      "name": "label",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<GridLabels>",
+      "description": "position, grabbed, dropped, cancelled, hint, hintGrabbed, handle, resize, instructions."
+    },
+    {
+      "name": "DashboardGridItem.id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "DashboardGridItem.title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "DashboardGridItem.description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "DashboardGridItem.actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "DashboardGridItem.bare",
+      "type": "boolean",
+      "description": "Sin marco: el contenido ya es la tarjeta."
+    },
+    {
+      "name": "DashboardGridItem.surface",
+      "type": "enum",
+      "values": ["glass", "solid"],
+      "default": "glass"
+    }
+  ],
+  "states": ["rest", "editable", "grabbed", "dragging", "resizing"],
+  "tokens": [
+    "card-radius",
+    "space-4",
+    "accent",
+    "accent-soft",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "line-strong",
+    "shadow-lg",
+    "surface-2",
+    "surface-3",
+    "glass-border",
+    "tooltip-bg",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "control-height-sm",
+    "control-radius-sm",
+    "touch-target",
+    "duration-normal",
+    "ease-emphasized"
+  ],
+  "classes": [
+    "z-dashboard-grid",
+    "z-dashboard-grid__canvas",
+    "z-dashboard-grid__item",
+    "z-dashboard-grid__head",
+    "z-dashboard-grid__titles",
+    "z-dashboard-grid__title",
+    "z-dashboard-grid__description",
+    "z-dashboard-grid__actions",
+    "z-dashboard-grid__body",
+    "z-dashboard-grid__float",
+    "z-dashboard-grid__handle",
+    "z-dashboard-grid__hint",
+    "z-dashboard-grid__hint-rest",
+    "z-dashboard-grid__hint-grabbed",
+    "z-dashboard-grid__resize"
+  ],
+  "a11y": "region con nombre; cada pieza es una section con el nombre de su título. En edición, cada pieza tiene un asa (botón «Move Revenue», aria-pressed) descrita por las instrucciones: sin coger, las flechas van de asa en asa por geometría; Espacio o Intro la coge, las flechas la mueven una celda, Mayús + flechas cambian su tamaño, Intro o Espacio la sueltan, Escape la devuelve y salir del asa la suelta. Cada paso se anuncia en la región viva central («Revenue, column 5, row 1, 4 by 2»). Con el puntero, el asa arrastra (captura, un solo puntero, Escape cancela) y la esquina redimensiona; el destino lo marca un hueco discontinuo. El orden del DOM es el de lectura (fila, columna) y se rehace al soltar; en un contenedor estrecho todo se apila en ese orden y la edición con el puntero se apaga. Sin React: .z-dashboard-grid[data-cols][data-editable] > .z-dashboard-grid__canvas > .z-dashboard-grid__item[data-id][data-x][data-y][data-w][data-h]; emite z:layoutchange { layout }; getDashboardLayout y setDashboardLayout.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Rejilla editable",
+      "code": "<DashboardGrid label=\"Overview\" editable defaultLayout={[{ id: \"revenue\", x: 0, y: 0, w: 8, h: 3 }, { id: \"uptime\", x: 8, y: 0, w: 4, h: 3 }, { id: \"sources\", x: 0, y: 3, w: 6, h: 3 }, { id: \"activity\", x: 6, y: 3, w: 6, h: 3 }]}>\n  <DashboardGridItem id=\"revenue\" title=\"Revenue\" description=\"Last 30 days\">Chart</DashboardGridItem>\n  <DashboardGridItem id=\"uptime\" title=\"Uptime\">Tracker</DashboardGridItem>\n  <DashboardGridItem id=\"sources\" title=\"Top sources\">BarList</DashboardGridItem>\n  <DashboardGridItem id=\"activity\" title=\"Activity\">Feed</DashboardGridItem>\n</DashboardGrid>"
+    }
+  ],
+  "origin": "Rejilla de ProCard (Ant Design Pro) y dashboard-01 de shadcn; compactación vertical como en las rejillas de widgets de escritorio. Sin react-grid-layout: lógica propia en core/grid-layout."
+}

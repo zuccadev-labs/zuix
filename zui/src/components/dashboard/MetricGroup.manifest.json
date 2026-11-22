@@ -1,0 +1,41 @@
+{
+  "name": "MetricGroup",
+  "group": "dashboard",
+  "description": "Fila de KPI: varias MetricCard en una banda de cristal con separadores (`glass`) o sueltas (`split`). Se reparte por el ancho del contenedor y se apila en estrecho.",
+  "import": "import { MetricGroup, MetricCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre de la región."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["glass", "split"],
+      "default": "glass"
+    },
+    {
+      "name": "columns",
+      "type": "enum",
+      "values": [2, 3, 4, 5, 6],
+      "description": "Columnas fijas en anchos grandes."
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": ["card-radius", "line", "space-4"],
+  "classes": ["z-metric-group"],
+  "a11y": "section con nombre: el lector la ofrece como región. Cada KPI conserva su article con nombre. En estrecho las piezas se apilan en el orden del marcado.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Cuatro KPI en una banda",
+      "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" />\n</MetricGroup>"
+    }
+  ],
+  "origin": "Fila de KPI de los bloques dashboard-01 de shadcn y de las plantillas de Tremor."
+}

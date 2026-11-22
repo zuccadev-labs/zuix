@@ -1,0 +1,127 @@
+{
+  "name": "Gauge",
+  "group": "dashboard",
+  "description": "Indicador radial: semicírculo (180°), 240° o anillo completo, con zonas (cada una con su nombre y su trazo), arco de valor y aguja opcional. Para lo que tiene un rango con umbrales: uso de CPU, cuota, satisfacción.",
+  "import": "import { Gauge } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 100
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "hint",
+      "type": "string",
+      "description": "Texto bajo la cifra."
+    },
+    {
+      "name": "zones",
+      "type": "{ to: number; tone: GaugeTone; label?: string }[]",
+      "description": "Zonas contiguas desde min."
+    },
+    {
+      "name": "arc",
+      "type": "enum",
+      "values": [180, 240, 360],
+      "default": 180
+    },
+    {
+      "name": "needle",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<GaugeLabels>",
+      "description": "valueText: «{value}, {zone}»."
+    }
+  ],
+  "tokens": [
+    "surface-3",
+    "success",
+    "warning",
+    "danger",
+    "accent",
+    "info",
+    "fg",
+    "fg-subtle",
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "text-caption",
+    "weight-semibold",
+    "success-text",
+    "warning-text",
+    "danger-text",
+    "accent-text"
+  ],
+  "classes": [
+    "z-gauge",
+    "z-gauge__svg",
+    "z-gauge__track",
+    "z-gauge__zone",
+    "z-gauge__value",
+    "z-gauge__needle",
+    "z-gauge__hub",
+    "z-gauge__readout",
+    "z-gauge__number",
+    "z-gauge__zone-label",
+    "z-gauge__hint"
+  ],
+  "a11y": "role=meter con aria-valuenow, min, max y aria-valuetext con la zona («72%, Warning»). El SVG y la cifra visible son decorativos. Las zonas se distinguen por su nombre y por el trazo (continuo, discontinuo, punteado), no solo por el color. Sin React: .z-gauge con data-value, data-min, data-max, data-label, data-hint, data-arc, data-needle y data-zones=\"60:success:Healthy|85:warning:Warning|100:danger:Critical\".",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "CPU con zonas",
+      "code": "<Gauge label=\"CPU\" value={72} valueFormat={{ style: \"unit\", unit: \"percent\" }} hint=\"Last 5 min\" zones={[{ to: 60, tone: \"success\", label: \"Healthy\" }, { to: 85, tone: \"warning\", label: \"Warning\" }, { to: 100, tone: \"danger\", label: \"Critical\" }]} locale=\"en-US\" />"
+    },
+    {
+      "title": "Anillo completo",
+      "code": "<Gauge label=\"Storage used\" arc={360} value={412} max={512} hint=\"of 512 GB\" size=\"sm\" />"
+    },
+    {
+      "title": "240° con aguja",
+      "code": "<Gauge label=\"Satisfaction\" arc={240} needle value={8.4} min={0} max={10} valueFormat={{ maximumFractionDigits: 1 }} zones={[{ to: 6, tone: \"danger\", label: \"Low\" }, { to: 8, tone: \"warning\", label: \"Fair\" }, { to: 10, tone: \"success\", label: \"Great\" }]} locale=\"en-US\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "CPU con zonas",
+      "code": "<div class=\"z-gauge\" data-value=\"72\" data-label=\"CPU\" data-hint=\"Last 5 min\" data-zones=\"60:success:Healthy|85:warning:Warning|100:danger:Critical\" data-locale=\"en-US\"></div>"
+    },
+    {
+      "title": "Anillo completo",
+      "code": "<div class=\"z-gauge\" data-arc=\"360\" data-value=\"412\" data-max=\"512\" data-label=\"Storage used\" data-hint=\"of 512 GB\" data-size=\"sm\"></div>"
+    }
+  ],
+  "origin": "Gauge de MUI X y GaugeChart de Mantine; role=meter de WAI-ARIA 1.2."
+}

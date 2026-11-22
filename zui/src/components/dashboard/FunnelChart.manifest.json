@@ -1,0 +1,71 @@
+{
+  "name": "FunnelChart",
+  "group": "dashboard",
+  "description": "Embudo: etapas con su valor, la conversión frente a la anterior y la total, y lo perdido entre etapas en trama tenue.",
+  "import": "import { FunnelChart } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "stages",
+      "type": "{ label: string; value: number }[]",
+      "required": true
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "string"
+    },
+    {
+      "name": "color",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<FunnelLabels>",
+      "description": "ofPrevious, ofFirst, dropped, summary."
+    }
+  ],
+  "tokens": ["chart-1", "surface-2", "fg", "fg-muted", "fg-subtle", "radius-xs", "text-small", "text-caption", "weight-semibold"],
+  "classes": [
+    "z-funnel",
+    "z-funnel__caption",
+    "z-funnel__title",
+    "z-funnel__summary",
+    "z-funnel__description",
+    "z-funnel__stages",
+    "z-funnel__stage",
+    "z-funnel__name",
+    "z-funnel__value",
+    "z-funnel__track",
+    "z-funnel__drop",
+    "z-funnel__bar",
+    "z-funnel__rate"
+  ],
+  "a11y": "figure con figcaption (título y conversión total) y una lista ordenada: cada etapa se lee con su valor, su conversión y lo que se perdió. Las barras son decorativas. Sin React: .z-funnel con data-stages (JSON), data-title y data-locale.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Embudo de compra",
+      "code": "<FunnelChart title=\"Checkout funnel\" locale=\"en-US\" stages={[{ label: \"Visited\", value: 12400 }, { label: \"Added to cart\", value: 4210 }, { label: \"Started checkout\", value: 2380 }, { label: \"Paid\", value: 1612 }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Embudo de compra",
+      "code": "<figure class=\"z-funnel\" data-title=\"Checkout funnel\" data-locale=\"en-US\" data-stages='[{\"label\":\"Visited\",\"value\":12400},{\"label\":\"Added to cart\",\"value\":4210},{\"label\":\"Paid\",\"value\":1612}]'></figure>"
+    }
+  ],
+  "origin": "Funnel de MUI X y FunnelChart de Mantine."
+}
