@@ -154,6 +154,9 @@ const IGNORED_CONSOLE = [
   /GL Driver Message/,
   WEBGL_UNAVAILABLE_WARNING,
   /scroll-linked positioning effect/,
+  // Firefox avisa de que 127.0.0.1 «rastrea rebotes» cuando el servidor local lleva un rato recibiendo páginas sin
+  // activación de usuario. Es del navegador y del origen de prueba, no de la suite.
+  /has been classified as a bounce tracker/,
 ];
 
 function makeContext(engine, baseUrl, record, shots) {
