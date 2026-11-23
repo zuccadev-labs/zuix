@@ -147,7 +147,9 @@ function chip(def: FilterDef, c: Config, s: State, uid: string): VEl {
               class: "z-filter-bar__input",
               name: `${menuId}-options`,
               value: o.value,
-              checked: chosen.includes(o.value) ? true : undefined,
+              // El estado marcado no va como `checked`: React haría de la casilla un control controlado y desharía el clic
+              // antes del `change`. `after` lo escribe en la propiedad tras cada pintado (React y modo DOM).
+              "data-checked": on(chosen.includes(o.value)),
               "data-option": def.id,
             }),
             h("span", { class: "z-filter-bar__option-label" }, o.label),
@@ -256,7 +258,9 @@ export const filterBarWidget: Widget<FilterBarProps, Config, State> = {
       root.removeEventListener("focusin", onFocus);
     };
   },
-  after: () => {},
+  after(root) {
+    for (const input of root.querySelectorAll<HTMLInputElement>(".z-filter-bar__input")) input.checked = input.hasAttribute("data-checked");
+  },
   fromDom(el, json) {
     return {
       filters: Array.isArray(json.filters) ? (json.filters as FilterDef[]) : [],

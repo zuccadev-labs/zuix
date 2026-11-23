@@ -5,6 +5,7 @@
 // ReviewCard  article.z-review-card[data-state] > p.z-review-card__text > span.z-review-card__rest[hidden=until-found]
 //             + button.z-review-card__more[aria-expanded][aria-controls]. Etiquetas: data-read-more y data-read-less
 //             en el artículo (por defecto, «Read more» y «Show less»). z:change { open } al desplegar o plegar.
+import { foldedValue } from "../core/reviews";
 import { all, emit, inDom } from "./forms-popup";
 import type { DomPart, Listen } from "./shared";
 
@@ -22,7 +23,7 @@ export function setReviewExpanded(root: HTMLElement, open: boolean): void {
   button.setAttribute("aria-expanded", String(open));
   button.textContent = open ? (root.dataset.readLess ?? "Show less") : (root.dataset.readMore ?? "Read more");
   if (open) rest.removeAttribute("hidden");
-  else rest.setAttribute("hidden", "until-found");
+  else rest.setAttribute("hidden", foldedValue());
   root.querySelector<HTMLElement>(".z-review-card__ellipsis")?.toggleAttribute("hidden", open);
   emit(root, "change", { open });
 }
@@ -30,7 +31,7 @@ export function setReviewExpanded(root: HTMLElement, open: boolean): void {
 function hydrate(root: ParentNode): void {
   // El marcado de servidor puede traer `hidden` a secas: plegado pasa a `until-found`.
   for (const el of all(root, ".z-review-card[data-state='closed']"))
-    el.querySelector<HTMLElement>(".z-review-card__rest[hidden]")?.setAttribute("hidden", "until-found");
+    el.querySelector<HTMLElement>(".z-review-card__rest[hidden]")?.setAttribute("hidden", foldedValue());
 }
 
 function setup(on: Listen): void {

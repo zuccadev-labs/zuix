@@ -117,7 +117,7 @@ export function patchElement(
     }
   }
   // Estado que la persona cambia sin pasar por los atributos: siempre desde el árbol.
-  if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = Boolean(v.a?.checked);
+  if (el instanceof HTMLInputElement && (el.type === "checkbox" || el.type === "radio")) el.checked = Boolean(v.a?.checked);
   if (el instanceof HTMLOptionElement) el.selected = Boolean(v.a?.selected);
   // Una región viva la escribe el anuncio (con retraso): su texto no se pisa al volver a pintar.
   if (!fresh && !v.c?.length && (el.hasAttribute("data-live") || el.classList.contains("z-agenda__live"))) return;

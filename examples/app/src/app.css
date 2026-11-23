@@ -802,3 +802,10 @@ body {
 .app-flow-bar {
   flex-wrap: wrap;
 }
+
+/* Pantalla de anuncio: lista de alojamientos en rejilla, sin viñetas. */
+.app-stays {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

@@ -4,7 +4,7 @@ import "./helpers/dom.mjs";
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import fc from "fast-check";
-import { excerpt, ratingAverage, ratingDistribution, ratingTotal } from "../../zui/src/core/reviews.ts";
+import { excerpt, foldedValue, ratingAverage, ratingDistribution, ratingTotal } from "../../zui/src/core/reviews.ts";
 import { ReviewCard } from "../../zui/src/components/data/ReviewCard.tsx";
 import { ReviewSummary } from "../../zui/src/components/data/ReviewSummary.tsx";
 import { dataModule, setReviewExpanded } from "../../zui/src/dom/families/data.ts";
@@ -149,7 +149,7 @@ describe("modo DOM", () => {
     assert.equal(more.textContent, "Less");
     assert.equal(rest.hasAttribute("hidden"), false);
     more.click();
-    assert.equal(rest.getAttribute("hidden"), "until-found");
+    assert.equal(rest.getAttribute("hidden"), foldedValue());
     assert.equal(more.textContent, "Read more");
     rest.dispatchEvent(new Event("beforematch", { bubbles: true }));
     assert.equal(card.dataset.state, "open");

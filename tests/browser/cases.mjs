@@ -20,6 +20,7 @@ import datagridCases from "./cases-datagrid.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
+import listingCases from "./cases-listing.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -283,6 +284,7 @@ const SCREENS = [
   "kanban",
   "login",
   "flows",
+  "listing",
 ];
 
 export const cases = [
@@ -3141,6 +3143,7 @@ export const cases = [
     nodesCases,
     transferCases,
     datagridCases,
+    listingCases,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────

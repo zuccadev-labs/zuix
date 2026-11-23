@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode, type Ref } from "react";
 import { formatDate } from "../../core/format";
-import { excerpt } from "../../core/reviews";
+import { excerpt, foldedValue } from "../../core/reviews";
 import { fill } from "../../core/vnode";
 import { useIsoLayoutEffect, useLatest } from "../../primitives/hooks";
 import { REVIEW_CARD_LABELS, type ReviewCardLabels } from "../../core/reviews";
@@ -88,7 +88,7 @@ export function ReviewCard({
 
   // React solo escribe `hidden` como booleano: plegado pasa a `until-found` (Buscar en la página lo encuentra y abre).
   useIsoLayoutEffect(() => {
-    if (!open && restRef.current) restRef.current.setAttribute("hidden", "until-found");
+    if (!open && restRef.current) restRef.current.setAttribute("hidden", foldedValue());
   }, [open, tail]);
   // `beforematch` burbujea: se escucha en el artículo, que existe siempre (el resto aparece y desaparece con el texto).
   useEffect(() => {

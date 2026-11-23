@@ -861,6 +861,7 @@
   }
   .z-notification-center__list {
     display: grid;
+    gap: var(--z-space-0-5);
     margin: 0;
     padding: 0 var(--z-space-2);
     list-style: none;

@@ -98,7 +98,7 @@ describe("FilterBar", () => {
     );
     assert.match(html, /popovertarget="fb-m-type" aria-haspopup="dialog" aria-expanded="false"/);
     assert.match(html, /<span class="z-chip__count">Private room<\/span>/);
-    assert.match(html, /type="checkbox" class="z-filter-bar__input" name="fb-m-type-options" value="room" checked/);
+    assert.match(html, /type="checkbox" class="z-filter-bar__input" name="fb-m-type-options" value="room" data-checked/);
     assert.match(html, /type="radio" class="z-filter-bar__input" name="fb-m-price-options" value="low" data-option="price"/);
     assert.match(html, /data-clear>/);
     assert.match(html, /<span class="z-sr-only" id="fb-count">2 filters active<\/span>/);

@@ -237,6 +237,11 @@
     color: var(--z-fg-prose);
     overflow-wrap: anywhere;
   }
+  /* Plegado con `until-found` el resto se oculta con `content-visibility`, que no actúa sobre una caja en línea: pasa
+     a bloque (de altura 0) mientras está plegado y vuelve a la línea al desplegarse. */
+  .z-review-card__rest[hidden="until-found"] {
+    display: block;
+  }
   .z-review-card__more {
     align-self: flex-start;
     min-height: var(--z-control-height-xs);

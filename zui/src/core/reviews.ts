@@ -129,3 +129,11 @@ export const REVIEW_CARD_LABELS: ReviewCardLabels = {
   rating: "Rating",
   outOf: "{value} out of {max}",
 };
+
+/**
+ * Valor de `hidden` para lo plegado: `until-found` donde el navegador lo entiende (la búsqueda en la página lo
+ * encuentra y lo abre); donde no, `hidden` a secas, porque la hoja le da `display: block` a `[hidden="until-found"]`
+ * (un resto en línea no se oculta con `content-visibility`) y sin soporte eso lo dejaría a la vista.
+ */
+export const foldedValue = (): string =>
+  typeof HTMLElement !== "undefined" && "onbeforematch" in HTMLElement.prototype ? "until-found" : "";
