@@ -215,6 +215,14 @@ tallas distintas, objetivo pequeño con espacio alrededor…) queda contado como
 informe; no se descarta nada en bloque. La medida en bruto se guarda, así que `--report` reclasifica sin abrir
 el navegador.
 
+El margen lateral de `Container` con `gutter="fluid"` sale del token `container-gutter`, un `clamp()` entre 16 y
+40 px que sigue al ancho del contenedor: casi nunca cae en un paso de `--z-space-*`. La auditoría lo acepta solo en
+`padding-left` y `padding-right`, cuando el `--z-container-pad` del elemento es ese token y el valor queda entre sus
+dos límites. Un relleno fluido que no salga del token sigue contando como defecto.
+
+En la excepción de espaciado de un objetivo pequeño, el vecino cuenta por la parte que se ve: un chip desplazado
+fuera de su fila (overflow) no está junto al objetivo aunque su caja caiga encima.
+
 Dentro de un lienzo de nodos (`.z-node-canvas`) el solape entre su contenido y su cromo es parte del diseño: los
 nodos pasan bajo el minimapa y los controles flotantes, y con poco zoom se acercan entre sí. Los controles del cuerpo
 de un nodo miden en pantalla lo que dicta el zoom. Los dos casos se cuentan como aceptados con su motivo; los

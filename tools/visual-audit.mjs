@@ -200,6 +200,10 @@ function collect({ TOKENS, families, coarse }) {
       });
   };
   const near = (v, set, tol = 0.5) => set.some((s) => Math.abs(s - v) <= tol);
+  // Margen lateral fluido de Container (token `container-gutter`, un clamp() entre dos px). Solo cuenta si el margen
+  // del elemento sale de ese token, y dentro de sus dos límites.
+  const gutter = getComputedStyle(document.documentElement).getPropertyValue("--z-container-gutter").trim();
+  const gutterBounds = /^clamp\(\s*([\d.]+)px\s*,.+,\s*([\d.]+)px\s*\)$/.exec(gutter)?.slice(1).map(Number);
   const all = [...document.body.querySelectorAll("*")].filter(
     (el) => !(el instanceof SVGElement) && !["SCRIPT", "STYLE", "TEMPLATE", "NOSCRIPT", "BR", "Z-ICON"].includes(el.tagName),
   );
@@ -998,6 +1002,16 @@ function collect({ TOKENS, families, coarse }) {
         add("margen-automatico", el, `${prop} ${value} (margen automático que empuja)`);
         continue;
       }
+      if (
+        gutterBounds &&
+        /padding-(left|right)/.test(prop) &&
+        cs.getPropertyValue("--z-container-pad").trim() === gutter &&
+        v >= gutterBounds[0] - 0.5 &&
+        v <= gutterBounds[1] + 0.5
+      ) {
+        add("margen-fluido", el, `${prop} ${Math.round(v * 100) / 100}px (container-gutter: ${gutter})`);
+        continue;
+      }
       // Con puntero grueso, un relleno que lleva la fila al objetivo táctil (40) sale de un cálculo, no de la escala.
       if (
         coarse &&
@@ -1205,9 +1219,12 @@ function collect({ TOKENS, families, coarse }) {
     // Excepción de espaciado: un círculo de 24 px centrado en el objetivo no toca otro objetivo ni su círculo.
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
+    // El vecino cuenta por la parte que se ve: un chip desplazado fuera de su fila (overflow) no está junto al objetivo.
     const spaced = inter.every((o) => {
       if (o === el || o.contains(el) || el.contains(o)) return true;
-      const q = rects.get(o);
+      const c = clipped(o);
+      const q = { left: c.left, top: c.top, right: c.right, bottom: c.bottom, width: c.right - c.left, height: c.bottom - c.top };
+      if (q.width < 1 || q.height < 1) return true;
       const dx = Math.max(q.left - cx, 0, cx - q.right);
       const dy = Math.max(q.top - cy, 0, cy - q.bottom);
       if (Math.hypot(dx, dy) < 12) return false;
@@ -1781,6 +1798,10 @@ function classify(recs) {
         case "espaciado-linea":
           verdict = "aceptado";
           why = "1 px: línea de rejilla o ajuste óptico, por debajo del paso más pequeño de la escala";
+          break;
+        case "margen-fluido":
+          verdict = "aceptado";
+          why = "margen lateral fluido de Container: el token container-gutter crece con el ancho entre sus dos límites";
           break;
         case "relleno-tactil":
           verdict = "aceptado";
