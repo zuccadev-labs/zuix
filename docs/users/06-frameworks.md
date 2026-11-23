@@ -14,7 +14,7 @@ binding se escribe después y tiene que producir ese marcado.
 |---|---|---|
 | Contrato | Tokens `--z-*`, clases `z-*`, atributos de estado (`data-state`, `data-size`, `aria-*`) e iconos | Nada: CSS y SVG |
 | Comportamiento | `@zuccadev-labs/zuix-zui/dom` y `@zuccadev-labs/zuix-zout/dom`: diálogos, menús, popovers, tooltips, avisos, pestañas, acordeón, controles, paneles | El navegador (`<dialog>`, Popover API) |
-| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 19 |
+| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 18.2 o posterior, o React 19 |
 
 El comportamiento y el binding comparten la misma lógica (colocación, foco, teclado, capas): está escrita
 una vez, sin framework, y los dos la consumen. Un binding para otro framework solo tiene que producir el

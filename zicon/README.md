@@ -10,7 +10,7 @@ element, as an SVG node or string, from a sprite, or as single files.
 pnpm add @zuccadev-labs/zuix-zicon
 ```
 
-React 19 is an optional peer: only the `Icon` component needs it. The package also comes inside the full
+React (18.2 or later, or 19) is an optional peer: only the `Icon` component needs it. The package also comes inside the full
 suite, [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 
 ## Without React

@@ -22,9 +22,10 @@ una versión publicada salió de aquí. El procedimiento de publicación está e
 | Contrato, auditoría y tipos (Node 26) | `pnpm install --frozen-lockfile`, `pnpm audit`, lint, formato, pruebas unitarias con umbral, `pnpm check`, comprobación de que lo generado está al día (`git status --porcelain` no devuelve nada), build del sitio y `pnpm test:site`, `pnpm build`, `pnpm test:pack --skip-build --next`, y genera el SBOM y las huellas de los tarballs |
 | Node 22 y Node 24 | `pnpm check`, `pnpm build` y la prueba de empaquetado sin Next.js |
 | Navegador (Chromium, Firefox, WebKit) | `pnpm test:html` y `pnpm test:browser` en cada motor. Si fallan, sube las capturas |
+| Navegador con React 18 (Chromium) | `REACT=18 pnpm test:browser`: la suite entera con la aplicación servida con React 18, en paralelo con los demás |
 | Windows | `pnpm check`, que lo generado sale igual, byte a byte, que en Linux, y las pruebas unitarias. Las suites de navegador y el empaquetado se quedan en Linux. No corre en la verificación de una publicación |
 
-Son siete trabajos en un pull request (el primero, dos de Node, tres de navegador y Windows) y seis cuando
+Son ocho trabajos en un pull request (el primero, dos de Node, cuatro de navegador y Windows) y siete cuando
 lo llama `release`: lo que se publica se construye y se prueba en Linux, así que un fallo propio de Windows
 se ve en el pull request sin detener una versión. Para fusionar en `main` son obligatorios el primero y los
 tres de navegador.

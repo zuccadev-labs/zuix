@@ -111,7 +111,8 @@ import { Stack } from "@zuccadev-labs/zuix/zout";
 - La marca se elige importando su CSS o con `data-brand` en `<html>`.
 - El contenedor de la aplicación lleva `class="z-root z-canvas"`: `z-root` aplica tipografía, foco y
   selección; `z-canvas` pinta el fondo.
-- El binding requiere React 19. El resto de la suite no depende de React.
+- El binding funciona con React 18.2 o posterior y con React 19
+  ([Compatibilidad](./10-compatibilidad.md#react)). El resto de la suite no depende de React.
 
 Sin React, en HTML plano o en otro framework: [Frameworks](./06-frameworks.md).
 

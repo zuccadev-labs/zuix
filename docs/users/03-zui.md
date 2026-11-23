@@ -60,7 +60,8 @@ export function App() {
 - `ToastProvider` envuelve la aplicación una vez.
 - Los textos visibles llegan por props; los valores por defecto están en inglés.
 - La clase `z-root` en el contenedor de la aplicación aplica tipografía, foco y selección.
-- Los componentes aceptan `ref` como prop, sin `forwardRef`: es la forma de React 19.
+- Los componentes aceptan `ref` como una prop más, también con React 18: allí los que la reciben van envueltos
+  en `forwardRef` por dentro.
 
 ### Con Next.js
 

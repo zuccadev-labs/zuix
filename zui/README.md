@@ -8,7 +8,7 @@ React binding in the main entry.
 |---|---|---|
 | Contract | `@zuccadev-labs/zuix-zui/styles.css`, `@zuccadev-labs/zuix-zui/html.json` | `@zuccadev-labs/zuix-tokens` |
 | Behavior | `@zuccadev-labs/zuix-zui/dom` | The browser (`<dialog>`, Popover API) |
-| React binding | `@zuccadev-labs/zuix-zui` | React 19 |
+| React binding | `@zuccadev-labs/zuix-zui` | React 18.2 or later, or React 19 |
 
 There is no third-party UI library underneath. Dialogs are a native `<dialog>` opened with `showModal()`,
 floating layers are `popover` elements, and the keyboard and focus logic follows the
@@ -22,8 +22,8 @@ pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-
 ```
 
 `@zuccadev-labs/zuix-zicon` is a required peer (components draw their icons with the application's copy).
-`react` and `react-dom` 19 are optional peers: only the binding needs them (`pnpm add react react-dom`).
-React 18 is not supported. The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
+`react` and `react-dom` are optional peers, 18.2 or later or 19: only the binding needs them
+(`pnpm add react react-dom`). The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
 are installed and upgraded together, at the same version. Requires Node 22.12 or later.
 
 To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).

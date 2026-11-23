@@ -24,7 +24,7 @@ Escribí este documento para obligarme: antes de fusionar un cambio miro esta ta
 | Funciones | Lo exportado por cada entrada | `init`, `use`, `destroy`, `hydrate`, `toast`, `confirm`, `registerIcons`, `iconSvg`, `iconElement`, `cx`, y los módulos de familia de `zui/dom` (`datesModule`, `agendaModule`…) |
 | Política de Trusted Types | `@zuccadev-labs/zuix-zui/dom` | El nombre `zuix-zui` |
 | Entradas del paquete | `publishConfig.exports` de cada `package.json` | `@zuccadev-labs/zuix-zui/dom`, `@zuccadev-labs/zuix-zicon/icons/*`, `@zuccadev-labs/zuix-zui/dist/zui.css` |
-| Peers y entorno | `peerDependencies`, `engines`, la línea de navegadores | React 19, Node 22.12; Chrome y Edge 116, Firefox 125, Safari 17, Safari de iOS 18.3 |
+| Peers y entorno | `peerDependencies`, `engines`, la línea de navegadores | React 18.2 o 19, Node 22.12; Chrome y Edge 116, Firefox 125, Safari 17, Safari de iOS 18.3 |
 
 ## Entradas
 

@@ -14,7 +14,7 @@ puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
 | `pnpm --filter @zuccadev-labs/zuix-zudocs build` | El sitio compila; enlaces, anclas e imágenes resuelven |
 | `pnpm test:site` | El sitio compilado, página a página |
 | `pnpm test:html` | El contrato HTML y el modo sin framework, en navegador |
-| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador |
+| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador. Con `REACT=18`, la misma aplicación con React 18 (`examples/react18`) |
 | `pnpm audit:visual` | Medidas en navegador: márgenes, fuentes, escala, radios, alturas, alineación, foco, objetivo táctil y axe |
 | `pnpm build` | El `dist/` de publicación |
 | `pnpm test:pack` | Los cinco tarballs, consumidos fuera del workspace |

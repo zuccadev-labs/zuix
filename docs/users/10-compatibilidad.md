@@ -45,12 +45,38 @@ Los paquetes solo publican ESM. `require("@zuccadev-labs/zuix-zui")` funciona en
 
 | | |
 |---|---|
-| Versión | React 19 y React DOM 19, como peers opcionales |
-| React 18 | No se admite |
+| Versión | React y React DOM 18.2 o posterior, o 19, como peers opcionales (`^18.2.0 \|\| ^19.0.0`) |
+| Tipos | `@types/react` 18 o 19 para consumir los paquetes |
 | Sin React | Todo lo que no es el binding: contrato, `zui/dom`, `zout/dom`, `<z-icon>` |
 
-Probé React 18 y no funciona: `inert` no se aplica como atributo booleano, y los componentes reciben `ref`
-como prop, sin `forwardRef`, que es la forma de React 19. No voy a mantener dos caminos.
+Hasta la 0.3 el binding pedía React 19. Hay proyectos que siguen en React 18 y no quiero dejarlos fuera, así que
+el binding funciona con las dos. Lo que cambia entre ellas lo resuelvo en un módulo interno de cada paquete
+(`react-compat.ts`), que lee la versión de React una vez, al cargarse:
+
+| Diferencia | React 19 | React 18 | Qué hago |
+|---|---|---|---|
+| `ref` en un componente de función | Llega como una prop más | No llega; hace falta `forwardRef` | Los componentes que aceptan `ref` pasan por `withRef`: en 19 es la misma función; en 18 la envuelve en `forwardRef` y devuelve la ref a las props |
+| Ref de un hijo (`trigger`, `asChild`) | `element.props.ref` (leer `element.ref` avisa) | `element.ref` | Se lee de donde esté |
+| Una ref de función devuelve una limpieza | Se llama al desmontar | Aviso; se llama a la ref con `null` | La fusión de refs no devuelve limpieza en 18 |
+| `inert` | Booleano | Atributo desconocido: solo se escribe con una cadena | `inert=""` en 18 |
+| `popoverTarget` | Prop conocida, en camelCase | Desconocida: aviso con camelCase | `popovertarget` en minúsculas en 18 |
+| `useLayoutEffect` en el servidor | Sin aviso | Aviso en cada render de servidor | `useEffect` cuando no hay `document` |
+
+En React 18 los componentes que aceptan `ref` son objetos de `forwardRef`, no funciones: se usan con JSX igual,
+pero no se llaman como función. `useId` da identificadores como `:r1:`; los dos puntos no valen en un selector CSS
+sin escapar (`CSS.escape`), pero sí en `id`, `aria-*` y en un enlace `#…`.
+
+Lo pruebo en cada cambio: la suite de navegador entera con la aplicación de ejemplo servida con React 18
+(`REACT=18 pnpm test:browser`, que usa `examples/react18`) y `pnpm test:pack`, que instala los tarballs en un
+proyecto con React 19 y otro con React 18, cada uno con sus `@types/react`, y comprueba render en servidor, render
+en un DOM con refs y sin avisos de React en la consola, `tsc` y Vite.
+
+Un límite de la prueba, no del paquete: la pantalla de la aplicación de ejemplo que renderiza en servidor dentro del
+navegador (`?screen=audit-ssr`) recibe con React 18 el aviso de `useLayoutEffect`, porque allí sí hay `document`;
+ese caso lo acepta solo con `REACT=18`. En Node, sin `document`, `pnpm test:pack` comprueba que no hay aviso.
+
+Límite: el fuente de la suite compila con `@types/react` 19. Con los tipos de 18 da errores propios del fuente
+(`useRef(null)` era de solo lectura en 18); las declaraciones publicadas sí compilan con los dos.
 
 Con Server Components (Next.js App Router) funciona; los detalles están en
 [Frameworks](./06-frameworks.md#con-nextjs-app-router).

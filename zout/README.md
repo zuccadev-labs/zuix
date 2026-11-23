@@ -9,9 +9,9 @@ tabs, grids, site navigation) and draws no content. Measures and material come f
 pnpm add @zuccadev-labs/zuix-zout @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-zicon
 ```
 
-`@zuccadev-labs/zuix-zicon` is a required peer. `react` and `react-dom` 19 are optional peers: only the
-binding needs them (`pnpm add react react-dom`). The suite packages are installed and upgraded together, at
-the same version. Requires Node 22.12 or later.
+`@zuccadev-labs/zuix-zicon` is a required peer. `react` and `react-dom` (18.2 or later, or 19) are optional
+peers: only the binding needs them (`pnpm add react react-dom`). The suite packages are installed and upgraded
+together, at the same version. Requires Node 22.12 or later.
 
 To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 

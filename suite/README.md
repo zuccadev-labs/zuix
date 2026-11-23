@@ -7,8 +7,8 @@ CSS and tokens; it works with any framework and ships a React binding.
 pnpm add @zuccadev-labs/zuix
 ```
 
-With npm, `npm install @zuccadev-labs/zuix`. The React binding also needs `react` and `react-dom` 19
-(`pnpm add react react-dom`). The framework-free subpaths do not import them. Requires Node 22.12 or later.
+With npm, `npm install @zuccadev-labs/zuix`. The React binding also needs `react` and `react-dom`, 18.2 or
+later or 19 (`pnpm add react react-dom`). The framework-free subpaths do not import them. Requires Node 22.12 or later.
 
 ## With React
 
