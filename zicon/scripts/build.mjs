@@ -1,16 +1,26 @@
-// Genera el paquete a partir de icons.json (salida de extract.py) y scripts/keywords.json.
+// Genera el paquete a partir de icons.json (Dazicon, salida de extract.py), icons-own.json (iconos propios, salida
+// de own.mjs) y scripts/keywords.json.
 // Escribe: src/icons/<nombre>.ts, src/names.ts, src/all.ts, manifest.json y la tabla de AGENTS.md.
-// Falla si un alias o un emoji apunta a un icono que no existe.
+// Falla si un alias o un emoji apunta a un icono que no existe, o si las dos fuentes repiten un nombre o una categoría.
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
-const { icons, categories, box } = read("icons.json");
+const dazicon = read("icons.json");
+const own = read("icons-own.json");
+const { box } = dazicon;
 const { words, aliases, emoji } = read("scripts/keywords.json");
-const names = new Set(icons.map((i) => i.name));
 const errors = [];
+if (own.box !== box) errors.push(`icons-own.json: caja de ${own.box}, la de Dazicon es de ${box}`);
+const daziconNames = new Set(dazicon.icons.map((i) => i.name));
+for (const i of own.icons) if (daziconNames.has(i.name)) errors.push(`${i.name}: está en icons.json y en icons-own.json`);
+for (const k of Object.keys(own.categories))
+  if (k in dazicon.categories) errors.push(`categoría "${k}": está en icons.json y en icons-own.json`);
+const categories = { ...dazicon.categories, ...own.categories };
+const icons = [...dazicon.icons, ...own.icons].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+const names = new Set(icons.map((i) => i.name));
 for (const k of Object.keys(aliases)) if (!names.has(k)) errors.push(`aliases: no existe el icono "${k}"`);
 for (const [e, k] of Object.entries(emoji)) if (!names.has(k)) errors.push(`emoji ${e}: no existe el icono "${k}"`);
 const camel0 = (n) => n.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/^(\d)/, "_$1");
@@ -105,7 +115,7 @@ writeFileSync(
   `${JSON.stringify(
     {
       name: "@zuccadev-labs/zuix-zicon",
-      source: "Dazicon",
+      source: "Dazicon y dibujos propios",
       box,
       count: icons.length,
       variants: ["outline", "solid"],

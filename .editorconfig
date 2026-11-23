@@ -16,7 +16,7 @@ max_line_length = 110
 indent_size = 4
 
 # Generados: no se reformatean.
-[{pnpm-lock.yaml,**/manifest.json,**/html.json,zicon/icons.json,zicon/sprite.svg,zicon/svg/**,zicon/src/icons/**}]
+[{pnpm-lock.yaml,**/manifest.json,**/html.json,zicon/icons.json,zicon/icons-own.json,zicon/sprite.svg,zicon/svg/**,zicon/src/icons/**}]
 insert_final_newline = unset
 trim_trailing_whitespace = unset
 indent_size = unset

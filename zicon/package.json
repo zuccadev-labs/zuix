@@ -2,7 +2,7 @@
   "name": "@zuccadev-labs/zuix-zicon",
   "version": "0.3.0",
   "type": "module",
-  "description": "Estándar iconográfico de la suite zuix, extraído de Dazicon.",
+  "description": "Estándar iconográfico de la suite zuix: Dazicon y dibujos propios.",
   "license": "MIT",
   "keywords": [
     "zuix",

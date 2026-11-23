@@ -1,7 +1,8 @@
 # @zuccadev-labs/zuix-zicon
 
-The icon standard of the zuix suite: 346 icons in two variants (`outline` and `solid`), on a 24 × 24 box,
-with categories and keywords in Spanish and English. They are used by name from React, as a `<z-icon>`
+The icon standard of the zuix suite: 366 icons in two variants (`outline` and `solid`), on a 24 × 24 box,
+with categories and keywords in Spanish and English. 346 come from the Dazicon set and 20 (weather, transport,
+maps and a few more) are my own drawings in the same line style. They are used by name from React, as a `<z-icon>`
 element, as an SVG node or string, from a sprite, or as single files.
 
 ## Install
@@ -105,7 +106,7 @@ the same version.
 
 - The `outline` variant is drawn as a filled shape: stroke width cannot be adjusted.
 - There is a single 24 px box.
-- 101 of the 346 icons are identical in `outline` and `solid`: the source drawing does not distinguish them.
+- 105 of the 366 icons are identical in `outline` and `solid`: the source drawing does not distinguish them.
 - `<use>` pointing at an external `sprite.svg` only works when the sprite is served from the same origin as
   the page.
 
@@ -119,7 +120,7 @@ The guides are written in Spanish.
 
 ## Español
 
-Estándar iconográfico de la suite zuix: 346 iconos en `outline` y `solid`. La guía está en español en
+Estándar iconográfico de la suite zuix: 366 iconos en `outline` y `solid`. La guía está en español en
 [`docs/users/02-zicon.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/02-zicon.md).
 
 ## License

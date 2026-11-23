@@ -1,0 +1,29 @@
+{
+  "$comment": "Iconos propios: categoría de cada uno y categorías que no existen en Dazicon. Los dibujos están en outline/ y solid/; `pnpm icons:own` los convierte.",
+  "categories": {
+    "weather": { "en": "Weather", "es": "Clima" },
+    "transport": { "en": "Transport", "es": "Transporte" }
+  },
+  "icons": {
+    "anchor": "transport",
+    "car": "transport",
+    "cloud-rain": "weather",
+    "cloud-sun": "weather",
+    "compass": "maps",
+    "first-aid": "others",
+    "fish": "others",
+    "fuel": "transport",
+    "gauge": "charts",
+    "navigation": "maps",
+    "shield": "security",
+    "ship": "transport",
+    "siren": "security",
+    "snowflake": "weather",
+    "sunset": "weather",
+    "target": "symbols",
+    "tv": "devices",
+    "utensils": "others",
+    "waves": "weather",
+    "wind": "weather"
+  }
+}

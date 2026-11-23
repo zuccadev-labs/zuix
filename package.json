@@ -10,6 +10,7 @@
   "scripts": {
     "tokens": "node tokens/src/build.mjs && node tokens/src/validate.mjs",
     "icons": "node zicon/scripts/build.mjs && node zicon/scripts/sprite.mjs",
+    "icons:own": "node zicon/scripts/own.mjs",
     "style-audit": "node tools/audit.mjs",
     "manifest": "node tools/manifest.mjs",
     "typecheck": "pnpm -r typecheck",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",
     "axe-core": "^4.14.1",
+    "canvaskit-wasm": "0.42.0",
     "esbuild": "^0.28.2",
     "fast-check": "4.10.2",
     "happy-dom": "^21.0.4",
