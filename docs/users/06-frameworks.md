@@ -206,7 +206,7 @@ init(datesModule, chartsModule);
 |---|---|---|
 | `/dom/core` | Diálogos, popovers, menús y submenús, tooltip, `toast`, `confirm`, pestañas, acordeón, casillas, interruptores, radios, Rating, acciones (Toolbar, CopyButton…), navegación (Menubar, Collapsible), capas (Drawer, HoverCard, Toggletip, Tour, ActionBar, Banner) y lo básico de formularios: Select, Combobox, Slider, OTPInput, FileUpload, NumberInput, PasswordInput, Field, Listbox y TagsInput | `init`, `use`, `hydrate`, `destroy`, `download`, utilidades de atajos |
 | `/dom/dates` | Calendar, DatePicker y sus variantes, DateField, TimeField, TimePicker, DateTimePicker | `datesModule`, `setCalendarOptions`… |
-| `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable | `dataModule`, `sortTable`… |
+| `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable, TransferList, NotificationCenter, FilterBar y ReviewCard | `dataModule`, `sortTable`, `setReviewExpanded`, `formatMoney`, `summarizePrice`… |
 | `/dom/content` | FormatNumber, FormatByte, FormatDate, Highlight, Marquee, JsonTree, Stepper con paneles, Timer, RelativeTime | `contentModule`, `setJsonTreeValue`… |
 | `/dom/agenda` | EventCalendar, TimelineView, PerpetualYear, FreeBusy, SlotPicker, CalendarHeatmap, HabitCalendar (trae `/dom/dates`) | `agendaModule`, `setAgendaEvents`… |
 | `/dom/charts` | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline | `chartsModule`, `setWidgetProps` |

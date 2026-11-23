@@ -160,6 +160,9 @@ function chip(def: FilterDef, c: Config, s: State, uid: string): VEl {
   );
 }
 
+/** Vigilancia de los bordes de la fila, por raíz (se suelta al desmontar). */
+const edges = new WeakMap<HTMLElement, () => void>();
+
 export const filterBarWidget: Widget<FilterBarProps, Config, State> = {
   root: "z-filter-bar",
   configure: (p) => ({
@@ -239,19 +242,18 @@ export const filterBarWidget: Widget<FilterBarProps, Config, State> = {
         menu.querySelector<HTMLInputElement>("input:checked, input")?.focus({ preventScroll: true });
       } else if (host.state().open === id) host.update({ open: "" });
     };
-    const scroller = root.querySelector<HTMLElement>(".z-filter-bar__scroller");
-    const untrack = scroller ? trackScrollEdges(scroller) : () => {};
     // Un chip que recibe el foco con el teclado se trae a la vista entero (no solo su borde).
     const onFocus = (event: FocusEvent) => {
       const chipEl = (event.target as Element).closest?.<HTMLElement>(".z-filter-bar__chip");
-      if (chipEl && scroller?.contains(chipEl)) chipEl.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+      if (chipEl) chipEl.scrollIntoView?.({ block: "nearest", inline: "nearest" });
     };
     root.addEventListener("click", onClick);
     root.addEventListener("change", onChange);
     root.addEventListener("toggle", onToggle, true);
     root.addEventListener("focusin", onFocus);
     return () => {
-      untrack();
+      edges.get(root)?.();
+      edges.delete(root);
       root.removeEventListener("click", onClick);
       root.removeEventListener("change", onChange);
       root.removeEventListener("toggle", onToggle, true);
@@ -259,6 +261,9 @@ export const filterBarWidget: Widget<FilterBarProps, Config, State> = {
     };
   },
   after(root) {
+    // Los bordes se vigilan desde el primer pintado (en el modo DOM la interacción se conecta antes de pintar).
+    const scroller = root.querySelector<HTMLElement>(".z-filter-bar__scroller");
+    if (scroller && !edges.has(root)) edges.set(root, trackScrollEdges(scroller));
     for (const input of root.querySelectorAll<HTMLInputElement>(".z-filter-bar__input")) input.checked = input.hasAttribute("data-checked");
   },
   fromDom(el, json) {
