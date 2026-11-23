@@ -54,7 +54,7 @@ import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup, t
 export type { DomModule, DomPart } from "./shared";
 export { download, downloadBlob, downloadUrl, mimeFromName, type DownloadSource } from "../core/download";
 export { matchesShortcut, normalizeShortcut, parseShortcut, shortcutLabels } from "../core/shortcut";
-export { setOtpValue, setSliderValue } from "./forms-controls";
+export { reorderUpload, setOtpValue, setSliderValue } from "./forms-controls";
 export { setNumberInputValue } from "./forms-fields";
 export { setListboxValue, setTagsValue } from "./forms-choice";
 export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";

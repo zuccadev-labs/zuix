@@ -41,6 +41,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   solo del lado con chips ocultos. «Clear» aparece con algún filtro activo y deja el foco en el primer chip; el número
   de activos va en la descripción del grupo y se anuncia al cambiar. Valor controlado o libre; en `/dom/data`,
   `.z-filter-bar` con `data-props`, `z:change { value, id }`, `toggleFilter`, `toggleOption`, `activeCount` y `chipText`.
+- `FileUpload`: `layout="grid"`, rejilla de miniaturas grandes para fotos (en un lienzo, sin URL de objeto, como la
+  lista), con `sortable` (arrastrar el asa o, con el teclado, Espacio coge, flechas mueven por la rejilla también
+  arriba y abajo y en RTL, Espacio suelta y Escape cancela; cada posición se anuncia una vez), `cover` (la primera es
+  la portada y las demás llevan «Make … the cover»), quitar y progreso por foto. `onReorder` y `onCoverChange`; textos
+  en `reorderLabels`. Las casillas se mueven, no se rehacen: el foco y la miniatura se conservan. Con la lista o la
+  rejilla dentro, el campo se nombra solo con su texto principal (`aria-labelledby`). En el modo DOM: `data-layout`,
+  `data-sortable`, `data-cover`, `data-reorder-labels`, `z:reorder`, `z:cover` y `reorderUpload`; en rejilla con
+  `multiple`, lo elegido se suma a lo que ya había.
 - Modo DOM: un icono que el registro del módulo no tiene (el de un aviso de la aplicación) se pinta con `<z-icon>`,
   que lo dibuja con el set que haya cargado la página, en vez de quedar en blanco.
 - `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en

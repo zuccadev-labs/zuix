@@ -3500,7 +3500,18 @@
   "FileUpload": {
    "group": "forms",
    "classes": [
-    "z-upload"
+    "z-upload",
+    "z-upload__grid",
+    "z-upload__tile",
+    "z-upload__preview",
+    "z-upload__cover",
+    "z-upload__tile-name",
+    "z-upload__tile-actions",
+    "z-upload__handle",
+    "z-upload__make-cover",
+    "z-upload__remove",
+    "z-upload__progress",
+    "z-upload__reorder-hint"
    ],
    "behavior": "dom",
    "examples": [
@@ -3514,6 +3525,12 @@
      "title": "Un documento",
      "html": "<label class=\"z-upload\" id=\"contract\" data-size=\"md\">\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"contract\" accept=\".pdf\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"document-arrow-up\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\">Upload the signed contract</span>\n</label>",
      "source": "manual"
+    },
+    {
+     "title": "Fotos ordenables con portada",
+     "html": "<label class=\"z-upload\" id=\"photos\" data-size=\"md\" data-layout=\"grid\" data-sortable data-cover>\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"photos\" accept=\"image/*\" multiple aria-labelledby=\"photos-label\" aria-describedby=\"photos-hint\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"photo\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\" id=\"photos-label\">Add photos</span>\n  <span class=\"z-upload__hint\" id=\"photos-hint\">Drag to reorder. The first photo is the cover.</span>\n  <ul class=\"z-upload__files z-upload__grid\"></ul>\n</label>",
+     "source": "manual",
+     "script": "document.querySelector(\"#photos\").addEventListener(\"z:reorder\", (event) => console.log(event.detail.files.map((file) => file.name)));"
     }
    ]
   },

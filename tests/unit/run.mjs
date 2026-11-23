@@ -51,6 +51,7 @@ const COVERED = [
   "zui/src/core/notification-center-widget.ts",
   "zui/src/core/filters.ts",
   "zui/src/core/filter-bar-widget.ts",
+  "zui/src/core/reorder.ts",
   "zui/src/core/agenda.ts",
   "zui/src/core/idle.ts",
   "zui/src/core/freebusy.ts",

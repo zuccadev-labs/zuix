@@ -18409,7 +18409,7 @@
   {
    "name": "FileUpload",
    "group": "forms",
-   "description": "Zona para elegir o soltar archivos. No guarda estado.",
+   "description": "Zona para elegir o soltar archivos, con lista o con rejilla de miniaturas ordenable (portada, quitar, progreso).",
    "import": "import { FileUpload } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -18520,6 +18520,42 @@
       "environment"
      ],
      "description": "Abre la cámara en el móvil."
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "list",
+      "grid"
+     ],
+     "default": "list",
+     "description": "`grid`: rejilla de miniaturas grandes para fotos (implica `showFiles`). Las miniaturas se dibujan en un lienzo: el archivo no pasa por ninguna URL."
+    },
+    {
+     "name": "sortable",
+     "type": "boolean",
+     "default": false,
+     "description": "Reordenar arrastrando el asa o con el teclado: Espacio o Intro cogen, las flechas mueven por la rejilla (también arriba y abajo), Espacio suelta y Escape cancela; cada posición se anuncia."
+    },
+    {
+     "name": "onReorder",
+     "type": "(files: File[]) => void",
+     "description": "Nuevo orden tras soltar (o al elegir portada)."
+    },
+    {
+     "name": "cover",
+     "type": "boolean",
+     "default": false,
+     "description": "La primera es la portada (marca «Cover»); las demás llevan un botón para pasar a ser la primera."
+    },
+    {
+     "name": "onCoverChange",
+     "type": "(file: File) => void"
+    },
+    {
+     "name": "reorderLabels",
+     "type": "Partial<ReorderLabels>",
+     "description": "`handle` («Reorder {name}»), `hint`, `grabbed`, `moved`, `dropped`, `cancelled`, `cover`, `makeCover`, `coverChanged`."
     }
    ],
    "states": [
@@ -18529,7 +18565,9 @@
     "active",
     "dragging",
     "invalid",
-    "disabled"
+    "disabled",
+    "grabbed",
+    "sorting"
    ],
    "tokens": [
     "space-2",
@@ -18561,12 +18599,42 @@
     "surface-2",
     "weight-medium",
     "surface-3",
-    "radius-xs"
+    "radius-xs",
+    "radius-lg",
+    "radius-md",
+    "line",
+    "fg-on-accent",
+    "accent-solid",
+    "text-caption",
+    "text-fine",
+    "weight-semibold",
+    "popup-bg",
+    "surface-solid",
+    "glass-border",
+    "shadow-sm",
+    "shadow-lg",
+    "control-height-xs",
+    "layer-raised",
+    "focus-offset",
+    "space-0-5",
+    "space-1-5",
+    "space-2-5"
    ],
    "classes": [
-    "z-upload"
+    "z-upload",
+    "z-upload__grid",
+    "z-upload__tile",
+    "z-upload__preview",
+    "z-upload__cover",
+    "z-upload__tile-name",
+    "z-upload__tile-actions",
+    "z-upload__handle",
+    "z-upload__make-cover",
+    "z-upload__remove",
+    "z-upload__progress",
+    "z-upload__reorder-hint"
    ],
-   "a11y": "label que envuelve un input de archivos real: se activa con teclado y lo anuncian los lectores. `hint` va por aria-describedby. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo label con su input real, así que teclado y lectores funcionan sin el módulo; este añade soltar archivos, el filtrado por `accept` y `data-max-size`, y la lista `ul.z-upload__files` con nombre y tamaño. Los archivos rechazados solo llegan en `z:change` (`detail.rejected`): anunciarlos es cosa de la aplicación.",
+   "a11y": "label que envuelve un input de archivos real: se activa con teclado y lo anuncian los lectores. `hint` va por aria-describedby. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo label con su input real, así que teclado y lectores funcionan sin el módulo; este añade soltar archivos, el filtrado por `accept` y `data-max-size`, y la lista `ul.z-upload__files` con nombre y tamaño. Los archivos rechazados solo llegan en `z:change` (`detail.rejected`): anunciarlos es cosa de la aplicación. En rejilla (`data-layout=\"grid\"`), el campo se nombra solo con su texto principal (`aria-labelledby`), no con los nombres de archivo. El asa es un botón «Reorder playa.jpg» con instrucciones en `aria-describedby` y `aria-pressed` mientras está cogida: Espacio o Intro cogen (un lector la activa igual; un clic de ratón no), las flechas mueven por la rejilla en la dirección visual (también en RTL), Inicio y Fin van a los extremos, Espacio suelta, Escape devuelve la foto a su sitio y salir del asa con Tab suelta. Cada paso se anuncia una vez en la región educada del anunciador central («playa.jpg, position 3 of 5»). Con el puntero se arrastra solo desde el asa (`touch-action: none` en ella; el resto de la casilla deja desplazar la página): la casilla sigue al puntero y el destino se marca con un canto discontinuo. Las casillas se mueven, no se rehacen: el foco y la miniatura se conservan. Sin React, en rejilla emite además `z:reorder { files, from, to }` y `z:cover { file }`, y `reorderUpload(zone, from, to)` mueve por código.",
    "behavior": "dom",
    "examples": [
     {
@@ -18580,6 +18648,10 @@
     {
      "title": "Con lista y progreso",
      "code": "<FileUpload\n  multiple\n  showFiles\n  accept=\"image/*,.pdf\"\n  hint=\"Images or PDF.\"\n  onFiles={(files) => upload(files)}\n  progress={(file) => uploads[file.name]}\n/>"
+    },
+    {
+     "title": "Fotos ordenables con portada",
+     "code": "<FileUpload\n  layout=\"grid\"\n  multiple\n  sortable\n  cover\n  accept=\"image/*\"\n  label=\"Add photos\"\n  hint=\"Drag to reorder. The first photo is the cover.\"\n  onFiles={(added) => upload(added)}\n  onReorder={(files) => setOrder(files)}\n  progress={(file) => uploads[file.name]}\n/>"
     }
    ],
    "html": [
@@ -18591,6 +18663,11 @@
     {
      "title": "Un documento",
      "code": "<label class=\"z-upload\" id=\"contract\" data-size=\"md\">\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"contract\" accept=\".pdf\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"document-arrow-up\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\">Upload the signed contract</span>\n</label>"
+    },
+    {
+     "title": "Fotos ordenables con portada",
+     "code": "<label class=\"z-upload\" id=\"photos\" data-size=\"md\" data-layout=\"grid\" data-sortable data-cover>\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"photos\" accept=\"image/*\" multiple aria-labelledby=\"photos-label\" aria-describedby=\"photos-hint\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"photo\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\" id=\"photos-label\">Add photos</span>\n  <span class=\"z-upload__hint\" id=\"photos-hint\">Drag to reorder. The first photo is the cover.</span>\n  <ul class=\"z-upload__files z-upload__grid\"></ul>\n</label>",
+     "script": "document.querySelector(\"#photos\").addEventListener(\"z:reorder\", (event) => console.log(event.detail.files.map((file) => file.name)));"
     }
    ],
    "origin": "Nuevo.",

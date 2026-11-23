@@ -1,16 +1,21 @@
 // Slider, OTPInput y FileUpload sin framework.
 import { matchesAccept } from "../core/accept";
+import { announce } from "../core/announcer";
 import { isRtl } from "../core/dir";
+import { columnsOf, gridTarget, moveItem, nearestIndex, REORDER_LABELS, type ReorderLabels } from "../core/reorder";
 import { drawThumbnail } from "../core/thumbnail";
+import { fill } from "../core/vnode";
 import { closestThumb, keyValue, moveThumb as nextValues, percent as percentOf, snap, valueAt } from "../core/slider";
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
+import { arrowsPointingOut } from "@zuccadev-labs/zuix-zicon/icons/arrows-pointing-out";
 import { document as documentIcon } from "@zuccadev-labs/zuix-zicon/icons/document";
 import { photo } from "@zuccadev-labs/zuix-zicon/icons/photo";
+import { star } from "@zuccadev-labs/zuix-zicon/icons/star";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
 import { all, emit, flag, inDom } from "./forms-popup";
 import { setMarkup, type Listen } from "./shared";
 
-registerIcons([documentIcon, photo, xMark]);
+registerIcons([arrowsPointingOut, documentIcon, photo, star, xMark]);
 
 /* ---------- Slider ---------- */
 
@@ -265,10 +270,275 @@ function fileSize(bytes: number): string {
   return `${(bytes / 1_000_000).toFixed(1)} MB`;
 }
 
+/* ---------- FileUpload en rejilla: miniaturas, portada y reordenar ---------- */
+
+const gridOf = (zone: HTMLElement) => zone.dataset.layout === "grid";
+/** Orden provisional mientras se reordena con el teclado (Escape lo descarta). */
+const sessions = new WeakMap<HTMLElement, { file: File; origin: number; order: File[] }>();
+/** Vista previa de cada archivo: se reutiliza al repintar, así el lienzo no se vuelve a decodificar. */
+const previews = new WeakMap<File, HTMLElement>();
+const tiles = new WeakMap<File, HTMLLIElement>();
+/** Zonas que se están repintando: el desenfoque del asa que eso provoca no suelta lo cogido. */
+const repainting = new WeakSet<HTMLElement>();
+
+function reorderLabels(zone: HTMLElement): ReorderLabels {
+  try {
+    return { ...REORDER_LABELS, ...(JSON.parse(zone.dataset.reorderLabels ?? "{}") as Partial<ReorderLabels>) };
+  } catch {
+    return REORDER_LABELS;
+  }
+}
+const zoneFiles = (zone: HTMLElement) =>
+  sessions.get(zone)?.order ?? Array.from(zone.querySelector<HTMLInputElement>(".z-upload__input")?.files ?? []);
+
+function setFiles(zone: HTMLElement, files: readonly File[]): void {
+  const input = zone.querySelector<HTMLInputElement>(".z-upload__input");
+  if (!input) return;
+  try {
+    const transfer = new DataTransfer();
+    for (const file of files) transfer.items.add(file);
+    input.files = transfer.files;
+  } catch {
+    // Sin DataTransfer construible el campo no se puede reordenar.
+  }
+}
+
+function previewOf(file: File): HTMLElement {
+  let el = previews.get(file);
+  if (el) return el;
+  el = document.createElement("span");
+  el.className = "z-upload__preview";
+  el.setAttribute("aria-hidden", "true");
+  const image = file.type.startsWith("image/");
+  setMarkup(el, iconSvg(image ? "photo" : "document", { size: 24 }));
+  if (image) {
+    const canvas = document.createElement("canvas");
+    const target = el;
+    void drawThumbnail(canvas, file, 192).then((drawn) => {
+      if (drawn) target.replaceChildren(canvas);
+    });
+  }
+  previews.set(file, el);
+  return el;
+}
+
+function button(className: string, label: string, iconName: string): HTMLButtonElement {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = className;
+  b.setAttribute("aria-label", label);
+  setMarkup(b, iconSvg(iconName, { size: 14 }));
+  return b;
+}
+
+/** Pinta la rejilla reutilizando las casillas (los nodos se mueven, no se rehacen: el foco y el lienzo se conservan). */
+function renderGrid(zone: HTMLElement, list: HTMLElement, files: readonly File[]): void {
+  const l = reorderLabels(zone);
+  const off = zone.hasAttribute("data-disabled");
+  const sortable = zone.hasAttribute("data-sortable") && !off && files.length > 1;
+  const cover = zone.hasAttribute("data-cover");
+  const session = sessions.get(zone);
+  if (!zone.id) zone.id = `z-upload-${Math.random().toString(36).slice(2, 8)}`;
+  const hintId = `${zone.id}-reorder-hint`;
+  list.classList.add("z-upload__grid");
+  const items = files.map((file, index) => {
+    let li = tiles.get(file);
+    if (!li) {
+      li = document.createElement("li");
+      li.className = "z-upload__tile";
+      tiles.set(file, li);
+    }
+    li.dataset.index = String(index);
+    li.toggleAttribute("data-cover", cover && index === 0);
+    li.toggleAttribute("data-grabbed", session?.file === file);
+    const name = document.createElement("span");
+    name.className = "z-upload__tile-name";
+    name.textContent = file.name;
+    const actions = document.createElement("span");
+    actions.className = "z-upload__tile-actions";
+    if (sortable) {
+      const handle = button("z-upload__handle", fill(l.handle, { name: file.name }), "arrows-pointing-out");
+      handle.dataset.index = String(index);
+      handle.setAttribute("aria-describedby", hintId);
+      handle.setAttribute("aria-pressed", String(session?.file === file));
+      actions.append(handle);
+    }
+    if (cover && !off && index > 0) {
+      const make = button("z-upload__make-cover", fill(l.makeCover, { name: file.name }), "star");
+      make.title = make.getAttribute("aria-label") ?? "";
+      make.dataset.index = String(index);
+      actions.append(make);
+    }
+    if (!off) {
+      const label = (zone.dataset.removeLabel ?? "Remove {name}").replace("{name}", file.name);
+      const remove = button("z-upload__remove", label, "x-mark");
+      remove.title = label;
+      remove.dataset.index = String(index);
+      actions.append(remove);
+    }
+    const kids: Node[] = [previewOf(file)];
+    if (cover && index === 0) {
+      const tag = document.createElement("span");
+      tag.className = "z-upload__cover";
+      tag.textContent = l.cover;
+      kids.push(tag);
+    }
+    kids.push(name, actions);
+    // Se rehace todo menos la vista previa; el asa enfocada se recupera después por su índice.
+    li.replaceChildren(...kids);
+    return li;
+  });
+  const move =
+    "moveBefore" in Element.prototype
+      ? (node: Node) => (list as unknown as { moveBefore(n: Node, r: Node | null): void }).moveBefore(node, null)
+      : (node: Node) => list.append(node);
+  for (const child of [...list.children]) if (!items.includes(child as HTMLLIElement)) child.remove();
+  for (const item of items)
+    if (item.parentNode === list) move(item);
+    else list.append(item);
+  let hint = zone.querySelector<HTMLElement>(":scope > .z-upload__reorder-hint");
+  if (sortable && !hint) {
+    hint = document.createElement("span");
+    hint.className = "z-sr-only z-upload__reorder-hint";
+    hint.id = hintId;
+    list.after(hint);
+  }
+  if (hint) hint.textContent = l.hint;
+}
+
+const say = (zone: HTMLElement, template: string, file: File, position: number, count: number) =>
+  announce(fill(template, { name: file.name, position: position + 1, count }), { source: zone, delay: 300 });
+
+function focusHandle(zone: HTMLElement, index: number): void {
+  const handle = zone.querySelector<HTMLElement>(`.z-upload__tile[data-index="${index}"] .z-upload__handle`);
+  handle?.closest(".z-upload__tile")?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  handle?.focus({ preventScroll: true });
+}
+
+/** Lleva el archivo de `from` a `to`, lo guarda en el campo y avisa (`z:reorder` y `z:change`). */
+export function reorderUpload(zone: HTMLElement, from: number, to: number): void {
+  const files = Array.from(zone.querySelector<HTMLInputElement>(".z-upload__input")?.files ?? []);
+  if (from === to || from < 0 || from >= files.length) return;
+  const next = moveItem(files, from, to);
+  setFiles(zone, next);
+  renderFiles(zone, next);
+  emit(zone, "reorder", { files: next, from, to: Math.max(0, Math.min(files.length - 1, to)) });
+  emit(zone, "change", { files: next, rejected: [] });
+}
+
+function dropGrab(zone: HTMLElement, cancel = false): void {
+  const session = sessions.get(zone);
+  if (!session) return;
+  sessions.delete(zone);
+  const l = reorderLabels(zone);
+  const files = Array.from(zone.querySelector<HTMLInputElement>(".z-upload__input")?.files ?? []);
+  if (cancel) {
+    renderFiles(zone, files);
+    focusHandle(zone, session.origin);
+    say(zone, l.cancelled, session.file, session.origin, files.length);
+    return;
+  }
+  const at = session.order.indexOf(session.file);
+  if (at === session.origin) {
+    renderFiles(zone, files);
+    return;
+  }
+  setFiles(zone, session.order);
+  renderFiles(zone, session.order);
+  emit(zone, "reorder", { files: session.order, from: session.origin, to: at });
+  emit(zone, "change", { files: session.order, rejected: [] });
+  say(zone, l.dropped, session.file, at, files.length);
+}
+
+function onHandleKey(zone: HTMLElement, handle: HTMLElement, event: KeyboardEvent): void {
+  const session = sessions.get(zone);
+  if (!session) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    event.stopPropagation();
+    dropGrab(zone, true);
+    return;
+  }
+  const from = session.order.indexOf(session.file);
+  const tilesNow = [...zone.querySelectorAll<HTMLElement>(".z-upload__tile")];
+  const to = gridTarget(from, event.key, {
+    count: session.order.length,
+    columns: columnsOf(tilesNow.map((t) => t.getBoundingClientRect())),
+    rtl: isRtl(handle),
+  });
+  if (to === null) {
+    if (event.key.startsWith("Arrow") || event.key === "Home" || event.key === "End") event.preventDefault();
+    return;
+  }
+  event.preventDefault();
+  session.order = moveItem(session.order, from, to);
+  renderFiles(zone, session.order);
+  focusHandle(zone, to);
+  say(zone, reorderLabels(zone).moved, session.file, to, session.order.length);
+}
+
+/** Arrastre con el puntero desde el asa: la casilla sigue al puntero y el destino sale de la rejilla quieta. */
+function onHandleDown(zone: HTMLElement, handle: HTMLElement, event: PointerEvent): void {
+  if (event.button !== 0 || sessions.has(zone) || uploadOff(zone)) return;
+  const tile = handle.closest<HTMLElement>(".z-upload__tile");
+  const list = zone.querySelector<HTMLElement>(".z-upload__files");
+  if (!tile || !list) return;
+  event.preventDefault();
+  const pointer = event.pointerId;
+  const start = { x: event.clientX, y: event.clientY };
+  const all = [...list.querySelectorAll<HTMLElement>(".z-upload__tile")];
+  const rects = all.map((el) => el.getBoundingClientRect());
+  const from = all.indexOf(tile);
+  let target = from;
+  handle.setPointerCapture?.(pointer);
+  list.setAttribute("data-sorting", "");
+  tile.setAttribute("data-dragging", "");
+  tile.setAttribute("data-grabbed", "");
+  const move = (e: PointerEvent) => {
+    if (e.pointerId !== pointer) return;
+    tile.style.setProperty("--z-drag-x", `${e.clientX - start.x}px`);
+    tile.style.setProperty("--z-drag-y", `${e.clientY - start.y}px`);
+    const next = nearestIndex(e.clientX, e.clientY, rects);
+    if (next === -1 || next === target) return;
+    all[target]?.removeAttribute("data-drop-target");
+    target = next;
+    if (target !== from) all[target]?.setAttribute("data-drop-target", "");
+  };
+  const end = (e: PointerEvent) => {
+    if (e.pointerId !== pointer) return;
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", end);
+    document.removeEventListener("pointercancel", end);
+    tile.style.removeProperty("--z-drag-x");
+    tile.style.removeProperty("--z-drag-y");
+    for (const el of all) el.removeAttribute("data-drop-target");
+    tile.removeAttribute("data-dragging");
+    tile.removeAttribute("data-grabbed");
+    list.removeAttribute("data-sorting");
+    if (e.type !== "pointerup" || target === from) return;
+    const files = zoneFiles(zone);
+    const file = files[from];
+    reorderUpload(zone, from, target);
+    if (file) say(zone, reorderLabels(zone).dropped, file, target, files.length);
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", end);
+  document.addEventListener("pointercancel", end);
+}
+
 /** Pinta la lista de archivos de la zona (si tiene `ul.z-upload__files`): miniatura, nombre, tamaño y quitar. */
 function renderFiles(zone: HTMLElement, files: File[]): void {
   const target = zone.querySelector<HTMLElement>(".z-upload__files");
   if (!target) return;
+  if (gridOf(zone)) {
+    repainting.add(zone);
+    try {
+      renderGrid(zone, target, files);
+    } finally {
+      repainting.delete(zone);
+    }
+    return;
+  }
   const removable = !zone.hasAttribute("data-disabled");
   target.replaceChildren(
     ...files.map((file, index) => {
@@ -326,14 +596,19 @@ function removeFile(zone: HTMLElement, index: number): void {
   emit(zone, "change", { files, rejected: [] });
 }
 
+/** Lo que tenía el campo antes de abrir el selector (el navegador lo vacía al elegir). */
+const previous = new WeakMap<HTMLElement, File[]>();
+
 function deliver(zone: HTMLElement, list: FileList | null | undefined): void {
   const input = zone.querySelector<HTMLInputElement>(".z-upload__input");
   if (!input) return;
   const every = Array.from(list ?? []);
   const picked = input.multiple ? every : every.slice(0, 1);
   const limit = num(zone.dataset.maxSize, Infinity);
-  const files = picked.filter((file) => matchesAccept(file, input.accept) && file.size <= limit);
-  const rejected = picked.filter((file) => !files.includes(file));
+  const accepted = picked.filter((file) => matchesAccept(file, input.accept) && file.size <= limit);
+  const rejected = picked.filter((file) => !accepted.includes(file));
+  // En rejilla con `multiple` se suman a las que ya había (añadir fotos a un anuncio no borra las anteriores).
+  const files = gridOf(zone) && input.multiple ? [...(previous.get(zone) ?? []), ...accepted] : accepted;
   // El campo conserva solo lo aceptado: el formulario envía lo mismo que se muestra.
   try {
     const transfer = new DataTransfer();
@@ -342,6 +617,7 @@ function deliver(zone: HTMLElement, list: FileList | null | undefined): void {
   } catch {
     // Navegador sin DataTransfer construible: el campo queda como estaba.
   }
+  previous.set(zone, files);
   renderFiles(zone, files);
   emit(zone, "change", { files, rejected });
 }
@@ -370,6 +646,11 @@ export function setup(on: Listen): void {
     const target = event.target;
     if (!(target instanceof HTMLElement) || event.defaultPrevented || typeof event.key !== "string") return;
     if (target.matches(".z-slider__thumb")) return onSliderKey(target, event);
+    if (target.matches(".z-upload__handle")) {
+      const zone = uploadZone(target);
+      if (zone) onHandleKey(zone, target, event);
+      return;
+    }
     const otp = target.matches(".z-otp__cell") ? target.closest<HTMLElement>(".z-otp") : null;
     if (otp && inDom(otp)) onOtpKey(otp, target as HTMLInputElement, event);
   });
@@ -411,12 +692,50 @@ export function setup(on: Listen): void {
     if (!uploadOff(zone)) deliver(zone, event.dataTransfer?.files);
   });
   on(document, "click", (event) => {
-    const remove = (event.target as Element).closest?.<HTMLElement>(".z-upload__remove");
-    const zone = remove ? uploadZone(remove) : null;
-    if (!remove || !zone) return;
-    // Dentro de la etiqueta: quitar no abre el selector.
+    const target = (event.target as Element).closest?.<HTMLElement>(".z-upload__remove, .z-upload__handle, .z-upload__make-cover");
+    const zone = target ? uploadZone(target) : null;
+    if (!target || !zone) return;
+    // Dentro de la etiqueta: los botones de la lista no abren el selector.
     event.preventDefault();
-    removeFile(zone, Number(remove.dataset.index));
+    const index = Number(target.dataset.index);
+    if (target.matches(".z-upload__remove")) {
+      sessions.delete(zone);
+      removeFile(zone, index);
+    } else if (target.matches(".z-upload__make-cover")) {
+      const file = zoneFiles(zone)[index];
+      reorderUpload(zone, index, 0);
+      if (file) {
+        emit(zone, "cover", { file });
+        announce(fill(reorderLabels(zone).coverChanged, { name: file.name }), { source: zone, delay: 300 });
+      }
+      focusHandle(zone, 0);
+    } else if (event.detail === 0) {
+      // Asa: Espacio o Intro (o la activación de un lector, clic sin puntero) cogen y sueltan. Un clic de ratón no.
+      if (sessions.has(zone)) dropGrab(zone);
+      else {
+        const files = zoneFiles(zone);
+        const file = files[index];
+        if (!file) return;
+        sessions.set(zone, { file, origin: index, order: files });
+        renderFiles(zone, files);
+        focusHandle(zone, index);
+        say(zone, reorderLabels(zone).grabbed, file, index, files.length);
+      }
+    }
+  });
+  on(document, "pointerdown", (event) => {
+    const handle = (event.target as Element).closest?.<HTMLElement>(".z-upload__handle");
+    const zone = handle ? uploadZone(handle) : null;
+    if (handle && zone) onHandleDown(zone, handle, event);
+  });
+  // El asa que pierde el foco (Tab a otro control) suelta; el desenfoque que causa el repintado no cuenta.
+  on(document, "focusout", (event) => {
+    const handle = (event.target as Element).closest?.<HTMLElement>(".z-upload__handle");
+    const zone = handle ? uploadZone(handle) : null;
+    if (!zone || !sessions.has(zone) || repainting.has(zone)) return;
+    const next = event.relatedTarget as Element | null;
+    if (next?.matches?.(".z-upload__handle") && zone.contains(next)) return;
+    dropGrab(zone);
   });
   on(document, "change", (event) => {
     const input = event.target as HTMLElement;
