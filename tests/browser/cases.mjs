@@ -666,8 +666,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        39,
-        "39 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Flows, Chat, Assistant, Dashboard, Profile, Settings, Board y Sign in)",
+        40,
+        "40 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Flows, Chat, Assistant, Dashboard, Profile, Settings, Board, Sign in y Listing)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -810,9 +810,8 @@ export const cases = [
         `${t("tabs")} [role=tab][aria-selected=true]`,
       );
       assert(controls === "tabpanel", "aria-controls apunta a un tabpanel");
-      // SegmentedControl con flechas.
-      // SegmentedControl.
-      await page.click('button:has-text("List")');
+      // SegmentedControl con flechas. El segmento por su texto exacto: «List» también está en «Listing» (barra lateral).
+      await page.locator(".z-segmented__item", { hasText: /^\s*List\s*$/ }).click();
       await expectText(page, t("view-state"), "list");
       await page.keyboard.press("ArrowLeft");
       await poll(
