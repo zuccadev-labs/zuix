@@ -1436,7 +1436,8 @@ async function run() {
       servers.push(srv);
       let n = 0;
       for (const p of paths) {
-        if (filter && !`/${p}`.includes(filter)) continue;
+        // Varias páginas separadas por comas: `--filter overlay/modal,layout/shell`.
+        if (filter && !filter.split(",").some((f) => f && `/${p}`.includes(f))) continue;
         if (n++ >= maxPages) break;
         // El sitio se compila con una marca (zudocs.config.json): las otras se inyectan para medir color y contraste.
         for (const brand of brands)

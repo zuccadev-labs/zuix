@@ -2,6 +2,7 @@
 // Un componente sin demo aquí se ve igual con los ejemplos de su manifiesto (contrato HTML en vivo).
 import { type ReactNode, useRef, useState } from "react";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import {
   Accordion,
   ActionBar,
@@ -22,6 +23,7 @@ import {
   ColorPicker,
   ColorPickerTrigger,
   Combobox,
+  CopyButton,
   DatePicker,
   NativeSelect,
   CommandPalette,
@@ -55,6 +57,7 @@ import {
   Spinner,
   StatTile,
   Stepper,
+  Swap,
   Switch,
   Tabs,
   Textarea,
@@ -159,9 +162,15 @@ export function useDemos(): Record<string, ReactNode> {
     ),
     IconButton: (
       <>
+        <IconButton icon="plus" label="New project" variant="primary" />
         <IconButton icon="gear" label="Settings" />
-        <IconButton icon="bell" label="Notifications" />
-        <IconButton icon="x-mark" label="Close" />
+        <IconButton icon="bell" label="Notifications" variant="outline" />
+        <IconButton icon="x-mark" label="Close" variant="ghost" />
+        <IconButton icon="star" iconVariant="solid" label="Remove from favourites" active />
+        <IconButton icon="trash" label="Delete" variant="danger" />
+        <IconButton icon="arrow-path" label="Refreshing" loading />
+        <IconButton icon="pencil" label="Edit (small)" size="sm" />
+        <IconButton icon="pencil" label="Edit (large)" size="lg" />
       </>
     ),
     SegmentedControl: (
@@ -175,7 +184,47 @@ export function useDemos(): Record<string, ReactNode> {
         ]}
       />
     ),
-    Toggle: <Toggle icon="star" label="Favourite" defaultPressed />,
+    Toggle: (
+      <>
+        <Toggle icon="star" label="Favourite" defaultPressed />
+        <Toggle icon="bookmark" label="Bookmark" />
+        <Toggle icon="bold" label="Bold" variant="ghost" defaultPressed />
+        <Toggle icon="speaker-x-mark" defaultPressed>
+          Mute
+        </Toggle>
+        <Toggle icon="eye" size="sm" label="Show hidden (small)" />
+        <Toggle icon="eye" size="lg" label="Show hidden (large)" />
+        <Toggle icon="lock-closed" label="Locked" disabled />
+      </>
+    ),
+    CopyButton: (
+      <>
+        <CopyButton value="zx_live_4f9c2a" label="Copy API key" />
+        <CopyButton value="zx_live_4f9c2a" label="Copy API key (small)" size="sm" variant="ghost" />
+        <CopyButton value="pnpm add @zuccadev-labs/zuix" variant="outline">
+          Copy command
+        </CopyButton>
+        <CopyButton value="https://example.com/i/8d2k" variant="primary">
+          Copy invite link
+        </CopyButton>
+      </>
+    ),
+    Swap: (
+      <>
+        <Toggle label="Dark mode">
+          <Swap effect="rotate" off={<Icon name="sun" />} on={<Icon name="moon" />} />
+        </Toggle>
+        <Toggle label="Menu" variant="ghost">
+          <Swap effect="scale" off={<Icon name="bars-3" />} on={<Icon name="x-mark" />} />
+        </Toggle>
+        <Toggle label="Favourite" variant="ghost">
+          <Swap effect="flip" off={<Icon name="heart" />} on={<Icon name="heart" variant="solid" />} />
+        </Toggle>
+        <Toggle label="Play">
+          <Swap effect="fade" off={<Icon name="play" />} on={<Icon name="pause" />} />
+        </Toggle>
+      </>
+    ),
     Input: (
       <Field label="Project name" hint="Shown in the sidebar." required>
         <Input placeholder="My project" />
