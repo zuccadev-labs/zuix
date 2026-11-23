@@ -26,6 +26,10 @@
     position: relative;
     overflow: hidden;
     isolation: isolate;
+    /* Todo su contenido va posicionado y no le da ancho: en una fila flex o una rejilla centrada se quedaba en los
+       2 px del borde. Ocupa el ancho de su contenedor salvo que se le dé otro. */
+    box-sizing: border-box;
+    inline-size: 100%;
     min-block-size: 320px;
     border: 1px solid var(--z-line);
     border-radius: var(--z-panel-radius);
@@ -727,6 +731,45 @@
     min-inline-size: 0;
     overflow-x: auto;
     border-radius: var(--z-radius-md);
+  }
+  /* En estrecho la tabla desplaza: el borde con columnas ocultas se difumina, solo si hay algo por ese lado. */
+  @supports (animation-timeline: scroll()) {
+    .z-node-list__scroll {
+      animation: z-node-list-fade linear both;
+      animation-timeline: scroll(self inline);
+    }
+    .z-node-list__scroll:dir(rtl) {
+      animation-name: z-node-list-fade-rtl;
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-node-list__scroll {
+      animation: none;
+    }
+  }
+  @keyframes z-node-list-fade {
+    from {
+      mask-image: linear-gradient(to right, black, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to right, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to right, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), black);
+    }
+  }
+  @keyframes z-node-list-fade-rtl {
+    from {
+      mask-image: linear-gradient(to left, black, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to left, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to left, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), black);
+    }
   }
   .z-node-list__scroll:focus-visible {
     outline: var(--z-focus-width) solid var(--z-accent-ring);

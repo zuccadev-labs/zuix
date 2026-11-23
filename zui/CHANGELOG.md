@@ -88,7 +88,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   - Aristas recta, bézier, escalonada y escalonada suave, con flecha, etiqueta, tono y trazo animado (quieto con
     movimiento reducido y pausado fuera de pantalla).
   - `NodeMinimap`, `NodeControls` (una Toolbar) y `NodeListView` (tablas de nodos y conexiones con las mismas
-    acciones).
+    acciones; en estrecho, el borde con columnas ocultas se difumina).
+  - El lienzo ocupa el ancho de su contenedor: todo lo que lleva dentro va posicionado y, en una fila flex centrada,
+    se quedaba en los 2 px del borde.
   - Teclado: una parada de Tab con foco itinerante, flechas al nodo más cercano en esa dirección, Intro y Escape para
     entrar y salir de un nodo, Alt + flechas para moverlo, `]` y `[` para seguir conexiones (con varias, un menú para
     elegir), conectar eligiendo origen y destino, Supr, Ctrl+Z/Y/A/C/X/V/D/G. Descripción textual del grafo y de cada
