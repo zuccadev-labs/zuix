@@ -245,7 +245,8 @@ export const filterBarWidget: Widget<FilterBarProps, Config, State> = {
     // Un chip que recibe el foco con el teclado se trae a la vista entero (no solo su borde).
     const onFocus = (event: FocusEvent) => {
       const chipEl = (event.target as Element).closest?.<HTMLElement>(".z-filter-bar__chip");
-      if (chipEl) chipEl.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+      // Solo con el teclado: con el puntero, desplazar al pulsar movería el chip bajo el dedo y el clic se perdería.
+      if (chipEl && (event.target as Element).matches?.(":focus-visible")) chipEl.scrollIntoView?.({ block: "nearest", inline: "nearest" });
     };
     root.addEventListener("click", onClick);
     root.addEventListener("change", onChange);

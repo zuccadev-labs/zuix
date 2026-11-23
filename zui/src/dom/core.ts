@@ -1108,12 +1108,12 @@ function onClick(event: MouseEvent): void {
 
   // Toggle suelto: no los de un ToggleGroup ni el de mostrar contraseña (los atienden ./actions y ./forms-fields), ni
   // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor, gráficos, historias, consola de logs, diff,
-  // chat e IA).
+  // chat e IA, filtros y el asa de la rejilla de FileUpload).
   const pressed = target.closest<HTMLElement>("button[aria-pressed]:not(.z-toggle-group > .z-toggle, .z-password__toggle)");
   if (
     pressed &&
     !pressed.closest(
-      ".z-calendar, .z-heatmap, .z-chart, .z-stories, .z-log-console, .z-diff, .z-duration-field, .z-reactions, .z-conversation-list, .z-composer, .z-emoji-picker, .z-call, .z-message-list, .z-assistant-message, .z-suggestions, .z-artifact",
+      ".z-calendar, .z-heatmap, .z-chart, .z-stories, .z-log-console, .z-diff, .z-duration-field, .z-reactions, .z-conversation-list, .z-composer, .z-emoji-picker, .z-call, .z-message-list, .z-assistant-message, .z-suggestions, .z-artifact, .z-filter-bar, .z-upload__tile",
     )
   ) {
     const next = pressed.getAttribute("aria-pressed") !== "true";
