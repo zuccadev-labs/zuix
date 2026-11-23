@@ -1,7 +1,7 @@
 // Árbol de core/vnode → nodos del documento, con parcheo por posición y clave (el texto siempre como nodo de texto,
 // nunca como marcado). Lo usan la agenda y las demás piezas de la agenda del modo DOM.
 
-import { iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
+import { getIcon, iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 import type { VEl, VNode, VSlot } from "../core/vnode";
 import { fragment } from "./shared";
 
@@ -40,6 +40,16 @@ function create(v: VNode, doc: Document, slots: SlotRenderers, svg = false): Nod
   if (!v) return doc.createTextNode("");
   if ("slot" in v) {
     if (v.slot === "icon") {
+      // Un icono que esta copia del registro no tiene (el de un aviso o una acción de la aplicación) se deja al
+      // elemento <z-icon>, que lo dibuja con el set que haya cargado la página.
+      if (!getIcon(String(v.p.name))) {
+        const el = doc.createElement("z-icon");
+        el.setAttribute("name", String(v.p.name));
+        el.setAttribute("size", String(Number(v.p.size)));
+        if (v.p.variant === "solid") el.setAttribute("variant", "solid");
+        keys.set(el, slotKey(v));
+        return el;
+      }
       const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size), variant: v.p.variant === "solid" ? "solid" : "outline" }));
       const glyph = frag.firstElementChild ?? doc.createElement("span");
       keys.set(glyph, slotKey(v));

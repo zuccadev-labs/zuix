@@ -47,6 +47,8 @@ const COVERED = [
   "zui/src/core/accept.ts",
   "zui/src/core/money.ts",
   "zui/src/core/reviews.ts",
+  "zui/src/core/notifications.ts",
+  "zui/src/core/notification-center-widget.ts",
   "zui/src/core/agenda.ts",
   "zui/src/core/idle.ts",
   "zui/src/core/freebusy.ts",

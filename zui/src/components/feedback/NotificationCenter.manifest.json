@@ -1,0 +1,183 @@
+{
+  "name": "NotificationCenter",
+  "group": "feedback",
+  "description": "Centro de avisos: campana con el número de no leídos y un panel (popover) con los avisos agrupados por día, leídos y no leídos, acciones por aviso, «Mark all as read» y estado vacío. Los avisos nuevos se anuncian una vez por el anunciador central.",
+  "import": "import { NotificationCenter } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "notifications",
+      "type": "NotificationItem[]",
+      "required": true,
+      "description": "`{ id, title, time, body?, read?, icon?, tone?, href?, actions? }`. `time`: ISO, milisegundos o Date. `actions`: `{ id, label }[]`, botones que avisan con `onAction`."
+    },
+    {
+      "name": "onReadChange",
+      "type": "({ id, read }) => void",
+      "description": "Se marcó un aviso como leído o no leído. La vista cambia al momento; cuando `read` de la aplicación coincide, vuelve a mandar ella."
+    },
+    {
+      "name": "onReadAll",
+      "type": "({ ids }) => void"
+    },
+    {
+      "name": "onAction",
+      "type": "({ id, action }) => void"
+    },
+    {
+      "name": "onOpenChange",
+      "type": "({ open }) => void"
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 99,
+      "description": "Tope del contador («99+»)."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "timeZone",
+      "type": "string",
+      "description": "Zona de la agrupación por día. Por defecto, la de quien mira."
+    },
+    {
+      "name": "now",
+      "type": "number",
+      "description": "Instante actual para «Today» y «Yesterday»."
+    },
+    {
+      "name": "viewAllHref",
+      "type": "string",
+      "description": "Enlace «View all» al pie."
+    },
+    {
+      "name": "placement",
+      "type": "Placement",
+      "default": "bottom-end"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "silent",
+      "type": "boolean",
+      "default": false,
+      "description": "Sin anuncios de avisos nuevos (la aplicación ya avisa con un Toast)."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<NotificationCenterLabels>",
+      "description": "`title`, `trigger` («Notifications, {count} unread»), `markAllRead`, `markRead`, `markUnread`, `unread`, `empty`, `emptyHint`, `today`, `yesterday`, `arrived`, `arrivedMany`, `allRead`, `viewAll`."
+    }
+  ],
+  "states": ["closed", "open", "unread", "empty"],
+  "tokens": [
+    "danger-solid",
+    "accent-solid",
+    "fg-on-accent",
+    "canvas",
+    "accent-soft",
+    "accent",
+    "success-soft",
+    "success",
+    "warning-soft",
+    "warning",
+    "danger-soft",
+    "danger",
+    "info-soft",
+    "info",
+    "surface-2",
+    "surface-solid",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line",
+    "control-border",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius-sm",
+    "control-radius-lg",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-4",
+    "space-6",
+    "space-8",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "weight-medium",
+    "weight-semibold",
+    "tracking-wide",
+    "leading-snug",
+    "leading-tight"
+  ],
+  "classes": [
+    "z-notification-center",
+    "z-notification-center__trigger",
+    "z-notification-center__panel",
+    "z-notification-center__head",
+    "z-notification-center__title",
+    "z-notification-center__read-all",
+    "z-notification-center__body",
+    "z-notification-center__group",
+    "z-notification-center__day",
+    "z-notification-center__list",
+    "z-notification",
+    "z-notification__icon",
+    "z-notification__main",
+    "z-notification__head",
+    "z-notification__title",
+    "z-notification__body",
+    "z-notification__time",
+    "z-notification__actions",
+    "z-notification__toggle",
+    "z-notification__dot",
+    "z-notification__ring",
+    "z-notification-center__empty",
+    "z-notification-center__empty-icon",
+    "z-notification-center__empty-title",
+    "z-notification-center__empty-hint",
+    "z-notification-center__foot",
+    "z-notification-center__all",
+    "z-notification-badge"
+  ],
+  "a11y": "La campana es un botón con nombre que incluye el recuento («Notifications, 3 unread»), `aria-haspopup=\"dialog\"` y `aria-expanded`; el contador visible va oculto para no repetirlo. El panel es un `popover` automático con `role=\"dialog\"` y título: Escape o un clic fuera lo cierran y el foco vuelve a la campana; al abrirse, el foco pasa al panel. Cada día es una sección con encabezado; un aviso sin leer lleva el prefijo oculto «Unread:» además del fondo y el punto. Marcar como leído es un botón con nombre propio («Mark “Payout sent” as read»); «Mark all as read» usa `aria-disabled` sin nada pendiente (conserva el foco). Los avisos nuevos sin leer se anuncian una vez en la región educada del anunciador central, aunque el panel esté cerrado; «Mark all as read» se confirma igual. Sin React: .z-notification-center con data-locale, data-time-zone, data-now, data-max, data-view-all, data-placement, data-open, data-silent y los avisos en <script type=\"application/json\" data-props>{ \"notifications\": [...] }</script>; emite z:readchange, z:readall, z:action y z:openchange, y `setWidgetProps(el, { notifications })` cambia la lista.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Avisos de un anfitrión",
+      "code": "<NotificationCenter\n  now={Date.parse(\"2026-11-23T12:00:00Z\")}\n  timeZone=\"UTC\"\n  locale=\"en-GB\"\n  viewAllHref=\"#notifications\"\n  notifications={[{id: \"n1\", title: \"Marco Rossi booked Sea View Loft\", body: \"3 nights, 12–15 Dec.\", time: \"2026-11-23T10:42:00Z\", icon: \"calendar-days\", tone: \"accent\", actions: [{id: \"view\", label: \"View booking\"}]}, {id: \"n2\", title: \"Payout of €1,240.00 sent\", time: \"2026-11-23T08:05:00Z\", icon: \"banknotes\", tone: \"success\"}, {id: \"n3\", title: \"New review from Ana López\", body: \"“Great base for exploring.”\", time: \"2026-11-22T19:30:00Z\", icon: \"star\", read: true}, {id: \"n4\", title: \"Calendar sync failed\", body: \"Reconnect your external calendar.\", time: \"2026-11-18T07:15:00Z\", icon: \"exclamation-triangle\", tone: \"warning\", read: true, actions: [{id: \"retry\", label: \"Reconnect\"}]}]}\n  onReadChange={({ id, read }) => markRead(id, read)}\n  onReadAll={({ ids }) => markAllRead(ids)}\n  onAction={({ id, action }) => run(id, action)}\n/>"
+    },
+    {
+      "title": "Sin avisos",
+      "code": "<NotificationCenter notifications={[]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Avisos de un anfitrión",
+      "code": "<div class=\"z-notification-center\" id=\"inbox\" data-locale=\"en-GB\" data-time-zone=\"UTC\" data-now=\"2026-11-23T12:00:00Z\" data-view-all=\"#notifications\">\n  <script type=\"application/json\" data-props>{\"notifications\": [{\"id\": \"n1\", \"title\": \"Marco Rossi booked Sea View Loft\", \"body\": \"3 nights, 12–15 Dec.\", \"time\": \"2026-11-23T10:42:00Z\", \"icon\": \"calendar-days\", \"tone\": \"accent\", \"actions\": [{\"id\": \"view\", \"label\": \"View booking\"}]}, {\"id\": \"n2\", \"title\": \"Payout of €1,240.00 sent\", \"time\": \"2026-11-23T08:05:00Z\", \"icon\": \"banknotes\", \"tone\": \"success\"}, {\"id\": \"n3\", \"title\": \"New review from Ana López\", \"body\": \"“Great base for exploring.”\", \"time\": \"2026-11-22T19:30:00Z\", \"icon\": \"star\", \"read\": true}, {\"id\": \"n4\", \"title\": \"Calendar sync failed\", \"body\": \"Reconnect your external calendar.\", \"time\": \"2026-11-18T07:15:00Z\", \"icon\": \"exclamation-triangle\", \"tone\": \"warning\", \"read\": true, \"actions\": [{\"id\": \"retry\", \"label\": \"Reconnect\"}]}]}</script>\n</div>",
+      "script": "document.querySelector(\"#inbox\").addEventListener(\"z:readchange\", (event) => console.log(event.detail.id, event.detail.read));"
+    },
+    {
+      "title": "Sin avisos",
+      "code": "<div class=\"z-notification-center\" id=\"inbox-empty\">\n  <script type=\"application/json\" data-props>{\"notifications\":[]}</script>\n</div>"
+    }
+  ],
+  "origin": "Centros de notificaciones de GitHub, Linear y Airbnb; panel con el popover de la plataforma, como ColorPickerTrigger."
+}

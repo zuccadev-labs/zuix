@@ -2808,6 +2808,83 @@
     }
    ]
   },
+  "NotificationBadge": {
+   "group": "feedback",
+   "classes": [
+    "z-notification-badge",
+    "z-notification-badge-anchor"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Suelto",
+     "html": "<span class=\"z-notification-badge\" data-tone=\"danger\">\n  <span aria-hidden=\"true\">12</span>\n  <span class=\"z-sr-only\">12 unread</span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Tope",
+     "html": "<span class=\"z-notification-badge\" data-tone=\"danger\">\n  <span aria-hidden=\"true\">99+</span>\n  <span class=\"z-sr-only\">240 unread</span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "En un botón de icono",
+     "html": "<span class=\"z-notification-badge-anchor\">\n  <button type=\"button\" title=\"Inbox, 3 unread\" aria-label=\"Inbox, 3 unread\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n    <z-icon name=\"inbox\" size=\"16\"></z-icon>\n  </button>\n  <span class=\"z-notification-badge\" data-tone=\"danger\">\n    <span>3</span>\n  </span>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Punto",
+     "html": "<span class=\"z-notification-badge-anchor\">\n  <button type=\"button\" title=\"Messages\" aria-label=\"Messages\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n    <z-icon name=\"chat-bubble-left-right\" size=\"16\"></z-icon>\n  </button>\n  <span class=\"z-notification-badge\" data-tone=\"danger\" data-dot=\"true\">\n    <span class=\"z-sr-only\">New activity</span>\n  </span>\n</span>",
+     "source": "generated"
+    }
+   ]
+  },
+  "NotificationCenter": {
+   "group": "feedback",
+   "classes": [
+    "z-notification-center",
+    "z-notification-center__trigger",
+    "z-notification-center__panel",
+    "z-notification-center__head",
+    "z-notification-center__title",
+    "z-notification-center__read-all",
+    "z-notification-center__body",
+    "z-notification-center__group",
+    "z-notification-center__day",
+    "z-notification-center__list",
+    "z-notification",
+    "z-notification__icon",
+    "z-notification__main",
+    "z-notification__head",
+    "z-notification__title",
+    "z-notification__body",
+    "z-notification__time",
+    "z-notification__actions",
+    "z-notification__toggle",
+    "z-notification__dot",
+    "z-notification__ring",
+    "z-notification-center__empty",
+    "z-notification-center__empty-icon",
+    "z-notification-center__empty-title",
+    "z-notification-center__empty-hint",
+    "z-notification-center__foot",
+    "z-notification-center__all",
+    "z-notification-badge"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Avisos de un anfitrión",
+     "html": "<div class=\"z-notification-center\" id=\"inbox\" data-locale=\"en-GB\" data-time-zone=\"UTC\" data-now=\"2026-11-23T12:00:00Z\" data-view-all=\"#notifications\">\n  <script type=\"application/json\" data-props>{\"notifications\": [{\"id\": \"n1\", \"title\": \"Marco Rossi booked Sea View Loft\", \"body\": \"3 nights, 12–15 Dec.\", \"time\": \"2026-11-23T10:42:00Z\", \"icon\": \"calendar-days\", \"tone\": \"accent\", \"actions\": [{\"id\": \"view\", \"label\": \"View booking\"}]}, {\"id\": \"n2\", \"title\": \"Payout of €1,240.00 sent\", \"time\": \"2026-11-23T08:05:00Z\", \"icon\": \"banknotes\", \"tone\": \"success\"}, {\"id\": \"n3\", \"title\": \"New review from Ana López\", \"body\": \"“Great base for exploring.”\", \"time\": \"2026-11-22T19:30:00Z\", \"icon\": \"star\", \"read\": true}, {\"id\": \"n4\", \"title\": \"Calendar sync failed\", \"body\": \"Reconnect your external calendar.\", \"time\": \"2026-11-18T07:15:00Z\", \"icon\": \"exclamation-triangle\", \"tone\": \"warning\", \"read\": true, \"actions\": [{\"id\": \"retry\", \"label\": \"Reconnect\"}]}]}</script>\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\"#inbox\").addEventListener(\"z:readchange\", (event) => console.log(event.detail.id, event.detail.read));"
+    },
+    {
+     "title": "Sin avisos",
+     "html": "<div class=\"z-notification-center\" id=\"inbox-empty\">\n  <script type=\"application/json\" data-props>{\"notifications\":[]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Skeleton": {
    "group": "feedback",
    "classes": [

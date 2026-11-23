@@ -26,6 +26,18 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     plegado lleva `hidden="until-found"`, así que Buscar en la página lo encuentra y lo abre. En `/dom/data`,
     «Read more» y `beforematch` sin React, `setReviewExpanded`, `z:change { open }` y `z:photoselect { index }`.
 - Iconos en el árbol compartido de las piezas (`core/vnode`): variante `solid`.
+- Avisos (grupo `feedback`):
+  - `NotificationCenter`: campana con el número de no leídos en su nombre («Notifications, 3 unread») y un panel en
+    `popover` automático con los avisos agrupados por día civil en la zona de quien mira («Today», «Yesterday»,
+    fecha), leídos y no leídos (prefijo oculto «Unread:» además del fondo), acciones propias por aviso, marcar como
+    leído o no leído con nombre propio, «Mark all as read», estado vacío y enlace «View all». Un aviso nuevo sin leer
+    se anuncia una vez por el anunciador central, también con el panel cerrado (`silent` lo apaga). En `/dom/data`:
+    `.z-notification-center` con los avisos en `data-props`, `z:readchange`, `z:readall`, `z:action` y
+    `z:openchange`; `badgeText`, `groupByDay` y `unreadCount`.
+  - `NotificationBadge`: contador con tope («99+») o punto, suelto o pegado a la esquina de otro elemento; la cifra
+    va oculta y se lee el texto entero («12 unread»). No añado un `AlertBell`: sería otro nombre para la misma campana.
+- Modo DOM: un icono que el registro del módulo no tiene (el de un aviso de la aplicación) se pinta con `<z-icon>`,
+  que lo dibuja con el set que haya cargado la página, en vez de quedar en blanco.
 - `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en
   una cabecera ancha y pasan a un menú «Más» en una de 420 px o menos: con tres iconos el nombre quedaba en «An…».
 - Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de

@@ -747,4 +747,271 @@
       height: max(100%, var(--z-touch-target, 0px));
     }
   }
+
+  /* ---- NotificationBadge ---- */
+  /* Contador: rectángulo de radio corto, nunca píldora. Con una cifra es un cuadrado; crece a lo ancho con «99+». */
+  .z-notification-badge {
+    display: inline-flex;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    --z-notification-badge-size: calc(var(--z-space-4) + var(--z-space-0-5));
+    min-inline-size: var(--z-notification-badge-size);
+    block-size: var(--z-notification-badge-size);
+    padding-inline: var(--z-space-1);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-danger-solid);
+    color: var(--z-fg-on-accent);
+    font-size: var(--z-text-fine);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-tight);
+    white-space: nowrap;
+  }
+  .z-notification-badge[data-tone="accent"] {
+    background: var(--z-accent-solid);
+  }
+  .z-notification-badge[data-tone="neutral"] {
+    background: var(--z-fg);
+    color: var(--z-surface-solid);
+  }
+  /* Punto: algo nuevo, sin contar. Es circular. */
+  .z-notification-badge[data-dot] {
+    min-inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    padding: 0;
+    border-radius: var(--z-radius-full);
+  }
+  /* Pegado a otro elemento: en su esquina superior final, con un anillo del color del fondo que lo separa. */
+  .z-notification-badge-anchor {
+    position: relative;
+    display: inline-flex;
+  }
+  .z-notification-badge-anchor > .z-notification-badge,
+  .z-notification-center__trigger > .z-notification-badge {
+    position: absolute;
+    inset-block-start: calc(var(--z-space-1) * -1);
+    inset-inline-end: calc(var(--z-space-1) * -1);
+    box-shadow: 0 0 0 2px var(--z-canvas);
+    pointer-events: none;
+  }
+  .z-notification-badge-anchor > .z-notification-badge[data-dot] {
+    inset-block-start: 0;
+    inset-inline-end: 0;
+  }
+
+  /* ---- NotificationCenter ---- */
+  .z-notification-center {
+    display: inline-flex;
+  }
+  .z-notification-center__trigger {
+    position: relative;
+    overflow: visible;
+  }
+  .z-notification-center__panel {
+    box-sizing: border-box;
+    inline-size: min(24rem, calc(100vw - var(--z-space-4)));
+    max-block-size: min(32rem, var(--z-available-height, calc(100dvh - var(--z-space-4))));
+    padding: 0;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  .z-notification-center__panel:popover-open {
+    display: flex;
+  }
+  .z-notification-center__panel:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-notification-center__head {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+    padding: var(--z-space-3) var(--z-space-3) var(--z-space-2) var(--z-space-4);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-notification-center__title {
+    margin: 0;
+    color: var(--z-fg);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-notification-center__read-all[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .z-notification-center__body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block: var(--z-space-1) var(--z-space-2);
+  }
+  .z-notification-center__day {
+    margin: 0;
+    padding: var(--z-space-2) var(--z-space-4) var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-notification-center__list {
+    display: grid;
+    margin: 0;
+    padding: 0 var(--z-space-2);
+    list-style: none;
+  }
+  .z-notification {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--z-space-3);
+    padding: var(--z-space-2-5) var(--z-space-2);
+    border-radius: var(--z-item-radius);
+  }
+  .z-notification[data-unread] {
+    background: color-mix(in srgb, var(--z-accent-soft) 55%, transparent);
+  }
+  .z-notification__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--z-control-height-sm);
+    block-size: var(--z-control-height-sm);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+  }
+  .z-notification__icon[data-tone="accent"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent);
+  }
+  .z-notification__icon[data-tone="success"] {
+    background: var(--z-success-soft);
+    color: var(--z-success);
+  }
+  .z-notification__icon[data-tone="warning"] {
+    background: var(--z-warning-soft);
+    color: var(--z-warning);
+  }
+  .z-notification__icon[data-tone="danger"] {
+    background: var(--z-danger-soft);
+    color: var(--z-danger);
+  }
+  .z-notification__icon[data-tone="info"] {
+    background: var(--z-info-soft);
+    color: var(--z-info);
+  }
+  .z-notification__main {
+    display: grid;
+    gap: var(--z-space-0-5);
+    min-inline-size: 0;
+  }
+  .z-notification__head,
+  .z-notification__body {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .z-notification__title {
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-snug);
+  }
+  a.z-notification__title {
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    a.z-notification__title:hover {
+      text-decoration: underline;
+    }
+  }
+  a.z-notification__title:focus-visible {
+    border-radius: var(--z-radius-xs);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-notification[data-unread] .z-notification__title {
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-notification__body {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-notification__time {
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+  }
+  .z-notification__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-2);
+    margin-block-start: var(--z-space-1-5);
+  }
+  /* Interruptor de leído: punto lleno sin leer, anillo vacío leído; el nombre dice la acción. */
+  .z-notification__dot,
+  .z-notification__ring {
+    display: block;
+    inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    border-radius: var(--z-radius-full);
+  }
+  .z-notification__dot {
+    background: var(--z-accent);
+  }
+  .z-notification__ring {
+    box-shadow: inset 0 0 0 1px var(--z-control-border);
+  }
+  .z-notification-center__empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--z-space-1);
+    padding: var(--z-space-8) var(--z-space-6);
+    text-align: center;
+  }
+  .z-notification-center__empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--z-control-height-lg);
+    block-size: var(--z-control-height-lg);
+    margin-block-end: var(--z-space-2);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+  }
+  .z-notification-center__empty-title {
+    margin: 0;
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-notification-center__empty-hint {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-notification-center__foot {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    padding: var(--z-space-2-5) var(--z-space-4);
+    border-block-start: 1px solid var(--z-line);
+    font-size: var(--z-text-small);
+  }
+  @media (forced-colors: active) {
+    .z-notification-badge {
+      border: 1px solid CanvasText;
+    }
+    .z-notification__dot {
+      background: Highlight;
+    }
+    .z-notification[data-unread] {
+      outline: 1px solid CanvasText;
+    }
+  }
 }
