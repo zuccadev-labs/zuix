@@ -20,6 +20,7 @@ import { place, type Placement } from "./place";
 import { toInstant } from "./relative";
 import { fill, h, icon, on, type VEl } from "./vnode";
 import type { Widget, WidgetHost } from "./widget";
+import { popoverOpen, showPopover } from "./popover";
 
 export type { NotificationAction, NotificationItem };
 
@@ -328,7 +329,7 @@ export const notificationCenterWidget: Widget<NotificationCenterProps, Config, S
     root.addEventListener("click", onClick);
     root.addEventListener("toggle", onToggle, true);
     // Abierto al montar: el popover se abre en cuanto la raíz está en el documento.
-    if (host.state().open) queueMicrotask(() => panelOf()?.isConnected && !panelOf()?.matches(":popover-open") && panelOf()?.showPopover());
+    if (host.state().open) queueMicrotask(() => panelOf()?.isConnected && !popoverOpen(panelOf()) && showPopover(panelOf()!));
     return () => {
       root.removeEventListener("click", onClick);
       root.removeEventListener("toggle", onToggle, true);

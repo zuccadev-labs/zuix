@@ -234,6 +234,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `/dom` sin Popover API (Chromium < 114, Firefox < 125, Safari < 17): abrir un menú, un popover, un tooltip o un
+  submenú lanzaba, porque `:popover-open` no es un selector válido ahí y `showPopover` no existe. Ahora no se abren y
+  nada lanza; con `@oddbird/popover-polyfill` cargado por la aplicación, funcionan.
+- `/dom` en Safari < 16.4: el módulo no cargaba, porque el resaltado de código y las tablas de Markdown usaban
+  aserciones hacia atrás (`(?<!…)`) en expresiones regulares. Se escriben sin ellas y el resultado es el mismo.
 - `Chip` interactivo (también los de `FilterBar`): con puntero grueso el botón quedaba en 38 px, 2 px por dentro del
   borde del chip de 40. Su zona de pulsación cubre ahora el borde y llega a los 40 sin cambiar el dibujo.
 - `Calendar` con `numberOfMonths` de 2 o más: el título del rango («December 2026 – January 2027») usa espacios

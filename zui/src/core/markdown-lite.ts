@@ -38,7 +38,11 @@ const cells = (line: string) => {
   let s = line.trim();
   if (s.startsWith("|")) s = s.slice(1);
   if (s.endsWith("|") && !s.endsWith("\\|")) s = s.slice(0, -1);
-  return s.split(/(?<!\\)\|/).map((c) => c.trim().replace(/\\\|/g, "|"));
+  // Sin aserción hacia atrás (`(?<!\\)\|`): Safari no la admite hasta la 16.4 y no cargaría el módulo.
+  return s
+    .replace(/\\\|/g, "\u0000")
+    .split("|")
+    .map((c) => c.trim().replaceAll("\u0000", "|"));
 };
 
 const startsBlock = (line: string) => FENCE.test(line) || HEADING.test(line) || HR.test(line) || QUOTE.test(line) || ITEM.test(line);
