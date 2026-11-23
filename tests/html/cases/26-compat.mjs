@@ -5,9 +5,8 @@
 // Cada caso abre sus propias páginas; la compartida no se toca.
 
 const VIEWPORT = { width: 1440, height: 1000 };
-// La única diferencia conocida: el punto de estado del Avatar. Con capas, la regla base de zui.people (posterior) pisa
-// el color de estado de zui.data aunque sea menos específica; aplanadas, gana la más específica.
-const KNOWN = [".z-avatar__status"];
+// Diferencias conocidas entre la hoja normal y la compat, con su motivo. Hoy ninguna.
+const KNOWN = [];
 
 export default async function ({ page, test, ok, note }) {
   const url = page.url();

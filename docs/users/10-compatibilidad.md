@@ -139,10 +139,9 @@ Límites que conozco:
   en línea, como el color de un calendario elegido por la persona), queda el color que más pesa en la mezcla: un
   fondo al 15 % de un color queda transparente.
 - **Especificidad entre capas.** Con capas, una regla de una capa posterior gana a otra de una capa anterior aunque
-  tenga menos especificidad; aplanadas, gana la más específica. Lo comparo elemento a elemento en `pnpm test:html` y
-  hoy cambia una sola cosa: el punto de estado del Avatar en línea, que con la hoja normal queda gris (la regla
-  base de `zui.people` pisa el verde de `zui.data`) y con la compat sale verde. Una aplicación con su propio CSS sin
-  capas compite ahora por especificidad con la suite.
+  tenga menos especificidad; aplanadas, gana la más específica. Lo comparo elemento a elemento en `pnpm test:html`
+  y hoy las dos hojas coinciden en toda la página de ejemplo. Una aplicación con su propio CSS sin capas compite
+  ahora por especificidad con la suite.
 - **Tokens redefinidos por la aplicación.** Los tokens compat escriben los derivados con selectores de
   especificidad (0,6,0): `:root` con la marca y el tema, rellenos con `:root` repetido para que todos pesen igual.
   Para pisar uno desde la aplicación hace falta más.

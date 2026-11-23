@@ -239,6 +239,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Avatar`: el punto de estado `online`, `busy` y `away` salía gris. La regla base del punto en `zui.people` volvía a
+  poner el fondo por defecto y, por ir en una capa posterior, pisaba el color de cada estado de `zui.data`. Ahora
+  solo `zui.data` pone ese fondo.
 - `/dom` sin Popover API (Chromium < 114, Firefox < 125, Safari < 17): abrir un menú, un popover, un tooltip o un
   submenú lanzaba, porque `:popover-open` no es un selector válido ahí y `showPopover` no existe. Ahora no se abren y
   nada lanza; con `@oddbird/popover-polyfill` cargado por la aplicación, funcionan.
