@@ -117,6 +117,7 @@ The `Shell` measures its own width, not the screen:
 | `@zuccadev-labs/zuix-zout` | React layouts and their types |
 | `@zuccadev-labs/zuix-zout/dom` | Framework-free behavior: `init`, `hydrate`, `dispose`, `setPanelOpen`, `setSplitSizes`, `addWorkTab`… |
 | `@zuccadev-labs/zuix-zout/styles.css` | Styles |
+| `@zuccadev-labs/zuix-zout/styles.compat.css` | The same styles for Chromium 109, Firefox 115 and Safari 15.4 ([compat mode](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)) |
 | `@zuccadev-labs/zuix-zout/manifest.json`, `@zuccadev-labs/zuix-zout/html.json` | Props, classes and markup, for tools and agents |
 | `@zuccadev-labs/zuix-zout/dist/zout.css`, `@zuccadev-labs/zuix-zout/dist/zout.dom.js` | Bundles to link without a bundler |
 

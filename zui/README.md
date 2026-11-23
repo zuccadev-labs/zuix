@@ -121,6 +121,7 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people`, `/dom/nodes` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
+| `@zuccadev-labs/zuix-zui/styles.compat.css` | The same styles for Chromium 109, Firefox 115 and Safari 15.4, with `tokens.compat.css` ([compat mode](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)) |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |
 | `@zuccadev-labs/zuix-zui/manifest.json` | Components, props, classes and examples, for tools and agents |
 | `@zuccadev-labs/zuix-zui/html.json` | The markup of every example |
