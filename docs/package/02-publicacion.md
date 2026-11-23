@@ -34,7 +34,7 @@ versión `0.0.0-stage`, anterior a `0.1.0`; `latest` apunta a `0.1.0`.
 | # | Decisión | Qué elegí y por qué |
 |---|---|---|
 | 1 | Licencia de los paquetes | MIT. `LICENSE` en la raíz y en cada paquete, `"license": "MIT"` |
-| 2 | Licencia del set de iconos | MIT también. Los dibujos salen del archivo Dazicon de DAZLABS |
+| 2 | Licencia del set de iconos | MIT también. Los dibujos salen del archivo Dazicon de DAZLABS, salvo 20 que dibujé yo para un proyecto propio |
 | 3 | Registro | Público, npmjs.com. `publishConfig.access: "public"` en los cinco |
 | 4 | Scope y nombres | La organización `zuccadev-labs` de npmjs.com, que es mía. Nombres: `@zuccadev-labs/zuix` y `@zuccadev-labs/zuix-<paquete>` |
 | 5 | Repositorio y página | `https://github.com/zuccadev-labs/zuix`, público. `repository` (con `directory`), `homepage` y `bugs` están en los cinco `package.json` |

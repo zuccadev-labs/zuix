@@ -58,7 +58,7 @@ Con Server Components (Next.js App Router) funciona; los detalles están en
 ## TypeScript
 
 Las declaraciones se emiten con TypeScript 7 y se comprueban en cada cambio con TypeScript 5.9, 6 y 7, con
-`skipLibCheck: false` y con `moduleResolution` `Bundler` y `NodeNext`. `IconName` es una unión de 346
+`skipLibCheck: false` y con `moduleResolution` `Bundler` y `NodeNext`. `IconName` es una unión de 366
 literales: un nombre de icono que no existe no compila.
 
 ## Bundlers y gestores de paquetes

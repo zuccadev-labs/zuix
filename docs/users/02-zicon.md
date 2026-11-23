@@ -1,15 +1,31 @@
 # Zicon
 
-`@zuccadev-labs/zuix-zicon` es el estándar iconográfico de la suite. Sale de Dazicon, el set de iconos de
-DAZLABS.
+`@zuccadev-labs/zuix-zicon` es el estándar iconográfico de la suite. La mayor parte sale de Dazicon, el set de
+iconos de DAZLABS. El resto son dibujos míos: los hice para un proyecto propio con el mismo lenguaje de línea y
+los añadí cuando eché en falta esos conceptos en Dazicon.
 
 ## Qué incluye
 
-- **346 iconos** en dos variantes: `outline` y `solid`.
+- **366 iconos** en dos variantes: `outline` y `solid`. 346 de Dazicon y 20 propios.
 - Caja de 24 × 24 y color heredado (`currentColor`).
-- 20 categorías con etiqueta en español e inglés.
+- 22 categorías con etiqueta en español e inglés.
 - Palabras clave en ambos idiomas, por forma y por concepto de uso.
-- Tabla de sustitución de 152 emojis.
+- Tabla de sustitución de 177 emojis.
+
+### Los iconos propios
+
+| Categoría | Iconos |
+|---|---|
+| Clima | `cloud-rain`, `cloud-sun`, `snowflake`, `sunset`, `waves`, `wind` |
+| Transporte | `anchor`, `car`, `fuel`, `ship` |
+| Mapas | `compass`, `navigation` |
+| Seguridad | `shield`, `siren` |
+| Otros | `first-aid`, `fish`, `utensils` |
+| Gráficos, Símbolos, Dispositivos | `gauge`, `target`, `tv` |
+
+Los dibujé con trazo. Para que encajen con Dazicon los convertí a forma rellena con el mismo grosor (1,5 en la
+caja de 24) y los escalé a su mismo tamaño. Los comparé a 16, 20 y 24 px con iconos de Dazicon, en claro y
+oscuro. Las fuentes con trazo están en `zicon/own/`.
 
 Se pueden explorar en la página [Iconos](/icons).
 
@@ -91,8 +107,9 @@ icono sin registrar sale vacío y la consola lo avisa.
 
 - La variante `outline` está dibujada como forma rellena. El grosor del trazo no se puede ajustar.
 - Hay una sola caja de 24 px; no existen versiones optimizadas para 16 o 20.
-- **101 de los 346 iconos son iguales en `outline` y en `solid`**: el dibujo de origen no distingue las dos
-  variantes en ellos. Algunos `solid` no están rellenos (`magnifying-glass`, `power`). No lo corrijo en el
+- **105 de los 366 iconos son iguales en `outline` y en `solid`**: el dibujo de origen no distingue las dos
+  variantes en ellos (101 de Dazicon; de los propios, `snowflake`, `utensils`, `waves` y `wind`, que no tienen
+  un macizo natural). Algunos `solid` no están rellenos (`magnifying-glass`, `power`). No lo corrijo en el
   código porque la regla del paquete es no dibujar SVG a mano: se arregla en el archivo de Figma y se vuelve a
   extraer.
 - Algunas categorías son muy cortas (Tiempo tiene un icono, Diseño dos).
@@ -114,9 +131,25 @@ La tabla de renombrado está en `zicon/scripts/rename.json`. La extracción fall
 pareja outline/solid, y la generación valida cada icono: trazados dentro de la caja, identificador de módulo
 único y categoría existente.
 
+La extracción solo reescribe los iconos de Dazicon (`icons.json`). Los propios están aparte, en
+`icons-own.json`, y la generación une las dos fuentes. Si un nombre está en las dos, falla.
+
+## Regenerar los iconos propios
+
+```
+pnpm icons:own
+pnpm icons
+```
+
+`icons:own` lee los dibujos con trazo de `zicon/own/`, los convierte en contornos rellenos con CanvasKit (uniones
+y terminaciones redondeadas, grosor 1,5), los escala y centra al tamaño de Dazicon y escribe `icons-own.json` y
+los SVG de `zicon/svg/`. Solo hace falta al añadir o retocar un icono propio: el resultado está en el
+repositorio, y `pnpm icons` no usa CanvasKit.
+
 ## Licencia de los dibujos
 
 Decidí publicar el set bajo MIT, igual que el código. Los trazados salen del archivo Dazicon de DAZLABS; los
 nombres siguen la nomenclatura de Heroicons, que también es MIT. Los dibujos que revisé al extraer son los
-del archivo; no he comparado los 346 uno a uno con otro set. Cómo lo extraje:
+del archivo; no he comparado los 346 uno a uno con otro set. Los 20 iconos propios los dibujé yo y entran bajo
+la misma licencia MIT. Cómo lo extraje:
 [Zicon: extracción de Dazicon](../investigations/03-zicon-dazicon.md).

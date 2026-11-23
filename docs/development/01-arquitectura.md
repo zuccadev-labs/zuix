@@ -115,8 +115,9 @@ de que el comportamiento mida.
 
 | Paso | Herramienta | Salida |
 |---|---|---|
-| Extraer del archivo de Figma | `scripts/extract.py` (lee el `.fig` sin Figma) | `icons.json` |
-| Generar módulos | `scripts/build.mjs` | `src/icons/<nombre>.ts`, `src/names.ts`, `src/all.ts`, `svg/`, `manifest.json` y las tablas de `AGENTS.md` |
+| Extraer del archivo de Figma | `scripts/extract.py` (lee el `.fig` sin Figma) | `icons.json` y `svg/` de los iconos de Dazicon |
+| Convertir los iconos propios (solo al añadir o retocar uno) | `scripts/own.mjs` (`pnpm icons:own`, con `canvaskit-wasm`) lee los dibujos con trazo de `own/` | `icons-own.json` y `svg/` de los iconos propios |
+| Generar módulos | `scripts/build.mjs` une `icons.json` e `icons-own.json` (un nombre repetido es un error) | `src/icons/<nombre>.ts`, `src/names.ts`, `src/all.ts`, `manifest.json` y las tablas de `AGENTS.md` |
 | Generar el sprite | `scripts/sprite.mjs` | `sprite.svg` |
 
 El registro (`src/registry.ts`) es un mapa en un módulo. `Icon`, `<z-icon>`, `iconSvg()` e `iconElement()`

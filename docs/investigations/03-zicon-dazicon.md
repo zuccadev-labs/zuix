@@ -90,10 +90,33 @@ Revisé a ojo hojas de contacto con los 692 dibujos.
   en Figma y se vuelve a extraer.
 - **Una sola caja de 24 px.**
 
+## Iconos propios
+
+Más tarde eché en falta conceptos que Dazicon no tiene (clima, transporte, náutica, comida) y que yo ya había
+dibujado para un proyecto propio, con el mismo lenguaje de línea: trazo de 1,5 a 1,75 en la caja de 24,
+uniones y terminaciones redondeadas. Añadí 20 de esos dibujos. Dejé fuera los que repetían un concepto que
+Dazicon ya cubre con otro nombre (`log-out`, `menu`, `zap`, `flame`, `filter`, `refresh`, `image`,
+`download`…), los de pura interfaz de esa aplicación (un panel con cuatro baldosas desiguales) y una casilla
+marcada que no casaba con `x-square`.
+
+| Problema | Tratamiento |
+|---|---|
+| Están dibujados con trazo y zicon guarda formas rellenas | `zicon/scripts/own.mjs` convierte cada trazo en su contorno con Skia (`canvaskit-wasm`), con uniones y terminaciones redondeadas, y une las piezas en una sola forma |
+| Grosor distinto (1,75 en la mayoría) | Todos a 1,5, el de Dazicon |
+| Ocupaban más caja (de 2 a 22 por la línea central) | Cada icono se escala y centra para ocupar lo mismo que uno de Dazicon: de 2,36 a 21,64 por fuera |
+| No tenían variante `solid` | La dibujé en `own/solid/` con el criterio de Dazicon: la forma cerrada rellena y los detalles interiores recortados (la cruz de `first-aid`, la aguja de `compass`). Cuatro sin macizo natural (`snowflake`, `utensils`, `waves`, `wind`) repiten el dibujo |
+
+Las fuentes con trazo quedan en `zicon/own/` y el resultado convertido en `zicon/icons-own.json` y
+`zicon/svg/`. `build.mjs` une las dos fuentes y falla si un nombre o una categoría está en las dos, así que
+volver a extraer Dazicon no los borra. Los revisé en una lámina junto a `bell`, `cloud`, `sun`, `truck` y
+otros de Dazicon, a 16, 20 y 24 px, en las dos variantes y en claro y oscuro, y ajusté el `solid` de `car`
+(las ruedas recortadas pesaban demasiado; quedaron como anillos, igual que en `truck`).
+
 ## Licencia
 
 Publico el set bajo MIT, igual que el código. Los nombres siguen la nomenclatura de Heroicons, que también es
 MIT; los trazados que revisé son los del archivo de DAZLABS. No he comparado los 346 uno a uno con otro set.
+Los 20 iconos propios los dibujé yo y van bajo la misma licencia MIT.
 
 ## Lo que no he comprobado
 

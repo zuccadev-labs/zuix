@@ -112,6 +112,23 @@ Además:
 - Todas las dependencias están en su última versión estable. Los paquetes publicados no tienen dependencias
   de terceros en ejecución; estas políticas protegen las herramientas con las que se construyen.
 
+### `canvaskit-wasm`
+
+Dependencia de desarrollo de la raíz, fijada en `0.42.0`. Es Skia compilado a WebAssembly, publicado por
+Google. La uso solo en `zicon/scripts/own.mjs` (`pnpm icons:own`), para convertir los trazos de mis iconos
+propios en contornos rellenos: `makeStroked` da el contorno exacto con uniones y terminaciones redondeadas y
+las operaciones de trazados de Skia unen y recortan las piezas. No encontré otra forma sin dependencias: no
+quería depender de un programa del sistema como Inkscape, y calcular a mano el desplazamiento de las curvas
+era reinventar Skia.
+
+- No tiene script de instalación (pasa `strictDepBuilds` sin tocar `allowBuilds`) y trae una sola
+  dependencia, `@webgpu/types`, que son tipos.
+- La conversión se hace una vez por icono y el resultado (`zicon/icons-own.json` y `zicon/svg/`) está en el
+  repositorio. `pnpm icons`, `pnpm check` y la CI no la cargan, y ningún paquete publicado depende de ella.
+- La fijo en una versión exacta porque es 0.x y `own.mjs` usa `_makeSimplified`: en esta versión el envoltorio
+  público `makeSimplified` no está en el prototipo de `Path`. Al subirla hay que volver a ejecutar
+  `pnpm icons:own` y comprobar que el diff de `icons-own.json` no cambia la forma de ningún icono.
+
 ## Publicación
 
 Publica solo el workflow `release`, cuando llega a `main` una versión que no está en el registro.
