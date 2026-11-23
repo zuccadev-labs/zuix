@@ -188,20 +188,6 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   como `Skeleton.Card`, `Skeleton.List`…), `loading` para envolver el contenido real y `SkeletonGroup` (contenedor con
   `aria-busy` y un solo brillo sincronizado). Los anchos salen de una semilla: servidor y cliente pintan lo mismo. En
   `/dom`, un `.z-skeleton-pattern[data-pattern]` vacío se expande solo.
-
-### Cambiado
-
-- `Avatar`: estados `dnd` y `oof`, una forma dentro del punto de estado desde el tamaño `md` y, sin `statusLabel`,
-  el texto del estado («Available», «Do not disturb») como nombre accesible. Las iniciales ya no parten caracteres
-  compuestos.
-- `AvatarGroup`: con `items` es una lista y, con `overflow="list"`, el «+N» abre la lista de sobrantes; además
-  `reverse` y `spacing`.
-
-- El bucle del `Carousel` en desplazamiento nativo ya no salta del final al principio: aparca el primer o el último
-  slide con CSS `order` junto al actual y compensa el salto (guía `carousel`), sin clonar nada. La tira con lente
-  sigue con réplicas, porque allí la pista es transformada y no desplazamiento nativo.
-- En el desplazamiento nativo y en el mazo, la posición se anuncia tras asentarse (`scrollend`) y solo si cambió;
-  antes se anunciaba al pulsar. El teclado (flechas, Inicio y Fin) lo lleva el motor común de React y `/dom`.
 - Familia de tiempo y hora (grupo `time`; contrato HTML, modo sin framework y binding de React sobre un solo árbol
   de `core/vnode`):
   - `Clock`: reloj digital con 12 o 24 h según el locale (o `hourCycle`), segundos, fecha y nombre de la zona
@@ -247,6 +233,19 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   incluida en `@zuccadev-labs/zuix-zui/dom`.
 - Entrada `@zuccadev-labs/zuix-zui/dom/time` (`timeModule`, `refreshTimeZoneSelect`), también incluida en
   `@zuccadev-labs/zuix-zui/dom`.
+
+### Cambiado
+
+- `Avatar`: estados `dnd` y `oof`, una forma dentro del punto de estado desde el tamaño `md` y, sin `statusLabel`,
+  el texto del estado («Available», «Do not disturb») como nombre accesible. Las iniciales ya no parten caracteres
+  compuestos.
+- `AvatarGroup`: con `items` es una lista y, con `overflow="list"`, el «+N» abre la lista de sobrantes; además
+  `reverse` y `spacing`.
+- El bucle del `Carousel` en desplazamiento nativo ya no salta del final al principio: aparca el primer o el último
+  slide con CSS `order` junto al actual y compensa el salto (guía `carousel`), sin clonar nada. La tira con lente
+  sigue con réplicas, porque allí la pista es transformada y no desplazamiento nativo.
+- En el desplazamiento nativo y en el mazo, la posición se anuncia tras asentarse (`scrollend`) y solo si cambió;
+  antes se anunciaba al pulsar. El teclado (flechas, Inicio y Fin) lo lleva el motor común de React y `/dom`.
 
 ### Corregido
 
