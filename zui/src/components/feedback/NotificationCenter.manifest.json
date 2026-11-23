@@ -124,7 +124,12 @@
     "weight-semibold",
     "tracking-wide",
     "leading-snug",
-    "leading-tight"
+    "leading-tight",
+    "accent-text",
+    "success-text",
+    "warning-text",
+    "danger-text",
+    "info-text"
   ],
   "classes": [
     "z-notification-center",

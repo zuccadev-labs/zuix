@@ -889,23 +889,23 @@
   }
   .z-notification__icon[data-tone="accent"] {
     background: var(--z-accent-soft);
-    color: var(--z-accent);
+    color: var(--z-accent-text);
   }
   .z-notification__icon[data-tone="success"] {
     background: var(--z-success-soft);
-    color: var(--z-success);
+    color: var(--z-success-text);
   }
   .z-notification__icon[data-tone="warning"] {
     background: var(--z-warning-soft);
-    color: var(--z-warning);
+    color: var(--z-warning-text);
   }
   .z-notification__icon[data-tone="danger"] {
     background: var(--z-danger-soft);
-    color: var(--z-danger);
+    color: var(--z-danger-text);
   }
   .z-notification__icon[data-tone="info"] {
     background: var(--z-info-soft);
-    color: var(--z-info);
+    color: var(--z-info-text);
   }
   .z-notification__main {
     display: grid;
