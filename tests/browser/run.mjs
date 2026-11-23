@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Pruebas en navegador de la suite sobre examples/app. Runner propio, sin @playwright/test.
 // Uso: node tests/browser/run.mjs [filtro…] [--headed] [--repeat=N]      BROWSER=chromium|firefox|webkit|all (por defecto chromium)
+//   REACT=18 sirve la misma aplicación con React 18 (examples/react18) en vez de React 19; capturas en shots/react18-<navegador>/.
 //   --repeat=N ejecuta N veces cada caso elegido (para medir un caso inestable: el objetivo es N de N).
 //   NO_WEBGL=1 lanza los motores sin WebGL, como el Firefox de los runners de CI (tests/webgl.mjs).
 //   Levanta Vite en un puerto libre y ejecuta los casos de cases.mjs en cada navegador pedido:
@@ -19,8 +20,16 @@ import { WEBGL_UNAVAILABLE_WARNING, applyNoWebgl, noWebgl, noWebglLaunch } from 
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
-const appDir = join(root, "examples", "app");
+// Versión de React con la que se sirve la aplicación: 19 (examples/app) o 18 (examples/react18, la misma aplicación con
+// React 18). La página escribe la que cargó en `data-react` y el runner comprueba que coincide antes de empezar.
+const reactMajor = process.env.REACT ?? "19";
+if (reactMajor !== "18" && reactMajor !== "19") {
+  console.error(`REACT desconocido: ${reactMajor}. Valores: 18, 19.`);
+  process.exit(2);
+}
+const appDir = join(root, "examples", reactMajor === "18" ? "react18" : "app");
 const shotsRoot = join(here, "shots");
+const shotsName = (browserName) => (reactMajor === "18" ? `react18-${browserName}` : browserName);
 const args = process.argv.slice(2);
 const headed = args.includes("--headed");
 const filters = args.filter((a) => !a.startsWith("--")).map((a) => a.toLowerCase());
@@ -242,7 +251,7 @@ function makeContext(engine, baseUrl, record, shots) {
 }
 
 async function runBrowser(browserName, server, selected) {
-  const shots = join(shotsRoot, browserName);
+  const shots = join(shotsRoot, shotsName(browserName));
   rmSync(shots, { recursive: true, force: true });
   mkdirSync(shots, { recursive: true });
   const results = [];
@@ -262,6 +271,9 @@ async function runBrowser(browserName, server, selected) {
       await warm.goto(server.url, { waitUntil: "load" });
       await warm.waitForSelector('[data-testid="screen-overview"]', { timeout: 60000 });
       await warm.waitForTimeout(500);
+      const loaded = await warm.evaluate(() => document.documentElement.dataset.react ?? "");
+      if (loaded.split(".")[0] !== reactMajor) throw new Error(`Se pidió React ${reactMajor} y la página cargó React ${loaded || "?"}.`);
+      console.log(`React ${loaded}`);
       await warm.close();
     }
 
@@ -275,6 +287,9 @@ async function runBrowser(browserName, server, selected) {
         await testCase.run(ctx);
         // `expectConsole`: mensajes de consola que el caso provoca a propósito (un límite de errores de React).
         if (testCase.expectConsole) record.problems = record.problems.filter((problem) => !testCase.expectConsole.test(problem));
+        // `expectConsoleReact18`: lo mismo, solo con REACT=18 (un aviso que React 19 ya no da).
+        if (reactMajor === "18" && testCase.expectConsoleReact18)
+          record.problems = record.problems.filter((problem) => !testCase.expectConsoleReact18.test(problem));
         if (record.problems.length) {
           status = "fail";
           detail = `Errores de consola o de página:\n  ${[...new Set(record.problems)].join("\n  ")}`;
@@ -317,7 +332,10 @@ async function runBrowser(browserName, server, selected) {
     await engine.reduced?.close().catch(() => {});
     await engine.browser?.close().catch(() => {});
   }
-  writeFileSync(join(shots, "results.json"), JSON.stringify({ date: new Date().toISOString(), browser: browserName, results }, null, 2));
+  writeFileSync(
+    join(shots, "results.json"),
+    JSON.stringify({ date: new Date().toISOString(), browser: browserName, react: reactMajor, results }, null, 2),
+  );
   return results;
 }
 
@@ -352,7 +370,7 @@ async function main() {
     const count = (s) => results.filter((r) => r.status === s).length;
     failed += count("fail");
     console.log(
-      `${browserName}: ${results.length} casos · ${count("pass")} correctos · ${count("fail")} fallidos · ${count("unverifiable")} no verificables`,
+      `${browserName} (React ${reactMajor}): ${results.length} casos · ${count("pass")} correctos · ${count("fail")} fallidos · ${count("unverifiable")} no verificables`,
     );
     for (const r of results)
       if (r.status !== "pass")

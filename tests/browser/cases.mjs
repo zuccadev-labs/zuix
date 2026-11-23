@@ -1371,7 +1371,10 @@ export const cases = [
       assert((await fresh.locator(skip).textContent()).trim() === "Skip to content", "texto del enlace de salto");
       const target = await fresh.getAttribute(skip, "href");
       assert(
-        await fresh.evaluate((href) => document.querySelector(href)?.matches(".z-shell__main") ?? false, target),
+        await fresh.evaluate(
+          (href) => document.getElementById(decodeURIComponent(href.slice(1)))?.matches(".z-shell__main") ?? false,
+          target,
+        ),
         `el enlace apunta al área principal (${target})`,
       );
       await fresh.keyboard.press("Enter");

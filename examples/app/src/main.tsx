@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, version } from "react";
 import { createRoot } from "react-dom/client";
 
 import "@zuccadev-labs/zuix-tokens/tokens.css";
@@ -16,6 +16,9 @@ import { Layers } from "./screens/audit/Layers";
 import { AgendaScreen } from "./screens/Agenda";
 import { PIECES, PlanningPieces, type PieceId } from "./screens/Planning";
 import { PerfStage } from "./screens/Perf";
+
+// La suite de navegador comprueba con este atributo qué React sirvió la página (tests/browser/run.mjs, REACT=18).
+document.documentElement.dataset.react = version;
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing #root");

@@ -1166,6 +1166,10 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
     },
     {
       name: "Auditoría · SSR e hidratación: sin avisos con el reloj del servidor en otro mes (Calendar), y el mes pasa al del navegador",
+      // React 18 avisa de cada useLayoutEffect que encuentra renderToString. En un servidor de verdad no hay `document` y
+      // el binding usa useEffect (pnpm test:pack lo comprueba con React 18 en Node); aquí el render de servidor corre
+      // dentro del navegador, con `document`. React 19 ya no da ese aviso.
+      expectConsoleReact18: /useLayoutEffect does nothing on the server/,
       async run({ open }) {
         const page = await open("audit-ssr");
         await expectText(page, t("ssr-status"), "done", "la hidratación termina");
