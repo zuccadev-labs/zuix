@@ -26,7 +26,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     respondiendo/editando y notas de voz con MediaRecorder cuando existe (pulsar para grabar y para enviar, Cancelar).
   - `ConversationList` (presencia, último mensaje o quién escribe o el borrador, hora corta, no leídos y menciones,
     silenciado, fijado, búsqueda y filtros), `ChatHeader`, `EmojiPicker` (conjunto propio de unos 120 emojis con
-    nombres CLDR, recientes, tono de piel y carga a demanda de otro conjunto), `VoiceNote`, `Reactions`,
+    nombres CLDR, recientes, tono de piel y carga a demanda de otro conjunto; la fila que queda a medias abajo se
+    difumina), `VoiceNote`, `Reactions`,
     `TypingIndicator`, `DeliveryStatus` (leído con otro texto y otro trazo, no solo color), `ThreadSummary`, `CallCard`
     (entrante con aviso asertivo, saliente y en curso) y `PinnedBar`.
   - `core/`: `chat-group`, `chat-anchor`, `delivery`, `linkify`, `mentions`, `waveform`, `emoji-data` y `chat-tree`.
