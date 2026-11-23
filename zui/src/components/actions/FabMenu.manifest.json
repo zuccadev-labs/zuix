@@ -59,8 +59,8 @@
   ],
   "tokens": ["accent-solid", "fg-on-accent", "popup-bg", "shadow-md", "radius-lg", "accent-ring"],
   "classes": ["z-fab", "z-fab-menu"],
-  "a11y": "Patrón menu button de WAI-ARIA sobre el FAB: aria-haspopup=menu y aria-expanded; flechas entre acciones, Escape cierra y devuelve el foco al FAB.",
-  "behavior": "react",
+  "a11y": "Patrón menu button de WAI-ARIA sobre el FAB: aria-haspopup=menu y aria-expanded; clic, Intro, Espacio o ↓ abren con el foco en la primera acción y ↑ en la última; flechas, Inicio, Fin y letra entre acciones; Escape cierra y devuelve el foco al FAB; un clic fuera lo cierra. Sin React (`@zuccadev-labs/zuix-zui/dom`): el FAB con data-z-open=\"#menu\" y data-z-placement=\"top-end\" y un .z-menu.z-fab-menu[popover]; emite z:open, z:close y z:select.",
+  "behavior": "dom",
   "examples": [
     {
       "title": "Crear",

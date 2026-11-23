@@ -46,8 +46,8 @@
   ],
   "tokens": ["radius-xs", "duration-normal", "ease-emphasized"],
   "classes": ["z-split-button", "z-split-button__main", "z-split-button__toggle"],
-  "a11y": "Grupo con dos botones nativos: la acción y un menu button con nombre («More options»), aria-haspopup=menu y aria-expanded. Escape devuelve el foco a la flecha.",
-  "behavior": "react",
+  "a11y": "Grupo con dos botones nativos: la acción y un menu button con nombre («More options»), aria-haspopup=menu y aria-expanded. Clic, Intro, Espacio o ↓ abren con el foco en la primera alternativa y ↑ en la última; Escape cierra y devuelve el foco a la flecha; un clic fuera lo cierra. Sin React (`@zuccadev-labs/zuix-zui/dom`): la flecha con data-z-open=\"#menu\" y data-z-placement=\"bottom-end\" y un .z-menu[popover]; la acción principal es un botón normal. Emite z:open, z:close y z:select.",
+  "behavior": "dom",
   "examples": [
     {
       "title": "Publicar",

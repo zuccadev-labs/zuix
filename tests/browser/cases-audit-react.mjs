@@ -731,6 +731,27 @@ export default function ({ t, assert, poll, until, visible, gone, settled, focus
         await poll(() => page.evaluate(() => document.activeElement?.textContent.trim() === "Delete"), "búsqueda por letra");
         await press(page, "Escape");
         await expectCount(page, '[role="menu"]', 0);
+        // APG Menu Button: Flecha arriba abre con el foco en la última entrada; Flecha abajo, en la primera.
+        await page.locator(t("a-menu")).focus();
+        await press(page, "ArrowUp");
+        await visible(page, '[role="menu"]');
+        await poll(
+          () => page.evaluate(() => document.activeElement?.textContent.trim().startsWith("Delete")),
+          "Flecha arriba enfoca la última entrada",
+        );
+        await press(page, "Escape");
+        await expectCount(page, '[role="menu"]', 0);
+        await press(page, "ArrowDown");
+        await visible(page, '[role="menu"]');
+        await poll(
+          () =>
+            page.evaluate(
+              () => document.activeElement?.closest('[role="menu"]')?.querySelector('[role^="menuitem"]') === document.activeElement,
+            ),
+          "Flecha abajo enfoca la primera entrada",
+        );
+        await press(page, "Escape");
+        await expectCount(page, '[role="menu"]', 0);
       },
     },
     {

@@ -1,5 +1,5 @@
 "use client";
-import { useId, type KeyboardEvent, type ReactElement } from "react";
+import { useId, useState, type KeyboardEvent, type ReactElement } from "react";
 import { MenuSurface } from "../../primitives/menu";
 import { slot } from "../../primitives/slot";
 import { useDisclosure, type MenuEntry } from "./internal";
@@ -42,11 +42,18 @@ export function Menu({
     popup: "menu",
     id,
   });
+  // APG Menu Button: Flecha arriba abre con el foco en la última entrada; el clic, Intro, Espacio y Flecha abajo, en
+  // la primera.
+  const [initialFocus, setInitialFocus] = useState<"first" | "last">("first");
   const withKeys = slot(trigger!, {
     id: (triggerProp.props as { id?: string }).id ?? triggerId,
+    onPointerDown: () => setInitialFocus("first"),
     onKeyDown: (event: KeyboardEvent) => {
-      if (open || (event.key !== "ArrowDown" && event.key !== "ArrowUp")) return;
+      if (open) return;
+      if (event.key === "Enter" || event.key === " ") setInitialFocus("first");
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
       event.preventDefault();
+      setInitialFocus(event.key === "ArrowUp" ? "last" : "first");
       setOpen(true);
     },
   });
@@ -64,6 +71,7 @@ export function Menu({
         placement={align === "center" ? side : `${side}-${align}`}
         label={label}
         labelledBy={(triggerProp.props as { id?: string }).id ?? triggerId}
+        initialFocus={initialFocus}
         className={className}
       />
     </>

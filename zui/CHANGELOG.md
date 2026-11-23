@@ -236,6 +236,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Cambiado
 
+- `FabMenu`, `SplitButton` y `AccountMenu` funcionan sin React: pasan de `behavior: "react"` a `"dom"` y su marcado
+  del contrato abre el Menu de `/dom` (`data-z-open` y `data-z-placement`). El ejemplo de `AccountMenu` añade el
+  cambio de cuenta. Ya no queda ningún componente que solo funcione con React.
+- Botón de menú (APG Menu Button), en `/dom` y en React: Flecha abajo abre el menú con el foco en la primera entrada
+  y Flecha arriba en la última. En `/dom` las flechas no abrían; en React las dos enfocaban la primera.
 - `Avatar`: estados `dnd` y `oof`, una forma dentro del punto de estado desde el tamaño `md` y, sin `statusLabel`,
   el texto del estado («Available», «Do not disturb») como nombre accesible. Las iniciales ya no parten caracteres
   compuestos.

@@ -41,8 +41,8 @@ Cada componente declara en el contrato qué necesita para funcionar:
 | `behavior` | Significado | Cuántos |
 |---|---|---|
 | `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 147 |
-| `react` | Hoy solo funciona con el binding de React: `FabMenu`, `SplitButton` y `AccountMenu` | 3 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 150 |
+| `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
 

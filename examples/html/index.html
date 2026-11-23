@@ -98,6 +98,18 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="FabMenu" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FabMenu</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" title="Create" aria-label="Create" class="z-fab" data-size="md" data-variant="primary" aria-haspopup="menu" aria-expanded="false" data-z-open="#fab-actions" data-z-placement="top-end"><z-icon name="plus" size="22"></z-icon></button>
+
+<div id="fab-actions" popover class="z-liquid z-menu z-fab-menu" role="menu" aria-label="Create" data-size="lg">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="document-text" size="14"></z-icon></span><span class="z-menu__text">Document</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="photo" size="14"></z-icon></span><span class="z-menu__text">Image</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="folder-plus" size="14"></z-icon></span><span class="z-menu__text">Folder</span></button>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="IconButton" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">IconButton</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -127,6 +139,20 @@
     <z-icon name="squares-2x2" size="16"></z-icon>
     <span class="z-segmented__label">Grid</span>
   </button>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="SplitButton" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">SplitButton</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-split-button" role="group" data-variant="primary" data-size="md">
+  <button type="button" class="z-btn z-btn--primary z-split-button__main" data-size="md"><z-icon name="paper-airplane" size="16"></z-icon>Publish</button>
+  <button type="button" class="z-btn z-btn--icon z-btn--primary z-split-button__toggle" data-size="md" aria-label="More options" title="More options" aria-haspopup="menu" aria-expanded="false" data-z-open="#publish-more" data-z-placement="bottom-end"><z-icon name="chevron-down" size="16"></z-icon></button>
+</div>
+
+<div id="publish-more" popover class="z-liquid z-menu" role="menu" aria-label="More options" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="clock" size="14"></z-icon></span><span class="z-menu__text">Schedule</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="document-duplicate" size="14"></z-icon></span><span class="z-menu__text">Save as draft</span></button>
 </div>
   </div>
 </section>
@@ -4345,6 +4371,36 @@ malaga" data-ignore-accents="">Un
 </div>
 <h2 class="page__group">people</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="AccountMenu" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">AccountMenu</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-account-menu" data-variant="avatar" aria-haspopup="menu" aria-expanded="false" data-z-open="#account">
+  <span class="z-sr-only">Account of Ana López</span>
+  <span class="z-avatar" data-size="md" data-shape="circle" role="img" aria-label="" aria-hidden="true"><span class="z-avatar__initials" aria-hidden="true">AL</span></span>
+</button>
+
+<div id="account" popover class="z-liquid z-menu z-account-menu__menu" role="menu" aria-label="Account of Ana López" data-size="md">
+  <div class="z-menu__label"><div class="z-persona z-account-menu__persona" data-size="sm" data-orientation="horizontal"><span class="z-persona__media"><span class="z-avatar" data-size="sm" data-shape="circle" role="img" aria-label="" aria-hidden="true"><span class="z-avatar__initials" aria-hidden="true">AL</span></span></span><span class="z-persona__text"><span class="z-persona__name">Ana López</span><span class="z-persona__secondary">ana@example.com</span></span></div></div>
+  <div class="z-menu__separator" role="separator"></div>
+  <div class="z-menu__group" role="group" aria-labelledby="account-switch">
+    <div class="z-menu__label" id="account-switch">Switch account</div>
+    <button type="button" role="menuitemradio" aria-checked="true" class="z-menu__item" tabindex="-1" value="ana"><span class="z-menu__icon z-menu__check" data-kind="radio" aria-hidden="true"></span><span class="z-menu__text">Ana López · ana@example.com</span></button>
+    <button type="button" role="menuitemradio" aria-checked="false" class="z-menu__item" tabindex="-1" value="work"><span class="z-menu__icon z-menu__check" data-kind="radio" aria-hidden="true"></span><span class="z-menu__text">Ana López · ana@work.example</span></button>
+  </div>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="user" size="14"></z-icon></span><span class="z-menu__text">Profile</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="cog" size="14"></z-icon></span><span class="z-menu__text">Settings</span></button>
+  <div class="z-menu__separator" role="separator"></div>
+  <div class="z-menu__group" role="group" aria-labelledby="account-theme">
+    <div class="z-menu__label" id="account-theme">Theme</div>
+    <button type="button" role="menuitemradio" aria-checked="false" class="z-menu__item" tabindex="-1" value="light"><span class="z-menu__icon z-menu__check" data-kind="radio" aria-hidden="true"></span><span class="z-menu__text">Light</span></button>
+    <button type="button" role="menuitemradio" aria-checked="true" class="z-menu__item" tabindex="-1" value="dark"><span class="z-menu__icon z-menu__check" data-kind="radio" aria-hidden="true"></span><span class="z-menu__text">Dark</span></button>
+  </div>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="arrow-right-start-on-rectangle" size="14"></z-icon></span><span class="z-menu__text">Sign out</span></button>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="MemberList" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">MemberList</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -6329,6 +6385,9 @@ document.querySelector("#tour-start").addEventListener("click", () => {
     ],
   });
 });
+
+// AccountMenu
+document.querySelector("#account").addEventListener("z:select", (event) => console.log(event.target.textContent.trim()));
   </script>
 </body>
 </html>

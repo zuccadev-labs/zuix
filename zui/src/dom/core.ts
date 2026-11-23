@@ -1193,6 +1193,23 @@ function onKeydown(event: KeyboardEvent): void {
     return;
   }
 
+  // Botón de menú (APG Menu Button): ↓ abre el menú y enfoca su primera entrada; ↑, la última. Intro y Espacio lo
+  // abren por el clic. Los títulos de una barra de menús tienen su propio teclado (navigation).
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    const button = target.closest<HTMLElement>('[aria-haspopup="menu"][data-z-open]');
+    const menu = button && !button.closest(".z-menubar") && !isDisabled(button) ? byRef(button.getAttribute("data-z-open")) : null;
+    if (menu?.matches(".z-menu[popover]")) {
+      event.preventDefault();
+      if (!popoverOpen(menu)) {
+        const anchor = byRef(button!.getAttribute("data-z-anchor")) ?? button!;
+        openPopover(menu, anchor, (button!.getAttribute("data-z-placement") as Placement) ?? "bottom-start", { trigger: button! });
+      }
+      const items = menuItems(menu);
+      highlight(menu, event.key === "ArrowUp" ? items[items.length - 1] : items[0]);
+      return;
+    }
+  }
+
   if (!inDom(target)) return;
   // Una casilla se marca con Espacio; Intro no la cambia (APG checkbox; igual que en React).
   if (event.key === "Enter" && target.matches('button[role="checkbox"]')) {
