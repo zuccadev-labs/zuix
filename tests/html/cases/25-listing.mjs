@@ -44,7 +44,7 @@ export default async function ({ page, test, ok }) {
         window.__ls = [];
         for (const type of ["z:readchange", "z:readall", "z:action", "z:openchange", "z:change", "z:reorder", "z:cover", "z:photoselect"])
           box.addEventListener(type, (event) =>
-            window.__ls.push([type, JSON.parse(JSON.stringify(event.detail ?? null, (k, v) => (v instanceof File ? v.name : v)))]),
+            window.__ls.push([type, JSON.parse(JSON.stringify(event.detail ?? null, (_k, v) => (v instanceof File ? v.name : v)))]),
           );
         (await import("/zui/dist/zui.dom.js")).hydrate(box);
       },
