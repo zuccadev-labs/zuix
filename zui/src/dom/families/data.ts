@@ -1,5 +1,6 @@
 // @zuccadev-labs/zuix-zui/dom/data — Tree, CommandPalette, Table (orden), Pagination, DataTable, TransferList,
-// ReviewCard y NotificationCenter sin framework.
+// ReviewCard, NotificationCenter y FilterBar sin
+// framework.
 // Registro: init(dataModule) o use(dataModule) junto a @zuccadev-labs/zuix-zui/dom/core.
 import * as collections from "../collections";
 import * as datatable from "../datatable";
@@ -20,6 +21,7 @@ export {
 export { dataTableCSVFromDom, dataTableSelection, setDataTablePage, setDataTableSelection } from "../datatable";
 export { destroyWidget, setWidgetProps } from "../widgets";
 export { setReviewExpanded } from "../reviews";
+export { activeCount, chipText, toggleFilter, toggleOption, type FilterDef, type FilterValue } from "../../core/filters";
 export { badgeText, groupByDay, unreadCount, type NotificationItem } from "../../core/notifications";
 export { formatMoney, summarizePrice, type MoneyOptions, type PriceLine, type PriceSummary } from "../../core/money";
 

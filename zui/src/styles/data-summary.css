@@ -315,4 +315,91 @@
     color: var(--z-fg-prose);
     font-size: var(--z-text-small);
   }
+
+  /* ---- FilterBar ---- */
+  .z-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+  }
+  /* La fila desplaza en horizontal; el borde con chips ocultos se difumina (data-scroll-edges, core/edges). El relleno
+     deja sitio al contorno de foco, y scroll-padding evita que un chip enfocado se quede bajo el difuminado. */
+  .z-filter-bar__scroller {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+    padding: var(--z-space-1);
+    margin: calc(var(--z-space-1) * -1);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: var(--z-space-6);
+    /* La barra fina se queda: el difuminado acompaña, no sustituye, a la señal de que hay más. */
+    scrollbar-width: thin;
+  }
+  .z-filter-bar__chip {
+    flex-shrink: 0;
+    scroll-margin-inline: var(--z-space-6);
+  }
+  .z-filter-bar__chevron {
+    display: inline-flex;
+    margin-inline-start: calc(var(--z-space-0-5) * -1);
+    transition: rotate var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-filter-bar__chip [aria-expanded="true"] .z-filter-bar__chevron {
+    rotate: 180deg;
+  }
+  .z-filter-bar__clear {
+    flex-shrink: 0;
+  }
+  .z-filter-bar__menu {
+    min-inline-size: 12rem;
+    max-inline-size: min(20rem, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-1-5);
+  }
+  .z-filter-bar__options {
+    display: grid;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .z-filter-bar__option {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2);
+    border-radius: var(--z-item-radius);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-filter-bar__option:hover {
+      background: var(--z-row-hover);
+    }
+  }
+  .z-filter-bar__option:has(.z-filter-bar__input:focus-visible) {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-filter-bar__input {
+    flex-shrink: 0;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    margin: 0;
+    accent-color: var(--z-accent-solid);
+  }
+  .z-filter-bar__input:focus-visible {
+    outline: none;
+  }
+  @media (forced-colors: active) {
+    .z-filter-bar__option:has(.z-filter-bar__input:focus-visible) {
+      outline-color: Highlight;
+    }
+  }
 }

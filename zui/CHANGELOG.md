@@ -36,6 +36,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     `z:openchange`; `badgeText`, `groupByDay` y `unreadCount`.
   - `NotificationBadge`: contador con tope («99+») o punto, suelto o pegado a la esquina de otro elemento; la cifra
     va oculta y se lee el texto entero («12 unread»). No añado un `AlertBell`: sería otro nombre para la misma campana.
+- `FilterBar` (grupo `data`): chips de interruptor (`aria-pressed`) y de menú (popover con casillas o botones de opción
+  nativos; el chip dice la opción elegida o cuántas) en una fila que desplaza en horizontal con el borde difuminado
+  solo del lado con chips ocultos. «Clear» aparece con algún filtro activo y deja el foco en el primer chip; el número
+  de activos va en la descripción del grupo y se anuncia al cambiar. Valor controlado o libre; en `/dom/data`,
+  `.z-filter-bar` con `data-props`, `z:change { value, id }`, `toggleFilter`, `toggleOption`, `activeCount` y `chipText`.
 - Modo DOM: un icono que el registro del módulo no tiene (el de un aviso de la aplicación) se pinta con `<z-icon>`,
   que lo dibuja con el set que haya cargado la página, en vez de quedar en blanco.
 - `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en

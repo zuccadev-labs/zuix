@@ -2181,6 +2181,34 @@
     }
    ]
   },
+  "FilterBar": {
+   "group": "data",
+   "classes": [
+    "z-filter-bar",
+    "z-filter-bar__scroller",
+    "z-filter-bar__chip",
+    "z-filter-bar__chevron",
+    "z-filter-bar__clear",
+    "z-filter-bar__menu",
+    "z-filter-bar__options",
+    "z-filter-bar__option",
+    "z-filter-bar__input",
+    "z-filter-bar__option-label",
+    "z-chip",
+    "z-chip__main",
+    "z-chip__label",
+    "z-chip__count"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Búsqueda de alojamiento",
+     "html": "<div class=\"z-filter-bar\" id=\"stay-filters\">\n  <script type=\"application/json\" data-props>{\"filters\": [{\"id\": \"instant\", \"label\": \"Instant book\", \"icon\": \"bolt\"}, {\"id\": \"price\", \"label\": \"Price\", \"icon\": \"banknotes\", \"options\": [{\"value\": \"low\", \"label\": \"Under €100\"}, {\"value\": \"mid\", \"label\": \"€100–€200\"}, {\"value\": \"high\", \"label\": \"Over €200\"}], \"multiple\": false}, {\"id\": \"type\", \"label\": \"Type of place\", \"options\": [{\"value\": \"entire\", \"label\": \"Entire home\"}, {\"value\": \"room\", \"label\": \"Private room\"}, {\"value\": \"shared\", \"label\": \"Shared room\"}]}, {\"id\": \"pets\", \"label\": \"Pets allowed\"}, {\"id\": \"parking\", \"label\": \"Free parking\"}, {\"id\": \"pool\", \"label\": \"Pool\"}, {\"id\": \"wifi\", \"label\": \"Wi-Fi\"}], \"defaultValue\": {\"instant\": true, \"type\": [\"entire\"]}}</script>\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\"#stay-filters\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    }
+   ]
+  },
   "Item": {
    "group": "data",
    "classes": [
