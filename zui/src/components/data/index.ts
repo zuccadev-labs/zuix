@@ -24,3 +24,18 @@ export {
   type PriceLineKind,
 } from "./SummaryList";
 export { PriceTag, type PriceTagProps } from "./PriceTag";
+export {
+  ReviewSummary,
+  REVIEW_SUMMARY_LABELS,
+  type ReviewSummaryProps,
+  type ReviewSummaryLabels,
+  type RatingCounts,
+} from "./ReviewSummary";
+export {
+  ReviewCard,
+  REVIEW_CARD_LABELS,
+  type ReviewCardProps,
+  type ReviewCardLabels,
+  type ReviewPhoto,
+  type ReviewReply,
+} from "./ReviewCard";

@@ -1,0 +1,92 @@
+{
+  "name": "ReviewSummary",
+  "group": "data",
+  "description": "Resumen de opiniones: media, estrellas de solo lectura, número de valoraciones y distribución con una barra por estrella, cada una con su texto para lectores.",
+  "import": "import { ReviewSummary } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "distribution",
+      "type": "Record<number, number> | number[]",
+      "required": true,
+      "description": "Recuentos por estrella (`{ 5: 873, 4: 241 }`) o una lista con 1 estrella primero."
+    },
+    {
+      "name": "average",
+      "type": "number",
+      "description": "Media propia (ponderada en el servidor). Por defecto, la de la distribución, con un decimal."
+    },
+    {
+      "name": "count",
+      "type": "number",
+      "description": "Total propio. Por defecto, la suma de la distribución."
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Formato de la media, los recuentos y los porcentajes."
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ReviewSummaryLabels>",
+      "description": "`count` («{count} reviews»), `countOne`, `distribution`, `bar` («{star} stars: {count} reviews, {percent}»), `barOne`, `outOf`, `rating`, `empty`."
+    }
+  ],
+  "tokens": [
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-8",
+    "fg",
+    "fg-muted",
+    "warning",
+    "surface-3",
+    "line",
+    "radius-xs",
+    "font-display",
+    "text-display",
+    "text-heading",
+    "text-small",
+    "weight-display",
+    "weight-semibold",
+    "tracking-display",
+    "leading-tight"
+  ],
+  "classes": [
+    "z-review-summary",
+    "z-review-summary__title",
+    "z-review-summary__body",
+    "z-review-summary__score",
+    "z-review-summary__average",
+    "z-review-summary__count",
+    "z-review-summary__bars",
+    "z-review-summary__row",
+    "z-review-summary__star",
+    "z-review-summary__track",
+    "z-review-summary__fill",
+    "z-review-summary__share"
+  ],
+  "a11y": "La media se lee una vez, en las estrellas (`role=\"img\"`, «Average rating: 4.6 out of 5»); la cifra grande va oculta para no repetirla. La distribución es una lista con nombre; cada barra, su número y su porcentaje van ocultos y la fila se lee entera en texto («5 stars: 873 reviews, 68%»). Los porcentajes se reparten por el mayor resto: siempre suman 100. Las barras usan `CanvasText` con colores forzados. Solo marcado: sin React es el mismo HTML.",
+  "examples": [
+    {
+      "title": "Alojamiento",
+      "code": "<ReviewSummary title=\"Guest reviews\" locale=\"en-US\" distribution={{ 5: 873, 4: 241, 3: 90, 2: 31, 1: 49 }} />"
+    },
+    {
+      "title": "Sin opiniones",
+      "code": "<ReviewSummary distribution={{}} />"
+    }
+  ],
+  "origin": "Resumen de opiniones de las fichas de producto de Amazon y de alojamiento de Booking."
+}

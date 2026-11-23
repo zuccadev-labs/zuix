@@ -17,6 +17,15 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   - `PriceTag`: precio con moneda, anterior tachado delante del actual con prefijo para lectores («Previous price:»)
     y unidad («/ night»).
   - `formatMoney`, `summarizePrice` y `currencyDigits` en la raíz y en `/dom/data`.
+- Opiniones (grupo `data`):
+  - `ReviewSummary`: media, estrellas de solo lectura, número de valoraciones y una barra por estrella. Cada barra
+    se lee entera en texto («5 stars: 873 reviews, 68%») y los porcentajes se reparten por el mayor resto, así que
+    siempre suman 100. Nota y barras lado a lado o apiladas según el ancho de su hueco (consulta de contenedor).
+  - `ReviewCard`: autor con `Persona`, valoración, fecha en `<time>`, título, fotos (botones con nombre propio con
+    `onPhotoSelect`) y respuesta del propietario. El texto largo se pliega en un espacio cerca de `collapseAt`; lo
+    plegado lleva `hidden="until-found"`, así que Buscar en la página lo encuentra y lo abre. En `/dom/data`,
+    «Read more» y `beforematch` sin React, `setReviewExpanded`, `z:change { open }` y `z:photoselect { index }`.
+- Iconos en el árbol compartido de las piezas (`core/vnode`): variante `solid`.
 - `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en
   una cabecera ancha y pasan a un menú «Más» en una de 420 px o menos: con tres iconos el nombre quedaba en «An…».
 - Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de
