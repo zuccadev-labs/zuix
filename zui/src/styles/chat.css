@@ -1716,6 +1716,27 @@
     overscroll-behavior: contain;
     scrollbar-width: thin;
   }
+  /* La fila que queda a medias abajo se difumina: se lee como «siguen más». Arriba no, ahí va la categoría fija. */
+  @supports (animation-timeline: scroll()) {
+    .z-emoji-picker__grid {
+      animation: z-emoji-fade linear both;
+      animation-timeline: scroll(self block);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-emoji-picker__grid {
+      animation: none;
+    }
+  }
+  @keyframes z-emoji-fade {
+    from,
+    96% {
+      mask-image: linear-gradient(to bottom, black calc(100% - var(--z-space-8)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to bottom, black calc(100% - var(--z-space-8)), black);
+    }
+  }
   .z-emoji-picker__heading {
     position: sticky;
     inset-block-start: 0;

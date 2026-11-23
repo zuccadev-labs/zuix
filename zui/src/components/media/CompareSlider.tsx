@@ -4,6 +4,7 @@ import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { compareKey, comparePosition } from "../../core/compare-slider";
 import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
+import { withRef } from "../../react-compat";
 
 export interface CompareSliderLabels {
   /** Nombre accesible del divisor. */
@@ -35,7 +36,7 @@ export interface CompareSliderProps extends Omit<HTMLAttributes<HTMLDivElement>,
 }
 
 /** Comparador antes/después: un divisor que se arrastra o se mueve con el teclado (patrón APG «slider»). */
-export function CompareSlider({
+export const CompareSlider = withRef(function CompareSlider({
   before,
   after,
   value: valueProp,
@@ -139,4 +140,4 @@ export function CompareSlider({
       </span>
     </div>
   );
-}
+});

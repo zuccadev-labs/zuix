@@ -16,7 +16,7 @@
 //   teclado   skip link, cajón móvil (<dialog>), paleta de búsqueda (⌘K), índice (TOC), sidebar y cambio de tema.
 //   medios    prefers-reduced-motion, prefers-reduced-transparency (solo Chromium), forced-colors e impresión.
 //   páginas   portada, índice y página de cada componente (Vista previa/Código, React/HTML, gestor de paquetes,
-//             «Copiar página»), iconos, tokens, búsqueda y 404, si el sitio las tiene.
+//             «Copiar página», vista previa en vivo de cada ejemplo), iconos, tokens, búsqueda y 404, si el sitio las tiene.
 //   archivos  sitemap.xml, robots.txt, llms.txt y llms-full.txt.
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -370,7 +370,9 @@ for (const browserName of wanted) {
               if (axeSource) {
                 await page.evaluate(axeSource);
                 const violations = await page.evaluate(async () => {
+                  // Sin iframes: los de la suite van aislados (sandbox sin scripts), axe no puede entrar y en Firefox su postMessage al marco es un error de consola.
                   const r = await globalThis.axe.run(document, {
+                    iframes: false,
                     runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
                     resultTypes: ["violations"],
                   });
@@ -740,6 +742,51 @@ for (const browserName of wanted) {
         );
         ok(empty.length === 0, `iconos sin dibujar: ${[...new Set(empty)].join(", ")}`);
       }));
+
+    // Todo ejemplo se ve en vivo: o marcado del contrato HTML o demo de React. Primero en el HTML compilado (cada
+    // bloque de ejemplo trae su vista previa), luego en el navegador (tras hidratar, el escenario no queda vacío).
+    const componentPages = pages.filter((p) => /^components\/[^/]+\/[^/]+\/?$/.test(p));
+    await test(`componentes: cada ejemplo de las ${componentPages.length} páginas tiene vista previa en vivo`, async () => {
+      const missing = [];
+      let total = 0;
+      for (const p of componentPages) {
+        const file = fileFor(`${base}${p}`);
+        // El HTML compilado va minificado: los atributos pueden ir sin comillas.
+        const blocks = readFileSync(file, "utf8")
+          .split(/class="?zd-example-block"?(?=[\s>])/)
+          .slice(1);
+        total += blocks.length;
+        blocks.forEach((block, i) => {
+          const title = block.match(/<h3[^>]*>(.*?)<\/h3>/)?.[1]?.replace(/<[^>]+>/g, "") ?? `#${i + 1}`;
+          if (!/class="?zd-preview"?[\s>]/.test(block) || block.includes("zd-example__note")) missing.push(`${p}: ${title}`);
+        });
+      }
+      ok(missing.length === 0, `${missing.length} ejemplos sin vista previa: ${missing.slice(0, 12).join(" · ")}`);
+      note(`${total} ejemplos en ${componentPages.length} páginas`);
+      const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: "dark", locale: "es-ES" });
+      const page = await context.newPage();
+      const problems = [];
+      watch(page, problems);
+      try {
+        for (const p of componentPages) {
+          await page.goto(`${at(p)}?docusaurus-theme=dark`);
+          await hydrated(page);
+          const empty = await page.evaluate(() =>
+            [...document.querySelectorAll(".zd-example-block")]
+              .filter((b) => {
+                const stage = b.querySelector(".zd-preview__stage");
+                return !stage || (stage.childElementCount === 0 && !stage.textContent.trim());
+              })
+              .map((b) => b.querySelector("h3")?.textContent ?? "?"),
+          );
+          if (empty.length) missing.push(`${p}: ${empty.join(", ")}`);
+        }
+      } finally {
+        await context.close();
+      }
+      ok(missing.length === 0, `vista previa vacía tras hidratar: ${missing.slice(0, 12).join(" · ")}`);
+      ok(problems.length === 0, problems.slice(0, 6).join("\n"));
+    });
 
     await test("componente: Vista previa / Código y React / HTML, también con teclado; el HTML de los ejemplos cobra vida", () =>
       withPage({ path: "components/actions/button" }, async (page) => {

@@ -6,7 +6,16 @@
 //               z:selectionchange { value: string[] } en .z-datatable. setDataTableSelection(el, keys).
 //   Paginación  data-page-size="10" en .z-datatable; .z-pagination y .z-datatable__range en la barra;
 //               data-range-label="{from}–{to} of {total}". z:pagechange { value } en .z-datatable. setDataTablePage(el, n).
+//   Filtros    fila tr.z-table__filters en thead con input.z-table__filter por columna: oculta las filas cuyo texto en
+//               esa columna no contiene el filtro (sin acentos ni mayúsculas) y repagina. z:filterchange { value }.
+//   Ancho      span.z-table__resize[role=separator] en las cabeceras: puntero o flechas. z:columnresize { key, width }.
+//   Fijadas    th[data-pinned]: la columna queda fija al inicio al desplazar en horizontal.
+//   Exportar   button.z-datatable__export: descarga las filas filtradas (todas las páginas) en CSV
+//               (data-export-name="table.csv" en .z-datatable).
 // La casilla «seleccionar todo» actúa sobre las filas de la página visible; lo seleccionado en otras se conserva.
+import { bindColumnResize } from "../core/datagrid-runtime";
+import { matchesFilter, toCSV } from "../core/datagrid";
+import { download } from "../core/download";
 import { headerState, pageCountOf, pageSlice, rangeKeys, toggleAll, toggleKey, type RowKey } from "../core/selection";
 import { setPage } from "./collections";
 import type { Listen } from "./shared";
@@ -88,13 +97,54 @@ export function setDataTableSelection(root: HTMLElement, keys: ReadonlyArray<Row
   if (after.join("\u0000") !== before) emit(root, "selectionchange", { value: after });
 }
 
+/* ---------- Filtros y exportar ---------- */
+
+const matching = (root: Element) => bodyRows(root).filter((row) => !row.hasAttribute("data-filtered-out"));
+const filterInputs = (root: Element) => [...root.querySelectorAll<HTMLInputElement>("thead .z-table__filters .z-table__filter")];
+
+/** Filtros actuales por índice de columna (o `data-key` de la cabecera). */
+function readFilters(root: Element): { index: number; key: string; query: string }[] {
+  return filterInputs(root)
+    .map((input) => {
+      const cell = input.closest<HTMLTableCellElement>("th, td");
+      const index = cell?.cellIndex ?? -1;
+      const head = tableOf(root)?.tHead?.rows[0]?.cells[index] as HTMLElement | undefined;
+      return { index, key: head?.dataset.key ?? String(index), query: input.value };
+    })
+    .filter((f) => f.index >= 0);
+}
+
+function applyFilters(root: HTMLElement): void {
+  const active = readFilters(root).filter((f) => f.query.trim());
+  for (const row of bodyRows(root)) {
+    const ok = active.every((f) => matchesFilter(row.cells[f.index]?.textContent ?? "", f.query));
+    row.toggleAttribute("data-filtered-out", !ok);
+    if (!ok) row.hidden = true;
+    else if (!root.dataset.pageSize) row.hidden = false;
+  }
+  if (root.dataset.pageSize) applyPage(root, 1);
+  else paintSelection(root, dataTableSelection(root));
+}
+
+/** CSV de las filas que pasan los filtros (todas las páginas), sin la columna de casillas. */
+export function dataTableCSVFromDom(root: HTMLElement): string {
+  const table = tableOf(root);
+  const head = [...(table?.tHead?.rows[0]?.cells ?? [])];
+  const columns = head.map((cell, i) => ({ cell, i })).filter(({ cell }) => !cell.classList.contains("z-table__select"));
+  const text = (cell: Element | undefined) => (cell?.textContent ?? "").replace(/\s+/g, " ").trim();
+  return toCSV([
+    columns.map(({ cell }) => text(cell.querySelector(".z-table__sort > span") ?? cell)),
+    ...matching(root).map((row) => columns.map(({ i }) => text(row.cells[i]))),
+  ]);
+}
+
 /* ---------- Paginación ---------- */
 
 const pageOf = new WeakMap<HTMLElement, number>();
 
 function applyPage(root: HTMLElement, wanted: number): number {
   const size = Number(root.dataset.pageSize);
-  const rows = bodyRows(root);
+  const rows = matching(root);
   if (!(size > 0)) return 1;
   const count = pageCountOf(rows.length, size);
   const page = Math.min(Math.max(1, Math.round(wanted) || 1), count);
@@ -170,10 +220,36 @@ function onSort(event: Event): void {
   if (root && inDom(root) && root.dataset.pageSize) applyPage(root, pageOf.get(root) ?? 1);
 }
 
+function onFilterInput(event: Event): void {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || !input.matches(".z-table__filter")) return;
+  const root = input.closest<HTMLElement>(ROOT);
+  if (!root || !inDom(root)) return;
+  applyFilters(root);
+  emit(root, "filterchange", {
+    value: Object.fromEntries(
+      readFilters(root)
+        .filter((f) => f.query)
+        .map((f) => [f.key, f.query]),
+    ),
+  });
+}
+
+function onExport(event: Event): void {
+  const button = (event.target as Element).closest?.<HTMLElement>(".z-datatable__export");
+  const root = button?.closest<HTMLElement>(ROOT);
+  if (!button || !root || !inDom(root)) return;
+  void download(dataTableCSVFromDom(root), root.dataset.exportName || "table.csv", "text/csv");
+}
+
+const bound = new WeakSet<HTMLTableElement>();
+
 export function setup(listen: Listen): void {
   const remember = (event: Event) => {
     shift = (event as MouseEvent | KeyboardEvent).shiftKey === true;
   };
+  listen(document, "input", onFilterInput);
+  listen(document, "click", onExport);
   listen(document, "click", remember, true);
   listen(document, "keydown", remember, true);
   listen(document, "z:change", onChange);
@@ -185,6 +261,12 @@ export function hydrate(root: ParentNode): void {
   if (root instanceof HTMLElement && root.matches(ROOT)) list.unshift(root);
   for (const el of list) {
     if (!inDom(el)) continue;
+    const table = tableOf(el);
+    if (table && !bound.has(table) && table.querySelector("thead .z-table__resize, thead th[data-pinned]")) {
+      bound.add(table);
+      bindColumnResize(table, { onResize: (key, width) => emit(el, "columnresize", { key, width }) });
+    }
+    if (filterInputs(el).some((input) => input.value)) applyFilters(el);
     const current = Number(el.querySelector('.z-datatable__bar .z-pagination [aria-current="page"]')?.textContent) || 1;
     if (el.dataset.pageSize) applyPage(el, Number(el.dataset.page) || current);
     else paintSelection(el, dataTableSelection(el));

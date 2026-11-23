@@ -3,6 +3,7 @@ import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
 import { useOffscreenRef } from "../../primitives/offscreen";
 import type { EffectTone } from "./BorderBeam";
+import { withRef } from "../../react-compat";
 
 export interface AttentionRingProps extends HTMLAttributes<HTMLSpanElement> {
   /** Muestra el anillo. */
@@ -22,7 +23,7 @@ export interface AttentionRingProps extends HTMLAttributes<HTMLSpanElement> {
  * Llama la atención sobre un control o un panel (actividad nueva, paso de un recorrido) con un anillo que late
  * unas veces y queda fijo. Es solo visual: el motivo se anuncia aparte (texto, insignia o región viva).
  */
-export function AttentionRing({
+export const AttentionRing = withRef(function AttentionRing({
   active = true,
   variant = "ring",
   tone = "accent",
@@ -53,4 +54,4 @@ export function AttentionRing({
       {children}
     </span>
   );
-}
+});

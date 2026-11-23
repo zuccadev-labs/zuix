@@ -5,6 +5,7 @@ import { cx } from "../../cx";
 import { useMergedRef } from "../../refs";
 import { useIsoLayoutEffect } from "../../primitives/hooks";
 import { ToolbarContext } from "./toolbar-context";
+import { withRef } from "../../react-compat";
 
 interface ToolbarBase extends Omit<HTMLAttributes<HTMLDivElement>, "role"> {
   orientation?: "horizontal" | "vertical";
@@ -25,7 +26,7 @@ export type ToolbarProps = ToolbarBase & ({ label: string; "aria-labelledby"?: s
  * de sus grupos. Las flechas del eje los recorren con vuelta (en RTL la izquierda avanza), Inicio y Fin van a los
  * extremos y la barra recuerda el último control enfocado. Un campo de texto o un select conserva sus flechas.
  */
-export function Toolbar({
+export const Toolbar = withRef(function Toolbar({
   label,
   orientation = "horizontal",
   variant = "glass",
@@ -84,7 +85,7 @@ export function Toolbar({
       </div>
     </ToolbarContext.Provider>
   );
-}
+});
 
 export interface ToolbarGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, "role"> {
   /** Nombre del grupo («Style», «Alignment»). */

@@ -420,6 +420,33 @@ a[class*="skipToContent"]:focus {
   padding: 0 var(--z-space-2) var(--z-space-2);
   overflow: auto;
 }
+/* Índice y navegación más altos que la ventana: el borde con entradas ocultas se difumina en vez de cortar una a media
+   altura. Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+@supports (animation-timeline: scroll()) {
+  .zd-sitenav__scroll,
+  .zd-rail {
+    animation: zd-scroll-fade linear both;
+    animation-timeline: scroll(self block);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .zd-sitenav__scroll,
+  .zd-rail {
+    animation: none;
+  }
+}
+@keyframes zd-scroll-fade {
+  from {
+    mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+  }
+  4%,
+  96% {
+    mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+  }
+  to {
+    mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+  }
+}
 .zd-nav-links,
 .zd-nav-group__items {
   margin: 0;
@@ -1366,8 +1393,9 @@ a[class*="skipToContent"]:focus {
   position: relative;
   display: grid;
   place-items: center;
-  min-block-size: 380px;
-  padding: var(--z-space-10) var(--z-space-6);
+  /* Se ajusta a lo que enseña: una pieza pequeña (IconButton, Toggle) no queda perdida en un escenario enorme. */
+  min-block-size: 160px;
+  padding: var(--z-space-8) var(--z-space-6);
   overflow: hidden;
   border: 1px solid var(--z-line);
   border-radius: var(--z-radius-xl);
@@ -2680,6 +2708,146 @@ mark[data-markjs] {
   display: inline-flex;
   align-items: center;
   gap: var(--z-space-1);
+}
+
+/* Demos de los ejemplos (ComponentPage/examples): columnas con su texto de estado, marcos para lo que ocupa el
+   alto de su contenedor (Shell, SplitPane, Sidebar) y piezas de medios que necesitan un ancho. */
+.zd-demo-stack {
+  display: grid;
+  gap: var(--z-space-3);
+  inline-size: min(100%, 36rem);
+}
+.zd-demo-stack--center {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  inline-size: 100%;
+}
+.zd-demo-stack > * {
+  max-inline-size: 100%;
+}
+.zd-demo-wide {
+  inline-size: 100%;
+}
+.zd-demo-hint {
+  margin: 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+}
+.zd-palette-demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--z-space-3);
+}
+.zd-frame {
+  display: flex;
+  inline-size: 100%;
+  block-size: 360px;
+  overflow: hidden;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-lg);
+  background: var(--z-canvas);
+}
+.zd-frame > * {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+.zd-frame[data-size="sm"] {
+  inline-size: min(100%, 20rem);
+  block-size: 320px;
+}
+.zd-frame[data-size="lg"] {
+  block-size: 440px;
+}
+.zd-pane-code {
+  margin: 0;
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-small);
+  white-space: pre-wrap;
+}
+.zd-demo-media {
+  inline-size: min(100%, 32rem);
+}
+.zd-demo-media img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.zd-demo-media .zd-raw {
+  filter: grayscale(1) contrast(0.85);
+}
+.zd-demo-card-media {
+  inline-size: min(100%, 18rem);
+}
+.zd-thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--z-space-2);
+  inline-size: min(100%, 32rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zd-thumbs__button {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-md);
+  background: none;
+  cursor: zoom-in;
+}
+.zd-thumbs__button img {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+/* Calendario con datos por día: el precio más bajo en verde y los marcadores de ciclo, cada uno con su leyenda. */
+.zd-calendar-prices .z-calendar__day[data-cheap]:not([data-selected]) .z-calendar__day-content {
+  color: var(--z-success-text);
+  font-weight: var(--z-weight-semibold);
+}
+.zd-calendar-cycle .z-calendar__day[data-period]:not([data-selected]),
+.zd-legend [data-mark="period"]::before {
+  background: var(--z-danger-soft);
+}
+.zd-calendar-cycle .z-calendar__day[data-predicted]:not([data-selected]),
+.zd-legend [data-mark="predicted"]::before {
+  box-shadow: inset 0 0 0 1px var(--z-danger);
+}
+.zd-calendar-cycle .z-calendar__day[data-fertile]:not([data-selected]),
+.zd-legend [data-mark="fertile"]::before {
+  background: var(--z-info-soft);
+}
+.zd-calendar-cycle .z-calendar__day[data-ovulation]:not([data-selected]),
+.zd-legend [data-mark="ovulation"]::before {
+  box-shadow: inset 0 0 0 2px var(--z-info);
+}
+.zd-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--z-space-2) var(--z-space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+  list-style: none;
+}
+.zd-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-1-5);
+}
+.zd-legend li::before {
+  content: "";
+  inline-size: var(--z-space-3);
+  block-size: var(--z-space-3);
+  border-radius: var(--z-radius-xs);
 }
 
 /* ── Galerías de cargadores y efectos (/loaders, /effects) ─────────────────────────────────────────────── */

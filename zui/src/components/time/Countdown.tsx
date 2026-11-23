@@ -2,6 +2,7 @@
 import type { Ref } from "react";
 import { countdownWidget, type CountdownLabels, type CountdownProps as CoreProps } from "../../core/countdown-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { CountdownLabels };
 
@@ -17,6 +18,6 @@ export interface CountdownProps extends CoreProps {
  * Cuenta atrás hasta un instante: días, horas, minutos y segundos en cajas (`segments`), en línea o con cifras que
  * giran (`flip`). Es un `role="timer"`; solo se anuncian los hitos y el final, nunca cada segundo.
  */
-export function Countdown({ onComplete, id, className, ref, ...props }: CountdownProps) {
+export const Countdown = withRef(function Countdown({ onComplete, id, className, ref, ...props }: CountdownProps) {
   return useWidget(countdownWidget, props, { id, className, ref, handlers: { complete: onComplete } });
-}
+});

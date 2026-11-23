@@ -1,0 +1,65 @@
+{
+  "name": "NodeControls",
+  "group": "nodes",
+  "description": "Controles de un NodeCanvas: acercar, alejar, encajar, bloquear y deshacer/rehacer, y ordenar si se pide. Es una Toolbar de cristal, vertical por defecto.",
+  "import": "import { NodeControls } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "showZoom",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showFit",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showLock",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showHistory",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "showLayout",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["vertical", "horizontal"],
+      "default": "vertical"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["bottom-left", "top-left", "top-right"],
+      "default": "bottom-left"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<NodeCanvasLabels>"
+    }
+  ],
+  "states": ["rest", "disabled", "pressed"],
+  "tokens": ["glass-bg", "glass-border", "layer-raised", "fg-muted", "text-caption"],
+  "classes": ["z-node-controls"],
+  "a11y": "role=toolbar con nombre: una parada de Tab y flechas entre botones. Cada botón tiene nombre; bloquear es un conmutador con aria-pressed; deshacer, rehacer y los límites de zoom van con aria-disabled (siguen en el recorrido). Cada acción se anuncia en la región central.",
+  "examples": [
+    {
+      "title": "Horizontal arriba",
+      "code": "<NodeCanvas defaultNodes={[]} controls={{ orientation: \"horizontal\", position: \"top-left\", showLayout: true }} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Controles",
+      "code": "<div role=\"toolbar\" aria-label=\"Canvas controls\" aria-orientation=\"vertical\" class=\"z-toolbar z-liquid z-node-controls\" data-variant=\"glass\" data-size=\"sm\"><button type=\"button\" title=\"Zoom in\" aria-label=\"Zoom in\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-in\"><z-icon name=\"magnifying-glass-plus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Zoom out\" aria-label=\"Zoom out\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-out\"><z-icon name=\"magnifying-glass-minus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Fit view\" aria-label=\"Fit view\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"fit\"><z-icon name=\"arrows-pointing-in\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Lock canvas\" aria-label=\"Lock canvas\" aria-pressed=\"false\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"lock\"><span data-lock-icon=\"open\" class=\"z-node-controls__lock\"><span data-when=\"open\"><z-icon name=\"lock-open\" size=\"16\"></z-icon></span><span data-when=\"closed\"><z-icon name=\"lock-closed\" size=\"16\"></z-icon></span></span></button><div role=\"separator\" aria-orientation=\"horizontal\" class=\"z-toolbar__separator\"></div><button type=\"button\" title=\"Undo\" aria-label=\"Undo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"undo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-left\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Redo\" aria-label=\"Redo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"redo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-right\" size=\"16\"></z-icon></button></div>"
+    }
+  ]
+}

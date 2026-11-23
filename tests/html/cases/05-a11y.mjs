@@ -16,7 +16,8 @@ export default async function ({ page, test, ok, settle }) {
       try {
         if (!(await page.evaluate(() => typeof window.axe !== "undefined"))) await page.evaluate(axeSource);
         const violations = await page.evaluate(async () => {
-          const result = await window.axe.run(document, { resultTypes: ["violations"] });
+          // Sin iframes: los de la suite van aislados (sandbox sin scripts), axe no puede entrar y en Firefox su postMessage al marco es un error de consola.
+          const result = await window.axe.run(document, { resultTypes: ["violations"], iframes: false });
           return result.violations
             .filter((v) => v.impact === "serious" || v.impact === "critical")
             .map(

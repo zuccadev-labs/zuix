@@ -14,6 +14,7 @@ import { menubarIndex, menubarKey } from "../core/menubar";
 import { all, emit, inDom } from "./forms-popup";
 import { closePopover, openPopover } from "./core";
 import { byRef, type Listen } from "./shared";
+import { popoverOpen } from "../core/popover";
 
 /* ---------- Collapsible ---------- */
 
@@ -54,7 +55,7 @@ function menubarRoot(menu: HTMLElement): { trigger: HTMLElement; root: HTMLEleme
   return null;
 }
 
-const openBarMenu = (bar: Element) => barTriggers(bar).find((t) => menuOfTrigger(t)?.matches(":popover-open"));
+const openBarMenu = (bar: Element) => barTriggers(bar).find((t) => popoverOpen(menuOfTrigger(t)));
 
 function rove(bar: Element, stop: HTMLElement): void {
   for (const trigger of bar.querySelectorAll<HTMLElement>(":scope > .z-menubar__trigger")) trigger.tabIndex = trigger === stop ? 0 : -1;
@@ -66,7 +67,7 @@ export function openMenubarMenu(trigger: HTMLElement, focus: "first" | "last" = 
   const bar = trigger.closest(".z-menubar");
   if (!menu || !bar) return;
   rove(bar, trigger);
-  if (!menu.matches(":popover-open")) openPopover(menu, trigger, "bottom-start");
+  if (!popoverOpen(menu)) openPopover(menu, trigger, "bottom-start");
   if (focus === "last") {
     const items = [...menu.querySelectorAll<HTMLElement>(".z-menu__item")].filter(
       (item) => item.closest(".z-menu") === menu && item.getAttribute("aria-disabled") !== "true",

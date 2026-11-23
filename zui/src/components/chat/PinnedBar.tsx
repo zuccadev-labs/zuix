@@ -2,6 +2,7 @@
 import type { Ref } from "react";
 import { pinnedBarWidget, type PinnedBarLabels, type PinnedBarProps as CoreProps, type PinnedItem } from "../../core/chat-widgets";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { PinnedBarLabels, PinnedItem };
 
@@ -15,6 +16,6 @@ export interface PinnedBarProps extends CoreProps {
 }
 
 /** Barra de mensajes fijados: el último y, con varios, «2 de 3»; pulsar salta al mensaje y pasa al anterior. */
-export function PinnedBar({ onJump, onUnpin, id, className, ref, ...props }: PinnedBarProps) {
+export const PinnedBar = withRef(function PinnedBar({ onJump, onUnpin, id, className, ref, ...props }: PinnedBarProps) {
   return useWidget(pinnedBarWidget, props, { id, className, ref, handlers: { jump: onJump, unpin: onUnpin } });
-}
+});

@@ -1790,3 +1790,150 @@
     border-block-start: 1px solid var(--z-line);
   }
 }
+
+/* TransferList: dos listas con casillas y una columna de botones para mover. */
+@layer zui.forms {
+  .z-transfer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: var(--z-space-3);
+    align-items: stretch;
+  }
+  .z-transfer__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    min-inline-size: 0;
+    padding: var(--z-space-2);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-surface-solid);
+  }
+  .z-transfer__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--z-space-2);
+    padding-inline: var(--z-space-1-5);
+    padding-block-start: var(--z-space-1);
+  }
+  .z-transfer__title {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-transfer__count {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-transfer__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    block-size: var(--z-transfer-height, 320px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--z-control-radius);
+    outline: none;
+  }
+  .z-transfer__options:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-transfer__option {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-sm);
+    padding-block: var(--z-space-1);
+    padding-inline: var(--z-space-2);
+    border-radius: var(--z-control-radius-sm);
+    color: var(--z-fg);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  @media (hover: hover) {
+    .z-transfer__option:hover {
+      background: var(--z-row-hover);
+    }
+  }
+  .z-transfer__options:focus-visible .z-transfer__option[data-active] {
+    background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-accent);
+  }
+  .z-transfer__option[aria-disabled="true"] {
+    color: var(--z-fg-subtle);
+    cursor: not-allowed;
+  }
+  .z-transfer__check {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    border: 1.5px solid var(--z-control-border);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-control-bg);
+    color: transparent;
+  }
+  .z-transfer__option[aria-selected="true"] .z-transfer__check {
+    border-color: transparent;
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+  }
+  .z-transfer__text {
+    display: grid;
+    min-inline-size: 0;
+  }
+  .z-transfer__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-transfer__description {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-transfer__empty {
+    display: grid;
+    place-items: center;
+    flex: 1;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-transfer__actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--z-space-2);
+  }
+  .z-transfer[data-disabled] {
+    opacity: 0.6;
+  }
+  /* En una pantalla estrecha las listas se apilan y los botones giran. */
+  @media (max-width: 560px) {
+    .z-transfer {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .z-transfer__actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+    .z-transfer__actions svg {
+      rotate: 90deg;
+    }
+  }
+  [dir="rtl"] .z-transfer__actions svg {
+    scale: -1 1;
+  }
+  @media (forced-colors: active) {
+    .z-transfer__option[aria-selected="true"] .z-transfer__check {
+      background: Highlight;
+      color: HighlightText;
+    }
+    .z-transfer__options:focus-visible .z-transfer__option[data-active] {
+      outline: 2px solid Highlight;
+    }
+  }
+}

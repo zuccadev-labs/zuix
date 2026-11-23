@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { groupZones, zoneMatches, zoneOptions, type ZoneOption } from "../../core/timezones";
 import { Combobox, type ComboboxOption, type ComboboxOptionGroup, type ComboboxProps } from "../forms/Combobox";
+import { withRef } from "../../react-compat";
 
 export interface TimeZoneSelectProps
   extends Omit<ComboboxProps, "options" | "filter" | "multiple" | "allowCustomValue" | "onValueChange" | "icon"> {
@@ -23,7 +24,7 @@ export interface TimeZoneSelectProps
  * Selector de zona horaria buscable sobre Combobox: opciones «Madrid · GMT+1 · 10:42» agrupadas por región. Se
  * busca por ciudad, por identificador IANA o por desfase («+5:30»). Desfases y horas se calculan al abrir.
  */
-export function TimeZoneSelect({
+export const TimeZoneSelect = withRef(function TimeZoneSelect({
   zones,
   names,
   showOffset = true,
@@ -63,4 +64,4 @@ export function TimeZoneSelect({
       onValueChange={(value) => onValueChange?.(value, value ? (byValue.get(value) ?? null) : null)}
     />
   );
-}
+});

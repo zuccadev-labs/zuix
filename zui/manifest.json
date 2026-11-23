@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 210,
+ "count": 224,
  "groups": {
   "actions": [
    "Button",
@@ -116,13 +116,19 @@
    "CircularProgress",
    "DataTable",
    "DescriptionList",
+   "FilterBar",
    "Item",
    "Kbd",
    "Meter",
+   "PriceBreakdown",
+   "PriceTag",
    "Progress",
    "Rating",
+   "ReviewCard",
+   "ReviewSummary",
    "StatTile",
    "StatusDot",
+   "SummaryList",
    "Table",
    "Timeline"
   ],
@@ -142,6 +148,8 @@
    "ErrorBoundary",
    "ErrorState",
    "LoadingOverlay",
+   "NotificationBadge",
+   "NotificationCenter",
    "Skeleton",
    "Spinner"
   ],
@@ -186,6 +194,7 @@
    "Textarea",
    "TimeField",
    "TimePicker",
+   "TransferList",
    "WeekPicker",
    "YearPicker"
   ],
@@ -207,6 +216,13 @@
    "Stepper",
    "Tabs",
    "Tree"
+  ],
+  "nodes": [
+   "Node",
+   "NodeCanvas",
+   "NodeControls",
+   "NodeListView",
+   "NodeMinimap"
   ],
   "overlay": [
    "ActionBar",
@@ -10536,6 +10552,11 @@
      "type": "boolean",
      "default": false,
      "description": "Punto de estado delante del texto."
+    },
+    {
+     "name": "avatar",
+     "type": "ReactNode",
+     "description": "Avatar delante del texto (ficha de persona). Decorativo: el nombre va en el texto de la ficha."
     }
    ],
    "states": [
@@ -10593,7 +10614,8 @@
    ],
    "classes": [
     "z-chip",
-    "z-chip__dot"
+    "z-chip__dot",
+    "z-chip__avatar"
    ],
    "a11y": "Con onClick, button con aria-pressed. El botón de quitar es un button aparte con nombre accesible.",
    "examples": [
@@ -10608,6 +10630,10 @@
     {
      "title": "Chips de estado con tono",
      "code": "<div style={{ display: \"flex\", gap: 8, flexWrap: \"wrap\" }}>\n  <Chip tone=\"success\" dot>Running</Chip>\n  <Chip tone=\"warning\" dot>Paused</Chip>\n  <Chip tone=\"danger\" dot count={3}>Errors</Chip>\n  <Chip tone=\"info\" icon=\"cloud\">Remote</Chip>\n</div>"
+    },
+    {
+     "title": "Ficha de persona",
+     "code": "<Chip avatar={<Avatar name=\"Ana Torres\" size=\"xs\" />} onRemove={() => {}} removeLabel=\"Remove Ana Torres\">Ana Torres</Chip>"
     }
    ],
    "origin": "FilterChip del design system base y chip de zutool.",
@@ -10726,7 +10752,7 @@
   {
    "name": "DataTable",
    "group": "data",
-   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.",
+   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación. Además: filtro por columna, ancho ajustable, columnas fijadas al inicio y exportar a CSV.",
    "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -10900,6 +10926,50 @@
      "name": "paginationLabel",
      "type": "string",
      "default": "Pagination"
+    },
+    {
+     "name": "filters",
+     "type": "Record<string, string>",
+     "description": "Filtros por columna (controlado). Una columna con `filterable: true` lleva un campo bajo la cabecera; filtra por `text(row)` o `accessor`, sin acentos ni mayúsculas, y vuelve a la página 1."
+    },
+    {
+     "name": "defaultFilters",
+     "type": "Record<string, string>"
+    },
+    {
+     "name": "onFiltersChange",
+     "type": "(filters) => void"
+    },
+    {
+     "name": "filterLabel",
+     "type": "(column) => string",
+     "default": "Filter {header}"
+    },
+    {
+     "name": "onColumnResize",
+     "type": "(key: string, width: number) => void",
+     "description": "Una columna con `resizable: true` lleva un asa (separador enfocable): arrastrar o flechas (Mayús, más rápido); Escape cancela el arrastre."
+    },
+    {
+     "name": "resizeLabel",
+     "type": "(column) => string",
+     "default": "Resize {header}"
+    },
+    {
+     "name": "exportable",
+     "type": "boolean",
+     "default": false,
+     "description": "Botón que descarga en CSV las filas filtradas y ordenadas de todas las páginas (`dataTableCSV(rows, columns)` hace lo mismo sin descargar). Los textos que empiezan por = + - @ se escapan para que una hoja de cálculo no los ejecute."
+    },
+    {
+     "name": "exportLabel",
+     "type": "string",
+     "default": "Export CSV"
+    },
+    {
+     "name": "exportFileName",
+     "type": "string",
+     "default": "table.csv"
     }
    ],
    "states": [
@@ -10914,39 +10984,42 @@
     "paged"
    ],
    "tokens": [
+    "accent",
+    "accent-ring",
+    "accent-soft",
+    "accent-text",
+    "card-bg",
     "card-border",
     "card-radius",
-    "card-bg",
     "card-shadow",
-    "space-3",
-    "fg",
-    "text-small",
-    "space-2",
-    "fg-muted",
-    "line",
+    "control-bg",
+    "control-border",
+    "control-height-sm",
+    "control-radius-sm",
     "duration-fast",
     "ease-standard",
-    "font-mono",
-    "surface-solid",
-    "surface",
-    "row-hover",
-    "accent-soft",
-    "accent-ring",
-    "surface-3",
-    "space-8",
-    "space-4",
-    "space-1",
-    "surface-2",
-    "accent-text",
-    "control-radius-sm",
+    "fg",
+    "fg-muted",
     "focus-width",
+    "font-mono",
     "layer-raised",
     "leading-ui",
-    "space-2-5",
-    "text-body",
-    "weight-medium",
+    "line",
     "line-strong",
-    "control-height-sm"
+    "row-hover",
+    "space-1",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-4",
+    "space-8",
+    "surface",
+    "surface-2",
+    "surface-3",
+    "surface-solid",
+    "text-body",
+    "text-small",
+    "weight-medium"
    ],
    "classes": [
     "z-table",
@@ -10955,9 +11028,13 @@
     "z-datatable__bar",
     "z-datatable__count",
     "z-datatable__range",
-    "z-table__select"
+    "z-table__select",
+    "z-table__filters",
+    "z-table__filter",
+    "z-table__resize",
+    "z-datatable__export"
    ],
-   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre.",
+   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre. Cada filtro es un campo de búsqueda con nombre («Filter Name»). El asa de ancho es un separador enfocable con aria-valuenow (patrón de separador de ventanas): flechas izquierda y derecha cambian el ancho. Sin React: tr.z-table__filters con input.z-table__filter, span.z-table__resize en la cabecera, th[data-pinned] y button.z-datatable__export (data-export-name); emite z:filterchange y z:columnresize.",
    "examples": [
     {
      "title": "Ordenable",
@@ -10970,6 +11047,10 @@
     {
      "title": "Selección, pie y paginación",
      "code": "const members = [\n  { id: \"a1\", name: \"Ana Ruiz\", seats: 3 },\n  { id: \"b2\", name: \"Leo Park\", seats: 12 },\n  { id: \"c3\", name: \"Mia Chen\", seats: 1 },\n  { id: \"d4\", name: \"Zoe Katz\", seats: 7 },\n  { id: \"e5\", name: \"Iker Sanz\", seats: 5 },\n];\n\n<DataTable\n  caption=\"Members\"\n  captionHidden\n  rows={members}\n  rowKey={(member) => member.id}\n  selectable\n  defaultSelectedKeys={[\"b2\"]}\n  pageSize={3}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (member) => member.name, sortable: true, footer: \"Total\" },\n    {\n      key: \"seats\",\n      header: \"Seats\",\n      accessor: (member) => member.seats,\n      sortable: true,\n      align: \"end\",\n      mono: true,\n      footer: (all) => all.reduce((sum, member) => sum + member.seats, 0),\n    },\n  ]}\n/>"
+    },
+    {
+     "title": "Filtros, ancho, columna fijada y exportar",
+     "code": "<DataTable caption=\"Members\" captionHidden exportable rowKey={(r) => r.id} rows={[{ id: \"a1\", name: \"Ana Torres\", team: \"Design\", seats: 4 }, { id: \"b2\", name: \"Ben Okafor\", team: \"Engineering\", seats: 12 }, { id: \"c3\", name: \"Chen Wei\", team: \"Engineering\", seats: 7 }]} columns={[{ key: \"name\", header: \"Name\", accessor: (r) => r.name, pinned: \"start\", width: \"180px\", filterable: true, resizable: true }, { key: \"team\", header: \"Team\", accessor: (r) => r.team, filterable: true, resizable: true }, { key: \"seats\", header: \"Seats\", accessor: (r) => r.seats, align: \"end\", sortable: true }]} />"
     }
    ],
    "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
@@ -10982,6 +11063,10 @@
     {
      "title": "Selección, pie y paginación en el cliente (data-page-size; emite z:selectionchange y z:pagechange)",
      "code": "<div class=\"z-datatable\" data-selectable=\"true\" data-paged=\"true\" data-page-size=\"3\" data-selected-label=\"{n} selected\" data-range-label=\"{from}–{to} of {total}\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-selectable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select all rows\" data-select-all=\"\" role=\"checkbox\" aria-checked=\"mixed\" data-state=\"indeterminate\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"indeterminate\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></th>\n          <th scope=\"col\" aria-sort=\"none\" data-key=\"name\"><button type=\"button\" class=\"z-table__sort\"><span>Name</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n          <th scope=\"col\" data-align=\"end\" aria-sort=\"none\" data-key=\"seats\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 1\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Ana Ruiz</td>\n          <td data-align=\"end\" data-mono=\"true\">3</td>\n        </tr>\n        <tr data-key=\"b2\" data-selected=\"true\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 2\" role=\"checkbox\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-check__box\"><span class=\"z-check__mark\" data-state=\"checked\"></span></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"></label></td>\n          <td>Leo Park</td>\n          <td data-align=\"end\" data-mono=\"true\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 3\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Mia Chen</td>\n          <td data-align=\"end\" data-mono=\"true\">1</td>\n        </tr>\n        <tr data-key=\"d4\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 4\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Zoe Katz</td>\n          <td data-align=\"end\" data-mono=\"true\">7</td>\n        </tr>\n        <tr data-key=\"e5\">\n          <td class=\"z-table__select\"><label class=\"z-check\"><button type=\"button\" aria-label=\"Select row 5\" role=\"checkbox\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-check__box\"></button><input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"></label></td>\n          <td>Iker Sanz</td>\n          <td data-align=\"end\" data-mono=\"true\">5</td>\n        </tr>\n      </tbody>\n      <tfoot>\n        <tr>\n          <td class=\"z-table__select\"></td>\n          <td>Total</td>\n          <td data-align=\"end\" data-mono=\"true\">28</td>\n        </tr>\n      </tfoot>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <span class=\"z-datatable__count\" role=\"status\">1 selected</span>\n    <span class=\"z-datatable__range\">1–3 of 5</span>\n    <nav aria-label=\"Pagination\" class=\"z-pagination\" data-size=\"sm\" data-page-count=\"2\" data-page-label=\"Page {page}\">\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Previous page\" disabled><z-icon name=\"chevron-left\" size=\"14\"></z-icon></button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 1\" aria-current=\"page\">1</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Page 2\">2</button>\n      <button type=\"button\" class=\"z-pagination__btn\" aria-label=\"Next page\"><z-icon name=\"chevron-right\" size=\"14\"></z-icon></button>\n    </nav>\n  </div>\n</div>"
+    },
+    {
+     "title": "Filtros, ancho, columna fijada y exportar",
+     "code": "<div class=\"z-datatable\" data-export-name=\"members.csv\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-resizable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" data-key=\"name\" data-pinned=\"\" style=\"width: 180px\">Name<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Name\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"180\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"team\">Team<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Team\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"160\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"seats\" data-align=\"end\" aria-sort=\"none\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n        <tr class=\"z-table__filters\">\n          <th scope=\"col\" data-pinned=\"\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Name\" placeholder=\"Name\"></th>\n          <th scope=\"col\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Team\" placeholder=\"Team\"></th>\n          <th scope=\"col\" data-align=\"end\"></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td data-pinned=\"\">Ana Torres</td>\n          <td>Design</td>\n          <td data-align=\"end\">4</td>\n        </tr>\n        <tr data-key=\"b2\">\n          <td data-pinned=\"\">Ben Okafor</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td data-pinned=\"\">Chen Wei</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">7</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-datatable__export\" data-size=\"sm\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Export CSV</button>\n  </div>\n</div>"
     }
    ],
    "file": "zui/src/components/data/DataTable.manifest.json"
@@ -11072,6 +11157,105 @@
    "origin": "Data List de Shark y KeyValue de zutool.",
    "behavior": "none",
    "file": "zui/src/components/data/DescriptionList.manifest.json"
+  },
+  {
+   "name": "FilterBar",
+   "group": "data",
+   "description": "Barra de filtros: chips de interruptor y de menú en una fila que desplaza con el borde difuminado, «Clear» cuando hay alguno activo y el número de activos para lectores.",
+   "import": "import { FilterBar } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "filters",
+     "type": "FilterDef[]",
+     "required": true,
+     "description": "`{ id, label, icon?, type?, options?, multiple? }`. Sin opciones es un interruptor; con `options` abre un menú con casillas (`multiple`, por defecto) o con botones de opción (`multiple: false`)."
+    },
+    {
+     "name": "value",
+     "type": "FilterValue",
+     "description": "Valor controlado: `{ instant: true, type: [\"entire\", \"room\"] }`. Un `value` nuevo de la aplicación manda."
+    },
+    {
+     "name": "defaultValue",
+     "type": "FilterValue"
+    },
+    {
+     "name": "onChange",
+     "type": "({ value, id }) => void",
+     "description": "Cambió un filtro; con `id` vacío, se limpiaron todos."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<FilterBarLabels>",
+     "description": "`label` (nombre del grupo), `clear`, `count` («{count} filters active»), `countOne`, `none`."
+    }
+   ],
+   "states": [
+    "rest",
+    "active",
+    "open"
+   ],
+   "tokens": [
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-4",
+    "space-6",
+    "fg",
+    "row-hover",
+    "item-radius",
+    "control-height-sm",
+    "accent-solid",
+    "accent-ring",
+    "focus-width",
+    "text-small",
+    "duration-fast",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-filter-bar",
+    "z-filter-bar__scroller",
+    "z-filter-bar__chip",
+    "z-filter-bar__chevron",
+    "z-filter-bar__clear",
+    "z-filter-bar__menu",
+    "z-filter-bar__options",
+    "z-filter-bar__option",
+    "z-filter-bar__input",
+    "z-filter-bar__option-label",
+    "z-chip",
+    "z-chip__main",
+    "z-chip__label",
+    "z-chip__count"
+   ],
+   "a11y": "Un grupo con nombre («Filters») y descripción con el número de activos («2 filters active»), que además se anuncia en la región status de la pieza al cambiar. Un chip de interruptor es un botón con `aria-pressed`; uno de menú, un botón con `aria-haspopup=\"dialog\"` y `aria-expanded` que abre un `popover` automático con un `fieldset` de casillas o botones de opción nativos (Tab, Espacio y flechas como en cualquier formulario; Escape cierra y devuelve el foco al chip). Con varias opciones, el chip dice cuántas («Type of place 2»); con una, cuál. «Clear» solo existe con algún filtro activo y, al limpiar, el foco pasa al primer chip. La fila desplaza en horizontal con la barra fina visible y el borde con chips ocultos difuminado (`data-scroll-edges`); un chip enfocado se trae a la vista entero. Sin React: .z-filter-bar con data-size y { \"filters\": [...], \"value\" | \"defaultValue\": {...}, \"labels\" } en <script type=\"application/json\" data-props>; emite z:change { value, id }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Búsqueda de alojamiento",
+     "code": "<FilterBar\n  filters={[{id:  \"instant\", label:  \"Instant book\", icon:  \"bolt\"}, {id:  \"price\", label:  \"Price\", icon:  \"banknotes\", options:  [{value:  \"low\", label:  \"Under €100\"}, {value:  \"mid\", label:  \"€100–€200\"}, {value:  \"high\", label:  \"Over €200\"}], multiple:  false}, {id:  \"type\", label:  \"Type of place\", options:  [{value:  \"entire\", label:  \"Entire home\"}, {value:  \"room\", label:  \"Private room\"}, {value:  \"shared\", label:  \"Shared room\"}]}, {id:  \"pets\", label:  \"Pets allowed\"}, {id:  \"parking\", label:  \"Free parking\"}, {id:  \"pool\", label:  \"Pool\"}, {id:  \"wifi\", label:  \"Wi-Fi\"}]}\n  defaultValue={{ instant: true, type: [\"entire\"] }}\n  onChange={({ value }) => setFilters(value)}\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Búsqueda de alojamiento",
+     "code": "<div class=\"z-filter-bar\" id=\"stay-filters\">\n  <script type=\"application/json\" data-props>{\"filters\": [{\"id\": \"instant\", \"label\": \"Instant book\", \"icon\": \"bolt\"}, {\"id\": \"price\", \"label\": \"Price\", \"icon\": \"banknotes\", \"options\": [{\"value\": \"low\", \"label\": \"Under €100\"}, {\"value\": \"mid\", \"label\": \"€100–€200\"}, {\"value\": \"high\", \"label\": \"Over €200\"}], \"multiple\": false}, {\"id\": \"type\", \"label\": \"Type of place\", \"options\": [{\"value\": \"entire\", \"label\": \"Entire home\"}, {\"value\": \"room\", \"label\": \"Private room\"}, {\"value\": \"shared\", \"label\": \"Shared room\"}]}, {\"id\": \"pets\", \"label\": \"Pets allowed\"}, {\"id\": \"parking\", \"label\": \"Free parking\"}, {\"id\": \"pool\", \"label\": \"Pool\"}, {\"id\": \"wifi\", \"label\": \"Wi-Fi\"}], \"defaultValue\": {\"instant\": true, \"type\": [\"entire\"]}}</script>\n</div>",
+     "script": "document.querySelector(\"#stay-filters\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    }
+   ],
+   "origin": "Barras de filtros de Airbnb, Google Shopping y GitHub; los chips son los de Chip.",
+   "file": "zui/src/components/data/FilterBar.manifest.json"
   },
   {
    "name": "Item",
@@ -11430,6 +11614,206 @@
    "file": "zui/src/components/data/Meter.manifest.json"
   },
   {
+   "name": "PriceBreakdown",
+   "group": "data",
+   "description": "Desglose de precio: filas con importes alineados, descuentos y créditos con signo, impuestos por importe o porcentaje, subtotal opcional y total destacado, con Intl.NumberFormat.",
+   "import": "import { PriceBreakdown } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "lines",
+     "type": "PriceLine[]",
+     "required": true,
+     "description": "`{ label, amount?, rate?, kind?, hint?, id? }`. `kind`: `item` (por defecto), `fee`, `discount` y `credit` (restan siempre, sea cual sea el signo) o `tax` (con `rate` en %: porcentaje de la base acumulada hasta esa fila, sin impuestos)."
+    },
+    {
+     "name": "currency",
+     "type": "string",
+     "required": true,
+     "description": "Código ISO 4217. Los decimales salen de la moneda: 2 en EUR, 0 en JPY."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "currencyDisplay",
+     "type": "enum",
+     "values": [
+      "symbol",
+      "narrowSymbol",
+      "code",
+      "name"
+     ],
+     "default": "symbol"
+    },
+    {
+     "name": "subtotal",
+     "type": "boolean",
+     "default": false,
+     "description": "Fila de subtotal antes de descuentos e impuestos."
+    },
+    {
+     "name": "subtotalLabel",
+     "type": "ReactNode",
+     "default": "Subtotal"
+    },
+    {
+     "name": "totalLabel",
+     "type": "ReactNode",
+     "default": "Total"
+    },
+    {
+     "name": "totalHint",
+     "type": "ReactNode",
+     "description": "Texto bajo el total."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    }
+   ],
+   "tokens": [
+    "space-1",
+    "space-2",
+    "space-4",
+    "line",
+    "fg",
+    "fg-muted",
+    "success-text",
+    "text-heading",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-summary",
+    "z-summary__row",
+    "z-summary__label",
+    "z-summary__hint",
+    "z-summary__value"
+   ],
+   "a11y": "El marcado de SummaryList (`<dl>`). Los descuentos se escriben con signo («−$20.00»), no solo en verde. Las sumas se hacen en unidades menores: el total es la suma exacta de las filas que se leen. Sin React: el mismo marcado, ya formateado en el servidor; `summarizePrice` y `formatMoney` salen también de `@zuccadev-labs/zuix-zui/dom/data` para calcularlo en el cliente.",
+   "examples": [
+    {
+     "title": "Reserva de tres noches",
+     "code": "<PriceBreakdown\n  currency=\"EUR\"\n  locale=\"en-IE\"\n  subtotal\n  lines={[\n    { label: \"3 nights\", hint: \"€120.00 × 3\", amount: 360 },\n    { label: \"Cleaning fee\", amount: 45, kind: \"fee\" },\n    { label: \"Weekly discount\", amount: 36, kind: \"discount\" },\n    { label: \"VAT (13%)\", rate: 13, kind: \"tax\" },\n  ]}\n  totalHint=\"You won't be charged yet\"\n/>"
+    },
+    {
+     "title": "Yenes, sin decimales",
+     "code": "<PriceBreakdown currency=\"JPY\" locale=\"ja-JP\" lines={[{ label: \"Room\", amount: 18400 }, { label: \"Tax\", rate: 10, kind: \"tax\" }]} />"
+    }
+   ],
+   "origin": "Desglose de reserva de Airbnb y resúmenes de pedido de Shopify, sin dominio: no sabe de noches ni de envíos.",
+   "file": "zui/src/components/data/PriceBreakdown.manifest.json"
+  },
+  {
+   "name": "PriceTag",
+   "group": "data",
+   "description": "Precio con moneda (Intl.NumberFormat), precio anterior tachado y unidad («/ night»).",
+   "import": "import { PriceTag } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "amount",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "currency",
+     "type": "string",
+     "required": true,
+     "description": "Código ISO 4217."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "previous",
+     "type": "number",
+     "description": "Precio anterior; se muestra tachado delante del actual si es distinto."
+    },
+    {
+     "name": "unit",
+     "type": "ReactNode",
+     "description": "Unidad tras el precio."
+    },
+    {
+     "name": "previousLabel",
+     "type": "string",
+     "default": "Previous price:",
+     "description": "Prefijo para lectores del precio anterior (el tachado no se anuncia)."
+    },
+    {
+     "name": "currentLabel",
+     "type": "string",
+     "default": "Current price:"
+    },
+    {
+     "name": "currencyDisplay",
+     "type": "enum",
+     "values": [
+      "symbol",
+      "narrowSymbol",
+      "code",
+      "name"
+     ],
+     "default": "symbol"
+    },
+    {
+     "name": "trimZeros",
+     "type": "boolean",
+     "default": false,
+     "description": "Sin decimales cuando el importe es entero."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    }
+   ],
+   "tokens": [
+    "space-1-5",
+    "fg",
+    "fg-muted",
+    "text-heading",
+    "text-display-sm",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-snug",
+    "tracking-tight",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-price",
+    "z-price__current",
+    "z-price__previous",
+    "z-price__unit"
+   ],
+   "a11y": "El tachado (`<s>`) no lo anuncian la mayoría de lectores: cada precio lleva su prefijo en texto oculto («Previous price: €150. Current price: €120 / night»).",
+   "examples": [
+    {
+     "title": "Por noche, con rebaja",
+     "code": "<PriceTag amount={120} previous={150} currency=\"EUR\" locale=\"en-IE\" unit=\"/ night\" trimZeros />"
+    },
+    {
+     "title": "Grande",
+     "code": "<PriceTag size=\"lg\" amount={49} currency=\"USD\" unit=\"per month\" />"
+    }
+   ],
+   "origin": "Precios de ficha de Airbnb y Booking.",
+   "file": "zui/src/components/data/PriceTag.manifest.json"
+  },
+  {
    "name": "Progress",
    "group": "data",
    "description": "Barra de avance de una tarea, determinada o indeterminada; horizontal o vertical, continua o por tramos.",
@@ -11673,6 +12057,237 @@
    ],
    "origin": "Rating del design system base.",
    "file": "zui/src/components/data/Rating.manifest.json"
+  },
+  {
+   "name": "ReviewCard",
+   "group": "data",
+   "description": "Opinión: autor con Persona, valoración de solo lectura, fecha, título, texto largo plegable, fotos y respuesta del propietario.",
+   "import": "import { ReviewCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "author",
+     "type": "{ name: string; avatar?: string; secondary?: ReactNode }",
+     "required": true
+    },
+    {
+     "name": "rating",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 5
+    },
+    {
+     "name": "date",
+     "type": "Date | number | string",
+     "description": "Fecha civil ISO o instante; se escribe en `<time datetime>`."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "headingLevel",
+     "type": "number",
+     "default": 3
+    },
+    {
+     "name": "text",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "collapseAt",
+     "type": "number",
+     "default": 280,
+     "description": "Caracteres visibles antes de plegar. El corte cae en un espacio; si lo oculto serían menos de 40 caracteres, no se pliega. 0 no pliega nunca."
+    },
+    {
+     "name": "defaultExpanded",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "photos",
+     "type": "{ src: string; alt: string }[]"
+    },
+    {
+     "name": "onPhotoSelect",
+     "type": "(index: number) => void",
+     "description": "Con él cada foto es un botón («Open photo 2 of 3»)."
+    },
+    {
+     "name": "reply",
+     "type": "{ text: string; author?: string; date?: Date | number | string }",
+     "description": "Respuesta del propietario."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ReviewCardLabels>",
+     "description": "`readMore`, `readLess`, `replyFrom` («Response from {name}»), `reply`, `photo`, `photos`, `rating`, `outOf`."
+    }
+   ],
+   "states": [
+    "closed",
+    "open"
+   ],
+   "tokens": [
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-20",
+    "fg",
+    "fg-muted",
+    "fg-prose",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "line",
+    "line-strong",
+    "surface-2",
+    "radius-md",
+    "control-radius-sm",
+    "control-height-xs",
+    "text-body",
+    "text-small",
+    "weight-medium",
+    "weight-semibold",
+    "leading-normal",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-review-card",
+    "z-review-card__head",
+    "z-review-card__meta",
+    "z-review-card__date",
+    "z-review-card__title",
+    "z-review-card__text",
+    "z-review-card__ellipsis",
+    "z-review-card__rest",
+    "z-review-card__more",
+    "z-review-card__photos",
+    "z-review-card__photo-item",
+    "z-review-card__photo",
+    "z-review-card__reply",
+    "z-review-card__reply-head",
+    "z-review-card__reply-author",
+    "z-review-card__reply-text"
+   ],
+   "a11y": "Un `<article>` con cabecera. Las estrellas son una imagen con nombre («Rating: 4 out of 5»). El texto plegado sigue en el documento: el resto lleva `hidden=\"until-found\"`, así que Buscar en la página lo encuentra y lo abre (`beforematch`), y «Read more» es un botón con `aria-expanded` y `aria-controls`. Las fotos llevan su `alt`; con `onPhotoSelect` son botones con nombre propio. Sin React (`@zuccadev-labs/zuix-zui/dom/data`): el mismo marcado; el módulo alterna `data-state`, `aria-expanded` y el texto del botón (`data-read-more`, `data-read-less`), abre con `beforematch` y emite `z:change { open }` y, en las fotos que son botón, `z:photoselect { index }`.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con texto largo, fotos y respuesta",
+     "code": "<ReviewCard\n  author={{ name: \"Ana López\", secondary: \"Madrid, Spain\" }}\n  rating={4}\n  date=\"2026-10-12\"\n  locale=\"en-GB\"\n  title=\"Great base for exploring\"\n  text=\"The flat is bright and quiet, and the kitchen has everything you need for longer stays. We walked to the old town every morning and took the tram back in the evening. The only thing I would change is the shower pressure, which was weak on the second floor. Check-in was easy with the lockbox, and the host answered every message within minutes. We would happily come back in spring.\"\n  photos={[{ src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g)'/%3E%3C/svg%3E\", alt: \"Living room with a sofa by the window\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236ac3f8'/%3E%3Cstop offset='1' stop-color='%233b5bdb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g)'/%3E%3C/svg%3E\", alt: \"Kitchen with a small table\" }]}\n  onPhotoSelect={(index) => openLightbox(index)}\n  reply={{ author: \"Marta\", date: \"2026-10-14\", text: \"Thank you, Ana! We have fixed the shower since your stay.\" }}\n/>"
+    },
+    {
+     "title": "Corta",
+     "code": "<ReviewCard author={{ name: \"Yuki Tanaka\" }} rating={5} date=\"2026-09-30\" text=\"Spotless and exactly as described.\" />"
+    }
+   ],
+   "origin": "Opiniones de Airbnb y Google Maps; texto plegable con `hidden=\"until-found\"` como Collapsible.",
+   "file": "zui/src/components/data/ReviewCard.manifest.json"
+  },
+  {
+   "name": "ReviewSummary",
+   "group": "data",
+   "description": "Resumen de opiniones: media, estrellas de solo lectura, número de valoraciones y distribución con una barra por estrella, cada una con su texto para lectores.",
+   "import": "import { ReviewSummary } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "distribution",
+     "type": "Record<number, number> | number[]",
+     "required": true,
+     "description": "Recuentos por estrella (`{ 5: 873, 4: 241 }`) o una lista con 1 estrella primero."
+    },
+    {
+     "name": "average",
+     "type": "number",
+     "description": "Media propia (ponderada en el servidor). Por defecto, la de la distribución, con un decimal."
+    },
+    {
+     "name": "count",
+     "type": "number",
+     "description": "Total propio. Por defecto, la suma de la distribución."
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 5
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Formato de la media, los recuentos y los porcentajes."
+    },
+    {
+     "name": "title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ReviewSummaryLabels>",
+     "description": "`count` («{count} reviews»), `countOne`, `distribution`, `bar` («{star} stars: {count} reviews, {percent}»), `barOne`, `outOf`, `rating`, `empty`."
+    }
+   ],
+   "tokens": [
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-8",
+    "fg",
+    "fg-muted",
+    "warning",
+    "surface-3",
+    "line",
+    "radius-xs",
+    "font-display",
+    "text-display",
+    "text-heading",
+    "text-small",
+    "weight-display",
+    "weight-semibold",
+    "tracking-display",
+    "leading-tight"
+   ],
+   "classes": [
+    "z-review-summary",
+    "z-review-summary__title",
+    "z-review-summary__body",
+    "z-review-summary__score",
+    "z-review-summary__average",
+    "z-review-summary__count",
+    "z-review-summary__bars",
+    "z-review-summary__row",
+    "z-review-summary__star",
+    "z-review-summary__track",
+    "z-review-summary__fill",
+    "z-review-summary__share"
+   ],
+   "a11y": "La media se lee una vez, en las estrellas (`role=\"img\"`, «Average rating: 4.6 out of 5»); la cifra grande va oculta para no repetirla. La distribución es una lista con nombre; cada barra, su número y su porcentaje van ocultos y la fila se lee entera en texto («5 stars: 873 reviews, 68%»). Los porcentajes se reparten por el mayor resto: siempre suman 100. Las barras usan `CanvasText` con colores forzados. Solo marcado: sin React es el mismo HTML.",
+   "examples": [
+    {
+     "title": "Alojamiento",
+     "code": "<ReviewSummary title=\"Guest reviews\" locale=\"en-US\" distribution={{ 5: 873, 4: 241, 3: 90, 2: 31, 1: 49 }} />"
+    },
+    {
+     "title": "Sin opiniones",
+     "code": "<ReviewSummary distribution={{}} />"
+    }
+   ],
+   "origin": "Resumen de opiniones de las fichas de producto de Amazon y de alojamiento de Booking.",
+   "file": "zui/src/components/data/ReviewSummary.manifest.json"
   },
   {
    "name": "StatTile",
@@ -11920,6 +12535,67 @@
    "origin": "Status de Shark; computer-dot de zutool.",
    "behavior": "none",
    "file": "zui/src/components/data/StatusDot.manifest.json"
+  },
+  {
+   "name": "SummaryList",
+   "group": "data",
+   "description": "Lista clave–valor con los valores alineados al final y en cifras tabulares: resumen de pedido, de plan o de reserva, con separadores y fila de total.",
+   "import": "import { SummaryList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "SummaryItem[]",
+     "required": true,
+     "description": "`{ label, value, hint?, tone?, separated?, total?, key? }`. `tone`: `muted`, `success` (un descuento) o `danger`. `separated` traza una línea encima; `total` destaca la fila."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    }
+   ],
+   "tokens": [
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-4",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "danger-text",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "text-heading",
+    "weight-regular",
+    "weight-medium",
+    "weight-semibold",
+    "tracking-snug",
+    "leading-ui"
+   ],
+   "classes": [
+    "z-summary",
+    "z-summary__row",
+    "z-summary__label",
+    "z-summary__hint",
+    "z-summary__value"
+   ],
+   "a11y": "Un `<dl>`: cada fila es un par término–descripción que el lector anuncia como tal. El tono no es la única pista: un descuento lleva su signo menos en el texto.",
+   "examples": [
+    {
+     "title": "Resumen de plan",
+     "code": "<SummaryList items={[\n  { label: \"Plan\", value: \"Team\" },\n  { label: \"Seats\", value: \"12\", hint: \"3 invited\" },\n  { label: \"Billing\", value: \"Yearly\", tone: \"muted\" },\n  { label: \"Due today\", value: \"$1,152.00\", total: true },\n]} />"
+    }
+   ],
+   "origin": "Resúmenes de pedido de los bloques de comercio de Tailwind UI y el desglose de reserva de Airbnb, sin dominio.",
+   "file": "zui/src/components/data/SummaryList.manifest.json"
   },
   {
    "name": "Table",
@@ -13501,6 +14177,297 @@
    ],
    "origin": "LoadingOverlay del design system base.",
    "file": "zui/src/components/feedback/LoadingOverlay.manifest.json"
+  },
+  {
+   "name": "NotificationBadge",
+   "group": "feedback",
+   "description": "Contador de avisos sin leer: cifra con tope («99+») o un punto; suelto o pegado a la esquina de otro elemento.",
+   "import": "import { NotificationBadge } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "count",
+     "type": "number",
+     "required": true,
+     "description": "Sin leer. Con 0 no se pinta (salvo `showZero`)."
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 99
+    },
+    {
+     "name": "dot",
+     "type": "boolean",
+     "default": false,
+     "description": "Solo un punto."
+    },
+    {
+     "name": "showZero",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "danger",
+      "accent",
+      "neutral"
+     ],
+     "default": "danger"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "{count} unread",
+     "description": "Texto para lectores; vacío si el elemento al que acompaña ya dice el número en su nombre."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Elemento al que se pega, en su esquina superior final."
+    }
+   ],
+   "tokens": [
+    "danger-solid",
+    "accent-solid",
+    "fg-on-accent",
+    "fg",
+    "surface-solid",
+    "canvas",
+    "radius-xs",
+    "radius-full",
+    "space-0-5",
+    "space-1",
+    "space-2",
+    "space-4",
+    "text-fine",
+    "weight-semibold",
+    "leading-tight"
+   ],
+   "classes": [
+    "z-notification-badge",
+    "z-notification-badge-anchor"
+   ],
+   "a11y": "La cifra va oculta y el texto se lee entero («12 unread»), porque «12» suelto no dice nada. Pegado a un botón, el contador queda fuera de él: mejor que el nombre del botón incluya el número y el contador lleve `label=\"\"`, como hace NotificationCenter. Solo marcado.",
+   "examples": [
+    {
+     "title": "Suelto",
+     "code": "<NotificationBadge count={12} />"
+    },
+    {
+     "title": "Tope",
+     "code": "<NotificationBadge count={240} />"
+    },
+    {
+     "title": "En un botón de icono",
+     "code": "<NotificationBadge count={3} label=\"\">\n  <IconButton icon=\"inbox\" label=\"Inbox, 3 unread\" />\n</NotificationBadge>"
+    },
+    {
+     "title": "Punto",
+     "code": "<NotificationBadge dot count={1} label=\"New activity\">\n  <IconButton icon=\"chat-bubble-left-right\" label=\"Messages\" />\n</NotificationBadge>"
+    }
+   ],
+   "origin": "Contadores de avisos de iOS y de GitHub, en rectángulo de radio corto.",
+   "file": "zui/src/components/feedback/NotificationBadge.manifest.json"
+  },
+  {
+   "name": "NotificationCenter",
+   "group": "feedback",
+   "description": "Centro de avisos: campana con el número de no leídos y un panel (popover) con los avisos agrupados por día, leídos y no leídos, acciones por aviso, «Mark all as read» y estado vacío. Los avisos nuevos se anuncian una vez por el anunciador central.",
+   "import": "import { NotificationCenter } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "notifications",
+     "type": "NotificationItem[]",
+     "required": true,
+     "description": "`{ id, title, time, body?, read?, icon?, tone?, href?, actions? }`. `time`: ISO, milisegundos o Date. `actions`: `{ id, label }[]`, botones que avisan con `onAction`."
+    },
+    {
+     "name": "onReadChange",
+     "type": "({ id, read }) => void",
+     "description": "Se marcó un aviso como leído o no leído. La vista cambia al momento; cuando `read` de la aplicación coincide, vuelve a mandar ella."
+    },
+    {
+     "name": "onReadAll",
+     "type": "({ ids }) => void"
+    },
+    {
+     "name": "onAction",
+     "type": "({ id, action }) => void"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "({ open }) => void"
+    },
+    {
+     "name": "max",
+     "type": "number",
+     "default": 99,
+     "description": "Tope del contador («99+»)."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "timeZone",
+     "type": "string",
+     "description": "Zona de la agrupación por día. Por defecto, la de quien mira."
+    },
+    {
+     "name": "now",
+     "type": "number",
+     "description": "Instante actual para «Today» y «Yesterday»."
+    },
+    {
+     "name": "viewAllHref",
+     "type": "string",
+     "description": "Enlace «View all» al pie."
+    },
+    {
+     "name": "placement",
+     "type": "Placement",
+     "default": "bottom-end"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "silent",
+     "type": "boolean",
+     "default": false,
+     "description": "Sin anuncios de avisos nuevos (la aplicación ya avisa con un Toast)."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NotificationCenterLabels>",
+     "description": "`title`, `trigger` («Notifications, {count} unread»), `markAllRead`, `markRead`, `markUnread`, `unread`, `empty`, `emptyHint`, `today`, `yesterday`, `arrived`, `arrivedMany`, `allRead`, `viewAll`."
+    }
+   ],
+   "states": [
+    "closed",
+    "open",
+    "unread",
+    "empty"
+   ],
+   "tokens": [
+    "danger-solid",
+    "accent-solid",
+    "fg-on-accent",
+    "canvas",
+    "accent-soft",
+    "accent",
+    "success-soft",
+    "success",
+    "warning-soft",
+    "warning",
+    "danger-soft",
+    "danger",
+    "info-soft",
+    "info",
+    "surface-2",
+    "surface-solid",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line",
+    "control-border",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "control-height-sm",
+    "control-height-lg",
+    "control-radius-sm",
+    "control-radius-lg",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-3",
+    "space-4",
+    "space-6",
+    "space-8",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "weight-medium",
+    "weight-semibold",
+    "tracking-wide",
+    "leading-snug",
+    "leading-tight",
+    "accent-text",
+    "success-text",
+    "warning-text",
+    "danger-text",
+    "info-text"
+   ],
+   "classes": [
+    "z-notification-center",
+    "z-notification-center__trigger",
+    "z-notification-center__panel",
+    "z-notification-center__head",
+    "z-notification-center__title",
+    "z-notification-center__read-all",
+    "z-notification-center__body",
+    "z-notification-center__group",
+    "z-notification-center__day",
+    "z-notification-center__list",
+    "z-notification",
+    "z-notification__icon",
+    "z-notification__main",
+    "z-notification__head",
+    "z-notification__title",
+    "z-notification__body",
+    "z-notification__time",
+    "z-notification__actions",
+    "z-notification__toggle",
+    "z-notification__dot",
+    "z-notification__ring",
+    "z-notification-center__empty",
+    "z-notification-center__empty-icon",
+    "z-notification-center__empty-title",
+    "z-notification-center__empty-hint",
+    "z-notification-center__foot",
+    "z-notification-center__all",
+    "z-notification-badge"
+   ],
+   "a11y": "La campana es un botón con nombre que incluye el recuento («Notifications, 3 unread»), `aria-haspopup=\"dialog\"` y `aria-expanded`; el contador visible va oculto para no repetirlo. El panel es un `popover` automático con `role=\"dialog\"` y título: Escape o un clic fuera lo cierran y el foco vuelve a la campana; al abrirse, el foco pasa al panel. Cada día es una sección con encabezado; un aviso sin leer lleva el prefijo oculto «Unread:» además del fondo y el punto. Marcar como leído es un botón con nombre propio («Mark “Payout sent” as read»); «Mark all as read» usa `aria-disabled` sin nada pendiente (conserva el foco). Los avisos nuevos sin leer se anuncian una vez en la región educada del anunciador central, aunque el panel esté cerrado; «Mark all as read» se confirma igual. Sin React: .z-notification-center con data-locale, data-time-zone, data-now, data-max, data-view-all, data-placement, data-open, data-silent y los avisos en <script type=\"application/json\" data-props>{ \"notifications\": [...] }</script>; emite z:readchange, z:readall, z:action y z:openchange, y `setWidgetProps(el, { notifications })` cambia la lista.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Avisos de un anfitrión",
+     "code": "<NotificationCenter\n  now={Date.parse(\"2026-11-23T12:00:00Z\")}\n  timeZone=\"UTC\"\n  locale=\"en-GB\"\n  viewAllHref=\"https://example.com/notifications\"\n  notifications={[{id: \"n1\", title: \"Marco Rossi booked Sea View Loft\", body: \"3 nights, 12–15 Dec.\", time: \"2026-11-23T10:42:00Z\", icon: \"calendar-days\", tone: \"accent\", actions: [{id: \"view\", label: \"View booking\"}]}, {id: \"n2\", title: \"Payout of €1,240.00 sent\", time: \"2026-11-23T08:05:00Z\", icon: \"banknotes\", tone: \"success\"}, {id: \"n3\", title: \"New review from Ana López\", body: \"“Great base for exploring.”\", time: \"2026-11-22T19:30:00Z\", icon: \"star\", read: true}, {id: \"n4\", title: \"Calendar sync failed\", body: \"Reconnect your external calendar.\", time: \"2026-11-18T07:15:00Z\", icon: \"exclamation-triangle\", tone: \"warning\", read: true, actions: [{id: \"retry\", label: \"Reconnect\"}]}]}\n  onReadChange={({ id, read }) => markRead(id, read)}\n  onReadAll={({ ids }) => markAllRead(ids)}\n  onAction={({ id, action }) => run(id, action)}\n/>"
+    },
+    {
+     "title": "Sin avisos",
+     "code": "<NotificationCenter notifications={[]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Avisos de un anfitrión",
+     "code": "<div class=\"z-notification-center\" id=\"inbox\" data-locale=\"en-GB\" data-time-zone=\"UTC\" data-now=\"2026-11-23T12:00:00Z\" data-view-all=\"https://example.com/notifications\">\n  <script type=\"application/json\" data-props>{\"notifications\": [{\"id\": \"n1\", \"title\": \"Marco Rossi booked Sea View Loft\", \"body\": \"3 nights, 12–15 Dec.\", \"time\": \"2026-11-23T10:42:00Z\", \"icon\": \"calendar-days\", \"tone\": \"accent\", \"actions\": [{\"id\": \"view\", \"label\": \"View booking\"}]}, {\"id\": \"n2\", \"title\": \"Payout of €1,240.00 sent\", \"time\": \"2026-11-23T08:05:00Z\", \"icon\": \"banknotes\", \"tone\": \"success\"}, {\"id\": \"n3\", \"title\": \"New review from Ana López\", \"body\": \"“Great base for exploring.”\", \"time\": \"2026-11-22T19:30:00Z\", \"icon\": \"star\", \"read\": true}, {\"id\": \"n4\", \"title\": \"Calendar sync failed\", \"body\": \"Reconnect your external calendar.\", \"time\": \"2026-11-18T07:15:00Z\", \"icon\": \"exclamation-triangle\", \"tone\": \"warning\", \"read\": true, \"actions\": [{\"id\": \"retry\", \"label\": \"Reconnect\"}]}]}</script>\n</div>",
+     "script": "document.querySelector(\"#inbox\").addEventListener(\"z:readchange\", (event) => console.log(event.detail.id, event.detail.read));"
+    },
+    {
+     "title": "Sin avisos",
+     "code": "<div class=\"z-notification-center\" id=\"inbox-empty\">\n  <script type=\"application/json\" data-props>{\"notifications\":[]}</script>\n</div>"
+    }
+   ],
+   "origin": "Centros de notificaciones de GitHub, Linear y Airbnb; panel con el popover de la plataforma, como ColorPickerTrigger.",
+   "file": "zui/src/components/feedback/NotificationCenter.manifest.json"
   },
   {
    "name": "Skeleton",
@@ -17447,7 +18414,7 @@
   {
    "name": "FileUpload",
    "group": "forms",
-   "description": "Zona para elegir o soltar archivos. No guarda estado.",
+   "description": "Zona para elegir o soltar archivos, con lista o con rejilla de miniaturas ordenable (portada, quitar, progreso).",
    "import": "import { FileUpload } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -17558,6 +18525,42 @@
       "environment"
      ],
      "description": "Abre la cámara en el móvil."
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "list",
+      "grid"
+     ],
+     "default": "list",
+     "description": "`grid`: rejilla de miniaturas grandes para fotos (implica `showFiles`). Las miniaturas se dibujan en un lienzo: el archivo no pasa por ninguna URL."
+    },
+    {
+     "name": "sortable",
+     "type": "boolean",
+     "default": false,
+     "description": "Reordenar arrastrando el asa o con el teclado: Espacio o Intro cogen, las flechas mueven por la rejilla (también arriba y abajo), Espacio suelta y Escape cancela; cada posición se anuncia."
+    },
+    {
+     "name": "onReorder",
+     "type": "(files: File[]) => void",
+     "description": "Nuevo orden tras soltar (o al elegir portada)."
+    },
+    {
+     "name": "cover",
+     "type": "boolean",
+     "default": false,
+     "description": "La primera es la portada (marca «Cover»); las demás llevan un botón para pasar a ser la primera."
+    },
+    {
+     "name": "onCoverChange",
+     "type": "(file: File) => void"
+    },
+    {
+     "name": "reorderLabels",
+     "type": "Partial<ReorderLabels>",
+     "description": "`handle` («Reorder {name}»), `hint`, `grabbed`, `moved`, `dropped`, `cancelled`, `cover`, `makeCover`, `coverChanged`."
     }
    ],
    "states": [
@@ -17567,7 +18570,9 @@
     "active",
     "dragging",
     "invalid",
-    "disabled"
+    "disabled",
+    "grabbed",
+    "sorting"
    ],
    "tokens": [
     "space-2",
@@ -17599,12 +18604,42 @@
     "surface-2",
     "weight-medium",
     "surface-3",
-    "radius-xs"
+    "radius-xs",
+    "radius-lg",
+    "radius-md",
+    "line",
+    "fg-on-accent",
+    "accent-solid",
+    "text-caption",
+    "text-fine",
+    "weight-semibold",
+    "popup-bg",
+    "surface-solid",
+    "glass-border",
+    "shadow-sm",
+    "shadow-lg",
+    "control-height-xs",
+    "layer-raised",
+    "focus-offset",
+    "space-0-5",
+    "space-1-5",
+    "space-2-5"
    ],
    "classes": [
-    "z-upload"
+    "z-upload",
+    "z-upload__grid",
+    "z-upload__tile",
+    "z-upload__preview",
+    "z-upload__cover",
+    "z-upload__tile-name",
+    "z-upload__tile-actions",
+    "z-upload__handle",
+    "z-upload__make-cover",
+    "z-upload__remove",
+    "z-upload__progress",
+    "z-upload__reorder-hint"
    ],
-   "a11y": "label que envuelve un input de archivos real: se activa con teclado y lo anuncian los lectores. `hint` va por aria-describedby. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo label con su input real, así que teclado y lectores funcionan sin el módulo; este añade soltar archivos, el filtrado por `accept` y `data-max-size`, y la lista `ul.z-upload__files` con nombre y tamaño. Los archivos rechazados solo llegan en `z:change` (`detail.rejected`): anunciarlos es cosa de la aplicación.",
+   "a11y": "label que envuelve un input de archivos real: se activa con teclado y lo anuncian los lectores. `hint` va por aria-describedby. Sin React (`@zuccadev-labs/zuix-zui/dom`): el mismo label con su input real, así que teclado y lectores funcionan sin el módulo; este añade soltar archivos, el filtrado por `accept` y `data-max-size`, y la lista `ul.z-upload__files` con nombre y tamaño. Los archivos rechazados solo llegan en `z:change` (`detail.rejected`): anunciarlos es cosa de la aplicación. En rejilla (`data-layout=\"grid\"`), el campo se nombra solo con su texto principal (`aria-labelledby`), no con los nombres de archivo. El asa es un botón «Reorder playa.jpg» con instrucciones en `aria-describedby` y `aria-pressed` mientras está cogida: Espacio o Intro cogen (un lector la activa igual; un clic de ratón no), las flechas mueven por la rejilla en la dirección visual (también en RTL), Inicio y Fin van a los extremos, Espacio suelta, Escape devuelve la foto a su sitio y salir del asa con Tab suelta. Cada paso se anuncia una vez en la región educada del anunciador central («playa.jpg, position 3 of 5»). Con el puntero se arrastra solo desde el asa (`touch-action: none` en ella; el resto de la casilla deja desplazar la página): la casilla sigue al puntero y el destino se marca con un canto discontinuo. Las casillas se mueven, no se rehacen: el foco y la miniatura se conservan. Sin React, en rejilla emite además `z:reorder { files, from, to }` y `z:cover { file }`, y `reorderUpload(zone, from, to)` mueve por código.",
    "behavior": "dom",
    "examples": [
     {
@@ -17618,6 +18653,10 @@
     {
      "title": "Con lista y progreso",
      "code": "<FileUpload\n  multiple\n  showFiles\n  accept=\"image/*,.pdf\"\n  hint=\"Images or PDF.\"\n  onFiles={(files) => upload(files)}\n  progress={(file) => uploads[file.name]}\n/>"
+    },
+    {
+     "title": "Fotos ordenables con portada",
+     "code": "<FileUpload\n  layout=\"grid\"\n  multiple\n  sortable\n  cover\n  accept=\"image/*\"\n  label=\"Add photos\"\n  hint=\"Drag to reorder. The first photo is the cover.\"\n  onFiles={(added) => upload(added)}\n  onReorder={(files) => setOrder(files)}\n  progress={(file) => uploads[file.name]}\n/>"
     }
    ],
    "html": [
@@ -17629,6 +18668,11 @@
     {
      "title": "Un documento",
      "code": "<label class=\"z-upload\" id=\"contract\" data-size=\"md\">\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"contract\" accept=\".pdf\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"document-arrow-up\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\">Upload the signed contract</span>\n</label>"
+    },
+    {
+     "title": "Fotos ordenables con portada",
+     "code": "<label class=\"z-upload\" id=\"photos\" data-size=\"md\" data-layout=\"grid\" data-sortable data-cover>\n  <input class=\"z-upload__input z-sr-only\" type=\"file\" name=\"photos\" accept=\"image/*\" multiple aria-labelledby=\"photos-label\" aria-describedby=\"photos-hint\" />\n  <span class=\"z-upload__icon\"><z-icon name=\"photo\" size=\"20\"></z-icon></span>\n  <span class=\"z-upload__label\" id=\"photos-label\">Add photos</span>\n  <span class=\"z-upload__hint\" id=\"photos-hint\">Drag to reorder. The first photo is the cover.</span>\n  <ul class=\"z-upload__files z-upload__grid\"></ul>\n</label>",
+     "script": "document.querySelector(\"#photos\").addEventListener(\"z:reorder\", (event) => console.log(event.detail.files.map((file) => file.name)));"
     }
    ],
    "origin": "Nuevo.",
@@ -20566,6 +21610,117 @@
    "file": "zui/src/components/forms/TimePicker.manifest.json"
   },
   {
+   "name": "TransferList",
+   "group": "forms",
+   "description": "Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible. El valor es la lista de elegidos, en el orden en que llegaron.",
+   "import": "import { TransferList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "{ value: string; label: string; description?: string; disabled?: boolean }[]",
+     "required": true
+    },
+    {
+     "name": "value",
+     "type": "string[]",
+     "description": "Elegidos (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string[]) => void"
+    },
+    {
+     "name": "searchable",
+     "type": "boolean",
+     "default": false,
+     "description": "Búsqueda en cada lista (sin acentos ni mayúsculas)."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Un input oculto por valor elegido para el formulario."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TransferListLabels>",
+     "description": "Títulos, búsqueda, recuento («{count} of {total} selected»), botones y anuncio, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "checked",
+    "disabled",
+    "empty"
+   ],
+   "tokens": [
+    "line",
+    "surface-solid",
+    "surface-3",
+    "row-hover",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "control-border",
+    "control-bg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-height-sm",
+    "radius-xs",
+    "text-caption",
+    "text-small",
+    "weight-semibold",
+    "focus-width",
+    "focus-offset"
+   ],
+   "classes": [
+    "z-transfer",
+    "z-transfer__list",
+    "z-transfer__head",
+    "z-transfer__title",
+    "z-transfer__count",
+    "z-transfer__search",
+    "z-transfer__options",
+    "z-transfer__option",
+    "z-transfer__check",
+    "z-transfer__text",
+    "z-transfer__label",
+    "z-transfer__description",
+    "z-transfer__empty",
+    "z-transfer__actions"
+   ],
+   "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Miembros de un equipo",
+     "code": "<TransferList searchable name=\"members\" labels={{ source: \"People\", target: \"Team\" }} items={[{ value: \"ana\", label: \"Ana Torres\", description: \"Design\" }, { value: \"ben\", label: \"Ben Okafor\", description: \"Engineering\" }, { value: \"chen\", label: \"Chen Wei\", description: \"Engineering\" }, { value: \"dara\", label: \"Dara Singh\", description: \"Product\", disabled: true }]} defaultValue={[\"chen\"]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Miembros de un equipo",
+     "code": "<div class=\"z-transfer\" data-searchable data-name=\"members\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"value\": \"ana\", \"label\": \"Ana Torres\", \"description\": \"Design\"}, {\"value\": \"ben\", \"label\": \"Ben Okafor\", \"description\": \"Engineering\"}, {\"value\": \"chen\", \"label\": \"Chen Wei\", \"description\": \"Engineering\"}, {\"value\": \"dara\", \"label\": \"Dara Singh\", \"description\": \"Product\", \"disabled\": true}, {\"value\": \"eli\", \"label\": \"Eli Moreau\", \"description\": \"Support\"}, {\"value\": \"femi\", \"label\": \"Femi Adeyemi\", \"description\": \"Sales\"}], \"value\": [\"chen\"], \"labels\": {\"source\": \"People\", \"target\": \"Team\"}}</script>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: Transfer list de MUI, Transfer de Ant Design y PickList de PrimeReact.",
+   "file": "zui/src/components/forms/TransferList.manifest.json"
+  },
+  {
    "name": "WeekPicker",
    "group": "forms",
    "description": "Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible. Valor YYYY-Www, como <input type=\"week\">; con mode=\"range\", un rango de semanas.",
@@ -22578,6 +23733,552 @@
     }
    ],
    "file": "zui/src/components/navigation/Tree.manifest.json"
+  },
+  {
+   "name": "Node",
+   "group": "nodes",
+   "exports": [
+    "NodeGroup",
+    "NodePort"
+   ],
+   "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
+   "import": "import { Node, NodeGroup, NodePort } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "node",
+     "type": "GraphNode",
+     "description": "El nodo del modelo."
+    },
+    {
+     "name": "x",
+     "type": "number",
+     "description": "Posición absoluta para el primer pintado."
+    },
+    {
+     "name": "y",
+     "type": "number"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Cuerpo propio (sin él, data.description)."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "selected",
+    "running",
+    "success",
+    "error",
+    "entered"
+   ],
+   "tokens": [
+    "surface",
+    "surface-solid",
+    "card-bg",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "shadow-sm",
+    "shadow-md",
+    "radius-lg",
+    "panel-radius",
+    "focus-width",
+    "focus-offset",
+    "glass-highlight",
+    "radius-full",
+    "text-caption",
+    "text-body",
+    "weight-semibold",
+    "weight-medium",
+    "control-height-xs",
+    "control-radius-sm",
+    "touch-target"
+   ],
+   "classes": [
+    "z-node",
+    "z-node__header",
+    "z-node__icon",
+    "z-node__title",
+    "z-node__status",
+    "z-node__body",
+    "z-node__resize",
+    "z-node-port",
+    "z-node-port__label",
+    "z-node-group",
+    "z-node-group__header",
+    "z-node-group__title"
+   ],
+   "a11y": "group con aria-roledescription «node» y el título como nombre. El estado se dice en texto («running», «error»), no solo con color. Cada puerto es un <button> con nombre («Input json», «Output true») y objetivo de 24 px. En el lienzo, los controles del cuerpo salen del orden de Tab hasta que se entra en el nodo con Intro.",
+   "examples": [
+    {
+     "title": "Nodo con dos salidas",
+     "code": "<Node node={{ id: \"filter\", position: { x: 0, y: 0 }, data: { label: \"Filter\", icon: \"funnel\", description: \"total > 100\", status: \"success\" }, ports: [{ id: \"in\", kind: \"target\" }, { id: \"true\", kind: \"source\", label: \"true\" }, { id: \"false\", kind: \"source\", label: \"false\" }] }} />"
+    },
+    {
+     "title": "Grupo",
+     "code": "<NodeGroup node={{ id: \"g\", position: { x: 0, y: 0 }, size: { width: 360, height: 200 }, data: { label: \"Retry block\" } }} />"
+    }
+   ],
+   "file": "zui/src/components/nodes/Node.manifest.json"
+  },
+  {
+   "name": "NodeCanvas",
+   "group": "nodes",
+   "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y trazo animado), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez.",
+   "import": "import { NodeCanvas } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "nodes",
+     "type": "GraphNode[]",
+     "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él."
+    },
+    {
+     "name": "edges",
+     "type": "GraphEdge[]",
+     "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?, animated?, label?, markerEnd?, tone? }."
+    },
+    {
+     "name": "defaultNodes",
+     "type": "GraphNode[]"
+    },
+    {
+     "name": "defaultEdges",
+     "type": "GraphEdge[]"
+    },
+    {
+     "name": "onNodesChange",
+     "type": "(nodes, change) => void",
+     "description": "Cambio de nodos. `change.type`: move, resize, remove, paste, duplicate, group, ungroup, layout, undo, redo; `change.done` es false en los pasos intermedios de un arrastre."
+    },
+    {
+     "name": "onEdgesChange",
+     "type": "(edges, change) => void"
+    },
+    {
+     "name": "onChange",
+     "type": "(graph, change) => void",
+     "description": "Cualquier cambio, con el modelo { nodes, edges } completo (serializable)."
+    },
+    {
+     "name": "onConnect",
+     "type": "(edge) => void"
+    },
+    {
+     "name": "isValidConnection",
+     "type": "(edge) => boolean",
+     "description": "Validación propia, además de sentido, tipos (`port.type`), límites (`port.max`) y duplicadas."
+    },
+    {
+     "name": "allowCycles",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "renderNode",
+     "type": "(node, { x, y }) => ReactNode",
+     "description": "Cuerpo de cada nodo. Sin él, `data.description`."
+    },
+    {
+     "name": "viewport",
+     "type": "{ x, y, zoom }"
+    },
+    {
+     "name": "defaultViewport",
+     "type": "{ x, y, zoom }"
+    },
+    {
+     "name": "onViewportChange",
+     "type": "(viewport) => void"
+    },
+    {
+     "name": "minZoom",
+     "type": "number",
+     "default": 0.1
+    },
+    {
+     "name": "maxZoom",
+     "type": "number",
+     "default": 4
+    },
+    {
+     "name": "snap",
+     "type": "number | false",
+     "default": 16,
+     "description": "Cuadrícula del imán en unidades del mundo."
+    },
+    {
+     "name": "fitOnMount",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "selection",
+     "type": "{ nodes?: string[]; edges?: string[] }"
+    },
+    {
+     "name": "onSelectionChange",
+     "type": "(selection) => void"
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "edgeType",
+     "type": "enum",
+     "values": [
+      "bezier",
+      "straight",
+      "step",
+      "smoothstep"
+     ],
+     "default": "bezier"
+    },
+    {
+     "name": "layoutDirection",
+     "type": "enum",
+     "values": [
+      "LR",
+      "TB"
+     ],
+     "default": "LR",
+     "description": "Sentido del botón de ordenar de los controles."
+    },
+    {
+     "name": "background",
+     "type": "enum",
+     "values": [
+      "dots",
+      "grid",
+      "none"
+     ],
+     "default": "dots"
+    },
+    {
+     "name": "minimap",
+     "type": "boolean | NodeMinimapProps",
+     "default": true
+    },
+    {
+     "name": "controls",
+     "type": "boolean | NodeControlsProps",
+     "default": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>",
+     "description": "Textos y anuncios, en inglés por defecto."
+    },
+    {
+     "name": "ref",
+     "type": "Ref<NodeCanvasHandle>",
+     "description": "fitView, zoomIn, zoomOut, zoomTo, undo, redo, layout('LR' | 'TB'), focusNode, removeSelection, removeEdge, graph, viewport, selection."
+    }
+   ],
+   "states": [
+    "rest",
+    "panning",
+    "dragging",
+    "connecting",
+    "selected",
+    "locked",
+    "readonly"
+   ],
+   "tokens": [
+    "surface",
+    "surface-solid",
+    "card-bg",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "shadow-sm",
+    "shadow-md",
+    "radius-lg",
+    "panel-radius",
+    "focus-width",
+    "focus-offset",
+    "glass-highlight",
+    "shadow-lg",
+    "radius-sm",
+    "radius-xl",
+    "text-caption",
+    "text-small",
+    "weight-semibold",
+    "layer-raised",
+    "control-height-md",
+    "control-height-xs",
+    "control-radius-sm"
+   ],
+   "classes": [
+    "z-node-canvas",
+    "z-node-canvas__background",
+    "z-node-canvas__world",
+    "z-node-canvas__groups",
+    "z-node-canvas__edges",
+    "z-node-canvas__edge-layer",
+    "z-node-canvas__labels",
+    "z-node-canvas__nodes",
+    "z-node-canvas__selection",
+    "z-node-canvas__draft",
+    "z-node-canvas__marker",
+    "z-node-canvas__desc",
+    "z-node-canvas__descs",
+    "z-edge",
+    "z-edge__path",
+    "z-edge__hit",
+    "z-edge__end",
+    "z-edge__label"
+   ],
+   "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Flujo con puertos tipados",
+     "code": "<NodeCanvas aria-label=\"Order flow\" defaultNodes={[{ id: \"hook\", position: { x: 0, y: 40 }, data: { label: \"Webhook\", icon: \"bolt\", description: \"POST /orders\", tone: \"accent\" }, ports: [{ id: \"out\", kind: \"source\", type: \"json\" }] }, { id: \"save\", position: { x: 320, y: 40 }, data: { label: \"Save order\", icon: \"circle-stack\", status: \"running\" }, ports: [{ id: \"in\", kind: \"target\", type: \"json\" }] }]} defaultEdges={[{ id: \"e1\", source: \"hook\", sourcePort: \"out\", target: \"save\", targetPort: \"in\", animated: true }]} />"
+    },
+    {
+     "title": "Controlado, con cuerpo propio",
+     "code": "<NodeCanvas nodes={nodes} edges={edges} onNodesChange={setNodes} onEdgesChange={setEdges} edgeType=\"smoothstep\" renderNode={(node) => <Switch label=\"Enabled\" />} controls={{ showLayout: true }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Flujo en el marcado",
+     "code": "<div class=\"z-node-canvas\" data-z-node-canvas data-snap=\"16\" aria-label=\"Order flow\">\n  <div class=\"z-node\" data-id=\"hook\" data-tone=\"accent\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Webhook\" data-x=\"0\" data-y=\"40\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"bolt\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Webhook</span></div><div class=\"z-node__body\">POST /orders</div><button type=\"button\" class=\"z-node-port\" data-port=\"out\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output out\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"filter\" data-status=\"success\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Filter\" data-x=\"300\" data-y=\"0\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"funnel\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Filter</span><span class=\"z-node__status\" data-status=\"success\">succeeded</span></div><div class=\"z-node__body\">total &gt; 100</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><button type=\"button\" class=\"z-node-port\" data-port=\"true\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output true\" style=\"--z-port-t: 0.33\"><span class=\"z-node-port__label\">true</span></button><button type=\"button\" class=\"z-node-port\" data-port=\"false\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output false\" style=\"--z-port-t: 0.67\"><span class=\"z-node-port__label\">false</span></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"save\" data-status=\"running\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Save order\" data-x=\"600\" data-y=\"60\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"circle-stack\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Save order</span><span class=\"z-node__status\" data-status=\"running\">running</span></div><div class=\"z-node__body\">orders table</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <script type=\"application/json\" class=\"z-node-canvas__edges\">[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]</script>\n</div>"
+    },
+    {
+     "title": "Grafo en JSON, solo lectura, con vista en lista",
+     "code": "<div class=\"z-node-canvas\" data-z-node-canvas data-readonly data-minimap=\"false\" aria-label=\"Pipeline\" id=\"pipeline\">\n  <script type=\"application/json\" data-graph>{\"nodes\":[{\"id\":\"hook\",\"position\":{\"x\":0,\"y\":40},\"data\":{\"label\":\"Webhook\",\"icon\":\"bolt\",\"description\":\"POST /orders\",\"tone\":\"accent\"},\"ports\":[{\"id\":\"out\",\"kind\":\"source\",\"type\":\"json\"}]},{\"id\":\"filter\",\"position\":{\"x\":300,\"y\":0},\"data\":{\"label\":\"Filter\",\"icon\":\"funnel\",\"description\":\"total > 100\",\"status\":\"success\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"},{\"id\":\"true\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"true\"},{\"id\":\"false\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"false\"}]},{\"id\":\"save\",\"position\":{\"x\":600,\"y\":60},\"data\":{\"label\":\"Save order\",\"icon\":\"circle-stack\",\"description\":\"orders table\",\"status\":\"running\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"}]}],\"edges\":[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]}</script>\n</div>\n<div class=\"z-node-list\" data-for=\"#pipeline\"></div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias de interacción: React Flow (xyflow) y el editor de n8n. Sin código ni dependencias de terceros.",
+   "file": "zui/src/components/nodes/NodeCanvas.manifest.json"
+  },
+  {
+   "name": "NodeControls",
+   "group": "nodes",
+   "description": "Controles de un NodeCanvas: acercar, alejar, encajar, bloquear y deshacer/rehacer, y ordenar si se pide. Es una Toolbar de cristal, vertical por defecto.",
+   "import": "import { NodeControls } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "showZoom",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showFit",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showLock",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showHistory",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "showLayout",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "vertical",
+      "horizontal"
+     ],
+     "default": "vertical"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "bottom-left",
+      "top-left",
+      "top-right"
+     ],
+     "default": "bottom-left"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "disabled",
+    "pressed"
+   ],
+   "tokens": [
+    "glass-bg",
+    "glass-border",
+    "layer-raised",
+    "fg-muted",
+    "text-caption"
+   ],
+   "classes": [
+    "z-node-controls"
+   ],
+   "a11y": "role=toolbar con nombre: una parada de Tab y flechas entre botones. Cada botón tiene nombre; bloquear es un conmutador con aria-pressed; deshacer, rehacer y los límites de zoom van con aria-disabled (siguen en el recorrido). Cada acción se anuncia en la región central.",
+   "examples": [
+    {
+     "title": "Horizontal arriba",
+     "code": "<NodeCanvas defaultNodes={[]} controls={{ orientation: \"horizontal\", position: \"top-left\", showLayout: true }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Controles",
+     "code": "<div role=\"toolbar\" aria-label=\"Canvas controls\" aria-orientation=\"vertical\" class=\"z-toolbar z-liquid z-node-controls\" data-variant=\"glass\" data-size=\"sm\"><button type=\"button\" title=\"Zoom in\" aria-label=\"Zoom in\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-in\"><z-icon name=\"magnifying-glass-plus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Zoom out\" aria-label=\"Zoom out\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"zoom-out\"><z-icon name=\"magnifying-glass-minus\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Fit view\" aria-label=\"Fit view\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"fit\"><z-icon name=\"arrows-pointing-in\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Lock canvas\" aria-label=\"Lock canvas\" aria-pressed=\"false\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"lock\"><span data-lock-icon=\"open\" class=\"z-node-controls__lock\"><span data-when=\"open\"><z-icon name=\"lock-open\" size=\"16\"></z-icon></span><span data-when=\"closed\"><z-icon name=\"lock-closed\" size=\"16\"></z-icon></span></span></button><div role=\"separator\" aria-orientation=\"horizontal\" class=\"z-toolbar__separator\"></div><button type=\"button\" title=\"Undo\" aria-label=\"Undo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"undo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-left\" size=\"16\"></z-icon></button><button type=\"button\" title=\"Redo\" aria-label=\"Redo\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" data-node-action=\"redo\" aria-disabled=\"true\"><z-icon name=\"arrow-uturn-up-right\" size=\"16\"></z-icon></button></div>"
+    }
+   ],
+   "file": "zui/src/components/nodes/NodeControls.manifest.json"
+  },
+  {
+   "name": "NodeListView",
+   "group": "nodes",
+   "description": "Vista en lista de un grafo: una tabla de nodos (estado, entradas, salidas) y otra de conexiones, con «Show» para volver al nodo en el lienzo y quitar conexión. La alternativa accesible al diagrama, con el mismo modelo.",
+   "import": "import { NodeListView } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "graph",
+     "type": "{ nodes, edges }"
+    },
+    {
+     "name": "onShowNode",
+     "type": "(id) => void"
+    },
+    {
+     "name": "onRemoveEdge",
+     "type": "(id) => void"
+    },
+    {
+     "name": "readOnly",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "fg",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-node-list",
+    "z-node-list__table",
+    "z-node-list__caption"
+   ],
+   "a11y": "Tablas con caption y cabeceras de fila y columna. Los botones nombran el nodo o la conexión («Remove connection Webhook → Filter»). Sin React: .z-node-list[data-for=\"#lienzo\"] se pinta y se mantiene al día con el lienzo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Lista",
+     "code": "<NodeListView graph={{ nodes: [{ id: \"a\", position: { x: 0, y: 0 }, data: { label: \"Fetch\" }, ports: [{ id: \"out\", kind: \"source\" }] }, { id: \"b\", position: { x: 0, y: 0 }, data: { label: \"Store\" }, ports: [{ id: \"in\", kind: \"target\" }] }], edges: [{ id: \"e\", source: \"a\", target: \"b\" }] }} onRemoveEdge={() => {}} />"
+    }
+   ],
+   "file": "zui/src/components/nodes/NodeListView.manifest.json"
+  },
+  {
+   "name": "NodeMinimap",
+   "group": "nodes",
+   "description": "Minimapa de un NodeCanvas: todos los nodos reducidos y el rectángulo visible. Pulsar o arrastrar mueve la vista; con el foco, las flechas desplazan y + y − hacen zoom.",
+   "import": "import { NodeMinimap } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "bottom-right",
+      "bottom-left",
+      "top-right",
+      "top-left"
+     ],
+     "default": "bottom-right"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<NodeCanvasLabels>"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus"
+   ],
+   "tokens": [
+    "glass-bg",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "danger",
+    "overlay",
+    "radius-md",
+    "layer-raised"
+   ],
+   "classes": [
+    "z-node-minimap",
+    "z-node-minimap__svg",
+    "z-node-minimap__node",
+    "z-node-minimap__mask",
+    "z-node-minimap__view"
+   ],
+   "a11y": "nav con nombre («Minimap») y la descripción del lienzo; una parada de Tab. El dibujo es aria-hidden: la información está en los nodos y en NodeListView.",
+   "examples": [
+    {
+     "title": "Arriba a la derecha",
+     "code": "<NodeCanvas defaultNodes={[]} minimap={{ position: \"top-right\" }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Minimapa",
+     "code": "<nav class=\"z-node-minimap z-liquid\" aria-label=\"Minimap\" tabindex=\"0\"></nav>"
+    }
+   ],
+   "file": "zui/src/components/nodes/NodeMinimap.manifest.json"
   },
   {
    "name": "ActionBar",

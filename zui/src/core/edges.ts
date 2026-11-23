@@ -5,19 +5,21 @@
 const EDGE_SLACK = 8;
 
 /** Lados con contenido oculto. `scrollStart` es la distancia desplazada desde el inicio (positiva también en RTL). */
-export function scrollEdges(scrollStart: number, scrollSize: number, viewSize: number): string {
+export function scrollEdges(scrollStart: number, scrollSize: number, viewSize: number, slack = EDGE_SLACK): string {
   // Menos de 8 px por esconder es holgura (el hueco final de la fila, un contorno), no contenido oculto.
   const hidden = scrollSize - viewSize;
-  if (hidden <= EDGE_SLACK) return "";
-  const start = scrollStart > EDGE_SLACK;
-  const end = scrollStart < hidden - EDGE_SLACK;
+  if (hidden <= slack) return "";
+  const start = scrollStart > slack;
+  const end = scrollStart < hidden - slack;
   return [start ? "start" : "", end ? "end" : ""].filter(Boolean).join(" ");
 }
 
 /** Mantiene `data-scroll-edges` al día al desplazar y al cambiar de tamaño. Devuelve la función que deja de vigilar. */
 export function trackScrollEdges(el: HTMLElement): () => void {
+  // Una tabla no tiene hueco final: su última columna llega al borde y 7 px escondidos ya cortan el texto de la celda.
+  const slack = el.classList.contains("z-table-wrap") ? 1 : EDGE_SLACK;
   const update = () => {
-    const value = scrollEdges(Math.abs(el.scrollLeft), el.scrollWidth, el.clientWidth);
+    const value = scrollEdges(Math.abs(el.scrollLeft), el.scrollWidth, el.clientWidth, slack);
     if (value) el.setAttribute("data-scroll-edges", value);
     else el.removeAttribute("data-scroll-edges");
   };

@@ -6,6 +6,7 @@ import { bindStories, type StoriesHandle } from "../../core/stories-runtime";
 import { cx } from "../../cx";
 import { useLatest } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
+import { withRef } from "../../react-compat";
 
 export interface StoryItem {
   id: string;
@@ -66,7 +67,7 @@ const DEFAULT_LABELS: StoriesLabels = {
  * Historias al estilo de Instagram: una barra por historia que se llena con el tiempo, tocar a un lado o al otro para
  * retroceder o avanzar, mantener pulsado para pausar y grupos por persona. Con movimiento reducido empieza en pausa.
  */
-export function Stories({
+export const Stories = withRef(function Stories({
   groups,
   ariaLabel,
   defaultGroup = 0,
@@ -178,4 +179,4 @@ export function Stories({
       </div>
     </section>
   );
-}
+});

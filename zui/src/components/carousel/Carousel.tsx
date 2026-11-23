@@ -41,6 +41,7 @@ import { useLatest } from "../../primitives/hooks";
 import type { CarouselRasterSize, CarouselRasterSource } from "./slideTexture";
 import { useMergedRef } from "../../refs";
 import { useCarouselTrack } from "./useCarouselTrack";
+import { inertProp, withRef } from "../../react-compat";
 
 export interface CarouselSlideState {
   /** Posición del elemento en `items`. */
@@ -162,7 +163,7 @@ const length = (value: number | string) => (typeof value === "number" ? `${value
  * `orientation="vertical"`, desplazamiento nativo con scroll-snap. En los dos: flechas, indicadores y reproducción
  * automática con pausa.
  */
-export function Carousel<T>(props: CarouselProps<T>) {
+export const Carousel = withRef(function Carousel<T>(props: CarouselProps<T>) {
   const effect = props.effect ?? "lens";
   const mode = carouselMode({
     layout: props.layout,
@@ -172,9 +173,9 @@ export function Carousel<T>(props: CarouselProps<T>) {
   });
   if (mode === "engine") return <EngineCarousel {...props} />;
   return <ScrollCarousel {...props} deck={mode === "deck"} />;
-}
+});
 
-function EngineCarousel<T>({
+const EngineCarousel = withRef(function EngineCarousel<T>({
   items,
   renderItem,
   getKey,
@@ -291,7 +292,7 @@ function EngineCarousel<T>({
                     aria-roledescription={clone ? undefined : text.slideRole}
                     aria-label={clone ? undefined : text.slide(index, count)}
                     aria-hidden={clone || undefined}
-                    inert={clone || undefined}
+                    inert={inertProp(clone)}
                   >
                     {renderItem(item, index, state)}
                   </div>
@@ -330,7 +331,7 @@ function EngineCarousel<T>({
       </p>
     </div>
   );
-}
+});
 
 /* ---------- Controles comunes: reproducción, flechas e indicador ---------- */
 
@@ -500,7 +501,7 @@ function CarouselThumbs<T>({
 
 /* ---------- Desplazamiento nativo (snap) y mazo (deck) ---------- */
 
-function ScrollCarousel<T>({
+const ScrollCarousel = withRef(function ScrollCarousel<T>({
   items,
   renderItem,
   getKey,
@@ -698,4 +699,4 @@ function ScrollCarousel<T>({
       <p ref={liveRef} className="z-carousel__live" aria-live={play.playing ? "off" : "polite"} aria-atomic="true" />
     </div>
   );
-}
+});

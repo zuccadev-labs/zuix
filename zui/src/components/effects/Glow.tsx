@@ -3,6 +3,7 @@ import { useRef, type CSSProperties, type HTMLAttributes, type PointerEvent, typ
 import { cx } from "../../cx";
 import { glowPoint } from "../../core/effects";
 import type { EffectTone } from "./BorderBeam";
+import { withRef } from "../../react-compat";
 
 export interface GlowProps extends HTMLAttributes<HTMLDivElement> {
   /** Dónde brilla: el borde, la superficie (por debajo del contenido) o ambos. */
@@ -20,7 +21,7 @@ export interface GlowProps extends HTMLAttributes<HTMLDivElement> {
  * Brillo que sigue al puntero sobre el borde o la superficie de lo que envuelve. Solo con un puntero que pasa por
  * encima (`hover: hover`); el contenido se ve y se usa igual sin él. Las capas son `aria-hidden` y sin puntero.
  */
-export function Glow({
+export const Glow = withRef(function Glow({
   variant = "border",
   tone = "accent",
   size,
@@ -57,4 +58,4 @@ export function Glow({
       {variant !== "surface" ? <span className="z-glow__ring" aria-hidden="true" /> : null}
     </div>
   );
-}
+});

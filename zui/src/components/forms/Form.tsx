@@ -2,6 +2,7 @@
 import type { FormEvent, FormHTMLAttributes, ReactNode, Ref } from "react";
 import { validateForm } from "../../core/validity";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
   /** Se llama cuando el envío se detiene por errores (tras llevar el foco al primero). */
@@ -15,7 +16,7 @@ export interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
  * enviar comprueba los controles, cada `Field` con `validate` muestra su mensaje y el foco va al primer error. Si
  * todo es válido, llama a `onSubmit` como un `<form>` normal.
  */
-export function Form({ className, onSubmit, onInvalidSubmit, children, ...rest }: FormProps) {
+export const Form = withRef(function Form({ className, onSubmit, onInvalidSubmit, children, ...rest }: FormProps) {
   return (
     <form
       noValidate
@@ -33,4 +34,4 @@ export function Form({ className, onSubmit, onInvalidSubmit, children, ...rest }
       {children}
     </form>
   );
-}
+});

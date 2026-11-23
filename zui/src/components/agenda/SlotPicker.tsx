@@ -3,6 +3,7 @@ import type { Ref } from "react";
 import type { Availability, HourCycle } from "../../core/slots";
 import { slotPickerWidget, type SlotPickerLabels, type SlotPickerProps as CoreProps } from "../../core/slots-widget";
 import { useWidget } from "./vtree";
+import { withRef } from "../../react-compat";
 
 export type { Availability, HourCycle, SlotPickerLabels };
 
@@ -23,7 +24,7 @@ export interface SlotPickerProps extends CoreProps {
  * Franjas de cita: Calendar con los días que tienen hueco (los demás, deshabilitados pero enfocables y anunciados) y
  * un `listbox` con las horas del día en la zona del visitante, en 12 o 24 h; «Next» es un botón aparte.
  */
-export function SlotPicker({
+export const SlotPicker = withRef(function SlotPicker({
   onSelect,
   onConfirm,
   onDateChange,
@@ -46,4 +47,4 @@ export function SlotPicker({
       "hour-cycle-change": onHourCycleChange,
     },
   });
-}
+});

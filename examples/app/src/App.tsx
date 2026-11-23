@@ -48,6 +48,7 @@ import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
 import { CarouselsScreen } from "./screens/Carousels";
 import { TerminalScreen } from "./screens/TerminalScreen";
+import { Flows } from "./screens/Flows";
 import { TimeScreen } from "./screens/Time";
 import { ChatScreen } from "./screens/Chat";
 import { AssistantScreen } from "./screens/Assistant";
@@ -55,6 +56,7 @@ import { DashboardScreen } from "./screens/Dashboard";
 import { KanbanScreen } from "./screens/Kanban";
 import { LoginScreen } from "./screens/Login";
 import { ProfileScreen, SettingsScreen } from "./screens/People";
+import { ListingScreen } from "./screens/Listing";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -246,6 +248,10 @@ export function App() {
       <KanbanScreen />
     ) : active === "login" ? (
       <LoginScreen />
+    ) : active === "flows" ? (
+      <Flows />
+    ) : active === "listing" ? (
+      <ListingScreen />
     ) : (
       <Editor />
     );

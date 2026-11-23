@@ -5,6 +5,7 @@ import { cx } from "../../cx";
 import type { CarouselEffect, CarouselLayout } from "../../core/carousel-effects";
 import { Carousel, type CarouselLabels } from "./Carousel";
 import { Lightbox, type LightboxLabels } from "./Lightbox";
+import { withRef } from "../../react-compat";
 
 export interface GalleryItem {
   src: string;
@@ -30,7 +31,7 @@ export interface GalleryProps extends Omit<HTMLAttributes<HTMLDivElement>, "chil
 }
 
 /** Galería: carrusel con miniaturas sincronizadas y visor a pantalla completa (Lightbox). */
-export function Gallery({
+export const Gallery = withRef(function Gallery({
   items,
   ariaLabel,
   thumbnails = "bottom",
@@ -84,4 +85,4 @@ export function Gallery({
       ) : null}
     </div>
   );
-}
+});

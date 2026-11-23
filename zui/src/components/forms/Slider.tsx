@@ -5,6 +5,7 @@ import { closestThumb, keyValue, moveThumb, percent, snap, valueAt } from "../..
 import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
 import { useFieldControl, useFieldLabel } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface SliderProps extends Omit<ComponentProps<"span">, "children" | "defaultValue" | "onChange"> {
   /** Un valor por tirador, de menor a mayor. */
@@ -37,7 +38,7 @@ export interface SliderProps extends Omit<ComponentProps<"span">, "children" | "
 }
 
 /** Deslizador de uno o varios valores (patrón APG «slider»; rango con dos tiradores). */
-export function Slider({
+export const Slider = withRef(function Slider({
   value: valueProp,
   defaultValue = [0],
   onValueChange,
@@ -222,4 +223,4 @@ export function Slider({
         : null}
     </span>
   );
-}
+});

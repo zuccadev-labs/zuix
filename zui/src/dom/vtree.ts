@@ -1,7 +1,7 @@
 // Árbol de core/vnode → nodos del documento, con parcheo por posición y clave (el texto siempre como nodo de texto,
 // nunca como marcado). Lo usan la agenda y las demás piezas de la agenda del modo DOM.
 
-import { iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
+import { getIcon, iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 import type { VEl, VNode, VSlot } from "../core/vnode";
 import { fragment } from "./shared";
 
@@ -26,7 +26,7 @@ export type SlotRenderers = Partial<Record<"event", (p: Record<string, unknown>)
 
 const slotKey = (v: VSlot) =>
   v.slot === "icon"
-    ? `icon:${v.p.name}:${v.p.size}`
+    ? `icon:${v.p.name}:${v.p.size}:${v.p.variant ?? ""}`
     : v.slot === "minical"
       ? "minical"
       : v.slot === "event"
@@ -40,7 +40,17 @@ function create(v: VNode, doc: Document, slots: SlotRenderers, svg = false): Nod
   if (!v) return doc.createTextNode("");
   if ("slot" in v) {
     if (v.slot === "icon") {
-      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size) }));
+      // Un icono que esta copia del registro no tiene (el de un aviso o una acción de la aplicación) se deja al
+      // elemento <z-icon>, que lo dibuja con el set que haya cargado la página.
+      if (!getIcon(String(v.p.name))) {
+        const el = doc.createElement("z-icon");
+        el.setAttribute("name", String(v.p.name));
+        el.setAttribute("size", String(Number(v.p.size)));
+        if (v.p.variant === "solid") el.setAttribute("variant", "solid");
+        keys.set(el, slotKey(v));
+        return el;
+      }
+      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size), variant: v.p.variant === "solid" ? "solid" : "outline" }));
       const glyph = frag.firstElementChild ?? doc.createElement("span");
       keys.set(glyph, slotKey(v));
       return glyph;
@@ -107,7 +117,7 @@ export function patchElement(
     }
   }
   // Estado que la persona cambia sin pasar por los atributos: siempre desde el árbol.
-  if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = Boolean(v.a?.checked);
+  if (el instanceof HTMLInputElement && (el.type === "checkbox" || el.type === "radio")) el.checked = Boolean(v.a?.checked);
   if (el instanceof HTMLOptionElement) el.selected = Boolean(v.a?.selected);
   // Una región viva la escribe el anuncio (con retraso): su texto no se pisa al volver a pintar.
   if (!fresh && !v.c?.length && (el.hasAttribute("data-live") || el.classList.contains("z-agenda__live"))) return;

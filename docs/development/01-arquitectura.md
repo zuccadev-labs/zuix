@@ -153,6 +153,8 @@ publicada, y `pnpm test:pack` que cada subruta del paraguas es el mismo módulo 
 | `zui/manifest.json`, `zout/manifest.json` | `tools/manifest.mjs`, desde los `*.manifest.json` | `pnpm manifest` |
 | `zui/html.json`, `zout/html.json` | `tools/html.mjs` | `pnpm html` |
 | `*/dist/*.css`, `*/dist/*.js` (bundles de navegador) | `tools/dist.mjs` | `pnpm dist` |
+| `*/dist/*.compat.css`, `tokens/dist/**/*.compat.css` (modo compat) | `tools/compat.mjs`, desde `tools/dist.mjs` | `pnpm dist` |
+| Matriz de soporte de `docs/users/10-compatibilidad.md` | `tools/compat-matrix.mjs` | `pnpm matrix` |
 | `examples/html/index.html` | `examples/html/build.mjs` | `pnpm dist` |
 | `zudocs/static/llms.txt` | `zudocs/scripts/llms.mjs` | `pnpm llms` (también lo regenera el build de zudocs) |
 | `*/dist/esm/` (publicación) | `tools/build.mjs` | `pnpm build` |

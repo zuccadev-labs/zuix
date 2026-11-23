@@ -7,6 +7,7 @@ import {
   type MessageListProps as CoreProps,
 } from "../../core/message-list-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { MessageListLabels };
 
@@ -54,7 +55,7 @@ export interface MessageListProps extends CoreProps {
  * arriba sin saltos, ir al final con los nuevos contados y ventana virtual con muchos mensajes. Una sola parada de Tab
  * (↑/↓, Inicio/Fin, RePág/AvPág, Intro a las acciones, R responder). Los mensajes de otros se anuncian cortos y agrupados.
  */
-export function MessageList({
+export const MessageList = withRef(function MessageList({
   onLoadOlder,
   onReachEnd,
   onReply,
@@ -110,4 +111,4 @@ export function MessageList({
       escape: onEscape,
     },
   });
-}
+});

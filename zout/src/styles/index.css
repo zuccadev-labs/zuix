@@ -610,6 +610,33 @@
   .z-sidebar__body[hidden] {
     display: none;
   }
+  /* Una lista más alta que la barra desplaza: el borde con filas ocultas se difumina, así la fila que queda a medias se
+     lee como «sigue» y no como un elemento roto. Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+  @supports (animation-timeline: scroll()) {
+    .z-sidebar__sections,
+    .z-sidebar__body {
+      animation: z-sidebar-fade linear both;
+      animation-timeline: scroll(self block);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-sidebar__sections,
+    .z-sidebar__body {
+      animation: none;
+    }
+  }
+  @keyframes z-sidebar-fade {
+    from {
+      mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+    }
+  }
   .z-sidebar__foot {
     display: flex;
     flex: 0 0 auto;
@@ -1658,21 +1685,44 @@
     justify-content: space-between;
   }
 
+  /* Margen lateral en una variable local: el ancho máximo suma el contenido y los dos márgenes, así que el texto mide
+     lo mismo con cualquier margen. Sin `data-gutter` (marcado anterior a 0.4), el del área principal. */
   .z-container {
+    --z-container-pad: var(--z-stage-pad-x);
     box-sizing: border-box;
     width: 100%;
     margin-inline: auto;
-    padding-inline: var(--z-stage-pad-x);
+    padding-inline: var(--z-container-pad);
+  }
+  /* Fluido: crece con el ancho del contenedor de consulta más cercano (`cqi`), entre 16 y 40 px. */
+  .z-container[data-gutter="fluid"] {
+    --z-container-pad: var(--z-container-gutter);
+  }
+  .z-container[data-gutter="none"] {
+    --z-container-pad: 0px;
   }
   .z-container[data-width="content"] {
-    max-width: calc(var(--z-content-max) + var(--z-stage-pad-x) * 2);
+    max-width: calc(var(--z-content-max) + var(--z-container-pad) * 2);
   }
   .z-container[data-width="prose"] {
-    max-width: calc(var(--z-prose-max) + var(--z-stage-pad-x) * 2);
+    max-width: calc(var(--z-prose-max) + var(--z-container-pad) * 2);
+  }
+  .z-container[data-width="sm"] {
+    max-width: calc(var(--z-container-sm) + var(--z-container-pad) * 2);
+  }
+  .z-container[data-width="md"] {
+    max-width: calc(var(--z-container-md) + var(--z-container-pad) * 2);
+  }
+  .z-container[data-width="lg"] {
+    max-width: calc(var(--z-container-lg) + var(--z-container-pad) * 2);
+  }
+  .z-container[data-width="xl"] {
+    max-width: calc(var(--z-container-xl) + var(--z-container-pad) * 2);
   }
   @container stage (max-width: 760px) {
-    .z-container {
-      padding-inline: var(--z-space-4);
+    .z-container:not([data-gutter]),
+    .z-container[data-gutter="stage"] {
+      --z-container-pad: var(--z-space-4);
     }
   }
 

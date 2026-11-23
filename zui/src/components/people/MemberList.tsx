@@ -3,6 +3,7 @@ import type { Ref } from "react";
 import type { Member, Role } from "../../core/members";
 import { memberListWidget, type MemberListLabels, type MemberListProps as CoreProps } from "../../core/member-list-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { Member, MemberListLabels, Role };
 
@@ -22,11 +23,11 @@ export interface MemberListProps extends CoreProps {
  * Lista de miembros: búsqueda que anuncia los resultados, grupos por rol o por presencia, rol en un selector nativo,
  * quitar con nombre propio e invitar.
  */
-export function MemberList({ onRoleChange, onRemove, onInvite, id, className, ref, ...props }: MemberListProps) {
+export const MemberList = withRef(function MemberList({ onRoleChange, onRemove, onInvite, id, className, ref, ...props }: MemberListProps) {
   return useWidget(memberListWidget, props, {
     id,
     className,
     ref,
     handlers: { "role-change": onRoleChange, remove: onRemove, invite: onInvite as ((d: never) => void) | undefined },
   });
-}
+});

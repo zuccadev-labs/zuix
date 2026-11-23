@@ -7,6 +7,20 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- React 18: los layouts funcionan con React 18.2 o posterior además de con React 19 (peers
+  `^18.2.0 || ^19.0.0`). `Shell` escribe `inert=""` y `Navbar` y `NavigationMenu`, `popovertarget` en minúsculas con
+  React 18, que no conoce esas props. `Shell` y `FloatingPanel` usan `useEffect` en el servidor, donde React 18 avisa
+  de cada `useLayoutEffect`.
+- Sin Popover API, `Shell` ya no lanza al pulsar Escape con un cajón abierto, y `Navbar` y `NavigationMenu` abren
+  sus paneles con la misma comprobación que el modo sin framework (y con el polyfill, por él).
+- Modo compat: `styles.compat.css` (`dist/zout.compat.css`), la hoja de layouts para Chromium 109, Firefox 115 y
+  Safari 15.4. Va con `tokens.compat.css` y `zui.compat.css`
+  ([Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)).
+- `Container`: tamaños `sm`, `md`, `lg` y `xl` (tokens `container-*`) y `gutter` (`fluid`, `stage` o `none`). El
+  margen fluido crece con el ancho del contenedor de consulta entre 16 y 40 px; el ancho máximo suma los dos
+  márgenes, así que la columna de texto mide lo mismo con cualquiera. El marcado sin `data-gutter` se ve como antes.
+  Tiene manifiesto propio (antes iba dentro del de `Page`). `Stack`, `Inline` (con `wrap` y `gap`) y `Grid` cubren
+  el resto de la maquetación, así que no añado un `Flex` aparte.
 - `Shell`: `railBreakpoint` (600 px por defecto; `data-rail-breakpoint` en `/dom`). Por debajo, con la sidebar en
   cajón, el rail deja su columna y se muestra dentro del cajón, a su lado. En un teléfono una columna de iconos fija
   se comía una quinta parte del ancho.
@@ -32,10 +46,15 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `/dom` sin Popover API: Escape en un cajón y el submenú plegado de la Sidebar lanzaban (`:popover-open` no es un
+  selector válido ahí). Ahora comprueba antes.
 - `Navbar`: plegada y aun así sin sitio (una columna estrecha), las acciones bajan a otra línea en vez de salirse de la
   cabecera.
 - `SettingsLayout`: en estrecho, la tira de secciones difumina el borde con secciones ocultas (`data-scroll-edges`,
   también en `/dom`) en lugar de cortar la última en seco.
+- `Sidebar`: una lista más alta que la barra difumina el borde con filas ocultas (arriba, abajo o los dos) en vez de
+  cortar la última fila a media altura, donde parecía un elemento roto. Solo con algo por ese lado; en un navegador sin
+  animaciones ligadas al desplazamiento, la lista se corta como antes.
 
 ## [0.3.0] - 2026-11-21
 

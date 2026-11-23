@@ -7,6 +7,7 @@ import { useControllable } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface PasswordInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
   size?: ControlSize;
@@ -45,7 +46,7 @@ const LABELS = ["Too short", "Weak", "Fair", "Good", "Strong"] as const;
  * Campo de contraseña con botón de mostrar u ocultar (aria-pressed) y medidor opcional. Admite pegar y el
  * autocompletado del gestor de contraseñas; el medidor se lee con el campo (aria-describedby), sin anunciar cada tecla.
  */
-export function PasswordInput({
+export const PasswordInput = withRef(function PasswordInput({
   size = "md",
   invalid,
   autoComplete = "current-password",
@@ -177,4 +178,4 @@ export function PasswordInput({
       ) : null}
     </div>
   );
-}
+});

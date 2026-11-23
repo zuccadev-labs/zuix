@@ -1716,6 +1716,14 @@ malaga" data-ignore-accents="">Un
 </dl>
   </div>
 </section>
+<section class="z-card demo" data-component="FilterBar" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">FilterBar</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-filter-bar" id="stay-filters">
+  <script type="application/json" data-props>{"filters": [{"id": "instant", "label": "Instant book", "icon": "bolt"}, {"id": "price", "label": "Price", "icon": "banknotes", "options": [{"value": "low", "label": "Under €100"}, {"value": "mid", "label": "€100–€200"}, {"value": "high", "label": "Over €200"}], "multiple": false}, {"id": "type", "label": "Type of place", "options": [{"value": "entire", "label": "Entire home"}, {"value": "room", "label": "Private room"}, {"value": "shared", "label": "Shared room"}]}, {"id": "pets", "label": "Pets allowed"}, {"id": "parking", "label": "Free parking"}, {"id": "pool", "label": "Pool"}, {"id": "wifi", "label": "Wi-Fi"}], "defaultValue": {"instant": true, "type": ["entire"]}}</script>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Item" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Item</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1779,6 +1787,57 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="PriceBreakdown" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">PriceBreakdown</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<dl class="z-summary" data-size="md">
+  <div class="z-summary__row">
+    <dt class="z-summary__label">3 nights
+      <span class="z-summary__hint">€120.00 × 3</span>
+    </dt>
+    <dd class="z-summary__value">€360.00</dd>
+  </div>
+  <div class="z-summary__row">
+    <dt class="z-summary__label">Cleaning fee</dt>
+    <dd class="z-summary__value">€45.00</dd>
+  </div>
+  <div class="z-summary__row" data-separated="true">
+    <dt class="z-summary__label">Subtotal</dt>
+    <dd class="z-summary__value">€405.00</dd>
+  </div>
+  <div class="z-summary__row" data-tone="success">
+    <dt class="z-summary__label">Weekly discount</dt>
+    <dd class="z-summary__value">-€36.00</dd>
+  </div>
+  <div class="z-summary__row" data-tone="muted">
+    <dt class="z-summary__label">VAT (13%)</dt>
+    <dd class="z-summary__value">€47.97</dd>
+  </div>
+  <div class="z-summary__row" data-total="true">
+    <dt class="z-summary__label">Total
+      <span class="z-summary__hint">You won&#x27;t be charged yet</span>
+    </dt>
+    <dd class="z-summary__value">€416.97</dd>
+  </div>
+</dl>
+  </div>
+</section>
+<section class="z-card demo" data-component="PriceTag" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">PriceTag</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<span class="z-price" data-size="md" data-discounted="">
+  <s class="z-price__previous">
+    <span class="z-sr-only">Previous price: </span>
+    €150
+  </s>
+  <span class="z-price__current">
+    <span class="z-sr-only">Current price: </span>
+    €120
+  </span>
+  <span class="z-price__unit">/ night</span>
+</span>
+  </div>
+</section>
 <section class="z-card demo" data-component="Progress" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Progress</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1812,6 +1871,156 @@ malaga" data-ignore-accents="">Un
   <span class="z-rating__value">4.3</span>
   <span class="z-rating__caption">(128 reviews)</span>
 </span>
+  </div>
+</section>
+<section class="z-card demo" data-component="ReviewCard" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ReviewCard</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<article class="z-review-card" data-state="closed" data-read-more="Read more" data-read-less="Show less">
+  <header class="z-review-card__head">
+    <div class="z-persona" data-size="sm" data-orientation="horizontal">
+      <span class="z-persona__media">
+        <span class="z-avatar" data-size="sm" data-shape="circle" role="img" aria-label="" aria-hidden="true">
+          <span class="z-avatar__initials" aria-hidden="true">AL</span>
+        </span>
+      </span>
+      <span class="z-persona__text">
+        <span class="z-persona__name">Ana López</span>
+        <span class="z-persona__secondary">Madrid, Spain</span>
+      </span>
+    </div>
+    <div class="z-review-card__meta">
+      <span class="z-rating" data-size="sm">
+        <span class="z-rating__stars" role="img" aria-label="Rating: 4 out of 5">
+          <span class="z-rating__layer">
+            <z-icon name="star" size="14"></z-icon>
+            <z-icon name="star" size="14"></z-icon>
+            <z-icon name="star" size="14"></z-icon>
+            <z-icon name="star" size="14"></z-icon>
+            <z-icon name="star" size="14"></z-icon>
+          </span>
+          <span class="z-rating__layer z-rating__layer--filled" style="width:80%">
+            <z-icon name="star" variant="solid" size="14"></z-icon>
+            <z-icon name="star" variant="solid" size="14"></z-icon>
+            <z-icon name="star" variant="solid" size="14"></z-icon>
+            <z-icon name="star" variant="solid" size="14"></z-icon>
+            <z-icon name="star" variant="solid" size="14"></z-icon>
+          </span>
+        </span>
+      </span>
+      <time class="z-review-card__date" dateTime="2026-10-12">12 Oct 2026</time>
+    </div>
+  </header>
+  <h3 class="z-review-card__title">Great base for exploring</h3>
+  <p class="z-review-card__text" id="z-review-_R_0_-text">The flat is bright and quiet, and the kitchen has everything you need for longer stays. We walked to the old town every morning and took the tram back in the evening. The only thing I would change is the shower pressure, which was weak on the second floor. Check-in was easy with
+    <span class="z-review-card__ellipsis" aria-hidden="true">…</span>
+    <span class="z-review-card__rest" id="z-review-_R_0_-rest" hidden=""> the lockbox, and the host answered every message within minutes. We would happily come back in spring.</span>
+  </p>
+  <button type="button" class="z-review-card__more" aria-expanded="false" aria-controls="z-review-_R_0_-rest">Read more</button>
+  <ul class="z-review-card__photos" aria-label="Photos">
+    <li class="z-review-card__photo-item">
+      <button type="button" class="z-review-card__photo" data-index="0" aria-label="Open photo 1 of 2">
+        <img src="data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 400 400&#x27;%3E%3Cdefs%3E%3ClinearGradient id=&#x27;g&#x27; x2=&#x27;1&#x27; y2=&#x27;1&#x27;%3E%3Cstop offset=&#x27;0&#x27; stop-color=&#x27;%23f8b26a&#x27;/%3E%3Cstop offset=&#x27;1&#x27; stop-color=&#x27;%23e0598b&#x27;/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=&#x27;400&#x27; height=&#x27;400&#x27; fill=&#x27;url(%23g)&#x27;/%3E%3C/svg%3E" alt="Living room with a sofa by the window" loading="lazy" decoding="async"/>
+      </button>
+    </li>
+    <li class="z-review-card__photo-item">
+      <button type="button" class="z-review-card__photo" data-index="1" aria-label="Open photo 2 of 2">
+        <img src="data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 400 400&#x27;%3E%3Cdefs%3E%3ClinearGradient id=&#x27;g&#x27; x2=&#x27;1&#x27; y2=&#x27;1&#x27;%3E%3Cstop offset=&#x27;0&#x27; stop-color=&#x27;%236ac3f8&#x27;/%3E%3Cstop offset=&#x27;1&#x27; stop-color=&#x27;%233b5bdb&#x27;/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=&#x27;400&#x27; height=&#x27;400&#x27; fill=&#x27;url(%23g)&#x27;/%3E%3C/svg%3E" alt="Kitchen with a small table" loading="lazy" decoding="async"/>
+      </button>
+    </li>
+  </ul>
+  <div class="z-review-card__reply">
+    <p class="z-review-card__reply-head">
+      <span class="z-review-card__reply-author">Response from Marta</span>
+      <time class="z-review-card__date" dateTime="2026-10-14">14 Oct 2026</time>
+    </p>
+    <p class="z-review-card__reply-text">Thank you, Ana! We have fixed the shower since your stay.</p>
+  </div>
+</article>
+  </div>
+</section>
+<section class="z-card demo" data-component="ReviewSummary" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">ReviewSummary</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-review-summary">
+  <h3 class="z-review-summary__title">Guest reviews</h3>
+  <div class="z-review-summary__body">
+    <div class="z-review-summary__score">
+      <span class="z-review-summary__average" aria-hidden="true">4.4</span>
+      <span class="z-rating" data-size="md">
+        <span class="z-rating__stars" role="img" aria-label="Average rating: 4.4 out of 5">
+          <span class="z-rating__layer">
+            <z-icon name="star" size="18"></z-icon>
+            <z-icon name="star" size="18"></z-icon>
+            <z-icon name="star" size="18"></z-icon>
+            <z-icon name="star" size="18"></z-icon>
+            <z-icon name="star" size="18"></z-icon>
+          </span>
+          <span class="z-rating__layer z-rating__layer--filled" style="width:88.00000000000001%">
+            <z-icon name="star" variant="solid" size="18"></z-icon>
+            <z-icon name="star" variant="solid" size="18"></z-icon>
+            <z-icon name="star" variant="solid" size="18"></z-icon>
+            <z-icon name="star" variant="solid" size="18"></z-icon>
+            <z-icon name="star" variant="solid" size="18"></z-icon>
+          </span>
+        </span>
+      </span>
+      <span class="z-review-summary__count">1,284 reviews</span>
+    </div>
+    <ul class="z-review-summary__bars" aria-label="Rating distribution">
+      <li class="z-review-summary__row" style="--z-review-share:67.99%">
+        <span class="z-review-summary__star" aria-hidden="true">5
+          <z-icon name="star" variant="solid" size="12"></z-icon>
+        </span>
+        <span class="z-review-summary__track" aria-hidden="true">
+          <span class="z-review-summary__fill"></span>
+        </span>
+        <span class="z-review-summary__share" aria-hidden="true">68%</span>
+        <span class="z-sr-only">5 stars: 873 reviews, 68%</span>
+      </li>
+      <li class="z-review-summary__row" style="--z-review-share:18.77%">
+        <span class="z-review-summary__star" aria-hidden="true">4
+          <z-icon name="star" variant="solid" size="12"></z-icon>
+        </span>
+        <span class="z-review-summary__track" aria-hidden="true">
+          <span class="z-review-summary__fill"></span>
+        </span>
+        <span class="z-review-summary__share" aria-hidden="true">19%</span>
+        <span class="z-sr-only">4 stars: 241 reviews, 19%</span>
+      </li>
+      <li class="z-review-summary__row" style="--z-review-share:7.01%">
+        <span class="z-review-summary__star" aria-hidden="true">3
+          <z-icon name="star" variant="solid" size="12"></z-icon>
+        </span>
+        <span class="z-review-summary__track" aria-hidden="true">
+          <span class="z-review-summary__fill"></span>
+        </span>
+        <span class="z-review-summary__share" aria-hidden="true">7%</span>
+        <span class="z-sr-only">3 stars: 90 reviews, 7%</span>
+      </li>
+      <li class="z-review-summary__row" style="--z-review-share:2.41%">
+        <span class="z-review-summary__star" aria-hidden="true">2
+          <z-icon name="star" variant="solid" size="12"></z-icon>
+        </span>
+        <span class="z-review-summary__track" aria-hidden="true">
+          <span class="z-review-summary__fill"></span>
+        </span>
+        <span class="z-review-summary__share" aria-hidden="true">2%</span>
+        <span class="z-sr-only">2 stars: 31 reviews, 2%</span>
+      </li>
+      <li class="z-review-summary__row" style="--z-review-share:3.82%">
+        <span class="z-review-summary__star" aria-hidden="true">1
+          <z-icon name="star" variant="solid" size="12"></z-icon>
+        </span>
+        <span class="z-review-summary__track" aria-hidden="true">
+          <span class="z-review-summary__fill"></span>
+        </span>
+        <span class="z-review-summary__share" aria-hidden="true">4%</span>
+        <span class="z-sr-only">1 star: 49 reviews, 4%</span>
+      </li>
+    </ul>
+  </div>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="StatTile" data-behavior="none">
@@ -1857,6 +2066,31 @@ malaga" data-ignore-accents="">Un
     <span class="z-status__label">Offline</span>
   </span>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="SummaryList" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">SummaryList</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<dl class="z-summary" data-size="md">
+  <div class="z-summary__row">
+    <dt class="z-summary__label">Plan</dt>
+    <dd class="z-summary__value">Team</dd>
+  </div>
+  <div class="z-summary__row">
+    <dt class="z-summary__label">Seats
+      <span class="z-summary__hint">3 invited</span>
+    </dt>
+    <dd class="z-summary__value">12</dd>
+  </div>
+  <div class="z-summary__row" data-tone="muted">
+    <dt class="z-summary__label">Billing</dt>
+    <dd class="z-summary__value">Yearly</dd>
+  </div>
+  <div class="z-summary__row" data-total="true">
+    <dt class="z-summary__label">Due today</dt>
+    <dd class="z-summary__value">$1,152.00</dd>
+  </div>
+</dl>
   </div>
 </section>
 <section class="z-card demo" data-component="Table" data-behavior="none">
@@ -2144,6 +2378,23 @@ malaga" data-ignore-accents="">Un
     <span class="z-spinner" data-size="lg" data-tone="accent" aria-hidden="true"></span>
     <span class="z-loading-overlay__message">Loading report</span>
   </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NotificationBadge" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">NotificationBadge</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<span class="z-notification-badge" data-tone="danger">
+  <span aria-hidden="true">12</span>
+  <span class="z-sr-only">12 unread</span>
+</span>
+  </div>
+</section>
+<section class="z-card demo" data-component="NotificationCenter" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NotificationCenter</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-notification-center" id="inbox" data-locale="en-GB" data-time-zone="UTC" data-now="2026-11-23T12:00:00Z" data-view-all="https://example.com/notifications">
+  <script type="application/json" data-props>{"notifications": [{"id": "n1", "title": "Marco Rossi booked Sea View Loft", "body": "3 nights, 12–15 Dec.", "time": "2026-11-23T10:42:00Z", "icon": "calendar-days", "tone": "accent", "actions": [{"id": "view", "label": "View booking"}]}, {"id": "n2", "title": "Payout of €1,240.00 sent", "time": "2026-11-23T08:05:00Z", "icon": "banknotes", "tone": "success"}, {"id": "n3", "title": "New review from Ana López", "body": "“Great base for exploring.”", "time": "2026-11-22T19:30:00Z", "icon": "star", "read": true}, {"id": "n4", "title": "Calendar sync failed", "body": "Reconnect your external calendar.", "time": "2026-11-18T07:15:00Z", "icon": "exclamation-triangle", "tone": "warning", "read": true, "actions": [{"id": "retry", "label": "Reconnect"}]}]}</script>
 </div>
   </div>
 </section>
@@ -3122,6 +3373,14 @@ malaga" data-ignore-accents="">Un
 <div id="start-time-panel" popover="manual" class="z-liquid z-popover z-timepicker__panel" role="dialog" aria-label="Choose time"></div>
   </div>
 </section>
+<section class="z-card demo" data-component="TransferList" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TransferList</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-transfer" data-searchable data-name="members">
+  <script type="application/json" data-props>{"items": [{"value": "ana", "label": "Ana Torres", "description": "Design"}, {"value": "ben", "label": "Ben Okafor", "description": "Engineering"}, {"value": "chen", "label": "Chen Wei", "description": "Engineering"}, {"value": "dara", "label": "Dara Singh", "description": "Product", "disabled": true}, {"value": "eli", "label": "Eli Moreau", "description": "Support"}, {"value": "femi", "label": "Femi Adeyemi", "description": "Sales"}], "value": ["chen"], "labels": {"source": "People", "target": "Team"}}</script>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="WeekPicker" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">WeekPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3626,6 +3885,123 @@ malaga" data-ignore-accents="">Un
     </div>
   </li>
 </ul>
+  </div>
+</section>
+</div>
+<h2 class="page__group">nodes</h2>
+<div class="page__grid">
+<section class="z-card demo" data-component="Node" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Node</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-node" data-id="filter" data-status="success" role="group" aria-roledescription="node" aria-label="Filter" style="--z-node-x:0px;--z-node-y:0px">
+  <div class="z-node__header">
+    <span class="z-node__icon" aria-hidden="true">
+      <z-icon name="funnel" size="16"></z-icon>
+    </span>
+    <span class="z-node__title">Filter</span>
+    <span class="z-node__status" data-status="success">succeeded</span>
+  </div>
+  <div class="z-node__body">total &gt; 100</div>
+  <button type="button" class="z-node-port" data-port="in" data-kind="target" data-side="left" aria-label="Input in" style="--z-port-t:0.5"></button>
+  <button type="button" class="z-node-port" data-port="true" data-kind="source" data-side="right" aria-label="Output true" style="--z-port-t:0.33">
+    <span class="z-node-port__label">true</span>
+  </button>
+  <button type="button" class="z-node-port" data-port="false" data-kind="source" data-side="right" aria-label="Output false" style="--z-port-t:0.67">
+    <span class="z-node-port__label">false</span>
+  </button>
+  <span class="z-node__resize" aria-hidden="true"></span>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeCanvas" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NodeCanvas</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-node-canvas" data-z-node-canvas data-snap="16" aria-label="Order flow">
+  <div class="z-node" data-id="hook" data-tone="accent" role="group" aria-roledescription="node" aria-label="Webhook" data-x="0" data-y="40"><div class="z-node__header"><span class="z-node__icon" aria-hidden="true"><z-icon name="bolt" size="16"></z-icon></span><span class="z-node__title">Webhook</span></div><div class="z-node__body">POST /orders</div><button type="button" class="z-node-port" data-port="out" data-kind="source" data-side="right" data-type="json" aria-label="Output out" style="--z-port-t: 0.5"></button><span class="z-node__resize" aria-hidden="true"></span></div>
+  <div class="z-node" data-id="filter" data-status="success" role="group" aria-roledescription="node" aria-label="Filter" data-x="300" data-y="0"><div class="z-node__header"><span class="z-node__icon" aria-hidden="true"><z-icon name="funnel" size="16"></z-icon></span><span class="z-node__title">Filter</span><span class="z-node__status" data-status="success">succeeded</span></div><div class="z-node__body">total &gt; 100</div><button type="button" class="z-node-port" data-port="in" data-kind="target" data-side="left" data-type="json" aria-label="Input in" style="--z-port-t: 0.5"></button><button type="button" class="z-node-port" data-port="true" data-kind="source" data-side="right" data-type="json" aria-label="Output true" style="--z-port-t: 0.33"><span class="z-node-port__label">true</span></button><button type="button" class="z-node-port" data-port="false" data-kind="source" data-side="right" data-type="json" aria-label="Output false" style="--z-port-t: 0.67"><span class="z-node-port__label">false</span></button><span class="z-node__resize" aria-hidden="true"></span></div>
+  <div class="z-node" data-id="save" data-status="running" role="group" aria-roledescription="node" aria-label="Save order" data-x="600" data-y="60"><div class="z-node__header"><span class="z-node__icon" aria-hidden="true"><z-icon name="circle-stack" size="16"></z-icon></span><span class="z-node__title">Save order</span><span class="z-node__status" data-status="running">running</span></div><div class="z-node__body">orders table</div><button type="button" class="z-node-port" data-port="in" data-kind="target" data-side="left" data-type="json" aria-label="Input in" style="--z-port-t: 0.5"></button><span class="z-node__resize" aria-hidden="true"></span></div>
+  <script type="application/json" class="z-node-canvas__edges">[{"id":"e1","source":"hook","sourcePort":"out","target":"filter","targetPort":"in","animated":true},{"id":"e2","source":"filter","sourcePort":"true","target":"save","targetPort":"in","label":"yes"}]</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeControls" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NodeControls</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div role="toolbar" aria-label="Canvas controls" aria-orientation="vertical" class="z-toolbar z-liquid z-node-controls" data-variant="glass" data-size="sm"><button type="button" title="Zoom in" aria-label="Zoom in" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="zoom-in"><z-icon name="magnifying-glass-plus" size="16"></z-icon></button><button type="button" title="Zoom out" aria-label="Zoom out" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="zoom-out"><z-icon name="magnifying-glass-minus" size="16"></z-icon></button><button type="button" title="Fit view" aria-label="Fit view" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="fit"><z-icon name="arrows-pointing-in" size="16"></z-icon></button><button type="button" title="Lock canvas" aria-label="Lock canvas" aria-pressed="false" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="lock"><span data-lock-icon="open" class="z-node-controls__lock"><span data-when="open"><z-icon name="lock-open" size="16"></z-icon></span><span data-when="closed"><z-icon name="lock-closed" size="16"></z-icon></span></span></button><div role="separator" aria-orientation="horizontal" class="z-toolbar__separator"></div><button type="button" title="Undo" aria-label="Undo" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="undo" aria-disabled="true"><z-icon name="arrow-uturn-up-left" size="16"></z-icon></button><button type="button" title="Redo" aria-label="Redo" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" data-node-action="redo" aria-disabled="true"><z-icon name="arrow-uturn-up-right" size="16"></z-icon></button></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeListView" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">NodeListView</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-node-list">
+  <div class="z-node-list__scroll" role="region" aria-label="Nodes" tabindex="0">
+    <table class="z-table z-node-list__table">
+      <caption class="z-node-list__caption">Nodes</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Status</th>
+          <th scope="col">Inputs</th>
+          <th scope="col">Outputs</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-id="a">
+          <th scope="row">Fetch</th>
+          <td>—</td>
+          <td>0</td>
+          <td>1</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="a">Show
+              <span class="z-sr-only"> Fetch</span>
+            </button>
+          </td>
+        </tr>
+        <tr data-id="b">
+          <th scope="row">Store</th>
+          <td>—</td>
+          <td>1</td>
+          <td>0</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="show" data-node="b">Show
+              <span class="z-sr-only"> Store</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="z-node-list__scroll" role="region" aria-label="Connections" tabindex="0">
+    <table class="z-table z-node-list__table">
+      <caption class="z-node-list__caption">Connections</caption>
+      <thead>
+        <tr>
+          <th scope="col">From</th>
+          <th scope="col">To</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-edge="e">
+          <td>Fetch</td>
+          <td>Store</td>
+          <td>
+            <button type="button" class="z-btn z-btn--ghost" data-size="sm" data-node-action="remove-edge" data-edge="e">Remove connection
+              <span class="z-sr-only"> Fetch → Store</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="NodeMinimap" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">NodeMinimap</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<nav class="z-node-minimap z-liquid" aria-label="Minimap" tabindex="0"></nav>
   </div>
 </section>
 </div>
@@ -4537,6 +4913,21 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Container" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Container</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-container" data-width="md" data-gutter="fluid">
+  <header class="z-pagehead">
+    <div class="z-pagehead__row">
+      <div class="z-pagehead__text">
+        <h1 class="z-pagehead__title">Your trip</h1>
+        <p class="z-pagehead__description">Three nights in Lisbon.</p>
+      </div>
+    </div>
+  </header>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="DashboardLayout" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">DashboardLayout</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -5123,7 +5514,7 @@ malaga" data-ignore-accents="">Un
   <header class="demo__head"><h3 class="demo__name">Page</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
 <div class="z-page" role="region" aria-label="Page content" tabindex="0">
-  <div class="z-container" data-width="content">
+  <div class="z-container" data-width="content" data-gutter="stage">
     <header class="z-pagehead">
       <div class="z-pagehead__row">
         <div class="z-pagehead__text">
@@ -5862,6 +6253,12 @@ document.querySelector("#open-viewer").addEventListener("click", () => openLight
 const stories = document.querySelector("#stories");
 stories.addEventListener("z:change", (event) => console.debug("story", event.detail.group, event.detail.item));
 // storiesWidget(stories).nextGroup();
+
+// FilterBar
+document.querySelector("#stay-filters").addEventListener("z:change", (event) => console.log(event.detail.value));
+
+// NotificationCenter
+document.querySelector("#inbox").addEventListener("z:readchange", (event) => console.log(event.detail.id, event.detail.read));
 
 // Calendar
 document.querySelector("#due-calendar").addEventListener("z:change", (event) => console.log(event.detail.value));

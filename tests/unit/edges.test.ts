@@ -16,6 +16,12 @@ describe("bordes de una tira con desplazamiento", () => {
     assert.equal(scrollEdges(100, 400, 300), "start");
     assert.equal(scrollEdges(50, 400, 300), "start end");
   });
+  test("con holgura de 1 px (tablas), 7 px escondidos ya son un borde", () => {
+    assert.equal(scrollEdges(0, 307, 300), "");
+    assert.equal(scrollEdges(0, 307, 300, 1), "end");
+    assert.equal(scrollEdges(7, 307, 300, 1), "start");
+    assert.equal(zoutEdges(0, 307, 300, 1), "end");
+  });
   test("zui y zout responden igual y nunca marcan un lado sin desborde", () => {
     fc.assert(
       fc.property(fc.nat(2000), fc.nat(2000), fc.nat(2000), (pos, size, view) => {

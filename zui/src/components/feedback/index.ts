@@ -15,3 +15,12 @@ export { ErrorBoundary, type ErrorBoundaryProps } from "./ErrorBoundary";
 export { Alert, type AlertProps, type AlertTone } from "./Alert";
 export { Banner, type BannerProps, type BannerTone } from "./Banner";
 export { DotMatrix, type DotMatrixProps } from "./DotMatrix";
+export { NotificationBadge, type NotificationBadgeProps } from "./NotificationBadge";
+export {
+  NotificationCenter,
+  NOTIFICATION_CENTER_LABELS,
+  type NotificationAction,
+  type NotificationCenterLabels,
+  type NotificationCenterProps,
+  type NotificationItem,
+} from "./NotificationCenter";

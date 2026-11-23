@@ -8,6 +8,7 @@ import { notePress, pressedOnBackdrop } from "../core/layers";
 import { lockScroll } from "../core/scroll-lock";
 import { useMergedRef } from "../refs";
 import { useIsoLayoutEffect, useLatest, useLayer, usePresence } from "./hooks";
+import { withRef } from "../react-compat";
 
 export type DismissReason = "escape" | "backdrop";
 
@@ -26,7 +27,7 @@ export interface DialogSurfaceProps extends Omit<ComponentProps<"dialog">, "open
   ref?: Ref<HTMLDialogElement>;
 }
 
-export function DialogSurface({
+export const DialogSurface = withRef(function DialogSurface({
   open,
   onDismiss,
   closeOnEscape = true,
@@ -110,4 +111,4 @@ export function DialogSurface({
     </dialog>,
     document.body,
   );
-}
+});

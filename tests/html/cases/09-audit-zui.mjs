@@ -343,13 +343,19 @@ window.__ready = true;
         await soon(
           () =>
             tab.evaluate(() =>
-              document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+              document
+                .getAnimations()
+                .every(
+                  (a) =>
+                    a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity || a.timeline !== document.timeline,
+                ),
             ),
           3000,
         );
         await tab.evaluate(axeSource);
         const violations = await tab.evaluate(async () => {
-          const result = await window.axe.run(document, { resultTypes: ["violations"] });
+          // Sin iframes: los de la suite van aislados (sandbox sin scripts), axe no puede entrar y en Firefox su postMessage al marco es un error de consola.
+          const result = await window.axe.run(document, { resultTypes: ["violations"], iframes: false });
           return result.violations
             .filter((v) => v.impact === "serious" || v.impact === "critical")
             .map(

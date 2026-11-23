@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface FabProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   icon: IconName;
@@ -22,7 +23,17 @@ export interface FabProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
  * Botón de acción flotante (FAB de Material 3): un cuadrado de esquinas redondeadas con la acción principal de la
  * pantalla; extendido con texto, que se pliega con `collapsed`. Fijo en una esquina con `position`.
  */
-export function Fab({ icon, label, extended, collapsed, size = "md", variant = "primary", position, className, ...rest }: FabProps) {
+export const Fab = withRef(function Fab({
+  icon,
+  label,
+  extended,
+  collapsed,
+  size = "md",
+  variant = "primary",
+  position,
+  className,
+  ...rest
+}: FabProps) {
   return (
     <button
       type="button"
@@ -40,4 +51,4 @@ export function Fab({ icon, label, extended, collapsed, size = "md", variant = "
       {extended ? <span className="z-fab__label">{label}</span> : null}
     </button>
   );
-}
+});

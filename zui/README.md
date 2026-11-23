@@ -8,7 +8,7 @@ React binding in the main entry.
 |---|---|---|
 | Contract | `@zuccadev-labs/zuix-zui/styles.css`, `@zuccadev-labs/zuix-zui/html.json` | `@zuccadev-labs/zuix-tokens` |
 | Behavior | `@zuccadev-labs/zuix-zui/dom` | The browser (`<dialog>`, Popover API) |
-| React binding | `@zuccadev-labs/zuix-zui` | React 19 |
+| React binding | `@zuccadev-labs/zuix-zui` | React 18.2 or later, or React 19 |
 
 There is no third-party UI library underneath. Dialogs are a native `<dialog>` opened with `showModal()`,
 floating layers are `popover` elements, and the keyboard and focus logic follows the
@@ -22,8 +22,8 @@ pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-
 ```
 
 `@zuccadev-labs/zuix-zicon` is a required peer (components draw their icons with the application's copy).
-`react` and `react-dom` 19 are optional peers: only the binding needs them (`pnpm add react react-dom`).
-React 18 is not supported. The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
+`react` and `react-dom` are optional peers, 18.2 or later or 19: only the binding needs them
+(`pnpm add react react-dom`). The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
 are installed and upgraded together, at the same version. Requires Node 22.12 or later.
 
 To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
@@ -118,7 +118,7 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
 | `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior, everything: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
 | `@zuccadev-labs/zuix-zui/dom/core` | Framework-free core (`init`, `use`, dialogs, popovers, menus, `toast`, basic forms), extended per family |
-| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people` | One behavior family each, registered with `init(module)` or `use(module)` |
+| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people`, `/dom/nodes` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |

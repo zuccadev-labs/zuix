@@ -1,0 +1,91 @@
+{
+  "name": "FilterBar",
+  "group": "data",
+  "description": "Barra de filtros: chips de interruptor y de menú en una fila que desplaza con el borde difuminado, «Clear» cuando hay alguno activo y el número de activos para lectores.",
+  "import": "import { FilterBar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "filters",
+      "type": "FilterDef[]",
+      "required": true,
+      "description": "`{ id, label, icon?, type?, options?, multiple? }`. Sin opciones es un interruptor; con `options` abre un menú con casillas (`multiple`, por defecto) o con botones de opción (`multiple: false`)."
+    },
+    {
+      "name": "value",
+      "type": "FilterValue",
+      "description": "Valor controlado: `{ instant: true, type: [\"entire\", \"room\"] }`. Un `value` nuevo de la aplicación manda."
+    },
+    {
+      "name": "defaultValue",
+      "type": "FilterValue"
+    },
+    {
+      "name": "onChange",
+      "type": "({ value, id }) => void",
+      "description": "Cambió un filtro; con `id` vacío, se limpiaron todos."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<FilterBarLabels>",
+      "description": "`label` (nombre del grupo), `clear`, `count` («{count} filters active»), `countOne`, `none`."
+    }
+  ],
+  "states": ["rest", "active", "open"],
+  "tokens": [
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-2-5",
+    "space-4",
+    "space-6",
+    "fg",
+    "row-hover",
+    "item-radius",
+    "control-height-sm",
+    "accent-solid",
+    "accent-ring",
+    "focus-width",
+    "text-small",
+    "duration-fast",
+    "ease-standard"
+  ],
+  "classes": [
+    "z-filter-bar",
+    "z-filter-bar__scroller",
+    "z-filter-bar__chip",
+    "z-filter-bar__chevron",
+    "z-filter-bar__clear",
+    "z-filter-bar__menu",
+    "z-filter-bar__options",
+    "z-filter-bar__option",
+    "z-filter-bar__input",
+    "z-filter-bar__option-label",
+    "z-chip",
+    "z-chip__main",
+    "z-chip__label",
+    "z-chip__count"
+  ],
+  "a11y": "Un grupo con nombre («Filters») y descripción con el número de activos («2 filters active»), que además se anuncia en la región status de la pieza al cambiar. Un chip de interruptor es un botón con `aria-pressed`; uno de menú, un botón con `aria-haspopup=\"dialog\"` y `aria-expanded` que abre un `popover` automático con un `fieldset` de casillas o botones de opción nativos (Tab, Espacio y flechas como en cualquier formulario; Escape cierra y devuelve el foco al chip). Con varias opciones, el chip dice cuántas («Type of place 2»); con una, cuál. «Clear» solo existe con algún filtro activo y, al limpiar, el foco pasa al primer chip. La fila desplaza en horizontal con la barra fina visible y el borde con chips ocultos difuminado (`data-scroll-edges`); un chip enfocado se trae a la vista entero. Sin React: .z-filter-bar con data-size y { \"filters\": [...], \"value\" | \"defaultValue\": {...}, \"labels\" } en <script type=\"application/json\" data-props>; emite z:change { value, id }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Búsqueda de alojamiento",
+      "code": "<FilterBar\n  filters={[{id:  \"instant\", label:  \"Instant book\", icon:  \"bolt\"}, {id:  \"price\", label:  \"Price\", icon:  \"banknotes\", options:  [{value:  \"low\", label:  \"Under €100\"}, {value:  \"mid\", label:  \"€100–€200\"}, {value:  \"high\", label:  \"Over €200\"}], multiple:  false}, {id:  \"type\", label:  \"Type of place\", options:  [{value:  \"entire\", label:  \"Entire home\"}, {value:  \"room\", label:  \"Private room\"}, {value:  \"shared\", label:  \"Shared room\"}]}, {id:  \"pets\", label:  \"Pets allowed\"}, {id:  \"parking\", label:  \"Free parking\"}, {id:  \"pool\", label:  \"Pool\"}, {id:  \"wifi\", label:  \"Wi-Fi\"}]}\n  defaultValue={{ instant: true, type: [\"entire\"] }}\n  onChange={({ value }) => setFilters(value)}\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Búsqueda de alojamiento",
+      "code": "<div class=\"z-filter-bar\" id=\"stay-filters\">\n  <script type=\"application/json\" data-props>{\"filters\": [{\"id\": \"instant\", \"label\": \"Instant book\", \"icon\": \"bolt\"}, {\"id\": \"price\", \"label\": \"Price\", \"icon\": \"banknotes\", \"options\": [{\"value\": \"low\", \"label\": \"Under €100\"}, {\"value\": \"mid\", \"label\": \"€100–€200\"}, {\"value\": \"high\", \"label\": \"Over €200\"}], \"multiple\": false}, {\"id\": \"type\", \"label\": \"Type of place\", \"options\": [{\"value\": \"entire\", \"label\": \"Entire home\"}, {\"value\": \"room\", \"label\": \"Private room\"}, {\"value\": \"shared\", \"label\": \"Shared room\"}]}, {\"id\": \"pets\", \"label\": \"Pets allowed\"}, {\"id\": \"parking\", \"label\": \"Free parking\"}, {\"id\": \"pool\", \"label\": \"Pool\"}, {\"id\": \"wifi\", \"label\": \"Wi-Fi\"}], \"defaultValue\": {\"instant\": true, \"type\": [\"entire\"]}}</script>\n</div>",
+      "script": "document.querySelector(\"#stay-filters\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    }
+  ],
+  "origin": "Barras de filtros de Airbnb, Google Shopping y GitHub; los chips son los de Chip."
+}

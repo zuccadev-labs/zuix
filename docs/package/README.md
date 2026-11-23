@@ -49,7 +49,7 @@ Ninguno incluye `src/`, pruebas ni `compat/*.inventory.json`; todos llevan `READ
 
 | Comando | Qué hace |
 |---|---|
-| `pnpm build` | Genera `dist/` de `zicon`, `zui` y `zout`: ESM, declaraciones, sourcemaps, CSS y bundles de navegador. Comprueba que cada reexportación del paraguas apunta a una entrada publicada |
+| `pnpm build` | Genera `dist/` de `zicon`, `zui` y `zout`: ESM, declaraciones, sourcemaps, CSS (también el modo compat) y bundles de navegador. Comprueba que cada reexportación del paraguas apunta a una entrada publicada |
 | `pnpm test:pack` | Empaqueta los cinco paquetes y los prueba en proyectos fuera del workspace |
 | `pnpm test:pack:next` | Lo anterior más un consumidor Next.js (App Router): build, marcado de servidor, hidratación e interacción en Chrome. Necesita red |
 | `pnpm verify` | Puerta previa a una versión: `check`, lint, pruebas unitarias, build y prueba del sitio, `build`, `test:pack`, `test:html` y `test:browser` en Chromium |
@@ -68,10 +68,13 @@ zui/dist/
   zui.css         bundle de navegador: todos los estilos en un archivo
   zui.dom.js      bundle de navegador: @zuccadev-labs/zuix-zui/dom autocontenido y minificado
   zui.dom.carousel-gl.js  shaders del Carousel en modo WebGL; zui.dom.js lo carga solo si se usa
+  zui.compat.css  modo compat: zui.css para Chromium 109, Firefox 115 y Safari 15.4 (tools/compat.mjs)
 ```
 
-`zout/dist/` tiene `esm/`, `zout.css` y `zout.dom.js`; `zicon/dist/` tiene `esm/` y `zicon.element.js`.
-`tokens/dist/` lo genera `pnpm tokens`. El paraguas no tiene `dist/`: sus archivos (`suite/*.js`, `*.d.ts`,
+`zout/dist/` tiene `esm/`, `zout.css`, `zout.compat.css` y `zout.dom.js`; `zicon/dist/` tiene `esm/` y
+`zicon.element.js`. `tokens/dist/` lo genera `pnpm tokens`, salvo `tokens.compat.css` y `brands/*.compat.css`, que
+salen del mismo paso que `zui.compat.css` porque llevan resueltos los colores que mezclan los componentes
+([Modo compat](../users/10-compatibilidad.md#modo-compat)). El paraguas no tiene `dist/`: sus archivos (`suite/*.js`, `*.d.ts`,
 `*.css`) son reexportaciones de una línea escritas a mano. `dist/` está en `.gitignore`: se genera, no se edita.
 
 Los bundles de navegador se quedan en la raíz de `dist/`: sus rutas se enlazan por URL
@@ -152,6 +155,10 @@ nombra las rutas de `src/` y las de `dist/` porque `publishConfig` no puede rees
 | `zout` | `tokens`, `zui` | `zicon`; `react` y `react-dom` (opcionales) |
 | Paraguas | `tokens`, `zicon`, `zui`, `zout` | `react` y `react-dom` (opcionales) |
 
+El rango de `react` y `react-dom` es `^18.2.0 || ^19.0.0` en los cuatro
+([Compatibilidad](../users/10-compatibilidad.md#react)). Las dependencias de desarrollo del workspace siguen en
+React 19; React 18 lo trae `examples/react18`, que sirve la aplicación de ejemplo con esa versión.
+
 Ningún paquete depende de código de terceros en ejecución. Las dependencias entre paquetes de la suite llevan
 rango `^X.Y.Z`. `zicon` es peer de `zui` y `zout` para que el registro de iconos sea una sola copia: con
 dependencia exacta reproduje dos copias e iconos vacíos
@@ -179,12 +186,16 @@ pnpm test:pack
    paquetes de la suite y con `zicon` como peer de `zui` y `zout`.
 3. Un proyecto con el paraguas: instala los cinco y comprueba que cada subruta del paraguas es el mismo
    módulo que la del paquete que reexporta, y que un `Button` con icono se dibuja a través de él.
-4. Un proyecto con React: renderiza `Button`, `Badge`, `Stack` e `Icon` con `react-dom/server` y compara el
-   marcado, resuelve todas las entradas de `exports`, pasa `tsc --noEmit` con `skipLibCheck: false` en
-   `Bundler` y `NodeNext` (también importando por el paraguas) con TypeScript 5.9, 6 y 7 (las declaraciones
+4. Dos proyectos con React, uno con React 19 y otro con React 18 (cada uno con sus `@types/react`): renderiza
+   `Button`, `Badge`, `Stack` e `Icon` con `react-dom/server` y compara el marcado; renderiza en un DOM de
+   happy-dom y comprueba las refs de `Button`, `Icon`, `Input`, `Switch` y del disparador de `Modal`, `inert` y
+   `popovertarget`, sin avisos de React en la consola; resuelve todas las entradas de `exports`, pasa
+   `tsc --noEmit` con `skipLibCheck: false` en `Bundler` y `NodeNext` (también importando por el paraguas) con
+   TypeScript 5.9, 6 (solo con React 19) y 7 (las declaraciones
    se emiten con 7 y deben servir a quien siga en 5.x), y compila con Vite 8 dos veces: con los paquetes
    sueltos y con `@zuccadev-labs/zuix/styles.css` y las subrutas del paraguas. Falla si el set completo de
-   iconos entra en el bundle.
+   iconos entra en el bundle. Una tercera compilación importa `@zuccadev-labs/zuix/styles.compat.css` y falla si
+   la hoja resultante conserva `@import`, `@layer` o `color-mix()`.
 5. Un proyecto sin React: instala los tarballs e importa los módulos `dom`, sueltos y por el paraguas, en
    Node.
 6. Con `--next`, un proyecto Next.js (última versión estable, App Router): `next build`, `next start` y una

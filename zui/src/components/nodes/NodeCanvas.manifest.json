@@ -1,0 +1,226 @@
+{
+  "name": "NodeCanvas",
+  "group": "nodes",
+  "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y trazo animado), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez.",
+  "import": "import { NodeCanvas } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "nodes",
+      "type": "GraphNode[]",
+      "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él."
+    },
+    {
+      "name": "edges",
+      "type": "GraphEdge[]",
+      "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?, animated?, label?, markerEnd?, tone? }."
+    },
+    {
+      "name": "defaultNodes",
+      "type": "GraphNode[]"
+    },
+    {
+      "name": "defaultEdges",
+      "type": "GraphEdge[]"
+    },
+    {
+      "name": "onNodesChange",
+      "type": "(nodes, change) => void",
+      "description": "Cambio de nodos. `change.type`: move, resize, remove, paste, duplicate, group, ungroup, layout, undo, redo; `change.done` es false en los pasos intermedios de un arrastre."
+    },
+    {
+      "name": "onEdgesChange",
+      "type": "(edges, change) => void"
+    },
+    {
+      "name": "onChange",
+      "type": "(graph, change) => void",
+      "description": "Cualquier cambio, con el modelo { nodes, edges } completo (serializable)."
+    },
+    {
+      "name": "onConnect",
+      "type": "(edge) => void"
+    },
+    {
+      "name": "isValidConnection",
+      "type": "(edge) => boolean",
+      "description": "Validación propia, además de sentido, tipos (`port.type`), límites (`port.max`) y duplicadas."
+    },
+    {
+      "name": "allowCycles",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "renderNode",
+      "type": "(node, { x, y }) => ReactNode",
+      "description": "Cuerpo de cada nodo. Sin él, `data.description`."
+    },
+    {
+      "name": "viewport",
+      "type": "{ x, y, zoom }"
+    },
+    {
+      "name": "defaultViewport",
+      "type": "{ x, y, zoom }"
+    },
+    {
+      "name": "onViewportChange",
+      "type": "(viewport) => void"
+    },
+    {
+      "name": "minZoom",
+      "type": "number",
+      "default": 0.1
+    },
+    {
+      "name": "maxZoom",
+      "type": "number",
+      "default": 4
+    },
+    {
+      "name": "snap",
+      "type": "number | false",
+      "default": 16,
+      "description": "Cuadrícula del imán en unidades del mundo."
+    },
+    {
+      "name": "fitOnMount",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "selection",
+      "type": "{ nodes?: string[]; edges?: string[] }"
+    },
+    {
+      "name": "onSelectionChange",
+      "type": "(selection) => void"
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "edgeType",
+      "type": "enum",
+      "values": ["bezier", "straight", "step", "smoothstep"],
+      "default": "bezier"
+    },
+    {
+      "name": "layoutDirection",
+      "type": "enum",
+      "values": ["LR", "TB"],
+      "default": "LR",
+      "description": "Sentido del botón de ordenar de los controles."
+    },
+    {
+      "name": "background",
+      "type": "enum",
+      "values": ["dots", "grid", "none"],
+      "default": "dots"
+    },
+    {
+      "name": "minimap",
+      "type": "boolean | NodeMinimapProps",
+      "default": true
+    },
+    {
+      "name": "controls",
+      "type": "boolean | NodeControlsProps",
+      "default": true
+    },
+    {
+      "name": "labels",
+      "type": "Partial<NodeCanvasLabels>",
+      "description": "Textos y anuncios, en inglés por defecto."
+    },
+    {
+      "name": "ref",
+      "type": "Ref<NodeCanvasHandle>",
+      "description": "fitView, zoomIn, zoomOut, zoomTo, undo, redo, layout('LR' | 'TB'), focusNode, removeSelection, removeEdge, graph, viewport, selection."
+    }
+  ],
+  "states": ["rest", "panning", "dragging", "connecting", "selected", "locked", "readonly"],
+  "tokens": [
+    "surface",
+    "surface-solid",
+    "card-bg",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "shadow-sm",
+    "shadow-md",
+    "radius-lg",
+    "panel-radius",
+    "focus-width",
+    "focus-offset",
+    "glass-highlight",
+    "shadow-lg",
+    "radius-sm",
+    "radius-xl",
+    "text-caption",
+    "text-small",
+    "weight-semibold",
+    "layer-raised",
+    "control-height-md",
+    "control-height-xs",
+    "control-radius-sm"
+  ],
+  "classes": [
+    "z-node-canvas",
+    "z-node-canvas__background",
+    "z-node-canvas__world",
+    "z-node-canvas__groups",
+    "z-node-canvas__edges",
+    "z-node-canvas__edge-layer",
+    "z-node-canvas__labels",
+    "z-node-canvas__nodes",
+    "z-node-canvas__selection",
+    "z-node-canvas__draft",
+    "z-node-canvas__marker",
+    "z-node-canvas__desc",
+    "z-node-canvas__descs",
+    "z-edge",
+    "z-edge__path",
+    "z-edge__hit",
+    "z-edge__end",
+    "z-edge__label"
+  ],
+  "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Flujo con puertos tipados",
+      "code": "<NodeCanvas aria-label=\"Order flow\" defaultNodes={[{ id: \"hook\", position: { x: 0, y: 40 }, data: { label: \"Webhook\", icon: \"bolt\", description: \"POST /orders\", tone: \"accent\" }, ports: [{ id: \"out\", kind: \"source\", type: \"json\" }] }, { id: \"save\", position: { x: 320, y: 40 }, data: { label: \"Save order\", icon: \"circle-stack\", status: \"running\" }, ports: [{ id: \"in\", kind: \"target\", type: \"json\" }] }]} defaultEdges={[{ id: \"e1\", source: \"hook\", sourcePort: \"out\", target: \"save\", targetPort: \"in\", animated: true }]} />"
+    },
+    {
+      "title": "Controlado, con cuerpo propio",
+      "code": "<NodeCanvas nodes={nodes} edges={edges} onNodesChange={setNodes} onEdgesChange={setEdges} edgeType=\"smoothstep\" renderNode={(node) => <Switch label=\"Enabled\" />} controls={{ showLayout: true }} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Flujo en el marcado",
+      "code": "<div class=\"z-node-canvas\" data-z-node-canvas data-snap=\"16\" aria-label=\"Order flow\">\n  <div class=\"z-node\" data-id=\"hook\" data-tone=\"accent\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Webhook\" data-x=\"0\" data-y=\"40\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"bolt\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Webhook</span></div><div class=\"z-node__body\">POST /orders</div><button type=\"button\" class=\"z-node-port\" data-port=\"out\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output out\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"filter\" data-status=\"success\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Filter\" data-x=\"300\" data-y=\"0\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"funnel\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Filter</span><span class=\"z-node__status\" data-status=\"success\">succeeded</span></div><div class=\"z-node__body\">total &gt; 100</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><button type=\"button\" class=\"z-node-port\" data-port=\"true\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output true\" style=\"--z-port-t: 0.33\"><span class=\"z-node-port__label\">true</span></button><button type=\"button\" class=\"z-node-port\" data-port=\"false\" data-kind=\"source\" data-side=\"right\" data-type=\"json\" aria-label=\"Output false\" style=\"--z-port-t: 0.67\"><span class=\"z-node-port__label\">false</span></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <div class=\"z-node\" data-id=\"save\" data-status=\"running\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Save order\" data-x=\"600\" data-y=\"60\"><div class=\"z-node__header\"><span class=\"z-node__icon\" aria-hidden=\"true\"><z-icon name=\"circle-stack\" size=\"16\"></z-icon></span><span class=\"z-node__title\">Save order</span><span class=\"z-node__status\" data-status=\"running\">running</span></div><div class=\"z-node__body\">orders table</div><button type=\"button\" class=\"z-node-port\" data-port=\"in\" data-kind=\"target\" data-side=\"left\" data-type=\"json\" aria-label=\"Input in\" style=\"--z-port-t: 0.5\"></button><span class=\"z-node__resize\" aria-hidden=\"true\"></span></div>\n  <script type=\"application/json\" class=\"z-node-canvas__edges\">[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]</script>\n</div>"
+    },
+    {
+      "title": "Grafo en JSON, solo lectura, con vista en lista",
+      "code": "<div class=\"z-node-canvas\" data-z-node-canvas data-readonly data-minimap=\"false\" aria-label=\"Pipeline\" id=\"pipeline\">\n  <script type=\"application/json\" data-graph>{\"nodes\":[{\"id\":\"hook\",\"position\":{\"x\":0,\"y\":40},\"data\":{\"label\":\"Webhook\",\"icon\":\"bolt\",\"description\":\"POST /orders\",\"tone\":\"accent\"},\"ports\":[{\"id\":\"out\",\"kind\":\"source\",\"type\":\"json\"}]},{\"id\":\"filter\",\"position\":{\"x\":300,\"y\":0},\"data\":{\"label\":\"Filter\",\"icon\":\"funnel\",\"description\":\"total > 100\",\"status\":\"success\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"},{\"id\":\"true\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"true\"},{\"id\":\"false\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"false\"}]},{\"id\":\"save\",\"position\":{\"x\":600,\"y\":60},\"data\":{\"label\":\"Save order\",\"icon\":\"circle-stack\",\"description\":\"orders table\",\"status\":\"running\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"}]}],\"edges\":[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]}</script>\n</div>\n<div class=\"z-node-list\" data-for=\"#pipeline\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias de interacción: React Flow (xyflow) y el editor de n8n. Sin código ni dependencias de terceros."
+}

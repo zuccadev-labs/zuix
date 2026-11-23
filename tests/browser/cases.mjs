@@ -14,9 +14,14 @@ import mediaCases from "./cases-media.mjs";
 import timeTerminal from "./cases-time-terminal.mjs";
 import chatAi from "./cases-chat-ai.mjs";
 import dashboardPeople from "./cases-dashboard-people.mjs";
+import nodesCases from "./cases-nodes.mjs";
+import transferCases from "./cases-transfer.mjs";
+import datagridCases from "./cases-datagrid.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
+import listingCases from "./cases-listing.mjs";
+import popoverApiCases from "./cases-popover-api.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -205,8 +210,14 @@ async function overflowReport(page) {
       for (let n = el.parentElement; n; n = n.parentElement) {
         const o = getComputedStyle(n).overflowX;
         if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
-        // Recortes deliberados con su propio desplazamiento: el carrusel y la cinta de Marquee.
-        if (n.classList.contains("z-carousel__viewport") || n.classList.contains("z-marquee__viewport")) return true;
+        // Recortes deliberados con su propio desplazamiento: el carrusel, la cinta de Marquee y el lienzo de nodos (en un
+        // teléfono el grafo no cabe a un zoom legible y se recorre desplazando el lienzo).
+        if (
+          n.classList.contains("z-carousel__viewport") ||
+          n.classList.contains("z-marquee__viewport") ||
+          n.classList.contains("z-node-canvas")
+        )
+          return true;
       }
       return false;
     };
@@ -273,6 +284,8 @@ const SCREENS = [
   "settings",
   "kanban",
   "login",
+  "flows",
+  "listing",
 ];
 
 export const cases = [
@@ -654,8 +667,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        38,
-        "38 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Chat, Assistant, Dashboard, Profile, Settings, Board y Sign in)",
+        40,
+        "40 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Flows, Chat, Assistant, Dashboard, Profile, Settings, Board, Sign in y Listing)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -798,9 +811,8 @@ export const cases = [
         `${t("tabs")} [role=tab][aria-selected=true]`,
       );
       assert(controls === "tabpanel", "aria-controls apunta a un tabpanel");
-      // SegmentedControl con flechas.
-      // SegmentedControl.
-      await page.click('button:has-text("List")');
+      // SegmentedControl con flechas. El segmento por su texto exacto: «List» también está en «Listing» (barra lateral).
+      await page.locator(".z-segmented__item", { hasText: /^\s*List\s*$/ }).click();
       await expectText(page, t("view-state"), "list");
       await page.keyboard.press("ArrowLeft");
       await poll(
@@ -1360,7 +1372,10 @@ export const cases = [
       assert((await fresh.locator(skip).textContent()).trim() === "Skip to content", "texto del enlace de salto");
       const target = await fresh.getAttribute(skip, "href");
       assert(
-        await fresh.evaluate((href) => document.querySelector(href)?.matches(".z-shell__main") ?? false, target),
+        await fresh.evaluate(
+          (href) => document.getElementById(decodeURIComponent(href.slice(1)))?.matches(".z-shell__main") ?? false,
+          target,
+        ),
         `el enlace apunta al área principal (${target})`,
       );
       await fresh.keyboard.press("Enter");
@@ -3121,6 +3136,7 @@ export const cases = [
     contentCases,
     dataCases,
     siteCases,
+    popoverApiCases,
     mediaCases,
     charts,
     reading,
@@ -3128,6 +3144,10 @@ export const cases = [
     chatAi,
     dashboardPeople,
     carouselsCases,
+    nodesCases,
+    transferCases,
+    datagridCases,
+    listingCases,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────

@@ -2,6 +2,7 @@ import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { skeletonTree, type SkeletonAnimation, type SkeletonPattern, type SkeletonPatternOptions } from "../../core/skeleton";
 import { cx } from "../../cx";
 import { toReact } from "../vnode";
+import { inertProp } from "../../react-compat";
 
 export type { SkeletonAnimation, SkeletonPattern, SkeletonPatternOptions };
 
@@ -82,7 +83,7 @@ export function Skeleton({
         data-loading=""
         style={style}
         aria-hidden="true"
-        inert
+        inert={inertProp(true)}
       >
         {children}
       </span>

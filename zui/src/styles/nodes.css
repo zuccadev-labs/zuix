@@ -1,0 +1,816 @@
+/* @zuccadev-labs/zuix-zui — nodos: NodeCanvas, Node, NodePort, aristas, NodeGroup, NodeMinimap, NodeControls y
+   NodeListView. El mundo del lienzo es un plano físico (x hacia la derecha, como un mapa): va en LTR y se transforma
+   con las variables de la vista (`--z-vp-x`, `--z-vp-y`, `--z-vp-zoom`); el texto de cada nodo sigue la dirección del
+   documento. Los nodos son HTML (admiten cualquier pieza de zui) y no llevan desenfoque: con cientos a la vez, el
+   cristal va solo en el cromo (minimapa y controles). */
+/* La vista y el fondo cambian en cada fotograma de desplazamiento: sin herencia, el cambio no recalcula el estilo de
+   los nodos que cuelgan del mundo. */
+@property --z-vp-x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --z-vp-y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --z-vp-zoom {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+@layer zui.nodes {
+  .z-node-canvas {
+    --z-node-dir: ltr;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    /* Todo su contenido va posicionado y no le da ancho: en una fila flex o una rejilla centrada se quedaba en los
+       2 px del borde. Ocupa el ancho de su contenedor salvo que se le dé otro. */
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: 320px;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-panel-radius);
+    background: var(--z-surface);
+    color: var(--z-fg);
+    /* Solo el lienzo toma los gestos táctiles: fuera de él, la página se desplaza y se amplía como siempre. */
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    outline: none;
+  }
+  .z-node-canvas:dir(rtl) {
+    --z-node-dir: rtl;
+  }
+  .z-node-canvas:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-node-canvas[data-panning] {
+    cursor: grabbing;
+  }
+  /* La trama va en un pseudoelemento más grande que el lienzo que se desplaza con una transformación (resto del paso):
+     el fondo no se vuelve a pintar al desplazar y la caja visible no sale del lienzo. */
+  .z-node-canvas__background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .z-node-canvas__background::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--z-grid-step, 16px) * -2);
+    translate: var(--z-grid-x, 0) var(--z-grid-y, 0);
+    will-change: translate;
+    background-image: radial-gradient(circle at center, var(--z-line-strong) 0 1px, transparent 1.5px);
+    background-size: var(--z-grid-step, 16px) var(--z-grid-step, 16px);
+  }
+  .z-node-canvas[data-background="grid"] .z-node-canvas__background::before {
+    background-image:
+      linear-gradient(to right, var(--z-line) 1px, transparent 1px), linear-gradient(to bottom, var(--z-line) 1px, transparent 1px);
+  }
+  .z-node-canvas[data-background="none"] .z-node-canvas__background::before {
+    background-image: none;
+  }
+  .z-node-canvas__world {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 0;
+    block-size: 0;
+    direction: ltr;
+    transform-origin: 0 0;
+    transform: translate(var(--z-vp-x, 0), var(--z-vp-y, 0)) scale(var(--z-vp-zoom, 1));
+    will-change: transform;
+  }
+  .z-node-canvas__edges,
+  .z-node-canvas__overlay {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .z-node-canvas__groups,
+  .z-node-canvas__nodes,
+  .z-node-canvas__labels {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+  }
+
+  /* Aristas. */
+  .z-edge__path {
+    fill: none;
+    stroke: var(--z-line-strong);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-edge__hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 18;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+  .z-node-canvas[data-connecting] .z-edge__hit {
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .z-edge:hover .z-edge__path {
+      stroke: var(--z-fg-subtle);
+    }
+  }
+  .z-edge[data-tone="accent"] .z-edge__path {
+    stroke: var(--z-accent);
+  }
+  .z-edge[data-tone="success"] .z-edge__path {
+    stroke: var(--z-success);
+  }
+  .z-edge[data-tone="warning"] .z-edge__path {
+    stroke: var(--z-warning);
+  }
+  .z-edge[data-tone="danger"] .z-edge__path {
+    stroke: var(--z-danger);
+  }
+  .z-edge[data-selected] .z-edge__path {
+    stroke: var(--z-accent);
+    stroke-width: 2.5;
+  }
+  .z-edge[data-reconnecting] .z-edge__path {
+    opacity: 0.35;
+  }
+  .z-edge[data-animated] .z-edge__path {
+    stroke-dasharray: 6 6;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-edge[data-animated] .z-edge__path {
+      animation: z-edge-flow 0.8s linear infinite;
+    }
+    .z-node-canvas[data-offscreen] .z-edge[data-animated] .z-edge__path {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-edge-flow {
+    to {
+      stroke-dashoffset: -12;
+    }
+  }
+  .z-edge__end {
+    fill: var(--z-surface-solid);
+    stroke: var(--z-accent);
+    stroke-width: 2;
+    pointer-events: all;
+    cursor: crosshair;
+  }
+  .z-node-canvas__marker path {
+    fill: var(--z-line-strong);
+  }
+  .z-node-canvas__marker[data-tone="accent"] path,
+  .z-node-canvas__marker[data-tone="selected"] path {
+    fill: var(--z-accent);
+  }
+  .z-node-canvas__marker[data-tone="success"] path {
+    fill: var(--z-success);
+  }
+  .z-node-canvas__marker[data-tone="warning"] path {
+    fill: var(--z-warning);
+  }
+  .z-node-canvas__marker[data-tone="danger"] path {
+    fill: var(--z-danger);
+  }
+  .z-node-canvas__draft {
+    fill: none;
+    stroke: var(--z-accent);
+    stroke-width: 2;
+    stroke-dasharray: 5 5;
+  }
+  .z-edge__label {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    translate: calc(var(--z-edge-x, 0px) - 50%) calc(var(--z-edge-y, 0px) - 50%);
+    padding-block: var(--z-space-0-5);
+    padding-inline: var(--z-space-2);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-radius-sm);
+    background: var(--z-surface-solid);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-tight);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .z-edge__label[data-selected] {
+    border-color: var(--z-accent);
+    color: var(--z-accent-text);
+  }
+
+  /* Nodo. */
+  .z-node {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    translate: var(--z-node-x, 0) var(--z-node-y, 0);
+    display: flex;
+    flex-direction: column;
+    inline-size: var(--z-node-w, max-content);
+    min-inline-size: 180px;
+    max-inline-size: var(--z-node-w, 280px);
+    block-size: var(--z-node-h, auto);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-surface-solid);
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-sm);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    cursor: grab;
+    contain: layout style;
+    transition:
+      box-shadow var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-node-canvas[data-dragging] .z-node[data-selected] {
+    cursor: grabbing;
+    box-shadow:
+      inset 0 1px 0 var(--z-glass-highlight),
+      var(--z-shadow-lg);
+  }
+  .z-node-canvas[data-locked] .z-node {
+    cursor: default;
+  }
+  .z-node:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-node[data-selected] {
+    border-color: var(--z-accent);
+    box-shadow:
+      0 0 0 1px var(--z-accent),
+      var(--z-shadow-md);
+  }
+  .z-node__header {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-md);
+    padding-block: var(--z-space-2);
+    padding-inline: var(--z-space-3);
+    direction: var(--z-node-dir);
+  }
+  .z-node__icon {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--z-control-height-xs);
+    block-size: var(--z-control-height-xs);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-node[data-tone="success"] .z-node__icon {
+    background: var(--z-success-soft);
+    color: var(--z-success-text);
+  }
+  .z-node[data-tone="warning"] .z-node__icon {
+    background: var(--z-warning-soft);
+    color: var(--z-warning-text);
+  }
+  .z-node[data-tone="danger"] .z-node__icon {
+    background: var(--z-danger-soft);
+    color: var(--z-danger-text);
+  }
+  .z-node[data-tone="info"] .z-node__icon {
+    background: var(--z-info-soft);
+    color: var(--z-info-text);
+  }
+  .z-node__title {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    font-weight: var(--z-weight-semibold);
+    font-size: var(--z-text-body);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-node__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    flex: none;
+    padding-block: var(--z-space-0-5);
+    padding-inline: var(--z-space-1-5);
+    border-radius: var(--z-radius-sm);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-node__status::before {
+    content: "";
+    inline-size: var(--z-space-1-5);
+    block-size: var(--z-space-1-5);
+    border-radius: var(--z-radius-full);
+    background: currentColor;
+  }
+  .z-node__status[data-status="running"] {
+    background: var(--z-info-soft);
+    color: var(--z-info-text);
+  }
+  .z-node__status[data-status="success"] {
+    background: var(--z-success-soft);
+    color: var(--z-success-text);
+  }
+  .z-node__status[data-status="error"] {
+    background: var(--z-danger-soft);
+    color: var(--z-danger-text);
+  }
+  .z-node__body {
+    flex: 1;
+    min-block-size: 0;
+    padding-block: var(--z-space-2-5);
+    padding-inline: var(--z-space-3);
+    border-block-start: 1px solid var(--z-line);
+    color: var(--z-fg-muted);
+    line-height: var(--z-leading-snug);
+    direction: var(--z-node-dir);
+    cursor: default;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  .z-node-canvas[data-dragging] .z-node__body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-node[data-status="error"] {
+    border-color: var(--z-danger);
+  }
+  .z-node[data-status="error"][data-selected] {
+    box-shadow:
+      0 0 0 1px var(--z-danger),
+      var(--z-shadow-md);
+  }
+  .z-node[data-status="success"] {
+    border-color: var(--z-success);
+  }
+  .z-node[data-status="running"] {
+    border-color: var(--z-info);
+  }
+  /* Ejecutando: un trazo que recorre el borde (con movimiento reducido, el borde de color basta). */
+  @property --z-node-spin {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-node[data-status="running"]::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: conic-gradient(from var(--z-node-spin), transparent 0 65%, var(--z-info) 85%, transparent 100%);
+      -webkit-mask:
+        linear-gradient(var(--z-fg) 0 0) content-box,
+        linear-gradient(var(--z-fg) 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(var(--z-fg) 0 0) content-box exclude,
+        linear-gradient(var(--z-fg) 0 0);
+      pointer-events: none;
+      animation: z-node-spin 1.6s linear infinite;
+    }
+    .z-node-canvas[data-offscreen] .z-node[data-status="running"]::after {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-node-spin {
+    to {
+      --z-node-spin: 360deg;
+    }
+  }
+
+  /* Puertos: el objetivo mide 24 px aunque el punto mida 12. */
+  .z-node-port {
+    position: absolute;
+    inset-block-start: calc(var(--z-port-t, 0.5) * 100%);
+    inset-inline-start: 0;
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-touch-target, 24px);
+    block-size: var(--z-touch-target, 24px);
+    min-inline-size: 24px;
+    min-block-size: 24px;
+    margin: 0;
+    padding: 0;
+    translate: -50% -50%;
+    scale: var(--z-port-scale, 1);
+    border: 0;
+    border-radius: var(--z-radius-full);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .z-node-port::before {
+    content: "";
+    inline-size: var(--z-space-3);
+    block-size: var(--z-space-3);
+    border: 2px solid var(--z-line-strong);
+    border-radius: var(--z-radius-full);
+    background: var(--z-surface-solid);
+    transition:
+      scale var(--z-duration-fast) var(--z-ease-out),
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-node-port[data-kind="source"]::before {
+    background: var(--z-fg-subtle);
+    border-color: var(--z-surface-solid);
+    box-shadow: 0 0 0 1px var(--z-line-strong);
+  }
+  .z-node-port[data-side="right"] {
+    inset-inline-start: 100%;
+  }
+  .z-node-port[data-side="top"] {
+    inset-block-start: 0;
+    inset-inline-start: calc(var(--z-port-t, 0.5) * 100%);
+  }
+  .z-node-port[data-side="bottom"] {
+    inset-block-start: 100%;
+    inset-inline-start: calc(var(--z-port-t, 0.5) * 100%);
+  }
+  @media (hover: hover) {
+    .z-node-port:hover::before {
+      scale: 1.25;
+      border-color: var(--z-accent);
+    }
+  }
+  .z-node-port:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-node-canvas[data-connecting] .z-node-port:not([data-candidate], [data-origin])::before {
+    opacity: 0.35;
+  }
+  .z-node-port[data-candidate]::before {
+    scale: 1.3;
+    border-color: var(--z-accent);
+    background: var(--z-accent-soft);
+  }
+  .z-node-port[data-origin]::before {
+    scale: 1.3;
+    border-color: var(--z-accent);
+    background: var(--z-accent);
+  }
+  /* La etiqueta va fuera del nodo, sobre la línea de la arista: no tapa el título ni el cuerpo. */
+  .z-node-port__label {
+    position: absolute;
+    inset-block-end: 50%;
+    inset-inline-end: 50%;
+    padding-inline: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    line-height: var(--z-leading-tight);
+    white-space: nowrap;
+    pointer-events: none;
+    /* El puerto crece con poco zoom para conservar su objetivo; la etiqueta no: sigue al tamaño del nodo. */
+    scale: calc(1 / var(--z-port-scale, 1));
+    transform-origin: 100% 100%;
+  }
+  .z-node-port[data-side="right"] .z-node-port__label {
+    inset-inline-end: auto;
+    inset-inline-start: 50%;
+    transform-origin: 0 100%;
+  }
+  .z-node-port[data-side="top"] .z-node-port__label,
+  .z-node-port[data-side="bottom"] .z-node-port__label {
+    inset-block-end: auto;
+    inset-inline-end: auto;
+    inset-inline-start: 100%;
+    transform-origin: 0 0;
+  }
+  .z-node__resize {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    border-end-end-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      transparent 0 55%,
+      var(--z-line-strong) 55% 62%,
+      transparent 62% 72%,
+      var(--z-line-strong) 72% 79%,
+      transparent 79%
+    );
+    opacity: 0;
+    cursor: nwse-resize;
+    touch-action: none;
+    transition: opacity var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-node[data-selected] > .z-node__resize,
+  .z-node-group[data-selected] > .z-node__resize {
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .z-node:hover > .z-node__resize,
+    .z-node-group:hover > .z-node__resize {
+      opacity: 1;
+    }
+  }
+  .z-node-canvas[data-locked] .z-node__resize,
+  .z-node-canvas[data-locked] .z-edge__end {
+    display: none;
+  }
+
+  /* Grupo o subflujo: un marco con título; sus nodos se mueven con él. */
+  .z-node-group {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    translate: var(--z-node-x, 0) var(--z-node-y, 0);
+    inline-size: var(--z-node-w, 360px);
+    block-size: var(--z-node-h, 240px);
+    border: 1.5px dashed var(--z-line-strong);
+    border-radius: var(--z-radius-xl);
+    background: var(--z-surface-2);
+    cursor: grab;
+  }
+  .z-node-group:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-node-group[data-selected] {
+    border-style: solid;
+    border-color: var(--z-accent);
+  }
+  .z-node-group__header {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    padding-block: var(--z-space-2);
+    padding-inline: var(--z-space-3);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    direction: var(--z-node-dir);
+  }
+
+  /* Caja de selección (en pantalla, fuera del mundo). */
+  .z-node-canvas__selection {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: var(--z-box-w, 0);
+    block-size: var(--z-box-h, 0);
+    translate: var(--z-box-x, 0) var(--z-box-y, 0);
+    border: 1px solid var(--z-accent);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-soft);
+    pointer-events: none;
+    /* En pantalla, como el mundo: coordenadas desde la izquierda también en RTL. */
+    direction: ltr;
+  }
+  .z-node-canvas__selection[hidden] {
+    display: none;
+  }
+
+  /* Menú para elegir qué conexión seguir (] y [ con varias). */
+  .z-node-canvas__menu {
+    --z-lg-bg: var(--z-popup-bg);
+    --z-lg-blur: var(--z-popup-blur);
+    --z-lg-shadow: var(--z-popup-shadow);
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-layer-popover);
+    display: grid;
+    min-inline-size: 200px;
+    padding: var(--z-space-1);
+    translate: var(--z-menu-x, 0) var(--z-menu-y, 0);
+    border-radius: var(--z-popup-radius);
+    direction: ltr;
+  }
+  .z-node-canvas__menu-item {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2-5);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg);
+    font: inherit;
+    font-size: var(--z-text-small);
+    text-align: start;
+    direction: var(--z-node-dir);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-node-canvas__menu-item:hover {
+      background: var(--z-surface-3);
+    }
+  }
+  .z-node-canvas__menu-item:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+    background: var(--z-surface-3);
+  }
+
+  /* Minimapa y controles: cromo de cristal sobre el lienzo. */
+  .z-node-minimap {
+    position: absolute;
+    inset-block-end: var(--z-space-3);
+    inset-inline-end: var(--z-space-3);
+    z-index: var(--z-layer-raised);
+    inline-size: 200px;
+    block-size: 136px;
+    overflow: hidden;
+    border-radius: var(--z-radius-md);
+    cursor: pointer;
+    touch-action: none;
+  }
+  .z-node-minimap[data-position="bottom-left"] {
+    inset-inline-end: auto;
+    inset-inline-start: var(--z-space-3);
+  }
+  .z-node-minimap[data-position="top-right"] {
+    inset-block-end: auto;
+    inset-block-start: var(--z-space-3);
+  }
+  .z-node-minimap[data-position="top-left"] {
+    inset-block-end: auto;
+    inset-block-start: var(--z-space-3);
+    inset-inline-end: auto;
+    inset-inline-start: var(--z-space-3);
+  }
+  .z-node-minimap:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-node-minimap__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .z-node-minimap__node {
+    fill: var(--z-fg-subtle);
+    opacity: 0.55;
+    vector-effect: non-scaling-stroke;
+  }
+  .z-node-minimap__node[data-group] {
+    fill: none;
+    stroke: var(--z-fg-subtle);
+    stroke-width: 1;
+    stroke-dasharray: 3 2;
+  }
+  .z-node-minimap__node[data-selected] {
+    fill: var(--z-accent);
+    opacity: 1;
+  }
+  .z-node-minimap__node[data-status="error"] {
+    fill: var(--z-danger);
+    opacity: 1;
+  }
+  .z-node-minimap__mask {
+    fill: var(--z-fg);
+    opacity: 0.06;
+  }
+  .z-node-minimap__view {
+    fill: none;
+    stroke: var(--z-accent);
+    stroke-width: 1.5;
+    rx: 3px;
+  }
+  .z-node-controls {
+    position: absolute;
+    inset-block-end: var(--z-space-3);
+    inset-inline-start: var(--z-space-3);
+    z-index: var(--z-layer-raised);
+  }
+  .z-node-controls[data-position="top-left"] {
+    inset-block-end: auto;
+    inset-block-start: var(--z-space-3);
+  }
+  .z-node-controls[data-position="top-right"] {
+    inset-block-end: auto;
+    inset-block-start: var(--z-space-3);
+    inset-inline-start: auto;
+    inset-inline-end: var(--z-space-3);
+  }
+  .z-node-controls__zoom {
+    min-inline-size: 5ch;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .z-node-controls [data-lock-icon="open"] [data-when="closed"],
+  .z-node-controls [data-lock-icon="closed"] [data-when="open"] {
+    display: none;
+  }
+
+  /* Vista en lista: alternativa al lienzo, el mismo modelo. */
+  .z-node-list {
+    display: grid;
+    gap: var(--z-space-4);
+  }
+  .z-node-list__scroll {
+    min-inline-size: 0;
+    overflow-x: auto;
+    border-radius: var(--z-radius-md);
+  }
+  /* En estrecho la tabla desplaza: el borde con columnas ocultas se difumina, solo si hay algo por ese lado. */
+  @supports (animation-timeline: scroll()) {
+    .z-node-list__scroll {
+      animation: z-node-list-fade linear both;
+      animation-timeline: scroll(self inline);
+    }
+    .z-node-list__scroll:dir(rtl) {
+      animation-name: z-node-list-fade-rtl;
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-node-list__scroll {
+      animation: none;
+    }
+  }
+  @keyframes z-node-list-fade {
+    from {
+      mask-image: linear-gradient(to right, black, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to right, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to right, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), black);
+    }
+  }
+  @keyframes z-node-list-fade-rtl {
+    from {
+      mask-image: linear-gradient(to left, black, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to left, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to left, transparent, black var(--z-space-6), black calc(100% - var(--z-space-6)), black);
+    }
+  }
+  .z-node-list__scroll:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-node-list__caption {
+    padding-block-end: var(--z-space-2);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+    text-align: start;
+  }
+
+  @media (max-width: 640px) {
+    .z-node-minimap {
+      inline-size: 128px;
+      block-size: 88px;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .z-edge__path,
+    .z-node-canvas__draft {
+      stroke: CanvasText;
+    }
+    .z-edge[data-selected] .z-edge__path,
+    .z-node-minimap__view {
+      stroke: Highlight;
+    }
+    .z-node-canvas__marker path {
+      fill: CanvasText;
+    }
+    .z-node[data-selected],
+    .z-node-group[data-selected],
+    .z-node-port[data-candidate]::before {
+      outline: 2px solid Highlight;
+    }
+    .z-node-port::before {
+      border-color: CanvasText;
+    }
+    .z-node-canvas__background {
+      display: none;
+    }
+  }
+}

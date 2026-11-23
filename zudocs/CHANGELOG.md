@@ -14,16 +14,25 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   Se activa con `pages.carousels` y va en la navegación de referencia.
 - `/loaders` enseña los ocho patrones de `Skeleton` dentro de un `SkeletonGroup`.
 - Ilustraciones SVG propias en `static/img/carousel/` para las demos.
+- Vista previa en vivo de todos los ejemplos de las páginas de componente. Los que no tienen marcado estático en
+  `html.json` (necesitan datos, estado o una capa por portal) llevan su demo de React en `ComponentPage/examples/`:
+  Carousel, Gallery, Lightbox, Stories, Calendar, DataTable, NodeCanvas, Shell, las capas (con su disparador a la
+  vista) y otros 40 componentes. Un ejemplo sin vista previa detiene el build con su nombre, y `pnpm test:site`
+  comprueba cada ejemplo de cada página.
 
 ### Cambiado
 
 - La portada sustituye la tira con lente por Prisma: una pieza de la suite por slide, con una composición en vivo de
   los componentes reales, pase automático con progreso y botón de pausa. Sube justo debajo del titular.
 - Grupos «Tiempo» y «Terminal y código» en el catálogo de componentes, con su icono.
+- El escenario de la vista previa se ajusta a su contenido (alto mínimo de 160 px en lugar de 380): una pieza pequeña
+  ya no queda perdida en el centro. IconButton, Toggle, CopyButton y Swap enseñan sus variantes y tamaños arriba.
 
 ### Corregido
 
 - Navegación: el nombre de un grupo («Dashboard y tableros») pasa a dos líneas antes de cortarse con elipsis.
+- Navegación lateral e índice de la página: más altos que la ventana, difuminan el borde con entradas ocultas en vez
+  de cortar una a media altura.
 
 ## [0.3.0] - 2026-11-21
 

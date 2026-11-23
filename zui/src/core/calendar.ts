@@ -645,10 +645,14 @@ export function buildCalendar(input: CalendarInput): CalendarModel {
   const title =
     n === 1
       ? formats.title.format(parse(firstDay))
-      : ((formats.title as Intl.DateTimeFormat & { formatRange?: (a: Date, b: Date) => string }).formatRange?.(
-          parse(firstDay),
-          parse(`${lastMonth}-01`),
-        ) ?? `${formats.title.format(parse(firstDay))} – ${formats.title.format(parse(`${lastMonth}-01`))}`);
+      : // Espacios normales: el ICU de Node separa el rango con espacios finos y el de los navegadores no, y el
+        // título del render en el servidor no casaba con el del cliente (error de hidratación).
+        (
+          (formats.title as Intl.DateTimeFormat & { formatRange?: (a: Date, b: Date) => string }).formatRange?.(
+            parse(firstDay),
+            parse(`${lastMonth}-01`),
+          ) ?? `${formats.title.format(parse(firstDay))} – ${formats.title.format(parse(`${lastMonth}-01`))}`
+        ).replace(/[\u2009\u202f]/g, " ");
   return { view, title, weekdays, months, units: [], unitsLabel: "", canPrevious, canNext, tabbable, firstMonth, lastMonth };
 }
 

@@ -4,6 +4,7 @@ import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   size?: ControlSize;
@@ -19,7 +20,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   ref?: Ref<HTMLInputElement>;
 }
 
-export function Input({
+export const Input = withRef(function Input({
   size = "md",
   invalid,
   icon,
@@ -50,4 +51,4 @@ export function Input({
       {trailing ? <span className="z-input__trailing">{trailing}</span> : null}
     </span>
   );
-}
+});

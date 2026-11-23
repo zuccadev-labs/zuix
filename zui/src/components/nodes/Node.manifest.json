@@ -1,0 +1,94 @@
+{
+  "name": "Node",
+  "group": "nodes",
+  "exports": ["NodeGroup", "NodePort"],
+  "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
+  "import": "import { Node, NodeGroup, NodePort } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "node",
+      "type": "GraphNode",
+      "description": "El nodo del modelo."
+    },
+    {
+      "name": "x",
+      "type": "number",
+      "description": "Posición absoluta para el primer pintado."
+    },
+    {
+      "name": "y",
+      "type": "number"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<NodeCanvasLabels>"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Cuerpo propio (sin él, data.description)."
+    }
+  ],
+  "states": ["rest", "focus", "selected", "running", "success", "error", "entered"],
+  "tokens": [
+    "surface",
+    "surface-solid",
+    "card-bg",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "success",
+    "success-soft",
+    "success-text",
+    "warning",
+    "shadow-sm",
+    "shadow-md",
+    "radius-lg",
+    "panel-radius",
+    "focus-width",
+    "focus-offset",
+    "glass-highlight",
+    "radius-full",
+    "text-caption",
+    "text-body",
+    "weight-semibold",
+    "weight-medium",
+    "control-height-xs",
+    "control-radius-sm",
+    "touch-target"
+  ],
+  "classes": [
+    "z-node",
+    "z-node__header",
+    "z-node__icon",
+    "z-node__title",
+    "z-node__status",
+    "z-node__body",
+    "z-node__resize",
+    "z-node-port",
+    "z-node-port__label",
+    "z-node-group",
+    "z-node-group__header",
+    "z-node-group__title"
+  ],
+  "a11y": "group con aria-roledescription «node» y el título como nombre. El estado se dice en texto («running», «error»), no solo con color. Cada puerto es un <button> con nombre («Input json», «Output true») y objetivo de 24 px. En el lienzo, los controles del cuerpo salen del orden de Tab hasta que se entra en el nodo con Intro.",
+  "examples": [
+    {
+      "title": "Nodo con dos salidas",
+      "code": "<Node node={{ id: \"filter\", position: { x: 0, y: 0 }, data: { label: \"Filter\", icon: \"funnel\", description: \"total > 100\", status: \"success\" }, ports: [{ id: \"in\", kind: \"target\" }, { id: \"true\", kind: \"source\", label: \"true\" }, { id: \"false\", kind: \"source\", label: \"false\" }] }} />"
+    },
+    {
+      "title": "Grupo",
+      "code": "<NodeGroup node={{ id: \"g\", position: { x: 0, y: 0 }, size: { width: 360, height: 200 }, data: { label: \"Retry block\" } }} />"
+    }
+  ]
+}

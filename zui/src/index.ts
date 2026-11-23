@@ -17,7 +17,10 @@ export * from "./components/chat";
 export * from "./components/ai";
 export * from "./components/dashboard";
 export * from "./components/people";
+export * from "./components/nodes";
 export { cx } from "./cx";
+// Importes de PriceBreakdown y PriceTag: formato de moneda y sumas exactas en unidades menores.
+export { currencyDigits, formatMoney, summarizePrice, type MoneyOptions, type PriceSummary, type ResolvedLine } from "./core/money";
 // Patrones del cargador DotMatrix (los mismos que dibuja el modo sin framework).
 export { DOT_PATTERNS, type DotPattern } from "./core/dotmatrix";
 // Utilidades de fechas civiles (cadenas ISO, sin zona) que comparten Calendar y los selectores.

@@ -177,6 +177,24 @@ export default function ({ t, assert, poll }) {
           async () => Number(await page.locator(`${logs} [role=grid]`).getAttribute("aria-rowcount")) === count + 1,
           "entrada añadida (un aviso)",
         );
+        // Subir en el mismo fotograma en que llega una entrada: el repintado no puede devolver la vista al final.
+        await page.locator(`${logs} .z-log-console__follow`).click();
+        await poll(
+          () => page.locator(`${logs} .z-log-console__viewport`).evaluate((el) => el.scrollTop + el.clientHeight >= el.scrollHeight - 2),
+          "vuelve a seguir el final",
+        );
+        await page.evaluate(
+          ([sel, add]) => {
+            document.querySelector(`${sel} .z-log-console__viewport`).scrollTop = 0;
+            document.querySelector(add).click();
+          },
+          [logs, t("x-logs-add")],
+        );
+        await poll(
+          async () => (await page.locator(`${logs} .z-log-console__follow`).getAttribute("aria-pressed")) === "false",
+          "subir mientras llega una entrada deja de seguir",
+        );
+        assert((await page.locator(`${logs} .z-log-console__viewport`).evaluate((el) => el.scrollTop)) < 50, "la vista se queda arriba");
       },
     },
     {

@@ -1,0 +1,27 @@
+{
+  "name": "@zuccadev-labs/zuix-example-react18",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "La aplicación de ejemplo (examples/app) servida con React 18: base de las pruebas en navegador con REACT=18.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@zuccadev-labs/zuix-tokens": "workspace:*",
+    "@zuccadev-labs/zuix-zicon": "workspace:*",
+    "@zuccadev-labs/zuix-zout": "workspace:*",
+    "@zuccadev-labs/zuix-zui": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

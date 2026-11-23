@@ -2,6 +2,7 @@ import type { CSSProperties, LiHTMLAttributes, OlHTMLAttributes, ReactNode, Ref 
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import type { Tone } from "../actions/types";
+import { withRef } from "../../react-compat";
 
 export interface TimelineProps extends OlHTMLAttributes<HTMLOListElement> {
   /** `start`: hora y contenido tras la línea. `end`: la línea al final. `alternate`: a uno y otro lado (en estrecho, una columna). */
@@ -18,7 +19,7 @@ export interface TimelineProps extends OlHTMLAttributes<HTMLOListElement> {
 }
 
 /** Lista ordenada de acontecimientos con línea, punto por elemento y hora (`<ol>`). */
-export function Timeline({
+export const Timeline = withRef(function Timeline({
   align = "start",
   line = "solid",
   dot = "circle",
@@ -41,7 +42,7 @@ export function Timeline({
       {children}
     </ol>
   );
-}
+});
 
 export interface TimelineItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>, "title"> {
   title: ReactNode;
@@ -63,7 +64,7 @@ export interface TimelineItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>,
 }
 
 /** Elemento de Timeline: punto (o icono) en la línea, hora, título y descripción. */
-export function TimelineItem({
+export const TimelineItem = withRef(function TimelineItem({
   title,
   time,
   timeLabel,
@@ -108,4 +109,4 @@ export function TimelineItem({
       </div>
     </li>
   );
-}
+});

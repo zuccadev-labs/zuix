@@ -2,6 +2,7 @@
 import type { Ref } from "react";
 import { circularSliderWidget, type CircularSliderProps as CoreProps } from "../../core/circular-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export interface CircularSliderProps extends CoreProps {
   /** Cada cambio mientras se arrastra o con una tecla. */
@@ -14,7 +15,14 @@ export interface CircularSliderProps extends CoreProps {
 }
 
 /** Deslizador circular (círculo completo o arco abierto) con el valor en el centro; patrón APG «slider». */
-export function CircularSlider({ onValueChange, onValueChangeEnd, id, className, ref, ...props }: CircularSliderProps) {
+export const CircularSlider = withRef(function CircularSlider({
+  onValueChange,
+  onValueChangeEnd,
+  id,
+  className,
+  ref,
+  ...props
+}: CircularSliderProps) {
   return useWidget(circularSliderWidget, props, {
     id,
     className,
@@ -24,4 +32,4 @@ export function CircularSlider({ onValueChange, onValueChangeEnd, id, className,
       "change-end": onValueChangeEnd ? (d: { value: number }) => onValueChangeEnd(d.value) : undefined,
     },
   });
-}
+});

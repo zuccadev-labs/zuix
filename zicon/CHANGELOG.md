@@ -7,6 +7,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- React 18: `Icon` funciona con React 18.2 o posterior además de con React 19 (peer `^18.2.0 || ^19.0.0`). Con
+  React 18 va envuelto en `forwardRef` para seguir aceptando `ref`.
 - 20 iconos propios, dibujados por mí con el mismo lenguaje de línea que Dazicon y publicados bajo MIT:
   `anchor`, `car`, `cloud-rain`, `cloud-sun`, `compass`, `first-aid`, `fish`, `fuel`, `gauge`, `navigation`,
   `shield`, `ship`, `siren`, `snowflake`, `sunset`, `target`, `tv`, `utensils`, `waves` y `wind`. El set pasa

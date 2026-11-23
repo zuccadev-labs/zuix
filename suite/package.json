@@ -101,6 +101,10 @@
       "types": "./zui-dom-people.d.ts",
       "default": "./zui-dom-people.js"
     },
+    "./zui/dom/nodes": {
+      "types": "./zui-dom-nodes.d.ts",
+      "default": "./zui-dom-nodes.js"
+    },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"
@@ -134,12 +138,14 @@
       "default": "./zicon-element.js"
     },
     "./tokens.css": "./tokens.css",
+    "./tokens.compat.css": "./tokens.compat.css",
     "./tokens/dazlabs.css": "./tokens-dazlabs.css",
     "./tokens/zutool.css": "./tokens-zutool.css",
     "./tokens/zenith.css": "./tokens-zenith.css",
     "./tailwind.css": "./tailwind.css",
     "./docusaurus.css": "./docusaurus.css",
     "./styles.css": "./styles.css",
+    "./styles.compat.css": "./styles.compat.css",
     "./package.json": "./package.json"
   },
   "files": [
@@ -167,8 +173,8 @@
     "@zuccadev-labs/zuix-zout": "workspace:^"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
     "react": {

@@ -855,4 +855,166 @@
   .z-upload:has(.z-upload__files:not(:empty)) {
     cursor: default;
   }
+  /* Pulsar un botón de la lista no hunde la zona entera. */
+  .z-upload:has(.z-upload__files :active):active {
+    border-color: var(--z-control-border);
+    background: var(--z-control-bg);
+  }
+
+  /* Rejilla de miniaturas (`data-layout="grid"`): fotos grandes, portada, asa para reordenar, quitar y progreso. */
+  .z-upload__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(8.5rem, 100%), 1fr));
+    gap: var(--z-space-3);
+    margin-block-start: var(--z-space-2);
+  }
+  .z-upload__tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1-5);
+    min-width: 0;
+    padding: var(--z-space-1-5);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-radius-lg);
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+    font-size: var(--z-text-caption);
+    scroll-margin: var(--z-space-4);
+    transition:
+      scale var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-fast) var(--z-ease-standard),
+      border-color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-upload__preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--z-radius-md);
+    background: var(--z-surface-3);
+    color: var(--z-fg-muted);
+  }
+  .z-upload__preview canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .z-upload__tile-name {
+    overflow: hidden;
+    padding-inline: var(--z-space-0-5);
+    color: var(--z-fg-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-upload__cover {
+    position: absolute;
+    inset-block-start: var(--z-space-2-5);
+    inset-inline-start: var(--z-space-2-5);
+    padding: var(--z-space-0-5) var(--z-space-1-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-semibold);
+    pointer-events: none;
+  }
+  .z-upload__tile[data-cover] {
+    border-color: var(--z-accent);
+  }
+  .z-upload__tile-actions {
+    position: absolute;
+    inset-block-start: var(--z-space-2-5);
+    inset-inline-end: var(--z-space-2-5);
+    display: flex;
+    gap: var(--z-space-1);
+  }
+  .z-upload__tile-actions > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--z-control-height-xs);
+    height: var(--z-control-height-xs);
+    padding: 0;
+    border: 1px solid var(--z-glass-border);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-popup-bg);
+    color: var(--z-fg);
+    box-shadow: var(--z-shadow-sm);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-upload__tile-actions > button:hover {
+      background: var(--z-surface-solid);
+      color: var(--z-fg);
+    }
+  }
+  .z-upload__tile-actions > button:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  /* Asa: arrastrar solo desde aquí (el resto de la casilla deja desplazar la página en pantallas táctiles). */
+  .z-upload__handle {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+  }
+  .z-upload__tile-actions > .z-upload__handle {
+    cursor: grab;
+  }
+  .z-upload__grid[data-sorting],
+  .z-upload__grid[data-sorting] * {
+    cursor: grabbing;
+  }
+  .z-upload__handle[aria-pressed="true"] {
+    border-color: var(--z-accent);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+  }
+  .z-upload__tile[data-grabbed] {
+    z-index: var(--z-layer-raised);
+    border-color: var(--z-accent);
+    box-shadow: var(--z-shadow-lg);
+    scale: 1.02;
+  }
+  /* Mientras se arrastra, la casilla sigue al puntero desde su sitio; el destino se marca con un canto discontinuo. */
+  .z-upload__tile[data-dragging] {
+    pointer-events: none;
+    translate: var(--z-drag-x, 0) var(--z-drag-y, 0);
+    transition: none;
+  }
+  .z-upload__tile[data-drop-target] {
+    outline: var(--z-focus-width) dashed var(--z-accent);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-upload__tile .z-upload__progress {
+    position: absolute;
+    inset-inline: var(--z-space-3);
+    inset-block-end: calc(var(--z-space-6) + var(--z-space-1));
+    width: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-upload__tile {
+      transition: none;
+    }
+    .z-upload__tile[data-grabbed] {
+      scale: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .z-upload__tile[data-grabbed],
+    .z-upload__tile[data-cover] {
+      border-color: Highlight;
+    }
+    .z-upload__tile[data-drop-target] {
+      outline-color: Highlight;
+    }
+    .z-upload__handle[aria-pressed="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
 }

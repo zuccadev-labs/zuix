@@ -12,6 +12,8 @@ import { place, type Box, type Placement } from "../core/place";
 import { lockScroll } from "../core/scroll-lock";
 import { useMergedRef } from "../refs";
 import { useIsoLayoutEffect, useLatest } from "./hooks";
+import { withRef } from "../react-compat";
+import { popoverOpen, showPopover } from "../core/popover";
 
 /** Dónde se monta una capa: en el `<dialog>` modal que contiene a su ancla (fuera de él quedaría inerte) o en `<body>`. */
 export const portalHost = (anchor: Element | null | undefined): HTMLElement => anchor?.closest("dialog") ?? document.body;
@@ -109,7 +111,7 @@ function anchorTo(el: HTMLElement, latest: RefObject<Anchoring>, watch?: RefObje
 }
 
 /** Elemento `popover="manual"` abierto mientras está montado, colocado junto a su ancla y recolocado al desplazar. */
-export function Popup({
+export const Popup = withRef(function Popup({
   open,
   anchorRect,
   placement,
@@ -129,11 +131,8 @@ export function Popup({
   useIsoLayoutEffect(() => {
     const el = node.current;
     if (!el) return;
-    try {
-      if (!el.matches(":popover-open")) el.showPopover();
-    } catch {
-      // Navegador sin Popover API: la capa queda en el flujo con `position: fixed` y su z-index.
-    }
+    // Sin Popover API (ni polyfill) no se abre en la capa superior: queda en el flujo con `position: fixed` y su z-index.
+    if (!popoverOpen(el)) showPopover(el);
     const release = anchorTo(el, latest, watch);
     latest.current.onShown?.(el);
     return release;
@@ -151,7 +150,7 @@ export function Popup({
       {children}
     </div>
   );
-}
+});
 
 export interface ModalPopupProps extends Omit<ComponentProps<"dialog">, "open"> {
   /** `data-state`: `open`, o `closed` durante la animación de salida. */
@@ -174,7 +173,7 @@ export interface ModalPopupProps extends Omit<ComponentProps<"dialog">, "open"> 
  * superior y sigue a su ancla; además el navegador deja inerte todo lo que queda fuera y la página no se desplaza. No lleva velo visible: una
  * pulsación fuera recae en su `::backdrop` transparente y pide el cierre.
  */
-export function ModalPopup({
+export const ModalPopup = withRef(function ModalPopup({
   open,
   anchorRect,
   placement,
@@ -239,7 +238,7 @@ export function ModalPopup({
       {children}
     </dialog>
   );
-}
+});
 
 /** Rectángulo de un elemento como `Box`, o null si no está montado. */
 export function rectOf(el: Element | null | undefined): Box | null {

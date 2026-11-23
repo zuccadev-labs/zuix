@@ -4,6 +4,7 @@ import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { announceText, copyableText, copyText } from "../../core/clipboard";
 import { cx } from "../../cx";
 import { BUTTON_ICON_SIZE, type ButtonSize, type ButtonVariant } from "./types";
+import { withRef } from "../../react-compat";
 
 export interface CopyButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value" | "children" | "onCopy"> {
   /** Texto que se copia, o función que lo devuelve en el momento de copiar. */
@@ -31,7 +32,7 @@ export interface CopyButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
  * Botón que copia un texto al portapapeles. El icono pasa a una marca y una burbuja (`role="status"`, fuera del
  * botón) dice «Copied» o «Copy failed»: lo ven y lo oyen igual. No se deshabilita mientras confirma.
  */
-export function CopyButton({
+export const CopyButton = withRef(function CopyButton({
   value,
   target,
   label = "Copy",
@@ -108,4 +109,4 @@ export function CopyButton({
       </span>
     </span>
   );
-}
+});

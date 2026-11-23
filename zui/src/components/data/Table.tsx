@@ -1,6 +1,7 @@
 import type { ReactNode, Ref, TableHTMLAttributes } from "react";
 import { cx } from "../../cx";
 import { ScrollEdges } from "./edges.internal";
+import { withRef } from "../../react-compat";
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
   density?: "compact" | "comfortable";
@@ -23,7 +24,7 @@ export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
 }
 
 /** Tabla con estilo. Dentro se usa el marcado nativo: thead, tbody, tr, th y td. */
-export function Table({
+export const Table = withRef(function Table({
   density = "comfortable",
   framed = true,
   striped,
@@ -54,4 +55,4 @@ export function Table({
       </table>
     </ScrollEdges>
   );
-}
+});

@@ -7,6 +7,66 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- React 18: el binding funciona con React 18.2 o posterior además de con React 19. Los peers pasan a
+  `^18.2.0 || ^19.0.0`. Los componentes que aceptan `ref` la siguen recibiendo como prop; en React 18 van envueltos
+  en `forwardRef` por dentro (son objetos, no funciones). `inert` se escribe como `inert=""`, `popovertarget` en
+  minúsculas, la ref del hijo de un `trigger` o `asChild` se lee de `element.ref` y la fusión de refs no devuelve una
+  limpieza, que React 18 no admite. `EventCalendar`, `FileUpload`, `Carousel` y los widgets de agenda usan
+  `useEffect` en el servidor, donde React 18 avisa de cada `useLayoutEffect`. `DateTimePicker` (y `DatePicker` con
+  `input`) reinicia el borrador al abrir durante el render: con React 18 el calendario se abría enfocando el día de
+  la apertura anterior. Con React 19 nada cambia.
+- Sin Popover API, el binding de React ya no lanza: `Popup` (las capas de Popover, Menu, Select, Tooltip…), `Toast`
+  y los avisos de la agenda abren con la comprobación de `core/popover`, como el modo sin framework. Con
+  `@oddbird/popover-polyfill` se abren por él y se reconocen abiertos por su clase `:popover-open`.
+- Modo compat: `styles.compat.css` (`dist/zui.compat.css`), la hoja de componentes para Chromium 109, Firefox 115
+  y Safari 15.4, generada con lightningcss: sin `@layer` (aplanado en el orden de las capas), sin `color-mix()` (lee
+  los colores de `tokens.compat.css`), sin anidado ni `:dir()`, con la clase `.\:popover-open` de
+  `@oddbird/popover-polyfill` y anillos de foco con `:focus-within` donde falta `:has()`. Límites en
+  [Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat).
+- Resúmenes y precios (grupo `data`, solo marcado: se renderizan en un Server Component):
+  - `SummaryList`: lista clave–valor (`<dl>`) con los valores alineados al final en cifras tabulares, pista bajo la
+    etiqueta, tonos, separadores y fila de total destacada.
+  - `PriceBreakdown`: desglose sobre `SummaryList` con `Intl.NumberFormat` (`currency`, `locale`); descuentos y
+    créditos restan siempre y se escriben con signo, impuestos por importe o por porcentaje de la base, subtotal
+    opcional. Las sumas van en unidades menores enteras: el total es la suma exacta de las filas que se leen, también
+    en monedas sin decimales (JPY) o con tres (KWD).
+  - `PriceTag`: precio con moneda, anterior tachado delante del actual con prefijo para lectores («Previous price:»)
+    y unidad («/ night»).
+  - `formatMoney`, `summarizePrice` y `currencyDigits` en la raíz y en `/dom/data`.
+- Opiniones (grupo `data`):
+  - `ReviewSummary`: media, estrellas de solo lectura, número de valoraciones y una barra por estrella. Cada barra
+    se lee entera en texto («5 stars: 873 reviews, 68%») y los porcentajes se reparten por el mayor resto, así que
+    siempre suman 100. Nota y barras lado a lado o apiladas según el ancho de su hueco (consulta de contenedor).
+  - `ReviewCard`: autor con `Persona`, valoración, fecha en `<time>`, título, fotos (botones con nombre propio con
+    `onPhotoSelect`) y respuesta del propietario. El texto largo se pliega en un espacio cerca de `collapseAt`; lo
+    plegado lleva `hidden="until-found"`, así que Buscar en la página lo encuentra y lo abre. En `/dom/data`,
+    «Read more» y `beforematch` sin React, `setReviewExpanded`, `z:change { open }` y `z:photoselect { index }`.
+- Iconos en el árbol compartido de las piezas (`core/vnode`): variante `solid`.
+- Avisos (grupo `feedback`):
+  - `NotificationCenter`: campana con el número de no leídos en su nombre («Notifications, 3 unread») y un panel en
+    `popover` automático con los avisos agrupados por día civil en la zona de quien mira («Today», «Yesterday»,
+    fecha), leídos y no leídos (prefijo oculto «Unread:» además del fondo), acciones propias por aviso, marcar como
+    leído o no leído con nombre propio, «Mark all as read», estado vacío y enlace «View all». Un aviso nuevo sin leer
+    se anuncia una vez por el anunciador central, también con el panel cerrado (`silent` lo apaga). En `/dom/data`:
+    `.z-notification-center` con los avisos en `data-props`, `z:readchange`, `z:readall`, `z:action` y
+    `z:openchange`; `badgeText`, `groupByDay` y `unreadCount`.
+  - `NotificationBadge`: contador con tope («99+») o punto, suelto o pegado a la esquina de otro elemento; la cifra
+    va oculta y se lee el texto entero («12 unread»). No añado un `AlertBell`: sería otro nombre para la misma campana.
+- `FilterBar` (grupo `data`): chips de interruptor (`aria-pressed`) y de menú (popover con casillas o botones de opción
+  nativos; el chip dice la opción elegida o cuántas) en una fila que desplaza en horizontal con el borde difuminado
+  solo del lado con chips ocultos. «Clear» aparece con algún filtro activo y deja el foco en el primer chip; el número
+  de activos va en la descripción del grupo y se anuncia al cambiar. Valor controlado o libre; en `/dom/data`,
+  `.z-filter-bar` con `data-props`, `z:change { value, id }`, `toggleFilter`, `toggleOption`, `activeCount` y `chipText`.
+- `FileUpload`: `layout="grid"`, rejilla de miniaturas grandes para fotos (en un lienzo, sin URL de objeto, como la
+  lista), con `sortable` (arrastrar el asa o, con el teclado, Espacio coge, flechas mueven por la rejilla también
+  arriba y abajo y en RTL, Espacio suelta y Escape cancela; cada posición se anuncia una vez), `cover` (la primera es
+  la portada y las demás llevan «Make … the cover»), quitar y progreso por foto. `onReorder` y `onCoverChange`; textos
+  en `reorderLabels`. Las casillas se mueven, no se rehacen: el foco y la miniatura se conservan. Con la lista o la
+  rejilla dentro, el campo se nombra solo con su texto principal (`aria-labelledby`). En el modo DOM: `data-layout`,
+  `data-sortable`, `data-cover`, `data-reorder-labels`, `z:reorder`, `z:cover` y `reorderUpload`; en rejilla con
+  `multiple`, lo elegido se suma a lo que ya había.
+- Modo DOM: un icono que el registro del módulo no tiene (el de un aviso de la aplicación) se pinta con `<z-icon>`,
+  que lo dibuja con el set que haya cargado la página, en vez de quedar en blanco.
 - `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en
   una cabecera ancha y pasan a un menú «Más» en una de 420 px o menos: con tres iconos el nombre quedaba en «An…».
 - Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de
@@ -26,7 +86,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     respondiendo/editando y notas de voz con MediaRecorder cuando existe (pulsar para grabar y para enviar, Cancelar).
   - `ConversationList` (presencia, último mensaje o quién escribe o el borrador, hora corta, no leídos y menciones,
     silenciado, fijado, búsqueda y filtros), `ChatHeader`, `EmojiPicker` (conjunto propio de unos 120 emojis con
-    nombres CLDR, recientes, tono de piel y carga a demanda de otro conjunto), `VoiceNote`, `Reactions`,
+    nombres CLDR, recientes, tono de piel y carga a demanda de otro conjunto; la fila que queda a medias abajo se
+    difumina), `VoiceNote`, `Reactions`,
     `TypingIndicator`, `DeliveryStatus` (leído con otro texto y otro trazo, no solo color), `ThreadSummary`, `CallCard`
     (entrante con aviso asertivo, saliente y en curso) y `PinnedBar`.
   - `core/`: `chat-group`, `chat-anchor`, `delivery`, `linkify`, `mentions`, `waveform`, `emoji-data` y `chat-tree`.
@@ -74,6 +135,38 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `Fab` (tres tamaños, extendido y plegable, fijo en una esquina), `FabMenu` y `SplitButton`, de Material 3.
 - `ImageList` (`standard`, `quilted`, `woven`, `masonry`) y `Masonry` (carriles nativos donde existen, columnas CSS
   donde no).
+- Familia de nodos (grupo `nodes`, entrada `/dom/nodes`), sin bibliotecas de terceros:
+  - `NodeCanvas`: lienzo con zoom (Ctrl/⌘ + rueda o pellizco), desplazamiento (rueda, arrastre del fondo, Espacio +
+    arrastre, flechas), fondo de puntos o rejilla que sigue la vista, imán a la cuadrícula, caja de selección con
+    Mayús, arrastrar y redimensionar nodos, conectar arrastrando desde un puerto, con dos clics o con el teclado,
+    reconectar arrastrando el extremo de una arista, borrar, copiar/cortar/pegar (también con el portapapeles del
+    sistema como JSON), duplicar, agrupar y desagrupar, deshacer/rehacer y disposición automática por capas. Modelo
+    `{ nodes, edges }` serializable, controlado o no, con `onNodesChange`, `onEdgesChange`, `onChange` y `onConnect`.
+    Solo pinta los nodos y aristas que se ven. Al montar encuadra el grafo sin bajar del 80 % (el texto de los nodos
+    se lee); si a ese zoom no cabe, empieza por su principio y el resto se ve desplazando o con el botón de encuadrar.
+  - `Node`, `NodeGroup` y `NodePort`: nodo con cabecera (icono, título, estado), cuerpo libre, estados seleccionado,
+    ejecutando, correcto y error, y puertos de entrada y salida con tipo y límite de conexiones.
+  - Aristas recta, bézier, escalonada y escalonada suave, con flecha, etiqueta, tono y trazo animado (quieto con
+    movimiento reducido y pausado fuera de pantalla).
+  - `NodeMinimap`, `NodeControls` (una Toolbar) y `NodeListView` (tablas de nodos y conexiones con las mismas
+    acciones; en estrecho, el borde con columnas ocultas se difumina).
+  - El lienzo ocupa el ancho de su contenedor: todo lo que lleva dentro va posicionado y, en una fila flex centrada,
+    se quedaba en los 2 px del borde.
+  - Teclado: una parada de Tab con foco itinerante, flechas al nodo más cercano en esa dirección, Intro y Escape para
+    entrar y salir de un nodo, Alt + flechas para moverlo, `]` y `[` para seguir conexiones (con varias, un menú para
+    elegir), conectar eligiendo origen y destino, Supr, Ctrl+Z/Y/A/C/X/V/D/G. Descripción textual del grafo y de cada
+    nodo, y anuncios en el anunciador central.
+  - `core/`: `viewport`, `edge-path`, `graph`, `graph-edit`, `ports`, `undo`, `layout-layers`, `minimap`, `node-view`
+    y la caja de selección en `selection` (`boxSelection`), con pruebas de propiedades de geometría e historial.
+- `TransferList` (grupo `forms`): disponibles y elegidos con casillas, búsqueda opcional, mover lo marcado o todo lo
+  visible, Intro y doble clic para mover, rango con Mayús y anuncio de lo movido. En `/dom/data`, `.z-transfer` con los
+  elementos en `data-props` y `z:change`. Lógica pura en `core/transfer`.
+- `DataTable`, funciones de tabla de datos avanzada: filtro por columna (`filterable`, `filters`, `onFiltersChange`), ancho
+  ajustable con puntero o flechas (`resizable`, `onColumnResize`), columnas fijadas al inicio (`pinned: "start"`) y
+  exportar a CSV (`exportable`, `dataTableCSV`), con los textos que empiezan por `=`, `+`, `-` o `@` neutralizados. En
+  `/dom/data`, lo mismo sobre el marcado (`tr.z-table__filters`, `.z-table__resize`, `th[data-pinned]`,
+  `.z-datatable__export`), con `z:filterchange`, `z:columnresize` y `dataTableCSVFromDom`.
+- `Chip` con `avatar`: ficha de persona («input chip» de Material 3) con un avatar delante del texto.
 - `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
   corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
   nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y
@@ -89,7 +182,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     `slidesPerPage="auto"`, `autoHeight`, `depth` y `peek`. En `/dom`, los mismos como `data-*`.
 - `Stories` (historias por persona con barras de progreso, toque para avanzar o retroceder, pulsación larga para
   pausar; empieza en pausa con movimiento reducido), `Lightbox` (visor a pantalla completa sobre `<dialog>` con zoom y
-  encuadre, `core/zoom`) y `Gallery` (carrusel con miniaturas sincronizadas y botón de pantalla completa). En `/dom`:
+  encuadre, `core/zoom`; al abrir, el foco empieza en «Acercar», o en «Cerrar» sin zoom, también en Safari) y `Gallery` (carrusel con miniaturas sincronizadas y botón de pantalla completa). En `/dom`:
   `[data-z-stories]`, `dialog[data-z-lightbox]` con `openLightbox(dialog, índice)` y `[data-z-gallery]`.
 - `Skeleton` por patrón: `pattern` (`card`, `list`, `table`, `profile`, `chat`, `chart`, `article`, `calendar`, también
   como `Skeleton.Card`, `Skeleton.List`…), `loading` para envolver el contenido real y `SkeletonGroup` (contenedor con
@@ -157,12 +250,28 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Avatar`: el punto de estado `online`, `busy` y `away` salía gris. La regla base del punto en `zui.people` volvía a
+  poner el fondo por defecto y, por ir en una capa posterior, pisaba el color de cada estado de `zui.data`. Ahora
+  solo `zui.data` pone ese fondo.
+- `/dom` sin Popover API (Chromium < 114, Firefox < 125, Safari < 17): abrir un menú, un popover, un tooltip o un
+  submenú lanzaba, porque `:popover-open` no es un selector válido ahí y `showPopover` no existe. Ahora no se abren y
+  nada lanza; con `@oddbird/popover-polyfill` cargado por la aplicación, funcionan.
+- `/dom` en Safari < 16.4: el módulo no cargaba, porque el resaltado de código y las tablas de Markdown usaban
+  aserciones hacia atrás (`(?<!…)`) en expresiones regulares. Se escriben sin ellas y el resultado es el mismo.
+- `Chip` interactivo (también los de `FilterBar`): con puntero grueso el botón quedaba en 38 px, 2 px por dentro del
+  borde del chip de 40. Su zona de pulsación cubre ahora el borde y llega a los 40 sin cambiar el dibujo.
+- `Calendar` con `numberOfMonths` de 2 o más: el título del rango («December 2026 – January 2027») usa espacios
+  normales. El de Node llevaba espacios finos y no casaba con el del navegador al hidratar un render en el servidor.
 - `AnalogClock`: con marcas, las cifras van a radio 31 (antes 35) y no pisan las marcas del 3, el 6 y el 9.
 - `AvatarGroup`: el solape depende de la talla (0,28 del diámetro; 0,2 en `sm`; ninguno en `xs`, donde dos iniciales
   ocupan casi todo el círculo) y las iniciales de cada avatar tapado se centran en la parte que se ve. El siguiente
   avatar ya no tapa las iniciales del anterior.
 - `Table` y `DataTable`: una columna `mono` (fechas, códigos) no parte línea («2026-11-\n10»), y el borde con columnas
-  ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco.
+  ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco. En una
+  tabla cuenta desde 1 px escondido (en una tira, desde 8): la última columna llega al borde y unos pocos píxeles ya
+  cortan su texto.
+- `SlotPicker`: con más horas de las que caben, el borde de la lista con horas ocultas se difumina en vez de cortar una
+  hora a media altura.
 - `KanbanBoard`, `CalendarHeatmap` y las miniaturas de `Carousel` y `Gallery`: el borde con contenido oculto se difumina en
   lugar de cortar una tarjeta, un mes o una miniatura en seco (también en `/dom`).
 - `PromptInput`: modelo, herramientas y uso van en una sola fila que desplaza, con el borde oculto difuminado; en un
@@ -198,6 +307,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
   un filtro) a veces no dejaba de seguir el final: se ignoraba el desplazamiento de la persona si llegaba fundido
   con el de la pieza. Ahora solo se ignora el que llega a la posición que pidió la pieza.
+- `LogConsole`: subir en el mismo fotograma en que la consola se repinta (llega una entrada, se limpia la búsqueda)
+  devolvía la vista al final antes de que llegara el evento de desplazamiento, y la consola seguía siguiendo. Ahora el
+  repintado ve que la posición subió desde la última conocida y deja de seguir en vez de bajar.
 
 ## [0.3.0] - 2026-11-21
 

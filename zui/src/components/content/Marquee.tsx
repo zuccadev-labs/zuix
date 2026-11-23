@@ -2,6 +2,7 @@
 import { useState, type CSSProperties, type HTMLAttributes, type ReactNode, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import { inertProp, withRef } from "../../react-compat";
 
 export interface MarqueeProps extends HTMLAttributes<HTMLDivElement> {
   /** Nombre de la región (lo que desfila). */
@@ -31,7 +32,7 @@ export interface MarqueeProps extends HTMLAttributes<HTMLDivElement> {
  * Cinta que desfila sin fin: copias del contenido (solo la primera para los lectores de pantalla; las demás `inert`
  * y `aria-hidden`), pausa al pasar o enfocar y botón de pausa visible. Con `prefers-reduced-motion` no se mueve.
  */
-export function Marquee({
+export const Marquee = withRef(function Marquee({
   label,
   duration = 30,
   orientation = "horizontal",
@@ -70,7 +71,7 @@ export function Marquee({
         <div className="z-marquee__track">
           {Array.from({ length: Math.max(2, repeat) }, (_, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: copias fijas del mismo contenido.
-            <div key={i} className="z-marquee__group" aria-hidden={i > 0 ? true : undefined} inert={i > 0 ? true : undefined}>
+            <div key={i} className="z-marquee__group" aria-hidden={i > 0 ? true : undefined} inert={inertProp(i > 0)}>
               {children}
             </div>
           ))}
@@ -90,4 +91,4 @@ export function Marquee({
       ) : null}
     </div>
   );
-}
+});

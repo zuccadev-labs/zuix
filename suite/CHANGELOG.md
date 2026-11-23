@@ -7,10 +7,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Peers `react` y `react-dom`: `^18.2.0 || ^19.0.0`. El binding funciona también con React 18.2 o posterior.
+- `./styles.compat.css` y `./tokens.compat.css`: el modo compat (Chromium 109, Firefox 115, Safari 15.4) de
+  `styles.css` y `tokens.css`, sobre las hojas compat de tokens, zui y zout.
 - Subrutas `./zui/dom/time` y `./zui/dom/terminal`: el comportamiento sin framework de las familias de tiempo y de
   terminal y código de `@zuccadev-labs/zuix-zui`.
 - Subrutas `./zui/dom/chat` y `./zui/dom/ai`: chat y mensajería, e IA y agentes, sin framework.
 - Subrutas `./zui/dom/dashboard` y `./zui/dom/people`: dashboard y tableros, y usuarios y perfiles.
+- Subruta `./zui/dom/nodes`: el lienzo de nodos sin framework de `@zuccadev-labs/zuix-zui`.
 
 ## [0.3.0] - 2026-11-21
 

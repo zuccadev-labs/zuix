@@ -3,6 +3,7 @@ import type { CSSProperties, HTMLAttributes, Ref } from "react";
 import { cx } from "../../cx";
 import { dotDuration, dotGrid, dotMatrixCells, dotMotion, dotValue, type DotPattern } from "../../core/dotmatrix";
 import { useOffscreenRef } from "../../primitives/offscreen";
+import { withRef } from "../../react-compat";
 
 export interface DotMatrixProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children"> {
   /** Patrón de movimiento. */
@@ -30,7 +31,7 @@ export interface DotMatrixProps extends Omit<HTMLAttributes<HTMLSpanElement>, "c
  * Cargador de rejilla de puntos: cada patrón desfasa en el tiempo una misma animación de opacidad y escala (CSS,
  * en el compositor). Quieto con movimiento reducido (un fotograma del patrón) y en pausa fuera de pantalla.
  */
-export function DotMatrix({
+export const DotMatrix = withRef(function DotMatrix({
   pattern = "wave",
   cols,
   rows,
@@ -82,4 +83,4 @@ export function DotMatrix({
       ))}
     </span>
   );
-}
+});

@@ -32,6 +32,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/index.css",
+    "./styles.compat.css": "./dist/zui.compat.css",
     "./styles/*": "./src/styles/*",
     "./manifest.json": "./manifest.json",
     "./dom": "./src/dom/index.ts",
@@ -50,9 +51,11 @@
     "./dom/ai": "./src/dom/families/ai.ts",
     "./dom/dashboard": "./src/dom/families/dashboard.ts",
     "./dom/people": "./src/dom/families/people.ts",
+    "./dom/nodes": "./src/dom/families/nodes.ts",
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
     "./html.json": "./html.json",
     "./dist/zui.css": "./dist/zui.css",
+    "./dist/zui.compat.css": "./dist/zui.compat.css",
     "./dist/zui.dom.js": "./dist/zui.dom.js",
     "./dist/zui.dom.carousel-gl.js": "./dist/zui.dom.carousel-gl.js",
     "./package.json": "./package.json"
@@ -62,8 +65,8 @@
   },
   "peerDependencies": {
     "@zuccadev-labs/zuix-zicon": "workspace:^",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
     "@zuccadev-labs/zuix-tokens": "workspace:^"
@@ -170,15 +173,21 @@
         "types": "./dist/esm/dom/families/people.d.ts",
         "default": "./dist/esm/dom/families/people.js"
       },
+      "./dom/nodes": {
+        "types": "./dist/esm/dom/families/nodes.d.ts",
+        "default": "./dist/esm/dom/families/nodes.js"
+      },
       "./dom/carousel-gl": {
         "types": "./dist/esm/dom/carousel-gl.d.ts",
         "default": "./dist/esm/dom/carousel-gl.js"
       },
       "./styles.css": "./dist/zui.css",
+      "./styles.compat.css": "./dist/zui.compat.css",
       "./styles/*": "./dist/styles/*",
       "./manifest.json": "./manifest.json",
       "./html.json": "./html.json",
       "./dist/zui.css": "./dist/zui.css",
+      "./dist/zui.compat.css": "./dist/zui.compat.css",
       "./dist/zui.dom.js": {
         "types": "./dist/esm/dom/index.d.ts",
         "default": "./dist/zui.dom.js"

@@ -27,6 +27,7 @@ import { afterPaint } from "./idle";
 import { pushLayer } from "./layers";
 import { place } from "./place";
 import { arrowDirection, nextInDirection } from "./spatial";
+import { showPopover } from "./popover";
 
 export type AgendaEventName =
   | "event-click"
@@ -965,11 +966,8 @@ export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boole
         : root.querySelector<HTMLElement>(`.z-agenda__view .z-event[data-key="${CSS.escape(pop.dataset.for ?? "")}"]`);
     const fresh = !open.has(pop);
     if (fresh) {
-      try {
-        pop.showPopover();
-      } catch {
-        // Sin Popover API: se queda en el flujo, visible.
-      }
+      // Sin Popover API (ni polyfill): se queda en el flujo, visible.
+      showPopover(pop);
       open.set(
         pop,
         pushLayer({

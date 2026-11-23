@@ -4,6 +4,7 @@ import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
 import { ICON_SIZE, type ControlSize } from "./types";
+import { withRef } from "../../react-compat";
 
 export interface ToggleProps extends Omit<ComponentProps<"button">, "onChange"> {
   pressed?: boolean;
@@ -19,7 +20,7 @@ export interface ToggleProps extends Omit<ComponentProps<"button">, "onChange"> 
 }
 
 /** Botón de dos estados (aria-pressed). */
-export function Toggle({
+export const Toggle = withRef(function Toggle({
   pressed: pressedProp,
   defaultPressed = false,
   onPressedChange,
@@ -57,4 +58,4 @@ export function Toggle({
       {children}
     </button>
   );
-}
+});

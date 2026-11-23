@@ -1,10 +1,25 @@
 "use client";
-import { useEffect, useId, useRef, useState, type DragEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type DragEvent,
+  type KeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { matchesAccept } from "../../core/accept";
+import { announce } from "../../core/announcer";
+import { isRtl } from "../../core/dir";
+import { columnsOf, gridTarget, moveItem, nearestIndex, REORDER_LABELS, type ReorderLabels } from "../../core/reorder";
 import { drawThumbnail } from "../../core/thumbnail";
+import { fill } from "../../core/vnode";
 import { cx } from "../../cx";
 import { useFieldControl } from "./Field";
+import { useIsoLayoutEffect } from "../../primitives/hooks";
 
 export interface FileUploadProps {
   /** Recibe los archivos elegidos o soltados (ya filtrados por `accept` y `maxSize`). */
@@ -46,7 +61,27 @@ export interface FileUploadProps {
   directory?: boolean;
   /** Abre la cámara en el móvil (`user` o `environment`). */
   capture?: "user" | "environment";
+  /**
+   * `list` (por defecto): filas con miniatura pequeña. `grid`: rejilla de miniaturas grandes, pensada para fotos
+   * (implica `showFiles`).
+   */
+  layout?: "list" | "grid";
+  /**
+   * Reordenar con el puntero (arrastrando el asa) y con el teclado (Espacio coge, flechas mueven, Espacio suelta,
+   * Escape cancela), con anuncio de cada posición. El nuevo orden sale por `onReorder`.
+   */
+  sortable?: boolean;
+  /** Nuevo orden de la lista tras soltar. Con `files`, actualízala aquí. */
+  onReorder?: (files: File[]) => void;
+  /** La primera es la portada: lleva la marca «Cover» y las demás un botón para pasar a ser la primera. */
+  cover?: boolean;
+  /** Se eligió otra portada (ya está primera en el orden que llega por `onReorder`). */
+  onCoverChange?: (file: File) => void;
+  /** Textos de reordenar y portada: `handle`, `hint`, `grabbed`, `moved`, `dropped`, `cancelled`, `cover`, `makeCover`, `coverChanged`. */
+  reorderLabels?: Partial<ReorderLabels>;
 }
+
+export type { ReorderLabels };
 
 /** Tamaño legible de un archivo (B, kB, MB). */
 function fileSize(bytes: number): string {
@@ -93,6 +128,102 @@ function FileRow({ file, progress, removeLabel, onRemove }: { file: File; progre
   );
 }
 
+interface TileProps {
+  file: File;
+  index: number;
+  count: number;
+  progress?: number;
+  removeLabel: string;
+  onRemove?: () => void;
+  sortable: boolean;
+  grabbed: boolean;
+  dragging: boolean;
+  /** Casilla donde caerá el arrastre. */
+  dropTarget: boolean;
+  isCover: boolean;
+  labels: ReorderLabels;
+  hintId: string;
+  onMakeCover?: () => void;
+  onHandleClick: (event: ReactMouseEvent<HTMLButtonElement>) => void;
+  onHandleKey: (event: KeyboardEvent<HTMLButtonElement>) => void;
+  onHandleBlur: () => void;
+  onHandlePointer: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+}
+
+function GridTile(p: TileProps) {
+  const image = p.file.type.startsWith("image/");
+  // La miniatura se dibuja en un lienzo: el archivo no pasa por ninguna URL ni atributo `src`.
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    setDrawn(false);
+    if (!image || !canvas.current) return;
+    let alive = true;
+    void drawThumbnail(canvas.current, p.file, 192).then((ok) => {
+      if (alive) setDrawn(ok);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [p.file, image]);
+  const name = p.file.name;
+  return (
+    <li
+      className="z-upload__tile"
+      data-index={p.index}
+      data-cover={p.isCover || undefined}
+      data-grabbed={p.grabbed || undefined}
+      data-dragging={p.dragging || undefined}
+      data-drop-target={p.dropTarget || undefined}
+      data-progress={p.progress === undefined ? undefined : Math.round(p.progress)}
+    >
+      <span className="z-upload__preview" aria-hidden="true">
+        {image ? <canvas ref={canvas} hidden={!drawn} /> : null}
+        {drawn ? null : <Icon name={image ? "photo" : "document"} size={24} />}
+      </span>
+      {p.isCover ? <span className="z-upload__cover">{p.labels.cover}</span> : null}
+      <span className="z-upload__tile-name">{name}</span>
+      {p.progress === undefined ? null : (
+        <progress className="z-upload__progress" max={100} value={p.progress} aria-label={`${name}: ${Math.round(p.progress)}%`} />
+      )}
+      <span className="z-upload__tile-actions">
+        {p.sortable && p.count > 1 ? (
+          <button
+            type="button"
+            className="z-upload__handle"
+            aria-label={fill(p.labels.handle, { name })}
+            aria-describedby={p.hintId}
+            aria-pressed={p.grabbed}
+            data-index={p.index}
+            onClick={p.onHandleClick}
+            onKeyDown={p.onHandleKey}
+            onBlur={p.onHandleBlur}
+            onPointerDown={p.onHandlePointer}
+          >
+            <Icon name="arrows-pointing-out" size={14} />
+          </button>
+        ) : null}
+        {p.onMakeCover && !p.isCover ? (
+          <button
+            type="button"
+            className="z-upload__make-cover"
+            aria-label={fill(p.labels.makeCover, { name })}
+            title={fill(p.labels.makeCover, { name })}
+            onClick={p.onMakeCover}
+          >
+            <Icon name="star" size={14} />
+          </button>
+        ) : null}
+        {p.onRemove ? (
+          <button type="button" className="z-upload__remove" aria-label={p.removeLabel} title={p.removeLabel} onClick={p.onRemove}>
+            <Icon name="x-mark" size={14} />
+          </button>
+        ) : null}
+      </span>
+    </li>
+  );
+}
+
 // Comprueba un archivo contra una lista `accept` (extensiones, tipos MIME y comodines).
 // Deja en el campo solo los archivos aceptados: el formulario envía lo mismo que recibió `onFiles`.
 function keep(input: HTMLInputElement | null, files: File[]): void {
@@ -130,11 +261,29 @@ export function FileUpload({
   removeLabel = (file) => `Remove ${file.name}`,
   directory,
   capture,
+  layout = "list",
+  sortable,
+  onReorder,
+  cover,
+  onCoverChange,
+  reorderLabels,
 }: FileUploadProps) {
   const [inner, setInner] = useState<ReadonlyArray<File>>([]);
-  const list = filesProp ?? inner;
+  const grid = layout === "grid";
+  const listed = showFiles || grid;
+  // Orden provisional mientras se reordena con el teclado (Escape lo descarta; soltar lo confirma).
+  const [preview, setPreview] = useState<ReadonlyArray<File> | null>(null);
+  const list = preview ?? filesProp ?? inner;
+  const reorderText = { ...REORDER_LABELS, ...reorderLabels };
+  const filesHint = useId();
+  const grab = useRef<{ file: File; origin: number } | null>(null);
+  const [grabbed, setGrabbed] = useState<File | null>(null);
+  const refocus = useRef<File | null>(null);
+  const filesRef = useRef<HTMLUListElement>(null);
+  const [drag, setDrag] = useState<{ file: File; target: number } | null>(null);
   const control = useFieldControl({ id, invalid });
   const hintId = useId();
+  const labelId = useId();
   const input = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -145,8 +294,8 @@ export function FileUpload({
     const rejected = picked.filter((file) => !accepted.includes(file));
     if (accepted.length) onFiles(accepted);
     if (rejected.length) onReject?.(rejected);
-    if (showFiles && filesProp === undefined && accepted.length) setInner(multiple ? [...inner, ...accepted] : accepted);
-    return showFiles && multiple && filesProp === undefined ? [...inner, ...accepted] : accepted;
+    if (listed && filesProp === undefined && accepted.length) setInner(multiple ? [...inner, ...accepted] : accepted);
+    return listed && multiple && filesProp === undefined ? [...inner, ...accepted] : accepted;
   };
   const onDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
@@ -156,9 +305,142 @@ export function FileUpload({
     if (name) keep(input.current, accepted);
   };
 
+  const say = (template: string, file: File, position: number) =>
+    announce(fill(template, { name: file.name, position: position + 1, count: list.length }), { source: input.current, delay: 300 });
+  const commit = (next: File[]) => {
+    if (filesProp === undefined) setInner(next);
+    if (name) keep(input.current, next);
+    onReorder?.(next);
+  };
+  const columns = () =>
+    columnsOf([...(filesRef.current?.querySelectorAll<HTMLElement>(".z-upload__tile") ?? [])].map((el) => el.getBoundingClientRect()));
+  const handleOf = (file: File) => {
+    const i = list.indexOf(file);
+    return filesRef.current?.querySelector<HTMLButtonElement>(`.z-upload__tile[data-index="${i}"] .z-upload__handle`) ?? null;
+  };
+  // Tras cada movimiento, el foco vuelve al asa del archivo (React lo mueve de sitio en el DOM) y la casilla se trae a la vista.
+  useIsoLayoutEffect(() => {
+    const file = refocus.current;
+    if (!file) return;
+    refocus.current = null;
+    const handle = handleOf(file);
+    handle?.closest(".z-upload__tile")?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    handle?.focus({ preventScroll: true });
+  });
+  const drop = (file: File) => {
+    const session = grab.current;
+    grab.current = null;
+    setGrabbed(null);
+    if (!session) return;
+    const order = [...list];
+    setPreview(null);
+    const at = order.indexOf(file);
+    if (at !== session.origin) {
+      commit(order);
+      say(reorderText.dropped, file, at);
+    }
+  };
+  const cancel = (file: File) => {
+    const session = grab.current;
+    grab.current = null;
+    setGrabbed(null);
+    setPreview(null);
+    if (!session) return;
+    refocus.current = file;
+    say(reorderText.cancelled, file, session.origin);
+  };
+  const onHandleClick = (file: File) => (event: ReactMouseEvent<HTMLButtonElement>) => {
+    // Un clic de ratón al soltar un arrastre no coge: el modo de teclado empieza con Espacio o Intro (o con la activación
+    // de un lector de pantalla, que llega como clic sin puntero, `detail` 0).
+    if (event.detail !== 0) return;
+    if (grab.current) drop(file);
+    else {
+      grab.current = { file, origin: list.indexOf(file) };
+      setGrabbed(file);
+      say(reorderText.grabbed, file, list.indexOf(file));
+    }
+  };
+  const onHandleKey = (file: File) => (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (!grab.current) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      cancel(file);
+      return;
+    }
+    const from = list.indexOf(file);
+    const to = gridTarget(from, event.key, { count: list.length, columns: columns(), rtl: isRtl(event.currentTarget) });
+    if (to === null) {
+      if (event.key.startsWith("Arrow") || event.key === "Home" || event.key === "End") event.preventDefault();
+      return;
+    }
+    event.preventDefault();
+    refocus.current = file;
+    setPreview(moveItem(list, from, to));
+    say(reorderText.moved, file, to);
+  };
+  // Soltar si el asa pierde el foco (Tab a otro control); el desenfoque que causa el propio movimiento no cuenta.
+  const onHandleBlur = (file: File) => () => {
+    if (grab.current && refocus.current !== file) drop(file);
+  };
+  const onHandlePointer = (file: File) => (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0 || grab.current || disabled) return;
+    const handle = event.currentTarget;
+    const tile = handle.closest<HTMLElement>(".z-upload__tile");
+    if (!tile || !filesRef.current) return;
+    event.preventDefault();
+    const pointer = event.pointerId;
+    const start = { x: event.clientX, y: event.clientY };
+    // Casillas medidas en reposo: el destino sale de la rejilla quieta, no de lo que se mueve.
+    const rects = [...filesRef.current.querySelectorAll<HTMLElement>(".z-upload__tile")].map((el) => el.getBoundingClientRect());
+    const from = list.indexOf(file);
+    let target = from;
+    handle.setPointerCapture?.(pointer);
+    setDrag({ file, target });
+    const move = (e: PointerEvent) => {
+      if (e.pointerId !== pointer) return;
+      tile.style.setProperty("--z-drag-x", `${e.clientX - start.x}px`);
+      tile.style.setProperty("--z-drag-y", `${e.clientY - start.y}px`);
+      const next = nearestIndex(e.clientX, e.clientY, rects);
+      if (next !== -1 && next !== target) {
+        target = next;
+        setDrag({ file, target });
+      }
+    };
+    const end = (e: PointerEvent) => {
+      if (e.pointerId !== pointer) return;
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerup", end);
+      document.removeEventListener("pointercancel", end);
+      tile.style.removeProperty("--z-drag-x");
+      tile.style.removeProperty("--z-drag-y");
+      setDrag(null);
+      if (e.type === "pointerup" && target !== from) {
+        commit(moveItem(list, from, target));
+        say(reorderText.dropped, file, target);
+      }
+    };
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerup", end);
+    document.addEventListener("pointercancel", end);
+  };
+  const remove = (file: File) => () => {
+    const next = list.filter((f) => f !== file);
+    if (filesProp === undefined) setInner(next);
+    if (name) keep(input.current, next);
+    onRemove?.(file);
+  };
+  const makeCover = (file: File) => () => {
+    const next = moveItem(list, list.indexOf(file), 0);
+    commit(next);
+    onCoverChange?.(file);
+    announce(fill(reorderText.coverChanged, { name: file.name }), { source: input.current, delay: 300 });
+  };
+
   return (
     <label
       className={cx("z-upload", className)}
+      data-layout={grid ? "grid" : undefined}
       data-size={size}
       data-dragging={dragging || undefined}
       data-invalid={control.invalid || undefined}
@@ -184,6 +466,8 @@ export function FileUpload({
         disabled={disabled}
         capture={capture}
         {...(directory ? { webkitdirectory: "", directory: "" } : {})}
+        // Con la lista dentro de la zona, el nombre del campo es solo su texto principal (no los nombres de archivo).
+        aria-labelledby={listed ? labelId : undefined}
         aria-invalid={control["aria-invalid"]}
         aria-describedby={[hint ? hintId : undefined, control["aria-describedby"]].filter(Boolean).join(" ") || undefined}
         onChange={(event) => {
@@ -197,14 +481,16 @@ export function FileUpload({
       <span className="z-upload__icon">
         <Icon name={icon} size={size === "lg" ? 24 : 20} />
       </span>
-      <span className="z-upload__label">{label}</span>
+      <span className="z-upload__label" id={listed ? labelId : undefined}>
+        {label}
+      </span>
       {hint ? (
         <span className="z-upload__hint" id={hintId}>
           {hint}
         </span>
       ) : null}
       {children}
-      {showFiles ? (
+      {listed && !grid ? (
         // biome-ignore lint/a11y/useKeyWithClickEvents: solo cancela la activación de la etiqueta; los botones de la lista tienen su teclado.
         <ul className="z-upload__files" onClick={(event) => event.preventDefault()}>
           {list.map((file) => (
@@ -213,19 +499,50 @@ export function FileUpload({
               file={file}
               progress={progress?.(file)}
               removeLabel={removeLabel(file)}
-              onRemove={
-                disabled
-                  ? undefined
-                  : () => {
-                      const next = list.filter((f) => f !== file);
-                      if (filesProp === undefined) setInner(next);
-                      if (name) keep(input.current, next);
-                      onRemove?.(file);
-                    }
-              }
+              onRemove={disabled ? undefined : remove(file)}
             />
           ))}
         </ul>
+      ) : null}
+      {grid ? (
+        <>
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: solo cancela la activación de la etiqueta; los botones de la rejilla tienen su teclado. */}
+          <ul
+            ref={filesRef}
+            className="z-upload__files z-upload__grid"
+            data-sorting={grabbed || drag ? "" : undefined}
+            onClick={(event) => event.preventDefault()}
+          >
+            {list.map((file, index) => (
+              <GridTile
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                file={file}
+                index={index}
+                count={list.length}
+                progress={progress?.(file)}
+                removeLabel={removeLabel(file)}
+                onRemove={disabled ? undefined : remove(file)}
+                sortable={Boolean(sortable) && !disabled}
+                grabbed={grabbed === file || drag?.file === file}
+                dragging={drag?.file === file}
+                dropTarget={Boolean(drag) && drag?.target === index && drag?.file !== file}
+                isCover={Boolean(cover) && index === 0}
+                labels={reorderText}
+                hintId={filesHint}
+                onMakeCover={cover && !disabled ? makeCover(file) : undefined}
+                onHandleClick={onHandleClick(file)}
+                onHandleKey={onHandleKey(file)}
+                onHandleBlur={onHandleBlur(file)}
+                onHandlePointer={onHandlePointer(file)}
+              />
+            ))}
+          </ul>
+          {sortable ? (
+            <span className="z-sr-only" id={filesHint}>
+              {reorderText.hint}
+            </span>
+          ) : null}
+        </>
       ) : null}
     </label>
   );

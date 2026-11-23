@@ -23,7 +23,9 @@
 //             z:change { value, index }.
 // OTPInput    .z-otp: data-mode="numeric|text", data-value. z:change { value, complete }.
 // FileUpload  .z-upload: data-max-size (bytes); accept y multiple, en el input. Lista opcional: ul.z-upload__files.
-//             z:change { files, rejected }.
+//             z:change { files, rejected }. Rejilla: data-layout="grid" (con multiple, lo elegido se suma), data-sortable
+//             (asa para reordenar con puntero y teclado; z:reorder { files, from, to }), data-cover (la primera es la
+//             portada; z:cover { file }) y data-reorder-labels (JSON con los textos de core/reorder).
 // DateField   .z-input.z-datefield[role=group] > .z-datefield__input con span.z-datefield__segment[role=spinbutton]
 //             [data-segment] y .z-datefield__literal (se rehacen si no siguen el orden del locale), button.z-datefield__clear
 //             opcional e input.z-native-input (valor ISO y validez nativa). En .z-datefield: data-locale, data-granularity

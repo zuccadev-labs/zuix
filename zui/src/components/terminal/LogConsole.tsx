@@ -8,6 +8,7 @@ import {
   type LogLevel,
 } from "../../core/log-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { LogConsoleLabels, LogEntry, LogLevel };
 
@@ -25,6 +26,6 @@ export interface LogConsoleProps extends CoreProps {
  * Consola de logs: hora, nivel, origen y mensaje; filtros por nivel con contadores, búsqueda con las coincidencias
  * marcadas, seguir el final, copiar y descargar. Pinta por ventana: miles de entradas sin miles de nodos.
  */
-export function LogConsole({ onLevelsChange, onClear, id, className, ref, ...props }: LogConsoleProps) {
+export const LogConsole = withRef(function LogConsole({ onLevelsChange, onClear, id, className, ref, ...props }: LogConsoleProps) {
   return useWidget(logConsoleWidget, props, { id, className, ref, handlers: { "levels-change": onLevelsChange, clear: onClear } });
-}
+});
