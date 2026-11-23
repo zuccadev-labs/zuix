@@ -32,6 +32,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/index.css",
+    "./styles.compat.css": "./dist/zui.compat.css",
     "./styles/*": "./src/styles/*",
     "./manifest.json": "./manifest.json",
     "./dom": "./src/dom/index.ts",
@@ -54,6 +55,7 @@
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
     "./html.json": "./html.json",
     "./dist/zui.css": "./dist/zui.css",
+    "./dist/zui.compat.css": "./dist/zui.compat.css",
     "./dist/zui.dom.js": "./dist/zui.dom.js",
     "./dist/zui.dom.carousel-gl.js": "./dist/zui.dom.carousel-gl.js",
     "./package.json": "./package.json"
@@ -180,10 +182,12 @@
         "default": "./dist/esm/dom/carousel-gl.js"
       },
       "./styles.css": "./dist/zui.css",
+      "./styles.compat.css": "./dist/zui.compat.css",
       "./styles/*": "./dist/styles/*",
       "./manifest.json": "./manifest.json",
       "./html.json": "./html.json",
       "./dist/zui.css": "./dist/zui.css",
+      "./dist/zui.compat.css": "./dist/zui.compat.css",
       "./dist/zui.dom.js": {
         "types": "./dist/esm/dom/index.d.ts",
         "default": "./dist/zui.dom.js"

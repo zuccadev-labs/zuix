@@ -195,12 +195,18 @@ importers:
       happy-dom:
         specifier: ^21.0.4
         version: 21.0.4
+      lightningcss:
+        specifier: ^1.33.0
+        version: 1.33.0
       playwright-core:
         specifier: ^1.65.1
         version: 1.65.1
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
+      web-features:
+        specifier: ^3.47.0
+        version: 3.47.0
 
   examples/app:
     dependencies:
@@ -6850,6 +6856,9 @@ packages:
 
   wbuf@1.7.3:
     resolution: {integrity: sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA==}
+
+  web-features@3.47.0:
+    resolution: {integrity: sha512-sD8j2ZQrev47vR5AGtT8gAJWk2+COnbTcopAI+UPo/+kXQClkPfhTWKnTlVOZhZnmH1bA5exPLhNeMtk6l3Ifg==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -15025,6 +15034,8 @@ snapshots:
   wbuf@1.7.3:
     dependencies:
       minimalistic-assert: 1.0.1
+
+  web-features@3.47.0: {}
 
   web-namespaces@2.0.1: {}
 

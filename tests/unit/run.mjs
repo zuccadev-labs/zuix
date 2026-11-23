@@ -34,6 +34,7 @@ const COVERED = [
   "tools/audit.mjs",
   "tools/check-barrels.mjs",
   "tools/use-client.mjs",
+  "tools/compat.mjs",
   "zout/src/logic.ts",
   "zout/src/edges.ts",
   "zout/src/pages.ts",

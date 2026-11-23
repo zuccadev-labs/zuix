@@ -138,12 +138,14 @@
       "default": "./zicon-element.js"
     },
     "./tokens.css": "./tokens.css",
+    "./tokens.compat.css": "./tokens.compat.css",
     "./tokens/dazlabs.css": "./tokens-dazlabs.css",
     "./tokens/zutool.css": "./tokens-zutool.css",
     "./tokens/zenith.css": "./tokens-zenith.css",
     "./tailwind.css": "./tailwind.css",
     "./docusaurus.css": "./docusaurus.css",
     "./styles.css": "./styles.css",
+    "./styles.compat.css": "./styles.compat.css",
     "./package.json": "./package.json"
   },
   "files": [

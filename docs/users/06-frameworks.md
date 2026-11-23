@@ -62,6 +62,8 @@ Los archivos listos para enlazar están en la carpeta `dist/` de cada paquete in
 - `z-root` aplica tipografía y foco; `z-canvas` pinta el fondo.
 - `data-z-dom` activa el comportamiento de pestañas, acordeón y controles dentro de ese contenedor.
 - El ejemplo completo, con todos los componentes, está en `examples/html/index.html`.
+- Para navegadores anteriores a la Popover API (hasta Chromium 109, Firefox 115 y Safari 15.4) están las hojas
+  `*.compat.css` y el polyfill de popover: [Modo compat](./10-compatibilidad.md#modo-compat).
 
 ## Con bundler (Vue, Svelte, Angular, Astro)
 

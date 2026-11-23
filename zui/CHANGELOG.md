@@ -7,6 +7,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Modo compat: `styles.compat.css` (`dist/zui.compat.css`), la hoja de componentes para Chromium 109, Firefox 115
+  y Safari 15.4, generada con lightningcss: sin `@layer` (aplanado en el orden de las capas), sin `color-mix()` (lee
+  los colores de `tokens.compat.css`), sin anidado ni `:dir()`, con la clase `.\:popover-open` de
+  `@oddbird/popover-polyfill` y anillos de foco con `:focus-within` donde falta `:has()`. Límites en
+  [Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat).
 - Resúmenes y precios (grupo `data`, solo marcado: se renderizan en un Server Component):
   - `SummaryList`: lista clave–valor (`<dl>`) con los valores alineados al final en cifras tabulares, pista bajo la
     etiqueta, tonos, separadores y fila de total destacada.

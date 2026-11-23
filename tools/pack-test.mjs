@@ -232,7 +232,7 @@ assert.equal(zui.Button, Button); assert.equal(zout.Stack, Stack); assert.equal(
 const html = renderToStaticMarkup(h(Stack, null, h(Button, { variant: "primary", icon: "plus" }, "New")));
 assert.ok(html.includes("z-btn--primary") && html.includes("<path"), "render con icono a través del paraguas");
 assert.ok(iconSvg("plus").includes("<path")); assert.equal(typeof zuiDom.init, "function"); assert.equal(typeof zoutDom.init, "function");
-for (const f of ["styles.css", "tokens.css"]) import.meta.resolve("@zuccadev-labs/zuix/" + f);
+for (const f of ["styles.css", "tokens.css", "styles.compat.css", "tokens.compat.css"]) import.meta.resolve("@zuccadev-labs/zuix/" + f);
 console.log("ok");
 `,
     },
@@ -289,9 +289,10 @@ function fileURLToPathSafe(u) { return decodeURIComponent(new URL(u).pathname); 
 const specs = [
   "@zuccadev-labs/zuix-zicon", "@zuccadev-labs/zuix-zicon/core", "@zuccadev-labs/zuix-zicon/all", "@zuccadev-labs/zuix-zicon/dom", "@zuccadev-labs/zuix-zicon/element", "@zuccadev-labs/zuix-zicon/icons/x-mark",
   "@zuccadev-labs/zuix-zicon/manifest.json", "@zuccadev-labs/zuix-zicon/sprite.svg", "@zuccadev-labs/zuix-zicon/svg/outline/bell.svg", "@zuccadev-labs/zuix-zicon/svg/solid/bell.svg", "@zuccadev-labs/zuix-zicon/dist/zicon.element.js",
-  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal", "chat", "ai", "dashboard", "people", "nodes"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js",
-  "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js",
+  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal", "chat", "ai", "dashboard", "people", "nodes"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js", "@zuccadev-labs/zuix-zui/styles.compat.css", "@zuccadev-labs/zuix-zui/dist/zui.compat.css",
+  "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js", "@zuccadev-labs/zuix-zout/styles.compat.css", "@zuccadev-labs/zuix-zout/dist/zout.compat.css",
   "@zuccadev-labs/zuix-tokens/tokens.css", "@zuccadev-labs/zuix-tokens/tokens.json", "@zuccadev-labs/zuix-tokens/css/dazlabs.css",
+  "@zuccadev-labs/zuix-tokens/tokens.compat.css", "@zuccadev-labs/zuix-tokens/css/zenith.compat.css",
 ];
 for (const s of specs) {
   const file = resolve(s);
@@ -338,6 +339,13 @@ console.log("subpaths: " + specs.length + " entradas de exports resuelven a arch
     // El mismo uso a través del paraguas: tipos en Bundler y NodeNext, y CSS con @import de paquetes en Vite.
     "umbrella.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>umbrella</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/umbrella.tsx"></script></body></html>\n`,
     "vite.umbrella.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out-umbrella", rolldownOptions: { input: "umbrella.html" } } });\n`,
+    // Modo compat por el paraguas: una sola hoja con tokens, zui y zout ya bajados (docs/users/10-compatibilidad.md).
+    "compat.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>compat</title></head><body class="z-root z-canvas"><button class="z-btn z-btn--primary">Ok</button><script type="module" src="/src/compat.ts"></script></body></html>\n`,
+    "vite.compat.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ logLevel: "warn", build: { outDir: "out-compat", rolldownOptions: { input: "compat.html" } } });\n`,
+    "src/compat.ts": `import "@zuccadev-labs/zuix/styles.compat.css";
+import { init } from "@zuccadev-labs/zuix/zui/dom";
+init();
+`,
     "src/umbrella.tsx": `import "@zuccadev-labs/zuix/styles.css";
 import { createRoot } from "react-dom/client";
 import { Icon, registerIcons, type IconName } from "@zuccadev-labs/zuix/zicon/core";
@@ -466,6 +474,28 @@ if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", 
       ok(
         `vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
       );
+  }
+  if (
+    step(
+      "react: vite build de la hoja compat del paraguas",
+      "pnpm",
+      ["exec", "vite", "build", "--config", "vite.compat.config.mjs"],
+      reactDir,
+    ).ok
+  ) {
+    const css = walk(join(reactDir, "out-compat"))
+      .filter((f) => f.endsWith(".css"))
+      .map((f) => readFileSync(f, "utf8"))
+      .join("");
+    const left = [
+      ["@import", "@import"],
+      ["@layer", /@layer\b/],
+      ["color-mix()", /color-mix\(/i],
+    ].filter(([, re]) => (typeof re === "string" ? css.includes(re) : re.test(css)));
+    if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-compat-"))
+      bad("vite (compat): @zuccadev-labs/zuix/styles.compat.css no trae los tokens compat, zui y zout");
+    else if (left.length) bad(`vite (compat): la hoja compilada aún lleva ${left.map(([n]) => n).join(", ")}`);
+    else ok(`vite (compat): styles.compat.css resuelve sus @import, sin @layer ni color-mix() (CSS ${(css.length / 1024).toFixed(0)} kB)`);
   }
 }
 

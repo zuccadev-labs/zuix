@@ -7,6 +7,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Modo compat: `styles.compat.css` (`dist/zout.compat.css`), la hoja de layouts para Chromium 109, Firefox 115 y
+  Safari 15.4. Va con `tokens.compat.css` y `zui.compat.css`
+  ([Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)).
 - `Container`: tamaños `sm`, `md`, `lg` y `xl` (tokens `container-*`) y `gutter` (`fluid`, `stage` o `none`). El
   margen fluido crece con el ancho del contenedor de consulta entre 16 y 40 px; el ancho máximo suma los dos
   márgenes, así que la columna de texto mide lo mismo con cualquiera. El marcado sin `data-gutter` se ve como antes.
