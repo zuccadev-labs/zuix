@@ -44,12 +44,16 @@ describe("modo sin framework en el objetivo", () => {
       assert.equal(closestOpenPopover(el), el);
 
       const calls = [];
-      const native = { matches: (s) => s === ":popover-open", closest: () => native, showPopover: (o) => calls.push(o) };
+      const native = { isConnected: true, matches: (s) => s === ":popover-open", closest: () => native, showPopover: (o) => calls.push(o) };
       assert.equal(popoverOpen(native), true);
       assert.equal(closestOpenPopover(native), native);
       const source = {};
       assert.equal(showPopover(native), true);
       assert.equal(showPopover(native, source), true);
       assert.deepEqual(calls, [undefined, { source }]);
+      // Fuera del documento no se intenta: `showPopover` lanzaría («Element is not connected» en WebKit).
+      const detached = { ...native, isConnected: false };
+      assert.equal(showPopover(detached), false);
+      assert.equal(calls.length, 2);
     });
 });
