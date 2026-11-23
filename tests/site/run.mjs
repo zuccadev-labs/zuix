@@ -771,6 +771,9 @@ for (const browserName of wanted) {
         for (const p of componentPages) {
           await page.goto(`${at(p)}?docusaurus-theme=dark`);
           await hydrated(page);
+          // Como en el rastreo: los trozos de las vistas previas terminan antes de pasar a la página siguiente; una
+          // carga cortada por la navegación es un «Loading chunk … failed» en Firefox.
+          await page.waitForLoadState("networkidle").catch(() => {});
           const empty = await page.evaluate(() =>
             [...document.querySelectorAll(".zd-example-block")]
               .filter((b) => {
