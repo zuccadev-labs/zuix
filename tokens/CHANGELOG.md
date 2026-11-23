@@ -5,6 +5,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Container: `container-sm`, `container-md`, `container-lg` y `container-xl` (640, 768, 1024 y 1280 px), anchos
+  máximos con nombre para centrar contenido, y `container-gutter`, margen lateral fluido entre 16 y 40 px que
+  crece con el ancho del contenedor de consulta (`cqi`), no con el de la ventana.
+
 ## [0.3.0] - 2026-11-21
 
 Base visual nueva, «liquid glass»: escala tipográfica en `rem`, radios concéntricos, capas de material y foco

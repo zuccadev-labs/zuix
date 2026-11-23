@@ -97,6 +97,25 @@
     }
    ]
   },
+  "Container": {
+   "group": "layout",
+   "classes": [
+    "z-container"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Ficha centrada",
+     "html": "<div class=\"z-container\" data-width=\"md\" data-gutter=\"fluid\">\n  <header class=\"z-pagehead\">\n    <div class=\"z-pagehead__row\">\n      <div class=\"z-pagehead__text\">\n        <h1 class=\"z-pagehead__title\">Your trip</h1>\n        <p class=\"z-pagehead__description\">Three nights in Lisbon.</p>\n      </div>\n    </div>\n  </header>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Página ancha sin margen",
+     "html": "<div class=\"z-container\" data-width=\"xl\" data-gutter=\"none\">\n  <div class=\"z-grid\" data-gap=\"6\" style=\"--z-grid-min:280px\">…</div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "DashboardLayout": {
    "group": "layout",
    "classes": [
@@ -336,14 +355,13 @@
    "classes": [
     "z-page",
     "z-pagehead",
-    "z-section",
-    "z-container"
+    "z-section"
    ],
    "behavior": "none",
    "examples": [
     {
      "title": "Panel de control",
-     "html": "<div class=\"z-page\" role=\"region\" aria-label=\"Page content\" tabindex=\"0\">\n  <div class=\"z-container\" data-width=\"content\">\n    <header class=\"z-pagehead\">\n      <div class=\"z-pagehead__row\">\n        <div class=\"z-pagehead__text\">\n          <div class=\"z-pagehead__eyebrow\">Analytics</div>\n          <h1 class=\"z-pagehead__title\">Overview</h1>\n          <p class=\"z-pagehead__description\">Last 30 days.</p>\n        </div>\n        <div class=\"z-pagehead__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n            <z-icon name=\"plus\" size=\"16\"></z-icon>\n            New report\n          </button>\n        </div>\n      </div>\n    </header>\n    <div class=\"z-page__body\">\n      <section class=\"z-section\">\n        <div class=\"z-section__head\">\n          <div>\n            <h2 class=\"z-section__title\">Metrics</h2>\n          </div>\n        </div>\n        <div class=\"z-grid\" data-gap=\"4\" style=\"--z-grid-min:200px\">…</div>\n      </section>\n    </div>\n  </div>\n</div>",
+     "html": "<div class=\"z-page\" role=\"region\" aria-label=\"Page content\" tabindex=\"0\">\n  <div class=\"z-container\" data-width=\"content\" data-gutter=\"stage\">\n    <header class=\"z-pagehead\">\n      <div class=\"z-pagehead__row\">\n        <div class=\"z-pagehead__text\">\n          <div class=\"z-pagehead__eyebrow\">Analytics</div>\n          <h1 class=\"z-pagehead__title\">Overview</h1>\n          <p class=\"z-pagehead__description\">Last 30 days.</p>\n        </div>\n        <div class=\"z-pagehead__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n            <z-icon name=\"plus\" size=\"16\"></z-icon>\n            New report\n          </button>\n        </div>\n      </div>\n    </header>\n    <div class=\"z-page__body\">\n      <section class=\"z-section\">\n        <div class=\"z-section__head\">\n          <div>\n            <h2 class=\"z-section__title\">Metrics</h2>\n          </div>\n        </div>\n        <div class=\"z-grid\" data-gap=\"4\" style=\"--z-grid-min:200px\">…</div>\n      </section>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]

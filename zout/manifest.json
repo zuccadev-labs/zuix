@@ -1,12 +1,13 @@
 {
  "name": "@zuccadev-labs/zuix-zout",
- "count": 29,
+ "count": 30,
  "groups": {
   "layout": [
    "AppBar",
    "AuthLayout",
    "BottomNavigation",
    "ChatLayout",
+   "Container",
    "DashboardLayout",
    "DocsLayout",
    "Float",
@@ -457,6 +458,71 @@
    ],
    "origin": "Diseño propio; referencias: WhatsApp Web, Telegram Desktop y el ChatLayout de MUI X. Pila con historial según la guía stack-drill-down.",
    "file": "zout/src/layouts/ChatLayout.manifest.json"
+  },
+  {
+   "name": "Container",
+   "group": "layout",
+   "description": "Centra el contenido, limita su ancho con un token de tamaño y deja un margen lateral fijo o fluido.",
+   "import": "import { Container } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "width",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "content",
+      "prose",
+      "full"
+     ],
+     "default": "content",
+     "description": "Ancho máximo del contenido: `sm`–`xl` son los tokens `container-*` (640, 768, 1024 y 1280 px); `content`, el ancho de la aplicación (`content-max`); `prose`, el de lectura (`prose-max`); `full`, sin límite. El margen lateral se suma por fuera: el texto mide lo mismo con cualquier margen."
+    },
+    {
+     "name": "gutter",
+     "type": "enum",
+     "values": [
+      "fluid",
+      "stage",
+      "none"
+     ],
+     "description": "Margen lateral. `fluid`: crece con el ancho del contenedor de consulta más cercano entre 16 y 40 px (`container-gutter`, en unidades `cqi`). `stage`: el del área principal (`stage-pad-x`; 16 px cuando el área mide menos de 760 px). `none`: sin margen. Por defecto, `fluid` en `sm`–`xl` y `stage` en el resto."
+    },
+    {
+     "name": "as",
+     "type": "ElementType",
+     "default": "div"
+    }
+   ],
+   "tokens": [
+    "container-sm",
+    "container-md",
+    "container-lg",
+    "container-xl",
+    "container-gutter",
+    "content-max",
+    "prose-max",
+    "stage-pad-x",
+    "space-4"
+   ],
+   "classes": [
+    "z-container"
+   ],
+   "a11y": "Solo maquetación: no añade semántica. Con `as` se convierte en `main`, `section` o `article` cuando el contenido lo pide.",
+   "examples": [
+    {
+     "title": "Ficha centrada",
+     "code": "<Container width=\"md\">\n  <PageHeader title=\"Your trip\" description=\"Three nights in Lisbon.\" />\n</Container>"
+    },
+    {
+     "title": "Página ancha sin margen",
+     "code": "<Container width=\"xl\" gutter=\"none\">\n  <Grid min={280} gap={6}>…</Grid>\n</Container>"
+    }
+   ],
+   "origin": "Contenedor del design system base; tamaños y margen fluido en 0.4.",
+   "file": "zout/src/layouts/Container.manifest.json"
   },
   {
    "name": "DashboardLayout",
@@ -1416,12 +1482,11 @@
    "name": "Page",
    "group": "layout",
    "description": "Página con desplazamiento propio, cabecera y secciones.",
-   "import": "import { Page, PageHeader, PageSection, Container } from \"@zuccadev-labs/zuix-zout\"",
+   "import": "import { Page, PageHeader, PageSection } from \"@zuccadev-labs/zuix-zout\"",
    "exports": [
     "Page",
     "PageHeader",
-    "PageSection",
-    "Container"
+    "PageSection"
    ],
    "props": [
     {
@@ -1432,11 +1497,16 @@
      "name": "width",
      "type": "enum",
      "values": [
+      "sm",
+      "md",
+      "lg",
+      "xl",
       "content",
       "prose",
       "full"
      ],
-     "default": "content"
+     "default": "content",
+     "description": "Ancho del Container interior (ver Container)."
     },
     {
      "name": "label",
@@ -1516,8 +1586,7 @@
    "classes": [
     "z-page",
     "z-pagehead",
-    "z-section",
-    "z-container"
+    "z-section"
    ],
    "examples": [
     {

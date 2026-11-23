@@ -7,6 +7,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- `Container`: tamaños `sm`, `md`, `lg` y `xl` (tokens `container-*`) y `gutter` (`fluid`, `stage` o `none`). El
+  margen fluido crece con el ancho del contenedor de consulta entre 16 y 40 px; el ancho máximo suma los dos
+  márgenes, así que la columna de texto mide lo mismo con cualquiera. El marcado sin `data-gutter` se ve como antes.
+  Tiene manifiesto propio (antes iba dentro del de `Page`). `Stack`, `Inline` (con `wrap` y `gap`) y `Grid` cubren
+  el resto de la maquetación, así que no añado un `Flex` aparte.
 - `Shell`: `railBreakpoint` (600 px por defecto; `data-rail-breakpoint` en `/dom`). Por debajo, con la sidebar en
   cajón, el rail deja su columna y se muestra dentro del cajón, a su lado. En un teléfono una columna de iconos fija
   se comía una quinta parte del ancho.
