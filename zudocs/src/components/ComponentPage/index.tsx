@@ -16,6 +16,7 @@ import { Fragment, useEffect, useRef } from "react";
 import { Toc, type TocEntry } from "../Toc";
 import { COLUMN, useDemos } from "./demos";
 import { Example, useCodeMode } from "./Example";
+import { EXAMPLE_DEMOS } from "./examples";
 
 interface Prop {
   name: string;
@@ -297,14 +298,25 @@ export default function ComponentPage({ data }: { data: ComponentData }) {
                 <Heading as="h2" id="ejemplos">
                   Ejemplos
                 </Heading>
-                {examples.map((e, i) => (
-                  <div key={ids[i]} className="zd-example-block">
-                    <Heading as="h3" id={ids[i]}>
-                      {e.title}
-                    </Heading>
-                    <Example title={e.title} react={e.code} html={e.html} script={e.script} />
-                  </div>
-                ))}
+                {examples.map((e, i) => {
+                  // Sin marcado del contrato HTML, la vista previa es la demo de React del ejemplo.
+                  const Demo = e.html ? undefined : EXAMPLE_DEMOS[data.name]?.[e.title];
+                  return (
+                    <div key={ids[i]} className="zd-example-block">
+                      <Heading as="h3" id={ids[i]}>
+                        {e.title}
+                      </Heading>
+                      <Example
+                        title={e.title}
+                        owner={data.name}
+                        react={e.code}
+                        html={e.html}
+                        script={e.script}
+                        preview={Demo ? <Demo /> : undefined}
+                      />
+                    </div>
+                  );
+                })}
               </section>
             ) : null}
 

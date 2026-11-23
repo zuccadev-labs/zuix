@@ -77,6 +77,7 @@ export function HtmlPreview({ html, script }: { html: string; script?: string })
 
 export function Example({
   title,
+  owner,
   react,
   html,
   preview,
@@ -84,6 +85,8 @@ export function Example({
   script,
 }: {
   title: string;
+  /** Componente al que pertenece el ejemplo (para el aviso de vista previa que falta). */
+  owner?: string;
   react?: string;
   html?: string;
   /** Script del ejemplo HTML (se ejecuta tras hidratar la vista previa). */
@@ -98,6 +101,12 @@ export function Example({
   const shown: CodeMode = both ? mode : react ? "react" : "html";
   const code = shown === "react" ? react : html;
   const canPreview = Boolean(preview || html);
+  // Todo ejemplo se ve en vivo: sin marcado del contrato ni demo de React, el build del sitio (render en el
+  // servidor) se detiene aquí con el nombre del ejemplo. En desarrollo, la página lo dice en su lugar.
+  if (!canPreview && typeof window === "undefined")
+    throw new Error(
+      `zudocs: el ejemplo «${title}»${owner ? ` de ${owner}` : ""} no tiene vista previa. Añade su demo en ComponentPage/examples o su marcado en html.json.`,
+    );
   const current = canPreview ? tab : "code";
   return (
     <div className="zd-example">
@@ -114,7 +123,9 @@ export function Example({
             ]}
           />
         ) : (
-          <span className="zd-example__note">Sin marcado estático: solo React</span>
+          <span className="zd-example__note" role="alert">
+            Falta la vista previa de este ejemplo
+          </span>
         )}
         {current === "code" && both ? (
           <SegmentedControl
