@@ -537,6 +537,7 @@ ${HEAD}<title>csp</title></head><body class="z-root z-canvas" data-z-dom><main>
 <div class="z-carousel" id="car" data-z-carousel data-effect="none" aria-label="Slides"><div>One</div><div>Two</div></div>
 <span class="z-input z-combobox" id="combo" data-size="md"><input class="z-input__control" role="combobox" aria-label="City" aria-controls="combo-list" aria-expanded="false"><div id="combo-list" popover class="z-liquid z-listbox"><div class="z-listbox__viewport" role="listbox" aria-label="City"></div></div></span>
 <span class="z-rating" data-interactive="true"><span class="z-rating__stars" role="radiogroup" aria-label="Rate"><button type="button" role="radio" class="z-rating__star" data-star="1" aria-checked="false" aria-label="1"></button><button type="button" role="radio" class="z-rating__star" data-star="2" aria-checked="false" aria-label="2"></button></span></span>
+<div class="z-artifact" id="art" data-title="Card" data-kind="HTML"><script type="application/json" data-props>{"versions":[{"code":"<h1>Pro</h1>","language":"html","preview":"html"},{"code":"<h1>Team</h1>","language":"html","preview":"html"}]}</script></div>
 </main><script type="module" src="./csp.js"></script></body></html>`,
     );
     const { tab, problems } = await openPage("csp.html");
@@ -557,7 +558,25 @@ ${HEAD}<title>csp</title></head><body class="z-root z-canvas" data-z-dom><main>
       await tab.locator("#slider .z-slider__thumb").focus();
       await tab.keyboard.press("ArrowRight");
       await tab.locator(".z-rating__star").nth(1).click();
+      // La vista previa HTML de Artifact: srcdoc es un destino de Trusted Types. Se pinta una versión y luego otra.
+      await tab.waitForSelector("#art iframe.z-artifact__frame");
+      await tab.locator("#art .z-artifact__versions button").first().click();
+      await tab.waitForFunction(() => document.querySelector("#art iframe")?.getAttribute("srcdoc")?.includes("Pro"));
       await tab.waitForTimeout(150);
+      const frame = await tab.locator("#art iframe.z-artifact__frame").evaluate(
+        (el, peek) => ({
+          sandbox: el.getAttribute("sandbox"),
+          tokens: el.sandbox.length,
+          // Sin allow-same-origin el documento tiene un origen opaco: la página no puede leerlo. WebKit lo confirma igual,
+          // pero además lo anota como error de la página, así que allí basta con la lista de permisos vacía.
+          opaque: peek ? el.contentDocument === null : true,
+          srcdoc: el.getAttribute("srcdoc"),
+        }),
+        browserName !== "webkit",
+      );
+      ok(frame.sandbox === "" && frame.tokens === 0, `el iframe de la vista previa debe llevar sandbox vacío: ${frame.sandbox}`);
+      ok(frame.opaque, "el documento de la vista previa no debe compartir origen con la página");
+      ok(frame.srcdoc === "<h1>Pro</h1>", `la vista previa no recibe la versión elegida: ${frame.srcdoc}`);
       const state = await tab.evaluate(() => ({
         csp: window.__csp,
         tt: typeof window.trustedTypes !== "undefined",

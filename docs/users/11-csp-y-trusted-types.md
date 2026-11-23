@@ -28,14 +28,18 @@ Con `require-trusted-types-for 'script'` el navegador rechaza cualquier asignaci
 
 | Pieza | Cómo escribe en el DOM |
 |---|---|
-| `@zuccadev-labs/zuix-zui/dom` | Su marcado propio (la estructura de un aviso, de un calendario) pasa por un único punto y por la política `zuix-zui`. La política no filtra: solo recibe marcado fijo del paquete |
+| `@zuccadev-labs/zuix-zui/dom` | Su marcado propio (la estructura de un aviso, de un calendario) pasa por un único punto y por la política `zuix-zui`. La política no filtra: solo recibe marcado fijo del paquete y el documento de la vista previa de `Artifact` |
+| Vista previa HTML de `Artifact` | El código del artefacto va al `srcdoc` de un iframe con `sandbox=""` (sin scripts, sin formularios, sin el origen de la página), por la política `zuix-zui`, en `/dom` y en React. Es contenido de la aplicación, pero el iframe no lo deja ejecutar nada ni leer la página |
 | `@zuccadev-labs/zuix-zout/dom` | Crea sus elementos y sus iconos con el DOM. No necesita política |
 | `<z-icon>`, `iconElement()` | Construyen el SVG con el DOM. No necesitan política |
 | `iconSvg()` | Devuelve una cadena. Si tu código la asigna a `innerHTML`, necesita tu propia política |
-| Binding de React | React escribe con la API del DOM |
+| Binding de React | React escribe con la API del DOM. El `srcdoc` de `Artifact` no va como prop (React lo escribiría con una cadena): se asigna con la política `zuix-zui` |
 
 Si la política `zuix-zui` no está permitida en la cabecera `trusted-types`, el navegador bloquea la creación
-y `zui/dom` no puede dibujar avisos ni calendarios.
+y `zui/dom` no puede dibujar avisos ni calendarios, ni `Artifact` su vista previa HTML.
+
+La política se crea una vez por página aunque se carguen el bundle de `/dom` y el de React: los dos la comparten.
+No hace falta `'allow-duplicates'`.
 
 ## Qué pasa con los datos de la aplicación
 
@@ -60,8 +64,8 @@ por terceros ([Zudocs](./05-zudocs.md#documentos-escritos-por-terceros)). La pol
 
 ## Lo que no he comprobado
 
-- El binding de React bajo `require-trusted-types-for 'script'`: la prueba con esa política es la del modo
-  sin framework.
+- El binding de React entero bajo `require-trusted-types-for 'script'`: con esa política pruebo el modo sin
+  framework completo y, en React, `Artifact` con su vista previa HTML (React 18 y 19, en Chromium).
 - Una política con `nonce` en lugar de `'self'`.
 - Trusted Types fuera de Chromium y del WebKit y el Firefox que trae Playwright en su versión actual.
 

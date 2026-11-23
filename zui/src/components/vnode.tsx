@@ -5,6 +5,7 @@ import { createElement, type CSSProperties, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import type { VEl, VNode } from "../core/vnode";
 import { LEGACY_REACT } from "../react-compat";
+import { setSrcdoc } from "../trusted";
 
 const ATTR: Record<string, string> = {
   class: "className",
@@ -30,6 +31,8 @@ const ATTR: Record<string, string> = {
   enterkeyhint: "enterKeyHint",
   autocapitalize: "autoCapitalize",
   autocorrect: "autoCorrect",
+  srcdoc: "srcDoc",
+  referrerpolicy: "referrerPolicy",
 };
 // React 18 no conoce `popovertarget` (lo escribe tal cual en minúsculas) ni `inert` (solo lo escribe con una cadena).
 const LEGACY_ATTR: Record<string, string> = { popovertarget: "popovertarget" };
@@ -72,7 +75,16 @@ function element(node: VEl, slots: Partial<Record<"minical" | "calendar" | "even
     if (v === undefined || v === null || v === false) continue;
     if (node.t === "option" && k === "selected") continue;
     if (k === "value" && node.t === "input") props.defaultValue = v;
-    else if (k === "checked") {
+    else if (k === "srcdoc" && node.t === "iframe" && typeof document !== "undefined") {
+      // En el navegador el documento del iframe no va como prop: React lo escribiría con setAttribute y una cadena, y
+      // con `require-trusted-types-for 'script'` el navegador lo rechaza. Pasa por la política del paquete. En el
+      // servidor sí va en el marcado (el analizador no es un destino de Trusted Types), y la hidratación no lo compara.
+      const html = String(v);
+      props.ref = (frame: HTMLIFrameElement | null) => {
+        if (frame) setSrcdoc(frame, html);
+      };
+      props.suppressHydrationWarning = true;
+    } else if (k === "checked") {
       props.checked = Boolean(v);
       props.onChange = noop;
     } else if (LEGACY_REACT) props[LEGACY_ATTR[k] ?? ATTR[k] ?? k] = k === "inert" && v === true ? "" : v;

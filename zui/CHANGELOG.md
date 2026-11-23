@@ -249,6 +249,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Artifact` bajo `require-trusted-types-for 'script'`: la vista previa HTML escribía `srcdoc` con `setAttribute` y
+  una cadena, y Chrome la rechazaba («This document requires 'TrustedHTML' assignment»), en `/dom` y en React. Ahora
+  pasa por la política `zuix-zui`, la misma de `setMarkup`, que se comparte entre los bundles de `/dom` y de React
+  cargados en la misma página. El iframe sigue con `sandbox=""`: sin scripts ni el origen de la página. Al renderizar
+  en servidor el `srcdoc` va en el marcado, como antes.
 - `Avatar`: el punto de estado `online`, `busy` y `away` salía gris. La regla base del punto en `zui.people` volvía a
   poner el fondo por defecto y, por ir en una capa posterior, pisaba el color de cada estado de `zui.data`. Ahora
   solo `zui.data` pone ese fondo.

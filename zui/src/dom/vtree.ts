@@ -3,6 +3,7 @@
 
 import { getIcon, iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 import type { VEl, VNode, VSlot } from "../core/vnode";
+import { setSrcdoc } from "../trusted";
 import { fragment } from "./shared";
 
 const keys = new WeakMap<Node, string>();
@@ -107,7 +108,12 @@ export function patchElement(
     for (const attr of [...el.attributes])
       if (!want.has(attr.name) && attr.name !== "style" && attr.name !== "open" && !(typed && attr.name === "value"))
         el.removeAttribute(attr.name);
-    for (const [k, value] of want) if (el.getAttribute(k) !== value) el.setAttribute(k, value);
+    for (const [k, value] of want) {
+      if (el.getAttribute(k) === value) continue;
+      // El documento de un iframe es un destino de Trusted Types: pasa por la política del paquete (`setSrcdoc`).
+      if (k === "srcdoc" && el instanceof HTMLIFrameElement) setSrcdoc(el, value);
+      else el.setAttribute(k, value);
+    }
     if (el instanceof HTMLElement || el instanceof SVGElement) {
       const style = el.style;
       for (const name of [...style].filter((p) => p.startsWith("--") && !(v.s && p in v.s))) style.removeProperty(name);

@@ -1,11 +1,83 @@
 // Binding de React (pantallas `?screen=chat` y `?screen=assistant` de examples/app): mensajería con estados de
 // entrega, respuesta y reacciones; asistente con streaming, parar, aprobación y ramas. Exporta una función que recibe
 // los ayudantes de cases.mjs.
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { build } from "esbuild";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+// La misma copia de React que sirve la suite (REACT=18 → examples/react18).
+const reactModules = join(root, "examples", process.env.REACT === "18" ? "react18" : "app", "node_modules");
+const CSP =
+  "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; require-trusted-types-for 'script'; trusted-types zuix-zui";
+const CSP_ENTRY = `import { createElement, useState } from "react";
+import { createRoot } from "react-dom/client";
+import "./zicon/src/all.ts";
+import { Artifact } from "./zui/src/components/ai/Artifact.tsx";
+window.__csp = [];
+document.addEventListener("securitypolicyviolation", (e) => window.__csp.push(e.violatedDirective + " " + (e.sample || "")));
+const versions = [
+  { code: "<h1>Pro</h1>", language: "html", preview: "html" },
+  { code: "<h1>Team</h1>", language: "html", preview: "html" },
+];
+function App() {
+  const [version, setVersion] = useState(1);
+  return createElement(Artifact, { id: "art", title: "Card", kind: "HTML", versions, version, onVersionChange: ({ index }) => setVersion(index) });
+}
+createRoot(document.getElementById("root")).render(createElement(App));
+window.__ready = true;`;
+
 export default function ({ t, assert, poll }) {
   const announced = (page) =>
     page.evaluate(() => [...document.querySelectorAll("[data-z-announcer] [aria-live]")].map((r) => r.textContent).join(" | "));
 
   return [
+    {
+      name: "Artifact (React) bajo CSP estricta y Trusted Types: la vista previa HTML pasa por la política zuix-zui y sigue aislada",
+      async run({ open }) {
+        const page = await open("overview");
+        const origin = new URL(page.url()).origin;
+        // Página propia servida desde el mismo origen con la cabecera CSP del documento de CSP y Trusted Types; el
+        // binding de React y Artifact, empaquetados aquí mismo con esbuild.
+        const bundle = await build({
+          stdin: { contents: CSP_ENTRY, resolveDir: root, loader: "js" },
+          bundle: true,
+          write: false,
+          format: "esm",
+          jsx: "automatic",
+          nodePaths: [reactModules],
+          alias: { react: join(reactModules, "react"), "react-dom": join(reactModules, "react-dom") },
+          define: { "process.env.NODE_ENV": '"development"' },
+          logLevel: "silent",
+        });
+        await page.route(`${origin}/__csp/**`, (route) => {
+          const path = new URL(route.request().url()).pathname;
+          if (path.endsWith(".js")) return route.fulfill({ contentType: "text/javascript", body: bundle.outputFiles[0].text });
+          return route.fulfill({
+            contentType: "text/html",
+            headers: { "content-security-policy": CSP },
+            body: '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>csp</title></head><body><div id="root"></div><script type="module" src="/__csp/app.js"></script></body></html>',
+          });
+        });
+        await page.goto(`${origin}/__csp/index.html`);
+        await page.waitForSelector("#art iframe.z-artifact__frame");
+        await page.locator("#art .z-artifact__versions button").first().click();
+        await page.waitForFunction(() => document.querySelector("#art iframe")?.getAttribute("srcdoc") === "<h1>Pro</h1>");
+        const state = await page.evaluate(() => {
+          const frame = document.querySelector("#art iframe.z-artifact__frame");
+          return {
+            csp: window.__csp,
+            tt: typeof window.trustedTypes !== "undefined",
+            sandbox: frame.getAttribute("sandbox"),
+            tokens: frame.sandbox.length,
+            frames: document.querySelectorAll("#art iframe").length,
+          };
+        });
+        assert(state.csp.length === 0, `violaciones de CSP: ${state.csp.join(" | ")}`);
+        assert(state.sandbox === "" && state.tokens === 0, `el iframe debe llevar sandbox vacío: ${state.sandbox}`);
+        assert(state.frames === 1, "una sola vista previa");
+      },
+    },
     {
       name: "Chat (React): enviar recorre los estados de entrega, la otra persona escribe y responde, y la llegada se anuncia",
       async run({ open }) {
