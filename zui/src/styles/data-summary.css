@@ -1,0 +1,110 @@
+/* Datos: resúmenes y precios (SummaryList, PriceBreakdown, PriceTag). Importes en cifras tabulares y alineados al
+   final de la fila, para que las columnas de números se lean de un vistazo. */
+@layer zui.data {
+  /* ---- SummaryList / PriceBreakdown ---- */
+  .z-summary {
+    --z-summary-pad: var(--z-space-2);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-size: var(--z-text-body);
+    line-height: var(--z-leading-ui);
+  }
+  .z-summary[data-size="sm"] {
+    --z-summary-pad: var(--z-space-1-5);
+    font-size: var(--z-text-small);
+  }
+  .z-summary__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: var(--z-space-4);
+    row-gap: var(--z-space-0-5);
+    padding-block: var(--z-summary-pad);
+  }
+  .z-summary__row[data-separated],
+  .z-summary__row[data-total] {
+    margin-block-start: var(--z-space-1);
+    padding-block-start: calc(var(--z-summary-pad) + var(--z-space-1));
+    border-block-start: 1px solid var(--z-line);
+  }
+  .z-summary__label {
+    display: flex;
+    flex: 1 1 12rem;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+    color: var(--z-fg-muted);
+  }
+  .z-summary__hint {
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+  }
+  .z-summary__value {
+    flex: 0 0 auto;
+    margin: 0;
+    margin-inline-start: auto;
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--z-weight-medium);
+    text-align: end;
+  }
+  .z-summary__row[data-tone="muted"] .z-summary__value {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-regular);
+  }
+  .z-summary__row[data-tone="success"] .z-summary__value {
+    color: var(--z-success-text);
+  }
+  .z-summary__row[data-tone="danger"] .z-summary__value {
+    color: var(--z-danger-text);
+  }
+  .z-summary__row[data-total] .z-summary__label {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-summary__row[data-total] .z-summary__value {
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+  }
+
+  /* ---- PriceTag ---- */
+  .z-price {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--z-space-1-5);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--z-leading-snug);
+  }
+  .z-price__current {
+    color: var(--z-fg);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-price__previous {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    text-decoration-thickness: 1px;
+  }
+  .z-price__unit {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-price[data-size="sm"] .z-price__current {
+    font-size: var(--z-text-body);
+  }
+  .z-price[data-size="sm"] :is(.z-price__previous, .z-price__unit) {
+    font-size: var(--z-text-caption);
+  }
+  .z-price[data-size="lg"] .z-price__current {
+    font-size: var(--z-text-display-sm);
+    letter-spacing: var(--z-tracking-tight);
+  }
+  .z-price[data-size="lg"] :is(.z-price__previous, .z-price__unit) {
+    font-size: var(--z-text-body);
+  }
+}

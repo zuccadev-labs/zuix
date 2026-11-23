@@ -7,6 +7,16 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Resúmenes y precios (grupo `data`, solo marcado: se renderizan en un Server Component):
+  - `SummaryList`: lista clave–valor (`<dl>`) con los valores alineados al final en cifras tabulares, pista bajo la
+    etiqueta, tonos, separadores y fila de total destacada.
+  - `PriceBreakdown`: desglose sobre `SummaryList` con `Intl.NumberFormat` (`currency`, `locale`); descuentos y
+    créditos restan siempre y se escriben con signo, impuestos por importe o por porcentaje de la base, subtotal
+    opcional. Las sumas van en unidades menores enteras: el total es la suma exacta de las filas que se leen, también
+    en monedas sin decimales (JPY) o con tres (KWD).
+  - `PriceTag`: precio con moneda, anterior tachado delante del actual con prefijo para lectores («Previous price:»)
+    y unidad («/ night»).
+  - `formatMoney`, `summarizePrice` y `currencyDigits` en la raíz y en `/dom/data`.
 - `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en
   una cabecera ancha y pasan a un menú «Más» en una de 420 px o menos: con tres iconos el nombre quedaba en «An…».
 - Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de

@@ -26,7 +26,7 @@ export type SlotRenderers = Partial<Record<"event", (p: Record<string, unknown>)
 
 const slotKey = (v: VSlot) =>
   v.slot === "icon"
-    ? `icon:${v.p.name}:${v.p.size}`
+    ? `icon:${v.p.name}:${v.p.size}:${v.p.variant ?? ""}`
     : v.slot === "minical"
       ? "minical"
       : v.slot === "event"
@@ -40,7 +40,7 @@ function create(v: VNode, doc: Document, slots: SlotRenderers, svg = false): Nod
   if (!v) return doc.createTextNode("");
   if ("slot" in v) {
     if (v.slot === "icon") {
-      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size) }));
+      const frag = fragment(iconSvg(String(v.p.name), { size: Number(v.p.size), variant: v.p.variant === "solid" ? "solid" : "outline" }));
       const glyph = frag.firstElementChild ?? doc.createElement("span");
       keys.set(glyph, slotKey(v));
       return glyph;

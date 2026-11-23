@@ -34,7 +34,11 @@ export const h = (t: string, a?: HAttrs | null, ...c: VNode[]): VEl => {
   if (kids.length) el.c = kids;
   return el;
 };
-export const icon = (name: string, size = 16): VSlot => ({ slot: "icon", p: { name, size } });
+/** Icono por nombre. `solid` para la variante rellena (una estrella valorada, una campana con avisos). */
+export const icon = (name: string, size = 16, variant?: "solid"): VSlot => ({
+  slot: "icon",
+  p: variant ? { name, size, variant } : { name, size },
+});
 /** Atributo booleano de estado: `""` si es verdadero, ausente si no. */
 export const on = (v: boolean | undefined) => (v ? "" : undefined);
 export const fill = (template: string, values: Record<string, string | number>) =>
@@ -43,12 +47,13 @@ export const fill = (template: string, values: Record<string, string | number>) 
 /** HTML del árbol (para el contrato HTML y las pruebas). Escapa texto y atributos. */
 export function toHTML(
   node: VNode,
-  iconHTML: (name: string, size: number) => string = (n, s) => `<z-icon name="${n}" size="${s}"></z-icon>`,
+  iconHTML: (name: string, size: number, variant?: string) => string = (n, s, v) =>
+    `<z-icon name="${n}"${v === "solid" ? ' variant="solid"' : ""} size="${s}"></z-icon>`,
 ): string {
   if (node === null || node === undefined || node === false) return "";
   if (typeof node === "string") return escapeText(node);
   if ("slot" in node) {
-    if (node.slot === "icon") return iconHTML(String(node.p.name), Number(node.p.size));
+    if (node.slot === "icon") return iconHTML(String(node.p.name), Number(node.p.size), node.p.variant as string | undefined);
     if (node.slot === "event") return '<span class="z-event__custom"></span>';
     const cls = node.slot === "minical" ? "z-calendar z-agenda__minical" : `z-calendar${node.p.className ? ` ${node.p.className}` : ""}`;
     return `<div class="${cls}"${Object.entries((node.p.attrs ?? {}) as Record<string, VAttr>)

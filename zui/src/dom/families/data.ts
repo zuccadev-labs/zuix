@@ -18,6 +18,7 @@ export {
 } from "../collections";
 export { dataTableCSVFromDom, dataTableSelection, setDataTablePage, setDataTableSelection } from "../datatable";
 export { destroyWidget, setWidgetProps } from "../widgets";
+export { formatMoney, summarizePrice, type MoneyOptions, type PriceLine, type PriceSummary } from "../../core/money";
 
 export const dataModule: DomModule = {
   name: "data",

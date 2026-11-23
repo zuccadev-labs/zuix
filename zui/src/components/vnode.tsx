@@ -42,7 +42,15 @@ export function toReact(node: VNode, slots: Partial<Record<"minical" | "calendar
   if (node === null || node === undefined || node === false) return null;
   if (typeof node === "string") return node;
   if ("slot" in node) {
-    if (node.slot === "icon") return <Icon key={node.k} name={node.p.name as IconName} size={Number(node.p.size)} />;
+    if (node.slot === "icon")
+      return (
+        <Icon
+          key={node.k}
+          name={node.p.name as IconName}
+          size={Number(node.p.size)}
+          variant={node.p.variant === "solid" ? "solid" : undefined}
+        />
+      );
     return slots[node.slot]?.({ ...node.p, key: node.k }) ?? null;
   }
   if (node.m) {

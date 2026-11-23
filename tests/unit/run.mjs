@@ -45,6 +45,7 @@ const COVERED = [
   "zui/src/components/navigation/Pagination.tsx",
   "zui/src/components/data/DataTable.tsx",
   "zui/src/core/accept.ts",
+  "zui/src/core/money.ts",
   "zui/src/core/agenda.ts",
   "zui/src/core/idle.ts",
   "zui/src/core/freebusy.ts",
