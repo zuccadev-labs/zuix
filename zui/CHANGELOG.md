@@ -190,6 +190,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Calendar` con `numberOfMonths` de 2 o más: el título del rango («December 2026 – January 2027») usa espacios
+  normales. El de Node llevaba espacios finos y no casaba con el del navegador al hidratar un render en el servidor.
 - `AnalogClock`: con marcas, las cifras van a radio 31 (antes 35) y no pisan las marcas del 3, el 6 y el 9.
 - `AvatarGroup`: el solape depende de la talla (0,28 del diámetro; 0,2 en `sm`; ninguno en `xs`, donde dos iniciales
   ocupan casi todo el círculo) y las iniciales de cada avatar tapado se centran en la parte que se ve. El siguiente
