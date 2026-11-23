@@ -26,6 +26,13 @@ pantalla; no dibuja contenido. Usa los tokens para medidas y material, y depende
 | `BottomNavigation` | Navegación de móvil: de tres a cinco destinos con icono y etiqueta | Propio |
 | `SiteFooter` | Pie de un sitio: marca, columnas de enlaces, redes y franja legal | Propio |
 | `SkipLink` | Enlace para saltar al contenido; lleva el foco al destino aunque no sea enfocable | Propio |
+| `AppBar` | Barra de aplicación superior (pequeña, mediana o grande); la grande pliega el título a la fila superior al desplazar | Propio |
+| `DashboardLayout`, `SettingsLayout`, `ProfileLayout`, `KanbanLayout` | Layouts de página para un dashboard (filtros fijos), ajustes (navegación con anclas y barra de guardar), un perfil y un tablero | Propio |
+| `AuthLayout` | Página de acceso: tarjeta de cristal sobre el lienzo o dividida con un lado de imagen | Propio |
+| `DocsLayout` | Página de documentación: navegación, artículo, índice que marca la sección que se lee y paginación | Propio |
+| `LandingLayout`, `LandingHero`, `LandingSection` | Página de presentación con cabecera, rejilla de funciones, llamada a la acción y pie | Propio |
+| `MailLayout` | Carpetas, lista de mensajes y lectura; en estrecho, una vista cada vez | Propio |
+| `ChatLayout` | Lista de conversaciones, conversación y detalles; en estrecho, una pila que puede seguir el historial del navegador. `variant="widget"` es un asistente flotante | Propio |
 
 ## Uso
 

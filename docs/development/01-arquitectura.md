@@ -48,7 +48,7 @@ ese mismo archivo.
 zui/src/
   core/         lógica pura: sin React, sin efectos al importar
   primitives/   primitivas de React sobre core
-  components/   los 144 componentes, por grupo, cada uno con su manifiesto
+  components/   los 224 componentes, por grupo, cada uno con su manifiesto
   dom/          el modo sin framework, sobre core
   styles/       una hoja por grupo, en su @layer
 ```

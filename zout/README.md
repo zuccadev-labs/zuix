@@ -43,6 +43,7 @@ To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://
 | `DocsLayout` | Documentation page: navigation, article, table of contents that tracks the section being read, pager |
 | `LandingLayout`, `LandingHero`, `LandingSection` | Landing page with a hero, feature grid, call to action and footer |
 | `MailLayout` | Folders, message list and reader; one view at a time on narrow screens |
+| `ChatLayout` | Conversation list, conversation and details; a stack on narrow screens that can follow the browser history. `variant="widget"` is a floating assistant |
 
 ## With React
 

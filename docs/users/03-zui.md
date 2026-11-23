@@ -1,6 +1,6 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 144 componentes en 12 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 224 componentes en 19 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
@@ -8,7 +8,7 @@ cargar todo (`/dom`) o el núcleo (`/dom/core`) más las familias que use la pá
 `/dom/charts`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
 
 No depende de ninguna biblioteca de UI. En ejecución solo necesita `@zuccadev-labs/zuix-tokens`;
-`@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM 19 son peers opcionales.
+`@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM (18.2 o posterior, o 19) son peers opcionales.
 
 El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/components).
 
@@ -16,25 +16,33 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 
 | Grupo | Componentes |
 |---|---|
-| Acciones | Button, ButtonGroup, CopyButton, DownloadTrigger, IconButton, Link, SegmentedControl, Swap, Toggle, ToggleGroup, Toolbar |
-| Formularios | Calendar, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, WeekPicker, YearPicker |
+| Acciones | Button, ButtonGroup, CopyButton, DownloadTrigger, Fab, FabMenu, IconButton, Link, SegmentedControl, SplitButton, Swap, Toggle, ToggleGroup, Toolbar |
+| Formularios | Calendar, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TransferList, WeekPicker, YearPicker |
 | Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
-| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, Item, Kbd, Meter, Progress, Rating, StatTile, StatusDot, Table, Timeline |
+| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, FilterBar, Item, Kbd, Meter, PriceBreakdown, PriceTag, Progress, Rating, ReviewCard, ReviewSummary, StatTile, StatusDot, SummaryList, Table, Timeline |
 | Gráficos | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline |
-| Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, Skeleton, Spinner |
-| Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
-| Medios | CompareSlider, ImageCropper, QRCode, SignaturePad |
+| Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, NotificationBadge, NotificationCenter, Skeleton, Spinner |
+| Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatDuration, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
+| Medios | CompareSlider, ImageCropper, ImageList, Masonry, QRCode, SignaturePad |
 | Efectos | AttentionRing, Backdrop, BorderBeam, Confetti, Glow, TextEffect |
 | Capas | ActionBar, Command, CommandPalette, ConfirmDialog, ContextMenu, Drawer, HoverCard, Menu, Modal, Popover, Toast, Toggletip, Tooltip, Tour |
 | Navegación | Accordion, Breadcrumb, Collapsible, Menubar, NavList, Pagination, Stepper, Tabs, Tree |
-| Carousel | Carousel |
+| Carousel | Carousel, Gallery, Lightbox, Stories |
+| Tiempo | AnalogClock, Clock, Countdown, DurationField, TimeZoneSelect, WorldClock |
+| Terminal y código | CodeViewer, DiffViewer, LogConsole, Terminal |
+| Chat y mensajería | CallCard, ChatHeader, Composer, ConversationList, DeliveryStatus, EmojiPicker, MessageBubble, MessageList, PinnedBar, Reactions, ThreadSummary, TypingIndicator, VoiceNote |
+| IA y agentes | AgentPlan, AgentStatus, ApprovalCard, Artifact, AssistantMessage, BranchPicker, Citation, Markdown, PromptInput, Reasoning, Sources, Suggestions, ToolCall, UsageMeter |
+| Dashboard y tableros | ActivityFeed, BarList, DashboardGrid, DeltaBadge, FunnelChart, Gauge, KanbanBoard, Leaderboard, MetricCard, MetricGroup, ProgressGoal, Tracker |
+| Usuarios y perfiles | AccountMenu, MemberList, Persona, PresenceBadge, ProfileEditor, ProfileHeader, SettingsSection, UserCard |
+| Nodos | Node, NodeCanvas, NodeControls, NodeListView, NodeMinimap |
 
 Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 48 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 95 |
+| `none` | Solo CSS. Basta el marcado | 73 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 147 |
+| `react` | Hoy solo funciona con el binding de React: `FabMenu`, `SplitButton` y `AccountMenu` | 3 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
 
