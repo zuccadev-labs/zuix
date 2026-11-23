@@ -189,7 +189,12 @@ export default async function ({ page, test, ok, note }) {
     ok(!(await field.evaluate((el) => el === document.activeElement)), "sin onComplete, Tab sale");
     await field.focus();
     await page.keyboard.press("Control+l");
-    await page.waitForTimeout(60);
+    // El borrado se pinta en el siguiente fotograma; con WebKit cargado, 60 ms fijos no siempre bastaban.
+    await term
+      .locator(".z-terminal__line")
+      .first()
+      .waitFor({ state: "detached", timeout: 2000 })
+      .catch(() => {});
     ok((await term.locator(".z-terminal__line").count()) === 0, "Ctrl+L limpia");
   });
 
