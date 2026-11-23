@@ -23,7 +23,9 @@ export interface CodeToken {
   text: string;
 }
 
-type Rule = [TokenType, RegExp];
+// El tercer elemento, si lo hay, es la clase que no puede ir justo antes del token: hace de aserción hacia atrás
+// (`(?<!…)`), que Safari no admite hasta la 16.4 y que ahí impediría cargar el módulo.
+type Rule = [TokenType, RegExp, RegExp?];
 
 const JS_KEYWORDS =
   "abstract|as|async|await|break|case|catch|class|const|continue|debugger|declare|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|keyof|let|namespace|new|of|private|protected|public|readonly|return|satisfies|set|static|super|switch|this|throw|try|type|typeof|var|void|while|with|yield";
@@ -78,11 +80,11 @@ const HTML: Rule[] = [
 ];
 
 const SHELL: Rule[] = [
-  ["comment", sticky(String.raw`(?<![\w$])#[^\n]*`)],
+  ["comment", sticky(String.raw`#[^\n]*`), /[\w$]/],
   ["string", sticky(String.raw`"(?:\\.|[^"\\])*"?|'[^']*'?`)],
   ["variable", sticky(String.raw`\$\{[^}\n]*\}?|\$[A-Za-z_]\w*|\$[\d@#?*!$-]`)],
   ["keyword", sticky(`\\b(?:${SH_KEYWORDS})\\b`)],
-  ["attr", sticky(String.raw`(?<![\w-])--?[\w][\w-]*`)],
+  ["attr", sticky(String.raw`--?[\w][\w-]*`), /[\w-]/],
   ["number", sticky(String.raw`\b\d+\b`)],
   ["plain", sticky(String.raw`[\w./~-]+|\s+`)],
   ["punctuation", sticky(String.raw`[|&;<>()[\]{}=\\]+`)],
@@ -150,7 +152,8 @@ export function tokenize(code: string, language?: string): CodeToken[] {
   };
   while (at < code.length) {
     let matched = false;
-    for (const [type, re] of rules) {
+    for (const [type, re, notAfter] of rules) {
+      if (notAfter && at > 0 && notAfter.test(code[at - 1]!)) continue;
       re.lastIndex = at;
       const m = re.exec(code);
       if (m?.[0].length) {

@@ -445,6 +445,7 @@
     aspect-ratio: 1;
     border-radius: var(--z-radius-full);
     background: var(--z-fg-subtle);
+    color: var(--z-surface-solid);
     box-shadow: 0 0 0 2px var(--z-surface-solid);
   }
   .z-avatar__status[data-status="online"] {

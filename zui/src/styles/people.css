@@ -54,13 +54,12 @@
   .z-presence-badge .z-presence {
     box-shadow: none;
   }
-  /* El punto de estado del Avatar con su forma. */
+  /* El punto de estado del Avatar con su forma. El fondo y el color por defecto, y los de online, busy y away, los pone
+     zui.data: repetirlos aquí, en una capa posterior, pisaba esos estados aunque esta regla sea menos específica. */
   .z-avatar__status {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--z-fg-subtle);
-    color: var(--z-surface-solid);
   }
   .z-avatar__status:is([data-status="dnd"]) {
     background: var(--z-danger);

@@ -34,6 +34,7 @@ import { centerBox, clampStep, ringBox, tourKey, tourProgress } from "../core/to
 import { emit, inDom } from "./forms-popup";
 import { closeDialog } from "./core";
 import { byRef, setMarkup, type Listen } from "./shared";
+import { popoverOpen, showPopover } from "../core/popover";
 
 registerIcons([xMark]);
 
@@ -196,7 +197,7 @@ export function startTour({
     card.querySelector(".z-tour__primary")!.textContent = last ? doneLabel : nextLabel;
     targetOf(step)?.scrollIntoView({ block: "center", inline: "nearest", behavior: reducedMotion() ? "auto" : "smooth" });
     card.dataset.state = "open";
-    if (!card.matches(":popover-open")) card.showPopover();
+    if (!popoverOpen(card)) showPopover(card);
     position();
     setTimeout(() => open && position(), 400);
     focusQuiet(card.querySelector<HTMLElement>(".z-tour__primary"));
@@ -213,7 +214,7 @@ export function startTour({
     ring.dataset.state = "closed";
     const inside = card.contains(document.activeElement);
     afterExit(card, () => {
-      if (card.matches(":popover-open")) card.hidePopover();
+      if (popoverOpen(card)) card.hidePopover();
       card.remove();
       ring.remove();
     });
@@ -287,7 +288,7 @@ function showHint(hint: Hint): void {
   hint.cancelExit = undefined;
   if (!layer.hasAttribute("popover")) layer.setAttribute("popover", "manual");
   layer.dataset.state = "open";
-  if (!layer.matches(":popover-open")) layer.showPopover();
+  if (!popoverOpen(layer)) showPopover(layer);
   positionHint(hint);
   if (hint.toggle) {
     trigger.setAttribute("aria-expanded", "true");
@@ -313,7 +314,7 @@ function hideHint(hint: Hint): void {
   layer.dataset.state = "closed";
   hint.cancelExit = afterExit(layer, () => {
     hint.cancelExit = undefined;
-    if (layer.matches(":popover-open")) layer.hidePopover();
+    if (popoverOpen(layer)) layer.hidePopover();
   });
   emit(layer, "close");
 }

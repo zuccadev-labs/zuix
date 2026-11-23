@@ -11,6 +11,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   `^18.2.0 || ^19.0.0`). `Shell` escribe `inert=""` y `Navbar` y `NavigationMenu`, `popovertarget` en minúsculas con
   React 18, que no conoce esas props. `Shell` y `FloatingPanel` usan `useEffect` en el servidor, donde React 18 avisa
   de cada `useLayoutEffect`.
+- Modo compat: `styles.compat.css` (`dist/zout.compat.css`), la hoja de layouts para Chromium 109, Firefox 115 y
+  Safari 15.4. Va con `tokens.compat.css` y `zui.compat.css`
+  ([Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)).
 - `Container`: tamaños `sm`, `md`, `lg` y `xl` (tokens `container-*`) y `gutter` (`fluid`, `stage` o `none`). El
   margen fluido crece con el ancho del contenedor de consulta entre 16 y 40 px; el ancho máximo suma los dos
   márgenes, así que la columna de texto mide lo mismo con cualquiera. El marcado sin `data-gutter` se ve como antes.
@@ -41,6 +44,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `/dom` sin Popover API: Escape en un cajón y el submenú plegado de la Sidebar lanzaban (`:popover-open` no es un
+  selector válido ahí). Ahora comprueba antes.
 - `Navbar`: plegada y aun así sin sitio (una columna estrecha), las acciones bajan a otra línea en vez de salirse de la
   cabecera.
 - `SettingsLayout`: en estrecho, la tira de secciones difumina el borde con secciones ocultas (`data-scroll-edges`,

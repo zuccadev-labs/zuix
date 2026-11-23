@@ -4,11 +4,14 @@
 //   zui/dist/zui.dom.js         comportamiento (@zuccadev-labs/zuix-zui/dom)
 //   zui/dist/zui.dom.carousel-gl.js  modo WebGL del Carousel; zui.dom.js lo importa solo si un carrusel lo pide
 //   zicon/dist/zicon.element.js <z-icon> con el set completo
-// Los tokens ya se publican en tokens/dist/.
+//   */dist/*.compat.css         modo compat (tools/compat.mjs): zui, zout y los tokens, para navegadores anteriores
+// Los tokens ya se publican en tokens/dist/; su versión compat sale de aquí porque resuelve también las mezclas
+// de color de los componentes.
 import { build } from "esbuild";
 import { statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildCompat } from "./compat.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const targets = [
@@ -46,3 +49,5 @@ for (const [entry, out] of targets) {
   });
   console.log(`✓ ${out} · ${(statSync(join(root, out)).size / 1024).toFixed(1)} kB`);
 }
+const compat = buildCompat();
+for (const f of compat.written) console.log(`✓ ${f} · ${(statSync(join(root, f)).size / 1024).toFixed(1)} kB`);

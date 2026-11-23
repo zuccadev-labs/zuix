@@ -50,6 +50,7 @@ import { swipeDirection, swipeToDismiss } from "../core/swipe";
 import { createTimer } from "../core/timer";
 import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup, type DomModule, type DomPart } from "./shared";
+import { popoverOpen, closestOpenPopover, showPopover } from "../core/popover";
 
 export type { DomModule, DomPart } from "./shared";
 export { download, downloadBlob, downloadUrl, mimeFromName, type DownloadSource } from "../core/download";
@@ -192,7 +193,7 @@ function follow(event: Event): void {
   // El desplazamiento dentro del propio popover (una lista larga) no lo mueve.
   if (event.target instanceof Element && event.target.closest("[popover]")) return;
   for (const [el, reposition] of [...followers]) {
-    if (!el.isConnected || !el.matches(":popover-open")) followers.delete(el);
+    if (!el.isConnected || !popoverOpen(el)) followers.delete(el);
     else reposition();
   }
 }
@@ -227,7 +228,7 @@ export function openPopover(
 ): void {
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
-  if (!el.matches(":popover-open")) el.showPopover();
+  if (!popoverOpen(el)) showPopover(el);
   const gap = anchor instanceof Element ? 6 + (el.hasAttribute("data-arrow") ? 7 : 0) : 0;
   let css = anchor instanceof Element && el.classList.contains("z-popover") ? anchorWithCss(el, anchor, placement, gap) : null;
   if (css) cssAnchors.set(el, css);
@@ -242,7 +243,7 @@ export function openPopover(
   };
   position();
   // Con CSS anchor positioning, algún motor aplica el desplazamiento de la página con retraso: se vigila un momento.
-  if (css) settleAnchoring(() => el.matches(":popover-open") && position());
+  if (css) settleAnchoring(() => popoverOpen(el) && position());
   if (anchor instanceof Element) {
     const owner = options.trigger ?? anchor;
     anchors.set(el, owner);
@@ -260,7 +261,7 @@ export function openPopover(
 const cssAnchors = new WeakMap<HTMLElement, CssAnchoring>();
 
 export function closePopover(el: HTMLElement): void {
-  if (el.matches(":popover-open")) el.hidePopover();
+  if (popoverOpen(el)) el.hidePopover();
 }
 
 /* ---------- Submenús: <button class="z-menu__item" data-z-submenu="#id"> + <div id popover class="z-liquid z-menu"> ---------- */
@@ -280,9 +281,9 @@ function detectSourceNesting(): void {
     inner.setAttribute("popover", "auto");
     outer.append(invoker);
     document.body.append(outer, inner);
-    outer.showPopover();
-    (inner.showPopover as (options?: { source?: HTMLElement }) => void)({ source: invoker });
-    sourceNesting = outer.matches(":popover-open");
+    showPopover(outer);
+    showPopover(inner, invoker);
+    sourceNesting = popoverOpen(outer);
   } catch {
     sourceNesting = false;
   }
@@ -305,7 +306,7 @@ function openChild(menu: Element): HTMLElement | undefined {
   for (const trigger of menu.querySelectorAll<HTMLElement>('[data-z-submenu][aria-expanded="true"]')) {
     if (trigger.closest(".z-menu") !== menu) continue;
     const sub = submenuOf(trigger);
-    if (sub?.matches(":popover-open")) return sub;
+    if (sub && popoverOpen(sub)) return sub;
   }
   return undefined;
 }
@@ -334,13 +335,13 @@ export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
   const sub = submenuOf(trigger);
   const parent = trigger.closest<HTMLElement>(".z-menu");
   if (!sub || !parent || sub === parent || sub.contains(parent) || isDisabled(trigger)) return;
-  if (!sub.matches(":popover-open")) {
+  if (!popoverOpen(sub)) {
     if (!sub.hasAttribute("popover")) sub.setAttribute("popover", "auto");
     // Sin init() no se ha comprobado `source` (la comprobación cerraría los menús abiertos): se anida en el DOM.
     if (!sourceNesting && !parent.contains(sub)) parent.append(sub);
     describeSubmenu(trigger, sub);
     sub.dataset.state = "open";
-    (sub.showPopover as (options?: { source?: HTMLElement }) => void)({ source: trigger });
+    showPopover(sub, trigger);
     anchors.set(sub, trigger);
     trigger.setAttribute("aria-expanded", "true");
     trigger.dataset.state = "open";
@@ -465,7 +466,7 @@ function showTooltip(target: HTMLElement): void {
     tip.textContent = text;
     // Dentro del diálogo modal que contiene al disparador: fuera de él la burbuja quedaría inerte.
     (target.closest("dialog[open]") ?? document.body).append(tip);
-    tip.showPopover();
+    showPopover(tip);
     place(tip, target.getBoundingClientRect(), (target.getAttribute("data-z-placement") as Placement) ?? "top");
     // Se añade a la descripción que el control ya tuviera (la ayuda de un Field), sin sustituirla.
     target.setAttribute("aria-describedby", [...describedBy(target), tip.id].join(" "));
@@ -525,8 +526,8 @@ let unfollowToasts: (() => void) | undefined;
  */
 function raiseToasts(host: HTMLElement, to: HTMLElement = modalHost()): void {
   moveToHost(host, to);
-  if (host.matches(":popover-open")) host.hidePopover();
-  host.showPopover();
+  if (popoverOpen(host)) host.hidePopover();
+  showPopover(host);
   settleShown(host, '.z-toast[data-state="open"]', toastShown);
 }
 
@@ -620,7 +621,7 @@ export function toast({
     afterExit(item, () => {
       item.remove();
       if (!host.children.length) {
-        if (host.matches(":popover-open")) host.hidePopover();
+        if (popoverOpen(host)) host.hidePopover();
         unfollowToasts?.();
         unfollowToasts = undefined;
       }
@@ -1016,7 +1017,7 @@ function onClick(event: MouseEvent): void {
     const el = byRef(opener.getAttribute("data-z-open"));
     if (el instanceof HTMLDialogElement) openDialog(el);
     else if (el) {
-      if (el.matches(":popover-open")) closePopover(el);
+      if (popoverOpen(el)) closePopover(el);
       else {
         // `data-z-anchor="#id"`: se coloca junto a otro elemento; el disparador sigue siendo el que lo abre.
         const anchor = byRef(opener.getAttribute("data-z-anchor")) ?? opener;
@@ -1185,7 +1186,7 @@ function onKeydown(event: KeyboardEvent): void {
   // Escape en un diálogo: se cierra con animación, o no se cierra si es estático.
   if (event.key === "Escape") {
     const dialog = target.closest<HTMLDialogElement>("dialog.z-modal, dialog.z-drawer");
-    if (dialog?.open && !target.closest(":popover-open")) {
+    if (dialog?.open && !closestOpenPopover(target)) {
       event.preventDefault();
       if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
     }
@@ -1263,7 +1264,7 @@ const contextPress = /* @__PURE__ */ createLongPress((point, event) => {
   const onLift = () => {
     lift.abort();
     setTimeout(() => {
-      if (!menu.matches(":popover-open")) openPopover(menu, point, "bottom-start");
+      if (!popoverOpen(menu)) openPopover(menu, point, "bottom-start");
     });
   };
   window.addEventListener("pointerup", onLift, { capture: true, signal: lift.signal });
@@ -1376,7 +1377,7 @@ export function init(...mods: DomModule[]): () => void {
     // El puntero sale de una entrada con el submenú abierto: empieza la zona de gracia hacia él.
     const trigger = from.closest?.<HTMLElement>('.z-menu__item[data-z-submenu][aria-expanded="true"]');
     const sub = trigger && !trigger.contains(to) ? submenuOf(trigger) : null;
-    if (sub?.matches(":popover-open"))
+    if (sub && popoverOpen(sub))
       aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
     const host = from.closest?.("[data-z-tooltip]");
     if (host && !host.contains(to)) {

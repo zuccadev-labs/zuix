@@ -15,6 +15,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   `useEffect` en el servidor, donde React 18 avisa de cada `useLayoutEffect`. `DateTimePicker` (y `DatePicker` con
   `input`) reinicia el borrador al abrir durante el render: con React 18 el calendario se abría enfocando el día de
   la apertura anterior. Con React 19 nada cambia.
+- Modo compat: `styles.compat.css` (`dist/zui.compat.css`), la hoja de componentes para Chromium 109, Firefox 115
+  y Safari 15.4, generada con lightningcss: sin `@layer` (aplanado en el orden de las capas), sin `color-mix()` (lee
+  los colores de `tokens.compat.css`), sin anidado ni `:dir()`, con la clase `.\:popover-open` de
+  `@oddbird/popover-polyfill` y anillos de foco con `:focus-within` donde falta `:has()`. Límites en
+  [Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat).
 - Resúmenes y precios (grupo `data`, solo marcado: se renderizan en un Server Component):
   - `SummaryList`: lista clave–valor (`<dl>`) con los valores alineados al final en cifras tabulares, pista bajo la
     etiqueta, tonos, separadores y fila de total destacada.
@@ -242,6 +247,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Avatar`: el punto de estado `online`, `busy` y `away` salía gris. La regla base del punto en `zui.people` volvía a
+  poner el fondo por defecto y, por ir en una capa posterior, pisaba el color de cada estado de `zui.data`. Ahora
+  solo `zui.data` pone ese fondo.
+- `/dom` sin Popover API (Chromium < 114, Firefox < 125, Safari < 17): abrir un menú, un popover, un tooltip o un
+  submenú lanzaba, porque `:popover-open` no es un selector válido ahí y `showPopover` no existe. Ahora no se abren y
+  nada lanza; con `@oddbird/popover-polyfill` cargado por la aplicación, funcionan.
+- `/dom` en Safari < 16.4: el módulo no cargaba, porque el resaltado de código y las tablas de Markdown usaban
+  aserciones hacia atrás (`(?<!…)`) en expresiones regulares. Se escriben sin ellas y el resultado es el mismo.
 - `Chip` interactivo (también los de `FilterBar`): con puntero grueso el botón quedaba en 38 px, 2 px por dentro del
   borde del chip de 40. Su zona de pulsación cubre ahora el borde y llega a los 40 sin cambiar el dibujo.
 - `Calendar` con `numberOfMonths` de 2 o más: el título del rango («December 2026 – January 2027») usa espacios

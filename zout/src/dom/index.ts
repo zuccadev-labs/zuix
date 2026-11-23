@@ -103,6 +103,18 @@ import {
   type ResizeSide,
 } from "../logic";
 
+/**
+ * ¿`el` está dentro de una capa `[popover]` abierta (con `within: false`, ¿es una)? Sin Popover API, `:popover-open` no es un
+ * selector válido y `matches()`/`closest()` lanzarían; con @oddbird/popover-polyfill la capa lleva la clase `:popover-open`.
+ */
+function inOpenLayer(el: Element, within = true): boolean {
+  try {
+    return within ? el.closest(":popover-open") !== null : el.matches(":popover-open");
+  } catch {
+    return within ? el.closest(".\\:popover-open") !== null : el.classList.contains(":popover-open");
+  }
+}
+
 export type { PanelMode } from "../logic";
 export type ShellSide = "sidebar" | "inspector";
 export type ShellModes = Record<ShellSide, PanelMode>;
@@ -797,7 +809,7 @@ export function setSidebarCollapsed(sidebar: HTMLElement, collapsed: boolean, si
       link.setAttribute("aria-haspopup", "true");
       link.setAttribute("aria-expanded", "false");
     } else {
-      if (sub.matches(":popover-open")) sub.hidePopover();
+      if (inOpenLayer(sub, false)) sub.hidePopover();
       sub.removeAttribute("popover");
       sub.classList.remove("z-liquid");
       sub.removeAttribute("style");
@@ -1131,7 +1143,7 @@ function onKeydown(event: KeyboardEvent): void {
 
   // Escape cierra el cajón abierto, salvo que lo haya gestionado otro (un diálogo o un menú por encima).
   if (event.key === "Escape") {
-    if (event.defaultPrevented || target.closest("dialog[open], :popover-open")) return;
+    if (event.defaultPrevented || target.closest("dialog[open]") || inOpenLayer(target)) return;
     const panel = target.closest<HTMLElement>(".z-floatpanel");
     if (panel && inDom(panel) && panel.querySelector(".z-floatpanel__close")) {
       event.preventDefault();
