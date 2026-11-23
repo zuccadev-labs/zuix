@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type Ref } from "react";
+import { useId, useRef, useState, type KeyboardEvent, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { todayISO, valid } from "../../core/date";
 import { FIELD_TEXTS } from "../../core/segments";
@@ -15,6 +15,7 @@ import { Calendar, type CalendarPreset } from "./Calendar";
 import type { DateFieldProps } from "./DateField";
 import { SegmentedField } from "./segmented.internal";
 import { TimeField } from "./TimeField";
+import { withRef } from "../../react-compat";
 
 export interface DateTimePickerProps extends Omit<DateFieldProps, "children"> {
   /** `day`: DatePicker con campo tecleable. `minute` (por defecto) o `second`: fecha y hora. */
@@ -42,7 +43,7 @@ export interface DateTimePickerProps extends Omit<DateFieldProps, "children"> {
 
 /** Campo tecleable (DateField) con un calendario y, con hora, un TimeField en el mismo panel. Valor ISO civil:
  *  `YYYY-MM-DD` o `YYYY-MM-DDTHH:mm[:ss]`, sin zona, como `datetime-local`. */
-export function DateTimePicker({
+export const DateTimePicker = withRef(function DateTimePicker({
   granularity = "minute",
   open,
   defaultOpen = false,
@@ -104,12 +105,16 @@ export function DateTimePicker({
   // Borrador del panel: el día y la hora se eligen y «Aplicar» los junta.
   const [draftDate, setDraftDate] = useState<string | null>(datePart);
   const [draftTime, setDraftTime] = useState<string | null>(timePart);
-  // biome-ignore lint/correctness/useExhaustiveDependencies: el borrador se reinicia solo al abrir.
-  useEffect(() => {
-    if (!isOpen) return;
-    setDraftDate(datePart);
-    setDraftTime(timePart);
-  }, [isOpen]);
+  // El borrador se reinicia al abrir, durante el render y no en un efecto: el panel se monta ya con el día que hay que
+  // enfocar. Con un efecto, React 18 montaba el panel y lo enfocaba con el borrador de la apertura anterior.
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) {
+      setDraftDate(datePart);
+      setDraftTime(timePart);
+    }
+  }
 
   const focusDay = () => {
     const start = draftDate ?? today ?? todayISO();
@@ -237,4 +242,4 @@ export function DateTimePicker({
       ) : null}
     </>
   );
-}
+});

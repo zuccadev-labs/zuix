@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
 import { AspectRatio } from "./AspectRatio";
+import { withRef } from "../../react-compat";
 
 export interface CardMediaProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   /** Imagen de la cabecera. Sin `src`, la media son los hijos (vídeo, mapa, ilustración). */
@@ -19,7 +20,7 @@ export interface CardMediaProps extends Omit<HTMLAttributes<HTMLDivElement>, "ch
 }
 
 /** Media de cabecera de una `Card` (imagen de producto, portada) sobre AspectRatio. */
-export function CardMedia({
+export const CardMedia = withRef(function CardMedia({
   src,
   alt = "",
   ratio = 16 / 9,
@@ -34,4 +35,4 @@ export function CardMedia({
       {src ? <img src={src} alt={alt} loading={loading} decoding="async" /> : children}
     </AspectRatio>
   );
-}
+});

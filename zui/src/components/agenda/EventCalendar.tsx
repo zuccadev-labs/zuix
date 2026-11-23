@@ -1,5 +1,5 @@
 "use client";
-import { createElement, type ReactNode, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState, type Ref } from "react";
+import { createElement, type ReactNode, useEffect, useId, useMemo, useReducer, useRef, useState, type Ref } from "react";
 import type { AgendaView, CalendarEvent, CalendarSource } from "../../core/agenda";
 import { clockMinutes } from "../../core/agenda";
 import {
@@ -29,6 +29,8 @@ import { safeTimeZone } from "../../core/zone";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
 import { toReact } from "./vtree";
+import { withRef } from "../../react-compat";
+import { useIsoLayoutEffect } from "../../primitives/hooks";
 
 export type { AgendaView, CalendarEvent, CalendarSource, EventChange, SlotSelection, AgendaLabels, AgendaLabelsInput, BusinessHours };
 
@@ -126,7 +128,7 @@ const NO_CALENDARS: CalendarSource[] = [];
  * de día, semana, semana laboral, mes y agenda sobre el mismo modelo de eventos. Mover, redimensionar y crear con
  * puntero y teclado, y «Mover a…» como alternativa sin arrastre. El marcado y la interacción son los del modo DOM.
  */
-export function EventCalendar({
+export const EventCalendar = withRef(function EventCalendar({
   events = NO_EVENTS,
   calendars = NO_CALENDARS,
   view,
@@ -285,7 +287,7 @@ export function EventCalendar({
   );
 
   useEffect(() => (root.current ? attachAgenda(root.current, host) : undefined), [host]);
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!root.current) return;
     const focus = wantFocus.current;
     wantFocus.current = false;
@@ -365,4 +367,4 @@ export function EventCalendar({
   const { className: _c, ...rest } = (toReact(tree, { minical, event }) as { props: Record<string, unknown> }).props;
   // La raíz lleva la ref; lo demás es el árbol tal cual.
   return createElement("div", { ...rest, className: (tree.a?.class as string) ?? "z-agenda", ref: setRoot });
-}
+});

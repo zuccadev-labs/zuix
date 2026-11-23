@@ -9,6 +9,7 @@ import {
   type ComposerTool,
 } from "../../core/composer-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { ComposerModel as PromptModel, ComposerTool as PromptTool };
 
@@ -33,7 +34,7 @@ export type { ComposerFile as PromptFile, ComposerSend as PromptSubmit };
  * Entrada de un asistente: campo que crece (Intro envía, sin enviar durante un IME), adjuntos, selector de modelo,
  * herramientas activables, uso de contexto y enviar ↔ parar en el mismo sitio.
  */
-export function PromptInput({
+export const PromptInput = withRef(function PromptInput({
   onValueChange,
   onSubmit,
   onStop,
@@ -60,4 +61,4 @@ export function PromptInput({
       "tool-toggle": onToolToggle,
     },
   });
-}
+});

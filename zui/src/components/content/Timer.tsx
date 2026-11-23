@@ -19,6 +19,7 @@ import {
 } from "../../core/stopwatch";
 import { cx } from "../../cx";
 import { Button } from "../actions/Button";
+import { withRef } from "../../react-compat";
 
 export interface TimerProps extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {
   /** Cuenta atrás (por defecto) o cronómetro. */
@@ -61,7 +62,7 @@ export interface TimerProps extends Omit<HTMLAttributes<HTMLDivElement>, "childr
  * al llegar a ella, con el tiempo hablado como nombre); los cambios de estado y los hitos van a una región `status`
  * aparte, para no anunciar cada segundo.
  */
-export function Timer({
+export const Timer = withRef(function Timer({
   mode = "countdown",
   duration,
   autoStart = false,
@@ -196,4 +197,4 @@ export function Timer({
       </span>
     </div>
   );
-}
+});

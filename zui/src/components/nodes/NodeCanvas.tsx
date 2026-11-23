@@ -14,6 +14,7 @@ import { cx } from "../../cx";
 import { useIsoLayoutEffect, useLatest } from "../../primitives/hooks";
 import { Node } from "./Node";
 import { NodeControls, type NodeControlsProps, NodeMinimap, type NodeMinimapProps } from "./NodeControls";
+import { withRef } from "../../react-compat";
 
 export type { CanvasSelection, GraphChange, NodeCanvasHandle };
 
@@ -104,7 +105,7 @@ const NodeView = memo(function NodeView({
  * desde un puerto (o con dos clics, o con el teclado), reconectar, borrar, copiar/pegar/duplicar, deshacer/rehacer,
  * grupos, minimapa, controles y disposición automática por capas. Solo se pintan los nodos y aristas que se ven.
  */
-export function NodeCanvas({
+export const NodeCanvas = withRef(function NodeCanvas({
   nodes,
   edges,
   defaultNodes,
@@ -320,4 +321,4 @@ export function NodeCanvas({
       {children}
     </div>
   );
-}
+});

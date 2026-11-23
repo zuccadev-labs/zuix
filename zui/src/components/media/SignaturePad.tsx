@@ -10,6 +10,7 @@ import {
   type SignatureValue,
 } from "../../core/signature-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export { signatureBlob, signatureValue };
 export type { SignaturePadLabels, SignaturePoint, SignatureStroke, SignatureValue };
@@ -26,6 +27,6 @@ export interface SignaturePadProps extends CoreProps {
  * Lienzo de firma con el puntero (presión si la hay), deshacer y borrar, y la alternativa accesible de escribir el
  * nombre. La firma se lee con `signatureValue(el)` (SVG incluido) o `signatureBlob(el)` (PNG).
  */
-export function SignaturePad({ onChange, id, className, ref, ...props }: SignaturePadProps) {
+export const SignaturePad = withRef(function SignaturePad({ onChange, id, className, ref, ...props }: SignaturePadProps) {
   return useWidget(signaturePadWidget, props, { id, className, ref, handlers: { change: onChange } });
-}
+});

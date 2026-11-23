@@ -1,6 +1,7 @@
 import { Children, type HTMLAttributes, type ReactNode, type Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   title: ReactNode;
@@ -28,7 +29,7 @@ export interface ItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "title">
  * Fila de contenido: medio, título, descripción, metadato y acciones. Con `href`, el título es un enlace cuya zona de
  * clic cubre el item entero (las acciones quedan por encima). Dentro de ItemGroup, cada item es un elemento de lista.
  */
-export function Item({
+export const Item = withRef(function Item({
   title,
   description,
   media,
@@ -73,7 +74,7 @@ export function Item({
       {actions ? <div className="z-item__actions">{actions}</div> : null}
     </div>
   );
-}
+});
 
 export interface ItemGroupProps extends HTMLAttributes<HTMLDivElement> {
   /** Cabecera visible del grupo. Si es texto, también nombra la lista. */
@@ -87,7 +88,15 @@ export interface ItemGroupProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /** Lista de Item (role="list", cada hijo un listitem) con cabecera opcional, divisiones y marco. */
-export function ItemGroup({ header, divided, framed, className, children, "aria-label": ariaLabel, ...rest }: ItemGroupProps) {
+export const ItemGroup = withRef(function ItemGroup({
+  header,
+  divided,
+  framed,
+  className,
+  children,
+  "aria-label": ariaLabel,
+  ...rest
+}: ItemGroupProps) {
   return (
     <div {...rest} className={cx("z-item-group", className)} data-divided={divided || undefined} data-framed={framed || undefined}>
       {header ? (
@@ -106,4 +115,4 @@ export function ItemGroup({ header, divided, framed, className, children, "aria-
       </div>
     </div>
   );
-}
+});

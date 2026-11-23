@@ -2,7 +2,6 @@
 import {
   useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
   type DragEvent,
@@ -20,6 +19,7 @@ import { drawThumbnail } from "../../core/thumbnail";
 import { fill } from "../../core/vnode";
 import { cx } from "../../cx";
 import { useFieldControl } from "./Field";
+import { useIsoLayoutEffect } from "../../primitives/hooks";
 
 export interface FileUploadProps {
   /** Recibe los archivos elegidos o soltados (ya filtrados por `accept` y `maxSize`). */
@@ -319,7 +319,7 @@ export function FileUpload({
     return filesRef.current?.querySelector<HTMLButtonElement>(`.z-upload__tile[data-index="${i}"] .z-upload__handle`) ?? null;
   };
   // Tras cada movimiento, el foco vuelve al asa del archivo (React lo mueve de sitio en el DOM) y la casilla se trae a la vista.
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const file = refocus.current;
     if (!file) return;
     refocus.current = null;

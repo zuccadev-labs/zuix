@@ -9,6 +9,7 @@ import { cx } from "../../cx";
 import { useMergedRef } from "../../refs";
 import { Persona } from "../people/Persona";
 import { Rating } from "./Rating";
+import { withRef } from "../../react-compat";
 
 export type { ReviewCardLabels };
 export { REVIEW_CARD_LABELS };
@@ -53,7 +54,7 @@ export interface ReviewCardProps extends Omit<HTMLAttributes<HTMLElement>, "titl
  * Opinión: autor (Persona), valoración con estrellas de solo lectura, fecha, texto largo plegable (la búsqueda en la
  * página encuentra y abre lo plegado), fotos y respuesta del propietario.
  */
-export function ReviewCard({
+export const ReviewCard = withRef(function ReviewCard({
   author,
   rating,
   max = 5,
@@ -185,4 +186,4 @@ export function ReviewCard({
       ) : null}
     </article>
   );
-}
+});

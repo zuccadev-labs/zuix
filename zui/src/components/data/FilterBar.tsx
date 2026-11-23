@@ -10,6 +10,7 @@ import {
   type FilterValue,
 } from "../../core/filter-bar-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export { FILTER_BAR_LABELS };
 export type { FilterBarLabels, FilterDef, FilterOption, FilterValue };
@@ -26,11 +27,11 @@ export interface FilterBarProps extends CoreProps {
  * Barra de filtros: chips de interruptor y de menú en una fila que desplaza con el borde difuminado, «Clear» cuando
  * hay alguno activo y el número de activos para lectores.
  */
-export function FilterBar({ onChange, id, className, ref, ...props }: FilterBarProps) {
+export const FilterBar = withRef(function FilterBar({ onChange, id, className, ref, ...props }: FilterBarProps) {
   return useWidget(filterBarWidget, props, {
     id,
     className,
     ref,
     handlers: { change: onChange } as Record<string, ((detail: never) => void) | undefined>,
   });
-}
+});

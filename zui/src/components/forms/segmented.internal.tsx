@@ -41,6 +41,7 @@ import { useLatest } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl, useFieldLabel } from "./Field";
+import { withRef } from "../../react-compat";
 
 export type { SegmentType };
 
@@ -119,7 +120,7 @@ const MESSAGES: Record<Validity, "incomplete" | "invalid" | "range" | null> = {
 };
 
 /** Campo por segmentos (spinbuttons de APG en un `role="group"`). Uso interno: DateField, TimeField, TimePicker. */
-export function SegmentedField(props: InternalProps) {
+export const SegmentedField = withRef(function SegmentedField(props: InternalProps) {
   const {
     value,
     defaultValue,
@@ -465,6 +466,6 @@ export function SegmentedField(props: InternalProps) {
       />
     </div>
   );
-}
+});
 
 const noop = () => {};

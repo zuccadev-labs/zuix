@@ -4,6 +4,7 @@ import { isGroup, nodeLabel, type GraphNode, type NodePort as PortModel } from "
 import { mergeNodeLabels, type NodeCanvasLabels, nodeVars, portLabel } from "../../core/node-view";
 import { portFractions, portSide } from "../../core/ports";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface NodePortProps {
   port: PortModel;
@@ -47,7 +48,7 @@ export interface NodeProps extends Omit<HTMLAttributes<HTMLDivElement>, "childre
  * Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida y asa de
  * redimensionado. Con `type: "group"`, un grupo con título. Solo marcado: lo mueve NodeCanvas.
  */
-export function Node({ node, x, y, labels, children, className, style, ref, ...rest }: NodeProps) {
+export const Node = withRef(function Node({ node, x, y, labels, children, className, style, ref, ...rest }: NodeProps) {
   const l = mergeNodeLabels(labels);
   const label = nodeLabel(node);
   const vars = nodeVars(x ?? node.position.x, y ?? node.position.y, node.size) as CSSProperties;
@@ -112,13 +113,13 @@ export function Node({ node, x, y, labels, children, className, style, ref, ...r
       <span className="z-node__resize" aria-hidden="true" />
     </div>
   );
-}
+});
 
 export interface NodeGroupProps extends Omit<NodeProps, "node"> {
   node: Omit<GraphNode, "type"> & { type?: "group" };
 }
 
 /** Grupo o subflujo: marco con título; los nodos con `parentId` se mueven con él. */
-export function NodeGroup({ node, ...rest }: NodeGroupProps) {
+export const NodeGroup = withRef(function NodeGroup({ node, ...rest }: NodeGroupProps) {
   return <Node {...rest} node={{ ...node, type: "group" }} />;
-}
+});

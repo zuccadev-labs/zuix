@@ -4,6 +4,7 @@
 import { createElement, type CSSProperties, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import type { VEl, VNode } from "../core/vnode";
+import { LEGACY_REACT } from "../react-compat";
 
 const ATTR: Record<string, string> = {
   class: "className",
@@ -30,6 +31,8 @@ const ATTR: Record<string, string> = {
   autocapitalize: "autoCapitalize",
   autocorrect: "autoCorrect",
 };
+// React 18 no conoce `popovertarget` (lo escribe tal cual en minúsculas) ni `inert` (solo lo escribe con una cadena).
+const LEGACY_ATTR: Record<string, string> = { popovertarget: "popovertarget" };
 const noop = () => {};
 
 export type SlotRenderer = (p: Record<string, unknown>) => ReactNode;
@@ -72,7 +75,8 @@ function element(node: VEl, slots: Partial<Record<"minical" | "calendar" | "even
     else if (k === "checked") {
       props.checked = Boolean(v);
       props.onChange = noop;
-    } else props[ATTR[k] ?? k] = v === true ? true : v;
+    } else if (LEGACY_REACT) props[LEGACY_ATTR[k] ?? ATTR[k] ?? k] = k === "inert" && v === true ? "" : v;
+    else props[ATTR[k] ?? k] = v === true ? true : v;
   }
   if (node.t === "select") {
     const chosen = (node.c ?? []).find((c) => c && typeof c === "object" && !("slot" in c) && c.a?.selected);

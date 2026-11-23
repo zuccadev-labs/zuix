@@ -3,6 +3,7 @@ import { useState, type ButtonHTMLAttributes, type ReactNode, type Ref } from "r
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { download, downloadUrl, mimeFromName, type DownloadSource } from "../../core/download";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export { download, mimeFromName, type DownloadSource };
 
@@ -29,7 +30,7 @@ export interface DownloadTriggerProps extends Omit<ButtonHTMLAttributes<HTMLButt
  * Botón de descarga: genera el archivo al pulsar (también desde una promesa, con estado de carga) y lo descarga con
  * un enlace temporal, sin dejar URLs abiertas.
  */
-export function DownloadTrigger({
+export const DownloadTrigger = withRef(function DownloadTrigger({
   data,
   href,
   fileName,
@@ -81,4 +82,4 @@ export function DownloadTrigger({
       {children}
     </button>
   );
-}
+});

@@ -8,6 +8,7 @@ import {
   type Source,
 } from "../../core/ai-widgets";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { AiLabels, AssistantPart, Source };
 
@@ -31,7 +32,7 @@ export interface AssistantMessageProps extends CoreProps {
  * aprobaciones, fuentes con citas y artefactos), acciones al terminar y ramas «‹ 2 / 3 ›». Mientras llega lleva
  * `aria-busy` y no se anuncia nada; al terminar se anuncia una vez.
  */
-export function AssistantMessage({
+export const AssistantMessage = withRef(function AssistantMessage({
   onCopy,
   onRegenerate,
   onFeedback,
@@ -60,4 +61,4 @@ export function AssistantMessage({
       "open-artifact": onOpenArtifact,
     },
   });
-}
+});

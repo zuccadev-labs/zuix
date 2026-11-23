@@ -7,6 +7,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- React 18: los layouts funcionan con React 18.2 o posterior además de con React 19 (peers
+  `^18.2.0 || ^19.0.0`). `Shell` escribe `inert=""` y `Navbar` y `NavigationMenu`, `popovertarget` en minúsculas con
+  React 18, que no conoce esas props. `Shell` y `FloatingPanel` usan `useEffect` en el servidor, donde React 18 avisa
+  de cada `useLayoutEffect`.
 - `Container`: tamaños `sm`, `md`, `lg` y `xl` (tokens `container-*`) y `gutter` (`fluid`, `stage` o `none`). El
   margen fluido crece con el ancho del contenedor de consulta entre 16 y 40 px; el ancho máximo suma los dos
   márgenes, así que la columna de texto mide lo mismo con cualquiera. El marcado sin `data-gutter` se ve como antes.

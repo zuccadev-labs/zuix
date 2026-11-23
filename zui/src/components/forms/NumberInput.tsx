@@ -7,6 +7,7 @@ import { useLatest } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 type NativeProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -53,7 +54,7 @@ const HOLD_EVERY = 60;
  * Av Pág para el paso largo, Inicio y Fin para los topes, y botones que repiten al mantenerlos. No usa
  * `type="number"`: conserva el formato y no cambia con la rueda por accidente.
  */
-export function NumberInput({
+export const NumberInput = withRef(function NumberInput({
   value,
   defaultValue = null,
   onValueChange,
@@ -296,4 +297,4 @@ export function NumberInput({
       {name ? <input type="hidden" name={name} form={form} value={current ?? ""} /> : null}
     </span>
   );
-}
+});

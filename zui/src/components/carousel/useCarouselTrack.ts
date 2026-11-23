@@ -1,8 +1,9 @@
 "use client";
-import { useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useMemo, useRef, useState, type RefObject } from "react";
 import { MIN_SIDE, createEngine } from "./engine";
 import { LensRenderer } from "./lensRenderer";
 import { toSlideTexture, type CarouselRasterSize, type CarouselRasterSource } from "./slideTexture";
+import { useIsoLayoutEffect } from "../../primitives/hooks";
 
 // Binding de React del motor del carrusel (engine.ts): refs, ciclo de vida y número de réplicas.
 export type { CarouselMode } from "./engine";
@@ -45,12 +46,12 @@ export function useCarouselTrack(options: UseCarouselTrackOptions): { side: numb
   const maxTextureRef = useRef(4096);
 
   // Siempre las funciones del último render, sin reiniciar el motor.
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     latest.current = options;
   });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: `contentKey` no se lee dentro; cambia cuando cambia el contenido de los slides y obliga a recrear el motor para volver a medir y rasterizar.
-  useLayoutEffect(() => {
+  // `contentKey` no se lee dentro; cambia cuando cambia el contenido de los slides y obliga a recrear el motor para volver a medir y rasterizar.
+  useIsoLayoutEffect(() => {
     const root = rootRef.current;
     const viewport = viewportRef.current;
     const stage = stageRef.current;

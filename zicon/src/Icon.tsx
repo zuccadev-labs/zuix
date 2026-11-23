@@ -1,6 +1,7 @@
 import type { SVGProps } from "react";
 import type { IconName } from "./names";
 import type { IconVariant } from "./types";
+import { withRef } from "./react-compat";
 import { getIcon } from "./registry";
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
@@ -17,7 +18,7 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
 const warned = new Set<string>();
 
 /** Icono de la suite. El color se hereda de `currentColor`. */
-export function Icon({ name, variant = "outline", size = 16, label, className, ...rest }: IconProps) {
+export const Icon = withRef(function Icon({ name, variant = "outline", size = 16, label, className, ...rest }: IconProps) {
   const def = getIcon(name);
   if (!def && !warned.has(name)) {
     warned.add(name);
@@ -50,4 +51,4 @@ export function Icon({ name, variant = "outline", size = 16, label, className, .
       )}
     </svg>
   );
-}
+});

@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface ProseProps extends HTMLAttributes<HTMLElement> {
   /** Elemento raíz. */
@@ -12,10 +13,10 @@ export interface ProseProps extends HTMLAttributes<HTMLElement> {
 
 /** Tipografía de contenido largo (`.z-prose`): títulos, párrafos, listas, citas, código, tablas y medios con el ritmo
  *  de lectura de la suite. Un bloque con `.z-not-prose` queda fuera. Sin estado. */
-export function Prose({ as: Tag = "div", size = "md", className, children, ref, ...rest }: ProseProps) {
+export const Prose = withRef(function Prose({ as: Tag = "div", size = "md", className, children, ref, ...rest }: ProseProps) {
   return (
     <Tag {...rest} ref={ref as Ref<HTMLDivElement>} className={cx("z-prose", className)} data-size={size}>
       {children}
     </Tag>
   );
-}
+});

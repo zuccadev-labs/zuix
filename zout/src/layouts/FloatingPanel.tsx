@@ -4,6 +4,9 @@ import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
 import { FLOAT_STEP, clampRect, moveDelta, resizeDelta, resizeRect, type Rect } from "../logic";
 
+/** `useLayoutEffect` en el navegador; en el servidor, `useEffect` (React 18 avisa de un efecto de layout en el servidor). */
+const useIsoLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
+
 export interface FloatingPanelProps {
   title: ReactNode;
   children: ReactNode;
@@ -99,7 +102,7 @@ export function FloatingPanel({
   // tamaño de ese momento, no los del montaje: si no, devolvería el panel a donde estaba al abrirse.
   const fitLatest = useRef(() => {});
   fitLatest.current = () => commit(clampRect(rect, bounds(), min));
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const fit = () => fitLatest.current();
     fit();
     window.addEventListener("resize", fit);

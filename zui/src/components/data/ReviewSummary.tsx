@@ -5,6 +5,7 @@ import { ratingAverage, ratingDistribution, ratingTotal, type RatingCounts } fro
 import { REVIEW_SUMMARY_LABELS, type ReviewSummaryLabels } from "../../core/reviews";
 import { cx } from "../../cx";
 import { Rating } from "./Rating";
+import { withRef } from "../../react-compat";
 
 export type { RatingCounts, ReviewSummaryLabels };
 export { REVIEW_SUMMARY_LABELS };
@@ -25,7 +26,7 @@ export interface ReviewSummaryProps extends Omit<HTMLAttributes<HTMLDivElement>,
 }
 
 /** Resumen de opiniones: media, estrellas, número de valoraciones y una barra por estrella con su texto para lectores. */
-export function ReviewSummary({
+export const ReviewSummary = withRef(function ReviewSummary({
   distribution,
   average,
   count,
@@ -92,4 +93,4 @@ export function ReviewSummary({
       </div>
     </div>
   );
-}
+});

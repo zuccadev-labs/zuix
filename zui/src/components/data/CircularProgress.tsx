@@ -1,6 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
 import type { Tone } from "../actions/types";
+import { withRef } from "../../react-compat";
 
 export interface CircularProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   /** Avance actual. Sin valor, el anillo es indeterminado (gira). */
@@ -25,7 +26,7 @@ export interface CircularProgressProps extends Omit<HTMLAttributes<HTMLDivElemen
  * Anillo de avance sobre un `<progress>` nativo: el anillo es un degradado cónico recortado con una máscara, el valor
  * va en `--z-ring-value` y el centro admite el porcentaje o contenido propio.
  */
-export function CircularProgress({
+export const CircularProgress = withRef(function CircularProgress({
   value,
   max = 100,
   label,
@@ -70,4 +71,4 @@ export function CircularProgress({
       ) : null}
     </div>
   );
-}
+});

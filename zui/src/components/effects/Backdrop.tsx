@@ -2,6 +2,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
 import { useOffscreenRef } from "../../primitives/offscreen";
+import { withRef } from "../../react-compat";
 
 export type BackdropPattern = "grid" | "dots" | "hex" | "mesh";
 
@@ -24,7 +25,7 @@ export interface BackdropProps extends HTMLAttributes<HTMLDivElement> {
  * Fondo decorativo en CSS detrás del contenido: rejilla, puntos, hexágonos o malla de color. La capa es
  * `aria-hidden` y no recibe el puntero; el contenido va encima, en su propia capa.
  */
-export function Backdrop({
+export const Backdrop = withRef(function Backdrop({
   pattern = "grid",
   intensity = "medium",
   fade = "radial",
@@ -53,4 +54,4 @@ export function Backdrop({
       <div className="z-backdrop__content">{children}</div>
     </div>
   );
-}
+});

@@ -7,6 +7,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- React 18: el binding funciona con React 18.2 o posterior además de con React 19. Los peers pasan a
+  `^18.2.0 || ^19.0.0`. Los componentes que aceptan `ref` la siguen recibiendo como prop; en React 18 van envueltos
+  en `forwardRef` por dentro (son objetos, no funciones). `inert` se escribe como `inert=""`, `popovertarget` en
+  minúsculas, la ref del hijo de un `trigger` o `asChild` se lee de `element.ref` y la fusión de refs no devuelve una
+  limpieza, que React 18 no admite. `EventCalendar`, `FileUpload`, `Carousel` y los widgets de agenda usan
+  `useEffect` en el servidor, donde React 18 avisa de cada `useLayoutEffect`. `DateTimePicker` (y `DatePicker` con
+  `input`) reinicia el borrador al abrir durante el render: con React 18 el calendario se abría enfocando el día de
+  la apertura anterior. Con React 19 nada cambia.
 - Resúmenes y precios (grupo `data`, solo marcado: se renderizan en un Server Component):
   - `SummaryList`: lista clave–valor (`<dl>`) con los valores alineados al final en cifras tabulares, pista bajo la
     etiqueta, tonos, separadores y fila de total destacada.

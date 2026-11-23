@@ -2,6 +2,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
+import { popoverTarget } from "../react-compat";
 import { wireNavbar } from "../site";
 import { NavbarContext } from "./navbar-context";
 import { NavigationMenu, type NavMenuItem } from "./NavigationMenu";
@@ -57,14 +58,14 @@ export function Navbar({
         <div className="z-navbar__bar z-navbar__main">
           {brand ? <div className="z-navbar__brand">{brand}</div> : null}
           <nav className="z-navbar__nav" aria-label={label}>
-            <button type="button" className="z-navbar__toggle" aria-expanded="false" aria-controls={menuId} popoverTarget={menuId}>
+            <button type="button" className="z-navbar__toggle" aria-expanded="false" aria-controls={menuId} {...popoverTarget(menuId)}>
               <Icon name="bars-3" size={18} />
               <span className="z-navbar__toggle-label">{menuLabel}</span>
             </button>
             <div id={menuId} className="z-navbar__menu" popover="auto">
               <div className="z-navbar__drawer-head">
                 <span className="z-navbar__drawer-title">{menuLabel}</span>
-                <button type="button" className="z-navbar__close" popoverTarget={menuId} popoverTargetAction="hide" aria-label={closeLabel}>
+                <button type="button" className="z-navbar__close" {...popoverTarget(menuId, "hide")} aria-label={closeLabel}>
                   <Icon name="x-mark" size={18} />
                 </button>
               </div>

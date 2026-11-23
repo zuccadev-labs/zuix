@@ -3,6 +3,7 @@ import { useContext, type ComponentProps, type ReactNode } from "react";
 import { cx } from "../../cx";
 import { NativeInput } from "../../primitives/native-input";
 import { RadioGroupContext } from "../../primitives/radio-context";
+import { withRef } from "../../react-compat";
 
 export interface RadioProps extends Omit<ComponentProps<"button">, "children" | "value" | "onChange"> {
   /** Valor de la opción dentro de su `RadioGroup`. */
@@ -12,7 +13,15 @@ export interface RadioProps extends Omit<ComponentProps<"button">, "children" | 
 }
 
 /** Opción de un `RadioGroup`. */
-export function Radio({ value, children, description, className, disabled: disabledProp, onClick, ...rest }: RadioProps) {
+export const Radio = withRef(function Radio({
+  value,
+  children,
+  description,
+  className,
+  disabled: disabledProp,
+  onClick,
+  ...rest
+}: RadioProps) {
   const group = useContext(RadioGroupContext);
   if (!group) throw new Error("<Radio> must be used inside <RadioGroup>");
   const checked = group.value === value;
@@ -60,4 +69,4 @@ export function Radio({ value, children, description, className, disabled: disab
       ) : null}
     </label>
   );
-}
+});

@@ -9,6 +9,7 @@ import {
   type ComposerVoice,
 } from "../../core/composer-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { ComposerFile, ComposerLabels, ComposerSend, ComposerVoice };
 
@@ -34,7 +35,7 @@ export interface ComposerProps extends Omit<CoreProps, "status" | "models" | "mo
  * Caja de texto de chat: crece con el texto, Intro envía y Mayús+Intro salta de línea (sin enviar durante un IME),
  * adjuntos con quitar, emojis, menciones con `@`, respondiendo/editando y notas de voz con MediaRecorder si existe.
  */
-export function Composer({
+export const Composer = withRef(function Composer({
   onValueChange,
   onSend,
   onAttach,
@@ -63,4 +64,4 @@ export function Composer({
       "cancel-edit": onCancelEdit,
     },
   });
-}
+});

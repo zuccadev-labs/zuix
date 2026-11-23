@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface DescriptionItem {
   /** Término (`<dt>`). */
@@ -27,7 +28,7 @@ export interface DescriptionListProps extends HTMLAttributes<HTMLDListElement> {
 }
 
 /** Lista de pares término–descripción (`<dl>`): propiedades, metadatos, resumen de una ficha. */
-export function DescriptionList({
+export const DescriptionList = withRef(function DescriptionList({
   items,
   orientation = "horizontal",
   divided,
@@ -59,4 +60,4 @@ export function DescriptionList({
       {children}
     </dl>
   );
-}
+});

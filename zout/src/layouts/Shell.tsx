@@ -2,7 +2,11 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cx } from "../cx";
 import { INSPECTOR_BREAKPOINT, RAIL_BREAKPOINT, SIDEBAR_BREAKPOINT, panelMode, railInDrawer } from "../logic";
+import { inertProp } from "../react-compat";
 import { ResizeHandle } from "./ResizeHandle";
+
+/** `useLayoutEffect` en el navegador; en el servidor, `useEffect` (React 18 avisa de un efecto de layout en el servidor). */
+const useIsoLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
 export type ShellPanelMode = "docked" | "overlay";
 
@@ -77,7 +81,7 @@ export interface ShellProps {
 function useWidth() {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     setWidth(el.getBoundingClientRect().width);
@@ -134,7 +138,7 @@ function Side({
       data-mode={mode}
       data-panel-mode={panel.mode ?? "auto"}
       data-side={side}
-      inert={inert || undefined}
+      inert={inertProp(inert)}
     >
       {rail ? <div className="z-shell__rail">{rail}</div> : null}
       <div className="z-shell__panel-body">{panel.content}</div>
@@ -197,7 +201,7 @@ export function Shell({
   // Antes del pintado: si la aplicación cierra un panel al pasar a cajón, no llega a verse abierto.
   // Solo importa si el ancho ya se midió, no su valor: el aviso depende de los modos resueltos.
   const measured = width !== null;
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (measured) modeChange.current?.({ sidebar: sidebarAuto, inspector: inspectorAuto });
   }, [measured, sidebarAuto, inspectorAuto]);
 
@@ -227,7 +231,7 @@ export function Shell({
         {/* Con un cajón abierto todo lo que queda bajo el velo es inerte: rail, área principal y el panel que siga acoplado. */}
         {/* Estrecho: el rail no ocupa columna; va dentro del cajón de la sidebar cuando está abierto. */}
         {rail && !railToDrawer ? (
-          <div className="z-shell__rail" inert={drawerOpen ? true : undefined}>
+          <div className="z-shell__rail" inert={inertProp(drawerOpen)}>
             {rail}
           </div>
         ) : null}
@@ -244,7 +248,7 @@ export function Shell({
           id={mainId}
           tabIndex={skipLinkLabel ? -1 : undefined}
           className={cx("z-shell__main", surface === "glass" && "z-liquid", surface === "solid" && "z-solid")}
-          inert={drawerOpen ? true : undefined}
+          inert={inertProp(drawerOpen)}
         >
           {header ? <header className="z-shell__header">{header}</header> : null}
           <div className="z-shell__content">{children}</div>

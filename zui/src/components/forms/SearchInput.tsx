@@ -5,6 +5,7 @@ import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type" | "value" | "defaultValue"> {
   value?: string;
@@ -23,7 +24,7 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
 }
 
 /** Campo de búsqueda con icono, botón de borrado y Escape para limpiar. */
-export function SearchInput({
+export const SearchInput = withRef(function SearchInput({
   value,
   defaultValue = "",
   onValueChange,
@@ -99,4 +100,4 @@ export function SearchInput({
       ) : null}
     </span>
   );
-}
+});

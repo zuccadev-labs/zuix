@@ -9,6 +9,7 @@ import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl, useFieldLabel } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface ListboxOption {
   value: string;
@@ -68,7 +69,7 @@ const EMPTY: ReadonlyArray<string> = [];
  * por letra. En `single` la selección sigue al foco; en `multiple`, Espacio marca, Mayús+flecha extiende la selección
  * y Ctrl/⌘+A marca todas.
  */
-export function Listbox(props: ListboxProps) {
+export const Listbox = withRef(function Listbox(props: ListboxProps) {
   const {
     options,
     label,
@@ -245,4 +246,4 @@ export function Listbox(props: ListboxProps) {
       {name ? chosen.map((value) => <input key={value} type="hidden" name={name} value={value} />) : null}
     </div>
   );
-}
+});

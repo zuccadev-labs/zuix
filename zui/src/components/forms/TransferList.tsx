@@ -7,6 +7,7 @@ import {
   transferListWidget,
 } from "../../core/transfer-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { TransferItem, TransferListLabels };
 
@@ -22,11 +23,11 @@ export interface TransferListProps extends CoreProps {
  * Lista de transferencia: disponibles y elegidos, con casillas, búsqueda opcional y botones para mover lo marcado o
  * todo lo visible. Cada lista es un listbox de selección múltiple navegable con el teclado; Intro o doble clic mueven.
  */
-export function TransferList({ onValueChange, id, className, ref, ...props }: TransferListProps) {
+export const TransferList = withRef(function TransferList({ onValueChange, id, className, ref, ...props }: TransferListProps) {
   return useWidget(transferListWidget, props, {
     id,
     className,
     ref,
     handlers: { change: onValueChange ? (detail: { value: string[] }) => onValueChange(detail.value) : undefined },
   });
-}
+});

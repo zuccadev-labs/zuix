@@ -1,5 +1,6 @@
 import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface ScrollAreaProps extends HTMLAttributes<HTMLDivElement> {
   /** Nombre de la región (obligatorio para el teclado: la región es enfocable). */
@@ -20,7 +21,7 @@ export interface ScrollAreaProps extends HTMLAttributes<HTMLDivElement> {
  * Región desplazable con nombre y foco (para usarla con el teclado), barra con el color de la suite
  * (`scrollbar-color`, 3:1) y sombras que solo aparecen hacia donde queda contenido. Sin estado ni JavaScript.
  */
-export function ScrollArea({
+export const ScrollArea = withRef(function ScrollArea({
   label,
   orientation = "vertical",
   maxHeight,
@@ -49,4 +50,4 @@ export function ScrollArea({
       {children}
     </div>
   );
-}
+});

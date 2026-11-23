@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { formatMoney, summarizePrice, type MoneyOptions, type PriceLine, type PriceLineKind } from "../../core/money";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export type { PriceLine, PriceLineKind };
 
@@ -26,7 +27,7 @@ export interface SummaryListProps extends Omit<HTMLAttributes<HTMLDListElement>,
 }
 
 /** Lista clave–valor con los valores alineados al final y en cifras tabulares: resumen de un pedido, de un plan o de una reserva. */
-export function SummaryList({ items, size = "md", className, ref, ...rest }: SummaryListProps) {
+export const SummaryList = withRef(function SummaryList({ items, size = "md", className, ref, ...rest }: SummaryListProps) {
   return (
     <dl {...rest} ref={ref} className={cx("z-summary", className)} data-size={size}>
       {items.map((item, index) => (
@@ -46,7 +47,7 @@ export function SummaryList({ items, size = "md", className, ref, ...rest }: Sum
       ))}
     </dl>
   );
-}
+});
 
 export interface PriceBreakdownProps extends Omit<HTMLAttributes<HTMLDListElement>, "title"> {
   /** Filas: artículos, cargos, descuentos y créditos (restan siempre) e impuestos (importe o `rate` en %). */
@@ -73,7 +74,7 @@ const TONE: Partial<Record<PriceLineKind, SummaryItem["tone"]>> = { discount: "s
  * Desglose de precio: filas con importes alineados, descuentos con signo, impuestos por importe o porcentaje y total
  * destacado. Las sumas se hacen en unidades menores (céntimos): el total coincide siempre con las filas.
  */
-export function PriceBreakdown({
+export const PriceBreakdown = withRef(function PriceBreakdown({
   lines,
   currency,
   locale,
@@ -107,4 +108,4 @@ export function PriceBreakdown({
   }
   items.push({ key: "total", label: totalLabel, hint: totalHint, value: money(summary.total), total: true });
   return <SummaryList {...rest} size={size} items={items} />;
-}
+});

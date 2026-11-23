@@ -4,6 +4,7 @@ import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface NativeSelectOption {
   value: string;
@@ -32,7 +33,7 @@ export interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectE
 }
 
 /** `<select>` nativo con el aspecto del resto de controles: lista del sistema, ideal en móvil y formularios simples. */
-export function NativeSelect({
+export const NativeSelect = withRef(function NativeSelect({
   size = "md",
   invalid,
   options,
@@ -88,4 +89,4 @@ export function NativeSelect({
       </span>
     </span>
   );
-}
+});

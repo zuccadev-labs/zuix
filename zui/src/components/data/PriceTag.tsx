@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { formatMoney, type MoneyOptions } from "../../core/money";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface PriceTagProps extends HTMLAttributes<HTMLSpanElement> {
   amount: number;
@@ -23,7 +24,7 @@ export interface PriceTagProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 /** Precio con moneda, precio anterior tachado y unidad. */
-export function PriceTag({
+export const PriceTag = withRef(function PriceTag({
   amount,
   currency,
   locale,
@@ -61,4 +62,4 @@ export function PriceTag({
       {unit ? <span className="z-price__unit">{unit}</span> : null}
     </span>
   );
-}
+});

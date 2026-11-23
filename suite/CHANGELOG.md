@@ -7,6 +7,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Peers `react` y `react-dom`: `^18.2.0 || ^19.0.0`. El binding funciona también con React 18.2 o posterior.
 - Subrutas `./zui/dom/time` y `./zui/dom/terminal`: el comportamiento sin framework de las familias de tiempo y de
   terminal y código de `@zuccadev-labs/zuix-zui`.
 - Subrutas `./zui/dom/chat` y `./zui/dom/ai`: chat y mensajería, e IA y agentes, sin framework.

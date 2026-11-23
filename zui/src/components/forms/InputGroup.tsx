@@ -3,6 +3,7 @@ import type { HTMLAttributes, InputHTMLAttributes, MouseEvent, ReactNode, Ref, T
 import { cx } from "../../cx";
 import type { ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface InputGroupProps extends HTMLAttributes<HTMLDivElement> {
   size?: ControlSize;
@@ -28,7 +29,7 @@ function focusGroupControl(event: MouseEvent<HTMLElement>): void {
  * Campo con adornos: texto, icono, atajo, botón o menú al inicio, al final, encima o debajo del control. Es un solo
  * recuadro (fondo, canto y anillo de foco en el contenedor); el control es `InputGroupInput` o `InputGroupTextarea`.
  */
-export function InputGroup({ size = "md", invalid, disabled, className, children, ...rest }: InputGroupProps) {
+export const InputGroup = withRef(function InputGroup({ size = "md", invalid, disabled, className, children, ...rest }: InputGroupProps) {
   const field = useFieldControl({ invalid });
   return (
     <div
@@ -41,7 +42,7 @@ export function InputGroup({ size = "md", invalid, disabled, className, children
       {children}
     </div>
   );
-}
+});
 
 export interface InputGroupAddonProps extends HTMLAttributes<HTMLDivElement> {
   /** Lado del adorno. `block-start` y `block-end` ocupan una fila propia (útil con un textarea). */
@@ -90,17 +91,24 @@ export interface InputGroupInputProps extends Omit<InputHTMLAttributes<HTMLInput
   ref?: Ref<HTMLInputElement>;
 }
 
-export function InputGroupInput({ className, id, invalid, required, "aria-describedby": describedBy, ...rest }: InputGroupInputProps) {
+export const InputGroupInput = withRef(function InputGroupInput({
+  className,
+  id,
+  invalid,
+  required,
+  "aria-describedby": describedBy,
+  ...rest
+}: InputGroupInputProps) {
   const { invalid: _invalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   return <input {...rest} {...control} className={cx("z-input-group__control", className)} />;
-}
+});
 
 export interface InputGroupTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   invalid?: boolean;
   ref?: Ref<HTMLTextAreaElement>;
 }
 
-export function InputGroupTextarea({
+export const InputGroupTextarea = withRef(function InputGroupTextarea({
   className,
   id,
   invalid,
@@ -111,4 +119,4 @@ export function InputGroupTextarea({
 }: InputGroupTextareaProps) {
   const { invalid: _invalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
   return <textarea rows={rows} {...rest} {...control} className={cx("z-input-group__control", className)} data-multiline="" />;
-}
+});

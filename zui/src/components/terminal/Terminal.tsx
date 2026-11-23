@@ -9,6 +9,7 @@ import {
   type TerminalRun,
 } from "../../core/terminal-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { TerminalLabels, TerminalResult, TerminalRun };
 
@@ -38,7 +39,7 @@ export interface TerminalProps extends CoreProps {
  * ANSI (16, 256 y 24 bits) en streaming y copiar. `onCommand` devuelve texto, un código de salida, una promesa o un
  * iterable asíncrono de trozos; la `ref` escribe desde fuera.
  */
-export function Terminal({ onInterrupt, onClear, id, className, ref, ...props }: TerminalProps) {
+export const Terminal = withRef(function Terminal({ onInterrupt, onClear, id, className, ref, ...props }: TerminalProps) {
   const root = useRef<HTMLDivElement | null>(null);
   useImperativeHandle(
     ref,
@@ -55,4 +56,4 @@ export function Terminal({ onInterrupt, onClear, id, className, ref, ...props }:
     [],
   );
   return useWidget(terminalWidget, props, { id, className, ref: root, handlers: { interrupt: onInterrupt, clear: onClear } });
-}
+});

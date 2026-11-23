@@ -9,6 +9,7 @@ import {
   type NotificationItem,
 } from "../../core/notification-center-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export { NOTIFICATION_CENTER_LABELS };
 export type { NotificationAction, NotificationCenterLabels, NotificationItem };
@@ -31,7 +32,7 @@ export interface NotificationCenterProps extends CoreProps {
  * Centro de avisos: campana con el número de no leídos y un panel con los avisos agrupados por día, leídos y no
  * leídos, acciones por aviso, «Mark all as read» y estado vacío. Los avisos nuevos se anuncian una vez.
  */
-export function NotificationCenter({
+export const NotificationCenter = withRef(function NotificationCenter({
   onReadChange,
   onReadAll,
   onAction,
@@ -52,4 +53,4 @@ export function NotificationCenter({
       "open-change": onOpenChange,
     } as Record<string, ((detail: never) => void) | undefined>,
   });
-}
+});

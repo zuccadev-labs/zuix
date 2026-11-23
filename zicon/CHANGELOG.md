@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- React 18: `Icon` funciona con React 18.2 o posterior además de con React 19 (peer `^18.2.0 || ^19.0.0`). Con
+  React 18 va envuelto en `forwardRef` para seguir aceptando `ref`.
+
 ## [0.3.0] - 2026-11-21
 
 Sin cambios en este paquete. La versión sube para seguir alineada con la suite.

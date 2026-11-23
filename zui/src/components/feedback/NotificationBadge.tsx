@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { badgeText } from "../../core/notifications";
 import { fill } from "../../core/vnode";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface NotificationBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   /** Avisos sin leer. Con 0 no se pinta nada (salvo `showZero`). */
@@ -22,7 +23,7 @@ export interface NotificationBadgeProps extends HTMLAttributes<HTMLSpanElement> 
 }
 
 /** Contador de avisos sin leer: cifra con tope, o un punto; suelto o pegado a la esquina de otro elemento. */
-export function NotificationBadge({
+export const NotificationBadge = withRef(function NotificationBadge({
   count,
   max = 99,
   dot,
@@ -57,4 +58,4 @@ export function NotificationBadge({
       {badge}
     </span>
   );
-}
+});
