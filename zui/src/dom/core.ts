@@ -146,7 +146,8 @@ function emit(el: Element, name: string, detail?: unknown): boolean {
 
 /** Abre un `<dialog>` como modal: capa superior, foco atrapado y Escape nativos. */
 export function openDialog(dialog: HTMLDialogElement): void {
-  if (dialog.open) return;
+  // Desconectado, `showModal()` lanza («Element is not connected» en WebKit).
+  if (dialog.open || !dialog.isConnected) return;
   dialog.dataset.state = "open";
   dialog.showModal();
   // La página no se desplaza bajo un diálogo modal; se libera cuando el diálogo se cierra, por la vía que sea.
@@ -226,6 +227,9 @@ export function openPopover(
   placement: Placement = "bottom-start",
   options: { follow?: boolean; trigger?: Element } = {},
 ): void {
+  // Una apertura que llega tarde (la reapertura tras una pulsación larga, un disparador quitado) sobre una capa que
+  // ya no está en el documento no hace nada: ni la abre ni toca su disparador.
+  if (!el.isConnected) return;
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
   if (!popoverOpen(el)) showPopover(el);
@@ -334,7 +338,8 @@ function closeChain(menu: HTMLElement): void {
 export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
   const sub = submenuOf(trigger);
   const parent = trigger.closest<HTMLElement>(".z-menu");
-  if (!sub || !parent || sub === parent || sub.contains(parent) || isDisabled(trigger)) return;
+  // Se abre también desde el temporizador del puntero: la entrada o el submenú pueden haber salido del documento.
+  if (!sub || !parent || sub === parent || sub.contains(parent) || isDisabled(trigger) || !trigger.isConnected || !sub.isConnected) return;
   if (!popoverOpen(sub)) {
     if (!sub.hasAttribute("popover")) sub.setAttribute("popover", "auto");
     // Sin init() no se ha comprobado `source` (la comprobación cerraría los menús abiertos): se anida en el DOM.

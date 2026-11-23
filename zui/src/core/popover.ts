@@ -24,11 +24,13 @@ export function closestOpenPopover(el: Element): Element | null {
 }
 
 /**
- * Abre la capa si el navegador (o el polyfill) sabe hacerlo; devuelve si lo intentó. `source` la declara hija de la
+ * Abre la capa si el navegador (o el polyfill) sabe hacerlo y sigue en el documento; devuelve si lo intentó. `source` la declara hija de la
  * capa que contiene a ese elemento, para que abrirla no cierre la otra (donde el navegador lo admite).
  */
 export function showPopover(el: HTMLElement, source?: HTMLElement): boolean {
-  if (typeof el.showPopover !== "function") return false;
+  // Fuera del documento `showPopover` lanza («Element is not connected» en WebKit). Pasa cuando la apertura llega
+  // tarde (un temporizador, un rAF, el final de una transición) y la capa ya se quitó: no hay nada que abrir.
+  if (typeof el.showPopover !== "function" || !el.isConnected) return false;
   (el.showPopover as (options?: { source?: HTMLElement }) => void)(source ? { source } : undefined);
   return true;
 }

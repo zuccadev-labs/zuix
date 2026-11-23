@@ -254,6 +254,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `/dom` en WebKit: una capa que se abría tarde (el submenú tras el retardo del puntero, una pista o un toggletip,
+  la reapertura tras una pulsación larga) sobre un elemento que ya había salido del documento lanzaba «Element is not
+  connected». `showPopover`, `openPopover`, `openSubmenu`, las pistas y `openDialog` comprueban `isConnected` antes de
+  abrir y, si el elemento ya no está, no hacen nada.
 - `Artifact` bajo `require-trusted-types-for 'script'`: la vista previa HTML escribía `srcdoc` con `setAttribute` y
   una cadena, y Chrome la rechazaba («This document requires 'TrustedHTML' assignment»), en `/dom` y en React. Ahora
   pasa por la política `zuix-zui`, la misma de `setMarkup`, que se comparte entre los bundles de `/dom` y de React

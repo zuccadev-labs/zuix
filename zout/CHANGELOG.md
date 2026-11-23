@@ -46,6 +46,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `/dom`: abrir un panel o un menú del sitio que ya había salido del documento lanzaba «Element is not connected» en
+  WebKit. `showPopover` comprueba `isConnected` y no hace nada si el elemento ya no está.
 - `/dom` sin Popover API: Escape en un cajón y el submenú plegado de la Sidebar lanzaban (`:popover-open` no es un
   selector válido ahí). Ahora comprueba antes.
 - `Navbar`: plegada y aun así sin sitio (una columna estrecha), las acciones bajan a otra línea en vez de salirse de la

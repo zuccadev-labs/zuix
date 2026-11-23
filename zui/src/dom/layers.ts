@@ -284,6 +284,8 @@ function positionHint(hint: Hint): void {
 
 function showHint(hint: Hint): void {
   const { trigger, layer } = hint;
+  // Llega tras el retardo de apertura: si el disparador o la capa salieron del documento, no hay nada que enseñar.
+  if (!trigger.isConnected || !layer.isConnected) return;
   hint.cancelExit?.();
   hint.cancelExit = undefined;
   if (!layer.hasAttribute("popover")) layer.setAttribute("popover", "manual");
