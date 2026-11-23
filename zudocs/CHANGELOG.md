@@ -24,6 +24,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 ### Corregido
 
 - Navegación: el nombre de un grupo («Dashboard y tableros») pasa a dos líneas antes de cortarse con elipsis.
+- Navegación lateral e índice de la página: más altos que la ventana, difuminan el borde con entradas ocultas en vez
+  de cortar una a media altura.
 
 ## [0.3.0] - 2026-11-21
 

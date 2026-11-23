@@ -420,6 +420,33 @@ a[class*="skipToContent"]:focus {
   padding: 0 var(--z-space-2) var(--z-space-2);
   overflow: auto;
 }
+/* Índice y navegación más altos que la ventana: el borde con entradas ocultas se difumina en vez de cortar una a media
+   altura. Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+@supports (animation-timeline: scroll()) {
+  .zd-sitenav__scroll,
+  .zd-rail {
+    animation: zd-scroll-fade linear both;
+    animation-timeline: scroll(self block);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .zd-sitenav__scroll,
+  .zd-rail {
+    animation: none;
+  }
+}
+@keyframes zd-scroll-fade {
+  from {
+    mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+  }
+  4%,
+  96% {
+    mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+  }
+  to {
+    mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+  }
+}
 .zd-nav-links,
 .zd-nav-group__items {
   margin: 0;
