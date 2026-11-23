@@ -235,6 +235,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
   un filtro) a veces no dejaba de seguir el final: se ignoraba el desplazamiento de la persona si llegaba fundido
   con el de la pieza. Ahora solo se ignora el que llega a la posición que pidió la pieza.
+- `LogConsole`: subir en el mismo fotograma en que la consola se repinta (llega una entrada, se limpia la búsqueda)
+  devolvía la vista al final antes de que llegara el evento de desplazamiento, y la consola seguía siguiendo. Ahora el
+  repintado ve que la posición subió desde la última conocida y deja de seguir en vez de bajar.
 
 ## [0.3.0] - 2026-11-21
 

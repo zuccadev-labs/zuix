@@ -151,10 +151,11 @@ export function appendLogEntries(el: HTMLElement, entries: readonly LogEntry[]):
   appenders.get(el)?.(entries);
 }
 
-const live = new WeakMap<HTMLElement, { follow: boolean; frame: number; focusCell: boolean }>();
+// `top`: última posición vista (por un evento de desplazamiento o por la pieza al bajar al final); NaN, ninguna.
+const live = new WeakMap<HTMLElement, { follow: boolean; frame: number; focusCell: boolean; top: number }>();
 
 function attach(root: HTMLElement, host: Host): () => void {
-  const state = { follow: host.state().follow, frame: 0, focusCell: false };
+  const state = { follow: host.state().follow, frame: 0, focusCell: false, top: Number.NaN };
   live.set(root, state);
   const viewport = () => root.querySelector<HTMLElement>(".z-log-console__viewport");
   appenders.set(root, (entries) => host.update({ appended: [...host.state().appended, ...entries] }));
@@ -188,6 +189,7 @@ function attach(root: HTMLElement, host: Host): () => void {
       host.update({ follow: false });
     }
     vp.dataset.programmatic = "";
+    state.top = vp.scrollTop;
     if (state.frame) return;
     state.frame = requestAnimationFrame(() => {
       state.frame = 0;
@@ -497,9 +499,18 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
     const vp = root.querySelector<HTMLElement>(".z-log-console__viewport");
     if (vp && host.state().follow) {
       const end = vp.scrollHeight - vp.clientHeight;
-      if (Math.abs(vp.scrollTop - end) > 1) {
+      // La persona subió y su evento de desplazamiento aún no ha llegado (un repintado por entradas nuevas o por el
+      // filtro cae en el mismo fotograma): bajar al final se comería su gesto. Deja de seguir. Un recorte del alto
+      // (filtrar deja menos filas) también baja la posición, pero la deja en el final: eso no es subir.
+      const movedUp = state && vp.scrollTop < state.top - 2 && vp.scrollTop < end - 4;
+      if (movedUp && state) {
+        state.follow = false;
+        state.top = vp.scrollTop;
+        host.update({ follow: false });
+      } else if (Math.abs(vp.scrollTop - end) > 1) {
         vp.dataset.programmatic = String(end);
         vp.scrollTop = end;
+        if (state) state.top = end;
       }
     }
     if (focus && state?.focusCell) {
