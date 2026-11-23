@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-23
+
 ### Añadido
 
 - Peers `react` y `react-dom`: `^18.2.0 || ^19.0.0`. El binding funciona también con React 18.2 o posterior.

@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix-zui",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "Sistema de componentes de la suite zuix. Contrato HTML + CSS sobre tokens, comportamiento sin framework (dom) y binding de React, sin dependencias de terceros.",
   "license": "MIT",

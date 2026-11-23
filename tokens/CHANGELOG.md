@@ -5,6 +5,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-23
+
 ### Añadido
 
 - Modo compat: `tokens.compat.css` y `css/<marca>.compat.css`, para Chromium 109, Firefox 115 y Safari 15.4.

@@ -7,6 +7,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-23
+
 ### Añadido
 
 - `/carousels`: galería de carruseles en vivo (Prisma y coverflow, layouts de Material 3, pantalla completa con
