@@ -3,6 +3,7 @@
 // elemento debe salir con los mismos colores. Y el modo sin framework en un navegador sin Popover API: se le quita la
 // API a la página antes de cargarla y abrir un menú, un popover o un selector no debe lanzar.
 // Cada caso abre sus propias páginas; la compartida no se toca.
+import { removePopoverApi } from "../../popover-api.mjs";
 
 const VIEWPORT = { width: 1440, height: 1000 };
 // Diferencias conocidas entre la hoja normal y la compat, con su motivo. Hoy ninguna.
@@ -29,24 +30,7 @@ export default async function ({ page, test, ok, note }) {
             .replace(/\.css$/, ".compat.css"),
         }),
       );
-    if (noPopover)
-      await p.addInitScript(() => {
-        // Como un navegador anterior a la Popover API: sin métodos y con `:popover-open` como selector no válido.
-        for (const name of ["showPopover", "hidePopover", "togglePopover", "popover"]) delete HTMLElement.prototype[name];
-        const invalid = (s) => typeof s === "string" && /(^|[^\\]):popover-open/.test(s);
-        for (const [proto, names] of [
-          [Element.prototype, ["matches", "closest", "querySelector", "querySelectorAll"]],
-          [Document.prototype, ["querySelector", "querySelectorAll"]],
-          [DocumentFragment.prototype, ["querySelector", "querySelectorAll"]],
-        ])
-          for (const name of names) {
-            const native = proto[name];
-            proto[name] = function (selector, ...rest) {
-              if (invalid(selector)) throw new DOMException(`'${selector}' is not a valid selector`, "SyntaxError");
-              return native.call(this, selector, ...rest);
-            };
-          }
-      });
+    if (noPopover) await p.addInitScript(removePopoverApi);
     await p.goto(url);
     await p.waitForFunction(() => customElements.get("z-icon"));
     await p.evaluate(

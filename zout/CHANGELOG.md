@@ -11,6 +11,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   `^18.2.0 || ^19.0.0`). `Shell` escribe `inert=""` y `Navbar` y `NavigationMenu`, `popovertarget` en minúsculas con
   React 18, que no conoce esas props. `Shell` y `FloatingPanel` usan `useEffect` en el servidor, donde React 18 avisa
   de cada `useLayoutEffect`.
+- Sin Popover API, `Shell` ya no lanza al pulsar Escape con un cajón abierto, y `Navbar` y `NavigationMenu` abren
+  sus paneles con la misma comprobación que el modo sin framework (y con el polyfill, por él).
 - Modo compat: `styles.compat.css` (`dist/zout.compat.css`), la hoja de layouts para Chromium 109, Firefox 115 y
   Safari 15.4. Va con `tokens.compat.css` y `zui.compat.css`
   ([Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)).

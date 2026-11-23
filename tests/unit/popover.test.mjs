@@ -1,11 +1,12 @@
 // El modo sin framework en navegadores anteriores a su mínimo: las comprobaciones de existencia de la Popover API
-// (zui/src/core/popover.ts) y que los módulos de /dom se puedan cargar en Chromium 109, Firefox 115 y Safari 15.4.
+// (zui/src/core/popover.ts y su copia en zout/src/popover.ts) y que los módulos de /dom se puedan cargar en Chromium 109, Firefox 115 y Safari 15.4.
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { build, transform } from "esbuild";
-import { closestOpenPopover, popoverOpen, showPopover } from "../../zui/src/core/popover.ts";
+import * as zuiPopover from "../../zui/src/core/popover.ts";
+import * as zoutPopover from "../../zout/src/popover.ts";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
 
@@ -20,31 +21,35 @@ describe("modo sin framework en el objetivo", () => {
     }
   });
 
-  test("popover.ts: sin Popover API no lanza; con el polyfill lee su clase", () => {
-    const syntax = () => {
-      throw new SyntaxError("':popover-open' is not a valid selector");
-    };
-    const classes = new Set();
-    const el = {
-      matches: syntax,
-      closest: (sel) => (sel === ":popover-open" ? syntax() : sel === ".\\:popover-open" && classes.has(":popover-open") ? el : null),
-      classList: { contains: (c) => classes.has(c) },
-    };
-    assert.equal(popoverOpen(el), false);
-    assert.equal(popoverOpen(null), false);
-    assert.equal(closestOpenPopover(el), null);
-    assert.equal(showPopover(el), false);
-    classes.add(":popover-open");
-    assert.equal(popoverOpen(el), true);
-    assert.equal(closestOpenPopover(el), el);
+  for (const [label, { closestOpenPopover, popoverOpen, showPopover }] of [
+    ["zui/src/core/popover.ts", zuiPopover],
+    ["zout/src/popover.ts", zoutPopover],
+  ])
+    test(`${label}: sin Popover API no lanza; con el polyfill lee su clase`, () => {
+      const syntax = () => {
+        throw new SyntaxError("':popover-open' is not a valid selector");
+      };
+      const classes = new Set();
+      const el = {
+        matches: syntax,
+        closest: (sel) => (sel === ":popover-open" ? syntax() : sel === ".\\:popover-open" && classes.has(":popover-open") ? el : null),
+        classList: { contains: (c) => classes.has(c) },
+      };
+      assert.equal(popoverOpen(el), false);
+      assert.equal(popoverOpen(null), false);
+      assert.equal(closestOpenPopover(el), null);
+      assert.equal(showPopover(el), false);
+      classes.add(":popover-open");
+      assert.equal(popoverOpen(el), true);
+      assert.equal(closestOpenPopover(el), el);
 
-    const calls = [];
-    const native = { matches: (s) => s === ":popover-open", closest: () => native, showPopover: (o) => calls.push(o) };
-    assert.equal(popoverOpen(native), true);
-    assert.equal(closestOpenPopover(native), native);
-    const source = {};
-    assert.equal(showPopover(native), true);
-    assert.equal(showPopover(native, source), true);
-    assert.deepEqual(calls, [undefined, { source }]);
-  });
+      const calls = [];
+      const native = { matches: (s) => s === ":popover-open", closest: () => native, showPopover: (o) => calls.push(o) };
+      assert.equal(popoverOpen(native), true);
+      assert.equal(closestOpenPopover(native), native);
+      const source = {};
+      assert.equal(showPopover(native), true);
+      assert.equal(showPopover(native, source), true);
+      assert.deepEqual(calls, [undefined, { source }]);
+    });
 });

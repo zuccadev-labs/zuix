@@ -71,7 +71,7 @@ export const ROWS = [
     what: "Todas las capas flotantes: menús, selectores, tooltips, popovers, toasts, submenús",
     effect: "roto",
     below:
-      "No se abren. El `/dom` no lanza: comprueba que existe `showPopover` y lee el estado sin `:popover-open`. Con `@oddbird/popover-polyfill` funcionan, y la hoja compat entiende su clase `.\\:popover-open`",
+      "No se abren. Ni el `/dom` ni el binding de React lanzan: comprueban que existe `showPopover` y leen el estado sin `:popover-open`. Con `@oddbird/popover-polyfill` funcionan, y la hoja compat entiende su clase `.\\:popover-open`",
   },
   {
     id: "dialog",

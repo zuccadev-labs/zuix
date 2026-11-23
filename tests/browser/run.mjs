@@ -15,6 +15,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, firefox, webkit } from "playwright-core";
 import { cases } from "./cases.mjs";
+import { fakePopoverPolyfill, removePopoverApi } from "../popover-api.mjs";
 import { touchContext, touchDriver } from "../touch.mjs";
 import { WEBGL_UNAVAILABLE_WARNING, applyNoWebgl, noWebgl, noWebglLaunch } from "../webgl.mjs";
 
@@ -174,6 +175,9 @@ function makeContext(engine, baseUrl, record, shots) {
       touch = false,
       query = "",
       timezoneId,
+      // `popover`: "none" quita la Popover API a la página antes de cargarla; "polyfill", además, simula el polyfill
+      // (tests/popover-api.mjs).
+      popover,
     } = {},
   ) {
     let target = browser;
@@ -188,6 +192,8 @@ function makeContext(engine, baseUrl, record, shots) {
         : { viewport: { width, height }, reducedMotion, hasTouch, deviceScaleFactor: 1, ...(timezoneId ? { timezoneId } : {}) },
     );
     const page = await context.newPage();
+    if (popover === "none" || popover === "polyfill") await page.addInitScript(removePopoverApi);
+    if (popover === "polyfill") await page.addInitScript(fakePopoverPolyfill);
     if (reducedTransparency && browserName === "chromium") {
       const session = await context.newCDPSession(page);
       await session.send("Emulation.setEmulatedMedia", {

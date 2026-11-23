@@ -8,6 +8,7 @@ import { swipeDirection, swipeToDismiss } from "../../core/swipe";
 import { createTimer } from "../../core/timer";
 import { useIsoLayoutEffect, useLatest } from "../../primitives/hooks";
 import { CloseButton } from "./internal";
+import { popoverOpen, showPopover } from "../../core/popover";
 
 export type ToastIntent = "info" | "success" | "warning" | "danger";
 
@@ -262,12 +263,9 @@ export function ToastProvider({
       moveToHost(host, to);
       const el = viewport.current;
       if (!el) return;
-      try {
-        if (el.matches(":popover-open")) el.hidePopover();
-        el.showPopover();
-      } catch {
-        // Navegador sin Popover API: la región queda con su posición fija y su z-index.
-      }
+      // Sin Popover API (ni polyfill), la región queda con su posición fija y su z-index.
+      if (popoverOpen(el)) el.hidePopover();
+      showPopover(el);
       settleShown(el, '.z-toast[data-state="open"]', shown.current);
     };
     raise(modalHost());

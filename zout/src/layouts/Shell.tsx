@@ -4,6 +4,7 @@ import { cx } from "../cx";
 import { INSPECTOR_BREAKPOINT, RAIL_BREAKPOINT, SIDEBAR_BREAKPOINT, panelMode, railInDrawer } from "../logic";
 import { inertProp } from "../react-compat";
 import { ResizeHandle } from "./ResizeHandle";
+import { closestOpenPopover } from "../popover";
 
 /** `useLayoutEffect` en el navegador; en el servidor, `useEffect` (React 18 avisa de un efecto de layout en el servidor). */
 const useIsoLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
@@ -210,7 +211,7 @@ export function Shell({
     // Escape cierra el cajón salvo que lo gestione una capa por encima (un diálogo, un menú o un popover abiertos).
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || e.defaultPrevented) return;
-      if (e.target instanceof Element && e.target.closest("dialog[open], :popover-open")) return;
+      if (e.target instanceof Element && (e.target.closest("dialog[open]") || closestOpenPopover(e.target))) return;
       onCloseOverlay();
     };
     document.addEventListener("keydown", onKey);

@@ -15,6 +15,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   `useEffect` en el servidor, donde React 18 avisa de cada `useLayoutEffect`. `DateTimePicker` (y `DatePicker` con
   `input`) reinicia el borrador al abrir durante el render: con React 18 el calendario se abría enfocando el día de
   la apertura anterior. Con React 19 nada cambia.
+- Sin Popover API, el binding de React ya no lanza: `Popup` (las capas de Popover, Menu, Select, Tooltip…), `Toast`
+  y los avisos de la agenda abren con la comprobación de `core/popover`, como el modo sin framework. Con
+  `@oddbird/popover-polyfill` se abren por él y se reconocen abiertos por su clase `:popover-open`.
 - Modo compat: `styles.compat.css` (`dist/zui.compat.css`), la hoja de componentes para Chromium 109, Firefox 115
   y Safari 15.4, generada con lightningcss: sin `@layer` (aplanado en el orden de las capas), sin `color-mix()` (lee
   los colores de `tokens.compat.css`), sin anidado ni `:dir()`, con la clase `.\:popover-open` de

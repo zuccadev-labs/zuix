@@ -130,6 +130,7 @@ const COVERED = [
   "zui/src/core/ansi.ts",
   "zui/src/core/code-tokens.ts",
   "zui/src/core/popover.ts",
+  "zout/src/popover.ts",
   "zui/src/core/diff.ts",
   "zui/src/core/history.ts",
   "zui/src/core/log-filter.ts",

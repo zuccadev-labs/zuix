@@ -21,6 +21,7 @@ import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import listingCases from "./cases-listing.mjs";
+import popoverApiCases from "./cases-popover-api.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -3135,6 +3136,7 @@ export const cases = [
     contentCases,
     dataCases,
     siteCases,
+    popoverApiCases,
     mediaCases,
     charts,
     reading,

@@ -13,6 +13,7 @@ import { lockScroll } from "../core/scroll-lock";
 import { useMergedRef } from "../refs";
 import { useIsoLayoutEffect, useLatest } from "./hooks";
 import { withRef } from "../react-compat";
+import { popoverOpen, showPopover } from "../core/popover";
 
 /** Dónde se monta una capa: en el `<dialog>` modal que contiene a su ancla (fuera de él quedaría inerte) o en `<body>`. */
 export const portalHost = (anchor: Element | null | undefined): HTMLElement => anchor?.closest("dialog") ?? document.body;
@@ -130,11 +131,8 @@ export const Popup = withRef(function Popup({
   useIsoLayoutEffect(() => {
     const el = node.current;
     if (!el) return;
-    try {
-      if (!el.matches(":popover-open")) el.showPopover();
-    } catch {
-      // Navegador sin Popover API: la capa queda en el flujo con `position: fixed` y su z-index.
-    }
+    // Sin Popover API (ni polyfill) no se abre en la capa superior: queda en el flujo con `position: fixed` y su z-index.
+    if (!popoverOpen(el)) showPopover(el);
     const release = anchorTo(el, latest, watch);
     latest.current.onShown?.(el);
     return release;

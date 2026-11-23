@@ -45,7 +45,7 @@ función).
 
 | Característica | Qué la usa | Chrome | Firefox | Safari | Safari iOS | Por debajo |
 |---|---|---|---|---|---|---|
-| [Popover](https://web-platform-dx.github.io/web-features-explorer/features/popover/) | Todas las capas flotantes: menús, selectores, tooltips, popovers, toasts, submenús (159) | 116 | 125 | 17 | 18.3 | **Roto.** No se abren. El `/dom` no lanza: comprueba que existe `showPopover` y lee el estado sin `:popover-open`. Con `@oddbird/popover-polyfill` funcionan, y la hoja compat entiende su clase `.\:popover-open` |
+| [Popover](https://web-platform-dx.github.io/web-features-explorer/features/popover/) | Todas las capas flotantes: menús, selectores, tooltips, popovers, toasts, submenús (162) | 116 | 125 | 17 | 18.3 | **Roto.** No se abren. Ni el `/dom` ni el binding de React lanzan: comprueban que existe `showPopover` y leen el estado sin `:popover-open`. Con `@oddbird/popover-polyfill` funcionan, y la hoja compat entiende su clase `.\:popover-open` |
 | [`<dialog>`](https://web-platform-dx.github.io/web-features-explorer/features/dialog/) | Modal, Drawer, AlertDialog, Palette y `confirm()` (30) | 37 (Edge 79) | 98 | 15.4 | 15.4 | **Roto.** No se abren. Es el suelo de Safari en el modo compat (15.4) |
 | [Cascade layers](https://web-platform-dx.github.io/web-features-explorer/features/cascade-layers/) | El orden de las hojas: `zui.material`, `zui.base` y una capa por grupo; `zout` después (51) | 99 | 97 | 15.4 | 15.4 | **Modo compat.** Con la hoja normal, el navegador descarta todo lo que hay dentro de `@layer`: la página sale sin estilos. La hoja compat aplana las capas en su orden |
 | [color-mix()](https://web-platform-dx.github.io/web-features-explorer/features/color-mix/) | Tonos suaves, bordes y estados de los tokens y de los componentes (126) | 111 | 113 | 16.2 | 16.2 | **Modo compat.** La declaración no vale: fondos y bordes de estado transparentes, tonos de texto heredados. La hoja compat escribe el color ya mezclado para cada marca y tema |
@@ -172,8 +172,10 @@ debajo de la suite compat (sin capas).
 Con el polyfill va la hoja compat, aunque el navegador entienda `color-mix()`: la normal escribe `:popover-open`, que
 el polyfill no puede añadir al CSS, y las reglas que lo llevan no se aplican a sus capas.
 
-El binding de React no tiene estas comprobaciones: sin polyfill, abrir una de sus capas lanza. Con el polyfill no lo
-he probado.
+El binding de React usa las mismas comprobaciones (`zui/src/core/popover.ts`, y una copia en `zout`): sin polyfill
+sus capas no se abren, pero nada lanza; con el polyfill se abren por él y se reconocen abiertas por su clase. Lo
+pruebo en la suite de navegador con la API quitada a la página y con un polyfill simulado que hace lo mismo que
+`@oddbird/popover-polyfill` (`tests/popover-api.mjs`); el polyfill de verdad no lo he cargado en el binding.
 
 ## Node
 
