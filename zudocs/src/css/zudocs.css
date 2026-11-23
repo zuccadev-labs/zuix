@@ -1489,9 +1489,13 @@ a[class*="skipToContent"]:focus {
     all: revert;
   }
 }
+/* En un teléfono el escenario apila en columna, en una sola línea. Con `wrap`, una columna es un contenedor de varias
+   líneas: el navegador mide la altura de cada pieza con su ancho ajustado al contenido antes de estirarla, y lo que
+   se mide por su ancho (el visor 9:16 de Stories) salía con la altura de un visor de 118 px y se cortaba. */
 @container (max-width: 520px) {
   .zd-preview__stage {
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
   }
 }

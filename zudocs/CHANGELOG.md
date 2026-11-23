@@ -30,6 +30,10 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- A 390 px la vista previa de `Stories` cortaba el visor (551 px de alto en un escenario de 256) y no se veían sus
+  controles. El escenario apila en columna con `flex-wrap: wrap`, y en una columna de varias líneas el navegador mide
+  la altura de cada pieza con su ancho ajustado al contenido; el visor 9:16 se medía con 118 px de ancho. En el
+  teléfono la columna va ahora en una sola línea.
 - Navegación: el nombre de un grupo («Dashboard y tableros») pasa a dos líneas antes de cortarse con elipsis.
 - Navegación lateral e índice de la página: más altos que la ventana, difuminan el borde con entradas ocultas en vez
   de cortar una a media altura.
