@@ -320,6 +320,21 @@
   button.z-chip__main {
     cursor: pointer;
   }
+  /* Con puntero grueso el chip mide 40 px por fuera, pero el botón queda 2 px por dentro del borde: la zona de
+     pulsación cubre también el borde para llegar al objetivo táctil sin cambiar el dibujo. */
+  @media (pointer: coarse) {
+    button.z-chip__main {
+      position: relative;
+    }
+    button.z-chip__main::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: max(100%, var(--z-touch-target, 0px));
+    }
+  }
   @media (hover: hover) {
     .z-chip[data-interactive]:hover:not([data-disabled]) {
       background: var(--z-surface-3);

@@ -234,6 +234,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Chip` interactivo (también los de `FilterBar`): con puntero grueso el botón quedaba en 38 px, 2 px por dentro del
+  borde del chip de 40. Su zona de pulsación cubre ahora el borde y llega a los 40 sin cambiar el dibujo.
 - `AnalogClock`: con marcas, las cifras van a radio 31 (antes 35) y no pisan las marcas del 3, el 6 y el 9.
 - `AvatarGroup`: el solape depende de la talla (0,28 del diámetro; 0,2 en `sm`; ninguno en `xs`, donde dos iniciales
   ocupan casi todo el círculo) y las iniciales de cada avatar tapado se centran en la parte que se ve. El siguiente
