@@ -9,7 +9,7 @@
 import { type ComponentType, Fragment, type ReactElement, type ReactNode, createElement } from "react";
 import type { VNode } from "../core/vnode";
 import { BUILTIN_BLOCKS } from "./blocks";
-import { type BlockSpec, type HtmlOptions, type RawHtml, RenderError, registry, styleOf, toTrees, withDefaults } from "./render";
+import { type BlockSpec, type HtmlOptions, type RawHtml, RenderError, registry, styleOf, toTrees, withDefaults, decorate } from "./render";
 import { CHILDREN, slotOf } from "./tree";
 import { type PageDocument, type PageNode, isText } from "./types";
 
@@ -113,7 +113,5 @@ function one(node: PageNode, blocks: Map<string, BlockSpec>, o: ReactOptions): R
       .join(""),
     id: node.id,
   });
-  const style = styleOf(node.style, o.catalog?.style);
-  const tree = Object.keys(style).length ? { ...el, s: { ...el.s, ...style } } : el;
-  return toElement(o.ids ? { ...tree, a: { ...tree.a, "data-z-node": node.id } } : tree, node.id, { blocks, o });
+  return toElement(decorate(el, node, o), node.id, { blocks, o });
 }

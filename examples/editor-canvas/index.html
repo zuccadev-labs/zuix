@@ -19,6 +19,7 @@
     <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="down">Bajar</button>
     <button type="button" class="z-btn z-btn--danger" data-size="sm" id="remove">Borrar</button>
     <span class="bar__spacer"></span>
+    <label>Tamaño <select id="size"><option value="">Automático</option><option>compact</option><option>medium</option><option>expanded</option><option>large</option><option>xlarge</option></select></label>
     <label>Tema <select id="theme"><option>dark</option><option>light</option></select></label>
     <label>Marca <select id="brand"></select></label>
     <label>Acento <input type="color" id="accent" value="#e74327"></label>
@@ -33,6 +34,8 @@
     <aside class="panel" aria-label="Propiedades">
       <h2 id="selected">Sin selección</h2>
       <form id="props" class="props"></form>
+      <h3 id="adaptive-title">Adaptativo</h3>
+      <form id="adaptive" class="props"></form>
       <p id="status" class="status" role="status" aria-live="polite"></p>
     </aside>
   </div>

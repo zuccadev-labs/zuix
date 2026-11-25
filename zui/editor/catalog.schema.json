@@ -148,7 +148,44 @@
           }
         },
         "a11y": { "type": "array", "items": { "$ref": "#/$defs/a11y" } },
-        "classes": { "type": "array", "items": { "type": "string" } }
+        "classes": { "type": "array", "items": { "type": "string" } },
+        "provisional": { "type": "string" },
+        "adaptive": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["value", "label"],
+                "additionalProperties": false,
+                "properties": {
+                  "value": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+                  "label": { "type": "string" },
+                  "description": { "type": "string" }
+                }
+              }
+            },
+            "layout": {
+              "type": "object",
+              "required": ["templates", "measure"],
+              "additionalProperties": false,
+              "properties": {
+                "measure": { "enum": ["container", "viewport"] },
+                "templates": {
+                  "type": "object",
+                  "propertyNames": { "enum": ["compact", "medium", "expanded", "large", "xlarge"] },
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": ["areas"],
+                    "properties": { "areas": { "type": "array", "items": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "token": {

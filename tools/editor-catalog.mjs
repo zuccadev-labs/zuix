@@ -39,6 +39,7 @@ export { validateDocument } from "./src/editor/validate";
 export { CATALOG_SCHEMA_VERSION, DOCUMENT_SCHEMA_VERSION } from "./src/editor/types";
 export { PROTOCOL_VERSION } from "./src/editor/protocol";
 export { checkContrast } from "./src/editor/contrast";
+export { ADAPTIVE_VARIANTS } from "./src/editor/adaptive";
 `,
     resolveDir: join(root, "zui"),
     sourcefile: "editor-catalog-entry.ts",
@@ -361,6 +362,10 @@ function blockFrom({ type, pkg, manifest, spec }) {
     events,
     a11y: spec?.a11y ?? [],
     classes: manifest?.classes ?? [],
+    ...(spec?.adaptive || E.ADAPTIVE_VARIANTS[type]
+      ? { adaptive: { ...(E.ADAPTIVE_VARIANTS[type] ? { variants: E.ADAPTIVE_VARIANTS[type] } : {}), ...spec?.adaptive } }
+      : {}),
+    ...(spec?.provisional ? { provisional: spec.provisional } : {}),
     _manifest: manifest,
     _contract: contract,
     _spec: spec,
@@ -379,7 +384,11 @@ for (const pkg of ["zui", "zout"]) {
   }
 }
 for (const [type, spec] of specs) {
-  if (!blocks.some((b) => b.type === type)) errors.push(`${type}: tiene serialización pero ningún manifiesto lo exporta`);
+  if (!blocks.some((b) => b.type === type)) {
+    // Un bloque provisional (su componente llega de otra rama) entra sin manifiesto, con sus presets.
+    if (spec.provisional) blocks.push(blockFrom({ type, pkg: spec.package, spec }));
+    else errors.push(`${type}: tiene serialización pero ningún manifiesto lo exporta`);
+  }
   for (const s of Object.values(spec.props))
     if (s !== true && s["x-control"] === "icon" && s.default && !iconSet.has(s.default))
       errors.push(`${type}: icono por defecto inexistente`);
@@ -430,7 +439,8 @@ for (const block of blocks) {
     continue;
   }
   if (block.html !== "template" || !m) {
-    if (block.html === "template") block.presets.push(defaultPreset(block, used));
+    if (block._spec?.presets) block.presets.push(...block._spec.presets);
+    else if (block.html === "template") block.presets.push(defaultPreset(block, used));
     continue;
   }
   const isMain = m.name === block.type;

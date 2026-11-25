@@ -5,6 +5,7 @@
 //   documento    árbol JSON de nodos (validateDocument, migrateDocument, operaciones de ./tree)
 //   salidas      toHTML (marcado de html.json), toTrustedHTML, renderToDOM (con /dom), toReact (en /editor/react)
 //   puente       createCanvas (dentro del iframe) y connectCanvas (en el editor), sobre postMessage con MessagePort
+//   adaptativo   orden, área, visibilidad, variante y props por clase de tamaño; plantillas de AdaptiveLayout
 //   marca        createBrandEditor: tokens con tipo y rango, CSS en vivo, contraste y archivo de marca
 // No hace nada al importarse. Ver docs/users/12-conectar-un-editor.md.
 
@@ -27,6 +28,7 @@ export {
   slotOf,
   slotsOf,
   textOf,
+  updateAdaptive,
   updateProps,
   updateStyle,
   updateText,
@@ -54,6 +56,26 @@ export {
   type ConnectOptions,
 } from "./bridge";
 export { brandValueToCss, createBrandEditor, tokenValueProblem, type BrandEditor, type Theme, type TokenProblem } from "./brand";
+export {
+  ADAPTIVE_VARIANTS,
+  SIZE_CLASSES,
+  SIZE_CLASS_MIN,
+  SIZE_CLASS_PREVIEW,
+  adaptiveAttributes,
+  adaptiveLayoutAttributes,
+  isSizeClass,
+  resolveAdaptive,
+  resolveTemplate,
+  sizeClassOf,
+  templateAreas,
+  templateProblems,
+  type AdaptiveOverride,
+  type AdaptiveSpec,
+  type AdaptiveTemplate,
+  type AdaptiveTemplates,
+  type PointerKind,
+  type SizeClass,
+} from "./adaptive";
 export { checkContrast, expandToken, parseCssColor, type ContrastFailure, type ContrastReport } from "./contrast";
 export type { BlockType } from "./blocks.generated";
 export { BLOCK_TYPES } from "./blocks.generated";

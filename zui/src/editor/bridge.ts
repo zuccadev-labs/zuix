@@ -29,8 +29,41 @@ import {
   originAllowed,
 } from "./protocol";
 import type { BlockSpec } from "./render";
-import { CHILDREN, findNode, insertNode, moveNode, pathTo, removeNode, slotOf, updateProps, updateStyle, updateText } from "./tree";
-import { CATALOG_SCHEMA_VERSION, type Catalog, DOCUMENT_SCHEMA_VERSION, type JsonValue, type PageDocument, isText } from "./types";
+import {
+  CHILDREN,
+  findNode,
+  insertNode,
+  locate,
+  moveNode,
+  pathTo,
+  removeNode,
+  slotOf,
+  updateAdaptive,
+  updateProps,
+  updateStyle,
+  updateText,
+} from "./tree";
+import {
+  type AdaptiveTemplates,
+  type PointerKind,
+  SIZE_CLASS_PREVIEW,
+  type SizeClass,
+  isSizeClass,
+  resolveAdaptive,
+  resolveTemplate,
+  sizeClassOf,
+  templateAreas,
+} from "./adaptive";
+import {
+  CATALOG_SCHEMA_VERSION,
+  type Catalog,
+  DOCUMENT_SCHEMA_VERSION,
+  type ElementNode,
+  type JsonValue,
+  type PageDocument,
+  type PageNode,
+  isText,
+} from "./types";
 import { type Issue, validateDocument } from "./validate";
 
 // ── Lienzo ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -153,6 +186,73 @@ export function createCanvas(o: CanvasOptions): Canvas {
       else html.style.setProperty(`--z-${name}`, String(value));
     }
     overlay.refresh();
+  };
+
+  // ── Adaptativo: clase de vista previa, áreas y arrastre entre áreas ──
+  let forced: { sizeClass: SizeClass | null; width: number | null; pointer: PointerKind | null } = {
+    sizeClass: null,
+    width: null,
+    pointer: null,
+  };
+  const pointerKind = (): PointerKind => forced.pointer ?? (win.matchMedia?.("(pointer: coarse)").matches ? "coarse" : "fine");
+  // Se mide la caja de contenido, como una consulta de contenedor (sin el relleno del lienzo).
+  const contentWidth = () => {
+    const cs = win.getComputedStyle(o.container);
+    return o.container.clientWidth - (Number.parseFloat(cs.paddingInlineStart) || 0) - (Number.parseFloat(cs.paddingInlineEnd) || 0);
+  };
+  const sizeClass = (): SizeClass => forced.sizeClass ?? sizeClassOf(forced.width ?? contentWidth());
+  const applyViewport = () => {
+    const width = forced.width ?? (forced.sizeClass ? SIZE_CLASS_PREVIEW[forced.sizeClass] : null);
+    if (width) {
+      o.container.style.inlineSize = `${width}px`;
+      o.container.style.marginInline = "auto";
+    } else {
+      o.container.style.removeProperty("inline-size");
+      o.container.style.removeProperty("margin-inline");
+    }
+    o.container.setAttribute("data-z-size-class", sizeClass());
+    o.container.setAttribute("data-z-pointer", pointerKind());
+    overlay.refresh();
+  };
+  const adaptiveLayouts = (only?: string): ElementNode[] => {
+    const out: ElementNode[] = [];
+    const byType = new Map(o.catalog.blocks.map((b) => [b.type, b]));
+    const visit = (list: readonly PageNode[]) => {
+      for (const n of list) {
+        if (isText(n)) continue;
+        if (byType.get(n.type)?.adaptive?.layout && (!only || n.id === only)) out.push(n);
+        for (const kids of [n.children ?? [], ...Object.values(n.slots ?? {})]) visit(kids);
+      }
+    };
+    visit(document.body);
+    return out;
+  };
+  const templatesOf = (layout: ElementNode) =>
+    (layout.props?.templates ?? o.catalog.blocks.find((b) => b.type === layout.type)?.adaptive?.layout?.templates) as
+      | AdaptiveTemplates
+      | undefined;
+  /** Caja de cada área: la unión de sus piezas visibles; un área vacía toma la del layout. */
+  const areaRects = (only?: string) => {
+    const cls = sizeClass();
+    const out: { parent: string; area: string; rect: { x: number; y: number; width: number; height: number } }[] = [];
+    for (const layout of adaptiveLayouts(only)) {
+      const box = view.elementOf(layout.id);
+      if (!box) continue;
+      for (const area of templateAreas(resolveTemplate(templatesOf(layout), cls))) {
+        const rects = (layout.children ?? [])
+          .filter((c) => !isText(c) && resolveAdaptive(c.adaptive, cls).area === area && !resolveAdaptive(c.adaptive, cls).hidden)
+          .map((c) => view.elementOf(c.id))
+          .filter((e): e is HTMLElement => e !== null)
+          .map(rectOf);
+        const base = rects.length ? rects : [rectOf(box)];
+        const x0 = Math.min(...base.map((r) => r.x));
+        const y0 = Math.min(...base.map((r) => r.y));
+        const x1 = Math.max(...base.map((r) => r.x + r.width));
+        const y1 = Math.max(...base.map((r) => r.y + r.height));
+        out.push({ parent: layout.id, area, rect: { x: x0, y: y0, width: x1 - x0, height: y1 - y0 } });
+      }
+    }
+    return out;
   };
 
   const measure = (p: EditorMessages["measure"]): DropTarget[] => {
@@ -283,6 +383,50 @@ export function createCanvas(o: CanvasOptions): Canvas {
           );
         case "measure":
           return send("dropTargets", { targets: measure(msg.payload) }, reply);
+        case "viewport": {
+          const p = msg.payload;
+          if (p.sizeClass !== undefined && p.sizeClass !== null && !isSizeClass(p.sizeClass))
+            throw new Error(`clase de tamaño no válida: ${String(p.sizeClass)}`);
+          if (p.width !== undefined && p.width !== null && !(Number.isFinite(p.width) && p.width >= 200 && p.width <= 4000))
+            throw new Error("el ancho debe estar entre 200 y 4000 px");
+          if (p.pointer !== undefined && p.pointer !== null && p.pointer !== "coarse" && p.pointer !== "fine")
+            throw new Error(`puntero no válido: ${String(p.pointer)}`);
+          forced = {
+            sizeClass: p.sizeClass === undefined ? forced.sizeClass : p.sizeClass,
+            width: p.width === undefined ? (p.sizeClass !== undefined ? null : forced.width) : p.width,
+            pointer: p.pointer === undefined ? forced.pointer : p.pointer,
+          };
+          applyViewport();
+          return send(
+            "viewportChanged",
+            {
+              sizeClass: sizeClass(),
+              width: forced.width ?? (forced.sizeClass ? SIZE_CLASS_PREVIEW[forced.sizeClass] : null),
+              pointer: pointerKind(),
+            },
+            reply,
+          );
+        }
+        case "adapt": {
+          const { id, sizeClass: cls, patch } = msg.payload;
+          const node = findNode(document, id);
+          if (!node || isText(node)) throw new Error(`no existe el nodo «${id}»`);
+          const { props, ...rest } = patch;
+          let mergedProps: Record<string, JsonValue> | null | undefined;
+          if (props === null) mergedProps = null;
+          else if (props) {
+            const current: Record<string, JsonValue> = { ...node.adaptive?.[cls]?.props };
+            for (const [k, v] of Object.entries(props)) {
+              if (v === null) delete current[k];
+              else current[k] = v;
+            }
+            mergedProps = Object.keys(current).length ? current : null;
+          }
+          const next = updateAdaptive(document, id, cls, { ...rest, ...(mergedProps !== undefined ? { props: mergedProps } : {}) });
+          return commit(next, "adapt", reply, `adapt:${id}:${cls}:${Object.keys(patch).sort().join(",")}`);
+        }
+        case "measureAreas":
+          return send("areaTargets", { sizeClass: sizeClass(), areas: areaRects(msg.payload.parent) }, reply);
       }
     } catch (error) {
       send("error", { code: "failed", message: error instanceof Error ? error.message : String(error) }, reply);
@@ -326,16 +470,76 @@ export function createCanvas(o: CanvasOptions): Canvas {
   const onClick = (event: MouseEvent) => {
     if (!o.container.contains(event.target as Node)) return;
     event.preventDefault();
+    if (swallowClick) {
+      swallowClick = false;
+      return;
+    }
     selectNode(nodeAt(event.target));
   };
   const onSubmit = (event: Event) => event.preventDefault();
-  const onMove = (event: PointerEvent) => hoverNode(o.container.contains(event.target as Node) ? nodeAt(event.target) : null);
+  // Arrastrar una pieza de un layout adaptativo a otra área la mueve en la clase actual (orden y área por clase).
+  let drag: { id: string; parent: string; x: number; y: number; moved: boolean } | null = null;
+  let swallowClick = false;
+  const pieceAt = (target: EventTarget | null) => {
+    let id = nodeAt(target);
+    while (id) {
+      const at = locate(document, id);
+      if (!at || at.parent === null) return null;
+      if (adaptiveLayouts(at.parent).length) return { id, parent: at.parent };
+      id = at.parent;
+    }
+    return null;
+  };
+  const areaAt = (parent: string, x: number, y: number) =>
+    areaRects(parent).find((a) => x >= a.rect.x && x <= a.rect.x + a.rect.width && y >= a.rect.y && y <= a.rect.y + a.rect.height)?.area;
+  const onDown = (event: PointerEvent) => {
+    if (event.button !== 0 || !o.container.contains(event.target as Node)) return;
+    const piece = pieceAt(event.target);
+    drag = piece ? { ...piece, x: event.clientX, y: event.clientY, moved: false } : null;
+  };
+  const onUp = (event: PointerEvent) => {
+    const d = drag;
+    drag = null;
+    if (!d?.moved) return;
+    swallowClick = true;
+    overlay.show("hover", null);
+    const area = areaAt(d.parent, event.clientX, event.clientY);
+    const cls = sizeClass();
+    const node = findNode(document, d.id);
+    if (!area || !node || isText(node) || resolveAdaptive(node.adaptive, cls).area === area) return;
+    commit(updateAdaptive(document, d.id, cls, { area }), "adapt");
+  };
+  const onMove = (event: PointerEvent) => {
+    if (drag) {
+      if (!drag.moved && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 6) drag.moved = true;
+      if (drag.moved) {
+        const area = areaAt(drag.parent, event.clientX, event.clientY);
+        const target = area ? areaRects(drag.parent).find((a) => a.area === area) : undefined;
+        overlay.show("hover", target ? (view.elementOf(drag.parent) ?? null) : null, area ? `→ ${area}` : "");
+        return;
+      }
+    }
+    hoverNode(o.container.contains(event.target as Node) ? nodeAt(event.target) : null);
+  };
   const onKey = (event: KeyboardEvent) => {
     if (event.key === "Escape" && selected) selectNode(null);
   };
   o.container.addEventListener("click", onClick, true);
   o.container.addEventListener("submit", onSubmit, true);
   doc.addEventListener("pointermove", onMove, { passive: true });
+  o.container.addEventListener("pointerdown", onDown);
+  doc.addEventListener("pointerup", onUp);
+  const resize =
+    typeof ResizeObserver === "function"
+      ? new ResizeObserver(() => {
+          const before = o.container.getAttribute("data-z-size-class");
+          applyViewport();
+          if (before && before !== sizeClass())
+            send("viewportChanged", { sizeClass: sizeClass(), width: forced.width, pointer: pointerKind() });
+        })
+      : null;
+  resize?.observe(o.container);
+  applyViewport();
   doc.addEventListener("keydown", onKey);
 
   return {
@@ -357,6 +561,9 @@ export function createCanvas(o: CanvasOptions): Canvas {
       o.container.removeEventListener("submit", onSubmit, true);
       doc.removeEventListener("pointermove", onMove);
       doc.removeEventListener("keydown", onKey);
+      o.container.removeEventListener("pointerdown", onDown);
+      doc.removeEventListener("pointerup", onUp);
+      resize?.disconnect();
       port?.close();
       port = null;
       overlay.destroy();

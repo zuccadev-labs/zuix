@@ -15,7 +15,15 @@ import {
   type ElementNode,
   type PageDocument,
   type PageNode,
+  type SizeClass,
   DOCUMENT_JSON_SCHEMA,
+  SIZE_CLASSES,
+  resolveAdaptive,
+  resolveTemplate,
+  sizeClassOf,
+  templateAreas,
+  templateProblems,
+  updateAdaptive,
   accepts,
   checkContrast,
   createBrandEditor,
@@ -53,6 +61,9 @@ const catalog = JSON.parse(readFileSync(new URL("../../zui/editor/catalog.json",
 const doc = (body: PageNode[]): PageDocument => ({ format: "zuix.page", schemaVersion: 1, body });
 const t = (id: string, text: string): PageNode => ({ id, type: "#text", text });
 const codes = (d: unknown) => validateDocument(d, catalog).errors.map((e) => e.code);
+
+/** Atributos `style` sin espacios: cada vía (cadena, DOM, React) los separa a su manera. */
+const flatStyle = (html: string) => html.replace(/style="([^"]*)"/g, (_, x: string) => `style="${x.replace(/\s+|;$/g, "")}"`);
 
 /** Sin ids: para comparar documentos que solo difieren en ellos. */
 function strip(list: PageNode[]): unknown[] {
@@ -458,13 +469,7 @@ describe("DOM y React", () => {
         const frag = toDOM(d, document, { catalog });
         const div = document.createElement("div");
         div.append(frag);
-        assert.equal(
-          div.innerHTML
-            .replace(/ ([a-z-]+)=""/g, " $1")
-            .replace(/style="([^"]*)"/g, (_, s: string) => `style="${s.replace(/;\s*$/, "").replace(/;\s*/g, "; ")}"`),
-          toHTML(d, { catalog }),
-          `${b.type}/${p.id}`,
-        );
+        assert.equal(flatStyle(div.innerHTML.replace(/ ([a-z-]+)=""/g, " $1")), flatStyle(toHTML(d, { catalog })), `${b.type}/${p.id}`);
       }
     }
   });
@@ -474,9 +479,9 @@ describe("DOM y React", () => {
       s
         .replace(/\s*\/>/g, ">")
         .replace(/ ([a-z-]+)=""/g, " $1")
+        .replace(/style="([^"]*)"/g, (_, x: string) => `style="${x.replace(/\s+|;$/g, "")}"`)
         .replace(/&#x27;/g, "'")
-        .replace(/&quot;/g, '"')
-        .replace(/style="([^"]*)"/g, (_, x: string) => `style="${x.replace(/\s*([:;])\s*/g, "$1")}"`);
+        .replace(/&quot;/g, '"');
     for (const b of catalog.blocks.filter((x) => x.html === "template" && !x.parents)) {
       for (const p of b.presets) {
         const d = doc([p.node as PageNode]);
@@ -633,5 +638,141 @@ describe("marca", () => {
     assert.equal(file.themes.dark.accent, "#3366ff");
     assert.equal(file.scale?.["space-4"], "18px");
     assert.throws(() => createBrandEditor(catalog.tokens, "nope"), /no existe la marca/);
+  });
+});
+
+describe("adaptativo", () => {
+  const layout = (children: PageNode[], templates?: Record<string, unknown>): PageDocument =>
+    doc([{ id: "al", type: "AdaptiveLayout", ...(templates ? { props: { templates: templates as never } } : {}), children }]);
+  const section = (id: string, adaptive: Record<string, unknown>): PageNode =>
+    ({ id, type: "Section", adaptive, children: [{ id: `${id}-p`, type: "Paragraph", children: [t(`${id}-t`, id)] }] }) as PageNode;
+
+  test("clases de tamaño y fusión de móvil hacia arriba", () => {
+    assert.deepEqual([0, 599, 600, 839, 840, 1199, 1200, 1599, 1600, 4000].map(sizeClassOf), [
+      "compact",
+      "compact",
+      "medium",
+      "medium",
+      "expanded",
+      "expanded",
+      "large",
+      "large",
+      "xlarge",
+      "xlarge",
+    ]);
+    const spec = { compact: { area: "main", order: 1, props: { a: 1 } }, expanded: { order: 3, hidden: true, props: { b: 2 } } };
+    assert.deepEqual(resolveAdaptive(spec, "compact"), { area: "main", order: 1, props: { a: 1 } });
+    assert.deepEqual(resolveAdaptive(spec, "medium"), resolveAdaptive(spec, "compact"));
+    assert.deepEqual(resolveAdaptive(spec, "xlarge"), { area: "main", order: 3, hidden: true, props: { a: 1, b: 2 } });
+    const templates = { compact: { areas: ["a"] }, large: { areas: ["a b"] } };
+    assert.deepEqual(resolveTemplate(templates, "expanded"), { areas: ["a"] });
+    assert.deepEqual(templateAreas(resolveTemplate(templates, "xlarge")), ["a", "b"]);
+  });
+
+  test("propiedad: una clase mayor solo cambia lo que declara", () => {
+    const override = fc.record(
+      { order: fc.integer({ min: -9, max: 9 }), hidden: fc.boolean(), area: fc.constantFrom("a", "b") },
+      { requiredKeys: [] },
+    );
+    fc.assert(
+      fc.property(fc.dictionary(fc.constantFrom(...SIZE_CLASSES), override), (spec) => {
+        for (const [i, cls] of SIZE_CLASSES.entries()) {
+          const here = resolveAdaptive(spec, cls);
+          const below = i ? resolveAdaptive(spec, SIZE_CLASSES[i - 1] as SizeClass) : {};
+          for (const key of ["order", "hidden", "area"] as const) assert.equal(here[key], spec[cls]?.[key] ?? below[key]);
+        }
+      }),
+    );
+  });
+
+  test("plantillas: áreas rectangulares y filas iguales", () => {
+    assert.deepEqual(templateProblems({ areas: ["a a", "b c"] }), []);
+    assert.deepEqual(templateProblems({ areas: ["a . b", "a . b"] }), []);
+    assert.match(templateProblems({ areas: ["a b", "b a"] }).join(), /«a» no es rectangular/);
+    assert.match(templateProblems({ areas: ["a b", "c"] }).join(), /mismo número/);
+    assert.match(templateProblems({ areas: ["a b a"] }).join(), /«a» no es rectangular/);
+    assert.match(templateProblems({ areas: ["9x"] }).join(), /no es un nombre/);
+  });
+
+  test("validación: área de la plantilla del padre, variante, props y plantilla", () => {
+    const ok = layout([
+      section("m", { compact: { area: "main" } }),
+      section("s", { compact: { area: "aside", order: 2 }, expanded: { order: 1 } }),
+    ]);
+    assert.deepEqual(codes(ok), []);
+    // `nav` solo existe desde large: en compact es un error, y se hereda hasta xlarge.
+    const templates = { compact: { areas: ["main"] }, large: { areas: ["nav main"] } };
+    assert.deepEqual(codes(layout([section("n", { large: { area: "nav" } })], templates)), []);
+    const bad = validateDocument(layout([section("n", { compact: { area: "nav" } })], templates), catalog);
+    assert.deepEqual(
+      bad.errors.map((e) => [e.code, e.pointer]),
+      [
+        ["adaptive.area", "/body/0/children/0/adaptive/compact"],
+        ["adaptive.area", "/body/0/children/0/adaptive/medium"],
+        ["adaptive.area", "/body/0/children/0/adaptive/expanded"],
+      ],
+    );
+    assert.match(bad.errors[0]?.message ?? "", /área «nav», que la plantilla de AdaptiveLayout «al» no tiene \(main\)/);
+    assert.deepEqual(codes(doc([section("x", { compact: { area: "main" } })])), ["adaptive.area"]);
+    assert.deepEqual(codes(layout([], { compact: { areas: ["a b", "b a"] } })), ["adaptive.template", "adaptive.template"]);
+    assert.deepEqual(
+      codes(
+        doc([
+          {
+            id: "t",
+            type: "Tabs",
+            preset: catalog.blocks.find((b) => b.type === "Tabs")?.presets[0]?.id,
+            adaptive: { compact: { variant: "select" } },
+          },
+        ]),
+      ),
+      [],
+    );
+    assert.deepEqual(
+      codes(
+        doc([
+          {
+            id: "t",
+            type: "Tabs",
+            preset: catalog.blocks.find((b) => b.type === "Tabs")?.presets[0]?.id,
+            adaptive: { compact: { variant: "accordion" } },
+          },
+        ]),
+      ),
+      ["adaptive.variant"],
+    );
+    assert.deepEqual(
+      codes(doc([{ id: "b", type: "Button", adaptive: { compact: { props: { size: "lg" } } }, children: [t("bt", "x")] }])),
+      [],
+    );
+    assert.deepEqual(
+      codes(doc([{ id: "b", type: "Button", adaptive: { compact: { props: { size: "huge" } } }, children: [t("bt", "x")] }])),
+      ["adaptive.props"],
+    );
+    assert.deepEqual(codes(doc([{ id: "b", type: "Button", adaptive: { tiny: {} } as never, children: [t("bt", "x")] }])), [
+      "document.shape",
+    ]);
+  });
+
+  test("HTML: variables y datos por clase en la pieza y plantillas en el layout", () => {
+    const html = toHTML(layout([section("m", { compact: { area: "main" }, expanded: { order: 2, hidden: false, variant: "x" } })]), {
+      catalog,
+    });
+    assert.match(
+      html,
+      /^<div class="z-adaptive" data-z-adaptive-layout data-measure="container" style="--z-adaptive-areas-compact: &quot;main&quot; &quot;aside&quot;; --z-adaptive-areas-expanded: &quot;main aside&quot;; --z-adaptive-columns-expanded: 1fr 18rem">/,
+    );
+    assert.match(html, /data-hidden-expanded="false" data-variant-expanded="x" data-z-adaptive="\{&quot;compact&quot;/);
+    assert.match(html, /style="--z-area-compact: main; --z-order-expanded: 2"/);
+  });
+
+  test("árbol: updateAdaptive por clase", () => {
+    let d = layout([section("m", { compact: { area: "main" } })]);
+    d = updateAdaptive(d, "m", "expanded", { area: "aside", order: 2 });
+    assert.deepEqual((findNode(d, "m") as ElementNode).adaptive, { compact: { area: "main" }, expanded: { area: "aside", order: 2 } });
+    d = updateAdaptive(d, "m", "expanded", { area: null, order: null });
+    d = updateAdaptive(d, "m", "compact", { area: null });
+    assert.equal((findNode(d, "m") as ElementNode).adaptive, undefined);
+    assert.throws(() => updateAdaptive(d, "m", "huge" as SizeClass, {}), /clase de tamaño/);
   });
 });

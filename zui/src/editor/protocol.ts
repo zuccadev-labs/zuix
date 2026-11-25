@@ -3,6 +3,7 @@
 // El saludo (`hello`) va por window.postMessage y entrega un MessagePort; todo lo demás viaja por ese puerto, que solo
 // tienen las dos partes. Ver docs/users/12-conectar-un-editor.md.
 
+import type { AdaptiveOverride, PointerKind, SizeClass } from "./adaptive";
 import type { Issue } from "./validate";
 import type { Location, NodePath } from "./tree";
 import type { JsonValue, PageDocument, PageNode } from "./types";
@@ -43,9 +44,24 @@ export interface EditorMessages {
   theme: { brand?: string; theme?: "dark" | "light"; tokens?: Record<string, string | null> };
   /** Pide las medidas de los puntos de anclaje de un hueco (o de todos los visibles). */
   measure: { parent?: string | null; slot?: string };
+  /**
+   * Vista previa por clase de tamaño: fuerza el ancho del contenedor del lienzo (el típico de la clase, o `width`) y el
+   * tipo de puntero. `null` en un campo vuelve a medir el lienzo tal cual.
+   */
+  viewport: { sizeClass?: SizeClass | null; width?: number | null; pointer?: PointerKind | null };
+  /** Cambia orden, área, visibilidad, columnas, variante o props de un nodo en una clase. `null` quita el campo. */
+  adapt: {
+    id: string;
+    sizeClass: SizeClass;
+    patch: { [K in Exclude<keyof AdaptiveOverride, "props">]?: AdaptiveOverride[K] | null } & {
+      props?: Record<string, JsonValue | null> | null;
+    };
+  };
+  /** Pide las áreas de los layouts adaptativos en la clase actual, como zonas de soltar. */
+  measureAreas: { parent?: string };
 }
 
-export type ChangeReason = "load" | "insert" | "move" | "remove" | "update" | "undo" | "redo";
+export type ChangeReason = "load" | "insert" | "move" | "remove" | "update" | "adapt" | "undo" | "redo";
 
 export interface CanvasMessages {
   ready: { zuix: string; protocolVersion: number; documentSchemaVersion: number; catalogSchemaVersion: number };
@@ -56,6 +72,10 @@ export interface CanvasMessages {
   dropTargets: { targets: DropTarget[] };
   /** Respuesta a `theme`: lo que quedó aplicado. */
   themed: { brand: string | null; theme: string | null; tokens: string[] };
+  /** Respuesta a `viewport` (y aviso cuando el lienzo cambia de clase al redimensionarse). */
+  viewportChanged: { sizeClass: SizeClass; width: number | null; pointer: PointerKind };
+  /** Áreas de cada layout adaptativo en la clase actual: zonas de soltar para mover una pieza de área. */
+  areaTargets: { sizeClass: SizeClass; areas: { parent: string; area: string; rect: Rect }[] };
 }
 
 export type EditorMessageType = keyof EditorMessages;
@@ -87,8 +107,21 @@ const EDITOR_TYPES = new Set<string>([
   "redo",
   "theme",
   "measure",
+  "viewport",
+  "adapt",
+  "measureAreas",
 ]);
-const CANVAS_TYPES = new Set<string>(["ready", "selected", "hovered", "changed", "error", "dropTargets", "themed"]);
+const CANVAS_TYPES = new Set<string>([
+  "ready",
+  "selected",
+  "hovered",
+  "changed",
+  "error",
+  "dropTargets",
+  "themed",
+  "viewportChanged",
+  "areaTargets",
+]);
 
 export function envelope<T extends string, P>(type: T, payload: P, extra: { id?: number; replyTo?: number } = {}): Envelope<T, P> {
   return { protocol: PROTOCOL, version: PROTOCOL_VERSION, type, ...extra, payload };

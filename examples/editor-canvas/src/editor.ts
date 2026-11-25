@@ -10,7 +10,13 @@ import {
   type JsonValue,
   type PageDocument,
   type PageNode,
+  type SizeClass,
+  type AdaptiveTemplates,
   CHILDREN,
+  isSizeClass,
+  resolveAdaptive,
+  resolveTemplate,
+  templateAreas,
   accepts,
   connectCanvas,
   createBrandEditor,
@@ -28,38 +34,47 @@ const byType = new Map(catalog.blocks.map((b) => [b.type, b]));
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const nextId = idGenerator("e");
 
-const state: { document: PageDocument; selected: string | null; canUndo: boolean; canRedo: boolean; connection: CanvasConnection | null } =
-  {
-    document: createDocument({
-      title: "Demo",
-      lang: "en",
-      body: [
-        {
-          id: "hero",
-          type: "LandingHero",
-          props: { align: "center" },
-          slots: {
-            eyebrow: [{ id: "hero-e", type: "#text", text: "zuix 0.5" }],
-            title: [{ id: "hero-t", type: "#text", text: "A page from the editor" }],
-            lead: [{ id: "hero-l", type: "#text", text: "Blocks from the catalog, rendered with the HTML contract." }],
-            actions: [
-              {
-                id: "cta",
-                type: "Button",
-                props: { variant: "primary", icon: "plus" },
-                children: [{ id: "cta-t", type: "#text", text: "Get started" }],
-              },
-            ],
-          },
+const adaptiveDemo = catalog.blocks.find((b) => b.type === "AdaptiveLayout")?.presets.find((p) => p.id === "contenido-con-lateral")?.node;
+const state: {
+  document: PageDocument;
+  selected: string | null;
+  canUndo: boolean;
+  canRedo: boolean;
+  connection: CanvasConnection | null;
+  sizeClass: SizeClass;
+} = {
+  document: createDocument({
+    title: "Demo",
+    lang: "en",
+    body: [
+      {
+        id: "hero",
+        type: "LandingHero",
+        props: { align: "center" },
+        slots: {
+          eyebrow: [{ id: "hero-e", type: "#text", text: "zuix 0.5" }],
+          title: [{ id: "hero-t", type: "#text", text: "A page from the editor" }],
+          lead: [{ id: "hero-l", type: "#text", text: "Blocks from the catalog, rendered with the HTML contract." }],
+          actions: [
+            {
+              id: "cta",
+              type: "Button",
+              props: { variant: "primary", icon: "plus" },
+              children: [{ id: "cta-t", type: "#text", text: "Get started" }],
+            },
+          ],
         },
-        { id: "intro", type: "Paragraph", children: [{ id: "intro-t", type: "#text", text: "Click a block to select it." }] },
-      ],
-    }),
-    selected: null,
-    canUndo: false,
-    canRedo: false,
-    connection: null,
-  };
+      },
+      { id: "intro", type: "Paragraph", children: [{ id: "intro-t", type: "#text", text: "Click a block to select it." }] },
+      ...(adaptiveDemo ? [adaptiveDemo] : []),
+    ],
+  }),
+  selected: null,
+  canUndo: false,
+  canRedo: false,
+  connection: null,
+  sizeClass: "compact",
+};
 (window as unknown as { zuixEditor: typeof state }).zuixEditor = state;
 
 const status = (text: string) => {
@@ -195,6 +210,53 @@ function panel() {
     );
 }
 
+// ── Adaptativo: lo de la clase de vista previa del nodo seleccionado ──────────────────────────────────────────
+function adaptivePanel() {
+  const form = $("adaptive");
+  const cls = state.sizeClass;
+  $("adaptive-title").textContent = `Adaptativo · ${cls}`;
+  form.replaceChildren();
+  const node = state.selected ? findNode(state.document, state.selected) : null;
+  if (!node || node.type === "#text") return;
+  const block = byType.get(node.type);
+  const own = (node as ElementNode).adaptive?.[cls] ?? {};
+  const resolved = resolveAdaptive((node as ElementNode).adaptive, cls);
+  const adapt = (patch: Record<string, JsonValue | null>) =>
+    state.connection?.request("adapt", { id: node.id, sizeClass: cls, patch } as never).catch((e: Error) => status(e.message));
+  form.append(
+    field("order", { type: "integer", "x-control": "number", default: resolved.order }, own.order, (v) =>
+      adapt({ order: v === null ? null : Math.trunc(Number(v)) }),
+    ),
+  );
+  form.append(
+    field("hidden", { type: "boolean", "x-control": "switch", default: resolved.hidden ?? false }, own.hidden, (v) => adapt({ hidden: v })),
+  );
+  const at = locate(state.document, node.id);
+  const parent = at?.parent ? findNode(state.document, at.parent) : null;
+  const parentBlock = parent ? byType.get(parent.type) : undefined;
+  if (parent && parent.type !== "#text" && parentBlock?.adaptive?.layout) {
+    const templates = ((parent as ElementNode).props?.templates ?? parentBlock.adaptive.layout.templates) as AdaptiveTemplates;
+    const areas = templateAreas(resolveTemplate(templates, cls));
+    form.append(field("area", { enum: areas, default: resolved.area }, own.area, (v) => adapt({ area: v })));
+    form.append(
+      field("span", { type: "integer", "x-control": "number" }, own.span, (v) =>
+        adapt({ span: v === null ? null : Math.trunc(Number(v)) }),
+      ),
+    );
+  }
+  if (block?.adaptive?.variants)
+    form.append(
+      field("variant", { enum: block.adaptive.variants.map((v) => v.value), default: resolved.variant }, own.variant, (v) =>
+        adapt({ variant: v }),
+      ),
+    );
+}
+
+$<HTMLSelectElement>("size").addEventListener("change", (e) => {
+  const value = (e.target as HTMLSelectElement).value;
+  state.connection?.request("viewport", { sizeClass: isSizeClass(value) ? value : null }).catch((error: Error) => status(error.message));
+});
+
 // ── Marca ──────────────────────────────────────────────────────────────────────────────────────────────────
 const brands = $<HTMLSelectElement>("brand");
 for (const b of catalog.tokens.brands) brands.append(new Option(b, b, false, b === catalog.tokens.defaultBrand));
@@ -286,14 +348,21 @@ connectCanvas(frame, { origin: "null", zuix: catalog.zuix })
       if (state.selected && !findNode(state.document, state.selected)) state.selected = null;
       buttons();
       panel();
+      adaptivePanel();
       status(p.warnings.length ? `Avisos: ${p.warnings.map((w) => w.message).join("; ")}` : `Cambio: ${p.reason}`);
     });
     connection.on("selected", (p) => {
       state.selected = p.id;
       panel();
+      adaptivePanel();
+    });
+    connection.on("viewportChanged", (p) => {
+      state.sizeClass = p.sizeClass;
+      adaptivePanel();
     });
     connection.on("error", (p) => status(`Error: ${p.message}`));
     await connection.request("load", { document: state.document });
+    await connection.request("viewport", {});
     document.documentElement.dataset.editorReady = "";
   })
   .catch((error: Error) => status(error.message));

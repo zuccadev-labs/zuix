@@ -183,6 +183,21 @@ const COVERED = [
   "zui/src/dom/datatable.ts",
   "zui/src/dom/time.ts",
   "zudocs/scripts/config.mjs",
+  "zui/src/editor/tree.ts",
+  "zui/src/editor/json-schema.ts",
+  "zui/src/editor/validate.ts",
+  "zui/src/editor/migrate.ts",
+  "zui/src/editor/render.ts",
+  "zui/src/editor/parse.ts",
+  "zui/src/editor/contrast.ts",
+  "zui/src/editor/brand.ts",
+  "zui/src/editor/protocol.ts",
+  "zui/src/editor/adaptive.ts",
+  "zui/src/editor/document-schema.ts",
+  "zui/src/editor/blocks/core.ts",
+  "zui/src/editor/blocks/zui.ts",
+  "zui/src/editor/blocks/zout.ts",
+  "zui/src/editor/blocks/shared.ts",
 ];
 // Umbrales sobre el conjunto anterior. El motor del carrusel y los módulos DOM incluyen ramas que solo existen
 // en un navegador real (WebGL, captura de puntero, capa superior); esas las cubren tests/html y tests/browser.

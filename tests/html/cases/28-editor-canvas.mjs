@@ -39,7 +39,8 @@ export default async function ({ page, test, ok, note }) {
       ok(await frame.evaluate(() => window.origin === "null"), "el lienzo no tiene origen opaco");
       await frame.waitForSelector("#page .z-landing-hero h1");
       ok(await frame.evaluate(() => window.zuixCanvas.connected), "el lienzo no quedó conectado");
-      ok((await counts()) === 3, `nodos pintados: ${await counts()}`);
+      ok((await counts()) >= 10, `nodos pintados: ${await counts()}`);
+      ok((await editor.evaluate(() => window.zuixEditor.document.body.length)) === 3, "el cuerpo no tiene tres bloques");
     });
 
     await test("editor: clic en el lienzo selecciona, con capa fuera del documento", async () => {
@@ -60,7 +61,7 @@ export default async function ({ page, test, ok, note }) {
       });
       ok(box.hidden === false && !box.inside && box.dx < 1 && box.dw < 1, `capa de selección: ${JSON.stringify(box)}`);
       const exported = await editor.evaluate(() => window.zuixEditor.document.body.length);
-      ok(exported === 2, "la selección cambió el documento");
+      ok(exported === 3, "la selección cambió el documento");
     });
 
     await test("editor: insertar desde el catálogo, cambiar una prop, deshacer y rehacer", async () => {
@@ -69,7 +70,7 @@ export default async function ({ page, test, ok, note }) {
       await frame.evaluate(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
       await wait(() => window.zuixEditor.selected === null);
       await editor.locator('#palette [data-block="Button"]').click();
-      await wait(() => window.zuixEditor.document.body.length === 3);
+      await wait(() => window.zuixEditor.document.body.length === 4);
       ok((await frame.locator("#page > .z-btn").count()) === 1, "el botón no llegó al lienzo");
       ok(await editor.locator("#undo").isEnabled(), "deshacer no se habilitó");
       await editor.locator('#props select[name="variant"]').selectOption("danger");
@@ -77,10 +78,10 @@ export default async function ({ page, test, ok, note }) {
       await editor.locator("#undo").click();
       await frame.waitForSelector("#page > .z-btn:not(.z-btn--danger)");
       await editor.locator("#undo").click();
-      await wait(() => window.zuixEditor.document.body.length === 2);
+      await wait(() => window.zuixEditor.document.body.length === 3);
       ok((await frame.locator("#page > .z-btn").count()) === 0, "deshacer no quitó el botón");
       await editor.locator("#redo").click();
-      await wait(() => window.zuixEditor.document.body.length === 3);
+      await wait(() => window.zuixEditor.document.body.length === 4);
       await editor.keyboard.press("Control+Shift+Z");
       await frame.waitForSelector("#page > .z-btn--danger");
     });
@@ -117,6 +118,48 @@ export default async function ({ page, test, ok, note }) {
         "el HTML exportado no es el del documento",
       );
       await editor.keyboard.press("Escape");
+    });
+
+    await test("editor: clase de vista previa, orden por clase y mover de área arrastrando", async () => {
+      const frame = canvas();
+      await editor.locator("#size").selectOption("compact");
+      await frame.waitForFunction(() => document.getElementById("page").dataset.zSizeClass === "compact");
+      const width = await frame.evaluate(() => getComputedStyle(document.getElementById("page")).inlineSize);
+      ok(width === "390px", `ancho de compact: ${width}`);
+      await wait(() => window.zuixEditor.sizeClass === "compact");
+      ok((await editor.locator("#adaptive-title").textContent()).includes("compact"), "el panel no muestra la clase");
+      // Orden por clase desde el panel.
+      await editor.evaluate(() => window.zuixEditor.connection.request("select", { id: "cl-a" }));
+      await wait(() => window.zuixEditor.selected === "cl-a");
+      await editor.locator('#adaptive input[name="order"]').fill("5");
+      await editor.locator('#adaptive input[name="order"]').dispatchEvent("change");
+      await wait(() => window.zuixEditor.document.body[2].children[2].adaptive.compact.order === 5);
+      ok(
+        await frame.locator('[data-z-node="cl-a"]').evaluate((el) => el.style.getPropertyValue("--z-order-compact") === "5"),
+        "el lienzo no recibió el orden",
+      );
+      // Las áreas como zonas de soltar.
+      const areas = await editor.evaluate(() => window.zuixEditor.connection.request("measureAreas", {}).then((m) => m.payload));
+      ok(areas.sizeClass === "compact" && areas.areas.map((a) => a.area).join() === "main,aside", `áreas: ${JSON.stringify(areas)}`);
+      // Arrastrar «main» sobre el área «aside».
+      const from = await frame.locator('[data-z-node="cl-m"]').boundingBox();
+      const to = await frame.locator('[data-z-node="cl-a"]').boundingBox();
+      await editor.mouse.move(from.x + 10, from.y + from.height / 2);
+      await editor.mouse.down();
+      await editor.mouse.move(to.x + 20, to.y + to.height / 2, { steps: 6 });
+      await editor.mouse.up();
+      await wait(() => window.zuixEditor.document.body[2].children[1].adaptive.compact.area === "aside");
+      await editor.locator("#undo").click();
+      await wait(() => window.zuixEditor.document.body[2].children[1].adaptive.compact.area === "main");
+      // Un área que la plantilla no tiene se rechaza.
+      const message = await editor.evaluate(() =>
+        window.zuixEditor.connection.request("adapt", { id: "cl-m", sizeClass: "compact", patch: { area: "nav" } }).then(
+          () => "aceptada",
+          (e) => e.message,
+        ),
+      );
+      ok(/área «nav», que la plantilla/.test(message), message);
+      await editor.locator("#size").selectOption("");
     });
 
     await test("editor: el lienzo rechaza el saludo de otro origen", async () => {

@@ -287,6 +287,12 @@ assert.equal(typeof Modal, "function");
 assert.equal(typeof Shell, "function");
 assert.equal(cx("a", false, "b"), "a b");
 assert.ok(registeredIconNames().length >= 300, "set completo registrado");
+// Conector de editores: toReact con el binding (React 18 y 19).
+const { toReact } = await import("@zuccadev-labs/zuix-zui/editor/react");
+const zuiAll = await import("@zuccadev-labs/zuix-zui");
+const page = { format: "zuix.page", schemaVersion: 1, body: [{ id: "b", type: "Button", props: { variant: "primary" }, children: [{ id: "t", type: "#text", text: "Go" }] }] };
+assert.equal(renderToStaticMarkup(toReact(page)), '<button type="button" class="z-btn z-btn--primary" data-size="md">Go</button>');
+assert.equal(renderToStaticMarkup(toReact(page, { components: zuiAll })), '<button type="button" class="z-btn z-btn--primary" data-size="md">Go</button>');
 // Render de servidor de componentes con efectos de layout, sin avisos de React (React 18 avisa de un useLayoutEffect
 // en el servidor; el binding usa useEffect cuando no hay document).
 const { renderToString } = await import("react-dom/server");
@@ -321,7 +327,7 @@ function fileURLToPathSafe(u) { return decodeURIComponent(new URL(u).pathname); 
 const specs = [
   "@zuccadev-labs/zuix-zicon", "@zuccadev-labs/zuix-zicon/core", "@zuccadev-labs/zuix-zicon/all", "@zuccadev-labs/zuix-zicon/dom", "@zuccadev-labs/zuix-zicon/element", "@zuccadev-labs/zuix-zicon/icons/x-mark",
   "@zuccadev-labs/zuix-zicon/manifest.json", "@zuccadev-labs/zuix-zicon/sprite.svg", "@zuccadev-labs/zuix-zicon/svg/outline/bell.svg", "@zuccadev-labs/zuix-zicon/svg/solid/bell.svg", "@zuccadev-labs/zuix-zicon/dist/zicon.element.js",
-  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal", "chat", "ai", "dashboard", "people", "nodes"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js", "@zuccadev-labs/zuix-zui/styles.compat.css", "@zuccadev-labs/zuix-zui/dist/zui.compat.css",
+  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal", "chat", "ai", "dashboard", "people", "nodes"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js", "@zuccadev-labs/zuix-zui/styles.compat.css", "@zuccadev-labs/zuix-zui/dist/zui.compat.css", "@zuccadev-labs/zuix-zui/editor", "@zuccadev-labs/zuix-zui/editor/react", "@zuccadev-labs/zuix-zui/editor/catalog.json", "@zuccadev-labs/zuix-zui/editor/catalog.schema.json", "@zuccadev-labs/zuix-zui/editor/document.schema.json",
   "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js", "@zuccadev-labs/zuix-zout/styles.compat.css", "@zuccadev-labs/zuix-zout/dist/zout.compat.css",
   "@zuccadev-labs/zuix-tokens/tokens.css", "@zuccadev-labs/zuix-tokens/tokens.json", "@zuccadev-labs/zuix-tokens/css/dazlabs.css",
   "@zuccadev-labs/zuix-tokens/tokens.compat.css", "@zuccadev-labs/zuix-tokens/css/zenith.compat.css",
@@ -591,6 +597,7 @@ const domDir = project(
   { dependencies: { ...zuixDeps } },
   {
     "dom.mjs": `import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 const here = createRequire(import.meta.url);
 for (const from of [import.meta.url, import.meta.resolve("@zuccadev-labs/zuix-zui/dom"), import.meta.resolve("@zuccadev-labs/zuix-zicon/dom"), import.meta.resolve("@zuccadev-labs/zuix-zout/dom")]) {
@@ -631,6 +638,17 @@ assert.equal(viaUmbrella.init, zui.init, "el paraguas reexporta el mismo zui/dom
 assert.equal((await import("@zuccadev-labs/zuix/zout/dom")).init, zout.init);
 assert.equal((await import("@zuccadev-labs/zuix/zicon/dom")).iconSvg, zicon.iconSvg);
 await import("@zuccadev-labs/zuix/zicon/element");
+// Conector de editores: sin React, con el catálogo como JSON (paquete suelto) y como módulo (paraguas).
+const editor = await import("@zuccadev-labs/zuix-zui/editor");
+const { default: catalog } = await import("@zuccadev-labs/zuix-zui/editor/catalog.json", { with: { type: "json" } });
+assert.equal(catalog.schemaVersion, editor.CATALOG_SCHEMA_VERSION);
+assert.equal((await import("@zuccadev-labs/zuix/editor/catalog")).default.zuix, catalog.zuix, "el paraguas reexporta el catálogo");
+assert.equal((await import("@zuccadev-labs/zuix/editor")).toHTML, editor.toHTML, "el paraguas reexporta el conector");
+const page = editor.migrateDocument([{ type: "Button", props: { variant: "primary", icon: "plus" }, children: ["New"] }]).document;
+assert.ok(editor.validateDocument(page, catalog).valid, "el documento migrado valida");
+assert.equal(editor.toHTML(page, { catalog }), '<button type="button" class="z-btn z-btn--primary" data-size="md"><z-icon name="plus" size="16"></z-icon>New</button>');
+assert.equal(editor.validateDocument({ ...page, body: [{ id: "x", type: "IconButton", props: { icon: "plus" } }] }, catalog).errors[0].code, "a11y.name");
+for (const f of ["catalog.schema.json", "document.schema.json"]) assert.ok(JSON.parse(readFileSync(new URL(import.meta.resolve("@zuccadev-labs/zuix-zui/editor/" + f)), "utf8")).$schema);
 // El binding de React sí debe fallar aquí: confirma que React no llegó por otra vía.
 await assert.rejects(() => import("@zuccadev-labs/zuix-zui"), /Cannot find package 'react/);
 console.log("dom: @zuccadev-labs/zuix-zicon/dom, @zuccadev-labs/zuix-zui/dom y @zuccadev-labs/zuix-zout/dom cargan en Node sin React instalado");

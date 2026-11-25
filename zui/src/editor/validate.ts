@@ -3,6 +3,7 @@
 
 import { DOCUMENT_JSON_SCHEMA } from "./document-schema";
 import { type SchemaError, pointerOf, validateSchema } from "./json-schema";
+import { type AdaptiveTemplates, SIZE_CLASSES, resolveAdaptive, resolveTemplate, templateAreas, templateProblems } from "./adaptive";
 import { accepts } from "./render";
 import { CHILDREN, slotsOf, textOf, walk } from "./tree";
 import { type Catalog, type CatalogBlock, DOCUMENT_SCHEMA_VERSION, type JsonSchema, type PageNode, isText } from "./types";
@@ -28,7 +29,11 @@ export type IssueCode =
   | "a11y.alt"
   | "a11y.text"
   | "a11y.heading-order"
-  | "a11y.multiple-h1";
+  | "a11y.multiple-h1"
+  | "adaptive.area"
+  | "adaptive.template"
+  | "adaptive.variant"
+  | "adaptive.props";
 
 export interface Issue {
   code: IssueCode;
@@ -198,6 +203,58 @@ export function validateDocument(doc: unknown, catalog: Catalog, o: ValidateOpti
             : `${name(node, path)}: «${key}» no es una propiedad de estilo admitida`,
           { ...where, pointer: `${where.pointer}/style/${key}` },
         );
+    }
+    // Adaptativo: plantillas del layout, y área, variante y props por clase de cada hijo.
+    if (block.adaptive?.layout) {
+      const templates = (node.props?.templates ?? block.props.properties.templates?.default) as AdaptiveTemplates | undefined;
+      for (const cls of SIZE_CLASSES) {
+        const t = templates?.[cls];
+        if (t && Array.isArray(t.areas))
+          for (const problem of templateProblems(t))
+            add("adaptive.template", `${name(node, path)}: plantilla de ${cls}: ${problem}`, {
+              ...where,
+              pointer: `${where.pointer}/props/templates/${cls}`,
+            });
+      }
+    }
+    if (node.adaptive) {
+      const parentLayout = parent && !isText(parent) && parentBlock?.adaptive?.layout ? parent : null;
+      const parentTemplates = (parentLayout?.props?.templates ?? parentBlock?.props.properties.templates?.default) as
+        | AdaptiveTemplates
+        | undefined;
+      let noLayout = false;
+      for (const cls of SIZE_CLASSES) {
+        const o = node.adaptive[cls];
+        const at = { ...where, pointer: `${where.pointer}/adaptive/${cls}` };
+        if (o?.variant !== undefined && !block.adaptive?.variants?.some((v) => v.value === o.variant))
+          add(
+            "adaptive.variant",
+            `${name(node, path)}: «${o.variant}» no es una variante adaptativa de ${node.type}${block.adaptive?.variants ? ` (${block.adaptive.variants.map((v) => v.value).join(", ")})` : " (no tiene)"}`,
+            at,
+          );
+        for (const [prop, value] of Object.entries(o?.props ?? {})) {
+          const schema = block.html === "preset" ? undefined : block.props.properties[prop];
+          if (!schema) add("adaptive.props", `${name(node, path)}: en ${cls}, «${prop}» no es una prop editable`, at);
+          else
+            for (const e of collapse(validateSchema(value, schema)))
+              add("adaptive.props", `${name(node, path)}: en ${cls}, la prop «${prop}» ${e.message}`, at);
+        }
+        const area = resolveAdaptive(node.adaptive, cls).area;
+        if (area === undefined) continue;
+        if (!parentLayout) {
+          if (!noLayout)
+            add("adaptive.area", `${name(node, path)}: tiene área («${area}») pero no está dentro de un layout adaptativo`, at);
+          noLayout = true;
+          continue;
+        }
+        const areas = templateAreas(resolveTemplate(parentTemplates, cls));
+        if (!areas.includes(area))
+          add(
+            "adaptive.area",
+            `${name(node, path)}: en ${cls} va al área «${area}», que la plantilla de ${parentLayout.type} «${parentLayout.id}» no tiene (${areas.join(", ") || "sin áreas"})`,
+            at,
+          );
+      }
     }
     // Accesibilidad.
     for (const rule of block.a11y) {

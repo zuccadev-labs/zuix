@@ -63,6 +63,23 @@ export const DOCUMENT_JSON_SCHEMA: JsonSchema = {
           additionalProperties: { type: "string", pattern: "^[a-z][a-z0-9-]*$" },
         },
         preset: { type: "string", pattern: "^[a-z0-9][a-z0-9-]*$" },
+        adaptive: {
+          type: "object",
+          propertyNames: { enum: ["compact", "medium", "expanded", "large", "xlarge"] },
+          additionalProperties: { $ref: "#/$defs/override" },
+        },
+      },
+    },
+    override: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        order: { type: "integer", minimum: -999, maximum: 999 },
+        hidden: { type: "boolean" },
+        area: { type: "string", pattern: "^[A-Za-z_][A-Za-z0-9_-]*$" },
+        span: { type: "integer", minimum: 1, maximum: 24 },
+        variant: { type: "string", pattern: "^[a-z][a-z0-9-]*$" },
+        props: { type: "object", propertyNames: { pattern: "^[A-Za-z][A-Za-z0-9]*$" } },
       },
     },
   },

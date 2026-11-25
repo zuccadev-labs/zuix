@@ -1,6 +1,8 @@
 // Tipos del conector de editor visual: el catálogo de bloques, el documento de página y lo que comparten. Solo
 // tipos y constantes de versión: ningún módulo de aquí toca el documento ni importa React.
 
+import type { AdaptiveSpec, AdaptiveTemplates } from "./adaptive";
+
 /** Versión del esquema de `editor/catalog.json`. Sube cuando cambia su forma, no cuando cambian los bloques. */
 export const CATALOG_SCHEMA_VERSION = 1;
 /** Versión del formato del documento de página. Un documento anterior se sube con `migrateDocument`. */
@@ -157,6 +159,13 @@ export interface CatalogBlock {
   a11y: A11yRule[];
   /** Clases del contrato que emite. */
   classes: string[];
+  /** El componente llega de otra rama y su marcado es provisional hasta integrarlo. */
+  provisional?: string;
+  /** Adaptativo: variantes que admite por clase de tamaño y, si es un layout adaptativo, sus plantillas por defecto. */
+  adaptive?: {
+    variants?: { value: string; label: string; description?: string }[];
+    layout?: { templates: AdaptiveTemplates; measure: "container" | "viewport" };
+  };
 }
 
 export interface TokenSpec {
@@ -243,6 +252,8 @@ export interface ElementNode {
   style?: NodeStyle;
   /** Preset de origen (`Calendar/basico`). Obligatorio en bloques `preset`. */
   preset?: string;
+  /** Orden, área, visibilidad, columnas, variante y props por clase de tamaño (de móvil hacia arriba). */
+  adaptive?: AdaptiveSpec;
 }
 
 export type PageNode = ElementNode | TextNode;

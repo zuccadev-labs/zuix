@@ -6,9 +6,23 @@
 
 import { trustedHTML } from "../trusted";
 import { type VEl, type VNode, toHTML as vnodeHTML } from "../core/vnode";
-import type { A11yRule, Catalog, ContentCategory, JsonSchema, JsonValue, PageDocument, PageNode, SlotRule, StyleSpec } from "./types";
+import type {
+  A11yRule,
+  BlockPreset,
+  Catalog,
+  CatalogBlock,
+  ContentCategory,
+  ElementNode,
+  JsonSchema,
+  JsonValue,
+  PageDocument,
+  PageNode,
+  SlotRule,
+  StyleSpec,
+} from "./types";
 import { isText } from "./types";
 import { CHILDREN, slotOf } from "./tree";
+import { adaptiveAttributes } from "./adaptive";
 
 /** Lo que recibe la función de un bloque. */
 export interface RenderContext {
@@ -47,6 +61,15 @@ export interface BlockSpec {
    */
   props: Record<string, JsonSchema | true>;
   render(ctx: RenderContext): VEl;
+  /** Adaptativo: variantes por clase y, en un layout adaptativo, sus plantillas por defecto. */
+  adaptive?: CatalogBlock["adaptive"];
+  /** Presets propios (si el bloque no tiene manifiesto del que sacarlos). */
+  presets?: BlockPreset[];
+  /**
+   * El componente aún no está en esta rama (lo construye otro paquete): el bloque entra en el catálogo con esta nota y
+   * sin comparar con html.json. Se quita al integrar.
+   */
+  provisional?: string;
 }
 
 const ALLOWED_SCHEMES = /^(?:https?|mailto|tel):$/i;
@@ -188,13 +211,16 @@ function toTree(node: PageNode, blocks: Map<string, BlockSpec>, o: HtmlOptions):
     id: node.id,
   };
   const el = spec.render(ctx);
+  return decorate(el, node, o);
+}
+
+/** Estilo de tokens, atributos adaptativos e id del lienzo sobre la raíz de un bloque. */
+export function decorate(el: VEl, node: ElementNode, o: HtmlOptions): VEl {
   const style = styleOf(node.style, o.catalog?.style);
+  const adaptive = adaptiveAttributes(node.adaptive);
   const extra: Record<string, string> = o.ids ? { "data-z-node": node.id } : {};
-  return {
-    ...el,
-    a: { ...el.a, ...extra },
-    ...(Object.keys(style).length ? { s: { ...el.s, ...style } } : {}),
-  };
+  const s = { ...el.s, ...style, ...adaptive.s };
+  return { ...el, a: { ...el.a, ...adaptive.a, ...extra }, ...(Object.keys(s).length ? { s } : {}) };
 }
 
 const isRaw = (n: unknown): n is RawHtml => typeof n === "object" && n !== null && (n as RawHtml).slot === "html";

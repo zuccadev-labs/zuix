@@ -60,7 +60,7 @@ export function tokenValueProblem(spec: TokenSpec, value: string, resolved: stri
   const v = (resolved ?? value).trim();
   switch (spec.type) {
     case "color":
-      return parseCssColor(v) ? null : "no es un color que se pueda medir (hex, rgb(), color-mix(in srgb, …) o una referencia)";
+      return parseCssColor(v) ? null : "no es un color que se pueda medir (hexadecimal, rgb o color-mix en srgb, o una referencia)";
     case "length": {
       if (/^(clamp|min|max|calc)\(/.test(v)) return null;
       const n = px(v);

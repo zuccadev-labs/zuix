@@ -2,6 +2,7 @@
 // marcado de su contrato (`zout/html.json`), igual que una aplicación sin React. `pnpm check` lo compara con él.
 
 import { h } from "../../core/vnode";
+import { type AdaptiveTemplates, adaptiveLayoutAttributes } from "../adaptive";
 import type { BlockSpec } from "../render";
 import { oneOf } from "../render";
 import { FLOW, LAYOUT, PHRASING, SPACE, bool, enumOf, text } from "./shared";
@@ -265,6 +266,117 @@ export const ZOUT_BLOCKS: BlockSpec[] = [
           : null,
         children.length ? h("div", { class: "z-landing-section__body" }, ...children) : null,
       );
+    },
+  },
+  {
+    type: "AdaptiveLayout",
+    package: "zout",
+    provisional: "AdaptiveLayout llega a zout en la rama feat/v05-adaptive; su manifiesto y su marcado sustituyen a estos al integrar.",
+    title: "AdaptiveLayout",
+    group: "layout",
+    description: "Rejilla de áreas con una plantilla por clase de tamaño. Cada hijo elige área, orden y visibilidad por clase.",
+    icon: "squares-2x2",
+    categories: ["flow"],
+    layout: true,
+    children: LAYOUT,
+    props: {
+      templates: {
+        type: "object",
+        "x-control": "json",
+        description:
+          'Plantilla por clase: { compact: { areas: ["main", "aside"] }, expanded: { areas: ["main aside"], columns: "1fr 18rem" } }.',
+        propertyNames: { enum: ["compact", "medium", "expanded", "large", "xlarge"] },
+        additionalProperties: {
+          type: "object",
+          required: ["areas"],
+          additionalProperties: false,
+          properties: {
+            areas: { type: "array", minItems: 1, items: { type: "string", pattern: "^[A-Za-z0-9_.\\s-]+$" } },
+            columns: { type: "string", pattern: "^[A-Za-z0-9 ().,%+*/-]*$" },
+            rows: { type: "string", pattern: "^[A-Za-z0-9 ().,%+*/-]*$" },
+          },
+        },
+        default: { compact: { areas: ["main", "aside"] }, expanded: { areas: ["main aside"], columns: "1fr 18rem" } },
+      },
+      measure: enumOf(["container", "viewport"], "container", "Sobre qué se mide la clase de tamaño."),
+    },
+    adaptive: {
+      layout: {
+        measure: "container",
+        templates: { compact: { areas: ["main", "aside"] }, expanded: { areas: ["main aside"], columns: "1fr 18rem" } },
+      },
+    },
+    presets: [
+      {
+        id: "lista-y-detalle",
+        title: "Lista y detalle",
+        node: {
+          id: "al",
+          type: "AdaptiveLayout",
+          props: { templates: { compact: { areas: ["list", "detail"] }, expanded: { areas: ["list detail"], columns: "20rem 1fr" } } },
+          children: [
+            {
+              id: "al-l",
+              type: "Section",
+              props: { tag: "nav" },
+              adaptive: { compact: { area: "list" } },
+              children: [{ id: "al-lp", type: "Paragraph", children: [{ id: "al-lt", type: "#text", text: "List" }] }],
+            },
+            {
+              id: "al-d",
+              type: "Section",
+              props: { tag: "section" },
+              adaptive: { compact: { area: "detail" } },
+              children: [{ id: "al-dp", type: "Paragraph", children: [{ id: "al-dt", type: "#text", text: "Detail" }] }],
+            },
+          ],
+        },
+      },
+      {
+        id: "contenido-con-lateral",
+        title: "Contenido con lateral",
+        node: {
+          id: "cl",
+          type: "AdaptiveLayout",
+          props: {
+            templates: {
+              compact: { areas: ["main", "aside"] },
+              expanded: { areas: ["main aside"], columns: "1fr 18rem" },
+              large: { areas: ["nav main aside"], columns: "14rem 1fr 18rem" },
+            },
+          },
+          children: [
+            {
+              id: "cl-n",
+              type: "Section",
+              props: { tag: "nav" },
+              adaptive: { compact: { hidden: true }, large: { hidden: false, area: "nav" } },
+              children: [{ id: "cl-np", type: "Paragraph", children: [{ id: "cl-nt", type: "#text", text: "Navigation" }] }],
+            },
+            {
+              id: "cl-m",
+              type: "Section",
+              props: { tag: "main" },
+              adaptive: { compact: { area: "main" } },
+              children: [{ id: "cl-mp", type: "Paragraph", children: [{ id: "cl-mt", type: "#text", text: "Content" }] }],
+            },
+            {
+              id: "cl-a",
+              type: "Section",
+              props: { tag: "aside" },
+              adaptive: { compact: { area: "aside", order: 2 } },
+              children: [{ id: "cl-ap", type: "Paragraph", children: [{ id: "cl-at", type: "#text", text: "Aside" }] }],
+            },
+          ],
+        },
+      },
+    ],
+    render: ({ props, children }) => {
+      const { a, s } = adaptiveLayoutAttributes(
+        props.templates as AdaptiveTemplates | undefined,
+        props.measure === "viewport" ? "viewport" : "container",
+      );
+      return { t: "div", a: { class: "z-adaptive", ...a }, s, c: children };
     },
   },
 ];
