@@ -481,12 +481,15 @@
     text-decoration: underline;
     text-underline-offset: 2px;
   }
+  /* Aviso fijo, no texto del usuario: sin pre-wrap, que en el marcado HTML conserva el sangrado. El icono va en la
+     línea, como una letra más: si el aviso parte en dos líneas, se queda con la primera. */
   .z-message__text--deleted {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--z-space-1-5);
     color: var(--z-fg-muted);
     font-style: italic;
+    white-space: normal;
+  }
+  .z-message__text--deleted svg.z-icon {
+    margin-inline-end: var(--z-space-1-5);
   }
   .z-message__match {
     border-radius: var(--z-radius-xs);

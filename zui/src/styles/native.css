@@ -7,6 +7,41 @@
   svg.z-icon {
     fill: currentColor;
     flex-shrink: 0;
+    /* En una línea de texto (o en un envoltorio que no es flex), el icono va centrado en la letra y no apoyado en
+       la línea base con el hueco del descendente debajo. En un contenedor flex o grid no tiene efecto. */
+    vertical-align: middle;
+  }
+  /* Con la unidad cap, el centro del icono va a media altura de las mayúsculas, que es el centro de la caja de la
+     letra (middle lo deja 1–2 px por debajo). vertical-align sube el borde inferior: media mayúscula menos medio
+     icono. Sin tamaño conocido, el icono mide 1em. */
+  @supports (vertical-align: 1cap) {
+    svg.z-icon {
+      vertical-align: calc(0.5cap - 0.5em);
+    }
+    svg.z-icon[height="10"] {
+      vertical-align: calc(0.5cap - 5px);
+    }
+    svg.z-icon[height="12"] {
+      vertical-align: calc(0.5cap - 6px);
+    }
+    svg.z-icon[height="14"] {
+      vertical-align: calc(0.5cap - 7px);
+    }
+    svg.z-icon[height="16"] {
+      vertical-align: calc(0.5cap - 8px);
+    }
+    svg.z-icon[height="18"] {
+      vertical-align: calc(0.5cap - 9px);
+    }
+    svg.z-icon[height="20"] {
+      vertical-align: calc(0.5cap - 10px);
+    }
+    svg.z-icon[height="22"] {
+      vertical-align: calc(0.5cap - 11px);
+    }
+    svg.z-icon[height="24"] {
+      vertical-align: calc(0.5cap - 12px);
+    }
   }
   z-icon {
     display: contents;
