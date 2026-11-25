@@ -18,7 +18,7 @@
     "barrels": "node tools/check-barrels.mjs",
     "docs:coverage": "node tools/docs-coverage.mjs",
     "llms": "pnpm --filter @zuccadev-labs/zuix-zudocs llms",
-    "check": "pnpm tokens && pnpm icons && pnpm style-audit && pnpm manifest && pnpm barrels && pnpm html && pnpm docs:coverage && pnpm dist && pnpm matrix && pnpm llms && pnpm typecheck",
+    "check": "pnpm tokens && pnpm icons && pnpm style-audit && pnpm manifest && pnpm barrels && pnpm html && pnpm editor && pnpm docs:coverage && pnpm dist && pnpm matrix && pnpm llms && pnpm typecheck",
     "html": "node tools/html.mjs",
     "dist": "node tools/dist.mjs && node examples/html/build.mjs",
     "matrix": "node tools/compat-matrix.mjs",
@@ -37,7 +37,8 @@
     "test:site": "node tests/site/run.mjs",
     "test:site:all": "BROWSER=all node tests/site/run.mjs",
     "audit:visual": "node tools/visual-audit.mjs",
-    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm test:site && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser"
+    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm --filter @zuccadev-labs/zuix-zudocs build && pnpm test:site && pnpm build && pnpm test:pack --skip-build && pnpm test:html && pnpm test:browser",
+    "editor": "node tools/editor-catalog.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

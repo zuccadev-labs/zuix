@@ -1,0 +1,54 @@
+/* Capas del lienzo de un editor visual (@zuccadev-labs/zuix-zui/editor, createCanvas): selección y paso del puntero.
+   Fuera del documento pintado, en la capa superior, sin recibir el puntero. */
+@layer zui.editor {
+  .z-editor-overlay {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    inline-size: auto;
+    block-size: auto;
+    background: none;
+    overflow: visible;
+    pointer-events: none;
+    z-index: var(--z-layer-top);
+  }
+  .z-editor-overlay__box {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    box-sizing: border-box;
+    border-radius: var(--z-radius-xs);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-editor-overlay__box[data-kind="hover"] {
+    outline-style: dashed;
+    outline-width: 1px;
+  }
+  .z-editor-overlay__box[hidden] {
+    display: none;
+  }
+  .z-editor-overlay__label {
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 0;
+    margin-block-end: var(--z-space-1);
+    padding-inline: var(--z-space-1-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-solid);
+    color: var(--z-fg-on-accent);
+    font: var(--z-weight-medium) var(--z-text-caption) / var(--z-leading-snug) var(--z-font-sans);
+    white-space: nowrap;
+  }
+  .z-editor-overlay__box[data-kind="hover"] .z-editor-overlay__label,
+  .z-editor-overlay__label:empty {
+    display: none;
+  }
+  @media (forced-colors: active) {
+    .z-editor-overlay__box {
+      outline-color: Highlight;
+    }
+  }
+}

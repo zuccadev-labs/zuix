@@ -1,0 +1,62 @@
+/* Editor de demostración: maquetación mínima, sin estilo de producto. Solo tokens. */
+body {
+  margin: 0;
+  color: var(--z-fg);
+  font-family: var(--z-font-sans);
+  font-size: var(--z-text-body);
+}
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--z-space-2);
+  padding: var(--z-space-2) var(--z-space-4);
+  border-block-end: 1px solid var(--z-line);
+  background: var(--z-surface-solid);
+}
+.bar__spacer {
+  flex: 1;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 300px;
+  height: calc(100vh - 56px);
+}
+.panel {
+  overflow: auto;
+  padding: var(--z-space-3);
+  background: var(--z-surface-solid);
+}
+.filter {
+  inline-size: 100%;
+  margin-block-end: var(--z-space-2);
+}
+.palette {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.palette button {
+  inline-size: 100%;
+  justify-content: flex-start;
+}
+#canvas {
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+}
+.props {
+  display: grid;
+  gap: var(--z-space-2);
+}
+.props label {
+  display: grid;
+  gap: var(--z-space-1);
+}
+.status {
+  color: var(--z-fg-muted);
+}
+.exported textarea {
+  inline-size: min(80vw, 900px);
+  font-family: var(--z-font-mono);
+}

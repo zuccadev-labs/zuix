@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-brand="dazlabs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'; trusted-types zuix-zui">
+  <title>Lienzo</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../tokens/dist/tokens.css">
+  <link rel="stylesheet" href="../../zui/dist/zui.css">
+  <link rel="stylesheet" href="../../zout/dist/zout.css">
+  <!-- Sin fonts.css: con sandbox el lienzo tiene origen opaco y las fuentes piden CORS, que el servidor de pruebas no da. -->
+  <link rel="stylesheet" href="./canvas.css">
+</head>
+<body class="z-root z-canvas">
+  <main id="page"></main>
+  <script src="./dist/canvas.js"></script>
+</body>
+</html>

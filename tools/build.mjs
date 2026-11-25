@@ -129,7 +129,9 @@ function main() {
       }
       const [js, dts] = [specs(value.default), specs(value.types)];
       for (const s of js) if (!published(s)) fail(`suite/${value.default}: "${s}" no es una entrada publicada`);
-      if (dts.length && js.join() !== dts.join()) fail(`suite: ${value.default} y ${value.types} no reexportan lo mismo`);
+      // Un módulo que reexporta un JSON (`with { type: "json" }`) declara su tipo con el del paquete: no se comparan.
+      if (dts.length && !js.some((s) => s.endsWith(".json")) && js.join() !== dts.join())
+        fail(`suite: ${value.default} y ${value.types} no reexportan lo mismo`);
       entries += 1;
     }
     console.log(

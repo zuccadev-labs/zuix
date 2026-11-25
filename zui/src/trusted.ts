@@ -22,8 +22,10 @@ function policy(): TrustedTypePolicyLike | null {
   store[SLOT] = null;
   const factory = (globalThis as { trustedTypes?: TrustedTypesLike }).trustedTypes;
   try {
-    // La política no filtra: solo recibe el marcado fijo del paquete (`setMarkup`) y el documento de la vista previa
-    // de Artifact, que se carga en un iframe con sandbox vacío (sin scripts ni el origen de la página).
+    // La política no filtra: solo recibe el marcado fijo del paquete (`setMarkup`), el documento de la vista previa
+    // de Artifact, que se carga en un iframe con sandbox vacío (sin scripts ni el origen de la página), y la salida de
+    // `toTrustedHTML` del conector de editores, que es segura por construcción: etiquetas y atributos fijos, texto y
+    // valores escapados, URL filtradas por esquema (editor/render).
     if (factory) store[SLOT] = factory.createPolicy(TRUSTED_TYPES_POLICY, { createHTML: (input) => input });
   } catch {
     // La CSP no admite la política: se asigna la cadena y el navegador decide (lanza con require-trusted-types-for).

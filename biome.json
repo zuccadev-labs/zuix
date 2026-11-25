@@ -30,6 +30,9 @@
       "!zui/html.json",
       "!zout/manifest.json",
       "!zout/html.json",
+      "!zui/editor/catalog.json",
+      "!zui/editor/document.schema.json",
+      "!zui/src/editor/blocks.generated.ts",
       "!examples/html/index.html",
       "!examples/zenith-docs",
       "!zudocs/static/llms.txt"

@@ -1,0 +1,15 @@
+{
+  "name": "@zuccadev-labs/zuix-example-editor-canvas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Editor mínimo de demostración sobre el conector @zuccadev-labs/zuix-zui/editor: catálogo, lienzo en un iframe con el puente, panel de props desde el JSON Schema y exportar HTML. Base de la prueba del puente en tests/html.",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@zuccadev-labs/zuix-tokens": "workspace:*",
+    "@zuccadev-labs/zuix-zicon": "workspace:*",
+    "@zuccadev-labs/zuix-zui": "workspace:*"
+  }
+}

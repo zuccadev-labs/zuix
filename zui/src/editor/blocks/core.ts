@@ -1,0 +1,170 @@
+// Bloques del conector: los elementos de HTML que una página necesita y que no son un componente (título, párrafo,
+// imagen, lista, cita, sección, énfasis, enlace nativo e icono). Con ellos se expresan también los ejemplos de los
+// manifiestos que mezclan componentes con marcado propio (`<p>Read the <Link …/></p>`).
+
+import { h } from "../../core/vnode";
+import type { BlockSpec } from "../render";
+import { oneOf, safeUrl } from "../render";
+import { BLOCK, CONTROL, FLOW, INLINE, LAYOUT, PHRASING, PHRASING_STATIC, enumOf, icon, text, zicon } from "./shared";
+
+const LEVELS = [1, 2, 3, 4, 5, 6];
+const INLINE_TAGS = ["strong", "em", "code", "kbd", "mark", "small", "s", "span", "sub", "sup"];
+const SECTION_TAGS = ["div", "section", "article", "header", "footer", "main", "aside", "nav"];
+
+export const CORE_BLOCKS: BlockSpec[] = [
+  {
+    type: "Heading",
+    package: "core",
+    group: "text",
+    title: "Heading",
+    description: "Título de sección (h1–h6).",
+    icon: "bars-3-center-left",
+    categories: ["flow", "heading"],
+    children: PHRASING,
+    props: { level: enumOf(LEVELS, 2, "Nivel del título. Uno solo de nivel 1 por página.") },
+    a11y: [{ rule: "required-text", slot: "children", message: "un título necesita texto" }],
+    render: ({ props, children }) => h(`h${oneOf(props.level, LEVELS, 2)}`, null, ...children),
+  },
+  {
+    type: "Paragraph",
+    package: "core",
+    group: "text",
+    title: "Paragraph",
+    description: "Párrafo de texto con formato en línea.",
+    icon: "bars-3-bottom-left",
+    categories: BLOCK,
+    children: PHRASING,
+    props: {},
+    render: ({ children }) => h("p", null, ...children),
+  },
+  {
+    type: "InlineText",
+    package: "core",
+    group: "text",
+    title: "Inline text",
+    description: "Texto en línea con significado: énfasis, código, tecla, resaltado o letra pequeña.",
+    icon: "bold",
+    categories: INLINE,
+    children: PHRASING,
+    props: { tag: enumOf(INLINE_TAGS, "strong", "Elemento: strong, em, code, kbd, mark, small, s, span, sub o sup.") },
+    render: ({ props, children }) => h(oneOf(props.tag, INLINE_TAGS, "strong"), null, ...children),
+  },
+  {
+    type: "Anchor",
+    package: "core",
+    group: "text",
+    title: "Anchor",
+    description: "Enlace nativo, sin la clase z-link (dentro de Prose toma su estilo).",
+    icon: "link",
+    categories: CONTROL,
+    children: PHRASING_STATIC,
+    props: { href: { type: "string", format: "uri-reference", "x-control": "link", description: "Destino." } },
+    a11y: [{ rule: "name", props: [], text: true, message: "un enlace necesita texto" }],
+    render: ({ props, children }) => h("a", { href: safeUrl(props.href) }, ...children),
+  },
+  {
+    type: "Image",
+    package: "core",
+    group: "media",
+    title: "Image",
+    description: "Imagen. Sin texto alternativo vacío solo si es decorativa.",
+    icon: "photo",
+    categories: INLINE,
+    props: {
+      src: { type: "string", format: "uri-reference", "x-control": "image", description: "URL de la imagen." },
+      alt: text("Texto alternativo. Vacío si la imagen es decorativa."),
+      width: { type: "integer", minimum: 1, maximum: 8192, "x-control": "number" },
+      height: { type: "integer", minimum: 1, maximum: 8192, "x-control": "number" },
+      loading: enumOf(["lazy", "eager"], "lazy", "`eager` solo para la imagen principal de la página."),
+    },
+    a11y: [{ rule: "alt", prop: "alt", message: "una imagen necesita `alt` (vacío si es decorativa)" }],
+    render: ({ props }) =>
+      h("img", {
+        src: safeUrl(props.src, "image"),
+        alt: typeof props.alt === "string" ? props.alt : "",
+        width: typeof props.width === "number" ? props.width : undefined,
+        height: typeof props.height === "number" ? props.height : undefined,
+        loading: oneOf(props.loading, ["lazy", "eager"], "lazy"),
+      }),
+  },
+  {
+    type: "List",
+    package: "core",
+    group: "text",
+    title: "List",
+    description: "Lista con viñetas o numerada.",
+    icon: "list-bullet",
+    categories: BLOCK,
+    children: { types: ["ListItem"] },
+    props: { ordered: { type: "boolean", default: false, "x-control": "switch", description: "Numerada (ol)." } },
+    render: ({ props, children }) => h(props.ordered === true ? "ol" : "ul", null, ...children),
+  },
+  {
+    type: "ListItem",
+    package: "core",
+    group: "text",
+    title: "List item",
+    description: "Elemento de una lista.",
+    icon: "minus",
+    categories: [],
+    parents: ["List"],
+    children: FLOW,
+    props: {},
+    render: ({ children }) => h("li", null, ...children),
+  },
+  {
+    type: "Quote",
+    package: "core",
+    group: "text",
+    title: "Quote",
+    description: "Cita en bloque.",
+    icon: "chat-bubble-bottom-left-text",
+    categories: BLOCK,
+    children: FLOW,
+    props: { cite: { type: "string", format: "uri-reference", "x-control": "link", description: "Fuente de la cita." } },
+    render: ({ props, children }) => h("blockquote", { cite: safeUrl(props.cite) }, ...children),
+  },
+  {
+    type: "Section",
+    package: "core",
+    group: "layout",
+    title: "Section",
+    description: "Agrupa bloques con un elemento semántico (section, header, footer, main, nav…).",
+    icon: "square-3-stack-3d",
+    categories: ["flow", "sectioning"],
+    layout: true,
+    children: LAYOUT,
+    props: {
+      tag: enumOf(SECTION_TAGS, "section", "Elemento."),
+      label: text("Nombre accesible de la región (aria-label)."),
+    },
+    render: ({ props, children }) =>
+      h(
+        oneOf(props.tag, SECTION_TAGS, "section"),
+        { "aria-label": typeof props.label === "string" && props.label ? props.label : undefined },
+        ...children,
+      ),
+  },
+  {
+    type: "Icon",
+    package: "core",
+    group: "media",
+    title: "Icon",
+    description: "Icono de zicon. Sin `label` es decorativo.",
+    icon: "star",
+    categories: INLINE,
+    props: {
+      name: { ...icon("Nombre del icono."), default: "star" },
+      size: { type: "integer", minimum: 8, maximum: 96, default: 16, "x-control": "number" },
+      variant: enumOf(["outline", "solid"], "outline"),
+      label: text("Nombre accesible si el icono comunica algo por sí solo."),
+    },
+    render: ({ props }) =>
+      zicon(
+        props.name ?? "star",
+        typeof props.size === "number" ? props.size : 16,
+        props.variant,
+        typeof props.label === "string" ? props.label : undefined,
+      ),
+  },
+];

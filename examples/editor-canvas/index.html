@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-brand="dazlabs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zuix · editor de demostración</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../tokens/dist/tokens.css">
+  <link rel="stylesheet" href="../../zui/dist/zui.css">
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="stylesheet" href="./editor.css">
+</head>
+<body class="z-root z-canvas">
+  <header class="bar">
+    <strong>Editor de demostración</strong>
+    <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="undo" disabled>Deshacer</button>
+    <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="redo" disabled>Rehacer</button>
+    <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="up">Subir</button>
+    <button type="button" class="z-btn z-btn--secondary" data-size="sm" id="down">Bajar</button>
+    <button type="button" class="z-btn z-btn--danger" data-size="sm" id="remove">Borrar</button>
+    <span class="bar__spacer"></span>
+    <label>Tema <select id="theme"><option>dark</option><option>light</option></select></label>
+    <label>Marca <select id="brand"></select></label>
+    <label>Acento <input type="color" id="accent" value="#e74327"></label>
+    <button type="button" class="z-btn z-btn--primary" data-size="sm" id="export">Exportar HTML</button>
+  </header>
+  <div class="layout">
+    <nav class="panel" aria-label="Catálogo">
+      <input type="search" id="filter" class="filter" placeholder="Buscar bloque" aria-label="Buscar bloque">
+      <ul id="palette" class="palette"></ul>
+    </nav>
+    <iframe id="canvas" title="Lienzo" sandbox="allow-scripts"></iframe>
+    <aside class="panel" aria-label="Propiedades">
+      <h2 id="selected">Sin selección</h2>
+      <form id="props" class="props"></form>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </aside>
+  </div>
+  <dialog id="exported" class="exported">
+    <form method="dialog">
+      <h2>HTML del documento</h2>
+      <textarea id="html" rows="16" readonly aria-label="HTML del documento"></textarea>
+      <p id="downloads"></p>
+      <button type="submit" class="z-btn z-btn--secondary" data-size="sm">Cerrar</button>
+    </form>
+  </dialog>
+  <script src="./dist/editor.js"></script>
+</body>
+</html>

@@ -53,6 +53,11 @@
     "./dom/people": "./src/dom/families/people.ts",
     "./dom/nodes": "./src/dom/families/nodes.ts",
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
+    "./editor": "./src/editor/index.ts",
+    "./editor/react": "./src/editor/react.ts",
+    "./editor/catalog.json": "./editor/catalog.json",
+    "./editor/catalog.schema.json": "./editor/catalog.schema.json",
+    "./editor/document.schema.json": "./editor/document.schema.json",
     "./html.json": "./html.json",
     "./dist/zui.css": "./dist/zui.css",
     "./dist/zui.compat.css": "./dist/zui.compat.css",
@@ -89,6 +94,7 @@
   },
   "files": [
     "dist",
+    "editor",
     "manifest.json",
     "html.json",
     "AGENTS.md",
@@ -181,6 +187,17 @@
         "types": "./dist/esm/dom/carousel-gl.d.ts",
         "default": "./dist/esm/dom/carousel-gl.js"
       },
+      "./editor": {
+        "types": "./dist/esm/editor/index.d.ts",
+        "default": "./dist/esm/editor/index.js"
+      },
+      "./editor/react": {
+        "types": "./dist/esm/editor/react.d.ts",
+        "default": "./dist/esm/editor/react.js"
+      },
+      "./editor/catalog.json": "./editor/catalog.json",
+      "./editor/catalog.schema.json": "./editor/catalog.schema.json",
+      "./editor/document.schema.json": "./editor/document.schema.json",
       "./styles.css": "./dist/zui.css",
       "./styles.compat.css": "./dist/zui.compat.css",
       "./styles/*": "./dist/styles/*",

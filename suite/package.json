@@ -109,6 +109,18 @@
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"
     },
+    "./editor": {
+      "types": "./editor.d.ts",
+      "default": "./editor.js"
+    },
+    "./editor/react": {
+      "types": "./editor-react.d.ts",
+      "default": "./editor-react.js"
+    },
+    "./editor/catalog": {
+      "types": "./editor-catalog.d.ts",
+      "default": "./editor-catalog.js"
+    },
     "./zout": {
       "types": "./zout.d.ts",
       "default": "./zout.js"

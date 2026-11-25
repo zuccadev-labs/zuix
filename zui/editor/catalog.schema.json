@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zuix.dev/schemas/editor/catalog.schema.json",
+  "title": "Catálogo de bloques de zuix para editores visuales",
+  "description": "Forma de editor/catalog.json. La versión del esquema es schemaVersion; un cambio incompatible en esta forma la sube.",
+  "type": "object",
+  "required": ["schemaVersion", "zuix", "documentSchemaVersion", "protocolVersion", "blocks", "icons", "style", "tokens"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "zuix": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$" },
+    "documentSchemaVersion": { "type": "integer", "minimum": 1 },
+    "protocolVersion": { "type": "integer", "minimum": 1 },
+    "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+    "icons": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }, "uniqueItems": true },
+    "style": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["css"],
+        "additionalProperties": false,
+        "properties": {
+          "css": { "type": "string", "pattern": "^[a-z-]+$" },
+          "tokens": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" } },
+          "keywords": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "tokens": { "$ref": "#/$defs/tokens" }
+  },
+  "$defs": {
+    "category": { "enum": ["flow", "phrasing", "interactive", "heading", "sectioning"] },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "accepts": { "type": "array", "items": { "$ref": "#/$defs/category" } },
+        "types": { "type": "array", "items": { "type": "string" } },
+        "rejects": { "type": "array", "items": { "$ref": "#/$defs/category" } },
+        "text": { "type": "boolean" },
+        "max": { "type": "integer", "minimum": 0 },
+        "required": { "type": "boolean" }
+      }
+    },
+    "propSchema": {
+      "type": "object",
+      "properties": {
+        "x-control": { "enum": ["text", "number", "select", "token-color", "icon", "switch", "image", "link", "json"] }
+      }
+    },
+    "a11y": {
+      "type": "object",
+      "required": ["rule", "message"],
+      "properties": {
+        "rule": { "enum": ["name", "alt", "required-text"] },
+        "props": { "type": "array", "items": { "type": "string" } },
+        "prop": { "type": "string" },
+        "slot": { "type": "string" },
+        "text": { "type": "boolean" },
+        "message": { "type": "string" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "required": [
+        "type",
+        "package",
+        "group",
+        "title",
+        "description",
+        "icon",
+        "html",
+        "behavior",
+        "layout",
+        "categories",
+        "props",
+        "slots",
+        "variants",
+        "presets",
+        "events",
+        "a11y",
+        "classes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+        "package": { "enum": ["zui", "zout", "core"] },
+        "group": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "import": { "type": "string" },
+        "html": { "enum": ["template", "preset", "none"] },
+        "behavior": { "enum": ["none", "dom"] },
+        "layout": { "type": "boolean" },
+        "categories": { "type": "array", "items": { "$ref": "#/$defs/category" } },
+        "props": {
+          "type": "object",
+          "required": ["type", "properties"],
+          "properties": {
+            "type": { "const": "object" },
+            "additionalProperties": { "const": false },
+            "properties": { "type": "object", "additionalProperties": { "$ref": "#/$defs/propSchema" } }
+          }
+        },
+        "children": { "$ref": "#/$defs/slot" },
+        "slots": { "type": "object", "additionalProperties": { "$ref": "#/$defs/slot" } },
+        "parents": { "type": "array", "items": { "type": "string" } },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["prop", "value", "label"],
+            "additionalProperties": false,
+            "properties": { "prop": { "type": "string" }, "value": {}, "label": { "type": "string" } }
+          }
+        },
+        "presets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+              "title": { "type": "string" },
+              "node": { "type": "object", "required": ["id", "type"] },
+              "html": { "type": "string" },
+              "script": { "type": "string" }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "react", "type"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "react": { "type": "string", "pattern": "^on[A-Z]" },
+              "dom": { "type": "string", "pattern": "^z:[a-z]+$" },
+              "type": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "a11y": { "type": "array", "items": { "$ref": "#/$defs/a11y" } },
+        "classes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "token": {
+      "type": "object",
+      "required": ["name", "type", "group", "scope", "default"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "type": { "enum": ["color", "length", "duration", "number", "font", "shadow", "easing", "gradient", "other"] },
+        "group": { "type": "string" },
+        "scope": { "enum": ["theme", "scale", "component"] },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "default": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "required": ["dark", "light"],
+              "additionalProperties": false,
+              "properties": { "dark": { "type": "string" }, "light": { "type": "string" } }
+            }
+          ]
+        }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["defaultBrand", "themes", "brands", "brandSchema", "tokens", "contrast", "base", "brandFiles"],
+      "additionalProperties": false,
+      "properties": {
+        "defaultBrand": { "type": "string" },
+        "themes": { "type": "array", "items": { "enum": ["dark", "light"] } },
+        "brands": { "type": "array", "items": { "type": "string" } },
+        "brandSchema": { "type": "object" },
+        "tokens": { "type": "array", "items": { "$ref": "#/$defs/token" } },
+        "contrast": {
+          "type": "object",
+          "required": ["surfaces", "text", "canvasText", "pairs", "nonText", "uses", "borders", "pending"],
+          "properties": {
+            "surfaces": { "type": "object" },
+            "text": { "type": "array", "items": { "type": "string" } },
+            "canvasText": { "type": "array", "items": { "type": "string" } },
+            "pairs": { "type": "array" },
+            "nonText": { "type": "array", "items": { "type": "string" } },
+            "uses": { "type": "array" },
+            "borders": { "type": "array" },
+            "pending": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "base": {
+          "type": "object",
+          "required": ["scale", "semantic", "component"],
+          "properties": {
+            "scale": { "type": "object", "additionalProperties": { "type": "string" } },
+            "semantic": { "type": "object", "additionalProperties": { "type": "string" } },
+            "component": { "type": "object", "additionalProperties": { "type": "string" } }
+          }
+        },
+        "brandFiles": { "type": "object" }
+      }
+    }
+  }
+}
