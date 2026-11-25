@@ -32,6 +32,9 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Corregido
 
+- La página de `DataTable` daba un error de hidratación (React #418) cuando el sitio se compilaba con una
+  configuración regional distinta de la del navegador: la fecha de «Ordenable» se formateaba con la del entorno. El
+  ejemplo la formatea con `en-US` y UTC.
 - A 390 px la vista previa de `Stories` cortaba el visor (551 px de alto en un escenario de 256) y no se veían sus
   controles. El escenario apila en columna con `flex-wrap: wrap`, y en una columna de varias líneas el navegador mide
   la altura de cada pieza con su ancho ajustado al contenido; el visor 9:16 se medía con 118 px de ancho. En el

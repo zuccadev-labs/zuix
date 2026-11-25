@@ -11038,7 +11038,7 @@
    "examples": [
     {
      "title": "Ordenable",
-     "code": "const users = [\n  { id: 1, name: \"Ana Ruiz\", seats: 3, joined: new Date(\"2025-03-02\") },\n  { id: 2, name: \"Leo Park\", seats: 1, joined: new Date(\"2026-01-15\") },\n];\n\n<DataTable\n  caption=\"Users\"\n  captionHidden\n  rows={users}\n  rowKey={(user) => user.id}\n  defaultSort={{ key: \"name\", direction: \"asc\" }}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (user) => user.name, sortable: true },\n    { key: \"seats\", header: \"Seats\", accessor: (user) => user.seats, sortable: true, align: \"end\", mono: true },\n    { key: \"joined\", header: \"Joined\", accessor: (user) => user.joined, sortable: true },\n  ]}\n/>"
+     "code": "const users = [\n  { id: 1, name: \"Ana Ruiz\", seats: 3, joined: new Date(\"2025-03-02\") },\n  { id: 2, name: \"Leo Park\", seats: 1, joined: new Date(\"2026-01-15\") },\n];\n\n<DataTable\n  caption=\"Users\"\n  captionHidden\n  rows={users}\n  rowKey={(user) => user.id}\n  defaultSort={{ key: \"name\", direction: \"asc\" }}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (user) => user.name, sortable: true },\n    { key: \"seats\", header: \"Seats\", accessor: (user) => user.seats, sortable: true, align: \"end\", mono: true },\n    {\n      key: \"joined\",\n      header: \"Joined\",\n      accessor: (user) => user.joined,\n      render: (user) => user.joined.toLocaleDateString(\"en-US\", { timeZone: \"UTC\" }),\n      sortable: true,\n    },\n  ]}\n/>"
     },
     {
      "title": "Filas activables y celda propia",

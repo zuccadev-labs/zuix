@@ -233,7 +233,14 @@ export const content: Record<string, ExampleDemos> = {
         columns={[
           { key: "name", header: "Name", accessor: (user) => user.name, sortable: true },
           { key: "seats", header: "Seats", accessor: (user) => user.seats, sortable: true, align: "end", mono: true },
-          { key: "joined", header: "Joined", accessor: (user) => user.joined, sortable: true },
+          {
+            key: "joined",
+            header: "Joined",
+            accessor: (user) => user.joined,
+            // Locale y zona fijos: el texto del render del servidor y el de la hidratación coinciden.
+            render: (user) => user.joined.toLocaleDateString("en-US", { timeZone: "UTC" }),
+            sortable: true,
+          },
         ]}
       />
     ),
