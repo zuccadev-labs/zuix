@@ -182,4 +182,30 @@ export default async function ({ page, test, ok }) {
     await until((s) => document.querySelector(s).dataset.sizeClass === "expanded", "no pasó a expanded", shell);
     ok((await page.locator(`${shell} .z-sidebar[data-collapsed]`).count()) === 0, "expanded: se despliega al salir de rail");
   });
+
+  await test("AdaptiveLayout acepta el marcado del editor visual (--z-adaptive-areas-* y data-z-adaptive)", async () => {
+    const r = await page.evaluate(async () => {
+      document.getElementById("zad-editor")?.remove();
+      const box = document.createElement("div");
+      box.id = "zad-editor";
+      box.style.inlineSize = "1000px";
+      box.innerHTML = `<div class="z-adaptive" data-measure="container" style='--z-adaptive-areas-compact: "a" "b"; --z-adaptive-areas-expanded: "b a"'>
+        <div class="z-adaptive__grid">
+          <div class="z-adaptive__item" data-item="a" data-z-adaptive='{"compact":{"area":"a"}}'><button type="button">A</button></div>
+          <div class="z-adaptive__item" data-item="b" data-z-adaptive='{"compact":{"area":"b"},"medium":{"hidden":true},"expanded":{"hidden":false}}'><button type="button">B</button></div>
+        </div></div>`;
+      document.querySelector("[data-z-dom]").append(box);
+      (await import("/zout/dist/zout.dom.js")).hydrate(box);
+      const [a, b] = ["a", "b"].map((k) => box.querySelector(`[data-item="${k}"]`));
+      return {
+        cls: box.querySelector(".z-adaptive").dataset.sizeClass,
+        bLeft: b.getBoundingClientRect().left < a.getBoundingClientRect().left,
+        dom: [...box.querySelectorAll(".z-adaptive__item")].map((el) => el.dataset.item).join(),
+        hiddenIn: b.getAttribute("data-hidden-in"),
+      };
+    });
+    ok(r.cls === "expanded" && r.bLeft, `expanded: b a la izquierda de a (${JSON.stringify(r)})`);
+    ok(r.dom === "b,a", `el DOM sigue el orden visual: ${r.dom}`);
+    ok(r.hiddenIn === "medium", `oculto en medium: ${r.hiddenIn}`);
+  });
 }

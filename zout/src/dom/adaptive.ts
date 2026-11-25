@@ -22,6 +22,8 @@ import {
 } from "../adaptive-runtime";
 
 const watched = new WeakMap<HTMLElement, () => void>();
+// Ajustes de cada pieza que pasó por setAdaptiveItem (o vino del editor), para recolocarla al cambiar las plantillas.
+const nodes = new WeakMap<HTMLElement, AdaptiveNode>();
 const current = new WeakMap<HTMLElement, SizeClass>();
 const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
 
@@ -111,7 +113,44 @@ function watchSwitch(el: HTMLElement): void {
   });
 }
 
+/**
+ * Marcado del documento del editor visual (`zui/editor`): plantillas en `--z-adaptive-areas-<clase>` (y
+ * `-columns-`, `-rows-`) en el layout o su rejilla, ajustes de cada pieza en `data-z-adaptive` (JSON) y
+ * `data-measure="viewport"`. Se traduce a las variables de zout la primera vez; lo que ya las tiene no se toca.
+ */
+function upgradeEditorMarkup(layout: HTMLElement): void {
+  if (layout.dataset.measure === "viewport") layout.dataset.measure = "window";
+  const { grid, items } = layoutParts(layout);
+  if (!grid) return;
+  const read = (name: string) => (grid.style.getPropertyValue(name) || layout.style.getPropertyValue(name)).trim();
+  if (!read("--z-areas-compact")) {
+    const templates: AdaptiveTemplates = {};
+    for (const cls of SIZE_CLASS_NAMES) {
+      const areas = parseAreasValue(read(`--z-adaptive-areas-${cls}`));
+      if (!areas) continue;
+      const columns = read(`--z-adaptive-columns-${cls}`);
+      const rows = read(`--z-adaptive-rows-${cls}`);
+      templates[cls] = { areas, ...(columns ? { columns } : {}), ...(rows ? { rows } : {}) };
+    }
+    if (Object.keys(templates).length)
+      for (const [name, value] of Object.entries(templateVars(templates))) grid.style.setProperty(name, value);
+  }
+  const templates = getAdaptiveTemplates(layout);
+  for (const item of items) {
+    const json = item.getAttribute("data-z-adaptive");
+    if (!json || item.style.getPropertyValue("--z-place-compact")) continue;
+    try {
+      const node: AdaptiveNode = { id: item.dataset.item ?? "", adaptive: JSON.parse(json) };
+      nodes.set(item, node);
+      writeItem(item, node, templates);
+    } catch {
+      // JSON no válido: la pieza queda en flujo.
+    }
+  }
+}
+
 export function hydrateAdaptive(root: ParentNode): void {
+  for (const layout of all(root, ".z-adaptive")) upgradeEditorMarkup(layout);
   for (const layout of all(root, ".z-adaptive")) watchLayout(layout);
   for (const el of all(root, ".z-adaptive-switch")) watchSwitch(el);
 }
@@ -157,8 +196,6 @@ export function setAdaptiveTemplates(layout: HTMLElement, templates: AdaptiveTem
   if (layout.hasAttribute("data-transition")) adaptiveTransition(layout, apply);
   else apply();
 }
-
-const nodes = new WeakMap<HTMLElement, AdaptiveNode>();
 
 function writeItem(item: HTMLElement, node: AdaptiveNode, templates: AdaptiveTemplates): void {
   const { vars, hiddenIn } = nodeStyle(templates, node);

@@ -27,6 +27,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `@zuccadev-labs/zuix-zout/dom`: `.z-adaptive` y `.z-adaptive-switch` (evento `z:sizeclass`, y `z:ordermismatch` en
   modo visual), `setAdaptiveTemplates`, `setAdaptiveItem`, `getAdaptiveTemplates`, `sizeClassOf`,
   `observeSizeClass` y `adaptiveTransition` (view transitions, sin animar con `prefers-reduced-motion`).
+  Traduce además el marcado del documento del editor visual (`--z-adaptive-areas-<clase>`, `data-z-adaptive`).
 
 ### Cambiado
 

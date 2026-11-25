@@ -161,6 +161,11 @@ adaptive })` los ajustes de una pieza; `getAdaptiveTemplates(layout)` lee las pl
 variables. Es lo que usa un editor sin React. `sizeClassOf(el)` mide la clase de un elemento y
 `observeSizeClass(el, fn)` la vigila.
 
+El módulo acepta también el marcado que escribe el documento del editor visual: plantillas en
+`--z-adaptive-areas-<clase>` (con `--z-adaptive-columns-<clase>` y `--z-adaptive-rows-<clase>`) en el layout o en
+su rejilla, los ajustes de cada pieza en `data-z-adaptive` (JSON) y `data-measure="viewport"`. Al hidratar los
+traduce a las variables de arriba; hasta entonces, sin ellas, las piezas van en una columna.
+
 ## Orden de lectura y foco
 
 Cuando una plantilla pone delante una pieza que va detrás en el DOM, lo que se ve y lo que recorren el teclado y el

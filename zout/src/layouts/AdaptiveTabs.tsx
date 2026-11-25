@@ -27,7 +27,7 @@ export interface AdaptiveTabsProps {
   /** Nombre accesible de la navegación (lista de pestañas, select o barra). */
   label: string;
   /**
-   * Variante por clase: `tabs`, `select` o `bottom-nav`. Por defecto, `select` en compacto y `tabs` desde medio.
+   * Variante por clase: `tabs`, `select` o `bottom-nav` (también `bottom-navigation`). Por defecto, `select` en compacto y `tabs` desde medio.
    */
   adaptive?: AdaptiveMap;
   /** Aspecto de las pestañas. */
@@ -65,6 +65,19 @@ export function AdaptiveTabs({
       {current?.content}
     </div>
   );
+  const bottomNav = (
+    <>
+      {panel}
+      <BottomNavigation
+        position="static"
+        variant="bar"
+        label={label}
+        value={value}
+        onValueChange={select}
+        items={items.filter((i) => !i.disabled).map((i) => ({ value: i.value, label: i.label, icon: i.icon ?? "squares-2x2" }))}
+      />
+    </>
+  );
   return (
     <AdaptiveSwitch
       className={cx("z-adaptive-tabs", className)}
@@ -100,19 +113,9 @@ export function AdaptiveTabs({
             {panel}
           </>
         ),
-        "bottom-nav": (
-          <>
-            {panel}
-            <BottomNavigation
-              position="static"
-              variant="bar"
-              label={label}
-              value={value}
-              onValueChange={select}
-              items={items.filter((i) => !i.disabled).map((i) => ({ value: i.value, label: i.label, icon: i.icon ?? "squares-2x2" }))}
-            />
-          </>
-        ),
+        "bottom-nav": bottomNav,
+        // Nombre que usa el documento del editor visual.
+        "bottom-navigation": bottomNav,
       }}
     />
   );
