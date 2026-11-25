@@ -193,7 +193,8 @@ export default async function ({ page, test, ok, settle, browserName, note, Unve
         ...document.querySelectorAll(
           "main :is(button, a[href], input:not([type=hidden]), select, textarea, [role='slider'], [role='treeitem'] > .z-tree__row, label.z-check, label.z-radio, label.z-switch, label.z-upload)",
         ),
-      ].filter((el) => visible(el) && !el.classList.contains("z-sr-only") && !el.disabled);
+        // Sin puntero (`pointer-events: none`, como el campo nativo oculto de un control propio) no es un objetivo.
+      ].filter((el) => visible(el) && !el.classList.contains("z-sr-only") && !el.disabled && getComputedStyle(el).pointerEvents !== "none");
       // Un control dentro de una etiqueta que lo activa comparte objetivo con ella.
       const box = (el) => (el.closest("label.z-check, label.z-radio, label.z-switch") ?? el).getBoundingClientRect();
       const failing = [];

@@ -600,8 +600,10 @@ test("rango de fecha y hora: reloj civil, zona con desfase y error de orden", ()
   // El mismo reloj en dos zonas: el instante cambia; sin zona, se compara como UTC.
   assert.ok(instantOf("2026-03-03T09:00", "Asia/Tokyo")! < instantOf("2026-03-03T09:00", "Europe/Madrid")!);
   assert.equal(instantOf("bad"), null);
-  // Una hora que no existe en la zona (salto de primavera) es un error del rango con `reject`… y con `compatible` se mueve.
-  assert.equal(dateTimeRangeError({ start: "2026-03-29T01:00", end: "2026-03-29T02:30", timeZone: "Europe/Madrid" }), null);
+  // Una hora que el cambio de hora se salta en esa zona no existe: el rango lo dice («gap»).
+  assert.equal(dateTimeRangeError({ start: "2026-03-29T01:00", end: "2026-03-29T02:30", timeZone: "Europe/Madrid" }), "gap");
+  assert.equal(dateTimeRangeError({ start: "2026-03-29T01:00", end: "2026-03-29T03:30", timeZone: "Europe/Madrid" }), null);
+  assert.equal(dateTimeRangeError({ start: "2026-03-29T01:00", end: "2026-03-29T02:30" }), null);
 });
 
 test("rango de fecha y hora: preajustes, ahora en una zona y texto", () => {

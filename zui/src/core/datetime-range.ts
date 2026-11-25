@@ -2,9 +2,9 @@
 // IANA opcional. Con zona, el formulario recibe cada extremo con su desfase y su zona (`2026-03-03T09:00+01:00[Europe/
 // Madrid]`, RFC 9557, lo que lee `Temporal.ZonedDateTime.from`): la hora queda atada al lugar y no deriva con el
 // cambio de hora. Sin zona, el reloj civil tal cual, como `datetime-local`. Preajustes relativos a «ahora».
-import { addDays, valid } from "./date";
+import { addDays, startOfWeek, valid } from "./date";
 import { fullTime, validTime } from "./time";
-import { fromWall, offsetAt, validTimeZone, type Wall } from "./zone";
+import { fromWall, offsetAt, validTimeZone, wallStatus, type Wall } from "./zone";
 
 export interface DateTimeRange {
   start: string | null;
@@ -50,10 +50,13 @@ export function dateTimeRangeError(range: DateTimeRange | null | undefined): Dat
   const end = validDateTime(range?.end) ? range!.end! : null;
   if (!start && !end) return null;
   if (!start || !end) return "incomplete";
-  const a = instantOf(start, range?.timeZone);
-  const b = instantOf(end, range?.timeZone);
-  if (a === null || b === null) return "gap";
-  return b > a ? null : "order";
+  // Con zona, una hora que el cambio de hora se salta (02:30 del último domingo de marzo en Madrid) no existe: se
+  // avisa en lugar de moverla en silencio.
+  const zone = validTimeZone(range?.timeZone) ? range!.timeZone! : null;
+  if (zone && (wallStatus(wallOf(start), zone) === "gap" || wallStatus(wallOf(end), zone) === "gap")) return "gap";
+  const a = instantOf(start, zone);
+  const b = instantOf(end, zone);
+  return a !== null && b !== null && b > a ? null : "order";
 }
 
 /** Desfase en minutos → `+01:00`, `-03:30`. */
@@ -130,8 +133,7 @@ export function resolveDateTimePreset(preset: DateTimePreset["value"], now: stri
     case "next-7-days":
       return { start: `${day}T00:00`, end: `${addDays(day, 6)}T23:59` };
     case "this-week": {
-      const weekday = new Date(`${day}T00:00:00Z`).getUTCDay();
-      const first = addDays(day, -((weekday - weekStart + 7) % 7));
+      const first = startOfWeek(day, weekStart);
       return { start: `${first}T00:00`, end: `${addDays(first, 6)}T23:59` };
     }
     default:
