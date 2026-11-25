@@ -290,9 +290,9 @@ assert.ok(registeredIconNames().length >= 300, "set completo registrado");
 // Conector de editores: toReact con el binding (React 18 y 19).
 const { toReact } = await import("@zuccadev-labs/zuix-zui/editor/react");
 const zuiAll = await import("@zuccadev-labs/zuix-zui");
-const page = { format: "zuix.page", schemaVersion: 1, body: [{ id: "b", type: "Button", props: { variant: "primary" }, children: [{ id: "t", type: "#text", text: "Go" }] }] };
-assert.equal(renderToStaticMarkup(toReact(page)), '<button type="button" class="z-btn z-btn--primary" data-size="md">Go</button>');
-assert.equal(renderToStaticMarkup(toReact(page, { components: zuiAll })), '<button type="button" class="z-btn z-btn--primary" data-size="md">Go</button>');
+const editorPage = { format: "zuix.page", schemaVersion: 1, body: [{ id: "b", type: "Button", props: { variant: "primary" }, children: [{ id: "t", type: "#text", text: "Go" }] }] };
+assert.equal(renderToStaticMarkup(toReact(editorPage)), '<button type="button" class="z-btn z-btn--primary" data-size="md">Go</button>');
+assert.equal(renderToStaticMarkup(toReact(editorPage, { components: zuiAll })), '<button type="button" class="z-btn z-btn--primary" data-size="md">Go</button>');
 // Render de servidor de componentes con efectos de layout, sin avisos de React (React 18 avisa de un useLayoutEffect
 // en el servidor; el binding usa useEffect cuando no hay document).
 const { renderToString } = await import("react-dom/server");
