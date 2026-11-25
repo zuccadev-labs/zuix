@@ -44,7 +44,9 @@ Desde la raíz de zuix:
 | `pnpm manifest` | Cada componente exportado tiene manifiesto válido | Sin fallos |
 | `pnpm barrels` | Cada componente con manifiesto se puede importar desde la raíz de su paquete | Sin fallos |
 | `pnpm html` | El contrato HTML se genera desde los componentes | Sin fallos |
+| `pnpm docs:coverage` | Cada componente, prop, entrada, familia, función y comando aparece en la documentación; recuentos al día | Sin huecos |
 | `pnpm dist` | CSS y módulos para usar sin bundler | Sin fallos |
+| `pnpm matrix` | La matriz de compatibilidad sigue al código | Sin fallos |
 | `pnpm typecheck` | Tipos, incluidos los nombres de icono | Sin errores |
 | `pnpm check` | Todo lo anterior | Sin fallos |
 | `pnpm lint` | Biome (TypeScript, React, accesibilidad, CSS, JSON) y la regla de `"use client"` | 0 errores y 0 avisos |

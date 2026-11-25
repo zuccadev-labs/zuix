@@ -185,8 +185,10 @@ contribuir: [`CONTRIBUTING.md`](./CONTRIBUTING.md). Para reportar una vulnerabil
 
 La suite está en npm bajo la organización `@zuccadev-labs`
 ([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). La versión actual es la
-`0.3.0`: el catálogo pasa a 144 componentes y 19 layouts y todos los componentes estrenan base visual. No
-retiré ningún token, clase ni exportación, pero casi todos los componentes se ven distintos. La que rompió
+`0.4.0`: el catálogo pasa a 224 componentes y 30 layouts (tiempo, terminal y código, chat, IA y agentes,
+tableros, usuarios y perfiles, nodos, avisos, opiniones e importes), llega un modo compat para navegadores sin
+Popover API y el binding de React funciona con React 18 además de con 19. Desde la `0.2.0` no he retirado
+nada; la `0.3.0` cambió la base visual de todos los componentes. La que rompió
 fue la `0.2.0`: quité la biblioteca de UI de terceros sobre la que estaba hecho el binding de React, pasé
 los diálogos al `<dialog>` nativo y subí la versión mínima de Node. Mientras la versión sea `0.x`, una
 subida de `MENOR` puede romper ([Versionado](./docs/package/01-versionado.md)). Las versiones se publican solas cuando una subida de versión

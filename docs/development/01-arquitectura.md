@@ -76,6 +76,7 @@ ni toca el documento al cargarse, así que se prueban en Node.
 | `date`, `pagination`, `slider`, `compare`, `search`, `accept` | Aritmética de calendario, de paginación y de Slider; orden de tabla; búsqueda sin acentos; filtro de archivos |
 | `ref` | Resolver por id el elemento que nombra un atributo |
 | `keys` | Claves estables para listas sin identificador propio |
+| `vnode`, `widget` | El árbol de nodos que pintan igual React y el modo DOM, y el contrato de una pieza con datos: configuración, estado, árbol e interacción conectada a la raíz. Sobre ellos van la agenda, los gráficos y todas las familias de la 0.4 (`*-widget`) |
 
 ### `primitives/`: React sobre la plataforma
 
@@ -92,10 +93,12 @@ No hay portales ni `z-index`: `<dialog>` y `popover` viven en la capa superior d
 
 ### `dom/`: el modo sin framework
 
-`index.ts` conecta los listeners del documento (`init()`, que devuelve `destroy`) y reexporta las funciones
-de cada grupo: `forms-*` (controles, lista, calendario, popup), `collections` (paleta, árbol, tabla,
-paginación) y `carousel`. `carousel-gl.ts` lleva los shaders del modo WebGL y se carga con `import()` solo
-cuando un carrusel lo pide. `shared.ts` tiene el único punto que escribe marcado como cadena (`setMarkup`,
+`core.ts` es el núcleo (`init`, `use`, `hydrate`, `destroy` y el registro de piezas) con las capas y lo básico de
+formularios; `families/<familia>.ts` es cada entrada `/dom/<familia>`, que registra sus módulos (`forms-*`,
+`collections`, `carousel`, `widgets-<familia>`…) al pasarla a `init()` o `use()`. `index.ts` lo reexporta todo y
+monta todas las familias. `widgets.ts` monta las piezas con datos sobre `core/widget`: lee `data-*` y
+`data-props`, pinta el árbol y emite `z:<nombre>`. `carousel-gl.ts` lleva los shaders del modo WebGL y se carga
+con `import()` solo cuando un carrusel lo pide. `shared.ts` tiene el único punto que escribe marcado como cadena (`setMarkup`,
 con la política de Trusted Types).
 
 ### `styles/`

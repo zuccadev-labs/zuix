@@ -174,6 +174,7 @@ import {
   setSidebarCollapsed, setSidebarItemOpen,
   openFloatingPanel, closeFloatingPanel, setFloatingPanelRect,
   getPaneLayout, setPaneLayout, splitLayoutPane,
+  setChatView, setChatWidgetOpen,
 } from "@zuccadev-labs/zuix-zout/dom";
 
 setPanelOpen(shell, "inspector", true);
@@ -182,7 +183,13 @@ setSplitSizes(split, [0.3, 0.7]);
 addWorkTab(strip, { id: "notes", title: "Notes", icon: "document-text", controls: "screen-notes" });
 hydrate(container);                          // tras insertar marcado nuevo o cambiar `hidden` a mano
 dispose(container);                          // antes de retirar un bloque: suelta sus observadores
+setChatView(chat, "details");                // ChatLayout estrecho: list, conversation o details
+setChatWidgetOpen(widget, true);             // ChatLayout variant="widget"
 ```
+
+Las funciones que usan por dentro `AppBar` y `DocsLayout` salen también de la raíz de React:
+`appBarProgress(scroll, distance)` da el avance 0…1 del pliegue de la barra y `activeSection(tops, line, atEnd)`, la
+sección que se está leyendo. Los textos por defecto de `ChatLayout` están en `CHAT_LAYOUT_LABELS`.
 
 ### Eventos
 
@@ -200,6 +207,7 @@ aplicación.
 | `z:add` | `.z-tabstrip` | | No se crea la pestaña de `data-new-title` |
 | `z:change` | `.z-sidebar__section` | `{ open }` | (informativo) |
 | `z:change` | `.z-sidebar` | `{ collapsed }` | (informativo) |
+| `z:change` | `.z-sidebar__item` con submenú | `{ open }` | (informativo) |
 | `z:reorder` | `.z-tabstrip` | `{ ids }` | No cambia el orden |
 | `z:grouptoggle` | `.z-tabstrip` | `{ id, collapsed }` | (informativo) |
 | `z:change` | `.z-floatpanel` | `{ x, y, width, height }` | (informativo) |
@@ -208,6 +216,8 @@ aplicación.
 | `z:split` | `.z-panelayout` | `{ id, direction }` | La aplicación llama a `splitLayoutPane` con el panel nuevo |
 | `z:close` | `.z-panelayout` | `{ id }` | No se cierra el panel |
 | `z:select` | `.z-bottomnav` | `{ value }` | No se mueve `aria-current` |
+| `z:viewchange` | `.z-chat-layout` | `{ view }`: `list`, `conversation` o `details` | No cambia la vista ni el historial |
+| `z:open`, `z:close` | `.z-chat-layout[data-variant="widget"]` | | (informativos) |
 
 `z:modechange` se emite al medir por primera vez, dentro de `init()`: quien quiera el primer aviso se
 suscribe antes, o lee `getShellModes(shell)`. Los `z:resize` de un `SplitPane` anidado llegan también

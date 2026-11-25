@@ -220,7 +220,7 @@ init(datesModule, chartsModule);
 | `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
 | `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
 | `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
-| `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
+| `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader, SettingsSection y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
 | `/dom/nodes` | NodeCanvas (nodos, puertos, aristas, grupos, minimapa, controles), NodeListView | `nodesModule`, `nodeCanvas(el)`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
@@ -247,6 +247,33 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.
+
+### Piezas con datos
+
+Las familias de la 0.4 (agenda, gráficos, tiempo, terminal, chat, IA, dashboard, usuarios, nodos) y algunas piezas
+de `/dom/data` (NotificationCenter, FilterBar, DataTable) no se escriben a mano: el marcado lo pinta `zui/dom` a partir
+de unos datos, con el mismo árbol que usa el binding de React. En la página va solo la raíz con su clase:
+
+```html
+<div class="z-countdown" data-to="2027-01-15T17:00:00Z" data-locale="en-GB" data-timer-label="Launch countdown"></div>
+
+<div class="z-log-console" data-title="api logs" data-time-zone="UTC">
+  <script type="application/json" data-props>{ "entries": [{ "id": 1, "time": "2026-11-21T10:42:01Z", "level": "info", "message": "GET /v1/projects 200" }] }</script>
+</div>
+```
+
+| Qué | Cómo |
+|---|---|
+| Opciones sencillas | Atributos `data-*` en la raíz: `data-time-zone`, `data-locale`, `data-to`… Los de cada pieza están en su ejemplo HTML |
+| Listas y objetos | Un hijo `<script type="application/json" data-props>` con las props en JSON |
+| Datos que cambian | `setWidgetProps(el, { entries })`: manda sobre los atributos y el JSON, y repinta |
+| Avisos | Eventos `z:<nombre>` que burbujean, con el mismo `detail` que la prop de función de React. El nombre es el del aviso sin guiones: `onValueChange` → `z:valuechange`, `onReadChange` → `z:readchange` |
+| Retirarla | `destroyWidget(el)` suelta sus listeners; `destroy()` retira todas |
+
+Hay excepciones al nombre del evento: `PromptInput` avisa con `z:send` (en React, `onSubmit`); `CircularSlider` e
+`ImageCropper`, con `z:change` y `z:changeend`. El marcado de partida de cada pieza, con sus atributos, está en el
+ejemplo HTML de su página del [catálogo](/components) y en `zui/html.json`. El texto que llega en los datos se
+escribe siempre como texto, nunca como HTML.
 
 ### Declarativo
 
@@ -351,7 +378,8 @@ posiciones centradas); `data-z-context` abre con pulsación larga; el Slider, el
 ### Eventos
 
 Los elementos emiten `z:open`, `z:close`, `z:change` (con `detail.value`, `detail.checked` o
-`detail.pressed`), `z:select` (entrada de menú elegida) y `z:sort`. `z:close` se emite también cuando un
+`detail.pressed`), `z:select` (entrada de menú elegida) y `z:sort`. Las piezas con datos emiten además los suyos
+([Piezas con datos](#piezas-con-datos)). `z:close` se emite también cuando un
 `<dialog>` de zui se cierra con `dialog.close()` o con `<form method="dialog">`. Los de `zout/dom` están en
 [Zout](./04-zout.md#eventos).
 
@@ -392,6 +420,48 @@ cada slide, como hace la prop `rasterize` en React. La franja central sigue sien
 - Si las imágenes cambian después de activar el carrusel (un `<canvas>` que se pinta más tarde, un cambio de
   tema): `carousel(el).refresh()` rehace las réplicas del bucle y las texturas.
 
+### Todas las funciones
+
+Lo que exporta cada entrada, además de su módulo (`datesModule`, `chatModule`…). Las firmas y su descripción van en
+las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexporta todo.
+
+| Entrada | Para qué | Funciones |
+|---|---|---|
+| `/dom/core` | Montar y desmontar | `init`, `use`, `hydrate`, `destroy` |
+| | Tema y marca | `setTheme`, `setBrand` |
+| | Capas | `openDialog`, `closeDialog`, `openPopover`, `closePopover`, `place`, `openSubmenu`, `openMenubarMenu`, `setHintOpen`, `setDrawerSnap`, `startTour`, `closeActionBar`, `dismissBanner` |
+| | Avisos | `toast`, `toastPromise`, `confirm`, `announce` |
+| | Formularios | `setSelectValue`, `setComboboxValue`, `setComboboxOptions`, `setComboboxLoading`, `setListboxValue`, `setSliderValue`, `setOtpValue`, `setNumberInputValue`, `setTagsValue`, `reorderUpload` |
+| | Navegación y estado | `selectTab`, `setCollapsibleOpen`, `expandSkeleton` |
+| | Descargas | `download`, `downloadBlob`, `downloadUrl`, `mimeFromName` |
+| | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutLabels` |
+| `/dom/dates` | Valor desde código | `setCalendarValue`, `setCalendarOptions`, `setDatePickerValue`, `setDateFieldValue`, `setTimeFieldValue`, `setTimePickerValue` |
+| | Fechas civiles | `formatDateRange`, `isoWeekText`, `weekNumber`, `weekStartOf`, `rangePresets`, `resolvePreset`, `PRESET_KEYS` |
+| `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `openPalette` |
+| | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom` |
+| | Avisos | `badgeText`, `groupByDay`, `unreadCount` |
+| | Filtros | `toggleFilter`, `toggleOption`, `activeCount`, `chipText` |
+| | Opiniones e importes | `setReviewExpanded`, `formatMoney`, `summarizePrice` |
+| `/dom/content` | Contenido | `setHighlightQuery`, `setJsonTreeValue`, `setStep`, `startTimer`, `pauseTimer`, `resetTimer`, `updateRelativeTime` |
+| `/dom/agenda` | Agendas | `setAgendaEvents`, `setAgendaCalendars`, `setAgendaOptions`, `setAgendaView`, `destroyAgenda` |
+| `/dom/color` | Color | `setColorValue` |
+| `/dom/media` | Carrusel e historias | `carousel`, `storiesWidget`, `lightbox`, `openLightbox` |
+| | Medios | `setCompareValue`, `cropImage`, `cropImageBlob`, `signatureValue`, `signatureBlob`, `qrcodeSvg`, `confetti` |
+| `/dom/effects` | Efectos | `setDotMatrixPattern` |
+| `/dom/time` | Tiempo | `refreshTimeZoneSelect`, `formatDuration`, `parseISODuration`, `toISODuration`, `durationToMs` |
+| `/dom/terminal` | Terminal | `terminal`, `appendLogEntries`, `parseAnsi`, `stripAnsi`, `createAnsiScreen` |
+| `/dom/chat` | Lista y entrega | `messageList`, `chatRows`, `dayLabel`, `arrivalText`, `typingText`, `mergeDelivery`, `toggleReaction` |
+| | Texto y enlaces | `linkify`, `safeHref`, `encodeMentions`, `mentionParts` |
+| | Emoji y voz | `EMOJI_SET`, `QUICK_REACTIONS`, `searchEmoji`, `peaksFrom` |
+| `/dom/ai` | Respuestas | `createTextStream`, `provisional`, `parseMarkdown`, `markdownText` |
+| | Ramas | `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch` |
+| | Uso | `compactTokens`, `formatCost` |
+| `/dom/dashboard` | Rejilla | `getDashboardLayout`, `setDashboardLayout`, `normalizeLayout`, `parseLayout`, `serializeLayout`, `moveGridItem`, `resizeGridItem` |
+| | Kanban | `moveCard`, `locateCard` |
+| `/dom/people` | Miembros y perfil | `filterMembers`, `groupMembers`, `presenceText`, `validateProfile` |
+| `/dom/nodes` | Lienzo | `nodeCanvas`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph` |
+| Todas las de piezas con datos | Datos y retirada | `setWidgetProps`, `destroyWidget` |
+
 ## Qué cubre cada capa
 
 | Componentes | Sin React |
@@ -406,11 +476,9 @@ cada slide, como hace la prop `rasterize` en React. La franja central sigue sien
 | DataTable (orden) | `zui/dom`: ordena las filas presentes al pulsar una cabecera con `aria-sort` (ascendente, descendente, sin orden). Tipo en `<th data-sort="number\|text\|date">`, valor en `<td data-sort-value>`; `data-manual-sort` en la tabla solo avisa. `z:sort` con `detail.key`, `direction` y `column`; `sortTable(th, direction)` |
 | Pagination | `zui/dom`: cambia de página, recalcula el rango con huecos y emite `z:change` con `detail.value`. `data-page-count`, `data-siblings`, `data-page-label="Page {page}"`; `setPage(nav, page)` |
 | Carousel | `zui/dom`: `<div class="z-carousel" data-z-carousel data-effect="lens\|none" data-loop>` con un hijo por slide; monta la tira, las flechas, el contador y los anuncios. Arrastre con inercia, bucle, teclado y `prefers-reduced-motion` con el mismo motor que React. `z:change` con `detail.index`; `carousel(el)` devuelve `{ next, prev, goTo, refresh, destroy }`. Zonas curvas en WebGL: [modo `gl`](#carousel-en-webgl-modo-gl) |
+| Agenda, gráficos, color, medios, tiempo, terminal, chat, IA, dashboard, usuarios, nodos, NotificationCenter, FilterBar y ReviewCard | `zui/dom`, con su familia: el marcado lo pinta la pieza a partir de `data-*` y `data-props` ([Piezas con datos](#piezas-con-datos)). Persona, UserCard, ProfileHeader, MetricCard, ReviewSummary, PriceTag y PriceBreakdown son solo CSS |
 | `Shell` responsive, `ResizeHandle`, `SplitPane`, `TabStrip` y `Sidebar` de `zout` | `zout/dom` ([Zout](./04-zout.md#sin-react-zuccadev-labszuix-zoutdom)) |
 | `Rail`, `TitleBar`, `SidePanel`, `Page`, `Grid`, `Stack`, `Inline` de `zout` | Solo CSS; el destino activo del `Rail` (`aria-current`) lo marca la aplicación |
-
-Para un campo de selección sin React, `NativeSelect` usa el `<select>` del navegador y no necesita
-comportamiento.
 
 Para un campo de selección sin React, `NativeSelect` usa el `<select>` del navegador y no necesita
 comportamiento.
