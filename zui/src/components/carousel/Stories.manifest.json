@@ -1,0 +1,121 @@
+{
+  "name": "Stories",
+  "group": "carousel",
+  "description": "Historias al estilo de Instagram: grupos por persona, una barra por historia que se llena con el tiempo, tocar a un lado o al otro para retroceder o avanzar y mantener pulsado para pausar.",
+  "import": "import { Stories } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "groups",
+      "type": "StoryGroup[]",
+      "required": true,
+      "description": "`{ id, author: { name, avatar? }, items: { id, media, alt?, caption?, duration? }[] }[]`. `media` es una URL de imagen o contenido."
+    },
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "required": true,
+      "description": "Nombre accesible de la región."
+    },
+    {
+      "name": "defaultGroup",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 5000,
+      "description": "Duración por defecto de cada historia (ms, mínimo 1000). Ajustable por historia (WCAG 2.2.1)."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<StoriesLabels>",
+      "description": "stories, story, previous, next, pause, previousGroup, nextGroup y position (\"Story {index} of {count}, {author}\"). En inglés por defecto."
+    },
+    {
+      "name": "onGroupChange",
+      "type": "(group: number) => void"
+    },
+    {
+      "name": "onComplete",
+      "type": "() => void",
+      "description": "Terminó la última historia del último grupo."
+    }
+  ],
+  "states": ["playing", "paused", "held"],
+  "tokens": [
+    "accent",
+    "overlay",
+    "glass-border",
+    "glass-highlight",
+    "glass-shadow",
+    "scrim",
+    "surface-solid",
+    "radius-panel",
+    "radius-lg",
+    "radius-xs",
+    "radius-full",
+    "button-radius",
+    "control-height-md",
+    "surface-2",
+    "surface-3",
+    "fg",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "layer-raised",
+    "text-small",
+    "weight-semibold",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-5",
+    "space-7"
+  ],
+  "classes": [
+    "z-stories",
+    "z-stories__viewer",
+    "z-stories__group",
+    "z-stories__bars",
+    "z-stories__bar",
+    "z-stories__fill",
+    "z-stories__head",
+    "z-stories__avatar",
+    "z-stories__author",
+    "z-stories__item",
+    "z-stories__media",
+    "z-stories__caption",
+    "z-stories__nav",
+    "z-stories__controls",
+    "z-stories__control"
+  ],
+  "attributes": [
+    "data-state",
+    "data-held",
+    "data-active",
+    "data-author",
+    "data-avatar",
+    "data-duration",
+    "data-stories-action",
+    "data-start"
+  ],
+  "cssVars": ["--z-story-fill", "--z-stories-width"],
+  "icons": ["chevron-double-left", "chevron-double-right", "pause", "play"],
+  "a11y": "Región con nombre y aria-roledescription=\"stories\"; cada historia es un group con aria-roledescription=\"story\" y nombre «Story 2 of 5, Ana». Zonas de paso como botones nativos («Previous story», «Next story»), pausa como botón conmutador (aria-pressed) y saltos de persona. Mantener pulsado o Espacio pausa; flechas izquierda y derecha cambian de historia. Las barras son decorativas (aria-hidden). La posición se anuncia en la región viva central (core/announcer) solo tras una navegación de la persona. Con movimiento reducido empieza en pausa: no avanza sola. Se detiene con la pestaña oculta y fuera de pantalla.",
+  "examples": [
+    {
+      "title": "Dos personas",
+      "code": "<Stories\n  ariaLabel=\"Team stories\"\n  groups={[\n    { id: \"ana\", author: { name: \"Ana\", avatar: \"/ana.jpg\" }, items: [{ id: \"1\", media: \"/dawn.jpg\", alt: \"Dawn over the bay\" }] },\n    { id: \"leo\", author: { name: \"Leo\" }, items: [{ id: \"2\", media: \"/ridge.jpg\", alt: \"Mountain ridge\", duration: 8000 }] },\n  ]}\n/>"
+    }
+  ],
+  "behavior": "dom",
+  "html": [
+    {
+      "title": "Marcado mínimo: zui/dom crea barras, cabecera, zonas de paso y controles",
+      "code": "<div id=\"stories\" class=\"z-stories\" data-z-stories aria-label=\"Team stories\">\n  <article class=\"z-stories__group\" data-author=\"Ana\">\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Dawn</p></div>\n    </figure>\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Coast</p></div>\n    </figure>\n  </article>\n  <article class=\"z-stories__group\" data-author=\"Leo\">\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Ridge</p></div>\n    </figure>\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Valley</p></div>\n    </figure>\n    <figure class=\"z-stories__item\" data-duration=\"5000\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\"><p class=\"z-card__title\">Night</p></div>\n    </figure>\n  </article>\n</div>",
+      "script": "import { storiesWidget } from \"@zuccadev-labs/zuix-zui/dom\";\n\nconst stories = document.querySelector(\"#stories\");\nstories.addEventListener(\"z:change\", (event) => console.debug(\"story\", event.detail.group, event.detail.item));\n// storiesWidget(stories).nextGroup();"
+    }
+  ],
+  "origin": "Patrón de producto (Instagram); sin biblioteca de terceros."
+}

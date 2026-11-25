@@ -5,6 +5,7 @@ import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface DateInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
   /** Tipo de valor: fecha, hora, fecha y hora, o mes. */
@@ -17,7 +18,7 @@ export interface DateInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
 }
 
 /** Campo de fecha u hora sobre el control nativo: valor ISO, teclado y selector del sistema. */
-export function DateInput({
+export const DateInput = withRef(function DateInput({
   type = "date",
   size = "md",
   invalid,
@@ -63,4 +64,4 @@ export function DateInput({
       </button>
     </span>
   );
-}
+});

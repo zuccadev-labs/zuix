@@ -5,6 +5,63 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-23
+
+### Añadido
+
+- React 18: los layouts funcionan con React 18.2 o posterior además de con React 19 (peers
+  `^18.2.0 || ^19.0.0`). `Shell` escribe `inert=""` y `Navbar` y `NavigationMenu`, `popovertarget` en minúsculas con
+  React 18, que no conoce esas props. `Shell` y `FloatingPanel` usan `useEffect` en el servidor, donde React 18 avisa
+  de cada `useLayoutEffect`.
+- Sin Popover API, `Shell` ya no lanza al pulsar Escape con un cajón abierto, y `Navbar` y `NavigationMenu` abren
+  sus paneles con la misma comprobación que el modo sin framework (y con el polyfill, por él).
+- Modo compat: `styles.compat.css` (`dist/zout.compat.css`), la hoja de layouts para Chromium 109, Firefox 115 y
+  Safari 15.4. Va con `tokens.compat.css` y `zui.compat.css`
+  ([Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)).
+- `Container`: tamaños `sm`, `md`, `lg` y `xl` (tokens `container-*`) y `gutter` (`fluid`, `stage` o `none`). El
+  margen fluido crece con el ancho del contenedor de consulta entre 16 y 40 px; el ancho máximo suma los dos
+  márgenes, así que la columna de texto mide lo mismo con cualquiera. El marcado sin `data-gutter` se ve como antes.
+  Tiene manifiesto propio (antes iba dentro del de `Page`). `Stack`, `Inline` (con `wrap` y `gap`) y `Grid` cubren
+  el resto de la maquetación, así que no añado un `Flex` aparte.
+- `Shell`: `railBreakpoint` (600 px por defecto; `data-rail-breakpoint` en `/dom`). Por debajo, con la sidebar en
+  cajón, el rail deja su columna y se muestra dentro del cajón, a su lado. En un teléfono una columna de iconos fija
+  se comía una quinta parte del ancho.
+- `ChatLayout`: lista de conversaciones, conversación y detalles. Tres columnas en pantalla ancha, detalles encima en
+  media y una pila (lista → conversación → detalles) en estrecha, decidido por consultas de contenedor sobre el propio
+  layout. Con `history`, la pila se sincroniza con el historial del navegador; F6 salta entre paneles; `variant="widget"`
+  es un asistente flotante (botón y panel de cristal). En `/dom`: `data-view`, `[data-z-chat-view]`, `data-history`,
+  `setChatView` y `setChatWidgetOpen`.
+- `AppBar`: barra de aplicación superior pequeña, mediana o grande; la grande pliega el título a la fila superior al
+  desplazar (animación ligada al desplazamiento, con respaldo en `/dom` y en React donde no la hay) y gana sombra con
+  algo desplazado.
+- Layouts de página, todos con consultas de contenedor (responden a su hueco, no al viewport):
+  - `DashboardLayout`: cabecera, barra de filtros fija, contenido y panel lateral; navegación propia opcional.
+  - `SettingsLayout`: navegación con anclas, secciones y barra de guardar fija cuando hay cambios sin guardar.
+  - `AuthLayout`: acceso en una tarjeta de cristal centrada o dividido con un lado de imagen.
+  - `ProfileLayout`: cabecera de perfil, pestañas, contenido y columna lateral.
+  - `DocsLayout`: navegación, artículo, índice con la sección que se lee marcada (`aria-current`) y paginación;
+    en estrecho el índice es un `<details>` sobre el artículo.
+  - `LandingLayout` con `LandingHero` y `LandingSection` (rejilla de funciones, banda de llamada y bloque tenue).
+  - `KanbanLayout` y `MailLayout` (carpetas, lista y lectura; en estrecho, una sola vista según `view`).
+- `appBarProgress` y `activeSection` en la lógica compartida; en `/dom`, `.z-appbar[data-collapse]` y
+  `.z-docs-layout__toc` se conectan solos.
+
+### Corregido
+
+- Contrato HTML: el ejemplo «Con filtros y panel» de `DashboardLayout` fija `locale="en-US"` en sus métricas, y
+  `html.json` ya no cambia con la configuración regional de la máquina que lo genera.
+- `/dom`: abrir un panel o un menú del sitio que ya había salido del documento lanzaba «Element is not connected» en
+  WebKit. `showPopover` comprueba `isConnected` y no hace nada si el elemento ya no está.
+- `/dom` sin Popover API: Escape en un cajón y el submenú plegado de la Sidebar lanzaban (`:popover-open` no es un
+  selector válido ahí). Ahora comprueba antes.
+- `Navbar`: plegada y aun así sin sitio (una columna estrecha), las acciones bajan a otra línea en vez de salirse de la
+  cabecera.
+- `SettingsLayout`: en estrecho, la tira de secciones difumina el borde con secciones ocultas (`data-scroll-edges`,
+  también en `/dom`) en lugar de cortar la última en seco.
+- `Sidebar`: una lista más alta que la barra difumina el borde con filas ocultas (arriba, abajo o los dos) en vez de
+  cortar la última fila a media altura, donde parecía un elemento roto. Solo con algo por ese lado; en un navegador sin
+  animaciones ligadas al desplazamiento, la lista se corta como antes.
+
 ## [0.3.0] - 2026-11-21
 
 ### Añadido

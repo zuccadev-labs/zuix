@@ -1,0 +1,51 @@
+{
+  "name": "SummaryList",
+  "group": "data",
+  "description": "Lista clave–valor con los valores alineados al final y en cifras tabulares: resumen de pedido, de plan o de reserva, con separadores y fila de total.",
+  "import": "import { SummaryList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "SummaryItem[]",
+      "required": true,
+      "description": "`{ label, value, hint?, tone?, separated?, total?, key? }`. `tone`: `muted`, `success` (un descuento) o `danger`. `separated` traza una línea encima; `total` destaca la fila."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    }
+  ],
+  "tokens": [
+    "space-0-5",
+    "space-1",
+    "space-1-5",
+    "space-2",
+    "space-4",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "danger-text",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "text-heading",
+    "weight-regular",
+    "weight-medium",
+    "weight-semibold",
+    "tracking-snug",
+    "leading-ui"
+  ],
+  "classes": ["z-summary", "z-summary__row", "z-summary__label", "z-summary__hint", "z-summary__value"],
+  "a11y": "Un `<dl>`: cada fila es un par término–descripción que el lector anuncia como tal. El tono no es la única pista: un descuento lleva su signo menos en el texto.",
+  "examples": [
+    {
+      "title": "Resumen de plan",
+      "code": "<SummaryList items={[\n  { label: \"Plan\", value: \"Team\" },\n  { label: \"Seats\", value: \"12\", hint: \"3 invited\" },\n  { label: \"Billing\", value: \"Yearly\", tone: \"muted\" },\n  { label: \"Due today\", value: \"$1,152.00\", total: true },\n]} />"
+    }
+  ],
+  "origin": "Resúmenes de pedido de los bloques de comercio de Tailwind UI y el desglose de reserva de Airbnb, sin dominio."
+}

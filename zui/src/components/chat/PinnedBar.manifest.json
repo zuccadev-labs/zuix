@@ -1,0 +1,56 @@
+{
+  "name": "PinnedBar",
+  "group": "chat",
+  "description": "Barra de mensajes fijados sobre la conversación: el último fijado y, con varios, «Pinned message 2 of 3» con un segmento por fijado; pulsar salta al mensaje y pasa al anterior.",
+  "import": "import { PinnedBar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ id, author?, text }[]"
+    },
+    {
+      "name": "unpinnable",
+      "type": "boolean"
+    },
+    {
+      "name": "onJump",
+      "type": "(detail: { id }) => void"
+    },
+    {
+      "name": "onUnpin",
+      "type": "(detail: { id }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<PinnedBarLabels>"
+    }
+  ],
+  "states": ["one", "many", "empty"],
+  "tokens": ["accent", "accent-text", "line", "line-strong", "row-hover", "item-radius"],
+  "classes": [
+    "z-pinned-bar",
+    "z-pinned-bar__main",
+    "z-pinned-bar__track",
+    "z-pinned-bar__segment",
+    "z-pinned-bar__icon",
+    "z-pinned-bar__body",
+    "z-pinned-bar__title",
+    "z-pinned-bar__text",
+    "z-pinned-bar__unpin"
+  ],
+  "a11y": "Un botón con nombre completo («Pinned message 2 of 3: Ana, Standup moved to 10:30»); los segmentos son decorativos. Sin React: .z-pinned-bar con items en <script type=\"application/json\" data-props> y data-unpinnable; emite z:jump { id } y z:unpin { id }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Tres fijados",
+      "code": "<PinnedBar unpinnable items={[{ id: \"p1\", author: \"Ana\", text: \"Release on Friday\" }, { id: \"p2\", text: \"Docs live at /docs\" }, { id: \"p3\", author: \"Luis\", text: \"Standup moved to 10:30\" }]} onJump={({ id }) => jumpTo(id)} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Tres fijados",
+      "code": "<div class=\"z-pinned-bar\" data-unpinnable>\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"p1\", \"author\": \"Ana\", \"text\": \"Release on Friday\"}, {\"id\": \"p2\", \"text\": \"Docs live at /docs\"}, {\"id\": \"p3\", \"author\": \"Luis\", \"text\": \"Standup moved to 10:30\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencia: los mensajes fijados de Telegram."
+}

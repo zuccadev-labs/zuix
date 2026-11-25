@@ -5,6 +5,7 @@
 // retraso. Lee la geometría en cada tecla o movimiento (getBoundingClientRect) y calcula con core/agenda.
 // Sin efectos al importar: todo empieza en `attachAgenda`.
 
+import { announceTo } from "./announcer";
 import {
   dateOf,
   dayStart,
@@ -26,6 +27,7 @@ import { afterPaint } from "./idle";
 import { pushLayer } from "./layers";
 import { place } from "./place";
 import { arrowDirection, nextInDirection } from "./spatial";
+import { showPopover } from "./popover";
 
 export type AgendaEventName =
   | "event-click"
@@ -76,19 +78,10 @@ const wallISO = (min: number) =>
 
 /* ---------- Región viva ---------- */
 
-const liveTimers = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
-/** Anuncio educado con ~500 ms de retraso y vaciado previo (guía drag-and-drop): no se lo come el anuncio del foco. */
+/** Anuncio educado con ~500 ms de retraso y vaciado previo: no se lo come el anuncio del foco. */
 export function announce(root: HTMLElement, text: string): void {
   const live = root.querySelector<HTMLElement>(".z-agenda__live");
-  if (!live) return;
-  clearTimeout(liveTimers.get(live));
-  live.textContent = "";
-  liveTimers.set(
-    live,
-    setTimeout(() => {
-      live.textContent = text;
-    }, 500),
-  );
+  if (live) announceTo(live, text, 500);
 }
 
 /* ---------- Ayudas ---------- */
@@ -973,11 +966,8 @@ export function syncAgenda(root: HTMLElement, host: AgendaHost, moveFocus: boole
         : root.querySelector<HTMLElement>(`.z-agenda__view .z-event[data-key="${CSS.escape(pop.dataset.for ?? "")}"]`);
     const fresh = !open.has(pop);
     if (fresh) {
-      try {
-        pop.showPopover();
-      } catch {
-        // Sin Popover API: se queda en el flujo, visible.
-      }
+      // Sin Popover API (ni polyfill): se queda en el flujo, visible.
+      showPopover(pop);
       open.set(
         pop,
         pushLayer({

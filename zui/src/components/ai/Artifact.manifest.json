@@ -1,0 +1,90 @@
+{
+  "name": "Artifact",
+  "group": "ai",
+  "description": "Artefacto generado por un asistente, en panel o tarjeta: título, tipo, Vista previa (HTML en un iframe aislado sin scripts, o Markdown) y Código (CodeViewer), versiones «‹ v3 ›», copiar y descargar.",
+  "import": "import { Artifact } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "kind",
+      "type": "string"
+    },
+    {
+      "name": "versions",
+      "type": "{ code, language?, preview?: \"html\" | \"markdown\" }[]"
+    },
+    {
+      "name": "version",
+      "type": "number"
+    },
+    {
+      "name": "downloadName",
+      "type": "string"
+    },
+    {
+      "name": "closable",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultView",
+      "type": "\"code\" | \"preview\"",
+      "default": "preview"
+    },
+    {
+      "name": "onVersionChange",
+      "type": "(detail: { index }) => void"
+    },
+    {
+      "name": "onDownload",
+      "type": "(detail: { name, code }) => void"
+    },
+    {
+      "name": "onClose",
+      "type": "() => void"
+    }
+  ],
+  "states": ["preview", "code", "versions"],
+  "tokens": [
+    "card-radius",
+    "line",
+    "surface-3",
+    "surface-solid",
+    "reading-bg",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "control-radius",
+    "control-radius-sm",
+    "shadow-sm"
+  ],
+  "classes": [
+    "z-artifact",
+    "z-artifact__bar",
+    "z-artifact__title",
+    "z-artifact__views",
+    "z-artifact__view",
+    "z-artifact__versions",
+    "z-artifact__actions",
+    "z-artifact__panel",
+    "z-artifact__frame",
+    "z-artifact__doc"
+  ],
+  "a11y": "Región nombrada por su título; Vista previa y Código son pestañas (role=tab con ←/→); las versiones son botones «Previous version» y «Next version» en un grupo «Version 2 of 3». La vista previa HTML va en un iframe con sandbox vacío (sin scripts ni formularios) y título. Sin React: .z-artifact con data-title, data-kind, data-download-name y versions en <script type=\"application/json\" data-props>; emite z:versionchange, z:download y z:close.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "HTML con dos versiones",
+      "code": "<Artifact title=\"Pricing card\" kind=\"HTML\" downloadName=\"card.html\" versions={[{ code: \"<h1>Pro</h1>\", language: \"html\", preview: \"html\" }, { code: \"<h1>Pro</h1><p>$12 / month</p>\", language: \"html\", preview: \"html\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "HTML con dos versiones",
+      "code": "<div class=\"z-artifact\" data-title=\"Pricing card\" data-kind=\"HTML\" data-download-name=\"card.html\" style=\"height: 360px\">\n  <script type=\"application/json\" data-props>{\"versions\": [{\"code\": \"<h1>Pro</h1>\", \"language\": \"html\", \"preview\": \"html\"}, {\"code\": \"<h1 style=\\\"font-family: sans-serif\\\">Pro</h1><p>$12 / month</p>\", \"language\": \"html\", \"preview\": \"html\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: los artefactos de Claude y Vercel AI Elements (Artifact, Web Preview)."
+}

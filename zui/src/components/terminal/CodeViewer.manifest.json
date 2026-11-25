@@ -1,0 +1,124 @@
+{
+  "name": "CodeViewer",
+  "group": "terminal",
+  "description": "CodeBlock ampliado: números de línea, líneas resaltadas, pestañas de archivos, copiar y resaltado mínimo sin dependencias (JavaScript y TypeScript con JSX, JSON, CSS, HTML y XML, shell y Python); un lenguaje desconocido va como texto. `highlight` admite el resaltado de la aplicación como tokens por línea.",
+  "import": "import { CodeViewer } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "code",
+      "type": "string"
+    },
+    {
+      "name": "files",
+      "type": "{ name: string; code: string; language?: string }[]",
+      "description": "Varios archivos, en pestañas; el lenguaje sale de la extensión si falta."
+    },
+    {
+      "name": "language",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "lineNumbers",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "highlightLines",
+      "type": "string | number[]",
+      "description": "\"3-5,9\" o [3, 4, 5, 9]."
+    },
+    {
+      "name": "startLine",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "wrap",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "maxHeight",
+      "type": "string",
+      "description": "Longitud CSS; a partir de ahí desplaza."
+    },
+    {
+      "name": "highlight",
+      "type": "(code: string, language?: string) => CodeToken[][]"
+    },
+    {
+      "name": "defaultFile",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "onFileChange",
+      "type": "(detail: { index, name }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<CodeViewerLabels>"
+    }
+  ],
+  "states": ["rest", "highlighted", "copied"],
+  "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "success-text",
+    "warning-text",
+    "info-text",
+    "danger-text",
+    "font-mono",
+    "text-code",
+    "leading-code"
+  ],
+  "classes": [
+    "z-code-viewer",
+    "z-code-viewer__bar",
+    "z-code-viewer__title",
+    "z-code-viewer__tabs",
+    "z-code-viewer__tab",
+    "z-code-viewer__language",
+    "z-code-viewer__copy",
+    "z-code-viewer__body",
+    "z-code-viewer__line",
+    "z-code-viewer__number",
+    "z-code-viewer__text",
+    "z-tok"
+  ],
+  "a11y": "El código es una región con nombre (el título o «Code»), enfocable para desplazarla con el teclado; con varios archivos, pestañas del patrón APG (tablist, flechas, Inicio y Fin, activación automática) y la región es su tabpanel. Los números de línea van con aria-hidden y no se seleccionan ni se copian. Una línea resaltada lleva una barra en el borde además del fondo. El botón de copiar copia el código sin números y confirma en el botón y en una región status, sin deshabilitarse. Sin React: .z-code-viewer con un <pre><code> (o template[data-file] por archivo), data-language, data-title, data-highlight-lines, data-start-line, data-line-numbers=\"false\", data-wrap y data-max-height; emite z:filechange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Archivo con líneas resaltadas",
+      "code": "<CodeViewer title=\"server.ts\" language=\"ts\" highlightLines=\"5-8\" code={serverCode} />"
+    },
+    {
+      "title": "Varios archivos",
+      "code": "<CodeViewer files={[{ name: \"package.json\", code: pkg }, { name: \"styles.css\", code: css }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Archivo con líneas resaltadas",
+      "code": "<div class=\"z-code-viewer\" data-title=\"server.ts\" data-language=\"ts\" data-highlight-lines=\"5-8\">\n  <script type=\"application/json\" data-props>{\"code\": \"import { createServer } from \\\"node:http\\\";\\n\\n// Answers every request with the same JSON.\\nconst port = Number(process.env.PORT ?? 3000);\\nconst server = createServer((req, res) => {\\n  res.writeHead(200, { \\\"content-type\\\": \\\"application/json\\\" });\\n  res.end(JSON.stringify({ ok: true, path: req.url }));\\n});\\n\\nserver.listen(port, () => console.log(`Listening on ${port}`));\\n\"}</script>\n</div>"
+    },
+    {
+      "title": "Varios archivos",
+      "code": "<div class=\"z-code-viewer\">\n  <template data-file=\"package.json\">{\n  \"name\": \"demo\",\n  \"private\": true,\n  \"scripts\": { \"dev\": \"vite\" }\n}\n</template>\n  <template data-file=\"styles.css\">.card {\n  padding: var(--z-space-4);\n  border-radius: var(--z-card-radius);\n}\n</template>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio sobre CodeBlock; referencias: CodeHighlight de Mantine y Code snippet de Carbon."
+}

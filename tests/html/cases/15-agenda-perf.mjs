@@ -1,4 +1,4 @@
-// Agenda sin framework con 5000 eventos (agenda.md §6): cada navegación por debajo de un umbral holgado, lo que se
+// Agenda sin framework con 5000 eventos: cada navegación por debajo de un umbral holgado, lo que se
 // pinta acotado («+N» en la rejilla de horas, ventana virtual en la lista) y lo que eso no puede romper: el teclado
 // llega a lo oculto por «+N», la lista con ventana sigue al foco y la densidad del año sale de setAgendaOptions.
 // También el arrastre con puntero en la vista de línea temporal.

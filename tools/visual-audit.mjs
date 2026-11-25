@@ -4,9 +4,17 @@
 //
 //   desbordamiento   horizontal del documento y elementos que se salen del viewport sin contenedor que desplace
 //   recorte          texto cortado (scrollWidth > clientWidth) sin elipsis ni line-clamp
+//   tapado           texto que otra capa tapa a medias (dentro de lo que sus contenedores dejan ver, en los dos ejes)
+//   cortes           tira o tabla que desplaza y corta un texto en seco sin fundido; fila flex que pasa de su borde;
+//                    pieza que sale de la caja de su padre; fila de controles apilados uno por línea; dato (fecha,
+//                    código) partido en dos líneas; nombre corto cortado con elipsis
+//   trazos           letras que pisan o rozan el trazo de un SVG de su componente (cifras de una esfera, arco)
+//   carrusel         lente cortada en seco o con sangrado vacío; slide activo fuera del centro; mazo plano
+//   teléfono         navegación lateral acoplada que se come el ancho del contenido
 //   solape           elementos interactivos que se pisan
 //   fuente           familia computada fuera de la marca, fuente que no cargó y fuente real del sistema
-//                    (CSS.getPlatformFontsForNode del protocolo de depuración: qué tipografía pinta de verdad)
+//                    (CSS.getPlatformFontsForNode del protocolo de depuración: qué tipografía pinta de verdad) y
+//                    texto que una transformación deja por debajo de 9 px en pantalla (lienzo con poco zoom)
 //   escala           tamaño, interlineado y peso fuera de los tokens; márgenes, rellenos y huecos fuera de
 //                    --z-space-* (±0,5 px); radios fuera de la familia de radios; alturas de control fuera de
 //                    --z-control-height-* (24/28/34/40/48 o el objetivo táctil con puntero grueso)
@@ -20,7 +28,7 @@
 //
 // Uso (desde la raíz; antes `pnpm check` y, para el sitio, el build de zudocs):
 //   pnpm audit:visual [--target site,app,html] [--brands dazlabs,zutool,zenith] [--themes dark,light]
-//                     [--widths 1440,768,390] [--filter <texto>] [--out <carpeta>] [--shots] [--no-axe]
+//                     [--widths 1440,768,390] [--filter <texto>[,<texto>…]] [--out <carpeta>] [--shots] [--no-axe]
 //                     [--site <carpeta compilada>] [--base /ruta/] [--max <n páginas>] [--report]
 //   AUDIT_OUT=<carpeta>  carpeta de salida (por defecto .tmp/visual-audit, fuera del control de versiones)
 //   --report             reclasifica el último raw.json sin abrir el navegador (para afinar los detectores)
@@ -177,9 +185,25 @@ function collect({ TOKENS, families, coarse }) {
     const key = `${type}|${sig(el)}|${detail}`;
     const prev = found.get(key);
     if (prev) prev.count += 1;
-    else found.set(key, { type, sig: sig(el), owner: owner(el), detail, path: path(el), count: 1, ...extra });
+    else
+      found.set(key, {
+        type,
+        sig: sig(el),
+        owner: owner(el),
+        detail,
+        path: path(el),
+        count: 1,
+        // Dentro de un lienzo de nodos: su contenido vive en un plano con zoom bajo controles flotantes.
+        canvas: !!el.closest(".z-node-canvas"),
+        world: !!el.closest(".z-node-canvas__world"),
+        ...extra,
+      });
   };
   const near = (v, set, tol = 0.5) => set.some((s) => Math.abs(s - v) <= tol);
+  // Margen lateral fluido de Container (token `container-gutter`, un clamp() entre dos px). Solo cuenta si el margen
+  // del elemento sale de ese token, y dentro de sus dos límites.
+  const gutter = getComputedStyle(document.documentElement).getPropertyValue("--z-container-gutter").trim();
+  const gutterBounds = /^clamp\(\s*([\d.]+)px\s*,.+,\s*([\d.]+)px\s*\)$/.exec(gutter)?.slice(1).map(Number);
   const all = [...document.body.querySelectorAll("*")].filter(
     (el) => !(el instanceof SVGElement) && !["SCRIPT", "STYLE", "TEMPLATE", "NOSCRIPT", "BR", "Z-ICON"].includes(el.tagName),
   );
@@ -318,12 +342,16 @@ function collect({ TOKENS, families, coarse }) {
       } else hidden = true;
       break;
     }
-    // Un evento mide lo que dura, una diapositiva puede asomar a medias y en una marquesina los elementos entran y
-    // salen por el borde (cuál queda cortado depende del fotograma): su texto cortado es parte del diseño.
-    const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport");
+    // Un evento mide lo que dura, una diapositiva puede asomar a medias, en una marquesina los elementos entran y
+    // salen por el borde (cuál queda cortado depende del fotograma) y un lienzo de nodos recorta lo que queda fuera de
+    // la vista (se ve desplazando): su texto cortado es parte del diseño.
+    const byDesign = el.closest(".z-event,.z-carousel__slide,.z-marquee__viewport,.z-node-canvas__world");
     if (hidden && !byDesign && !/ellipsis/.test(getComputedStyle(el).textOverflow))
       add("texto-cortado-antecesor", el, "cortado por un antecesor sin desplazamiento", { text: text.slice(0, 40) });
-    const current = el.closest("[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']");
+    // Lo seleccionado de una tira: no un panel de pestañas activo, que es contenido corriente.
+    const current = el.closest(
+      "[aria-selected='true'],[aria-current]:not([aria-current='false']),[data-state='active']:not([role=tabpanel])",
+    );
     if (scrolledOut && current)
       add("seleccionado-a-medias", el, `${sig(current)} visible a medias en su tira con desplazamiento`, { text: text.slice(0, 40) });
   }
@@ -397,6 +425,7 @@ function collect({ TOKENS, families, coarse }) {
       let prevTop = null;
       let prevLetter = false;
       let split = null;
+      let token = "";
       for (let i = 0; i < t.length && !split; i++) {
         const letter = LETTER.test(t[i]);
         range.setStart(node, i);
@@ -412,11 +441,19 @@ function collect({ TOKENS, families, coarse }) {
           while (a > 0 && LETTER.test(t[a - 1])) a--;
           while (b < t.length && LETTER.test(t[b])) b++;
           split = `${t.slice(a, i)}/${t.slice(i, b)}`;
+          let c = i;
+          let d = i;
+          while (c > 0 && /\S/.test(t[c - 1])) c--;
+          while (d < t.length && /\S/.test(t[d])) d++;
+          token = t.slice(c, d);
         }
         prevTop = box.top;
         prevLetter = letter;
       }
-      if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
+      // Un código largo sin espacios (atributos, una ruta) más ancho que la línea solo puede partirse.
+      if (split && token && token.length > 30)
+        add("token-partido", el, `código largo partido «${token.slice(0, 40)}»`, { text: t.trim().slice(0, 40) });
+      else if (split) add("palabra-partida", el, `salto dentro de una palabra sin guion «${split}»`, { text: t.trim().slice(0, 40) });
     }
   }
 
@@ -445,6 +482,10 @@ function collect({ TOKENS, families, coarse }) {
     return false;
   };
   const texts = shown.filter((el) => ownText(el) && !el.matches("input,textarea,select,option"));
+  const stickies = shown.filter((el) => {
+    const cs = getComputedStyle(el);
+    return cs.position === "sticky" && cs.pointerEvents === "none";
+  });
   const done = new Set();
   const total = Math.min(document.documentElement.scrollHeight, 20000);
   for (let y = 0; y < total; y += Math.max(200, vh * 0.8)) {
@@ -454,40 +495,435 @@ function collect({ TOKENS, families, coarse }) {
       const r = el.getBoundingClientRect();
       if (r.top < 0 || r.bottom > vh || r.right <= 0 || r.left >= vw) continue;
       done.add(el);
-      const cx = Math.min(Math.max(r.left + Math.min(r.width, 24) / 2, 0), vw - 1);
+      // Varios puntos a lo ancho del texto: lo que tapa puede estar en el centro (un separador pegajoso centrado) y no al
+      // principio de la línea.
+      // A lo ancho de las letras, no de la caja: un bloque a todo el ancho con un título corto no está tapado por lo que
+      // ocupa su hueco libre (el botón de ampliar en la esquina de una tarjeta).
+      let ink = r;
+      {
+        let left = Number.POSITIVE_INFINITY;
+        let right = Number.NEGATIVE_INFINITY;
+        for (const node of el.childNodes) {
+          if (node.nodeType !== 3 || !node.textContent.trim()) continue;
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          const b = range.getBoundingClientRect();
+          if (b.width > 0) {
+            left = Math.min(left, b.left);
+            right = Math.max(right, b.right);
+          }
+        }
+        if (right > left) ink = { left, width: right - left };
+      }
+      const xs = [0.1, 0.5, 0.9].map((f) => Math.min(Math.max(ink.left + Math.min(ink.width * f, ink.width - 2), 0), vw - 1));
+      const paints = (hit) => {
+        const hs = getComputedStyle(hit);
+        return alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none";
+      };
       // Solo cuenta si lo tapado es una parte: entero debajo de una cabecera es contenido que se desplazó, como debe.
-      const coverAt = (py) => {
+      // Dentro de una pieza deformada en 3D (una diapositiva con lente) la caja del texto es la del cuadrilátero
+      // proyectado: abarca lo que tiene al lado en su mismo plano sin que nada lo tape.
+      let warped = null;
+      for (let p = el.parentElement; p && p !== document.body && !warped; p = p.parentElement)
+        if (/matrix3d/.test(getComputedStyle(p).transform)) warped = p;
+      const coverAt = (cx, py) => {
         for (const hit of document.elementsFromPoint(cx, py)) {
-          if (hit === el || el.contains(hit) || hit.contains(el)) return null;
-          const hs = getComputedStyle(hit);
+          if (hit === el || el.contains(hit) || hit.contains(el)) break;
+          if (warped?.contains(hit)) continue;
           // La insignia de un Float se monta a propósito sobre la esquina de lo que acompaña.
-          if ((alphaOf(hs.backgroundColor) >= 0.5 || hs.backdropFilter !== "none") && !pageChrome(hit) && !hit.closest(".z-float"))
-            return hit;
+          if (paints(hit) && !pageChrome(hit) && !hit.closest(".z-float")) return hit;
+        }
+        // elementsFromPoint no ve lo que tiene pointer-events: none. Un pegajoso así (un separador de fecha, una
+        // cabecera decorativa) sigue pintando encima: se busca a mano lo que pinta dentro de él en ese punto.
+        for (const sticky of stickies) {
+          if (sticky.contains(el) || el.contains(sticky)) continue;
+          // La barra pegajosa de la propia página tapa al desplazar, como debe.
+          if (pageChrome(sticky)) continue;
+          const sr = sticky.getBoundingClientRect();
+          if (cx < sr.left || cx > sr.right || py < sr.top || py > sr.bottom) continue;
+          for (const part of [sticky, ...sticky.querySelectorAll("*")]) {
+            const pr = part.getBoundingClientRect();
+            if (cx >= pr.left && cx <= pr.right && py >= pr.top && py <= pr.bottom && paints(part)) return part;
+          }
         }
         return null;
       };
-      // Se mira dentro de lo que el texto deja ver (recortado por sus antecesores con desbordamiento) y con
-      // pointer-events activos, que elementsFromPoint ignora los elementos que no reciben el puntero.
+      // Se mira dentro de lo que el texto deja ver (recortado por sus antecesores con desbordamiento, en los dos ejes)
+      // y con pointer-events activos, que elementsFromPoint ignora los elementos que no reciben el puntero. Lo que un
+      // contenedor recorta no se ve: lo que pinte encima de esa parte (el panel de al lado) no lo tapa.
       let ct = r.top;
       let cb = r.bottom;
+      let cl = r.left;
+      let cr = r.right;
       for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
         const ps = getComputedStyle(p);
-        if (!/(auto|scroll|hidden|clip)/.test(ps.overflowY)) continue;
         const q = p.getBoundingClientRect();
-        ct = Math.max(ct, q.top);
-        cb = Math.min(cb, q.bottom);
+        if (/(auto|scroll|hidden|clip)/.test(ps.overflowY)) {
+          ct = Math.max(ct, q.top);
+          cb = Math.min(cb, q.bottom);
+        }
+        if (/(auto|scroll|hidden|clip)/.test(ps.overflowX)) {
+          cl = Math.max(cl, q.left);
+          cr = Math.min(cr, q.right);
+        }
       }
       if (cb - ct < r.height - 1) continue; // ya recortado por su contenedor: no es tapar, es desplazar
+      if (cr - cl < 4) continue;
       const pe = el.style.pointerEvents;
       el.style.pointerEvents = "auto";
-      const top = coverAt(r.top + 2);
-      const bottom = coverAt(r.bottom - 2);
+      // Tapado a medias: en vertical (arriba sí y abajo no, o al revés) o en horizontal (unos puntos de la línea sí y
+      // otros no: una pastilla encima de la mitad de una frase).
+      let covered = null;
+      const across = [];
+      for (const cx0 of xs) {
+        const cx = Math.min(Math.max(cx0, cl + 1), cr - 1);
+        const top = coverAt(cx, r.top + 2);
+        const bottom = coverAt(cx, r.bottom - 2);
+        covered = top && !bottom ? top : bottom && !top ? bottom : null;
+        if (covered) break;
+        across.push(top && bottom ? top : null);
+      }
+      if (!covered && across.some(Boolean) && across.some((c) => !c)) covered = across.find(Boolean);
       el.style.pointerEvents = pe;
-      const covered = top && !bottom ? top : bottom && !top ? bottom : null;
       if (covered) add("texto-tapado", el, `tapado por ${sig(covered)}`, { text: ownText(el).slice(0, 40) });
     }
   }
   scrollTo(0, 0);
+
+  // 2c. Lo que se ve mal sin que nada se salga del viewport.
+  const shownSet = new Set(shown);
+  const masked = (s) => s.maskImage !== "none" || s.webkitMaskImage !== "none";
+  const mono = (el) => /mono/i.test(getComputedStyle(el).fontFamily) || el.closest("pre,code,kbd,samp");
+  const textRects = (el) => {
+    const out = [];
+    for (const node of el.childNodes) {
+      if (node.nodeType !== 3 || !node.textContent.trim()) continue;
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      for (const b of range.getClientRects()) if (b.width > 1 && b.height > 1) out.push(b);
+    }
+    return out;
+  };
+
+  // Corte sin fundido: una tira o una tabla que desplaza en horizontal y corta un texto en seco por su borde, sin
+  // fundido (máscara) ni barra de desplazamiento a la vista: no hay nada que diga que sigue.
+  for (const box of shown) {
+    const bs = getComputedStyle(box);
+    if (!/(auto|scroll)/.test(bs.overflowX) || box.scrollWidth - box.clientWidth <= 8 || masked(bs)) continue;
+    const q = rects.get(box);
+    if (q.width < 60 || q.height < 16) continue;
+    const bar = box.offsetHeight - box.clientHeight - Number.parseFloat(bs.borderTopWidth) - Number.parseFloat(bs.borderBottomWidth);
+    if (bar > 2 && bs.scrollbarWidth !== "none") continue;
+    let hit = null;
+    for (const el of box.querySelectorAll("*")) {
+      if (!shownSet.has(el) || !ownText(el) || mono(el)) continue;
+      const r = rects.get(el);
+      if (r.bottom <= q.top || r.top >= q.bottom) continue;
+      if ((r.left < q.left - 1 && r.right > q.left + 4) || (r.right > q.right + 1 && r.left < q.right - 4)) {
+        hit = el;
+        break;
+      }
+    }
+    // Una rejilla con ejes fijos (cabecera o columna pegajosa: línea de tiempo, semana) desplaza en los dos ejes como
+    // una hoja de cálculo: el eje fijo dice dónde se está y el corte del contenido es el de cualquier rejilla.
+    const axes = hit && [...box.querySelectorAll("*")].some((e) => getComputedStyle(e).position === "sticky");
+    // En un carrusel la diapositiva siguiente asoma a propósito: es lo que invita a desplazar.
+    if (hit && box.matches(".z-carousel__viewport"))
+      add("asoma-diapositiva", box, "la diapositiva siguiente asoma por el borde", { text: ownText(hit).slice(0, 40) });
+    else if (hit && axes)
+      add("corte-rejilla", box, `rejilla con ejes fijos que desplaza ${box.scrollWidth - box.clientWidth} px`, {
+        text: ownText(hit).slice(0, 40),
+      });
+    else if (hit)
+      add("corte-sin-fundido", box, `desplaza ${box.scrollWidth - box.clientWidth} px en horizontal y corta un texto en seco`, {
+        text: ownText(hit).slice(0, 40),
+      });
+  }
+  // Lo mismo en vertical para listas de navegación (barra lateral, menú): una fila que el borde corta a media altura,
+  // sin fundido ni barra a la vista, parece un elemento roto y no una lista que sigue.
+  for (const box of shown) {
+    const bs = getComputedStyle(box);
+    if (!/(auto|scroll)/.test(bs.overflowY) || box.scrollHeight - box.clientHeight <= 8 || masked(bs)) continue;
+    if (!box.closest("nav,aside,[role=navigation],[role=menu],[role=listbox],.z-sidebar")) continue;
+    const q = rects.get(box);
+    if (q.width < 60 || q.height < 60) continue;
+    const bar = box.offsetWidth - box.clientWidth - Number.parseFloat(bs.borderLeftWidth) - Number.parseFloat(bs.borderRightWidth);
+    if (bar > 2 && bs.scrollbarWidth !== "none") continue;
+    let hit = null;
+    for (const el of box.querySelectorAll("a,button,[role=menuitem],[role=option],[role=treeitem]")) {
+      if (!shownSet.has(el) || el.closest("[role=grid],table")) continue;
+      const r = rects.get(el);
+      if (r.right <= q.left || r.left >= q.right) continue;
+      if ((r.top < q.top - 1 && r.bottom > q.top + 4) || (r.bottom > q.bottom + 1 && r.top < q.bottom - 4)) {
+        hit = el;
+        break;
+      }
+    }
+    if (hit)
+      add("corte-sin-fundido", box, `desplaza ${box.scrollHeight - box.clientHeight} px en vertical y corta una fila en seco`, {
+        text: (hit.textContent ?? "").trim().slice(0, 40),
+      });
+  }
+
+  // Texto pisado por un trazo: una cifra de una esfera sobre las marcas, el valor de un indicador que roza su arco. Se
+  // muestrea el área de las letras (sin el hueco de ascendentes y descendentes) más una holgura de 0,12 em contra el
+  // trazo real de cada figura fija del SVG del mismo componente (isPointInStroke). Las agujas se mueven: no cuentan.
+  const block = (el) => {
+    let top = null;
+    for (let p = el; p && p !== document.body; p = p.parentElement)
+      if (
+        String(p.getAttribute?.("class") ?? "")
+          .split(/\s+/)
+          .some((c) => /^z-[a-z0-9-]+$/.test(c) && !/^z-(root|liquid|solid|stack|row|card|section|page|container|shell.*)$/.test(c))
+      ) {
+        top = p;
+        break;
+      }
+    return top;
+  };
+  const strokeDone = new Set();
+  for (const svg of document.querySelectorAll("svg")) {
+    const sr = svg.getBoundingClientRect();
+    if (sr.width < 24 || sr.height < 24 || svg.closest("z-icon,.z-icon,button,[hidden]")) continue;
+    const geoms = [...svg.querySelectorAll("line,path,circle,ellipse,polyline,polygon")].filter((g) => {
+      const gs = getComputedStyle(g);
+      return (
+        gs.stroke !== "none" &&
+        Number.parseFloat(gs.strokeWidth) > 0 &&
+        Number(gs.strokeOpacity) > 0.2 &&
+        Number(gs.opacity) > 0.2 &&
+        gs.display !== "none" &&
+        gs.visibility !== "hidden" &&
+        // Solo las piezas de un componente (con clase): marcas, pistas, arcos; no un conector o un adorno sin nombre.
+        /^z-/.test(String(g.getAttribute("class") ?? "")) &&
+        !/(hand|needle|pointer)/.test(String(g.getAttribute("class") ?? "")) &&
+        typeof g.isPointInStroke === "function"
+      );
+    });
+    if (!geoms.length) continue;
+    const owner = block(svg.parentElement) ?? svg.parentElement;
+    const candidates = [...svg.querySelectorAll("text"), ...[...owner.querySelectorAll("*")].filter((e) => shownSet.has(e) && ownText(e))];
+    for (const el of candidates) {
+      if (strokeDone.has(el)) continue;
+      const boxes = el instanceof SVGElement ? [el.getBoundingClientRect()] : textRects(el);
+      let crossed = null;
+      const em = Number.parseFloat(getComputedStyle(el).fontSize) || 12;
+      const clear = Math.max(2, em * 0.12);
+      for (const b of boxes) {
+        const t = b.top + b.height * 0.25 - clear;
+        const bt = b.bottom - b.height * 0.2 + clear;
+        const l = b.left + 1 - clear;
+        const rr = b.right - 1 + clear;
+        if (bt <= t || rr <= l) continue;
+        for (const g of geoms) {
+          const gr = g.getBoundingClientRect();
+          const pad = Number.parseFloat(getComputedStyle(g).strokeWidth) * 2;
+          if (gr.right + pad < l || gr.left - pad > rr || gr.bottom + pad < t || gr.top - pad > bt) continue;
+          const m = g.getScreenCTM()?.inverse();
+          if (!m) continue;
+          for (let y = t; y <= bt && !crossed; y += 1.5)
+            for (let x = l; x <= rr && !crossed; x += 1.5) {
+              const p = new DOMPoint(x, y).matrixTransform(m);
+              if (g.isPointInStroke(p)) crossed = g;
+            }
+          if (crossed) break;
+        }
+        if (crossed) break;
+      }
+      if (crossed) {
+        strokeDone.add(el);
+        add("texto-sobre-trazo", el, `sus letras pisan el trazo de ${sig(crossed)}`, { text: el.textContent.trim().slice(0, 40) });
+      }
+    }
+  }
+
+  // Dato partido: una fecha, una hora o un código (una sola palabra con cifras) que parte línea por un guion o una
+  // barra. Un dato se lee entero: va en una línea.
+  for (const el of shown) {
+    for (const node of el.childNodes) {
+      if (node.nodeType !== 3) continue;
+      const t = node.textContent.trim();
+      if (!/^\S{4,32}$/.test(t) || !/\d/.test(t) || !/[-/.]/.test(t)) continue;
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const tops = [...new Set([...range.getClientRects()].filter((b) => b.width > 0.5).map((b) => Math.round(b.top / 3)))];
+      if (tops.length > 1) add("dato-partido", el, `«${t}» parte en ${tops.length} líneas`, { text: t });
+    }
+  }
+
+  // Fuera de su contenedor: una pieza que se ve (un botón, una barra con fondo) sale de la caja de su padre sin que
+  // este la recorte ni desplace: el padre no le deja sitio.
+  const paintsBox = (s) =>
+    alphaOf(s.backgroundColor) >= 0.3 ||
+    s.backdropFilter !== "none" ||
+    Number.parseFloat(s.borderTopWidth) > 0 ||
+    s.backgroundImage !== "none";
+  for (const el of shown) {
+    const cs = getComputedStyle(el);
+    if (!/^(static|relative|sticky)$/.test(cs.position)) continue;
+    // Una pieza transformada (la cara de un carrusel 3D) sale de su caja a propósito.
+    if (cs.transform !== "none" || cs.translate !== "none" || cs.scale !== "none" || cs.rotate !== "none") continue;
+    if (!(el.matches(INTERACTIVE) || (paintsBox(cs) && ownText(el) === "" && el.children.length))) continue;
+    const parent = el.parentElement;
+    if (!parent || parent === document.body) continue;
+    const ps = getComputedStyle(parent);
+    if (/(auto|scroll|hidden|clip)/.test(ps.overflowX) || /contents/.test(ps.display)) continue;
+    if (Number.parseFloat(cs.marginLeft) < 0 || Number.parseFloat(cs.marginRight) < 0) continue;
+    // Las filas de una rejilla que desplaza son más anchas que su grupo a propósito.
+    if (el.matches("[role=row],[role=rowgroup]") || parent.matches("[role=grid],[role=treegrid]")) continue;
+    const r = rects.get(el);
+    const pr = rects.get(parent) ?? parent.getBoundingClientRect();
+    if (pr.width < 1) continue;
+    const over = Math.max(r.right - pr.right, pr.left - r.left);
+    if (over > 8)
+      add("fuera-del-contenedor", el, `sale ${Math.round(over)} px de ${sig(parent)}`, { text: el.textContent.trim().slice(0, 40) });
+  }
+
+  // Fila que desborda: una fila flex sin salto de línea ni desplazamiento cuyas piezas pasan de su borde; lo que sobra
+  // queda fuera del panel (o recortado por él) sin que nada lo diga.
+  for (const row of shown) {
+    const cs = getComputedStyle(row);
+    if (!/flex/.test(cs.display) || /column/.test(cs.flexDirection) || cs.flexWrap !== "nowrap") continue;
+    if (!/visible/.test(cs.overflowX)) continue;
+    const r = rects.get(row);
+    if (r.width < 40) continue;
+    let far = null;
+    for (const k of row.children) {
+      const ks = getComputedStyle(k);
+      if (!shownSet.has(k) || /absolute|fixed/.test(ks.position)) continue;
+      // Girada o animada (un indicador que da vueltas), su caja no es su sitio.
+      if (ks.transform !== "none" || ks.rotate !== "none" || ks.animationName !== "none") continue;
+      const kr = rects.get(k);
+      if (kr.right > r.right + 8 || kr.left < r.left - 8) far = k;
+    }
+    if (far && !far.closest(".z-carousel__track,.z-marquee__track,[data-scroll-edges]"))
+      add(
+        "fila-desborda",
+        row,
+        `${sig(far)} pasa ${Math.round(Math.max(rects.get(far).right - r.right, r.left - rects.get(far).left))} px del borde de la fila`,
+        {
+          text: far.textContent.trim().slice(0, 40),
+        },
+      );
+  }
+
+  // Etiqueta cortada: el nombre de algo (un dato, una persona, un título de tarjeta) de hasta tres palabras cortado con
+  // elipsis. Un nombre corto pasa a dos líneas o le cede sitio lo secundario; la elipsis es para lo largo.
+  for (const el of shown) {
+    const es = getComputedStyle(el);
+    if (es.textOverflow !== "ellipsis" || el.scrollWidth <= el.clientWidth + 1) continue;
+    const t = el.textContent.trim();
+    // Un nombre de archivo puede ser largo: se corta con elipsis y conserva la extensión a la vista en su propio dato.
+    // Tampoco un identificador (un nombre de icono, una ruta): es un código, no un nombre que se lea.
+    if (!t || t.length > 24 || t.split(/\s+/).length > 3 || /\.[a-z0-9]{1,5}$/i.test(t) || /^[a-z0-9]+([-_/][a-z0-9]+)+$/i.test(t))
+      continue;
+    if (!/__(label|title|name)\b/.test(String(el.getAttribute("class") ?? ""))) continue;
+    if (
+      el.closest(
+        ".z-event,.z-timeline,.z-tabstrip,[role=tab],[role=gridcell],[role=columnheader],[role=row],.z-jsontree,[role=option],.z-paneheader",
+      )
+    )
+      continue;
+    add("etiqueta-cortada", el, `muestra ${Math.round((el.clientWidth / el.scrollWidth) * 100)} % de un nombre corto`, { text: t });
+  }
+
+  // Navegación lateral fija en un teléfono: una columna de navegación acoplada que se come el ancho del contenido.
+  if (vw <= 480)
+    for (const nav of shown.filter((e) => e.matches("nav,[role=navigation]"))) {
+      if (nav.closest("dialog,[popover],[role=dialog],.z-shell__drawer")) continue;
+      const r = rects.get(nav);
+      if (r.height >= vh * 0.5 && r.width >= 40 && r.width <= 120 && r.left < vw * 0.3)
+        add("navegacion-lateral-en-telefono", nav, `${Math.round(r.width)} px de ${vw} acoplados al lado del contenido`);
+    }
+
+  // Fila apilada: una fila de controles que parte línea en cada pieza (una debajo de otra, de anchos distintos).
+  for (const row of shown) {
+    const cs = getComputedStyle(row);
+    if (!/flex/.test(cs.display) || /column/.test(cs.flexDirection) || cs.flexWrap === "nowrap") continue;
+    const kids = [...row.children].filter((k) => shownSet.has(k) && getComputedStyle(k).position !== "absolute");
+    if (kids.length < 3) continue;
+    // Líneas por solape vertical: un texto y un botón centrados en la misma línea tienen `top` distintos.
+    const lines = [];
+    for (const k of [...kids].sort((a, b) => rects.get(a).top - rects.get(b).top)) {
+      const r = rects.get(k);
+      const line = lines.find((l) => r.top < l.bottom - 2 && r.bottom > l.top + 2);
+      if (line) line.bottom = Math.max(line.bottom, r.bottom);
+      else lines.push({ top: r.top, bottom: r.bottom });
+    }
+    const tops = { size: lines.length };
+    const width = rects.get(row).width;
+    // Si todas miden lo mismo (una lista de botones a todo el ancho), apilarlas es la forma; con anchos muy distintos,
+    // una debajo de otra, la fila se rompió.
+    const ws = kids.map((k) => rects.get(k).width);
+    if (
+      tops.size === kids.length &&
+      Math.max(...ws) > Math.min(...ws) * 1.5 &&
+      Math.min(...ws) < width * 0.8 &&
+      // Una pieza a todo el ancho (un campo de búsqueda) apila la fila a propósito.
+      Math.max(...ws) < width * 0.9 &&
+      kids.some((k) => k.matches(INTERACTIVE) || k.querySelector(INTERACTIVE))
+    )
+      add("fila-apilada", row, `${kids.length} piezas de una fila, cada una en su línea`);
+  }
+
+  // Lente del carrusel: las diapositivas laterales cortadas en seco por el borde (sin fundido) y el sangrado vertical
+  // que el motor reserva para el estiramiento sin que nada lo ocupe.
+  for (const vp of shown.filter((e) => e.matches(".z-carousel__viewport"))) {
+    const bleed = Number.parseFloat(getComputedStyle(vp.closest(".z-carousel")).getPropertyValue("--z-carousel-bleed")) || 0;
+    if (!bleed) continue;
+    // Con WebGL las zonas curvas las pinta el lienzo, no las diapositivas: su caja no dice cuánto ocupa la lente.
+    const cssLens = vp.closest(".z-carousel").dataset.mode === "css";
+    const q = rects.get(vp);
+    const slides = [...vp.querySelectorAll(".z-carousel__slide")]
+      .map((s) => s.getBoundingClientRect())
+      .filter((r) => r.right > q.left && r.left < q.right);
+    if (
+      !masked(getComputedStyle(vp)) &&
+      slides.some((r) => (r.left < q.left - 1 && r.right > q.left + 8) || (r.right > q.right + 1 && r.left < q.right - 8))
+    )
+      add("lente-cortada", vp, "diapositivas laterales cortadas en seco por el borde del carrusel");
+    if (cssLens && slides.length) {
+      const top = Math.min(...slides.map((r) => r.top)) - q.top;
+      const bottom = q.bottom - Math.max(...slides.map((r) => r.bottom));
+      if (Math.min(top, bottom) > 24)
+        add("sangrado-sobrante", vp, `${Math.round(Math.min(top, bottom))} px vacíos encima y debajo de las diapositivas`);
+    }
+  }
+
+  // Carrusel con ajuste al centro (prisma, coverflow, rueda): el slide marcado como activo es el que está en el centro.
+  // Si otro ocupa el centro, la persona ve uno y el carrusel (indicadores, índice, estilo de la selección) dice otro.
+  for (const root of shown.filter((e) => e.matches('.z-carousel[data-mode="snap"]'))) {
+    const vp = root.querySelector(":scope > .z-carousel__viewport");
+    const active = root.querySelector(".z-carousel__slide[data-active]");
+    if (!vp || !active || root.querySelectorAll(".z-carousel__slide[data-active]").length !== 1) continue;
+    // Con reproducción automática se mueve solo: el centro y el activo coinciden al asentarse, no en cada fotograma.
+    if (root.dataset.autoplayState === "playing") continue;
+    if (!root.matches('[data-align="center"],[data-effect="prism"],[data-effect="coverflow"],[data-effect="wheel"]')) continue;
+    const q = vp.getBoundingClientRect();
+    const vertical = root.dataset.orientation === "vertical";
+    const mid = vertical ? q.top + q.height / 2 : q.left + q.width / 2;
+    let centered = null;
+    for (const s of root.querySelectorAll(".z-carousel__slide")) {
+      const r = s.getBoundingClientRect();
+      if (vertical ? r.top <= mid && r.bottom >= mid : r.left <= mid && r.right >= mid) centered = s;
+    }
+    if (centered && centered !== active)
+      add("activo-descentrado", root, `el centro muestra el slide ${centered.dataset.index} y el activo es el ${active.dataset.index}`, {
+        text: centered.textContent.trim().slice(0, 40),
+      });
+  }
+
+  // Mazo plano: la tarjeta de arriba de un mazo (`layout="stack"`) tiene el mismo fondo y la misma sombra que las de
+  // debajo; solo el desplazamiento la separa y el mazo se lee como una tarjeta suelta.
+  for (const root of shown.filter((e) => e.matches('.z-carousel[data-layout="stack"]'))) {
+    const top = root.querySelector(".z-carousel__slide[data-active]");
+    const under = [...root.querySelectorAll(".z-carousel__slide:not([data-active])")].find((s) => getComputedStyle(s).opacity !== "0");
+    if (!top || !under) continue;
+    const a = getComputedStyle(top);
+    const b = getComputedStyle(under);
+    if (a.backgroundColor === b.backgroundColor && a.backgroundImage === b.backgroundImage && a.boxShadow === b.boxShadow)
+      add("mazo-plano", top, "la tarjeta de arriba tiene el fondo y la sombra de las de debajo");
+  }
 
   // 3. Tipografía, escala, radios, alturas
   const fontEls = [];
@@ -505,6 +941,13 @@ function collect({ TOKENS, families, coarse }) {
         fontEls.push({ first, weight: cs.fontWeight, style: cs.fontStyle, sig: sig(el), text: text.slice(0, 30) });
       }
       const size = Number.parseFloat(cs.fontSize);
+      // Tamaño en pantalla: un antecesor con transform (el mundo de un lienzo con zoom, una tarjeta en perspectiva)
+      // encoge las letras aunque el tamaño computado esté en la escala. Por debajo de 9 px no se leen.
+      const drawn = el.offsetWidth > 0 ? rects.get(el).width / el.offsetWidth : 1;
+      if (drawn < 0.99 && size * drawn < 9)
+        add("texto-ilegible", el, `${(size * drawn).toFixed(1)} px en pantalla (${size} px × ${drawn.toFixed(2)})`, {
+          text: text.slice(0, 40),
+        });
       if (!near(size, scale.text)) {
         const parentSize = Number.parseFloat(getComputedStyle(el.parentElement).fontSize);
         if (el.matches("code,kbd,samp") && !near(parentSize, scale.text) === false && size < parentSize)
@@ -557,6 +1000,16 @@ function collect({ TOKENS, families, coarse }) {
         (specified === "auto" || (/(flex|grid)/.test(parentDisplay) && Number.parseFloat(value) > 40 && !el.computedStyleMap))
       ) {
         add("margen-automatico", el, `${prop} ${value} (margen automático que empuja)`);
+        continue;
+      }
+      if (
+        gutterBounds &&
+        /padding-(left|right)/.test(prop) &&
+        cs.getPropertyValue("--z-container-pad").trim() === gutter &&
+        v >= gutterBounds[0] - 0.5 &&
+        v <= gutterBounds[1] + 0.5
+      ) {
+        add("margen-fluido", el, `${prop} ${Math.round(v * 100) / 100}px (container-gutter: ${gutter})`);
         continue;
       }
       // Con puntero grueso, un relleno que lleva la fila al objetivo táctil (40) sale de un cálculo, no de la escala.
@@ -766,9 +1219,12 @@ function collect({ TOKENS, families, coarse }) {
     // Excepción de espaciado: un círculo de 24 px centrado en el objetivo no toca otro objetivo ni su círculo.
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
+    // El vecino cuenta por la parte que se ve: un chip desplazado fuera de su fila (overflow) no está junto al objetivo.
     const spaced = inter.every((o) => {
       if (o === el || o.contains(el) || el.contains(o)) return true;
-      const q = rects.get(o);
+      const c = clipped(o);
+      const q = { left: c.left, top: c.top, right: c.right, bottom: c.bottom, width: c.right - c.left, height: c.bottom - c.top };
+      if (q.width < 1 || q.height < 1) return true;
       const dx = Math.max(q.left - cx, 0, cx - q.right);
       const dy = Math.max(q.top - cy, 0, cy - q.bottom);
       if (Math.hypot(dx, dy) < 12) return false;
@@ -980,7 +1436,8 @@ async function run() {
       servers.push(srv);
       let n = 0;
       for (const p of paths) {
-        if (filter && !`/${p}`.includes(filter)) continue;
+        // Varias páginas separadas por comas: `--filter overlay/modal,layout/shell`.
+        if (filter && !filter.split(",").some((f) => f && `/${p}`.includes(f))) continue;
         if (n++ >= maxPages) break;
         // El sitio se compila con una marca (zudocs.config.json): las otras se inyectan para medir color y contraste.
         for (const brand of brands)
@@ -1003,7 +1460,8 @@ async function run() {
       const srv = await viteServer();
       servers.push(srv);
       for (const screen of appScreens()) {
-        if (filter && !screen.includes(filter)) continue;
+        // Varias pantallas separadas por comas: `--filter dashboard,kanban`.
+        if (filter && !filter.split(",").some((f) => f && screen.includes(f))) continue;
         for (const brand of brands)
           for (const theme of themes)
             for (const width of widths)
@@ -1265,7 +1723,7 @@ function classify(recs) {
               ? "evento de la rejilla de tiempo en un teléfono: su ancho lo fija la duración y el solape; se abre también desde la vista de lista"
               : /z-segmented__item/.test(i.sig) && / < 40$/.test(i.detail)
                 ? "opción de segmentado: con puntero grueso la zona táctil crece a 40 px con ::before"
-                : /z-resize|z-split__divider/.test(i.sig)
+                : /z-resize|z-table__resize|z-split__divider/.test(i.sig)
                   ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
                   : /z-heatmap__cell/.test(i.sig)
                     ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
@@ -1279,6 +1737,10 @@ function classify(recs) {
           if (why2) {
             verdict = "aceptado";
             why = why2;
+          } else if (i.world) {
+            verdict = "aceptado";
+            why =
+              "control dentro de un lienzo de nodos con zoom: su tamaño en pantalla sigue al zoom (a 100 % mide lo suyo); los puertos conservan 24 px a cualquier zoom";
           }
           break;
         }
@@ -1287,6 +1749,24 @@ function classify(recs) {
             verdict = "aceptado";
             why = "marca inyectada sin cargar su fuente: el sitio se compila con la suya y otra métrica desborda unos px";
           }
+          break;
+        case "asoma-diapositiva":
+          verdict = "aceptado";
+          why = "la diapositiva siguiente de un carrusel asoma a propósito";
+          break;
+        case "token-partido":
+          verdict = "aceptado";
+          why = "código sin espacios más ancho que la línea: solo puede partirse";
+          break;
+        case "escala-tamano":
+          if (/hero__title/.test(i.sig)) {
+            verdict = "aceptado";
+            why = "titular fluido entre dos tokens (display-sm y hero) según el ancho de su contenedor";
+          }
+          break;
+        case "corte-rejilla":
+          verdict = "aceptado";
+          why = "rejilla con ejes fijos (cabecera o columna pegajosa) que desplaza en los dos ejes";
           break;
         case "objetivo-espaciado":
           verdict = "aceptado";
@@ -1319,6 +1799,10 @@ function classify(recs) {
         case "espaciado-linea":
           verdict = "aceptado";
           why = "1 px: línea de rejilla o ajuste óptico, por debajo del paso más pequeño de la escala";
+          break;
+        case "margen-fluido":
+          verdict = "aceptado";
+          why = "margen lateral fluido de Container: el token container-gutter crece con el ancho entre sus dos límites";
           break;
         case "relleno-tactil":
           verdict = "aceptado";
@@ -1376,6 +1860,15 @@ function classify(recs) {
             why = "pieza circular o pista fina (avatar, punto, interruptor, pista)";
           }
           break;
+        case "texto-tapado":
+          // El mundo del lienzo es más grande que la vista: el minimapa y los controles flotan sobre él como sobre un
+          // mapa, y lo que queda debajo se alcanza desplazando (y desde la vista en lista).
+          if (i.world && /z-node-(minimap|controls)/.test(i.detail)) {
+            verdict = "aceptado";
+            why =
+              "nodo bajo el minimapa o los controles flotantes del lienzo: se alcanza desplazando, con el teclado y desde la vista en lista";
+          }
+          break;
         case "solape":
           if (/z-event/.test(i.sig) && /z-event/.test(i.detail)) {
             verdict = "aceptado";
@@ -1383,6 +1876,10 @@ function classify(recs) {
           } else if (i.offscreen) {
             verdict = "aceptado";
             why = "fuera de la pantalla (capa cerrada o carrusel)";
+          } else if (i.canvas) {
+            verdict = "aceptado";
+            why =
+              "lienzo de nodos: los nodos pasan bajo el minimapa y los controles flotantes y con poco zoom se acercan; se alcanzan desplazando, acercando, con el teclado y desde la vista en lista";
           }
           break;
         default:

@@ -52,7 +52,7 @@ src/primitives/*                                   primitivas de React sobre cor
 src/dom/*.ts                                       comportamiento sin framework (@zuccadev-labs/zuix-zui/dom), sobre core
 ```
 
-Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `media`, `effects`, `overlay`, `navigation`, `carousel`.
+Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `media`, `effects`, `overlay`, `navigation`, `carousel`, `time`, `terminal`, `dashboard`, `people`.
 
 ## Patrones
 
@@ -62,6 +62,7 @@ Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `
 import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "danger";
@@ -72,7 +73,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
-export function Button({ variant = "secondary", size = "md", icon, loading, className, children, disabled, onClick, ...rest }: ButtonProps) {
+export const Button = withRef(function Button({ variant = "secondary", size = "md", icon, loading, className, children, disabled, onClick, ...rest }: ButtonProps) {
   return (
     <button
       type="button"
@@ -89,10 +90,12 @@ export function Button({ variant = "secondary", size = "md", icon, loading, clas
       {children}
     </button>
   );
-}
+});
 ```
 
-- `ref` es una prop más: React 19, sin `forwardRef`.
+- `ref` es una prop más. Un componente que la acepta se declara con `withRef` (`src/react-compat.ts`):
+  `export const Button = withRef(function Button(…) {…})`. En React 19 es la misma función; en React 18 la
+  envuelve en `forwardRef`. El binding funciona con React 18.2+ y 19.
 - En carga el botón lleva `aria-disabled`, no `disabled`: conserva el foco. No hay manejador propio, así que
   el módulo no necesita `"use client"`.
 
@@ -179,7 +182,9 @@ Campos del contrato HTML: `behavior` (`none` | `dom` | `react`; se deduce si fal
 | `border-radius: var(--z-radius-full)` en un botón, campo o pestaña | `var(--z-button-radius)` o `var(--z-control-radius*)` |
 | Un `div` flotante con `z-index` | Un elemento `popover` con las primitivas de `src/primitives/` |
 | `disabled` para un botón en carga | `aria-disabled` |
-| `forwardRef` | `ref` como prop |
+| `forwardRef`, o `ref` en las props sin `withRef` | `withRef(function X(…) {…})`, con `ref` en las props |
+| `inert={true}`, `popoverTarget=` | `inert={inertProp(x)}`, `{...popoverTarget(id)}` (React 18 no los conoce) |
+| Leer `child.props.ref` o `child.ref` | `elementRef(child)` |
 | Una clase suelta en la pantalla | Una variante en el componente y en su manifiesto |
 
 ## Cuando falta algo

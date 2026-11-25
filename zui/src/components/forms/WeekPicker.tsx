@@ -1,6 +1,7 @@
 "use client";
 import { isoWeekText, weekNumber, weekRangeDays, weekRangeOf, weekStartOf, type DateRange } from "../../core/date";
 import { DatePicker, type DatePickerSingleProps } from "./DatePicker";
+import { withRef } from "../../react-compat";
 
 /** Rango de semanas ISO, `{ from: "YYYY-Www", to: "YYYY-Www" }`. */
 export interface WeekRange {
@@ -35,7 +36,7 @@ const toDate = (week: string | null | undefined) => (week === undefined ? undefi
 
 /** Selector de semana ISO: el calendario elige la semana entera (lunes a domingo) y muestra su número. Con
  *  `mode="range"`, un rango de semanas. */
-export function WeekPicker(props: WeekPickerProps) {
+export const WeekPicker = withRef(function WeekPicker(props: WeekPickerProps) {
   const { placeholder = "Select week", calendarLabel = "Choose week", weekLabel = "Week", locale } = props;
   const number = new Intl.NumberFormat(locale, { useGrouping: false });
   const weekText = (date: string) => {
@@ -95,4 +96,4 @@ export function WeekPicker(props: WeekPickerProps) {
       }}
     />
   );
-}
+});

@@ -1,0 +1,139 @@
+{
+  "name": "Terminal",
+  "group": "terminal",
+  "description": "Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y 24 bits, negrita, subrayado, enlaces OSC 8) y copiar. No emula una VT100 completa: es una consola de líneas con barras de progreso por retorno de carro.",
+  "import": "import { Terminal } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "prompt",
+      "type": "string",
+      "default": "$"
+    },
+    {
+      "name": "defaultOutput",
+      "type": "string",
+      "description": "Salida inicial (admite ANSI)."
+    },
+    {
+      "name": "onCommand",
+      "type": "(command: string, run: { write, signal }) => void | string | number | Promise<…> | AsyncIterable<string>",
+      "description": "Texto, código de salida, promesa o flujo de trozos. Ctrl+C aborta `signal`."
+    },
+    {
+      "name": "onComplete",
+      "type": "(input: string) => string[] | Promise<string[]>",
+      "description": "Opciones para Tab. Sin él, Tab sale de la terminal."
+    },
+    {
+      "name": "history",
+      "type": "string[]",
+      "description": "Historial inicial."
+    },
+    {
+      "name": "maxLines",
+      "type": "number",
+      "default": 5000
+    },
+    {
+      "name": "readOnly",
+      "type": "boolean",
+      "default": false,
+      "description": "Solo salida, sin línea de entrada."
+    },
+    {
+      "name": "busy",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "theme",
+      "type": "enum",
+      "values": ["glass", "solid"],
+      "default": "glass"
+    },
+    {
+      "name": "announce",
+      "type": "enum",
+      "values": ["end", "all", "none"],
+      "default": "end",
+      "description": "Anuncia el final de cada orden, cada línea nueva o nada."
+    },
+    {
+      "name": "onInterrupt",
+      "type": "() => void"
+    },
+    {
+      "name": "onClear",
+      "type": "() => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TerminalLabels>"
+    },
+    {
+      "name": "ref",
+      "type": "Ref<TerminalHandle>",
+      "description": "write(chunk), writeln(line), clear(), focus(), text()."
+    }
+  ],
+  "states": ["idle", "busy"],
+  "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-text",
+    "danger-text",
+    "warning-text",
+    "info-text",
+    "accent-text",
+    "accent-soft",
+    "font-mono",
+    "text-code",
+    "leading-code"
+  ],
+  "classes": [
+    "z-terminal",
+    "z-terminal__bar",
+    "z-terminal__title",
+    "z-terminal__actions",
+    "z-terminal__copy",
+    "z-terminal__clear",
+    "z-terminal__screen",
+    "z-terminal__line",
+    "z-terminal__input",
+    "z-terminal__prompt",
+    "z-terminal__field",
+    "z-ansi"
+  ],
+  "a11y": "Región con nombre. La salida es role=log con aria-live=off: una terminal habla demasiado para anunciar cada línea (announce=\"all\" la vuelve polite); al terminar una orden se anuncia «Command finished» o el código de salida en una región status aparte. La entrada es un <input> real con etiqueta («Command») dentro de un <form>: Intro envía con el envío nativo, que no salta mientras un IME compone. ↑/↓ recorren el historial conservando lo que se estaba escribiendo; Tab completa solo con onComplete (si no, sale: el foco no queda atrapado); Ctrl+C interrumpe solo sin texto seleccionado (con selección, copia). La salida es una parada de Tab para leerla y desplazarla; Escape vuelve a la entrada. Los colores van además de negrita y subrayado, y los de 256 y 24 bits se acotan en luminosidad para leerse en claro y en oscuro. La salida se pinta como nodos de texto, nunca como marcado; los enlaces OSC 8 solo admiten http y https. Sin React: .z-terminal con data-prompt, data-title, data-max-lines, data-read-only, data-theme, data-announce, y el historial y la salida inicial en <script type=\"application/json\" data-props>{\"history\": […], \"output\": \"…\"}</script>; terminal(el) devuelve write, writeln, clear, focus y text; emite z:command { command }, z:interrupt y z:clear; setWidgetProps(el, { onCommand, onComplete }) para responder con un flujo.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Salida de un build",
+      "code": "<Terminal title=\"build\" prompt=\"~/app $\" defaultOutput={buildLog} onCommand={(cmd) => (cmd === \"help\" ? \"help · clear · build\" : `command not found: ${cmd}`)} />"
+    },
+    {
+      "title": "Solo lectura",
+      "code": "<Terminal readOnly theme=\"solid\" title=\"deploy.log\" defaultOutput={deployLog} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Salida de un build",
+      "code": "<div class=\"z-terminal\" data-title=\"build\" data-prompt=\"~/app $\">\n  <script type=\"application/json\" data-props>{ \"history\": [\"pnpm build\", \"pnpm test\"], \"output\": \"\\u001b[1;32m✓\\u001b[0m Compiled 128 modules in \\u001b[1m1.4s\\u001b[0m\\n\\u001b[33mwarn\\u001b[0m  2 unused exports in \\u001b[4msrc/legacy.ts\\u001b[0m\\n\\u001b[38;5;39mdist/app.js\\u001b[0m   \\u001b[2m84.2 kB\\u001b[0m\\n\" }</script>\n</div>"
+    },
+    {
+      "title": "Solo lectura",
+      "code": "<div class=\"z-terminal\" data-read-only data-theme=\"solid\" data-title=\"deploy.log\">\n  <script type=\"application/json\" data-props>{ \"output\": \"\\u001b[2m12:04:01\\u001b[0m Uploading 24 files\\n\\u001b[2m12:04:03\\u001b[0m \\u001b[32mDeployed\\u001b[0m to \\u001b]8;;https://example.com\\u0007example.com\\u001b]8;;\\u0007\\n\" }</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: xterm.js para el juego de secuencias y las terminales de Vercel y AI Elements."
+}

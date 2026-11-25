@@ -14,7 +14,7 @@ binding se escribe después y tiene que producir ese marcado.
 |---|---|---|
 | Contrato | Tokens `--z-*`, clases `z-*`, atributos de estado (`data-state`, `data-size`, `aria-*`) e iconos | Nada: CSS y SVG |
 | Comportamiento | `@zuccadev-labs/zuix-zui/dom` y `@zuccadev-labs/zuix-zout/dom`: diálogos, menús, popovers, tooltips, avisos, pestañas, acordeón, controles, paneles | El navegador (`<dialog>`, Popover API) |
-| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 19 |
+| Binding | `@zuccadev-labs/zuix-zui` y `@zuccadev-labs/zuix-zout` para React | React 18.2 o posterior, o React 19 |
 
 El comportamiento y el binding comparten la misma lógica (colocación, foco, teclado, capas): está escrita
 una vez, sin framework, y los dos la consumen. Un binding para otro framework solo tiene que producir el
@@ -62,6 +62,8 @@ Los archivos listos para enlazar están en la carpeta `dist/` de cada paquete in
 - `z-root` aplica tipografía y foco; `z-canvas` pinta el fondo.
 - `data-z-dom` activa el comportamiento de pestañas, acordeón y controles dentro de ese contenedor.
 - El ejemplo completo, con todos los componentes, está en `examples/html/index.html`.
+- Para navegadores anteriores a la Popover API (hasta Chromium 109, Firefox 115 y Safari 15.4) están las hojas
+  `*.compat.css` y el polyfill de popover: [Modo compat](./10-compatibilidad.md#modo-compat).
 
 ## Con bundler (Vue, Svelte, Angular, Astro)
 
@@ -206,13 +208,20 @@ init(datesModule, chartsModule);
 |---|---|---|
 | `/dom/core` | Diálogos, popovers, menús y submenús, tooltip, `toast`, `confirm`, pestañas, acordeón, casillas, interruptores, radios, Rating, acciones (Toolbar, CopyButton…), navegación (Menubar, Collapsible), capas (Drawer, HoverCard, Toggletip, Tour, ActionBar, Banner) y lo básico de formularios: Select, Combobox, Slider, OTPInput, FileUpload, NumberInput, PasswordInput, Field, Listbox y TagsInput | `init`, `use`, `hydrate`, `destroy`, `download`, utilidades de atajos |
 | `/dom/dates` | Calendar, DatePicker y sus variantes, DateField, TimeField, TimePicker, DateTimePicker | `datesModule`, `setCalendarOptions`… |
-| `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable | `dataModule`, `sortTable`… |
+| `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable, TransferList, NotificationCenter, FilterBar y ReviewCard | `dataModule`, `sortTable`, `setReviewExpanded`, `formatMoney`, `summarizePrice`… |
 | `/dom/content` | FormatNumber, FormatByte, FormatDate, Highlight, Marquee, JsonTree, Stepper con paneles, Timer, RelativeTime | `contentModule`, `setJsonTreeValue`… |
 | `/dom/agenda` | EventCalendar, TimelineView, PerpetualYear, FreeBusy, SlotPicker, CalendarHeatmap, HabitCalendar (trae `/dom/dates`) | `agendaModule`, `setAgendaEvents`… |
 | `/dom/charts` | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline | `chartsModule`, `setWidgetProps` |
 | `/dom/color` | ColorPicker, ColorArea, ColorSlider, ColorSwatchPicker, ColorField, ColorPickerTrigger | `colorModule`, `setColorValue` |
 | `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti | `mediaModule`, `carousel`… |
 | `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
+| `/dom/time` | Clock, AnalogClock, WorldClock, Countdown, DurationField, TimeZoneSelect (sobre el Combobox del núcleo) | `timeModule`, `refreshTimeZoneSelect`, `formatDuration` |
+| `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
+| `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
+| `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
+| `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
+| `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
+| `/dom/nodes` | NodeCanvas (nodos, puertos, aristas, grupos, minimapa, controles), NodeListView | `nodesModule`, `nodeCanvas(el)`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -222,10 +231,19 @@ mismas rutas cuelgan de `@zuccadev-labs/zuix/zui/dom/…`. Qué pesa cada caso c
 | Consumidor | Antes, con una sola entrada | Ahora |
 |---|---|---|
 | Solo `toast()` | 225 kB (de `/dom`) | 11 kB, de `/dom` o de `/dom/core` (3 iconos) |
-| `init()` del núcleo | — | 92 kB (4 iconos) |
-| `init()` del núcleo con fechas | — | 168 kB |
-| `init()` del núcleo con agenda | — | 332 kB |
-| `init()` completo | 526 kB | 515 kB (33 iconos) |
+| `init()` del núcleo | — | 99 kB |
+| `init()` del núcleo con fechas | — | 175 kB |
+| `init()` del núcleo con agenda | — | 340 kB |
+| `init()` del núcleo con tiempo | — | 144 kB |
+| `init()` del núcleo con terminal y código | — | 160 kB |
+| `init()` del núcleo con chat | — | 234 kB |
+| `init()` del núcleo con IA | — | 225 kB |
+| `init()` del núcleo con chat e IA | — | 301 kB |
+| `init()` del núcleo con dashboard | — | 157 kB |
+| `init()` del núcleo con usuarios y perfiles | — | 128 kB |
+| `init()` del núcleo con dashboard y usuarios | — | 178 kB |
+| `init()` del núcleo con nodos | — | 183 kB |
+| `init()` completo | 526 kB | 943 kB |
 
 Sin bundler, `zui/dist/zui.dom.js` sigue siendo un solo archivo con todo. Para cargar por partes sin bundler, las
 entradas de `dist/esm/` funcionan con un mapa de importación que resuelva `@zuccadev-labs/zuix-zicon/…`.

@@ -14,7 +14,7 @@ puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
 | `pnpm --filter @zuccadev-labs/zuix-zudocs build` | El sitio compila; enlaces, anclas e imágenes resuelven |
 | `pnpm test:site` | El sitio compilado, página a página |
 | `pnpm test:html` | El contrato HTML y el modo sin framework, en navegador |
-| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador |
+| `pnpm test:browser` | El binding de React sobre `examples/app`, en navegador. Con `REACT=18`, la misma aplicación con React 18 (`examples/react18`) |
 | `pnpm audit:visual` | Medidas en navegador: márgenes, fuentes, escala, radios, alturas, alineación, foco, objetivo táctil y axe |
 | `pnpm build` | El `dist/` de publicación |
 | `pnpm test:pack` | Los cinco tarballs, consumidos fuera del workspace |
@@ -196,6 +196,11 @@ compila con una marca: las otras se inyectan con su hoja de `tokens/dist/brands/
 |---|---|
 | Desbordamiento | El documento se desplaza en horizontal, o un elemento se sale del viewport sin contenedor que desplace |
 | Recorte | Texto con `scrollWidth > clientWidth` sin elipsis ni `line-clamp` |
+| Tapado | Otra capa pinta encima de una parte de un texto, dentro de lo que sus contenedores dejan ver en los dos ejes |
+| Cortes | Una tira o una tabla que desplaza corta un texto en seco, sin fundido ni barra; una fila flex pasa de su borde; un botón o una barra con fondo sale de la caja de su padre; una fila de controles parte línea en cada pieza; una fecha o un código parte en dos líneas; un nombre corto (hasta tres palabras) se corta con elipsis |
+| Trazos | Las letras (con una holgura de 0,12 em) pisan el trazo fijo de un SVG de su componente: las cifras de una esfera, el valor de un indicador sobre su arco |
+| Carrusel | La lente corta los vecinos en seco o reserva un sangrado que nada ocupa; el slide activo no es el del centro; la tarjeta de arriba de un mazo no se distingue de las de debajo |
+| Teléfono | A 480 px o menos, una navegación lateral acoplada se come el ancho del contenido |
 | Solape | Dos elementos interactivos que se pisan donde se ven |
 | Fuente | La familia computada no es la de la marca, la fuente no cargó (`document.fonts`) o el sistema pinta otra (`CSS.getPlatformFontsForNode`) |
 | Escala | Tamaño, interlineado o peso fuera de los tokens; relleno, margen o hueco fuera de `--z-space-*` (±0,5 px); radio fuera de la familia; altura de control fuera de `--z-control-height-*` |
@@ -209,6 +214,19 @@ Lo que una regla acepta (elipsis intencionada, relleno que compensa el borde, ra
 tallas distintas, objetivo pequeño con espacio alrededor…) queda contado como aceptado y con el motivo en el
 informe; no se descarta nada en bloque. La medida en bruto se guarda, así que `--report` reclasifica sin abrir
 el navegador.
+
+El margen lateral de `Container` con `gutter="fluid"` sale del token `container-gutter`, un `clamp()` entre 16 y
+40 px que sigue al ancho del contenedor: casi nunca cae en un paso de `--z-space-*`. La auditoría lo acepta solo en
+`padding-left` y `padding-right`, cuando el `--z-container-pad` del elemento es ese token y el valor queda entre sus
+dos límites. Un relleno fluido que no salga del token sigue contando como defecto.
+
+En la excepción de espaciado de un objetivo pequeño, el vecino cuenta por la parte que se ve: un chip desplazado
+fuera de su fila (overflow) no está junto al objetivo aunque su caja caiga encima.
+
+Dentro de un lienzo de nodos (`.z-node-canvas`) el solape entre su contenido y su cromo es parte del diseño: los
+nodos pasan bajo el minimapa y los controles flotantes, y con poco zoom se acercan entre sí. Los controles del cuerpo
+de un nodo miden en pantalla lo que dicta el zoom. Los dos casos se cuentan como aceptados con su motivo; los
+puertos mantienen el objetivo de 24 px a cualquier zoom.
 
 ```
 pnpm audit:visual --target site --brands dazlabs --widths 1440 --themes dark   # una pasada rápida

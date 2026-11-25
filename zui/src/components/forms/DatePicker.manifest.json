@@ -337,5 +337,5 @@
       "code": "<span class=\"z-select z-datepicker\" id=\"shifts\" data-size=\"md\" data-block data-mode=\"multiple\" data-locale=\"en-US\" data-count-label=\"{count} shifts\" data-placeholder=\"Select dates\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shifts-panel\" data-state=\"closed\" data-placeholder>\n    <span class=\"z-sr-only\">Shifts</span>\n    <span class=\"z-select__value\">Select dates</span>\n  </button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-days\" size=\"16\"></z-icon></span>\n  <input type=\"hidden\" name=\"shifts\" value=\"\" />\n</span>\n\n<div id=\"shifts-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel\" role=\"dialog\" aria-label=\"Choose date\">\n  <div class=\"z-calendar\"></div>\n</div>"
     }
   ],
-  "origin": "DatePicker del catálogo objetivo; reutiliza la envoltura de Select y el panel de Popover."
+  "origin": "DatePicker propio; reutiliza la envoltura de Select y el panel de Popover."
 }

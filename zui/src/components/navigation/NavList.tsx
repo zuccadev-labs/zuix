@@ -3,6 +3,7 @@ import { isValidElement, type ComponentProps, type HTMLAttributes, type MouseEve
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { slot } from "../../primitives/slot";
+import { withRef } from "../../react-compat";
 
 export interface NavListProps extends Omit<ComponentProps<"nav">, "aria-label"> {
   /** Nombre accesible de la navegación. */
@@ -13,14 +14,14 @@ export interface NavListProps extends Omit<ComponentProps<"nav">, "aria-label"> 
 }
 
 /** Contenedor vertical de `NavLink`, pensado para barras laterales. */
-export function NavList({ label, heading, className, children, ...rest }: NavListProps) {
+export const NavList = withRef(function NavList({ label, heading, className, children, ...rest }: NavListProps) {
   return (
     <nav {...rest} aria-label={label} className={cx("z-navlist", className)}>
       {heading ? <div className="z-navlist__heading">{heading}</div> : null}
       {children}
     </nav>
   );
-}
+});
 
 /** Además de sus props, admite atributos HTML (`data-*`, `aria-*`, `id`), que llegan al enlace o al botón. */
 export interface NavLinkProps extends Omit<HTMLAttributes<HTMLElement>, "onClick" | "children" | "className" | "title"> {

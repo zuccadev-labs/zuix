@@ -479,6 +479,6 @@
       "script": "import { setCalendarOptions } from \"@zuccadev-labs/zuix-zui/dom\";\nsetCalendarOptions(document.querySelector(\"#price-calendar\"), {\n  dayContent: (date) => (date.endsWith(\"0\") ? \"$89\" : null),\n  dayDescription: (date) => (date.endsWith(\"0\") ? \"from $89\" : null),\n});"
     }
   ],
-  "origin": "Calendario propio del DatePicker del catálogo objetivo; rejilla de fechas de ARIA APG.",
+  "origin": "Calendario propio del DatePicker; rejilla de fechas de ARIA APG.",
   "exports": ["presetValue"]
 }

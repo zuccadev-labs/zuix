@@ -14,6 +14,7 @@ import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { Calendar, todayISO, type CalendarLegend, type CalendarPreset, type CalendarProps, type DateRange } from "./Calendar";
 import { DateTimePicker } from "./DateTimePicker";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 /** Props del calendario que el selector reenvía tal cual. */
 type ForwardedCalendarProps = Pick<
@@ -164,7 +165,7 @@ const normalize = (raw: unknown) => (raw && typeof raw === "object" && !Array.is
 
 /** Campo de fecha con calendario propio en un popover. Valor ISO `YYYY-MM-DD`, `{ from, to }` en rango o una lista.
  *  Con `input` (fecha única), el disparador es un DateField tecleable con un botón de calendario. */
-export function DatePicker(props: DatePickerProps) {
+export const DatePicker = withRef(function DatePicker(props: DatePickerProps) {
   if (props.input && (props.mode ?? "single") === "single") {
     const p = props as DatePickerSingleProps;
     return (
@@ -202,9 +203,9 @@ export function DatePicker(props: DatePickerProps) {
     );
   }
   return <DatePickerPanel {...props} />;
-}
+});
 
-function DatePickerPanel(props: DatePickerProps) {
+const DatePickerPanel = withRef(function DatePickerPanel(props: DatePickerProps) {
   const {
     mode = "single",
     open,
@@ -506,13 +507,17 @@ function DatePickerPanel(props: DatePickerProps) {
       ) : null}
     </>
   );
-}
+});
 
 /** Selector de rango: `DatePicker` en modo `range` con dos meses por defecto. */
 export type DateRangePickerProps = Omit<DatePickerRangeProps, "mode">;
-export function DateRangePicker({ numberOfMonths = 2, placeholder = "Select dates", ...props }: DateRangePickerProps) {
+export const DateRangePicker = withRef(function DateRangePicker({
+  numberOfMonths = 2,
+  placeholder = "Select dates",
+  ...props
+}: DateRangePickerProps) {
   return <DatePicker {...props} mode="range" numberOfMonths={numberOfMonths} placeholder={placeholder} />;
-}
+});
 
 const noop = () => {};
 

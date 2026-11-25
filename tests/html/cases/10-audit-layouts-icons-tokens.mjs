@@ -1,5 +1,5 @@
 // Auditoría previa a la 0.2.0 de zout, zicon y tokens, sin framework: lo que no cubrían los casos anteriores.
-// Iconos: los 346 × 2 se dibujan, atributos hostiles, `hidden`, registro tardío, sprite. Tokens: preferencias de
+// Iconos: los 366 × 2 se dibujan, atributos hostiles, `hidden`, registro tardío, sprite. Tokens: preferencias de
 // contraste y colores forzados. Layouts: regiones y enlace de salto, RTL, patrón «window splitter» completo,
 // tiradores verticales, shells anidados, estado previo a la medida, selectores inválidos y dispose().
 export default async function ({ page, test, ok, card, settle, browserName, Unverifiable }) {
@@ -37,7 +37,7 @@ export default async function ({ page, test, ok, card, settle, browserName, Unve
 
   /* ───────────── zicon ───────────── */
 
-  await test("auditoría · zicon: los 346 iconos se dibujan en las dos variantes, dentro de la caja", async () => {
+  await test("auditoría · zicon: los 366 iconos se dibujan en las dos variantes, dentro de la caja", async () => {
     const result = await page.evaluate(async () => {
       const { icons } = await (await fetch("../../zicon/manifest.json")).json();
       const host = document.createElement("div");
@@ -70,7 +70,7 @@ export default async function ({ page, test, ok, card, settle, browserName, Unve
       host.remove();
       return { count: icons.length, bad };
     });
-    ok(result.count === 346, `el manifiesto declara ${result.count} iconos`);
+    ok(result.count === 366, `el manifiesto declara ${result.count} iconos`);
     ok(result.bad.length === 0, `${result.bad.length} iconos con problemas: ${result.bad.slice(0, 6).join("; ")}`);
   });
 
@@ -169,7 +169,7 @@ export default async function ({ page, test, ok, card, settle, browserName, Unve
       host.remove();
       return { count: ids.length, unique: new Set(ids).size, widths, inlineStyle: /<svg[^>]*\sstyle=/.test(text) };
     });
-    ok(result.count === 692 && result.unique === 692, `símbolos: ${result.count}, únicos: ${result.unique}`);
+    ok(result.count === 732 && result.unique === 732, `símbolos: ${result.count}, únicos: ${result.unique}`);
     ok(!result.inlineStyle, "la raíz del sprite usa style en línea");
     ok(
       result.widths.every((w) => w > 1),

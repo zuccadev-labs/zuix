@@ -1,8 +1,8 @@
 {
  "name": "@zuccadev-labs/zuix-zicon",
- "source": "Dazicon",
+ "source": "Dazicon y dibujos propios",
  "box": 24,
- "count": 346,
+ "count": 366,
  "variants": [
   "outline",
   "solid"
@@ -88,6 +88,14 @@
   "user": {
    "en": "User",
    "es": "Usuario"
+  },
+  "weather": {
+   "en": "Weather",
+   "es": "Clima"
+  },
+  "transport": {
+   "en": "Transport",
+   "es": "Transporte"
   }
  },
  "icons": [
@@ -144,6 +152,29 @@
     "ajustes"
    ],
    "emoji": []
+  },
+  {
+   "name": "anchor",
+   "category": "transport",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "anchor",
+    "ancla",
+    "nautical",
+    "marine",
+    "port",
+    "harbor",
+    "náutico",
+    "puerto",
+    "amarre",
+    "tripulación"
+   ],
+   "emoji": [
+    "⚓"
+   ]
   },
   {
    "name": "ant",
@@ -2022,6 +2053,30 @@
    ]
   },
   {
+   "name": "car",
+   "category": "transport",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "car",
+    "coche",
+    "vehicle",
+    "auto",
+    "transport",
+    "drive",
+    "vehículo",
+    "transporte",
+    "conducir",
+    "automóvil"
+   ],
+   "emoji": [
+    "🚗",
+    "🚙"
+   ]
+  },
+  {
    "name": "chart-bar",
    "category": "charts",
    "variants": [
@@ -2915,6 +2970,55 @@
    "emoji": []
   },
   {
+   "name": "cloud-rain",
+   "category": "weather",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cloud",
+    "rain",
+    "nube",
+    "lluvia",
+    "weather",
+    "rainy",
+    "storm",
+    "forecast",
+    "tiempo",
+    "lluvioso",
+    "tormenta",
+    "previsión"
+   ],
+   "emoji": [
+    "🌧️"
+   ]
+  },
+  {
+   "name": "cloud-sun",
+   "category": "weather",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "cloud",
+    "sun",
+    "nube",
+    "sol",
+    "weather",
+    "partly cloudy",
+    "forecast",
+    "tiempo",
+    "parcialmente nublado",
+    "previsión"
+   ],
+   "emoji": [
+    "⛅",
+    "🌤️"
+   ]
+  },
+  {
    "name": "code-bracket",
    "category": "system",
    "variants": [
@@ -2987,6 +3091,28 @@
     "consola"
    ],
    "emoji": []
+  },
+  {
+   "name": "compass",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "compass",
+    "brújula",
+    "explore",
+    "direction",
+    "orientation",
+    "explorar",
+    "dirección",
+    "orientación",
+    "rumbo"
+   ],
+   "emoji": [
+    "🧭"
+   ]
   },
   {
    "name": "computer",
@@ -3863,6 +3989,53 @@
    ]
   },
   {
+   "name": "first-aid",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "first",
+    "aid",
+    "primeros",
+    "auxilios",
+    "medical",
+    "health",
+    "emergency",
+    "kit",
+    "botiquín",
+    "médico",
+    "salud",
+    "emergencia"
+   ],
+   "emoji": [
+    "⛑️"
+   ]
+  },
+  {
+   "name": "fish",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "fish",
+    "pez",
+    "fishing",
+    "seafood",
+    "marine",
+    "pesca",
+    "pescado",
+    "marisco"
+   ],
+   "emoji": [
+    "🐟",
+    "🐠"
+   ]
+  },
+  {
    "name": "flag",
    "category": "others",
    "variants": [
@@ -3978,6 +4151,28 @@
    ]
   },
   {
+   "name": "fuel",
+   "category": "transport",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "fuel",
+    "combustible",
+    "gas",
+    "petrol",
+    "gas station",
+    "refuel",
+    "gasolina",
+    "gasolinera",
+    "repostar"
+   ],
+   "emoji": [
+    "⛽"
+   ]
+  },
+  {
    "name": "funnel",
    "category": "symbols",
    "variants": [
@@ -3990,6 +4185,28 @@
     "filter",
     "filtrar",
     "filtro"
+   ],
+   "emoji": []
+  },
+  {
+   "name": "gauge",
+   "category": "charts",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "gauge",
+    "indicador",
+    "speed",
+    "speedometer",
+    "meter",
+    "performance",
+    "dashboard",
+    "velocidad",
+    "velocímetro",
+    "medidor",
+    "rendimiento"
    ],
    "emoji": []
   },
@@ -4777,6 +4994,27 @@
    ]
   },
   {
+   "name": "navigation",
+   "category": "maps",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "navigation",
+    "navegación",
+    "heading",
+    "location",
+    "gps",
+    "direction",
+    "rumbo",
+    "ubicación",
+    "posición",
+    "dirección"
+   ],
+   "emoji": []
+  },
+  {
    "name": "newspaper",
    "category": "others",
    "variants": [
@@ -5547,6 +5785,26 @@
    "emoji": []
   },
   {
+   "name": "shield",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "shield",
+    "escudo",
+    "security",
+    "protection",
+    "safe",
+    "guard",
+    "seguridad",
+    "protección",
+    "defensa"
+   ],
+   "emoji": []
+  },
+  {
    "name": "shield-check",
    "category": "security",
    "variants": [
@@ -5581,6 +5839,31 @@
     "exclamación"
    ],
    "emoji": []
+  },
+  {
+   "name": "ship",
+   "category": "transport",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "ship",
+    "barco",
+    "boat",
+    "vessel",
+    "yacht",
+    "sailboat",
+    "embarcación",
+    "velero",
+    "yate",
+    "bote"
+   ],
+   "emoji": [
+    "🚢",
+    "⛵",
+    "🛥️"
+   ]
   },
   {
    "name": "shopping-bag",
@@ -5656,6 +5939,29 @@
    "emoji": []
   },
   {
+   "name": "siren",
+   "category": "security",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "siren",
+    "sirena",
+    "alarm",
+    "emergency",
+    "alert",
+    "urgent",
+    "alarma",
+    "emergencia",
+    "alerta",
+    "urgente"
+   ],
+   "emoji": [
+    "🚨"
+   ]
+  },
+  {
    "name": "slash",
    "category": "symbols",
    "variants": [
@@ -5667,6 +5973,29 @@
     "tachado"
    ],
    "emoji": []
+  },
+  {
+   "name": "snowflake",
+   "category": "weather",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "snowflake",
+    "copo de nieve",
+    "cold",
+    "winter",
+    "freeze",
+    "frozen",
+    "frío",
+    "invierno",
+    "nieve",
+    "congelado"
+   ],
+   "emoji": [
+    "❄️"
+   ]
   },
   {
    "name": "sparkles",
@@ -5898,6 +6227,29 @@
    ]
   },
   {
+   "name": "sunset",
+   "category": "weather",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "sunset",
+    "atardecer",
+    "evening",
+    "dusk",
+    "sundown",
+    "tarde",
+    "anochecer",
+    "puesta de sol",
+    "ocaso"
+   ],
+   "emoji": [
+    "🌅",
+    "🌇"
+   ]
+  },
+  {
    "name": "swatch",
    "category": "misc",
    "variants": [
@@ -5967,6 +6319,29 @@
    ],
    "emoji": [
     "🏷️"
+   ]
+  },
+  {
+   "name": "target",
+   "category": "symbols",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "target",
+    "diana",
+    "goal",
+    "aim",
+    "objective",
+    "focus",
+    "meta",
+    "objetivo",
+    "enfoque",
+    "puntería"
+   ],
+   "emoji": [
+    "🎯"
    ]
   },
   {
@@ -6041,6 +6416,28 @@
    ],
    "emoji": [
     "🚚"
+   ]
+  },
+  {
+   "name": "tv",
+   "category": "devices",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "tv",
+    "televisión",
+    "television",
+    "screen",
+    "monitor",
+    "entertainment",
+    "pantalla",
+    "tele",
+    "entretenimiento"
+   ],
+   "emoji": [
+    "📺"
    ]
   },
   {
@@ -6169,6 +6566,31 @@
    ]
   },
   {
+   "name": "utensils",
+   "category": "others",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "utensils",
+    "cubiertos",
+    "food",
+    "restaurant",
+    "dining",
+    "catering",
+    "meal",
+    "comida",
+    "restaurante",
+    "cubertería",
+    "menú"
+   ],
+   "emoji": [
+    "🍴",
+    "🍽️"
+   ]
+  },
+  {
    "name": "variable",
    "category": "math",
    "variants": [
@@ -6263,6 +6685,29 @@
    "emoji": []
   },
   {
+   "name": "waves",
+   "category": "weather",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "waves",
+    "olas",
+    "sea",
+    "ocean",
+    "water",
+    "swell",
+    "mar",
+    "océano",
+    "agua",
+    "oleaje"
+   ],
+   "emoji": [
+    "🌊"
+   ]
+  },
+  {
    "name": "wifi",
    "category": "symbols",
    "variants": [
@@ -6291,6 +6736,29 @@
     "señal"
    ],
    "emoji": []
+  },
+  {
+   "name": "wind",
+   "category": "weather",
+   "variants": [
+    "outline",
+    "solid"
+   ],
+   "keywords": [
+    "wind",
+    "viento",
+    "weather",
+    "breeze",
+    "air",
+    "tiempo",
+    "brisa",
+    "aire",
+    "meteorología"
+   ],
+   "emoji": [
+    "💨",
+    "🌬️"
+   ]
   },
   {
    "name": "window",
@@ -6565,6 +7033,31 @@
   "🗂️": "rectangle-stack",
   "🗄️": "archive-drawer",
   "💾": "arrow-down-tray",
-  "🧮": "calculator"
+  "🧮": "calculator",
+  "⚓": "anchor",
+  "🚢": "ship",
+  "⛵": "ship",
+  "🛥️": "ship",
+  "🧭": "compass",
+  "🌊": "waves",
+  "💨": "wind",
+  "🌬️": "wind",
+  "🐟": "fish",
+  "🐠": "fish",
+  "⛽": "fuel",
+  "❄️": "snowflake",
+  "🌧️": "cloud-rain",
+  "⛅": "cloud-sun",
+  "🌤️": "cloud-sun",
+  "🌅": "sunset",
+  "🌇": "sunset",
+  "🚨": "siren",
+  "⛑️": "first-aid",
+  "🍴": "utensils",
+  "🍽️": "utensils",
+  "🚗": "car",
+  "🚙": "car",
+  "🎯": "target",
+  "📺": "tv"
  }
 }

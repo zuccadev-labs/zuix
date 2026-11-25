@@ -1,6 +1,7 @@
 import type { AnchorHTMLAttributes, ReactNode, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   /** `inline` va subrayado dentro de un texto; `subtle` solo se subraya al pasar; `standalone` es una acción suelta. */
@@ -15,7 +16,7 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children?: ReactNode;
 }
 
-export function Link({
+export const Link = withRef(function Link({
   variant = "inline",
   external,
   externalLabel = "opens in a new tab",
@@ -50,4 +51,4 @@ export function Link({
       ) : null}
     </a>
   );
-}
+});

@@ -1,5 +1,6 @@
 import type { HTMLAttributes, Ref } from "react";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /** `elevated` con sombra, `outlined` solo borde, `filled` fondo hundido. */
@@ -11,7 +12,7 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /** Superficie que agrupa contenido relacionado. */
-export function Card({ variant = "elevated", padding = "md", interactive, className, children, ...rest }: CardProps) {
+export const Card = withRef(function Card({ variant = "elevated", padding = "md", interactive, className, children, ...rest }: CardProps) {
   return (
     <div
       {...rest}
@@ -23,4 +24,4 @@ export function Card({ variant = "elevated", padding = "md", interactive, classN
       {children}
     </div>
   );
-}
+});

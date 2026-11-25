@@ -1,4 +1,4 @@
-// Oleada 6: patrones de DotMatrix (core/dotmatrix), pausa fuera de pantalla (core/visibility) y cálculos de los
+// Patrones de DotMatrix (core/dotmatrix), pausa fuera de pantalla (core/visibility) y cálculos de los
 // efectos (core/effects).
 import assert from "node:assert/strict";
 import { afterEach, describe, test } from "node:test";
@@ -54,7 +54,7 @@ describe("DotMatrix", () => {
     );
     assert.equal(new Set(sig).size, DOT_PATTERNS.length);
   });
-  test("oleada 7: rombo simétrico, radar en el sentido de las agujas, hélice y corazón con silueta", () => {
+  test("rombo simétrico, radar en el sentido de las agujas, hélice y corazón con silueta", () => {
     const diamond = dotMatrixCells("diamond", 5, 5);
     assert.equal(diamond[12]?.phase, 0, "el centro late primero");
     assert.equal(diamond[2]?.phase, diamond[10]?.phase, "simétrico");

@@ -62,6 +62,7 @@ export function useSections(): Section[] {
     if (site.pages.tokens) reference.push({ title: "Tokens", path: "/tokens" });
     if (site.pages.loaders) reference.push({ title: "Cargadores", path: "/loaders" });
     if (site.pages.effects) reference.push({ title: "Efectos", path: "/effects" });
+    if (site.pages.carousels) reference.push({ title: "Carruseles", path: "/carousels" });
     if (reference.length) out.push({ id: "reference", label: "Referencia", icon: "swatch", links: reference, groups: [] });
     return out;
   }, [site, data]);
@@ -71,7 +72,7 @@ export function useSections(): Section[] {
 function sectionOf(sections: Section[], path: string, base: string): Section["id"] {
   const rel = `/${path.slice(base.length)}`;
   if (/^\/components(\/|$)/.test(rel) && sections.some((s) => s.id === "components")) return "components";
-  if (/^\/(icons|tokens|loaders|effects)(\/|$)/.test(rel) && sections.some((s) => s.id === "reference")) return "reference";
+  if (/^\/(icons|tokens|loaders|effects|carousels)(\/|$)/.test(rel) && sections.some((s) => s.id === "reference")) return "reference";
   return "docs";
 }
 

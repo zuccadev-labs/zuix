@@ -2,6 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { BUTTON_ICON_SIZE, type ButtonSize, type ButtonVariant } from "./types";
+import { withRef } from "../../react-compat";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Intención. `outline` es de contorno sin relleno; `link` tiene aspecto de enlace (sigue siendo un botón). */
@@ -17,7 +18,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
-export function Button({
+export const Button = withRef(function Button({
   variant = "secondary",
   size = "md",
   icon,
@@ -52,6 +53,6 @@ export function Button({
       {iconRight ? <Icon name={iconRight} size={BUTTON_ICON_SIZE[size]} /> : null}
     </button>
   );
-}
+});
 
 const off = (value: unknown) => value === true || value === "true";

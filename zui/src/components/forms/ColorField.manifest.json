@@ -126,5 +126,5 @@
       "code": "<ColorField defaultValue=\"rgb(236 72 153 / 0.8)\" />"
     }
   ],
-  "origin": "Oleada 7. Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color)."
+  "origin": "Inspirado en el comportamiento de los ColorPicker de shark-ui (MIT), sin su código; conversiones propias (core/color)."
 }

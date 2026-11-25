@@ -2,6 +2,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
 import { useOffscreenRef } from "../../primitives/offscreen";
+import { withRef } from "../../react-compat";
 
 export type EffectTone = "accent" | "info" | "success" | "warning" | "danger" | "neutral";
 
@@ -27,7 +28,7 @@ export interface BorderBeamProps extends HTMLAttributes<HTMLDivElement> {
  * Haz de luz que recorre el borde de lo que envuelve. Un anillo enmascarado (`aria-hidden`, sin puntero) gira un
  * degradado cónico con `transform` en el compositor. Quieto con movimiento reducido y en pausa fuera de pantalla.
  */
-export function BorderBeam({
+export const BorderBeam = withRef(function BorderBeam({
   duration = 6,
   length = 18,
   width = 1,
@@ -63,4 +64,4 @@ export function BorderBeam({
       <span className="z-beam__ring" aria-hidden="true" />
     </div>
   );
-}
+});

@@ -7,8 +7,8 @@ CSS and tokens; it works with any framework and ships a React binding.
 pnpm add @zuccadev-labs/zuix
 ```
 
-With npm, `npm install @zuccadev-labs/zuix`. The React binding also needs `react` and `react-dom` 19
-(`pnpm add react react-dom`). The framework-free subpaths do not import them. Requires Node 22.12 or later.
+With npm, `npm install @zuccadev-labs/zuix`. The React binding also needs `react` and `react-dom`, 18.2 or
+later or 19 (`pnpm add react react-dom`). The framework-free subpaths do not import them. Requires Node 22.12 or later.
 
 ## With React
 
@@ -65,10 +65,11 @@ These subpaths do not import React, and a project that only uses them does not i
 |---|---|
 | `@zuccadev-labs/zuix/styles.css` | Tokens (all brands) + component and layout styles |
 | `@zuccadev-labs/zuix/tokens.css` | `@zuccadev-labs/zuix-tokens/tokens.css` |
+| `@zuccadev-labs/zuix/styles.compat.css`, `/tokens.compat.css` | The same sheets for Chromium 109, Firefox 115 and Safari 15.4 ([compat mode](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)) |
 | `@zuccadev-labs/zuix/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` | A single brand on `:root` |
 | `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Token bridges to Tailwind 4 and Docusaurus |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | `@zuccadev-labs/zuix-zui`, its framework-free behavior and the WebGL carousel mode |
-| `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/dates`, `/zui/dom/data`, `/zui/dom/content`, `/zui/dom/agenda`, `/zui/dom/charts`, `/zui/dom/color`, `/zui/dom/media`, `/zui/dom/effects` | The framework-free behavior of `@zuccadev-labs/zuix-zui` split by family |
+| `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/dates`, `/zui/dom/data`, `/zui/dom/content`, `/zui/dom/agenda`, `/zui/dom/charts`, `/zui/dom/color`, `/zui/dom/media`, `/zui/dom/effects`, `/zui/dom/time`, `/zui/dom/terminal`, `/zui/dom/chat`, `/zui/dom/ai`, `/zui/dom/dashboard`, `/zui/dom/people`, `/zui/dom/nodes` | The framework-free behavior of `@zuccadev-labs/zuix-zui` split by family |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout` and its framework-free behavior |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | The entry points of `@zuccadev-labs/zuix-zicon` |
 | `@zuccadev-labs/zuix` | The `zui`, `zout` and `zicon` namespaces (requires React) |
@@ -98,9 +99,9 @@ from the other and render empty.
 | Package | Contents |
 |---|---|
 | [`@zuccadev-labs/zuix-tokens`](https://www.npmjs.com/package/@zuccadev-labs/zuix-tokens) | Design tokens; a brand is one file |
-| [`@zuccadev-labs/zuix-zicon`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon) | 346 icons in outline and solid |
-| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 144 components |
-| [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 19 layouts |
+| [`@zuccadev-labs/zuix-zicon`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon) | 366 icons in outline and solid |
+| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 224 components |
+| [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 30 layouts |
 
 ## Documentation
 

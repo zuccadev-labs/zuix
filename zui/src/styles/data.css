@@ -70,9 +70,12 @@
   .z-table :is(th, td)[data-align="end"] {
     text-align: end;
   }
+  /* Una columna de datos (fechas, horas, códigos) no parte línea: «2026-11-10» partía por el guion. La tabla
+     desplaza si no cabe. */
   .z-table td[data-mono] {
     font-family: var(--z-font-mono);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
   .z-table[data-sticky] thead th {
     position: sticky;
@@ -317,6 +320,21 @@
   button.z-chip__main {
     cursor: pointer;
   }
+  /* Con puntero grueso el chip mide 40 px por fuera, pero el botón queda 2 px por dentro del borde: la zona de
+     pulsación cubre también el borde para llegar al objetivo táctil sin cambiar el dibujo. */
+  @media (pointer: coarse) {
+    button.z-chip__main {
+      position: relative;
+    }
+    button.z-chip__main::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: max(100%, var(--z-touch-target, 0px));
+    }
+  }
   @media (hover: hover) {
     .z-chip[data-interactive]:hover:not([data-disabled]) {
       background: var(--z-surface-3);
@@ -386,7 +404,8 @@
        4,3:1 (axe, zutool y zenith claros). */
     background: linear-gradient(var(--z-accent-soft), var(--z-accent-soft)), var(--z-surface-solid);
     color: var(--z-accent-text);
-    font-size: calc(var(--z-avatar-size) * 0.38);
+    /* Iniciales en la escala tipográfica, una talla por tamaño de avatar (cerca del 38 % del diámetro). */
+    font-size: var(--z-text-small);
     font-weight: var(--z-weight-bold);
     line-height: 1;
     user-select: none;
@@ -394,15 +413,19 @@
   }
   .z-avatar[data-size="xs"] {
     --z-avatar-size: 20px;
+    font-size: var(--z-text-fine);
   }
   .z-avatar[data-size="sm"] {
     --z-avatar-size: 28px;
+    font-size: var(--z-text-caption);
   }
   .z-avatar[data-size="lg"] {
     --z-avatar-size: 48px;
+    font-size: var(--z-text-heading);
   }
   .z-avatar[data-size="xl"] {
     --z-avatar-size: 64px;
+    font-size: var(--z-text-display-sm);
   }
   .z-avatar[data-shape="rounded"] {
     border-radius: var(--z-radius-sm);
@@ -422,6 +445,7 @@
     aspect-ratio: 1;
     border-radius: var(--z-radius-full);
     background: var(--z-fg-subtle);
+    color: var(--z-surface-solid);
     box-shadow: 0 0 0 2px var(--z-surface-solid);
   }
   .z-avatar__status[data-status="online"] {
@@ -444,12 +468,93 @@
   .z-avatar-group > .z-avatar {
     box-shadow: 0 0 0 2px var(--z-surface-solid);
   }
-  .z-avatar-group > .z-avatar + .z-avatar {
-    margin-inline-start: calc(var(--z-avatar-size) * -0.28);
+  /* Solape: lo que el siguiente avatar tapa del anterior, un paso de la escala por talla. Es el justo para que las
+     iniciales se lean enteras: cada avatar tapado lleva sus iniciales al centro de la parte que se ve. En xs (20 px)
+     dos iniciales ocupan casi todo el círculo: los avatares no se solapan, solo los une el anillo. La talla es la del
+     avatar (o la del grupo en la lista). */
+  .z-avatar-group {
+    --z-avatar-group-flip: 1;
+  }
+  .z-avatar-group:dir(rtl) {
+    --z-avatar-group-flip: -1;
+  }
+  .z-avatar-group > .z-avatar,
+  .z-avatar-group > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-2-5);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar,
+  .z-avatar-group[data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-3);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar,
+  .z-avatar-group[data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1);
+  }
+  .z-avatar-group > .z-avatar[data-size="sm"],
+  .z-avatar-group[data-size="sm"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1-5);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="sm"],
+  .z-avatar-group[data-size="sm"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-2);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="sm"],
+  .z-avatar-group[data-size="sm"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1);
+  }
+  .z-avatar-group > .z-avatar[data-size="xs"],
+  .z-avatar-group[data-size="xs"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-0);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="xs"],
+  .z-avatar-group[data-size="xs"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-0);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="xs"],
+  .z-avatar-group[data-size="xs"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-0);
+  }
+  .z-avatar-group > .z-avatar[data-size="lg"],
+  .z-avatar-group[data-size="lg"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-3);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="lg"],
+  .z-avatar-group[data-size="lg"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-4);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="lg"],
+  .z-avatar-group[data-size="lg"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-1-5);
+  }
+  .z-avatar-group > .z-avatar[data-size="xl"],
+  .z-avatar-group[data-size="xl"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-4);
+  }
+  .z-avatar-group[data-spacing="tight"] > .z-avatar[data-size="xl"],
+  .z-avatar-group[data-size="xl"][data-spacing="tight"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-5);
+  }
+  .z-avatar-group[data-spacing="loose"] > .z-avatar[data-size="xl"],
+  .z-avatar-group[data-size="xl"][data-spacing="loose"] > .z-avatar-group__item {
+    --z-avatar-group-shift: var(--z-space-2);
+  }
+  .z-avatar-group > :is(.z-avatar, .z-avatar-group__item) + :is(.z-avatar, .z-avatar-group__item) {
+    margin-inline-start: calc(var(--z-avatar-group-shift) * -1);
+  }
+  /* Iniciales al centro de lo que se ve: el borde final de cada avatar queda bajo el siguiente (en apilado inverso,
+     el inicial bajo el anterior). */
+  .z-avatar-group:not([data-reverse]) > .z-avatar:not(:last-child) > .z-avatar__initials,
+  .z-avatar-group:not([data-reverse]) > .z-avatar-group__item:not(:last-child) > .z-avatar > .z-avatar__initials {
+    translate: calc(var(--z-avatar-group-shift) * -0.5 * var(--z-avatar-group-flip)) 0;
+  }
+  .z-avatar-group[data-reverse] > .z-avatar:not(:first-child) > .z-avatar__initials,
+  .z-avatar-group[data-reverse] > .z-avatar-group__item:not(:first-child) > .z-avatar > .z-avatar__initials {
+    translate: calc(var(--z-avatar-group-shift) * 0.5 * var(--z-avatar-group-flip)) 0;
   }
 
   /* ---- StatTile ---- */
   .z-stat {
+    container: z-stat / inline-size;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-1);
@@ -508,6 +613,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* En una baldosa estrecha (cuatro en 620 px) el icono cede su sitio al nombre: «Completion» quedaba en «Complet…». */
+  @container z-stat (inline-size < 7.5rem) {
+    .z-stat .z-stat__icon {
+      display: none;
+    }
+  }
   /* Icono en baldosa: rectángulo redondeado (28 px, radio 8), no círculo. */
   .z-stat__icon {
     display: inline-flex;
@@ -520,8 +631,11 @@
     background: var(--z-accent-soft);
     color: var(--z-accent-text);
   }
+  /* Una cifra no parte línea («$12.4k» partía en «$12.4» y «k» en una baldosa estrecha). */
   .z-stat__value {
     margin-top: auto;
+    overflow-wrap: normal;
+    white-space: nowrap;
     font-family: var(--z-font-display);
     font-size: var(--z-text-display-sm);
     font-weight: var(--z-weight-display);

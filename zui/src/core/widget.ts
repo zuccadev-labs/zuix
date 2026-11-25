@@ -3,6 +3,7 @@
 // interacción conectada al elemento raíz. El binding de React y el modo DOM pintan el mismo árbol y llaman a la misma
 // interacción; aquí solo los tipos y ayudas sin documento al importar.
 
+import { announceTo } from "./announcer";
 import type { VEl } from "./vnode";
 
 export interface WidgetHost<C, S> {
@@ -50,17 +51,8 @@ export const num = (v: string | undefined, fallback: number) =>
   v !== undefined && v !== "" && Number.isFinite(Number(v)) ? Number(v) : fallback;
 export const list = (v: string | undefined) => (v ?? "").split(/[\s,]+/).filter(Boolean);
 
-/** Anuncio educado con ~500 ms de retraso y vaciado previo en la región viva `.z-live` de la pieza. */
-const liveTimers = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
+/** Anuncio educado con ~500 ms de retraso y vaciado previo en la región viva `[data-live]` de la pieza (cola de core/announcer). */
 export function announceIn(root: HTMLElement, text: string, selector = "[data-live]"): void {
   const live = root.querySelector<HTMLElement>(selector);
-  if (!live) return;
-  clearTimeout(liveTimers.get(live));
-  live.textContent = "";
-  liveTimers.set(
-    live,
-    setTimeout(() => {
-      live.textContent = text;
-    }, 500),
-  );
+  if (live) announceTo(live, text, 500);
 }

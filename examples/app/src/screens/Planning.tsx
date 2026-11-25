@@ -19,7 +19,7 @@ import {
 } from "@zuccadev-labs/zuix-zui";
 import { AGENDA_NOW, AGENDA_TODAY } from "./Agenda";
 
-// Piezas de planificación de la agenda (oleada 2), con los datos del prototipo (agenda.md): jueves 19 de noviembre
+// Piezas de planificación de la agenda, con la semana de referencia: jueves 19 de noviembre
 // de 2026, 10:42 en Madrid. `?screen=planning-stage&piece=<id>` pinta una sola, a todo el ancho (capturas).
 const TZ = "Europe/Madrid";
 

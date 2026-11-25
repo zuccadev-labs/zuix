@@ -6,28 +6,29 @@ import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { useControllable } from "../../primitives/hooks";
 import { slot } from "../../primitives/slot";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface CloseButtonProps extends ComponentProps<"button"> {
   label: string;
 }
 
 /** Botón de cierre local (el grupo no depende de `actions`). */
-export function CloseButton({ label, className, ...rest }: CloseButtonProps) {
+export const CloseButton = withRef(function CloseButton({ label, className, ...rest }: CloseButtonProps) {
   return (
     <button type="button" {...rest} className={cx("z-overlay-close", className)} aria-label={label}>
       <Icon name="x-mark" size={16} />
     </button>
   );
-}
+});
 
 export interface DialogButtonProps extends ComponentProps<"button"> {
   variant?: "primary" | "secondary" | "danger";
 }
 
 /** Botón de pie de diálogo; misma forma que el botón estándar. */
-export function DialogButton({ variant = "secondary", className, ...rest }: DialogButtonProps) {
+export const DialogButton = withRef(function DialogButton({ variant = "secondary", className, ...rest }: DialogButtonProps) {
   return <button type="button" {...rest} className={cx("z-dialog-btn", className)} data-variant={variant} />;
-}
+});
 
 export interface MenuItemEntry {
   type?: "item";

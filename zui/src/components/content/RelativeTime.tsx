@@ -2,6 +2,7 @@
 import { useEffect, useState, type HTMLAttributes, type Ref } from "react";
 import { formatRelative, nextUpdate, toInstant, type RelativeUnit } from "../../core/relative";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface RelativeTimeProps extends Omit<HTMLAttributes<HTMLTimeElement>, "children"> {
   /** Instante: ISO 8601 con zona (`2026-11-19T12:00:00Z`), milisegundos o `Date`. */
@@ -23,7 +24,7 @@ export interface RelativeTimeProps extends Omit<HTMLAttributes<HTMLTimeElement>,
 
 /** «hace 3 min», «en 2 días»: un `<time>` con el instante en `datetime`, la fecha completa en `title` y el texto
  *  que se actualiza con una cadencia que se alarga con la distancia (sin región viva: no interrumpe al lector). */
-export function RelativeTime({
+export const RelativeTime = withRef(function RelativeTime({
   value,
   locale,
   format = "long",
@@ -64,4 +65,4 @@ export function RelativeTime({
       {formatRelative(then, current, locale, { style: format, numeric, minUnit })}
     </time>
   );
-}
+});

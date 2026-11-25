@@ -23,5 +23,5 @@
       "code": "<Form aria-label=\"Create account\" method=\"post\">\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Password\" required hint=\"Eight or more characters.\" validate={{ tooShort: \"Use at least 8 characters.\" }}>\n    <PasswordInput name=\"password\" autoComplete=\"new-password\" minLength={8} />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Create account</Button>\n</Form>"
     }
   ],
-  "origin": "Nuevo. Guías «forms» y «accessible-error-announcement» (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState)."
+  "origin": "Nuevo. Pautas habituales de formularios accesibles y de anuncio de errores (ValidityState, :user-invalid, foco al primer error). Referencia: Form de Radix (mensajes por ValidityState)."
 }

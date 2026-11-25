@@ -9,9 +9,9 @@ tabs, grids, site navigation) and draws no content. Measures and material come f
 pnpm add @zuccadev-labs/zuix-zout @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-zicon
 ```
 
-`@zuccadev-labs/zuix-zicon` is a required peer. `react` and `react-dom` 19 are optional peers: only the
-binding needs them (`pnpm add react react-dom`). The suite packages are installed and upgraded together, at
-the same version. Requires Node 22.12 or later.
+`@zuccadev-labs/zuix-zicon` is a required peer. `react` and `react-dom` (18.2 or later, or 19) are optional
+peers: only the binding needs them (`pnpm add react react-dom`). The suite packages are installed and upgraded
+together, at the same version. Requires Node 22.12 or later.
 
 To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
 
@@ -37,6 +37,13 @@ To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://
 | `BottomNavigation` | Mobile navigation: three to five destinations with icon and label |
 | `SiteFooter` | Site footer: brand, link columns, social links and legal strip |
 | `SkipLink` | Skip-to-content link that moves focus to the target even if it is not focusable |
+| `AppBar` | Top app bar (small, medium, large); the large title folds into the top row on scroll |
+| `DashboardLayout`, `SettingsLayout`, `ProfileLayout`, `KanbanLayout` | Page layouts for a dashboard (sticky filters), settings (anchored navigation and a save bar), a profile and a board |
+| `AuthLayout` | Sign-in page: a glass card on the canvas, or split with an image side |
+| `DocsLayout` | Documentation page: navigation, article, table of contents that tracks the section being read, pager |
+| `LandingLayout`, `LandingHero`, `LandingSection` | Landing page with a hero, feature grid, call to action and footer |
+| `MailLayout` | Folders, message list and reader; one view at a time on narrow screens |
+| `ChatLayout` | Conversation list, conversation and details; a stack on narrow screens that can follow the browser history. `variant="widget"` is a floating assistant |
 
 ## With React
 
@@ -110,6 +117,7 @@ The `Shell` measures its own width, not the screen:
 | `@zuccadev-labs/zuix-zout` | React layouts and their types |
 | `@zuccadev-labs/zuix-zout/dom` | Framework-free behavior: `init`, `hydrate`, `dispose`, `setPanelOpen`, `setSplitSizes`, `addWorkTab`… |
 | `@zuccadev-labs/zuix-zout/styles.css` | Styles |
+| `@zuccadev-labs/zuix-zout/styles.compat.css` | The same styles for Chromium 109, Firefox 115 and Safari 15.4 ([compat mode](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)) |
 | `@zuccadev-labs/zuix-zout/manifest.json`, `@zuccadev-labs/zuix-zout/html.json` | Props, classes and markup, for tools and agents |
 | `@zuccadev-labs/zuix-zout/dist/zout.css`, `@zuccadev-labs/zuix-zout/dist/zout.dom.js` | Bundles to link without a bundler |
 

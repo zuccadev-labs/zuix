@@ -1,0 +1,89 @@
+{
+  "name": "PriceTag",
+  "group": "data",
+  "description": "Precio con moneda (Intl.NumberFormat), precio anterior tachado y unidad («/ night»).",
+  "import": "import { PriceTag } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "amount",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "required": true,
+      "description": "Código ISO 4217."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "previous",
+      "type": "number",
+      "description": "Precio anterior; se muestra tachado delante del actual si es distinto."
+    },
+    {
+      "name": "unit",
+      "type": "ReactNode",
+      "description": "Unidad tras el precio."
+    },
+    {
+      "name": "previousLabel",
+      "type": "string",
+      "default": "Previous price:",
+      "description": "Prefijo para lectores del precio anterior (el tachado no se anuncia)."
+    },
+    {
+      "name": "currentLabel",
+      "type": "string",
+      "default": "Current price:"
+    },
+    {
+      "name": "currencyDisplay",
+      "type": "enum",
+      "values": ["symbol", "narrowSymbol", "code", "name"],
+      "default": "symbol"
+    },
+    {
+      "name": "trimZeros",
+      "type": "boolean",
+      "default": false,
+      "description": "Sin decimales cuando el importe es entero."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    }
+  ],
+  "tokens": [
+    "space-1-5",
+    "fg",
+    "fg-muted",
+    "text-heading",
+    "text-display-sm",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-snug",
+    "tracking-tight",
+    "leading-snug"
+  ],
+  "classes": ["z-price", "z-price__current", "z-price__previous", "z-price__unit"],
+  "a11y": "El tachado (`<s>`) no lo anuncian la mayoría de lectores: cada precio lleva su prefijo en texto oculto («Previous price: €150. Current price: €120 / night»).",
+  "examples": [
+    {
+      "title": "Por noche, con rebaja",
+      "code": "<PriceTag amount={120} previous={150} currency=\"EUR\" locale=\"en-IE\" unit=\"/ night\" trimZeros />"
+    },
+    {
+      "title": "Grande",
+      "code": "<PriceTag size=\"lg\" amount={49} currency=\"USD\" locale=\"en-US\" unit=\"per month\" />"
+    }
+  ],
+  "origin": "Precios de ficha de Airbnb y Booking."
+}

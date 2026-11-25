@@ -5,6 +5,7 @@ import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
 import { NativeInput } from "../../primitives/native-input";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export type CheckedState = boolean | "indeterminate";
 
@@ -27,7 +28,7 @@ export interface CheckboxProps extends Omit<ComponentProps<"button">, "children"
 }
 
 /** Casilla con estado marcado, sin marcar e indeterminado (`checked="indeterminate"`). Patrón APG «checkbox»: se cambia con Espacio. */
-export function Checkbox({
+export const Checkbox = withRef(function Checkbox({
   checked: checkedProp,
   defaultChecked = false,
   onCheckedChange,
@@ -113,4 +114,4 @@ export function Checkbox({
       ) : null}
     </label>
   );
-}
+});

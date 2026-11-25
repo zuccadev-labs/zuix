@@ -1,6 +1,7 @@
 import { Fragment, type HTMLAttributes, type Ref } from "react";
 import { highlightParts, type HighlightOptions } from "../../core/format";
 import { cx } from "../../cx";
+import { withRef } from "../../react-compat";
 
 export interface HighlightProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children">, HighlightOptions {
   /** Texto en el que se buscan las coincidencias. */
@@ -13,7 +14,7 @@ export interface HighlightProps extends Omit<HTMLAttributes<HTMLSpanElement>, "c
 }
 
 /** Marca con `<mark>` las coincidencias de una o varias consultas (sin distinguir mayúsculas y, si se pide, acentos). */
-export function Highlight({
+export const Highlight = withRef(function Highlight({
   text,
   query,
   ignoreCase,
@@ -51,4 +52,4 @@ export function Highlight({
       })}
     </span>
   );
-}
+});

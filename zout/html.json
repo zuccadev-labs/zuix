@@ -2,6 +2,58 @@
  "name": "@zuccadev-labs/zuix-zout",
  "note": "Contrato HTML: marcado que producen los componentes. Iconos como <z-icon>. `behavior`: none = solo CSS; dom = necesita @zuccadev-labs/zuix-zui/dom (layouts de zout: @zuccadev-labs/zuix-zout/dom); react = hoy solo disponible en el binding de React.",
  "components": {
+  "AppBar": {
+   "group": "layout",
+   "classes": [
+    "z-appbar",
+    "z-appbar__row",
+    "z-appbar__leading",
+    "z-appbar__title",
+    "z-appbar__compact-title",
+    "z-appbar__actions",
+    "z-appbar__headline",
+    "z-appbar__subtitle",
+    "z-appbar__extra"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Grande que se pliega",
+     "html": "<header class=\"z-appbar z-liquid\" data-size=\"large\" data-surface=\"glass\" data-sticky=\"\" data-collapse=\"\" data-collapse-distance=\"96\" style=\"--z-appbar-distance:96px\">\n  <div class=\"z-appbar__row\">\n    <div class=\"z-appbar__leading\">\n      <button type=\"button\" title=\"Menu\" aria-label=\"Menu\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"bars-3\" size=\"16\"></z-icon>\n      </button>\n    </div>\n    <span class=\"z-appbar__compact-title\" aria-hidden=\"true\">Inbox</span>\n    <div class=\"z-appbar__actions\">\n      <button type=\"button\" title=\"Search\" aria-label=\"Search\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"magnifying-glass\" size=\"16\"></z-icon>\n      </button>\n      <button type=\"button\" title=\"More\" aria-label=\"More\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"ellipsis-vertical\" size=\"16\"></z-icon>\n      </button>\n    </div>\n  </div>\n  <div class=\"z-appbar__headline\">\n    <h1 class=\"z-appbar__title\">Inbox</h1>\n    <p class=\"z-appbar__subtitle\">12 unread</p>\n  </div>\n</header>",
+     "source": "generated"
+    },
+    {
+     "title": "Pequeña",
+     "html": "<header class=\"z-appbar z-liquid\" data-size=\"small\" data-surface=\"glass\" data-sticky=\"\">\n  <div class=\"z-appbar__row\">\n    <div class=\"z-appbar__leading\">\n      <button type=\"button\" title=\"Back\" aria-label=\"Back\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n        <z-icon name=\"arrow-left\" size=\"16\"></z-icon>\n      </button>\n    </div>\n    <h1 class=\"z-appbar__title\">Settings</h1>\n  </div>\n</header>",
+     "source": "generated"
+    }
+   ]
+  },
+  "AuthLayout": {
+   "group": "layout",
+   "classes": [
+    "z-auth-layout",
+    "z-auth-layout__grid",
+    "z-auth-layout__media",
+    "z-auth-layout__stage",
+    "z-auth-layout__card",
+    "z-auth-layout__brand",
+    "z-auth-layout__head",
+    "z-auth-layout__title",
+    "z-auth-layout__description",
+    "z-auth-layout__body",
+    "z-auth-layout__footer",
+    "z-auth-layout__legal"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Entrar",
+     "html": "<main class=\"z-auth-layout\" data-variant=\"centered\">\n  <div class=\"z-auth-layout__grid\">\n    <div class=\"z-auth-layout__stage\">\n      <div class=\"z-auth-layout__card z-liquid\">\n        <div class=\"z-auth-layout__head\">\n          <h1 class=\"z-auth-layout__title\">Welcome back</h1>\n          <p class=\"z-auth-layout__description\">Sign in to continue to your workspace.</p>\n        </div>\n        <div class=\"z-auth-layout__body\">\n          <div class=\"z-field\" data-layout=\"stacked\">\n            <label class=\"z-field__label\" id=\"_R_5m_-label\" for=\"_R_5m_-control\">Email</label>\n            <div class=\"z-field__body\">\n              <span class=\"z-input\" data-size=\"md\">\n                <input type=\"email\" autoComplete=\"email\" id=\"_R_5m_-control\" class=\"z-input__control\"/>\n              </span>\n            </div>\n          </div>\n          <div class=\"z-field\" data-layout=\"stacked\">\n            <label class=\"z-field__label\" id=\"_R_9m_-label\" for=\"_R_9m_-control\">Password</label>\n            <div class=\"z-field__body\">\n              <div class=\"z-password\" data-size=\"md\">\n                <span class=\"z-input z-password__field\" data-size=\"md\">\n                  <input id=\"_R_9m_-control\" type=\"password\" autoComplete=\"current-password\" autoCapitalize=\"none\" autoCorrect=\"off\" spellCheck=\"false\" class=\"z-input__control\"/>\n                  <button type=\"button\" class=\"z-input__action z-password__toggle\" aria-label=\"Show password\" aria-pressed=\"false\" aria-controls=\"_R_9m_-control\" aria-describedby=\"_R_6pm_-toggle-hint\" title=\"Show password\">\n                    <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"fade\">\n                      <span class=\"z-swap__item\" data-for=\"off\">\n                        <z-icon name=\"eye\" size=\"16\"></z-icon>\n                      </span>\n                      <span class=\"z-swap__item\" data-for=\"on\">\n                        <z-icon name=\"eye-slash\" size=\"16\"></z-icon>\n                      </span>\n                    </span>\n                  </button>\n                  <span id=\"_R_6pm_-toggle-hint\" class=\"z-sr-only\">Shows the password on screen</span>\n                </span>\n              </div>\n            </div>\n          </div>\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\" data-block=\"true\">Sign in</button>\n        </div>\n        <div class=\"z-auth-layout__footer\">No account? \n          <a href=\"#\">Create one</a>\n        </div>\n      </div>\n      <footer class=\"z-auth-layout__legal\">\n        <a href=\"#\">Terms</a>\n        <a href=\"#\">Privacy</a>\n      </footer>\n    </div>\n  </div>\n</main>",
+     "source": "generated"
+    }
+   ]
+  },
   "BottomNavigation": {
    "group": "layout",
    "classes": [
@@ -22,6 +74,99 @@
     {
      "title": "Solo la actual con etiqueta",
      "html": "<nav class=\"z-bottomnav\" aria-label=\"Primary\" data-labels=\"active\" data-variant=\"bar\" data-position=\"static\">\n  <ul class=\"z-bottomnav__list\">\n    <li>\n      <button type=\"button\" class=\"z-bottomnav__item\" data-value=\"today\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"calendar-days\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Today</span>\n      </button>\n    </li>\n    <li>\n      <button type=\"button\" class=\"z-bottomnav__item\" data-value=\"stats\" aria-current=\"page\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"chart-bar\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Stats</span>\n      </button>\n    </li>\n    <li>\n      <button type=\"button\" class=\"z-bottomnav__item\" data-value=\"settings\">\n        <span class=\"z-bottomnav__icon\">\n          <z-icon name=\"cog\" size=\"22\"></z-icon>\n        </span>\n        <span class=\"z-bottomnav__label\">Settings</span>\n      </button>\n    </li>\n  </ul>\n</nav>",
+     "source": "generated"
+    }
+   ]
+  },
+  "ChatLayout": {
+   "group": "layout",
+   "classes": [
+    "z-chat-layout",
+    "z-chat-layout__list",
+    "z-chat-layout__main",
+    "z-chat-layout__details",
+    "z-chat-layout__panel",
+    "z-chat-layout__launcher"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres paneles",
+     "html": "<div class=\"z-chat-layout\" data-view=\"conversation\" data-details style=\"height: 480px\">\n  <section class=\"z-chat-layout__list\" aria-label=\"Chats\">\n    <div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\" data-filters=\"none\">\n      <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Shipping the docs next.\", \"lastMine\": true, \"status\": \"delivered\", \"lastAt\": \"2026-11-21T09:05:00Z\"}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"lastMessage\": \"See you at 10\", \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 3}]}</script>\n    </div>\n  </section>\n  <section class=\"z-chat-layout__main\" aria-label=\"Conversation\">\n    <header class=\"z-chat-header\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost z-chat-header__back\" data-size=\"md\" data-z-chat-view=\"list\" aria-label=\"Back to chats\"><z-icon name=\"chevron-left\" size=\"16\"></z-icon></button><span class=\"z-chat-header__identity\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span><span class=\"z-chat-header__titles\"><h2 class=\"z-chat-header__title\">Ana López</h2><span class=\"z-chat-header__status\" data-tone=\"accent\">online</span></span></span><span class=\"z-chat-header__actions\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" data-z-chat-view=\"details\" aria-label=\"Details\"><z-icon name=\"information-circle\" size=\"16\"></z-icon></button></span></header>\n    <div class=\"z-message-list\" data-current-user=\"me\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n      <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}]}</script>\n    </div>\n    <div class=\"z-composer\"></div>\n  </section>\n  <aside class=\"z-chat-layout__details\" aria-label=\"Details\"><p style=\"padding: 16px\">Shared files</p></aside>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "Container": {
+   "group": "layout",
+   "classes": [
+    "z-container"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Ficha centrada",
+     "html": "<div class=\"z-container\" data-width=\"md\" data-gutter=\"fluid\">\n  <header class=\"z-pagehead\">\n    <div class=\"z-pagehead__row\">\n      <div class=\"z-pagehead__text\">\n        <h1 class=\"z-pagehead__title\">Your trip</h1>\n        <p class=\"z-pagehead__description\">Three nights in Lisbon.</p>\n      </div>\n    </div>\n  </header>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Página ancha sin margen",
+     "html": "<div class=\"z-container\" data-width=\"xl\" data-gutter=\"none\">\n  <div class=\"z-grid\" data-gap=\"6\" style=\"--z-grid-min:280px\">…</div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "DashboardLayout": {
+   "group": "layout",
+   "classes": [
+    "z-dashboard-layout",
+    "z-dashboard-layout__grid",
+    "z-dashboard-layout__nav",
+    "z-dashboard-layout__main",
+    "z-dashboard-layout__header",
+    "z-dashboard-layout__titles",
+    "z-dashboard-layout__eyebrow",
+    "z-dashboard-layout__title",
+    "z-dashboard-layout__description",
+    "z-dashboard-layout__actions",
+    "z-dashboard-layout__filters",
+    "z-dashboard-layout__content",
+    "z-dashboard-layout__aside"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con filtros y panel",
+     "html": "<div class=\"z-dashboard-layout\" data-aside=\"\">\n  <div class=\"z-dashboard-layout__grid\">\n    <div class=\"z-dashboard-layout__main\">\n      <header class=\"z-dashboard-layout__header\">\n        <div class=\"z-dashboard-layout__titles\">\n          <div class=\"z-dashboard-layout__eyebrow\">Acme Inc.</div>\n          <h1 class=\"z-dashboard-layout__title\">Overview</h1>\n          <p class=\"z-dashboard-layout__description\">Sales and product health for November.</p>\n        </div>\n        <div class=\"z-dashboard-layout__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n            <z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>\n            Export\n          </button>\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n            <z-icon name=\"pencil\" size=\"16\"></z-icon>\n            Edit layout\n          </button>\n        </div>\n      </header>\n      <div class=\"z-dashboard-layout__filters z-liquid\">\n        <div role=\"radiogroup\" aria-label=\"Period\" class=\"z-segmented\" data-size=\"md\">\n          <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"7d\" tabindex=\"-1\" class=\"z-segmented__item\">\n            <span class=\"z-segmented__label\">7 days</span>\n          </button>\n          <button type=\"button\" role=\"radio\" aria-checked=\"true\" data-state=\"on\" value=\"30d\" tabindex=\"0\" class=\"z-segmented__item\">\n            <span class=\"z-segmented__label\">30 days</span>\n          </button>\n          <button type=\"button\" role=\"radio\" aria-checked=\"false\" data-state=\"off\" value=\"90d\" tabindex=\"-1\" class=\"z-segmented__item\">\n            <span class=\"z-segmented__label\">90 days</span>\n          </button>\n        </div>\n        <span class=\"z-chip\" data-size=\"md\">\n          <span class=\"z-chip__main\">\n            <span class=\"z-chip__label\">Region: EU</span>\n          </span>\n        </span>\n      </div>\n      <div class=\"z-dashboard-layout__content\">\n        <section aria-label=\"KPIs\" class=\"z-metric-group z-liquid\" data-variant=\"glass\">\n          <article class=\"z-metric\" aria-label=\"Revenue\" data-variant=\"plain\" data-state=\"ready\" data-sentiment=\"good\">\n            <header class=\"z-metric__head\">\n              <span class=\"z-metric__label\">Revenue</span>\n            </header>\n            <div class=\"z-metric__main\">\n              <data class=\"z-metric__value\">$128.4k</data>\n              <span class=\"z-metric__delta\">\n                <span class=\"z-delta\" data-direction=\"up\" data-sentiment=\"good\" data-delta=\"0.124\" data-locale=\"en-US\">\n                  <span class=\"z-delta__arrow\" aria-hidden=\"true\">\n                    <z-icon name=\"arrow-trending-up-right\" size=\"14\"></z-icon>\n                  </span>\n                  <span class=\"z-delta__value\" aria-hidden=\"true\">12.4%</span>\n                  <span class=\"z-sr-only\">up 12.4%, better than the previous period</span>\n                </span>\n              </span>\n            </div>\n          </article>\n          <article class=\"z-metric\" aria-label=\"Orders\" data-variant=\"plain\" data-state=\"ready\" data-sentiment=\"good\">\n            <header class=\"z-metric__head\">\n              <span class=\"z-metric__label\">Orders</span>\n            </header>\n            <div class=\"z-metric__main\">\n              <data class=\"z-metric__value\" value=\"1284\">1,284</data>\n              <span class=\"z-metric__delta\">\n                <span class=\"z-delta\" data-direction=\"up\" data-sentiment=\"good\" data-value=\"1284\" data-delta=\"0.04\" data-locale=\"en-US\">\n                  <span class=\"z-delta__arrow\" aria-hidden=\"true\">\n                    <z-icon name=\"arrow-trending-up-right\" size=\"14\"></z-icon>\n                  </span>\n                  <span class=\"z-delta__value\" aria-hidden=\"true\">4%</span>\n                  <span class=\"z-sr-only\">up 4%, better than the previous period</span>\n                </span>\n              </span>\n            </div>\n          </article>\n        </section>\n      </div>\n    </div>\n    <aside class=\"z-dashboard-layout__aside\" aria-label=\"Details\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">Details</div>\n    </aside>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "DocsLayout": {
+   "group": "layout",
+   "classes": [
+    "z-docs-layout",
+    "z-docs-layout__grid",
+    "z-docs-layout__header",
+    "z-docs-layout__sidebar",
+    "z-docs-layout__main",
+    "z-docs-layout__toc-compact",
+    "z-docs-layout__toc-summary",
+    "z-docs-layout__article",
+    "z-docs-layout__pager",
+    "z-docs-layout__page",
+    "z-docs-layout__page-hint",
+    "z-docs-layout__page-title",
+    "z-docs-layout__toc",
+    "z-docs-layout__toc-title",
+    "z-docs-layout__toc-list",
+    "z-docs-layout__toc-link"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Artículo con índice",
+     "html": "<div class=\"z-docs-layout\" data-toc=\"\" data-sidebar=\"\">\n  <div class=\"z-docs-layout__grid\">\n    <nav class=\"z-docs-layout__sidebar\" aria-label=\"Documentation\">\n      <nav aria-label=\"Guides\" class=\"z-navlist\">\n        <a class=\"z-navlink\" aria-current=\"page\" data-active=\"true\" href=\"#\">\n          <span class=\"z-navlink__label\">Getting started</span>\n        </a>\n        <a class=\"z-navlink\" href=\"#\">\n          <span class=\"z-navlink__label\">Tokens</span>\n        </a>\n      </nav>\n    </nav>\n    <div class=\"z-docs-layout__main\">\n      <details class=\"z-docs-layout__toc-compact\">\n        <summary class=\"z-docs-layout__toc-summary\">On this page\n          <z-icon name=\"chevron-down\" size=\"14\"></z-icon>\n        </summary>\n        <ul class=\"z-docs-layout__toc-list\">\n          <li data-level=\"2\">\n            <a class=\"z-docs-layout__toc-link\" href=\"#docs-install\">Install</a>\n          </li>\n          <li data-level=\"2\">\n            <a class=\"z-docs-layout__toc-link\" href=\"#docs-usage\">Usage</a>\n          </li>\n          <li data-level=\"3\">\n            <a class=\"z-docs-layout__toc-link\" href=\"#docs-usage-react\">With React</a>\n          </li>\n        </ul>\n      </details>\n      <article class=\"z-docs-layout__article\">\n        <div class=\"z-prose\" data-size=\"md\">\n          <h1>Getting started</h1>\n          <h2 id=\"docs-install\">Install</h2>\n          <p>…</p>\n          <h2 id=\"docs-usage\">Usage</h2>\n          <p>…</p>\n          <h3 id=\"docs-usage-react\">With React</h3>\n          <p>…</p>\n        </div>\n      </article>\n      <nav class=\"z-docs-layout__pager\" aria-label=\"Pages\">\n        <a class=\"z-docs-layout__page\" href=\"#\" rel=\"prev\" data-dir=\"prev\">\n          <span class=\"z-docs-layout__page-hint\">\n            <z-icon name=\"chevron-left\" size=\"14\"></z-icon>\n            Previous\n          </span>\n          <span class=\"z-docs-layout__page-title\">Introduction</span>\n        </a>\n        <a class=\"z-docs-layout__page\" href=\"#\" rel=\"next\" data-dir=\"next\">\n          <span class=\"z-docs-layout__page-hint\">Next\n            <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n          </span>\n          <span class=\"z-docs-layout__page-title\">Components</span>\n        </a>\n      </nav>\n    </div>\n    <nav class=\"z-docs-layout__toc\" aria-label=\"On this page\">\n      <p class=\"z-docs-layout__toc-title\" aria-hidden=\"true\">On this page</p>\n      <ul class=\"z-docs-layout__toc-list\">\n        <li data-level=\"2\">\n          <a class=\"z-docs-layout__toc-link\" href=\"#docs-install\">Install</a>\n        </li>\n        <li data-level=\"2\">\n          <a class=\"z-docs-layout__toc-link\" href=\"#docs-usage\">Usage</a>\n        </li>\n        <li data-level=\"3\">\n          <a class=\"z-docs-layout__toc-link\" href=\"#docs-usage-react\">With React</a>\n        </li>\n      </ul>\n    </nav>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -73,6 +218,76 @@
     {
      "title": "Rejilla de métricas",
      "html": "<div class=\"z-grid\" data-gap=\"4\" style=\"--z-grid-min:200px\">\n  <div class=\"z-stat z-liquid\" data-variant=\"glass\">\n    <span class=\"z-stat__head\">\n      <span class=\"z-stat__label\">Users</span>\n    </span>\n    <span class=\"z-stat__value\">1,284</span>\n  </div>\n  <div class=\"z-stat z-liquid\" data-variant=\"glass\">\n    <span class=\"z-stat__head\">\n      <span class=\"z-stat__label\">Revenue</span>\n    </span>\n    <span class=\"z-stat__value\">$12.4k</span>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "KanbanLayout": {
+   "group": "layout",
+   "classes": [
+    "z-kanban-layout",
+    "z-kanban-layout__header",
+    "z-kanban-layout__titles",
+    "z-kanban-layout__title",
+    "z-kanban-layout__description",
+    "z-kanban-layout__actions",
+    "z-kanban-layout__filters",
+    "z-kanban-layout__board"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Sprint",
+     "html": "<div class=\"z-kanban-layout\">\n  <header class=\"z-kanban-layout__header\">\n    <div class=\"z-kanban-layout__titles\">\n      <h1 class=\"z-kanban-layout__title\">Sprint 14</h1>\n      <p class=\"z-kanban-layout__description\">Nov 18 – Dec 1</p>\n    </div>\n    <div class=\"z-kanban-layout__actions\">\n      <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n        <z-icon name=\"plus\" size=\"16\"></z-icon>\n        New card\n      </button>\n    </div>\n  </header>\n  <div class=\"z-kanban-layout__board\">\n    <div role=\"region\" aria-label=\"Sprint 14\" id=\"z-kanban-_R_3_\" class=\"z-kanban\">\n      <div class=\"z-kanban__board\">\n        <section class=\"z-kanban__column\" data-column=\"todo\" aria-labelledby=\"z-kanban-_R_3_-todo\">\n          <header class=\"z-kanban__column-head\">\n            <h3 class=\"z-kanban__column-title\" id=\"z-kanban-_R_3_-todo\">To do</h3>\n            <span class=\"z-kanban__count\">1</span>\n          </header>\n          <ol class=\"z-kanban__cards\" data-column=\"todo\" aria-labelledby=\"z-kanban-_R_3_-todo\">\n            <li class=\"z-kanban__card\" data-id=\"a\" tabindex=\"0\" aria-describedby=\"z-kanban-_R_3_-hint\">\n              <span class=\"z-kanban__title\">Write the changelog</span>\n            </li>\n          </ol>\n        </section>\n        <section class=\"z-kanban__column\" data-column=\"done\" aria-labelledby=\"z-kanban-_R_3_-done\">\n          <header class=\"z-kanban__column-head\">\n            <h3 class=\"z-kanban__column-title\" id=\"z-kanban-_R_3_-done\">Done</h3>\n            <span class=\"z-kanban__count\">0</span>\n          </header>\n          <ol class=\"z-kanban__cards\" data-column=\"done\" aria-labelledby=\"z-kanban-_R_3_-done\">\n            <li class=\"z-kanban__empty\" aria-hidden=\"true\">Drop cards here</li>\n          </ol>\n        </section>\n      </div>\n      <span class=\"z-sr-only\" id=\"z-kanban-_R_3_-hint\">Press Space to pick up and move with the arrow keys; Enter opens the card.</span>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "LandingLayout": {
+   "group": "layout",
+   "classes": [
+    "z-landing",
+    "z-landing__header",
+    "z-landing__main",
+    "z-landing__footer",
+    "z-landing-hero",
+    "z-landing-hero__text",
+    "z-landing-hero__eyebrow",
+    "z-landing-hero__title",
+    "z-landing-hero__lead",
+    "z-landing-hero__actions",
+    "z-landing-hero__media",
+    "z-landing-section",
+    "z-landing-section__head",
+    "z-landing-section__eyebrow",
+    "z-landing-section__title",
+    "z-landing-section__description",
+    "z-landing-section__actions",
+    "z-landing-section__body"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Héroe y funciones",
+     "html": "<div class=\"z-landing\">\n  <main class=\"z-landing__main\">\n    <section class=\"z-landing-hero\" data-align=\"center\">\n      <div class=\"z-landing-hero__text\">\n        <p class=\"z-landing-hero__eyebrow\">New in 0.4</p>\n        <h1 class=\"z-landing-hero__title\">Interfaces that feel like glass</h1>\n        <p class=\"z-landing-hero__lead\">Tokens, components and layouts for the web platform, with React as one binding among many.</p>\n        <div class=\"z-landing-hero__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"lg\">Get started</button>\n          <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"lg\">Read the docs</button>\n        </div>\n      </div>\n    </section>\n    <section id=\"features\" class=\"z-landing-section\" data-variant=\"features\" data-columns=\"3\" aria-labelledby=\"features-title\">\n      <div class=\"z-landing-section__head\">\n        <p class=\"z-landing-section__eyebrow\">Why</p>\n        <h2 class=\"z-landing-section__title\" id=\"features-title\">Built on the platform</h2>\n      </div>\n      <div class=\"z-landing-section__body\">\n        <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">HTML first</div>\n        <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">Tokens only</div>\n        <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">Accessible by default</div>\n      </div>\n    </section>\n    <section id=\"cta\" class=\"z-landing-section z-liquid\" data-variant=\"cta\" aria-labelledby=\"cta-title\">\n      <div class=\"z-landing-section__head\">\n        <h2 class=\"z-landing-section__title\" id=\"cta-title\">Start in a minute</h2>\n        <div class=\"z-landing-section__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Install</button>\n        </div>\n      </div>\n    </section>\n  </main>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "MailLayout": {
+   "group": "layout",
+   "classes": [
+    "z-mail-layout",
+    "z-mail-layout__grid",
+    "z-mail-layout__folders",
+    "z-mail-layout__list",
+    "z-mail-layout__reader"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tres paneles",
+     "html": "<div class=\"z-mail-layout\" data-view=\"list\" data-folders=\"\">\n  <div class=\"z-mail-layout__grid\">\n    <nav class=\"z-mail-layout__folders\" aria-label=\"Folders\">\n      <nav aria-label=\"Folders\" class=\"z-navlist\">\n        <a class=\"z-navlink\" aria-current=\"page\" data-active=\"true\" href=\"#\">\n          <span class=\"z-navlink__icon\">\n            <z-icon name=\"inbox\" variant=\"solid\" size=\"16\"></z-icon>\n          </span>\n          <span class=\"z-navlink__label\">Inbox</span>\n          <span class=\"z-navlink__trailing\">12</span>\n        </a>\n        <a class=\"z-navlink\" href=\"#\">\n          <span class=\"z-navlink__icon\">\n            <z-icon name=\"paper-airplane\" size=\"16\"></z-icon>\n          </span>\n          <span class=\"z-navlink__label\">Sent</span>\n        </a>\n      </nav>\n    </nav>\n    <section class=\"z-mail-layout__list z-liquid\" aria-label=\"Messages\">\n      <p>Messages</p>\n    </section>\n    <section class=\"z-mail-layout__reader z-solid\" aria-label=\"Message\">\n      <p>Message</p>\n    </section>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -140,14 +355,13 @@
    "classes": [
     "z-page",
     "z-pagehead",
-    "z-section",
-    "z-container"
+    "z-section"
    ],
    "behavior": "none",
    "examples": [
     {
      "title": "Panel de control",
-     "html": "<div class=\"z-page\" role=\"region\" aria-label=\"Page content\" tabindex=\"0\">\n  <div class=\"z-container\" data-width=\"content\">\n    <header class=\"z-pagehead\">\n      <div class=\"z-pagehead__row\">\n        <div class=\"z-pagehead__text\">\n          <div class=\"z-pagehead__eyebrow\">Analytics</div>\n          <h1 class=\"z-pagehead__title\">Overview</h1>\n          <p class=\"z-pagehead__description\">Last 30 days.</p>\n        </div>\n        <div class=\"z-pagehead__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n            <z-icon name=\"plus\" size=\"16\"></z-icon>\n            New report\n          </button>\n        </div>\n      </div>\n    </header>\n    <div class=\"z-page__body\">\n      <section class=\"z-section\">\n        <div class=\"z-section__head\">\n          <div>\n            <h2 class=\"z-section__title\">Metrics</h2>\n          </div>\n        </div>\n        <div class=\"z-grid\" data-gap=\"4\" style=\"--z-grid-min:200px\">…</div>\n      </section>\n    </div>\n  </div>\n</div>",
+     "html": "<div class=\"z-page\" role=\"region\" aria-label=\"Page content\" tabindex=\"0\">\n  <div class=\"z-container\" data-width=\"content\" data-gutter=\"stage\">\n    <header class=\"z-pagehead\">\n      <div class=\"z-pagehead__row\">\n        <div class=\"z-pagehead__text\">\n          <div class=\"z-pagehead__eyebrow\">Analytics</div>\n          <h1 class=\"z-pagehead__title\">Overview</h1>\n          <p class=\"z-pagehead__description\">Last 30 days.</p>\n        </div>\n        <div class=\"z-pagehead__actions\">\n          <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n            <z-icon name=\"plus\" size=\"16\"></z-icon>\n            New report\n          </button>\n        </div>\n      </div>\n    </header>\n    <div class=\"z-page__body\">\n      <section class=\"z-section\">\n        <div class=\"z-section__head\">\n          <div>\n            <h2 class=\"z-section__title\">Metrics</h2>\n          </div>\n        </div>\n        <div class=\"z-grid\" data-gap=\"4\" style=\"--z-grid-min:200px\">…</div>\n      </section>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -194,6 +408,25 @@
     }
    ]
   },
+  "ProfileLayout": {
+   "group": "layout",
+   "classes": [
+    "z-profile-layout",
+    "z-profile-layout__header",
+    "z-profile-layout__tabs",
+    "z-profile-layout__body",
+    "z-profile-layout__content",
+    "z-profile-layout__aside"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Perfil",
+     "html": "<div class=\"z-profile-layout\" data-aside=\"\">\n  <div class=\"z-profile-layout__header\">\n    <header class=\"z-profile-header\">\n      <div class=\"z-profile-header__cover\"></div>\n      <div class=\"z-profile-header__main z-liquid\">\n        <div class=\"z-profile-header__top\">\n          <span class=\"z-profile-header__avatar\">\n            <span class=\"z-avatar\" data-size=\"xl\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\">\n              <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n            </span>\n          </span>\n        </div>\n        <div class=\"z-profile-header__identity\">\n          <div class=\"z-profile-header__title\">\n            <h1 class=\"z-profile-header__name\">Ana López</h1>\n          </div>\n          <p class=\"z-profile-header__subtitle\">\n            <span class=\"z-profile-header__handle\">@ana</span>\n            <span aria-hidden=\"true\"> · </span>\n            <span class=\"z-profile-header__role\">Principal designer</span>\n          </p>\n        </div>\n      </div>\n    </header>\n  </div>\n  <div class=\"z-profile-layout__body\">\n    <div class=\"z-profile-layout__content\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">Recent work</div>\n    </div>\n    <aside class=\"z-profile-layout__aside\" aria-label=\"About\">\n      <div class=\"z-card\" data-variant=\"elevated\" data-padding=\"md\">Teams</div>\n    </aside>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Rail": {
    "group": "layout",
    "classes": [
@@ -219,6 +452,31 @@
      "title": "Borde derecho de un panel",
      "html": "<div id=\"resize-demo\" class=\"z-solid\" style=\"position:relative;box-sizing:border-box;width:240px;padding:var(--z-space-4);border-radius:var(--z-radius-md)\">\n  Drag the right edge, or focus it and use the arrow keys.\n  <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panel\" aria-valuenow=\"240\" aria-valuemin=\"160\" aria-valuemax=\"320\" class=\"z-resize\" data-side=\"right\" data-default-size=\"240\"></div>\n</div>",
      "source": "manual"
+    }
+   ]
+  },
+  "SettingsLayout": {
+   "group": "layout",
+   "classes": [
+    "z-settings-layout",
+    "z-settings-layout__grid",
+    "z-settings-layout__header",
+    "z-settings-layout__title",
+    "z-settings-layout__description",
+    "z-settings-layout__nav",
+    "z-settings-layout__links",
+    "z-settings-layout__link",
+    "z-settings-layout__content",
+    "z-settings-layout__savebar",
+    "z-settings-layout__dirty",
+    "z-settings-layout__save-actions"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con cambios sin guardar",
+     "html": "<div class=\"z-settings-layout\" data-dirty=\"\">\n  <div class=\"z-settings-layout__grid\">\n    <header class=\"z-settings-layout__header\">\n      <h1 class=\"z-settings-layout__title\">Settings</h1>\n      <p class=\"z-settings-layout__description\">Manage your account and workspace.</p>\n    </header>\n    <nav class=\"z-settings-layout__nav\" aria-label=\"Settings\">\n      <ul class=\"z-settings-layout__links\">\n        <li>\n          <a class=\"z-settings-layout__link\" href=\"#profile\" aria-current=\"page\">\n            <z-icon name=\"user\" size=\"16\"></z-icon>\n            <span>Profile</span>\n          </a>\n        </li>\n        <li>\n          <a class=\"z-settings-layout__link\" href=\"#notifications\">\n            <z-icon name=\"bell\" size=\"16\"></z-icon>\n            <span>Notifications</span>\n          </a>\n        </li>\n      </ul>\n    </nav>\n    <div class=\"z-settings-layout__content\">\n      <section id=\"profile\" class=\"z-settings-section\" aria-labelledby=\"profile-title\">\n        <div class=\"z-settings-section__head\">\n          <h2 class=\"z-settings-section__title\" id=\"profile-title\">Profile</h2>\n        </div>\n        <div class=\"z-settings-section__body z-solid\">\n          <div class=\"z-setting-row\">\n            <div class=\"z-setting-row__text\">\n              <span class=\"z-setting-row__label\">Public profile</span>\n            </div>\n            <div class=\"z-setting-row__control\">\n              <label class=\"z-switch\" data-size=\"md\" data-label=\"end\">\n                <button type=\"button\" aria-label=\"Public profile\" role=\"switch\" aria-checked=\"true\" data-state=\"checked\" value=\"on\" class=\"z-switch__track\">\n                  <span class=\"z-switch__thumb\" data-state=\"checked\"></span>\n                </button>\n                <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" checked=\"\" value=\"on\"/>\n              </label>\n              <span class=\"z-setting-row__status\" role=\"status\"></span>\n            </div>\n          </div>\n        </div>\n      </section>\n      <section id=\"notifications\" class=\"z-settings-section\" aria-labelledby=\"notifications-title\">\n        <div class=\"z-settings-section__head\">\n          <h2 class=\"z-settings-section__title\" id=\"notifications-title\">Notifications</h2>\n        </div>\n        <div class=\"z-settings-section__body z-solid\">\n          <div class=\"z-setting-row\">\n            <div class=\"z-setting-row__text\">\n              <span class=\"z-setting-row__label\">Mentions</span>\n            </div>\n            <div class=\"z-setting-row__control\">\n              <label class=\"z-switch\" data-size=\"md\" data-label=\"end\">\n                <button type=\"button\" aria-label=\"Mentions\" role=\"switch\" aria-checked=\"false\" data-state=\"unchecked\" value=\"on\" class=\"z-switch__track\">\n                  <span class=\"z-switch__thumb\" data-state=\"unchecked\"></span>\n                </button>\n                <input type=\"checkbox\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"on\"/>\n              </label>\n              <span class=\"z-setting-row__status\" role=\"status\"></span>\n            </div>\n          </div>\n        </div>\n      </section>\n    </div>\n    <section class=\"z-settings-layout__savebar z-liquid\" aria-label=\"You have unsaved changes\">\n      <span class=\"z-settings-layout__dirty\" role=\"status\">\n        <z-icon name=\"exclamation-circle\" size=\"16\"></z-icon>\n        You have unsaved changes\n      </span>\n      <div class=\"z-settings-layout__save-actions\">\n        <button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"md\">Discard</button>\n        <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Save changes</button>\n      </div>\n    </section>\n  </div>\n</div>",
+     "source": "generated"
     }
    ]
   },

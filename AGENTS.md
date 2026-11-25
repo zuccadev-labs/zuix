@@ -8,7 +8,7 @@ zuix es una suite de UI con un solo estándar:
 | Paquete | Carpeta | Qué es |
 |---|---|---|
 | `@zuccadev-labs/zuix-tokens` | `tokens/` | Fuente única de valores de diseño. Una marca es un archivo |
-| `@zuccadev-labs/zuix-zicon` | `zicon/` | Estándar iconográfico: 346 iconos, `<z-icon>` y componente de React |
+| `@zuccadev-labs/zuix-zicon` | `zicon/` | Estándar iconográfico: 366 iconos, `<z-icon>` y componente de React |
 | `@zuccadev-labs/zuix-zui` | `zui/` | Sistema de componentes: contrato HTML y CSS, modo sin framework y binding de React |
 | `@zuccadev-labs/zuix-zout` | `zout/` | Layouts y ventanas dinámicas |
 | `@zuccadev-labs/zuix` | `suite/` | Paraguas: reexporta los cuatro anteriores bajo subrutas |

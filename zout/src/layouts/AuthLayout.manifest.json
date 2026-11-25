@@ -1,0 +1,83 @@
+{
+  "name": "AuthLayout",
+  "group": "layout",
+  "description": "Página de acceso (entrar, registrarse, recuperar): tarjeta de cristal centrada sobre el lienzo (`centered`) o dividida con un lado de imagen (`split`). En móvil solo queda el formulario.",
+  "import": "import { AuthLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "brand",
+      "type": "ReactNode"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["centered", "split"],
+      "default": "centered"
+    },
+    {
+      "name": "media",
+      "type": "ReactNode",
+      "description": "Lado de imagen (split)."
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "legal",
+      "type": "ReactNode"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": [
+    "canvas",
+    "canvas-gradient",
+    "canvas-fg-muted",
+    "panel-radius",
+    "radius-xl",
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "fg-muted",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-auth-layout",
+    "z-auth-layout__grid",
+    "z-auth-layout__media",
+    "z-auth-layout__stage",
+    "z-auth-layout__card",
+    "z-auth-layout__brand",
+    "z-auth-layout__head",
+    "z-auth-layout__title",
+    "z-auth-layout__description",
+    "z-auth-layout__body",
+    "z-auth-layout__footer",
+    "z-auth-layout__legal"
+  ],
+  "a11y": "Es la región principal (main) con un solo h1. El lado de imagen es decorativo. El formulario que va dentro usa los campos de la suite con autocompletado (email, current-password o new-password) y botones nativos.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Entrar",
+      "code": "<AuthLayout title=\"Welcome back\" description=\"Sign in to continue to your workspace.\" footer={<>No account? <a href=\"#\">Create one</a></>} legal={<><a href=\"#\">Terms</a><a href=\"#\">Privacy</a></>}>\n  <Field label=\"Email\"><Input type=\"email\" autoComplete=\"email\" /></Field>\n  <Field label=\"Password\"><PasswordInput autoComplete=\"current-password\" /></Field>\n  <Button variant=\"primary\" fullWidth>Sign in</Button>\n</AuthLayout>"
+    }
+  ],
+  "origin": "LoginForm de Ant Design Pro y los bloques login-01 a login-05 de shadcn."
+}

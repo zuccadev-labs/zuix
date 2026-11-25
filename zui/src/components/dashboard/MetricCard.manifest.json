@@ -1,0 +1,178 @@
+{
+  "name": "MetricCard",
+  "group": "dashboard",
+  "description": "Tarjeta de KPI completa: etiqueta, valor, variación con su sentido, minigráfico, meta con ritmo, nota y acciones; estados de carga, vacío y error. StatTile sigue como tesela mínima; MetricCard es la del dashboard.",
+  "import": "import { MetricCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "value",
+      "type": "number | string | null",
+      "description": "Número (pasa por `format`) o texto ya formateado."
+    },
+    {
+      "name": "format",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "previous",
+      "type": "number",
+      "description": "Valor del periodo anterior: calcula la variación."
+    },
+    {
+      "name": "delta",
+      "type": "number",
+      "description": "Variación ya calculada (fracción)."
+    },
+    {
+      "name": "positive",
+      "type": "enum",
+      "values": ["up", "down"],
+      "default": "up"
+    },
+    {
+      "name": "period",
+      "type": "string",
+      "description": "Periodo de comparación («last month»): se ve como «vs last month» y entra en la frase de la variación."
+    },
+    {
+      "name": "trend",
+      "type": "(number | null)[]",
+      "description": "Serie del minigráfico."
+    },
+    {
+      "name": "trendType",
+      "type": "enum",
+      "values": ["area", "line", "bar"],
+      "default": "area"
+    },
+    {
+      "name": "color",
+      "type": "number",
+      "description": "Color de serie 1–8 del minigráfico."
+    },
+    {
+      "name": "target",
+      "type": "number",
+      "description": "Meta: barra de avance hacia ella."
+    },
+    {
+      "name": "elapsed",
+      "type": "number",
+      "description": "Fracción del periodo transcurrida (0–1) para el ritmo."
+    },
+    {
+      "name": "hint",
+      "type": "ReactNode"
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "state",
+      "type": "enum",
+      "values": ["ready", "loading", "empty", "error"],
+      "default": "ready"
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "description": "La etiqueta es un enlace que cubre la tarjeta."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "IconButton o Menu en la cabecera, por encima del enlace."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["glass", "soft", "solid", "plain"],
+      "default": "glass"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<MetricCardLabels> & { delta?, goal? }",
+      "description": "empty, error, target, versus («vs {period}»); y los de DeltaBadge (delta) y ProgressGoal (goal)."
+    }
+  ],
+  "states": ["ready", "loading", "empty", "error", "hover", "focus"],
+  "tokens": [
+    "card-radius",
+    "card-bg",
+    "card-border",
+    "card-shadow",
+    "accent-soft",
+    "accent-text",
+    "accent-solid",
+    "fg-on-accent",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "danger-text",
+    "font-display",
+    "text-display-sm",
+    "weight-display",
+    "tracking-display",
+    "text-small",
+    "text-caption",
+    "focus-width",
+    "focus-offset",
+    "accent-ring",
+    "control-radius-sm",
+    "control-height-sm"
+  ],
+  "classes": [
+    "z-metric",
+    "z-metric__head",
+    "z-metric__icon",
+    "z-metric__label",
+    "z-metric__link",
+    "z-metric__actions",
+    "z-metric__main",
+    "z-metric__value",
+    "z-metric__delta",
+    "z-metric__period",
+    "z-metric__trend",
+    "z-metric__goal",
+    "z-metric__hint",
+    "z-metric__message",
+    "z-metric__bone"
+  ],
+  "a11y": "article con nombre (la etiqueta). El valor va en <data value>. La variación se lee como frase («up 12.4%, better than last month»), no por su color. En carga, aria-busy y huesos decorativos, sin anunciar «cargando». Con href, la etiqueta es el enlace y su zona cubre la tarjeta; las acciones quedan por encima y siguen siendo alcanzables.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Ingresos con variación, tendencia y meta",
+      "code": "<MetricCard label=\"Revenue\" icon=\"banknotes\" value={128400} format={{ style: \"currency\", currency: \"USD\", maximumFractionDigits: 0 }} previous={114200} period=\"last month\" trend={[42, 44, 41, 48, 52, 50, 57, 61, 59, 66, 70, 74]} target={150000} elapsed={0.7} locale=\"en-US\" />"
+    },
+    {
+      "title": "Lo que es bueno que baje",
+      "code": "<MetricCard label=\"Error rate\" icon=\"exclamation-triangle\" value={0.012} format={{ style: \"percent\", maximumFractionDigits: 1 }} delta={-0.21} positive=\"down\" period=\"last week\" trend={[3, 2.6, 2.8, 2.1, 1.9, 1.6, 1.4, 1.2]} trendType=\"line\" color={2} locale=\"en-US\" />"
+    },
+    {
+      "title": "Cargando",
+      "code": "<MetricCard label=\"Active users\" state=\"loading\" />"
+    },
+    {
+      "title": "Sin datos",
+      "code": "<MetricCard label=\"Refunds\" state=\"empty\" variant=\"soft\" />"
+    }
+  ],
+  "origin": "StatisticCard de Ant Design Pro y las tarjetas KPI de Tremor y de los bloques dashboard de shadcn."
+}

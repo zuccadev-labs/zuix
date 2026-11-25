@@ -1,7 +1,8 @@
 # Zicon · guía para agentes
 
-Guía para los agentes de IA que usan `@zuccadev-labs/zuix-zicon`: 346 iconos en dos variantes (`outline`,
-`solid`), caja de 24 × 24, extraídos de Dazicon. Formato: reglas → patrones → verificación.
+Guía para los agentes de IA que usan `@zuccadev-labs/zuix-zicon`: 366 iconos en dos variantes (`outline`,
+`solid`), caja de 24 × 24. 346 salen de Dazicon y 20 son dibujos propios del mantenedor con el mismo lenguaje de
+línea. Formato: reglas → patrones → verificación.
 
 ## Reglas
 
@@ -9,11 +10,13 @@ Guía para los agentes de IA que usan `@zuccadev-labs/zuix-zicon`: 346 iconos en
    `manifest.json` y en el tipo `IconName`; un nombre que no existe no compila.
 2. **Sin emojis como iconos.** Se sustituyen con la tabla de abajo.
 3. **Sin SVG a mano.** Si no existe un icono para el concepto, se informa. No se inventa uno ni se toma de
-   otra biblioteca. Tampoco se retoca un trazado en el código: se corrige en el archivo de origen.
+   otra biblioteca. Un icono nuevo sale de una de las dos fuentes: Dazicon o los dibujos propios del
+   mantenedor en `own/`, y solo lo añade él. Tampoco se retoca un trazado generado en `svg/`, `icons.json` o
+   `icons-own.json`: se corrige en su origen (Dazicon o `own/`) y se regenera.
 4. **El color se hereda.** El icono usa `currentColor`; el color lo pone el texto que lo rodea, con tokens.
 5. **Decorativo o informativo.** Sin `label` el icono se oculta a lectores de pantalla. Si comunica algo por
    sí solo (un botón sin texto), lleva `label`.
-6. **`outline` por defecto.** `solid` se reserva para el estado activo o seleccionado. En 101 iconos las dos
+6. **`outline` por defecto.** `solid` se reserva para el estado activo o seleccionado. En 105 iconos las dos
    variantes son el mismo dibujo: no cuentes con `solid` como única señal de estado.
 7. **Sin `innerHTML`.** En código que construye el DOM se usa `iconElement()`; `iconSvg()` devuelve una
    cadena y es para render en servidor o plantillas de texto.
@@ -85,19 +88,21 @@ registrar sale vacío y la consola lo avisa.
 | `buildings` | Edificios | 6 |
 | `ecommerce` | Comercio | 9 |
 | `media` | Multimedia | 21 |
-| `symbols` | Símbolos | 48 |
+| `symbols` | Símbolos | 49 |
 | `communication` | Comunicación | 23 |
 | `editor` | Edición | 7 |
 | `misc` | Misceláneos | 28 |
 | `system` | Sistema | 12 |
 | `design` | Diseño | 2 |
-| `charts` | Gráficos | 6 |
-| `others` | Otros | 23 |
+| `charts` | Gráficos | 7 |
+| `others` | Otros | 26 |
 | `time` | Tiempo | 1 |
-| `devices` | Dispositivos | 9 |
-| `maps` | Mapas | 5 |
-| `security` | Seguridad | 10 |
+| `devices` | Dispositivos | 10 |
+| `maps` | Mapas | 7 |
+| `security` | Seguridad | 12 |
 | `user` | Usuario | 7 |
+| `weather` | Clima | 6 |
+| `transport` | Transporte | 4 |
 <!-- categories:end -->
 
 ## Sustitución de emojis
@@ -106,6 +111,7 @@ registrar sale vacío y la consola lo avisa.
 | Emoji | Icono |
 |---|---|
 | 🎓 | `academic-cap` |
+| ⚓ | `anchor` |
 | 🐛 🐞 | `ant` |
 | 📦 | `archive-box` |
 | 🗄️ | `archive-drawer` |
@@ -140,6 +146,7 @@ registrar sale vacío y la consola lo avisa.
 | 📅 | `calendar` |
 | 📆 | `calendar-days` |
 | 📷 📸 | `camera` |
+| 🚗 🚙 | `car` |
 | 📊 | `chart-bar` |
 | 🗨️ | `chat-bubble-bottom-left` |
 | 💬 | `chat-bubble-oval-left` |
@@ -148,6 +155,9 @@ registrar sale vacío y la consola lo avisa.
 | 📋 | `clipboard` |
 | 🕐 ⏰ ⏱️ | `clock` |
 | ☁️ | `cloud` |
+| 🌧️ | `cloud-rain` |
+| ⛅ 🌤️ | `cloud-sun` |
+| 🧭 | `compass` |
 | 💻 | `computer` |
 | 🖥️ | `computer-desktop` |
 | 💳 | `credit-card` |
@@ -165,10 +175,13 @@ registrar sale vacío y la consola lo avisa.
 | 😀 🙂 | `face-smile` |
 | 🎬 | `film` |
 | 🔥 | `fire` |
+| ⛑️ | `first-aid` |
+| 🐟 🐠 | `fish` |
 | 🚩 | `flag` |
 | 📁 | `folder` |
 | 📂 | `folder-open` |
 | ⏩ | `forward` |
+| ⛽ | `fuel` |
 | ⚙️ | `gear` |
 | 🎁 | `gift` |
 | 🌐 | `globe-alt` |
@@ -218,24 +231,33 @@ registrar sale vacío y la consola lo avisa.
 | ⚖️ | `scale` |
 | ✂️ | `scissors` |
 | 🛡️ | `shield-check` |
+| 🚢 ⛵ 🛥️ | `ship` |
 | 🛍️ | `shopping-bag` |
 | 🛒 | `shopping-cart` |
 | 📶 | `signal` |
+| 🚨 | `siren` |
+| ❄️ | `snowflake` |
 | ✨ | `sparkles` |
 | 🔊 | `speaker-wave` |
 | 🔇 | `speaker-x-mark` |
 | ⭐ 🌟 | `star` |
 | ⏹️ | `stop` |
 | ☀️ | `sun` |
+| 🌅 🌇 | `sunset` |
 | 🎨 | `swatch` |
 | 🏷️ | `tag` |
+| 🎯 | `target` |
 | 🎫 | `ticket` |
 | 🗑️ | `trash` |
 | 🏆 | `trophy` |
 | 🚚 | `truck` |
+| 📺 | `tv` |
 | 👤 | `user` |
 | 👥 | `users` |
+| 🍴 🍽️ | `utensils` |
 | 🎥 | `video-camera` |
+| 🌊 | `waves` |
+| 💨 🌬️ | `wind` |
 | 🔧 | `wrench` |
 | 🛠️ | `wrench-screwdriver` |
 | ❌ ✖️ | `x-mark` |
@@ -243,14 +265,29 @@ registrar sale vacío y la consola lo avisa.
 
 ## Añadir o corregir un icono
 
+Hay dos fuentes, y `scripts/build.mjs` las fusiona: `icons.json` (Dazicon, lo escribe `extract.py`) e
+`icons-own.json` (dibujos propios, lo escribe `own.mjs`). Un nombre o una categoría en las dos es un error.
+
+### De Dazicon
+
 1. Dibujarlo en Dazicon, en la caja de 24 × 24 y en ambas variantes.
 2. Si el nombre del archivo no es kebab-case en inglés, añadirlo a `scripts/rename.json`.
 3. `python3 -I scripts/extract.py <ruta a Dazicon.fig>` (o la variable `DAZICON_FIG`) y después `pnpm icons`.
-4. Añadir alias de uso en `scripts/keywords.json` si el concepto no coincide con la forma.
+
+### Propio
+
+1. Dibujarlo con trazo en `own/outline/<nombre>.svg`: caja de 24 × 24, `stroke-width="1.5"`, uniones y
+   terminaciones redondeadas. Si tiene macizo, `own/solid/<nombre>.svg`; sin él, `solid` es el mismo dibujo.
+   En `solid`, un elemento con `fill` se rellena y uno con `data-op="cut"` se resta de lo anterior.
+2. Darle categoría en `own/own.json`.
+3. `pnpm icons:own` (convierte los trazos en contornos rellenos con CanvasKit, escala el dibujo al tamaño
+   de Dazicon y escribe `icons-own.json` y `svg/`) y después `pnpm icons`.
+
+En los dos casos, añadir las palabras nuevas y los alias de uso en `scripts/keywords.json`.
 
 La extracción falla si un icono queda sin pareja outline/solid o con nombre sin normalizar. La generación
 valida cada icono: trazados dentro de la caja, identificador de módulo único y no reservado, categoría
-existente, y que el sprite no repita ids.
+existente, nombre que no esté en las dos fuentes, y que el sprite no repita ids.
 
 Las tablas de categorías y de emojis de este archivo las escribe `pnpm icons` entre sus marcadores: no se
 editan a mano.

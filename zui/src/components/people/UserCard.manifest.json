@@ -1,0 +1,84 @@
+{
+  "name": "UserCard",
+  "group": "people",
+  "description": "Tarjeta de persona: portada, avatar superpuesto, nombre, usuario, rol, biografía corta, estadísticas y acciones (seguir, mensaje).",
+  "import": "import { UserCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "user",
+      "type": "{ name, handle?, avatar?, cover?, role?, bio?, presence? }",
+      "required": true
+    },
+    {
+      "name": "stats",
+      "type": "{ label, value }[]"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["cover", "compact"],
+      "default": "cover"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [2, 3, 4],
+      "default": 3
+    },
+    {
+      "name": "href",
+      "type": "string"
+    }
+  ],
+  "tokens": [
+    "card-radius",
+    "surface-2",
+    "surface-solid",
+    "glass-border",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "chart-2",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "line",
+    "font-display",
+    "text-title",
+    "text-heading",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "weight-display",
+    "leading-relaxed"
+  ],
+  "classes": [
+    "z-user-card",
+    "z-user-card__cover",
+    "z-user-card__cover-image",
+    "z-user-card__identity",
+    "z-user-card__avatar",
+    "z-user-card__presence",
+    "z-user-card__names",
+    "z-user-card__name",
+    "z-user-card__handle",
+    "z-user-card__role",
+    "z-user-card__bio",
+    "z-user-card__stats",
+    "z-user-card__stat",
+    "z-user-card__actions"
+  ],
+  "a11y": "article con el nombre; el nombre es un encabezado (h3 por defecto). La portada es decorativa. Las estadísticas son una lista de pares (dl) que se lee «Followers 1.2k».",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Con portada",
+      "code": "<UserCard user={{ name: \"Ana López\", handle: \"ana\", role: \"Design\", bio: \"Design systems and the odd typeface.\", presence: \"online\" }} stats={[{ label: \"Followers\", value: \"1.2k\" }, { label: \"Projects\", value: 34 }, { label: \"Reviews\", value: 210 }]} actions={<><Button variant=\"primary\" icon=\"user-plus\">Follow</Button><Button icon=\"chat-bubble-left-right\">Message</Button></>} />"
+    }
+  ],
+  "origin": "Card.Meta de Ant Design, User de HeroUI y las tarjetas de perfil de los bloques de shadcn."
+}

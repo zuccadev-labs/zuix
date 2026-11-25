@@ -8,6 +8,7 @@ import { useLayer, usePresence } from "../../primitives/hooks";
 import { Popup, Portal, rectOf } from "../../primitives/popup";
 import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface ComboboxOption {
   value: string;
@@ -97,7 +98,7 @@ const matches = (option: ComboboxOption, text: string) => fold(option.label).inc
  * Campo con lista filtrable (patrón ARIA combobox): el foco se queda en el campo y la opción activa va por
  * aria-activedescendant. Admite grupos, varias opciones como piezas (`multiple`) y texto libre (`allowCustomValue`).
  */
-export function Combobox(props: ComboboxProps | ComboboxMultipleProps) {
+export const Combobox = withRef(function Combobox(props: ComboboxProps | ComboboxMultipleProps) {
   const multiple = props.multiple === true;
   const allowCustomValue = !multiple && props.allowCustomValue === true;
   const {
@@ -537,4 +538,4 @@ export function Combobox(props: ComboboxProps | ComboboxMultipleProps) {
       ) : null}
     </>
   );
-}
+});

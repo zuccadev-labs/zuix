@@ -1,0 +1,93 @@
+{
+  "name": "ApprovalCard",
+  "group": "ai",
+  "description": "Petición de permiso de un agente: qué hará, con qué datos y su riesgo; Rechazar y Aprobar, y «Always allow in this session». Con riesgo alto, Aprobar pide una confirmación antes de valer.",
+  "import": "import { ApprovalCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "string"
+    },
+    {
+      "name": "details",
+      "type": "{ label, value }[]"
+    },
+    {
+      "name": "risk",
+      "type": "\"low\" | \"medium\" | \"high\"",
+      "default": "medium"
+    },
+    {
+      "name": "allowAlways",
+      "type": "boolean"
+    },
+    {
+      "name": "decision",
+      "type": "\"approved\" | \"rejected\""
+    },
+    {
+      "name": "requestId",
+      "type": "string"
+    },
+    {
+      "name": "onApprove",
+      "type": "(detail: { id, always }) => void"
+    },
+    {
+      "name": "onReject",
+      "type": "(detail: { id }) => void"
+    }
+  ],
+  "states": ["pending", "confirming", "approved", "rejected"],
+  "tokens": [
+    "surface-solid",
+    "surface-2",
+    "line",
+    "warning",
+    "warning-soft",
+    "warning-text",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "info",
+    "info-soft",
+    "info-text",
+    "success-text",
+    "radius-md",
+    "font-mono"
+  ],
+  "classes": [
+    "z-approval-card",
+    "z-approval",
+    "z-approval__header",
+    "z-approval__title",
+    "z-approval__risk",
+    "z-approval__description",
+    "z-approval__details",
+    "z-approval__actions",
+    "z-approval__approve",
+    "z-approval__reject",
+    "z-approval__always",
+    "z-approval__decision"
+  ],
+  "a11y": "Región con encabezado propio; al aparecer se anuncia «Approval needed: …». Aprobar y Rechazar son botones normales (nada se aprueba con Intro en otro sitio). Con riesgo alto, el primer Aprobar se convierte en «Confirm approval» con Cancelar, y el foco se queda en él. El riesgo va en texto además del color. Sin React: .z-approval-card con data-title, data-description, data-risk, data-allow-always, data-decision y details en <script type=\"application/json\" data-props>; emite z:approve { id, always } y z:reject { id }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Riesgo alto",
+      "code": "<ApprovalCard requestId=\"deploy\" risk=\"high\" allowAlways title=\"Deploy to production\" description=\"The agent wants to run the deploy workflow.\" details={[{ label: \"Workflow\", value: \"release.yml\" }, { label: \"Branch\", value: \"main\" }]} onApprove={approve} onReject={reject} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Riesgo alto",
+      "code": "<div class=\"z-approval-card\" data-id=\"deploy\" data-risk=\"high\" data-allow-always data-title=\"Deploy to production\" data-description=\"The agent wants to run the deploy workflow.\">\n  <script type=\"application/json\" data-props>{\"details\": [{\"label\": \"Workflow\", \"value\": \"release.yml\"}, {\"label\": \"Branch\", \"value\": \"main\"}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: los permisos de herramientas de Claude y Vercel AI Elements (Confirmation)."
+}

@@ -38,9 +38,14 @@ export default async function ({ page, test, ok, shots, browserName, note, Unver
         (s) => {
           const el = document.querySelector(s);
           if (el === null) return false;
-          return el
-            .getAnimations({ subtree: true })
-            .every((a) => a.playState === "finished" || a.playState === "idle" || a.effect?.getComputedTiming().iterations === Infinity);
+          return el.getAnimations({ subtree: true }).every(
+            (a) =>
+              a.playState === "finished" ||
+              a.playState === "idle" ||
+              a.effect?.getComputedTiming().iterations === Infinity ||
+              // Ligada al desplazamiento (el difuminado de una lista que desplaza): no termina nunca.
+              a.timeline !== document.timeline,
+          );
         },
         `${what} no terminó su animación de entrada`,
         selector,

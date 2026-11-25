@@ -1,42 +1,14 @@
 // Portada: titular grande sobre el lienzo de la marca, instalación con pestañas por gestor, una composición en
-// vivo con los componentes reales, cifras de la suite, categorías de componentes y áreas de documentación.
+// vivo con los componentes reales, Prisma con las piezas de la suite, cifras, categorías y áreas de documentación.
 import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
-import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import zicon from "@zuccadev-labs/zuix-zicon/manifest.json";
-import { Badge, Button, Carousel, Input, SegmentedControl, Switch } from "@zuccadev-labs/zuix-zui";
+import { Badge, Button, Input, SegmentedControl, Switch } from "@zuccadev-labs/zuix-zui";
 import { useState } from "react";
+import { HomePrism } from "../components/HomePrism";
 import { PackageInstall } from "../components/PackageInstall";
 import { useSiteData, useZudocs } from "../site";
-
-const PIECES: { icon: IconName; title: string; text: string; to: string }[] = [
-  {
-    icon: "swatch",
-    title: "Tokens",
-    text: "Una marca es un archivo. Colores, material, tipografía y medidas salen de ahí.",
-    to: "/tokens",
-  },
-  { icon: "sparkles", title: "Zicon", text: "Iconos en outline y solid, con búsqueda por concepto en español e inglés.", to: "/icons" },
-  {
-    icon: "puzzle-piece",
-    title: "Zui",
-    text: "Componentes accesibles que solo leen tokens. Cada uno con su manifiesto.",
-    to: "/components",
-  },
-  {
-    icon: "rectangle-group",
-    title: "Zout",
-    text: "Shell, paneles divididos, pestañas y rejillas que se adaptan a su contenedor.",
-    to: "/components#layout",
-  },
-  { icon: "book", title: "Zudocs", text: "Este sitio: el estándar de documentación y su plantilla.", to: "/docs/users/zudocs" },
-  {
-    icon: "command-line",
-    title: "Kit de agente",
-    text: "Guías, auditoría con objetivo cero y manifiestos legibles por máquina.",
-    to: "/docs/agents",
-  },
-];
 
 /** Composición en vivo: los componentes reales sobre una superficie de cristal. */
 function Showcase() {
@@ -120,6 +92,19 @@ export default function Home() {
         </section>
 
         {home.suite ? (
+          <section className="zd-container zd-home-section zd-home-prism" aria-labelledby="zd-home-pieces">
+            <div className="zd-home-section__head">
+              <h2 id="zd-home-pieces">La suite, pieza a pieza</h2>
+              <p className="zd-home-section__text">
+                Prisma, el carrusel de la marca. Deslízalo, usa las flechas o deja que pase solo.{" "}
+                <Link to="/carousels">Ver todos los carruseles</Link>
+              </p>
+            </div>
+            <HomePrism />
+          </section>
+        ) : null}
+
+        {home.suite ? (
           <section className="zd-container zd-stats" aria-label="La suite en cifras">
             <dl>
               <div className="zd-stat zd-glass">
@@ -195,29 +180,6 @@ export default function Home() {
             ))}
           </ul>
         </section>
-
-        {home.suite ? (
-          <section className="zd-container zd-home-section" aria-labelledby="zd-home-pieces">
-            <div className="zd-home-section__head">
-              <h2 id="zd-home-pieces">Las piezas</h2>
-              <p className="zd-home-section__text">Arrastra, usa las flechas o el teclado. Es el Carousel de zui con su efecto lente.</p>
-            </div>
-            <Carousel
-              ariaLabel="Piezas de la suite"
-              items={PIECES}
-              getKey={(p) => p.title}
-              slideWidth={300}
-              renderItem={(p) => (
-                <article className="zd-slide">
-                  <Icon className="zd-slide__icon" name={p.icon} size={28} />
-                  <h3 className="zd-slide__title">{p.title}</h3>
-                  <p className="zd-slide__text">{p.text}</p>
-                  <Link to={p.to}>Abrir</Link>
-                </article>
-              )}
-            />
-          </section>
-        ) : null}
       </main>
     </Layout>
   );

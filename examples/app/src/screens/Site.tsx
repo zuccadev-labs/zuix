@@ -46,7 +46,7 @@ const MENU = [
   { label: "Pricing", href: "#pricing", current: true },
 ];
 
-/** Oleada 6: navegación de sitio, cargadores y efectos. */
+/** Navegación de sitio, cargadores y efectos. */
 export function Site() {
   const [tab, setTab] = useState("home");
   const [beam, setBeam] = useState(false);

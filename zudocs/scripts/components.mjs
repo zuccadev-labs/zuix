@@ -29,6 +29,13 @@ export const GROUPS = {
   carousel: { label: "Carousel", icon: "photo" },
   effects: { label: "Efectos", icon: "sparkles" },
   media: { label: "Medios", icon: "camera" },
+  time: { label: "Tiempo", icon: "clock" },
+  terminal: { label: "Terminal y código", icon: "command-line" },
+  chat: { label: "Chat y mensajería", icon: "chat-bubble-left-right" },
+  ai: { label: "IA y agentes", icon: "sparkles" },
+  dashboard: { label: "Dashboard y tableros", icon: "presentation-chart-line" },
+  people: { label: "Usuarios y perfiles", icon: "user-group" },
+  nodes: { label: "Nodos", icon: "share" },
   layout: { label: "Layouts", icon: "rectangle-group" },
 };
 

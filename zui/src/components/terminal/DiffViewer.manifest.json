@@ -1,0 +1,122 @@
+{
+  "name": "DiffViewer",
+  "group": "terminal",
+  "description": "Diferencias de dos textos (diff de líneas de Myers) o de un parche unificado (`git diff`, varios archivos), en vista unificada o lado a lado, con las palabras cambiadas marcadas, cabecera por archivo con +N −M y las regiones sin cambios plegadas tras un botón.",
+  "import": "import { DiffViewer } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "before",
+      "type": "string"
+    },
+    {
+      "name": "after",
+      "type": "string"
+    },
+    {
+      "name": "patch",
+      "type": "string",
+      "description": "Parche unificado, en lugar de before y after."
+    },
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": ["unified", "split"],
+      "description": "Controlado; sin él, defaultMode y el selector."
+    },
+    {
+      "name": "defaultMode",
+      "type": "enum",
+      "values": ["unified", "split"],
+      "default": "unified"
+    },
+    {
+      "name": "context",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "wordDiff",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "fileName",
+      "type": "string"
+    },
+    {
+      "name": "hideModeToggle",
+      "type": "boolean",
+      "default": false,
+      "description": "Sin el conmutador de vista."
+    },
+    {
+      "name": "onModeChange",
+      "type": "(detail: { mode }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DiffViewerLabels>"
+    }
+  ],
+  "states": ["unified", "split", "collapsed", "expanded"],
+  "tokens": [
+    "code-bg",
+    "code-bar-bg",
+    "code-radius",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "success-soft",
+    "danger-soft",
+    "success-text",
+    "danger-text",
+    "success",
+    "danger",
+    "info-soft",
+    "info-text",
+    "surface-2",
+    "font-mono"
+  ],
+  "classes": [
+    "z-diff",
+    "z-diff__bar",
+    "z-diff__mode",
+    "z-diff__file",
+    "z-diff__file-head",
+    "z-diff__name",
+    "z-diff__stats",
+    "z-diff__table",
+    "z-diff__row",
+    "z-diff__num",
+    "z-diff__sign",
+    "z-diff__code",
+    "z-diff__word",
+    "z-diff__gap",
+    "z-diff__expand",
+    "z-diff__hunk"
+  ],
+  "a11y": "Una tabla por archivo, con cabeceras (ocultas a la vista) y una región enfocable con el nombre del archivo para desplazarla. Cada línea dice su tipo en texto oculto («added: », «removed: »); el signo va con aria-hidden y el color no es la única señal. Las cifras +N −M tienen su texto («12 additions, 3 deletions»). Las palabras cambiadas llevan subrayado además del fondo. El botón de una región plegada dice cuántas líneas muestra y, al pulsarlo, el foco pasa a la primera. La vista lado a lado es un conmutador («Split view», aria-pressed). Sin React: .z-diff con template[data-before] y template[data-after] (o template[data-patch], o los textos en <script type=\"application/json\" data-props>), data-mode, data-context, data-word-diff=\"false\", data-file-name y data-hide-mode-toggle; emite z:modechange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Dos versiones de un archivo",
+      "code": "<DiffViewer fileName=\"src/total.js\" before={oldCode} after={newCode} />"
+    },
+    {
+      "title": "Parche lado a lado",
+      "code": "<DiffViewer patch={gitDiff} defaultMode=\"split\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Dos versiones de un archivo",
+      "code": "<div class=\"z-diff\" data-file-name=\"src/total.js\">\n  <script type=\"application/json\" data-props>{ \"before\": \"export function total(items) {\\n  let sum = 0;\\n  for (const item of items) {\\n    sum += item.price;\\n  }\\n  return sum;\\n}\\n\", \"after\": \"export function total(items, tax = 0) {\\n  let sum = 0;\\n  for (const item of items) {\\n    sum += item.price * item.quantity;\\n  }\\n  return sum * (1 + tax);\\n}\\n\" }</script>\n</div>"
+    },
+    {
+      "title": "Parche lado a lado",
+      "code": "<div class=\"z-diff\" data-mode=\"split\">\n  <script type=\"application/json\" data-props>{ \"patch\": \"diff --git a/src/total.js b/src/total.js\\n--- a/src/total.js\\n+++ b/src/total.js\\n@@ -1,7 +1,7 @@\\n-export function total(items) {\\n+export function total(items, tax = 0) {\\n   let sum = 0;\\n   for (const item of items) {\\n-    sum += item.price;\\n+    sum += item.price * item.quantity;\\n   }\\n-  return sum;\\n+  return sum * (1 + tax);\\n }\\n\" }</script>\n</div>"
+    }
+  ],
+  "origin": "Diseño propio; algoritmo de Myers (1986). Referencias: Diff de Mantine y la vista de cambios de GitHub."
+}

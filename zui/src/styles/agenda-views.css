@@ -1,5 +1,5 @@
 /*
-  Agenda, oleada 2: año (12 minimeses con densidad), año perpetuo de una página, línea temporal (Gantt y recursos),
+  Vistas de la agenda: año (12 minimeses con densidad), año perpetuo de una página, línea temporal (Gantt y recursos),
   buscar hueco, franjas de cita, mapa de calor y rachas. Mismas reglas que agenda.css: cromo en cristal, lectura
   sobre `reading-bg`, controles y celdas rectangulares (control-radius*, calendar-cell-radius, item-radius) y
   `radius-full` solo para lo circular. Ningún estado depende solo del color: forma, trama, icono o texto además.
@@ -1116,6 +1116,31 @@
     overflow: auto;
     padding: var(--z-space-0-5);
     scrollbar-width: thin;
+  }
+  /* Más horas de las que caben: el borde con horas ocultas se difumina y la que queda a medias se lee como «sigue».
+     Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+  @supports (animation-timeline: scroll()) {
+    .z-slotpicker__list {
+      animation: z-slotpicker-fade linear both;
+      animation-timeline: scroll(self block);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .z-slotpicker__list {
+      animation: none;
+    }
+  }
+  @keyframes z-slotpicker-fade {
+    from {
+      mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    4%,
+    96% {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+    }
+    to {
+      mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+    }
   }
   .z-slotpicker__slot {
     display: flex;

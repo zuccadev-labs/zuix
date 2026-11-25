@@ -1,20 +1,10 @@
 "use client";
-import {
-  createElement,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  type ReactElement,
-  type ReactNode,
-  type Ref,
-} from "react";
+import { createElement, useEffect, useId, useMemo, useReducer, useRef, type ReactElement, type ReactNode, type Ref } from "react";
 import { toReact, type SlotRenderer } from "../vnode";
 import { focusActive, type Widget, type WidgetHost } from "../../core/widget";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
+import { useIsoLayoutEffect } from "../../primitives/hooks";
 
 export { toReact, type SlotRenderer };
 
@@ -63,7 +53,7 @@ export function useWidget<P, C, S>(widget: Widget<P, C, S>, props: P, { id, clas
     [],
   );
   useEffect(() => (root.current ? widget.attach(root.current, host) : undefined), [host, widget]);
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!root.current) return;
     const focus = wantFocus.current;
     wantFocus.current = false;

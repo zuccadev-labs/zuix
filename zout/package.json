@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix-zout",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "Layouts y ventanas dinámicas de la suite zuix.",
   "license": "MIT",
@@ -32,10 +32,12 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/index.css",
+    "./styles.compat.css": "./dist/zout.compat.css",
     "./manifest.json": "./manifest.json",
     "./html.json": "./html.json",
     "./dom": "./src/dom/index.ts",
     "./dist/zout.css": "./dist/zout.css",
+    "./dist/zout.compat.css": "./dist/zout.compat.css",
     "./dist/zout.dom.js": "./dist/zout.dom.js",
     "./package.json": "./package.json"
   },
@@ -44,8 +46,8 @@
   },
   "peerDependencies": {
     "@zuccadev-labs/zuix-zicon": "workspace:^",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
     "@zuccadev-labs/zuix-tokens": "workspace:^",
@@ -94,9 +96,11 @@
         "default": "./dist/esm/dom/index.js"
       },
       "./styles.css": "./dist/zout.css",
+      "./styles.compat.css": "./dist/zout.compat.css",
       "./manifest.json": "./manifest.json",
       "./html.json": "./html.json",
       "./dist/zout.css": "./dist/zout.css",
+      "./dist/zout.compat.css": "./dist/zout.compat.css",
       "./dist/zout.dom.js": {
         "types": "./dist/esm/dom/index.d.ts",
         "default": "./dist/zout.dom.js"

@@ -94,6 +94,11 @@
     "stage-pad-y": "24px",
     "content-max": "1200px",
     "prose-max": "72ch",
+    "container-sm": "640px",
+    "container-md": "768px",
+    "container-lg": "1024px",
+    "container-xl": "1280px",
+    "container-gutter": "clamp(16px, 4cqi, 40px)",
 
     "docs-navbar-height": "48px",
     "docs-sidebar-width": "248px",

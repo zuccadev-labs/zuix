@@ -7,6 +7,7 @@ import { useControllable } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface TagsInputProps extends TagRules {
   value?: ReadonlyArray<string>;
@@ -46,7 +47,7 @@ const EMPTY: ReadonlyArray<string> = [];
  * campo vacío lleva a la última y otro Retroceso la quita, y las flechas recorren las etiquetas. Una sola parada de
  * Tab; los cambios se anuncian en una región `status`.
  */
-export function TagsInput({
+export const TagsInput = withRef(function TagsInput({
   value,
   defaultValue = EMPTY,
   onValueChange,
@@ -257,4 +258,4 @@ export function TagsInput({
         : null}
     </div>
   );
-}
+});

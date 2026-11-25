@@ -420,6 +420,33 @@ a[class*="skipToContent"]:focus {
   padding: 0 var(--z-space-2) var(--z-space-2);
   overflow: auto;
 }
+/* Índice y navegación más altos que la ventana: el borde con entradas ocultas se difumina en vez de cortar una a media
+   altura. Solo si hay algo por ese lado (línea de tiempo del desplazamiento). */
+@supports (animation-timeline: scroll()) {
+  .zd-sitenav__scroll,
+  .zd-rail {
+    animation: zd-scroll-fade linear both;
+    animation-timeline: scroll(self block);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .zd-sitenav__scroll,
+  .zd-rail {
+    animation: none;
+  }
+}
+@keyframes zd-scroll-fade {
+  from {
+    mask-image: linear-gradient(to bottom, black, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+  }
+  4%,
+  96% {
+    mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), transparent);
+  }
+  to {
+    mask-image: linear-gradient(to bottom, transparent, black var(--z-space-6), black calc(100% - var(--z-space-8)), black);
+  }
+}
 .zd-nav-links,
 .zd-nav-group__items {
   margin: 0;
@@ -459,12 +486,15 @@ a[class*="skipToContent"]:focus {
 .zd-nav-group__icon {
   color: var(--z-fg-muted);
 }
+/* Un grupo de dos o tres palabras («Dashboard y tableros») pasa a dos líneas antes de cortarse. */
 .zd-nav-group__label {
+  display: -webkit-box;
   flex: 1;
   min-inline-size: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 .zd-nav-group__chevron {
   color: var(--z-fg-subtle);
@@ -1363,8 +1393,9 @@ a[class*="skipToContent"]:focus {
   position: relative;
   display: grid;
   place-items: center;
-  min-block-size: 380px;
-  padding: var(--z-space-10) var(--z-space-6);
+  /* Se ajusta a lo que enseña: una pieza pequeña (IconButton, Toggle) no queda perdida en un escenario enorme. */
+  min-block-size: 160px;
+  padding: var(--z-space-8) var(--z-space-6);
   overflow: hidden;
   border: 1px solid var(--z-line);
   border-radius: var(--z-radius-xl);
@@ -1458,9 +1489,13 @@ a[class*="skipToContent"]:focus {
     all: revert;
   }
 }
+/* En un teléfono el escenario apila en columna, en una sola línea. Con `wrap`, una columna es un contenedor de varias
+   líneas: el navegador mide la altura de cada pieza con su ancho ajustado al contenido antes de estirarla, y lo que
+   se mide por su ancho (el visor 9:16 de Stories) salía con la altura de un visor de 118 px y se cortaba. */
 @container (max-width: 520px) {
   .zd-preview__stage {
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
   }
 }
@@ -1959,36 +1994,205 @@ a[class*="skipToContent"]:focus {
   backdrop-filter: var(--zd-glass);
   box-shadow: inset 0 1px 0 var(--z-glass-highlight);
 }
-.zd-slide {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--z-space-2);
-  block-size: 300px;
+/* Prisma de la portada: una pieza de la suite por slide, con su composición en vivo sobre una ilustración. */
+.zd-home-prism .zd-home-section__text a {
+  color: var(--z-accent-text);
+  font-weight: var(--z-weight-medium);
+}
+.zd-prism {
+  --z-carousel-media-height: clamp(19rem, 30vw, 25rem);
+}
+.zd-piece__art {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.zd-piece__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Ventana de cristal con la composición: centrada en la parte de arriba, sobre la ilustración. */
+.zd-piece__window {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-inline-size: min(78%, 20rem);
+  margin-block-end: var(--z-space-20);
   padding: var(--z-space-5);
   border: 1px solid var(--z-glass-border);
-  border-radius: var(--z-card-radius);
-  background: linear-gradient(160deg, var(--z-surface-3), var(--z-surface)), var(--z-surface-solid);
+  border-radius: var(--z-radius-xl);
+  background: var(--z-glass-bg);
+  -webkit-backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+  backdrop-filter: blur(var(--z-glass-blur)) saturate(var(--z-glass-saturate));
+  box-shadow:
+    inset 0 1px 0 var(--z-glass-highlight),
+    var(--z-glass-shadow);
+  color: var(--z-fg);
 }
-.zd-slide__icon {
-  margin-block-end: auto;
-  color: var(--z-accent-text);
+.zd-piece__stack {
+  display: grid;
+  justify-items: center;
+  gap: var(--z-space-3);
 }
-.zd-slide__title {
+.zd-piece__row {
+  display: flex;
+  gap: var(--z-space-2);
+}
+.zd-piece__icons {
+  display: grid;
+  grid-template-columns: repeat(6, var(--z-space-8));
+  gap: var(--z-space-2);
+  color: var(--z-fg);
+}
+.zd-piece__icons > * {
+  justify-self: center;
+}
+.zd-piece__swatches {
+  display: grid;
+  grid-template-columns: repeat(3, var(--z-space-14));
+  gap: var(--z-space-2);
+}
+.zd-piece__swatch {
+  block-size: var(--z-space-10);
+  border-radius: var(--z-radius-md);
+  box-shadow: inset 0 0 0 1px var(--z-glass-border);
+}
+.zd-piece__swatch[data-tone="accent"] {
+  background: var(--z-accent);
+}
+.zd-piece__swatch[data-tone="info"] {
+  background: var(--z-info);
+}
+.zd-piece__swatch[data-tone="success"] {
+  background: var(--z-success);
+}
+.zd-piece__swatch[data-tone="warning"] {
+  background: var(--z-warning);
+}
+.zd-piece__swatch[data-tone="danger"] {
+  background: var(--z-danger);
+}
+.zd-piece__swatch[data-tone="fg"] {
+  background: var(--z-fg);
+}
+.zd-piece__shell {
+  display: grid;
+  grid-template-columns: var(--z-space-8) var(--z-space-20) minmax(var(--z-space-20), 1fr);
+  gap: var(--z-space-2);
+  inline-size: min(100%, 18rem);
+  block-size: var(--z-space-20);
+}
+.zd-piece__pane {
+  border: 1px solid var(--z-glass-border);
+  border-radius: var(--z-radius-md);
+  background: var(--z-surface-2);
+  box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+}
+.zd-piece__pane[data-part="main"] {
+  background: var(--z-surface);
+}
+.zd-piece__deck {
+  position: relative;
+  inline-size: var(--z-space-20);
+  block-size: var(--z-space-16);
+}
+.zd-piece__deck > span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--z-glass-border);
+  border-radius: var(--z-radius-md);
+  background: var(--z-accent);
+  box-shadow: var(--z-shadow-md);
+}
+.zd-piece__deck > span:nth-child(1) {
+  rotate: -12deg;
+  translate: calc(var(--z-space-8) * -1) 0;
+  background: var(--z-info);
+}
+.zd-piece__deck > span:nth-child(2) {
+  rotate: 10deg;
+  translate: var(--z-space-8) 0;
+  background: var(--z-success);
+}
+.zd-piece__code {
   margin: 0;
-  font-size: var(--z-text-heading-lg);
+  color: var(--z-fg);
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-code);
+  line-height: var(--z-leading-code);
+  white-space: pre;
 }
-.zd-slide__text {
+.zd-piece__lines {
+  display: grid;
+  gap: var(--z-space-2);
+  inline-size: min(100%, 16rem);
+}
+.zd-piece__lines > span {
+  block-size: var(--z-space-2);
+  border-radius: var(--z-radius-xs);
+  background: var(--z-surface-3);
+}
+.zd-piece__lines > span:first-child {
+  block-size: var(--z-space-4);
+  background: var(--z-accent);
+}
+.zd-piece__lines > [data-w="60"] {
+  inline-size: 60%;
+}
+.zd-piece__lines > [data-w="70"] {
+  inline-size: 70%;
+}
+.zd-piece__lines > [data-w="88"] {
+  inline-size: 88%;
+}
+/* Pie de cristal: icono, nombre, una línea y el enlace. */
+.zd-piece__caption {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--z-space-3);
+}
+.zd-piece__copy {
+  display: grid;
+  gap: var(--z-space-0-5);
+  min-inline-size: 0;
+}
+.zd-piece__title {
+  margin: 0;
+  font-size: var(--z-text-title);
+  font-weight: var(--z-weight-semibold);
+}
+.zd-piece__text {
   margin: 0;
   color: var(--z-fg-muted);
   font-size: var(--z-text-small);
+  line-height: var(--z-leading-snug);
 }
-/* El enlace de la diapositiva es un objetivo por sí solo (no va dentro de una frase): 24 px de alto como mínimo. */
-.zd-slide > a {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  min-block-size: var(--z-control-height-xs);
+.zd-piece__caption .zd-tile {
+  color: var(--z-accent-text);
+}
+@media (max-width: 640px) {
+  .zd-prism {
+    --z-carousel-media-height: 27rem;
+  }
+}
+@container z-carousel (max-width: 560px) {
+  .zd-piece__window {
+    min-inline-size: 0;
+    max-inline-size: calc(100% - var(--z-space-6));
+  }
+  .zd-piece__caption {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .zd-piece__caption .zd-tile {
+    display: none;
+  }
+  .zd-piece__window {
+    margin-block-end: calc(var(--z-space-20) + var(--z-space-8));
+    padding: var(--z-space-4);
+  }
 }
 
 /* ── Pie y 404 ────────────────────────────────────────────────────────────── */
@@ -2498,7 +2702,7 @@ mark[data-markjs] {
   }
 }
 
-/* Demos de la oleada 4: tarjeta de vista previa y etiqueta con su ayuda en línea. */
+/* Demos de capas: tarjeta de vista previa y etiqueta con su ayuda en línea. */
 .zd-demo-card {
   display: grid;
   gap: var(--z-space-1);
@@ -2508,6 +2712,146 @@ mark[data-markjs] {
   display: inline-flex;
   align-items: center;
   gap: var(--z-space-1);
+}
+
+/* Demos de los ejemplos (ComponentPage/examples): columnas con su texto de estado, marcos para lo que ocupa el
+   alto de su contenedor (Shell, SplitPane, Sidebar) y piezas de medios que necesitan un ancho. */
+.zd-demo-stack {
+  display: grid;
+  gap: var(--z-space-3);
+  inline-size: min(100%, 36rem);
+}
+.zd-demo-stack--center {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  inline-size: 100%;
+}
+.zd-demo-stack > * {
+  max-inline-size: 100%;
+}
+.zd-demo-wide {
+  inline-size: 100%;
+}
+.zd-demo-hint {
+  margin: 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+}
+.zd-palette-demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--z-space-3);
+}
+.zd-frame {
+  display: flex;
+  inline-size: 100%;
+  block-size: 360px;
+  overflow: hidden;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-lg);
+  background: var(--z-canvas);
+}
+.zd-frame > * {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+.zd-frame[data-size="sm"] {
+  inline-size: min(100%, 20rem);
+  block-size: 320px;
+}
+.zd-frame[data-size="lg"] {
+  block-size: 440px;
+}
+.zd-pane-code {
+  margin: 0;
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-small);
+  white-space: pre-wrap;
+}
+.zd-demo-media {
+  inline-size: min(100%, 32rem);
+}
+.zd-demo-media img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.zd-demo-media .zd-raw {
+  filter: grayscale(1) contrast(0.85);
+}
+.zd-demo-card-media {
+  inline-size: min(100%, 18rem);
+}
+.zd-thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--z-space-2);
+  inline-size: min(100%, 32rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zd-thumbs__button {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-radius-md);
+  background: none;
+  cursor: zoom-in;
+}
+.zd-thumbs__button img {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+/* Calendario con datos por día: el precio más bajo en verde y los marcadores de ciclo, cada uno con su leyenda. */
+.zd-calendar-prices .z-calendar__day[data-cheap]:not([data-selected]) .z-calendar__day-content {
+  color: var(--z-success-text);
+  font-weight: var(--z-weight-semibold);
+}
+.zd-calendar-cycle .z-calendar__day[data-period]:not([data-selected]),
+.zd-legend [data-mark="period"]::before {
+  background: var(--z-danger-soft);
+}
+.zd-calendar-cycle .z-calendar__day[data-predicted]:not([data-selected]),
+.zd-legend [data-mark="predicted"]::before {
+  box-shadow: inset 0 0 0 1px var(--z-danger);
+}
+.zd-calendar-cycle .z-calendar__day[data-fertile]:not([data-selected]),
+.zd-legend [data-mark="fertile"]::before {
+  background: var(--z-info-soft);
+}
+.zd-calendar-cycle .z-calendar__day[data-ovulation]:not([data-selected]),
+.zd-legend [data-mark="ovulation"]::before {
+  box-shadow: inset 0 0 0 2px var(--z-info);
+}
+.zd-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--z-space-2) var(--z-space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+  list-style: none;
+}
+.zd-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-1-5);
+}
+.zd-legend li::before {
+  content: "";
+  inline-size: var(--z-space-3);
+  block-size: var(--z-space-3);
+  border-radius: var(--z-radius-xs);
 }
 
 /* ── Galerías de cargadores y efectos (/loaders, /effects) ─────────────────────────────────────────────── */
@@ -2645,4 +2989,116 @@ mark[data-markjs] {
   place-items: center;
   inline-size: var(--z-space-10);
   block-size: var(--z-space-10);
+}
+
+/* ── Galería de carruseles (/carousels) ──────────────────────────────────────────────────────────────────── */
+.zd-carousel-caption strong {
+  font-size: var(--z-text-body);
+}
+.zd-carousel-caption span {
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+}
+.zd-carousel-narrow {
+  max-inline-size: 24rem;
+  margin-inline: auto;
+}
+.zd-step {
+  display: grid;
+  align-content: start;
+  gap: var(--z-space-2);
+  padding: var(--z-space-6);
+}
+.zd-step__title {
+  margin: 0;
+  font-size: var(--z-text-heading);
+}
+.zd-step__text {
+  margin: 0;
+  color: var(--z-fg-muted);
+}
+.zd-step .zd-tile {
+  color: var(--z-accent-text);
+}
+.zd-carousel-wheel {
+  display: grid;
+  justify-items: center;
+  gap: var(--z-space-3);
+  max-inline-size: 16rem;
+  margin-inline: auto;
+}
+.zd-wheel-item {
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-title);
+  font-variant-numeric: tabular-nums;
+}
+.zd-wheel-value {
+  margin: 0;
+  color: var(--z-fg-muted);
+}
+.zd-logo-cloud {
+  padding-block: var(--z-space-4);
+}
+.zd-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-2);
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-heading);
+  font-weight: var(--z-weight-semibold);
+  letter-spacing: var(--z-tracking-snug);
+  filter: grayscale(1);
+  transition:
+    color var(--z-duration-fast) var(--z-ease-standard),
+    filter var(--z-duration-fast) var(--z-ease-standard);
+}
+@media (hover: hover) {
+  .zd-logo:hover {
+    color: var(--z-accent-text);
+    filter: none;
+  }
+}
+.zd-quote {
+  display: grid;
+  align-content: space-between;
+  gap: var(--z-space-4);
+  margin: 0;
+  padding: var(--z-space-5);
+  border: 1px solid var(--z-glass-border);
+  border-radius: var(--z-card-radius);
+  background: var(--z-glass-bg);
+  box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+}
+.zd-quote__text {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--z-fg);
+  font-size: var(--z-text-reading);
+  line-height: var(--z-leading-relaxed);
+}
+.zd-quote__author {
+  display: flex;
+  align-items: center;
+  gap: var(--z-space-3);
+  font-size: var(--z-text-small);
+}
+.zd-quote__author > span {
+  display: grid;
+}
+.zd-quote__role {
+  color: var(--z-fg-muted);
+}
+.zd-skeleton-stage {
+  display: block;
+  padding: var(--z-space-4);
+}
+/* Fragmentos largos que parten línea: sin desplazamiento horizontal no hace falta que sean enfocables. */
+.zd-gallery__snippet--wrap {
+  overflow-x: visible;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.zd-gallery__snippet--wrap code {
+  white-space: inherit;
 }

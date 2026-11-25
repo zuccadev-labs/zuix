@@ -21,6 +21,7 @@ zicon/src/icons/** linguist-generated=true
 zicon/src/names.ts linguist-generated=true
 zicon/src/all.ts linguist-generated=true
 zicon/icons.json linguist-generated=true
+zicon/icons-own.json linguist-generated=true
 zicon/sprite.svg linguist-generated=true
 zicon/manifest.json linguist-generated=true
 zui/manifest.json linguist-generated=true
@@ -30,8 +31,9 @@ zout/html.json linguist-generated=true
 examples/html/index.html linguist-generated=true
 zudocs/static/llms.txt linguist-generated=true
 
-# Fuente de los iconos (SVG de Dazicon): datos, no código.
+# Fuente de los iconos (SVG de Dazicon y dibujos propios): datos, no código.
 zicon/svg/** linguist-vendored=true
+zicon/own/** linguist-vendored=true
 
 # La documentación cuenta como contenido del repositorio.
 docs/** linguist-documentation=true

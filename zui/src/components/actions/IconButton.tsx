@@ -2,6 +2,7 @@ import type { ButtonHTMLAttributes, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { BUTTON_ICON_SIZE, type ButtonSize, type ButtonVariant } from "./types";
+import { withRef } from "../../react-compat";
 
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   icon: IconName;
@@ -16,7 +17,7 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   ref?: Ref<HTMLButtonElement>;
 }
 
-export function IconButton({
+export const IconButton = withRef(function IconButton({
   icon,
   label,
   variant = "ghost",
@@ -54,6 +55,6 @@ export function IconButton({
       )}
     </button>
   );
-}
+});
 
 const off = (value: unknown) => value === true || value === "true";

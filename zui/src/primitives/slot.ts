@@ -1,6 +1,7 @@
 // Slot propio: fusiona props y ref con un elemento hijo (disparadores `trigger`, `asChild`). Sin hooks.
 import { cloneElement, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
 import { cx } from "../cx";
+import { elementRef } from "../react-compat";
 import { mergeRefs } from "../refs";
 
 type Props = Record<string, unknown>;
@@ -29,7 +30,9 @@ export function mergeProps(slot: Props, child: Props): Props {
 
 /** Clona `child` con las props fusionadas; `children`, si se pasa, sustituye a los del hijo. */
 export function slot(child: ReactElement, props: Props, children?: ReactNode): ReactElement {
-  const merged = mergeProps(props, child.props as Props);
+  // La ref del hijo está en sus props en React 19 y en el elemento en React 18 (elementRef).
+  const ref = elementRef(child);
+  const merged = mergeProps(props, ref ? { ...(child.props as Props), ref } : (child.props as Props));
   return children === undefined ? cloneElement(child, merged) : cloneElement(child, merged, children);
 }
 

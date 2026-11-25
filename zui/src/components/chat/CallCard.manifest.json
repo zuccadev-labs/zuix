@@ -1,0 +1,92 @@
+{
+  "name": "CallCard",
+  "group": "chat",
+  "description": "Tarjeta de llamada de cristal: entrante (aceptar, rechazar, avatar que suena), saliente («Calling…», colgar) y en curso (duración, silenciar, cámara, colgar).",
+  "import": "import { CallCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "kind",
+      "type": "\"incoming\" | \"outgoing\" | \"ongoing\"",
+      "default": "incoming"
+    },
+    {
+      "name": "caller",
+      "type": "{ name, avatar? }"
+    },
+    {
+      "name": "video",
+      "type": "boolean"
+    },
+    {
+      "name": "startedAt",
+      "type": "string | number"
+    },
+    {
+      "name": "muted",
+      "type": "boolean"
+    },
+    {
+      "name": "camera",
+      "type": "boolean"
+    },
+    {
+      "name": "onAccept",
+      "type": "(detail: { video }) => void"
+    },
+    {
+      "name": "onDecline · onHangUp",
+      "type": "() => void"
+    },
+    {
+      "name": "onMute",
+      "type": "(detail: { muted }) => void"
+    },
+    {
+      "name": "onCamera",
+      "type": "(detail: { camera }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<CallCardLabels>"
+    }
+  ],
+  "states": ["incoming", "outgoing", "ongoing", "muted"],
+  "tokens": ["card-radius", "success", "success-solid", "danger-solid", "fg-on-accent", "surface-3", "fg", "fg-muted", "touch-target"],
+  "classes": [
+    "z-call",
+    "z-call__avatar",
+    "z-call__body",
+    "z-call__name",
+    "z-call__status",
+    "z-call__timer",
+    "z-call__actions",
+    "z-call__button",
+    "z-call__accept",
+    "z-call__decline",
+    "z-call__hangup",
+    "z-call__toggle"
+  ],
+  "a11y": "Región nombrada por quien llama y descrita por el estado. La entrante se anuncia una vez y de forma asertiva («Incoming call from Ana») y no roba el foco. Los botones tienen nombre; silenciar y cámara llevan aria-pressed. La duración es role=timer (no se lee cada segundo). Los anillos no se animan con movimiento reducido. Sin React: .z-call con data-kind, data-video, data-started-at, data-caller y data-avatar; emite z:accept, z:decline, z:hangup, z:mute y z:camera.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Llamada entrante de vídeo",
+      "code": "<CallCard kind=\"incoming\" video caller={{ name: \"Ana López\" }} onAccept={accept} onDecline={decline} />"
+    },
+    {
+      "title": "En curso",
+      "code": "<CallCard kind=\"ongoing\" caller={{ name: \"Design team\" }} startedAt={Date.now() - 65000} onHangUp={hangUp} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Llamada entrante de vídeo",
+      "code": "<div class=\"z-call\" data-kind=\"incoming\" data-video data-caller=\"Ana López\" style=\"max-width: 420px\"></div>"
+    },
+    {
+      "title": "En curso",
+      "code": "<div class=\"z-call\" data-kind=\"ongoing\" data-caller=\"Design team\" data-started-at=\"2026-11-21T09:28:55Z\" style=\"max-width: 420px\"></div>"
+    }
+  ],
+  "origin": "Diseño propio; referencias: las llamadas de WhatsApp y Telegram. Aviso persistente según la guía persistent-toast-notifications."
+}

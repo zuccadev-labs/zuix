@@ -1,0 +1,64 @@
+{
+  "name": "SplitButton",
+  "group": "actions",
+  "description": "Botón dividido: la acción principal y, pegado a ella, un botón con flecha que abre las alternativas; la flecha gira al abrir.",
+  "import": "import { SplitButton } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "onClick",
+      "type": "() => void"
+    },
+    {
+      "name": "items",
+      "type": "MenuEntry[]",
+      "required": true
+    },
+    {
+      "name": "menuLabel",
+      "type": "string",
+      "default": "More options"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["primary", "secondary", "ghost"],
+      "default": "primary"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean"
+    }
+  ],
+  "tokens": ["radius-xs", "duration-normal", "ease-emphasized"],
+  "classes": ["z-split-button", "z-split-button__main", "z-split-button__toggle"],
+  "a11y": "Grupo con dos botones nativos: la acción y un menu button con nombre («More options»), aria-haspopup=menu y aria-expanded. Clic, Intro, Espacio o ↓ abren con el foco en la primera alternativa y ↑ en la última; Escape cierra y devuelve el foco a la flecha; un clic fuera lo cierra. Sin React (`@zuccadev-labs/zuix-zui/dom`): la flecha con data-z-open=\"#menu\" y data-z-placement=\"bottom-end\" y un .z-menu[popover]; la acción principal es un botón normal. Emite z:open, z:close y z:select.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Publicar",
+      "code": "<SplitButton icon=\"paper-airplane\" items={[{ id: \"schedule\", label: \"Schedule\", icon: \"clock\" }, { id: \"draft\", label: \"Save as draft\", icon: \"document-duplicate\" }]}>Publish</SplitButton>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Publicar",
+      "code": "<div class=\"z-split-button\" role=\"group\" data-variant=\"primary\" data-size=\"md\">\n  <button type=\"button\" class=\"z-btn z-btn--primary z-split-button__main\" data-size=\"md\"><z-icon name=\"paper-airplane\" size=\"16\"></z-icon>Publish</button>\n  <button type=\"button\" class=\"z-btn z-btn--icon z-btn--primary z-split-button__toggle\" data-size=\"md\" aria-label=\"More options\" title=\"More options\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#publish-more\" data-z-placement=\"bottom-end\"><z-icon name=\"chevron-down\" size=\"16\"></z-icon></button>\n</div>\n\n<div id=\"publish-more\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"More options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Schedule</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"document-duplicate\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Save as draft</span></button>\n</div>"
+    }
+  ],
+  "origin": "Split button de Material 3 Expressive y SplitButton de Fluent UI."
+}

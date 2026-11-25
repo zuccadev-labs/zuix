@@ -48,7 +48,7 @@
   ],
   "classes": ["z-chart"],
   "behavior": "dom",
-  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
   "description": "Gráfico de áreas: como LineChart con relleno lavado (≈16 %) y base en cero; `stacked` apila las series (positivos hacia arriba, negativos hacia abajo) y el tooltip suma el total.",
   "import": "import { AreaChart } from \"@zuccadev-labs/zuix-zui\"",
   "props": [

@@ -33,6 +33,7 @@ import * as listbox from "./forms-listbox";
 import * as popup from "./forms-popup";
 import * as layers from "./layers";
 import * as navigation from "./navigation";
+import * as skeleton from "./skeleton";
 import { trapTab } from "../core/focus";
 import { trackScrollEdges } from "../core/edges";
 import { escapeTop } from "../core/layers";
@@ -49,16 +50,19 @@ import { swipeDirection, swipeToDismiss } from "../core/swipe";
 import { createTimer } from "../core/timer";
 import { createTypeahead } from "../core/typeahead";
 import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup, type DomModule, type DomPart } from "./shared";
+import { popoverOpen, closestOpenPopover, showPopover } from "../core/popover";
 
 export type { DomModule, DomPart } from "./shared";
 export { download, downloadBlob, downloadUrl, mimeFromName, type DownloadSource } from "../core/download";
 export { matchesShortcut, normalizeShortcut, parseShortcut, shortcutLabels } from "../core/shortcut";
-export { setOtpValue, setSliderValue } from "./forms-controls";
+export { reorderUpload, setOtpValue, setSliderValue } from "./forms-controls";
 export { setNumberInputValue } from "./forms-fields";
 export { setListboxValue, setTagsValue } from "./forms-choice";
 export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
 export { place, type Placement };
 export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
+export { expandSkeleton } from "./skeleton";
+export { announce, type AnnounceOptions, type Politeness } from "../core/announcer";
 export {
   closeActionBar,
   dismissBanner,
@@ -88,6 +92,7 @@ const coreModule = (): DomModule => ({
   name: "core",
   parts: [
     { rank: 10, setup: actions.setup, hydrate: actions.hydrate },
+    { rank: 12, setup: skeleton.setup, hydrate: skeleton.hydrate },
     { rank: 20, setup: popup.setup, hydrate: () => {} },
     { rank: 21, setup: listbox.setup, hydrate: listbox.hydrate },
     { rank: 23, setup: controls.setup, hydrate: controls.hydrate },
@@ -141,7 +146,8 @@ function emit(el: Element, name: string, detail?: unknown): boolean {
 
 /** Abre un `<dialog>` como modal: capa superior, foco atrapado y Escape nativos. */
 export function openDialog(dialog: HTMLDialogElement): void {
-  if (dialog.open) return;
+  // Desconectado, `showModal()` lanza («Element is not connected» en WebKit).
+  if (dialog.open || !dialog.isConnected) return;
   dialog.dataset.state = "open";
   dialog.showModal();
   // La página no se desplaza bajo un diálogo modal; se libera cuando el diálogo se cierra, por la vía que sea.
@@ -188,7 +194,7 @@ function follow(event: Event): void {
   // El desplazamiento dentro del propio popover (una lista larga) no lo mueve.
   if (event.target instanceof Element && event.target.closest("[popover]")) return;
   for (const [el, reposition] of [...followers]) {
-    if (!el.isConnected || !el.matches(":popover-open")) followers.delete(el);
+    if (!el.isConnected || !popoverOpen(el)) followers.delete(el);
     else reposition();
   }
 }
@@ -221,9 +227,12 @@ export function openPopover(
   placement: Placement = "bottom-start",
   options: { follow?: boolean; trigger?: Element } = {},
 ): void {
+  // Una apertura que llega tarde (la reapertura tras una pulsación larga, un disparador quitado) sobre una capa que
+  // ya no está en el documento no hace nada: ni la abre ni toca su disparador.
+  if (!el.isConnected) return;
   if (!el.hasAttribute("popover")) el.setAttribute("popover", "auto");
   el.dataset.state = "open";
-  if (!el.matches(":popover-open")) el.showPopover();
+  if (!popoverOpen(el)) showPopover(el);
   const gap = anchor instanceof Element ? 6 + (el.hasAttribute("data-arrow") ? 7 : 0) : 0;
   let css = anchor instanceof Element && el.classList.contains("z-popover") ? anchorWithCss(el, anchor, placement, gap) : null;
   if (css) cssAnchors.set(el, css);
@@ -238,7 +247,7 @@ export function openPopover(
   };
   position();
   // Con CSS anchor positioning, algún motor aplica el desplazamiento de la página con retraso: se vigila un momento.
-  if (css) settleAnchoring(() => el.matches(":popover-open") && position());
+  if (css) settleAnchoring(() => popoverOpen(el) && position());
   if (anchor instanceof Element) {
     const owner = options.trigger ?? anchor;
     anchors.set(el, owner);
@@ -256,7 +265,7 @@ export function openPopover(
 const cssAnchors = new WeakMap<HTMLElement, CssAnchoring>();
 
 export function closePopover(el: HTMLElement): void {
-  if (el.matches(":popover-open")) el.hidePopover();
+  if (popoverOpen(el)) el.hidePopover();
 }
 
 /* ---------- Submenús: <button class="z-menu__item" data-z-submenu="#id"> + <div id popover class="z-liquid z-menu"> ---------- */
@@ -276,9 +285,9 @@ function detectSourceNesting(): void {
     inner.setAttribute("popover", "auto");
     outer.append(invoker);
     document.body.append(outer, inner);
-    outer.showPopover();
-    (inner.showPopover as (options?: { source?: HTMLElement }) => void)({ source: invoker });
-    sourceNesting = outer.matches(":popover-open");
+    showPopover(outer);
+    showPopover(inner, invoker);
+    sourceNesting = popoverOpen(outer);
   } catch {
     sourceNesting = false;
   }
@@ -301,7 +310,7 @@ function openChild(menu: Element): HTMLElement | undefined {
   for (const trigger of menu.querySelectorAll<HTMLElement>('[data-z-submenu][aria-expanded="true"]')) {
     if (trigger.closest(".z-menu") !== menu) continue;
     const sub = submenuOf(trigger);
-    if (sub?.matches(":popover-open")) return sub;
+    if (sub && popoverOpen(sub)) return sub;
   }
   return undefined;
 }
@@ -329,14 +338,15 @@ function closeChain(menu: HTMLElement): void {
 export function openSubmenu(trigger: HTMLElement, focusFirst = false): void {
   const sub = submenuOf(trigger);
   const parent = trigger.closest<HTMLElement>(".z-menu");
-  if (!sub || !parent || sub === parent || sub.contains(parent) || isDisabled(trigger)) return;
-  if (!sub.matches(":popover-open")) {
+  // Se abre también desde el temporizador del puntero: la entrada o el submenú pueden haber salido del documento.
+  if (!sub || !parent || sub === parent || sub.contains(parent) || isDisabled(trigger) || !trigger.isConnected || !sub.isConnected) return;
+  if (!popoverOpen(sub)) {
     if (!sub.hasAttribute("popover")) sub.setAttribute("popover", "auto");
     // Sin init() no se ha comprobado `source` (la comprobación cerraría los menús abiertos): se anida en el DOM.
     if (!sourceNesting && !parent.contains(sub)) parent.append(sub);
     describeSubmenu(trigger, sub);
     sub.dataset.state = "open";
-    (sub.showPopover as (options?: { source?: HTMLElement }) => void)({ source: trigger });
+    showPopover(sub, trigger);
     anchors.set(sub, trigger);
     trigger.setAttribute("aria-expanded", "true");
     trigger.dataset.state = "open";
@@ -461,7 +471,7 @@ function showTooltip(target: HTMLElement): void {
     tip.textContent = text;
     // Dentro del diálogo modal que contiene al disparador: fuera de él la burbuja quedaría inerte.
     (target.closest("dialog[open]") ?? document.body).append(tip);
-    tip.showPopover();
+    showPopover(tip);
     place(tip, target.getBoundingClientRect(), (target.getAttribute("data-z-placement") as Placement) ?? "top");
     // Se añade a la descripción que el control ya tuviera (la ayuda de un Field), sin sustituirla.
     target.setAttribute("aria-describedby", [...describedBy(target), tip.id].join(" "));
@@ -521,8 +531,8 @@ let unfollowToasts: (() => void) | undefined;
  */
 function raiseToasts(host: HTMLElement, to: HTMLElement = modalHost()): void {
   moveToHost(host, to);
-  if (host.matches(":popover-open")) host.hidePopover();
-  host.showPopover();
+  if (popoverOpen(host)) host.hidePopover();
+  showPopover(host);
   settleShown(host, '.z-toast[data-state="open"]', toastShown);
 }
 
@@ -616,7 +626,7 @@ export function toast({
     afterExit(item, () => {
       item.remove();
       if (!host.children.length) {
-        if (host.matches(":popover-open")) host.hidePopover();
+        if (popoverOpen(host)) host.hidePopover();
         unfollowToasts?.();
         unfollowToasts = undefined;
       }
@@ -968,7 +978,7 @@ const edgeTracked = new WeakSet<HTMLElement>();
 export function hydrate(root: ParentNode = document): void {
   // Tiras con desplazamiento horizontal: difuminado del borde con contenido oculto (data-scroll-edges).
   for (const strip of root.querySelectorAll<HTMLElement>(
-    '[data-z-dom] .z-tabs__list:not([data-orientation="vertical"]), [data-z-dom] .z-listbox[data-orientation="horizontal"] > .z-listbox__viewport',
+    '[data-z-dom] .z-tabs__list:not([data-orientation="vertical"]), [data-z-dom] .z-listbox[data-orientation="horizontal"] > .z-listbox__viewport, [data-z-dom] .z-table-wrap, [data-z-dom] .z-actionbar__actions',
   )) {
     if (edgeTracked.has(strip)) continue;
     edgeTracked.add(strip);
@@ -1012,7 +1022,7 @@ function onClick(event: MouseEvent): void {
     const el = byRef(opener.getAttribute("data-z-open"));
     if (el instanceof HTMLDialogElement) openDialog(el);
     else if (el) {
-      if (el.matches(":popover-open")) closePopover(el);
+      if (popoverOpen(el)) closePopover(el);
       else {
         // `data-z-anchor="#id"`: se coloca junto a otro elemento; el disparador sigue siendo el que lo abre.
         const anchor = byRef(opener.getAttribute("data-z-anchor")) ?? opener;
@@ -1103,9 +1113,15 @@ function onClick(event: MouseEvent): void {
   }
 
   // Toggle suelto: no los de un ToggleGroup ni el de mostrar contraseña (los atienden ./actions y ./forms-fields), ni
-  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor, gráficos).
+  // los botones de una pieza que lleva su propio estado (Calendar, mapa de calor, gráficos, historias, consola de logs, diff,
+  // chat e IA, filtros y el asa de la rejilla de FileUpload).
   const pressed = target.closest<HTMLElement>("button[aria-pressed]:not(.z-toggle-group > .z-toggle, .z-password__toggle)");
-  if (pressed && !pressed.closest(".z-calendar, .z-heatmap, .z-chart")) {
+  if (
+    pressed &&
+    !pressed.closest(
+      ".z-calendar, .z-heatmap, .z-chart, .z-stories, .z-log-console, .z-diff, .z-duration-field, .z-reactions, .z-conversation-list, .z-composer, .z-emoji-picker, .z-call, .z-message-list, .z-assistant-message, .z-suggestions, .z-artifact, .z-filter-bar, .z-upload__tile",
+    )
+  ) {
     const next = pressed.getAttribute("aria-pressed") !== "true";
     pressed.setAttribute("aria-pressed", String(next));
     pressed.dataset.state = next ? "on" : "off";
@@ -1175,11 +1191,28 @@ function onKeydown(event: KeyboardEvent): void {
   // Escape en un diálogo: se cierra con animación, o no se cierra si es estático.
   if (event.key === "Escape") {
     const dialog = target.closest<HTMLDialogElement>("dialog.z-modal, dialog.z-drawer");
-    if (dialog?.open && !target.closest(":popover-open")) {
+    if (dialog?.open && !closestOpenPopover(target)) {
       event.preventDefault();
       if (!dialog.hasAttribute("data-z-static")) closeDialog(dialog);
     }
     return;
+  }
+
+  // Botón de menú (APG Menu Button): ↓ abre el menú y enfoca su primera entrada; ↑, la última. Intro y Espacio lo
+  // abren por el clic. Los títulos de una barra de menús tienen su propio teclado (navigation).
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    const button = target.closest<HTMLElement>('[aria-haspopup="menu"][data-z-open]');
+    const menu = button && !button.closest(".z-menubar") && !isDisabled(button) ? byRef(button.getAttribute("data-z-open")) : null;
+    if (menu?.matches(".z-menu[popover]")) {
+      event.preventDefault();
+      if (!popoverOpen(menu)) {
+        const anchor = byRef(button!.getAttribute("data-z-anchor")) ?? button!;
+        openPopover(menu, anchor, (button!.getAttribute("data-z-placement") as Placement) ?? "bottom-start", { trigger: button! });
+      }
+      const items = menuItems(menu);
+      highlight(menu, event.key === "ArrowUp" ? items[items.length - 1] : items[0]);
+      return;
+    }
   }
 
   if (!inDom(target)) return;
@@ -1209,7 +1242,8 @@ function onKeydown(event: KeyboardEvent): void {
     return;
   }
   const radio = target.closest<HTMLElement>('[role="radio"]');
-  if (radio) {
+  // Una pieza que mueve sus propios radios (los filtros de un chat, los tonos de un selector) ya atendió la tecla.
+  if (radio && !event.defaultPrevented) {
     const list = [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])].filter(
       (r) => !isDisabled(r),
     );
@@ -1252,7 +1286,7 @@ const contextPress = /* @__PURE__ */ createLongPress((point, event) => {
   const onLift = () => {
     lift.abort();
     setTimeout(() => {
-      if (!menu.matches(":popover-open")) openPopover(menu, point, "bottom-start");
+      if (!popoverOpen(menu)) openPopover(menu, point, "bottom-start");
     });
   };
   window.addEventListener("pointerup", onLift, { capture: true, signal: lift.signal });
@@ -1365,7 +1399,7 @@ export function init(...mods: DomModule[]): () => void {
     // El puntero sale de una entrada con el submenú abierto: empieza la zona de gracia hacia él.
     const trigger = from.closest?.<HTMLElement>('.z-menu__item[data-z-submenu][aria-expanded="true"]');
     const sub = trigger && !trigger.contains(to) ? submenuOf(trigger) : null;
-    if (sub?.matches(":popover-open"))
+    if (sub && popoverOpen(sub))
       aim.start({ x: event.clientX, y: event.clientY }, sub.getBoundingClientRect(), sub.dataset.side === "left" ? "left" : "right");
     const host = from.closest?.("[data-z-tooltip]");
     if (host && !host.contains(to)) {

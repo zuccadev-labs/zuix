@@ -1,0 +1,757 @@
+/* @zuccadev-labs/zuix-zui — terminal y código: Terminal, LogConsole, CodeViewer y DiffViewer.
+   El texto denso va sobre `code-bg` (opaco); el cromo (barras) sobre `code-bar-bg`. Los colores ANSI de 16 van a los
+   tokens de texto (cumplen 4.5:1 sobre el fondo de código en todas las marcas y temas); los de 256 y 24 bits llegan
+   como canales RGB en `--z-ansi-fg` y se acotan en luminosidad según el tema para que también se lean. */
+@layer zui.terminal {
+  /* ---- Colores ANSI ---- */
+  /* Canales RGB de un color de 256 o 24 bits: los escribe cada trozo en su `style` (variable local). */
+  .z-ansi {
+    --z-ansi-fg: 128 128 128;
+    --z-ansi-bg: 128 128 128;
+  }
+  .z-ansi[data-fg="0"],
+  .z-ansi[data-fg="8"] {
+    color: var(--z-fg-subtle);
+  }
+  .z-ansi:is([data-fg="1"], [data-fg="9"]) {
+    color: var(--z-danger-text);
+  }
+  .z-ansi:is([data-fg="2"], [data-fg="10"]) {
+    color: var(--z-success-text);
+  }
+  .z-ansi:is([data-fg="3"], [data-fg="11"]) {
+    color: var(--z-warning-text);
+  }
+  .z-ansi:is([data-fg="4"], [data-fg="12"], [data-fg="6"], [data-fg="14"]) {
+    color: var(--z-info-text);
+  }
+  .z-ansi:is([data-fg="5"], [data-fg="13"]) {
+    color: var(--z-accent-text);
+  }
+  .z-ansi[data-fg="7"] {
+    color: var(--z-fg-muted);
+  }
+  .z-ansi[data-fg="15"] {
+    color: var(--z-fg);
+  }
+  /* 256 y 24 bits: el tono se conserva y la luminosidad se acota (oscura sobre fondo claro, clara sobre oscuro). */
+  .z-ansi[data-fg="rgb"] {
+    color: light-dark(
+      oklch(from rgb(var(--z-ansi-fg)) min(l, 0.48) min(c, 0.2) h),
+      oklch(from rgb(var(--z-ansi-fg)) max(l, 0.78) min(c, 0.16) h)
+    );
+  }
+  .z-ansi:is([data-bg="1"], [data-bg="9"]) {
+    background: var(--z-danger-soft);
+  }
+  .z-ansi:is([data-bg="2"], [data-bg="10"]) {
+    background: var(--z-success-soft);
+  }
+  .z-ansi:is([data-bg="3"], [data-bg="11"]) {
+    background: var(--z-warning-soft);
+  }
+  .z-ansi:is([data-bg="4"], [data-bg="12"], [data-bg="6"], [data-bg="14"]) {
+    background: var(--z-info-soft);
+  }
+  .z-ansi:is([data-bg="5"], [data-bg="13"]) {
+    background: var(--z-accent-soft);
+  }
+  .z-ansi:is([data-bg="0"], [data-bg="7"], [data-bg="8"], [data-bg="15"]) {
+    background: var(--z-surface-3);
+  }
+  .z-ansi[data-bg="rgb"] {
+    background: color-mix(in oklab, rgb(var(--z-ansi-bg)) 28%, transparent);
+  }
+  .z-ansi[data-inverse] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-ansi[data-bold] {
+    font-weight: var(--z-weight-bold);
+  }
+  .z-ansi[data-dim]:not([data-fg]) {
+    color: var(--z-fg-muted);
+  }
+  .z-ansi[data-italic] {
+    font-style: italic;
+  }
+  .z-ansi[data-underline] {
+    text-decoration: underline;
+  }
+  .z-ansi[data-strike] {
+    text-decoration: line-through;
+  }
+  a.z-ansi {
+    color: var(--z-accent-text);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  a.z-ansi:focus-visible {
+    border-radius: var(--z-radius-xs);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+
+  /* ---- Botón de copiar de las barras ---- */
+  .z-term-copy__text {
+    font-size: var(--z-text-small);
+  }
+  :is(.z-terminal__copy, .z-log-console__copy, .z-code-viewer__copy)[data-copied] {
+    color: var(--z-success-text);
+  }
+  :is(.z-terminal__copy, .z-log-console__copy, .z-code-viewer__copy)[data-failed] {
+    color: var(--z-danger-text);
+  }
+
+  /* ---- Terminal ---- */
+  .z-terminal {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-code-radius);
+    background: var(--z-code-bg);
+    color: var(--z-fg);
+  }
+  .z-terminal[data-theme="solid"] {
+    background: var(--z-surface-solid);
+  }
+  .z-terminal__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-lg);
+    padding-inline: var(--z-space-3) var(--z-space-1-5);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-code-bar-bg);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-terminal__icon {
+    display: inline-flex;
+    color: var(--z-fg-muted);
+  }
+  .z-terminal__title {
+    overflow: hidden;
+    color: var(--z-fg);
+    font-weight: var(--z-weight-medium);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-terminal__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+  }
+  .z-terminal__pulse {
+    inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    border-radius: var(--z-radius-full);
+    background: var(--z-success);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-terminal__pulse {
+      animation: z-terminal-pulse 1.2s var(--z-ease-standard) infinite;
+    }
+  }
+  @keyframes z-terminal-pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  .z-terminal__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-0-5);
+    margin-inline-start: auto;
+  }
+  .z-terminal__screen {
+    flex: 1 1 auto;
+    min-block-size: calc(var(--z-space-20) * 2);
+    max-block-size: var(--z-terminal-height, calc(var(--z-space-20) * 4.5));
+    overflow: auto;
+    padding: var(--z-space-3) var(--z-space-4);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+    font-variant-ligatures: none;
+    line-height: var(--z-leading-code);
+    /* La salida de una terminal se lee de izquierda a derecha también en una página RTL. */
+    direction: ltr;
+    text-align: left;
+    overscroll-behavior: contain;
+    cursor: text;
+  }
+  .z-terminal__screen:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-terminal__line {
+    min-block-size: 1lh;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    /* Miles de líneas: las que no se ven no se maquetan. */
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 1lh;
+  }
+  .z-terminal__input {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-lg);
+    padding-inline: var(--z-space-4);
+    border-block-start: 1px solid var(--z-line);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+    direction: ltr;
+  }
+  .z-terminal__input:focus-within {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-terminal__prompt {
+    flex: none;
+    color: var(--z-success-text);
+    font-weight: var(--z-weight-bold);
+    white-space: pre;
+  }
+  .z-terminal__field {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    min-block-size: var(--z-control-height-sm);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--z-fg);
+    caret-color: var(--z-accent);
+    font: inherit;
+    outline: none;
+  }
+  .z-terminal[data-running] .z-terminal__field {
+    color: var(--z-fg-muted);
+  }
+
+  /* ---- LogConsole ---- */
+  .z-log-console {
+    /* Con puntero grueso la fila (y su celda) llega al objetivo táctil. */
+    --z-log-row-height: max(var(--z-control-height-sm), var(--z-touch-target, 0px));
+    container: z-log-console / inline-size;
+    inline-size: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-card-radius);
+    /* Base opaca, como CodeViewer: el filtro de niveles no pierde contraste sobre un fondo oscuro. */
+    background: linear-gradient(var(--z-code-bg), var(--z-code-bg)), var(--z-surface-solid);
+    color: var(--z-fg);
+  }
+  .z-log-console__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+    padding: var(--z-space-2);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-code-bar-bg);
+  }
+  .z-log-console__levels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1);
+  }
+  .z-log-console__level[aria-pressed="false"] {
+    color: var(--z-fg-muted);
+  }
+  .z-log-console__level[aria-pressed="false"] .z-log-console__dot {
+    background: transparent;
+  }
+  :is(.z-log-console__level, .z-log-console__follow, .z-diff__mode)[aria-pressed="true"] {
+    border-color: var(--z-line-strong);
+    background: var(--z-surface-3);
+  }
+  .z-log-console__dot {
+    inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    border: 1.5px solid currentColor;
+    border-radius: var(--z-radius-full);
+    background: currentColor;
+  }
+  .z-log-console__dot[data-level="debug"] {
+    color: var(--z-fg-subtle);
+  }
+  .z-log-console__dot[data-level="info"] {
+    color: var(--z-info);
+  }
+  .z-log-console__dot[data-level="warn"] {
+    color: var(--z-warning);
+  }
+  .z-log-console__dot[data-level="error"] {
+    color: var(--z-danger);
+  }
+  .z-log-console__count {
+    min-inline-size: var(--z-space-5);
+    padding-inline: var(--z-space-1);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .z-log-console__find {
+    /* El campo de dentro también llega al objetivo táctil (el borde va aparte). */
+    --z-input-height: max(var(--z-control-height-md), calc(var(--z-touch-target, 0px) + 2px));
+    flex: 1 1 calc(var(--z-space-20) * 2);
+    inline-size: auto;
+    max-inline-size: calc(var(--z-space-20) * 3.5);
+  }
+  .z-log-console__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-0-5);
+    margin-inline-start: auto;
+  }
+  .z-log-console__viewport {
+    position: relative;
+    block-size: var(--z-log-console-height, calc(var(--z-space-20) * 4));
+    overflow: auto;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    overscroll-behavior: contain;
+    direction: ltr;
+    text-align: left;
+  }
+  .z-log-console__row {
+    display: grid;
+    grid-template-columns: calc(12ch + var(--z-space-4)) calc(7ch + var(--z-space-4)) calc(10ch + var(--z-space-4)) minmax(0, 1fr);
+    align-items: center;
+    block-size: var(--z-log-row-height);
+    box-shadow: inset 2px 0 0 transparent;
+  }
+  .z-log-console__grid {
+    direction: ltr;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    text-align: left;
+  }
+  .z-log-console__head {
+    border-block-end: 1px solid var(--z-line);
+    /* Opaca: las filas pasan por debajo al desplazar. */
+    background: var(--z-surface-solid);
+    color: var(--z-fg-muted);
+    font-family: var(--z-font-sans);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-log-console__body {
+    position: relative;
+  }
+  .z-log-console__viewport[data-virtual] .z-log-console__body {
+    block-size: calc(var(--z-log-total) * var(--z-log-row-height));
+  }
+  .z-log-console__viewport[data-virtual] .z-log-console__body > .z-log-console__row {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(var(--z-log-row) * var(--z-log-row-height));
+  }
+  .z-log-console__row[data-level="warn"] {
+    box-shadow: inset 2px 0 0 var(--z-warning);
+  }
+  .z-log-console__row[data-level="error"] {
+    box-shadow: inset 2px 0 0 var(--z-danger);
+  }
+  @media (hover: hover) {
+    .z-log-console__body > .z-log-console__row:hover {
+      background: var(--z-surface-2);
+    }
+  }
+  /* La celda ocupa el alto de la fila: es el objetivo de puntero (24 px, o el táctil con puntero grueso). */
+  .z-log-console__cell {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
+    padding-inline: var(--z-space-2);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-log-console__cell[data-column="time"],
+  .z-log-console__cell[data-column="source"] {
+    color: var(--z-fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-log-console__cell:focus-visible {
+    border-radius: var(--z-radius-xs);
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-log-console[data-wrapped] .z-log-console__row {
+    align-items: start;
+    block-size: auto;
+    min-block-size: var(--z-log-row-height);
+    padding-block: var(--z-space-1);
+  }
+  .z-log-console[data-wrapped] .z-log-console__cell[data-column="message"] {
+    display: block;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .z-log-console__badge {
+    font-weight: var(--z-weight-semibold);
+    text-transform: uppercase;
+  }
+  .z-log-console__badge[data-level="debug"] {
+    color: var(--z-fg-muted);
+  }
+  .z-log-console__badge[data-level="info"] {
+    color: var(--z-info-text);
+  }
+  .z-log-console__badge[data-level="warn"] {
+    color: var(--z-warning-text);
+  }
+  .z-log-console__badge[data-level="error"] {
+    color: var(--z-danger-text);
+  }
+  .z-log-console__match {
+    border-radius: var(--z-radius-xs);
+    background: var(--z-warning-soft);
+    color: var(--z-warning-text);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  /* En un hueco estrecho el origen se oculta: hora, nivel y mensaje caben sin desplazar. */
+  @container z-log-console (max-width: 560px) {
+    .z-log-console__row {
+      grid-template-columns: calc(12ch + var(--z-space-4)) calc(7ch + var(--z-space-4)) minmax(0, 1fr);
+    }
+    .z-log-console__cell[data-column="source"] {
+      display: none;
+    }
+    .z-log-console__find {
+      flex-basis: 100%;
+      max-inline-size: none;
+    }
+  }
+  .z-log-console__empty {
+    margin: 0;
+    padding: var(--z-space-6) var(--z-space-4);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    text-align: center;
+  }
+
+  /* ---- CodeViewer ---- */
+  .z-code-viewer {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-code-radius);
+    /* Tinte del código sobre base opaca: translúcido, sobre un fondo oscuro (una demo, una tarjeta tintada) bajaba
+       los comentarios y los números de línea a 4,46:1 (zutool claro). Así el par es el que mide `pnpm tokens`. */
+    background: linear-gradient(var(--z-code-bg), var(--z-code-bg)), var(--z-surface-solid);
+    color: var(--z-fg);
+  }
+  .z-code-viewer__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-xl);
+    padding-inline: var(--z-space-4) var(--z-space-1-5);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-code-bar-bg);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-code-viewer__title {
+    overflow: hidden;
+    font-family: var(--z-font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-code-viewer__tabs {
+    display: flex;
+    align-self: stretch;
+    gap: var(--z-space-1);
+    min-width: 0;
+    overflow-x: auto;
+    margin-inline-start: calc(var(--z-space-2) * -1);
+  }
+  .z-code-viewer__tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--z-space-2);
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: transparent;
+    color: var(--z-fg-muted);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .z-code-viewer__tab[aria-selected="true"] {
+    color: var(--z-fg);
+  }
+  /* La pestaña elegida lleva una barra, no solo otro color. */
+  .z-code-viewer__tab[aria-selected="true"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: var(--z-space-2);
+    inset-block-end: 0;
+    block-size: 2px;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent);
+  }
+  @media (hover: hover) {
+    .z-code-viewer__tab:hover {
+      color: var(--z-fg);
+    }
+  }
+  .z-code-viewer__tab:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-code-viewer__language {
+    color: var(--z-fg-muted);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-code-viewer__actions {
+    display: flex;
+    margin-inline-start: auto;
+  }
+  .z-code-viewer__body {
+    max-block-size: var(--z-code-viewer-max, none);
+    overflow: auto;
+  }
+  .z-code-viewer__body:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-code-viewer__pre {
+    font-variant-ligatures: none;
+    margin: 0;
+    padding-block: var(--z-space-3);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+    line-height: var(--z-leading-code);
+    tab-size: 2;
+    direction: ltr;
+    text-align: left;
+  }
+  .z-code-viewer__code {
+    display: block;
+    min-inline-size: max-content;
+    font: inherit;
+  }
+  .z-code-viewer[data-wrap] .z-code-viewer__code {
+    min-inline-size: 0;
+  }
+  .z-code-viewer__line {
+    display: flex;
+    padding-inline: var(--z-space-4) var(--z-space-5);
+    border-inline-start: 3px solid transparent;
+  }
+  /* Tinte muy suave: los colores del código tienen que seguir llegando a 4.5:1 encima. La barra es la señal. */
+  .z-code-viewer__line[data-highlighted] {
+    border-inline-start-color: var(--z-accent);
+    background: color-mix(in oklab, var(--z-accent) 5%, transparent);
+  }
+  .z-code-viewer__number {
+    flex: none;
+    inline-size: calc(var(--z-code-viewer-digits, 2) * 1ch);
+    margin-inline-end: var(--z-space-4);
+    color: var(--z-fg-subtle);
+    text-align: end;
+    user-select: none;
+  }
+  .z-code-viewer__text {
+    white-space: pre;
+  }
+  .z-code-viewer[data-wrap] .z-code-viewer__text {
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .z-tok[data-tok="comment"] {
+    color: var(--z-fg-subtle);
+    font-style: italic;
+  }
+  .z-tok[data-tok="string"] {
+    color: var(--z-success-text);
+  }
+  .z-tok:is([data-tok="number"], [data-tok="literal"], [data-tok="attr"]) {
+    color: var(--z-warning-text);
+  }
+  .z-tok:is([data-tok="keyword"], [data-tok="variable"]) {
+    color: var(--z-accent-text);
+  }
+  .z-tok:is([data-tok="function"], [data-tok="type"], [data-tok="property"]) {
+    color: var(--z-info-text);
+  }
+  .z-tok[data-tok="tag"] {
+    color: var(--z-danger-text);
+  }
+  .z-tok[data-tok="punctuation"] {
+    color: var(--z-fg-muted);
+  }
+
+  /* ---- DiffViewer ---- */
+  .z-diff {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    min-width: 0;
+    margin: 0;
+  }
+  .z-diff__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--z-space-3);
+  }
+  .z-diff__file {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-code-radius);
+    background: var(--z-code-bg);
+    color: var(--z-fg);
+  }
+  .z-diff__file-head {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-block-size: var(--z-control-height-xl);
+    padding-inline: var(--z-space-4);
+    border-block-end: 1px solid var(--z-line);
+    background: var(--z-code-bar-bg);
+  }
+  .z-diff__icon {
+    display: inline-flex;
+    color: var(--z-fg-muted);
+  }
+  .z-diff__name {
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-diff__stats {
+    display: inline-flex;
+    gap: var(--z-space-2);
+    margin-inline-start: auto;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-small);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-diff__bar .z-diff__stats {
+    margin-inline-start: 0;
+    margin-inline-end: auto;
+  }
+  .z-diff__added {
+    color: var(--z-success-text);
+  }
+  .z-diff__removed {
+    color: var(--z-danger-text);
+  }
+  .z-diff__note {
+    margin: 0;
+    padding: var(--z-space-4);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-diff__scroll {
+    overflow-x: auto;
+  }
+  .z-diff__scroll:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  /* El código no se parte dentro de una palabra: la tabla crece y la región se desplaza en horizontal. */
+  .z-diff__table {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    border-collapse: collapse;
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-code);
+    line-height: var(--z-leading-code);
+    direction: ltr;
+    text-align: left;
+  }
+  .z-diff__table td {
+    padding-block: 0;
+    padding-inline: var(--z-space-2);
+    vertical-align: top;
+  }
+  .z-diff__num {
+    inline-size: 1%;
+    min-inline-size: 4ch;
+    color: var(--z-fg-subtle);
+    text-align: end;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .z-diff__sign {
+    inline-size: 1%;
+    color: var(--z-fg-muted);
+    user-select: none;
+  }
+  .z-diff__code {
+    white-space: pre;
+  }
+  .z-diff__row[data-kind="insert"] > td,
+  .z-diff__row[data-right="insert"] > :is(td:nth-child(3), td:nth-child(4)) {
+    background: var(--z-success-soft);
+  }
+  .z-diff__row[data-kind="delete"] > td,
+  .z-diff__row[data-left="delete"] > :is(td:nth-child(1), td:nth-child(2)) {
+    background: var(--z-danger-soft);
+  }
+  .z-diff__row[data-kind="insert"] > .z-diff__sign {
+    color: var(--z-success-text);
+  }
+  .z-diff__row[data-kind="delete"] > .z-diff__sign {
+    color: var(--z-danger-text);
+  }
+  .z-diff__empty {
+    background: var(--z-surface-2);
+  }
+  .z-diff__word {
+    border-radius: var(--z-radius-xs);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  :is(.z-diff__row[data-kind="insert"], .z-diff__code--new) .z-diff__word {
+    background: color-mix(in oklab, var(--z-success) 28%, transparent);
+  }
+  :is(.z-diff__row[data-kind="delete"], .z-diff__code--old) .z-diff__word {
+    background: color-mix(in oklab, var(--z-danger) 28%, transparent);
+  }
+  .z-diff__row:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-diff__gap > td,
+  .z-diff__hunk > td {
+    padding-block: var(--z-space-1);
+    background: var(--z-surface-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-diff__hunk > td {
+    background: var(--z-info-soft);
+    color: var(--z-info-text);
+  }
+}

@@ -42,13 +42,17 @@ guarda el resultado en `html.json`. El HTML que documento para otros frameworks 
 la implementación, y `examples/html/index.html`, la página que prueba el modo sin framework, se genera desde
 ese mismo archivo.
 
+El contrato no depende de la máquina que lo genera: `tools/html.mjs` renderiza con `en-US` y UTC fijados, y
+renderiza otra vez con `de-DE` y `Asia/Tokyo`. Si un ejemplo cambia entre las dos pasadas, falla y lo nombra:
+ese ejemplo formatea números o fechas sin fijar `locale` (o `timeZone`, si muestra horas).
+
 ## `zui` por dentro
 
 ```
 zui/src/
   core/         lógica pura: sin React, sin efectos al importar
   primitives/   primitivas de React sobre core
-  components/   los 144 componentes, por grupo, cada uno con su manifiesto
+  components/   los 224 componentes, por grupo, cada uno con su manifiesto
   dom/          el modo sin framework, sobre core
   styles/       una hoja por grupo, en su @layer
 ```
@@ -115,8 +119,9 @@ de que el comportamiento mida.
 
 | Paso | Herramienta | Salida |
 |---|---|---|
-| Extraer del archivo de Figma | `scripts/extract.py` (lee el `.fig` sin Figma) | `icons.json` |
-| Generar módulos | `scripts/build.mjs` | `src/icons/<nombre>.ts`, `src/names.ts`, `src/all.ts`, `svg/`, `manifest.json` y las tablas de `AGENTS.md` |
+| Extraer del archivo de Figma | `scripts/extract.py` (lee el `.fig` sin Figma) | `icons.json` y `svg/` de los iconos de Dazicon |
+| Convertir los iconos propios (solo al añadir o retocar uno) | `scripts/own.mjs` (`pnpm icons:own`, con `canvaskit-wasm`) lee los dibujos con trazo de `own/` | `icons-own.json` y `svg/` de los iconos propios |
+| Generar módulos | `scripts/build.mjs` une `icons.json` e `icons-own.json` (un nombre repetido es un error) | `src/icons/<nombre>.ts`, `src/names.ts`, `src/all.ts`, `manifest.json` y las tablas de `AGENTS.md` |
 | Generar el sprite | `scripts/sprite.mjs` | `sprite.svg` |
 
 El registro (`src/registry.ts`) es un mapa en un módulo. `Icon`, `<z-icon>`, `iconSvg()` e `iconElement()`
@@ -152,6 +157,8 @@ publicada, y `pnpm test:pack` que cada subruta del paraguas es el mismo módulo 
 | `zui/manifest.json`, `zout/manifest.json` | `tools/manifest.mjs`, desde los `*.manifest.json` | `pnpm manifest` |
 | `zui/html.json`, `zout/html.json` | `tools/html.mjs` | `pnpm html` |
 | `*/dist/*.css`, `*/dist/*.js` (bundles de navegador) | `tools/dist.mjs` | `pnpm dist` |
+| `*/dist/*.compat.css`, `tokens/dist/**/*.compat.css` (modo compat) | `tools/compat.mjs`, desde `tools/dist.mjs` | `pnpm dist` |
+| Matriz de soporte de `docs/users/10-compatibilidad.md` | `tools/compat-matrix.mjs` | `pnpm matrix` |
 | `examples/html/index.html` | `examples/html/build.mjs` | `pnpm dist` |
 | `zudocs/static/llms.txt` | `zudocs/scripts/llms.mjs` | `pnpm llms` (también lo regenera el build de zudocs) |
 | `*/dist/esm/` (publicación) | `tools/build.mjs` | `pnpm build` |

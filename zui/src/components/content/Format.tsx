@@ -1,7 +1,9 @@
 import type { HTMLAttributes, Ref } from "react";
+import { formatDuration, toISODuration, toMs, type DurationInput, type DurationStyle, type DurationUnit } from "../../core/duration";
 import { formatByte, formatDate, formatNumber, type ByteSystem } from "../../core/format";
 import { cx } from "../../cx";
 import { RelativeTime, type RelativeTimeProps } from "./RelativeTime";
+import { withRef } from "../../react-compat";
 
 export interface FormatNumberProps extends Omit<HTMLAttributes<HTMLDataElement>, "children"> {
   value: number;
@@ -12,7 +14,7 @@ export interface FormatNumberProps extends Omit<HTMLAttributes<HTMLDataElement>,
 }
 
 /** Número con `Intl.NumberFormat` en un `<data value>` (el valor exacto queda en el marcado). Sin estado. */
-export function FormatNumber({ value, locale, options, className, ref, ...rest }: FormatNumberProps) {
+export const FormatNumber = withRef(function FormatNumber({ value, locale, options, className, ref, ...rest }: FormatNumberProps) {
   return (
     <data
       {...rest}
@@ -26,7 +28,7 @@ export function FormatNumber({ value, locale, options, className, ref, ...rest }
       {formatNumber(value, locale, options)}
     </data>
   );
-}
+});
 
 export interface FormatByteProps extends Omit<HTMLAttributes<HTMLDataElement>, "children"> {
   /** Tamaño en bytes. */
@@ -40,7 +42,7 @@ export interface FormatByteProps extends Omit<HTMLAttributes<HTMLDataElement>, "
 }
 
 /** Tamaño en bytes legible («1.5 MB», «1.4 MiB») en un `<data value>` con los bytes exactos. Sin estado. */
-export function FormatByte({
+export const FormatByte = withRef(function FormatByte({
   value,
   locale,
   system = "decimal",
@@ -65,7 +67,7 @@ export function FormatByte({
       {formatByte(value, locale, { system, unitDisplay, maximumFractionDigits })}
     </data>
   );
-}
+});
 
 export interface FormatDateProps extends Omit<HTMLAttributes<HTMLTimeElement>, "children"> {
   /** Fecha civil ISO (`2026-11-20`), instante ISO, milisegundos o `Date`. */
@@ -81,7 +83,16 @@ export interface FormatDateProps extends Omit<HTMLAttributes<HTMLTimeElement>, "
 }
 
 /** Fecha en un `<time datetime>` con `Intl.DateTimeFormat`, o relativa con `relative` (RelativeTime). */
-export function FormatDate({ value, locale, options, relative, relativeOptions, className, ref, ...rest }: FormatDateProps) {
+export const FormatDate = withRef(function FormatDate({
+  value,
+  locale,
+  options,
+  relative,
+  relativeOptions,
+  className,
+  ref,
+  ...rest
+}: FormatDateProps) {
   if (relative) return <RelativeTime {...rest} {...relativeOptions} ref={ref} value={value} locale={locale} className={className} />;
   const { text, datetime } = formatDate(value, locale, options);
   return (
@@ -97,4 +108,46 @@ export function FormatDate({ value, locale, options, relative, relativeOptions, 
       {text}
     </time>
   );
+});
+
+export interface FormatDurationProps extends Omit<HTMLAttributes<HTMLTimeElement>, "children"> {
+  /** ISO 8601 (`PT1H30M`), milisegundos o partes (`{ hours: 1, minutes: 30 }`). */
+  value: DurationInput;
+  /** `long` «1 hour, 30 minutes» · `short` «1 hr, 30 min» · `narrow` «1h 30m» · `digital` «1:30:00». */
+  format?: DurationStyle;
+  /** Unidad mayor del reparto (`hours` para «26 h» en vez de «1 day, 2 h»). */
+  largestUnit?: DurationUnit;
+  /** Unidad menor que se muestra. */
+  smallestUnit?: DurationUnit;
+  locale?: string;
+  ref?: Ref<HTMLTimeElement>;
 }
+
+/** Duración legible en un `<time datetime="PT…">` con `Intl.DurationFormat`. Sin estado. */
+export const FormatDuration = withRef(function FormatDuration({
+  value,
+  format = "short",
+  largestUnit,
+  smallestUnit,
+  locale,
+  className,
+  ref,
+  ...rest
+}: FormatDurationProps) {
+  const ms = toMs(value);
+  return (
+    <time
+      {...rest}
+      ref={ref}
+      className={cx("z-format", className)}
+      dateTime={toISODuration(ms)}
+      data-format="duration"
+      data-style={format}
+      data-locale={locale}
+      data-largest-unit={largestUnit}
+      data-smallest-unit={smallestUnit}
+    >
+      {formatDuration(ms, { style: format, largestUnit, smallestUnit, locale })}
+    </time>
+  );
+});

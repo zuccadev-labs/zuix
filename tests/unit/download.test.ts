@@ -1,4 +1,4 @@
-// Oleada 7: DownloadTrigger (core/download): tipos por extensión, nombres seguros y contenido como Blob.
+// DownloadTrigger (core/download): tipos por extensión, nombres seguros y contenido como Blob.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import { mimeFromName, safeFileName, toBlob } from "../../zui/src/core/download.ts";

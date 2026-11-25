@@ -13,6 +13,8 @@ export interface ChipProps extends Omit<HTMLAttributes<HTMLSpanElement>, "onClic
   onRemove?: () => void;
   removeLabel?: string;
   icon?: IconName;
+  /** Avatar delante del texto (ficha de persona, «input chip» de Material 3): un Avatar pequeño o una imagen. */
+  avatar?: ReactNode;
   /** Contador a la derecha del texto. */
   count?: number;
   size?: "sm" | "md";
@@ -31,6 +33,7 @@ export function Chip({
   onRemove,
   removeLabel = "Remove",
   icon,
+  avatar,
   count,
   size = "md",
   disabled,
@@ -43,6 +46,11 @@ export function Chip({
   const content = (
     <>
       {dot ? <span className="z-chip__dot" aria-hidden="true" /> : null}
+      {avatar ? (
+        <span className="z-chip__avatar" aria-hidden="true">
+          {avatar}
+        </span>
+      ) : null}
       {icon ? <Icon name={icon} size={size === "sm" ? 12 : 14} /> : null}
       <span className="z-chip__label">{children}</span>
       {count !== undefined ? <span className="z-chip__count">{count}</span> : null}
@@ -54,6 +62,7 @@ export function Chip({
       className={cx("z-chip", className)}
       data-size={size}
       data-tone={tone}
+      data-avatar={avatar ? true : undefined}
       data-selected={selected || undefined}
       data-interactive={onClick ? true : undefined}
       data-disabled={disabled || undefined}

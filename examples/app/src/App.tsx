@@ -41,11 +41,22 @@ import { Gallery } from "./screens/Gallery";
 import { Editor } from "./screens/Editor";
 import { AgendaScreen } from "./screens/Agenda";
 import { Workspace } from "./screens/Workspace";
-import { ContentWave5 } from "./screens/ContentWave5";
+import { ContentScreen } from "./screens/Content";
 import { ChartsScreen } from "./screens/Charts";
-import { DataWave5 } from "./screens/DataWave5";
+import { DataScreen } from "./screens/Data";
 import { Site } from "./screens/Site";
 import { Media } from "./screens/Media";
+import { CarouselsScreen } from "./screens/Carousels";
+import { TerminalScreen } from "./screens/TerminalScreen";
+import { Flows } from "./screens/Flows";
+import { TimeScreen } from "./screens/Time";
+import { ChatScreen } from "./screens/Chat";
+import { AssistantScreen } from "./screens/Assistant";
+import { DashboardScreen } from "./screens/Dashboard";
+import { KanbanScreen } from "./screens/Kanban";
+import { LoginScreen } from "./screens/Login";
+import { ProfileScreen, SettingsScreen } from "./screens/People";
+import { ListingScreen } from "./screens/Listing";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -208,15 +219,39 @@ export function App() {
     ) : active === "workspace" ? (
       <Workspace />
     ) : active === "content" ? (
-      <ContentWave5 />
+      <ContentScreen />
     ) : active === "charts" ? (
       <ChartsScreen />
     ) : active === "data" ? (
-      <DataWave5 />
+      <DataScreen />
     ) : active === "site" ? (
       <Site />
     ) : active === "media" ? (
       <Media />
+    ) : active === "carousels" ? (
+      <CarouselsScreen />
+    ) : active === "time" ? (
+      <TimeScreen />
+    ) : active === "terminal" ? (
+      <TerminalScreen />
+    ) : active === "chat" ? (
+      <ChatScreen />
+    ) : active === "assistant" ? (
+      <AssistantScreen />
+    ) : active === "dashboard" ? (
+      <DashboardScreen />
+    ) : active === "profile" ? (
+      <ProfileScreen />
+    ) : active === "settings" ? (
+      <SettingsScreen />
+    ) : active === "kanban" ? (
+      <KanbanScreen />
+    ) : active === "login" ? (
+      <LoginScreen />
+    ) : active === "flows" ? (
+      <Flows />
+    ) : active === "listing" ? (
+      <ListingScreen />
     ) : (
       <Editor />
     );
@@ -226,7 +261,7 @@ export function App() {
       className="app-shell"
       // ?skip=1: enlace «saltar al contenido» (lo recorre tests/browser).
       skipLinkLabel={params.get("skip") === "1" ? "Skip to content" : undefined}
-      surface={active === "editor" ? "none" : "glass"}
+      surface={active === "editor" || active === "chat" ? "none" : "glass"}
       onCloseOverlay={closeOverlays}
       onModeChange={onModeChange}
       titlebar={
@@ -242,8 +277,9 @@ export function App() {
                 aria-expanded={sidebarOpen}
                 data-testid="toggle-sidebar"
               />
-              <span className="app-brand" data-testid="brand-name">
-                {brand}
+              {/* Nombre de la aplicación de ejemplo, no de la marca: la marca es un tema y se elige en el selector. */}
+              <span className="app-brand" data-testid="app-name">
+                Acme
               </span>
             </>
           }
@@ -380,7 +416,8 @@ export function App() {
       }}
       inspector={{
         label: "Details",
-        open: inspectorOpen,
+        // Chat y asistente ocupan el ancho: traen sus propios paneles de detalles.
+        open: inspectorOpen && active !== "chat" && active !== "assistant",
         content: (
           <SidePanel
             title={project.name}

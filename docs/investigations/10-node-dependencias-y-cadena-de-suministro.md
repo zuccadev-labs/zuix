@@ -111,10 +111,11 @@ Alrededor de eso:
 El funcionamiento día a día está en [CI y cadena de suministro](../development/03-ci-y-cadena-de-suministro.md)
 y el procedimiento, en [Publicación](../package/02-publicacion.md).
 
+Cuando escribí estas notas, la publicación de confianza solo estaba validada en local y en ensayo. La
+comprobé de principio a fin el 2026-11-19: la `0.2.0` salió por el workflow, sin token y con procedencia.
+
 ## Lo que no he comprobado
 
-- **La publicación de confianza de principio a fin.** El workflow está validado en local y en ensayo; la
-  primera publicación real será la `0.2.0`.
 - **Node 22 y 24 con las suites de navegador.** En esas dos líneas la CI ejecuta la generación, el build y la
   prueba de empaquetado; las suites de navegador corren con Node 26.
 - **La puntuación de Scorecard** con todo esto ya en `main`.

@@ -34,13 +34,16 @@ export function createLensShape(width: number, height: number, slideHeight: numb
   const compact = width < 640;
   const half = Math.max(width / 2, 1);
   const flat = Math.min(Math.max((widestSlide / 2 + (compact ? 8 : 24)) / half, 0.2), 0.86);
+  // El estiramiento crece con el tramo curvo: cuando el slide central ocupa casi toda la tira (un teléfono), los
+  // vecinos solo asoman y estirarlos del todo reservaba arriba y abajo un hueco que nadie ocupaba.
+  const reach = Math.min(Math.max((1 - flat) / 0.4, 0.35), 1);
   return {
     width,
     height,
     centerY: height / 2,
     slideHeight,
     flat,
-    stretch: compact ? 0.45 : 0.62,
+    stretch: (compact ? 0.45 : 0.62) * reach,
     magnify: compact ? 0.18 : 0.24,
   };
 }

@@ -1,19 +1,30 @@
 {
  "name": "@zuccadev-labs/zuix-zout",
- "count": 19,
+ "count": 30,
  "groups": {
   "layout": [
+   "AppBar",
+   "AuthLayout",
    "BottomNavigation",
+   "ChatLayout",
+   "Container",
+   "DashboardLayout",
+   "DocsLayout",
    "Float",
    "FloatingPanel",
    "Grid",
+   "KanbanLayout",
+   "LandingLayout",
+   "MailLayout",
    "Navbar",
    "NavigationMenu",
    "Page",
    "PaneHeader",
    "PaneLayout",
+   "ProfileLayout",
    "Rail",
    "ResizeHandle",
+   "SettingsLayout",
    "Shell",
    "SidePanel",
    "Sidebar",
@@ -25,6 +36,219 @@
   ]
  },
  "components": [
+  {
+   "name": "AppBar",
+   "group": "layout",
+   "description": "Barra de aplicación superior (top app bar de Material 3): pequeña, mediana o grande. La grande pliega su título a la fila superior al desplazar, con una animación ligada al desplazamiento y un respaldo donde no la hay; gana sombra en cuanto hay algo desplazado.",
+   "import": "import { AppBar } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "subtitle",
+     "type": "ReactNode"
+    },
+    {
+     "name": "leading",
+     "type": "ReactNode",
+     "description": "Menú o atrás."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "small",
+      "medium",
+      "large"
+     ],
+     "default": "small"
+    },
+    {
+     "name": "collapseOnScroll",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "collapseDistance",
+     "type": "number",
+     "default": 96
+    },
+    {
+     "name": "sticky",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "surface",
+     "type": "enum",
+     "values": [
+      "glass",
+      "plain"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      1,
+      2
+     ],
+     "default": 1
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "Fila extra (búsqueda, pestañas)."
+    }
+   ],
+   "states": [
+    "rest",
+    "scrolled",
+    "collapsed"
+   ],
+   "tokens": [
+    "panel-radius",
+    "layer-sticky",
+    "shadow-md",
+    "glass-bg",
+    "glass-border",
+    "glass-blur",
+    "glass-saturate",
+    "fg",
+    "fg-muted",
+    "control-height-lg",
+    "text-title",
+    "text-heading-lg",
+    "text-display-sm",
+    "font-display",
+    "weight-display",
+    "weight-semibold",
+    "tracking-display",
+    "text-small",
+    "duration-normal",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-appbar",
+    "z-appbar__row",
+    "z-appbar__leading",
+    "z-appbar__title",
+    "z-appbar__compact-title",
+    "z-appbar__actions",
+    "z-appbar__headline",
+    "z-appbar__subtitle",
+    "z-appbar__extra"
+   ],
+   "a11y": "header con el título como encabezado (h1 por defecto). Con el título grande, la copia pequeña de la fila es aria-hidden: el lector solo oye uno. El pliegue solo anima transform y opacity, y no se anima con movimiento reducido. Sin React: .z-appbar[data-collapse][data-collapse-distance] (con @zuccadev-labs/zuix-zout/dom para el respaldo y data-scrolled).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Grande que se pliega",
+     "code": "<AppBar size=\"large\" collapseOnScroll title=\"Inbox\" subtitle=\"12 unread\" leading={<IconButton icon=\"bars-3\" label=\"Menu\" variant=\"ghost\" />} actions={<><IconButton icon=\"magnifying-glass\" label=\"Search\" variant=\"ghost\" /><IconButton icon=\"ellipsis-vertical\" label=\"More\" variant=\"ghost\" /></>} />"
+    },
+    {
+     "title": "Pequeña",
+     "code": "<AppBar title=\"Settings\" leading={<IconButton icon=\"arrow-left\" label=\"Back\" variant=\"ghost\" />} />"
+    }
+   ],
+   "origin": "Top app bar (small, medium, large) de Material 3 y AppBar de MUI; pliegue con animaciones ligadas al desplazamiento.",
+   "file": "zout/src/layouts/AppBar.manifest.json"
+  },
+  {
+   "name": "AuthLayout",
+   "group": "layout",
+   "description": "Página de acceso (entrar, registrarse, recuperar): tarjeta de cristal centrada sobre el lienzo (`centered`) o dividida con un lado de imagen (`split`). En móvil solo queda el formulario.",
+   "import": "import { AuthLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "brand",
+     "type": "ReactNode"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "centered",
+      "split"
+     ],
+     "default": "centered"
+    },
+    {
+     "name": "media",
+     "type": "ReactNode",
+     "description": "Lado de imagen (split)."
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "legal",
+     "type": "ReactNode"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "canvas",
+    "canvas-gradient",
+    "canvas-fg-muted",
+    "panel-radius",
+    "radius-xl",
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "fg-muted",
+    "text-small",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-auth-layout",
+    "z-auth-layout__grid",
+    "z-auth-layout__media",
+    "z-auth-layout__stage",
+    "z-auth-layout__card",
+    "z-auth-layout__brand",
+    "z-auth-layout__head",
+    "z-auth-layout__title",
+    "z-auth-layout__description",
+    "z-auth-layout__body",
+    "z-auth-layout__footer",
+    "z-auth-layout__legal"
+   ],
+   "a11y": "Es la región principal (main) con un solo h1. El lado de imagen es decorativo. El formulario que va dentro usa los campos de la suite con autocompletado (email, current-password o new-password) y botones nativos.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Entrar",
+     "code": "<AuthLayout title=\"Welcome back\" description=\"Sign in to continue to your workspace.\" footer={<>No account? <a href=\"#\">Create one</a></>} legal={<><a href=\"#\">Terms</a><a href=\"#\">Privacy</a></>}>\n  <Field label=\"Email\"><Input type=\"email\" autoComplete=\"email\" /></Field>\n  <Field label=\"Password\"><PasswordInput autoComplete=\"current-password\" /></Field>\n  <Button variant=\"primary\" fullWidth>Sign in</Button>\n</AuthLayout>"
+    }
+   ],
+   "origin": "LoginForm de Ant Design Pro y los bloques login-01 a login-05 de shadcn.",
+   "file": "zout/src/layouts/AuthLayout.manifest.json"
+  },
   {
    "name": "BottomNavigation",
    "group": "layout",
@@ -125,6 +349,360 @@
     }
    ],
    "file": "zout/src/layouts/BottomNavigation.manifest.json"
+  },
+  {
+   "name": "ChatLayout",
+   "group": "layout",
+   "description": "Layout de mensajería en tres paneles: lista de conversaciones, conversación y detalles. Columnas en pantalla ancha, detalles encima en media y una pila (lista → conversación → detalles) en estrecha, decidido por el ancho del propio layout. F6 salta entre paneles; la pila puede sincronizarse con el historial. variant=\"widget\": asistente flotante en una esquina.",
+   "import": "import { ChatLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "list",
+     "type": "ReactNode"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "description": "La conversación: ChatHeader, MessageList, Composer."
+    },
+    {
+     "name": "details",
+     "type": "ReactNode"
+    },
+    {
+     "name": "detailsOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "view",
+     "type": "\"list\" | \"conversation\" | \"details\"",
+     "default": "conversation",
+     "description": "Vista en pantalla estrecha."
+    },
+    {
+     "name": "onViewChange",
+     "type": "(view) => void"
+    },
+    {
+     "name": "history",
+     "type": "boolean",
+     "default": false,
+     "description": "Atrás del navegador vuelve en la pila."
+    },
+    {
+     "name": "variant",
+     "type": "\"panes\" | \"widget\"",
+     "default": "panes"
+    },
+    {
+     "name": "open · onOpenChange",
+     "type": "boolean · (open) => void",
+     "description": "Widget abierto."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Nombre del panel del widget."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChatLayoutLabels>"
+    }
+   ],
+   "states": [
+    "three-columns",
+    "two-columns",
+    "stack",
+    "widget-open",
+    "widget-closed"
+   ],
+   "tokens": [
+    "panel-radius",
+    "surface-solid",
+    "canvas",
+    "accent-soft",
+    "line",
+    "glass-bg",
+    "glass-border",
+    "glass-blur",
+    "shadow-lg",
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow"
+   ],
+   "classes": [
+    "z-chat-layout",
+    "z-chat-layout__list",
+    "z-chat-layout__main",
+    "z-chat-layout__details",
+    "z-chat-layout__panel",
+    "z-chat-layout__launcher"
+   ],
+   "a11y": "Cada panel es una región con nombre (Chats, Conversation, Details). En la pila solo existe en el árbol de accesibilidad la vista actual, y el botón de volver de ChatHeader dice adónde vuelve; con history, el atrás del sistema vuelve a la lista (guía stack-drill-down). F6 y Mayús+F6 llevan al siguiente panel visible. El widget es un botón con aria-expanded y un panel no modal; Escape lo cierra y devuelve el foco al botón. Sin React: .z-chat-layout con data-view y data-details; [data-z-chat-view] dentro cambia de vista (z:viewchange), data-history sincroniza la pila; widget con .z-chat-layout__launcher (z:open, z:close).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres paneles",
+     "code": "<div style={{ height: 480 }}>\n  <ChatLayout view=\"conversation\" list={<ConversationList items={chats} />} details={<p style={{ padding: 16 }}>Shared files</p>} detailsOpen>\n    <ChatHeader title=\"Ana López\" status=\"online\" statusTone=\"accent\" />\n    <MessageList messages={messages} currentUserId=\"me\" />\n    <Composer onSend={send} />\n  </ChatLayout>\n</div>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Tres paneles",
+     "code": "<div class=\"z-chat-layout\" data-view=\"conversation\" data-details style=\"height: 480px\">\n  <section class=\"z-chat-layout__list\" aria-label=\"Chats\">\n    <div class=\"z-conversation-list\" data-selected-id=\"ana\" data-time-zone=\"UTC\" data-now=\"1795253400000\" data-filters=\"none\">\n      <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"ana\", \"title\": \"Ana López\", \"presence\": \"online\", \"lastMessage\": \"Shipping the docs next.\", \"lastMine\": true, \"status\": \"delivered\", \"lastAt\": \"2026-11-21T09:05:00Z\"}, {\"id\": \"team\", \"title\": \"Design team\", \"group\": true, \"lastMessage\": \"See you at 10\", \"lastAt\": \"2026-11-21T08:40:00Z\", \"unread\": 3}]}</script>\n    </div>\n  </section>\n  <section class=\"z-chat-layout__main\" aria-label=\"Conversation\">\n    <header class=\"z-chat-header\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost z-chat-header__back\" data-size=\"md\" data-z-chat-view=\"list\" aria-label=\"Back to chats\"><z-icon name=\"chevron-left\" size=\"16\"></z-icon></button><span class=\"z-chat-header__identity\"><span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"Ana López\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span><span class=\"z-chat-header__titles\"><h2 class=\"z-chat-header__title\">Ana López</h2><span class=\"z-chat-header__status\" data-tone=\"accent\">online</span></span></span><span class=\"z-chat-header__actions\"><button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\" data-z-chat-view=\"details\" aria-label=\"Details\"><z-icon name=\"information-circle\" size=\"16\"></z-icon></button></span></header>\n    <div class=\"z-message-list\" data-current-user=\"me\" data-time-zone=\"UTC\" data-now=\"1795253400000\">\n      <script type=\"application/json\" data-props>{\"messages\": [{\"id\": \"m3\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:58:00Z\", \"text\": \"Morning! Did the new build land?\"}, {\"id\": \"m4\", \"authorId\": \"ana\", \"author\": {\"name\": \"Ana López\"}, \"createdAt\": \"2026-11-21T08:59:00Z\", \"attachments\": [{\"kind\": \"voice\", \"src\": \"\", \"duration\": 14, \"peaks\": [2, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 2, 6, 9, 5]}]}, {\"id\": \"m5\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:04:00Z\", \"text\": \"It did. Notes are at https://example.com/notes\", \"status\": \"read\", \"replyTo\": {\"id\": \"m3\", \"author\": \"Ana López\", \"text\": \"Morning! Did the new build land?\"}, \"reactions\": [{\"emoji\": \"👍\", \"count\": 1}]}, {\"id\": \"m6\", \"authorId\": \"me\", \"createdAt\": \"2026-11-21T09:05:00Z\", \"text\": \"Shipping the docs next.\", \"status\": \"delivered\", \"editedAt\": \"2026-11-21T09:06:00Z\"}]}</script>\n    </div>\n    <div class=\"z-composer\"></div>\n  </section>\n  <aside class=\"z-chat-layout__details\" aria-label=\"Details\"><p style=\"padding: 16px\">Shared files</p></aside>\n</div>"
+    }
+   ],
+   "origin": "Diseño propio; referencias: WhatsApp Web, Telegram Desktop y el ChatLayout de MUI X. Pila con historial según la guía stack-drill-down.",
+   "file": "zout/src/layouts/ChatLayout.manifest.json"
+  },
+  {
+   "name": "Container",
+   "group": "layout",
+   "description": "Centra el contenido, limita su ancho con un token de tamaño y deja un margen lateral fijo o fluido.",
+   "import": "import { Container } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "width",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "content",
+      "prose",
+      "full"
+     ],
+     "default": "content",
+     "description": "Ancho máximo del contenido: `sm`–`xl` son los tokens `container-*` (640, 768, 1024 y 1280 px); `content`, el ancho de la aplicación (`content-max`); `prose`, el de lectura (`prose-max`); `full`, sin límite. El margen lateral se suma por fuera: el texto mide lo mismo con cualquier margen."
+    },
+    {
+     "name": "gutter",
+     "type": "enum",
+     "values": [
+      "fluid",
+      "stage",
+      "none"
+     ],
+     "description": "Margen lateral. `fluid`: crece con el ancho del contenedor de consulta más cercano entre 16 y 40 px (`container-gutter`, en unidades `cqi`). `stage`: el del área principal (`stage-pad-x`; 16 px cuando el área mide menos de 760 px). `none`: sin margen. Por defecto, `fluid` en `sm`–`xl` y `stage` en el resto."
+    },
+    {
+     "name": "as",
+     "type": "ElementType",
+     "default": "div"
+    }
+   ],
+   "tokens": [
+    "container-sm",
+    "container-md",
+    "container-lg",
+    "container-xl",
+    "container-gutter",
+    "content-max",
+    "prose-max",
+    "stage-pad-x",
+    "space-4"
+   ],
+   "classes": [
+    "z-container"
+   ],
+   "a11y": "Solo maquetación: no añade semántica. Con `as` se convierte en `main`, `section` o `article` cuando el contenido lo pide.",
+   "examples": [
+    {
+     "title": "Ficha centrada",
+     "code": "<Container width=\"md\">\n  <PageHeader title=\"Your trip\" description=\"Three nights in Lisbon.\" />\n</Container>"
+    },
+    {
+     "title": "Página ancha sin margen",
+     "code": "<Container width=\"xl\" gutter=\"none\">\n  <Grid min={280} gap={6}>…</Grid>\n</Container>"
+    }
+   ],
+   "origin": "Contenedor del design system base; tamaños y margen fluido en 0.4.",
+   "file": "zout/src/layouts/Container.manifest.json"
+  },
+  {
+   "name": "DashboardLayout",
+   "group": "layout",
+   "description": "Página de dashboard: cabecera con título y acciones, barra de filtros fija bajo ella, contenido (DashboardGrid, MetricGroup) y panel lateral opcional. Responde al ancho de su contenedor.",
+   "import": "import { DashboardLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "eyebrow",
+     "type": "ReactNode"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "filters",
+     "type": "ReactNode",
+     "description": "Barra de filtros fija."
+    },
+    {
+     "name": "nav",
+     "type": "ReactNode",
+     "description": "Navegación propia; en estrecho, tira arriba."
+    },
+    {
+     "name": "navLabel",
+     "type": "string",
+     "default": "Dashboard"
+    },
+    {
+     "name": "aside",
+     "type": "ReactNode"
+    },
+    {
+     "name": "asideLabel",
+     "type": "string",
+     "default": "Details"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "tracking-display",
+    "leading-tight",
+    "fg-muted",
+    "fg-subtle",
+    "text-small",
+    "text-caption",
+    "control-radius-xl",
+    "layer-sticky",
+    "space-5",
+    "space-6"
+   ],
+   "classes": [
+    "z-dashboard-layout",
+    "z-dashboard-layout__grid",
+    "z-dashboard-layout__nav",
+    "z-dashboard-layout__main",
+    "z-dashboard-layout__header",
+    "z-dashboard-layout__titles",
+    "z-dashboard-layout__eyebrow",
+    "z-dashboard-layout__title",
+    "z-dashboard-layout__description",
+    "z-dashboard-layout__actions",
+    "z-dashboard-layout__filters",
+    "z-dashboard-layout__content",
+    "z-dashboard-layout__aside"
+   ],
+   "a11y": "Un h1 con el título. La navegación y el panel lateral son nav y aside con nombre. Los filtros quedan fijos arriba al desplazar sin tapar el foco (los controles de debajo tienen margen de desplazamiento). En estrecho todo se apila en el orden del marcado.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con filtros y panel",
+     "code": "<DashboardLayout eyebrow=\"Acme Inc.\" title=\"Overview\" description=\"Sales and product health for November.\" actions={<><Button icon=\"arrow-down-tray\">Export</Button><Button variant=\"primary\" icon=\"pencil\">Edit layout</Button></>} filters={<><SegmentedControl label=\"Period\" items={[{ value: \"7d\", label: \"7 days\" }, { value: \"30d\", label: \"30 days\" }, { value: \"90d\", label: \"90 days\" }]} defaultValue=\"30d\" /><Chip>Region: EU</Chip></>} aside={<Card>Details</Card>}>\n  <MetricGroup label=\"KPIs\"><MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} locale=\"en-US\" /><MetricCard variant=\"plain\" label=\"Orders\" value={1284} delta={0.04} locale=\"en-US\" /></MetricGroup>\n</DashboardLayout>"
+    }
+   ],
+   "origin": "dashboard-01 de los bloques de shadcn, ProLayout de Ant Design Pro y las plantillas de Tremor.",
+   "file": "zout/src/layouts/DashboardLayout.manifest.json"
+  },
+  {
+   "name": "DocsLayout",
+   "group": "layout",
+   "description": "Página de documentación: barra superior, navegación de páginas, artículo, índice con la sección que se lee marcada y paginación anterior/siguiente. En estrecho el índice pasa a un desplegable sobre el artículo.",
+   "import": "import { DocsLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "header",
+     "type": "ReactNode"
+    },
+    {
+     "name": "sidebar",
+     "type": "ReactNode"
+    },
+    {
+     "name": "toc",
+     "type": "{ id, label, level? }[]"
+    },
+    {
+     "name": "previous",
+     "type": "{ href, label }"
+    },
+    {
+     "name": "next",
+     "type": "{ href, label }"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DocsLayoutLabels>",
+     "description": "nav, toc, onThisPage, previous, next, pager."
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "prose-max",
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-text",
+    "line",
+    "line-strong",
+    "surface",
+    "row-hover",
+    "radius-sm",
+    "radius-md",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "weight-medium",
+    "control-height-md",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-docs-layout",
+    "z-docs-layout__grid",
+    "z-docs-layout__header",
+    "z-docs-layout__sidebar",
+    "z-docs-layout__main",
+    "z-docs-layout__toc-compact",
+    "z-docs-layout__toc-summary",
+    "z-docs-layout__article",
+    "z-docs-layout__pager",
+    "z-docs-layout__page",
+    "z-docs-layout__page-hint",
+    "z-docs-layout__page-title",
+    "z-docs-layout__toc",
+    "z-docs-layout__toc-title",
+    "z-docs-layout__toc-list",
+    "z-docs-layout__toc-link"
+   ],
+   "a11y": "Dos nav con nombres distintos (Documentation y On this page) y una tercera para la paginación (rel=prev y rel=next). El enlace de la sección que se lee lleva aria-current. En estrecho el índice es un <details> nativo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Artículo con índice",
+     "code": "<DocsLayout sidebar={<NavList label=\"Guides\"><NavLink href=\"#\" active>Getting started</NavLink><NavLink href=\"#\">Tokens</NavLink></NavList>} toc={[{ id: \"docs-install\", label: \"Install\" }, { id: \"docs-usage\", label: \"Usage\" }, { id: \"docs-usage-react\", label: \"With React\", level: 3 }]} previous={{ href: \"#\", label: \"Introduction\" }} next={{ href: \"#\", label: \"Components\" }}>\n  <Prose><h1>Getting started</h1><h2 id=\"docs-install\">Install</h2><p>…</p><h2 id=\"docs-usage\">Usage</h2><p>…</p><h3 id=\"docs-usage-react\">With React</h3><p>…</p></Prose>\n</DocsLayout>"
+    }
+   ],
+   "origin": "El propio sitio zudocs y los bloques de documentación; índice con seguimiento de la sección.",
+   "file": "zout/src/layouts/DocsLayout.manifest.json"
   },
   {
    "name": "Float",
@@ -424,6 +1002,280 @@
    "file": "zout/src/layouts/Grid.manifest.json"
   },
   {
+   "name": "KanbanLayout",
+   "group": "layout",
+   "description": "Página de tablero: cabecera con título, acciones y filtros, y el tablero (KanbanBoard) a todo el ancho con desplazamiento horizontal por columnas (una por pantalla en móvil).",
+   "import": "import { KanbanLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "filters",
+     "type": "ReactNode"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "fg-muted",
+    "text-small",
+    "space-4"
+   ],
+   "classes": [
+    "z-kanban-layout",
+    "z-kanban-layout__header",
+    "z-kanban-layout__titles",
+    "z-kanban-layout__title",
+    "z-kanban-layout__description",
+    "z-kanban-layout__actions",
+    "z-kanban-layout__filters",
+    "z-kanban-layout__board"
+   ],
+   "a11y": "Un h1 con el nombre del tablero. El tablero es una región con su propia navegación de teclado (KanbanBoard).",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Sprint",
+     "code": "<KanbanLayout title=\"Sprint 14\" description=\"Nov 18 – Dec 1\" actions={<Button variant=\"primary\" icon=\"plus\">New card</Button>}>\n  <KanbanBoard label=\"Sprint 14\" columns={[{ id: \"todo\", title: \"To do\", cards: [{ id: \"a\", title: \"Write the changelog\" }] }, { id: \"done\", title: \"Done\", cards: [] }]} />\n</KanbanLayout>"
+    }
+   ],
+   "origin": "Tableros de Ant Design Pro y de los bloques de shadcn.",
+   "file": "zout/src/layouts/KanbanLayout.manifest.json"
+  },
+  {
+   "name": "LandingLayout",
+   "group": "layout",
+   "exports": [
+    "LandingHero",
+    "LandingSection"
+   ],
+   "description": "Página de presentación: barra del sitio, héroe (el único h1), secciones (funciones en rejilla, banda de llamada en cristal, bloque tenue) y pie.",
+   "import": "import { LandingLayout, LandingHero, LandingSection } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "header",
+     "type": "ReactNode"
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "LandingHero.title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "LandingHero.eyebrow",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingHero.lead",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingHero.actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingHero.media",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingHero.align",
+     "type": "enum",
+     "values": [
+      "center",
+      "split"
+     ],
+     "default": "center"
+    },
+    {
+     "name": "LandingSection.title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingSection.eyebrow",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingSection.description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "LandingSection.id",
+     "type": "string"
+    },
+    {
+     "name": "LandingSection.variant",
+     "type": "enum",
+     "values": [
+      "default",
+      "features",
+      "cta",
+      "muted"
+     ],
+     "default": "default"
+    },
+    {
+     "name": "LandingSection.columns",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4
+     ],
+     "default": 3
+    },
+    {
+     "name": "LandingSection.actions",
+     "type": "ReactNode"
+    }
+   ],
+   "tokens": [
+    "font-display",
+    "text-hero",
+    "text-display-sm",
+    "text-lead",
+    "weight-display",
+    "tracking-display",
+    "leading-tight",
+    "leading-relaxed",
+    "fg-muted",
+    "accent-soft",
+    "accent-text",
+    "glass-border",
+    "surface",
+    "radius-sm",
+    "radius-xl",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "space-16"
+   ],
+   "classes": [
+    "z-landing",
+    "z-landing__header",
+    "z-landing__main",
+    "z-landing__footer",
+    "z-landing-hero",
+    "z-landing-hero__text",
+    "z-landing-hero__eyebrow",
+    "z-landing-hero__title",
+    "z-landing-hero__lead",
+    "z-landing-hero__actions",
+    "z-landing-hero__media",
+    "z-landing-section",
+    "z-landing-section__head",
+    "z-landing-section__eyebrow",
+    "z-landing-section__title",
+    "z-landing-section__description",
+    "z-landing-section__actions",
+    "z-landing-section__body"
+   ],
+   "a11y": "Un solo h1 (el del héroe) y un h2 por sección, en orden. Cada sección con título es una región con nombre (aria-labelledby). Los títulos se equilibran (text-wrap: balance) y el tamaño del héroe sigue al contenedor.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Héroe y funciones",
+     "code": "<LandingLayout>\n  <LandingHero eyebrow=\"New in 0.4\" title=\"Interfaces that feel like glass\" lead=\"Tokens, components and layouts for the web platform, with React as one binding among many.\" actions={<><Button variant=\"primary\" size=\"lg\">Get started</Button><Button size=\"lg\" variant=\"ghost\">Read the docs</Button></>} />\n  <LandingSection id=\"features\" eyebrow=\"Why\" title=\"Built on the platform\" variant=\"features\"><Card>HTML first</Card><Card>Tokens only</Card><Card>Accessible by default</Card></LandingSection>\n  <LandingSection id=\"cta\" variant=\"cta\" title=\"Start in a minute\" actions={<Button variant=\"primary\">Install</Button>} />\n</LandingLayout>"
+    }
+   ],
+   "origin": "Bloques de landing de shadcn y Magic UI.",
+   "file": "zout/src/layouts/LandingLayout.manifest.json"
+  },
+  {
+   "name": "MailLayout",
+   "group": "layout",
+   "description": "Correo: carpetas, lista de mensajes y lectura. Ancho: tres columnas; medio: lista y lectura con las carpetas arriba; estrecho: una sola vista (`view`), la lista o el mensaje.",
+   "import": "import { MailLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "folders",
+     "type": "ReactNode"
+    },
+    {
+     "name": "foldersLabel",
+     "type": "string",
+     "default": "Folders"
+    },
+    {
+     "name": "list",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "listLabel",
+     "type": "string",
+     "default": "Messages"
+    },
+    {
+     "name": "reader",
+     "type": "ReactNode"
+    },
+    {
+     "name": "readerLabel",
+     "type": "string",
+     "default": "Message"
+    },
+    {
+     "name": "view",
+     "type": "enum",
+     "values": [
+      "list",
+      "reader"
+     ],
+     "default": "list",
+     "description": "La vista en estrecho."
+    }
+   ],
+   "tokens": [
+    "panel-radius",
+    "space-3",
+    "space-5",
+    "space-6"
+   ],
+   "classes": [
+    "z-mail-layout",
+    "z-mail-layout__grid",
+    "z-mail-layout__folders",
+    "z-mail-layout__list",
+    "z-mail-layout__reader"
+   ],
+   "a11y": "Carpetas en un nav con nombre; lista y lectura son regiones con nombre. En estrecho solo se ve una; la aplicación cambia `view` al abrir un mensaje, pone un botón de volver en la lectura y sincroniza el historial para que el gesto atrás vuelva a la lista.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tres paneles",
+     "code": "<MailLayout folders={<NavList label=\"Folders\"><NavLink href=\"#\" icon=\"inbox\" trailing=\"12\" active>Inbox</NavLink><NavLink href=\"#\" icon=\"paper-airplane\">Sent</NavLink></NavList>} list={<p>Messages</p>} reader={<p>Message</p>} />"
+    }
+   ],
+   "origin": "Bloque mail de shadcn.",
+   "file": "zout/src/layouts/MailLayout.manifest.json"
+  },
+  {
    "name": "Navbar",
    "group": "layout",
    "status": "new",
@@ -630,12 +1482,11 @@
    "name": "Page",
    "group": "layout",
    "description": "Página con desplazamiento propio, cabecera y secciones.",
-   "import": "import { Page, PageHeader, PageSection, Container } from \"@zuccadev-labs/zuix-zout\"",
+   "import": "import { Page, PageHeader, PageSection } from \"@zuccadev-labs/zuix-zout\"",
    "exports": [
     "Page",
     "PageHeader",
-    "PageSection",
-    "Container"
+    "PageSection"
    ],
    "props": [
     {
@@ -646,11 +1497,16 @@
      "name": "width",
      "type": "enum",
      "values": [
+      "sm",
+      "md",
+      "lg",
+      "xl",
       "content",
       "prose",
       "full"
      ],
-     "default": "content"
+     "default": "content",
+     "description": "Ancho del Container interior (ver Container)."
     },
     {
      "name": "label",
@@ -730,8 +1586,7 @@
    "classes": [
     "z-page",
     "z-pagehead",
-    "z-section",
-    "z-container"
+    "z-section"
    ],
    "examples": [
     {
@@ -914,6 +1769,59 @@
    "file": "zout/src/layouts/PaneLayout.manifest.json"
   },
   {
+   "name": "ProfileLayout",
+   "group": "layout",
+   "description": "Página de perfil: cabecera (ProfileHeader), pestañas, contenido y una columna lateral (UserCard, miembros, actividad) que baja bajo el contenido en estrecho.",
+   "import": "import { ProfileLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "header",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "tabs",
+     "type": "ReactNode"
+    },
+    {
+     "name": "aside",
+     "type": "ReactNode"
+    },
+    {
+     "name": "asideLabel",
+     "type": "string",
+     "default": "About"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "tokens": [
+    "space-4",
+    "space-5"
+   ],
+   "classes": [
+    "z-profile-layout",
+    "z-profile-layout__header",
+    "z-profile-layout__tabs",
+    "z-profile-layout__body",
+    "z-profile-layout__content",
+    "z-profile-layout__aside"
+   ],
+   "a11y": "El h1 es el nombre en ProfileHeader. La columna lateral es un aside con nombre. En estrecho el orden es el del marcado: cabecera, pestañas, contenido y lateral.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Perfil",
+     "code": "<ProfileLayout header={<ProfileHeader user={{ name: \"Ana López\", handle: \"ana\", role: \"Principal designer\" }} />} aside={<Card>Teams</Card>}>\n  <Card>Recent work</Card>\n</ProfileLayout>"
+    }
+   ],
+   "origin": "Páginas de perfil de GitHub y LinkedIn.",
+   "file": "zout/src/layouts/ProfileLayout.manifest.json"
+  },
+  {
    "name": "Rail",
    "group": "layout",
    "description": "Barra estrecha de navegación principal, solo iconos.",
@@ -1085,8 +1993,101 @@
      "code": "<div id=\"resize-demo\" class=\"z-solid\" style=\"position:relative;box-sizing:border-box;width:240px;padding:var(--z-space-4);border-radius:var(--z-radius-md)\">\n  Drag the right edge, or focus it and use the arrow keys.\n  <div role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"Resize panel\" aria-valuenow=\"240\" aria-valuemin=\"160\" aria-valuemax=\"320\" class=\"z-resize\" data-side=\"right\" data-default-size=\"240\"></div>\n</div>"
     }
    ],
-   "origin": "ResizeHandle de zutool; se añadió el teclado.",
+   "origin": "ResizeHandle de zutool; le añadí el teclado.",
    "file": "zout/src/layouts/ResizeHandle.manifest.json"
+  },
+  {
+   "name": "SettingsLayout",
+   "group": "layout",
+   "description": "Página de ajustes: navegación lateral con anclas a las secciones, contenido (SettingsSection) y barra de guardar fija al pie cuando hay cambios sin guardar. En estrecho la navegación pasa a una tira desplazable arriba.",
+   "import": "import { SettingsLayout } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "nav",
+     "type": "{ href, label, icon?, current? }[]",
+     "required": true
+    },
+    {
+     "name": "navLabel",
+     "type": "string",
+     "default": "Settings"
+    },
+    {
+     "name": "dirty",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "saveBar",
+     "type": "ReactNode",
+     "description": "Botones de la barra de guardar."
+    },
+    {
+     "name": "dirtyLabel",
+     "type": "string",
+     "default": "You have unsaved changes"
+    },
+    {
+     "name": "children",
+     "type": "ReactNode",
+     "required": true
+    }
+   ],
+   "states": [
+    "rest",
+    "dirty"
+   ],
+   "tokens": [
+    "font-display",
+    "text-heading-lg",
+    "weight-display",
+    "fg",
+    "fg-muted",
+    "accent-soft",
+    "accent-text",
+    "row-hover",
+    "control-radius",
+    "control-radius-xl",
+    "control-height-md",
+    "text-small",
+    "weight-medium",
+    "layer-sticky",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-settings-layout",
+    "z-settings-layout__grid",
+    "z-settings-layout__header",
+    "z-settings-layout__title",
+    "z-settings-layout__description",
+    "z-settings-layout__nav",
+    "z-settings-layout__links",
+    "z-settings-layout__link",
+    "z-settings-layout__content",
+    "z-settings-layout__savebar",
+    "z-settings-layout__dirty",
+    "z-settings-layout__save-actions"
+   ],
+   "a11y": "nav con nombre y la sección actual con aria-current=page. La barra de guardar es una región con nombre y un status que dice «You have unsaved changes» al aparecer. Las secciones tienen margen de desplazamiento para que el ancla no quede bajo una barra fija.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Con cambios sin guardar",
+     "code": "<SettingsLayout title=\"Settings\" description=\"Manage your account and workspace.\" dirty nav={[{ href: \"#profile\", label: \"Profile\", icon: \"user\", current: true }, { href: \"#notifications\", label: \"Notifications\", icon: \"bell\" }]} saveBar={<><Button variant=\"ghost\">Discard</Button><Button variant=\"primary\">Save changes</Button></>}>\n  <SettingsSection id=\"profile\" title=\"Profile\"><SettingRow label=\"Public profile\" control={<Switch aria-label=\"Public profile\" defaultChecked />} /></SettingsSection>\n  <SettingsSection id=\"notifications\" title=\"Notifications\"><SettingRow label=\"Mentions\" control={<Switch aria-label=\"Mentions\" />} /></SettingsSection>\n</SettingsLayout>"
+    }
+   ],
+   "origin": "Páginas de ajustes de los bloques de shadcn y de Carbon.",
+   "file": "zout/src/layouts/SettingsLayout.manifest.json"
   },
   {
    "name": "Shell",
@@ -1169,6 +2170,12 @@
      "default": 1180
     },
     {
+     "name": "railBreakpoint",
+     "type": "number",
+     "default": 600,
+     "description": "Ancho del shell (px) bajo el cual el rail deja su columna y se muestra dentro del cajón de la sidebar, si la sidebar es un cajón. En el modo DOM, `data-rail-breakpoint` en `.z-shell`."
+    },
+    {
      "name": "onCloseOverlay",
      "type": "() => void",
      "description": "Cierra el cajón abierto (velo o Escape)."
@@ -1235,7 +2242,7 @@
    "classes": [
     "z-shell"
    ],
-   "a11y": "Regiones: la TitleBar es <header> (banner), el Rail es <nav> (navigation), el área principal es <main> (o lo que diga `mainAs`) y los paneles son <aside> con nombre (complementary). `skipLinkLabel` añade un enlace para saltar al contenido. En modo cajón el panel es role=dialog con aria-modal, recibe el foco al abrirse y lo devuelve al cerrarse; el rail, el área principal y el otro panel quedan inertes, y Escape o el velo lo cierran. La barra de título sigue operable para poder alternar los paneles. Escape no cierra el cajón si lo gestiona una capa por encima (un <dialog> o un popover abiertos). Sigue la dirección de escritura: en RTL la sidebar y su cajón quedan a la derecha. Antes de medirse (HTML de servidor, o antes de init()), un panel `auto` que no cabe no se muestra.",
+   "a11y": "Regiones: la TitleBar es <header> (banner), el Rail es <nav> (navigation), el área principal es <main> (o lo que diga `mainAs`) y los paneles son <aside> con nombre (complementary). `skipLinkLabel` añade un enlace para saltar al contenido. En estrecho (`railBreakpoint`) el rail entra en el cajón de la sidebar, dentro del diálogo, y sale del orden de tabulación mientras está cerrado. En modo cajón el panel es role=dialog con aria-modal, recibe el foco al abrirse y lo devuelve al cerrarse; el rail, el área principal y el otro panel quedan inertes, y Escape o el velo lo cierran. La barra de título sigue operable para poder alternar los paneles. Escape no cierra el cajón si lo gestiona una capa por encima (un <dialog> o un popover abiertos). Sigue la dirección de escritura: en RTL la sidebar y su cajón quedan a la derecha. Antes de medirse (HTML de servidor, o antes de init()), un panel `auto` que no cabe no se muestra.",
    "examples": [
     {
      "title": "Aplicación con rail, sidebar e inspector",

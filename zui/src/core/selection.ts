@@ -80,3 +80,20 @@ export function pageSlice(total: number, page: number, size: number): { start: n
 export function pageCountOf(total: number, size: number): number {
   return Number.isFinite(size) && size > 0 && total > 0 ? Math.ceil(total / Math.floor(size)) : 1;
 }
+
+/** Caja de selección (lienzo de nodos): ids cuyas cajas corta (`intersect`) o contiene por completo (`contain`). */
+export function boxSelection(
+  rects: ReadonlyMap<string, { x: number; y: number; width: number; height: number }>,
+  box: { x: number; y: number; width: number; height: number },
+  mode: "intersect" | "contain" = "intersect",
+): string[] {
+  const out: string[] = [];
+  for (const [id, r] of rects) {
+    const hit =
+      mode === "contain"
+        ? r.x >= box.x && r.y >= box.y && r.x + r.width <= box.x + box.width && r.y + r.height <= box.y + box.height
+        : r.x < box.x + box.width && box.x < r.x + r.width && r.y < box.y + box.height && box.y < r.y + r.height;
+    if (hit) out.push(id);
+  }
+  return out;
+}

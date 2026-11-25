@@ -5,6 +5,337 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-23
+
+### Añadido
+
+- React 18: el binding funciona con React 18.2 o posterior además de con React 19. Los peers pasan a
+  `^18.2.0 || ^19.0.0`. Los componentes que aceptan `ref` la siguen recibiendo como prop; en React 18 van envueltos
+  en `forwardRef` por dentro (son objetos, no funciones). `inert` se escribe como `inert=""`, `popovertarget` en
+  minúsculas, la ref del hijo de un `trigger` o `asChild` se lee de `element.ref` y la fusión de refs no devuelve una
+  limpieza, que React 18 no admite. `EventCalendar`, `FileUpload`, `Carousel` y los widgets de agenda usan
+  `useEffect` en el servidor, donde React 18 avisa de cada `useLayoutEffect`. `DateTimePicker` (y `DatePicker` con
+  `input`) reinicia el borrador al abrir durante el render: con React 18 el calendario se abría enfocando el día de
+  la apertura anterior. Con React 19 nada cambia.
+- Sin Popover API, el binding de React ya no lanza: `Popup` (las capas de Popover, Menu, Select, Tooltip…), `Toast`
+  y los avisos de la agenda abren con la comprobación de `core/popover`, como el modo sin framework. Con
+  `@oddbird/popover-polyfill` se abren por él y se reconocen abiertos por su clase `:popover-open`.
+- Modo compat: `styles.compat.css` (`dist/zui.compat.css`), la hoja de componentes para Chromium 109, Firefox 115
+  y Safari 15.4, generada con lightningcss: sin `@layer` (aplanado en el orden de las capas), sin `color-mix()` (lee
+  los colores de `tokens.compat.css`), sin anidado ni `:dir()`, con la clase `.\:popover-open` de
+  `@oddbird/popover-polyfill` y anillos de foco con `:focus-within` donde falta `:has()`. Límites en
+  [Compatibilidad](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat).
+- Resúmenes y precios (grupo `data`, solo marcado: se renderizan en un Server Component):
+  - `SummaryList`: lista clave–valor (`<dl>`) con los valores alineados al final en cifras tabulares, pista bajo la
+    etiqueta, tonos, separadores y fila de total destacada.
+  - `PriceBreakdown`: desglose sobre `SummaryList` con `Intl.NumberFormat` (`currency`, `locale`); descuentos y
+    créditos restan siempre y se escriben con signo, impuestos por importe o por porcentaje de la base, subtotal
+    opcional. Las sumas van en unidades menores enteras: el total es la suma exacta de las filas que se leen, también
+    en monedas sin decimales (JPY) o con tres (KWD).
+  - `PriceTag`: precio con moneda, anterior tachado delante del actual con prefijo para lectores («Previous price:»)
+    y unidad («/ night»).
+  - `formatMoney`, `summarizePrice` y `currencyDigits` en la raíz y en `/dom/data`.
+- Opiniones (grupo `data`):
+  - `ReviewSummary`: media, estrellas de solo lectura, número de valoraciones y una barra por estrella. Cada barra
+    se lee entera en texto («5 stars: 873 reviews, 68%») y los porcentajes se reparten por el mayor resto, así que
+    siempre suman 100. Nota y barras lado a lado o apiladas según el ancho de su hueco (consulta de contenedor).
+  - `ReviewCard`: autor con `Persona`, valoración, fecha en `<time>`, título, fotos (botones con nombre propio con
+    `onPhotoSelect`) y respuesta del propietario. El texto largo se pliega en un espacio cerca de `collapseAt`; lo
+    plegado lleva `hidden="until-found"`, así que Buscar en la página lo encuentra y lo abre. En `/dom/data`,
+    «Read more» y `beforematch` sin React, `setReviewExpanded`, `z:change { open }` y `z:photoselect { index }`.
+- Iconos en el árbol compartido de las piezas (`core/vnode`): variante `solid`.
+- Avisos (grupo `feedback`):
+  - `NotificationCenter`: campana con el número de no leídos en su nombre («Notifications, 3 unread») y un panel en
+    `popover` automático con los avisos agrupados por día civil en la zona de quien mira («Today», «Yesterday»,
+    fecha), leídos y no leídos (prefijo oculto «Unread:» además del fondo), acciones propias por aviso, marcar como
+    leído o no leído con nombre propio, «Mark all as read», estado vacío y enlace «View all». Un aviso nuevo sin leer
+    se anuncia una vez por el anunciador central, también con el panel cerrado (`silent` lo apaga). En `/dom/data`:
+    `.z-notification-center` con los avisos en `data-props`, `z:readchange`, `z:readall`, `z:action` y
+    `z:openchange`; `badgeText`, `groupByDay` y `unreadCount`.
+  - `NotificationBadge`: contador con tope («99+») o punto, suelto o pegado a la esquina de otro elemento; la cifra
+    va oculta y se lee el texto entero («12 unread»). No añado un `AlertBell`: sería otro nombre para la misma campana.
+- `FilterBar` (grupo `data`): chips de interruptor (`aria-pressed`) y de menú (popover con casillas o botones de opción
+  nativos; el chip dice la opción elegida o cuántas) en una fila que desplaza en horizontal con el borde difuminado
+  solo del lado con chips ocultos. «Clear» aparece con algún filtro activo y deja el foco en el primer chip; el número
+  de activos va en la descripción del grupo y se anuncia al cambiar. Valor controlado o libre; en `/dom/data`,
+  `.z-filter-bar` con `data-props`, `z:change { value, id }`, `toggleFilter`, `toggleOption`, `activeCount` y `chipText`.
+- `FileUpload`: `layout="grid"`, rejilla de miniaturas grandes para fotos (en un lienzo, sin URL de objeto, como la
+  lista), con `sortable` (arrastrar el asa o, con el teclado, Espacio coge, flechas mueven por la rejilla también
+  arriba y abajo y en RTL, Espacio suelta y Escape cancela; cada posición se anuncia una vez), `cover` (la primera es
+  la portada y las demás llevan «Make … the cover»), quitar y progreso por foto. `onReorder` y `onCoverChange`; textos
+  en `reorderLabels`. Las casillas se mueven, no se rehacen: el foco y la miniatura se conservan. Con la lista o la
+  rejilla dentro, el campo se nombra solo con su texto principal (`aria-labelledby`). En el modo DOM: `data-layout`,
+  `data-sortable`, `data-cover`, `data-reorder-labels`, `z:reorder`, `z:cover` y `reorderUpload`; en rejilla con
+  `multiple`, lo elegido se suma a lo que ya había.
+- Modo DOM: un icono que el registro del módulo no tiene (el de un aviso de la aplicación) se pinta con `<z-icon>`,
+  que lo dibuja con el set que haya cargado la página, en vez de quedar en blanco.
+- `ChatHeader`: `moreActions` (`ChatHeaderAction[]`) y `moreLabel`. Las acciones secundarias son botones de icono en
+  una cabecera ancha y pasan a un menú «Más» en una de 420 px o menos: con tres iconos el nombre quedaba en «An…».
+- Familia de chat y mensajería (grupo `chat`; contrato HTML, `/dom/chat` y binding de React sobre el mismo árbol de
+  `core/vnode`):
+  - `MessageList`: grupos por autor y tiempo con la cola en la última burbuja, separadores de día en su propia franja (encabezados
+    reales) y el día flotante mientras se desplaza, sin tapar mensajes, marca de no leídos, indicador de escritura, historial hacia arriba sin saltos (se conserva el mensaje que
+    tenías delante), «ir al final» con los nuevos contados y ventana virtual con altos medidos a partir de 150 filas.
+    Una sola parada de Tab con ↑/↓, Inicio/Fin y RePág/AvPág; Intro lleva a la barra de acciones del mensaje
+    (reaccionar, responder, reenviar, copiar, editar, borrar) y R responde. Los mensajes nuevos de otros se anuncian
+    por el anunciador central, cortos y agrupados; las reacciones responden al instante.
+  - `MessageBubble`: el mismo marcado suelto, con cita, reenviado, editado, borrado, fallido con reintentar, emojis
+    grandes, y adjuntos: álbum de imágenes, archivo con tamaño y progreso, nota de voz con onda, ubicación (imagen de la
+    aplicación o un plano decorativo, sin mapas de terceros) y vista previa de enlace. Los enlaces del texto solo salen
+    con destino http, https o mailto (`core/linkify`, con el analizador de URL).
+  - `Composer`: crece con el texto, Intro envía y Mayús+Intro salta de línea sin enviar durante la composición de un
+    IME, adjuntos (elegir, pegar o soltar), emojis, menciones con `@` como combobox (`core/mentions`, tokens `<@id>`),
+    respondiendo/editando y notas de voz con MediaRecorder cuando existe (pulsar para grabar y para enviar, Cancelar).
+  - `ConversationList` (presencia, último mensaje o quién escribe o el borrador, hora corta, no leídos y menciones,
+    silenciado, fijado, búsqueda y filtros), `ChatHeader`, `EmojiPicker` (conjunto propio de unos 120 emojis con
+    nombres CLDR, recientes, tono de piel y carga a demanda de otro conjunto; la fila que queda a medias abajo se
+    difumina), `VoiceNote`, `Reactions`,
+    `TypingIndicator`, `DeliveryStatus` (leído con otro texto y otro trazo, no solo color), `ThreadSummary`, `CallCard`
+    (entrante con aviso asertivo, saliente y en curso) y `PinnedBar`.
+  - `core/`: `chat-group`, `chat-anchor`, `delivery`, `linkify`, `mentions`, `waveform`, `emoji-data` y `chat-tree`.
+- Familia de IA, chatbots y agentes (grupo `ai`; `/dom/ai`):
+  - `AssistantMessage`: partes en orden (texto en streaming con cursor, razonamiento, herramientas, aprobaciones,
+    fuentes con citas en línea y artefactos), `aria-busy` mientras llega y un solo anuncio al terminar; acciones
+    (copiar, regenerar, valorar) y ramas «‹ 2 / 3 ›».
+  - `Markdown`: Markdown mínimo propio (`core/markdown-lite`) que construye nodos, nunca marcado: párrafos,
+    encabezados, listas anidadas y de tareas, citas, tablas, énfasis, enlaces http(s), citas `[n]` y código con el
+    `CodeViewer`. Mientras llega, `core/stream-text` cierra a título provisional el código y el énfasis abiertos.
+  - `PromptInput` (la forma de prompt de Composer: modelo, herramientas, uso de contexto y enviar ↔ parar), `Reasoning`,
+    `ToolCall`, `ApprovalCard` (con riesgo alto, aprobar pide confirmar), `AgentPlan`, `Sources`, `Citation`,
+    `Suggestions`, `Artifact` (vista previa en un iframe aislado sin scripts, código, versiones, copiar y descargar),
+    `BranchPicker`, `AgentStatus` y `UsageMeter`.
+  - `core/`: `agent-state` (transiciones y qué se anuncia), `branches` (árbol de la conversación y rama activa),
+    `usage` y `stream-text`.
+- Dashboard y tableros (grupo `dashboard`, entrada `/dom/dashboard`):
+  - `MetricCard`: etiqueta, valor, variación frente al periodo anterior con su sentido (`positive="down"` para lo
+    que es bueno que baje), minigráfico, meta con ritmo, nota y acciones; estados `loading` (huesos con
+    `aria-busy`), `empty` y `error`; enlace que cubre la tarjeta. `MetricGroup` reúne varias en una fila de KPI.
+  - `DeltaBadge`: flecha, magnitud y una frase para el lector («up 12.4%, better than last month»).
+  - `Gauge`: semicírculo, 240° o anillo con zonas (cada una con nombre y trazo propio) y aguja opcional; es un
+    `role="meter"` con la zona en `aria-valuetext`.
+  - `ProgressGoal`: avance hacia una meta con la marca del ritmo esperado (delante, en ritmo, detrás, conseguido).
+  - `BarList`, `FunnelChart` (conversión frente a la etapa anterior y la total) y `Leaderboard` (rangos con empates).
+  - `Tracker`: tira de estados por día con la disponibilidad calculada, una sola parada de tabulación y la etiqueta
+    del día activo.
+  - `ActivityFeed`: actividad agrupada por día en la zona de la persona, hora relativa con la absoluta en `<time>`.
+  - `DashboardGrid` y `DashboardGridItem`: rejilla de 12 columnas que se mueve y se redimensiona con el puntero y
+    con el teclado (Espacio coge, flechas mueven, Mayús + flechas redimensionan, Intro suelta, Escape cancela), con
+    anuncios en la región central, el orden del DOM igual al de lectura y `onLayoutChange` para guardar la
+    disposición. En un contenedor estrecho se apila. Sin `/dom`: `z:layoutchange`, `getDashboardLayout` y
+    `setDashboardLayout`.
+  - `KanbanBoard`: columnas con contador y límite de trabajo en curso, tarjetas que se arrastran con el puntero o
+    se mueven con el teclado, `onMove`, `onOpen` y `onAdd` (en `/dom`, `z:move`, `z:open` y `z:add`).
+  - Lógica en `core/`: `metric`, `gauge`, `funnel`, `tracker`, `grid-layout` (colocación, colisiones, compactación
+    y serialización), `kanban`, `activity` e `initials`. Se exportan `computeDelta`, `computePace`,
+    `normalizeLayout`, `moveGridItem`, `resizeGridItem`, `serializeLayout`, `parseLayout`, `moveCard` y más.
+- Usuarios y perfiles (grupo `people`, entrada `/dom/people`): `Persona`, `PresenceBadge` (seis estados, cada uno
+  con su forma y su texto, y «visto hace…»), `UserCard`, `ProfileHeader`, `MemberList` (búsqueda que anuncia los
+  resultados, grupos por rol o presencia, rol en un selector nativo, quitar e invitar), `AccountMenu` (cuentas, tema
+  y salir sobre `Menu`), `ProfileEditor` (validación al salir de cada campo y al guardar, contador de la biografía,
+  foto; en `/dom`, `z:submit`) y `SettingsSection` con `SettingRow` (etiqueta unida al control y estado de guardado).
+  Lógica en `core/user-presence`, `core/members` y `core/profile`.
+- `Fab` (tres tamaños, extendido y plegable, fijo en una esquina), `FabMenu` y `SplitButton`, de Material 3.
+- `ImageList` (`standard`, `quilted`, `woven`, `masonry`) y `Masonry` (carriles nativos donde existen, columnas CSS
+  donde no).
+- Familia de nodos (grupo `nodes`, entrada `/dom/nodes`), sin bibliotecas de terceros:
+  - `NodeCanvas`: lienzo con zoom (Ctrl/⌘ + rueda o pellizco), desplazamiento (rueda, arrastre del fondo, Espacio +
+    arrastre, flechas), fondo de puntos o rejilla que sigue la vista, imán a la cuadrícula, caja de selección con
+    Mayús, arrastrar y redimensionar nodos, conectar arrastrando desde un puerto, con dos clics o con el teclado,
+    reconectar arrastrando el extremo de una arista, borrar, copiar/cortar/pegar (también con el portapapeles del
+    sistema como JSON), duplicar, agrupar y desagrupar, deshacer/rehacer y disposición automática por capas. Modelo
+    `{ nodes, edges }` serializable, controlado o no, con `onNodesChange`, `onEdgesChange`, `onChange` y `onConnect`.
+    Solo pinta los nodos y aristas que se ven. Al montar encuadra el grafo sin bajar del 80 % (el texto de los nodos
+    se lee); si a ese zoom no cabe, empieza por su principio y el resto se ve desplazando o con el botón de encuadrar.
+  - `Node`, `NodeGroup` y `NodePort`: nodo con cabecera (icono, título, estado), cuerpo libre, estados seleccionado,
+    ejecutando, correcto y error, y puertos de entrada y salida con tipo y límite de conexiones.
+  - Aristas recta, bézier, escalonada y escalonada suave, con flecha, etiqueta, tono y trazo animado (quieto con
+    movimiento reducido y pausado fuera de pantalla).
+  - `NodeMinimap`, `NodeControls` (una Toolbar) y `NodeListView` (tablas de nodos y conexiones con las mismas
+    acciones; en estrecho, el borde con columnas ocultas se difumina).
+  - El lienzo ocupa el ancho de su contenedor: todo lo que lleva dentro va posicionado y, en una fila flex centrada,
+    se quedaba en los 2 px del borde.
+  - Teclado: una parada de Tab con foco itinerante, flechas al nodo más cercano en esa dirección, Intro y Escape para
+    entrar y salir de un nodo, Alt + flechas para moverlo, `]` y `[` para seguir conexiones (con varias, un menú para
+    elegir), conectar eligiendo origen y destino, Supr, Ctrl+Z/Y/A/C/X/V/D/G. Descripción textual del grafo y de cada
+    nodo, y anuncios en el anunciador central.
+  - `core/`: `viewport`, `edge-path`, `graph`, `graph-edit`, `ports`, `undo`, `layout-layers`, `minimap`, `node-view`
+    y la caja de selección en `selection` (`boxSelection`), con pruebas de propiedades de geometría e historial.
+- `TransferList` (grupo `forms`): disponibles y elegidos con casillas, búsqueda opcional, mover lo marcado o todo lo
+  visible, Intro y doble clic para mover, rango con Mayús y anuncio de lo movido. En `/dom/data`, `.z-transfer` con los
+  elementos en `data-props` y `z:change`. Lógica pura en `core/transfer`.
+- `DataTable`, funciones de tabla de datos avanzada: filtro por columna (`filterable`, `filters`, `onFiltersChange`), ancho
+  ajustable con puntero o flechas (`resizable`, `onColumnResize`), columnas fijadas al inicio (`pinned: "start"`) y
+  exportar a CSV (`exportable`, `dataTableCSV`), con los textos que empiezan por `=`, `+`, `-` o `@` neutralizados. En
+  `/dom/data`, lo mismo sobre el marcado (`tr.z-table__filters`, `.z-table__resize`, `th[data-pinned]`,
+  `.z-datatable__export`), con `z:filterchange`, `z:columnresize` y `dataTableCSVFromDom`.
+- `Chip` con `avatar`: ficha de persona («input chip» de Material 3) con un avatar delante del texto.
+- `core/announcer`: una región viva educada y una asertiva por documento (o por diálogo modal abierto), con retraso
+  corto, vaciado previo y espera mientras la persona escribe. En una ráfaga solo se lee el último anuncio y no habla
+  nada que esté en un árbol `inert`. En `/dom`, `announce(texto, { politeness, source })`. `announceIn` de los widgets y
+  la región de la agenda usan ya la misma cola.
+- `Carousel` con dos ejes:
+  - `layout`: `strip`, los de Material 3 (`multi-browse`, `hero` y `hero-center` con máscaras por keylines,
+    `uncontained`, `fullscreen`) y `stack` (mazo que se descarta deslizando).
+  - `effect`: además de `lens` y `none`, `prism` (coverflow de cristal con profundidad, la variante de marca),
+    `coverflow`, `fade` (con `kenBurns`), `parallax` (capas `[data-parallax-layer]`) y `wheel` (cilindro vertical).
+  - Los efectos se pintan desde `--z-slide-progress`, que anima el navegador con animaciones ligadas al
+    desplazamiento (`view()`) o escribe el motor donde no existen. Con `prefers-reduced-motion` todo queda plano.
+  - `indicators="progress"` (el punto actual se alarga y se llena durante el intervalo), `slidesPerMove`,
+    `slidesPerPage="auto"`, `autoHeight`, `depth` y `peek`. En `/dom`, los mismos como `data-*`.
+- `Stories` (historias por persona con barras de progreso, toque para avanzar o retroceder, pulsación larga para
+  pausar; empieza en pausa con movimiento reducido), `Lightbox` (visor a pantalla completa sobre `<dialog>` con zoom y
+  encuadre, `core/zoom`; al abrir, el foco empieza en «Acercar», o en «Cerrar» sin zoom, también en Safari) y `Gallery` (carrusel con miniaturas sincronizadas y botón de pantalla completa). En `/dom`:
+  `[data-z-stories]`, `dialog[data-z-lightbox]` con `openLightbox(dialog, índice)` y `[data-z-gallery]`.
+- `Skeleton` por patrón: `pattern` (`card`, `list`, `table`, `profile`, `chat`, `chart`, `article`, `calendar`, también
+  como `Skeleton.Card`, `Skeleton.List`…), `loading` para envolver el contenido real y `SkeletonGroup` (contenedor con
+  `aria-busy` y un solo brillo sincronizado). Los anchos salen de una semilla: servidor y cliente pintan lo mismo. En
+  `/dom`, un `.z-skeleton-pattern[data-pattern]` vacío se expande solo.
+- Familia de tiempo y hora (grupo `time`; contrato HTML, modo sin framework y binding de React sobre un solo árbol
+  de `core/vnode`):
+  - `Clock`: reloj digital con 12 o 24 h según el locale (o `hourCycle`), segundos, fecha y nombre de la zona
+    opcionales, zona IANA y separadores que laten.
+  - `AnalogClock`: esfera en SVG con marcas de horas o de minutos, números (cuartos o todos), segundero a saltos o
+    continuo y tres tamaños. Es una imagen con nombre («10:42, Madrid») que cambia una vez por minuto.
+  - `WorldClock`: varias zonas en lista o rejilla, con diferencia frente a una zona de referencia («+6 h»), día
+    distinto («Tomorrow»), día o noche y, con `removable`, botón para quitar cada ciudad (`onRemove`, `z:remove`).
+    Cada ciudad se lee como una frase completa.
+  - `Countdown`: cuenta atrás hasta un instante, en cajas, en línea o con cifras que giran. `role="timer"` sin
+    región viva; los hitos (cada hora, cada cuarto en la última hora, cada minuto en los últimos cinco, o
+    `announceEvery`) y el final van a una región `status` aparte, nunca cada segundo. `onComplete` y `z:complete`.
+  - `DurationField`: duración por segmentos (horas, minutos, segundos) con `spinbutton` por unidad, paso, tope,
+    preajustes y pegado de «1:30», «90m» o «PT1H30M». Valor ISO 8601 (`onValueChange`, `z:change`).
+  - `TimeZoneSelect`: Combobox de zonas IANA agrupadas por región o desfase, con desfase y hora en cada opción;
+    se busca por ciudad, identificador o desfase. En el modo DOM, `data-z-tz-select` sobre un Combobox.
+  - `FormatDuration` (grupo `content`): duración legible con `Intl.DurationFormat` en `long`, `short`, `narrow` o
+    `digital`, con respaldo donde falte, en un `<time datetime="PT…">`.
+- Un único temporizador compartido para todos los relojes (`core/ticker`): se programa al siguiente borde de segundo
+  o de minuto, se para con la pestaña oculta y para cada pieza fuera de pantalla, y la pone al día al volver.
+- `core/duration`, `core/clock`, `core/countdown` y `core/timezones`, con pruebas (también de propiedades con
+  fast-check). Desde la raíz: `formatDuration`, `parseISODuration`, `toISODuration`, `durationToMs`,
+  `listTimeZones`, `zoneOptions`, `groupZones` y `offsetText`.
+- Familia de terminal y código (grupo `terminal`; mismo modelo de un solo árbol):
+  - `Terminal`: prompt, historial con ↑/↓ (conserva lo que se estaba escribiendo), autocompletado con Tab solo si
+    hay `onComplete` (si no, Tab sale), Ctrl+L, Ctrl+C (interrumpe sin selección; con selección, copia), salida en
+    streaming con colores ANSI de 16, 256 y 24 bits, negrita, subrayado, enlaces OSC 8 (solo http y https), retorno
+    de carro y borrado de línea, límite de líneas y copiar. `onCommand` devuelve texto, un código de salida, una
+    promesa o un iterable asíncrono; la `ref` (`TerminalHandle`) escribe desde fuera. La salida es `role="log"` sin
+    anunciar cada línea; se anuncia el final de cada orden.
+  - `LogConsole`: hora, nivel, origen y mensaje; filtros por nivel con contadores, búsqueda con `<mark>`, seguir el
+    final, copiar y descargar. Pinta por ventana (`core/virtual`): miles de entradas sin miles de nodos. Rejilla con
+    `aria-rowcount` y `aria-rowindex` y una sola parada de Tab.
+  - `CodeViewer`: CodeBlock ampliado con números de línea, líneas resaltadas, pestañas de archivos, copiar y un
+    resaltado mínimo propio (JavaScript, TypeScript, JSX, JSON, CSS, HTML, XML, shell y Python), o el de la aplicación
+    con `highlight`.
+  - `DiffViewer`: diff de dos textos (Myers) o de un parche unificado con varios archivos, en vista unificada o lado a
+    lado, con palabras cambiadas, regiones sin cambios plegadas y el tipo de cada línea en texto oculto.
+- `core/ansi`, `core/diff`, `core/code-tokens`, `core/history` y `core/log-filter`, con pruebas (también de
+  propiedades con fast-check). Desde la raíz: `createAnsiScreen`, `parseAnsi`, `stripAnsi`, `diffLines`, `parsePatch`,
+  `toHunks`, `wordDiff`, `tokenize` y `tokenizeLines`.
+- Entrada `@zuccadev-labs/zuix-zui/dom/terminal` (`terminalModule`, `terminal(el)`, `appendLogEntries`), también
+  incluida en `@zuccadev-labs/zuix-zui/dom`.
+- Entrada `@zuccadev-labs/zuix-zui/dom/time` (`timeModule`, `refreshTimeZoneSelect`), también incluida en
+  `@zuccadev-labs/zuix-zui/dom`.
+
+### Cambiado
+
+- `FabMenu`, `SplitButton` y `AccountMenu` funcionan sin React: pasan de `behavior: "react"` a `"dom"` y su marcado
+  del contrato abre el Menu de `/dom` (`data-z-open` y `data-z-placement`). El ejemplo de `AccountMenu` añade el
+  cambio de cuenta. Ya no queda ningún componente que solo funcione con React.
+- Botón de menú (APG Menu Button), en `/dom` y en React: Flecha abajo abre el menú con el foco en la primera entrada
+  y Flecha arriba en la última. En `/dom` las flechas no abrían; en React las dos enfocaban la primera.
+- `Avatar`: estados `dnd` y `oof`, una forma dentro del punto de estado desde el tamaño `md` y, sin `statusLabel`,
+  el texto del estado («Available», «Do not disturb») como nombre accesible. Las iniciales ya no parten caracteres
+  compuestos.
+- `AvatarGroup`: con `items` es una lista y, con `overflow="list"`, el «+N» abre la lista de sobrantes; además
+  `reverse` y `spacing`.
+- El bucle del `Carousel` en desplazamiento nativo ya no salta del final al principio: aparca el primer o el último
+  slide con CSS `order` junto al actual y compensa el salto (guía `carousel`), sin clonar nada. La tira con lente
+  sigue con réplicas, porque allí la pista es transformada y no desplazamiento nativo.
+- En el desplazamiento nativo y en el mazo, la posición se anuncia tras asentarse (`scrollend`) y solo si cambió;
+  antes se anunciaba al pulsar. El teclado (flechas, Inicio y Fin) lo lleva el motor común de React y `/dom`.
+
+### Corregido
+
+- `Avatar`: `src` se valida como fuente de imagen (ruta relativa, http, https, `blob:` o `data:image/…`). Un esquema
+  que no es de imagen (`javascript:`) deja las iniciales en lugar de llegar al `<img>`, y `<`, `>`, `"` y `'` llegan
+  codificados (`%3C`…), como los pide el navegador.
+- Lectura de texto en tiempo lineal: los enlaces en texto plano (`linkify`, la puntuación final y los correos sin
+  `@`), las duraciones cortas de `toMs` (`1h 30m`) y las menciones de la vista previa de un mensaje tardaban en
+  cuadrático con entradas largas y repetidas (muchos `!`, muchas cifras sin unidad, muchos `<@` sin cerrar). El
+  resultado es el mismo; la parte local de un correo enlazado llega hasta 64 caracteres, el máximo de RFC 5321.
+- Contrato HTML: los ejemplos de `MessageBubble`, `ThreadSummary`, `DeltaBadge`, `MetricGroup`, `PriceTag`,
+  `ReviewCard` y `ReviewSummary` fijan `locale="en-US"`, y `html.json` ya no cambia con la configuración regional ni
+  la zona horaria de la máquina que lo genera.
+- `/dom` en WebKit: una capa que se abría tarde (el submenú tras el retardo del puntero, una pista o un toggletip,
+  la reapertura tras una pulsación larga) sobre un elemento que ya había salido del documento lanzaba «Element is not
+  connected». `showPopover`, `openPopover`, `openSubmenu`, las pistas y `openDialog` comprueban `isConnected` antes de
+  abrir y, si el elemento ya no está, no hacen nada.
+- `Artifact` bajo `require-trusted-types-for 'script'`: la vista previa HTML escribía `srcdoc` con `setAttribute` y
+  una cadena, y Chrome la rechazaba («This document requires 'TrustedHTML' assignment»), en `/dom` y en React. Ahora
+  pasa por la política `zuix-zui`, la misma de `setMarkup`, que se comparte entre los bundles de `/dom` y de React
+  cargados en la misma página. El iframe sigue con `sandbox=""`: sin scripts ni el origen de la página. Al renderizar
+  en servidor el `srcdoc` va en el marcado, como antes.
+- `Avatar`: el punto de estado `online`, `busy` y `away` salía gris. La regla base del punto en `zui.people` volvía a
+  poner el fondo por defecto y, por ir en una capa posterior, pisaba el color de cada estado de `zui.data`. Ahora
+  solo `zui.data` pone ese fondo.
+- `/dom` sin Popover API (Chromium < 114, Firefox < 125, Safari < 17): abrir un menú, un popover, un tooltip o un
+  submenú lanzaba, porque `:popover-open` no es un selector válido ahí y `showPopover` no existe. Ahora no se abren y
+  nada lanza; con `@oddbird/popover-polyfill` cargado por la aplicación, funcionan.
+- `/dom` en Safari < 16.4: el módulo no cargaba, porque el resaltado de código y las tablas de Markdown usaban
+  aserciones hacia atrás (`(?<!…)`) en expresiones regulares. Se escriben sin ellas y el resultado es el mismo.
+- `Chip` interactivo (también los de `FilterBar`): con puntero grueso el botón quedaba en 38 px, 2 px por dentro del
+  borde del chip de 40. Su zona de pulsación cubre ahora el borde y llega a los 40 sin cambiar el dibujo.
+- `Calendar` con `numberOfMonths` de 2 o más: el título del rango («December 2026 – January 2027») usa espacios
+  normales. El de Node llevaba espacios finos y no casaba con el del navegador al hidratar un render en el servidor.
+- `AnalogClock`: con marcas, las cifras van a radio 31 (antes 35) y no pisan las marcas del 3, el 6 y el 9.
+- `AvatarGroup`: el solape depende de la talla (0,28 del diámetro; 0,2 en `sm`; ninguno en `xs`, donde dos iniciales
+  ocupan casi todo el círculo) y las iniciales de cada avatar tapado se centran en la parte que se ve. El siguiente
+  avatar ya no tapa las iniciales del anterior.
+- `Table` y `DataTable`: una columna `mono` (fechas, códigos) no parte línea («2026-11-\n10»), y el borde con columnas
+  ocultas se difumina (`data-scroll-edges`, también en `/dom`): en estrecho la tabla ya no se corta en seco. En una
+  tabla cuenta desde 1 px escondido (en una tira, desde 8): la última columna llega al borde y unos pocos píxeles ya
+  cortan su texto.
+- `SlotPicker`: con más horas de las que caben, el borde de la lista con horas ocultas se difumina en vez de cortar una
+  hora a media altura.
+- `KanbanBoard`, `CalendarHeatmap` y las miniaturas de `Carousel` y `Gallery`: el borde con contenido oculto se difumina en
+  lugar de cortar una tarjeta, un mes o una miniatura en seco (también en `/dom`).
+- `PromptInput`: modelo, herramientas y uso van en una sola fila que desplaza, con el borde oculto difuminado; en un
+  teléfono partían línea y quedaban uno debajo de otro.
+- `MetricCard`: la etiqueta usa hasta dos líneas antes de cortarse («New custom…» cabía entera).
+- `Gauge`: la cifra baja de talla cuando el indicador encoge por debajo de su medida; a 168 px rozaba el arco.
+- `Carousel`: un salto sin animación (volver al slide inicial al montar, ajustar tras un cambio de tamaño) relaja
+  `scroll-snap-stop` durante el salto. Se paraba en el primer slide del camino: Prism abría en «Scene 3» con el
+  índice en 0 y la rueda con `defaultIndex` en otra hora.
+- `Carousel` `prism` y `coverflow`: solo el slide central recibe el puntero. Chromium encontraba antes un vecino girado
+  que se pinta detrás, que tapaba el borde del pie central y se llevaba sus clics.
+- `Carousel` `wheel`: la opción elegida va en una banda de cristal del ancho de la rueda y el cilindro se funde arriba
+  y abajo; `layout="stack"`: la tarjeta de arriba se separa del mazo con un tono más claro y sombra alta.
+- `Gallery` con lente: los vecinos se funden en los bordes de la tira en vez de cortarse en seco, y el margen vertical
+  sigue al estiramiento real de la forma, que crece con el tramo curvo: en un teléfono sobraban unos 60 px arriba y
+  abajo del slide.
+- `ColorPicker`: el formato pasa a su propia línea por debajo de 21rem (antes 18rem). Entre 288 y 336 px la fila de
+  canales con alfa y el selector del sistema se salía de la tarjeta.
+- `StatTile`: en una baldosa de menos de 7,5rem de contenido el icono cede su sitio al nombre («Complet…»).
+- `OTPInput`: las casillas ceden ancho (hasta la altura de un control pequeño) en una columna más estrecha que el
+  código; la sexta casilla se salía del grupo.
+- `VoiceNote`: las barras de la onda se reparten su ancho sin hueco fijo; en una burbuja de teléfono pasaban del borde.
+- `ChatHeader`: el avatar no sale de su identidad aunque las acciones aprieten.
+- `Artifact`: en una barra estrecha los controles bajan a otra línea; el título quedaba en 0 px y las acciones se
+  salían.
+- `ToolCall`: el nombre de la herramienta no cede ancho; lo cede el identificador.
+- `ImageList`: hasta `--z-image-cols` columnas de 7rem como mínimo; en estrecho caben menos y el pie de cada imagen
+  se lee. La consulta de contenedor que pasaba a dos columnas no se aplicaba (el elemento consultaba su propio
+  tamaño). `StatTile`: la cifra no parte línea. `AccountMenu` con avatar no se estira con su contenedor. `ActionBar`:
+  el borde con acciones ocultas se difumina.
+- `CodeViewer` y `LogConsole`: el tinte del código va sobre una base opaca. Sobre un fondo oscuro, los comentarios, los
+  números de línea y el filtro de niveles bajaban a 4,46:1 en zutool claro.
+- `LogConsole`: desplazar hacia arriba justo después de que la consola baje sola (al limpiar la búsqueda o cambiar
+  un filtro) a veces no dejaba de seguir el final: se ignoraba el desplazamiento de la persona si llegaba fundido
+  con el de la pieza. Ahora solo se ignora el que llega a la posición que pidió la pieza.
+- `LogConsole`: subir en el mismo fotograma en que la consola se repinta (llega una entrada, se limpia la búsqueda)
+  devolvía la vista al final antes de que llegara el evento de desplazamiento, y la consola seguía siguiendo. Ahora el
+  repintado ve que la posición subió desde la última conocida y deja de seguir en vez de bajar.
+
 ## [0.3.0] - 2026-11-21
 
 Base visual nueva, «liquid glass», sobre los tokens de `@zuccadev-labs/zuix-tokens`. Botón, campo, select,
@@ -113,7 +444,7 @@ radios y material de los tokens.
     `core/anchor` (`anchorWithCss`, `positionArea`, `supportsAnchor`) y `arrowOffset` en `core/place`; `place()`
     escribe `--z-arrow-offset`.
   - `HoverCard`: vista previa al pasar el puntero (retardos de apertura y cierre) o enfocar un enlace, con el
-    patrón «hovercard» de modern-web-guidance: la tarjeta es `role="tooltip"` (el rol mínimo de una pista con
+    patrón de pista rica de la propuesta `interestfor`: la tarjeta es `role="tooltip"` (el rol mínimo de una pista con
     enlaces) y describe al enlace con `aria-describedby` desde que se monta, abierta o cerrada, sin
     `aria-expanded` y sin mover el foco al abrirse; un `aria-describedby` del autor manda. El puntero cruza a la
     tarjeta sin cerrarla, Escape y una pulsación fuera la cierran y Tab entra en ella y sale hacia lo que sigue al

@@ -4,8 +4,10 @@ zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación c
 marca replica el sistema cambiando un archivo. El estándar es HTML, CSS y tokens: sirve con cualquier
 framework o sin ninguno, y trae un binding de React.
 
-Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que cambia entre una y otra en
-[Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
+Esta documentación describe la `0.3.0`. De la `0.2.0` a la `0.3.0` no retiré nada: cambia el aspecto y
+se añaden componentes. Si sobrescribes variables de algún componente, repasa el apartado «Cambiado» del
+`CHANGELOG.md` de zui. Si vienes de la
+`0.1.0`, lo que se rompe y cómo arreglarlo está en [Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
 
 ## Documentos
 
@@ -29,9 +31,9 @@ Esta documentación describe la `0.2.0`. Quien venga de la `0.1.0` tiene lo que 
 |---|---|---|
 | `@zuccadev-labs/zuix` | Paraguas: la suite completa en una dependencia | [Instalar](#instalar) |
 | `@zuccadev-labs/zuix-tokens` | Fuente única de valores de diseño. Una marca es un archivo | [Tokens](./01-tokens.md) |
-| `@zuccadev-labs/zuix-zicon` | 346 iconos en outline y solid | [Zicon](./02-zicon.md) |
-| `@zuccadev-labs/zuix-zui` | 144 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
-| `@zuccadev-labs/zuix-zout` | 19 layouts: shell, paneles, pestañas, rejillas | [Zout](./04-zout.md) |
+| `@zuccadev-labs/zuix-zicon` | 366 iconos en outline y solid | [Zicon](./02-zicon.md) |
+| `@zuccadev-labs/zuix-zui` | 224 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
+| `@zuccadev-labs/zuix-zout` | 30 layouts: shell, paneles, pestañas, rejillas, layouts de página | [Zout](./04-zout.md) |
 | `@zuccadev-labs/zuix-zudocs` | Estándar de documentación y plantilla Docusaurus. No se publica en npm | [Zudocs](./05-zudocs.md) |
 
 ## Instalar
@@ -109,7 +111,8 @@ import { Stack } from "@zuccadev-labs/zuix/zout";
 - La marca se elige importando su CSS o con `data-brand` en `<html>`.
 - El contenedor de la aplicación lleva `class="z-root z-canvas"`: `z-root` aplica tipografía, foco y
   selección; `z-canvas` pinta el fondo.
-- El binding requiere React 19. El resto de la suite no depende de React.
+- El binding funciona con React 18.2 o posterior y con React 19
+  ([Compatibilidad](./10-compatibilidad.md#react)). El resto de la suite no depende de React.
 
 Sin React, en HTML plano o en otro framework: [Frameworks](./06-frameworks.md).
 

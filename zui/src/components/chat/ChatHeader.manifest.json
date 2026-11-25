@@ -1,0 +1,110 @@
+{
+  "name": "ChatHeader",
+  "group": "chat",
+  "description": "Cabecera de una conversación: volver (en móvil, a la lista), avatar con presencia, nombre, línea de estado («online», «last seen…», «typing…») y acciones (llamada, vídeo, buscar, menú).",
+  "import": "import { ChatHeader } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "avatar",
+      "type": "string"
+    },
+    {
+      "name": "avatarName",
+      "type": "string",
+      "description": "Nombre para las iniciales (por defecto, title si es texto)."
+    },
+    {
+      "name": "presence",
+      "type": "\"online\" | \"away\" | \"busy\" | \"offline\""
+    },
+    {
+      "name": "presenceLabel",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": "ReactNode"
+    },
+    {
+      "name": "statusTone",
+      "type": "\"muted\" | \"accent\"",
+      "default": "muted"
+    },
+    {
+      "name": "onBack",
+      "type": "MouseEventHandler",
+      "description": "Con él, botón de volver."
+    },
+    {
+      "name": "backLabel",
+      "type": "string",
+      "default": "Back",
+      "description": "Dice adónde vuelve: «Back to chats»."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Acciones que se ven siempre (IconButton)."
+    },
+    {
+      "name": "moreActions",
+      "type": "ChatHeaderAction[]",
+      "description": "Acciones secundarias `{ id, icon, label, onSelect?, active?, disabled? }`: botones de icono en una cabecera ancha y menú «Más» en una de 420 px o menos, para que el nombre no se corte."
+    },
+    {
+      "name": "moreLabel",
+      "type": "string",
+      "default": "More actions",
+      "description": "Nombre del botón del menú «Más»."
+    },
+    {
+      "name": "onTitleClick",
+      "type": "MouseEventHandler",
+      "description": "La identidad es un botón que abre los detalles."
+    },
+    {
+      "name": "level",
+      "type": "2 | 3",
+      "default": 2
+    },
+    {
+      "name": "titleId",
+      "type": "string"
+    }
+  ],
+  "states": ["rest", "typing", "with-back"],
+  "tokens": ["header-height", "fg", "fg-muted", "accent-text", "row-hover", "item-radius"],
+  "classes": [
+    "z-chat-header",
+    "z-chat-header__back",
+    "z-chat-header__identity",
+    "z-chat-header__titles",
+    "z-chat-header__title",
+    "z-chat-header__status",
+    "z-chat-header__actions",
+    "z-chat-header__secondary",
+    "z-chat-header__more"
+  ],
+  "a11y": "El nombre es un encabezado (h2 por defecto) y puede nombrar la conversación con titleId. El botón de volver dice adónde vuelve. La presencia del avatar tiene nombre propio. Las acciones son IconButton con nombre. Las acciones secundarias son botones con nombre en ancho y, en estrecho, entradas de un menú (patrón APG «menu button»).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Contacto en línea con acciones",
+      "code": "<ChatHeader title=\"Ana López\" presence=\"online\" presenceLabel=\"Online\" status=\"online\" statusTone=\"accent\" actions={<>\n  <IconButton icon=\"phone\" label=\"Voice call\" />\n  <IconButton icon=\"video-camera\" label=\"Video call\" />\n  <IconButton icon=\"magnifying-glass\" label=\"Search in chat\" />\n</>} />"
+    },
+    {
+      "title": "Acciones secundarias que pasan a un menú en estrecho",
+      "code": "<ChatHeader title=\"Ana López\" presence=\"online\" presenceLabel=\"Online\" status=\"online\" statusTone=\"accent\" actions={<IconButton icon=\"phone\" label=\"Voice call\" />} moreActions={[\n  { id: \"video\", icon: \"video-camera\", label: \"Video call\" },\n  { id: \"search\", icon: \"magnifying-glass\", label: \"Search in chat\" },\n]} />"
+    },
+    {
+      "title": "Grupo con volver (móvil)",
+      "code": "<ChatHeader title=\"Design team\" status=\"Luis is typing…\" statusTone=\"accent\" onBack={() => {}} backLabel=\"Back to chats\" actions={<IconButton icon=\"ellipsis-vertical\" label=\"More\" />} />"
+    }
+  ],
+  "origin": "Diseño propio; referencias: WhatsApp, Telegram y el ConversationHeader de MUI X Chat."
+}

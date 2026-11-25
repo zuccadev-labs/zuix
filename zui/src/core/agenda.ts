@@ -199,7 +199,7 @@ function shiftText(text: string, days: number): string {
   return `${addDays(date, days)}${text.slice(10)}`;
 }
 
-/* Índice por intervalos (agenda.md §6): por lista de eventos y zona, los eventos sueltos ordenados por inicio con su
+/* Índice por intervalos (para 5000 eventos en un mes): por lista de eventos y zona, los eventos sueltos ordenados por inicio con su
    intervalo ya convertido y su ocurrencia ya creada, y aparte las series. Una vista pide su rango con una búsqueda
    binaria en vez de recorrer la lista entera, y las ocurrencias de un mismo evento son el mismo objeto entre pintados
    (las vistas memorizan su marcado por ocurrencia). La memoria se comprueba en cada consulta (mismos objetos y mismos

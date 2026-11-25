@@ -1,0 +1,105 @@
+{
+  "name": "AccountMenu",
+  "group": "people",
+  "description": "Menú de cuenta: botón con el avatar que abre un Menu con la persona en la cabecera, cambio de cuenta (radio), entradas propias, tema y salir.",
+  "import": "import { AccountMenu } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "user",
+      "type": "{ id?, name, email?, avatar?, presence? }",
+      "required": true
+    },
+    {
+      "name": "accounts",
+      "type": "AccountUser[]"
+    },
+    {
+      "name": "currentAccount",
+      "type": "string"
+    },
+    {
+      "name": "onSwitch",
+      "type": "(id: string) => void"
+    },
+    {
+      "name": "onAddAccount",
+      "type": "() => void"
+    },
+    {
+      "name": "items",
+      "type": "MenuEntry[]"
+    },
+    {
+      "name": "theme",
+      "type": "enum",
+      "values": ["light", "dark", "system"]
+    },
+    {
+      "name": "onThemeChange",
+      "type": "(theme) => void"
+    },
+    {
+      "name": "onSignOut",
+      "type": "() => void"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["avatar", "full"],
+      "default": "avatar"
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": ["top", "right", "bottom", "left"],
+      "default": "bottom"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "end"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AccountMenuLabels>"
+    }
+  ],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "row-hover",
+    "radius-full",
+    "control-radius",
+    "control-height-lg",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-account-menu",
+    "z-account-menu__text",
+    "z-account-menu__name",
+    "z-account-menu__email",
+    "z-account-menu__menu",
+    "z-account-menu__persona"
+  ],
+  "a11y": "Botón con nombre «Account of Ana López» y aria-haspopup=menu (patrón menu button de WAI-ARIA): clic, Intro, Espacio o ↓ abren con el foco en la primera entrada y ↑ en la última. Las cuentas y el tema son grupos de menuitemradio con nombre. Escape cierra y devuelve el foco al botón; un clic fuera lo cierra. Sin React (`@zuccadev-labs/zuix-zui/dom`): el botón con data-z-open=\"#menu\" y un .z-menu.z-account-menu__menu[popover]; elegir una cuenta o un tema cambia aria-checked en su grupo y emite z:change y z:select.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Cuenta con tema",
+      "code": "<AccountMenu user={{ name: \"Ana López\", email: \"ana@example.com\", presence: \"online\" }} items={[{ id: \"profile\", label: \"Profile\", icon: \"user\" }, { id: \"settings\", label: \"Settings\", icon: \"cog\" }]} theme=\"dark\" onThemeChange={() => {}} onSignOut={() => {}} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Cuenta con tema",
+      "code": "<button type=\"button\" class=\"z-account-menu\" data-variant=\"avatar\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#account\">\n  <span class=\"z-sr-only\">Account of Ana López</span>\n  <span class=\"z-avatar\" data-size=\"md\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span>\n</button>\n\n<div id=\"account\" popover class=\"z-liquid z-menu z-account-menu__menu\" role=\"menu\" aria-label=\"Account of Ana López\" data-size=\"md\">\n  <div class=\"z-menu__label\"><div class=\"z-persona z-account-menu__persona\" data-size=\"sm\" data-orientation=\"horizontal\"><span class=\"z-persona__media\"><span class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\"><span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span></span></span><span class=\"z-persona__text\"><span class=\"z-persona__name\">Ana López</span><span class=\"z-persona__secondary\">ana@example.com</span></span></div></div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"account-switch\">\n    <div class=\"z-menu__label\" id=\"account-switch\">Switch account</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"ana\"><span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span><span class=\"z-menu__text\">Ana López · ana@example.com</span></button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"work\"><span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span><span class=\"z-menu__text\">Ana López · ana@work.example</span></button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"user\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Profile</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"cog\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Settings</span></button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"account-theme\">\n    <div class=\"z-menu__label\" id=\"account-theme\">Theme</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"light\"><span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span><span class=\"z-menu__text\">Light</span></button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"dark\"><span class=\"z-menu__icon z-menu__check\" data-kind=\"radio\" aria-hidden=\"true\"></span><span class=\"z-menu__text\">Dark</span></button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"arrow-right-start-on-rectangle\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Sign out</span></button>\n</div>",
+      "script": "document.querySelector(\"#account\").addEventListener(\"z:select\", (event) => console.log(event.target.textContent.trim()));"
+    }
+  ],
+  "origin": "nav-user de los bloques de sidebar de shadcn y avatarProps de ProLayout (Ant Design Pro)."
+}

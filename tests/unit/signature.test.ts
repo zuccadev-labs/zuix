@@ -1,4 +1,4 @@
-// Oleada 7: SignaturePad (core/signature): grosor por presión, trazado suavizado, SVG y captura de puntos.
+// SignaturePad (core/signature): grosor por presión, trazado suavizado, SVG y captura de puntos.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import { addPoint, signatureSvg, strokePath, strokeWidth, type SignatureStroke } from "../../zui/src/core/signature.ts";

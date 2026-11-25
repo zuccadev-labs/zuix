@@ -5,6 +5,20 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-23
+
+### Añadido
+
+- React 18: `Icon` funciona con React 18.2 o posterior además de con React 19 (peer `^18.2.0 || ^19.0.0`). Con
+  React 18 va envuelto en `forwardRef` para seguir aceptando `ref`.
+- 20 iconos propios, dibujados por mí con el mismo lenguaje de línea que Dazicon y publicados bajo MIT:
+  `anchor`, `car`, `cloud-rain`, `cloud-sun`, `compass`, `first-aid`, `fish`, `fuel`, `gauge`, `navigation`,
+  `shield`, `ship`, `siren`, `snowflake`, `sunset`, `target`, `tv`, `utensils`, `waves` y `wind`. El set pasa
+  de 346 a 366 iconos.
+- Categorías `weather` (Clima) y `transport` (Transporte).
+- 25 emojis más en la tabla de sustitución (⚓, 🚢, 🧭, 🌊, 🚨, 🎯, 📺…) y alias de uso para los iconos nuevos.
+- `manifest.json`: `source` pasa de `"Dazicon"` a `"Dazicon y dibujos propios"`.
+
 ## [0.3.0] - 2026-11-21
 
 Sin cambios en este paquete. La versión sube para seguir alineada con la suite.

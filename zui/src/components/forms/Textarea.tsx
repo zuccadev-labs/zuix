@@ -2,6 +2,7 @@
 import { useState, type Ref, type TextareaHTMLAttributes } from "react";
 import { cx } from "../../cx";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   size?: "sm" | "md";
@@ -15,7 +16,7 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   ref?: Ref<HTMLTextAreaElement>;
 }
 
-export function Textarea({
+export const Textarea = withRef(function Textarea({
   size = "md",
   invalid,
   mono,
@@ -52,4 +53,4 @@ export function Textarea({
       data-resize={resize}
     />
   );
-}
+});

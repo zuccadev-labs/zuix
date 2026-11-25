@@ -14,6 +14,7 @@
 //   data-z-shell-toggle="sidebar|inspector"   botón que abre o cierra ese panel (data-z-shell="#id" si está fuera del shell)
 //   data-z-close                              dentro de un cajón del shell: lo cierra
 //   data-sidebar-breakpoint, data-inspector-breakpoint   en .z-shell: cortes en px (880 y 1180 por defecto)
+//   data-rail-breakpoint                      en .z-shell: bajo este ancho (600 por defecto) el rail va dentro del cajón de la sidebar
 //   data-panel-mode="auto|docked|overlay"     en el <aside>: preferencia de modo (auto por defecto)
 //   hidden                                    en el <aside>: panel cerrado
 //   data-close-label                          en .z-shell: nombre accesible del velo
@@ -39,14 +40,22 @@
 //   .z-sidebar__trigger[aria-controls]        botón que pliega y despliega la sidebar; data-shortcut: Ctrl/⌘+B
 // La sidebar plegada usa del modo sin framework de zui el tooltip (`data-z-tooltip`) y el popover anclado
 // (`data-z-open`) para el submenú: cargar también @zuccadev-labs/zuix-zui/dom.
+//   .z-chat-layout                            ChatLayout (./chat): data-view en estrecho, [data-z-chat-view] cambia de vista
+//                                             (z:viewchange), data-history sincroniza la pila, F6 entre paneles y
+//                                             variante widget con .z-chat-layout__launcher (z:open, z:close)
 //   .z-navbar / .z-navmenu                     navegación de sitio (./site): fila o cajón medido sin punto de corte fijo y
 //                                             grupos de disclosure con panel; .z-skiplink; .z-bottomnav con botones
 //                                             (aria-current y z:select { value })
+//   .z-appbar[data-collapse]                  barra que se pliega al desplazar (respaldo sin animaciones ligadas al
+//                                             desplazamiento) y data-scrolled con algo desplazado (./pages)
+//   .z-docs-layout__toc                        índice con la sección que se lee marcada con aria-current
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { edgeMargin, trackScrollEdges } from "../edges";
+import { disposePages, hydratePages } from "./pages";
 import { disposeSite, hydrateSite, onSiteClick } from "./site";
+import { hydrateChat, onChatClick, onChatKeydown, onChatPopState } from "./chat";
 import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
 import { chevronDoubleRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-right";
 import { chevronDownSmall } from "@zuccadev-labs/zuix-zicon/icons/chevron-down-small";
@@ -57,6 +66,7 @@ import {
   RESIZE_MAX,
   RESIZE_MIN,
   RESIZE_STEP,
+  RAIL_BREAKPOINT,
   SIDEBAR_BREAKPOINT,
   SPLIT_MIN_FRACTION,
   clamp,
@@ -65,6 +75,7 @@ import {
   isHorizontal,
   moveDivider,
   panelMode,
+  railInDrawer,
   physicalSide,
   resizeByKey,
   resizeSign,
@@ -91,6 +102,18 @@ import {
   type PhysicalSide,
   type ResizeSide,
 } from "../logic";
+
+/**
+ * ¿`el` está dentro de una capa `[popover]` abierta (con `within: false`, ¿es una)? Sin Popover API, `:popover-open` no es un
+ * selector válido y `matches()`/`closest()` lanzarían; con @oddbird/popover-polyfill la capa lleva la clase `:popover-open`.
+ */
+function inOpenLayer(el: Element, within = true): boolean {
+  try {
+    return within ? el.closest(":popover-open") !== null : el.matches(":popover-open");
+  } catch {
+    return within ? el.closest(".\\:popover-open") !== null : el.classList.contains(":popover-open");
+  }
+}
 
 export type { PanelMode } from "../logic";
 export type ShellSide = "sidebar" | "inspector";
@@ -198,6 +221,20 @@ function syncShell(shell: HTMLElement): void {
     }
     // Con un cajón abierto, el panel que siga acoplado queda bajo el velo.
     el.inert = drawerOpen && mode === "docked";
+  }
+  // Estrecho: el rail no ocupa columna; con el cajón de la sidebar abierto entra en él (y vuelve al cuerpo al cerrarse).
+  const rail = shell.querySelector<HTMLElement>(
+    ":scope > .z-shell__body > .z-shell__rail, :scope > .z-shell__body > .z-shell__side > .z-shell__rail",
+  );
+  const side = panels[0]?.el;
+  if (rail) {
+    const toDrawer =
+      Boolean(side) && railInDrawer(state.width, num(shell.getAttribute("data-rail-breakpoint"), RAIL_BREAKPOINT), auto.sidebar);
+    const inDrawer = toDrawer && side && panels[0]?.mode === "overlay";
+    if (inDrawer && rail.parentElement !== side) side.prepend(rail);
+    else if (!inDrawer && rail.parentElement !== body) body.prepend(rail);
+    rail.hidden = toDrawer && !inDrawer;
+    if (inDrawer) rail.inert = false;
   }
   for (const zone of body.querySelectorAll<HTMLElement>(":scope > .z-shell__rail, :scope > .z-shell__main")) zone.inert = drawerOpen;
 
@@ -772,7 +809,7 @@ export function setSidebarCollapsed(sidebar: HTMLElement, collapsed: boolean, si
       link.setAttribute("aria-haspopup", "true");
       link.setAttribute("aria-expanded", "false");
     } else {
-      if (sub.matches(":popover-open")) sub.hidePopover();
+      if (inOpenLayer(sub, false)) sub.hidePopover();
       sub.removeAttribute("popover");
       sub.classList.remove("z-liquid");
       sub.removeAttribute("style");
@@ -1106,7 +1143,7 @@ function onKeydown(event: KeyboardEvent): void {
 
   // Escape cierra el cajón abierto, salvo que lo haya gestionado otro (un diálogo o un menú por encima).
   if (event.key === "Escape") {
-    if (event.defaultPrevented || target.closest("dialog[open], :popover-open")) return;
+    if (event.defaultPrevented || target.closest("dialog[open]") || inOpenLayer(target)) return;
     const panel = target.closest<HTMLElement>(".z-floatpanel");
     if (panel && inDom(panel) && panel.querySelector(".z-floatpanel__close")) {
       event.preventDefault();
@@ -1313,6 +1350,8 @@ function onDoubleClick(event: MouseEvent): void {
   if (defaultSize !== undefined) resizeTo(handle, defaultSize);
 }
 
+export { setChatView, setChatWidgetOpen } from "./chat";
+
 /** Prepara el marcado bajo `[data-z-dom]`: mide los shells, completa divisores y pestañas. Repetible. */
 export function hydrate(root: ParentNode = document): void {
   if (!isBrowser) return;
@@ -1323,6 +1362,8 @@ export function hydrate(root: ParentNode = document): void {
   for (const panel of all(root, ".z-floatpanel")) if (!panel.hidden) setFloatingPanelRect(panel, panelRect(panel), true);
   for (const layout of all(root, ".z-panelayout")) syncPaneFocus(layout);
   hydrateSite(root);
+  hydrateChat(root);
+  hydratePages(root);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
@@ -1345,6 +1386,7 @@ export function hydrate(root: ParentNode = document): void {
 export function dispose(root: ParentNode = document): void {
   if (!isBrowser) return;
   disposeSite(root);
+  disposePages(root);
   for (const shell of all(root, ".z-shell")) {
     shellObserver?.unobserve(shell);
     shells.delete(shell);
@@ -1365,7 +1407,10 @@ export function init(): void {
   wired = true;
   document.addEventListener("click", onClick);
   document.addEventListener("click", onSiteClick);
+  document.addEventListener("click", onChatClick);
+  document.addEventListener("keydown", onChatKeydown);
   document.addEventListener("keydown", onKeydown);
+  window.addEventListener("popstate", onChatPopState);
   document.addEventListener("dblclick", onDoubleClick);
   document.addEventListener("pointerdown", onPointerDown);
   document.addEventListener("pointermove", (event) => {

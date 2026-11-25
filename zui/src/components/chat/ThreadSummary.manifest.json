@@ -1,0 +1,41 @@
+{
+  "name": "ThreadSummary",
+  "group": "chat",
+  "description": "Resumen de un hilo bajo un mensaje: avatares de quien respondió, «12 replies» y la última respuesta en relativo. Es un botón que abre el hilo.",
+  "import": "import { ThreadSummary } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "count",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "lastAt",
+      "type": "string | number"
+    },
+    {
+      "name": "participants",
+      "type": "ChatPerson[]"
+    },
+    {
+      "name": "onClick",
+      "type": "MouseEventHandler"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChatLabels>"
+    }
+  ],
+  "states": ["rest", "hover"],
+  "tokens": ["accent-text", "fg-muted", "row-hover", "control-radius-sm"],
+  "classes": ["z-thread-summary", "z-thread-summary__people", "z-thread-summary__count", "z-thread-summary__last"],
+  "a11y": "Botón con su texto como nombre («12 replies, Last reply 3 min ago»); los avatares son decorativos.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Hilo con tres personas",
+      "code": "<ThreadSummary count={12} locale=\"en-US\" lastAt=\"2026-11-21T09:27:00Z\" now={1795253400000} participants={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }, { name: \"Marta Ruiz\" }]} />"
+    }
+  ],
+  "origin": "Diseño propio; referencia: los hilos de Slack."
+}

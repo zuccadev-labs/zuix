@@ -57,16 +57,27 @@ export function Grid({ children, min = 240, gap = 4, as: Tag = "div", className 
 
 export interface ContainerProps {
   children: ReactNode;
-  /** `content`: ancho máximo de contenido. `prose`: ancho de lectura. `full`: sin límite. */
-  width?: "content" | "prose" | "full";
+  /**
+   * Ancho máximo. `sm`, `md`, `lg` y `xl`: los tokens `container-*` (640, 768, 1024 y 1280 px). `content`: ancho de
+   * contenido de la aplicación. `prose`: ancho de lectura. `full`: sin límite.
+   */
+  width?: "sm" | "md" | "lg" | "xl" | "content" | "prose" | "full";
+  /**
+   * Margen lateral. `fluid`: crece con el ancho del contenedor entre 16 y 40 px (token `container-gutter`). `stage`:
+   * el del área principal (`stage-pad-x`, 16 px en estrecho). `none`: sin margen. Por defecto, `fluid` en los tamaños
+   * `sm`–`xl` y `stage` en `content`, `prose` y `full`.
+   */
+  gutter?: "fluid" | "stage" | "none";
   as?: ElementType;
   className?: string;
 }
 
-/** Centra el contenido y limita su ancho con los tokens `content-max` o `prose-max`. */
-export function Container({ children, width = "content", as: Tag = "div", className }: ContainerProps) {
+const SIZED = new Set(["sm", "md", "lg", "xl"]);
+
+/** Centra el contenido, limita su ancho con un token de tamaño y deja un margen lateral fijo o fluido. */
+export function Container({ children, width = "content", gutter, as: Tag = "div", className }: ContainerProps) {
   return (
-    <Tag className={cx("z-container", className)} data-width={width}>
+    <Tag className={cx("z-container", className)} data-width={width} data-gutter={gutter ?? (SIZED.has(width) ? "fluid" : "stage")}>
       {children}
     </Tag>
   );

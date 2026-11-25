@@ -37,6 +37,7 @@ No hace falta compilar para desarrollar: dentro del workspace cada paquete expor
 | `suite/` | El paraguas: reexportaciones de una línea |
 | `zudocs/` | Plantilla del sitio de documentación |
 | `examples/app/` | Aplicación de React que ejercita la suite; base de `pnpm test:browser` |
+| `examples/react18/` | La misma aplicación servida con React 18 (solo dependencias y `vite.config.ts`); base de `REACT=18 pnpm test:browser` |
 | `examples/html/` | El contrato HTML en una página sin framework; base de `pnpm test:html` |
 | `tools/` | Herramientas del repositorio: auditoría, manifiestos, contrato HTML, build, empaquetado, versión |
 | `tests/` | Pruebas unitarias, de navegador y del sitio |

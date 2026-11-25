@@ -1,7 +1,7 @@
-// Navegación de sitio (oleada 6): NavigationMenu, Navbar y SkipLink. Un solo comportamiento para el binding de React
+// Navegación de sitio: NavigationMenu, Navbar y SkipLink. Un solo comportamiento para el binding de React
 // y el modo sin framework: los dos llaman a estas funciones sobre el marcado del contrato. Sin efectos al importar.
 //
-// Es navegación, no un menú de aplicación (guía «navbar»): los enlaces siguen en el orden de Tab, sin role=menu ni
+// Es navegación, no un menú de aplicación: los enlaces siguen en el orden de Tab, sin role=menu ni
 // flechas. Cada grupo es un disclosure: un <button aria-expanded aria-controls> seguido de su panel.
 //   - Horizontal: el panel es `popover="auto"` y el botón lo abre con `popovertarget` (funciona sin JavaScript);
 //     aquí se coloca bajo el botón, se sincroniza aria-expanded con `toggle`, se previsualiza al pasar el puntero y
@@ -10,16 +10,11 @@
 // Navbar: mide si la fila entera cabe (sin punto de corte fijo). Si no cabe, `data-collapsed` y la lista pasa a un
 // cajón `popover="auto"` que abre el botón de menú; dentro, el NavigationMenu en vertical.
 import { navbarShouldMeasure } from "./logic";
+import { popoverOpen, showPopover } from "./popover";
 
 const GAP = 8;
 const hoverable = () => typeof matchMedia === "function" && matchMedia("(hover: hover)").matches;
-const isOpen = (el: Element) => {
-  try {
-    return el.matches(":popover-open");
-  } catch {
-    return false;
-  }
-};
+const isOpen = popoverOpen;
 const rtl = (el: Element) => getComputedStyle(el).direction === "rtl";
 
 /** Disparadores y paneles de un NavigationMenu (sin los de un menú anidado en otro). */
@@ -80,7 +75,7 @@ export function setNavGroupOpen(trigger: HTMLElement, open: boolean, preview = f
   if (open && !isOpen(panel)) {
     if (preview) panel.dataset.preview = "";
     placeNavPanel(trigger, panel);
-    panel.showPopover();
+    showPopover(panel);
   } else if (!open && isOpen(panel)) panel.hidePopover();
 }
 
@@ -222,7 +217,7 @@ export function navbarFits(header: HTMLElement): boolean {
   header.toggleAttribute("data-collapsed", collapsed);
   if (menu && hadPopover) {
     menu.setAttribute("popover", "auto");
-    if (wasOpen) menu.showPopover();
+    if (wasOpen) showPopover(menu);
   }
   requestAnimationFrame(() => header.removeAttribute("data-measuring"));
   return fits;

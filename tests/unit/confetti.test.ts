@@ -1,4 +1,4 @@
-// Oleada 7: Confetti (core/confetti): ráfaga determinista, física y fin de vida.
+// Confetti (core/confetti): ráfaga determinista, física y fin de vida.
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import fc from "fast-check";

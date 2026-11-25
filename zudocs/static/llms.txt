@@ -1,13 +1,13 @@
 # Zuix
 
-> Componentes, layouts, iconos y documentación con un solo estándar. Cambia la marca, conserva el sistema.
+> Componentes, layouts, iconos y documentación sobre un solo estándar de HTML, CSS y tokens. Una marca nueva es un archivo.
 
 ## Uso
 
 - [Zuix para usuarios](https://zuccadev-labs.github.io/zuix/docs/users.md): zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación con un solo estándar.
 - [Tokens](https://zuccadev-labs.github.io/zuix/docs/users/tokens.md): @zuccadev-labs/zuix-tokens es la fuente única de los valores de diseño.
 - [Zicon](https://zuccadev-labs.github.io/zuix/docs/users/zicon.md): @zuccadev-labs/zuix-zicon es el estándar iconográfico de la suite.
-- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 144 componentes en 12 grupos.
+- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 224 componentes en 19 grupos.
 - [Zout](https://zuccadev-labs.github.io/zuix/docs/users/zout.md): @zuccadev-labs/zuix-zout es el paquete de layouts y ventanas dinámicas.
 - [Zudocs](https://zuccadev-labs.github.io/zuix/docs/users/zudocs.md): @zuccadev-labs/zuix-zudocs es el estándar de documentación de la suite y su plantilla: un sitio Docusaurus con el estilo liquid glass, que se adapta a otro proyecto o marca editando un solo archivo.
 - [Usar zuix con cualquier framework](https://zuccadev-labs.github.io/zuix/docs/users/frameworks.md): zuix no es una biblioteca de React.
@@ -48,7 +48,7 @@
 - [Node, dependencias y cadena de suministro](https://zuccadev-labs.github.io/zuix/docs/investigations/node-dependencias-y-cadena-de-suministro.md): Qué versiones admito y por qué, cómo protejo la instalación de dependencias y cómo publico sin guardar un token en ningún sitio.
 - [Lint, pruebas y por qué no Barrits](https://zuccadev-labs.github.io/zuix/docs/investigations/lint-pruebas-y-barrits.md): La 0.1.0 salió sin linter, sin formateador y sin pruebas unitarias: tenía auditoría de estilo, tipos y pruebas de navegador.
 - [El sitio de documentación, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/el-sitio-medido.md): zudocs lo había tratado como una plantilla que funcionaba: compilaba y no tenía enlaces rotos.
-- [Rendimiento de la agenda, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/rendimiento-de-la-agenda.md): La especificación de la agenda pide 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (objetivo de 50 ms por interacción; INP «bueno», por debajo de 200 ms, como mínimo).
+- [Rendimiento de la agenda, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/rendimiento-de-la-agenda.md): Cuando diseñé la agenda me puse un objetivo: 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (50 ms por interacción como meta; un INP «bueno», por debajo de 200 ms, como mínimo).
 
 ## Publicación
 
@@ -64,9 +64,12 @@
 - [ButtonGroup](https://zuccadev-labs.github.io/zuix/components/actions/button-group.md): Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.
 - [CopyButton](https://zuccadev-labs.github.io/zuix/components/actions/copy-button.md): Botón que copia un texto (un valor o el contenido de otro elemento) al portapapeles y lo confirma con icono y burbuja anunciada.
 - [DownloadTrigger](https://zuccadev-labs.github.io/zuix/components/actions/download-trigger.md): Botón que descarga un archivo generado al pulsar: texto, Blob, bytes o una función (también asíncrona, con estado de carga), o una URL.
+- [Fab](https://zuccadev-labs.github.io/zuix/components/actions/fab.md): Botón de acción flotante (FAB de Material 3): un cuadrado de esquinas redondeadas con la acción principal de la pantalla, en tres tamaños; extendido con texto que se pliega con `collapsed`; fijo en…
+- [FabMenu](https://zuccadev-labs.github.io/zuix/components/actions/fab-menu.md): FAB que abre un menú de acciones por encima (FAB menu de Material 3, Speed Dial de MUI).
 - [IconButton](https://zuccadev-labs.github.io/zuix/components/actions/icon-button.md): Botón cuadrado de solo icono con nombre accesible obligatorio.
 - [Link](https://zuccadev-labs.github.io/zuix/components/actions/link.md): Enlace de texto: dentro de un párrafo, discreto o como acción suelta.
 - [SegmentedControl](https://zuccadev-labs.github.io/zuix/components/actions/segmented-control.md): Selector de una opción entre pocas; siempre hay una elegida.
+- [SplitButton](https://zuccadev-labs.github.io/zuix/components/actions/split-button.md): Botón dividido: la acción principal y, pegado a ella, un botón con flecha que abre las alternativas; la flecha gira al abrir.
 - [Swap](https://zuccadev-labs.github.io/zuix/components/actions/swap.md): Intercambio animado entre dos contenidos en el mismo sitio (un icono de menú que pasa a cruz, un sol que pasa a luna).
 - [Toggle](https://zuccadev-labs.github.io/zuix/components/actions/toggle.md): Botón de dos estados (activado o no), con texto, icono o ambos.
 - [ToggleGroup](https://zuccadev-labs.github.io/zuix/components/actions/toggle-group.md): Conjunto de botones de dos estados con una sola parada de tabulación: una opción activable (single) o varias (multiple).
@@ -93,7 +96,7 @@
 - [Editable](https://zuccadev-labs.github.io/zuix/components/forms/editable.md): Texto que se edita en su sitio (un título, un nombre): se ve como texto y pasa a ser un campo del mismo tamaño al activarlo.
 - [Field](https://zuccadev-labs.github.io/zuix/components/forms/field.md): Envoltura de campo: etiqueta, ayuda y mensaje de error enlazados al control.
 - [Fieldset](https://zuccadev-labs.github.io/zuix/components/forms/fieldset.md): Grupo de campos relacionados con su título (fieldset y legend), descripción y deshabilitado de una vez; FieldGroup reparte los campos con el ritmo del estándar.
-- [FileUpload](https://zuccadev-labs.github.io/zuix/components/forms/file-upload.md): Zona para elegir o soltar archivos.
+- [FileUpload](https://zuccadev-labs.github.io/zuix/components/forms/file-upload.md): Zona para elegir o soltar archivos, con lista o con rejilla de miniaturas ordenable (portada, quitar, progreso).
 - [Form](https://zuccadev-labs.github.io/zuix/components/forms/form.md): Formulario que pinta la validación nativa en sus campos: sin globos del navegador, mensajes por ValidityState en cada Field y foco al primer error al enviar.
 - [Input](https://zuccadev-labs.github.io/zuix/components/forms/input.md): Campo de texto de una línea con icono y contenido final opcionales.
 - [InputGroup](https://zuccadev-labs.github.io/zuix/components/forms/input-group.md): Campo con adornos: texto, icono, atajo de teclado, botón o tramo de prefijo al inicio, al final, encima o debajo del control, en un solo recuadro.
@@ -114,6 +117,7 @@
 - [Textarea](https://zuccadev-labs.github.io/zuix/components/forms/textarea.md): Campo de texto de varias líneas, con crecimiento automático opcional.
 - [TimeField](https://zuccadev-labs.github.io/zuix/components/forms/time-field.md): Hora de reloj que se teclea por segmentos (hora, minuto, segundo, AM/PM).
 - [TimePicker](https://zuccadev-labs.github.io/zuix/components/forms/time-picker.md): TimeField con un botón que abre un panel para elegir la hora: columnas de horas, minutos, (segundos) y AM/PM, o una lista de franjas filtrable al teclear.
+- [TransferList](https://zuccadev-labs.github.io/zuix/components/forms/transfer-list.md): Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible.
 - [WeekPicker](https://zuccadev-labs.github.io/zuix/components/forms/week-picker.md): Selector de semana ISO 8601: elegir un día elige su semana (lunes a domingo), con el número de semana visible.
 - [YearPicker](https://zuccadev-labs.github.io/zuix/components/forms/year-picker.md): Selector de año: DatePicker en la vista de década (rejilla 3 × 4 con los años del borde atenuados).
 
@@ -136,13 +140,19 @@
 - [CircularProgress](https://zuccadev-labs.github.io/zuix/components/data/circular-progress.md): Anillo de avance sobre un <progress> nativo: determinado o indeterminado, con el valor o contenido propio en el centro.
 - [DataTable](https://zuccadev-labs.github.io/zuix/components/data/data-table.md): Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación.
 - [DescriptionList](https://zuccadev-labs.github.io/zuix/components/data/description-list.md): Pares término–descripción en un <dl>: propiedades de un recurso, metadatos, resumen de una ficha.
+- [FilterBar](https://zuccadev-labs.github.io/zuix/components/data/filter-bar.md): Barra de filtros: chips de interruptor y de menú en una fila que desplaza con el borde difuminado, «Clear» cuando hay alguno activo y el número de activos para lectores.
 - [Item](https://zuccadev-labs.github.io/zuix/components/data/item.md): Fila de contenido con medio (avatar, icono o imagen), título, descripción, metadato y acciones; enlace opcional que cubre toda la fila.
 - [Kbd](https://zuccadev-labs.github.io/zuix/components/data/kbd.md): Tecla o atajo de teclado.
 - [Meter](https://zuccadev-labs.github.io/zuix/components/data/meter.md): Medidor de una magnitud dentro de un rango conocido.
+- [PriceBreakdown](https://zuccadev-labs.github.io/zuix/components/data/price-breakdown.md): Desglose de precio: filas con importes alineados, descuentos y créditos con signo, impuestos por importe o porcentaje, subtotal opcional y total destacado, con Intl.NumberFormat.
+- [PriceTag](https://zuccadev-labs.github.io/zuix/components/data/price-tag.md): Precio con moneda (Intl.NumberFormat), precio anterior tachado y unidad («/ night»).
 - [Progress](https://zuccadev-labs.github.io/zuix/components/data/progress.md): Barra de avance de una tarea, determinada o indeterminada; horizontal o vertical, continua o por tramos.
 - [Rating](https://zuccadev-labs.github.io/zuix/components/data/rating.md): Valoración con estrellas: lectura (admite decimales) o entrada.
+- [ReviewCard](https://zuccadev-labs.github.io/zuix/components/data/review-card.md): Opinión: autor con Persona, valoración de solo lectura, fecha, título, texto largo plegable, fotos y respuesta del propietario.
+- [ReviewSummary](https://zuccadev-labs.github.io/zuix/components/data/review-summary.md): Resumen de opiniones: media, estrellas de solo lectura, número de valoraciones y distribución con una barra por estrella, cada una con su texto para lectores.
 - [StatTile](https://zuccadev-labs.github.io/zuix/components/data/stat-tile.md): Tesela de indicador: etiqueta, valor destacado y contexto.
 - [StatusDot](https://zuccadev-labs.github.io/zuix/components/data/status-dot.md): Punto de estado con su texto (en línea, ocupado, caído).
+- [SummaryList](https://zuccadev-labs.github.io/zuix/components/data/summary-list.md): Lista clave–valor con los valores alineados al final y en cifras tabulares: resumen de pedido, de plan o de reserva, con separadores y fila de total.
 - [Table](https://zuccadev-labs.github.io/zuix/components/data/table.md): Tabla con estilo para marcado nativo (thead, tbody, tr, th, td).
 - [Timeline](https://zuccadev-labs.github.io/zuix/components/data/timeline.md): Lista ordenada de acontecimientos: punto o icono en una línea, hora en <time datetime>, título y descripción.
 
@@ -164,7 +174,9 @@
 - [ErrorBoundary](https://zuccadev-labs.github.io/zuix/components/feedback/error-boundary.md): Captura errores de render de su subárbol y muestra un ErrorState con reintento.
 - [ErrorState](https://zuccadev-labs.github.io/zuix/components/feedback/error-state.md): Estado de error recuperable, con reintento opcional.
 - [LoadingOverlay](https://zuccadev-labs.github.io/zuix/components/feedback/loading-overlay.md): Capa de espera sobre un contenedor o sobre toda la ventana.
-- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido.
+- [NotificationBadge](https://zuccadev-labs.github.io/zuix/components/feedback/notification-badge.md): Contador de avisos sin leer: cifra con tope («99+») o un punto; suelto o pegado a la esquina de otro elemento.
+- [NotificationCenter](https://zuccadev-labs.github.io/zuix/components/feedback/notification-center.md): Centro de avisos: campana con el número de no leídos y un panel (popover) con los avisos agrupados por día, leídos y no leídos, acciones por aviso, «Mark all as read» y estado vacío.
+- [Skeleton](https://zuccadev-labs.github.io/zuix/components/feedback/skeleton.md): Marcador de posición mientras llega el contenido: el primitivo, envoltorio del contenido real (`loading`), ocho patrones de pantalla completos (`pattern`) y un grupo con el brillo sincronizado.
 - [Spinner](https://zuccadev-labs.github.io/zuix/components/feedback/spinner.md): Indicador de espera de duración desconocida: anillo giratorio, tres puntos que laten o cuatro barras.
 
 ## Componentes: Contenido
@@ -179,6 +191,7 @@
 - [Divider](https://zuccadev-labs.github.io/zuix/components/content/divider.md): Línea separadora entre bloques o entre elementos de una barra.
 - [FormatByte](https://zuccadev-labs.github.io/zuix/components/content/format-byte.md): Tamaño en bytes legible: decimal con las unidades de Intl («1.5 MB», «1,5 megabytes») o binario con símbolo IEC («1.4 MiB»), en un <data value> con los bytes exactos.
 - [FormatDate](https://zuccadev-labs.github.io/zuix/components/content/format-date.md): Fecha en un <time datetime> con Intl.DateTimeFormat, o relativa («hace 3 min») con `relative`, que delega en RelativeTime y se actualiza sola.
+- [FormatDuration](https://zuccadev-labs.github.io/zuix/components/content/format-duration.md): Duración legible en un <time datetime="PT…"> con Intl.DurationFormat: «1 hour, 30 minutes» (`long`), «1 hr, 30 min» (`short`), «1h 30m» (`narrow`) o «1:30:00» (`digital`).
 - [FormatNumber](https://zuccadev-labs.github.io/zuix/components/content/format-number.md): Número con Intl.NumberFormat (compacto, moneda, porcentaje, unidad) en un <data value> que conserva el valor exacto.
 - [Highlight](https://zuccadev-labs.github.io/zuix/components/content/highlight.md): Marca con <mark> las coincidencias de una o varias consultas en un texto: sin distinguir mayúsculas, opcionalmente sin acentos o solo palabras completas; relleno de acento o subrayado ondulado.
 - [JsonTree](https://zuccadev-labs.github.io/zuix/components/content/json-tree.md): Visor de JSON y de valores de JavaScript como árbol: tipos con color, profundidad inicial, Map y Set, cadenas largas truncadas y copia de la ruta.
@@ -220,7 +233,10 @@
 
 ## Componentes: Carousel
 
-- [Carousel](https://zuccadev-labs.github.io/zuix/components/carousel/carousel.md): Carrusel agnóstico al contenido: tira con bucle infinito, arrastre con inercia, ajuste al slide más cercano, flechas, contador, teclado y anuncios para lectores de pantalla.
+- [Carousel](https://zuccadev-labs.github.io/zuix/components/carousel/carousel.md): Carrusel agnóstico al contenido con dos ejes: `layout` (tira, los de Material 3 y mazo) y `effect` (lente, prisma de cristal, coverflow, fundido, parallax, rueda).
+- [Gallery](https://zuccadev-labs.github.io/zuix/components/carousel/gallery.md): Galería: carrusel con tira de miniaturas sincronizada (debajo o al lado) y botón para abrir la imagen actual en el visor a pantalla completa.
+- [Lightbox](https://zuccadev-labs.github.io/zuix/components/carousel/lightbox.md): Visor de imágenes a pantalla completa sobre `<dialog>` modal: anterior y siguiente, contador, zoom con botones, teclado, doble clic y Ctrl + rueda, y encuadre arrastrando.
+- [Stories](https://zuccadev-labs.github.io/zuix/components/carousel/stories.md): Historias al estilo de Instagram: grupos por persona, una barra por historia que se llena con el tiempo, tocar a un lado o al otro para retroceder o avanzar y mantener pulsado para pausar.
 
 ## Componentes: Efectos
 
@@ -235,22 +251,118 @@
 
 - [CompareSlider](https://zuccadev-labs.github.io/zuix/components/media/compare-slider.md): Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado.
 - [ImageCropper](https://zuccadev-labs.github.io/zuix/components/media/image-cropper.md): Recortador de imagen: área que se mueve y se redimensiona desde ocho asas, relación de aspecto fija o libre, forma rectangular o circular, rejilla de tercios y teclado.
+- [ImageList](https://zuccadev-labs.github.io/zuix/components/media/image-list.md): Lista de imágenes: rejilla regular (`standard`), acolchada con piezas de distinto tamaño (`quilted`), tejida (`woven`) o en mampostería (`masonry`), con título opcional encima o debajo.
+- [Masonry](https://zuccadev-labs.github.io/zuix/components/media/masonry.md): Mampostería: piezas de alto distinto en columnas sin huecos (tarjetas, notas, fotos).
 - [QRCode](https://zuccadev-labs.github.io/zuix/components/media/qr-code.md): Código QR con codificador propio (ISO/IEC 18004: modo byte en UTF-8, versiones 1–40, corrección L/M/Q/H, la máscara de menor penalización), dibujado como un único path de SVG, oscuro sobre claro con…
 - [SignaturePad](https://zuccadev-labs.github.io/zuix/components/media/signature-pad.md): Lienzo de firma: trazos con el puntero (con presión si el dispositivo la da, trazado suavizado), deshacer y borrar, y la alternativa accesible de escribir el nombre.
 
+## Componentes: Tiempo
+
+- [AnalogClock](https://zuccadev-labs.github.io/zuix/components/time/analog-clock.md): Reloj de esfera en SVG: agujas de horas y minutos, segundero opcional (a saltos o continuo), marcas de horas o de minutos, números (ninguno, cuartos o todos), zona IANA y tres tamaños.
+- [Clock](https://zuccadev-labs.github.io/zuix/components/time/clock.md): Reloj digital: 12 o 24 h según el locale (o `hourCycle`), segundos y fecha opcionales, zona IANA, nombre de la zona y separadores que laten.
+- [Countdown](https://zuccadev-labs.github.io/zuix/components/time/countdown.md): Cuenta atrás hasta un instante (un lanzamiento, el fin de una oferta): días, horas, minutos y segundos en cajas (`segments`), en línea o con cifras que giran (`flip`).
+- [DurationField](https://zuccadev-labs.github.io/zuix/components/time/duration-field.md): Entrada de duración por segmentos (horas, minutos, segundos), con paso para los minutos, tope y preajustes («15 min», «30 min», «1 h»).
+- [TimeZoneSelect](https://zuccadev-labs.github.io/zuix/components/time/time-zone-select.md): Selector de zona horaria buscable sobre Combobox: opciones «Madrid · GMT+1 · 10:42» agrupadas por región o por desfase, con la lista del navegador (`Intl.supportedValuesOf`) o una restringida.
+- [WorldClock](https://zuccadev-labs.github.io/zuix/components/time/world-clock.md): Varias zonas a la vez, en lista o rejilla: hora, diferencia con la zona de referencia («+6 h»), día distinto («Tomorrow») y día o noche (sol o luna, aproximado de 7 a 19 h).
+
+## Componentes: Terminal y código
+
+- [CodeViewer](https://zuccadev-labs.github.io/zuix/components/terminal/code-viewer.md): CodeBlock ampliado: números de línea, líneas resaltadas, pestañas de archivos, copiar y resaltado mínimo sin dependencias (JavaScript y TypeScript con JSX, JSON, CSS, HTML y XML, shell y Python); un…
+- [DiffViewer](https://zuccadev-labs.github.io/zuix/components/terminal/diff-viewer.md): Diferencias de dos textos (diff de líneas de Myers) o de un parche unificado (`git diff`, varios archivos), en vista unificada o lado a lado, con las palabras cambiadas marcadas, cabecera por archivo…
+- [LogConsole](https://zuccadev-labs.github.io/zuix/components/terminal/log-console.md): Consola de logs con columnas (hora, nivel, origen, mensaje): filtros por nivel con contadores, búsqueda con las coincidencias marcadas, seguir el final, copiar y descargar lo filtrado.
+- [Terminal](https://zuccadev-labs.github.io/zuix/components/terminal/terminal.md): Terminal de líneas para mostrar y ejecutar órdenes: prompt, historial con ↑/↓, autocompletado con Tab, Ctrl+L para limpiar y Ctrl+C para interrumpir, salida en streaming con colores ANSI (16, 256 y…
+
+## Componentes: Chat y mensajería
+
+- [CallCard](https://zuccadev-labs.github.io/zuix/components/chat/call-card.md): Tarjeta de llamada de cristal: entrante (aceptar, rechazar, avatar que suena), saliente («Calling…», colgar) y en curso (duración, silenciar, cámara, colgar).
+- [ChatHeader](https://zuccadev-labs.github.io/zuix/components/chat/chat-header.md): Cabecera de una conversación: volver (en móvil, a la lista), avatar con presencia, nombre, línea de estado («online», «last seen…», «typing…») y acciones (llamada, vídeo, buscar, menú).
+- [Composer](https://zuccadev-labs.github.io/zuix/components/chat/composer.md): Caja de texto de chat: crece con el texto, Intro envía y Mayús+Intro salta de línea (nunca durante la composición de un IME), botón de enviar siempre presente, adjuntos (elegir, pegar o soltar) con…
+- [ConversationList](https://zuccadev-labs.github.io/zuix/components/chat/conversation-list.md): Lista de conversaciones de mensajería: avatar con presencia, nombre, último mensaje (o quién escribe, o el borrador), hora corta, no leídos y menciones, silenciado y fijado, y la entrega de tu último…
+- [DeliveryStatus](https://zuccadev-labs.github.io/zuix/components/chat/delivery-status.md): Estado de entrega de un mensaje propio: enviando (reloj), enviado (una marca), entregado (dos), leído (dos marcas más gruesas y en acento, con otro texto) y fallido.
+- [EmojiPicker](https://zuccadev-labs.github.io/zuix/components/chat/emoji-picker.md): Selector de emojis: buscador que hace de combobox sobre una rejilla por categorías, pestañas, recientes, tono de piel y la vista de la opción activa con su nombre CLDR.
+- [MessageBubble](https://zuccadev-labs.github.io/zuix/components/chat/message-bubble.md): Burbuja de un mensaje suelta (el mismo marcado que pinta MessageList): rectángulo redondeado con la esquina de la cola más cerrada, autor, cita, reenviado, adjuntos, texto con enlaces seguros y…
+- [MessageList](https://zuccadev-labs.github.io/zuix/components/chat/message-list.md): Lista de mensajes de una conversación: grupos por autor y tiempo, separadores de día en su propia franja (y el día flotante mientras se desplaza, sin tapar mensajes), marca de no leídos, indicador de…
+- [PinnedBar](https://zuccadev-labs.github.io/zuix/components/chat/pinned-bar.md): Barra de mensajes fijados sobre la conversación: el último fijado y, con varios, «Pinned message 2 of 3» con un segmento por fijado; pulsar salta al mensaje y pasa al anterior.
+- [Reactions](https://zuccadev-labs.github.io/zuix/components/chat/reactions.md): Reacciones con contador: botones conmutables (la propia se marca), y añadir con la fila rápida de seis y «más».
+- [ThreadSummary](https://zuccadev-labs.github.io/zuix/components/chat/thread-summary.md): Resumen de un hilo bajo un mensaje: avatares de quien respondió, «12 replies» y la última respuesta en relativo.
+- [TypingIndicator](https://zuccadev-labs.github.io/zuix/components/chat/typing-indicator.md): Indicador de escritura: tres puntos en una burbuja y el texto («Ana is typing…», «Ana and Luis are typing…», «Ana and 2 others are typing…»).
+- [VoiceNote](https://zuccadev-labs.github.io/zuix/components/chat/voice-note.md): Nota de voz: reproducir y pausar, onda (que es el deslizador de posición), tiempo y velocidad (1×, 1.5×, 2×), sobre un <audio>.
+
+## Componentes: IA y agentes
+
+- [AgentPlan](https://zuccadev-labs.github.io/zuix/components/ai/agent-plan.md): Plan de un agente: pasos y subpasos con su estado (pendiente, en curso, hecho, fallido, omitido) y el progreso «3 of 7» en un <progress>; plegable.
+- [AgentStatus](https://zuccadev-labs.github.io/zuix/components/ai/agent-status.md): Estado de un agente en una etiqueta: inactivo, pensando, usando una herramienta, esperando aprobación, error o hecho, con la duración mientras trabaja.
+- [ApprovalCard](https://zuccadev-labs.github.io/zuix/components/ai/approval-card.md): Petición de permiso de un agente: qué hará, con qué datos y su riesgo; Rechazar y Aprobar, y «Always allow in this session».
+- [Artifact](https://zuccadev-labs.github.io/zuix/components/ai/artifact.md): Artefacto generado por un asistente, en panel o tarjeta: título, tipo, Vista previa (HTML en un iframe aislado sin scripts, o Markdown) y Código (CodeViewer), versiones «‹ v3 ›», copiar y descargar.
+- [AssistantMessage](https://zuccadev-labs.github.io/zuix/components/ai/assistant-message.md): Respuesta de un asistente con partes en orden: texto en streaming con Markdown propio y cursor, razonamiento plegable, llamadas a herramientas, peticiones de aprobación, fuentes con citas en línea y…
+- [BranchPicker](https://zuccadev-labs.github.io/zuix/components/ai/branch-picker.md): «‹ 2 / 3 ›»: versiones de un mensaje editado o regenerado.
+- [Citation](https://zuccadev-labs.github.io/zuix/components/ai/citation.md): Cita en línea a una fuente: un número que es un enlace, con una tarjeta (título y dominio) al pasar el puntero o enfocarla.
+- [Markdown](https://zuccadev-labs.github.io/zuix/components/ai/markdown.md): Markdown mínimo propio: párrafos, encabezados, listas (anidadas, ordenadas y de tareas), citas, código en línea y en bloque (con el CodeViewer de la suite), tablas sencillas, énfasis, tachado…
+- [PromptInput](https://zuccadev-labs.github.io/zuix/components/ai/prompt-input.md): Entrada de un asistente: campo que crece (Intro envía sin enviar durante un IME), adjuntos, selector de modelo, herramientas activables, uso de contexto y enviar ↔ parar en el mismo sitio.
+- [Reasoning](https://zuccadev-labs.github.io/zuix/components/ai/reasoning.md): Razonamiento de un modelo plegable: «Thinking…» con brillo mientras dura y «Thought for 12 s» al terminar, cuando se pliega solo (salvo que tengas el foco dentro).
+- [Sources](https://zuccadev-labs.github.io/zuix/components/ai/sources.md): Fuentes de una respuesta: resumen «4 sources» con iniciales de dominio y lista plegable numerada como sus citas, con título, dominio y extracto.
+- [Suggestions](https://zuccadev-labs.github.io/zuix/components/ai/suggestions.md): Sugerencias de prompt: fila desplazable (con fundido en el borde solo si queda más) o rejilla de tarjetas para la pantalla de inicio.
+- [ToolCall](https://zuccadev-labs.github.io/zuix/components/ai/tool-call.md): Llamada a una herramienta: icono, nombre, estado en texto (pendiente, preparando, en curso, esperando aprobación, hecho, error, cancelado), duración y entrada/salida plegables como JSON con el…
+- [UsageMeter](https://zuccadev-labs.github.io/zuix/components/ai/usage-meter.md): Uso de la ventana de contexto: <meter> con aviso al 80 % y al 95 %, tokens compactos, desglose (entrada, salida, caché) y coste; en barra, anillo o en línea.
+
+## Componentes: Dashboard y tableros
+
+- [ActivityFeed](https://zuccadev-labs.github.io/zuix/components/dashboard/activity-feed.md): Actividad reciente: avatar o icono, «Ana **closed** #42», hora relativa con la absoluta en <time>, agrupada por día en la zona de la persona y con «Load more».
+- [BarList](https://zuccadev-labs.github.io/zuix/components/dashboard/bar-list.md): Barras horizontales con etiqueta y valor: los primeros de algo (páginas, fuentes de tráfico, países).
+- [DashboardGrid](https://zuccadev-labs.github.io/zuix/components/dashboard/dashboard-grid.md): Rejilla de tarjetas de un dashboard: 12 columnas, cada pieza con columna, fila, ancho y alto.
+- [DeltaBadge](https://zuccadev-labs.github.io/zuix/components/dashboard/delta-badge.md): Variación frente al periodo anterior: flecha, magnitud y una frase para el lector con el sentido («up 12.4%, better than last month»).
+- [FunnelChart](https://zuccadev-labs.github.io/zuix/components/dashboard/funnel-chart.md): Embudo: etapas con su valor, la conversión frente a la anterior y la total, y lo perdido entre etapas en trama tenue.
+- [Gauge](https://zuccadev-labs.github.io/zuix/components/dashboard/gauge.md): Indicador radial: semicírculo (180°), 240° o anillo completo, con zonas (cada una con su nombre y su trazo), arco de valor y aguja opcional.
+- [KanbanBoard](https://zuccadev-labs.github.io/zuix/components/dashboard/kanban-board.md): Tablero kanban: columnas con contador (y límite de trabajo en curso) y tarjetas con etiquetas, prioridad, fecha y personas, que se arrastran entre columnas con el puntero o se mueven con el teclado.
+- [Leaderboard](https://zuccadev-labs.github.io/zuix/components/dashboard/leaderboard.md): Clasificación sencilla: rango (con empates), persona, valor con barra y variación.
+- [MetricCard](https://zuccadev-labs.github.io/zuix/components/dashboard/metric-card.md): Tarjeta de KPI completa: etiqueta, valor, variación con su sentido, minigráfico, meta con ritmo, nota y acciones; estados de carga, vacío y error.
+- [MetricGroup](https://zuccadev-labs.github.io/zuix/components/dashboard/metric-group.md): Fila de KPI: varias MetricCard en una banda de cristal con separadores (`glass`) o sueltas (`split`).
+- [ProgressGoal](https://zuccadev-labs.github.io/zuix/components/dashboard/progress-goal.md): Avance hacia una meta con la marca del ritmo esperado: con `elapsed` dice si vas por delante, en ritmo o por detrás («92% of expected pace»).
+- [Tracker](https://zuccadev-labs.github.io/zuix/components/dashboard/tracker.md): Tira de estados por día (disponibilidad de un servicio, ejecuciones de un trabajo) con la disponibilidad calculada y la etiqueta del día activo al pasar el puntero o con el foco.
+
+## Componentes: Usuarios y perfiles
+
+- [AccountMenu](https://zuccadev-labs.github.io/zuix/components/people/account-menu.md): Menú de cuenta: botón con el avatar que abre un Menu con la persona en la cabecera, cambio de cuenta (radio), entradas propias, tema y salir.
+- [MemberList](https://zuccadev-labs.github.io/zuix/components/people/member-list.md): Lista de miembros: búsqueda que anuncia los resultados, grupos por rol o por presencia, rol en un selector nativo, quitar con nombre propio e invitar.
+- [Persona](https://zuccadev-labs.github.io/zuix/components/people/persona.md): Persona: avatar, nombre, línea secundaria (rol, correo) y presencia, en fila o en columna y en cinco tamaños.
+- [PresenceBadge](https://zuccadev-labs.github.io/zuix/components/people/presence-badge.md): Presencia de una persona: disponible, ausente, ocupada, no molestar, desconectada o fuera de la oficina, con «visto hace…» cuando se sabe.
+- [ProfileEditor](https://zuccadev-labs.github.io/zuix/components/people/profile-editor.md): Editor de perfil: foto (elegir y quitar), nombre, usuario, correo, web, ubicación y biografía con contador.
+- [ProfileHeader](https://zuccadev-labs.github.io/zuix/components/people/profile-header.md): Cabecera de perfil: portada a sangre, avatar superpuesto con anillo de cristal, nombre (h1), insignias, usuario, rol, biografía, metadatos, estadísticas, acciones y pestañas.
+- [SettingsSection](https://zuccadev-labs.github.io/zuix/components/people/settings-section.md): Sección de ajustes con filas: título, descripción, superficie de lectura con filas etiqueta–descripción–control (SettingRow) y pie con acciones.
+- [UserCard](https://zuccadev-labs.github.io/zuix/components/people/user-card.md): Tarjeta de persona: portada, avatar superpuesto, nombre, usuario, rol, biografía corta, estadísticas y acciones (seguir, mensaje).
+
+## Componentes: Nodos
+
+- [Node](https://zuccadev-labs.github.io/zuix/components/nodes/node.md): Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y…
+- [NodeCanvas](https://zuccadev-labs.github.io/zuix/components/nodes/node-canvas.md): Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y…
+- [NodeControls](https://zuccadev-labs.github.io/zuix/components/nodes/node-controls.md): Controles de un NodeCanvas: acercar, alejar, encajar, bloquear y deshacer/rehacer, y ordenar si se pide.
+- [NodeListView](https://zuccadev-labs.github.io/zuix/components/nodes/node-list-view.md): Vista en lista de un grafo: una tabla de nodos (estado, entradas, salidas) y otra de conexiones, con «Show» para volver al nodo en el lienzo y quitar conexión.
+- [NodeMinimap](https://zuccadev-labs.github.io/zuix/components/nodes/node-minimap.md): Minimapa de un NodeCanvas: todos los nodos reducidos y el rectángulo visible.
+
 ## Componentes: Layouts
 
+- [AppBar](https://zuccadev-labs.github.io/zuix/components/layout/app-bar.md): Barra de aplicación superior (top app bar de Material 3): pequeña, mediana o grande.
+- [AuthLayout](https://zuccadev-labs.github.io/zuix/components/layout/auth-layout.md): Página de acceso (entrar, registrarse, recuperar): tarjeta de cristal centrada sobre el lienzo (`centered`) o dividida con un lado de imagen (`split`).
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.
+- [ChatLayout](https://zuccadev-labs.github.io/zuix/components/layout/chat-layout.md): Layout de mensajería en tres paneles: lista de conversaciones, conversación y detalles.
+- [Container](https://zuccadev-labs.github.io/zuix/components/layout/container.md): Centra el contenido, limita su ancho con un token de tamaño y deja un margen lateral fijo o fluido.
+- [DashboardLayout](https://zuccadev-labs.github.io/zuix/components/layout/dashboard-layout.md): Página de dashboard: cabecera con título y acciones, barra de filtros fija bajo ella, contenido (DashboardGrid, MetricGroup) y panel lateral opcional.
+- [DocsLayout](https://zuccadev-labs.github.io/zuix/components/layout/docs-layout.md): Página de documentación: barra superior, navegación de páginas, artículo, índice con la sección que se lee marcada y paginación anterior/siguiente.
 - [Float](https://zuccadev-labs.github.io/zuix/components/layout/float.md): Pone una insignia, un punto o un contador sobre la esquina o el borde de otro elemento.
 - [FloatingPanel](https://zuccadev-labs.github.io/zuix/components/layout/floating-panel.md): Ventana flotante no modal que se arrastra y se redimensiona, con puntero o teclado, sin salir de su área.
 - [Grid](https://zuccadev-labs.github.io/zuix/components/layout/grid.md): Primitivas de maquetación: rejilla intrínseca, pila vertical y fila.
+- [KanbanLayout](https://zuccadev-labs.github.io/zuix/components/layout/kanban-layout.md): Página de tablero: cabecera con título, acciones y filtros, y el tablero (KanbanBoard) a todo el ancho con desplazamiento horizontal por columnas (una por pantalla en móvil).
+- [LandingLayout](https://zuccadev-labs.github.io/zuix/components/layout/landing-layout.md): Página de presentación: barra del sitio, héroe (el único h1), secciones (funciones en rejilla, banda de llamada en cristal, bloque tenue) y pie.
+- [MailLayout](https://zuccadev-labs.github.io/zuix/components/layout/mail-layout.md): Correo: carpetas, lista de mensajes y lectura.
 - [Navbar](https://zuccadev-labs.github.io/zuix/components/layout/navbar.md): Barra de navegación de un sitio, de cristal: flotante (dos barras separadas), dock (una barra compacta centrada) o de borde a borde; pegajosa, fija o en su sitio.
 - [NavigationMenu](https://zuccadev-labs.github.io/zuix/components/layout/navigation-menu.md): Menús de un sitio con paneles: enlaces y grupos cuyo botón abre un panel de enlaces con icono y descripción, en una o varias columnas.
 - [Page](https://zuccadev-labs.github.io/zuix/components/layout/page.md): Página con desplazamiento propio, cabecera y secciones.
 - [PaneHeader](https://zuccadev-labs.github.io/zuix/components/layout/pane-header.md): Cabecera de un panel de trabajo: icono, título, línea secundaria y barra de acciones con menú.
 - [PaneLayout](https://zuccadev-labs.github.io/zuix/components/layout/pane-layout.md): Mosaico de paneles redimensionables: árbol de divisiones, cabecera y menú por panel, y arrastre de un panel al borde de otro.
+- [ProfileLayout](https://zuccadev-labs.github.io/zuix/components/layout/profile-layout.md): Página de perfil: cabecera (ProfileHeader), pestañas, contenido y una columna lateral (UserCard, miembros, actividad) que baja bajo el contenido en estrecho.
 - [Rail](https://zuccadev-labs.github.io/zuix/components/layout/rail.md): Barra estrecha de navegación principal, solo iconos.
 - [ResizeHandle](https://zuccadev-labs.github.io/zuix/components/layout/resize-handle.md): Tirador para redimensionar un panel, con puntero y teclado.
+- [SettingsLayout](https://zuccadev-labs.github.io/zuix/components/layout/settings-layout.md): Página de ajustes: navegación lateral con anclas a las secciones, contenido (SettingsSection) y barra de guardar fija al pie cuando hay cambios sin guardar.
 - [Shell](https://zuccadev-labs.github.io/zuix/components/layout/shell.md): Estructura general de una aplicación.
 - [Sidebar](https://zuccadev-labs.github.io/zuix/components/layout/sidebar.md): Navegación secundaria: items con icono, contador, acción y submenú, plegable a iconos, y secciones en acordeón con pie fijo.
 - [SidePanel](https://zuccadev-labs.github.io/zuix/components/layout/side-panel.md): Andamiaje de panel lateral: barra de título, cuerpo con desplazamiento y pie.

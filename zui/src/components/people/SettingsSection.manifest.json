@@ -1,0 +1,119 @@
+{
+  "name": "SettingsSection",
+  "group": "people",
+  "exports": ["SettingRow"],
+  "description": "Sección de ajustes con filas: título, descripción, superficie de lectura con filas etiqueta–descripción–control (SettingRow) y pie con acciones. La fila muestra el estado del guardado.",
+  "import": "import { SettingsSection, SettingRow } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "description": "Ancla de la sección."
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["default", "danger"],
+      "default": "default"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [2, 3],
+      "default": 2
+    },
+    {
+      "name": "SettingRow.label",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "SettingRow.description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "SettingRow.control",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "SettingRow.htmlFor",
+      "type": "string",
+      "description": "Id del control: la etiqueta es un <label for>."
+    },
+    {
+      "name": "SettingRow.status",
+      "type": "enum",
+      "values": ["saving", "saved", "error"]
+    },
+    {
+      "name": "SettingRow.error",
+      "type": "string"
+    },
+    {
+      "name": "SettingRow.danger",
+      "type": "boolean"
+    },
+    {
+      "name": "SettingRow.stacked",
+      "type": "boolean"
+    },
+    {
+      "name": "SettingRow.labels",
+      "type": "Partial<SettingRowLabels>"
+    }
+  ],
+  "states": ["rest", "saving", "saved", "error"],
+  "tokens": [
+    "card-radius",
+    "line",
+    "danger",
+    "danger-text",
+    "success-text",
+    "fg",
+    "fg-muted",
+    "text-title",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "weight-medium",
+    "leading-snug"
+  ],
+  "classes": [
+    "z-settings-section",
+    "z-settings-section__head",
+    "z-settings-section__title",
+    "z-settings-section__description",
+    "z-settings-section__body",
+    "z-settings-section__footer",
+    "z-setting-row",
+    "z-setting-row__text",
+    "z-setting-row__label",
+    "z-setting-row__description",
+    "z-setting-row__control",
+    "z-setting-row__status"
+  ],
+  "a11y": "La sección se nombra por su título. En cada fila la etiqueta es un <label for> del control (htmlFor) y la descripción le llega por aria-describedby. El estado de guardado está en una región status por fila: «Saved» se anuncia una vez.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Notificaciones",
+      "code": "<SettingsSection id=\"notifications\" title=\"Notifications\" description=\"Choose what reaches your inbox.\">\n  <SettingRow htmlFor=\"n-mentions\" label=\"Mentions\" description=\"When someone mentions you in a comment.\" control={<Switch id=\"n-mentions\" defaultChecked aria-label=\"Mentions\" />} status=\"saved\" />\n  <SettingRow htmlFor=\"n-digest\" label=\"Weekly digest\" description=\"A summary every Monday.\" control={<NativeSelect id=\"n-digest\" block={false} defaultValue=\"monday\" options={[{ value: \"monday\", label: \"Monday\" }, { value: \"friday\", label: \"Friday\" }, { value: \"never\", label: \"Never\" }]} />} />\n</SettingsSection>"
+    }
+  ],
+  "origin": "Páginas de ajustes de los bloques de shadcn y de Carbon."
+}

@@ -6,6 +6,7 @@ import { cx } from "../../cx";
 import { useControllable, useIsoLayoutEffect } from "../../primitives/hooks";
 import { RadioGroupContext } from "../../primitives/radio-context";
 import { useFieldControl, useFieldLabel } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface RadioGroupProps extends Omit<ComponentProps<"div">, "onChange" | "defaultValue"> {
   value?: string;
@@ -28,7 +29,7 @@ const radiosOf = (group: Element) =>
   );
 
 /** Grupo de opciones excluyentes (patrón APG «radiogroup»): las flechas mueven el foco y la selección. */
-export function RadioGroup({
+export const RadioGroup = withRef(function RadioGroup({
   value: valueProp,
   defaultValue = "",
   onValueChange,
@@ -99,4 +100,4 @@ export function RadioGroup({
       </RadioGroupContext.Provider>
     </div>
   );
-}
+});

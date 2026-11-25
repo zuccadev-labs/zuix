@@ -48,7 +48,7 @@
   ],
   "classes": ["z-chart"],
   "behavior": "dom",
-  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
   "description": "Gráfico de barras verticales u horizontales, agrupadas o apiladas, con valores negativos: grosor máximo, extremo del dato redondeado y base recta, hueco de 2 px entre las que se tocan, banda resaltada y tooltip por categoría, tramas por serie (`patterns`).",
   "import": "import { BarChart } from \"@zuccadev-labs/zuix-zui\"",
   "props": [

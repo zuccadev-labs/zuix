@@ -1,0 +1,71 @@
+{
+  "name": "PriceBreakdown",
+  "group": "data",
+  "description": "Desglose de precio: filas con importes alineados, descuentos y créditos con signo, impuestos por importe o porcentaje, subtotal opcional y total destacado, con Intl.NumberFormat.",
+  "import": "import { PriceBreakdown } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "lines",
+      "type": "PriceLine[]",
+      "required": true,
+      "description": "`{ label, amount?, rate?, kind?, hint?, id? }`. `kind`: `item` (por defecto), `fee`, `discount` y `credit` (restan siempre, sea cual sea el signo) o `tax` (con `rate` en %: porcentaje de la base acumulada hasta esa fila, sin impuestos)."
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "required": true,
+      "description": "Código ISO 4217. Los decimales salen de la moneda: 2 en EUR, 0 en JPY."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "currencyDisplay",
+      "type": "enum",
+      "values": ["symbol", "narrowSymbol", "code", "name"],
+      "default": "symbol"
+    },
+    {
+      "name": "subtotal",
+      "type": "boolean",
+      "default": false,
+      "description": "Fila de subtotal antes de descuentos e impuestos."
+    },
+    {
+      "name": "subtotalLabel",
+      "type": "ReactNode",
+      "default": "Subtotal"
+    },
+    {
+      "name": "totalLabel",
+      "type": "ReactNode",
+      "default": "Total"
+    },
+    {
+      "name": "totalHint",
+      "type": "ReactNode",
+      "description": "Texto bajo el total."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    }
+  ],
+  "tokens": ["space-1", "space-2", "space-4", "line", "fg", "fg-muted", "success-text", "text-heading", "weight-semibold"],
+  "classes": ["z-summary", "z-summary__row", "z-summary__label", "z-summary__hint", "z-summary__value"],
+  "a11y": "El marcado de SummaryList (`<dl>`). Los descuentos se escriben con signo («−$20.00»), no solo en verde. Las sumas se hacen en unidades menores: el total es la suma exacta de las filas que se leen. Sin React: el mismo marcado, ya formateado en el servidor; `summarizePrice` y `formatMoney` salen también de `@zuccadev-labs/zuix-zui/dom/data` para calcularlo en el cliente.",
+  "examples": [
+    {
+      "title": "Reserva de tres noches",
+      "code": "<PriceBreakdown\n  currency=\"EUR\"\n  locale=\"en-IE\"\n  subtotal\n  lines={[\n    { label: \"3 nights\", hint: \"€120.00 × 3\", amount: 360 },\n    { label: \"Cleaning fee\", amount: 45, kind: \"fee\" },\n    { label: \"Weekly discount\", amount: 36, kind: \"discount\" },\n    { label: \"VAT (13%)\", rate: 13, kind: \"tax\" },\n  ]}\n  totalHint=\"You won't be charged yet\"\n/>"
+    },
+    {
+      "title": "Yenes, sin decimales",
+      "code": "<PriceBreakdown currency=\"JPY\" locale=\"ja-JP\" lines={[{ label: \"Room\", amount: 18400 }, { label: \"Tax\", rate: 10, kind: \"tax\" }]} />"
+    }
+  ],
+  "origin": "Desglose de reserva de Airbnb y resúmenes de pedido de Shopify, sin dominio: no sabe de noches ni de envíos."
+}

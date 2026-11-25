@@ -6,6 +6,7 @@ import type { TimelineLabels } from "../../core/timeline-view";
 import { timelineWidget, type Resource, type TimelineViewProps as CoreProps } from "../../core/timeline-widget";
 import type { SlotSelection } from "../../core/agenda-control";
 import { useWidget } from "./vtree";
+import { withRef } from "../../react-compat";
 
 export type { Resource, TimelineLabels, TimelineScale, TimelineTask };
 export type { TimelineGroup } from "../../core/timeline";
@@ -36,7 +37,7 @@ export interface TimelineViewProps extends CoreProps {
  * camino crítico, línea de hoy y zoom día/semana/mes) o recursos (`mode="resources"`: salas o personas por hora,
  * conflictos con trama y texto, crear arrastrando, ventana virtual de filas). Treegrid/grid con una parada de Tab.
  */
-export function TimelineView({
+export const TimelineView = withRef(function TimelineView({
   onScaleChange,
   onGroupToggle,
   onTaskClick,
@@ -63,4 +64,4 @@ export function TimelineView({
       "select-slot": onSelectSlot,
     },
   });
-}
+});

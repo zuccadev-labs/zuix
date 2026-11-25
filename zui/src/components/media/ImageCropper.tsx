@@ -3,6 +3,7 @@ import type { Ref } from "react";
 import type { Crop } from "../../core/crop";
 import { imageCropperWidget, type ImageCropperLabels, type ImageCropperProps as CoreProps } from "../../core/cropper-widget";
 import { useWidget } from "../agenda/vtree";
+import { withRef } from "../../react-compat";
 
 export type { Crop, ImageCropperLabels };
 
@@ -32,7 +33,15 @@ type Detail = { crop: Crop; pixels: PixelCrop };
  * Recortador de imagen: área que se mueve y se redimensiona (ocho asas), relación de aspecto fija u opcional, forma
  * rectangular o circular y teclado. La salida se dibuja con `cropImage(img, crop)` o `cropImageBlob(img, crop)`.
  */
-export function ImageCropper({ onCropChange, onCropChangeEnd, onImageLoad, id, className, ref, ...props }: ImageCropperProps) {
+export const ImageCropper = withRef(function ImageCropper({
+  onCropChange,
+  onCropChangeEnd,
+  onImageLoad,
+  id,
+  className,
+  ref,
+  ...props
+}: ImageCropperProps) {
   return useWidget(imageCropperWidget, props, {
     id,
     className,
@@ -43,4 +52,4 @@ export function ImageCropper({ onCropChange, onCropChangeEnd, onImageLoad, id, c
       load: onImageLoad ? (d: Detail) => onImageLoad(d.crop, d.pixels) : undefined,
     },
   });
-}
+});

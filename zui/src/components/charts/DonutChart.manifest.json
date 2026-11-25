@@ -48,7 +48,7 @@
   ],
   "classes": ["z-chart"],
   "behavior": "dom",
-  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); método de color y marcas de la guía dataviz. Sin bibliotecas.",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
   "description": "Anillo: parte de un todo con el total en el centro (o el sector activo al pasar o enfocar), leyenda con porcentajes que oculta sectores, hueco entre sectores y trama opcional.",
   "import": "import { DonutChart } from \"@zuccadev-labs/zuix-zui\"",
   "props": [

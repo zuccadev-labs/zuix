@@ -1,5 +1,5 @@
 /*
-  Familia ColorPicker (oleada 7): área de saturación y brillo, deslizadores de tono y alfa, campos, muestrario,
+  Familia ColorPicker: área de saturación y brillo, deslizadores de tono y alfa, campos, muestrario,
   cuentagotas, selector del sistema y la variante en popover. El color mostrado es el valor de la aplicación
   (variables locales que escribe la pieza); los extremos del área y el espectro del tono son tokens
   (`colorpicker-white`, `colorpicker-black`, `colorpicker-spectrum`). Sin píldoras: el área y las pistas son
@@ -262,8 +262,9 @@
     flex-grow: 2.6;
     min-inline-size: 5.5rem;
   }
-  /* Estrecho (un selector de 220 px en una columna): el formato va en su propia línea y los canales debajo. */
-  @container z-colorfields (inline-size < 18rem) {
+  /* Estrecho: el formato va en su propia línea y los canales debajo. La fila entera (formato, cuatro canales con
+     alfa y el selector del sistema) pide unos 326 px: con el corte en 18rem, entre 288 y 336 px se salía de la tarjeta. */
+  @container z-colorfields (inline-size < 21rem) {
     .z-colorpicker__fields {
       flex-wrap: wrap;
     }

@@ -55,11 +55,18 @@ export default async function ({ page, test, ok, settle, shots }) {
     const root = "#meetings-calendar";
     await page.locator(root).scrollIntoViewIfNeeded();
     await changes();
-    await day(root, "2026-11-11").click();
-    await day(root, "2026-11-25").click();
+    // Cada paso espera su z:change antes del siguiente: la rejilla se vuelve a pintar al cambiar y, en un Firefox
+    // cargado, un clic que llega a medio repintado cae en el día recién sustituido y se pierde.
+    const seen = [];
+    const step = async (act) => {
+      await act();
+      await page.waitForFunction(() => window.__zdates.length > 0, null, { timeout: 4000 }).catch(() => {});
+      seen.push(...(await changes()));
+    };
+    await step(() => day(root, "2026-11-11").click());
+    await step(() => day(root, "2026-11-25").click());
     await page.keyboard.press("ArrowLeft");
-    await page.keyboard.press("Enter");
-    const seen = await changes();
+    await step(() => page.keyboard.press("Enter"));
     ok(seen.length === 3 && seen.at(-1).value.join() === "2026-11-04,2026-11-18,2026-11-24,2026-11-25", `z:change ${JSON.stringify(seen)}`);
     ok((await page.locator(`${root} [role=grid]`).getAttribute("aria-multiselectable")) === "true", "aria-multiselectable");
   });

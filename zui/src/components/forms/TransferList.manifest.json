@@ -1,0 +1,104 @@
+{
+  "name": "TransferList",
+  "group": "forms",
+  "description": "Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible. El valor es la lista de elegidos, en el orden en que llegaron.",
+  "import": "import { TransferList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "{ value: string; label: string; description?: string; disabled?: boolean }[]",
+      "required": true
+    },
+    {
+      "name": "value",
+      "type": "string[]",
+      "description": "Elegidos (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string[]) => void"
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "default": false,
+      "description": "Búsqueda en cada lista (sin acentos ni mayúsculas)."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Un input oculto por valor elegido para el formulario."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TransferListLabels>",
+      "description": "Títulos, búsqueda, recuento («{count} of {total} selected»), botones y anuncio, en inglés por defecto."
+    }
+  ],
+  "states": ["rest", "focus", "checked", "disabled", "empty"],
+  "tokens": [
+    "line",
+    "surface-solid",
+    "surface-3",
+    "row-hover",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-solid",
+    "fg-on-accent",
+    "accent-ring",
+    "control-border",
+    "control-bg",
+    "control-radius",
+    "control-radius-sm",
+    "control-radius-lg",
+    "control-height-sm",
+    "radius-xs",
+    "text-caption",
+    "text-small",
+    "weight-semibold",
+    "focus-width",
+    "focus-offset"
+  ],
+  "classes": [
+    "z-transfer",
+    "z-transfer__list",
+    "z-transfer__head",
+    "z-transfer__title",
+    "z-transfer__count",
+    "z-transfer__search",
+    "z-transfer__options",
+    "z-transfer__option",
+    "z-transfer__check",
+    "z-transfer__text",
+    "z-transfer__label",
+    "z-transfer__description",
+    "z-transfer__empty",
+    "z-transfer__actions"
+  ],
+  "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Miembros de un equipo",
+      "code": "<TransferList searchable name=\"members\" labels={{ source: \"People\", target: \"Team\" }} items={[{ value: \"ana\", label: \"Ana Torres\", description: \"Design\" }, { value: \"ben\", label: \"Ben Okafor\", description: \"Engineering\" }, { value: \"chen\", label: \"Chen Wei\", description: \"Engineering\" }, { value: \"dara\", label: \"Dara Singh\", description: \"Product\", disabled: true }]} defaultValue={[\"chen\"]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Miembros de un equipo",
+      "code": "<div class=\"z-transfer\" data-searchable data-name=\"members\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"value\": \"ana\", \"label\": \"Ana Torres\", \"description\": \"Design\"}, {\"value\": \"ben\", \"label\": \"Ben Okafor\", \"description\": \"Engineering\"}, {\"value\": \"chen\", \"label\": \"Chen Wei\", \"description\": \"Engineering\"}, {\"value\": \"dara\", \"label\": \"Dara Singh\", \"description\": \"Product\", \"disabled\": true}, {\"value\": \"eli\", \"label\": \"Eli Moreau\", \"description\": \"Support\"}, {\"value\": \"femi\", \"label\": \"Femi Adeyemi\", \"description\": \"Sales\"}], \"value\": [\"chen\"], \"labels\": {\"source\": \"People\", \"target\": \"Team\"}}</script>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: Transfer list de MUI, Transfer de Ant Design y PickList de PrimeReact."
+}

@@ -1,0 +1,131 @@
+{
+  "name": "LandingLayout",
+  "group": "layout",
+  "exports": ["LandingHero", "LandingSection"],
+  "description": "Página de presentación: barra del sitio, héroe (el único h1), secciones (funciones en rejilla, banda de llamada en cristal, bloque tenue) y pie.",
+  "import": "import { LandingLayout, LandingHero, LandingSection } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "header",
+      "type": "ReactNode"
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "LandingHero.title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "LandingHero.eyebrow",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingHero.lead",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingHero.actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingHero.media",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingHero.align",
+      "type": "enum",
+      "values": ["center", "split"],
+      "default": "center"
+    },
+    {
+      "name": "LandingSection.title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingSection.eyebrow",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingSection.description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "LandingSection.id",
+      "type": "string"
+    },
+    {
+      "name": "LandingSection.variant",
+      "type": "enum",
+      "values": ["default", "features", "cta", "muted"],
+      "default": "default"
+    },
+    {
+      "name": "LandingSection.columns",
+      "type": "enum",
+      "values": [2, 3, 4],
+      "default": 3
+    },
+    {
+      "name": "LandingSection.actions",
+      "type": "ReactNode"
+    }
+  ],
+  "tokens": [
+    "font-display",
+    "text-hero",
+    "text-display-sm",
+    "text-lead",
+    "weight-display",
+    "tracking-display",
+    "leading-tight",
+    "leading-relaxed",
+    "fg-muted",
+    "accent-soft",
+    "accent-text",
+    "glass-border",
+    "surface",
+    "radius-sm",
+    "radius-xl",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "space-16"
+  ],
+  "classes": [
+    "z-landing",
+    "z-landing__header",
+    "z-landing__main",
+    "z-landing__footer",
+    "z-landing-hero",
+    "z-landing-hero__text",
+    "z-landing-hero__eyebrow",
+    "z-landing-hero__title",
+    "z-landing-hero__lead",
+    "z-landing-hero__actions",
+    "z-landing-hero__media",
+    "z-landing-section",
+    "z-landing-section__head",
+    "z-landing-section__eyebrow",
+    "z-landing-section__title",
+    "z-landing-section__description",
+    "z-landing-section__actions",
+    "z-landing-section__body"
+  ],
+  "a11y": "Un solo h1 (el del héroe) y un h2 por sección, en orden. Cada sección con título es una región con nombre (aria-labelledby). Los títulos se equilibran (text-wrap: balance) y el tamaño del héroe sigue al contenedor.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Héroe y funciones",
+      "code": "<LandingLayout>\n  <LandingHero eyebrow=\"New in 0.4\" title=\"Interfaces that feel like glass\" lead=\"Tokens, components and layouts for the web platform, with React as one binding among many.\" actions={<><Button variant=\"primary\" size=\"lg\">Get started</Button><Button size=\"lg\" variant=\"ghost\">Read the docs</Button></>} />\n  <LandingSection id=\"features\" eyebrow=\"Why\" title=\"Built on the platform\" variant=\"features\"><Card>HTML first</Card><Card>Tokens only</Card><Card>Accessible by default</Card></LandingSection>\n  <LandingSection id=\"cta\" variant=\"cta\" title=\"Start in a minute\" actions={<Button variant=\"primary\">Install</Button>} />\n</LandingLayout>"
+    }
+  ],
+  "origin": "Bloques de landing de shadcn y Magic UI."
+}

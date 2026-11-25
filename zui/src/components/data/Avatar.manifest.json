@@ -33,12 +33,13 @@
     {
       "name": "status",
       "type": "enum",
-      "values": ["online", "offline", "busy", "away"]
+      "values": ["online", "offline", "busy", "away", "dnd", "oof"],
+      "description": "Estado; cada uno con su forma dentro del punto (desde md) además del color."
     },
     {
       "name": "statusLabel",
       "type": "string",
-      "description": "Nombre accesible del estado; por defecto el propio valor."
+      "description": "Nombre accesible del estado. Por defecto, su texto («Available», «Do not disturb»)."
     }
   ],
   "states": ["rest", "image", "fallback"],

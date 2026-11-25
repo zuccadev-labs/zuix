@@ -3,9 +3,10 @@
 //   1. `pnpm build` (se salta con --skip-build), `pnpm bump check` y `pnpm pack` de cada paquete a .tmp/pack/.
 //   2. Revisa cada tarball (los cinco, incluido el paraguas @zuccadev-labs/zuix): sin `src/`, sin `workspace:`, sin datos
 //      internos, con README, LICENSE, CHANGELOG y metadatos de npm, y cada destino de `exports` existe dentro.
-//   3. .tmp/consumer/react: proyecto fuera del workspace (raíz propia), instalado desde los tarballs. Renderiza con
-//      react-dom/server, compila con Vite y pasa `tsc --noEmit` con skipLibCheck: false (bundler y nodenext), con
-//      TypeScript 5.9 y con TypeScript 7.
+//   3. .tmp/consumer/react y .tmp/consumer/react18: proyectos fuera del workspace (raíz propia), instalados desde los
+//      tarballs, con React 19 y con React 18 (y sus @types/react). Renderizan con react-dom/server y en un DOM de happy-dom
+//      (refs, `inert`, `popovertarget`, sin avisos de React en la consola), compilan con Vite y pasan `tsc --noEmit` con
+//      skipLibCheck: false (bundler y nodenext), con TypeScript 5.9, 6 (solo React 19) y 7.
 //   4. .tmp/consumer/dom: lo mismo sin React instalado; importa los módulos `dom` en Node y comprueba con esbuild que
 //      las entradas por familia de zui/dom se descartan en un bundle (toast() solo no trae agenda, gráficos ni color).
 //   5. Con --next, .tmp/consumer/next: Next.js (última estable, App Router) instalado desde los tarballs. `next build`,
@@ -27,9 +28,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 /**
  * Cuántos iconos del set completo trae un bundle: se busca el primer trazado de cada icono de `zicon/src/icons`.
  * Los componentes usan unos pocos por dentro (chevrones, cierre, marca…); el set completo son más de 300. Medir esto
- * en vez del peso del bundle evita que el tope tenga que subir con cada componente nuevo.
+ * en vez del peso del bundle evita que el tope tenga que subir con cada componente nuevo. El consumidor de Vite llama
+ * al init() completo de zui/dom, que trae los iconos de todas las familias (unos 80 con chat, IA, dashboard y
+ * usuarios): el tope queda lejos de esa cifra y del set completo.
  */
-const ICON_LIMIT = 80;
+const ICON_LIMIT = 120;
 function iconsIn(js) {
   const dir = join(root, "zicon", "src", "icons");
   let found = 0;
@@ -230,7 +233,7 @@ assert.equal(zui.Button, Button); assert.equal(zout.Stack, Stack); assert.equal(
 const html = renderToStaticMarkup(h(Stack, null, h(Button, { variant: "primary", icon: "plus" }, "New")));
 assert.ok(html.includes("z-btn--primary") && html.includes("<path"), "render con icono a través del paraguas");
 assert.ok(iconSvg("plus").includes("<path")); assert.equal(typeof zuiDom.init, "function"); assert.equal(typeof zoutDom.init, "function");
-for (const f of ["styles.css", "tokens.css"]) import.meta.resolve("@zuccadev-labs/zuix/" + f);
+for (const f of ["styles.css", "tokens.css", "styles.compat.css", "tokens.compat.css"]) import.meta.resolve("@zuccadev-labs/zuix/" + f);
 console.log("ok");
 `,
     },
@@ -239,22 +242,30 @@ console.log("ok");
   step("paraguas @zuccadev-labs/zuix: subrutas, mismo módulo y render", "node", ["check.mjs"], dir);
 }
 
-// ── 3. Consumidor con React ───────────────────────────────────────────────────────────────────────
-const reactDir = project(
-  "react",
-  {
-    dependencies: { ...zuixDeps, react: "^19.0.0", "react-dom": "^19.0.0" },
-    devDependencies: {
-      "@types/react": "^19.0.0",
-      "@types/react-dom": "^19.0.0",
-      typescript: "^5.9.0",
-      "typescript-6": "npm:typescript@^6.0.0",
-      "typescript-7": "npm:typescript@^7.0.0",
-      vite: "^8.0.0",
+// ── 3. Consumidores con React 19 y con React 18 ───────────────────────────────────────────────────
+// El mismo proyecto dos veces: `react` (React 19 y @types/react 19) y `react18` (React 18 y @types/react 18). Los dos
+// renderizan en servidor y en un DOM (happy-dom: refs, `inert`, `popovertarget` y consola sin avisos), resuelven las
+// entradas, pasan tsc y compilan con Vite.
+const install = ["install", "--prefer-offline", "--no-frozen-lockfile"];
+for (const major of [19, 18]) {
+  const name = major === 19 ? "react" : "react18";
+  const range = major === 19 ? "^19.0.0" : "^18.2.0";
+  const reactDir = project(
+    name,
+    {
+      dependencies: { ...zuixDeps, react: range, "react-dom": range },
+      devDependencies: {
+        "@types/react": range,
+        "@types/react-dom": range,
+        "@happy-dom/global-registrator": "^21.0.0",
+        typescript: "^5.9.0",
+        "typescript-6": "npm:typescript@^6.0.0",
+        "typescript-7": "npm:typescript@^7.0.0",
+        vite: "^8.0.0",
+      },
     },
-  },
-  {
-    "ssr.mjs": `import assert from "node:assert/strict";
+    {
+      "ssr.mjs": `import assert from "node:assert/strict";
 import { createElement as h } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import "@zuccadev-labs/zuix-zicon/all";
@@ -276,9 +287,32 @@ assert.equal(typeof Modal, "function");
 assert.equal(typeof Shell, "function");
 assert.equal(cx("a", false, "b"), "a b");
 assert.ok(registeredIconNames().length >= 300, "set completo registrado");
-console.log("ssr: Button, Badge, Stack e Icon renderizan el marcado del contrato");
+// Render de servidor de componentes con efectos de layout, sin avisos de React (React 18 avisa de un useLayoutEffect
+// en el servidor; el binding usa useEffect cuando no hay document).
+const { renderToString } = await import("react-dom/server");
+const { Calendar, Carousel, FileUpload, Tabs } = await import("@zuccadev-labs/zuix-zui");
+const { FloatingPanel, Navbar } = await import("@zuccadev-labs/zuix-zout");
+const warnings = [];
+const { error, warn } = console;
+console.error = (...args) => warnings.push(args.map(String).join(" ").slice(0, 300));
+console.warn = console.error;
+const page = renderToString(
+  h(Shell, { sidebar: { content: "Nav", label: "Main" } },
+    h(Calendar, {}),
+    h(Carousel, { items: ["a", "b"], renderItem: (item) => h("span", null, item), label: "Photos" }),
+    h(FileUpload, { onFiles: () => {} }),
+    h(Tabs, { items: [{ value: "a", label: "A", content: "Panel" }] }),
+    h(FloatingPanel, { title: "Panel" }, "Body"),
+    h(Navbar, { brand: "Acme", items: [{ label: "Docs", href: "#docs" }] }),
+  ),
+);
+console.error = error;
+console.warn = warn;
+assert.ok(page.includes("z-shell") && page.includes("z-calendar"), "render de servidor de Shell y Calendar");
+assert.deepEqual(warnings, [], "render de servidor sin avisos");
+console.log("ssr: Button, Badge, Stack e Icon renderizan el marcado del contrato; Shell, Calendar, Carousel y otros, sin avisos");
 `,
-    "subpaths.mjs": `import assert from "node:assert/strict";
+      "subpaths.mjs": `import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
@@ -287,9 +321,10 @@ function fileURLToPathSafe(u) { return decodeURIComponent(new URL(u).pathname); 
 const specs = [
   "@zuccadev-labs/zuix-zicon", "@zuccadev-labs/zuix-zicon/core", "@zuccadev-labs/zuix-zicon/all", "@zuccadev-labs/zuix-zicon/dom", "@zuccadev-labs/zuix-zicon/element", "@zuccadev-labs/zuix-zicon/icons/x-mark",
   "@zuccadev-labs/zuix-zicon/manifest.json", "@zuccadev-labs/zuix-zicon/sprite.svg", "@zuccadev-labs/zuix-zicon/svg/outline/bell.svg", "@zuccadev-labs/zuix-zicon/svg/solid/bell.svg", "@zuccadev-labs/zuix-zicon/dist/zicon.element.js",
-  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js",
-  "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js",
+  "@zuccadev-labs/zuix-zui", "@zuccadev-labs/zuix-zui/dom", ...["core", "dates", "data", "content", "agenda", "charts", "color", "media", "effects", "time", "terminal", "chat", "ai", "dashboard", "people", "nodes"].map((f) => "@zuccadev-labs/zuix-zui/dom/" + f), "@zuccadev-labs/zuix-zui/styles.css", "@zuccadev-labs/zuix-zui/styles/actions.css", "@zuccadev-labs/zuix-zui/manifest.json", "@zuccadev-labs/zuix-zui/html.json", "@zuccadev-labs/zuix-zui/dist/zui.css", "@zuccadev-labs/zuix-zui/dist/zui.dom.js", "@zuccadev-labs/zuix-zui/styles.compat.css", "@zuccadev-labs/zuix-zui/dist/zui.compat.css",
+  "@zuccadev-labs/zuix-zout", "@zuccadev-labs/zuix-zout/dom", "@zuccadev-labs/zuix-zout/styles.css", "@zuccadev-labs/zuix-zout/manifest.json", "@zuccadev-labs/zuix-zout/html.json", "@zuccadev-labs/zuix-zout/dist/zout.css", "@zuccadev-labs/zuix-zout/dist/zout.dom.js", "@zuccadev-labs/zuix-zout/styles.compat.css", "@zuccadev-labs/zuix-zout/dist/zout.compat.css",
   "@zuccadev-labs/zuix-tokens/tokens.css", "@zuccadev-labs/zuix-tokens/tokens.json", "@zuccadev-labs/zuix-tokens/css/dazlabs.css",
+  "@zuccadev-labs/zuix-tokens/tokens.compat.css", "@zuccadev-labs/zuix-tokens/css/zenith.compat.css",
 ];
 for (const s of specs) {
   const file = resolve(s);
@@ -306,37 +341,91 @@ for (const s of ["@zuccadev-labs/zuix-zui/dist/zui.dom.js", "@zuccadev-labs/zuix
   assert.doesNotMatch(readFileSync(resolve(s), "utf8"), /from\\s*["'](?!\\.)/, s + " es autocontenido");
 console.log("subpaths: " + specs.length + " entradas de exports resuelven a archivos publicados");
 `,
-    "tsconfig.json": JSON.stringify(
-      {
-        compilerOptions: {
-          target: "ES2022",
-          module: "ESNext",
-          moduleResolution: "Bundler",
-          jsx: "react-jsx",
-          lib: ["ES2022", "DOM", "DOM.Iterable"],
-          strict: true,
-          noEmit: true,
-          skipLibCheck: false,
-          types: [],
-          resolveJsonModule: true,
+      "client.mjs": `import assert from "node:assert/strict";
+import { GlobalRegistrator } from "@happy-dom/global-registrator";
+GlobalRegistrator.register({ url: "http://localhost/" });
+// Cualquier aviso de React (refs en componentes de función, atributos desconocidos o mal tipados) hace fallar la prueba.
+const problems = [];
+for (const level of ["error", "warn"]) console[level] = (...args) => problems.push(level + ": " + args.map(String).join(" ").slice(0, 400));
+const { createElement: h, createRef, version } = await import("react");
+const { flushSync } = await import("react-dom");
+const { createRoot } = await import("react-dom/client");
+await import("@zuccadev-labs/zuix-zicon/all");
+const { Icon } = await import("@zuccadev-labs/zuix-zicon");
+const { Button, Input, Skeleton, Modal, Switch } = await import("@zuccadev-labs/zuix-zui");
+const { Navbar } = await import("@zuccadev-labs/zuix-zout");
+assert.equal(version.split(".")[0], "${major}", "React instalado");
+const refs = { button: createRef(), icon: createRef(), input: createRef(), toggle: createRef(), trigger: createRef() };
+const container = document.createElement("div");
+document.body.append(container);
+const root = createRoot(container);
+flushSync(() =>
+  root.render(
+    h("div", null,
+      h(Button, { ref: refs.button }, "Save"),
+      h(Icon, { name: "bell", ref: refs.icon }),
+      h(Input, { ref: refs.input, "aria-label": "Name" }),
+      h(Switch, { ref: refs.toggle, "aria-label": "Wi-Fi" }),
+      h(Skeleton, { loading: true }, h("span", null, "Loaded")),
+      h(Modal, { title: "Edit", trigger: h(Button, { ref: refs.trigger }, "Open") }, "Body"),
+      h(Navbar, { brand: "Acme", items: [{ label: "Docs", href: "#docs" }] }),
+    ),
+  ),
+);
+await new Promise((resolve) => setTimeout(resolve, 20));
+assert.equal(refs.button.current?.tagName, "BUTTON", "ref de Button");
+assert.equal(refs.icon.current?.tagName.toLowerCase(), "svg", "ref de Icon");
+assert.equal(refs.input.current?.tagName, "INPUT", "ref de Input");
+assert.equal(refs.toggle.current?.getAttribute("role"), "switch", "ref de Switch");
+// La ref del disparador de Modal (Slot) se une a la propia del componente: el botón la recibe y abre el diálogo.
+assert.equal(refs.trigger.current?.textContent, "Open", "ref del disparador de Modal");
+assert.equal(container.querySelector(".z-skeleton")?.getAttribute("inert"), "", "Skeleton con contenido lleva inert");
+assert.equal(container.querySelector(".z-navbar__toggle")?.getAttribute("popovertarget"), container.querySelector(".z-navbar__menu")?.id, "popovertarget del Navbar");
+flushSync(() => root.unmount());
+assert.equal(refs.button.current, null, "la ref se limpia al desmontar");
+assert.deepEqual(problems, [], "consola sin avisos");
+console.log("client: React " + version + " · refs, inert y popovertarget sin avisos");
+// Sin unregister: el planificador de React puede tener trabajo pendiente que aún lee window.
+process.exit(0);
+`,
+      "tsconfig.json": JSON.stringify(
+        {
+          compilerOptions: {
+            target: "ES2022",
+            module: "ESNext",
+            moduleResolution: "Bundler",
+            jsx: "react-jsx",
+            lib: ["ES2022", "DOM", "DOM.Iterable"],
+            strict: true,
+            noEmit: true,
+            skipLibCheck: false,
+            types: [],
+            resolveJsonModule: true,
+          },
+          include: ["src"],
         },
-        include: ["src"],
-      },
-      null,
-      2,
-    ),
-    "tsconfig.nodenext.json": JSON.stringify(
-      { extends: "./tsconfig.json", compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext" } },
-      null,
-      2,
-    ),
-    "index.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>consumer</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n`,
-    "vite.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out" } });\n`,
-    "src/css.d.ts": `declare module "*.css";\n`,
-    // El mismo uso a través del paraguas: tipos en Bundler y NodeNext, y CSS con @import de paquetes en Vite.
-    "umbrella.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>umbrella</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/umbrella.tsx"></script></body></html>\n`,
-    "vite.umbrella.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out-umbrella", rolldownOptions: { input: "umbrella.html" } } });\n`,
-    "src/umbrella.tsx": `import "@zuccadev-labs/zuix/styles.css";
+        null,
+        2,
+      ),
+      "tsconfig.nodenext.json": JSON.stringify(
+        { extends: "./tsconfig.json", compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext" } },
+        null,
+        2,
+      ),
+      "index.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>consumer</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>\n`,
+      "vite.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out" } });\n`,
+      "src/css.d.ts": `declare module "*.css";\n`,
+      // El mismo uso a través del paraguas: tipos en Bundler y NodeNext, y CSS con @import de paquetes en Vite.
+      "umbrella.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>umbrella</title></head><body class="z-root z-canvas"><div id="root"></div><script type="module" src="/src/umbrella.tsx"></script></body></html>\n`,
+      "vite.umbrella.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ oxc: { jsx: { runtime: "automatic" } }, logLevel: "warn", build: { outDir: "out-umbrella", rolldownOptions: { input: "umbrella.html" } } });\n`,
+      // Modo compat por el paraguas: una sola hoja con tokens, zui y zout ya bajados (docs/users/10-compatibilidad.md).
+      "compat.html": `<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><title>compat</title></head><body class="z-root z-canvas"><button class="z-btn z-btn--primary">Ok</button><script type="module" src="/src/compat.ts"></script></body></html>\n`,
+      "vite.compat.config.mjs": `import { defineConfig } from "vite";\nexport default defineConfig({ logLevel: "warn", build: { outDir: "out-compat", rolldownOptions: { input: "compat.html" } } });\n`,
+      "src/compat.ts": `import "@zuccadev-labs/zuix/styles.compat.css";
+import { init } from "@zuccadev-labs/zuix/zui/dom";
+init();
+`,
+      "src/umbrella.tsx": `import "@zuccadev-labs/zuix/styles.css";
 import { createRoot } from "react-dom/client";
 import { Icon, registerIcons, type IconName } from "@zuccadev-labs/zuix/zicon/core";
 import { plus } from "@zuccadev-labs/zuix-zicon/icons/plus";
@@ -369,9 +458,10 @@ createRoot(document.getElementById("root")!).render(
 init();
 initLayouts();
 `,
-    "src/main.tsx": `import "@zuccadev-labs/zuix-tokens/tokens.css";
+      "src/main.tsx": `import "@zuccadev-labs/zuix-tokens/tokens.css";
 import "@zuccadev-labs/zuix-zui/styles.css";
 import "@zuccadev-labs/zuix-zout/styles.css";
+import { createRef } from "react";
 import { createRoot } from "react-dom/client";
 import { Icon, registerIcons, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { plus } from "@zuccadev-labs/zuix-zicon/icons/plus";
@@ -383,6 +473,9 @@ import { init as initLayouts } from "@zuccadev-labs/zuix-zout/dom";
 import { iconSvg } from "@zuccadev-labs/zuix-zicon/dom";
 
 registerIcons([plus, bell]);
+// Refs a componentes con los tipos de @types/react 18 y 19.
+const saveRef = createRef<HTMLButtonElement>();
+const iconRef = createRef<SVGSVGElement>();
 const icon: IconName = "bell";
 const props: ButtonProps = { variant: "primary", icon: "plus" };
 const options: ToastOptions = { title: "Saved", intent: "success" };
@@ -395,8 +488,8 @@ createRoot(document.getElementById("root")!).render(
   <ToastProvider>
     <Page>
       <Stack gap={4}>
-        <Button {...props} onClick={() => toast(options)}>New project</Button>
-        <Icon name={icon} label="Alerts" />
+        <Button {...props} ref={saveRef} onClick={() => toast(options)}>New project</Button>
+        <Icon name={icon} label="Alerts" ref={iconRef} />
         <Modal trigger={<Button>Open</Button>} title="Edit">Body</Modal>
       </Stack>
     </Page>
@@ -405,65 +498,90 @@ createRoot(document.getElementById("root")!).render(
 init();
 initLayouts();
 `,
-  },
-);
-const install = ["install", "--prefer-offline", "--no-frozen-lockfile"];
-if (step("react: pnpm install desde los tarballs, fuera del workspace", "pnpm", install, reactDir).ok) {
-  step("react: render con react-dom/server", "node", ["ssr.mjs"], reactDir);
-  step("react: subpath exports", "node", ["subpaths.mjs"], reactDir);
-  // Las declaraciones se emiten con TypeScript 7 y las consume quien siga en 5.x: se comprueban con los dos compiladores,
-  // cada uno por su ruta (los dos paquetes declaran el binario `tsc`).
-  for (const [label, pkg] of [
-    ["TS 5.9", "typescript"],
-    ["TS 6", "typescript-6"],
-    ["TS 7", "typescript-7"],
-  ]) {
-    const tsc = join(reactDir, "node_modules", pkg, "bin/tsc");
-    step(`react: tsc --noEmit con ${label} (Bundler, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.json"], reactDir);
-    step(`react: tsc --noEmit con ${label} (NodeNext, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.nodenext.json"], reactDir);
+    },
+  );
+  if (step(`${name}: pnpm install desde los tarballs, fuera del workspace`, "pnpm", install, reactDir).ok) {
+    step(`${name}: render con react-dom/server`, "node", ["ssr.mjs"], reactDir);
+    step(`${name}: render en un DOM, refs y consola sin avisos`, "node", ["client.mjs"], reactDir);
+    step(`${name}: subpath exports`, "node", ["subpaths.mjs"], reactDir);
+    // Las declaraciones se emiten con TypeScript 7 y las consume quien siga en 5.x: se comprueban con los dos compiladores,
+    // cada uno por su ruta (los dos paquetes declaran el binario `tsc`).
+    // Con React 18 (y @types/react 18) basta con los extremos: 5.9 y 7.
+    for (const [label, pkg] of [["TS 5.9", "typescript"], ...(major === 19 ? [["TS 6", "typescript-6"]] : []), ["TS 7", "typescript-7"]]) {
+      const tsc = join(reactDir, "node_modules", pkg, "bin/tsc");
+      step(`${name}: tsc --noEmit con ${label} (Bundler, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.json"], reactDir);
+      step(`${name}: tsc --noEmit con ${label} (NodeNext, skipLibCheck: false)`, "node", [tsc, "-p", "tsconfig.nodenext.json"], reactDir);
+    }
+    if (step(`${name}: vite build`, "pnpm", ["exec", "vite", "build"], reactDir).ok) {
+      const out = walk(join(reactDir, "out"));
+      const css = out
+        .filter((f) => f.endsWith(".css"))
+        .map((f) => readFileSync(f, "utf8"))
+        .join("");
+      const js = out
+        .filter((f) => f.endsWith(".js"))
+        .map((f) => readFileSync(f, "utf8"))
+        .join("");
+      if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-"))
+        bad(`${name} vite: el CSS compilado no trae zui, zout y tokens`);
+      else if (!js.includes("z-btn--")) bad(`${name} vite: el JS compilado no trae los componentes`);
+      // Solo se registraron dos iconos: el set completo no debe entrar en el bundle.
+      else if (iconsIn(js).found > ICON_LIMIT)
+        bad(`${name} vite: el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el set completo no se está descartando`);
+      else
+        ok(
+          `${name} vite: CSS ${(css.length / 1024).toFixed(0)} kB con tokens, zui y zout · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
+        );
+    }
+    if (
+      step(`${name}: vite build a través del paraguas`, "pnpm", ["exec", "vite", "build", "--config", "vite.umbrella.config.mjs"], reactDir)
+        .ok
+    ) {
+      const out = walk(join(reactDir, "out-umbrella"));
+      const css = out
+        .filter((f) => f.endsWith(".css"))
+        .map((f) => readFileSync(f, "utf8"))
+        .join("");
+      const js = out
+        .filter((f) => f.endsWith(".js"))
+        .map((f) => readFileSync(f, "utf8"))
+        .join("");
+      if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-") || css.includes("@import"))
+        bad(`${name} vite (paraguas): @zuccadev-labs/zuix/styles.css no trae tokens, zui y zout resueltos`);
+      else if (!js.includes("z-btn--")) bad(`${name} vite (paraguas): el JS compilado no trae los componentes`);
+      else if (iconsIn(js).found > ICON_LIMIT)
+        bad(
+          `${name} vite (paraguas): el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el paraguas arrastra el set completo`,
+        );
+      else
+        ok(
+          `${name} vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
+        );
+    }
   }
-  if (step("react: vite build", "pnpm", ["exec", "vite", "build"], reactDir).ok) {
-    const out = walk(join(reactDir, "out"));
-    const css = out
-      .filter((f) => f.endsWith(".css"))
-      .map((f) => readFileSync(f, "utf8"))
-      .join("");
-    const js = out
-      .filter((f) => f.endsWith(".js"))
-      .map((f) => readFileSync(f, "utf8"))
-      .join("");
-    if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-"))
-      bad("vite: el CSS compilado no trae zui, zout y tokens");
-    else if (!js.includes("z-btn--")) bad("vite: el JS compilado no trae los componentes");
-    // Solo se registraron dos iconos: el set completo no debe entrar en el bundle.
-    else if (iconsIn(js).found > ICON_LIMIT)
-      bad(`vite: el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el set completo no se está descartando`);
-    else
-      ok(
-        `vite: CSS ${(css.length / 1024).toFixed(0)} kB con tokens, zui y zout · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
-      );
-  }
+  // La hoja compat no depende de la versión de React: basta con un consumidor.
   if (
-    step("react: vite build a través del paraguas", "pnpm", ["exec", "vite", "build", "--config", "vite.umbrella.config.mjs"], reactDir).ok
+    major === 19 &&
+    step(
+      "react: vite build de la hoja compat del paraguas",
+      "pnpm",
+      ["exec", "vite", "build", "--config", "vite.compat.config.mjs"],
+      reactDir,
+    ).ok
   ) {
-    const out = walk(join(reactDir, "out-umbrella"));
-    const css = out
+    const css = walk(join(reactDir, "out-compat"))
       .filter((f) => f.endsWith(".css"))
       .map((f) => readFileSync(f, "utf8"))
       .join("");
-    const js = out
-      .filter((f) => f.endsWith(".js"))
-      .map((f) => readFileSync(f, "utf8"))
-      .join("");
-    if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-") || css.includes("@import"))
-      bad("vite (paraguas): @zuccadev-labs/zuix/styles.css no trae tokens, zui y zout resueltos");
-    else if (!js.includes("z-btn--")) bad("vite (paraguas): el JS compilado no trae los componentes");
-    else if (iconsIn(js).found > ICON_LIMIT)
-      bad(`vite (paraguas): el bundle trae ${iconsIn(js).found} de ${iconsIn(js).total} iconos; el paraguas arrastra el set completo`);
-    else
-      ok(
-        `vite (paraguas): styles.css resuelve sus @import (CSS ${(css.length / 1024).toFixed(0)} kB) · JS ${(js.length / 1024).toFixed(0)} kB con ${iconsIn(js).found} de ${iconsIn(js).total} iconos`,
-      );
+    const left = [
+      ["@import", "@import"],
+      ["@layer", /@layer\b/],
+      ["color-mix()", /color-mix\(/i],
+    ].filter(([, re]) => (typeof re === "string" ? css.includes(re) : re.test(css)));
+    if (!css.includes(".z-btn") || !css.includes(".z-shell") || !css.includes("--z-compat-"))
+      bad("vite (compat): @zuccadev-labs/zuix/styles.compat.css no trae los tokens compat, zui y zout");
+    else if (left.length) bad(`vite (compat): la hoja compilada aún lleva ${left.map(([n]) => n).join(", ")}`);
+    else ok(`vite (compat): styles.compat.css resuelve sus @import, sin @layer ni color-mix() (CSS ${(css.length / 1024).toFixed(0)} kB)`);
   }
 }
 
@@ -492,7 +610,7 @@ for (const fn of ["init", "hydrate", "toast", "confirm", "openDialog", "closeDia
 const core = await import("@zuccadev-labs/zuix-zui/dom/core");
 for (const fn of ["init", "use", "hydrate", "destroy", "toast", "confirm", "openDialog", "openPopover", "setSelectValue"]) assert.equal(typeof core[fn], "function", "zui/dom/core." + fn);
 assert.equal(zui.toast, core.toast, "zui/dom reexporta el núcleo de zui/dom/core");
-const families = { dates: "datesModule", data: "dataModule", content: "contentModule", agenda: "agendaModule", charts: "chartsModule", color: "colorModule", media: "mediaModule", effects: "effectsModule" };
+const families = { dates: "datesModule", data: "dataModule", content: "contentModule", agenda: "agendaModule", charts: "chartsModule", color: "colorModule", media: "mediaModule", effects: "effectsModule", time: "timeModule", terminal: "terminalModule", chat: "chatModule", ai: "aiModule", dashboard: "dashboardModule", people: "peopleModule", nodes: "nodesModule" };
 for (const [family, name] of Object.entries(families)) {
   const mod = await import("@zuccadev-labs/zuix-zui/dom/" + family);
   assert.ok(Array.isArray(mod[name]?.parts), "zui/dom/" + family + "." + name);

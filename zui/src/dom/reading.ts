@@ -1,7 +1,9 @@
-// Contenido de lectura sin framework, oleada 5. Todo dentro de `[data-z-dom]`; el texto entra siempre como texto.
+// Contenido de lectura sin framework. Todo dentro de `[data-z-dom]`; el texto entra siempre como texto.
 //
 // Format     <data class="z-format" data-format="number|byte" value="1234" data-locale data-options='{…}'> y
 //            <time class="z-format" data-format="date" datetime="…">: el texto se escribe con Intl al hidratar.
+//            FormatDuration: <time class="z-format" data-format="duration" datetime="PT1H30M" data-style="long|short|
+//            narrow|digital"> con data-largest-unit y data-smallest-unit.
 //            FormatByte: data-system="decimal|binary", data-unit-display, data-fraction.
 // Highlight  <span class="z-highlight" data-query="a\nb"> con el texto: marca las coincidencias con <mark>.
 //            data-ignore-case="false", data-ignore-accents, data-whole-word. setHighlightQuery(el, consulta).
@@ -10,6 +12,7 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { pause } from "@zuccadev-labs/zuix-zicon/icons/pause";
 import { play } from "@zuccadev-labs/zuix-zicon/icons/play";
+import { DURATION_UNITS, formatDuration, type DurationUnit } from "../core/duration";
 import { formatByte, formatDate, formatNumber, highlightParts } from "../core/format";
 import { emit, inDom } from "./forms-popup";
 import { fragment, type Listen } from "./shared";
@@ -27,6 +30,13 @@ const json = <T>(text: string | undefined): T | undefined => {
 
 function renderFormat(el: HTMLElement): void {
   const d = el.dataset;
+  if (d.format === "duration") {
+    const raw = el.getAttribute("datetime") ?? "";
+    const style = d.style === "long" || d.style === "narrow" || d.style === "digital" ? d.style : "short";
+    const unit = (v: string | undefined) => ((DURATION_UNITS as readonly string[]).includes(v ?? "") ? (v as DurationUnit) : undefined);
+    el.textContent = formatDuration(raw, { style, locale: d.locale, largestUnit: unit(d.largestUnit), smallestUnit: unit(d.smallestUnit) });
+    return;
+  }
   if (d.format === "date") {
     const raw = el.getAttribute("datetime") ?? "";
     const { text } = formatDate(raw, d.locale, json<Intl.DateTimeFormatOptions>(d.options));

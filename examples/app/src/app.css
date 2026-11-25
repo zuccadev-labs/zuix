@@ -30,7 +30,6 @@ body {
   font-family: var(--z-font-display);
   font-weight: var(--z-weight-bold);
   letter-spacing: var(--z-tracking-tight);
-  text-transform: capitalize;
 }
 /* En un teléfono el nombre de la marca deja el sitio a las pestañas de trabajo (a 390 px quedaban ~50 px y la
    pestaña activa se cortaba por los dos lados); sigue siendo texto para el lector de pantalla. */
@@ -259,7 +258,7 @@ body {
   align-items: center;
   gap: var(--z-space-2);
 }
-/* Piezas de planificación de la agenda (oleada 2), una bajo otra. */
+/* Piezas de planificación de la agenda, una bajo otra. */
 .app-planning {
   display: flex;
   flex-direction: column;
@@ -527,7 +526,7 @@ body {
   color: var(--z-fg-muted);
 }
 
-/* Barras verticales de la pantalla Data (oleada 5). */
+/* Barras verticales de la pantalla Data. */
 .app-row--tall {
   align-items: stretch;
   height: 140px;
@@ -554,4 +553,259 @@ body {
 
 .app-compare {
   block-size: 180px;
+}
+.app-narrow {
+  max-inline-size: 24rem;
+}
+
+/* ---- Chat ---- */
+.app-chat {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+}
+.app-chat > .z-chat-layout {
+  height: 100%;
+}
+.app-chat__list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--z-space-3) var(--z-space-3) 0 var(--z-space-4);
+}
+.app-chat__title {
+  margin: 0;
+  font-size: var(--z-text-title);
+  font-weight: var(--z-weight-bold);
+}
+.app-chat__fill,
+.app-chat__messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.app-chat__fill > *,
+.app-chat__messages > * {
+  flex: 1;
+  min-height: 0;
+}
+.app-chat__details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--z-space-2);
+  padding: var(--z-space-8) var(--z-space-4);
+  text-align: center;
+}
+.app-chat__details-name {
+  margin: var(--z-space-2) 0 0;
+  font-size: var(--z-text-title);
+}
+.app-chat__call {
+  position: absolute;
+  inset-block-start: var(--z-space-4);
+  inset-inline: 0;
+  z-index: var(--z-layer-overlay);
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--z-space-4);
+  pointer-events: none;
+}
+.app-chat__call > * {
+  width: min(440px, 100%);
+  pointer-events: auto;
+}
+
+/* ---- Asistente ---- */
+.app-assistant {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+}
+.app-assistant--split {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+}
+.app-assistant__main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+/* En estrecho el uso de contexto baja a otra línea: en la misma, la fila se salía por el borde del panel. */
+.app-assistant__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--z-space-2) var(--z-space-3);
+  padding: var(--z-space-3) var(--z-space-5);
+  border-block-end: 1px solid var(--z-line);
+}
+.app-assistant__title {
+  margin: 0;
+  font-size: var(--z-text-body);
+  font-weight: var(--z-weight-semibold);
+}
+.app-assistant__usage {
+  min-inline-size: 0;
+  margin-inline-start: auto;
+}
+.app-assistant__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.app-assistant__thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-6);
+  max-width: 800px;
+  margin-inline: auto;
+  padding: var(--z-space-6) var(--z-space-5) var(--z-space-8);
+}
+.app-assistant__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-5);
+  padding-block-start: var(--z-space-10);
+}
+.app-assistant__hello {
+  margin: 0;
+  font-family: var(--z-font-display);
+  font-size: var(--z-text-display-sm);
+  font-weight: var(--z-weight-semibold);
+  letter-spacing: var(--z-tracking-tight);
+  text-align: center;
+}
+.app-assistant__user {
+  display: flex;
+  justify-content: flex-end;
+}
+.app-assistant__input {
+  max-width: 820px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 0 var(--z-space-4) var(--z-space-3);
+}
+.app-assistant__note {
+  margin: var(--z-space-2) 0 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-caption);
+  text-align: center;
+}
+.app-assistant__side {
+  display: flex;
+  min-height: 0;
+  padding: var(--z-space-3);
+  border-inline-start: 1px solid var(--z-line);
+}
+.app-assistant__side > * {
+  flex: 1;
+}
+@media (width < 900px) {
+  .app-assistant--split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 0.9fr);
+  }
+  .app-assistant__side {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--z-line);
+  }
+}
+
+/* Contenido centrado en una pieza del dashboard (el Gauge). */
+.app-center {
+  display: grid;
+  place-items: center;
+  block-size: 100%;
+}
+
+/* Pantallas de perfil, tablero y acceso. */
+.app-presence,
+.app-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--z-space-3) var(--z-space-5);
+  margin-block-start: var(--z-space-3);
+}
+.app-people {
+  align-items: center;
+  gap: var(--z-space-6);
+}
+.app-profile-form {
+  padding-block: var(--z-space-5);
+}
+.app-fab {
+  position: sticky;
+  inset-block-end: var(--z-space-4);
+  display: flex;
+  justify-content: flex-end;
+  padding-inline-end: var(--z-space-4);
+  pointer-events: none;
+}
+.app-fab > * {
+  pointer-events: auto;
+}
+.app-auth {
+  min-block-size: 40rem;
+  display: grid;
+}
+.app-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-4);
+}
+.app-auth-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--z-space-2);
+  font-size: var(--z-text-small);
+}
+.app-brand-mark {
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: var(--z-radius-sm);
+  background: linear-gradient(135deg, var(--z-accent), var(--z-chart-2));
+}
+.app-auth-media {
+  block-size: 100%;
+  min-block-size: 24rem;
+  background:
+    radial-gradient(70% 60% at 20% 20%, color-mix(in srgb, var(--z-accent) 70%, transparent), transparent 70%),
+    radial-gradient(60% 70% at 80% 80%, color-mix(in srgb, var(--z-chart-3) 60%, transparent), transparent 70%), var(--z-surface-3);
+}
+
+/* Editor de flujos: el lienzo ocupa el ancho y el inspector flota a la derecha. */
+.app-flow {
+  position: relative;
+}
+.app-flow__canvas {
+  block-size: clamp(420px, 62vh, 680px);
+}
+.app-flow__canvas--big {
+  block-size: 520px;
+}
+.app-flow__inspector {
+  position: absolute;
+  inset-block-start: var(--z-space-3);
+  inset-inline-end: var(--z-space-3);
+  z-index: var(--z-layer-raised);
+  display: grid;
+  gap: var(--z-space-2);
+  inline-size: min(260px, calc(100% - var(--z-space-6)));
+  padding: var(--z-space-3);
+  border-radius: var(--z-radius-lg);
+}
+.app-flow-bar {
+  flex-wrap: wrap;
+}
+
+/* Pantalla de anuncio: lista de alojamientos en rejilla, sin viñetas. */
+.app-stays {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }

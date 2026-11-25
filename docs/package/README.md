@@ -2,9 +2,9 @@
 
 Cómo se versionan, se construyen y se publican los paquetes de la suite.
 
-La `0.1.0` está en npmjs.com desde el 2026-11-14, bajo el scope `@zuccadev-labs`, con licencia MIT y acceso
-público. La publiqué a mano, con 2FA y sin procedencia. De la siguiente en adelante publica el workflow
-`release` al fusionar en `main` una subida de versión
+Los paquetes están en npmjs.com desde el 2026-11-14, bajo el scope `@zuccadev-labs`, con licencia MIT y
+acceso público. La `0.1.0` la publiqué a mano, con 2FA y sin procedencia. La `0.2.0` y la `0.3.0` las publicó
+el workflow `release` al fusionar en `main` la subida de versión
 ([Publicación automática](./02-publicacion.md#publicación-automática-desde-main)).
 
 ## Documentos
@@ -18,13 +18,13 @@ público. La publiqué a mano, con 2FA y sin procedencia. De la siguiente en ade
 
 ## Qué se publica
 
-| Paquete | Contenido | Tarball 0.1.0 | Tarball 0.2.0 | Tarball 0.3.0 |
-|---|---|---|---|---|
-| `@zuccadev-labs/zuix-tokens` (`tokens/`) | CSS y JSON generados, DTCG, marcas, capas de compatibilidad y esquemas | 20,9 kB · 24 archivos | 42,1 kB · 30 | 59,6 kB · 30 |
-| `@zuccadev-labs/zuix-zicon` (`zicon/`) | ESM por icono, declaraciones, sprite, SVG sueltos, `<z-icon>` para navegador | 715,1 kB · 1425 | 721,8 kB · 1425 | 723,4 kB · 1425 |
-| `@zuccadev-labs/zuix-zui` (`zui/`) | ESM de componentes, lógica y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 416,7 kB · 292 | 556,3 kB · 383 | 2029,8 kB · 886 |
-| `@zuccadev-labs/zuix-zout` (`zout/`) | ESM de layouts y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 69,1 kB · 44 | 81,7 kB · 44 | 202,0 kB · 89 |
-| `@zuccadev-labs/zuix` (`suite/`) | Paraguas: depende de los otros cuatro y los reexporta bajo subrutas. Sin código propio | 4,1 kB · 26 | 5,1 kB · 33 | 5,1 kB · 33 |
+| Paquete | Contenido | Tarball 0.1.0 | Tarball 0.2.0 | Tarball 0.3.0 | Tarball 0.4.0 |
+|---|---|---|---|---|---|
+| `@zuccadev-labs/zuix-tokens` (`tokens/`) | CSS y JSON generados, DTCG, marcas, capas de compatibilidad y esquemas | 20,9 kB · 24 archivos | 42,1 kB · 30 | 59,6 kB · 30 | 104,0 kB · 34 |
+| `@zuccadev-labs/zuix-zicon` (`zicon/`) | ESM por icono, declaraciones, sprite, SVG sueltos, `<z-icon>` para navegador | 715,1 kB · 1425 | 721,8 kB · 1425 | 723,4 kB · 1425 | 771,3 kB · 1508 |
+| `@zuccadev-labs/zuix-zui` (`zui/`) | ESM de componentes, lógica y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 416,7 kB · 292 | 556,3 kB · 383 | 2047,9 kB · 919 | 3450,1 kB · 1499 |
+| `@zuccadev-labs/zuix-zout` (`zout/`) | ESM de layouts y `dom`, declaraciones, CSS, contrato HTML, bundles de navegador | 69,1 kB · 44 | 81,7 kB · 44 | 202,5 kB · 89 | 278,1 kB · 141 |
+| `@zuccadev-labs/zuix` (`suite/`) | Paraguas: depende de los otros cuatro y los reexporta bajo subrutas. Sin código propio | 4,1 kB · 26 | 5,1 kB · 33 | 5,9 kB · 51 | 6,9 kB · 67 |
 
 Tamaño del tarball comprimido (en kB de 1024 bytes) y número de archivos, con `pnpm pack`. La columna de la
 `0.2.0` la medí el 2026-11-18 sobre los tarballs de la versión, antes de publicarla. `zui` crece porque ahora lleva dentro la lógica que
@@ -39,6 +39,13 @@ El modo sin framework es otra cosa: `@zuccadev-labs/zuix-zui/dom` es una sola pi
 iconos al cargarse) y cualquier importación desde él trae todo el comportamiento, unos 535 kB minificados
 (`dist/zui.dom.js`; 99 kB en la `0.2.0`).
 
+La columna de la `0.3.0` es la de los tarballs publicados; la que puse antes de publicarla era algo menor. La de
+la `0.4.0` la medí el 2026-11-23, después de subir la versión. `zui` pasa de 144 a 224 componentes, `zout` de 19
+a 30 piezas y `zicon` de 346 a 366 iconos; `tokens` crece por las hojas del modo compat. Descomprimido, `zui`
+ocupa 14,4 MB: 6 MB de mapas de fuente, 3,6 MB de JavaScript y 2,1 MB de CSS. Importar solo `Button` añade
+1,9 kB minificados, y `dist/zui.dom.js` sube a unos 1018 kB porque el modo sin framework cubre ya las familias
+nuevas.
+
 Ninguno incluye `src/`, pruebas ni `compat/*.inventory.json`; todos llevan `README.md`, `CHANGELOG.md` y
 `LICENSE`. `zui` lleva además `AGENTS.md` y `THIRD_PARTY_NOTICES.md`, y `zicon`, `AGENTS.md`.
 
@@ -49,7 +56,7 @@ Ninguno incluye `src/`, pruebas ni `compat/*.inventory.json`; todos llevan `READ
 
 | Comando | Qué hace |
 |---|---|
-| `pnpm build` | Genera `dist/` de `zicon`, `zui` y `zout`: ESM, declaraciones, sourcemaps, CSS y bundles de navegador. Comprueba que cada reexportación del paraguas apunta a una entrada publicada |
+| `pnpm build` | Genera `dist/` de `zicon`, `zui` y `zout`: ESM, declaraciones, sourcemaps, CSS (también el modo compat) y bundles de navegador. Comprueba que cada reexportación del paraguas apunta a una entrada publicada |
 | `pnpm test:pack` | Empaqueta los cinco paquetes y los prueba en proyectos fuera del workspace |
 | `pnpm test:pack:next` | Lo anterior más un consumidor Next.js (App Router): build, marcado de servidor, hidratación e interacción en Chrome. Necesita red |
 | `pnpm verify` | Puerta previa a una versión: `check`, lint, pruebas unitarias, build y prueba del sitio, `build`, `test:pack`, `test:html` y `test:browser` en Chromium |
@@ -68,10 +75,13 @@ zui/dist/
   zui.css         bundle de navegador: todos los estilos en un archivo
   zui.dom.js      bundle de navegador: @zuccadev-labs/zuix-zui/dom autocontenido y minificado
   zui.dom.carousel-gl.js  shaders del Carousel en modo WebGL; zui.dom.js lo carga solo si se usa
+  zui.compat.css  modo compat: zui.css para Chromium 109, Firefox 115 y Safari 15.4 (tools/compat.mjs)
 ```
 
-`zout/dist/` tiene `esm/`, `zout.css` y `zout.dom.js`; `zicon/dist/` tiene `esm/` y `zicon.element.js`.
-`tokens/dist/` lo genera `pnpm tokens`. El paraguas no tiene `dist/`: sus archivos (`suite/*.js`, `*.d.ts`,
+`zout/dist/` tiene `esm/`, `zout.css`, `zout.compat.css` y `zout.dom.js`; `zicon/dist/` tiene `esm/` y
+`zicon.element.js`. `tokens/dist/` lo genera `pnpm tokens`, salvo `tokens.compat.css` y `brands/*.compat.css`, que
+salen del mismo paso que `zui.compat.css` porque llevan resueltos los colores que mezclan los componentes
+([Modo compat](../users/10-compatibilidad.md#modo-compat)). El paraguas no tiene `dist/`: sus archivos (`suite/*.js`, `*.d.ts`,
 `*.css`) son reexportaciones de una línea escritas a mano. `dist/` está en `.gitignore`: se genera, no se edita.
 
 Los bundles de navegador se quedan en la raíz de `dist/`: sus rutas se enlazan por URL
@@ -152,6 +162,10 @@ nombra las rutas de `src/` y las de `dist/` porque `publishConfig` no puede rees
 | `zout` | `tokens`, `zui` | `zicon`; `react` y `react-dom` (opcionales) |
 | Paraguas | `tokens`, `zicon`, `zui`, `zout` | `react` y `react-dom` (opcionales) |
 
+El rango de `react` y `react-dom` es `^18.2.0 || ^19.0.0` en los cuatro
+([Compatibilidad](../users/10-compatibilidad.md#react)). Las dependencias de desarrollo del workspace siguen en
+React 19; React 18 lo trae `examples/react18`, que sirve la aplicación de ejemplo con esa versión.
+
 Ningún paquete depende de código de terceros en ejecución. Las dependencias entre paquetes de la suite llevan
 rango `^X.Y.Z`. `zicon` es peer de `zui` y `zout` para que el registro de iconos sea una sola copia: con
 dependencia exacta reproduje dos copias e iconos vacíos
@@ -179,12 +193,16 @@ pnpm test:pack
    paquetes de la suite y con `zicon` como peer de `zui` y `zout`.
 3. Un proyecto con el paraguas: instala los cinco y comprueba que cada subruta del paraguas es el mismo
    módulo que la del paquete que reexporta, y que un `Button` con icono se dibuja a través de él.
-4. Un proyecto con React: renderiza `Button`, `Badge`, `Stack` e `Icon` con `react-dom/server` y compara el
-   marcado, resuelve todas las entradas de `exports`, pasa `tsc --noEmit` con `skipLibCheck: false` en
-   `Bundler` y `NodeNext` (también importando por el paraguas) con TypeScript 5.9, 6 y 7 (las declaraciones
+4. Dos proyectos con React, uno con React 19 y otro con React 18 (cada uno con sus `@types/react`): renderiza
+   `Button`, `Badge`, `Stack` e `Icon` con `react-dom/server` y compara el marcado; renderiza en un DOM de
+   happy-dom y comprueba las refs de `Button`, `Icon`, `Input`, `Switch` y del disparador de `Modal`, `inert` y
+   `popovertarget`, sin avisos de React en la consola; resuelve todas las entradas de `exports`, pasa
+   `tsc --noEmit` con `skipLibCheck: false` en `Bundler` y `NodeNext` (también importando por el paraguas) con
+   TypeScript 5.9, 6 (solo con React 19) y 7 (las declaraciones
    se emiten con 7 y deben servir a quien siga en 5.x), y compila con Vite 8 dos veces: con los paquetes
    sueltos y con `@zuccadev-labs/zuix/styles.css` y las subrutas del paraguas. Falla si el set completo de
-   iconos entra en el bundle.
+   iconos entra en el bundle. Una tercera compilación importa `@zuccadev-labs/zuix/styles.compat.css` y falla si
+   la hoja resultante conserva `@import`, `@layer` o `color-mix()`.
 5. Un proyecto sin React: instala los tarballs e importa los módulos `dom`, sueltos y por el paraguas, en
    Node.
 6. Con `--next`, un proyecto Next.js (última versión estable, App Router): `next build`, `next start` y una
@@ -233,8 +251,6 @@ y `pnpm test:browser`).
 
 ## Lo que no he comprobado
 
-- **La publicación automática.** El workflow `release` no ha publicado nunca: la primera vez será con la
-  `0.2.0` ([Publicación](./02-publicacion.md#lo-que-no-he-comprobado)).
 - **webpack, Parcel y Rspack contra el paquete publicado.** Pruebo Vite 8 y Next.js con Turbopack. El sitio
   de documentación usa Rspack, pero contra el fuente.
 - **`attw` en modo estricto.** Lo ejecuto con el perfil `esm-only`: los paquetes no tienen salida CommonJS.

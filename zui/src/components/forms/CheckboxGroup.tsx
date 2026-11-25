@@ -4,6 +4,7 @@ import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
 import { CheckboxGroupContext, type CheckboxGroupState } from "../../primitives/checkbox-context";
 import { Checkbox, type CheckedState } from "./Checkbox";
+import { withRef } from "../../react-compat";
 
 export interface CheckboxGroupOption {
   value: string;
@@ -43,7 +44,7 @@ const EMPTY: ReadonlyArray<string> = [];
  * Varias casillas de una misma pregunta en un `<fieldset>` con su `<legend>`. El valor es la lista de marcadas;
  * `selectAll` añade una casilla que marca o desmarca todas y se ve indeterminada si solo hay algunas.
  */
-export function CheckboxGroup({
+export const CheckboxGroup = withRef(function CheckboxGroup({
   label,
   description,
   options = [],
@@ -132,4 +133,4 @@ export function CheckboxGroup({
       ) : null}
     </fieldset>
   );
-}
+});

@@ -1,0 +1,134 @@
+{
+  "name": "ReviewCard",
+  "group": "data",
+  "description": "Opinión: autor con Persona, valoración de solo lectura, fecha, título, texto largo plegable, fotos y respuesta del propietario.",
+  "import": "import { ReviewCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "author",
+      "type": "{ name: string; avatar?: string; secondary?: ReactNode }",
+      "required": true
+    },
+    {
+      "name": "rating",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "default": 5
+    },
+    {
+      "name": "date",
+      "type": "Date | number | string",
+      "description": "Fecha civil ISO o instante; se escribe en `<time datetime>`."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "headingLevel",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "name": "text",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "collapseAt",
+      "type": "number",
+      "default": 280,
+      "description": "Caracteres visibles antes de plegar. El corte cae en un espacio; si lo oculto serían menos de 40 caracteres, no se pliega. 0 no pliega nunca."
+    },
+    {
+      "name": "defaultExpanded",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "photos",
+      "type": "{ src: string; alt: string }[]"
+    },
+    {
+      "name": "onPhotoSelect",
+      "type": "(index: number) => void",
+      "description": "Con él cada foto es un botón («Open photo 2 of 3»)."
+    },
+    {
+      "name": "reply",
+      "type": "{ text: string; author?: string; date?: Date | number | string }",
+      "description": "Respuesta del propietario."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ReviewCardLabels>",
+      "description": "`readMore`, `readLess`, `replyFrom` («Response from {name}»), `reply`, `photo`, `photos`, `rating`, `outOf`."
+    }
+  ],
+  "states": ["closed", "open"],
+  "tokens": [
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "space-20",
+    "fg",
+    "fg-muted",
+    "fg-prose",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "line",
+    "line-strong",
+    "surface-2",
+    "radius-md",
+    "control-radius-sm",
+    "control-height-xs",
+    "text-body",
+    "text-small",
+    "weight-medium",
+    "weight-semibold",
+    "leading-normal",
+    "leading-snug"
+  ],
+  "classes": [
+    "z-review-card",
+    "z-review-card__head",
+    "z-review-card__meta",
+    "z-review-card__date",
+    "z-review-card__title",
+    "z-review-card__text",
+    "z-review-card__ellipsis",
+    "z-review-card__rest",
+    "z-review-card__more",
+    "z-review-card__photos",
+    "z-review-card__photo-item",
+    "z-review-card__photo",
+    "z-review-card__reply",
+    "z-review-card__reply-head",
+    "z-review-card__reply-author",
+    "z-review-card__reply-text"
+  ],
+  "a11y": "Un `<article>` con cabecera. Las estrellas son una imagen con nombre («Rating: 4 out of 5»). El texto plegado sigue en el documento: el resto lleva `hidden=\"until-found\"`, así que Buscar en la página lo encuentra y lo abre (`beforematch`), y «Read more» es un botón con `aria-expanded` y `aria-controls`. Las fotos llevan su `alt`; con `onPhotoSelect` son botones con nombre propio. Sin React (`@zuccadev-labs/zuix-zui/dom/data`): el mismo marcado; el módulo alterna `data-state`, `aria-expanded` y el texto del botón (`data-read-more`, `data-read-less`), abre con `beforematch` y emite `z:change { open }` y, en las fotos que son botón, `z:photoselect { index }`.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Con texto largo, fotos y respuesta",
+      "code": "<ReviewCard\n  author={{ name: \"Ana López\", secondary: \"Madrid, Spain\" }}\n  rating={4}\n  date=\"2026-10-12\"\n  locale=\"en-GB\"\n  title=\"Great base for exploring\"\n  text=\"The flat is bright and quiet, and the kitchen has everything you need for longer stays. We walked to the old town every morning and took the tram back in the evening. The only thing I would change is the shower pressure, which was weak on the second floor. Check-in was easy with the lockbox, and the host answered every message within minutes. We would happily come back in spring.\"\n  photos={[{ src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f8b26a'/%3E%3Cstop offset='1' stop-color='%23e0598b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g)'/%3E%3C/svg%3E\", alt: \"Living room with a sofa by the window\" }, { src: \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236ac3f8'/%3E%3Cstop offset='1' stop-color='%233b5bdb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g)'/%3E%3C/svg%3E\", alt: \"Kitchen with a small table\" }]}\n  onPhotoSelect={(index) => openLightbox(index)}\n  reply={{ author: \"Marta\", date: \"2026-10-14\", text: \"Thank you, Ana! We have fixed the shower since your stay.\" }}\n/>"
+    },
+    {
+      "title": "Corta",
+      "code": "<ReviewCard author={{ name: \"Yuki Tanaka\" }} rating={5} date=\"2026-09-30\" locale=\"en-US\" text=\"Spotless and exactly as described.\" />"
+    }
+  ],
+  "origin": "Opiniones de Airbnb y Google Maps; texto plegable con `hidden=\"until-found\"` como Collapsible."
+}

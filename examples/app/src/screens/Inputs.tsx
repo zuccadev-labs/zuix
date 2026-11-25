@@ -40,6 +40,7 @@ import {
   TagsInput,
   Toggle,
   ToggleGroup,
+  TransferList,
 } from "@zuccadev-labs/zuix-zui";
 
 const REVIEWERS = [
@@ -75,8 +76,9 @@ const CITIES = [
 const show = (value: unknown) =>
   Array.isArray(value) ? value.join(",") || "none" : value === null || value === "" ? "none" : String(value);
 
-/** Piezas de la oleada 3 (formularios y acciones) con su valor a la vista, para las pruebas en navegador. */
+/** Piezas de formularios y acciones con su valor a la vista, para las pruebas en navegador. */
 export function Inputs() {
+  const [team, setTeam] = useState<string[]>(["chen"]);
   const [seats, setSeats] = useState<number | null>(3);
   const [budget, setBudget] = useState<number | null>(1250);
   const [tags, setTags] = useState<string[]>(["design"]);
@@ -519,6 +521,31 @@ export function Inputs() {
           </Card>
         </Grid>
       </PageSection>
+      <PageSection title="Transfer list">
+        <Stack gap={2}>
+          <div data-testid="i-transfer">
+            <TransferList
+              searchable
+              name="team"
+              labels={{ source: "People", target: "Team" }}
+              items={PEOPLE}
+              value={team}
+              onValueChange={setTeam}
+            />
+          </div>
+          <span className="app-muted" data-testid="i-transfer-value">{`Team: ${team.join(", ") || "none"}`}</span>
+        </Stack>
+      </PageSection>
     </Page>
   );
 }
+
+const PEOPLE = [
+  { value: "ana", label: "Ana Torres", description: "Design" },
+  { value: "ben", label: "Ben Okafor", description: "Engineering" },
+  { value: "chen", label: "Chen Wei", description: "Engineering" },
+  { value: "dara", label: "Dara Singh", description: "Product", disabled: true },
+  { value: "eli", label: "Eli Moreau", description: "Support" },
+  { value: "femi", label: "Femi Adeyemi", description: "Sales" },
+  { value: "gus", label: "Gustavo Lima", description: "Engineering" },
+];

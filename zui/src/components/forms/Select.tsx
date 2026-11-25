@@ -10,6 +10,7 @@ import { Popup, Portal, rectOf } from "../../primitives/popup";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface SelectOption {
   value: string;
@@ -94,7 +95,7 @@ function activate(list: Element, option: HTMLElement | undefined, scroll = true)
  * Lista desplegable con popup propio (material liquid), iconos y grupos; patrón APG «select-only combobox» con el foco
  * dentro de la lista. Para la lista del sistema, `NativeSelect`.
  */
-export function Select(props: SelectProps | SelectMultipleProps) {
+export const Select = withRef(function Select(props: SelectProps | SelectMultipleProps) {
   const multiple = props.multiple === true;
   const {
     options,
@@ -411,4 +412,4 @@ export function Select(props: SelectProps | SelectMultipleProps) {
       ) : null}
     </>
   );
-}
+});

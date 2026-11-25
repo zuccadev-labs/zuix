@@ -1,0 +1,479 @@
+/* @zuccadev-labs/zuix-zui — tiempo y hora: Clock, AnalogClock, WorldClock, Countdown y DurationField.
+   Cifras tabulares en todo lo que cambia (no saltan al pasar de 1 a 0). Lo que se mueve (separadores que laten,
+   segundero continuo, cifras que giran) solo con `prefers-reduced-motion: no-preference` y parado fuera de pantalla
+   (`data-offscreen`, core/visibility). */
+@layer zui.time {
+  /* ---- Clock ---- */
+  .z-clock {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+    color: var(--z-fg);
+  }
+  .z-clock__label {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-clock__time {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0;
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--z-tracking-tight);
+    line-height: var(--z-leading-tight);
+    white-space: nowrap;
+  }
+  .z-clock[data-size="sm"] .z-clock__time {
+    font-size: var(--z-text-title);
+  }
+  .z-clock[data-size="lg"] .z-clock__time {
+    font-size: var(--z-text-display-lg);
+  }
+  .z-clock__period {
+    margin-inline-start: var(--z-space-1);
+    color: var(--z-fg-muted);
+    font-size: 0.5em;
+    font-weight: var(--z-weight-medium);
+  }
+  .z-clock__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1) var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-clock__zone {
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-clock[data-blinking] .z-clock__sep {
+      animation: z-clock-blink 1s steps(1, end) infinite;
+    }
+    .z-clock[data-offscreen] .z-clock__sep {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes z-clock-blink {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  /* ---- AnalogClock ---- */
+  .z-analog-clock {
+    --z-analog-clock-size: 160px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--z-space-2);
+    color: var(--z-fg);
+  }
+  .z-analog-clock[data-size="sm"] {
+    --z-analog-clock-size: 64px;
+  }
+  .z-analog-clock[data-size="lg"] {
+    --z-analog-clock-size: 240px;
+  }
+  .z-analog-clock__time {
+    display: block;
+    inline-size: var(--z-analog-clock-size);
+    block-size: var(--z-analog-clock-size);
+  }
+  .z-analog-clock__face {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+  .z-analog-clock__dial {
+    fill: var(--z-surface-2);
+    stroke: var(--z-line-strong);
+    stroke-width: 1;
+  }
+  .z-analog-clock__mark {
+    stroke: var(--z-fg-subtle);
+    stroke-width: 1;
+  }
+  .z-analog-clock__mark[data-major] {
+    stroke: var(--z-fg-muted);
+    stroke-width: 2;
+  }
+  .z-analog-clock__numeral {
+    fill: var(--z-fg);
+    font-family: var(--z-font-display);
+    /* Unidades del lienzo de 100: crece con la esfera. */
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-analog-clock__hand {
+    stroke: var(--z-fg);
+  }
+  .z-analog-clock__hand[data-hand="hour"] {
+    stroke-width: 4;
+  }
+  .z-analog-clock__hand[data-hand="minute"] {
+    stroke-width: 2.5;
+  }
+  .z-analog-clock__hand[data-hand="second"] {
+    stroke: var(--z-accent);
+    stroke-width: 1.2;
+  }
+  .z-analog-clock__pin {
+    fill: var(--z-accent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-analog-clock__second[data-smooth] {
+      transform-origin: 50px 50px;
+      animation: z-clock-sweep 60s linear infinite;
+      animation-delay: var(--z-clock-second-delay, 0s);
+    }
+    .z-analog-clock[data-offscreen] .z-analog-clock__second[data-smooth] {
+      animation-play-state: paused;
+    }
+  }
+  /* Con movimiento reducido, el segundero continuo vuelve a ir a saltos: se oculta y queda la hora exacta. */
+  @media (prefers-reduced-motion: reduce) {
+    .z-analog-clock__second[data-smooth] {
+      display: none;
+    }
+  }
+  @keyframes z-clock-sweep {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .z-analog-clock__caption {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--z-space-0-5);
+  }
+  .z-analog-clock__label {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-analog-clock__digital {
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- WorldClock ---- */
+  .z-world-clock {
+    min-width: 0;
+  }
+  .z-world-clock__list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-world-clock__city {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+    padding-block: var(--z-space-3);
+    padding-inline: var(--z-space-1);
+    border-block-end: 1px solid var(--z-line);
+  }
+  .z-world-clock__city:last-child {
+    border-block-end: 0;
+  }
+  .z-world-clock__body {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--z-space-3);
+    min-width: 0;
+  }
+  .z-world-clock__dial {
+    --z-analog-clock-size: 40px;
+    flex: none;
+    inline-size: var(--z-analog-clock-size);
+    block-size: var(--z-analog-clock-size);
+  }
+  .z-world-clock__dial .z-analog-clock__face {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .z-world-clock__place {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+  }
+  .z-world-clock__name {
+    overflow: hidden;
+    color: var(--z-fg);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-world-clock__diff {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-world-clock__day {
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-world-clock__now {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-world-clock__icon {
+    display: inline-flex;
+    color: var(--z-warning);
+  }
+  .z-world-clock__icon[data-day="night"] {
+    color: var(--z-info);
+  }
+  .z-world-clock__time {
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--z-tracking-tight);
+    white-space: nowrap;
+  }
+  .z-world-clock[data-layout="grid"] .z-world-clock__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+    gap: var(--z-space-3);
+  }
+  .z-world-clock[data-layout="grid"] .z-world-clock__city {
+    align-items: flex-start;
+    padding: var(--z-space-4);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-card-radius);
+    background: var(--z-card-bg);
+  }
+  .z-world-clock[data-layout="grid"] .z-world-clock__body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--z-space-2);
+  }
+  .z-world-clock[data-layout="grid"] .z-world-clock__place {
+    inline-size: 100%;
+  }
+  .z-world-clock[data-layout="grid"] .z-world-clock__remove {
+    position: absolute;
+    inset-block-start: var(--z-space-2);
+    inset-inline-end: var(--z-space-2);
+  }
+
+  /* ---- Countdown ---- */
+  .z-countdown {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--z-space-2);
+    color: var(--z-fg);
+  }
+  .z-countdown__timer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-3);
+  }
+  .z-countdown__units {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-2);
+  }
+  .z-countdown__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--z-space-1);
+    min-inline-size: var(--z-control-height-xl);
+    padding: var(--z-space-3) var(--z-space-2);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  .z-countdown__value {
+    display: inline-flex;
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display-sm);
+    font-weight: var(--z-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--z-tracking-tight);
+    line-height: var(--z-leading-tight);
+  }
+  .z-countdown__label {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-medium);
+    letter-spacing: var(--z-tracking-wide);
+    text-transform: uppercase;
+  }
+  .z-countdown[data-size="sm"] .z-countdown__value {
+    font-size: var(--z-text-title);
+  }
+  .z-countdown[data-size="lg"] .z-countdown__value {
+    font-size: var(--z-text-display);
+  }
+  .z-countdown__complete {
+    color: var(--z-success-text);
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-countdown[data-state="done"] .z-countdown__unit {
+    color: var(--z-fg-muted);
+  }
+  .z-countdown__target {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  /* En línea: «2 d 03 h 04 min 05 s» en el tamaño del texto que lo rodea. */
+  .z-countdown[data-variant="inline"] .z-countdown__units {
+    gap: var(--z-space-2);
+  }
+  .z-countdown[data-variant="inline"] .z-countdown__unit {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--z-space-1);
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .z-countdown[data-variant="inline"] .z-countdown__value {
+    font-family: inherit;
+    font-size: var(--z-text-body);
+    letter-spacing: normal;
+  }
+  .z-countdown[data-variant="inline"] .z-countdown__label {
+    font-size: var(--z-text-small);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  /* Cifras que giran: una caja por cifra; la caja nueva entra desde arriba. */
+  .z-countdown[data-variant="flip"] .z-countdown__unit {
+    padding: var(--z-space-2);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .z-countdown[data-variant="flip"] .z-countdown__value {
+    gap: var(--z-space-1);
+  }
+  .z-countdown__digit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 1.15em;
+    padding-block: var(--z-space-2);
+    padding-inline: var(--z-space-1);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface-2);
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .z-countdown__digit {
+      animation: z-countdown-flip var(--z-duration-normal) var(--z-ease-out);
+    }
+    .z-countdown[data-offscreen] .z-countdown__digit {
+      animation: none;
+    }
+  }
+  @keyframes z-countdown-flip {
+    from {
+      opacity: 0;
+      transform: perspective(200px) rotateX(-70deg);
+    }
+  }
+
+  /* ---- DurationField ---- */
+  .z-duration-field {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--z-space-2);
+    min-width: 0;
+  }
+  .z-duration-field__control {
+    inline-size: auto;
+    cursor: text;
+    font-variant-numeric: tabular-nums;
+  }
+  .z-duration-field__control[data-size="sm"] {
+    --z-input-height: var(--z-control-height-sm);
+    --z-input-pad: var(--z-space-2-5);
+    --z-input-radius: var(--z-control-radius-sm);
+  }
+  .z-duration-field__control[data-size="lg"] {
+    --z-input-height: var(--z-control-height-lg);
+    --z-input-radius: var(--z-control-radius-lg);
+  }
+  .z-duration-field[data-disabled] .z-duration-field__control {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .z-duration-field__input {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    white-space: nowrap;
+  }
+  .z-duration-field__unit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-0-5);
+  }
+  .z-duration-field__segment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-block-size: var(--z-control-height-xs);
+    padding-inline: var(--z-space-1);
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg);
+    caret-color: transparent;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    transition:
+      background var(--z-duration-fast) var(--z-ease-standard),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-duration-field__segment:focus {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-duration-field__suffix {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-duration-field__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5);
+  }
+  .z-duration-field__preset[data-active] {
+    border-color: var(--z-accent);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+}

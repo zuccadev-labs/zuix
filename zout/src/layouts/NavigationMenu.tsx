@@ -2,6 +2,7 @@
 import { useContext, useEffect, useId, useLayoutEffect, useRef, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
+import { popoverTarget } from "../react-compat";
 import { syncNavMenu, wireNavMenu } from "../site";
 import { NavbarContext } from "./navbar-context";
 
@@ -87,7 +88,7 @@ export function NavigationMenu({ items, label = "Main", orientation = "horizonta
                 aria-expanded="false"
                 aria-controls={panelId}
                 data-current={current ? "" : undefined}
-                {...(horizontal ? { popoverTarget: panelId } : {})}
+                {...(horizontal ? popoverTarget(panelId) : {})}
               >
                 {item.label}
                 <Icon name="chevron-down-small" size={16} className="z-navmenu__chevron" />

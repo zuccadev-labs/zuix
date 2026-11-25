@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type CSSProperties, type ElementType, type
 import { cx } from "../../cx";
 import { splitText, type TextSplit } from "../../core/effects";
 import { useIsoLayoutEffect } from "../../primitives/hooks";
+import { withRef } from "../../react-compat";
 
 export type TextEffectKind = "reveal" | "blur" | "gradient" | "shimmer";
 
@@ -35,7 +36,7 @@ const SPLIT = new Set<TextEffectKind>(["reveal", "blur"]);
  * entero llega a los lectores de pantalla una sola vez; las piezas son `aria-hidden`. Sin movimiento reducido no
  * se anima y el texto queda en su estado final; sin JavaScript también se ve entero.
  */
-export function TextEffect({
+export const TextEffect = withRef(function TextEffect({
   children,
   effect = "reveal",
   by = "word",
@@ -125,4 +126,4 @@ export function TextEffect({
       )}
     </Tag>
   );
-}
+});

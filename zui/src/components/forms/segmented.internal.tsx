@@ -41,6 +41,7 @@ import { useLatest } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl, useFieldLabel } from "./Field";
+import { withRef } from "../../react-compat";
 
 export type { SegmentType };
 
@@ -119,7 +120,7 @@ const MESSAGES: Record<Validity, "incomplete" | "invalid" | "range" | null> = {
 };
 
 /** Campo por segmentos (spinbuttons de APG en un `role="group"`). Uso interno: DateField, TimeField, TimePicker. */
-export function SegmentedField(props: InternalProps) {
+export const SegmentedField = withRef(function SegmentedField(props: InternalProps) {
   const {
     value,
     defaultValue,
@@ -320,7 +321,7 @@ export function SegmentedField(props: InternalProps) {
       setState(latest.current.state);
     }
     if (group.current?.contains(event.relatedTarget as Node | null)) return;
-    // Validar al salir, y solo si se editó (guía de formularios): no se avisa mientras se teclea.
+    // Valido al salir, y solo si se editó: avisar mientras se teclea interrumpe a quien escribe.
     if (!edited.current) return;
     edited.current = false;
     const result = validity(current.values, config);
@@ -465,6 +466,6 @@ export function SegmentedField(props: InternalProps) {
       />
     </div>
   );
-}
+});
 
 const noop = () => {};

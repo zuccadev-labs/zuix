@@ -1,6 +1,6 @@
 {
   "name": "@zuccadev-labs/zuix-tokens",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "Fuente única de tokens de diseño de la suite zuix. Una marca es un archivo en brands/.",
   "license": "MIT",
@@ -29,6 +29,7 @@
   },
   "exports": {
     "./tokens.css": "./dist/tokens.css",
+    "./tokens.compat.css": "./dist/tokens.compat.css",
     "./tailwind.css": "./dist/tailwind.css",
     "./docusaurus.css": "./dist/docusaurus.css",
     "./tokens.json": "./dist/tokens.json",
@@ -38,6 +39,9 @@
     "./css/dazlabs.css": "./dist/brands/dazlabs.css",
     "./css/zenith.css": "./dist/brands/zenith.css",
     "./css/zutool.css": "./dist/brands/zutool.css",
+    "./css/dazlabs.compat.css": "./dist/brands/dazlabs.compat.css",
+    "./css/zenith.compat.css": "./dist/brands/zenith.compat.css",
+    "./css/zutool.compat.css": "./dist/brands/zutool.compat.css",
     "./css/*": "./dist/brands/*",
     "./compat/*": "./dist/compat/*"
   },

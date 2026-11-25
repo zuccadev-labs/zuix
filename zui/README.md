@@ -1,6 +1,6 @@
 # @zuccadev-labs/zuix-zui
 
-The component system of the zuix suite: 144 accessible components in 12 groups. Each component is an HTML and
+The component system of the zuix suite: 224 accessible components in 19 groups. Each component is an HTML and
 CSS contract on top of tokens; the framework-free behavior lives in `@zuccadev-labs/zuix-zui/dom` and the
 React binding in the main entry.
 
@@ -8,7 +8,7 @@ React binding in the main entry.
 |---|---|---|
 | Contract | `@zuccadev-labs/zuix-zui/styles.css`, `@zuccadev-labs/zuix-zui/html.json` | `@zuccadev-labs/zuix-tokens` |
 | Behavior | `@zuccadev-labs/zuix-zui/dom` | The browser (`<dialog>`, Popover API) |
-| React binding | `@zuccadev-labs/zuix-zui` | React 19 |
+| React binding | `@zuccadev-labs/zuix-zui` | React 18.2 or later, or React 19 |
 
 There is no third-party UI library underneath. Dialogs are a native `<dialog>` opened with `showModal()`,
 floating layers are `popover` elements, and the keyboard and focus logic follows the
@@ -22,8 +22,8 @@ pnpm add @zuccadev-labs/zuix-zui @zuccadev-labs/zuix-tokens @zuccadev-labs/zuix-
 ```
 
 `@zuccadev-labs/zuix-zicon` is a required peer (components draw their icons with the application's copy).
-`react` and `react-dom` 19 are optional peers: only the binding needs them (`pnpm add react react-dom`).
-React 18 is not supported. The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
+`react` and `react-dom` are optional peers, 18.2 or later or 19: only the binding needs them
+(`pnpm add react react-dom`). The only runtime dependency is `@zuccadev-labs/zuix-tokens`. The suite packages
 are installed and upgraded together, at the same version. Requires Node 22.12 or later.
 
 To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix).
@@ -53,8 +53,8 @@ import { datesModule } from "@zuccadev-labs/zuix-zui/dom/dates"; // Calendar, Da
 init(datesModule); // later: use(agendaModule) from "@zuccadev-labs/zuix-zui/dom/agenda"
 ```
 
-Families: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`. Which one covers what, and
-the sizes, in the [frameworks guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md).
+Families: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`, `time`, `terminal`, `chat`,
+`ai`, `dashboard`, `people`. Which one covers what, and the sizes, in the [frameworks guide](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/06-frameworks.md).
 
 ```html
 <body class="z-root z-canvas" data-z-dom>
@@ -118,9 +118,10 @@ markup (`Button`, `Badge`, `Card`…) do not, so they render as Server Component
 | `@zuccadev-labs/zuix-zui` | React components and their `*Props` types |
 | `@zuccadev-labs/zuix-zui/dom` | Framework-free behavior, everything: `init`, `destroy`, `hydrate`, `toast`, `confirm`… |
 | `@zuccadev-labs/zuix-zui/dom/core` | Framework-free core (`init`, `use`, dialogs, popovers, menus, `toast`, basic forms), extended per family |
-| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects` | One behavior family each, registered with `init(module)` or `use(module)` |
+| `@zuccadev-labs/zuix-zui/dom/dates`, `/dom/data`, `/dom/content`, `/dom/agenda`, `/dom/charts`, `/dom/color`, `/dom/media`, `/dom/effects`, `/dom/time`, `/dom/terminal`, `/dom/chat`, `/dom/ai`, `/dom/dashboard`, `/dom/people`, `/dom/nodes` | One behavior family each, registered with `init(module)` or `use(module)` |
 | `@zuccadev-labs/zuix-zui/dom/carousel-gl` | WebGL mode of the carousel, loaded on demand |
 | `@zuccadev-labs/zuix-zui/styles.css` | All the styles |
+| `@zuccadev-labs/zuix-zui/styles.compat.css` | The same styles for Chromium 109, Firefox 115 and Safari 15.4, with `tokens.compat.css` ([compat mode](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/10-compatibilidad.md#modo-compat)) |
 | `@zuccadev-labs/zuix-zui/styles/*` | Single stylesheets per group |
 | `@zuccadev-labs/zuix-zui/manifest.json` | Components, props, classes and examples, for tools and agents |
 | `@zuccadev-labs/zuix-zui/html.json` | The markup of every example |
@@ -146,7 +147,7 @@ The guides are written in Spanish.
 
 ## Español
 
-Sistema de componentes de la suite zuix: 144 componentes sobre un contrato de HTML y CSS, sin bibliotecas de
+Sistema de componentes de la suite zuix: 224 componentes sobre un contrato de HTML y CSS, sin bibliotecas de
 UI de terceros. La guía está en español en [`docs/users/03-zui.md`](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/03-zui.md).
 
 ## License

@@ -4,15 +4,70 @@
 // de modo que el HTML documentado para otros frameworks es exactamente el que produce la implementación.
 // Los iconos se escriben como <z-icon name="…">. Un manifiesto puede fijar el marcado a mano con el campo
 // `html` (lista de { title, code }): se usa en lo que React monta por portal y no aparece en el render estático.
+//
+// El resultado no depende de la máquina: el proceso principal no renderiza, lanza dos hijos con la
+// configuración regional y la zona horaria fijadas por entorno (el ICU de Node las lee al arrancar).
+// El canónico (en-US, UTC) da el contrato; la sonda (de-DE, Asia/Tokyo) renderiza lo mismo y, si un
+// ejemplo cambia, falla: ese ejemplo formatea números o fechas sin fijar `locale` (o `timeZone`).
 import { build, transformSync } from "esbuild";
+import { execFile } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const tmp = join(root, ".tmp");
 mkdirSync(tmp, { recursive: true });
+
+const ENVS = {
+  canonical: { LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", TZ: "UTC" },
+  probe: { LANG: "de_DE.UTF-8", LC_ALL: "de_DE.UTF-8", TZ: "Asia/Tokyo" },
+};
+if (!process.env.ZUIX_HTML_MODE) {
+  const run = (mode) =>
+    promisify(execFile)(process.execPath, [fileURLToPath(import.meta.url)], {
+      env: { ...process.env, LANGUAGE: "", ...ENVS[mode], ZUIX_HTML_MODE: mode },
+      maxBuffer: 256 * 1024 * 1024,
+    }).then(({ stdout }) => JSON.parse(stdout));
+  const [canonical, probe] = await Promise.all([run("canonical"), run("probe")]);
+  if (canonical.locale !== "en-US" || canonical.timeZone !== "UTC") {
+    console.error(`✗ El render canónico no quedó en en-US/UTC (${canonical.locale}, ${canonical.timeZone}).`);
+    process.exit(1);
+  }
+  const drift = [];
+  for (const [pkg, components] of Object.entries(canonical.packages)) {
+    for (const [name, c] of Object.entries(components.result)) {
+      const other = probe.packages[pkg]?.result[name]?.examples ?? [];
+      c.examples.forEach((ex, i) => {
+        if (other[i]?.html !== ex.html) drift.push(`${pkg}/${name}: "${ex.title}"`);
+      });
+    }
+  }
+  for (const [pkg, { result, count }] of Object.entries(canonical.packages)) {
+    writeFileSync(
+      join(root, pkg, "html.json"),
+      `${JSON.stringify({ name: `@zuccadev-labs/zuix-${pkg}`, note: "Contrato HTML: marcado que producen los componentes. Iconos como <z-icon>. `behavior`: none = solo CSS; dom = necesita @zuccadev-labs/zuix-zui/dom (layouts de zout: @zuccadev-labs/zuix-zout/dom); react = hoy solo disponible en el binding de React.", components: result }, null, 1)}\n`,
+    );
+    console.log(`${pkg}: ${Object.keys(result).length} de ${count} componentes con contrato HTML`);
+  }
+  const { total, manual, skipped } = canonical;
+  const verbose = process.argv.includes("--verbose");
+  if (skipped.length && verbose) console.log(skipped.map((s) => `· ${s}`).join("\n"));
+  console.log(
+    `✓ ${total} ejemplos (${manual} escritos a mano) · ${skipped.length} sin marcado estático${verbose ? "" : " (--verbose para verlos)"}`,
+  );
+  if (drift.length) {
+    console.error(
+      `✗ ${drift.length} ejemplos cambian con la configuración regional o la zona horaria de la máquina. Fija \`locale\` (y \`timeZone\` si muestra horas) en el ejemplo:\n${drift.map((d) => `  · ${d}`).join("\n")}`,
+    );
+    process.exit(1);
+  }
+  process.exit(0);
+}
+// Hijo: stdout lleva solo el JSON del resultado.
+console.log = console.error;
 
 // Entrada: expone los componentes y el render estático. Se empaqueta para poder ejecutar TSX desde Node.
 // Va por stdin con `resolveDir` en zui/ (resuelve react desde sus dependencias): no se escribe ningún archivo
@@ -125,6 +180,7 @@ const DOM = /role="(?:tab|switch|checkbox|radio)"|aria-pressed=|z-accordion__tri
 let total = 0,
   manual = 0;
 const skipped = [];
+const packages = {};
 for (const pkg of ["zui", "zout"]) {
   const manifest = JSON.parse(readFileSync(join(root, pkg, "manifest.json"), "utf8"));
   const result = {};
@@ -162,13 +218,6 @@ for (const pkg of ["zui", "zout"]) {
       total += examples.length;
     } else skipped.push(`${pkg}/${c.name}: sin contrato HTML`);
   }
-  writeFileSync(
-    join(root, pkg, "html.json"),
-    `${JSON.stringify({ name: `@zuccadev-labs/zuix-${pkg}`, note: "Contrato HTML: marcado que producen los componentes. Iconos como <z-icon>. `behavior`: none = solo CSS; dom = necesita @zuccadev-labs/zuix-zui/dom (layouts de zout: @zuccadev-labs/zuix-zout/dom); react = hoy solo disponible en el binding de React.", components: result }, null, 1)}\n`,
-  );
-  console.log(`${pkg}: ${Object.keys(result).length} de ${manifest.components.length} componentes con contrato HTML`);
+  packages[pkg] = { result, count: manifest.components.length };
 }
-if (skipped.length && process.argv.includes("--verbose")) console.log(skipped.map((s) => `· ${s}`).join("\n"));
-console.log(
-  `✓ ${total} ejemplos (${manual} escritos a mano) · ${skipped.length} sin marcado estático${process.argv.includes("--verbose") ? "" : " (--verbose para verlos)"}`,
-);
+process.stdout.write(JSON.stringify({ ...Intl.DateTimeFormat().resolvedOptions(), packages, total, manual, skipped }));

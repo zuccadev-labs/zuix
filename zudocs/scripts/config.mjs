@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 export const templateDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 /** Raíz del repositorio de zuix. */
 export const repoDir = join(templateDir, "..");
-export const PAGES = ["components", "icons", "tokens", "loaders", "effects"];
+export const PAGES = ["components", "icons", "tokens", "loaders", "effects", "carousels"];
 export const CONFIG_NAME = "zudocs.config.json";
 
 /** Error de uso o de configuración: el mensaje ya es legible y no necesita traza. */

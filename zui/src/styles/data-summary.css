@@ -1,0 +1,410 @@
+/* Datos: resúmenes y precios (SummaryList, PriceBreakdown, PriceTag). Importes en cifras tabulares y alineados al
+   final de la fila, para que las columnas de números se lean de un vistazo. */
+@layer zui.data {
+  /* ---- SummaryList / PriceBreakdown ---- */
+  .z-summary {
+    --z-summary-pad: var(--z-space-2);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-size: var(--z-text-body);
+    line-height: var(--z-leading-ui);
+  }
+  .z-summary[data-size="sm"] {
+    --z-summary-pad: var(--z-space-1-5);
+    font-size: var(--z-text-small);
+  }
+  .z-summary__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: var(--z-space-4);
+    row-gap: var(--z-space-0-5);
+    padding-block: var(--z-summary-pad);
+  }
+  .z-summary__row[data-separated],
+  .z-summary__row[data-total] {
+    margin-block-start: var(--z-space-1);
+    padding-block-start: calc(var(--z-summary-pad) + var(--z-space-1));
+    border-block-start: 1px solid var(--z-line);
+  }
+  .z-summary__label {
+    display: flex;
+    flex: 1 1 12rem;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+    color: var(--z-fg-muted);
+  }
+  .z-summary__hint {
+    color: var(--z-fg-subtle);
+    font-size: var(--z-text-caption);
+  }
+  .z-summary__value {
+    flex: 0 0 auto;
+    margin: 0;
+    margin-inline-start: auto;
+    color: var(--z-fg);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--z-weight-medium);
+    text-align: end;
+  }
+  .z-summary__row[data-tone="muted"] .z-summary__value {
+    color: var(--z-fg-muted);
+    font-weight: var(--z-weight-regular);
+  }
+  .z-summary__row[data-tone="success"] .z-summary__value {
+    color: var(--z-success-text);
+  }
+  .z-summary__row[data-tone="danger"] .z-summary__value {
+    color: var(--z-danger-text);
+  }
+  .z-summary__row[data-total] .z-summary__label {
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-summary__row[data-total] .z-summary__value {
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+  }
+
+  /* ---- PriceTag ---- */
+  .z-price {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--z-space-1-5);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--z-leading-snug);
+  }
+  .z-price__current {
+    color: var(--z-fg);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-snug);
+  }
+  .z-price__previous {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    text-decoration-thickness: 1px;
+  }
+  .z-price__unit {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-price[data-size="sm"] .z-price__current {
+    font-size: var(--z-text-body);
+  }
+  .z-price[data-size="sm"] :is(.z-price__previous, .z-price__unit) {
+    font-size: var(--z-text-caption);
+  }
+  .z-price[data-size="lg"] .z-price__current {
+    font-size: var(--z-text-display-sm);
+    letter-spacing: var(--z-tracking-tight);
+  }
+  .z-price[data-size="lg"] :is(.z-price__previous, .z-price__unit) {
+    font-size: var(--z-text-body);
+  }
+
+  /* ---- ReviewSummary ---- */
+  /* Contenedor de consulta: en un hueco ancho la nota y las barras van lado a lado; en estrecho, una sobre otra. */
+  .z-review-summary {
+    container-type: inline-size;
+    display: grid;
+    gap: var(--z-space-3);
+  }
+  .z-review-summary__body {
+    display: grid;
+    gap: var(--z-space-4);
+  }
+  .z-review-summary__title {
+    margin: 0;
+    color: var(--z-fg);
+    font-size: var(--z-text-heading);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-review-summary__score {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: var(--z-space-1);
+  }
+  .z-review-summary__average {
+    color: var(--z-fg);
+    font-family: var(--z-font-display);
+    font-size: var(--z-text-display);
+    font-weight: var(--z-weight-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--z-tracking-display);
+    line-height: var(--z-leading-tight);
+  }
+  .z-review-summary__count {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  .z-review-summary__bars {
+    display: grid;
+    gap: var(--z-space-1-5);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-review-summary__row {
+    display: grid;
+    grid-template-columns: 3ch minmax(0, 1fr) 4.5ch;
+    align-items: center;
+    gap: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-review-summary__star {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-0-5);
+  }
+  .z-review-summary__star > .z-icon {
+    color: var(--z-warning);
+  }
+  .z-review-summary__track {
+    height: var(--z-space-2);
+    overflow: hidden;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+  }
+  .z-review-summary__fill {
+    display: block;
+    width: var(--z-review-share, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--z-warning);
+  }
+  .z-review-summary__share {
+    text-align: end;
+  }
+  @container (inline-size >= 30rem) {
+    .z-review-summary__body {
+      grid-template-columns: minmax(9rem, auto) minmax(0, 1fr);
+      column-gap: var(--z-space-8);
+    }
+  }
+  @media (forced-colors: active) {
+    .z-review-summary__fill {
+      background: CanvasText;
+    }
+  }
+
+  /* ---- ReviewCard ---- */
+  .z-review-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    min-width: 0;
+    color: var(--z-fg);
+    font-size: var(--z-text-body);
+    line-height: var(--z-leading-normal);
+  }
+  .z-review-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--z-space-2) var(--z-space-4);
+  }
+  .z-review-card__meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-review-card__date {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    white-space: nowrap;
+  }
+  .z-review-card__title {
+    margin: 0;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+  }
+  .z-review-card__text {
+    margin: 0;
+    color: var(--z-fg-prose);
+    overflow-wrap: anywhere;
+  }
+  /* Plegado con `until-found` el resto se oculta con `content-visibility`, que no actúa sobre una caja en línea: pasa
+     a bloque (de altura 0) mientras está plegado y vuelve a la línea al desplegarse. */
+  .z-review-card__rest[hidden="until-found"] {
+    display: block;
+  }
+  .z-review-card__more {
+    align-self: flex-start;
+    min-height: var(--z-control-height-xs);
+    margin-block-start: calc(var(--z-space-2) * -1);
+    padding-inline: var(--z-space-1);
+    margin-inline-start: calc(var(--z-space-1) * -1);
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-accent-text);
+    font: inherit;
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-review-card__more:hover {
+      text-decoration: underline;
+    }
+  }
+  .z-review-card__more:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-review-card__photos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-review-card__photo {
+    display: block;
+    inline-size: var(--z-space-20);
+    aspect-ratio: 1;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-radius-md);
+    background: var(--z-surface-2);
+  }
+  button.z-review-card__photo {
+    cursor: zoom-in;
+  }
+  button.z-review-card__photo:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-review-card__photo > img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  .z-review-card__reply {
+    display: grid;
+    gap: var(--z-space-1);
+    padding-block: var(--z-space-1);
+    padding-inline-start: var(--z-space-4);
+    border-inline-start: 2px solid var(--z-line-strong);
+  }
+  .z-review-card__reply-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--z-space-1) var(--z-space-2);
+    margin: 0;
+  }
+  .z-review-card__reply-author {
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-review-card__reply-text {
+    margin: 0;
+    color: var(--z-fg-prose);
+    font-size: var(--z-text-small);
+  }
+
+  /* ---- FilterBar ---- */
+  .z-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+  }
+  /* La fila desplaza en horizontal; el borde con chips ocultos se difumina (data-scroll-edges, core/edges). El relleno
+     deja sitio al contorno de foco, y scroll-padding evita que un chip enfocado se quede bajo el difuminado. */
+  .z-filter-bar__scroller {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+    padding: var(--z-space-1);
+    margin: calc(var(--z-space-1) * -1);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: var(--z-space-6);
+    /* La barra fina se queda: el difuminado acompaña, no sustituye, a la señal de que hay más. */
+    scrollbar-width: thin;
+  }
+  .z-filter-bar__chip {
+    flex-shrink: 0;
+    scroll-margin-inline: var(--z-space-6);
+  }
+  .z-filter-bar__chevron {
+    display: inline-flex;
+    margin-inline-start: calc(var(--z-space-0-5) * -1);
+    transition: rotate var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-filter-bar__chip [aria-expanded="true"] .z-filter-bar__chevron {
+    rotate: 180deg;
+  }
+  .z-filter-bar__clear {
+    flex-shrink: 0;
+  }
+  .z-filter-bar__menu {
+    min-inline-size: 12rem;
+    max-inline-size: min(20rem, calc(100vw - var(--z-space-4)));
+    padding: var(--z-space-1-5);
+  }
+  .z-filter-bar__options {
+    display: grid;
+    gap: var(--z-space-0-5);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .z-filter-bar__option {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-2-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2);
+    border-radius: var(--z-item-radius);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-filter-bar__option:hover {
+      background: var(--z-row-hover);
+    }
+  }
+  .z-filter-bar__option:has(.z-filter-bar__input:focus-visible) {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-filter-bar__input {
+    flex-shrink: 0;
+    inline-size: var(--z-space-4);
+    block-size: var(--z-space-4);
+    margin: 0;
+    accent-color: var(--z-accent-solid);
+  }
+  .z-filter-bar__input:focus-visible {
+    outline: none;
+  }
+  @media (forced-colors: active) {
+    .z-filter-bar__option:has(.z-filter-bar__input:focus-visible) {
+      outline-color: Highlight;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { cx } from "../../cx";
 import { useControllable } from "../../primitives/hooks";
 import { NativeInput } from "../../primitives/native-input";
 import { useFieldControl } from "./Field";
+import { withRef } from "../../react-compat";
 
 export interface SwitchProps extends Omit<ComponentProps<"button">, "children" | "value" | "onChange" | "defaultChecked"> {
   checked?: boolean;
@@ -28,7 +29,7 @@ export interface SwitchProps extends Omit<ComponentProps<"button">, "children" |
 }
 
 /** Interruptor de activación inmediata (role="switch"). */
-export function Switch({
+export const Switch = withRef(function Switch({
   checked: checkedProp,
   defaultChecked = false,
   onCheckedChange,
@@ -104,4 +105,4 @@ export function Switch({
       ) : null}
     </label>
   );
-}
+});

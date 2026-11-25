@@ -22,9 +22,10 @@ una versión publicada salió de aquí. El procedimiento de publicación está e
 | Contrato, auditoría y tipos (Node 26) | `pnpm install --frozen-lockfile`, `pnpm audit`, lint, formato, pruebas unitarias con umbral, `pnpm check`, comprobación de que lo generado está al día (`git status --porcelain` no devuelve nada), build del sitio y `pnpm test:site`, `pnpm build`, `pnpm test:pack --skip-build --next`, y genera el SBOM y las huellas de los tarballs |
 | Node 22 y Node 24 | `pnpm check`, `pnpm build` y la prueba de empaquetado sin Next.js |
 | Navegador (Chromium, Firefox, WebKit) | `pnpm test:html` y `pnpm test:browser` en cada motor. Si fallan, sube las capturas |
+| Navegador con React 18 (Chromium) | `REACT=18 pnpm test:browser`: la suite entera con la aplicación servida con React 18, en paralelo con los demás |
 | Windows | `pnpm check`, que lo generado sale igual, byte a byte, que en Linux, y las pruebas unitarias. Las suites de navegador y el empaquetado se quedan en Linux. No corre en la verificación de una publicación |
 
-Son siete trabajos en un pull request (el primero, dos de Node, tres de navegador y Windows) y seis cuando
+Son ocho trabajos en un pull request (el primero, dos de Node, cuatro de navegador y Windows) y siete cuando
 lo llama `release`: lo que se publica se construye y se prueba en Linux, así que un fallo propio de Windows
 se ve en el pull request sin detener una versión. Para fusionar en `main` son obligatorios el primero y los
 tres de navegador.
@@ -61,6 +62,10 @@ Tres comprobaciones salen sin puntuación: `Branch-Protection`, porque el `GITHU
 leer las reglas de protección de rama; `Packaging` y `Signed-Releases`, porque todavía no hay ninguna
 publicación hecha desde un workflow. La definición de cada una está en la
 [documentación de Scorecard](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
+
+Esa tabla es del 2026-11-18. Después registré el proyecto en bestpractices.dev (el distintivo está en el
+`README.md`) y la `0.2.0` y la `0.3.0` salieron desde el workflow `release`. No he vuelto a apuntar aquí la
+puntuación.
 
 ### Endurecimiento de los workflows
 
@@ -107,6 +112,23 @@ Además:
   se publica (catorce para una versión mayor). Las de seguridad no esperan.
 - Todas las dependencias están en su última versión estable. Los paquetes publicados no tienen dependencias
   de terceros en ejecución; estas políticas protegen las herramientas con las que se construyen.
+
+### `canvaskit-wasm`
+
+Dependencia de desarrollo de la raíz, fijada en `0.42.0`. Es Skia compilado a WebAssembly, publicado por
+Google. La uso solo en `zicon/scripts/own.mjs` (`pnpm icons:own`), para convertir los trazos de mis iconos
+propios en contornos rellenos: `makeStroked` da el contorno exacto con uniones y terminaciones redondeadas y
+las operaciones de trazados de Skia unen y recortan las piezas. No encontré otra forma sin dependencias: no
+quería depender de un programa del sistema como Inkscape, y calcular a mano el desplazamiento de las curvas
+era reinventar Skia.
+
+- No tiene script de instalación (pasa `strictDepBuilds` sin tocar `allowBuilds`) y trae una sola
+  dependencia, `@webgpu/types`, que son tipos.
+- La conversión se hace una vez por icono y el resultado (`zicon/icons-own.json` y `zicon/svg/`) está en el
+  repositorio. `pnpm icons`, `pnpm check` y la CI no la cargan, y ningún paquete publicado depende de ella.
+- La fijo en una versión exacta porque es 0.x y `own.mjs` usa `_makeSimplified`: en esta versión el envoltorio
+  público `makeSimplified` no está en el prototipo de `Path`. Al subirla hay que volver a ejecutar
+  `pnpm icons:own` y comprobar que el diff de `icons-own.json` no cambia la forma de ningún icono.
 
 ## Publicación
 
@@ -156,11 +178,9 @@ de contenido que genera `zudocs headers` no tiene efecto allí; sirve en un aloj
 
 ## Lo que no he comprobado
 
-- El workflow `release` no ha publicado todavía ninguna versión: la primera será la `0.2.0`. Lo validé en
-  local y con la ejecución de ensayo.
 - El trabajo de Windows no ha corrido todavía en ningún runner: repasé los scripts que ejecuta (rutas,
   finales de línea, procesos hijos) sin tener un Windows donde probarlos. Por eso se ve en el pull request
   y no forma parte de la verificación de una publicación.
-- El despliegue de `pages` en el alojamiento real: Pages no está activado todavía. La consulta que lo detecta
-  la probé en local contra la API, no en un runner.
+- La rama de `pages` que omite el despliegue cuando Pages está desactivado. Pages ya está activado y el
+  sitio se despliega con cada cambio en `main`; esa consulta solo la probé en local contra la API.
 - La puntuación de Scorecard con estos cambios ya en `main`; en particular, que `Fuzzing` pase a 10.

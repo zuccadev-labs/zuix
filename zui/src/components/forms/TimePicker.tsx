@@ -23,6 +23,7 @@ import { useMergedRef } from "../../refs";
 import { ICON_SIZE } from "../actions/types";
 import { SegmentedField } from "./segmented.internal";
 import type { TimeFieldProps } from "./TimeField";
+import { withRef } from "../../react-compat";
 
 export interface TimePickerProps extends TimeFieldProps {
   /** `columns`: horas, minutos, (segundos) y AM/PM en columnas. `list`: franjas de `step` minutos, filtrables al teclear. */
@@ -53,7 +54,7 @@ export interface TimePickerProps extends TimeFieldProps {
 }
 
 /** Campo de hora (TimeField) con un panel de columnas o de franjas. Valor `HH:mm` o `HH:mm:ss` en 24 h. */
-export function TimePicker({
+export const TimePicker = withRef(function TimePicker({
   variant = "columns",
   step = 30,
   isTimeDisabled,
@@ -247,7 +248,7 @@ export function TimePicker({
       ) : null}
     </>
   );
-}
+});
 
 interface ColumnsProps {
   columns: TimeColumn[];

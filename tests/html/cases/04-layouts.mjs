@@ -618,6 +618,30 @@ export default async function ({ page, test, ok, card, settle, shots }) {
         ok(await hidden(panel), `Escape no cerró ${panel}`);
       }
     });
+
+    await test("layouts · 390 px: el rail no ocupa columna y entra en el cajón de la sidebar", async () => {
+      await size(390, 844);
+      await until(() => document.querySelector("#modes").textContent === "sidebar drawer, inspector drawer", "no pasó a cajón");
+      ok(await page.locator(".z-shell__body > .z-shell__rail").evaluate((el) => el.hidden), "el rail sigue en su columna");
+      const main = await box(".z-shell__main");
+      ok(main.x < 20, `el área principal empieza en ${main.x}px: el rail le sigue quitando ancho`);
+      await page.locator("#toggle-sidebar").click();
+      await settle();
+      const rail = page.locator(`${side}.z-shell__drawer > .z-shell__rail`);
+      ok(await rail.isVisible(), "el rail no está dentro del cajón");
+      ok(!(await rail.evaluate((el) => el.inert)), "el rail del cajón está inerte");
+      const b = await box(side);
+      ok(b.x >= 0 && b.x + b.width <= 390, `el cajón con el rail se sale de la ventana: ${JSON.stringify(b)}`);
+      await page.locator(`${side} .z-rail [data-go="editor"]`).click();
+      ok(await page.locator("#screen-editor").isVisible(), "el rail del cajón no navegó");
+      await page.keyboard.press("Escape");
+      await settle();
+      if (!(await hidden(side))) await page.locator("#toggle-sidebar").click();
+      ok(await page.locator(".z-shell__body > .z-shell__rail").count(), "el rail no volvió al cuerpo al cerrar el cajón");
+      await size(1440);
+      await until(() => document.querySelector("#modes").textContent === "sidebar docked, inspector docked", "no volvió a acoplar");
+      ok(await page.locator(".z-shell__body > .z-shell__rail").isVisible(), "el rail no volvió a su columna en ancho");
+    });
   } finally {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(new URL("index.html", page.url()).href);

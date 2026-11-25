@@ -1,0 +1,50 @@
+{
+  "name": "KanbanLayout",
+  "group": "layout",
+  "description": "Página de tablero: cabecera con título, acciones y filtros, y el tablero (KanbanBoard) a todo el ancho con desplazamiento horizontal por columnas (una por pantalla en móvil).",
+  "import": "import { KanbanLayout } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "filters",
+      "type": "ReactNode"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "required": true
+    }
+  ],
+  "tokens": ["font-display", "text-heading-lg", "weight-display", "fg-muted", "text-small", "space-4"],
+  "classes": [
+    "z-kanban-layout",
+    "z-kanban-layout__header",
+    "z-kanban-layout__titles",
+    "z-kanban-layout__title",
+    "z-kanban-layout__description",
+    "z-kanban-layout__actions",
+    "z-kanban-layout__filters",
+    "z-kanban-layout__board"
+  ],
+  "a11y": "Un h1 con el nombre del tablero. El tablero es una región con su propia navegación de teclado (KanbanBoard).",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Sprint",
+      "code": "<KanbanLayout title=\"Sprint 14\" description=\"Nov 18 – Dec 1\" actions={<Button variant=\"primary\" icon=\"plus\">New card</Button>}>\n  <KanbanBoard label=\"Sprint 14\" columns={[{ id: \"todo\", title: \"To do\", cards: [{ id: \"a\", title: \"Write the changelog\" }] }, { id: \"done\", title: \"Done\", cards: [] }]} />\n</KanbanLayout>"
+    }
+  ],
+  "origin": "Tableros de Ant Design Pro y de los bloques de shadcn."
+}

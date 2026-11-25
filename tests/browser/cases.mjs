@@ -4,15 +4,24 @@
 import auditCss from "./cases-audit-css.mjs";
 import auditReact from "./cases-audit-react.mjs";
 import layers from "./cases-layers.mjs";
-import wave3 from "./cases-wave3.mjs";
-import wave4 from "./cases-wave4.mjs";
-import wave4Zout from "./cases-wave4-zout.mjs";
-import wave5Content from "./cases-wave5-content.mjs";
-import wave5Data from "./cases-wave5-data.mjs";
-import wave6 from "./cases-wave6.mjs";
-import wave7 from "./cases-wave7.mjs";
+import inputsCases from "./cases-inputs.mjs";
+import commandsCases from "./cases-commands.mjs";
+import workspaceCases from "./cases-workspace.mjs";
+import contentCases from "./cases-content.mjs";
+import dataCases from "./cases-data.mjs";
+import siteCases from "./cases-site.mjs";
+import mediaCases from "./cases-media.mjs";
+import timeTerminal from "./cases-time-terminal.mjs";
+import chatAi from "./cases-chat-ai.mjs";
+import dashboardPeople from "./cases-dashboard-people.mjs";
+import nodesCases from "./cases-nodes.mjs";
+import transferCases from "./cases-transfer.mjs";
+import datagridCases from "./cases-datagrid.mjs";
+import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
+import listingCases from "./cases-listing.mjs";
+import popoverApiCases from "./cases-popover-api.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -62,7 +71,18 @@ const gone = (page, selector, message = `${selector} retirado`) =>
 const settled = (page) =>
   until(
     page,
-    () => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+    // Fuera: las infinitas, las ligadas al desplazamiento (no terminan: siguen a la tira) y el llenado del indicador
+    // `progress` del carrusel, que vuelve a empezar en cada intervalo mientras dura la reproducción automática.
+    () =>
+      document
+        .getAnimations()
+        .every(
+          (a) =>
+            a.playState !== "running" ||
+            a.effect?.getComputedTiming().iterations === Infinity ||
+            a.timeline !== document.timeline ||
+            String(a.animationName ?? "").startsWith("z-carousel-fill"),
+        ),
     "las animaciones terminan",
   );
 
@@ -190,8 +210,14 @@ async function overflowReport(page) {
       for (let n = el.parentElement; n; n = n.parentElement) {
         const o = getComputedStyle(n).overflowX;
         if ((o === "auto" || o === "scroll") && n.scrollWidth > n.clientWidth) return true;
-        // Recortes deliberados con su propio desplazamiento: el carrusel y la cinta de Marquee.
-        if (n.classList.contains("z-carousel__viewport") || n.classList.contains("z-marquee__viewport")) return true;
+        // Recortes deliberados con su propio desplazamiento: el carrusel, la cinta de Marquee y el lienzo de nodos (en un
+        // teléfono el grafo no cabe a un zoom legible y se recorre desplazando el lienzo).
+        if (
+          n.classList.contains("z-carousel__viewport") ||
+          n.classList.contains("z-marquee__viewport") ||
+          n.classList.contains("z-node-canvas")
+        )
+          return true;
       }
       return false;
     };
@@ -250,6 +276,16 @@ const SCREENS = [
   "data",
   "charts",
   "media",
+  "carousels",
+  "time",
+  "terminal",
+  "dashboard",
+  "profile",
+  "settings",
+  "kanban",
+  "login",
+  "flows",
+  "listing",
 ];
 
 export const cases = [
@@ -631,8 +667,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        28,
-        "28 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site y Media)",
+        40,
+        "40 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Flows, Chat, Assistant, Dashboard, Profile, Settings, Board, Sign in y Listing)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -775,9 +811,8 @@ export const cases = [
         `${t("tabs")} [role=tab][aria-selected=true]`,
       );
       assert(controls === "tabpanel", "aria-controls apunta a un tabpanel");
-      // SegmentedControl con flechas.
-      // SegmentedControl.
-      await page.click('button:has-text("List")');
+      // SegmentedControl con flechas. El segmento por su texto exacto: «List» también está en «Listing» (barra lateral).
+      await page.locator(".z-segmented__item", { hasText: /^\s*List\s*$/ }).click();
       await expectText(page, t("view-state"), "list");
       await page.keyboard.press("ArrowLeft");
       await poll(
@@ -1203,6 +1238,23 @@ export const cases = [
     },
   },
   {
+    name: "Shell a 390 px: el rail no ocupa columna y entra en el cajón de la sidebar",
+    async run({ open, shot }) {
+      const page = await open("overview", { width: 390 });
+      await expectCount(page, ".z-shell__body > .z-shell__rail", 0, "a 390 px el rail no ocupa columna");
+      const main = await page.locator(".z-shell__main").boundingBox();
+      assert(main.x < 20, `el área principal empieza en ${main.x}px: el rail le sigue quitando ancho`);
+      await page.click(t("toggle-sidebar"));
+      await visible(page, ".z-shell__side.z-shell__drawer > .z-shell__rail .z-rail");
+      await expectInViewport(page, ".z-shell__side");
+      await shot(page, "shell-390-rail-drawer");
+      await page.click('.z-shell__side .z-rail__item[aria-label="Navigation"]');
+      await visible(page, t("screen-navigation"));
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await visible(page, ".z-shell__body > .z-shell__rail .z-rail");
+    },
+  },
+  {
     name: "Shell: cambia de modo al redimensionar la ventana",
     async run({ open }) {
       const page = await open("overview", { width: 1440 });
@@ -1320,7 +1372,10 @@ export const cases = [
       assert((await fresh.locator(skip).textContent()).trim() === "Skip to content", "texto del enlace de salto");
       const target = await fresh.getAttribute(skip, "href");
       assert(
-        await fresh.evaluate((href) => document.querySelector(href)?.matches(".z-shell__main") ?? false, target),
+        await fresh.evaluate(
+          (href) => document.getElementById(decodeURIComponent(href.slice(1)))?.matches(".z-shell__main") ?? false,
+          target,
+        ),
         `el enlace apunta al área principal (${target})`,
       );
       await fresh.keyboard.press("Enter");
@@ -1733,7 +1788,9 @@ export const cases = [
       assert((await bg()) !== before, "el fondo del shell cambia con el tema");
       await page.click(t("toggle-brand"));
       await until(page, () => document.documentElement.dataset.brand === "zutool", "data-brand=zutool");
-      await expectText(page, t("brand-name"), "zutool");
+      // La marca se nombra en el selector; la barra lleva el nombre de la aplicación, que no cambia con ella.
+      assert((await page.getAttribute(t("toggle-brand"), "aria-label"))?.includes("zutool"), "el selector nombra la marca actual");
+      await expectText(page, t("app-name"), "Acme");
       await page.click(t("toggle-theme"));
       await until(page, () => document.documentElement.dataset.theme === "dark", "data-theme=dark");
     },
@@ -3035,7 +3092,17 @@ export const cases = [
         { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.6 },
         { x: drawer.x + drawer.width / 2, y: drawer.y + drawer.height * 0.3 },
       );
-      await sleep(400);
+      // Con la lista de pantallas más alta que el cajón, el gesto deja una inercia en marcha; un toque durante la
+      // inercia solo la frena y no llega como clic, así que se espera a que el desplazamiento se detenga.
+      const scrollTop = () => page.evaluate(() => document.querySelector(".z-shell__side .z-sidebar__sections")?.scrollTop ?? 0);
+      let last = -1;
+      await poll(async () => {
+        await sleep(150);
+        const now = await scrollTop();
+        const still = now === last;
+        last = now;
+        return still;
+      }, "la inercia del desplazamiento dentro del cajón se detiene");
       await expectCount(page, ".z-shell__side.z-shell__drawer", 1, "desplazar dentro del cajón no lo cierra");
       const size = page.viewportSize();
       assert(drawer.x + drawer.width < size.width - 24, `el cajón deja velo que tocar: ${JSON.stringify(drawer)}`);
@@ -3059,9 +3126,29 @@ export const cases = [
     },
   },
   // Auditoría previa a la 0.2.0: cada archivo recibe los ayudantes de este módulo y devuelve sus casos.
-  ...[auditReact, auditCss, layers, wave3, wave4, wave4Zout, wave5Content, wave5Data, wave6, wave7, charts, reading].flatMap((build) =>
-    build(helpers()),
-  ),
+  ...[
+    auditReact,
+    auditCss,
+    layers,
+    inputsCases,
+    commandsCases,
+    workspaceCases,
+    contentCases,
+    dataCases,
+    siteCases,
+    popoverApiCases,
+    mediaCases,
+    charts,
+    reading,
+    timeTerminal,
+    chatAi,
+    dashboardPeople,
+    carouselsCases,
+    nodesCases,
+    transferCases,
+    datagridCases,
+    listingCases,
+  ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
   {
@@ -3486,7 +3573,7 @@ export const cases = [
       await shot(narrow, "agenda-month-390");
     },
   },
-  // ───────────────────────────── Agenda, oleada 2 ─────────────────────────────
+  // ───────────────────────────── Agenda: vistas ─────────────────────────────
   {
     name: "Agenda: vistas de año, perpetuo y línea temporal en el EventCalendar",
     async run({ open, shot }) {

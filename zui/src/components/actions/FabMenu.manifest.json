@@ -1,0 +1,77 @@
+{
+  "name": "FabMenu",
+  "group": "actions",
+  "description": "FAB que abre un menú de acciones por encima (FAB menu de Material 3, Speed Dial de MUI).",
+  "import": "import { FabMenu } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "icon",
+      "type": "IconName",
+      "required": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "items",
+      "type": "MenuEntry[]",
+      "required": true
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["primary", "secondary", "surface"],
+      "default": "primary"
+    },
+    {
+      "name": "position",
+      "type": "enum",
+      "values": ["bottom-end", "bottom-start", "top-end", "top-start", "bottom-center"]
+    },
+    {
+      "name": "extended",
+      "type": "boolean"
+    },
+    {
+      "name": "collapsed",
+      "type": "boolean"
+    },
+    {
+      "name": "open",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean"
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    }
+  ],
+  "tokens": ["accent-solid", "fg-on-accent", "popup-bg", "shadow-md", "radius-lg", "accent-ring"],
+  "classes": ["z-fab", "z-fab-menu"],
+  "a11y": "Patrón menu button de WAI-ARIA sobre el FAB: aria-haspopup=menu y aria-expanded; clic, Intro, Espacio o ↓ abren con el foco en la primera acción y ↑ en la última; flechas, Inicio, Fin y letra entre acciones; Escape cierra y devuelve el foco al FAB; un clic fuera lo cierra. Sin React (`@zuccadev-labs/zuix-zui/dom`): el FAB con data-z-open=\"#menu\" y data-z-placement=\"top-end\" y un .z-menu.z-fab-menu[popover]; emite z:open, z:close y z:select.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Crear",
+      "code": "<FabMenu icon=\"plus\" label=\"Create\" items={[{ id: \"doc\", label: \"Document\", icon: \"document-text\" }, { id: \"image\", label: \"Image\", icon: \"photo\" }, { id: \"folder\", label: \"Folder\", icon: \"folder-plus\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Crear",
+      "code": "<button type=\"button\" title=\"Create\" aria-label=\"Create\" class=\"z-fab\" data-size=\"md\" data-variant=\"primary\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#fab-actions\" data-z-placement=\"top-end\"><z-icon name=\"plus\" size=\"22\"></z-icon></button>\n\n<div id=\"fab-actions\" popover class=\"z-liquid z-menu z-fab-menu\" role=\"menu\" aria-label=\"Create\" data-size=\"lg\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"document-text\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Document</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"photo\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Image</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"folder-plus\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Folder</span></button>\n</div>"
+    }
+  ],
+  "origin": "FAB menu de Material 3 Expressive y SpeedDial de MUI."
+}

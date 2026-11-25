@@ -1,5 +1,5 @@
 /*
-  Navegación de sitio, oleada 6: Navbar (flotante, dock o barra; cajón en estrecho), NavigationMenu (paneles de
+  Navegación de sitio: Navbar (flotante, dock o barra; cajón en estrecho), NavigationMenu (paneles de
   disclosure), BottomNavigation, SiteFooter y SkipLink. Cristal de cromo para las barras y cristal elevado para
   paneles y cajón. Rectángulos de esquinas redondeadas concéntricos (enlace 10 + relleno 6 = barra 16); nada en
   píldora. Solo tokens y propiedades lógicas.
@@ -373,6 +373,12 @@
     }
   }
   /* En fila: el botón de menú no se ve y la lista va en la barra. */
+  /* Plegada y aun así sin sitio (una columna estrecha): las acciones bajan a otra línea en vez de salirse de la
+     cabecera. Midiendo no, para que la medida vea la fila entera. */
+  .z-navbar[data-collapsed]:not([data-measuring]) .z-navbar__inner {
+    flex-wrap: wrap;
+    row-gap: var(--z-space-2);
+  }
   .z-navbar:not([data-collapsed]) .z-navbar__toggle {
     display: none;
   }
