@@ -257,7 +257,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 ### Corregido
 
 - `Avatar`: `src` se valida como fuente de imagen (ruta relativa, http, https, `blob:` o `data:image/…`). Un esquema
-  que no es de imagen (`javascript:`) o una cadena con `<`, `>` o `"` deja las iniciales en lugar de llegar al `<img>`.
+  que no es de imagen (`javascript:`) deja las iniciales en lugar de llegar al `<img>`, y `<`, `>`, `"` y `'` llegan
+  codificados (`%3C`…), como los pide el navegador.
 - Lectura de texto en tiempo lineal: los enlaces en texto plano (`linkify`, la puntuación final y los correos sin
   `@`), las duraciones cortas de `toMs` (`1h 30m`) y las menciones de la vista previa de un mensaje tardaban en
   cuadrático con entradas largas y repetidas (muchos `!`, muchas cifras sin unidad, muchos `<@` sin cerrar). El

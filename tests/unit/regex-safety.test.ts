@@ -195,7 +195,12 @@ describe("fuente de imagen del avatar", () => {
       assert.equal(safeSrc(ok), ok);
     assert.equal(safeSrc("  /a.png  "), "/a.png");
   });
-  test("fuera otros esquemas, control y marcado", () => {
+  test("el marcado sale codificado", () => {
+    assert.equal(safeSrc('/a.png" onerror="alert(1)'), "/a.png%22 onerror=%22alert(1)");
+    assert.equal(safeSrc("/a.png><script>"), "/a.png%3E%3Cscript%3E");
+    assert.equal(safeSrc("/o'brien.png"), "/o%27brien.png");
+  });
+  test("fuera otros esquemas y caracteres de control", () => {
     for (const bad of [
       "javascript:alert(1)",
       " JavaScript:alert(1)",
@@ -204,8 +209,6 @@ describe("fuente de imagen del avatar", () => {
       "data:text/html,<b>x</b>",
       "data:text/html;base64,PHNjcmlwdD4=",
       "file:///etc/passwd",
-      '/a.png" onerror="alert(1)',
-      "/a.png><script>",
       "",
       "   ",
       null,
@@ -213,12 +216,12 @@ describe("fuente de imagen del avatar", () => {
     ])
       assert.equal(safeSrc(bad), null, String(bad));
   });
-  test("propiedad: lo que pasa no trae marcado ni un esquema peligroso", () => {
+  test("propiedad: lo que sale no trae marcado ni un esquema peligroso", () => {
     fc.assert(
       fc.property(fc.string({ maxLength: 40 }), (raw) => {
         const out = safeSrc(raw);
         if (out === null) return;
-        assert.ok(!/[<>"]/.test(out));
+        assert.ok(!/[<>"']/.test(out));
         assert.ok(!/^\s*(?:javascript|vbscript|file):/i.test(out));
       }),
     );

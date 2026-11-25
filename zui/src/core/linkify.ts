@@ -30,13 +30,13 @@ const MEDIA = new Set(["http:", "https:", "blob:"]);
 
 /**
  * Fuente segura de una imagen (`<img src>`) o `null`. Vale una ruta relativa (`/a.png`, `fotos/a.png`), http(s),
- * `blob:` (una foto recién elegida) y `data:image/…`. Fuera `javascript:` y cualquier otro esquema, los caracteres
- * de control y los de marcado (`<`, `>`, `"`), que en una URL bien formada van codificados.
+ * `blob:` (una foto recién elegida) y `data:image/…`. Fuera `javascript:` y cualquier otro esquema y los caracteres de
+ * control. Los de marcado (`<`, `>`, `"`, `'`) salen codificados (`%3C`…), como los pide el navegador al cargarla.
  */
 export function safeSrc(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const value = raw.trim();
-  if (!value || /[<>"]/.test(value)) return null;
+  if (!value) return null;
   for (const ch of value) {
     const code = ch.charCodeAt(0);
     if (code < 32 || code === 127) return null;
@@ -48,8 +48,8 @@ export function safeSrc(raw: string | null | undefined): string | null {
   } catch {
     return null;
   }
-  if (url.protocol === "data:") return /^data:image\//i.test(value) ? value : null;
-  return MEDIA.has(url.protocol) ? value : null;
+  if (url.protocol === "data:" ? !/^data:image\//i.test(value) : !MEDIA.has(url.protocol)) return null;
+  return value.replace(/</g, "%3C").replace(/>/g, "%3E").replace(/"/g, "%22").replace(/'/g, "%27");
 }
 
 // Candidatos: esquema http(s), «www.» o un correo. El final se recorta después. La parte local del correo va acotada a
