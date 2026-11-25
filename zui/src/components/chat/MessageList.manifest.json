@@ -116,6 +116,21 @@
       "description": "scrollToEnd(focus?), jumpTo(id), focus()."
     },
     {
+      "name": "onCopy",
+      "type": "(detail: { id, text }) => void",
+      "description": "Se eligió «Copiar»; el texto ya está en el portapapeles."
+    },
+    {
+      "name": "onVoiceEnded",
+      "type": "(detail: { id }) => void",
+      "description": "Terminó de sonar una nota de voz."
+    },
+    {
+      "name": "onEscape",
+      "type": "() => void",
+      "description": "Escape dentro de la lista, para devolver el foco al campo."
+    },
+    {
       "name": "labels",
       "type": "Partial<MessageListLabels>"
     }

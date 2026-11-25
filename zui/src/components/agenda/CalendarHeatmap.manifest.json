@@ -63,6 +63,11 @@
       "type": "string"
     },
     {
+      "name": "onViewChange",
+      "type": "(detail: { view: \"grid\" | \"table\" }) => void",
+      "description": "Cambio entre la rejilla y la tabla accesible."
+    },
+    {
       "name": "labels",
       "type": "Partial<HeatmapLabels>"
     },

@@ -5,6 +5,15 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Corregido
+
+- Manifiestos: 19 props que existían en los tipos y no salían en el catálogo ni en `manifest.json`.
+  `CalendarHeatmap` `onViewChange`; `PromptInput` `onAttach` y `onRemoveAttachment`; `Composer` `onRemoveAttachment`
+  y `onRecordError`; `MessageBubble` `actions`, `hourCycle` y `now`; `MessageList` `onCopy`, `onVoiceEnded` y
+  `onEscape`; `ThreadSummary` `now` y `locale`; `DateTimePicker` `popupClassName` y `triggerRef`; `NumberInput` y
+  `PasswordInput` `inputClassName`; `NodeCanvas` `onLockChange` y `locale`.
+- `AGENTS.md`: la lista de grupos incluye `chat`, `ai` y `nodes`.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

@@ -1850,6 +1850,11 @@
      "type": "string"
     },
     {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"grid\" | \"table\" }) => void",
+     "description": "Cambio entre la rejilla y la tabla accesible."
+    },
+    {
      "name": "labels",
      "type": "Partial<HeatmapLabels>"
     },
@@ -3471,6 +3476,16 @@
     {
      "name": "onValueChange",
      "type": "(value) => void"
+    },
+    {
+     "name": "onAttach",
+     "type": "(detail: { files: File[] }) => void",
+     "description": "Archivos añadidos: elegidos, pegados o soltados."
+    },
+    {
+     "name": "onRemoveAttachment",
+     "type": "(detail: { id, name? }) => void",
+     "description": "Se quitó un adjunto."
     },
     {
      "name": "labels",
@@ -6230,6 +6245,16 @@
      "type": "() => void"
     },
     {
+     "name": "onRemoveAttachment",
+     "type": "(detail: { id, name? }) => void",
+     "description": "Se quitó un adjunto."
+    },
+    {
+     "name": "onRecordError",
+     "type": "() => void",
+     "description": "No se pudo abrir el micrófono (permiso denegado o sin dispositivo). El aviso para lectores ya lo da el campo."
+    },
+    {
      "name": "labels",
      "type": "Partial<ComposerLabels>"
     }
@@ -6614,6 +6639,21 @@
      "type": "string"
     },
     {
+     "name": "actions",
+     "type": "MessageAction[]",
+     "description": "Barra de acciones del mensaje. Aquí solo el marcado: el teclado y los eventos los pone MessageList. Por defecto ninguna."
+    },
+    {
+     "name": "hourCycle",
+     "type": "\"h12\" | \"h23\"",
+     "description": "Ciclo de la hora del mensaje. Por defecto, el del idioma."
+    },
+    {
+     "name": "now",
+     "type": "number",
+     "description": "Instante de referencia en milisegundos, para render en servidor estable."
+    },
+    {
      "name": "labels",
      "type": "Partial<ChatLabels>"
     }
@@ -6795,6 +6835,21 @@
      "name": "ref",
      "type": "Ref<MessageListHandle>",
      "description": "scrollToEnd(focus?), jumpTo(id), focus()."
+    },
+    {
+     "name": "onCopy",
+     "type": "(detail: { id, text }) => void",
+     "description": "Se eligió «Copiar»; el texto ya está en el portapapeles."
+    },
+    {
+     "name": "onVoiceEnded",
+     "type": "(detail: { id }) => void",
+     "description": "Terminó de sonar una nota de voz."
+    },
+    {
+     "name": "onEscape",
+     "type": "() => void",
+     "description": "Escape dentro de la lista, para devolver el foco al campo."
     },
     {
      "name": "labels",
@@ -7046,6 +7101,16 @@
     {
      "name": "onClick",
      "type": "MouseEventHandler"
+    },
+    {
+     "name": "now",
+     "type": "number",
+     "description": "Instante de referencia en milisegundos para el «hace…» de la última respuesta."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Idioma del tiempo relativo."
     },
     {
      "name": "labels",
@@ -17962,6 +18027,16 @@
      "name": "...DateField",
      "type": "DateFieldProps",
      "description": "locale, name, required, disabled, readOnly, invalid, size, clearable y etiquetas de segmento."
+    },
+    {
+     "name": "popupClassName",
+     "type": "string",
+     "description": "Clase del panel flotante."
+    },
+    {
+     "name": "triggerRef",
+     "type": "Ref<HTMLButtonElement>",
+     "description": "Ref del botón que abre el panel."
     }
    ],
    "states": [
@@ -19450,6 +19525,11 @@
      "name": "readOnly",
      "type": "boolean",
      "default": false
+    },
+    {
+     "name": "inputClassName",
+     "type": "string",
+     "description": "Clase del `<input>`; `className` va en la envoltura."
     }
    ],
    "states": [
@@ -19746,6 +19826,11 @@
      "name": "...rest",
      "type": "InputHTMLAttributes",
      "description": "Atributos nativos (name, required, minLength, value, onChange…)."
+    },
+    {
+     "name": "inputClassName",
+     "type": "string",
+     "description": "Clase del `<input>`; `className` va en la envoltura."
     }
    ],
    "states": [
@@ -23983,6 +24068,16 @@
      "name": "controls",
      "type": "boolean | NodeControlsProps",
      "default": true
+    },
+    {
+     "name": "onLockChange",
+     "type": "(locked: boolean) => void",
+     "description": "Se bloqueó o desbloqueó el lienzo desde los controles."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Idioma de las descripciones de nodos y aristas que se leen."
     },
     {
      "name": "labels",

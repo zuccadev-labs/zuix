@@ -96,6 +96,11 @@
       "name": "readOnly",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "inputClassName",
+      "type": "string",
+      "description": "Clase del `<input>`; `className` va en la envoltura."
     }
   ],
   "states": ["rest", "hover", "focus", "invalid", "disabled", "readonly"],

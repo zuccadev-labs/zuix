@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Corregido
+
+- Manifiestos: `Shell` documenta `titlebar`, `header` y `overlays`, y `SplitPane`, `dividerLabel` (por defecto
+  «Resize panes»). Existían en los tipos y no salían en el catálogo ni en `manifest.json`.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

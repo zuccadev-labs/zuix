@@ -114,6 +114,16 @@
       "name": "...DateField",
       "type": "DateFieldProps",
       "description": "locale, name, required, disabled, readOnly, invalid, size, clearable y etiquetas de segmento."
+    },
+    {
+      "name": "popupClassName",
+      "type": "string",
+      "description": "Clase del panel flotante."
+    },
+    {
+      "name": "triggerRef",
+      "type": "Ref<HTMLButtonElement>",
+      "description": "Ref del botón que abre el panel."
     }
   ],
   "states": ["rest", "focus", "open", "disabled", "invalid"],

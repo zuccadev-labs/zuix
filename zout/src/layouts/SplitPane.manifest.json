@@ -37,6 +37,12 @@
       "name": "Pane.focused",
       "type": "boolean",
       "description": "true marca el panel con borde de acento; false lo atenúa."
+    },
+    {
+      "name": "dividerLabel",
+      "type": "string",
+      "default": "Resize panes",
+      "description": "Nombre accesible de cada divisor."
     }
   ],
   "tokens": [

@@ -69,6 +69,16 @@
       "type": "(value) => void"
     },
     {
+      "name": "onAttach",
+      "type": "(detail: { files: File[] }) => void",
+      "description": "Archivos añadidos: elegidos, pegados o soltados."
+    },
+    {
+      "name": "onRemoveAttachment",
+      "type": "(detail: { id, name? }) => void",
+      "description": "Se quitó un adjunto."
+    },
+    {
       "name": "labels",
       "type": "Partial<ComposerLabels>"
     }

@@ -104,6 +104,21 @@
       "values": ["main", "div", "section"],
       "default": "main",
       "description": "Elemento del área principal. Solo puede haber un <main> visible por documento: un Shell anidado o un segundo Shell en la misma página usa `div` o `section`."
+    },
+    {
+      "name": "titlebar",
+      "type": "ReactNode",
+      "description": "Barra de título propia, para ventanas sin marco."
+    },
+    {
+      "name": "header",
+      "type": "ReactNode",
+      "description": "Cabecera dentro del área principal."
+    },
+    {
+      "name": "overlays",
+      "type": "ReactNode",
+      "description": "Capas flotantes hermanas del cuerpo: diálogos propios, avisos."
     }
   ],
   "tokens": [

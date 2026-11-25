@@ -131,6 +131,16 @@
       "default": true
     },
     {
+      "name": "onLockChange",
+      "type": "(locked: boolean) => void",
+      "description": "Se bloqueó o desbloqueó el lienzo desde los controles."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Idioma de las descripciones de nodos y aristas que se leen."
+    },
+    {
       "name": "labels",
       "type": "Partial<NodeCanvasLabels>",
       "description": "Textos y anuncios, en inglés por defecto."
