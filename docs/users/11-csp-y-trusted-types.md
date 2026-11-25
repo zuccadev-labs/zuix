@@ -30,6 +30,7 @@ Con `require-trusted-types-for 'script'` el navegador rechaza cualquier asignaci
 |---|---|
 | `@zuccadev-labs/zuix-zui/dom` | Su marcado propio (la estructura de un aviso, de un calendario) pasa por un único punto y por la política `zuix-zui`. La política no filtra: solo recibe marcado fijo del paquete y el documento de la vista previa de `Artifact` |
 | Vista previa HTML de `Artifact` | El código del artefacto va al `srcdoc` de un iframe con `sandbox=""` (sin scripts, sin formularios, sin el origen de la página), por la política `zuix-zui`, en `/dom` y en React. Es contenido de la aplicación, pero el iframe no lo deja ejecutar nada ni leer la página |
+| `@zuccadev-labs/zuix-zui/editor` | `renderToDOM` construye los nodos con la API del DOM; solo el marcado fijo de un bloque `preset` pasa por la política. `toTrustedHTML` devuelve el documento por la política `zuix-zui`: es seguro por construcción (etiquetas y atributos fijos, texto escapado, URL filtradas por esquema) |
 | `@zuccadev-labs/zuix-zout/dom` | Crea sus elementos y sus iconos con el DOM. No necesita política |
 | `<z-icon>`, `iconElement()` | Construyen el SVG con el DOM. No necesitan política |
 | `iconSvg()` | Devuelve una cadena. Si tu código la asigna a `innerHTML`, necesita tu propia política |

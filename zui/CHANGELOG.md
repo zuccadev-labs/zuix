@@ -5,6 +5,30 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Conector para editores visuales de páginas por bloques: `@zuccadev-labs/zuix-zui/editor` (sin React) y
+  `@zuccadev-labs/zuix-zui/editor/react`. Lo describe
+  [Conectar un editor visual](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-conectar-un-editor.md).
+  - Catálogo de bloques (`editor/catalog.json`, con `catalog.schema.json`), generado desde los manifiestos en
+    `pnpm check`: los componentes de zui y los layouts de zout, más diez bloques propios de contenido (`Heading`,
+    `Paragraph`, `Image`, `List`…). Props como JSON Schema 2020-12 con control sugerido y valor por defecto,
+    huecos y reglas de anidado, presets sacados de los ejemplos, eventos, `behavior`, contenedores de maquetación,
+    reglas de accesibilidad y tokens editables con su tipo y rango.
+  - Documento de página (`document.schema.json`): `validateDocument` con códigos estables y rutas,
+    `migrateDocument`, operaciones inmutables del árbol, `toHTML` y `toTrustedHTML` (el marcado de `html.json`, con
+    URL filtradas por esquema), `renderToDOM` (hidrata con `/dom`), `toReact` y `fromHTML`.
+  - Puente de lienzo para un iframe (`createCanvas`, `connectCanvas`): saludo con origen y emisor comprobados,
+    mensajes por un `MessagePort`, versión de protocolo, selección y paso del puntero con capas fuera del
+    documento, historial de deshacer, tema y tokens en vivo, puntos de anclaje y áreas para soltar.
+  - Adaptativo: `adaptive` por clase de tamaño (`compact` a `xlarge`) en cada nodo, plantillas de áreas de
+    `AdaptiveLayout`, variantes adaptativas de `Tabs`, `Sidebar`, `DataTable` y `Toolbar`, vista previa por clase y
+    mover piezas de área arrastrando en el lienzo. El marcado de `AdaptiveLayout` es provisional hasta integrarlo
+    desde zout.
+  - Edición de marca (`createBrandEditor`): tokens con tipo y rango, variables CSS en vivo, el contraste con las
+    mismas reglas que `pnpm tokens` y el archivo de marca validado con `brand.schema.json`.
+- `styles/editor.css` (en `styles.css`): las capas de selección del lienzo (`.z-editor-overlay`).
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

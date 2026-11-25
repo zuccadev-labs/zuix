@@ -7,6 +7,10 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Añadido
+
+- La guía «Conectar un editor visual» y la investigación del conector de editores, en el sitio y en `llms.txt`.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

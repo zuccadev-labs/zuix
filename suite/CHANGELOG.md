@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- `@zuccadev-labs/zuix/editor`, `/editor/react` y `/editor/catalog`: el conector de editores visuales de zui y su
+  catálogo como módulo JSON.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

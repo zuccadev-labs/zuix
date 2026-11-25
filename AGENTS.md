@@ -45,7 +45,8 @@ Guías por paquete: `zui/AGENTS.md` y `zicon/AGENTS.md`. Guía general: `docs/ag
 8. **`"use client"`.** Un módulo de React con hooks, contexto o manejadores de eventos propios empieza por
    `"use client";`. Lo comprueba `tools/use-client.mjs` dentro de `pnpm lint`.
 9. **Lo generado no se edita.** `tokens/dist/`, `zicon/src/icons/`, `zicon/src/names.ts`, `zicon/src/all.ts`,
-   los `manifest.json` y `html.json` de la raíz de cada paquete, `*/dist/`, `zicon/sprite.svg`,
+   los `manifest.json` y `html.json` de la raíz de cada paquete, `zui/editor/catalog.json`,
+  `zui/editor/document.schema.json`, `zui/src/editor/blocks.generated.ts` (los genera `pnpm editor`), `*/dist/`, `zicon/sprite.svg`,
    `examples/html/index.html`, `zudocs/static/llms.txt` y `tokens/dist/compat/`. Las capas de compatibilidad
    salen de `tokens/compat/*.json`. Se regeneran con `pnpm check` y entran en el mismo cambio.
 10. **Cada cambio visible se anota** en "Sin publicar" del `CHANGELOG.md` de su paquete.

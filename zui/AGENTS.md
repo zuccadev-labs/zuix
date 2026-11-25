@@ -176,6 +176,14 @@ tabla de su grupo de `docs/users/03-zui.md`, y una función nueva de `/dom/<fami
 Campos del contrato HTML: `behavior` (`none` | `dom` | `react`; se deduce si falta) y `html` (lista de
 `{ title, code, script? }`) cuando el marcado no sale del render estático.
 
+### Conector de editores (`src/editor/`)
+
+- `src/editor/blocks/` define los bloques que el conector serializa sin React. Cada función reproduce el marcado de
+  su componente; `pnpm editor` lo compara con `html.json` en cada ejemplo expresable como documento. Si cambias el
+  marcado de uno de esos componentes (Button, Link, Card, Panel, Stack, Grid…), cambia también su bloque.
+- El catálogo (`editor/catalog.json`) y `src/editor/blocks.generated.ts` los genera `pnpm editor`: no se editan.
+- Lo que el editor recibe como texto o URL del usuario se escapa al escribir y las URL pasan por `safeUrl`.
+
 ## No hacer
 
 | En lugar de | Usa |
@@ -211,6 +219,7 @@ pnpm typecheck    # sin errores
 pnpm manifest     # todo componente exportado tiene manifiesto válido
 pnpm barrels      # todo componente con manifiesto se exporta desde la raíz del paquete
 pnpm html         # el contrato HTML se regenera
+pnpm editor       # el catálogo del conector de editores y su comparación con html.json
 pnpm docs:coverage # el componente, sus props y sus funciones aparecen en la documentación de usuario
 pnpm test:unit    # si tocaste src/core o lógica cubierta
 pnpm test:html    # si tocaste src/dom, native.css o un componente con behavior "dom"

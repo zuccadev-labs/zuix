@@ -16,6 +16,7 @@
 - [Accesibilidad](https://zuccadev-labs.github.io/zuix/docs/users/accesibilidad.md): El objetivo de la suite es WCAG 2.2 nivel AA, y lo trato como algo que se mide: lo que se puede comprobar con una máquina se comprueba en cada cambio y hace fallar la verificación.
 - [Compatibilidad](https://zuccadev-labs.github.io/zuix/docs/users/compatibilidad.md): Qué navegadores, qué versiones de Node, de React y de TypeScript, y qué bundlers admite la suite.
 - [CSP y Trusted Types](https://zuccadev-labs.github.io/zuix/docs/users/csp-y-trusted-types.md): Cómo usar la suite en una página con una política de seguridad de contenido estricta, y qué hace la suite con los datos que recibe.
+- [Conectar un editor visual](https://zuccadev-labs.github.io/zuix/docs/users/conectar-un-editor.md): Cómo un editor de páginas por bloques usa zuix: qué bloques hay y cómo se editan, en qué formato se guarda una página, cómo se pinta en un lienzo dentro de un iframe y cómo se exporta.
 
 ## Agentes
 
@@ -49,6 +50,7 @@
 - [Lint, pruebas y por qué no Barrits](https://zuccadev-labs.github.io/zuix/docs/investigations/lint-pruebas-y-barrits.md): La 0.1.0 salió sin linter, sin formateador y sin pruebas unitarias: tenía auditoría de estilo, tipos y pruebas de navegador.
 - [El sitio de documentación, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/el-sitio-medido.md): zudocs lo había tratado como una plantilla que funcionaba: compilaba y no tenía enlaces rotos.
 - [Rendimiento de la agenda, medido](https://zuccadev-labs.github.io/zuix/docs/investigations/rendimiento-de-la-agenda.md): Cuando diseñé la agenda me puse un objetivo: 5000 eventos en un mes y 500 recursos sin tareas largas al navegar (50 ms por interacción como meta; un INP «bueno», por debajo de 200 ms, como mínimo).
+- [El conector de editores visuales](https://zuccadev-labs.github.io/zuix/docs/investigations/conector-de-editores.md): Noviembre de 2026, para la 0.5.
 
 ## Publicación
 

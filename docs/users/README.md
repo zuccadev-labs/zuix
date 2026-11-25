@@ -25,6 +25,7 @@ binding con React 18. Si sobrescribes variables de algún componente, repasa los
 | 09 | [Accesibilidad](./09-accesibilidad.md) | Qué garantiza la suite, cómo se mide y qué queda en manos de la aplicación |
 | 10 | [Compatibilidad](./10-compatibilidad.md) | Navegadores, Node, React, TypeScript y bundlers admitidos |
 | 11 | [CSP y Trusted Types](./11-csp-y-trusted-types.md) | Cómo desplegar con una política de seguridad de contenido estricta |
+| 12 | [Conectar un editor visual](./12-conectar-un-editor.md) | Catálogo de bloques, documento de página, lienzo en un iframe y cómo escribir un adaptador |
 
 ## Paquetes
 
@@ -60,6 +61,7 @@ pnpm add react react-dom
 | `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Puentes de los tokens a Tailwind 4 y a Docusaurus |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | Las mismas entradas de `@zuccadev-labs/zuix-zui` |
 | `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/<familia>` | El núcleo y cada familia del modo sin framework: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`, `time`, `terminal`, `chat`, `ai`, `dashboard`, `people` y `nodes` ([Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias)) |
+| `@zuccadev-labs/zuix/editor`, `/editor/react`, `/editor/catalog` | El conector de editores visuales de `@zuccadev-labs/zuix-zui/editor` y su catálogo como módulo ([Conectar un editor](./12-conectar-un-editor.md)) |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout`, `@zuccadev-labs/zuix-zout/dom` |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | Las mismas entradas de `@zuccadev-labs/zuix-zicon` |
 
