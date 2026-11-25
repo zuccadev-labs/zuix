@@ -7,6 +7,11 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Corregido
+
+- Navegación lateral: con un grupo de nombre largo en dos líneas («Dashboard y tableros») el icono iba entre las
+  dos líneas; ahora sigue a la primera, y el contador y el chevrón quedan al centro de la fila.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido
