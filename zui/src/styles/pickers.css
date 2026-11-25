@@ -179,8 +179,11 @@
     min-width: 0;
     max-width: 100%;
   }
+  /* Contenedor de consulta: su ancho no puede salir del contenido, así que ocupa el de su sitio (en una columna
+     centrada se quedaría en cero y las horas, aplastadas). */
   .z-timerange {
     container: z-timerange / inline-size;
+    inline-size: 100%;
   }
   .z-timerange > .z-timefield {
     flex: 1 1 0;

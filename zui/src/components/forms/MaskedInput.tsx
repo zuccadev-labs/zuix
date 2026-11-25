@@ -1,15 +1,7 @@
 "use client";
 import { useEffect, useId, useMemo, useRef, useState, type InputHTMLAttributes, type Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
-import {
-  applyMask,
-  MASK_PRESETS,
-  maskInputMode,
-  maskTemplate,
-  resolveMask,
-  type MaskPreset,
-  type MaskSpec,
-} from "../../core/mask";
+import { applyMask, MASK_PRESETS, maskInputMode, maskTemplate, resolveMask, type MaskPreset, type MaskSpec } from "../../core/mask";
 import { attachMask, type MaskControl } from "../../core/mask-control";
 import { fill } from "../../core/vnode";
 import { cx } from "../../cx";

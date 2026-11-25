@@ -7,6 +7,11 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Añadido
+
+- Páginas de Cascader, TreeSelect, MaskedInput, DateTimeRangePicker, TimeRangePicker y QuarterPicker, con la vista
+  previa sin React de cada ejemplo (salen de sus manifiestos).
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

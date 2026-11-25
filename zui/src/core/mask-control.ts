@@ -56,7 +56,7 @@ export function attachMask(input: HTMLInputElement, options: MaskControlOptions)
     event.preventDefault();
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? start;
-    // Cortar: el texto seleccionado va al portapapeles antes de quitarlo (lo hace el navegador en `cut`).
+    // `deleteByCut` llega después de `cut`: el navegador ya copió la selección; aquí solo se quita del valor.
     const result = editMask(spec, input.value, start, end, edit);
     if (result.rejected) return;
     write(result.value, result.caret);

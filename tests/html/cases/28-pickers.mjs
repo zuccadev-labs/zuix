@@ -7,6 +7,8 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const contract = JSON.parse(readFileSync(join(here, "../../../zui/html.json"), "utf8")).components;
+/** Marcado de un ejemplo del contrato por su título. */
+const example = (name, title) => contract[name].examples.find((e) => e.title === title).html;
 
 export default async function ({ page, test, ok }) {
   /** Monta el marcado en una caja `[data-z-dom]` dentro de un formulario, prepara la suite y recoge z:change. */
@@ -87,7 +89,7 @@ export default async function ({ page, test, ok }) {
   });
 
   await test("TreeSelect sin React · casillas con estado mixto, estrategia parent y FormData", async () => {
-    await mount(contract.TreeSelect.examples[0].html);
+    await mount(example("TreeSelect", "Varios equipos con casillas"));
     const input = ".z-treeselect__input";
     ok((await box.locator(".z-tags__tag").count()) === 2, "dos piezas");
     await box.locator(input).focus();
@@ -129,7 +131,7 @@ export default async function ({ page, test, ok }) {
   });
 
   await test("TimeRangePicker sin React · turno de noche con indicador, duración y fin anterior al inicio", async () => {
-    await mount(contract.TimeRangePicker.examples[0].html);
+    await mount(example("TimeRangePicker", "Turno de noche"));
     const group = box.locator(".z-timerange");
     ok((await group.getAttribute("data-overnight")) === "", "cruza la medianoche");
     ok((await group.locator(".z-timerange__overnight").textContent())?.includes("+1 day"), "indicador");
@@ -150,7 +152,7 @@ export default async function ({ page, test, ok }) {
   });
 
   await test("DateTimeRangePicker sin React · panel con calendario de rango, horas, zona y Apply", async () => {
-    await mount(contract.DateTimeRangePicker.examples[0].html);
+    await mount(example("DateTimeRangePicker", "Ventana de mantenimiento con zona"));
     const trigger = box.locator(".z-dtrange > .z-select__control");
     ok((await trigger.textContent())?.includes("(Madrid)"), `texto: ${await trigger.textContent()}`);
     await trigger.click();

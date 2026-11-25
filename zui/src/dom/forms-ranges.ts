@@ -246,7 +246,8 @@ function buildPanel(picker: HTMLElement, panel: HTMLElement, draft: Draft): void
   panel.querySelector(".z-calendar__apply")!.textContent = label(picker, "apply");
   const cal = panel.querySelector<HTMLElement>(".z-calendar")!;
   for (const key of ["locale", "weekStart", "today", "min", "max"]) if (picker.dataset[key]) cal.dataset[key] = picker.dataset[key];
-  cal.dataset.months = picker.dataset.months ?? "2";
+  // En una ventana estrecha (teléfono), un solo mes.
+  cal.dataset.months = matchMedia("(max-width: 640px)").matches ? "1" : (picker.dataset.months ?? "2");
   calendarDraft(cal, draft);
   hydrateFields(panel);
 }

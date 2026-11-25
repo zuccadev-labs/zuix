@@ -198,6 +198,10 @@
     {
       "title": "Varias regiones con casillas",
       "code": "<div class=\"z-cascader\" data-multiple data-name=\"coverage\" data-label=\"Coverage\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [[\"es\", \"ct\"]]}</script>\n</div>"
+    },
+    {
+      "title": "Rama elegible (changeOnSelect)",
+      "code": "<div class=\"z-cascader\" data-change-on-select data-placeholder=\"Country or region\" data-label=\"Area\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}]}</script>\n</div>"
     }
   ],
   "origin": "Nuevo. Referencias: Cascader de Ant Design y de Element Plus, y el patrón combobox de APG."

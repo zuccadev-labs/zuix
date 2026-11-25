@@ -320,7 +320,7 @@ export const DateTimeRangePicker = withRef(function DateTimeRangePicker({
                 mode="range"
                 value={{ from: draft.from, to: draft.to }}
                 onValueChange={(range: DateRange) => setDraft({ ...draft, from: range.from, to: range.to })}
-                numberOfMonths={numberOfMonths}
+                numberOfMonths={narrowScreen() ? 1 : numberOfMonths}
                 min={min}
                 max={max}
                 isDateDisabled={isDateDisabled}
@@ -418,3 +418,6 @@ function draftOf(range: DateTimeRange, zone: string | null): Draft {
 }
 
 const noop = () => {};
+
+/** Ventana estrecha (teléfono): el panel enseña un solo mes. Se mira al pintar el panel abierto, nunca en el servidor. */
+const narrowScreen = () => typeof matchMedia === "function" && matchMedia("(max-width: 640px)").matches;
