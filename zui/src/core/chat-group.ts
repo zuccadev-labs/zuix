@@ -229,14 +229,35 @@ export const ARRIVAL_LABELS: ArrivalLabels = {
   link: "Link",
 };
 
+/**
+ * Menciones `<@id>` → `@`. Recorrido con `indexOf` y no `/<@[^>]+>/g`: esa expresión, con muchos `<@` y ningún `>`,
+ * volvía a recorrer el resto del texto desde cada uno.
+ */
+function stripMentions(text: string): string {
+  let out = "";
+  let from = 0;
+  let at = text.indexOf("<@");
+  while (at !== -1) {
+    const end = text.indexOf(">", at + 2);
+    if (end === -1) break;
+    if (end === at + 2) {
+      at = text.indexOf("<@", at + 1);
+      continue;
+    }
+    out += `${text.slice(from, at)}@`;
+    from = end + 1;
+    at = text.indexOf("<@", from);
+  }
+  return out + text.slice(from);
+}
+
 /** Texto corto de un mensaje para un anuncio o una vista previa: el texto (recortado) o el tipo de adjunto. */
 export function messagePreview(
   m: ChatMessage,
   labels: Pick<ArrivalLabels, "photo" | "file" | "voice" | "location" | "link">,
   max = 80,
 ): string {
-  const text = (m.text ?? "")
-    .replace(/<@[^>]+>/g, "@")
+  const text = stripMentions(m.text ?? "")
     .replace(/\s+/g, " ")
     .trim();
   if (text) return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;

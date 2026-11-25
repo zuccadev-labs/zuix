@@ -42,6 +42,10 @@ guarda el resultado en `html.json`. El HTML que documento para otros frameworks 
 la implementación, y `examples/html/index.html`, la página que prueba el modo sin framework, se genera desde
 ese mismo archivo.
 
+El contrato no depende de la máquina que lo genera: `tools/html.mjs` renderiza con `en-US` y UTC fijados, y
+renderiza otra vez con `de-DE` y `Asia/Tokyo`. Si un ejemplo cambia entre las dos pasadas, falla y lo nombra:
+ese ejemplo formatea números o fechas sin fijar `locale` (o `timeZone`, si muestra horas).
+
 ## `zui` por dentro
 
 ```

@@ -48,6 +48,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- Contrato HTML: el ejemplo «Con filtros y panel» de `DashboardLayout` fija `locale="en-US"` en sus métricas, y
+  `html.json` ya no cambia con la configuración regional de la máquina que lo genera.
 - `/dom`: abrir un panel o un menú del sitio que ya había salido del documento lanzaba «Element is not connected» en
   WebKit. `showPopover` comprueba `isConnected` y no hace nada si el elemento ya no está.
 - `/dom` sin Popover API: Escape en un cajón y el submenú plegado de la Sidebar lanzaban (`:popover-open` no es un

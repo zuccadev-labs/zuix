@@ -6658,15 +6658,15 @@
    "examples": [
     {
      "title": "Recibido y enviado (leído)",
-     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" showAuthor message={{ id: \"a\", authorId: \"ana\", author: { name: \"Ana López\" }, createdAt: \"2026-11-21T08:58:00Z\", text: \"Morning! Did the new build land?\" }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"b\", authorId: \"me\", createdAt: \"2026-11-21T09:04:00Z\", text: \"It did. Notes are at https://example.com/notes\", status: \"read\" }} />\n</div>"
+     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble locale=\"en-US\" timeZone=\"UTC\" showAuthor message={{ id: \"a\", authorId: \"ana\", author: { name: \"Ana López\" }, createdAt: \"2026-11-21T08:58:00Z\", text: \"Morning! Did the new build land?\" }} />\n  <MessageBubble mine locale=\"en-US\" timeZone=\"UTC\" message={{ id: \"b\", authorId: \"me\", createdAt: \"2026-11-21T09:04:00Z\", text: \"It did. Notes are at https://example.com/notes\", status: \"read\" }} />\n</div>"
     },
     {
      "title": "Reenviado, editado y eliminado",
-     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"c\", authorId: \"luis\", createdAt: \"2026-11-21T09:10:00Z\", text: \"Standup moved to 10:30\", forwarded: true }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"d\", authorId: \"me\", createdAt: \"2026-11-21T09:11:00Z\", text: \"Got it, thanks\", status: \"delivered\", editedAt: \"2026-11-21T09:12:00Z\" }} />\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"e\", authorId: \"luis\", createdAt: \"2026-11-21T09:13:00Z\", deletedAt: \"2026-11-21T09:14:00Z\" }} />\n</div>"
+     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble locale=\"en-US\" timeZone=\"UTC\" message={{ id: \"c\", authorId: \"luis\", createdAt: \"2026-11-21T09:10:00Z\", text: \"Standup moved to 10:30\", forwarded: true }} />\n  <MessageBubble mine locale=\"en-US\" timeZone=\"UTC\" message={{ id: \"d\", authorId: \"me\", createdAt: \"2026-11-21T09:11:00Z\", text: \"Got it, thanks\", status: \"delivered\", editedAt: \"2026-11-21T09:12:00Z\" }} />\n  <MessageBubble locale=\"en-US\" timeZone=\"UTC\" message={{ id: \"e\", authorId: \"luis\", createdAt: \"2026-11-21T09:13:00Z\", deletedAt: \"2026-11-21T09:14:00Z\" }} />\n</div>"
     },
     {
      "title": "Ubicación y archivo",
-     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble timeZone=\"UTC\" message={{ id: \"f\", authorId: \"ana\", createdAt: \"2026-11-21T09:20:00Z\", attachments: [{ kind: \"location\", title: \"Studio\", address: \"Calle Mayor 12, Madrid\", href: \"https://www.openstreetmap.org/?mlat=40.4168&mlon=-3.7038\" }] }} />\n  <MessageBubble mine timeZone=\"UTC\" message={{ id: \"g\", authorId: \"me\", createdAt: \"2026-11-21T09:21:00Z\", status: \"sent\", attachments: [{ kind: \"file\", name: \"release-notes.pdf\", size: 482000, type: \"PDF\" }] }} />\n</div>"
+     "code": "<div style={{ display: \"grid\", gap: 8, maxWidth: 520 }}>\n  <MessageBubble locale=\"en-US\" timeZone=\"UTC\" message={{ id: \"f\", authorId: \"ana\", createdAt: \"2026-11-21T09:20:00Z\", attachments: [{ kind: \"location\", title: \"Studio\", address: \"Calle Mayor 12, Madrid\", href: \"https://www.openstreetmap.org/?mlat=40.4168&mlon=-3.7038\" }] }} />\n  <MessageBubble mine locale=\"en-US\" timeZone=\"UTC\" message={{ id: \"g\", authorId: \"me\", createdAt: \"2026-11-21T09:21:00Z\", status: \"sent\", attachments: [{ kind: \"file\", name: \"release-notes.pdf\", size: 482000, type: \"PDF\" }] }} />\n</div>"
     }
    ],
    "origin": "Diseño propio; referencias: las burbujas de WhatsApp, Telegram e iMessage.",
@@ -7073,7 +7073,7 @@
    "examples": [
     {
      "title": "Hilo con tres personas",
-     "code": "<ThreadSummary count={12} lastAt=\"2026-11-21T09:27:00Z\" now={1795253400000} participants={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }, { name: \"Marta Ruiz\" }]} />"
+     "code": "<ThreadSummary count={12} locale=\"en-US\" lastAt=\"2026-11-21T09:27:00Z\" now={1795253400000} participants={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }, { name: \"Marta Ruiz\" }]} />"
     }
    ],
    "origin": "Diseño propio; referencia: los hilos de Slack.",
@@ -9250,11 +9250,11 @@
    "examples": [
     {
      "title": "Ventas que suben",
-     "code": "<DeltaBadge value={128400} previous={114200} period=\"last month\" />"
+     "code": "<DeltaBadge value={128400} previous={114200} period=\"last month\" locale=\"en-US\" />"
     },
     {
      "title": "Errores que bajan (bueno)",
-     "code": "<DeltaBadge delta={-0.18} positive=\"down\" period=\"last week\" />"
+     "code": "<DeltaBadge delta={-0.18} positive=\"down\" period=\"last week\" locale=\"en-US\" />"
     },
     {
      "title": "Sin cambio",
@@ -9939,7 +9939,7 @@
    "examples": [
     {
      "title": "Cuatro KPI en una banda",
-     "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" />\n</MetricGroup>"
+     "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" locale=\"en-US\" />\n</MetricGroup>"
     }
    ],
    "origin": "Fila de KPI de los bloques dashboard-01 de shadcn y de las plantillas de Tremor.",
@@ -11807,7 +11807,7 @@
     },
     {
      "title": "Grande",
-     "code": "<PriceTag size=\"lg\" amount={49} currency=\"USD\" unit=\"per month\" />"
+     "code": "<PriceTag size=\"lg\" amount={49} currency=\"USD\" locale=\"en-US\" unit=\"per month\" />"
     }
    ],
    "origin": "Precios de ficha de Airbnb y Booking.",
@@ -12190,7 +12190,7 @@
     },
     {
      "title": "Corta",
-     "code": "<ReviewCard author={{ name: \"Yuki Tanaka\" }} rating={5} date=\"2026-09-30\" text=\"Spotless and exactly as described.\" />"
+     "code": "<ReviewCard author={{ name: \"Yuki Tanaka\" }} rating={5} date=\"2026-09-30\" locale=\"en-US\" text=\"Spotless and exactly as described.\" />"
     }
    ],
    "origin": "Opiniones de Airbnb y Google Maps; texto plegable con `hidden=\"until-found\"` como Collapsible.",
@@ -12283,7 +12283,7 @@
     },
     {
      "title": "Sin opiniones",
-     "code": "<ReviewSummary distribution={{}} />"
+     "code": "<ReviewSummary locale=\"en-US\" distribution={{}} />"
     }
    ],
    "origin": "Resumen de opiniones de las fichas de producto de Amazon y de alojamiento de Booking.",

@@ -85,7 +85,7 @@
     },
     {
       "title": "Sin opiniones",
-      "code": "<ReviewSummary distribution={{}} />"
+      "code": "<ReviewSummary locale=\"en-US\" distribution={{}} />"
     }
   ],
   "origin": "Resumen de opiniones de las fichas de producto de Amazon y de alojamiento de Booking."

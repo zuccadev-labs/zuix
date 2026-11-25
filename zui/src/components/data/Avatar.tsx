@@ -2,6 +2,7 @@
 import { useState, type HTMLAttributes } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { initialsOf } from "../../core/initials";
+import { safeSrc } from "../../core/linkify";
 import { PRESENCE_ICON, PRESENCE_LABELS } from "../../core/user-presence";
 import { cx } from "../../cx";
 
@@ -29,7 +30,9 @@ const initials = (name: string) => initialsOf(name);
 /** Imagen de persona o entidad, con iniciales o icono como respaldo. */
 export function Avatar({ src, name, alt, size = "md", shape = "circle", status, statusLabel, className, ...rest }: AvatarProps) {
   const [failed, setFailed] = useState<string | null>(null);
-  const showImage = Boolean(src) && failed !== src;
+  // La fuente se valida como URL de imagen: un esquema que no es de imagen (`javascript:`) se queda en las iniciales.
+  const image = safeSrc(src);
+  const showImage = image !== null && failed !== image;
   const label = alt ?? name;
   return (
     // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-label solo se emite junto a role="img" (sin imagen); con imagen el nombre lo da su `alt`.
@@ -45,12 +48,12 @@ export function Avatar({ src, name, alt, size = "md", shape = "circle", status, 
       {showImage ? (
         <img
           className="z-avatar__image"
-          src={src}
+          src={image}
           alt={label ?? ""}
-          onError={() => setFailed(src ?? null)}
+          onError={() => setFailed(image)}
           // Renderizada en servidor, la imagen puede haber fallado antes de hidratar: `error` ya no llegará.
           ref={(node) => {
-            if (node?.complete && node.naturalWidth === 0 && node.getAttribute("src")) setFailed(src ?? null);
+            if (node?.complete && node.naturalWidth === 0 && node.getAttribute("src")) setFailed(image);
           }}
         />
       ) : name ? (

@@ -256,6 +256,15 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Corregido
 
+- `Avatar`: `src` se valida como fuente de imagen (ruta relativa, http, https, `blob:` o `data:image/…`). Un esquema
+  que no es de imagen (`javascript:`) o una cadena con `<`, `>` o `"` deja las iniciales en lugar de llegar al `<img>`.
+- Lectura de texto en tiempo lineal: los enlaces en texto plano (`linkify`, la puntuación final y los correos sin
+  `@`), las duraciones cortas de `toMs` (`1h 30m`) y las menciones de la vista previa de un mensaje tardaban en
+  cuadrático con entradas largas y repetidas (muchos `!`, muchas cifras sin unidad, muchos `<@` sin cerrar). El
+  resultado es el mismo; la parte local de un correo enlazado llega hasta 64 caracteres, el máximo de RFC 5321.
+- Contrato HTML: los ejemplos de `MessageBubble`, `ThreadSummary`, `DeltaBadge`, `MetricGroup`, `PriceTag`,
+  `ReviewCard` y `ReviewSummary` fijan `locale="en-US"`, y `html.json` ya no cambia con la configuración regional ni
+  la zona horaria de la máquina que lo genera.
 - `/dom` en WebKit: una capa que se abría tarde (el submenú tras el retardo del puntero, una pista o un toggletip,
   la reapertura tras una pulsación larga) sobre un elemento que ya había salido del documento lanzaba «Element is not
   connected». `showPopover`, `openPopover`, `openSubmenu`, las pistas y `openDialog` comprueban `isConnected` antes de

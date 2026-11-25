@@ -76,11 +76,11 @@
   "examples": [
     {
       "title": "Ventas que suben",
-      "code": "<DeltaBadge value={128400} previous={114200} period=\"last month\" />"
+      "code": "<DeltaBadge value={128400} previous={114200} period=\"last month\" locale=\"en-US\" />"
     },
     {
       "title": "Errores que bajan (bueno)",
-      "code": "<DeltaBadge delta={-0.18} positive=\"down\" period=\"last week\" />"
+      "code": "<DeltaBadge delta={-0.18} positive=\"down\" period=\"last week\" locale=\"en-US\" />"
     },
     {
       "title": "Sin cambio",

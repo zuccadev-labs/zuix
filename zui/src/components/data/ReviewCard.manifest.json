@@ -127,7 +127,7 @@
     },
     {
       "title": "Corta",
-      "code": "<ReviewCard author={{ name: \"Yuki Tanaka\" }} rating={5} date=\"2026-09-30\" text=\"Spotless and exactly as described.\" />"
+      "code": "<ReviewCard author={{ name: \"Yuki Tanaka\" }} rating={5} date=\"2026-09-30\" locale=\"en-US\" text=\"Spotless and exactly as described.\" />"
     }
   ],
   "origin": "Opiniones de Airbnb y Google Maps; texto plegable con `hidden=\"until-found\"` como Collapsible."

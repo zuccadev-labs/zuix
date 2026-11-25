@@ -43,6 +43,43 @@ export function partsToMs(parts: DurationParts): number {
   return Math.round(total);
 }
 
+const SHORT_UNIT: Record<string, DurationUnit> = { w: "weeks", d: "days", h: "hours", m: "minutes", min: "minutes", s: "seconds" };
+const isDigit = (ch: string | undefined) => ch !== undefined && ch >= "0" && ch <= "9";
+const isWord = (ch: string | undefined) => ch !== undefined && /\w/.test(ch);
+const isSpace = (ch: string | undefined) => ch !== undefined && /\s/.test(ch);
+
+/**
+ * Texto corto (`90m`, `1h 30m`, `1,5h`, `45 s`) → partes, o `null` si sobra algo que no es una cantidad con unidad.
+ * Se lee con un recorrido de un solo paso: con una expresión, una tira larga de cifras sin unidad se volvía a probar
+ * desde cada cifra y tardaba en cuadrático.
+ */
+function parseShort(text: string): DurationParts | null {
+  const parts: DurationParts = {};
+  let i = 0;
+  let found = false;
+  for (;;) {
+    while (isSpace(text[i])) i += 1;
+    if (i >= text.length) return found ? parts : null;
+    const start = i;
+    while (isDigit(text[i])) i += 1;
+    if (i === start) return null;
+    if ((text[i] === "." || text[i] === ",") && isDigit(text[i + 1])) {
+      i += 1;
+      while (isDigit(text[i])) i += 1;
+    }
+    const num = Number(text.slice(start, i).replace(",", "."));
+    while (isSpace(text[i])) i += 1;
+    const unit = ["min", "w", "d", "h", "m", "s"].find(
+      (u) => text.slice(i, i + u.length).toLowerCase() === u && !isWord(text[i + u.length]),
+    );
+    if (!unit) return null;
+    i += unit.length;
+    const key = SHORT_UNIT[unit]!;
+    parts[key] = (parts[key] ?? 0) + num;
+    found = true;
+  }
+}
+
 /**
  * Cualquier forma de duración → milisegundos: número (ms), ISO 8601, texto de reloj (`1:30`, `1:30:15`), texto corto
  * (`90m`, `1h 30m`, `45s`) o partes. 0 si no se entiende.
@@ -56,22 +93,8 @@ export function toMs(value: DurationInput): number {
   if (iso) return partsToMs(iso);
   const clock = /^(\d+):([0-5]?\d)(?::([0-5]?\d))?$/.exec(text);
   if (clock) return partsToMs({ hours: Number(clock[1]), minutes: Number(clock[2]), seconds: Number(clock[3] ?? 0) });
-  const short = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*(w|d|h|m(?:in)?|s)\b/gi)];
-  if (
-    short.length &&
-    short
-      .map((s) => s[0])
-      .join("")
-      .replace(/\s/g, "") === text.replace(/\s/g, "")
-  ) {
-    const unit: Record<string, DurationUnit> = { w: "weeks", d: "days", h: "hours", m: "minutes", min: "minutes", s: "seconds" };
-    const parts: DurationParts = {};
-    for (const [, num, u] of short) {
-      const key = unit[u!.toLowerCase()]!;
-      parts[key] = (parts[key] ?? 0) + Number(num!.replace(",", "."));
-    }
-    return partsToMs(parts);
-  }
+  const short = parseShort(text);
+  if (short) return partsToMs(short);
   return 0;
 }
 

@@ -106,6 +106,18 @@ const server = createServer((req, res) => {
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const origin = `http://127.0.0.1:${server.address().port}`;
+// Texto de un trozo de HTML para un mensaje: fuera todo lo que va entre `<` y `>`. Recorrido a mano y no un
+// `replace(/<[^>]+>/g, "")`, que con etiquetas anidadas o sin cerrar deja restos de marcado.
+function textOf(html = "") {
+  let out = "";
+  let inTag = false;
+  for (const ch of html) {
+    if (ch === "<") inTag = true;
+    else if (ch === ">") inTag = false;
+    else if (!inTag) out += ch;
+  }
+  return out;
+}
 const at = (path = "") => `${origin}${base}${path.replace(/^\//, "")}`;
 
 // ── Páginas: todas las del sitemap ───────────────────────────────────────────────────────────────────────
@@ -757,7 +769,7 @@ for (const browserName of wanted) {
           .slice(1);
         total += blocks.length;
         blocks.forEach((block, i) => {
-          const title = block.match(/<h3[^>]*>(.*?)<\/h3>/)?.[1]?.replace(/<[^>]+>/g, "") ?? `#${i + 1}`;
+          const title = textOf(block.match(/<h3[^>]*>(.*?)<\/h3>/)?.[1]) || `#${i + 1}`;
           if (!/class="?zd-preview"?[\s>]/.test(block) || block.includes("zd-example__note")) missing.push(`${p}: ${title}`);
         });
       }

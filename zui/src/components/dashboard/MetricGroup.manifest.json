@@ -34,7 +34,7 @@
   "examples": [
     {
       "title": "Cuatro KPI en una banda",
-      "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" />\n</MetricGroup>"
+      "code": "<MetricGroup label=\"This month\" columns={4}>\n  <MetricCard variant=\"plain\" label=\"Revenue\" value=\"$128.4k\" delta={0.124} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"New customers\" value={1284} delta={0.061} period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"Churn\" value=\"2.1%\" delta={-0.08} positive=\"down\" period=\"last month\" locale=\"en-US\" />\n  <MetricCard variant=\"plain\" label=\"NPS\" value={62} delta={0} period=\"last month\" locale=\"en-US\" />\n</MetricGroup>"
     }
   ],
   "origin": "Fila de KPI de los bloques dashboard-01 de shadcn y de las plantillas de Tremor."

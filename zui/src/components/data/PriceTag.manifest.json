@@ -82,7 +82,7 @@
     },
     {
       "title": "Grande",
-      "code": "<PriceTag size=\"lg\" amount={49} currency=\"USD\" unit=\"per month\" />"
+      "code": "<PriceTag size=\"lg\" amount={49} currency=\"USD\" locale=\"en-US\" unit=\"per month\" />"
     }
   ],
   "origin": "Precios de ficha de Airbnb y Booking."

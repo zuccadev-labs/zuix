@@ -26,22 +26,55 @@ export function safeHref(raw: string | null | undefined, protocols: ReadonlySet<
   return url.href;
 }
 
-// Candidatos: esquema http(s), «www.» o un correo. El final se recorta después.
-const CANDIDATE = /\b(?:https?:\/\/[^\s<>"]+|www\.[^\s<>"]+|[\w.+-]+@[\w-]+(?:\.[\w-]+)+)/gi;
-const TRAILING = /[.,;:!?'"’”»]+$/;
+const MEDIA = new Set(["http:", "https:", "blob:"]);
+
+/**
+ * Fuente segura de una imagen (`<img src>`) o `null`. Vale una ruta relativa (`/a.png`, `fotos/a.png`), http(s),
+ * `blob:` (una foto recién elegida) y `data:image/…`. Fuera `javascript:` y cualquier otro esquema, los caracteres
+ * de control y los de marcado (`<`, `>`, `"`), que en una URL bien formada van codificados.
+ */
+export function safeSrc(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const value = raw.trim();
+  if (!value || /[<>"]/.test(value)) return null;
+  for (const ch of value) {
+    const code = ch.charCodeAt(0);
+    if (code < 32 || code === 127) return null;
+  }
+  let url: URL;
+  try {
+    // Una ruta relativa se resuelve contra una base cualquiera de http: lo que se mira es si trae su propio esquema.
+    url = new URL(value, "https://base.invalid/");
+  } catch {
+    return null;
+  }
+  if (url.protocol === "data:") return /^data:image\//i.test(value) ? value : null;
+  return MEDIA.has(url.protocol) ? value : null;
+}
+
+// Candidatos: esquema http(s), «www.» o un correo. El final se recorta después. La parte local del correo va acotada a
+// 64 caracteres (el máximo de RFC 5321): sin cota, un texto como «a.a.a.…» sin `@` se recorría entero desde cada
+// palabra y tardaba en cuadrático.
+const CANDIDATE = /\b(?:https?:\/\/[^\s<>"]+|www\.[^\s<>"]+|[\w.+-]{1,64}@[\w-]+(?:\.[\w-]+)+)/gi;
+// Puntuación final que no forma parte de la URL. Se recorta a mano, de atrás adelante: una expresión `[…]+$` vuelve
+// a recorrer la tanda desde cada posición y tarda en cuadrático con muchos signos seguidos.
+const TRAILING = new Set([".", ",", ";", ":", "!", "?", "'", '"', "’", "”", "»"]);
 
 /** Quita la puntuación final y los paréntesis de cierre que no se abrieron dentro de la URL. */
 function trimCandidate(raw: string): string {
-  let s = raw;
+  let open = 0;
+  let close = 0;
+  for (const ch of raw) {
+    if (ch === "(") open += 1;
+    else if (ch === ")") close += 1;
+  }
+  let end = raw.length;
   for (;;) {
-    const before = s;
-    s = s.replace(TRAILING, "");
-    if (s.endsWith(")")) {
-      const open = (s.match(/\(/g) ?? []).length;
-      const close = (s.match(/\)/g) ?? []).length;
-      if (close > open) s = s.slice(0, -1);
-    }
-    if (s === before) return s;
+    if (end > 0 && TRAILING.has(raw[end - 1]!)) end -= 1;
+    else if (end > 0 && raw[end - 1] === ")" && close > open) {
+      end -= 1;
+      close -= 1;
+    } else return raw.slice(0, end);
   }
 }
 

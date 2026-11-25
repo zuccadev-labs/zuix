@@ -34,7 +34,7 @@
   "examples": [
     {
       "title": "Hilo con tres personas",
-      "code": "<ThreadSummary count={12} lastAt=\"2026-11-21T09:27:00Z\" now={1795253400000} participants={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }, { name: \"Marta Ruiz\" }]} />"
+      "code": "<ThreadSummary count={12} locale=\"en-US\" lastAt=\"2026-11-21T09:27:00Z\" now={1795253400000} participants={[{ name: \"Ana López\" }, { name: \"Luis Gil\" }, { name: \"Marta Ruiz\" }]} />"
     }
   ],
   "origin": "Diseño propio; referencia: los hilos de Slack."
