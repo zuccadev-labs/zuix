@@ -41,6 +41,21 @@
       "type": "string"
     },
     {
+      "name": "actions",
+      "type": "MessageAction[]",
+      "description": "Barra de acciones del mensaje. Aquí solo el marcado: el teclado y los eventos los pone MessageList. Por defecto ninguna."
+    },
+    {
+      "name": "hourCycle",
+      "type": "\"h12\" | \"h23\"",
+      "description": "Ciclo de la hora del mensaje. Por defecto, el del idioma."
+    },
+    {
+      "name": "now",
+      "type": "number",
+      "description": "Instante de referencia en milisegundos, para render en servidor estable."
+    },
+    {
       "name": "labels",
       "type": "Partial<ChatLabels>"
     }

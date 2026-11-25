@@ -94,6 +94,16 @@
       "type": "() => void"
     },
     {
+      "name": "onRemoveAttachment",
+      "type": "(detail: { id, name? }) => void",
+      "description": "Se quitó un adjunto."
+    },
+    {
+      "name": "onRecordError",
+      "type": "() => void",
+      "description": "No se pudo abrir el micrófono (permiso denegado o sin dispositivo). El aviso para lectores ya lo da el campo."
+    },
+    {
       "name": "labels",
       "type": "Partial<ComposerLabels>"
     }

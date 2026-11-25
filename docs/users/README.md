@@ -4,8 +4,9 @@ zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación c
 marca replica el sistema cambiando un archivo. El estándar es HTML, CSS y tokens: sirve con cualquier
 framework o sin ninguno, y trae un binding de React.
 
-Esta documentación describe la `0.3.0`. De la `0.2.0` a la `0.3.0` no retiré nada: cambia el aspecto y
-se añaden componentes. Si sobrescribes variables de algún componente, repasa el apartado «Cambiado» del
+Esta documentación describe la `0.4.0`. Desde la `0.2.0` no he retirado nada: la `0.3.0` cambió el aspecto
+y la `0.4.0` añade familias de componentes, el modo compat para navegadores anteriores a la Popover API y el
+binding con React 18. Si sobrescribes variables de algún componente, repasa los apartados «Cambiado» del
 `CHANGELOG.md` de zui. Si vienes de la
 `0.1.0`, lo que se rompe y cómo arreglarlo está en [Actualizar de 0.1 a 0.2](./08-actualizar-de-0-1-a-0-2.md).
 
@@ -54,9 +55,11 @@ pnpm add react react-dom
 |---|---|
 | `@zuccadev-labs/zuix/styles.css` | `tokens.css` + estilos de `zui` + estilos de `zout`, en ese orden. Necesita un bundler |
 | `@zuccadev-labs/zuix/tokens.css` | `@zuccadev-labs/zuix-tokens/tokens.css` (todas las marcas) |
+| `@zuccadev-labs/zuix/styles.compat.css`, `/tokens.compat.css` | Las mismas hojas para Chromium 109, Firefox 115 y Safari 15.4 ([Modo compat](./10-compatibilidad.md#modo-compat)) |
 | `@zuccadev-labs/zuix/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` | Una sola marca en `:root` |
 | `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Puentes de los tokens a Tailwind 4 y a Docusaurus |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | Las mismas entradas de `@zuccadev-labs/zuix-zui` |
+| `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/<familia>` | El núcleo y cada familia del modo sin framework: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`, `time`, `terminal`, `chat`, `ai`, `dashboard`, `people` y `nodes` ([Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias)) |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout`, `@zuccadev-labs/zuix-zout/dom` |
 | `@zuccadev-labs/zuix/zicon`, `/zicon/core`, `/zicon/dom`, `/zicon/element`, `/zicon/all` | Las mismas entradas de `@zuccadev-labs/zuix-zicon` |
 

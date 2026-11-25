@@ -791,6 +791,8 @@
 
   /* ---- ActivityFeed ---- */
   .z-activity {
+    /* Lado del avatar o del icono de cada entrada: la primera línea del texto y la hora se centran en él. */
+    --z-activity-marker: 28px;
     display: flex;
     flex-direction: column;
     gap: var(--z-space-4);
@@ -841,8 +843,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    inline-size: 28px;
-    block-size: 28px;
+    inline-size: var(--z-activity-marker);
+    block-size: var(--z-activity-marker);
     border-radius: var(--z-control-radius-sm);
     background: var(--z-t-soft);
     color: var(--z-t-text);
@@ -852,10 +854,10 @@
     flex-direction: column;
     gap: var(--z-space-1-5);
     min-inline-size: 0;
-    padding-block-start: var(--z-space-1);
   }
   .z-activity__text {
     margin: 0;
+    padding-block-start: calc((var(--z-activity-marker) - 1lh) / 2);
     color: var(--z-fg-muted);
     font-size: var(--z-text-small);
     line-height: var(--z-leading-snug);
@@ -888,7 +890,9 @@
     font-size: var(--z-text-small);
   }
   .z-activity__time {
-    padding-block-start: var(--z-space-1);
+    display: flex;
+    align-items: center;
+    block-size: var(--z-activity-marker);
     color: var(--z-fg-subtle);
     font-size: var(--z-text-caption);
     white-space: nowrap;

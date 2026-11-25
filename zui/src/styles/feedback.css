@@ -526,10 +526,12 @@
     --z-alert-tone: var(--z-danger);
     --z-alert-soft: var(--z-danger-soft);
   }
+  /* Una línea de alto y el icono centrado: va con la primera línea del texto, mida lo que mida el icono. */
   .z-alert__icon {
     display: inline-flex;
     flex-shrink: 0;
-    margin-top: var(--z-space-0-5);
+    align-items: center;
+    block-size: 1lh;
     color: var(--z-alert-tone);
   }
   .z-alert__body {
@@ -614,7 +616,10 @@
     inline-size: 100%;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto auto;
-    align-items: center;
+    /* Icono, texto y acción van en la primera línea base: con el texto en dos líneas, el icono y los botones siguen a
+       la primera. La fila se centra en el alto mínimo. */
+    align-items: baseline;
+    align-content: center;
     gap: var(--z-space-2) var(--z-space-3);
     min-height: var(--z-control-height-lg);
     padding: var(--z-space-2) var(--z-space-2) var(--z-space-2) var(--z-space-4);
@@ -655,12 +660,11 @@
     --z-banner-tone: var(--z-danger);
     --z-banner-soft: var(--z-danger-soft);
   }
+  /* Bloque de una línea con el icono dentro: su línea base es la del texto y el icono queda a media altura de las
+     mayúsculas (native.css). */
   .z-banner__icon {
-    display: inline-flex;
+    display: block;
     grid-area: 1 / 1;
-    align-self: start;
-    /* A la altura de la primera línea de texto. */
-    margin-block-start: var(--z-space-0-5);
     color: var(--z-banner-tone);
   }
   .z-banner__body {
@@ -709,12 +713,12 @@
   }
   .z-banner__close {
     grid-area: 1 / 4;
-    align-self: start;
+    align-self: center;
     display: inline-grid;
     place-items: center;
     width: 24px;
     height: 24px;
-    margin-block-start: -2px;
+    margin-block: -2px;
     padding: 0;
     border: 0;
     border-radius: var(--z-radius-xs);

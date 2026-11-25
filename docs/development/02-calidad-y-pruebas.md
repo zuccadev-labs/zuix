@@ -7,7 +7,7 @@ puede comprobar, lo comprueba en cada cambio y hace fallar la verificación.
 
 | Comando | Qué comprueba |
 |---|---|
-| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, bundles de navegador, `llms.txt` y tipos |
+| `pnpm check` | Tokens y contraste, iconos, auditoría de estilo, manifiestos, exportaciones, contrato HTML, cobertura de la documentación, bundles de navegador, matriz de compatibilidad, `llms.txt` y tipos |
 | `pnpm lint` | Biome con errores y avisos bloqueantes, y la regla de `"use client"` |
 | `pnpm format:check` | Formato de TypeScript, CSS y JSON |
 | `pnpm test:unit` | Lógica pura, con umbral de cobertura |
@@ -81,6 +81,28 @@ comprobación un componente nuevo, con su manifiesto y su hoja de estilos, podr�
 pudiera importarlo, y el compilador no lo notaría: un archivo que nadie importa no es un error de tipos. La
 dirección contraria, un componente exportado sin manifiesto, la comprueba `pnpm manifest`.
 
+### Cobertura de la documentación
+
+`pnpm docs:coverage` (`tools/docs-coverage.mjs`) contrasta el proyecto con lo que cuenta la documentación vigente
+(los README, los `AGENTS.md` y `docs/` salvo las investigaciones) y falla con el primer hueco. La escribí después de
+encontrar, al publicar la 0.4.0, la portada de usuarios describiendo todavía la 0.3.0 y más de la mitad de las funciones
+sin framework sin nombrar en ninguna guía.
+
+| Comprueba | Dónde |
+|---|---|
+| Cada componente de zui y cada pieza de zout aparece en la guía de su paquete | `docs/users/03-zui.md`, `04-zout.md` |
+| Cada entrada de `exports` de los cinco paquetes está documentada | Documentación de usuario o README del paquete |
+| Cada familia `/dom/<nombre>` tiene su fila, y cada función que exporta está en «Todas las funciones» bajo esa entrada (y ninguna de más) | `docs/users/06-frameworks.md` |
+| Las funciones de la raíz de zui y zout, de `zout/dom` y de `zicon` están nombradas | La guía de su paquete |
+| Cada miembro propio de `<Nombre>Props` está en las props de su manifiesto, del que salen las páginas del catálogo | `*.manifest.json` |
+| Los recuentos de componentes, grupos, layouts, iconos y categorías, y la tabla de `behavior` | Documentación vigente |
+| La lista de grupos de `zui/AGENTS.md`, la versión que dice describir la portada de usuarios y cada comando de `package.json` | — |
+| Los enlaces relativos y los de `blob/main/…` de los README, `AGENTS.md` y `CHANGELOG.md` | Los de `docs/` los comprueba el build de zudocs |
+
+Una línea que compara versiones («pasa de 144 a 224», `0.3.0`) habla del pasado y no cuenta como recuento.
+`node tools/docs-coverage.mjs --report` lista además, sin fallar, lo que solo nombran el `CHANGELOG.md` o las
+investigaciones, las herramientas de `tools/` y los archivos de prueba que ninguna guía cita.
+
 ## Pruebas unitarias
 
 `pnpm test:unit` usa el runner nativo de Node (`node:test`) con `tsx` para importar el TypeScript y el TSX
@@ -151,6 +173,12 @@ Un caso falla si lanza o si la página registra errores de consola, excepciones 
 | `test:browser` | `examples/app`: el binding de React | Lo mismo desde React, las combinaciones de marca y tema, `Shell` en tres anchos, móvil a 390 px, formularios dentro de un `Modal`, y las capas apiladas: cierre en orden con cuatro niveles, 200 aperturas seguidas sin fugas, y desmontaje con la capa abierta |
 | `test:site` | El sitio de documentación compilado, servido bajo su `baseUrl` | Todas las páginas del sitemap en dos temas y tres anchos: hidratación, consola, red, desbordamiento, enlaces y anclas; teclado; impresión; `sitemap.xml`, `robots.txt` y `llms.txt` |
 
+Los casos van por áreas. `tests/html/cases/NN-<área>.mjs` sigue el orden de `examples/html` (núcleo, formularios,
+colecciones, layouts, agenda, gráficos, chat e IA, nodos, compat…); `tests/browser/cases-<área>.mjs` agrupa los de una
+pantalla de `examples/app` (`?screen=chat`, `?screen=flows`…) y `cases.mjs`, los generales. Las dos suites comparten
+los ayudantes de `tests/`: `touch.mjs` (gestos), `webgl.mjs` (detección de WebGL y `NO_WEBGL`), `rest.mjs` (reposo
+real de un Carousel) y `popover-api.mjs` (navegador sin Popover API, simulado).
+
 En las tres:
 
 - **axe-core** revisa cada pantalla en claro y oscuro, también con menús, diálogos y selectores abiertos. Las
@@ -206,6 +234,7 @@ compila con una marca: las otras se inyectan con su hoja de `tokens/dist/brands/
 | Escala | Tamaño, interlineado o peso fuera de los tokens; relleno, margen o hueco fuera de `--z-space-*` (±0,5 px); radio fuera de la familia; altura de control fuera de `--z-control-height-*` |
 | Píldora | Un radio mayor que el de la familia en algo que no es circular |
 | Alineación | Controles de una fila con alturas distintas, icono descentrado en su botón, huecos desiguales entre hermanos |
+| Icono desalineado | Un icono que comparte línea con un texto tiene su centro vertical a más de 1 px del de esa línea (1,5 px si mide más de 20) |
 | Foco | Una parada de Tab sin contorno, o con contraste menor que 3:1 contra lo que tiene detrás |
 | Objetivo | Menor de 24 × 24 (40 con puntero grueso) sin la excepción de espaciado de WCAG 2.5.8 |
 | axe, consola y red | WCAG 2.2 A y AA con contraste; errores de página, de consola y peticiones fallidas |
@@ -214,6 +243,21 @@ Lo que una regla acepta (elipsis intencionada, relleno que compensa el borde, ra
 tallas distintas, objetivo pequeño con espacio alrededor…) queda contado como aceptado y con el motivo en el
 informe; no se descarta nada en bloque. La medida en bruto se guarda, así que `--report` reclasifica sin abrir
 el navegador.
+
+El icono desalineado se mide contra la caja de la línea del texto de al lado (un `Range` sobre el nodo de texto,
+que da una caja por línea), no contra la caja del elemento: un nombre que parte en dos líneas cuenta con la línea
+que el icono cruza, y el icono de una alerta con título, con la primera. Si el icono va en un recuadro propio (fondo
+o borde), se mide el recuadro. No cuentan el icono que va solo (un botón de solo icono lo mide «icono descentrado»),
+el que está posicionado encima de otra cosa, el que gira ni el texto oculto para lectores de pantalla. Se aceptan con
+su motivo el recuadro junto a un bloque de varias líneas, el icono centrado en una pila de título y subtítulo y la
+marca circular del tamaño de un avatar.
+
+El arreglo de fondo está en `native.css`: un `svg.z-icon` en línea con el texto lleva el centro a media altura de las
+mayúsculas (`vertical-align: calc(0.5cap - <medio icono>)`), que es el centro de la caja de la letra, en lugar de
+apoyarse en la línea base con el hueco del descendente debajo. En un contenedor flex o grid no tiene efecto. Un
+icono que acompaña a la primera línea de un texto que puede partir va en una caja de una línea de alto
+(`block-size: 1lh`) con el icono centrado, o en una fila alineada por la primera línea base, no con un margen fijo
+de 2 px que solo vale para una letra y un tamaño de icono.
 
 El margen lateral de `Container` con `gutter="fluid"` sale del token `container-gutter`, un `clamp()` entre 16 y
 40 px que sigue al ancho del contenedor: casi nunca cae en un paso de `--z-space-*`. La auditoría lo acepta solo en
@@ -239,7 +283,7 @@ Salida en `.tmp/visual-audit/` (fuera del control de versiones): `raw.json`, `re
 
 ## Prueba de empaquetado
 
-`pnpm test:pack` no publica nada. Empaqueta los cinco paquetes con `pnpm pack` y los usa como lo haría una
+`pnpm test:pack` (`tools/pack-test.mjs`) no publica nada. Empaqueta los cinco paquetes con `pnpm pack` y los usa como lo haría una
 aplicación, en proyectos fuera del workspace:
 
 | Paso | Qué comprueba |

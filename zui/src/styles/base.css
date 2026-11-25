@@ -241,6 +241,12 @@
     .z-root .z-switch__track[data-state="checked"] .z-switch__thumb {
       background: HighlightText !important;
     }
+    /* Con colores del sistema no hay tono que suavizar: la pista cambia de golpe. Con la transición del fondo, al entrar
+       en colores forzados la pista marcada partía del ButtonFace de la apagada y durante 200 ms no se distinguía de
+       ella. El estado se lee además por forma: el pulgar al final de la pista y el borde de Highlight. */
+    .z-root .z-switch__track {
+      transition: none !important;
+    }
     .z-root :is(.z-rating__star[data-filled], .z-rating__layer--filled) {
       color: Highlight !important;
     }

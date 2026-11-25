@@ -335,6 +335,28 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `LogConsole`: subir en el mismo fotograma en que la consola se repinta (llega una entrada, se limpia la búsqueda)
   devolvía la vista al final antes de que llegara el evento de desplazamiento, y la consola seguía siguiendo. Ahora el
   repintado ve que la posición subió desde la última conocida y deja de seguir en vez de bajar.
+- `Switch` en colores forzados: la pista ya no anima el fondo. Al entrar en `forced-colors` la pista marcada partía
+  del `ButtonFace` de la apagada y durante 200 ms no se distinguía de ella; ahora pasa a `Highlight` de golpe. El
+  estado se lee además por el pulgar al final de la pista y el borde de `Highlight`.
+- Manifiestos: 19 props que existían en los tipos y no salían en el catálogo ni en `manifest.json`.
+  `CalendarHeatmap` `onViewChange`; `PromptInput` `onAttach` y `onRemoveAttachment`; `Composer` `onRemoveAttachment`
+  y `onRecordError`; `MessageBubble` `actions`, `hourCycle` y `now`; `MessageList` `onCopy`, `onVoiceEnded` y
+  `onEscape`; `ThreadSummary` `now` y `locale`; `DateTimePicker` `popupClassName` y `triggerRef`; `NumberInput` y
+  `PasswordInput` `inputClassName`; `NodeCanvas` `onLockChange` y `locale`.
+- `AGENTS.md`: la lista de grupos incluye `chat`, `ai` y `nodes`.
+- Iconos alineados con el texto. Un `svg.z-icon` en línea (o dentro de un envoltorio que no es flex) ya no se
+  apoya en la línea base con el hueco del descendente debajo: su centro va a media altura de las mayúsculas, que es
+  el centro de la caja de la letra (`native.css`, de 12 a 24 px; sin la unidad `cap`, `vertical-align: middle`). Lo
+  notaban el resumen de `Reasoning` (bombilla 2 px alta) y el chevrón de `ThreadSummary`.
+- El icono que acompaña a la primera línea de un texto ya no depende de un margen fijo de 2 px: `Alert`, `Callout`
+  y los pasos de `AgentPlan` lo centran en una caja de una línea de alto (`1lh`), y `Banner` alinea icono, texto y
+  acción por la primera línea base. Con otra letra (zutool) o con el texto en dos líneas se desviaban 1,5 px.
+- `AgentPlan`: el paso en curso gira el icono sobre su centro, no el marcador entero.
+- `ActivityFeed`: la primera línea del texto y la hora se centran en el avatar o el icono de 28 px (iban 2,5 px
+  altas).
+- Mensaje borrado (`z-message__text--deleted`): sin `pre-wrap`, el sangrado del marcado HTML ya no parte la línea,
+  y el icono va en la línea como una letra más: si el aviso parte en dos líneas, se queda con la primera.
+- `FilterBar`: el chevrón de un filtro con menú ya no se acerca 2 px al texto; los huecos del chip son iguales.
 
 ## [0.3.0] - 2026-11-21
 

@@ -445,7 +445,7 @@
   }
   @media (prefers-reduced-motion: no-preference) {
     .z-tool-call__status[data-status="running"] .z-tool-call__status-icon,
-    .z-agent-plan__step[data-status="running"] > .z-agent-plan__marker {
+    .z-agent-plan__step[data-status="running"] > .z-agent-plan__marker svg {
       animation: z-ai-spin 1.1s linear infinite;
     }
   }
@@ -728,10 +728,13 @@
     gap: var(--z-space-2);
     font-size: var(--z-text-small);
   }
+  /* Una línea de alto, con el icono centrado: va con la primera línea del título, mida lo que mida la letra. Gira
+     el icono, no el marcador, para que lo haga sobre su centro. */
   .z-agent-plan__marker {
     display: inline-flex;
     flex: none;
-    padding-block-start: 2px;
+    align-items: center;
+    block-size: 1lh;
     color: var(--z-fg-subtle);
   }
   .z-agent-plan__step[data-status="running"] > .z-agent-plan__marker {

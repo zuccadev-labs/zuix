@@ -61,6 +61,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `Sidebar`: una lista más alta que la barra difumina el borde con filas ocultas (arriba, abajo o los dos) en vez de
   cortar la última fila a media altura, donde parecía un elemento roto. Solo con algo por ese lado; en un navegador sin
   animaciones ligadas al desplazamiento, la lista se corta como antes.
+- Manifiestos: `Shell` documenta `titlebar`, `header` y `overlays`, y `SplitPane`, `dividerLabel` (por defecto
+  «Resize panes»). Existían en los tipos y no salían en el catálogo ni en `manifest.json`.
 
 ## [0.3.0] - 2026-11-21
 

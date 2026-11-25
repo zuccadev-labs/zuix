@@ -52,7 +52,7 @@ src/primitives/*                                   primitivas de React sobre cor
 src/dom/*.ts                                       comportamiento sin framework (@zuccadev-labs/zuix-zui/dom), sobre core
 ```
 
-Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `media`, `effects`, `overlay`, `navigation`, `carousel`, `time`, `terminal`, `dashboard`, `people`.
+Grupos: `actions`, `forms`, `agenda`, `data`, `charts`, `feedback`, `content`, `media`, `effects`, `overlay`, `navigation`, `carousel`, `time`, `terminal`, `chat`, `ai`, `dashboard`, `people`, `nodes`.
 
 ## Patrones
 
@@ -168,6 +168,11 @@ export const Button = withRef(function Button({ variant = "secondary", size = "m
 
 Campos obligatorios: `name`, `group`, `description`, `import`, `props`, `tokens`, `classes`, `examples`.
 
+Cada miembro propio de `<Nombre>Props` va en `props` (los atributos reenviados, `id`, `className`, `ref` y
+`children`, no hacen falta): `pnpm docs:coverage` falla si falta uno. Un componente nuevo se nombra además en la
+tabla de su grupo de `docs/users/03-zui.md`, y una función nueva de `/dom/<familia>` en «Todas las funciones» de
+`docs/users/06-frameworks.md`.
+
 Campos del contrato HTML: `behavior` (`none` | `dom` | `react`; se deduce si falta) y `html` (lista de
 `{ title, code, script? }`) cuando el marcado no sale del render estático.
 
@@ -206,6 +211,7 @@ pnpm typecheck    # sin errores
 pnpm manifest     # todo componente exportado tiene manifiesto válido
 pnpm barrels      # todo componente con manifiesto se exporta desde la raíz del paquete
 pnpm html         # el contrato HTML se regenera
+pnpm docs:coverage # el componente, sus props y sus funciones aparecen en la documentación de usuario
 pnpm test:unit    # si tocaste src/core o lógica cubierta
 pnpm test:html    # si tocaste src/dom, native.css o un componente con behavior "dom"
 pnpm test:browser # si tocaste el binding de un componente interactivo
