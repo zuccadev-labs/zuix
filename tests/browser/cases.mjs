@@ -16,6 +16,7 @@ import chatAi from "./cases-chat-ai.mjs";
 import dashboardPeople from "./cases-dashboard-people.mjs";
 import nodesCases from "./cases-nodes.mjs";
 import transferCases from "./cases-transfer.mjs";
+import pickersCases from "./cases-pickers.mjs";
 import datagridCases from "./cases-datagrid.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
@@ -3146,6 +3147,7 @@ export const cases = [
     carouselsCases,
     nodesCases,
     transferCases,
+    pickersCases,
     datagridCases,
     listingCases,
   ].flatMap((build) => build(helpers())),

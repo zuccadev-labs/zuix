@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- `@zuccadev-labs/zuix/zui/dom/forms`: reexporta la familia nueva de zui (Cascader, TreeSelect y MaskedInput sin
+  framework).
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

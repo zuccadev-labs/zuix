@@ -307,7 +307,8 @@ export function setup(on: Listen): void {
       chooseOption(option.closest<HTMLElement>(LISTBOX)!, option);
       return;
     }
-    const remove = target.closest<HTMLElement>(".z-tags__remove");
+    // Solo las piezas de TagsInput: las de Combobox, Cascader o TreeSelect las atiende su control.
+    const remove = target.closest<HTMLElement>(".z-tags .z-tags__remove");
     if (remove) {
       const box = remove.closest<HTMLElement>(".z-tags")!;
       removeTag(box, tagsOf(box).indexOf(remove.closest<HTMLElement>(".z-tags__tag")!));

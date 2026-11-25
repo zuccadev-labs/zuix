@@ -2449,6 +2449,14 @@ malaga" data-ignore-accents="">Un
 <div class="z-calendar" id="due-calendar" data-mode="single" data-locale="en-US" data-week-start="0" data-value="2026-11-13" data-min="2026-11-05" data-max="2026-12-20"></div>
   </div>
 </section>
+<section class="z-card demo" data-component="Cascader" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Cascader</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-cascader" data-searchable data-clearable data-name="location" data-label="Location">
+  <script type="application/json" data-props>{"options": [{"value": "es", "label": "Spain", "children": [{"value": "md", "label": "Madrid", "children": [{"value": "mad", "label": "Madrid"}, {"value": "alc", "label": "Alcalá de Henares"}]}, {"value": "ct", "label": "Catalonia", "children": [{"value": "bcn", "label": "Barcelona"}, {"value": "gir", "label": "Girona"}]}]}, {"value": "pt", "label": "Portugal", "children": [{"value": "lis", "label": "Lisbon", "children": [{"value": "lis-c", "label": "Lisbon"}, {"value": "sin", "label": "Sintra"}]}]}], "value": ["es", "md", "alc"], "levelLabels": ["Country", "Region", "City"]}</script>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Checkbox" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Checkbox</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -2880,6 +2888,17 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="DateTimeRangePicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DateTimeRangePicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-select z-dtrange" data-picker id="window" data-size="md" data-block data-name="window" data-time-zone data-time-zones="UTC,Europe/Madrid,America/New_York,Asia/Tokyo" data-locale="en-US" data-hour-cycle="24" data-today="2026-11-25" data-presets='[{"label":"Today","value":"today"},{"label":"Next 7 days","value":"next-7-days"}]'>
+  <button type="button" class="z-select__control" aria-label="Maintenance window" aria-haspopup="dialog" aria-expanded="false" aria-controls="window-panel" data-state="closed"><span class="z-select__value"></span></button>
+  <span class="z-select__chevron"><z-icon name="calendar-date-range" size="16"></z-icon></span>
+  <input type="text" class="z-native-input" aria-hidden="true" tabindex="-1" name="window" value="2026-11-28T22:00+01:00[Europe/Madrid]/2026-11-29T02:00+01:00[Europe/Madrid]">
+</span>
+<div id="window-panel" popover="manual" class="z-liquid z-popover z-datepicker__panel z-dtrange__panel" role="dialog" aria-label="Choose date and time range"></div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Editable" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Editable</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3085,6 +3104,18 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="MaskedInput" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">MaskedInput</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<span class="z-masked" data-size="md" data-mask="phone">
+  <span class="z-masked__format" id="_R_0_-format">Format: (___) ___-____</span>
+  <span class="z-input" data-size="md">
+    <input aria-label="Phone" aria-describedby="_R_0_-format" type="text" class="z-input__control" inputMode="numeric" autoComplete="tel-national" spellCheck="false" autoCorrect="off" value="(555) 123-4567"/>
+  </span>
+  <input type="hidden" name="phone" value="5551234567"/>
+</span>
+  </div>
+</section>
 <section class="z-card demo" data-component="MonthPicker" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">MonthPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3177,6 +3208,12 @@ malaga" data-ignore-accents="">Un
     </div>
   </div>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="QuarterPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">QuarterPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-quarterpicker" data-name="quarter" data-label="Fiscal quarter" data-locale="en-US" data-today="2026-11-25" data-min="2024-Q1" data-max="2027-Q4" data-value="2026-Q4"></div>
   </div>
 </section>
 <section class="z-card demo" data-component="Radio" data-behavior="dom">
@@ -3399,11 +3436,37 @@ malaga" data-ignore-accents="">Un
 <div id="start-time-panel" popover="manual" class="z-liquid z-popover z-timepicker__panel" role="dialog" aria-label="Choose time"></div>
   </div>
 </section>
+<section class="z-card demo" data-component="TimeRangePicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TimeRangePicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-timerange" role="group" aria-label="Night shift" data-size="md" data-allow-overnight data-name="shift">
+  <div class="z-input z-datefield z-timefield z-timepicker" id="shift-start" role="group" aria-label="Start time" data-size="md" data-locale="en-GB" data-hour-cycle="24" data-granularity="minute" data-value="22:00">
+    <button type="button" class="z-input__action z-timepicker__trigger" aria-label="Start time" title="Start time" aria-haspopup="dialog" aria-expanded="false" aria-controls="shift-start-panel"><z-icon name="clock" size="16"></z-icon></button>
+  </div>
+  <div id="shift-start-panel" popover="manual" class="z-liquid z-popover z-timepicker__panel" role="dialog" aria-label="Start time"></div>
+  <span class="z-timerange__sep" aria-hidden="true"><z-icon name="arrow-right" size="16"></z-icon></span>
+  <div class="z-input z-datefield z-timefield z-timepicker" id="shift-end" role="group" aria-label="End time" data-size="md" data-locale="en-GB" data-hour-cycle="24" data-granularity="minute" data-value="06:00">
+    <button type="button" class="z-input__action z-timepicker__trigger" aria-label="End time" title="End time" aria-haspopup="dialog" aria-expanded="false" aria-controls="shift-end-panel"><z-icon name="clock" size="16"></z-icon></button>
+  </div>
+  <div id="shift-end-panel" popover="manual" class="z-liquid z-popover z-timepicker__panel" role="dialog" aria-label="End time"></div>
+  <span class="z-timerange__meta" aria-live="polite"></span>
+  <input type="text" class="z-native-input" aria-hidden="true" tabindex="-1" name="shift" value="22:00/06:00">
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="TransferList" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">TransferList</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
 <div class="z-transfer" data-searchable data-name="members">
   <script type="application/json" data-props>{"items": [{"value": "ana", "label": "Ana Torres", "description": "Design"}, {"value": "ben", "label": "Ben Okafor", "description": "Engineering"}, {"value": "chen", "label": "Chen Wei", "description": "Engineering"}, {"value": "dara", "label": "Dara Singh", "description": "Product", "disabled": true}, {"value": "eli", "label": "Eli Moreau", "description": "Support"}, {"value": "femi", "label": "Femi Adeyemi", "description": "Sales"}], "value": ["chen"], "labels": {"source": "People", "target": "Team"}}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="TreeSelect" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TreeSelect</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-treeselect" data-multiple data-name="teams" data-strategy="parent" data-label="Teams">
+  <script type="application/json" data-props>{"nodes": [{"value": "eng", "label": "Engineering", "children": [{"value": "web", "label": "Web"}, {"value": "mobile", "label": "Mobile"}, {"value": "platform", "label": "Platform", "children": [{"value": "infra", "label": "Infrastructure"}, {"value": "data", "label": "Data"}]}]}, {"value": "design", "label": "Design", "children": [{"value": "brand", "label": "Brand"}, {"value": "product", "label": "Product design"}]}, {"value": "sales", "label": "Sales", "disabled": true}], "value": ["web", "design"], "defaultExpanded": ["eng"]}</script>
 </div>
   </div>
 </section>
@@ -6319,6 +6382,9 @@ document.querySelector("#inbox").addEventListener("z:readchange", (event) => con
 // Calendar
 document.querySelector("#due-calendar").addEventListener("z:change", (event) => console.log(event.detail.value));
 
+// Cascader
+document.querySelector(".z-cascader").addEventListener("z:change", (event) => console.log(event.detail.value, event.detail.labels));
+
 // Combobox
 document.querySelector("#country").addEventListener("z:change", (event) => console.log(event.detail.value));
 
@@ -6328,11 +6394,17 @@ document.querySelector("#deadline").addEventListener("z:change", (event) => cons
 // DatePicker
 document.querySelector("#due").addEventListener("z:change", (event) => console.log(event.detail.value));
 
+// DateTimeRangePicker
+document.querySelector("#window").addEventListener("z:change", (event) => console.log(event.detail.value));
+
 // FileUpload
 document.querySelector("#images").addEventListener("z:change", (event) => console.log(event.detail.files.length, event.detail.rejected.length));
 
 // OTPInput
 document.querySelector("#code").addEventListener("z:change", (event) => { if (event.detail.complete) console.log(event.detail.value); });
+
+// QuarterPicker
+document.querySelector(".z-quarterpicker").addEventListener("z:change", (event) => console.log(event.detail.value, event.detail.from, event.detail.to));
 
 // Select
 document.querySelector("#view").addEventListener("z:change", (event) => console.log(event.detail.value));
@@ -6345,6 +6417,12 @@ document.querySelector("#alarm").addEventListener("z:change", (event) => console
 
 // TimePicker
 document.querySelector("#start-time").addEventListener("z:change", (event) => console.log(event.detail.value));
+
+// TimeRangePicker
+document.querySelector(".z-timerange").addEventListener("z:change", (event) => { if (event.target.matches(".z-timerange")) console.log(event.detail.value, event.detail.info); });
+
+// TreeSelect
+document.querySelector(".z-treeselect").addEventListener("z:change", (event) => console.log(event.detail.value));
 
 // CompareSlider
 document.querySelector(".z-compare").addEventListener("z:changeend", (event) => console.log(event.detail.value));

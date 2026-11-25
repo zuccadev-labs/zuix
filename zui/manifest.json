@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 224,
+ "count": 230,
  "groups": {
   "actions": [
    "Button",
@@ -155,6 +155,7 @@
   ],
   "forms": [
    "Calendar",
+   "Cascader",
    "Checkbox",
    "CheckboxGroup",
    "CircularSlider",
@@ -170,6 +171,7 @@
    "DatePicker",
    "DateRangePicker",
    "DateTimePicker",
+   "DateTimeRangePicker",
    "Editable",
    "Field",
    "Fieldset",
@@ -178,11 +180,13 @@
    "Input",
    "InputGroup",
    "Listbox",
+   "MaskedInput",
    "MonthPicker",
    "NativeSelect",
    "NumberInput",
    "OTPInput",
    "PasswordInput",
+   "QuarterPicker",
    "Radio",
    "RadioGroup",
    "SearchInput",
@@ -194,7 +198,9 @@
    "Textarea",
    "TimeField",
    "TimePicker",
+   "TimeRangePicker",
    "TransferList",
+   "TreeSelect",
    "WeekPicker",
    "YearPicker"
   ],
@@ -15378,6 +15384,228 @@
    "file": "zui/src/components/forms/Calendar.manifest.json"
   },
   {
+   "name": "Cascader",
+   "group": "forms",
+   "description": "Selección jerárquica por columnas (país › región › ciudad). Hijos que llegan más tarde con `loadChildren` (con su estado de carga), búsqueda por la ruta completa, `changeOnSelect` para quedarse en una rama y selección múltiple con casillas en cascada. En una ventana estrecha se ve una columna cada vez, con «Back» para volver al nivel anterior. El valor es la ruta de valores; el formulario recibe `es/md/mad`.",
+   "import": "import { Cascader } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "options",
+     "type": "CascaderOption[]",
+     "required": true,
+     "description": "Árbol `{ value, label, disabled?, children?, isLeaf? }`; `isLeaf: false` marca una rama de carga diferida."
+    },
+    {
+     "name": "value",
+     "type": "string[] | string[][] | null",
+     "description": "Ruta elegida o, con `multiple`, las rutas (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string[] | string[][] | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value, detail: { labels, option? }) => void",
+     "description": "Ruta nueva con sus etiquetas (y la opción final)."
+    },
+    {
+     "name": "multiple",
+     "type": "boolean",
+     "default": false,
+     "description": "Casillas con estado mixto; el valor es una lista de rutas."
+    },
+    {
+     "name": "showCheckedStrategy",
+     "type": "enum",
+     "values": [
+      "parent",
+      "all",
+      "child"
+     ],
+     "default": "parent",
+     "description": "Con `multiple`: la rama entera como una ruta (`parent`), todas las rutas marcadas (`all`) o solo hojas (`child`)."
+    },
+    {
+     "name": "changeOnSelect",
+     "type": "boolean",
+     "default": false,
+     "description": "Elegir una rama ya cambia el valor."
+    },
+    {
+     "name": "searchable",
+     "type": "boolean",
+     "default": false,
+     "description": "Teclear busca en la ruta completa («mad» encuentra «Spain / Madrid / Madrid»)."
+    },
+    {
+     "name": "loadChildren",
+     "type": "(option, path) => Promise<CascaderOption[]>",
+     "description": "Hijos de una opción con `isLeaf: false`, al abrirla (con su estado de carga). Si falla, la opción queda como hoja."
+    },
+    {
+     "name": "onLoad",
+     "type": "(detail: { path, options }) => void"
+    },
+    {
+     "name": "onLoadError",
+     "type": "(detail: { path, error }) => void"
+    },
+    {
+     "name": "levelLabels",
+     "type": "string[]",
+     "description": "Nombre de cada columna («Country», «Region», «City»)."
+    },
+    {
+     "name": "displaySeparator",
+     "type": "string",
+     "default": " / "
+    },
+    {
+     "name": "separator",
+     "type": "string",
+     "default": "/",
+     "description": "Separador del valor que envía el formulario."
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "clearable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CascaderLabels>",
+     "description": "placeholder, level («Level {n}»), empty, noResults, loading, back, clear, toggle, remove («Remove {label}») y results («{count} results»), en inglés por defecto."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "open",
+    "loading",
+    "checked",
+    "indeterminate",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "control-height-lg",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "item-radius",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "row-hover",
+    "glass-border",
+    "glass-highlight",
+    "danger-text"
+   ],
+   "classes": [
+    "z-cascader",
+    "z-cascader__control",
+    "z-cascader__input",
+    "z-cascader__popup",
+    "z-cascader__columns",
+    "z-cascader__column",
+    "z-cascader__option",
+    "z-cascader__chevron",
+    "z-cascader__spinner",
+    "z-cascader__check",
+    "z-cascader__results",
+    "z-cascader__mark",
+    "z-cascader__bar",
+    "z-cascader__back",
+    "z-cascader__crumb"
+   ],
+   "a11y": "Patrón APG «combobox»: el foco se queda en el campo (role=combobox, aria-expanded, aria-controls con las columnas) y la opción activa va por aria-activedescendant. Cada columna es un listbox con nombre (su nivel) y aria-busy mientras carga. Flechas arriba y abajo recorren la columna; derecha abre la rama (izquierda en RTL), izquierda vuelve a la anterior; Inicio y Fin; Intro elige; una letra salta por la etiqueta (sin búsqueda); Escape vacía la búsqueda y luego cierra; Retroceso con el campo vacío quita la última pieza. Con casillas, aria-checked con estado mixto. La carga y los resultados se anuncian en una región viva. Sin React: .z-cascader con data-* y las opciones en <script type=\"application/json\" data-props>; emite z:change, z:load y z:loaderror; la carga diferida con setWidgetProps(el, { loadChildren }).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "País, región y ciudad",
+     "code": "<Cascader aria-label=\"Location\" name=\"location\" searchable clearable levelLabels={[\"Country\", \"Region\", \"City\"]} defaultValue={[\"es\", \"md\", \"alc\"]} options={[{ value: \"es\", label: \"Spain\", children: [{ value: \"md\", label: \"Madrid\", children: [{ value: \"mad\", label: \"Madrid\" }, { value: \"alc\", label: \"Alcalá de Henares\" }] }, { value: \"ct\", label: \"Catalonia\", children: [{ value: \"bcn\", label: \"Barcelona\" }, { value: \"gir\", label: \"Girona\" }] }] }, { value: \"pt\", label: \"Portugal\", children: [{ value: \"lis\", label: \"Lisbon\", children: [{ value: \"lis-c\", label: \"Lisbon\" }, { value: \"sin\", label: \"Sintra\" }] }] }]} />"
+    },
+    {
+     "title": "Varias regiones con casillas",
+     "code": "<Cascader aria-label=\"Coverage\" multiple name=\"coverage\" defaultValue={[[\"es\", \"ct\"]]} options={[{ value: \"es\", label: \"Spain\", children: [{ value: \"md\", label: \"Madrid\", children: [{ value: \"mad\", label: \"Madrid\" }, { value: \"alc\", label: \"Alcalá de Henares\" }] }, { value: \"ct\", label: \"Catalonia\", children: [{ value: \"bcn\", label: \"Barcelona\" }, { value: \"gir\", label: \"Girona\" }] }] }, { value: \"pt\", label: \"Portugal\", children: [{ value: \"lis\", label: \"Lisbon\", children: [{ value: \"lis-c\", label: \"Lisbon\" }, { value: \"sin\", label: \"Sintra\" }] }] }]} />"
+    },
+    {
+     "title": "Rama elegible (changeOnSelect)",
+     "code": "<Cascader aria-label=\"Area\" changeOnSelect placeholder=\"Country or region\" options={[{ value: \"es\", label: \"Spain\", children: [{ value: \"md\", label: \"Madrid\", children: [{ value: \"mad\", label: \"Madrid\" }, { value: \"alc\", label: \"Alcalá de Henares\" }] }, { value: \"ct\", label: \"Catalonia\", children: [{ value: \"bcn\", label: \"Barcelona\" }, { value: \"gir\", label: \"Girona\" }] }] }, { value: \"pt\", label: \"Portugal\", children: [{ value: \"lis\", label: \"Lisbon\", children: [{ value: \"lis-c\", label: \"Lisbon\" }, { value: \"sin\", label: \"Sintra\" }] }] }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "País, región y ciudad",
+     "code": "<div class=\"z-cascader\" data-searchable data-clearable data-name=\"location\" data-label=\"Location\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [\"es\", \"md\", \"alc\"], \"levelLabels\": [\"Country\", \"Region\", \"City\"]}</script>\n</div>",
+     "script": "document.querySelector(\".z-cascader\").addEventListener(\"z:change\", (event) => console.log(event.detail.value, event.detail.labels));"
+    },
+    {
+     "title": "Varias regiones con casillas",
+     "code": "<div class=\"z-cascader\" data-multiple data-name=\"coverage\" data-label=\"Coverage\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [[\"es\", \"ct\"]]}</script>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: Cascader de Ant Design y de Element Plus, y el patrón combobox de APG.",
+   "file": "zui/src/components/forms/Cascader.manifest.json"
+  },
+  {
    "name": "Checkbox",
    "group": "forms",
    "description": "Casilla de verificación con etiqueta, descripción y estado indeterminado.",
@@ -18115,6 +18343,248 @@
    "file": "zui/src/components/forms/DateTimePicker.manifest.json"
   },
   {
+   "name": "DateTimeRangePicker",
+   "group": "forms",
+   "description": "Rango de fecha y hora en un panel: el calendario de rango, una hora de inicio y otra de fin (TimeField), zona horaria opcional y preajustes («Last 24 hours», «Today»…). El valor cambia con «Apply». Con zona, el formulario recibe cada extremo con desfase y zona (`2026-03-03T09:00+01:00[Europe/Madrid]`), lo que lee `Temporal.ZonedDateTime.from`.",
+   "import": "import { DateTimeRangePicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "{ start: string | null; end: string | null; timeZone?: string | null } | null",
+     "description": "Relojes de pared `YYYY-MM-DDTHH:mm` (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "DateTimeRange | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: DateTimeRange) => void"
+    },
+    {
+     "name": "showTimeZone",
+     "type": "boolean",
+     "default": false,
+     "description": "Selector de zona en el panel."
+    },
+    {
+     "name": "timeZones",
+     "type": "string[]",
+     "description": "Zonas que se ofrecen; por defecto, todas."
+    },
+    {
+     "name": "defaultTimeZone",
+     "type": "string",
+     "description": "Zona de partida; por defecto, la del dispositivo."
+    },
+    {
+     "name": "presets",
+     "type": "{ label: string; value: DateTimePresetKey | ((now) => { start, end }) }[]",
+     "description": "`last-hour`, `last-24-hours`, `today`, `yesterday`, `last-7-days`, `next-7-days`, `this-week` o una función."
+    },
+    {
+     "name": "min",
+     "type": "string",
+     "description": "`YYYY-MM-DD`."
+    },
+    {
+     "name": "max",
+     "type": "string"
+    },
+    {
+     "name": "isDateDisabled",
+     "type": "(date: string) => boolean"
+    },
+    {
+     "name": "numberOfMonths",
+     "type": "number",
+     "default": 2
+    },
+    {
+     "name": "weekStartsOn",
+     "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "hourCycle",
+     "type": "enum",
+     "values": [
+      "12",
+      "24"
+     ]
+    },
+    {
+     "name": "minuteStep",
+     "type": "number"
+    },
+    {
+     "name": "defaultStartTime",
+     "type": "string",
+     "default": "00:00"
+    },
+    {
+     "name": "defaultEndTime",
+     "type": "string",
+     "default": "23:59"
+    },
+    {
+     "name": "today",
+     "type": "string"
+    },
+    {
+     "name": "open",
+     "type": "boolean"
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "block",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end"
+     ],
+     "default": "start"
+    },
+    {
+     "name": "popupClassName",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DateTimeRangePickerLabels>",
+     "description": "placeholder, dialog, presets, start, end, timeZone, apply y cancel, en inglés por defecto."
+    },
+    {
+     "name": "messages",
+     "type": "Partial<DateTimeRangeMessages>",
+     "description": "incomplete, order y gap (una hora que no existe en esa zona)."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+     "name": "aria-labelledby",
+     "type": "string",
+     "description": "Id del texto que nombra el control; dentro de un Field, su etiqueta."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "open",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "control-height-lg",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "item-radius",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "danger-text"
+   ],
+   "classes": [
+    "z-dtrange",
+    "z-dtrange__panel",
+    "z-dtrange__body",
+    "z-dtrange__presets",
+    "z-dtrange__footer",
+    "z-dtrange__time",
+    "z-dtrange__zone",
+    "z-dtrange__error"
+   ],
+   "a11y": "Botón con aria-haspopup=\"dialog\" cuyo nombre incluye el rango elegido, y un panel role=dialog con el foco atrapado. El calendario es la rejilla APG de Calendar en modo rango; las horas son TimeField con nombre («Start», «End»), y la zona un `<select>` nativo. El error del borrador se anuncia (role=status) y «Apply» queda con aria-disabled mientras el rango no vale. Escape y «Cancel» descartan y devuelven el foco al botón. Sin React: .z-select.z-dtrange[data-picker] con su panel vacío; emite z:change { value }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Ventana de mantenimiento con zona",
+     "code": "<DateTimeRangePicker aria-label=\"Maintenance window\" name=\"window\" showTimeZone timeZones={[\"UTC\", \"Europe/Madrid\", \"America/New_York\", \"Asia/Tokyo\"]} locale=\"en-US\" hourCycle={24} today=\"2026-11-25\" defaultValue={{ start: \"2026-11-28T22:00\", end: \"2026-11-29T02:00\", timeZone: \"Europe/Madrid\" }} presets={[{ label: \"Today\", value: \"today\" }, { label: \"Next 7 days\", value: \"next-7-days\" }]} />"
+    },
+    {
+     "title": "Sin zona",
+     "code": "<DateTimeRangePicker aria-label=\"Event\" locale=\"en-US\" today=\"2026-11-25\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Ventana de mantenimiento con zona",
+     "code": "<span class=\"z-select z-dtrange\" data-picker id=\"window\" data-size=\"md\" data-block data-name=\"window\" data-time-zone data-time-zones=\"UTC,Europe/Madrid,America/New_York,Asia/Tokyo\" data-locale=\"en-US\" data-hour-cycle=\"24\" data-today=\"2026-11-25\" data-presets='[{\"label\":\"Today\",\"value\":\"today\"},{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"}]'>\n  <button type=\"button\" class=\"z-select__control\" aria-label=\"Maintenance window\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"window-panel\" data-state=\"closed\"><span class=\"z-select__value\"></span></button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"window\" value=\"2026-11-28T22:00+01:00[Europe/Madrid]/2026-11-29T02:00+01:00[Europe/Madrid]\">\n</span>\n<div id=\"window-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-dtrange__panel\" role=\"dialog\" aria-label=\"Choose date and time range\"></div>",
+     "script": "document.querySelector(\"#window\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    }
+   ],
+   "origin": "Nuevo. Referencias: DateRangePicker con hora de Ant Design y de MUI X, y los selectores de intervalo de Grafana y Datadog.",
+   "file": "zui/src/components/forms/DateTimeRangePicker.manifest.json"
+  },
+  {
    "name": "Editable",
    "group": "forms",
    "description": "Texto que se edita en su sitio (un título, un nombre): se ve como texto y pasa a ser un campo del mismo tamaño al activarlo.",
@@ -19183,6 +19653,150 @@
    "file": "zui/src/components/forms/Listbox.manifest.json"
   },
   {
+   "name": "MaskedInput",
+   "group": "forms",
+   "description": "Campo con máscara: teléfono, tarjeta (15 o 16 cifras según el número), fecha, hora, matrícula, código postal o patrón propio con `9` (cifra), `a` (letra), `*` (letra o cifra) y funciones. El cursor no salta al teclear, pegar o borrar en medio; la composición de un IME y el autocompletado se reformatean al terminar. Expone el valor crudo y el formateado, y el formato va sobre el campo, enlazado con aria-describedby.",
+   "import": "import { MaskedInput } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "mask",
+     "type": "MaskPreset | string | ((raw: string) => string) | MaskSpec",
+     "required": true,
+     "description": "Preset (`phone`, `card`, `date`, `time`, `plate`, `postal`), patrón, función que elige el patrón según lo tecleado o `{ pattern, tokens, transform }`."
+    },
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Valor crudo, solo lo que ocupa ranuras (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(raw: string, detail: { value: string; complete: boolean }) => void",
+     "description": "Crudo, texto formateado y si están todas las ranuras."
+    },
+    {
+     "name": "submit",
+     "type": "enum",
+     "values": [
+      "raw",
+      "formatted"
+     ],
+     "default": "raw",
+     "description": "Qué envía el formulario: el crudo (campo oculto) o el texto formateado."
+    },
+    {
+     "name": "formatHint",
+     "type": "string",
+     "description": "Formato que se muestra y se anuncia; por defecto el del preset o el patrón con `_`."
+    },
+    {
+     "name": "formatLabel",
+     "type": "string",
+     "default": "Format: {format}"
+    },
+    {
+     "name": "showFormat",
+     "type": "boolean",
+     "default": true,
+     "description": "Formato visible sobre el campo; sin él, solo se anuncia."
+    },
+    {
+     "name": "incompleteMessage",
+     "type": "string",
+     "default": "Enter the complete value",
+     "description": "Mensaje de validez con el valor a medias."
+    },
+    {
+     "name": "icon",
+     "type": "IconName"
+    },
+    {
+     "name": "inputClassName",
+     "type": "string"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "complete",
+    "incomplete",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "fg",
+    "fg-muted",
+    "text-caption",
+    "space-1",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-masked",
+    "z-masked__format"
+   ],
+   "a11y": "Un `<input type=\"text\">` nativo con `inputmode` y `autocomplete` del preset (tel-national, cc-number, postal-code). El formato está en un texto visible encima del campo (no solo en el placeholder) y se anuncia con aria-describedby. `beforeinput` cancela la edición y la rehace sobre el valor crudo, así que el cursor queda tras lo tecleado; se emite el `input` correspondiente para la validación del Field. Con el valor a medias, setCustomValidity da el mensaje (`incompleteMessage`). Sin React: .z-masked con data-mask o data-pattern; emite z:change { raw, value, complete }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Teléfono",
+     "code": "<MaskedInput mask=\"phone\" aria-label=\"Phone\" name=\"phone\" defaultValue=\"5551234567\" />"
+    },
+    {
+     "title": "Tarjeta",
+     "code": "<MaskedInput mask=\"card\" aria-label=\"Card number\" name=\"card\" icon=\"credit-card\" />"
+    },
+    {
+     "title": "Matrícula en mayúsculas",
+     "code": "<MaskedInput mask=\"plate\" aria-label=\"License plate\" name=\"plate\" defaultValue=\"abc1234\" />"
+    },
+    {
+     "title": "Patrón propio",
+     "code": "<MaskedInput mask=\"aa-9999-**\" aria-label=\"Order code\" formatHint=\"AB-1234-X9\" submit=\"formatted\" name=\"order\" />"
+    }
+   ],
+   "origin": "Nuevo. Referencias: react-input-mask, IMask, Maskito (cursor con beforeinput) y la guía de formularios de pago de web.dev.",
+   "file": "zui/src/components/forms/MaskedInput.manifest.json"
+  },
+  {
    "name": "MonthPicker",
    "group": "forms",
    "description": "Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4). Valor YYYY-MM, como <input type=\"month\">; en rango, de mes a mes.",
@@ -19886,6 +20500,146 @@
    ],
    "origin": "Nuevo. Patrón habitual de formularios accesibles (botón con aria-pressed, autocomplete current-password o new-password, pegar permitido). Referencia de variantes: Password Input de Shark UI y Password Toggle Field de Radix.",
    "file": "zui/src/components/forms/PasswordInput.manifest.json"
+  },
+  {
+   "name": "QuarterPicker",
+   "group": "forms",
+   "description": "Selector de trimestre (Q1–Q4 de cada año) con el mismo patrón que MonthPicker y YearPicker: botón con el valor y un panel con la rejilla del calendario, aquí de 2 × 2, con los meses de cada trimestre. Valor `YYYY-Qn`; al elegir se informa también de los días que abarca.",
+   "import": "import { QuarterPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string | null",
+     "description": "`YYYY-Qn` (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string, range: { from: string; to: string }) => void",
+     "description": "Trimestre y su primer y último día."
+    },
+    {
+     "name": "min",
+     "type": "string",
+     "description": "Primer trimestre elegible (`YYYY-Qn`)."
+    },
+    {
+     "name": "max",
+     "type": "string"
+    },
+    {
+     "name": "today",
+     "type": "string",
+     "description": "`YYYY-MM-DD`: marca el trimestre en curso."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "block",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "labels",
+     "type": "Partial<QuarterPickerLabels>",
+     "description": "placeholder, dialog, quarter («Q{quarter}»), value («Q{quarter} {year}»), previousYear y nextYear, en inglés por defecto."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+     "name": "aria-labelledby",
+     "type": "string",
+     "description": "Id del texto que nombra el control; dentro de un Field, su etiqueta."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "open",
+    "selected",
+    "current",
+    "disabled"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "popup-bg",
+    "popup-radius",
+    "accent",
+    "accent-text",
+    "accent-soft",
+    "fg",
+    "fg-muted",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-quarterpicker",
+    "z-quarterpicker__field",
+    "z-quarterpicker__panel",
+    "z-quarterpicker__calendar",
+    "z-quarterpicker__unit",
+    "z-quarterpicker__name",
+    "z-quarterpicker__months"
+   ],
+   "a11y": "Botón con aria-haspopup=\"dialog\" cuyo nombre incluye el trimestre elegido. El panel es role=dialog con el foco atrapado; la rejilla es un role=grid con foco itinerante (APG «grid»): flechas a los lados (±1) y en vertical (±2), Inicio y Fin de la fila, Re Pág y Av Pág de año (con Mayús, década). Cada celda tiene nombre completo («Q1 2026, Jan – Mar») y aria-selected. Intro o Espacio eligen y el foco vuelve al botón. Sin React: .z-quarterpicker con data-value, data-min, data-max, data-today, data-locale, data-name; emite z:change { value, from, to }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Trimestre fiscal",
+     "code": "<QuarterPicker aria-label=\"Fiscal quarter\" name=\"quarter\" locale=\"en-US\" today=\"2026-11-25\" min=\"2024-Q1\" max=\"2027-Q4\" defaultValue=\"2026-Q4\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Trimestre fiscal",
+     "code": "<div class=\"z-quarterpicker\" data-name=\"quarter\" data-label=\"Fiscal quarter\" data-locale=\"en-US\" data-today=\"2026-11-25\" data-min=\"2024-Q1\" data-max=\"2027-Q4\" data-value=\"2026-Q4\"></div>",
+     "script": "document.querySelector(\".z-quarterpicker\").addEventListener(\"z:change\", (event) => console.log(event.detail.value, event.detail.from, event.detail.to));"
+    }
+   ],
+   "origin": "Nuevo. Referencias: DatePicker con `picker=\"quarter\"` de Ant Design y los selectores de periodo de las herramientas de informes.",
+   "file": "zui/src/components/forms/QuarterPicker.manifest.json"
   },
   {
    "name": "Radio",
@@ -21695,6 +22449,178 @@
    "file": "zui/src/components/forms/TimePicker.manifest.json"
   },
   {
+   "name": "TimeRangePicker",
+   "group": "forms",
+   "description": "Rango de horas: dos TimePicker (inicio y fin) en un grupo. Comprueba que el fin sea posterior al inicio; con `allowOvernight`, admite que cruce la medianoche y lo marca con un indicador. Muestra la duración, admite duración mínima y máxima y envía `inicio/fin` al formulario.",
+   "import": "import { TimeRangePicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "{ start: string | null; end: string | null } | null",
+     "description": "Horas `HH:mm` (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "{ start: string | null; end: string | null } | null"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: TimeRange, info: TimeRangeInfo) => void",
+     "description": "Rango nuevo con su duración, si cruza la medianoche y por qué no vale."
+    },
+    {
+     "name": "allowOvernight",
+     "type": "boolean",
+     "default": false,
+     "description": "El fin puede caer al día siguiente (turno de noche)."
+    },
+    {
+     "name": "minDuration",
+     "type": "number",
+     "description": "Minutos."
+    },
+    {
+     "name": "maxDuration",
+     "type": "number",
+     "description": "Minutos."
+    },
+    {
+     "name": "showDuration",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "columns",
+      "list"
+     ],
+     "default": "columns",
+     "description": "Panel de cada hora."
+    },
+    {
+     "name": "step",
+     "type": "number",
+     "default": 30,
+     "description": "Minutos entre franjas con `variant=\"list\"`."
+    },
+    {
+     "name": "minuteStep",
+     "type": "number"
+    },
+    {
+     "name": "hourCycle",
+     "type": "enum",
+     "values": [
+      "12",
+      "24"
+     ]
+    },
+    {
+     "name": "showSeconds",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TimeRangePickerLabels>",
+     "description": "start, end, overnight («+1 day»), overnightDescription y duration, en inglés por defecto."
+    },
+    {
+     "name": "messages",
+     "type": "Partial<TimeRangeMessages>",
+     "description": "incomplete, order, short y long: mensajes de validez del campo nativo."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+     "name": "aria-labelledby",
+     "type": "string",
+     "description": "Id del texto que nombra el control; dentro de un Field, su etiqueta."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "overnight",
+    "invalid",
+    "disabled"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "fg-muted",
+    "fg-subtle",
+    "text-small",
+    "space-2",
+    "info-soft",
+    "info-text"
+   ],
+   "classes": [
+    "z-timerange",
+    "z-timerange__sep",
+    "z-timerange__meta",
+    "z-timerange__overnight",
+    "z-timerange__duration"
+   ],
+   "a11y": "Un role=group con el nombre del Field y dos TimeField (spinbuttons por segmento) llamados «Start time» y «End time», cada uno con su panel. La duración y el indicador de día siguiente están en una región viva enlazada con aria-describedby; el indicador lleva texto para lectores («Ends the next day»). Un rango que no vale lleva su mensaje en el campo nativo (setCustomValidity): lo muestra un Field con `validate` y lleva el foco a la primera hora. Sin React: .z-timerange con dos .z-timefield.z-timepicker; emite z:change { value, info } en el grupo.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Horario de oficina",
+     "code": "<TimeRangePicker aria-label=\"Opening hours\" name=\"hours\" locale=\"en-US\" defaultValue={{ start: \"09:00\", end: \"17:30\" }} />"
+    },
+    {
+     "title": "Turno de noche",
+     "code": "<TimeRangePicker aria-label=\"Night shift\" name=\"shift\" allowOvernight locale=\"en-GB\" hourCycle={24} defaultValue={{ start: \"22:00\", end: \"06:00\" }} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Turno de noche",
+     "code": "<div class=\"z-timerange\" role=\"group\" aria-label=\"Night shift\" data-size=\"md\" data-allow-overnight data-name=\"shift\">\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"shift-start\" role=\"group\" aria-label=\"Start time\" data-size=\"md\" data-locale=\"en-GB\" data-hour-cycle=\"24\" data-granularity=\"minute\" data-value=\"22:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Start time\" title=\"Start time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shift-start-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"shift-start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Start time\"></div>\n  <span class=\"z-timerange__sep\" aria-hidden=\"true\"><z-icon name=\"arrow-right\" size=\"16\"></z-icon></span>\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"shift-end\" role=\"group\" aria-label=\"End time\" data-size=\"md\" data-locale=\"en-GB\" data-hour-cycle=\"24\" data-granularity=\"minute\" data-value=\"06:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"End time\" title=\"End time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shift-end-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"shift-end-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"End time\"></div>\n  <span class=\"z-timerange__meta\" aria-live=\"polite\"></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"shift\" value=\"22:00/06:00\">\n</div>",
+     "script": "document.querySelector(\".z-timerange\").addEventListener(\"z:change\", (event) => { if (event.target.matches(\".z-timerange\")) console.log(event.detail.value, event.detail.info); });"
+    }
+   ],
+   "origin": "Nuevo. Referencias: TimeRangePicker de Mantine y RangePicker con `picker=\"time\"` de Ant Design.",
+   "file": "zui/src/components/forms/TimeRangePicker.manifest.json"
+  },
+  {
    "name": "TransferList",
    "group": "forms",
    "description": "Lista de transferencia: disponibles y elegidos con casillas, búsqueda opcional en cada lista y botones para mover lo marcado o todo lo visible. El valor es la lista de elegidos, en el orden en que llegaron.",
@@ -21804,6 +22730,187 @@
    ],
    "origin": "Nuevo. Referencias: Transfer list de MUI, Transfer de Ant Design y PickList de PrimeReact.",
    "file": "zui/src/components/forms/TransferList.manifest.json"
+  },
+  {
+   "name": "TreeSelect",
+   "group": "forms",
+   "description": "Select con un árbol en su panel. Selección única o casillas con estado mixto en cascada (las de Tree), búsqueda que expande lo que coincide y piezas para lo elegido. Con casillas, el valor sale según la estrategia: todo lo marcado, la rama en lugar de sus hijos o solo hojas.",
+   "import": "import { TreeSelect } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "nodes",
+     "type": "TreeSelectNode[]",
+     "required": true,
+     "description": "Árbol `{ value, label, disabled?, children? }`."
+    },
+    {
+     "name": "value",
+     "type": "string | null | string[]",
+     "description": "Valor elegido o, con `multiple`, los valores (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string | null | string[]"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value, detail: { label } | { labels }) => void"
+    },
+    {
+     "name": "multiple",
+     "type": "boolean",
+     "default": false,
+     "description": "Casillas con estado mixto; elegir no cierra el panel."
+    },
+    {
+     "name": "showCheckedStrategy",
+     "type": "enum",
+     "values": [
+      "parent",
+      "all",
+      "child"
+     ],
+     "default": "parent",
+     "description": "Con `multiple`: qué ids forman el valor."
+    },
+    {
+     "name": "searchable",
+     "type": "boolean",
+     "default": true,
+     "description": "Teclear filtra el árbol y expande los antepasados de lo que coincide."
+    },
+    {
+     "name": "defaultExpanded",
+     "type": "string[]",
+     "description": "Ramas expandidas al abrir."
+    },
+    {
+     "name": "maxChips",
+     "type": "number",
+     "description": "Piezas visibles como mucho; el resto se resume en «+N»."
+    },
+    {
+     "name": "placeholder",
+     "type": "string"
+    },
+    {
+     "name": "clearable",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TreeSelectLabels>",
+     "description": "placeholder, tree, empty, noResults, clear, toggle, remove, results y more («+{count}»), en inglés por defecto."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md",
+      "lg"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "required",
+     "type": "boolean",
+     "default": false,
+     "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+     "name": "invalid",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Nombre del campo al enviar un formulario."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "open",
+    "checked",
+    "indeterminate",
+    "disabled",
+    "invalid"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "control-height-lg",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "item-radius",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "row-hover",
+    "glass-border",
+    "glass-highlight"
+   ],
+   "classes": [
+    "z-treeselect",
+    "z-treeselect__control",
+    "z-treeselect__input",
+    "z-treeselect__popup",
+    "z-treeselect__tree",
+    "z-treeselect__item",
+    "z-treeselect__row",
+    "z-treeselect__check",
+    "z-treeselect__mark",
+    "z-treeselect__more"
+   ],
+   "a11y": "Patrón APG «combobox» con popup `tree` (aria-haspopup=\"tree\"): el foco se queda en el campo y la fila activa va por aria-activedescendant. Flechas arriba y abajo recorren las filas visibles; derecha expande o baja al primer hijo, izquierda contrae o sube al padre (al revés en RTL); Inicio y Fin; Intro elige (o marca); Escape vacía la búsqueda y luego cierra; Retroceso con el campo vacío quita la última pieza. Cada treeitem lleva aria-level, aria-setsize, aria-posinset, aria-expanded y aria-selected o, con casillas, aria-checked con estado mixto. El número de resultados se anuncia. Sin React: .z-treeselect con data-* y los nodos en data-props; emite z:change.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Equipo",
+     "code": "<TreeSelect aria-label=\"Team\" name=\"team\" clearable defaultValue=\"infra\" nodes={[{ value: \"eng\", label: \"Engineering\", children: [{ value: \"web\", label: \"Web\" }, { value: \"mobile\", label: \"Mobile\" }, { value: \"platform\", label: \"Platform\", children: [{ value: \"infra\", label: \"Infrastructure\" }, { value: \"data\", label: \"Data\" }] }] }, { value: \"design\", label: \"Design\", children: [{ value: \"brand\", label: \"Brand\" }, { value: \"product\", label: \"Product design\" }] }, { value: \"sales\", label: \"Sales\", disabled: true }]} />"
+    },
+    {
+     "title": "Varios equipos con casillas",
+     "code": "<TreeSelect aria-label=\"Teams\" multiple name=\"teams\" showCheckedStrategy=\"parent\" defaultValue={[\"web\", \"design\"]} defaultExpanded={[\"eng\"]} nodes={[{ value: \"eng\", label: \"Engineering\", children: [{ value: \"web\", label: \"Web\" }, { value: \"mobile\", label: \"Mobile\" }, { value: \"platform\", label: \"Platform\", children: [{ value: \"infra\", label: \"Infrastructure\" }, { value: \"data\", label: \"Data\" }] }] }, { value: \"design\", label: \"Design\", children: [{ value: \"brand\", label: \"Brand\" }, { value: \"product\", label: \"Product design\" }] }, { value: \"sales\", label: \"Sales\", disabled: true }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Varios equipos con casillas",
+     "code": "<div class=\"z-treeselect\" data-multiple data-name=\"teams\" data-strategy=\"parent\" data-label=\"Teams\">\n  <script type=\"application/json\" data-props>{\"nodes\": [{\"value\": \"eng\", \"label\": \"Engineering\", \"children\": [{\"value\": \"web\", \"label\": \"Web\"}, {\"value\": \"mobile\", \"label\": \"Mobile\"}, {\"value\": \"platform\", \"label\": \"Platform\", \"children\": [{\"value\": \"infra\", \"label\": \"Infrastructure\"}, {\"value\": \"data\", \"label\": \"Data\"}]}]}, {\"value\": \"design\", \"label\": \"Design\", \"children\": [{\"value\": \"brand\", \"label\": \"Brand\"}, {\"value\": \"product\", \"label\": \"Product design\"}]}, {\"value\": \"sales\", \"label\": \"Sales\", \"disabled\": true}], \"value\": [\"web\", \"design\"], \"defaultExpanded\": [\"eng\"]}</script>\n</div>",
+     "script": "document.querySelector(\".z-treeselect\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    }
+   ],
+   "origin": "Nuevo. Referencias: TreeSelect de Ant Design y de PrimeReact, y el ejemplo de combobox con árbol de APG.",
+   "file": "zui/src/components/forms/TreeSelect.manifest.json"
   },
   {
    "name": "WeekPicker",

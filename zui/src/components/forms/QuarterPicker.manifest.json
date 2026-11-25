@@ -1,0 +1,128 @@
+{
+  "name": "QuarterPicker",
+  "group": "forms",
+  "description": "Selector de trimestre (Q1–Q4 de cada año) con el mismo patrón que MonthPicker y YearPicker: botón con el valor y un panel con la rejilla del calendario, aquí de 2 × 2, con los meses de cada trimestre. Valor `YYYY-Qn`; al elegir se informa también de los días que abarca.",
+  "import": "import { QuarterPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string | null",
+      "description": "`YYYY-Qn` (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string, range: { from: string; to: string }) => void",
+      "description": "Trimestre y su primer y último día."
+    },
+    {
+      "name": "min",
+      "type": "string",
+      "description": "Primer trimestre elegible (`YYYY-Qn`)."
+    },
+    {
+      "name": "max",
+      "type": "string"
+    },
+    {
+      "name": "today",
+      "type": "string",
+      "description": "`YYYY-MM-DD`: marca el trimestre en curso."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "labels",
+      "type": "Partial<QuarterPickerLabels>",
+      "description": "placeholder, dialog, quarter («Q{quarter}»), value («Q{quarter} {year}»), previousYear y nextYear, en inglés por defecto."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+      "name": "aria-labelledby",
+      "type": "string",
+      "description": "Id del texto que nombra el control; dentro de un Field, su etiqueta."
+    }
+  ],
+  "states": ["rest", "focus", "open", "selected", "current", "disabled"],
+  "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "popup-bg",
+    "popup-radius",
+    "accent",
+    "accent-text",
+    "accent-soft",
+    "fg",
+    "fg-muted",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-quarterpicker",
+    "z-quarterpicker__field",
+    "z-quarterpicker__panel",
+    "z-quarterpicker__calendar",
+    "z-quarterpicker__unit",
+    "z-quarterpicker__name",
+    "z-quarterpicker__months"
+  ],
+  "a11y": "Botón con aria-haspopup=\"dialog\" cuyo nombre incluye el trimestre elegido. El panel es role=dialog con el foco atrapado; la rejilla es un role=grid con foco itinerante (APG «grid»): flechas a los lados (±1) y en vertical (±2), Inicio y Fin de la fila, Re Pág y Av Pág de año (con Mayús, década). Cada celda tiene nombre completo («Q1 2026, Jan – Mar») y aria-selected. Intro o Espacio eligen y el foco vuelve al botón. Sin React: .z-quarterpicker con data-value, data-min, data-max, data-today, data-locale, data-name; emite z:change { value, from, to }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Trimestre fiscal",
+      "code": "<QuarterPicker aria-label=\"Fiscal quarter\" name=\"quarter\" locale=\"en-US\" today=\"2026-11-25\" min=\"2024-Q1\" max=\"2027-Q4\" defaultValue=\"2026-Q4\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Trimestre fiscal",
+      "code": "<div class=\"z-quarterpicker\" data-name=\"quarter\" data-label=\"Fiscal quarter\" data-locale=\"en-US\" data-today=\"2026-11-25\" data-min=\"2024-Q1\" data-max=\"2027-Q4\" data-value=\"2026-Q4\"></div>",
+      "script": "document.querySelector(\".z-quarterpicker\").addEventListener(\"z:change\", (event) => console.log(event.detail.value, event.detail.from, event.detail.to));"
+    }
+  ],
+  "origin": "Nuevo. Referencias: DatePicker con `picker=\"quarter\"` de Ant Design y los selectores de periodo de las herramientas de informes."
+}

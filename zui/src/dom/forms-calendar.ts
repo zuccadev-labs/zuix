@@ -969,7 +969,9 @@ export function setDatePickerValue(picker: HTMLElement, value: CalendarValue | D
 /** Calendario activo: dentro de `[data-z-dom]` o en el panel abierto de un DatePicker. */
 function calendarAt(target: Element): HTMLElement | null {
   const cal = target.closest<HTMLElement>(".z-calendar");
+  // `data-widget`: la rejilla la pinta y la mueve otra pieza (la de QuarterPicker), con el aspecto del calendario.
   return cal &&
+    !cal.hasAttribute("data-widget") &&
     (inDom(cal) ||
       isOpen(cal.closest<HTMLElement>("[popover]")) ||
       Boolean(cal.closest<HTMLDialogElement>("dialog.z-datepicker__drawer")?.open))

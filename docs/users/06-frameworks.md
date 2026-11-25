@@ -207,7 +207,8 @@ init(datesModule, chartsModule);
 | Entrada | Qué conecta | Exporta además |
 |---|---|---|
 | `/dom/core` | Diálogos, popovers, menús y submenús, tooltip, `toast`, `confirm`, pestañas, acordeón, casillas, interruptores, radios, Rating, acciones (Toolbar, CopyButton…), navegación (Menubar, Collapsible), capas (Drawer, HoverCard, Toggletip, Tour, ActionBar, Banner) y lo básico de formularios: Select, Combobox, Slider, OTPInput, FileUpload, NumberInput, PasswordInput, Field, Listbox y TagsInput | `init`, `use`, `hydrate`, `destroy`, `download`, utilidades de atajos |
-| `/dom/dates` | Calendar, DatePicker y sus variantes, DateField, TimeField, TimePicker, DateTimePicker | `datesModule`, `setCalendarOptions`… |
+| `/dom/dates` | Calendar, DatePicker y sus variantes, DateField, TimeField, TimePicker, DateTimePicker, TimeRangePicker, DateTimeRangePicker, QuarterPicker | `datesModule`, `setCalendarOptions`… |
+| `/dom/forms` | Cascader, TreeSelect, MaskedInput | `formsModule`, `setMask`, `setMaskedValue`, `setWidgetProps`… |
 | `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable, TransferList, NotificationCenter, FilterBar y ReviewCard | `dataModule`, `sortTable`, `setReviewExpanded`, `formatMoney`, `summarizePrice`… |
 | `/dom/content` | FormatNumber, FormatByte, FormatDate, Highlight, Marquee, JsonTree, Stepper con paneles, Timer, RelativeTime | `contentModule`, `setJsonTreeValue`… |
 | `/dom/agenda` | EventCalendar, TimelineView, PerpetualYear, FreeBusy, SlotPicker, CalendarHeatmap, HabitCalendar (trae `/dom/dates`) | `agendaModule`, `setAgendaEvents`… |
@@ -435,8 +436,11 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Navegación y estado | `selectTab`, `setCollapsibleOpen`, `expandSkeleton` |
 | | Descargas | `download`, `downloadBlob`, `downloadUrl`, `mimeFromName` |
 | | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutLabels` |
-| `/dom/dates` | Valor desde código | `setCalendarValue`, `setCalendarOptions`, `setDatePickerValue`, `setDateFieldValue`, `setTimeFieldValue`, `setTimePickerValue` |
+| `/dom/dates` | Valor desde código | `setCalendarValue`, `setCalendarOptions`, `setDatePickerValue`, `setDateFieldValue`, `setTimeFieldValue`, `setTimePickerValue`, `setTimeRangeValue`, `setDateTimeRangeValue` |
 | | Fechas civiles | `formatDateRange`, `isoWeekText`, `weekNumber`, `weekStartOf`, `rangePresets`, `resolvePreset`, `PRESET_KEYS` |
+| | Rangos y trimestres | `timeRangeInfo`, `dateTimeRangeText`, `parseDateTimeRange`, `addQuarters`, `quarterOf`, `quarterRange` |
+| `/dom/forms` | Máscaras | `setMask`, `setMaskedValue`, `applyMask`, `extractRaw`, `maskTemplate`, `MASK_PRESETS` |
+| | Árboles | `searchPaths`, `filterTree`, `strategyValue` |
 | `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `openPalette` |
 | | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom` |
 | | Avisos | `badgeText`, `groupByDay`, `unreadCount` |

@@ -1,0 +1,204 @@
+{
+  "name": "Cascader",
+  "group": "forms",
+  "description": "Selección jerárquica por columnas (país › región › ciudad). Hijos que llegan más tarde con `loadChildren` (con su estado de carga), búsqueda por la ruta completa, `changeOnSelect` para quedarse en una rama y selección múltiple con casillas en cascada. En una ventana estrecha se ve una columna cada vez, con «Back» para volver al nivel anterior. El valor es la ruta de valores; el formulario recibe `es/md/mad`.",
+  "import": "import { Cascader } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "options",
+      "type": "CascaderOption[]",
+      "required": true,
+      "description": "Árbol `{ value, label, disabled?, children?, isLeaf? }`; `isLeaf: false` marca una rama de carga diferida."
+    },
+    {
+      "name": "value",
+      "type": "string[] | string[][] | null",
+      "description": "Ruta elegida o, con `multiple`, las rutas (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string[] | string[][] | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value, detail: { labels, option? }) => void",
+      "description": "Ruta nueva con sus etiquetas (y la opción final)."
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "default": false,
+      "description": "Casillas con estado mixto; el valor es una lista de rutas."
+    },
+    {
+      "name": "showCheckedStrategy",
+      "type": "enum",
+      "values": ["parent", "all", "child"],
+      "default": "parent",
+      "description": "Con `multiple`: la rama entera como una ruta (`parent`), todas las rutas marcadas (`all`) o solo hojas (`child`)."
+    },
+    {
+      "name": "changeOnSelect",
+      "type": "boolean",
+      "default": false,
+      "description": "Elegir una rama ya cambia el valor."
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "default": false,
+      "description": "Teclear busca en la ruta completa («mad» encuentra «Spain / Madrid / Madrid»)."
+    },
+    {
+      "name": "loadChildren",
+      "type": "(option, path) => Promise<CascaderOption[]>",
+      "description": "Hijos de una opción con `isLeaf: false`, al abrirla (con su estado de carga). Si falla, la opción queda como hoja."
+    },
+    {
+      "name": "onLoad",
+      "type": "(detail: { path, options }) => void"
+    },
+    {
+      "name": "onLoadError",
+      "type": "(detail: { path, error }) => void"
+    },
+    {
+      "name": "levelLabels",
+      "type": "string[]",
+      "description": "Nombre de cada columna («Country», «Region», «City»)."
+    },
+    {
+      "name": "displaySeparator",
+      "type": "string",
+      "default": " / "
+    },
+    {
+      "name": "separator",
+      "type": "string",
+      "default": "/",
+      "description": "Separador del valor que envía el formulario."
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "labels",
+      "type": "Partial<CascaderLabels>",
+      "description": "placeholder, level («Level {n}»), empty, noResults, loading, back, clear, toggle, remove («Remove {label}») y results («{count} results»), en inglés por defecto."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    }
+  ],
+  "states": ["rest", "focus", "open", "loading", "checked", "indeterminate", "disabled", "invalid"],
+  "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "control-height-lg",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "item-radius",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "row-hover",
+    "glass-border",
+    "glass-highlight",
+    "danger-text"
+  ],
+  "classes": [
+    "z-cascader",
+    "z-cascader__control",
+    "z-cascader__input",
+    "z-cascader__popup",
+    "z-cascader__columns",
+    "z-cascader__column",
+    "z-cascader__option",
+    "z-cascader__chevron",
+    "z-cascader__spinner",
+    "z-cascader__check",
+    "z-cascader__results",
+    "z-cascader__mark",
+    "z-cascader__bar",
+    "z-cascader__back",
+    "z-cascader__crumb"
+  ],
+  "a11y": "Patrón APG «combobox»: el foco se queda en el campo (role=combobox, aria-expanded, aria-controls con las columnas) y la opción activa va por aria-activedescendant. Cada columna es un listbox con nombre (su nivel) y aria-busy mientras carga. Flechas arriba y abajo recorren la columna; derecha abre la rama (izquierda en RTL), izquierda vuelve a la anterior; Inicio y Fin; Intro elige; una letra salta por la etiqueta (sin búsqueda); Escape vacía la búsqueda y luego cierra; Retroceso con el campo vacío quita la última pieza. Con casillas, aria-checked con estado mixto. La carga y los resultados se anuncian en una región viva. Sin React: .z-cascader con data-* y las opciones en <script type=\"application/json\" data-props>; emite z:change, z:load y z:loaderror; la carga diferida con setWidgetProps(el, { loadChildren }).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "País, región y ciudad",
+      "code": "<Cascader aria-label=\"Location\" name=\"location\" searchable clearable levelLabels={[\"Country\", \"Region\", \"City\"]} defaultValue={[\"es\", \"md\", \"alc\"]} options={[{ value: \"es\", label: \"Spain\", children: [{ value: \"md\", label: \"Madrid\", children: [{ value: \"mad\", label: \"Madrid\" }, { value: \"alc\", label: \"Alcalá de Henares\" }] }, { value: \"ct\", label: \"Catalonia\", children: [{ value: \"bcn\", label: \"Barcelona\" }, { value: \"gir\", label: \"Girona\" }] }] }, { value: \"pt\", label: \"Portugal\", children: [{ value: \"lis\", label: \"Lisbon\", children: [{ value: \"lis-c\", label: \"Lisbon\" }, { value: \"sin\", label: \"Sintra\" }] }] }]} />"
+    },
+    {
+      "title": "Varias regiones con casillas",
+      "code": "<Cascader aria-label=\"Coverage\" multiple name=\"coverage\" defaultValue={[[\"es\", \"ct\"]]} options={[{ value: \"es\", label: \"Spain\", children: [{ value: \"md\", label: \"Madrid\", children: [{ value: \"mad\", label: \"Madrid\" }, { value: \"alc\", label: \"Alcalá de Henares\" }] }, { value: \"ct\", label: \"Catalonia\", children: [{ value: \"bcn\", label: \"Barcelona\" }, { value: \"gir\", label: \"Girona\" }] }] }, { value: \"pt\", label: \"Portugal\", children: [{ value: \"lis\", label: \"Lisbon\", children: [{ value: \"lis-c\", label: \"Lisbon\" }, { value: \"sin\", label: \"Sintra\" }] }] }]} />"
+    },
+    {
+      "title": "Rama elegible (changeOnSelect)",
+      "code": "<Cascader aria-label=\"Area\" changeOnSelect placeholder=\"Country or region\" options={[{ value: \"es\", label: \"Spain\", children: [{ value: \"md\", label: \"Madrid\", children: [{ value: \"mad\", label: \"Madrid\" }, { value: \"alc\", label: \"Alcalá de Henares\" }] }, { value: \"ct\", label: \"Catalonia\", children: [{ value: \"bcn\", label: \"Barcelona\" }, { value: \"gir\", label: \"Girona\" }] }] }, { value: \"pt\", label: \"Portugal\", children: [{ value: \"lis\", label: \"Lisbon\", children: [{ value: \"lis-c\", label: \"Lisbon\" }, { value: \"sin\", label: \"Sintra\" }] }] }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "País, región y ciudad",
+      "code": "<div class=\"z-cascader\" data-searchable data-clearable data-name=\"location\" data-label=\"Location\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [\"es\", \"md\", \"alc\"], \"levelLabels\": [\"Country\", \"Region\", \"City\"]}</script>\n</div>",
+      "script": "document.querySelector(\".z-cascader\").addEventListener(\"z:change\", (event) => console.log(event.detail.value, event.detail.labels));"
+    },
+    {
+      "title": "Varias regiones con casillas",
+      "code": "<div class=\"z-cascader\" data-multiple data-name=\"coverage\" data-label=\"Coverage\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [[\"es\", \"ct\"]]}</script>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: Cascader de Ant Design y de Element Plus, y el patrón combobox de APG."
+}
