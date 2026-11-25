@@ -256,7 +256,15 @@ export default async function ({ page, test, ok, note }) {
     await page.waitForTimeout(150);
     ok((await page.evaluate(() => document.activeElement?.closest("tr")?.dataset.rowKey)) === row, "el foco no sale del documento");
     await page.keyboard.press("ArrowDown");
-    ok((await page.evaluate(() => document.activeElement?.closest("tr")?.dataset.rowKey)) !== row, "↓ desde la fila reciclada");
+    // La fila siguiente no estaba pintada: se desplaza a ella y el foco llega al pintarla.
+    await until(
+      (r) => {
+        const key = document.activeElement?.closest("tr")?.dataset.rowKey;
+        return Boolean(key) && key !== r;
+      },
+      "↓ desde la fila reciclada",
+      row,
+    );
   });
 
   await test("Escala · Select con búsqueda y Combobox/Listbox del servidor sin React · antirrebote, cancelación, error y páginas", async () => {

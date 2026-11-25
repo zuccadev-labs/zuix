@@ -78,12 +78,13 @@
     white-space: nowrap;
   }
   /* La cabecera entera queda fija (también la fila de filtros, que si no se montaba sobre la primera). */
+  /* Por encima de las celdas fijadas del cuerpo (que también se elevan) y opaca, también con marco. */
   .z-table[data-sticky] thead {
     position: sticky;
     inset-block-start: 0;
-    z-index: var(--z-layer-raised);
+    z-index: calc(var(--z-layer-raised) + 1);
   }
-  .z-table[data-sticky] thead :is(th, td) {
+  .z-table-wrap .z-table[data-sticky] thead tr :is(th, td) {
     background: var(--z-surface-solid);
   }
   .z-table[data-striped] tbody tr:nth-child(even) td {
