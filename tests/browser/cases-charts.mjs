@@ -1,6 +1,7 @@
 // Gráficos en el binding de React (pantalla `?screen=charts` de examples/app): teclado entre puntos con nombre
 // completo, tooltip al enfocar y al pasar, Intro → onPointClick, leyenda controlada (onHiddenChange), tabla
-// alternativa, anillo con el sector activo en el centro, minigráficos y StatTile con tendencia.
+// alternativa, anillo con el sector activo en el centro, minigráficos y StatTile con tendencia; dispersión, radar,
+// combinado, mapa de calor, bala, barra por categorías y número animado (0.5).
 export default function ({ t, assert, poll, expectAttr, expectText, expectCount }) {
   const screen = (open, options) => open("charts", options);
   const active = (page) => page.evaluate(() => document.activeElement?.getAttribute("aria-label") ?? "");
@@ -73,6 +74,74 @@ export default function ({ t, assert, poll, expectAttr, expectText, expectCount 
         const spark = page.locator('.app-charts__spark .z-sparkline[role="img"]').first();
         assert(/^Weekly visits: from 120 to 340/.test((await spark.getAttribute("aria-label")) ?? ""), "nombre del minigráfico");
         await expectCount(page, ".z-stat .z-stat__trend", 4, "StatTile con tendencia");
+      },
+    },
+    {
+      name: "Gráficos · ScatterChart: punto con nombre, ←→ por la serie, ↓ a la otra serie y onPointClick con la fila (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        await expectCount(page, '#chart-scatter .z-chart__point[tabindex="0"]', 1, "una sola parada de Tab");
+        await expectCount(page, "#chart-scatter .z-chart__trend", 2, "una recta de tendencia por serie");
+        await page.focus('#chart-scatter .z-chart__point[tabindex="0"]');
+        await poll(async () => /^Acme \(SMB\): Revenue \$12/.test(await active(page)), "nombre del primer punto");
+        await page.keyboard.press("ArrowRight");
+        await poll(async () => /^Birch/.test(await active(page)), "→ siguiente de la serie");
+        await page.keyboard.press("ArrowDown");
+        await poll(async () => /^Delta \(Enterprise\)/.test(await active(page)), "↓ a la otra serie");
+        await page.keyboard.press("Enter");
+        await expectText(page, t("chart-last"), "Scatter: Delta", "Intro → onPointClick con la fila");
+      },
+    },
+    {
+      name: "Gráficos · RadarChart y ComboChart: cuña con todas las series y eje secundario (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.focus('#chart-radar .z-chart__wedge[tabindex="0"]');
+        await poll(async () => (await active(page)) === "Speed: Model A 82, Model B 64", "nombre del eje");
+        await page.keyboard.press("End");
+        await poll(async () => /^Tech/.test(await active(page)), "Fin: último eje");
+        await expectCount(page, '#chart-combo .z-chart__axis[data-side="end"]', 1, "eje secundario");
+        await page.focus('#chart-combo .z-chart__hit[tabindex="0"]');
+        await poll(async () => /^January 2026: Revenue \$42,000, Margin 18%$/.test(await active(page)), "formato por eje");
+      },
+    },
+    {
+      name: "Gráficos · HeatmapChart: rejilla con flechas, Ctrl+Fin, onPointClick y escala divergente (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        await expectCount(page, '#chart-heatmap [role="grid"] [role="gridcell"][tabindex="0"]', 1, "una sola parada de Tab");
+        await page.focus('#chart-heatmap [role="gridcell"][tabindex="0"]');
+        await page.keyboard.press("ArrowRight");
+        await poll(async () => /^Mon, 09: \d+$/.test(await active(page)), "→ siguiente columna");
+        await page.keyboard.press("Control+End");
+        await poll(async () => /^Fri, 19/.test(await active(page)), "Ctrl+Fin");
+        await page.keyboard.press("Enter");
+        await expectText(page, t("chart-last"), "Heatmap: Fri 19");
+        await expectCount(page, '#chart-diverging .z-chart__swatch[data-mark="level"]', 9, "leyenda divergente");
+      },
+    },
+    {
+      name: "Gráficos · BulletChart, CategoryBar y AnimatedNumber en StatTile y MetricCard (React)",
+      async run({ open }) {
+        const page = await screen(open);
+        await page.focus('#chart-bullet .z-chart__bullet-track[tabindex="0"]');
+        await poll(async () => (await active(page)) === "North: 82, target 85, in Good", "nombre de la fila");
+        await page.focus('#chart-category .z-category-bar__segment[tabindex="0"]');
+        await page.keyboard.press("ArrowRight");
+        await poll(async () => (await active(page)) === "Watch: 30 (30%)", "→ siguiente tramo");
+        await expectText(page, "#chart-orders .z-sr-only", "1,284");
+        await page.click(t("chart-orders-more"));
+        await expectText(page, "#chart-orders .z-sr-only", "1,500", "la copia accesible dice el final de una vez");
+        await poll(
+          async () => ((await page.locator("#chart-orders .z-animated-number__value").textContent()) ?? "") === "1,500",
+          "la cuenta acaba en el valor",
+        );
+        await poll(
+          async () => ((await page.locator("#chart-metric .z-animated-number__value").textContent()) ?? "") === "$130,500",
+          "MetricCard con animate",
+        );
+        const live = await page.locator("#chart-orders [aria-live]").getAttribute("aria-live");
+        assert(live === "polite", "aria-live opcional");
       },
     },
   ];

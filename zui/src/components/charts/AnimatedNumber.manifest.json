@@ -1,0 +1,80 @@
+{
+  "name": "AnimatedNumber",
+  "group": "charts",
+  "states": ["rest", "animating"],
+  "tokens": ["fg-muted", "duration-slow"],
+  "classes": ["z-animated-number"],
+  "behavior": "dom",
+  "origin": "Diseño propio: cuenta con requestAnimationFrame sobre el nodo de texto e Intl.NumberFormat. Sin bibliotecas.",
+  "description": "Número que cuenta del valor anterior al nuevo con el formato de Intl.NumberFormat (moneda, porcentaje, unidades, compacto). El servidor pinta ya el valor final, los lectores de pantalla oyen solo el final y, con prefers-reduced-motion, cambia sin cuenta. Se usa solo, dentro de StatTile (como value) o en MetricCard (animate).",
+  "import": "import { AnimatedNumber } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number | null",
+      "required": true,
+      "description": "Valor final."
+    },
+    {
+      "name": "from",
+      "type": "number",
+      "description": "Valor desde el que cuenta al montar (por defecto, al montar no cuenta)."
+    },
+    {
+      "name": "format",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Formato del valor y de las cifras intermedias (con los decimales del más preciso de los dos valores, sin pasar de los del formato)."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Locale de Intl para números y fechas."
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "default": 800,
+      "description": "Duración de la cuenta en ms."
+    },
+    {
+      "name": "animate",
+      "type": "boolean",
+      "default": true,
+      "description": "false: cambia sin cuenta. Con prefers-reduced-motion: reduce, siempre sin cuenta."
+    },
+    {
+      "name": "live",
+      "type": "enum",
+      "values": ["off", "polite", "assertive"],
+      "default": "off",
+      "description": "Anuncia el valor final al cambiar, una sola vez (nunca las cifras intermedias)."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "—",
+      "description": "Texto sin valor."
+    }
+  ],
+  "a11y": "El texto que cuenta va con aria-hidden; al lado, una copia solo para lectores de pantalla con el valor final, que se lee al recorrer la página y, con live, se anuncia una vez por cambio (aria-live + aria-atomic). La cuenta no se repite ni parpadea (dura 800 ms por defecto y acaba en el valor exacto) y desaparece con prefers-reduced-motion: reduce. Cifras tabulares para que no mueva lo que lo rodea.",
+  "examples": [
+    {
+      "title": "Moneda",
+      "code": "<AnimatedNumber\n  value={48250}\n  format={{style: \"currency\",currency: \"USD\",maximumFractionDigits: 0}}\n  locale=\"en-US\"\n/>"
+    },
+    {
+      "title": "Cuenta al montar y anuncio",
+      "code": "<AnimatedNumber\n  value={0.873}\n  from={0}\n  format={{style: \"percent\",maximumFractionDigits: 1}}\n  live=\"polite\"\n  locale=\"en-US\"\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Moneda",
+      "code": "<span class=\"z-animated-number\" data-value=\"48250\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"format\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0}}</script>\n</span>"
+    },
+    {
+      "title": "Cuenta al montar y anuncio",
+      "code": "<span class=\"z-animated-number\" data-value=\"0.873\" data-from=\"0\" data-live=\"polite\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"format\":{\"style\":\"percent\",\"maximumFractionDigits\":1}}</script>\n</span>"
+    }
+  ]
+}

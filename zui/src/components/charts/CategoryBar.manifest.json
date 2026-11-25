@@ -1,0 +1,110 @@
+{
+  "name": "CategoryBar",
+  "group": "charts",
+  "states": ["rest", "hover", "focus"],
+  "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "line",
+    "shadow-md",
+    "control-radius",
+    "accent-ring",
+    "focus-width",
+    "text-caption",
+    "text-small",
+    "layer-tooltip",
+    "space-6"
+  ],
+  "classes": ["z-category-bar"],
+  "behavior": "dom",
+  "origin": "Inspirado en la CategoryBar de Tremor (barra segmentada con marcador), reescrito sobre la plataforma. Sin bibliotecas.",
+  "description": "Barra partida en tramos proporcionales a sus valores, uno por categoría con su color de serie, marcador opcional sobre la misma escala, rótulos acumulados en los límites, leyenda y tooltip por tramo.",
+  "import": "import { CategoryBar } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "values",
+      "type": "number[]",
+      "required": true,
+      "description": "Ancho de cada tramo: se reparten sobre su suma."
+    },
+    {
+      "name": "categories",
+      "type": "string[]",
+      "description": "Nombre de cada tramo."
+    },
+    {
+      "name": "colors",
+      "type": "number[]",
+      "description": "Color de serie 1–8 de cada tramo (por defecto, su posición)."
+    },
+    {
+      "name": "marker",
+      "type": "{ value: number; label?: string }",
+      "description": "Marca vertical sobre la escala de la suma («Marker: 62» en el nombre accesible)."
+    },
+    {
+      "name": "showLabels",
+      "type": "boolean",
+      "default": false,
+      "description": "Valor acumulado en cada límite (0, 40, 70, 100)."
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "default": false,
+      "description": "Leyenda con el nombre y el valor de cada tramo."
+    },
+    {
+      "name": "tooltip",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "patterns",
+      "type": "boolean",
+      "default": false,
+      "description": "Trama por tramo además del color."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre del conjunto (nombre del grupo de tramos)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions"
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Locale de Intl para números y fechas."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<CategoryBarLabels>",
+      "description": "Textos: segment, marker, bar, legend, keyboard, noData."
+    }
+  ],
+  "a11y": "Un role=group con nombre (label) descrito por un resumen con todos los tramos y el marcador. Cada tramo es un role=img enfocable con su nombre («High: 20 (20%)»): una parada de Tab, flechas entre tramos (en RTL siguen la dirección visual), Inicio/Fin y Escape; el tooltip se ve al pasar o enfocar. La zona de cada tramo mide 24 px de alto aunque la barra sea fina. Hueco de 2 px entre tramos y trama opcional (siempre con colores forzados) para no depender del color.",
+  "examples": [
+    {
+      "title": "Con marcador y rótulos",
+      "code": "<CategoryBar\n  label=\"Error budget\"\n  values={[40,30,20,10]}\n  categories={[\"Healthy\",\"Watch\",\"At risk\",\"Critical\"]}\n  colors={[4,1,2,3]}\n  marker={{value: 62}}\n  showLabels\n  legend\n  locale=\"en-US\"\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Con marcador y rótulos",
+      "code": "<div class=\"z-category-bar\" data-label=\"Error budget\" data-show-labels data-legend data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"values\":[40,30,20,10],\"categories\":[\"Healthy\",\"Watch\",\"At risk\",\"Critical\"],\"colors\":[4,1,2,3],\"marker\":{\"value\":62}}</script>\n</div>"
+    }
+  ]
+}

@@ -14,8 +14,11 @@ import {
   type Curve,
   extent,
   hitEdges,
+  gridStep,
   indexAt,
   linePath,
+  nearestPoint,
+  scatterStep,
   areaPath,
   niceTicks,
   numberFormat,
@@ -29,168 +32,36 @@ import {
   timeTicks,
   toTime,
 } from "./chart";
-import { fill, fmt, h, icon, on, type VEl, type VNode } from "./vnode";
+import {
+  CHART_LABELS,
+  type ChartConfig,
+  type ChartLabels,
+  type ChartProps,
+  type ChartSeries,
+  type ChartState,
+  type ChartType,
+  colorOf,
+  head,
+  isRound,
+  legend,
+  MARKERS,
+  markerOf,
+  rootAttrs,
+  round,
+  yAxisNode,
+  tableOf,
+  TYPES,
+  value,
+} from "./chart-parts";
+import { bulletTree } from "./chart-bullet";
+import { heatModel, heatmapTree } from "./chart-heatmap";
+import { radarTree } from "./chart-radar";
+import { scatterModel, scatterTree } from "./chart-scatter";
+import { fill, fmt, h, on, type VEl, type VNode } from "./vnode";
 import { list, num, yes, type Widget, type WidgetHost } from "./widget";
 
-export type ChartType = "line" | "area" | "bar" | "donut" | "pie";
-export type ChartMarker = "circle" | "square" | "diamond" | "triangle";
-export const CHART_COLORS = 8;
-const MARKERS: ChartMarker[] = ["circle", "square", "diamond", "triangle"];
-
-export interface ChartSeries {
-  /** Clave del valor en cada fila de `data`. */
-  key: string;
-  label: string;
-  /** Color de serie 1–8 (`--z-chart-N`). Por defecto, su posición en `series`: el color sigue a la serie. */
-  color?: number;
-  /** Forma del marcador (con `markers`). Por defecto, una por posición. */
-  marker?: ChartMarker;
-}
-
-export interface ChartLabels {
-  viewAsTable: string;
-  /** Nombre del grupo de la leyenda. */
-  legend: string;
-  /** Instrucciones de teclado (descripción del área de trazado). */
-  keyboard: string;
-  /** «{x}: {values}»: nombre de cada posición del eje. */
-  point: string;
-  /** «{series} {value}». */
-  value: string;
-  missing: string;
-  total: string;
-  /** «{type}, {count} series: {names}. {points} points from {first} to {last}.» */
-  summary: string;
-  /** «{series}: from {min} to {max}.» */
-  range: string;
-  /** «{label}: {value} ({percent})» en el anillo. */
-  slice: string;
-  noData: string;
-  types: Record<ChartType, string>;
-}
-
-export const CHART_LABELS: ChartLabels = {
-  viewAsTable: "View as table",
-  legend: "Series",
-  keyboard: "Use the arrow keys to move between points.",
-  point: "{x}: {values}",
-  value: "{series} {value}",
-  missing: "no data",
-  total: "Total",
-  summary: "{type}, {count} series: {names}. {points} points from {first} to {last}.",
-  range: "{series}: from {min} to {max}.",
-  slice: "{label}: {value} ({percent})",
-  noData: "No data",
-  types: { line: "Line chart", area: "Area chart", bar: "Bar chart", donut: "Donut chart", pie: "Pie chart" },
-};
-
-export interface ChartProps {
-  type?: ChartType;
-  data?: ReadonlyArray<Record<string, unknown>>;
-  /** Clave de la categoría o del tiempo en cada fila. */
-  xKey?: string;
-  /** Nombre del eje de categorías o tiempo (cabecera de la tabla alternativa). Por defecto, `xKey`. */
-  xLabel?: string;
-  series?: ReadonlyArray<ChartSeries>;
-  /** Tipo del eje horizontal. Por defecto, `time` si todos los valores son fechas (Date, ISO o ms) y `category` si no. */
-  xType?: "category" | "time" | "number";
-  title?: string;
-  /** Texto visible bajo el título (también describe el gráfico). */
-  description?: string;
-  /** Resumen para lectores de pantalla. Por defecto se compone de los datos. */
-  summary?: string;
-  stacked?: boolean;
-  orientation?: "vertical" | "horizontal";
-  curve?: Curve;
-  /** Marcador con forma propia por serie en cada punto (no depender solo del color). */
-  markers?: boolean;
-  /** Trazo discontinuo o trama por serie (también con colores forzados y al imprimir). */
-  patterns?: boolean;
-  yMin?: number;
-  yMax?: number;
-  /** Divisiones aproximadas del eje de valores. */
-  yTicks?: number;
-  valueFormat?: Intl.NumberFormatOptions;
-  /** Formato de los rótulos de tiempo (por defecto, según la escala). */
-  xFormat?: Intl.DateTimeFormatOptions;
-  locale?: string;
-  grid?: boolean;
-  /** Leyenda (por defecto, con dos o más series). */
-  legend?: boolean;
-  tooltip?: boolean;
-  /** Alto del área de trazado en px. */
-  height?: number;
-  defaultView?: "chart" | "table";
-  /** Claves de series ocultas (controlado). */
-  hidden?: readonly string[];
-  defaultHidden?: readonly string[];
-  /** Animación de entrada (siempre sin movimiento con `prefers-reduced-motion`). */
-  animate?: boolean;
-  /** Panel de cristal con relleno (por defecto). `false` para meterlo en una tarjeta propia. */
-  framed?: boolean;
-  /** Anillo: texto bajo el valor central (por defecto, «Total»). */
-  centerLabel?: string;
-  /** Anillo: valor central (por defecto, el total formateado). */
-  centerValue?: string;
-  labels?: Partial<ChartLabels>;
-}
-
-export interface ChartConfig {
-  type: ChartType;
-  data: ReadonlyArray<Record<string, unknown>>;
-  xKey: string;
-  xLabel: string;
-  series: ChartSeries[];
-  xType: "category" | "time" | "number";
-  title: string;
-  description: string;
-  summary: string;
-  stacked: boolean;
-  orientation: "vertical" | "horizontal";
-  curve: Curve;
-  markers: boolean;
-  patterns: boolean;
-  yMin?: number;
-  yMax?: number;
-  yTicks: number;
-  valueFormat: Intl.NumberFormatOptions;
-  xFormat?: Intl.DateTimeFormatOptions;
-  locale?: string;
-  grid: boolean;
-  legend: boolean;
-  tooltip: boolean;
-  height?: number;
-  defaultView: "chart" | "table";
-  hidden?: string[];
-  defaultHidden: string[];
-  animate: boolean;
-  framed: boolean;
-  centerLabel?: string;
-  centerValue?: string;
-  labels: ChartLabels;
-}
-
-export interface ChartState {
-  view: "chart" | "table";
-  /** Posición del eje (o sector) activa: la enfocable y la del tooltip. */
-  active: number | null;
-  /** El tooltip se ve (puntero encima o foco dentro). */
-  tip: boolean;
-  hidden: string[];
-}
-
-const TYPES: ChartType[] = ["line", "area", "bar", "donut", "pie"];
-const round = (v: number) => (Number.isFinite(v) ? v : 0);
-const isRound = (t: ChartType) => t === "donut" || t === "pie";
-const value = (v: unknown): number | null => {
-  const n = typeof v === "number" ? v : typeof v === "string" && v.trim() !== "" ? Number(v) : Number.NaN;
-  return Number.isFinite(n) ? n : null;
-};
-const colorOf = (s: ChartSeries, i: number) => {
-  const c = Math.round(s.color ?? i + 1);
-  return ((((c - 1) % CHART_COLORS) + CHART_COLORS) % CHART_COLORS) + 1;
-};
-const markerOf = (s: ChartSeries, i: number): ChartMarker => s.marker ?? MARKERS[i % MARKERS.length]!;
+export { CHART_COLORS, CHART_LABELS } from "./chart-parts";
+export type { ChartConfig, ChartLabels, ChartMarker, ChartProps, ChartSeries, ChartState, ChartType } from "./chart-parts";
 
 /** Datos derivados del eje horizontal (o de categorías): posiciones, rótulos y marcas. */
 interface XModel {
@@ -205,7 +76,7 @@ function xModel(config: ChartConfig): XModel {
   const { data, xKey, locale } = config;
   const raw = data.map((row) => row[xKey]);
   const n = raw.length;
-  const bars = config.type === "bar";
+  const bars = config.type === "bar" || config.type === "combo";
   if (config.xType === "time") {
     const times = raw.map(toTime);
     const grain = timeGrain(times);
@@ -268,10 +139,16 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
   configure(p) {
     const type = TYPES.includes(p.type as ChartType) ? (p.type as ChartType) : "line";
     const data = Array.isArray(p.data) ? p.data : [];
-    const xKey = p.xKey ?? (isRound(type) ? "label" : "x");
-    const series = (Array.isArray(p.series) && p.series.length ? p.series : [{ key: isRound(type) ? "value" : "y", label: "" }]).filter(
-      (s): s is ChartSeries => Boolean(s && typeof s.key === "string"),
-    );
+    const xKey = p.xKey ?? (isRound(type) || type === "bullet" ? "label" : "x");
+    const given = (Array.isArray(p.series) ? p.series : []).filter((s): s is ChartSeries => Boolean(s && typeof s.key === "string"));
+    const yKey = p.yKey ?? "y";
+    let series = given.length ? given : [{ key: isRound(type) ? "value" : "y", label: "" }];
+    if (type === "scatter") {
+      // Una serie por valor de `seriesKey` (en orden de aparición), con el nombre y el color de `series` si los trae.
+      const keys = p.seriesKey ? [...new Set(data.map((row) => String(row[p.seriesKey!] ?? "")))] : [""];
+      for (const s of given) if (!keys.includes(s.key) && p.seriesKey) keys.push(s.key);
+      series = keys.map((k) => given.find((s) => s.key === k) ?? { key: k, label: k || (p.yLabel ?? yKey) });
+    }
     const auto =
       data.length > 0 &&
       data.every((row) => {
@@ -290,8 +167,15 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
       title: p.title ?? "",
       description: p.description ?? "",
       summary: p.summary ?? "",
-      stacked: Boolean(p.stacked) && (type === "bar" || type === "area"),
-      orientation: p.orientation === "horizontal" && type === "bar" ? "horizontal" : "vertical",
+      stacked: Boolean(p.stacked) && (type === "bar" || type === "area" || type === "combo"),
+      orientation:
+        type === "bullet"
+          ? p.orientation === "vertical"
+            ? "vertical"
+            : "horizontal"
+          : p.orientation === "horizontal" && type === "bar"
+            ? "horizontal"
+            : "vertical",
       curve: p.curve === "monotone" || p.curve === "step" ? p.curve : "linear",
       markers: Boolean(p.markers),
       patterns: Boolean(p.patterns),
@@ -302,7 +186,7 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
       xFormat: p.xFormat,
       locale: p.locale,
       grid: p.grid !== false,
-      legend: p.legend ?? (isRound(type) ? true : series.length > 1),
+      legend: p.legend ?? (isRound(type) || type === "combo" || type === "heatmap" || type === "bullet" ? true : series.length > 1),
       tooltip: p.tooltip !== false,
       height: Number.isFinite(p.height) && (p.height ?? 0) > 0 ? p.height : undefined,
       defaultView: p.defaultView === "table" ? "table" : "chart",
@@ -313,6 +197,31 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
       centerLabel: p.centerLabel,
       centerValue: p.centerValue,
       labels,
+      yKey,
+      sizeKey: p.sizeKey,
+      seriesKey: p.seriesKey,
+      labelKey: p.labelKey,
+      trend: Boolean(p.trend),
+      xValueFormat: p.xValueFormat ?? {},
+      sizeFormat: p.sizeFormat ?? {},
+      yLabel: p.yLabel ?? yKey,
+      sizeLabel: p.sizeLabel ?? p.sizeKey ?? "",
+      xMin: Number.isFinite(p.xMin) ? p.xMin : undefined,
+      xMax: Number.isFinite(p.xMax) ? p.xMax : undefined,
+      gridShape: p.gridShape === "circle" ? "circle" : "polygon",
+      y2Min: Number.isFinite(p.y2Min) ? p.y2Min : undefined,
+      y2Max: Number.isFinite(p.y2Max) ? p.y2Max : undefined,
+      y2Format: p.y2Format ?? p.valueFormat ?? {},
+      valueKey: p.valueKey ?? "value",
+      scale: p.scale === "diverging" ? "diverging" : "sequential",
+      domain:
+        Array.isArray(p.domain) && Number.isFinite(p.domain[0]) && Number.isFinite(p.domain[1])
+          ? [Math.min(p.domain[0]!, p.domain[1]!), Math.max(p.domain[0]!, p.domain[1]!)]
+          : undefined,
+      midpoint: Number.isFinite(p.midpoint) ? p.midpoint! : 0,
+      showValues: Boolean(p.showValues),
+      ranges: (Array.isArray(p.ranges) ? p.ranges : []).filter((v) => Number.isFinite(v)).sort((a, b) => a - b),
+      rangeLabels: Array.isArray(p.rangeLabels) ? p.rangeLabels.map(String) : [],
     };
   },
   initial(config) {
@@ -322,7 +231,12 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
     return config.hidden && config.hidden.join("\n") !== state.hidden.join("\n") ? { ...state, hidden: config.hidden } : state;
   },
   tree(config, state, uid) {
-    return isRound(config.type) ? roundTree(config, state, uid) : cartesianTree(config, state, uid);
+    if (isRound(config.type)) return roundTree(config, state, uid);
+    if (config.type === "scatter") return scatterTree(config, state, uid);
+    if (config.type === "radar") return radarTree(config, state, uid);
+    if (config.type === "heatmap") return heatmapTree(config, state, uid);
+    if (config.type === "bullet") return bulletTree(config, state, uid);
+    return cartesianTree(config, state, uid);
   },
   attach(root, host) {
     return attachChart(root, host);
@@ -347,7 +261,7 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
       description: d.description,
       summary: d.summary,
       stacked: yes(d.stacked),
-      orientation: d.orientation === "horizontal" ? "horizontal" : "vertical",
+      orientation: d.orientation === "horizontal" || d.orientation === "vertical" ? d.orientation : undefined,
       curve: (d.curve as Curve) ?? undefined,
       markers: yes(d.markers),
       patterns: yes(d.patterns),
@@ -368,148 +282,104 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
       centerLabel: d.centerLabel,
       centerValue: d.centerValue,
       labels: json.labels as Partial<ChartLabels> | undefined,
+      yKey: d.yKey,
+      sizeKey: d.sizeKey,
+      seriesKey: d.seriesKey,
+      labelKey: d.labelKey,
+      trend: yes(d.trend),
+      xValueFormat: json.xValueFormat as Intl.NumberFormatOptions | undefined,
+      sizeFormat: json.sizeFormat as Intl.NumberFormatOptions | undefined,
+      yLabel: d.yLabel,
+      sizeLabel: d.sizeLabel,
+      xMin: n(d.xMin),
+      xMax: n(d.xMax),
+      gridShape: d.gridShape === "circle" ? "circle" : undefined,
+      y2Min: n(d.y2Min),
+      y2Max: n(d.y2Max),
+      y2Format: json.y2Format as Intl.NumberFormatOptions | undefined,
+      valueKey: d.valueKey,
+      scale: d.scale === "diverging" ? "diverging" : undefined,
+      domain: Array.isArray(json.domain) ? (json.domain as [number, number]) : undefined,
+      midpoint: n(d.midpoint),
+      showValues: yes(d.showValues),
+      ranges: Array.isArray(json.ranges) ? (json.ranges as number[]) : undefined,
+      rangeLabels: Array.isArray(json.rangeLabels) ? (json.rangeLabels as string[]) : undefined,
     };
   },
 };
-
-// —— Piezas comunes ——
-
-function head(config: ChartConfig, state: ChartState, uid: string): VEl {
-  return h(
-    "figcaption",
-    { key: "head", class: "z-chart__head" },
-    h(
-      "span",
-      { class: "z-chart__heading" },
-      config.title ? h("span", { class: "z-chart__title", id: `${uid}-title` }, config.title) : null,
-      config.description ? h("span", { class: "z-chart__desc" }, config.description) : null,
-    ),
-    h(
-      "button",
-      { type: "button", class: "z-chart__toggle", "aria-pressed": state.view === "table" ? "true" : "false" },
-      icon("table-cells", 16),
-      config.labels.viewAsTable,
-    ),
-  );
-}
-
-function legend(
-  config: ChartConfig,
-  state: ChartState,
-  items: Array<{ key: string; label: string; color: number; pattern: number; marker: ChartMarker; extra?: string }>,
-  mark: "line" | "rect",
-): VNode {
-  if (!config.legend || !items.length) return null;
-  const shown = items.filter((s) => !state.hidden.includes(s.key)).length;
-  return h(
-    "div",
-    { key: "legend", class: "z-chart__legend", role: "group", "aria-label": config.labels.legend },
-    ...items.map((s) => {
-      const visible = !state.hidden.includes(s.key);
-      return h(
-        "button",
-        {
-          key: s.key,
-          type: "button",
-          class: "z-chart__key",
-          "data-key": s.key,
-          "aria-pressed": visible ? "true" : "false",
-          // La última serie visible no se puede ocultar (el gráfico no queda vacío).
-          "aria-disabled": visible && shown <= 1 ? "true" : undefined,
-        },
-        h("span", {
-          class: "z-chart__swatch",
-          "data-mark": mark,
-          "data-color": s.color,
-          "data-pattern": s.pattern,
-          "data-marker": config.markers ? s.marker : undefined,
-          "aria-hidden": "true",
-        }),
-        h("span", { class: "z-chart__key-label" }, s.label),
-        s.extra ? h("span", { class: "z-chart__key-value" }, s.extra) : null,
-      );
-    }),
-  );
-}
-
-function rootAttrs(config: ChartConfig, state: ChartState) {
-  return {
-    class: config.framed ? "z-chart z-liquid" : "z-chart",
-    "data-framed": on(config.framed),
-    "data-type": config.type,
-    "data-orientation": config.type === "bar" ? config.orientation : undefined,
-    "data-stacked": on(config.stacked),
-    "data-markers": on(config.markers),
-    "data-patterns": on(config.patterns),
-    "data-animate": on(config.animate),
-    "data-view": state.view,
-    s: config.height ? { "--z-chart-height": `${config.height}px` } : undefined,
-  };
-}
-
-function tableOf(
-  config: ChartConfig,
-  uid: string,
-  header: string,
-  cols: string[],
-  rows: Array<{ key: string; head: string; cells: string[] }>,
-) {
-  return h(
-    "div",
-    { key: "table", class: "z-chart__table-wrap", role: "region", tabindex: 0, "aria-labelledby": `${uid}-caption` },
-    h(
-      "table",
-      { class: "z-chart__table" },
-      h("caption", { id: `${uid}-caption` }, config.title || config.labels.types[config.type]),
-      h("thead", null, h("tr", null, h("th", { scope: "col" }, header), ...cols.map((c, i) => h("th", { key: `c${i}`, scope: "col" }, c)))),
-      h(
-        "tbody",
-        null,
-        ...rows.map((r) =>
-          h("tr", { key: r.key }, h("th", { scope: "row" }, r.head), ...r.cells.map((c, i) => h("td", { key: `v${i}` }, c))),
-        ),
-      ),
-    ),
-  );
-}
 
 // —— Líneas, áreas y barras ——
 
 function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl {
   const { labels, data, type, locale } = config;
   const n = data.length;
-  const bars = type === "bar";
-  const horizontal = bars && config.orientation === "horizontal";
+  const combo = type === "combo";
+  const bars = type === "bar" || combo;
+  const horizontal = type === "bar" && config.orientation === "horizontal";
   const all = config.series.map((s, i) => ({
     ...s,
     index: i,
     color: colorOf(s, i),
     pattern: i % 4,
     marker: markerOf(s, i),
+    kind: (combo ? (s.type === "line" ? "line" : "bar") : bars ? "bar" : "line") as "bar" | "line",
+    second: combo && s.axis === "end",
     values: data.map((row) => value(row[s.key])),
   }));
   const visible = all.filter((s) => !state.hidden.includes(s.key));
+  const barSeries = visible.filter((s) => s.kind === "bar");
+  const lineSeries = visible.filter((s) => s.kind === "line");
   const x = xModel(config);
-  const stacked = config.stacked ? stack(visible.map((s) => s.values)) : null;
-  const span = stacked ? extent(stacked.flatMap((rows) => rows.flatMap(([a, b]) => [a, b]))) : extent(visible.flatMap((s) => s.values));
+  // Se apilan las barras (o las áreas); en el combinado, las líneas nunca.
+  const stackSet = bars ? barSeries : visible;
+  const stacked = config.stacked ? stack(stackSet.map((s) => s.values)) : null;
+  const stackOf = (s: (typeof visible)[number]) => (stacked ? stackSet.indexOf(s) : -1);
+  const spanOf = (second: boolean) => {
+    const own = visible.filter((s) => s.second === second);
+    const vals: Array<number | null> = [];
+    for (const s of own) {
+      const k = stackOf(s);
+      if (k >= 0) for (const [a, b] of stacked![k]!) vals.push(a, b);
+      else vals.push(...s.values);
+    }
+    return extent(vals);
+  };
   const zero = bars || type === "area";
-  const yt = niceTicks(config.yMin ?? span?.[0] ?? 0, config.yMax ?? span?.[1] ?? 1, config.yTicks, zero);
-  const ylo = config.yMin ?? yt.min;
-  const yhi = config.yMax ?? yt.max;
-  const yf = (v: number) => (v - ylo) / (yhi - ylo || 1); // fracción desde la base
-  const yticks = yt.ticks.filter((t) => t >= ylo - 1e-9 && t <= yhi + 1e-9);
+  const scaleOf = (second: boolean) => {
+    const span = spanOf(second);
+    const min = second ? config.y2Min : config.yMin;
+    const max = second ? config.y2Max : config.yMax;
+    // El combinado con barras en un eje lo lleva al 0; un eje solo de líneas no tiene por qué.
+    const z = combo ? visible.some((s) => s.second === second && s.kind === "bar") : zero;
+    const t = niceTicks(min ?? span?.[0] ?? 0, max ?? span?.[1] ?? 1, config.yTicks, z);
+    const lo = min ?? t.min;
+    const hi = max ?? t.max;
+    return { lo, hi, f: (v: number) => (v - lo) / (hi - lo || 1), ticks: t.ticks.filter((v) => v >= lo - 1e-9 && v <= hi + 1e-9) };
+  };
+  const primary = scaleOf(false);
+  const hasSecond = combo && visible.some((s) => s.second);
+  const secondary = hasSecond ? scaleOf(true) : primary;
+  const ylo = primary.lo;
+  const yhi = primary.hi;
+  const yf = primary.f; // fracción desde la base
+  const yticks = primary.ticks;
+  const fOf = (s: { second: boolean }) => (s.second ? secondary.f : yf);
   const valueFmt = numberFormat(locale, config.valueFormat);
+  const value2Fmt = numberFormat(locale, config.y2Format);
   const axisFmt = numberFormat(locale, axisNumberOptions(config.valueFormat, Math.max(Math.abs(ylo), Math.abs(yhi))));
-  const fmtValue = (v: number | null) => (v === null ? labels.missing : valueFmt.format(v));
+  const axis2Fmt = numberFormat(locale, axisNumberOptions(config.y2Format, Math.max(Math.abs(secondary.lo), Math.abs(secondary.hi))));
+  const fmtOf = (s: { second: boolean }) => (v: number | null) =>
+    v === null ? labels.missing : (s.second ? value2Fmt : valueFmt).format(v);
   const active = state.active !== null && state.active >= 0 && state.active < n ? state.active : null;
   const focusIndex = active ?? (n ? 0 : null);
   const base = Math.min(Math.max(yf(0), 0), 1);
+  const totalOf = (i: number) => stackSet.reduce((a, s) => a + (s.values[i] ?? 0), 0);
+  const showTotal = config.stacked && stackSet.length > 1;
 
   // Nombre de cada posición: «Mar 2026: Revenue 1,200, Costs 800, Total 2,000».
   const pointName = (i: number) => {
-    const parts = visible.map((s) => fill(labels.value, { series: s.label, value: fmtValue(s.values[i] ?? null) }));
-    if (config.stacked && visible.length > 1)
-      parts.push(fill(labels.value, { series: labels.total, value: valueFmt.format(visible.reduce((a, s) => a + (s.values[i] ?? 0), 0)) }));
+    const parts = visible.map((s) => fill(labels.value, { series: s.label, value: fmtOf(s)(s.values[i] ?? null) }));
+    if (showTotal) parts.push(fill(labels.value, { series: labels.total, value: valueFmt.format(totalOf(i)) }));
     return fill(labels.point, { x: x.label[i] ?? "", values: parts.join(", ") });
   };
 
@@ -519,68 +389,69 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
   const marks: VNode[] = [];
   const dots: VNode[] = [];
   const barNodes: VNode[] = [];
-  if (!bars) {
-    for (let k = 0; k < visible.length; k++) {
-      const s = visible[k]!;
-      const top: Point[] = s.values.map((v, i) => {
-        const yv = stacked ? stacked[k]![i]![1] : v;
-        return v === null || yv === null ? null : [r3(x.pos[i]! * 100), svgY(yf(yv))];
-      });
-      if (type === "area") {
-        const bottom: Point[] = s.values.map((_, i) => [r3(x.pos[i]! * 100), stacked ? svgY(yf(stacked[k]![i]![0])) : svgY(base)]);
-        marks.push(
-          h("path", {
-            key: `a:${s.key}`,
-            class: "z-chart__area",
-            d: areaPath(top, bottom, config.curve),
-            "data-color": s.color,
-            "data-pattern": s.pattern,
-          }),
-        );
-      }
+  for (const s of lineSeries) {
+    const k = combo ? -1 : stackOf(s);
+    const f = fOf(s);
+    const top: Point[] = s.values.map((v, i) => {
+      const yv = k >= 0 ? stacked![k]![i]![1] : v;
+      return v === null || yv === null ? null : [r3(x.pos[i]! * 100), svgY(f(yv))];
+    });
+    if (type === "area") {
+      const bottom: Point[] = s.values.map((_, i) => [r3(x.pos[i]! * 100), k >= 0 ? svgY(yf(stacked![k]![i]![0])) : svgY(base)]);
       marks.push(
         h("path", {
-          key: `l:${s.key}`,
-          class: "z-chart__line",
-          d: linePath(top, config.curve),
+          key: `a:${s.key}`,
+          class: "z-chart__area",
+          d: areaPath(top, bottom, config.curve),
           "data-color": s.color,
           "data-pattern": s.pattern,
         }),
       );
-      // Marcadores: todos con `markers` (hasta 60 posiciones), y siempre los de la posición activa.
-      s.values.forEach((v, i) => {
-        if (v === null) return;
-        const show = (config.markers && n <= 60) || (state.tip && i === active) || n === 1;
-        if (!show) return;
-        const yv = stacked ? stacked[k]![i]![1] : v;
-        dots.push(
-          h("span", {
-            key: `d:${s.key}:${i}`,
-            class: "z-chart__dot",
-            "data-color": s.color,
-            "data-marker": config.markers ? s.marker : "circle",
-            "data-active": on(state.tip && i === active),
-            "aria-hidden": "true",
-            s: { "--x": r3(x.pos[i]!), "--y": r3(yf(yv)) },
-          }),
-        );
-      });
     }
-  } else {
-    const groups = config.stacked ? 1 : Math.max(1, visible.length);
+    marks.push(
+      h("path", {
+        key: `l:${s.key}`,
+        class: "z-chart__line",
+        d: linePath(top, config.curve),
+        "data-color": s.color,
+        "data-pattern": s.pattern,
+      }),
+    );
+    // Marcadores: todos con `markers` (hasta 60 posiciones), y siempre los de la posición activa.
+    s.values.forEach((v, i) => {
+      if (v === null) return;
+      const show = (config.markers && n <= 60) || (state.tip && i === active) || n === 1;
+      if (!show) return;
+      const yv = k >= 0 ? stacked![k]![i]![1] : v;
+      dots.push(
+        h("span", {
+          key: `d:${s.key}:${i}`,
+          class: "z-chart__dot",
+          "data-color": s.color,
+          "data-marker": config.markers ? s.marker : "circle",
+          "data-active": on(state.tip && i === active),
+          "aria-hidden": "true",
+          s: { "--x": r3(x.pos[i]!), "--y": r3(f(yv)) },
+        }),
+      );
+    });
+  }
+  if (barSeries.length) {
+    const groups = config.stacked ? 1 : Math.max(1, barSeries.length);
     const sub = band.bandwidth / groups;
-    visible.forEach((s, k) => {
+    barSeries.forEach((s, k) => {
+      const f = fOf(s);
       s.values.forEach((v, i) => {
         if (v === null) return;
         const [lo, hi] = stacked ? stacked[k]![i]! : v >= 0 ? [0, v] : [v, 0];
-        const a = Math.min(Math.max(yf(Math.min(lo, hi)), 0), 1);
-        const b = Math.min(Math.max(yf(Math.max(lo, hi)), 0), 1);
+        const a = Math.min(Math.max(f(Math.min(lo, hi)), 0), 1);
+        const b = Math.min(Math.max(f(Math.max(lo, hi)), 0), 1);
         const center = config.stacked ? band.center(i) : band.start(i) + sub * (k + 0.5);
         // Extremo redondeado: el de la punta del dato (el último del apilado en cada sentido).
         const negative = v < 0;
         const cap =
           !stacked ||
-          visible.slice(k + 1).every((o) => {
+          barSeries.slice(k + 1).every((o) => {
             const ov = o.values[i];
             return ov === null || ov === undefined || ov === 0 || Math.sign(ov) !== Math.sign(v);
           });
@@ -618,8 +489,24 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
     showBase
       ? h("path", { key: "base", class: "z-chart__base", d: horizontal ? `M${r3(base * 100)} 0V100` : `M0 ${svgY(base)}H100` })
       : null,
-    h("g", { key: "marks", class: "z-chart__marks" }, ...marks),
+    combo ? null : h("g", { key: "marks", class: "z-chart__marks" }, ...marks),
   );
+  // Combinado: las líneas en su propio SVG, por encima de las barras.
+  const lineSvg =
+    combo && marks.length
+      ? h(
+          "svg",
+          {
+            key: "lines",
+            class: "z-chart__svg",
+            viewBox: "0 0 100 100",
+            preserveAspectRatio: "none",
+            "aria-hidden": "true",
+            focusable: "false",
+          },
+          h("g", { key: "marks", class: "z-chart__marks" }, ...marks),
+        )
+      : null;
 
   // Zonas activas: una por posición del eje, enfocable con su nombre completo.
   const gap = (band.step - band.bandwidth) / 2;
@@ -652,17 +539,17 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
         "span",
         { key: s.key, class: "z-chart__tip-row" },
         h("span", { class: "z-chart__tip-key", "data-color": s.color, "data-pattern": s.pattern }),
-        h("b", null, fmtValue(s.values[active] ?? null)),
+        h("b", null, fmtOf(s)(s.values[active] ?? null)),
         h("span", null, s.label),
       ),
     );
-    if (config.stacked && visible.length > 1)
+    if (showTotal)
       rows.push(
         h(
           "span",
           { key: "total", class: "z-chart__tip-row", "data-total": "" },
           h("span", { class: "z-chart__tip-key", "data-total": "" }),
-          h("b", null, valueFmt.format(visible.reduce((a, s) => a + (s.values[active] ?? 0), 0))),
+          h("b", null, valueFmt.format(totalOf(active))),
           h("span", null, labels.total),
         ),
       );
@@ -682,7 +569,7 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
   }
 
   const cross =
-    !bars && state.tip && active !== null
+    (!bars || (combo && lineSeries.length > 0 && barSeries.length === 0)) && state.tip && active !== null
       ? h("span", { key: "cross", class: "z-chart__cross", "aria-hidden": "true", s: { "--x": r3(x.pos[active]!) } })
       : null;
   const bandHi =
@@ -699,7 +586,10 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
   const valueTicks = yticks.map((t, i) => ({ at: yf(t), text: axisFmt.format(t), minor: yticks.length > 5 && i % 2 === 1 }));
   // Con pocas categorías se ven todas; con muchas, una de cada dos cede en un contenedor estrecho.
   // En un eje de tiempo o número los rótulos son más anchos: alternan desde 5.
-  const catTicks = x.ticks.length > 6 || (!bars && x.ticks.length > 4) ? x.ticks : x.ticks.map((t) => ({ ...t, minor: false }));
+  const catTicks =
+    x.ticks.length > 6 || ((!bars || config.xType === "time") && x.ticks.length > 4)
+      ? x.ticks
+      : x.ticks.map((t) => ({ ...t, minor: false }));
   const vAxisTicks = horizontal ? catTicks.map((t) => ({ ...t, at: 1 - t.at })) : valueTicks;
   const hAxisTicks = horizontal ? valueTicks : catTicks;
   // Todos los rótulos en flujo (sin alto): el eje toma el ancho del más ancho, sea cual sea la fuente.
@@ -711,6 +601,13 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
       h("span", { key: `y${i}`, class: "z-chart__tick", "data-minor": on(t.minor), s: { "--at": r3(t.at) } }, t.text),
     ),
   );
+  const y2Axis = hasSecond
+    ? yAxisNode(
+        secondary.ticks.map((t, i) => ({ at: secondary.f(t), text: axis2Fmt.format(t), minor: secondary.ticks.length > 5 && i % 2 === 1 })),
+        "end",
+        "y2axis",
+      )
+    : null;
   const xAxis = h(
     "div",
     { class: "z-chart__axis", "data-axis": "x", "aria-hidden": "true" },
@@ -741,19 +638,27 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
     },
     svg,
     bars ? h("div", { key: "bars", class: "z-chart__bars" }, bandHi, ...barNodes) : null,
+    lineSvg,
     cross,
     dots.length ? h("div", { key: "dots", class: "z-chart__dots" }, ...dots) : null,
     n ? hits : h("span", { key: "empty", class: "z-chart__empty" }, labels.noData),
     tip,
   );
 
-  const legendItems = all.map((s) => ({ key: s.key, label: s.label, color: s.color, pattern: s.pattern, marker: s.marker }));
+  const legendItems = all.map((s) => ({
+    key: s.key,
+    label: s.label,
+    color: s.color,
+    pattern: s.pattern,
+    marker: s.marker,
+    mark: combo ? (s.kind === "line" ? ("line" as const) : ("rect" as const)) : undefined,
+  }));
   const table = tableOf(
     config,
     uid,
     config.xLabel,
     visible.map((s) => s.label),
-    data.map((_, i) => ({ key: `r${i}`, head: x.label[i] ?? "", cells: visible.map((s) => fmtValue(s.values[i] ?? null)) })),
+    data.map((_, i) => ({ key: `r${i}`, head: x.label[i] ?? "", cells: visible.map((s) => fmtOf(s)(s.values[i] ?? null)) })),
   );
   return h(
     "div",
@@ -767,9 +672,15 @@ function cartesianTree(config: ChartConfig, state: ChartState, uid: string): VEl
         ? table
         : h(
             "div",
-            { key: "frame", class: "z-chart__frame", "data-orientation": horizontal ? "horizontal" : undefined },
+            {
+              key: "frame",
+              class: "z-chart__frame",
+              "data-orientation": horizontal ? "horizontal" : undefined,
+              "data-y2": on(hasSecond),
+            },
             yAxis,
             plot,
+            y2Axis,
             xAxis,
           ),
       h("p", { key: "summary", class: "z-sr-only", id: summaryId }, config.summary || summarize(config, visible, x.label, valueFmt)),
@@ -987,8 +898,12 @@ function attachChart(root: HTMLElement, host: WidgetHost<ChartConfig, ChartState
   const count = () => {
     const c = host.config();
     if (isRound(c.type)) return root.querySelectorAll(".z-chart__slice").length;
+    if (c.type === "scatter") return root.querySelectorAll(".z-chart__point").length;
+    if (c.type === "heatmap") return root.querySelectorAll(".z-chart__cell").length;
     return c.data.length;
   };
+  /** Tipos cuyas zonas activas son elementos propios (sector, cuña, celda, fila): el puntero va por `closest`. */
+  const byTarget = (t: string) => isRound(t as ChartType) || t === "radar" || t === "heatmap" || t === "bullet";
   const rtl = () => root.closest("[dir]")?.getAttribute("dir") === "rtl";
   const select = (i: number, focus: boolean) => {
     const s = host.state();
@@ -1038,6 +953,41 @@ function attachChart(root: HTMLElement, host: WidgetHost<ChartConfig, ChartState
       let key = event.key;
       if (rtl() && !horizontal) key = key === "ArrowLeft" ? "ArrowRight" : key === "ArrowRight" ? "ArrowLeft" : key;
       let next: number | null = null;
+      if (c.type === "heatmap" || c.type === "scatter") {
+        const map: Record<string, string> = {
+          ArrowRight: "right",
+          ArrowLeft: "left",
+          ArrowDown: "down",
+          ArrowUp: "up",
+          Home: "home",
+          End: "end",
+          PageDown: "pageDown",
+          PageUp: "pageUp",
+        };
+        const k = map[key];
+        if (k) {
+          event.preventDefault();
+          if (c.type === "heatmap") {
+            const m = heatModel(c);
+            const ctrl = event.ctrlKey || event.metaKey;
+            const g = k === "home" ? (ctrl ? "first" : "rowStart") : k === "end" ? (ctrl ? "last" : "rowEnd") : k;
+            next = gridStep(i, m.rows.length, m.cols.length, g as Parameters<typeof gridStep>[3]);
+          } else {
+            const m = scatterModel(c, host.state().hidden);
+            const g = { right: "next", left: "prev", down: "down", up: "up", home: "first", end: "last", pageDown: "down", pageUp: "up" }[
+              k
+            ] as Parameters<typeof scatterStep>[3];
+            next = scatterStep(
+              m.groups,
+              m.points.map((p) => p.x),
+              i,
+              g,
+            );
+          }
+          host.update({ active: next, tip: true }, true);
+          return;
+        }
+      }
       if (key === "ArrowRight" || key === "ArrowDown") next = i + 1;
       else if (key === "ArrowLeft" || key === "ArrowUp") next = i - 1;
       else if (key === "Home") next = 0;
@@ -1081,9 +1031,26 @@ function attachChart(root: HTMLElement, host: WidgetHost<ChartConfig, ChartState
     (event) => {
       if (event.pointerType === "touch") return;
       const c = host.config();
-      if (isRound(c.type)) {
-        const slice = (event.target as Element).closest?.(".z-chart__slice");
-        if (slice) select(Number(slice.getAttribute("data-index")), false);
+      if (byTarget(c.type)) {
+        const hit = (event.target as Element).closest?.("[data-index]");
+        if (hit && root.contains(hit)) select(Number(hit.getAttribute("data-index")), false);
+        return;
+      }
+      if (c.type === "scatter") {
+        const plot = (event.target as Element).closest?.<HTMLElement>(".z-chart__plot");
+        if (!plot) return;
+        const pts = [...plot.querySelectorAll<HTMLElement>(".z-chart__point")];
+        const centers = pts.map((el) => {
+          const r = el.getBoundingClientRect();
+          return [r.left + r.width / 2, r.top + r.height / 2] as const;
+        });
+        const i = nearestPoint(centers, [event.clientX, event.clientY]);
+        if (i < 0) return;
+        const [cx, cy] = centers[i]!;
+        // Solo cerca de un punto (32 px o su radio): en el vacío no salta el tooltip de un punto lejano.
+        const reach = Math.max(32, pts[i]!.getBoundingClientRect().width / 2 + 8);
+        if (Math.hypot(cx - event.clientX, cy - event.clientY) <= reach) select(Number(pts[i]!.dataset.index), false);
+        else if (host.state().tip && !root.contains(root.ownerDocument.activeElement)) host.update({ tip: false });
         return;
       }
       const plot = (event.target as Element).closest?.<HTMLElement>(".z-chart__plot");
@@ -1118,6 +1085,16 @@ function attachChart(root: HTMLElement, host: WidgetHost<ChartConfig, ChartState
 
 function emitPoint(host: WidgetHost<ChartConfig, ChartState>, index: number): void {
   const c = host.config();
+  if (c.type === "scatter") {
+    const p = scatterModel(c, host.state().hidden).points[index];
+    host.emit("point-click", { index, datum: p ? c.data[p.row] : undefined });
+    return;
+  }
+  if (c.type === "heatmap") {
+    const row = heatModel(c).source[index] ?? -1;
+    host.emit("point-click", { index, datum: row >= 0 ? c.data[row] : undefined });
+    return;
+  }
   if (isRound(c.type)) {
     const visible = c.data.filter((row, i) => !host.state().hidden.includes(String(row[c.xKey] ?? i)));
     host.emit("point-click", { index, datum: visible[index] });

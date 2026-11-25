@@ -910,6 +910,25 @@
     }
    ]
   },
+  "AnimatedNumber": {
+   "group": "charts",
+   "classes": [
+    "z-animated-number"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Moneda",
+     "html": "<span class=\"z-animated-number\" data-value=\"48250\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"format\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0}}</script>\n</span>",
+     "source": "manual"
+    },
+    {
+     "title": "Cuenta al montar y anuncio",
+     "html": "<span class=\"z-animated-number\" data-value=\"0.873\" data-from=\"0\" data-live=\"polite\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"format\":{\"style\":\"percent\",\"maximumFractionDigits\":1}}</script>\n</span>",
+     "source": "manual"
+    }
+   ]
+  },
   "AreaChart": {
    "group": "charts",
    "classes": [
@@ -943,6 +962,53 @@
     }
    ]
   },
+  "BulletChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Satisfacción por región",
+     "html": "<div class=\"z-chart\" data-type=\"bullet\" data-title=\"Customer satisfaction\" data-description=\"Score out of 100\" data-x-label=\"Region\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"North\",\"value\":82,\"target\":85},{\"label\":\"South\",\"value\":64,\"target\":75},{\"label\":\"East\",\"value\":91,\"target\":80},{\"label\":\"West\",\"value\":47,\"target\":70}],\"ranges\":[50,75,100],\"rangeLabels\":[\"Poor\",\"Fair\",\"Good\"]}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Vertical",
+     "html": "<div class=\"z-chart\" data-type=\"bullet\" data-title=\"Customer satisfaction\" data-orientation=\"vertical\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"North\",\"value\":82,\"target\":85},{\"label\":\"South\",\"value\":64,\"target\":75},{\"label\":\"East\",\"value\":91,\"target\":80},{\"label\":\"West\",\"value\":47,\"target\":70}],\"ranges\":[50,75,100],\"rangeLabels\":[\"Poor\",\"Fair\",\"Good\"]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "CategoryBar": {
+   "group": "charts",
+   "classes": [
+    "z-category-bar"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con marcador y rótulos",
+     "html": "<div class=\"z-category-bar\" data-label=\"Error budget\" data-show-labels data-legend data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"values\":[40,30,20,10],\"categories\":[\"Healthy\",\"Watch\",\"At risk\",\"Critical\"],\"colors\":[4,1,2,3],\"marker\":{\"value\":62}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "ComboChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Ingresos y margen",
+     "html": "<div class=\"z-chart\" data-type=\"combo\" data-title=\"Revenue and margin\" data-description=\"Monthly, 2026\" data-x-key=\"month\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"margin\":0.18},{\"month\":\"2026-02\",\"revenue\":48000,\"margin\":0.21},{\"month\":\"2026-03\",\"revenue\":45000,\"margin\":0.19},{\"month\":\"2026-04\",\"revenue\":61000,\"margin\":0.24},{\"month\":\"2026-05\",\"revenue\":66000,\"margin\":0.26},{\"month\":\"2026-06\",\"revenue\":72000,\"margin\":0.28}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"margin\",\"label\":\"Margin\",\"type\":\"line\",\"axis\":\"end\"}],\"valueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0},\"y2Format\":{\"style\":\"percent\"}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "DonutChart": {
    "group": "charts",
    "classes": [
@@ -953,6 +1019,25 @@
     {
      "title": "Almacenamiento",
      "html": "<div class=\"z-chart\" data-type=\"donut\" data-title=\"Storage\" data-description=\"GB by type\" data-x-key=\"label\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"Media\",\"value\":412},{\"label\":\"Documents\",\"value\":186},{\"label\":\"Backups\",\"value\":132},{\"label\":\"Other\",\"value\":58}],\"series\":[{\"key\":\"value\",\"label\":\"GB\"}],\"valueFormat\":{\"style\":\"unit\",\"unit\":\"gigabyte\"}}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "HeatmapChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Actividad por día y hora",
+     "html": "<div class=\"z-chart\" data-type=\"heatmap\" data-title=\"Support tickets\" data-description=\"By weekday and hour\" data-x-key=\"hour\" data-y-key=\"day\" data-x-label=\"Hour\" data-y-label=\"Day\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"day\":\"Mon\",\"hour\":\"08\",\"value\":4},{\"day\":\"Mon\",\"hour\":\"09\",\"value\":7},{\"day\":\"Mon\",\"hour\":\"10\",\"value\":10},{\"day\":\"Mon\",\"hour\":\"11\",\"value\":12},{\"day\":\"Mon\",\"hour\":\"12\",\"value\":18},{\"day\":\"Mon\",\"hour\":\"13\",\"value\":19},{\"day\":\"Mon\",\"hour\":\"14\",\"value\":14},{\"day\":\"Mon\",\"hour\":\"15\",\"value\":13},{\"day\":\"Mon\",\"hour\":\"16\",\"value\":12},{\"day\":\"Mon\",\"hour\":\"17\",\"value\":10},{\"day\":\"Mon\",\"hour\":\"18\",\"value\":7},{\"day\":\"Mon\",\"hour\":\"19\",\"value\":4},{\"day\":\"Tue\",\"hour\":\"08\",\"value\":6},{\"day\":\"Tue\",\"hour\":\"09\",\"value\":11},{\"day\":\"Tue\",\"hour\":\"10\",\"value\":15},{\"day\":\"Tue\",\"hour\":\"11\",\"value\":18},{\"day\":\"Tue\",\"hour\":\"12\",\"value\":25},{\"day\":\"Tue\",\"hour\":\"13\",\"value\":26},{\"day\":\"Tue\",\"hour\":\"14\",\"value\":21},{\"day\":\"Tue\",\"hour\":\"15\",\"value\":20},{\"day\":\"Tue\",\"hour\":\"16\",\"value\":18},{\"day\":\"Tue\",\"hour\":\"17\",\"value\":15},{\"day\":\"Tue\",\"hour\":\"18\",\"value\":11},{\"day\":\"Tue\",\"hour\":\"19\",\"value\":6},{\"day\":\"Wed\",\"hour\":\"08\",\"value\":8},{\"day\":\"Wed\",\"hour\":\"09\",\"value\":15},{\"day\":\"Wed\",\"hour\":\"10\",\"value\":20},{\"day\":\"Wed\",\"hour\":\"11\",\"value\":24},{\"day\":\"Wed\",\"hour\":\"12\",\"value\":32},{\"day\":\"Wed\",\"hour\":\"13\",\"value\":33},{\"day\":\"Wed\",\"hour\":\"14\",\"value\":28},{\"day\":\"Wed\",\"hour\":\"15\",\"value\":27},{\"day\":\"Wed\",\"hour\":\"16\",\"value\":24},{\"day\":\"Wed\",\"hour\":\"17\",\"value\":20},{\"day\":\"Wed\",\"hour\":\"18\",\"value\":15},{\"day\":\"Wed\",\"hour\":\"19\",\"value\":8},{\"day\":\"Thu\",\"hour\":\"08\",\"value\":4},{\"day\":\"Thu\",\"hour\":\"09\",\"value\":7},{\"day\":\"Thu\",\"hour\":\"10\",\"value\":10},{\"day\":\"Thu\",\"hour\":\"11\",\"value\":12},{\"day\":\"Thu\",\"hour\":\"12\",\"value\":18},{\"day\":\"Thu\",\"hour\":\"13\",\"value\":19},{\"day\":\"Thu\",\"hour\":\"14\",\"value\":14},{\"day\":\"Thu\",\"hour\":\"15\",\"value\":13},{\"day\":\"Thu\",\"hour\":\"16\",\"value\":12},{\"day\":\"Thu\",\"hour\":\"17\",\"value\":10},{\"day\":\"Thu\",\"hour\":\"18\",\"value\":7},{\"day\":\"Thu\",\"hour\":\"19\",\"value\":4},{\"day\":\"Fri\",\"hour\":\"08\",\"value\":6},{\"day\":\"Fri\",\"hour\":\"09\",\"value\":11},{\"day\":\"Fri\",\"hour\":\"10\",\"value\":15},{\"day\":\"Fri\",\"hour\":\"11\",\"value\":18},{\"day\":\"Fri\",\"hour\":\"12\",\"value\":25},{\"day\":\"Fri\",\"hour\":\"13\",\"value\":26},{\"day\":\"Fri\",\"hour\":\"14\",\"value\":21},{\"day\":\"Fri\",\"hour\":\"15\",\"value\":20},{\"day\":\"Fri\",\"hour\":\"16\",\"value\":18},{\"day\":\"Fri\",\"hour\":\"17\",\"value\":15},{\"day\":\"Fri\",\"hour\":\"18\",\"value\":11},{\"day\":\"Fri\",\"hour\":\"19\",\"value\":6}],\"series\":[{\"key\":\"value\",\"label\":\"Tickets\"}]}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Escala divergente",
+     "html": "<div class=\"z-chart\" data-type=\"heatmap\" data-title=\"Change vs last year\" data-x-key=\"month\" data-y-key=\"region\" data-y-label=\"Region\" data-scale=\"diverging\" data-show-values data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"region\":\"North\",\"month\":\"Jan\",\"value\":4},{\"region\":\"North\",\"month\":\"Feb\",\"value\":7},{\"region\":\"North\",\"month\":\"Mar\",\"value\":-2},{\"region\":\"North\",\"month\":\"Apr\",\"value\":-6},{\"region\":\"North\",\"month\":\"May\",\"value\":3},{\"region\":\"North\",\"month\":\"Jun\",\"value\":9},{\"region\":\"South\",\"month\":\"Jan\",\"value\":-8},{\"region\":\"South\",\"month\":\"Feb\",\"value\":-5},{\"region\":\"South\",\"month\":\"Mar\",\"value\":-3},{\"region\":\"South\",\"month\":\"Apr\",\"value\":1},{\"region\":\"South\",\"month\":\"May\",\"value\":4},{\"region\":\"South\",\"month\":\"Jun\",\"value\":2},{\"region\":\"East\",\"month\":\"Jan\",\"value\":12},{\"region\":\"East\",\"month\":\"Feb\",\"value\":9},{\"region\":\"East\",\"month\":\"Mar\",\"value\":6},{\"region\":\"East\",\"month\":\"Apr\",\"value\":2},{\"region\":\"East\",\"month\":\"May\",\"value\":-1},{\"region\":\"East\",\"month\":\"Jun\",\"value\":-4},{\"region\":\"West\",\"month\":\"Jan\",\"value\":-3},{\"region\":\"West\",\"month\":\"Feb\",\"value\":-9},{\"region\":\"West\",\"month\":\"Mar\",\"value\":-12},{\"region\":\"West\",\"month\":\"Apr\",\"value\":-7},{\"region\":\"West\",\"month\":\"May\",\"value\":-2},{\"region\":\"West\",\"month\":\"Jun\",\"value\":5}],\"series\":[{\"key\":\"value\",\"label\":\"Change\"}],\"valueFormat\":{\"style\":\"unit\",\"unit\":\"percent\",\"signDisplay\":\"exceptZero\"}}</script>\n</div>",
      "source": "manual"
     }
    ]
@@ -981,6 +1066,34 @@
     {
      "title": "Con trama",
      "html": "<div class=\"z-chart\" data-type=\"pie\" data-title=\"Storage share\" data-x-key=\"label\" data-patterns data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"Media\",\"value\":412},{\"label\":\"Documents\",\"value\":186},{\"label\":\"Backups\",\"value\":132},{\"label\":\"Other\",\"value\":58}],\"series\":[{\"key\":\"value\",\"label\":\"GB\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "RadarChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Dos modelos",
+     "html": "<div class=\"z-chart\" data-type=\"radar\" data-title=\"Model comparison\" data-x-key=\"axis\" data-y-max=\"100\" data-y-ticks=\"4\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"axis\":\"Speed\",\"a\":82,\"b\":64},{\"axis\":\"Range\",\"a\":58,\"b\":88},{\"axis\":\"Comfort\",\"a\":71,\"b\":76},{\"axis\":\"Safety\",\"a\":90,\"b\":81},{\"axis\":\"Price\",\"a\":52,\"b\":72},{\"axis\":\"Tech\",\"a\":86,\"b\":60}],\"series\":[{\"key\":\"a\",\"label\":\"Model A\"},{\"key\":\"b\",\"label\":\"Model B\"}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
+  "ScatterChart": {
+   "group": "charts",
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Burbujas por segmento con tendencia",
+     "html": "<div class=\"z-chart\" data-type=\"scatter\" data-title=\"Revenue and margin\" data-description=\"Bubble size: employees\" data-x-key=\"revenue\" data-y-key=\"margin\" data-size-key=\"staff\" data-series-key=\"segment\" data-label-key=\"name\" data-x-label=\"Revenue\" data-y-label=\"Margin\" data-size-label=\"Employees\" data-trend data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"name\":\"Acme\",\"revenue\":12,\"margin\":18,\"staff\":120,\"segment\":\"SMB\"},{\"name\":\"Birch\",\"revenue\":21,\"margin\":24,\"staff\":210,\"segment\":\"SMB\"},{\"name\":\"Cobalt\",\"revenue\":33,\"margin\":20,\"staff\":260,\"segment\":\"SMB\"},{\"name\":\"Delta\",\"revenue\":46,\"margin\":27,\"staff\":410,\"segment\":\"Enterprise\"},{\"name\":\"Ember\",\"revenue\":59,\"margin\":31,\"staff\":520,\"segment\":\"Enterprise\"},{\"name\":\"Fjord\",\"revenue\":74,\"margin\":36,\"staff\":780,\"segment\":\"Enterprise\"}],\"series\":[{\"key\":\"SMB\",\"label\":\"SMB\"},{\"key\":\"Enterprise\",\"label\":\"Enterprise\"}],\"xValueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0},\"valueFormat\":{\"style\":\"unit\",\"unit\":\"percent\"}}</script>\n</div>",
      "source": "manual"
     }
    ]

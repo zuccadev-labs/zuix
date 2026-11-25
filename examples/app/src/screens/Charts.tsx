@@ -1,5 +1,22 @@
 import { useState } from "react";
-import { AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline, StatTile } from "@zuccadev-labs/zuix-zui";
+import {
+  AnimatedNumber,
+  AreaChart,
+  BarChart,
+  BulletChart,
+  Button,
+  CategoryBar,
+  ComboChart,
+  DonutChart,
+  HeatmapChart,
+  LineChart,
+  MetricCard,
+  PieChart,
+  RadarChart,
+  ScatterChart,
+  Sparkline,
+  StatTile,
+} from "@zuccadev-labs/zuix-zui";
 
 const MONTHS = [
   "2026-01",
@@ -43,13 +60,65 @@ const STORAGE = [
   { label: "Other", value: 58 },
 ];
 const money: Intl.NumberFormatOptions = { style: "currency", currency: "USD", maximumFractionDigits: 0 };
+const COMPANIES = [
+  { name: "Acme", revenue: 12, margin: 18, staff: 120, segment: "SMB" },
+  { name: "Birch", revenue: 21, margin: 24, staff: 210, segment: "SMB" },
+  { name: "Cobalt", revenue: 33, margin: 20, staff: 260, segment: "SMB" },
+  { name: "Delta", revenue: 46, margin: 27, staff: 410, segment: "Enterprise" },
+  { name: "Ember", revenue: 59, margin: 31, staff: 520, segment: "Enterprise" },
+  { name: "Fjord", revenue: 74, margin: 36, staff: 780, segment: "Enterprise" },
+];
+const MODELS = [
+  { axis: "Speed", a: 82, b: 64 },
+  { axis: "Range", a: 58, b: 88 },
+  { axis: "Comfort", a: 71, b: 76 },
+  { axis: "Safety", a: 90, b: 81 },
+  { axis: "Price", a: 52, b: 72 },
+  { axis: "Tech", a: 86, b: 60 },
+];
+const MARGIN = [0.18, 0.21, 0.19, 0.24, 0.26, 0.28, 0.27, 0.3, 0.31, 0.3, 0.32, 0.35];
+const COMBO = SALES.map((row, i) => ({ month: row.month, revenue: row.revenue, margin: MARGIN[i]! }));
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const TICKETS = DAYS.flatMap((day, d) =>
+  Array.from({ length: 12 }, (_, k) => {
+    const h = k + 8;
+    return {
+      day,
+      hour: String(h).padStart(2, "0"),
+      value: Math.round(((h - 7) * (20 - h) * ((d % 3) + 2)) / 6 + (h === 12 || h === 13 ? 5 : 0)),
+    };
+  }),
+);
+const CHANGE = [
+  [4, 7, -2, -6, 3, 9],
+  [-8, -5, -3, 1, 4, 2],
+  [12, 9, 6, 2, -1, -4],
+  [-3, -9, -12, -7, -2, 5],
+].flatMap((row, r) => row.map((value, m) => ({ region: ["North", "South", "East", "West"][r]!, month: MONTHS[m]!.slice(5), value })));
+const SATISFACTION = [
+  { label: "North", value: 82, target: 85 },
+  { label: "South", value: 64, target: 75 },
+  { label: "East", value: 91, target: 80 },
+  { label: "West", value: 47, target: 70 },
+];
 
 export function ChartsScreen() {
   const [last, setLast] = useState("—");
   const [hidden, setHidden] = useState<string[]>([]);
+  const [orders, setOrders] = useState(1284);
   return (
     <div className="app-charts" data-testid="charts">
       <div className="app-charts__tiles">
+        <StatTile
+          label="Orders"
+          value={<AnimatedNumber value={orders} locale="en-US" live="polite" id="chart-orders" />}
+          hint={
+            <Button size="sm" variant="ghost" onClick={() => setOrders((n) => n + 216)} data-testid="chart-orders-more">
+              Add orders
+            </Button>
+          }
+        />
+        <MetricCard label="Revenue (animated)" value={orders * 87} format={money} animate locale="en-US" id="chart-metric" />
         <StatTile label="Revenue" value="$112k" delta="+15%" deltaTone="success" trend={REVENUE} />
         <StatTile label="Costs" value="$66k" delta="+8%" deltaTone="warning" trend={COSTS} trendProps={{ color: 2, type: "line" }} />
         <StatTile
@@ -144,6 +213,116 @@ export function ChartsScreen() {
           series={[{ key: "net", label: "Net" }]}
           valueFormat={money}
           id="chart-net"
+          locale="en-US"
+        />
+      </div>
+      <ScatterChart
+        title="Revenue and margin"
+        description="Bubble size: employees"
+        data={COMPANIES}
+        xKey="revenue"
+        yKey="margin"
+        sizeKey="staff"
+        seriesKey="segment"
+        labelKey="name"
+        xLabel="Revenue"
+        yLabel="Margin"
+        sizeLabel="Employees"
+        xValueFormat={money}
+        valueFormat={{ style: "unit", unit: "percent" }}
+        trend
+        onPointClick={({ datum }) => setLast(`Scatter: ${String(datum?.name)}`)}
+        id="chart-scatter"
+        locale="en-US"
+      />
+      <div className="app-charts__row">
+        <RadarChart
+          title="Model comparison"
+          data={MODELS}
+          xKey="axis"
+          series={[
+            { key: "a", label: "Model A" },
+            { key: "b", label: "Model B" },
+          ]}
+          yMax={100}
+          yTicks={4}
+          markers
+          id="chart-radar"
+          locale="en-US"
+        />
+        <ComboChart
+          title="Revenue and margin"
+          description="Monthly, 2026"
+          data={COMBO}
+          xKey="month"
+          series={[
+            { key: "revenue", label: "Revenue" },
+            { key: "margin", label: "Margin", type: "line", axis: "end" },
+          ]}
+          valueFormat={money}
+          y2Format={{ style: "percent" }}
+          markers
+          id="chart-combo"
+          locale="en-US"
+        />
+      </div>
+      <HeatmapChart
+        title="Support tickets"
+        description="By weekday and hour"
+        data={TICKETS}
+        xKey="hour"
+        yKey="day"
+        xLabel="Hour"
+        yLabel="Day"
+        series={[{ key: "value", label: "Tickets" }]}
+        onPointClick={({ datum }) => setLast(`Heatmap: ${String(datum?.day)} ${String(datum?.hour)}`)}
+        id="chart-heatmap"
+        locale="en-US"
+      />
+      <div className="app-charts__row">
+        <HeatmapChart
+          title="Change vs last year"
+          data={CHANGE}
+          xKey="month"
+          yKey="region"
+          yLabel="Region"
+          scale="diverging"
+          showValues
+          series={[{ key: "value", label: "Change" }]}
+          valueFormat={{ style: "unit", unit: "percent", signDisplay: "exceptZero" }}
+          id="chart-diverging"
+          locale="en-US"
+        />
+        <BulletChart
+          title="Customer satisfaction"
+          description="Score out of 100"
+          data={SATISFACTION}
+          ranges={[50, 75, 100]}
+          rangeLabels={["Poor", "Fair", "Good"]}
+          xLabel="Region"
+          id="chart-bullet"
+          locale="en-US"
+        />
+        <BulletChart
+          title="Satisfaction (vertical)"
+          data={SATISFACTION}
+          ranges={[50, 75, 100]}
+          rangeLabels={["Poor", "Fair", "Good"]}
+          orientation="vertical"
+          id="chart-bullet-v"
+          locale="en-US"
+        />
+      </div>
+      <div className="app-charts__budget z-liquid">
+        <CategoryBar
+          label="Error budget"
+          values={[40, 30, 20, 10]}
+          categories={["Healthy", "Watch", "At risk", "Critical"]}
+          colors={[4, 1, 2, 3]}
+          marker={{ value: 62 }}
+          showLabels
+          legend
+          id="chart-category"
           locale="en-US"
         />
       </div>

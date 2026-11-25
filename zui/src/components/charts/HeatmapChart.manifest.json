@@ -1,0 +1,228 @@
+{
+  "name": "HeatmapChart",
+  "group": "charts",
+  "states": ["rest", "hover", "focus", "table"],
+  "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip",
+    "heatmap-0",
+    "heatmap-1",
+    "heatmap-2",
+    "heatmap-3",
+    "heatmap-4",
+    "heatmap-neg-1",
+    "heatmap-neg-2",
+    "heatmap-neg-3",
+    "heatmap-neg-4",
+    "heatmap-pos-1",
+    "heatmap-pos-2",
+    "heatmap-pos-3",
+    "heatmap-pos-4",
+    "line-strong",
+    "layer-raised"
+  ],
+  "classes": ["z-chart"],
+  "behavior": "dom",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas. Navegación de rejilla según el patrón grid de APG.",
+  "description": "Mapa de calor: matriz de celdas (por ejemplo día × hora) con escala secuencial de cinco niveles o divergente de cuatro por lado alrededor de un punto medio, leyenda de la escala con el tramo de cada nivel, valor escrito opcional, tooltip y navegación de celdas con flechas como una rejilla (role=grid).",
+  "import": "import { HeatmapChart } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "data",
+      "type": "Record<string, unknown>[]",
+      "required": true,
+      "description": "Filas: una celda por fila (columna, fila y valor)."
+    },
+    {
+      "name": "xKey",
+      "type": "string",
+      "required": true,
+      "description": "Clave de la columna. Las columnas siguen el orden de aparición."
+    },
+    {
+      "name": "yKey",
+      "type": "string",
+      "required": true,
+      "description": "Clave de la fila. Las filas siguen el orden de aparición."
+    },
+    {
+      "name": "valueKey",
+      "type": "string",
+      "default": "value",
+      "description": "Clave del valor."
+    },
+    {
+      "name": "series",
+      "type": "ChartSeries[]",
+      "description": "Solo el nombre de la medida: [{ key, label }] (tooltip y resumen)."
+    },
+    {
+      "name": "scale",
+      "type": "enum",
+      "values": ["sequential", "diverging"],
+      "default": "sequential",
+      "description": "Secuencial (de menos a más) o divergente alrededor de midpoint."
+    },
+    {
+      "name": "domain",
+      "type": "[number, number]",
+      "description": "Extremos de la escala (por defecto, los de los datos; en la divergente, simétricos alrededor del punto medio)."
+    },
+    {
+      "name": "midpoint",
+      "type": "number",
+      "default": 0,
+      "description": "Valor neutro de la escala divergente."
+    },
+    {
+      "name": "showValues",
+      "type": "boolean",
+      "default": false,
+      "description": "Escribe el valor en cada celda (con colores forzados se escribe siempre)."
+    },
+    {
+      "name": "xLabel",
+      "type": "string",
+      "description": "Nombre de las columnas."
+    },
+    {
+      "name": "yLabel",
+      "type": "string",
+      "description": "Nombre de las filas (cabecera de la tabla y de la esquina de la rejilla)."
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Texto visible bajo el título."
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Locale de Intl para números y fechas."
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+      "name": "tooltip",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+      "name": "defaultView",
+      "type": "enum",
+      "values": ["chart", "table"],
+      "default": "chart",
+      "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+      "name": "animate",
+      "type": "boolean",
+      "default": true,
+      "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+      "name": "framed",
+      "type": "boolean",
+      "default": true,
+      "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChartLabels>",
+      "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+      "name": "onPointClick",
+      "type": "(detail: { index, datum }) => void",
+      "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+      "name": "onViewChange",
+      "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+  ],
+  "a11y": "figure con figcaption y resumen (filas × columnas, mínimo y máximo con su celda). La matriz es un role=grid con nombre y descripción: una fila de role=columnheader y, en cada fila, un role=rowheader y las celdas role=gridcell, cada una con su nombre completo («Tue, 13: 31»). Una parada de Tab; flechas entre celdas, Inicio/Fin al principio y al final de la fila, Ctrl+Inicio/Fin a la primera y la última celda, Re Pág/Av Pág de 5 en 5 filas, Intro para onPointClick, Escape cierra el tooltip; en RTL ←→ siguen la dirección visual. Los niveles crecen en luminosidad (también se leen en escala de grises), la divergente usa dos tonos que se distinguen con daltonismo (azul de info y ámbar de warning) y la leyenda dice el tramo de cada nivel; una celda sin dato es un hueco con borde discontinuo. Con colores forzados, cada celda escribe su valor. Tabla alternativa.",
+  "examples": [
+    {
+      "title": "Actividad por día y hora",
+      "code": "<HeatmapChart\n  title=\"Support tickets\"\n  description=\"By weekday and hour\"\n  data={[{day: \"Mon\",hour: \"08\",value: 4},{day: \"Mon\",hour: \"09\",value: 7},{day: \"Mon\",hour: \"10\",value: 10},{day: \"Mon\",hour: \"11\",value: 12},{day: \"Mon\",hour: \"12\",value: 18},{day: \"Mon\",hour: \"13\",value: 19},{day: \"Mon\",hour: \"14\",value: 14},{day: \"Mon\",hour: \"15\",value: 13},{day: \"Mon\",hour: \"16\",value: 12},{day: \"Mon\",hour: \"17\",value: 10},{day: \"Mon\",hour: \"18\",value: 7},{day: \"Mon\",hour: \"19\",value: 4},{day: \"Tue\",hour: \"08\",value: 6},{day: \"Tue\",hour: \"09\",value: 11},{day: \"Tue\",hour: \"10\",value: 15},{day: \"Tue\",hour: \"11\",value: 18},{day: \"Tue\",hour: \"12\",value: 25},{day: \"Tue\",hour: \"13\",value: 26},{day: \"Tue\",hour: \"14\",value: 21},{day: \"Tue\",hour: \"15\",value: 20},{day: \"Tue\",hour: \"16\",value: 18},{day: \"Tue\",hour: \"17\",value: 15},{day: \"Tue\",hour: \"18\",value: 11},{day: \"Tue\",hour: \"19\",value: 6},{day: \"Wed\",hour: \"08\",value: 8},{day: \"Wed\",hour: \"09\",value: 15},{day: \"Wed\",hour: \"10\",value: 20},{day: \"Wed\",hour: \"11\",value: 24},{day: \"Wed\",hour: \"12\",value: 32},{day: \"Wed\",hour: \"13\",value: 33},{day: \"Wed\",hour: \"14\",value: 28},{day: \"Wed\",hour: \"15\",value: 27},{day: \"Wed\",hour: \"16\",value: 24},{day: \"Wed\",hour: \"17\",value: 20},{day: \"Wed\",hour: \"18\",value: 15},{day: \"Wed\",hour: \"19\",value: 8},{day: \"Thu\",hour: \"08\",value: 4},{day: \"Thu\",hour: \"09\",value: 7},{day: \"Thu\",hour: \"10\",value: 10},{day: \"Thu\",hour: \"11\",value: 12},{day: \"Thu\",hour: \"12\",value: 18},{day: \"Thu\",hour: \"13\",value: 19},{day: \"Thu\",hour: \"14\",value: 14},{day: \"Thu\",hour: \"15\",value: 13},{day: \"Thu\",hour: \"16\",value: 12},{day: \"Thu\",hour: \"17\",value: 10},{day: \"Thu\",hour: \"18\",value: 7},{day: \"Thu\",hour: \"19\",value: 4},{day: \"Fri\",hour: \"08\",value: 6},{day: \"Fri\",hour: \"09\",value: 11},{day: \"Fri\",hour: \"10\",value: 15},{day: \"Fri\",hour: \"11\",value: 18},{day: \"Fri\",hour: \"12\",value: 25},{day: \"Fri\",hour: \"13\",value: 26},{day: \"Fri\",hour: \"14\",value: 21},{day: \"Fri\",hour: \"15\",value: 20},{day: \"Fri\",hour: \"16\",value: 18},{day: \"Fri\",hour: \"17\",value: 15},{day: \"Fri\",hour: \"18\",value: 11},{day: \"Fri\",hour: \"19\",value: 6}]}\n  xKey=\"hour\"\n  yKey=\"day\"\n  xLabel=\"Hour\"\n  yLabel=\"Day\"\n  series={[{key: \"value\",label: \"Tickets\"}]}\n  locale=\"en-US\"\n/>"
+    },
+    {
+      "title": "Escala divergente",
+      "code": "<HeatmapChart\n  title=\"Change vs last year\"\n  data={[{region: \"North\",month: \"Jan\",value: 4},{region: \"North\",month: \"Feb\",value: 7},{region: \"North\",month: \"Mar\",value: -2},{region: \"North\",month: \"Apr\",value: -6},{region: \"North\",month: \"May\",value: 3},{region: \"North\",month: \"Jun\",value: 9},{region: \"South\",month: \"Jan\",value: -8},{region: \"South\",month: \"Feb\",value: -5},{region: \"South\",month: \"Mar\",value: -3},{region: \"South\",month: \"Apr\",value: 1},{region: \"South\",month: \"May\",value: 4},{region: \"South\",month: \"Jun\",value: 2},{region: \"East\",month: \"Jan\",value: 12},{region: \"East\",month: \"Feb\",value: 9},{region: \"East\",month: \"Mar\",value: 6},{region: \"East\",month: \"Apr\",value: 2},{region: \"East\",month: \"May\",value: -1},{region: \"East\",month: \"Jun\",value: -4},{region: \"West\",month: \"Jan\",value: -3},{region: \"West\",month: \"Feb\",value: -9},{region: \"West\",month: \"Mar\",value: -12},{region: \"West\",month: \"Apr\",value: -7},{region: \"West\",month: \"May\",value: -2},{region: \"West\",month: \"Jun\",value: 5}]}\n  xKey=\"month\"\n  yKey=\"region\"\n  yLabel=\"Region\"\n  scale=\"diverging\"\n  showValues\n  series={[{key: \"value\",label: \"Change\"}]}\n  valueFormat={{style: \"unit\",unit: \"percent\",signDisplay: \"exceptZero\"}}\n  locale=\"en-US\"\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Actividad por día y hora",
+      "code": "<div class=\"z-chart\" data-type=\"heatmap\" data-title=\"Support tickets\" data-description=\"By weekday and hour\" data-x-key=\"hour\" data-y-key=\"day\" data-x-label=\"Hour\" data-y-label=\"Day\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"day\":\"Mon\",\"hour\":\"08\",\"value\":4},{\"day\":\"Mon\",\"hour\":\"09\",\"value\":7},{\"day\":\"Mon\",\"hour\":\"10\",\"value\":10},{\"day\":\"Mon\",\"hour\":\"11\",\"value\":12},{\"day\":\"Mon\",\"hour\":\"12\",\"value\":18},{\"day\":\"Mon\",\"hour\":\"13\",\"value\":19},{\"day\":\"Mon\",\"hour\":\"14\",\"value\":14},{\"day\":\"Mon\",\"hour\":\"15\",\"value\":13},{\"day\":\"Mon\",\"hour\":\"16\",\"value\":12},{\"day\":\"Mon\",\"hour\":\"17\",\"value\":10},{\"day\":\"Mon\",\"hour\":\"18\",\"value\":7},{\"day\":\"Mon\",\"hour\":\"19\",\"value\":4},{\"day\":\"Tue\",\"hour\":\"08\",\"value\":6},{\"day\":\"Tue\",\"hour\":\"09\",\"value\":11},{\"day\":\"Tue\",\"hour\":\"10\",\"value\":15},{\"day\":\"Tue\",\"hour\":\"11\",\"value\":18},{\"day\":\"Tue\",\"hour\":\"12\",\"value\":25},{\"day\":\"Tue\",\"hour\":\"13\",\"value\":26},{\"day\":\"Tue\",\"hour\":\"14\",\"value\":21},{\"day\":\"Tue\",\"hour\":\"15\",\"value\":20},{\"day\":\"Tue\",\"hour\":\"16\",\"value\":18},{\"day\":\"Tue\",\"hour\":\"17\",\"value\":15},{\"day\":\"Tue\",\"hour\":\"18\",\"value\":11},{\"day\":\"Tue\",\"hour\":\"19\",\"value\":6},{\"day\":\"Wed\",\"hour\":\"08\",\"value\":8},{\"day\":\"Wed\",\"hour\":\"09\",\"value\":15},{\"day\":\"Wed\",\"hour\":\"10\",\"value\":20},{\"day\":\"Wed\",\"hour\":\"11\",\"value\":24},{\"day\":\"Wed\",\"hour\":\"12\",\"value\":32},{\"day\":\"Wed\",\"hour\":\"13\",\"value\":33},{\"day\":\"Wed\",\"hour\":\"14\",\"value\":28},{\"day\":\"Wed\",\"hour\":\"15\",\"value\":27},{\"day\":\"Wed\",\"hour\":\"16\",\"value\":24},{\"day\":\"Wed\",\"hour\":\"17\",\"value\":20},{\"day\":\"Wed\",\"hour\":\"18\",\"value\":15},{\"day\":\"Wed\",\"hour\":\"19\",\"value\":8},{\"day\":\"Thu\",\"hour\":\"08\",\"value\":4},{\"day\":\"Thu\",\"hour\":\"09\",\"value\":7},{\"day\":\"Thu\",\"hour\":\"10\",\"value\":10},{\"day\":\"Thu\",\"hour\":\"11\",\"value\":12},{\"day\":\"Thu\",\"hour\":\"12\",\"value\":18},{\"day\":\"Thu\",\"hour\":\"13\",\"value\":19},{\"day\":\"Thu\",\"hour\":\"14\",\"value\":14},{\"day\":\"Thu\",\"hour\":\"15\",\"value\":13},{\"day\":\"Thu\",\"hour\":\"16\",\"value\":12},{\"day\":\"Thu\",\"hour\":\"17\",\"value\":10},{\"day\":\"Thu\",\"hour\":\"18\",\"value\":7},{\"day\":\"Thu\",\"hour\":\"19\",\"value\":4},{\"day\":\"Fri\",\"hour\":\"08\",\"value\":6},{\"day\":\"Fri\",\"hour\":\"09\",\"value\":11},{\"day\":\"Fri\",\"hour\":\"10\",\"value\":15},{\"day\":\"Fri\",\"hour\":\"11\",\"value\":18},{\"day\":\"Fri\",\"hour\":\"12\",\"value\":25},{\"day\":\"Fri\",\"hour\":\"13\",\"value\":26},{\"day\":\"Fri\",\"hour\":\"14\",\"value\":21},{\"day\":\"Fri\",\"hour\":\"15\",\"value\":20},{\"day\":\"Fri\",\"hour\":\"16\",\"value\":18},{\"day\":\"Fri\",\"hour\":\"17\",\"value\":15},{\"day\":\"Fri\",\"hour\":\"18\",\"value\":11},{\"day\":\"Fri\",\"hour\":\"19\",\"value\":6}],\"series\":[{\"key\":\"value\",\"label\":\"Tickets\"}]}</script>\n</div>"
+    },
+    {
+      "title": "Escala divergente",
+      "code": "<div class=\"z-chart\" data-type=\"heatmap\" data-title=\"Change vs last year\" data-x-key=\"month\" data-y-key=\"region\" data-y-label=\"Region\" data-scale=\"diverging\" data-show-values data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"region\":\"North\",\"month\":\"Jan\",\"value\":4},{\"region\":\"North\",\"month\":\"Feb\",\"value\":7},{\"region\":\"North\",\"month\":\"Mar\",\"value\":-2},{\"region\":\"North\",\"month\":\"Apr\",\"value\":-6},{\"region\":\"North\",\"month\":\"May\",\"value\":3},{\"region\":\"North\",\"month\":\"Jun\",\"value\":9},{\"region\":\"South\",\"month\":\"Jan\",\"value\":-8},{\"region\":\"South\",\"month\":\"Feb\",\"value\":-5},{\"region\":\"South\",\"month\":\"Mar\",\"value\":-3},{\"region\":\"South\",\"month\":\"Apr\",\"value\":1},{\"region\":\"South\",\"month\":\"May\",\"value\":4},{\"region\":\"South\",\"month\":\"Jun\",\"value\":2},{\"region\":\"East\",\"month\":\"Jan\",\"value\":12},{\"region\":\"East\",\"month\":\"Feb\",\"value\":9},{\"region\":\"East\",\"month\":\"Mar\",\"value\":6},{\"region\":\"East\",\"month\":\"Apr\",\"value\":2},{\"region\":\"East\",\"month\":\"May\",\"value\":-1},{\"region\":\"East\",\"month\":\"Jun\",\"value\":-4},{\"region\":\"West\",\"month\":\"Jan\",\"value\":-3},{\"region\":\"West\",\"month\":\"Feb\",\"value\":-9},{\"region\":\"West\",\"month\":\"Mar\",\"value\":-12},{\"region\":\"West\",\"month\":\"Apr\",\"value\":-7},{\"region\":\"West\",\"month\":\"May\",\"value\":-2},{\"region\":\"West\",\"month\":\"Jun\",\"value\":5}],\"series\":[{\"key\":\"value\",\"label\":\"Change\"}],\"valueFormat\":{\"style\":\"unit\",\"unit\":\"percent\",\"signDisplay\":\"exceptZero\"}}</script>\n</div>"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 224,
+ "count": 231,
  "groups": {
   "actions": [
    "Button",
@@ -50,11 +50,18 @@
    "Stories"
   ],
   "charts": [
+   "AnimatedNumber",
    "AreaChart",
    "BarChart",
+   "BulletChart",
+   "CategoryBar",
+   "ComboChart",
    "DonutChart",
+   "HeatmapChart",
    "LineChart",
    "PieChart",
+   "RadarChart",
+   "ScatterChart",
    "Sparkline"
   ],
   "chat": [
@@ -4685,6 +4692,99 @@
    "file": "zui/src/components/carousel/Stories.manifest.json"
   },
   {
+   "name": "AnimatedNumber",
+   "group": "charts",
+   "states": [
+    "rest",
+    "animating"
+   ],
+   "tokens": [
+    "fg-muted",
+    "duration-slow"
+   ],
+   "classes": [
+    "z-animated-number"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio: cuenta con requestAnimationFrame sobre el nodo de texto e Intl.NumberFormat. Sin bibliotecas.",
+   "description": "Número que cuenta del valor anterior al nuevo con el formato de Intl.NumberFormat (moneda, porcentaje, unidades, compacto). El servidor pinta ya el valor final, los lectores de pantalla oyen solo el final y, con prefers-reduced-motion, cambia sin cuenta. Se usa solo, dentro de StatTile (como value) o en MetricCard (animate).",
+   "import": "import { AnimatedNumber } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number | null",
+     "required": true,
+     "description": "Valor final."
+    },
+    {
+     "name": "from",
+     "type": "number",
+     "description": "Valor desde el que cuenta al montar (por defecto, al montar no cuenta)."
+    },
+    {
+     "name": "format",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato del valor y de las cifras intermedias (con los decimales del más preciso de los dos valores, sin pasar de los del formato)."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "default": 800,
+     "description": "Duración de la cuenta en ms."
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "false: cambia sin cuenta. Con prefers-reduced-motion: reduce, siempre sin cuenta."
+    },
+    {
+     "name": "live",
+     "type": "enum",
+     "values": [
+      "off",
+      "polite",
+      "assertive"
+     ],
+     "default": "off",
+     "description": "Anuncia el valor final al cambiar, una sola vez (nunca las cifras intermedias)."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "—",
+     "description": "Texto sin valor."
+    }
+   ],
+   "a11y": "El texto que cuenta va con aria-hidden; al lado, una copia solo para lectores de pantalla con el valor final, que se lee al recorrer la página y, con live, se anuncia una vez por cambio (aria-live + aria-atomic). La cuenta no se repite ni parpadea (dura 800 ms por defecto y acaba en el valor exacto) y desaparece con prefers-reduced-motion: reduce. Cifras tabulares para que no mueva lo que lo rodea.",
+   "examples": [
+    {
+     "title": "Moneda",
+     "code": "<AnimatedNumber\n  value={48250}\n  format={{style: \"currency\",currency: \"USD\",maximumFractionDigits: 0}}\n  locale=\"en-US\"\n/>"
+    },
+    {
+     "title": "Cuenta al montar y anuncio",
+     "code": "<AnimatedNumber\n  value={0.873}\n  from={0}\n  format={{style: \"percent\",maximumFractionDigits: 1}}\n  live=\"polite\"\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Moneda",
+     "code": "<span class=\"z-animated-number\" data-value=\"48250\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"format\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0}}</script>\n</span>"
+    },
+    {
+     "title": "Cuenta al montar y anuncio",
+     "code": "<span class=\"z-animated-number\" data-value=\"0.873\" data-from=\"0\" data-live=\"polite\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"format\":{\"style\":\"percent\",\"maximumFractionDigits\":1}}</script>\n</span>"
+    }
+   ],
+   "file": "zui/src/components/charts/AnimatedNumber.manifest.json"
+  },
+  {
    "name": "AreaChart",
    "group": "charts",
    "states": [
@@ -5187,6 +5287,597 @@
    "file": "zui/src/components/charts/BarChart.manifest.json"
   },
   {
+   "name": "BulletChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip",
+    "layer-raised"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Gráfico de bala de Stephen Few (barra del valor, marca del objetivo y rangos cualitativos en grises), en HTML colocado por fracciones. Sin bibliotecas.",
+   "description": "Bala: por fila, el valor como barra sobre bandas de rangos cualitativos (de más oscura, la peor, a más clara) y el objetivo como marca, en horizontal o vertical, con una escala común, tooltip, flechas entre filas, leyenda de las piezas y tabla alternativa.",
+   "import": "import { BulletChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "BulletDatum[]",
+     "required": true,
+     "description": "{ label, value, target?, ranges?, max?, color? (1–8) } por fila."
+    },
+    {
+     "name": "ranges",
+     "type": "number[]",
+     "description": "Límites superiores de los rangos cualitativos, de menor a mayor, comunes a todas las filas (cada fila puede traer los suyos)."
+    },
+    {
+     "name": "rangeLabels",
+     "type": "string[]",
+     "description": "Nombre de cada rango («Poor», «Fair», «Good»): entra en la leyenda, la tabla y el nombre de la fila."
+    },
+    {
+     "name": "orientation",
+     "type": "enum",
+     "values": [
+      "horizontal",
+      "vertical"
+     ],
+     "default": "horizontal"
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Cabecera de la columna de nombres de la tabla."
+    },
+    {
+     "name": "yMin",
+     "type": "number"
+    },
+    {
+     "name": "yMax",
+     "type": "number",
+     "description": "Fin de la escala (por defecto, el mayor de valores, objetivos y rangos)."
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption y resumen con cada fila. Cada fila es un role=img enfocable con su nombre completo («South: 64, target 75, in Fair»): una parada de Tab, flechas entre filas, Inicio/Fin, Intro para onPointClick y Escape. El tooltip repite valor, objetivo y rango. Los rangos se distinguen por luminosidad (gris de fg al 26, 17 y 9 %) y no por tono; la barra del valor usa el color de serie y el objetivo es una marca de fg a 3:1 o más sobre cualquier rango. Con colores forzados, valor y objetivo en CanvasText y los rangos separados por un trazo. Tabla alternativa.",
+   "examples": [
+    {
+     "title": "Satisfacción por región",
+     "code": "<BulletChart\n  title=\"Customer satisfaction\"\n  description=\"Score out of 100\"\n  data={[{label: \"North\",value: 82,target: 85},{label: \"South\",value: 64,target: 75},{label: \"East\",value: 91,target: 80},{label: \"West\",value: 47,target: 70}]}\n  ranges={[50,75,100]}\n  rangeLabels={[\"Poor\",\"Fair\",\"Good\"]}\n  xLabel=\"Region\"\n  locale=\"en-US\"\n/>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<BulletChart\n  title=\"Customer satisfaction\"\n  data={[{label: \"North\",value: 82,target: 85},{label: \"South\",value: 64,target: 75},{label: \"East\",value: 91,target: 80},{label: \"West\",value: 47,target: 70}]}\n  ranges={[50,75,100]}\n  rangeLabels={[\"Poor\",\"Fair\",\"Good\"]}\n  orientation=\"vertical\"\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Satisfacción por región",
+     "code": "<div class=\"z-chart\" data-type=\"bullet\" data-title=\"Customer satisfaction\" data-description=\"Score out of 100\" data-x-label=\"Region\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"North\",\"value\":82,\"target\":85},{\"label\":\"South\",\"value\":64,\"target\":75},{\"label\":\"East\",\"value\":91,\"target\":80},{\"label\":\"West\",\"value\":47,\"target\":70}],\"ranges\":[50,75,100],\"rangeLabels\":[\"Poor\",\"Fair\",\"Good\"]}</script>\n</div>"
+    },
+    {
+     "title": "Vertical",
+     "code": "<div class=\"z-chart\" data-type=\"bullet\" data-title=\"Customer satisfaction\" data-orientation=\"vertical\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"North\",\"value\":82,\"target\":85},{\"label\":\"South\",\"value\":64,\"target\":75},{\"label\":\"East\",\"value\":91,\"target\":80},{\"label\":\"West\",\"value\":47,\"target\":70}],\"ranges\":[50,75,100],\"rangeLabels\":[\"Poor\",\"Fair\",\"Good\"]}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/BulletChart.manifest.json"
+  },
+  {
+   "name": "CategoryBar",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "line",
+    "shadow-md",
+    "control-radius",
+    "accent-ring",
+    "focus-width",
+    "text-caption",
+    "text-small",
+    "layer-tooltip",
+    "space-6"
+   ],
+   "classes": [
+    "z-category-bar"
+   ],
+   "behavior": "dom",
+   "origin": "Inspirado en la CategoryBar de Tremor (barra segmentada con marcador), reescrito sobre la plataforma. Sin bibliotecas.",
+   "description": "Barra partida en tramos proporcionales a sus valores, uno por categoría con su color de serie, marcador opcional sobre la misma escala, rótulos acumulados en los límites, leyenda y tooltip por tramo.",
+   "import": "import { CategoryBar } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "values",
+     "type": "number[]",
+     "required": true,
+     "description": "Ancho de cada tramo: se reparten sobre su suma."
+    },
+    {
+     "name": "categories",
+     "type": "string[]",
+     "description": "Nombre de cada tramo."
+    },
+    {
+     "name": "colors",
+     "type": "number[]",
+     "description": "Color de serie 1–8 de cada tramo (por defecto, su posición)."
+    },
+    {
+     "name": "marker",
+     "type": "{ value: number; label?: string }",
+     "description": "Marca vertical sobre la escala de la suma («Marker: 62» en el nombre accesible)."
+    },
+    {
+     "name": "showLabels",
+     "type": "boolean",
+     "default": false,
+     "description": "Valor acumulado en cada límite (0, 40, 70, 100)."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "default": false,
+     "description": "Leyenda con el nombre y el valor de cada tramo."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trama por tramo además del color."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre del conjunto (nombre del grupo de tramos)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<CategoryBarLabels>",
+     "description": "Textos: segment, marker, bar, legend, keyboard, noData."
+    }
+   ],
+   "a11y": "Un role=group con nombre (label) descrito por un resumen con todos los tramos y el marcador. Cada tramo es un role=img enfocable con su nombre («High: 20 (20%)»): una parada de Tab, flechas entre tramos (en RTL siguen la dirección visual), Inicio/Fin y Escape; el tooltip se ve al pasar o enfocar. La zona de cada tramo mide 24 px de alto aunque la barra sea fina. Hueco de 2 px entre tramos y trama opcional (siempre con colores forzados) para no depender del color.",
+   "examples": [
+    {
+     "title": "Con marcador y rótulos",
+     "code": "<CategoryBar\n  label=\"Error budget\"\n  values={[40,30,20,10]}\n  categories={[\"Healthy\",\"Watch\",\"At risk\",\"Critical\"]}\n  colors={[4,1,2,3]}\n  marker={{value: 62}}\n  showLabels\n  legend\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Con marcador y rótulos",
+     "code": "<div class=\"z-category-bar\" data-label=\"Error budget\" data-show-labels data-legend data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"values\":[40,30,20,10],\"categories\":[\"Healthy\",\"Watch\",\"At risk\",\"Critical\"],\"colors\":[4,1,2,3],\"marker\":{\"value\":62}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/CategoryBar.manifest.json"
+  },
+  {
+   "name": "ComboChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
+   "description": "Barras y líneas en el mismo gráfico sobre un eje de categorías o tiempo: cada serie elige su forma (series[].type) y su eje de valores, el principal o un secundario al final (series[].axis = \"end\") con su propia escala y formato; barras agrupadas o apiladas, líneas por encima, tooltip con todas las series, flechas entre posiciones, leyenda y tabla alternativa.",
+   "import": "import { ComboChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: una por posición del eje."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave de la categoría o del tiempo en cada fila."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "required": true,
+     "description": "{ key, label, color?, marker?, type?: \"bar\" | \"line\", axis?: \"start\" | \"end\" }. Por defecto, barras en el eje principal."
+    },
+    {
+     "name": "xType",
+     "type": "enum",
+     "values": [
+      "category",
+      "time",
+      "number"
+     ],
+     "description": "Por defecto, time si todos los valores son fechas (Date, ISO o ms)."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre del eje (cabecera de la tabla alternativa)."
+    },
+    {
+     "name": "xFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "description": "Formato de los rótulos de tiempo (por defecto, según la escala: horas, días, meses o años)."
+    },
+    {
+     "name": "yMin",
+     "type": "number"
+    },
+    {
+     "name": "yMax",
+     "type": "number"
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "curve",
+     "type": "enum",
+     "values": [
+      "linear",
+      "monotone",
+      "step"
+     ],
+     "default": "linear"
+    },
+    {
+     "name": "markers",
+     "type": "boolean",
+     "default": false,
+     "description": "Marcador con forma propia por serie (círculo, cuadrado, rombo, triángulo)."
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "stacked",
+     "type": "boolean",
+     "default": false,
+     "description": "Apila las series de barras (las líneas nunca)."
+    },
+    {
+     "name": "y2Min",
+     "type": "number",
+     "description": "Mínimo del eje secundario."
+    },
+    {
+     "name": "y2Max",
+     "type": "number",
+     "description": "Máximo del eje secundario."
+    },
+    {
+     "name": "y2Format",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de las series del eje secundario (por defecto, valueFormat)."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "Como BarChart: figure con figcaption y resumen; cada posición del eje es un role=img enfocable con los valores de todas las series, cada una con el formato de su eje («March 2026: Revenue $45,000, Margin 19%»), flechas, Inicio/Fin, Re Pág/Av Pág, Intro y Escape. Leyenda con la muestra de cada forma (barra o línea) y aria-pressed; tabla alternativa. Barras con trama y líneas con trazo por serie (patterns); los dos ejes de valores llevan sus rótulos, y el secundario solo existe si alguna serie visible lo usa.",
+   "examples": [
+    {
+     "title": "Ingresos y margen",
+     "code": "<ComboChart\n  title=\"Revenue and margin\"\n  description=\"Monthly, 2026\"\n  data={[{month: \"2026-01\",revenue: 42000,margin: 0.18},{month: \"2026-02\",revenue: 48000,margin: 0.21},{month: \"2026-03\",revenue: 45000,margin: 0.19},{month: \"2026-04\",revenue: 61000,margin: 0.24},{month: \"2026-05\",revenue: 66000,margin: 0.26},{month: \"2026-06\",revenue: 72000,margin: 0.28}]}\n  xKey=\"month\"\n  series={[{key: \"revenue\",label: \"Revenue\"},{key: \"margin\",label: \"Margin\",type: \"line\",axis: \"end\"}]}\n  valueFormat={{style: \"currency\",currency: \"USD\",maximumFractionDigits: 0}}\n  y2Format={{style: \"percent\"}}\n  markers\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Ingresos y margen",
+     "code": "<div class=\"z-chart\" data-type=\"combo\" data-title=\"Revenue and margin\" data-description=\"Monthly, 2026\" data-x-key=\"month\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"margin\":0.18},{\"month\":\"2026-02\",\"revenue\":48000,\"margin\":0.21},{\"month\":\"2026-03\",\"revenue\":45000,\"margin\":0.19},{\"month\":\"2026-04\",\"revenue\":61000,\"margin\":0.24},{\"month\":\"2026-05\",\"revenue\":66000,\"margin\":0.26},{\"month\":\"2026-06\",\"revenue\":72000,\"margin\":0.28}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"margin\",\"label\":\"Margin\",\"type\":\"line\",\"axis\":\"end\"}],\"valueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0},\"y2Format\":{\"style\":\"percent\"}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/ComboChart.manifest.json"
+  },
+  {
    "name": "DonutChart",
    "group": "charts",
    "states": [
@@ -5378,6 +6069,248 @@
     }
    ],
    "file": "zui/src/components/charts/DonutChart.manifest.json"
+  },
+  {
+   "name": "HeatmapChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip",
+    "heatmap-0",
+    "heatmap-1",
+    "heatmap-2",
+    "heatmap-3",
+    "heatmap-4",
+    "heatmap-neg-1",
+    "heatmap-neg-2",
+    "heatmap-neg-3",
+    "heatmap-neg-4",
+    "heatmap-pos-1",
+    "heatmap-pos-2",
+    "heatmap-pos-3",
+    "heatmap-pos-4",
+    "line-strong",
+    "layer-raised"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas. Navegación de rejilla según el patrón grid de APG.",
+   "description": "Mapa de calor: matriz de celdas (por ejemplo día × hora) con escala secuencial de cinco niveles o divergente de cuatro por lado alrededor de un punto medio, leyenda de la escala con el tramo de cada nivel, valor escrito opcional, tooltip y navegación de celdas con flechas como una rejilla (role=grid).",
+   "import": "import { HeatmapChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: una celda por fila (columna, fila y valor)."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave de la columna. Las columnas siguen el orden de aparición."
+    },
+    {
+     "name": "yKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave de la fila. Las filas siguen el orden de aparición."
+    },
+    {
+     "name": "valueKey",
+     "type": "string",
+     "default": "value",
+     "description": "Clave del valor."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "description": "Solo el nombre de la medida: [{ key, label }] (tooltip y resumen)."
+    },
+    {
+     "name": "scale",
+     "type": "enum",
+     "values": [
+      "sequential",
+      "diverging"
+     ],
+     "default": "sequential",
+     "description": "Secuencial (de menos a más) o divergente alrededor de midpoint."
+    },
+    {
+     "name": "domain",
+     "type": "[number, number]",
+     "description": "Extremos de la escala (por defecto, los de los datos; en la divergente, simétricos alrededor del punto medio)."
+    },
+    {
+     "name": "midpoint",
+     "type": "number",
+     "default": 0,
+     "description": "Valor neutro de la escala divergente."
+    },
+    {
+     "name": "showValues",
+     "type": "boolean",
+     "default": false,
+     "description": "Escribe el valor en cada celda (con colores forzados se escribe siempre)."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre de las columnas."
+    },
+    {
+     "name": "yLabel",
+     "type": "string",
+     "description": "Nombre de las filas (cabecera de la tabla y de la esquina de la rejilla)."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption y resumen (filas × columnas, mínimo y máximo con su celda). La matriz es un role=grid con nombre y descripción: una fila de role=columnheader y, en cada fila, un role=rowheader y las celdas role=gridcell, cada una con su nombre completo («Tue, 13: 31»). Una parada de Tab; flechas entre celdas, Inicio/Fin al principio y al final de la fila, Ctrl+Inicio/Fin a la primera y la última celda, Re Pág/Av Pág de 5 en 5 filas, Intro para onPointClick, Escape cierra el tooltip; en RTL ←→ siguen la dirección visual. Los niveles crecen en luminosidad (también se leen en escala de grises), la divergente usa dos tonos que se distinguen con daltonismo (azul de info y ámbar de warning) y la leyenda dice el tramo de cada nivel; una celda sin dato es un hueco con borde discontinuo. Con colores forzados, cada celda escribe su valor. Tabla alternativa.",
+   "examples": [
+    {
+     "title": "Actividad por día y hora",
+     "code": "<HeatmapChart\n  title=\"Support tickets\"\n  description=\"By weekday and hour\"\n  data={[{day: \"Mon\",hour: \"08\",value: 4},{day: \"Mon\",hour: \"09\",value: 7},{day: \"Mon\",hour: \"10\",value: 10},{day: \"Mon\",hour: \"11\",value: 12},{day: \"Mon\",hour: \"12\",value: 18},{day: \"Mon\",hour: \"13\",value: 19},{day: \"Mon\",hour: \"14\",value: 14},{day: \"Mon\",hour: \"15\",value: 13},{day: \"Mon\",hour: \"16\",value: 12},{day: \"Mon\",hour: \"17\",value: 10},{day: \"Mon\",hour: \"18\",value: 7},{day: \"Mon\",hour: \"19\",value: 4},{day: \"Tue\",hour: \"08\",value: 6},{day: \"Tue\",hour: \"09\",value: 11},{day: \"Tue\",hour: \"10\",value: 15},{day: \"Tue\",hour: \"11\",value: 18},{day: \"Tue\",hour: \"12\",value: 25},{day: \"Tue\",hour: \"13\",value: 26},{day: \"Tue\",hour: \"14\",value: 21},{day: \"Tue\",hour: \"15\",value: 20},{day: \"Tue\",hour: \"16\",value: 18},{day: \"Tue\",hour: \"17\",value: 15},{day: \"Tue\",hour: \"18\",value: 11},{day: \"Tue\",hour: \"19\",value: 6},{day: \"Wed\",hour: \"08\",value: 8},{day: \"Wed\",hour: \"09\",value: 15},{day: \"Wed\",hour: \"10\",value: 20},{day: \"Wed\",hour: \"11\",value: 24},{day: \"Wed\",hour: \"12\",value: 32},{day: \"Wed\",hour: \"13\",value: 33},{day: \"Wed\",hour: \"14\",value: 28},{day: \"Wed\",hour: \"15\",value: 27},{day: \"Wed\",hour: \"16\",value: 24},{day: \"Wed\",hour: \"17\",value: 20},{day: \"Wed\",hour: \"18\",value: 15},{day: \"Wed\",hour: \"19\",value: 8},{day: \"Thu\",hour: \"08\",value: 4},{day: \"Thu\",hour: \"09\",value: 7},{day: \"Thu\",hour: \"10\",value: 10},{day: \"Thu\",hour: \"11\",value: 12},{day: \"Thu\",hour: \"12\",value: 18},{day: \"Thu\",hour: \"13\",value: 19},{day: \"Thu\",hour: \"14\",value: 14},{day: \"Thu\",hour: \"15\",value: 13},{day: \"Thu\",hour: \"16\",value: 12},{day: \"Thu\",hour: \"17\",value: 10},{day: \"Thu\",hour: \"18\",value: 7},{day: \"Thu\",hour: \"19\",value: 4},{day: \"Fri\",hour: \"08\",value: 6},{day: \"Fri\",hour: \"09\",value: 11},{day: \"Fri\",hour: \"10\",value: 15},{day: \"Fri\",hour: \"11\",value: 18},{day: \"Fri\",hour: \"12\",value: 25},{day: \"Fri\",hour: \"13\",value: 26},{day: \"Fri\",hour: \"14\",value: 21},{day: \"Fri\",hour: \"15\",value: 20},{day: \"Fri\",hour: \"16\",value: 18},{day: \"Fri\",hour: \"17\",value: 15},{day: \"Fri\",hour: \"18\",value: 11},{day: \"Fri\",hour: \"19\",value: 6}]}\n  xKey=\"hour\"\n  yKey=\"day\"\n  xLabel=\"Hour\"\n  yLabel=\"Day\"\n  series={[{key: \"value\",label: \"Tickets\"}]}\n  locale=\"en-US\"\n/>"
+    },
+    {
+     "title": "Escala divergente",
+     "code": "<HeatmapChart\n  title=\"Change vs last year\"\n  data={[{region: \"North\",month: \"Jan\",value: 4},{region: \"North\",month: \"Feb\",value: 7},{region: \"North\",month: \"Mar\",value: -2},{region: \"North\",month: \"Apr\",value: -6},{region: \"North\",month: \"May\",value: 3},{region: \"North\",month: \"Jun\",value: 9},{region: \"South\",month: \"Jan\",value: -8},{region: \"South\",month: \"Feb\",value: -5},{region: \"South\",month: \"Mar\",value: -3},{region: \"South\",month: \"Apr\",value: 1},{region: \"South\",month: \"May\",value: 4},{region: \"South\",month: \"Jun\",value: 2},{region: \"East\",month: \"Jan\",value: 12},{region: \"East\",month: \"Feb\",value: 9},{region: \"East\",month: \"Mar\",value: 6},{region: \"East\",month: \"Apr\",value: 2},{region: \"East\",month: \"May\",value: -1},{region: \"East\",month: \"Jun\",value: -4},{region: \"West\",month: \"Jan\",value: -3},{region: \"West\",month: \"Feb\",value: -9},{region: \"West\",month: \"Mar\",value: -12},{region: \"West\",month: \"Apr\",value: -7},{region: \"West\",month: \"May\",value: -2},{region: \"West\",month: \"Jun\",value: 5}]}\n  xKey=\"month\"\n  yKey=\"region\"\n  yLabel=\"Region\"\n  scale=\"diverging\"\n  showValues\n  series={[{key: \"value\",label: \"Change\"}]}\n  valueFormat={{style: \"unit\",unit: \"percent\",signDisplay: \"exceptZero\"}}\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Actividad por día y hora",
+     "code": "<div class=\"z-chart\" data-type=\"heatmap\" data-title=\"Support tickets\" data-description=\"By weekday and hour\" data-x-key=\"hour\" data-y-key=\"day\" data-x-label=\"Hour\" data-y-label=\"Day\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"day\":\"Mon\",\"hour\":\"08\",\"value\":4},{\"day\":\"Mon\",\"hour\":\"09\",\"value\":7},{\"day\":\"Mon\",\"hour\":\"10\",\"value\":10},{\"day\":\"Mon\",\"hour\":\"11\",\"value\":12},{\"day\":\"Mon\",\"hour\":\"12\",\"value\":18},{\"day\":\"Mon\",\"hour\":\"13\",\"value\":19},{\"day\":\"Mon\",\"hour\":\"14\",\"value\":14},{\"day\":\"Mon\",\"hour\":\"15\",\"value\":13},{\"day\":\"Mon\",\"hour\":\"16\",\"value\":12},{\"day\":\"Mon\",\"hour\":\"17\",\"value\":10},{\"day\":\"Mon\",\"hour\":\"18\",\"value\":7},{\"day\":\"Mon\",\"hour\":\"19\",\"value\":4},{\"day\":\"Tue\",\"hour\":\"08\",\"value\":6},{\"day\":\"Tue\",\"hour\":\"09\",\"value\":11},{\"day\":\"Tue\",\"hour\":\"10\",\"value\":15},{\"day\":\"Tue\",\"hour\":\"11\",\"value\":18},{\"day\":\"Tue\",\"hour\":\"12\",\"value\":25},{\"day\":\"Tue\",\"hour\":\"13\",\"value\":26},{\"day\":\"Tue\",\"hour\":\"14\",\"value\":21},{\"day\":\"Tue\",\"hour\":\"15\",\"value\":20},{\"day\":\"Tue\",\"hour\":\"16\",\"value\":18},{\"day\":\"Tue\",\"hour\":\"17\",\"value\":15},{\"day\":\"Tue\",\"hour\":\"18\",\"value\":11},{\"day\":\"Tue\",\"hour\":\"19\",\"value\":6},{\"day\":\"Wed\",\"hour\":\"08\",\"value\":8},{\"day\":\"Wed\",\"hour\":\"09\",\"value\":15},{\"day\":\"Wed\",\"hour\":\"10\",\"value\":20},{\"day\":\"Wed\",\"hour\":\"11\",\"value\":24},{\"day\":\"Wed\",\"hour\":\"12\",\"value\":32},{\"day\":\"Wed\",\"hour\":\"13\",\"value\":33},{\"day\":\"Wed\",\"hour\":\"14\",\"value\":28},{\"day\":\"Wed\",\"hour\":\"15\",\"value\":27},{\"day\":\"Wed\",\"hour\":\"16\",\"value\":24},{\"day\":\"Wed\",\"hour\":\"17\",\"value\":20},{\"day\":\"Wed\",\"hour\":\"18\",\"value\":15},{\"day\":\"Wed\",\"hour\":\"19\",\"value\":8},{\"day\":\"Thu\",\"hour\":\"08\",\"value\":4},{\"day\":\"Thu\",\"hour\":\"09\",\"value\":7},{\"day\":\"Thu\",\"hour\":\"10\",\"value\":10},{\"day\":\"Thu\",\"hour\":\"11\",\"value\":12},{\"day\":\"Thu\",\"hour\":\"12\",\"value\":18},{\"day\":\"Thu\",\"hour\":\"13\",\"value\":19},{\"day\":\"Thu\",\"hour\":\"14\",\"value\":14},{\"day\":\"Thu\",\"hour\":\"15\",\"value\":13},{\"day\":\"Thu\",\"hour\":\"16\",\"value\":12},{\"day\":\"Thu\",\"hour\":\"17\",\"value\":10},{\"day\":\"Thu\",\"hour\":\"18\",\"value\":7},{\"day\":\"Thu\",\"hour\":\"19\",\"value\":4},{\"day\":\"Fri\",\"hour\":\"08\",\"value\":6},{\"day\":\"Fri\",\"hour\":\"09\",\"value\":11},{\"day\":\"Fri\",\"hour\":\"10\",\"value\":15},{\"day\":\"Fri\",\"hour\":\"11\",\"value\":18},{\"day\":\"Fri\",\"hour\":\"12\",\"value\":25},{\"day\":\"Fri\",\"hour\":\"13\",\"value\":26},{\"day\":\"Fri\",\"hour\":\"14\",\"value\":21},{\"day\":\"Fri\",\"hour\":\"15\",\"value\":20},{\"day\":\"Fri\",\"hour\":\"16\",\"value\":18},{\"day\":\"Fri\",\"hour\":\"17\",\"value\":15},{\"day\":\"Fri\",\"hour\":\"18\",\"value\":11},{\"day\":\"Fri\",\"hour\":\"19\",\"value\":6}],\"series\":[{\"key\":\"value\",\"label\":\"Tickets\"}]}</script>\n</div>"
+    },
+    {
+     "title": "Escala divergente",
+     "code": "<div class=\"z-chart\" data-type=\"heatmap\" data-title=\"Change vs last year\" data-x-key=\"month\" data-y-key=\"region\" data-y-label=\"Region\" data-scale=\"diverging\" data-show-values data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"region\":\"North\",\"month\":\"Jan\",\"value\":4},{\"region\":\"North\",\"month\":\"Feb\",\"value\":7},{\"region\":\"North\",\"month\":\"Mar\",\"value\":-2},{\"region\":\"North\",\"month\":\"Apr\",\"value\":-6},{\"region\":\"North\",\"month\":\"May\",\"value\":3},{\"region\":\"North\",\"month\":\"Jun\",\"value\":9},{\"region\":\"South\",\"month\":\"Jan\",\"value\":-8},{\"region\":\"South\",\"month\":\"Feb\",\"value\":-5},{\"region\":\"South\",\"month\":\"Mar\",\"value\":-3},{\"region\":\"South\",\"month\":\"Apr\",\"value\":1},{\"region\":\"South\",\"month\":\"May\",\"value\":4},{\"region\":\"South\",\"month\":\"Jun\",\"value\":2},{\"region\":\"East\",\"month\":\"Jan\",\"value\":12},{\"region\":\"East\",\"month\":\"Feb\",\"value\":9},{\"region\":\"East\",\"month\":\"Mar\",\"value\":6},{\"region\":\"East\",\"month\":\"Apr\",\"value\":2},{\"region\":\"East\",\"month\":\"May\",\"value\":-1},{\"region\":\"East\",\"month\":\"Jun\",\"value\":-4},{\"region\":\"West\",\"month\":\"Jan\",\"value\":-3},{\"region\":\"West\",\"month\":\"Feb\",\"value\":-9},{\"region\":\"West\",\"month\":\"Mar\",\"value\":-12},{\"region\":\"West\",\"month\":\"Apr\",\"value\":-7},{\"region\":\"West\",\"month\":\"May\",\"value\":-2},{\"region\":\"West\",\"month\":\"Jun\",\"value\":5}],\"series\":[{\"key\":\"value\",\"label\":\"Change\"}],\"valueFormat\":{\"style\":\"unit\",\"unit\":\"percent\",\"signDisplay\":\"exceptZero\"}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/HeatmapChart.manifest.json"
   },
   {
    "name": "LineChart",
@@ -5809,6 +6742,502 @@
     }
    ],
    "file": "zui/src/components/charts/PieChart.manifest.json"
+  },
+  {
+   "name": "RadarChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
+   "description": "Radar: un eje radial por fila, varias series como polígonos con relleno translúcido, retícula poligonal o circular con escala configurable (mínimo, máximo y divisiones, escrita bajo el radar para no pisar los anillos), cuña enfocable por eje con los valores de todas las series, tooltip, leyenda que oculta series y tabla alternativa.",
+   "import": "import { RadarChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: un eje radial por fila."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave del nombre de cada eje."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "required": true,
+     "description": "{ key, label, color? (1–8), marker? }. El color sigue a la serie."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre de los ejes (cabecera de la tabla)."
+    },
+    {
+     "name": "yMin",
+     "type": "number",
+     "description": "Centro de la escala (por defecto, 0)."
+    },
+    {
+     "name": "yMax",
+     "type": "number",
+     "description": "Borde de la escala (por defecto, el máximo redondeado)."
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Anillos aproximados de la retícula."
+    },
+    {
+     "name": "gridShape",
+     "type": "enum",
+     "values": [
+      "polygon",
+      "circle"
+     ],
+     "default": "polygon",
+     "description": "Retícula de polígonos o de círculos."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "markers",
+     "type": "boolean",
+     "default": false,
+     "description": "Marcador con forma propia por serie (círculo, cuadrado, rombo, triángulo)."
+    },
+    {
+     "name": "patterns",
+     "type": "boolean",
+     "default": false,
+     "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption y resumen (series, ejes y mínimo y máximo de cada serie). Cada eje es una cuña role=img enfocable con su nombre («Speed: Model A 82, Model B 64»): una parada de Tab, flechas entre ejes, Inicio/Fin, Intro para onPointClick y Escape. El tooltip y los vértices del eje activo se ven al pasar y al enfocar. Leyenda con aria-pressed y tabla alternativa. Además del color: marcadores con forma (markers) y trazo por serie (patterns); con colores forzados, polígonos sin relleno en CanvasText con su trazo.",
+   "examples": [
+    {
+     "title": "Dos modelos",
+     "code": "<RadarChart\n  title=\"Model comparison\"\n  data={[{axis: \"Speed\",a: 82,b: 64},{axis: \"Range\",a: 58,b: 88},{axis: \"Comfort\",a: 71,b: 76},{axis: \"Safety\",a: 90,b: 81},{axis: \"Price\",a: 52,b: 72},{axis: \"Tech\",a: 86,b: 60}]}\n  xKey=\"axis\"\n  series={[{key: \"a\",label: \"Model A\"},{key: \"b\",label: \"Model B\"}]}\n  yMax={100}\n  yTicks={4}\n  markers\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Dos modelos",
+     "code": "<div class=\"z-chart\" data-type=\"radar\" data-title=\"Model comparison\" data-x-key=\"axis\" data-y-max=\"100\" data-y-ticks=\"4\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"axis\":\"Speed\",\"a\":82,\"b\":64},{\"axis\":\"Range\",\"a\":58,\"b\":88},{\"axis\":\"Comfort\",\"a\":71,\"b\":76},{\"axis\":\"Safety\",\"a\":90,\"b\":81},{\"axis\":\"Price\",\"a\":52,\"b\":72},{\"axis\":\"Tech\",\"a\":86,\"b\":60}],\"series\":[{\"key\":\"a\",\"label\":\"Model A\"},{\"key\":\"b\",\"label\":\"Model B\"}]}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/RadarChart.manifest.json"
+  },
+  {
+   "name": "ScatterChart",
+   "group": "charts",
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "hidden-series",
+    "table"
+   ],
+   "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+   ],
+   "classes": [
+    "z-chart"
+   ],
+   "behavior": "dom",
+   "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas. Regresión lineal por mínimos cuadrados en core/chart.",
+   "description": "Dispersión: dos medidas por punto, varias series con forma propia (círculo, cuadrado, rombo, triángulo), burbujas con el área proporcional a una tercera medida, recta de regresión lineal opcional por serie, tooltip al pasar o enfocar, flechas entre puntos, leyenda que oculta series y tabla alternativa.",
+   "import": "import { ScatterChart } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "data",
+     "type": "Record<string, unknown>[]",
+     "required": true,
+     "description": "Filas: un punto por fila."
+    },
+    {
+     "name": "xKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave del valor horizontal."
+    },
+    {
+     "name": "yKey",
+     "type": "string",
+     "required": true,
+     "description": "Clave del valor vertical."
+    },
+    {
+     "name": "sizeKey",
+     "type": "string",
+     "description": "Clave del tamaño: burbujas con el área proporcional al valor (escala de raíz cuadrada)."
+    },
+    {
+     "name": "seriesKey",
+     "type": "string",
+     "description": "Clave que reparte las filas en series (su valor es la key de la serie)."
+    },
+    {
+     "name": "series",
+     "type": "ChartSeries[]",
+     "description": "{ key, label, color? (1–8), marker? } de cada valor de seriesKey: nombre, color y forma. El color sigue a la serie."
+    },
+    {
+     "name": "labelKey",
+     "type": "string",
+     "description": "Clave del nombre de cada punto (entra en su nombre accesible, el tooltip y la tabla)."
+    },
+    {
+     "name": "trend",
+     "type": "boolean",
+     "default": false,
+     "description": "Recta de regresión lineal por serie, sobre el tramo de x de sus datos; la pendiente y R² van en el resumen."
+    },
+    {
+     "name": "xLabel",
+     "type": "string",
+     "description": "Nombre del eje horizontal (tooltip, nombre de cada punto y tabla)."
+    },
+    {
+     "name": "yLabel",
+     "type": "string",
+     "description": "Nombre del eje vertical."
+    },
+    {
+     "name": "sizeLabel",
+     "type": "string",
+     "description": "Nombre del tamaño."
+    },
+    {
+     "name": "xValueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores horizontales."
+    },
+    {
+     "name": "sizeFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato del tamaño."
+    },
+    {
+     "name": "xMin",
+     "type": "number"
+    },
+    {
+     "name": "xMax",
+     "type": "number"
+    },
+    {
+     "name": "yMin",
+     "type": "number"
+    },
+    {
+     "name": "yMax",
+     "type": "number"
+    },
+    {
+     "name": "yTicks",
+     "type": "number",
+     "default": 5,
+     "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Texto visible bajo el título."
+    },
+    {
+     "name": "summary",
+     "type": "string",
+     "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+     "name": "valueFormat",
+     "type": "Intl.NumberFormatOptions",
+     "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Locale de Intl para números y fechas."
+    },
+    {
+     "name": "legend",
+     "type": "boolean",
+     "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+     "name": "tooltip",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "height",
+     "type": "number",
+     "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+     "name": "defaultView",
+     "type": "enum",
+     "values": [
+      "chart",
+      "table"
+     ],
+     "default": "chart",
+     "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": true,
+     "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+     "name": "framed",
+     "type": "boolean",
+     "default": true,
+     "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChartLabels>",
+     "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+     "name": "hidden",
+     "type": "string[]",
+     "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+     "name": "defaultHidden",
+     "type": "string[]"
+    },
+    {
+     "name": "onPointClick",
+     "type": "(detail: { index, datum }) => void",
+     "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+     "name": "onHiddenChange",
+     "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+     "name": "onViewChange",
+     "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+   ],
+   "a11y": "figure con figcaption y resumen en texto (series, número de puntos, tramo de x y, con trend, pendiente y R² de cada serie). Cada punto es un role=img enfocable con su nombre completo («Delta (Enterprise): Revenue $46, Margin 27%, Employees 410»): una parada de Tab; ←→ recorren la serie en orden de x, ↑↓ pasan a la serie siguiente o anterior al punto de x más cercana, Inicio/Fin, Intro o Espacio para onPointClick, Escape cierra el tooltip; en RTL ←→ siguen la dirección visual. Cada punto ocupa al menos 24 × 24 px aunque la marca sea menor. El puntero activa el punto más cercano a 32 px. Nada depende solo del color: forma por serie, borde en las burbujas y trazo discontinuo en la tendencia; con colores forzados, marcas en CanvasText.",
+   "examples": [
+    {
+     "title": "Burbujas por segmento con tendencia",
+     "code": "<ScatterChart\n  title=\"Revenue and margin\"\n  description=\"Bubble size: employees\"\n  data={[{name: \"Acme\",revenue: 12,margin: 18,staff: 120,segment: \"SMB\"},{name: \"Birch\",revenue: 21,margin: 24,staff: 210,segment: \"SMB\"},{name: \"Cobalt\",revenue: 33,margin: 20,staff: 260,segment: \"SMB\"},{name: \"Delta\",revenue: 46,margin: 27,staff: 410,segment: \"Enterprise\"},{name: \"Ember\",revenue: 59,margin: 31,staff: 520,segment: \"Enterprise\"},{name: \"Fjord\",revenue: 74,margin: 36,staff: 780,segment: \"Enterprise\"}]}\n  xKey=\"revenue\"\n  yKey=\"margin\"\n  sizeKey=\"staff\"\n  seriesKey=\"segment\"\n  labelKey=\"name\"\n  series={[{key: \"SMB\",label: \"SMB\"},{key: \"Enterprise\",label: \"Enterprise\"}]}\n  xLabel=\"Revenue\"\n  yLabel=\"Margin\"\n  sizeLabel=\"Employees\"\n  xValueFormat={{style: \"currency\",currency: \"USD\",maximumFractionDigits: 0}}\n  valueFormat={{style: \"unit\",unit: \"percent\"}}\n  trend\n  locale=\"en-US\"\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Burbujas por segmento con tendencia",
+     "code": "<div class=\"z-chart\" data-type=\"scatter\" data-title=\"Revenue and margin\" data-description=\"Bubble size: employees\" data-x-key=\"revenue\" data-y-key=\"margin\" data-size-key=\"staff\" data-series-key=\"segment\" data-label-key=\"name\" data-x-label=\"Revenue\" data-y-label=\"Margin\" data-size-label=\"Employees\" data-trend data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"name\":\"Acme\",\"revenue\":12,\"margin\":18,\"staff\":120,\"segment\":\"SMB\"},{\"name\":\"Birch\",\"revenue\":21,\"margin\":24,\"staff\":210,\"segment\":\"SMB\"},{\"name\":\"Cobalt\",\"revenue\":33,\"margin\":20,\"staff\":260,\"segment\":\"SMB\"},{\"name\":\"Delta\",\"revenue\":46,\"margin\":27,\"staff\":410,\"segment\":\"Enterprise\"},{\"name\":\"Ember\",\"revenue\":59,\"margin\":31,\"staff\":520,\"segment\":\"Enterprise\"},{\"name\":\"Fjord\",\"revenue\":74,\"margin\":36,\"staff\":780,\"segment\":\"Enterprise\"}],\"series\":[{\"key\":\"SMB\",\"label\":\"SMB\"},{\"key\":\"Enterprise\",\"label\":\"Enterprise\"}],\"xValueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0},\"valueFormat\":{\"style\":\"unit\",\"unit\":\"percent\"}}</script>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/charts/ScatterChart.manifest.json"
   },
   {
    "name": "Sparkline",
@@ -9766,6 +11195,12 @@
     {
      "name": "format",
      "type": "Intl.NumberFormatOptions"
+    },
+    {
+     "name": "animate",
+     "type": "boolean",
+     "default": false,
+     "description": "Un valor numérico cuenta del anterior al nuevo al cambiar (AnimatedNumber): el servidor pinta el valor final y los lectores de pantalla solo lo leen a él. Sin cuenta con prefers-reduced-motion."
     },
     {
      "name": "previous",

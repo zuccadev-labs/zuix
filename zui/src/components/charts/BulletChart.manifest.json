@@ -1,0 +1,193 @@
+{
+  "name": "BulletChart",
+  "group": "charts",
+  "states": ["rest", "hover", "focus", "table"],
+  "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip",
+    "layer-raised"
+  ],
+  "classes": ["z-chart"],
+  "behavior": "dom",
+  "origin": "Gráfico de bala de Stephen Few (barra del valor, marca del objetivo y rangos cualitativos en grises), en HTML colocado por fracciones. Sin bibliotecas.",
+  "description": "Bala: por fila, el valor como barra sobre bandas de rangos cualitativos (de más oscura, la peor, a más clara) y el objetivo como marca, en horizontal o vertical, con una escala común, tooltip, flechas entre filas, leyenda de las piezas y tabla alternativa.",
+  "import": "import { BulletChart } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "data",
+      "type": "BulletDatum[]",
+      "required": true,
+      "description": "{ label, value, target?, ranges?, max?, color? (1–8) } por fila."
+    },
+    {
+      "name": "ranges",
+      "type": "number[]",
+      "description": "Límites superiores de los rangos cualitativos, de menor a mayor, comunes a todas las filas (cada fila puede traer los suyos)."
+    },
+    {
+      "name": "rangeLabels",
+      "type": "string[]",
+      "description": "Nombre de cada rango («Poor», «Fair», «Good»): entra en la leyenda, la tabla y el nombre de la fila."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "name": "xLabel",
+      "type": "string",
+      "description": "Cabecera de la columna de nombres de la tabla."
+    },
+    {
+      "name": "yMin",
+      "type": "number"
+    },
+    {
+      "name": "yMax",
+      "type": "number",
+      "description": "Fin de la escala (por defecto, el mayor de valores, objetivos y rangos)."
+    },
+    {
+      "name": "yTicks",
+      "type": "number",
+      "default": 5,
+      "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Texto visible bajo el título."
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Locale de Intl para números y fechas."
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+      "name": "tooltip",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+      "name": "defaultView",
+      "type": "enum",
+      "values": ["chart", "table"],
+      "default": "chart",
+      "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+      "name": "animate",
+      "type": "boolean",
+      "default": true,
+      "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+      "name": "framed",
+      "type": "boolean",
+      "default": true,
+      "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChartLabels>",
+      "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+      "name": "onPointClick",
+      "type": "(detail: { index, datum }) => void",
+      "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+      "name": "onViewChange",
+      "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+  ],
+  "a11y": "figure con figcaption y resumen con cada fila. Cada fila es un role=img enfocable con su nombre completo («South: 64, target 75, in Fair»): una parada de Tab, flechas entre filas, Inicio/Fin, Intro para onPointClick y Escape. El tooltip repite valor, objetivo y rango. Los rangos se distinguen por luminosidad (gris de fg al 26, 17 y 9 %) y no por tono; la barra del valor usa el color de serie y el objetivo es una marca de fg a 3:1 o más sobre cualquier rango. Con colores forzados, valor y objetivo en CanvasText y los rangos separados por un trazo. Tabla alternativa.",
+  "examples": [
+    {
+      "title": "Satisfacción por región",
+      "code": "<BulletChart\n  title=\"Customer satisfaction\"\n  description=\"Score out of 100\"\n  data={[{label: \"North\",value: 82,target: 85},{label: \"South\",value: 64,target: 75},{label: \"East\",value: 91,target: 80},{label: \"West\",value: 47,target: 70}]}\n  ranges={[50,75,100]}\n  rangeLabels={[\"Poor\",\"Fair\",\"Good\"]}\n  xLabel=\"Region\"\n  locale=\"en-US\"\n/>"
+    },
+    {
+      "title": "Vertical",
+      "code": "<BulletChart\n  title=\"Customer satisfaction\"\n  data={[{label: \"North\",value: 82,target: 85},{label: \"South\",value: 64,target: 75},{label: \"East\",value: 91,target: 80},{label: \"West\",value: 47,target: 70}]}\n  ranges={[50,75,100]}\n  rangeLabels={[\"Poor\",\"Fair\",\"Good\"]}\n  orientation=\"vertical\"\n  locale=\"en-US\"\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Satisfacción por región",
+      "code": "<div class=\"z-chart\" data-type=\"bullet\" data-title=\"Customer satisfaction\" data-description=\"Score out of 100\" data-x-label=\"Region\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"North\",\"value\":82,\"target\":85},{\"label\":\"South\",\"value\":64,\"target\":75},{\"label\":\"East\",\"value\":91,\"target\":80},{\"label\":\"West\",\"value\":47,\"target\":70}],\"ranges\":[50,75,100],\"rangeLabels\":[\"Poor\",\"Fair\",\"Good\"]}</script>\n</div>"
+    },
+    {
+      "title": "Vertical",
+      "code": "<div class=\"z-chart\" data-type=\"bullet\" data-title=\"Customer satisfaction\" data-orientation=\"vertical\" data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"label\":\"North\",\"value\":82,\"target\":85},{\"label\":\"South\",\"value\":64,\"target\":75},{\"label\":\"East\",\"value\":91,\"target\":80},{\"label\":\"West\",\"value\":47,\"target\":70}],\"ranges\":[50,75,100],\"rangeLabels\":[\"Poor\",\"Fair\",\"Good\"]}</script>\n</div>"
+    }
+  ]
+}

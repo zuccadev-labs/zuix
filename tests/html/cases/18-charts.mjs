@@ -1,4 +1,5 @@
-// Gráficos sin framework: LineChart, BarChart, DonutChart y Sparkline montados desde zui/html.json con zui/dom
+// Gráficos sin framework: LineChart, BarChart, DonutChart, Sparkline, ScatterChart, RadarChart, ComboChart,
+// HeatmapChart, BulletChart, CategoryBar y AnimatedNumber montados desde zui/html.json con zui/dom
 // (SVG en su espacio de nombres, foco y flechas entre puntos, tooltip, leyenda que oculta series, tabla alternativa,
 // eventos z:pointclick / z:hiddenchange / z:viewchange y RTL).
 import { readFileSync } from "node:fs";
@@ -163,6 +164,151 @@ export default async function ({ page, test, ok }) {
     );
     ok((await box.locator(".z-sparkline rect").count()) === 7, "barras del segundo");
   });
+  await test("ScatterChart sin React: puntos con nombre, ←→ por la serie, ↓ a la otra, tendencia y puntero cercano", async () => {
+    const box = await inject("ScatterChart");
+    const points = box.locator(".z-chart__point");
+    ok((await points.count()) === 6, "un punto por fila");
+    ok((await box.locator('.z-chart__point[tabindex="0"]').count()) === 1, "una sola parada de Tab");
+    ok((await box.locator(".z-chart__trend").count()) === 2, "una recta por serie");
+    await points.first().focus();
+    ok(/^Acme \(SMB\): Revenue \$12, Margin 18%, Employees 120$/.test(await active()), `nombre: ${await active()}`);
+    await page.keyboard.press("ArrowRight");
+    ok(/^Birch/.test(await active()), "→ siguiente de la serie");
+    await page.keyboard.press("ArrowDown");
+    ok(/^Delta \(Enterprise\)/.test(await active()), `↓ a la otra serie: ${await active()}`);
+    ok(((await box.locator(".z-chart__tip").textContent()) ?? "").includes("410"), "tooltip con el tamaño");
+    await page.keyboard.press("Enter");
+    ok(
+      (await events()).some((e) => e.name === "z:pointclick" && e.detail.datum?.name === "Delta"),
+      "Intro → z:pointclick con la fila",
+    );
+    await page.keyboard.press("Escape");
+    ok((await box.locator(".z-chart__tip").count()) === 0, "Escape");
+    const fjord = await points.last().boundingBox();
+    await page.mouse.move(fjord.x + fjord.width / 2 + 4, fjord.y + fjord.height / 2 + 4);
+    await page.waitForFunction((id) => document.querySelector(`#${id} .z-chart__tip`), await box.getAttribute("id"));
+    ok(((await box.locator(".z-chart__tip-title").textContent()) ?? "") === "Fjord", "el puntero activa el punto más cercano");
+    await page.mouse.move(1, 1);
+    const sum = await box.locator(".z-sr-only").first().textContent();
+    ok(/Scatter chart, 2 series: SMB, Enterprise\. 6 points/.test(sum ?? "") && /R²/.test(sum ?? ""), `resumen: ${sum}`);
+  });
+
+  await test("RadarChart sin React: cuñas enfocables con los valores, flechas y tabla", async () => {
+    const box = await inject("RadarChart");
+    const wedges = box.locator(".z-chart__wedge");
+    ok((await wedges.count()) === 6, "una cuña por eje");
+    const ns = await box.evaluate((el) => el.querySelector(".z-chart__radar")?.namespaceURI);
+    ok(ns === "http://www.w3.org/2000/svg", "polígono en SVG");
+    await wedges.first().focus();
+    ok((await active()) === "Speed: Model A 82, Model B 64", `nombre: ${await active()}`);
+    await page.keyboard.press("ArrowRight");
+    ok(/^Range/.test(await active()), "→ siguiente eje");
+    ok(await box.locator(".z-chart__tip").isVisible(), "tooltip");
+    await box.locator(".z-chart__toggle").click();
+    ok((await box.locator("tbody tr").count()) === 6, "tabla: un eje por fila");
+  });
+
+  await test("ComboChart sin React: barras, línea encima y eje secundario con su formato", async () => {
+    const box = await inject("ComboChart");
+    ok((await box.locator(".z-chart__bar").count()) === 6, "una barra por mes");
+    ok((await box.locator('.z-chart__axis[data-side="end"]').count()) === 1, "eje secundario");
+    ok(((await box.locator('.z-chart__axis[data-side="end"]').textContent()) ?? "").includes("%"), "en porcentaje");
+    await box.locator(".z-chart__hit").first().focus();
+    ok((await active()) === "January 2026: Revenue $42,000, Margin 18%", `nombre: ${await active()}`);
+    await box.locator(".z-chart__key").nth(1).click();
+    ok((await box.locator('.z-chart__axis[data-side="end"]').count()) === 0, "sin la serie, sin eje secundario");
+  });
+
+  await test("HeatmapChart sin React: role=grid, flechas, Inicio/Fin, Ctrl+Fin y nombre de celda", async () => {
+    const box = await inject("HeatmapChart");
+    ok((await box.locator('[role="grid"]').count()) === 1, "rejilla");
+    ok((await box.locator('[role="gridcell"]').count()) === 60, "5 × 12 celdas");
+    ok((await box.locator('[role="columnheader"]').count()) === 13, "esquina + 12 columnas");
+    ok((await box.locator('[role="gridcell"][tabindex="0"]').count()) === 1, "una sola parada de Tab");
+    await box.locator('[role="gridcell"]').first().focus();
+    ok(/^Mon, 08: \d+$/.test(await active()), `nombre: ${await active()}`);
+    await page.keyboard.press("ArrowDown");
+    ok(/^Tue, 08/.test(await active()), "↓ fila siguiente");
+    await page.keyboard.press("End");
+    ok(/^Tue, 19/.test(await active()), "Fin: final de la fila");
+    await page.keyboard.press("Control+End");
+    ok(/^Fri, 19/.test(await active()), "Ctrl+Fin: última celda");
+    ok(await box.locator(".z-chart__tip").isVisible(), "tooltip");
+    await page.keyboard.press("Enter");
+    ok(
+      (await events()).some((e) => e.name === "z:pointclick" && e.detail.datum?.day === "Fri"),
+      "Intro → z:pointclick",
+    );
+    const diverging = await inject("HeatmapChart", 1);
+    ok((await diverging.locator('.z-chart__swatch[data-mark="level"]').count()) === 9, "leyenda divergente de 9 niveles");
+    ok((await diverging.locator('.z-chart__cell[data-level="-4"]').count()) >= 1, "nivel negativo extremo");
+    ok(((await diverging.locator(".z-chart__cell-value").first().textContent()) ?? "") === "+4%", "showValues");
+  });
+
+  await test("HeatmapChart en RTL: → retrocede y la primera columna queda a la derecha", async () => {
+    const box = await inject("HeatmapChart", 0, "rtl");
+    const cells = box.locator('[role="gridcell"]');
+    await cells.nth(1).focus();
+    await page.keyboard.press("ArrowRight");
+    ok(/^Mon, 08/.test(await active()), `→ retrocede en RTL: ${await active()}`);
+    const a = await cells.nth(0).boundingBox();
+    const b = await cells.nth(1).boundingBox();
+    ok(a.x > b.x, "orden visual de derecha a izquierda");
+  });
+
+  await test("BulletChart sin React: filas con objetivo y rango, flechas y vertical", async () => {
+    const box = await inject("BulletChart");
+    const rows = box.locator(".z-chart__bullet-track");
+    ok((await rows.count()) === 4, "una fila por región");
+    await rows.first().focus();
+    ok((await active()) === "North: 82, target 85, in Good", `nombre: ${await active()}`);
+    await page.keyboard.press("ArrowDown");
+    ok((await active()) === "South: 64, target 75, in Fair", "↓ siguiente fila");
+    ok(((await box.locator(".z-chart__tip").textContent()) ?? "").includes("75"), "tooltip con el objetivo");
+    const v = await inject("BulletChart", 1);
+    const track = await v.locator(".z-chart__bullet-track").first().boundingBox();
+    ok(track.height > track.width, "vertical: columnas");
+  });
+
+  await test("CategoryBar sin React: tramos con nombre, flechas, marcador y rótulos", async () => {
+    const box = await inject("CategoryBar");
+    const segs = box.locator(".z-category-bar__segment");
+    ok((await segs.count()) === 4, "cuatro tramos");
+    await segs.first().focus();
+    ok((await active()) === "Healthy: 40 (40%)", `nombre: ${await active()}`);
+    await page.keyboard.press("ArrowRight");
+    ok((await active()) === "Watch: 30 (30%)", "→");
+    ok(await box.locator(".z-category-bar__tip").isVisible(), "tooltip");
+    ok((await box.locator(".z-category-bar__marker").count()) === 1, "marcador");
+    const sum = await box.locator(".z-sr-only").first().textContent();
+    ok(/Marker: 62/.test(sum ?? ""), `resumen: ${sum}`);
+    const h = await segs.first().boundingBox();
+    ok(h.height >= 24, `zona de 24 px: ${h.height}`);
+  });
+
+  await test("AnimatedNumber sin React: valor final, copia accesible y cuenta al cambiar", async () => {
+    const box = await inject("AnimatedNumber");
+    const el = box.locator(".z-animated-number");
+    ok(((await el.locator(".z-animated-number__value").textContent()) ?? "") === "$48,250", "valor formateado");
+    ok((await el.locator(".z-animated-number__value").getAttribute("aria-hidden")) === "true", "el visible no se lee");
+    await page.evaluate(
+      async (id) => {
+        const { setWidgetProps } = await import("/zui/dist/zui.dom.js");
+        setWidgetProps(document.querySelector(`#${id} .z-animated-number`), { value: 50000, duration: 400 });
+      },
+      await box.getAttribute("id"),
+    );
+    const reduced = await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
+    ok(((await el.locator(".z-sr-only").textContent()) ?? "") === "$50,000", "la copia accesible dice ya el final");
+    if (!reduced) ok((await el.getAttribute("data-animating")) !== null, "cuenta en curso");
+    await page.waitForFunction(
+      (id) => document.querySelector(`#${id} .z-animated-number__value`)?.textContent === "$50,000",
+      await box.getAttribute("id"),
+    );
+    const live = await inject("AnimatedNumber", 1);
+    ok((await live.locator("[aria-live]").getAttribute("aria-live")) === "polite", "aria-live opcional");
+  });
+
   await page.evaluate(() => {
     for (const old of document.querySelectorAll("[data-w5-layer]")) old.remove();
   });

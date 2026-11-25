@@ -34,7 +34,7 @@ binding con React 18. Si sobrescribes variables de algún componente, repasa los
 | `@zuccadev-labs/zuix` | Paraguas: la suite completa en una dependencia | [Instalar](#instalar) |
 | `@zuccadev-labs/zuix-tokens` | Fuente única de valores de diseño. Una marca es un archivo | [Tokens](./01-tokens.md) |
 | `@zuccadev-labs/zuix-zicon` | 366 iconos en outline y solid | [Zicon](./02-zicon.md) |
-| `@zuccadev-labs/zuix-zui` | 224 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
+| `@zuccadev-labs/zuix-zui` | 231 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
 | `@zuccadev-labs/zuix-zout` | 30 layouts: shell, paneles, pestañas, rejillas, layouts de página | [Zout](./04-zout.md) |
 | `@zuccadev-labs/zuix-zudocs` | Estándar de documentación y plantilla Docusaurus. No se publica en npm | [Zudocs](./05-zudocs.md) |
 

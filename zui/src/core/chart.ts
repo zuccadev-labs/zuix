@@ -467,3 +467,230 @@ export function axisNumberOptions(options: Intl.NumberFormatOptions, max: number
   if (options.notation || options.style === "percent") return options;
   return Math.abs(max) >= 10000 ? { ...options, notation: "compact", maximumFractionDigits: 1 } : options;
 }
+
+// —— Dispersión: regresión, radio de burbuja y punto más cercano ——
+
+export interface Regression {
+  slope: number;
+  intercept: number;
+  /** Coeficiente de determinación (0–1); 1 si todos los puntos caen en la recta. */
+  r2: number;
+}
+
+/**
+ * Recta de mínimos cuadrados de los pares finitos. `null` con menos de dos puntos o con todas las x iguales (la recta
+ * sería vertical y no describe una tendencia de y frente a x).
+ */
+export function linearRegression(points: ReadonlyArray<readonly [number, number]>): Regression | null {
+  const pts = points.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
+  const n = pts.length;
+  if (n < 2) return null;
+  let mx = 0;
+  let my = 0;
+  for (const [x, y] of pts) {
+    mx += x;
+    my += y;
+  }
+  mx /= n;
+  my /= n;
+  let sxx = 0;
+  let sxy = 0;
+  let syy = 0;
+  for (const [x, y] of pts) {
+    sxx += (x - mx) ** 2;
+    sxy += (x - mx) * (y - my);
+    syy += (y - my) ** 2;
+  }
+  // Varianza de x nula (o del orden del error de coma flotante frente a la magnitud de x).
+  if (sxx <= 1e-12 * Math.max(1, mx * mx) * n) return null;
+  const slope = sxy / sxx;
+  const intercept = my - slope * mx;
+  const r2 = syy === 0 ? 1 : Math.min(1, Math.max(0, (sxy * sxy) / (sxx * syy)));
+  return { slope, intercept, r2 };
+}
+
+/**
+ * Radio de una burbuja con el área proporcional al valor (escala de raíz cuadrada): 0 → `min`, `max` → `rMax`.
+ * Un valor negativo o no finito cuenta como 0.
+ */
+export function bubbleRadius(v: number, max: number, rMin = 4, rMax = 24): number {
+  const f = Number.isFinite(v) && v > 0 && max > 0 ? Math.min(1, v / max) : 0;
+  return r3(Math.max(rMin, rMax * Math.sqrt(f)));
+}
+
+/** Índice del punto más cercano a `p` (coordenadas en la misma unidad; `aspect` = ancho / alto del área). */
+export function nearestPoint(points: ReadonlyArray<readonly [number, number]>, p: readonly [number, number], aspect = 1): number {
+  let best = -1;
+  let dist = Number.POSITIVE_INFINITY;
+  points.forEach(([x, y], i) => {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    const d = ((x - p[0]) * aspect) ** 2 + (y - p[1]) ** 2;
+    if (d < dist) {
+      dist = d;
+      best = i;
+    }
+  });
+  return best;
+}
+
+/**
+ * Siguiente punto de una dispersión por teclado. `groups[s]` son los índices planos de la serie `s` en orden de x.
+ * ←→ recorren la serie; ↑↓ cambian de serie al punto de x más cercana; Inicio/Fin, primero y último de la serie.
+ */
+export function scatterStep(
+  groups: ReadonlyArray<readonly number[]>,
+  xs: readonly number[],
+  current: number,
+  key: "next" | "prev" | "up" | "down" | "first" | "last",
+): number {
+  const s = groups.findIndex((g) => g.includes(current));
+  if (s < 0) return groups.find((g) => g.length)?.[0] ?? current;
+  const g = groups[s]!;
+  const at = g.indexOf(current);
+  if (key === "next") return g[Math.min(g.length - 1, at + 1)]!;
+  if (key === "prev") return g[Math.max(0, at - 1)]!;
+  if (key === "first") return g[0]!;
+  if (key === "last") return g[g.length - 1]!;
+  // Serie siguiente (o anterior) con puntos; si no la hay, se queda.
+  const dir = key === "down" ? 1 : -1;
+  for (let k = s + dir; k >= 0 && k < groups.length; k += dir) {
+    const other = groups[k]!;
+    if (!other.length) continue;
+    const x = xs[current] ?? 0;
+    let best = other[0]!;
+    for (const i of other) if (Math.abs((xs[i] ?? 0) - x) < Math.abs((xs[best] ?? 0) - x)) best = i;
+    return best;
+  }
+  return current;
+}
+
+// —— Radar ——
+
+/** Punto del eje `i` de `n` (0 arriba, en sentido horario) a la fracción `f` del radio, en un viewBox de 100. */
+export function polarPoint(i: number, n: number, f: number, radius = 40): [number, number] {
+  const a = (Math.PI * 2 * i) / Math.max(1, n);
+  const r = radius * Math.max(0, f);
+  return [r3(50 + r * Math.sin(a)), r3(50 - r * Math.cos(a))];
+}
+
+/** Polígono cerrado de un radar (una fracción por eje; `null` cuenta como el centro). */
+export function radarPath(fractions: ReadonlyArray<number | null>, radius = 40): string {
+  const n = fractions.length;
+  if (!n) return "";
+  return `${fractions
+    .map((f, i) => {
+      const [x, y] = polarPoint(i, n, f ?? 0, radius);
+      return `${i ? "L" : "M"}${x} ${y}`;
+    })
+    .join("")}Z`;
+}
+
+/** Cuña de la zona activa del eje `i` (de la mitad hacia el anterior a la mitad hacia el siguiente). */
+export function radarWedge(i: number, n: number, radius = 48): string {
+  const step = (Math.PI * 2) / Math.max(1, n);
+  if (n === 1) return arcPath(50, 50, 0, radius, 0, Math.PI * 2);
+  return arcPath(50, 50, 0, radius, i * step - step / 2, i * step + step / 2);
+}
+
+// —— Mapa de calor ——
+
+/** Nivel 0…`levels − 1` de un valor en una escala secuencial [lo, hi] (cuantiles iguales). */
+export function sequentialLevel(v: number, lo: number, hi: number, levels = 5): number {
+  if (!Number.isFinite(v)) return 0;
+  if (!(hi > lo)) return v > lo ? levels - 1 : 0;
+  const f = (v - lo) / (hi - lo);
+  return Math.max(0, Math.min(levels - 1, Math.floor(f * levels)));
+}
+
+/**
+ * Nivel −`steps`…`steps` de un valor en una escala divergente alrededor de `mid`: 0 en el punto medio, negativos por
+ * debajo y positivos por encima, cada lado repartido en `steps` tramos hasta su extremo.
+ */
+export function divergingLevel(v: number, lo: number, mid: number, hi: number, steps = 4): number {
+  if (!Number.isFinite(v) || v === mid) return 0;
+  if (v > mid) {
+    const span = hi - mid;
+    return span > 0 ? Math.max(1, Math.min(steps, Math.ceil(((v - mid) / span) * steps))) : steps;
+  }
+  const span = mid - lo;
+  return span > 0 ? -Math.max(1, Math.min(steps, Math.ceil(((mid - v) / span) * steps))) : -steps;
+}
+
+/** Umbrales de una escala secuencial: el inicio de cada nivel (para la leyenda). */
+export function sequentialThresholds(lo: number, hi: number, levels = 5): number[] {
+  return Array.from({ length: levels }, (_, i) => lo + ((hi - lo) * i) / levels);
+}
+
+/** Celda siguiente de una rejilla (`rows` × `cols`, índice plano por filas) con las teclas de APG para `grid`. */
+export function gridStep(
+  index: number,
+  rows: number,
+  cols: number,
+  key: "right" | "left" | "down" | "up" | "rowStart" | "rowEnd" | "first" | "last" | "pageDown" | "pageUp",
+  page = 5,
+): number {
+  if (rows <= 0 || cols <= 0) return 0;
+  const r = Math.floor(index / cols);
+  const c = index % cols;
+  const at = (rr: number, cc: number) => Math.max(0, Math.min(rows - 1, rr)) * cols + Math.max(0, Math.min(cols - 1, cc));
+  if (key === "right") return at(r, c + 1);
+  if (key === "left") return at(r, c - 1);
+  if (key === "down") return at(r + 1, c);
+  if (key === "up") return at(r - 1, c);
+  if (key === "rowStart") return at(r, 0);
+  if (key === "rowEnd") return at(r, cols - 1);
+  if (key === "first") return 0;
+  if (key === "last") return rows * cols - 1;
+  if (key === "pageDown") return at(r + page, c);
+  return at(r - page, c);
+}
+
+// —— Barra por categorías ——
+
+export interface Segment {
+  index: number;
+  value: number;
+  /** Inicio y fin (fracción de la barra). */
+  start: number;
+  end: number;
+  /** Valor acumulado al final del tramo. */
+  cumulative: number;
+}
+
+/** Tramos de una barra segmentada: los valores positivos uno detrás de otro sobre su suma. */
+export function segmentLayout(values: readonly number[]): { segments: Segment[]; total: number } {
+  const clean = values.map((v) => (Number.isFinite(v) && v > 0 ? v : 0));
+  const total = clean.reduce((a, b) => a + b, 0);
+  let acc = 0;
+  const segments = clean.map((value, index) => {
+    const start = total > 0 ? acc / total : 0;
+    acc += value;
+    return { index, value, start, end: total > 0 ? acc / total : 0, cumulative: acc };
+  });
+  return { segments, total };
+}
+
+// —— Animación de números ——
+
+/** Curva de salida cúbica: rápida al empezar, suave al llegar. */
+export const easeOutCubic = (t: number) => 1 - (1 - Math.min(1, Math.max(0, t))) ** 3;
+
+/** Decimales con los que está escrito un número (hasta 20): 12.5 → 1, 3 → 0. */
+export function decimalsOf(v: number): number {
+  if (!Number.isFinite(v) || Number.isInteger(v)) return 0;
+  const s = String(v);
+  const e = /e-(\d+)$/.exec(s);
+  if (e) return Math.min(20, Number(e[1]) + (s.split("e")[0]!.split(".")[1]?.length ?? 0));
+  return Math.min(20, s.split(".")[1]?.length ?? 0);
+}
+
+/**
+ * Valor intermedio de `from` a `to` en el instante `t` (0–1) de la curva, redondeado a `decimals` para que las cifras
+ * no tiemblen (un entero no pasa por 12,3456). En `t = 1` es exactamente `to`.
+ */
+export function tweenValue(from: number, to: number, t: number, decimals: number, ease = easeOutCubic): number {
+  if (t >= 1 || !Number.isFinite(from)) return to;
+  const v = from + (to - from) * ease(t);
+  const p = 10 ** Math.max(0, Math.min(20, decimals));
+  return Math.round(v * p) / p;
+}

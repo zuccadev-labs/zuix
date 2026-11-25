@@ -1,0 +1,247 @@
+{
+  "name": "ComboChart",
+  "group": "charts",
+  "states": ["rest", "hover", "focus", "hidden-series", "table"],
+  "tokens": [
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "chart-6",
+    "chart-7",
+    "chart-8",
+    "chart-grid",
+    "chart-baseline",
+    "chart-height",
+    "chart-bar-max",
+    "chart-bar-radius",
+    "chart-area-opacity",
+    "chart-line-width",
+    "fg",
+    "fg-muted",
+    "surface-solid",
+    "surface-2",
+    "surface-3",
+    "line",
+    "row-hover",
+    "reading-bg",
+    "shadow-md",
+    "panel-radius",
+    "control-radius",
+    "control-radius-sm",
+    "item-radius",
+    "radius-xs",
+    "radius-full",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "control-height-sm",
+    "control-height-xs",
+    "text-caption",
+    "text-small",
+    "text-title",
+    "duration-slow",
+    "ease-out",
+    "ease-emphasized",
+    "layer-tooltip"
+  ],
+  "classes": ["z-chart"],
+  "behavior": "dom",
+  "origin": "Diseño propio sobre la plataforma (SVG + HTML colocado por fracciones); color por series y marcas según las pautas habituales de visualización de datos. Sin bibliotecas.",
+  "description": "Barras y líneas en el mismo gráfico sobre un eje de categorías o tiempo: cada serie elige su forma (series[].type) y su eje de valores, el principal o un secundario al final (series[].axis = \"end\") con su propia escala y formato; barras agrupadas o apiladas, líneas por encima, tooltip con todas las series, flechas entre posiciones, leyenda y tabla alternativa.",
+  "import": "import { ComboChart } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "data",
+      "type": "Record<string, unknown>[]",
+      "required": true,
+      "description": "Filas: una por posición del eje."
+    },
+    {
+      "name": "xKey",
+      "type": "string",
+      "required": true,
+      "description": "Clave de la categoría o del tiempo en cada fila."
+    },
+    {
+      "name": "series",
+      "type": "ChartSeries[]",
+      "required": true,
+      "description": "{ key, label, color?, marker?, type?: \"bar\" | \"line\", axis?: \"start\" | \"end\" }. Por defecto, barras en el eje principal."
+    },
+    {
+      "name": "xType",
+      "type": "enum",
+      "values": ["category", "time", "number"],
+      "description": "Por defecto, time si todos los valores son fechas (Date, ISO o ms)."
+    },
+    {
+      "name": "xLabel",
+      "type": "string",
+      "description": "Nombre del eje (cabecera de la tabla alternativa)."
+    },
+    {
+      "name": "xFormat",
+      "type": "Intl.DateTimeFormatOptions",
+      "description": "Formato de los rótulos de tiempo (por defecto, según la escala: horas, días, meses o años)."
+    },
+    {
+      "name": "yMin",
+      "type": "number"
+    },
+    {
+      "name": "yMax",
+      "type": "number"
+    },
+    {
+      "name": "yTicks",
+      "type": "number",
+      "default": 5,
+      "description": "Divisiones aproximadas del eje de valores (paso 1, 2, 2,5 o 5 × 10ⁿ)."
+    },
+    {
+      "name": "grid",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "curve",
+      "type": "enum",
+      "values": ["linear", "monotone", "step"],
+      "default": "linear"
+    },
+    {
+      "name": "markers",
+      "type": "boolean",
+      "default": false,
+      "description": "Marcador con forma propia por serie (círculo, cuadrado, rombo, triángulo)."
+    },
+    {
+      "name": "patterns",
+      "type": "boolean",
+      "default": false,
+      "description": "Trazo discontinuo o trama por serie (también, siempre, con colores forzados y al imprimir)."
+    },
+    {
+      "name": "stacked",
+      "type": "boolean",
+      "default": false,
+      "description": "Apila las series de barras (las líneas nunca)."
+    },
+    {
+      "name": "y2Min",
+      "type": "number",
+      "description": "Mínimo del eje secundario."
+    },
+    {
+      "name": "y2Max",
+      "type": "number",
+      "description": "Máximo del eje secundario."
+    },
+    {
+      "name": "y2Format",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Formato de las series del eje secundario (por defecto, valueFormat)."
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Título visible (figcaption) y nombre del área de trazado."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Texto visible bajo el título."
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "description": "Resumen para lectores de pantalla. Por defecto se compone de los datos (series, puntos, primero/último, mínimo y máximo)."
+    },
+    {
+      "name": "valueFormat",
+      "type": "Intl.NumberFormatOptions",
+      "description": "Formato de los valores (tooltip, tabla, nombre accesible). El eje usa notación compacta a partir de 10 000."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Locale de Intl para números y fechas."
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "description": "Leyenda con botones que muestran u ocultan cada serie (por defecto, con 2+ series)."
+    },
+    {
+      "name": "tooltip",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "description": "Alto del área de trazado en px (por defecto, el token chart-height)."
+    },
+    {
+      "name": "defaultView",
+      "type": "enum",
+      "values": ["chart", "table"],
+      "default": "chart",
+      "description": "Vista inicial; el botón «View as table» alterna."
+    },
+    {
+      "name": "animate",
+      "type": "boolean",
+      "default": true,
+      "description": "Entrada animada; sin movimiento con prefers-reduced-motion."
+    },
+    {
+      "name": "framed",
+      "type": "boolean",
+      "default": true,
+      "description": "Panel de cristal con relleno; false para meterlo en una tarjeta propia."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChartLabels>",
+      "description": "Textos: viewAsTable, legend, keyboard, point, value, missing, total, summary, range, slice, noData, types."
+    },
+    {
+      "name": "hidden",
+      "type": "string[]",
+      "description": "Series ocultas (controlado, con onHiddenChange)."
+    },
+    {
+      "name": "defaultHidden",
+      "type": "string[]"
+    },
+    {
+      "name": "onPointClick",
+      "type": "(detail: { index, datum }) => void",
+      "description": "Pulsación o Intro en una posición del eje o un sector."
+    },
+    {
+      "name": "onHiddenChange",
+      "type": "(detail: { hidden: string[] }) => void"
+    },
+    {
+      "name": "onViewChange",
+      "type": "(detail: { view: \"chart\" | \"table\" }) => void"
+    }
+  ],
+  "a11y": "Como BarChart: figure con figcaption y resumen; cada posición del eje es un role=img enfocable con los valores de todas las series, cada una con el formato de su eje («March 2026: Revenue $45,000, Margin 19%»), flechas, Inicio/Fin, Re Pág/Av Pág, Intro y Escape. Leyenda con la muestra de cada forma (barra o línea) y aria-pressed; tabla alternativa. Barras con trama y líneas con trazo por serie (patterns); los dos ejes de valores llevan sus rótulos, y el secundario solo existe si alguna serie visible lo usa.",
+  "examples": [
+    {
+      "title": "Ingresos y margen",
+      "code": "<ComboChart\n  title=\"Revenue and margin\"\n  description=\"Monthly, 2026\"\n  data={[{month: \"2026-01\",revenue: 42000,margin: 0.18},{month: \"2026-02\",revenue: 48000,margin: 0.21},{month: \"2026-03\",revenue: 45000,margin: 0.19},{month: \"2026-04\",revenue: 61000,margin: 0.24},{month: \"2026-05\",revenue: 66000,margin: 0.26},{month: \"2026-06\",revenue: 72000,margin: 0.28}]}\n  xKey=\"month\"\n  series={[{key: \"revenue\",label: \"Revenue\"},{key: \"margin\",label: \"Margin\",type: \"line\",axis: \"end\"}]}\n  valueFormat={{style: \"currency\",currency: \"USD\",maximumFractionDigits: 0}}\n  y2Format={{style: \"percent\"}}\n  markers\n  locale=\"en-US\"\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Ingresos y margen",
+      "code": "<div class=\"z-chart\" data-type=\"combo\" data-title=\"Revenue and margin\" data-description=\"Monthly, 2026\" data-x-key=\"month\" data-markers data-locale=\"en-US\">\n  <script type=\"application/json\" data-props>{\"data\":[{\"month\":\"2026-01\",\"revenue\":42000,\"margin\":0.18},{\"month\":\"2026-02\",\"revenue\":48000,\"margin\":0.21},{\"month\":\"2026-03\",\"revenue\":45000,\"margin\":0.19},{\"month\":\"2026-04\",\"revenue\":61000,\"margin\":0.24},{\"month\":\"2026-05\",\"revenue\":66000,\"margin\":0.26},{\"month\":\"2026-06\",\"revenue\":72000,\"margin\":0.28}],\"series\":[{\"key\":\"revenue\",\"label\":\"Revenue\"},{\"key\":\"margin\",\"label\":\"Margin\",\"type\":\"line\",\"axis\":\"end\"}],\"valueFormat\":{\"style\":\"currency\",\"currency\":\"USD\",\"maximumFractionDigits\":0},\"y2Format\":{\"style\":\"percent\"}}</script>\n</div>"
+    }
+  ]
+}

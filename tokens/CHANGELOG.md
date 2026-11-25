@@ -5,6 +5,19 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Escala divergente del mapa de calor (`HeatmapChart` con `scale="diverging"`): `heatmap-neg-hue` (de
+  `warning-text`) y `heatmap-pos-hue` (de `info-text`), cada una con cuatro niveles (`heatmap-neg-1…4`,
+  `heatmap-pos-1…4`) mezclados con `surface-solid`. Ámbar y azul se distinguen con daltonismo y no dependen del
+  acento de la marca. Los niveles 3 y 4 de cada lado se miden como indicadores (3:1) en `pnpm tokens`.
+
+### Cambiado
+
+- `heatmap-2` baja del 56 % al 50 % del tono y `heatmap-3` sube del 78 % al 82 %: con `showValues` el valor escrito
+  en la celda llega a 4.5:1 en todas las marcas y temas (`fg` hasta el nivel 2, `surface-solid` desde el 3).
+  `CalendarHeatmap` usa los mismos niveles y apenas cambia.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

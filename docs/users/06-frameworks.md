@@ -211,7 +211,7 @@ init(datesModule, chartsModule);
 | `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable, TransferList, NotificationCenter, FilterBar y ReviewCard | `dataModule`, `sortTable`, `setReviewExpanded`, `formatMoney`, `summarizePrice`… |
 | `/dom/content` | FormatNumber, FormatByte, FormatDate, Highlight, Marquee, JsonTree, Stepper con paneles, Timer, RelativeTime | `contentModule`, `setJsonTreeValue`… |
 | `/dom/agenda` | EventCalendar, TimelineView, PerpetualYear, FreeBusy, SlotPicker, CalendarHeatmap, HabitCalendar (trae `/dom/dates`) | `agendaModule`, `setAgendaEvents`… |
-| `/dom/charts` | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline | `chartsModule`, `setWidgetProps` |
+| `/dom/charts` | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline | `chartsModule`, `setWidgetProps` |
 | `/dom/color` | ColorPicker, ColorArea, ColorSlider, ColorSwatchPicker, ColorField, ColorPickerTrigger | `colorModule`, `setColorValue` |
 | `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti | `mediaModule`, `carousel`… |
 | `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
