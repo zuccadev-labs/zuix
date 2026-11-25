@@ -5,6 +5,12 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Corregido
+
+- `Switch` en colores forzados: la pista ya no anima el fondo. Al entrar en `forced-colors` la pista marcada partía
+  del `ButtonFace` de la apagada y durante 200 ms no se distinguía de ella; ahora pasa a `Highlight` de golpe. El
+  estado se lee además por el pulgar al final de la pista y el borde de `Highlight`.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido
