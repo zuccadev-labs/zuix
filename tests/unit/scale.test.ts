@@ -518,9 +518,11 @@ describe("rejilla: modelo", () => {
     assert.ok(said.some((t) => t.startsWith("A grabbed, position 1 of 3")));
     assert.ok(said.some((t) => t.includes("back at position 1")));
     assert.ok(said.some((t) => t.startsWith("A dropped at position 2")));
-    // Puntero: de «c» a delante de «b».
+    // Puntero: arrastrar «c» a la primera cabecera.
     const ths = [...table.tHead!.rows[0]!.cells];
-    ths.forEach((th, i) => setRect(th, { left: i * 100, top: 0, width: 100, height: 30 }));
+    ths.forEach((th, i) => {
+      setRect(th, { left: i * 100, top: 0, width: 100, height: 30 });
+    });
     const c = table.querySelector<HTMLElement>('[data-col-key="c"]')!;
     c.setPointerCapture = () => {};
     c.dispatchEvent(new window.PointerEvent("pointerdown", { bubbles: true, button: 0, clientX: 250, pointerId: 1 }));

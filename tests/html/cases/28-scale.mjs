@@ -53,7 +53,6 @@ export default async function ({ page, test, ok, note }) {
       throw new Error(`no llegó: ${label}`);
     }
   };
-  const live = () => page.evaluate(() => [...document.querySelectorAll("[aria-live]")].map((n) => n.textContent).join(" | "));
 
   await test("Escala · DataTable sin React · rejilla: flechas, editar con validación, z:celledit cancelable, Escape y Tab", async () => {
     await mount(example("DataTable", "Rejilla editable"), ["z:celledit", "z:columnorder"]);
