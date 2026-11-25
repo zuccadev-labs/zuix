@@ -518,6 +518,10 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   gap: var(--z-space-4);
 }
+.app-charts__budget {
+  padding: var(--z-space-5);
+  border-radius: var(--z-panel-radius);
+}
 .app-charts__spark {
   display: flex;
   flex-wrap: wrap;
