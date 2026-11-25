@@ -19,6 +19,12 @@
       "type": "Intl.NumberFormatOptions"
     },
     {
+      "name": "animate",
+      "type": "boolean",
+      "default": false,
+      "description": "Un valor numérico cuenta del anterior al nuevo al cambiar (AnimatedNumber): el servidor pinta el valor final y los lectores de pantalla solo lo leen a él. Sin cuenta con prefers-reduced-motion."
+    },
+    {
       "name": "previous",
       "type": "number",
       "description": "Valor del periodo anterior: calcula la variación."

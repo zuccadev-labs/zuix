@@ -3,6 +3,7 @@ import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { deltaOf, type ProgressGoalLabels } from "../../core/dashboard-trees";
 import { formatValue, type DeltaLabels, type DeltaPositive } from "../../core/metric";
 import { cx } from "../../cx";
+import { AnimatedNumber } from "../charts/AnimatedNumber";
 import { Sparkline, type SparklineProps } from "../charts/Sparkline";
 import { Skeleton } from "../feedback/Skeleton";
 import { DeltaBadge } from "./DeltaBadge";
@@ -31,6 +32,8 @@ export interface MetricCardProps {
   /** Valor: un número (pasa por `format`) o un texto ya formateado. */
   value?: number | string | null;
   format?: Intl.NumberFormatOptions;
+  /** Un valor numérico cuenta del anterior al nuevo al cambiar (AnimatedNumber); sin cuenta con movimiento reducido. */
+  animate?: boolean;
   /** Valor del periodo anterior: calcula la variación. */
   previous?: number;
   /** Variación ya calculada, como fracción (0.124 = 12,4 %). */
@@ -73,6 +76,7 @@ export function MetricCard({
   label,
   value,
   format,
+  animate = false,
   previous,
   delta,
   positive = "up",
@@ -139,7 +143,7 @@ export function MetricCard({
       ) : (
         <div className="z-metric__main">
           <data className="z-metric__value" value={typeof value === "number" ? value : undefined}>
-            {shown}
+            {animate && typeof value === "number" ? <AnimatedNumber value={value} format={format} locale={locale} /> : shown}
           </data>
           {d ? (
             <span className="z-metric__delta">

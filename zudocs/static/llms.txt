@@ -7,7 +7,7 @@
 - [Zuix para usuarios](https://zuccadev-labs.github.io/zuix/docs/users.md): zuix es una suite de UI: tokens, iconos, componentes, layouts y documentación con un solo estándar.
 - [Tokens](https://zuccadev-labs.github.io/zuix/docs/users/tokens.md): @zuccadev-labs/zuix-tokens es la fuente única de los valores de diseño.
 - [Zicon](https://zuccadev-labs.github.io/zuix/docs/users/zicon.md): @zuccadev-labs/zuix-zicon es el estándar iconográfico de la suite.
-- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 224 componentes en 19 grupos.
+- [Zui](https://zuccadev-labs.github.io/zuix/docs/users/zui.md): @zuccadev-labs/zuix-zui es el sistema de componentes de la suite: 231 componentes en 19 grupos.
 - [Zout](https://zuccadev-labs.github.io/zuix/docs/users/zout.md): @zuccadev-labs/zuix-zout es el paquete de layouts y ventanas dinámicas.
 - [Zudocs](https://zuccadev-labs.github.io/zuix/docs/users/zudocs.md): @zuccadev-labs/zuix-zudocs es el estándar de documentación de la suite y su plantilla: un sitio Docusaurus con el estilo liquid glass, que se adapta a otro proyecto o marca editando un solo archivo.
 - [Usar zuix con cualquier framework](https://zuccadev-labs.github.io/zuix/docs/users/frameworks.md): zuix no es una biblioteca de React.
@@ -158,11 +158,18 @@
 
 ## Componentes: Gráficos
 
+- [AnimatedNumber](https://zuccadev-labs.github.io/zuix/components/charts/animated-number.md): Número que cuenta del valor anterior al nuevo con el formato de Intl.NumberFormat (moneda, porcentaje, unidades, compacto).
 - [AreaChart](https://zuccadev-labs.github.io/zuix/components/charts/area-chart.md): Gráfico de áreas: como LineChart con relleno lavado (≈16 %) y base en cero; `stacked` apila las series (positivos hacia arriba, negativos hacia abajo) y el tooltip suma el total.
 - [BarChart](https://zuccadev-labs.github.io/zuix/components/charts/bar-chart.md): Gráfico de barras verticales u horizontales, agrupadas o apiladas, con valores negativos: grosor máximo, extremo del dato redondeado y base recta, hueco de 2 px entre las que se tocan, banda…
+- [BulletChart](https://zuccadev-labs.github.io/zuix/components/charts/bullet-chart.md): Bala: por fila, el valor como barra sobre bandas de rangos cualitativos (de más oscura, la peor, a más clara) y el objetivo como marca, en horizontal o vertical, con una escala común, tooltip…
+- [CategoryBar](https://zuccadev-labs.github.io/zuix/components/charts/category-bar.md): Barra partida en tramos proporcionales a sus valores, uno por categoría con su color de serie, marcador opcional sobre la misma escala, rótulos acumulados en los límites, leyenda y tooltip por tramo.
+- [ComboChart](https://zuccadev-labs.github.io/zuix/components/charts/combo-chart.md): Barras y líneas en el mismo gráfico sobre un eje de categorías o tiempo: cada serie elige su forma (series.type) y su eje de valores, el principal o un secundario al final (series.axis = "end")…
 - [DonutChart](https://zuccadev-labs.github.io/zuix/components/charts/donut-chart.md): Anillo: parte de un todo con el total en el centro (o el sector activo al pasar o enfocar), leyenda con porcentajes que oculta sectores, hueco entre sectores y trama opcional.
+- [HeatmapChart](https://zuccadev-labs.github.io/zuix/components/charts/heatmap-chart.md): Mapa de calor: matriz de celdas (por ejemplo día × hora) con escala secuencial de cinco niveles o divergente de cuatro por lado alrededor de un punto medio, leyenda de la escala con el tramo de cada…
 - [LineChart](https://zuccadev-labs.github.io/zuix/components/charts/line-chart.md): Gráfico de líneas: una o varias series sobre un eje de categorías, tiempo (marcas de día, semana, mes o año y rótulos de Intl) o número; curva lineal, monótona o escalonada, huecos donde falta el…
 - [PieChart](https://zuccadev-labs.github.io/zuix/components/charts/pie-chart.md): Tarta: como DonutChart sin hueco central; los sectores se separan con un trazo de superficie y el tooltip sale junto al sector.
+- [RadarChart](https://zuccadev-labs.github.io/zuix/components/charts/radar-chart.md): Radar: un eje radial por fila, varias series como polígonos con relleno translúcido, retícula poligonal o circular con escala configurable (mínimo, máximo y divisiones, escrita bajo el radar para no…
+- [ScatterChart](https://zuccadev-labs.github.io/zuix/components/charts/scatter-chart.md): Dispersión: dos medidas por punto, varias series con forma propia (círculo, cuadrado, rombo, triángulo), burbujas con el área proporcional a una tercera medida, recta de regresión lineal opcional por…
 - [Sparkline](https://zuccadev-labs.github.io/zuix/components/charts/sparkline.md): Minigráfico en línea, área o barras: una serie sin ejes, con el último valor marcado.
 
 ## Componentes: Estado

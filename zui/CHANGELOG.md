@@ -5,6 +5,40 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Gráficos nuevos sobre la misma pieza que `LineChart` (figure, leyenda, «View as table», resumen, tooltip por
+  puntero y por teclado, `locale`, RTL, movimiento reducido y `/dom/charts`):
+  - `ScatterChart`: dispersión con varias series (`seriesKey`) de forma propia, burbujas con el área proporcional a
+    `sizeKey`, recta de regresión lineal por serie (`trend`) con pendiente y R² en el resumen, y cada punto
+    enfocable: ←→ por la serie en orden de x, ↑↓ entre series.
+  - `RadarChart`: ejes radiales, una serie por polígono translúcido, retícula poligonal o circular (`gridShape`) y
+    escala con `yMin`, `yMax` y `yTicks`, escrita bajo el radar; cada eje es una cuña enfocable con los valores de
+    todas las series.
+  - `ComboChart`: barras y líneas en el mismo gráfico (`series[].type`) con eje secundario opcional
+    (`series[].axis: "end"`, `y2Format`, `y2Min`, `y2Max`). Las líneas van por encima de las barras.
+  - `HeatmapChart`: matriz de celdas en un `role="grid"` con flechas, Inicio/Fin, Ctrl+Inicio/Fin y Re Pág/Av
+    Pág; escala secuencial de cinco niveles o divergente de cuatro por lado alrededor de `midpoint`, leyenda con el
+    tramo de cada nivel, celdas sin dato con borde discontinuo y `showValues` (con colores forzados, siempre).
+  - `BulletChart`: valor, objetivo y rangos cualitativos (`ranges`, `rangeLabels`) por fila, en horizontal o
+    vertical, con escala común.
+- `CategoryBar`: barra segmentada por categorías con marcador, rótulos acumulados, leyenda y tramos enfocables
+  con tooltip (zona de 24 px de alto).
+- `AnimatedNumber`: número que cuenta del valor anterior al nuevo con `Intl.NumberFormat`. El servidor pinta el
+  valor final; el texto que cuenta está oculto a los lectores de pantalla y una copia con el final se anuncia una
+  sola vez con `live`. Sin cuenta con `prefers-reduced-motion` o `animate={false}`. Va como `value` de `StatTile`.
+- `MetricCard`: `animate` hace contar el valor numérico con `AnimatedNumber`. Sin la prop, nada cambia.
+- `core/chart`: regresión lineal, radio de burbuja, punto más cercano, navegación de dispersión y de rejilla, puntos
+  polares, niveles secuenciales y divergentes, tramos y cuenta de números, con pruebas de propiedades.
+
+### Cambiado
+
+- `ChartLabels` suma los textos de los tipos nuevos (`keyboardScatter`, `keyboardGrid`, `scatterPoint`, `trend`,
+  `trendSummary`, `cell`, `scale`, `actual`, `target`, `bullet`, `inRange`, `band`, `radarScale`). Los existentes no cambian.
+- Las piezas comunes de los gráficos (cabecera, leyenda, tabla, ejes) pasan de `core/chart-widget` a
+  `core/chart-parts`; `core/chart-widget` sigue exportando los mismos tipos.
+- `BarChart` con eje de tiempo alterna los rótulos de seis o más meses en un contenedor estrecho, como `LineChart`.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido
