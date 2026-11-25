@@ -28,6 +28,8 @@ import { exportedNames } from "./check-barrels.mjs";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFileSync(join(root, p), "utf8");
 const json = (p) => JSON.parse(read(p));
+/** Escapa todos los metacaracteres de una expresión regular, la barra invertida incluida. */
+const escapeRe = (s) => s.replace(/[\\^$.*+?()[\]{}|/-]/g, "\\$&");
 const md = (dir) =>
   readdirSync(join(root, dir))
     .filter((f) => f.endsWith(".md"))
@@ -84,9 +86,9 @@ for (const dir of Object.values(packages)) {
     const sub = key === "." ? "" : key.slice(1).replace(/\*.*$/, "");
     const full = `${pkg.name}${sub}`;
     const haystack = `${userText}\n${readme}`;
-    const literal = key === "." ? new RegExp(`${full.replace(/[/.-]/g, "\\$&")}["'\`]`).test(haystack) : haystack.includes(full);
+    const literal = key === "." ? new RegExp(`${escapeRe(full)}["'\`]`).test(haystack) : haystack.includes(full);
     // Las tablas abrevian la subruta (`/dom/data`, `tokens.compat.css`, `css/<marca>.css`).
-    const short = (s) => new RegExp(`[\`/ ]${s.replace(/[$.*+?^()[\]{}|\\]/g, "\\$&")}(?![\\w.-])`).test(haystack);
+    const short = (s) => new RegExp(`[\`/ ]${escapeRe(s)}(?![\\w.-])`).test(haystack);
     const bare = sub.slice(1);
     const abbreviated = key !== "." && (short(bare) || short(bare.replace(/\b(dazlabs|zenith|zutool)\b/, "<marca>")));
     // El paraguas documenta sus subrutas de zui por patrón: «las mismas rutas cuelgan de …/zui/dom/…».
@@ -204,7 +206,7 @@ function sameDrawing() {
 
 // 7. Comandos de package.json.
 {
-  const missing = Object.keys(rootPkg.scripts).filter((s) => !new RegExp(`pnpm ${s.replace(/[:]/g, "\\:")}(?![\\w:-])`).test(allText));
+  const missing = Object.keys(rootPkg.scripts).filter((s) => !new RegExp(`pnpm ${escapeRe(s)}(?![\\w:-])`).test(allText));
   if (missing.length) fail(`comandos de package.json sin documentar: ${missing.join(", ")}`);
 }
 
