@@ -28,7 +28,8 @@ export type ScreenId =
   | "kanban"
   | "login"
   | "flows"
-  | "listing";
+  | "listing"
+  | "adaptive";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -66,6 +67,7 @@ export const SCREENS: ScreenDef[] = [
   { id: "login", title: "Sign in", icon: "lock-closed", hint: "Glass sign-in page" },
   { id: "flows", title: "Flows", icon: "share", hint: "Node editor with ports, edges and minimap" },
   { id: "listing", title: "Listing", icon: "home-modern", hint: "Notifications, filters, prices, reviews and photos" },
+  { id: "adaptive", title: "Adaptive", icon: "arrows-pointing-out", hint: "A template per size class, editable live" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);
