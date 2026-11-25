@@ -1861,8 +1861,8 @@ function classify(recs) {
                 ? "opción de segmentado: con puntero grueso la zona táctil crece a 40 px con ::before"
                 : /z-resize|z-table__resize|z-split__divider/.test(i.sig)
                   ? "tirador de redimensionado: 12 px con ratón, 40 con puntero grueso (::before) y flechas con teclado; más ancho taparía la barra de desplazamiento del panel"
-                  : /z-heatmap__cell/.test(i.sig)
-                    ? "celda de un mapa de calor de 53 semanas: el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
+                  : /z-heatmap__cell|z-chart__cell/.test(i.sig)
+                    ? "celda de un mapa de calor (53 semanas, o día × hora en HeatmapChart): el tamaño es esencial a la presentación; una sola parada de Tab y flechas"
                     : /z-rating__star/.test(i.sig)
                       ? "media estrella: la estrella entera mide 24 px y el valor se fija también con flechas"
                       : /z-timeline__booking/.test(i.sig)
