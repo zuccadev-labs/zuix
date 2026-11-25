@@ -33,6 +33,9 @@ pantalla; no dibuja contenido. Usa los tokens para medidas y material, y depende
 | `LandingLayout`, `LandingHero`, `LandingSection` | Página de presentación con cabecera, rejilla de funciones, llamada a la acción y pie | Propio |
 | `MailLayout` | Carpetas, lista de mensajes y lectura; en estrecho, una vista cada vez | Propio |
 | `ChatLayout` | Lista de conversaciones, conversación y detalles; en estrecho, una pila que puede seguir el historial del navegador. `variant="widget"` es un asistente flotante | Propio |
+| `AdaptiveLayout`, `AdaptiveItem` | Layout adaptativo: una plantilla de áreas por clase de tamaño y piezas con área, orden y visibilidad por clase. Ver [Layouts adaptativos](./12-layouts-adaptativos.md) | Propio |
+| `AdaptiveSwitch` | Una variante de un componente por clase de tamaño, elegida con CSS hasta medir | Propio |
+| `AdaptiveTabs`, `AdaptiveTable`, `AdaptiveToolbar` | Pestañas ↔ select o barra inferior, tabla ↔ tarjetas y barra ↔ menú «más», por clase de tamaño | Propio |
 
 ## Uso
 
@@ -89,6 +92,10 @@ popover abierto por encima: lo gestiona esa capa.
 
 Antes de medirse (HTML de servidor, o antes de `init()`), un panel `auto` que no cabe no se muestra: una
 ventana estrecha no enseña un instante los paneles acoplados.
+
+Un panel con `adaptive` (ajustes por clase de tamaño) deja de usar los cortes en px: cada clase dice si es
+`docked`, `drawer` o `rail` (acoplado y con la `Sidebar` plegada a iconos), o si se oculta. El `Shell` escribe la
+clase medida en `data-size-class`. Está en [Layouts adaptativos](./12-layouts-adaptativos.md#las-que-vienen-hechas).
 
 ## Teclado y puntero
 
@@ -153,6 +160,9 @@ Solo actúa dentro de un contenedor `[data-z-dom]`. Aplicación completa de ejem
 | `FloatingPanel` | `.z-floatpanel[role=dialog]` con `.z-floatpanel__header`, `__handle`, `__resize` y `__close` | `data-strategy="absolute"` lo acota a su contenedor; `data-min-width`, `data-min-height`; `data-z-panel="#id"` en un botón lo abre |
 | `PaneLayout` | `.z-panelayout` con `.z-split` anidados y `.z-panelayout__pane[data-pane-id]` | `data-pane-action="move-left\|move-right\|move-up\|move-down\|close\|split-right\|split-down"` en los items de su menú |
 | Navegación de sitio | `.z-navbar`, `.z-navmenu`, `.z-skiplink`, `.z-bottomnav` | Los mismos atributos que produce el binding (`zout/html.json`) |
+| `AdaptiveLayout` | `.z-adaptive > .z-adaptive__grid > .z-adaptive__item` | `data-reorder="dom\|visual"`, `data-measure="window"`, `data-transition`; en cada pieza, `data-item` y `data-hidden-in`; la colocación, en variables (`--z-areas-*`, `--z-place-*`, `--z-order-*`) |
+| `AdaptiveSwitch` | `.z-adaptive-switch > .z-adaptive-switch__variant` | `data-variant` y `data-classes` (clases en que se muestra) en cada variante |
+| Panel adaptativo del `Shell` | El `<aside>` | `data-adaptive`, `data-drawer-in`, `data-rail-in`, `data-hidden-in` |
 
 El módulo escribe el mismo estado que React: `data-mode`, clase `z-shell__drawer`, `role="dialog"`,
 `aria-modal`, `inert` en lo que queda bajo el velo, `button.z-shell__scrim`, `--z-shell-panel-width`,
@@ -175,6 +185,8 @@ import {
   openFloatingPanel, closeFloatingPanel, setFloatingPanelRect,
   getPaneLayout, setPaneLayout, splitLayoutPane,
   setChatView, setChatWidgetOpen,
+  setAdaptiveTemplates, setAdaptiveItem, getAdaptiveTemplates,
+  sizeClassOf, observeSizeClass, sizeClassFor, SIZE_CLASSES, adaptiveTransition,
 } from "@zuccadev-labs/zuix-zout/dom";
 
 setPanelOpen(shell, "inspector", true);
@@ -185,7 +197,17 @@ hydrate(container);                          // tras insertar marcado nuevo o ca
 dispose(container);                          // antes de retirar un bloque: suelta sus observadores
 setChatView(chat, "details");                // ChatLayout estrecho: list, conversation o details
 setChatWidgetOpen(widget, true);             // ChatLayout variant="widget"
+sizeClassOf(layout);                         // { sizeClass: "medium", width: 712, pointer: "fine", hover: true }
+setAdaptiveItem(item, { area: "aside", adaptive: { compact: { hidden: true } } });
 ```
+
+Los layouts adaptativos tienen su núcleo en la raíz del paquete, sin React ni DOM, para el editor o el servidor:
+`SIZE_CLASSES`, `SIZE_CLASS_NAMES`, `sizeClassFor`, `sizeClassIndex`, `isSizeClass`, `inputClassOf`,
+`resolveAdaptive`, `resolveAll`, `pickForClass`, `resolveTemplate`, `resolveNodes`, `areaRows`, `areaRects`,
+`validateTemplate`, `validateAdaptive`, `visualOrder`, `readingOrder`, `domOrderFor`, `orderMismatch`,
+`templateVars`, `nodeStyle`, `splitOverflow` y `adaptivePanel`; y, con DOM, `sizeClassOf` y `adaptiveTransition`.
+El hook es `useSizeClass` y su contexto, `SizeClassContext`. Todo se explica en
+[Layouts adaptativos](./12-layouts-adaptativos.md).
 
 Las funciones que usan por dentro `AppBar` y `DocsLayout` salen también de la raíz de React:
 `appBarProgress(scroll, distance)` da el avance 0…1 del pliegue de la barra y `activeSection(tops, line, atEnd)`, la
@@ -218,6 +240,8 @@ aplicación.
 | `z:select` | `.z-bottomnav` | `{ value }` | No se mueve `aria-current` |
 | `z:viewchange` | `.z-chat-layout` | `{ view }`: `list`, `conversation` o `details` | No cambia la vista ni el historial |
 | `z:open`, `z:close` | `.z-chat-layout[data-variant="widget"]` | | (informativos) |
+| `z:sizeclass` | `.z-adaptive`, `.z-adaptive-switch` | `{ sizeClass, previous, width, pointer, hover }`; en el switch, también `variant` | En el layout, no se reordena el DOM |
+| `z:ordermismatch` | `.z-adaptive[data-reorder="visual"]` | `{ sizeClass, dom, visual, readingFlow }` | No se avisa por consola |
 
 `z:modechange` se emite al medir por primera vez, dentro de `init()`: quien quiera el primer aviso se
 suscribe antes, o lee `getShellModes(shell)`. Los `z:resize` de un `SplitPane` anidado llegan también
