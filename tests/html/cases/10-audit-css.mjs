@@ -12,12 +12,16 @@ const ZOUT = Object.keys(
 export default async function ({ page, test, ok, settle, browserName, note, Unverifiable }) {
   // Firefox cambia lo que responde matchMedia al emular, pero no vuelve a aplicar las reglas @media de las hojas ya
   // cargadas: se desactivan y reactivan para que las evalúe otra vez.
+  // Después se espera a que terminen las transiciones que haya disparado el cambio: un control que anima su fondo
+  // parte del color que tenía un instante antes y, medido entonces, aún no muestra el estado final.
   const restyle = () =>
-    page.evaluate(() => {
+    page.evaluate(async () => {
       for (const sheet of document.styleSheets) {
         sheet.disabled = true;
         sheet.disabled = false;
       }
+      const running = document.getAnimations().filter((animation) => animation instanceof CSSTransition);
+      await Promise.all(running.map((animation) => animation.finished.catch(() => {})));
     });
   const media = async (features) => {
     try {
