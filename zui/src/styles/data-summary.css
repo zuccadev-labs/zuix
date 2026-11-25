@@ -350,7 +350,6 @@
   }
   .z-filter-bar__chevron {
     display: inline-flex;
-    margin-inline-start: calc(var(--z-space-0-5) * -1);
     transition: rotate var(--z-duration-fast) var(--z-ease-standard);
   }
   .z-filter-bar__chip [aria-expanded="true"] .z-filter-bar__chevron {

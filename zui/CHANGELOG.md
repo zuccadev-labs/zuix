@@ -19,6 +19,7 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   altas).
 - Mensaje borrado (`z-message__text--deleted`): sin `pre-wrap`, el sangrado del marcado HTML ya no parte la línea,
   y el icono va en la línea como una letra más: si el aviso parte en dos líneas, se queda con la primera.
+- `FilterBar`: el chevrón de un filtro con menú ya no se acerca 2 px al texto; los huecos del chip son iguales.
 
 ## [0.4.0] - 2026-11-23
 
