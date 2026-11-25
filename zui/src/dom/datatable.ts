@@ -58,7 +58,18 @@ const bodyRows = (root: Element) => {
   const table = tableOf(root);
   return table ? bodyRowsOf(table).filter((row) => row.dataset.detailOf === undefined && !row.classList.contains("z-table__group")) : [];
 };
-const rowBox = (row: Element) => row.querySelector<HTMLElement>(':scope > .z-table__select [role="checkbox"]');
+// La casilla de cada fila se busca una vez: con 10 000 filas, buscarla en cada pintado de la selección pesaba segundos.
+const boxes = new WeakMap<Element, HTMLElement | null>();
+const rowBox = (row: Element) => {
+  let box = boxes.get(row);
+  if (box === undefined || (box && !row.contains(box))) {
+    box = null;
+    for (const cell of (row as HTMLTableRowElement).cells ?? [])
+      if (cell.classList.contains("z-table__select")) box = cell.querySelector<HTMLElement>('[role="checkbox"]');
+    boxes.set(row, box);
+  }
+  return box;
+};
 const allBox = (root: Element) => root.querySelector<HTMLElement>('thead .z-table__select [role="checkbox"]');
 const keyOf = (row: HTMLTableRowElement) => row.dataset.key ?? String(row.sectionRowIndex);
 const off = (box: HTMLElement | null) => !box || box.hasAttribute("data-disabled") || (box as HTMLButtonElement).disabled;

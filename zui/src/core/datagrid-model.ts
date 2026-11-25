@@ -57,8 +57,8 @@ export interface FlattenInput<T> {
   keyOf: (row: T) => RowKey;
   /** Columnas por las que se agrupa, de fuera a dentro. */
   groupBy?: ReadonlyArray<string>;
-  /** Valor de una fila en una columna (para agrupar). */
-  valueOf?: (row: T, column: string) => Primitive;
+  /** Valor de una fila en una columna (para agrupar). No se llama `valueOf`: chocaría con el de Object. */
+  valueAt?: (row: T, column: string) => Primitive;
   /** Grupos plegados (por su clave de `GridRow`); por defecto todos abiertos. */
   collapsedGroups?: ReadonlySet<string>;
   /** Hijos de una fila (datos en árbol). */
@@ -77,7 +77,7 @@ export interface FlattenInput<T> {
 export function flattenGrid<T>(input: FlattenInput<T>): GridRow<T>[] {
   const out: GridRow<T>[] = [];
   const groups = input.groupBy?.filter(Boolean) ?? [];
-  const value = input.valueOf ?? (() => undefined);
+  const value = input.valueAt ?? (() => undefined);
   const pushRows = (list: ReadonlyArray<T>, depth: number, parent: RowKey | null) => {
     list.forEach((row, i) => {
       const key = input.keyOf(row);

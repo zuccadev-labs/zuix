@@ -116,7 +116,12 @@ export function createAsyncOptions<T>(config: AsyncOptionsConfig<T>): AsyncOptio
         if (mine !== ticket || ctrl.signal.aborted || isAbort(error)) return;
         controller = null;
         failed = { query, page };
-        set({ status: "error", loadingMore: false, error });
+        // Si falla la primera página, lo que había era de otra consulta: no se deja a la vista con el error.
+        set(
+          page > 1
+            ? { status: "error", loadingMore: false, error }
+            : { status: "error", loadingMore: false, error, query, options: [], hasMore: false },
+        );
       },
     );
   };

@@ -103,7 +103,8 @@ describe("DataTable (React): selección, pie y paginación", () => {
   test("paginación en servidor: las filas recibidas son la página y rowCount el total", () => {
     const out = html({ pageSize: 2, page: 3, manualPagination: true, rowCount: 40, rows: members.slice(0, 2) });
     assert.match(out, /5–6 of 40/);
-    assert.equal([...out.matchAll(/<tr class=""/g)].length, 2);
+    const body = /<tbody>([\s\S]*)<\/tbody>/.exec(out)?.[1] ?? "";
+    assert.equal([...body.matchAll(/<tr\b/g)].length, 2);
   });
   test("sin filas: el vacío ocupa también la columna de casillas y la cabecera queda deshabilitada", () => {
     const out = html({ rows: [], selectable: true, pageSize: 5 });

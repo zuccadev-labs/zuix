@@ -1076,7 +1076,10 @@ export function hydrate(root: ParentNode = document): void {
   )) {
     if (edgeTracked.has(strip)) continue;
     edgeTracked.add(strip);
-    trackScrollEdges(strip);
+    // Una tabla, al fotograma siguiente: si es larga, la ventana virtual (familia data, en este mismo hydrate) la deja
+    // antes en lo que se ve y medir sus bordes no obliga a maquetar miles de filas.
+    if (strip.matches(".z-table-wrap")) requestAnimationFrame(() => trackScrollEdges(strip));
+    else trackScrollEdges(strip);
   }
   for (const tabs of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tabs, .z-tabs[data-z-dom]")) {
     const active = tabs.querySelector<HTMLElement>('.z-tabs__tab[data-state="active"]') ?? tabs.querySelector<HTMLElement>(".z-tabs__tab");

@@ -96,6 +96,12 @@ export function virtualizeTable(table: HTMLTableElement, scroller: HTMLElement, 
     }
     return k;
   };
+  // Antes de medir nada: la tabla pasa a desplazar dentro de su alto y las filas salen del documento (si no, la
+  // primera ventana sería la tabla entera y su medida obligaría a maquetar 10 000 filas).
+  scroller.classList.add("z-table-wrap--virtual");
+  table.setAttribute("data-virtual", "");
+  table.toggleAttribute("data-sticky", true);
+  body.replaceChildren(before, after);
   const headRows = table.tHead?.rows.length ?? 0;
   table.setAttribute("aria-rowcount", String(headRows + rows.length + (table.tFoot?.rows.length ?? 0)));
   const paint = () => {
@@ -111,7 +117,18 @@ export function virtualizeTable(table: HTMLTableElement, scroller: HTMLElement, 
     const want = [before, ...shown, after];
     const now = [...body.children];
     if (want.length !== now.length || want.some((el, i) => el !== now[i])) {
-      body.replaceChildren(...want);
+      // Sin mover lo que se queda: quitar una fila del documento (aunque vuelva enseguida) le quitaría el foco. Se
+      // quita lo que sale y se inserta lo que entra; lo que sigue conserva su sitio relativo.
+      const keepSet = new Set<Element>(want);
+      for (const child of now) if (!keepSet.has(child)) child.remove();
+      let cur = body.firstElementChild;
+      for (const el of want) {
+        if (el === cur) {
+          cur = cur.nextElementSibling;
+          continue;
+        }
+        body.insertBefore(el, cur);
+      }
       // Las filas que vuelven al documento llevan el desplazamiento de las columnas fijadas.
       if (table.tHead?.querySelector("th[data-pinned]")) applyPinned(table);
     }
@@ -142,8 +159,5 @@ export function virtualizeTable(table: HTMLTableElement, scroller: HTMLElement, 
     const row = (event.target as Element).closest?.("tr");
     focusedAt = row ? store.visible.indexOf(row as HTMLTableRowElement) : -1;
   });
-  scroller.classList.add("z-table-wrap--virtual");
-  table.setAttribute("data-virtual", "");
-  table.toggleAttribute("data-sticky", true);
   paint();
 }

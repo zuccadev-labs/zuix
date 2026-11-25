@@ -896,7 +896,7 @@ export function setComboboxLoader(combo: HTMLElement, load: AsyncLoader<Combobox
     debounce: options.debounce,
     minLength: options.minLength,
     onChange(state) {
-      if (state.status === "ready") setComboboxOptions(combo, state.options);
+      if (state.status === "ready" || (state.status === "error" && !state.options.length)) setComboboxOptions(combo, state.options);
       setComboboxLoading(combo, state.status === "loading" || state.loadingMore);
       paintAsyncStatus(popup, state, combo);
       if (state.status === "error" && !state.options.length) popup.querySelector(":scope > .z-listbox__empty:not([data-async])")?.remove();

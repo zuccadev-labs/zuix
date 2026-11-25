@@ -77,7 +77,11 @@ function render(el: HTMLElement, focus = false): void {
   for (const [k, value] of Object.entries(vars)) if (el.style.getPropertyValue(k) !== String(value)) el.style.setProperty(k, String(value));
   if (Object.keys(vars).length) el.dataset.zVars = Object.keys(vars).join(" ");
   for (const s of scripts) s.remove();
+  // Recolocar un nodo con clave (la ventana virtual que cambia) lo saca un instante del documento y pierde el foco:
+  // si lo tenía y sigue en la pieza, lo recupera.
+  const focused = el.contains(el.ownerDocument.activeElement) ? (el.ownerDocument.activeElement as HTMLElement) : null;
   patchChildren(el, tree.c ?? []);
+  if (focused && focused !== el.ownerDocument.activeElement && el.contains(focused)) focused.focus({ preventScroll: true });
   el.append(...scripts);
   for (const fill of slotFills) fill(el, tree.c ?? []);
   if (widget.after) widget.after(el, entry.host, focus);

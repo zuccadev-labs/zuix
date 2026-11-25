@@ -521,7 +521,7 @@ export function DataTable<T>({
       rows: visible,
       keyOf,
       groupBy: groupKeys,
-      valueOf: (row, key) => byKey.get(key)?.accessor?.(row),
+      valueAt: (row, key) => byKey.get(key)?.accessor?.(row),
       collapsedGroups: new Set(collapsed),
       childrenOf: getRowChildren,
       expandedRows: new Set(treeOpen),
@@ -954,7 +954,7 @@ export function DataTable<T>({
         key={r.key}
         className="z-table__group"
         data-row-key={r.key}
-        data-vkey={r.key}
+        data-vkey={virtual ? r.key : undefined}
         aria-level={r.depth + 1}
         aria-expanded={r.expanded}
         aria-rowindex={rowIndexAttr(at)}

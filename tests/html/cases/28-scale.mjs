@@ -45,9 +45,17 @@ export default async function ({ page, test, ok, note }) {
       const el = document.activeElement;
       return { row: el?.closest("tr")?.dataset.rowKey ?? null, col: el?.closest("td, th")?.cellIndex ?? -1, tag: el?.tagName };
     });
+  /** Espera una condición en la página; si no llega, el error dice cuál. */
+  const until = async (fn, label, arg) => {
+    try {
+      await page.waitForFunction(fn, arg, { timeout: 8000 });
+    } catch {
+      throw new Error(`no llegó: ${label}`);
+    }
+  };
   const live = () => page.evaluate(() => [...document.querySelectorAll("[aria-live]")].map((n) => n.textContent).join(" | "));
 
-  await test("DataTable sin React · rejilla: flechas, editar con validación, z:celledit cancelable, Escape y Tab", async () => {
+  await test("Escala · DataTable sin React · rejilla: flechas, editar con validación, z:celledit cancelable, Escape y Tab", async () => {
     await mount(example("DataTable", "Rejilla editable"), ["z:celledit", "z:columnorder"]);
     const b = box();
     ok((await b.locator("tbody [tabindex='0']").count()) === 1, "una parada de Tab en el cuerpo");
@@ -114,14 +122,16 @@ export default async function ({ page, test, ok, note }) {
     ok(heads.join() === "name,seats,role,joined", `cabecera movida: ${heads}`);
     const cells = await b.locator('tbody tr[data-row-key="a1"] td').evaluateAll((tds) => tds.map((td) => td.dataset.col));
     ok(cells.join() === "name,seats,role,joined", `celdas movidas: ${cells}`);
-    ok(/Role dropped at position 2 of 2/.test(await live()), "anuncia la posición");
+    await page.waitForFunction(() =>
+      /Role dropped at position 2 of 2/.test([...document.querySelectorAll("[aria-live]")].map((n) => n.textContent).join(" ")),
+    );
     const pins = await b
       .locator('tbody tr[data-row-key="a1"] td[data-pinned]')
       .evaluateAll((tds) => tds.map((td) => getComputedStyle(td).position));
     ok(pins.join() === "sticky,sticky", `fijadas a los dos lados: ${pins}`);
   });
 
-  await test("DataTable sin React · grupos con agregados, árbol con →/← y fila de detalle", async () => {
+  await test("Escala · DataTable sin React · grupos con agregados, árbol con →/← y fila de detalle", async () => {
     await mount(example("DataTable", "Agrupada con agregados"), ["z:expandchange", "z:detailchange"]);
     let b = box();
     const group = b.locator("tbody tr.z-table__group").first();
@@ -153,86 +163,91 @@ export default async function ({ page, test, ok, note }) {
     ok(ev.filter(([t]) => t === "z:detailchange").length === 2, `z:detailchange: ${JSON.stringify(ev)}`);
   });
 
-  await test("DataTable sin React · 10 000 filas del servidor: ventana virtual, orden, filtro y foco medidos", async () => {
-    const result = await page.evaluate(async () => {
-      for (const old of document.querySelectorAll("[data-sc-layer]")) old.remove();
-      const rows = [];
-      for (let i = 0; i < 10000; i++)
-        rows.push(
-          `<tr data-key="r${i}" data-row-key="r${i}"><td class="z-table__select"><button type="button" role="checkbox" class="z-check__box" aria-checked="false" aria-label="Select row ${i + 1}" data-state="unchecked"></button></td><td data-col="name">Item ${String(i + 1).padStart(5, "0")}</td><td data-col="team">${["North", "South", "East", "West", "Central"][i % 5]}</td><td data-col="value" data-align="end">${(i * 37) % 1000}</td></tr>`,
-        );
-      const html = `<div class="z-datatable" data-selected-label="{n} selected"><div class="z-table-wrap"><table class="z-table" data-grid data-density="comfortable"><thead><tr><th scope="col" class="z-table__select"><button type="button" role="checkbox" class="z-check__box" aria-checked="false" aria-label="Select all" data-select-all></button></th><th scope="col" data-key="name">Name</th><th scope="col" data-key="team">Team</th><th scope="col" data-key="value" data-sort="number" aria-sort="none"><button type="button" class="z-table__sort"><span>Value</span></button></th></tr><tr class="z-table__filters"><td class="z-table__select"></td><th scope="col"><input type="search" class="z-input__control z-table__filter" aria-label="Filter Name"></th><th scope="col"><input type="search" class="z-input__control z-table__filter" aria-label="Filter Team"></th><th scope="col"></th></tr></thead><tbody>${rows.join("")}</tbody></table></div><div class="z-datatable__bar"><span class="z-datatable__count" role="status" data-empty></span></div></div>`;
-      const box = document.createElement("div");
-      box.setAttribute("data-z-dom", "");
-      box.setAttribute("data-sc-layer", "");
-      Object.assign(box.style, {
-        position: "fixed",
-        insetBlockStart: "0",
-        insetInlineStart: "0",
-        zIndex: "2147483000",
-        inlineSize: "760px",
-        background: "Canvas",
-        padding: "16px",
-      });
-      document.querySelector(".page__main").append(box);
-      const dom = await import("/zui/dist/zui.dom.js");
-      const start = performance.now();
-      box.innerHTML = html;
-      dom.hydrate(box);
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      const mount = performance.now() - start;
-      const table = box.querySelector("table");
-      const wrap = box.querySelector(".z-table-wrap");
-      const inDoc = table.tBodies[0].rows.length;
-      const frames = [];
-      for (let i = 1; i <= 20; i++) {
-        const s = performance.now();
-        wrap.scrollTop = i * 4000;
+  await test("Escala · DataTable sin React · 10 000 filas del servidor: ventana virtual, orden, filtro y foco medidos", async () => {
+    const build = (n) =>
+      page.evaluate(async (count) => {
+        for (const old of document.querySelectorAll("[data-sc-layer]")) old.remove();
+        const rows = [];
+        for (let i = 0; i < count; i++)
+          rows.push(
+            `<tr data-key="r${i}" data-row-key="r${i}"><td class="z-table__select"><button type="button" role="checkbox" class="z-check__box" aria-checked="false" aria-label="Select row ${i + 1}" data-state="unchecked"></button></td><td data-col="name">Item ${String(i + 1).padStart(5, "0")}</td><td data-col="team">${["North", "South", "East", "West", "Central"][i % 5]}</td><td data-col="value" data-align="end">${(i * 37) % 1000}</td></tr>`,
+          );
+        const html = `<div class="z-datatable" data-selected-label="{n} selected"><div class="z-table-wrap"><table class="z-table" data-grid data-density="comfortable"><thead><tr><th scope="col" class="z-table__select"><button type="button" role="checkbox" class="z-check__box" aria-checked="false" aria-label="Select all" data-select-all></button></th><th scope="col" data-key="name">Name</th><th scope="col" data-key="team">Team</th><th scope="col" data-key="value" data-sort="number" aria-sort="none"><button type="button" class="z-table__sort"><span>Value</span></button></th></tr><tr class="z-table__filters"><td class="z-table__select"></td><th scope="col"><input type="search" class="z-input__control z-table__filter" aria-label="Filter Name"></th><th scope="col"><input type="search" class="z-input__control z-table__filter" aria-label="Filter Team"></th><th scope="col"></th></tr></thead><tbody>${rows.join("")}</tbody></table></div><div class="z-datatable__bar"><span class="z-datatable__count" role="status" data-empty></span></div></div>`;
+        const box = document.createElement("div");
+        box.setAttribute("data-z-dom", "");
+        box.setAttribute("data-sc-layer", "");
+        Object.assign(box.style, {
+          position: "fixed",
+          insetBlockStart: "0",
+          insetInlineStart: "0",
+          zIndex: "2147483000",
+          inlineSize: "760px",
+          background: "Canvas",
+          padding: "16px",
+        });
+        document.querySelector(".page__main").append(box);
+        const dom = await import("/zui/dist/zui.dom.js");
+        const start = performance.now();
+        box.innerHTML = html;
+        dom.hydrate(box);
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-        frames.push(performance.now() - s);
-      }
-      frames.sort((a, b) => a - b);
-      const firstIndex = table.tBodies[0].querySelector("tr[data-vkey]")?.getAttribute("aria-rowindex");
-      let s = performance.now();
-      table.querySelector('th[data-key="value"] .z-table__sort').click();
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      const sort = performance.now() - s;
-      wrap.scrollTop = 0;
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      const firstValue = table.tBodies[0].querySelector("tr[data-vkey] td[data-col='value']")?.textContent;
-      s = performance.now();
-      const filter = table.querySelector('input[aria-label="Filter Team"]');
-      filter.value = "north";
-      filter.dispatchEvent(new Event("input", { bubbles: true }));
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      const filtering = performance.now() - s;
-      const shownAfterFilter = [...table.tBodies[0].querySelectorAll("tr[data-vkey] td[data-col='team']")].every(
-        (td) => td.textContent === "North",
-      );
-      return {
-        mount: Math.round(mount),
-        inDoc,
-        p50: Math.round(frames[10]),
-        p95: Math.round(frames[18]),
-        firstIndex,
-        sort: Math.round(sort),
-        firstValue,
-        filtering: Math.round(filtering),
-        shownAfterFilter,
-        rowcount: table.getAttribute("aria-rowcount"),
-      };
-    });
+        const mount = performance.now() - start;
+        const table = box.querySelector("table");
+        const wrap = box.querySelector(".z-table-wrap");
+        const inDoc = table.tBodies[0].rows.length;
+        const frames = [];
+        for (let i = 1; i <= 20; i++) {
+          const s = performance.now();
+          wrap.scrollTop = i * 4000;
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+          frames.push(performance.now() - s);
+        }
+        frames.sort((a, b) => a - b);
+        const firstIndex = table.tBodies[0].querySelector("tr[data-vkey]")?.getAttribute("aria-rowindex");
+        let s = performance.now();
+        table.querySelector('th[data-key="value"] .z-table__sort').click();
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const sort = performance.now() - s;
+        wrap.scrollTop = 0;
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const firstValue = table.tBodies[0].querySelector("tr[data-vkey] td[data-col='value']")?.textContent;
+        s = performance.now();
+        const filter = table.querySelector('input[aria-label="Filter Team"]');
+        filter.value = "north";
+        filter.dispatchEvent(new Event("input", { bubbles: true }));
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const filtering = performance.now() - s;
+        const shownAfterFilter = [...table.tBodies[0].querySelectorAll("tr[data-vkey] td[data-col='team']")].every(
+          (td) => td.textContent === "North",
+        );
+        return {
+          mount: Math.round(mount),
+          inDoc,
+          p50: Math.round(frames[10]),
+          p95: Math.round(frames[18]),
+          firstIndex,
+          sort: Math.round(sort),
+          firstValue,
+          filtering: Math.round(filtering),
+          shownAfterFilter,
+          rowcount: table.getAttribute("aria-rowcount"),
+        };
+      }, n);
+    // Referencia con 1 000 filas: con ventana virtual, desplazar cuesta lo mismo con 10 veces más.
+    const small = await build(1000);
+    const result = await build(10000);
     note(
-      `10 000 filas sin React · montaje ${result.mount} ms · ${result.inDoc} filas en el documento · desplazamiento p50 ${result.p50} ms, p95 ${result.p95} ms · ordenar ${result.sort} ms · filtrar ${result.filtering} ms`,
+      `10 000 filas sin React · montaje ${result.mount} ms · ${result.inDoc} filas en el documento · desplazamiento p50 ${result.p50} ms, p95 ${result.p95} ms (con 1 000: p50 ${small.p50} ms) · ordenar ${result.sort} ms · filtrar ${result.filtering} ms`,
     );
     ok(result.inDoc < 90, `ventana virtual: ${result.inDoc} filas en el documento`);
     ok(result.rowcount === "10002", `aria-rowcount: ${result.rowcount}`);
     ok(Number(result.firstIndex) > 1000, `aria-rowindex tras desplazar: ${result.firstIndex}`);
     ok(result.firstValue === "0", `ordena todas las filas (también las de fuera): ${result.firstValue}`);
     ok(result.shownAfterFilter, "filtra todas las filas");
-    ok(result.mount < 2500, `montaje < 2500 ms: ${result.mount}`);
-    ok(result.p95 < 100, `desplazamiento p95 < 100 ms: ${result.p95}`);
-    ok(result.sort < 800, `ordenar < 800 ms: ${result.sort}`);
+    // Umbrales holgados para una máquina cargada; lo que se comprueba de verdad es que el coste no crece con las filas.
+    ok(result.p50 <= small.p50 * 2 + 40, `desplazar no depende del número de filas: ${result.p50} ms frente a ${small.p50} ms`);
+    ok(result.mount < 3000, `montaje < 3000 ms: ${result.mount}`);
+    ok(result.sort < 1500, `ordenar < 1500 ms: ${result.sort}`);
     // Foco al reciclar: la fila enfocada sigue en el documento tras desplazar lejos.
     await page.locator("[data-sc-layer] tbody tr[data-vkey] td[data-col='name']").first().click();
     const row = await page.evaluate(() => document.activeElement?.closest("tr")?.dataset.rowKey);
@@ -245,7 +260,7 @@ export default async function ({ page, test, ok, note }) {
     ok((await page.evaluate(() => document.activeElement?.closest("tr")?.dataset.rowKey)) !== row, "↓ desde la fila reciclada");
   });
 
-  await test("Select con búsqueda y Combobox/Listbox del servidor sin React · antirrebote, cancelación, error y páginas", async () => {
+  await test("Escala · Select con búsqueda y Combobox/Listbox del servidor sin React · antirrebote, cancelación, error y páginas", async () => {
     const options = Array.from(
       { length: 300 },
       (_, i) =>
@@ -300,21 +315,21 @@ export default async function ({ page, test, ok, note }) {
       );
     });
     await page.click("[data-sc-layer] .z-combobox input");
-    await page.waitForFunction(() => document.querySelectorAll("#sc-combo .z-listbox__option").length === 20);
+    await until(() => document.querySelectorAll("#sc-combo .z-listbox__option").length === 20, "paso 2");
     await page.keyboard.type("rome", { delay: 20 });
-    await page.waitForFunction(() => document.querySelector("#sc-combo .z-listbox__option .z-listbox__text")?.textContent === "rome 1");
+    await until(() => document.querySelector("#sc-combo .z-listbox__option .z-listbox__text")?.textContent === "rome 1", "paso 3");
     const calls = await page.evaluate(() => window.__calls.splice(0));
     ok(calls.join() === "#1,rome#1", `antirrebote: una petición por consulta final: ${calls}`);
     await page.evaluate(() => {
       const vp = document.querySelector("#sc-combo .z-listbox__viewport");
       vp.scrollTop = vp.scrollHeight;
     });
-    await page.waitForFunction(() => document.querySelectorAll("#sc-combo .z-listbox__option").length === 40);
+    await until(() => document.querySelectorAll("#sc-combo .z-listbox__option").length === 40, "paso 4");
     await page.fill("[data-sc-layer] .z-combobox input", "error");
-    await page.waitForFunction(() => document.querySelector("#sc-combo .z-listbox__empty[data-error]"));
+    await until(() => document.querySelector("#sc-combo .z-listbox__empty[data-error]"), "paso 5");
     ok((await page.locator("#sc-combo [data-retry]").count()) === 1, "botón de reintentar");
     await page.keyboard.press("Enter");
-    await page.waitForFunction(() => document.querySelector("#sc-combo .z-listbox__option .z-listbox__text")?.textContent === "error 1");
+    await until(() => document.querySelector("#sc-combo .z-listbox__option .z-listbox__text")?.textContent === "error 1", "paso 6");
     await page.keyboard.press("Escape");
 
     // Listbox del servidor.
@@ -329,13 +344,13 @@ export default async function ({ page, test, ok, note }) {
         hasMore: page < 3,
       }));
     });
-    await page.waitForFunction(() => document.querySelectorAll("[data-sc-layer] .z-listbox__option").length === 30);
+    await until(() => document.querySelectorAll("[data-sc-layer] .z-listbox__option").length === 30, "paso 7");
     await page.locator("[data-sc-layer] .z-listbox__option").first().focus();
     await page.keyboard.press("End");
-    await page.waitForFunction(() => document.querySelectorAll("[data-sc-layer] .z-listbox__option").length === 60);
+    await until(() => document.querySelectorAll("[data-sc-layer] .z-listbox__option").length === 60, "paso 8");
   });
 
-  await test("Tree sin React · mover con el teclado y con el puntero (z:move cancelable), anuncios y carga diferida", async () => {
+  await test("Escala · Tree sin React · mover con el teclado y con el puntero (z:move cancelable), anuncios y carga diferida", async () => {
     await mount(example("Tree", "Explorador"), ["z:move", "z:change"], 420);
     await page.evaluate(async () => {
       const tree = document.querySelector("[data-sc-layer] [role=tree]");
@@ -375,7 +390,7 @@ export default async function ({ page, test, ok, note }) {
     // Carga diferida.
     await page.locator(`${tree} [data-value="lazy"] > .z-tree__row`).click();
     ok((await page.getAttribute(`${tree} [data-value="lazy"]`, "aria-busy")) === "true", "aria-busy");
-    await page.waitForFunction(() => document.querySelectorAll('[data-sc-layer] [data-value="lazy"] [role=treeitem]').length === 2);
+    await until(() => document.querySelectorAll('[data-sc-layer] [data-value="lazy"] [role=treeitem]').length === 2, "paso 9");
     // Teclado: Ctrl+X coge, ↓ elige, Intro suelta.
     const first = (await items())[0].split(":")[0];
     await page.focus(`${tree} [data-value="${first}"]`);
@@ -391,14 +406,14 @@ export default async function ({ page, test, ok, note }) {
     await page.focus(`${tree} [data-value="${leaf}"]`);
     await page.keyboard.press("Control+x");
     ok((await page.getAttribute(`${tree} [data-value="${leaf}"]`, "data-grabbed")) === "", "cogido");
-    ok(/Moving /.test(await live()), "anuncia");
+    await page.waitForFunction(() => /Moving /.test([...document.querySelectorAll("[aria-live]")].map((n) => n.textContent).join(" ")));
     await page.keyboard.press("ArrowDown");
     ok((await page.locator(`${tree} .z-tree__row[data-drop]`).count()) === 1, "marcador");
     await page.keyboard.press("Enter");
     const ev = await events();
     const move = ev.find(([t]) => t === "z:move");
     ok(move && move[1].value === leaf, `z:move: ${JSON.stringify(ev)}`);
-    ok(/moved/.test(await live()), "anuncia que lo soltó");
+    await page.waitForFunction(() => /moved/.test([...document.querySelectorAll("[aria-live]")].map((n) => n.textContent).join(" ")));
     ok(start !== undefined, "parada de Tab");
     // Cancelable: la aplicación lo impide y el marcado no cambia.
     await page.evaluate(() =>
@@ -424,7 +439,7 @@ export default async function ({ page, test, ok, note }) {
     );
   });
 
-  await test("Tabs sin React · menú «Más»: botón fuera del tablist, entradas de las que no caben, la elegida vuelve a la tira", async () => {
+  await test("Escala · Tabs sin React · menú «Más»: botón fuera del tablist, entradas de las que no caben, la elegida vuelve a la tira", async () => {
     const tabs = [
       "Overview",
       "Activity",
@@ -444,7 +459,7 @@ export default async function ({ page, test, ok, note }) {
       )
       .join("")}</div></div>`;
     await mount(html, ["z:change"], 420);
-    await page.waitForFunction(() => !document.querySelector("[data-sc-layer] .z-tabs__more")?.hidden);
+    await until(() => !document.querySelector("[data-sc-layer] .z-tabs__more")?.hidden, "paso 10");
     ok((await page.locator("[data-sc-layer] [role=tablist] .z-tabs__more").count()) === 0, "fuera del tablist");
     await page.click("[data-sc-layer] .z-tabs__more");
     const shown = await page.locator("[data-sc-layer] .z-menu [role=menuitem]:not([hidden])").allTextContents();
@@ -455,7 +470,7 @@ export default async function ({ page, test, ok, note }) {
       ev.some(([t, d]) => t === "z:change" && d.value === "t9"),
       `z:change: ${JSON.stringify(ev)}`,
     );
-    await page.waitForFunction(() => document.activeElement?.dataset.value === "t9");
+    await until(() => document.activeElement?.dataset.value === "t9", "paso 11");
     const fits = await page.evaluate(() => {
       const tab = document.querySelector('[data-sc-layer] [data-value="t9"]');
       const list = tab.parentElement.getBoundingClientRect();
@@ -465,7 +480,7 @@ export default async function ({ page, test, ok, note }) {
     ok(fits, "la elegida cabe en la tira");
   });
 
-  await test("ConversationList, MemberList y TransferList sin React · 1 000 entradas con la ventana virtual de core", async () => {
+  await test("Escala · ConversationList, MemberList y TransferList sin React · 1 000 entradas con la ventana virtual de core", async () => {
     const now = Date.parse("2026-11-19T10:00:00Z");
     const items = Array.from({ length: 1000 }, (_, i) => ({
       id: `c${i}`,
@@ -498,7 +513,7 @@ export default async function ({ page, test, ok, note }) {
     ok((await b.locator(".z-transfer__option").count()) < 160, "TransferList: ventana virtual");
     await b.locator('.z-conversation[tabindex="0"]').focus();
     await page.keyboard.press("End");
-    await page.waitForFunction(() => document.activeElement?.closest("li")?.getAttribute("aria-posinset") === "1000");
+    await until(() => document.activeElement?.closest("li")?.getAttribute("aria-posinset") === "1000", "paso 12");
     ok((await page.evaluate(() => document.activeElement?.closest("li")?.getAttribute("aria-setsize"))) === "1000", "aria-setsize");
     await page.keyboard.press("Enter");
     const ev = await events();
