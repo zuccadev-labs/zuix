@@ -263,10 +263,12 @@
     --z-callout-tone: var(--z-danger);
     --z-callout-soft: var(--z-danger-soft);
   }
+  /* Una línea de alto y el icono centrado: va con la primera línea del texto. */
   .z-callout__icon {
     display: inline-flex;
     flex-shrink: 0;
-    margin-top: var(--z-space-0-5);
+    align-items: center;
+    block-size: 1lh;
     color: var(--z-callout-tone);
   }
   .z-callout__body {

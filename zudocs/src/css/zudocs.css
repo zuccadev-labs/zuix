@@ -458,11 +458,14 @@ a[class*="skipToContent"]:focus {
   padding-block-start: var(--z-space-2);
   border-block-start: 1px solid var(--z-line);
 }
+/* La primera línea va centrada en los 34 px de la fila; si el nombre parte en dos, el icono sigue a la primera
+   línea y el contador y el chevrón quedan al centro de la fila. */
 .zd-nav-group__head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--z-space-2-5);
   min-block-size: 34px;
+  padding-block: calc((34px - 1lh) / 2);
   padding-inline: var(--z-space-2-5);
   border-radius: var(--z-item-radius);
   color: var(--z-fg);
@@ -484,7 +487,11 @@ a[class*="skipToContent"]:focus {
   }
 }
 .zd-nav-group__icon {
+  margin-block: calc((1lh - 16px) / 2);
   color: var(--z-fg-muted);
+}
+.zd-nav-group__head > :is(.zd-count, .zd-nav-group__chevron) {
+  align-self: center;
 }
 /* Un grupo de dos o tres palabras («Dashboard y tableros») pasa a dos líneas antes de cortarse. */
 .zd-nav-group__label {
