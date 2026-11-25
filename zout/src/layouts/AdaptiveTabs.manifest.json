@@ -1,0 +1,37 @@
+{
+  "name": "AdaptiveTabs",
+  "group": "layout",
+  "status": "new",
+  "description": "Pestañas que cambian de forma con la clase de tamaño: pestañas donde caben, un select nativo o una barra inferior en compacto. Una sola selección, que se conserva al cambiar de variante.",
+  "import": "import { AdaptiveTabs } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "AdaptiveTabItem[]",
+      "required": true,
+      "description": "{ value, label, icon?, badge?, disabled?, content }. `icon` hace falta para la variante bottom-nav."
+    },
+    { "name": "value", "type": "string" },
+    { "name": "defaultValue", "type": "string" },
+    { "name": "onValueChange", "type": "(value: string) => void" },
+    { "name": "label", "type": "string", "required": true, "description": "Nombre accesible de la navegación." },
+    {
+      "name": "adaptive",
+      "type": "AdaptiveMap",
+      "default": "{ compact: { variant: \"select\" }, medium: { variant: \"tabs\" } }",
+      "description": "Variante por clase: tabs, select o bottom-nav."
+    },
+    { "name": "tabsVariant", "type": "enum", "values": ["segmented", "pill", "underline"] },
+    { "name": "measure", "type": "enum", "values": ["container", "window"], "default": "container" }
+  ],
+  "tokens": ["space-3"],
+  "classes": ["z-adaptive-tabs", "z-adaptive-tabs__select", "z-adaptive-tabs__panel"],
+  "behavior": "react",
+  "a11y": "En pestañas, el patrón APG de Tabs. En select, un <select> nativo con el nombre de la navegación y el contenido en una región con el nombre de la sección. En barra inferior, BottomNavigation con aria-current.",
+  "examples": [
+    {
+      "title": "Select en compacto, pestañas desde medio",
+      "code": "<AdaptiveTabs\n  label=\"Project\"\n  items={[\n    { value: \"overview\", label: \"Overview\", icon: \"home\", content: <p>Summary.</p> },\n    { value: \"activity\", label: \"Activity\", icon: \"clock\", content: <p>Latest changes.</p> },\n    { value: \"settings\", label: \"Settings\", icon: \"cog\", content: <p>Options.</p> },\n  ]}\n/>"
+    }
+  ]
+}

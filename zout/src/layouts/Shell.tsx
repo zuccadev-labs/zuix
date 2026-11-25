@@ -1,7 +1,17 @@
 "use client";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cx } from "../cx";
-import { INSPECTOR_BREAKPOINT, RAIL_BREAKPOINT, SIDEBAR_BREAKPOINT, panelMode, railInDrawer } from "../logic";
+import {
+  INSPECTOR_BREAKPOINT,
+  RAIL_BREAKPOINT,
+  SIDEBAR_BREAKPOINT,
+  adaptivePanel,
+  adaptivePanelClasses,
+  panelMode,
+  railInDrawer,
+} from "../logic";
+import { sizeClassFor, type AdaptiveMap } from "../adaptive";
+import { ShellPanelContext } from "./shell-panel-context";
 import { inertProp } from "../react-compat";
 import { ResizeHandle } from "./ResizeHandle";
 import { closestOpenPopover } from "../popover";
@@ -28,6 +38,13 @@ export interface ShellPanel {
   onResize?: (width: number) => void;
   /** Nombre accesible del tirador. Por defecto, `Resize <label>`. */
   resizeLabel?: string;
+  /**
+   * Ajustes por clase de tamaño del shell (layout adaptativo). `variant`: `docked`, `drawer` o `rail` (acoplado y
+   * plegado a iconos: la `Sidebar` de dentro se pliega sola); `hidden`: ni acoplado ni cajón. Se heredan hacia arriba:
+   * `{ compact: { variant: "drawer" }, medium: { variant: "rail" }, expanded: { variant: "docked" } }`. Con ellos, el
+   * panel ignora `mode` y el corte en px.
+   */
+  adaptive?: AdaptiveMap;
 }
 
 export interface ShellProps {
@@ -102,6 +119,7 @@ function Side({
   mode,
   inert,
   rail,
+  railVariant = false,
 }: {
   panel: ShellPanel;
   side: "left" | "right";
@@ -109,6 +127,8 @@ function Side({
   inert?: boolean;
   /** Rail dentro del cajón (shell estrecho). */
   rail?: ReactNode;
+  /** Variante `rail` de los ajustes por clase: acoplado y plegado a iconos. */
+  railVariant?: boolean;
 }) {
   const id = useId();
   const overlay = mode === "overlay";
@@ -118,13 +138,19 @@ function Side({
     const el = ref.current;
     if (!overlay || !el) return;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    if (!el.contains(previous)) el.focus({ preventScroll: true });
+    // Al fotograma siguiente: un panel acoplado que pasa a cajón al estrecharse y que la aplicación cierra en ese mismo
+    // cambio (onModeChange) no llega a pintarse, y no debe quitarle el foco a lo que lo tenía.
+    const frame = requestAnimationFrame(() => {
+      if (el.isConnected && !el.contains(document.activeElement)) el.focus({ preventScroll: true });
+    });
     return () => {
+      cancelAnimationFrame(frame);
       const active = document.activeElement;
       if (previous?.isConnected && (!active || active === document.body || el.contains(active))) previous.focus({ preventScroll: true });
     };
   }, [overlay]);
   const style = panel.width !== undefined ? ({ "--z-shell-panel-width": `${panel.width}px` } as CSSProperties) : undefined;
+  const classes = panel.adaptive ? adaptivePanelClasses(panel.adaptive) : null;
   return (
     // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-modal solo se emite cuando el panel es un cajón y lleva role="dialog"; acoplado es un <aside> sin ninguno de los dos.
     <aside
@@ -137,13 +163,20 @@ function Side({
       aria-modal={overlay ? true : undefined}
       id={id}
       data-mode={mode}
-      data-panel-mode={panel.mode ?? "auto"}
+      data-panel-mode={panel.adaptive ? "auto" : (panel.mode ?? "auto")}
       data-side={side}
+      data-adaptive={panel.adaptive ? "" : undefined}
+      data-drawer-in={classes?.drawerIn}
+      data-rail-in={classes?.railIn}
+      data-hidden-in={classes?.hiddenIn}
+      data-variant={railVariant ? "rail" : undefined}
       inert={inertProp(inert)}
     >
       {rail ? <div className="z-shell__rail">{rail}</div> : null}
-      <div className="z-shell__panel-body">{panel.content}</div>
-      {!overlay && panel.onResize && panel.width !== undefined ? (
+      <div className="z-shell__panel-body">
+        <ShellPanelContext.Provider value={{ rail: railVariant }}>{panel.content}</ShellPanelContext.Provider>
+      </div>
+      {!overlay && !railVariant && panel.onResize && panel.width !== undefined ? (
         <ResizeHandle
           // Bordes lógicos: la sidebar se redimensiona por su borde final y el inspector por el inicial, también en RTL.
           side={side === "left" ? "end" : "start"}
@@ -185,17 +218,25 @@ export function Shell({
 }: ShellProps) {
   const [ref, width] = useWidth();
   const mainId = useId();
-  const resolve = (panel: ShellPanel | undefined, breakpoint: number): ShellPanelMode | null => {
-    if (!panel || panel.open === false) return null;
-    return panelMode(width, breakpoint, panel.mode);
+  // Con ajustes por clase, el panel se resuelve con la clase de tamaño del shell; sin ellos, con su corte en px.
+  const sidebarState = sidebar?.adaptive ? adaptivePanel(width, sidebar.adaptive) : null;
+  const inspectorState = inspector?.adaptive ? adaptivePanel(width, inspector.adaptive) : null;
+  const resolve = (
+    panel: ShellPanel | undefined,
+    breakpoint: number,
+    state: ReturnType<typeof adaptivePanel> | null,
+  ): ShellPanelMode | null => {
+    if (!panel || panel.open === false || state?.hidden) return null;
+    return state ? state.mode : panelMode(width, breakpoint, panel.mode);
   };
-  const sideMode = resolve(sidebar, sidebarBreakpoint);
-  const inspectorMode = resolve(inspector, inspectorBreakpoint);
+  const sideMode = resolve(sidebar, sidebarBreakpoint, sidebarState);
+  const inspectorMode = resolve(inspector, inspectorBreakpoint, inspectorState);
   const drawerOpen = sideMode === "overlay" || inspectorMode === "overlay";
 
-  const auto = (panel: ShellPanel | undefined, breakpoint: number): ShellPanelMode => panelMode(width, breakpoint, panel?.mode);
-  const sidebarAuto = auto(sidebar, sidebarBreakpoint);
-  const inspectorAuto = auto(inspector, inspectorBreakpoint);
+  const auto = (panel: ShellPanel | undefined, breakpoint: number, state: ReturnType<typeof adaptivePanel> | null): ShellPanelMode =>
+    state ? state.mode : panelMode(width, breakpoint, panel?.mode);
+  const sidebarAuto = auto(sidebar, sidebarBreakpoint, sidebarState);
+  const inspectorAuto = auto(inspector, inspectorBreakpoint, inspectorState);
   const railToDrawer = Boolean(rail && sidebar) && railInDrawer(width, railBreakpoint, sidebarAuto);
   const modeChange = useRef(onModeChange);
   modeChange.current = onModeChange;
@@ -221,7 +262,12 @@ export function Shell({
   return (
     // `data-measured`: hasta que se mide el ancho (servidor, antes de hidratar) la hoja oculta con una consulta de
     // contenedor los paneles `auto` que no caben, para que una ventana estrecha no los muestre acoplados un instante.
-    <div ref={ref} className={cx("z-shell z-canvas z-root", className)} data-measured={width !== null ? "" : undefined}>
+    <div
+      ref={ref}
+      className={cx("z-shell z-canvas z-root", className)}
+      data-measured={width !== null ? "" : undefined}
+      data-size-class={width !== null ? sizeClassFor(width) : undefined}
+    >
       {skipLinkLabel ? (
         <a className="z-shell__skip" href={`#${mainId}`}>
           {skipLinkLabel}
@@ -243,6 +289,7 @@ export function Shell({
             mode={sideMode}
             inert={drawerOpen && sideMode === "docked"}
             rail={railToDrawer && sideMode === "overlay" ? rail : undefined}
+            railVariant={sideMode === "docked" && sidebarState?.rail === true}
           />
         ) : null}
         <Main
@@ -255,7 +302,13 @@ export function Shell({
           <div className="z-shell__content">{children}</div>
         </Main>
         {inspector && inspectorMode ? (
-          <Side panel={inspector} side="right" mode={inspectorMode} inert={drawerOpen && inspectorMode === "docked"} />
+          <Side
+            panel={inspector}
+            side="right"
+            mode={inspectorMode}
+            inert={drawerOpen && inspectorMode === "docked"}
+            railVariant={inspectorMode === "docked" && inspectorState?.rail === true}
+          />
         ) : null}
         {drawerOpen ? <button type="button" className="z-shell__scrim" aria-label={closeOverlayLabel} onClick={onCloseOverlay} /> : null}
       </div>

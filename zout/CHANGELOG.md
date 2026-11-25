@@ -5,6 +5,36 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Layouts adaptativos: para cada clase de tamaño (`compact`, `medium`, `expanded`, `large`, `xlarge`, las de Material 3)
+  se elige un layout distinto, no el mismo estirado. Lo responsive de antes no cambia. Contrato: plantillas por clase
+  (`{ areas, columns?, rows? }`) y, en cada pieza, ajustes por clase (`{ order?, hidden?, area?, span?, variant?,
+  props? }`), heredados hacia arriba ([Layouts adaptativos](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-layouts-adaptativos.md)).
+- `AdaptiveLayout` y `AdaptiveItem`. La hoja coloca las piezas con consultas de contenedor (o de ventana con
+  `measure="window"`) a partir de variables por clase, así que el HTML del servidor ya sale colocado y la hidratación
+  no mueve nada. `reorder="dom"` (por defecto) mueve los nodos al orden en que se ven, con `moveBefore` donde existe;
+  `reorder="visual"` deja el DOM, pone `reading-flow: grid-rows` y avisa en desarrollo si el foco no seguiría lo que
+  se ve.
+- `AdaptiveSwitch`: una variante de un componente por clase, elegida por CSS hasta medir. Sobre él, `AdaptiveTabs`
+  (pestañas, `<select>` o barra inferior), `AdaptiveTable` (tabla o tarjetas) y `AdaptiveToolbar` (acciones que pasan
+  a un menú «más»).
+- `Shell`: `adaptive` en `sidebar` e `inspector`, con las variantes `docked`, `drawer` y `rail` (la `Sidebar` de
+  dentro se pliega sola) y `hidden` por clase. Sin `adaptive` el panel se comporta como siempre. El shell escribe su
+  clase en `data-size-class`.
+- `useSizeClass()` y el núcleo sin React ni DOM en la raíz (`SIZE_CLASSES`, `sizeClassFor`, `resolveAdaptive`,
+  `validateTemplate`, `validateAdaptive`, `visualOrder`…), para el editor visual y el servidor.
+- `@zuccadev-labs/zuix-zout/dom`: `.z-adaptive` y `.z-adaptive-switch` (evento `z:sizeclass`, y `z:ordermismatch` en
+  modo visual), `setAdaptiveTemplates`, `setAdaptiveItem`, `getAdaptiveTemplates`, `sizeClassOf`,
+  `observeSizeClass` y `adaptiveTransition` (view transitions, sin animar con `prefers-reduced-motion`).
+
+### Cambiado
+
+- `Shell`: un panel que pasa a cajón recibe el foco al fotograma siguiente. Si la aplicación lo cierra en el mismo
+  cambio (`onModeChange`), ya no le quita el foco a lo que lo tenía.
+- `Sidebar`: `collapsed` sin valor toma el de la variante `rail` del panel del `Shell` que la contiene; fuera de un
+  panel adaptativo sigue desplegada, como antes.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

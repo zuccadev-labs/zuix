@@ -44,6 +44,8 @@ To install everything with a single dependency: [`@zuccadev-labs/zuix`](https://
 | `LandingLayout`, `LandingHero`, `LandingSection` | Landing page with a hero, feature grid, call to action and footer |
 | `MailLayout` | Folders, message list and reader; one view at a time on narrow screens |
 | `ChatLayout` | Conversation list, conversation and details; a stack on narrow screens that can follow the browser history. `variant="widget"` is a floating assistant |
+| `AdaptiveLayout`, `AdaptiveItem` | Adaptive layout: a different area template per size class (`compact`, `medium`, `expanded`, `large`, `xlarge`) and pieces with their area, order and visibility per class. Placed by CSS, so server HTML hydrates without moving |
+| `AdaptiveSwitch`, `AdaptiveTabs`, `AdaptiveTable`, `AdaptiveToolbar` | One component variant per size class: tabs ↔ select or bottom bar, table ↔ cards, toolbar ↔ overflow menu |
 
 ## With React
 
@@ -100,6 +102,13 @@ The `Shell` measures its own width, not the screen:
 | 1180 px or more | Docked | Docked |
 | 880 to 1179 px | Docked | Drawer |
 | Less than 880 px | Drawer | Drawer |
+
+## Adaptive layouts
+
+Responsive stretches or folds the same layout. Adaptive picks a different one per size class: which regions
+exist, where each piece goes, in which order, what is hidden and which component variant is used. It is an
+optional layer on top of the responsive behavior above. See
+[Layouts adaptativos](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-layouts-adaptativos.md).
 
 ## Keyboard, pointer and direction
 

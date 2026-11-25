@@ -1,0 +1,50 @@
+{
+  "name": "AdaptiveSwitch",
+  "group": "layout",
+  "status": "new",
+  "description": "Una variante de un componente por clase de tamaño. Es su propio contenedor de consulta: hasta medir, todas las variantes están en el documento y la hoja muestra la de la clase activa; medido, el binding deja montada solo esa.",
+  "import": "import { AdaptiveSwitch } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "variants",
+      "type": "Record<string, ReactNode>",
+      "required": true
+    },
+    {
+      "name": "adaptive",
+      "type": "AdaptiveMap",
+      "required": true,
+      "description": "{ [clase]: { variant } }, heredado hacia arriba."
+    },
+    {
+      "name": "fallback",
+      "type": "string",
+      "description": "Variante de las clases sin ajuste. Por defecto, la primera."
+    },
+    {
+      "name": "measure",
+      "type": "enum",
+      "values": ["container", "window"],
+      "default": "container"
+    },
+    {
+      "name": "onVariantChange",
+      "type": "(variant: string, sizeClass: SizeClass) => void"
+    },
+    {
+      "name": "as",
+      "type": "ElementType",
+      "default": "div"
+    }
+  ],
+  "tokens": ["size-medium", "size-expanded", "size-large", "size-xlarge"],
+  "classes": ["z-adaptive-switch", "z-adaptive-switch__variant"],
+  "behavior": "dom",
+  "a11y": "Las variantes ocultas llevan display: none: no se enfocan ni se leen. Si el foco estaba en la variante que se oculta, pasa al primer control de la nueva (también en zout/dom).",
+  "examples": [
+    {
+      "title": "Botón con texto o solo icono",
+      "code": "<AdaptiveSwitch\n  adaptive={{ compact: { variant: \"icon\" }, medium: { variant: \"text\" } }}\n  variants={{\n    icon: <IconButton icon=\"plus\" label=\"New project\" />,\n    text: <Button icon=\"plus\" variant=\"primary\">New project</Button>,\n  }}\n/>"
+    }
+  ]
+}

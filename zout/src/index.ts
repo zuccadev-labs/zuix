@@ -51,3 +51,46 @@ export {
 export { KanbanLayout, type KanbanLayoutProps } from "./layouts/KanbanLayout";
 export { MailLayout, type MailLayoutProps } from "./layouts/MailLayout";
 export { activeSection, appBarProgress } from "./logic";
+export { AdaptiveLayout, AdaptiveItem, type AdaptiveLayoutProps, type AdaptiveItemProps } from "./layouts/AdaptiveLayout";
+export { AdaptiveSwitch, type AdaptiveSwitchProps } from "./layouts/AdaptiveSwitch";
+export { AdaptiveTabs, type AdaptiveTabsProps, type AdaptiveTabItem } from "./layouts/AdaptiveTabs";
+export { AdaptiveToolbar, type AdaptiveToolbarProps, type AdaptiveToolbarAction } from "./layouts/AdaptiveToolbar";
+export { AdaptiveTable, type AdaptiveTableProps } from "./layouts/AdaptiveTable";
+export { useSizeClass, SizeClassContext, type SizeClassView } from "./layouts/size-class";
+export {
+  SIZE_CLASSES,
+  SIZE_CLASS_NAMES,
+  areaRects,
+  areaRows,
+  domOrderFor,
+  inputClassOf,
+  isSizeClass,
+  nodeStyle,
+  orderMismatch,
+  pickForClass,
+  readingOrder,
+  resolveAdaptive,
+  resolveAll,
+  resolveNodes,
+  resolveTemplate,
+  sizeClassFor,
+  sizeClassIndex,
+  splitOverflow,
+  templateVars,
+  validateAdaptive,
+  validateTemplate,
+  visualOrder,
+  type AdaptiveIssue,
+  type AdaptiveIssueCode,
+  type AdaptiveMap,
+  type AdaptiveNode,
+  type AdaptiveSettings,
+  type AdaptiveTemplate,
+  type AdaptiveTemplates,
+  type InputClass,
+  type PointerKind,
+  type SizeClass,
+  type SizeClassDef,
+} from "./adaptive";
+export { adaptiveTransition, sizeClassOf, type MeasureMode, type OrderReport, type ReorderMode, type SizeState } from "./adaptive-runtime";
+export { adaptivePanel, type ShellPanelVariant } from "./logic";

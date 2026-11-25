@@ -1,0 +1,112 @@
+{
+  "name": "AdaptiveLayout",
+  "group": "layout",
+  "status": "new",
+  "description": "Layout adaptativo: una plantilla de áreas distinta por clase de tamaño (compact, medium, expanded, large, xlarge) y piezas que declaran por clase su área, su orden y si se ocultan. Lo coloca la hoja con consultas de contenedor, así que el HTML del servidor ya sale colocado y la hidratación no mueve nada.",
+  "import": "import { AdaptiveLayout, AdaptiveItem } from \"@zuccadev-labs/zuix-zout\"",
+  "exports": ["AdaptiveLayout", "AdaptiveItem"],
+  "props": [
+    {
+      "name": "templates",
+      "type": "AdaptiveTemplates",
+      "required": true,
+      "description": "{ [clase]: { areas: string[], columns?, rows? } }, heredadas hacia arriba (mobile-first). `areas` como grid-template-areas, una cadena por fila."
+    },
+    {
+      "name": "reorder",
+      "type": "enum",
+      "values": ["dom", "visual"],
+      "default": "dom",
+      "description": "`dom`: mueve los nodos (con moveBefore donde existe) para que el orden del documento sea el que se ve. `visual`: solo CSS, con reading-flow donde existe y aviso en desarrollo donde no."
+    },
+    {
+      "name": "measure",
+      "type": "enum",
+      "values": ["container", "window"],
+      "default": "container",
+      "description": "Qué se mide para elegir la clase."
+    },
+    {
+      "name": "gap",
+      "type": "enum",
+      "values": [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20],
+      "default": 4
+    },
+    {
+      "name": "transition",
+      "type": "boolean",
+      "default": false,
+      "description": "Anima con view transitions los cambios de orden y de plantilla, salvo con prefers-reduced-motion."
+    },
+    {
+      "name": "onSizeClassChange",
+      "type": "(state: SizeState) => void",
+      "description": "Clase de tamaño y de entrada nuevas, también en la primera medida."
+    },
+    {
+      "name": "onOrderMismatch",
+      "type": "(report: OrderReport) => void",
+      "description": "En modo visual, el orden que se ve y el del DOM se separan. Sin ella, aviso por consola en desarrollo si el navegador no tiene reading-flow."
+    },
+    {
+      "name": "onIssues",
+      "type": "(issues: AdaptiveIssue[]) => void",
+      "description": "Plantillas mal formadas o piezas en un área que no existe. Sin ella, consola en desarrollo."
+    },
+    {
+      "name": "as",
+      "type": "ElementType",
+      "default": "div"
+    },
+    {
+      "name": "AdaptiveItem.id",
+      "type": "string",
+      "required": true,
+      "description": "Identificador de la pieza (`data-item`)."
+    },
+    {
+      "name": "AdaptiveItem.area",
+      "type": "string",
+      "description": "Área en todas las clases, salvo lo que diga `adaptive`."
+    },
+    {
+      "name": "AdaptiveItem.order",
+      "type": "number",
+      "description": "Orden dentro de su área o en el flujo."
+    },
+    {
+      "name": "AdaptiveItem.span",
+      "type": "number",
+      "description": "Columnas que ocupa una pieza sin área."
+    },
+    {
+      "name": "AdaptiveItem.hidden",
+      "type": "boolean"
+    },
+    {
+      "name": "AdaptiveItem.adaptive",
+      "type": "AdaptiveMap",
+      "description": "{ [clase]: { order?, hidden?, area?, span?, variant?, props? } }, heredados hacia arriba."
+    },
+    {
+      "name": "AdaptiveItem.elementId",
+      "type": "string",
+      "description": "Atributo id del elemento."
+    }
+  ],
+  "states": ["compact", "medium", "expanded", "large", "xlarge"],
+  "tokens": ["space-4", "size-compact", "size-medium", "size-expanded", "size-large", "size-xlarge", "duration-normal", "ease-standard"],
+  "classes": ["z-adaptive", "z-adaptive__grid", "z-adaptive__item"],
+  "behavior": "dom",
+  "a11y": "El orden visual no rompe el de foco ni el de lectura. Con reorder=\"dom\" (por defecto) las piezas se mueven en el DOM al cambiar de clase, sin rehacerlas (moveBefore conserva el foco; sin él, el foco se devuelve a su sitio), así que Tab y el lector de pantalla siguen lo que se ve. Con reorder=\"visual\" el DOM no se toca: la rejilla lleva reading-flow: grid-rows y, en un navegador sin él, el binding avisa en desarrollo (onOrderMismatch o consola) y zout/dom emite z:ordermismatch. Las transiciones respetan prefers-reduced-motion.",
+  "examples": [
+    {
+      "title": "Tres plantillas: una columna, dos y tres con navegación",
+      "code": "<AdaptiveLayout\n  templates={{\n    compact: { areas: [\"header\", \"main\", \"aside\"] },\n    medium: { areas: [\"header header\", \"main aside\"], columns: \"minmax(0, 2fr) minmax(0, 1fr)\" },\n    expanded: { areas: [\"nav header header\", \"nav main aside\"], columns: \"200px minmax(0, 2fr) minmax(0, 1fr)\" },\n  }}\n>\n  <AdaptiveItem id=\"header\" area=\"header\"><h2>Overview</h2></AdaptiveItem>\n  <AdaptiveItem id=\"nav\" area=\"nav\" adaptive={{ compact: { hidden: true }, expanded: { hidden: false } }}><a href=\"#reports\">Reports</a></AdaptiveItem>\n  <AdaptiveItem id=\"main\" area=\"main\"><p>Weekly activity.</p></AdaptiveItem>\n  <AdaptiveItem id=\"aside\" area=\"aside\"><button type=\"button\">Export</button></AdaptiveItem>\n</AdaptiveLayout>"
+    },
+    {
+      "title": "Orden por clase sin plantilla en compacto",
+      "code": "<AdaptiveLayout\n  templates={{ expanded: { areas: [\"filters results\"], columns: \"260px 1fr\" } }}\n  gap={3}\n>\n  <AdaptiveItem id=\"results\" area=\"results\" adaptive={{ compact: { order: 1 } }}><p>24 results</p></AdaptiveItem>\n  <AdaptiveItem id=\"filters\" area=\"filters\" adaptive={{ compact: { order: 2 } }}><button type=\"button\">Filters</button></AdaptiveItem>\n</AdaptiveLayout>"
+    }
+  ]
+}
