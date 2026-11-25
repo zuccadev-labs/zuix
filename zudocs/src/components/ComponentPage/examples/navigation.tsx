@@ -18,6 +18,20 @@ import {
 import { useEffect, useState } from "react";
 import type { ExampleDemos } from "./shared";
 
+const MOVABLE: TreeNode[] = [
+  {
+    id: "docs",
+    label: "docs",
+    icon: "folder",
+    children: [
+      { id: "intro", label: "intro.md", icon: "document-text" },
+      { id: "guide", label: "guide.md", icon: "document-text" },
+    ],
+  },
+  { id: "archive", label: "archive", icon: "folder", hasChildren: true },
+  { id: "notes", label: "notes.md", icon: "document-text" },
+];
+
 const FILES: TreeNode[] = [
   {
     id: "src",
@@ -135,6 +149,20 @@ export const navigation: Record<string, ExampleDemos> = {
     },
   },
   Tabs: {
+    "Menú «Más»": () => (
+      <div className="zd-demo-narrow">
+        <Tabs
+          overflow="menu"
+          variant="underline"
+          label="Settings"
+          items={["Overview", "Activity", "Members", "Billing", "Security", "Integrations", "Webhooks", "Audit log"].map((label) => ({
+            value: label.toLowerCase().replace(/\s+/g, "-"),
+            label,
+            content: <p>{label} settings.</p>,
+          }))}
+        />
+      </div>
+    ),
     "Segmentado con contenido": () => (
       <Tabs
         label="Account sections"
@@ -164,6 +192,29 @@ export const navigation: Record<string, ExampleDemos> = {
     },
   },
   Tree: {
+    "Mover nodos y carga diferida": () => {
+      const [nodes, setNodes] = useState<TreeNode[]>(MOVABLE);
+      const [last, setLast] = useState("");
+      return (
+        <div className="zd-demo-stack">
+          <Tree
+            label="Files"
+            nodes={nodes}
+            draggable
+            defaultExpanded={["docs"]}
+            canDrop={(drop) => drop.position !== "inside" || drop.target === "docs" || drop.target === "archive"}
+            onMove={(drop, next) => {
+              setNodes(next);
+              setLast(`${drop.id} ${drop.position} ${drop.target}`);
+            }}
+            loadChildren={(node) =>
+              new Promise((resolve) => setTimeout(() => resolve([{ id: `${node.id}/2025`, label: "2025.md", icon: "document-text" }]), 300))
+            }
+          />
+          <p className="zd-demo-hint">{last ? `Moved: ${last}` : "Drag a file, or press Ctrl+X, then the arrows and Enter."}</p>
+        </div>
+      );
+    },
     "Explorador de archivos": () => {
       const [open, setOpen] = useState<string>();
       return (

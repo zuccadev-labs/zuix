@@ -567,7 +567,7 @@ export function ScaleListsStage() {
       </div>
       <div data-testid="s-members">
         <MemberList
-          title="1 000 members"
+          title="Team"
           members={MEMBERS}
           roles={[
             { id: "admin", label: "Admins" },

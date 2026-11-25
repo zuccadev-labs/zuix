@@ -437,6 +437,11 @@ export default function ({ t, assert, poll, sleep }) {
           async () => (await page.locator(".z-listbox[data-searchable] .z-listbox__option").first().textContent()) === "City 010",
           "Select: busca en el servidor",
         );
+        // La primera de los resultados nuevos pasa a ser la activa.
+        await poll(async () => {
+          const id = await page.getAttribute(".z-listbox[data-searchable] .z-listbox__search input", "aria-activedescendant");
+          return id && (await page.locator(`[id="${id}"]`).textContent()) === "City 010";
+        }, "activa la primera de los resultados");
         await page.keyboard.press("Enter");
         await poll(async () => (await page.locator(`${sel} .z-select__value`).textContent()) === "City 010", "etiqueta de la elegida");
       },

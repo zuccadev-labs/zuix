@@ -903,6 +903,10 @@
   [dir="rtl"] .z-table :is(th, td)[data-pinned-last] {
     box-shadow: inset 1px 0 0 var(--z-line);
   }
+  /* Una cabecera fijada tapa lo que pasa por debajo: fondo opaco también en una tabla con marco. */
+  .z-table-wrap .z-table thead tr :is(th, td)[data-pinned] {
+    background: var(--z-surface-solid);
+  }
   /* Fijadas al final: la misma regla hacia el otro lado. */
   .z-table :is(th, td)[data-pinned="end"] {
     inset-inline-start: auto;
@@ -975,6 +979,7 @@
   }
   .z-table__error {
     color: var(--z-danger-text);
+    font-family: var(--z-font-sans);
     font-size: var(--z-text-caption);
     white-space: normal;
   }
@@ -996,25 +1001,30 @@
   .z-table__expand > svg {
     transition: rotate var(--z-duration-normal) var(--z-ease-emphasized);
   }
-  [dir="rtl"] .z-table__toggle > svg,
-  [dir="rtl"] .z-table__expand > svg {
+  [dir="rtl"] .z-table__toggle > svg {
     scale: -1 1;
   }
-  .z-table__toggle[data-state="open"] > svg,
-  .z-table__expand[data-state="open"] > svg {
+  .z-table__toggle[data-state="open"] > svg {
     rotate: 90deg;
+  }
+  /* El detalle usa otro icono (abajo) para no confundirse con el de abrir una rama: abierto, apunta arriba. */
+  .z-table__expand[data-state="open"] > svg {
+    rotate: 180deg;
   }
   .z-table__toggle-space {
     display: inline-block;
     flex: none;
     inline-size: var(--z-space-5);
+    block-size: var(--z-space-5);
   }
+  /* En medio de la línea: con o sin botón, el texto queda a la altura del de las otras celdas. */
   .z-table__tree-cell,
   .z-table__group-cell {
     display: inline-flex;
     align-items: center;
     gap: var(--z-space-1);
     padding-inline-start: calc(var(--z-depth, 0) * var(--z-space-5));
+    vertical-align: middle;
   }
   .z-table__group > td {
     background: var(--z-surface);

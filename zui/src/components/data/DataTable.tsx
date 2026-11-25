@@ -1049,7 +1049,7 @@ export function DataTable<T>({
                 setDetails(toggleIn(details, key));
               }}
             >
-              <Icon name="chevron-right" size={14} />
+              <Icon name="chevron-down" size={14} />
             </button>
           </td>
         ) : null}

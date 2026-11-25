@@ -832,3 +832,7 @@ body {
   flex: 1;
   min-block-size: 0;
 }
+.app-scale__chats .z-conversation-list__search,
+.app-scale__chats .z-conversation-list__filters {
+  flex: none;
+}

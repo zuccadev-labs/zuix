@@ -2723,6 +2723,10 @@ mark[data-markjs] {
 
 /* Demos de los ejemplos (ComponentPage/examples): columnas con su texto de estado, marcos para lo que ocupa el
    alto de su contenedor (Shell, SplitPane, Sidebar) y piezas de medios que necesitan un ancho. */
+/* Una tira estrecha para el ejemplo de pestañas que no caben (Tabs con overflow="menu"). */
+.zd-demo-narrow {
+  max-inline-size: 22.5rem;
+}
 .zd-demo-stack {
   display: grid;
   gap: var(--z-space-3);
