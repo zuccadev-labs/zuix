@@ -10,6 +10,18 @@ import { avatarNode, deliveryNode } from "./chat-tree";
 import { DELIVERY_LABELS, type DeliveryLabels } from "./delivery";
 import { toInstant } from "./relative";
 import { fold } from "./search";
+import { virtualizeAttr, wantsVirtual } from "./virtual";
+import {
+  followVirtual,
+  measureInto,
+  scrollToRow,
+  spacerNode,
+  unfollowVirtual,
+  widgetList,
+  windowChanges,
+  type ViewportState,
+  type WidgetListInput,
+} from "./virtual-widget";
 import { fill, h, icon, on } from "./vnode";
 import type { Widget, WidgetHost } from "./widget";
 
@@ -111,6 +123,11 @@ export interface ConversationListProps {
   hourCycle?: "h12" | "h23";
   now?: number;
   labels?: Partial<ConversationListLabels>;
+  /**
+   * Ventana virtual: solo se pintan las conversaciones que se ven. `true` siempre, `false` nunca, un número es el umbral.
+   * Por defecto, a partir de 150. Con ella, Ctrl+F del navegador solo encuentra lo pintado: usa la búsqueda de la lista.
+   */
+  virtualize?: boolean | number;
 }
 
 interface Config {
@@ -125,6 +142,7 @@ interface Config {
   hourCycle?: "h12" | "h23";
   now?: number;
   labels: ConversationListLabels;
+  virtualize?: boolean | number;
 }
 
 interface State {
@@ -132,6 +150,26 @@ interface State {
   active: string | null;
   query: string;
   filter: ConversationFilter;
+  /** Ventana virtual: desplazamiento y alto de la lista, y los altos medidos. */
+  view: ViewportState | null;
+  heights: Map<string, number>;
+}
+
+const ROW_ESTIMATE = 68;
+const VIRTUAL_FROM = 150;
+
+/** Entrada de la ventana virtual con lo visible y la parada de Tab fijada. */
+function listInput(c: Config, s: State, list: readonly ConversationItem[]): WidgetListInput {
+  const stop = list.findIndex((it) => it.id === s.active);
+  return {
+    virtual: wantsVirtual(c.virtualize, list.length, VIRTUAL_FROM),
+    count: list.length,
+    keyOf: (i) => list[i]!.id,
+    estimate: ROW_ESTIMATE,
+    heights: s.heights,
+    view: s.view,
+    keep: stop >= 0 ? [stop] : [],
+  };
 }
 
 type Host = WidgetHost<Config, State>;
@@ -227,26 +265,36 @@ function attach(root: HTMLElement, host: Host): () => void {
     }
     const row = target.closest?.<HTMLElement>(".z-conversation");
     if (!row || !root.contains(row)) return;
-    const list = items();
-    const i = list.indexOf(row);
-    const to =
+    // Por índice sobre lo visible, no sobre lo pintado: con ventana virtual el destino puede no estar aún en el documento.
+    const c = host.config();
+    const s = host.state();
+    const list = visibleConversations(c.items, s.query, s.filter, c.sort);
+    const i = list.findIndex((it) => it.id === row.dataset.id);
+    const page = Math.max(1, Math.floor((row.closest(".z-conversation-list__items")?.clientHeight ?? 400) / ROW_ESTIMATE));
+    const at =
       event.key === "ArrowDown"
-        ? list[i + 1]
+        ? i + 1
         : event.key === "ArrowUp"
-          ? list[i - 1]
+          ? i - 1
           : event.key === "Home"
-            ? list[0]
+            ? 0
             : event.key === "End"
-              ? list[list.length - 1]
-              : undefined;
-    if (event.key === "ArrowUp" && i === 0 && host.config().search) {
+              ? list.length - 1
+              : event.key === "PageDown"
+                ? Math.min(list.length - 1, i + page)
+                : event.key === "PageUp"
+                  ? Math.max(0, i - page)
+                  : -2;
+    if (event.key === "ArrowUp" && i === 0 && c.search) {
       event.preventDefault();
       root.querySelector<HTMLInputElement>(".z-conversation-list__search input")?.focus();
       return;
     }
+    const to = at >= 0 ? list[at] : undefined;
     if (to) {
       event.preventDefault();
-      host.update({ active: to.dataset.id! }, true);
+      scrollToRow(root.querySelector<HTMLElement>(".z-conversation-list__items"), listInput(c, s, list), at);
+      host.update({ active: to.id }, true);
     }
   };
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -269,6 +317,7 @@ function attach(root: HTMLElement, host: Host): () => void {
   root.addEventListener("input", onInput);
   return () => {
     clearTimeout(timer);
+    unfollowVirtual(root);
     root.removeEventListener("click", onClick);
     root.removeEventListener("keydown", onKey);
     root.removeEventListener("input", onInput);
@@ -289,12 +338,15 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
     hourCycle: p.hourCycle,
     now: p.now,
     labels: { ...CONVERSATION_LIST_LABELS, ...p.labels },
+    virtualize: p.virtualize,
   }),
   initial: (c) => ({
     selected: c.selected ?? c.defaultSelected ?? null,
     active: c.selected ?? c.defaultSelected ?? null,
     query: "",
     filter: "all",
+    view: null,
+    heights: new Map(),
   }),
   control: (c, s) => (c.selected !== undefined && c.selected !== s.selected ? { ...s, selected: c.selected } : s),
   tree(c, s, uid) {
@@ -302,6 +354,7 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
     const now = c.now ?? Date.now();
     const list = visibleConversations(c.items, s.query, s.filter, c.sort);
     const stop = list.find((it) => it.id === s.active) ?? list.find((it) => it.id === s.selected) ?? list[0];
+    const win = widgetList({ ...listInput(c, s, list), keep: stop ? [list.indexOf(stop)] : [] });
     return h(
       "div",
       { class: "z-conversation-list" },
@@ -349,14 +402,23 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
       list.length
         ? h(
             "ul",
-            { class: "z-conversation-list__items", id: `${uid}-items`, "aria-label": labels.list },
-            ...list.map((it) => {
+            { class: "z-conversation-list__items", id: `${uid}-items`, "aria-label": labels.list, "data-virtual": on(win.virtual) },
+            spacerNode("li", "before", win.before),
+            ...win.indices.map((index) => {
+              const it = list[index]!;
               const at = toInstant(it.lastAt ?? null);
               const typing = it.typing?.length ? (it.group ? fill(labels.typingName, { name: it.typing[0]! }) : labels.typing) : "";
               const unread = Math.max(0, it.unread ?? 0);
               return h(
                 "li",
-                { key: it.id, class: "z-conversation-list__item" },
+                {
+                  key: it.id,
+                  class: "z-conversation-list__item",
+                  "data-key": it.id,
+                  // Con ventana virtual, la posición y el total para los lectores (no están todas en el documento).
+                  "aria-posinset": win.virtual ? index + 1 : undefined,
+                  "aria-setsize": win.virtual ? list.length : undefined,
+                },
                 h(
                   "button",
                   {
@@ -446,12 +508,23 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
                 ),
               );
             }),
+            spacerNode("li", "after", win.after),
           )
         : h("p", { class: "z-conversation-list__empty", role: "status" }, labels.empty),
     );
   },
   attach,
-  after(root, _host, focus) {
+  after(root, host, focus) {
+    const s = host.state();
+    const scroller = root.querySelector<HTMLElement>(".z-conversation-list__items[data-virtual]");
+    // Altos reales de lo pintado y desplazamiento: solo se vuelve a pintar si cambia la ventana.
+    if (scroller && measureInto(scroller, ":scope > li[data-key]", s.heights)) queueMicrotask(() => host.update({}));
+    followVirtual(root, "items", scroller ? ".z-conversation-list__items[data-virtual]" : null, (view) => {
+      const st = host.state();
+      const cf = host.config();
+      if (windowChanges(listInput(cf, st, visibleConversations(cf.items, st.query, st.filter, cf.sort)), view)) host.update({ view });
+      else st.view = view;
+    });
     if (!focus) return;
     const target = root.querySelector<HTMLElement>('.z-conversation[tabindex="0"]');
     if (target && target !== root.ownerDocument.activeElement) {
@@ -473,6 +546,7 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
       hourCycle: d.hourCycle === "h12" || d.hourCycle === "h23" ? d.hourCycle : undefined,
       now: d.now ? Number(d.now) : undefined,
       labels: json.labels as Partial<ConversationListLabels> | undefined,
+      virtualize: virtualizeAttr(d.virtualize),
     };
   },
 };

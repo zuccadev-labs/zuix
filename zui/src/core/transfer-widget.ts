@@ -4,6 +4,18 @@
 // a la otra lista; doble clic mueve una opción. Un solo árbol y una sola interacción para React y el modo DOM.
 
 import { filterTransfer, moveTransfer, rangeTransfer, splitTransfer, type TransferItem } from "./transfer";
+import { virtualizeAttr, wantsVirtual } from "./virtual";
+import {
+  followVirtual,
+  measureInto,
+  scrollToRow,
+  spacerNode,
+  unfollowVirtual,
+  widgetList,
+  windowChanges,
+  type ViewportState,
+  type WidgetListInput,
+} from "./virtual-widget";
 import { fill, h, icon, on, type VEl } from "./vnode";
 import { announceIn, type Widget, type WidgetHost } from "./widget";
 
@@ -52,6 +64,11 @@ export interface TransferListProps {
   /** Nombre del campo: un `<input type="hidden">` por valor elegido. */
   name?: string;
   labels?: Partial<TransferListLabels>;
+  /**
+   * Ventana virtual en cada lista: solo se pintan las opciones que se ven. `true` siempre, `false` nunca, un número es
+   * el umbral; por defecto, a partir de 200 opciones en una lista.
+   */
+  virtualize?: boolean | number;
 }
 
 interface Config extends TransferListProps {
@@ -66,7 +83,22 @@ interface State {
   active: Record<Side, string | null>;
   anchor: Record<Side, string | null>;
   prop: string[] | undefined;
+  view: Record<Side, ViewportState | null>;
+  heights: Map<string, number>;
 }
+
+const listInput = (c: Config, s: State, side: Side, visible: TransferItem[]): WidgetListInput => {
+  const at = visible.findIndex((i) => i.value === s.active[side]);
+  return {
+    virtual: wantsVirtual(c.virtualize, visible.length, 200),
+    count: visible.length,
+    keyOf: (i) => `${side}:${visible[i]!.value}`,
+    estimate: 36,
+    heights: s.heights,
+    view: s.view[side],
+    keep: at >= 0 ? [at] : [],
+  };
+};
 
 const other = (s: Side): Side => (s === "source" ? "target" : "source");
 const optionId = (uid: string, side: Side, value: string) => `${uid}-${side}-${value.replace(/[^\w-]/g, "_")}`;
@@ -84,6 +116,7 @@ function panel(c: Config, s: State, uid: string, side: Side, all: TransferItem[]
   const checked = new Set(s.checked[side]);
   const active = visible.some((i) => i.value === s.active[side]) ? s.active[side] : null;
   const count = all.filter((i) => checked.has(i.value)).length;
+  const win = widgetList(listInput(c, s, side, visible));
   return h(
     "section",
     { class: "z-transfer__list", "data-side": side, "aria-labelledby": `${uid}-${side}-title` },
@@ -121,16 +154,22 @@ function panel(c: Config, s: State, uid: string, side: Side, all: TransferItem[]
         "aria-disabled": c.disabled ? "true" : undefined,
         tabindex: c.disabled ? -1 : 0,
         "data-side": side,
+        "data-virtual": on(win.virtual),
       },
+      spacerNode("div", "before", win.before),
       ...(visible.length
-        ? visible.map((i) =>
-            h(
+        ? win.indices.map((index) => {
+            const i = visible[index]!;
+            return h(
               "div",
               {
                 key: i.value,
                 id: optionId(uid, side, i.value),
                 class: "z-transfer__option",
                 role: "option",
+                "data-key": win.virtual ? `${side}:${i.value}` : undefined,
+                "aria-posinset": win.virtual ? index + 1 : undefined,
+                "aria-setsize": win.virtual ? visible.length : undefined,
                 "aria-selected": checked.has(i.value) ? "true" : "false",
                 "aria-disabled": i.disabled ? "true" : undefined,
                 "data-value": i.value,
@@ -143,9 +182,10 @@ function panel(c: Config, s: State, uid: string, side: Side, all: TransferItem[]
                 h("span", { class: "z-transfer__label" }, i.label),
                 i.description ? h("span", { class: "z-transfer__description" }, i.description) : null,
               ),
-            ),
-          )
+            );
+          })
         : [h("div", { class: "z-transfer__empty", role: "presentation" }, s.query[side] ? c.labels.noMatches : c.labels.empty)]),
+      spacerNode("div", "after", win.after),
     ),
   );
 }
@@ -284,6 +324,8 @@ function attach(root: HTMLElement, host: Host): () => void {
         const checked = [...new Set([...s.checked[side], ...rangeTransfer(list, s.anchor[side] ?? s.active[side], item.value)])];
         host.update({ active: { ...s.active, [side]: item.value }, checked: { ...s.checked, [side]: checked } });
       } else host.update({ active: { ...s.active, [side]: item.value } });
+      // Con ventana virtual la opción puede no estar pintada: se desplaza por índice y luego se ajusta.
+      scrollToRow(target, listInput(host.config(), host.state(), side, list), list.indexOf(item));
       target.querySelector(`[data-value="${CSS.escape(item.value)}"]`)?.scrollIntoView?.({ block: "nearest" });
     };
     if (event.key === "ArrowDown") go(at + 1, event.shiftKey);
@@ -323,11 +365,27 @@ function attach(root: HTMLElement, host: Host): () => void {
   root.addEventListener("input", input);
   root.addEventListener("focusin", focusin);
   return () => {
+    unfollowVirtual(root);
     root.removeEventListener("click", click);
     root.removeEventListener("keydown", keydown);
     root.removeEventListener("input", input);
     root.removeEventListener("focusin", focusin);
   };
+}
+
+function after(root: HTMLElement, host: Host): void {
+  for (const side of ["source", "target"] as const) {
+    const selector = `.z-transfer__options[data-side="${side}"][data-virtual]`;
+    const scroller = root.querySelector<HTMLElement>(selector);
+    if (scroller && measureInto(scroller, ".z-transfer__option[data-key]", host.state().heights)) queueMicrotask(() => host.update({}));
+    followVirtual(root, side, scroller ? selector : null, (view) => {
+      const c = host.config();
+      const s = host.state();
+      const visible = lists(c, s).visible[side];
+      if (windowChanges(listInput(c, s, side, visible), view)) host.update({ view: { ...s.view, [side]: view } });
+      else s.view = { ...s.view, [side]: view };
+    });
+  }
 }
 
 export const transferListWidget: Widget<TransferListProps, Config, State> = {
@@ -340,11 +398,13 @@ export const transferListWidget: Widget<TransferListProps, Config, State> = {
     active: { source: null, target: null },
     anchor: { source: null, target: null },
     prop: c.value,
+    view: { source: null, target: null },
+    heights: new Map(),
   }),
   control: (c, s) => (c.value !== undefined && c.value !== s.prop ? { ...s, value: [...c.value], prop: c.value } : s),
   tree,
   attach,
-  after: () => {},
+  after,
   fromDom(el, json) {
     const d = el.dataset;
     const items = Array.isArray(json.items) ? (json.items as TransferItem[]) : [];
@@ -355,6 +415,7 @@ export const transferListWidget: Widget<TransferListProps, Config, State> = {
       disabled: d.disabled !== undefined,
       name: d.name,
       labels: json.labels as Partial<TransferListLabels> | undefined,
+      virtualize: virtualizeAttr(d.virtualize),
     };
   },
 };

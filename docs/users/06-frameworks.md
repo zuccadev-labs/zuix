@@ -431,14 +431,14 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Tema y marca | `setTheme`, `setBrand` |
 | | Capas | `openDialog`, `closeDialog`, `openPopover`, `closePopover`, `place`, `openSubmenu`, `openMenubarMenu`, `setHintOpen`, `setDrawerSnap`, `startTour`, `closeActionBar`, `dismissBanner` |
 | | Avisos | `toast`, `toastPromise`, `confirm`, `announce` |
-| | Formularios | `setSelectValue`, `setComboboxValue`, `setComboboxOptions`, `setComboboxLoading`, `setListboxValue`, `setSliderValue`, `setOtpValue`, `setNumberInputValue`, `setTagsValue`, `reorderUpload` |
+| | Formularios | `setSelectValue`, `setComboboxValue`, `setComboboxOptions`, `setComboboxLoading`, `setListboxValue`, `setComboboxLoader`, `clearComboboxLoader`, `setSelectLoader`, `setListboxLoader`, `setSliderValue`, `setOtpValue`, `setNumberInputValue`, `setTagsValue`, `reorderUpload` |
 | | Navegación y estado | `selectTab`, `setCollapsibleOpen`, `expandSkeleton` |
 | | Descargas | `download`, `downloadBlob`, `downloadUrl`, `mimeFromName` |
 | | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutLabels` |
 | `/dom/dates` | Valor desde código | `setCalendarValue`, `setCalendarOptions`, `setDatePickerValue`, `setDateFieldValue`, `setTimeFieldValue`, `setTimePickerValue` |
 | | Fechas civiles | `formatDateRange`, `isoWeekText`, `weekNumber`, `weekStartOf`, `rangePresets`, `resolvePreset`, `PRESET_KEYS` |
-| `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `openPalette` |
-| | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom` |
+| `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `moveTreeItem`, `setTreeLoader`, `moveNode`, `TREE_DRAG_LABELS`, `openPalette` |
+| | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom`, `setDataTableExpanded`, `setDataTableDetail` |
 | | Avisos | `badgeText`, `groupByDay`, `unreadCount` |
 | | Filtros | `toggleFilter`, `toggleOption`, `activeCount`, `chipText` |
 | | Opiniones e importes | `setReviewExpanded`, `formatMoney`, `summarizePrice` |

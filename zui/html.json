@@ -2137,7 +2137,24 @@
     "z-table__filters",
     "z-table__filter",
     "z-table__resize",
-    "z-datatable__export"
+    "z-datatable__export",
+    "z-table-wrap--virtual",
+    "z-table__spacer",
+    "z-table__editor",
+    "z-table__input",
+    "z-table__error",
+    "z-table__group",
+    "z-table__group-cell",
+    "z-table__group-label",
+    "z-table__toggle",
+    "z-table__toggle-space",
+    "z-table__tree-cell",
+    "z-table__expand",
+    "z-table__expand-cell",
+    "z-table__detail",
+    "z-table__detail-body",
+    "z-table__grip",
+    "z-table__row--editing"
    ],
    "behavior": "dom",
    "examples": [
@@ -2154,6 +2171,21 @@
     {
      "title": "Filtros, ancho, columna fijada y exportar",
      "html": "<div class=\"z-datatable\" data-export-name=\"members.csv\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-resizable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" data-key=\"name\" data-pinned=\"\" style=\"width: 180px\">Name<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Name\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"180\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"team\">Team<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Team\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"160\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"seats\" data-align=\"end\" aria-sort=\"none\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n        <tr class=\"z-table__filters\">\n          <th scope=\"col\" data-pinned=\"\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Name\" placeholder=\"Name\"></th>\n          <th scope=\"col\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Team\" placeholder=\"Team\"></th>\n          <th scope=\"col\" data-align=\"end\"></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td data-pinned=\"\">Ana Torres</td>\n          <td>Design</td>\n          <td data-align=\"end\">4</td>\n        </tr>\n        <tr data-key=\"b2\">\n          <td data-pinned=\"\">Ben Okafor</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td data-pinned=\"\">Chen Wei</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">7</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-datatable__export\" data-size=\"sm\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Export CSV</button>\n  </div>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Rejilla editable, fijadas a los dos lados y columnas reordenables (z:celledit cancelable, z:columnorder)",
+     "html": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table role=\"grid\" data-grid=\"true\" data-reorderable=\"true\" class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Team</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" data-key=\"name\" data-pinned=\"\" data-editor=\"text\" data-required=\"\">Name</th>\n        <th scope=\"col\" data-key=\"role\" data-editor=\"select\" data-options=\"[{&quot;value&quot;:&quot;admin&quot;,&quot;label&quot;:&quot;Admin&quot;},{&quot;value&quot;:&quot;editor&quot;,&quot;label&quot;:&quot;Editor&quot;},{&quot;value&quot;:&quot;viewer&quot;,&quot;label&quot;:&quot;Viewer&quot;}]\">\n          <button type=\"button\" class=\"z-table__grip\" data-col-key=\"role\" aria-label=\"Move Role\" title=\"Move Role\" aria-pressed=\"false\">\n            <z-icon name=\"arrows-right-left\" size=\"12\"></z-icon>\n          </button>\n          Role\n        </th>\n        <th scope=\"col\" data-key=\"seats\" data-align=\"end\" data-editor=\"number\" data-min=\"1\" data-max=\"50\">\n          <button type=\"button\" class=\"z-table__grip\" data-col-key=\"seats\" aria-label=\"Move Seats\" title=\"Move Seats\" aria-pressed=\"false\">\n            <z-icon name=\"arrows-right-left\" size=\"12\"></z-icon>\n          </button>\n          Seats\n        </th>\n        <th scope=\"col\" data-key=\"joined\" data-pinned=\"end\">Joined</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr data-row-key=\"a1\">\n        <td data-col=\"name\" data-pinned=\"\" data-editable=\"\">Ana Torres</td>\n        <td data-col=\"role\" data-editable=\"\">admin</td>\n        <td data-col=\"seats\" data-align=\"end\" data-editable=\"\">4</td>\n        <td data-col=\"joined\" data-pinned=\"end\">2 mar 2025</td>\n      </tr>\n      <tr data-row-key=\"b2\">\n        <td data-col=\"name\" data-pinned=\"\" data-editable=\"\">Ben Okafor</td>\n        <td data-col=\"role\" data-editable=\"\">editor</td>\n        <td data-col=\"seats\" data-align=\"end\" data-editable=\"\">12</td>\n        <td data-col=\"joined\" data-pinned=\"end\">15 ene 2026</td>\n      </tr>\n      <tr data-row-key=\"c3\">\n        <td data-col=\"name\" data-pinned=\"\" data-editable=\"\">Chen Wei</td>\n        <td data-col=\"role\" data-editable=\"\">viewer</td>\n        <td data-col=\"seats\" data-align=\"end\" data-editable=\"\">7</td>\n        <td data-col=\"joined\" data-pinned=\"end\">20 nov 2024</td>\n      </tr>\n    </tbody>\n  </table>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Agrupada con agregados (z:expandchange; →/← en la primera celda)",
+     "html": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table role=\"treegrid\" data-grid=\"true\" class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Sales</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" data-key=\"region\">Region</th>\n        <th scope=\"col\" data-key=\"rep\">Rep</th>\n        <th scope=\"col\" data-key=\"amount\" data-align=\"end\">Amount</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr class=\"z-table__group\" data-row-key=\"group:North\" data-vkey=\"group:North\" aria-level=\"1\" aria-expanded=\"true\" style=\"--z-depth:0\">\n        <td data-col=\"region\">\n          <span class=\"z-table__group-cell\">\n            <button type=\"button\" class=\"z-table__toggle\" data-state=\"open\" aria-hidden=\"true\" tabindex=\"-1\" title=\"Expand\">\n              <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n            </button>\n            <span class=\"z-table__group-label\">Region: North (2)</span>\n          </span>\n        </td>\n        <td data-col=\"rep\">2</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">2,000</td>\n      </tr>\n      <tr data-row-key=\"1\" aria-level=\"3\" aria-posinset=\"1\" aria-setsize=\"2\">\n        <td data-col=\"region\">North</td>\n        <td data-col=\"rep\">Ana</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">1200</td>\n      </tr>\n      <tr data-row-key=\"2\" aria-level=\"3\" aria-posinset=\"2\" aria-setsize=\"2\">\n        <td data-col=\"region\">North</td>\n        <td data-col=\"rep\">Leo</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">800</td>\n      </tr>\n      <tr class=\"z-table__group\" data-row-key=\"group:South\" data-vkey=\"group:South\" aria-level=\"1\" aria-expanded=\"true\" style=\"--z-depth:0\">\n        <td data-col=\"region\">\n          <span class=\"z-table__group-cell\">\n            <button type=\"button\" class=\"z-table__toggle\" data-state=\"open\" aria-hidden=\"true\" tabindex=\"-1\" title=\"Expand\">\n              <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n            </button>\n            <span class=\"z-table__group-label\">Region: South (1)</span>\n          </span>\n        </td>\n        <td data-col=\"rep\">1</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">1,500</td>\n      </tr>\n      <tr data-row-key=\"3\" aria-level=\"3\" aria-posinset=\"1\" aria-setsize=\"1\">\n        <td data-col=\"region\">South</td>\n        <td data-col=\"rep\">Mia</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">1500</td>\n      </tr>\n    </tbody>\n    <tfoot>\n      <tr>\n        <td></td>\n        <td>3</td>\n        <td data-align=\"end\" data-mono=\"true\">3,500</td>\n      </tr>\n    </tfoot>\n  </table>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Datos en árbol y fila de detalle (z:expandchange, z:detailchange)",
+     "html": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table role=\"treegrid\" data-grid=\"true\" class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Files</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" class=\"z-table__expand-cell\">\n          <span class=\"z-sr-only\">Expand</span>\n        </th>\n        <th scope=\"col\" data-key=\"name\">Name</th>\n        <th scope=\"col\" data-key=\"size\" data-align=\"end\">Size (kB)</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr data-row-key=\"src\" aria-level=\"1\" aria-expanded=\"true\" aria-posinset=\"1\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"closed\" aria-expanded=\"false\" aria-label=\"Details of row 1\" title=\"Details of row 1\">\n            <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:0\">\n            <button type=\"button\" class=\"z-table__toggle\" data-state=\"open\" aria-hidden=\"true\" tabindex=\"-1\" title=\"Expand\">\n              <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n            </button>\n            src\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">0</td>\n      </tr>\n      <tr data-row-key=\"src/index.ts\" aria-level=\"2\" aria-posinset=\"1\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"closed\" aria-expanded=\"false\" aria-label=\"Details of row 2\" title=\"Details of row 2\">\n            <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:1\">\n            <span class=\"z-table__toggle-space\" aria-hidden=\"true\"></span>\n            index.ts\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">2</td>\n      </tr>\n      <tr data-row-key=\"src/app.ts\" aria-level=\"2\" aria-posinset=\"2\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"closed\" aria-expanded=\"false\" aria-label=\"Details of row 3\" title=\"Details of row 3\">\n            <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:1\">\n            <span class=\"z-table__toggle-space\" aria-hidden=\"true\"></span>\n            app.ts\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">14</td>\n      </tr>\n      <tr data-row-key=\"readme\" aria-level=\"1\" aria-posinset=\"2\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"readme-detail\" aria-label=\"Details of row 2\" title=\"Details of row 2\">\n            <z-icon name=\"chevron-right\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:0\">\n            <span class=\"z-table__toggle-space\" aria-hidden=\"true\"></span>\n            README.md\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">4</td>\n      </tr>\n      <tr class=\"z-table__detail\" data-detail-of=\"readme\" data-row-key=\"readme:detail\">\n        <td id=\"readme-detail\" colSpan=\"3\" data-col=\"__detail\">\n          <div class=\"z-table__detail-body\">Path: readme</div>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>",
      "source": "manual"
     }
    ]
@@ -3268,7 +3300,8 @@
    "classes": [
     "z-input",
     "z-combobox",
-    "z-listbox"
+    "z-listbox",
+    "z-listbox__retry"
    ],
    "behavior": "dom",
    "examples": [
@@ -3619,7 +3652,8 @@
     "z-listbox__label",
     "z-listbox__content",
     "z-listbox__description",
-    "z-listbox__check"
+    "z-listbox__check",
+    "z-listbox__retry"
    ],
    "behavior": "dom",
    "examples": [
@@ -3830,7 +3864,9 @@
    "group": "forms",
    "classes": [
     "z-select",
-    "z-listbox"
+    "z-listbox",
+    "z-listbox__search",
+    "z-listbox__retry"
    ],
    "behavior": "dom",
    "examples": [
@@ -4383,7 +4419,9 @@
     "z-tabs__list",
     "z-tabs__tab",
     "z-tabs__label",
-    "z-tabs__panel"
+    "z-tabs__panel",
+    "z-tabs__strip",
+    "z-tabs__more"
    ],
    "behavior": "dom",
    "examples": [
@@ -4405,7 +4443,8 @@
     "z-tree__label",
     "z-tree__group",
     "z-tree__check",
-    "z-tree__rename"
+    "z-tree__rename",
+    "z-tree__spinner"
    ],
    "behavior": "dom",
    "examples": [
@@ -4871,7 +4910,8 @@
     "z-member-list__row",
     "z-member-list__role",
     "z-member-list__role-text",
-    "z-member-list__remove"
+    "z-member-list__remove",
+    "z-member-list__scroll"
    ],
    "behavior": "dom",
    "examples": [

@@ -17,6 +17,7 @@ import dashboardPeople from "./cases-dashboard-people.mjs";
 import nodesCases from "./cases-nodes.mjs";
 import transferCases from "./cases-transfer.mjs";
 import datagridCases from "./cases-datagrid.mjs";
+import scaleCases from "./cases-scale.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
@@ -3147,6 +3148,7 @@ export const cases = [
     nodesCases,
     transferCases,
     datagridCases,
+    scaleCases,
     listingCases,
   ].flatMap((build) => build(helpers())),
 

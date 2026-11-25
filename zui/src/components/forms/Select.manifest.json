@@ -110,6 +110,51 @@
       "type": "string",
       "default": "No options",
       "description": "Texto de la lista cuando no hay opciones."
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "default": false,
+      "description": "Campo de búsqueda arriba de la lista: filtra por etiqueta (sin acentos ni mayúsculas) y oculta los grupos sin coincidencias. El foco va al campo; la opción activa va por aria-activedescendant."
+    },
+    {
+      "name": "searchPlaceholder",
+      "type": "string",
+      "default": "Search",
+      "description": "Texto de ejemplo y nombre accesible del campo de búsqueda."
+    },
+    {
+      "name": "loadOptions",
+      "type": "(query, { signal, page }) => Promise<{ options, hasMore? } | SelectOption[]>",
+      "description": "Opciones del servidor por consulta (activa la búsqueda): antirrebote, la petición anterior se cancela con `signal` y `page` sube al llegar al final si hay `hasMore`. La elegida conserva su etiqueta."
+    },
+    {
+      "name": "debounce",
+      "type": "number",
+      "default": 250,
+      "description": "Espera tras la última tecla antes de pedir (ms)."
+    },
+    {
+      "name": "loadingText",
+      "type": "string",
+      "default": "Loading"
+    },
+    {
+      "name": "errorText",
+      "type": "string",
+      "default": "Couldn't load the options",
+      "description": "Texto si la carga falla, con un botón para reintentar (Intro también reintenta)."
+    },
+    {
+      "name": "retryLabel",
+      "type": "string",
+      "default": "Retry"
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 100,
+      "description": "Ventana virtual: solo se pintan las opciones que se ven y la activa no sale del documento. `true` siempre, `false` nunca, un número es el umbral."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "placeholder", "disabled", "invalid"],
@@ -163,8 +208,8 @@
     "accent-soft",
     "radius-xs"
   ],
-  "classes": ["z-select", "z-listbox"],
-  "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar. Con `multiple` la lista es aria-multiselectable: Intro o Espacio marcan la opción activa sin cerrar, y Escape o Tab devuelven el foco al control.",
+  "classes": ["z-select", "z-listbox", "z-listbox__search", "z-listbox__retry"],
+  "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar. Con `multiple` la lista es aria-multiselectable: Intro o Espacio marcan la opción activa sin cerrar, y Escape o Tab devuelven el foco al control. Con `searchable` o `loadOptions`, el campo de búsqueda es un combobox dentro del popup con aria-activedescendant; Inicio y Fin mueven el cursor del texto. Con ventana virtual, cada opción lleva aria-setsize y aria-posinset.",
   "behavior": "dom",
   "examples": [
     {
@@ -182,6 +227,14 @@
     {
       "title": "Varias con tope",
       "code": "<Field label=\"Reviewers\" hint=\"Up to two.\">\n  <Select\n    multiple\n    maxSelected={2}\n    name=\"reviewers\"\n    placeholder=\"Choose reviewers\"\n    defaultValue={[\"ana\"]}\n    options={[\n      { value: \"ana\", label: \"Ana Ruiz\" },\n      { value: \"leo\", label: \"Leo Park\" },\n      { value: \"mia\", label: \"Mia Chen\" },\n      { value: \"noor\", label: \"Noor Rahman\" },\n    ]}\n  />\n</Field>"
+    },
+    {
+      "title": "Búsqueda y grupos",
+      "code": "<Select searchable options={[{ label: \"Europe\", options: europe }, { label: \"Americas\", options: americas }]} aria-label=\"Country\" />"
+    },
+    {
+      "title": "Opciones del servidor",
+      "code": "<Select\n  aria-label=\"Assignee\"\n  loadOptions={async (query, { signal, page }) => {\n    const res = await fetch(`/api/people?q=${query}&page=${page}`, { signal });\n    return res.json(); // { options, hasMore }\n  }}\n/>"
     }
   ],
   "html": [

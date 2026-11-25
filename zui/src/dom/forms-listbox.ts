@@ -4,6 +4,7 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
+import { createAsyncOptions, type AsyncLoader, type AsyncOptions, type AsyncState } from "../core/async-options";
 import { step } from "../core/roving";
 import { createTypeahead, isPrintable as printable } from "../core/typeahead";
 import { all, emit, flag, fold, hidePopup, inDom, isOpen, ownerOf, popupFor, reposition, showPopup } from "./forms-popup";
@@ -139,18 +140,158 @@ export function setSelectValue(select: HTMLElement, value: string | ReadonlyArra
   if (value !== before) emit(select, "change", { value });
 }
 
+/* Búsqueda dentro del Select (data-searchable, o con setSelectLoader): un campo arriba de la lista que conserva el foco
+   y señala la opción activa con aria-activedescendant; filtra por etiqueta y oculta los grupos sin coincidencias. */
+
+const searchOf = (popup: Element) => popup.querySelector<HTMLInputElement>(":scope > .z-listbox__search input");
+
+/** Crea el campo de búsqueda del popup de un Select (una vez). */
+export function prepareSelectSearch(select: HTMLElement): void {
+  const popup = popupFor(selectControl(select));
+  if (!popup || searchOf(popup)) return;
+  const viewport = popup.querySelector<HTMLElement>(".z-listbox__viewport");
+  if (viewport && !viewport.id) viewport.id = `z-listbox-${++listSeq}`;
+  optionsOf(popup).forEach((option, i) => {
+    if (!option.id) option.id = `${viewport?.id ?? "z-listbox"}-option-${i}`;
+  });
+  const label = select.dataset.searchPlaceholder ?? "Search";
+  const wrap = document.createElement("div");
+  wrap.className = "z-listbox__search";
+  const field = document.createElement("span");
+  field.className = "z-input z-input--search";
+  field.dataset.size = "sm";
+  const input = document.createElement("input");
+  input.className = "z-input__control";
+  input.type = "search";
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-label", label);
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-expanded", "true");
+  if (viewport) input.setAttribute("aria-controls", viewport.id);
+  input.autocomplete = "off";
+  input.spellcheck = false;
+  input.placeholder = label;
+  field.append(input);
+  wrap.append(field);
+  popup.prepend(wrap);
+  popup.setAttribute("data-searchable", "");
+  select.setAttribute("data-searchable", "");
+}
+
+function setSelectActive(popup: HTMLElement, option: HTMLElement | undefined, scroll = true): void {
+  const field = searchOf(popup);
+  setActive(popup, option, !field, scroll);
+  if (field) flag(field, "aria-activedescendant", Boolean(option), option?.id);
+}
+
+function filterSelect(select: HTMLElement, popup: HTMLElement, query: string): void {
+  const engine = selectLoaders.get(select);
+  if (engine) {
+    engine.search(query);
+    return;
+  }
+  const q = fold(query.trim());
+  for (const option of optionsOf(popup)) option.hidden = q !== "" && !fold(labelOf(option)).includes(q);
+  for (const group of popup.querySelectorAll<HTMLElement>(".z-listbox__group"))
+    group.hidden = !group.querySelector(".z-listbox__option:not([hidden])");
+  const none = optionsOf(popup).every((option) => option.hidden);
+  let status = popup.querySelector<HTMLElement>(":scope > .z-listbox__empty:not([data-async])");
+  if (none && !status) {
+    status = document.createElement("div");
+    status.className = "z-listbox__empty";
+    status.setAttribute("role", "status");
+    popup.append(status);
+  }
+  if (none && status) status.textContent = select.dataset.emptyText ?? "No options";
+  else status?.remove();
+  setSelectActive(popup, optionsOf(popup).filter(usable)[0]);
+}
+
+const selectLoaders = new WeakMap<HTMLElement, AsyncOptions<ComboboxOption>>();
+
+/**
+ * Opciones del servidor para un Select: activa la búsqueda dentro de la lista y pide con lo escrito (antirrebote,
+ * cancelación de la anterior y páginas al llegar al final), como el Combobox. La elegida conserva su etiqueta.
+ */
+export function setSelectLoader(select: HTMLElement, load: AsyncLoader<ComboboxOption>, options: AsyncLoaderOptions = {}): void {
+  prepareSelectSearch(select);
+  const popup = popupFor(selectControl(select));
+  const viewport = popup?.querySelector<HTMLElement>(".z-listbox__viewport");
+  if (!popup || !viewport) return;
+  selectLoaders.get(select)?.abort();
+  const engine = createAsyncOptions<ComboboxOption>({
+    load,
+    debounce: options.debounce,
+    minLength: options.minLength,
+    onChange(state) {
+      const field = searchOf(popup);
+      if (field) flag(field, "aria-busy", state.status === "loading" || state.loadingMore, "true");
+      flag(viewport, "aria-busy", state.status === "loading" || state.loadingMore, "true");
+      if (state.status === "ready") {
+        const size = ICON_SIZE[popup.dataset.size ?? "md"] ?? 16;
+        viewport.replaceChildren(
+          ...state.options.map((option, i) => {
+            const el = buildOption(option, size);
+            el.id = `${viewport.id}-option-${i}`;
+            el.tabIndex = -1;
+            return el;
+          }),
+        );
+        mark(popup, isMultiSelect(select) ? multiValue(select) : selectValue(select) || null);
+        deferLongList(viewport, select);
+        if (!activeOf(popup)) setSelectActive(popup, optionsOf(popup).filter(usable)[0], false);
+      }
+      let status = popup.querySelector<HTMLElement>(":scope > .z-listbox__empty:not([data-async])");
+      const empty = state.options.length === 0 && state.status !== "error" && state.status !== "idle";
+      if (empty && !status) {
+        status = document.createElement("div");
+        status.className = "z-listbox__empty";
+        status.setAttribute("role", "status");
+        popup.append(status);
+      }
+      if (empty && status)
+        status.textContent =
+          state.status === "loading" ? (select.dataset.loadingText ?? "Loading") : (select.dataset.emptyText ?? "No options");
+      else status?.remove();
+      paintAsyncStatus(popup, state, select);
+    },
+  });
+  selectLoaders.set(select, engine);
+  viewport.addEventListener(
+    "scroll",
+    () => {
+      if (nearEnd(viewport)) engine.more();
+    },
+    { passive: true },
+  );
+  popup.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("[data-retry]")) engine.retry();
+  });
+}
+
 function openSelect(select: HTMLElement, start: "selected" | "first" | "last" = "selected"): void {
   const control = selectControl(select);
   const popup = popupFor(control);
   if (!control || !popup || control.disabled || isOpen(popup)) return;
+  const field = searchOf(popup);
   showPopup(popup, select, control, () => {
     control.dataset.state = "closed";
     setActive(popup, undefined, false);
+    selectLoaders.get(select)?.abort();
+    if (field?.value) {
+      field.value = "";
+      if (!selectLoaders.has(select)) filterSelect(select, popup, "");
+    }
   });
   control.dataset.state = "open";
+  if (field) {
+    field.focus({ preventScroll: true });
+    const engine = selectLoaders.get(select);
+    if (engine && engine.state().status === "idle") engine.search("", true);
+  }
   const list = optionsOf(popup).filter(usable);
   const selected = list.find((option) => option.dataset.state === "checked");
-  setActive(popup, start === "last" ? list[list.length - 1] : start === "selected" ? (selected ?? list[0]) : list[0], true);
+  setSelectActive(popup, start === "last" ? list[list.length - 1] : start === "selected" ? (selected ?? list[0]) : list[0]);
 }
 
 function closeSelect(select: HTMLElement, refocus = true): void {
@@ -167,7 +308,9 @@ function chooseSelect(select: HTMLElement, option: HTMLElement): void {
     const values = multiValue(select);
     const value = optionValue(option);
     setSelectValue(select, values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
-    option.focus({ preventScroll: true });
+    const popup = popupFor(selectControl(select));
+    if (popup && searchOf(popup)) searchOf(popup)?.focus({ preventScroll: true });
+    else option.focus({ preventScroll: true });
     return;
   }
   closeSelect(select);
@@ -196,19 +339,25 @@ function onSelectControlKey(select: HTMLElement, event: KeyboardEvent): void {
 function onSelectListKey(select: HTMLElement, popup: HTMLElement, event: KeyboardEvent): void {
   const list = optionsOf(popup).filter(usable);
   const current = activeOf(popup);
-  const next = step(list, current, event.key, false);
+  const field = searchOf(popup);
+  const inSearch = event.target === field;
+  // En el campo de búsqueda, Inicio y Fin mueven el cursor del texto.
+  const next = step(list, current, inSearch && (event.key === "Home" || event.key === "End") ? "" : event.key, false);
   if (next) {
     event.preventDefault();
-    setActive(popup, next, true);
-  } else if (event.key === "Enter" || (event.key === " " && !search.pending())) {
+    setSelectActive(popup, next);
+    if (next === list[list.length - 1]) selectLoaders.get(select)?.more();
+  } else if (event.key === "Enter" || (event.key === " " && !inSearch && !search.pending())) {
     event.preventDefault();
-    if (current) chooseSelect(select, current);
+    if (!current && selectLoaders.get(select)?.state().status === "error") selectLoaders.get(select)?.retry();
+    else if (current) chooseSelect(select, current);
   } else if (event.key === "Tab") {
     // El tabulador no sale de la lista abierta (igual que en React).
     event.preventDefault();
-  } else if (printable(event)) {
+  } else if (!inSearch && printable(event)) {
     event.preventDefault();
-    setActive(popup, typeahead(list, event.key, current) ?? current ?? undefined, true);
+    if (field) field.focus();
+    else setActive(popup, typeahead(list, event.key, current) ?? current ?? undefined, true);
   }
 }
 
@@ -431,6 +580,7 @@ function openCombo(combo: HTMLElement, start: "selected" | "first" | "last"): vo
         combo.dataset.state = "closed";
         toggle?.setAttribute("aria-expanded", "false");
         setComboActive(combo, undefined);
+        loaders.get(combo)?.abort();
         refreshCombo(combo);
         syncComboIcon(combo);
       },
@@ -438,6 +588,9 @@ function openCombo(combo: HTMLElement, start: "selected" | "first" | "last"): vo
     );
     combo.dataset.state = "open";
     toggle?.setAttribute("aria-expanded", "true");
+    // Del servidor: al abrir sin resultados, se piden ya.
+    const engine = loaders.get(combo);
+    if (engine && engine.state().status === "idle") engine.search(comboState(combo).editing ? input.value : "", true);
   }
   refreshCombo(combo);
   const list = optionsOf(popup).filter(usable);
@@ -501,6 +654,7 @@ function onComboInput(combo: HTMLElement, input: HTMLInputElement): void {
   emit(combo, "input", { value: input.value });
   // Vaciar el campo quita la selección.
   if (input.value === "" && comboValue(combo) !== null) commitCombo(combo, null);
+  loaders.get(combo)?.search(input.value);
   openCombo(combo, "first");
 }
 
@@ -515,7 +669,11 @@ function onComboKey(combo: HTMLElement, event: KeyboardEvent): void {
     case "ArrowUp":
       event.preventDefault();
       if (!shown) openCombo(combo, event.key === "ArrowDown" ? "selected" : "last");
-      else setComboActive(combo, step(list, active, event.key, true));
+      else {
+        const next = step(list, active, event.key, true);
+        setComboActive(combo, next);
+        if (next && next === list[list.length - 1]) loaders.get(combo)?.more();
+      }
       break;
     case "Home":
     case "End":
@@ -534,7 +692,8 @@ function onComboKey(combo: HTMLElement, event: KeyboardEvent): void {
       }
       // Con la lista abierta, Enter elige y no envía el formulario.
       event.preventDefault();
-      if (active) chooseCombo(combo, active);
+      if (!active && loaders.get(combo)?.state().status === "error") loaders.get(combo)?.retry();
+      else if (active) chooseCombo(combo, active);
       else if (combo.hasAttribute("data-custom")) {
         commitCustomCombo(combo);
         closeCombo(combo);
@@ -553,7 +712,7 @@ function onComboKey(combo: HTMLElement, event: KeyboardEvent): void {
   }
 }
 
-function buildOption(option: ComboboxOption, size: number): HTMLElement {
+export function buildOption(option: ComboboxOption, size: number): HTMLElement {
   const el = document.createElement("div");
   el.className = "z-listbox__option";
   el.setAttribute("role", "option");
@@ -588,6 +747,7 @@ export function setComboboxOptions(combo: HTMLElement, options: ReadonlyArray<Co
   const size = ICON_SIZE[popup.dataset.size ?? "md"] ?? 16;
   viewport.replaceChildren(...options.map((option) => buildOption(option, size)));
   mark(popup, comboValue(combo));
+  deferLongList(viewport, combo);
   refreshCombo(combo);
   if (isOpen(popup)) setComboActive(combo, optionsOf(popup).filter(usable)[0]);
 }
@@ -660,6 +820,106 @@ function hydrateCombo(combo: HTMLElement): void {
   if (combo.hasAttribute("data-loading")) setComboboxLoading(combo, true);
   refreshCombo(combo);
   syncComboIcon(combo);
+}
+
+/* ---------- Carga asíncrona y listas largas ---------- */
+
+export interface AsyncLoaderOptions {
+  /** Espera tras la última tecla (ms). Por defecto 250. */
+  debounce?: number;
+  /** Letras mínimas para pedir. */
+  minLength?: number;
+}
+
+const loaders = new WeakMap<HTMLElement, AsyncOptions<ComboboxOption>>();
+
+/**
+ * Estado de una carga asíncrona bajo la lista: el texto de error con el botón de reintentar (`data-retry`) o el de
+ * «cargando más». El vacío y la primera carga los pinta cada pieza. Lo comparten Select, Combobox y Listbox.
+ */
+export function paintAsyncStatus(box: HTMLElement, state: AsyncState<unknown>, owner: HTMLElement): void {
+  let status = box.querySelector<HTMLElement>(":scope > .z-listbox__empty[data-async]");
+  const failed = state.status === "error";
+  if (!failed && !state.loadingMore) {
+    status?.remove();
+    return;
+  }
+  if (!status) {
+    status = document.createElement("div");
+    status.className = "z-listbox__empty";
+    status.setAttribute("role", "status");
+    status.setAttribute("data-async", "");
+    box.append(status);
+  }
+  flag(status, "data-error", failed);
+  flag(status, "data-loading", !failed);
+  status.textContent = failed
+    ? (owner.dataset.errorText ?? "Couldn't load the options")
+    : (owner.dataset.loadingMoreText ?? owner.dataset.loadingText ?? "Loading more");
+  if (failed) {
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "z-btn z-btn--ghost z-listbox__retry";
+    retry.dataset.size = "sm";
+    retry.setAttribute("data-retry", "");
+    retry.textContent = owner.dataset.retryLabel ?? "Retry";
+    status.append(" ", retry);
+  }
+}
+
+/** Marca una lista larga del servidor para que las opciones fuera de la vista no se pinten (content-visibility). */
+export function deferLongList(viewport: HTMLElement | null, owner?: HTMLElement | null): void {
+  if (!viewport) return;
+  const count = viewport.querySelectorAll(".z-listbox__option").length;
+  const threshold = owner?.dataset.virtualize === "false" ? Infinity : Number(owner?.dataset.virtualize) || 100;
+  viewport.toggleAttribute("data-deferred", count > threshold);
+}
+
+/** Pide la página siguiente al llegar cerca del final de la lista. */
+function nearEnd(viewport: HTMLElement): boolean {
+  return viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 48;
+}
+
+/**
+ * Opciones del servidor para un Combobox: se piden con lo escrito tras el antirrebote (la petición anterior se
+ * cancela con su `signal`), con la consulta vacía al abrir y página a página al llegar al final de la lista si la
+ * respuesta trae `hasMore`. Sin filtro local. Textos en el Combobox: data-loading-text, data-empty-text,
+ * data-error-text, data-retry-label.
+ */
+export function setComboboxLoader(combo: HTMLElement, load: AsyncLoader<ComboboxOption>, options: AsyncLoaderOptions = {}): void {
+  const { popup, viewport } = comboParts(combo);
+  if (!popup || !viewport) return;
+  combo.dataset.filter = "false";
+  loaders.get(combo)?.abort();
+  const engine = createAsyncOptions<ComboboxOption>({
+    load,
+    debounce: options.debounce,
+    minLength: options.minLength,
+    onChange(state) {
+      if (state.status === "ready") setComboboxOptions(combo, state.options);
+      setComboboxLoading(combo, state.status === "loading" || state.loadingMore);
+      paintAsyncStatus(popup, state, combo);
+      if (state.status === "error" && !state.options.length) popup.querySelector(":scope > .z-listbox__empty:not([data-async])")?.remove();
+      deferLongList(viewport, combo);
+    },
+  });
+  loaders.set(combo, engine);
+  viewport.addEventListener(
+    "scroll",
+    () => {
+      if (nearEnd(viewport)) engine.more();
+    },
+    { passive: true },
+  );
+  popup.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("[data-retry]")) engine.retry();
+  });
+}
+
+/** Quita la carga asíncrona de un Combobox. */
+export function clearComboboxLoader(combo: HTMLElement): void {
+  loaders.get(combo)?.abort();
+  loaders.delete(combo);
 }
 
 /* ---------- Delegación ---------- */
@@ -740,6 +1000,10 @@ export function setup(on: Listen): void {
     const input = event.target as Element;
     if (input.matches?.(`${COMBO} input.z-input__control`) && inDom(input))
       onComboInput(input.closest<HTMLElement>(COMBO)!, input as HTMLInputElement);
+    else if (input.matches?.(".z-listbox__search input")) {
+      const at = ownerAt(input);
+      if (at && !at.owner.matches(COMBO)) filterSelect(at.owner, at.popup, (input as HTMLInputElement).value);
+    }
   });
   // Combobox: al perder el foco el campo, la lista se cierra (también si el foco no va a ningún elemento).
   on(document, "focusout", (event) => {
@@ -758,7 +1022,7 @@ export function setup(on: Listen): void {
     const at = option && ownerAt(option);
     if (!option || !at || !usable(option) || option.hasAttribute("data-highlighted")) return;
     if (at.owner.matches(COMBO)) setComboActive(at.owner, option, false);
-    else setActive(at.popup, option, true, false);
+    else setSelectActive(at.popup, option, false);
   });
   // Combobox: pulsar en la lista o en sus botones no quita el foco del campo.
   on(document, "mousedown", (event) => {
@@ -781,4 +1045,11 @@ export function hydrate(root: ParentNode): void {
             ""),
       );
   for (const combo of all(root, COMBO)) hydrateCombo(combo);
+  // Listas largas del servidor: las opciones fuera de la vista no se pintan (siguen en el documento).
+  for (const select of all(root, SELECT)) {
+    const popup = popupFor(selectControl(select));
+    deferLongList(popup?.querySelector<HTMLElement>(".z-listbox__viewport") ?? null, select);
+    if (select.hasAttribute("data-searchable")) prepareSelectSearch(select);
+  }
+  for (const combo of all(root, COMBO)) deferLongList(comboParts(combo).viewport, combo);
 }

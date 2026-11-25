@@ -67,6 +67,12 @@
     {
       "name": "presenceLabels",
       "type": "Partial<PresenceLabels>"
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 200,
+      "description": "Ventana virtual: la lista desplaza dentro de `--z-member-list-height` (480 px) y solo pinta las filas que se ven. `true` siempre, `false` nunca, un número es el umbral. Modo DOM: `data-virtualize`."
     }
   ],
   "tokens": [
@@ -98,9 +104,10 @@
     "z-member-list__row",
     "z-member-list__role",
     "z-member-list__role-text",
-    "z-member-list__remove"
+    "z-member-list__remove",
+    "z-member-list__scroll"
   ],
-  "a11y": "Búsqueda con nombre; el número de resultados se anuncia en la región status de la pieza («3 results») tras teclear, no por tecla. Cada grupo es una sección con encabezado. El rol es un <select> nativo con nombre «Role for Ana López»; quitar es un botón «Remove Ana López» y al quitar el foco pasa a la fila siguiente. La presencia se lee con texto. Sin React: .z-member-list con data-title, data-editable, data-invitable, data-group-by, data-current-user y los datos en <script type=\"application/json\" data-props>{ \"members\": [...], \"roles\": [...] }; emite z:rolechange, z:remove y z:invite.",
+  "a11y": "Búsqueda con nombre; el número de resultados se anuncia en la región status de la pieza («3 results») tras teclear, no por tecla. Cada grupo es una sección con encabezado. El rol es un <select> nativo con nombre «Role for Ana López»; quitar es un botón «Remove Ana López» y al quitar el foco pasa a la fila siguiente. La presencia se lee con texto. Sin React: .z-member-list con data-title, data-editable, data-invitable, data-group-by, data-current-user y los datos en <script type=\"application/json\" data-props>{ \"members\": [...], \"roles\": [...] }; emite z:rolechange, z:remove y z:invite. Con ventana virtual, cada fila lleva aria-setsize y aria-posinset dentro de su grupo, y la fila con el foco no sale del documento.",
   "behavior": "dom",
   "examples": [
     {

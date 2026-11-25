@@ -16,6 +16,7 @@ import { Layers } from "./screens/audit/Layers";
 import { AgendaScreen } from "./screens/Agenda";
 import { PIECES, PlanningPieces, type PieceId } from "./screens/Planning";
 import { PerfStage } from "./screens/Perf";
+import { ScaleListsStage } from "./screens/scale";
 
 // La suite de navegador comprueba con este atributo qué React sirvió la página (tests/browser/run.mjs, REACT=18).
 document.documentElement.dataset.react = version;
@@ -33,7 +34,8 @@ if (
   screen === "layers" ||
   screen === "agenda-stage" ||
   screen === "planning-stage" ||
-  screen === "perf-stage"
+  screen === "perf-stage" ||
+  screen === "scale-stage"
 ) {
   document.documentElement.dataset.theme = params.get("theme") === "light" ? "light" : "dark";
   document.documentElement.dataset.brand = params.get("brand") === "zutool" ? "zutool" : "dazlabs";
@@ -53,6 +55,11 @@ createRoot(root).render(
       // Rendimiento de la agenda: 5000 eventos y 500 recursos (?n= cambia el número de eventos).
       <main className="z-root app-stage" data-testid="screen-perf-stage">
         <PerfStage n={Number(params.get("n")) || 5000} />
+      </main>
+    ) : screen === "scale-stage" ? (
+      // Listas de miles: ConversationList y MemberList con 1000 entradas (ventana virtual).
+      <main className="z-root app-stage" data-testid="screen-scale-stage">
+        <ScaleListsStage />
       </main>
     ) : screen === "planning-stage" ? (
       // Piezas de planificación a todo el ancho (?piece=gantt…): las que se comparan con el prototipo.

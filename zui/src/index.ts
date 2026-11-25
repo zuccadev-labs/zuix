@@ -98,6 +98,9 @@ export {
   type GridLayout,
 } from "./core/grid-layout";
 export { locateCard, moveCard } from "./core/kanban";
+export { moveNode } from "./core/tree";
+export { wantsVirtual, virtualWindow, type VirtualWindow } from "./core/virtual";
+export type { AsyncContext, AsyncLoader, AsyncPage } from "./core/async-options";
 export { funnelStages } from "./core/funnel";
 // Usuarios y perfiles: presencia, iniciales, miembros y validación del perfil.
 export { presenceText, presenceRank, PRESENCE_LABELS, type PresenceLabels as PresenceText } from "./core/user-presence";

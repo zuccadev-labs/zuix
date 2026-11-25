@@ -42,6 +42,12 @@
       "name": "footer",
       "type": "ReactNode",
       "description": "Pie bajo la lista (atajos, ayuda)."
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 150,
+      "description": "Ventana virtual, como en CommandPalette."
     }
   ],
   "states": ["rest", "active", "disabled", "empty"],

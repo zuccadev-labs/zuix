@@ -61,6 +61,12 @@
     {
       "name": "labels",
       "type": "Partial<ConversationListLabels>"
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 150,
+      "description": "Ventana virtual: solo se pintan las conversaciones que se ven (la parada de Tab no sale del documento). `true` siempre, `false` nunca, un número es el umbral. Modo DOM: `data-virtualize`."
     }
   ],
   "states": ["rest", "hover", "selected", "unread", "muted", "pinned", "typing", "empty"],
@@ -99,7 +105,7 @@
     "z-conversation__mention",
     "z-conversation-list__empty"
   ],
-  "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son un grupo de radios (una parada, ←/→). Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id (la abierta al empezar), data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange.",
+  "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son un grupo de radios (una parada, ←/→). Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id (la abierta al empezar), data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange. Con ventana virtual, cada fila lleva aria-setsize y aria-posinset; RePág y AvPág saltan una página. Ctrl+F del navegador solo encuentra lo pintado: la búsqueda de la lista lo encuentra todo.",
   "behavior": "dom",
   "examples": [
     {

@@ -18,6 +18,7 @@ import {
   TimelineItem,
   type RowKey,
 } from "@zuccadev-labs/zuix-zui";
+import { DataGridSections } from "./scale";
 
 interface Member {
   id: string;
@@ -135,6 +136,7 @@ export function DataScreen() {
           </p>
         </Stack>
       </PageSection>
+      <DataGridSections />
       <PageSection title="Progress">
         <Grid min={280}>
           <Card className="app-demo">

@@ -13,6 +13,7 @@ import {
   Tree,
   type TreeNode,
 } from "@zuccadev-labs/zuix-zui";
+import { TreeAndTabsSections } from "./scale";
 
 const TREE: TreeNode[] = [
   {
@@ -146,6 +147,8 @@ export function NavigationScreen() {
           </span>
         </PageSection>
       </Grid>
+
+      <TreeAndTabsSections />
 
       <PageSection title="Stepper and pagination">
         <Stack gap={4}>

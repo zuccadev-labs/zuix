@@ -24,6 +24,36 @@
   .z-tabs__list::-webkit-scrollbar {
     display: none;
   }
+  /* Pestañas que no caben, con menú «Más»: la tira recorta (no desplaza), las que no se ven enteras se ocultan con
+     visibility (conservan su caja para que el observador vea cuándo vuelven a caber) y el botón queda tras la tira. */
+  .z-tabs__strip {
+    display: flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  .z-tabs__list[data-overflow="menu"] {
+    overflow: clip;
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
+  .z-tabs__list[data-overflow="menu"] > .z-tabs__tab {
+    flex: none;
+  }
+  .z-tabs__list[data-overflow="menu"] > .z-tabs__tab[data-clipped]:not([aria-selected="true"], :focus) {
+    visibility: hidden;
+  }
+  .z-tabs__list[data-overflow="menu"] > .z-tabs__tab[data-displaced] {
+    display: none;
+  }
+  .z-tabs__more {
+    flex: none;
+  }
+  /* Al desplazar con el teclado, la pestaña con el foco no queda bajo el difuminado del borde. */
+  .z-tabs__list:not([data-overflow="menu"]) {
+    scroll-padding-inline: var(--z-space-6);
+  }
   .z-tabs__list[data-orientation="vertical"] {
     flex-direction: column;
     align-items: stretch;
@@ -792,6 +822,88 @@
     outline: var(--z-focus-width) solid var(--z-accent-ring);
     outline-offset: 0;
   }
+  /* Ventana virtual: el árbol desplaza dentro de su alto y pinta en plano solo las filas que se ven. */
+  .z-tree[data-virtual] {
+    display: block;
+    max-block-size: var(--z-tree-height, 480px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .z-tree[data-virtual] > .z-tree__item {
+    margin-block-end: 1px;
+  }
+  /* Lista larga del modo DOM (marcado del servidor): las filas fuera de la vista no se pintan pero siguen en el
+     documento (teclado, lectores y Ctrl+F). */
+  .z-tree[data-deferred] .z-tree__row {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto 32px;
+  }
+  /* Carga diferida de una rama: un anillo en lugar del chevron mientras llegan los hijos. */
+  .z-tree__spinner {
+    inline-size: 12px;
+    block-size: 12px;
+    border: 1.5px solid var(--z-line-strong);
+    border-block-start-color: var(--z-accent);
+    border-radius: var(--z-radius-full);
+    animation: z-tree-spin 0.8s linear infinite;
+  }
+  .z-tree__toggle[data-loading] {
+    transform: none;
+  }
+  @keyframes z-tree-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+  /* Arrastrar y soltar: la fila que se mueve se atenúa y la de destino lleva una línea (delante o detrás) o un anillo
+     (dentro). El marcador no depende solo del color: es una forma. */
+  .z-tree[data-dragging] {
+    cursor: grabbing;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-tree[data-dragging] .z-tree__row {
+    cursor: grabbing;
+  }
+  .z-tree__item[data-dragged] > .z-tree__row,
+  .z-tree__item[data-grabbed] > .z-tree__row {
+    opacity: 0.55;
+  }
+  .z-tree__item[data-grabbed] > .z-tree__row {
+    outline: var(--z-focus-width) dashed var(--z-accent);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-tree__row[data-drop] {
+    position: relative;
+  }
+  .z-tree__row[data-drop="inside"] {
+    background: var(--z-accent-soft);
+    box-shadow: inset 0 0 0 2px var(--z-accent);
+  }
+  .z-tree__row[data-drop="before"]::before,
+  .z-tree__row[data-drop="after"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: calc(var(--z-space-2) + var(--z-tree-level, 0) * var(--z-space-4)) var(--z-space-2);
+    block-size: 0;
+    border-block-start: 2px solid var(--z-accent);
+    pointer-events: none;
+  }
+  .z-tree__row[data-drop="before"]::before {
+    inset-block-start: -1px;
+  }
+  .z-tree__row[data-drop="after"]::after {
+    inset-block-end: -1px;
+  }
+  @media (forced-colors: active) {
+    .z-tree__row[data-drop="inside"] {
+      outline: 2px solid Highlight;
+    }
+    .z-tree__row[data-drop="before"]::before,
+    .z-tree__row[data-drop="after"]::after {
+      border-color: Highlight;
+    }
+  }
 
   /* ---------- Enlaces de barra lateral ---------- */
   .z-navlist {
@@ -1057,6 +1169,7 @@
     .z-collapsible__trigger,
     .z-tree__row,
     .z-tree__toggle,
+    .z-tree__spinner,
     .z-navlink {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;

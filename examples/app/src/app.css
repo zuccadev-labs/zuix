@@ -809,3 +809,26 @@ body {
   padding: 0;
   list-style: none;
 }
+
+/* Escala (0.5): listas largas, pestañas estrechas y listas de miles. */
+.app-listbox-tall .z-listbox__viewport {
+  max-block-size: 260px;
+}
+.app-tabs-narrow {
+  max-inline-size: 420px;
+}
+.app-scale {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: var(--z-space-6);
+  padding: var(--z-space-6);
+}
+.app-scale__chats {
+  display: flex;
+  flex-direction: column;
+  block-size: 640px;
+}
+.app-scale__chats .z-conversation-list {
+  flex: 1;
+  min-block-size: 0;
+}

@@ -133,6 +133,46 @@
       "name": "icon",
       "type": "IconName",
       "description": "Icono decorativo al inicio del campo."
+    },
+    {
+      "name": "loadOptions",
+      "type": "(query, { signal, page }) => Promise<{ options, hasMore? } | ComboboxOption[]>",
+      "description": "Opciones del servidor por consulta: tras `debounce` ms sin teclear, la anterior se cancela con `signal`, `page` sube al llegar al final si hay `hasMore`. Sin filtro local; con la consulta vacía al abrir."
+    },
+    {
+      "name": "debounce",
+      "type": "number",
+      "default": 250,
+      "description": "Espera tras la última tecla antes de pedir (ms)."
+    },
+    {
+      "name": "minQueryLength",
+      "type": "number",
+      "default": 0,
+      "description": "Letras mínimas para pedir."
+    },
+    {
+      "name": "errorText",
+      "type": "string",
+      "default": "Couldn't load the options",
+      "description": "Texto si la carga falla, con un botón para reintentar (Intro también reintenta)."
+    },
+    {
+      "name": "retryLabel",
+      "type": "string",
+      "default": "Retry"
+    },
+    {
+      "name": "loadingMoreText",
+      "type": "string",
+      "default": "Loading more",
+      "description": "Texto mientras llega la página siguiente."
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 100,
+      "description": "Ventana virtual: solo se pintan las opciones que se ven y la activa no sale del documento. `true` siempre, `false` nunca, un número es el umbral."
     }
   ],
   "states": ["rest", "hover", "focus", "open", "loading", "empty", "disabled", "invalid"],
@@ -189,8 +229,8 @@
     "touch-target",
     "glass-border"
   ],
-  "classes": ["z-input", "z-combobox", "z-listbox"],
-  "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado. Con `multiple` la lista es aria-multiselectable y cada pieza tiene un botón con nombre; con `allowCustomValue` (patrón «autocompletar») el texto escrito se conserva como valor.",
+  "classes": ["z-input", "z-combobox", "z-listbox", "z-listbox__retry"],
+  "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado. Con `multiple` la lista es aria-multiselectable y cada pieza tiene un botón con nombre; con `allowCustomValue` (patrón «autocompletar») el texto escrito se conserva como valor. Con `loadOptions`, el campo y la lista llevan aria-busy mientras carga y el estado (cargando, vacío, error) está en una región role=\"status\". Con ventana virtual, cada opción lleva aria-setsize y aria-posinset.",
   "behavior": "dom",
   "examples": [
     {
@@ -212,6 +252,10 @@
     {
       "title": "Autocompletar (texto libre) con icono",
       "code": "<Field label=\"City\" hint=\"Pick a suggestion or type any city.\">\n  <Combobox\n    allowCustomValue\n    icon=\"map-pin\"\n    placeholder=\"Search a city\"\n    options={[\n      { value: \"lisbon\", label: \"Lisbon\" },\n      { value: \"madrid\", label: \"Madrid\" },\n      { value: \"montreal\", label: \"Montreal\" },\n    ]}\n  />\n</Field>"
+    },
+    {
+      "title": "Búsqueda en el servidor con páginas",
+      "code": "<Combobox\n  aria-label=\"City\"\n  loadOptions={async (query, { signal, page }) => {\n    const res = await fetch(`/api/cities?q=${query}&page=${page}`, { signal });\n    return res.json(); // { options, hasMore }\n  }}\n/>"
     }
   ],
   "html": [

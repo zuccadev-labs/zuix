@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import { Icon } from "@zuccadev-labs/zuix-zicon";
+import { LargeListsSection } from "./scale";
 import {
   Button,
   ButtonGroup,
@@ -536,6 +537,7 @@ export function Inputs() {
           <span className="app-muted" data-testid="i-transfer-value">{`Team: ${team.join(", ") || "none"}`}</span>
         </Stack>
       </PageSection>
+      <LargeListsSection />
     </Page>
   );
 }

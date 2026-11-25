@@ -531,8 +531,9 @@ fuera de ellos. Son funciones puras salvo los hooks; las firmas están en las de
 | IA | `createTextStream`, `provisional`, `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch`, `siblings` |
 | Dashboard | `computeDelta`, `computePace`, `elapsedFraction`, `funnelStages`, `normalizeLayout`, `parseLayout`, `serializeLayout`, `sortLayout`, `compactLayout`, `fitColumns`, `moveGridItem`, `resizeGridItem`, `moveCard`, `locateCard` |
 | Usuarios | `presenceText`, `presenceRank`, `PRESENCE_LABELS`, `initialsOf`, `filterMembers`, `groupMembers`, `sortByName`, `sortByPresence`, `validateProfile`, `validHandle`, `bioCounter` |
+| Listas largas y árboles | `wantsVirtual`, `virtualWindow`, `moveNode` |
 | Nodos | `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph`, `describeNode` |
-| Textos por defecto | `REVIEW_SUMMARY_LABELS`, `REVIEW_CARD_LABELS`, `FILTER_BAR_LABELS`, `NOTIFICATION_CENTER_LABELS` |
+| Textos por defecto | `REVIEW_SUMMARY_LABELS`, `REVIEW_CARD_LABELS`, `FILTER_BAR_LABELS`, `NOTIFICATION_CENTER_LABELS`, `TREE_DRAG_LABELS` |
 
 ## Manifiestos
 

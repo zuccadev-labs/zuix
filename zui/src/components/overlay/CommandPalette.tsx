@@ -3,8 +3,11 @@ import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type R
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { occurrenceKeys } from "../../core/keys";
 import { score } from "../../core/search";
+import { wantsVirtual } from "../../core/virtual";
 import { cx } from "../../cx";
 import { DialogSurface } from "../../primitives/dialog";
+import { useVirtual } from "../../primitives/virtual";
+import { Spacer } from "../forms/option-rows.internal";
 
 export interface PaletteCommand {
   id: string;
@@ -41,6 +44,11 @@ export interface CommandPaletteProps {
   closeOnSelect?: boolean;
   /** Pie bajo la lista: atajos de navegación, ayuda o una acción. */
   footer?: ReactNode;
+  /**
+   * Ventana virtual: solo se pintan los comandos que se ven (el activo no sale del documento). `true` siempre, `false`
+   * nunca, un número es el umbral; por defecto, a partir de 150 comandos.
+   */
+  virtualize?: boolean | number;
   className?: string;
 }
 
@@ -88,10 +96,24 @@ interface CommandListProps {
   inline?: boolean;
   footer?: ReactNode;
   id?: string;
+  virtualize?: boolean | number;
 }
 
 /** Campo de búsqueda, lista filtrada y pie: lo que comparten la paleta (en un diálogo) y el comando en línea. */
-function CommandList({ open, groups, placeholder, emptyLabel, label, escapeLabel, filter, onRun, inline, footer, id }: CommandListProps) {
+function CommandList({
+  open,
+  groups,
+  placeholder,
+  emptyLabel,
+  label,
+  escapeLabel,
+  filter,
+  onRun,
+  inline,
+  footer,
+  id,
+  virtualize,
+}: CommandListProps) {
   const auto = useId();
   const baseId = id ?? auto;
   const [query, setQuery] = useState("");
@@ -115,14 +137,39 @@ function CommandList({ open, groups, placeholder, emptyLabel, label, escapeLabel
     }
   }
 
+  // Filas (cabecera de grupo y comando) para la ventana virtual.
+  const rows = useMemo(() => {
+    const out: Array<{ kind: "heading"; key: string; group: number } | { kind: "command"; key: string; group: number; index: number }> = [];
+    let n = 0;
+    visible.forEach((group, g) => {
+      if (group.heading) out.push({ kind: "heading", key: `h:${g}`, group: g });
+      for (const command of group.commands) out.push({ kind: "command", key: `c:${command.id}`, group: g, index: n++ });
+    });
+    return out;
+  }, [visible]);
+  const virtual = wantsVirtual(virtualize, flat.length, 150);
+  const activeRow = rows.findIndex((r) => r.kind === "command" && r.index === index);
+  const win = useVirtual({
+    enabled: virtual && open,
+    count: rows.length,
+    size: (i) => (rows[i]?.kind === "heading" ? 28 : 40),
+    key: (i) => rows[i]?.key ?? String(i),
+    keep: activeRow >= 0 ? [activeRow] : [],
+    scroller: listRef,
+    rowSelector: "[data-key]",
+  });
+
   // El comando activo se mantiene a la vista; no al montar (un comando en línea no desplaza la página al cargar).
   const moved = useRef(false);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: solo al cambiar el comando activo.
   useEffect(() => {
     if (!moved.current) {
       moved.current = true;
       return;
     }
-    listRef.current?.querySelector<HTMLElement>(`[data-index="${index}"]`)?.scrollIntoView({ block: "nearest" });
+    const el = listRef.current?.querySelector<HTMLElement>(`[data-index="${index}"]`);
+    if (el) el.scrollIntoView({ block: "nearest" });
+    else if (activeRow >= 0) win.scrollToIndex(activeRow);
   }, [index]);
 
   const run = (command: PaletteCommand | undefined) => {
@@ -157,6 +204,12 @@ function CommandList({ open, groups, placeholder, emptyLabel, label, escapeLabel
 
   // Un grupo se identifica por su título y su primer comando: la clave lo sigue cuando el filtro quita grupos por delante.
   const groupKeys = occurrenceKeys(visible.map((group) => `${group.heading ?? ""}/${group.commands[0]?.id ?? ""}`));
+  // Lo que se pinta de cada grupo: con ventana virtual, solo sus filas dentro de ella.
+  const shown = new Set(win.indices);
+  const firstOf: number[] = [];
+  rows.forEach((r, i) => {
+    if (firstOf[r.group] === undefined) firstOf[r.group] = i;
+  });
   let n = -1;
   return (
     <>
@@ -185,60 +238,83 @@ function CommandList({ open, groups, placeholder, emptyLabel, label, escapeLabel
         />
         {escapeLabel ? <kbd className="z-palette__kbd">{escapeLabel}</kbd> : null}
       </div>
-      <div ref={listRef} id={`${baseId}-list`} role="listbox" aria-label={label} className="z-palette__list">
+      <div
+        ref={listRef}
+        id={`${baseId}-list`}
+        role="listbox"
+        aria-label={label}
+        className="z-palette__list"
+        data-virtual={win.virtual || undefined}
+      >
         {flat.length === 0 ? (
           <div className="z-palette__empty" role="status">
             {emptyLabel}
           </div>
         ) : null}
-        {visible.map((group, g) => (
-          <div key={groupKeys[g]} role="group" aria-label={group.heading} className="z-palette__group">
-            {group.heading ? (
-              <div className="z-palette__heading" aria-hidden="true">
-                {group.heading}
-              </div>
-            ) : null}
-            {group.commands.map((command) => {
-              n += 1;
-              const i = n;
-              const active = i === index;
-              return (
-                // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
-                // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
-                <div
-                  key={command.id}
-                  id={optionId(i)}
-                  role="option"
-                  aria-selected={active}
-                  aria-disabled={command.disabled || undefined}
-                  data-index={i}
-                  className="z-palette__item"
-                  onPointerMove={() => {
-                    if (!active) setIndex(i);
-                  }}
-                  onClick={() => run(command)}
-                >
-                  {command.icon ? (
-                    <span className="z-palette__item-icon">
-                      <Icon name={command.icon} size={16} />
-                    </span>
-                  ) : null}
-                  <span className="z-palette__item-label">{command.label}</span>
-                  {command.hint ? <span className="z-palette__item-hint">{command.hint}</span> : null}
-                  {command.shortcut ? (
-                    <span className="z-palette__shortcut">
-                      {shortcutKeys(command.shortcut).map(([id, key]) => (
-                        <kbd key={id} className="z-palette__kbd">
-                          {key}
-                        </kbd>
-                      ))}
-                    </span>
-                  ) : null}
+        {win.virtual && win.before > 0 ? <Spacer px={win.before} /> : null}
+        {visible.map((group, g) => {
+          const base = firstOf[g] ?? 0;
+          const headingRow = group.heading ? base : -1;
+          const firstCommandRow = group.heading ? base + 1 : base;
+          const rendered = group.commands.some((_, c) => shown.has(firstCommandRow + c)) || shown.has(headingRow);
+          if (!rendered) {
+            n += group.commands.length;
+            return null;
+          }
+          return (
+            <div key={groupKeys[g]} role="group" aria-label={group.heading} className="z-palette__group">
+              {group.heading && shown.has(headingRow) ? (
+                <div className="z-palette__heading" aria-hidden="true" data-key={win.virtual ? `h:${g}` : undefined}>
+                  {group.heading}
                 </div>
-              );
-            })}
-          </div>
-        ))}
+              ) : null}
+              {group.commands.map((command, c) => {
+                n += 1;
+                const i = n;
+                if (!shown.has(firstCommandRow + c)) return null;
+                const active = i === index;
+                return (
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: patrón combobox con aria-activedescendant: el foco no sale del campo, que atiende flechas e Intro.
+                  // biome-ignore lint/a11y/useFocusableInteractive: las opciones no reciben foco; el campo las señala con aria-activedescendant.
+                  <div
+                    key={command.id}
+                    id={optionId(i)}
+                    role="option"
+                    aria-selected={active}
+                    aria-disabled={command.disabled || undefined}
+                    data-index={i}
+                    data-key={win.virtual ? `c:${command.id}` : undefined}
+                    aria-posinset={win.virtual ? i + 1 : undefined}
+                    aria-setsize={win.virtual ? flat.length : undefined}
+                    className="z-palette__item"
+                    onPointerMove={() => {
+                      if (!active) setIndex(i);
+                    }}
+                    onClick={() => run(command)}
+                  >
+                    {command.icon ? (
+                      <span className="z-palette__item-icon">
+                        <Icon name={command.icon} size={16} />
+                      </span>
+                    ) : null}
+                    <span className="z-palette__item-label">{command.label}</span>
+                    {command.hint ? <span className="z-palette__item-hint">{command.hint}</span> : null}
+                    {command.shortcut ? (
+                      <span className="z-palette__shortcut">
+                        {shortcutKeys(command.shortcut).map(([id, key]) => (
+                          <kbd key={id} className="z-palette__kbd">
+                            {key}
+                          </kbd>
+                        ))}
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+        {win.virtual && win.after > 0 ? <Spacer px={win.after} /> : null}
       </div>
       {footer ? <div className="z-palette__footer">{footer}</div> : null}
     </>
@@ -256,6 +332,7 @@ export function CommandPalette({
   filter = defaultFilter,
   closeOnSelect = true,
   footer,
+  virtualize,
   className,
 }: CommandPaletteProps) {
   return (
@@ -276,6 +353,7 @@ export function CommandPalette({
         escapeLabel={escapeLabel}
         filter={filter}
         footer={footer}
+        virtualize={virtualize}
         onRun={(command) => {
           if (closeOnSelect) onOpenChange(false);
           command.onSelect();
@@ -296,6 +374,8 @@ export interface CommandProps {
   filter?: (groups: PaletteGroup[], query: string) => PaletteGroup[];
   /** Pie bajo la lista: atajos de navegación, ayuda o una acción. */
   footer?: ReactNode;
+  /** Ventana virtual (como en CommandPalette): por defecto, a partir de 150 comandos. */
+  virtualize?: boolean | number;
   className?: string;
 }
 
@@ -312,6 +392,7 @@ export function Command({
   emptyLabel = "No results",
   filter = defaultFilter,
   footer,
+  virtualize,
   className,
 }: CommandProps) {
   return (
@@ -326,6 +407,7 @@ export function Command({
         label={label}
         filter={filter}
         footer={footer}
+        virtualize={virtualize}
         onRun={(command) => command.onSelect()}
       />
     </div>
