@@ -21,6 +21,8 @@
 //   píldora          radius-full en un control que no es circular
 //   alineación       controles de una misma fila con alturas distintas, iconos descentrados en su botón y huecos
 //                    desiguales entre hermanos de un grupo
+//   icono-desalineado icono que comparte línea con un texto y cuyo centro vertical se aparta del de esa línea más
+//                    de 1 px (1,5 px si mide más de 20): botón, enlace, chip, menú, alerta, encabezado, sidebar…
 //   foco             contorno visible en cada parada de Tab y contraste ≥ 3:1 contra lo que tiene detrás
 //   objetivo         objetivo táctil ≥ 24×24 (≥ 40 con puntero grueso)
 //   axe              WCAG 2.2 A/AA con contraste de color
@@ -1023,6 +1025,12 @@ function collect({ TOKENS, families, coarse }) {
         add("relleno-tactil", el, `${prop} ${value} (completa el objetivo táctil)`);
         continue;
       }
+      // Relleno que centra una línea en una altura de control: la fila admite una segunda línea y sus iconos se
+      // alinean con la primera (`padding-block: calc((control-height - 1lh) / 2)`).
+      if (/padding-(top|bottom)/.test(prop) && scale.height.some((h) => Math.abs(v - (h - Number.parseFloat(cs.lineHeight)) / 2) <= 0.6)) {
+        add("relleno-de-linea", el, `${prop} ${Math.round(v * 100) / 100}px (centra la primera línea en la altura de control)`);
+        continue;
+      }
       // Centrado geométrico (marcador de un gráfico): margen negativo de medio tamaño propio.
       if (
         /margin/.test(prop) &&
@@ -1152,6 +1160,134 @@ function collect({ TOKENS, families, coarse }) {
     const dx = i.left + i.width / 2 - (b.left + b.width / 2);
     const dy = i.top + i.height / 2 - (b.top + b.height / 2);
     if (Math.abs(dx) > 1 || Math.abs(dy) > 1) add("icono-descentrado", btn, `desvío ${dx.toFixed(1)},${dy.toFixed(1)}px`);
+  }
+  // Icono que comparte línea con un texto: su centro vertical contra el de la caja de línea del texto de al lado
+  // (Range sobre el nodo de texto, una caja por línea). Con un texto de varias líneas cuenta la línea con la que
+  // el icono se cruza, la primera si se alinea arriba.
+  const TEXT_SKIP = "svg,script,style,template,[hidden],.z-sr-only,.zd-sr-only,input,textarea,select,kbd";
+  const lineBoxes = (scope, icon) => {
+    const boxes = [];
+    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.textContent.trim()) continue;
+      const host = n.parentElement;
+      if (!host || host.closest(TEXT_SKIP) || icon.contains(host)) continue;
+      if (host.checkVisibility && !host.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue;
+      // Texto solo para lectores de pantalla (caja de 1 px recortada): no se ve.
+      let hiddenText = false;
+      for (let a = host; a && a !== scope.parentElement; a = a.parentElement) {
+        const ar = a.getBoundingClientRect();
+        if (ar.width <= 2 || ar.height <= 2) hiddenText = getComputedStyle(a).display !== "contents";
+        if (hiddenText) break;
+      }
+      if (hiddenText) continue;
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      for (const q of range.getClientRects()) if (q.width > 0.5 && q.height > 0.5) boxes.push({ q, host });
+    }
+    return boxes;
+  };
+  const icons = [...document.body.querySelectorAll("svg")].filter((s) => !s.ownerSVGElement);
+  for (const icon of icons) {
+    const i = icon.getBoundingClientRect();
+    if (i.width < 8 || i.height < 8 || i.width > 32 || i.height > 32 || i.width / i.height > 1.4 || i.height / i.width > 1.4) continue;
+    if (icon.checkVisibility && !icon.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue;
+    if (icon.closest("[hidden],[inert],.z-sr-only,.zd-sr-only,[popover]:not(:popover-open),dialog:not([open])")) continue;
+    const ics = getComputedStyle(icon);
+    if (ics.position === "absolute" || ics.position === "fixed") continue;
+    // Caja que lo contiene: <z-icon> es `display: contents`.
+    let host = icon.parentElement;
+    while (host && getComputedStyle(host).display === "contents") host = host.parentElement;
+    if (!host) continue;
+    // Icono que gira (indicador de progreso): su caja cambia con cada vuelta.
+    if (
+      [icon, host].some((el) => el.getAnimations?.().some((a) => a.effect?.getComputedTiming?.().iterations === Number.POSITIVE_INFINITY))
+    )
+      continue;
+    const hostPos = getComputedStyle(host).position;
+    // Icono dibujado encima de otra cosa (adorno de un campo, insignia sobre un avatar): no comparte línea.
+    if ((hostPos === "absolute" || hostPos === "fixed") && !host.textContent.trim()) continue;
+    let partner = null;
+    for (let p = host, depth = 0; p && p !== document.body && depth < 3 && !partner; p = p.parentElement, depth++) {
+      if (getComputedStyle(p).display === "contents") {
+        depth--;
+        continue;
+      }
+      // En la misma línea: se cruza en vertical con el icono y queda al lado, a un hueco razonable.
+      const near = lineBoxes(p, icon).filter(({ q }) => {
+        const overlap = Math.min(q.bottom, i.bottom) - Math.max(q.top, i.top);
+        const gap = Math.max(q.left - i.right, i.left - q.right, 0);
+        // Al lado, no encima: un contador posicionado sobre el icono (insignia) no es su texto de línea.
+        const beside = q.left >= i.right - 1 || q.right <= i.left + 1;
+        return beside && overlap > Math.min(q.height, i.height) * 0.3 && gap <= 24;
+      });
+      if (near.length) {
+        // La línea que más se cruza con el icono; a igualdad, la más cercana en horizontal.
+        near.sort((a, b) => {
+          const oa = Math.min(a.q.bottom, i.bottom) - Math.max(a.q.top, i.top);
+          const ob = Math.min(b.q.bottom, i.bottom) - Math.max(b.q.top, i.top);
+          if (Math.abs(oa - ob) > 0.5) return ob - oa;
+          const ga = Math.max(a.q.left - i.right, i.left - a.q.right, 0);
+          const gb = Math.max(b.q.left - i.right, i.left - b.q.right, 0);
+          return ga - gb;
+        });
+        partner = { ...near[0], scope: p };
+        break;
+      }
+      // Control con solo un icono (botón, enlace, pestaña): va solo; su centrado lo mide icono-descentrado.
+      if (p.matches(INTERACTIVE) || p.matches("[role=img],figure")) break;
+    }
+    if (!partner) continue;
+    const { q, host: textHost } = partner;
+    // Icono en un recuadro propio (fondo o borde, más alto que el icono): se mide el recuadro. Si junto a él hay
+    // un bloque de varias líneas (título y subtítulo), es un objeto multimedia, no un icono de línea.
+    const hs = getComputedStyle(host);
+    const t = host.getBoundingClientRect();
+    const tile =
+      !host.textContent.trim() &&
+      t.height >= i.height + 6 &&
+      t.width >= i.width + 6 &&
+      (Number.parseFloat(hs.borderTopWidth) > 0 ||
+        !/^(rgba\(0, 0, 0, 0\)|transparent)$/.test(hs.backgroundColor) ||
+        hs.backgroundImage !== "none");
+    const box = tile ? t : i;
+    const bc = box.top + box.height / 2;
+    const dy = bc - (q.top + q.height / 2);
+    const limit = box.height > 20 ? 1.5 : 1;
+    if (Math.abs(dy) <= limit) continue;
+    // Pila de texto al mismo lado del icono que se cruza con su altura: título y subtítulo, o un texto que parte.
+    const side = q.left >= box.right - 1 ? 1 : -1;
+    const stack = lineBoxes(partner.scope, icon).filter(
+      ({ q: o }) =>
+        (side > 0 ? o.left >= box.right - 1 : o.right <= box.left + 1) &&
+        // La misma columna que la línea de al lado (una debajo de otra), no un contador a su lado.
+        o.left < q.right &&
+        o.right > q.left &&
+        o.bottom > box.top - q.height * 0.75 &&
+        o.top < box.bottom + q.height * 0.75,
+    );
+    const lines = new Set(stack.map(({ q: o }) => Math.round(o.top + o.height / 2)));
+    const hosts = new Set(stack.map(({ host: h }) => h));
+    const stackTop = Math.min(...stack.map(({ q: o }) => o.top));
+    const stackBottom = Math.max(...stack.map(({ q: o }) => o.bottom));
+    // Recuadro junto a varias líneas: objeto multimedia. Icono centrado en una pila de dos textos distintos (título
+    // y subtítulo): centrado a propósito. Un mismo texto que parte en dos líneas no cuenta: el icono va con la primera.
+    const media = lines.size > 1 && (tile || (hosts.size > 1 && Math.abs(bc - (stackTop + stackBottom) / 2) <= 1.5));
+    // Marca circular del tamaño de un avatar (asistente, hito de una línea de tiempo): va arriba, junto al bloque.
+    const avatar = tile && t.height >= 28 && Number.parseFloat(hs.borderTopLeftRadius) >= Math.min(t.width, t.height) / 2 - 0.5;
+    const ts = getComputedStyle(textHost);
+    add(
+      "icono-desalineado",
+      host,
+      `${dy > 0 ? "+" : ""}${(Math.round(dy * 2) / 2).toFixed(1)}px (${tile ? "recuadro" : "icono"} ${Math.round(box.height)}, texto ${ts.fontSize}/${ts.lineHeight})`,
+      {
+        text: textHost.textContent.trim().slice(0, 40),
+        icon: icon.getAttribute("data-icon") ?? icon.getAttribute("class") ?? "svg",
+        display: `${ics.display}/${ics.verticalAlign}`,
+        media,
+        avatar,
+      },
+    );
   }
 
   // 5. Solapes y objetivo táctil
@@ -1808,6 +1944,10 @@ function classify(recs) {
           verdict = "aceptado";
           why = "relleno calculado para llegar al objetivo táctil con puntero grueso";
           break;
+        case "relleno-de-linea":
+          verdict = "aceptado";
+          why = "relleno que centra la primera línea en una altura de control; con dos líneas, el icono sigue a la primera";
+          break;
         case "margen-automatico":
           verdict = "aceptado";
           why = "margen automático (empuja al final del contenedor)";
@@ -1867,6 +2007,16 @@ function classify(recs) {
             verdict = "aceptado";
             why =
               "nodo bajo el minimapa o los controles flotantes del lienzo: se alcanza desplazando, con el teclado y desde la vista en lista";
+          }
+          break;
+        case "icono-desalineado":
+          if (i.media) {
+            verdict = "aceptado";
+            why =
+              "icono en un recuadro junto a un bloque de varias líneas, o centrado en una pila de título y subtítulo: objeto multimedia, no icono de línea";
+          } else if (i.avatar) {
+            verdict = "aceptado";
+            why = "marca circular del tamaño de un avatar arriba del bloque que acompaña (mensaje del asistente), como un avatar";
           }
           break;
         case "solape":

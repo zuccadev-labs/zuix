@@ -206,6 +206,7 @@ compila con una marca: las otras se inyectan con su hoja de `tokens/dist/brands/
 | Escala | Tamaño, interlineado o peso fuera de los tokens; relleno, margen o hueco fuera de `--z-space-*` (±0,5 px); radio fuera de la familia; altura de control fuera de `--z-control-height-*` |
 | Píldora | Un radio mayor que el de la familia en algo que no es circular |
 | Alineación | Controles de una fila con alturas distintas, icono descentrado en su botón, huecos desiguales entre hermanos |
+| Icono desalineado | Un icono que comparte línea con un texto tiene su centro vertical a más de 1 px del de esa línea (1,5 px si mide más de 20) |
 | Foco | Una parada de Tab sin contorno, o con contraste menor que 3:1 contra lo que tiene detrás |
 | Objetivo | Menor de 24 × 24 (40 con puntero grueso) sin la excepción de espaciado de WCAG 2.5.8 |
 | axe, consola y red | WCAG 2.2 A y AA con contraste; errores de página, de consola y peticiones fallidas |
@@ -214,6 +215,21 @@ Lo que una regla acepta (elipsis intencionada, relleno que compensa el borde, ra
 tallas distintas, objetivo pequeño con espacio alrededor…) queda contado como aceptado y con el motivo en el
 informe; no se descarta nada en bloque. La medida en bruto se guarda, así que `--report` reclasifica sin abrir
 el navegador.
+
+El icono desalineado se mide contra la caja de la línea del texto de al lado (un `Range` sobre el nodo de texto,
+que da una caja por línea), no contra la caja del elemento: un nombre que parte en dos líneas cuenta con la línea
+que el icono cruza, y el icono de una alerta con título, con la primera. Si el icono va en un recuadro propio (fondo
+o borde), se mide el recuadro. No cuentan el icono que va solo (un botón de solo icono lo mide «icono descentrado»),
+el que está posicionado encima de otra cosa, el que gira ni el texto oculto para lectores de pantalla. Se aceptan con
+su motivo el recuadro junto a un bloque de varias líneas, el icono centrado en una pila de título y subtítulo y la
+marca circular del tamaño de un avatar.
+
+El arreglo de fondo está en `native.css`: un `svg.z-icon` en línea con el texto lleva el centro a media altura de las
+mayúsculas (`vertical-align: calc(0.5cap - <medio icono>)`), que es el centro de la caja de la letra, en lugar de
+apoyarse en la línea base con el hueco del descendente debajo. En un contenedor flex o grid no tiene efecto. Un
+icono que acompaña a la primera línea de un texto que puede partir va en una caja de una línea de alto
+(`block-size: 1lh`) con el icono centrado, o en una fila alineada por la primera línea base, no con un margen fijo
+de 2 px que solo vale para una letra y un tamaño de icono.
 
 El margen lateral de `Container` con `gutter="fluid"` sale del token `container-gutter`, un `clamp()` entre 16 y
 40 px que sigue al ancho del contenedor: casi nunca cae en un paso de `--z-space-*`. La auditoría lo acepta solo en
