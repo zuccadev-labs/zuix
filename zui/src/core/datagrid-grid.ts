@@ -53,7 +53,8 @@ const rowEl = (table: HTMLTableElement, key: string) =>
 
 /** Lo que recibe el foco en una celda: su único control (una casilla, un botón) o la propia celda. */
 function focusTarget(cell: HTMLElement): HTMLElement {
-  const controls = [...cell.querySelectorAll<HTMLElement>(CONTROLS)].filter((el) => !el.closest("[hidden]"));
+  // Un control oculto a los lectores (el botón de abrir una rama: lo dice aria-expanded de la fila) no recibe el foco.
+  const controls = [...cell.querySelectorAll<HTMLElement>(CONTROLS)].filter((el) => !el.closest('[hidden], [aria-hidden="true"]'));
   return controls.length === 1 ? controls[0]! : cell;
 }
 
@@ -79,6 +80,7 @@ export function bindGrid(table: HTMLTableElement, o: GridOptions): GridHandle {
     const stop = target ? focusTarget(target) : null;
     for (const el of tbody.querySelectorAll<HTMLElement>(`:scope > tr > :is(td, th), :scope > tr > :is(td, th) :is(${CONTROLS})`)) {
       if (el.closest(EDITING) && el.matches(EDITING)) continue;
+      if (el.closest('[aria-hidden="true"]')) continue;
       const want = el === stop ? "0" : "-1";
       if (el.getAttribute("tabindex") !== want) el.setAttribute("tabindex", want);
     }
