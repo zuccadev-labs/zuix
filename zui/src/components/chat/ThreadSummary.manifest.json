@@ -22,6 +22,16 @@
       "type": "MouseEventHandler"
     },
     {
+      "name": "now",
+      "type": "number",
+      "description": "Instante de referencia en milisegundos para el «hace…» de la última respuesta."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Idioma del tiempo relativo."
+    },
+    {
       "name": "labels",
       "type": "Partial<ChatLabels>"
     }

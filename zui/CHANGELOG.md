@@ -5,12 +5,6 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
-### Corregido
-
-- `Switch` en colores forzados: la pista ya no anima el fondo. Al entrar en `forced-colors` la pista marcada partía
-  del `ButtonFace` de la apagada y durante 200 ms no se distinguía de ella; ahora pasa a `Highlight` de golpe. El
-  estado se lee además por el pulgar al final de la pista y el borde de `Highlight`.
-
 ## [0.4.0] - 2026-11-23
 
 ### Añadido
@@ -341,6 +335,15 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `LogConsole`: subir en el mismo fotograma en que la consola se repinta (llega una entrada, se limpia la búsqueda)
   devolvía la vista al final antes de que llegara el evento de desplazamiento, y la consola seguía siguiendo. Ahora el
   repintado ve que la posición subió desde la última conocida y deja de seguir en vez de bajar.
+- `Switch` en colores forzados: la pista ya no anima el fondo. Al entrar en `forced-colors` la pista marcada partía
+  del `ButtonFace` de la apagada y durante 200 ms no se distinguía de ella; ahora pasa a `Highlight` de golpe. El
+  estado se lee además por el pulgar al final de la pista y el borde de `Highlight`.
+- Manifiestos: 19 props que existían en los tipos y no salían en el catálogo ni en `manifest.json`.
+  `CalendarHeatmap` `onViewChange`; `PromptInput` `onAttach` y `onRemoveAttachment`; `Composer` `onRemoveAttachment`
+  y `onRecordError`; `MessageBubble` `actions`, `hourCycle` y `now`; `MessageList` `onCopy`, `onVoiceEnded` y
+  `onEscape`; `ThreadSummary` `now` y `locale`; `DateTimePicker` `popupClassName` y `triggerRef`; `NumberInput` y
+  `PasswordInput` `inputClassName`; `NodeCanvas` `onLockChange` y `locale`.
+- `AGENTS.md`: la lista de grupos incluye `chat`, `ai` y `nodes`.
 
 ## [0.3.0] - 2026-11-21
 

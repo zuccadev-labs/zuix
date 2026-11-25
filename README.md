@@ -184,8 +184,10 @@ Code of conduct: [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md).
 
 The suite is on npm under the `@zuccadev-labs` organization
 ([`@zuccadev-labs/zuix`](https://www.npmjs.com/package/@zuccadev-labs/zuix)). The current version is
-`0.3.0`. It grows the catalog to 144 components and 19 layouts and gives every component a new visual base;
-no token, class or export was removed, but most components look different. `0.2.0` was the one that broke
+`0.4.0`. It grows the catalog to 224 components and 30 layouts (time, terminal and code, chat, AI and agents,
+dashboards, people and profiles, nodes, notifications, reviews and prices), adds a compat mode for browsers
+without the Popover API and makes the React binding work with React 18 as well as 19. Nothing was removed
+since `0.2.0`; `0.3.0` gave every component a new visual base. `0.2.0` was the one that broke
 with `0.1.0`: I dropped the third-party UI library the React binding was built on, moved dialogs to the
 native `<dialog>` and raised the minimum Node version. While the version is `0.x`, a `MINOR` bump may break
 ([Versioning](./docs/package/01-versionado.md)). Releases are published automatically when a version bump

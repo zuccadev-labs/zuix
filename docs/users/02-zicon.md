@@ -97,6 +97,16 @@ icono sin registrar sale vacío y la consola lo avisa.
 
 `onIconsRegistered(fn)` avisa cada vez que se registran iconos, por si una aplicación los carga bajo demanda.
 
+| Función | Entrada | Qué hace |
+|---|---|---|
+| `registerIcons(icons)` | `/core`, `/dom` | Registra iconos en el registro único |
+| `getIcon(name)` | `/core`, `/dom` | El icono registrado con ese nombre, o `undefined` |
+| `registeredIconNames()` | `/core`, `/dom` | Los nombres registrados hasta ahora |
+| `iconNames` | `/core`, `/dom` | Los 366 nombres del set, estén registrados o no |
+| `onIconsRegistered(fn)` | `/core`, `/dom` | Avisa en cada registro; devuelve la función que deja de escuchar |
+| `iconElement(name, options)`, `iconSvg(name, options)`, `iconPaths(name, variant)` | `/dom` | Un `<svg>` construido con el DOM, una cadena SVG escapada o los trazados en crudo |
+| `defineIconElement(tag)` | `/dom` | Define `<z-icon>` (u otro nombre). Idempotente. `/element` ya lo llama |
+
 ## Nombres
 
 - En inglés, minúsculas y con guiones: `arrow-down`, `shopping-cart`.
