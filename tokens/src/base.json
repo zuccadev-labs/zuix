@@ -99,6 +99,11 @@
     "container-lg": "1024px",
     "container-xl": "1280px",
     "container-gutter": "clamp(16px, 4cqi, 40px)",
+    "size-compact": "0px",
+    "size-medium": "600px",
+    "size-expanded": "840px",
+    "size-large": "1200px",
+    "size-xlarge": "1600px",
 
     "docs-navbar-height": "48px",
     "docs-sidebar-width": "248px",

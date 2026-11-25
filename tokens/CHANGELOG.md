@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Clases de tamaño: `size-compact`, `size-medium`, `size-expanded`, `size-large` y `size-xlarge` (0, 600, 840, 1200 y
+  1600 px), los cortes de las *window size classes* de Material 3 que usan los layouts adaptativos de zout.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido
