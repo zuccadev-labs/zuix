@@ -60,7 +60,14 @@ function oldLinkify(text: string): TextPart[] {
 }
 function oldShort(text: string): number | null {
   const short = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*(w|d|h|m(?:in)?|s)\b/gi)];
-  if (!short.length || short.map((s) => s[0]).join("").replace(/\s/g, "") !== text.replace(/\s/g, "")) return null;
+  if (
+    !short.length ||
+    short
+      .map((s) => s[0])
+      .join("")
+      .replace(/\s/g, "") !== text.replace(/\s/g, "")
+  )
+    return null;
   const unit: Record<string, "weeks" | "days" | "hours" | "minutes" | "seconds"> = {
     w: "weeks",
     d: "days",
@@ -153,7 +160,10 @@ describe("menciones en la vista previa sin expresión", () => {
   test("propiedad: mismo texto que con /<@[^>]+>/g", () => {
     fc.assert(
       fc.property(from("<@>ab ", 40), (text) => {
-        const expected = text.replace(/<@[^>]+>/g, "@").replace(/\s+/g, " ").trim();
+        const expected = text
+          .replace(/<@[^>]+>/g, "@")
+          .replace(/\s+/g, " ")
+          .trim();
         assert.equal(messagePreview(msg(text), ARRIVAL_LABELS, 1000), expected);
       }),
       { numRuns: 2000 },

@@ -220,6 +220,4 @@ for (const pkg of ["zui", "zout"]) {
   }
   packages[pkg] = { result, count: manifest.components.length };
 }
-process.stdout.write(
-  JSON.stringify({ ...Intl.DateTimeFormat().resolvedOptions(), packages, total, manual, skipped }),
-);
+process.stdout.write(JSON.stringify({ ...Intl.DateTimeFormat().resolvedOptions(), packages, total, manual, skipped }));
