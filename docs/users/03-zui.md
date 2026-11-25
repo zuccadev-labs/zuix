@@ -1,6 +1,6 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 224 componentes en 19 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 231 componentes en 19 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
@@ -20,7 +20,7 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Formularios | Calendar, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TransferList, WeekPicker, YearPicker |
 | Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
 | Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, FilterBar, Item, Kbd, Meter, PriceBreakdown, PriceTag, Progress, Rating, ReviewCard, ReviewSummary, StatTile, StatusDot, SummaryList, Table, Timeline |
-| Gráficos | AreaChart, BarChart, DonutChart, LineChart, PieChart, Sparkline |
+| Gráficos | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline |
 | Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, NotificationBadge, NotificationCenter, Skeleton, Spinner |
 | Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatDuration, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
 | Medios | CompareSlider, ImageCropper, ImageList, Masonry, QRCode, SignaturePad |
@@ -41,7 +41,7 @@ Cada componente declara en el contrato qué necesita para funcionar:
 | `behavior` | Significado | Cuántos |
 |---|---|---|
 | `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 150 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 157 |
 | `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
@@ -448,6 +448,61 @@ Cambiar un filtro emite `z:change { value, id }`; `toggleFilter` y `toggleOption
   `:has()` falta en Firefox 115: los límites están en la misma página.
 - El binding funciona con React 18.2 o posterior y con 19. En 18, los componentes que aceptan `ref` son objetos de
   `forwardRef`, no funciones ([React](./10-compatibilidad.md#react)).
+
+## Gráficos
+
+`LineChart`, `AreaChart`, `BarChart`, `DonutChart`, `PieChart`, `ScatterChart`, `RadarChart`, `ComboChart`,
+`HeatmapChart` y `BulletChart` son el mismo componente con otro `type`: un `figure` con título, leyenda, botón
+«View as table» que cambia el gráfico por su tabla, resumen para lectores de pantalla, tooltip al pasar o enfocar y
+una sola parada de Tab con flechas entre puntos. `CategoryBar`, `AnimatedNumber` y `Sparkline` son piezas sueltas.
+Todo está en `/dom/charts` sin React. Los números y las fechas salen de `Intl` con `locale`, el color de cada
+serie es un token `--z-chart-1…8` que sigue a la serie aunque se oculten otras, y nada depende solo del color:
+formas de marcador, trazos, tramas y, con colores forzados, `CanvasText`. Con `prefers-reduced-motion` no hay
+animación de entrada ni cuenta.
+
+- `ScatterChart`: un punto por fila (`xKey`, `yKey`), series por el valor de `seriesKey` con forma propia,
+  burbujas con `sizeKey` (el área es proporcional al valor) y `trend` para la recta de regresión de cada serie,
+  con su pendiente y R² en el resumen. ←→ recorren la serie en orden de x y ↑↓ cambian de serie.
+- `RadarChart`: un eje radial por fila y un polígono translúcido por serie. La escala se fija con `yMin`, `yMax` y
+  `yTicks` y se escribe bajo el radar («Scale 0 to 100, rings every 25»), no sobre los anillos; `gridShape="circle"`
+  cambia la retícula.
+- `ComboChart`: cada serie dice si es barra o línea (`type`) y en qué eje va (`axis: "end"` para el secundario,
+  con `y2Format`, `y2Min` y `y2Max`).
+- `HeatmapChart`: una celda por fila (`xKey` columna, `yKey` fila, `valueKey` valor) en un `role="grid"` con
+  flechas, Inicio/Fin y Ctrl+Inicio/Fin. `scale="sequential"` usa cinco niveles del acento
+  (`--z-heatmap-0…4`); `scale="diverging"`, cuatro por lado alrededor de `midpoint` en azul y ámbar
+  (`--z-heatmap-pos-*`, `--z-heatmap-neg-*`). La leyenda dice el tramo de cada nivel y `showValues` escribe el
+  valor en la celda.
+- `BulletChart`: valor, objetivo y rangos cualitativos (`ranges`, `rangeLabels`) por fila, en horizontal o
+  `orientation="vertical"`. Las filas comparten escala: medidas de unidades distintas van en gráficos distintos.
+- `CategoryBar`: tramos proporcionales a `values`, con `categories`, `colors`, `marker`, `showLabels` y `legend`.
+- `AnimatedNumber`: cuenta del valor anterior al nuevo con `format` de `Intl.NumberFormat`. El servidor pinta el
+  valor final, así que no hay desajuste de hidratación; el texto que cuenta está oculto a los lectores de
+  pantalla y una copia con el final se lee una vez (`live="polite"` la anuncia al cambiar). Va solo, como
+  `value` de `StatTile` o con `animate` en `MetricCard`.
+
+```tsx
+import { AnimatedNumber, HeatmapChart, StatTile } from "@zuccadev-labs/zuix-zui";
+
+export function Load({ cells, orders }: { cells: { day: string; hour: string; value: number }[]; orders: number }) {
+  return (
+    <>
+      <StatTile label="Orders" value={<AnimatedNumber value={orders} live="polite" locale="en-US" />} />
+      <HeatmapChart title="Support tickets" data={cells} xKey="hour" yKey="day" locale="en-US" />
+    </>
+  );
+}
+```
+
+```html
+<div class="z-chart" data-type="heatmap" data-title="Support tickets" data-x-key="hour" data-y-key="day" data-locale="en-US">
+  <script type="application/json" data-props>{"data":[{"day":"Mon","hour":"09","value":4}]}</script>
+</div>
+<span class="z-animated-number" data-value="1284" data-live="polite" data-locale="en-US"></span>
+```
+
+Sin React, `setWidgetProps(el, { value: 1500 })` cambia el número y lo hace contar, y `setWidgetProps(el, { data })`
+repinta un gráfico con datos nuevos.
 
 ## Dirección de escritura
 
