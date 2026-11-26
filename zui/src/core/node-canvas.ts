@@ -172,6 +172,8 @@ export interface NodeCanvasHandle {
   exportSVG(options?: ExportOptions): Promise<string>;
   /** PNG del diagrama completo. */
   exportPNG(options?: ExportOptions): Promise<Blob>;
+  /** Tamaño de cada nodo: el fijo o el medido en el documento (para recolocar con las medidas reales). */
+  readonly sizes: ReadonlyMap<string, Size>;
   readonly graph: Graph;
   readonly viewport: Viewport;
   readonly selection: CanvasSelection;
@@ -272,6 +274,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
   const measured = new Map<string, Size>();
   /** Fracción medida de los puertos que dibuja el cuerpo del nodo (`anchor`), por nodo. */
   const portT = new Map<string, Map<string, number>>();
+  /** Borde de arriba de los nodos con pestaña (carpetas): cuánto baja respecto a la caja, en unidades del mundo. */
+  const insetTop = new Map<string, number>();
   /** Cambia con la geometría (modelo, medidas): las rutas ortogonales se recalculan con ella. */
   let geometry = 0;
   let vp: Viewport = o.viewport ?? DEFAULT_VIEWPORT;
@@ -520,6 +524,16 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
   function measurePorts(el: HTMLElement, id: string): boolean {
     const anchors = el.querySelectorAll<HTMLElement>("[data-port-anchor][data-port]");
     const node = index.get(id);
+    let insetChanged = false;
+    const body = el.querySelector<HTMLElement>(":scope > .z-folder-card__body");
+    if (body) {
+      const inset = Math.round(body.offsetTop);
+      if (insetTop.get(id) !== inset) {
+        insetTop.set(id, inset);
+        insetChanged = true;
+      }
+    }
+    if (!anchors.length || !node?.ports?.some((p) => p.anchor)) return portT.delete(id) || insetChanged;
     if (!anchors.length || !node?.ports?.some((p) => p.anchor)) return portT.delete(id);
     const box = el.getBoundingClientRect();
     if (!box.width || !box.height) return false;
@@ -535,7 +549,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     }
     const old = portT.get(id);
     const same = old && old.size === next.size && [...next].every(([k, v]) => Math.abs((old.get(k) ?? -1) - v) < 0.0005);
-    if (same) return false;
+    if (same) return insetChanged;
     portT.set(id, next);
     return true;
   }
@@ -646,8 +660,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     const ra = rects.get(e.source);
     const rb = rects.get(e.target);
     if (!a || !b || !ra || !rb) return null;
-    const s = anchorOf(a, ra, e.sourcePort, "source", portT.get(e.source));
-    const t = anchorOf(b, rb, e.targetPort, "target", portT.get(e.target));
+    const s = anchorOf(a, ra, e.sourcePort, "source", portT.get(e.source), insetTop.get(e.source));
+    const t = anchorOf(b, rb, e.targetPort, "target", portT.get(e.target), insetTop.get(e.target));
     return { source: s.point, sourceSide: s.side, target: t.point, targetSide: t.side };
   };
   // Rutas ortogonales: se calculan todas a la vez (esquivan nodos y se reparten en carriles) cuando cambia la
@@ -2296,6 +2310,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
         const bg = clone.querySelector<HTMLElement>(".z-node-canvas__background");
         if (bg) {
           bg.replaceChildren();
+          bg.style.setProperty("width", "100%");
+          bg.style.setProperty("height", "100%");
           const image = dots?.getPropertyValue("background-image");
           if (image && image !== "none") {
             const step = typeof o.snap === "number" && o.snap > 0 ? o.snap : 16;
@@ -2386,6 +2402,9 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     },
     get visible() {
       return visible;
+    },
+    get sizes() {
+      return new Map([...rects].map(([id, r]) => [id, { width: r.width, height: r.height }]));
     },
     dispose() {
       disposed = true;

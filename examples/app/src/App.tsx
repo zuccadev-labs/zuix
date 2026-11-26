@@ -58,6 +58,7 @@ import { LoginScreen } from "./screens/Login";
 import { ProfileScreen, SettingsScreen } from "./screens/People";
 import { ListingScreen } from "./screens/Listing";
 import { Pickers } from "./screens/Pickers";
+import { Infra } from "./screens/Infra";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -251,6 +252,8 @@ export function App() {
       <LoginScreen />
     ) : active === "flows" ? (
       <Flows />
+    ) : active === "infra" ? (
+      <Infra />
     ) : active === "listing" ? (
       <ListingScreen />
     ) : active === "pickers" ? (

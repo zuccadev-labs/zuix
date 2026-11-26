@@ -28,6 +28,7 @@ export type ScreenId =
   | "kanban"
   | "login"
   | "flows"
+  | "infra"
   | "pickers"
   | "listing";
 
@@ -66,6 +67,7 @@ export const SCREENS: ScreenDef[] = [
   { id: "kanban", title: "Board", icon: "view-columns", hint: "Kanban board with drag and keyboard" },
   { id: "login", title: "Sign in", icon: "lock-closed", hint: "Glass sign-in page" },
   { id: "flows", title: "Flows", icon: "share", hint: "Node editor with ports, edges and minimap" },
+  { id: "infra", title: "Infrastructure", icon: "server-stack", hint: "Home lab diagram from an inventory, with export" },
   { id: "pickers", title: "Pickers", icon: "list-bullet", hint: "Cascader, tree select, masks and ranges" },
   { id: "listing", title: "Listing", icon: "home-modern", hint: "Notifications, filters, prices, reviews and photos" },
 ];

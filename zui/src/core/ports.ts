@@ -44,6 +44,8 @@ export function anchorOf(
   portId: string | undefined,
   kind: "source" | "target",
   measured?: ReadonlyMap<string, number>,
+  /** Lo que el borde de arriba baja respecto a la caja (la pestaña de una carpeta): las aristas llegan al borde. */
+  insetTop = 0,
 ): Anchor {
   const ports = node.ports ?? [];
   const port = (portId ? ports.find((p) => p.id === portId) : undefined) ?? ports.find((p) => p.kind === kind);
@@ -53,7 +55,9 @@ export function anchorOf(
   }
   const side = portSide(port);
   const t = measured?.get(port.id) ?? portFractions(ports).get(port.id) ?? 0.5;
-  return { side, point: sidePoint(rect, side, Math.min(1, Math.max(0, t))) };
+  const point = sidePoint(rect, side, Math.min(1, Math.max(0, t)));
+  if (side === "top" && insetTop > 0) point.y += Math.min(insetTop, rect.height);
+  return { side, point };
 }
 
 /** Tipos de un puerto (`"json text"` → dos). Vacío o `any` acepta cualquiera. */

@@ -809,6 +809,24 @@ body {
   flex-wrap: wrap;
 }
 
+/* Infraestructura: el diagrama ocupa casi toda la altura; el servidor reparte hardware y almacenamiento. */
+.app-infra {
+  block-size: clamp(480px, 76vh, 900px);
+}
+.app-infra-server {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(380px, 1fr);
+  gap: var(--z-space-5);
+  align-items: start;
+}
+.app-infra-note {
+  max-inline-size: 72ch;
+}
+.app-mono {
+  font-family: var(--z-font-mono);
+  font-size: var(--z-text-caption);
+}
+
 /* Pantalla de anuncio: lista de alojamientos en rejilla, sin viñetas. */
 .app-stays {
   margin: 0;

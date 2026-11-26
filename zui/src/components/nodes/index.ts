@@ -66,3 +66,5 @@ export {
   type InventoryService,
   type LinkKind,
 } from "../../core/inventory";
+export { DeviceSummary, type DeviceSummaryProps } from "./DeviceSummary";
+export { SpecList, type SpecItem, type SpecListProps } from "./SpecList";

@@ -281,6 +281,9 @@ export const NodeCanvas = withRef(function NodeCanvas({
         get visible() {
           return handle.current?.visible ?? new Set<string>();
         },
+        get sizes() {
+          return handle.current?.sizes ?? new Map();
+        },
         dispose: () => handle.current?.dispose(),
       }) satisfies NodeCanvasHandle,
     [graph],

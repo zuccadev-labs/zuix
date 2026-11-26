@@ -140,6 +140,11 @@ export interface InventoryDiagramOptions {
   kinds?: Partial<Record<LinkKind, string>>;
   /** Columnas de las zonas. Por defecto 3. */
   zoneColumns?: number;
+  /**
+   * Tamaños reales de los nodos (los que mide el lienzo: `handle.sizes`). Sin ellos se estiman por el contenido; con
+   * ellos, una segunda pasada coloca sin solapes lo que la aplicación pinta en cada tarjeta.
+   */
+  sizes?: ReadonlyMap<string, Size>;
 }
 
 export interface InventoryDiagram extends Graph {
@@ -268,15 +273,22 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
   const tier = new Map<string, number>();
   const hasInternet = (inv.links ?? []).some((l) => split(l.from)[0] === "internet" || split(l.to)[0] === "internet") || !!inv.internet;
 
-  // Nombre del equipo al otro lado de cada puerto (rótulo bajo el conector).
+  // Nombre del equipo al otro lado de cada puerto (rótulo bajo el conector) y lado del conector: arriba si el enlace
+  // sube a un nivel anterior (el uplink entra por arriba), abajo si baja.
   const peer = new Map<string, string>();
+  const upward = new Set<string>();
+  const tierOf = (id: string) =>
+    id === "internet" || (inv.externals ?? []).some((x) => x.id === id) ? 0 : (ROLE_TIER[devices.get(id)?.role ?? "other"] ?? 4);
   for (const l of inv.links ?? []) {
     const [a] = split(l.from);
     const [b] = split(l.to);
     const name = (id: string) => (id === "internet" ? (inv.internet?.label ?? "Internet") : (devices.get(id)?.name ?? id));
     peer.set(l.from, name(b));
     peer.set(l.to, name(a));
+    if (tierOf(b) < tierOf(a)) upward.add(l.from);
+    if (tierOf(a) < tierOf(b)) upward.add(l.to);
   }
+  const sizeOf = (id: string, fallback: Size) => o.sizes?.get(id) ?? fallback;
 
   if (hasInternet) {
     const note = [inv.internet?.note, inv.internet?.down && `↓ ${inv.internet.down}`, inv.internet?.up && `↑ ${inv.internet.up}`]
@@ -293,7 +305,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
       ],
       selectable: true,
     });
-    sizes.set("internet", { width: 260, height: 130 });
+    sizes.set("internet", sizeOf("internet", { width: 260, height: 130 }));
     tier.set("internet", 0);
   }
   for (const x of inv.externals ?? []) {
@@ -303,7 +315,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
       data: { label: x.name, description: x.note, icon: x.icon ?? "cloud" },
       ports: [{ id: "in", kind: "target", side: "left", anchor: true }],
     });
-    sizes.set(x.id, { width: 240, height: 76 });
+    sizes.set(x.id, sizeOf(x.id, { width: 240, height: 76 }));
     tier.set(x.id, 0);
     if (hasInternet)
       edges.push({
@@ -324,7 +336,15 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
     const ports: NodePort[] = [
       { id: "up", kind: "target", side: "top", anchor: true },
       { id: "down", kind: "source", side: "bottom", anchor: true },
-      ...(d.ports ?? []).map((p): NodePort => ({ id: p.id, kind: "source", side: "bottom", anchor: true, label: p.label })),
+      ...(d.ports ?? []).map(
+        (p): NodePort => ({
+          id: p.id,
+          kind: "source",
+          side: upward.has(`${d.id}${SEP}${p.id}`) ? "top" : "bottom",
+          anchor: true,
+          label: p.label,
+        }),
+      ),
     ];
     const panel: PanelPort[] = (d.ports ?? []).map((p) => ({
       id: p.id,
@@ -335,6 +355,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
       tagged: p.tagged,
       state: p.state,
       to: p.to ?? peer.get(`${d.id}${SEP}${p.id}`),
+      side: upward.has(`${d.id}${SEP}${p.id}`) ? "top" : undefined,
     }));
     nodes.push({
       id: d.id,
@@ -359,7 +380,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
       },
       ports,
     });
-    sizes.set(d.id, estimateDeviceSize(d));
+    sizes.set(d.id, sizeOf(d.id, estimateDeviceSize(d)));
     tier.set(d.id, ROLE_TIER[d.role] ?? 4);
   }
 
@@ -411,8 +432,8 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
     let y = cloud.position.y;
     for (const x of inv.externals ?? []) {
       const n = nodes.find((m) => m.id === x.id)!;
-      n.position = { x: cloud.position.x + 260 + 120, y };
-      y += 76 + 16;
+      n.position = { x: cloud.position.x + (sizes.get("internet")?.width ?? 260) + 120, y };
+      y += (sizes.get(x.id)?.height ?? 76) + 16;
     }
   }
 

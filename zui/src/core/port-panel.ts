@@ -40,6 +40,8 @@ export interface PanelPort {
   note?: string;
   /** Grupo: los puertos de grupos distintos se separan (por defecto, por tipo de conector). */
   group?: string;
+  /** Lado del nodo por el que sale su arista en un lienzo (`top` para un enlace que sube). Por defecto el del panel. */
+  side?: "top" | "bottom";
 }
 
 export interface PortPanelLabels {
@@ -208,7 +210,7 @@ export function portPanelTree(props: PortPanelProps): VEl {
               title: port.note,
               "data-port": port.id,
               "data-port-anchor": "",
-              "data-side": props.side ?? "bottom",
+              "data-side": port.side ?? props.side ?? "bottom",
               "data-connector": portConnector(port),
               "data-state": state,
               "data-vlan": on(!!color),

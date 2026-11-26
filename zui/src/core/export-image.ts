@@ -228,7 +228,8 @@ function pseudo(el: Element, which: "::before" | "::after", c: CloneContext): HT
   const content = cs.getPropertyValue("content");
   if (!content || content === "none" || content === "normal") return null;
   const out = el.ownerDocument.createElementNS(XHTML_NS, "span") as HTMLElement;
-  const text = /^["'](.*)["']$/.exec(content)?.[1] ?? "";
+  // `"·" / ""`: el texto es la primera cadena; lo que sigue a la barra es su texto alternativo.
+  const text = /^(["'])((?:\\.|(?!\1).)*)\1/.exec(content)?.[2] ?? "";
   if (text) out.textContent = text.replace(/\\([0-9a-f]{1,6})\s?/gi, (_m, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)));
   out.setAttribute("style", styleText(cs, defaultStyle(c.d, null, "span")));
   out.setAttribute("aria-hidden", "true");
@@ -252,7 +253,7 @@ function cloneNode(node: Node, c: CloneContext): Node | null {
   const copy = el.ownerDocument.createElementNS(ns ?? XHTML_NS, tag);
   for (const a of [...el.attributes]) {
     const name = a.name;
-    if (/^on/i.test(name) || name === "style" || name === "class" || name === "tabindex" || name === "contenteditable") continue;
+    if (/^on/i.test(name) || name === "style" || name === "tabindex" || name === "contenteditable") continue;
     if ((name === "href" || name === "src" || name === "xlink:href") && /^\s*javascript:/i.test(a.value)) continue;
     try {
       copy.setAttribute(name, a.value);
@@ -287,13 +288,32 @@ function cloneNode(node: Node, c: CloneContext): Node | null {
   return copy;
 }
 
-/** Fondo efectivo: el del elemento o el primero opaco de sus antepasados. */
+/** Opacidad de un color computado (`rgb(…)`, `rgba(…, a)`, `color(… / a)`, `oklab(… / a)`). */
+export function colorAlpha(value: string): number {
+  if (!value || value === "transparent") return 0;
+  const slash = /\/\s*([\d.]+%?)\s*\)$/.exec(value);
+  const comma = /^rgba\((?:[^,]+,){3}\s*([\d.]+%?)\s*\)$/.exec(value);
+  const raw = slash?.[1] ?? comma?.[1];
+  if (raw === undefined) return 1;
+  return raw.endsWith("%") ? Number.parseFloat(raw) / 100 : Number.parseFloat(raw);
+}
+
+/**
+ * Fondo efectivo: el primero opaco del elemento o de sus antepasados; si ninguno lo es (fondos de cristal sobre una
+ * imagen), el color de la página de la marca (`--z-canvas`).
+ */
 function effectiveBackground(el: Element, win: Window): string | null {
   for (let cur: Element | null = el; cur; cur = cur.parentElement) {
     const bg = win.getComputedStyle(cur).backgroundColor;
-    if (bg && bg !== "transparent" && !/rgba\(.*,\s*0\)$/.test(bg)) return bg;
+    if (colorAlpha(bg) >= 0.999) return bg;
   }
-  return null;
+  const probe = el.ownerDocument.createElement("span");
+  probe.style.setProperty("background-color", "var(--z-canvas, var(--z-surface-solid))");
+  probe.style.setProperty("position", "absolute");
+  el.append(probe);
+  const bg = win.getComputedStyle(probe).backgroundColor;
+  probe.remove();
+  return colorAlpha(bg) > 0 ? bg : null;
 }
 
 export interface CloneResult {
